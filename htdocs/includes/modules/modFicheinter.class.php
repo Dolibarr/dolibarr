@@ -23,11 +23,11 @@
  *
  */
 
-/*!     \defgroup   ficheinter     Module fiche interventions
+/**     \defgroup   ficheinter     Module fiche interventions
         \brief      Module pour gérer la tenue de fiches d'interventions
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modFicheinter.class.php
         \ingroup    ficheinter
         \brief      Fichier de description et activation du module Ficheinter
@@ -35,7 +35,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modFicheinter
+/** \class modFicheinter
 		\brief      Classe de description et activation du module Ficheinter
 */
 
@@ -88,12 +88,25 @@ class modFicheinter  extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (60,'Tous les droits sur les fiches d\'intervention','ficheinter','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (61,'Lire les fiches d\'intervention','ficheinter','r',1);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (62,'Créer modifier les fiches d\'intervention','ficheinter','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (64,'Supprimer les fiches d\'intervention','ficheinter','d',0);"
-		 );
+    $this->rights[0][0] = 60;
+    $this->rights[0][1] = 'Tous les droits sur les fiches d\'intervention';
+    $this->rights[0][2] = 'a';
+    $this->rights[0][3] = 0;
+
+    $this->rights[1][0] = 61;
+    $this->rights[1][1] = 'Lire les fiches d\'intervention';
+    $this->rights[1][2] = 'r';
+    $this->rights[1][3] = 1;
+
+    $this->rights[2][0] = 62;
+    $this->rights[2][1] = 'Créer modifier les fiches d\'intervention';
+    $this->rights[2][2] = 'w';
+    $this->rights[2][3] = 0;
+
+    $this->rights[3][0] = 64;
+    $this->rights[3][1] = 'Supprimer les fiches d\'intervention';
+    $this->rights[3][2] = 'd';
+    $this->rights[3][3] = 0;
 
     return $this->_init($sql);
   }
@@ -104,7 +117,7 @@ class modFicheinter  extends DolibarrModules
    */
   function remove()
   {
-    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'ficheinter';");
+    $sql = array();
 
     return $this->_remove($sql);
   }

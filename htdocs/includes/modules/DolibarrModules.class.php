@@ -232,7 +232,7 @@ class DolibarrModules
         }
 
         // Supprime les droits de la liste des droits disponibles
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = '".$this->right_class."';"
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = '".$this->right_class."';";
         if (!$this->db->query($sql))
         {
             $err++;

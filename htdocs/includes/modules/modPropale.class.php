@@ -23,11 +23,11 @@
  *
  */
 
-/*!     \defgroup   propale     Module propale
+/**     \defgroup   propale     Module propale
         \brief      Module pour gérer la tenue de propositions commerciales
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modPropale.class.php
         \ingroup    propale
         \brief      Fichier de description et activation du module Propale
@@ -35,7 +35,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modPropale
+/** \class modPropale
 		\brief      Classe de description et activation du module Propale
 */
 
@@ -139,8 +139,7 @@ class modPropale extends DolibarrModules
 
     $sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom = '".$this->const[0][2]."'",
-		 "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) 
-		 VALUES('".$this->const[0][2]."');",
+		 "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES('".$this->const[0][2]."');",
 		 );
     
     return $this->_init($sql);
@@ -153,9 +152,7 @@ class modPropale extends DolibarrModules
    */
   function remove()
   {
-    $sql = array(
-		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'propale';"
-		 );
+    $sql = array();
 
     return $this->_remove($sql);
 

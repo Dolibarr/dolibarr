@@ -114,7 +114,7 @@ class modBanque extends DolibarrModules
    */
   function remove()
   {
-    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'banque';");
+    $sql = array();
 
     return $this->_remove($sql);
   }

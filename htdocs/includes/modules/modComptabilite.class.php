@@ -23,11 +23,11 @@
  *
  */
 
-/*!     \defgroup   comptabilite     Module comptabilite
+/**     \defgroup   comptabilite     Module comptabilite
         \brief      Module pour inclure des fonctions de comptabilité (gestion de comptes comptables et rapports)
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modComptabilite.class.php
         \ingroup    comptabilite
         \brief      Fichier de description et activation du module Comptabilite
@@ -35,7 +35,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modComptabilite
+/** \class modComptabilite
         \brief      Classe de description et activation du module Comptabilite
 */
 
@@ -88,17 +88,40 @@ class modComptabilite extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $isq = "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES";
-    $sql = array(
-		 "$isq (90,'Tous les droits sur la compta','compta',NULL,NULL,'a',0);",
-		 "$isq (91,'Lire les charges','compta',NULL,NULL,'r',1);",
-		 "$isq (92,'Créer modifier les charges','compta',NULL,NULL,'w',0);",
-		 "$isq (93,'Supprimer les charges','compta',NULL,NULL,'d',0);",
-		 "$isq (95,'Lire CA, bilans, résultats','compta',NULL,NULL,'r',1);",
-		 "$isq (96,'Paramétrer la ventilation','compta','ventilation','param','r',0);",
-		 "$isq (97,'Ventiler les lignes de facture','compta','ventiler',NULL,'r',0);"
-		 );
+    $this->rights[0][0] = 90; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur la compta'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
 
+    $this->rights[1][0] = 91;
+    $this->rights[1][1] = 'Lire les charges';
+    $this->rights[1][2] = 'r';
+    $this->rights[1][3] = 1;
+
+    $this->rights[2][0] = 92;
+    $this->rights[2][1] = 'Créer modifier les charges';
+    $this->rights[2][2] = 'w';
+    $this->rights[2][3] = 0;
+
+    $this->rights[3][0] = 93;
+    $this->rights[3][1] = 'Supprimer les charges';
+    $this->rights[3][2] = 'd';
+    $this->rights[3][3] = 0;
+
+    $this->rights[4][0] = 95;
+    $this->rights[4][1] = 'Lire CA, bilans, résultats';
+    $this->rights[4][2] = 'r';
+    $this->rights[4][3] = 1;
+
+    $this->rights[5][0] = 96;
+    $this->rights[5][1] = 'Paramétrer la ventilation';
+    $this->rights[5][2] = 'r';
+    $this->rights[5][3] = 0;
+
+    $this->rights[6][0] = 97;
+    $this->rights[6][1] = 'Ventiler les lignes de facture';
+    $this->rights[6][2] = 'r';
+    $this->rights[6][3] = 0;
 
     // Dir
     $this->dirs[0] = $conf->compta->dir_output;
@@ -114,7 +137,7 @@ class modComptabilite extends DolibarrModules
    */
   function remove()
   {
-    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'compta';");
+    $sql = array();
 
     return $this->_remove($sql);
   }

@@ -23,11 +23,11 @@
  *
  */
 
-/*!     \defgroup   service     Module service
+/**     \defgroup   service     Module service
         \brief      Module pour gérer le suivi de services prédéfinis
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modService.class.php
         \ingroup    service
         \brief      Fichier de description et activation du module Service
@@ -35,7 +35,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modService
+/** \class modService
 		\brief      Classe de description et activation du module Service
 */
 
@@ -66,8 +66,10 @@ class modService extends DolibarrModules
 
     // Boites
     $this->boxes = array();
-    $this->boxes[0][0] = "Derniers produits/services contractés";
-    $this->boxes[0][1] = "box_services_vendus.php";
+    $this->boxes[0][0] = "Derniers produits/services enregistrés";
+    $this->boxes[0][1] = "box_produits.php";
+    $this->boxes[1][0] = "Derniers produits/services vendus";
+    $this->boxes[1][1] = "box_services_vendus.php";
 
     // Permissions
     $this->rights = array();

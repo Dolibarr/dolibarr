@@ -20,11 +20,11 @@
  *
  */
 
-/*!     \defgroup   contrat     Module contrat
+/**     \defgroup   contrat     Module contrat
         \brief      Module pour gérer la tenue de contrat de services
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modContrat.class.php
         \ingroup    contrat
         \brief      Fichier de description et activation du module Contrat
@@ -32,7 +32,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modContrat
+/** \class modContrat
         \brief      Classe de description et activation du module Contrat
 */
 
@@ -119,9 +119,7 @@ class modContrat extends DolibarrModules
    */
   function remove()
   {
-    $sql = array(
-		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'contrat';"
-		 );
+    $sql = array();
 
     return $this->_remove($sql);
 

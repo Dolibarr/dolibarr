@@ -24,11 +24,11 @@
  *
  */
 
-/*!     \defgroup   commande     Module commande
+/**     \defgroup   commande     Module commande
         \brief      Module pour gérer le suivi des commandes
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modCommande.class.php
         \ingroup    commande
         \brief      Fichier de description et activation du module Commande
@@ -36,7 +36,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*!     \class      modCommande
+/**     \class      modCommande
         \brief      Classe de description et activation du module Commande
 */
 

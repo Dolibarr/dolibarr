@@ -23,11 +23,11 @@
  *
  */
 
-/*!     \defgroup   projet     Module projet
+/**     \defgroup   projet     Module projet
         \brief      Module pour inclure le detail par projets dans les autres modules
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modProjet.class.php
         \ingroup    projet
         \brief      Fichier de description et activation du module Projet
@@ -35,7 +35,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*!     \class      modProjet
+/**     \class      modProjet
 		\brief      Classe de description et activation du module Projet
 */
 
@@ -81,12 +81,25 @@ class modProjet extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (40,'Tous les droits sur les projets','projet','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (41,'Lire les projets','projet','r',1);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (42,'Créer modifier les projets','projet','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (44,'Supprimer les projets','projet','d',0);"
-		 );
+    $this->rights[0][0] = 40; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur les projets'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[1][0] = 41; // id de la permission
+    $this->rights[1][1] = 'Lire les projets'; // libelle de la permission
+    $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
+
+    $this->rights[2][0] = 42; // id de la permission
+    $this->rights[2][1] = 'Créer modifier les projets'; // libelle de la permission
+    $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[3][0] = 44; // id de la permission
+    $this->rights[3][1] = 'Supprimer les projets'; // libelle de la permission
+    $this->rights[3][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
     
     return $this->_init($sql);
   }
@@ -97,7 +110,7 @@ class modProjet extends DolibarrModules
    */
   function remove()
   {
-    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'projet';");
+    $sql = array();
 
     return $this->_remove($sql);
   }

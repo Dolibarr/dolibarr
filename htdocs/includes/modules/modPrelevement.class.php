@@ -20,11 +20,11 @@
  *
  */
 
-/*!     \defgroup   prelevement     Module prelevement
+/**     \defgroup   prelevement     Module prelevement
         \brief      Module de gestion des prélèvements bancaires
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modPrelevement.class.php
         \ingroup    prelevement
         \brief      Fichier de description et activation du module Prelevement
@@ -32,7 +32,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modPrelevement
+/** \class modPrelevement
 		\brief      Classe de description et activation du module Prelevement
 */
 
@@ -120,7 +120,7 @@ class modPrelevement extends DolibarrModules
    */
   function remove()
   {
-    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'prelevement';");
+    $sql = array();
 
     return $this->_remove($sql);
   }

@@ -21,11 +21,11 @@
  *
  */
 
-/*!     \defgroup   postnuke     Module postnuke
+/**     \defgroup   postnuke     Module postnuke
         \brief      Module d'interfacage avec Postnuke
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modPostnuke.class.php
         \ingroup    postnuke
         \brief      Fichier de description et activation du module Postnuke
@@ -33,7 +33,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modPostnuke
+/** \class modPostnuke
 		\brief      Classe de description et activation du module Postnuke
 */
 

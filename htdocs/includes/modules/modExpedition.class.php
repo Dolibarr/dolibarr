@@ -21,11 +21,11 @@
  *
  */
 
-/*!     \defgroup   expedition     Module expedition
+/**     \defgroup   expedition     Module expedition
         \brief      Module pour gérer les expeditions de produits
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modExpedition.class.php
         \ingroup    expedition
         \brief      Fichier de description et activation du module Expedition
@@ -33,7 +33,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modExpedition
+/** \class modExpedition
 		\brief      Classe de description et activation du module Expedition
 */
 
@@ -122,12 +122,9 @@ class modExpedition extends DolibarrModules
    */
   function remove()
   {
-    $sql = array(
-
-		 );
+    $sql = array();
 
     return $this->_remove($sql);
-
   }
 }
 ?>

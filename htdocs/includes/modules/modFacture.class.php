@@ -23,12 +23,12 @@
  *
  */
 
-/*!     \defgroup   facture     Module facture
+/**     \defgroup   facture     Module facture
         \brief      Module pour gérer les factures clients et/ou fournisseurs
 */
 
 
-/*! \file htdocs/includes/modules/modFacture.class.php
+/** \file htdocs/includes/modules/modFacture.class.php
 		\ingroup    facture
 		\brief      Fichier de la classe de description et activation du module Facture
 */
@@ -36,7 +36,7 @@
 include_once "DolibarrModules.class.php";
 
 
-/*! \class modFacture
+/** \class modFacture
         \brief      Classe de description et activation du module Facture
 */
 
@@ -180,9 +180,7 @@ class modFacture extends DolibarrModules
    */
   function remove()
   {
-    $sql = array(
-		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'facture';"
-		 );
+    $sql = array();
 
     return $this->_remove($sql);
   }

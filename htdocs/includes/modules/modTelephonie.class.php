@@ -20,11 +20,11 @@
  *
  */
 
-/*!   \defgroup   telephonie  Module telephonie
+/**   \defgroup   telephonie  Module telephonie
       \brief      Module pour gérer la téléphonie
 */
 
-/*!
+/**
       \file       htdocs/includes/modules/modTelephonie.class.php
       \ingroup    telephonie
       \brief      Fichier de description et activation du module de Téléphonie
@@ -32,7 +32,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modTelephonie
+/** \class modTelephonie
     \brief Classe de description et activation du module Telephonie
 */
 
@@ -172,7 +172,7 @@ class modTelephonie extends DolibarrModules
    */
   function remove()
   {
-    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'telephonie';");
+    $sql = array();
 
     return $this->_remove($sql);
   }

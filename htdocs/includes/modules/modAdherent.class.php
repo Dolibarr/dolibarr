@@ -24,11 +24,11 @@
  *
  */
 
-/*!     \defgroup   adherent     Module adherents
+/**     \defgroup   adherent     Module adherents
         \brief      Module pour gérer les adhérents d'une association
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modAdherent.class.php
         \ingroup    adherent
         \brief      Fichier de description et activation du module adherents
@@ -36,7 +36,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modAdherent
+/** \class modAdherent
         \brief      Classe de description et activation du module Adherent
 */
 
@@ -166,9 +166,7 @@ class modAdherent extends DolibarrModules
    */
   function remove()
   {
-    $sql = array(
-		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'adherent';"
-		 );
+    $sql = array();
 
     return $this->_remove($sql);
   }

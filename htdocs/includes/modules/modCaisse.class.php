@@ -22,11 +22,11 @@
  *
  */
 
-/*!     \defgroup   caisse     Module caisse
+/**     \defgroup   caisse     Module caisse
         \brief      Module pour gérer la tenue d'une ou plusieurs caisses liquides
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modCaisse.class.php
         \ingroup    caisse
         \brief      Fichier de description et activation du module Caisse
@@ -34,7 +34,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modCaisse
+/** \class modCaisse
 		\brief      Classe de description et activation du module Caisse
 */
 
@@ -100,7 +100,7 @@ class modCaisse extends DolibarrModules
    */
   function remove()
   {
-    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'caisse';");
+    $sql = array();
 
     return $this->_remove($sql);
   }

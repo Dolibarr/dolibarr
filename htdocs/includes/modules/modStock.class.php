@@ -21,11 +21,11 @@
  *
  */
 
-/*!     \defgroup   stock     Module stock
+/**     \defgroup   stock     Module stock
         \brief      Module pour gérer la tenue de stocks produits
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modStock.class.php
         \ingroup    stock
         \brief      Fichier de description et activation du module Stock
@@ -33,7 +33,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modStock
+/** \class modStock
 		\brief      Classe de description et activation du module Stock
 */
 
@@ -91,9 +91,7 @@ class modStock extends DolibarrModules
    */
   function remove()
   {
-    $sql = array(
-
-		 );
+    $sql = array();
 
     return $this->_remove($sql);
 

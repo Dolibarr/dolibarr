@@ -23,11 +23,11 @@
  *
  */
 
-/*!     \defgroup   commercial     Module commercial
+/**     \defgroup   commercial     Module commercial
         \brief      Module pour gérer les fonctions commerciales
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modCommercial.class.php
         \ingroup    commercial
         \brief      Fichier de description et activation du module Commercial
@@ -35,7 +35,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modCommercial
+/** \class modCommercial
         \brief      Classe de description et activation du module Commercial
 */
 

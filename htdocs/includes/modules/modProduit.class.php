@@ -23,11 +23,11 @@
  *
  */
 
-/*!     \defgroup   produit     Module produit
+/**     \defgroup   produit     Module produit
         \brief      Module pour gérer le suivi de produits prédéfinis
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modProduit.class.php
         \ingroup    produit
         \brief      Fichier de description et activation du module Produit
@@ -35,7 +35,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modProduit
+/** \class modProduit
 		\brief      Classe de description et activation du module Produit
 */
 
@@ -72,6 +72,8 @@ class modProduit extends DolibarrModules
     $this->boxes = array();
     $this->boxes[0][0] = "Derniers produits/services enregistrés";
     $this->boxes[0][1] = "box_produits.php";
+    $this->boxes[1][0] = "Derniers produits/services vendus";
+    $this->boxes[1][1] = "box_services_vendus.php";
 
     // Permissions
     $this->rights = array();
@@ -118,11 +120,7 @@ class modProduit extends DolibarrModules
    */
   function remove()
   {
-    $sql = array(
-		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'produit';",
-		 "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = 'box_services_vendus.php';",
-		 "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = 'box_produits.php';"
-		 );
+    $sql = array();
 
     return $this->_remove($sql);
   }
