@@ -23,7 +23,7 @@ require("./pre.inc.php");
 require("../contact.class.php");
 require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
-if ($action == 'update') 
+if ($HTTP_POST_VARS["action"] == 'update') 
 {
   $contact = new Contact($db);
 
@@ -35,7 +35,6 @@ if ($action == 'update')
   $contact->birthday_alert = $HTTP_POST_VARS["birthday_alert"];
 
   $result = $contact->update_perso($HTTP_POST_VARS["contactid"], $user);
-
 }
 
 /*
