@@ -26,7 +26,8 @@ require("pre.inc.php");
  */
 if ($user->societe_id > 0) 
 {
-  $socid = $user->societe_id;
+  //$socid = $user->societe_id;
+	$socid = $_GET["socid"];
 }
 	
 $socid = $_GET["socid"];
@@ -62,10 +63,10 @@ if ($_GET["action"] == 'delete')
  $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"].";";
  $db->query($sql);
     
-  if ($db->query($sql))
-    {
+ // if ($db->query($sql))
+   // {
       // TODO ajouter une sécu pour la suppression 
-    }
+    //}
 }
 
 /*

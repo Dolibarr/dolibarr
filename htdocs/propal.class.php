@@ -480,7 +480,7 @@ class Propal
     {
       if ($user->rights->propale->valider)
 	{
-
+		
 	  $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
 	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 	  

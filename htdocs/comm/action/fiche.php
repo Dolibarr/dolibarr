@@ -275,10 +275,23 @@ if ($_GET["action"] == 'create')
       if ($_GET["afaire"] == 1)
     	{
             print $html->select_date('','ac');
-      } else if ($_GET["afaire"] == 2) {
+						print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+            print_heure_select("heure",8,20);
+            print '</td></tr>';
+      } 
+			else if ($_GET["afaire"] == 2) 
+			{
             print $html->select_date('','ac',1,1);
-      } else {
+						print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+        		print_heure_select("heure",8,20);
+        		print '</td></tr>';
+      } 
+			else 
+			{
             print $html->select_date('','ac',1,1);
+						print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+        		print_heure_select("heure",8,20);
+        		print '</td></tr>';
       }
       print '</td></tr>';
 
