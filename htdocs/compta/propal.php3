@@ -111,7 +111,7 @@ if ($propalid)
       print '<table border="1" cellspacing="0" cellpadding="2" width="100%">';
 
       print '<tr><td>Société</td><td colspan="2"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-      print "<td valign=\"top\" width=\"50%\" rowspan=\"8\">Note :<br>". nl2br($obj->note)."</td></tr>";
+      print "<td valign=\"top\" width=\"50%\" rowspan=\"9\">Note :<br>". nl2br($obj->note)."</td></tr>";
       //
 
       print '<tr><td>'.translate("Date").'</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td></tr>';
@@ -129,7 +129,7 @@ if ($propalid)
        *
        */
 
-      print "<tr><td bgcolor=\"$color1\">Montant HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->price)." euros</td></tr>";
+      print "<tr><td bgcolor=\"$color1\">Montant HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->price + $obj->remise)." euros</td></tr>";
       /*
        *
        */
@@ -140,7 +140,7 @@ if ($propalid)
        *
        */
 
-      $totalht = $propal->price - $propal->remise ;
+      $totalht = $propal->price ;
 
       print "<tr><td bgcolor=\"$color1\">Total HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\"><b>".price($totalht)."</b> euros</td></tr>";
       /*
