@@ -89,6 +89,7 @@ $modules["MAIN_MODULE_DON"][0] = "Module don";
 $modules["MAIN_MODULE_DON"][1] = "MAIN_MODULE_DON";
 $modules["MAIN_MODULE_DON"][2] = MAIN_MODULE_DON;
 $modules["MAIN_MODULE_DON"][3] = "Module de gestion des dons";
+$modules["MAIN_MODULE_DON"][4] = "modDon";
 
 $modules["MAIN_MODULE_ADHERENT"][0] = "Module adherent";
 $modules["MAIN_MODULE_ADHERENT"][1] = "MAIN_MODULE_ADHERENT";
@@ -106,11 +107,13 @@ $modules["MAIN_MODULE_POSTNUKE"][0] = "Module Postnuke";
 $modules["MAIN_MODULE_POSTNUKE"][1] = "MAIN_MODULE_POSTNUKE";
 $modules["MAIN_MODULE_POSTNUKE"][2] = MAIN_MODULE_POSTNUKE;
 $modules["MAIN_MODULE_POSTNUKE"][3] = "Module de gestion de postnuke";
+$modules["MAIN_MODULE_POSTNUKE"][4] = "modPostnuke";
 
 $modules["MAIN_MODULE_WEBCALENDAR"][0] = "Module Webcalendar";
 $modules["MAIN_MODULE_WEBCALENDAR"][1] = "MAIN_MODULE_WEBCALENDAR";
 $modules["MAIN_MODULE_WEBCALENDAR"][2] = MAIN_MODULE_WEBCALENDAR;
 $modules["MAIN_MODULE_WEBCALENDAR"][3] = "Module de gestion du calendrier";
+$modules["MAIN_MODULE_WEBCALENDAR"][4] = "modWebcalendar";
 
 $modules["MAIN_MODULE_EXTERNAL_RSS"][0] = "Module de syndication externe";
 $modules["MAIN_MODULE_EXTERNAL_RSS"][1] = "MAIN_MODULE_EXTERNAL_RSS";
@@ -192,7 +195,7 @@ print '<table border="1" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Description</td><td align="center">Activé</td>';
-print '<td align="center">Action</td></tr>';
+print '<td align="center">Action</td><td>&nbsp;</td></tr>';
 
 foreach ($modules as $key => $value)
 {
@@ -200,6 +203,7 @@ foreach ($modules as $key => $value)
   $const_name = $modules[$key][1];
   $const_value = $modules[$key][2];
   $desc = $modules[$key][3];
+  $modName = $modules[$key][4];
 
   print '<tr class="pair"><td>';
   echo "$titre";
@@ -220,14 +224,28 @@ foreach ($modules as $key => $value)
   
   if ($const_value == 1)
     {
-      print '<a href="modules.php?action=reset&value='.$const_name.'">Désactiver</a>';
+      print '<a href="modules.php?action=reset&value='.$const_name.'">Désactiver</a></td>';
+
+
+      $file = $modName . ".class.php";
+      include("../includes/modules/$file");
+      $objMod = new $modName($db);
+      if ($objMod->config_page_url)
+	{
+	  print '<td><a href="'.$objMod->config_page_url.'">Configurer</a></td>';
+	}
+      else
+	{
+	  print "<td>&nbsp;</td>";
+	}
+      
     }
   else
     {
-      print '<a href="modules.php?action=set&value='.$const_name.'">Activer</a>';
+      print '<a href="modules.php?action=set&value='.$const_name.'">Activer</a></td><td>&nbsp;</td>';
     }
   
-  print '</td></tr>';
+  print '</tr>';
 }
 
 print '</table>';
