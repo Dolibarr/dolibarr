@@ -110,9 +110,11 @@ if ($conf->facture->enabled)
       $sql .= " AND f.fk_soc = $socidp";
     }
   
-  if ( $db->query($sql) )
+  $resql = $db->query($sql);
+
+  if ( $resql )
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $i = 0;
       
       if ($num)
@@ -123,7 +125,7 @@ if ($conf->facture->enabled)
 	  $var = True;
 	  while ($i < $num && $i < 20)
 	    {
-	      $obj = $db->fetch_object();
+	      $obj = $db->fetch_object($resql);
 	      $var=!$var;
 	      print '<tr '.$bc[$var].'><td width="92"><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("Showcompany"),"company").' '.$obj->nom.'</a></td></tr>';
@@ -132,6 +134,7 @@ if ($conf->facture->enabled)
 	  
 	  print "</table><br>";
 	}
+      $db->free($resql);
     }
   else
     {
@@ -151,9 +154,11 @@ if ($user->societe_id == 0)
   $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc";
   $sql .= " WHERE c.fk_type = cc.id AND c.paye=0";
   
-  if ( $db->query($sql) ) 
+  $resql = $db->query($sql);
+
+  if ( $resql ) 
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       if ($num)
 	{
 	  print '<table class="noborder" width="100%">';
@@ -163,7 +168,7 @@ if ($user->societe_id == 0)
 	  $var = True;
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object();
+	      $obj = $db->fetch_object($resql);
 	      $var = !$var;
 	      print "<tr $bc[$var]>";
 	      print '<td>'.$obj->libelle.'</td>';
@@ -173,6 +178,7 @@ if ($user->societe_id == 0)
 	    }
 	  print '</table><br>';
 	}
+      $db->free($resql);
     }
   else
     {
@@ -191,9 +197,11 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
 $sql .= " ORDER BY lower(s.nom) ASC";
 
-if ( $db->query($sql) )
+$resql = $db->query($sql);
+
+if ( $resql )
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   if ($num)
     {
@@ -202,7 +210,7 @@ if ( $db->query($sql) )
       $var = True;
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object();
+	  $obj = $db->fetch_object($resql);
 	  $var = !$var;
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
@@ -212,8 +220,12 @@ if ( $db->query($sql) )
 	}
       print '</table>';
     }
+  $db->free($resql);
 }
-
+else
+{
+  dolibarr_print_error($db);
+}
 print '</td><td valign="top" width="70%">';
 
 
@@ -237,9 +249,11 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
       $sql .= " AND p.fk_soc = $socidp";
     }
 
-  if ( $db->query($sql) ) 
+  $resql = $db->query($sql);
+
+  if ( $resql ) 
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       if ($num)
 	{
 	  $i = 0;
@@ -253,26 +267,29 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	  while ($i < $num)
 	    {
 	      $var=!$var;
-	      $obj = $db->fetch_object();
-		  if ($obj->total_ht-$obj->tot_fht) {
-			print "<tr $bc[$var]>";
-			print "<td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
-			print "<a href=\"commande.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
-	
-			print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
-			print '<a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-			print '<td align="right">'.price($obj->total_ht-$obj->tot_fht).'</td>';
-			print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td></tr>';
-			$tot_ht += $obj->total_ht-$obj->tot_fht;
-			$tot_ttc += $obj->total_ttc-$obj->tot_fttc;
-		  }
-			$i++;
+	      $obj = $db->fetch_object($resql);
+	      if ($obj->total_ht-$obj->tot_fht)
+		{
+		  print "<tr $bc[$var]>";
+		  print "<td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
+		  print "<a href=\"commande.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
+		  
+		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
+		  print '<a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+		  print '<td align="right">'.price($obj->total_ht-$obj->tot_fht).'</td>';
+		  print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td></tr>';
+		  $tot_ht += $obj->total_ht-$obj->tot_fht;
+		  $tot_ttc += $obj->total_ttc-$obj->tot_fttc;
+		}
+	      $i++;
 	    }
 	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; (Reste à facturer : '.price($tot_ttc).')</i></td><td align="right"><i>'.price($tot_ht)."</i></td><td align=\"right\"><i>".price($tot_ttc)."</i></td></tr>";
 	  print "</table><br>";
 	}
+      $db->free($resql);
     }
-  else {
+  else
+    {
       dolibarr_print_error($db);
     }    
 }
@@ -295,9 +312,11 @@ if ($conf->facture->enabled)
     }
   $sql .= " GROUP BY f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc";   
   
-  if ( $db->query($sql) )
+  $resql = $db->query($sql);
+
+  if ( $resql )
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $i = 0;
       
       if ($num)
@@ -309,7 +328,7 @@ if ($conf->facture->enabled)
 	  $total_ttc = $totalam = $total = 0;
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object();
+	      $obj = $db->fetch_object($resql);
 
 	      if ($i < 20)
 		{
@@ -321,7 +340,7 @@ if ($conf->facture->enabled)
 		  print '<td align="right">'.price($obj->am).'</td></tr>';
 		}
 	      $total_ttc +=  $obj->total_ttc;
-		  $total += $obj->total;
+	      $total += $obj->total;
 	      $totalam +=  $obj->am;
 	      $i++;
 	    }
@@ -329,7 +348,7 @@ if ($conf->facture->enabled)
 	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; ('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</i></td><td align="right"><i>'.price($total)."</i></td><td align=\"right\"><i>".price($total_ttc)."</i></td><td align=\"right\"><i>".price($totalam)."</i></td></tr>";
 	  print "</table><br>";
 	}
-      $db->free();
+      $db->free($resql);
     }
   else
     {
