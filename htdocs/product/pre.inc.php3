@@ -24,7 +24,7 @@ require("../main.inc.php3");
 $types[0] = "produit";
 $types[1] = "service";
 
-function llxHeader($head = "", $urlp = "")
+function llxHeader($head = "", $urlp = "", $title="")
 {
   global $user, $conf;
 
@@ -32,7 +32,7 @@ function llxHeader($head = "", $urlp = "")
    *
    *
    */
-  top_menu($head);
+  top_menu($head, $title);
 
   $menu = new Menu();
 
