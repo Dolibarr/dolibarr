@@ -25,9 +25,13 @@ require("../../contact.class.php");
 require("../../cactioncomm.class.php");
 require("../../actioncomm.class.php");
 
-llxHeader();
 $user->getrights('propale');
+$user->getrights('fichinter');
+$user->getrights('commande');
 $user->getrights('projet');
+
+
+llxHeader();
 
 /*
  *
