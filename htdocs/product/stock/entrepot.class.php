@@ -27,10 +27,14 @@ class Entrepot
   var $id ;
   var $libelle;
   var $description;
+  var $statut;
 
   Function Entrepot($DB)
     {
       $this->db = $DB;
+
+      $this->statuts[0] = "fermé";
+      $this->statuts[1] = "ouvert";
     }
   /*
    *
@@ -81,6 +85,7 @@ class Entrepot
 	  $sql = "UPDATE llx_entrepot ";
 	  $sql .= " SET label = '" . trim($this->libelle) ."'";
 	  $sql .= ",description = '" . trim($this->description) ."'";
+	  $sql .= ",statut = " . $this->statut ;
 	  
 	  $sql .= " WHERE rowid = " . $id;
 	  
@@ -105,9 +110,8 @@ class Entrepot
    *
    */
   Function fetch ($id)
-    {
-    
-      $sql = "SELECT rowid, label, description";
+    {    
+      $sql = "SELECT rowid, label, description, statut";
       $sql .= " FROM llx_entrepot WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
@@ -120,6 +124,7 @@ class Entrepot
 	  $this->ref            = $result["ref"];
 	  $this->libelle        = stripslashes($result["label"]);
 	  $this->description    = stripslashes($result["description"]);
+	  $this->statut         = $result["statut"];
 
 	  $this->db->free();
 	  return 1;
@@ -130,82 +135,15 @@ class Entrepot
 	  return -1;
 	}
   }
-  /*
-   *
-   *
-   */
-  Function count_propale()
-    {
-      $sql = "SELECT pd.fk_propal";
-      $sql .= " FROM llx_propaldet as pd, llx_product as p";
-      $sql .= " WHERE p.rowid = pd.fk_product AND p.rowid = ".$this->id;
-      $sql .= " GROUP BY pd.fk_propal";
-
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
-	{
-	  return $this->db->num_rows();
-	}
-      else
-	{
-	  return 0;
-	}
-    }
-  /*
-   *
+  /**
+   * Renvoie la liste des entrepôts ouverts
    *
    */
-  Function count_propale_client()
-    {
-      $sql = "SELECT pr.fk_soc";
-      $sql .= " FROM llx_propaldet as pd, llx_product as p, llx_propal as pr";
-      $sql .= " WHERE p.rowid = pd.fk_product AND pd.fk_propal = pr.rowid AND p.rowid = ".$this->id;
-      $sql .= " GROUP BY pr.fk_soc";
-
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
-	{
-	  return $this->db->num_rows();
-	}
-      else
-	{
-	  return 0;
-	}
-    }
-  /*
-   *
-   *
-   */
-  Function count_facture()
-    {
-      $sql = "SELECT pd.fk_facture";
-      $sql .= " FROM llx_facturedet as pd, llx_product as p";
-      $sql .= " WHERE p.rowid = pd.fk_product AND p.rowid = ".$this->id;
-      $sql .= " GROUP BY pd.fk_facture";
-
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
-	{
-	  return $this->db->num_rows();
-	}
-      else
-	{
-	  return 0;
-	}
-    }
-  /*
-   *
-   *
-   */
-
   Function list_array()
   {
     $liste = array();
 
-    $sql = "SELECT rowid, label FROM llx_entrepot";
+    $sql = "SELECT rowid, label FROM llx_entrepot WHERE statut = 1";
 
       $result = $this->db->query($sql) ;
       $i = 0;
