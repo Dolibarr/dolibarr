@@ -25,34 +25,60 @@ body {
     background-color: #cac8c0;
     margin-left: 5%;
     margin-right: 5%;
-    margin-top: 5%;
+    margin-top: 2em;
     margin-bottom: 5%;
 }
 
-div.main {
-    background-color: white;
-    text-align: left;
-    border: solid black 1px;
-}
+div.titre {
+            padding: 0.5em 0.5em 0.5em;
+            margin: 0em 0em 0em 0em;    
+            }
 
-div.barrebottom {
-    background-color: white;
-    text-align: right;
-    border: solid black 1px;
-    margin-top: 10px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-right: 10px;
-}
+span.titre {
+             font-size:1.1em;
+             font-weight: bold;
+             background: #dcdcd3;
+             color: #990033;
+             padding: 0.5em 0.5em 0.5em;
+             margin: 0em 0em 0em 0em;
+             border: 1px solid #8CACBB;
+             }
+
+
+div.soustitre {
+             font-size:1.1em;
+             font-weight: bold;
+             color: #990033;
+             padding: 0em 1.2em 0.5em 2em;
+             margin: 1.2em 1.2em 1.2em 1.2em;
+             border-bottom: 1px solid #8CACBB;
+             border-right: 1px solid #8CACBB;
+                 text-align: right;
+             }
+
+
+div.main {           
+           background: #dcdcd3;
+           text-align: left;
+           border:  1px solid #8CACBB;           
+           }
 
 div.main-inside {
-    background-color: white;
-    padding-left: 20px;
-    padding-right: 50px;
-    text-align: center;
-    margin-bottom: 50px;
-    margin-top: 10px;
-}
+                  padding-left: 20px;
+                  padding-right: 50px;                  
+                  margin-bottom: 50px;
+                  margin-top: 10px;
+                  }
+
+
+div.barrebottom {
+                  text-align: right;
+                  margin-top: 10px;
+                  padding-top: 10px;
+                  padding-bottom: 10px;
+                  padding-right: 10px;
+                  }
+
 
 div.footer {
 	background-color: #dcdff4;
@@ -63,10 +89,10 @@ div.footer {
 }
 
 div.header {
-  background-color: #dcdff4;  
-  border-bottom: solid black 1px;
-  padding-left: 5px;
-  text-align: center;
+             background-color: #dcdff4;  
+             border-bottom: solid black 1px;
+             padding-left: 5px;
+             text-align: center;
 }
 
 div.footer p {
@@ -75,12 +101,15 @@ div.footer p {
 
 a:link,a:visited,a:active {
 	text-decoration:none;
-	color:blue;
 }
 a:hover {
 	text-decoration:underline;
-	color:blue;
 }
+
+a.titre {
+          text-decoration:none;
+}
+
 
 div.comment {
               text-decoration:none;
@@ -101,3 +130,12 @@ tr.bg1 {
 tr.bg2 { 
          background-color: #B5E5E5;
 }
+
+td.label {
+             background: #dcdcd3;
+             color: #990033;
+             padding: 0.5em 0.5em 0.5em;
+             margin: 0em 0em 0em 0em;
+             border-bottom: 1px solid #8CACBB;
+             }
+
