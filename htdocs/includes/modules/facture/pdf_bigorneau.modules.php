@@ -196,6 +196,7 @@ Class pdf_bigorneau {
 	      $pdf->Close();
 	      
 	      $pdf->Output($file);
+	      return 1;
 	    }
 	  else
 	    {
