@@ -1,7 +1,9 @@
 
 --
--- Mise à jour de la version 0.1.5 à 0.1.6
+-- Mise à jour de la version 0.1.5 à 0.2.0
 --
+
+alter table llx_propal add model_pdf varchar(50);
 
 create table llx_notify_def
 (
