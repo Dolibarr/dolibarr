@@ -22,9 +22,10 @@
  */
 if ($user->rights->facture->lire)
 {
-
+  $nbtoshow=5;
+  
   $info_box_head = array();
-  $info_box_head[] = array('text' => "Factures clients impayées");
+  $info_box_head[] = array('text' => "Les $nbtoshow plus anciennes factures clients impayées");
 
   $info_box_contents = array();
 
@@ -35,7 +36,7 @@ if ($user->rights->facture->lire)
       $sql .= " AND s.idp = $user->societe_id";
     }
   $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
-  $sql .= $db->plimit(5, 0);
+  $sql .= $db->plimit($nbtoshow, 0);
   
   $result = $db->query($sql);
   if ($result)
