@@ -101,7 +101,7 @@ if ($action == 'create')
 	$sumpayed = $db->result(0,0);
 	$db->free();
       }
-      print '<tr><td>Déjà payé</td><td colspan=\"2\"><b>'.price($sumpayed).'</b> euros TTC</td></tr>';
+      print '<tr><td>Déjà payé</td><td colspan="2"><b>'.price($sumpayed).'</b> euros TTC</td></tr>';
 
       print "<tr class=\"liste_titre\"><td colspan=\"3\">Paiement</td>";
 
