@@ -104,7 +104,7 @@ if ( $db->query($sql) )
         }
         else {            
       	  $class = "error";
-    	  $statut="<b>En service, expiré</b>".img_warning();
+    	  $statut="<b>En service</b>, ".img_warning()."  expiré";
         }
 	}
       elseif($obj->enservice == 2)
