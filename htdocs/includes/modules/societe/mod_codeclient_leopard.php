@@ -30,11 +30,15 @@ class mod_codeclient_leopard
   }
 
   function info()
-    {
-      return "En développement";
-    }
-
-
+  {
+    return "Renvoie toujours ok, pour ceux qui ne veulent pas faire de test.";
+  }
+  
+  function verif($db, $code)
+  {
+    // Renvoie toujours ok
+    return 0;
+  }
 }
 
 ?>
