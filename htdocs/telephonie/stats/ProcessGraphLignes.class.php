@@ -71,6 +71,7 @@ class ProcessGraphLignes
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
     $sql .= " WHERE l.rowid >= ".$min;
     $sql .= " AND l.rowid < ".$max;
+    $sql .= " ORDER BY l.rowid ASC";
     
     if ($this->db->query($sql))
       {
