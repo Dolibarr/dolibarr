@@ -223,12 +223,10 @@ if ($account) {
     print "<input name=\"label\" type=\"text\" size=40></td>";
     print "<td><input name=\"debit\" type=\"text\" size=8></td>";
     print "<td><input name=\"credit\" type=\"text\" size=8></td>";
-    print "<td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"ajouter\"</td>";
+    print "<td colspan=\"2\" align=\"center\"><select name=\"cat1\">$options</select></td>";
     print "</tr><tr><td colspan=\"2\">Format : YYYYMMDD - 20010826</td><td>0000.00</td>";
 
-    print "<td colspan=\"4\"><select name=\"cat1\">$options";
-
-    print "</select></td></tr>";
+    print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
 
 
 
