@@ -49,6 +49,11 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add_submenu("fichinter.php", "Fiches d'intervention");
     }
 
+  if(defined("MAIN_MODULE_ADHERENT") && MAIN_MODULE_ADHERENT)
+    {
+      $menu->add_submenu("adherent.php", "Gestion des Adhérents");
+    }
+
   if(defined("MAIN_MODULE_WEBCALENDAR") && MAIN_MODULE_WEBCALENDAR)
     {
       $menu->add_submenu("webcalendar.php", "Calendrier");
