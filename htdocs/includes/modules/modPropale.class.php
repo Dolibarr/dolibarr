@@ -45,7 +45,7 @@ class modPropale
      */
     $const[0][0] = "PROPALE_ADDON_PDF";
     $const[0][1] = "chaine";
-    $const[0][2] = "propale_rouge";
+    $const[0][2] = "rouge";
 
     foreach ($const as $key => $value)
       {
@@ -78,15 +78,9 @@ class modPropale
 	  }
       }
 
-    $sql = "INSERT INTO llx_boxes_def (name,file) VALUES('Proposition commerciales', 'box_propales.php');";
-
-    if ( $this->db->query($sql) )
-      {
-	
-      }
        
     /*
-     * Permissions
+     * Permissions et valeurs par défaut
      */
     $sql = array(
 		 "insert into llx_rights_def values (20,'Tous les droits sur les propositions commerciales','propale','a',0);",
@@ -95,7 +89,9 @@ class modPropale
 		 "insert into llx_rights_def values (24,'Valider les propositions commerciales','propale','d',0);",
 		 "insert into llx_rights_def values (25,'Envoyer les propositions commerciales aux clients','propale','d',0);",
 		 "insert into llx_rights_def values (26,'Clôturer les propositions commerciales','propale','d',0);",
-		 "insert into llx_rights_def values (27,'Supprimer les propositions commerciales','propale','d',0);"
+		 "insert into llx_rights_def values (27,'Supprimer les propositions commerciales','propale','d',0);",
+		 "INSERT INTO llx_boxes_def (name,file) VALUES('Proposition commerciales', 'box_propales.php');",
+		 "REPLACE INTO llx_propal_model_pdf SET nom = '".$const[0][2]."'"
 		 );
     //"insert into llx_rights_def values (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
     for ($i = 0 ; $i < sizeof($sql) ; $i++)
@@ -112,15 +108,15 @@ class modPropale
   Function remove()
   {
 
-    $sql = "DELETE FROM llx_boxes_def WHERE file = 'box_propales.php';";
+    $sql = array(
+		 "DELETE FROM llx_boxes_def WHERE file = 'box_propales.php';",
+		 "DELETE FROM llx_rights_def WHERE module = 'propale';"
+		 );
 
-    if ( $this->db->query($sql) )
+    for ($i = 0 ; $i < sizeof($sql) ; $i++)
       {
-	
+	$this->db->query($sql[$i]);
       }
-
-    $sql = "DELETE FROM llx_rights_def WHERE module = 'propale';";
-    $this->db->query($sql);
 
   }
 }
