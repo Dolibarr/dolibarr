@@ -170,11 +170,14 @@ if ($socid > 0) {
 
     print "<tr><td>siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
     print "<td>prefix</td><td>";
-    if ($objsoc->prefix_comm) {
-      print $objsoc->prefix_comm;
-    } else {
-      print "[<a href=\"$PHP_SELF?socid=$objsoc->idp&action=attribute_prefix\">Attribuer</a>]";
-    }
+    if ($objsoc->prefix_comm)
+      {
+	print $objsoc->prefix_comm;
+      }
+    else
+      {
+	print "[<a href=\"$PHP_SELF?socid=$objsoc->idp&action=attribute_prefix\">Attribuer</a>]";
+      }
 
     print "</td></tr>";
 
@@ -303,9 +306,10 @@ if ($socid > 0) {
 	//print '<img border="0" src="/theme/'.$conf->theme.'/img/filenew.png"></a>&nbsp;';
 	print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
-	if ($obj->note) {
-	  print "<br>".nl2br($obj->note);
-	}
+	if ($obj->note)
+	  {
+	    print "<br>".nl2br($obj->note);
+	  }
 	print "</td>";
 	print "<td>$obj->poste&nbsp;</td>";
 	print '<td><a href="action/fiche.php3?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
@@ -413,70 +417,84 @@ if ($socid > 0) {
       $sql .= " AND c.id=a.fk_action AND a.percent = 100";
       $sql .= " ORDER BY a.datea DESC, a.id DESC";
 
-      if ( $db->query($sql) ) {
-	print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
-
-	$i = 0 ; 
-	$num = $db->num_rows();
-	$oldyear='';
-	$oldmonth='';
-	while ($i < $num) {
-	  $var = !$var;
-
-	  $obj = $db->fetch_object( $i);
-	  print "<tr $bc[$var]>";
-
-	  if ($oldyear == strftime("%Y",$obj->da) ) {
-	    print '<td align="center">|</td>';
-	  } else {
-	    print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
-	    $oldyear = strftime("%Y",$obj->da);
-	  }
-
-	  if ($oldmonth == strftime("%Y%b",$obj->da) ) {
-	    print '<td align="center">|</td>';
-	  } else {
-	    print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
-	    $oldmonth = strftime("%Y%b",$obj->da);
-	  }
+      if ( $db->query($sql) )
+	{
+	  print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
 	  
-	  print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
-	  print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
-
-	  print '<td width="10%">&nbsp;</td>';
-
-	  if ($obj->propalrowid) {
-	    print '<td width="40%"><a href="propal.php3?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
-	  } else {
-	    print '<td width="40%">'.$obj->libelle.'</td>';
-	  }
-	  /*
-	   * Contact pour cette action
-	   *
-	   */
-	  if ($obj->fk_contact) {
-	    $contact = new Contact($db);
-	    $contact->fetch($obj->fk_contact);
-	    print '<td width="40%"><a href="people.php3?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
-	  } else {
-	    print '<td width="40%">&nbsp;</td>';
-	  }
-	  /*
-	   */
-	  print '<td width="20%"><a href="../user.php3">'.$obj->code.'</a></td>';
-	  print "</tr>\n";
-	  $i++;
+	  $i = 0 ; 
+	  $num = $db->num_rows();
+	  $oldyear='';
+	  $oldmonth='';
+	  while ($i < $num)
+	    {
+	      $var = !$var;
+	      
+	      $obj = $db->fetch_object( $i);
+	      print "<tr $bc[$var]>";
+	      
+	      if ($oldyear == strftime("%Y",$obj->da) )
+		{
+		  print '<td align="center">|</td>';
+		}
+	      else
+		{
+		  print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+		  $oldyear = strftime("%Y",$obj->da);
+		}
+	      
+	      if ($oldmonth == strftime("%Y%b",$obj->da) )
+		{
+		  print '<td align="center">|</td>';
+		}
+	      else
+		{
+		  print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+		  $oldmonth = strftime("%Y%b",$obj->da);
+		}
+	  
+	      print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
+	      print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
+	      
+	      print '<td width="10%">&nbsp;</td>';
+	      
+	      if ($obj->propalrowid)
+		{
+		  print '<td width="40%"><a href="propal.php3?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+		}
+	      else
+		{
+		  print '<td width="40%"><a href="action/fiche.php3?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+		}
+	      /*
+	       * Contact pour cette action
+	       *
+	       */
+	      if ($obj->fk_contact)
+		{
+		  $contact = new Contact($db);
+		  $contact->fetch($obj->fk_contact);
+		  print '<td width="40%"><a href="people.php3?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+		}
+	      else
+		{
+		  print '<td width="40%">&nbsp;</td>';
+		}
+	      /*
+	       */
+	      print '<td width="20%"><a href="../user.php3">'.$obj->code.'</a></td>';
+	      print "</tr>\n";
+	      $i++;
+	    }
+	  print "</table>";
+	  
+	  $db->free();
 	}
-	print "</table>";
-
-	$db->free();
-      } else {
-	print $db->error();
-      }
+      else
+	{
+	  print $db->error();
+	}
       print "</td></tr></table>";
-
-
-
+      
 
 
       /*
