@@ -44,10 +44,12 @@ class Tva {
    */
   Function solde($year = 0) {
     
+    $reglee = $this->tva_sum_reglee($year);
+
     $payee = $this->tva_sum_payee($year);
     $collectee = $this->tva_sum_collectee($year);
 
-    $solde = $payee - $collectee;
+    $solde = $reglee - ($collectee - $payee) ;
 
     return $solde;
   }
@@ -84,10 +86,41 @@ class Tva {
   }
   /*
    * Tva payée
-   * Total de la TVA payee aupres de qui de droit
+   * 
    *
    */
   Function tva_sum_payee($year = 0) {
+
+    $sql = "SELECT sum(f.amount) as amount";
+    $sql .= " FROM llx_facture_fourn as f";
+
+    if ($year) {
+      $sql .= " WHERE f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
+    }
+
+    $result = $this->db->query($sql);
+
+    if ($result) {
+      if ($this->db->num_rows()) {
+	$obj = $this->db->fetch_object(0);
+	return $obj->amount;
+      } else {
+	return 0;
+      }
+
+      $this->db->free();
+
+    } else {
+      print $this->db->error();
+      return -1;
+    } 
+  }
+  /*
+   * Tva réglée
+   * Total de la TVA réglee aupres de qui de droit
+   *
+   */
+  Function tva_sum_reglee($year = 0) {
 
     $sql = "SELECT sum(f.amount) as amount";
     $sql .= " FROM llx_tva as f";

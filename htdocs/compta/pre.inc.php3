@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 require("../main.inc.php3");
@@ -35,7 +35,6 @@ function llxHeader($head = "") {
 
   $menu->add("/compta/facture.php3","Factures");
   $menu->add_submenu("paiement.php3","Paiements");
-  //  $menu->add_submenu("fac.php3","admin fac");
 
   $menu->add("charges/index.php3","Charges");
   $menu->add_submenu("sociales/","Prest. Sociales");
@@ -67,6 +66,17 @@ function llxHeader($head = "") {
   $menu->add("ligne.php3","Compta");
   $menu->add_submenu("ligne.php3","Lignes");
   $menu->add_submenu("config.php3","Configuration");
+
+
+  if ($user->compta > 0) {
+
+  } else {
+    $menu->clear();
+    $menu->add("/index.php3","Accueil");
+
+
+
+  }
 
   left_menu($menu->liste);
 
