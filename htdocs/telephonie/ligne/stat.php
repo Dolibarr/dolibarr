@@ -95,23 +95,104 @@ if ($_GET["id"] or $_GET["numero"])
 	  print '<tr><td width="25%">Statut</td><td colspan="3">';
 	  print '<img src="./graph'.$ligne->statut.'.png">&nbsp;';
 	  print $ligne->statuts[$ligne->statut];
-	  print '</td></tr>';
-
-	  print '<tr><td colspan="2" align="center">';
-	  print '<img src="./graphdureemoyenne.php?ligne='.$ligne->numero.'">';
-	  print '</td><td colspan="2" align="center">';
-	  //print '<img src="./graphconsominutes.php?ligne='.$ligne->numero.'">';
 	  print "</td></tr></table>";
 
+	  /*
+	   *
+	   *
+	   */
+
+	  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+	  print '<tr><td width="50%" align="center">Chiffre d\'affaire</td>';
+	  print '<td width="50%" align="center">Gain</td></tr>';
+
+	  print '<tr><td width="50%" valign="top" align="center">';
+
+	  $mesg_no_graph = 'Nous avons pas assez de données à ce jour pour générer ce graphique.';
+
+	  $img_root = DOL_DATA_ROOT."/graph/".substr($ligne->id,-1)."/telephonie/ligne/";
+
+	  $file = $img_root.$ligne->id."/graphca.png";
+
+	  if (file_exists($file)) 
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
+	    }
+	  else
+	    {
+	      print $mesg_no_graph;
+	    }
+
+	  print '</td><td width="50%" valign="top" align="center">';
+
+	  $file = $img_root.$ligne->id."/graphgain.png";
+	  if (file_exists($file)) 
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
+	    }
+	  else
+	    {
+	      print $mesg_no_graph;
+	    }
+
+	  print '</td></tr>';
+
+	  print '<tr><td width="50%" align="center">Appels</td>';
+	  print '<td width="50%" align="center">-</td></tr>';
+
+	  print '<tr><td width="50%" valign="top" align="center">';
+
+	  $file = $img_root.$ligne->id."/graphappelsdureemoyenne.png";
+
+	  if (file_exists($file)) 
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
+	    }
+	  else
+	    {
+	      print $mesg_no_graph;
+	    }
+
+	  print '</td><td width="50%" valign="top" align="center">';
+
+	  print "&nbsp;";
+
+	  print '</td></tr>';
+
+	  print '<tr><td width="50%" align="center">Communications</td>';
+	  print '<td width="50%" align="center">Minutes</td></tr>';
+
+	  print '<tr><td width="50%" valign="top" align="center">';
+
+	  $file = $img_root.$ligne->id."/nb-comm-mensuel.png";
+
+	  if (file_exists($file)) 
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
+	    }
+	  else
+	    {
+	      print $mesg_no_graph;
+	    }
+
+	  print '</td><td width="50%" valign="top" align="center">';
+
+	  $file = $img_root.$ligne->id."/nb-minutes-mensuel.png";
+
+	  if (file_exists($file)) 
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
+	    }
+	  else
+	    {
+	      print $mesg_no_graph;
+	    }
+
+	  print '</td></tr></table>';
 
 	}
     }
 
-  /*
-   *
-   *
-   *
-   */
 }
 else
 {
