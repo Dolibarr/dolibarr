@@ -35,7 +35,7 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-print_titre("Chiffres d'affaires (".MAIN_MONNAIE." HT)");
+print_titre("Chiffre d'affaire (".MAIN_MONNAIE." HT)");
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
@@ -80,8 +80,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
   print '<td align="center" width="10%">'.$annee.'</td>';
 }
-print '<td width="50%" rowspan="13">&nbsp;</td></tr>';
-
+print '</tr>';
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
   $var=!$var;
@@ -97,10 +96,20 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	  print price($cum[$case]);
 	}
       print "</td>";
+	$total[$annee]+=$cum[$case];
     }
 
   print '</tr>';
 }
+
+// Affiche total
+print "<tr><td align=\"right\">Total : </td>";
+for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+{
+	print "<td align=\"right\"><b>".($total[$annee]?$total[$annee]:"&nbsp;")."</b></td>";
+}
+print "</tr>\n";
+
 
 print "</table>";
 
