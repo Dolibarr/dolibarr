@@ -922,7 +922,7 @@ class Form
         print "<tr>";
         print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
     	print "<td>";
-    	print "<input type=\"file\" value=\"".$langs->trans("Upload")."\"/>";
+    	print "<input type=\"file\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
     	print "</td></tr>";
     }
     
