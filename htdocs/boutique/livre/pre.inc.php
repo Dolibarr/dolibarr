@@ -54,6 +54,11 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("/product/promotion/", "Promotions");
 
+  if (defined("MAIN_MODULE_POSTNUKE") && MAIN_MODULE_POSTNUKE)
+    {
+      $menu->add("/postnuke/articles/", "Editorial");
+    }
+
   left_menu($menu->liste);
 }
 ?>

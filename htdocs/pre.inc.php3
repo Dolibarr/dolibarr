@@ -129,6 +129,12 @@ function llxHeader($head = "") {
       $menu->add("/domain/", "Domaines");
     }
 
+  if (defined("MAIN_MODULE_POSTNUKE") && MAIN_MODULE_POSTNUKE)
+    {
+      $menu->add("/postnuke/articles/", "Editorial");
+    }
+
+
   /*
    *
    */
