@@ -127,7 +127,10 @@ if ($conf->produit->enabled || $conf->service->enabled)
 }
 
 
-      
+if ($conf->fournisseur->enabled) 
+{
+  $langs->load("suppliers");
+        
   $class="";
   if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "supplier")
     {
@@ -142,10 +145,8 @@ if ($conf->produit->enabled || $conf->service->enabled)
       $class = 'class="tmenu"';
     }
 
-  print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=supplier"'.($target?" target=$target":"").'>'.$langs->trans("Fournisseur").'</a>';
-
-
-
+  print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=supplier"'.($target?" target=$target":"").'>'.$langs->trans("Suppliers").'</a>';
+}
 
 
 if ($conf->webcal->enabled)
