@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +80,7 @@ if ($err == 0)
 
 if(strlen($dolibarr_main_url_root) == 0)
 {
-$dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,strlen($_SERVER["SCRIPT_FILENAME"])-18);
+$dolibarr_main_document_root = dirname($_SERVER["SCRIPT_FILENAME"]);
 }
  print $dolibarr_main_document_root 
 ?>
@@ -95,6 +96,8 @@ exemple : /var/www/dolibarr/htdocs
 <td valign="top" class="label">
 URL Racine</td><td valign="top" class="label"><input type="text" size="60" name="main_url" value="
 <?PHP 
+if(strlen($main_url) > 0)
+  $dolibarr_main_url_root=$main_url;
 if(strlen($dolibarr_main_url_root) == 0)
 {
   $dolibarr_main_url_root = substr($_SERVER["SCRIPT_URI"],0,strlen($_SERVER["SCRIPT_URI"])-9);
@@ -117,32 +120,32 @@ exemples :
 
 <tr>
 <td valign="top" class="label">Serveur</td>
-<td valign="top" class="label"><input type="text" name="db_host" value="<?PHP print $dolibarr_main_db_host ?>"></td>
+<td valign="top" class="label"><input type="text" name="db_host" value="<?PHP isset($db_host) ? print $db_host : print $dolibarr_main_db_host ; ?>"></td>
 <td class="label"><div class="comment">Nom du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</div></td>
 </tr>
 
 <tr>
 <td class="label">Nom de la base</td>
-<td class="label" valign="top"><input type="text" name="db_name" value="<?PHP print $dolibarr_main_db_name ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_name" value="<?PHP isset($db_name) ? print $db_name : print $dolibarr_main_db_name ; ?>"></td>
 <td class="label"><div class="comment">Nom de votre base de données</div></td>
 </tr>
 
 <tr class="bg1">
 <td class="label" valign="top">Login</td>
-<td class="label"><input type="text" name="db_user" value="<?PHP print $dolibarr_main_db_user ?>"></td>
+<td class="label"><input type="text" name="db_user" value="<?PHP isset($db_user) ? print $db_user : print $dolibarr_main_db_user ; ?>"></td>
 <td class="label"><div class="comment">Laisser vide si vous vous connectez en anonyme</div></td>
 </tr>
 
 <tr>
 <td class="label" valign="top">Mot de passe</td>
-<td class="label"><input type="text" name="db_pass" value="<?PHP print $dolibarr_main_db_pass ?>"></td>
+<td class="label"><input type="text" name="db_pass" value="<?PHP isset($db_pass) ? print $db_pass : print $dolibarr_main_db_pass ; ?>"></td>
 <td class="label"><div class="comment">Laisser vide si vous vous connectez en anonyme</div>
 </td>
 </tr>
 
 <tr>
 <td class="label" valign="top">Créer l'utilisateur</td>
-<td class="label"><input type="checkbox" name="db_create_user"></td>
+<td class="label"><input type="checkbox" name="db_create_user" <?PHP if(isset($db_create_user)) print 'checked';?> ></td>
 <td class="label"><div class="comment">Cocher cette option si l'utilisateur doit-être créé</div>
 </td>
 </tr>
@@ -154,14 +157,14 @@ exemples :
 
 <tr>
 <td class="label" valign="top">Login</td>
-<td class="label"><input type="text" name="db_user_root"></td>
+<td class="label"><input type="text" name="db_user_root" value="<?PHP if(isset($db_user_root)) print $db_user_root; ?>"></td>
 <td class="label"><div class="comment">Login de l'utilisateur ayant les droits de création de la base de données, inutile si vous êtes chez un hébergeur, votre base de données est déjà créée. Laisser vide si vous vous connectez en anonymous</div>
 </td>
 </tr>
 
 <tr>
 <td class="label" valign="top">Mot de passe</td>
-<td class="label"><input type="text" name="db_pass_root"></td>
+<td class="label"><input type="text" name="db_pass_root" value="<?PHP if(isset($db_pass_root)) print $db_pass_root; ?>"></td>
 <td class="label"><div class="comment">Laisser vide si l'utilisateur n'a pas de mot de passe</div>
 </td>
 </tr>
