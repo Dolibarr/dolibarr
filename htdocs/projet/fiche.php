@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,11 +99,26 @@ if ($action == 'create')
    *
    */
 
-  print_titre("Fiche projet");
-
-  $propales = array();
   $projet = new Project($db);
   $projet->fetch($id);
+
+
+  $h=0;
+  $head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
+  $head[$h][1] = 'Fiche projet';
+  
+  $head[$h+1][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
+  $head[$h+1][1] = 'Prop. Commerciales';
+  
+  $head[$h+2][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
+  $head[$h+2][1] = 'Commandes';
+  
+  $head[$h+3][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
+  $head[$h+3][1] = 'Factures';
+ 
+  dolibarr_fiche_head($head, 0);
+
+
 
   $projet->societe->fetch($projet->societe->id);
   
@@ -147,106 +162,6 @@ if ($action == 'create')
 
   print "</tr></table>";
 
-  if ($_GET["action"] == '')
-    {
-      $propales = $projet->get_propal_list();
-      
-      if (sizeof($propales)>0 && is_array($propales))
-	{
-	  print_titre('Listes des propositions commerciales associées au projet');
-	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-	  
-	  print '<TR class="liste_titre">';
-	  print '<td width="15%">Réf</td><td width="25%">Date</td><td align="right">Prix</td></tr>';
-	  
-	  for ($i = 0; $i<sizeof($propales);$i++)
-	    {
-	      $propale = new Propal($db);
-	      $propale->fetch($propales[$i]);
-	      
-	      $var=!$var;
-	      print "<tr $bc[$var]>";
-	      print "<td><a href=\"../comm/propal.php?propalid=$propale->id\">$propale->ref</a></td>\n";
-	      
-	      print '<td>'.strftime("%d %B %Y",$propale->datep).'</td>';
-	      
-	      print '<td align="right">'.price($propale->price).'</td></tr>';
-	      $total = $total + $propale->price;
-	    }
-	  
-	  print '<tr><td>'.$i.' propales</td>';
-	  print '<td align="right">Total : '.price($total).'</td>';
-	  print '<td align="left">'.MAIN_MONNAIE.' HT</td></tr></table>';
-	}
-      /*
-       * Commandes
-       *
-       */
-      $commandes = $projet->get_commande_list();
-      $total = 0 ;
-      if (sizeof($commandes)>0 && is_array($commandes))
-	{
-	  print_titre('Listes des commandes associées au projet');
-	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-	  
-	  print '<TR class="liste_titre">';
-	  print '<td width="15%">Réf</td><td width="25%">Date</td><td align="right">Prix</td></tr>';
-	  
-	  for ($i = 0; $i<sizeof($commandes);$i++)
-	    {
-	      $commande = new Commande($db);
-	      $commande->fetch($commandes[$i]);
-	      
-	      $var=!$var;
-	      print "<TR $bc[$var]>";
-	      print "<TD><a href=\"../commande/fiche.php?id=$commande->id\">$commande->ref</a></TD>\n";	      
-	      print '<td>'.strftime("%d %B %Y",$commande->date).'</td>';	      
-	      print '<TD align="right">'.price($commande->total_ht).'</td></tr>';
-	      
-	      $total = $total + $commande->total_ht;
-	    }
-	  
-	  print '<tr><td>'.$i.' commandes</td>';
-	  print '<td align="right">Total : '.price($total).'</td>';
-	  print '<td align="left">'.MAIN_MONNAIE.' HT</td></tr>';
-	  print "</table>";
-	}
-    
-
-      /*
-       * Factures
-       *
-       */
-      $factures = $projet->get_facture_list();
-      $total = 0;
-      if (sizeof($factures)>0 && is_array($factures))
-	{
-	  print_titre('Listes des factures associées au projet');
-	  print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
-	  
-	  print '<tr class="liste_titre">';
-	  print '<td width="15%">Réf</td><td width="25%">Date</td><td align="right">Prix</td></tr>';
-	  
-	  for ($i = 0; $i<sizeof($factures);$i++)
-	    {
-	      $facture = new Facture($db);
-	      $facture->fetch($factures[$i]);
-	      
-	      $var=!$var;
-	      print "<TR $bc[$var]>";
-	      print "<TD><a href=\"../compta/facture.php?facid=$facture->id\">$facture->ref</a></TD>\n";	      
-	      print '<td>'.strftime("%d %B %Y",$facture->date).'</td>';	      
-	      print '<TD align="right">'.price($facture->total_ht).'</td></tr>';
-	      
-	      $total = $total + $facture->total_ht;
-	    }
-	  
-	  print '<tr><td>'.$i.' factures</td>';
-	  print '<td align="right">Total : '.price($total).'</td>';
-	  print '<td align="left">'.MAIN_MONNAIE.' HT</td></tr>';
-	  print "</TABLE>";
-	}
-    }
 }
 $db->close();
 
