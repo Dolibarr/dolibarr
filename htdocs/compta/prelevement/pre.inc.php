@@ -42,6 +42,9 @@ function llxHeader($head = "", $title="", $help_url='')
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste.php","Liste");
     }
 
+  $langs->load("bills");
+  $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
+
   left_menu($menu->liste, $help_url);
 }
 
