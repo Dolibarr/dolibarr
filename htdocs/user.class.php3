@@ -45,8 +45,8 @@ class User
 
       $this->db = $DB;
       $this->id = $id;
-      $this->comm = 0;
-      $this->compta = 0;
+      $this->comm = 1;
+      $this->compta = 1;
       $this->limite_liste = 0;
 
       $this->rights->facture->lire = 0;
@@ -365,9 +365,6 @@ class User
 	    
 	    $this->contact_id = $obj->fk_socpeople;
 
-	    $this->comm = $obj->module_comm;
-	    $this->compta = $obj->module_compta;
-	    
 	    $this->login = $obj->login;
 	    $this->pass  = $obj->pass;
 	    $this->webcal_login = $obj->webcal_login;
@@ -580,8 +577,8 @@ class User
 	      $sql .= ", email = '$this->email'";
 	      $sql .= ", admin = $this->admin";
 	      $sql .= ", webcal_login = '$this->webcal_login'";
-	      $sql .= ", module_comm = $this->comm";
-	      $sql .= ", module_compta = $this->compta";
+	      $sql .= ", module_comm = 1";
+	      $sql .= ", module_compta = 1";
 	      $sql .= ", code = '$this->code'";
 	      $sql .= ", note = '$this->note'";
 	      $sql .= " WHERE rowid = $this->id";
