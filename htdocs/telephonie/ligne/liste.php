@@ -62,7 +62,8 @@ $pagenext = $page + 1;
  */
 
 $sql = "SELECT s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " ,  ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
@@ -81,6 +82,17 @@ if ($_GET["search_client"])
   $sel =urldecode($_GET["search_client"]);
   $sql .= " AND s.nom LIKE '%".$sel."%'";
 }
+
+if ($_GET["commercial_suiv"])
+{
+  $sql .= " AND l.fk_commercial_suiv ='".$_GET["commercial_suiv"]."'";
+}
+
+if ($_GET["commercial_sign"])
+{
+  $sql .= " AND l.fk_commercial_sign ='".$_GET["commercial_sign"]."'";
+}
+
 
 if ($_GET["search_client_facture"])
 {
@@ -103,7 +115,25 @@ if ($result)
   
   $urladd= "&amp;statut=".$_GET["statut"];
 
-  print_barre_liste("Lignes", $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
+  $titre = "Lignes";
+
+  if ($_GET["commercial_suiv"])
+    {
+      $cuser = new User($db, $_GET["commercial_suiv"]);
+      $cuser->fetch();
+      $titre = "Lignes suivies par ".$cuser->fullname;
+      $urladd .= "&amp;commercial_suiv=". $_GET["commercial_suiv"]; 
+    }
+
+  if ($_GET["commercial_sign"])
+    {
+      $cuser = new User($db, $_GET["commercial_sign"]);
+      $cuser->fetch();
+      $titre = "Lignes signées par ".$cuser->fullname;
+      $urladd .= "&amp;commercial_sign=". $_GET["commercial_sign"];
+    }
+
+  print_barre_liste($titre, $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
@@ -155,8 +185,8 @@ if ($result)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.$obj->nom.'</a></td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.$obj->nom_facture.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->nom_facture).'</a></td>';
 
       print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
 
