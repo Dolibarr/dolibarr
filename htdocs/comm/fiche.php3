@@ -22,8 +22,8 @@
 require("./pre.inc.php3");
 require("../contact.class.php3");
 require("../lib/webcal.class.php3");
-require("cactioncomm.class.php3");
-require("actioncomm.class.php3");
+require("../cactioncomm.class.php3");
+require("../actioncomm.class.php3");
 
 
 llxHeader();
@@ -35,42 +35,6 @@ if ($sortorder == "") {
 }
 if ($sortfield == "") {
   $sortfield="nom";
-}
-
-if ($action=='add_action') {
-  /*
-   * Vient de actioncomm.php3
-   *
-   */
-  $actioncomm = new ActionComm($db);
-  $actioncomm->date = $date;
-  $actioncomm->type = $actionid;
-  $actioncomm->contact = $contactid;
-
-  $actioncomm->societe = $socid;
-  $actioncomm->note = $note;
-
-  $actioncomm->add($user);
-
-
-  $societe = new Societe($db);
-  $societe->fetch($socid);
-
-
-  $todo = new TodoComm($db);
-  $todo->date = mktime(12,0,0,$remonth, $reday, $reyear);
-
-  $todo->libelle = $todo_label;
-
-  $todo->societe = $societe->id;
-  $todo->contact = $contactid;
-
-  $todo->note = $todo_note;
-
-  $todo->add($user);
-
-  $webcal = new Webcal();
-  $webcal->add($user, $todo->date, $societe->nom, $todo->libelle);
 }
 
 
@@ -307,11 +271,13 @@ if ($socid > 0) {
        * Liste des contacts
        *
        */
-      print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=2>";
+      print '<table width="100%" cellspacing="0" border="0" cellpadding="0" bgcolor="#000000"><tr><td>';
+      
+      print '<table width="100%" cellspacing="1" border="0" cellpadding="2">';
 
-      print "<tr><td><b>Pr&eacute;nom Nom</b></td>";
-      print '<td><b>Poste</b></td><td><b>T&eacute;l</b></td>';
-      print "<td><b>Fax</b></td><td><b>Email</b></td>";
+      print "<tr class=\"liste_titre\"><td>Pr&eacute;nom Nom</td>";
+      print '<td><b>Poste</b></td><td>T&eacute;l</td>';
+      print "<td><b>Fax</b></td><td>Email</td>";
       print "<td><a href=\"people.php3?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
     
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
@@ -319,11 +285,9 @@ if ($socid > 0) {
       $i = 0 ; $num = $db->num_rows(); $tag = True;
       while ($i < $num) {
 	$obj = $db->fetch_object( $i);
-	if ($tag) {
-	  print "<tr bgcolor=\"e0e0e0\">";
-	} else {
-	  print "<tr>";
-	}
+	$var = !$var;
+	print "<tr $bc[$var]>";
+
 	print '<td>';
 	//print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">';
 	//print '<img border="0" src="/theme/'.$conf->theme.'/img/filenew.png"></a>&nbsp;';
@@ -343,7 +307,7 @@ if ($socid > 0) {
 	$tag = !$tag;
       }
       print "</table>";
-    
+      print '</td></tr></table>';
       print "\n<hr noshade size=1>\n";
 
       /*

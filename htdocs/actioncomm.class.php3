@@ -55,8 +55,7 @@ class ActionComm {
     $sql .= $this->user->id . ", $this->contact, $this->percent, '$this->note', $this->priority);";
 
     if ($this->db->query($sql) ) {
-
-
+      return 1;
     } else {
       print $this->db->error() . "<br>" . $sql;
     }

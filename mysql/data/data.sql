@@ -23,6 +23,7 @@
 --
 
 delete from c_actioncomm;
+insert into c_actioncomm (id,libelle) values ( 0, '-');
 insert into c_actioncomm (id,libelle) values ( 1, 'Appel Téléphonique');
 insert into c_actioncomm (id,libelle) values ( 2, 'Envoi Fax');
 insert into c_actioncomm (id,libelle) values ( 3, 'Envoi propal par mail');

@@ -22,9 +22,9 @@
 require("./pre.inc.php3");
 
 require("../../contact.class.php3");
-require("../..//lib/webcal.class.php3");
-require("../cactioncomm.class.php3");
-require("../actioncomm.class.php3");
+require("../../lib/webcal.class.php3");
+require("../../cactioncomm.class.php3");
+require("../../actioncomm.class.php3");
 
 $db = new Db();
 
@@ -36,6 +36,9 @@ $db = new Db();
 if ($action=='add_action') {
   $contact = new Contact($db);
   $contact->fetch($contactid);
+  $societe = new Societe($db);
+  $societe->fetch($socid);
+
 
   $actioncomm = new ActionComm($db);
 
@@ -50,8 +53,6 @@ if ($action=='add_action') {
   $actioncomm->type = $actionid;
   $actioncomm->contact = $contactid;
 
-
-
   $actioncomm->user = $user;
 
   $actioncomm->societe = $socid;
@@ -59,12 +60,7 @@ if ($action=='add_action') {
 
   $actioncomm->add($user);
 
-
-  $societe = new Societe($db);
-  $societe->fetch($socid);
-
-
-  if ($todo) {
+  if ($todo == 'on' ) {
 
     $todo = new ActionComm($db);
     $todo->type = 0;
@@ -83,7 +79,7 @@ if ($action=='add_action') {
     
     $todo->add($user);
 
-    if ($conf->webcal && $todo_webcal) {
+    if ($conf->webcal && $todo_webcal == 'on') {
 
       $webcal = new Webcal();
 
@@ -159,14 +155,15 @@ if ($action=='create' && $actionid && $contactid) {
 
     }
   /* 
-   *Autre action
+   *
+   * Action autre que rendez-vous
    *
    *
    */   
   else 
     {
 
-      print '<form action="fiche.php3?socid='.$socid.'" method="post">';
+      print '<form action="'.$PHP_SELF.'?socid='.$socid.'" method="post">';
       print '<input type="hidden" name="action" value="add_action">';
 
       print '<input type="hidden" name="date" value="'.$db->idate(time()).'">';

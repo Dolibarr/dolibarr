@@ -22,8 +22,8 @@
 require("./pre.inc.php3");
 require("../contact.class.php3");
 require("../lib/webcal.class.php3");
-require("cactioncomm.class.php3");
-require("actioncomm.class.php3");
+require("../cactioncomm.class.php3");
+require("../actioncomm.class.php3");
 
 llxHeader();
 

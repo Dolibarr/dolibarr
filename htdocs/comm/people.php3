@@ -82,8 +82,8 @@ if ($socid > 0) {
      *
      *
      */
-    print "<br><table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
-    print "<tr><td><big>N° $objsoc->idp - <a href=\"index.php3?socid=$objsoc->idp\">$objsoc->nom</a> - [$objsoc->stcomm] </td>";
+    print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
+    print "<tr><td><a href=\"index.php3?socid=$objsoc->idp\">$objsoc->nom</a></td>";
     print "<td align=\"center\"><a href=\"socnote.php3?socid=$socid\">Notes</a></big></td>";
 
     print "<td bgcolor=\"#e0E0E0\" align=\"center\">[<a href=\"people.php3?socid=$socid&action=addcontact\">Ajouter un contact</a>]</td>";
@@ -190,11 +190,10 @@ if ($socid > 0) {
    *
    *
    */
-  print "<P><table width=\"100%\" cellspacing=0 border=1 cellpadding=2>";
+  print '<P><table width="100%" cellspacing="0" border="0" cellpadding="2">';
   
-  print "<tr><td><b>Action</b></td>";
-  print "<td><b>Fax</b></td><td><b>Email</b></td>";
-
+  print "<tr class=\"liste_titre\"><td>Action</td>";
+  print "<td>Fax</td><td>Email</td>";
 
   $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
   $sql .= " FROM actioncomm as a, c_actioncomm as c, llx_user as u ";
@@ -211,11 +210,9 @@ if ($socid > 0) {
     $i = 0 ; $num = $db->num_rows(); $tag = True;
     while ($i < $num) {
       $obj = $db->fetch_object( $i);
-      if ($tag) {
-	print "<tr bgcolor=\"e0e0e0\">";
-      } else {
-	print "<tr>";
-      }
+      $var=!$var;
+      print "<tr $bc[$var]>";
+
       print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
       if ($obj->propalrowid) {
 	print "<td><a href=\"propal.php3?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
