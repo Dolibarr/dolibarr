@@ -126,6 +126,7 @@ class Societe {
       $this->id = $socid;
 
       $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
+      $sql .= ",". $this->db->pdate("s.tms")." as date_update";
       $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
       $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
       $sql .= ", e.libelle as effectif, e.id as effectif_id";
@@ -149,10 +150,15 @@ class Societe {
 	    {
 	      $obj = $this->db->fetch_object(0);
 
+	      $this->date_update = $obj->date_update;
+
 	      $this->nom = stripslashes($obj->nom);
 	      $this->adresse =  stripslashes($obj->address);
 	      $this->cp = $obj->cp;
 	      $this->ville =  stripslashes($obj->ville);
+
+	      $this->adresse_full =  stripslashes($obj->address) . "\n". $obj->cp . " ". stripslashes($obj->ville);
+
 	      $this->departement_id = $obj->fk_departement;
 	      $this->pays_id = $obj->fk_pays;
 
