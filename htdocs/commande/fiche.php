@@ -22,10 +22,10 @@
  */
 
 /**
-	        \file       htdocs/commande/fiche.php
-	        \ingroup    commande
-	        \brief      Fiche commande
-	        \version    $Revision$
+   \file       htdocs/commande/fiche.php
+   \ingroup    commande
+   \brief      Fiche commande
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -36,8 +36,7 @@ $langs->load("companies");
 $user->getrights('commande');
 $user->getrights('expedition');
 
-if (!$user->rights->commande->lire)
-  accessforbidden();
+if (!$user->rights->commande->lire) accessforbidden();
 
 require("../project.class.php");
 require("../propal.class.php");
@@ -53,7 +52,7 @@ if ($user->societe_id > 0)
 /*
  *
  */	
-if ($_POST["action"] == 'classin') 
+if ($_POST["action"] == 'classin' && $user->rights->commande->creer)
 {
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);
@@ -62,7 +61,7 @@ if ($_POST["action"] == 'classin')
 /*
  *
  */	
-if ($_POST["action"] == 'add') 
+if ($_POST["action"] == 'add' && $user->rights->commande->creer) 
 {
   $datecommande = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]); 
 
@@ -198,9 +197,8 @@ $html = new Form($db);
  * Mode creation
  *
  *
- *
  ************************************************************************/
-if ($_GET["action"] == 'create') 
+if ($_GET["action"] == 'create' && $user->rights->commande->creer) 
 {
   print_titre("Créer une commande");
 
@@ -220,12 +218,14 @@ if ($_GET["action"] == 'create')
       $sql .= "WHERE s.idp = ".$_GET["socidp"];      
     }
 
-  if ( $db->query($sql) ) 
+  $resql = $db->query($sql);
+
+  if ( $resql ) 
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       if ($num)
 	{
-	  $obj = $db->fetch_object();
+	  $obj = $db->fetch_object($resql);
 
 	  $soc = new Societe($db);
 	  $soc->fetch($obj->idp);
@@ -234,23 +234,24 @@ if ($_GET["action"] == 'create')
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="soc_id" value="'.$soc->id.'">' ."\n";
 	  print '<input type="hidden" name="remise_percent" value="0">';
+	  print '<input name="facnumber" type="hidden" value="provisoire">';
 
 	  print '<table class="border" width="100%">';
 	  
-	  print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$obj->nom.'</td>';
-	  print '<td class="border">'.$langs->trans("Comments").' :</td></tr>';
+	  print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$soc->nom_url.'</td>';
+	  print '<td>'.$langs->trans("Comments").' :</td></tr>';
 
 	  print '<tr><td>'.$langs->trans("Author").' :</td><td>'.$user->fullname.'</td>';
 	  
 	  print '<td rowspan="5" valign="top">';
-	  print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
+	  print '<textarea name="note" wrap="soft" cols="60" rows="6"></textarea></td></tr>';	
 	  
 	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
 	  $html->select_date();
 	  print "</td></tr>";
 
 	  print '<tr><td>'.$langs->trans("Ref").' :</td><td>Provisoire</td></tr>';
-	  print '<input name="facnumber" type="hidden" value="provisoire">';
+
 
 	  print '<tr><td>'.$langs->trans("Source").' :</td><td>';
 	  $html->select_array("source_id",$new_commande->sources,2);
@@ -274,7 +275,7 @@ if ($_GET["action"] == 'create')
 	      print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2">'.$obj->ref.'</td></tr>';
 	      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($amount).'</td></tr>';
 	      print '<tr><td>'.$langs->trans("VAT").'</td><td colspan="2">'.price($obj->tva)."</td></tr>";
-	      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($obj->total)."</td></tr>";	  
+	      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($obj->total)."</td></tr>";
 	    }	  
 	  else
 	    {
