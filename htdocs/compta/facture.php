@@ -490,20 +490,20 @@ if ($_GET["action"] == 'create')
 	  print '<table class="border" width="100%">';
 	  
 	  print '<tr><td>'.$langs->trans("Company").' :</td><td>'.$soc->nom.'</td>';
-	  print '<td class="border">'.$langs->trans("Comment").'</td></tr>';
+	  print '<td class="border">'.$langs->trans("Comments").'</td></tr>';
 
 	  print '<tr><td>'.$langs->trans("Author").' :</td><td>'.$user->fullname.'</td>';
 	  
-	  print '<td rowspan="6" valign="top">';
-	  print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
+	  print '<td rowspan="5" valign="top">';
+	  print '<textarea name="note" wrap="soft" cols="60" rows="5"></textarea></td></tr>';	
 	  
 	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
-	
 	  print_date_select(time());
-
 	  print '</td></tr>';
+
 	  print '<tr><td>'.$langs->trans("Ref").' :</td><td>Provisoire</td></tr>';
 	  print '<input name="facnumber" type="hidden" value="provisoire">';
+
 	  print "<tr><td>Conditions de réglement :</td><td>";
 	  $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."cond_reglement ORDER BY sortorder";
 	  $result = $db->query($sql);
@@ -530,6 +530,8 @@ if ($_GET["action"] == 'create')
     	  $proj = new Project($db);
     	  $html->select_array("projetid",$proj->liste_array($socidp));
     	  print "</td></tr>";
+      } else {
+    	  print "<tr><td colspan=\"2\">&nbsp;</td></tr>";
       }
       	  
 	  if ($_GET["propalid"] > 0)
@@ -543,16 +545,16 @@ if ($_GET["action"] == 'create')
 	      print '<input type="hidden" name="propalid" value="'.$propalid.'">';
 	      
 	      print '<tr><td>Proposition</td><td colspan="2">'.$obj->ref.'</td></tr>';
-	      print '<tr><td>Montant HT</td><td colspan="2">'.price($amount).'</td></tr>';
-	      print '<tr><td>TVA</td><td colspan="2">'.price($obj->tva)."</td></tr>";
+	      print '<tr><td>'.$langs->trans("TotalHT").'</td><td colspan="2">'.price($amount).'</td></tr>';
+	      print '<tr><td>'.$langs->trans("VAT").'</td><td colspan="2">'.price($obj->tva)."</td></tr>";
 	      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($obj->total)."</td></tr>";
 	    }
 	  elseif ($_GET["commandeid"] > 0)
 	    {
 	      print '<input type="hidden" name="commandeid" value="'.$commande->id.'">';
-	      print '<tr><td>Commande</td><td colspan="2">'.$commande->ref.'</td></tr>';
-	      print '<tr><td>Montant HT</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
-	      print '<tr><td>TVA</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
+	      print '<tr><td>'.$langs->trans("Order").'</td><td colspan="2">'.$commande->ref.'</td></tr>';
+	      print '<tr><td>'.$langs->trans("TotalHT").'</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
+	      print '<tr><td>'.$langs->trans("VAT").'</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
 	      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($commande->total_ttc)."</td></tr>";
 	    }
 	  else
@@ -584,11 +586,11 @@ if ($_GET["action"] == 'create')
 		}
 	      else
 		{
-		  print $db->error();
+		  dolibarr_print_error($db);
 		}
 	      	      
 	      print '<table class="noborder" cellspacing="0" cellpadding="2">';
-	      print '<tr><td>Services/Produits prédéfinis</td><td>Quan.</td><td>Remise</td><td> &nbsp; &nbsp; </td>';
+	      print '<tr><td>Services/Produits prédéfinis</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td><td> &nbsp; &nbsp; </td>';
 	      if ($conf->service->enabled) {
 		print '<td>Si produit de type service à durée limitée</td></tr>';
 	      }
@@ -1145,9 +1147,9 @@ else
 		}
 
 	      // Supprimer
-	      if ($fac->statut == 0 && $user->rights->facture->supprimer)
+	      if ($fac->statut == 0 && $user->rights->facture->supprimer && $_GET["action"] != 'delete')
 		{
-		  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+		  print "<a class=\"butDelete\" href=\"facture.php?facid=$fac->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 		} 
 
 	      // Envoyer
