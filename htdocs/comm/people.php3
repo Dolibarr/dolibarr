@@ -122,33 +122,14 @@ if ($socid > 0) {
     if ($objsoc->url) {
       print "<a href=\"http://$objsoc->url\">$objsoc->url</a><br>";
     }
-    print "<br>Contact : <br><b>$objsoc->c_nom $objsoc->c_prenom</b>";
-    print "<br>tel : <b>$objsoc->c_tel</b>";
-    print "<br>email : <b>$objsoc->c_mail</b>";
-
 
     print "</td>\n";
     print "<td valign=\"top\"><table border=0 width=\"100%\" cellspacing=0 bgcolor=#e0e0e0>";
     print "<tr><td>Créée le</td><td align=center><b>" . strftime("%d %b %Y %H:%M", $objsoc->dc) . "</b></td></tr>";
-    print "<tr><td>Dernière modif le</td><td align=center><b>" . strftime("%d %b %Y %H:%M", $objsoc->dm) . "</b></td></tr>";
-    print "<tr><td>Fiche société</td><td align=center><b>".$yn[$objsoc->fplus]."</b></td></tr>" ;
-    print "<tr><td valign=\"top\">";
-
-    print "<hr noshade size=1>";
-    print "<table border=0 cellspacing=0>";
-
-    print "</table></td>";
-
-    print "<td valign=\"top\"><hr noshade size=1>";
-    print "<table cellspacing=0 border=0>";
- 
-    print "</table></td>\n";
-    print "</tr>";
 
     print "</table></td></tr>\n";
     print "</table>";
 
-    print "<hr noshade size=1>";
     /*
      *
      */
@@ -245,5 +226,5 @@ if ($socid > 0) {
 $db->free();
 $db->close();
 
-llxFooter();
+llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
