@@ -1,0 +1,1111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>dolibarr: htdocs/lib/functions.inc.php Source File</title>
+<link href="doxygen.css" rel="stylesheet" type="text/css">
+</head><body>
+<!-- Généré par Doxygen 1.3.7 -->
+<div class="qindex"><a class="qindex" href="index.html">Page&nbsp;principale</a> | <a class="qindex" href="files.html">Liste&nbsp;des&nbsp;fichiers</a> | <a class="qindex" href="globals.html">Membres&nbsp;de&nbsp;fichier</a></div>
+<h1>htdocs/lib/functions.inc.php</h1><pre class="fragment"><div>00001 &lt;?PHP
+00002 <span class="comment">/* Copyright (C) 2000-2004 Rodolphe Quiedeville &lt;rodolphe@quiedeville.org&gt;</span>
+00003 <span class="comment"> * Copyright (C) 2003      Jean-Louis Bergamo   &lt;jlb@j1b.org&gt;</span>
+00004 <span class="comment"> * Copyright (C) 2004      Laurent Destailleur  &lt;eldy@users.sourceforge.net&gt;</span>
+00005 <span class="comment"> *</span>
+00006 <span class="comment"> * This program is free software; you can redistribute it and/or modify</span>
+00007 <span class="comment"> * it under the terms of the GNU General Public License as published by</span>
+00008 <span class="comment"> * the Free Software Foundation; either version 2 of the License, or</span>
+00009 <span class="comment"> * (at your option) any later version.</span>
+00010 <span class="comment"> *</span>
+00011 <span class="comment"> * This program is distributed in the hope that it will be useful,</span>
+00012 <span class="comment"> * but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+00013 <span class="comment"> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+00014 <span class="comment"> * GNU General Public License for more details.</span>
+00015 <span class="comment"> *</span>
+00016 <span class="comment"> * You should have received a copy of the GNU General Public License</span>
+00017 <span class="comment"> * along with this program; if not, write to the Free Software</span>
+00018 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
+00019 <span class="comment"> * or see http://www.gnu.org/</span>
+00020 <span class="comment"> *</span>
+00021 <span class="comment"> * $Id$</span>
+00022 <span class="comment"> * $Source$</span>
+00023 <span class="comment"> *</span>
+00024 <span class="comment"> */</span>
+00025 
+00026 $yn[0] = <span class="stringliteral">"non"</span>;
+00027 $yn[1] = <span class="stringliteral">"oui"</span>;
+00028 
+00029 Function dolibarr_syslog($message)
+00030 {
+00031   define_syslog_variables();
+00032 
+00033   openlog(<span class="stringliteral">"dolibarr"</span>, LOG_PID | LOG_PERROR, LOG_USER);  # LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les PHP
+00034   
+00035   syslog(LOG_WARNING, $message);
+00036 
+00037   closelog();
+00038 }
+00039 
+00040 Function dolibarr_fiche_head($links, $active=0)
+00041 {
+00042   print <span class="stringliteral">"&lt;!-- fiche --&gt;&lt;div class=\"tabs\"&gt;\n"</span>;
+00043 
+00044   <span class="keywordflow">for</span> ($i = 0 ; $i &lt; <span class="keyword">sizeof</span>($links) ; $i++)
+00045     {
+00046       <span class="keywordflow">if</span> ($links[$i][2] == 'image')
+00047   {
+00048     print '&lt;a <span class="keyword">class</span>=<span class="stringliteral">"tabimage"</span> href=<span class="stringliteral">"'.$links[$i][0].'"</span>&gt;'.$links[$i][1].'&lt;/a&gt;'.<span class="stringliteral">"\n"</span>;
+00049   }
+00050       <span class="keywordflow">else</span>
+00051   {
+00052     <span class="keywordflow">if</span> ($i == $active)
+00053       {
+00054         print '&lt;a <span class="keywordtype">id</span>=<span class="stringliteral">"active"</span> <span class="keyword">class</span>=<span class="stringliteral">"tab"</span> href=<span class="stringliteral">"'.$links[$i][0].'"</span>&gt;'.$links[$i][1].'&lt;/a&gt;'.<span class="stringliteral">"\n"</span>;
+00055       }
+00056     <span class="keywordflow">else</span>
+00057       {
+00058         print '&lt;a <span class="keyword">class</span>=<span class="stringliteral">"tab"</span> href=<span class="stringliteral">"'.$links[$i][0].'"</span>&gt;'.$links[$i][1].'&lt;/a&gt;'.<span class="stringliteral">"\n"</span>;
+00059       }
+00060   }
+00061     }
+00062 
+00063   print <span class="stringliteral">"&lt;/div&gt;\n"</span>;
+00064   print <span class="stringliteral">"&lt;div class=\"tabBar\"&gt;\n&lt;br&gt;\n"</span>;
+00065 }
+00066 
+00067 
+00068 Function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
+00069 <span class="comment">// Ajoute ou modifie un parametre dans la table llx_const</span>
+00070 <span class="comment">// Retour: 0=KO, 1=OK</span>
+00071 {
+00072   $sql = <span class="stringliteral">"REPLACE INTO llx_const SET name = '$name', value='$value', visible=$visible, type='$type', note='$note'"</span>;
+00073 
+00074   <span class="keywordflow">if</span> ($db-&gt;query($sql))
+00075     {
+00076       <span class="keywordflow">return</span> 1;
+00077     }
+00078   <span class="keywordflow">else</span>
+00079     {
+00080       <span class="keywordflow">return</span> 0;
+00081     }
+00082 }
+00083 
+00084 Function dolibarr_del_const($db, $name)
+00085 <span class="comment">// Supprime un parametre de la table llx_const</span>
+00086 <span class="comment">// Retour: 0=KO, 1=OK</span>
+00087 {
+00088   $sql = <span class="stringliteral">"DELETE FROM llx_const WHERE name='$name'"</span>;
+00089   
+00090   <span class="keywordflow">if</span> ($db-&gt;query($sql))
+00091     {
+00092       <span class="keywordflow">return</span> 1;
+00093     }
+00094   <span class="keywordflow">else</span>
+00095     {
+00096       <span class="keywordflow">return</span> 0;
+00097     }
+00098 }
+00099 
+00100 Function dolibarr_print_ca($ca)
+00101 {
+00102     <span class="comment">// Permet d'avoir une fonction commune du formatage des nombres</span>
+00103     <span class="keywordflow">if</span> ($ca &gt; 1000)
+00104     {
+00105       $cat = round(($ca / 1000),2);
+00106       $cat = <span class="stringliteral">"$cat Keuros"</span>;
+00107     }
+00108     <span class="keywordflow">else</span>
+00109     {
+00110       $cat = round($ca,2);
+00111       $cat = <span class="stringliteral">"$cat euros"</span>;
+00112     }
+00113     
+00114     <span class="keywordflow">if</span> ($ca &gt; 1000000)
+00115     {
+00116       $cat = round(($ca / 1000000),2);
+00117       $cat = <span class="stringliteral">"$cat Meuros"</span>;
+00118     }
+00119 
+00120     <span class="keywordflow">return</span> $cat;
+00121 }
+00122 
+00123 Function dolibarr_print_date($time,$format=<span class="stringliteral">"%d %b %Y"</span>)
+00124 {
+00125     <span class="comment">// Permet d'avoir une fonction commune du formatage d'affichage des date</span>
+00126     <span class="keywordflow">return</span> strftime($format,$time);
+00127 }
+00128 
+00129 Function dolibarr_print_object_info($object)
+00130 {
+00131   print <span class="stringliteral">"Créé par  : "</span> . $object-&gt;user_creation-&gt;fullname . '&lt;br&gt;';
+00132   print <span class="stringliteral">"Date de création : "</span> . strftime(<span class="stringliteral">"%A %d %B %Y %H:%M:%S"</span>,$object-&gt;date_creation) . '&lt;br&gt;';
+00133   print <span class="stringliteral">"Modifié par  : "</span> . $object-&gt;user_modification-&gt;fullname . '&lt;br&gt;';
+00134   print <span class="stringliteral">"Date de modification : "</span> . strftime(<span class="stringliteral">"%A %d %B %Y %H:%M:%S"</span>,$object-&gt;date_modification) . '&lt;br&gt;';
+00135 }
+00136 
+00137 Function dolibarr_print_phone($phone)
+00138 {
+00139     <span class="comment">// Permet d'avoir une fonction commune du formatage d'affichage des tel/fax</span>
+00140     <span class="keywordflow">if</span> (strlen(trim($phone)) == 10)
+00141     {
+00142       <span class="keywordflow">return</span> substr($phone,0,2).<span class="stringliteral">" "</span>.substr($phone,2,2).<span class="stringliteral">" "</span>.substr($phone,4,2).<span class="stringliteral">" "</span>.substr($phone,6,2).<span class="stringliteral">" "</span>.substr($phone,8,2);
+00143     }
+00144     <span class="keywordflow">else</span>
+00145     {
+00146       <span class="keywordflow">return</span> $phone;
+00147     }
+00148 }
+00149 
+00150 Function img_file($alt = <span class="stringliteral">"Voir"</span>)
+00151 {
+00152   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span>&gt;';
+00153 }
+00154 
+00155 Function img_file_new($alt = <span class="stringliteral">"Voir"</span>)
+00156 {
+00157   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/filenew.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span>&gt;';
+00158 }
+00159 
+00160 
+00161 Function img_pdf($alt = <span class="stringliteral">"Voir"</span>)
+00162 {
+00163   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/pdf.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span>&gt;';
+00164 }
+00165 
+00166 Function img_warning($alt = <span class="stringliteral">"Voir"</span>)
+00167 {
+00168   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/warning.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span>&gt;';
+00169 }
+00170 
+00171 Function img_delete($alt = <span class="stringliteral">"Supprimer"</span>)
+00172 {
+00173   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/delete.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span> title=<span class="stringliteral">"Supprimer"</span>&gt;';
+00174 }
+00175 
+00176 Function img_info($alt = <span class="stringliteral">"Informations"</span>)
+00177 {
+00178   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/info.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span> title=<span class="stringliteral">"Informations"</span>&gt;';
+00179 }
+00180 
+00181 
+00182 Function img_edit($alt = <span class="stringliteral">"Modifier"</span>)
+00183 {
+00184   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span> title=<span class="stringliteral">"Modifier"</span>&gt;';
+00185 }
+00186 
+00187 Function img_phone_in($alt = <span class="stringliteral">"Modifier"</span>)
+00188 {
+00189   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span> title=<span class="stringliteral">"'.$alt.'"</span>&gt;';
+00190 }
+00191 
+00192 Function img_phone_out($alt = <span class="stringliteral">"Modifier"</span>)
+00193 {
+00194   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call_out.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span> title=<span class="stringliteral">"'.$alt.'"</span>&gt;';
+00195 }
+00196 
+00197 
+00198 Function img_alerte($alt = <span class="stringliteral">"Alerte"</span>)
+00199 {
+00200   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/alerte.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span> title=<span class="stringliteral">"'.$alt.'"</span>&gt;';
+00201 }
+00202 
+00203 
+00204 Function img_next($alt = <span class="stringliteral">"Suivant"</span>)
+00205 {
+00206   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/next.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span> title=<span class="stringliteral">"'.$alt.'"</span>&gt;';
+00207 }
+00208 
+00209 Function img_previous($alt = <span class="stringliteral">"Précédent"</span>)
+00210 {
+00211   <span class="keywordflow">return</span> '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/previous.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"'.$alt.'"</span> title=<span class="stringliteral">"'.$alt.'"</span>&gt;';
+00212 }
+00213 
+00214 
+00215 function loginFunction()
+00216 {
+00220   print '&lt;!DOCTYPE HTML PUBLIC <span class="stringliteral">"-//W3C//DTD HTML 4.01 Transitional//EN"</span> <span class="stringliteral">"http://www.w3.org/TR/html4/loose.dtd"</span>&gt;';
+00221   print <span class="stringliteral">"\n&lt;html&gt;&lt;head&gt;&lt;title&gt;Dolibarr Authentification&lt;/title&gt;"</span>;
+00222   print '&lt;style type=<span class="stringliteral">"text/css"</span>&gt;
+00223   body {
+00224     font-size:14px;
+00225     font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
+00226     background-color: #cac8c0;
+00227     margin-left: 30%;
+00228     margin-right: 30%;
+00229     margin-top: 10%;
+00230     margin-bottom: 1%;
+00231   }
+00232   div.main {
+00233     background-color: white;
+00234     text-align: left;
+00235     border: solid black 1px;
+00236   }
+00237   div.main-inside {
+00238     background-color: white;
+00239     padding-left: 20px;
+00240     padding-right: 50px;
+00241     text-align: center;
+00242     margin-bottom: 50px;
+00243     margin-top: 30px;
+00244   }
+00245   div.footer {
+00246   background-color: #dcdff4;
+00247   font-size: 10px;
+00248   border-top: solid black 1px;
+00249   padding-left: 5px;
+00250         text-align: center;
+00251   }
+00252   div.header {
+00253   background-color: #dcdff4;
+00254   border-bottom: solid black 1px;
+00255   padding-left: 5px;
+00256         text-align: center;
+00257   }
+00258   div.footer p {
+00259   margin: 0px;
+00260   }
+00261   a:link,a:visited,a:active {
+00262   text-decoration:none;
+00263   color:blue;
+00264   }
+00265   a:hover {
+00266   text-decoration:underline;
+00267   color:blue;
+00268   }
+00269   &lt;/style&gt;
+00270   &lt;meta http-equiv=<span class="stringliteral">"Content-Type"</span> content=<span class="stringliteral">"text/html; charset=iso-8859-15"</span>&gt;
+00271   &lt;script language=<span class="stringliteral">"javascript"</span>&gt;
+00272   function donnefocus(){
+00273    document.identification.username.focus();
+00274   }
+00275   &lt;/script&gt;
+00276   &lt;/head&gt;
+00277   &lt;body onload=<span class="stringliteral">"donnefocus();"</span>&gt;
+00278   &lt;div <span class="keyword">class</span>=<span class="stringliteral">"main"</span>&gt;
+00279   &lt;div <span class="keyword">class</span>=<span class="stringliteral">"header"</span>&gt;';
+00280   print 'Dolibarr '.DOL_VERSION;
+00281   print '
+00282   &lt;/div&gt;
+00283   &lt;div <span class="keyword">class</span>=<span class="stringliteral">"main-inside"</span>&gt;
+00284   ';
+00285 
+00286   echo '&lt;form method=<span class="stringliteral">"post"</span> action=<span class="stringliteral">"' . $_SERVER['PHP_SELF'] . '"</span> name=<span class="stringliteral">"identification"</span>&gt;';
+00287   print '&lt;table&gt;&lt;tr&gt;';
+00288   print '&lt;td&gt;Login : &lt;/td&gt;&lt;td&gt;&lt;input type=<span class="stringliteral">"text"</span> name=<span class="stringliteral">"username"</span>&gt;&lt;/td&gt;&lt;/tr&gt;';;
+00289   print '&lt;tr&gt;&lt;td&gt;Password : &lt;/td&gt;&lt;td&gt;&lt;input type=<span class="stringliteral">"password"</span> name=<span class="stringliteral">"password"</span>&gt;&lt;/td&gt;&lt;/tr&gt;';
+00290 
+00291   echo '&lt;/table&gt;
+00292   &lt;p align=<span class="stringliteral">"center"</span>&gt;&lt;input value=<span class="stringliteral">"Login"</span> type=<span class="stringliteral">"submit"</span>&gt;
+00293   &lt;/form&gt;';
+00294 }
+00295 <span class="comment">/*</span>
+00296 <span class="comment"> *</span>
+00297 <span class="comment"> *</span>
+00298 <span class="comment"> */</span>
+00299 function accessforbidden()
+00300 {
+00301   llxHeader();
+00302   print <span class="stringliteral">"Accés interdit"</span>;
+00303   llxFooter();
+00304   exit(0);
+00305 }
+00306 
+00307 function doliMoveFileUpload($src_file, $dest_file)
+00308 {
+00309   $file_name = $dest_file;
+00310 
+00311   <span class="keywordflow">if</span> (substr($file_name, strlen($file_name) -3 , 3) == 'php')
+00312     {
+00313       $file_name = $dest_file . <span class="stringliteral">".txt"</span>;
+00314     }
+00315   
+00316   <span class="keywordflow">return</span> move_uploaded_file($src_file, $file_name);
+00317 }
+00318 
+00319 function dolibarr_user_page_param($db, &amp;$user)
+00320 {
+00321   foreach ($GLOBALS[<span class="stringliteral">"_GET"</span>] as $key=&gt;$value)
+00322     { 
+00323       <span class="keywordflow">if</span> ($key == <span class="stringliteral">"sortfield"</span>)
+00324   {
+00325     $sql = <span class="stringliteral">"REPLACE INTO "</span>.MAIN_DB_PREFIX.<span class="stringliteral">"user_param "</span>;
+00326     $sql .= <span class="stringliteral">" SET fk_user ="</span>.$user-&gt;id;
+00327     $sql .= <span class="stringliteral">" ,page='"</span>.$GLOBALS[<span class="stringliteral">"SCRIPT_URL"</span>] . <span class="stringliteral">"'"</span>;
+00328     $sql .= <span class="stringliteral">" ,param='sortfield'"</span>;
+00329     $sql .= <span class="stringliteral">" ,value='"</span>.urlencode($value).<span class="stringliteral">"'"</span>;
+00330     
+00331     $db-&gt;query($sql);
+00332     $user-&gt;page_param[<span class="stringliteral">"sortfield"</span>] = $value;
+00333   }
+00334 
+00335       <span class="comment">//      print $key . "=".$value . "&lt;br&gt;";</span>
+00336 
+00337       <span class="keywordflow">if</span> ($key == <span class="stringliteral">"sortorder"</span>)
+00338   {
+00339     $sql = <span class="stringliteral">"REPLACE INTO "</span>.MAIN_DB_PREFIX.<span class="stringliteral">"user_param "</span>;
+00340     $sql .= <span class="stringliteral">" SET fk_user ="</span>.$user-&gt;id;
+00341     $sql .= <span class="stringliteral">" ,page='"</span>.$GLOBALS[<span class="stringliteral">"SCRIPT_URL"</span>] . <span class="stringliteral">"'"</span>;
+00342     $sql .= <span class="stringliteral">" ,param='sortorder'"</span>;
+00343     $sql .= <span class="stringliteral">" ,value='"</span>.urlencode($value).<span class="stringliteral">"'"</span>;
+00344     
+00345     $db-&gt;query($sql);
+00346     $user-&gt;page_param[<span class="stringliteral">"sortorder"</span>] = $value;
+00347   }
+00348       <span class="keywordflow">if</span> ($key == <span class="stringliteral">"begin"</span>)
+00349   {
+00350     $sql = <span class="stringliteral">"REPLACE INTO "</span>.MAIN_DB_PREFIX.<span class="stringliteral">"user_param "</span>;
+00351     $sql .= <span class="stringliteral">" SET fk_user ="</span>.$user-&gt;id;
+00352     $sql .= <span class="stringliteral">" ,page='"</span>.$GLOBALS[<span class="stringliteral">"SCRIPT_URL"</span>] . <span class="stringliteral">"'"</span>;
+00353     $sql .= <span class="stringliteral">" ,param='begin'"</span>;
+00354     $sql .= <span class="stringliteral">" ,value='"</span>.$value.<span class="stringliteral">"'"</span>;
+00355     
+00356     $db-&gt;query($sql);
+00357     $user-&gt;page_param[<span class="stringliteral">"begin"</span>] = $value;
+00358   }
+00359       <span class="keywordflow">if</span> ($key == <span class="stringliteral">"page"</span>)
+00360   {
+00361     $sql = <span class="stringliteral">"REPLACE INTO "</span>.MAIN_DB_PREFIX.<span class="stringliteral">"user_param "</span>;
+00362     $sql .= <span class="stringliteral">" SET fk_user ="</span>.$user-&gt;id;
+00363     $sql .= <span class="stringliteral">" ,page='"</span>.$GLOBALS[<span class="stringliteral">"SCRIPT_URL"</span>] . <span class="stringliteral">"'"</span>;
+00364     $sql .= <span class="stringliteral">" ,param='page'"</span>;
+00365     $sql .= <span class="stringliteral">" ,value='"</span>.$value.<span class="stringliteral">"'"</span>;
+00366     
+00367     $db-&gt;query($sql);
+00368     $user-&gt;page_param[<span class="stringliteral">"page"</span>] = $value;
+00369   }
+00370     }
+00371 }
+00372 
+00373 function transcoS2L($zonein,$devise)
+00374 { 
+00375   <span class="comment">// Open source offert par &lt;A HREF="mailto:alainfloch@free.fr?subject=chif2let"&gt;alainfloch@free.fr&lt;/A&gt; 28/10/2001, sans garantie.</span>
+00376   <span class="comment">// début de la fonction de transcodification de somme en toutes lettres</span>
+00377 
+00378   <span class="comment">/*  $zonein = "123,56";  </span>
+00379 <span class="comment">   *  $devise = "E"; // préciser F si francs , sinon ce sera de l'euro</span>
+00380 <span class="comment">   *  $r = transcoS2L($zonein,$devise); // appeler la fonction</span>
+00381 <span class="comment">   *  echo "résultat   vaut $r&lt;br&gt;";</span>
+00382 <span class="comment">   *  $zonelettresM =  strtoupper($r); // si vous voulez la même zone mais tout en majuscules</span>
+00383 <span class="comment">   *  echo "résultat en Majuscules  vaut $zonelettresM&lt;br&gt;";</span>
+00384 <span class="comment">   *  $zonein = "1,01";</span>
+00385 <span class="comment">   *  $r = transcoS2L($zonein,$devise);</span>
+00386 <span class="comment">   *  echo "résultat   vaut $r&lt;br&gt;";</span>
+00387 <span class="comment">   */</span>
+00388 
+00389 
+00390   <span class="keywordflow">if</span> ($devise == <span class="stringliteral">"F"</span>)
+00391     {
+00392       $unite_singulier = <span class="stringliteral">" franc "</span>;
+00393       $unite_pluriel = <span class="stringliteral">" francs "</span>;
+00394       $cent_singulier = <span class="stringliteral">" centime"</span>;
+00395     }
+00396   <span class="keywordflow">else</span>
+00397     {
+00398       $unite_singulier = <span class="stringliteral">" euro "</span>;
+00399       $unite_pluriel = <span class="stringliteral">" euros "</span>;
+00400       $cent_singulier = <span class="stringliteral">" centime"</span>;
+00401     }
+00402   
+00403   $arr1_99 = array(<span class="stringliteral">"zéro"</span>,<span class="stringliteral">"un"</span>,<span class="stringliteral">"deux"</span>,<span class="stringliteral">"trois"</span>,
+00404        <span class="stringliteral">"quatre"</span>,<span class="stringliteral">"cinq"</span>,<span class="stringliteral">"six"</span>,<span class="stringliteral">"sept"</span>,
+00405        <span class="stringliteral">"huit"</span>,<span class="stringliteral">"neuf"</span>,<span class="stringliteral">"dix"</span>,<span class="stringliteral">"onze"</span>,<span class="stringliteral">"douze"</span>,
+00406        <span class="stringliteral">"treize"</span>,<span class="stringliteral">"quatorze"</span>,<span class="stringliteral">"quinze"</span>,<span class="stringliteral">"seize"</span>,
+00407        <span class="stringliteral">"dix-sept"</span>,<span class="stringliteral">"dix-huit"</span>,<span class="stringliteral">"dix-neuf"</span>,<span class="stringliteral">"vingt "</span>);
+00408 
+00409   $arr1_99[30] = <span class="stringliteral">"trente "</span>;
+00410   $arr1_99[40] = <span class="stringliteral">"quarante "</span>;
+00411   $arr1_99[50] = <span class="stringliteral">"cinquante "</span>;
+00412   $arr1_99[60] = <span class="stringliteral">"soixante "</span>;
+00413   $arr1_99[70] = <span class="stringliteral">"soixante-dix "</span>;
+00414   $arr1_99[71] = <span class="stringliteral">"soixante et onze"</span>;
+00415   $arr1_99[80] = <span class="stringliteral">"quatre-vingts "</span>;
+00416   $i = 22;
+00417   <span class="keywordflow">while</span> ($i &lt; 63) {<span class="comment">// initialise la  table</span>
+00418     $arr1_99[$i - 1] = $arr1_99[$i - 2].<span class="stringliteral">" et un"</span>;
+00419     $j = 0;
+00420     <span class="keywordflow">while</span> ($j &lt; 8) {
+00421       $k = $i + $j;
+00422       $arr1_99[$k] = $arr1_99[$i - 2].$arr1_99[$j + 2];
+00423       $j++;
+00424     }
+00425     $i = $i + 10;
+00426   } <span class="comment">// fin initialise la table</span>
+00427 
+00428   $i = 12;
+00429   <span class="keywordflow">while</span> ($i &lt; 20) {<span class="comment">// initialise la  table (suite)</span>
+00430     $j = 60 + $i;
+00431     $arr1_99[$j] = <span class="stringliteral">"soixante-"</span>.$arr1_99[$i];
+00432     $i++;
+00433   } <span class="comment">// fin initialise la  table (suite)</span>
+00434 
+00435   $i = 1;
+00436   <span class="keywordflow">while</span> ($i &lt; 20) {<span class="comment">// initialise la  table (fin)</span>
+00437     $j = 80 + $i;
+00438     $arr1_99[$j] = <span class="stringliteral">"quatre-vingt-"</span>.$arr1_99[$i];
+00439     $i++;
+00440   } <span class="comment">// fin initialise la  table (fin)</span>
+00441   <span class="comment">// echo "Pour une valeur en entrée = $zonein&lt;br&gt;"; //pour ceux qui ne croient que ce qu'ils voient !</span>
+00442   <span class="comment">// quelques petits controles s'imposent !! </span>
+00443   $valid = <span class="stringliteral">"[a-zA-Z\&amp;\é\"\'\(\-\è\_\ç\à\)\=\;\:\!\*\$\^&lt;&gt;]"</span>;
+00444   <span class="keywordflow">if</span> (ereg($valid,$zonein))
+00445     {
+00446       $r = <span class="stringliteral">"&lt;b&gt;la chaîne "</span>.$zonein.<span class="stringliteral">" n'est pas valide&lt;/b&gt;"</span>;
+00447       <span class="keywordflow">return</span>($r);
+00448     }
+00449   $zone = explode(<span class="stringliteral">" "</span>,$zonein); <span class="comment">// supprimer les blancs séparateurs</span>
+00450   $zonein = implode(<span class="stringliteral">""</span>,$zone); <span class="comment">// reconcatène la zone input</span>
+00451   $zone = explode(<span class="stringliteral">"."</span>,$zonein); <span class="comment">// supprimer les points séparateurs</span>
+00452   $zonein = implode(<span class="stringliteral">""</span>,$zone); <span class="comment">// reconcatène la zone input, ça c'est fort ! merci PHP</span>
+00453   $virg = strpos($zonein,<span class="stringliteral">","</span>,1); <span class="comment">// à la poursuite de la virgule</span>
+00454   $i = strlen($zonein); <span class="comment">// et de la longueur de la zone input</span>
+00455   <span class="keywordflow">if</span> ($virg == 0) { <span class="comment">// ya pas de virgule</span>
+00456     <span class="keywordflow">if</span> ($i &gt; 7)
+00457       {
+00458   $r = <span class="stringliteral">"&lt;b&gt;la chaîne "</span>.$zonein.<span class="stringliteral">" est trop longue (maxi = 9 millions)&lt;/b&gt;"</span>;
+00459   <span class="keywordflow">return</span>($r);
+00460       }
+00461     $deb = 7 - $i;
+00462     $zoneanaly = substr($zonechiffres,0,$deb).$zonein.<span class="stringliteral">",00"</span>;
+00463   }
+00464   <span class="keywordflow">else</span>
+00465     { <span class="comment">//ya une virgule</span>
+00466       $ti = explode(<span class="stringliteral">","</span>,$zonein); <span class="comment">// mettre de côté ce qu'il y a devant la virgule</span>
+00467       $i = strlen($ti[0]); <span class="comment">// en controler la longueur</span>
+00468       $zonechiffres = <span class="stringliteral">"0000000,00"</span>;
+00469       <span class="keywordflow">if</span> ($i &gt; 7)
+00470   {
+00471     $r = <span class="stringliteral">"&lt;b&gt;la chaîne "</span>.$zonein.<span class="stringliteral">" est trop longue (maxi = 9 millions,00)&lt;/b&gt;"</span>;
+00472     <span class="keywordflow">return</span>($r);
+00473   }
+00474       $deb = 7 - $i;
+00475       $zoneanaly = substr($zonechiffres,0,$deb).$zonein;
+00476     }
+00477   $M= substr($zoneanaly,0,1);
+00478   <span class="keywordflow">if</span> ($M != 0)
+00479     { <span class="comment">// qui veut gagner des millions</span>
+00480       $r =   $arr1_99[$M].<span class="stringliteral">" million"</span>;
+00481       <span class="keywordflow">if</span> ($M ==1) $r =  $r.<span class="stringliteral">" "</span>;
+00482       <span class="keywordflow">else</span> $r = $r.<span class="stringliteral">"s "</span>;
+00483       <span class="keywordflow">if</span> (substr($zoneanaly,1,6)==0)
+00484   {
+00485     <span class="keywordflow">if</span> ($devise == <span class="charliteral">'F'</span>) $r = $r.<span class="stringliteral">" de "</span>;
+00486     <span class="keywordflow">else</span> $r = $r.<span class="stringliteral">"d'"</span>;
+00487   }
+00488     }
+00489   $CM= substr($zoneanaly,1,1);
+00490   <span class="keywordflow">if</span> ($CM == 1)
+00491     { <span class="comment">// qui veut gagner des centaines de mille</span>
+00492       $r = $r.<span class="stringliteral">" cent "</span>;
+00493     }
+00494  <span class="keywordflow">else</span>
+00495    { <span class="comment">// ya des centaines de mille</span>
+00496   <span class="keywordflow">if</span> ($CM &gt; 1)
+00497     {
+00498       $r = $r. $arr1_99[$CM].<span class="stringliteral">" cent "</span>;
+00499     }
+00500    } <span class="comment">// fin du else ya des centaines de mille</span>
+00501   $MM= substr($zoneanaly,2,2);
+00502   <span class="keywordflow">if</span> (substr($zoneanaly,2,1)==0){ $MM = substr($zoneanaly,3,1);} <span class="comment">// enlever le zéro des milliers cause indexation</span>
+00503   <span class="keywordflow">if</span> ($MM ==0 &amp;&amp; $CM &gt; 0)
+00504     {
+00505       $r = $r.<span class="stringliteral">"mille "</span>;
+00506     }
+00507   <span class="keywordflow">if</span> ($MM != 0)
+00508     {
+00509       <span class="keywordflow">if</span> ($MM == 80)
+00510   {
+00511     $r = $r.<span class="stringliteral">"quatre-vingt mille "</span>;
+00512   }
+00513       <span class="keywordflow">else</span>
+00514   {
+00515     <span class="keywordflow">if</span> ($MM &gt; 1 )
+00516       {
+00517         $r = $r.$arr1_99[$MM].<span class="stringliteral">" mille "</span>;
+00518       }
+00519     <span class="keywordflow">else</span>
+00520       {
+00521         <span class="keywordflow">if</span> ($CM == 0) $r = $r.<span class="stringliteral">" mille "</span>;
+00522         <span class="keywordflow">else</span>
+00523     {
+00524       $r = $r.$arr1_99[$MM].<span class="stringliteral">" mille "</span>;
+00525     }
+00526       }
+00527   }
+00528     }
+00529   $C2= substr($zoneanaly,5,2);
+00530   <span class="keywordflow">if</span> (substr($zoneanaly,5,1)==0){ $C2 = substr($zoneanaly,6,1);} <span class="comment">// enlever le zéro des centaines cause indexation</span>
+00531   $C1= substr($zoneanaly,4,1);
+00532   <span class="keywordflow">if</span> ($C2 ==0 &amp;&amp; $C1 &gt; 1)
+00533     {
+00534       $r = $r.$arr1_99[$C1].<span class="stringliteral">" cents "</span>;
+00535     }
+00536   <span class="keywordflow">else</span>
+00537     {
+00538       <span class="keywordflow">if</span> ($C1 == 1) $r = $r.<span class="stringliteral">" cent "</span>;
+00539       <span class="keywordflow">else</span>
+00540   {
+00541     <span class="keywordflow">if</span> ($C1 &gt; 1) $r = $r.$arr1_99[$C1].<span class="stringliteral">" cent "</span>;
+00542   }
+00543     }
+00544   <span class="keywordflow">if</span> ($C2 != 0) 
+00545     {
+00546       $r = $r.$arr1_99[$C2];
+00547     }
+00548   <span class="keywordflow">if</span> ($virg !=0)
+00549     {
+00550       <span class="keywordflow">if</span> ($ti[0] &gt; 1) $r = $r. $unite_pluriel; <span class="keywordflow">else</span> $r = <span class="stringliteral">"un "</span>.$unite_singulier;
+00551     }
+00552   <span class="keywordflow">else</span>
+00553     {
+00554       <span class="keywordflow">if</span> ($zonein &gt; 1) $r = $r.$unite_pluriel; <span class="keywordflow">else</span> $r = <span class="stringliteral">"un "</span>.$unite_singulier;
+00555     }
+00556   $UN= substr($zoneanaly,8,2);
+00557   <span class="keywordflow">if</span> ($UN != <span class="stringliteral">"00"</span>)
+00558     {
+00559       $cts = $UN;
+00560       <span class="keywordflow">if</span> (substr($UN,0,1)==0){ $cts = substr($UN,1,1);} <span class="comment">// enlever le zéro des centimes cause indexation</span>
+00561       $r = $r.<span class="stringliteral">" et "</span>. $arr1_99[$cts].$cent_singulier;
+00562       <span class="keywordflow">if</span> ($UN &gt; 1) $r =$r.<span class="stringliteral">"s"</span>; <span class="comment">// accorde au pluriel</span>
+00563     }
+00564   $r1 = ltrim($r); <span class="comment">// enleve quelques blancs possibles en début de zone</span>
+00565   $r = ucfirst($r1); <span class="comment">// met le 1er caractère en Majuscule, c'est + zoli</span>
+00566   <span class="keywordflow">return</span>($r); <span class="comment">// retourne le résultat</span>
+00567 } <span class="comment">// fin fonction transcoS2L</span>
+00568 
+00569 
+00570 
+00571 function print_liste_field_titre($name, $file, $field, $begin=<span class="stringliteral">""</span>, $options=<span class="stringliteral">""</span>)
+00572  {
+00573   global $conf;
+00574 
+00575   print $name.<span class="stringliteral">"&amp;nbsp;"</span>;
+00576   print '&lt;a href=<span class="stringliteral">"'.$file.'?sortfield='.$field.'&amp;amp;sortorder=asc&amp;amp;begin='.$begin.$options.'"</span>&gt;';
+00577   print '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.$conf-&gt;theme.'/img/1downarrow.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"A-Z"</span>&gt;&lt;/a&gt;';
+00578   print '&lt;a href=<span class="stringliteral">"'.$file.'?sortfield='.$field.'&amp;amp;sortorder=desc&amp;amp;begin='.$begin.$options.'"</span>&gt;';
+00579   print '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.$conf-&gt;theme.'/img/1uparrow.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"Z-A"</span>&gt;&lt;/a&gt;';
+00580 }
+00581 
+00582 function print_liste_field_titre_new($name, $file, $field, $begin=<span class="stringliteral">""</span>, $options=<span class="stringliteral">""</span>, $td=<span class="stringliteral">""</span>, $sortfield=<span class="stringliteral">""</span>)
+00583  {
+00584    <span class="comment">/*</span>
+00585 <span class="comment">    * idem à la fonction ci dessus mais ajoute des fonctionnalités</span>
+00586 <span class="comment">    *</span>
+00587 <span class="comment">    *</span>
+00588 <span class="comment">    */</span>
+00589   global $conf;
+00590   <span class="keywordflow">if</span> ($sortfield == $field)
+00591     {
+00592   print '&lt;td <span class="keyword">class</span>=<span class="stringliteral">"menusel"</span> '. $td.<span class="charliteral">'&gt;'</span>;
+00593     }
+00594   <span class="keywordflow">else</span>
+00595     {
+00596   print '&lt;td '. $td.<span class="charliteral">'&gt;'</span>;
+00597     }
+00598   print $name.<span class="stringliteral">"&amp;nbsp;"</span>;
+00599   print '&lt;a href=<span class="stringliteral">"'.$file.'?sortfield='.$field.'&amp;amp;sortorder=asc&amp;amp;begin='.$begin.$options.'"</span>&gt;';
+00600   print '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.$conf-&gt;theme.'/img/1downarrow.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"A-Z"</span>&gt;&lt;/a&gt;';
+00601   print '&lt;a href=<span class="stringliteral">"'.$file.'?sortfield='.$field.'&amp;amp;sortorder=desc&amp;amp;begin='.$begin.$options.'"</span>&gt;';
+00602   print '&lt;img src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.$conf-&gt;theme.'/img/1uparrow.png"</span> border=<span class="stringliteral">"0"</span> alt=<span class="stringliteral">"Z-A"</span>&gt;&lt;/a&gt;';
+00603   print <span class="stringliteral">"&lt;/td&gt;"</span>;
+00604 }
+00605 
+00606 <span class="comment">/*</span>
+00607 <span class="comment"> *</span>
+00608 <span class="comment"> */</span>
+00609 function print_titre($titre)
+00610 {
+00611   print '&lt;div <span class="keyword">class</span>=<span class="stringliteral">"titre"</span>&gt;'.$titre.'&lt;/div&gt;';
+00612 }
+00613 <span class="comment">/*</span>
+00614 <span class="comment"> * Idem que print_titre mais offre en plus possibilité de mettre un text à droite</span>
+00615 <span class="comment"> */</span>
+00616 function print_fiche_titre($titre, $mesg='')
+00617 {
+00618   print <span class="stringliteral">"\n"</span>.'&lt;table width=<span class="stringliteral">"100%"</span> border=<span class="stringliteral">"0"</span> cellpadding=<span class="stringliteral">"3"</span> cellspacing=<span class="stringliteral">"0"</span>&gt;';
+00619   print '&lt;tr&gt;&lt;td&gt;&lt;div <span class="keyword">class</span>=<span class="stringliteral">"titre"</span> valign=<span class="stringliteral">"middle"</span>&gt;'.$titre.'&lt;/div&gt;&lt;/td&gt;';
+00620   <span class="keywordflow">if</span> (strlen($mesg))
+00621     {
+00622       print '&lt;td align=<span class="stringliteral">"right"</span> valign=<span class="stringliteral">"middle"</span>&gt;&lt;b&gt;'.$mesg.'&lt;/b&gt;&lt;/td&gt;';
+00623     }
+00624   print '&lt;/tr&gt;&lt;/table&gt;'.<span class="stringliteral">"\n"</span>;
+00625 }
+00626 
+00627 <span class="comment">/*</span>
+00628 <span class="comment"> *</span>
+00629 <span class="comment"> *</span>
+00630 <span class="comment"> */</span>
+00631 function dol_delete_file($file)
+00632 {
+00633   <span class="keywordflow">return</span> unlink($file);
+00634 }
+00635 
+00636 <span class="comment">/*</span>
+00637 <span class="comment"> *</span>
+00638 <span class="comment"> *</span>
+00639 <span class="comment"> */</span>
+00640 function block_access()
+00641 {
+00642   llxHeader();
+00643   print <span class="stringliteral">"Accés refusé"</span>;
+00644   llxFooter();
+00645 } 
+00646 
+00647 <span class="comment">/*</span>
+00648 <span class="comment"> *</span>
+00649 <span class="comment"> *</span>
+00650 <span class="comment"> */</span>
+00651 
+00652 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $form='', $num=-1)
+00653  {
+00654   global $conf;
+00655 
+00656   <span class="keywordflow">if</span> ($num &gt; $conf-&gt;liste_limit or $num == -1)
+00657     {
+00658       $nextpage = 1;
+00659     }
+00660   <span class="keywordflow">else</span>
+00661     {
+00662       $nextpage = 0;
+00663     }
+00664 
+00665   print '&lt;table width=<span class="stringliteral">"100%"</span> border=<span class="stringliteral">"0"</span> cellpadding=<span class="stringliteral">"3"</span> cellspacing=<span class="stringliteral">"0"</span>&gt;';
+00666 
+00667  <span class="keywordflow">if</span> ($page &gt; 0) 
+00668    {
+00669      print '&lt;tr&gt;&lt;td&gt;&lt;div <span class="keyword">class</span>=<span class="stringliteral">"titre"</span>&gt;'.$titre.' - page '.($page+1).'&lt;/div&gt;&lt;/td&gt;';
+00670    }
+00671  <span class="keywordflow">else</span>
+00672    {
+00673      print '&lt;tr&gt;&lt;td&gt;&lt;div <span class="keyword">class</span>=<span class="stringliteral">"titre"</span>&gt;'.$titre.'&lt;/div&gt;&lt;/td&gt;';
+00674    }
+00675 
+00676  <span class="keywordflow">if</span> ($form)
+00677    {
+00678      print '&lt;td align=<span class="stringliteral">"left"</span>&gt;'.$form.'&lt;/td&gt;';
+00679    }
+00680 
+00681   print '&lt;td align=<span class="stringliteral">"right"</span>&gt;';
+00682 
+00683   <span class="keywordflow">if</span> (strlen($sortfield))
+00684     {
+00685       $options .= <span class="stringliteral">"&amp;amp;sortfield=$sortfield"</span>;
+00686     }
+00687 
+00688   <span class="keywordflow">if</span> (strlen($sortorder))
+00689     {
+00690       $options .= <span class="stringliteral">"&amp;amp;sortorder=$sortorder"</span>;
+00691     }
+00692 
+00693   <span class="comment">// affichage des fleches de navigation</span>
+00694 
+00695   print_fleche_navigation($page,$file,$options, $nextpage);
+00696 
+00697   print '&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;';
+00698 }
+00699 
+00700 <span class="comment">/*</span>
+00701 <span class="comment"> * fonction servant a afficher les fleches de navigation dans les</span>
+00702 <span class="comment"> * pages de liste</span>
+00703 <span class="comment"> */</span>
+00704 function print_fleche_navigation($page,$file,$options='', $nextpage)
+00705 {
+00706   global $conf;
+00707   <span class="keywordflow">if</span> ($page &gt; 0) 
+00708     {
+00709       print '&lt;a href=<span class="stringliteral">"'.$file.'?page='.($page-1).$options.'"</span>&gt;&lt;img alt=<span class="stringliteral">"Page précédente"</span> src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.$conf-&gt;theme.'/img/1leftarrow.png"</span> border=<span class="stringliteral">"0"</span>&gt;&lt;/a&gt;';
+00710     }
+00711 
+00712   <span class="keywordflow">if</span> ($nextpage &gt; 0) 
+00713     {
+00714       print '&lt;a href=<span class="stringliteral">"'.$file.'?page='.($page+1).$options.'"</span>&gt;&lt;img alt=<span class="stringliteral">"Page suivante"</span> src=<span class="stringliteral">"'.DOL_URL_ROOT.'/theme/'.$conf-&gt;theme.'/img/1rightarrow.png"</span> border=<span class="stringliteral">"0"</span>&gt;&lt;/a&gt;';
+00715     }
+00716 }
+00717 <span class="comment">/*</span>
+00718 <span class="comment"> *</span>
+00719 <span class="comment"> *</span>
+00720 <span class="comment"> */</span>
+00721 function print_oui_non($value)
+00722 {
+00723   <span class="keywordflow">if</span> ($value)
+00724     {
+00725       print '&lt;option value=<span class="stringliteral">"0"</span>&gt;non';
+00726       print '&lt;option value=<span class="stringliteral">"1"</span> selected&gt;oui';
+00727     }
+00728   <span class="keywordflow">else</span>
+00729     {
+00730       print '&lt;option value=<span class="stringliteral">"0"</span> selected&gt;non';
+00731       print '&lt;option value=<span class="stringliteral">"1"</span>&gt;oui';
+00732     }
+00733 }
+00734 <span class="comment">/*</span>
+00735 <span class="comment"> *</span>
+00736 <span class="comment"> *</span>
+00737 <span class="comment"> */</span>
+00738 function print_date_select($set_time='')
+00739 {
+00740   <span class="keywordflow">if</span> (! $set_time)
+00741     {
+00742       $set_time = time();
+00743     }
+00744 
+00745   $strmonth[1] = <span class="stringliteral">"Janvier"</span>;
+00746   $strmonth[2] = <span class="stringliteral">"F&amp;eacute;vrier"</span>;
+00747   $strmonth[3] = <span class="stringliteral">"Mars"</span>;
+00748   $strmonth[4] = <span class="stringliteral">"Avril"</span>;
+00749   $strmonth[5] = <span class="stringliteral">"Mai"</span>;
+00750   $strmonth[6] = <span class="stringliteral">"Juin"</span>;
+00751   $strmonth[7] = <span class="stringliteral">"Juillet"</span>;
+00752   $strmonth[8] = <span class="stringliteral">"Ao&amp;ucirc;t"</span>;
+00753   $strmonth[9] = <span class="stringliteral">"Septembre"</span>;
+00754   $strmonth[10] = <span class="stringliteral">"Octobre"</span>;
+00755   $strmonth[11] = <span class="stringliteral">"Novembre"</span>;
+00756   $strmonth[12] = <span class="stringliteral">"D&amp;eacute;cembre"</span>;
+00757     
+00758   $smonth = 1; $endmonth = 12;
+00759   $sday = 1; $endday = 31;
+00760 
+00761   $cday = date(<span class="stringliteral">"d"</span>, $set_time);
+00762   $cmonth = date(<span class="stringliteral">"n"</span>, $set_time);
+00763   $syear = date(<span class="stringliteral">"Y"</span>, $set_time);
+00764 
+00765   print <span class="stringliteral">"&lt;select name=\"reday\"&gt;"</span>;    
+00766 
+00767   <span class="keywordflow">for</span> ($day = 1 ; $day &lt;= $endday ; $day++) 
+00768     {
+00769       <span class="keywordflow">if</span> ($day == $cday)
+00770   {
+00771     print <span class="stringliteral">"&lt;option value=\"$day\" selected&gt;$day"</span>;
+00772   }
+00773       <span class="keywordflow">else</span> 
+00774   {
+00775     print <span class="stringliteral">"&lt;option value=\"$day\"&gt;$day"</span>;
+00776   }
+00777     }
+00778 
+00779   print <span class="stringliteral">"&lt;/select&gt;"</span>;
+00780 
+00781 
+00782   print <span class="stringliteral">"&lt;select name=\"remonth\"&gt;"</span>;    
+00783   <span class="keywordflow">for</span> ($month = $smonth ; $month &lt;= $endmonth ; $month++)
+00784     {
+00785       <span class="keywordflow">if</span> ($month == $cmonth)
+00786   {
+00787     print <span class="stringliteral">"&lt;option value=\"$month\" selected&gt;"</span> . $strmonth[$month];
+00788   }
+00789       <span class="keywordflow">else</span>
+00790   {
+00791     print <span class="stringliteral">"&lt;option value=\"$month\"&gt;"</span> . $strmonth[$month];
+00792   }
+00793     }
+00794   print <span class="stringliteral">"&lt;/select&gt;"</span>;
+00795   
+00796   print <span class="stringliteral">"&lt;select name=\"reyear\"&gt;"</span>;
+00797   
+00798   <span class="keywordflow">for</span> ($year = $syear - 2; $year &lt; $syear + 5 ; $year++)
+00799     {
+00800       <span class="keywordflow">if</span> ($year == $syear)
+00801   {
+00802     print <span class="stringliteral">"&lt;option value=\"$year\" SELECTED&gt;$year"</span>;
+00803   }
+00804       <span class="keywordflow">else</span>
+00805   {
+00806     print <span class="stringliteral">"&lt;option value=\"$year\"&gt;$year"</span>;
+00807   }
+00808     }
+00809   print <span class="stringliteral">"&lt;/select&gt;\n"</span>;
+00810   
+00811 }
+00812 <span class="comment">/*</span>
+00813 <span class="comment"> *</span>
+00814 <span class="comment"> *</span>
+00815 <span class="comment"> */</span>
+00816 function print_heure_select($prefix,$begin=1,$end=23) {
+00817   
+00818   print '&lt;select name=<span class="stringliteral">"'.$prefix.'hour"</span>&gt;';
+00819   <span class="keywordflow">for</span> ($hour = $begin ; $hour &lt;= $end ; $hour++) {
+00820     print <span class="stringliteral">"&lt;option value=\"$hour\"&gt;$hour"</span>;
+00821   }
+00822   print <span class="stringliteral">"&lt;/select&gt;&amp;nbsp;H&amp;nbsp;"</span>;
+00823   print '&lt;select name=<span class="stringliteral">"'.$prefix.'min"</span>&gt;';
+00824   <span class="keywordflow">for</span> ($min = 0 ; $min &lt; 60 ; $min=$min+5) {
+00825     <span class="keywordflow">if</span> ($min &lt; 10) {
+00826       $min = <span class="stringliteral">"0"</span> . $min;
+00827     }
+00828     print <span class="stringliteral">"&lt;option value=\"$min\"&gt;$min"</span>;
+00829   }
+00830   print <span class="stringliteral">"&lt;/select&gt;\n"</span>;  
+00831 }
+00832 <span class="comment">/*</span>
+00833 <span class="comment"> *</span>
+00834 <span class="comment"> *</span>
+00835 <span class="comment"> */</span>
+00836 function print_duree_select($prefix)
+00837 {  
+00838   print '&lt;select name=<span class="stringliteral">"'.$prefix.'hour"</span>&gt;';
+00839   print <span class="stringliteral">"&lt;option value=\"0\"&gt;0"</span>;
+00840   print <span class="stringliteral">"&lt;option value=\"1\" SELECTED&gt;1"</span>;
+00841 
+00842   <span class="keywordflow">for</span> ($hour = 2 ; $hour &lt; 13 ; $hour++)
+00843     {
+00844       print <span class="stringliteral">"&lt;option value=\"$hour\"&gt;$hour"</span>;
+00845     }
+00846   print <span class="stringliteral">"&lt;/select&gt;&amp;nbsp;H&amp;nbsp;"</span>;
+00847   print '&lt;select name=<span class="stringliteral">"'.$prefix.'min"</span>&gt;';
+00848   <span class="keywordflow">for</span> ($min = 0 ; $min &lt; 55 ; $min=$min+5)
+00849     {
+00850       print <span class="stringliteral">"&lt;option value=\"$min\"&gt;$min"</span>;
+00851     }
+00852   print <span class="stringliteral">"&lt;/select&gt;\n"</span>;  
+00853 }
+00854 
+00855 <span class="comment">/*</span>
+00856 <span class="comment"> * Return an amount with format "9 999.99"</span>
+00857 <span class="comment"> * Fonction utilisée dans les pdf et les pages</span>
+00858 <span class="comment"> * html</span>
+00859 <span class="comment"> */</span>
+00860 function price($amount, $html=0)
+00861 {
+00862   <span class="keywordflow">if</span> ($html)
+00863     {
+00864 
+00865       $dec=<span class="charliteral">'.'</span>; $thousand=<span class="charliteral">' '</span>;  
+00866       <span class="keywordflow">return</span> ereg_replace(<span class="charliteral">' '</span>,'&amp;nbsp;',number_format($amount, 2, $dec, $thousand));
+00867    
+00868     }
+00869   <span class="keywordflow">else</span>
+00870     {
+00871       <span class="keywordflow">return</span> number_format($amount, 2, <span class="charliteral">'.'</span>, <span class="charliteral">' '</span>);
+00872     }
+00873 
+00874 }
+00875 
+00876 function francs($euros)
+00877 {
+00878   <span class="keywordflow">return</span> price($euros * 6.55957);
+00879 }
+00880 
+00881 function tva($euros, $taux=19.6)
+00882 {
+00883   $taux = $taux / 100 ;
+00884 
+00885   <span class="keywordflow">return</span> sprintf(<span class="stringliteral">"%01.2f"</span>,($euros * $taux));
+00886 }
+00887 function inctva($euros, $taux=1.196)
+00888 {
+00889   <span class="keywordflow">return</span> sprintf(<span class="stringliteral">"%01.2f"</span>,($euros * $taux));
+00890 }
+00891 
+00892 
+00893 <span class="comment">/*</span>
+00894 <span class="comment"> *</span>
+00895 <span class="comment"> *</span>
+00896 <span class="comment"> */</span>
+00897 function stat_print($basename,$bc1,$bc2,$ftc, $jour) {
+00898 
+00899   $db = pg_Connect(<span class="stringliteral">""</span>,<span class="stringliteral">""</span>,<span class="stringliteral">""</span>,<span class="stringliteral">""</span>,<span class="stringliteral">"$basename"</span>);
+00900   <span class="keywordflow">if</span> (!$db) {
+00901     echo <span class="stringliteral">"Pas de connexion a la base\n"</span>; 
+00902     exit ; 
+00903   }
+00904 
+00905   $offset = $jour * 9;
+00906 
+00907   $sql=<span class="stringliteral">"SELECT s.date, s.nb, l.libelle FROM stat_base as s, stat_cat as l WHERE s.cat = l.id ORDER by s.date DESC, s.cat ASC LIMIT 9 OFFSET $offset"</span>;
+00908   
+00909   $result = $db-&gt;query($sql);
+00910   <span class="keywordflow">if</span> (!$result) {
+00911     print <span class="stringliteral">"Erreur SELECT&lt;br&gt;&lt;h1&gt;$sql&lt;/h1&gt;&lt;br&gt;"</span>;
+00912     <span class="keywordflow">return</span> 1;
+00913   }
+00914 
+00915   print <span class="stringliteral">"&lt;table border=1 cellspacing=0 cellpadding=2&gt;"</span>;
+00916   print <span class="stringliteral">"&lt;tr&gt;&lt;td&gt;&lt;font color=\"white\"&gt;base &lt;b&gt;$basename&lt;/b&gt;&lt;/font&gt;&lt;/td&gt;"</span>;
+00917   print <span class="stringliteral">"&lt;td&gt;&lt;font color=\"white\"&gt;libelle&lt;/font&gt;&lt;/td&gt;"</span>;
+00918   print <span class="stringliteral">"&lt;/tr&gt;"</span>;
+00919 
+00920   $num = $db-&gt;num_rows();
+00921   $i = 0;
+00922   
+00923   $tag = 1;
+00924   <span class="keywordflow">while</span> ( $i &lt; $num) {
+00925     $obj = $db-&gt;fetch_object( $i);
+00926 
+00927     $tag = !$tag;
+00928 
+00929     print <span class="stringliteral">"&lt;TR&gt;&lt;TD&gt;$obj-&gt;date&lt;/TD&gt;&lt;TD&gt;$obj-&gt;libelle&lt;/TD&gt;\n"</span>;
+00930     print <span class="stringliteral">"&lt;TD align=\"center\"&gt;$obj-&gt;nb&lt;/TD&gt;&lt;/TR&gt;\n"</span>;
+00931     $i++;
+00932   }
+00933   print <span class="stringliteral">"&lt;/TABLE&gt;"</span>;
+00934   $db-&gt;free();
+00935   
+00936   $db-&gt;close();
+00937 
+00938 }
+00939 
+00940 function tab_count($basename,$bc1,$bc2,$ftc) {
+00941 
+00942   $db = pg_Connect(<span class="stringliteral">""</span>,<span class="stringliteral">""</span>,<span class="stringliteral">""</span>,<span class="stringliteral">""</span>,<span class="stringliteral">"$basename"</span>);
+00943   <span class="keywordflow">if</span> (!$db) {
+00944     echo <span class="stringliteral">"Pas de connexion a la base\n"</span>; 
+00945     exit ; 
+00946   }
+00947 
+00948   $sql=<span class="stringliteral">"SELECT count(*) AS nbcv from candidat WHERE active=1"</span>;
+00949   $result = $db-&gt;query($sql);
+00950   <span class="keywordflow">if</span> (!$result) {
+00951     print <span class="stringliteral">"Erreur SELECT&lt;br&gt;&lt;h1&gt;$sql&lt;/h1&gt;&lt;br&gt;"</span>;
+00952     <span class="keywordflow">return</span> 1;
+00953   }
+00954   print <span class="stringliteral">"&lt;table border=0 bgcolor=black cellspacing=0 cellpadding=0&gt;&lt;tr&gt;&lt;td&gt;"</span>;
+00955   
+00956   print <span class="stringliteral">"&lt;table border=0 cellspacing=1 cellpadding=1&gt;"</span>;
+00957   print <span class="stringliteral">"&lt;tr&gt;&lt;td&gt;&lt;font color=\"white\"&gt;base &lt;b&gt;$basename&lt;/b&gt;&lt;/font&gt;&lt;/td&gt;"</span>;
+00958   print <span class="stringliteral">"&lt;td&gt;&lt;font color=\"white\"&gt;libelle&lt;/font&gt;&lt;/td&gt;"</span>;
+00959   print <span class="stringliteral">"&lt;/tr&gt;"</span>;
+00960   $nbcv = $db-&gt;result( $i, <span class="stringliteral">"nbcv"</span>);
+00961   
+00962   print <span class="stringliteral">"&lt;tr $bc1&gt;&lt;td&gt;&lt;b&gt;$ftc Nombre de CV&lt;/font&gt;&lt;/b&gt;&lt;/td&gt;\n"</span>;
+00963   print <span class="stringliteral">"&lt;td  align=\"center\"&gt;$ftc $nbcv&lt;/td&gt;\n"</span>;
+00964   print <span class="stringliteral">"&lt;/tr&gt;\n"</span>;
+00965   $db-&gt;free();
+00966 
+00967   $sql=<span class="stringliteral">"SELECT count(*) AS nbcv from offre WHERE active=1"</span>;
+00968 
+00969   $result = $db-&gt;query($sql);
+00970   <span class="keywordflow">if</span> (!$result) {
+00971     print <span class="stringliteral">"Erreur SELECT&lt;br&gt;&lt;h1&gt;$sql&lt;/h1&gt;&lt;br&gt;"</span>;
+00972   }  
+00973   $nbcv = $db-&gt;result( $i, <span class="stringliteral">"nbcv"</span>);
+00974   
+00975   print <span class="stringliteral">"&lt;tr $bc2&gt;&lt;td&gt;&lt;b&gt;$ftc Nombre d'offre&lt;/font&gt;&lt;/b&gt;&lt;/td&gt;"</span>;
+00976   print <span class="stringliteral">"&lt;td align=\"center\"&gt;$ftc $nbcv&lt;/td&gt;"</span>;
+00977   print <span class="stringliteral">"&lt;/tr&gt;"</span>;
+00978   
+00979   $db-&gt;free();
+00980   
+00981 
+00982   $sql=<span class="stringliteral">"SELECT count(*) AS nbcv from candidat WHERE active=0"</span>;
+00983 
+00984   $result = $db-&gt;query($sql);
+00985   <span class="keywordflow">if</span> (!$result) {
+00986     print <span class="stringliteral">"Erreur SELECT&lt;br&gt;&lt;h1&gt;$sql&lt;/h1&gt;&lt;br&gt;"</span>;
+00987   }
+00988 
+00989   $nbcv = $db-&gt;result( $i, <span class="stringliteral">"nbcv"</span>);
+00990   
+00991   print <span class="stringliteral">"&lt;tr $bc1&gt;&lt;td&gt;&lt;b&gt;$ftc Nombre de CV inactifs&lt;/font&gt;&lt;/b&gt;&lt;/td&gt;\n"</span>;
+00992   print <span class="stringliteral">"&lt;td align=\"center\"&gt;$ftc $nbcv&lt;/td&gt;"</span>;
+00993   print <span class="stringliteral">"&lt;/tr&gt;"</span>;
+00994   
+00995   $db-&gt;free();
+00996 
+00997 
+00998   $sql=<span class="stringliteral">"SELECT count(*) AS nbcv from offre WHERE active=0"</span>;
+00999   
+01000   $result = $db-&gt;query($sql);
+01001   <span class="keywordflow">if</span> (!$result) {
+01002     print <span class="stringliteral">"Erreur SELECT&lt;br&gt;&lt;h1&gt;$sql&lt;/h1&gt;&lt;br&gt;"</span>;
+01003   }
+01004   
+01005   $nbcv = $db-&gt;result( $i, <span class="stringliteral">"nbcv"</span>);
+01006 
+01007   print <span class="stringliteral">"&lt;tr $bc2&gt;&lt;td&gt;&lt;b&gt;$ftc Nombre d'offres inactives&lt;/font&gt;&lt;/b&gt;&lt;/td&gt;\n"</span>;
+01008   print <span class="stringliteral">"&lt;td  align=\"center\"&gt;$ftc $nbcv&lt;/td&gt;\n"</span>;
+01009   print <span class="stringliteral">"&lt;/tr&gt;\n"</span>;
+01010   
+01011   $db-&gt;free();
+01012     
+01013   $sql=<span class="stringliteral">"SELECT count(*) AS nbsoc from logsoc"</span>;
+01014   
+01015   $result = $db-&gt;query($sql);
+01016   <span class="keywordflow">if</span> (!$result) {
+01017     print <span class="stringliteral">"Erreur SELECT&lt;br&gt;&lt;h1&gt;$sql&lt;/h1&gt;&lt;br&gt;"</span>;
+01018   }
+01019   
+01020   $nbsoc = $db-&gt;result( $i, <span class="stringliteral">"nbsoc"</span>);
+01021   
+01022   print <span class="stringliteral">"&lt;tr $bc1&gt;&lt;td&gt;&lt;b&gt;$ftc Nombre de logins societes&lt;/font&gt;&lt;/b&gt;&lt;/td&gt;\n"</span>;
+01023   print <span class="stringliteral">"&lt;td align=\"center\"&gt;$ftc $nbsoc&lt;/td&gt;"</span>;
+01024   print <span class="stringliteral">"&lt;/tr&gt;"</span>;
+01025 
+01026   print <span class="stringliteral">"&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"</span>;
+01027   
+01028   $db-&gt;close();
+01029 
+01030 }
+01031 
+01032 <span class="comment">/*</span>
+01033 <span class="comment"> * logfile : permet de logguer dans un fichier</span>
+01034 <span class="comment"> * cette fonction ne fonctionenra que si et seulement si le fichier de</span>
+01035 <span class="comment"> * la constante globale MAIN_DEBUG existe et vaut 1</span>
+01036 <span class="comment"> */</span>
+01037 function logfile($str,$log=<span class="stringliteral">"/var/log/dolibarr/dolibarr.log"</span>)
+01038 {
+01039   <span class="keywordflow">if</span> (defined(<span class="stringliteral">"MAIN_DEBUG"</span>) &amp;&amp; MAIN_DEBUG ==1)
+01040     {
+01041       <span class="keywordflow">if</span> (!file_exists($log))
+01042   {
+01043     <span class="keywordflow">if</span> (!$file=fopen($log,<span class="stringliteral">"w"</span>))
+01044       {
+01045         <span class="keywordflow">return</span> 0;
+01046       }
+01047   }
+01048       <span class="keywordflow">else</span>
+01049   {
+01050     <span class="keywordflow">if</span> (!$file=fopen($log,<span class="stringliteral">"a+"</span>))
+01051       {
+01052         <span class="keywordflow">return</span> 0;
+01053       }
+01054   }
+01055       $logentry=date(<span class="stringliteral">"[d/M/Y:H:i:s] "</span>).$str.<span class="stringliteral">"\n"</span>;
+01056       <span class="keywordflow">if</span>(!fwrite($file,$logentry)) {
+01057   fclose($file);
+01058   <span class="keywordflow">return</span> 0;
+01059       }
+01060       fclose($file);
+01061       <span class="keywordflow">return</span> 1;
+01062     }
+01063 }
+01064 
+01065 <span class="comment">/*</span>
+01066 <span class="comment"> * Fonctions reprise sur spip</span>
+01067 <span class="comment"> * http://www.uzine.net/spip/</span>
+01068 <span class="comment"> */</span>
+01069 function creer_pass_aleatoire($longueur = 8, $sel = <span class="stringliteral">""</span>) {
+01070   $seed = (<span class="keywordtype">double</span>) (microtime() + 1) * time();
+01071   srand($seed);
+01072   
+01073   <span class="keywordflow">for</span> ($i = 0; $i &lt; $longueur; $i++) {
+01074     <span class="keywordflow">if</span> (!$s) {
+01075       <span class="keywordflow">if</span> (!$s) $s = rand();
+01076       $s = substr(md5(uniqid($s).$sel), 0, 16);
+01077     }
+01078     $r = unpack(<span class="stringliteral">"Cr"</span>, pack(<span class="stringliteral">"H2"</span>, $s.$s));
+01079     $x = $r[<span class="charliteral">'r'</span>] &amp; 63;
+01080     <span class="keywordflow">if</span> ($x &lt; 10) $x = chr($x + 48);
+01081     <span class="keywordflow">else</span> <span class="keywordflow">if</span> ($x &lt; 36) $x = chr($x + 55);
+01082     <span class="keywordflow">else</span> <span class="keywordflow">if</span> ($x &lt; 62) $x = chr($x + 61);
+01083     <span class="keywordflow">else</span> <span class="keywordflow">if</span> ($x == 63) $x = <span class="charliteral">'/'</span>;
+01084     <span class="keywordflow">else</span> $x = <span class="charliteral">'.'</span>;
+01085     $pass .= $x;
+01086     $s = substr($s, 2);
+01087   }
+01088   <span class="keywordflow">return</span> $pass;
+01089 }
+01090 
+01091 <span class="comment">/*</span>
+01092 <span class="comment"> * Fonctions reprise sur spip</span>
+01093 <span class="comment"> * http://www.uzine.net/spip/</span>
+01094 <span class="comment"> */</span>
+01095 
+01096 function initialiser_sel() {
+01097   global $htsalt;
+01098   
+01099   $htsalt = '$1$'.creer_pass_aleatoire();
+01100 }
+01101 
+01102 ?&gt;
+</div></pre><hr size="1"><address style="align: right;"><small>Généré le Thu Jul 15 14:51:57 2004 pour dolibarr par
+<a href="http://www.doxygen.org/index.html">
+<img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.7 </small></address>
+</body>
+</html>

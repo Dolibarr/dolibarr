@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>dolibarr: htdocs/lib/mysql.lib.php Source File</title>
+<link href="doxygen.css" rel="stylesheet" type="text/css">
+</head><body>
+<!-- Généré par Doxygen 1.3.7 -->
+<div class="qindex"><a class="qindex" href="index.html">Page&nbsp;principale</a> | <a class="qindex" href="files.html">Liste&nbsp;des&nbsp;fichiers</a> | <a class="qindex" href="globals.html">Membres&nbsp;de&nbsp;fichier</a></div>
+<h1>htdocs/lib/mysql.lib.php</h1><a href="mysql_8lib_8php.html">Aller à la documentation de ce fichier.</a><pre class="fragment"><div>00001 &lt;?PHP
+00002 <span class="comment">/* Copyright (C) 2001      Fabien Seisen        &lt;seisen@linuxfr.org&gt;</span>
+00003 <span class="comment"> * Copyright (C) 2002-2004 Rodolphe Quiedeville &lt;rodolphe@quiedeville.org&gt;</span>
+00004 <span class="comment"> * Copyright (C) 2004      Laurent Destailleur  &lt;eldy@users.sourceforge.net&gt;</span>
+00005 <span class="comment"> *</span>
+00006 <span class="comment"> * $Id$</span>
+00007 <span class="comment"> * $Source$</span>
+00008 <span class="comment"> *</span>
+00009 <span class="comment"> * This program is free software; you can redistribute it and/or modify</span>
+00010 <span class="comment"> * it under the terms of the GNU General Public License as published by</span>
+00011 <span class="comment"> * the Free Software Foundation; either version 2 of the License, or</span>
+00012 <span class="comment"> * (at your option) any later version.</span>
+00013 <span class="comment"> *</span>
+00014 <span class="comment"> * This program is distributed in the hope that it will be useful,</span>
+00015 <span class="comment"> * but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+00016 <span class="comment"> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+00017 <span class="comment"> * GNU General Public License for more details.</span>
+00018 <span class="comment"> *</span>
+00019 <span class="comment"> * You should have received a copy of the GNU General Public License</span>
+00020 <span class="comment"> * along with this program; if not, write to the Free Software</span>
+00021 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
+00022 <span class="comment"> *</span>
+00023 <span class="comment"> */</span>
+00024 
+00035 <span class="keyword">class </span>DoliDb {
+00036   var $db, $results, $ok, $connected, $database_selected;
+00037 
+00038   <span class="comment">// Constantes pour code erreurs</span>
+00039   var $ERROR_DUPLICATE=1062;
+00040   var $ERROR_TABLEEXISTS=1050;
+00041 
+00051   Function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '')
+00052 
+00053   <span class="comment">// Se connecte au serveur et éventuellement à une base (si spécifié)</span>
+00054   <span class="comment">// Renvoie 1 en cas de succès, 0 sinon</span>
+00055 
+00056     {
+00057       global $conf;
+00058 
+00059       <span class="keywordflow">if</span> ($host == '')
+00060         {
+00061           $host = $conf-&gt;db-&gt;host;
+00062         }
+00063 
+00064       <span class="keywordflow">if</span> ($user == '')
+00065         {
+00066           $user = $conf-&gt;db-&gt;user;
+00067         }
+00068 
+00069       <span class="keywordflow">if</span> ($pass == '')
+00070         {
+00071           $pass = $conf-&gt;db-&gt;pass;
+00072         }
+00073 
+00074       <span class="keywordflow">if</span> ($name == '')
+00075         {
+00076           $name = $conf-&gt;db-&gt;name;
+00077         }
+00078 
+00079       <span class="comment">//print "Name DB: $host,$user,$pass,$name&lt;br&gt;";</span>
+00080 
+00081       <span class="comment">// Essai connexion serveur</span>
+00082 
+00083       $this-&gt;db = $this-&gt;connect($host, $user, $pass);
+00084 
+00085       <span class="keywordflow">if</span> ($this-&gt;db)
+00086         {
+00087           $this-&gt;connected = 1;
+00088           $this-&gt;ok = 1;
+00089         }
+00090       <span class="keywordflow">else</span>
+00091         {
+00092           $this-&gt;connected = 0;
+00093           $this-&gt;ok = 0;
+00094         }
+00095 
+00096       <span class="comment">// Si connexion serveur ok et si connexion base demandée, on essaie connexion base</span>
+00097 
+00098       <span class="keywordflow">if</span> ($this-&gt;connected &amp;&amp; $name)
+00099         {
+00100 
+00101           <span class="keywordflow">if</span> ($this-&gt;select_db($name) == 1)
+00102             {
+00103               $this-&gt;database_selected = 1;
+00104               $this-&gt;ok = 1;
+00105             }
+00106           <span class="keywordflow">else</span>
+00107             {
+00108               $this-&gt;database_selected = 0;
+00109               $this-&gt;ok = 0;
+00110             }
+00111 
+00112         }
+00113       <span class="keywordflow">else</span>
+00114         {
+00115           <span class="comment">// Pas de selection de base demandée, mais tout est ok</span>
+00116 
+00117           $this-&gt;database_selected = 0;
+00118           $this-&gt;ok = 1;
+00119         }
+00120 
+00121       <span class="keywordflow">return</span> $this-&gt;ok;
+00122     }
+00123 
+00130   Function select_db($database)
+00131     {
+00132       <span class="keywordflow">return</span> mysql_select_db($database, $this-&gt;db);
+00133     }
+00134 
+00143   Function connect($host, $login, $passwd)
+00144     {
+00145       $this-&gt;db  = @mysql_connect($host, $login, $passwd);
+00146       <span class="comment">//print "Resultat fonction connect: ".$this-&gt;db;</span>
+00147       <span class="keywordflow">return</span> $this-&gt;db;
+00148     }
+00149 
+00156   Function create_db($database)
+00157   {
+00158     <span class="keywordflow">if</span> (mysql_create_db ($database, $this-&gt;db))
+00159       {
+00160         <span class="keywordflow">return</span> 1;
+00161       }
+00162     <span class="keywordflow">else</span>
+00163       {
+00164         <span class="keywordflow">return</span> 0;
+00165       }
+00166   }
+00167 
+00173   Function clone()
+00174     {
+00175       $db2 = <span class="keyword">new</span> DoliDb(<span class="stringliteral">""</span>, <span class="stringliteral">""</span>, <span class="stringliteral">""</span>, <span class="stringliteral">""</span>, <span class="stringliteral">""</span>);
+00176       $db2-&gt;db = $this-&gt;db;
+00177       <span class="keywordflow">return</span> $db2;
+00178     }
+00179 
+00188   Function pconnect($host, $login, $passwd)
+00189     {
+00190       $this-&gt;db  = mysql_pconnect($host, $login, $passwd);
+00191       <span class="keywordflow">return</span> $this-&gt;db;
+00192     }
+00193 
+00199   Function close()
+00200   {
+00201     <span class="keywordflow">return</span> mysql_close($this-&gt;db);
+00202   }
+00203 
+00210   Function begin($<span class="keywordflow">do</span>=1)
+00211   {
+00212     <span class="keywordflow">if</span> ($do)
+00213       {
+00214         <span class="keywordflow">return</span> $this-&gt;query(<span class="stringliteral">"BEGIN"</span>);
+00215       }
+00216     <span class="keywordflow">else</span>
+00217       {
+00218         <span class="keywordflow">return</span> 1;
+00219       }
+00220   }
+00221 
+00228   Function commit($<span class="keywordflow">do</span>=1)
+00229   {
+00230     <span class="keywordflow">if</span> ($do)
+00231       {
+00232         <span class="keywordflow">return</span> $this-&gt;query(<span class="stringliteral">"COMMIT"</span>);
+00233       }
+00234     <span class="keywordflow">else</span>
+00235       {
+00236         <span class="keywordflow">return</span> 1;
+00237       }
+00238   }
+00239 
+00246   Function rollback($<span class="keywordflow">do</span>=1)
+00247   {
+00248     <span class="keywordflow">if</span> ($do)
+00249       {
+00250         <span class="keywordflow">return</span> $this-&gt;query(<span class="stringliteral">"ROLLBACK"</span>);
+00251       }
+00252     <span class="keywordflow">else</span>
+00253       {
+00254         <span class="keywordflow">return</span> 1;
+00255       }
+00256   }
+00257 
+00266   Function query($query, $limit=<span class="stringliteral">""</span>, $offset=<span class="stringliteral">""</span>)
+00267     {
+00268       $query = trim($query);
+00269       <span class="comment">//print "&lt;p&gt;$query&lt;/p&gt;\n";</span>
+00270       $this-&gt;results = mysql_query($query, $this-&gt;db);
+00271       <span class="keywordflow">return</span> $this-&gt;results;
+00272     }
+00273 
+00280   Function list_tables($database)
+00281   {
+00282     $this-&gt;results = mysql_list_tables($database, $this-&gt;db);
+00283     <span class="keywordflow">return</span>  $this-&gt;results;
+00284   }
+00285 
+00293   Function result($nb, $fieldname)
+00294     {
+00295       <span class="keywordflow">return</span> mysql_result($this-&gt;results, $nb, $fieldname);
+00296     }
+00297 
+00303   Function free()
+00304     {
+00305       <span class="keywordflow">return</span> mysql_free_result($this-&gt;results);
+00306     }
+00307 
+00313   Function fetch_object()
+00314     {
+00315       <span class="keywordflow">return</span> mysql_fetch_object($this-&gt;results);
+00316     }
+00317 
+00325   Function plimit($limit=0,$offset=0)
+00326     {
+00327       <span class="keywordflow">if</span> ($offset &gt; 0)
+00328         {
+00329           <span class="keywordflow">return</span> <span class="stringliteral">" LIMIT $offset,$limit "</span>;
+00330         }
+00331       <span class="keywordflow">else</span>
+00332         {
+00333           <span class="keywordflow">return</span> <span class="stringliteral">" LIMIT $limit "</span>;
+00334         }
+00335     }
+00336 
+00337 
+00338   Function pdate($fname)
+00339     {
+00340       <span class="keywordflow">return</span> <span class="stringliteral">"unix_timestamp($fname)"</span>;
+00341     }
+00342 
+00349   Function idate($fname)
+00350     {
+00351       <span class="keywordflow">return</span> strftime(<span class="stringliteral">"%Y%m%d%H%M%S"</span>,$fname);
+00352     }
+00353 
+00359   Function fetch_array()
+00360     {
+00361       <span class="keywordflow">return</span> mysql_fetch_array($this-&gt;results);
+00362     }
+00363 
+00369   Function fetch_row()
+00370     {
+00371       <span class="keywordflow">return</span> mysql_fetch_row($this-&gt;results);
+00372     }
+00373 
+00381   Function fetch_field()
+00382     {
+00383       <span class="keywordflow">return</span> mysql_fetch_field($this-&gt;results);
+00384     }
+00385 
+00386 
+00392   Function num_rows()
+00393     {
+00394       <span class="keywordflow">return</span> mysql_num_rows($this-&gt;results);
+00395     }
+00396 
+00402   Function num_fields()
+00403     {
+00404       <span class="keywordflow">return</span> mysql_num_fields($this-&gt;results);
+00405     }
+00406 
+00412   Function error()
+00413     {
+00414       <span class="keywordflow">return</span> mysql_error($this-&gt;db);
+00415     }
+00416 
+00422   Function errno()
+00423     {
+00424       <span class="comment">// $ERROR_DUPLICATE=1062;</span>
+00425       <span class="comment">// $ERROR_TABLEEXISTS=1050;</span>
+00426 
+00427       <span class="keywordflow">return</span> mysql_errno($this-&gt;db);
+00428     }
+00429 
+00435   Function last_insert_id()
+00436     {
+00437       <span class="keywordflow">return</span> mysql_insert_id();
+00438     }
+00439 
+00445   Function affected_rows()
+00446     {
+00447       <span class="keywordflow">return</span> mysql_affected_rows();
+00448     }
+00449 
+00450 }
+00451 
+00452 ?&gt;
+</div></pre><hr size="1"><address style="align: right;"><small>Généré le Thu Jul 15 14:51:57 2004 pour dolibarr par
+<a href="http://www.doxygen.org/index.html">
+<img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.7 </small></address>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>dolibarr: ldap.lib.php File Reference</title>
+<link href="doxygen.css" rel="stylesheet" type="text/css">
+</head><body>
+<!-- Généré par Doxygen 1.3.7 -->
+<div class="qindex"><a class="qindex" href="index.html">Page&nbsp;principale</a> | <a class="qindex" href="files.html">Liste&nbsp;des&nbsp;fichiers</a> | <a class="qindex" href="globals.html">Membres&nbsp;de&nbsp;fichier</a></div>
+<h1>Référence du fichier htdocs/lib/ldap.lib.php</h1>Librairie contenant les fonctions pour accèder au serveur ldap.  
+<a href="#_details">Plus de détails...</a>
+<p>
+
+<p>
+<a href="ldap_8lib_8php-source.html">Aller au code source de ce fichier.</a><table border=0 cellpadding=0 cellspacing=0>
+<tr><td></td></tr>
+<tr><td colspan=2><br><h2>Fonctions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="ldap_8lib_8php.html#a0">dolibarr_ldap_connect</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">ouverture d'une connection vers le serveur ldap.  <a href="#a0"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="ldap_8lib_8php.html#a1">dolibarr_ldap_bind</a> ($ds)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">bind au serveur ldap.  <a href="#a1"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="ldap_8lib_8php.html#a2">dolibarr_ldap_unbind</a> ($ds)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">unbind du serveur ldap.  <a href="#a2"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="ldap_8lib_8php.html#a3">dolibarr_ldap_getversion</a> ($ds)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">verification de la version du serveur ldap.  <a href="#a3"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="ldap_8lib_8php.html#a4">dolibarr_ldap_setversion</a> ($ds, $version)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">changement de la version du serveur ldap.  <a href="#a4"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="ldap_8lib_8php.html#a5">dolibarr_ldap_unacc</a> ($str)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">permet d'enlever les accents d'une chaine.  <a href="#a5"></a><br><br></td></tr>
+</table>
+<hr><a name="_details"></a><h2>Description détaillée</h2>
+Librairie contenant les fonctions pour accèder au serveur ldap. 
+<p>
+<dl compact><dt><b>Auteur:</b></dt><dd>Rodolphe Quiedeville. <p>
+Benoit Mortier. </dd></dl>
+<dl compact><dt><b>Version:</b></dt><dd>1.2.</dd></dl>
+Ensemble des fonctions permettant d'accèder à un serveur ldap.
+<p>
+Définition dans le fichier <a class="el" href="ldap_8lib_8php-source.html">ldap.lib.php</a>.<hr><h2>Documentation des fonctions</h2>
+<a class="anchor" name="a1" doxytag="ldap.lib.php::dolibarr_ldap_bind" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_ldap_bind           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>ds</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+bind au serveur ldap. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>ds</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>bool </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="ldap_8lib_8php-source.html#l00054">54</a> du fichier <a class="el" href="ldap_8lib_8php-source.html">ldap.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a0" doxytag="ldap.lib.php::dolibarr_ldap_connect" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_ldap_connect           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+ouverture d'une connection vers le serveur ldap. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>resource </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="ldap_8lib_8php-source.html#l00040">40</a> du fichier <a class="el" href="ldap_8lib_8php-source.html">ldap.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a3" doxytag="ldap.lib.php::dolibarr_ldap_getversion" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_ldap_getversion           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>ds</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+verification de la version du serveur ldap. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>ds</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>version </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="ldap_8lib_8php-source.html#l00084">84</a> du fichier <a class="el" href="ldap_8lib_8php-source.html">ldap.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a4" doxytag="ldap.lib.php::dolibarr_ldap_setversion" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_ldap_setversion           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>ds</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>version</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+changement de la version du serveur ldap. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>ds</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>version</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>version </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="ldap_8lib_8php-source.html#l00101">101</a> du fichier <a class="el" href="ldap_8lib_8php-source.html">ldap.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a5" doxytag="ldap.lib.php::dolibarr_ldap_unacc" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_ldap_unacc           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>str</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+permet d'enlever les accents d'une chaine. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>str</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>string </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="ldap_8lib_8php-source.html#l00114">114</a> du fichier <a class="el" href="ldap_8lib_8php-source.html">ldap.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a2" doxytag="ldap.lib.php::dolibarr_ldap_unbind" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_ldap_unbind           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>ds</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+unbind du serveur ldap. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>ds</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>bool </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="ldap_8lib_8php-source.html#l00070">70</a> du fichier <a class="el" href="ldap_8lib_8php-source.html">ldap.lib.php</a>.    </td>
+  </tr>
+</table>
+<hr size="1"><address style="align: right;"><small>Généré le Thu Jul 15 14:51:57 2004 pour dolibarr par
+<a href="http://www.doxygen.org/index.html">
+<img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.7 </small></address>
+</body>
+</html>
