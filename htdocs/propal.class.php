@@ -26,7 +26,8 @@
  *
  *
  * @since PHP 4.2.0
- * @author Rodolphe Quiedeville <rodolphe@quiedeville.org>, Éric Seigne <eric.seigne@ryxeo.com>
+ * @author Rodolphe Quiedeville <rodolphe@quiedeville.org>,
+ * @author Éric Seigne <eric.seigne@ryxeo.com>
  * @see http://www.dolibarr.com/
  */
 
@@ -311,7 +312,7 @@ class Propal
       /*
        *
        */
-      $sql = "UPDATE ".MAIN_DB_PREFIX."propal set price=$totalht, tva=$totaltva, total=$totalttc, remise=$total_remise WHERE rowid = $this->id";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."propal set price='$this->total_ht', tva='$totaltva', total='$totalttc', remise='$total_remise' WHERE rowid = $this->id";
       if ( $this->db->query($sql) )
 	{
 	  return 1;
