@@ -236,9 +236,10 @@ drop table llx_c_pays;
 create table llx_c_pays
 (
   rowid    integer PRIMARY KEY,
+  lang     varchar(8)   default 'all' NOT NULL,
   libelle  varchar(25)  NOT NULL,
   code     char(2)      NOT NULL,
-  active      tinyint default 1  NOT NULL,
+  active   tinyint default 1  NOT NULL,
 )type=innodb;
 
 insert into llx_c_pays (rowid,lang,libelle,code) values (0,  'all',   '-',               '');
