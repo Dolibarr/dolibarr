@@ -93,7 +93,7 @@ if ($action == 'pdf')
   propale_pdf_create($db, $propalid, $propal->modelpdf);
 }
 
-if ($action == 'setstatut') 
+if ($action == 'setstatut' && $user->rights->propale->cloturer) 
 {
   /*
    *  Cloture de la propale
@@ -104,7 +104,7 @@ if ($action == 'setstatut')
 
 } 
 
-if ($action == 'modif') 
+if ($action == 'modif' && $user->rights->propale->creer) 
 {
   /*
    *  Repasse la propale en mode brouillon
@@ -115,7 +115,7 @@ if ($action == 'modif')
 
 }
 
-if ($HTTP_POST_VARS["action"] == 'addligne') 
+if ($HTTP_POST_VARS["action"] == 'addligne' && $user->rights->propale->creer) 
 {
   /*
    *  Ajout d'une ligne produit dans la propale
@@ -128,7 +128,7 @@ if ($HTTP_POST_VARS["action"] == 'addligne')
     }
 } 
 
-if ($action == 'del_ligne') 
+if ($action == 'del_ligne' && $user->rights->propale->creer) 
 {
   /*
    *  Supprime une ligne produit dans la propale
@@ -139,7 +139,7 @@ if ($action == 'del_ligne')
   
 }
 
-if ( $action == 'delete' ) 
+if ( $action == 'delete' && $user->rights->propale->supprimer ) 
 {
   $sql = "DELETE FROM llx_propal WHERE rowid = $propalid;";
   if ( $db->query($sql) ) 
@@ -181,11 +181,11 @@ if ($propalid)
   $propal->fetch($propalid);
 
 
-  if ($valid == 1)
+  if ($valid == 1 && $user->rights->propale->valider)
     {
       $propal->update_price($propalid);
       propale_pdf_create($db, $propalid);
-      $propal->valid($user->id);
+      $propal->valid($user);
     }
   /*
    *
@@ -320,9 +320,13 @@ if ($propalid)
 		  print "<TD>[$objp->ref]</TD>\n";
 		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php3?id='.$objp->prodid.'">'.$objp->product.'</td>';
 		  print "<TD align=\"right\">".price($objp->price)."</TD><td align=\"center\">".$objp->qty."</td>\n";
-		  if ($obj->statut == 0)
+		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
 		      print '<td align="center"><a href="propal.php3?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
+		    }
+		  else
+		    {
+		      print '<td>-</td>';
 		    }
 		  print "</tr>";
 
@@ -330,7 +334,7 @@ if ($propalid)
 		}
 
 	    }
-	  if ($obj->statut == 0)
+	  if ($obj->statut == 0 && $user->rights->propale->creer)
 	    {
 
 	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p WHERE p.envente=1 ORDER BY p.nbvente DESC LIMIT 20";
@@ -374,13 +378,20 @@ if ($propalid)
 	  
 	      if ($obj->statut == 0)
 		{
-		  print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=delete\">Supprimer</a>]</td>";
+		  if ($user->rights->propale->supprimer)
+		    {
+		      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=delete\">Supprimer</a>]</td>";
+		    }
+		  else
+		    {
+		      print "<td align=\"center\" width=\"25%\">-</td>";
+		    }
 		}
 	      else
 		{
-		  if ($obj->statut == 1)
+		  if ($obj->statut == 1 && $user->rights->propale->cloturer)
 		    {
-		      print "<td bgcolor=\"#e0e0e0\" align=center>[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Cloturer</a>]</td>";
+		      print "<td align=center>[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Cloturer</a>]</td>";
 		    }
 		  else
 		    {
@@ -390,13 +401,13 @@ if ($propalid)
 	      /*
 	       *
 	       */
-	      if ($obj->statut < 2)
+	      if ($obj->statut < 2 && $user->rights->propale->creer)
 		{
 		  print '<td align="center" width="25%">[<a href="'.$PHP_SELF."?propalid=$propalid&action=pdf\">Générer</a>]</td>";
 		}
 	      else
 		{
-		  print "<td align=\"center\" width=\"25%\">-</td>";
+		  print '<td align="center" width="25%">-</td>';
 		}
 	    
 	      /*
@@ -407,8 +418,15 @@ if ($propalid)
 		  $file = PROPALE_OUTPUTDIR. "/$obj->ref/$obj->ref.pdf";
 		  if (file_exists($file))
 		    {
-		      print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">";
-		      print "[<a href=\"$PHP_SELF?propalid=$propalid&action=presend\">Envoyer la proposition</a>]</td>";
+		      if ($user->rights->propale->envoyer)
+			{
+			  print "<td align=\"center\" width=\"25%\">";
+			  print "[<a href=\"$PHP_SELF?propalid=$propalid&action=presend\">Envoyer la proposition</a>]</td>";
+			}
+		      else
+			{
+			  print '<td align="center" width="25%">-</td>';
+			}
 		    }
 		  else
 		    {
@@ -424,15 +442,29 @@ if ($propalid)
 	       */
 	      if ($obj->statut == 0)
 		{
-		  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
+		  if ($user->rights->propale->valider)
+		    {
+		      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
+		    }
+		  else
+		    {
+		      print '<td align="center" width="25%">-</td>';
+		    }
 		}
 	      elseif ($obj->statut == 1)
 		{
-		  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=modif\">Modifier</a>]</td>";
+		  if ($user->rights->propale->creer)
+		    {
+		      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=modif\">Modifier</a>]</td>";
+		    }
+		  else
+		    {
+		      print '<td align="center" width="25%">-</td>';
+		    }
 		}
 	      else
 		{
-		  print "<td align=\"center\" width=\"25%\">-</td>";
+		  print '<td align="center" width="25%">-</td>';
 		}
 	      print "</tr></table>";
 	    }

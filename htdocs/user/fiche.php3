@@ -401,16 +401,22 @@ else
 	   * Droits
 	   */
 	  print '<table>';
-	  $sql = "SELECT r.id, r.libelle FROM llx_rights_def as r ORDER BY r.id ASC";
+	  $sql = "SELECT r.id, r.libelle, r.module FROM llx_rights_def as r ORDER BY r.id ASC";
 
 	  if ($db->query($sql))
 	    {
 	      $num = $db->num_rows();
 	      $i = 0;
+	      $var = True;
 	      while ($i < $num)
 		{
 		  $obj = $db->fetch_object($i);
-		  print '<tr><td><a href="fiche.php3?id='.$id.'&request=perms&subaction=addrights&rights='.$obj->id.'">Ajouter</a></td><td>';
+		  if ($oldmod <> $obj->module)
+		    {
+		      $oldmod = $obj->module;
+		      $var = !$var;
+		    }
+		  print '<tr '. $bc[$var].'><td><a href="fiche.php3?id='.$id.'&request=perms&subaction=addrights&rights='.$obj->id.'">Ajouter</a></td><td>';
 		  print $obj->libelle . '</td>';
 		  print '<td><a href="fiche.php3?id='.$id.'&request=perms&subaction=delrights&rights='.$obj->id.'">Supprimer</a></td></tr>';
 		  $i++;
