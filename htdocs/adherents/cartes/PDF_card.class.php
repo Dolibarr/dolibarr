@@ -175,7 +175,7 @@ class PDF_card extends FPDF {
 					       'SpaceX'=>0,		
 					       'SpaceY'=>0,	
 					       'width'=>105,		
-					       'height'=>27,		
+					       'height'=>38,		
 					       'font-size'=>10),
 			      'CARD'=>array('name'=>'CARD',	
 					    'paper-size'=>'A4',	
