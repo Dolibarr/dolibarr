@@ -28,7 +28,7 @@ require ("../../master.inc.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/actives.class.php");
+
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.week.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/resiliation.week.class.php");
@@ -42,9 +42,25 @@ $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
 /***********************************************************************/
 /*
+/* Contrats
+/*
+/***********************************************************************/
+
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/contrats/modereglement.class.php");
+
+$file = $img_root . "contrats/modereglement.png";
+if ($verbose) print "Graph : Contrats Reglement $file\n";
+$graph = new GraphContratModeReglement($db, $file);
+$graph->GraphMakeGraph();
+
+
+/***********************************************************************/
+/*
 /* Lignes actives
 /*
 /***********************************************************************/
+
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/actives.class.php");
 
 $file = $img_root . "lignes/lignes.actives.png";
 if ($verbose) print "Graph : Lignes actives$file\n";
