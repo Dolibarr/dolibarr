@@ -50,28 +50,28 @@ function llxHeader($head = "")
       while ($i < $numr) 
 	{
 	  $objp = $db->fetch_object($i);
-	  $menu->add("account.php?account=" . $objp->rowid,  $objp->label);
-	  $menu->add_submenu("releve.php?account=" . $objp->rowid ,"Relevés");
-      $menu->add_submenu("bilanmens.php?account=" . $objp->rowid ,"Bilan mensuel E/S");
+	  $menu->add(DOL_URL_ROOT."/compta/bank/account.php?account=" . $objp->rowid,  $objp->label);
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=" . $objp->rowid ,"Relevés");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilanmens.php?account=" . $objp->rowid ,"Bilan mensuel E/S");
 	  $i++;
 	}
     }
   $db->close;
 
-  $menu->add("index.php","Banque");
+  $menu->add(DOL_URL_ROOT."/compta/bank/index.php","Banque");
 
-  $menu->add_submenu("search.php","Recherche écriture");
-  $menu->add_submenu("budget.php","Budgets");
-  $menu->add_submenu("bilan.php","Bilan");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php","Recherche écriture");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php","Budgets");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilan.php","Bilan");
 
   if ($user->rights->banque->modifier)
     {
-      $menu->add_submenu("virement.php","Virement");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php","Virement");
     }
 
   if ($user->rights->banque->configurer)
     {
-      $menu->add_submenu("config.php","Configuration");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/bank/config.php","Configuration");
     }
 
   if (defined("COMPTA_ONLINE_PAYMENT_BPLC") && COMPTA_ONLINE_PAYMENT_BPLC)
