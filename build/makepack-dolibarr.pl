@@ -20,7 +20,8 @@ $RPMSUBVERSION="1";
 "ZIP"=>"7z",
 "RPM"=>"rpmbuild",
 "DEB"=>"dpkg-buildpackage",
-"EXE"=>"makensis.exe");
+"EXE"=>"makensis.exe"
+);
 %ALTERNATEPATH=(
 "7z"=>"7-ZIP",
 "makensis.exe"=>"NSIS"
@@ -55,6 +56,7 @@ $VERSION="1.0 (build $REVISION)";
 $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $SOURCE="$DIR/../../dolibarr";
+$DESTI="$SOURCE/build";
 
 # Detect OS type
 # --------------
@@ -219,18 +221,18 @@ if ($nboftargetok) {
     		unlink $FILENAMETGZ.tgz;
 #    		unlink $BUILDROOT/$FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-   		    $cmd="tar --exclude-from \"$SOURCE/build/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
+   		    $cmd="tar --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
    		    $ret=`$cmd`;
-#        	$cmd="tar --exclude-from \"$SOURCE/build/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" $FILENAMETGZ";
+#        	$cmd="tar --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" $FILENAMETGZ";
 #        	$ret=`$cmd`;
             if ($OS =~ /windows/i) {
-        		print "Move $FILENAMETGZ.tgz to $SOURCE/build/$FILENAMETGZ.tgz\n";
-        		$ret=`mv "$FILENAMETGZ.tgz" "$SOURCE/build/$FILENAMETGZ.tgz"`;
-#        		$ret=`mv "$BUILDROOT/$FILENAMETGZ.tgz" "$SOURCE/build/$FILENAMETGZ.tgz"`;
+        		print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
+        		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
+#        		$ret=`mv "$BUILDROOT/$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
             }
     		next;
     	}
-    
+
     	if ($target eq 'ZIP') {
     		unlink $FILENAMEZIP.zip;
     		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
@@ -238,8 +240,8 @@ if ($nboftargetok) {
             #print "cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*\n";
             #$ret=`cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
     		$ret=`7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-    		print "Move $FILENAMEZIP.zip to $SOURCE/build/$FILENAMEZIP.zip\n";
-    		rename("$BUILDROOT/$FILENAMEZIP.zip","$SOURCE/build/$FILENAMEZIP.zip");
+		print "Move $FILENAMEZIP.zip to $DESTI\n";
+    		rename("$BUILDROOT/$FILENAMEZIP.zip","$DESTI/$FILENAMEZIP.zip");
     		next;
     	}
     
@@ -253,9 +255,9 @@ if ($nboftargetok) {
     		$cmd="mv \"$BUILDROOT/$FILENAMETGZ.tgz\" \"$RPMDIR/SOURCES/$FILENAMETGZ.tgz\"";
             $ret=`$cmd`;
 
-    		print "Copy $SOURCE/build/rpm/${BUILDFIC} to $BUILDROOT\n";
-#    		$ret=`cp -p "$SOURCE/build/rpm/${BUILDFIC}" "$BUILDROOT"`;
-            open (SPECFROM,"<$SOURCE/build/rpm/${BUILDFIC}") || die "Error";
+    		print "Copy $SOURCE/make/rpm/${BUILDFIC} to $BUILDROOT\n";
+#    		$ret=`cp -p "$SOURCE/make/rpm/${BUILDFIC}" "$BUILDROOT"`;
+            open (SPECFROM,"<$SOURCE/make/rpm/${BUILDFIC}") || die "Error";
             open (SPECTO,">$BUILDROOT/$BUILDFIC") || die "Error";
             while (<SPECFROM>) {
                 $_ =~ s/__VERSION__/$MAJOR.$MINOR.$BUILD/;
@@ -267,8 +269,8 @@ if ($nboftargetok) {
     		print "Launch RPM build (rpm --clean -ba $BUILDROOT/${BUILDFIC})\n";
     		$ret=`rpm --clean -ba $BUILDROOT/${BUILDFIC}`;
     	
-   		    print "Move $RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm into $SOURCE/build/${FILENAMERPM}.noarch.rpm\n";
-   		    $cmd="mv \"$RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm\" \"$SOURCE/build/${FILENAMERPM}.noarch.rpm\"";
+   		    print "Move $RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm into $DESTI/${FILENAMERPM}.noarch.rpm\n";
+   		    $cmd="mv \"$RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm\" \"$DESTI/${FILENAMERPM}.noarch.rpm\"";
     		$ret=`$cmd`;
     		next;
     	}
@@ -283,8 +285,8 @@ if ($nboftargetok) {
     		$command="\"$REQUIREMENTTARGET{$target}\" /DMUI_VERSION_DOT=$MAJOR.$MINOR.$BUILD /X\"SetCompressor bzip2\" \"$SOURCE\\build\\exe\\$FILENAME.nsi\"";
             print "$command\n";
     		$ret=`$command`;
-    		print "Move $FILENAMEEXE.exe to $SOURCE/build/$FILENAMEEXE.exe\n";
-    		rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$SOURCE/build/$FILENAMEEXE.exe");
+    		print "Move $FILENAMEEXE.exe to $DESTI\n";
+    		rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$DESTI/$FILENAMEEXE.exe");
     		next;
     	}
     
@@ -297,7 +299,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
     if ($CHOOSEDTARGET{$target} < 0) {
         print "Package $target not built (bad requirement).\n";
     } else {
-        print "Package $target built succeessfully in $SOURCE/build/\n";
+        print "Package $target built succeessfully in $DESTI\n";
     }
 }
 
