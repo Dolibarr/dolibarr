@@ -29,11 +29,44 @@ class CActioncomm {
       $this->db = $DB;
     }
   /*
+   * Récupération des données
+   *
+   */
+
+  Function fetch($db, $id)
+    {
+
+      $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_actioncomm WHERE id=$id;";
+      
+      if ($db->query($sql) )
+	{
+	  if ($db->num_rows())
+	    {
+	      $obj = $db->fetch_object(0);
+	      
+	      $this->id = $id;
+	      $this->libelle = $obj->libelle;
+	      
+	      $db->free();
+
+	      return 1;
+	    }
+	  else
+	    {
+	      return 0;
+	    }
+	}
+      else
+	{
+	  print $db->error();
+	  return -1;
+	}    
+    }
+  /*
    *
    *
    *
    */
-
   Function liste_array()
   {
     $ga = array();
@@ -63,29 +96,5 @@ class CActioncomm {
 	print $this->db->error();
       }    
   }
-
-
-  Function fetch($db, $id)
-    {
-
-      $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_actioncomm WHERE id=$id;";
-      
-      if ($db->query($sql) )
-	{
-	  if ($db->num_rows())
-	    {
-	      $obj = $db->fetch_object(0);
-	      
-	      $this->id = $id;
-	      $this->libelle = $obj->libelle;
-	      
-	      $db->free();
-	    }
-	}
-      else
-	{
-	  print $db->error();
-	}    
-    }
 }    
 ?>
