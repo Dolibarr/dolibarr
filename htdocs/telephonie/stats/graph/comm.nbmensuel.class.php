@@ -43,15 +43,35 @@ class GraphCommNbMensuel extends GraphBar{
   Function Graph($datas='', $labels='')
   {    
     $this->GetDatas();
-    $this->GraphDraw($this->file, $this->datas, $this->labels);
+
+    if (sizeof($this->datas))
+      {
+	$this->GraphDraw($this->file, $this->datas, $this->labels);
+      }
   }
 
   Function GetDatas()
   {
-    $sql = "SELECT date_format(date, '%Y%m'), count(*)";
-    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-    $sql .= " GROUP BY date_format(date, '%Y%m') ASC";
-    
+    if ($this->client == 0)
+      {
+
+	$sql = "SELECT date_format(date, '%Y%m'), count(*)";
+	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+	$sql .= " GROUP BY date_format(date, '%Y%m') ASC";
+      }
+    else
+      {
+	$sql = "SELECT date_format(td.date,'%Y%m'), count(*)";
+	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
+	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
+
+	$sql .= " WHERE td.ligne = s.ligne";
+	$sql .= " AND s.fk_client_comm = ".$this->client;
+
+	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
+      }    
+
+
     if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
@@ -70,7 +90,7 @@ class GraphCommNbMensuel extends GraphBar{
       }
     else 
       {
-	
+	dolibarr_syslog("Error");
       }
   }
 }  
