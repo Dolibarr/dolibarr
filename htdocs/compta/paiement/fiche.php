@@ -114,7 +114,7 @@ if ($db->query($sql))
   print '<br><table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td>'.$langs->trans("Bill").'</td><td>'.$langs->trans("Company").'</td>';
-  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';	      
+  print '<td align="right">'.$langs->trans("AmountTTC").'</td><td>&nbsp;</td>';
   print "</tr>\n";
   
   if ($num > 0) 
@@ -131,7 +131,7 @@ if ($db->query($sql))
 	  print ' <a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
 	  print "</a></td>\n";
 	  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">' . $objp->nom.'</a></td>';
-	  print '<td align="right">'.price($objp->amount).'</td>';
+	  print '<td align="right">'.price($objp->amount).'</td><td>'.$objp->paye.'</td>';
 	  print "</tr>\n";
 	  if ($objp->paye == 1)
 	    {
@@ -145,7 +145,7 @@ if ($db->query($sql))
   print "<tr $bc[$var]>";
   print '<td>&nbsp;</td>';
   print '<td align="right">Total</td>';
-  print '<td align="right">'.price($total).'</td>';  
+  print '<td align="right">'.price($total).'</td><td>&nbsp;</td>';
   print "</tr>\n";
 
   print "</table>\n";
