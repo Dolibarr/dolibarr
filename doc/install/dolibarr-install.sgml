@@ -133,7 +133,7 @@ Accueil -> Utilisateurs
 <sect1>
 <heading>Autres actions</heading>
 <p>
-Il peut-être nécessaire d'éffectuer d'autres actions lors de la mise à
+Il peut-être nécessaire d'effectuer d'autres actions lors de la mise à
 jour, comme la désactivation et la réactivation des modules. Cette
 information est communiquée dans le fichier README à la racine des sources.
 </p>
