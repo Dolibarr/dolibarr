@@ -63,6 +63,7 @@ if ($action == 'update')
   $product->description = $desc;
 
   $product->update($id, $user);
+  $action = '';
 }
 /*
  *
