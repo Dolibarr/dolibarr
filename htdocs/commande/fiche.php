@@ -168,7 +168,7 @@ if ($action == 'pdf')
   commande_pdf_create($db, $_GET["id"]);
 } 
 
-llxHeader();
+llxHeader('','Fiche commande','ch-commande.html');
 
 
 
@@ -260,7 +260,7 @@ if ($action == 'create')
 	    }	  
 	  else
 	    {
-	      print '<tr><td colspan="2">Services/Produits</td></tr>';
+	      print '<tr><td colspan="3">Services/Produits</td></tr>';
 	      print '<tr><td colspan="3">';
 	      /*
 	       *
@@ -291,7 +291,7 @@ if ($action == 'create')
 		}
 	      	      
 	      print '<table class="noborder" cellspacing="0">';
-	      print '<tr><td>Produit</td><td>Quan.</td><td>Remise</td></tr>';
+	      print '<tr><td>20 Produits les plus vendus</td><td>Quan.</td><td>Remise</td></tr>';
 	      for ($i = 1 ; $i < 5 ; $i++)
 		{
 		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
