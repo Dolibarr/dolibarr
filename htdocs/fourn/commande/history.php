@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -106,7 +106,7 @@ if ($id > 0)
       print "</td></tr>";
 	  
       print '<tr><td>'.$langs->trans("Date").'</td>';
-      print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
+      print '<td colspan="2">'.strftime("%A %d %B %Y",$commande->date_commande)."</td>\n";
 
       print '<td width="50%">&nbsp;';
       print "</td></tr>";
