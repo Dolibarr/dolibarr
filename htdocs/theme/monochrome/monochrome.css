@@ -205,21 +205,6 @@ tr.impair {
             }
 
 /*
- * Classes TABLE
- */
-
-.tablefprod { 
-          background: #444444; 
-          font-family: Helvetica, Verdana; 
-          font-size: 1.0em;
-          color: #eeeeee;
-          border-top:    1px dashed #555555;
-            border-right:  1px dashed #888888;
-            border-bottom: 1px dashed #777777;
-            border-left:   1px dashed #666666; 
-          }
-
-/*
  * Classes TR
  */
 
