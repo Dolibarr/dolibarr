@@ -29,6 +29,19 @@ require("./pre.inc.php");
 if (!$user->rights->banque->lire)
   accessforbidden();
 
+if ($_GET["action"] == 'dvnext')
+{
+  $ac = new Account($db);
+  $ac->datev_next($_GET["dvid"]);
+}
+
+
+if ($_GET["action"] == 'dvprev')
+{
+  $ac = new Account($db);
+  $ac->datev_previous($_GET["dvid"]);
+}
+
 
 llxHeader();
 
@@ -135,7 +148,7 @@ else
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print "<TR class=\"liste_titre\">";
-  print '<td>Date</td><td>Type</td><td width="30%">Description</TD>';
+  print '<td>Date Ope</td><td>Valeur</td><td>Type</td><td width="30%">Description</TD>';
   print '<td align="right">Debit</TD>';
   print '<td align="right">Credit</TD>';
   print '<td align="right">Solde</TD>';
@@ -151,14 +164,14 @@ else
     }
 
 
-  $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
+  $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
   $sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE";
   $sql .= " num_releve='".$_GET["num"]."'";
   if (! $_GET["num"]) {
   	$sql .= " or num_releve is null";
   }
   $sql .= " AND fk_account = ".$acct->id;
-  $sql .= " ORDER BY dateo ASC";
+  $sql .= " ORDER BY datev ASC";
   $result = $db->query($sql);
   if ($result)
     {
@@ -176,7 +189,17 @@ else
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  
-	  print "<td>".strftime("%d %b %Y",$objp->do)."</TD>\n";
+	  print '<td>'.strftime("%d %b %Y",$objp->do).'</td><td valign="center">';
+
+	  /* Mise à jour de la date de valeur */
+
+	  print '<a href="releve.php?action=dvprev&amp;num='.$_GET["num"].'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
+	  print img_previous() . "</a> ";
+	  print strftime("%d/%m/%Y",$objp->dv) ." ";
+	  print '<a href="releve.php?action=dvnext&amp;num='.$_GET["num"].'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
+	  print img_next();
+
+	  print "</td>\n";
 	  print '<td>'.$objp->fk_type.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
 	  print "<td>$objp->label";
 	  
