@@ -726,6 +726,81 @@ else
 	  }
 	print "<p>\n";
 
+
+	print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
+	/*
+	 * Liste des expéditions
+	 */
+	$sql = "SELECT e.rowid,e.ref,".$db->pdate("e.date_expedition")." as de";
+	$sql .= " FROM llx_expedition as e";
+	$sql .= " WHERE e.fk_commande = ". $commande->id;
+	    
+	$result = $db->query($sql);
+	if ($result)
+	  {
+	    $num = $db->num_rows();
+	    if ($num)
+	      {
+		print_titre("Expéditions");
+		$i = 0; $total = 0;
+		print '<table border="1" cellspacing="0" cellpadding="4" width="100%">';
+		print "<tr $bc[$var]><td>Expédition</td><td>Date</td></tr>\n";
+		
+		$var=True;
+		while ($i < $num)
+		  {
+		    $objp = $db->fetch_object( $i);
+		    $var=!$var;
+		    print "<tr $bc[$var]>";
+		    print '<td><a href="../expedition/fiche.php?id='.$objp->rowid.'">'.stripslashes($objp->ref).'</a></td>';
+		    print "<td>".strftime("%d %B %Y",$objp->de)."</td></tr>\n";
+		    $i++;
+		  }
+		print "</table>";
+	      }
+	  }
+	else
+	  {
+	    print $db->error();
+	  }
+	print "&nbsp;</td><td>";
+	/*
+	 * Liste des factures
+	 */
+	$sql = "SELECT f.rowid,f.facnumber,".$db->pdate("f.datef")." as df";
+	$sql .= " FROM llx_facture as f, llx_co_fa as cf";
+	$sql .= " WHERE f.rowid = cf.fk_facture AND cf.fk_commande = ". $commande->id;
+	    
+	$result = $db->query($sql);
+	if ($result)
+	  {
+	    $num = $db->num_rows();
+	    if ($num)
+	      {
+		print_titre("Factures");
+		$i = 0; $total = 0;
+		print '<table border="1" cellspacing="0" cellpadding="4" width="100%">';
+		print "<tr $bc[$var]><td>Facture</td><td>Date</td></tr>\n";
+		
+		$var=True;
+		while ($i < $num)
+		  {
+		    $objp = $db->fetch_object( $i);
+		    $var=!$var;
+		    print "<tr $bc[$var]>";
+		    print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.stripslashes($objp->facnumber).'</a></td>';
+		    print "<td>".strftime("%d %B %Y",$objp->df)."</td></tr>\n";
+		    $i++;
+		  }
+		print "</table>";
+	      }
+	  }
+	else
+	  {
+	    print $db->error();
+	  }
+	print "&nbsp;</td></tr></table>";
+
 	/*
 	 * Documents générés
 	 *
@@ -734,7 +809,7 @@ else
 	
 	if (file_exists($file))
 	  {
-	    print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
+
 	    print_titre("Documents");
 	    print '<table width="100%" cellspacing="0" class="border" cellpadding="3">';
 	    
@@ -751,43 +826,13 @@ else
 	     * Liste des actions
 	     *
 	     */
-	    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-	    $sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $commande->socidp AND a.fk_action in (9,10) AND a.fk_commande = $id";
-	    
-	    $result = $db->query($sql);
-	    if ($result)
-	      {
-		$num = $db->num_rows();
-		if ($num)
-		  {
-		    $i = 0; $total = 0;
-		    print '<table border="1" cellspacing="0" cellpadding="4" width="100%">';
-		    print "<tr $bc[$var]><td>Date</td><td>Action</td></tr>\n";
-		    
-		    $var=True;
-		    while ($i < $num)
-		      {
-			$objp = $db->fetch_object( $i);
-			$var=!$var;
-			print "<tr $bc[$var]>";
-			print "<td>".strftime("%d %B %Y",$objp->da)."</TD>\n";
-			print '<td>'.stripslashes($objp->note).'</TD>';
-			print "</tr>";
-			$i++;
-		      }
-		    print "</table>";
-		  }
-	      }
-	    else
-	      {
-		print $db->error();
-	      }
+
 	    
 	    /*
 	     *
 	     *
 	     */
-	    print "</td></tr></table>";
+
 	  }
 	/*
 	 *
