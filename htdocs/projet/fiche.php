@@ -23,6 +23,7 @@ require("./pre.inc.php");
 require("./project.class.php");
 require("../propal.class.php");
 require("../facture.class.php");
+require("../commande/commande.class.php");
 
 if ($HTTP_POST_VARS["action"] == 'update')
 {
@@ -177,6 +178,41 @@ if ($action == 'create')
 	  print '<td align="right"><b>Total : '.price($total).'</b></td>';
 	  print '<td align="left"><b>'.MAIN_MONNAIE.' HT</b></td></tr></table>';
 	}
+      /*
+       * Commandes
+       *
+       */
+      $commandes = $projet->get_commande_list();
+
+      if (sizeof($commandes)>0 && is_array($commandes))
+	{
+	  print_titre('Listes des commandes associées au projet');
+	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  
+	  print '<TR class="liste_titre">';
+	  print '<td>Réf</td><td>Date</td><td align="right">Prix</td></tr>';
+	  
+	  for ($i = 0; $i<sizeof($commandes);$i++)
+	    {
+	      $commande = new Commande($db);
+	      $commande->fetch($commandes[$i]);
+	      
+	      $var=!$var;
+	      print "<TR $bc[$var]>";
+	      print "<TD><a href=\"../fiche.php?id=$commande->id\">$commande->ref</a></TD>\n";	      
+	      print '<td>'.strftime("%d %B %Y",$commande->date).'</td>';	      
+	      print '<TD align="right">'.price($commande->total_ht).'</td></tr>';
+	      
+	      $total = $total + $commande->total_ht;
+	    }
+	  
+	  print '<tr><td>'.$i.' commandes</td>';
+	  print '<td align="right"><b>Total : '.price($total).'</b></td>';
+	  print '<td align="left"><b>'.MAIN_MONNAIE.' HT</b></td></tr>';
+	  print "</table>";
+	}
+    
+
       /*
        * Factures
        *
