@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/module
   require(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
 }
 
-$sql = "SELECT s.nom, s.idp, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s WHERE s.idp = $socidp;";
+$sql = "SELECT s.nom, s.idp, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s WHERE s.idp = ".$_GET["socidp"];
 
 $result = $db->query($sql);
 if ($result) 
@@ -49,7 +49,7 @@ print_titre("Nouvelle proposition commerciale");
  * Creation d'une nouvelle propale
  *
  */
-if ($action == 'create')
+if ($_GET["action"] == 'create')
 {
   $obj = PROPALE_ADDON;
   $modPropale = new $obj;
@@ -66,12 +66,12 @@ if ($action == 'create')
 	}
     }
     
-  print "<form action=\"propal.php?socidp=$socidp\" method=\"post\">";
+  print "<form action=\"propal.php?socidp=".$_GET["socidp"]."\" method=\"post\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   
   print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
   
-  print '<tr><td>Société</td><td><a href="fiche.php?socid='.$socidp.'">'.$objsoc->nom.'</a></td>';
+  print '<tr><td>Société</td><td><a href="fiche.php?socid='.$_GET["socidp"].'">'.$objsoc->nom.'</a></td>';
   
   print '<td valign="top" colspan="2">';
   print "Commentaires</td></tr>";
@@ -91,44 +91,53 @@ if ($action == 'create')
    * Destinataire de la propale
    *
    */
-  print "<tr><td>Contact</td><td><select name=\"contactidp\">\n";
-  $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $socidp";
+  print "<tr><td>Contact</td><td>\n";
+  $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email FROM ".MAIN_DB_PREFIX."socpeople as p";
+  $sql .= " WHERE p.fk_soc = ".$_GET["socidp"];
   
   if ( $db->query($sql) )
     {
       $i = 0 ;
       $numdest = $db->num_rows(); 
-      while ($i < $numdest)
+  
+      if ($numdest==0)
 	{
-	  $contact = $db->fetch_object( $i);
-	  print '<option value="'.$contact->idp.'"';
-	  if ($contact->idp == $setcontact)
-	    {
-	      print ' SELECTED';
-	    }
-	  print '>'.$contact->firstname.' '.$contact->name.' ['.$contact->email.']</option>';
-	  $i++;
+	  print 'Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale<br>';	
+	  print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socidp.'&amp;action=create">Ajouter un contact</a>';
 	}
+      else
+	{
+	  print "<select name=\"contactidp\">\n";
+	  
+	  while ($i < $numdest)
+	    {
+	      $contact = $db->fetch_object( $i);
+	      print '<option value="'.$contact->idp.'"';
+	      if ($contact->idp == $setcontact)
+		{
+		  print ' SELECTED';
+		}
+	      print '>'.$contact->firstname.' '.$contact->name.' ['.$contact->email.']</option>';
+	      $i++;
+	    }
+	  print '</select>';
+	}
+      
       $db->free();
     }
   else
     {
       print $db->error();
     }
-  print '</select>';
+
   
-  if ($numdest==0)
-    {
-      print 'Cette societe n\'a pas de contact, veuillez en creer un avant de faire de propale</b><br>';
-      print '<a href=people.php?socid='.$socidp.'&action=addcontact>Ajouter un contact</a>';
-    }
   print '</td></tr>';
   /*
    *
    * Projet associé
    *
    */
-  print '<tr><td valign="top">Projet</td><td><select name="projetidp">';
+  print '<tr><td valign="top">Projet</td><td>';
   print '<option value="0"></option>';
   
   $sql = "SELECT p.rowid, p.title FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $socidp";
@@ -137,11 +146,23 @@ if ($action == 'create')
     {
       $i = 0 ;
       $numprojet = $db->num_rows();
-      while ($i < $numprojet)
+
+      if ($numprojet==0)
 	{
-	  $projet = $db->fetch_object($i);
-	  print "<option value=\"$projet->rowid\">$projet->title</option>";
-	  $i++;
+	  print 'Cette société n\'a pas de projet.<br>';
+	  print '<a href=../projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
+	}
+      else
+	{	  
+	  print '<select name="projetidp">';
+	  
+	  while ($i < $numprojet)
+	    {
+	      $projet = $db->fetch_object($i);
+	      print "<option value=\"$projet->rowid\">$projet->title</option>";
+	      $i++;
+	    }
+	  print '</select>';
 	}
       $db->free();
     }
@@ -149,12 +170,8 @@ if ($action == 'create')
     {
       print $db->error();
     }
-  print '</select>';
-  if ($numprojet==0)
-    {
-	print 'Cette societe n\'a pas de projet.<br>';
-	print '<a href=../projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
-    }
+
+
   print '</td>';
   print '<td>Modèle</td>';
   print '<td>';
