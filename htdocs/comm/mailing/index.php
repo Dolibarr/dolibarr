@@ -107,20 +107,20 @@ print '</td><td valign="top" width="70%">';
 
 
 /*
- * Actions commerciales a faire
+ * 
  *
  */
 
-$sql = "SELECT m.titre, m.nbemail";
+$sql = "SELECT m.rowid, m.titre, m.nbemail";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-
+$sql .= " LIMIT 10";
 if ( $db->query($sql) ) 
 {
   $num = $db->num_rows();
   if ($num > 0)
     { 
       print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ActionsToDo").'</td></tr>';
+      print '<tr class="liste_titre"><td colspan="4">10 derniers mailing</td></tr>';
       $var = true;
       $i = 0;
       
@@ -130,7 +130,7 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print '<td><a href="action/fiche.php?id='.$obj->rowid.'">'.$obj->titre.'</a></td>';
+	  print '<td><a href="fiche.php?id='.$obj->rowid.'">'.$obj->titre.'</a></td>';
 	  print '<td>'.$obj->nbemail.'</td>';
 
 	  $i++;
