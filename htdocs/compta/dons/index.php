@@ -20,7 +20,15 @@
  * $Source$
  *
  */
+
+/*!	\file htdocs/compta/dons/index.php
+		\ingroup    don
+		\brief      Page accueil espace don
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
 
 llxHeader();
 
@@ -44,7 +52,7 @@ if ($result)
 
 print_titre("Dons");
 
-print '<table class="noboerder" cellspacing="0" cellpadding="3">';
+print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print "<td>&nbsp;</td>";
 print "<td>Somme</td>";

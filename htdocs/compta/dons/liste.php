@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +20,23 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/compta/dons/liste.php
+        \ingroup    don
+		\brief      Page de liste des dons
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
+
 llxHeader();
+
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+$statut=$_GET["statut"];
+$page=$_GET["page"];
 
 if ($sortorder == "") {  $sortorder="DESC"; }
 if ($sortfield == "") {  $sortfield="d.datedon"; }
@@ -32,13 +47,13 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
+// Genere requete de liste des dons
 $sql = "SELECT d.rowid, ".$db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet";
-$sql .= " FROM ".MAIN_DB_PREFIX."don as d, ".MAIN_DB_PREFIX."don_projet as p";
-$sql .= " WHERE p.rowid = d.fk_don_projet";
-if (strlen($statut))
+$sql .= " FROM ".MAIN_DB_PREFIX."don as d left join ".MAIN_DB_PREFIX."don_projet as p";
+$sql .= " ON p.rowid = d.fk_don_projet WHERE 1 = 1";
+if (isset($_GET["statut"]))
 {
-  $sql .= " AND d.fk_statut = $statut";
+  $sql .= " AND d.fk_statut = ".$_GET["statut"];
 }
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
@@ -56,9 +71,9 @@ if ($result)
     {
       print_barre_liste("Dons", $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
     }
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<table class=\"noborder\" width=\"100%\">";
 
-  print '<TR class="liste_titre">';
+  print '<tr class="liste_titre">';
   print "<td>";
   print_liste_field_titre("Prénom","liste.php","d.prenom","&page=$page&statut=$statut");
   print "</td><td>";
@@ -71,20 +86,20 @@ if ($result)
   print "<td align=\"right\">";
   print_liste_field_titre("Montant","liste.php","d.amount","&page=$page&statut=$statut");
   print '</td><td>&nbsp;</td>';
-  print "</TR>\n";
+  print "</tr>\n";
     
   $var=True;
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)."</a></TD>\n";
-      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->nom)."</a></TD>\n";
-      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->societe)."</a></TD>\n";
-      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->datedon)."</a></td>\n";
-      print "<TD>$objp->projet</TD>\n";
-      print '<TD align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->prenom)."</a></TD>\n";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->nom)."</a></TD>\n";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->societe)."</a></TD>\n";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".strftime("%d %B %Y",$objp->datedon)."</a></td>\n";
+      print "<td>$objp->projet</td>\n";
+      print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';
 
       print "</tr>";
       $i++;
@@ -93,8 +108,7 @@ if ($result)
 }
 else
 {
-  print $sql;
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 

@@ -19,6 +19,14 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/compta/dons/formulaire/fsfe.fr.php
+        \ingroup    don
+		\brief      Formulaire de don
+		\version    $Revision$
+*/
+
 require("../../../main.inc.php");
 
 echo '
@@ -40,8 +48,8 @@ require("../../../don.class.php");
 setlocale(LC_TIME,"fr_FR");
 
 $don = new Don($db);
-$don->id = $rowid;
-$don->fetch($rowid);
+$don->id = $_GET["rowid"];
+$don->fetch($_GET["rowid"]);
 
 ?>
 
