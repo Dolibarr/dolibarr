@@ -202,13 +202,17 @@ if ($nboftargetok) {
         
     	if ($target eq 'TGZ') {
     		unlink $FILENAMETGZ.tgz;
+#    		unlink $BUILDROOT/$FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-    		$cmd="tar --exclude-from \"$SOURCE/build/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
-#    		$cmd="tar --exclude-from \"$SOURCE/build/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" $FILENAMETGZ";
-#    		print $cmd;
-    		$ret=`$cmd`;
-#    		print "Move $FILENAMETGZ.tgz to $SOURCE/build/$FILENAMETGZ.tgz\n";
-#    		$ret=`mv "$BUILDROOT/$FILENAMETGZ.tgz" "$SOURCE/build/$FILENAMETGZ.tgz"`;
+   		    $cmd="tar --exclude-from \"$SOURCE/build/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
+   		    $ret=`$cmd`;
+#        	$cmd="tar --exclude-from \"$SOURCE/build/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" $FILENAMETGZ";
+#        	$ret=`$cmd`;
+            if ($OS =~ /windows/i) {
+        		print "Move $FILENAMETGZ.tgz to $SOURCE/build/$FILENAMETGZ.tgz\n";
+        		$ret=`mv "$FILENAMETGZ.tgz" "$SOURCE/build/$FILENAMETGZ.tgz"`;
+#        		$ret=`mv "$BUILDROOT/$FILENAMETGZ.tgz" "$SOURCE/build/$FILENAMETGZ.tgz"`;
+            }
     		next;
     	}
     
