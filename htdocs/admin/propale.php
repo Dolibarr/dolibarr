@@ -69,9 +69,9 @@ $handle=opendir($dir);
 
 while (($file = readdir($handle))!==false)
 {
-  if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
+  if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,12) == 'pdf_propale_')
     {
-      $name = substr($file, 4, strlen($file) -16);
+      $name = substr($file, 12, strlen($file) - 24);
       $classname = substr($file, 0, strlen($file) -12);
 
       print '<tr><td>';
