@@ -28,7 +28,7 @@ tar:
 	rsync -ar doc htdocs mysql misc COPY* http* INSTALL README scripts templates pgsql $(FILE)/
 	tar --exclude-from tar.exclude -cvvf $(FILE).tar $(FILE)/
 	gzip $(FILE).tar
-	md5sum $(FILE).tar.gz > $(FILE).tar.gz.md5sum
+	md5sum $(FILE).tar.gz > $(FILE).tar.gz.md5
 
 
 put:
