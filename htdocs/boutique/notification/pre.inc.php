@@ -34,7 +34,15 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
+  $menu->add("/boutique/client/", "Clients");
+
   $menu->add("/boutique/notification/", "Notifications");
+
+  $menu->add_submenu("/boutique/notification/produits.php", "Produits");
+
+  $menu->add("/boutique/newsletter/", "Newsletter");
+
+  $menu->add_submenu("/boutique/newsletter/fiche.php?action=create", "Nouvelle newsletter");
 
   left_menu($menu->liste);
   /*
