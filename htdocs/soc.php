@@ -34,7 +34,6 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-
 llxHeader();
 
 if ($action == 'add')
@@ -178,7 +177,7 @@ else
 
   if ($soc->client)
     {
-      print '<tr><td>Client</td><td colspan="3">oui <a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
+      print '<tr><td>Client</td><td colspan="3">oui <a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">'.img_file().'</a></td></tr>';
     }
   else
     {
@@ -187,7 +186,7 @@ else
   
   if ($soc->fournisseur)
     {
-      print '<tr><td>Fournisseur</td><td colspan="3">oui <a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
+      print '<tr><td>Fournisseur</td><td colspan="3">oui <a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid.'">'.img_file().'</a></td></tr>';
     }
   else
     {
