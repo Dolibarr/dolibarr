@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/*! 	\file       htdocs/docsoc.php
+/** 	\file       htdocs/docsoc.php
 		\brief      Fichier onglet documents liés à la société
 		\ingroup    societe
 		\version    $Revision$
@@ -36,10 +36,12 @@ llxHeader();
 $mesg = "";
 $socid=$_GET["socid"];
 
+
+/*
+ * Creation répertoire si n'existe pas
+ */
 if (! is_dir($conf->societe->dir_output)) { mkdir($conf->societe->dir_output); }
-
 $upload_dir = $conf->societe->dir_output . "/" . $socid ;
-
 if (! is_dir($upload_dir))
 {
   umask(0);
@@ -49,6 +51,10 @@ if (! is_dir($upload_dir))
     }
 }
 
+
+/*
+ * Action envoie fichier
+ */
 if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 {
   if (is_dir($upload_dir))
@@ -71,9 +77,15 @@ if ( $error_msg )
 { 
   print '<font class="error">'.$error_msg.'</font><br><br>';
 }
-if ($action=='delete')
+
+
+/*
+ * Action suppression fichier
+ */
+
+if ($_GET["action"]=='delete')
 {
-  $file = $upload_dir . "/" . urldecode($urlfile);
+  $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
   dol_delete_file($file);
   $mesg = "Le fichier a été supprimé";
 }
@@ -142,13 +154,11 @@ if ($socid > 0)
 
 
       /*
-       *
+       * 
        */
+
       print_titre("Documents associés");
-      /*
-       *
-       *
-       */
+
       if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 	{
 	  echo '<form name="userfile" action="docsoc.php?socid='.$socid.'" enctype="multipart/form-data" METHOD="POST">';      
@@ -173,7 +183,11 @@ if ($socid > 0)
 	}
       print '<br></div>';
 
-      print $mesg;
+
+      if ($mesg) { print "$mesg<br><br>"; }
+
+
+      // Affiche liste des documents existant
 
       clearstatcache();
 
@@ -181,20 +195,24 @@ if ($socid > 0)
 
       if ($handle)
 	{
-	  print '<table width="100%" class="border">';
+	  print '<table width="100%" class="noborder">';
+      print '<tr class="liste_titre"><td>'.$langs->trans("Document").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td><td>&nbsp;</td></tr>';
+
+      $var=true;
 	  while (($file = readdir($handle))!==false)
 	    {
 	      if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 		{
-		  print '<tr><td>';
-		  echo '<a href="'.DOL_URL_ROOT.'/document/societe/'.$socid.'/'.$file.'">'.$file.'</a>';
+		  $var=!$var;
+		  print "<tr $bc[$var]><td>";
+		  echo '<a href="'.$conf->societe->dir_output. '/'.$socid.'/'.$file.'">'.$file.'</a>';
 		  print "</td>\n";
 		  
 		  print '<td align="right">'.filesize($upload_dir."/".$file). ' bytes</td>';
-		  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($upload_dir."/".$file)).'</td>';
+		  print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
 		  
-		  print '<td>';
-		  echo '<a href="docsoc.php?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">Delete</a>';
+		  print '<td align="center">';
+		  echo '<a href="docsoc.php?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">'.img_delete().'</a>';
 		  print "</td></tr>\n";
 		}
 	    }
