@@ -244,15 +244,19 @@ class Form {
    *
    *
    */
-  Function select_array($name, $array, $id='')
+  Function select_array($name, $array, $id='', $empty=0)
     {
       print '<select name="'.$name.'">';
       
       $i = 0;
 
       if (strlen($id))
-	{	    	      
-	  reset ($array);
+	{
+	  if ($empty == 1)
+	    {
+	      $array[0] = "-";
+	    }
+	  sort  ($array);
 	  while (list($key, $value) = each ($array))
 	    {
 	      print "<option value=\"$key\" ";
