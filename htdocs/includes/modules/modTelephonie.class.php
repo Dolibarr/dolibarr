@@ -82,13 +82,31 @@ class modTelephonie extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (140,'Tous les droits sur la telephonie','telephonie','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (141,'Consulter la telephonie','telephonie','r',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (142,'Commander les lignes','telephonie','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (143,'Activer une ligne','telephonie','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (144,'Configurer la telephonie','telephonie','w',0);");
-    
+    $this->rights[0][0] = 140; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur la telephonie'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[1][0] = 141; // id de la permission
+    $this->rights[1][1] = 'Consulter la telephonie'; // libelle de la permission
+    $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[1][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[2][0] = 142; // id de la permission
+    $this->rights[2][1] = 'Commander les lignes'; // libelle de la permission
+    $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[3][0] = 143; // id de la permission
+    $this->rights[3][1] = 'Activer une ligne'; // libelle de la permission
+    $this->rights[3][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[4][0] = 144; // id de la permission
+    $this->rights[4][1] = 'Configurer la telephonie'; // libelle de la permission
+    $this->rights[4][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
+
     // Dir
     $this->dirs[0] = DOL_DATA_ROOT . "/telephonie/" ;
     $this->dirs[1] = DOL_DATA_ROOT . "/telephonie/ligne/" ;	  
