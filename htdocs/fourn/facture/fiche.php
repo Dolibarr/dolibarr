@@ -352,7 +352,7 @@ else
 	   */
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 	  print "<tr $bc[1]><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$obj->socidp\">$obj->socnom</a></b></td>";
-	  print "<td align=\"right\"><a href=\"index.php?socidp=$obj->socidp\">Autres factures</a></td>\n";
+	  print "<td align=\"right\"><a href=\"index.php?socid=$obj->socidp\">Autres factures</a></td>\n";
 	  print "</tr>";
 	  print "<tr $bc[1]><td>Date</td><td colspan=\"4\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
 	  print "<tr $bc[1]><td>Libelle</td><td colspan=\"4\">$obj->libelle</td>";
