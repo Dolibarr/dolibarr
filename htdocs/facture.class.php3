@@ -69,7 +69,7 @@ class Facture
    *
    */
 
-  Function create($userid)
+  Function create($user)
     {
       /*
        * On positionne en mode brouillon la facture
@@ -113,7 +113,7 @@ class Facture
       $total = $totalht + $tva;
       
       $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, tva, total, datef, note, fk_user_author,fk_projet, fk_cond_reglement, date_lim_reglement) ";
-      $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $tva, $total,".$this->db->idate($this->date).",'$this->note',$userid, $this->projetid, $this->cond_reglement,".$this->db->idate($datelim).")";      
+      $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $tva, $total,".$this->db->idate($this->date).",'$this->note',$user->id, $this->projetid, $this->cond_reglement,".$this->db->idate($datelim).")";      
       if ( $this->db->query($sql) )
 	{
 	  $this->id = $this->db->last_insert_id();
@@ -123,6 +123,24 @@ class Facture
 	      $sql = "INSERT INTO llx_fa_pr (fk_facture, fk_propal) VALUES (".$this->id.",".$this->propalid.")";
 	      $this->db->query($sql);
 	    }
+
+	  /*
+	   *
+	   */
+	  for ($i = 0 ; $i < sizeof($this->products) ; $i++)
+	    {
+	      $prod = new Product($this->db, $this->products[$i]);
+	      $prod->fetch($this->products[$i]);
+
+	      $sql = "INSERT INTO llx_facturedet (fk_facture, fk_product, qty, price, tva_taux, description) VALUES ";
+	      $sql .= " ($this->id,".$this->products[$i].",".$this->products_qty[$i].",$prod->price,$prod->tva_tx,'$prod->label');";
+	      
+	      if (! $this->db->query($sql) )
+		{
+		  print $sql . '<br>' . $this->db->error() .'<br>';
+		}
+	    }
+	  $this->updateprice($this->id);	  
 	  return $this->id;
 	}
       else
@@ -355,6 +373,23 @@ class Facture
 	  $contrat->create_from_facture($this->id, $user, $this->socidp);
       
 	  return $result;
+	}
+    }
+  /*
+   *
+   *
+   */
+  Function add_product($idproduct, $qty)
+    {
+      if ($idproduct > 0)
+	{
+	  $i = sizeof($this->products);
+	  $this->products[$i] = $idproduct;
+	  if (!$qty)
+	    {
+	      $qty = 1 ;
+	    }
+	  $this->products_qty[$i] = $qty;
 	}
     }
   /*
