@@ -36,10 +36,9 @@ class GraphAppelsDureeMoyenne extends GraphBar{
     $this->client = 0;
     $this->contrat = 0;
     $this->ligne = 0;
+
     $this->titre = "Durée moyenne des appels";
-
-    //$this->type = "LinePlot";
-
+    $this->showframe = true;
     $this->barcolor = "pink";
   }
 
@@ -95,13 +94,13 @@ class GraphAppelsDureeMoyenne extends GraphBar{
       {
 	$num = $this->db->num_rows();
 	$i = 0;
-	
+
 	while ($i < $num)
 	  {
 	    $row = $this->db->fetch_row();
 
 	    $this->labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
-	    $$this->datas[$i] = ($row[1] / $row[2] ) ;	    
+	    $this->datas[$i] = ($row[1] / $row[2] ) ;	    
 	    
 	    $i++;
 	  }
