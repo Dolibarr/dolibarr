@@ -22,6 +22,7 @@ require("../main.inc.php3");
 
 function llxHeader($head = "", $urlp = "")
 {
+  global $user;
   /*
    *
    *
