@@ -20,6 +20,18 @@
  */
 require("./pre.inc.php");
 
+if ($action == 'nbprod' && $user->admin)
+{
+  $sql = "REPLACE INTO llx_const SET name = 'PROPALE_NEW_FORM_NB_PRODUCT', value='".$value."', visible=0";
+
+  if ($db->query($sql))
+    {
+      // la constante qui a été lue en avant du nouveau set
+      // on passe donc par une variable pour avoir un affichage cohérent
+      Header("Location: propale.php");
+    }
+}
+
 llxHeader();
 
 if (!$user->admin)
@@ -86,7 +98,6 @@ if ($action == 'setmod')
       $propale_addon_var = $value;
     }
 }
-
 
 /*
  *
@@ -245,6 +256,18 @@ print '</table>';
  *
  *
  */
+print_titre("Formulaire de création");
+print '<form method="post" action="propale.php?action=nbprod">';
+print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<TR class="liste_titre">';
+print '<td>Nom</td>';
+print '<td>Valeur</td><td>&nbsp;</td>';
+print "</TR>\n";
+print '<tr><td>';
+print 'Nombre de ligne produits</td><td align="center">';
+print '<input size="3" type="text" name="value" value="'.PROPALE_NEW_FORM_NB_PRODUCT.'">';
+print '</td><td><input type="submit" value="changer"></td></tr></table></form>';
+
 
 
 $db->close();
