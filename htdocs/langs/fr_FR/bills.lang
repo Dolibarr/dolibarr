@@ -8,6 +8,7 @@ PaymentMode=Mode de paiement
 ClassifyPayed=Classer 'Payée'
 ClassifyCanceled=Classer 'Abandonnée'
 CreateBill=Créer Facture
+AddBill=Créer facture
 Send=Envoyer
 SendRemind=Envoyer rappel
 DoPaiement=Émettre paiement

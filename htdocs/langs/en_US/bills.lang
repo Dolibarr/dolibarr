@@ -8,6 +8,7 @@ PaymentMode=Payment mode
 ClassifyPayed=Classify 'Payed'
 ClassifyCanceled=Classify 'Abandonned'
 CreateBill=Create Bill
+AddBill=Add bill
 Send=Send
 SendRemind=Send reminder
 DoPaiement=Do payment

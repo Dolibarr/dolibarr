@@ -342,11 +342,12 @@ if ($socid > 0)
 
     if ($user->societe_id == 0)
       {
-    	if ($user->rights->facture->creer) {
+    	if ($conf->facture->enabled && $user->rights->facture->creer) {
             $langs->load("bills");
-	        print "<a class=\"tabAction\" href=\"facture.php?action=create&socidp=$societe->id\">".$langs->trans("CreateBill")."</a>";
+	        print "<a class=\"tabAction\" href=\"facture.php?action=create&socidp=$societe->id\">".$langs->trans("AddBill")."</a>";
         }
-        print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$societe->id&amp;action=create\">Créer Déplacement</a>";
+
+        print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
       }
     
     print '</div>';

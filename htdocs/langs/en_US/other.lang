@@ -17,3 +17,4 @@ MailCC=Copy to
 MailTopic=Subject
 MailText=Message
 MailFile=Attach a file
+AddTrip=Add trip
