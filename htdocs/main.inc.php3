@@ -78,9 +78,7 @@ function top_menu($head) {
    *
    */
 
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="0">';
-  print '<tr><td>';
-  print '<TABLE border="0" width="100%" cellspacing="1" cellpadding="2">';
+  print '<TABLE class="topbarre" width="100%">';
 
   print "<TR>";
   print '<TD width="15%" class="menu" align="center"><A class="menu" href="/">Accueil</A></TD>';
@@ -122,10 +120,8 @@ function top_menu($head) {
   print '&nbsp;</TD>';
   print '<TD width="15%" class="menu" align="center">'.strftime(" %d %B - %H:%M",time()).'</TD>';
 
-  print '<TD width="10%" class="menu" align="center">'.$user->code.'</td>';
+  print '<TD width="10%" class="menu" align="center">'.$user->login.'</td>';
   print '</TR>';
-  print '</table>';
-  print '</td></tr>';
   print '</table>';
   /*
    * Table principale

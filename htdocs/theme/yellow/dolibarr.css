@@ -1,8 +1,5 @@
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +14,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 
 BODY 
@@ -28,6 +28,21 @@ BODY
 /*
  *   Menu superieur
  */
+table.topbarre
+{ 
+  cell-spacing: 0;
+ }
+
+a { 
+    text-decoration: none; 
+    }
+
+td.menu
+{ 
+  border-right: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+ }
+
 .menu 
 { 
   background: #ccccb3; 
@@ -46,9 +61,16 @@ BODY
 /*
  *   Barre de gauche
  */
-
-TD.barre 
+a.leftmenu 
 { 
+  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
+  color: #202020; 
+  }
+
+td.barre 
+{ 
+  border-right: 1px solid #000000;
+  border-bottom: 1px solid #000000;
   background: #ccccb3;
   font-family: Helvetica, Verdana; font-size: 14px; 
   color: #000000; 
@@ -65,26 +87,26 @@ TD.barre_select
 DIV.titre 
 { 
   font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; 
-  color: #336666; 
+  color: #666633; 
   text-decoration: none }
 /*
  *
  */
 TR.liste_titre  
 { 
-  background: #669999; 
+  background: #999966; 
   font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
   text-decoration: none }
 
 TR.pair	        
 { 
-  background: #b3cccc; 
+  background: #ccccb3; 
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none }
 
 TR.impair	
 { 
-  background: #cceeee; 
+  background: #eeeecc; 
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none }
 
