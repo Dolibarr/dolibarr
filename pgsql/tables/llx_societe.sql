@@ -32,8 +32,8 @@ create table llx_societe
   "active"             smallint       DEFAULT 0,            --
   "parent"             integer        DEFAULT 0,            --
   "tms"                timestamp,
-  "datec"	             datetime,                            -- creation date
-  "datea"	             datetime,                            -- activation date
+  "datec"	             timestamp,                            -- creation date
+  "datea"	             timestamp,                            -- activation date
   "nom"                varchar(60),                         -- company name
   "code_client"        varchar(15),                         -- code client
   "code_compta"        varchar(15),                         -- code compta
@@ -65,5 +65,6 @@ create table llx_societe
   "fk_user_creat"      integer,                             -- utilisateur qui a créé l'info
   "fk_user_modif"      integer,                             -- utilisateur qui a modifié l'info
   "remise_client"      real           DEFAULT 0,            -- remise systématique pour le client
+  "UNIQUE" INDEX(prefix_comm)
 );
 

@@ -33,10 +33,10 @@
 create table llx_voyage
 (
   rowid SERIAL PRIMARY KEY,
-  "datec"           datetime,
+  "datec"           timestamp,
   "dateo"           date,                    -- date operation
-  "date_depart"     datetime,                -- date du voyage
-  "date_arrivee"    datetime,                -- date du voyage
+  "date_depart"     timestamp,                -- date du voyage
+  "date_arrivee"    timestamp,                -- date du voyage
   "amount"          real NOT NULL DEFAULT 0, -- prix du billet
   "reduction"       real NOT NULL DEFAULT 0, -- montant de la reduction obtenue
   "depart"          varchar(255),

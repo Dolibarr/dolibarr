@@ -35,7 +35,7 @@ create table llx_c_departements
   "tncc"             integer,
   "ncc"              varchar(50),
   "nom"              varchar(50),
-  "active"           tinyint DEFAULT 1  NOT NULL,
+  "active"           smallint DEFAULT 1  NOT NULL,
   key (fk_region)
 );
 

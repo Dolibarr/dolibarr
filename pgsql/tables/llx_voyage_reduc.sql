@@ -27,7 +27,7 @@
 create table llx_voyage_reduc
 (
   rowid SERIAL PRIMARY KEY,
-  "datec"           datetime,
+  "datec"           timestamp,
   "datev"           date,           -- date de valeur
   "date_debut"      date,           -- date operation
   "date_fin"        date,

@@ -31,12 +31,12 @@ create table llx_contrat
 (
   rowid SERIAL PRIMARY KEY,  
   "tms"             timestamp,
-  "datec"           datetime, -- date de creation de l'enregistrement
-  "date_contrat"    datetime,
+  "datec"           timestamp, -- date de creation de l'enregistrement
+  "date_contrat"    timestamp,
   "statut"          smallint DEFAULT 0,
-  "mise_en_service" datetime,
-  "fin_validite"    datetime,
-  "date_cloture"    datetime,
+  "mise_en_service" timestamp,
+  "fin_validite"    timestamp,
+  "date_cloture"    timestamp,
   "fk_soc"          integer NOT NULL,
   "fk_commercial_signature" integer NOT NULL,
   "fk_commercial_suivi"     integer NOT NULL,

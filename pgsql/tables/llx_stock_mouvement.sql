@@ -29,7 +29,7 @@ create table llx_stock_mouvement
 (
   rowid SERIAL PRIMARY KEY,
   "tms"             timestamp,
-  "datem"           datetime,
+  "datem"           timestamp,
   "fk_product"      integer NOT NULL,
   "fk_entrepot"     integer NOT NULL,
   "value"           integer,

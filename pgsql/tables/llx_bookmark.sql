@@ -27,5 +27,5 @@ create table llx_bookmark
   rowid SERIAL PRIMARY KEY,
   "fk_soc"      integer,
   "fk_user"     integer,
-  "dateb"       datetime
+  "dateb"       timestamp
 );

@@ -29,6 +29,7 @@ create table llx_usergroup_rights
 (
   rowid SERIAL PRIMARY KEY,
   "fk_usergroup"  integer NOT NULL,
-  "fk_id"         integer NOT NULL
+  "fk_id"         integer NOT NULL,
+  "UNIQUE"(fk_usergroup,fk_id)
 );
 

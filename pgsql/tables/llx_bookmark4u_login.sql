@@ -29,5 +29,6 @@ create table llx_bookmark4u_login
 (
   rowid SERIAL PRIMARY KEY,
   "fk_user"       integer,
-  "bk4u_uid"      integer
+  "bk4u_uid"      integer,
+  "UNIQUE" INDEX(fk_user)
 );

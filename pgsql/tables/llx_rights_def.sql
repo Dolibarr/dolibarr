@@ -32,6 +32,6 @@ create table llx_rights_def
   "perms"         varchar(50),
   "subperms"      varchar(50),
   "type" varchar(1) CHECK (type IN ('r','w','m','d','a')) ,
-  "bydefault"     tinyint DEFAULT 0
+  "bydefault"     smallint DEFAULT 0
 );
 

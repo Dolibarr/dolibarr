@@ -29,7 +29,7 @@
 create table llx_bank
 (
   rowid SERIAL PRIMARY KEY,
-  "datec"           datetime,
+  "datec"           timestamp,
   "datev"           date,           -- date de valeur
   "dateo"           date,           -- date operation
   "amount"          real NOT NULL default 0,
@@ -40,7 +40,7 @@ create table llx_bank
   "fk_type"         varchar(4),     -- CB, Virement, cheque
   "num_releve"      varchar(50),
   "num_chq"         int,
-  "rappro"          tinyint default 0,
+  "rappro"          smallint default 0,
   "note"            text,
   "author"          varchar(40) -- a supprimer apres migration
 );

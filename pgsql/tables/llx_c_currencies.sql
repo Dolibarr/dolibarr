@@ -26,7 +26,9 @@
 
 create table llx_c_currencies
 (
+  code        varchar(2)   UNIQUE PRIMARY KEY,
+  "code_iso"    varchar(3)   UNIQUE NOT NULL,
   "label"       varchar(64),
-  "active"      tinyint DEFAULT 1  NOT NULL
+  "active"      smallint DEFAULT 1  NOT NULL
 );
 

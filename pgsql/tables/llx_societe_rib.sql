@@ -32,7 +32,7 @@ create table llx_societe_rib
 (
   rowid SERIAL PRIMARY KEY,
   "fk_soc"         integer NOT NULL,
-  "datec"          datetime,
+  "datec"          timestamp,
   "tms"            timestamp,
   "label"          varchar(30),
   "bank"           varchar(255),

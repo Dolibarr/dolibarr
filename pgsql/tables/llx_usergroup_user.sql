@@ -29,5 +29,6 @@ create table llx_usergroup_user
 (
   rowid SERIAL PRIMARY KEY,
   "fk_user"       integer NOT NULL,
-  "fk_usergroup"  integer NOT NULL
+  "fk_usergroup"  integer NOT NULL,
+  "UNIQUE"(fk_user,fk_usergroup)
 );

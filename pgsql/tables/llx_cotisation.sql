@@ -27,9 +27,9 @@ create table llx_cotisation
 (
   rowid SERIAL PRIMARY KEY,
   "tms"             timestamp,
-  "datec"           datetime,
+  "datec"           timestamp,
   "fk_adherent"     integer,
-  "dateadh"         datetime,
+  "dateadh"         timestamp,
   "cotisation"      real,
   "fk_bank"         int4 DEFAULT NULL,
   "note"            text

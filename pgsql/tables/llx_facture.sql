@@ -30,7 +30,7 @@ create table llx_facture
   "facnumber"           varchar(50)        NOT NULL,
   "increment"           varchar(10),
   "fk_soc"              integer            NOT NULL,
-  "datec"               datetime,  -- date de creation de la facture
+  "datec"               timestamp,  -- date de creation de la facture
   "datef"               date,      -- date de la facture
   "paye"                smallint DEFAULT 0 NOT NULL,
   "amount"              real     DEFAULT 0 NOT NULL,
@@ -49,5 +49,6 @@ create table llx_facture
   "fk_mode_reglement"   integer,   -- mode de reglement (Virement, Prélèvement)
   "date_lim_reglement"  date,      -- date limite de reglement
   "note"                text,
-4294967294  "INDEX" fksoc (fk_soc)
+  "UNIQUE" INDEX (facnumber),
+  "INDEX" fksoc (fk_soc)
 );

@@ -28,9 +28,9 @@ create table llx_paiementcharge
 (
   rowid SERIAL PRIMARY KEY,
   "fk_charge"       integer,
-  "datec"           datetime,           -- date de creation
+  "datec"           timestamp,           -- date de creation
   "tms"             timestamp,
-  "datep"           datetime,           -- payment date
+  "datep"           timestamp,           -- payment date
   "amount"          real DEFAULT 0,
   "fk_typepaiement" integer NOT NULL,
   "num_paiement"    varchar(50),

@@ -30,6 +30,6 @@ create table llx_soc_recontact
 (
   rowid SERIAL PRIMARY KEY,
   "fk_soc"     integer,
-  "datere"     datetime,
+  "datere"     timestamp,
   "author"     varchar(15)
 );

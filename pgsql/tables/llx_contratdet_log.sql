@@ -30,7 +30,7 @@ create table llx_contratdet_log
   rowid SERIAL PRIMARY KEY,
   "tms"                   timestamp,
   "fk_contratdet"         integer NOT NULL,
-  "date"                  datetime,
+  "date"                  timestamp,
   "statut"                smallint NOT NULL,
   "fk_user_author"        integer NOT NULL,
   "commentaire"           text

@@ -30,6 +30,6 @@ create table llx_c_methode_commande_fournisseur
   rowid SERIAL PRIMARY KEY,
   "code"     varchar(30),
   "libelle"  varchar(30),
-  "active"   tinyint default 1  NOT NULL
+  "active"   smallint default 1  NOT NULL
 );
 

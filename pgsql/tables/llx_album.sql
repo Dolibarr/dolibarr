@@ -33,7 +33,7 @@ create table llx_album
   "title"		        varchar(64),
   "annee"		        int2,
   "description"     text,
-  "collectif"       tinyint,
+  "collectif"       smallint,
   "fk_user_author"  integer
 );
 

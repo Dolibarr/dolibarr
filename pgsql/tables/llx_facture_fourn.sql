@@ -33,7 +33,7 @@ create table llx_facture_fourn
   rowid SERIAL PRIMARY KEY,
   "facnumber"  varchar(50) NOT NULL,
   "fk_soc"     integer NOT NULL,
-  "datec"      datetime,    -- date de creation de la facture
+  "datec"      timestamp,    -- date de creation de la facture
   "datef"      date,        -- date de la facture
   "libelle"    varchar(255),
   "paye"       smallint DEFAULT 0 NOT NULL,
@@ -47,5 +47,6 @@ create table llx_facture_fourn
   "fk_statut"  smallint DEFAULT 0 NOT NULL,
   "fk_user_author"  integer,   -- createur de la facture
   "fk_user_valid"   integer,   -- valideur de la facture
-  "note"       text
+  "note"       text,
+  "UNIQUE" INDEX (facnumber, fk_soc)
 );

@@ -30,8 +30,8 @@ create table llx_livre
   rowid SERIAL PRIMARY KEY,
   "oscid"           integer NOT NULL,
   "tms"             timestamp,
-  "status"          tinyint,
-  "date_ajout"      datetime,
+  "status"          smallint,
+  "date_ajout"      timestamp,
   "ref"             varchar(12),
   "title"           varchar(64),
   "annee"           int2,
@@ -39,6 +39,7 @@ create table llx_livre
   "prix"            decimal(15,4),
   "fk_editeur"      integer,
   "fk_user_author"  integer,
-  "frais_de_port"   tinyint DEFAULT 1
+  "frais_de_port"   smallint DEFAULT 1,
+  "UNIQUE"(ref)
 );
 

@@ -28,7 +28,7 @@ create table llx_don_projet
 (
   rowid SERIAL PRIMARY KEY,
   "tms"             timestamp,
-  "datec"           datetime,
+  "datec"           timestamp,
   "libelle"         varchar(255),
   "fk_user_author"  integer NOT NULL,
   "note"            text

@@ -28,9 +28,10 @@
 create table llx_compta_compte_generaux
 (
   rowid SERIAL PRIMARY KEY,
-  "date_creation"   datetime,
+  "date_creation"   timestamp,
   "numero"          varchar(50),
   "intitule"        varchar(255),
   "fk_user_author"  integer,
-  "note"            text
+  "note"            text,
+  "UNIQUE"(numero)
 );

@@ -29,14 +29,15 @@ create table llx_prelevement
 (
   rowid SERIAL PRIMARY KEY,
   "ref"              varchar(12),        -- reference
-  "datec"            datetime,           -- date de creation
+  "datec"            timestamp,           -- date de creation
   "amount"           real DEFAULT 0,     -- montant total du prelevement
   "credite"          smallint DEFAULT 0, -- indique si le prelevement a été credité
   "note"             text,
-  "date_trans"       datetime,
+  "date_trans"       timestamp,
   "method_trans"     smallint,
   "fk_user_trans"    integer,
-  "date_credit"      datetime,
+  "date_credit"      timestamp,
   "fk_user_credit"   integer,
   
+  "UNIQUE"(ref)
 );

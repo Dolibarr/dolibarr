@@ -31,10 +31,10 @@ create table llx_propal
   "fk_soc_contact"  integer,
   "fk_projet"       integer DEFAULT 0,     -- projet auquel est rattache la propale
   "ref"             varchar(30) NOT NULL,  -- propal number
-  "datec"           datetime,              -- date de creation 
-  "fin_validite"    datetime,              -- date de fin de validite
-  "date_valid"      datetime,              -- date de validation
-  "date_cloture"    datetime,              -- date de cloture
+  "datec"           timestamp,              -- date de creation 
+  "fin_validite"    timestamp,              -- date de fin de validite
+  "date_valid"      timestamp,              -- date de validation
+  "date_cloture"    timestamp,              -- date de cloture
   "datep"           date,                  -- date de la propal
   "fk_user_author"  integer,               -- createur de la propale
   "fk_user_valid"   integer,               -- valideur de la propale
@@ -47,4 +47,5 @@ create table llx_propal
   "total"           real      DEFAULT 0,
   "note"            text,
   "model_pdf"       varchar(50),
-4294967294);
+  "UNIQUE" INDEX (ref)
+);

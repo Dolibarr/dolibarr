@@ -28,14 +28,15 @@
 create table llx_product
 (
   rowid SERIAL PRIMARY KEY,
-  "datec"              datetime,
+  "datec"              timestamp,
   "tms"                timestamp,
+  "ref"                varchar(15) UNIQUE,
   "label"              varchar(255),
   "description"        text,
   "price"              double,
   "tva_tx"             double DEFAULT 19.6,
   "fk_user_author"     integer,
-  "envente"            tinyint DEFAULT 1,
+  "envente"            smallint DEFAULT 1,
   "nbvente"            integer DEFAULT 0,
   "fk_product_type"    integer DEFAULT 0,
   "duration"           varchar(6),

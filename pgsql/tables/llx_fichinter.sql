@@ -31,12 +31,13 @@ create table llx_fichinter
   "fk_soc"          integer NOT NULL,
   "fk_projet"       integer DEFAULT 0,     -- projet auquel est rattache la fiche
   "ref"             varchar(30) NOT NULL,  -- number
-  "datec"           datetime,              -- date de creation 
-  "date_valid"      datetime,              -- date de validation
+  "datec"           timestamp,              -- date de creation 
+  "date_valid"      timestamp,              -- date de validation
   "datei"           date,                  -- date de l'intervention
   "fk_user_author"  integer,               -- createur de la fiche
   "fk_user_valid"   integer,               -- valideur de la fiche
   "fk_statut"       smallint  DEFAULT 0,
   "duree"           real,
   "note"            text,
-4294967294);
+  "UNIQUE" INDEX (ref)
+);

@@ -30,7 +30,7 @@ create table llx_export_compta
 (
   rowid SERIAL PRIMARY KEY,
   "ref"              varchar(12) NOT NULL,
-  "date_export"      datetime,        -- date de creation
+  "date_export"      timestamp,        -- date de creation
   "fk_user"          integer NOT NULL,
   "note"             text
 );

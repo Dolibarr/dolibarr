@@ -25,7 +25,7 @@
 
 create table llx_pointmort
 (
-  "month"        datetime,
+  "month"        timestamp,
   "amount"       real
 );
 

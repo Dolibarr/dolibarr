@@ -27,7 +27,7 @@
 create table llx_socpeople
 (
   idp SERIAL PRIMARY KEY,
-  "datec"          datetime,
+  "datec"          timestamp,
   "tms"            timestamp,
   "fk_soc"         integer,           -- lien vers la societe
   "civilite"       varchar(6),

@@ -33,4 +33,5 @@ create table llx_adherent_options
   optid SERIAL PRIMARY KEY,
   "tms"              timestamp,
   "adhid"            integer NOT NULL, -- id de l'adherent auquel correspond ces attributs optionnel 
+  "UNIQUE" INDEX(adhid)
 );

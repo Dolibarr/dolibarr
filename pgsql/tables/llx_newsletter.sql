@@ -27,7 +27,7 @@
 create table llx_newsletter
 (
   rowid SERIAL PRIMARY KEY,
-  "datec"              datetime,
+  "datec"              timestamp,
   "tms"                timestamp,
   "email_subject"      varchar(32) NOT NULL,
   "email_from_name"    varchar(255) NOT NULL,
@@ -37,9 +37,9 @@ create table llx_newsletter
   "target"             smallint,
   "sql_target"         text,
   "status"             smallint DEFAULT 0 NOT NULL,
-  "date_send_request"  datetime,   -- debut de l'envoi demandé
-  "date_send_begin"    datetime,   -- debut de l'envoi
-  "date_send_end"      datetime,   -- fin de l'envoi
+  "date_send_request"  timestamp,   -- debut de l'envoi demandé
+  "date_send_begin"    timestamp,   -- debut de l'envoi
+  "date_send_end"      timestamp,   -- fin de l'envoi
   "nbsent"             integer,    -- nombre de mails envoyés
   "nberror"            integer,    -- nombre de mails envoyés
   "fk_user_author"     integer,

@@ -28,8 +28,9 @@
 create table llx_c_pays
 (
   rowid    integer     PRIMARY KEY,
+  "code"     varchar(6)  UNIQUE NOT NULL,
   "libelle"  varchar(25)        NOT NULL,
-  "active"   tinyint DEFAULT 1  NOT NULL
+  "active"   smallint DEFAULT 1  NOT NULL
 );
 
 

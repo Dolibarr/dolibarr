@@ -30,6 +30,6 @@ create table llx_c_ape
   rowid SERIAL PRIMARY KEY,
   code_ape    varchar(5)   PRIMARY KEY,
   "libelle"     varchar(255),
-  "active"      tinyint DEFAULT 1  NOT NULL
+  "active"      smallint DEFAULT 1  NOT NULL
 );
 

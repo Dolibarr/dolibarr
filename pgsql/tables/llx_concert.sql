@@ -28,9 +28,9 @@ create table llx_concert
 (
   rowid SERIAL PRIMARY KEY,
   "tms"              timestamp,
-  "date_concert"	   datetime,
+  "date_concert"	   timestamp,
   "description"      text,
-  "collectif"        tinyint DEFAULT 0 NOT NULL,
+  "collectif"        smallint DEFAULT 0 NOT NULL,
   "fk_groupart"      integer,
   "fk_lieu_concert"  integer,
   "fk_user_author"   integer

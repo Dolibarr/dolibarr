@@ -27,7 +27,7 @@
 create table llx_socstatutlog
 (
   id SERIAL PRIMARY KEY,
-  "datel"       datetime,
+  "datel"       timestamp,
   "fk_soc"      integer,
   "fk_statut"   integer,
   "author"      varchar(30)

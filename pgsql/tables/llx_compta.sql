@@ -28,13 +28,13 @@
 create table llx_compta
 (
   rowid SERIAL PRIMARY KEY,
-  "datec"             datetime,
+  "datec"             timestamp,
   "datev"             date,           -- date de valeur
   "amount"            real DEFAULT 0 NOT NULL ,
   "label"             varchar(255),
   "fk_compta_account" integer,
   "fk_user_author"    integer,
   "fk_user_valid"     integer,
-  "valid"             tinyint DEFAULT 0,
+  "valid"             smallint DEFAULT 0,
   "note"              text
 );

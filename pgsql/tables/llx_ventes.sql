@@ -29,8 +29,8 @@ create table llx_ventes
   rowid SERIAL PRIMARY KEY,
   "fk_soc"        integer NOT NULL,
   "fk_product"    integer NOT NULL,
-  "dated"         datetime,         -- date debut
-  "datef"         datetime,         -- date fin
+  "dated"         timestamp,         -- date debut
+  "datef"         timestamp,         -- date fin
   "price"         real,
   "author"        varchar(30),
   "active"        smallint DEFAULT 0 NOT NULL,

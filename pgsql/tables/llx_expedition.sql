@@ -31,8 +31,8 @@ create table llx_expedition
   "tms"                   timestamp,
   "ref"                   varchar(30) NOT NULL,
   "fk_commande"           integer,
-  "date_creation"         datetime,              -- date de creation 
-  "date_valid"            datetime,              -- date de validation
+  "date_creation"         timestamp,              -- date de creation 
+  "date_valid"            timestamp,              -- date de validation
   "date_expedition"       date,                  -- date de l'expedition
   "fk_user_author"        integer,               -- createur
   "fk_user_valid"         integer,               -- valideur
@@ -41,7 +41,8 @@ create table llx_expedition
   "fk_statut"             smallint  DEFAULT 0,
   "note"                  text,
   "model_pdf"             varchar(50),
-4294967294);
+  "UNIQUE" INDEX (ref)
+);
 
 CREATE INDEX llx_expedition_fk_expedition_methode ON llx_expedition (fk_expedition_methode);
 CREATE INDEX llx_expedition_fk_commande ON llx_expedition (fk_commande);

@@ -29,6 +29,7 @@ create table llx_societe_commerciaux
 (
   rowid SERIAL PRIMARY KEY,
   "fk_soc"        integer,
-  "fk_user"       integer
+  "fk_user"       integer,
+  "UNIQUE" INDEX(fk_soc, fk_user)
 );
 

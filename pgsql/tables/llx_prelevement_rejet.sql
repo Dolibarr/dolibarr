@@ -29,11 +29,9 @@
 create table llx_prelevement_rejet
 (
   rowid SERIAL PRIMARY KEY,
-  "fk_soc"           integer NOT NULL,
-  "fk_prelevement"   integer,
-  "amount"           real DEFAULT 0,     -- montant total du prelevement
-  "motif"            integer,
-  "note"             text,
-  "date_creation"    datetime,
-  "fk_user_creation" integer
+  "fk_prelevement_lignes" integer,
+  "motif"                 integer,
+  "date_creation"         timestamp,
+  "fk_user_creation"      integer,
+  "note"                  text
 );

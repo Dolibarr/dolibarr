@@ -30,7 +30,7 @@
 create table llx_todocomm
 (
   id SERIAL PRIMARY KEY,
-  "datea"          datetime,     -- date de l'action
+  "datea"          timestamp,     -- date de l'action
   "label"          varchar(50),  -- libelle de l'action
   "fk_user_action" integer,      -- id de la personne qui doit effectuer l'action
   "fk_user_author" integer,      -- id auteur de l'action

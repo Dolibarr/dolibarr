@@ -32,4 +32,5 @@ create table llx_contact_facture
   idp SERIAL PRIMARY KEY,
   "fk_soc"       integer NOT NULL,
   "fk_contact"   integer NOT NULL,   -- point sur llx_socpeople
+  "UNIQUE" (fk_soc, fk_contact)
 );

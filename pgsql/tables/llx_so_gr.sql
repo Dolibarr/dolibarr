@@ -31,5 +31,6 @@ create table llx_so_gr
 (
   rowid SERIAL PRIMARY KEY,
   "fk_soc"      integer,
-  "fk_groupe"   integer
+  "fk_groupe"   integer,
+  "UNIQUE"(fk_soc, fk_groupe)
 );

@@ -32,7 +32,7 @@ create table llx_societe_remise_except
 (
   rowid SERIAL PRIMARY KEY,
   "fk_soc"          integer NOT NULL, -- client
-  "datec"           datetime,
+  "datec"           timestamp,
   "amount_ht"       real NOT NULL,
   "fk_user"         integer NOT NULL,
   "fk_facture"      integer,

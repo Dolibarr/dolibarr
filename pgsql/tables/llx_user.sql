@@ -28,7 +28,7 @@
 create table llx_user
 (
   rowid SERIAL PRIMARY KEY,
-  "datec"         datetime,
+  "datec"         timestamp,
   "tms"           timestamp,
   "login"         varchar(8),
   "pass"          varchar(32),
@@ -42,5 +42,6 @@ create table llx_user
   "module_compta" smallint DEFAULT 1,
   "fk_societe"    integer DEFAULT 0,
   "fk_socpeople"  integer DEFAULT 0,
-  "note"          text
+  "note"          text,
+  "UNIQUE" INDEX(login)
 );

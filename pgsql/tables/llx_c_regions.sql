@@ -28,10 +28,11 @@
 create table llx_c_regions
 (
   rowid SERIAL PRIMARY KEY,
+  "code_region" integer UNIQUE NOT NULL,
   "fk_pays"     integer NOT NULL,
   "cheflieu"    varchar(7),
   "tncc"        integer,
   "nom"         varchar(50),
-  "active"      tinyint DEFAULT 1 NOT NULL
+  "active"      smallint DEFAULT 1 NOT NULL
 );
 

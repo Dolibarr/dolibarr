@@ -29,10 +29,10 @@ create table llx_product_price
   rowid SERIAL PRIMARY KEY,
   "tms"             timestamp,
   "fk_product"      integer NOT NULL,
-  "date_price"      datetime,
+  "date_price"      timestamp,
   "price"           double,
   "tva_tx"          double DEFAULT 19.6,
   "fk_user_author"  integer,
-  "envente"         tinyint DEFAULT 1
+  "envente"         smallint DEFAULT 1
 );
 

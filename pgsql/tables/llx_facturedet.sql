@@ -37,8 +37,8 @@ create table llx_facturedet
   "remise"          real DEFAULT 0,    -- montant de la remise
   "subprice"        real,              -- prix avant remise
   "price"           real,              -- prix final
-  "date_start"      datetime,          -- date debut si service
-  "date_end"        datetime,          -- date fin si service
+  "date_start"      timestamp,          -- date debut si service
+  "date_end"        timestamp,          -- date fin si service
   "fk_code_ventilation" integer DEFAULT 0 NOT NULL,
   "fk_export_compta"    integer DEFAULT 0 NOT NULL
 );

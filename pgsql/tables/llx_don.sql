@@ -29,8 +29,8 @@ create table llx_don
   rowid SERIAL PRIMARY KEY,
   "tms"             timestamp,
   "fk_statut"       smallint NOT NULL DEFAULT 0,-- etat du don promesse/valid
-  "datec"           datetime,         -- date de création de l'enregistrement
-  "datedon"         datetime,         -- date du don/promesse
+  "datec"           timestamp,         -- date de création de l'enregistrement
+  "datedon"         timestamp,         -- date du don/promesse
   "amount"          real DEFAULT 0,
   "fk_paiement"     integer,
   "prenom"          varchar(50),

@@ -32,7 +32,7 @@
 create table llx_bank_account
 (
   rowid SERIAL PRIMARY KEY,
-  "datec"          datetime,
+  "datec"          timestamp,
   "tms"            timestamp,
   "label"          varchar(30),
   "bank"           varchar(60),

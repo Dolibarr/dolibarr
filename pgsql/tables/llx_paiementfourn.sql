@@ -28,9 +28,9 @@ create table llx_paiementfourn
 (
   rowid SERIAL PRIMARY KEY,
   "tms"               timestamp,
-  "datec"             datetime,          -- date de creation de l'enregistrement
+  "datec"             timestamp,          -- date de creation de l'enregistrement
   "fk_facture_fourn"  integer,           -- facture
-  "datep"             datetime,          -- date de paiement
+  "datep"             timestamp,          -- date de paiement
   "amount"            real DEFAULT 0,    -- montant
   "fk_user_author"    integer,           -- auteur
   "fk_paiement"       integer NOT NULL,  -- moyen de paiement

@@ -156,6 +156,7 @@ foreach my $file (keys %filelist) {
     			&reset_vars();
     			next;
     		} 
+
     		if (/(\w*)\s+enum\(((?:['"]\w+['"]\s*,)+['"]\w+['"])\)(.*)$/i) { # enum handling 
     			$enum_column=$1;
     			$enum_datafield{$enum_column} = $2;  # 'abc','def', ...
@@ -184,12 +185,17 @@ foreach my $file (keys %filelist) {
     			}
     			s/\w*int\(\d+\)/$out/g;
     		}
+    		elsif (/tinyint/i) {
+    		    s/tinyint/smallint/g;
+    		}
     
     		# nuke int unsigned
     		s/(int\w+)\s+unsigned/$1/gi;
+
     
     		# blob -> text
     		s/\w*blob/text/gi;
+
     		# tinytext/mediumtext -> text
     		s/tinytext/text/gi;
     		s/mediumtext/text/gi;
@@ -207,6 +213,7 @@ foreach my $file (keys %filelist) {
     		# change not null datetime field to null valid ones
     		# (to support remapping of "zero time" to null
     		s/datetime not null/datetime/i;
+    		s/datetime/timestamp/i;
     
     		# nuke size of timestamp
     		s/timestamp\([^)]*\)/timestamp/i;
@@ -215,12 +222,12 @@ foreach my $file (keys %filelist) {
     		s/double\([^)]*\)/float8/i;
     
     		# add unique to definition of type (MySQL separates this)
-    		if (/unique \w+ \((\w+)\)/i) {
-    			$create_sql.=~s/($1)([^,]+)/$1$2 unique/i;
-    			next;
-    		}
+#    		if (/unique \w+ \((\w+)\)/i) {
+#    			$create_sql.=~s/($1)([^,]+)/$1$2 unique/i;
+#    			next;
+#    		}
     		# FIX: unique for multipe columns (col1,col2) are unsupported!
-    		next if (/unique/i);
+#    		next if (/unique/i);
     
     		if (/\bkey\b/i && !/^\s+primary key\s+/i) {
     			s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key

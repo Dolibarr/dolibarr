@@ -33,9 +33,9 @@ create table llx_commande_fournisseur
   "fk_soc_contact"      integer,
   "fk_projet"           integer DEFAULT 0,     -- projet auquel est rattache la commande
   "ref"                 varchar(30) NOT NULL,  -- propal number
-  "date_creation"       datetime,              -- date de creation 
-  "date_valid"          datetime,              -- date de validation
-  "date_cloture"        datetime,              -- date de cloture
+  "date_creation"       timestamp,              -- date de creation 
+  "date_valid"          timestamp,              -- date de validation
+  "date_cloture"        timestamp,              -- date de cloture
   "date_commande"       date,                  -- date de la commande
   "fk_methode_commande" integer default 0,
   "fk_user_author"      integer,               -- createur de la commande
@@ -51,4 +51,5 @@ create table llx_commande_fournisseur
   "total_ttc"           real      default 0,
   "note"                text,
   "model_pdf"           varchar(50),
-4294967294);
+  "UNIQUE" INDEX (ref)
+);

@@ -40,11 +40,11 @@ create table llx_contratdet
   "statut"                smallint DEFAULT 0,
   "label"                 text, -- libellé du produit
   "description"           text,
-  "date_commande"         datetime,
-  "date_ouverture_prevue" datetime,
-  "date_ouverture"        datetime, -- date d'ouverture du service chez le client
-  "date_fin_validite"     datetime,
-  "date_cloture"          datetime,
+  "date_commande"         timestamp,
+  "date_ouverture_prevue" timestamp,
+  "date_ouverture"        timestamp, -- date d'ouverture du service chez le client
+  "date_fin_validite"     timestamp,
+  "date_cloture"          timestamp,
   "tva_tx"                real DEFAULT 19.6, -- taux tva
   "qty"                   real,              -- quantité
   "remise_percent"        real DEFAULT 0,    -- pourcentage de remise

@@ -29,7 +29,8 @@
 create table llx_usergroup
 (
   rowid SERIAL PRIMARY KEY,
-  "datec"         datetime,
+  "datec"         timestamp,
   "tms"           timestamp,
+  "nom"           varchar(255) NOT NULL UNIQUE,
   "note"          text
 );

@@ -28,8 +28,9 @@
 create table llx_groupesociete
 (
   rowid SERIAL PRIMARY KEY,
+  "parent"          integer UNIQUE,
   "tms"             timestamp,
-  "datec"	          datetime,                            -- creation date
+  "datec"	          timestamp,                            -- creation date
   "nom"             varchar(60),                         -- company name
   "note"            text,                                --
   "remise"          real           DEFAULT 0,            -- remise systématique pour le client

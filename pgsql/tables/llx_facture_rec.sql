@@ -32,7 +32,7 @@ create table llx_facture_rec
   rowid SERIAL PRIMARY KEY,
   "titre"              varchar(50) NOT NULL,
   "fk_soc"             integer NOT NULL,
-  "datec"              datetime,  -- date de creation
+  "datec"              timestamp,  -- date de creation
   "amount"             real     DEFAULT 0 NOT NULL,
   "remise"             real     DEFAULT 0,
   "remise_percent"     real     DEFAULT 0,
