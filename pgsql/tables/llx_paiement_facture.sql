@@ -1,8 +1,6 @@
--- ========================================================================
--- Copyright (C) 2004	   Benoit Mortier <benoit.mortier@opensides.be>
---
--- $Id$
--- $Source$
+-- ===================================================================
+-- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,14 +16,18 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- ========================================================================
+-- $Id$
+-- $Source$
+-- ===================================================================
 
-create table llx_c_pays
+create table llx_paiement_facture
 (
-  id       SERIAL PRIMARY KEY,
-  libelle  varchar(25),
-  code     char(2)      NOT NULL,
-  active      tinyint default 1  NOT NULL
+  rowid           serial PRIMARY KEY,
+  fk_paiement     integer,
+  fk_facture      integer,
+  amount          real     default 0
 );
 
+CREATE INDEX llx_paiement_facture_fk_paiement ON llx_paiement_facture(fk_paiement);
 
+CREATE INDEX llx_paiement_facture_fk_facture ON llx_paiement_facture(fk_facture);
