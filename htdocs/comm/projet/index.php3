@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +15,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 require("./pre.inc.php3");
 require("./project.class.php3");
 
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
 
 llxHeader("","../");
 print_titre("Projets");
 print '<table width="100%">';
 print '<tr>';
 
-if($socidp) {
+if($socidp && $user->societe_id == 0)
+{
   print '<td>[<a href="fiche.php3?socidp='.$socidp.'&action=create">Nouveau projet</a>]</td>';
 }
 print '</tr></table>';
@@ -53,10 +62,12 @@ if ($action == 'create') {
  * Affichage
  *
  */
-if ($sortfield == "") {
+if ($sortfield == "")
+{
   $sortfield="lower(p.label)";
 }
-if ($sortorder == "") {
+if ($sortorder == "")
+{
   $sortorder="ASC";
 }
 
@@ -79,7 +90,10 @@ $sql = "SELECT s.nom, s.idp, p.rowid as projectid, p.ref, p.title,".$db->pdate("
 $sql .= " FROM societe as s, llx_projet as p";
 $sql .= " WHERE p.fk_soc = s.idp";
 
-if ($socidp) { $sql .= " AND s.idp = $socidp"; }
+if ($socidp)
+{ 
+  $sql .= " AND s.idp = $socidp"; 
+}
 
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
