@@ -24,7 +24,20 @@
 function facture_get_num($objsoc=0)
 { 
 
-  return  "FA-" . "-" .strftime("%y%m%d", time());
+  $db = new Db();
+  $sql = "SELECT count(*) FROM llx_facture";
+
+  if ( $db->query($sql) ) 
+    {
+      $row = $db->fetch_row(0);
+      
+      $num = $row[0];
+    }
+
+
+  $y = strftime("%y",time());
+
+  return  "FA-" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
 
 }
 
