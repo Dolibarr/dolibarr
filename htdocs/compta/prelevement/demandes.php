@@ -81,21 +81,22 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   $i = 0;
   
+  print_barre_liste("Demandes de prélèvement", $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+  
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre">';
+  print '<td>Facture</td><td>Société</td></tr>';
+  
+  print '<form action="demandes.php" method="GET">';
+  
+  print '<tr class="liste_titre"><td>-</td><td>';
+  print '<input type="text" name="search_societe" size="12" value="'.$GET["search_societe"].'">&nbsp;';
+  print '<input type="submit" value="Chercher">';
+  print '</form>';
+
   if ($num)
     {
-      print_barre_liste("Demandes de prélèvement", $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
 
-
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td>Facture</td><td>Société</td></tr>';
- 
-      print '<form action="demandes.php" method="GET">';
-
-      print '<tr class="liste_titre"><td>-</td><td>';
-      print '<input type="text" name="search_societe" size="12" value="'.$GET["search_societe"].'">&nbsp;';
-      print '<input type="submit" value="Chercher">';
-      print '</form>';
 
 
 
