@@ -137,15 +137,6 @@ insert into llx_const (name, value, type) values ('DB_NAME_OSC','catalog','chain
 insert into llx_const (name, value, type) values ('OSC_LANGUAGE_ID','1','chaine');
 insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
 
---
--- Factures
---
-
-insert into llx_const (name, value, type) values ('FAC_PDF_INTITULE','Facture','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_MEL','facture@societe.com','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_WWW','http://www.societe.com','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_LOGO','/documents/logo/mylogo.png','chaine');
-
 
 -- Dictionnaires llx_c
 
