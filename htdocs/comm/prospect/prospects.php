@@ -43,7 +43,7 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm ";
+$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.fk_stcomm ";
 $sql .= ", d.nom as departement";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
 $sql .= " , ".MAIN_DB_PREFIX."c_departements as d";
@@ -140,7 +140,7 @@ if ($result)
   print_liste_field_titre("Département",$PHP_SELF,"s.fk_departement");
   print "</td><td>";
   print_liste_field_titre("Statut",$PHP_SELF,"s.fk_stcomm");
-  print "</td><td>&nbsp;</td>";
+  print '</td><td colspan="5">&nbsp;</td>';
   print "</TR>\n";
   $var=True;
 
@@ -151,7 +151,7 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$obj->idp.'">';
+      print '<td width="35%"><a href="fiche.php?id='.$obj->idp.'">';
       print img_file();
       print "</a>&nbsp;<a href=\"fiche.php?id=$obj->idp\">$obj->nom</A></td>\n";
       print "<TD>".$obj->ville."&nbsp;</TD>\n";
@@ -174,6 +174,25 @@ if ($result)
 	{
 	  print "<TD>&nbsp;</TD>\n";
 	}
+
+      $sts = array(-1,0,1,2);
+      foreach ($sts as $key => $value)
+	{
+	  if ($value <> $obj->fk_stcomm)
+	    {
+	      print '<td><a href="fiche.php?id='.$obj->idp.'&amp;stcomm=-1&amp;action=cstc">';
+	      print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm'.$value.'.png" border="0" alt="'.$alt.'">';
+	      print '</a></td>';
+	    }
+	  else
+	    {
+	      print '<td></td>';
+	    }
+	}
+
+
+
+
       print "</TR>\n";
       $i++;
     }
