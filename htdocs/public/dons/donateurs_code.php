@@ -26,7 +26,7 @@ $db = new Db();
 $a = setlocale("LC_TIME", "FRENCH");
 $sql = "SELECT ".$db->pdate("d.datedon")." as datedon, d.nom, d.amount, d.public, d.societe";
 $sql .= " FROM llx_don as d";
-$sql .= " WHERE d.fk_don_projet = 1 AND d.fk_statut = 3 ORDER BY d.datedon DESC";
+$sql .= " WHERE d.fk_don_projet = 1 AND d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
 
 if ( $db->query( $sql) )
 {
@@ -37,7 +37,7 @@ if ( $db->query( $sql) )
       print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
       print '<TR>';
-      print "<td>Nom / Société</td>";
+      print "<td>Prénom Nom / Société</td>";
       print "<td>Date</td>";
       print "<td align=\"right\">Montant</TD>";
       print "</TR>\n";
@@ -53,7 +53,7 @@ if ( $db->query( $sql) )
 	  print "<TR $bc[$var]>";
 	  if ($objp->public)
 	    {
-	      print "<td>".stripslashes($objp->nom)." ".stripslashes($objp->societe)."</TD>\n";
+	      print "<td>".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".stripslashes($objp->societe)."</TD>\n";
 	    }
 	  else
 	    {
