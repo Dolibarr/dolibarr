@@ -259,6 +259,12 @@ class ComptaExportPoivre
 	      {
 		$debit = "C";
 		$credit = "D";
+
+		if ($linep[$i][6] == 'Prélèvement')
+		  {
+		    $linep[$i][6] = 'Rejet Prelevement';
+		  }
+
 	      }
 
 	    $page->write_string($j,0, strftime("%d%m%y",$linep[$i][0]));
