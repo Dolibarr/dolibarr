@@ -804,12 +804,14 @@ function print_duree_select($prefix)
   print "</select>\n";  
 }
 
+/*
+ * Return an amount with format	"9 999.99"
+ */
 function price($amount)
 {
-  return number_format($amount, 2, '.', ' ');
-  //return sprintf("%.2f", $amount);
+	$dec='.'; $thousand=' ';	
+	return ereg_replace(' ','&nbsp;',number_format($amount, 2, $dec, $thousand));
 }
-
 
 function francs($euros)
 {
