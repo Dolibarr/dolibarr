@@ -50,7 +50,7 @@ values ('02-12-YHGT',2,now(),'2002-12-01',1,1000,0,196,1196,1,NULL,NULL,'');
 
 delete from llx_user;
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,admin,webcal_login)
-values ('Quiedeville','Rodolphe','RQ','rodo','rodo',1,1,1,'rodo');
+values ('Quiedeville','Rodolphe','RQ','rodo','CRnN0Tam/s7z.',1,1,1,'rodo');
 
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
 values ('demo','demo','DEMO','demo','demo',1,0,'demo');

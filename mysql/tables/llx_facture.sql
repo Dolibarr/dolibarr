@@ -17,29 +17,25 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===========================================================================
 
 create table llx_facture
 (
-  rowid      integer AUTO_INCREMENT PRIMARY KEY,
-  facnumber  varchar(50) NOT NULL,
-  fk_soc     integer NOT NULL,
-  datec      datetime,  -- date de creation de la facture
-  datef      date,      -- date de la facture
-  paye       smallint default 0 NOT NULL,
-  amount     real     default 0 NOT NULL,
-  remise     real     default 0,
-  tva        real     default 0,
-  total      real     default 0,
-  fk_statut  smallint default 0 NOT NULL,
-  author     varchar(50),
-  fk_user    integer,   -- createur de la facture
-
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  facnumber       varchar(50) NOT NULL,
+  fk_soc          integer NOT NULL,
+  datec           datetime,  -- date de creation de la facture
+  datef           date,      -- date de la facture
+  paye            smallint default 0 NOT NULL,
+  amount          real     default 0 NOT NULL,
+  remise          real     default 0,
+  tva             real     default 0,
+  total           real     default 0,
+  fk_statut       smallint default 0 NOT NULL,
+  author          varchar(50),
+  fk_user         integer,   -- createur de la facture
   fk_user_author  integer,   -- createur de la propale
-
   fk_user_valid   integer,   -- valideur de la propale
-
   note       text,
 
   UNIQUE INDEX (facnumber)
