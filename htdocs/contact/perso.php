@@ -26,6 +26,7 @@ require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 if ($HTTP_POST_VARS["action"] == 'update') 
 {
   $contact = new Contact($db);
+  $contact->id = $HTTP_POST_VARS["contactid"];
 
   $contact->birthday = mktime(12, 1 , 1, 
 			      $HTTP_POST_VARS["remonth"], 
@@ -76,6 +77,7 @@ if ($_GET["action"] == 'edit')
 
   print '<tr><td>Date de naissance</td><td>';
   $html = new Form($db);
+  print $contact->birthday;
   print $html->select_date('','re',0,0,1);
   print '</td><td>Alerte : ';
   if ($contact->birthday_alert)
