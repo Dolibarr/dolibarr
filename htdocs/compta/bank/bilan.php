@@ -45,7 +45,10 @@ function valeur($sql)
 
 print_titre("Bilan");
 
-print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+print "<tr class=\"liste_titre\">";
+echo '<td colspan="2">Résumé</td>';
+print "</tr>\n";
 
 $var=!$var;
 $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."paiement";

@@ -66,7 +66,7 @@ if (! isset($_GET["num"]))
       
       print_barre_liste("Relevés bancaires, compte : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>", $page, $PHP_SELF,"&amp;account=$account",$sortfield,$sortorder,'',$numrows);
 
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
       print "<tr class=\"liste_titre\">";
       print "<td>Relevé</td></tr>";
 
