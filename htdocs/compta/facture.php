@@ -272,7 +272,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->facture->creer)
   $_GET["facid"]=$_POST["facid"];   // Pour réaffichage de la fiche en cours d'édition
 }
 
-if ($_POST["action"] == 'updateligne' && $user->rights->facture->creer) 
+if ($_POST["action"] == 'updateligne' && $user->rights->facture->creer && $_POST["save"] == $langs->trans("Save")) 
 {
   $fac = new Facture($db,"",$_POST["facid"]);
   $fac->fetch($_POST["facid"]);
@@ -295,6 +295,11 @@ if ($_POST["action"] == 'updateligne' && $user->rights->facture->creer)
 			     );
 
   $_GET["facid"]=$_POST["facid"];   // Pour réaffichage de la fiche en cours d'édition
+}
+
+if ($_POST["action"] == 'updateligne' && $user->rights->facture->creer && $_POST["cancel"] == $langs->trans("Cancel")) 
+{
+      Header("Location: facture.php?facid=".$_POST["facid"]);   // Pour réaffichage de la fiche en cours d'édition
 }
 
 if ($_GET["action"] == 'deleteline' && $user->rights->facture->creer) 
@@ -1037,17 +1042,18 @@ else
 		      print '<td align="right"><input size="8" type="text" name="price" value="'.price($objp->subprice).'"></td>';
 		      print '<td align="right"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></td>';
 		      print '<td align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
-		      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Save").'"></td>';
+		      print '<td align="center" colspan="3"><input type="submit" name="save" value="'.$langs->trans("Save").'"><br /><input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 		      print '</tr>' . "\n";
-		      if ($conf->service->enabled) {
-			print "<tr $bc[$var]>";
-			print '<td colspan="8">Si produit de type service à durée limitée: Du ';
-			print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
-			print ' au ';
-			print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
-			print '</td>';
-			print '</tr>' . "\n";
-		      }
+		      if ($conf->service->enabled)
+			{
+			  print "<tr $bc[$var]>";
+			  print '<td colspan="8">Si produit de type service à durée limitée: Du ';
+			  print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
+			  print ' au ';
+			  print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
+			  print '</td>';
+			  print '</tr>' . "\n";
+			}
 		      print "</form>\n";
 		    }
 		
@@ -1067,7 +1073,7 @@ else
 	   * Ajouter une ligne
 	   *
 	   */
-	  if ($fac->statut == 0 && $user->rights->facture->creer) 
+	  if ($fac->statut == 0 && $user->rights->facture->creer && $_GET["action"] <> 'editline'  && $_GET["action"] <> 'valid') 
 	    {
 
 	      print "<form action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
@@ -1109,7 +1115,7 @@ else
 	   *
 	   */
 	  print '</div>';
-	  if ($user->societe_id == 0 && $_GET["action"] <> 'valid')
+	  if ($user->societe_id == 0 && $_GET["action"] <> 'valid' && $_GET["action"] <> 'editline')
 	    {
 	      print "<div class=\"tabsAction\">\n";
 
