@@ -174,96 +174,96 @@ if ($_socid > 0)
     $h++;
   }
 
-    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Note");
-    $h++;
-
-    if ($user->societe_id == 0)
+  $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
+  $head[$h][1] = $langs->trans("Note");
+  $h++;
+  
+  if ($user->societe_id == 0)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$objsoc->id;
-        $head[$h][1] = $langs->trans("Documents");
-        $h++;
+      $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$objsoc->id;
+      $head[$h][1] = $langs->trans("Documents");
+      $h++;
     }
-
-    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
-    $head[$h][1] = $langs->trans("Notifications");
-    $h++;
-    
-      if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
-	{
-	  $head[$h][0] = DOL_URL_ROOT.'/sl/fiche.php?id='.$objsoc->id;
-	  $head[$h][1] = 'Fiche catalogue';
-	  $h++;
-	}
-
-    if ($user->societe_id == 0)
-      {
-	$head[$h][0] = DOL_URL_ROOT."/comm/index.php?socidp=$objsoc->id&action=add_bookmark";
-	$head[$h][1] = '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
-	$head[$h][2] = 'image';
-	$h++;
-      }
-
-    dolibarr_fiche_head($head, $hselected, $objsoc->nom);
-
-    /*
-     *
-     *
-     */
-    print '<table width="100%" border="0">';
-    print '<tr><td valign="top">';
-    print '<table class="border" width="100%">';
-
-    print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">';
-    print $objsoc->nom;
-    print '</td></tr>';
-    print "<tr><td valign=\"top\">".$langs->trans("Address")."</td><td colspan=\"3\">".nl2br($objsoc->adresse).'</td></tr>';
-
-    print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td colspan="3">'.$objsoc->cp." ".$objsoc->ville.'</td></tr>';
-    print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$objsoc->pays.'</td></tr>';
-    
-    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($objsoc->tel).'&nbsp;</td><td>Fax</td><td>'.dolibarr_print_phone($objsoc->fax).'&nbsp;</td></tr>';
-    print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
-
-    print "<tr><td>".$langs->trans("ProfIdSiren")."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
-    print '<td>'.$langs->trans("Prefix").'</td><td>';
-    if ($objsoc->prefix_comm)
-      {
-	print $objsoc->prefix_comm;
-      }
-    else
-      {
-	print "[<a href=\"fiche.php?socid=$objsoc->id&action=attribute_prefix\">Attribuer</a>]";
-      }
-
-    print "</td></tr>";
-
-    print "<tr><td>".$langs->trans("Type")."</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
-    print '<tr><td>';
-    print $langs->trans("CustomerDiscount").'</td><td>'.$objsoc->remise_client."&nbsp;%</td>";
-    print '<td colspan="2"><a href="remise.php?id='.$objsoc->id.'">';
-    print img_edit("Modifier la remise");
-    print "</a>";
-    print '</td>';
-
-    print '<tr><td colspan="2">Remise exceptionnelles';
-    print '</td>';
-    print '<td colspan="2"><a href="remx.php?id='.$objsoc->id.'">';
-    print img_edit("Modifier la remise");
-    print "</a>";
-    print '</td></tr>';
-
-    print "</table>";
-
-    print "<br>";
-    
-    /*
-     *
-     */
-    print "</td>\n";
-    
-    //if ($conf->propal->enabled) {
-    
+  
+  $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
+  $head[$h][1] = $langs->trans("Notifications");
+  $h++;
+  
+  if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
+    {
+      $head[$h][0] = DOL_URL_ROOT.'/sl/fiche.php?id='.$objsoc->id;
+      $head[$h][1] = 'Fiche catalogue';
+      $h++;
+    }
+  
+  if ($user->societe_id == 0)
+    {
+      $head[$h][0] = DOL_URL_ROOT."/comm/index.php?socidp=$objsoc->id&action=add_bookmark";
+      $head[$h][1] = '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
+      $head[$h][2] = 'image';
+      $h++;
+    }
+  
+  dolibarr_fiche_head($head, $hselected, $objsoc->nom);
+  
+  /*
+   *
+   *
+   */
+  print '<table width="100%" border="0">';
+  print '<tr><td valign="top">';
+  print '<table class="border" width="100%">';
+  
+  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">';
+  print $objsoc->nom;
+  print '</td></tr>';
+  print "<tr><td valign=\"top\">".$langs->trans("Address")."</td><td colspan=\"3\">".nl2br($objsoc->adresse).'</td></tr>';
+  
+  print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td colspan="3">'.$objsoc->cp." ".$objsoc->ville.'</td></tr>';
+  print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$objsoc->pays.'</td></tr>';
+  
+  print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($objsoc->tel).'&nbsp;</td><td>Fax</td><td>'.dolibarr_print_phone($objsoc->fax).'&nbsp;</td></tr>';
+  print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
+  
+  print "<tr><td>".$langs->trans("ProfIdSiren")."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
+  print '<td>'.$langs->trans("Prefix").'</td><td>';
+  if ($objsoc->prefix_comm)
+    {
+      print $objsoc->prefix_comm;
+    }
+  else
+    {
+      print "[<a href=\"fiche.php?socid=$objsoc->id&action=attribute_prefix\">Attribuer</a>]";
+    }
+  
+  print "</td></tr>";
+  
+  print "<tr><td>".$langs->trans("Type")."</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
+  print '<tr><td>';
+  print $langs->trans("CustomerDiscount").'</td><td>'.$objsoc->remise_client."&nbsp;%</td>";
+  print '<td colspan="2"><a href="remise.php?id='.$objsoc->id.'">';
+  print img_edit("Modifier la remise");
+  print "</a>";
+  print '</td>';
+  
+  print '<tr><td colspan="2">Remise exceptionnelles';
+  print '</td>';
+  print '<td colspan="2"><a href="remx.php?id='.$objsoc->id.'">';
+  print img_edit("Modifier la remise");
+  print "</a>";
+  print '</td></tr>';
+  
+  print "</table>";
+  
+  print "<br>";
+  
+  /*
+   *
+   */
+  print "</td>\n";
+  
+  //if ($conf->propal->enabled) {
+  
     print '<td valign="top" width="50%">';
 
     /*
@@ -370,7 +370,9 @@ if ($_socid > 0)
       }
       $db->free();
       print "</table>";
-    } else {
+    }
+    else
+      {
         dolibarr_print_error($db);
     }
 
@@ -457,9 +459,13 @@ if ($_socid > 0)
 	print '<td>&nbsp;</td>';
 	print "</tr>";
 	
-	$sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->id  ORDER by p.datec";
+	$sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note ";
+	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+	$sql .= " WHERE p.fk_soc = $objsoc->id  ORDER by p.datec";
+
 	$result = $db->query($sql);
 	$i = 0 ; $num = $db->num_rows(); $tag = True;
+
 	while ($i < $num)
 	  {
 	    $obj = $db->fetch_object();
@@ -485,7 +491,7 @@ if ($_socid > 0)
 	    
 	    if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
 	      {
-		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&amp;socid='.$societe->id.'&amp;call='.$obj->phone.'">';
+		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&amp;socid='.$objsoc->id.'&amp;call='.$obj->phone.'">';
 		print img_phone_out("Appel émis") ;
 	      }
 	    print '</td><td>';
