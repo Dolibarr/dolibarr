@@ -141,7 +141,7 @@ if ($action == 'create')
     print "<tr>".'<td valign="top">Admin</td>';
     print '<td class="valeur">';
     $form->selectyesnonum('admin',0);
-    print '</td></tr>';
+    print "</td></tr>\n";
 
     if (defined("MAIN_MODULE_WEBCALENDAR"))
     {
@@ -151,11 +151,11 @@ if ($action == 'create')
 
     print "<tr>".'<td valign="top">Note</td><td>';
     print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
-    print "</textarea></td></tr>";
+    print "</textarea></td></tr>\n";
 
     print "<tr>".'<td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
-    print '</form>';
-    print '</table>';
+    print "</form>";
+    print "</table>\n";
 }
 /* ************************************************************************** */
 /*                                                                            */
@@ -275,18 +275,21 @@ else
             print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
             print '<td width="25%" valign="top">Prénom</td>';
             print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
-            print '</tr>';
+            print "</tr>\n";
 
             print "<tr>".'<td width="25%" valign="top">Login</td>';
             print '<td width="25%"  class="valeur">'.$fuser->login.'</td>';
             print '<td width="25%" valign="top">Email</td>';
-            print '<td width="25%"  class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td></tr>';
-
+            print '<td width="25%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
+            print "</tr>\n";
+            
             print "<tr>".'<td width="25%" valign="top">Administrateur</td>';
             print '<td colspan="3" class="valeur">'.$yn[$fuser->admin].'</td>';
+            print "</tr>\n";
 
             print "<tr>".'<td width="25%" valign="top">Id Société</td>';
-            print '<td colspan="3" class="valeur">'.$fuser->societe_id.'&nbsp;</td></tr>';
+            print '<td colspan="3" class="valeur">'.$fuser->societe_id.'&nbsp;</td>';
+            print "</tr>\n";
 
             print "<tr>".'<td width="25%" valign="top">Fiche contact</td>';
             print '<td colspan="3" valign="top">';
@@ -299,22 +302,24 @@ else
                 print "Pas de fiche parmi les Contacts";
             }
             print '</td>';
+            print "</tr>\n";
 
             print "<tr>".'<td width="25%" valign="top">Note</td>';
-            print '<td colspan="3" class="valeur">'.nl2br($fuser->note).'&nbsp;</td></tr>';
-
+            print '<td colspan="3" class="valeur">'.nl2br($fuser->note).'&nbsp;</td>';
+            print "</tr>\n";
 
             // Autres caractéristiques issus des autres modules
             if (defined("MAIN_MODULE_WEBCALENDAR"))
             {
                 print "<tr>".'<td width="25%" valign="top">Webcal Login</td>';
-                print '<td colspan="3">'.$fuser->webcal_login.'&nbsp;</td></tr>';
+                print '<td colspan="3">'.$fuser->webcal_login.'&nbsp;</td>';
+                print "</tr>\n";
             }
 
-            print '</table>';
-            print '<br>';
+            print "</table>\n";
+            print "<br>\n";
             
-            print '</div>';
+            print "</div>\n";
 
             /*
              * Droits
@@ -337,12 +342,12 @@ else
                         $var = !$var;
                     }
 
-                    print "<tr $bc[$var]><td>".$obj->libelle . '</td><td>'.$obj->module.'</td></tr>';
+                    print "<tr $bc[$var]><td>".$obj->libelle . '</td><td>'.$obj->module."</td></tr>\n";
                     $i++;
                 }
             }
-            print '</table>';
-            print '<br>';
+            print "</table>\n";
+            print "<br>\n";
 
             /*
              * Barre d'actions
@@ -367,10 +372,10 @@ else
 
             if ($user->admin && $user->id <> $id)
             {
-                print '<a class="tabAction" href="fiche.php?action=delete&amp;id='.$fuser->id.'">Supprimer utilisateur</a></td>';
+                print '<a class="tabAction" href="fiche.php?action=delete&amp;id='.$fuser->id.'">Supprimer utilisateur</a>';
             }
 
-            print '</div>';
+            print "</div>\n";
             print "<br>\n";
 
         }
