@@ -24,6 +24,8 @@ require("../../bargraph.class.php");
 
 function llxHeader($head = "", $urlp = "")
 {
+  global $langs;
+  
   top_menu($head);
 
   $menu = new Menu();
@@ -31,7 +33,7 @@ function llxHeader($head = "", $urlp = "")
   $menu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
 
 
-  $menu->add("./", "Statistiques");
+  $menu->add("./", $langs->trans("Statistics"));
 
    
   left_menu($menu->liste);

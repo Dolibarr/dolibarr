@@ -24,7 +24,7 @@ require("../main.inc.php");
 
 function llxHeader($head = "", $title="", $help_url='')
 {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
   /*
    *
@@ -60,7 +60,7 @@ function llxHeader($head = "", $title="", $help_url='')
       if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR) {
         $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
       }
-      $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/","Statistiques");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"));
     }
    
     

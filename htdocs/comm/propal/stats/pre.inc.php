@@ -23,6 +23,8 @@ require("../../../main.inc.php");
 require(DOL_DOCUMENT_ROOT."/bargraph.class.php");
 
 function llxHeader($head = "", $urlp = "") {
+  global $langs;
+  
   /*
    *
    *
@@ -33,7 +35,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add(DOL_URL_ROOT."/comm/propal.php", "Propositions");
 
-  $menu->add("index.php", "Statistiques");
+  $menu->add("index.php", $langs->trans("Statistics"));
 
   left_menu($menu->liste);
 }

@@ -24,14 +24,17 @@ require("../../bargraph.class.php");
 
 function llxHeader($head = "", $urlp = "")
 {
+  global $langs;
+  $langs->load("orders");
+  
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
+  $menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
 
 
-  $menu->add("./", "Statistiques");
+  $menu->add("./", $langs->trans("Statistics"));
 
    
   left_menu($menu->liste);

@@ -38,7 +38,7 @@ Rechercher une expédition<br>
 
 function llxHeader($head = "", $title="", $help_url='', $form_search='', $author='')
 {
-  global $user, $conf, $form_search;
+  global $user, $conf, $form_search, $langs;
 
   /*
    *
@@ -53,7 +53,7 @@ function llxHeader($head = "", $title="", $help_url='', $form_search='', $author
   $menu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
   $menu->add_submenu(DOL_URL_ROOT."/expedition/liste.php", "Liste");
 
-  $menu->add(DOL_URL_ROOT."/expedition/stats/", "Statistiques");
+  $menu->add(DOL_URL_ROOT."/expedition/stats/", $langs->trans("Statistics"));
 
   left_menu($menu->liste, $help_url, $form_search, $author);
 }

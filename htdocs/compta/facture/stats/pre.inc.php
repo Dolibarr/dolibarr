@@ -24,6 +24,9 @@ require(DOL_DOCUMENT_ROOT."/bargraph.class.php");
 require("./facturestats.class.php");
 
 function llxHeader($head = "", $urlp = "") {
+  global $langs;
+  $langs->load("bills");
+  
   /*
    *
    *
@@ -32,9 +35,9 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/compta/facture.php", "Factures");
+  $menu->add(DOL_URL_ROOT."/compta/facture.php", $langs->trans("Bills"));
 
-  $menu->add("index.php", "Statistiques");
+  $menu->add("index.php", $langs->trans("Statistics"));
 
   left_menu($menu->liste);
 }

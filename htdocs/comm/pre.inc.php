@@ -23,7 +23,7 @@
 require("../main.inc.php");
 
 function llxHeader($head = "", $urlp = "") {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
   /*
    *
@@ -48,7 +48,7 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
       $menu->add_submenu("propal.php?viewstatut=0", "Brouillons");
       $menu->add_submenu("propal.php?viewstatut=1", "Ouvertes");
-      $menu->add_submenu("./propal/stats/", "Statistiques");
+      $menu->add_submenu("./propal/stats/", $langs->trans("Statistics"));
     }
 
   if ($conf->contrat->enabled)
