@@ -43,6 +43,11 @@ class modCommercial extends DolibarrModules
 
     $this->const = array();
     $this->boxes = array();
+    $this->boxes[0][0] = "Derniers clients";
+    $this->boxes[0][1] = "box_clients.php";
+    $this->boxes[1][0] = "Derniers prospects enregistrés";
+    $this->boxes[1][1] = "box_propects.php";
+
   }
   /** initialisation du module
    *
