@@ -85,7 +85,6 @@ class Contact
       $sql .= ", phone_perso = '$this->phone_perso'";
       $sql .= ", phone_mobile = '$this->phone_mobile'";
       $sql .= ", jabberid = '$this->jabberid'";
-      $sql .= ", birthday = '".$this->db->idate($this->birthday)."'";
       $sql .= " WHERE idp=$id";
 
       $result = $this->db->query($sql);
@@ -93,20 +92,6 @@ class Contact
       if (!$result) 
 	{
 	  print $this->db->error() . '<br>' . $sql;
-	}
-
-      if ($user )
-	{
-	  if ( $this->birthday_alert == "on")
-	    {
-	      $sql = "REPLACE INTO llx_birthday_alert SET fk_user =$user->id, fk_contact=$id";
-	      $result = $this->db->query($sql);
-	    }
-	  else
-	    {
-	      $sql = "DELETE FROM llx_birthday_alert WHERE fk_user =$user->id AND fk_contact=$id";
-	      $result = $this->db->query($sql);
-	    }
 	}
 
       $ds = dolibarr_ldap_connect();
@@ -189,14 +174,15 @@ class Contact
 	    {
 	      $obj = $this->db->fetch_object($result , 0);
 
-	      $this->id        = $obj->idp;
-	      $this->name      = $obj->name;
-	      $this->firstname = $obj->firstname;
-	      $this->nom       = $obj->name;
-	      $this->prenom    = $obj->firstname;
-	      $this->societeid = $obj->fk_soc;
-	      $this->poste     = $obj->poste;
-	      $this->fullname  = $this->firstname . ' ' . $this->name;
+	      $this->id             = $obj->idp;
+	      $this->name           = $obj->name;
+	      $this->firstname      = $obj->firstname;
+	      $this->nom            = $obj->name;
+	      $this->prenom         = $obj->firstname;
+	      $this->societeid      = $obj->fk_soc;
+	      $this->socid          = $obj->fk_soc;
+	      $this->poste          = $obj->poste;
+	      $this->fullname       = $this->firstname . ' ' . $this->name;
 	      
 	      $this->phone_pro      = dolibarr_print_phone($obj->phone);
 	      $this->phone_perso    = dolibarr_print_phone($obj->phone_perso);
@@ -232,10 +218,6 @@ class Contact
 		      print $this->db->error();
 		    }
 		}
-	    }
-	  else
-	    {
-	      print "Erreur bad id";
 	    }
 	}
       else
@@ -289,8 +271,41 @@ class Contact
       
       return $result;
     }
+  /*
+   * Information sur l'objet
+   *
+   */
+  Function info($id) 
+    {
+      $sql = "SELECT c.idp, ".$this->db->pdate("datec")." as datec, fk_user";
+      $sql .= ", ".$this->db->pdate("tms")." as tms";
+      $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+      $sql .= " WHERE c.idp = $id";
+      
+      if ($this->db->query($sql)) 
+	{
+	  if ($this->db->num_rows()) 
+	    {
+	      $obj = $this->db->fetch_object($result , 0);
 
+	      $this->id                = $obj->idp;
 
+	      $cuser = new User($this->db, $obj->fk_user);
+	      $cuser->fetch();
+
+	      $this->user_creation     = $cuser;
+
+	      $this->date_creation     = $obj->datec;
+	      $this->date_modification = $obj->tms;
+
+	    }
+	  $this->db->free();
+
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+    }
 }
-
 ?>
