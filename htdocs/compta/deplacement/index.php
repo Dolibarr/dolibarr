@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Eric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,11 +77,13 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object();
+      $objp = $db->fetch_object($i);
+      $soc = new Societe($db);
+      $soc->fetch($objp->idp);
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.dolibarr_print_date($objp->dd).'</a></td>';
-      print '<td><a href="/comm/fiche.php?socid='.$objp->idp.'">'.$objp->nom."</a></td>\n";
+      print '<td>' . $soc->nom_url . '</a></td>';
 
       print '<td align="center">'.$objp->firstname.' '.$objp->name.'</td>';
 

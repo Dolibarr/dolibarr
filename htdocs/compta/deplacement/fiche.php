@@ -31,7 +31,6 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
   Header("Location: index.php");
 }
 
-
 if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
   $deplacement = new Deplacement($db);
