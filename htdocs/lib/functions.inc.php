@@ -577,11 +577,18 @@ function accessforbidden()
   llxHeader();
   print '<div class="error">'.$langs->trans("ErrorForbidden").'</div>';
   print '<br>';
-  if ($user->login) {
-    print $langs->trans("Login").": ".$user->login."<br>";
+  if ($user->login)
+  {
+    print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
     print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
   }
-  else {
+  elseif (! empty($_SERVER["REMOTE_USER"]))
+  {
+    print $langs->trans("CurrentLogin").': <font class="error">'.$_SERVER["REMOTE_USER"]."</font><br>";
+    print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
+  }
+  else
+  {
     print $langs->trans("ErrorForbidden3");
   }
   llxFooter();
