@@ -49,7 +49,7 @@ if ($sortorder == "")
   $sortorder="DESC";
 }
 
-$sql = "SELECT c.rowid as cid, c.enservice, c.fin_validite, p.label, p.rowid as pid, s.nom, s.idp as sidp";
+$sql = "SELECT c.rowid as cid, c.enservice, ".$db->pdate("c.fin_validite")." as fin_validite, p.label, p.rowid as pid, s.nom, s.idp as sidp";
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_product = p.rowid";
 if ($socid > 0)
@@ -80,11 +80,12 @@ if ( $db->query($sql) )
   print_liste_field_titre("Statut",$PHP_SELF, "c.enservice");
   print '</td>';
   print '</td><td align="center">';
-  print_liste_field_titre("Fin",$PHP_SELF, "c.fin_validite");
+  print_liste_field_titre("Date Fin",$PHP_SELF, "c.fin_validite");
   print '</td>';
   print "</tr>\n";
     
   $var=True;
+  $now=mktime();
   while ($i < min($num,$limit))
     {
       $obj = $db->fetch_object( $i);
@@ -97,8 +98,14 @@ if ( $db->query($sql) )
       // Affiche statut contrat
       if ($obj->enservice == 1)
 	{
-  	  $class = "impayee";
-	  $statut="En service";
+        if (! $obj->fin_validite || $obj->fin_validite >= $now) {
+      	  $class = "normal";
+    	  $statut="En service";
+        }
+        else {            
+      	  $class = "error";
+    	  $statut="<b>En service, expiré</b>";
+        }
 	}
       elseif($obj->enservice == 2)
 	{
@@ -115,8 +122,7 @@ if ( $db->query($sql) )
 	print "</td><td>";
 
     if ($obj->enservice > 0) {
-	    $time=strtotime($obj->fin_validite);
-        print dolibarr_print_date($time);
+        print dolibarr_print_date($obj->fin_validite);
     }
     else {
         print "&nbsp;";   

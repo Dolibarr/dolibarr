@@ -171,16 +171,31 @@ else
 	      print '<td>Société</td><td colspan="3">'.$contrat->societe->nom_url.'</td></tr>';
 	    }
 
-	  print '<tr><td>Statut</td><td colspan="3">';
-	  if ($contrat->enservice)
-	    {
-	      print "En service";
-	    }
-	  else
-	    {
-	      print "<b>Ce contrat n'est pas en service</b>";
-	    }
-      print "</td></tr>\n";
+      // Affiche statut contrat
+      $now=mktime();
+      if ($contrat->enservice == 1)
+	{
+        if (! $contrat->date_fin_validite || $contrat->date_fin_validite >= $now) {
+      	  $class = "normal";
+    	  $statut="En service";
+        }
+        else {            
+      	  $class = "error";
+    	  $statut="<b>En service, expiré</b>";
+        }
+	}
+      elseif($contrat->enservice == 2)
+	{
+   	  $class = "normal";
+	  $statut= "Cloturé";
+	}
+      else
+	{
+  	  $class = "warning";
+	  $statut= "<b>Ce contrat n'est pas en service</b>";
+	}
+	  print "<tr><td>Statut</td><td colspan=\"3\" class=\"$class\">$statut</td></tr>\n";
+
 	  if ($request == 'miseenservice')
 	    {
     	  // Si contrat lié à une ligne de facture, on recherche date debut et fin de la ligne
