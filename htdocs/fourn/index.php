@@ -153,7 +153,7 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print "<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td valign="center">';
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
   print "</td><td>Ville</td>";

@@ -84,8 +84,6 @@ if ($mode == 'search')
  * Mode Liste
  *
  */
-print_barre_liste("Liste des factures fournisseurs", $page, $PHP_SELF);
-
 if ($sortorder == "")
 {
   $sortorder="DESC";
@@ -105,7 +103,7 @@ if ($socid)
   $sql .= " AND s.idp = $socid";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit+1, $offset);
 
 $result = $db->query($sql);
 
@@ -122,7 +120,11 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+
+  print_barre_liste("Liste des factures fournisseurs", $page, $PHP_SELF,'', $sortfield, $sortorder,'',$num);
+
+
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<TR class="liste_titre">';
   print '<TD>Numéro</TD>';
   print '<TD>';
@@ -141,19 +143,19 @@ if ($result)
   print '<td align="center">Payé</td>';
   print "</TR>\n";
   $var=True;
-  while ($i < $num)
+  while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object( $i);
-      
+      $obj = $db->fetch_object($i);      
       $var=!$var;
       
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?facid=$obj->facid\">$obj->facnumber</A></td>\n";
-      print "<TD>".strftime("%d %b %Y",$obj->datef)."</td>\n";
-      print '<TD>'.stripslashes("$obj->libelle").'</td>';
-      print "<TD><a href=\"../fiche.php?socid=$obj->socid\">$obj->nom</A></td>\n";
-      print '<TD align="right">'.price($obj->total_ht).'</TD>';
-	  print '<TD align="right">'.price($obj->total_ttc).'</TD>';
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?facid=$obj->facid\">".img_file()."</a>\n";
+      print "&nbsp;<a href=\"fiche.php?facid=$obj->facid\">$obj->facnumber</A></td>\n";
+      print "<td>".strftime("%d %b %Y",$obj->datef)."</td>\n";
+      print '<td>'.stripslashes("$obj->libelle").'</td>';
+      print "<td><a href=\"../fiche.php?socid=$obj->socid\">$obj->nom</A></td>\n";
+      print '<TD align="right">'.price($obj->total_ht).'</td>';
+      print '<td align="right">'.price($obj->total_ttc).'</td>';
       print '<TD align="center">'.($obj->paye||$obj->total_ht==0?"":"<a class=\"impayee\" href=\"\">").($obj->total_ht==0?"brouillon":$yn[$obj->paye]).($obj->paye||$obj->total_ht==0?"":"</a>").'</TD>';
 
 
