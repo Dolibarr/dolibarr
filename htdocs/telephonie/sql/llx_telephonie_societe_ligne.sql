@@ -51,6 +51,8 @@ create table llx_telephonie_societe_ligne (
 
   code_analytique    varchar(12),
 
+  pdfdetail          varchar(50) DEFAULT 'standard' NOT NULL,
+
   UNIQUE INDEX(fk_soc, ligne)
 )type=innodb;
 
