@@ -36,6 +36,7 @@ if (!$user->rights->facture->lire)
   accessforbidden();
 
 $langs->load("bills");
+$langs->load("banks");
 
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
@@ -152,7 +153,7 @@ if ($_GET["facid"] > 0)
 
       $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
       $sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
-      $sql .= " , pfd.fk_prelevement, pfd.amount";
+      $sql .= " , pfd.amount";
       $sql .= " , u.name, u.firstname";
       $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
       $sql .= " , ".MAIN_DB_PREFIX."user as u";
@@ -226,7 +227,7 @@ if ($_GET["facid"] > 0)
       
       $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
       $sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
-      $sql .= " , pfd.fk_prelevement";
+      $sql .= " , pfd.fk_prelevement_bons";
       $sql .= " , u.name, u.firstname";
       $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
       $sql .= " , ".MAIN_DB_PREFIX."user as u";
@@ -253,8 +254,8 @@ if ($_GET["facid"] > 0)
 	      print '<td align="center">'.strftime("%d/%m/%Y",$obj->date_traite)."</td>\n";
 	      print '<td align="center">'.price($obj->amount).'</td>';
 	      print '<td align="center">';
-	      print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$obj->fk_prelevement;
-	      print '">'.$obj->fk_prelevement."</a></td>\n";
+	      print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$obj->fk_prelevement_bons;
+	      print '">'.$obj->fk_prelevement_bons."</a></td>\n";
 
 	      print '<td align="center" colspan="2">'.$obj->firstname." ".$obj->name.'</td>';
 
