@@ -41,6 +41,7 @@ function llxHeader($head = "") {
   $menu->add("../facture.php",$langs->trans("Bills"));
 
   $menu->add_submenu("liste.php",$langs->trans("Payments"));
+  $menu->add_submenu("avalider.php",$langs->trans("A valider"));
 
   left_menu($menu->liste);
 }
