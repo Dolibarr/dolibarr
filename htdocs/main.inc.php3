@@ -59,12 +59,22 @@ if ($result)
       $i++;
     }
 }
-
 /*
  *
  *
  */
+
 $db->close();
+
+/*
+ * Inclusion de librairies dépendantes de paramètres de conf
+ */
+
+if (defined("FACTURE_ADDON"))
+{
+  require("includes/modules/facture/".FACTURE_ADDON."/".FACTURE_ADDON.".modules.php");
+}
+
 
 // Modification de quelques variable de conf en fonction des Constantes
 /*
@@ -111,6 +121,11 @@ if (defined("MAIN_MAIL_NEW"))
 if (defined("MAIN_MAIL_NEW_SUBJECT"))
 {
   $conf->adherent->email_new_subject=MAIN_MAIL_NEW_SUBJECT;
+}
+
+if (defined("MAIN_MODULE_COMMANDE"))
+{
+  $conf->commande->enabled=MAIN_MODULE_COMMANDE;
 }
 
 /*
