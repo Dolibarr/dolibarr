@@ -1,9 +1,5 @@
---
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
---
--- $Id$
--- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,6 +15,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
+-- $Id$
+-- $Source$
 --
 -- Valeurs pour les bases de langues francaises
 --
@@ -79,35 +77,46 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAILMAN_URL','http
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAILMAN_LISTS','test-test,test-test2','chaine','Listes auxquelles inscrire les nouveaux adherents');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_DEBUG','1','yesno','Debug ..');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_GLASNOST','0','yesno','utilisation de glasnost ?');
+--
+-- Glasnost
+--
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_GLASNOST_SERVEUR','glasnost.j1b.org','chaine','serveur glasnost');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_GLASNOST_USER','user','chaine','Administrateur glasnost');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_GLASNOST_PASS','password','chaine','password de l\'administrateur');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_GLASNOST_AUTO','1','yesno','inscription automatique a glasnost ?');
+--
+-- SPIP
+--
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_SPIP','1','yesno','Utilisation de SPIP ?');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_SPIP_AUTO','1','yesno','Utilisation de SPIP automatiquement');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_USER','user','chaine','user spip');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_PASS','pass','chaine','Pass de connection');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_SERVEUR','localhost','chaine','serveur spip');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_DB','spip','chaine','db spip');
-
+--
+-- OsCommerce
+--
 INSERT INTO llx_const(name, value, type) VALUES ('DB_NAME_OSC','catalog','chaine');
 INSERT INTO llx_const(name, value, type) VALUES ('OSC_LANGUAGE_ID','1','chaine');
 INSERT INTO llx_const(name, value, type) VALUES ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_FROM','adherents@domain.com','chaine','From des mails');
-
+--
+-- Menus
+--
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MENU_BARRETOP','default.php','chaine','Module commande');
 
 --
 -- Modules
 --
 
-INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMANDE','0','yesno',0);
-INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_PROPALE','0','yesno',0);
-INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_DON','0','yesno',0);
-INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_ADHERENT','0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_COMMANDE','0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_PROPALE', '0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_FACTURE', '0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_DON',     '0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_ADHERENT','0','yesno',0);
 
-INSERT INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_LIVRE','0','yesno',0);
-INSERT INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_ALBUM','0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('BOUTIQUE_LIVRE','0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('BOUTIQUE_ALBUM','0','yesno',0);
 --
 -- Constantes 
 --
