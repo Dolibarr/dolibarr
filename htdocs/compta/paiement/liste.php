@@ -49,7 +49,7 @@ if ($sortorder == "")
 if ($sortfield == "")
   $sortfield="p.rowid";
   
-$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount";
+$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount, p.statut";
 $sql .=", c.libelle as paiement_type, p.num_paiement";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
 $sql .= " WHERE p.fk_paiement = c.id";
@@ -83,7 +83,19 @@ if ($result)
       print img_file();
       print "</a>&nbsp;".strftime("%d %B %Y",$objp->dp)."</td>\n";
       print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
-      print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';	
+      print '<td align="right">'.price($objp->amount).'</td>';
+      print '<td align="center">';
+
+      if ($objp->statut == 0)
+	{
+	  print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">A valider</a>';
+	}
+      else
+	{
+	  print "-";
+	}
+
+      print '</td>';	
       print "</tr>";
       $i++;
     }
