@@ -98,18 +98,18 @@ if ($HTTP_POST_VARS["action"] == 'update' &&
   $product = new Product($db);
   if ($product->fetch($id))
     {
+
+      $product->ref         = $HTTP_POST_VARS["ref"];
+      $product->label       = $HTTP_POST_VARS["libelle"];
+      $product->price       = $HTTP_POST_VARS["price"];
+      $product->tva_tx      = $HTTP_POST_VARS["tva_tx"];
+      $product->description = $HTTP_POST_VARS["desc"];
+      $product->envente     = $HTTP_POST_VARS["statut"];
+      $product->duration_value = $HTTP_POST_VARS["duration_value"];
+      $product->duration_unit = $HTTP_POST_VARS["duration_unit"];
+      
       if ($product->check())
 	{
-
-	  $product->ref = $HTTP_POST_VARS["ref"];
-	  $product->libelle = $HTTP_POST_VARS["libelle"];
-	  $product->price = $HTTP_POST_VARS["price"];
-	  $product->tva_tx = $HTTP_POST_VARS["tva_tx"];
-	  $product->description = $HTTP_POST_VARS["desc"];
-	  $product->envente = $HTTP_POST_VARS["statut"];
-	  $product->duration_value = $HTTP_POST_VARS["duration_value"];
-	  $product->duration_unit = $HTTP_POST_VARS["duration_unit"];
-	  
 	  if (  $product->update($id, $user))
 	    {
 	      $action = '';
@@ -117,13 +117,13 @@ if ($HTTP_POST_VARS["action"] == 'update' &&
 	    }
 	  else
 	    {
-	      $action = 'edit';
+	      $action = 're-edit';
 	      $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
 	    }
 	}
       else
 	{
-	  $action = 'edit';
+	  $action = 're-edit';
 	  $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
 	}
     }
@@ -195,8 +195,11 @@ else
 {
   if ($id)
     {
-      $product = new Product($db);
-      $result = $product->fetch($id);
+      if ($action <> 're-edit')
+	{
+	  $product = new Product($db);
+	  $result = $product->fetch($id);
+	}
 
       if ( $result )
 	{ 
@@ -283,7 +286,7 @@ else
 
 
     
-      if ($action == 'edit' && $user->rights->produit->creer)
+      if (($action == 'edit' || $action == 're-edit') && $user->rights->produit->creer)
 	{
 	  print '<hr><div class="titre">Edition de la fiche '.$types[$product->type].' : '.$product->ref.'</div><br>';
 
