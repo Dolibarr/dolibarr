@@ -20,26 +20,31 @@
  *
  */
 
+/* /bplc.php?CHAMP000=500240&CHAMP001=5965&CHAMP002=5429999010&CHAMP003=I&CHAMP004=Serveur+de+test+FSF+France&CHAMP006=FSF+France+TEST&CHAMP008=rq@lolix.org&CHAMP100=Quiedeville&CHA
+MP101=Rodolphe&CHAMP102=FSFFrance&CHAMP103=.&CHAMP104=rq@lolix.org&CHAMP105=80.15.137.93&CHAMP106=.&CHAMP107=.&CHAMP108=.&CHAMP109=.&CHAMP110=.&CHAMP200=15CB6D9703F8F46760846CEC4A3CADC8&CHAMP201=0,15&CHAMP202=EUR&CHAMP900=01&CHAMP901=0170610&CHAMP902=20021223&CHAMP903=170610&CHAMP904=950467&CHAMP905=2203G&CHAMP114=Quiedeville+Rodolphe&CHAMP906=0000&CHAMP907=0 HTTP/1.1" 200 5 "-" "Microsoft URL Control - 6.00.8169"
+
+*/
+
 require("../../lib/mysql.lib.php3");
 require("../../conf/conf.class.php3");
 require("../../retourbplc.class.php");
-$conf = new Conf();
 
+$conf = new Conf();
 
 $db = new Db();
 
 $retbplc = new Retourbplc($db, $conf);
 
-$retbplc->ipclient          = $HTTP_POST_VARS["CHAMP105"];
-$retbplc->num_transaction   = $HTTP_POST_VARS["CHAMP901"];
-$retbplc->date_transaction  = $HTTP_POST_VARS["CHAMP902"];
-$retbplc->heure_transaction = $HTTP_POST_VARS["CHAMP903"];
-$retbplc->num_autorisation  = $HTTP_POST_VARS["CHAMP904"];
-$retbplc->cle_acceptation   = $HTTP_POST_VARS["CHAMP905"];
-$retbplc->code_retour       = $HTTP_POST_VARS["CHAMP906"];
+$retbplc->ipclient          = $CHAMP105;
+$retbplc->num_transaction   = $CHAMP901;
+$retbplc->date_transaction  = $CHAMP902;
+$retbplc->heure_transaction = $CHAMP903;
+$retbplc->num_autorisation  = $CHAMP904;
+$retbplc->cle_acceptation   = $CHAMP905;
+$retbplc->code_retour       = $CHAMP906;
 
-$retbplc->ref_commande      = $HTTP_POST_VARS["CHAMP200"];
+$retbplc->ref_commande      = $CHAMP200;
 
-$retbplc->insertdb();
+print $retbplc->insertdb();
 
 

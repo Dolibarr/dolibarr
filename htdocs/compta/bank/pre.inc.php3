@@ -65,10 +65,11 @@ function llxHeader($head = "")
   $menu->add_submenu("bilan.php3","Bilan");
   $menu->add_submenu("virement.php3","Virement");
 
-
   $menu->add_submenu("config.php3","Config");
 
   $menu->add("/compta/facture.php3","Factures");
+
+  $menu->add("/compta/bank/bplc.php","Transactions BPLC");
 
   $menu->add("/compta/ca.php3","Chiffres d'affaires");
 
