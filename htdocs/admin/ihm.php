@@ -77,10 +77,10 @@ if ($_GET["action"] == 'edit')
 {
   print '<form method="post" action="ihm.php">';
 
-  print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-  print '<tr class="impair"><td>Thème</td>';
+  print '<tr class="impair"><td>'.$langs->trans("Skin").'</td>';
   print '<td><select name="main_theme">';
   clearstatcache();
   $dir = "../theme/";
@@ -129,17 +129,17 @@ if ($_GET["action"] == 'edit')
   print '</select>';
   print '</td></tr>';
 
-  print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (code langue)</td><td>';
+  print '<tr class="pair"><td width="50%">'.$langs->trans("DefaultLanguage").'</td><td>';
   $html=new Form($db);
   $html->select_lang(MAIN_LANG_DEFAULT,'main_lang_default');
   print '</td></tr>';
-  print '<tr class="impair"><td width="50%">Message du jour</td><td><textarea cols="40" rows="3" name="main_motd" size="20">' .stripslashes(MAIN_MOTD) . '</textarea></td></tr>';
+  print '<tr class="impair"><td width="50%">'.$langs->trans("MessageOfDay").'</td><td><textarea cols="40" rows="3" name="main_motd" size="20">' .stripslashes(MAIN_MOTD) . '</textarea></td></tr>';
 
   print '</table><br>';
 
   // Liste des zone de recherche permanantes supportées
-  print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td>Zone de recherche permanante du menu de gauche</td><td>'.$langs->trans("Activated").'</td></tr>';
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td>'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
   $var=True;
   foreach ($searchform as $key => $value) {
     $var=!$var;
@@ -158,23 +158,23 @@ if ($_GET["action"] == 'edit')
 else
 {
 
-  print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-  print '<tr class="impair"><td width="50%">Thème</td><td>' . MAIN_THEME . '</td></tr>';
-  print '<tr class="pair"><td>Longueur maximum des listes</td><td>' . SIZE_LISTE_LIMIT . '</td></tr>';
-  print '<tr class="impair"><td width="50%">Gestionnaire du menu du haut</td><td>';
+  print '<tr class="impair"><td width="50%">'.$langs->trans("Skin").'</td><td>' . MAIN_THEME . '</td></tr>';
+  print '<tr class="pair"><td>'.$langs->trans("MaxSizeList").'</td><td>' . SIZE_LISTE_LIMIT . '</td></tr>';
+  print '<tr class="impair"><td width="50%">'.$langs->trans("MenuTopManager").'</td><td>';
   $filelib=eregi_replace('\.php$','',MAIN_MENU_BARRETOP);
   print $filelib;
   print '</td></tr>';
-  print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (code langue)</td><td>' . MAIN_LANG_DEFAULT . '</td></tr>';
+  print '<tr class="pair"><td width="50%">'.$langs->trans("DefaultLanguage").'</td><td>' . MAIN_LANG_DEFAULT . '</td></tr>';
 
-  print '<tr class="impair"><td width="50%">Message du jour</td><td>' . stripslashes(nl2br(MAIN_MOTD)) . '</td></tr>';
+  print '<tr class="impair"><td width="50%">'.$langs->trans("MessageOfDay").'</td><td>' . stripslashes(nl2br(MAIN_MOTD)) . '</td></tr>';
 
   print '</table><br>';
 
   // Liste des zone de recherche permanantes supportées
-  print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td>Zone de recherche permanante du menu de gauche</td><td>'.$langs->trans("Activated").'</td></tr>';
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td>'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
   $var=True;
   foreach ($searchform as $key => $value) {
     $var=!$var;
