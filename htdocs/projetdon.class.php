@@ -31,19 +31,14 @@ class ProjetDon {
   function ProjetDon($DB) {
     $this->db = $DB;
   }
-  /*
-   *
-   *
-   *
-   */
-
 
   /*
    *
    *
    *
    */
-  function liste_array($id_societe='')
+	 
+	 function liste_array($id_societe='')
     {
       $projets = array();
 

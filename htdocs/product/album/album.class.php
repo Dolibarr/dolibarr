@@ -48,19 +48,19 @@ class Album {
 	$this->annee = 0;
       }
 
-    $sql = "insert into ".DB_NAME_OSC.".products (products_quantity, products_model, products_image, products_price, products_date_available, products_weight, products_status, products_tax_class_id, manufacturers_id, products_date_added) ";
-    $sql .= "values ('', '', 'Array', '', null, '', '0', '0', '8', now())";
+    $sql = "INSERT INTO ".DB_NAME_OSC.".products (products_quantity, products_model, products_image, products_price, products_date_available, products_weight, products_status, products_tax_class_id, manufacturers_id, products_date_added) ";
+    $sql .= "VALUES ('', '', 'Array', '', null, '', '0', '0', '8', now())";
 
     if ($this->db->query($sql) )
       {
 	$idosc = $this->db->last_insert_id();
 
-	$sql = "insert into ".DB_NAME_OSC.".products_to_categories (products_id, categories_id) values ($idosc, 0)";
+	$sql = "INSERT INTO ".DB_NAME_OSC.".products_to_categories (products_id, categories_id) VALUES ($idosc, 0)";
 
 	if ($this->db->query($sql) )
 	  {
 
-	    $sql = "insert into ".DB_NAME_OSC.".products_description (products_name, products_description, products_url, products_id, language_id) values ('".trim($this->titre)."', '".trim($this->description)."', '', $idosc, '1')";
+	    $sql = "INSERT INTO ".DB_NAME_OSC.".products_description (products_name, products_description, products_url, products_id, language_id) VALUES ('".trim($this->titre)."', '".trim($this->description)."', '', $idosc, '1')";
 	    
 	    if ($this->db->query($sql) )	    
 	      {
@@ -109,7 +109,7 @@ class Album {
   function linkga($id, $gaid)
   {
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."album_to_groupart (fk_album, fk_groupart) values ($id, $gaid)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."album_to_groupart (fk_album, fk_groupart) VALUES ($id, $gaid)";
 
     if ( $this->db->query($sql) ) {
       return 1;

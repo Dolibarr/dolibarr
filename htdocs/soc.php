@@ -24,8 +24,6 @@
 
 require("pre.inc.php");
 
-setlocale(LC_ALL, "fr_BE");
-
 $langs->load("companies");
  
 
