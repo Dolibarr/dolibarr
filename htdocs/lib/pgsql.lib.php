@@ -2,7 +2,7 @@
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -487,6 +487,11 @@ class DoliDb {
     {
 			return pg_affected_rows($this->db); 
     }
+
+/*!
+		\brief construit une chaine de connection pear.
+		\return peardsn
+*/
 
 	function getdsn($db_type,$db_user,$db_pass,$db_host,$dbname)
 	{

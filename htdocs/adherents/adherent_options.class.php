@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -298,7 +300,12 @@ class AdherentOptions
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
       $escaped_label=mysql_escape_string($label);
-      $sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options_label SET name='$attrname',label='$escaped_label'";
+			$sql_del = "delete from ".MAIN_DB_PREFIX."adherent_options_label where name =
+			'$attrname';";
+			$this->db->query($sql_del);
+			$sql = "insert into ".MAIN_DB_PREFIX."adherent_options_label (name,label) 
+							values ('$attrname','$escaped_label');";
+      //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options_label SET name='$attrname',label='$escaped_label'";
 
       if ( $this->db->query( $sql) )
 	{

@@ -1,5 +1,7 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +55,12 @@ $modules["BOUTIQUE_ALBUM"][3] = "Module de gestion des albums";
 
 if ($action == 'set')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '".$value."', value='1', visible = 0";
+	$sql = "delete from ".MAIN_DB_PREFIX."const where name = '".$value."';";
+	$db->query($sql);
+	$sql ='';
+	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('".$value."','1',0) ; ";
+	
+  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '".$value."', value='1', visible = 0";
 
   if ($db->query($sql))
     {
@@ -63,7 +70,11 @@ if ($action == 'set')
 
 if ($action == 'reset')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '".$value."', value='0', visible = 0";
+  $sql = "delete from ".MAIN_DB_PREFIX."const where name = '".$value."';";
+	$db->query($sql);
+	$sql = '';
+	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('".$value."','0',0) ; ";
+  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '".$value."', value='0', visible = 0";
 
   if ($db->query($sql))
     {

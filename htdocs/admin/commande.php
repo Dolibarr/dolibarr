@@ -1,6 +1,8 @@
 <?PHP
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004				Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      	Benoit Mortier			  <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +49,13 @@ $commande_addon_var = COMMANDE_ADDON;
 
 if ($_GET["action"] == 'setmod')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'COMMANDE_ADDON', value='".$_GET["value"]."', visible=0";
+	$sql = "delete from ".MAIN_DB_PREFIX."const where name = 'COMMANDE_ADDON' ;";
+	$db->query($sql);
+	$sql = '';
+	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('COMMANDE_ADDON','".$_GET["value"]."',0) ; ";
+	
+  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'COMMANDE_ADDON', value='".$_GET["value"]."', visible=0";
 
   if ($db->query($sql))
     {

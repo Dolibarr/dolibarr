@@ -2,6 +2,8 @@
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,10 +51,22 @@ $var=True;
 
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-  if (isset($_POST["consttype"]) && $_POST["consttype"] != ''){
-    $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$_POST["constvalue"]."',note='".$_POST["constnote"]."', type='".$typeconst[$_POST["consttype"]]."',visible=0";
-  }else{
-    $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$_POST["constvalue"]."',note='".$_POST["constnote"]."',visible=0";
+  if (isset($_POST["consttype"]) && $_POST["consttype"] != '')
+	{
+		$sql = "delete from ".MAIN_DB_PREFIX."const where name = '".$_POST["constname"]."';";
+	  $db->query($sql);
+		$sql = '';
+		$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,type,visible,note) VALUES ('".$_POST["constname"]."','".$_POST["constvalue"]."','".$typeconst[$_POST["consttype"]]."',0,'".$_POST["constnote"]."') ;";
+				
+  //  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$_POST["constvalue"]."',note='".$_POST["constnote"]."', type='".$typeconst[$_POST["consttype"]]."',visible=0";
+  }
+	else
+	{
+	  $sql = "delete from ".MAIN_DB_PREFIX."const where name = '".$_POST["constname"]."';";
+	  $db->query($sql);
+		$sql ='';
+		$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible,note) VALUES ('".$_POST["constname"]."','".$_POST["constvalue"]."',0,'".$_POST["constnote"]."') ;";
+    //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$_POST["constvalue"]."',note='".$_POST["constnote"]."',visible=0";
   }
   
   if ($db->query($sql))
@@ -71,7 +85,14 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 
 if ($action == 'set')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '$name', value='".$value."', visible=0";
+   $sql = "delete from ".MAIN_DB_PREFIX." where name = '$name' ;";
+	 $db->query($sql);
+	 
+	 $sql ='';
+	 $sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,visible) values ('$name','$value',
+	 0);  "; 
+
+ // $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '$name', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {

@@ -2,6 +2,8 @@
 /* Copyright (c) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -625,6 +627,7 @@ class User
 
       $this->login = strtolower(substr($contact->prenom, 0, 3)) . strtolower(substr($contact->nom, 0, 3));
 
+			
       $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login'";
 
       if ($this->db->query($sql)) 

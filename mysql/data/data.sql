@@ -280,7 +280,11 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (124,1, 91,'34172',2,'Languedoc-Roussillon');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (125,1, 93,'13055',0,'Provence-Alpes-Côte d\'Azur');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (126,1, 94,'2A004',0,'Corse');
+
+--
 -- Regions de Belgique
+--
+
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (201,2,201,'',1,'Flandre');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (202,2,202,'',2,'Wallonie');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (203,2,203,'',3,'Bruxelles-Capitale');
@@ -515,9 +519,9 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,104,'ASBL -
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,105,'SCRI - Société coopérative à responsabilité illimitée');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,106,'SCS  - Société en comanndite simple');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,107,'SCA  - Société en commandite par action');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'SNC  - Société en nom collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,107,'GIE  - Groupement d\'intérêt économique');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'GEIE - Groupement européen d\'intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,108,'SNC  - Société en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'GIE  - Groupement d\'intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,110,'GEIE - Groupement européen d\'intérêt économique');
 
 --
 -- Civilites

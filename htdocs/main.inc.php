@@ -2,6 +2,8 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,10 +129,12 @@ else
       
       //require_once "Auth/Auth.php";
       require_once DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php";
-
+			
+      $pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
+			
       $params = array(
 //		      "dsn" => $conf->db->getdsn(),
-		      "dsn" => $db->getdsn($dolibarr_main_db_type,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_host,$dolibarr_main_db_name),
+		      "dsn" =>$pear, //$db->getdsn($dolibarr_main_db_type,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_host,$dolibarr_main_db_name),
 		      "table" => MAIN_DB_PREFIX."user",
 		      "usernamecol" => "login",
 		      "passwordcol" => "pass",

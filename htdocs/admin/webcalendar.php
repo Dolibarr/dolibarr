@@ -2,7 +2,8 @@
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003 Éric Seigne          <erics@rycks.com>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +57,34 @@ if ($actionsave)
 {
     if (trim($phpwebcalendar_pass) == trim($phpwebcalendar_pass2))
     {
-            $sql  = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_URL',value='".$phpwebcalendar_url."', visible=0";
-            $sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_HOST',value='".$phpwebcalendar_host."', visible=0";
-            $sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_DBNAME', value='".$phpwebcalendar_dbname."', visible=0";
-            $sql3 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_USER',	value='".$phpwebcalendar_user."', visible=0";
-            $sql4 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_PASS',	value='".$phpwebcalendar_pass."', visible=0";
+            $sql = "delete from ".MAIN_DB_PREFIX."const where name = 'PHPWEBCALENDAR_URL';";
+						$db->query($sql);$sql='';
+						$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+						('PHPWEBCALENDAR_URL','".$phpwebcalendar_url."',0);"; 
+						//$sql  = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_URL',value='".$phpwebcalendar_url."', visible=0";
+						
+						$sql1 = "delete from ".MAIN_DB_PREFIX."const where name = 'PHPWEBCALENDAR_HOST';";
+						$db->query($sql1);$sql1 = '';
+						$sql1 = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_HOST','".$phpwebcalendar_host."',0);"; 
+            //$sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_HOST',value='".$phpwebcalendar_host."', visible=0";
+						
+						$sql2 = "delete from ".MAIN_DB_PREFIX."const where name = 'PHPWEBCALENDAR_DBNAME';";
+						$db->query($sql2);$sql2='';
+						$sql2 = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+						('PHPWEBCALENDAR_DBNAME','".$phpwebcalendar_dbname."',0);";
+            //$sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_DBNAME', value='".$phpwebcalendar_dbname."', visible=0";
+						
+						$sql3 = "delete from ".MAIN_DB_PREFIX."const where name = 'PHPWEBCALENDAR_USER' ;";
+						$db->query($sql3);$sql3='';
+						$sql3 = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+						('PHPWEBCALENDAR_USER','".$phpwebcalendar_user."',0);";
+            //$sql3 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_USER',	value='".$phpwebcalendar_user."', visible=0";
+						
+						$sql4 = "delete from ".MAIN_DB_PREFIX."const where name = 'PHPWEBCALENDAR_PASS';";
+						$db->query($sql4);$sql4='';
+						$sql4 = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+						('PHPWEBCALENDAR_PASS','".$phpwebcalendar_pass."',0);";
+            //$sql4 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_PASS',	value='".$phpwebcalendar_pass."', visible=0";
 
             if ($db->query($sql) && $db->query($sql1) && $db->query($sql2) && $db->query($sql3) && $db->query($sql4))
             {

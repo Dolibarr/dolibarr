@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier			  <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +45,12 @@ $ficheinter_addon_var_pdf = FICHEINTER_ADDON_PDF;
 
 if ($action == 'setpdf')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FICHEINTER_ADDON_PDF', value='".$value."', visible=0";
+	$sql = "delete from ".MAIN_DB_PREFIX."const where name = 'FICHEINTER_ADDON_PDF' ;";
+	$db->query($sql);$sql ='';
+	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('FICHEINTER_ADDON_PDF','".$value."',0) ; ";
+	
+  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FICHEINTER_ADDON_PDF', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {

@@ -2,6 +2,8 @@
 /* Copyright (c) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +153,7 @@ class Form
   function select_pays($selected='',$htmlname='pays_id')
   {
     $sql = "SELECT rowid, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
-    $sql .= " WHERE active = 1 ORDER BY libelle ASC";
+    $sql .= " WHERE active = 1 ORDER BY libelle ASC;";
 
     if ($this->db->query($sql))
       {
@@ -171,7 +173,7 @@ class Form
 		  {
 		    print '<option value="'.$obj->rowid.'">'.$obj->libelle.'</option>';
 		  }
-		$i++;
+		    $i++;
 	      }
 	  }
     print '</select>';

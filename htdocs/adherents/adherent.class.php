@@ -2,6 +2,8 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -346,7 +348,10 @@ class Adherent
 
       if (sizeof($this->array_options) > 0 )
 	{
-	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options SET adhid = $this->id";
+	  $sql_del = "delete from ".MAIN_DB_PREFIX."adherent_options where adhid = $this->id;";
+		$this->db->query($sql_del);
+		$sql = "insert into ".MAIN_DB_PREFIX."adherent_options (adhid) VALUES ($this->id);";
+	  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options SET adhid = $this->id";
 	  foreach($this->array_options as $key => $value)
 	    {
 	      // recupere le nom de l'attribut
