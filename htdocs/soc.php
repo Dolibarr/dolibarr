@@ -172,15 +172,15 @@ if ($_GET["action"] == 'create')
       print '<option value="2"'.($soc->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
       print '<option value="1"'.($soc->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
       print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
-      print '</select></td>';
+      print '</select></td>'."\n";
 
-      print '<td>'.$langs->trans('Supplier').'</td><td>';
-      $form->selectyesnonum("fournisseur",$soc->fournisseur);
-      print '</td></tr>';
+      print '<td>'.$langs->trans('Supplier').'</td><td>'."\n";
+      $form->selectyesnonum("fournisseur",0);
+      print '</td></tr>'."\n";
 
-      print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans('Add').'"></td></tr>';
-      print '</table>';
-      print '</form>';
+      print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans('Add').'"></td></tr>'."\n";
+      print '</table>'."\n";
+      print '</form>'."\n";
     }
 }
 elseif ($_GET["action"] == 'edit')
