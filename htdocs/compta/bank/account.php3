@@ -21,14 +21,7 @@
  *
  */
 
-/*
- *
- * $viewall
- *
- */
 require("./pre.inc.php3");
-//require("./bank.lib.php3");
-//require("./account.class.php");
 
 if ($HTTP_POST_VARS["action"] == 'add' && $account)
 {    
@@ -101,15 +94,15 @@ if ($account)
     {
       $viewline = 20;
     }
-
-  print "<b>Bank</b> - &nbsp;-";
-  print "<a href=\"$PHP_SELF?viewall=1&account=$account\">Voir tout</a>";
+  $acct=new Account($db);
+  $acct->fetch($account);
+  print_titre("Compte : " .$acct->label);
 
   /*
    * Formulaire de recherche
    *
    */  
-  print '<form method="post" action="'."$PHP_SELF?viewall=$viewall&vline=$vline&account=$account".'">';
+  print '<form method="post" action="'."$PHP_SELF?vline=$vline&account=$account".'">';
   print '<input type="hidden" name="action" value="search">';
   print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
   print "<TR>";
@@ -125,7 +118,7 @@ if ($account)
    *
    *
    */
-  print "<form method=\"post\" action=\"$PHP_SELF?viewall=$viewall&vline=$vline&account=$account\">";
+  print "<form method=\"post\" action=\"$PHP_SELF?vline=$vline&account=$account\">";
   print '<input type="hidden" name="action" value="add">';
   print "<TR class=\"liste_titre\">";
   print "<td>Date</td><td>Type</td><td>Description</TD>";
@@ -169,8 +162,6 @@ if ($account)
     }
   
   
-  if ($viewall) { $nbline=0; }
- 
   /* Another solution
    * create temporary table solde type=heap select amount from llx_bank limit 100 ;
    * select sum(amount) from solde ;
@@ -355,12 +346,7 @@ if ($account)
       print '<td colspan="4" align="center"><input type="submit" value="Ajouter"></td></tr>';
       
   }
-
   print "</table></form>";
-
-  print "<a href=\"categ.php3\">Edit Categories</a>";
-  print " <a href=\"budget.php3\">Budgets</a>";
-
 
 } else {
 
