@@ -97,9 +97,13 @@ if ($mode == 'search') {
     $db->free();
   }
 }
-
-
-
+/*
+ * Sécurité si un client essaye d'accéder à une autre fiche que la sienne
+ */
+if ($user->societe_id > 0) 
+{
+  $socid = $user->societe_id;
+}
 /*
  *
  * Mode fiche
@@ -107,9 +111,9 @@ if ($mode == 'search') {
  *
  */  
 if ($socid > 0) {
+
   $societe = new Societe($db, $socid);
   
-
   $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
 
@@ -137,14 +141,19 @@ if ($socid > 0) {
     print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
 
     print "<tr><td><div class=\"titre\">Fiche client : $objsoc->nom</div></td>";
-    print "<td align=\"center\"><a href=\"../compta/fiche.php3?socid=$objsoc->idp\">Compta</a></td>";
-    print "<td align=\"center\"><a href=\"index.php3?socidp=$objsoc->idp&action=add_bookmark\">[Bookmark]</a></td>";
-    print "<td align=\"center\"><a href=\"docsoc.php?socid=$objsoc->idp\">doc</a></td>";
-    print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
-    print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
-    print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
-    print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
-    print "</tr></table>";
+
+    if ($user->societe_id == 0)
+      {
+
+	print "<td align=\"center\"><a href=\"../compta/fiche.php3?socid=$objsoc->idp\">Compta</a></td>";
+	print "<td align=\"center\"><a href=\"index.php3?socidp=$objsoc->idp&action=add_bookmark\">[Bookmark]</a></td>";
+	print "<td align=\"center\"><a href=\"docsoc.php?socid=$objsoc->idp\">doc</a></td>";
+	print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
+	print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
+	print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
+	print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td></tr>";
+      }
+    print "</table>";
     /*
      *
      *
@@ -211,7 +220,6 @@ if ($socid > 0) {
       }
       $db->free();
     }
-
 
     /*
      *
@@ -387,11 +395,6 @@ if ($socid > 0) {
 	print $db->error();
       }
       print "</td></tr></table>";
-
-
-
-
-
 
       /*
        *
