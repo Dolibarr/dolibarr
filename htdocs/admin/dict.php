@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  * $Source$
  */
 
-/*!	    \file       htdocs/admin/dict.php
+/**	    \file       htdocs/admin/dict.php
 		\ingroup    setup
 		\brief      Page d'administration des dictionnaires de données
 		\version    $Revision$
@@ -195,8 +195,8 @@ if ($_POST["actionadd"]) {
 
 if ($_GET["action"] == 'delete')       // delete
 {
-    if ($tabrowid[$_GET["id"]]) $rowidcol=$tabrowid[$_GET["id"]];
-    else $rowidcol="rowid";
+    if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
+    else { $rowidcol="rowid"; }
 
     $sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE $rowidcol=".$_GET["rowid"];
 
@@ -209,8 +209,8 @@ if ($_GET["action"] == 'delete')       // delete
 
 if ($_GET["action"] == $acts[0])       // activate
 {
-    if ($tabrowid[$_GET["id"]]) $rowidcol=$tabrowid[$_GET["id"]];
-    else $rowidcol="rowid";
+    if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
+    else { $rowidcol="rowid"; }
 
     if ($_GET["rowid"] >0) {
         $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE $rowidcol=".$_GET["rowid"];
@@ -228,8 +228,8 @@ if ($_GET["action"] == $acts[0])       // activate
 
 if ($_GET["action"] == $acts[1])       // disable
 {
-    if ($tabrowid[$_GET["id"]]) $rowidcol=$tabrowid[$_GET["id"]];
-    else $rowidcol="rowid";
+    if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
+    else { $rowidcol="rowid"; }
 
     if ($_GET["rowid"] >0) {
         $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE $rowidcol=".$_GET["rowid"];
