@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,26 +17,31 @@
  *
  * $Id$
  * $Source$
- * $File:$
+ * $File$
  */
 
-/**
-
-   \file       htdocs/compta/export/modules/compta.export.class.php
-   \ingroup    compta
-   \brief      Fichier de la classe d'export compta
-   \version    $Revision$
-
+/*!
+  \file       htdocs/compta/export/modules/compta.export.class.php
+  \ingroup    compta
+  \brief      Fichier de la classe d'export compta
+  \version    $Revision$
 */
 
 
-/**     \class      ComptaExport
-	\brief      Classe permettant les exports comptables
+/*!
+  \class      ComptaExport
+  \brief      Classe permettant les exports comptables
 */
-
 
 class ComptaExport
 {
+
+  /*!
+    \brief      Createur Classe
+    \param      DB       object de base de données
+    \param      USER     object utilisateur    
+  */
+
   function ComptaExport ($DB, $USER, $classe)
   {
     $this->db = $DB;
@@ -45,9 +50,9 @@ class ComptaExport
     $this->error_message = '';
   }
 
-  /*
-   *
-   */
+  /*!
+    \brief      Lecture des factures dans la base
+  */
 
   function ReadLines()
   {
@@ -76,16 +81,19 @@ class ComptaExport
     $sql .= " AND c.rowid = l.fk_code_ventilation";
 
     $sql .= " ORDER BY f.rowid ASC, l.fk_code_ventilation ASC";
-    //    print $sql;
-    if ($this->db->query($sql))
+
+
+    $result = $this->db->query($sql);
+
+    if ($result)
       {
-	$num = $this->db->num_rows();
+	$num = $this->db->num_rows($result);
 	$i = 0;
 	$this->linec = array();
 
 	while ($i < $num)
 	  {
-	    $obj = $this->db->fetch_object();
+	    $obj = $this->db->fetch_object($result);
 
 	    $this->linec[$i][0] = $obj->datef;
 	    $this->linec[$i][1] = $obj->facid;
@@ -107,14 +115,16 @@ class ComptaExport
 
 	    $i++;
 	  }
+	$this->db->free($result);
       }    
 
     return $error;
   }
-  /*
-   *
-   *
-   */
+
+  /*!
+    \brief      Lecture des paiements dans la base
+  */
+
   function ReadLinesPayment()
   {
     $error = 0;
@@ -140,17 +150,17 @@ class ComptaExport
 
     $sql .= " ORDER BY f.rowid ASC, p.rowid ASC";
 
-    //        print $sql."<br><br>";
-   
-    if ($this->db->query($sql))
+    $result = $this->db->query($sql);
+
+    if ($result)
       {
-	$num = $this->db->num_rows();
+	$num = $this->db->num_rows($result);
 	$i = 0;
 	$this->linep = array();
 
 	while ($i < $num)
 	  {
-	    $obj = $this->db->fetch_object();
+	    $obj = $this->db->fetch_object($result);
 
 	    $this->linep[$i][0] = $obj->datep;
 	    $this->linep[$i][1] = $obj->paymentid;
@@ -163,6 +173,9 @@ class ComptaExport
 
 	    $i++;
 	  }
+
+	$this->db->free($result);
+
       }
     else
       {
@@ -171,11 +184,11 @@ class ComptaExport
         
     return $error;
   }
-  /**
-   *
-   *
-   *
-   */
+
+  /*!
+    \brief      Créé le fichier d'export
+  */
+
   function Export()
   {
     $error = 0;
@@ -198,7 +211,6 @@ class ComptaExport
 
 	$objexport->Export($this->linec, $this->linep);
       }
-
   }
 
 }
