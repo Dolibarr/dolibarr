@@ -143,11 +143,16 @@ if ($action == 'create')
 if ($action == '') {
   
   if ($page == -1)
-    {
-      $page = 0 ;
-    }
+    $page = 0 ;
+  
   $limit = $conf->liste_limit;
   $offset = $limit * $page ;
+
+  if ($sortorder == "")
+    $sortorder="DESC";
+  
+  if ($sortfield == "")
+    $sortfield="p.datep";
   
   $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber";
   $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
@@ -159,8 +164,8 @@ if ($action == '') {
       $sql .= " AND f.fk_soc = $socidp";
     }
   
-  $sql .= " ORDER BY datep DESC";
-  $sql .= $db->plimit( $limit ,$offset);
+  $sql .= " ORDER BY $sortfield $sortorder";
+  $sql .= $db->plimit( $limit +1 ,$offset);
   $result = $db->query($sql);
   
   if ($result)
@@ -169,18 +174,19 @@ if ($action == '') {
       $i = 0; 
       $var=True;
       
-      print_barre_liste("Paiements", $page, $PHP_SELF);
-      
+      print_barre_liste("Paiements", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
+
       print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
       print '<TR class="liste_titre">';
       print "<td>Facture</td>";
       print "<td>Date</td>";
-      print "<td>Type</TD>";
-      print '<td align="right">Montant</TD>';
+      print "<td>";
+      print_liste_field_titre("Type",$PHP_SELF,"c.libelle","","");
+      print '</td><td align="right">Montant</TD>';
       print "<td>&nbsp;</td>";
       print "</TR>\n";
       
-      while ($i < $num)
+      while ($i < min($num,$limit))
 	{
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
