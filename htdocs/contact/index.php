@@ -57,7 +57,7 @@ $view=isset($_GET["view"])?$_GET["view"]:$_POST["view"];
 $contactname=isset($_GET["contactname"])?$_GET["contactname"]:$_POST["contactname"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = $_GET["page"];
+$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 if ($sortorder == "")
 {
