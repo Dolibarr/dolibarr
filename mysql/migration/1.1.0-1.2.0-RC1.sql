@@ -5,6 +5,8 @@
 -- sans AUCUNE erreur ni warning
 -- ;
 
+
+
 create table llx_usergroup_rights
 (
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
@@ -239,17 +241,17 @@ create table llx_prelevement_facture_demande
 create table llx_prelevement_bons
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  ref            varchar(12),        -- reference
-  datec          datetime,           -- date de creation
-  amount         real DEFAULT 0,     -- montant total du prélèvement
-  statut         smallint DEFAULT 0, -- statut
-  credite        smallint DEFAULT 0, -- indique si le prelevement a été credité
+  ref            varchar(12),
+  datec          datetime,
+  amount         real DEFAULT 0,
+  statut         smallint DEFAULT 0,
+  credite        smallint DEFAULT 0,
   note           text,
-  date_trans     datetime,           -- date de transmission à la banque
-  method_trans   smallint,           -- méthode de transmission
-  fk_user_trans  integer,            -- user qui a effectué la transmission
-  date_credit    datetime,           -- date de crédit sur le compte
-  fk_user_credit integer,            -- user qui a remonté l'info de crédit
+  date_trans     datetime,  
+  method_trans   smallint,  
+  fk_user_trans  integer,   
+  date_credit    datetime,  
+  fk_user_credit integer,   
   
   UNIQUE(ref)
 )type=innodb;
@@ -846,10 +848,11 @@ create table llx_c_departements
   tncc        integer,
   ncc         varchar(50),
   nom         varchar(50),
-  active      tinyint default 1  NOT NULL,
-
-  key (fk_region)
+  active      tinyint default 1  NOT NULL
 )type=innodb;
+
+ALTER TABLE llx_c_departements ADD UNIQUE uk_departements (code_departement,fk_region);
+ALTER TABLE llx_c_departements ADD INDEX idx_departements_fk_region (fk_region);
 
 delete from llx_c_departements;
 insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,'0','0',0,'-','-');
