@@ -132,13 +132,13 @@ tr.liste_titre
 tr.pair
 { 
   background: #dcdcb3; 
-  font-family: Helvetica, Verdana; font-size: 12px; 
+  font-family: Helvetica, Verdana; font-size: 1em; 
   }
 
 tr.impair	
 { 
   background: #eeeecc; 
-  font-family: Helvetica, Verdana; font-size: 12px; 
+  font-family: Helvetica, Verdana; font-size: 1em; 
   }
 /*
  *
