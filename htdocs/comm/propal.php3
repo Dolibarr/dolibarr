@@ -284,7 +284,7 @@ if ($propalid) {
 		  $total = $total + $objp->price;
 		  $i++;
 		}
-	      //print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b></td><td>Euros HT</td></tr>\n";
+
 	      print "</table>";
 	    }
 	  /*
@@ -519,14 +519,14 @@ if ($propalid) {
    */
 
   if ($sortfield == "") {
-    $sortfield="p.fk_statut, datep ";
+    $sortfield="p.datep";
   }
   if ($sortorder == "") {
-    $sortorder="ASC";
+    $sortorder="DESC";
   }
 
   if ($page == -1) { $page = 0 ; }
-  $limit = 26;
+
   $offset = $limit * $page ;
   $pageprev = $page - 1;
   $pagenext = $page + 1;
@@ -553,83 +553,72 @@ if ($propalid) {
     $sql .= " AND date_format(p.datep, '%Y') = $year";
   }
   
-  $sql .= " ORDER BY $sortfield ASC";
+  $sql .= " ORDER BY $sortfield $sortorder";
 
   if ( $db->query($sql) ) {
     $num = $db->num_rows();
     $i = 0;
     print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
-    $oldstatut = -1;
-    $subtotal = 0;
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
-
-      if ($objp->statut <> $oldstatut ) {
-	$oldstatut = $objp->statut;
-
-	if ($i > 0) {
-	  print "<tr><td align=\"right\" colspan=\"5\">Total : <b>".price($subtotal)."</b></td>\n";
-	  print "<td align=\"left\">Euros HT</td></tr>\n";
-	}
-	$subtotal = 0;
+    print '<TR class="liste_titre">';
+    print "<TD>Réf</TD><td>";
+    print_liste_field_titre ("Société",$PHP_SELF,"s.nom");
+    print "</td><TD align=\"right\" colspan=\"2\">Date</TD>";
+    print "<TD align=\"right\">Prix</TD>";
+    print "<TD align=\"center\">Statut <a href=\"$PHP_SELF?viewstatut=$objp->statutid\">";
+    print '<img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a></td>';
+    print "</TR>\n";
+    $var=True;
+    
+    while ($i < $num)
+      {
+	$objp = $db->fetch_object( $i);
 	
-	print '<TR class="liste_titre">';
-	print "<TD>Réf</TD><td>";
-	print_liste_field_titre ("Société",$PHP_SELF,"s.nom");
-	print "</td><TD align=\"right\" colspan=\"2\">Date</TD>";
-	print "<TD align=\"right\">Prix</TD>";
-	print "<TD align=\"center\">Statut <a href=\"$PHP_SELF?viewstatut=$objp->statutid\">";
-	print '<img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a></td>';
+	$var=!$var;
+	print "<TR $bc[$var]>";
+	print "<TD><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+	print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      
+	
+	$now = time();
+	$lim = 3600 * 24 * 15 ;
+	
+	if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
+	  {
+	    print "<td><b> &gt; 15 jours</b></td>";
+	  }
+	else
+	  {
+	    print "<td>&nbsp;</td>";
+	  }
+      
+	print "<TD align=\"right\">";
+	$y = strftime("%Y",$objp->dp);
+	$m = strftime("%m",$objp->dp);
+	
+	print strftime("%d",$objp->dp)."\n";
+	print " <a href=\"propal.php3?year=$y&month=$m\">";
+	print strftime("%B",$objp->dp)."</a>\n";
+	print " <a href=\"propal.php3?year=$y\">";
+	print strftime("%Y",$objp->dp)."</a></TD>\n";      
+	
+	print "<TD align=\"right\">".price($objp->price)."</TD>\n";
+	print "<TD align=\"center\">$objp->statut</TD>\n";
 	print "</TR>\n";
-	$var=True;
-      }
-      
-      $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-      print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      
-      
-      $now = time();
-      $lim = 3600 * 24 * 15 ;
-      
-      if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 ) {
-	print "<td><b> &gt; 15 jours</b></td>";
-      } else {
-	print "<td>&nbsp;</td>";
-      }
-      
-      print "<TD align=\"right\">";
-      $y = strftime("%Y",$objp->dp);
-      $m = strftime("%m",$objp->dp);
-      
-      print strftime("%d",$objp->dp)."\n";
-      print " <a href=\"propal.php3?year=$y&month=$m\">";
-      print strftime("%B",$objp->dp)."</a>\n";
-      print " <a href=\"propal.php3?year=$y\">";
-      print strftime("%Y",$objp->dp)."</a></TD>\n";      
-      
-      print "<TD align=\"right\">".price($objp->price)."</TD>\n";
-      print "<TD align=\"center\">$objp->statut</TD>\n";
-      print "</TR>\n";
-  
-      $total = $total + $objp->price;
-      $subtotal = $subtotal + $objp->price;
-      
-      $i++;
+	
+	$total = $total + $objp->price;
+	$subtotal = $subtotal + $objp->price;
+	
+	$i++;
     }
-    print "<tr><td align=\"right\" colspan=\"5\">Total : <b>".price($subtotal)."</b></td>\n";
-    print "<td align=\"left\">Euros HT</td></tr>\n";
     
     
-    print "<tr><td></td><td>$i propales</td>";
-    print "<td colspan=\"3\" align=\"right\"><b>Total : ".price($total)."</b></td>";
-    print "<td align=\"left\"><b>Euros HT</b></td></tr>";
     print "</TABLE>";
     $db->free();
-  } else {
-    print $db->error();
   }
+  else
+    {
+      print $db->error();
+    }
 }
 $db->close();
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
