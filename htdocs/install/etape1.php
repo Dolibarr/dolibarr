@@ -198,11 +198,9 @@ if ($HTTP_POST_VARS["action"] == "set")
 	      }
 	    }
 	  
-	  $db->close();
-	  
+	  $db->close();	  
 	}
-      
-      
+            
       $conf = new Conf();
       $conf->db->host = $dolibarr_main_db_host;
       $conf->db->name = $dolibarr_main_db_name;

@@ -33,7 +33,7 @@ all: $(DOC).pdf $(DOC).html $(DOC).txt
 	linuxdoc --language=french --backend=latex -o pdf -c latin dolibarr-install.sgml
 
 %.html: %.sgml
-	linuxdoc --language=french --backend=html -c latin dolibarr-install.sgml
+	cd ../../htdocs/install/doc/ ; linuxdoc --language=french --backend=html -c latin ../../../doc/install/dolibarr-install.sgml
 
 put:
 	$(RSYNC) $(ROPT) $(RSSH) *pdf *html www.dolibarr.com:/home/www/www.dolibarr.com/htdocs/documentation

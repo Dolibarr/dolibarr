@@ -25,16 +25,6 @@ body {
 /*
  * Onglets
  */
-
-div.message {
-  background: #dee7ec;
-  padding: 0em 1.5em;
-  margin: 0em 0em 0em 0em;
-  border-top: 1px solid #8CACBB;
-  border-left: 1px solid #8CACBB;
-  border-right: 1px solid #8CACBB;
-}
-
 div.tabBar {
   background: #dcdcd3;
   padding: 0em 0.5em 0.5em;
@@ -60,6 +50,14 @@ div.FicheSubmit {
   text-align: center;
 }
 
+div.message {
+  background: #dee7ec;
+  padding: 0em 1.5em;
+  margin: 0em 0em 0em 0em;
+  border-top: 1px solid #8CACBB;
+  border-left: 1px solid #8CACBB;
+  border-right: 1px solid #8CACBB;
+}
 
 a.tab {
   background: white;
@@ -182,6 +180,30 @@ div.menus {
             border-bottom: 1px dashed #ccccb3;
             border-left:   1px dashed #ccccb3;
             }
+
+
+a.leftmenu { 
+             font-weight: bold; 
+             color: #202020;
+             }
+
+a.leftsubmenu { 
+                font-weight: bold; 
+                font-size: 0.95em;
+                color: #202020;
+                margin: 1em 1em 1em 1em;
+                }
+
+div.leftmenu { 
+               background: #ccccb3; 
+               text-align: left;
+               border-right: 1px solid #000000;
+               border-bottom: 1px solid #000000;
+               margin: 1px 0em 0em 0em;
+               padding: 2px;
+               }
+
+
 
 .menu 
 { 

@@ -23,59 +23,9 @@ require("./pre.inc.php");
 require("../contact.class.php");
 require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
-if ($HTTP_POST_VARS["action"] == 'add') 
-{
-  $contact = new Contact($db);
-
-  $contact->socid        = $HTTP_POST_VARS["socid"];
-
-  $contact->name         = $HTTP_POST_VARS["name"];
-  $contact->firstname    = $HTTP_POST_VARS["firstname"];
-
-  $contact->poste        = $HTTP_POST_VARS["poste"];
-
-  $contact->fax          = $HTTP_POST_VARS["fax"];
-  $contact->note         = $HTTP_POST_VARS["note"];
-  $contact->email        = $HTTP_POST_VARS["email"];
-  $contact->phone_pro    = $HTTP_POST_VARS["phone_pro"];
-  $contact->phone_perso  = $HTTP_POST_VARS["phone_perso"];
-  $contact->phone_mobile = $HTTP_POST_VARS["phone_mobile"];  
-  $contact->jabberid     = $HTTP_POST_VARS["jabberid"];
-
-  $_GET["id"] =  $contact->create($user);
-}
-
-if ($_GET["action"] == 'delete') 
-{
-  $contact = new Contact($db);
-
-  $contact->old_name      = $HTTP_POST_VARS["old_name"];
-  $contact->old_firstname = $HTTP_POST_VARS["old_firstname"];
-
-  $result = $contact->delete($_GET["id"]);
-
-  Header("Location: index.php");
-}
-
-
 if ($action == 'update') 
 {
   $contact = new Contact($db);
-
-  $contact->old_name      = $HTTP_POST_VARS["old_name"];
-  $contact->old_firstname = $HTTP_POST_VARS["old_firstname"];
-
-  $contact->name          = $HTTP_POST_VARS["name"];
-  $contact->firstname     = $HTTP_POST_VARS["firstname"];
-  $contact->poste         = $HTTP_POST_VARS["poste"];
-
-  $contact->phone_pro     = $HTTP_POST_VARS["phone_pro"];
-  $contact->phone_perso   = $HTTP_POST_VARS["phone_perso"];
-  $contact->phone_mobile  = $HTTP_POST_VARS["phone_mobile"];
-  $contact->fax           = $HTTP_POST_VARS["fax"];
-  $contact->note          = $HTTP_POST_VARS["note"];
-  $contact->email         = $HTTP_POST_VARS["email"];
-  $contact->jabberid      = $HTTP_POST_VARS["jabberid"];
 
   $contact->birthday = mktime(12, 1 , 1, 
 			      $HTTP_POST_VARS["remonth"], 
@@ -84,18 +34,8 @@ if ($action == 'update')
 
   $contact->birthday_alert = $HTTP_POST_VARS["birthday_alert"];
 
-  $result = $contact->update($HTTP_POST_VARS["contactid"], $user);
+  $result = $contact->update_perso($HTTP_POST_VARS["contactid"], $user);
 
-}
-
-if ($action == 'create_user') 
-{
-  $nuser = new User($db);
-  $contact = new Contact($db);
-  $nuser->nom = $contact->nom;
-  $nuser->prenom = $contact->prenom;
-  $result = $contact->fetch($contactid);
-  $nuser->create_from_contact($contact);
 }
 
 /*
@@ -137,7 +77,7 @@ if ($_GET["action"] == 'edit')
 
   print '<tr><td>Date de naissance</td><td>';
   $html = new Form($db);
-  print $html->select_date();
+  print $html->select_date('','re',0,0,1);
   print '</td><td>Alerte : ';
   if ($contact->birthday_alert)
     {
@@ -148,8 +88,9 @@ if ($_GET["action"] == 'edit')
       print '<input type="checkbox" name="birthday_alert"></td></tr>';
     }
 
-  print '<tr><td align="center" colspan="3"><input type="submit" value="Enregistrer"></td></tr>';
   print "</table>";
+
+  print '<div class="FicheSubmit"><input type="submit" value="Enregistrer">';
 
   print "</form>";
 }
@@ -172,14 +113,6 @@ else
 
       print 'Société : '.$objsoc->nom.'<br>';
     }
-
-  print 'Nom : '.$contact->name.' '.$contact->firstname ."<br>";
-
-  if ($contact->poste)
-    print 'Poste : '.$contact->poste ."<br>";
-
-  if ($contact->email)
-    print 'Email : '.$contact->email ."<br>";
 
   if ($contact->birthday)
     print 'Date de naissance : '.strftime("%d %B %Y",$contact->birthday);
