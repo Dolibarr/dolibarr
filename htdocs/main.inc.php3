@@ -75,36 +75,26 @@ $db = new DoliDb();
 $user = new User($db);
 
 //XAVIER DUTOIT 18/09/2003 : si l'utilisateur n'est pas authentifié apache, on essaie pear Auth
-function loginFunction()
-{
-	/**
-	* Change the HTML output so that it fits to your
-	* application.     */
-    echo "<form method=\"post\" action=\"" . $_SERVER['PHP_SELF'] . "\">";
-    echo "Login: <input type=\"text\" name=\"username\">";
-    echo "<br/> Password: <input type=\"password\" name=\"password\">";
-    echo "<br /><input value='Login' type=\"submit\">";
-    echo "</form>";
-}
+
 if (!empty ($GLOBALS["REMOTE_USER"]))
-	$user->fetch($GLOBALS["REMOTE_USER"]);
-else
+     $user->fetch($GLOBALS["REMOTE_USER"]);
+     else
 {
-	require_once "Auth/Auth.php";
-	$params = array(
-	  "dsn" => $conf->db->getdsn (),
-	  "table" => "llx_user",
-	  "usernamecol" => "login",
-	  "passwordcol" => "pass",
-	  "cryptType" => "none",
-	  );
-	$a = new Auth("DB", $params, "loginFunction");
-    $a->start();
-    if ($a->getAuth()) { 
-		$user->fetch($a->getUsername());
-	}
-	else
-		die ("Veuillez vous authentifier");
+  require_once "Auth/Auth.php";
+  $params = array(
+		  "dsn" => $conf->db->getdsn (),
+		  "table" => "llx_user",
+		  "usernamecol" => "login",
+		  "passwordcol" => "pass",
+		  "cryptType" => "none",
+		  );
+  $a = new Auth("DB", $params, "loginFunction");
+  $a->start();
+  if ($a->getAuth()) { 
+    $user->fetch($a->getUsername());
+  }
+  else
+    die ("Veuillez vous authentifier");
 }
 /*
  * Definition de toutes les Constantes globales d'envirronement
