@@ -76,7 +76,7 @@ function llxHeader($head = "") {
     }
 
 
-  $menu->add(DOL_URL_ROOT."/fourn/index.php3", "Fournisseurs");
+  $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
 
   /*
    *  $menu->add("ligne.php3","Compta");
