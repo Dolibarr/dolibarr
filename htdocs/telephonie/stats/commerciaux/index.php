@@ -92,7 +92,9 @@ print '</td>';
 
 print '</td><td valign="top" width="70%">';
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/lignes/commandes.hebdomadaire.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/commercials/clients.hebdomadaire.png" alt="Nouveaux clients par semaines" title="Nouveaux clients par semaine"><br /><br />'."\n";
+
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/lignes/commandes.hebdomadaire.png" alt="Commandes de ligne par semaines" title="Lignes Actives"><br /><br />'."\n";
 
 print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/lignes/commandes.mensuels.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
 
