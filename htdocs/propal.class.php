@@ -240,7 +240,7 @@ class Propal
       $totaltva=0;
       $totalttc=0;
       $total_remise=0;
-
+      $t = 0;
       /*
        *  Remise
        */
@@ -267,13 +267,17 @@ class Propal
 
 		  if ($remise_percent > 0)
 		    {
-		      $lremise = ($lprice * $remise_percent / 100);
-		      $total_remise = $total_remise + $lremise;
-		      $lprice = $lprice - $lremise;
+		      $ligne_remise = ($lprice * $remise_percent / 100);
+		      $total_remise = $total_remise + $ligne_remise;
+		      $lprice = $lprice - $ligne_remise;
 		    }
 
 		  $totalht = $totalht + $lprice;
-		  $totaltva = $totaltva + (tva(($lprice), $obj->tva_tx));
+
+		  $ligne_tva = ($lprice * ($obj->tva_tx / 100));
+
+		  $totaltva = $totaltva + $ligne_tva;
+
 		  $i++;
 		}
 
@@ -282,6 +286,8 @@ class Propal
 	      /*
 	       *  Calcul TVA
 	       */
+	      $totaltva = round($totaltva, 2);
+	      $totalht = round($totalht, 2);
 	      $totalttc = $totalht + $totaltva;
 	      /*
 	       *
