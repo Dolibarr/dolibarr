@@ -90,7 +90,7 @@ if ($action == 'create')
   print '<tr><td>CP</td><td><input size="6" type="text" name="cp">&nbsp;';
   print 'Ville&nbsp;<input type="text" name="ville"></td>';
 
-  print '<td>Département</td><td>';
+  print '<td>Département/Province/Canton</td><td>';
   print $form->select_departement($soc->departement_id);
   print '</td></tr>';
 
@@ -164,7 +164,7 @@ elseif ($action == 'edit')
       
       print '<tr><td>CP</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
       print 'Ville&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td>';
-      print '<td>Département</td><td>';
+      print '<td>Département/Province/Canton</td><td>';
       print $form->select_departement($soc->departement_id);
       print '</td></tr>';      
 
