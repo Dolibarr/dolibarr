@@ -230,8 +230,8 @@ else
 	  
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
-	  print '<td width="25%">'.$langs->trans("LastName").'</td>';
-	  print '<td width="25%">'.$langs->trans("FirstName").'</td>';
+	  print '<td width="25%">'.$langs->trans("Lastname").'</td>';
+	  print '<td width="25%">'.$langs->trans("Firstname").'</td>';
 	  print '<td>'.$langs->trans("Code").'</td>';
 	  print "<td>&nbsp;</td></tr>\n";
 	  $var=True;
