@@ -40,7 +40,7 @@ class modSociete extends DolibarrModules
     $this->const_config = MAIN_MODULE_SOCIETE;
 
     $this->depends = array();
-    $this->requiredby = array("modFacture");
+    $this->requiredby = array("modFacture","modFournisseur","modFicheinter","modPropale");
 
     $this->const = array();
     $this->boxes = array();

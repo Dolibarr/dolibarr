@@ -63,10 +63,10 @@ class modService extends DolibarrModules
      */
 
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (30,'Tous les droits sur les produits','produit','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (31,'Lire les produits','produit','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (32,'Créer modifier les produits','produit','w',0);",
-		 "insert INTO ".MAIN_DB_PREFIX."rights_def values (34,'Supprimer les produits','produit','d',0);"
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (30,'Tous les droits sur les produits/services','produit','a',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (31,'Lire les produits/services','produit','r',1);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (32,'Créer modifier les produits/services','produit','w',0);",
+		 "insert INTO ".MAIN_DB_PREFIX."rights_def values (34,'Supprimer les produits/services','produit','d',0);"
 		 );
 
     return $this->_init($sql);
