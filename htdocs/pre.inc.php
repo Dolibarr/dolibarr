@@ -34,7 +34,7 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  if ($conf->societe && $conf->commercial->enabled) 
+  if ($conf->societe) 
     {
       $menu->add(DOL_URL_ROOT."/societe.php", "Sociétés","company");
 
