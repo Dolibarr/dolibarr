@@ -27,8 +27,8 @@ create table llx_const
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   name        varchar(255),
-  value       varchar(255),
-  type        enum('yesno'),
+  value       text, -- max 65535 caracteres
+  type        enum('yesno','texte','chaine'),
   note        text,
 
   UNIQUE INDEX(name)
