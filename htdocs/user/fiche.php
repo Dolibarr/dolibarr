@@ -96,9 +96,9 @@ if ($_POST["action"] == 'update' && $user->admin)
     }
 }
 
-if ($action == 'password' && $user->admin)
+if ($_GET["action"] == 'password' && $user->admin)
 {
-    $edituser = new User($db, $id);
+    $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
 
     if ($edituser->password('',$conf->password_encrypted))
@@ -366,12 +366,12 @@ else
 
             if ($user->admin)
             {
-                print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$fuser->id.'">Editer</a>';
+                print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">Editer</a>';
             }
 
             if ($user->id == $id or $user->admin)
             {
-                print '<a class="tabAction" href="fiche.php?action=password&amp;id='.$fuser->id.'">Envoyer nouveau mot de passe</a>';
+                print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">Envoyer nouveau mot de passe</a>';
             }
 
             if ($user->admin)
@@ -394,7 +394,7 @@ else
         /* Edition                                                                    */
         /*                                                                            */
         /* ************************************************************************** */
-        if ($action == 'edit' && $user->admin && !$fuser->societe_id)
+        if ($_GET["action"] == 'edit' && $user->admin)
         {
             print_fiche_titre("Edition fiche utilisateur",$message);
             print '<br>';
@@ -414,11 +414,19 @@ else
 
             print "<tr>".'<td valign="top">Email</td>';
             print '<td><input size="30" type="text" name="email" value="'.$fuser->email.'"></td></tr>';
-
-            print "<tr>".'<td valign="top">Admin ?</td>';
-            print '<td class="valeur">';
-            $form->selectyesnonum('admin',$fuser->admin);
-            print '</td></tr>';
+	    print "<tr>".'<td valign="top">Admin ?</td>';
+	    if ($fuser->societe_id > 0)
+	      {
+		print '<td class="valeur">';
+		print '<input type="hidden" name="admin" value="0">non';
+		print '</td></tr>';
+	      }
+	    else
+	      {
+		print '<td class="valeur">';
+		$form->selectyesnonum('admin',$fuser->admin);
+		print '</td></tr>';
+	      }
 
             print "<tr>".'<td valign="top">Login Webcal</td>';
             print '<td class="valeur"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
