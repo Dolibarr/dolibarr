@@ -87,7 +87,7 @@ if ($action == 'stcomm') {
     }
 }
 
-/*
+/**
  * Recherche
  *
  *
@@ -112,7 +112,8 @@ if ($mode == 'search') {
  *
  *
  */  
-if ($socid > 0) {
+if ($socid > 0)
+{
   $societe = new Societe($db, $socid);
   
   $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description";
@@ -146,64 +147,34 @@ if ($socid > 0) {
     /*
      *
      */
-    print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
+    print '<table width="100%" class="noborder" cellspacing="1">';
 
     print "<tr><td><div class=\"titre\">Fiche fournisseur : $objsoc->nom</div></td>";
 
     print '<td><a href="facture/fiche.php?action=create&socid='.$objsoc->idp.'">Nouvelle Facture <img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
 
     print "<td align=\"center\">[<a href=\"../soc.php?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
-
-
+    print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/liste.php?type=0&fourn_id='.$objsoc->idp.'">Produits</a></td>';
 
     print "</tr></table>";
     /*
      *
      *
      */
-    ?>
-    <style type="text/css">
-       td.border { border: 1px dashed #c0c0c0; }
-    </style>
-    <?PHP
-    print '<table class="border" width="100%" border="0" cellspacing="0"><tr>';
-    print '<td valign="top">';
-    print '<table cellspacing="0" border="1" width="100%">';
+    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="1">';
+    print '<tr><td valign="top" width="50%">';
+    /*
+     *
+     */
+    print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
     print '<tr><td>Tél</td><td>'.$objsoc->tel.'&nbsp;</td><td>fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
-    print "<tr><td>Adresse</td><td colspan=\"3\">".nl2br($objsoc->address)."<br>$objsoc->cp $objsoc->ville</td></tr>";
+    print '<tr><td>Adresse</td><td colspan="3">'.nl2br($objsoc->address).'<br>'.$objsoc->cp.' '.$objsoc->ville.'</td></tr>';
 
-    print "<tr><td>siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
-    print "<td>prefix</td><td>";
-    if ($objsoc->prefix_comm) {
-      print $objsoc->prefix_comm;
-    } else {
-      print "[<a href=\"$PHP_SELF?socid=$objsoc->idp&action=attribute_prefix\">Attribuer</a>]";
-    }
-
-    print "</td></tr>";
-
-    print "<tr><td>Site</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
-
-    print "</table>";
-
-    /*
-     *
-     */
-    print "</td>\n";
-    print '<td valign="top" width="50%">';
-    print '<table border=0 width="100%" cellspacing=0>';
-    print "<tr><td>Créée le</td><td align=center>" . strftime("%d %b %Y %H:%M", $objsoc->dc) . "</td></tr>";
-    /*
-     *
-     */
     print '</table>';
-    print '</td></tr>';
     /*
      *
      */
-    print "<tr><td valign=\"top\">";
-
-    print "</td><td valign=\"top\">";
+    print '</td><td valign="top" width="50%">';
     /*
      *
      * Liste des projets associés
@@ -211,60 +182,48 @@ if ($socid > 0) {
      */
     $sql  = "SELECT p.rowid,p.title,p.ref,".$db->pdate("p.dateo")." as do";
     $sql .= " FROM llx_projet as p WHERE p.fk_soc = $objsoc->idp";
-    if ( $db->query($sql) ) {
-      print "<table border=1 cellspacing=0 width=100% cellpadding=\"1\">";
-      $i = 0 ; 
-      $num = $db->num_rows();
-      if ($num > 0) {
-	$tag = !$tag; print "<tr $bc[$tag]>";
-	print "<td colspan=\"2\"><a href=\"projet/index.php?socidp=$objsoc->idp\">liste des projets ($num)</td></tr>";
+    if ( $db->query($sql) )
+      {
+	print '<table class="noborder" cellspacing="0" width="100%" cellpadding="1">';
+	$i = 0 ; 
+	$num = $db->num_rows();
+	if ($num > 0)
+	  {
+	    $tag = !$tag;
+	    print "<tr $bc[$tag]>";
+	    print "<td colspan=\"2\"><a href=\"../projet/index.php?socidp=$objsoc->idp\">liste des projets ($num)</td></tr>";
+	  }
+	while ($i < $num && $i < 5)
+	  {
+	    $obj = $db->fetch_object( $i);
+	    $tag = !$tag;
+	    print "<tr $bc[$tag]>";
+	    print '<td><a href="projet/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';	    
+	    print "<td align=\"right\">".strftime("%d %b %Y", $obj->do) ."</td></tr>";
+	    $i++;
+	  }
+	$db->free();
+	print "</table>";
       }
-      while ($i < $num && $i < 5) {
-	$obj = $db->fetch_object( $i);
-	$tag = !$tag;
-	print "<tr $bc[$tag]>";
-	print '<td><a href="projet/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
-
-	print "<td align=\"right\">".strftime("%d %b %Y", $obj->do) ."</td></tr>";
-	$i++;
+    else
+      {
+	print $db->error();
       }
-      $db->free();
-      print "</table>";
-    } else {
-      print $db->error();
-    }
 
     /*
      *
      *
      */
-    print "</td></tr>";
-    print "</table>\n";
-    /*
-     *
-     *
-     *
-     */
-    if ($action == 'changevalue') {
+    print '</td></tr>';
+    print '</table>' . "<br>\n";
 
-      print "<HR noshade>";
-      print "<form action=\"index.php?socid=$objsoc->idp\" method=\"post\">";
-      print "<input type=\"hidden\" name=\"action\" value=\"cabrecrut\">";
-      print "Cette société est un cabinet de recrutement : ";
-      print "<select name=\"selectvalue\">";
-      print "<option value=\"\">";
-      print "<option value=\"t\">Oui";
-      print "<option value=\"f\">Non";
-      print "</select>";
-      print "<input type=\"submit\" value=\"Mettre &agrave; jour\">";
-      print "</form>\n";
-    } else {
+
       /*
        *
        * Liste des contacts
        *
        */
-      print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=2>";
+      print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 
       print "<tr><td><b>Pr&eacute;nom Nom</b></td>";
       print '<td><b>Poste</b></td><td><b>T&eacute;l</b></td>';
@@ -275,30 +234,35 @@ if ($socid > 0) {
       $sql .= " FROM llx_socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
       $result = $db->query($sql);
       $i = 0 ; $num = $db->num_rows(); $tag = True;
-      while ($i < $num) {
-	$obj = $db->fetch_object( $i);
-	if ($tag) {
-	  print "<tr bgcolor=\"e0e0e0\">";
-	} else {
-	  print "<tr>";
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  if ($tag)
+	    {
+	      print "<tr bgcolor=\"e0e0e0\">";
+	    }
+	  else
+	    {
+	      print "<tr>";
+	    }
+	  print "<td>$obj->firstname $obj->name";
+	  if ($obj->note)
+	    {
+	      print "<br><b>".nl2br($obj->note);
+	    }
+	  print "</td>";
+	  print "<td>$obj->poste&nbsp;</td>";
+	  print '<td><a href="actioncomm.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+	  print '<td><a href="actioncomm.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
+	  print '<td><a href="actioncomm.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+	  print "<td><a href=\"people.php?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
+	  print "</tr>\n";
+	  $i++;
+	  $tag = !$tag;
 	}
-	print "<td>$obj->firstname $obj->name";
-	if ($obj->note) {
-	  print "<br><b>".nl2br($obj->note);
-	}
-	print "</td>";
-	print "<td>$obj->poste&nbsp;</td>";
-	print '<td><a href="actioncomm.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
-	print '<td><a href="actioncomm.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
-	print '<td><a href="actioncomm.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
-	print "<td><a href=\"people.php?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
-	print "</tr>\n";
-	$i++;
-	$tag = !$tag;
-      }
       print "</table>";
-    
-      print "\n<hr noshade size=1>\n";
+      
+      
       /*
        *
        */
@@ -393,7 +357,7 @@ if ($socid > 0) {
       print '<table border="1" width="100%" cellspacing="0" bgcolor="#e0e0e0">';
       print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
       print "</table>";
-    }
+    
   }
   else {
     print $db->error() . "<br>" . $sql;
