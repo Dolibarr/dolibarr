@@ -47,10 +47,9 @@ if ($result)
 }
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-print '<TR class="liste_titre">';
-print "<td>Comptes courants</td><td>Banque</TD>";
-print "<td align=\"left\">Numéro</a></TD><td align=\"right\">Solde</td><td>&nbsp;</td>";
-print "</TR>\n";
+print '<tr class="liste_titre"><td>Comptes courants</td><td>Banque</td>';
+print '<td align="left">Numéro</td><td align="right">Solde</td><td>&nbsp;</td>';
+print "</tr>\n";
 $total = 0;
 for ($i = 0 ; $i < sizeof($accounts) ; $i++)
 {
