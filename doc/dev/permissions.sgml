@@ -1,0 +1,97 @@
+<!-- $Id$ -->
+<!-- $Source$ -->
+<chapt id="perm">Permissions
+
+  <p>
+    Définition des permissions
+  </p>
+  
+  <sect id="perm-def">Définitions des permissions
+    <p>
+      Chaque permission se voit affecter un id unique, cet id se
+      décompose en 2 partie, la partie mineur qui identifie le droit
+      dans sa classe et la partie majeure qui identifie la classe. La
+      partie mineure et codée de 0 à 9, la partie majeure est codée à
+      partir de 1.
+    </p>
+
+    <p>
+      Avant de créer de nouvelles permissions les développeurs doivent
+      compléter ce document c'est lui et lui seul qui fait office de
+      réservation et d'inventaire des classes retenues
+    </p>
+  </sect>
+  
+  <sect id="perm-table">Identification des classes.
+    <p>
+      Tableau d'identification des classes
+      <list>
+	<item>1 - facture</item>
+	<item>2 - propositions commerciales</item>
+	<item>3 - produits</item>
+	<item>4 - projets</item>
+	<item>5 - RESERVE</item>
+	<item>6 - fiche d'intervention</item>
+	<item>7 - adhérent</item>
+	<item>8 - <em>non attribué</em></item>
+      </list>
+    </p>
+  </sect>
+
+  <sect id="perm-example">Table des permissions
+    <p>
+      <example>
++----+---------------------------------------------------+------------+------+-----------+
+| id | libelle                                           | module     | type | bydefault |
++----+---------------------------------------------------+------------+------+-----------+
+| 10 | Tous les droits sur les factures                  | facture    | a    |         0 |
+| 11 | Lire les factures                                 | facture    | r    |         1 |
+| 12 | Créer modifier les factures                       | facture    | w    |         0 |
+| 14 | Valider les factures                              | facture    | d    |         0 |
+| 15 | Envoyer les factures aux clients                  | facture    | d    |         0 |
+| 16 | Emettre des paiements sur les factures            | facture    | d    |         0 |
+| 19 | Supprimer les factures                            | facture    | d    |         0 |
+| 20 | Tous les droits sur les propositions commerciales | propale    | a    |         0 |
+| 21 | Lire les propositions commerciales                | propale    | r    |         1 |
+| 22 | Créer modifier les propositions commerciales      | propale    | w    |         0 |
+| 24 | Valider les propositions commerciales             | propale    | d    |         0 |
+| 25 | Envoyer les propositions commerciales aux clients | propale    | d    |         0 |
+| 26 | Clôturer les propositions commerciales            | propale    | d    |         0 |
+| 27 | Supprimer les propositions commerciales           | propale    | d    |         0 |
+| 30 | Tous les droits sur les produits                  | produit    | a    |         0 |
+| 31 | Lire les produits                                 | produit    | r    |         1 |
+| 32 | Créer modifier les produits                       | produit    | w    |         0 |
+| 34 | Supprimer les produits                            | produit    | d    |         0 |
+| 40 | Tous les droits sur les projets                   | projet     | a    |         0 |
+| 41 | Lire les projets                                  | projet     | r    |         1 |
+| 42 | Créer modifier les projets                        | projet     | w    |         0 |
+| 44 | Supprimer les projets                             | projet     | d    |         0 |
+| 60 | Tous les droits sur les fiches d'intervention     | ficheinter | a    |         0 |
+| 61 | Lire les fiches d'intervention                    | ficheinter | r    |         1 |
+| 62 | Créer modifier les fiches d'intervention          | ficheinter | w    |         0 |
+| 64 | Supprimer les fiches d'intervention               | ficheinter | d    |         0 |
++----+---------------------------------------------------+------------+------+-----------+
+
+      </example>
+    </p>
+  </sect>
+  
+
+</chapt>
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:nil
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:("dolibarr-dev.sgml" "book" "chapt")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
