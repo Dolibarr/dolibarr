@@ -194,7 +194,7 @@ else
 {
   $sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact ";
   $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_societe as s, llx_user as u";
-  $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
+  $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid AND a.percent = 100";
   
   if ($type)
     {
