@@ -99,15 +99,16 @@ if ($result)
       Header("Location: fiche.php3?id=$objp->rowid");
     }
   
-  llxHeader();
-
   if ($ref || $snom || $sall)
     {
+      llxHeader("","","Dolibarr - Recherche Produit/Service");
+
       print_barre_liste("Recherche d'un produit ou service", $page, $PHP_SELF, "&sref=$sref&snom=$snom&envente=$envente", $sortfield, $sortorder,'',$num);
     }
   else
     {
       $texte = "Liste des ".$types[$type]."s";
+      llxHeader("","","Dolibarr - ".$texte);
       if (isset($envente) && $envente == 0)
 	{
 	  $texte .= " hors vente";
@@ -118,9 +119,9 @@ if ($result)
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf",$PHP_SELF, "p.ref","&envente=$envente");
+  print_liste_field_titre("Réf",$PHP_SELF, "p.ref","&envente=$envente&type=$type");
   print "</td><td>";
-  print_liste_field_titre("Libellé",$PHP_SELF, "p.label","&envente=$envente");
+  print_liste_field_titre("Libellé",$PHP_SELF, "p.label","&envente=$envente&type=$type");
   print "</td><TD align=\"right\">Prix de vente</TD>";
   print "</TR>\n";
   
