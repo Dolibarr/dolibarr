@@ -443,6 +443,19 @@ create table llx_voyage
 
 
 
+create table llx_product_price
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  tms             timestamp,
+  fk_product      integer NOT NULL,
+  date_price      datetime NOT NULL,
+  price           double,
+  tva_tx          double default 19.6,
+  fk_user_author  integer,
+  envente         tinyint default 1
+);
+
+
 create table llx_appro
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -686,6 +699,7 @@ create table llx_facture
   paye               smallint default 0 NOT NULL,
   amount             real     default 0 NOT NULL,
   remise             real     default 0,
+  remise_percent     real     default 0,
   tva                real     default 0,
   total              real     default 0,
   total_ttc          real     default 0,
@@ -768,6 +782,7 @@ create table llx_propal
   fk_user_cloture integer,               -- cloture de la propale signee ou non signee
   fk_statut       smallint  default 0,
   price           real      default 0,
+  remise_percent  real      default 0,
   remise          real      default 0,
   tva             real      default 0,
   total           real      default 0,
@@ -1011,6 +1026,13 @@ delete from llx_boxes;
 insert into llx_boxes (box_id, position) values (4,0);
 insert into llx_boxes (box_id, position) values (1,0);
 insert into llx_boxes (box_id, position) values (3,0);
+insert into llx_const(name, value, type, note) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation');
+
+insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
+
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','Thème par défaut');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
+
 insert into llx_const(name, value, type) values ('FAC_PDF_FAX','01 02 03 04 05','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_SIRET','123 456 789','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_INTITULE','Dolibarr','chaine');
@@ -1018,7 +1040,6 @@ insert into llx_const(name, value, type) values ('FAC_PDF_SIREN','123 456 789 12
 insert into llx_const(name, value, type) values ('FAC_PDF_TEL','05 04 03 02 01','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_ADRESSE','1 quai Martin\n56400 Auray','texte');
 
-insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
 
 insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
@@ -1031,8 +1052,7 @@ insert into llx_const(name, value, type, note) values ('COMPTA_ONLINE_PAYMENT_BP
 
 insert into llx_const(name, value, type, note) values ('COMPTA_BANK_FACTURES','1','yesno','Menu factures dans la partie bank');
 
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','theme principal');
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
+
 INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_RESIL','Votre adhesion sur %SERVEUR% vient d\'etre resilie.\r\nNous esperons vous revoir tres bientot','texte','Mail de Resiliation');
 INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_VALID','MAIN\r\nVotre adhesion vient d\'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante : \r\n%SERVEUR%public/adherents/','texte','Mail de validation');
 INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_EDIT','Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante :\r\n%SERVEUR%public/adherents/','texte','Mail d\'edition');
