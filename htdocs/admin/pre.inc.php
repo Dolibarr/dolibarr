@@ -57,7 +57,7 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
 
-  $menu->add("system/", $langs->trans("System"));
+  $menu->add(DOL_URL_ROOT."/admin/system/", $langs->trans("System"));
 
   left_menu($menu->liste, $help_url);
 }
