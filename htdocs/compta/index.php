@@ -101,7 +101,9 @@ print "</table></form><br>";
 if ($conf->facture->enabled)
 {
   
-  $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
+  $sql  = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+  $sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
   
   if ($socidp)
     {
@@ -291,7 +293,7 @@ if ($conf->facture->enabled)
     {
       $sql .= " AND f.fk_soc = $socidp";
     }
-  $sql .= " GROUP BY f.facnumber,f.rowid,s.nom, s.idp, f.total_ttc";   
+  $sql .= " GROUP BY f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc";   
   
   if ( $db->query($sql) )
     {
