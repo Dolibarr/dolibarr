@@ -171,6 +171,8 @@ if (defined("MAIN_MODULE_FACTURE") && MAIN_MODULE_FACTURE)
 
 if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
 {
+  $conf->propal->enabled=MAIN_MODULE_PROPALE;
+
   require (DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
   
   if (! defined("PROPALE_OUTPUTDIR"))
@@ -304,6 +306,11 @@ if (defined("MAIN_MODULE_PRODUIT"))
 if (defined("MAIN_MODULE_BOUTIQUE"))
 {
   $conf->boutique->enabled=MAIN_MODULE_BOUTIQUE;
+}
+
+if (defined("MAIN_MODULE_PROJET"))
+{
+  $conf->projet->enabled=MAIN_MODULE_PROJET;
 }
 
 if (defined("BOUTIQUE_LIVRE"))
@@ -474,33 +481,33 @@ Function left_menu($menu, $help_url='', $form_search='')
       
       if (defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
 	{
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/clients.php">Societes</A>';
 	  print '<form action="'.DOL_URL_ROOT.'/comm/clients.php">';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/clients.php">Societes</A><br>';
 	  print '<input type="hidden" name="mode" value="search">';
 	  print '<input type="hidden" name="mode-search" value="soc">';
 	  print '<input type="text" name="socname" class="flat" size="10">&nbsp;';
 	  print '<input type="submit" class="flat" value="go">';
-	  print '</form>';
+	  print "</form>\n";
 	}
       
       if (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
 	{
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/contact.php">Contacts</A>';
 	  print '<form action="'.DOL_URL_ROOT.'/comm/contact.php">';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/contact.php">Contacts</A><br>';
 	  print '<input type="hidden" name="mode" value="search">';
 	  print '<input type="hidden" name="mode-search" value="contact">';
 	  print '<input type="text" class="flat" name="contactname" size="10">&nbsp;';
 	  print '<input type="submit" class="flat" value="go">';
-	  print '</form>';
+	  print "</form>\n";
 	}
 
       if (defined("MAIN_MODULE_PRODUIT") && MAIN_MODULE_PRODUIT > 0)
 	{
+	  print '<form action="'.DOL_URL_ROOT.'/product/liste.php" method="post"><br>';
 	  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">Produits</A>';
-	  print '<form action="'.DOL_URL_ROOT.'/product/liste.php" method="post">';
 	  print '<input type="text" class="flat" name="sall" size="10">&nbsp;';
 	  print '<input type="submit" class="flat" value="go">';
-	  print '</form>';
+	  print "</form>\n";
 	}
       print '</td></tr>';
     }
