@@ -25,16 +25,6 @@ require("./pre.inc.php");
 llxHeader();
 
 $db = new Db();
-if ($sortfield == "") {
-  $sortfield="lower(cd.categories_name)";
-}
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-
-if ($page == -1) { $page = 0 ; }
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
 
 print_barre_liste("Liste des catégories", $page, $PHP_SELF);
 
@@ -42,8 +32,7 @@ $sql = "SELECT c.categories_id, cd.categories_name ";
 $sql .= " FROM ".DB_NAME_OSC.".categories as c,".DB_NAME_OSC.".categories_description as cd";
 $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
 $sql .= " AND c.parent_id = 0";
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit ,$offset);
+$sql .= " ORDER BY cd.categories_name ASC ";
  
 if ( $db->query($sql) )
 {

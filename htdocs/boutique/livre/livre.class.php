@@ -159,6 +159,78 @@ class Livre {
   /*
    *
    *
+   */
+  Function linkcategorie($categories_id)
+  {
+
+    $sql = "INSERT INTO ".DB_NAME_OSC.".products_to_categories ";
+
+    $sql .= " (products_id, categories_id)";
+    $sql .= " VALUES (".$this->oscid.",".$categories_id.")";
+
+    if ( $this->db->query($sql) )
+      {
+	return 1;
+      }
+    else
+      {
+	print $this->db->error() . ' in ' . $sql;
+      }
+    }
+  /*
+   *
+   *
+   */
+  Function listcategorie()
+  {
+    $listecat = new Categorie($this->db);
+    $cats = $listecat->liste_array();
+
+    $pcat = array();
+
+    $sql = "SELECT products_id, categories_id";
+    $sql .= " FROM ".DB_NAME_OSC.".products_to_categories ";
+    $sql .= " WHERE products_id = " . $this->oscid;
+
+    if ($this->db->query($sql) )
+      {
+	$nump = $this->db->num_rows();
+	
+	if ($nump)
+	  {
+	    $i = 0;
+	    while ($i < $nump)
+	      {
+		$obj = $this->db->fetch_object($i);	       
+		$pcat[$i] = $obj->categories_id;
+		$i++;
+	      }
+	  }
+      }
+    
+      foreach ($cats as $key => $value)
+	{
+	  $test = 0;
+	  for ($i = 0 ; $i < $nump ; $i++)
+	    {
+	      if ($pcat[$i] == $key)
+		{
+		  $test = 1;
+		}
+	    }
+	  if ($test)
+	    {
+	      print "<b>$value</b><br>";
+	    }
+	  else
+	    {
+	      print "$value<br>";
+	    }
+	}
+  }
+  /*
+   *
+   *
    *
    */
   Function updateosc()

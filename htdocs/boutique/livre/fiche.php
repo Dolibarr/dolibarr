@@ -39,10 +39,17 @@ if ($action == 'add') {
   $id = $livre->create($user);
 }
 
-if ($action == 'addga') {
+if ($action == 'addga')
+{
   $livre = new Livre($db);
-
   $livre->linkga($id, $coauteurid);
+}
+
+if ($action == 'linkcat')
+{
+  $livre = new Livre($db);
+  $livre->fetch($id);
+  $livre->linkcategorie( $catid);
 }
 
 
@@ -83,6 +90,14 @@ if ($action == 'create')
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Titre</td><td><input name="titre" size="40" value=""></td></tr>';
   print '<tr><td>Prix</td><TD><input name="price" size="10" value=""></td></tr>';    
+
+  $htmls = new Form($db);
+  $edits = new Editeur($db);
+	      
+  print "<tr><td>Editeur</td><td>";
+  $htmls->select_array("editeurid",  $edits->liste_array(), $livre->editeurid);
+  print "</td></tr>";
+
   print "<tr><td valign=\"top\">Description</td><td>";
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
@@ -116,7 +131,6 @@ else
 	      print "<tr>";
 	      print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$livre->ref.'"></td>';
 	      print "<td valign=\"top\">Description</td></tr>";
-
 	      print '<td>Titre</td><td><input name="titre" size="40" value="'.$livre->titre.'"></td>';
 	      print '<td valign="top" width="50%" rowspan="5"><textarea name="desc" rows="14" cols="60">';
 	      print $livre->description;
@@ -138,12 +152,7 @@ else
 		  print '<a href="../auteur/fiche.php?id='.$key.'">'.$value."<br>\n";
 		}
 	      print "</td></tr>";
-	      /*
-		$c = new Categorie($db);
-		print "<tr><td>Editeur</td><td>";
-		$htmls->select_array("editeurid", $c->liste_array());
-		print "</td></tr>";
-	      */
+
 
 	      print '<tr><td align="center" colspan="3"><input type="submit" value="Enregistrer">&nbsp;<input type="submit" value="Annuler" name="cancel"></td></tr>';
 	      print "</form>";
@@ -160,6 +169,15 @@ else
 	      print '&nbsp;<input type="submit" value="Ajouter"></td></tr>';
 	      print "</form>";
 
+	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	      print '<input type="hidden" name="action" value="linkcat">';
+
+	      $listecat = new Categorie($db);
+	      print '<td valign="top">Catégories</td><td>';
+	      $htmls->select_array("catid", $listecat->liste_array());
+	      print '&nbsp;<input type="submit" value="Ajouter"></td></tr>';
+	      print "</form>";
+	      print "</td></tr>\n";
 
 	      print '</table><hr>';
 	      
@@ -169,11 +187,16 @@ else
 
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print '<td width="20%">Référence</td><td width="30%">'.$livre->ref.'</td>';
-	  print '<td width="50%" valign="top">Description</td></tr>';
-
+	  print '<td width="15%">Référence</td><td width="20%">'.$livre->ref.'</td>';
+	  print '<td width="50%" valign="top">Description</td>';
+	  print '<td valign="top">Catégories</td></tr>';
 	  print "<tr><td>Statut</td><td>$livre->status_text</td>\n";
 	  print '<td rowspan="6" valign="top">'.nl2br($livre->description)."</td>";
+
+	  print '<td rowspan="6" valign="top">';
+	  $livre->listcategorie();
+	  print "</td></tr>";
+	  
 	  print "<tr><td>Titre</td><td>$livre->titre</td></tr>\n";
 	  print "<tr><td>Annee</td><td>$livre->annee</td></tr>\n";
 
@@ -195,15 +218,6 @@ else
 	  print "</td></tr>";
 	  print '<tr><td>Prix</td><TD>'.price($livre->price).'</td></tr>';    
 	  
-	  $listecat = new Categorie($db);
-
-
-	  print '<td valign="top">Artiste/Groupe</td><td>';
-
-	  $htmls->select_array("catd", $listecat->liste_array());
-	  
-	  print "</td></tr>\n";
-
 	  print "</table>";
 
 

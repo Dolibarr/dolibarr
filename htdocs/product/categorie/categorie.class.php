@@ -86,7 +86,7 @@ class Categorie {
     $sql = "SELECT c.categories_id, cd.categories_name ";
     $sql .= " FROM ".DB_NAME_OSC.".categories as c,".DB_NAME_OSC.".categories_description as cd";
     $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
-    $sql .= " AND c.parent_id = 0";
+    $sql .= " AND c.parent_id = 0 ORDER BY cd.categories_name";
     
     if ( $this->db->query($sql) )
       {
@@ -96,9 +96,12 @@ class Categorie {
 	while ($i < $num)
 	  {
 	    $objp = $this->db->fetch_object( $i);
+
+	    $cl[$objp->categories_id] = $objp->categories_name;
+
 	    $var=!$var;
 	    $pc = array();
-	    $pc = $this->printc($objp->categories_id, 0);
+	    $pc = $this->printc($objp->categories_id, 1);
 	    foreach($pc as $key => $value)
 	      {
 		$cl[$key] = $value;
@@ -109,36 +112,39 @@ class Categorie {
     return $cl;
   }
   /*
+   *
    */
   Function printc($id, $level)
   {
     $cr = array();
     $cat = new Categorie($this->db);
     $cat->fetch($id);
-
+    
     for ($i = 0 ; $i < $level ; $i++)
       {
-	$string = "&nbsp;&nbsp;|--";
+	$prefix .= "&nbsp;";
       }
     
-    $string .= $cat->name;
-
-    
+    $cr[$cat->id] = $cat->name;
     
     $childs = array();
     $childs = $cat->liste_childs_array();
-    
+
     if (sizeof($childs))
       {
 	foreach($childs as $key => $value)
 	  {
-	    $cr[$key] = $value;
-	    $this->printc($key, $level+1);
+	    $pc = array();
+	    $pc = $this->printc($key,$level+1);
+	    foreach($pc as $key => $value)
+	      {
+		$cr[$key] = $prefix . $value;
+	      } 
 	  }
       }
-    
     return $cr;
   }
+  
   /*
    *
    *
@@ -151,7 +157,7 @@ class Categorie {
     $sql .= " FROM ".DB_NAME_OSC.".categories as c,".DB_NAME_OSC.".categories_description as cd";
     $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
     $sql .= " AND c.parent_id = " . $this->id;
-
+    $sql .= " ORDER BY cd.categories_name";
     if ($this->db->query($sql) )
       {
 	$nump = $this->db->num_rows();
