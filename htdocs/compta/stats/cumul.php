@@ -92,7 +92,7 @@ function pt ($db, $sql, $date)
     {
       $num = $db->num_rows();
       $i = 0; $total = 0 ;
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
       print "<tr class=\"liste_titre\">";
       print "<td width=\"60%\">$date</td>";
       print "<td align=\"right\">Montant</td>";
@@ -111,7 +111,7 @@ function pt ($db, $sql, $date)
 	  
 	  $i++;
 	}
-      print "<tr class=\"total\"><td  align=\"right\">Total :</td><td align=\"right\">&nbsp;</b></td><td align=\"right\"><b>".price($total)."</b></td></tr>\n";
+      print "<tr class=\"total\"><td  align=\"right\">Cumul :</td><td align=\"right\">&nbsp;</b></td><td align=\"right\"><b>".price($total)."</b></td></tr>\n";
       
       print "</table>\n";
       $db->free();
