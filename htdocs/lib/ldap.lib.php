@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +36,35 @@ Function dolibarr_ldap_bind($ds)
     {
       $ldapbind = ldap_bind($ds, LDAP_SERVER_DN, LDAP_SERVER_PASS);
     }
-/*  else
-    {
-      $ldapbind = ldap_bind($ds, $dn); -- connection anonyme desactivee
-    }
-*/
+
   return $ldapbind;
 }
+
+
+Function dolibarr_ldap_unbind($ds)
+{
+
+   $ldapunbind = ldap_unbind($ds);
+
+  return $ldapunbind;
+}
+
+
+Function dolibarr_ldap_getversion($ds)
+{
+	ldap_get_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version);
+
+  return $version;
+}
+
+
+Function dolibarr_ldap_setversion($ds,$version)
+{
+	$ldapsetversion = ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version)
+
+  return $ldapsetversion;
+}
+
 
 Function ldap_unacc($str)
 {
