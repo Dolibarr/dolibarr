@@ -66,14 +66,14 @@ class Notify
 		{	  
 		  $subject = "Notification Dolibarr";
 		  $message = $texte;
-		  $filename = $file;
+		  $filename = split("/",$file);
 		  $replyto = MAIN_MAIL_FROM;
 	  
 		  $mailfile = new CMailFile($subject,
 					    $sendto,
 					    $replyto,
 					    $message,
-					    $file, "application/pdf", $filename);
+					    $file, "application/pdf", $filename[sizeof($filename)-1]);
 	  
 		  if ( $mailfile->sendfile() )
 		    {
