@@ -74,12 +74,14 @@ if ($result)
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\"><td>Facture</td>";
   print '<td width="54%">'.$langs->trans("Description").'</td>';
+  print '<td>'.$langs->trans("Montant").'</td>';
   print '<td colspan="2" align="center">'.$langs->trans("Compte").'</td>';
   print "</tr>\n";
   
   print '<tr class="liste_titre"><td><input name="search_facture" value="'.$_GET["search_facture"].'"></td>';
-  print '<td width="54%">'.$langs->trans("Description").'</td>';
-  print '<td align="center">'.$langs->trans("Compte").'</td>';
+  print '<td width="54%">&nbsp;</td>';
+  print '<td align="right">&nbsp;</td>';
+  print '<td align="center">&nbsp;</td>';
   print '<td align="center"><input type="submit"></td>';
   print "</tr>\n";
 
@@ -93,7 +95,11 @@ if ($result)
       print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td>';
 
       print '<td>'.stripslashes(nl2br($objp->description)).'</td>';
-                       
+                    
+      print '<td align="right">';
+      print price($objp->price);
+      print '</td>';
+   
       print '<td>';
       print $objp->numero;
       print '</td>';
