@@ -195,7 +195,7 @@ if ($account) {
 	  }
 
 	  if ($objp->rappro) {
-	    print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve\">$objp->num_releve</a></td>";
+	    print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve&account=$account\">$objp->num_releve</a></td>";
 	  } else {
 	    print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid&account=$account\">[Del]</a></td>";
 	  }
