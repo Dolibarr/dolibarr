@@ -115,19 +115,7 @@ class Translate {
     function trans($str, $param1='', $param2='', $param3='') {
         if ($this->tab_translate[$str]) {
             // Si la traduction est disponible
-            if ($param1) {
-                $param1=ereg_replace("<","&lt;",$param1);
-                $param1=ereg_replace(">","&gt;",$param1);
-            }
-            if ($param2) {
-                $param2=ereg_replace("<","&lt;",$param2);
-                $param2=ereg_replace(">","&gt;",$param2);
-            }
-            if ($param3) {
-                $param3=ereg_replace("<","&lt;",$param3);
-                $param3=ereg_replace(">","&gt;",$param3);
-            }
-            return sprintf($this->tab_translate[$str],$param1,$param2,$param3);
+            return sprintf($this->tab_translate[$str],htmlentities($param1),htmlentities($param2),htmlentities($param3));
         }
         return $str;
     }
