@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,23 +22,23 @@
  */
 
 /**
-	    \file       htdocs/compta/clients.php
-        \ingroup    compta
-		\brief      Page accueil des clients
-		\version    $Revision$
+   \file       htdocs/compta/clients.php
+   \ingroup    compta
+   \brief      Page accueil des clients
+   \version    $Revision$
 */
  
 require("./pre.inc.php");
 require("../contact.class.php");
 require("../actioncomm.class.php");
+
 if ($conf->webcal->enabled) {
-    require("../lib/webcal.class.php");
+  require("../lib/webcal.class.php");
 }
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
-
 
 $langs->load("companies");
 
@@ -269,7 +269,6 @@ if ($result)
   print "</tr>\n";
   print '</form>';
 
-
   $var=True;
 
   while ($i < min($num,$conf->liste_limit))
@@ -284,9 +283,20 @@ if ($result)
       print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print '<td>'.$obj->ville.'&nbsp;</td>';
       print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
-      print "<td align=\"center\">$obj->code_client&nbsp;</td>\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
-      print img_folder();
+      print '<td align="center">'.$obj->code_client.'&nbsp;</td>';
+      print '<td align="center">';
+      if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
+	{
+	  print '<a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
+	  print img_folder();
+	  print '</a>';
+	}
+      else
+	{
+	  print "&nbsp;";
+	}
+
+
       print "</td></tr>\n";
       $i++;
     }
