@@ -202,40 +202,13 @@ function top_menu($head)
   print "<tr>";
   print '<td width="15%" class="menu" align="center"><A class="menu" href="/">Accueil</A></TD>';
 
-  print '<TD width="15%" class="menu" align="center">';
-  if ($user->comm > 0 && $conf->commercial ) 
-    {
-      print '<A class="menu" href="/comm/">Commercial</A></TD>';
-    }
-  else
-    {
-      print '-';
-    }
+  if (!defined(MAIN_MENU_BARRETOP))
+  {
+    define("MAIN_MENU_BARRETOP","default.php");
+  }
 
-  print '<TD width="15%" class="menu" align="center">';
-  if ($user->compta > 0)
-    {
-      print '<A class="menu" href="/compta/">Compta</A></TD>';
-    } 
-  else
-    {
-      print '-';
-    }
+  require("includes/menus/barre_top/".MAIN_MENU_BARRETOP);
 
-  print '<TD width="15%" class="menu" align="center">';
-  if ($conf->produit->enabled ) 
-    {
-      print '<A class="menu" href="/product/">Produits</a>';
-    }
-  else
-    {
-      print '-';
-    }
-  print '</td><td width="15%" class="menu" align="center">';
-  if ($conf->webcal->enabled) {
-    print '<a class="menu" href="'.$conf->webcal->url.'">Calendrier</a>';
-  };
-  print '&nbsp;</TD>';
   print '<TD width="15%" class="menu" align="center">'.strftime(" %d %B - %H:%M",time()).'</TD>';
 
   print '<td width="10%" class="menu" align="center">'.$user->login.'</td>';
