@@ -53,9 +53,10 @@ function llxHeader($head = "") {
     {
       $menu->add("type.php","Configuration");
     }
+  left_menu($menu->liste);
   */
 
-  left_menu($menu->liste);
+
 }
 
 ?>
