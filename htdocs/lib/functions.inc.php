@@ -1237,99 +1237,6 @@ function stat_print($basename,$bc1,$bc2,$ftc, $jour) {
 
 }
 
-
-function tab_count($basename,$bc1,$bc2,$ftc) {
-
-  $db = pg_Connect("","","","","$basename");
-  if (!$db) {
-    echo "Pas de connexion a la base\n";
-    exit ;
-  }
-
-  $sql="SELECT count(*) AS nbcv from candidat WHERE active=1";
-  $result = $db->query($sql);
-  if (!$result) {
-    print "Erreur SELECT<br><h1>$sql</h1><br>";
-    return 1;
-  }
-  print "<table border=0 bgcolor=black cellspacing=0 cellpadding=0><tr><td>";
-
-  print "<table border=0 cellspacing=1 cellpadding=1>";
-  print "<tr><td><font color=\"white\">base <b>$basename</b></font></td>";
-  print "<td><font color=\"white\">libelle</font></td>";
-  print "</tr>";
-  $nbcv = $db->result( $i, "nbcv");
-
-  print "<tr $bc1><td><b>$ftc Nombre de CV</font></b></td>\n";
-  print "<td  align=\"center\">$ftc $nbcv</td>\n";
-  print "</tr>\n";
-  $db->free();
-
-  $sql="SELECT count(*) AS nbcv from offre WHERE active=1";
-
-  $result = $db->query($sql);
-  if (!$result) {
-    print "Erreur SELECT<br><h1>$sql</h1><br>";
-  }
-  $nbcv = $db->result( $i, "nbcv");
-
-  print "<tr $bc2><td><b>$ftc Nombre d'offre</font></b></td>";
-  print "<td align=\"center\">$ftc $nbcv</td>";
-  print "</tr>";
-
-  $db->free();
-
-
-  $sql="SELECT count(*) AS nbcv from candidat WHERE active=0";
-
-  $result = $db->query($sql);
-  if (!$result) {
-    print "Erreur SELECT<br><h1>$sql</h1><br>";
-  }
-
-  $nbcv = $db->result( $i, "nbcv");
-
-  print "<tr $bc1><td><b>$ftc Nombre de CV inactifs</font></b></td>\n";
-  print "<td align=\"center\">$ftc $nbcv</td>";
-  print "</tr>";
-
-  $db->free();
-
-
-  $sql="SELECT count(*) AS nbcv from offre WHERE active=0";
-
-  $result = $db->query($sql);
-  if (!$result) {
-    print "Erreur SELECT<br><h1>$sql</h1><br>";
-  }
-
-  $nbcv = $db->result( $i, "nbcv");
-
-  print "<tr $bc2><td><b>$ftc Nombre d'offres inactives</font></b></td>\n";
-  print "<td  align=\"center\">$ftc $nbcv</td>\n";
-  print "</tr>\n";
-
-  $db->free();
-
-  $sql="SELECT count(*) AS nbsoc from logsoc";
-
-  $result = $db->query($sql);
-  if (!$result) {
-    print "Erreur SELECT<br><h1>$sql</h1><br>";
-  }
-
-  $nbsoc = $db->result( $i, "nbsoc");
-
-  print "<tr $bc1><td><b>$ftc Nombre de logins societes</font></b></td>\n";
-  print "<td align=\"center\">$ftc $nbsoc</td>";
-  print "</tr>";
-
-  print "</td></tr></table></td></tr></table>";
-
-  $db->close();
-
-}
-
 /*!
 		\brief fonction qui permet d'envoyer les infos dans un fichier de log
 		\param	str				chaine a mettre dans le fichier
@@ -1406,12 +1313,14 @@ function initialiser_sel() {
   $htsalt = '$1$'.creer_pass_aleatoire();
 }
 
+/*!
+		\brief fonction pour qui retourne le rowid d'un departement par son code
+		\param	db				base de données
+		\param	code			code région
+		\param	pays_id		id du pays
+*/
 
-/*
- * Retourne le rowid d'un departement pas son code
- *
- */
-Function departement_rowid($db,$code, $pays_id)
+function departement_rowid($db,$code, $pays_id)
 {
   $sql = "SELECT c.rowid FROM ".MAIN_DB_PREFIX."c_departements as c,".MAIN_DB_PREFIX."c_regions as r";
   $sql .= " WHERE c.code_departement=". $code;
