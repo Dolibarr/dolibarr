@@ -161,23 +161,26 @@ if ($_GET["action"] == 'create')
       print '<input type="hidden" name="codeclient_modifiable" value="1">';
       
       print '<table class="border" width="100%">';
+      
       print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
-      print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft">';
+      print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
       print stripslashes($soc->adresse);
       print '</textarea></td></tr>';
-      print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp">&nbsp;';
-      print $langs->trans('Town').'&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td>';
+      
+      print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"></td>';
+      print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
-      print '<td>'.$langs->trans('State').'</td><td>';
+      print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
       $form->select_departement($soc->departement_id);
       print '</td></tr>';
 
       print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-      $form->select_pays(defined(MAIN_INFO_SOCIETE_PAYS)?MAIN_INFO_SOCIETE_PAYS:'');
+      $form->select_pays($soc->pays?$soc->pays:(defined(MAIN_INFO_SOCIETE_PAYS)?MAIN_INFO_SOCIETE_PAYS:''));
       print '</td></tr>';
 
       print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel"></td>';
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax"></td></tr>';
+      
       print '<tr><td>'.$langs->trans('Code client').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
       print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input size="40" type="text" name="url"></td></tr>';
 
@@ -246,17 +249,18 @@ elseif ($_GET["action"] == 'edit')
       print '<input type="hidden" name="codeclient_modifiable" value="'.$soc->codeclient_modifiable.'">';
 
       print '<table class="border" width="100%">';
+
       print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="40" name="nom" value="'.stripslashes($soc->nom).'"></td>';
+      print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
 
-      print '<td>'.$langs->trans('Prefix').'</td><td colspan="3"><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
-
-      print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft">';
+      print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
       print $soc->adresse;
       print '</textarea></td></tr>';
       
-      print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
-      print $langs->trans('Town').'&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td>';
-      print '<td>'.$langs->trans('State').'</td><td>';
+      print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"></td>';
+      print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
+
+      print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
       $form->select_departement($soc->departement_id);
       print '</td></tr>';      
 
@@ -313,6 +317,7 @@ elseif ($_GET["action"] == 'edit')
       print '</td></tr>';
       
       print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+
       print '</table>';
       print '</form>';
 
@@ -400,7 +405,12 @@ else
   print '<table class="border" width="100%">';
   print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
 
-  print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
+  print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
+
+  print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
+  print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
+
+  print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';
 
   print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
   print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
