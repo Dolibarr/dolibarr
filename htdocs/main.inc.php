@@ -346,17 +346,17 @@ function top_menu($head, $title="")
   //  print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
   //  print '<BASE href="'.DOL_URL_ROOT.'/">';
 
-  //print '<link rel="home" title="Accueil" href="/" />'; TODO RODO
+  print '<link rel="top" title="Accueil" href="'.DOL_URL_ROOT.'" />';
   //  print '<link rel="help" title="HowToUseWiki" href="HowToUseWiki" />';
 
-  print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1" />';
-  print '<link rel="author" title="Equipe de développement" href="http://www.dolibarr.com/dev.fr.html" />';
+  print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+  print '<link rel="author" title="Equipe de développement" href="http://www.dolibarr.com/dev.fr.html">'."\n";
 
   //print '<link rel="next" title="Equipe de développement" href="http://www.dolibarr.com/dev.fr.html" />';
 
-  print '<LINK REL="stylesheet" TYPE="text/css" HREF="'.DOL_URL_ROOT.'/'.$conf->css.'">';
-  print '<LINK REL="stylesheet" TYPE="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">';
-  print "\n";
+  print '<link rel="stylesheet" TYPE="text/css" HREF="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+  print '<link rel="stylesheet" TYPE="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
+
   if (strlen($title) > 0)
     {
       print '<title>Dolibarr - '.$title.'</title>';
