@@ -25,6 +25,9 @@ require("./bank.lib.php");
 require("../../tva.class.php");
 require("../../chargesociales.class.php");
 
+$user->getrights('compta');
+$user->getrights('banque');
+
 if (!$user->rights->banque->lire)
   accessforbidden();
 
@@ -146,6 +149,17 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
 }
 
 print "</table>";
+
+
+/*
+ * Boutons d'actions
+ */
+print "<br><div class=\"tabsAction\">\n";
+if ($user->rights->banque->configurer) {
+	print '<a class="tabAction" href="fiche.php?action=create">Nouveau compte</a>';
+	print '<a class="tabAction" href="categ.php">Catégories</a>';
+}
+print "</div>";
 
 
 $db->close();

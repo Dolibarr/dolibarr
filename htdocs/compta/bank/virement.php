@@ -23,6 +23,8 @@
 require("./pre.inc.php");
 require("./bank.lib.php");
 
+$user->getrights('banque');
+
 if (!$user->rights->banque->modifier)
   accessforbidden();
 
@@ -30,32 +32,49 @@ llxHeader();
 
 if ($action == 'add')
 {
-  $dateo = $reyear."-".$remonth."-".$reday;
+    /*
+     * Ajout d'un virement
+     */
+  $mesg='';
+  $dateo = $_POST["$reyear"]."-".$_POST["$remonth"]."-".$_POST["$reday"];
+  $label = $_POST["label"];
+  $amount= $_POST["amount"];
+  
+  if ($label && $amount) {
 
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-  $sql .= " VALUES (now(), '$dateo', '$label', (0 - $amount),$user->id,$account_from, 'VIR')";
-
-  $result = $db->query($sql);
-  if (!$result)
-    {
-      print $db->error();
-      print "<p>$sql";
-    }
-
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-  $sql .= " VALUES (now(), '$dateo', '$label', $amount,$user->id, $account_to, 'VIR')";
-
-
-  $result = $db->query($sql);
-  if (!$result)
-    {
-      print $db->error();
-      print "<p>$sql";
-    } 
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
+      $sql .= " VALUES (now(), now(), '$dateo', '$label', (0 - $amount),$user->id,$account_from, 'VIR')";
+    
+      $result = $db->query($sql);
+      if (!$result)
+        {
+          print "Erreur: $sql :".$db->error();
+        }
+    
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
+      $sql .= " VALUES (now(), now(), '$dateo', '$label', $amount,$user->id, $account_to, 'VIR')";
+    
+      $result = $db->query($sql);
+      if ($result)
+        {
+            $mesg.="<div class=\"ok\"><b>Votre virement de $amount ".MAIN_MONNAIE." a été crée.</b></div>";
+        }
+      else {
+          print "Erreur: $sql :".$db->error();
+        } 
+  } else {
+      $mesg.="<div class=\"error\"><b>Un libellé de virement et un montant non nul est obligatoire.</b></div>";
+  }
 }
 
-print_titre("Virement");
+print_titre("Virement inter-compte");
 print '<br>';
+
+if ($mesg) {
+    print "$mesg</div><br>";
+}
+
+print "En saisissant un virement d'un de vos comptes bancaire vers un autre, Dolibarr crée deux écritures comptables (une de débit dans un compte et l'autre de crédit, du même montant, dans l'autre compte. Le même libellé de transaction, et la même date, sont utilisés pour les 2 écritures)<br><br>";
 
 print "<form method=\"post\" action=\"$PHP_SELF\">";
 

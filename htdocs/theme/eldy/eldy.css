@@ -297,6 +297,7 @@ div.menus {
 /*
  *   Normal, warning, erreurs
  */
+.ok      { color: #114466; }
 .warning { color: #777711; }
 .error   { color: #550000; }
 

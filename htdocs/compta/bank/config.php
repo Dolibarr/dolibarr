@@ -23,13 +23,14 @@ require("./pre.inc.php");
 require("./bank.lib.php");
 
 $user->getrights('compta');
+$user->getrights('banque');
 
 if (!$user->admin && !$user->rights->compta->bank)
   accessforbidden();
 
 llxHeader();
 
-print_titre("Configuration");
+print_titre("Configuration des comptes");
 print '<br>';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
@@ -63,8 +64,10 @@ if ($result)
 print "</table>";
 
 
+/*
+ * Boutons d'actions
+ */
 print "<br><div class=\"tabsAction\">\n";
-
 if ($user->rights->banque->configurer) {
 	print '<a class="tabAction" href="fiche.php?action=create">Nouveau compte</a>';
 	print '<a class="tabAction" href="categ.php">Catégories</a>';
