@@ -148,7 +148,8 @@ if ($socid > 0) {
       print "<TD>".$obj->ville."</TD>\n";
 
       print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
-
+      
+      print '<td><a href="facture/fiche.php3?action=create&socid='.$obj->idp.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
 
       print "</TR>\n";
       $i++;

@@ -29,12 +29,12 @@ $yn[1] = "oui";
 $yn[0] = "<b>non</b>";
 	
 if ($action == 'valid') {
-  $sql = "UPDATE llx_facture set fk_statut = 1 WHERE rowid = $facid ;";
+  $sql = "UPDATE llx_facture_fourn set fk_statut = 1 WHERE rowid = $facid ;";
   $result = $db->query( $sql);
 }
 
 if ($action == 'payed') {
-  $sql = "UPDATE llx_facture set paye = 1 WHERE rowid = $facid ;";
+  $sql = "UPDATE llx_facture_fourn set paye = 1 WHERE rowid = $facid ;";
   $result = $db->query( $sql);
 }
 
@@ -184,8 +184,8 @@ if ($action == 'create') {
 
   if ($facid > 0) {
 
-    $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.author, f.note";
-    $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
+    $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.note, f.libelle";
+    $sql .= " FROM societe as s,llx_facture_fourn as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
 
     $result = $db->query( $sql);
   
@@ -209,16 +209,18 @@ if ($action == 'create') {
      *   Facture
      */
     print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
-    print "<tr><td>Société</td><td colspan=\"2\"><b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td></tr>";
+    print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td></tr>";
 
-    print "<tr><td>date</td><td colspan=\"2\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
-    print "<tr><td>Auteur</td><td colspan=\"2\">$obj->author</td>";
-    print "<tr><td>Statut</td><td align=\"center\" colspan=\"2\">$obj->statut</td>";
-    print "<tr><td>Paye</td><td align=\"center\" colspan=\"2\" bgcolor=\"#f0f0f0\"><b>".$yn[$obj->paye]."</b></td>";
+    print "<tr><td>Date</td><td colspan=\"3\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
+    print "<tr><td>Libelle</td><td colspan=\"3\">$obj->libelle</td>";
+    print "<tr><td>Auteur</td><td colspan=\"3\">$obj->author&nbsp;</td>";
   
     print "<tr><td>Montant</td><td align=\"right\"><b>".price($obj->amount)."</b></td><td>euros HT</td></tr>";
     print "<tr><td>TVA</td><td align=\"right\">".tva($obj->amount)."</td><td>euros</td></tr>";
     print "<tr><td>Total</td><td align=\"right\">".price($obj->total)."</td><td>euros TTC</td></tr>";
+
+    print "<tr><td>Statut</td><td align=\"center\">$obj->statut</td>";
+    print "<td>Paye</td><td align=\"center\" bgcolor=\"#f0f0f0\"><b>".$yn[$obj->paye]."</b></td>";
 
     print "</tr>";
     print "</table>";
@@ -233,7 +235,8 @@ if ($action == 'create') {
     $sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
     $sql .= " FROM llx_paiement as p, c_paiement as c WHERE p.fk_facture = $facid AND p.fk_paiement = c.id";
   
-    $result = $db->query($sql);
+    //$result = $db->query($sql);
+    $result = 0;
     if ($result) {
       $num = $db->num_rows();
       $i = 0; $total = 0;
@@ -268,7 +271,7 @@ if ($action == 'create') {
       print "</table>";
       $db->free();
     } else {
-      print $db->error();
+      //      print $db->error();
     }
 
     print "</td></tr>";
@@ -295,7 +298,7 @@ if ($action == 'create') {
     if ($obj->statut == 0) {
       print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=valid\">Valider</a>]</td>";
     } else {
-      print "<td align=\"center\" width=\"25%\"><a href=\"facture.php3?facid=$facid&action=pdf\">Générer la facture</a></td>";
+      print "<td align=\"center\" width=\"25%\">-</td>";
     }
     print "</tr></table><p>";
 
@@ -305,7 +308,7 @@ if ($action == 'create') {
      */
     print "<hr>";
     print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
-    print "<b>Documents générés</b><br>";
+    print "<b>Documents associés</b><br>";
     print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
 
     $file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/facture/$obj->facnumber/$obj->facnumber.pdf";

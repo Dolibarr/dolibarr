@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../main.inc.php3");
+require("../../main.inc.php3");
 
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf;
@@ -41,9 +41,8 @@ function llxHeader($head = "", $urlp = "") {
   $menu->add_submenu("/soc.php3?&action=create","Nouvelle sociétée");
   $menu->add_submenu("contact.php3","Contacts");
 
-
   $menu->add("/fourn/facture/index.php3", "Factures");
-
+  $menu->add_submenu("fiche.php3?action=create","Nouvelle");
 
   left_menu($menu->liste);
 }

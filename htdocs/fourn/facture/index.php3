@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *
  */
 require("./pre.inc.php3");
-require("../contact.class.php3");
+require("../../contact.class.php3");
 
 
 llxHeader();
@@ -101,27 +101,16 @@ if ($socid > 0) {
    *
    *
    */
-  print_barre_liste("Liste des fournisseurs",$page, $PHP_SELF);
+  print_barre_liste("Liste des factures", $page, $PHP_SELF);
 
-  $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
+  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.amount, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid";
+  $sql .= " FROM societe as s, llx_facture_fourn as fac ";
+  $sql .= " WHERE fac.fk_soc = s.idp";
 
-  if (strlen($stcomm)) {
-    $sql .= " AND s.fk_stcomm=$stcomm";
-  }
-
-  if (strlen($begin)) {
-    $sql .= " AND upper(s.nom) like '$begin%'";
-  }
-
-  if ($socname) {
-    $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
-    $sortfield = "lower(s.nom)";
-    $sortorder = "ASC";
-  }
-
-  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+  //  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
   $result = $db->query($sql);
+
   if ($result) {
     $num = $db->num_rows();
     $i = 0;
@@ -132,9 +121,10 @@ if ($socid > 0) {
       $sortorder="DESC";
     }
     print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print '<TR class="liste_titre"><td>';
+    print '<TR class="liste_titre">';
+    print "<TD>Libelle</TD><td>";
     print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-    print "</td><TD>Ville</TD>";
+    print "</td><TD>Montant</TD>";
     print "<td colspan=\"2\">&nbsp;</td>";
     print "</TR>\n";
     $var=True;
@@ -144,8 +134,9 @@ if ($socid > 0) {
       $var=!$var;
 
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
-      print "<TD>".$obj->ville."</TD>\n";
+      print "<TD><a href=\"fiche.php3?facid=$obj->facid\">$obj->libelle</A></td>\n";
+      print "<TD><a href=\"fiche.php3?socid=$obj->facid\">$obj->nom</A></td>\n";
+      print '<TD align="right">'.price($obj->amount).'</TD>';
 
       print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
 
