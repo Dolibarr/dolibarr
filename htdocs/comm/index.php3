@@ -21,6 +21,7 @@
  */
 require("./pre.inc.php3");
 require("../contact.class.php3");
+require("../societe.class.php3");
 
 llxHeader();
 $db = new Db();
@@ -45,7 +46,9 @@ $deacmeth["b"] = "robots";
 $deacmeth["m"] = "manuelle";
 
 if ($action == 'attribute_prefix') {
-  $prefix_attrib = soc_attribute_prefix($db, $socid);
+  $societe = new Societe($db, $socid);
+  $societe->attribute_prefix($db, $socid);
+  //$prefix_attrib = soc_attribute_prefix($db, $socid);
 }
 
 if ($action == 'recontact') {
@@ -150,6 +153,8 @@ if ($mode == 'search')
  *
  */  
 if ($socid > 0) {
+  $societe = new Societe($db, $socid);
+  
 
   $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
