@@ -68,8 +68,6 @@ if ($HTTP_POST_VARS["action"] == 'num_releve')
   $result = $db->query($sql);
 }
 
-
-
 $sql = "SELECT rowid, label FROM llx_bank_categ;";
 $result = $db->query($sql);
 if ($result)
@@ -86,8 +84,11 @@ if ($result)
   $db->free();
 }
 
+$acct=new Account($db,$account);
+$acct->fetch($account);
+
 print_titre("Edition de la ligne");
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print "<TR class=\"liste_titre\">";
 print "<td>Date</td><td>Description</TD>";
 print "<td align=\"right\">Debit</TD>";
@@ -130,8 +131,7 @@ if ($result)
 	}
     
       print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&ve=1\">$objp->num_releve</a></td>";
-      print "<td align=\"center\">$objp->author</td>";
-      
+      print "<td align=\"center\">$objp->author</td>";      
       print "</tr>";
       
       print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"5\">";
@@ -146,7 +146,11 @@ if ($result)
       print "<input type=\"submit\" value=\"Ajouter\"></td>";
       print "</tr>";
       
-      print "</form><form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
+      print "</form>";
+
+      print "<tr $bc[$var]><td>Compte</td><td colspan=\"5\"><a href=\"account.php?account=$account\">".$acct->label."</a></td></tr>";
+
+      print "<form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
       print "<input type=\"hidden\" name=\"action\" value=\"update\">";
     
       print "<tr $bc[$var]><td>Libell&eacute;</td><td colspan=\"5\">";
@@ -190,8 +194,7 @@ if ($result)
       print "</tr>";
 
       print "</form>";
-      
-      
+            
       $i++;
     }
   $db->free();
@@ -200,7 +203,7 @@ print "</table>";
 
 print "<p>Classé dans</p>";
 
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print "<TR class=\"liste_titre\">";
 print "<td>Description</TD>";
 print "</TR>\n";
