@@ -431,7 +431,7 @@ Function left_menu($menu, $help_url='')
    * Colonne de gauche
    *
    */
-  print '<table class="leftmenu" border="0" width="100%" cellspacing="1" cellpadding="4">';
+  print "\n".'<table class="leftmenu" border="0" width="100%" cellspacing="1" cellpadding="4">'."\n";
 
 
   for ($i = 0 ; $i < sizeof($menu) ; $i++) 
@@ -499,8 +499,8 @@ Function left_menu($menu, $help_url='')
    *
    *
    */
-  print '</table>';
-  print '</td><td valign="top" width="85%" colspan="6">';
+  print '</table>'."\n";
+  print '</td><td valign="top" width="85%" colspan="6">'."\n";
 
 
 }
@@ -513,7 +513,7 @@ Function left_menu($menu, $help_url='')
 function llxFooter($foot='') 
 {
   global $dolibarr_auto_user;
-  print "</td></tr>";
+  print "\n</td></tr>\n";
   /*
    *
    */

@@ -106,7 +106,7 @@ if ($socid > 0)
 
       if ($objsoc->note)
 	{
-	  print '<table border=0 width="100%" cellspacing="0">';
+	  print '<table border="0" width="100%" cellspacing="0">';
 	  print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
 	  print "</table>";
 	}
@@ -117,7 +117,7 @@ if ($socid > 0)
       print $db->error();
     }
   
-  print "<P><table class=\"tablefuser\" width=\"100%\" cellspacing=0 border=1 cellpadding=2>";
+  print '<p><table class="border" width="100%" cellspacing="0" border="1" cellpadding="2">';
   
   print "<tr><td><b>Prénom Nom</b></td>";
   print "<td><b>Poste</b></td><td><b>Tel</b></td>";
