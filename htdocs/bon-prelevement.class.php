@@ -35,12 +35,15 @@ class BonPrelevement
   var $emetteur_code_etablissement;
   var $total;
 
-  function BonPrelevement($DB, $filename) 
+  function BonPrelevement($DB, $filename='') 
     {
       $error = 0;
       $this->db = $DB;
 
-      $this->file = fopen ($filename,"w");
+      if (strlen($filename))
+	{    
+	  $this->file = fopen ($filename,"w");
+	}
       
       $this->date_echeance = time();
       $this->raison_sociale = "";
@@ -179,7 +182,7 @@ class BonPrelevement
     $sql .= " , method_trans, fk_user_trans";
     $sql .= ",".$this->db->pdate("p.date_credit")." as date_credit";
     $sql .= " , fk_user_credit";
-
+    $sql .= " , statut";
     $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 
     $sql .= " WHERE p.rowid=".$rowid;
@@ -202,8 +205,10 @@ class BonPrelevement
 	    $this->method_trans       = $obj->method_trans;
 	    $this->user_trans         = $obj->fk_user_trans;
 
-	    $this->date_credit         = $obj->date_credit;
-	    $this->user_credit         = $obj->fk_user_credit;
+	    $this->date_credit        = $obj->date_credit;
+	    $this->user_credit        = $obj->fk_user_credit;
+
+	    $this->statut             = $obj->statut;
 
 	    return 0;
 	  }
