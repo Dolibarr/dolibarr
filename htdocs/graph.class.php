@@ -28,7 +28,7 @@ class Graph
    * Prépare le graphique
    *
    */
-  Function prepare($file, $data, $title='')
+  function prepare($file, $data, $title='')
   {
     //Define the object
     $this->graph = new PHPlot($this->width, $this->height);
@@ -115,53 +115,53 @@ class Graph
     //    $this->graph->DrawGraph();
   }
 
-  Function SetPrecisionY($which_prec)
+  function SetPrecisionY($which_prec)
   {
     $this->precision_y = $which_prec;
     return true;
   }
 
-  Function SetYLabel($label)
+  function SetYLabel($label)
   {
     $this->YLabel = $label;
   }
 
-  Function SetWidth($w)
+  function SetWidth($w)
   {
     $this->width = $w;
   }
 
-  Function SetLegend($legend)
+  function SetLegend($legend)
   {
     $this->Legend = $legend;
   }
 
-  Function SetMaxValue($max)
+  function SetMaxValue($max)
   {
     $this->MaxValue = $max;
   }
 
-  Function SetHeight($h)
+  function SetHeight($h)
   {
     $this->height = $h;
   }
 
-  Function ResetBgColor()
+  function ResetBgColor()
   {
     unset($this->bgcolor);
   }
   
-  Function SetBgColor($bg_color = array(255,255,255))
+  function SetBgColor($bg_color = array(255,255,255))
   {
     $this->bgcolor = $bg_color;
   }
 
-  Function ResetDataColor()
+  function ResetDataColor()
   {
     unset($this->datacolor);
   }
 
-  Function GetMaxValue()
+  function GetMaxValue()
   {
     $k = 0;
     $vals = array();
@@ -181,7 +181,7 @@ class Graph
     return $vals[0];
   }
 
-  Function GetAmountMaxValue()
+  function GetAmountMaxValue()
   {
 
     $max = ceil($this->GetMaxValue());

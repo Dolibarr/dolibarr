@@ -28,7 +28,7 @@ class ProjetDon {
   var $title;
   var $socidp;
 
-  Function ProjetDon($DB) {
+  function ProjetDon($DB) {
     $this->db = $DB;
   }
   /*
@@ -43,7 +43,7 @@ class ProjetDon {
    *
    *
    */
-  Function liste_array($id_societe='')
+  function liste_array($id_societe='')
     {
       $projets = array();
 

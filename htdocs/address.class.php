@@ -28,7 +28,7 @@ class Address {
   var $city;
   var $country;
 
-  Function Address() {
+  function Address() {
 
   }  
 

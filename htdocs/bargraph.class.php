@@ -32,7 +32,7 @@ class BarGraph extends Graph
    * Retour: 0 si ko, 1 si ok
    */
 
-  Function BarGraph($data=array()) {
+  function BarGraph($data=array()) {
     
 	$modules_list = get_loaded_extensions();
 	$isgdinstalled=0;
@@ -74,7 +74,7 @@ class BarGraph extends Graph
     return;
   }
 
-  Function isGraphKo() {
+  function isGraphKo() {
     return $this->errorstr;
   }
 
@@ -82,7 +82,7 @@ class BarGraph extends Graph
    * Dessine le graphique
    *
    */
-  Function draw($file, $data, $title='') {
+  function draw($file, $data, $title='') {
     $this->prepare($file, $data, $title);
     
     if (substr($this->MaxValue,0,1) == 1)

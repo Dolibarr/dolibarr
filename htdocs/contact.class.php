@@ -36,7 +36,7 @@ class Contact
   var $email;
   var $birthday;
 
-  Function Contact($DB, $id=0) 
+  function Contact($DB, $id=0) 
     {
       $this->db = $DB;
       $this->id = $id;
@@ -48,7 +48,7 @@ class Contact
    * Création du contact
    *
    */
-  Function create($user)
+  function create($user)
   {
     if (!$this->socid)
       {
@@ -75,7 +75,7 @@ class Contact
    * Mise à jour des infos
    *
    */
-  Function update($id, $user=0)
+  function update($id, $user=0)
   {
     $this->id = $id;
     $this->error = array();
@@ -131,7 +131,7 @@ class Contact
    *
    */
   
-  Function update_ldap($user)
+  function update_ldap($user)
   {
     $this->fetch($this->id);
     
@@ -255,7 +255,7 @@ class Contact
    * Mise à jour des infos persos
    *
    */
-  Function update_perso($id, $user=0)
+  function update_perso($id, $user=0)
     {
       # Mis a jour contact
       $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET idp=$id ";
@@ -300,7 +300,7 @@ class Contact
    *
    *
    */
-  Function fetch($_id, $user=0) 
+  function fetch($_id, $user=0) 
     {
       $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname, c.address, c.birthday as birthday, poste, phone, phone_perso, phone_mobile, fax, c.email, jabberid, c.note";
       $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
@@ -391,7 +391,7 @@ class Contact
    *
    *
    */
-  Function delete($id)
+  function delete($id)
     {
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
       $sql .= " WHERE idp=$id";
@@ -439,7 +439,7 @@ class Contact
    * Information sur l'objet
    *
    */
-  Function info($id) 
+  function info($id) 
     {
       $sql = "SELECT c.idp, ".$this->db->pdate("datec")." as datec, fk_user";
       $sql .= ", ".$this->db->pdate("tms")." as tms, fk_user_modif";

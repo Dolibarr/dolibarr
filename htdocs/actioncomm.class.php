@@ -40,7 +40,7 @@ class ActionComm
    * Initialisation
    *
    */
-  Function ActionComm($db) 
+  function ActionComm($db) 
     {
       $this->db = $db;
       $this->societe = new Societe($db);
@@ -55,7 +55,7 @@ class ActionComm
    *
    *
    */
-  Function add($author)
+  function add($author)
     {
       if (! $this->contact)
 	{
@@ -92,7 +92,7 @@ class ActionComm
    *
    *
    */
-  Function fetch($id)
+  function fetch($id)
     {      
       $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent ";
       $sql .= "FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
@@ -135,7 +135,7 @@ class ActionComm
    *
    *
    */
-  Function delete($id)
+  function delete($id)
     {      
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm WHERE id=$id;";
       
@@ -148,7 +148,7 @@ class ActionComm
    * Met à jour l'action
    *
    */
-  Function update()
+  function update()
     {
       if ($this->percent > 100)
 	{

@@ -23,16 +23,16 @@
 class Menu {
   var $liste;
 
-  Function Menu() {
+  function Menu() {
     $this->liste = array();
   }
 
-  Function clear() {
+  function clear() {
     $this->liste = array();
   }
 
 
-  Function add($url, $titre) {
+  function add($url, $titre) {
 
     $i = sizeof($this->liste);
 
@@ -41,7 +41,7 @@ class Menu {
 
   }
 
-  Function add_submenu($url, $titre) {
+  function add_submenu($url, $titre) {
 
     $i = sizeof($this->liste) - 1;
     $j = sizeof($this->liste[$i]);

@@ -34,7 +34,7 @@ class Service {
   var $fin_epoch;
 
 
-  Function Service($DB, $id=0) {
+  function Service($DB, $id=0) {
     $this->db = $DB;
     $this->id = $id;
     
@@ -45,7 +45,7 @@ class Service {
    *
    *
    */
-  Function create($user) {
+  function create($user) {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."service (datec, fk_user_author) VALUES (now(), ".$user->id.")";
 
@@ -64,7 +64,7 @@ class Service {
    *
    *
    */
-  Function update($id, $user) {
+  function update($id, $user) {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."service ";
     $sql .= " SET label = '" . trim($this->libelle) ."'";
@@ -86,7 +86,7 @@ class Service {
    *
    *
    */
-  Function start_comm($id, $user, $datedeb=0) {
+  function start_comm($id, $user, $datedeb=0) {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."service ";
     if ($datedeb) {
@@ -109,7 +109,7 @@ class Service {
    *
    *
    */
-  Function stop_comm($id, $user, $datefin=0) {
+  function stop_comm($id, $user, $datefin=0) {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."service ";
     if ($datefin) {
@@ -132,7 +132,7 @@ class Service {
    *
    *
    */
-  Function fetch($id) {
+  function fetch($id) {
 
     $sql = "SELECT s.ref,s.label,s.price,s.tms,s.debut_comm,s.fin_comm,s.description,";
     $sql .= $this->db->pdate("s.debut_comm") . ' as debut_epoch,';

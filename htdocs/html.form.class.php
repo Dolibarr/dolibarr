@@ -27,7 +27,7 @@ class Form
   var $errorstr;
 
 
-  Function Form($DB)
+  function Form($DB)
   {
     
     $this->db = $DB;
@@ -40,7 +40,7 @@ class Form
    * avec un affichage avec rupture sur le pays
    *
    */
-  Function select_departement($selected='')
+  function select_departement($selected='')
   {
     // On recherche les départements/cantons/province active d'une region et pays actif
     $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM ";
@@ -93,7 +93,7 @@ class Form
    * Retourne la liste déroulante des pays actifs
    *
    */
-  Function select_pays($selected='')
+  function select_pays($selected='')
   {
     $sql = "SELECT rowid, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
     $sql .= " WHERE active = 1 ORDER BY libelle ASC";
@@ -127,7 +127,7 @@ class Form
    * Retourne la liste déroulante des sociétés
    *
    */
-  Function select_societes($selected='',$htmlname='soc_id')
+  function select_societes($selected='',$htmlname='soc_id')
   {
     // On recherche les societes
     $sql = "SELECT s.idp, s.nom FROM ";
@@ -166,7 +166,7 @@ class Form
    * Retourne la liste déroulante des contacts d'une société donnée
    *
    */
-  Function select_contacts($socid,$selected='',$htmlname='contactid')
+  function select_contacts($socid,$selected='',$htmlname='contactid')
   {
     // On recherche les societes
     $sql = "SELECT s.idp, s.name, s.firstname FROM ";
@@ -208,7 +208,7 @@ class Form
    * Retourne le nom d'un pays
    *
    */
-  Function pays_name($id)
+  function pays_name($id)
   {
     $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."c_pays";
     $sql .= " WHERE rowid=$id";
@@ -237,7 +237,7 @@ class Form
    *
    */
 
-  Function select_civilite($selected='')
+  function select_civilite($selected='')
   {
     $sql = "SELECT rowid, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
     $sql .= " WHERE active = 1";
@@ -276,7 +276,7 @@ class Form
    * avec un affichage avec rupture sur le pays
    *
    */
-    Function select_forme_juridique($selected='')
+    function select_forme_juridique($selected='')
     {
       // On recherche les formes juridiques actives des pays actifs
       $sql = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays FROM llx_c_forme_juridique as f, llx_c_pays as p";
@@ -328,7 +328,7 @@ class Form
    *
    *
    */
-  Function form_confirm($page, $title, $question, $action)
+  function form_confirm($page, $title, $question, $action)
   {
     global $langs;
     
@@ -350,7 +350,7 @@ class Form
    *
    *
    */
-  Function select_tva($name='', $defaulttx = '')
+  function select_tva($name='', $defaulttx = '')
   {
     if (! strlen(trim($name)))
     {
@@ -401,7 +401,7 @@ class Form
    * - La date du jour si set_time vaut ''
    * - Aucune date (champs vides) si set_time vaut -1
    */
-  Function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0)
+  function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0)
   {
     if (! $set_time && ! $empty)
       {
@@ -559,7 +559,7 @@ class Form
    *
    *
    */
-  Function select($name, $sql, $id='')
+  function select($name, $sql, $id='')
     {
 
       $result = $this->db->query($sql);
@@ -612,7 +612,7 @@ class Form
     		\param	1 si il faut un valeur "-" dans la liste, 0 sinon
     		\param	1 pour affiche la key dans la valeur "[key] value"
     */
-  Function select_array($name, $array, $id='', $empty=0, $key_libelle=0)
+  function select_array($name, $array, $id='', $empty=0, $key_libelle=0)
     {
       print '<select name="'.$name.'">';
       
@@ -668,7 +668,7 @@ class Form
    *
    *
    */
-  Function error()
+  function error()
     {
       return $this->errorstr;
     }
@@ -677,7 +677,7 @@ class Form
    * Yes/No
    *
    */
-  Function selectyesno($name,$value='')
+  function selectyesno($name,$value='')
   {
     global $langs;
     
@@ -700,7 +700,7 @@ class Form
    * Yes/No
    *
    */
-  Function selectyesnonum($name,$value='')
+  function selectyesnonum($name,$value='')
   {
     global $langs;
     
@@ -723,7 +723,7 @@ class Form
    * Checkbox
    *
    */
-  Function checkbox($name,$checked=0,$value=1)
+  function checkbox($name,$checked=0,$value=1)
     {
       if ($checked==1){
 	print "<input type=\"checkbox\" name=\"$name\" value=\"$value\" checked />\n";

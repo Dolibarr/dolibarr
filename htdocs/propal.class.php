@@ -59,7 +59,7 @@ class Propal
 
   // {{{ constructor
 
-  Function Propal($DB, $soc_idp="", $propalid=0)
+  function Propal($DB, $soc_idp="", $propalid=0)
     {
       $this->db = $DB ;
       $this->socidp = $soc_idp;
@@ -78,7 +78,7 @@ class Propal
    * @param integer $remise_percent remise effectuée sur le produit
    * @return void
    */
-  Function add_product($idproduct, $qty, $remise_percent=0)
+  function add_product($idproduct, $qty, $remise_percent=0)
     {
       if ($idproduct > 0)
 	{
@@ -98,7 +98,7 @@ class Propal
    *
    * @return integer
    */
-  Function insert_product($idproduct, $qty, $remise_percent=0)
+  function insert_product($idproduct, $qty, $remise_percent=0)
     {
       if ($this->statut == 0)
 	{
@@ -138,7 +138,7 @@ class Propal
    *
    *
    */
-  Function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $remise_percent=0)
+  function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $remise_percent=0)
     {
       if ($this->statut == 0)
 	{
@@ -186,7 +186,7 @@ class Propal
    *
    *
    */
-  Function fetch_client()
+  function fetch_client()
     {
       $client = new Societe($this->db);
       $client->fetch($this->socidp);
@@ -196,7 +196,7 @@ class Propal
    *
    *
    */
-  Function delete_product($idligne)
+  function delete_product($idligne)
     {
       if ($this->statut == 0)
 	{
@@ -219,7 +219,7 @@ class Propal
    *
    *
    */
-  Function create()
+  function create()
     {
       /*
        *  Insertion dans la base
@@ -285,7 +285,7 @@ class Propal
    *
    *
    */
-  Function update_price()
+  function update_price()
     {
       include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
 
@@ -338,7 +338,7 @@ class Propal
    *
    *
    */
-  Function fetch($rowid)
+  function fetch($rowid)
     {
 
       $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact,".$this->db->pdate("datep")."as dp,".$this->db->pdate("fin_validite")."as dfv, model_pdf, note, fk_projet, fk_statut, remise_percent, fk_user_author";
@@ -477,7 +477,7 @@ class Propal
    *
    *
    */
-  Function valid($user)
+  function valid($user)
     {
       if ($user->rights->propale->valider)
 	{
@@ -500,7 +500,7 @@ class Propal
    *
    *
    */
-  Function set_remise($user, $remise)
+  function set_remise($user, $remise)
     {
       if ($user->rights->propale->creer)
 	{
@@ -526,7 +526,7 @@ class Propal
    *
    *
    */
-  Function set_pdf_model($user, $modelpdf)
+  function set_pdf_model($user, $modelpdf)
     {
       if ($user->rights->propale->creer)
 	{
@@ -549,7 +549,7 @@ class Propal
    * Cloture de la proposition commerciale
    *
    */
-  Function cloture($user, $statut, $note)
+  function cloture($user, $statut, $note)
     {
       $this->statut = $statut;
 
@@ -590,7 +590,7 @@ class Propal
    * Créée une commande à partir de la proposition commerciale
    *
    */
-  Function create_commande($user)
+  function create_commande($user)
     {
       if ($this->statut == 2)
 	{
@@ -605,7 +605,7 @@ class Propal
    *
    *
    */
-  Function reopen($userid)
+  function reopen($userid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 0";
       
@@ -624,7 +624,7 @@ class Propal
    *
    *
    */
-  Function liste_array ($brouillon=0, $user='')
+  function liste_array ($brouillon=0, $user='')
     {
       $ga = array();
 
@@ -673,7 +673,7 @@ class Propal
    * Renvoie un tableau contenant les numéros de commandes associées
    *
    */
-  Function commande_liste_array ()
+  function commande_liste_array ()
     {
       $ga = array();
 
@@ -705,7 +705,7 @@ class Propal
    *
    *
    */
-  Function delete($user)
+  function delete($user)
   {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $this->id ;";
     if ( $this->db->query($sql) ) 
@@ -730,7 +730,7 @@ class Propal
    * Mets à jour la note
    *
    */
-  Function update_note($note)
+  function update_note($note)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET note = '$note'";
       $sql .= " WHERE rowid = $this->id;";
@@ -751,7 +751,7 @@ class Propal
    * Information sur l'objet
    *
    */
-  Function info($id) 
+  function info($id) 
     {
       $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec";
       $sql .= ", fk_user_valid, fk_user_cloture, fk_user_author";
@@ -802,7 +802,7 @@ class Propal
 
 class PropaleLigne  
 {
-  Function PropaleLigne()
+  function PropaleLigne()
     {
     }
 }

@@ -24,12 +24,12 @@ class Stats
 {
   var $db ;
 
-  Function Stats($DB)
+  function Stats($DB)
     {
       $this->db = $DB;
     }
 
-  Function getNbByMonthWithPrevYear($year)
+  function getNbByMonthWithPrevYear($year)
   {
     $data1 = $this->getNbByMonth($year - 1);
     $data2 = $this->getNbByMonth($year);
@@ -48,7 +48,7 @@ class Stats
    * Renvoie le nombre de proposition par mois pour une année donnée
    *
    */
-  Function _getNbByMonth($year, $sql)
+  function _getNbByMonth($year, $sql)
   {
     $result = array();
 
@@ -86,7 +86,7 @@ class Stats
    * Renvoie le nombre d'element par année
    *
    */
-  Function _getNbByYear($sql)
+  function _getNbByYear($sql)
   {
     $result = array();
 
@@ -109,7 +109,7 @@ class Stats
    * Renvoie le nombre d'element par mois pour une année donnée
    *
    */
-  Function _getAmountByMonth($year, $sql)
+  function _getAmountByMonth($year, $sql)
   {
     $result = array();
 
@@ -138,7 +138,7 @@ class Stats
    * 
    *
    */
-  Function _getAverageByMonth($year, $sql)
+  function _getAverageByMonth($year, $sql)
   {
     $result = array();
 

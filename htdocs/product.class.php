@@ -35,7 +35,7 @@ class Product
   var $duration_value;
   var $duration_unit;
 
-  Function Product($DB, $id=0)
+  function Product($DB, $id=0)
     {
       $this->db = $DB;
       $this->id   = $id ;
@@ -46,7 +46,7 @@ class Product
    *
    *
    */
-  Function check()
+  function check()
     {
     $this->ref = ereg_replace("'","",stripslashes($this->ref));
     $this->ref = ereg_replace("\"","",stripslashes($this->ref));
@@ -71,7 +71,7 @@ class Product
    *
    *
    */
-  Function create($user) 
+  function create($user) 
     {
     $this->ref = ereg_replace("'","",stripslashes($this->ref));
     $this->ref = ereg_replace("\"","",stripslashes($this->ref));
@@ -126,7 +126,7 @@ class Product
    *
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
   {
     $this->ref = ereg_replace("\"","",stripslashes($this->ref));
     $this->ref = ereg_replace("'","",stripslashes($this->ref));
@@ -163,7 +163,7 @@ class Product
    *
    *
    */
-  Function _log_price($user) 
+  function _log_price($user) 
     {
 
       $sql = "REPLACE INTO ".MAIN_DB_PREFIX."product_price ";
@@ -188,7 +188,7 @@ class Product
    *
    *
    */
-  Function update_price($id, $user)
+  function update_price($id, $user)
   {
     if (strlen(trim($this->price)) > 0 )
       {
@@ -219,7 +219,7 @@ class Product
    *
    *
    */
-  Function fetch ($id)
+  function fetch ($id)
     {    
       $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente, fk_product_type, duration, seuil_stock_alerte";
       $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE rowid = $id";
@@ -286,7 +286,7 @@ class Product
    *
    *
    */
-  Function count_propale($socid=0)
+  function count_propale($socid=0)
     {
       $sql = "SELECT pd.fk_propal";
       $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."propal as pr";
@@ -312,7 +312,7 @@ class Product
    *
    *
    */
-  Function count_propale_client($socid=0)
+  function count_propale_client($socid=0)
     {
       $sql = "SELECT pr.fk_soc";
       $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."propal as pr";
@@ -338,7 +338,7 @@ class Product
    *
    *
    */
-  Function count_facture($socid=0)
+  function count_facture($socid=0)
     {
       $sql = "SELECT pd.fk_facture";
       $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as pd, ".MAIN_DB_PREFIX."product as p";
@@ -366,7 +366,7 @@ class Product
    *
    */
 
-  Function _get_stats($sql)
+  function _get_stats($sql)
     {
       $result = $this->db->query($sql) ;
 
@@ -416,7 +416,7 @@ class Product
    *
    *
    */
-  Function get_nb_vente($socid=0)
+  function get_nb_vente($socid=0)
     {
       $sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
       $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
@@ -433,7 +433,7 @@ class Product
    *Renvoie le nombre de facture dans lesquelles figure le produit
    *
    */
-  Function get_num_vente($socid=0)
+  function get_num_vente($socid=0)
     {
       $sql = "SELECT count(*), date_format(f.datef, '%Y%m') ";
       $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
@@ -450,7 +450,7 @@ class Product
    *Renvoie le nombre de proaple dans lesquelles figure le produit
    *
    */
-  Function get_num_propal($socid=0)
+  function get_num_propal($socid=0)
   {
       $sql = "SELECT count(*), date_format(p.datep, '%Y%m') ";
       $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p";
@@ -467,7 +467,7 @@ class Product
    *
    *
    */
-  Function add_fournisseur($user, $id_fourn, $ref_fourn) 
+  function add_fournisseur($user, $id_fourn, $ref_fourn) 
     {
       $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product_fournisseur WHERE fk_product = $this->id AND fk_soc = $id_fourn";
 
@@ -507,7 +507,7 @@ class Product
    *
    *
    */
-  Function remove_fournisseur($user, $id_fourn) 
+  function remove_fournisseur($user, $id_fourn) 
     {
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur ";
       $sql .= " WHERE fk_product = $this->id AND fk_soc = $id_fourn;";	
@@ -526,7 +526,7 @@ class Product
    *
    *
    */
-  Function create_stock($id_entrepot, $nbpiece)
+  function create_stock($id_entrepot, $nbpiece)
   {
     
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock ";
@@ -547,7 +547,7 @@ class Product
    *
    *
    */
-  Function correct_stock($user, $id_entrepot, $nbpiece, $mouvement)
+  function correct_stock($user, $id_entrepot, $nbpiece, $mouvement)
   {
 
     $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product_stock ";
@@ -576,7 +576,7 @@ class Product
    *
    *
    */
-  Function ajust_stock($user, $id_entrepot, $nbpiece, $mouvement)
+  function ajust_stock($user, $id_entrepot, $nbpiece, $mouvement)
   {
     /* mouvement = 0 -> ajouter
      * mouvement = 1 -> supprimer

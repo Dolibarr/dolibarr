@@ -28,7 +28,7 @@
 class Cyberpaiement
 {
 
-  Function Cyberpaiement($conf) 
+  function Cyberpaiement($conf) 
     /*
      *   Initialisation des valeurs par défaut
      */
@@ -104,7 +104,7 @@ class Cyberpaiement
   /*                        */
   /* ********************** */
 
-  Function set_client($nom,$prenom,$email,$societe='')
+  function set_client($nom,$prenom,$email,$societe='')
   {          
     /* Nom */
     
@@ -165,7 +165,7 @@ class Cyberpaiement
   /*                        */
   /* ********************** */
   
-  Function set_commande($ref, $montant)
+  function set_commande($ref, $montant)
   {          
     /* Référence */
     
@@ -180,7 +180,7 @@ class Cyberpaiement
    *
    *
    */
-  Function print_hidden()
+  function print_hidden()
   {
       print '<input type="hidden" name="CHAMP000" value="'.$this->champ000.'">';
       print "\n";

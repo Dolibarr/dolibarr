@@ -28,7 +28,7 @@ class Project {
   var $title;
   var $socidp;
 
-  Function Project($DB) {
+  function Project($DB) {
     $this->db = $DB;
   }
   /*
@@ -37,7 +37,7 @@ class Project {
    *
    */
 
-  Function create($creatorid) {
+  function create($creatorid) {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat) ";
     $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, $creatorid) ;";
@@ -55,7 +55,7 @@ class Project {
    *
    */
 
-  Function fetch($rowid) {
+  function fetch($rowid) {
 
     $sql = "SELECT title, ref FROM ".MAIN_DB_PREFIX."projet WHERE rowid=$rowid;";
 
@@ -78,7 +78,7 @@ class Project {
    *
    *
    */
-  Function get_propal_list()
+  function get_propal_list()
     {
       $propales = array();
       $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE fk_projet=$this->id;";
@@ -114,7 +114,7 @@ class Project {
    *
    *
    */
-  Function liste_array($id_societe='')
+  function liste_array($id_societe='')
     {
       $projets = array();
 

@@ -33,7 +33,7 @@ class Notify
   var $note;
   var $projet_id;
 
-  Function Notify($DB)
+  function Notify($DB)
     {
       $this->db = $DB ;
       include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
@@ -44,7 +44,7 @@ class Notify
    *
    *
    */
-  Function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
+  function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
     {
       $sql = "SELECT s.nom, c.email, c.idp, c.name, c.firstname, a.titre,n.rowid";
       $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";

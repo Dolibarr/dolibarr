@@ -46,7 +46,7 @@ class FactureFourn
    * Initialisation
    *
    */
-  Function FactureFourn($DB, $soc_idp="", $facid="")
+  function FactureFourn($DB, $soc_idp="", $facid="")
   {
     $this->db = $DB ;
     $this->socidp = $soc_idp;
@@ -66,7 +66,7 @@ class FactureFourn
    * Création d'une facture fournisseur
    *
    */
-  Function create($user)
+  function create($user)
   {
 
     /*
@@ -136,7 +136,7 @@ class FactureFourn
    *
    *
    */
-  Function fetch($rowid)
+  function fetch($rowid)
     {
       $sql = "SELECT fk_soc,libelle,facnumber,amount,remise,".$this->db->pdate(datef)."as df";
       $sql .= ", total_ht, total_tva, total_ttc, fk_user_author";
@@ -215,7 +215,7 @@ class FactureFourn
    * Suppression de la facture
    *
    */
-  Function delete($rowid)
+  function delete($rowid)
     {
 
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn WHERE rowid = $rowid AND fk_statut = 0";
@@ -248,7 +248,7 @@ class FactureFourn
    * Passe une facture fournisseur a l'état validé
    *
    */
-  Function set_valid($userid)
+  function set_valid($userid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set fk_statut = 1, fk_user_valid = $userid WHERE rowid = ".$this->id;
       $result = $this->db->query( $sql);
@@ -261,7 +261,7 @@ class FactureFourn
    * Passe une facture fournisseur a l'état payé
    *
    */
-  Function set_payed($userid)
+  function set_payed($userid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set paye = 1 WHERE rowid = ".$this->id;
       $result = $this->db->query( $sql);
@@ -275,7 +275,7 @@ class FactureFourn
    * Ajoute une ligne dans la facture
    *
    */
-  Function addline($desc, $pu, $tauxtva, $qty)
+  function addline($desc, $pu, $tauxtva, $qty)
   {
     
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
@@ -299,7 +299,7 @@ class FactureFourn
    * Mise a jour ligne facture fourn
    *
    */
-  Function updateline($id, $label, $puht, $tauxtva, $qty=1)
+  function updateline($id, $label, $puht, $tauxtva, $qty=1)
   {
     if (is_numeric($puht) && is_numeric($qty))
       {
@@ -331,7 +331,7 @@ class FactureFourn
    * Supprime une ligne de la facture
    *
    */
-  Function deleteline($rowid)
+  function deleteline($rowid)
   {
     // Supprime ligne
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det ";
@@ -351,7 +351,7 @@ class FactureFourn
    *Mets à jour le prix total de la facture
    *
    */
-  Function updateprice($facid)
+  function updateprice($facid)
   {    
     $total_ht  = 0;
     $total_tva = 0;
@@ -401,7 +401,7 @@ class FactureFourn
    * Génération du PDF
    *
    */
-  Function pdf()
+  function pdf()
     {
 
     }
@@ -410,7 +410,7 @@ class FactureFourn
    * Renvoi un libellé du statut
    *
    */
-  Function LibStatut($paye,$statut)
+  function LibStatut($paye,$statut)
   {
     if (! $paye)
       {

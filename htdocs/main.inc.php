@@ -131,7 +131,7 @@ else
 		      "cryptType" => "none",
 		      );
 
-      $aDol = new DOLIAuth("DB", $params, "loginFunction");
+      $aDol = new DOLIAuth("DB", $params, "loginfunction");
       $aDol->start();
       $result = $aDol->getAuth();
       if ($result)
@@ -143,7 +143,7 @@ else
 	{
 	  /*
 	   * Le début de la page est affiché par
-	   * loginFunction
+	   * loginfunction
 	   */
 	  print "</div>\n</div>\n</body>\n</html>";
 	  die ;	  
@@ -552,7 +552,7 @@ function top_menu($head, $title="", $target="")
  *
  *
  */
-Function left_menu($menu, $help_url='', $form_search='', $author='') 
+function left_menu($menu, $help_url='', $form_search='', $author='') 
 {
   global $user, $conf, $langs;
 

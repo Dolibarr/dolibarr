@@ -24,7 +24,7 @@ class CActioncomm {
   var $id;
   var $libelle;
 
-  Function CActioncomm($DB=0)
+  function CActioncomm($DB=0)
     {
       $this->db = $DB;
     }
@@ -33,7 +33,7 @@ class CActioncomm {
    *
    */
 
-  Function fetch($db, $id)
+  function fetch($db, $id)
     {
 
       $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_actioncomm WHERE id=$id;";
@@ -67,7 +67,7 @@ class CActioncomm {
    *
    *
    */
-  Function liste_array()
+  function liste_array()
   {
     $ga = array();
 
@@ -102,7 +102,7 @@ class CActioncomm {
    * Renvoie le nom d'une action a partir d'un id
    *
    */
-  Function get_nom($id)
+  function get_nom($id)
     {
 
       $sql = "SELECT libelle nom FROM ".MAIN_DB_PREFIX."c_actioncomm WHERE id='$id';";

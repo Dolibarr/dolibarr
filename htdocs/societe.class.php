@@ -44,7 +44,7 @@ class Societe {
   var $fournisseur;
  
 
-  Function Societe($DB, $id=0)
+  function Societe($DB, $id=0)
   {
     global $config;
 
@@ -62,7 +62,7 @@ class Societe {
    *
    *
    */
-  Function create()
+  function create()
   {
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, client) ";
     $sql .= " VALUES ('".trim($this->nom)."', now(), now(), '$this->client');";
@@ -84,7 +84,7 @@ class Societe {
    *
    *
    */
-  Function update($id)
+  function update($id)
   {
     if (strlen(trim($this->nom)) == 0)
       {
@@ -163,7 +163,7 @@ class Societe {
    *
    *
    */
-  Function fetch($socid)
+  function fetch($socid)
     {
       $this->id = $socid;
 
@@ -275,7 +275,7 @@ class Societe {
    * TODO: Cette fonction n'est pas utilisée.. 
    * Attente des contraintes d'intégrité dans MySql
    */
-  Function delete($id)
+  function delete($id)
     {
       $sql = "DELETE from ".MAIN_DB_PREFIX."societe ";
       $sql .= " WHERE idp = " . $id .";";
@@ -318,7 +318,7 @@ class Societe {
    *
    *
    */
-  Function factures_impayes()
+  function factures_impayes()
     {
       $facimp = array();
       /*
@@ -351,7 +351,7 @@ class Societe {
    *
    */
 
-  Function attribute_prefix()
+  function attribute_prefix()
     {
       $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = '$this->id'";
       if ( $this->db->query( $sql) )
@@ -403,7 +403,7 @@ class Societe {
    *
    *
    */
-  Function set_as_client()
+  function set_as_client()
     {
       if ($this->id)
 	{
@@ -419,7 +419,7 @@ class Societe {
    * Renvoie le nom d'une societe a partir d'un id
    *
    */
-  Function get_nom($id)
+  function get_nom($id)
     {
 
       $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp='$id';";
@@ -445,7 +445,7 @@ class Societe {
    *
    *
    */
-  Function contact_email_array()
+  function contact_email_array()
     {
       $contact_email = array();
 
@@ -478,7 +478,7 @@ class Societe {
    *
    *
    */
-  Function contact_array()
+  function contact_array()
     {
       $contacts = array();
 
@@ -511,7 +511,7 @@ class Societe {
    *
    *
    */
-  Function contact_get_email($rowid)
+  function contact_get_email($rowid)
     {
 
       $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE idp = '$rowid'";
@@ -541,7 +541,7 @@ class Societe {
    *
    *
    */
-  Function effectif_array()
+  function effectif_array()
     {
       $effs = array();
       /*
@@ -569,7 +569,7 @@ class Societe {
    *
    *
    */
-  Function forme_juridique_array()
+  function forme_juridique_array()
     {
       $fj = array();
       /*

@@ -32,7 +32,7 @@ class Tva
   /*
    * Initialistation automatique de la classe
    */
-  Function Tva($DB)
+  function Tva($DB)
     {
       $this->db = $DB;
     
@@ -43,7 +43,7 @@ class Tva
    * calcluer le solde de TVA, non ?
    *
    */
-  Function solde($year = 0)
+  function solde($year = 0)
     {
     
       $reglee = $this->tva_sum_reglee($year);
@@ -60,7 +60,7 @@ class Tva
    * Total de la TVA des factures emises par la societe.
    *
    */
-  Function tva_sum_collectee($year = 0)
+  function tva_sum_collectee($year = 0)
     {
 
       $sql = "SELECT sum(f.tva) as amount";
@@ -99,7 +99,7 @@ class Tva
    * 
    *
    */
-  Function tva_sum_payee($year = 0)
+  function tva_sum_payee($year = 0)
     {
       
       $sql = "SELECT sum(f.amount) as amount";
@@ -138,7 +138,7 @@ class Tva
    * Total de la TVA réglee aupres de qui de droit
    *
    */
-  Function tva_sum_reglee($year = 0)
+  function tva_sum_reglee($year = 0)
     {
 
       $sql = "SELECT sum(f.amount) as amount";
@@ -176,7 +176,7 @@ class Tva
   /*
    *
    */
-  Function add_payement($datep, $datev, $amount)
+  function add_payement($datep, $datev, $amount)
     {
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep, datev, amount) ";
       $sql .= " VALUES ('".$this->db->idate($datep)."',";

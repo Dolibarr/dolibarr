@@ -40,7 +40,7 @@ class Paiement
    *
    *
    */
-  Function Paiement($DB, $soc_idp="") 
+  function Paiement($DB, $soc_idp="") 
   {
     $this->db = $DB ;
   }
@@ -48,7 +48,7 @@ class Paiement
    *
    *
    */
-  Function fetch($id) 
+  function fetch($id) 
     {
       $sql = "SELECT p.rowid,".$this->db->pdate("p.datep")." as dp, p.amount";
       $sql .=", c.libelle as paiement_type, p.num_paiement";
@@ -87,7 +87,7 @@ class Paiement
    *
    *
    */
-  Function create($user)
+  function create($user)
   {
     $sql_err = 0;
     /*
@@ -163,7 +163,7 @@ class Paiement
    *
    *
    */
-  Function select($name, $filtre='', $id='')
+  function select($name, $filtre='', $id='')
   {
     $form = new Form($this->db);
 
@@ -187,7 +187,7 @@ class Paiement
    *
    *
    */
-  Function delete()
+  function delete()
   {
     $sql = "DELETE FROM llx_paiement_facture WHERE fk_paiement = ".$this->id;
     
@@ -212,7 +212,7 @@ class Paiement
    * Mise a jour du lien entre le paiement et la ligne dans llx_bank générée
    *
    */
-  Function update_fk_bank($id_bank)
+  function update_fk_bank($id_bank)
     {
     $sql = "UPDATE llx_paiement set fk_bank = ".$id_bank." where rowid = ".$this->id;
     $result = $this->db->query($sql);
@@ -230,7 +230,7 @@ class Paiement
    * Information sur l'objet
    *
    */
-  Function info($id) 
+  function info($id) 
     {
       $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec, fk_user_creat, fk_user_modif";
       $sql .= ", ".$this->db->pdate("tms")." as tms";

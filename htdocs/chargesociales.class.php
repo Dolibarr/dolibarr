@@ -31,13 +31,13 @@ class PaiementCharge {
     var $num_paiement;
     var $note;
 
-    Function PaiementCharge($DB) {
+    function PaiementCharge($DB) {
         $this->db = $DB;
 
         return 1;
     }
 
-    Function create($user) {
+    function create($user) {
         $sql_err = 0;
         /*
          *  Insertion dans la base
@@ -93,7 +93,7 @@ class PaiementCharge {
     * Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank générée
     *
     */
-    Function update_fk_bank($id_bank) {
+    function update_fk_bank($id_bank) {
         $sql = "UPDATE llx_paiementcharge set fk_bank = ".$id_bank." where rowid = ".$this->id;
         $result = $this->db->query($sql);
         if ($result) 
@@ -125,7 +125,7 @@ class ChargeSociales {
     var $paye;
     var $periode;
 
-    Function ChargeSociales($DB) {
+    function ChargeSociales($DB) {
         $this->db = $DB;
 
         return 1;
@@ -135,7 +135,7 @@ class ChargeSociales {
     * Retrouve et charge une charge sociale
     * Retour: 1 si trouve, 0 sinon
     */
-    Function fetch($id) {
+    function fetch($id) {
         $sql = "SELECT cs.rowid,".$this->db->pdate("cs.date_ech")." as date_ech,".$this->db->pdate("cs.date_pai")." as date_pai";
         $sql .=", cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, ".$this->db->pdate("cs.periode")." as periode, c.libelle";
         $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs, ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -173,7 +173,7 @@ class ChargeSociales {
         }
     }
 
-    Function solde($year = 0) {
+    function solde($year = 0) {
 
         $sql = "SELECT sum(f.amount) as amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as f WHERE paye = 0";
@@ -204,7 +204,7 @@ class ChargeSociales {
    * Tag la charge comme payée complètement
    *
    */
-  Function set_payed($rowid)
+  function set_payed($rowid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales set paye=1 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
@@ -215,7 +215,7 @@ class ChargeSociales {
    * Renvoi le staut sous forme de libellé d'une charge
    *
    */
-    Function getLibStatut() {
+    function getLibStatut() {
         if ($this->paye == 0) { return "Non Payé"; }
         else { return "Payé"; }
     }

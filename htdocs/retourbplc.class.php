@@ -45,7 +45,7 @@ class Retourbplc
   /*
    *   Initialisation des valeurs par défaut
    */
-  Function Retourbplc($db) 
+  function Retourbplc($db) 
   {
     $this->db = $db;
   }
@@ -54,7 +54,7 @@ class Retourbplc
    *
    *
    */
-  Function insertdb()
+  function insertdb()
   {
 
 
@@ -95,7 +95,7 @@ class Retourbplc
    *
    *
    */
-  Function check_key($key)
+  function check_key($key)
   {
 
     $A = $this->montant;
@@ -149,7 +149,7 @@ class Retourbplc
    * Table de correspondance de l'algorithme de Luhn
    *
    */
-  Function corres($value)
+  function corres($value)
   {
     $map[0] = 0;
 
@@ -172,7 +172,7 @@ class Retourbplc
    *
    *
    */
-  Function cle_luhn($cle, $map)
+  function cle_luhn($cle, $map)
   {
     $buffer = $this->array_reverse($cle);
  
@@ -209,7 +209,7 @@ class Retourbplc
    *
    *
    */
-  Function calcul_pos($N1, $N0, $C5)
+  function calcul_pos($N1, $N0, $C5)
   {
     if ($N0 >= 0 && $N0 <= 6)
       {
@@ -259,7 +259,7 @@ class Retourbplc
    *
    *
    */
-  Function array_reverse($string)
+  function array_reverse($string)
   {
 
     $len = strlen($string);
