@@ -37,6 +37,8 @@ function llxHeader($head = "", $urlp = "")
 
   $menu->add_submenu("fiche.php3?&action=create","Nouveau produit");
 
+  $menu->add_submenu("popuprop.php", "Popularité");
+
   if (defined("MAIN_MODULE_BOUTIQUE") && MAIN_MODULE_BOUTIQUE)
     {
 
