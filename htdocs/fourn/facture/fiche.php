@@ -85,7 +85,7 @@ if ($action == 'add')
   $facfou->date    = $datefacture;
   $facfou->note    = $HTTP_POST_VARS["note"];
 
-  for ($i = 1 ; $i < 6 ; $i++)
+  for ($i = 1 ; $i < 9 ; $i++)
     {
       $label = "label$i";
       $amount = "amount$i"; 
@@ -199,7 +199,7 @@ if ($action == 'create' or $action == 'copy')
   print '<table cellspacing="0" cellpadding="3" class="border" width="100%">';
   print "<tr class=\"liste_titre\">".'<td>&nbsp;</td><td>Libellé</td><td align="center">P.U.</td><td align="center">Qty</td><td align="center">Tx TVA</td></tr>';
 
-  for ($i = 1 ; $i < 6 ; $i++)
+  for ($i = 1 ; $i < 9 ; $i++)
     {
       if ($action == 'copy')
 	{
