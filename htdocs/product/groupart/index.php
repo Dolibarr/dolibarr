@@ -60,7 +60,7 @@ if ( $db->query($sql) ) {
     $var=!$var;
     print "<TR $bc[$var]>";
     print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->nom</a></TD>\n";
-    print "<TD>$objp->groupart</TD>\n";
+    print "<TD>".ucfirst(strtolower(strtoupper($objp->groupart)))."</TD>\n";
     print "</TR>\n";
     $i++;
   }
