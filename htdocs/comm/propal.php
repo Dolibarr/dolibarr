@@ -41,10 +41,6 @@ require("../actioncomm.class.php");
 require("../lib/CMailFile.class.php");
 
 /*
- *
- */
-
-/*
  * Sécurité accés client
  */
 if ($user->societe_id > 0) 

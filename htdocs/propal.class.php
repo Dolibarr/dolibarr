@@ -87,8 +87,7 @@ class Propal
 	      $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $price.",".$prod->tva_tx.",'".addslashes($prod->label)."',$remise_percent, $subprice)";
 	  
 	      if ($this->db->query($sql) )
-		{
-		  
+		{		  
 		  $this->update_price();
 		  
 		  return 1;
@@ -159,7 +158,6 @@ class Propal
       $client = new Societe($this->db);
       $client->fetch($this->socidp);
       $this->client = $client;
-	
     }
   /*
    *
@@ -173,7 +171,6 @@ class Propal
 	  
 	  if ($this->db->query($sql) )
 	    {
-	      
 	      $this->update_price();
 	      
 	      return 1;
@@ -219,9 +216,6 @@ class Propal
 		      $prod = new Product($this->db, $this->products[$i]);
 		      $prod->fetch($this->products[$i]);
 		    
-		      //$sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx) VALUES ";
-		      //$sql .= " ($propalid,".$this->products[$i].",".$this->products_qty[$i].",$prod->price,$prod->tva_tx);";
-
 		      $this->insert_product($this->products[$i], 
 					    $this->products_qty[$i], 
 					    $this->products_remise_percent[$i]);
@@ -422,8 +416,6 @@ class Propal
 		{
 		  print $this->db->error();
 		}
-
-
 	    }
 	  return 1;
 	}
@@ -440,7 +432,6 @@ class Propal
    */
   Function valid($user)
     {
-
       if ($user->rights->propale->valider)
 	{
 

@@ -62,15 +62,15 @@ if ($action == 'del_bookmark')
  */
 print_titre(translate("Espace comptabilité"));
 
-print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top" width="30%">';
 /*
  *
  */
 print '<form method="post" action="facture.php">';
-print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-print "<TR class=\"liste_titre\">";
+print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+print "<tr class=\"liste_titre\">";
 print '<td colspan="2">Rechercher une facture</td></tr>';
 print "<tr $bc[1]><td>";
 print 'Num. : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="Rechercher" class="flat"></td></tr>';
@@ -198,7 +198,6 @@ if ( $db->query($sql) )
   print '</table>';
 }
 /*
- * Actions a faire
  *
  *
  */
@@ -222,16 +221,15 @@ if ($user->comm > 0 && $conf->commercial )
       if ($num)
 	{
 	  $i = 0;
-	  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-	  print "<TR class=\"liste_titre\">";
-	  print '<td colspan="2">'.translate("Propositions comm. à facturer").'</td>';
-	  print "</TR>\n";
+	  print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+	  print "<tr class=\"liste_titre\">";
+	  print '<td colspan="2">'.translate("Propositions commerciales à facturer").'</td></tr>';
   
 	  while ($i < $num)
 	    {
 	      $var=!$var;
 	      $obj = $db->fetch_object($i);
-	      print "<tr $bc[$var]><td><a href=\"propal.php?propalid=$obj->rowid\">$obj->ref</a></td>";
+	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"propal.php?propalid=$obj->rowid\">$obj->ref</a></td>";
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
 	    }
@@ -266,7 +264,7 @@ if ( $db->query($sql) )
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
+	  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td align="right">'.price($obj->total_ttc).'</td></tr>';
 	  $i++;

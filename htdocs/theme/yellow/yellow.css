@@ -49,6 +49,14 @@ table.noborder td {
                     border-collapse: collapse;
                     border: 0px  }
 
+table.liste {
+              border-collapse: collapse;
+              border: 0px  }
+
+table.liste td {
+                 border-collapse: collapse;
+                 border: 0px  }
+
 table#actions {
                 border: 0px;
                 cell-spacing: 1em;

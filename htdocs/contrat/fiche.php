@@ -28,6 +28,16 @@ llxHeader();
 
 $mesg = '';
 
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
+
 if ($action == 'add')
 {
   $contrat = new Contrat($db);
@@ -97,7 +107,7 @@ if ($action == 'create')
   print '<input type="hidden" name="type" value="'.$type.'">'."\n";
   print '<div class="titre">Nouveau '.$types[$type].'</div><br>'."\n";
       
-  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print "<tr>";
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
@@ -133,7 +143,7 @@ else
 	{ 
 	  print_fiche_titre('Fiche contrat : '.$contrat->id, $mesg);
       
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
 	  print '<td width="20%">Service</td><td width="40%">'.$contrat->product->label_url.'</td>';
 	  print '<td colspan="2">';
@@ -202,7 +212,7 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
+print '<br><table width="100%" id="actions" cellspacing="0" cellpadding="3">';
 print '<td width="20%" align="center">-</td>';
 
 if ($contrat->enservice)

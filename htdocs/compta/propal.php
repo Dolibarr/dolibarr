@@ -34,9 +34,15 @@ require("../lib/CMailFile.class.php");
 require("../project.class.php");
 require("../propal.class.php");
 require("../actioncomm.class.php");
+
 /*
- *
+ * Sécurité accés client
  */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
 
 llxHeader();
 
@@ -127,7 +133,7 @@ if ($propalid)
 	  $projet = new Project($db);
 	  $projet->fetch($obj->fk_projet); 
 	  print '<tr><td>Projet</td><td colspan="1">';
-	  print '<a href="projet/fiche.php?id='.$projet->id.'">';
+	  print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id.'">';
 	  print $projet->title.'</a></td></tr>';
 	}
       print "<tr><td>Destinataire</td><td colspan=\"2\">$obj->firstname $obj->name &lt;$obj->email&gt;</td></tr>";

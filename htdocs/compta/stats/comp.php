@@ -167,7 +167,7 @@ function pt ($db, $sql, $year) {
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
-    print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+    print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
     print "<TR class=\"liste_titre\">";
     print "<TD>Mois</TD>";
     print "<td align=\"right\">Montant</td></tr>\n";
@@ -269,7 +269,7 @@ function ppt ($db, $year, $socidp)
   
   print "</td><td valign=\"top\" width=\"30%\">";
   
-  print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
   print "<TR class=\"liste_titre\">";
   print "<TD>Mois</TD>";
   print "<TD align=\"right\">Montant</TD>";

@@ -37,7 +37,7 @@ function propals ($db, $year, $month) {
   $result = $db->query($sql);
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print '<p><table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print "<TR bgcolor=\"#e0e0e0\"><td colspan=\"3\"><b>Propal</b></td></tr>";
 
   $oldstatut = -1;
@@ -87,7 +87,7 @@ function propals ($db, $year, $month) {
   print "<tr>";
   print "<td colspan=\"2\" align=\"right\"><b>Total : ".price($total)."</b></td>";
   print "<td align=\"left\"><b>Euros HT</b></td></tr>";
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 
 }
@@ -157,7 +157,7 @@ function pt ($db, $sql, $year) {
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
-    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+    print '<p><table class="border" width="100%" cellspacing="0" cellpadding="3">';
     print "<TR class=\"liste_titre\">";
     print "<TD>Mois</TD>";
     print "<td align=\"right\">Montant</td></tr>\n";
@@ -229,7 +229,7 @@ function ppt ($db, $year, $socidp)
   print "CA ".($year - 1);
   
   print "</td><td align=\"center\">CA $year</td>";
-  print "<td valign=\"top\">Delta</td></tr>";
+  print '<td align="center">Delta</td></tr>';
   print "<tr><td valign=\"top\" width=\"30%\">";
   
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
@@ -259,7 +259,7 @@ function ppt ($db, $year, $socidp)
   
   print "</td><td valign=\"top\" width=\"30%\">";
   
-  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print '<p><table class="border" width="100%" cellspacing="0" cellpadding="3">';
   print "<TR class=\"liste_titre\">";
   print "<TD>Mois</TD>";
   print "<TD align=\"right\">Montant</TD>";

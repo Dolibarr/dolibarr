@@ -58,15 +58,12 @@ function llxHeader($head = "", $title="") {
       $menu->add("tva/index.php","TVA");
     }
 
-  $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisse");
+  if ($user->societe_id == 0)
+    {
+      $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisse");
 
-  $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
-
-  /*
-   *  $menu->add("ligne.php","Compta");
-   *  $menu->add_submenu("ligne.php","Lignes");
-   *  $menu->add_submenu("config.php","Configuration");
-   */
+      $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
+    }
 
   if ($user->compta > 0) 
     {
@@ -78,7 +75,10 @@ function llxHeader($head = "", $title="") {
       $menu->add(DOL_URL_ROOT."/","Accueil");      
     }
 
-  $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
+  if ($user->societe_id == 0)
+    {
+      $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
+    }
 
   left_menu($menu->liste);
 
