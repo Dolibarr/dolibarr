@@ -32,7 +32,6 @@ if ($user->societe_id > 0)
 }
 
 $page=$_GET["page"];
-$begin=$_GET["begin"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 
@@ -55,11 +54,6 @@ if ($socidp)
 if ($_GET["search_nom"])
 {
   $sql .= " AND s.nom like '%".strtolower($_GET["search_nom"])."%'";
-}
-
-if (strlen($begin))
-{
-  $sql .= " AND upper(s.nom) like '$begin%'";
 }
 
 if ($user->societe_id)
@@ -93,7 +87,7 @@ if ($result)
 
   llxHeader();
 
-  print_barre_liste("Liste des clients", $page, "clients.php","&amp;begin=$begin",$sortfield,$sortorder,"",$num);
+  print_barre_liste("Liste des clients", $page, "clients.php","",$sortfield,$sortorder,"",$num);
 
   $i = 0;
   
