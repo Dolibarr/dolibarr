@@ -138,7 +138,7 @@ if ($action == 'modif' && $user->rights->propale->creer)
 
 }
 
-if ($HTTP_POST_VARS["action"] == 'addligne' && $user->rights->propale->creer) 
+if ($HTTP_POST_VARS["addligne"] == 'Ajouter' && $user->rights->propale->creer) 
 {
   /*
    *  Ajout d'une ligne produit dans la propale
@@ -151,7 +151,7 @@ if ($HTTP_POST_VARS["action"] == 'addligne' && $user->rights->propale->creer)
     }
 } 
 
-if ($HTTP_POST_VARS["action"] == 'addproduct' && $user->rights->propale->creer) 
+if ($HTTP_POST_VARS["addproduct"] == 'Ajouter' && $user->rights->propale->creer) 
 {
   /*
    *  Ajout d'une ligne produit dans la propale
@@ -333,8 +333,8 @@ if ($propalid)
 	   * Produits
 	   */
 	  print_titre("Produits");
-
-	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	  print '<form action="propal.php?propalid='.$propalid.'" method="post">';
+	  print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<TR class=\"liste_titre\">";
 	  print "<td>Réf</td><td>Produit</td>";
 	  print '<td align="center">Tva</td><td align="center">Qté.</td><td align="center">Remise</td><td align="right">P.U.</td>';
@@ -439,8 +439,8 @@ if ($propalid)
 	       *
 	       */
 	      $var=!$var;
-	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
-	      print '<input type="hidden" name="action" value="addproduct">';
+
+
 	      print '<tr '.$bc[$var].'>';
 	      print '<td>&nbsp;</td>';
 	      print '<td><input type="text" size="28" name="np_desc"></td>';
@@ -449,28 +449,23 @@ if ($propalid)
 	      print '<td align="center"><input type="text" size="3" value="1" name="np_qty"></td>';
 	      print '<td align="center"><input type="text" size="3" value="0" name="np_remise"> %</td>';
 	      print '<td align="right"><input type="text" size="6" name="np_price"></td>';
-	      print '<td align="center"><input type="submit" value="Ajouter"></td>';
-	      print '</tr></form>';
+	      print '<td align="center"><input type="submit" value="Ajouter" name="addproduct"></td>';
+	      print '</tr>';
 
 	      /*
 	       * Produits
 	       *
 	       */
 	      $var=!$var;
-	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
-	      print '<input type="hidden" name="action" value="addligne">';
 	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"2\"><select name=\"idprod\">$opt</select></td>";
 	      print '<td align="center"><input type="text" size="3" name="qty" value="1"></td>';
 	      print '<td align="center"><input type="text" size="3" name="remise" value="0"> %</td>';
 	      print '<td>&nbsp;</td>';
-	      print '<td align="center"><input type="submit" value="Ajouter"></td>';
+	      print '<td align="center"><input type="submit" value="Ajouter" name="addligne"></td>';
 	      print "</tr>\n";
-	      print '</form>';
-
-
 	    }
-
 	  print "</table>";
+	  print '</form>';
 
 	  if ($propal->brouillon == 1)
 	    {
@@ -481,7 +476,6 @@ if ($propalid)
 	      print '<input type="submit" value="Appliquer">';
 	      print '</td></tr></table></form>';
 	    }
-
 	  /*
 	   * Actions
 	   */
@@ -628,9 +622,14 @@ if ($propalid)
 	  /*
 	   *
 	   */
-	  
+	  if ($propal->brouillon == 1)
+	    {
+	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
+	      print '<input type="hidden" name="action" value="setpdfmodel">';
+	    }	  
 	  print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
 	  print_titre('<a href="propal/document.php?id='.$propal->id.'">Documents</a>');
+
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  
 	  $file = PROPALE_OUTPUTDIR . "/$obj->ref/$obj->ref.pdf";
@@ -644,18 +643,13 @@ if ($propalid)
 	  
 	  if ($propal->brouillon == 1)
 	    {
-	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
-	      print '<input type="hidden" name="action" value="setpdfmodel">';
 	      print "<tr $bc[1]><td>Modèle</td><td align=\"right\">";
-
 	      $html = new Form($db);
 	      $modelpdf = new Propal_Model_pdf($db);
 	      $html->select_array("modelpdf",$modelpdf->liste_array(),$propal->modelpdf);
-
 	      print '</td><td colspan="2"><input type="submit" value="Changer">';
-	      print '</td></tr></form>';
+	      print '</td></tr>';
 	    }
-
 	  print "</table>\n";
 	  /*
 	   *
@@ -703,6 +697,10 @@ if ($propalid)
 	   *
 	   */
 	  print "</td></tr></table>";
+	  if ($propal->brouillon == 1)
+	    {
+	      print '</form>';
+	    }
 	  /*
 	   *
 	   *
