@@ -1,4 +1,15 @@
+2003-10-09  Rodolphe Quiédeville  <rq@quiedeville.org>
+
+	* Ajout de la possibilité de modifier le numéro de relevé d'une
+	ligne d'un compte bancaire
+
+
+2003-10-08  Rodolphe Quiédeville  <rq@quiedeville.org>
+
+	* Gestion des taux de tva configurable par fichier
+	
 2003-10-06  Eric Seigne  <erics@rycks.com>
+
 	* Bug dans l'url des  a href de compta/resultat/index.php qui fait
 	des liens absolus et non relatifs.
 
