@@ -11,3 +11,10 @@ BuildPDF=Générer le PDF
 RebuildPDF=Regénérer le PDF
 VAT=TVA
 Amount=Montant
+BillStatusDraft=Brouillon (à valider)
+BillStatusPayed=Payée
+BillStatusCanceled=Abandonnée
+BillStatusValidated=Validée (à payer)
+BillStatusStarted=Commencé
+BillStatusNotPayed=Impayé
+

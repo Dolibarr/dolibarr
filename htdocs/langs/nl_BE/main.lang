@@ -1,14 +1,15 @@
 # Dolibarr language file - nl_BE - main
 charset="iso-8859-1"
-Error=Error
-ErrorForbidden=L'accès est interndit
-ErrorFileDoesNotExists=Le fichier %s n'existe pas
+Error=Fout
+ErrorForbidden=Toegangs verboden
+ErrorFileDoesNotExists=Bestand %s Bestaat Niet
+ErrorCanNotCreateDir=Kan dir %s niet creëren 
 yes=ya
 Yes=ya
 no=nee
 No=nee
 All=All
-Home=Accueil
+Home=Home
 Help=Hulp
 Activate=Activeer
 Activated=Activeer
@@ -90,5 +91,7 @@ ctionsDone=Acties deden
 ActionsToDo=Acties zullen doen
 Filter=de filter
 RemoveFilter=Verwijdeer filter
-
+ChartGenerated=De grafiek genereerde
+ChartNotGenerated=De grafiek niet genereerde
+Duration=Duration
 

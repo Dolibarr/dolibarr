@@ -1,4 +1,4 @@
-# Dolibarr language file - fr_FR - products
+# Dolibarr language file - fr_BE - products
 Products=Produits
 Services=Services
 Product=Produit
@@ -11,3 +11,5 @@ ProductsNotOnSell=Produits hors vente
 ServicesOnSell=Services en vente
 ServicesNotOnSell=Services hors vente
 LastRecorded=Derniers produits/services en vente enregistrés
+CardProduct0=Fiche produit
+CardProduct1=Fiche service
