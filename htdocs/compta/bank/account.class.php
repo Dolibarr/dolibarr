@@ -31,6 +31,7 @@ class Account {
   var $number;
   var $cle_rib;
   var $bic;
+  var $iban_prefix;
 
   Function Account($DB, $rowid=0) {
     global $config;
@@ -85,6 +86,7 @@ class Account {
       $sql .= ",bic='".$this->bic."'";
       $sql .= ",courant = ".$this->courant;
       $sql .= ",clos = ".$this->clos;
+      $sql .= ",iban_prefix = '".$this->iban_prefix."'";
 
       $sql .= " WHERE rowid = $this->id";
       
@@ -100,6 +102,7 @@ class Account {
       else
 	{
 	  print $this->db->error();
+	  print "<p>$sql</p>";
 	}
     }
   /*
@@ -109,7 +112,7 @@ class Account {
   Function fetch($id)
   {
     $this->id = $id; 
-    $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque,code_guichet,cle_rib FROM llx_bank_account";
+    $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque,code_guichet,cle_rib,bic,iban_prefix FROM llx_bank_account";
     $sql .= " WHERE rowid  = ".$id;
 
     $result = $this->db->query($sql);
@@ -128,6 +131,8 @@ class Account {
 	    $this->code_guichet = $obj->code_guichet;
 	    $this->number       = $obj->number;
 	    $this->cle_rib      = $obj->cle_rib;
+	    $this->bic          = $obj->bic;
+	    $this->iban_prefix  = $obj->iban_prefix;
 	  }
 	$this->db->free();
       }
