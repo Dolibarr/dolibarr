@@ -38,10 +38,10 @@ if ($_POST["action"] == 'add' && $user->admin)
         $adht = new AdherentType($db);
           
         $adht->libelle     = $_POST["libelle"];
-        $adht->cotisation  = $_POST["cotisation"];
+        $adht->cotisation  = $yesno[$_POST["cotisation"]];
         $adht->commentaire = $_POST["comment"];
         $adht->mail_valid  = $_POST["mail_valid"];
-        $adht->vote        = $_POST["vote"];
+        $adht->vote        = $yesno[$_POST["vote"]];
 
         if ($_POST["libelle"]) { $adht->create($user->id); }
     }
@@ -54,10 +54,10 @@ if ($_POST["action"] == 'update' && $user->admin)
         $adht = new AdherentType($db);
         $adht->id          = $_POST["rowid"];;
         $adht->libelle     = $_POST["libelle"];
-        $adht->cotisation  = $_POST["cotisation"];
+        $adht->cotisation  = $yesno[$_POST["cotisation"]];
         $adht->commentaire = $_POST["comment"];
         $adht->mail_valid  = $_POST["mail_valid"];
-        $adht->vote        = $_POST["vote"];
+        $adht->vote        = $yesno[$_POST["vote"]];
         
         $adht->update($user->id);
     }	  
@@ -148,26 +148,25 @@ else
 
 
 if ($_GET["action"] == 'create') {
+  $htmls = new Form($db);
 
   print_titre("Nouveau type");
   print '<br>';
   
   print "<form action=\"type.php\" method=\"post\">";
-  print '<table cellspacing="0" class="border" width="100%" cellpadding="3">';
+  print '<table class="border" width="100%">';
   
   print '<input type="hidden" name="action" value="add">';
 
   print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';  
 
   print '<tr><td>Soumis à cotisation</td><td>';
-
-  print '<select name="cotisation"><option value="yes">oui</option>';
-  print '<option value="no">non</option></select>';
+  $htmls->selectyesno("cotisation","");
+  print '</tr>';
   
   print '<tr><td>Droit de vote</td><td>';
-
-  print '<select name="vote"><option value="yes">oui</option>';
-  print '<option value="no">non</option></select>';
+  $htmls->selectyesno("vote","");
+  print '</tr>';
 
   print '<tr><td valign="top">'.$langs->trans("Comments").' :</td><td>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
@@ -190,6 +189,7 @@ if ($_GET["action"] == 'create') {
 /* ************************************************************************** */
 if ($_GET["rowid"] > 0 && $_GET["action"] == 'edit')
 {
+  $htmls = new Form($db);
 
   $adht = new AdherentType($db);
   $adht->id = $_GET["rowid"];
@@ -198,21 +198,14 @@ if ($_GET["rowid"] > 0 && $_GET["action"] == 'edit')
   print_titre("Edition de la fiche");
   print '<br>';
   
-  /*
-   *
-   *
-   */
   print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$_GET["rowid"].'">';
   print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
   print '<input type="hidden" name="action" value="update">';
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  print '<table class="border" width="100%">';
 
   print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.$adht->libelle.'"></td></tr>';  
 
   print '<tr><td>Soumis à cotisation</td><td>';
-
-  $htmls = new Form($db);
-
   $htmls->selectyesno("cotisation",$adht->cotisation);
   print '</tr>';
 
