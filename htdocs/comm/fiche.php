@@ -467,7 +467,7 @@ if ($_socid > 0)
        *      Listes des actions a faire
        *
        */
-      print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
+      print '<table width="100%" cellspacing=0 class="noborder" cellpadding=2>';
       print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$objsoc->id.'&afaire=1">'.$langs->trans("AddActionToDo").'</a></td></tr>';
       print '<tr>';
       print '<td colspan="2" valign="top">';
