@@ -863,7 +863,7 @@ class Form
    */
   function selectyesnonum($name,$value='')
   {
-    selectyesno($name,$value,1);
+    $this->selectyesno($name,$value,1);
   }
 	
   /*
