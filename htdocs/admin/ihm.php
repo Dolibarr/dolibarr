@@ -34,7 +34,7 @@ if ($_POST["action"] == 'update')
   dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",$_POST["main_searchform_societe"]);
   dolibarr_set_const($db, "MAIN_LANG_DEFAULT",$_POST["main_lang_default"]);
 
-  Header("Location: $PHP_SELF");
+  Header("Location: ihm.php");
 }
 
 
@@ -46,7 +46,7 @@ print "<br>\n";
 
 if ($_GET["action"] == 'edit')
 {
-  print '<form method="post" action="'.$PHP_SELF.'">';
+  print '<form method="post" action="ihm.php">';
 
   print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr class="liste_titre"><td>Nom</td><td>Valeur</td></tr>';
@@ -140,7 +140,7 @@ else
   print '</table><br>';
 
   print '<div class="tabsAction">';
-  print '<a class="tabAction" href="'.$PHP_SELF.'?action=edit">Editer</a>';
+  print '<a class="tabAction" href="ihm.php?action=edit">Editer</a>';
   print '</div>';
 
 }
