@@ -531,6 +531,7 @@ function top_menu($head, $title="", $target="")
 
   print "</div><!-- class=tmenu -->\n";
 
+
 }
 
 
@@ -544,6 +545,8 @@ function top_menu($head, $title="", $target="")
 function left_menu($menu, $help_url='', $form_search='', $author='') 
 {
   global $user, $conf, $langs;
+
+  print '<div class="vmenuplusfiche" width="158">'."\n";
 
   /*
    * Colonne de gauche
@@ -637,6 +640,8 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
   print "</div>\n";
   print "<!-- Fin left menu -->\n";
 
+  print '</div>'."\n";
+  print '<div class="vmenuplusfiche">'."\n";
 
   print '<div class="fiche">'."\n";
 
@@ -670,6 +675,9 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 function llxFooter($foot='') 
 {
   global $dolibarr_auto_user;
+
+  print '</div><!-- div class="vmenuplusifche" -->'."\n";
+
   print "\n".'</div><!-- div class="fiche" -->'."\n";
   print '</div><!-- div class="body" -->'."\n";
   print "</body>\n</html>\n";

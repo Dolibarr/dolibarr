@@ -56,49 +56,52 @@ div.body
     margin-bottom: 0;
     margin-right: 3px;
     margin-left: 3px;
-  display:block;
-  padding:0px;
-  font-family:arial,tahoma,verdana,helvetica;
-  font-size:12px;
+    display:block;
+    padding:0px;
+    font-family:arial,tahoma,verdana,helvetica;
+    font-size:12px;
 }
-
 
 div.tmenu
 {
-  white-space: nowrap;
-  display:block;
-  border:0;
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  padding: 3px 1em 0em;
-  margin: 0em 0em 0.2em 0em;
-  font-weight:bold;
-  font-size:12px;
-  height: 18px;
-  background: #b3c5cc; 
-  color: #000000; 
-  text-decoration: none;
+    float: top;
+    display:block;
+    white-space: nowrap;
+    border:0;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    padding: 3px 1em 0em;
+    margin: 0em 0em 0.2em 0em;
+    font-weight:bold;
+    font-size:12px;
+    height: 18px;
+    background: #b3c5cc; 
+    color: #000000; 
+    text-decoration: none;
+}
+
+div.vmenuplusfiche
+{
+    float: left;
 }
 
 div.vmenu
 {
-  float: left;
-/*  background: #dee7ec; */
-  display:block;
-  margin-right: 10px;
-  padding: 0px;
-  padding-bottom: 0px;
-  width: 158px;
+    display:block;
+    float: left;
+    margin-right: 8px;
+    padding: 0px;
+    padding-bottom: 0px;
+    width: 158px;
 }
 
 div.fiche
 {
-  display: block;
-  float: none;
-  position: absolute;
-  top: 28px;
-  left: 168px;
-  margin-right: 10px;
+    position: absolute;
+    display: block;
+    float: left;
+    top: 29px;
+    margin-right: 2px;
 }
 
 
@@ -361,6 +364,12 @@ border-collapse: collapse;
 border: 0px
 }
 
+table.liste {
+border-collapse: collapse;
+border: 0px;
+width: 100%;
+}
+
 table.noborder td {
 border-collapse: collapse;
 border: 0px
@@ -377,6 +386,18 @@ border: 1px ridge
 }
 
 tr.liste_titre { 
+background: #7699A9;
+color: #334444;
+font: helvetica, verdana, arial, sans-serif;
+font-weight: bold;
+border-left: 1px solid #FFFFFF;
+border-right: 1px solid #FFFFFF;
+border-top: 1px solid #FFFFFF;
+border-bottom: 1px solid #FFFFFF;
+white-space: nowrap;
+}
+
+th { 
 background: #7699A9;
 color: #334444;
 font: helvetica, verdana, arial, sans-serif;
