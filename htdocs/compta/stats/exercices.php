@@ -44,9 +44,10 @@ if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
 print_titre("Comparatif CA année en cours avec année précédente (".MAIN_MONNAIE." HT, ".$mode.")");
 print "<br>\n";
 
+
 function factures ($db, $year, $month, $paye)
 {
-  global $bc;
+  global $bc,$langs;
 
   $sql = "SELECT s.nom, s.idp, f.facnumber, f.total as amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
@@ -103,7 +104,7 @@ function factures ($db, $year, $month, $paye)
 
 
 function pt ($db, $sql, $year) {
-  global $bc;
+  global $bc,$langs;
 
   $result = $db->query($sql);
   if ($result) {
@@ -174,7 +175,7 @@ function pt ($db, $sql, $year) {
 
 function ppt ($db, $year, $socidp)
 {
-  global $bc,$conf;
+  global $bc,$conf,$langs;
   print "<table width=\"100%\">";
 
   print "<tr class=\"liste_titre\"><td align=\"center\" width=\"30%\">";
