@@ -54,7 +54,7 @@ if ($_POST["action"] == "create_stock")
   $product->create_stock($_POST["id_entrepot"], $_POST["nbpiece"]);
 }
 
-if ($_POST["action"] == "correct_stock" && $_POST["cancel"] <> "Annuler")
+if ($_POST["action"] == "correct_stock" && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
   if (is_numeric($_POST["nbpiece"]))
     {

@@ -445,7 +445,7 @@ else
 	   */
 	  if ($_GET["action"] == 'annuler')
 	    {
-	      $html->form_confirm("fiche.php?id=$id","Annuler la commande","Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
+	      $html->form_confirm("fiche.php?id=$id",$langs->trans("Cancel"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
 	    }
 
 	  /*
@@ -605,7 +605,7 @@ else
 		      print '<td align="center"><input size="4" type="text" name="elqty" value="'.$objp->qty.'"></TD>';
 		      print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
 		      print '<td align="right"><input size="8" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
-		      print '<td align="right" colspan="2"><input type="submit" value="Enregistrer"></td>';
+		      print '<td align="right" colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td>';
 		      print '</tr>' . "\n";
 		      print "</form>\n";
 		    }

@@ -36,7 +36,7 @@ $form = new Form($db);
 
 if ($_POST["action"] == 'add' && $user->admin) 
 {
-    if ($_POST["button"] != "Annuler") {
+    if ($_POST["button"] != $langs->trans("Cancel")) {
         // Type et taille non encore pris en compte => varchar(255)
         if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-]*$/",$_POST['attrname'])){
         $adho->create($_POST['attrname'],$_POST['type'],$_POST['size']);
@@ -50,7 +50,7 @@ if ($_POST["action"] == 'add' && $user->admin)
 
 if ($_POST["action"] == 'update' && $user->admin) 
 {
-    if ($_POST["button"] != "Annuler") {
+    if ($_POST["button"] != $langs->trans("Cancel")) {
         if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-]*$/",$_POST['attrname'])){
         $adho->update($_POST['attrname'],$_POST['type'],$_POST['size']);
         }
@@ -150,8 +150,8 @@ if ($_GET["action"] == 'create') {
   print '</td></tr>';
   print '<tr><td>Taille</td><td><input type="text" name="size" size="5" value="255"></td></tr>';  
   
-  print '<tr><td colspan="2" align="center"><input type="submit" name="button" value="Enregistrer"> &nbsp; ';
-  print '<input type="submit" name="button" value="Annuler"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" name="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+  print '<input type="submit" name="button" value="'.$langs->trans("Cancel").'"></td></tr>';
   print "</form>\n";
   print "</table>\n";
   
@@ -188,8 +188,8 @@ if ($_GET["attrname"] && $_GET["action"] == 'edit')
   print '</td></tr>';
   //  print '<tr><td>Type (non pris en compte)</td><td class="valeur"><input type="text" name="type" size="40" value="'.$adho->attribute_name[$attrname].'"></td></tr>';
   print '<tr><td>Taille</td><td class="valeur"><input type="text" name="size" size="5" value="'.$size.'"></td></tr>';  
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"> &nbsp; ';
-  print '<input type="submit" name="button" value="Annuler"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"> &nbsp; ';
+  print '<input type="submit" name="button" value="'.$langs->trans("Cancel").'"></td></tr>';
   print '</table>';
   print "</form>";
   

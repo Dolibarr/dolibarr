@@ -238,7 +238,7 @@ if ($_GET["action"] == 'create')
       print '</td></tr>';
       
       print '<tr><td colspan="2" align="center">';
-      print "<input type=\"submit\" value=\"Enregistrer\">";
+      print "<input type=\"submit\" value=\"'.$langs->trans("Save").'\">";
       print '</td></tr>';
       print '</table>';      
       print '</form>';

@@ -199,7 +199,7 @@ else
 
 	      print '<tr><td width="20%" valign="top">Texte</td><td width="80%"><textarea name="email_body" rows="10" cols="60">'.$newsletter->email_body.'</textarea></td></tr>';
 
-	      print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer">&nbsp;<input type="submit" value="Annuler" name="cancel"></td></tr>';
+	      print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;<input type="submit" value="'.$langs->trans("Cancel").'" name="cancel"></td></tr>';
 	      
 	      print '</form>';
 

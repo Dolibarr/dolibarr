@@ -83,7 +83,7 @@ if ($_GET["action"] == 'edit')
   print '<input name="ape" size="20" value="' . MAIN_INFO_APE . '"></td></tr>';
 
   print '<tr><td colspan="2" align="center">';
-  print '<input type="submit" value="Enregistrer"></td></tr>';
+  print '<input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print '</table></form>';
 }
 else

@@ -719,7 +719,7 @@ if ($user->admin)
     defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
         print '<tr><td>Libelle</td><td colspan="2"><input name="label" type="text" size=20 value="Cotisation '.stripslashes($adh->prenom).' '.stripslashes($adh->nom).' '.strftime("%Y",$adh->datefin).'" ></td></tr>';
     }
-    print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"</td></tr>';
+    print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"</td></tr>';
     print "</form>\n";
 }
 

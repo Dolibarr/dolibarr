@@ -187,7 +187,7 @@ print '<tr><td>Profil public ?</td><td><input type="checkbox" name="public" chec
 foreach($adho->attribute_label as $key=>$value){
   print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
 }
-print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
 print "</form>\n";
 print "</table>\n";
 

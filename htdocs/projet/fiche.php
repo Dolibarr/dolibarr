@@ -117,7 +117,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   ?>
   <tr><td><?php echo $langs->trans("Ref") ?></td><td><input size="10" type="text" name="ref"></td></tr>
   <tr><td>Titre</td><td><input size="30" type="text" name="title"></td></tr>
-  <tr><td colspan="2"><input type="submit" value="Enregistrer"></td></tr>
+  <tr><td colspan="2"><input type="submit" value="<?php echo $langs->trans("Save") ?>"></td></tr>
   </table>
   </form>
   <?PHP

@@ -84,7 +84,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 }
 
 if ($_POST["action"] == 'update' && 
-    $_POST["cancel"] <> 'Annuler' && 
+    $_POST["cancel"] <> $langs->trans("Cancel") && 
     ( $user->rights->produit->modifier || $user->rights->produit->creer))
 {
   $product = new Product($db);
@@ -157,7 +157,7 @@ if ($_POST["action"] == 'addinfacture' &&
 
 }
 
-if ($_POST["action"] == 'add_fourn' && $_POST["cancel"] <> 'Annuler')
+if ($_POST["action"] == 'add_fourn' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
 
   $product = new Product($db);
@@ -193,7 +193,7 @@ if ($_GET["action"] == 'remove_fourn')
 
 
 if ($_POST["action"] == 'update_price' && 
-    $_POST["cancel"] <> 'Annuler' && 
+    $_POST["cancel"] <> $langs->trans("Cancel") && 
     ( $user->rights->produit->modifier || $user->rights->produit->creer))
 {
   $product = new Product($db);
@@ -216,7 +216,7 @@ if ($_POST["action"] == 'update_price' &&
 }
 
 
-if ($_POST["cancel"] == 'Annuler')
+if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
   $action = '';
   Header("Location: fiche.php?id=".$_POST["id"]);
@@ -467,8 +467,8 @@ else
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
-	  print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
-	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+	  print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	  print '</table>';
 	  print '</form>';
 	}
@@ -502,8 +502,8 @@ else
 
 	    }
 	  print '</select></td><td>'.$langs->trans("Ref").'</td><td><input name="ref_fourn" size="25" value=""></td></tr>';
-	  print '<tr><td colspan="4" align="center"><input type="submit" value="Enregistrer">&nbsp;';
-	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+	  print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	  print '</table>';
 	  print '</form>';
 	}    
@@ -598,8 +598,8 @@ else
 	      print '</td></tr>';
 	    }
 
-	  print "<tr>".'<td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
-	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+	  print "<tr>".'<td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	  print '</table>';
 	  print '</form>';
 	}

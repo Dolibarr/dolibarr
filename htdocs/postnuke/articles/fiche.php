@@ -79,7 +79,7 @@ if ($id)
 	  print str_replace("<br />","",$article->body);
 	  print "</textarea></td></tr>";
 	  
-	  print '<tr><td align="center" colspan="2"><input type="submit" value="Enregistrer">&nbsp;<input type="submit" value="Annuler" name="cancel"></td></tr>';
+	  print '<tr><td align="center" colspan="2"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;<input type="submit" value="'.$langs->trans("Cancel").'" name="cancel"></td></tr>';
 	  print "</form>";
 	  
 

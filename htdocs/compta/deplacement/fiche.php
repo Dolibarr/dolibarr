@@ -32,7 +32,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 }
 
 
-if ($_POST["action"] == 'add' && $_POST["cancel"] <> 'Annuler')
+if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
   $deplacement = new Deplacement($db);
 
@@ -56,7 +56,7 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> 'Annuler')
     }
 }
 
-if ($_POST["action"] == 'update' && $_POST["cancel"] <> 'Annuler')
+if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
   $deplacement = new Deplacement($db);
   $result = $deplacement->fetch($_POST["id"]);
@@ -109,8 +109,8 @@ if ($_GET["action"] == 'create')
   print '</td></tr>';
 
   print '<tr><td>Kilomètres</td><td><input name="km" size="10" value=""></td></tr>';
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer">&nbsp;';
-  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+  print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
   print '</table>';
   print '</form>';      
 }
@@ -165,8 +165,8 @@ else
 	      print '</td></tr>';
 	      print '<tr><td>Kilomètres</td><td><input name="km" size="10" value="'.$deplacement->km.'"></td></tr>';
 
-	      print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer">&nbsp;';
-	      print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+	      print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
 	      print '</form>';
 	    } 

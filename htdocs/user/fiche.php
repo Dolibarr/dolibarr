@@ -459,7 +459,7 @@ else
             print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
             print '<td class="valeur"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
 
-            print "<tr>".'<td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
+            print "<tr>".'<td align="center" colspan="2"><input value="'.$langs->trans("Save").'" type="submit"></td></tr>';
 
             print '</table>';
             print '</form>';

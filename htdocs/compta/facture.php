@@ -996,7 +996,7 @@ else
 		      print '<td align="right"><input size="8" type="text" name="price" value="'.price($objp->subprice).'"></td>';
 		      print '<td align="right"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></td>';
 		      print '<td align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
-		      print '<td align="center" colspan="3"><input type="submit" value="Enregistrer"></td>';
+		      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Save").'"></td>';
 		      print '</tr>' . "\n";
 		      if ($conf->service->enabled) {
 			print "<tr $bc[$var]>";

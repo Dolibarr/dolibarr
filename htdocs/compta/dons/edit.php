@@ -155,7 +155,7 @@ if ($rowid)
   print '<tr><td>Pays</td><td><input type="text" name="pays" size="40" value="'.$don->pays.'"></td></tr>';
   print '<tr><td>Email</td><td><input type="text" name="email" size="40" value="'.$don->email.'"></td></tr>';
   print '<tr><td>Montant</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> euros</td></tr>';
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print "</form>\n";
   print "</table>\n";
        

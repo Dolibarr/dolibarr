@@ -26,7 +26,7 @@ require("../../tva.class.php");
 
 $mesg = '';
 
-if ($_POST["action"] == 'add' && $_POST["cancel"] <> 'Annuler')
+if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
   $tva = new Tva($db);
 
@@ -68,8 +68,8 @@ if ($action == 'create')
   print $html->select_date("","datep");
   print '</td></tr>';
   print '<tr><td>Montant</td><td><input name="amount" size="10" value=""></td></tr>';    
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer">&nbsp;';
-  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+  print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
   print '</table>';
   print '</form>';      
 }

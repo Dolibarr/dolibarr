@@ -129,7 +129,7 @@ else
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $album->description;
 	  print "</textarea></td></tr>";
-	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer"></td></tr>';
+	  print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
 
 	  print '</form>';
 

@@ -11,3 +11,5 @@ ProductsNotOnSell=Products out of sell
 ServicesOnSell=Services on sell
 ServicesNotOnSell=Services out of sell
 LastRecorded=Last products/services on sell recorded
+CardProduct0=Product card
+CardProduct1=Service card

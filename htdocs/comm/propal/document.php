@@ -94,7 +94,7 @@ if ($id > 0)
       print '<input type="hidden" name="max_file_size" value="2000000">';
       print '<input type="file"   name="userfile" size="40" maxlength="80"><br>';
       print '<input type="submit" value="Upload File!" name="sendit">';
-      print '<input type="submit" value="Annuler" name="cancelit"><BR>';
+      print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><BR>';
       print '</FORM>';
 
       clearstatcache();

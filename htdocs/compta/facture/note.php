@@ -121,7 +121,7 @@ if ($_GET["facid"])
 	      print '<form method="post" action="note.php?facid='.$facture->id.'">';
 	      print '<input type="hidden" name="action" value="update">';
 	      print '<tr><td valign="top" colspan="4"><textarea name="note" cols="80" rows="8">'.$facture->note."</textarea></td></tr>";
-	      print '<tr><td align="center" colspan="4"><input type="submit" value="Enregistrer"></td></tr>';
+	      print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
 	      print '</form>';
 	    }
 

@@ -41,7 +41,7 @@ if ($_POST["action"] == 'add')
   Header("Location: fiche.php?id=$id");
 }
 
-if ($_POST["action"] == 'update' && $_POST["cancel"] <> 'Annuler')
+if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
   $entrepot = new Entrepot($db);
   if ($entrepot->fetch($_GET["id"]))
@@ -71,7 +71,7 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> 'Annuler')
 
 llxHeader("","","Fiche entrepôt");
 
-if ($cancel == 'Annuler')
+if ($cancel == $langs->trans("Cancel"))
 {
   $action = '';
 }
@@ -157,8 +157,8 @@ else
 	    }
 	  print '</td></tr>';
 
-	  print "<tr>".'<td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
-	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+	  print "<tr>".'<td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	  print '</table>';
 	  print '</form>';
 	}

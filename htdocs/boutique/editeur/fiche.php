@@ -132,7 +132,7 @@ else
 	      print '<td width="20%">Nom</td><td width="80%"><input name="nom" size="40" value="'.$editeur->nom.'"></td>';
 
 
-	      print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer">&nbsp;<input type="submit" value="Annuler" name="cancel"></td></tr>';
+	      print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;<input type="submit" value="'.$langs->trans("Cancel").'" name="cancel"></td></tr>';
 	      
 	      print '</form>';
 

@@ -316,7 +316,7 @@ else
 	   */
 	  if ($_GET["action"] == 'annuler')
 	    {
-	      $html->form_confirm("fiche.php?id=$expedition->id","Annuler la commande","Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
+	      $html->form_confirm("fiche.php?id=$expedition->id",$langs->trans("Cancel"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
 	    }
 
 	  /*

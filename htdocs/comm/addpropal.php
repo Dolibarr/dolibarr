@@ -226,7 +226,7 @@ if ($_GET["action"] == 'create')
    */
   if ($numdest > 0)
     {
-      print '<input type="submit" value="Enregistrer">';
+      print '<input type="submit" value="'.$langs->trans("Save").'">';
     }
   print "</form>";
 }

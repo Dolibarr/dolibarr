@@ -1,8 +1,9 @@
 # Dolibarr language file - en_US - main
 charset="iso-8859-1"
 Error=Fout
-ErrorForbidden=De toegang is verboden
-ErrorFileDoesNotExists=Dien %s niet bestaat in
+ErrorForbidden=Access forbidden
+ErrorFileDoesNotExists=File %s does not exists
+ErrorCanNotCreateDir=Can not create dir %s
 yes=yes
 Yes=Yes
 no=no
@@ -60,6 +61,7 @@ Alert=Alert
 Previous=Previous
 Next=Next
 Cards=Cards
+Card=Card
 Date=Date
 Year=Year
 Month=Month
@@ -90,3 +92,5 @@ ActionsDone=Actions Done
 ActionsToDo=Actions To Do
 Filter=Filter
 RemoveFilter=Remove filter
+ChartGenerated=Chart generated
+ChartNotGenerated=Chart not generated

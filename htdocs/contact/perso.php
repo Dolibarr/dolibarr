@@ -105,7 +105,7 @@ if ($_GET["action"] == 'edit')
 
   print "</table>";
 
-  print '<div class="FicheSubmit"><input type="submit" value="Enregistrer">';
+  print '<div class="FicheSubmit"><input type="submit" value="'.$langs->trans("Save").'">';
 
   print "</form>";
 }

@@ -319,7 +319,7 @@ if ($_GET["action"] == 'create')
 	      print '<tr><td colspan="3" align="center">'.$fiche_erreur_message.'</td></tr>';
 	    }
 
-	  print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+	  print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
 	  print "</table>";
 	  print "</form>\n";	  
 	}

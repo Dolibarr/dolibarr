@@ -267,7 +267,7 @@ elseif ($_GET["action"] == 'edit')
   print '<textarea name="note" cols="60" rows="3">';
   print nl2br($contact->note);
   print '</textarea></td></tr>';
-  print '<tr><td colspan="6" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+  print '<tr><td colspan="6" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print "</table>";
 
   print "</form>";

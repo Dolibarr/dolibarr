@@ -11,3 +11,5 @@ ProductsNotOnSell=Produits hors vente
 ServicesOnSell=Services en vente
 ServicesNotOnSell=Services hors vente
 LastRecorded=Derniers produits/services en vente enregistrés
+CardProduct0=Fiche produit
+CardProduct1=Fiche service

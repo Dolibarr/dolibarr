@@ -117,7 +117,7 @@ if ($_GET["propalid"])
 	      print '<form method="post" action="note.php?propalid='.$propal->id.'">';
 	      print '<input type="hidden" name="action" value="update">';
 	      print '<tr><td valign="top" colspan="4"><textarea name="note" cols="80" rows="8">'.$propal->note."</textarea></td></tr>";
-	      print '<tr><td align="center" colspan="4"><input type="submit" value="Enregistrer"></td></tr>';
+	      print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
 	      print '</form>';
 	    }
 

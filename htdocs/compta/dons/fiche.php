@@ -182,7 +182,7 @@ if ($action == 'create') {
   print "<tr $bc[1]>".'<td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
   print "<tr $bc[1]>".'<td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
   print "<tr $bc[1]>".'<td>Montant</td><td><input type="text" name="amount" size="10"> euros</td></tr>';
-  print "<tr $bc[1]>".'<td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+  print "<tr $bc[1]>".'<td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print "</form>\n";
   print "</table>\n";
   
@@ -321,7 +321,7 @@ if ($rowid > 0 && $action == 'edit')
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   print "<tr $bc[1]>".'<td align="center">Commentaires</td></tr>';
   print "<tr $bc[1]>".'<td><textarea cols="60" rows="20" name="commentaire">'.$don->commentaire.'</textarea></td></tr>';
-  print "<tr $bc[1]>".'<td align="center"><input type="submit" value="Enregistrer"></td></tr>';
+  print "<tr $bc[1]>".'<td align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print '</table></form>';
   
 }

@@ -34,7 +34,7 @@ require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 
 if ($_POST["action"] == 'add' && $user->admin) 
 {
-    if ($_POST["button"] != "Annuler") {
+    if ($_POST["button"] != $langs->trans("Cancel")) {
         $adht = new AdherentType($db);
           
         $adht->libelle     = $_POST["libelle"];
@@ -50,7 +50,7 @@ if ($_POST["action"] == 'add' && $user->admin)
 
 if ($_POST["action"] == 'update' && $user->admin) 
 {
-    if ($_POST["button"] != "Annuler") {
+    if ($_POST["button"] != $langs->trans("Cancel")) {
         $adht = new AdherentType($db);
         $adht->id          = $_POST["rowid"];;
         $adht->libelle     = $_POST["libelle"];
@@ -175,8 +175,8 @@ if ($_GET["action"] == 'create') {
   print '<tr><td valign="top">Mail d\'accueil :</td><td>';
   print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea></td></tr>";
 
-  print '<tr><td colspan="2" align="center"><input type="submit" name="button" value="Enregistrer"> &nbsp;';
-  print '<input type="submit" name="button" value="Annuler"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" name="button" value="'.$langs->trans("Save").'"> &nbsp;';
+  print '<input type="submit" name="button" value="'.$langs->trans("Cancel").'"></td></tr>';
 
   print "</form>\n";
   print "</table>\n";
@@ -226,8 +226,8 @@ if ($_GET["rowid"] > 0 && $_GET["action"] == 'edit')
   print '<tr><td valign="top">Mail d\'accueil :</td><td>';
   print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\">".$adht->mail_valid."</textarea></td></tr>";
 
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"> &nbsp;';
-  print '<input type="submit" name="button" value="Annuler"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"> &nbsp;';
+  print '<input type="submit" name="button" value="'.$langs->trans("Cancel").'"></td></tr>';
 
   print '</table>';
   print "</form>";

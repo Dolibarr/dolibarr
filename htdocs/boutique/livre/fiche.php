@@ -303,7 +303,7 @@ else
 	      print "</td></tr>";
 
 
-	      print '<tr><td align="center" colspan="3"><input type="submit" value="Enregistrer">&nbsp;<input type="submit" value="Annuler" name="cancel"></td></tr>';
+	      print '<tr><td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;<input type="submit" value="'.$langs->trans("Cancel").'" name="cancel"></td></tr>';
 	      print "</form>";
 
 	      print '</form>';
@@ -333,7 +333,7 @@ else
 	      print '<input type="hidden" name="max_file_size" value="2000000">';
 	      print '<input type="file"   name="userfile" size="40" maxlength="80"><br>';
 	      print '<input type="submit" value="Upload File!" name="sendit">';
-	      print '<input type="submit" value="Annuler" name="cancelit"><BR>';
+	      print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><BR>';
 	      print '</form>';
 	      print "</td></tr>\n";
 

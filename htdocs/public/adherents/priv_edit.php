@@ -36,7 +36,7 @@ $error=0;
 if ($action == 'update')
 {
 
-  if ($_POST["bouton"] == "Enregistrer")
+  if ($_POST["bouton"] == $langs->trans("Save"))
     {
       if (isset($user->login)){
 	$adh = new Adherent($db);
@@ -254,8 +254,8 @@ if (isset($user->login)){
     print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
   }
   print '<tr><td colspan="2" align="center">';
-  print '<input type="submit" name="bouton" value="Enregistrer">&nbsp;';
-  print '<input type="submit" value="Annuler">';
+  print '<input type="submit" name="bouton" value="'.$langs->trans("Save").'">&nbsp;';
+  print '<input type="submit" value="'.$langs->trans("Cancel").'">';
   print '</td></tr>';
   print '</form>';
   print '</table>';

@@ -213,7 +213,7 @@ if ($id)
 	  print '</td></tr>';
 	  
 	  print '<tr><td colspan="4" align="center">';
-	  print '<input type="submit" value="Enregistrer">';
+	  print '<input type="submit" value="'.$langs->trans("Save").'">';
 	  print '</td></tr>';
 	  print '</form>';
 	}

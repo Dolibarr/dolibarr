@@ -143,7 +143,7 @@ else
 	      print '<tr><td>Année</td><TD><input name="annee" size="6" maxlenght="4" value="'.$album->annee.'"></td></tr>';
 	      print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value="'.$album->price.'"></td></tr>';    
 
-	      print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer"></td></tr>';
+	      print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
 	      
 	      print '</form>';
 	      
