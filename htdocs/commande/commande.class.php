@@ -35,6 +35,8 @@ class Commande
       $this->sources[2] = "Papier";
       $this->sources[3] = "Téléphone";
       $this->sources[4] = "Fax";
+
+      $this->products = array();
     }
   /**
    * Créé la facture depuis une propale existante
@@ -119,6 +121,27 @@ class Commande
       if ( $this->db->query($sql) )
 	{
 	  $this->id = $this->db->last_insert_id();
+
+	  /*
+	   *  Insertion des produits dans la base
+	   */
+	  for ($i = 0 ; $i < sizeof($this->products) ; $i++)
+	    {
+	      $prod = new Product($this->db, $this->products[$i]);
+	      if ($prod->fetch($this->products[$i]))
+		{		    
+		  $this->insert_product_generic($prod->libelle,
+						$prod->price,
+						$this->products_qty[$i], 
+						$prod->tva_tx,
+						$this->products[$i], 
+						$this->products_remise_percent[$i]);
+		}
+	    }
+	  /*
+	   *
+	   *
+	   */
 
 	  $sql = "UPDATE llx_commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 	  if ($this->db->query($sql))
@@ -262,6 +285,25 @@ class Commande
 	      print "<br>$sql<br>".$this->db->error();
 	      return -1;
 	    }
+	}
+    }
+  /**
+   * Ajoute un produit dans la commande
+   *
+   *
+   */
+  Function add_product($idproduct, $qty, $remise_percent=0)
+    {
+      if ($idproduct > 0)
+	{
+	  $i = sizeof($this->products);
+	  $this->products[$i] = $idproduct;
+	  if (!$qty)
+	    {
+	      $qty = 1 ;
+	    }
+	  $this->products_qty[$i] = $qty;
+	  $this->products_remise_percent[$i] = $remise_percent;
 	}
     }
 
