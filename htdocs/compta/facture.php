@@ -1336,17 +1336,17 @@ else
 	print '<TR class="liste_titre">';
 	print '<TD>Num&eacute;ro</TD>';
 	print '<TD align="center">';
-	print_liste_field_titre("Date facturation",$PHP_SELF,"f.datef","","&amp;socidp=$socidp");
+	print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&amp;socidp=$socidp");
 	print '</td>';
-    print '<td>';
-    print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
-    print '</td>';
-    print '<td align="right">';
-    print_liste_field_titre("Montant HT",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
-    print '</td>';
-    print '<td align="right">';
-    print_liste_field_titre("Montant TTC",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
-    print '</td>';
+	print '<td>';
+	print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
+	print '</td>';
+	print '<td align="right">';
+	print_liste_field_titre("Montant HT",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
+	print '</td>';
+	print '<td align="right">';
+	print_liste_field_titre("Montant TTC",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
+	print '</td>';
 
 	print '<TD align="right">Reçu</TD>';
 	print '<td align="center">Status</td>';
