@@ -29,8 +29,9 @@ create table llx_paiement_facture
   rowid SERIAL PRIMARY KEY,
   "fk_paiement"     integer,
   "fk_facture"      integer,
-  "amount"          real     DEFAULT 0,
+  "amount"          real     DEFAULT 0
   
-  key (fk_paiement),
-  key (fk_facture)
 );
+
+CREATE INDEX idx_fk_paiement ON llx_paiement_facture (fk_paiement);
+CREATE INDEX idx_fk_facture ON llx_paiement_facture (fk_facture);

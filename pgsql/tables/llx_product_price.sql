@@ -30,8 +30,8 @@ create table llx_product_price
   "tms"             timestamp,
   "fk_product"      integer NOT NULL,
   "date_price"      timestamp,
-  "price"           double,
-  "tva_tx"          double DEFAULT 19.6,
+  "price"           real,
+  "tva_tx"          real DEFAULT 19.6,
   "fk_user_author"  integer,
   "envente"         smallint DEFAULT 1
 );

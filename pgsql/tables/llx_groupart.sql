@@ -30,7 +30,7 @@ create table llx_groupart
   "osc_id"          integer NOT NULL,
   "tms"             timestamp,
   "nom"             varchar(64),
-  "groupart" varchar(7) CHECK (groupart IN ("artiste","groupe"))  NOT NULL,
+  "groupart" varchar(7) CHECK (groupart IN ('artiste','groupe'))  NOT NULL,
   "description"     text NOT NULL,
   "fk_user_author"  integer
 );

@@ -49,6 +49,7 @@ create table llx_commande
   "total_ttc"        real      default 0,
   "note"             text,
   "model_pdf"        varchar(50),
-  "facture"          smallint default 0,   
-  "UNIQUE" INDEX (ref)
+  "facture"          smallint default 0   
 );
+
+CREATE INDEX idx_ref ON llx_commande (ref);

@@ -42,6 +42,7 @@ create table llx_user
   "module_compta" smallint DEFAULT 1,
   "fk_societe"    integer DEFAULT 0,
   "fk_socpeople"  integer DEFAULT 0,
-  "note"          text,
-  "UNIQUE" INDEX(login)
+  "note"          text
 );
+
+CREATE INDEX idx_login ON llx_user (login);

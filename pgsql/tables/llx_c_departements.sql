@@ -35,9 +35,10 @@ create table llx_c_departements
   "tncc"             integer,
   "ncc"              varchar(50),
   "nom"              varchar(50),
-  "active"           smallint DEFAULT 1  NOT NULL,
-  key (fk_region)
+  "active"           smallint DEFAULT 1  NOT NULL
 );
+
+CREATE INDEX idx_fk_region ON llx_c_departements (fk_region);
 
 
 

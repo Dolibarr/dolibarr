@@ -38,6 +38,7 @@ create table llx_fichinter
   "fk_user_valid"   integer,               -- valideur de la fiche
   "fk_statut"       smallint  DEFAULT 0,
   "duree"           real,
-  "note"            text,
-  "UNIQUE" INDEX (ref)
+  "note"            text
 );
+
+CREATE INDEX idx_ref ON llx_fichinter (ref);

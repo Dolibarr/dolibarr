@@ -42,6 +42,7 @@ create table llx_facture_rec
   "fk_user_author"     integer,   -- createur
   "fk_projet"          integer,   -- projet auquel est associé la facture
   "fk_cond_reglement"  integer,   -- condition de reglement
-  "note"               text,
-  "INDEX" fksoc (fk_soc)
+  "note"               text
 );
+
+CREATE INDEX fksoc ON llx_facture_rec (fk_soc);

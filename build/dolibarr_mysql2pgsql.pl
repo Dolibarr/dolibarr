@@ -111,7 +111,11 @@ foreach my $file (keys %filelist) {
     print OUT "-- (c) 2005, Laurent Destailleur.\n";
     print OUT "\n";
     
+    # Output for create table and create index
     sub output_create {
+        # If command ends with "xxx,);", we change to "xxx);"
+        $create_sql =~ s/,(\s*)\)/$1\)/m;
+
     	print OUT $create_sql;
         if ($create_index) {
     	    print OUT "\n";
@@ -119,7 +123,7 @@ foreach my $file (keys %filelist) {
     	}
     }
     
-    # reset when moving from each "create table" to "insert" part of dump
+    # Reset when moving from each "create table" to "insert" part of dump
     sub reset_vars() {
     	$create_sql="";
     	$create_index="";
@@ -142,13 +146,15 @@ foreach my $file (keys %filelist) {
     		next;
     	}
     	if ($create_sql ne "") { 		# we are inside create table statement so lets process datatypes
+
     		if (/\);/i) {	# end of create table squence
     			$create_sql =~ s/,$//g;	# strip last , inside create table
     			&output_create;
     			&reset_vars();
     		  next;
             # LDR Added innodb
-    		} elsif (/(ISAM|innodb)/i) { # end of create table sequence
+    		}
+    		elsif (/(ISAM|innodb)/i) { # end of create table sequence
     			s/\) *Type=(MyISAM|innodb);/);/i;  
     			$create_sql =~ s/,$//g;	# strip last , inside create table
     			$create_sql .= $_;
@@ -157,16 +163,20 @@ foreach my $file (keys %filelist) {
     			next;
     		} 
 
+            # enum -> check
     		if (/(\w*)\s+enum\(((?:['"]\w+['"]\s*,)+['"]\w+['"])\)(.*)$/i) { # enum handling 
     			$enum_column=$1;
-    			$enum_datafield{$enum_column} = $2;  # 'abc','def', ...
+    			$enum_datafield{$enum_column}=$2;  # 'abc','def', ...
+    			my $suite=$3;
     			my $maxlength=0;
-    			foreach my $enum (split(',',$2)) {
+    			foreach my $enum (split(',',$enum_datafield{$enum_column})) {
     			    $enum =~ s/[\"\']//g;
     			    if ($maxlength<length($enum)) { $maxlength=length($enum); }
     			}
-    			$_ =  qq~  $1 CHAR($maxlength) CHECK ($1 IN ($2)) $3\n~;
-    		} elsif (/^[\s\t]*(\w*)\s*.*int.*auto_increment/i) { 		# int,auto_increment -> serial
+    			$enum_datafield{$enum_column} =~ s/\"/\'/g;
+    			$_ =  qq~  $enum_column CHAR($maxlength) CHECK ($enum_column IN ($enum_datafield{$enum_column})) $suite\n~;
+            # int, auto_increment -> serial
+    		} elsif (/^[\s\t]*(\w*)\s*.*int.*auto_increment/i) { 		
     			$seq = qq~${table}_${1}_seq~;
     			s/[\s\t]*([a-zA-Z_0-9]*)\s*.*int.*auto_increment[^,]*/  $1 SERIAL PRIMARY KEY/ig;
     			#  MYSQL: data_id mediumint(8) unsigned NOT NULL auto_increment,
@@ -185,6 +195,7 @@ foreach my $file (keys %filelist) {
     			}
     			s/\w*int\(\d+\)/$out/g;
     		}
+    		# tinyint -> smallint
     		elsif (/tinyint/i) {
     		    s/tinyint/smallint/g;
     		}
@@ -218,19 +229,31 @@ foreach my $file (keys %filelist) {
     		# nuke size of timestamp
     		s/timestamp\([^)]*\)/timestamp/i;
     
-    		# double -> float8
-    		s/double\([^)]*\)/float8/i;
+    		# double -> real
+    		s/^double/real/i;
+    		s/(\s*)double/${1}real/i;
     
-    		# FIX: unique for multipe columns (col1,col2) are unsupported!
-    		# Ignore "unique key(xx, yy)"
+    		# Ignore "unique key(xx, yy)"  (key on double fields not supported by postgres)
     		next if (/unique key\(\w+\s*,\s*\w+\)/i);
     
     		if (/\bkey\b/i && !/^\s+primary key\s+/i) {
     			s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key
     		}
     
-            # if key(xxx)
-            if (/key\((\w+)\)/i) {
+            # unique index(field)
+            if (/unique index\s*(\w*)\s*\((\w+)\)/i) {
+                $create_index .= "CREATE INDEX ".($1?"$1":"idx_$2")." ON $table ($2);\n";
+                next;
+            }
+            
+            # index(field)
+            if (/index\s*(\w*)\s*\((\w+)\)/i) {
+                $create_index .= "CREATE INDEX ".($1?"$1":"idx_$2")." ON $table ($2);\n";
+                next;
+            }
+
+            # key(xxx)
+            if (/key\s*\((\w+)\)/i) {
                 #$create_index .= "CREATE INDEX ${table}_$1 ON $table ($1);\n";
                 $create_index .= "CREATE INDEX idx_$1 ON $table ($1);\n";
                 next;

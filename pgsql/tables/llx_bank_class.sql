@@ -26,6 +26,7 @@
 create table llx_bank_class
 (
   "lineid"   integer NOT NULL,
-  "fk_categ" integer NOT NULL,
-  "INDEX"(lineid)
+  "fk_categ" integer NOT NULL
 );
+
+CREATE INDEX idx_lineid ON llx_bank_class (lineid);

@@ -50,6 +50,7 @@ create table llx_commande_fournisseur
   "total_ht"            real      default 0,
   "total_ttc"           real      default 0,
   "note"                text,
-  "model_pdf"           varchar(50),
-  "UNIQUE" INDEX (ref)
+  "model_pdf"           varchar(50)
 );
+
+CREATE INDEX idx_ref ON llx_commande_fournisseur (ref);
