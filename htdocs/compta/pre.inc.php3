@@ -48,7 +48,10 @@ function llxHeader($head = "") {
 
   $menu->add("/comm/clients.php3", "Clients");
 
-  $menu->add("/compta/dons/","Dons");
+  if ($conf->don->enabled)
+    {
+      $menu->add("/compta/dons/","Dons");
+    }
 
   $menu->add("/compta/facture.php3","Factures");
   $menu->add_submenu("paiement.php3","Paiements");
@@ -92,7 +95,6 @@ function llxHeader($head = "") {
 
   if ($conf->voyage) 
     {
-
       $menu->add("voyage/index.php3","Voyages");
 
       $menu->add_submenu("voyage/index.php3","Voyages");
