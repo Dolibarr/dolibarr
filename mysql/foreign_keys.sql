@@ -25,12 +25,16 @@ ALTER TABLE llx_propal      ADD INDEX (fk_soc);
 
 ALTER TABLE llx_fichinter   ADD INDEX (fk_soc);
 
-ALTER TABLE llx_fichinter   ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+ALTER TABLE llx_socpeople   ADD INDEX (fk_soc);
 
-ALTER TABLE llx_propal      ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+ALTER TABLE llx_fichinter        ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
 
-ALTER TABLE llx_facture     ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+ALTER TABLE llx_propal           ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
 
-ALTER TABLE llx_facturedet  ADD FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
+ALTER TABLE llx_facture          ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+
+ALTER TABLE llx_facturedet       ADD FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
 
 ALTER TABLE llx_facture_tva_sum  ADD FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
+
+ALTER TABLE llx_socpeople        ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
