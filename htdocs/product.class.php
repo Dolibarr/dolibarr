@@ -61,7 +61,7 @@ class Product
     }  
 
   /**
-   *    \brief  Vérifie que la référence produit est non null
+   *    \brief  Vérifie que la référence et libellé du produit est non null
    *    \return int         1 si ok, 0 sinon
    */
 	 
@@ -149,27 +149,32 @@ class Product
     }
 
   /**
-   *    \brief  Mise à jour du produit en base
-   *    \param  id          id du produit
-   *    \param  user        utilisateur qui effectue l'insertion
+   *    \brief      Mise à jour du produit en base
+   *    \param      id          id du produit
+   *    \param      user        utilisateur qui effectue l'insertion
+   *    \return     int         1 si ok, -1 si ref deja existante, -2 autre erreur       
    */
 	 
   function update($id, $user)
   {
+    global $langs;
+    $langs->load("main");
+    $langs->load("products");
+    
     $this->ref = ereg_replace("\"","",stripslashes($this->ref));
     $this->ref = ereg_replace("'","",stripslashes($this->ref));
-
+    
     if (strlen(trim($this->libelle)) == 0)
-      {
-	$this->libelle = 'LIBELLE MANQUANT';
-      }
+    {
+        $this->libelle = 'LIBELLE MANQUANT';
+    }
     
     $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
     $sql .= " SET label = '" . trim($this->libelle) ."'";
     if (strlen(trim($this->ref)))
-      {
-	$sql .= ",ref = '" . trim($this->ref) ."'";
-      }
+    {
+        $sql .= ",ref = '" . trim($this->ref) ."'";
+    }
     $sql .= ",tva_tx = " . $this->tva_tx ;
     $sql .= ",envente = " . $this->envente ;
     $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
@@ -179,13 +184,20 @@ class Product
     $sql .= " WHERE rowid = " . $id;
     
     if ( $this->db->query($sql) )
-      {
-	return 1;
-      }
+    {
+        return 1;
+    }
     else
-      {
-		  dolibarr_print_error($this->db);
-      }
+    {
+        if ($this->db->errno() == $this->db->ERROR_DUPLICATE) {
+            $this->mesg_error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
+            return -1;
+        }
+        else {
+            $this->mesg_error=$langs->trans("Error")." : ".$this->db->error();
+    	    return -2;
+        }
+    }
   }
 
   /**

@@ -48,7 +48,7 @@ if (!$user->rights->produit->lire)
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
-
+// Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
   $product = new Product($db);
@@ -83,6 +83,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     }
 }
 
+// Action mise a jour d'un produit ou service
 if ($_POST["action"] == 'update' && 
     $_POST["cancel"] <> $langs->trans("Cancel") && 
     ( $user->rights->produit->modifier || $user->rights->produit->creer))
@@ -90,7 +91,6 @@ if ($_POST["action"] == 'update' &&
   $product = new Product($db);
   if ($product->fetch($_POST["id"]))
     {
-
       $product->ref                = $_POST["ref"];
       $product->libelle            = $_POST["libelle"];
       $product->price              = $_POST["price"];
@@ -103,24 +103,25 @@ if ($_POST["action"] == 'update' &&
       
       if ($product->check())
 	{
-	  if ($product->update($product->id, $user))
+	  if ($product->update($product->id, $user) > 0)
 	    {
 	      $_GET["action"] = '';
-	      $mesg = 'Fiche mise à jour';
+          $_GET["id"] = $_POST["id"];
 	    }
 	  else
 	    {
 	      $_GET["action"] = 're-edit';
-	      $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+	      $_GET["id"] = $_POST["id"];
+	      $mesg = $product->mesg_error;
 	    }
 	}
       else
 	{
 	  $_GET["action"] = 're-edit';
-	  $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+      $_GET["id"] = $_POST["id"];
+	  $mesg = $langs->trans("ErrorProductBadRefOrLabel");
 	}
     }
-  Header("Location: fiche.php?id=".$product->id);
 }
 
 
@@ -224,6 +225,8 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 }
 
 
+
+
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 
@@ -300,8 +303,12 @@ if ($_GET["action"] == 'create')
 }
 else
 {
+  /*
+   * Fiche produit
+   */
   if ($_GET["id"])
     {
+
       if ($_GET["action"] <> 're-edit')
 	{
 	  $product = new Product($db);
@@ -314,7 +321,7 @@ else
 	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	    {
 	      /*
-	       *  Fiche en visu
+	       *  En mode visu
 	       */
 	      
 	      // Zone recherche
@@ -514,8 +521,13 @@ else
      */
       if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && $user->rights->produit->creer)
 	{
-	  print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, $mesg);
 
+	  print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, "");
+
+      if ($mesg) {
+	      print '<br><div class="error">'.$mesg.'</div><br>';
+	  }
+	  
 	  print "<form action=\"fiche.php\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
