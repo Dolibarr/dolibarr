@@ -31,6 +31,7 @@ function llxHeader($head = "") {
   $user->getrights('societe');
   $user->getrights('propale');
   $user->getrights('facture');
+  $user->getrights('commande');
 
   top_menu($head);
 
@@ -110,13 +111,14 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/adherents/index.php", $langs->trans("Members"));
     }
 
-  if ($conf->commande->enabled)
+  if ($conf->commande->enabled && $user->rights->commande->lire)
     {
       $langs->load("orders");
       $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
-      if ($conf->expedition->enabled) {
-      	$menu->add_submenu(DOL_URL_ROOT."/expedition/index.php", $langs->trans("Sendings"));
-      }
+      if ($conf->expedition->enabled)
+	{
+	  $menu->add_submenu(DOL_URL_ROOT."/expedition/index.php", $langs->trans("Sendings"));
+	}
     }
 
   $langs->trans("mails");
