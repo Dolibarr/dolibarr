@@ -257,17 +257,17 @@ if ($propalid)
 
 	  print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
-	  print '<tr><td>Société</td><td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	  print '<tr><td>Société</td><td colspan="3"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td>Statut</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
 
-	  print '<tr><td>Date</td><td>'.strftime("%A %d %B %Y",$obj->dp).'</td>';
+	  print '<tr><td>Date</td><td colspan="3">'.strftime("%A %d %B %Y",$obj->dp).'</td>';
 
 	  print '<td>Auteur</td><td>';
 	  $author = new User($db, $obj->fk_user_author);
 	  $author->fetch('');
 	  print $author->fullname.'</td></tr>';
 
-	  print "<tr><td>Destinataire</td><td>$obj->firstname $obj->name &lt;$obj->email&gt;</td>";
+	  print "<tr><td>Destinataire</td><td colspan=\"3\">$obj->firstname $obj->name &lt;$obj->email&gt;</td>";
 
 	  print '<td valign="top" colspan="2" width="50%" rowspan="7">Note :<br>'. nl2br($propal->note)."</td></tr>";
 	  
@@ -283,20 +283,19 @@ if ($propalid)
 	  /*
 	   *
 	   */
-
-	  print '<tr><td>Montant HT</td><td align="right">'.price($obj->price + $obj->remise).' euros</td></tr>';
+	  print '<tr><td>Remise</td><td align="right">'.price($propal->remise).' euros</td>';
+	  print '<td>&nbsp;</td><td align="right">'.price($propal->remise_percent).' %</td></tr>';
 	  /*
 	   *
 	   */
-	  
-	  print '<tr><td>Remise</td>';
-	  print "<td align=\"right\">".price($obj->remise)." euros</td></tr>";
-	  
+	  print '<tr><td>Montant HT</td><td align="right">'.price($obj->price + $obj->remise).' euros</td>';
+	  print '<td align="right">TVA</td><td align="right">'.price($propal->total_tva).' euros</td></tr>';
+	  	  
 	  /*
 	   *
 	   */
-	  
-	  print '<tr><td>Total HT</td><td align="right"><b>'.price($obj->price).'</b> euros</td></tr>';
+	  print '<tr><td>Total HT</td><td align="right"><b>'.price($obj->price).'</b> euros</td>';
+	  print '<td align="right">Total TTC</td><td align="right"><b>'.price($propal->total_ttc).'</b> euros</td></tr>';
 	  /*
 	   *
 	   */
@@ -324,7 +323,7 @@ if ($propalid)
 	    {
 	      print '<form action="propal.php3?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="setremise">';
-	      print '<table><tr><td>Remise</td><td align="right">';
+	      print '<table cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
 	      print '<input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%';
 	      print '<input type="submit" value="Appliquer">';
 	      print '</td></tr></table></form>';
