@@ -184,6 +184,7 @@ class Contrat
 		  $sql .= " VALUES (".$prowid[$i].", $factureid, ".$fdrowid[$i].", $socid, $user->id)";
 		  if (! $this->db->query($sql))
 		    {
+		      dolibarr_syslog("Contrat::create_from_facture - 10");
 		      print "Erreur : ".$this->db->error()."<br>".$sql;
 		    }
 		}
@@ -195,6 +196,7 @@ class Contrat
 	}
       else
 	{
+	  dolibarr_syslog("Contrat::create_from_facture - 20");
 	  print $this->db->error();
 	}
       
