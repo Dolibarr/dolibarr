@@ -18,7 +18,7 @@
 -- $Id$
 -- $Source$
 --
-
+drop table if exists llx_bank_url;
 drop table if exists llx_entrepot;
 drop table if exists llx_product_stock;
 drop table if exists llx_stock;
