@@ -114,9 +114,9 @@ if ($action == 'create') {
   }
   print_titre("Nouvel adhérent");
   print "<form action=\"$PHP_SELF\" method=\"post\">\n";
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">\n';
+  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
-  print '<input type="hidden" name="action" value="add">\n';
+  print '<input type="hidden" name="action" value="add">';
 
   $htmls = new Form($db);
   $adht = new AdherentType($db);
@@ -125,7 +125,7 @@ if ($action == 'create') {
   $htmls->select_array("type",  $adht->liste_array());
   print "</td>\n";
 
-  print '<td width="50%" valign="top">Commentaires :</td></tr>\n';
+  print '<td width="50%" valign="top">Commentaires :</td></tr>';
 
   $morphys["phy"] = "Physique";
   $morphys["mor"] = "Morale";
@@ -134,20 +134,20 @@ if ($action == 'create') {
   $htmls->select_array("morphy",  $morphys);
   print "</td>\n";
   
-  print '<td valign="top" rowspan="11"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>\n';
+  print '<td valign="top" rowspan="11"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
 
-  print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>\n';  
+  print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>';  
   
 
 
 
 
-  print '<tr><td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>\n';
-  print '<tr><td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>\n';
-  print '<tr><td>Adresse</td><td>\n';
-  print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>\n';
-  print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>\n';
-  print '<tr><td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>\n';
+  print '<tr><td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>';
+  print '<tr><td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>';
+  print '<tr><td>Adresse</td><td>';
+  print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
+  print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
+  print '<tr><td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
   print '<tr><td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
 
 
@@ -162,9 +162,9 @@ if ($action == 'create') {
 
   print "</td></tr>\n";
 
-  print '<tr><td>Cotisation</td><td><input type="text" name="cotisation" size="6"> euros</td></tr>\n';
+  print '<tr><td>Cotisation</td><td><input type="text" name="cotisation" size="6"> euros</td></tr>';
 
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>\n';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
   print "</form>\n";
   print "</table>\n";
   
@@ -192,11 +192,11 @@ if ($rowid > 0)
   if ($action == 'delete')
     {
 
-      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">\n';
-      print '<input type="hidden" name="action" value="confirm_delete">\n';
-      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">\n';
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+      print '<input type="hidden" name="action" value="confirm_delete">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
       
-      print '<tr><td colspan="3">Supprimer un adhérent</td></tr>\n';
+      print '<tr><td colspan="3">Supprimer un adhérent</td></tr>';
       print "<tr><td colspan=\"3\">La suppression d'un adhérent entraine la suppression de toutes ses cotisations !!!</td></tr>\n";
       
       print '<tr><td class="delete">Etes-vous sur de vouloir supprimer cet adhérent ?</td><td class="delete">';
@@ -205,8 +205,8 @@ if ($rowid > 0)
       $htmls->selectyesno("confirm","no");
       
       print "</td>\n";
-      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>\n';
-      print '</table>\n';
+      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '</table>';
       print "</form>\n";  
     }
 
@@ -219,11 +219,11 @@ if ($rowid > 0)
   if ($action == 'valid')
     {
 
-      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">\n';
-      print '<input type="hidden" name="action" value="confirm_valid">\n';
-      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">\n';
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+      print '<input type="hidden" name="action" value="confirm_valid">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
       
-      print '<tr><td colspan="3">Valider un adhérent</td></tr>\n';
+      print '<tr><td colspan="3">Valider un adhérent</td></tr>';
       
       print '<tr><td class="valid">Etes-vous sur de vouloir valider cet adhérent ?</td><td class="valid">';
       $htmls = new Form($db);
@@ -231,8 +231,8 @@ if ($rowid > 0)
       $htmls->selectyesno("confirm","no");
       
       print "</td>\n";
-      print '<td class="valid" align="center"><input type="submit" value="Confirmer"</td></tr>\n';
-      print '</table>\n';
+      print '<td class="valid" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '</table>';
       print "</form>\n";  
     }
 
@@ -244,11 +244,11 @@ if ($rowid > 0)
   if ($action == 'resign')
     {
 
-      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">\n';
-      print '<input type="hidden" name="action" value="confirm_resign">\n';
-      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">\n';
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+      print '<input type="hidden" name="action" value="confirm_resign">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
       
-      print '<tr><td colspan="3">Résilier une adhésion</td></tr>\n';
+      print '<tr><td colspan="3">Résilier une adhésion</td></tr>';
       
       print '<tr><td class="delete">Etes-vous sur de vouloir résilier cette adhésion ?</td><td class="delete">';
       $htmls = new Form($db);
@@ -256,33 +256,33 @@ if ($rowid > 0)
       $htmls->selectyesno("confirm","no");
       
       print "</td>\n";
-      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>\n';
-      print '</table>\n';
+      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '</table>';
       print "</form>\n";  
     }
 
 
   print "<form action=\"$PHP_SELF\" method=\"post\">\n";
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">\n';
+  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
   print "<tr><td>Type</td><td class=\"valeur\">$adh->type</td>\n";
-  print '<td valign="top" width="50%">Commentaires</tr>\n';
+  print '<td valign="top" width="50%">Commentaires</tr>';
 
-  print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>\n';
+  print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>';
 
-  print '<td rowspan="11" valign="top" width="50%">\n';
-  print nl2br($adh->commentaire).'&nbsp;</td></tr>\n';
+  print '<td rowspan="11" valign="top" width="50%">';
+  print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 
-  print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>\n';
+  print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
 
-  print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>\n';
+  print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
   
 
-  print '<tr><td>Société</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>\n';
-  print '<tr><td>Adresse</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>\n';
-  print '<tr><td>CP Ville</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>\n';
-  print '<tr><td>Pays</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>\n';
-  print '<tr><td>Email</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>\n';
+  print '<tr><td>Société</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
+  print '<tr><td>Adresse</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
+  print '<tr><td>CP Ville</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
+  print '<tr><td>Pays</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
+  print '<tr><td>Email</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
 
   print "</table>\n";
 
@@ -296,7 +296,7 @@ if ($rowid > 0)
        * Case 1
        */
       
-      print '<td align="center" width="25%">[<a href="edit.php?rowid='.$adh->id.'">Editer</a>]</td>\n';
+      print '<td align="center" width="25%">[<a href="edit.php?rowid='.$adh->id.'">Editer</a>]</td>';
       
       /*
        * Case 2
@@ -349,7 +349,7 @@ if ($rowid > 0)
   
       print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">\n";
 
-      print '<TR class="liste_titre">\n';
+      print '<TR class="liste_titre">';
       print "<td>Cotisations</td>\n";
       print "<td>Date</td>\n";
       print "<td align=\"right\">Montant</TD>\n";
@@ -381,17 +381,17 @@ if ($rowid > 0)
    */
   if ($user->admin)
     {
-      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'&action=edit">\n';
-      print '<input type="hidden" name="action" value="cotisation">\n';
-      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">\n';
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'&action=edit">';
+      print '<input type="hidden" name="action" value="cotisation">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
-      print '<tr>\n';
+      print '<tr>';
 
       print '<td rowspan="6">';
 
-      print '</td>\n';
+      print '</td>';
 
-      print '<td width="15%">Fin adhésion</td>\n';
+      print '<td width="15%">Fin adhésion</td>';
       if ($adh->datefin < time())
 	{
 	  print '<td width="35%" class="delete">';
@@ -400,11 +400,11 @@ if ($rowid > 0)
 	{
 	  print '<td width="35%" class="valeur">';
 	}
-      print strftime("%d %B %Y",$adh->datefin).'&nbsp;</td>\n';
+      print strftime("%d %B %Y",$adh->datefin).'&nbsp;</td>';
 
-      print '<td valign="top" width="50%">&nbsp;</td></tr>\n';
+      print '<td valign="top" width="50%">&nbsp;</td></tr>';
       
-      print '<tr><td colspan="3">Nouvelle adhésion</td></tr>\n';
+      print '<tr><td colspan="3">Nouvelle adhésion</td></tr>';
       
       print "<tr><td>Date de cotisation</td><td>\n";
       if ($adh->datefin > 0)
@@ -423,9 +423,9 @@ if ($rowid > 0)
       $paiement->select("modepaiement","crédit");
       
       print "</td><td>&nbsp;</td></tr>\n";
-      print '<tr><td>Cotisation</td><td colspan="2"><input type="text" name="cotisation" size="6"> euros</td></tr>\n';
-      print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"</td></tr>\n';
-      print '</table>\n';
+      print '<tr><td>Cotisation</td><td colspan="2"><input type="text" name="cotisation" size="6"> euros</td></tr>';
+      print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"</td></tr>';
+      print '</table>';
       print "</form>\n";  
     }
 
