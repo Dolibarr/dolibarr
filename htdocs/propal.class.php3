@@ -439,8 +439,7 @@ class Propal
    */
   Function set_remise($user, $remise)
     {
-
-      if ($user->rights->propale->valider)
+      if ($user->rights->propale->creer)
 	{
 
 	  $sql = "UPDATE llx_propal SET remise_percent = ".ereg_replace(",",".",$remise);
