@@ -21,19 +21,37 @@
  *
  */
 
+/*!
+        \file       htdocs/cactioncomm.class.php
+        \ingroup    commercial
+        \brief      Fichier de la classe des types d'actions commerciales
+        \version    $Revision$
+*/
+
+
+/*!     \class      CActionComm
+	    \brief      Classe permettant la gestion des différents types d'actions commerciales
+*/
+
 class CActioncomm {
   var $id;
   var $libelle;
 
+  /**
+   *    \brief      Constructeur
+   *    \param      db          Handler d'accès base de donnée
+   */
   function CActioncomm($DB=0)
     {
       $this->db = $DB;
     }
-  /*
-   * Récupération des données
-   *
-   */
 
+  /**
+   *    \brief      Charge l'objet type d'action depuis la base
+   *    \param      db          handle d'accès base
+   *    \param      id          id du type d'action à récupérer
+   *    \return     int         1=ok, 0=aucune action, -1=erreur
+   */
   function fetch($db, $id)
     {
 
@@ -63,10 +81,11 @@ class CActioncomm {
 	  return -1;
 	}    
     }
+
   /*
-   * \brief     Renvoi la liste des type d'actions existant
-   * \param     active  1 ou 0 pour un filtre sur l'etat actif ou non ('' par defaut)
-   *
+   *    \brief      Renvoi la liste des type d'actions existant
+   *    \param      active      1 ou 0 pour un filtre sur l'etat actif ou non ('' par defaut)
+   *    \return     array       tableau des types d'actions actifs
    */
   function liste_array($active='')
   {
@@ -103,8 +122,9 @@ class CActioncomm {
 
   
   /*
-   * Renvoie le nom d'une action a partir d'un id
-   *
+   *    \brief      Renvoie le nom d'un type d'action
+   *    \param      id          id du type d'action
+   *    \return     string      libelle du type d'action
    */
   function get_nom($id)
     {
