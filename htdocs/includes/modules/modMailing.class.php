@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +23,13 @@
 
 /**
    \defgroup   mailing  Module mailing
-   \brief      Module pour gérer la téléphonie
+   \brief      Module pour gérer les mailings
 */
 
 /**
    \file       htdocs/includes/modules/modMailing.class.php
    \ingroup    mailing
-   \brief      Fichier de description et activation du module de Téléphonie
+   \brief      Fichier de description et activation du module Mailing
 */
 
 include_once "DolibarrModules.class.php";
@@ -51,13 +52,13 @@ class modMailing extends DolibarrModules
     $this->numero = 22 ;
 
     $this->family = "technic";
-    $this->name = "Mailing";
-    $this->description = "Gestion des Mailing";
-    $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
+    $this->name = "Mailings";
+    $this->description = "Gestion des Mailings";
+    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_MAILING";
     $this->const_config = MAIN_MODULE_MAILING;
     $this->special = 1;
-    //$this->picto='phoning';
+    $this->picto='email';
 
     // Dir
     $this->dirs = array();
@@ -93,10 +94,22 @@ class modMailing extends DolibarrModules
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 222;
-    $this->rights[2][1] = 'Créer des mailing';
+    $this->rights[2][1] = 'Créer/modifier les mailings (sujet, destinataires...)';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
     $this->rights[2][4] = 'creer';
+
+    $this->rights[3][0] = 223;
+    $this->rights[3][1] = 'Valider les mailings (permet leur envoi)';
+    $this->rights[3][2] = 'w';
+    $this->rights[3][3] = 0;
+    $this->rights[3][4] = 'valider';
+
+    $this->rights[4][0] = 229;
+    $this->rights[4][1] = 'Supprimer les mailings)';
+    $this->rights[4][2] = 'd';
+    $this->rights[4][3] = 0;
+    $this->rights[4][4] = 'supprimer';
    
     return $this->_init($sql);
   }

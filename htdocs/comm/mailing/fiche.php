@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/comm/mailing/fiche.php
+/**
+        \file       htdocs/comm/mailing/fiche.php
         \brief      Fiche mailing, onglet général
         \version    $Revision$
 */
@@ -29,6 +30,12 @@
 require("./pre.inc.php");
 
 $langs->load("mails");
+
+$user->getrights("mailing");
+
+if (! $user->rights->mailing->lire || $user->societe_id > 0)
+  accessforbidden();
+
 
 $message = '';
 
@@ -328,7 +335,7 @@ else
             {
                 print "\n\n<div class=\"tabsAction\">\n";
 
-                if ($mil->statut == 0)
+                if ($mil->statut == 0 && $user->rights->mailing->creer)
                 {
                     print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$mil->id.'">'.$langs->trans("EditMailing").'</a>';
                 }
@@ -337,17 +344,17 @@ else
 
                 print '<a class="butAction" href="fiche.php?action=test&amp;id='.$mil->id.'">'.$langs->trans("TestMailing").'</a>';
 
-                if ($mil->statut == 0 && $mil->nbemail > 0)
+                if ($mil->statut == 0 && $mil->nbemail > 0 && $user->rights->mailing->valider)
                 {
                     print '<a class="butAction" href="fiche.php?action=valide&amp;id='.$mil->id.'">'.$langs->trans("ValidMailing").'</a>';
                 }
 
-                if ($mil->statut == 1 && $mil->nbemail > 0)
+                if ($mil->statut == 1 && $mil->nbemail > 0 && $user->rights->mailing->valider)
                 {
                     print '<a class="butAction" href="fiche.php?action=sendall&amp;id='.$mil->id.'">'.$langs->trans("SendMailing").'</a>';
                 }
 
-                if ($mil->statut <= 1)
+                if ($mil->statut <= 1 && $user->rights->mailing->supprimer)
                 {
                     print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$mil->id.'">'.$langs->trans("DeleteMailing").'</a>';
                 }

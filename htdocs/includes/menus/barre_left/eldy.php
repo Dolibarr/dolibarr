@@ -20,7 +20,8 @@
  *
  */
 
-/**	    \file       htdocs/includes/menus/barre_left/eldy.php
+/**
+	    \file       htdocs/includes/menus/barre_left/eldy.php
 		\brief      Gestionnaire du menu du gauche Eldy
 		\version    $Revision$
 
@@ -33,7 +34,8 @@
 */
 
 
-/**     \class      MenuLeft
+/**
+        \class      MenuLeft
 	    \brief      Classe permettant la gestion du menu du gauche Eldy
 */
 
@@ -448,13 +450,13 @@ class MenuLeft {
              */
             if ($mainmenu == 'tools') {
 
-                $newmenu->add(DOL_URL_ROOT."/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"));
-
-                if($user->admin)    // \todo en attendant droits d'un module mailing
+                if ($conf->mailing->enabled) 
                 {
                   $langs->load("admin");
                   $langs->load("mails");
-                  $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?leftmenu=mailing&action=create", $langs->trans("NewMailing"));
+
+                  $newmenu->add(DOL_URL_ROOT."/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"),0,$user->rights->mailing->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?leftmenu=mailing&action=create", $langs->trans("NewMailing"),1,$user->rights->mailing->creer);
                 }
 
                 if ($conf->projet->enabled) 

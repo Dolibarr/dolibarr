@@ -187,6 +187,10 @@ if (defined("MAIN_MODULE_DEPLACEMENT"))
 {
   $conf->deplacement->enabled=MAIN_MODULE_DEPLACEMENT;
 }
+if (defined("MAIN_MODULE_MAILING"))
+{
+  $conf->mailing->enabled=MAIN_MODULE_MAILING;
+}
 if (defined("MAIN_MODULE_EXTERNALRSS"))
 {
   $conf->externalrss->enabled=MAIN_MODULE_EXTERNALRSS;

@@ -31,8 +31,13 @@ require("./pre.inc.php");
 
 $langs->load("mails");
 
-$dir=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
+$user->getrights("mailing");
 
+if (! $user->rights->mailing->lire || $user->societe_id > 0)
+  accessforbidden();
+
+
+$dir=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
 $mesg = '';
 
 

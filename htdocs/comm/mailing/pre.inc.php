@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/comm/mailing/pre.inc.php
+/**
+        \file       htdocs/comm/mailing/pre.inc.php
         \brief      Fichier de gestion du menu gauche de l'espace mailing
         \version    $Revision$
 */
@@ -41,9 +42,14 @@ function llxHeader($head = "", $title = "") {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/comm/mailing/index.php", $langs->trans("Mailings"));
-  $menu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?action=create", $langs->trans("NewMailing"));
-
+  if ($user->rights->mailing->lire) {
+    $menu->add(DOL_URL_ROOT."/comm/mailing/index.php", $langs->trans("Mailings"));
+  }
+  
+  if ($user->rights->mailing->creer) {
+    $menu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?action=create", $langs->trans("NewMailing"));
+  }
+  
   left_menu($menu->liste);
 
 }

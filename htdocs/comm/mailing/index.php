@@ -30,13 +30,15 @@
  
 require("./pre.inc.php");
 
-if ($user->societe_id > 0)
-{
-  accessforbidden();
-}
-	  
 $langs->load("commercial");
 $langs->load("orders");
+
+$user->getrights("mailing");
+
+if (! $user->rights->mailing->lire || $user->societe_id > 0)
+  accessforbidden();
+	  
+
 
 llxHeader('','Mailing');
 
