@@ -338,7 +338,21 @@ function init () {
 	}
 
 	if ( !defined('MAGPIE_CACHE_DIR') ) {
-		define('MAGPIE_CACHE_DIR', DOL_DOCUMENT_ROOT.'/document/rsscache');
+
+        // Le rep de cache est defini dans DOL_DATA_ROOT
+        if (! file_exists(DOL_DATA_ROOT.'/rsscache')) {
+            mkdir(DOL_DATA_ROOT);
+            mkdir(DOL_DATA_ROOT.'/rsscache');
+        }
+        define('MAGPIE_CACHE_DIR', DOL_DATA_ROOT.'/rsscache');
+
+        // Si le rep de cache n'a pu etre trouvé ou créé, on utilise
+        // l'ancien dans DOL_DOCUMENT_ROOT pour raison de compatibilite
+        // avec anciennes versions
+        if (! file_exists(DOL_DATA_ROOT.'/rsscache')) {
+		    define('MAGPIE_CACHE_DIR', DOL_DOCUMENT_ROOT.'/rsscache');
+		}
+
 	}
 
 	if ( !defined('MAGPIE_CACHE_AGE') ) {
