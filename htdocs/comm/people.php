@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,42 +26,6 @@ if ($sortorder == "")
 {
   $sortfield="lower(s.nom)";
   $sortorder="ASC";
-}
-
-if ($action == 'add') 
-{
-  $email = trim($email);
-
-  if (strlen(trim($name)) + strlen(trim($firstname)) > 0) 
-    {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc,name, firstname, poste, phone,fax,email) ";
-      $sql .= " VALUES (now(),$socid,'$name','$firstname','$poste','$phone','$fax','$email')";
-      $result = $db->query($sql);
-      if ($result) 
-	{
-	  Header("Location: fiche.php?socid=$socid");
-      }
-    }
-}
-if ($action == 'update') 
-{
-  if (strlen(trim($name)) + strlen(trim($firstname)) > 0) 
-    {    
-      $contact = new Contact($db);
-      $contact->name = $name;
-      $contact->firstname = $firstname;
-      $contact->poste = $poste;
-      $contact->phone = $phone;
-      $contact->fax = $fax;
-      $contact->note = $note;
-      $contact->email = $email;
-
-      $result = $contact->update($contactid);
-      if ($result) 
-	{
-	  Header("Location: fiche.php?socid=$socid");
-	}
-    }
 }
 
 if ($action == 'create_user') 
@@ -165,21 +129,6 @@ if ($socid > 0)
   print "</table>";
   
   
-  if ($action == 'addcontact') 
-    {
-      print "<form method=\"post\" action=\"people.php?socid=$socid\">";
-      print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-      print "<table class=\"noborder\" border=0>";
-      print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\"></td>";
-      print "<td>Prenom</td><td><input name=\"firstname\" type=\"text\" size=\"15\" maxlength=\"80\"></td></tr>";
-      print "<tr><td>Poste</td><td colspan=\"3\"><input name=\"poste\" type=\"text\" size=\"50\" maxlength=\"80\"></td></tr>";
-      print "<tr><td>Tel</td><td><input name=\"phone\" type=\"text\" size=\"18\" maxlength=\"80\"></td>";
-      print "<td>Fax</td><td><input name=\"fax\" type=\"text\" size=\"18\" maxlength=\"80\"></td></tr>";
-      print "<tr><td>Email</td><td colspan=\"3\"><input name=\"email\" type=\"text\" size=\"50\" maxlength=\"80\"></td></tr>";
-      print "<tr><td align=\"center\" colspan=\"4\"><input type=\"submit\" value=\"Ajouter\"></td></tr>";
-      print "</table>";
-      print "</form>";
-    }
   /*
    *
    * Edition du contact
