@@ -113,6 +113,49 @@ class Product
       $this->db->free();
       return $result;
   }
+  /*
+   *
+   *
+   */
+  Function count_propale()
+    {
+      $sql = "SELECT pd.fk_propal";
+      $sql .= " FROM llx_propaldet as pd, llx_product as p";
+      $sql .= " WHERE p.rowid = pd.fk_product AND p.rowid = ".$this->id;
+      $sql .= " GROUP BY pd.fk_propal";
 
+      $result = $this->db->query($sql) ;
+
+      if ( $result )
+	{
+	  return $this->db->num_rows();
+	}
+      else
+	{
+	  return 0;
+	}
+    }
+  /*
+   *
+   *
+   */
+  Function count_propale_client()
+    {
+      $sql = "SELECT pr.fk_soc";
+      $sql .= " FROM llx_propaldet as pd, llx_product as p, llx_propal as pr";
+      $sql .= " WHERE p.rowid = pd.fk_product AND pd.fk_propal = pr.rowid AND p.rowid = ".$this->id;
+      $sql .= " GROUP BY pr.fk_soc";
+
+      $result = $this->db->query($sql) ;
+
+      if ( $result )
+	{
+	  return $this->db->num_rows();
+	}
+      else
+	{
+	  return 0;
+	}
+    }
 }
 ?>
