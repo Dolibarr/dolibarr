@@ -102,22 +102,7 @@ if ($action == 'generate')
 {
   if ($id)
     {
-
       print fichinter_pdf_create($db, $id);
-
-      //$DBI = "dbi:mysql:dbname=lolixdev:host=espy:user=rodo";
-      /*
-      $command = 'export LC_TIME=fr_FR ; export DBI_DSN="dbi:'.$conf->db->type.':dbname='.$conf->db->name.':host='.$conf->db->host.'"';
-
-      $command .= " ; ./tex-fichinter.pl --fichinter=".$id ;
-      $command .= " --pdf --ps -vv --html";
-      $command .= " --output="    .$conf->fichinter->outputdir;
-      $command .= " --templates=" .$conf->fichinter->templatesdir;
-      
-      $output = system($command);
-      print $output;
-      print "<p>command : <b>$command<br>";
-      */
     }
   else
     {
@@ -361,36 +346,6 @@ if ($id)
   print nl2br($fichinter->note);
   print '</td></tr>';
 
-  print '<tr><td>Documents</td><td colspan="3"><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'">liste...</a></td></tr>';
-
-  $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.pdf";
-  if (file_exists($file))
-    {
-    
-      print '<tr><td>PDF</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.pdf">'.$fichinter->ref.'.pdf</a></td>';
-      print '<td align="right">'.filesize($file). ' bytes</td>';
-      print '<td>'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-      print '</tr>';
-    }
-  $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.ps";
-  if (file_exists($file))
-    {
-      print '<tr><td>PS</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.ps">'.$fichinter->ref.'.ps</a></td>';
-      print '<td align="right">'.filesize($file).' bytes</td>';
-      print '<td>'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-      print '</tr>';
-    }
-
-  $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.tex";
-  if (file_exists($file)) {    
-    print '<tr><td>tex</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.tex">'.$fichinter->ref.'.tex</a>';
-    print '&nbsp;[<a href="texview.php3?fichinter_ref='.$fichinter->ref.'">view</a>]';
-    print '</td>';
-    print '<td align="right">'.filesize($file).' bytes</td>';
-    print '<td>'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-    print '</tr>';
-  }
-
   print '</td></tr>';
   print "</table>";  
 
@@ -446,6 +401,21 @@ if ($id)
     }
   
   print '</tr></table>';
+  
+  print "<table width=\"50%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
+  print_titre("Documents générés");
+  print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
+  
+  $file = FICHEINTER_OUTPUTDIR . "/$fichinter->ref/$fichinter->ref.pdf";
+  if (file_exists($file))
+    {
+      print "<tr $bc[0]><td>Ficheinter PDF</a></td>";
+      print '<td><a href="'.FICHEINTER_OUTPUT_URL.'/'.$fichinter->ref.'/'.$fichinter->ref.'.pdf">'.$fichinter->ref.'.pdf</a></td>';
+      print '<td align="right">'.filesize($file). ' bytes</td>';
+      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
+    }  
+  
+  print "</table></td></tr></table>\n";
   
 }
 
