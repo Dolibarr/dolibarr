@@ -70,10 +70,14 @@ class Societe {
     if ($this->db->query($sql) ) {
       $id = $this->db->last_insert_id();
 
-      $this->update($id);
+      $result=$this->update($id);
+      if ($result < 0) { return $result; }
 
       return $id;
-    }
+    } else {
+    	dolibarr_print_error($this->db);
+    }        
+        
   }
   /*
    *
@@ -102,7 +106,6 @@ class Societe {
      * TODO simpliste pour l'instant mais remplit 95% des cas
      * à améliorer
      */
-
     if ($this->departement_id == -1 && $this->pays_id == 1)
       {
 	if (strlen(trim($this->cp)) == 5)
@@ -139,18 +142,20 @@ class Societe {
     $sql .= ",client = '" . $this->client ."'";
     $sql .= ",fournisseur = '" . $this->fournisseur ."'";
     $sql .= " WHERE idp = '" . $id ."';";
+
     if ($this->db->query($sql)) 
       {
-	return 0;
+    	return 0;
       }
     else
       {
-	if ($this->db->errno() == 1062)
-	  {
-	    // Doublons sur le prefix commercial
-	    return -1;
-	  }
-	print $this->db->error();
+    	if ($this->db->errno() == $this->db->ERROR_DUPLICATE)
+    	  {
+    	    // Doublon
+    	    return -1;
+    	  }
+    
+    	dolibarr_print_error($this->db);
       }
   }
 

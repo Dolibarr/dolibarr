@@ -76,7 +76,14 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
   if ($_POST["action"] == 'add')
     {
       $socid = $soc->create();
-      Header("Location: soc.php?socid=$socid");
+
+      if ($socid > 0) {
+        Header("Location: soc.php?socid=$socid");
+      }
+      else {
+        $mesg="Erreur, cette société existe déjà";
+        $_GET["actions"]='create';
+      }
     }
 }
 
@@ -99,7 +106,10 @@ if ($_GET["action"] == 'create')
       if ($_GET["type"]=='c') { $soc->client=1; }
       if ($_GET["type"]=='p') { $soc->client=2; }
       
-      print '<div class="titre">'.$langs->trans("NewCompany").'</div><br>';
+      print_titre($langs->trans("NewCompany"));
+      print "<br>\n";
+      
+      print $mesg;	  
       print '<form action="soc.php" method="post">';
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="fournisseur" value="0">';
