@@ -77,7 +77,7 @@ if ( $db->query($sql) )
       
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object($i);
+	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  print "<tr $bc[$var]><td><a href=\"liste.php?catid=".$obj->rowid."\">".$active[$obj->active]."</a></td>";
 	  print '<td align="center">'.$obj->cc."</td></tr>";
@@ -118,7 +118,7 @@ if ( $db->query($sql) )
       
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object($i);
+	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  print "<tr $bc[$var]><td><a href=\"liste.php?catid=".$obj->rowid."\">".$active[$obj->active]."</a></td>";
 	  print '<td align="center">'.$obj->cc."</td></tr>";

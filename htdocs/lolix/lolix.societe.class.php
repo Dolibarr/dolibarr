@@ -102,7 +102,7 @@ class LolixSociete {
 	{
 	  if ($this->db->num_rows())
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object();
 
 	      $this->nom = $obj->nom;
 	      $this->active = $obj->active;
