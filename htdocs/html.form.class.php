@@ -65,10 +65,26 @@ class Form {
       $name = "tauxtva";
     }
 
+    $txtva[0] = '19.6';
+    $txtva[1] = '5.5';
+    $txtva[2] = '0';
+
+    $taille = sizeof($txtva);
+
     print '<select name="'.$name.'">';
-    print '<option value="19.6">19.6 %</option>';
-    print '<option value="5.5">5.5 %</option>';
-    print '<option value="0">0 %</option>';
+
+    for ($i = 0 ; $i < $taille ; $i++)
+      {
+	print '<option value="'.$txtva[$i].'"';
+	if ($txtva[$i] == $defaulttx)
+	  {
+	    print ' SELECTED>'.$txtva[$i].' %</option>';
+	  }
+	else
+	  {
+	    print '>'.$txtva[$i].' %</option>';
+	  }
+      }
     print '</select>';
   }
 
