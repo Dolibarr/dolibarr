@@ -32,6 +32,7 @@ require("../project.class.php");
 require("../propal.class.php");
 require("./bank/account.class.php");
 require("../contrat/contrat.class.php");
+require("../commande/commande.class.php");
 
 llxHeader();
 
@@ -57,9 +58,9 @@ if ($HTTP_POST_VARS["action"] == 'classin')
  */	
 if ($HTTP_POST_VARS["action"] == 'add') 
 {
-  $datefacture = mktime(12, 0 , 0, $remonth, $reday, $reyear); 
+  $datefacture = mktime(12, 0 , 0, $HTTP_POST_VARS["remonth"], $HTTP_POST_VARS["reday"], $HTTP_POST_VARS["reyear"]); 
 
-  $facture = new Facture($db, $socid);
+  $facture = new Facture($db, $HTTP_POST_VARS["socid"]);
 
   $facture->number         = $HTTP_POST_VARS["facnumber"];
   $facture->date           = $datefacture;      
@@ -80,8 +81,8 @@ if ($HTTP_POST_VARS["action"] == 'add')
       $facture->amount         = $HTTP_POST_VARS["amount"];
       $facture->remise         = $HTTP_POST_VARS["remise"];
       $facture->remise_percent = $HTTP_POST_VARS["remise_percent"];
-  
-      if (!$HTTP_POST_VARS["propalid"]) 
+
+      if (!$HTTP_POST_VARS["propalid"] && !$HTTP_POST_VARS["commandeid"]) 
 	{      
 	  $facture->add_product($HTTP_POST_VARS["idprod1"],$HTTP_POST_VARS["qty1"],$HTTP_POST_VARS["remise_percent1"]);
 	  $facture->add_product($HTTP_POST_VARS["idprod2"],$HTTP_POST_VARS["qty2"],$HTTP_POST_VARS["remise_percent2"]);
@@ -92,37 +93,74 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	}
       else
 	{
-	  $facture->propalid = $HTTP_POST_VARS["propalid"];
-	  
-	  $facid = $facture->create($user);
-	  
-	  if ($facid)
+	  /*
+	   * Propale
+	   */
+	  if ($HTTP_POST_VARS["propalid"])
 	    {
-	      $prop = New Propal($db);
-	      if ( $prop->fetch($HTTP_POST_VARS["propalid"]) )
+	      $facture->propalid = $HTTP_POST_VARS["propalid"];
+	  
+	      $facid = $facture->create($user);
+	      
+	      if ($facid)
 		{
-		  for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
+		  $prop = New Propal($db);
+		  if ( $prop->fetch($HTTP_POST_VARS["propalid"]) )
 		    {
-		      $result = $facture->addline($facid,
-						  addslashes($prop->lignes[$i]->libelle),
-						  $prop->lignes[$i]->subprice,
-						  $prop->lignes[$i]->qty,
-						  $prop->lignes[$i]->tva_tx,
-						  $prop->lignes[$i]->product_id,
-						  $prop->lignes[$i]->remise_percent);
+		      for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
+			{
+			  $result = $facture->addline($facid,
+						      addslashes($prop->lignes[$i]->libelle),
+						      $prop->lignes[$i]->subprice,
+						      $prop->lignes[$i]->qty,
+						      $prop->lignes[$i]->tva_tx,
+						      $prop->lignes[$i]->product_id,
+						      $prop->lignes[$i]->remise_percent);
+			}
+		    }
+		  else
+		    {
+		      print "Erreur";
+		    }
+		}
+	    }
+	  /*
+	   * Commande
+	   */
+
+	  if ($HTTP_POST_VARS["commandeid"])
+	    {
+	      $facid = $facture->create($user);
+
+	      if ($facid)
+		{
+		  $comm = New Commande($db);
+		  if ( $comm->fetch($HTTP_POST_VARS["commandeid"]) )
+		    {
+		      $lines = $comm->fetch_lignes();
+		      print_r($lines);
+		      for ($i = 0 ; $i < sizeof(lines) ; $i++)
+			{
+			  $result = $facture->addline($facid,
+						      addslashes($lines[$i]->description),
+						      $lines[$i]->subprice,
+						      $lines[$i]->qty,
+						      $lines[$i]->tva_tx,
+						      $lines[$i]->product_id,
+						      $lines[$i]->remise_percent);
+			}
+		    }
+		  else
+		    {
+		      print "Erreur";
 		    }
 		}
 	      else
 		{
-		  print "Erreur";
+		  print "Erreur creation de facture";
 		}
 	    }
-	  else
-	    {
-	      print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
-	      print "<p>Retour à la <a href=\"propal.php?propalid=$propalid\">propal</a>";
-	      print $db->error();
-	    }
+	  
 	}
     }
 
@@ -239,8 +277,8 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
   if ($user->rights->facture->supprimer ) 
     {
       $fac = new Facture($db);
-      $fac->delete($facid);
-      $facid = 0 ;
+      $fac->delete($_GET["facid"]);
+      $_GET["facid"] = 0 ;
     }
 }
 
@@ -332,7 +370,7 @@ $html = new Form($db);
  *
  *
  ************************************************************************/
-if ($action == 'create') 
+if ($_GET["action"] == 'create') 
 {
   print_titre("Emettre une facture");
 
@@ -347,10 +385,18 @@ if ($action == 'create')
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp ";
       $sql .= "FROM llx_societe as s ";
-      $sql .= "WHERE s.idp = $socidp";      
+      $sql .= "WHERE s.idp = ".$_GET["socidp"];      
     }
 
-  if ( $db->query($sql) ) 
+  if ($_GET["commandeid"])
+    {
+      $commande = New Commande($db);
+      $commande->fetch($_GET["commandeid"]);
+      $societe_id = $commande->soc_id;
+    }
+
+
+  if ( $societe_id ) 
     {
       $num = $db->num_rows();
       if ($num)
@@ -358,16 +404,16 @@ if ($action == 'create')
 	  $obj = $db->fetch_object(0);
 
 	  $soc = new Societe($db);
-	  $soc->fetch($obj->idp);
+	  $soc->fetch($societe_id);
        
 	  print '<form action="'.$PHP_SELF.'" method="post">';
 	  print '<input type="hidden" name="action" value="add">';
-	  print '<input type="hidden" name="socid" value="'.$obj->idp.'">' ."\n";
+	  print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 	  print '<input type="hidden" name="remise_percent" value="0">';
 
 	  print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
 	  
-	  print '<tr><td>Client :</td><td>'.$obj->nom.'</td>';
+	  print '<tr><td>Client :</td><td>'.$soc->nom.'</td>';
 	  print '<td class="border">Commentaire</td></tr>';
 
 	  print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
@@ -407,7 +453,7 @@ if ($action == 'create')
 	  $html->select_array("projetid",$proj->liste_array($socidp));
 	  print "</td></tr>";
 	  
-	  if ($propalid > 0)
+	  if ($_GET["propalid"] > 0)
 	    {
 	      $amount = ($obj->price);
 	      print '<input type="hidden" name="amount"   value="'.$amount.'">'."\n";
@@ -420,8 +466,16 @@ if ($action == 'create')
 	      print '<tr><td>Proposition</td><td colspan="2">'.$obj->ref.'</td></tr>';
 	      print '<tr><td>Montant HT</td><td colspan="2">'.price($amount).'</td></tr>';
 	      print '<tr><td>TVA</td><td colspan="2">'.price($obj->tva)."</td></tr>";
-	      print '<tr><td>Total TTC</td><td colspan="2">'.price($obj->total)."</td></tr>";	  
-	    }	  
+	      print '<tr><td>Total TTC</td><td colspan="2">'.price($obj->total)."</td></tr>";
+	    }
+	  elseif ($_GET["commandeid"] > 0)
+	    {
+	      print '<input type="hidden" name="commandeid" value="'.$commande->id.'">';
+	      print '<tr><td>Commande</td><td colspan="2">'.$commande->ref.'</td></tr>';
+	      print '<tr><td>Montant HT</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
+	      print '<tr><td>TVA</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
+	      print '<tr><td>Total TTC</td><td colspan="2">'.price($commande->total_ttc)."</td></tr>";
+	    }
 	  else
 	    {
 	      print '<tr><td colspan="2">Services/Produits</td></tr>';
@@ -470,10 +524,10 @@ if ($action == 'create')
 	   * Factures récurrentes
 	   *
 	   */
-	  if ($propalid == 0)
+	  if ($_GET["propalid"] == 0 && $_GET["commandeid"] == 0)
 	    {
 	      $sql = "SELECT r.rowid, r.titre, r.amount FROM llx_facture_rec as r";
-	      $sql .= " WHERE r.fk_soc = $socidp";
+	      $sql .= " WHERE r.fk_soc = ".$soc->id;
 	      if ( $db->query($sql) )
 		{
 		  $num = $db->num_rows();	
@@ -505,7 +559,7 @@ if ($action == 'create')
 	  print "</form>\n";
 	  print "</table>\n";
 
-	  if ($propalid)
+	  if ($_GET["propalid"])
 	    {
 	      /*
 	       * Produits
@@ -562,7 +616,50 @@ if ($action == 'create')
 		}
 
 	      print '</table>';
-	    }	  
+	    }
+	  /*
+	   * Produits dans la commande
+	   *
+	   */
+
+	  if ($_GET["commandeid"])
+	    {
+
+	      print_titre("Produits");
+	      
+	      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
+	      print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
+	      
+	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.subprice, pt.qty, p.rowid as prodid, pt.remise_percent";
+	      $sql .= " FROM llx_commandedet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_commande = ".$commande->id;
+	      $sql .= " ORDER BY pt.rowid ASC";
+	      $result = $db->query($sql);
+	      if ($result) 
+		{
+		  $num = $db->num_rows();
+		  $i = 0;	
+		  $var=True;	
+		  while ($i < $num) 
+		    {
+		      $objp = $db->fetch_object($i);
+		      $var=!$var;
+		      print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
+		      print '<td>'.$objp->product.'</td>';
+		      print "<td align=\"right\">".price($objp->subprice)."</TD>";
+		      print '<td align="center">'.$objp->remise_percent.' %</td>';
+		      print "<td align=\"center\">".$objp->qty."</td></tr>\n";
+		      $i++;
+		    }
+		}
+	      else
+		{
+		  print $sql;
+		}
+
+	      print '</table>';
+	    }
+
 	}
     } 
   else 
@@ -594,7 +691,7 @@ else
 	   * Confirmation de la suppression de la facture
 	   *
 	   */
-	  if ($action == 'delete')
+	  if ($_GET["action"] == 'delete')
 	    {
 	      $html->form_confirm("$PHP_SELF?facid=$fac->id","Supprimer la facture","Etes-vous sûr de vouloir supprimer cette facture ?","confirm_delete");
 	    }
@@ -651,7 +748,7 @@ else
 	   * Paiements
 	   */
 	$sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
-	$sql .= " FROM llx_paiement as p, c_paiement as c WHERE p.fk_facture = $fac->id AND p.fk_paiement = c.id";
+	$sql .= " FROM llx_paiement as p, c_paiement as c WHERE p.fk_facture = ".$fac->id." AND p.fk_paiement = c.id";
 	
 	$result = $db->query($sql);
 	if ($result)
@@ -882,11 +979,12 @@ else
 	    
 	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
 	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"paiement.php?facid=$fac->id&amp;action=create\">Emettre un paiement</a></td>";
+		print '<td align="center" width="20%">';
+		print '<a href="paiement.php?facid='.$fac->id.'&amp;action=create">Emettre un paiement</a></td>';
 	      }
 	    else
 	      {
-		print "<td align=\"center\" width=\"20%\">-</td>";
+		    print '<td align="center" width="20%">-</td>';
 	      }
 	    
 	    if ($fac->statut == 1 && abs($resteapayer) == 0 && $fac->paye == 0) 
