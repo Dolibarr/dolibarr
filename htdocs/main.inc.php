@@ -60,6 +60,9 @@ if (!strlen(getenv("LLX_DBNAME")))
   $conf->db->pass = $dolibarr_main_db_pass;
 }
 
+// A terme cette constante sera définie dans la base
+define('MAIN_DB_PREFIX','llx_');
+
 require (DOL_DOCUMENT_ROOT ."/lib/mysql.lib.php");
 require (DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
 require (DOL_DOCUMENT_ROOT ."/html.form.class.php");
