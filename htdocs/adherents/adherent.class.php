@@ -509,7 +509,7 @@ class Adherent
       {
 	if ( $this->db->affected_rows() )
 	  {
-
+	    $rowid=$this->db->last_insert_id();
 	    $datefin = mktime(12, 0 , 0, 
 			      strftime("%m",$date), 
 			      strftime("%d",$date),
@@ -519,7 +519,7 @@ class Adherent
 
 	    if ( $this->db->query( $sql) )
 	      {
-	      return 1;
+	      return $rowid;
 	      }
 	  }
 	else
