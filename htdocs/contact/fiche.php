@@ -142,31 +142,30 @@ $form = new Form($db);
  */
 if ($_GET["id"] > 0)
 {
-    # Si edition contact deja existant
+  // Si edition contact deja existant
 
-    $contact = new Contact($db);
-    $contact->fetch($_GET["id"], $user);
-
-
-    $h=0;
-    $head[$h][0] = DOL_URL_ROOT.'fiche.php?id='.$_GET["id"];
-    $head[$h][1] = "Général";
-    $hselected=$h;
-    $h++;
-    
-    $head[$h][0] = DOL_URL_ROOT.'perso.php?id='.$_GET["id"];
-    $head[$h][1] = 'Informations personnelles';
-    $h++;
-    
-    $head[$h][0] = DOL_URL_ROOT.'vcard.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans("VCard");
-    $h++;
-    
-    $head[$h][0] = DOL_URL_ROOT.'info.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans("Info");
-    $h++;
-    
-    dolibarr_fiche_head($head, $hselected, $contact->firstname.' '.$contact->name);
+  $contact = new Contact($db);
+  $contact->fetch($_GET["id"], $user);
+  
+  $h=0;
+  $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
+  $head[$h][1] = "Général";
+  $hselected=$h;
+  $h++;
+  
+  $head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
+  $head[$h][1] = 'Informations personnelles';
+  $h++;
+  
+  $head[$h][0] = DOL_URL_ROOT.'/contact/vcard.php?id='.$_GET["id"];
+  $head[$h][1] = $langs->trans("VCard");
+  $h++;
+  
+  $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
+  $head[$h][1] = $langs->trans("Info");
+  $h++;
+  
+  dolibarr_fiche_head($head, $hselected, $contact->firstname.' '.$contact->name);
 }
 
 
