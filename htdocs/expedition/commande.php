@@ -74,11 +74,6 @@ if ($id > 0)
       print_titre("Commande : ".$commande->ref);
       
       /*
-       *   Commande
-       */
-
-	  
-      /*
        * Confirmation de la validation
        *
        */
@@ -86,8 +81,6 @@ if ($id > 0)
 	{
 	  $html->form_confirm("$PHP_SELF?id=$id","Cloturer la commande","Etes-vous sûr de cloturer cette commande ?","confirm_cloture");
 	}
-      
-      
       /*
        *
        */
@@ -116,12 +109,6 @@ if ($id > 0)
 	  print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
 	}
       print "</td></tr>";
-
-      print "<tr><td>Auteur</td><td colspan=\"2\">$author->fullname</td>";
-	
-      print '<td>- ';
-
-      print "&nbsp;</td></tr>";
   
       if ($commande->note)
 	{
