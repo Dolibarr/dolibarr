@@ -75,7 +75,6 @@ if ($mode == 'search') {
  *
  *
  */
-print_barre_liste("Liste des societes", $page, $PHP_SELF);
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id";
@@ -95,17 +94,19 @@ if (strlen($begin)) {
 
 if ($socname) {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
-  $sortfield = "lower(s.nom)";
-  $sortorder = "ASC";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
 {
   $num = $db->num_rows();
   $i = 0;
+
+  $params = "&amp;socname=$socname";
+
+  print_barre_liste("Liste des societes", $page, $PHP_SELF,$params,$sortfield,$sortorder,'',$num);
     
   if ($sortorder == "DESC") 
     {
@@ -119,13 +120,14 @@ if ($result)
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
   print '<td>';
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print_liste_field_titre("Société",$PHP_SELF,"s.nom", $params);
   print "</td><td>";
-  print_liste_field_titre("Ville",$PHP_SELF,"s.ville");
-  print '</td><td colspan="2" align="center">Fiches</td><td>&nbsp;</td>';
+  print_liste_field_titre("Ville",$PHP_SELF,"s.ville",$params);
+  print '</td><td colspan="2" align="center">Fiches</td>';
   print "</tr>\n";
   $var=True;
-  while ($i < $num)
+
+  while ($i < min($num,$conf->liste_limit))
     {
       $obj = $db->fetch_object( $i);    
       $var=!$var;    
@@ -157,9 +159,7 @@ if ($result)
 	  print "&nbsp;";
 	}
       
-      print '</td><td align="center"><a href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$obj->idp.'">Notifications</a></td>';
-      
-      print "</tr>\n";
+      print '</td></tr>'."\n";
       $i++;
     }
 
