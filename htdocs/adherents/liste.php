@@ -26,7 +26,7 @@ llxHeader();
 
 $db = new Db();
 
-if ($sortorder == "") {  $sortorder="DESC"; }
+if ($sortorder == "") {  $sortorder="ASC"; }
 if ($sortfield == "") {  $sortfield="d.nom"; }
 
 if ($page == -1) { $page = 0 ; }

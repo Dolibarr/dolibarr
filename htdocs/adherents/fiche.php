@@ -84,12 +84,18 @@ if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] =
 {
   $adh = new Adherent($db, $rowid);
   $adh->validate($user->id);
+  $adh->fetch($rowid);
+  $mesg=preg_replace("/%INFO%/","Prenom : $adh->prenom\nNom : $adh->nom\nSociete = $adh->societe\nAdresse = $adh->adresse\nCode Postal : $adh->cp\nVille : $adh->ville\nPays : $adh->pays\nEmail : $adh->email\nLogin : $adh->login\nPassword : $adh->pass\nNote : $adh->note",$conf->adherent->email_valid);
+  mail($adh->email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
 }
 
 if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] == yes)
 {
   $adh = new Adherent($db, $rowid);
   $adh->resiliate($user->id);
+  $adh->fetch($rowid);
+  $mesg=preg_replace("/%INFO%/","Prenom : $adh->prenom\nNom : $adh->nom\nSociete = $adh->societe\nAdresse = $adh->adresse\nCode Postal : $adh->cp\nVille : $adh->ville\nPays : $adh->pays\nEmail : $adh->email\nLogin : $adh->login\nPassword : $adh->pass\nNote : $adh->note",$conf->adherent->email_resil);
+  mail($adh->email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
 }
 
 
