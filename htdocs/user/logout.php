@@ -19,6 +19,13 @@
  * $Source$
  *
  */
+
+/**
+* Pour se déconnecter
+* @package User
+*/
+if (!empty ($GLOBALS["REMOTE_USER"]))
+   die("La d&eacute;connection ne fonctionne actuellement que pour l'authentification par pear");
 require_once "Auth/Auth.php";
 $a = new Auth("DB");
 $a->setShowLogin (false);
