@@ -26,8 +26,10 @@
  *
  */
 require("./pre.inc.php3");
-
 require("./bank.lib.php3");
+
+require("../../tva.class.php3");
+
 llxHeader();
 $db = new Db();
 
@@ -51,13 +53,10 @@ if ($result) {
   $db->free();
 }
 
-
-
-
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 print "<TR class=\"liste_titre\">";
 print "<td>Label</td><td>Banque</TD>";
-print "<td align=\"left\">Numéro</a></TD><td align=\"right\">Solde</td>";
+print "<td align=\"left\">Numéro</a></TD><td align=\"right\">Solde</td><td>&nbsp;</td>";
 print "</TR>\n";
 $total = 0;
 for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
@@ -65,22 +64,37 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
   $acc->fetch($accounts[$i]);
 
   $solde = $acc->solde();
-
   
   print "<tr><td>";
   print '<a href="account.php3?account='.$acc->id.'">'.$acc->label.'</a>';
 
   print "</td><td>$acc->bank</td><td>$acc->number</td>";
 
-
-
-  print '</td><td align="right">'.price($solde).'</td></tr>';
+  print '</td><td align="right">'.price($solde).'</td><td>&nbsp;</td></tr>';
   
   $total += $solde;
 
 }
 
-print '<tr><td colspan="3" align="right">Total</td><td align="right">'.price($total).'</td></tr>';
+print '<tr><td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>euros HT</td></tr>';
+
+print '<tr class="liste_titre"><td colspan="5">Dettes</td></tr>';
+/*
+ * TVA
+ */
+$tva = new Tva($db);
+
+$tva_solde = $tva->solde();
+
+$total = $total + $tva_solde;
+
+print '<tr><td colspan="3">TVA</td><td align="right">'.price($tva_solde).'</td><td>&nbsp;</td></tr>';
+/*
+ *
+ */
+
+print '<tr><td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>euros HT</td></tr>';
+
 print "</table>";
 
 

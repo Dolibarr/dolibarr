@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-require("../main.inc.php3");
+require("../../main.inc.php3");
 
 function llxHeader($head = "") {
   global $user, $conf;
@@ -34,34 +34,14 @@ function llxHeader($head = "") {
   $menu = new Menu();
 
   $menu->add("/compta/facture.php3","Factures");
-  $menu->add_submenu("paiement.php3","Paiements");
-  //  $menu->add_submenu("fac.php3","admin fac");
 
-  $menu->add("ca.php3","Chiffres d'affaires");
 
-  $menu->add_submenu("prev.php3","Prévisionnel");
-  $menu->add_submenu("comp.php3","Comparatif");
+  $menu->add("../ca.php3","Chiffres d'affaires");
 
-  $menu->add_submenu("casoc.php3","Par société");
-  $menu->add_submenu("pointmort.php3","Point mort");
+  $menu->add("index.php3","TVA");
 
-  $menu->add("tva/index.php3","TVA");
 
-  $menu->add("/compta/propal.php3","Propales");
-
-  $menu->add("bank/index.php3","Bank");
-
-  if ($conf->voyage) {
-
-    $menu->add("voyage/index.php3","Voyages");
-
-    $menu->add_submenu("voyage/index.php3","Voyages");
-    $menu->add_submenu("voyage/reduc.php3","Reduc");
-  }
-
-  $menu->add("ligne.php3","Compta");
-  $menu->add_submenu("ligne.php3","Lignes");
-  $menu->add_submenu("config.php3","Configuration");
+  $menu->add("/compta/bank/index.php3","Bank");
 
   left_menu($menu->liste);
 
