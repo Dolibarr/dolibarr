@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/comm/prospect/prospect.php
+        \ingroup    prospect
+		\brief      Page de la liste des prospects
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $user->getrights('propale');
@@ -59,10 +67,9 @@ $pagenext = $page + 1;
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.fk_stcomm ";
 $sql .= ", d.nom as departement";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
-$sql .= " , ".MAIN_DB_PREFIX."c_departements as d";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql .= " LEFT join ".MAIN_DB_PREFIX."c_departements as d on d.rowid = s.fk_departement";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client=2";
-$sql .= " AND d.rowid = s.fk_departement";
 
 if (strlen($stcomm))
 {
@@ -86,24 +93,16 @@ if ($socname)
   $sortorder = "ASC";
 }
 
-if ($user->page_param["sortorder"] == '')
+if (! $sortorder)
 {
   $sortorder="ASC";
 }
-else
-{
-  $sortorder=$user->page_param["sortorder"];
-}
-
-if ($user->page_param["sortfield"] == '')
+if (! $sortfield)
 {
   $sortfield="s.nom";
 }
-else
-{
-  $sortfield=$user->page_param["sortfield"];
-}
-$sql .= " ORDER BY $sortfield $sortorder, s.nom ASC " . $db->plimit($conf->liste_limit +1, $offset);
+
+$sql .= " ORDER BY $sortfield $sortorder, s.nom ASC " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -113,7 +112,7 @@ if ($result)
   if ($num == 1 && $socname)
     {
       $obj = $db->fetch_object($result);
-      Header("Location: fiche.php?socid=$obj->idp");
+      Header("Location: fiche.php?socid=".$obj->idp);
     }
   else
     {
@@ -147,9 +146,9 @@ if ($result)
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print "<td valign=\"center\">";
-  print_liste_field_titre("Société","prospects.php","s.nom");
+  print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom");
   print "</td><td>";
-  print_liste_field_titre("Ville","prospects.php","s.ville");
+  print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville");
   print "</td>";
   print "<td align=\"center\">";
   print_liste_field_titre("Département","prospects.php","s.fk_departement");
@@ -182,7 +181,7 @@ if ($result)
 	}
       else
 	{
-	  print "<TD>&nbsp;</TD>\n";
+	  print "<td>&nbsp;</td>\n";
 	}
 
       $sts = array(-1,0,1,2);
