@@ -71,9 +71,5 @@ print '<tr><td>Database name</td><td>' . $conf->webcal->db->name . '</td></tr>';
 
 print '</table>';
 
-$db = new Db();
-
-?> <a href="phpinfo.php">phpinfo</a> <?PHP
-
 llxFooter();
 ?>
