@@ -93,85 +93,49 @@ Class pdf_soleil
 	       */
 	      $pdf->SetTextColor(0,0,0);
 	      $pdf->SetFont('Arial','B',12);
-	      //$fac->fetch_client();
+	      $fich->fetch_client();
 	      $pdf->SetXY(102,42);
-	      $pdf->MultiCell(66,5, $fac->client->nom);
+	      $pdf->MultiCell(66,5, $fich->client->nom);
 	      $pdf->SetFont('Arial','B',11);
 	      $pdf->SetXY(102,47);
-	      $pdf->MultiCell(66,5, $fac->client->adresse . "\n" . $fac->client->cp . " " . $fac->client->ville);
+	      $pdf->MultiCell(66,5, $fich->client->adresse . "\n" . $fich->client->cp . " " . $fich->client->ville);
 	      $pdf->rect(100, 40, 100, 40);
 	      
 	      
 	      $pdf->SetTextColor(200,0,0);
 	      $pdf->SetFont('Arial','B',14);
-	      $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $fac->date));
-	      $pdf->Text(11, 94, "Facture : ".$fac->ref);
+	      $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $fich->date));
+	      $pdf->Text(11, 94, "Fiche d'intervention : ".$fich->ref);
 	      
 	      /*
 	       */
+
+	      /*
+	       */
+	      $pdf->SetFillColor(220,220,220);
 	      $pdf->SetTextColor(0,0,0);
-	      $pdf->SetFont('Arial','',10);
-	      $titre = "Montants exprimés en euros";
-	      $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
-	      /*
-	       */
-	      
 	      $pdf->SetFont('Arial','',12);
 	      
 	      $tab_top = 100;
 	      $tab_height = 110;
+
+	      $pdf->SetXY (10, $tab_top);
+	      $pdf->MultiCell(190,8,'Désignation',0,'L',0);
+	      $pdf->line(10, $tab_top + 8, 200, $tab_top + 8 );	      
 	      
-	      $pdf->Text(11,$tab_top + 5,'Désignation');
-	      
-	      $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-	      $pdf->Text(134,$tab_top + 5,'TVA');
-	      
-	      $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-	      $pdf->Text(147,$tab_top + 5,'Qté');
-	      
-	      $pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-	      $pdf->Text(160,$tab_top + 5,'P.U.');
-	      
-	      $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-	      $pdf->Text(187,$tab_top + 5,'Total');
-	      
-	      $pdf->Rect(10, $tab_top, 190, $tab_height);
-	      $pdf->line(10, $tab_top + 10, 200, $tab_top + 10 );
-	      
+	      $pdf->Rect(10, $tab_top, 190, $tab_height);	      
 	      /*
 	       *
-	       */  
-	      
-	      $pdf->SetFillColor(220,220,220);
-	      
+	       */  	      	      
 	      $pdf->SetFont('Arial','', 10);
-	      for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
-		{
-		  $pdf->SetXY (11, $tab_top + 11 + ($i * 27) );
-		  $pdf->MultiCell(118, 5, $fac->lignes[$i]->desc, 0, 'J');
+
+	      $pdf->SetXY (10, $tab_top + 8 );
+	      $pdf->MultiCell(190, 5, $fich->note, 0, 'J', 0);
 		  
-		  $pdf->SetXY (133, $tab_top + 11 + ($i * 27) );
-		  $pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
-		  
-		  $pdf->SetXY (145, $tab_top + 11 + ($i * 27) );
-		  $pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'C');
-		  
-		  $pdf->SetXY (156, $tab_top + 11 + ($i * 27) );
-		  $pdf->MultiCell(18, 5, price($fac->lignes[$i]->price), 0, 'R', 0);
-	      
-		  $pdf->SetXY (174, $tab_top + 11 + ($i * 27) );
-		  $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
-		  $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
-		  
-		  $pdf->line(10, $pdf->GetY + 37 + $tab_top, 200, $pdf->GetY + 37 + $tab_top);
-		}
 	      /*
 	       *
 	       */
-
-	  
-	      $pdf->Output($file);
-	      
+	      $pdf->Output($file);	      
 	    }
 	}
     }
