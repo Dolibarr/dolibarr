@@ -18,6 +18,10 @@
 -- $Id$
 -- $Source$
 --
+--
+-- courant : indique si c'est un compte courant
+-- clos : le compte est-il clos ou encore ouvert
+--
 -- =============================================================================
 
 create table llx_bank_account
@@ -37,7 +41,3 @@ create table llx_bank_account
   courant        smallint default 0 not null,
   clos           smallint default 0 not null
 );
-
-
--- courant : indique si c'est un compte courant
--- clos : le compte est-il clos ou encore ouvert

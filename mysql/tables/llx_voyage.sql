@@ -18,6 +18,11 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
+-- insert into llx_voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc) 
+-- values ('2002-04-21 12:05','2002-04-21 15:25',26.8,'Paris','Auray',1);
+
+-- insert into llx_voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc) 
+-- values ('2002-04-23 15:42','2002-04-23 19:10',26.8,'Auray','Paris',1);
 -- ===================================================================
 
 create table llx_voyage
@@ -38,9 +43,3 @@ create table llx_voyage
   dossier         varchar(50),             -- numero de dossier
   note            text
 );
-
--- insert into llx_voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc) 
--- values ('2002-04-21 12:05','2002-04-21 15:25',26.8,'Paris','Auray',1);
-
--- insert into llx_voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc) 
--- values ('2002-04-23 15:42','2002-04-23 19:10',26.8,'Auray','Paris',1);
