@@ -214,8 +214,8 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-  print '<TR class="liste_titre"><td valign="center">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td valign="center">';
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
   print "</td><td>Ville</td>";
   print "<td align=\"center\">Préfix</td><td colspan=\"2\">&nbsp;</td></tr>\n";
@@ -228,23 +228,23 @@ if ($result)
       
       $var=!$var;
 
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
-      print "<TD>".$obj->ville."&nbsp;</TD>\n";
-      print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print "<td>".$obj->ville."&nbsp;</td>\n";
+      print "<td align=\"center\">$obj->prefix_comm&nbsp;</td>\n";
 
       if ($user->societe_id == 0)
 	{
-	  print "<TD align=\"center\"><a href=\"facture.php?socidp=$obj->idp&action=create\">Facturer <img src='".DOL_URL_ROOT."/theme/".$conf->theme."/img/filenew.png' border=\"0\" alt=\"Nouvelle facture\"></A></td>\n";
+	  print "<td align=\"center\"><a href=\"facture.php?socidp=$obj->idp&action=create\">Facturer <img src='".DOL_URL_ROOT."/theme/".$conf->theme."/img/filenew.png' border=\"0\" alt=\"Nouvelle facture\"></A></td>\n";
 	}
       else
 	{
-	  print "<TD>&nbsp;</TD>\n";
+	  print "<td>&nbsp;</td>\n";
 	}
-      print "</TR>\n";
+      print "</tr>\n";
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
