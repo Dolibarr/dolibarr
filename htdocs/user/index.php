@@ -59,13 +59,18 @@ if ($result)
       $var=!$var;
       
       print "<TR $bc[$var]>";
-      print '<TD>'.ucfirst($obj->name).'</TD>';
+      print '<TD><a href="fiche.php?id='.$obj->rowid.'">';
+      print img_file();
+      print '</a>&nbsp;'.ucfirst($obj->name).'</TD>';
       print '<TD>'.ucfirst($obj->firstname).'</td>';
-      if ($obj->login) {
-        print '<TD><a href="fiche.php?id='.$obj->rowid.'">'.$obj->login.'</a></TD>';
-      } else {
-        print '<TD><a class="impayee" href="fiche.php?id='.$obj->rowid.'">Inactif</a></TD>';
-      }        
+      if ($obj->login)
+	{
+	  print '<TD><a href="fiche.php?id='.$obj->rowid.'">'.$obj->login.'</a></TD>';
+	}
+      else
+	{
+	  print '<TD><a class="impayee" href="fiche.php?id='.$obj->rowid.'">Inactif</a></TD>';
+	}        
       print '<TD>'.$obj->code.'</TD>';
       print "</TR>\n";
       $i++;
