@@ -65,26 +65,26 @@ TD.barre_select
 DIV.titre 
 { 
   font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; 
-  color: #666633; 
+  color: #336666; 
   text-decoration: none }
 /*
  *
  */
 TR.liste_titre  
 { 
-  background: #999966; 
+  background: #669999; 
   font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
   text-decoration: none }
 
 TR.pair	        
 { 
-  background: #ccccb3; 
+  background: #b3cccc; 
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none }
 
 TR.impair	
 { 
-  background: #eeeecc; 
+  background: #cceeee; 
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none }
 
