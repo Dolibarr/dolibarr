@@ -18,115 +18,224 @@
  * $Id$
  * $Source$
  *
- * Script d'import des CDR
+ * Script d'import des CDR des fournisseurs
  */
 
 require ("../../master.inc.php");
 
-$opt = getopt("f:");
+$opt = getopt("f:i:");
 
 $file = $opt['f'];
+$id_fourn = $opt['i'];
 
-if (strlen($file) == 0)
+if (strlen($file) == 0 || strlen($id_fourn) == 0)
 {
-  print "Usage :\n php import-cdr.php -f FILENAME\n";
+  print "Usage :\n php import-cdr.php -f <filename> -i <id_fournisseur>\n";
+  exit;
+}
+
+/*
+ * Vérification du fournisseur
+ *
+ */
+
+$sql = "SELECT f.rowid, f.nom";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
+$sql .= " WHERE f.rowid = ".$id_fourn;
+
+if ($db->query($sql))
+{  
+  $num = $db->num_rows();
+
+  if ($num == 1)
+    {
+      $row = $db->fetch_row();
+      dolibarr_syslog ("Import fichier ".$file);
+      dolibarr_syslog("Fournisseur [".$row[0]."] ".$row[1]);
+    }
+  else
+    {
+      dolibarr_syslog("Erreur Fournisseur inexistant : ".$id_fourn);
+      exit ;
+    }
 }
 else
 {
-  if (is_readable($file))
+  dolibarr_syslog("Erreur recherche fournisseur");
+  exit ;
+}
+
+/*
+ * Vérifie que le fichier n'a pas déjà été chargé
+ *
+ */
+
+$sql = "SELECT count(*)";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
+$sql .= " WHERE fichier = '".$file."'";
+
+if ($db->query($sql))
+{  
+  $num = $db->num_rows();
+
+  if ($num == 1)
     {
+      $row = $db->fetch_row();
+      if ($row[0] > 0)
+	{
+	  dolibarr_syslog ("Fichier ".$file." déjà chargé dans import-log");
 
-      dolibarr_syslog("Lecture du fichier $file");
+	  exit ;
+	}
+    }
+  else
+    {
+      dolibarr_syslog("Erreur vérif du fichier");
+      exit ;
+    }
+}
+else
+{
+  dolibarr_syslog("Erreur SQL vérification du fichier");
+  exit ;
+}
 
-      $error = 0;
-      $line = 0;
-      $hf = fopen ($file, "r");
-      $line = 0;
+/*
+ * Vérifie que le fichier n'a pas déjà été traité
+ *
+ */
+
+$sql = "SELECT count(*)";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+$sql .= " WHERE fichier = '".$file."'";
+
+if ($db->query($sql))
+{  
+  $num = $db->num_rows();
+
+  if ($num == 1)
+    {
+      $row = $db->fetch_row();
+      if ($row[0] > 0)
+	{
+	  dolibarr_syslog ("Fichier ".$file." déjà traité");
+	  exit ;
+	}
+    }
+  else
+    {
+      dolibarr_syslog("Erreur vérif du fichier dans les comm");
+      exit ;
+    }
+}
+else
+{
+  dolibarr_syslog("Erreur SQL vérification du fichier dans les comm");
+  exit ;
+}
+
+
+/*
+ * Traitement
+ *
+ */
+
+if (is_readable($file))
+{
   
-      if ($db->query("BEGIN"))
-	{  
-	  while (!feof($hf) && $error == 0)
+  dolibarr_syslog("Lecture du fichier $file");
+  
+  $error = 0;
+  $line = 0;
+  $hf = fopen ($file, "r");
+  $line = 0;
+  
+  if ($db->query("BEGIN"))
+    {  
+      while (!feof($hf) && $error == 0)
+	{
+	  $cont = fgets($hf, 1024);
+	  
+	  $tabline = explode(";", $cont);
+	  
+	  if (sizeof($tabline) == 11)
 	    {
-	      $cont = fgets($hf, 1024);
-	  
-	      $tabline = explode(";", $cont);
-	  
-	      if (sizeof($tabline) == 11)
+	      $index             = $tabline[0];
+	      $ligne             = $tabline[1];
+	      $date              = $tabline[2];
+	      $heure             = $tabline[3];
+	      $numero            = $tabline[4];
+	      $tarif             = $tabline[5];
+	      $duree_text        = $tabline[6];
+	      $tarif_fourn       = $tabline[7];
+	      $montant           = $tabline[8];
+	      $duree_secondes    = ereg_replace('"','',$tabline[9]);
+	      
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_import_cdr";
+	      
+	      $sql .= "(idx,ligne,date,heure,num,dest,dureetext,tarif,montant,duree";
+	      $sql .= ", fichier, fk_fournisseur)";
+	      
+	      $sql .= " VALUES (";
+	      $sql .= "$index";
+	      $sql .= ",'".ereg_replace('"','',$ligne)."'";
+	      $sql .= ",'".ereg_replace('"','',$date)."'";
+	      $sql .= ",'".ereg_replace('"','',$heure)."'";
+	      $sql .= ",'".ereg_replace('"','',$numero)."'";
+	      $sql .= ",'".addslashes(ereg_replace('"','',$tarif))."'";
+	      $sql .= ",'".ereg_replace('"','',$duree_text)."'";
+	      $sql .= ",'".ereg_replace('"','',$tarif_fourn)."'";
+	      $sql .= ",".ereg_replace(',','.',$montant);
+	      $sql .= ",".$duree_secondes;
+	      $sql .= ",'".ereg_replace('"','',$file)."'";
+	      $sql .= " ,".$id_fourn;
+	      $sql .= ")";
+	      
+	      if(ereg("^[0-9]+$", $duree_secondes))
 		{
-		  $index             = $tabline[0];
-		  $ligne             = $tabline[1];
-		  $date              = $tabline[2];
-		  $heure             = $tabline[3];
-		  $numero            = $tabline[4];
-		  $tarif             = $tabline[5];
-		  $duree_text        = $tabline[6];
-		  $tarif_fourn       = $tabline[7];
-		  $montant           = $tabline[8];
-		  $duree_secondes    = ereg_replace('"','',$tabline[9]);
-	      
-		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_import_cdr";
-	      
-		  $sql .= "(idx,ligne,date,heure,num,dest,dureetext,tarif,montant,duree, fichier)";
-	      
-		  $sql .= " VALUES (";
-		  $sql .= "$index";
-		  $sql .= ",'".ereg_replace('"','',$ligne)."'";
-		  $sql .= ",'".ereg_replace('"','',$date)."'";
-		  $sql .= ",'".ereg_replace('"','',$heure)."'";
-		  $sql .= ",'".ereg_replace('"','',$numero)."'";
-		  $sql .= ",'".addslashes(ereg_replace('"','',$tarif))."'";
-		  $sql .= ",'".ereg_replace('"','',$duree_text)."'";
-		  $sql .= ",'".ereg_replace('"','',$tarif_fourn)."'";
-		  $sql .= ",".ereg_replace(',','.',$montant);
-		  $sql .= ",".$duree_secondes;
-		  $sql .= ",'".ereg_replace('"','',$file)."'";
-		  $sql .= ")";
-	      
-		  if(ereg("^[0-9]+$", $duree_secondes))
+		  if (! $db->query($sql))
 		    {
-		      if (! $db->query($sql))
-			{
-			  dolibarr_syslog("Erreur de traitement de ligne $index");
-			  dolibarr_syslog($db->error());
-			  dolibarr_syslog($sql);
-			  $error++;
-			}
-		    }
-		  else
-		    {
-		      print "Ligne : $cont ignorée\n";
+		      dolibarr_syslog("Erreur de traitement de ligne $index");
+		      dolibarr_syslog($db->error());
+		      dolibarr_syslog($sql);
+		      $error++;
 		    }
 		}
 	      else
 		{
-		  dolibarr_syslog("Mauvais format de fichier ligne $line");
+		  print "Ligne : $cont ignorée\n";
 		}
-	  
-	      $line++;
-	    }
-      
-	  dolibarr_syslog(($line -1 )." lignes traitées");
-      
-	  if ($error == 0)
-	    {	  
-	      $db->query("COMMIT");
-	      dolibarr_syslog("COMMIT");
 	    }
 	  else
 	    {
-	      $db->query("ROLLBACK");
-	      dolibarr_syslog("ROLLBACK");
+	      dolibarr_syslog("Mauvais format de fichier ligne $line");
 	    }
-      
+	  
+	  $line++;
 	}
+      
+      dolibarr_syslog(($line -1 )." lignes traitées");
+      
+      if ($error == 0)
+	{	  
+	  $db->query("COMMIT");
+	  dolibarr_syslog("COMMIT");
+	}
+      else
+	{
+	  $db->query("ROLLBACK");
+	  dolibarr_syslog("ROLLBACK");
+	}
+      
+    }
   
-      fclose($hf);
-    }
-  else
-    {
-      print "Erreur lecture : $file";
-      dolibarr_syslog($file . " not readable");
-    }
+  fclose($hf);
 }
+else
+{
+  print "Erreur lecture : $file";
+  dolibarr_syslog($file . " not readable");
+}
+
 
 return $error;
