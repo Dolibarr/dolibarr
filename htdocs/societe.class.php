@@ -450,11 +450,11 @@ class Societe {
 	    $this->tva_intra_code = substr($obj->tva_intra,0,2);
 	    $this->tva_intra_num  = substr($obj->tva_intra,2);
 
-	    $this->effectif       = $obj->effectif;
 	    $this->effectif_id    = $obj->effectif_id;
+	    $this->effectif       = $obj->effectif_id?$obj->effectif:'';
 
 	    $this->forme_juridique_code= $obj->forme_juridique_code;
-	    $this->forme_juridique     = $obj->forme_juridique;
+	    $this->forme_juridique     = $obj->forme_juridique_code?$obj->forme_juridique:'';
 
 	    $this->prefix_comm = $obj->prefix_comm;
 
