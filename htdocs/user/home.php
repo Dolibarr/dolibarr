@@ -95,8 +95,7 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"".DOL_URL_ROOT."/user/group/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowGroup"),"group")."</a>&nbsp;";
-	  print "<a href=\"".DOL_URL_ROOT."/user/group/fiche.php?id=$obj->rowid\">$obj->nom</a></td>";
+	  print "<td><a href=\"".DOL_URL_ROOT."/user/group/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowGroup"),"group")." ".$obj->nom."</a></td>";
 	  print "<td width=\"120\" align=\"center\">".dolibarr_print_date($obj->datec,"%d %b %Y")."</td>";
       print '</tr>';
 	  $i++;
@@ -135,8 +134,7 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowUser"),"user")."</a>&nbsp;";
-	  print "<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">$obj->firstname $obj->name</a></td>";
+	  print "<td><a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowUser"),"user")." ".$obj->firstname." ".$obj->name."</a></td>";
 	  print "<td width=\"120\" align=\"center\">".strftime("%d %b %Y",$obj->datec)."</td>";
       print '</tr>';
 	  $i++;
