@@ -157,6 +157,11 @@ if ($_GET["id"])
       if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
 	  $h=0;
+
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/fiche.php?id=".$soc->id;
+	  $head[$h][1] = $langs->trans("Contrats");
+	  $h++;
+
 	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/fiche.php?id=".$soc->id;
 	  $head[$h][1] = $langs->trans("Lignes");
 	  $h++;
