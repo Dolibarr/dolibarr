@@ -22,6 +22,14 @@
       </p>
     </sect1>
 
+    <sect1 id="commande-cloture">Clôturer une commande
+      <p>
+	Une fois qu'une commande a été entièrement expédiée, il faut
+	retourner sur sa fiche pour clôturer la commande.
+      </p>
+    </sect1>
+
+
     <sect1 id="commande-suppression">Supprimer une commande
       <p>
 	Pour supprimer une commande il vous faut ouvrir la fiche de
