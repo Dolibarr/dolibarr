@@ -25,7 +25,7 @@ function propale_get_num($objsoc=0)
 { 
   global $db;
 
-  $sql = "SELECT count(*) FROM llx_propale";
+  $sql = "SELECT count(*) FROM llx_propal";
 
   if ( $db->query($sql) ) 
     {
