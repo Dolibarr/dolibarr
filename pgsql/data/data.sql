@@ -258,7 +258,6 @@ insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_s
 insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (101,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Reprises sur provisions','787');
 insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (102,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Transferts de charges','79');
 
-
 --
 -- Types action comm
 --
@@ -288,7 +287,6 @@ insert into llx_c_chargesociales (id,libelle,deductible) values ( 1, 'Allocation
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 2, 'GSG Deductible',1);
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 3, 'GSG/CRDS NON Deductible',0);
 
-
 --
 -- Civilites
 --
@@ -299,12 +297,10 @@ insert into llx_c_civilite (rowid, code, civilite, active) values (3 , 'MR',   '
 insert into llx_c_civilite (rowid, code, civilite, active) values (5 , 'MLE',  'Mademoiselle', 1);
 insert into llx_c_civilite (rowid, code, civilite, active) values (7 , 'MTRE', 'Maître', 1);
 
-
 --
 -- Departements/Cantons/Provinces
 --
 
-delete from llx_c_departements;
 insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,'0','0',0,'-','-');
 -- Departements de France
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',5,'AIN','Ain');
@@ -411,7 +407,6 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 --
 -- Provinces de Belgique - en Francais
 --
-
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANVERS','Anvers');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (203,'02','',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'03','',2,'BRABANT-WALLON','Brabant-Wallon');
@@ -436,7 +431,6 @@ insert into llx_c_effectif (id,code,libelle) values (3, 'EF11-50',   '11 - 50');
 insert into llx_c_effectif (id,code,libelle) values (4, 'EF51-100',  '51 - 100');
 insert into llx_c_effectif (id,code,libelle) values (5, 'EF100-500', '100 - 500');
 insert into llx_c_effectif (id,code,libelle) values (6, 'EF500-',    '> 500');
-
 
 --
 -- Formes juridiques
@@ -596,7 +590,6 @@ insert into llx_c_typent (id,code,libelle) values (100, 'TE_OTHER',   'Autres');
 -- Regions
 --
 
-delete from llx_c_regions;
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
 -- Regions de France
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (101,1,  1,'97105',3,'Guadeloupe');
