@@ -21,7 +21,8 @@
  *
  */
 
-/**	        \file       htdocs/fourn/commande/fiche.php
+/**
+	        \file       htdocs/fourn/commande/fiche.php
 	        \ingroup    commande
 	        \brief      Fiche commande
 	        \version    $Revision$
@@ -506,14 +507,6 @@ if ($id > 0)
 	{
 	  print '<div class="tabsAction">';
 	
-	  if ($commande->statut == 0) 
-	    {
-	      if ($user->rights->fournisseur->commande->creer)
-		{
-		  print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-		}
-	    }
-	    
 	  if ($commande->statut == 0 && $num_lignes > 0) 
 	    {
 	      if ($user->rights->fournisseur->commande->valider)
@@ -540,6 +533,14 @@ if ($id > 0)
 		}
 	    }
 
+	  if ($commande->statut == 0) 
+	    {
+	      if ($user->rights->fournisseur->commande->creer)
+		{
+		  print '<a class="butDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+		}
+	    }
+	    
 	  print "</div>";
 	}
       print "<p>\n";
@@ -579,7 +580,7 @@ if ($id > 0)
 	}
       else
 	{
-	  print $db->error();
+	  dolibarr_print_error($db);
 	}
       print "&nbsp;</td><td>";
 	
@@ -589,22 +590,22 @@ if ($id > 0)
       $sql = "SELECT f.rowid,f.facnumber,".$db->pdate("f.datef")." as df";
       $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."co_fa as cf";
       $sql .= " WHERE f.rowid = cf.fk_facture AND cf.fk_commande = ". $commande->id;
-	    
+
       $result = $db->query($sql);
-      if ($result && 0)
+      if ($result)
 	{
-	  $num = $db->num_rows();
+	  $num = $db->num_rows($result);
 	  if ($num)
 	    {
-	      print_titre("Factures");
+	      print_titre($langs->trans("Bills"));
 	      $i = 0; $total = 0;
 	      print '<table class="border" width="100%">';
-	      print "<tr $bc[$var]><td>Facture</td><td>".$langs->trans("Date")."</td></tr>\n";
+	      print "<tr $bc[$var]><td>".$langs->trans("Bills")."</td><td>".$langs->trans("Date")."</td></tr>\n";
 		
 	      $var=True;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object();
+		  $objp = $db->fetch_object($result);
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
 		  print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.stripslashes($objp->facnumber).'</a></td>';
@@ -631,7 +632,7 @@ if ($id > 0)
 	  
       if (file_exists($file))
 	{
-	  print_titre("Documents");
+	  print_titre($langs->trans("Documents"));
 	  print '<table width="100%" class="border">';
 	    
 	  print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
