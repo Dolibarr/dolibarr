@@ -45,23 +45,6 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des contacts fournisseurs",$page, $PHP_SELF);
-
-print "<DIV align=\"center\">";
-
-print "| <A href=\"$PHP_SELF?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
-for ($i = 65 ; $i < 91; $i++) {
-  print "<A href=\"$PHP_SELF?begin=" . chr($i) . "&stcomm=$stcomm\" class=\"T3\">";
-  
-  if ($begin == chr($i) ) {
-    print  "<b>-&gt;" . chr($i) . "&lt;-</b>" ; 
-  } else {
-    print  chr($i)  ; 
-  }
-  print "</A> | ";
-}
-print "</div>";
-
 
 /*
  *
@@ -69,8 +52,6 @@ print "</div>";
  *
  *
  */
-
-
 
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
 $sql .= " FROM llx_societe as s, llx_socpeople as p, c_stcomm as st";
@@ -99,7 +80,23 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 $result = $db->query($sql);
 if ($result) {
   $num = $db->num_rows();
-  $i = 0;
+  
+  print_barre_liste("Liste des contacts fournisseurs",$page, $PHP_SELF, "",$sortfield,$sortorder,"",$num);
+  
+  print "<DIV align=\"center\">";
+  
+  print "| <A href=\"$PHP_SELF?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
+  for ($i = 65 ; $i < 91; $i++) {
+    print "<A href=\"$PHP_SELF?begin=" . chr($i) . "&stcomm=$stcomm\" class=\"T3\">";
+    
+    if ($begin == chr($i) ) {
+      print  "<b>-&gt;" . chr($i) . "&lt;-</b>" ; 
+    } else {
+      print  chr($i)  ; 
+    }
+    print "</A> | ";
+  }
+  print "</div>";
   
   if ($sortorder == "DESC") {
     $sortorder="ASC";
@@ -108,14 +105,18 @@ if ($result) {
   }
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\">";
-  print "<TD>Nom</TD>";
-  print "<TD>Prénom</TD><td>";
+  print "<TD>";
+  print_liste_field_titre("Nom",$PHP_SELF,"lower(p.name)", $begin);
+  print "</td><td>";
+  print_liste_field_titre("Prénom",$PHP_SELF,"lower(p.firstname)", $begin);
+  print "</td><td>";
   print_liste_field_titre("Société",$PHP_SELF,"lower(s.nom)", $begin);
   print "</td><TD>email</TD>";
   print '<TD>Téléphone</TD>';
   print "</TR>\n";
   $var=True;
-  while ($i < $num) {
+  $i = 0;
+  while ($i < min($num,$limit)) {
     $obj = $db->fetch_object( $i);
     
     $var=!$var;
@@ -136,6 +137,8 @@ if ($result) {
   print "</TABLE>";
   $db->free();
 } else {
+  print_barre_liste("Liste des contacts $label",$page, $PHP_SELF);
+
   print $db->error();
 }
 
