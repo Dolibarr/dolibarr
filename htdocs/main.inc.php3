@@ -396,7 +396,7 @@ Function left_menu($menu)
 	  print '</form>';
 	}
 
-      if (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
+      if (defined("MAIN_MODULE_PRODUIT") && MAIN_MODULE_PRODUIT > 0)
 	{
 	  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">Produits</A>';
 	  print '<form action="'.DOL_URL_ROOT.'/product/">';
