@@ -136,7 +136,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 		{
 		  $obj = $db->fetch_object();
 		  $var=!$var;
-		  print '<tr '.$bc[$var].'><td width="25%">'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
+		  print '<tr '.$bc[$var].'><td width="25%" nowrap>'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
 		  $i++;
 		  $total += $obj->price;
 		}
