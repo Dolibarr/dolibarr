@@ -71,7 +71,8 @@ if ($action == 'addinpropal')
   $action = '';
 }
 
-if ($action == 'addinfacture')
+if ($HTTP_POST_VARS["action"] == 'addinfacture' && 
+    ( $user->rights->facture->modifier || $user->rights->facture->creer))
 {
   $product = new Product($db);
   $result = $product->fetch($id);
@@ -95,25 +96,36 @@ if ($HTTP_POST_VARS["action"] == 'update' &&
     ( $user->rights->produit->modifier || $user->rights->produit->creer))
 {
   $product = new Product($db);
-
-  $product->ref = $HTTP_POST_VARS["ref"];
-  $product->libelle = $HTTP_POST_VARS["libelle"];
-  $product->price = $HTTP_POST_VARS["price"];
-  $product->tva_tx = $HTTP_POST_VARS["tva_tx"];
-  $product->description = $HTTP_POST_VARS["desc"];
-  $product->envente = $HTTP_POST_VARS["statut"];
-  $product->duration_value = $HTTP_POST_VARS["duration_value"];
-  $product->duration_unit = $HTTP_POST_VARS["duration_unit"];
-
-  if (  $product->update($id, $user))
+  if ($product->fetch($id))
     {
-      $action = '';
-      $mesg = 'Fiche mise à jour';
-    }
-  else
-    {
-      $action = 'edit';
-      $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+      if ($product->check())
+	{
+
+	  $product->ref = $HTTP_POST_VARS["ref"];
+	  $product->libelle = $HTTP_POST_VARS["libelle"];
+	  $product->price = $HTTP_POST_VARS["price"];
+	  $product->tva_tx = $HTTP_POST_VARS["tva_tx"];
+	  $product->description = $HTTP_POST_VARS["desc"];
+	  $product->envente = $HTTP_POST_VARS["statut"];
+	  $product->duration_value = $HTTP_POST_VARS["duration_value"];
+	  $product->duration_unit = $HTTP_POST_VARS["duration_unit"];
+	  
+	  if (  $product->update($id, $user))
+	    {
+	      $action = '';
+	      $mesg = 'Fiche mise à jour';
+	    }
+	  else
+	    {
+	      $action = 'edit';
+	      $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+	    }
+	}
+      else
+	{
+	  $action = 'edit';
+	  $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+	}
     }
 }
 
