@@ -45,7 +45,8 @@ Class pdf_tourteau {
 	  
 	  if (! file_exists($dir))
 	    {
-	      if (! mkdir($dir, 755))
+	      umask(0);
+	      if (! mkdir($dir, 0755))
 		{
 		  print "Impossible de créer $dir !";
 		}

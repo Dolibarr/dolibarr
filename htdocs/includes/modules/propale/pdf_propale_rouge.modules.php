@@ -39,10 +39,10 @@ Class pdf_propale_rouge {
 	  if (defined("PROPALE_OUTPUTDIR"))
 	    {
 	      $dir = PROPALE_OUTPUTDIR . "/" . $propale->ref . "/" ;
-	      
+	      umask(0);
 	      if (! file_exists($dir))
 		{
-		  mkdir($dir, 755);
+		  mkdir($dir, 0755);
 		}
 	    }
 	  else
