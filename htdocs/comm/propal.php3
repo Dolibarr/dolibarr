@@ -92,175 +92,182 @@ if ($propalid) {
 
   $result = $db->query($sql);
 
-  if ( $result ) {
-    $obj = $db->fetch_object( 0 );
+  if ( $result )
+    {
+      $obj = $db->fetch_object( 0 );
     
-    if ($db->num_rows()) {
-            
-      $color1 = "#e0e0e0";
+      if ($db->num_rows()) 
+	{
 
-      print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
+	  $color1 = "#e0e0e0";
 
-      print '<tr><td>Société</td><td colspan="2"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-      print "<td valign=\"top\" width=\"50%\" rowspan=\"9\">Note :<br>". nl2br($obj->note)."</td></tr>";
+	  print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
-      print '<tr><td>Date</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td></tr>';
+	  print '<tr><td>Société</td><td colspan="2"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	  print "<td valign=\"top\" width=\"50%\" rowspan=\"9\">Note :<br>". nl2br($obj->note)."</td></tr>";
+	  
+	  print '<tr><td>Date</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td></tr>';
 
-      if ($obj->fk_projet) {
-	$projet = new Project();
-	$projet->fetch($db,$obj->fk_projet); 
-	print '<tr><td>Projet</td><td colspan="1">';
-	print '<a href="projet/fiche.php3?id='.$projet->id.'">';
-	print $projet->title.'</a></td></tr>';
-      }
-      print "<tr><td>Destinataire</td><td colspan=\"2\">$obj->firstname $obj->name &lt;$obj->email&gt;</td></tr>";
-      /*
-       *
-       */
+	  if ($obj->fk_projet) 
+	    {
+	      $projet = new Project($db);
+	      $projet->fetch($obj->fk_projet); 
+	      print '<tr><td>Projet</td><td colspan="1">';
+	      print '<a href="projet/fiche.php3?id='.$projet->id.'">';
+	      print $projet->title.'</a></td></tr>';
+	    }
+	  print "<tr><td>Destinataire</td><td colspan=\"2\">$obj->firstname $obj->name &lt;$obj->email&gt;</td></tr>";
+	  /*
+	   *
+	   */
 
-      print "<tr><td bgcolor=\"$color1\">Montant HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->price)." euros</td></tr>";
-      /*
-       *
-       */
-
-      print "<tr><td bgcolor=\"$color1\">Remise</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->remise)." euros</td></tr>";
-
-      /*
-       *
-       */
-
-      $totalht = $propal->price - $propal->remise ;
-
-      print "<tr><td bgcolor=\"$color1\">Total HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\"><b>".price($totalht)."</b> euros</td></tr>";
-      /*
-       *
-       */
-      print '<tr><td>Auteur</td><td colspan="2">';
-      $author = new User($db, $obj->fk_user_author);
-      $author->fetch('');
-      print $author->fullname.'</td></tr>';
-
-      /*
-       *
-       */
-      print "<tr bgcolor=\"#f0f0f0\"><td>Statut :</td><td colspan=2 align=center><b>$obj->lst</b></td>";
-
-      print '</tr>';
-
-
-      print "</table>";
-
-      if ($action == 'statut') {
-	print "<form action=\"$PHP_SELF?propalid=$propalid\" method=\"post\">";
-	print "<input type=\"hidden\" name=\"action\" value=\"setstatut\">";
-	print "<select name=\"statut\">";
-	print "<option value=\"2\">Signée";
-	print "<option value=\"3\">Non Signée";
-	print '</select>';
-	print '<br><textarea cols="60" rows="6" wrap="soft" name="note">';
-	print $obj->note . "\n----------\n";
-	print '</textarea><br><input type="submit" value="Valider">';
-	print "</form>";
-      }
+	  print "<tr><td bgcolor=\"$color1\">Montant HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->price)." euros</td></tr>";
+	  /*
+	   *
+	   */
+	  
+	  print "<tr><td bgcolor=\"$color1\">Remise</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->remise)." euros</td></tr>";
+	  
+	  /*
+	   *
+	   */
+	  
+	  $totalht = $propal->price - $propal->remise ;
+	  
+	  print "<tr><td bgcolor=\"$color1\">Total HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\"><b>".price($totalht)."</b> euros</td></tr>";
+	  /*
+	   *
+	   */
+	  print '<tr><td>Auteur</td><td colspan="2">';
+	  $author = new User($db, $obj->fk_user_author);
+	  $author->fetch('');
+	  print $author->fullname.'</td></tr>';
+      
+	  /*
+	   *
+	   */
+	  print "<tr bgcolor=\"#f0f0f0\"><td>Statut :</td><td colspan=2 align=center><b>$obj->lst</b></td>";
+	  
+	  print '</tr>';
 
 
-      print "<table width=\"100%\" cellspacing=2><tr><td valign=\"top\">";
-      /*
-       * Produits
-       */
-      $sql = "SELECT p.label as product, p.ref, pt.price, pt.qty";
-      $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
+	  print "</table>";
 
-      $result = $db->query($sql);
-      if ($result) {
-	$num = $db->num_rows();
-	$i = 0; $total = 0;
-	print "<p><b>Produits</b><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-	print "<TR class=\"liste_titre\">";
-	print "<td>Réf</td><td>Produit</td>";
-	print "<td align=\"right\">Prix</TD><td align=\"center\">Qté.</td>";
-	print "</TR>\n";
+	  if ($action == 'statut') 
+	    {
+	      print "<form action=\"$PHP_SELF?propalid=$propalid\" method=\"post\">";
+	      print "<input type=\"hidden\" name=\"action\" value=\"setstatut\">";
+	      print "<select name=\"statut\">";
+	      print "<option value=\"2\">Signée";
+	      print "<option value=\"3\">Non Signée";
+	      print '</select>';
+	      print '<br><textarea cols="60" rows="6" wrap="soft" name="note">';
+	      print $obj->note . "\n----------\n";
+	      print '</textarea><br><input type="submit" value="Valider">';
+	      print "</form>";
+	    }
 
-	$var=True;
-	while ($i < $num) {
-	  $objp = $db->fetch_object( $i);
-	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<TD>[$objp->ref]</TD>\n";
-	  print "<TD>$objp->product</TD>\n";
-	  print "<TD align=\"right\">".price($objp->price)."</TD><td align=\"center\">".$objp->qty."</td>\n";
-	  print "</tr>";
-	  $total = $total + $objp->price;
-	  $i++;
-	}
-	//print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b></td><td>Euros HT</td></tr>\n";
-	print "</table>";
-      }
-      /*
-       *
-       */
-      print "</td></tr>";
-      print "</table>";
-      /*
-       * Actions
-       */
-      print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
-  
-      if ($obj->statut == 0) {
-	print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=delete\">Supprimer</a>]</td>";
-      } else {
-	if ($obj->statut == 1) {
-	  print "<td bgcolor=\"#e0e0e0\" align=center>[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Cloturer</a>]</td>";
-	} else {
+
+	  print "<table width=\"100%\" cellspacing=2><tr><td valign=\"top\">";
+	  /*
+	   * Produits
+	   */
+	  $sql = "SELECT p.label as product, p.ref, pt.price, pt.qty";
+	  $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
+	  
+	  $result = $db->query($sql);
+	  if ($result) 
+	    {
+	      $num = $db->num_rows();
+	      $i = 0; $total = 0;
+	      print "<p><b>Produits</b><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+	      print "<TR class=\"liste_titre\">";
+	      print "<td>Réf</td><td>Produit</td>";
+	      print "<td align=\"right\">Prix</TD><td align=\"center\">Qté.</td>";
+	      print "</TR>\n";
+	      
+	      $var=True;
+
+	      while ($i < $num) 
+		{
+		  $objp = $db->fetch_object( $i);
+		  $var=!$var;
+		  print "<TR $bc[$var]>";
+		  print "<TD>[$objp->ref]</TD>\n";
+		  print "<TD>$objp->product</TD>\n";
+		  print "<TD align=\"right\">".price($objp->price)."</TD><td align=\"center\">".$objp->qty."</td>\n";
+		  print "</tr>";
+		  $total = $total + $objp->price;
+		  $i++;
+		}
+	      //print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b></td><td>Euros HT</td></tr>\n";
+	      print "</table>";
+	    }
+	  /*
+	   *
+	   */
+	  print "</td></tr>";
+	  print "</table>";
+	  /*
+	   * Actions
+	   */
+	  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+	  
+	  if ($obj->statut == 0) {
+	    print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=delete\">Supprimer</a>]</td>";
+	  } else {
+	    if ($obj->statut == 1) {
+	      print "<td bgcolor=\"#e0e0e0\" align=center>[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Cloturer</a>]</td>";
+	    } else {
+	      print "<td align=\"center\" width=\"25%\">-</td>";
+	    }
+	  } 
+	  
 	  print "<td align=\"center\" width=\"25%\">-</td>";
-	}
-      } 
-
-      print "<td align=\"center\" width=\"25%\">-</td>";
-
-      if ($obj->statut == 1) {
-	$file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
-	if (file_exists($file)) {
-	  print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">";
-	  print "[<a href=\"$PHP_SELF?propalid=$propalid&action=presend\">Envoyer la propale par mail</a>]</td>";
-	} else {
-	  print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">! Propale non generee !</td>";
-	}
-      } else {
-	print "<td align=\"center\" width=\"25%\">-</td>";
-      }
-      if ($obj->statut == 0) {
-	print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
-      } else {
-	print "<td align=\"center\" width=\"25%\">-</td>";
-      }
-      print "</tr></table>";
-      /*
-       *
-       */
-
-      /*
-       * Send
-       *
-       */
-      if ($action == 'send') {
-	$file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/propal/$obj->ref/$obj->ref.pdf";
-	if (file_exists($file)) {
-
-	  $subject = "Notre proposition commerciale $obj->ref";
-	  $message = "Veuillez trouver ci-joint notre proposition commerciale $obj->ref\n\nCordialement\n\n";
-	  $filepath = $file ;
-	  $filename = "$obj->ref.pdf";
-	  $mimetype = "application/pdf";
-
-	  $replyto = "$replytoname <$replytomail>";
-
-	  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype, $filename);
-
-	  if ( $mailfile->sendfile() ) {
-
-	    print "<p>envoy&eacute; &agrave; $sendto";
-	    print "<p>envoy&eacute; par ".htmlentities($replyto);
+	  
+	  if ($obj->statut == 1) {
+	    $file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
+	    if (file_exists($file)) {
+	      print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">";
+	      print "[<a href=\"$PHP_SELF?propalid=$propalid&action=presend\">Envoyer la propale par mail</a>]</td>";
+	    } else {
+	      print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">! Propale non generee !</td>";
+	    }
+	  } else {
+	    print "<td align=\"center\" width=\"25%\">-</td>";
+	  }
+	  if ($obj->statut == 0) {
+	    print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
+	  } else {
+	    print "<td align=\"center\" width=\"25%\">-</td>";
+	  }
+	  print "</tr></table>";
+	  /*
+	   *
+	   */
+	  
+	  /*
+	   * Send
+	   *
+	   */
+	  if ($action == 'send') {
+	    $file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/propal/$obj->ref/$obj->ref.pdf";
+	    if (file_exists($file)) {
+	      
+	      $subject = "Notre proposition commerciale $obj->ref";
+	      $message = "Veuillez trouver ci-joint notre proposition commerciale $obj->ref\n\nCordialement\n\n";
+	      $filepath = $file ;
+	      $filename = "$obj->ref.pdf";
+	      $mimetype = "application/pdf";
+	      
+	      $replyto = "$replytoname <$replytomail>";
+	      
+	      $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype, $filename);
+	      
+	      if ( $mailfile->sendfile() ) {
+		
+		print "<p>envoy&eacute; &agrave; $sendto";
+		print "<p>envoy&eacute; par ".htmlentities($replyto);
 	  } else {
 	    print "<b>!! erreur d'envoi";
 	  }

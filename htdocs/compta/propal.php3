@@ -122,13 +122,14 @@ if ($propalid) {
 
       print '<tr><td>'.translate("Date").'</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td></tr>';
 
-      if ($obj->fk_projet) {
-	$projet = new Project();
-	$projet->fetch($db,$obj->fk_projet); 
-	print '<tr><td>Projet</td><td colspan="1">';
-	print '<a href="projet/fiche.php3?id='.$projet->id.'">';
-	print $projet->title.'</a></td></tr>';
-      }
+      if ($obj->fk_projet) 
+	{
+	  $projet = new Project($db);
+	  $projet->fetch($obj->fk_projet); 
+	  print '<tr><td>Projet</td><td colspan="1">';
+	  print '<a href="projet/fiche.php3?id='.$projet->id.'">';
+	  print $projet->title.'</a></td></tr>';
+	}
       print "<tr><td>Destinataire</td><td colspan=\"2\">$obj->firstname $obj->name &lt;$obj->email&gt;</td></tr>";
       /*
        *

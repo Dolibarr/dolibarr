@@ -77,130 +77,145 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if ($socid > 0) {
+if ($socid > 0) 
+{
 
   $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.cp,s.ville, s.note FROM societe as s, c_stcomm as st ";
   $sql .= " WHERE s.fk_stcomm=st.id";
 
-  if ($to == 'next') {
-    $sql .= " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
-  } else {
-    $sql .= " AND s.idp = $socid";
-  }
+  if ($to == 'next') 
+    {
+      $sql .= " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
+    } 
+  else
+    {
+      $sql .= " AND s.idp = $socid";
+    }
 
   $result = $db->query($sql);
 
-  if ($result) {
-    $objsoc = $db->fetch_object( 0);
+  if ($result) 
+    {
+      $objsoc = $db->fetch_object( 0);
 
-    /*
-     *
-     *
-     */
-    print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
-    print "<tr><td><a href=\"fiche.php3?socid=$objsoc->idp\">$objsoc->nom</a></td>";
-    print "<td align=\"center\"><a href=\"socnote.php3?socid=$socid\">Notes</a></big></td>";
-
-    print "<td bgcolor=\"#e0E0E0\" align=\"center\">[<a href=\"people.php3?socid=$socid&action=addcontact\">Ajouter un contact</a>]</td>";
-    print '</td></tr></table>';
-
-
-
-    /*
-     *
-     */
-
+      /*
+       *
+       *
+       */
+      print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
+      print "<tr><td><a href=\"fiche.php3?socid=$objsoc->idp\">$objsoc->nom</a></td>";
+      print "<td align=\"center\"><a href=\"socnote.php3?socid=$socid\">Notes</a></big></td>";
+      
+      print "<td align=\"center\">[<a href=\"people.php3?socid=$socid&action=addcontact\">Ajouter un contact</a>]</td>";
+      print '</td></tr></table>';
+      
     
-    print "<table border=0 width=\"100%\" cellspacing=0 bgcolor=#e0e0e0>";
-    print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
-    print "</table>";
+      /*
+       *
+       */
 
-    $bc1="bgcolor=\"#c0f0c0\"";
-    $bc3="bgcolor=\"#90c090\"";
-    $bc2="bgcolor=\"#b0e0b0\"";    
-  } else {
-    print $db->error();
-  }
+      if ($objsoc->note)
+	{
+	  print "<table border=0 width=\"100%\" cellspacing=0 bgcolor=#e0e0e0>";
+	  print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
+	  print "</table>";
+	}
 
+    }
+  else
+    {
+      print $db->error();
+    }
+  
   print "<P><table width=\"100%\" cellspacing=0 border=1 cellpadding=2>";
   
   print "<tr><td><b>Prénom Nom</b></td>";
   print "<td><b>Poste</b></td><td><b>Tel</b></td>";
   print "<td><b>Fax</b></td><td><b>Email</b></td>";
-
+  
   $sql = "SELECT p.name, p.firstname, p.poste, p.phone, p.fax, p.email ";
   $sql .= " FROM socpeople as p WHERE p.fk_soc = $objsoc->idp";
+  
+  if ($contactid) 
+    {
+      $sql .= " AND p.idp = $contactid";
+    }
 
-  if ($contactid) {
-    $sql .= " AND p.idp = $contactid";
-  }
   $sql .= "   ORDER by p.datec";
   $result = $db->query($sql);
   $i = 0 ; $num = $db->num_rows(); $tag = True;
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
-    if ($tag) {
-      print "<tr bgcolor=\"e0e0e0\">";
-    } else {
-      print "<tr>";
+  while ($i < $num) 
+    {
+      $obj = $db->fetch_object( $i);
+      if ($tag) 
+	{
+	  print "<tr bgcolor=\"e0e0e0\">";
+	}
+      else
+	{
+	  print "<tr>";
+	}
+      print "<td>$obj->firstname $obj->name</td>";
+      print "<td>$obj->poste&nbsp;</td>";
+      print "<td>$obj->phone&nbsp;</td>";
+      print "<td>$obj->fax&nbsp;</td>";
+      print "<td><a href=\"mailto:$obj->email\">$obj->email</a>&nbsp;</td>";
+      print "</tr>\n";
+      $i++;
+      $tag = !$tag;
     }
-    print "<td>$obj->firstname $obj->name</td>";
-    print "<td>$obj->poste&nbsp;</td>";
-    print "<td>$obj->phone&nbsp;</td>";
-    print "<td>$obj->fax&nbsp;</td>";
-    print "<td><a href=\"mailto:$obj->email\">$obj->email</a>&nbsp;</td>";
-    print "</tr>\n";
-    $i++;
-    $tag = !$tag;
-  }
   print "</table>";
-
-
-  if ($action == 'addcontact') {
-    print "<form method=\"post\" action=\"people.php3?socid=$socid\">";
-    print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-    print "<table border=0>";
-    print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\"></td>";
-    print "<td>Prenom</td><td><input name=\"firstname\" type=\"text\" size=\"15\" maxlength=\"80\"></td></tr>";
-    print "<tr><td>Poste</td><td colspan=\"3\"><input name=\"poste\" type=\"text\" size=\"50\" maxlength=\"80\"></td></tr>";
-    print "<tr><td>Tel</td><td><input name=\"phone\" type=\"text\" size=\"18\" maxlength=\"80\"></td>";
-    print "<td>Fax</td><td><input name=\"fax\" type=\"text\" size=\"18\" maxlength=\"80\"></td></tr>";
-    print "<tr><td>Email</td><td colspan=\"3\"><input name=\"email\" type=\"text\" size=\"50\" maxlength=\"80\"></td></tr>";
-    print "</table>";
-    print "<input type=\"submit\" value=\"Ajouter\">";
-    print "</form>";
-  }
+  
+  
+  if ($action == 'addcontact') 
+    {
+      print "<form method=\"post\" action=\"people.php3?socid=$socid\">";
+      print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+      print "<table border=0>";
+      print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\"></td>";
+      print "<td>Prenom</td><td><input name=\"firstname\" type=\"text\" size=\"15\" maxlength=\"80\"></td></tr>";
+      print "<tr><td>Poste</td><td colspan=\"3\"><input name=\"poste\" type=\"text\" size=\"50\" maxlength=\"80\"></td></tr>";
+      print "<tr><td>Tel</td><td><input name=\"phone\" type=\"text\" size=\"18\" maxlength=\"80\"></td>";
+      print "<td>Fax</td><td><input name=\"fax\" type=\"text\" size=\"18\" maxlength=\"80\"></td></tr>";
+      print "<tr><td>Email</td><td colspan=\"3\"><input name=\"email\" type=\"text\" size=\"50\" maxlength=\"80\"></td></tr>";
+      print "</table>";
+      print "<input type=\"submit\" value=\"Ajouter\">";
+      print "</form>";
+    }
   /*
    *
    * Edition du contact
    *
    */
-  if ($action == 'editcontact') {
-    $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
-    $sql .= " FROM socpeople as p WHERE p.idp = $contactid";
-    $result = $db->query($sql);
-    $num = $db->num_rows();
-    if ( $num >0 ) {
-      $obj = $db->fetch_object( 0);
+  if ($action == 'editcontact') 
+    {
+      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
+      $sql .= " FROM socpeople as p WHERE p.idp = $contactid";
+      $result = $db->query($sql);
+      $num = $db->num_rows();
+
+      if ( $num >0 ) 
+	{
+	  $obj = $db->fetch_object( 0);
+	}
+  
+      print "<form method=\"post\" action=\"people.php3?socid=$socid\">";
+      print '<input type="hidden" name="action" value="update">';
+      print "<input type=\"hidden\" name=\"contactid\" value=\"$contactid\">";
+      print "<table border=0>";
+      print "<tr><td>Numéro</td><td>$obj->idp</td>";
+      print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\" value=\"$obj->name\"></td>";
+      print "<td>Prenom</td><td><input name=\"firstname\" type=\"text\" size=\"15\" maxlength=\"80\" value=\"$obj->firstname\"></td></tr>";
+      print "<tr><td>Poste</td><td colspan=\"3\"><input name=\"poste\" type=\"text\" size=\"50\" maxlength=\"80\" value=\"$obj->poste\"></td></tr>";
+      print "<tr><td>Tel</td><td><input name=\"phone\" type=\"text\" size=\"18\" maxlength=\"80\" value=\"$obj->phone\"></td>";
+      print "<td>Fax</td><td><input name=\"fax\" type=\"text\" size=\"18\" maxlength=\"80\" value=\"$obj->fax\"></td></tr>";
+      print "<tr><td>Email</td><td colspan=\"3\"><input name=\"email\" type=\"text\" size=\"50\" maxlength=\"80\" value=\"$obj->email\"></td></tr>";
+      print '<tr><td valign="top">Note</td><td colspan="3"><textarea wrap="soft" cols="40" rows="10" name="note">'.$obj->note.'</textarea></td></tr>';
+      print "</table>";
+      print "<input type=\"submit\" value=\"Modifier\">";
+      print "</form>";
     }
   
-    print "<form method=\"post\" action=\"people.php3?socid=$socid\">";
-    print '<input type="hidden" name="action" value="update">';
-    print "<input type=\"hidden\" name=\"contactid\" value=\"$contactid\">";
-    print "<table border=0>";
-    print "<tr><td>Numéro</td><td>$obj->idp</td>";
-    print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\" value=\"$obj->name\"></td>";
-    print "<td>Prenom</td><td><input name=\"firstname\" type=\"text\" size=\"15\" maxlength=\"80\" value=\"$obj->firstname\"></td></tr>";
-    print "<tr><td>Poste</td><td colspan=\"3\"><input name=\"poste\" type=\"text\" size=\"50\" maxlength=\"80\" value=\"$obj->poste\"></td></tr>";
-    print "<tr><td>Tel</td><td><input name=\"phone\" type=\"text\" size=\"18\" maxlength=\"80\" value=\"$obj->phone\"></td>";
-    print "<td>Fax</td><td><input name=\"fax\" type=\"text\" size=\"18\" maxlength=\"80\" value=\"$obj->fax\"></td></tr>";
-    print "<tr><td>Email</td><td colspan=\"3\"><input name=\"email\" type=\"text\" size=\"50\" maxlength=\"80\" value=\"$obj->email\"></td></tr>";
-    print '<tr><td valign="top">Note</td><td colspan="3"><textarea wrap="soft" cols="40" rows="10" name="note">'.$obj->note.'</textarea></td></tr>';
-    print "</table>";
-    print "<input type=\"submit\" value=\"Modifier\">";
-    print "</form>";
-  }
-
   /*
    *
    *
@@ -216,39 +231,49 @@ if ($socid > 0) {
   $sql .= " AND u.rowid = a.fk_user_author";
   $sql .= " AND c.id=a.fk_action ";
 
-  if ($contactid) {
-    $sql .= " AND fk_contact = $contactid";
-  }
+  if ($contactid) 
+    {
+      $sql .= " AND fk_contact = $contactid";
+    }
   $sql .= " ORDER BY a.datea DESC, a.id DESC";
 
-  if ( $db->query($sql) ) {
-    $i = 0 ; $num = $db->num_rows(); $tag = True;
-    while ($i < $num) {
-      $obj = $db->fetch_object( $i);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-
-      print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
-      if ($obj->propalrowid) {
-	print "<td><a href=\"propal.php3?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
-      } else {
-	print "<td>$obj->libelle</td>";
-      }
-
-      print "<td>$obj->code&nbsp;</td>";
-      print "</tr>\n";
-      $i++;
-      $tag = !$tag;
+  if ( $db->query($sql) ) 
+    {
+      $i = 0 ; $num = $db->num_rows(); $tag = True;
+      while ($i < $num) 
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<tr $bc[$var]>";
+	  
+	  print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
+	  if ($obj->propalrowid) 
+	    {
+	      print "<td><a href=\"propal.php3?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
+	    } 
+	  else 
+	    {
+	      print "<td>$obj->libelle</td>";
+	    }
+	  
+	  print "<td>$obj->code&nbsp;</td>";
+	  print "</tr>\n";
+	  $i++;
+	  $tag = !$tag;
+	}
     }
-  } else {
-    print '<tr><td>' . $db->error() . '</td></tr>';
-  }
+  else 
+    {
+      print '<tr><td>' . $db->error() . '</td></tr>';
+    }
   print "</table>";
 
 
 
 
-} else {  
+} 
+else 
+{  
   print "Error";
 }
 $db->free();

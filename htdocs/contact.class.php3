@@ -20,7 +20,9 @@
  * 
  */
 
-class Contact {
+class Contact 
+{
+
   var $bs;
   var $db;
 
@@ -31,46 +33,71 @@ class Contact {
   var $code;
   var $email;
 
-  Function Contact($DB, $id=0) {
+  Function Contact($DB, $id=0) 
+    {
 
-    $this->db = $DB;
-    $this->id = $id;
-    
-    return 1;
-  }
+      $this->db = $DB;
+      $this->id = $id;
+      
+      return 1;
+    }
   /*
    *
    *
    *
    */
 
-  Function fetch($id) {
+  Function fetch($id) 
+    {
 
-    $sql = "SELECT c.idp, c.idp, c.name, c.firstname";
-    $sql .= " FROM socpeople as c";
-    $sql .= " WHERE c.idp = $id";
-  
-    $result = $this->db->query($sql);
+      $sql = "SELECT c.idp, c.idp, c.name, c.firstname";
+      $sql .= " FROM socpeople as c";
+      $sql .= " WHERE c.idp = $id";
+      
+      $result = $this->db->query($sql);
+      
+      if ($result) 
+	{
+	  if ($this->db->num_rows()) 
+	    {
+	      $obj = $this->db->fetch_object($result , 0);
 
-    if ($result) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object($result , 0);
+	      $this->id = $obj->idp;
+	      $this->nom = $obj->name;
+	      $this->prenom = $obj->firstname;
+	      
+	      $this->fullname = $this->prenom . ' ' . $this->nom;
+	      
+	      $this->code = $obj->code;
+	      $this->email = $obj->email;
+	    }
 
-	$this->id = $obj->idp;
-	$this->nom = $obj->name;
-	$this->prenom = $obj->firstname;
-
-	$this->fullname = $this->prenom . ' ' . $this->nom;
-
-	$this->code = $obj->code;
-	$this->email = $obj->email;
-      }
-      $this->db->free();
-
-    } else {
-      print $this->db->error();
+	  $this->db->free();
+	  
+	} 
+      else 
+	{
+	  print $this->db->error();
+	}
     }
-  }
+
+  Function update($id)
+    {
+
+      $this->email = trim($this->email);
+
+      $sql = "UPDATE socpeople set name='$this->name', firstname='$this->firstname', poste='$this->poste', phone='$this->phone',fax='$this->fax',email='$this->email', note='$this->note'";
+      $sql .= " WHERE idp=$id";
+
+      $result = $this->db->query($sql);
+
+      if (!$result) 
+	{
+	  print $this->db->error();
+	}
+      return $result;
+    }
+
 
 }
 

@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,6 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 require("./pre.inc.php3");
 
@@ -25,16 +25,17 @@ llxHeader();
 
 $db = new Db();
 
-
-
-function valeur($sql) {
+function valeur($sql) 
+{
   global $db;
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() ) {
-      $valeur = $db->result(0,0);
+  if ( $db->query($sql) ) 
+    {
+      if ( $db->num_rows() ) 
+	{
+	  $valeur = $db->result(0,0);
+	}
+      $db->free();
     }
-    $db->free();
-  }
   return $valeur;
 }
 /*
@@ -113,35 +114,40 @@ if ( $db->query($sql) ) {
   print '</table>';
 }
 /*
- * 
+ * Actions commerciales a faire
  *
  *
  */
 print '</td><td valign="top" width="70%">';
 
-$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.fk_user_author, a.fk_contact";
-$sql .= " FROM actioncomm as a, c_actioncomm as c";
-$sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND a.fk_user_action = $user->id";
+$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.fk_user_author, a.fk_contact, p.name, s.nom as sname";
+$sql .= " FROM actioncomm as a, c_actioncomm as c, socpeople as p, societe as s";
+$sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND a.fk_user_action = $user->id AND a.fk_contact = p.idp AND p.fk_soc = s.idp";
 $sql .= " ORDER BY a.datea DESC";
 
-if ( $db->query($sql) ) {
+if ( $db->query($sql) ) 
+{
 
   print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-  print "<TR class=\"liste_titre\">";
-  print "<td colspan=\"2\">Actions à faire</td>";
+  print '<TR class="liste_titre">';
+  print '<td colspan="4">Actions à faire</td>';
   print "</TR>\n";
 
   $i = 0;
-  while ($i < $db->num_rows() ) {
-    $obj = $db->fetch_object($i);
-    $var=!$var;
-    
-    print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td><td><a href=\"action/fiche.php3\">$obj->libelle $obj->label</a></td></tr>";
-    $i++;
-  }
+  while ($i < $db->num_rows() ) 
+    {
+      $obj = $db->fetch_object($i);
+      $var=!$var;
+      
+      print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td>";
+      print "<td><a href=\"action/fiche.php3?id=$obj->id\">$obj->libelle $obj->label</a></td><td>$obj->name</td><td>$obj->sname</td></tr>";
+      $i++;
+    }
   $db->free();
   print "</table><br>";
-} else {
+} 
+else
+{
   print $db->error();
 }
 
