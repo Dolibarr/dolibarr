@@ -151,7 +151,7 @@ else
   $conf->liste_limit=20;
 }
 
-if ($user->limite_liste <> $conf->liste_limit)
+if ($user->limite_liste > 0)
 {
   $conf->liste_limit = $user->limite_liste;
 }
