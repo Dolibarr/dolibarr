@@ -387,7 +387,7 @@ else
 	      $num = $db->num_rows();
 	      $i = 0; $total = 0;
 
-	      echo '<table border="1" width="100%" cellspacing="0" cellpadding="3">';
+	      echo '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	      print "<TR class=\"liste_titre\">";
 	      print "<td>Date</td>";
 	      print "<td>Type</td>";
@@ -459,42 +459,44 @@ else
   
       if ($obj->statut == 0 && $user->societe_id == 0)
 	{
-	  print '<td align="center" width="25%">[<a href="index.php?facid='.$facid.'&amp;action=delete">Supprimer</a>]</td>';
+	  print '<td align="center" width="20%">[<a href="index.php?facid='.$facid.'&amp;action=delete">Supprimer</a>]</td>';
 	}
       elseif ($obj->statut == 1 && $obj->paye == 0  && $user->societe_id == 0)
 	{
-	  print '<td align="center" width="25%">[<a href="paiement.php?facid='.$fac->id.'&amp;action=create">Emmettre un paiement</a>]</td>';
+	  print '<td align="center" width="20%">[<a href="paiement.php?facid='.$fac->id.'&amp;action=create">Emmettre un paiement</a>]</td>';
 	}
       else
 	{
-	  print '<td align="center" width="25%">-</td>';
+	  print '<td align="center" width="20%">-</td>';
 	} 
 
       if ($obj->statut == 0 && $user->societe_id == 0)    
 	{
-	  print '<td align="center" width="25%">[<a href="fiche.php?facid='.$obj->rowid.'&amp;action=edit">Editer</a>]</td>';
+	  print '<td align="center" width="20%">[<a href="fiche.php?facid='.$obj->rowid.'&amp;action=edit">Editer</a>]</td>';
 	}
       else
 	{
-	  print '<td align="center" width="25%">-</td>';
+	  print '<td align="center" width="20%">-</td>';
 	}
  
       if ($obj->statut == 1 && abs($resteapayer == 0) && $obj->paye == 0  && $user->societe_id == 0)
 	{
-	  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&amp;action=payed\">Classer 'Payée'</a>]</td>";
+	  print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&amp;action=payed\">Classer 'Payée'</a>]</td>";
 	}
       else
 	{
-	  print "<td align=\"center\" width=\"25%\">-</td>";
+	  print "<td align=\"center\" width=\"20%\">-</td>";
 	}
+
+      print "<td align=\"center\" width=\"20%\">-</td>";
 
       if ($obj->statut == 0  && $user->societe_id == 0)
 	{
-	  print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&amp;action=valid\">Valider</a>]</td>";
+	  print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&amp;action=valid\">Valider</a>]</td>";
 	}
       else
 	{
-	  print "<td align=\"center\" width=\"25%\">-</td>";
+	  print "<td align=\"center\" width=\"20%\">-</td>";
 	}
 
       print "</tr></table>";
