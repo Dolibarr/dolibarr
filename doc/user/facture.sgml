@@ -1,0 +1,33 @@
+<!-- $Id$ -->
+<!-- $Source$ -->
+<chapt id="facture">Facturation
+
+  <p>
+    Module de facturation.
+  </p>
+
+  <sect id="fac-creation">Créer une facture
+    <p>
+La création d'une facture se fait à partir de la fiche client dans la partie comptable. Le lien permettant cela se trouve en haut à gauche sur la fiche, sous la barre de menu générale.
+    </p>
+
+  </sect>
+ 
+</chapt>
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:nil
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:("dolibarr-user.sgml" "book" "chapt")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
