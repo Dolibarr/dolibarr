@@ -178,7 +178,7 @@ else
             print '<br>';
 
             $html = new Form($db);
-            $html->form_confirm("$PHP_SELF?id=$fuser->id","Supprimer cet utilisateur","Etes-vous sûr de vouloir supprimer cet utilisateur ?","confirm_delete");
+            $html->form_confirm("$PHP_SELF?id=$fuser->id","Désactiver cet utilisateur","Etes-vous sûr de vouloir désactiver cet utilisateur ?","confirm_delete");
         }
 
         if ($_GET["action"] == 'perms')
@@ -372,7 +372,7 @@ else
 
             if ($user->admin && $user->id <> $id)
             {
-                print '<a class="tabAction" href="fiche.php?action=delete&amp;id='.$fuser->id.'">Supprimer utilisateur</a>';
+                print '<a class="tabAction" href="fiche.php?action=delete&amp;id='.$fuser->id.'">Désactiver utilisateur</a>';
             }
 
             print "</div>\n";
