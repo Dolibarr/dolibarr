@@ -32,4 +32,4 @@ create table llx_commandedet
   remise         real default 0,    -- montant de la remise
   subprice       real,              -- prix avant remise
   price          real               -- prix final
-);
+)type=innodb;

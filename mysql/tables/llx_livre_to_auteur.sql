@@ -26,4 +26,4 @@ create table llx_livre_to_auteur
   fk_auteur      integer NOT NULL,
 
   unique index (fk_livre, fk_auteur)
-);
+)type=innodb;

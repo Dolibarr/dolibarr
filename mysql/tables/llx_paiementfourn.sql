@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -32,5 +32,5 @@ create table llx_paiementfourn
   fk_paiement       integer NOT NULL,  -- moyen de paiement
   num_paiement      varchar(50),       -- numéro de paiement (cheque)
   note              text,
-  fk_bank			integer NOT NULL
-);
+  fk_bank           integer NOT NULL
+)type=innodb;

@@ -25,5 +25,5 @@ create table llx_sqltables
   rowid    integer AUTO_INCREMENT PRIMARY KEY,
   name     varchar(255),
   loaded   tinyint(1)
-);
+)type=innodb;
 

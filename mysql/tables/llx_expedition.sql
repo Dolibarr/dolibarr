@@ -40,4 +40,4 @@ create table llx_expedition
   UNIQUE INDEX (ref),
   key(fk_expedition_methode),
   key(fk_commande)
-);
+)type=innodb;

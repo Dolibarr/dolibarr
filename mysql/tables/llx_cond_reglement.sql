@@ -29,4 +29,4 @@ create table llx_cond_reglement
   libelle_facture text,
   fdm             tinyint,    -- reglement fin de mois
   nbjour          smallint
-);
+)type=innodb;

@@ -29,4 +29,4 @@ create table llx_cotisation
   cotisation      real,
   fk_bank         int(11) default NULL,
   note            text
-);
+)type=innodb;

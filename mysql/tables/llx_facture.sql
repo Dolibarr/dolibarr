@@ -45,4 +45,4 @@ create table llx_facture
 
   UNIQUE INDEX (facnumber),
   INDEX fksoc (fk_soc)
-);
+)type=innodb;

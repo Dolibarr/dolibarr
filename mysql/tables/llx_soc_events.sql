@@ -28,4 +28,4 @@ create table llx_soc_events
   title         varchar(100) NOT NULL,
   url           varchar(255),
   description   text
-);
+)type=innodb;

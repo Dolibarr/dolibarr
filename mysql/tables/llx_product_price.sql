@@ -30,5 +30,5 @@ create table llx_product_price
   tva_tx          double default 19.6,
   fk_user_author  integer,
   envente         tinyint default 1
-);
+)type=innodb;
 

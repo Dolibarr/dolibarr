@@ -34,5 +34,5 @@ create table llx_todocomm
   fk_contact     integer,      -- id du contact sur laquelle l'action 
                                --    doit etre effectuee
   note           text
-);
+)type=innodb;
 

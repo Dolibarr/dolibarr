@@ -41,5 +41,5 @@ create table llx_newsletter
   fk_user_author     integer,
   fk_user_valid      integer,
   fk_user_modif      integer
-);
+)type=innodb;
 

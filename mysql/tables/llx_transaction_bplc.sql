@@ -33,4 +33,4 @@ create table llx_transaction_bplc
   code_retour       integer,
   ref_commande      integer
 
-);
+)type=innodb;

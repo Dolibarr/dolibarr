@@ -39,4 +39,4 @@ create table llx_socpeople
   jabberid       varchar(255),
   fk_user        integer default 0,
   note           text
-);
+)type=innodb;

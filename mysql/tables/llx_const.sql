@@ -34,4 +34,4 @@ create table llx_const
   note        text,
 
   UNIQUE INDEX(name)
-);
+)type=innodb;

@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -54,4 +54,4 @@ create table llx_adherent
   note             text,
  
   UNIQUE INDEX(login)
-);
+)type=innodb;

@@ -30,5 +30,5 @@ create table llx_concert
   fk_groupart      integer,
   fk_lieu_concert  integer,
   fk_user_author   integer
-);
+)type=innodb;
 

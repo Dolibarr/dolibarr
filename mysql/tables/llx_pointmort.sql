@@ -23,5 +23,5 @@ create table llx_pointmort
 (
   month        datetime,
   amount       real
-);
+)type=innodb;
 

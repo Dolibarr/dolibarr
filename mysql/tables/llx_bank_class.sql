@@ -24,4 +24,4 @@ create table llx_bank_class
   fk_categ integer not null,
 
   INDEX(lineid)
-);
+)type=innodb;

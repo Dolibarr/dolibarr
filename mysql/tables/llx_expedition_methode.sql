@@ -28,4 +28,4 @@ create table llx_expedition_methode
   libelle          varchar(50) NOT NULL,
   description      text,
   statut           tinyint default 0
-);
+)type=innodb;

@@ -34,5 +34,5 @@ create table llx_contrat
   fk_user_author  integer NOT NULL,
   fk_user_mise_en_service integer NOT NULL,
   fk_user_cloture integer NOT NULL
-);
+)type=innodb;
 

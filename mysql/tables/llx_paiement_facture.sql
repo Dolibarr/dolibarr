@@ -26,4 +26,4 @@ create table llx_paiement_facture
   fk_facture      integer,
   
   unique key (fk_paiement,fk_facture)
-);
+)type=innodb;

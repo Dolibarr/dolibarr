@@ -32,4 +32,4 @@ create table llx_voyage_reduc
   numero          varchar(255),
   fk_type         smallint,       -- Train, Avion, Bateaux
   note            text
-);
+)type=innodb;

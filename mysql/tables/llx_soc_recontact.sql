@@ -28,4 +28,4 @@ create table llx_soc_recontact
   fk_soc     integer,
   datere     datetime,
   author     varchar(15)
-);
+)type=innodb;

@@ -31,4 +31,4 @@ create table llx_ventes
   author	varchar(30),
   active        smallint DEFAULT 0 NOT NULL,
   note          varchar(255)
-);
+)type=innodb;

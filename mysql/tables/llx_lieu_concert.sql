@@ -28,5 +28,5 @@ create table llx_lieu_concert
   description      text,
   ville            varchar(64) NOT NULL,
   fk_user_author   integer
-);
+)type=innodb;
 

@@ -42,4 +42,4 @@ create table llx_don
   fk_user_author  integer NOT NULL,
   fk_user_valid   integer NOT NULL,
   note            text
-);
+)type=innodb;

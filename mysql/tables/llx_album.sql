@@ -31,5 +31,5 @@ create table llx_album
   description     text,
   collectif       tinyint,
   fk_user_author  integer
-);
+)type=innodb;
 

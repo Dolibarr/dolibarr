@@ -32,4 +32,4 @@ create table llx_deplacement
   km              smallint,
   fk_soc          integer,
   note            text
-);
+)type=innodb;

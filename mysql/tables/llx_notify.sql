@@ -29,4 +29,4 @@ create table llx_notify
   fk_contact      integer NOT NULL,
   objet_type      enum('ficheinter','facture','propale'),
   objet_id        integer NOT NULL
-);
+)type=innodb;

@@ -29,5 +29,5 @@ create table llx_appro
   quantity        smallint unsigned NOT NULL,
   price           real,
   fk_user_author  integer
-);
+)type=innodb;
 

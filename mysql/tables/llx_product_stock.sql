@@ -30,5 +30,5 @@ create table llx_product_stock
 
   key(fk_product),
   key(fk_entrepot)
-);
+)type=innodb;
 

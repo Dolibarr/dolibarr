@@ -27,4 +27,4 @@ create table llx_socstatutlog
   fk_soc      integer,
   fk_statut   integer,
   author      varchar(30)
-);
+)type=innodb;

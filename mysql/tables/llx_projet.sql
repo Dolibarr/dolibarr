@@ -35,4 +35,4 @@ create table llx_projet
 
   UNIQUE INDEX(ref)
 
-);
+)type=innodb;

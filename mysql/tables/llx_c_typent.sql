@@ -24,4 +24,4 @@ create table llx_c_typent
 (
   id        integer PRIMARY KEY,
   libelle   varchar(30)
-);
+)type=innodb;

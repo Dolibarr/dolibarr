@@ -30,4 +30,4 @@ create table llx_adherent_options
 --  teljob	   varchar(15)
 
   UNIQUE INDEX(adhid)
-);
+)type=innodb;

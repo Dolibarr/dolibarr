@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -31,5 +31,5 @@ create table llx_paiement
   fk_paiement     integer NOT NULL,
   num_paiement    varchar(50),
   note            text,
-  fk_bank		  integer NOT NULL
-);
+  fk_bank         integer NOT NULL
+)type=innodb;

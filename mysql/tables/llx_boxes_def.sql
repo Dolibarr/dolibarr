@@ -26,4 +26,4 @@ create table llx_boxes_def
   name        varchar(255) NOT NULL,
   file        varchar(255) NOT NULL,
   note        text
-);
+)type=innodb;

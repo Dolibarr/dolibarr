@@ -39,7 +39,7 @@ create table llx_product
   stock_commande     integer default 0,
   seuil_stock_alerte integer default 0
 
-);
+)type=innodb;
 
 
 

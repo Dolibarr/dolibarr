@@ -37,5 +37,5 @@ create table llx_livre
   frais_de_port   tinyint default 1,
 
   UNIQUE(ref)
-);
+)type=innodb;
 

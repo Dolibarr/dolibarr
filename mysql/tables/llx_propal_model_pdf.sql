@@ -27,4 +27,4 @@ create table llx_propal_model_pdf
   nom         varchar(50) PRIMARY KEY,
   libelle     varchar(255),
   description text
-);
+)type=innodb;

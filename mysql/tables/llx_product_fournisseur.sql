@@ -32,5 +32,5 @@ create table llx_product_fournisseur
 
   key(fk_product),
   key(fk_soc)
-);
+)type=innodb;
 

@@ -47,4 +47,4 @@ create table llx_commande
   model_pdf        varchar(50),
   facture          tinyint default 0,   
   UNIQUE INDEX (ref)
-);
+)type=innodb;

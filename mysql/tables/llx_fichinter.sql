@@ -36,4 +36,4 @@ create table llx_fichinter
   note            text,
 
   UNIQUE INDEX (ref)
-);
+)type=innodb;

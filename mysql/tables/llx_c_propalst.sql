@@ -24,5 +24,5 @@ create table llx_c_propalst
 (
   id              smallint PRIMARY KEY,
   label           varchar(30)
-);
+)type=innodb;
 

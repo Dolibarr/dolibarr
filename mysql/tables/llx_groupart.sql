@@ -29,5 +29,5 @@ create table llx_groupart
   groupart        enum("artiste","groupe") NOT NULL,
   description     text NOT NULL,
   fk_user_author  integer
-);
+)type=innodb;
 

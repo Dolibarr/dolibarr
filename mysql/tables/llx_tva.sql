@@ -29,4 +29,4 @@ create table llx_tva
   amount          real NOT NULL default 0,
   label           varchar(255),
   note            text
-);
+)type=innodb;

@@ -39,4 +39,4 @@ create table llx_bank
 
 
   author          varchar(40) -- a supprimer apres migration
-);
+)type=innodb;

@@ -25,4 +25,4 @@ create table llx_c_actioncomm
   id         integer PRIMARY KEY,
   libelle    varchar(30),
   todo       tinyint
-);
+)type=innodb;

@@ -40,4 +40,4 @@ create table llx_user
   note          text,
 
   UNIQUE INDEX(login)
-);
+)type=innodb;

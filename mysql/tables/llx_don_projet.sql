@@ -28,4 +28,4 @@ create table llx_don_projet
   libelle         varchar(255),
   fk_user_author  integer NOT NULL,
   note            text
-);
+)type=innodb;

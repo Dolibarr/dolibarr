@@ -26,4 +26,4 @@ create table llx_facture_tva_sum
   tva_tx        real  NOT NULL,
 
   KEY(fk_facture)
-);
+)type=innodb;

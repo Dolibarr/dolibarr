@@ -33,4 +33,4 @@ create table llx_compta
   valid             tinyint default 0,
   note              text
 
-);
+)type=innodb;

@@ -25,4 +25,4 @@ create table llx_birthday_alert
   rowid        integer AUTO_INCREMENT PRIMARY KEY,
   fk_contact   integer, -- pointe sur llx_socpeople
   fk_user      integer
-);
+)type=innodb;

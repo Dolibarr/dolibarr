@@ -24,4 +24,4 @@ create table llx_bookmark
   fk_soc      integer,
   fk_user     integer,
   dateb       datetime
-);
+)type=innodb;

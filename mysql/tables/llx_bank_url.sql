@@ -27,4 +27,4 @@ create table llx_bank_url
   url_id          integer,
   url             varchar(255),
   label           varchar(255)
-);
+)type=innodb;

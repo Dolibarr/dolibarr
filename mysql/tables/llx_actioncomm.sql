@@ -37,7 +37,7 @@ create table llx_actioncomm
   note           text,
   propalrowid    integer,
   fk_facture     integer
-);
+)type=innodb;
 
 
 

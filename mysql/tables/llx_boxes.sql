@@ -30,4 +30,4 @@ create table llx_boxes
   box_id      integer NOT NULL,
   position    smallint NOT NULL
 
-);
+)type=innodb;

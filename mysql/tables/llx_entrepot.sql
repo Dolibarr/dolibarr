@@ -29,5 +29,5 @@ create table llx_entrepot
   description     text,
   statut          tinyint default 1, -- 1 ouvert, 0 fermé
   fk_user_author  integer
-);
+)type=innodb;
 

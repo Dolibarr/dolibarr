@@ -29,4 +29,4 @@ create table llx_compta_account
   fk_user_author    integer,
   note              text
 
-);
+)type=innodb;

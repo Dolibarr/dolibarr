@@ -27,5 +27,5 @@ create table llx_editeur
   tms             timestamp,
   nom		  varchar(255),
   fk_user_author  integer
-);
+)type=innodb;
 

@@ -54,5 +54,5 @@ create table llx_societe
   fournisseur    smallint       default 0,            -- fournisseur oui/non
 
   UNIQUE INDEX(prefix_comm)
-);
+)type=innodb;
 

@@ -24,5 +24,5 @@ create table llx_c_effectif
 (
   id      integer PRIMARY KEY,
   libelle varchar(30)
-);
+)type=innodb;
 

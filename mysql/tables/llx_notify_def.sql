@@ -28,4 +28,4 @@ create table llx_notify_def
   fk_action       integer NOT NULL,
   fk_soc          integer NOT NULL,
   fk_contact      integer NOT NULL
-);
+)type=innodb;

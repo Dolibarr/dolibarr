@@ -44,4 +44,4 @@ create table llx_propal
   note            text,
   model_pdf       varchar(50),
   UNIQUE INDEX (ref)
-);
+)type=innodb;

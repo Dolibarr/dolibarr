@@ -32,4 +32,4 @@ create table llx_facture_fourn_det
   tva               real default 0,
   total_ttc         real default 0
 
-);
+)type=innodb;

@@ -27,4 +27,4 @@ create table llx_co_fa
 
   key(fk_commande),
   key(fk_facture)
-);
+)type=innodb;

@@ -28,4 +28,4 @@ create table llx_expeditiondet
 
   key(fk_expedition),
   key(fk_commande_ligne)
-);
+)type=innodb;
