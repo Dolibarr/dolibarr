@@ -1,8 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2000-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
---
--- $Id$
--- $Source$
+-- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,6 +14,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--
+-- $Id$
+-- $Source$
 --
 -- ========================================================================
 
@@ -40,7 +40,11 @@ create table llx_societe
   fk_secteur     integer        default 0,            --
   fk_effectif    integer        default 0,            --
   fk_typent      integer        default 0,            --
-  siren	         varchar(9),                          --
+  siren	         varchar(9),                          -- siren ou RCS
+  siret          varchar(14),                         -- numero de siret
+  ape            varchar(4),                          -- code ape
+  tva_intra      varchar(20),                         -- tva intracommunautaire
+  capital        real,                                -- capital de la société
   description    text,                                --
   fk_stcomm      smallint       default 0,            -- commercial statut
   note           text,                                --
