@@ -10,26 +10,11 @@
       <xsl:apply-templates select="@*|node()"/>
     </table>
     <p>
-      La FSF France s'engage à n'utliser vos informations personnelles
-      qu'exclusivement pour le traitement de votre don. Vous ne
+      La FSF France s'engage à utiliser vos informations personnelles
+      exclusivement pour le traitement de votre don. Vous ne
       receverez aucun email de la la part de la FSF France autre que
       pour la gestion de votre don.
     </p>
-
-
-    <p align="justify">Nous vous adresserons ensuite un <a
-	href="http://france.fsfeurope.org/donations/formulaire.fr.html">formulaire</a>
-	vous permettant de bénéficier d'une déduction d'impôts. Selon
-	l'<a
-	href="http://www.legifrance.gouv.fr/citoyen/unarticledecode.ow?code=CGIMPOT0.rcv&amp;art=200">article
-	200 du CGI</a>, <i>Ouvrent droit à une réduction d'impôt sur
-	le revenu égale à 50 % de leur montant les sommes prises dans
-	la limite de 6 % du revenu imposable qui correspondent à des
-	dons et versements, y compris l'abandon exprès de revenus ou
-	produits, effectués par les contribuables domiciliés en
-	France.</i> Voir aussi, concernant les entreprises, l'<a
-	href="http://www.legifrance.gouv.fr/WAspad/VisuArticleCode?commun=CGIMPO&amp;code=&amp;h0=CGIMPO00.rcv&amp;h1=1&amp;h3=39">article
-	238 bis du CGI</a>.</p>
 
   </xsl:template> 
 
