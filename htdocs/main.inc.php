@@ -496,10 +496,14 @@ function top_menu($head, $title="", $target="")
   print '</td>';
 
   // Logout
-  print '<td width="120" class="menu" align="center">' ;
+  print '<td width="120" class="menu" align="center" valign="center">' ;
   if (! $_SERVER["REMOTE_USER"])  // Propose ou non de se deloguer si authentication Apache ou non
     {
-      print '<a href="'.DOL_URL_ROOT.'/user/logout.php" title="logout">'.$user->login.'</a>' ;
+      print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->login.'</a>' ;
+
+      print '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
+      print '<img border="0" src="/theme/'.$conf->theme.'/img/logout.png" alt="Logout" title="Logout"></a>';
+
     }
   else
     {
