@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!	\file htdocs/compta/paiement/fiche.php
+/**	    \file       htdocs/compta/paiement/fiche.php
 		\ingroup    facture
 		\brief      Onglet paiement d'un paiement
 		\version    $Revision$
@@ -36,6 +36,8 @@ $user->getrights('facture');
 
 $langs->load("bills");
 $langs->load("companies");
+
+
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->facture->creer)
 {
@@ -56,6 +58,7 @@ if ($_POST["action"] == 'confirm_valide' && $_POST["confirm"] == 'yes' && $user-
       Header("Location: fiche.php?id=".$paiement->id);
     }
 }
+
 
 /*
  *
@@ -83,7 +86,7 @@ $html = new Form($db);
  * Confirmation de la suppression du paiement
  *
  */
- if ($_GET["action"] == 'delete')
+if ($_GET["action"] == 'delete')
    {
      print '<br>';
      $html->form_confirm("fiche.php?id=$paiement->id","Supprimer le paiement","Etes-vous sûr de vouloir supprimer ce paiement ?","confirm_delete");
@@ -91,7 +94,7 @@ $html = new Form($db);
 
    }
  
- if ($_GET["action"] == 'valide')
+if ($_GET["action"] == 'valide')
    {
      print '<br>';
      $html->form_confirm("fiche.php?id=$paiement->id","Valider le paiement","Etes-vous sûr de vouloir valider ce paiment, auncune modification n'est possible une fois le paiement validé ?","confirm_valide");
@@ -105,11 +108,16 @@ print '<table class="noborder" width="100%">';
 
 print '<tr><td valign="top">';
 
+if ($paiement->bank_account) {
+    // Si compte renseigné, on affiche libelle
+    $bank=new Account($db);
+    $bank->fetch($paiement->bank_account);
+    print $langs->trans("BankAccount").' : '.$bank->label.'<br>';
+}
 print $langs->trans("Date").' : '.dolibarr_print_date($paiement->date)."<br>";
 print $langs->trans("Type").' : '.$paiement->type_libelle."<br>";
 if ($paiement->numero) { print $langs->trans("Numero").' : '.$paiement->numero."<br>"; }
 print $langs->trans("Amount").' : '.$paiement->montant."&nbsp;".$conf->monnaie."<br>";
-
 print '</td></tr>';
 print "</table>";
 
