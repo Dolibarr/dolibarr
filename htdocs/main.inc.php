@@ -34,6 +34,20 @@ else
       Header("Location: install/index.php");
     }
 }
+/*
+ *
+ *
+ *
+$GLOBALS['sessionid'] = isset($_GET['sessionid']) ? $_GET['sessionid'] : $_COOKIE['sessionid'];
+if(!$GLOBALS['sessionid'])
+{
+  Header('Location: /login.php');
+  exit;
+}
+*
+ *
+ *
+ */
 
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
 
@@ -121,8 +135,11 @@ else
         print "<br><br>Vous devez respecter un de ces pré-requis pour continuer.\n";
         exit ;  
       }
+
+      // /usr/share/pear
       
-      require_once "Auth/Auth.php";
+      //require_once "Auth/Auth.php";
+      require_once DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php";
 
       $params = array(
 		      "dsn" => $conf->db->getdsn(),
@@ -131,7 +148,7 @@ else
 		      "passwordcol" => "pass",
 		      "cryptType" => "none",
 		      );
-      $aDol = new Auth("DB", $params, "loginFunction");
+      $aDol = new DOLIAuth("DB", $params, "loginFunction");
       $aDol->start();
       $result = $aDol->getAuth();
       if ($result)
