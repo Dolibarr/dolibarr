@@ -148,8 +148,7 @@ if ($socid > 0)
 {
   $societe = new Societe($db, $socid);
   
-
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM llx_societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
+  $sql = "SELECT s.idp as idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM llx_societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
 
   if ($to == 'next')
@@ -167,6 +166,14 @@ if ($socid > 0)
   if ($result) {
     $objsoc = $db->fetch_object(0);
 
+	if (! $objsoc->idp) { 
+		print("Cette societe n'existe pas ou plus");
+		$db->close();
+
+		llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+		exit;
+    }  
+  
     $dac = strftime("%Y-%m-%d %H:%M", time());
     if ($errmesg) {
       print "<b>$errmesg</b><br>";
@@ -182,11 +189,11 @@ if ($socid > 0)
     if ($user->societe_id == 0)
       {
 	print '<td align="center"><a href="../comm/fiche.php?socid='.$objsoc->idp.'">Commercial</a></td>';
-	print "<td align=\"center\"><a href=\"../comm/docsoc.php?socid=$objsoc->idp\">Documents</a></td>";
-	print "<td align=\"center\"><a href=\"index.php?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
+	print "<td align=\"center\">[<a href=\"../comm/docsoc.php?socid=$objsoc->idp\">Documents</a>]</td>";
+	print "<td align=\"center\">[<a href=\"index.php?socidp=$objsoc->idp&action=add\">Bookmark</a>]</td>";
 	if ($user->rights->facture->creer)
-	  print "<td>[<a href=\"facture.php?action=create&socidp=$objsoc->idp\">".translate("Facture")."</a>]</td>";
-	print "<td><a href=\"../socnote.php?socid=$objsoc->idp\">Notes</a></td>";
+	  print "<td>[<a href=\"facture.php?action=create&socidp=$objsoc->idp\">".translate("Facturer")."</a>]</td>";
+	print "<td>[<a href=\"../socnote.php?socid=$objsoc->idp\">Notes</a>]</td>";
 	print "<td align=\"center\">[<a href=\"deplacement/fiche.php?socid=$objsoc->idp&action=create\">Déplacement</a>]</td>";
       }
     print "</tr></table>";
@@ -232,7 +239,8 @@ if ($socid > 0)
 	print '<table class="border" width="100%" cellspacing="0" cellpadding="1">';
 	$var=!$var;
 	$sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-	$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND s.idp = $objsoc->idp ORDER BY f.datef DESC";
+	$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND s.idp = ".$objsoc->idp." ORDER BY f.datef DESC";
+	
 	if ( $db->query($sql) )
 	  {
 	    $num = $db->num_rows(); $i = 0; 
@@ -258,7 +266,7 @@ if ($socid > 0)
 		  }
 		print "<TD align=\"right\">".number_format($objp->amount, 2, ',', ' ')."</TD>\n";
 		$paye[1] = "payée";
-		$paye[0] = "<b>non payée</b>";
+		$paye[0] = "<b>impayée</b>";
 		print "<TD align=\"center\">".$paye[$objp->paye]."</TD>\n";
 		print "</TR>\n";
 		$i++;
