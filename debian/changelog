@@ -1,3 +1,9 @@
+dolibarr (0.7.0-2) unstable; urgency=low
+
+  * Install scripts and fix php install
+
+ -- Loic Dachary (OuoU) <loic@debian.org>  Thu, 11 Sep 2003 17:14:40 +0200
+
 dolibarr (0.7.0-1) unstable; urgency=low
 
   * initial version
