@@ -561,6 +561,13 @@ class Propal
 
 	      $this->create_commande($user);
 
+	      /* Classe la société rattachée comme client */
+
+	      $soc = new Societe($this->db);
+	      $soc->id = $this->socidp;
+	      $soc->set_as_client();
+
+
 	      return 1;
 	    }
 	  else
