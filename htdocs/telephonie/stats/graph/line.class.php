@@ -89,7 +89,11 @@ class GraphLine extends DolibarrGraph {
     // Display the graph
     
     $graph->img->SetImgFormat("png");
-    $graph->Stroke($file);
+
+    if (sizeof($datas) > 0)
+      {
+	$graph->Stroke($file);
+      }
   }
 }   
 ?>
