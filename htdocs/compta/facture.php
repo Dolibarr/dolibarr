@@ -95,7 +95,7 @@ if ($_POST["action"] == 'add')
                 $startday='';
                 $endday='';
                 if ($_POST["date_start${i}year"] && $_POST["date_start${i}month"] && $_POST["date_start${i}day"]) {
-        	        $startday=$_POST["date_start${i}year"].'-'.$_POST["date_start${i}month"].'-'.$_POST["date_start${i}day"];
+		  $startday=$_POST["date_start${i}year"].'-'.$_POST["date_start${i}month"].'-'.$_POST["date_start${i}day"];
 		}
                 if ($_POST["date_end${i}year"] && $_POST["date_end${i}month"] && $_POST["date_end${i}day"]) {
 		  $endday=$_POST["date_end${i}year"].'-'.$_POST["date_end${i}month"].'-'.$_POST["date_end${i}day"];
@@ -178,9 +178,9 @@ if ($_POST["action"] == 'add')
 		}
 	      else
 		{
-	      print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
-	      print "<p>Retour à la <a href=\"propal.php?propalid=$propalid\">propale</a>";
-	      print $db->error();
+		  print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
+		  print "<p>Retour à la <a href=\"propal.php?propalid=$propalid\">propale</a>";
+		  print $db->error();
 		}
 	    }
 	
@@ -204,7 +204,7 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->ri
   $result = $fac->set_valid($fac->id, $user, $soc);
   if ($result)
     {
-     facture_pdf_create($db, $fac->id);
+      facture_pdf_create($db, $fac->id);
     }
 }
 
@@ -241,15 +241,15 @@ if ($_POST["action"] == 'addligne' && $user->rights->facture->creer)
     $dateend=$_POST["date_endyear"].'-'.$_POST["date_endmonth"].'-'.$_POST["date_endday"];
   }
   $result = $fac->addline($_POST["facid"],
-    $_POST["desc"],
-    $_POST["pu"],
-    $_POST["qty"],
-    $_POST["tva_tx"],
-    0,
-    $_POST["remise_percent"],
-    $datestart,
-    $dateend
-    );
+			  $_POST["desc"],
+			  $_POST["pu"],
+			  $_POST["qty"],
+			  $_POST["tva_tx"],
+			  0,
+			  $_POST["remise_percent"],
+			  $datestart,
+			  $dateend
+			  );
 
   $_GET["facid"]=$_POST["facid"];   // Pour réaffichage de la fiche en cours d'édition
 }
@@ -304,72 +304,72 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
   $fac = new Facture($db,"",$_POST["facid"]);
   if ( $fac->fetch($_POST["facid"]) )
     {
-        $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
+      $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
       
-		if (is_readable($file))
-		{
+      if (is_readable($file))
+	{
 	  
-		  if ($_POST["sendto"]) {
-		    // Le destinataire a été fourni via le champ libre
-			$sendto = $_POST["sendto"];
-			$sendtoid = 0;
-		  }
-		  elseif ($_POST["destinataire"]) {
-	  	    // Le destinataire a été fourni via la liste déroulante
-	        $soc = new Societe($db, $fac->socidp);
-		  	$sendto = $soc->contact_get_email($_POST["destinataire"]);
-		    $sendtoid = $_POST["destinataire"];
-		  }
-
-		  if (strlen($sendto))
-		  {	  
-		      if ($_POST["action"] == 'send') {
-		      	$subject = "Facture $fac->ref";
-		      	$actioncode=9;
-				$actionmsg="Envoyée à $sendto";
-		      	$actionmsg2="Envoi Facture par mail";
-		      }
-		      if ($_POST["action"] == 'relance') 	{
-		      	$subject = "Relance facture $fac->ref";
-		      	$actioncode=10;
-		      	$actionmsg="Relance envoyée à $sendto";
-		      	$actionmsg2="Relance Facture par mail";
-		      }
-		      $message = $_POST["message"];
-		      $filename = $fac->ref.".pdf";
+	  if ($_POST["sendto"]) {
+	    // Le destinataire a été fourni via le champ libre
+	    $sendto = $_POST["sendto"];
+	    $sendtoid = 0;
+	  }
+	  elseif ($_POST["destinataire"]) {
+	    // Le destinataire a été fourni via la liste déroulante
+	    $soc = new Societe($db, $fac->socidp);
+	    $sendto = $soc->contact_get_email($_POST["destinataire"]);
+	    $sendtoid = $_POST["destinataire"];
+	  }
+	  
+	  if (strlen($sendto))
+	    {	  
+	      if ($_POST["action"] == 'send') {
+		$subject = "Facture $fac->ref";
+		$actioncode=9;
+		$actionmsg="Envoyée à $sendto";
+		$actionmsg2="Envoi Facture par mail";
+	      }
+	      if ($_POST["action"] == 'relance') 	{
+		$subject = "Relance facture $fac->ref";
+		$actioncode=10;
+		$actionmsg="Relance envoyée à $sendto";
+		$actionmsg2="Relance Facture par mail";
+	      }
+	      $message = $_POST["message"];
+	      $filename = $fac->ref.".pdf";
 		      
-		      $replyto = $_POST["replytoname"] . " <".$_POST["replytomail"] .">";
+	      $replyto = $_POST["replytoname"] . " <".$_POST["replytomail"] .">";
 		      
-			  // Envoi de la facture
-			  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,array ($file),array ("application/pdf"),array ($filename));
+	      // Envoi de la facture
+	      $mailfile = new CMailFile($subject,$sendto,$replyto,$message,array ($file),array ("application/pdf"),array ($filename));
 		      
-		      if ( $mailfile->sendfile() )
-			  {		  
-			  	$sendto = htmlentities($sendto);
+	      if ( $mailfile->sendfile() )
+		{		  
+		  $sendto = htmlentities($sendto);
 			  
-			  	$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '$actioncode' ,'$fac->socidp' ,'$actionmsg','$fac->id','$sendtoid','$user->id', '$actionmsg2',100);";
+		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '$actioncode' ,'$fac->socidp' ,'$actionmsg','$fac->id','$sendtoid','$user->id', '$actionmsg2',100);";
 	
-			  	if (! $db->query($sql) )
-			    {
-			      print $db->error();
-			      print "<p>$sql</p>";
-			    }	      	      	      
-			  }
-		      else
-			  {
-			    print "<b>!! erreur d'envoi<br>$sendto<br>$replyto<br>$filename";
-			  }	  
-		  }
-		  else
-		  {
-		      dolibarr_syslog("Le mail du destinataire est vide");
-		  }
-
+		  if (! $db->query($sql) )
+		    {
+		      print $db->error();
+		      print "<p>$sql</p>";
+		    }	      	      	      
 		}
-      	else
+	      else
 		{
-	  		dolibarr_syslog("Impossible de lire :".$file);
-		}
+		  print "<b>!! erreur d'envoi<br>$sendto<br>$replyto<br>$filename";
+		}	  
+	    }
+	  else
+	    {
+	      dolibarr_syslog("Le mail du destinataire est vide");
+	    }
+
+	}
+      else
+	{
+	  dolibarr_syslog("Impossible de lire :".$file);
+	}
     }
   else
     {
@@ -540,8 +540,8 @@ if ($_GET["action"] == 'create')
 	      	      
 	      print '<table class="noborder" cellspacing="0" cellpadding="2">';
 	      print '<tr><td>Services/Produits prédéfinis</td><td>Quan.</td><td>Remise</td><td> &nbsp; &nbsp; </td>';
-          if ($conf->service->enabled) {
-              print '<td>Si produit de type service à durée limitée</td></tr>';
+	      if ($conf->service->enabled) {
+		print '<td>Si produit de type service à durée limitée</td></tr>';
 	      }
 	      for ($i = 1 ; $i <= $NBLINES ; $i++)
 		{
@@ -550,13 +550,13 @@ if ($_GET["action"] == 'create')
 		  print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0">%</td>';
 		  print '<td>&nbsp;</td>';
 		  // Si le module service est actif, on propose des dates de début et fin à la ligne
-          if ($conf->service->enabled) {
-            print '<td>';
+		  if ($conf->service->enabled) {
+		    print '<td>';
 		    print 'Du ';
- 	        print $html->select_date('',"date_start$i",0,0,1);
+		    print $html->select_date('',"date_start$i",0,0,1);
 		    print ' au ';
 		    print $html->select_date('',"date_end$i",0,0,1);
-            print '</td>';
+		    print '</td>';
 		  }
 		  print "</tr>\n";
 		}	      	      
@@ -789,738 +789,741 @@ else
 	    }
 	  print "&nbsp;</td>";
 
-      print '<td rowspan="8" valign="top">';
+	  print '<td rowspan="8" valign="top">';
 	  	  
 	  /*
 	   * Paiements
 	   */
-    print 'Paiements :<br>';
-	$sql = "SELECT ".$db->pdate("datep")." as dp, pf.amount,";
-	$sql .= "c.libelle as paiement_type, p.num_paiement, p.rowid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
-	$sql .= " WHERE pf.fk_facture = ".$fac->id." AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid";
-	$sql .= " ORDER BY dp DESC";
+	  print 'Paiements :<br>';
+	  $sql = "SELECT ".$db->pdate("datep")." as dp, pf.amount,";
+	  $sql .= "c.libelle as paiement_type, p.num_paiement, p.rowid";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
+	  $sql .= " WHERE pf.fk_facture = ".$fac->id." AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid";
+	  $sql .= " ORDER BY dp DESC";
 	
-	$result = $db->query($sql);
-	if ($result)
-	  {
-	    $num = $db->num_rows();
-	    $i = 0; $total = 0;
-	    echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-	    print '<tr class="liste_titre"><td>Date</td><td>Type</td>';
-	    print "<td align=\"right\">Montant</TD><td>&nbsp;</td></tr>";
+	  $result = $db->query($sql);
+	  if ($result)
+	    {
+	      $num = $db->num_rows();
+	      $i = 0; $total = 0;
+	      echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<tr class="liste_titre"><td>Date</td><td>Type</td>';
+	      print "<td align=\"right\">Montant</TD><td>&nbsp;</td></tr>";
     
-	    $var=True;
-	    while ($i < $num)
-	      {
-		$objp = $db->fetch_object( $i);
-		$var=!$var;
-		print "<tr $bc[$var]><td>";
-		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_file().'</a>';
-		print "&nbsp;".strftime("%d %B %Y",$objp->dp)."</td>\n";
-		print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
-		print '<td align="right">'.price($objp->amount)."</td><td>".MAIN_MONNAIE."</td>\n";
-		print "</tr>";
-		$totalpaye += $objp->amount;
-		$i++;
-	      }
+	      $var=True;
+	      while ($i < $num)
+		{
+		  $objp = $db->fetch_object( $i);
+		  $var=!$var;
+		  print "<tr $bc[$var]><td>";
+		  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_file().'</a>';
+		  print "&nbsp;".strftime("%d %B %Y",$objp->dp)."</td>\n";
+		  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
+		  print '<td align="right">'.price($objp->amount)."</td><td>".MAIN_MONNAIE."</td>\n";
+		  print "</tr>";
+		  $totalpaye += $objp->amount;
+		  $i++;
+		}
 
-	    if ($fac->paye == 0)
-	      {
-		print "<tr><td colspan=\"2\" align=\"right\">Total déjà payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".MAIN_MONNAIE."</td></tr>\n";
-		print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" style=\"border: 1px solid;\">".price($fac->total_ttc)."</td><td>".MAIN_MONNAIE."</td></tr>\n";
+	      if ($fac->paye == 0)
+		{
+		  print "<tr><td colspan=\"2\" align=\"right\">Total déjà payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".MAIN_MONNAIE."</td></tr>\n";
+		  print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" style=\"border: 1px solid;\">".price($fac->total_ttc)."</td><td>".MAIN_MONNAIE."</td></tr>\n";
 		
-		$resteapayer = $fac->total_ttc - $totalpaye;
+		  $resteapayer = $fac->total_ttc - $totalpaye;
 
-		print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
-		print "<td align=\"right\" style=\"border: 1px solid;\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td>".MAIN_MONNAIE."</td></tr>\n";
-	      }
-	    print "</table>";
-	    $db->free();
-	  } else {
-	    print $db->error();
-	  }
+		  print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
+		  print "<td align=\"right\" style=\"border: 1px solid;\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td>".MAIN_MONNAIE."</td></tr>\n";
+		}
+	      print "</table>";
+	      $db->free();
+	    } else {
+	      print $db->error();
+	    }
 	
-	print "</td></tr>";
+	  print "</td></tr>";
 	
-    print "<tr><td height=\"10\">Auteur</td><td colspan=\"3\">$author->fullname</td>";
+	  print "<tr><td height=\"10\">Auteur</td><td colspan=\"3\">$author->fullname</td>";
   
-    print '<tr><td height=\"10\">Remise globale</td>';
-    print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
-    print '<td>%</td></tr>';
+	  print '<tr><td height=\"10\">Remise globale</td>';
+	  print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
+	  print '<td>%</td></tr>';
 
-	print '<tr><td height=\"10\">Montant HT</td>';
-	print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-	print '<td>'.MAIN_MONNAIE.' HT</td></tr>';
+	  print '<tr><td height=\"10\">Montant HT</td>';
+	  print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
+	  print '<td>'.MAIN_MONNAIE.' HT</td></tr>';
 
-	print '<tr><td height=\"10\">TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
-	print '<td>'.MAIN_MONNAIE.'</td></tr>';
-	print '<tr><td height=\"10\">Montant TTC</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
-	print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
-	print '<tr><td height=\"10\">Statut</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
-	if ($fac->note)
-	  {
-	    print '<tr><td colspan="4">Note : '.nl2br($fac->note)."</td></tr>";
-	  }
-	else {
+	  print '<tr><td height=\"10\">TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
+	  print '<td>'.MAIN_MONNAIE.'</td></tr>';
+	  print '<tr><td height=\"10\">Montant TTC</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
+	  print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
+	  print '<tr><td height=\"10\">Statut</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
+	  if ($fac->note)
+	    {
+	      print '<tr><td colspan="4">Note : '.nl2br($fac->note)."</td></tr>";
+	    }
+	  else {
 	    print '<tr><td colspan="4">&nbsp;</td></tr>';
-	}
-
-	print "</table><br>";
-
-	if ($fac->brouillon == 1 && $user->rights->facture->creer) 
-	  {
-	    print '<form action="facture.php?facid='.$fac->id.'" method="post">';
-	    print '<input type="hidden" name="action" value="setremise">';
-	    print '<table class="border" cellpadding="3" cellspacing="0"><tr><td>Remise</td><td align="right">';
-	    print '<input type="text" name="remise" size="3" value="'.$fac->remise_percent.'">%';
-	    print '<input type="submit" value="Appliquer">';
-	    print '</td></tr></table></form>';
 	  }
 
-	/*
-	 * Lignes de factures
-	 *
-	 */
-	$sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice, ".$db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end ";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = $fac->id ORDER BY l.rowid";
+	  print "</table><br>";
 
-	$result = $db->query($sql);
-	if ($result)
-	  {
-	    $num_lignes = $db->num_rows();
-	    $i = 0; $total = 0;
-	    
-	    echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-	    if ($num_lignes)
-	      {
-		print "<tr class=\"liste_titre\">";
-		print '<td width="54%">Description</td>';
-		print '<td width="8%" align="right">Tva</td>';
-		print '<td width="12%" align="right">P.U. HT</td>';
-		print '<td width="8%" align="right">Quantité</td>';
-		print '<td width="8%" align="right">Remise</td>';
-		print '<td width="10%" align="right">Montant HT</td>';
-		print '<td>&nbsp;</td><td>&nbsp;</td>';
-		print "</tr>\n";
-	      }
-	    $var=True;
-	    while ($i < $num_lignes)
-	      {
-		$objp = $db->fetch_object( $i);
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		if ($objp->fk_product > 0)
-		  {
-		    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a>';
-            if ($objp->date_start) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
-		    print '</td>';
-		  }
-		else
-		  {
-            print "<td>".stripslashes(nl2br($objp->description));
-            if ($objp->date_start) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
-            print "</td>\n";
-          }
+	  if ($fac->brouillon == 1 && $user->rights->facture->creer) 
+	    {
+	      print '<form action="facture.php?facid='.$fac->id.'" method="post">';
+	      print '<input type="hidden" name="action" value="setremise">';
+	      print '<table class="border" cellpadding="3" cellspacing="0"><tr><td>Remise</td><td align="right">';
+	      print '<input type="text" name="remise" size="3" value="'.$fac->remise_percent.'">%';
+	      print '<input type="submit" value="Appliquer">';
+	      print '</td></tr></table></form>';
+	    }
 
-		print '<td align="right">'.$objp->tva_taux.' %</td>';
-		print '<td align="right">'.price($objp->subprice)."</td>\n";
-		print '<td align="right">'.$objp->qty.'</td>';
-		if ($objp->remise_percent > 0)
-		  {
-		    print '<td align="right">'.$objp->remise_percent." %</td>\n";
-		  }
-		else
-		  {
-		    print '<td>&nbsp;</td>';
-		  }
-		print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+	  /*
+	   * Lignes de factures
+	   *
+	   */
+	  $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice, ".$db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end ";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = $fac->id ORDER BY l.rowid";
+
+	  $result = $db->query($sql);
+	  if ($result)
+	    {
+	      $num_lignes = $db->num_rows();
+	      $i = 0; $total = 0;
 	    
-	    // Icone d'edition et suppression		  
-		if ($fac->statut == 0  && $user->rights->facture->creer) 
-		  {
-		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
-		    print img_edit();
-		    print '</a></td>';
-		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
-		    print img_delete();
-		    print '</a></td>';
-		  }
-		else
-		  {
-		    print '<td>&nbsp;</td><td>&nbsp;</td>';
-		  }
-		print "</tr>";
+	      echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	      if ($num_lignes)
+		{
+		  print "<tr class=\"liste_titre\">";
+		  print '<td width="54%">Description</td>';
+		  print '<td width="8%" align="right">Tva</td>';
+		  print '<td width="12%" align="right">P.U. HT</td>';
+		  print '<td width="8%" align="right">Quantité</td>';
+		  print '<td width="8%" align="right">Remise</td>';
+		  print '<td width="10%" align="right">Montant HT</td>';
+		  print '<td>&nbsp;</td><td>&nbsp;</td>';
+		  print "</tr>\n";
+		}
+	      $var=True;
+	      while ($i < $num_lignes)
+		{
+		  $objp = $db->fetch_object( $i);
+		  $var=!$var;
+		  print "<tr $bc[$var]>";
+		  if ($objp->fk_product > 0)
+		    {
+		      print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a>';
+		      if ($objp->date_start) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
+		      print '</td>';
+		    }
+		  else
+		    {
+		      print "<td>".stripslashes(nl2br($objp->description));
+		      if ($objp->date_start) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
+		      print "</td>\n";
+		    }
+
+		  print '<td align="right">'.$objp->tva_taux.' %</td>';
+		  print '<td align="right">'.price($objp->subprice)."</td>\n";
+		  print '<td align="right">'.$objp->qty.'</td>';
+		  if ($objp->remise_percent > 0)
+		    {
+		      print '<td align="right">'.$objp->remise_percent." %</td>\n";
+		    }
+		  else
+		    {
+		      print '<td>&nbsp;</td>';
+		    }
+		  print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+	    
+		  // Icone d'edition et suppression		  
+		  if ($fac->statut == 0  && $user->rights->facture->creer) 
+		    {
+		      print '<td align="right"><a href="'.$PHPSELF.'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+		      print img_edit();
+		      print '</a></td>';
+		      print '<td align="right"><a href="'.$PHPSELF.'?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+		      print img_delete();
+		      print '</a></td>';
+		    }
+		  else
+		    {
+		      print '<td>&nbsp;</td><td>&nbsp;</td>';
+		    }
+		  print "</tr>";
 	  
-	    // Update ligne de facture
-		if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
-		  {
-		    print "<form action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
-		    print '<input type="hidden" name="action" value="updateligne">';
-		    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-		    print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
-		    print "<tr $bc[$var]>";
-		    print '<td><textarea name="desc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
-    	    print '<td align="right">';
-    	    //print $html->select_tva("tva_tx",$objp->tva_taux);
-    	    print "$objp->tva_taux %";    // Taux tva dépend du produit, donc on ne doit pas pouvoir le changer ici
-    	    print '</td>';
-		    print '<td align="right"><input size="8" type="text" name="price" value="'.price($objp->subprice).'"></td>';
-		    print '<td align="right"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></td>';
-		    print '<td align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
-		    print '<td align="center" colspan="3"><input type="submit" value="Enregistrer"></td>';
-		    print '</tr>' . "\n";
-            if ($conf->service->enabled) {
-                print "<tr $bc[$var]>";
-    		    print '<td colspan="8">Si produit de type service à durée limitée: Du ';
-     	        print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
-    		    print ' au ';
-    		    print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
-    		    print '</td>';
-    		    print '</tr>' . "\n";
-            }
-		    print "</form>\n";
-		  }
+		  // Update ligne de facture
+		  if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
+		    {
+		      print "<form action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
+		      print '<input type="hidden" name="action" value="updateligne">';
+		      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+		      print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
+		      print "<tr $bc[$var]>";
+		      print '<td><textarea name="desc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
+		      print '<td align="right">';
+		      //print $html->select_tva("tva_tx",$objp->tva_taux);
+		      print "$objp->tva_taux %";    // Taux tva dépend du produit, donc on ne doit pas pouvoir le changer ici
+		      print '</td>';
+		      print '<td align="right"><input size="8" type="text" name="price" value="'.price($objp->subprice).'"></td>';
+		      print '<td align="right"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></td>';
+		      print '<td align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
+		      print '<td align="center" colspan="3"><input type="submit" value="Enregistrer"></td>';
+		      print '</tr>' . "\n";
+		      if ($conf->service->enabled) {
+			print "<tr $bc[$var]>";
+			print '<td colspan="8">Si produit de type service à durée limitée: Du ';
+			print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
+			print ' au ';
+			print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
+			print '</td>';
+			print '</tr>' . "\n";
+		      }
+		      print "</form>\n";
+		    }
 		
-		$total = $total + ($objp->qty * $objp->price);
-		$i++;
-	      }
+		  $total = $total + ($objp->qty * $objp->price);
+		  $i++;
+		}
 	    
-	    $db->free();
-	    //	    print "</table>";
-	  } 
-	else
-	  {
-	    print "Erreur : ".$db->error()."<br>".$sql;
-	  }
+	      $db->free();
+	      //	    print "</table>";
+	    } 
+	  else
+	    {
+	      print "Erreur : ".$db->error()."<br>".$sql;
+	    }
 	
-	/*
-	 * Ajouter une ligne
-	 *
-	 */
-	if ($fac->statut == 0 && $user->rights->facture->creer) 
-	  {
+	  /*
+	   * Ajouter une ligne
+	   *
+	   */
+	  if ($fac->statut == 0 && $user->rights->facture->creer) 
+	    {
 
-	    print "<form action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
-	    print "<tr class=\"liste_titre\">";
-	    print '<td width="54%">Description</td>';
-	    print '<td width="8%" align="right">Tva</td>';
-	    print '<td width="12%" align="right">P.U. HT</TD>';
-	    print '<td width="8%" align="right">Quantité</td>';
-	    print '<td width="8%" align="right">Remise</td>';
-	    print '<td>&nbsp;</td>';
-	    print '<td>&nbsp;</td>';
-	    print '<td>&nbsp;</td>';
-	    print "</tr>\n";
-	    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-	    print '<input type="hidden" name="action" value="addligne">';
-	    print '<tr><td><textarea name="desc" cols="60" rows="2"></textarea></td>';
-	    print '<td align="right">';
-	    print $html->select_tva("tva_tx",$conf->defaulttx);
-	    print '</td>';
-	    print '<td align="right"><input type="text" name="pu" size="8"></td>';
-	    print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
-	    print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
-	    print '<td align="center" colspan="3"><input type="submit" value="Ajouter"></td></tr>';
-        if ($conf->service->enabled) {
-    	    print '<tr>';
-    	    print '<td colspan="8">Si produit de type service à durée limitée: Du ';
-     	    print $html->select_date('',"date_start",0,0,1);
+	      print "<form action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
+	      print "<tr class=\"liste_titre\">";
+	      print '<td width="54%">Description</td>';
+	      print '<td width="8%" align="right">Tva</td>';
+	      print '<td width="12%" align="right">P.U. HT</TD>';
+	      print '<td width="8%" align="right">Quantité</td>';
+	      print '<td width="8%" align="right">Remise</td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
+	      print "</tr>\n";
+	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+	      print '<input type="hidden" name="action" value="addligne">';
+	      print '<tr><td><textarea name="desc" cols="60" rows="2"></textarea></td>';
+	      print '<td align="right">';
+	      print $html->select_tva("tva_tx",$conf->defaulttx);
+	      print '</td>';
+	      print '<td align="right"><input type="text" name="pu" size="8"></td>';
+	      print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
+	      print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
+	      print '<td align="center" colspan="3"><input type="submit" value="Ajouter"></td></tr>';
+	      if ($conf->service->enabled) {
+		print '<tr>';
+		print '<td colspan="8">Si produit de type service à durée limitée: Du ';
+		print $html->select_date('',"date_start",0,0,1);
     		print ' au ';
     		print $html->select_date('',"date_end",0,0,1);
     		print '</td>';
-        }
-        print '</tr>';
-	    print "</form>";
-	  }
-	print "</table><br>\n";
+	      }
+	      print '</tr>';
+	      print "</form>";
+	    }
+	  print "</table><br>\n";
 
-	/*
-	 * Fin Ajout ligne
-	 *
-	 */
-	print '</div>';
-	if ($user->societe_id == 0 && $_GET["action"] <> 'valid')
-	  {
-	    print "<br><div class=\"tabsAction\">\n";
+	  /*
+	   * Fin Ajout ligne
+	   *
+	   */
+	  print '</div>';
+	  if ($user->societe_id == 0 && $_GET["action"] <> 'valid')
+	    {
+	      print "<br><div class=\"tabsAction\">\n";
 
-	    // Valider
-	    if ($fac->statut == 0 && $num_lignes > 0) 
-	      {
-		if ($user->rights->facture->valider)
-		  {
-		    print '<a class="tabAction" href="facture.php?facid='.$fac->id.'&amp;action=valid">Valider</a>';
-		  }
+	      // Valider
+	      if ($fac->statut == 0 && $num_lignes > 0) 
+		{
+		  if ($user->rights->facture->valider)
+		    {
+		      print '<a class="tabAction" href="facture.php?facid='.$fac->id.'&amp;action=valid">Valider</a>';
+		    }
 		}
-	    else
-	      {
-		// Générer
-		if ($fac->statut == 1 && ($fac->paye == 0 || $user->admin) && $user->rights->facture->creer)
-		  {
-		    if ($fac->paye == 0)
-		      {
-			print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Générer le PDF</a>";
-		      }
-		    else
-		      {
-			print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Regénérer le PDF</a>";
-		      }		  	
-		  }
-	      }
+	      else
+		{
+		  // Générer
+		  if ($fac->statut == 1 && ($fac->paye == 0 || $user->admin) && $user->rights->facture->creer)
+		    {
+		      if ($fac->paye == 0)
+			{
+			  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Générer le PDF</a>";
+			}
+		      else
+			{
+			  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Regénérer le PDF</a>";
+			}		  	
+		    }
+		}
 
-	    // Supprimer
-	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
-	      {
-		print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=delete\">Supprimer</a>";
-	      } 
+	      // Supprimer
+	      if ($fac->statut == 0 && $user->rights->facture->supprimer)
+		{
+		  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=delete\">Supprimer</a>";
+		} 
 
-	    // Envoyer
-	    if ($fac->statut == 1 && $user->rights->facture->envoyer)
-	      {
-	        print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">Envoyer</a>";
-	      }
+	      // Envoyer
+	      if ($fac->statut == 1 && $user->rights->facture->envoyer)
+		{
+		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">Envoyer</a>";
+		}
 	    
-	    // Envoyer une relance
-	    if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer) 
-	      {
-		print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">Envoyer relance</a>";
-	      }
+	      // Envoyer une relance
+	      if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer) 
+		{
+		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">Envoyer relance</a>";
+		}
 
-	    // Emettre paiement 
-	    if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->paiement)
-	      {
-		print "<a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">Emettre paiement</a>";
-	      }
+	      // Emettre paiement 
+	      if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->paiement)
+		{
+		  print "<a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">Emettre paiement</a>";
+		}
 	    
-	    // Classer 'payé'
-	    if ($fac->statut == 1 && price($resteapayer) <= 0 
-		&& $fac->paye == 0 && $user->rights->facture->paiement)
-	      {
-		print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a>";
-	      }
+	      // Classer 'payé'
+	      if ($fac->statut == 1 && price($resteapayer) <= 0 
+		  && $fac->paye == 0 && $user->rights->facture->paiement)
+		{
+		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a>";
+		}
 	    
-	    // Classer 'annulée' (possible si validée et aucun paiement n'a encore eu lieu)
-	    if ($fac->statut == 1 && $fac->paye == 0 && $totalpaye == 0 && $user->rights->facture->paiement)
-	      {
-		print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=canceled\">Classer 'Annulée'</a>";
-	      }
+	      // Classer 'annulée' (possible si validée et aucun paiement n'a encore eu lieu)
+	      if ($fac->statut == 1 && $fac->paye == 0 && $totalpaye == 0 && $user->rights->facture->paiement)
+		{
+		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=canceled\">Classer 'Annulée'</a>";
+		}
 
-	    // Récurrente
-	    if (! defined("FACTURE_DISABLE_RECUR")) 	// Possibilité de désactiver les factures récurrentes
-	      {
-		if ($fac->statut > 0)
-		  {
-		    print '<a class="tabAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">Récurrente</a>';
-		  }
-	      }
+	      // Récurrente
+	      if (! defined("FACTURE_DISABLE_RECUR")) 	// Possibilité de désactiver les factures récurrentes
+		{
+		  if ($fac->statut > 0)
+		    {
+		      print '<a class="tabAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">Récurrente</a>';
+		    }
+		}
 
-	    print "</div>";
+	      print "</div>";
 
-	  }
-	print "<p>\n";
+	    }
+	  print "<p>\n";
 
-	/*
-	 * Documents générés
-	 *
-	 */
-	$file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
+	  /*
+	   * Documents générés
+	   *
+	   */
+	  $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
 	
-    print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
+	  print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
 
-	if (file_exists($file))
-	  {
-	    print_titre("Documents");
-	    print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	  if (file_exists($file))
+	    {
+	      $encfile = urlencode($file);
+	      print_titre("Documents");
+	      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	    
-	    print "<tr $bc[0]><td>Facture PDF</td>";
-	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->ref."/".$fac->ref.'.pdf">'.$fac->ref.'.pdf</a></td>';
-	    print '<td align="right">'.filesize($file). ' bytes</td>';
-	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-	    print '</tr>';
+	      print "<tr $bc[0]><td>Facture PDF</td>";
+
+	      print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$fac->ref.'.pdf</a></td>';
+
+	      print '<td align="right">'.filesize($file). ' bytes</td>';
+	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+	      print '</tr>';
 	           	
-	    print "</table>\n";
-      }
+	      print "</table>\n";
+	    }
 
-    print '</td><td valign="top" width="50%">';
+	  print '</td><td valign="top" width="50%">';
 
-    /*
-    * Liste des actions propres aux document
-    *
-    */
-    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note, code ";
-    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."user as u ";
-    $sql .= " WHERE a.fk_user_author = u.rowid and a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $fac->id";
+	  /*
+	   * Liste des actions propres aux document
+	   *
+	   */
+	  $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note, code ";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."user as u ";
+	  $sql .= " WHERE a.fk_user_author = u.rowid and a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $fac->id";
     
-    $result = $db->query($sql);
-    if ($result)
-    {
-        $num = $db->num_rows();
-        if ($num)
-        {
-            print_titre("Actions sur les documents");
+	  $result = $db->query($sql);
+	  if ($result)
+	    {
+	      $num = $db->num_rows();
+	      if ($num)
+		{
+		  print_titre("Actions sur les documents");
     
-            $i = 0; $total = 0;
-            print '<table class="border" cellspacing="0" cellpadding="4" width="100%">';
-            print "<tr $bc[$var]><td>Date</td><td>Action</td><td>Par</td></tr>\n";
+		  $i = 0; $total = 0;
+		  print '<table class="border" cellspacing="0" cellpadding="4" width="100%">';
+		  print "<tr $bc[$var]><td>Date</td><td>Action</td><td>Par</td></tr>\n";
     
-            $var=True;
-            while ($i < $num)
-            {
-                $objp = $db->fetch_object( $i);
-                $var=!$var;
-                print "<tr $bc[$var]>";
-                print "<td>".dolibarr_print_date($objp->da)."</td>\n";
-                print '<td>'.stripslashes($objp->note).'</td>';
-                print '<td>'.$objp->code.'</td>';
-                print "</tr>";
-                $i++;
-            }
-            print "</table>";
-        }
-    }
-    else
-    {
-        print $db->error();
-    }
+		  $var=True;
+		  while ($i < $num)
+		    {
+		      $objp = $db->fetch_object( $i);
+		      $var=!$var;
+		      print "<tr $bc[$var]>";
+		      print "<td>".dolibarr_print_date($objp->da)."</td>\n";
+		      print '<td>'.stripslashes($objp->note).'</td>';
+		      print '<td>'.$objp->code.'</td>';
+		      print "</tr>";
+		      $i++;
+		    }
+		  print "</table>";
+		}
+	    }
+	  else
+	    {
+	      print $db->error();
+	    }
 	    
-	print "</td></tr></table>";
+	  print "</td></tr></table>";
 	    
 	    
-	/*
-	 *
-	 *
-	 */
-	if ($_GET["action"] == 'classer')
-	  {	    
-	    print "<p><form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id\">\n";
-	    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-	    print '<input type="hidden" name="action" value="classin">';
-	    print '<table cellspacing="0" class="border" cellpadding="3">';
-	    print '<tr><td>Projet</td><td>';
+	  /*
+	   *
+	   *
+	   */
+	  if ($_GET["action"] == 'classer')
+	    {	    
+	      print "<p><form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id\">\n";
+	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+	      print '<input type="hidden" name="action" value="classin">';
+	      print '<table cellspacing="0" class="border" cellpadding="3">';
+	      print '<tr><td>Projet</td><td>';
 	    
-	    $proj = new Project($db);
-	    $html->select_array("projetid",$proj->liste_array($soc->id));
+	      $proj = new Project($db);
+	      $html->select_array("projetid",$proj->liste_array($soc->id));
 	    
-	    print "</td></tr>";
-	    print '<tr><td colspan="2" align="center"><input type="submit" value="Envoyer"></td></tr></table></form></p>';
-	  }
-	/*
-	 *
-	 *
-	 */
-	if ($_GET["action"] == 'presend')
-	  {
-	    $replytoname = $user->fullname;
-	    $from_name = $replytoname;
+	      print "</td></tr>";
+	      print '<tr><td colspan="2" align="center"><input type="submit" value="Envoyer"></td></tr></table></form></p>';
+	    }
+	  /*
+	   *
+	   *
+	   */
+	  if ($_GET["action"] == 'presend')
+	    {
+	      $replytoname = $user->fullname;
+	      $from_name = $replytoname;
 
-	    $replytomail = $user->email;
-	    $from_mail = $replytomail;
+	      $replytomail = $user->email;
+	      $from_mail = $replytomail;
 	    
-	    print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
-	    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-	    print '<input type="hidden" name="action" value="send">';
-	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
-	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
-	    print '<br>';
+	      print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
+	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+	      print '<input type="hidden" name="action" value="send">';
+	      print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
+	      print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
+	      print '<br>';
 	    
-	    print_titre("Envoyer la facture par mail");
-	    print "<table cellspacing=\"0\" class=\"border\" cellpadding=\"3\" width=\"100%\">";
-	    print "<tr><td>Expéditeur</td><td>$from_name</td><td>$from_mail &nbsp;</td></tr>";
-	    print "<tr><td>Répondre à</td><td>$replytoname</td><td>$replytomail &nbsp;</td></tr>";
-	    print '<tr><td>Destinataire</td><td colspan=\"2\">';
+	      print_titre("Envoyer la facture par mail");
+	      print "<table cellspacing=\"0\" class=\"border\" cellpadding=\"3\" width=\"100%\">";
+	      print "<tr><td>Expéditeur</td><td>$from_name</td><td>$from_mail &nbsp;</td></tr>";
+	      print "<tr><td>Répondre à</td><td>$replytoname</td><td>$replytomail &nbsp;</td></tr>";
+	      print '<tr><td>Destinataire</td><td colspan=\"2\">';
 	    
-	    $form = new Form($db);	    
-	    $form->select_array("destinataire",$soc->contact_email_array());
-	    print " ou <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
+	      $form = new Form($db);	    
+	      $form->select_array("destinataire",$soc->contact_email_array());
+	      print " ou <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
 
-	    print '<tr><td>Message</td><td colspan=\"2\">';
-	    print "<textarea rows=\"5\" cols=\"60\" name=\"message\">";
-	    print "Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
-	    print "</textarea></td></tr>";
+	      print '<tr><td>Message</td><td colspan=\"2\">';
+	      print "<textarea rows=\"5\" cols=\"60\" name=\"message\">";
+	      print "Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
+	      print "</textarea></td></tr>";
 
-	    print "</table><br>\n";
+	      print "</table><br>\n";
 	    
-	    print "<center><input class=\"flat\" type=\"submit\" value=\"Envoyer\"></center></form>\n";
-	  }
+	      print "<center><input class=\"flat\" type=\"submit\" value=\"Envoyer\"></center></form>\n";
+	    }
 
-	if ($_GET["action"] == 'prerelance')
-	  {
-	    $replytoname = $user->fullname;
-	    $from_name = $replytoname;
+	  if ($_GET["action"] == 'prerelance')
+	    {
+	      $replytoname = $user->fullname;
+	      $from_name = $replytoname;
 
-	    $replytomail = $user->email;
-	    $from_mail = $replytomail;
+	      $replytomail = $user->email;
+	      $from_mail = $replytomail;
 	    
-	    print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
-	    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-	    print '<input type="hidden" name="action" value="relance">';
-	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
-	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
-	    print '<br>';
+	      print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
+	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+	      print '<input type="hidden" name="action" value="relance">';
+	      print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
+	      print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
+	      print '<br>';
 	    
-	    print_titre("Envoyer une relance par mail");
-	    print "<table cellspacing=\"0\" class=\"border\" cellpadding=\"3\" width=\"100%\">";
-	    print "<tr><td>Expéditeur</td><td>$from_name</td><td>$from_mail &nbsp;</td></tr>";
-	    print "<tr><td>Répondre à</td><td>$replytoname</td><td>$replytomail &nbsp;</td></tr>";
-	    print '<tr><td>Destinataire</td><td colspan=\"2\">';
+	      print_titre("Envoyer une relance par mail");
+	      print "<table cellspacing=\"0\" class=\"border\" cellpadding=\"3\" width=\"100%\">";
+	      print "<tr><td>Expéditeur</td><td>$from_name</td><td>$from_mail &nbsp;</td></tr>";
+	      print "<tr><td>Répondre à</td><td>$replytoname</td><td>$replytomail &nbsp;</td></tr>";
+	      print '<tr><td>Destinataire</td><td colspan=\"2\">';
 	    
-	    $form = new Form($db);	    
-	    $form->select_array("destinataire",$soc->contact_email_array());
-	    print " ou <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
+	      $form = new Form($db);	    
+	      $form->select_array("destinataire",$soc->contact_email_array());
+	      print " ou <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
 	    
-	    print '<tr><td>Message</td><td colspan=\"2\">';
-	    print "<textarea rows=\"5\" cols=\"60\" name=\"message\">";
-		print "Nous apportons à votre connaissance que la facture ".$fac->ref." ne semble toujours pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n";
-	    print "</textarea></td></tr>";
+	      print '<tr><td>Message</td><td colspan=\"2\">';
+	      print "<textarea rows=\"5\" cols=\"60\" name=\"message\">";
+	      print "Nous apportons à votre connaissance que la facture ".$fac->ref." ne semble toujours pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n";
+	      print "</textarea></td></tr>";
 
-	    print "</table><br>\n";
+	      print "</table><br>\n";
 	    
-	    print "<center><input class=\"flat\" type=\"submit\" value=\"Envoyer\"></center></form>\n";
-	  }
+	      print "<center><input class=\"flat\" type=\"submit\" value=\"Envoyer\"></center></form>\n";
+	    }
 	
-	/*
-	 *   Propales
-	 */
+	  /*
+	   *   Propales
+	   */
 	
-	$sql = "SELECT ".$db->pdate("p.datep")." as dp, p.price, p.ref, p.rowid as propalid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
+	  $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.price, p.ref, p.rowid as propalid";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
   
-	$result = $db->query($sql);
-	if ($result)
-	  {
-	    $num = $db->num_rows();
-	    if ($num)
-	      {
-		$i = 0; $total = 0;
-		print "<p>";
-		if ($num >1)
-		  {
-		    print_titre("Propositions commerciales associées");
-		  }
-		else
-		  {
-		    print_titre("Proposition commerciale associée");
-		  }
+	  $result = $db->query($sql);
+	  if ($result)
+	    {
+	      $num = $db->num_rows();
+	      if ($num)
+		{
+		  $i = 0; $total = 0;
+		  print "<p>";
+		  if ($num >1)
+		    {
+		      print_titre("Propositions commerciales associées");
+		    }
+		  else
+		    {
+		      print_titre("Proposition commerciale associée");
+		    }
 
-		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-		print '<tr class="liste_titre">';
-		print "<td>Numéro</td>";
-		print "<td>Date</td>";
-		print '<td align="right">Prix</td>';
-		print "</TR>\n";
+		  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		  print '<tr class="liste_titre">';
+		  print "<td>Numéro</td>";
+		  print "<td>Date</td>";
+		  print '<td align="right">Prix</td>';
+		  print "</TR>\n";
 		
-		$var=True;
-		while ($i < $num)
-		  {
-		    $objp = $db->fetch_object( $i);
-		    $var=!$var;
-		    print "<TR $bc[$var]>";
-		    print "<TD><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-		    print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-		    print '<TD align="right">'.price($objp->price).'</TD>';
-		    print "</tr>";
-		    $total = $total + $objp->price;
-		    $i++;
-		  }
-		print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b> $_MONNAIE HT</td></tr>\n";
-		print "</table>";
-	      }
-	  } else {
-	    print $db->error();
-	  }	
-      }
-    else
-      {
-	/* Facture non trouvée */
-	print "Facture inexistante ou accés refusé";
-      }
-  } else {
-    /***************************************************************************
-     *                                                                         *
-     *                      Mode Liste                                         *
-     *                                                                         *
-     ***************************************************************************/
-    if ($page == -1)
-      {
-	$page = 0 ;
-      }
+		  $var=True;
+		  while ($i < $num)
+		    {
+		      $objp = $db->fetch_object( $i);
+		      $var=!$var;
+		      print "<TR $bc[$var]>";
+		      print "<TD><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+		      print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+		      print '<TD align="right">'.price($objp->price).'</TD>';
+		      print "</tr>";
+		      $total = $total + $objp->price;
+		      $i++;
+		    }
+		  print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b> $_MONNAIE HT</td></tr>\n";
+		  print "</table>";
+		}
+	    } else {
+	      print $db->error();
+	    }	
+	}
+      else
+	{
+	  /* Facture non trouvée */
+	  print "Facture inexistante ou accés refusé";
+	}
+    } else {
+      /***************************************************************************
+       *                                                                         *
+       *                      Mode Liste                                         *
+       *                                                                         *
+       ***************************************************************************/
+      if ($page == -1)
+	{
+	  $page = 0 ;
+	}
 
-    if ($user->rights->facture->lire)
-      {
-	$limit = $conf->liste_limit;
-	$offset = $limit * $page ;
+      if ($user->rights->facture->lire)
+	{
+	  $limit = $conf->liste_limit;
+	  $offset = $limit * $page ;
 
-	if ($sortorder == "")
-	  $sortorder="DESC";
+	  if ($sortorder == "")
+	    $sortorder="DESC";
 
-	if ($sortfield == "")
-	  $sortfield="f.datef";
+	  if ($sortfield == "")
+	    $sortfield="f.datef";
 
-	$sql = "SELECT s.nom,s.idp,f.facnumber,f.total,f.total_ttc,".$db->pdate("f.datef")." as df, f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture WHERE f.fk_soc = s.idp";
+	  $sql = "SELECT s.nom,s.idp,f.facnumber,f.total,f.total_ttc,".$db->pdate("f.datef")." as df, f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture WHERE f.fk_soc = s.idp";
 	
-	if ($socidp)
-	  $sql .= " AND s.idp = $socidp";
+	  if ($socidp)
+	    $sql .= " AND s.idp = $socidp";
 	
-	if ($month > 0)
-	  $sql .= " AND date_format(f.datef, '%m') = $month";
+	  if ($month > 0)
+	    $sql .= " AND date_format(f.datef, '%m') = $month";
 	
-	if ($_GET["filtre"])
-	  {
-	    $filtrearr = split(",", $_GET["filtre"]);
-	    foreach ($filtrearr as $fil)
-	      {
-		$filt = split(":", $fil);
-		$sql .= " AND " . $filt[0] . " = " . $filt[1];
-	      }
-	  }
+	  if ($_GET["filtre"])
+	    {
+	      $filtrearr = split(",", $_GET["filtre"]);
+	      foreach ($filtrearr as $fil)
+		{
+		  $filt = split(":", $fil);
+		  $sql .= " AND " . $filt[0] . " = " . $filt[1];
+		}
+	    }
 	
-	if ($year > 0)
-	  $sql .= " AND date_format(f.datef, '%Y') = $year";
+	  if ($year > 0)
+	    $sql .= " AND date_format(f.datef, '%Y') = $year";
 
-	if (strlen($_POST["sf_ref"]) > 0)
-	  {
-	    $sql .= " AND f.facnumber like '%".$_POST["sf_ref"] . "%'";
-	  }
+	  if (strlen($_POST["sf_ref"]) > 0)
+	    {
+	      $sql .= " AND f.facnumber like '%".$_POST["sf_ref"] . "%'";
+	    }
 
-	$sql .= " GROUP BY f.facnumber";   
+	  $sql .= " GROUP BY f.facnumber";   
 	
-	$sql .= " ORDER BY ";
-	$listfield=split(',',$sortfield);
-    foreach ($listfield as $key => $value) {
+	  $sql .= " ORDER BY ";
+	  $listfield=split(',',$sortfield);
+	  foreach ($listfield as $key => $value) {
 	    $sql.="$listfield[$key] $sortorder,";
-    }
-	$sql .= " f.rowid DESC ";
+	  }
+	  $sql .= " f.rowid DESC ";
 	
-	$sql .= $db->plimit($limit,$offset);
+	  $sql .= $db->plimit($limit,$offset);
 	
-	$result = $db->query($sql);
-      }
-    if ($result)
-      {
-	$num = $db->num_rows();
-	print_barre_liste("Factures clients",$page,$_SERVER["PHP_SELF"],"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+	  $result = $db->query($sql);
+	}
+      if ($result)
+	{
+	  $num = $db->num_rows();
+	  print_barre_liste("Factures clients",$page,$_SERVER["PHP_SELF"],"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
-	$i = 0;
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-	print '<tr class="liste_titre">';
-	print '<td>';
-	print_liste_field_titre("Numéro",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp");
-	print '</td><td align="center">';
-	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"f.datef","","&amp;socidp=$socidp");
-	print '</td><td>';
-	print_liste_field_titre("Société",$_SERVER["PHP_SELF"],"s.nom","","&amp;socidp=$socidp");
-	print '</td><td align="right">';
-	print_liste_field_titre("Montant HT",$_SERVER["PHP_SELF"],"f.total","","&amp;socidp=$socidp");
-	print '</td><td align="right">';
-	print_liste_field_titre("Montant TTC",$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socidp=$socidp");
-	print '</td><td align="right">';
-	print_liste_field_titre("Reçu",$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp");
-	print '</td><td align="center">';
-	print_liste_field_titre("Statut",$_SERVER["PHP_SELF"],"fk_statut,paye","","&amp;socidp=$socidp");
-	print '</td>';
-	print "</tr>\n";
+	  $i = 0;
+	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<tr class="liste_titre">';
+	  print '<td>';
+	  print_liste_field_titre("Numéro",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp");
+	  print '</td><td align="center">';
+	  print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"f.datef","","&amp;socidp=$socidp");
+	  print '</td><td>';
+	  print_liste_field_titre("Société",$_SERVER["PHP_SELF"],"s.nom","","&amp;socidp=$socidp");
+	  print '</td><td align="right">';
+	  print_liste_field_titre("Montant HT",$_SERVER["PHP_SELF"],"f.total","","&amp;socidp=$socidp");
+	  print '</td><td align="right">';
+	  print_liste_field_titre("Montant TTC",$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socidp=$socidp");
+	  print '</td><td align="right">';
+	  print_liste_field_titre("Reçu",$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp");
+	  print '</td><td align="center">';
+	  print_liste_field_titre("Statut",$_SERVER["PHP_SELF"],"fk_statut,paye","","&amp;socidp=$socidp");
+	  print '</td>';
+	  print "</tr>\n";
       
-	if ($num > 0) 
-	  {
-	    $var=True;
-	    $total=0;
-	    $totalrecu=0;
+	  if ($num > 0) 
+	    {
+	      $var=True;
+	      $total=0;
+	      $totalrecu=0;
 
-	    while ($i < min($num,$limit))
-	      {
-		$objp = $db->fetch_object($i);
-		$var=!$var;
+	      while ($i < min($num,$limit))
+		{
+		  $objp = $db->fetch_object($i);
+		  $var=!$var;
 
-		print "<tr $bc[$var]>";
-		if ($objp->paye)
-		  {
-		    $class = "normal";
-		  }
-		else
-		  {
-		    if ($objp->fk_statut == 0)
-		      {
-			$class = "normal";
-		      }
-		    else
-		      {
-			$class = "impayee";
-		      }
-		  }
+		  print "<tr $bc[$var]>";
+		  if ($objp->paye)
+		    {
+		      $class = "normal";
+		    }
+		  else
+		    {
+		      if ($objp->fk_statut == 0)
+			{
+			  $class = "normal";
+			}
+		      else
+			{
+			  $class = "impayee";
+			}
+		    }
 
-		print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_file()."</a>&nbsp;\n";
-		print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
+		  print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_file()."</a>&nbsp;\n";
+		  print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
 		
-		if ($objp->df > 0 )
-		  {
-		    print "<TD align=\"center\">";
-		    $y = strftime("%Y",$objp->df);
-		    $m = strftime("%m",$objp->df);
+		  if ($objp->df > 0 )
+		    {
+		      print "<TD align=\"center\">";
+		      $y = strftime("%Y",$objp->df);
+		      $m = strftime("%m",$objp->df);
 		    
-		    print strftime("%d",$objp->df)."\n";
-		    print ' <a href="facture.php?year='.$y.'&amp;month='.$m.'">';
-		    print substr(strftime("%B",$objp->df),0,3)."</a>\n";
-		    print ' <a href="facture.php?year='.$y.'">';
-		    print strftime("%Y",$objp->df)."</a></TD>\n";
-		  }
-		else
-		  {
-		    print "<td align=\"center\"><b>!!!</b></td>\n";
-		  }
-        print '<td><a href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		      print strftime("%d",$objp->df)."\n";
+		      print ' <a href="facture.php?year='.$y.'&amp;month='.$m.'">';
+		      print substr(strftime("%B",$objp->df),0,3)."</a>\n";
+		      print ' <a href="facture.php?year='.$y.'">';
+		      print strftime("%Y",$objp->df)."</a></TD>\n";
+		    }
+		  else
+		    {
+		      print "<td align=\"center\"><b>!!!</b></td>\n";
+		    }
+		  print '<td><a href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		
-	    print "<td align=\"right\">".price($objp->total)."</td>";
-		print "<td align=\"right\">".price($objp->total_ttc)."</td>";
-		print "<td align=\"right\">".price($objp->am)."</td>";	
-		// Affiche statut de la facture
-		if (! $objp->paye)
-		  {
-		    if ($objp->fk_statut == 0)
-		      {
-			print '<td align="center">brouillon</td>';
-		      }
-		    elseif ($objp->fk_statut == 3)
-		      {
-			print '<td align="center">annulée</td>';
-		      }
-		    else
-		      {
-			print '<td align="center"><a class="'.$class.'" href="facture.php?filtre=paye:0,fk_statut:1">'.($objp->am?"commencé":"impayée").'</a></td>';
-		      }
-		  }
-		else
-		  {
-		    print '<td align="center">payée</td>';
-		  }
+		  print "<td align=\"right\">".price($objp->total)."</td>";
+		  print "<td align=\"right\">".price($objp->total_ttc)."</td>";
+		  print "<td align=\"right\">".price($objp->am)."</td>";	
+		  // Affiche statut de la facture
+		  if (! $objp->paye)
+		    {
+		      if ($objp->fk_statut == 0)
+			{
+			  print '<td align="center">brouillon</td>';
+			}
+		      elseif ($objp->fk_statut == 3)
+			{
+			  print '<td align="center">annulée</td>';
+			}
+		      else
+			{
+			  print '<td align="center"><a class="'.$class.'" href="facture.php?filtre=paye:0,fk_statut:1">'.($objp->am?"commencé":"impayée").'</a></td>';
+			}
+		    }
+		  else
+		    {
+		      print '<td align="center">payée</td>';
+		    }
 		
-		print "</tr>\n";
-		$total+=$objp->total;
-		$total_ttc+=$objp->total_ttc;
-		$totalrecu+=$objp->am;
-		$i++;
-	      }
+		  print "</tr>\n";
+		  $total+=$objp->total;
+		  $total_ttc+=$objp->total_ttc;
+		  $totalrecu+=$objp->am;
+		  $i++;
+		}
 
-	    if ($num <= $limit) {
-			// Print total
+	      if ($num <= $limit) {
+		// Print total
 	    	print "<tr ".$bc[!$var].">";
 	    	print "<td colspan=3 align=\"left\">Total : </TD>";
-			print "<td align=\"right\"><b>".price($total)."</b></TD>";		
+		print "<td align=\"right\"><b>".price($total)."</b></TD>";		
 	    	print "<td align=\"right\"><b>".price($total_ttc)."</b></TD>";
 	    	print "<td align=\"right\"><b>".price($totalrecu)."</b></TD>";
 	    	print '<td align="center">&nbsp;</td>';
 	    	print "</tr>\n";
-		}
-	  }
+	      }
+	    }
 	
-	print "</table>";
-	$db->free();
-      }
-    else
-      {
-	print $db->error() . "<br>" . $sql;
-      }    
-  }
+	  print "</table>";
+	  $db->free();
+	}
+      else
+	{
+	  print $db->error() . "<br>" . $sql;
+	}    
+    }
   
 }
 
