@@ -21,7 +21,6 @@
 require("../../main.inc.php3");
 
 function llxHeader($head = "", $urlp = "") {
-
   /*
    *
    *
@@ -45,11 +44,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu("phpinfo.php?what=modules", "Modules");
 
-  if ($user->admin)
-    {      
-      $menu->add(DOL_URL_ROOT."/admin/", "Configuration");
-    }
-
+  $menu->add(DOL_URL_ROOT."/admin/", "Configuration");
 
   left_menu($menu->liste);
 }
