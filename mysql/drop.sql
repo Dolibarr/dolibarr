@@ -129,7 +129,15 @@ drop table if exists llx_propaldet;
 
 drop table if exists llx_service;
 
+drop table if exists llx_societe;
+
+drop table if exists llx_socpeople;
+
+drop table if exists llx_soc_events;
+
 drop table if exists llx_soc_recontact;
+
+drop table if exists llx_socstatutlog ;
 
 drop table if exists llx_sqltables;
 
@@ -147,25 +155,4 @@ drop table if exists llx_voyage;
 
 drop table if exists llx_voyage_reduc;
 
-drop table if exists login ;
-
-drop table if exists socappoint ;
-
-drop table if exists soccontact;
-
-drop table if exists soccontactinfo;
-
-drop table if exists socfollowresume;
-
-drop table if exists llx_socstatutlog ;
-
-drop table if exists region_resume ;
-
-drop table if exists llx_societe;
-
-drop table if exists soc_events;
-
-drop table if exists soc_recontact;
-
-drop table if exists llx_socpeople;
 
