@@ -42,7 +42,7 @@ if ($result)
   $num = $db->num_rows();
   $i = 0; 
   $total = 0 ;
-  print '<p><TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
+  print '<br><TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
   print '<TR class="liste_titre">';
   print "<TD width=\"60%\">Date</TD>";
   print "<TD align=\"right\">Montant</TD>";
