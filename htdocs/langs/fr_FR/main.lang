@@ -75,7 +75,7 @@ Description=Description
 Designation=Designation
 Action=Action
 About=À propos
-WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et vous êtes connecté(e) sous le nom</font> %s
+WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et vous êtes connecté(e) sous le login</font> %s
 Number=Nombre
 Numero=Numéro
 DevelopmentTeam=Équipe de développement
@@ -188,3 +188,4 @@ Late=Retard
 Photo=Photo
 Photos=Photos
 AddPhoto=Ajouter photo
+CurrentLogin=Login courant

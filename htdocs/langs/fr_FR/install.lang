@@ -52,4 +52,5 @@ AdminLoginCreatedSuccessfuly=Création du compte administrateur réussie.
 GoToSetupArea=Accès à l'espace configuration
 Examples=Exemples
 WithNoSlashAtTheEnd=Sans le slash "/" à la fin
-
+LoginAlreadyExists=Existe déjà
+DolibarrAdminLogin=Login de l'administrateur Dolibarr

@@ -52,3 +52,5 @@ AdminLoginCreatedSuccessfuly=Administrator login created successfuly.
 GoToSetupArea=Go to setup area
 Examples=Examples
 WithNoSlashAtTheEnd=Without the slash "/" at the end
+LoginAlreadyExists=Already exists
+DolibarrAdminLogin=Dolibarr admin login
