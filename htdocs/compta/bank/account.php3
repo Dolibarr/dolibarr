@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +27,8 @@
  *
  */
 require("./pre.inc.php3");
-require("./bank.lib.php3");
-
+//require("./bank.lib.php3");
+//require("./account.class.php");
 
 if ($HTTP_POST_VARS["action"] == 'add' && $account)
 {    
@@ -41,7 +42,15 @@ if ($HTTP_POST_VARS["action"] == 'add' && $account)
     }
   
   $dateop = "$dateoy" . "$dateo";
-  
+  $acct=new Account($db,$account);
+  $insertid=$acct->addline($dateop, $operation, $label, $amount, $num_chq,$cat1);
+  //  $insertid=bank_add_line($db,$dateop, $label, $amount,$author,$num_chq,$account,$operation,$cat1);
+  if ($insertid == ''){
+    print "<p> Probleme d'insertion : ".$db->error();
+  }else{
+    Header("Location: $PHP_SELF?account=$account");
+  }
+    /*
   if ($num_chq)
     {
       $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
@@ -69,11 +78,13 @@ if ($HTTP_POST_VARS["action"] == 'add' && $account)
       print $db->error();
       print "<p>$sql";
     }
-  
+    */
 }
 if ($action == 'del' && $account)
 {
-  bank_delete_line($db, $rowid);
+  $acct=new Account($db,$account);
+  $acct->deleteline($rowid);
+  //bank_delete_line($db, $rowid);
 }
 
 
@@ -381,7 +392,7 @@ if ($account)
     $db->free();
   }
 
-  $acc = new Account($db);
+  //$acc = new Account($db);
 
   print "</table>";
 }
