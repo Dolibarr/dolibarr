@@ -48,7 +48,7 @@ function llxHeader($head = "") {
       $objp = $db->fetch_object($i);
       $menu->add("account.php3?account=" . $objp->rowid,  $objp->label);
       $menu->add_submenu("releve.php3?account=" . $objp->rowid ,"Relevés");
-
+      $menu->add_submenu("rappro.php3?account=".$objp->rowid,"Rappro");
       $i++;
     }
   }
@@ -56,7 +56,7 @@ function llxHeader($head = "") {
 
   $menu->add("index.php3","Bank");
 
-  $menu->add_submenu("rappro.php3?account=$account","Rappro");
+
   $menu->add_submenu("budget.php3","Budgets");
   $menu->add_submenu("bilan.php3","Bilan");
   $menu->add_submenu("virement.php3","Virement");
