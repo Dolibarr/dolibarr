@@ -64,7 +64,7 @@ if ($_GET["propalid"])
   $hselected=$h;
   $h++;
   
-  dolibarr_fiche_head($head, $hselected, $langs->trans("Prop").": $propal->ref");
+  dolibarr_fiche_head($head, $hselected, $langs->trans("Proposal").": $propal->ref");
   
   $propal->info($propal->id);
 

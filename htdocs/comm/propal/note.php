@@ -89,7 +89,7 @@ if ($_GET["propalid"])
       $head[$h][1] = $langs->trans("Info");
       $h++;
 	   
-	  dolibarr_fiche_head($head, $hselected, $langs->trans("Prop").": $propal->ref");
+	  dolibarr_fiche_head($head, $hselected, $langs->trans("Proposal").": $propal->ref");
                   	  
 	  print '<table class="border" width="100%">';
 	  
