@@ -11,6 +11,7 @@ Prénom: $don->prenom
 Nom: $don->nom
 Montant: $don->amount
 Au plus tard le: $date_limite
+Informations sur les modes de paiement: http://eucd.info/donations.fr.php
 
 L'initiative EUCD.INFO[1] a pour  objet de préserver l'intérêt général
 menacé  par  la   transposition  de  la  directive  du   22  mai  2001
