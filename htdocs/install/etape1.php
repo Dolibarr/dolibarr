@@ -343,6 +343,12 @@ if ($_POST["action"] == "set")
 	  print "</td><td>";
 	  print $langs->trans("Error");
 	  print "</td></tr>";
+	  
+	  print '<tr><td colspan="2">Un des paramètres saisis est peut-être incorrect:<br>';
+	  print 'host='.$conf->db->host.', name='.$conf->db->name.', user='.$conf->db->user.', pass='.$conf->db->pass.'<br>';
+      print 'Revenez en arrière pour corriger les paramètres.';
+      print '</td></tr>';
+
 	  $ok = 0;
 	}
       
@@ -400,7 +406,8 @@ if ($_POST["action"] == "set")
 		      dolibarr_syslog("la connexion au serveur avec l'utilisateur root rate");
 		      if (! $conf->db->user) {
 		        print "<tr><td colspan='2'>".$langs->trans("Error").": ";
-		        print "Le super utilisateur de la base est requis pour créer la base. Créer la base en manuel ou revenez en arrière pour saisir le super utilisateur";
+		        print "Le super utilisateur de la base est requis pour créer la base.";
+		        print "Créer la base en manuel ou revenez en arrière pour saisir le super utilisateur";
 		        print "</tr>";
 		      } else {
 		        print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>".$langs->trans("Error")."</td></tr>";
