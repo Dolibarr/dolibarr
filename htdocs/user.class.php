@@ -272,6 +272,22 @@ class User
 		    $this->rights->projet->supprimer = 1;
 
 		}
+	      if ($module == 'adherent' or $module == '')
+		{
+
+		  if ($obj->fk_id == 71)
+		    $this->rights->adherent->lire = 1;
+			
+		  if ($obj->fk_id == 72)
+		    $this->rights->adherent->creer = 1;
+			
+		  if ($obj->fk_id == 73)
+		    $this->rights->adherent->modifier = 1;
+			
+		  if ($obj->fk_id == 74)
+		    $this->rights->adherent->supprimer = 1;
+
+		}
 	      $i++;
 	      }
 	    //	    $this->db->free();	    
