@@ -1,0 +1,13 @@
+2003-09-06  Rodolphe Quiédeville  <rq@quiedeville.org>
+
+	* Modification de l'installation, ajout d'un test si l'utilisateur
+	est passé par install.php, si non le renvoie automatiquement sur
+	la page.
+	* bug fix sur les url vers les images dans comm/contact.php3 et
+	four/fiche.php3 et fourn/index.php
+	
+2003-09-05  Rodolphe Quiédeville  <rq@quiedeville.org>
+
+	* Calculs des remises dans les factures et les propales
+
+
