@@ -148,7 +148,7 @@ while (($file = readdir($handle))!==false)
 
       print '</td><td align="center">';
 
-      if ($facture_addon_var_pdf == "$file")
+      if ($facture_addon_var_pdf == "$name")
 	{
 	  print '<img src="/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
 	}
@@ -159,7 +159,7 @@ while (($file = readdir($handle))!==false)
 
       print "</td><td>\n";
 
-      print '<a href="facture.php?action=setpdf&value='.$file.'">activer</a>';
+      print '<a href="facture.php?action=setpdf&value='.$name.'">activer</a>';
 
       print '</td></tr>';
     }
