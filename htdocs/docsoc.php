@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,15 +35,13 @@ if (! is_dir($upload_dir))
     }
 }
 
-if ( $sendit )
+if ( $sendit && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 {
   if (is_dir($upload_dir))
     {
-
       if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
 	{
-	  $mesg = "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; 
-           avec succ&egrave;s.\n";
+	  $mesg = "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s.\n";
 	  //print_r($_FILES);
 	}
       else
@@ -122,29 +120,30 @@ if ($socid > 0)
       $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
       $head[$h][1] = 'Notifications';
       
-      dolibarr_fiche_head($head, $a);
-      
+      dolibarr_fiche_head($head, $a);      
       /*
        *
        */
-      print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
-      
-      print "<tr><td><div class=\"titre\">Documents associés à l'entreprise : $societe->nom</div></td>";
-      print "<td align=\"center\"><a href=\"fiche.php?socid=$societe->id\">Commercial</a></td>";
-      print "<td align=\"center\"><a href=\"../compta/fiche.php?socid=$societe->id\">Compta</a></td>";
-      print "</tr></table>";
+      print_titre("Documents associés à l'entreprise : $societe->nom");
       /*
        *
        *
        */
-
-      echo '<FORM NAME="userfile" ACTION="docsoc.php?socid='.$socid.'" ENCTYPE="multipart/form-data" METHOD="POST">';      
-      print '<input type="hidden" name="max_file_size" value="2000000">';
-      print '<input type="file"   name="userfile" size="40" maxlength="80">';
-      print '<BR>';
-      print '<input type="submit" value="Upload File!" name="sendit">';
-      print '<input type="submit" value="Cancel" name="cancelit"><BR>';
-      print '</FORM></div>';
+      if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
+	{
+	  echo '<FORM NAME="userfile" ACTION="docsoc.php?socid='.$socid.'" ENCTYPE="multipart/form-data" METHOD="POST">';      
+	  print '<input type="hidden" name="max_file_size" value="2000000">';
+	  print '<input type="file"   name="userfile" size="40" maxlength="80">';
+	  print '<BR>';
+	  print '<input type="submit" value="Upload File!" name="sendit">';
+	  print '<input type="submit" value="Cancel" name="cancelit"><BR>';
+	  print '</FORM>';
+	}
+      else
+	{
+	  print "La gestion des fichiers associés est désactivé sur ce serveur";
+	}
+      print '</div>';
 
       print $mesg;
 
@@ -154,9 +153,7 @@ if ($socid > 0)
 
       if ($handle)
 	{
-
 	  print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
-
 	  while (($file = readdir($handle))!==false)
 	    {
 	      if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
