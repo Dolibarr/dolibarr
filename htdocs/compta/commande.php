@@ -283,7 +283,7 @@ if ($_GET["id"] > 0)
 		    {
 		      print "<td>".$user->fullname."</td>\n";
 		    }
-		  print '<TD align="right">'.price($objp->total).'</TD>';
+		  print '<td align="right">'.price($objp->total).'</td>';
 		  print "</tr>";
 		  $total = $total + $objp->total;
 		  $i++;
@@ -309,10 +309,11 @@ if ($_GET["id"] > 0)
       if ($user->societe_id == 0 && !$commande->facturee)
 	{
 	  print "<br><div class=\"tabsAction\">\n";
-	 
 
 	  if ($user->rights->facture->creer)
-	    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">Facturer</a>';
+	    {
+	      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">Facturer</a>';
+	    }
 
 	  if (!$commande->facturee && $num_fac_asso)
 	    {
