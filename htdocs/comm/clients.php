@@ -31,7 +31,6 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-
 $page=$_GET["page"];
 $begin=$_GET["begin"];
 $sortorder=$_GET["sortorder"];
@@ -44,17 +43,18 @@ $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
+$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm ";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
+$sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
 
 if ($socidp)
 {
   $sql .= " AND s.idp = $socidp";
 }
 
-
-if (strlen($stcomm))
+if ($_GET["search_nom"])
 {
-  $sql .= " AND s.fk_stcomm=$stcomm";
+  $sql .= " AND s.nom like '%".strtolower($_GET["search_nom"])."%'";
 }
 
 if (strlen($begin))
@@ -127,12 +127,24 @@ if ($result)
   
   print '<table class="liste">';
   print '<tr class="liste_titre">';
-  print "<th valign=\"center\">";
-  print_liste_field_titre("Société","clients.php","s.nom","&amp;page=$page&amp;begin=$begin");
-  print "</th><th>";
-  print_liste_field_titre("Ville","clients.php","s.ville","&amp;page=$page&amp;begin=$begin");
-  print "</th>";
-  print "</TR>\n";
+  print "<td valign=\"right\">";
+
+  $addu = "&amp;page=$page&amp;begin=$begin&amp;search_nom=".$_GET["search_nom"];
+
+  print_liste_field_titre("Société","clients.php","s.nom",$addu);
+  print "</td><td>";
+  print_liste_field_titre("Ville","clients.php","s.ville",$addu);
+  print "</td>";
+  print "</tr>\n";
+
+  print '<form method="get" action="clients.php">';
+  print '<tr class="liste_titre">';
+  print '<td valign="right">';
+  print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
+  print "</td><td>&nbsp;";
+  print "</td>";
+  print "</tr>\n";
+
   $var=True;
 
   while ($i < min($num,$conf->liste_limit))
