@@ -33,6 +33,10 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Fiche");
 $h++;      
 
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Lignes");
+$h++;
+
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Factures");
 $h++;  
@@ -71,12 +75,11 @@ if ($prev_id)
    * Stats
    *
    */
-  $sql = "SELECT sum(f.total_ttc), pf.statut";
-  $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
-  $sql .= " , ".MAIN_DB_PREFIX."facture as f";
-  $sql .= " WHERE pf.fk_prelevement = ".$prev_id;
-  $sql .= " AND pf.fk_facture = f.rowid";
-  $sql .= " GROUP BY pf.statut";
+  $sql = "SELECT sum(pl.amount), pl.statut";
+  $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+
+  $sql .= " WHERE pl.fk_prelevement_bons = ".$prev_id;
+  $sql .= " GROUP BY pl.statut";
   
   if ($db->query($sql))
     {
@@ -96,15 +99,19 @@ if ($prev_id)
 	  
 	  print "<tr $bc[$var]><td>";
 	  
-	  if ($row[1] == 1)
+	  if ($row[1] == 2)
 	    {
 	      print 'Crédité';
 	    }
-	  elseif ($row[1] == 2)
+	  elseif ($row[1] == 3)
 	    {
 	      print 'Rejeté';
 	    }
-	  
+	  elseif ($row[1] == 1)
+	    {
+	      print 'En attente';
+	    }	  
+
 	  print '</td><td align="right">';	  
 	  print price($row[0]);	  
 

@@ -37,6 +37,10 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Fiche");
 $h++;      
 
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Lignes");
+$h++;  
+
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Factures");
 $h++;  
@@ -76,46 +80,28 @@ if ($_GET["id"])
 }
 
 $page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
-
-if ($page == -1) { $page = 0 ; }
-
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
-if ($sortorder == "") {
-  $sortorder="DESC";
-}
-if ($sortfield == "") {
-  $sortfield="p.datec";
-}
 
 /*
  * Liste des factures
  *
  *
  */
-$sql = "SELECT pf.rowid, pf.statut";
-$sql .= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc";
+$sql = "SELECT pl.rowid, pl.amount, pl.statut";
 $sql .= " , s.idp, s.nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE p.rowid=".$prev_id;
-$sql .= " AND pf.fk_prelevement = p.rowid";
-$sql .= " AND f.fk_soc = s.idp";
-$sql .= " AND pf.fk_facture = f.rowid";
-$sql .= " AND pf.statut = 2 ";
+$sql .= " AND pl.fk_prelevement_bons = p.rowid";
+$sql .= " AND pl.fk_soc = s.idp";
+$sql .= " AND pl.statut = 3 ";
 
 if ($_GET["socid"])
 {
   $sql .= " AND s.idp = ".$_GET["socid"];
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql .= " ORDER BY pl.amount DESC";
 
 $result = $db->query($sql);
 if ($result)
@@ -123,41 +109,29 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  $urladd = "&amp;id=".$_GET["id"];
-
-  print_barre_liste("Factures", $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste("Lignes de prélèvement rejetées", $page, "fiche-rejet.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre("Facture","factures.php","p.ref",'',$urladd);
-  print_liste_field_titre("Société","factures.php","s.nom",'',$urladd);
-  print_liste_field_titre("Montant","factures.php","f.total_ttc","",$urladd,'align="center"');
-  print '<td colspan="2">&nbsp;</td></tr>';
+  print '<td>Ligne</td><td>Société</td><td align="right">Montant</td></tr>';
 
   $var=True;
 
   $total = 0;
 
-  while ($i < min($num,$conf->liste_limit))
+  while ($i < $num)
     {
       $obj = $db->fetch_object($i);	
 
       print "<tr $bc[$var]><td>";
+      print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
+      print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 
-      print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
-      print img_file();      
-      print '</a>&nbsp;';
-
-      print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
-
+      print substr('000000'.$obj->rowid, -6);
+      print '</a></td>';
       print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom)."</a></td>\n";
 
-      print '<td align="center">'.price($obj->total_ttc)."</td>\n";
-
-      print '<td><b>Rejeté</b></td><td>';
-
-      print '</td>';
-
+      print '<td align="right">'.price($obj->amount)."</td>\n";
       print "</tr>\n";
 
       $total += $obj->total_ttc;
