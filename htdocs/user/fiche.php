@@ -22,10 +22,10 @@
  * $Source$
  */
 
-/*!
-  \file       htdocs/user/fiche.php
-  \brief      Onglet user et permissions de la fiche utilisateur
-  \version    $Revision$
+/**
+    \file       htdocs/user/fiche.php
+    \brief      Onglet user et permissions de la fiche utilisateur
+    \version    $Revision$
 */
 
 
@@ -195,7 +195,7 @@ else
     {
         $fuser = new User($db, $_GET["id"]);
         $fuser->fetch();
-	$fuser->getrights();
+	    $fuser->getrights();
 
         /*
          * Affichage onglets
@@ -418,16 +418,18 @@ else
                         $var = !$var;
                     }
                     if (! $obj->perms) {
-                        // Si droit selon modèle simple
+                        // Si droit selon ancien modèle
                         print "<tr $bc[$var]><td>".$obj->module."</td><td>".$obj->libelle . "</td></tr>\n";
                     } else {
                         // Si droit selon nouveau modèle (avec sous niveaux de droits)
-                        //$alpha = "user->rights->".$obj->perms."->".$obj->subperms;
-                        //print "$alpha ".$$alpha;
-                        //if ($$alpha)
-                        //{
-                            print "<tr $bc[$var]><td>".$obj->module."</td><td>".$obj->perms." - ".$obj->subperms."</td></tr>\n";
-                        //}
+                        $mod=$obj->module;
+                        $perm=$obj->perms;
+                        $subperm=$obj->subperms;
+                        $droit = $fuser->rights->$mod->$perm->$subperm;
+                        if ($droit)
+                        {
+                            print "<tr $bc[$var]><td>".$obj->module."</td><td>".$obj->libelle."</td></tr>\n";
+                        }
                     }
                     $i++;
                 }
