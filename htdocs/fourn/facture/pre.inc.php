@@ -30,29 +30,37 @@
 require("../../main.inc.php");
 
 
-function llxHeader($head = "", $urlp = "") {
-  global $user, $conf;
+function llxHeader($head = "", $title = "") {
+  global $user, $conf, $langs;
 
-  top_menu($head);
+  top_menu($head, $title);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
+  $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
 
   if ($user->societe_id == 0) 
     {
-      $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&type=f","Nouveau");
+      $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&type=f",$langs->trans("New"));
     }
 
+  if ($conf->societe->enabled) {
+    $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
+  }
 
-  $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", "Factures");
-
-  if ($user->societe_id == 0) 
+  if ($conf->facture->enabled) {
+    $langs->load("bills");
+    $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
+    
+    if ($user->societe_id == 0) 
     {
-      $menu->add_submenu("fiche.php?action=create","Nouvelle");
+      $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("New"));
     }
-
-  $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", "Paiements");
+    
+    $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
+  }
+  
+  $menu->add(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("Products"));
 
   left_menu($menu->liste);
 }
