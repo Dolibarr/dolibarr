@@ -151,6 +151,7 @@ if ($account > 0)
    *
    */
   $sql = "SELECT count(*) FROM llx_bank as b WHERE 1=1";
+  $sql .= " AND b.dateo <= now()";
   if ($account) { $sql .= " AND b.fk_account=$account"; }
   $sql .= $sql_rech;
   if ( $db->query($sql) )
@@ -215,12 +216,10 @@ if ($account > 0)
    */
   print "<form method=\"post\" action=\"$PHP_SELF?vline=$vline&amp;account=$account\">";
   print '<input type="hidden" name="action" value="add">';
-  print "<tr class=\"liste_titre\">";
-  print "<td>Date</td><td>Type</td><td>Description</TD>";
-  print "<td align=\"right\">Débit</TD>";
-  print "<td align=\"right\">Crédit</TD>";
-  print "<td align=\"right\">Solde</td>";
-  print "<td align=\"right\">Relevé</td></tr>";
+  print '<tr class="liste_titre">';
+  print '<td>Date</td><td>Type</td><td>Description</td>';
+  print '<td align="right">Débit</td><td align="right">Crédit</td><td align="right">Solde</td>';
+  print '<td align="center">Relevé</td></tr>';
   // DEBUG
   // print "<tr><td>$nbline</td><td>$viewline</td><td>total_lines $total_lines</td><td>limitsql $limitsql</td></tr>";
       
@@ -255,16 +254,62 @@ if ($account > 0)
 	  $sql .= " AND b.amount < 0 ";
 	}
     }
+
+  $sql .= " AND b.dateo <= now()";
+
   $sql .= " ORDER BY b.dateo ASC";
   $sql .= $db->plimit($limitsql, 0);
 
   $result = $db->query($sql);
   if ($result)
     {
-      $var=True;  
-      $num = $db->num_rows();
-      $i = 0; $total = 0;
-      $sep = 0;
+      _print_lines($db, $sql, $acct);
+    }
+  /*
+   * Opérations futures
+   *
+   */
+
+
+  print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
+  print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
+  print '<tr><td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
+  print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
+  print '<td><select name="operation">';
+  print '<option value="CB">CB';
+  print '<option value="CHQ">CHQ';
+  print '<option value="DEP">DEP';
+  print '<option value="TIP">TIP';
+  print '<option value="PRE">PRE';
+  print '<option value="VIR">VIR';
+  print '</select></td>';
+  print '<td><input name="num_chq" type="text" size="4">';
+  print '<input name="label" type="text" size="40"></td>';
+  print '<td><input name="debit" type="text" size="8"></td>';
+  print '<td><input name="credit" type="text" size="8"></td>';
+  print "<td colspan=\"2\" align=\"center\"><select name=\"cat1\">$options</select></td>";
+  print '</tr><tr><td colspan="3"><small>YYYYMMDD</small></td><td>0000.00</td>';
+  print '<td colspan="3" align="center"><input type="submit" value="Ajouter"></td></tr>';
+  print "</table></form>";
+}
+else
+{
+  print "Erreur : numéro ce compte inexistant";
+}
+
+$db->close();
+
+llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+/*
+ *
+ */
+Function _print_lines($db,$sql, $acct)
+{
+  global $bc, $nbline, $viewline;
+  $var=True;  
+  $num = $db->num_rows();
+  $i = 0; $total = 0;
+  $sep = 0;
       
       while ($i < $num)
 	{
@@ -308,7 +353,7 @@ if ($account > 0)
 		  
 	      if ($objp->num_chq)
 		{
-		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$account\">CHQ $objp->num_chq - $objp->label</a></td>";
+		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">CHQ $objp->num_chq - $objp->label</a></td>";
 		}
 	      else
 		{
@@ -355,11 +400,11 @@ if ($account > 0)
 	      
 	      if ($objp->rappro)
 		{
-		  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$account\">$objp->num_releve</a></td>";
+		  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
 		}
 	      else
 		{
-		  print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&amp;rowid=$objp->rowid&amp;account=$account&amp;page=$page\">[Del]</a></td>";
+		  print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id&amp;page=$page\">[Del]</a></td>";
 		}
 	      
 	      print "</tr>";
@@ -369,52 +414,5 @@ if ($account > 0)
 	  $i++;
 	}
       $db->free();
-    }
-  /*
-   * Opérations futures
-   *
-   */
-  if ($sep)
-    {
-      print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
-      print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
-    }
-  else
-    {
-
-      print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
-      print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
-      print "<tr>";
-      print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
-      print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
-      print "<td>";
-      
-      print '<select name="operation">';
-      print '<option value="CB">CB';
-      print '<option value="CHQ">CHQ';
-      print '<option value="DEP">DEP';
-      print '<option value="TIP">TIP';
-      print '<option value="PRE">PRE';
-      print '<option value="VIR">VIR';
-      print '</select></td>';
-      print "<td><input name=\"num_chq\" type=\"text\" size=4>";
-      print '<input name="label" type="text" size=40></td>';
-      print '<td><input name="debit" type="text" size="8"></td>';
-      print '<td><input name="credit" type="text" size="8"></td>';
-      print "<td colspan=\"2\" align=\"center\"><select name=\"cat1\">$options</select></td>";
-      print '</tr><tr><td colspan="3"><small>YYYYMMDD</small></td><td>0000.00</td>';
-      
-      print '<td colspan="3" align="center"><input type="submit" value="Ajouter"></td></tr>';
-      
-  }
-  print "</table></form>";
 }
-else
-{
-  print "Erreur : numéro ce compte inexistant";
-}
-
-$db->close();
-
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
