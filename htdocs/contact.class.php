@@ -81,6 +81,13 @@ class Contact
       $sql .= ", fax='$this->fax'";
       $sql .= ", email='$this->email'";
       $sql .= ", note='$this->note'";
+
+  $contact->address       = $HTTP_POST_VARS["adresse"];
+  $contact->cp            = $HTTP_POST_VARS["cp"];
+  $contact->ville         = $HTTP_POST_VARS["ville"];
+
+
+
       $sql .= ", phone = '$this->phone_pro'";
       $sql .= ", phone_perso = '$this->phone_perso'";
       $sql .= ", phone_mobile = '$this->phone_mobile'";
