@@ -68,7 +68,7 @@ class Account
   Function add_url_line($line_id, $url_id, $url, $label)
   {
     $sql = "INSERT INTO llx_bank_url (fk_bank, url_id, url, label)";
-    $sql .= " VALUES ($line_id, $url_id, '$url', '$label')";
+    $sql .= " VALUES ('$line_id', '$url_id', '$url', '$label')";
 
     if ($this->db->query($sql))
       {
@@ -141,14 +141,15 @@ class Account
 	  }
 	
 	$sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
-	$sql .= " VALUES (now(), $date, '$label', $amount,'$author','$num_chq', $this->rowid, '$oper')";
+	$sql .= " VALUES (now(), '$date', '$label', '" . ereg_replace(",",".",$amount) . "','$author','$num_chq', '$this->rowid', '$oper')";
+
 
 	if ($this->db->query($sql))
 	  {
 	    $rowid = $this->db->last_insert_id();
 	    if ($categorie)
 	      {
-		$sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ($rowid, $categorie)";
+		$sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
 		$result = $this->db->query($sql);
 		if ($result){
 		  return $rowid;
@@ -181,7 +182,7 @@ class Account
 	      if ( $this->update() )
 		{
 		  $sql = "INSERT INTO llx_bank (datec, label, amount, fk_account,datev,dateo,fk_type,rappro) ";
-		  $sql .= " VALUES (now(),'Solde',$this->solde,$this->id,'".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
+		  $sql .= " VALUES (now(),'Solde','" . ereg_replace(",",".",$this->solde) . "','$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
 
 		  $this->db->query($sql);
 		}

@@ -28,6 +28,7 @@ require("./pre.inc.php");
 if (!$user->rights->banque->lire)
   accessforbidden();
 
+
 llxHeader();
 
 if (! strlen($_GET["num"]))

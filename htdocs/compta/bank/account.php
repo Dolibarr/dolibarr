@@ -54,12 +54,12 @@ if ($HTTP_POST_VARS["action"] == 'add' && $_GET["account"])
   if ($num_chq)
     {
       $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
-      $sql .= " VALUES (now(), $dateop, '$label', $amount,'$author',$num_chq,$account,'$operation')";
+      $sql .= " VALUES (now(), '$dateop', '$label', '$amount','$author','$num_chq','$account','$operation')";
     }
   else
     {
       $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author,fk_account,fk_type)";
-      $sql .= " VALUES (now(), $dateop, '$label', $amount,'$author',$account,'$operation')";
+      $sql .= " VALUES (now(), '$dateop', '$label', '$amount','$author','$account','$operation')";
     }
   
   $result = $db->query($sql);
