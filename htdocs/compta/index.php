@@ -21,15 +21,16 @@
  *
  */
 
-/**     \file       htdocs/compta/index.php
-        \ingroup    compta
-		\brief      Page accueil zone comptabilité
-		\version    $Revision$
+/**   
+  \file       htdocs/compta/index.php
+  \ingroup    compta
+  \brief      Page accueil zone comptabilité
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
 
-$user->getrights('banque');
+$user->getrights(); // On a besoin des permissions sur plusieurs modules
 
 $langs->load("compta");
 
