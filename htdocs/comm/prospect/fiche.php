@@ -229,7 +229,7 @@ if ($socid > 0)
 
     if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
       {
-	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$societe->id.'&amp;action=create">'.$langs->trans("AddPropal").'</a>';
+	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$societe->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
       }
 
     if ($conf->projet->enabled && $user->rights->projet->creer)
