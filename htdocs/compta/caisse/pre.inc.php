@@ -21,26 +21,19 @@
  */
 require("../../main.inc.php");
 
-function llxHeader($head = "") {
-  global $user, $conf;
-
-
+function llxHeader($head = "")
+{
   /*
-   *
    *
    */
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add("/compta/caisse/index.php","Caisse");
+  $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisse");
 
-  $menu->add("/compta/caisse/annuel.php","Annuel");
-
-
+  $menu->add(DOL_URL_ROOT."/compta/caisse/annuel.php","Annuel");
 
   left_menu($menu->liste);
-
 }
-
 ?>
