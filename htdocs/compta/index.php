@@ -74,7 +74,7 @@ print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="2">Rechercher une facture</td></tr>';
 print "<tr $bc[0]><td>";
-print 'Num. : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="Rechercher" class="flat"></td></tr>';
+print 'Num. : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
 print "</table></form>";
 
 

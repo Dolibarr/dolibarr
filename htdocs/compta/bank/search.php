@@ -74,7 +74,7 @@ print "</tr>\n";
 </select>
 </td>
 <td align="left">
-<input type="submit" name="submit" value="Chercher">
+<input type="submit" name="submit" value="<?php echo $langs->trans("Search") ?>">
 </td>
 </tr>
 <?PHP

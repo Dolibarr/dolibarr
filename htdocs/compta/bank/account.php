@@ -192,7 +192,7 @@ if ($account > 0)
   print '<td colspan="3"><input type="text" name="req_desc" value="'.$_POST["req_desc"].'" size="40"></TD>';
   print '<td align="right"><input type="text" name="req_debit" value="'.$_POST["req_debit"].'" size="6"></TD>';
   print '<td align="right"><input type="text" name="req_credit" value="'.$_POST["req_credit"].'" size="6"></TD>';
-  print '<td align="center"><input type="submit" value="Chercher"></td>';
+  print '<td align="center"><input type="submit" value="'.$langs->trans("Search").'"></td>';
   print '<td align="center">';
   if ($user->rights->banque->modifier)
     {

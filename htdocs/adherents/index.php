@@ -134,7 +134,7 @@ print '<td>';
 
 print 'Nom/Prénom <input type="text" name="search" class="flat" size="20">';
 
-print '&nbsp; <input class="flat" type="submit" value="Chercher">';
+print '&nbsp; <input class="flat" type="submit" value="'.$langs->trans("Search").'">';
 print '</td></tr>';
 print "</table></form>";
 

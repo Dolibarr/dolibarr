@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ print '<form method="post" action="liste.php">';
 print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">Rechercher une expédition</td></tr>';
 print "<tr $bc[1]><td>";
-print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
+print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
 print "</table></form>\n";
 
 /*

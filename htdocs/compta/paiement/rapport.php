@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ for ($month = 1 ; $month < 13 ; $month++)
 {
   if ($month == $cmonth)
     {
-      print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
+      print "<option value=\"$month\" selected>" . $strmonth[$month];
     }
   else
     {
@@ -89,7 +90,7 @@ for ($formyear = $syear - 2; $formyear < $syear +1 ; $formyear++)
 {
   if ($formyear == $syear)
     {
-      print "<option value=\"$formyear\" SELECTED>$formyear";
+      print "<option value=\"$formyear\" selected>$formyear";
     }
   else
     {
