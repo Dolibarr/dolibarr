@@ -27,6 +27,7 @@ require("../../paiement.class.php");
 
 
 $db = new Db();
+llxHeader();
 
 if ($HTTP_POST_VARS["action"] == 'add') 
 {
@@ -55,13 +56,12 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	  $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
 	}
       // Envoi d'un Email de confirmation au nouvel adherent
-      $mesg="Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\nPrenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note\nType : $type\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\n http://$SERVER_NAME/adherents/private/edit.php\n\n";
+      $mesg="Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\nPrenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note\nType : $type\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\nhttp://$SERVER_NAME/adherents/private/edit.php\n\n";
       mail($email,"Votre adhesion sur http://$SERVER_NAME/",$mesg);
       Header("Location: new.php?action=added");
     }
 }
 
-llxHeader();
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -75,7 +75,7 @@ $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
 $sql .= " AND f.rowid = $facid";
 
 if (isset($action) && $action== 'added'){
-  print "<FONT COLOR=\"red\">Nouvel Adhérent ajouté. En attente de validation</FONT><BR>\n";
+  print "<FONT COLOR=\"blue\">Nouvel Adhérent ajouté. En attente de validation</FONT><BR>\n";
 }
 $result = $db->query($sql);
 if ($result) {
