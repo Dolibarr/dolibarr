@@ -20,15 +20,18 @@
  *
  */
 
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/brouzouf.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 
-class GraphAppelsDureeMoyenne extends GraphBrouzouf{
+class GraphAppelsDureeMoyenne extends GraphBar{
 
 
   Function GraphAppelsDureeMoyenne($DB, $file)
   {
     $this->db = $DB;
     $this->file = $file;
+
+    $this->datas = array();
+    $this->labels = array();
 
     $this->client = 0;
     $this->contrat = 0;
@@ -40,8 +43,17 @@ class GraphAppelsDureeMoyenne extends GraphBrouzouf{
     $this->barcolor = "pink";
   }
 
+  Function Graph($datas='', $labels='')
+  {    
+    $this->GetDatas();
 
-  Function GraphDraw()
+    if (sizeof($this->datas))
+      {
+	$this->GraphDraw($this->file, $this->datas, $this->labels);
+      }
+  }
+
+  Function GetDatas()
   {
     $num = 0;
 
@@ -83,14 +95,13 @@ class GraphAppelsDureeMoyenne extends GraphBrouzouf{
       {
 	$num = $this->db->num_rows();
 	$i = 0;
-	$labels = array();
 	
 	while ($i < $num)
 	  {
 	    $row = $this->db->fetch_row();
 
-	    $labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
-	    $datas[$i] = ($row[1] / $row[2] ) ;	    
+	    $this->labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
+	    $$this->datas[$i] = ($row[1] / $row[2] ) ;	    
 	    
 	    $i++;
 	  }
@@ -108,11 +119,6 @@ class GraphAppelsDureeMoyenne extends GraphBrouzouf{
       {
 	print $this->client . " " . $cv[$i - 1]."\n";
       }    
-
-    if ($num > 1)
-      {
-	$this->GraphMakeGraph($datas, $labels);
-      }
   }
 
 }   
