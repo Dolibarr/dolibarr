@@ -364,6 +364,7 @@ function print_date_select($set_time='')
   $strmonth[12] = "D&eacute;cembre";
     
   $smonth = 1;
+  $sday = 1;
 
   $cday = date("d", $set_time);
   $cmonth = date("n", $set_time);
