@@ -25,5 +25,6 @@ create table llx_action_def
   rowid           integer NOT NULL PRIMARY KEY,
   tms             timestamp,
   titre           varchar(255) NOT NULL,
-  description     text
+  description     text,
+  objet_type      enum('ficheinter','facture','propale')
 );
