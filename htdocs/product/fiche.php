@@ -226,11 +226,11 @@ else
 	    {
 	      print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 	      print '<tr class="liste_titre">';
-	      print '<form action="liste.php?type='.$product->type.'" method="post">';
-	      print '<td valign="center">Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
-	      print '</form><form action="liste.php" method="post">';
-	      print '<td>Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';
-	      print '</form><td>&nbsp;</td></tr></table>';
+	      print '<td><form action="liste.php?type='.$product->type.'" method="post">';
+	      print 'Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
+	      print '</form></td><td><form action="liste.php" method="post">';
+	      print 'Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
+	      print '</form></td><td>&nbsp;</td></tr></table>';
 
 
 	      print_fiche_titre('Fiche '.$types[$product->type].' : '.$product->ref, $mesg);
@@ -252,7 +252,7 @@ else
 	      print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
 	      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
 	      print '<td valign="top" rowspan="4">';
-	      print 'Fournisseurs [<a href="fiche.php?id='.$id.'&action=ajout_fourn">Ajouter</a>]';
+	      print 'Fournisseurs [<a href="fiche.php?id='.$id.'&amp;action=ajout_fourn">Ajouter</a>]';
 
 	      $sql = "SELECT s.nom, s.idp";
 	      $sql .= " FROM llx_societe as s, llx_product_fournisseur as pf";
@@ -452,7 +452,7 @@ if ($action == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<td width="20%" align="center">[<a href="fiche.php?action=edit_price&id='.$id.'">Changer le prix</a>]</td>';
+      print '<td width="20%" align="center">[<a href="fiche.php?action=edit_price&amp;id='.$id.'">Changer le prix</a>]</td>';
     }
   else
     {
@@ -470,7 +470,7 @@ if ($action == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
+      print '<td width="20%" align="center">[<a href="fiche.php?action=edit&amp;id='.$id.'">Editer</a>]</td>';
     }
   else
     {
