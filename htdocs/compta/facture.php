@@ -46,6 +46,15 @@ if ($user->societe_id > 0)
 /*
  *
  */	
+if ($HTTP_POST_VARS["action"] == 'classin') 
+{
+  $facture = new Facture($db);
+  $facture->fetch($facid);
+  $facture->classin($HTTP_POST_VARS["projetid"]);
+}
+/*
+ *
+ */	
 if ($HTTP_POST_VARS["action"] == 'add') 
 {
   $datefacture = mktime(12, 0 , 0, $remonth, $reday, $reyear); 
@@ -623,6 +632,10 @@ else
 	      $projet->fetch($fac->projetid);
 	      print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$fac->projetid.'">'.$projet->title.'</a>';
 	    }
+	  else
+	    {
+	      print '<a href="facture.php?facid='.$facid.'&amp;action=classer">Classer la facture</a>';
+	    }
 	  print "&nbsp;</td><td>Paiements</td></tr>";
 
 	  print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
@@ -998,6 +1011,23 @@ else
 	     *
 	     */
 	    print "</td></tr></table>";
+	  }
+	/*
+	 *
+	 *
+	 */
+	if ($action == 'classer')
+	  {	    
+	    print "<p><form method=\"post\" action=\"$PHP_SELF?facid=$facid\">\n";
+	    print '<input type="hidden" name="action" value="classin">';
+	    print '<table cellspacing="0" class="border" cellpadding="3">';
+	    print '<tr><td>Projet</td><td>';
+	    
+	    $proj = new Project($db);
+	    $html->select_array("projetid",$proj->liste_array($socidp));
+	    
+	    print "</td></tr>";
+	    print '<tr><td colspan="2" align="center"><input type="submit" value="Envoyer"></td></tr></table></form></p>';
 	  }
 	/*
 	 *
