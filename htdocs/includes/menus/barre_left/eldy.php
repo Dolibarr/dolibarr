@@ -296,12 +296,12 @@ class MenuLeft {
                 }
                 
                 if ($conf->compta->enabled) {
-                    $newmenu->add(DOL_URL_ROOT."/compta/ventilation/index.php?leftmenu=ventil",$langs->trans("Ventilations"));
-                    if ($leftmenu=="ventil") $newmenu->add_submenu(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("A ventiler"),1);
-                    if ($leftmenu=="ventil") $newmenu->add_submenu(DOL_URL_ROOT."/compta/ventilation/lignes.php",$langs->trans("Ventilées"),1);
-                    if ($user->rights->compta->ventilation->param) {
-                        if ($leftmenu=="ventil") $newmenu->add_submenu(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"),1);
-                    }
+                    //$newmenu->add(DOL_URL_ROOT."/compta/ventilation/index.php?leftmenu=ventil",$langs->trans("Ventilations"));
+                    //if ($leftmenu=="ventil") $newmenu->add_submenu(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("A ventiler"),1);
+                    //if ($leftmenu=="ventil") $newmenu->add_submenu(DOL_URL_ROOT."/compta/ventilation/lignes.php",$langs->trans("Ventilées"),1);
+                    //if ($user->rights->compta->ventilation->param) {
+                    //    if ($leftmenu=="ventil") $newmenu->add_submenu(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"),1);
+                    //}
                 }
                         
                 // Bank-Caisse
