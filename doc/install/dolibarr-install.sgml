@@ -43,34 +43,22 @@ Installation et mise à jour de Dolibarr
 	<item>php4-mysql</item>
 	<item>php4-curl (pour la partie gestion des adhérents)</item>
 	<item>php4-gd (pour les graphiques)</item>
+	<item>php4-cli (pour les scripts en mode console)</item>
 	<item>Apache</item>
       </itemize>
       Pour la gestion de l'authentification, Dolibarr fonctionne soit avec mod-auth-mysql soit avec Pear. Cette dernière est plus facile à installer.
       <itemize>
-	<item>Pear (package Auth)</item>
 	<item>libapache-mod-auth-mysql</item>
 	</itemize>
       </p>
     
         <sect2>
-	    <heading>Pear</heading>
+    <heading>Pear</heading>
 	    <p>
-	  Pear est un ensemble de classes et d'outils pour les installer et les mettre à jour. Les classes requises pour Dolibarr sont (par ordre d'installation) :
+	  Pear n'est plus nécessaire à partir de Dolibarr 2.0.0 les
+	  librairies Pear utilisées ont été incluses dans les sources directement.
+</p>
 
-      <itemize>
-	<item>Archive_Tar</item>
-	<item>Console_Getopt</item>
-	<item>PEAR</item>
-	<item>Auth</item>
-	<item>DB</item>
-	</itemize>
-</p>
-<p>
-Pour installer un paquet Pear, exécutez en root '$ pear install &lt;nom du paquet&gt;'.
-</p>
-	<p>
-	  Pour plus d'informations sur Pear et sa configuration, veuillez vous reporter à son site officiel <url url="pear.php.net">.
-	</p>
     </sect2>
 </sect1>
 
@@ -92,6 +80,8 @@ Pour installer un paquet Pear, exécutez en root '$ pear install &lt;nom du paque
       2- charger la base en exécutant :
     </p>
     <p>
+Cette étape n'est plus nécessaire à partir de la version 2.0.0 de
+Dolibarr le chargement de la base est effectué lors de l'installation.
   <tscreen>
    <verb>
 	# mysql dolibarr < mysql/mysql.sql
