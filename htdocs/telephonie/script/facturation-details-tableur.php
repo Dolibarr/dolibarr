@@ -87,7 +87,6 @@ if (!$error)
 	  $i++;
 	}            
       $db->free();
-      print "$i lignes trouvées\n";
     }
   else
     {
@@ -111,7 +110,7 @@ if (!$error)
       
       if ($resg <> 0)
 	{
-	  print "- ERREUR lors de Génération du pdf détaillé\n";
+	  dolibarr_syslog("ERREUR lors de Génération du détail tableur");
 	  $error = 19;
 	}
     }
@@ -120,5 +119,4 @@ if (!$error)
 $db->close();
 
 dolibarr_syslog("Conso mémoire ".memory_get_usage() );
-
 ?>
