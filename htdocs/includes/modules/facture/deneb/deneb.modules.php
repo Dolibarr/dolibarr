@@ -29,10 +29,10 @@
 */
 
 
-/*!	\class NumRefFacturesDeneb
+/*!	\class mod_facture_deneb
 		\brief      Classe du modèle de numérotation de référence de facture Deneb
 */
-class NumRefFacturesDeneb extends ModeleNumRefFactures
+class mod_facture_deneb extends ModeleNumRefFactures
 {
     
     /*!     \brief      Renvoi la description du modele de numérotation

@@ -149,7 +149,8 @@ function facture_get_num($soc)
 
       $file = FACTURE_ADDON."/".FACTURE_ADDON.".modules.php";
 
-      $classname = "NumRefFactures".ucfirst(FACTURE_ADDON);
+      // Chargement de la classe de numérotation
+      $classname = "mod_facture_".FACTURE_ADDON;
       require_once($dir.$file);
 
       $obj = new $classname();

@@ -29,11 +29,11 @@
 */
 
 
-/*!	\class NumRefFacturesPluton
+/*!	\class mod_facture_pluton
 		\brief      Classe du modèle de numérotation de référence de facture Pluton
 */
 
-class NumRefFacturesPluton extends ModeleNumRefFactures
+class mod_facture_pluton extends ModeleNumRefFactures
 {
 
     /*!     \brief      Renvoi la description du modele de numérotation

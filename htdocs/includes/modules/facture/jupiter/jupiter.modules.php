@@ -29,10 +29,10 @@
 */
 
 
-/*!	\class NumRefFacturesJupiter
+/*!	\class mod_facture_jupiter
 		\brief      Classe du modèle de numérotation de référence de facture Jupiter
 */
-class NumRefFacturesJupiter extends ModeleNumRefFactures
+class mod_facture_jupiter extends ModeleNumRefFactures
 {
     
     /*!     \brief      Renvoi la description du modele de numérotation

@@ -124,11 +124,11 @@ while (($file = readdir($handle))!==false)
       $filebis = $file."/".$file.".modules.php";
 
       // Chargement de la classe de numérotation
-      $classname = "NumRefFactures".ucfirst($file);
+      $classname = "mod_facture_".$file;
       require_once($dir.$filebis);
 
       $obj = new $classname($db);
-      print $obj->getDesc();
+      print $obj->info();
 
       print '</td>';
 

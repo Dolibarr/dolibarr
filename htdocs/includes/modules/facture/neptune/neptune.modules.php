@@ -29,10 +29,10 @@
 */
 
 
-/*!	\class NumRefFacturesNeptune
+/*!	\class mod_facture_neptune
 		\brief      Classe du modèle de numérotation de référence de facture Neptune
 */
-class NumRefFacturesNeptune extends ModeleNumRefFactures
+class mod_facture_neptune extends ModeleNumRefFactures
 {
 
     /*!     \brief      Renvoi la description du modele de numérotation

@@ -29,11 +29,11 @@
 */
 
 
-/*!	\class NumRefFacturesVenus
+/*!	\class mod_facture_venus
 		\brief      Classe du modèle de numérotation de référence de facture Venus
 */
 
-class NumRefFacturesVenus extends ModeleNumRefFactures
+class mod_facture_venus extends ModeleNumRefFactures
 {
     /*!     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
