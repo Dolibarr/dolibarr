@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ Class pdf_paiement {
 
       $sql = "SELECT ".$this->db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber";
       $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
-      $sql .= " FROM llx_paiement as p, llx_facture as f, c_paiement as c";
+      $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."c_paiement as c";
       $sql .= " WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id";
       $sql .= " AND date_format(p.datep, '%m%Y') = " . $month.$year;
       $sql .= " ORDER BY p.datep ASC";

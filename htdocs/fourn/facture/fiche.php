@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,19 +34,19 @@ $html = new Form($db);
 
 if ($action == 'valid') 
 {
-  $sql = "UPDATE llx_facture_fourn set fk_statut = 1 WHERE rowid = $facid ;";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set fk_statut = 1 WHERE rowid = $facid ;";
   $result = $db->query( $sql);
 }
 
 if ($action == 'payed')
 {
-  $sql = "UPDATE llx_facture_fourn set paye = 1 WHERE rowid = $facid ;";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set paye = 1 WHERE rowid = $facid ;";
   $result = $db->query( $sql);
 }
 
 if ($HTTP_POST_VARS["action"] == 'modif_libelle')
 {
-  $sql = "UPDATE llx_facture_fourn set libelle = '$form_libelle' WHERE rowid = $facid ;";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set libelle = '$form_libelle' WHERE rowid = $facid ;";
   $result = $db->query( $sql);
 }
 
@@ -55,7 +55,7 @@ if ($action == 'update')
 {
   $datefacture = $db->idate(mktime(12, 0 , 0, $HTTP_POST_VARS["remonth"], $HTTP_POST_VARS["reday"], $HTTP_POST_VARS["reyear"])); 
 
-  $sql = "UPDATE llx_facture_fourn set ";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set ";
   $sql .= " facnumber='".trim($HTTP_POST_VARS["facnumber"])."'";
   $sql .= ", libelle='".trim($HTTP_POST_VARS["libelle"])."'";
   $sql .= ", note='".$HTTP_POST_VARS["note"]."'";
@@ -153,7 +153,7 @@ if ($action == 'create' or $action == 'copy')
   print '<td><select name="socidp">';
 
   $sql = "SELECT s.nom, s.prefix_comm, s.idp";
-  $sql .= " FROM llx_societe as s WHERE s.fournisseur = 1 ORDER BY s.nom ASC";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur = 1 ORDER BY s.nom ASC";
 
   if ( $db->query($sql) )
     {
@@ -232,7 +232,7 @@ else
       $fac->fetch($facid);
 
       $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.tva, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.note, f.libelle, f.rowid";
-      $sql .= " FROM llx_societe as s,llx_facture_fourn as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
 
       $result = $db->query( $sql);
       
@@ -393,7 +393,7 @@ else
 	   * Paiements
 	   */
 	  $sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
-	  $sql .= " FROM llx_paiementfourn as p, c_paiement as c ";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."c_paiement as c ";
 	  $sql .= " WHERE p.fk_facture_fourn = ".$fac->id." AND p.fk_paiement = c.id";
 	  
 	  $result = $db->query($sql);
