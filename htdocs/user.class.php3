@@ -103,6 +103,38 @@ class User {
    *
    *
    */
+  Function create()
+    {
+      $sql = "SELECT login FROM llx_user WHERE login ='$this->login'";
+
+      if ($this->db->query($sql)) 
+	{
+	  $num = $this->db->num_rows();
+	  $this->db->free();
+
+	  if ($num) 
+	    {
+	      $this->errorstr = "Ce login existe déjà";
+	      return 0;
+	    }
+	  else
+	    {            
+	      $sql = "INSERT INTO llx_user (login) values ('$this->login');";
+	      if ($this->db->query($sql))
+		{
+		  if ($this->db->affected_rows()) 
+		    {
+		      return 1;		      
+		    }
+		}
+	    }
+	}
+    }
+  /*
+   *
+   *
+   */
+
   Function update()
     {
       $sql = "SELECT login FROM llx_user WHERE login ='$this->login'";
@@ -149,10 +181,12 @@ class User {
    *
    *
    */
-  Function password()
+  Function password($password='')
     {
-
-      $password =  substr(crypt(uniqid("")),0,8);
+      if (! $password)
+	{
+	  $password =  substr(crypt(uniqid("")),0,8);
+	}
 
       $sql = "UPDATE llx_user SET pass = '".crypt($password, "CRYPT_STD_DES")."'";
       $sql .= " WHERE rowid = $this->id";

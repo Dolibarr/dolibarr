@@ -40,7 +40,17 @@ fichier Makefile.
 	'make load' charge les donnees necessaire dans les tables de
 constantes.
 
-	'make dev' charge un ensemble de donnees de test
+	'make dev' charge un ensemble de donnees de test, cette étapes
+est facultative
+
 
 	Une fois ces 3 commandes passees votre base de donnees est
 pretes a etre utilisee.
+
+Initialisation
+--------------
+
+	Pour créer votre premier compte qui sera admin/admin allez à
+l'url /public/password.php, cette page créé un compte avec le login
+'admin' et le passe 'admin' dans la base, si et seulement si la table
+des login est vide.

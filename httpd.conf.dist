@@ -26,7 +26,7 @@
     Auth_MySQL_Password_Table 		llx_user
     Auth_MySQL_Username_Field 		login
     Auth_MySQL_Password_Field 		pass
-    Auth_MySQL_Encryption_Types 	Plaintext
+    Auth_MySQL_Encryption_Types 	Crypt_DES
     Auth_MySQL_Encrypted_Passwords 	off
     AuthName        			"Dolibarr"
 

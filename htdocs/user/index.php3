@@ -50,7 +50,7 @@ if ($result) {
     print '<TD><a href="fiche.php3?id='.$obj->rowid.'">'.$obj->firstname.'</a></td>';
     print '<TD>'.$obj->name.'</TD>';
     print '<TD>'.$obj->code.'</TD>';
-    print '<TD>'.$obj->login.'</TD>';
+    print '<TD><a href="fiche.php3?id='.$obj->rowid.'">'.$obj->login.'</a></TD>';
     print '<TD align="center">'.$obj->module_comm.'</TD>';
     print '<TD align="center">'.$obj->module_compta.'</TD>';
     print "</TR>\n";
