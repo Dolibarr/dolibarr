@@ -227,7 +227,7 @@ if ($action == 'create')
 	
 	print "<tr bgcolor=\"#e0e0e0\"><td>Client :</td><td>$obj->nom</td>";
 	
-	print '<td rowspan="6">';
+	print '<td rowspan="4">';
 	print '<textarea name="note" wrap="soft" cols="60" rows="15"></textarea></td></tr>';
 
 	if ($propalid)
@@ -246,13 +246,7 @@ if ($action == 'create')
 	  }
 	else
 	  {	    
-	    print '<tr bgcolor="#e0e0e0"><td>Montant HT :</td><td>';	    
-	    print '<input name="amount" type="text" value=""></td></tr>';	    
-	    print '</td></tr>';
-	    
-	    print '<tr bgcolor="#e0e0e0"><td>Remise :</td><td>';
-	    print '<input name="remise" type="text" value=""></td></tr>';
-	    print '</td></tr>';
+
 	  }
 	
 	print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
@@ -742,7 +736,7 @@ else
       $sql .= " AND date_format(f.datef, '%Y') = $year";
     }
   
-    $sql .= " ORDER BY f.fk_statut, f.paye, f.datef DESC, f.facnumber DESC ";
+    $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
   
     $result = $db->query($sql);
     if ($result) {
@@ -754,7 +748,7 @@ else
       print "<TD>Num&eacute;ro</TD><td>";
       print_liste_field_titre("Société",$PHP_SELF,"s.nom");
       print "</td><TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
-
+      print '<td>&nbsp;</td>';
       print "</TR>\n";
     
       if ($num > 0) {
@@ -762,28 +756,17 @@ else
 	while ($i < $num) {
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
-	
-	  if ($objp->paye && !$sep) {
-	    print "<tr><td colspan=\"3\" align=\"right\">";
-	    print "&nbsp;</small></td>";
-	    print "<td align=\"right\">Sous Total :<b> ".price($total)."</b></td></tr>";
-	  
-	    print '<TR class="liste_titre">';
-	    print "<TD>Num&eacute;ro</TD><td>";
-	    print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-	    print "</td><TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
-
-	    $sep = 1 ; $j = 0;
-	    $subtotal = 0;
-	  }
-	
+		
 	  print "<TR $bc[$var]>";
 	  print "<td><a href=\"facture.php3?facid=$objp->facid\">";
-	  if ($objp->paye) {
-	    print $objp->facnumber;
-	  } else {
-	    print '<b>'.$objp->facnumber.'</b>';
-	  }
+	  if ($objp->paye)
+	    {
+	      print $objp->facnumber;
+	    }
+	  else
+	    {
+	      print '<b>'.$objp->facnumber.'</b>';
+	    }
 	  print "</a></TD>\n";
 	  print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	
@@ -802,6 +785,15 @@ else
 	  }
 	
 	  print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
+
+	  if (! $objp->paye)
+	    {
+	      print '<td align="center">impayée</td>';
+	    }
+	  else
+	    {
+	      print '<td>&nbsp;</td>';
+	    }
 	
 	  $total = $total + $objp->amount;
 	  $subtotal = $subtotal + $objp->amount;	  
@@ -815,11 +807,11 @@ else
       }
       if ($i == 0) { $i=1; }  if ($j == 0) { $j=1; }
       print "<tr><td></td><td>$j factures</td><td colspan=\"1\" align=\"right\">&nbsp;</td>";
-      print "<td align=\"right\">Sous Total :<b> ".price($subtotal)."</b></td></tr>";
-    
+      print "<td align=\"right\">Sous Total :<b> ".price($subtotal)."</b></td>";
+      print '<td>&nbsp;</td></tr>';
       print "<tr bgcolor=\"#d0d0d0\"><td></td><td>$i factures</td><td colspan=\"1\" align=\"right\">&nbsp;</td>";
-      print "<td align=\"right\"><b>Total <small>(euros HT)</small>: ".price($total)."</b></td></tr>";
-    
+      print "<td align=\"right\"><b>Total <small>(euros HT)</small>: ".price($total)."</b></td>";
+      print '<td>&nbsp;</td></tr>';
       print "</TABLE>";
       $db->free();
     } else {
