@@ -27,6 +27,13 @@ $user->getrights('fichinter');
 $user->getrights('commande');
 $user->getrights('projet');
 
+if ($_GET["action"] == 'cstc')
+{
+  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
+  $sql .= " WHERE idp = ".$_GET["pid"];
+  $db->query($sql);
+}
+
 
 /*
  * Sécurité accés client
@@ -78,10 +85,10 @@ if ($sortorder == "")
 }
 if ($sortfield == "")
 {
-  $sortfield="s.datec";
+  $sortfield="s.nom";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
+$sql .= " ORDER BY $sortfield $sortorder, s.nom ASC " . $db->plimit($conf->liste_limit +1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -98,11 +105,13 @@ if ($result)
       llxHeader();
     }
 
+  $urladd="page=$page&amp;stcomm=$stcomm&amp;sortfield=$sortfield&amp;sortorder=$sortorder&amp;begin=$begin";
+
   print_barre_liste("Liste des prospects", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
 
   print '<div align="center">';
 
-  print "| <A href=\"$PHP_SELF?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
+  print "| <A href=\"$PHP_SELF?page=$pageprev&amp;stcomm=$stcomm&amp;sortfield=$sortfield&amp;sortorder=$sortorder\">*</A>\n| ";
   for ($ij = 65 ; $ij < 91; $ij++) {
     print "<A href=\"$PHP_SELF?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
     
@@ -180,7 +189,7 @@ if ($result)
 	{
 	  if ($value <> $obj->fk_stcomm)
 	    {
-	      print '<td><a href="fiche.php?id='.$obj->idp.'&amp;stcomm=-1&amp;action=cstc">';
+	      print '<td><a href="prospects.php?pid='.$obj->idp.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$urladd.'">';
 	      print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm'.$value.'.png" border="0" alt="'.$alt.'">';
 	      print '</a></td>';
 	    }
