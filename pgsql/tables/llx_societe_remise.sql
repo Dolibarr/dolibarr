@@ -1,3 +1,7 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ========================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
@@ -22,14 +26,15 @@
 -- 
 -- ========================================================================
 
+
 create table llx_societe_remise
 (
-  rowid           serial	PRIMARY KEY,
-  fk_soc          integer NOT NULL,
-  tms             timestamp,
-  datec	          timestamp without time zone,         -- creation date
-  fk_user_author  integer,                             -- utilisateur qui a créé l'info
-  remise_client   real DEFAULT 0,                      -- remise systématique pour le client
-  note            text
+  rowid SERIAL PRIMARY KEY,
+  "fk_soc"          integer NOT NULL,
+  "tms"             timestamp,
+  "datec"	          datetime,                            -- creation date
+  "fk_user_author"  integer,                             -- utilisateur qui a créé l'info
+  "remise_client"   real           DEFAULT 0,            -- remise systématique pour le client
+  "note"            text
 );
 

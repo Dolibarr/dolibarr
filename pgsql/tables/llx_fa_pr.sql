@@ -1,5 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,12 +21,11 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
 
 create table llx_fa_pr
 (
-  rowid      SERIAL PRIMARY KEY,
-  fk_facture integer,
-  fk_propal  integer
+  rowid SERIAL PRIMARY KEY,
+  "fk_facture"    integer,
+  "fk_propal"     integer
 );

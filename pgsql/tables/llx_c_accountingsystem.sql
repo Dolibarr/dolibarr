@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2004 Laurent Destailleur <eldy@users.sourceforge.net>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,11 +26,12 @@
 
 create table llx_c_accountingsystem
 (
-  rowid           SERIAL PRIMARY KEY,
-  fk_pays         integer      NOT NULL,
-  pcg_version     varchar(12)  NOT NULL,
-  pcg_type        varchar(20)  NOT NULL,
-	pcg_subtype     varchar(20)  NOT NULL,
-  label           varchar(128) NOT NULL,
-  account_number  varchar(20)  NOT NULL
+  rowid SERIAL PRIMARY KEY,
+  "fk_pays"         integer      NOT NULL,
+  "pcg_version"     varchar(12)  NOT NULL,
+  "pcg_type"        varchar(20)  NOT NULL,
+  "pcg_subtype"     varchar(20)  NOT NULL,
+  "label"           varchar(128) NOT NULL,
+  "account_number"  varchar(20)  NOT NULL,
+  "account_parent"  varchar(20)
 );

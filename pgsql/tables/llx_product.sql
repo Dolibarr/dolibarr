@@ -1,6 +1,9 @@
--- ===================================================================
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
+-- ============================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,24 +22,27 @@
 -- $Id$
 -- $Source$
 --
--- ===================================================================
+-- ============================================================================
+
 
 create table llx_product
 (
-  rowid              SERIAL PRIMARY KEY,
-  datec              timestamp without time zone,
-  tms                timestamp,
-  ref                varchar(15) UNIQUE,
-  label              varchar(255),
-  description        text,
-  price              double precision,
-  tva_tx             double precision DEFAULT 19.6,
-  fk_user_author     integer,
-  envente            smallint DEFAULT 1,
-  nbvente            integer DEFAULT 0,
-  fk_product_type    integer DEFAULT 0,
-  duration           varchar(6),
-  stock_propale      integer DEFAULT 0,
-  stock_commande     integer DEFAULT 0,
-  seuil_stock_alerte integer DEFAULT 0
+  rowid SERIAL PRIMARY KEY,
+  "datec"              datetime,
+  "tms"                timestamp,
+  "label"              varchar(255),
+  "description"        text,
+  "price"              double,
+  "tva_tx"             double DEFAULT 19.6,
+  "fk_user_author"     integer,
+  "envente"            tinyint DEFAULT 1,
+  "nbvente"            integer DEFAULT 0,
+  "fk_product_type"    integer DEFAULT 0,
+  "duration"           varchar(6),
+  "stock_propale"      integer DEFAULT 0,
+  "stock_commande"     integer DEFAULT 0,
+  "seuil_stock_alerte" integer DEFAULT 0
 );
+
+
+

@@ -1,7 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,14 +28,13 @@
 -- Definitions des constantes utilisés comme parametres de configuration
 --
 
+
 create table llx_const
 (
-  rowid       SERIAL PRIMARY KEY,
-  name        varchar(255),
-  value       text, -- max 65535 caracteres
-  type	      CHAR(6) CHECK (type IN ('yesno','texte','chaine')),
-  visible     smallint DEFAULT 1 NOT NULL,
-  note        text
+  rowid SERIAL PRIMARY KEY,
+  "name"        varchar(255),
+  "value"       text, -- max 65535 caracteres
+  "type" varchar(6) CHECK (type IN ('yesno','texte','chaine')) ,
+  "visible"     tinyint DEFAULT 1 NOT NULL,
+  "note"        text
 );
-
-CREATE UNIQUE INDEX llx_const_idx ON llx_const (name);

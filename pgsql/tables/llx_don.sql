@@ -1,5 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,27 +24,26 @@
 --
 -- ===================================================================
 
-
 create table llx_don
 (
-  rowid           SERIAL PRIMARY KEY,
-  tms             timestamp,
-  fk_statut       smallint NOT NULL DEFAULT 0,-- etat du don promesse/valid
-  datec           timestamp without time zone,         -- date de création de l'enregistrement
-  datedon         timestamp without time zone,         -- date du don/promesse
-  amount          real DEFAULT 0,
-  fk_paiement     integer,
-  prenom          varchar(50),
-  nom             varchar(50),
-  societe         varchar(50),
-  adresse         text,
-  cp              varchar(30),
-  ville           varchar(50),
-  pays            varchar(50),
-  email           varchar(255),
-  public          smallint DEFAULT 1 NOT NULL, -- le don est-il public (0,1)
-  fk_don_projet   integer NOT NULL, -- projet auquel est fait le don
-  fk_user_author  integer NOT NULL,
-  fk_user_valid   integer NOT NULL,
-  note            text
+  rowid SERIAL PRIMARY KEY,
+  "tms"             timestamp,
+  "fk_statut"       smallint NOT NULL DEFAULT 0,-- etat du don promesse/valid
+  "datec"           datetime,         -- date de création de l'enregistrement
+  "datedon"         datetime,         -- date du don/promesse
+  "amount"          real DEFAULT 0,
+  "fk_paiement"     integer,
+  "prenom"          varchar(50),
+  "nom"             varchar(50),
+  "societe"         varchar(50),
+  "adresse"         text,
+  "cp"              varchar(30),
+  "ville"           varchar(50),
+  "pays"            varchar(50),
+  "email"           varchar(255),
+  "public"          smallint DEFAULT 1 NOT NULL, -- le don est-il public (0,1)
+  "fk_don_projet"   integer NOT NULL, -- projet auquel est fait le don
+  "fk_user_author"  integer NOT NULL,
+  "fk_user_valid"   integer NOT NULL,
+  "note"            text
 );

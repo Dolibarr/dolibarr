@@ -1,7 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,13 +26,13 @@
 
 create table llx_ventes
 (
-  rowid         SERIAL PRIMARY KEY,
-  fk_soc        integer NOT NULL,
-  fk_product    integer NOT NULL,
-  dated         timestamp without time zone, -- date debut
-  datef         timestamp without time zone, -- date fin
-  price         real,
-  author        varchar(30),
-  active        smallint DEFAULT 0 NOT NULL,
-  note          varchar(255)
+  rowid SERIAL PRIMARY KEY,
+  "fk_soc"        integer NOT NULL,
+  "fk_product"    integer NOT NULL,
+  "dated"         datetime,         -- date debut
+  "datef"         datetime,         -- date fin
+  "price"         real,
+  "author"        varchar(30),
+  "active"        smallint DEFAULT 0 NOT NULL,
+  "note"          varchar(255)
 );

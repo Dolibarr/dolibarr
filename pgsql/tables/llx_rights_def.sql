@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,9 +27,11 @@
 create table llx_rights_def
 (
   id            integer PRIMARY KEY,
-  libelle       varchar(255),
-  module        varchar(12),
-  type          CHAR CHECK (type IN ('r','w','m','d','a')),
-  bydefault     smallint DEFAULT 0
+  "libelle"       varchar(255),
+  "module"        varchar(12),
+  "perms"         varchar(50),
+  "subperms"      varchar(50),
+  "type" varchar(1) CHECK (type IN ('r','w','m','d','a')) ,
+  "bydefault"     tinyint DEFAULT 0
 );
 

@@ -1,7 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===========================================================================
 -- Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,21 +21,21 @@
 --
 -- $Id$
 -- $Source$
---
+-- 
 -- ===========================================================================
+
+
 
 create table llx_projet
 (
-  rowid            SERIAL PRIMARY KEY,
-  fk_soc           integer  NOT NULL,
-  fk_statut        smallint NOT NULL,
-  tms              timestamp,
-  dateo            date,         -- date d'ouverture du projet
-  ref              varchar(50),
-  title            varchar(255),
-  fk_user_resp     integer,      -- responsable du projet
-  fk_user_creat    integer,      -- createur du projet
-  note             text
+  rowid SERIAL PRIMARY KEY,
+  "fk_soc"           integer  NOT NULL,
+  "fk_statut"        smallint NOT NULL,
+  "tms"              timestamp,
+  "dateo"            date,         -- date d'ouverture du projet
+  "ref"              varchar(50),
+  "title"            varchar(255),
+  "fk_user_resp"     integer,      -- responsable du projet
+  "fk_user_creat"    integer,      -- createur du projet
+  "note"             text
 );
-
-create unique index llx_projet_ref on llx_projet(ref);

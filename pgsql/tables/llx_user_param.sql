@@ -1,7 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,12 +25,11 @@
 --
 -- ===========================================================================
 
+
 create table llx_user_param
 (
-  fk_user       integer,
-  page          varchar(255),
-  param         varchar(64),
-  value         varchar(255),
-
-  UNIQUE (fk_user,page,param)
+  "fk_user"       integer,
+  "page"          varchar(255),
+  "param"         varchar(64),
+  "value"         varchar(255)
 );

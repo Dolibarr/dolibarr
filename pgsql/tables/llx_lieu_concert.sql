@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,11 +26,11 @@
 
 create table llx_lieu_concert
 (
-  rowid            SERIAL PRIMARY KEY,
-  tms              timestamp,
-  nom              varchar(64) NOT NULL,
-  description      text,
-  ville            varchar(64) NOT NULL,
-  fk_user_author   integer
+  rowid SERIAL PRIMARY KEY,
+  "tms"              timestamp,
+  "nom"              varchar(64) NOT NULL,
+  "description"      text,
+  "ville"            varchar(64) NOT NULL,
+  "fk_user_author"   integer
 );
 

@@ -1,5 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,13 +24,12 @@
 --
 -- ===================================================================
 
-
 create table llx_don_projet
 (
-  rowid           SERIAL PRIMARY KEY,
-  tms             timestamp,
-  datec           timestamp without time zone,
-  libelle         varchar(255),
-  fk_user_author  integer NOT NULL,
-  note            text
+  rowid SERIAL PRIMARY KEY,
+  "tms"             timestamp,
+  "datec"           datetime,
+  "libelle"         varchar(255),
+  "fk_user_author"  integer NOT NULL,
+  "note"            text
 );

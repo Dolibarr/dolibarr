@@ -1,5 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,18 +21,16 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
-
 
 create table llx_cotisation
 (
-  rowid           SERIAL PRIMARY KEY,
-  tms             timestamp,
-  datec           timestamp without time zone,
-  fk_adherent     integer,
-  dateadh         timestamp without time zone,
-  cotisation      real,
-  fk_bank         integer DEFAULT NULL,
-  note            text
+  rowid SERIAL PRIMARY KEY,
+  "tms"             timestamp,
+  "datec"           datetime,
+  "fk_adherent"     integer,
+  "dateadh"         datetime,
+  "cotisation"      real,
+  "fk_bank"         int4 DEFAULT NULL,
+  "note"            text
 );

@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,11 +26,12 @@
 
 create table llx_cond_reglement
 (
-  rowid           SERIAL PRIMARY KEY,
-  sortorder       smallint,
-  actif           smallint DEFAULT 1,
-  libelle         varchar(255),
-  libelle_facture text,
-  fdm             smallint,    -- reglement fin de mois
-  nbjour          smallint
+  rowid           integer PRIMARY KEY,
+  "code"            varchar(16),
+  "sortorder"       smallint,
+  "actif"           tinyint DEFAULT 1,
+  "libelle"         varchar(255),
+  "libelle_facture" text,
+  "fdm"             tinyint,    -- reglement fin de mois
+  "nbjour"          smallint
 );

@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,6 +29,6 @@
 create table llx_propal_model_pdf
 (
   nom         varchar(50) PRIMARY KEY,
-  libelle     varchar(255),
-  description text
+  "libelle"     varchar(255),
+  "description" text
 );

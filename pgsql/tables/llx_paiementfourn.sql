@@ -1,6 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,20 +22,19 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
 
 create table llx_paiementfourn
 (
-  rowid             SERIAL PRIMARY KEY,
-  tms               timestamp,
-  datec             timestamp without time zone,  -- date de creation de l'enregistrement
-  fk_facture_fourn  integer,                      -- facture
-  datep             timestamp without time zone,  -- date de paiement
-  amount            real DEFAULT 0,               -- montant
-  fk_user_author    integer,                      -- auteur
-  fk_paiement       integer NOT NULL,             -- moyen de paiement
-  num_paiement      varchar(50),                  -- numéro de paiement (cheque)
-  note              text,
-  fk_bank           integer NOT NULL
+  rowid SERIAL PRIMARY KEY,
+  "tms"               timestamp,
+  "datec"             datetime,          -- date de creation de l'enregistrement
+  "fk_facture_fourn"  integer,           -- facture
+  "datep"             datetime,          -- date de paiement
+  "amount"            real DEFAULT 0,    -- montant
+  "fk_user_author"    integer,           -- auteur
+  "fk_paiement"       integer NOT NULL,  -- moyen de paiement
+  "num_paiement"      varchar(50),       -- numéro de paiement (cheque)
+  "note"              text,
+  "fk_bank"           integer NOT NULL
 );

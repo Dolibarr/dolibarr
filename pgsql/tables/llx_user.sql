@@ -1,7 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,25 +24,23 @@
 --
 -- ===========================================================================
 
+
 create table llx_user
 (
-  rowid         SERIAL PRIMARY KEY,
-  datec         timestamp without time zone,
-  tms           timestamp,
-  login         varchar(8),
-  pass          varchar(32),
-  name          varchar(50),
-  firstname     varchar(50),
-  code          varchar(4),
-  email         varchar(255),
-  admin         smallint DEFAULT 0,
-  webcal_login  varchar(25),
-  module_comm   smallint DEFAULT 1,
-  module_compta smallint DEFAULT 1,
-  fk_societe    integer DEFAULT 0,
-  fk_socpeople  integer DEFAULT 0,
-  note          text
+  rowid SERIAL PRIMARY KEY,
+  "datec"         datetime,
+  "tms"           timestamp,
+  "login"         varchar(8),
+  "pass"          varchar(32),
+  "name"          varchar(50),
+  "firstname"     varchar(50),
+  "code"          varchar(4),
+  "email"         varchar(255),
+  "admin"         smallint DEFAULT 0,
+  "webcal_login"  varchar(25),
+  "module_comm"   smallint DEFAULT 1,
+  "module_compta" smallint DEFAULT 1,
+  "fk_societe"    integer DEFAULT 0,
+  "fk_socpeople"  integer DEFAULT 0,
+  "note"          text
 );
-
-create unique index llx_user_login on llx_user(login);
-

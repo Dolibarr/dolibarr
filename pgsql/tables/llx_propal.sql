@@ -1,7 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,28 +26,25 @@
 
 create table llx_propal
 (
-  rowid           SERIAL PRIMARY KEY,
-  fk_soc          integer,
-  fk_soc_contact  integer,
-  fk_projet       integer DEFAULT 0,              -- projet auquel est rattache la propale
-  ref             varchar(30) NOT NULL,           -- propal number
-  datec           timestamp without time zone,    -- date de creation
-  fin_validite    timestamp without time zone,    -- date de fin de validite
-  date_valid      timestamp without time zone,    -- date de validation
-  date_cloture    timestamp without time zone,    -- date de cloture
-  datep           date,                           -- date de la propal
-  fk_user_author  integer,                        -- createur de la propale
-  fk_user_valid   integer,                        -- valideur de la propale
-  fk_user_cloture integer,                        -- cloture de la propale signee ou non signee
-  fk_statut       smallint  DEFAULT 0,
-  price           real      DEFAULT 0,
-  remise_percent  real      DEFAULT 0,
-  remise          real      DEFAULT 0,
-  tva             real      DEFAULT 0,
-  total           real      DEFAULT 0,
-  note            text,
-  model_pdf       varchar(50)
-);
-
-create unique index llx_propal_ref on llx_propal(ref);
-
+  rowid SERIAL PRIMARY KEY,
+  "fk_soc"          integer,
+  "fk_soc_contact"  integer,
+  "fk_projet"       integer DEFAULT 0,     -- projet auquel est rattache la propale
+  "ref"             varchar(30) NOT NULL,  -- propal number
+  "datec"           datetime,              -- date de creation 
+  "fin_validite"    datetime,              -- date de fin de validite
+  "date_valid"      datetime,              -- date de validation
+  "date_cloture"    datetime,              -- date de cloture
+  "datep"           date,                  -- date de la propal
+  "fk_user_author"  integer,               -- createur de la propale
+  "fk_user_valid"   integer,               -- valideur de la propale
+  "fk_user_cloture" integer,               -- cloture de la propale signee ou non signee
+  "fk_statut"       smallint  DEFAULT 0,
+  "price"           real      DEFAULT 0,
+  "remise_percent"  real      DEFAULT 0,
+  "remise"          real      DEFAULT 0,
+  "tva"             real      DEFAULT 0,
+  "total"           real      DEFAULT 0,
+  "note"            text,
+  "model_pdf"       varchar(50),
+4294967294);

@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,9 +26,9 @@
 
 create table llx_bank_url
 (
-  rowid           SERIAL PRIMARY KEY,
-  fk_bank         integer,
-  url_id          integer,
-  url             varchar(255),
-  label           varchar(255)
+  rowid SERIAL PRIMARY KEY,
+  "fk_bank"         integer,
+  "url_id"          integer,
+  "url"             varchar(255),
+  "label"           varchar(255)
 );

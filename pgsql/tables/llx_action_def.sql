@@ -1,3 +1,7 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
@@ -24,9 +28,9 @@
 
 create table llx_action_def
 (
-  rowid           SERIAL PRIMARY KEY,
-  tms             timestamp,
-  titre           varchar(255) NOT NULL,
-  description     text,
-  objet_type	  CHAR(10) CHECK (objet_type IN ('ficheinter','facture','propale','mailing'))
+  rowid           integer NOT NULL PRIMARY KEY,
+  "tms"             timestamp,
+  "titre"           varchar(255) NOT NULL,
+  "description"     text,
+  "objet_type" varchar(10) CHECK (objet_type IN ('ficheinter','facture','propale','mailing')) 
 );

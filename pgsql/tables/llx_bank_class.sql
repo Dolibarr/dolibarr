@@ -1,5 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- $Id$
+-- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,15 +20,12 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
--- $Source$
---
 -- ===================================================================
+
 
 create table llx_bank_class
 (
-  lineid   integer NOT NULL,
-  fk_categ integer NOT NULL
+  "lineid"   integer NOT NULL,
+  "fk_categ" integer NOT NULL,
+  "INDEX"(lineid)
 );
-
-create index llx_bank_class_lineid on llx_bank_class(lineid);

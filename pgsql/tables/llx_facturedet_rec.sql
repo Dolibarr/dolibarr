@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,19 +21,18 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
 
 create table llx_facturedet_rec
 (
-  rowid           SERIAL PRIMARY KEY,
-  fk_facture      integer NOT NULL,
-  fk_product      integer,
-  description     text,
-  tva_taux        real DEFAULT 19.6, -- taux tva
-  qty             real,              -- quantité
-  remise_percent  real DEFAULT 0,    -- pourcentage de remise
-  remise          real DEFAULT 0,    -- montant de la remise
-  subprice        real,              -- prix avant remise
-  price           real               -- prix final
+  rowid SERIAL PRIMARY KEY,
+  "fk_facture"      integer NOT NULL,
+  "fk_product"      integer,
+  "description"     text,
+  "tva_taux"        real DEFAULT 19.6, -- taux tva
+  "qty"             real,              -- quantité
+  "remise_percent"  real DEFAULT 0,    -- pourcentage de remise
+  "remise"          real DEFAULT 0,    -- montant de la remise
+  "subprice"        real,              -- prix avant remise
+  "price"           real               -- prix final
 );

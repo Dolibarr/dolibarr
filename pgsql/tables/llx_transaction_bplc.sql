@@ -1,5 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,16 +24,17 @@
 --
 -- ===================================================================
 
+
 create table llx_transaction_bplc
 (
-  rowid             SERIAL PRIMARY KEY,
-  tms               timestamp,
-  ipclient          varchar(20),
-  num_transaction   varchar(10),
-  date_transaction  varchar(10),
-  heure_transaction varchar(10),
-  num_autorisation  varchar(10),
-  cle_acceptation   varchar(5),
-  code_retour       varchar(4),
-  ref_commande      integer
+  rowid SERIAL PRIMARY KEY,
+  "tms"               timestamp,
+  "ipclient"          varchar(20),
+  "num_transaction"   varchar(10), 
+  "date_transaction"  varchar(10), 
+  "heure_transaction" varchar(10), 
+  "num_autorisation"  varchar(10),
+  "cle_acceptation"   varchar(5),
+  "code_retour"       integer,
+  "ref_commande"      integer
 );

@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,14 +26,14 @@
 
 create table llx_deplacement
 (
-  rowid           SERIAL PRIMARY KEY,
-  datec           timestamp without time zone NOT NULL,
-  tms             timestamp,
-  dated           timestamp without time zone,
-  fk_user	        integer NOT NULL,
-  fk_user_author  integer,
-  type            smallint NOT NULL,
-  km              smallint,
-  fk_soc          integer,
-  note            text
+  rowid SERIAL PRIMARY KEY,
+  "datec"           datetime,
+  "tms"             timestamp,
+  "dated"           datetime,
+  "fk_user"	        integer NOT NULL,
+  "fk_user_author"  integer,
+  "type"            smallint NOT NULL,
+  "km"              smallint,
+  "fk_soc"          integer,
+  "note"            text
 );

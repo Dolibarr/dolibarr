@@ -1,6 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,12 +27,12 @@
 
 create table llx_entrepot
 (
-  rowid           SERIAL PRIMARY KEY,
-  datec           timestamp without time zone,
-  tms             timestamp,
-  label           varchar(255) NOT NULL,
-  description     text,
-  statut          smallint DEFAULT 1, -- 1 ouvert, 0 fermé
-  fk_user_author  integer
+  rowid SERIAL PRIMARY KEY,
+  "datec"           datetime,
+  "tms"             timestamp,
+  "label"           varchar(255) NOT NULL,
+  "description"     text,
+  "statut"          tinyint DEFAULT 1, -- 1 ouvert, 0 fermé
+  "fk_user_author"  integer
 );
 

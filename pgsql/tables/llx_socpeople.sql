@@ -1,7 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Eric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,25 +26,25 @@
 
 create table llx_socpeople
 (
-  idp           SERIAL PRIMARY KEY,
-  datec         timestamp without time zone,
-  tms           timestamp,
-  fk_soc        integer,           -- lien vers la societe
-  civilite      varchar(6),
-  name          varchar(50),
-  firstname     varchar(50),
-  address       varchar(255),
-  birthday      date,
-  poste         varchar(80),
-  phone         varchar(30),
-  phone_perso   varchar(30),
-  phone_mobile  varchar(30),
-  fax           varchar(30),
-  email         varchar(255),
-  jabberid      varchar(255),
-  fk_user       integer DEFAULT 0, -- user qui a créé l'enregistrement
-  fk_user_modif integer,
-  note          text
+  idp SERIAL PRIMARY KEY,
+  "datec"          datetime,
+  "tms"            timestamp,
+  "fk_soc"         integer,           -- lien vers la societe
+  "civilite"       varchar(6),
+  "name"           varchar(50),
+  "firstname"      varchar(50),
+  "address"        varchar(255),
+  "cp"             varchar(25),
+  "ville"          varchar(255),
+  "birthday"       date,
+  "poste"          varchar(80),
+  "phone"          varchar(30),
+  "phone_perso"    varchar(30),
+  "phone_mobile"   varchar(30),
+  "fax"            varchar(30),
+  "email"          varchar(255),
+  "jabberid"       varchar(255),
+  "fk_user"        integer DEFAULT 0, -- user qui a créé l'enregistrement
+  "fk_user_modif"  integer,
+  "note"           text
 );
-
-CREATE INDEX llx_socpeople_fk_soc ON llx_socpeople(fk_soc);

@@ -1,6 +1,13 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ========================================================================
 -- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
+--
+-- $Id$
+-- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,19 +23,15 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
--- $Source$
---
 -- ========================================================================
 
 create table llx_c_regions
 (
-  rowid       serial      PRIMARY KEY,
-  code_region integer     UNIQUE NOT NULL,
-  fk_pays     integer            NOT NULL,
-  cheflieu    varchar(7),
-  tncc        integer,
-  nom         varchar(50),
-  active      smallint DEFAULT 1 NOT NULL
+  rowid SERIAL PRIMARY KEY,
+  "fk_pays"     integer NOT NULL,
+  "cheflieu"    varchar(7),
+  "tncc"        integer,
+  "nom"         varchar(50),
+  "active"      tinyint DEFAULT 1 NOT NULL
 );
 

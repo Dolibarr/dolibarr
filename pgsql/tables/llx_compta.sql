@@ -1,7 +1,12 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2000-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+--
+-- $Id$
+-- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,23 +22,19 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
--- $Source$
---
 -- ===================================================================
 
 
 create table llx_compta
 (
-  rowid             SERIAL PRIMARY KEY,
-  datec             timestamp without time zone,
-  datev             date,           -- date de valeur
-  amount            real DEFAULT 0 NOT NULL,
-  label             varchar(255),
-  fk_compta_account integer,
-  fk_user_author    integer,
-  fk_user_valid     integer,
-  valid             int default 0,
-  note              text
-
+  rowid SERIAL PRIMARY KEY,
+  "datec"             datetime,
+  "datev"             date,           -- date de valeur
+  "amount"            real DEFAULT 0 NOT NULL ,
+  "label"             varchar(255),
+  "fk_compta_account" integer,
+  "fk_user_author"    integer,
+  "fk_user_valid"     integer,
+  "valid"             tinyint DEFAULT 0,
+  "note"              text
 );

@@ -1,5 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ========================================================================
--- Copyright (C) 2004	   Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,8 +27,7 @@
 
 create table llx_c_typent
 (
-  id        SERIAL      PRIMARY KEY,
-	code      varchar(12) UNIQUE NOT NULL,
-  libelle   varchar(30),
-	active    smallint DEFAULT 1 NOT NULL
+  id        integer      PRIMARY KEY,
+  "libelle"   varchar(30),
+  "active"    tinyint DEFAULT 1   NOT NULL
 );

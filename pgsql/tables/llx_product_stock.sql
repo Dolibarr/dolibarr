@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,16 +24,16 @@
 --
 -- ============================================================================
 
+
 create table llx_product_stock
 (
-  rowid           SERIAL PRIMARY KEY,
-  tms             timestamp,
-  fk_product      integer NOT NULL,
-  fk_stock        integer NOT NULL,
-  reel            integer           --stock réel
+  rowid SERIAL PRIMARY KEY,
+  "tms"             timestamp,
+  "fk_product"      integer NOT NULL,
+  "fk_entrepot"     integer NOT NULL,
+  "reel"            integer,          -- stock réel
 );
 
 CREATE INDEX llx_product_stock_fk_product ON llx_product_stock (fk_product);
-
-CREATE INDEX llx_product_stock_fk_stock ON llx_product_stock (fk_stock);
+CREATE INDEX llx_product_stock_fk_entrepot ON llx_product_stock (fk_entrepot);
 

@@ -1,7 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,13 +25,12 @@
 --
 -- ===================================================================
 
-create table llx_adherent_options
-(
-  optid            SERIAL PRIMARY KEY,
-  tms              timestamp,
-  adhid            integer NOT NULL -- id de l'adherent auquel correspond ces attributs optionnel
 --  telfixe	   varchar(15),
 --  teljob	   varchar(15)
-);
 
-CREATE UNIQUE INDEX llx_adherent_options_adhid ON llx_adherent_options (adhid);
+create table llx_adherent_options
+(
+  optid SERIAL PRIMARY KEY,
+  "tms"              timestamp,
+  "adhid"            integer NOT NULL, -- id de l'adherent auquel correspond ces attributs optionnel 
+);

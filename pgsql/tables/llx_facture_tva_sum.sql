@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,14 +21,13 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
+
 
 create table llx_facture_tva_sum
 (
-  fk_facture    integer NOT NULL,
-  amount        real  NOT NULL,
-  tva_tx        real  NOT NULL
+  "fk_facture"    integer NOT NULL,
+  "amount"        real  NOT NULL,
+  "tva_tx"        real  NOT NULL,
+  KEY(fk_facture)
 );
-
-CREATE INDEX llx_facture_tva_sum_fk_facture ON llx_facture_tva_sum (fk_facture);

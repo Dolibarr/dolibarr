@@ -1,7 +1,12 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+--
+-- $Id$
+-- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,26 +22,28 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
--- $Source$
---
+-- insert into llx_voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc) 
+-- values ('2002-04-21 12:05','2002-04-21 15:25',26.8,'Paris','Auray',1)
+
+-- insert into llx_voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc) 
+-- values ('2002-04-23 15:42','2002-04-23 19:10',26.8,'Auray','Paris',1)
 -- ===================================================================
+
 
 create table llx_voyage
 (
-  rowid           SERIAL PRIMARY KEY,
-  datec           timestamp without time zone,
-
-  dateo           date,                          -- date operation
-  date_depart     timestamp without time zone,   -- date du voyage
-  date_arrivee    timestamp without time zone,   -- date du voyage
-  amount          real NOT NULL DEFAULT 0,       -- prix du billet
-  reduction       real NOT NULL DEFAULT 0,       -- montant de la reduction obtenue
-  depart          varchar(255),
-  arrivee         varchar(255),
-  fk_type         smallint,                      -- Train, Avion, Bateaux
-  fk_reduc        integer,
-  distance        integer,                       -- distance en kilometre
-  dossier         varchar(50),                   -- numero de dossier
-  note            text
+  rowid SERIAL PRIMARY KEY,
+  "datec"           datetime,
+  "dateo"           date,                    -- date operation
+  "date_depart"     datetime,                -- date du voyage
+  "date_arrivee"    datetime,                -- date du voyage
+  "amount"          real NOT NULL DEFAULT 0, -- prix du billet
+  "reduction"       real NOT NULL DEFAULT 0, -- montant de la reduction obtenue
+  "depart"          varchar(255),
+  "arrivee"         varchar(255),
+  "fk_type"         smallint,                -- Train, Avion, Bateaux
+  "fk_reduc"        integer,
+  "distance"        integer,                 -- distance en kilometre
+  "dossier"         varchar(50),             -- numero de dossier
+  "note"            text
 );

@@ -1,5 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- $Id$
+-- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,16 +20,12 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
--- $Source$
---
 -- ===================================================================
-
 
 create table llx_bookmark
 (
-  rowid       SERIAL PRIMARY KEY,
-  fk_soc      integer,
-  fk_user     integer,
-  dateb       timestamp without time zone
+  rowid SERIAL PRIMARY KEY,
+  "fk_soc"      integer,
+  "fk_user"     integer,
+  "dateb"       datetime
 );

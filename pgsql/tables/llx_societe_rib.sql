@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- =============================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004      Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,24 +22,27 @@
 -- $Id$
 -- $Source$
 --
+--
+--
 -- =============================================================================
+
+
 
 create table llx_societe_rib
 (
-  rowid           serial PRIMARY KEY,
-  fk_soc          integer NOT NULL,
-  datec           timestamp without time zone,
-  tms             timestamp,
-  label           varchar(30),
-  bank            varchar(255),
-  code_banque     varchar(7),
-  code_guichet    varchar(6),
-  number          varchar(255),
-  cle_rib         varchar(5),
-  bic             varchar(10),
-  iban_prefix     varchar(5),
-  domiciliation   varchar(255),
-  proprio         varchar(60),
-  adresse_proprio varchar(255)
-
+  rowid SERIAL PRIMARY KEY,
+  "fk_soc"         integer NOT NULL,
+  "datec"          datetime,
+  "tms"            timestamp,
+  "label"          varchar(30),
+  "bank"           varchar(255),
+  "code_banque"    varchar(7),
+  "code_guichet"   varchar(6),
+  "number"         varchar(255),
+  "cle_rib"        varchar(5),
+  "bic"            varchar(10),
+  "iban_prefix"    varchar(5),
+  "domiciliation"  varchar(255),
+  "proprio"        varchar(60),
+  "adresse_proprio" varchar(255)
 );

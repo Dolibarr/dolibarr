@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,11 +26,11 @@
 
 create table llx_notify
 (
-  rowid           SERIAL PRIMARY KEY,
-  tms             timestamp,
-  daten           timestamp without time zone,           -- date de la notification
-  fk_action       integer NOT NULL,
-  fk_contact      integer NOT NULL,
-  objet_type	    CHAR(10) CHECK (objet_type IN ('ficheinter','facture','propale')),
-  objet_id        integer NOT NULL
+  rowid SERIAL PRIMARY KEY,
+  "tms"             timestamp,
+  "daten"           datetime,           -- date de la notification
+  "fk_action"       integer NOT NULL,
+  "fk_contact"      integer NOT NULL,
+  "objet_type" varchar(10) CHECK (objet_type IN ('ficheinter','facture','propale')) ,
+  "objet_id"        integer NOT NULL
 );

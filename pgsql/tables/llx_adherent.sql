@@ -1,5 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2004	   Benoit Mortiero <benoit.mortier@opensides.be>
+-- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,38 +24,37 @@
 -- $Source$
 --
 -- ===================================================================
-
+--
 -- statut
 -- 0 : non adherent
 -- 1 : adherent
 
 create table llx_adherent
 (
-  rowid            SERIAL PRIMARY KEY,
-  tms              timestamp,
-  statut           smallint NOT NULL DEFAULT 0,
-  public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
-  fk_adherent_type smallint,
-  morphy           CHAR(3) CHECK (morphy IN ('mor','phy')) NOT NULL, -- personne morale / personne physique
-  datevalid        timestamp without time zone,   -- date de validation
-  datec            timestamp without time zone,  -- date de creation
-  prenom           varchar(50),
-  nom              varchar(50),
-  societe          varchar(50),
-  adresse          text,
-  cp               varchar(30),
-  ville            varchar(50),
-  pays             varchar(50),
-  email            varchar(255),
-  login            varchar(50) NOT NULL,      -- login utilise pour editer sa fiche
-  pass             varchar(50),      -- pass utilise pour editer sa fiche
-  naiss            date,             -- date de naissance
-  photo            varchar(255),     -- url vers la photo de l'adherent
-  fk_user_author   integer NOT NULL,
-  fk_user_mod      integer NOT NULL,
-  fk_user_valid    integer NOT NULL,
-  datefin          timestamp without time zone NOT NULL, -- date de fin de validité de la cotisation
-  note             text
+  rowid SERIAL PRIMARY KEY,
+  "tms"              timestamp,
+  "statut"           smallint NOT NULL DEFAULT 0,
+  "public"           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
+  "fk_adherent_type" smallint,
+  "morphy" varchar(3) CHECK (morphy IN ('mor','phy'))  NOT NULL, -- personne morale / personne physique
+  "datevalid"        datetime,  -- date de validation
+  "datec"            datetime,  -- date de creation
+  "prenom"           varchar(50),
+  "nom"              varchar(50),
+  "societe"          varchar(50),
+  "adresse"          text,
+  "cp"               varchar(30),
+  "ville"            varchar(50),
+  "pays"             varchar(50),
+  "email"            varchar(255),
+  "login"            varchar(50) NOT NULL,      -- login utilise pour editer sa fiche
+  "pass"             varchar(50),      -- pass utilise pour editer sa fiche
+  "naiss"            date,             -- date de naissance
+  "photo"            varchar(255),     -- url vers la photo de l'adherent
+  "fk_user_author"   integer NOT NULL,
+  "fk_user_mod"      integer NOT NULL,
+  "fk_user_valid"    integer NOT NULL,
+  "datefin"          datetime, -- date de fin de validité de la cotisation
+  "note"             text,
+ 
 );
-
-CREATE UNIQUE INDEX llx_adherent_login ON llx_adherent (login);

@@ -1,7 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ========================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004	     Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,12 +24,13 @@
 -- $Source$
 --
 -- ========================================================================
+
 create table llx_c_chargesociales
 (
-  id          SERIAL PRIMARY KEY,
-  libelle     varchar(80),
-  deductible  integer DEFAULT 0 NOT NULL,
-	active      integer DEFAULT 1 NOT NULL
+  id          integer PRIMARY KEY,
+  "libelle"     varchar(80),
+  "deductible"  smallint DEFAULT 0 NOT NULL,
+  "active"      tinyint DEFAULT 1  NOT NULL
 );
 
 

@@ -1,7 +1,12 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+--
+-- $Id$
+-- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,21 +22,18 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
--- $Source$
---
 -- ===================================================================
 
 create table llx_voyage_reduc
 (
-  rowid           SERIAL PRIMARY KEY,
-  datec           timestamp without time zone,
-  datev           date,           -- date de valeur
-  date_debut      date,           -- date operation
-  date_fin        date,
-  amount          real NOT NULL DEFAULT 0,
-  label           varchar(255),
-  numero          varchar(255),
-  fk_type         smallint,       -- Train, Avion, Bateaux
-  note            text
+  rowid SERIAL PRIMARY KEY,
+  "datec"           datetime,
+  "datev"           date,           -- date de valeur
+  "date_debut"      date,           -- date operation
+  "date_fin"        date,
+  "amount"          real NOT NULL DEFAULT 0,
+  "label"           varchar(255),
+  "numero"          varchar(255),
+  "fk_type"         smallint,       -- Train, Avion, Bateaux
+  "note"            text
 );

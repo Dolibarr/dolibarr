@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,9 +27,9 @@
 create table llx_expedition_methode
 (
   rowid            integer PRIMARY KEY,
-  tms              timestamp,
-  code             varchar(30) NOT NULL,
-  libelle          varchar(50) NOT NULL,
-  description      text,
-  statut           smallint DEFAULT 0
+  "tms"              timestamp,
+  "code"             varchar(30) NOT NULL,
+  "libelle"          varchar(50) NOT NULL,
+  "description"      text,
+  "statut"           tinyint DEFAULT 0
 );

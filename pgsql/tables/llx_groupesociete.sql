@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ========================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2000-2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,16 +24,15 @@
 --
 -- ========================================================================
 
+
 create table llx_groupesociete
 (
-  rowid           serial PRIMARY KEY,
-  parent          integer UNIQUE,
-  tms             timestamp,
-  datec	          timestamp without time zone,         -- creation date
-  nom             varchar(60),                         -- company name
-  note            text,                                --
-  remise          real           DEFAULT 0,            -- remise systématique pour le client
-  fk_user_author  integer
-
-)
+  rowid SERIAL PRIMARY KEY,
+  "tms"             timestamp,
+  "datec"	          datetime,                            -- creation date
+  "nom"             varchar(60),                         -- company name
+  "note"            text,                                --
+  "remise"          real           DEFAULT 0,            -- remise systématique pour le client
+  "fk_user_author"  integer
+);
 

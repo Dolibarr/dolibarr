@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,22 +21,21 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
+
 
 create table llx_paiementcharge
 (
-  rowid           serial PRIMARY KEY,
-  fk_charge       integer,
-  datec           timestamp without time zone,           -- date de creation
-  tms             timestamp,
-  datep           timestamp without time zone,           -- payment date
-  amount          real DEFAULT 0,
-  fk_typepaiement integer NOT NULL,
-  num_paiement    varchar(50),
-  note            text,
-  fk_bank         integer NOT NULL,
-  fk_user_creat   integer,            -- utilisateur qui a créé l'info
-  fk_user_modif   integer             -- utilisateur qui a modifié l'info
-
+  rowid SERIAL PRIMARY KEY,
+  "fk_charge"       integer,
+  "datec"           datetime,           -- date de creation
+  "tms"             timestamp,
+  "datep"           datetime,           -- payment date
+  "amount"          real DEFAULT 0,
+  "fk_typepaiement" integer NOT NULL,
+  "num_paiement"    varchar(50),
+  "note"            text,
+  "fk_bank"         integer NOT NULL,
+  "fk_user_creat"   integer,            -- utilisateur qui a créé l'info
+  "fk_user_modif"   integer             -- utilisateur qui a modifié l'info
 );

@@ -1,7 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,21 +24,19 @@
 --
 -- ===================================================================
 
+
 create table llx_fichinter
 (
-  rowid           SERIAL PRIMARY KEY,
-  fk_soc          integer NOT NULL,
-  fk_projet       integer DEFAULT 0,     -- projet auquel est rattache la fiche
-  ref             varchar(30) NOT NULL,  -- number
-  datec           timestamp without time zone,              -- date de creation
-  date_valid      timestamp without time zone,              -- date de validation
-  datei           date,                  -- date de l'intervention
-  fk_user_author  integer,   -- createur de la fiche
-  fk_user_valid   integer,   -- valideur de la fiche
-  fk_statut       smallint  DEFAULT 0,
-  duree           real,
-  note            text
-);
-
-CREATE UNIQUE INDEX llx_fichinter_ref ON llx_fichinter(ref);
-
+  rowid SERIAL PRIMARY KEY,
+  "fk_soc"          integer NOT NULL,
+  "fk_projet"       integer DEFAULT 0,     -- projet auquel est rattache la fiche
+  "ref"             varchar(30) NOT NULL,  -- number
+  "datec"           datetime,              -- date de creation 
+  "date_valid"      datetime,              -- date de validation
+  "datei"           date,                  -- date de l'intervention
+  "fk_user_author"  integer,               -- createur de la fiche
+  "fk_user_valid"   integer,               -- valideur de la fiche
+  "fk_statut"       smallint  DEFAULT 0,
+  "duree"           real,
+  "note"            text,
+4294967294);

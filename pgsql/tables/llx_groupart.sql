@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,12 +26,12 @@
 
 create table llx_groupart
 (
-  rowid           SERIAL PRIMARY KEY,
-  osc_id          integer NOT NULL,
-  tms             timestamp,
-  nom		          varchar(64),
-  groupart	      CHAR(8) CHECK (groupart IN ('artiste','groupe')) NOT NULL,
-  description     text NOT NULL,
-  fk_user_author  integer
+  rowid SERIAL PRIMARY KEY,
+  "osc_id"          integer NOT NULL,
+  "tms"             timestamp,
+  "nom"             varchar(64),
+  "groupart" varchar(7) CHECK (groupart IN ("artiste","groupe"))  NOT NULL,
+  "description"     text NOT NULL,
+  "fk_user_author"  integer
 );
 

@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,23 +26,24 @@
 
 create table llx_newsletter
 (
-  rowid              SERIAL PRIMARY KEY,
-  datec              timestamp without time zone,
-  tms                timestamp,
-  email_subject      varchar(32) NOT NULL,
-  email_from_name    varchar(255) NOT NULL,
-  email_from_email   varchar(255) NOT NULL,
-  email_replyto      varchar(255) NOT NULL,
-  email_body         text,
-  target             smallint,
-  sql_target         text,
-  status             smallint DEFAULT 0 NOT NULL,
-  date_send_request  timestamp without time zone,   -- debut de l'envoi demandé
-  date_send_begin    timestamp without time zone,   -- debut de l'envoi
-  date_send_end      timestamp without time zone,   -- fin de l'envoi
-  nbsent             integer,     -- nombre de mails envoyés
-  nberror            integer,     -- nombre de mails envoyés
-  fk_user_author     integer,
-  fk_user_valid      integer,
-  fk_user_modif      integer
+  rowid SERIAL PRIMARY KEY,
+  "datec"              datetime,
+  "tms"                timestamp,
+  "email_subject"      varchar(32) NOT NULL,
+  "email_from_name"    varchar(255) NOT NULL,
+  "email_from_email"   varchar(255) NOT NULL,
+  "email_replyto"      varchar(255) NOT NULL,
+  "email_body"         text,
+  "target"             smallint,
+  "sql_target"         text,
+  "status"             smallint DEFAULT 0 NOT NULL,
+  "date_send_request"  datetime,   -- debut de l'envoi demandé
+  "date_send_begin"    datetime,   -- debut de l'envoi
+  "date_send_end"      datetime,   -- fin de l'envoi
+  "nbsent"             integer,    -- nombre de mails envoyés
+  "nberror"            integer,    -- nombre de mails envoyés
+  "fk_user_author"     integer,
+  "fk_user_valid"      integer,
+  "fk_user_modif"      integer
 );
+

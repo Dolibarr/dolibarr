@@ -1,7 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,19 +21,18 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
 
 create table llx_propaldet
 (
-  rowid          SERIAL PRIMARY KEY,
-  fk_propal      integer,
-  fk_product     integer,
-  description    text,
-  tva_tx         real DEFAULT 19.6, -- taux tva
-  qty            real,              -- quantité
-  remise_percent real DEFAULT 0,    -- pourcentage de remise
-  remise         real DEFAULT 0,    -- montant de la remise
-  subprice       real,              -- prix avant remise
-  price          real               -- prix final
+  rowid SERIAL PRIMARY KEY,
+  "fk_propal"      integer,
+  "fk_product"     integer,
+  "description"    text,
+  "tva_tx"         real DEFAULT 19.6, -- taux tva
+  "qty"            real,              -- quantité
+  "remise_percent" real DEFAULT 0,    -- pourcentage de remise
+  "remise"         real DEFAULT 0,    -- montant de la remise
+  "subprice"       real,              -- prix avant remise
+  "price"          real               -- prix final
 );

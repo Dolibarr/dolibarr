@@ -1,7 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ========================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,10 +26,14 @@
 
 create table llx_chargesociales
 (
-  rowid      SERIAL PRIMARY KEY,
-  libelle    varchar(80),
-  deductible smallint DEFAULT 0 NOT NULL,
-  active     smallint DEFAULT 0 NOT NULL
+  rowid SERIAL PRIMARY KEY,
+  "date_ech"   datetime, -- date d'echeance
+  "date_pai"   datetime, -- date de paiements
+  "libelle"    varchar(80),
+  "fk_type"    integer,
+  "amount"     real     default 0 NOT NULL,
+  "paye"       smallint default 0 NOT NULL,
+  "periode"    date
 );
 
 

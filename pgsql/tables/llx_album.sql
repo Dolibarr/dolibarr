@@ -1,5 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
--- Copyright (C) 2004 Benoit mortier <benoit;mortier@opensides.be>
+-- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,14 +26,14 @@
 
 create table llx_album
 (
-  rowid           serial PRIMARY KEY,
-  osc_id          integer NOT NULL,
-  tms             timestamp,
-  ref		  				varchar(12),
-  title		  			varchar(64),
-  annee		  			smallint,
-  description     text,
-  collectif       smallint,
-  fk_user_author  integer
+  rowid SERIAL PRIMARY KEY,
+  "osc_id"          integer NOT NULL,
+  "tms"             timestamp,
+  "ref"		          varchar(12),
+  "title"		        varchar(64),
+  "annee"		        int2,
+  "description"     text,
+  "collectif"       tinyint,
+  "fk_user_author"  integer
 );
 

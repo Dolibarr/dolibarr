@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,17 +21,16 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
+
 
 create table llx_paiement_facture
 (
-  rowid           serial PRIMARY KEY,
-  fk_paiement     integer,
-  fk_facture      integer,
-  amount          real     DEFAULT 0
+  rowid SERIAL PRIMARY KEY,
+  "fk_paiement"     integer,
+  "fk_facture"      integer,
+  "amount"          real     DEFAULT 0,
+  
+  key (fk_paiement),
+  key (fk_facture)
 );
-
-CREATE INDEX llx_paiement_facture_fk_paiement ON llx_paiement_facture(fk_paiement);
-
-CREATE INDEX llx_paiement_facture_fk_facture ON llx_paiement_facture(fk_facture);

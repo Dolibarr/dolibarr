@@ -1,7 +1,13 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ========================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+--
+-- $Id$
+-- $Source$
+--
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,21 +25,18 @@
 --
 -- Actions commerciales a effectuer
 --
--- $Id$
--- $Source$
---
 -- ========================================================================
 
 create table llx_todocomm
 (
-  id             SERIAL PRIMARY KEY,
-  datea          timestamp without time zone,     -- date de l'action
-  label          varchar(50),                     -- libelle de l'action
-  fk_user_action integer,                         -- id de la personne qui doit effectuer l'action
-  fk_user_author integer,                         -- id auteur de l'action
-  fk_soc         integer,                         -- id de la societe auquel est rattachee l'action
-  fk_contact     integer,                         -- id du contact sur laquelle l'action
-                                                  -- doit etre effectuee
-  note           text
+  id SERIAL PRIMARY KEY,
+  "datea"          datetime,     -- date de l'action
+  "label"          varchar(50),  -- libelle de l'action
+  "fk_user_action" integer,      -- id de la personne qui doit effectuer l'action
+  "fk_user_author" integer,      -- id auteur de l'action
+  "fk_soc"         integer,      -- id de la societe auquel est rattachee l'action
+  "fk_contact"     integer,      -- id du contact sur laquelle l'action 
+                               -- doit etre effectuee
+  "note"           text
 );
 

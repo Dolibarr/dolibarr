@@ -1,7 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,11 +26,11 @@
 
 create table llx_tva
 (
-  rowid           SERIAL PRIMARY KEY,
-  tms             timestamp,
-  datep           date,           -- date de paiement
-  datev           date,           -- date de valeur
-  amount          real NOT NULL DEFAULT 0,
-  label           varchar(255),
-  note            text
+  rowid SERIAL PRIMARY KEY,
+  "tms"             timestamp,
+  "datep"           date,           -- date de paiement
+  "datev"           date,           -- date de valeur
+  "amount"          real NOT NULL DEFAULT 0,
+  "label"           varchar(255),
+  "note"            text
 );

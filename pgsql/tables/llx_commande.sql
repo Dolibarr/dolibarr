@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,31 +26,28 @@
 
 create table llx_commande
 (
-  rowid            serial PRIMARY KEY,
-  tms              timestamp,
-  fk_soc           integer,
-  fk_soc_contact   integer,
-  fk_projet        integer DEFAULT 0,     -- projet auquel est rattache la commande
-  ref              varchar(30) NOT NULL,  -- propal number
-  date_creation    timestamp without time zone,              -- date de creation
-  date_valid       timestamp without time zone,              -- date de validation
-  date_cloture     timestamp without time zone,              -- date de cloture
-  date_commande    date,                  -- date de la commande
-  fk_user_author   integer,               -- createur de la commande
-  fk_user_valid    integer,               -- valideur de la commande
-  fk_user_cloture  integer,               -- cloture de la propale signee ou non signee
-  source           smallint NOT NULL,
-  fk_statut        smallint  default 0,
-  amount_ht        real      default 0,
-  remise_percent   real      default 0,
-  remise           real      default 0,
-  tva              real      default 0,
-  total_ht         real      default 0,
-  total_ttc        real      default 0,
-  note             text,
-  model_pdf        varchar(50),
-  facture          smallint default 0,
-
-  UNIQUE (ref)
-);
-
+  rowid SERIAL PRIMARY KEY,
+  "tms"              timestamp,
+  "fk_soc"           integer,
+  "fk_soc_contact"   integer,
+  "fk_projet"        integer DEFAULT 0,     -- projet auquel est rattache la commande
+  "ref"              varchar(30) NOT NULL,  -- propal number
+  "date_creation"    datetime,              -- date de creation 
+  "date_valid"       datetime,              -- date de validation
+  "date_cloture"     datetime,              -- date de cloture
+  "date_commande"    date,                  -- date de la commande
+  "fk_user_author"   integer,               -- createur de la commande
+  "fk_user_valid"    integer,               -- valideur de la commande
+  "fk_user_cloture"  integer,               -- cloture de la propale signee ou non signee
+  "source"           smallint NOT NULL,
+  "fk_statut"        smallint  default 0,
+  "amount_ht"        real      default 0,
+  "remise_percent"   real      default 0,
+  "remise"           real      default 0,
+  "tva"              real      default 0,
+  "total_ht"         real      default 0,
+  "total_ttc"        real      default 0,
+  "note"             text,
+  "model_pdf"        varchar(50),
+  "facture"          tinyint default 0,   
+4294967294);

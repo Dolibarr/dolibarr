@@ -1,7 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,23 +22,23 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
+
 
 create table llx_facturedet
 (
-  rowid           SERIAL PRIMARY KEY,
-  fk_facture      integer NOT NULL,
-  fk_product      integer DEFAULT 0 NOT NULL,
-  description     text,
-  tva_taux        real DEFAULT 19.6, -- taux tva
-  qty		  			  real,              -- quantité
-  remise_percent  real DEFAULT 0,    -- pourcentage de remise
-  remise          real DEFAULT 0,    -- montant de la remise
-  subprice        real,              -- prix avant remise
-  price           real,               -- prix final
-  date_start      timestamp without time zone,          -- date debut si service
-  date_end        timestamp without time zone           -- date fin si service
+  rowid SERIAL PRIMARY KEY,
+  "fk_facture"      integer NOT NULL,
+  "fk_product"      integer DEFAULT 0 NOT NULL,
+  "description"     text,
+  "tva_taux"        real DEFAULT 19.6, -- taux tva
+  "qty"             real,              -- quantité
+  "remise_percent"  real DEFAULT 0,    -- pourcentage de remise
+  "remise"          real DEFAULT 0,    -- montant de la remise
+  "subprice"        real,              -- prix avant remise
+  "price"           real,              -- prix final
+  "date_start"      datetime,          -- date debut si service
+  "date_end"        datetime,          -- date fin si service
+  "fk_code_ventilation" integer DEFAULT 0 NOT NULL,
+  "fk_export_compta"    integer DEFAULT 0 NOT NULL
 );
-
-CREATE INDEX llx_facturedet_fk_facture ON llx_facturedet (fk_facture);

@@ -1,6 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,20 +25,23 @@
 --
 -- ============================================================================
 
+
+
 create table llx_contrat
 (
-  rowid           SERIAL PRIMARY KEY,
-  tms             timestamp,
-  enservice       smallint DEFAULT 0,
-  mise_en_service timestamp without time zone,
-  fin_validite    timestamp without time zone,
-  date_cloture    timestamp without time zone,
-  fk_soc          integer NOT NULL,
-  fk_product      integer NOT NULL,
-  fk_facture      integer NOT NULL DEFAULT 0,
-  fk_facturedet   integer NOT NULL DEFAULT 0,
-  fk_user_author  integer NOT NULL,
-  fk_user_mise_en_service integer,
-  fk_user_cloture integer
+  rowid SERIAL PRIMARY KEY,  
+  "tms"             timestamp,
+  "datec"           datetime, -- date de creation de l'enregistrement
+  "date_contrat"    datetime,
+  "statut"          smallint DEFAULT 0,
+  "mise_en_service" datetime,
+  "fin_validite"    datetime,
+  "date_cloture"    datetime,
+  "fk_soc"          integer NOT NULL,
+  "fk_commercial_signature" integer NOT NULL,
+  "fk_commercial_suivi"     integer NOT NULL,
+  "fk_user_author"          integer NOT NULL default 0,
+  "fk_user_mise_en_service" integer,
+  "fk_user_cloture" integer
 );
 

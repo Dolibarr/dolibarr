@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,12 +26,12 @@
 
 create table llx_appro
 (
-  rowid           SERIAL PRIMARY KEY,
-  datec           timestamp without time zone,
-  tms             timestamp,
-  fk_product      integer NOT NULL,
-  quantity        smallint NOT NULL,
-  price           real,
-  fk_user_author  integer
+  rowid SERIAL PRIMARY KEY,
+  "datec"           datetime,
+  "tms"             timestamp,
+  "fk_product"      integer NOT NULL, 
+  "quantity"        smallint unsigned NOT NULL,
+  "price"           real,
+  "fk_user_author"  integer
 );
 

@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,25 +24,21 @@
 --
 -- ============================================================================
 
+
 create table llx_livre
 (
-  rowid           SERIAL PRIMARY KEY,
-  oscid           integer NOT NULL,
-  tms             timestamp,
-  status          smallint,
-  date_ajout      timestamp without time zone,
-  ref             varchar(12),
-  title           varchar(64),
-  annee           smallint,
-  description     text,
-  prix            decimal(15,4),
-  fk_editeur      integer,
-  fk_user_author  integer,
-  frais_de_port   smallint DEFAULT 1,
-
-UNIQUE(ref)
-
+  rowid SERIAL PRIMARY KEY,
+  "oscid"           integer NOT NULL,
+  "tms"             timestamp,
+  "status"          tinyint,
+  "date_ajout"      datetime,
+  "ref"             varchar(12),
+  "title"           varchar(64),
+  "annee"           int2,
+  "description"     text,
+  "prix"            decimal(15,4),
+  "fk_editeur"      integer,
+  "fk_user_author"  integer,
+  "frais_de_port"   tinyint DEFAULT 1
 );
-
-
 

@@ -1,0 +1,281 @@
+#!/usr/bin/perl -w
+#------------------------------------------------------------------------------
+# Ce script est une version modifiée de mysql2pgsql afin de:
+# - gérer les base mysql innodb
+# - traiter tous les fichiers ../mysq/data/*.sql vers ./pgsql/data
+# - gérer les autoincrement en SERIAL plutot qu'en séquenceurs
+# - utiliser le CHECK plutot que des sous-tables pour les types enum
+# - corriger de nombreux bugs
+#------------------------------------------------------------------------------
+use Data::Dumper;
+use Getopt::Long;
+use strict;
+
+use vars qw/ $DIR $PROG $Extension $SOURCE $DESTI %filelist /;
+
+# command line options
+my( $opt_debug, $opt_help);
+# general values
+my ($out, $size);
+# variables for constructing pre-create-table entities
+my $create_sql='';	    # if empty we are not making a create statement
+my $create_index='';	# if empty we are not making a create statement
+my %enum_datafield=();  #  holds enumeration choices
+my (@column_values,$enum_column, $seq);
+my $table="";
+
+
+
+#------------------------------------------------------------------------------
+# MAIN
+#------------------------------------------------------------------------------
+($DIR=$0) =~ s/([^\/\\]+)$//; ($PROG=$1) =~ s/\.([^\.]*)$//; $Extension=$1;
+$DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
+
+$SOURCE="$DIR/../mysql/tables";
+$DESTI="$DIR/../pgsql/tables";
+
+# Recherche tous les fichiers .sql
+opendir(DIR, $SOURCE);
+    foreach my $file (readdir(DIR)) {
+        if ($file =~ /\.sql$/ && -f "$SOURCE/$file") {
+            print "Found file $file\n";
+            $filelist{$file}=1;
+        }
+    }
+closedir(DIR);
+
+
+# Boucle sur tous les fichiers de SOURCE
+#---------------------------------------
+foreach my $file (keys %filelist) {
+
+    $ARGV[0]="$SOURCE/$file";
+    $ARGV[1]="$DESTI/$file";
+
+    print "Convert file $ARGV[0] into $ARGV[1]\n";
+    
+    # MySQL to PostgreSQL dump file converter
+    #
+    # For usage: perl mysql2pgsql.perl --help
+    #
+    # homepage: http://www.rot13.org/~dpavlin/projects.html
+    # 1999-12-15 DbP -- Dobrica Pavlinusic <dpavlin@rot13.org>
+    # 1999-12-26 DbP don't make serial from auto_increment, create all manually
+    #		 (to set start value right)
+    # 2000-01-11 DbP now creates sequences with correct value
+    # 2000-04-25 DbP import into CVS (at cvs.linux.hr)
+    # 2001-01-29 tpo -- Tomas Pospisek <tpo@sourcepole.ch>:
+    #		 1) make script comply to usage:
+    #		 2) make script output to STDOUT instead of STERR
+    #		 3) change verbosity behaveour
+    #		 4) add debug option
+    # see rest of changelog at http://cvs.linux.hr/cvsweb.cgi/sql/mysql2pgsql
+    # 2003-12-16 jsp -- Joe Speigle <joe.speigle@jklh.us>:
+    #		converts: s/\) *Type=MyISAM;/);/i, enum data type -> references, 
+    #		auto_increment->sequences
+    # 2004-01-13 jsp -- moved project to gborg; both the above declined ownership
+    # 2004-06-29 converts: year(4), year(2)
+    # homepage: gborg.postgresql.org 
+    
+    GetOptions("debug", "help");
+    
+    my $DEBUG = $opt_debug || 0;
+    my $HELP = $opt_help || 0;
+    
+    
+    if (($HELP) || ! defined($ARGV[0]) || ! defined($ARGV[1])) {
+    	print "Usage: perl $0 {--verbose|--help|--debug} mysql_dump_file.sql pg_dump_file.sql\n";
+    	print "\t* OPTIONS\n";
+    	print "\t--verbose tees to pg_dump_file.sql and STDOUT during conversion\n";
+    	print "\t--debug does ?? \n";
+    	print "\t--help prints this message \n";
+    	print "\t* REQUIRED ARGUMENTS\n";
+    	if (defined ($ARGV[0])) {
+    		print "\tmysql_dump_file.sql ($ARGV[0])\n";
+    	} else {
+    		print "\tmysql_dump_file.sql (undefined)\n";
+    	}
+    	if (defined ($ARGV[1])) {
+    		print "\tpg_dump_file.sql ($ARGV[1])\n";
+    	} else {
+    		print "\tpg_dump_file.sql (undefined)\n";
+    	}
+    	exit 1;
+    } 
+    
+    open(IN,"<$ARGV[0]") || die "can't open mysql dump file $ARGV[0]";
+    open(OUT,">$ARGV[1]") || die "can't open pg dump file $ARGV[1]";
+    print OUT "-- Generated from $PROG\n";
+    print OUT "-- (c) 2004, PostgreSQL Inc.\n";
+    print OUT "-- (c) 2005, Laurent Destailleur.\n";
+    print OUT "\n";
+    
+    sub output_create {
+    	print OUT $create_sql;
+        if ($create_index) {
+    	    print OUT "\n";
+    	    print OUT $create_index;
+    	}
+    }
+    
+    # reset when moving from each "create table" to "insert" part of dump
+    sub reset_vars() {
+    	$create_sql="";
+    	$create_index="";
+    	%enum_datafield=();
+    	$enum_column='';
+    }
+
+    
+    # Boucle sur contenu fichier source
+    #----------------------------------
+    while(<IN>) {
+    
+    	# comments or empty lines
+    	if (/^#/ || /^$/ || /^--/) { 
+    		print OUT $_; 
+    		next;
+    	}
+    	if (/^USE\s*([^;]*);/) { 
+    		print OUT "\\c ". $1; 
+    		next;
+    	}
+    	if ($create_sql ne "") { 		# we are inside create table statement so lets process datatypes
+    		if (/\);/i) {	# end of create table squence
+    			$create_sql =~ s/,$//g;	# strip last , inside create table
+    			&output_create;
+    			&reset_vars();
+    		  next;
+            # LDR Added innodb
+    		} elsif (/(ISAM|innodb)/i) { # end of create table sequence
+    			s/\) *Type=(MyISAM|innodb);/);/i;  
+    			$create_sql =~ s/,$//g;	# strip last , inside create table
+    			$create_sql .= $_;
+    			&output_create;
+    			&reset_vars();
+    			next;
+    		} 
+    		if (/(\w*)\s+enum\(((?:['"]\w+['"]\s*,)+['"]\w+['"])\)(.*)$/i) { # enum handling 
+    			$enum_column=$1;
+    			$enum_datafield{$enum_column} = $2;  # 'abc','def', ...
+    			my $maxlength=0;
+    			foreach my $enum (split(',',$2)) {
+    			    $enum =~ s/[\"\']//g;
+    			    if ($maxlength<length($enum)) { $maxlength=length($enum); }
+    			}
+    			$_ =  qq~  $1 CHAR($maxlength) CHECK ($1 IN ($2)) $3\n~;
+    		} elsif (/^[\s\t]*(\w*)\s*.*int.*auto_increment/i) { 		# int,auto_increment -> serial
+    			$seq = qq~${table}_${1}_seq~;
+    			s/[\s\t]*([a-zA-Z_0-9]*)\s*.*int.*auto_increment[^,]*/  $1 SERIAL PRIMARY KEY/ig;
+    			#  MYSQL: data_id mediumint(8) unsigned NOT NULL auto_increment,
+    			$create_sql.=$_;
+    			next;
+    		# int type conversion
+    		} elsif (/(\w*)int\(\d+\)/i) {
+    			$size=$1;
+    			$size =~ tr [A-Z] [a-z];
+    			if ($size eq "tiny" || $size eq "small") {
+    				$out = "int2";
+    			} elsif ($size eq "big") {
+    				$out = "int8";
+    			} else {
+    				$out = "int4";
+    			}
+    			s/\w*int\(\d+\)/$out/g;
+    		}
+    
+    		# nuke int unsigned
+    		s/(int\w+)\s+unsigned/$1/gi;
+    
+    		# blob -> text
+    		s/\w*blob/text/gi;
+    		# tinytext/mediumtext -> text
+    		s/tinytext/text/gi;
+    		s/mediumtext/text/gi;
+    
+    		# char -> varchar
+    		# PostgreSQL would otherwise pad with spaces as opposed
+    		# to MySQL! Your user interface may depend on this!
+    		s/(\s+)char/${1}varchar/gi;
+    
+    		# nuke date representation (not supported in PostgreSQL)
+    		s/datetime default '[^']+'/datetime/i;
+    		s/date default '[^']+'/datetime/i;
+    		s/time default '[^']+'/datetime/i;
+    
+    		# change not null datetime field to null valid ones
+    		# (to support remapping of "zero time" to null
+    		s/datetime not null/datetime/i;
+    
+    		# nuke size of timestamp
+    		s/timestamp\([^)]*\)/timestamp/i;
+    
+    		# double -> float8
+    		s/double\([^)]*\)/float8/i;
+    
+    		# add unique to definition of type (MySQL separates this)
+    		if (/unique \w+ \((\w+)\)/i) {
+    			$create_sql.=~s/($1)([^,]+)/$1$2 unique/i;
+    			next;
+    		}
+    		# FIX: unique for multipe columns (col1,col2) are unsupported!
+    		next if (/unique/i);
+    
+    		if (/\bkey\b/i && !/^\s+primary key\s+/i) {
+    			s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key
+    		}
+    
+            # if key(xxx),
+            if (/key\((\w+)\)/) {
+                $create_index .= "CREATE INDEX ${table}_$1 ON $table ($1);\n";
+                next;
+            }
+            
+    		# quote column names
+    		s/(^\s*)([^\s\-\(]+)(\s*)/$1"$2"$3/gi if (!/\bkey\b/i);
+    
+    		# remap colums with names of existing system attribute 
+    		if (/"oid"/i) {
+    			s/"oid"/"_oid"/g;
+    			print STDERR "WARNING: table $table uses column \"oid\" which is renamed to \"_oid\"\nYou should fix application manually! Press return to continue.";
+    			my $wait=<STDIN>;
+    		}
+    		s/oid/_oid/i if (/key/i && /oid/i); # fix oid in key
+    		$create_sql.=$_;
+    		} #  END of if ($create_sql ne "") i.e. were inside create table statement so processed datatypes
+    	else {	# not inside create table
+    		#---- fix data in inserted data: (from MS world)
+    		# FIX: disabled for now
+    		if (00 && /insert into/i) {
+    			s!\x96!-!g;	# --
+    			s!\x93!"!g;	# ``
+    			s!\x94!"!g;	# ''
+    			s!\x85!... !g;	# \ldots
+    			s!\x92!`!g;
+    		}
+    
+    		# fix dates '0000-00-00 00:00:00' (should be null)
+    		s/'0000-00-00 00:00:00'/null/gi;
+    		s/'0000-00-00'/null/gi;
+    		s/'00:00:00'/null/gi;
+    		s/([12]\d\d\d)([01]\d)([0-3]\d)([0-2]\d)([0-6]\d)([0-6]\d)/'$1-$2-$3 $4:$5:$6'/;
+    
+    		if (/create\s+table\s+(\w+)/i) {
+    			$create_sql = $_;
+    			/create\s*table\s*(\w+)/i;
+    			$table=$1 if (defined($1));
+    		} else {
+    			print OUT $_;
+    		}
+    	} # end of if inside create_table
+    } # END while(<IN>) 
+    
+    close IN;
+    close OUT;
+    
+}
+
+print "Build ".(scalar keys %filelist)." file(s).\n";
+
+0;

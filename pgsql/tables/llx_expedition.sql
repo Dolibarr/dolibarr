@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,26 +24,24 @@
 --
 -- ===================================================================
 
+
 create table llx_expedition
 (
-  rowid                 serial PRIMARY KEY,
-  tms                   timestamp,
-  ref                   varchar(30) NOT NULL,
-  fk_commande           integer,
-  date_creation         timestamp without time zone,              -- date de creation
-  date_valid            timestamp without time zone,              -- date de validation
-  date_expedition       date,                  -- date de l'expedition
-  fk_user_author        integer,               -- createur
-  fk_user_valid         integer,               -- valideur
-  fk_entrepot           integer,
-  fk_expedition_methode integer,
-  fk_statut             smallint  DEFAULT 0,
-  note                  text,
-  model_pdf             varchar(50),
+  rowid SERIAL PRIMARY KEY,
+  "tms"                   timestamp,
+  "ref"                   varchar(30) NOT NULL,
+  "fk_commande"           integer,
+  "date_creation"         datetime,              -- date de creation 
+  "date_valid"            datetime,              -- date de validation
+  "date_expedition"       date,                  -- date de l'expedition
+  "fk_user_author"        integer,               -- createur
+  "fk_user_valid"         integer,               -- valideur
+  "fk_entrepot"           integer,
+  "fk_expedition_methode" integer,
+  "fk_statut"             smallint  DEFAULT 0,
+  "note"                  text,
+  "model_pdf"             varchar(50),
+4294967294);
 
-  UNIQUE (ref)
-);
-
-CREATE INDEX llx_expedition_fk_expedition_methode ON llx_expedition(fk_expedition_methode);
-
-CREATE INDEX llx_expedition_fk_commande ON llx_expedition(fk_commande);
+CREATE INDEX llx_expedition_fk_expedition_methode ON llx_expedition (fk_expedition_methode);
+CREATE INDEX llx_expedition_fk_commande ON llx_expedition (fk_commande);

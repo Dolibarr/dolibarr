@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,17 +21,16 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
+
 
 create table llx_expeditiondet
 (
-  rowid             serial  PRIMARY KEY,
-  fk_expedition     integer NOT NULL,
-  fk_commande_ligne integer NOT NULL,
-  qty               real              -- quantité
+  rowid SERIAL PRIMARY KEY,
+  "fk_expedition"     integer NOT NULL,
+  "fk_commande_ligne" integer NOT NULL,
+  "qty"               real,              -- quantité
 );
 
-CREATE INDEX llx_expeditiondet_fk_expedition ON llx_expeditiondet(fk_expedition);
-
-CREATE INDEX llx_expeditiondet_fk_commande_ligne ON llx_expeditiondet(fk_commande_ligne);
+CREATE INDEX llx_expeditiondet_fk_expedition ON llx_expeditiondet (fk_expedition);
+CREATE INDEX llx_expeditiondet_fk_commande_ligne ON llx_expeditiondet (fk_commande_ligne);

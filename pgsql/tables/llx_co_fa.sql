@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,16 +21,15 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
+
 
 create table llx_co_fa
 (
-  rowid       serial PRIMARY KEY,
-  fk_commande integer NOT NULL,
-  fk_facture  integer NOT NULL
+  rowid SERIAL PRIMARY KEY,
+  "fk_commande" integer NOT NULL,
+  "fk_facture"  integer NOT NULL
 );
 
-CREATE INDEX llx_co_fa_fk_commande ON llx_co_fa(fk_commande);
-
-CREATE INDEX llx_co_fa_fk_facture ON llx_co_fa(fk_facture);
+CREATE INDEX llx_co_fa_fk_commande ON llx_co_fa (fk_commande);
+CREATE INDEX llx_co_fa_fk_facture ON llx_co_fa (fk_facture);

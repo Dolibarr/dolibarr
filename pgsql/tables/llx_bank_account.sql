@@ -1,7 +1,9 @@
--- ===================================================================
--- Copyright (C) 2000-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne          <erics@rycks.com>
--- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
+-- =============================================================================
+-- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -21,25 +23,29 @@
 -- $Id$
 -- $Source$
 --
--- ===================================================================
+--
+-- courant : indique si c'est un compte courant
+-- clos : le compte est-il clos ou encore ouvert
+--
+-- =============================================================================
 
 create table llx_bank_account
 (
-  rowid          SERIAL PRIMARY KEY,
-  datec          timestamp without time zone,
-  tms            timestamp,
-  label          varchar(30),
-	bank           varchar(60),
-	code_banque    varchar(7),
-  code_guichet   varchar(6),
-  number         varchar(255),
-  cle_rib        varchar(5),
-  bic            varchar(10),
-  iban_prefix    varchar(5),
-  domiciliation  varchar(255),
-  proprio        varchar(60),
-  adresse_proprio varchar(255),
-  courant        smallint DEFAULT 0 NOT NULL,
-  clos           smallint DEFAULT 0 NOT NULL,
-  account_number varchar(8)
+  rowid SERIAL PRIMARY KEY,
+  "datec"          datetime,
+  "tms"            timestamp,
+  "label"          varchar(30),
+  "bank"           varchar(60),
+  "code_banque"    varchar(7),
+  "code_guichet"   varchar(6),
+  "number"         varchar(255),
+  "cle_rib"        varchar(5),
+  "bic"            varchar(10),
+  "iban_prefix"    varchar(5),
+  "domiciliation"  varchar(255),
+  "proprio"        varchar(60),
+  "adresse_proprio" varchar(255),
+  "courant"        smallint DEFAULT 0 NOT NULL,
+  "clos"           smallint DEFAULT 0 NOT NULL,
+  "account_number" varchar(8)
 );

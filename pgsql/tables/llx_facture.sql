@@ -1,7 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===========================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,34 +21,33 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===========================================================================
+
 
 create table llx_facture
 (
-  rowid              SERIAL         PRIMARY KEY,
-  facnumber          varchar(50)       NOT NULL,
-  fk_soc             integer           NOT NULL,
-  datec              timestamp without time zone,  -- date de creation de la facture
-  datef              date,      -- date de la facture
-  paye               smallint DEFAULT 0 NOT NULL,
-  amount             real     DEFAULT 0 NOT NULL,
-  remise             real     DEFAULT 0,
-  remise_percent     real     DEFAULT 0,
-  tva                real     DEFAULT 0,
-  total              real     DEFAULT 0,
-  total_ttc          real     DEFAULT 0,
-  fk_statut          smallint DEFAULT 0 NOT NULL,
-  author             varchar(50),
-  fk_user            integer,   -- createur de la facture
-  fk_user_author     integer,   -- createur de la propale
-  fk_user_valid      integer,   -- valideur de la propale
-  fk_projet          integer,   -- projet auquel est associé la facture
-  fk_cond_reglement  integer,   -- condition de reglement
-  date_lim_reglement date,      -- date limite de reglement
-  note               text
+  rowid SERIAL PRIMARY KEY,
+  "facnumber"           varchar(50)        NOT NULL,
+  "increment"           varchar(10),
+  "fk_soc"              integer            NOT NULL,
+  "datec"               datetime,  -- date de creation de la facture
+  "datef"               date,      -- date de la facture
+  "paye"                smallint DEFAULT 0 NOT NULL,
+  "amount"              real     DEFAULT 0 NOT NULL,
+  "remise"              real     DEFAULT 0,
+  "remise_percent"      real     DEFAULT 0,
+  "tva"                 real     DEFAULT 0,
+  "total"               real     DEFAULT 0,
+  "total_ttc"           real     DEFAULT 0,
+  "fk_statut"           smallint DEFAULT 0 NOT NULL,
+  "author"              varchar(50),
+  "fk_user"             integer,   -- createur de la facture
+  "fk_user_author"      integer,   -- createur de la propale
+  "fk_user_valid"       integer,   -- valideur de la propale
+  "fk_projet"           integer,   -- projet auquel est associé la facture
+  "fk_cond_reglement"   integer,   -- condition de reglement (30 jours, fin de mois ...)
+  "fk_mode_reglement"   integer,   -- mode de reglement (Virement, Prélèvement)
+  "date_lim_reglement"  date,      -- date limite de reglement
+  "note"                text,
+4294967294  "INDEX" fksoc (fk_soc)
 );
-
-create unique index llx_facture_facnumber on llx_facture(facnumber);
-
-create index llx_facture_fksoc on llx_facture(fk_soc);

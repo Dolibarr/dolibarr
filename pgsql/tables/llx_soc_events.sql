@@ -1,7 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ========================================================================
--- Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 ?ric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,11 +26,11 @@
 
 create table llx_soc_events
 (
-  rowid         SERIAL PRIMARY KEY,                   -- public id
-  fk_soc        int NOT NULL,            
-  dateb	        timestamp without time zone NOT NULL, -- begin date
-  datee	        timestamp without time zone NOT NULL, -- end date
-  title         varchar(100) NOT NULL,
-  url           varchar(255),
-  description   text
+  rowid SERIAL PRIMARY KEY,  -- public id
+  "fk_soc"        int          NOT NULL,               --
+  "dateb"	        datetime    NOT NULL,                -- begin date
+  "datee"	        datetime    NOT NULL,                -- end date
+  "title"         varchar(100) NOT NULL,
+  "url"           varchar(255),
+  "description"   text
 );

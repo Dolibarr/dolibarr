@@ -1,6 +1,9 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,18 +24,19 @@
 --
 -- ============================================================================
 
+
 create table llx_stock_mouvement
 (
-  rowid           SERIAL PRIMARY KEY,
-  tms             timestamp,
-  datem           timestamp without time zone,
-  fk_product      integer NOT NULL,
-  fk_stock        integer NOT NULL,
-  value           integer,
-  type_mouvement  smallint,
-  fk_user_author  integer
+  rowid SERIAL PRIMARY KEY,
+  "tms"             timestamp,
+  "datem"           datetime,
+  "fk_product"      integer NOT NULL,
+  "fk_entrepot"     integer NOT NULL,
+  "value"           integer,
+  "type_mouvement"  smallint,
+  "fk_user_author"  integer
 );
 
-  CREATE INDEX llx_stock_mouvement_fk_product ON llx_stock_mouvement (fk_product);
+CREATE INDEX llx_stock_mouvement_fk_product ON llx_stock_mouvement (fk_product);
+CREATE INDEX llx_stock_mouvement_fk_entrepot ON llx_stock_mouvement (fk_entrepot);
 
-  CREATE INDEX llx_stock_mouvement_fk_stock ON llx_stock_mouvement (fk_stock);

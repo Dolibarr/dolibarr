@@ -1,5 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,20 +24,19 @@
 -- $Source$
 --
 -- ===================================================================
-
+--
 -- statut
 -- 0 : actif
 -- 1 : inactif
 
-
 create table llx_adherent_type
 (
-  rowid            SERIAL PRIMARY KEY,
-  tms              timestamp,
-  statut           smallint NOT NULL DEFAULT 0,
-  libelle          varchar(50),
-  cotisation	   CHAR(3) CHECK (cotisation IN ('yes','no')) NOT NULL DEFAULT 'yes',
-  vote             CHAR(3) CHECK (vote IN ('yes','no')) NOT NULL DEFAULT 'yes',
-  note             text,
-  mail_valid       text -- mail envoye a la validation
+  rowid SERIAL PRIMARY KEY,
+  "tms"              timestamp,
+  "statut"           smallint NOT NULL DEFAULT 0,
+  "libelle"          varchar(50),
+  "cotisation" varchar(3) CHECK (cotisation IN ('yes','no'))  NOT NULL DEFAULT 'yes',
+  "vote" varchar(3) CHECK (vote IN ('yes','no'))  NOT NULL DEFAULT 'yes',
+  "note"             text,
+  "mail_valid"       text -- mail envoye a la validation
 );

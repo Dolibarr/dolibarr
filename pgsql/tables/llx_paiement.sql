@@ -1,5 +1,10 @@
+-- Generated from dolibarr_mysql2pgsql
+-- (c) 2004, PostgreSQL Inc.
+-- (c) 2005, Laurent Destailleur.
+
 -- ===================================================================
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,22 +22,28 @@
 --
 -- $Id$
 -- $Source$
---
 -- ===================================================================
+--
+--
+-- Satut, 0 ou 1, 1 n'est plus supprimable
+-- fk_export_compta 0 pas exporté
+
 
 create table llx_paiement
 (
-  rowid           SERIAL PRIMARY KEY,
-  fk_facture      integer,
-  datec           timestamp without time zone, -- date de creation
-  tms             timestamp,
-  datep           timestamp without time zone, -- payment date
-  amount          real DEFAULT 0,
-  author          varchar(50),
-  fk_paiement     integer NOT NULL,
-  num_paiement    varchar(50),
-  note            text,
-  fk_bank         integer NOT NULL,
-  fk_user_creat   integer,                     -- utilisateur qui a créé l'info
-  fk_user_modif   integer                      -- utilisateur qui a modifié l'info
+  rowid SERIAL PRIMARY KEY,
+  "fk_facture"       integer,
+  "datec"            datetime,           -- date de creation
+  "tms"              timestamp,
+  "datep"            datetime,           -- payment date
+  "amount"           real DEFAULT 0,
+  "author"           varchar(50),
+  "fk_paiement"      integer NOT NULL,
+  "num_paiement"     varchar(50),
+  "note"             text,
+  "fk_bank"          integer NOT NULL,
+  "fk_user_creat"    integer,            -- utilisateur qui a créé l'info
+  "fk_user_modif"    integer,            -- utilisateur qui a modifié l'info
+  "statut"           smallint DEFAULT 0 NOT NULL,
+  "fk_export_compta" integer DEFAULT 0 NOT NULL
 );
