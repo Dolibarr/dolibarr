@@ -25,7 +25,7 @@ OPTIONS=-f
 all:	show
 
 create:
-	$(MYSQL) $(OPTIONS) $(BASE) < actioncomm.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_actioncomm.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < c_actioncomm.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < c_chargesociales.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < c_effectif.sql
@@ -76,9 +76,9 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_ventes.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_voyage.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_voyage_reduc.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < societe.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < socpeople.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < socstatutlog.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_societe.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_socpeople.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_socstatutlog.sql
 
 show:
 	$(MYSQL) $(OPTIONS) $(BASE) -e 'show tables'

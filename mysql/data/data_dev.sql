@@ -73,65 +73,65 @@ values ('demo2','demo2','DM2','demo2','demo',1,0,'demo2');
 --
 -- Societe
 --
-delete from societe;
-insert into societe (nom,datec,cp,ville,tel,fax, client, prefix_comm, fournisseur)
+delete from llx_societe;
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm, fournisseur)
 values ('Bolix SA',now(),'56350','Allaire','01 40 15 03 18','01 40 15 06 18',1,'LO',1);
 
-insert into societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
 values ('Cumulo',now(),'56610','Arradon','01 40 15 03 18','01 40 15 06 18',1,'CU');
 
-insert into societe (nom,cp,ville,tel,fax,client, prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,client, prefix_comm)
 values ('Doli INC.','29300','Arzano','01 55 55 03 18','01 55 55 55 55',1,'DO');
 
-insert into societe (nom,cp,ville,tel,fax,client, prefix_comm,url)
+insert into llx_societe (nom,cp,ville,tel,fax,client, prefix_comm,url)
 values ('Foo SARL','22300','Ploubezre','01 55 55 03 18','01 55 55 55 55',1,'FOO','www.gnu.org');
 
-insert into societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
 values ('Talphinfo',now(),'29400','Bodilis','01 40 15 03 18','01 40 15 06 18',1,'AP');
 
-insert into societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
 values ('Valphanix',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',1,'AL');
 
-insert into societe (nom,cp,ville,tel,fax,client,url)
+insert into llx_societe (nom,cp,ville,tel,fax,client,url)
 values ('Turin','29890','Brignogan-Plage','01 55 55 03 18','01 55 55 55 55',1,'http://www.ot-brignogan-plage.fr/');
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Yratin SA','29660','Carantec','01 55 55 03 18','01 55 55 55 55',1);
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Raggos SARL','29233','Cléder','01 55 55 03 18','01 55 55 55 55',1);
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Pruitosa','29870','Coat-Méal','01 55 55 03 18','01 55 55 55 55',1);
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Stratus','29120','Combrit','01 55 55 03 18','01 55 55 55 55',1);
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Nimbus','29490','Guipavas','01 55 55 03 18','01 55 55 55 55',1);
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Iono','22110','Rostrenen','01 55 55 03 18','01 55 55 55 55',1);
 --
 -- Contact
 --
-delete from socpeople;
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+delete from llx_socpeople;
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (10,1,'Victoire','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (11,1,'Tourin','Pierre','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (12,1,'Patrick','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (13,1,'Myriam','Isabelle','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (20,2,'Corin','Arnaud','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (30,3,'Phil','Breizh','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (31,3,'Marie','Jeanne','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (41,4,'Alix','Victor','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 --
 --
@@ -169,61 +169,61 @@ values (1, 'FI-LP-1','2001-12-05','2001-12-05','2001-12-05',1,1,1,4,'Mise à jour
 --
 -- Actions commerciales
 --
-delete from actioncomm;
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+delete from llx_actioncomm;
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
 values ('2002-04-06',1,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
 values ('2002-04-05',2,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
 values ('2002-04-05',1,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
 values ('2002-04-02',3,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
 values ('2002-04-02',3,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
 values ('2002-03-05',3,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
 values ('2002-03-04',1,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
 values ('2001-03-05',1,1,1,1);
 --
 --
 --
 --
-insert into societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values (20,'Bouleau','22800','Le Foeil','01 55 55 03 18','01 55 55 55 55',1,'BTP');
 
-insert into societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values (101,'Cerisier','22290','Goudelin','01 55 55 03 18','01 55 55 55 55',1,'CER');
 
-insert into societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values (100,'Chêne','22330','Le Gouray','01 55 55 03 18','01 55 55 55 55',1,'DEL');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm,datec)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm,datec)
 values ('Peuplier','22300','Lanmérin','01 55 55 03 18','01 55 55 55 55',1,'JP',now());
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm,datec)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm,datec)
 values ('Poirier','22290','Lannebert','01 55 55 03 18','01 55 55 55 55',1,'PO',now());
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Orme','22400','Noyal','01 55 55 03 18','01 55 55 55 55',1,'ORM');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Pin','22200','Pabu','01 55 55 03 18','01 55 55 55 55',1,'PIN');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Merisier','22510','Penguily','01 55 55 03 18','01 55 55 55 55',1,'IKE');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Hêtre','22480','Peumerit-Quintin','01 55 55 03 18','01 55 55 55 55',1,'CAS');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Saule','22800','Quintin','01 55 55 03 18','01 55 55 55 55',1,'ME');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Poirier','22940','Plaintel','01 55 55 03 18','01 55 55 55 55',1,'CEG');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Tek','22300','Rospez','01 55 55 03 18','01 55 55 55 55',1,'LMT');
 --
 --

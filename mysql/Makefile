@@ -32,15 +32,15 @@ all:
 
 show:
 	cd tables \
-	&& make show
+	&& make show BASE=$(BASE)
 
 table:
 	cd tables \
-	&& make create
+	&& make create BASE=$(BASE)
 
 dev:
 	cd data \
-	&& make dev
+	&& make dev BASE=$(BASE)
 
 
 fulldev: drop table load dev
