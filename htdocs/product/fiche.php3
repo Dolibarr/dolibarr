@@ -21,6 +21,7 @@
  */
 
 require("./pre.inc.php3");
+require("../propal.class.php3");
 
 llxHeader();
 
@@ -37,7 +38,19 @@ if ($action == 'add')
   $product->description = $desc;
 
   $id = $product->create($user);
+  $action = '';
 }
+
+if ($action == 'addinpropal')
+{
+  $propal = New Propal($db);
+
+  $propal->fetch($HTTP_POST_VARS["propalid"]);
+  $propal->insert_product($id, $HTTP_POST_VARS["qty"]);
+
+  $action = '';
+}
+
 
 if ($action == 'update')
 {
@@ -77,15 +90,12 @@ if ($action == 'create')
   print "</textarea></td></tr>";
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
   print '</table>';
-  print '</form>';
-      
-
+  print '</form>';      
 }
 else
 {
   if ($id)
     {
-
       $product = new Product($db);
       $result = $product->fetch($id);
 
@@ -96,8 +106,7 @@ else
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
 	  print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
-	  print '<td>Statistiques</td>';
-	  print '</tr>';
+	  print '<td>Statistiques</td></tr>';
 	  print "<td>Libellé</td><td>$product->label</td>";
 	  print '<td valign="top" rowspan="4">';
 	  print "Propositions commerciales : ".$product->count_propale();
@@ -117,8 +126,7 @@ else
 	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	  print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	  
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-	  print "<tr>";
+	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
 	  print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
 	  print '<td>Libellé</td><td><input name="libelle" size="40" value="'.$product->label.'"></td></tr>';
 	  print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
@@ -163,6 +171,25 @@ else
 print '<td width="20%" align="center">-</td>';    
 print '</table><br>';
 
+if ($id && $action == '')
+{
+  print_titre("Ajouter à la proposition");
+
+  $htmls = new Form($db);
+  $propal = New Propal($db);
+
+  print '<form method="POST" action="fiche.php3?id='.$id.'">';
+  print '<input type="hidden" name="action" value="addinpropal">';
+  print '<table border="1" cellpadding="3" cellspacing="0">';
+  print "<tr><td>Proposition</td><td>";
+  $htmls->select_array("propalid",  $propal->liste_array(1));
+  print '</td><td>';
+  print '<input type="text" name="qty" size="3" value="1">';
+  print '</td><td>';
+  print '<input type="submit" value="Ajouter">';
+  print "</td></tr>";
+  print '</table></form>';
+}
 
 
 $db->close();
