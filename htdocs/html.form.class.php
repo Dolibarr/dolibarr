@@ -36,16 +36,14 @@ class Form {
    *
    *
    */
-  Function form_confirm($page, $title, $question)
+  Function form_confirm($page, $title, $question, $action)
   {
     print '<form method="post" action="'.$page.'">';
-    print '<input type="hidden" name="action" value="confirm_valid">';
+    print '<input type="hidden" name="action" value="'.$action.'">';
     print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-    
     print '<tr><td colspan="3">'.$title.'</td></tr>';
     
     print '<tr><td class="valid">'.$question.'</td><td class="valid">';
-    $htmls = new Form($db);
     
     $this->selectyesno("confirm","no");
     
