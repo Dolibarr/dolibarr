@@ -42,7 +42,7 @@ function propale_pdf_create($db, $facid, $modele='')
 
   if (file_exists($dir.$file))
     {
-      $classname = "pdf_propale_".PROPALE_ADDON_PDF;
+      $classname = "pdf_propale_".$modele;
       require_once($dir.$file);
   
       $obj = new $classname($db);
