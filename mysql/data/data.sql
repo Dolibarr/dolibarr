@@ -462,28 +462,32 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,92,'Associa
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,93,'Fondation');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,99,'Autre personne morale de droit privé');
 
+--
 -- Pour la Belgique
+--
+
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,100,'Indépendant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,101,'SC - Coopérative');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,102,'SCRL - Coopérative à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,103,'SPRL - Société à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,104,'SA - Société Anonyme');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,105,'Société en nom collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,106,'Société en commandite');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,107,'Administration publique');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,108,'Syndicat de propriétaires');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'Fondations');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,101,'SPRL - Société à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,102,'SA   - Société Anonyme');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,103,'SCRL - Société coopérative à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,104,'ASBL - Association sans but Lucratif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,105,'SCRI - Société coopérative à responsabilité illimitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,106,'SCS  - Société en comanndite simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,107,'SCA  - Société en commandite par action');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'SNC  - Société en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,107,'GIE  - Groupement d\'intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'GEIE - Groupement européen d\'intérêt économique');
 
 --
 -- Formules de politesses
 --
-INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (1, 2, 'Madame', 1);
-INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (2, 2, 'Mevrouw', 1);
-INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (3, 2, 'Monsieur', 1);
-INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (4, 2, 'Meneer', 1);
-INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (5, 2, 'Mademoiselle', 1);
-INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (6, 2, 'Juffrouw', 1);
-INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (7, 2, 'Maître', 1);
+insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (1, 2, 'Madame', 1);
+insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (2, 2, 'Mevrouw', 1);
+insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (3, 2, 'Monsieur', 1);
+insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (4, 2, 'Meneer', 1);
+insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (5, 2, 'Mademoiselle', 1);
+insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (6, 2, 'Juffrouw', 1);
+insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (7, 2, 'Maître', 1);
 
 
 --
