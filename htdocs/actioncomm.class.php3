@@ -20,7 +20,8 @@
  *
  */
 
-class ActionComm {
+class ActionComm
+{
   var $id;
   var $db;
 
@@ -39,9 +40,12 @@ class ActionComm {
   var $percent;
 
 
-  Function ActionComm($db) {
+  Function ActionComm($db) 
+    {
     $this->db = $db;
     $this->societe = new Societe($db);
+    $this->author = new User($db);
+    $this->contact = new Contact($db);
 
   }
   /*
@@ -67,7 +71,7 @@ class ActionComm {
    */
   Function fetch($id) {
 
-    $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note,c.libelle, fk_soc ";
+    $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note,c.libelle, fk_soc, fk_user_author, fk_contact ";
     $sql .= "FROM actioncomm as a, c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
 
     if ($this->db->query($sql) ) {
@@ -80,6 +84,10 @@ class ActionComm {
 	$this->note =$obj->note;
 
 	$this->societe->id = $obj->fk_soc;
+
+	$this->author->id = $obj->fk_user_author;
+
+	$this->contact->id = $obj->fk_contact;
 
 	$this->db->free();
       }
