@@ -36,7 +36,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add(DOL_URL_ROOT."/admin/const.php", "Configuration autre");
 
-  $menu->add(DOL_URL_ROOT."/admin/ihm.php", "IHM");
+  $menu->add(DOL_URL_ROOT."/admin/ihm.php", "Configuration IHM");
 
   $menu->add(DOL_URL_ROOT."/admin/modules.php", "Modules");
 
