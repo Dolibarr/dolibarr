@@ -53,6 +53,10 @@ llxHeader("","","Fiche Ligne");
 	      $head[$h][1] = $langs->trans("Ligne");
 	      $h++;
 
+	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/factures.php?id=".$ligne->id;
+	      $head[$h][1] = $langs->trans('Factures');
+	      $h++;
+
 	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/infoc.php?id=".$ligne->id;
 	      $head[$h][1] = $langs->trans('Infos');
 	      $h++;
