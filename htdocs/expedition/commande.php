@@ -58,10 +58,10 @@ $html = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0)
+if ($_GET["id"] > 0)
 {
   $commande = New Commande($db);
-  if ( $commande->fetch($id) > 0)
+  if ( $commande->fetch($_GET["id"]) > 0)
     {	  
       $commande->livraison_array();
       
@@ -125,7 +125,7 @@ if ($id > 0)
       echo '<table class="liste" width="100%" cellspacing="0" cellpadding="3">';	  
 
       $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-      $sql .= " FROM llx_commandedet as l WHERE l.fk_commande = $id ORDER BY l.rowid";
+      $sql .= " FROM llx_commandedet as l WHERE l.fk_commande = ".$commande->id." ORDER BY l.rowid";
 	  
       $result = $db->query($sql);
       if ($result)
@@ -216,12 +216,12 @@ if ($id > 0)
 	  print '<td colspan="3">';
 	  $html->select_array("entrepot_id",$entrepot->list_array());
 	  print '</td></tr>';
-
-	  print '<tr><td width="20%">Méthode</td>';
+	  /*
+	  print '<tr><td width="20%">Mode d\'expédition</td>';
 	  print '<td colspan="3">';
 	  $html->select_array("entrepot_id",$entrepot->list_array());
 	  print '</td></tr>';
-
+	  */
 	  print '<tr><td colspan="4" align="center"><input type="submit" value="Créer"></td></tr>';
 	}
       print "</table>";
@@ -277,7 +277,7 @@ if ($id > 0)
 	    
 	  if ($user->rights->expedition->valider && $reste_a_livrer_total == 0 && $commande->statut < 3)
 	    {
-	      print '<td align="center" width="20%"><a href="commande.php?id='.$_GET["id"].'&amp;action=cloture">Clôturer</a></td>';
+	      print '<td align="center" width="20%"><a href="commande.php?id='.$commande->id.'&amp;action=cloture">Clôturer</a></td>';
 	    }
 	  else
 	    {
@@ -295,7 +295,7 @@ if ($id > 0)
        */
       $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande, ed.qty as qty_livre, e.ref, e.rowid as expedition_id";
       $sql .= " FROM llx_commandedet as cd , llx_expeditiondet as ed, llx_expedition as e";
-      $sql .= " WHERE cd.fk_commande = $id AND cd.rowid = ed.fk_commande_ligne AND ed.fk_expedition = e.rowid";
+      $sql .= " WHERE cd.fk_commande = ".$commande->id." AND cd.rowid = ed.fk_commande_ligne AND ed.fk_expedition = e.rowid";
       $sql .= " ORDER BY cd.fk_product";
       $result = $db->query($sql);
       if ($result)
