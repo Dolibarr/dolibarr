@@ -92,9 +92,11 @@ if ( $societe->fetch($socid) )
         $head[$h][1] = $langs->trans("Supplier");
         $h++;
     }
-    if ($conf->produit->enabled) {
-        $head[$h][0] = DOL_URL_ROOT.'/product/liste.php?type=0&fourn_id='.$societe->id;
-        $head[$h][1] = $langs->trans("Products");
+
+    if ($conf->compta->enabled) {
+        $langs->load("compta");
+        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid;
+        $head[$h][1] = $langs->trans("Accountancy");
         $h++;
     }
 
@@ -136,6 +138,22 @@ if ( $societe->fetch($socid) )
    */
   print '</td><td valign="top" width="50%">';
 
+  $var=false;
+
+  /*
+   *
+   * Liste des produits
+   *
+   */
+  if ($conf->produit->enabled || $conf->service->enabled) {
+      print '<table class="border" width="100%">';
+      $var=!$var;
+	  print "<tr $bc[$var]>";
+	  print '<td><a href="'.DOL_URL_ROOT.'/product/liste.php?fourn_id='.$societe->id.'">Liste des produits et services</td></tr>';
+      print '</table><br>';
+  }
+
+
   /*
    *
    * Liste des commandes associées
@@ -147,12 +165,13 @@ if ( $societe->fetch($socid) )
   $sql .= " ORDER BY p.rowid DESC LIMIT 0,4";
   if ( $db->query($sql) )
     {
-      print '<table class="noborder" width="100%">';
+      $var=!$var;
       $i = 0 ; 
       $num = $db->num_rows();
       if ($num > 0)
 	{
-	  print '<tr class="liste_titre">';
+      print '<table class="border" width="100%">';
+	  print "<tr $bc[$var]>";
 	  print "<td colspan=\"2\"><a href=\"commande/liste.php?socid=$societe->id\">Dernières commandes</td></tr>";
 	}
       while ($i < $num && $i < 5)
@@ -178,11 +197,13 @@ if ( $societe->fetch($socid) )
 	  $i++;
 	}
       $db->free();
-      print "</table>";
+      if ($num > 0) {
+        print "</table><br>";
+      }
     }
   else
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
 
 
@@ -196,14 +217,14 @@ if ( $societe->fetch($socid) )
   $sql .= " ORDER BY p.datef DESC LIMIT 0,4";
   if ( $db->query($sql) )
     {
-      print '<table class="border" width="100%">';
       $var=!$var;
       $i = 0 ; 
       $num = $db->num_rows();
       if ($num > 0)
 	{
+      print '<table class="border" width="100%">';
 	  print "<tr $bc[$var]>";
-	  print "<td colspan=\"4\"><a href=\"facture/index.php?socid=$societe->id\">Liste des factures ($num)</td></tr>";
+	  print "<td colspan=\"4\"><a href=\"facture/index.php?socid=$societe->id\">Liste des factures fournisseurs ($num)</td></tr>";
 	}
       while ($i < $num && $i < 5)
 	{
@@ -222,11 +243,13 @@ if ( $societe->fetch($socid) )
 	  $i++;
 	}
       $db->free();
-      print "</table>";
+      if ($num > 0) {
+        print "</table><br>";
+      }
     }
   else
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
 
   /*
@@ -234,7 +257,7 @@ if ( $societe->fetch($socid) )
    *
    */
   print '</td></tr>';
-  print '</table>' . "<br>\n";
+  print '</table>' . "\n";
   print '</div>';
 
   /*
@@ -265,7 +288,6 @@ if ( $societe->fetch($socid) )
   $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $societe->id  ORDER by p.datec";
   $result = $db->query($sql);
   $i = 0 ; $num = $db->num_rows();
-  $var=1;
   while ($i < $num)
     {
       $obj = $db->fetch_object();
@@ -296,7 +318,7 @@ if ( $societe->fetch($socid) )
 }
 else
 {
-  print "Erreur";
+    dolibarr_print_error($db);
 }
 $db->close();
 
