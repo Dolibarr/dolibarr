@@ -30,15 +30,15 @@ llxHeader();
 
 ob_start(); 
 
-if ($what == 'conf')
+if ($_GET["what"] == 'conf')
 {
   phpinfo(INFO_CONFIGURATION);
 }
-elseif ($what == 'env')
+elseif ($_GET["what"] == 'env')
 {
   phpinfo(INFO_ENVIRONMENT);
 }
-elseif ($what == 'modules')
+elseif ($_GET["what"] == 'modules')
 {
   phpinfo(INFO_MODULES);
 }
