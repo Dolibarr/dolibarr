@@ -438,16 +438,8 @@ class Facture
     }
 
   /**
-   * \brief Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-   */
-  function get_libstatut()
-    {
-		return $this->LibStatut($this->paye,$this->statut);
-    }
-
-  /**
-   * \brief     Tag la facture comme payée complètement
-   * \param     rowid       id de la facture à modifier
+   *    \brief     Tag la facture comme payée complètement
+   *    \param     rowid       id de la facture à modifier
    */
   function set_payed($rowid)
     {
@@ -456,8 +448,8 @@ class Facture
     }
 
   /**
-   * \brief     Tag la facture comme paiement commencée
-   * \param     rowid       id de la facture à modifier
+   *    \brief     Tag la facture comme paiement commencée
+   *    \param     rowid       id de la facture à modifier
    */
   function set_paiement_started($rowid)
     {
@@ -466,8 +458,8 @@ class Facture
     }
 
   /**
-   * \brief     Tag la facture comme abandonnée
-   * \param     rowid       id de la facture à modifier
+   *    \brief     Tag la facture comme abandonnée
+   *    \param     rowid       id de la facture à modifier
    */
   function set_canceled($rowid)
     {
@@ -973,9 +965,19 @@ class Facture
     }
 
   /**
-   * \brief     Renvoi un libellé du statut
-   * \param     paye        etat paye
-   * \param     statut      id statut
+   *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
+   *    \return     string      Libellé
+   */
+  function get_libstatut()
+    {
+		return $this->LibStatut($this->paye,$this->statut);
+    }
+
+  /**
+   *    \brief      Renvoi le libellé d'un statut donné
+   *    \param      paye        etat paye
+   *    \param      statut      id statut
+   *    \return     string      Libellé
    */
     function LibStatut($paye,$statut)
     {
