@@ -21,10 +21,10 @@
  *
  */
 
-/*!
-  \file   	htdocs/compta/prama/pre.inc.php
-  \ingroup    compta
-  \brief  	Fichier gestionnaire du menu paramétrage de la compta
+/**
+    \file   	htdocs/compta/param/pre.inc.php
+    \ingroup    compta
+    \brief  	Fichier gestionnaire du menu paramétrage de la compta
 */
 
 require("../../main.inc.php");

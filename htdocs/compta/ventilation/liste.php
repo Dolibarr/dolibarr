@@ -22,9 +22,10 @@
  *
  */
 
-/*!	    \file       htdocs/compta/facture.php
+/**
+	    \file       htdocs/compta/ventilation/liste.php
 		\ingroup    facture
-		\brief      Page de création d'une facture
+		\brief      Page liste des ventilations
 		\version    $Revision$
 */
 

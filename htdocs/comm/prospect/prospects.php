@@ -22,7 +22,7 @@
  */
 
 /**
-	    \file       htdocs/comm/prospect/prospect.php
+	    \file       htdocs/comm/prospect/prospects.php
         \ingroup    prospect
 		\brief      Page de la liste des prospects
 		\version    $Revision$

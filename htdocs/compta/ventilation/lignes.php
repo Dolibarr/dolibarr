@@ -20,6 +20,13 @@
  *
  */
 
+/**
+	    \file       htdocs/compta/ventilation/lignes.php
+		\ingroup    facture
+		\brief      Page de detail des lignes de ventilation d'une facture
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }

@@ -21,10 +21,10 @@
  *
  */
 
-/*!
-        \file       htdocs/compta/index.php
+/**
+        \file       htdocs/compta/ventilation/index.php
         \ingroup    compta
-		\brief      Page accueil zone comptabilité
+		\brief      Page accueil ventilation
 		\version    $Revision$
 */
 

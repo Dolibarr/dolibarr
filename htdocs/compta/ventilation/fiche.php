@@ -20,6 +20,13 @@
  *
  */
 
+/**
+        \file       htdocs/compta/ventilation/fiche.php
+        \ingroup    compta
+		\brief      Page fiche ventilation
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $mesg = '';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
-/* Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004 Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +21,10 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/propale.php
+/**
+    	\file       htdocs/admin/societe.php
 		\ingroup    propale
-		\brief      Page d'administration/configuration du module Propale
+		\brief      Page d'administration/configuration du module Societe
 		\version    $Revision$
 */
 

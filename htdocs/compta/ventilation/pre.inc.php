@@ -21,10 +21,10 @@
  *
  */
 
-/*!
-  \file   	htdocs/compta/pre.inc.php
-  \ingroup    compta
-  \brief  	Fichier gestionnaire du menu compta
+/**
+    \file   	htdocs/compta/ventilation/pre.inc.php
+    \ingroup    compta
+    \brief  	Fichier gestionnaire du menu compta
 */
 
 require("../../main.inc.php");
