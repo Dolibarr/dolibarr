@@ -1,5 +1,5 @@
 <?PHP
-$subject = "Subject: EUCD.INFO promesse de don de $don->amount euros pour sauver la copie privée";
+$subject = "EUCD.INFO promesse de don de $don->amount euros pour sauver la copie privée";
 
 $body ="
 EUCD.INFO  vous  remercie  de  la  promesse  de  don  que  vous  venez
