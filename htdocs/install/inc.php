@@ -21,6 +21,7 @@
  */
 
 $etapes=5;
+$docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
 
 Function pHeader($soutitre,$next)
 {
@@ -37,8 +38,8 @@ print '
 <span class="titre"><a class="titre" href="index.php">Dolibarr Installation</a></span>
 </div>
 ';
- print '<form action="'.$next.'.php" method="POST">';
-
+ print '<form action="'.$next.'.php" method="POST">
+<input type="hidden" name="action" value="set">';
 print '<div class="main"><div class="soustitre">'.$soutitre.'</div>
 <div class="main-inside">
 ';
@@ -57,5 +58,17 @@ print '
 </body>
 </html>';
     }
+
+
+Function dolibarr_syslog($message)
+{
+  define_syslog_variables();
+
+  openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+  
+  syslog(LOG_WARNING, $message);
+
+  closelog();
+}
 
 ?>

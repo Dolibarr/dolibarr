@@ -139,3 +139,13 @@ td.label {
              border-bottom: 1px solid #8CACBB;
              }
 
+td.comment {
+             background: #dcdcd3;
+             color: black;
+             padding: 0.5em 0.5em 0.5em;
+             margin: 0em 0em 0em 0em;
+             text-decoration:none;
+             font-size: 13px;
+             border-bottom: 1px solid #8CACBB;
+             }
+

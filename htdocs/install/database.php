@@ -20,32 +20,17 @@
  *
  */
 
-//
-// Essaye de créer le fichier de conf
-//
-
 $conf = "../conf/conf.php";
 
 if (is_readable($conf))
 {
   include ($conf);
 }
-else
-{
-  $fp = @fopen("$conf", "w");
-  if($fp)
-    {
-      @fwrite($fp, '<?PHP');
-      @fputs($fp,"\n");
-      @fputs($fp,"?>");
-      fclose($fp);
-    }
-}
+
 include("./inc.php");
 pHeader();
 
 
-$docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
 
 if (!file_exists("../conf/conf.php"))
 {
@@ -116,12 +101,15 @@ exemples :
 <li>http://www.lafrere.net/dolibarr</li>
 </ul>
 </tr>
-
-
 <tr>
 <td colspan="3" align="center"><h2>Base de données<h2></td>
 </tr>
-
+<?PHP
+if (!isset($dolibarr_main_db_host))
+{
+$dolibarr_main_db_host = "localhost";
+}
+?>
 <tr class="bg1">
 <td valign="top">Serveur</td><td valign="top"><input type="text" name="db_host" value="<?PHP print $dolibarr_main_db_host ?>"></td>
 <td><div class="comment">Nom du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</div></td>
