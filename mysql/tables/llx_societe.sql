@@ -31,6 +31,7 @@ create table llx_societe
   datea	             datetime,                            -- activation date
   nom                varchar(60),                         -- company name
   code_client        varchar(15),                         -- code client
+  code_compta        varchar(15),                         -- code compta
   address            varchar(255),                        -- company adresse
   cp                 varchar(10),                         -- zipcode
   ville              varchar(50),                         -- town
