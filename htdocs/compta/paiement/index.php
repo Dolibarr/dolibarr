@@ -20,7 +20,6 @@
  *
  */
 require("./pre.inc.php");
-
 /*
  * Sécurité accés
  */
@@ -28,6 +27,18 @@ if ($user->societe_id > 0)
 {
   block_access();
   exit;
+}
+
+require("../../includes/modules/rapport/pdf_paiement.class.php");
+
+$dir = DOL_DOCUMENT_ROOT."/document/rapport/";
+
+if ($HTTP_POST_VARS["action"] == 'gen')
+{
+  $rap = new pdf_paiement($db);
+  $rap->write_pdf_file($dir, $HTTP_POST_VARS["remonth"], $HTTP_POST_VARS["reyear"]);
+  
+  $year = $HTTP_POST_VARS["reyear"];
 }
 
 llxHeader();
@@ -39,13 +50,85 @@ llxHeader();
  */
 print_titre("Rapport paiements");
 
-require("../../includes/modules/rapport/pdf_paiement.class.php");
+print '<form method="post" action="index.php?year='.$year.'">';
+print '<input type="hidden" name="action" value="gen">';
+$cmonth = date("n", time());
+$syear = date("Y", time());
+    
+$strmonth[1] = "Janvier";
+$strmonth[2] = "F&eacute;vrier";
+$strmonth[3] = "Mars";
+$strmonth[4] = "Avril";
+$strmonth[5] = "Mai";
+$strmonth[6] = "Juin";
+$strmonth[7] = "Juillet";
+$strmonth[8] = "Ao&ucirc;t";
+$strmonth[9] = "Septembre";
+$strmonth[10] = "Octobre";
+$strmonth[11] = "Novembre";
+$strmonth[12] = "D&eacute;cembre";
 
-$rap = new pdf_paiement($db);
-$rap->write_pdf_file();
+print '<select name="remonth">';    
+for ($month = 1 ; $month < 13 ; $month++)
+{
+  if ($month == $cmonth)
+    {
+      print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
+    }
+  else
+    {
+      print "<option value=\"$month\">" . $strmonth[$month];
+    }
+}
+print "</select>";
+    
+print '<select name="reyear">';
 
-$rap->print_link();
+for ($formyear = $syear - 2; $formyear < $syear +1 ; $formyear++)
+{
+  if ($formyear == $syear)
+    {
+      print "<option value=\"$formyear\" SELECTED>$formyear";
+    }
+  else
+    {
+      print "<option value=\"$formyear\">$formyear";
+    }
+}
+print "</select>\n";
+print '<input type="submit" value="Générer">';
+print '</form>';
 
+clearstatcache();
+
+$handle=opendir($dir);
+
+while (($file = readdir($handle))!==false)
+{
+  if (is_dir($dir.$file) && substr($file, 0, 1) <> '.')
+    {
+      print '<a href="index.php?year='.$file.'">'.$file.'</a> ';
+    }
+}
+
+if ($year)
+{
+  $handle=opendir($dir.'/'.$year);
+  
+  print '<table cellpadding="3" border="1" cellspacing="0">';
+  print '<tr><td>Rapport</td><td>Taille</td><td>Date de génération</td></tr>';
+  while (($file = readdir($handle))!==false)
+    {
+      if (substr($file, 0, 8) == 'paiement')
+	{
+	  $tfile = $dir . '/'.$year.'/'.$file;
+	  print '<tr><td><a href="'.DOL_URL_ROOT.'/document/rapport/'.$year.'/'.$file.'">'.$file.'</a></td>';
+	  print '<td align="right">'.filesize($tfile). ' bytes</td>';
+	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($tfile)).'</td></tr>';
+	}
+    }
+  print '</table>';
+}
 $db->close();
  
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
