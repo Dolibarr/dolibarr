@@ -26,6 +26,13 @@ llxHeader();
 $db = new Db();
 
 
+
+if ($vline) {
+  $viewline = $vline;
+} else {
+  $viewline = 20;
+}
+
 print_titre ("Abonnement de réduction");
 
 
