@@ -167,7 +167,7 @@ $pagenext = $page + 1;
  *
  *
  */
-print_barre_liste("Liste des clients", $page, $PHP_SELF);
+print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder);
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
 
@@ -209,7 +209,7 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
   print '<TR class="liste_titre">';
   print "<TD valign=\"center\">";
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
