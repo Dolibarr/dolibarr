@@ -157,7 +157,7 @@ class TelephonieContrat {
       $sql = "SELECT c.rowid, c.ref, c.fk_client_comm, c.fk_soc, c.fk_soc_facture, c.note";
       $sql .= ", c.fk_commercial_sign, c.fk_commercial_suiv";
       $sql .= ", c.isfacturable, c.mode_paiement";
-
+      $sql .= ", c.fk_user_creat, c.date_creat";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as c";
       $sql .= " WHERE c.rowid = ".$id;
 
@@ -168,20 +168,22 @@ class TelephonieContrat {
 	    {
 	      $obj = $this->db->fetch_object(0);
 
-	      $this->id                = $obj->rowid;
-	      $this->socid             = $obj->fk_soc;
-	      $this->ref               = $obj->ref;
-	      $this->remise            = $obj->remise;
-	      $this->client_comm_id    = $obj->fk_client_comm;
-	      $this->client_id         = $obj->fk_soc;
-	      $this->client_facture_id = $obj->fk_soc_facture;
+	      $this->id                 = $obj->rowid;
+	      $this->socid              = $obj->fk_soc;
+	      $this->ref                = $obj->ref;
+	      $this->remise             = $obj->remise;
+	      $this->client_comm_id     = $obj->fk_client_comm;
+	      $this->client_id          = $obj->fk_soc;
+	      $this->client_facture_id  = $obj->fk_soc_facture;
 
-	      $this->commercial_sign_id     = $obj->fk_commercial_sign;
-	      $this->commercial_suiv_id     = $obj->fk_commercial_suiv;
+	      $this->commercial_sign_id = $obj->fk_commercial_sign;
+	      $this->commercial_suiv_id = $obj->fk_commercial_suiv;
 
-	      $this->statut            = $obj->statut;
-	      $this->mode_paiement     = $obj->mode_paiement;
-	      $this->code_analytique   = $obj->code_analytique;
+	      $this->statut             = $obj->statut;
+	      $this->mode_paiement      = $obj->mode_paiement;
+	      $this->code_analytique    = $obj->code_analytique;
+
+	      $this->user_creat         = $obj->fk_user_creat;
 
 	      if ($obj->isfacturable == 'oui')
 		{
@@ -256,6 +258,55 @@ class TelephonieContrat {
     
     return $this->db->query($sql);   
   }
+  /*
+   *
+   *
+   */
+  function count_associated_services()
+  {
+    $num = 0;
+    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."telephonie_contrat_service";
+    $sql .= " WHERE fk_contrat=".$this->id;
+
+    if ( $this->db->query( $sql) )
+      {
+	$num = $this->db->num_rows();
+      }
+
+    return $num;
+  }
+  /*
+   *
+   *
+   */
+  function add_service($user, $sid)
+  {
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_contrat_service";
+    $sql .= " (fk_contrat, fk_service, fk_user_creat, date_creat) ";
+    $sql .= " VALUES ($this->id, $sid, $user->id, now() )";
+    
+    if ($this->db->query($sql) )
+      {
+	return 0 ;
+      }
+  }
+  /*
+   *
+   *
+   */
+  function remove_service($user, $sid)
+  {
+
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_contrat_service";
+    $sql .= " (fk_contrat, fk_service, fk_user_creat, date_creat) ";
+    $sql .= " VALUES ($this->id, $sid, $user->id, now() )";
+    
+    if ($this->db->query($sql) )
+      {
+	return 0 ;
+      }
+  }
+
 }
 
 ?>
