@@ -161,8 +161,7 @@ class AdherentOptions
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+	  dolibarr_print_error($this->db);
 	  return 0;
 	}
     }else{
@@ -173,7 +172,7 @@ class AdherentOptions
 /*!
 		\brief fonction qui crée un label
 		\param	attrname			nom de l'atribut
-		\param	label					nom du label
+		\param	label				nom du label
 */
 
   function create_label($attrname,$label='') {
@@ -213,8 +212,7 @@ class AdherentOptions
 	}
       else
 	{
-	  print "Err : ".$this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+   	  print dolibarr_print_error($this->db);
 	  return 0;
 	}
     }else{
@@ -239,8 +237,7 @@ class AdherentOptions
 	}
       else
 	{
-	  print "Err : ".$this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+   	  print dolibarr_print_error($this->db);
 	  return 0;
 	}
     }else{
@@ -282,8 +279,7 @@ class AdherentOptions
 	}
       else
 	{
-	  print "Err : ".$this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+   	  print dolibarr_print_error($this->db);
 	  return 0;
 	}
     }else{
@@ -315,8 +311,7 @@ class AdherentOptions
 	}
       else
 	{
-	  print "Err : ".$this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+   	  print dolibarr_print_error($this->db);
 	  return 0;
 	}
     }else{
@@ -325,12 +320,20 @@ class AdherentOptions
 
   }
 
+
+/*!
+		\brief fonction qui modifie un label
+*/
 	function fetch_optionals()
     {
       $this->fetch_name_optionals();
       $this->fetch_name_optionals_label();
     }
 
+
+/*!
+		\brief fonction qui modifie un label
+*/
 	function fetch_name_optionals()
   {
     $array_name_options=array();
@@ -360,6 +363,9 @@ class AdherentOptions
 
   }
 
+/*!
+		\brief fonction qui modifie un label
+*/
 	function fetch_name_optionals_label()
   {
     $array_name_label=array();
@@ -380,7 +386,7 @@ class AdherentOptions
 	return array();
       }
     }else{
-      print $this->db->error();
+   	  print dolibarr_print_error($this->db);
       return array() ;
     }
 

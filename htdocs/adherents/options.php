@@ -74,54 +74,55 @@ if ($_GET["action"] == 'delete' && $user->admin)
 llxHeader();
 
 
-//if ($_GET["action"] != 'create') {
 
-    print_titre("Configuration des champs optionnels");
-    print '<br>';
-    
-    /* ************************************************************************** */
-    /*                                                                            */
-    /*                                                                            */
-    /*                                                                            */
-    /* ************************************************************************** */
-    
-    $array_options=$adho->fetch_name_optionals();
-    $array_label=$adho->fetch_name_optionals_label();
-    if (sizeof($array_options)>0) 
+print_titre("Configuration des champs optionnels");
+print '<br>';
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*                                                                            */
+/* ************************************************************************** */
+
+$array_options=$adho->fetch_name_optionals();
+$array_label=$adho->fetch_name_optionals_label();
+
+print "<table class=\"noborder\">";
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Label").'</td>';
+print "<td>Nom de l'attribut</td>";
+print '<td>'.$langs->trans("Type").'</td><td width="80">&nbsp;</td>';
+print "</tr>\n";
+  
+if (sizeof($array_options)>0) 
+{
+  $var=True;
+  foreach($adho->attribute_name as $key => $value)
     {
-      print "<table class=\"noborder\" cellspacing=\"0\" cellpadding=\"3\">";
-      
-      print '<tr class="liste_titre">';
-      print '<td>'.$langs->trans("Label").'</td>';
-      print "<td>Nom de l'attribut</td>";
-      print '<td>'.$langs->trans("Type").'</td><td width="80">&nbsp;</td>';
-      print "</tr>\n";
-      
-      $var=True;
-      foreach($adho->attribute_name as $key => $value)
-        {
-          $var=!$var;
-          print "<tr $bc[$var]>";
-          print "<td>".$adho->attribute_label[$key]."&nbsp;</td>\n";
-          print "<td>$key</td>\n";
-          print "<td>$value</td>\n";
-          print "<td align=\"center\"><a href=\"options.php?action=edit&attrname=$key\">".img_edit()."</a>";
-          print "&nbsp; <a href=\"options.php?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
-          print "</tr>";
-          //      $i++;
-        }
-      print "</table>";
-    
-        /*
-         * Barre d'actions
-         *
-         */
-        print '<div class="tabsAction">';
-        print "<a class=\"tabAction\" href=\"options.php?action=create\">Nouvel attribut</a>";
-        print "</div>";
+      $var=!$var;
+      print "<tr $bc[$var]>";
+      print "<td>".$adho->attribute_label[$key]."&nbsp;</td>\n";
+      print "<td>$key</td>\n";
+      print "<td>$value</td>\n";
+      print "<td align=\"center\"><a href=\"options.php?action=edit&attrname=$key\">".img_edit()."</a>";
+      print "&nbsp; <a href=\"options.php?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
+      print "</tr>";
+      //      $i++;
     }
 
-//}
+}
+
+print "</table>";
+
+/*
+ * Barre d'actions
+ *
+ */
+print '<div class="tabsAction">';
+print "<a class=\"tabAction\" href=\"options.php?action=create\">Nouvel attribut</a>";
+print "</div>";
+
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -132,10 +133,9 @@ llxHeader();
 if ($_GET["action"] == 'create') {
 
   print_titre("Nouvel attribut");
-  print '<br>';
   
   print "<form action=\"options.php\" method=\"post\">";
-  print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
+  print '<table class="border" width="100%">';
   
   print '<input type="hidden" name="action" value="add">';
 
@@ -165,8 +165,7 @@ if ($_GET["action"] == 'create') {
 if ($_GET["attrname"] && $_GET["action"] == 'edit')
 {
 
-  print_titre("Edition du champ $attrname");
-  print '<br>';
+  print_titre("Edition du champ ".$_GET["attrname"]);
   
   /*
    * formulaire d'edition
@@ -174,7 +173,7 @@ if ($_GET["attrname"] && $_GET["action"] == 'edit')
   print '<form method="post" action="options.php?attrname='.$_GET["attrname"].'">';
   print '<input type="hidden" name="attrname" value="'.$_GET["attrname"].'">';
   print '<input type="hidden" name="action" value="update">';
-  print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
+  print '<table class="border" width="100%">';
 
   print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40" value="'.$adho->attribute_label[$_GET["attrname"]].'"></td></tr>';  
   print '<tr><td>Nom de l\'attribut</td><td class="valeur">'.$_GET["attrname"].'&nbsp;</td></tr>';
@@ -186,8 +185,8 @@ if ($_GET["attrname"] && $_GET["action"] == 'edit')
 				   'date'=>'date',
 				   'datetime'=>'date et heure'),$type);
   print '</td></tr>';
-  //  print '<tr><td>Type (non pris en compte)</td><td class="valeur"><input type="text" name="type" size="40" value="'.$adho->attribute_name[$attrname].'"></td></tr>';
-  print '<tr><td>Taille</td><td class="valeur"><input type="text" name="size" size="5" value="'.$size.'"></td></tr>';  
+
+  print '<tr><td>'.$langs->trans("Size").'</td><td class="valeur"><input type="text" name="size" size="5" value="'.$size.'"></td></tr>';  
   print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"> &nbsp; ';
   print '<input type="submit" name="button" value="'.$langs->trans("Cancel").'"></td></tr>';
   print '</table>';

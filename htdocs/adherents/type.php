@@ -99,11 +99,11 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print "<table class=\"noborder\" cellspacing=\"0\" cellpadding=\"3\">";
+  print '<table class="noborder" width="100%">';
   
   print '<tr class="liste_titre">';
   print "<td>Id</td>";
-  print '<td>'.$langs->trans("Label").'</td><td>Cotisation ?</td><td>Vote ?</td><td>&nbsp;</td>';
+  print '<td>'.$langs->trans("Label").'</td><td align="center">Cotisation ?</td><td align="center">Vote ?</td><td>&nbsp;</td>';
   print "</tr>\n";
   
   $var=True;
@@ -114,8 +114,8 @@ if ($result)
       print "<tr $bc[$var]>";
       print "<td>".$objp->rowid."</td>\n";
       print '<td>'.$objp->libelle.'</td>';
-      print '<td align="center">'.$objp->cotisation.'</td>';
-      print '<td align="center">'.$objp->vote.'</td>';
+      print '<td align="center">'.$langs->trans($objp->cotisation).'</td>';
+      print '<td align="center">'.$langs->trans($objp->vote).'</td>';
       print '<td><a href="type.php?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</td>';
       print "</tr>";
       $i++;

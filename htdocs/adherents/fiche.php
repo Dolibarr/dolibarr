@@ -31,6 +31,7 @@
 require("./pre.inc.php");
 
 $langs->load("companies");
+$langs->load("bills");
 
 require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
@@ -186,7 +187,8 @@ if ($_POST["action"] == 'add')
         $public=0;
     }
     if (!$error){
-        // email a peu pres correct et le login n'existe pas
+
+    // Email a peu pres correct et le login n'existe pas
     if ($adh->create($user->id) )
     {
         if ($cotisation > 0)
@@ -202,7 +204,7 @@ if ($_POST["action"] == 'add')
                 $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE);
                 if ($insertid == '')
                 {
-                    print "<p> Probleme d'insertion : ".$db->error();
+                    dolibarr_print_error($db);
                 }
                 else
                 {
@@ -215,12 +217,15 @@ if ($_POST["action"] == 'add')
                     }
                     else
                     {
-                        print "<p> Probleme d'insertion $sql : ".$db->error();
+                        dolibarr_print_error($db);
                     }
                 }
             }
         }
         Header("Location: liste.php?statut=-1");
+    }
+    else {
+        dolibarr_print_error($db);
     }
 }
 }
@@ -374,13 +379,13 @@ if ($action == 'create') {
 
     print '<td valign="top" rowspan="13"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
 
-    print '<tr><td>'.$langs->trans("FirstName").'</td><td><input type="text" name="prenom" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("LastName").'</td><td><input type="text" name="nom" size="40"></td></tr>';
-    print '<tr><td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>';
-    print '<tr><td>Adresse</td><td>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Address").'</td><td>';
     print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
-    print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
-    print '<tr><td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("Login").'</td><td><input type="text" name="login" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="40"></td></tr>';
@@ -393,10 +398,10 @@ if ($action == 'create') {
     print "<tr><td>Date de cotisation</td><td>\n";
     print_date_select();
     print "</td></tr>\n";
-    print "<tr><td>Mode de paiement</td><td>\n";
+    print '<tr><td>Mode de paiment</td><td>';
 
     print '<select name="operation">';
-    print '<option value="CHQ" SELECTED>Chèque';
+    print '<option value="CHQ" selected>Chèque';
     print '<option value="CB">Carte Bleue';
     print '<option value="DEP">Espece';
     print '<option value="TIP">TIP';
@@ -416,7 +421,7 @@ if ($action == 'create') {
     }
     print '<tr><td>Cotisation</td><td><input type="text" name="cotisation" size="6"> euros</td></tr>';
     if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 && defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
-        print '<tr><td>Libelle</td><td><input name="label" type="text" size=20 value="Cotisation " ></td></tr>';
+        print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" type="text" size=20 value="Cotisation " ></td></tr>';
     }
     print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
     print "</form>\n";
@@ -512,7 +517,7 @@ if ($rowid > 0)
 
 
     print "<form action=\"fiche.php\" method=\"post\">\n";
-    print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
+    print '<table class="border" width="100%">';
 
     print '<tr><td>Numero</td><td class="valeur">'.$adh->id.'&nbsp;</td>';
     print '<td valign="top" width="50%">'.$langs->trans("Comments").'</tr>';
@@ -524,16 +529,16 @@ if ($rowid > 0)
 
     print '<tr><td>Personne</td><td class="valeur">'.$adh->getmorphylib().'&nbsp;</td></tr>';
 
-    print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
+    print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
 
-    print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("LastName").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
 
-    print '<tr><td>Société</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
-    print '<tr><td>Adresse</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
-    print '<tr><td>CP Ville</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
-    print '<tr><td>Pays</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
-    print '<tr><td>Email</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
-    print '<tr><td>Login</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
     //  print '<tr><td>Pass</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
     print '<tr><td>Date de Naissance</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
     print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
@@ -573,7 +578,7 @@ if ($user->admin)
         print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=resign\">Résilier l'adhésion</a>\n";
     }
 
-    print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=delete\">Supprimer</a>\n";
+    print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
 
     /*
     * bouton : "Envoie des informations"

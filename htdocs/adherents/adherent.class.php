@@ -167,7 +167,7 @@ class Adherent
 
 
 /*!
-		\brief fonction qui renvoie la nature physique ou morale d'un adherent
+		\brief  fonction qui renvoie la nature physique ou morale d'un adherent
 		\param	morphy		nature physique ou morale de l'adhérent
 */
 
@@ -180,7 +180,7 @@ class Adherent
   }
 
 /*!
-		\brief fonction qui vérifie les données entrées
+		\brief  fonction qui vérifie les données entrées
 		\param	minimum
 */
 
@@ -265,7 +265,6 @@ class Adherent
       
       /*
        * Return errors
-       *
        */
 
       if ($err)
@@ -281,7 +280,7 @@ class Adherent
     }
 
 /*!
-		\brief fonction qui crée l'adhérent
+		\brief  fonction qui crée l'adhérent
 		\param	userid		userid de l'adhérent
 */
 
@@ -305,16 +304,15 @@ class Adherent
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+      dolibarr_print_error($this->db);
 	  return 0;
 	}  
     }
 
+
 /*!
 		\brief fonction qui met à jour l'adhérent
 */
-
   function update() 
     {
 
@@ -343,8 +341,7 @@ class Adherent
     
       if (!$result)
 	{
-	  print $this->db->error();
-	  print "<br>$sql<br>";
+      dolibarr_print_error($this->db);
 	  return 0;
 	}
 
@@ -352,14 +349,21 @@ class Adherent
 	{
 	  $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = $this->id;";
 		$this->db->query($sql_del);
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid) VALUES ($this->id);";
-	  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options SET adhid = $this->id";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
 	  foreach($this->array_options as $key => $value)
 	    {
 	      // recupere le nom de l'attribut
 	      $attr=substr($key,8);
-	      $sql.=",$attr = '".$this->array_options[$key]."'";
+	      $sql.=",$attr";
 	    }
+	  $sql .= ") VALUES ($this->id";
+	  foreach($this->array_options as $key => $value)
+	    {
+
+	      $sql.=",'".$this->array_options[$key]."'";
+        }
+      $sql.=");";
+
 	  $result = $this->db->query($sql);
 	}
 	
@@ -369,8 +373,7 @@ class Adherent
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+      dolibarr_print_error($this->db);
 	  return 0;
 	}  
     }
@@ -411,7 +414,7 @@ class Adherent
       }
     else
       {
-	print "Err : ".$this->db->error();
+      dolibarr_print_error($this->db);
       }
 
     return $result;
@@ -436,7 +439,7 @@ class Adherent
       }
     else
       {
-	print $this->db->error();
+      dolibarr_print_error($this->db);
       }
   }
 
@@ -485,7 +488,7 @@ class Adherent
       }
     else
       {
-	print $this->db->error();
+      dolibarr_print_error($this->db);
       }
     
   }
@@ -516,7 +519,7 @@ class Adherent
 	  }
 	}
     }else{
-      print $this->db->error();
+      dolibarr_print_error($this->db);
     }
     
   }
@@ -544,7 +547,7 @@ class Adherent
 	return array();
       }
     }else{
-      print $this->db->error();
+      dolibarr_print_error($this->db);
       return array() ;
     }
     
@@ -586,7 +589,7 @@ class Adherent
       }
     else
       {
-	print "Err : ".$this->db->error();
+      dolibarr_print_error($this->db);
 	return 0;
       }
   }
@@ -613,8 +616,7 @@ class Adherent
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+      dolibarr_print_error($this->db);
 	  return 0;
 	}
     }
@@ -641,8 +643,7 @@ class Adherent
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+      dolibarr_print_error($this->db);
 	  return 0;
 	}
     }
