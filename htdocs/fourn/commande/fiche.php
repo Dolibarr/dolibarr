@@ -435,7 +435,7 @@ if ($_GET["id"] > 0)
        */
       if ($commande->statut == 0 && $user->rights->fournisseur->commande->creer) 
 	{
-	  $sql = "SELECT p.rowid,p.label,p.ref,p.price ";
+	  $sql = "SELECT p.rowid,p.label,p.ref ";
 	  $sql .=" , pf.price";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."product as p ";
 	  $sql .= " , ".MAIN_DB_PREFIX."product_fournisseur_price as pf ";
@@ -462,7 +462,7 @@ if ($_GET["id"] > 0)
 	      print $db->error();
 	    }
 
-	  print "<form action=\"fiche.php?id=$commande->id\" method=\"post\">";
+	  print '<form action="fiche.php?id='.$commande->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="addligne">';
 
 	  print "<tr class=\"liste_titre\">";
