@@ -49,9 +49,10 @@ $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
 
-if ($_GET["action"] == 'fastappro' && $user->rights->facture->creer)
+if ($_GET["action"] == 'fastappro')
 {
   $product = new Product($db);
+  $product->fetch($_GET["id"]);
   $result = $product->fastappro();
   Header("Location: fiche.php?id=".$_GET["id"]);
 }
