@@ -74,7 +74,7 @@ class Contrat
       $sql = "SELECT rowid, enservice, fk_soc, fk_product, ".$this->db->pdate("mise_en_service")." as datemise";
       $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_cloture")." as datecloture";
       $sql .= ", ".$this->db->pdate("fin_validite")." as datefin";
-      $sql .= ", fk_user_cloture";
+      $sql .= ", fk_user_cloture, fk_facture";
       $sql .= " FROM llx_contrat WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
@@ -85,6 +85,7 @@ class Contrat
 
 	  $this->id                = $result["rowid"];
 	  $this->enservice         = $result["enservice"];
+	  $this->factureid         = $result["fk_facture"];
 	  $this->mise_en_service   = $result["datemise"];
 	  $this->date_cloture      = $result["datecloture"];
 	  $this->date_fin_validite = $result["datefin"];

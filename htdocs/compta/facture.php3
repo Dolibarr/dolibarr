@@ -574,10 +574,10 @@ else
 		    print '<input type="hidden" name="action" value="updateligne">';
 		    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 		    print "<TR $bc[$var]>";
-		    print '<TD><textarea name="desc" cols="60" rows="3">'.stripslashes($objp->description).'</textarea></TD>';
-		    print '<TD align="center"><input type="text" name="qty" value="'.$objp->qty.'"></TD>';
-		    print '<TD align="right"><input type="text" name="price" value="'.price($objp->price).'"></TD>';
-		    print '<td colspan="2"><input type="submit"></td>';
+		    print '<TD colspan="2"><textarea name="desc" cols="60" rows="3">'.stripslashes($objp->description).'</textarea></TD>';
+		    print '<TD align="center"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></TD>';
+		    print '<TD align="right"><input size="8" type="text" name="price" value="'.price($objp->price).'"></TD>';
+		    print '<td align="right" colspan="2"><input type="submit" value="Enregistrer"></td>';
 		    print '</tr>' . "\n";
 		    print "</form>\n";
 		  }
@@ -627,7 +627,7 @@ else
 	 * Fin Ajout ligne
 	 *
 	 */
-	if ($user->societe_id == 0)
+	if ($user->societe_id == 0 && $fac->paye == 0)
 	  {
 	    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
 	
