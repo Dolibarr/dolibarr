@@ -28,7 +28,8 @@ class Product
   var $ref;
   var $libelle;
   var $description;
-  var $price ;
+  var $price;
+  var $tva_tx;
 
   Function Product($DB, $id=0)
     {
