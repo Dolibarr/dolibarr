@@ -64,7 +64,7 @@ if ($action == 'delete')
 
 if ($action == 'add') 
 {
-  $datefacture = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear)); 
+  $datefacture = $db->idate(mktime(12, 0 , 0, $remonth, $reday, $reyear)); 
   
   if (! $propalid) 
     {
@@ -179,12 +179,10 @@ if ($action == 'create')
 	    print "<tr><td>Propal :</td><td>$obj->ref</td></tr>";
 	    print '<tr bgcolor="#e0e0e0"><td>Montant HT :</td><td>'.price($amount).'</td></tr>';
 	    print "<tr bgcolor=\"#e0e0e0\"><td>TVA 19.6% :</td><td>".price($obj->tva)."</td></tr>";
-	    print "<tr bgcolor=\"#e0e0e0\"><td>Total TTC :</td><td>".price($obj->total)."</td></tr>";
-	  
+	    print "<tr bgcolor=\"#e0e0e0\"><td>Total TTC :</td><td>".price($obj->total)."</td></tr>";	  
 	  }
 	else
-	  {
-	    
+	  {	    
 	    print '<tr bgcolor="#e0e0e0"><td>Montant HT :</td><td>';	    
 	    print '<input name="amount" type="text" value=""></td></tr>';	    
 	    print '</td></tr>';
@@ -198,45 +196,10 @@ if ($action == 'create')
 	print "<tr><td>Auteur :</td><td>".$user->fullname."</td></tr>";
 	
 	print "<tr><td>Date :</td><td>";
-	$cday = date("d", time());
-	print "<select name=\"pday\">";    
-	for ($day = 1 ; $day < $sday + 32 ; $day++)
-	  {
-	    if ($day == $cday)
-	      {
-		print "<option value=\"$day\" SELECTED>$day";
-	      }
-	    else
-	      {
-		print "<option value=\"$day\">$day";
-	      }
-	  }
-	print "</select>";
-	$cmonth = date("n", time());
-	print "<select name=\"pmonth\">";    
-	for ($month = 1 ; $month <= 12 ; $month++)
-	  {
-	    if ($month == $cmonth)
-	      {
-		print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
-	      }
-	    else 
-	      {
-		print "<option value=\"$month\">" . $strmonth[$month];
-	      }
-	  }
-	print "</select>";
-	
-	print "<select name=\"pyear\">";
-	$syear = date("Y", time() ) ;
-	print "<option value=\"".($syear-1)."\">".($syear-1);
-	print "<option value=\"$syear\" SELECTED>$syear";
-	
-	for ($year = $syear +1 ; $year < $syear + 5 ; $year++)
-	  {
-	    print "<option value=\"$year\">$year";
-	  }
-	print "</select></td></tr>";
+
+	print_date_select(time());
+
+	print "</td></tr>";
 	print "<tr><td>Numéro :</td><td> <input name=\"facnumber\" type=\"text\" value=\"$numfa\"></td></tr>";
 
 
