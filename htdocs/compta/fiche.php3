@@ -166,7 +166,7 @@ if ($socid > 0) {
     print "<tr><td><div class=\"titre\">Fiche client : $objsoc->nom</div></td>";
     print "<td align=\"center\"><a href=\"bookmark.php3?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
     print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
-    print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
+    print "<td><a href=\"facture.php3?action=create&socidp=$objsoc->idp\">".translate("Bill")."</a></td>";
     print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
     print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
     print "</tr></table>";

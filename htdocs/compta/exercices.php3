@@ -264,7 +264,6 @@ function ppt ($db, $year, $socidp) {
   
   print "</td><td align=\"center\">CA $year</td>";
   print "<td valign=\"top\">Delta</td></tr>";
-  
   print "<tr><td valign=\"top\" width=\"30%\">";
   
   $sql = "SELECT sum(f.amount) as sum, round(date_format(f.datef, '%m')) as dm";
@@ -306,7 +305,7 @@ function ppt ($db, $year, $socidp) {
     $deltat = $deltat + $delta ;
     print "<TR $bc[$var]>";
     print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
-    print "<TD align=\"right\">".price($delta)."</TD>\n";	  
+    print "<TD align=\"right\">".price($delta)."</TD>\n";
     print "</TR>\n";
   }
 

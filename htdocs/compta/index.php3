@@ -53,7 +53,7 @@ if ($action == 'del_bookmark') {
   $result = $db->query($sql);
 }
 
-print_titre("Espace compta");
+print_titre(translate("Espace compta"));
 
 print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
@@ -94,7 +94,7 @@ if ( $db->query($sql) ) {
  */
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
 print "<TR class=\"liste_titre\">";
-print "<td colspan=\"2\">Propositions commerciales</td>";
+print '<td colspan="2">'.translate("Propositions commerciales").'</td>';
 print "</TR>\n";
 
 $sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 2";
@@ -109,7 +109,7 @@ print "</table><br>";
  */
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
 print "<TR class=\"liste_titre\">";
-print "<td colspan=\"2\">Factures</td>";
+print '<td colspan="2">'.translate("Bills").'</td>';
 print "</TR>\n";
 
 $sql = "SELECT count(*) FROM llx_facture WHERE paye = 0";

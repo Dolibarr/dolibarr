@@ -58,5 +58,7 @@ print '</table>';
 
 $db = new Db();
 
+?> <a href="phpinfo.php3">phpinfo</a> <?PHP
+
 llxFooter();
 ?>

@@ -47,7 +47,7 @@ $db->close();
 if(!isset($application_lang))
   $application_lang = "fr";
 
-$rtplang = new rtplang("langs", "en", "en", $application_lang);
+$rtplang = new rtplang($GLOBALS["DOCUMENT_ROOT"]."/langs", "en", "en", $application_lang);
 $rtplang->debug=1;
 /*
  */
