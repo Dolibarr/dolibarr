@@ -45,7 +45,7 @@ textarea  { font: helvetica, verdana, arial, sans-serif; }
     font: 12px helvetica, verdana, arial, sans-serif;
 	font-size: 100%;
 	border: 1px solid #ccd7e0;
-	background-image : url(/theme/eldy/img/button_bg.gif);
+	background-image : url(/theme/eldy/img/button_bg.png);
 	background-position : bottom;
 }
 
@@ -262,7 +262,7 @@ div.help
 	font-size: 100%;
 	font-weight: normal;
 	border: 1px solid #ccd7e0;
-	background-image : url(img/button_bg.gif);
+	background-image : url(img/button_bg.png);
 	background-position : bottom;
 }
 
