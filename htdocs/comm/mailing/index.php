@@ -65,8 +65,6 @@ while (($file = readdir($handle))!==false)
     {
         if (eregi("(.*)\.(.*)\.(.*)",$file,$reg))
         {
-            $var = !$var;
-
             $modulename=$reg[1];
 
             // Chargement de la classe
@@ -75,21 +73,23 @@ while (($file = readdir($handle))!==false)
             require_once($file);
             $mailmodule = new $classname($db);
             
-            foreach ($mailmodule->statssql as $sql) 
+            $qualified=1;
+            foreach ($mailmodule->require_module as $key)
             {
-                $qualified=1;
-                foreach ($mailmodule->require_module as $key)
+                if (! $conf->$key->enabled || (! $user->admin && $mailmodule->require_admin))
                 {
-                    if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
-                    {
-                        $qualified=0;
-                        //print "Les prérequis d'activation du module mailing ne sont pas respectés. Il ne sera pas actif";
-                        break;
-                    }
+                    $qualified=0;
+                    //print "Les prérequis d'activation du module mailing ne sont pas respectés. Il ne sera pas actif";
+                    break;
                 }
-                
-                // Si le module mailing est qualifié
-                if ($qualified)
+            }
+
+            // Si le module mailing est qualifié
+            if ($qualified)
+            {
+                $var = !$var;
+
+                foreach ($mailmodule->statssql as $sql) 
                 {
                     print '<tr '.$bc[$var].'>';
         
