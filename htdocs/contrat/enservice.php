@@ -49,7 +49,7 @@ if ($sortorder == "")
 }
 
 $sql = "SELECT s.nom, c.rowid as cid, c.enservice, p.label, p.rowid, s.idp as sidp";
-$sql .= " ,".$db->pdate("c.date_fin_validite")." as date_fin_validite";
+$sql .= " ,".$db->pdate("c.fin_validite")." as date_fin_validite";
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_product = p.rowid AND c.enservice = 1";
 if ($socid > 0)
