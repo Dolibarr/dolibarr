@@ -72,6 +72,10 @@ class Facture
   Function create($userid)
     {
       /*
+       * On positionne en mode brouillon la facture
+       */
+      $this->brouillon = 1;
+      /*
        *
        */
       $sql = "SELECT fdm,nbjour FROM llx_cond_reglement WHERE rowid = $this->cond_reglement";
@@ -126,7 +130,6 @@ class Facture
 	  print $this->db->error() . '<b><br>'.$sql;
 	  return 0;
 	}
-      
     }
 
   /*

@@ -105,7 +105,7 @@ if ($action == 'payed')
   $result = $fac->set_payed($facid);
 }
 
-if ($action == 'addligne') 
+if ($action == 'addligne' && $user->rights->facture->creer) 
 {
   $fac = new Facture($db);
   $fac->fetch($facid);
@@ -116,7 +116,7 @@ if ($action == 'addligne')
 			  $HTTP_POST_VARS["tva_tx"]);
 }
 
-if ($action == 'updateligne') 
+if ($action == 'updateligne' && $user->rights->facture->creer) 
 {
   $fac = new Facture($db,"",$facid);
   $fac->fetch($facid);
@@ -126,7 +126,7 @@ if ($action == 'updateligne')
 			     $HTTP_POST_VARS["qty"]);
 }
 
-if ($action == 'deleteline') 
+if ($action == 'deleteline' && $user->rights->facture->creer) 
 {
   $fac = new Facture($db,"",$facid);
   $fac->fetch($facid);
@@ -146,13 +146,13 @@ if ($action == 'add')
 
   $facture = new Facture($db, $socid);
 
-  $facture->number   = $HTTP_POST_VARS["facnumber"];
-  $facture->date     = $datefacture;      
-  $facture->note     = $HTTP_POST_VARS["note"];
-  $facture->projetid = $HTTP_POST_VARS["projetid"];
+  $facture->number         = $HTTP_POST_VARS["facnumber"];
+  $facture->date           = $datefacture;      
+  $facture->note           = $HTTP_POST_VARS["note"];
+  $facture->projetid       = $HTTP_POST_VARS["projetid"];
   $facture->cond_reglement = $HTTP_POST_VARS["condid"];
   
-  if (! $propalid) 
+  if (!$HTTP_POST_VARS["propalid"]) 
     {
       $facture->amount = $HTTP_POST_VARS["amount"];
       $facture->remise = $HTTP_POST_VARS["remise"];
@@ -163,14 +163,14 @@ if ($action == 'add')
     {
       $facture->amount   = $HTTP_POST_VARS["amount"];
       $facture->remise   = $remise;
-      $facture->propalid = $propalid;
+      $facture->propalid = $HTTP_POST_VARS["propalid"];
 
       $facid = $facture->create($user->id);
       //TODO
-      if ($facid )
+      if ($facid)
 	{
 	  $prop = New Propal($db);
-	  $prop->fetch($propalid);
+	  $prop->fetch($HTTP_POST_VARS["propalid"]);
 
 	  for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
 	    {
@@ -285,7 +285,7 @@ if ($action == 'create')
 
   print_titre("Emettre une facture");
 
-  if ($propalid) 
+  if ($propalid)
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
       $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c";
@@ -302,131 +302,130 @@ if ($action == 'create')
   if ( $db->query($sql) ) 
     {
       $num = $db->num_rows();
-      if ($num) {
-	$obj = $db->fetch_object(0);
+      if ($num)
+	{
+	  $obj = $db->fetch_object(0);
 	
-	$numfa = facture_get_num(); // définit dans includes/modules/facture
+	  $numfa = facture_get_num(); // définit dans includes/modules/facture
 	
-	print "<form action=\"$PHP_SELF\" method=\"post\">";
-	print '<input type="hidden" name="action" value="add">';
-	print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
+	  print '<form action="'.$PHP_SELF.'" method="post">';
+	  print '<input type="hidden" name="action" value="add">';
+	  print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
+	  
+	  print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
+	  
+	  print "<tr><td>Client :</td><td>$obj->nom</td>";
+	  print "<td>Commentaire</td></tr>";
+	  
+	  print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
+	  print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
+	  
+	  print '<td rowspan="5" valign="top">';
+	  print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
+	  
+	  print "<tr><td>Date :</td><td>";
 	
-	print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
-	
-	print "<tr><td>Client :</td><td>$obj->nom</td>";
-	print "<td>Commentaire</td></tr>";
-	
-	print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
-	print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
+	  print_date_select(time());
 
-	print '<td rowspan="5" valign="top">';
-	print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
-
-	print "<tr><td>Date :</td><td>";
-
-	print_date_select(time());
-
-	print "</td></tr>";
-	print "<tr><td>Numéro :</td><td> <input name=\"facnumber\" type=\"text\" value=\"$numfa\"></td></tr>";
-
-	print "<tr><td>Conditions de réglement :</td><td>";
-	$sql = "SELECT rowid, libelle FROM llx_cond_reglement ORDER BY sortorder";
-	$result = $db->query($sql);
-	$conds=array();
-	if ($result)
-	  {
-	    $num = $db->num_rows();
-	    $i = 0;
-	    while ($i < $num)
-	      {
-		$objp = $db->fetch_object($i);
-		$conds[$objp->rowid]=$objp->libelle;
-		$i++;
-	      }
-	    $db->free();
-	  }
-
-	$html->select_array("condid",$conds);
-	print "</td></tr>";
-
-	print "<tr><td>Projet :</td><td>";
-	$proj = new Project($db);
-	$html->select_array("projetid",$proj->liste_array($socidp));
-	print "</td></tr>";
-
-	if ($propalid)
-	  {
-	    $amount = ($obj->price - $obj->remise);
-	    print '<input type="hidden" name="amount"   value="'.$amount.'">';
-	    print '<input type="hidden" name="total"    value="'.$obj->total.'">';
-	    print '<input type="hidden" name="remise"   value="'.$obj->remise.'">';
-	    print '<input type="hidden" name="tva"      value="'.$obj->tva.'">';
-	    print '<input type="hidden" name="propalid" value="'.$propalid.'">';
-	    
-	    print '<tr><td>Proposition</td><td colspan="2">'.$obj->ref.'</td></tr>';
-	    print '<tr><td>Montant HT</td><td colspan="2">'.price($amount).'</td></tr>';
-	    print '<tr><td>TVA</td><td colspan="2">'.price($obj->tva)."</td></tr>";
-	    print '<tr><td>Total TTC</td><td colspan="2">'.price($obj->total)."</td></tr>";	  
-	  }
-
-	
-	print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
-	print "</form>\n";
-	print "</table>\n";
-	
-	if (! $propalid)
-	  {
-	    /*
-	     *
-	     * Liste des elements
-	     *
-	     */
-	    $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ";
-	    $sql .= " WHERE envente = 1";
-	    $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
-	    if ( $db->query($sql) )
-	      {
-		$opt = "<option value=\"0\" SELECTED></option>";
-		if ($result)
-		  {
-		    $num = $db->num_rows();	$i = 0;	
-		    while ($i < $num)
-		      {
-			$objp = $db->fetch_object( $i);
-			$opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
-			$i++;
-		      }
-		  }
-		$db->free();
-	      }
-	    else
-	      {
-		print $db->error();
-	      }
-	    
-	    print_titre("Services/Produits");
-	    	    
-	    print '<table border="1" cellspacing="0">';
-	    
-	    for ($i = 1 ; $i < 5 ; $i++)
-	      {
-		print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
-		print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td></tr>';
-	      }
-	    
-	    print "<tr><td align=\"right\" colspan=\"2\">Remise : <input size=\"6\" name=\"remise\" value=\"0\"></td></tr>\n";    
-	    
-	    print "</table>";
-	    
-	  }
-      }
+	  print "</td></tr>";
+	  print "<tr><td>Numéro :</td><td> <input name=\"facnumber\" type=\"text\" value=\"$numfa\"></td></tr>";
+	  
+	  print "<tr><td>Conditions de réglement :</td><td>";
+	  $sql = "SELECT rowid, libelle FROM llx_cond_reglement ORDER BY sortorder";
+	  $result = $db->query($sql);
+	  $conds=array();
+	  if ($result)
+	    {
+	      $num = $db->num_rows();
+	      $i = 0;
+	      while ($i < $num)
+		{
+		  $objp = $db->fetch_object($i);
+		  $conds[$objp->rowid]=$objp->libelle;
+		  $i++;
+		}
+	      $db->free();
+	    }
+	  
+	  $html->select_array("condid",$conds);
+	  print "</td></tr>";
+	  
+	  print "<tr><td>Projet :</td><td>";
+	  $proj = new Project($db);
+	  $html->select_array("projetid",$proj->liste_array($socidp));
+	  print "</td></tr>";
+	  
+	  if ($propalid)
+	    {
+	      $amount = ($obj->price - $obj->remise);
+	      print '<input type="hidden" name="amount"   value="'.$amount.'">';
+	      print '<input type="hidden" name="total"    value="'.$obj->total.'">';
+	      print '<input type="hidden" name="remise"   value="'.$obj->remise.'">';
+	      print '<input type="hidden" name="tva"      value="'.$obj->tva.'">';
+	      print '<input type="hidden" name="propalid" value="'.$propalid.'">';
+	      
+	      print '<tr><td>Proposition</td><td colspan="2">'.$obj->ref.'</td></tr>';
+	      print '<tr><td>Montant HT</td><td colspan="2">'.price($amount).'</td></tr>';
+	      print '<tr><td>TVA</td><td colspan="2">'.price($obj->tva)."</td></tr>";
+	      print '<tr><td>Total TTC</td><td colspan="2">'.price($obj->total)."</td></tr>";	  
+	    }
+	  
+	  
+	  print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
+	  print "</form>\n";
+	  print "</table>\n";
+	  
+	  if (!$propalid)
+	    {
+	      /*
+	       *
+	       * Liste des elements
+	       *
+	       */
+	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ";
+	      $sql .= " WHERE envente = 1";
+	      $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
+	      if ( $db->query($sql) )
+		{
+		  $opt = "<option value=\"0\" SELECTED></option>";
+		  if ($result)
+		    {
+		      $num = $db->num_rows();	$i = 0;	
+		      while ($i < $num)
+			{
+			  $objp = $db->fetch_object( $i);
+			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
+			  $i++;
+			}
+		    }
+		  $db->free();
+		}
+	      else
+		{
+		  print $db->error();
+		}
+	      
+	      print_titre("Services/Produits");
+	      
+	      print '<table border="1" cellspacing="0">';
+	      
+	      for ($i = 1 ; $i < 5 ; $i++)
+		{
+		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
+		  print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td></tr>';
+		}
+	      
+	      print "<tr><td align=\"right\" colspan=\"2\">Remise : <input size=\"6\" name=\"remise\" value=\"0\"></td></tr>\n";    
+	      
+	      print "</table>";
+	      
+	    }
+	}
     } 
   else 
     {
       print $db->error();
     }
-
-
 } 
 else 
 /* *************************************************************************** */
