@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,6 @@ print '<a class="tab" href="info.php?id='.$_GET["id"].'">Info</a>';
 print '</div>';
 
 print '<div class="tabBar">';
-
 /*
  * Visualisation de la fiche
  *
@@ -62,6 +62,7 @@ $html = new Form($db);
  */
  if ($_GET["action"] == 'delete')
    {
+	 print '<br>';
      $html->form_confirm("$PHP_SELF?id=$paiement->id","Supprimer le paiement","Etes-vous sûr de vouloir supprimer ce paiement ?","confirm_delete");
    }
  
@@ -143,7 +144,9 @@ if ($db->query($sql))
       // L'edition est pour l'instant inutile
       //print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=edit">Editer</a>';    
 
-      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=delete">Supprimer</a>';
+      if ($_GET["action"] != 'delete') { 
+      	print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=delete">Supprimer</a>';
+      }
       
       print "</div>";      
     }
