@@ -161,7 +161,7 @@ if ($result)
       print "<td>".$obj->ville."</td>\n";       
       print "<td align=\"center\">$obj->prefix_comm&nbsp;</td>\n";
       
-      print '<td><a href="facture/fiche.php?action=create&amp;socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
+      print '<td><a href="facture/fiche.php?action=create&amp;socid='.$obj->idp.'">Facturer <img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
 
       print "</tr>\n";
       $i++;
