@@ -84,7 +84,6 @@ if ($_GET["id"])
       print '</td></form></tr></table>';
       print '<br>';
       
-
       $head[0][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
       $head[0][1] = 'Fiche';
 	
