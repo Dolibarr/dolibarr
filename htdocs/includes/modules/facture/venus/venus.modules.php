@@ -21,10 +21,10 @@
  *
  */
 
-function facture_get_num($societe_prefix)
+function facture_get_num($objsoc=0)
 { 
 
-  return  "FA-" .  $obj->prefix_comm . "-" .strftime("%y%m%d", time());
+  return  "FA-" .  $objsoc->prefix_comm . "-" .strftime("%y%m%d", time());
 
 }
 
