@@ -39,8 +39,10 @@ $langs->defaultlang=$setuplang;
 $langs->load("admin");
 $langs->load("install");
 
+
 pHeader($langs->trans("CreateDatabaseObjects"),"etape4");
 
+$grant_query='';
 $etape = 2;
 
 if (file_exists($conffile))
@@ -145,7 +147,7 @@ if ($_POST["action"] == "set")
                 }
                 else
                 {
-                    if ($db->errno() == DB_ERROR_TABLE_ALREADY_EXISTS)
+                    if ($db->errno() == 'DB_ERROR_TABLE_ALREADY_EXISTS')
                     {
                         //print "<td>Déjà existante</td></tr>";
                         $table_exists = 1;
@@ -217,7 +219,7 @@ if ($_POST["action"] == "set")
                         }
                         else
                         {
-                            if ($db->errno() == DB_ERROR_CANNOT_CREATE || eregi('duplicate key name',$db->error()))
+                            if ($db->errno() == 'DB_ERROR_CANNOT_CREATE' || eregi('duplicate key name',$db->error()))
                             {
                                 //print "<td>Déjà existante</td></tr>";
                                 $key_exists = 1;
@@ -253,7 +255,7 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         // Droits sur les tables
-        if ($grant_query) {
+        if ($grant_query) {     // Non null si postgresql
             if ($db->query($grant_query))
             {
                 print "<tr><td>Grant User</td><td>".$langs->trans("OK")."</td></tr>";
@@ -300,7 +302,7 @@ if ($_POST["action"] == "set")
                     }
                     else
                     {
-                        if ($db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
+                        if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                         {
                             // print "<tr><td>Insertion ligne : $buffer</td><td>
                         }
@@ -355,7 +357,7 @@ if ($_POST["action"] == "set")
                     }
                     else
                     {
-                        if ($db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
+                        if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                         {
                             // print "<tr><td>Insertion ligne : $buffer</td><td>
                         }

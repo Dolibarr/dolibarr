@@ -54,7 +54,7 @@ require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
 print '<table cellspacing="0" cellpadding="4" border="1" width="100%">';
 
-$error=0;
+$err=0;
 
 $conf = new Conf();
 $conf->db->type = $dolibarr_main_db_type;
@@ -76,24 +76,27 @@ if ($db->ok == 1)
   print '<input type="password" name="pass_verif"></td></tr>';
   print '</table>';
 
-  if ($_GET["error"] == 1)
+  if (isset($_GET["error"]) && $_GET["error"] == 1)
     {
       print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
     }
 
-  if ($_GET["error"] == 2)
+  if (isset($_GET["error"]) && $_GET["error"] == 2)
     {
       print '<div class="error">';
       print $langs->trans("PleaseTypePassword");
       print '</div>';
     }
 
-  if ($_GET["error"] == 3)
+  if (isset($_GET["error"]) && $_GET["error"] == 3)
     {
       print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
     }
-  $db->close();
+
 }
 
+$db->close();
+
 pFooter($err);
+
 ?>
