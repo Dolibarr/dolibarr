@@ -22,8 +22,8 @@
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/brouzouf.class.php");
 
-class GraphCaMoyen extends GraphBrouzouf{
-
+class GraphCaMoyen extends GraphBrouzouf
+{
 
   Function GraphCaMoyen($DB, $file)
   {
@@ -41,7 +41,6 @@ class GraphCaMoyen extends GraphBrouzouf{
 
   Function GraphDraw()
   {
-    $num = 0;
     $ligne = new LigneTel($this->db);
         
     $sql = "SELECT date, sum(gain), sum(cout_vente), sum(fourn_montant)";
@@ -49,17 +48,16 @@ class GraphCaMoyen extends GraphBrouzouf{
     $sql .= " WHERE fk_facture is not null";    
     $sql .= " GROUP BY date ASC";
     
-    $result = $this->db->query($sql);
-    if ($result)
+    if ($this->db->query($sql))
       {
-	$num = $this->db->num_rows();
+	$num1 = $this->db->num_rows();
 	$i = 0;
 	$labels = array();
 	$cf = array();
 	$cv = array();
 	$gg = array();
 	
-	while ($i < $num)
+	while ($i < $num1)
 	  {
 	    $row = $this->db->fetch_row();
 
@@ -86,15 +84,14 @@ class GraphCaMoyen extends GraphBrouzouf{
     $sql .= " AND l.rowid = f.fk_ligne";
     $sql .= " GROUP BY f.date ASC";
     
-    $result = $this->db->query($sql);
-    if ($result)
+    if ($this->db->query($sql))
       {
-	$num = $this->db->num_rows();
+	$num2 = $this->db->num_rows();
 	$i = 0;
 
 	$nbc = array();
 	
-	while ($i < $num)
+	while ($i < $num2)
 	  {
 	    $row = $this->db->fetch_row();
 
@@ -129,7 +126,7 @@ class GraphCaMoyen extends GraphBrouzouf{
       }
 
 
-    if ($num > 0)
+    if (($num1 * $num2) > 0)
       {
 	$this->GraphMakeGraph($camoy, $labels);
       }
