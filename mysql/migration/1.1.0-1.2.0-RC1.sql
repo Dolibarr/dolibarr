@@ -4,6 +4,10 @@
 -- ce fichier doit être chargé sur une version 1.1.0 
 -- sans AUCUNE erreur ni warning
 -- 
+alter table llx_rights_def add perms varchar(255) after module;
+alter table llx_rights_def add subperms varchar(255) after perms;
+
+
 alter table llx_contrat add fk_facturedet integer NOT NULL default 0 after fk_facture;
 alter table llx_contrat change fk_user_cloture fk_user_cloture integer;
 alter table llx_contrat change fk_user_mise_en_service fk_user_mise_en_service integer;
