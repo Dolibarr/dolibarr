@@ -55,7 +55,7 @@ if ($result)
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
-      define ($objp->name, $objp->value);
+      define ("$objp->name", $objp->value);
       $i++;
     }
 }
@@ -196,12 +196,14 @@ Function left_menu($menu)
       
     }
 
-  if (defined(MAIN_SEARCHFORM_SOCIETE) or defined(MAIN_SEARCHFORM_CONTACT))
+  if ((defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)|| (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0))
     {
       print '<tr><td class="barre" valign="top" align="right">';
-
-      if (defined(MAIN_SEARCHFORM_SOCIETE) && MAIN_SEARCHFORM_SOCIETE > 0)
+      
+      if (defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
 	{
+	  //	  print constant("MAIN_SEARCHFORM_SOCIETE");
+	  //	  echo MAIN_SEARCHFORM_SOCIETE."==MAIN_SEARCHFORM_SOCIETE; le type est " . gettype( MAIN_SEARCHFORM_SOCIETE ) . "<br>\n";
 	  print '<A class="menu" href="/comm/clients.php3">Societes</A>';
 	  print '<form action="/comm/clients.php3">';
 	  print '<input type="hidden" name="mode" value="search">';
@@ -211,7 +213,7 @@ Function left_menu($menu)
 	  print '</form>';
 	}
       
-      if (defined(MAIN_SEARCHFORM_CONTACT) && MAIN_SEARCHFORM_CONTACT > 0)
+      if (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
 	{
 	  print '<A class="menu" href="/comm/contact.php3">Contacts</A>';
 	  print '<form action="/comm/contact.php3">';

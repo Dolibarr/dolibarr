@@ -31,7 +31,16 @@ if ($sortfield == "") {  $sortfield="d.nom"; }
 
 if ($page == -1) { $page = 0 ; }
 
+/*
+ * SIZE_LISTE_LIMIT : constante de taille maximale des listes
+ */
+if (defined("SIZE_LISTE_LIMIT"))
+{
+  $conf->liste_limit=SIZE_LISTE_LIMIT;
+}
+
 $offset = $conf->liste_limit * $page ;
+
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -44,6 +53,12 @@ $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." 
 $sql .= " , d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
 $sql .= " FROM llx_adherent as d, llx_adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
+if ( $_POST["action"] == 'search')
+{
+  if (isset($_POST['search']) && $_POST['search'] != ''){
+    $sql .= " AND (d.prenom LIKE '%".$_POST['search']."%' OR d.nom LIKE '%".$_POST['search']."%')";
+  }
+}
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
@@ -72,9 +87,14 @@ if ($result)
   print_liste_field_titre("Type",$PHP_SELF,"t.libelle","&page=$page&statut=$statut");
   print "</td>\n";
 
+  print "<td>";
+  print_liste_field_titre("Personne",$PHP_SELF,"d.morphy","&page=$page&statut=$statut");
+  print "</td>\n";
 
-  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.morphy\">Personne</a></td>\n";
-  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.statut\">Statut</a></td>\n";
+  print "<td>";
+  print_liste_field_titre("Statut",$PHP_SELF,"d.statut","&page=$page&statut=$statut");
+  print "</td>\n";
+
   print "<td>Action</td>\n";
   print "</TR>\n";
     

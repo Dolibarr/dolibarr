@@ -24,6 +24,8 @@ llxHeader();
 
 print_titre("Constantes de configuration Dolibarr");
 
+//print_r(get_defined_constants());
+
 print '<table border="1" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
 print '<TD>Nom</TD>';
@@ -36,31 +38,34 @@ print "</TR>\n";
 $db = new Db();
 $form = new Form($db);
 
-if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
+if ($user->admin)
 {
-
-  if ($HTTP_POST_VARS["consttype"] == 0){
-    $sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='yesno'";
-  }else{
-    $sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."'";
-  }
-
-
-  $result = $db->query($sql);
-  if (!$result)
+  if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
     {
-      print $db->error();
+  
+      if ($HTTP_POST_VARS["consttype"] == 0){
+	$sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='yesno'";
+      }else{
+	$sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."'";
+      }
+      
+      
+      $result = $db->query($sql);
+      if (!$result)
+	{
+	  print $db->error();
+	}
     }
-}
 
-if ($action == 'delete')
-{
-  $sql = "DELETE FROM llx_const WHERE rowid='$rowid'";
-
-  $result = $db->query($sql);
-  if (!$result)
+  if ($action == 'delete')
     {
-      print $db->error();
+      $sql = "DELETE FROM llx_const WHERE rowid='$rowid'";
+      
+      $result = $db->query($sql);
+      if (!$result)
+	{
+	  print $db->error();
+	}
     }
 }
 

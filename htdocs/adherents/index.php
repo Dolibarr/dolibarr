@@ -66,6 +66,7 @@ if ($result)
 print "</table>";
 
 print '<form action="liste.php" method="post" name="action" value="search">';
+print '<input type="hidden" name="action" value="search">';
 print '<p><TABLE border="0" cellspacing="0" cellpadding="4">';
 print '<TR class="liste_titre">';
 print "<td>Rechercher un adhérent</td>";
