@@ -40,7 +40,29 @@ $user->fetch($GLOBALS["REMOTE_USER"]);
 if ($user->limite_liste <> $conf->liste_limit) {
   $conf->liste_limit = $user->limite_liste;
 }
+/*
+ *
+ *
+ */
+$sql = "SELECT name, value FROM llx_const";
+$result = $db->query($sql);
+if ($result) 
+{
+  $num = $db->num_rows();
+  $i = 0;
+  
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object( $i);
+      define ($objp->name, $objp->value);
+      $i++;
+    }
+}
 
+/*
+ *
+ *
+ */
 $db->close();
 /*
  */
