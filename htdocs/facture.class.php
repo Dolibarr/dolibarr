@@ -1184,6 +1184,30 @@ class Facture
 	return -3;
       }
   }
+  /**
+   * \brief     Supprime une demande de prélèvement
+   * \param     user         utilisateur créant la demande
+   * \param     did          id de la demande a supprimer
+   */
+  function demande_prelevement_delete($user, $did)
+  {
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_facture_demande";
+    $sql .= " WHERE rowid = ".$did;
+    $sql .= " AND traite = 0";
+    
+    if ( $this->db->query( $sql) )
+      {
+	return 0;
+      }
+    else
+      {
+	dolibarr_syslog("Facture::DemandePrelevement Erreur");
+	return -1;
+      }
+  }
+  /*
+   *
+   */
 }
 
 
