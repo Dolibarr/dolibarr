@@ -75,10 +75,10 @@ class Project {
 
       if ($this->db->query($sql) ) 
 	{
-	  $sql = "UPDATE llx_propal SET fk_projet = 0 ";
+	  $sql = "UPDATE llx_propal SET fk_projet = 0 WHERE fk_projet = $this->id";
 	  if ($this->db->query($sql) ) 
 	    {
-	      $sql = "UPDATE llx_facture SET fk_projet = 0 ";
+	      $sql = "UPDATE llx_facture SET fk_projet = 0 WHERE fk_projet = $this->id";
 
 	      if ($this->db->query($sql) ) 
 		{
@@ -106,6 +106,7 @@ class Project {
 	      $this->id = $rowid;
 	      $this->ref = $obj->ref;
 	      $this->title = $obj->title;
+	      $this->titre = $obj->title;
 	      $this->societe->id = $obj->fk_soc;
 	      $this->db->free();
 	    }
@@ -144,6 +145,42 @@ class Project {
 	       *  Retourne un tableau contenant la liste des propales associees
 	       */
 	      return $propales;
+	    }
+	}
+      else
+	{
+	  print $this->db->error() . '<br>' .$sql;
+	}
+    }
+  /*
+   *
+   *
+   *
+   */
+  Function get_facture_list()
+    {
+      $factures = array();
+      $sql = "SELECT rowid FROM llx_facture WHERE fk_projet=$this->id;";
+      
+      if ($this->db->query($sql) )
+	{
+	  $nump = $this->db->num_rows();
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object($i);
+		  
+		  $factures[$i] = $obj->rowid;
+		  
+		  $i++;
+		}
+	      $this->db->free();
+	      /*
+	       *  Retourne un tableau contenant la liste des factures associees
+	       */
+	      return $factures;
 	    }
 	}
       else
