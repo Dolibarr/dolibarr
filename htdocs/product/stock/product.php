@@ -39,88 +39,97 @@ if ($_POST["action"] == "create_stock")
   $product->create_stock($_POST["id_entrepot"], $_POST["nbpiece"]);
 }
 
-if ($_POST["action"] == "correct_stock")
+if ($_POST["action"] == "correct_stock" && $_POST["cancel"] <> "Annuler")
 {
-  $product = new Product($db);
-  $product->id = $_GET["id"];
-  $product->correct_stock($user, 
-			  $_POST["id_entrepot"], 
-			  $_POST["nbpiece"],
-			  $_POST["mouvement"]);
+  if (is_numeric($_POST["nbpiece"]))
+    {
+
+      $product = new Product($db);
+      $product->id = $_GET["id"];
+      $product->correct_stock($user, 
+			      $_POST["id_entrepot"], 
+			      $_POST["nbpiece"],
+			      $_POST["mouvement"]);
+    }
 }
 
-
-if ($cancel == 'Annuler')
-{
-  $action = '';
-}
 /*
  *
  *
  */
 if ($_GET["id"])
 {
-  if ($action <> 're-edit')
-    {
-      $product = new Product($db);
-      $result = $product->fetch($_GET["id"]);
-    }
+
+  $product = new Product($db);
   
-  if ( $result )
-    { 
-      if ($action <> 'edit' && $action <> 're-edit')
+  if ( $product->fetch($_GET["id"]))
+    {
+      $head[0][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+      $head[0][1] = 'Fiche';
+      
+      $head[1][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
+      $head[1][1] = 'Prix';
+      $h = 2;
+      
+      $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+      $head[$h][1] = 'Stock';
+      $h++;
+      
+      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+      $head[$h][1] = 'Statistiques';
+      
+      dolibarr_fiche_head($head, 2, 'Fiche '.$types[$product->type].' : '.$product->ref);
+      
+      print($mesg);    	      
+      
+      print_fiche_titre('Fiche stock : '.$product->ref, $mesg);
+	  
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+      print "<tr>";
+      print '<td width="20%">Référence</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
+      print '<td width="40%">';
+      if ($product->envente)
 	{
-	  
-	  print_fiche_titre('Fiche stock : '.$product->ref, $mesg);
-	  
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-	  print "<tr>";
-	  print '<td width="20%">Référence</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
-	  print '<td width="40%">';
-	  if ($product->envente)
-	    {
-	      print "En vente";
-	    }
-	  else
-	    {
-	      print "<b>Cet article n'est pas en vente</b>";
-	    }
-	  print '</td></tr>';
-	  print "<tr><td>Libellé</td><td>$product->libelle</td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$product->id.'">Statistiques</a></td></tr>';
-	  print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
-	  print '<td valign="top" rowspan="2">';
-	  print 'Fournisseurs [<a href="../fiche.php?id='.$product->id.'&amp;action=ajout_fourn">Ajouter</a>]';
-	  
-	  $sql = "SELECT s.nom, s.idp";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
-	  $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product =$product->id";
-	  $sql .= " ORDER BY lower(s.nom)";
-	  
-	  if ( $db->query($sql) )
-	    {
-	      $num = $db->num_rows();
-	      $i = 0;
-	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-	      $var=True;      
-	      while ($i < $num)
-		{
-		  $objp = $db->fetch_object( $i);	  
-		  $var=!$var;
-		  print "<TR $bc[$var]>";
-		  print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td></tr>';
-		  $i++;
-		}
-	      print '</table>';
-	      $db->free();
-	    }
-	  
-	  print '</td></tr>';
-	  
-	  print '<tr><td>Stock seuil</td><td>'.$product->seuil_stock_alerte.'</td></tr>';
-	  
-	  print "</table>";
+	  print "En vente";
 	}
+      else
+	{
+	  print "<b>Cet article n'est pas en vente</b>";
+	}
+      print '</td></tr>';
+      print "<tr><td>Libellé</td><td>$product->libelle</td>";
+      print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$product->id.'">Statistiques</a></td></tr>';
+      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
+      print '<td valign="top" rowspan="2">';
+      print 'Fournisseurs [<a href="../fiche.php?id='.$product->id.'&amp;action=ajout_fourn">Ajouter</a>]';
+      
+      $sql = "SELECT s.nom, s.idp";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
+      $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product =$product->id";
+      $sql .= " ORDER BY lower(s.nom)";
+      
+      if ( $db->query($sql) )
+	{
+	  $num = $db->num_rows();
+	  $i = 0;
+	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	  $var=True;      
+	  while ($i < $num)
+	    {
+	      $objp = $db->fetch_object( $i);	  
+	      $var=!$var;
+	      print "<TR $bc[$var]>";
+	      print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td></tr>';
+	      $i++;
+	    }
+	  print '</table>';
+	  $db->free();
+	}
+      
+      print '</td></tr>';	  
+      print '<tr><td>Stock seuil</td><td>'.$product->seuil_stock_alerte.'</td></tr>';	  
+      print "</table>";
+      
       /* 
        * Contenu des stocks
        *
@@ -148,6 +157,7 @@ if ($_GET["id"])
 
 
     }
+  print '</div>';
   /*
    * Correction du stock
    *
@@ -235,7 +245,10 @@ else
 
 print "<br><div class=\"tabsAction\">\n";
 
-print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
+if ($_GET["action"] <> 'correction')
+{
+  print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
+}
 print '</div>';
 
 $db->close();
