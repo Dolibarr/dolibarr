@@ -45,6 +45,10 @@ if ($action == 'valid')
 {
   $fac = new Facture($db);
   $result = $fac->set_valid($facid, $user->id);
+  if ($result)
+    {
+     facture_pdf_create($db, $facid);
+    }
 }
 
 if ($action == 'payed') 
@@ -78,7 +82,6 @@ if ($action == 'delete')
   $fac->delete($facid);
   $facid = 0 ;
 }
-
 
 if ($action == 'add') 
 {
@@ -172,6 +175,16 @@ if ($action == 'send')
 	}
     }
 }
+
+if ($action == 'pdf')
+{
+  /*
+   * Generation de la facture
+   *
+   */
+  print facture_pdf_create($db, $facid); // définit dans /includes/modules/facture/modules_facture.php
+} 
+
 
 /*
  *
@@ -398,7 +411,7 @@ else
 	 *
 	 */
 	
-	$sql = "SELECT l.description, l.price, l.qty, l.rowid";
+	$sql = "SELECT l.description, l.price, l.qty, l.rowid, l.tva_taux";
 	$sql .= " FROM llx_facturedet as l WHERE l.fk_facture = $facid";
 	
 	$result = $db->query($sql);
@@ -409,7 +422,8 @@ else
 	    
 	    echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 	    print "<TR class=\"liste_titre\">";
-	    print '<td width="60%">Description</td>';
+	    print '<td width="62%">Description</td>';
+	    print '<td width="8%"align="center">Tva Tx</td>';
 	    print '<td width="8%"align="center">Quantité</td>';
 	    print '<td width="12%" align="right">Montant</TD><td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
 	    print "</TR>\n";
@@ -421,6 +435,7 @@ else
 		$var=!$var;
 		print "<TR $bc[$var]>";
 		print "<TD>".stripslashes(nl2br($objp->description))."</TD>\n";
+		print '<TD align="center">'.$objp->tva_taux.' %</TD>';
 		print '<TD align="center">'.$objp->qty.'</TD>';
 		print '<TD align="right">'.price($objp->price)."</TD>\n";
 		if ($obj->statut == 0) 
@@ -526,13 +541,18 @@ else
 	      {
 		print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=valid\">Valider</a>]</td>";
 	      }
-	    else
+	    elseif ($obj->statut == 1 && $obj->paye == 0)
 	      {
 		print "<td align=\"center\" width=\"25%\"><a href=\"facture.php3?facid=$facid&action=pdf\">Générer la facture</a></td>";
+	      }
+	    else
+	      {
+		print "<td align=\"center\" width=\"25%\">-</td>";
 	      }
 	    print "</tr></table>";
 	  }
 	print "<p>\n";
+
 	/*
 	 * Documents générés
 	 *
@@ -618,22 +638,6 @@ else
 	print "</td></tr>";
 	print "</table>";
 	
-	/*
-	 * Generation de la facture
-	 *
-	 */
-	if ($action == 'pdf')
-	  {
-	    print "<hr><b>Génération de la facture</b><br><small><pre>";
-	    $command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name."\" ";
-	    $command .= " ; ./texfacture.pl --html -vv --facture=$facid --pdf --output=".$conf->facture->outputdir;
-	    $command .= " --templates=".$conf->facture->templatesdir;
-	    
-	    $output = system($command);
-	    print "<p>command :<br><small>$command</small><br>";
-	    //print "<p>output :<br><small>$output</small><br>";
-	    print "</pre></small>";
-	  } 
 	/*
 	 *
 	 *
