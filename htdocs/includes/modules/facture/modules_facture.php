@@ -35,6 +35,13 @@ function pluton_get_num_explain()
 Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la douzième facture ayant le numéro 12.';
 }
 
+function neptune_get_num_explain()
+{
+  return '
+Identique à pluton, avec un correcteur au moyen de la constante FACTURE_NEPTUNE_DELTA.';
+}
+
+
 function jupiter_get_num_explain()
 {
   return '
