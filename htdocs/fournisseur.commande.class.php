@@ -65,7 +65,11 @@ class CommandeFournisseur
   function fetch ($id)
     {
       $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva";
-      $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande, cm.libelle as methode_commande";
+      $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande ";
+      $sql .= ", c.note";
+
+      $sql .= ", cm.libelle as methode_commande";
+
       $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
 
@@ -94,6 +98,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	  $this->source              = $obj->source;
 	  $this->facturee            = $obj->facture;
 	  $this->projet_id           = $obj->fk_projet;
+	  $this->note                = stripslashes($obj->note);
 
 	  $this->db->free($resql);
 	  
@@ -130,7 +135,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	}
     }
   /**
-   *
+   * Valide la commande
    *
    *
    */
@@ -149,6 +154,11 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	    {
 	      $result = 0;
 	      $this->log($user, 1, time());
+
+	      $this->ref = $ref;
+
+	      $this->_NotifyApprobator($user);
+
 	    }
 	  else
 	    {
@@ -162,8 +172,61 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	}
       return $result ;
     }
-  /**
+  /*
    *
+   *
+   */
+  function _NotifyApprobator($user)
+  {
+    require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+    
+    $this->ReadApprobators();
+    
+    if (sizeof($this->approbs) > 0)
+      {
+
+	$this->_details_text();
+
+	$from = $user->email;
+	$subject = "Nouvelle commande en attente d'approbation réf : ".$this->ref;
+
+	$message = "Bonjour,\n\n";
+	$message .= "La commande ".$this->ref." validée par $user->fullname, est en attente de votre approbation.\n\n";
+
+
+	$message .= $this->details_text;
+
+	$message .= "\nCette demande d'approbation a été envoyée à :\n";
+
+	foreach($this->approbs as $approb)
+	  {
+	    if (strlen($approb[2]))
+	      {
+		$message .= "- $approb[0] $approb[1] <$approb[2]>\n";
+	      }
+	  }
+
+	$message .= "\nCordialement,\n\n";
+	$message .="--\n(message automatique envoyé par Dolibarr)";	    
+	
+	foreach($this->approbs as $approb)
+	  {
+
+	    $sendto = $approb[2];
+
+	    $mailfile = new DolibarrMail($subject,
+					 $sendto,
+					 $from,
+					 $message);
+	    if ( $mailfile->sendfile() )
+	      {
+		
+	      }
+	  }
+      }
+  }
+  /**
+   * Approuve une commande
    *
    *
    */
@@ -180,6 +243,14 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	    {
 	      $result = 0;
 	      $this->log($user, 2, time());
+
+	      $subject = "Votre commande ".$this->ref." a été approuvée";
+	      $message = "Bonjour,\n\n";
+	      $message .= "Votre commande ".$this->ref." a été approuvée, par $user->fullname";
+	      $message .= "\n\nCordialement,\n\n";
+
+	      $this->_NotifyCreator($user, $subject, $message);
+
 	    }
 	  else
 	    {
@@ -194,7 +265,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
       return $result ;
     }
   /**
-   *
+   * Refuse une commande
    *
    *
    */
@@ -211,6 +282,11 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	    {
 	      $result = 0;
 	      $this->log($user, 9, time());
+
+	      $subject = "Votre commande ".$this->ref." a été refusée";
+	      $message = "Votre commande ".$this->ref." a été refusée, par $user->fullname";
+
+	      $this->_NotifyCreator($user, $subject, $message);
 	    }
 	  else
 	    {
@@ -224,6 +300,30 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	}
       return $result ;
     }
+  /*
+   *
+   *
+   */
+  function _NotifyCreator($user, $subject, $message)
+  {
+    require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+    
+    $cc = new user($this->db, $this->user_author_id);
+    $cc->fetch();
+    
+    $sendto = $cc->email;
+    $from = $user->email;
+
+    $mailfile = new DolibarrMail($subject,
+				 $sendto,
+				 $from,
+				 $message);
+    if ( $mailfile->sendfile() )
+      {
+	return 0;
+      }
+  }
+
   /**
    * Envoie la commande au fournisseur
    *
@@ -560,6 +660,119 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	return -1;
       }
   }
+  /**
+   *
+   *
+   *
+   */
+  function UpdateNote($user, $note)
+    {
+      dolibarr_syslog("CommandeFournisseur::UpdateNote");
+      $result = 0;
 
+      $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+
+      $sql .= " SET note  ='".trim($note) ."'";
+
+      $sql .= " WHERE rowid = ".$this->id;
+      
+      if ($this->db->query($sql) )
+	{
+	  $result = 0;
+	}
+      else
+	{
+	  dolibarr_syslog("CommandeFournisseur::UpdateNote Error -1");
+	  $result = -1;
+	}	  
+
+      return $result ;
+    }
+
+  /*
+   *
+   *
+   *
+   */
+  function ReadApprobators()
+  {
+    $this->approbs = array();
+
+    $sql = "SELECT u.name, u.firstname, u.email";
+    $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+    $sql .= " , ".MAIN_DB_PREFIX."user_rights as ur";
+    $sql .= " WHERE u.rowid = ur.fk_user";
+    $sql .= " AND ur.fk_id = 184";
+    
+    $resql = $this->db->query($sql);
+
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resql);
+	$i = 0;
+	
+	while ($i < $num)
+	  {
+	    $row = $this->db->fetch_row($resql);	    
+	    $this->approbs[$i] = $row;
+	    $i++;
+	  }
+
+	$this->db->free($resql);
+      }
+    else 
+      {
+	dolibarr_syslog("ReadApprobators Erreur");
+      }    
+  }
+  /*
+   *
+   *
+   */
+  function _details_text()
+  {
+    $blank = "                                                                                                                            ";
+    $this->details_text = substr("Produit".$blank,0,50);
+    $this->details_text .= substr("Qty".$blank,0,8);
+    $this->details_text .= substr("Prix".$blank,0,8);
+    $this->details_text .= substr("-----------------------------------------------------------------------------------------------------------------------",0,66);
+    $this->details_text .= "\n";
+
+    $sql = "SELECT l.ref, l.fk_product, l.description, l.price, l.qty";
+    $sql .= ", l.rowid, l.tva_tx, l.remise_percent, l.subprice";
+    $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l ";
+    $sql .= " WHERE l.fk_commande = ".$this->id." ORDER BY l.rowid";
+    
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {
+	$num_lignes = $this->db->num_rows($resql);
+	$i = 0;
+	
+	while ($i < $num_lignes)
+	  {
+	    $objp = $this->db->fetch_object();
+
+	    $this->details_text .=  "-".substr(stripslashes($objp->description).$blank, 0, 50);
+	    $this->details_text .= substr($objp->qty.$blank, 0, 7);
+	    $this->details_text .= substr($blank.price($objp->subprice),-8);
+	    $this->details_text .= "\n";
+	    $i++;
+	    
+	  }
+	$this->details_text .= substr("-----------------------------------------------------------------------------------------------------------------------",0,66);
+	$this->details_text .= "\n";
+	$this->details_text .= substr($blank."Total HT : ".price($this->total_ht), -66);
+	$this->details_text .= "\n";
+	$this->details_text .= substr($blank."Total TTC : ".price($this->total_ttc), -66);
+	$this->details_text .= "\n";
+	
+	$this->db->free();
+      } 
+    else
+      {
+	print $this->db->error();
+      }
+  }
 }
 ?>
