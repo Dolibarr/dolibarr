@@ -115,6 +115,10 @@ class DoliDb {
       {
 	return $this->query("BEGIN");
       }
+    else
+      {
+	return 1;
+      }
   }
 
   Function commit($do=1)
@@ -123,6 +127,10 @@ class DoliDb {
       {
 	return $this->query("COMMIT");
       }
+    else
+      {
+	return 1;
+      }
   }
 
   Function rollback($do=1)
@@ -130,6 +138,10 @@ class DoliDb {
     if ($do)
       {
 	return $this->query("ROLLBACK");
+      }
+    else
+      {
+	return 1;
       }
   }
 
