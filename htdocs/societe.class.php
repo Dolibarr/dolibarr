@@ -132,14 +132,16 @@ class Societe {
       $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
       $sql .= ", e.libelle as effectif, e.id as effectif_id";
       $sql .= ", s.fk_forme_juridique as forme_juridique_id, fj.libelle as forme_juridique";
-      $sql .= ", s.fk_departement, s.fk_pays";
+      $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm";
       $sql .= ", p.libelle as pays";
+      $sql .= ", st.libelle as stcomm";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
       $sql .= ", ".MAIN_DB_PREFIX."c_effectif as e";
       $sql .= ", ".MAIN_DB_PREFIX."c_pays as p";
+      $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
       $sql .= ", ".MAIN_DB_PREFIX."c_forme_juridique as fj";
-
-      $sql .= " WHERE s.idp = '".$this->id . "'";
+      $sql .= " WHERE s.idp = ".$this->id;
+      $sql .= " AND s.fk_stcomm = st.id";
       $sql .= " AND s.fk_effectif = e.id";
       $sql .= " AND s.fk_pays = p.rowid";
       $sql .= " AND s.fk_forme_juridique = fj.code";
@@ -162,6 +164,9 @@ class Societe {
 
 	      $this->departement_id = $obj->fk_departement;
 	      $this->pays_id = $obj->fk_pays;
+
+	      $this->stcomm_id = $obj->fk_stcomm; // statut commercial
+	      $this->statut_commercial = $obj->stcomm; // statut commercial
 
 	      $this->pays = $obj->pays;
 
