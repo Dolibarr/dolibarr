@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ Renvoie le numéro de facture sous la forme, F-PR-030202, où PR est le préfixe co
 function pluton_get_num_explain()
 {
   return '
-Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la douzième facture ayant le numéro 12.';
+Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la quinzième facture ayant le numéro 15.';
 }
 
 function neptune_get_num_explain()
@@ -41,11 +42,11 @@ function neptune_get_num_explain()
 Identique à pluton, avec un correcteur au moyen de la constante FACTURE_NEPTUNE_DELTA.';
   if (defined("FACTURE_NEPTUNE_DELTA"))
     {
-      $texte .= "Définit et vaut : ".FACTURE_NEPTUNE_DELTA;
+      $texte .= "Défini et vaut : ".FACTURE_NEPTUNE_DELTA;
     }
   else
     {
-      $texte .= "N'est pas définit";
+      $texte .= "N'est pas défini";
     }
   return $texte;
 }
@@ -54,7 +55,7 @@ Identique à pluton, avec un correcteur au moyen de la constante FACTURE_NEPTUNE_
 function jupiter_get_num_explain()
 {
   return '
-Système de numérotation mensuel sous la forme 20030712, qui correspond à la 12ème facture du mois de Juillet 2003';
+Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003';
 }
 
 function facture_pdf_create($db, $facid)
