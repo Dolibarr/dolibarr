@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  */
 
 /*!
-	    \file       htdocs/compta/dons/formulaire/fsfe.fr.php
-        \ingroup    don
-		\brief      Formulaire de don
-		\version    $Revision$
+			\file       htdocs/compta/dons/formulaire/fsfe.fr.php
+			\ingroup    don
+			\brief      Formulaire de don
+			\version    $Revision$
 */
 
 require("../../../main.inc.php");
@@ -166,10 +166,10 @@ $don->fetch($_GET["rowid"]);
 	  <tr>
 	    <td>
 	      <b>Nom :</b>
-<?PHP print "$don->prenom $don->nom $don->societe" ?><br>
-	      <b>Adresse :</b><?PHP print "$don->adresse" ?><br>
+<?php print "$don->prenom $don->nom $don->societe" ?><br>
+	      <b>Adresse :</b><?php print "$don->adresse" ?><br>
 	      <b>No</b> ______ <b>Rue</b> _________________________________<br>
-	      <b>Code postal</b> <?PHP print $don->cp; ?> <b>Commune</b> <?PHP print $don->ville; ?><br>
+	      <b>Code postal</b> <?php print $don->cp; ?> <b>Commune</b> <?php print $don->ville; ?><br>
 	    </td>
 	  </tr>
 	</table>
@@ -198,7 +198,7 @@ $don->fetch($_GET["rowid"]);
 	      Mode de versement :
 	      <table width="100%">
 		<tr align="center">
-		  <td valign="top"><?PHP
+		  <td valign="top"><?php
 if ($don->modepaiementid == 4)
 {
 print "( Numéraire )";
@@ -221,7 +221,7 @@ print "<strike>Chèque ou virement</strike>";
                     ?>
 		  </td>
 		  <td valign="top">
-<?PHP
+<?php
 if ($don->modepaiementid <> 4 && $don->modepaiementid <> 7 && $don->modepaiementid <> 2)
 {
 print "( Autres )";

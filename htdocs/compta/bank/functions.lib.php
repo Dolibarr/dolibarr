@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2000,2001 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * $Id$
