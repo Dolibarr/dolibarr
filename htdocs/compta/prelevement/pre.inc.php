@@ -30,6 +30,7 @@
 require("../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT."/bon-prelevement.class.php";
 
+$user->getrights("prelevement");
 
 function llxHeader($head = "", $title="", $help_url='')
 {
