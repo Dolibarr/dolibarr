@@ -78,31 +78,37 @@ if (!empty ($GLOBALS["REMOTE_USER"]))
 }  
 else
 {
-  require_once "Auth/Auth.php";
-
-  $params = array(
-		  "dsn" => $conf->db->getdsn(),
-		  "table" => "llx_user",
-		  "usernamecol" => "login",
-		  "passwordcol" => "pass",
-		  "cryptType" => "none",
-		  );
-  $aDol = new Auth("DB", $params, "loginFunction");
-  $aDol->start();
-  $result = $aDol->getAuth();
-  if ($result)
-    { 
-      $user->fetch($aDol->getUsername());
+  if (!empty ($dolibarr_auto_user))
+    {
+      $user->fetch($dolibarr_auto_user);
     }
   else
     {
-      /*
-       * Le début de la page est affiché par
-       * loginFunction
-       */
-      print '</div></div></body></html>';
-      die ;
+      require_once "Auth/Auth.php";
 
+      $params = array(
+		      "dsn" => $conf->db->getdsn(),
+		      "table" => "llx_user",
+		      "usernamecol" => "login",
+		      "passwordcol" => "pass",
+		      "cryptType" => "none",
+		      );
+      $aDol = new Auth("DB", $params, "loginFunction");
+      $aDol->start();
+      $result = $aDol->getAuth();
+      if ($result)
+	{ 
+	  $user->fetch($aDol->getUsername());
+	}
+      else
+	{
+	  /*
+	   * Le début de la page est affiché par
+	   * loginFunction
+	   */
+	  print '</div></div></body></html>';
+	  die ;	  
+	}
     }
 }
 
