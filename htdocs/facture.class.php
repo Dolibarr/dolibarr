@@ -507,10 +507,18 @@ class Facture
    */
   function set_payed($rowid)
     {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facture set paye=1 WHERE rowid = $rowid ;";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture set paye=1 WHERE rowid = ".$rowid ;
       $return = $this->db->query( $sql);
     }
-
+  /**
+   *    \brief     Tag la facture comme payée complètement
+   *    \param     rowid       id de la facture à modifier
+   */
+  function set_unpayed($rowid)
+    {
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture set paye=0 WHERE rowid = ".$rowid ;
+      $return = $this->db->query( $sql);
+    }
   /**
    *    \brief     Tag la facture comme paiement commencée
    *    \param     rowid       id de la facture à modifier
