@@ -400,8 +400,14 @@ else
 	  $author = new User($db);
 	  $author->id = $commande->user_author_id;
 	  $author->fetch();
+
+
+	  $head[0][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
+	  $head[0][1] = "Commande : $commande->ref";
+	  $h = 1;
+	  $a = 0;
 	  
-	  print_titre("Commande : ".$commande->ref);
+	  dolibarr_fiche_head($head, $a);	  
 
 	  /*
 	   * Confirmation de la suppression de la commande
@@ -664,6 +670,9 @@ else
 	 * Fin Ajout ligne
 	 *
 	 */
+
+	print '</div>';
+
 	if ($user->societe_id == 0 && $commande->statut < 3)
 	  {
 	    print '<p><div class="tabsAction">';
@@ -800,18 +809,6 @@ else
 	           	
 	    print "</table>\n";
 	    print '</td><td valign="top" width="50%">';
-	    print_titre("Actions");
-	    /*
-	     * Liste des actions
-	     *
-	     */
-
-	    
-	    /*
-	     *
-	     *
-	     */
-
 	  }
 	/*
 	 *
