@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
  *
  */
 
-/*!
-	    \file       htdocs/contrat/contrat.class.php
+/**	    \file       htdocs/contrat/contrat.class.php
         \ingroup    contrat
 		\brief      Page liste des contrats
 		\version    $Revision$
@@ -61,7 +60,7 @@ $offset = $limit * $page ;
 
 if ($sortfield == "")
 {
-  $sortfield="c.tms";
+  $sortfield="c.rowid";
 }
 
 if ($sortorder == "")
@@ -86,13 +85,13 @@ if ( $db->query($sql) )
   $i = 0;
 
 
-  print_barre_liste("Liste des contrats", $page, "index.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+  print_barre_liste("Liste des contrats", $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
   print '<table class="noborder" width="100%">';
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"index.php", "c.rowid","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"index.php", "s.nom","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","","",$sortfield);
   print "</tr>\n";
     
   $now=mktime();
