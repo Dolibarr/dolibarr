@@ -20,13 +20,15 @@
  *
  */
 
-class FactureLigne {
+class FactureLigne
+{
   Function FactureLigne()
     {
     }
 }
 
-class Facture {
+class Facture
+{
   var $id;
   var $db;
   var $socidp;
@@ -281,12 +283,15 @@ class Facture {
    *
    *
    */
-  Function addline($facid, $desc, $pu, $qty, $txtva)
+  Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL')
     {
-      $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty,tva_taux) VALUES ($facid, '$desc', $pu, $qty, $txtva) ;";
-      $result = $this->db->query( $sql);
+      $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty,tva_taux, fk_product)";
+      $sql .= " VALUES ($facid, '$desc', $pu, $qty, $txtva, $fk_product) ;";
 
-      $this->updateprice($facid);
+      if ( $this->db->query( $sql) )
+	{
+	  $this->updateprice($facid);
+	}
     }
   /*
    *
