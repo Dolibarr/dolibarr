@@ -29,6 +29,7 @@ llxHeader();
 include_once "../../societe.class.php";
 include_once "../../contact.class.php";
 include_once "../../facture.class.php";
+include_once "../../paiement.class.php";
 include_once "../../contrat/contrat.class.php";
 
 $sql = "SELECT rowid FROM llx_product"; $productsid = array();
@@ -55,7 +56,11 @@ if ($action == 'facture')
       $facture = new Facture($db, $societesid[rand(1, sizeof($societesid)-1)]);
 
       $facture->number         = time() . $f;
-      $facture->date           = time();
+      $datef = time()*2;
+      while($datef > time())
+	$datef = mktime(12,0,0,rand(1,12),rand(1,31),rand(2002,2003));
+
+      $facture->date           = $datef;
       $facture->note           = '';
       $facture->cond_reglement = 1;
       $facture->remise_percent = rand(0,50);
@@ -65,14 +70,13 @@ if ($action == 'facture')
 	{
 	  $pidrand = rand(1, sizeof($productsid)-1);
 	  $facture->add_product($productsid[rand(1, sizeof($productsid)-1)],rand(1,11));
-	  print "Ajout produit ".$productsid[$pidrand]."<br>";
-
+	  print "Ajout prod ".$productsid[$pidrand]." ";
 	}     
 
       $id = $facture->create($user);
       if ($id)
 	{
-	  print "- facture $id ok";
+	  print " - <b>facture $id ok";
 	  $test = rand(0,1);
 	  $test = 1;
 	  if ($test > 0)
@@ -80,7 +84,20 @@ if ($action == 'facture')
 	      $facture->set_valid($id, $user);
 	      print " - validée";
 	    }
-	  print "<br>";
+
+	  if($datef < (time() - (24*3600*30)))
+	    {
+	      $paiement = new Paiement($db);
+	      $paiement->facid = $id;
+	      $paiement->amount = $facture->total_ttc;
+	      $paiement->paiementid = 1;
+	      $paiement->datepaye = "now()";
+	      $paiement->create($user);
+	      $facture->set_payed($id);
+	      print " - payée";
+	    }
+
+	  print "</b><br>";
 	}
 
     }
