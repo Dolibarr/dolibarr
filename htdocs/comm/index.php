@@ -273,11 +273,6 @@ else
   print $db->error();
 }
 
-//Speed: Si le module n'est pas actif on ne fait pas les select en rapport.
-//New: Ajout d'un résumé sur page accueil espace commercial (nbre de client et nbre de prospect).
-//Fix: Les zone en rapport avec les commandes et propales s'affichent ou nons sur l'espace commercial si le module commande ou propale est actif ou non.
-//New: Ajout des derniers contrats sur page accueil commercial
-
 /*
  * Derniers contrat
  *
