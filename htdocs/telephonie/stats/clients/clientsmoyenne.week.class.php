@@ -160,7 +160,10 @@ class GraphClientsMoyenneWeek extends GraphLine {
 	array_shift($moys);
       }
 
-    $this->GraphDraw($this->file, $moys, $labels_new, $moys);
+    if (sizeof($moys) > 1)
+      {
+	$this->GraphDraw($this->file, $moys, $labels_new);
+      }
   }
 }   
 ?>
