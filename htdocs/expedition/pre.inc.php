@@ -45,6 +45,8 @@ function llxHeader($head = "", $title="", $help_url='', $form_search='')
 
   $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
 
+  $menu->add(DOL_URL_ROOT."/expedition/stats/", "Statistiques");
+
   left_menu($menu->liste, $help_url, $form_search);
 }
 ?>
