@@ -129,5 +129,23 @@ class ActionComm
    *
    *
    */
+  Function update()
+    {
+      
+      $sql = "UPDATE llx_actioncomm ";
+      $sql .= " SET percent=$this->percent";
+
+      if ($this->percent == 100)
+	{
+	  $sql .= ", datea = now()";
+	}
+
+      $sql .= " WHERE id=$this->id;";
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;
+	}
+    }
 }    
 ?>
