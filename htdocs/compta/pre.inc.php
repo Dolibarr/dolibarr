@@ -54,7 +54,9 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
   $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php","Paiements");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
+  if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR) {
+    $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
+  }
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/","Statistiques");
 
   // Les dépenses
