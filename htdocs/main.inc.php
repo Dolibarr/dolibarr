@@ -416,7 +416,7 @@ $bc[1]="class=\"pair\"";
  *
  */
 
-function top_menu($head, $title="") 
+function top_menu($head, $title="", $target="") 
 {
   global $user, $conf, $langs;
 
@@ -481,12 +481,12 @@ function top_menu($head, $title="")
   print '<table class="topbarre" width="100%">';
   print "<tr>";
 
-  // Sommet menu de gauche
+  // Sommet menu de gauche, lien accueil
   global $PHP_SELF;
   $class="";
   if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "accueil") { $class="menusel"; }
   elseif (ereg('^\/[^\\\/]+$',$PHP_SELF) || ereg('^\/user\/',$PHP_SELF) || ereg('^\/admin\/',$PHP_SELF)) { $class="menusel"; }
-  print '<td width="200" class="menu"><table cellpadding=0 cellspacing=0 width="100%"><tr><td class="'.$class.'" align=center><a class="'.$class.'" href="'.DOL_URL_ROOT.'/index.php">Accueil</a></td></tr></table></td>';
+  print '<td width="200" class="menu"><table cellpadding=0 cellspacing=0 width="100%"><tr><td class="'.$class.'" align=center><a class="'.$class.'" href="'.DOL_URL_ROOT.'/index.php"'.($target?" target=$target":"").'>Accueil</a></td></tr></table></td>';
 
   // Sommet géré par gestionnaire de menu du haut
   print '<td class="menu">';
