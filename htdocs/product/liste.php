@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ if ($result)
     {
       llxHeader("","","Recherche Produit/Service");
 
-      print_barre_liste("Recherche d'un produit ou service", $page, $PHP_SELF, "&sref=$sref&snom=$snom&envente=$envente", $sortfield, $sortorder,'',$num);
+      print_barre_liste("Recherche d'un produit ou service", $page, $PHP_SELF, "&sref=$sref&snom=$snom&amp;envente=$envente", $sortfield, $sortorder,'',$num);
     }
   else
     {
@@ -129,13 +129,13 @@ if ($result)
 	  $envente=1;
 	}
        
-      print_barre_liste($texte, $page, $PHP_SELF, "&sref=$sref&snom=$snom&fourn_id=$fourn_id", $sortfield, $sortorder,'',$num);
+      print_barre_liste($texte, $page, $PHP_SELF, "&sref=$sref&snom=$snom&fourn_id=$fourn_id&amp;type=$type", $sortfield, $sortorder,'',$num);
     }
 
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf",$PHP_SELF, "p.ref","&envente=$envente&type=$type&fourn_id=$fourn_id");
+  print_liste_field_titre("Réf",$PHP_SELF, "p.ref","&amp;envente=$envente&amp;type=$type&fourn_id=$fourn_id");
   print "</td><td>";
   print_liste_field_titre("Libellé",$PHP_SELF, "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id");
   print "</td><TD align=\"right\">";
