@@ -15,13 +15,18 @@
       
       <tr>
 	<td valign="top">
-	  <a href="/">Home</a><br />
-	  <a href="/tarif.fr.html">Tarifs</a><br />
-	  <a href="/lolix.fr.html">Lolix</a><br />
-	  <a href="/projets/">Projets</a><br />
-	  <a href="/other.fr.html">Autres</a><br />
-	  <a href="/standard.fr.html">Standards</a><br />
-	  <a href="/contact.fr.html">Contact</a>
+	  <a href="http://eucd.info/index.fr.php">Accueil</a><br />
+	  <a href="http://eucd.info/revue.fr.php">Presse</a><br />
+	  <a href="http://eucd.info/donations.fr.php">Aider</a><br />
+	  <a href="http://eucd.info/transparence.fr.php">Transparence</a><br />
+
+	  <br/>
+	  <a href="http://eucd.info/eucd.fr.php">Analyse</a><br />
+	  <a href="http://wiki.ael.be/index.php/EUCD-Status">Situation</a><br />
+	  <a href="http://mail.gnu.org/mailman/listinfo/fsfe-france">Discuter</a><br />
+	  <a href="http://eucd.info/who.fr.php">Qui</a><br />
+	  <br />
+	  <br />
 	</td>
 	
 	<td>	
@@ -29,7 +34,7 @@
 	</td>
       </tr>
     </table>
-
+    <address><a href="mailto:contact@eucd.info">Contact:</a> EUCD.INFO c/o FSF France 8, rue de valois, 75001 Paris - Tel: 01 42 76 05 49 - Mail: <a href="mailto:contact@eucd.info">contact@eucd.info</a> - Web: <a href="http://eucd.info/">http://eucd.info/</a></address>
   </xsl:template> 
 
   <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table[@id='formulaire']">
