@@ -95,7 +95,8 @@ my $copyalreadydone=0;
 my $batch=0;
 
 print "Makepack version $VERSION\n";
-print "Building package for $PROJECT $MAJOR.$MINOR.$BUILD\n";
+print "Building package name: $PROJECT\n";
+print "Building package version: $MAJOR.$MINOR.$BUILD\n";
 
 for (0..@ARGV-1) {
 	if ($ARGV[$_] =~ /^-*target=(\w+)/i)    { $target=$1; $batch=1; }
@@ -253,7 +254,15 @@ if ($nboftargetok) {
             $ret=`$cmd`;
 
     		print "Copy $SOURCE/build/rpm/${BUILDFIC} to $BUILDROOT\n";
-    		$ret=`cp -p "$SOURCE/build/rpm/${BUILDFIC}" "$BUILDROOT"`;
+#    		$ret=`cp -p "$SOURCE/build/rpm/${BUILDFIC}" "$BUILDROOT"`;
+            open (SPECFROM,"<$SOURCE/build/rpm/${BUILDFIC}") || die "Error";
+            open (SPECTO,">$BUILDROOT/$BUILDFIC") || die "Error";
+            while (<SPECFROM>) {
+                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$BUILD/;
+                print SPECTO $_;
+            }
+            close SPECFROM;
+            close SPECTO;
     
     		print "Launch RPM build (rpm --clean -ba $BUILDROOT/${BUILDFIC})\n";
     		$ret=`rpm --clean -ba $BUILDROOT/${BUILDFIC}`;

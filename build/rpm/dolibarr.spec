@@ -1,5 +1,5 @@
 %define name dolibarr
-%define version	2.0.0
+%define version	__VERSION__
 # For Mandrake
 #%define release 1mdk
 # For all other distrib
