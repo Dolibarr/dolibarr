@@ -1,6 +1,7 @@
 <!DOCTYPE debiandoc public "-//DebianDoc//DTD DebianDoc//EN"
 [
     <!entity ch-main	    system "main.sgml">
+    <!entity ch-config	    system "config.sgml">
     <!entity ch-modules	    system "modules.sgml">
     <!entity ch-constantes  system "constantes.sgml">
     <!entity ch-permissions system "permissions.sgml">
@@ -25,6 +26,7 @@
 
     &ch-main;
     &ch-modules;
+    &ch-config;
     &ch-permissions;
     &ch-constantes;
     &ch-propale;

@@ -85,7 +85,6 @@ llxHeader();
 
 if ($account)
 {
-
   if ($vline)
     {
       $viewline = $vline;
@@ -104,7 +103,7 @@ if ($account)
    */  
   print '<form method="post" action="'."$PHP_SELF?vline=$vline&account=$account".'">';
   print '<input type="hidden" name="action" value="search">';
-  print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print "<TR>";
   print '<td>&nbsp;</td>';
   print '<td>&nbsp;</td><td><input type="text" name="req_desc" size="24"></TD>';
@@ -112,7 +111,7 @@ if ($account)
   print '<td align="right"><input type="text" name="req_credit" size="6"></TD>';
   print '<td>&nbsp;</td>';
   print '<td align="right"><input type="submit" value="Chercher"></td>';
-  print "</TR>\n";
+  print "</tr>\n";
   print "</form>";
   /*
    *
@@ -120,13 +119,15 @@ if ($account)
    */
   print "<form method=\"post\" action=\"$PHP_SELF?vline=$vline&account=$account\">";
   print '<input type="hidden" name="action" value="add">';
-  print "<TR class=\"liste_titre\">";
+  print "<tr class=\"liste_titre\">";
   print "<td>Date</td><td>Type</td><td>Description</TD>";
   print "<td align=\"right\">Débit</TD>";
   print "<td align=\"right\">Crédit</TD>";
   print "<td align=\"right\">Solde</TD>";
   print "<td align=\"right\">Relevé</td>";
   print "</TR>\n";
+
+  $limit = 20;
   
   $sql = "SELECT count(*) FROM llx_bank";
   if ($account) { $sql .= " WHERE fk_account=$account"; }
@@ -135,16 +136,20 @@ if ($account)
       $nbline = $db->result (0, 0);
       $db->free();
     
-      if ($nbline > $viewline )
+      if ($nbline > $limit )
 	{
-	  $limit = $nbline - $viewline ;
+	  $offset = $nbline - $limit;
 	}
       else
 	{
-	  $limit = $viewline;
+	  $offset = 0;
 	}
+
+
     }
-  
+
+  print "<tr><td>".$nbline;
+
   $sql = "SELECT rowid, label FROM llx_bank_categ;";
   $result = $db->query($sql);
   if ($result)
@@ -166,6 +171,12 @@ if ($account)
    * create temporary table solde type=heap select amount from llx_bank limit 100 ;
    * select sum(amount) from solde ;
    */
+
+  $pageprev = $page - 1;
+  $pagenext = $page + 1;
+
+  $sql = "SELECT sum (b.amount) FROM llx_bank as b ";
+  
 
   $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
   $sql .= " FROM llx_bank as b ";
@@ -197,6 +208,7 @@ if ($account)
 	}
     }
   $sql .= " ORDER BY b.dateo ASC";
+  $sql .= $db->plimit($limit, $offset);
 
   $result = $db->query($sql);
   if ($result)
@@ -212,92 +224,83 @@ if ($account)
 	  $objp = $db->fetch_object( $i);
 	  $total = $total + $objp->amount;
 	  $time = time();
-	  if ($i > ($nbline - $viewline))
+	  $var = !$var;
+	  if ($objp->do > $time && !$sep)
 	    {
-	      $var=!$var;
-
-	      if ($objp->do > $time && !$sep)
-		{
-		  $sep = 1 ;
-		  print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
-		  print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
-		  print "<td>&nbsp;</td>";
-		  print '</tr><tr>';
-		  print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
-		  print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
-		  print '<td>';
-		  print '<select name="operation">';
-		  print '<option value="CB">CB';
-		  print '<option value="CHQ">CHQ';
-		  print '<option value="DEP">DEP';
-		  print '<option value="TIP">TIP';
-		  print '<option value="PRE">PRE';
-		  print '<option value="VIR">VIR';
-		  print '</select></td>';
-		  print '<td><input name="num_chq" type="text" size="6">&nbsp;-';
-		  print "<input name=\"label\" type=\"text\" size=40></td>";
-		  print "<td><input name=\"debit\" type=\"text\" size=8></td>";
-		  print "<td><input name=\"credit\" type=\"text\" size=8></td>";
-		  print "<td colspan=\"3\" align=\"center\"><select name=\"cat1\">$options</select></td>";
-		  print "</tr><tr><td colspan=\"3\"><small>YYYYMMDD</small></td><td>0000.00</td>";
-		  print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
-		}
+	      $sep = 1 ;
+	      print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
+	      print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
+	      print "<td>&nbsp;</td>";
+	      print '</tr><tr>';
+	      print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
+	      print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
+	      print '<td>';
+	      print '<select name="operation">';
+	      print '<option value="CB">CB';
+	      print '<option value="CHQ">CHQ';
+	      print '<option value="DEP">DEP';
+	      print '<option value="TIP">TIP';
+	      print '<option value="PRE">PRE';
+	      print '<option value="VIR">VIR';
+	      print '</select></td>';
+	      print '<td><input name="num_chq" type="text" size="6">&nbsp;-';
+	      print "<input name=\"label\" type=\"text\" size=40></td>";
+	      print "<td><input name=\"debit\" type=\"text\" size=8></td>";
+	      print "<td><input name=\"credit\" type=\"text\" size=8></td>";
+	      print "<td colspan=\"3\" align=\"center\"><select name=\"cat1\">$options</select></td>";
+	      print "</tr><tr><td colspan=\"3\"><small>YYYYMMDD</small></td><td>0000.00</td>";
+	      print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
+	    }
 		  
-	      print "<tr $bc[$var]>";
-	      print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
-	      print "<td>".$objp->fk_type."</TD>\n";
-		  
-	      if ($objp->num_chq)
-		{
-		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&account=$account\">CHQ $objp->num_chq - $objp->label</a></td>";
-		}
-	      else
-		{
-		  //Xavier DUTOIT : Ajout d'un lien pour modifier la ligne
-		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&account=$account\">$objp->label</a>&nbsp;</td>";
-					
-//		print "<td>$objp->label&nbsp;</td>";
-		}
+	  print "<tr $bc[$var]>";
+	  print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
+	  print "<td>".$objp->fk_type."</TD>\n";
+	  
+	  if ($objp->num_chq)
+	    {
+	      print "<td><a href=\"ligne.php?rowid=$objp->rowid&account=$account\">CHQ $objp->num_chq - $objp->label</a></td>";
+	    }
+	  else
+	    {
+	      print "<td><a href=\"ligne.php?rowid=$objp->rowid&account=$account\">$objp->label</a>&nbsp;</td>";
+	    }
 	      
-	      if ($objp->amount < 0)
-		{
-		  print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
-		}
-	      else
-		{
-		  print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
-		}
-	      
-	      if ($action !='search')
-		{
-		  if ($total > 0)
-		    {
-		      print '<td align="right">'.price($total)."</TD>\n";
-		    }
-		  else
-		    {
-		      print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
-		    }
-		}
-	      else
-		{
-		  print '<td align="right">-</TD>';
-		}
-	      
-	      if ($objp->rappro)
-		{
-		  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&account=$account\">$objp->num_releve</a></td>";
-		}
-	      else
-		{
-		  print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid&account=$account\">[Del]</a></td>";
-		}
-	      
-	      print "</tr>";
-	      
+	  if ($objp->amount < 0)
+	    {
+	      print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
+	    }
+	  else
+	    {
+	      print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
 	    }
 	  
-	  $i++;
+	  if ($action !='search')
+	    {
+	      if ($total > 0)
+		{
+		  print '<td align="right">'.price($total)."</TD>\n";
+		}
+	      else
+		{
+		  print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
+		}
+	    }
+	  else
+	    {
+	      print '<td align="right">-</TD>';
+	    }
+	  
+	  if ($objp->rappro)
+	    {
+	      print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&account=$account\">$objp->num_releve</a></td>";
+	    }
+	  else
+	    {
+	      print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid&account=$account\">[Del]</a></td>";
+	    }	  
+	  print "</tr>";
+
+	  $i++;	      
 	}
       $db->free();
     }
