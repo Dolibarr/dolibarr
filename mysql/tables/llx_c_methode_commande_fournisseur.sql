@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- $Id$
@@ -25,7 +25,9 @@ create table llx_c_methode_commande_fournisseur
 (
   rowid    integer AUTO_INCREMENT PRIMARY KEY,
   code     varchar(30),
-  libelle  varchar(30),
-  active   tinyint default 1  NOT NULL
+  libelle  varchar(60),
+  active   tinyint default 1  NOT NULL,
+
+  UNIQUE INDEX(code)
 )type=innodb;
 
