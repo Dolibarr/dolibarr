@@ -21,7 +21,19 @@
  * $Source$
  *
  */
+
+
+/*!
+	    \file       htdocs/contact/index.php
+        \ingroup    societe
+		\brief      Page liste des contacts
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("companies");
+
 
 /*
  * Sécurité accés client
@@ -138,23 +150,23 @@ if ($result)
     }
   print '<p><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>';
-  print_liste_field_titre("Nom","index.php","lower(p.name)", $begin);
+  print_liste_field_titre($langs->trans("Lastname"),"index.php","lower(p.name)", $begin);
   print "</td><td>";
-  print_liste_field_titre("Prénom","index.php","lower(p.firstname)", $begin);
+  print_liste_field_titre($langs->trans("Firstname"),"index.php","lower(p.firstname)", $begin);
   print "</td><td>";
-  print_liste_field_titre("Société","index.php","lower(s.nom)", $begin);
+  print_liste_field_titre($langs->trans("Company"),"index.php","lower(s.nom)", $begin);
   print '</td>';
 
-  print '<td>Téléphone</td>';
+  print '<td>'.$langs->trans("Phone").'</td>';
 
   if ($_GET["view"] == 'phone')
     {
-      print '<td>Portable</td>';
-      print '<td>Fax</td>';
+      print '<td>'.$langs->trans("Mobile").'</td>';
+      print '<td>'.$langs->trans("Fax").'</td>';
     }
   else
     {
-      print '<td>email</td>';
+      print '<td>'.$langs->trans("EMail").'</td>';
     }
 
   print "</tr>\n";
@@ -191,11 +203,17 @@ if ($result)
 	}
       else
 	{
-	  print '<td><a href="mailto:'.$obj->email.'">'.$obj->email.'</a>&nbsp;';
-	  if (!valid_email($obj->email))
-	    {
-	      print "Email Invalide !";
-	    }
+	  print '<td>';
+        if (! $obj->email) {
+            print '&nbsp;';
+        }
+        elseif (! ValidEmail($obj->email))
+        {
+            print "Email Invalide !";
+        }
+        else {
+            print '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>';
+        }
 	  print '</td>';
 	}
 
