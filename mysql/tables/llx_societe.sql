@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2000-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2000-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- $Id$
 -- $Source$
@@ -18,11 +18,9 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- SGBD : Mysql 3.23
---
 -- ========================================================================
 
-create table societe
+create table llx_societe
 (
   idp            integer AUTO_INCREMENT PRIMARY KEY,
   id             varchar(32),                         -- private id

@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- $Id$
 -- $Source$
@@ -20,7 +20,7 @@
 --
 -- ============================================================================
 
-create table socpeople
+create table llx_socpeople
 (
   idp         integer AUTO_INCREMENT PRIMARY KEY,
   datec       datetime,

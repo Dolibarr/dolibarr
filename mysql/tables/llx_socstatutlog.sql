@@ -1,7 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
--- SGBD : PostgreSQL 6.5.3
 -- $Id$
 -- $Source$
 --
@@ -21,7 +20,7 @@
 --
 -- ========================================================================
 
-create table socstatutlog
+create table llx_socstatutlog
 (
   id          integer AUTO_INCREMENT PRIMARY KEY,
   datel       datetime,

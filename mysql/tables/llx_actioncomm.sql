@@ -22,7 +22,7 @@
 --
 -- ========================================================================
 
-create table actioncomm
+create table llx_actioncomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
   datea          datetime,           -- action date
