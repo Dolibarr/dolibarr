@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,8 @@
 */
  
 require("./pre.inc.php");
-require("../contact.class.php");
+
+$user->getrights();
 
 $langs->load("companies");
 $langs->load("customers");
@@ -57,7 +58,7 @@ if($_GET["socid"] && $_GET["select"])
     }
   else
     {
-      Header("Location: lien.php?socid=".$soc->id);
+      Header("Location: lien.php?socid=".$_GET["socid"]);
     }
 }
 
@@ -125,7 +126,7 @@ if($_GET["socid"])
       $socm = new Societe($db);
       $socm->fetch($soc->parent);
       
-      print '<tr><td>Maison mère</td><td colspan="3">'.$socm->nom_url.'</td></tr>';
+      print '<tr><td>Maison mère</td><td colspan="3">'.$socm->nom_url.' ('.$socm->code_client.')<br />'.$socm->ville.'</td></tr>';
     }
 
   print '</table>';
@@ -140,112 +141,115 @@ if($_GET["socid"])
     }
   else
     {
-      $page=$_GET["page"];
-  
-      if ($page == -1) { $page = 0 ; }
-      
-      $offset = $conf->liste_limit * $page ;
-      $pageprev = $page - 1;
-      $pagenext = $page + 1;
-      
-      /*
-       * Liste
-       *
-       */
-      
-      $title=$langs->trans("CompanyList");
-  
-      $sql = "SELECT s.idp, s.nom, s.ville, s.prefix_comm, s.client, s.fournisseur, te.libelle";
-      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-      $sql .= " , ".MAIN_DB_PREFIX."c_typent as te";
-      $sql .= "  WHERE s.fk_typent = te.id";
-      
-      if (strlen(trim($_GET["search_nom"])))
+      if ($user->rights->societe->creer)
 	{
-	  $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
-	}
-      
-      $sql .= " ORDER BY s.nom ASC " . $db->plimit($conf->liste_limit+1, $offset);
-      
-      $result = $db->query($sql);
-      if ($result)
-	{
-	  $num = $db->num_rows();
-	  $i = 0;
+
+	  $page=$_GET["page"];
 	  
-	  $params = "&amp;socid=".$_GET["socid"];
+	  if ($page == -1) { $page = 0 ; }
 	  
-	  print_barre_liste($title, $page, "lien.php",$params,$sortfield,$sortorder,'',$num);
+	  $offset = $conf->liste_limit * $page ;
+	  $pageprev = $page - 1;
+	  $pagenext = $page + 1;
 	  
-	  // Lignes des titres
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre">';
-	  print '<td>'.$langs->trans("Company").'</td>';
-	  print '<td>'.$langs->trans("Town").'</td>';
-	  print '<td>Type<td>';
-	  print '<td colspan="2" align="center">&nbsp;</td>';
-	  print "</tr>\n";
-      
-	  // Lignes des champs de filtre
-	  print '<form action="lien.php" method="GET" >';
-	  print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
-	  print '<tr class="liste_titre">';
-	  print '<td valign="right">';
-	  print '<input type="text" name="search_nom" value="'.stripslashes($search_nom).'">';
-	  print '</td><td colspan="5" align="center">';
-	  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
-	  print '</td>';
-	  print "</tr>\n";
-	  print '</form>';
+	  /*
+	   * Liste
+	   *
+	   */
 	  
-	  $var=True;
+	  $title=$langs->trans("CompanyList");
 	  
-	  while ($i < min($num,$conf->liste_limit))
+	  $sql = "SELECT s.idp, s.nom, s.ville, s.prefix_comm, s.client, s.fournisseur, te.libelle";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+	  $sql .= " , ".MAIN_DB_PREFIX."c_typent as te";
+	  $sql .= "  WHERE s.fk_typent = te.id";
+	  
+	  if (strlen(trim($_GET["search_nom"])))
 	    {
-	      $obj = $db->fetch_object();    
-	      $var=!$var;    
-	      print "<tr $bc[$var]><td>";
-	      print stripslashes($obj->nom)."</td>\n";
-	      print "<td>".$obj->ville."&nbsp;</td>\n";
-	      print "<td>".$obj->libelle."&nbsp;</td>\n";
-	      print '<td align="center">';
-	      if ($obj->client==1)
-		{
-		  print $langs->trans("Customer")."\n";
-		}
-	      elseif ($obj->client==2)
-		{
-		  print $langs->trans("Prospect")."\n";
-		}
-	      else
-		{
-		  print "&nbsp;";
-		}
-	      print "</td><td align=\"center\">";
-	      if ($obj->fournisseur)
-		{
-		  print $langs->trans("Supplier");
-		}
-	      else
-		{
-		  print "&nbsp;";
-		}
-	      
-	      print '</td><td><a href="lien.php?socid='.$_GET["socid"].'&amp;select='.$obj->idp.'">Sélectionner</a></td>';
-	      
-	      print '</tr>'."\n";
-	      $i++;
+	      $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
 	    }
 	  
-	  print "</table>";
-	  $db->free();
-	}
-      else
-	{
-	  dolibarr_print_error($db);
-	}
-    }
-  
+	  $sql .= " ORDER BY s.nom ASC " . $db->plimit($conf->liste_limit+1, $offset);
+	  
+	  $result = $db->query($sql);
+	  if ($result)
+	    {
+	      $num = $db->num_rows();
+	      $i = 0;
+	      
+	      $params = "&amp;socid=".$_GET["socid"];
+	      
+	      print_barre_liste($title, $page, "lien.php",$params,$sortfield,$sortorder,'',$num);
+	      
+	      // Lignes des titres
+	      print '<table class="noborder" width="100%">';
+	      print '<tr class="liste_titre">';
+	      print '<td>'.$langs->trans("Company").'</td>';
+	      print '<td>'.$langs->trans("Town").'</td>';
+	      print '<td>Type<td>';
+	      print '<td colspan="2" align="center">&nbsp;</td>';
+	      print "</tr>\n";
+      
+	      // Lignes des champs de filtre
+	      print '<form action="lien.php" method="GET" >';
+	      print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
+	      print '<tr class="liste_titre">';
+	      print '<td valign="right">';
+	      print '<input type="text" name="search_nom" value="'.stripslashes($search_nom).'">';
+	      print '</td><td colspan="5" align="center">';
+	      print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
+	      print '</td>';
+	      print "</tr>\n";
+	      print '</form>';
+	      
+	      $var=True;
+	      
+	      while ($i < min($num,$conf->liste_limit))
+		{
+		  $obj = $db->fetch_object();    
+		  $var=!$var;    
+		  print "<tr $bc[$var]><td>";
+		  print stripslashes($obj->nom)."</td>\n";
+		  print "<td>".$obj->ville."&nbsp;</td>\n";
+		  print "<td>".$obj->libelle."&nbsp;</td>\n";
+		  print '<td align="center">';
+		  if ($obj->client==1)
+		    {
+		      print $langs->trans("Customer")."\n";
+		    }
+		  elseif ($obj->client==2)
+		    {
+		      print $langs->trans("Prospect")."\n";
+		    }
+		  else
+		    {
+		      print "&nbsp;";
+		    }
+		  print "</td><td align=\"center\">";
+		  if ($obj->fournisseur)
+		    {
+		      print $langs->trans("Supplier");
+		    }
+		  else
+		    {
+		      print "&nbsp;";
+		    }
+		  
+		  print '</td><td><a href="lien.php?socid='.$_GET["socid"].'&amp;select='.$obj->idp.'">Sélectionner</a></td>';
+		  
+		  print '</tr>'."\n";
+		  $i++;
+		}
+	      
+	      print "</table>";
+	      $db->free();
+	    }
+	  else
+	    {
+	      dolibarr_print_error($db);
+	    }
+	}            
+    }  
 }
 
 
