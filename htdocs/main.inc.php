@@ -682,9 +682,9 @@ function llxFooter($foot='')
 {
   global $dolibarr_auto_user;
 
-  print '</div><!-- div class="vmenuplusifche" -->'."\n";
+  print '</div><!-- div class="fiche" -->'."\n";
 
-  print "\n".'</div><!-- div class="fiche" -->'."\n";
+  print "\n".'</div><!-- div class="vmenuplusfiche" -->'."\n";
   print '</div><!-- div class="body" -->'."\n";
   print "</body>\n</html>\n";
 }
