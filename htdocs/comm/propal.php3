@@ -543,8 +543,8 @@ if ($propalid) {
 	   */
 	  if ($action == 'presend')
 	    {
-	      $replytoname = $conf->propal->replytoname;
-	      $replytomail = $conf->propal->replytomail;
+	      $replytoname = $user->fullname;
+	      $replytomail = $user->email;
 	      
 	      $from_name = $user->fullname ; //$conf->propal->fromtoname;
 	      $from_mail = $user->email; //conf->propal->fromtomail;
