@@ -18,9 +18,9 @@
 # $Id$
 # $Source$
 #
-MYSQL=mysql
-BASE=dolibarr
-OPTIONS=-f
+MYSQL=mysql 
+BASE=dolibarr2
+OPTIONS=-udolibarr2u -pazazaz
 
 all:	show
 
@@ -68,7 +68,7 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_projet.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_propal.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_propaldet.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < llx_service.sql
+#	$(MYSQL) $(OPTIONS) $(BASE) < llx_service.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_soc_recontact.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_sqltables.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_tva.sql
@@ -79,6 +79,17 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_societe.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_socpeople.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_socstatutlog.sql
+#ajouts eric.seigne@ryxeo.com 2004.01.07
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_user_rights.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_action_def.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_cond_reglement.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_contrat.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_facture_fourn_det.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_facture_tva_sum.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_paiementfourn.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_product_price.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_propal_model_pdf.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_rights_def.sql
 
 show:
 	$(MYSQL) $(OPTIONS) $(BASE) -e 'show tables'
