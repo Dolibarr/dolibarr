@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_clients extends ModeleBoxes {
 
     var $boxcode="lastcustomers";
-    var $boximg="company";
+    var $boximg="object_company";
     var $boxlabel;
     var $depends = array("societe");
 
@@ -60,7 +60,7 @@ class box_clients extends ModeleBoxes {
         global $user, $langs, $db;
         $langs->load("boxes");
 
-        $this->info_box_head = array('text' => "Les $max derniers clients enregistrés");
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomers",$max));
 
         $sql = "SELECT s.nom,s.idp";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.client = 1";
@@ -84,7 +84,7 @@ class box_clients extends ModeleBoxes {
                 $objp = $db->fetch_object($result);
 
                 $this->info_box_contents[$i][0] = array('align' => 'left',
-                'logo' => 'object_company',
+                'logo' => $this->boximg,
                 'text' => stripslashes($objp->nom),
                 'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
 

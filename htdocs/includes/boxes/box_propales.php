@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_propales extends ModeleBoxes {
 
     var $boxcode="lastpropals";
-    var $boximg="propal";
+    var $boximg="object_propal";
     var $boxlabel;
     var $depends = array("propale");
 
@@ -63,7 +63,7 @@ class box_propales extends ModeleBoxes {
         {
             $langs->load("boxes");
 
-            $this->info_box_head = array('text' => "Les $max dernières propositions");
+            $this->info_box_head = array('text' => $langs->trans("BoxTitleLastPropals",$max));
 
             $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.datep")." as dp,p.rowid";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p WHERE p.fk_soc = s.idp";
@@ -87,7 +87,7 @@ class box_propales extends ModeleBoxes {
                     $objp = $db->fetch_object($result);
 
                     $this->info_box_contents[$i][0] = array('align' => 'left',
-                    'logo' => 'object_propal',
+                    'logo' => $this->boximg,
                     'text' => $objp->ref,
                     'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
 

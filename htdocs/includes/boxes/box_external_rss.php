@@ -36,7 +36,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_external_rss extends ModeleBoxes {
 
     var $boxcode="lastrssinfos";
-    var $boximg="rss";
+    var $boximg="object_rss";
     var $boxlabel;
     var $depends = array();
 
@@ -64,7 +64,7 @@ class box_external_rss extends ModeleBoxes {
         $langs->load("boxes");
 
         for($site = 0; $site < 1; $site++) {
-            $this->info_box_head = array('text' => "Les $max dernières infos du site " . @constant("EXTERNAL_RSS_TITLE_". $site));
+            $this->info_box_head = array('text' => $langs->trans("BoxTitleLastRssInfos",$max, @constant("EXTERNAL_RSS_TITLE_". $site)));
     
             $rss = fetch_rss( @constant("EXTERNAL_RSS_URLRSS_" . $site) );
             for($i = 0; $i < $max ; $i++){
@@ -75,7 +75,7 @@ class box_external_rss extends ModeleBoxes {
                 $title=ereg_replace("^\s+","",$title);                                  // Supprime espaces de début
                 $this->info_box_contents["$href"]="$title";
                 $this->info_box_contents[$i][0] = array('align' => 'left',
-                'logo' => 'object_rss',
+                'logo' => $this->boximg,
                 'text' => $title,
                 'url' => $href);
             }

@@ -34,7 +34,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_factures_fourn extends ModeleBoxes {
 
     var $boxcode="lastsupplierbills";
-    var $boximg="bill";
+    var $boximg="object_bill";
     var $boxlabel;
     var $depends = array("facture","fournisseur");
 
@@ -61,7 +61,7 @@ class box_factures_fourn extends ModeleBoxes {
         global $user, $langs, $db;
         $langs->load("boxes");
 
-        $this->info_box_head = array('text' => "Les $max dernières factures fournisseurs enregistrées");
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastSupplierBills",$max));
 
         if ($user->rights->facture->lire)
         {
@@ -87,7 +87,7 @@ class box_factures_fourn extends ModeleBoxes {
                     $objp = $db->fetch_object($result);
 
                     $this->info_box_contents[$i][0] = array('align' => 'left',
-                    'logo' => 'object_bill',
+                    'logo' => $this->boximg,
                     'text' => $objp->facnumber,
                     'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
 

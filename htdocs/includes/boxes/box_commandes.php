@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_commandes extends ModeleBoxes {
 
     var $boxcode="lastcustomerorders";
-    var $boximg="order";
+    var $boximg="object_order";
     var $boxlabel;
     var $depends = array("commercial");
 
@@ -63,7 +63,7 @@ class box_commandes extends ModeleBoxes {
         {
             $langs->load("boxes");
             
-            $this->info_box_head = array('text' => "Les $max dernières commandes clients");
+            $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerOrders",$max));
 
             $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.date_commande")." as dp,p.rowid";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp";
@@ -87,7 +87,7 @@ class box_commandes extends ModeleBoxes {
                     $objp = $db->fetch_object($result);
 
                     $this->info_box_contents[$i][0] = array('align' => 'left',
-                    'logo' => 'object_order',
+                    'logo' => $this->boximg,
                     'text' => $objp->ref,
                     'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);
 

@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_factures_fourn_imp extends ModeleBoxes {
 
     var $boxcode="oldestunpayedsupplierbills";
-    var $boximg="bill";
+    var $boximg="object_bill";
     var $boxlabel;
     var $depends = array("facture","fournisseur");
 
@@ -48,7 +48,7 @@ class box_factures_fourn_imp extends ModeleBoxes {
         global $langs;
         $langs->load("boxes");
 
-        $this->boxlabel=$langs->trans("BoxOldesUnpayedSupplierBills");
+        $this->boxlabel=$langs->trans("BoxOldestUnpayedSupplierBills");
     }
 
     /**
@@ -63,7 +63,7 @@ class box_factures_fourn_imp extends ModeleBoxes {
         {
             $langs->load("boxes");
             
-            $this->info_box_head = array('text' => "Les $max plus anciennes factures fournisseurs impayées");
+            $this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedSupplierBills",$max));
 
             $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp AND f.paye=0 AND fk_statut = 1";
@@ -86,7 +86,7 @@ class box_factures_fourn_imp extends ModeleBoxes {
                     $objp = $db->fetch_object($result);
 
                     $this->info_box_contents[$i][0] = array('align' => 'left',
-                    'logo' => 'object_product',
+                    'logo' => $this->boximg,
                     'text' => $objp->facnumber,
                     'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
 

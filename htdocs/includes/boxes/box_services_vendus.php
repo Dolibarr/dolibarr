@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_services_vendus extends ModeleBoxes {
 
     var $boxcode="lastproductsincontract";
-    var $boximg="product";
+    var $boximg="object_product";
     var $boxlabel;
     var $depends = array("produit");
 
@@ -60,7 +60,7 @@ class box_services_vendus extends ModeleBoxes {
         global $user, $langs, $db;
         $langs->load("boxes");
 
-        $this->info_box_head = array('text' => "Les $max derniers produits/services contractés");
+        $this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract",$max));
 
         $sql  = "SELECT s.nom, s.idp, p.label, p.fk_product_type, c.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p";

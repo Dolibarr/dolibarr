@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_produits extends ModeleBoxes {
 
     var $boxcode="lastproducts";
-    var $boximg="product";
+    var $boximg="object_product";
     var $boxlabel;
     var $depends = array("produit");
     
@@ -61,7 +61,7 @@ class box_produits extends ModeleBoxes {
         global $user, $langs, $db;
         $langs->load("boxes");
 
-        $this->info_box_head = array('text' => "Les $max derniers produits/services enregistrés");
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts",$max));
 
         if ($user->rights->produit->lire)
         {

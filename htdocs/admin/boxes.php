@@ -184,7 +184,8 @@ if ($result)
         $box=new $module();
 
         print '<form action="boxes.php" method="POST">';
-        print '<tr '.$bc[$var].'><td>'.img_object("",$box->boximg).' '.$box->boxlabel.'</td><td>' . $obj->file . '</td>';
+        $logo=eregi_replace("^object_","",$box->boximg);
+        print '<tr '.$bc[$var].'><td>'.img_object("",$logo).' '.$box->boxlabel.'</td><td>' . $obj->file . '</td>';
 
         // Pour chaque position possible, on affiche un lien
         // d'activation si boite non deja active pour cette position
@@ -247,7 +248,8 @@ if ($result)
         include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
         $box=new $module();
 
-        print '<tr '.$bc[$var].'><td>'.img_object("",$box->boximg).' '.$box->boxlabel.'</td>';
+        $logo=eregi_replace("^object_","",$box->boximg);
+        print '<tr '.$bc[$var].'><td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
         print '<td>&nbsp;</td>';
         print '<td align="center">' . $pos_name[$obj->position] . '</td>';
         $hasnext=true;

@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_factures_imp extends ModeleBoxes {
 
     var $boxcode="oldestunpayedcustomerbills";
-    var $boximg="bill";
+    var $boximg="object_bill";
     var $boxlabel;
     var $depends = array("facture");
 
@@ -61,7 +61,7 @@ class box_factures_imp extends ModeleBoxes {
         global $user, $langs, $db;
         $langs->load("boxes");
 
-        $this->info_box_head = array('text' => "Les $max plus anciennes factures clients impayées");
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedCustomerBills",$max));
 
         if ($user->rights->facture->lire)
         {
@@ -86,7 +86,7 @@ class box_factures_imp extends ModeleBoxes {
                     $objp = $db->fetch_object($result);
 
                     $this->info_box_contents[$i][0] = array('align' => 'left',
-                    'logo' => 'object_bill',
+                    'logo' => $this->boximg,
                     'text' => $objp->facnumber,
                     'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
 

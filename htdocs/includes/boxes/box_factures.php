@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_factures extends ModeleBoxes {
 
     var $boxcode="lastcustomerbills";
-    var $boximg="bill";
+    var $boximg="object_bill";
     var $boxlabel;
     var $depends = array("facture");
 
@@ -63,7 +63,7 @@ class box_factures extends ModeleBoxes {
         {
             $langs->load("boxes");
             
-            $this->info_box_head = array('text' => "Les $max dernières factures clients enregistrées");
+            $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerBills",$max));
 
             $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
@@ -87,7 +87,7 @@ class box_factures extends ModeleBoxes {
                     $objp = $db->fetch_object($result);
 
                     $this->info_box_contents[$i][0] = array('align' => 'left',
-                    'logo' => 'object_bill',
+                    'logo' => $this->boximg,
                     'text' => $objp->facnumber,
                     'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
 

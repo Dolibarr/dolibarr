@@ -34,7 +34,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_boutique_livre extends ModeleBoxes {
 
     var $boxcode="lastbooks";
-    var $boximg="book";
+    var $boximg="object_book";
     var $boxlabel;
     var $depends = array("boutique");
 
@@ -61,7 +61,7 @@ class box_boutique_livre extends ModeleBoxes {
         global $user, $langs, $db;
         $langs->load("boxes");
 
-        $this->info_box_head = array('text' => "Les $max derniers ouvrages");
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastBooks",$max));
     
         $sql = "SELECT l.ref, l.title, l.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."livre as l ";
@@ -81,7 +81,7 @@ class box_boutique_livre extends ModeleBoxes {
                 $objp = $db->fetch_object($result);
 
                 $this->info_box_contents[$i][0] = array('align' => 'left',
-                'logo' => 'object_book',
+                'logo' => $this->boximg,
                 'text' => $objp->title,
                 'url' => DOL_URL_ROOT."/boutique/livre/fiche.php?id=".$objp->rowid);
 

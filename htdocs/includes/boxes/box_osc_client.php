@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 class box_osc_clients extends ModeleBoxes {
 
     var $boxcode="nbofcustomers";
-    var $boximg="company";
+    var $boximg="object_company";
     var $boxlabel;
     var $depends = array("boutique");
 
@@ -60,7 +60,7 @@ class box_osc_clients extends ModeleBoxes {
         global $user, $langs, $db;
         $langs->load("boxes");
 
-        $this->info_box_head = array('text' => "Nombre de client");
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleNbOfCustomers",$max));
 
         $sql = "SELECT count(*) as cus FROM ".DB_NAME_OSC.".customers";
 
@@ -76,7 +76,7 @@ class box_osc_clients extends ModeleBoxes {
                 $objp = $db->fetch_object($result);
 
                 $this->info_box_contents[$i][0] = array('align' => 'center',
-                'logo' => 'object_product',
+                'logo' => $this->boximg,
                 'text' => $objp->cus,
                 'url' => DOL_URL_ROOT."/boutique/client/index.php");
                 $i++;
