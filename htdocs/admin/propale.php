@@ -59,18 +59,18 @@ if ($_GET["action"] == 'del')
 
 $propale_addon_var_pdf = PROPALE_ADDON_PDF;
 
-if ($action == 'setpdf')
+if ($_GET["action"] == 'setpdf')
 {
-	if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$value))
+  if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$_GET["value"]))
     {
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
-      $propale_addon_var_pdf = $value;
+      $propale_addon_var_pdf = $_GET["value"];
     }
   /*
    * On la set active
    */
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$value."')";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$_GET["value"]."')";
 
   if ($db->query($sql))
     {
@@ -80,13 +80,13 @@ if ($action == 'setpdf')
 
 $propale_addon_var = PROPALE_ADDON;
 
-if ($action == 'setmod')
+if ($_GET["action"] == 'setmod')
 {
-	if (dolibarr_set_const($db, "PROPALE_ADDON",$value))
+	if (dolibarr_set_const($db, "PROPALE_ADDON",$_GET["value"]))
     {
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
-      $propale_addon_var = $value;
+      $propale_addon_var = $_GET["value"];
     }
 }
 
