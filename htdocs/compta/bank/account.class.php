@@ -132,8 +132,8 @@ class Account
 	      $this->id = $this->db->last_insert_id();
 	      if ( $this->update() )
 		{
-		  $sql = "INSERT INTO llx_bank (datec, label, amount, fk_account,datev,dateo) ";
-		  $sql .= " VALUES (now(),'Solde',$this->solde,$this->id,'1970-01-01','1970-01-01');";
+		  $sql = "INSERT INTO llx_bank (datec, label, amount, fk_account,datev,dateo,fk_type,rappro) ";
+		  $sql .= " VALUES (now(),'Solde',$this->solde,$this->id,'".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
 
 		  $this->db->query($sql);
 		}
