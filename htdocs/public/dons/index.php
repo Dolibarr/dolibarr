@@ -59,7 +59,7 @@ if ($conf->don->enabled)
 	  require("erreur.php");
 	}     
     }
-  elseif ($HTTP_POST_VARS["action"] == 'valid' && $HTTP_POST_VARS["submit"] == 'Valider')
+  elseif ($HTTP_POST_VARS["action"] == 'valid' && $HTTP_POST_VARS["valid"] == 'Valider')
     {
       
       if ($don->check($conf->don->minimum))
@@ -68,6 +68,13 @@ if ($conf->don->enabled)
 	  
 	  if ($return)
 	    {
+	      $a = setlocale("LC_TIME", "FRENCH");
+	      $date_limite = strftime("%A %d %B %Y",time() + (3 * 7 * 24 * 3600));
+
+	      include ("mail.php");
+
+	      mail($don->email, $subject, $body);
+
 	      require("merci.php");
 	    }
 	}
