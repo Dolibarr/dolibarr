@@ -163,8 +163,9 @@ if ($_POST["action"] == 'addinpropal')
 
   Header("Location: ../comm/propal.php?propalid=".$propal->id);
 }
-
-
+/*
+ * Ajout du produit dans une facture
+ */
 if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 {
   $product = new Product($db);
@@ -173,11 +174,14 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
   $facture = New Facture($db);
 
   $facture->fetch($_POST["factureid"]);
+
   $facture->addline($_POST["factureid"], 
 		    addslashes($product->libelle), 
-		    $product->price, 
+		    $product->price,
 		    $_POST["qty"], 
-		    $product->tva_tx, $product->id);
+		    $product->tva_tx, 
+		    $product->id,
+		    $_POST["remise_percent"]);
 
   Header("Location: ../compta/facture.php?facid=".$facture->id);
 
