@@ -24,3 +24,5 @@ NewBankAccount=Nouveau compte bancaire
 CreateAccount=Créer compte
 StandingOrderToProcess=A traiter
 StandingOrderProcessed=Traités
+NewAccount=Nouveau compte
+AccountSetup=Configuration des comptes

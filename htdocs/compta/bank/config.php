@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/*! \file htdocs/compta/bank/config.php
+/**     \file       htdocs/compta/bank/config.php
         \ingroup    banque
 		\brief      Page de configuration des comptes bancaires
 		\version    $Revision$
@@ -37,14 +37,14 @@ if (!$user->admin && !$user->rights->compta->bank)
 
 llxHeader();
 
-print_titre("Configuration des comptes");
+print_titre($langs->trans("AccountSetup"));
 print '<br>';
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print "<td>id</td><td>Label</td><td>".$langs->trans("Description")."</td>";
-print "<td align=\"left\">".$langs->trans("Number")."</a></td>";
-print "<td align=\"center\">Clos</a></td>";
+print "<td>".$langs->trans("Ref")."</td><td>".$langs->trans("Label")."</td><td>".$langs->trans("Description")."</td>";
+print "<td align=\"left\">".$langs->trans("Numero")."</a></td>";
+print "<td align=\"center\">".$langs->trans("Closed")."</a></td>";
 print "</tr>\n";
 
 $sql = "SELECT rowid, label,number,bank,clos from ".MAIN_DB_PREFIX."bank_account";
@@ -64,7 +64,7 @@ if ($result)
 
     $var=!$var;
     print "<tr $bc[$var]><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td>";
-    print "<td>$objp->bank&nbsp;</td><td>$objp->number&nbsp;</td><td align=\"center\">".$yn[$objp->clos]."</td></tr>";
+    print "<td>$objp->bank&nbsp;</td><td>$objp->number&nbsp;</td><td align=\"center\">".yn($objp->clos)."</td></tr>";
 
     $i++;
   }
@@ -78,8 +78,8 @@ print "</table>";
  */
 print "<br><div class=\"tabsAction\">\n";
 if ($user->rights->banque->configurer) {
-	print '<a class="tabAction" href="fiche.php?action=create">Nouveau compte</a>';
-	print '<a class="tabAction" href="categ.php">Catégories</a>';
+	print '<a class="tabAction" href="fiche.php?action=create">'.$langs->trans("NewAccount").'</a>';
+	print '<a class="tabAction" href="categ.php">'.$langs->trans("Categories").'</a>';
 }
 print "</div>";
 
