@@ -55,7 +55,7 @@ Class Translate {
                     if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#") {
                         $tab=split('=',$ligne,2);
                         //print "Ligne=$ligne<br>Found a string for $tab[0] with value $tab[1]<br>";
-                        $this->tab_translate[$tab[0]]=$tab[1];
+                        $this->tab_translate[$tab[0]]=trim($tab[1]);
                     }
                 }
                 fclose($fp);
