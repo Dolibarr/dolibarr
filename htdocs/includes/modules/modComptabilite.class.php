@@ -83,13 +83,14 @@ class modComptabilite extends DolibarrModules
   {
     // Permissions
     $this->remove();
-
+    $isq = "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES";
     $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (90,'Tous les droits sur la compta','compta','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (91,'Lire les charges','compta','r',1);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (92,'Créer modifier les charges','compta','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (93,'Supprimer les charges','compta','d',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (95,'Lire CA, bilans, résultats','compta','r',1);",
+		 "$isq (90,'Tous les droits sur la compta','compta',NULL,NULL,'a',0);",
+		 "$isq (91,'Lire les charges','compta',NULL,NULL,'r',1);",
+		 "$isq (92,'Créer modifier les charges',NULL,NULL,'compta','w',0);",
+		 "$isq (93,'Supprimer les charges','compta',NULL,NULL,'d',0);",
+		 "$isq (95,'Lire CA, bilans, résultats','compta',NULL,NULL,'r',1);",
+		 "$isq (96,'Paramétrer la ventilation','compta','ventilation','param','r',1);",
 		 );
     
     return $this->_init($sql);
