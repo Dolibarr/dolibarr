@@ -91,8 +91,9 @@ class Societe {
     $sql .= ",address = '" . trim($this->adresse) ."'";
     $sql .= ",cp = '" . trim($this->cp) ."'";
     $sql .= ",ville = '" . trim($this->ville) ."'";
-    $sql .= ",tel = '" . trim($this->tel) ."'";
-    $sql .= ",fax = '" . trim($this->fax) ."'";
+    $sql .= ",fk_departement = " . $this->departement_id;
+    $sql .= ",tel = '" . ereg_replace(" ","",$this->tel) ."'";
+    $sql .= ",fax = '" . ereg_replace(" ","",$this->fax) ."'";
     $sql .= ",url = '" . trim($this->url) ."'";
     $sql .= ",siren = '" . trim($this->siren) ."'";
     $sql .= ",siret = '" . trim($this->siret) ."'";
@@ -124,6 +125,7 @@ class Societe {
       $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
       $sql .= ", e.libelle as effectif, e.id as effectif_id";
       $sql .= ", s.fk_forme_juridique as forme_juridique_id, fj.libelle as forme_juridique";
+      $sql .= ", s.fk_departement";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
       $sql .= ", ".MAIN_DB_PREFIX."c_effectif as e";
       $sql .= ", ".MAIN_DB_PREFIX."c_forme_juridique as fj";
@@ -143,7 +145,7 @@ class Societe {
 	      $this->adresse =  stripslashes($obj->address);
 	      $this->cp = $obj->cp;
 	      $this->ville =  stripslashes($obj->ville);
-	      
+	      $this->departement_id = $obj->fk_departement;
 	      $this->url = $obj->url;
 
 	      $this->tel = $obj->tel;
