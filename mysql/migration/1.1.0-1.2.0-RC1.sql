@@ -5,6 +5,8 @@ alter table llx_societe add tva_intra varchar(20) after ape;
 alter table llx_societe add capital real after tva_intra;
 alter table llx_societe add rubrique varchar(255);
 
+alter table llx_societe add fk_forme_juridique integer default 0 after fk_typent;
+
 alter table llx_societe add fk_user_creat integer;
 alter table llx_societe add fk_user_modif integer;
 
@@ -95,6 +97,7 @@ create table llx_c_forme_juridique
 --
 -- Formes juridiques
 -- Extrait de http://www.insee.fr/fr/nom_def_met/nomenclatures/cj/cjniveau2.htm
+insert into llx_c_forme_juridique (code, libelle) values (0,'Non renseignée');
 insert into llx_c_forme_juridique (code, libelle) values (11,'Artisan Commerçant');
 insert into llx_c_forme_juridique (code, libelle) values (12,'Commerçant');
 insert into llx_c_forme_juridique (code, libelle) values (13,'Artisan');
