@@ -463,11 +463,11 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,93,'Fondati
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,99,'Autre personne morale de droit privé');
 
 -- Pour la Belgique
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 100,'Indépendant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 101,'SC - Coopérative');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 102,'SCRL - Coopérative à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 103,'SPRL - Société à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 104,'SA - Société Anonyme');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,100,'Indépendant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,101,'SC - Coopérative');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,102,'SCRL - Coopérative à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,103,'SPRL - Société à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,104,'SA - Société Anonyme');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,105,'Société en nom collectif');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,106,'Société en commandite');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,107,'Administration publique');
