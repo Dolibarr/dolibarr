@@ -58,7 +58,7 @@ div.tabsAction {
 }
 
 a.tabAction {
-  background: white;
+  background: white; 
   border: 1px solid #8CACBB;
   color: #436976;
   font: 105% Bold;
