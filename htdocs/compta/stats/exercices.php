@@ -19,42 +19,8 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-
-
-
-function get_ca_propal ($db, $year, $socidp) {
-
-  $sql = "SELECT sum(f.price - f.remise) as sum FROM llx_propal as f WHERE fk_statut in (1,2) AND date_format(f.datep, '%Y') = $year ";
-  if ($socidp) {
-    $sql .= " AND f.fk_soc = $socidp";
-  }
-  
-  $result = $db->query($sql);
-
-  if ($result) {
-    return  $db->result (0, 0);
-  } else {
-    return 0;
-  } 
-
-}
-function get_ca ($db, $year, $socidp) {
-  
-  $sql = "SELECT sum(f.amount) as sum FROM llx_facture as f WHERE f.paye = 1 AND date_format(f.datef , '%Y') = $year ";
-  if ($socidp) {
-    $sql .= " AND f.fk_soc = $socidp";
-  }
-
-  $result = $db->query($sql);
-
-  if ($result) {
-    return  $db->result ( 0, 0);
-  } else {
-    return 0;
-  } 
-
-}
+require("./pre.inc.php");
+require("./lib.inc.php");
 
 
 function propals ($db, $year, $month) {
@@ -337,8 +303,8 @@ if ($user->societe_id > 0)
 {
   $socidp = $user->societe_id;
 }
-
-ppt($db, 2002, $socidp);
+$cyear = strftime ("%Y", time());
+ppt($db, $cyear, $socidp);
 
 $db->close();
 
