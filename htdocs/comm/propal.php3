@@ -128,6 +128,20 @@ if ($HTTP_POST_VARS["action"] == 'addligne' && $user->rights->propale->creer)
     }
 } 
 
+if ($HTTP_POST_VARS["action"] == 'addproduct' && $user->rights->propale->creer) 
+{
+  /*
+   *  Ajout d'une ligne produit dans la propale
+   */
+  $propal = new Propal($db);
+  $propal->id = $propalid;
+  $propal->insert_product_generic($HTTP_POST_VARS["np_desc"], 
+				  $HTTP_POST_VARS["np_price"], 
+				  $HTTP_POST_VARS["np_qty"],
+				  $HTTP_POST_VARS["np_tva_tx"]);
+} 
+
+
 if ($action == 'del_ligne' && $user->rights->propale->creer) 
 {
   /*
@@ -334,6 +348,36 @@ if ($propalid)
 		}
 
 	    }
+
+	  $sql = "SELECT pt.rowid, pt.description, pt.price, pt.qty";
+	  $sql .= " FROM llx_propaldet as pt WHERE pt.fk_propal = $propalid AND pt.fk_product = 0";
+	  
+	  $result = $db->query($sql);
+	  if ($result) 
+	    {
+	      $num = $db->num_rows();
+	      $i = 0;	     
+	      $var=True;
+	      while ($i < $num) 
+		{
+		  $objp = $db->fetch_object( $i);
+		  $var=!$var;
+		  print "<TR $bc[$var]><td>&nbsp;</td>\n";
+		  print '<td>'.$objp->description.'</td>';
+		  print "<TD align=\"right\">".price($objp->price)."</TD><td align=\"center\">".$objp->qty."</td>\n";
+		  if ($obj->statut == 0 && $user->rights->propale->creer)
+		    {
+		      print '<td align="center"><a href="propal.php3?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
+		    }
+		  else
+		    {
+		      print '<td>-</td>';
+		    }
+		  print "</tr>";
+		  $i++;
+		}
+	    }
+
 	  if ($obj->statut == 0 && $user->rights->propale->creer)
 	    {
 
@@ -357,13 +401,31 @@ if ($propalid)
 		{
 		  print $db->error();
 		}
+
+	      /*
+	       * Produits génériques
+	       *
+	       */
+	      $var=!$var;
+	      print '<form action="propal.php3?propalid='.$propalid.'" method="post">';
+	      print '<input type="hidden" name="action" value="addproduct">';
+	      print '<tr '.$bc[$var].'>';
+	      print '<td>&nbsp;</td>';
+	      print '<td><input type="text" size="28" name="np_desc"></td>';
+	      print '<td align="right"><input type="text" size="6" name="np_price"></td>';
+	      print '<td align="center"><input type="text" size="3" name="np_qty"></td>';
+	      print '<td align="center"><input type="submit" value="Ajouter"></td>';
+	      print '</tr></form>';
+
+	      $var=!$var;
 	      print '<form action="propal.php3?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="addligne">';
-	      print "<tr><td colspan=\"2\"><select name=\"idprod\">$opt</select></td>";
-	      print '<td><input type="text" size="3" name="qty" value="1"></td>';
-	      print '<td><input type="submit" value="Ajouter"></td>';
+	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"2\"><select name=\"idprod\">$opt</select></td>";
+	      print '<td align="center"><input type="text" size="3" name="qty" value="1"></td>';
+	      print '<td align="center"><input type="submit" value="Ajouter"></td>';
 	      print "</tr>\n";
 	      print '</form>';
+
 
 	    }
 
