@@ -46,16 +46,12 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des contacts",$page, $PHP_SELF,"",$sortfield,$sortorder);
-
-
 /*
  *
  * Mode liste
  *
  *
  */
-
 
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
 $sql .= "FROM llx_societe as s, llx_socpeople as p, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
@@ -82,7 +78,7 @@ if ($socid)
   $sql .= " AND s.idp = $socid";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit+1, $offset);
 
 $result = $db->query($sql);
 
@@ -90,7 +86,7 @@ if ($result)
 {
   $num = $db->num_rows();
   $i = 0;
-  
+  print_barre_liste("Liste des contacts",$page, $PHP_SELF,"",$sortfield,$sortorder,"",$num);  
   if ($sortorder == "DESC") 
     {
       $sortorder="ASC";
@@ -111,7 +107,7 @@ if ($result)
   print '<TD>Téléphone</TD><td>&nbsp;</td>';
   print "</TR>\n";
   $var=True;
-  while ($i < $num) 
+  while ($i < min($num,$limit))
     {
       $obj = $db->fetch_object( $i);
     
