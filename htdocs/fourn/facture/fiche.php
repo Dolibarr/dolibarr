@@ -39,7 +39,7 @@ $mesg='';
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 
-if ($action == 'valid') 
+if ($_GET["action"] == 'valid') 
 {
   $facturefourn=new FactureFourn($db);
   $facturefourn->fetch($_GET["facid"]);
@@ -47,7 +47,7 @@ if ($action == 'valid')
   $facturefourn->set_valid($user->id);
 }
 
-if ($action == 'payed')
+if ($_GET["action"] == 'payed')
 {
   $facturefourn=new FactureFourn($db);
   $facturefourn->fetch($_GET["facid"]);
@@ -73,7 +73,7 @@ if ($_POST["action"] == 'modif_libelle')
 }
 
 
-if ($action == 'update')
+if ($_POST["action"] == 'update')
 {
   $datefacture = $db->idate(mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"])); 
 
@@ -86,15 +86,16 @@ if ($action == 'update')
   $result = $db->query( $sql);
 }
 
-if ($action == 'add')
+if ($_POST["action"] == 'add')
 {
-  if ($_POST["facnumber"]) {
+  if ($_POST["facnumber"])
+    {
       $datefacture = $db->idate(mktime(12, 
-    				   0, 
-    				   0, 
-    				   $_POST["remonth"], 
-    				   $_POST["reday"],
-    				   $_POST["reyear"])); 
+				       0, 
+				       0, 
+				       $_POST["remonth"], 
+				       $_POST["reday"],
+				       $_POST["reyear"])); 
       $tva = 0;
       $tva = ($_POST["tva_taux"] * $_POST["amount"]) / 100 ;
       $remise = 0;
@@ -113,8 +114,9 @@ if ($action == 'add')
 
       $facid = $facfou->create($user);
 
-      // Ajout des lignes de factures      
-      if ($facid > 0) {
+      // Ajout des lignes de factures
+      if ($facid > 0) 
+	{
           for ($i = 1 ; $i < 9 ; $i++)
             {
               $label = "label$i";
@@ -122,40 +124,45 @@ if ($action == 'add')
               $tauxtva = "tauxtva$i";
               $qty = "qty$i";
               
-              if (strlen($$label) > 0 && $$amount > 0)
+              if (strlen($_POST["$label"]) > 0 && $_POST["$amount"] > 0)
         	{
         	  $atleastoneline=1;
-        	  $facfou->addline($$label, $$amount, $$tauxtva, $$qty, 1);
+        	  $facfou->addline($_POST["$label"], $_POST["$amount"], $_POST["$tauxtva"], $_POST["$qty"], 1);
         	}
             }
 
           $db->commit();
-      }
-      else {
+	}
+      else
+	{
           $db->rollback();
-      }
+	}
+
+      header("Location: fiche.php?facid=$facid");
+  
     }
-    else {
-        $mesg="<div class=\"error\">Erreur: Un numéro de facture fournisseur est obligatoire.</div>";
+  else 
+    {
+      $mesg="<div class=\"error\">Erreur: Un numéro de facture fournisseur est obligatoire.</div>";
     }
 }
 
-if ($action == 'del_ligne')
+if ($_GET["action"] == 'del_ligne')
 {
-  $facfou = new FactureFourn($db,"",$facid);
+  $facfou = new FactureFourn($db,"",$_GET["facid"]);
 
-  $facfou->deleteline($ligne_id);
+  $facfou->deleteline($_GET["ligne_id"]);
 
-  $action="edit";
+  $_GET["action"] = "edit";
 }
 
-if ($action == 'add_ligne')
+if ($_GET["action"] == 'add_ligne')
 {
-  $facfou = new FactureFourn($db,"", $facid);
+  $facfou = new FactureFourn($db,"", $_GET["facid"]);
 
   $facfou->addline($_POST["label"], $_POST["amount"], $_POST["tauxtva"], $_POST["qty"]);
   
-  $action="edit";
+  $_GET["action"] = "edit";
 }
 
 
@@ -172,19 +179,19 @@ if ($mesg) { print "<br>$mesg<br>"; }
  *
  */
 
-if ($action == 'create' or $action == 'copy')
+if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
 {
-  if ($action == 'copy')
+  if ($_GET["action"] == 'copy')
     {
       $fac_ori = new FactureFourn($db);
-      $fac_ori->fetch($facid);
+      $fac_ori->fetch($_GET["facid"]);
     }
   print_titre("Saisir une facture fournisseur");
       
   print '<form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
-  print '<tr><td>Société :</td>';
+  print '<tr><td>Société</td>';
 
   print '<td><select name="socidp">';
 
@@ -212,24 +219,24 @@ if ($action == 'create' or $action == 'copy')
 	}
     }
   print '</select></td>';
-  print "<td>Commentaires :</td></tr>";
+  print "<td>Commentaires</td></tr>";
 
-  print '<tr><td>Numéro :</td><td><input name="facnumber" type="text"></td>';
+  print '<tr><td>Numéro</td><td><input name="facnumber" type="text"></td>';
 
   print '<td rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="30" rows="6"></textarea></td></tr>';
-  if ($action == 'copy')
+  if ($_GET["action"] == 'copy')
     {
-      print '<tr><td>Libellé :</td><td><input size="30" name="libelle" value="'.$fac_ori->libelle.'" type="text"></td></tr>';
+      print '<tr><td>Libellé</td><td><input size="30" name="libelle" value="'.$fac_ori->libelle.'" type="text"></td></tr>';
     }
   else
     {
-      print '<tr><td>Libellé :</td><td><input size="30" name="libelle" type="text"></td></tr>';
+      print '<tr><td>Libellé</td><td><input size="30" name="libelle" type="text"></td></tr>';
     }
-  print "<tr>".'<td>Date :</td><td>';
+  print "<tr>".'<td>Date</td><td>';
   $html->select_date();
   print '</td></tr>';
   
-  print '<tr><td>Auteur :</td><td>'.$user->fullname.'</td></tr>';
+  print '<tr><td>Auteur</td><td>'.$user->fullname.'</td></tr>';
   print "</table><br>";
 
   print '<table cellspacing="0" cellpadding="3" class="border" width="100%">';
@@ -237,7 +244,7 @@ if ($action == 'create' or $action == 'copy')
 
   for ($i = 1 ; $i < 9 ; $i++)
     {
-      if ($action == 'copy')
+      if ($_GET["action"] == 'copy')
 	{
 	  $value_label = $fac_ori->lignes[$i-1][0];
 	  $value_pu = $fac_ori->lignes[$i-1][1];
@@ -247,7 +254,7 @@ if ($action == 'create' or $action == 'copy')
 	{
 	  $value_qty = "1";
 	}
-      print '<tr><td>Ligne '.$i.' :</td>';
+      print '<tr><td>Ligne '.$i.'</td>';
       print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
       print '<td align="center"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
       print '<td align="center"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td><td align="center">';
@@ -262,87 +269,70 @@ if ($action == 'create' or $action == 'copy')
 }
 else
 {
-  if ($facid > 0)
+  /*
+   * Visualisation
+   *
+   */
+  if ($_GET["facid"] > 0)
     {
 
       $fac = new FactureFourn($db);
-      $fac->fetch($facid);
-
-      $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.tva, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.note, f.libelle, f.rowid";
-      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
-
-      $result = $db->query( $sql);
-      
-      if ($result)
-	{
-	  $num = $db->num_rows();
-	  if ($num)
-	    {
-	      $obj = $db->fetch_object( $i);    
-	    }
-	  $db->free();
-	}
-      else
-	{
-	  print $db->error();
-	}
+      $fac->fetch($_GET["facid"]);
 
       /*
        * Fiche facture en mode edition
        *
        */
-      if ($action == "edit")
+      if ($_GET["action"] == "edit")
 	{
 
-      print_titre('Facture : '.$obj->facnumber);
-      
-	  print "<form action=\"$PHP_SELF?facid=$obj->rowid\" method=\"post\">";
+	  print_titre('Facture : '.$fac->ref);
+	  
+	  print "<form action=\"$PHP_SELF?facid=$fac->id\" method=\"post\">";
 	  print '<input type="hidden" name="action" value="update">';
-    
+      
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-	  print "<tr><td width=\"20%\">Société :</td>";
-	
-	  print '<td width="20%">'.stripslashes($obj->socnom);
-	  print '</td>';
-	  print '<td width="60%" valign="top">Commentaires :</tr>';
-	
-	  print "<tr>".'<td valign="top">Numéro :</td><td valign="top">';
-	  print '<input name="facnumber" type="text" value="'.$obj->facnumber.'"></td>';
-	
+	  print "<tr><td width=\"20%\">Société</td>";
+      
+	  print '<td width="20%">'.stripslashes($fac->socnom).'</td>';
+	  print '<td width="60%" valign="top">Commentaires</tr>';
+      
+	  print "<tr>".'<td valign="top">Numéro</td><td valign="top">';
+	  print '<input name="facnumber" type="text" value="'.$fac->ref.'"></td>';
+      
 	  print '<td rowspan="7" width="60%" valign="top">';
 	  print '<textarea name="note" wrap="soft" cols="60" rows="10">';
-	  print stripslashes($obj->note);
+	  print stripslashes($fac->note);
 	  print '</textarea></td></tr>';
-
-	  print "<tr>".'<td valign="top">Libellé :</td><td>';
-	  print '<input size="30" name="libelle" type="text" value="'.stripslashes($obj->libelle).'"></td></tr>';
-    
-	  print "<tr>".'<td>Montant HT :</td>';
-	  print '<td valign="top">'.price($fac->total_ht).'</td></tr>';
-        
-	  print "<tr><td>Date :</td><td>";
-
-	  print_date_select($obj->df);
-
+	  
+	  print "<tr>".'<td valign="top">Libellé</td><td>';
+	  print '<input size="30" name="libelle" type="text" value="'.stripslashes($fac->libelle).'"></td></tr>';      
+	  print "<tr>".'<td>Montant HT</td>';
+	  print '<td valign="top">'.price($fac->total_ht).'</td></tr>';      
+	  print "<tr><td>Date</td><td>";
+	  
+	  print_date_select($fac->datep);
+	  
 	  print "</td></tr>";
-
+	  
 	  $authorfullname="&nbsp;";
-	  if ($fac->author) {
-		  $author = new User($db, $fac->author);
-		  $author->fetch('');
-		  $authorfullname=$author->fullname;
-	  }
-	  print "<tr><td>Auteur :</td><td>$authorfullname</td></tr>";
-	  print "<tr><td>Statut:</td><td>".$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
+	  if ($fac->author)
+	    {
+	      $author = new User($db, $fac->author);
+	      $author->fetch('');
+	      $authorfullname=$author->fullname;
+	    }
+	  print "<tr><td>Auteur</td><td>$authorfullname</td></tr>";
+	  print "<tr><td>Statut</td><td>".$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 	  print "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
 	  print "</table>";
 	  print "</form>";
-
+	  
 	  /*
 	   * Lignes
 	   *
 	   */	  
-	  print "<p><form action=\"$PHP_SELF?facid=$obj->rowid&amp;action=add_ligne\" method=\"post\">";
+	  print "<p><form action=\"$PHP_SELF?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
 	  print '<table class="noborder" cellspacing="0" cellpadding="2" width="100%">';
 	  print '<tr class="liste_titre"><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Total HT</td>';
 	  print '<td align="center">Taux TVA</td>';
@@ -358,10 +348,10 @@ else
 	      print '<td align="center">'.price($fac->lignes[$i][5])."</td>";  
 	      print '<td align="right">'.price($fac->lignes[$i][6])."</td>";
 	      print '<td align="center">';
-	      print '<a href="fiche.php?facid='.$facid.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_delete().'</a></td>';
+	      print '<a href="fiche.php?facid='.$fac->id.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_delete().'</a></td>';
 	      print '</tr>';
 	    }
-
+	  
 	  /* Nouvelle ligne */
 	  print "<tr $bc[1]>";
 	  print '<td>';
@@ -389,11 +379,11 @@ else
 	   *
 	   */
 	  
-	  $head[0][0] = DOL_URL_ROOT."$PHP_SELF?facid=".$_GET["facid"];
-	  $head[0][1] = 'Facture : '.$obj->facnumber;
+	  $head[0][0] = DOL_URL_ROOT."$PHP_SELF?facid=".$fac->id;
+	  $head[0][1] = 'Facture : '.$fac->ref;
 	  $h = 1;
 	  $a = 0;
-
+	  
 	  dolibarr_fiche_head($head, $a);
 
 	  print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
@@ -402,30 +392,31 @@ else
 	   *   Facture
 	   */
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-	  print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$obj->socidp\">$obj->socnom</a></b></td>";
-	  print "<td align=\"right\"><a href=\"index.php?socid=$obj->socidp\">Autres factures</a></td>\n";
+	  print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$fac->socidp\">$fac->socnom</a></b></td>";
+	  print "<td align=\"right\"><a href=\"index.php?socid=$fac->socidp\">Autres factures</a></td>\n";
 	  print "</tr>";
-	  print "<tr><td>Date</td><td colspan=\"4\">".dolibarr_print_date($obj->df,"%A %d %B %Y")."</td></tr>\n";
+	  print "<tr><td>Date</td><td colspan=\"4\">".dolibarr_print_date($fac->datep,"%A %d %B %Y")."</td></tr>\n";
 	  print "<tr><td>Libellé</td><td colspan=\"4\">";
-	  print $obj->libelle;
+	  print $fac->libelle;
 	  print "</td>";
 
 	  $authorfullname="&nbsp;";
-	  if ($fac->author) {
-		  $author = new User($db, $fac->author);
-		  $author->fetch('');
-		  $authorfullname=$author->fullname;
-	  }
+	  if ($fac->author)
+	    {
+	      $author = new User($db, $fac->author);
+	      $author->fetch('');
+	      $authorfullname=$author->fullname;
+	    }
 	  print "<tr><td>Auteur</td><td colspan=\"4\">$authorfullname</td>";
-	  print "<tr><td>Statut:</td><td colspan=\"4\">".$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
+	  print "<tr><td>Statut</td><td colspan=\"4\">".$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 	  
 	  print "<tr>".'<td>&nbsp</td><td>Total HT</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
 	  print '<td align="right">TVA</td><td align="right">'.price($fac->total_tva)."</td></tr>";
 	  print "<tr>".'<td>&nbsp</td><td>Total TTC</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
-	  if (strlen($obj->note))
+	  if (strlen($fac->note))
 	    {
 	      print "<tr>".'<td>Commentaires</td><td colspan="4">';
-	      print nl2br(stripslashes($obj->note));
+	      print nl2br(stripslashes($fac->note));
 	      print '</td></tr>';
 	    }
 	  print "</table>";
@@ -451,7 +442,7 @@ else
 	      print "<td>Date</td>";
 	      print "<td>Type</td>";
 
-	      if ($obj->statut == 1 && $obj->paye == 0 && $user->societe_id == 0)
+	      if ($fac->statut == 1 && $fac->paye == 0 && $user->societe_id == 0)
 		{
 		  $tdsup=' colspan="2"';
 		}
@@ -468,10 +459,10 @@ else
 		  print "<td>$objp->paiement_type $objp->num_paiement</TD>\n";
 		  print "<td align=\"right\">".price($objp->amount)."</TD><td>".MAIN_MONNAIE."</td>\n";
 
-		  if ($obj->statut == 1 && $obj->paye == 0 && $user->societe_id == 0)
+		  if ($fac->statut == 1 && $fac->paye == 0 && $user->societe_id == 0)
 		    {
 		      print '<td align="center">';
-		      print '<a href="fiche.php?facid='.$facid.'&amp;action=deletepaiement&amp;paiement_id='.$objp->rowid.'">';
+		      print '<a href="fiche.php?facid='.$fac->id.'&amp;action=deletepaiement&amp;paiement_id='.$objp->rowid.'">';
 		      print img_delete();
 		      print '</a></td>';
 		    }
@@ -482,11 +473,14 @@ else
 		}
 	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td$tdsup>".MAIN_MONNAIE."</td></tr>\n";
 	      
-	      $resteapayer = abs($fac->total_ttc - $total);
-	      
-	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Reste a payer :</td>";
-	      print '<td align="right"><b>'.price($resteapayer)."</b></td><td$tdsup>".MAIN_MONNAIE."</td>";
-	      print "</tr>\n";
+
+	      if ($fac->statut > 0)
+		{
+		  $resteapayer = abs($fac->total_ttc - $total);	      
+		  print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
+		  print '<td align="right"><b>'.price($resteapayer)."</b></td><td$tdsup>".MAIN_MONNAIE."</td>";
+		  print "</tr>\n";
+		}
 	      
 	      print "</table>";
 	      $db->free();
@@ -532,51 +526,52 @@ else
        *
        */
 
-	print "<div class=\"tabsAction\">\n";
+      print "<div class=\"tabsAction\">\n";
   
-      if ($obj->statut == 0 && $user->societe_id == 0)
+      if ($fac->statut == 0 && $user->societe_id == 0)
 	{
-        if ($action != "edit")
+	  if ($_GET["action"] != "edit")
 	    {
-	        print '<a class="tabAction" href="index.php?facid='.$facid.'&amp;action=delete">Supprimer</a>';
-        }
+	      print '<a class="tabAction" href="index.php?facid='.$fac->id.'&amp;action=delete">Supprimer</a>';
+	    }
 	}
-      elseif ($obj->statut == 1 && $obj->paye == 0  && $user->societe_id == 0)
+      elseif ($fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
 	{
 	  print '<a class="tabAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">Emmettre un paiement</a>';
 	}
-
-      if ($obj->statut == 0 && $user->societe_id == 0)    
+      
+      if ($fac->statut == 0 && $user->societe_id == 0)    
 	{
-	  if ($action == "edit")
+	  if ($_GET["action"] == "edit")
 	    {
-	      print '<a class="tabAction" href="fiche.php?facid='.$obj->rowid.'">Abandonner</a>';
+	      print '<a class="tabAction" href="fiche.php?facid='.$fac->id.'">Abandonner</a>';
 	    }
 	  else
 	    {
-	      print '<a class="tabAction" href="fiche.php?facid='.$obj->rowid.'&amp;action=edit">Editer</a>';
+	      print '<a class="tabAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">Editer</a>';
 	    }
 	}
- 
-      if ($obj->statut == 1 && price($resteapayer) <= 0 && $obj->paye == 0  && $user->societe_id == 0)
+      
+      if ($fac->statut == 1 && price($resteapayer) <= 0 && $fac->paye == 0  && $user->societe_id == 0)
 	{
-	  print "<a class=\"tabAction\" href=\"fiche.php?facid=$facid&amp;action=payed\">Classer 'Payée'</a>";
+	  print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a>";
 	}
-
+      
       if ($user->societe_id == 0)
 	{
-	  if ($obj->statut == 0)
+	  if ($fac->statut == 0)
 	    {
-	      print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$facid&amp;action=valid\">Valider</a>";
+	      if ($_GET["action"] <> "edit")
+		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=valid\">Valider</a>";
 	    }
 	  else
 	    {
-	      print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$facid&amp;action=copy&amp;socid=$fac->socidp\">Copier</a>";
+	      print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=copy&amp;socid=$fac->socidp\">Copier</a>";
 	    }
 	}
-
-	print "</div>";
-
+      
+      print "</div>";
+      
     }
 }
 
