@@ -35,3 +35,10 @@ update llx_facture set fk_cond_reglement = 1 where fk_cond_reglement IS NULL ;
 update llx_facture set date_lim_reglement = datef where date_lim_reglement IS NULL ;
 
 alter table llx_livre add frais_de_port tinyint default 1 ;
+
+--
+-- Insertion pour le module rss_externe (syndication de sites externes)
+-- si soucis, erreurs et autres commentaires, mailto:erics@rycks.com
+--
+
+insert into llx_boxes_def values('','Syndication','box_external_rss.php','');
