@@ -55,3 +55,13 @@ alter table c_pays           rename llx_c_pays ;
 alter table c_stcomm         rename llx_c_stcomm ;
 alter table c_typent         rename llx_c_typent ;
 
+
+create table llx_paiement_facture
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_facture      integer,
+  fk_paiement     integer,
+  
+  unique key (fk_facture,fk_paiement)
+);
+
