@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
@@ -120,9 +120,9 @@ function facture_pdf_create($db, $facid, $message="")
 
       if ( $obj->write_pdf_file($facid) > 0)
 	{
-        // Succès de la création de la facture. On génère le fichier meta
+	  // Succès de la création de la facture. On génère le fichier meta
 	  facture_meta_create($db, $facid);
-        return 1;
+	  return 1;
 	}
       else
 	{
@@ -139,36 +139,36 @@ function facture_pdf_create($db, $facid, $message="")
 }
 
 /**
-        \brief      Créé un meta fichier à côté de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payée ou compliquée à gérer ... avec un rgrep c'est vite fait bien fait [eric seigne]
-        \param	    db  		objet base de donnée
-        \param	    facid		id de la facture à créer
-        \param      message     message
+   \brief      Créé un meta fichier à côté de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payée ou compliquée à gérer ... avec un rgrep c'est vite fait bien fait [eric seigne]
+   \param	    db  		objet base de donnée
+   \param	    facid		id de la facture à créer
+   \param      message     message
 */
 function facture_meta_create($db, $facid, $message="")
 {
-    global $langs,$conf;
-
+  global $langs,$conf;
+  
   $fac = new Facture($db,"",$facid);
   $fac->fetch($facid);  
   $fac->fetch_client();
-
+  
   if ($conf->facture->dir_output)
     {
-	  $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","="); 
-	  $facref = str_replace($forbidden_chars,"_",$fac->ref); 
-	  $dir = $conf->facture->dir_output . "/" . $facref ; 
-	  $file = $dir . "/" . $facref . ".meta";
- 
+      $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","="); 
+      $facref = str_replace($forbidden_chars,"_",$fac->ref); 
+      $dir = $conf->facture->dir_output . "/" . $facref ; 
+      $file = $dir . "/" . $facref . ".meta";
+      
       if (! file_exists($dir))
         {
-            umask(0);
-            if (! mkdir($dir, 0755))
+	  umask(0);
+	  if (! mkdir($dir, 0755))
             {
-                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                return 0;
+	      $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+	      return 0;
             }
         }
-
+      
       if (file_exists($dir))
 	{
 	  $nblignes = sizeof($fac->lignes);
@@ -179,7 +179,7 @@ NB_ITEMS=\"" . $nblignes . "\"
 CLIENT=\"" . $client . "\"
 TOTAL_HT=\"" . $fac->total_ht . "\"
 TOTAL_TTC=\"" . $fac->total_ttc . "\"\n";
-
+	  
 	  for ($i = 0 ; $i < $nblignes ; $i++) {
 	    //Pour les articles
 	    $meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lignes[$i]->qty . "\"
@@ -197,11 +197,11 @@ ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->
 
 
 /**
-		\brief      Renvoie la référence de facture suivante non utilisée en fonction du module 
-		            de numérotation actif défini dans FACTURE_ADDON
-		\param	    soc  		            objet societe
-        \param      prefixe_additionnel     prefixe additionnel
-		\return     string                  reference libre pour la facture
+   \brief      Renvoie la référence de facture suivante non utilisée en fonction du module 
+   de numérotation actif défini dans FACTURE_ADDON
+   \param	    soc  		            objet societe
+   \param      prefixe_additionnel     prefixe additionnel
+   \return     string                  reference libre pour la facture
 */
 function facture_get_num($soc, $prefixe_additionnel='')
 {
