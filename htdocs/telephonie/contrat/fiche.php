@@ -57,7 +57,6 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
   $contrat = new TelephonieContrat($db);
   $contrat->id = $_GET["id"];
 
-  $contrat->client_comm    = $_POST["client_comm"];
   $contrat->client         = $_POST["client"];
   $contrat->client_facture = $_POST["client_facture"];
   $contrat->fournisseur    = $_POST["fournisseur"];
@@ -293,7 +292,11 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0)
 	  
 	  print '<tr><td width="20%">Commercial Signature</td><td >';
 	  $ff = array();
-	  $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
+	  $sql = "SELECT u.rowid, u.firstname, u.name";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as ug";
+	  $sql .= " WHERE u.rowid = ug.fk_user";
+	  $sql .= " AND ug.fk_usergroup = '".TELEPHONIE_GROUPE_COMMERCIAUX_ID."'";
+	  $sql .= " ORDER BY name ";
 	  if ( $db->query( $sql) )
 	    {
 	      $num = $db->num_rows();
@@ -555,8 +558,6 @@ else
 	      $client_comm = new Societe($db, $contrat->client_comm_id);
 	      $client_comm->fetch($contrat->client_comm_id);
 
-	      print '<input type="hidden" name="client_comm" value="'.$client_comm->id.'">';
-
 	      print '<tr><td width="20%">Client</td><td>';
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
 
@@ -677,7 +678,12 @@ else
 	      print "\n".'<tr><td width="20%">Commercial Suivi</td><td colspan="2">';
 	      print '<select name="commercial_suiv">';
 	  
-	      $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
+	      $sql = "SELECT u.rowid, u.name, u.firstname";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as ug";
+	      $sql .= " WHERE u.rowid = ug.fk_user";
+	      $sql .= " AND ug.fk_usergroup = '".TELEPHONIE_GROUPE_COMMERCIAUX_ID."'";
+	      $sql .= " ORDER BY name ";
+
 	      if ( $db->query( $sql) )
 		{
 		  $num = $db->num_rows();
@@ -692,7 +698,7 @@ else
 			    {
 			      print " SELECTED";
 			    }
-			  print '>'.$row[1]." ".$row[2];
+			  print '>'.$row[2]." ".$row[1];
 
 
 			  $i++;
