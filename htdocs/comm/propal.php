@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -500,16 +501,16 @@ if ($_GET["propalid"])
 	       */
 	      $var=!$var;
 
-	      print '<tr '.$bc[$var].'>';
-	      print '<td>&nbsp;</td>';
-	      print '<td><input type="text" size="28" name="np_desc"></td>';
-	      print '<td align="center">';
-	      print $html->select_tva("np_tva_tx",$conf->defaulttx) . '</td>';
-	      print '<td align="center"><input type="text" size="3" value="1" name="np_qty"></td>';
-	      print '<td align="center"><input type="text" size="3" value="'.$societe->remise_client.'" name="np_remise"> %</td>';
-	      print '<td align="right"><input type="text" size="6" name="np_price"></td>';
-	      print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="addproduct"></td>';
-	      print '</tr>';
+	      print "<tr ".$bc[$var].">\n";
+	      print "  <td>&nbsp;</td>\n";
+	      print "  <td><textarea cols=\"50\" name=\"np_desc\"></textarea></td>\n";
+	      print "  <td align=\"center\">";
+	      print $html->select_tva("np_tva_tx",$conf->defaulttx) . "</td>\n";
+	      print "  <td align=\"center\"><input type=\"text\" size=\"3\" value=\"1\" name=\"np_qty\"></td>\n";
+	      print "  <td align=\"center\"><input type=\"text\" size=\"3\" value=\"".$societe->remise_client."\" name=\"np_remise\"> %</td>\n";
+	      print "  <td align=\"right\"><input type=\"text\" size=\"6\" name=\"np_price\"></td>\n";
+	      print "  <td align=\"center\"><input type=\"submit\" value=\"".$langs->trans("Add")."\" name=\"addproduct\"></td>\n";
+	      print "</tr>";
 
 	      /*
 	       * Ligne d'ajout de produits/services prédéfinis
@@ -689,36 +690,37 @@ if ($_GET["propalid"])
 	  print "</table>\n";
 
 	  /*
-	   *
+	   * Si le module commandes est activé ...
 	   */
-	  $nb_commande = sizeof($propal->commande_liste_array());
-	  if ($nb_commande > 0)
-	    {
-	      $coms = $propal->commande_liste_array();
-	      print '<br><table class="border" width="100%">';
-
-	      if ($nb_commande == 1)
-
-		{
-		  print "<tr><td>Commande rattachée : ";
-		  print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">';
-		  print img_file();
-		  print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a>";
-		  print "</td></tr>\n";
-		}
-	      else
-		{
-		  print "<tr><td>Commandes rattachées</td></tr>\n";
-	      
-		  for ($i = 0 ; $i < $nb_commande ; $i++)
-		    {
-		      print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
-		      print "</tr>\n";
-		    }
-		}
-	      print "</table>";
-	    }
-
+	  if($conf->commande->enabled) {
+	    $nb_commande = sizeof($propal->commande_liste_array());
+	    if ($nb_commande > 0)
+	      {
+		$coms = $propal->commande_liste_array();
+		print '<br><table class="border" width="100%">';
+		
+		if ($nb_commande == 1)
+		  
+		  {
+		    print "<tr><td>Commande rattachée : ";
+		    print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[0].'">';
+		    print img_file();
+		    print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[0].'">'.$coms[0]."</a>";
+		    print "</td></tr>\n";
+		  }
+		else
+		  {
+		    print "<tr><td>Commandes rattachées</td></tr>\n";
+		    
+		    for ($i = 0 ; $i < $nb_commande ; $i++)
+		      {
+			print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
+			print "</tr>\n";
+		      }
+		  }
+		print "</table>";
+	      }
+	  }
 
 
 
@@ -788,33 +790,32 @@ if ($_GET["propalid"])
 	      
 	      $message = "Veuillez trouver ci-joint notre proposition commerciale $propal->ref\n\nCordialement\n\n";
 
+
 	      print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"propal.php?propalid=$propal->id&amp;action=send\">\n";
 	      print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
 	      print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
 	      print '<input type="hidden" name="max_file_size" value="2000000">';
 
 	      print_titre("Envoyer la propale par mail");
-          $form=new Form($db);
 
 	      // Formulaire envoi mail
 	      print '<table class="border" width="100%">';
-
 	      // Destinataire
-	      print "<tr><td width=\"180\">Destinataire</td>";
+	      print "<tr><td width=\"180Â\">Destinataire</td>";
 	      print "<td colspan=\"6\" align=\"left\"><input size=\"50\" name=\"sendto\" value=\"" . ucfirst(strtolower($obj->firstname)) . " " .  ucfirst(strtolower($obj->name)) . " <$obj->email>\"></td></tr>";
 
-          // CC
+	      // CC
 	      print '<tr><td>Copie à</td>';
 	      print '<td colspan="6" align="left"><input size="50" name="sendtocc"></td></tr>';
 
-          // Sender
+	      // Sender
 	      print "<tr><td>Expediteur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
 	      print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
 	      print "<td>$replytomail</td></tr>";
+	      print "<tr><td valign=\"top\">Joindre un fichier en plus de la propale<br>(conditions générales de ventes ...)</td><td colspan=\"6\"><input type=\"file\" name=\"addedfile\" size=\"40\" maxlength=\"80\"></td></tr>";
 
+	      print "<tr><td valign=\"top\">Message</td><td colspan=\"6\"><textarea rows=\"5\" cols=\"40\" name=\"message\">$message</textarea></td></tr>";
 	      print "</table>";
-
-          $form->mail_topicmessagefile(0,1,1,$message);
 
 	      print "<input type=\"submit\" value=\"".$langs->trans("Send")."\">";
 	      print "</form>";
