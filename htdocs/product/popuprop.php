@@ -94,8 +94,8 @@ if ( $db->query($sql) )
       print "<td><a href=\"fiche.php?id=$objp->rowid\">";
 	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
 	  else print img_object($langs->trans("ShowProduct"),"product");
-      print "</a> ";
-      print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
+      print " ";
+      print "$objp->ref</a></td>\n";
       print "<td>$objp->label</td>\n";
       print '<td align="right">'.$objp->c.'</td>';
       print "</tr>\n";
