@@ -107,11 +107,6 @@ div.fiche
  *   Menu superieur et 1ere ligne tableau
  */
 
-table.topbarre
-{ 
-	cell-spacing: 0;
-}
-
 .menu { 
     background: #b3c5cc; 
     font-size: 12px; 
@@ -265,7 +260,7 @@ td.barre_select {
 	color: #000000 
 }
 
-form {
+orm {
     padding: 0.1em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
