@@ -62,7 +62,7 @@ if ($_GET["commid"])
 
   print '<tr><td valign="top">';
   
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/lignes.statut.png" alt="Chiffre d\'affaire mensuel" title="Chiffre d\'affaire mensuel"><br /><br />'."\n";
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/lignes.statut.png" alt="Statuts des lignes" title="Statuts des lignes"><br /><br />'."\n";
   
   print '</td></tr>';
   print '</table>';
