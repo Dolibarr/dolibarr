@@ -1,7 +1,10 @@
 #!/usr/bin/perl
-#--------------------------------------------------
+#--------------------------------------------------------------------
 # Lance la generation de la doc dev doxygen
-#--------------------------------------------------
+#
+# $Id$
+# $Source$
+#--------------------------------------------------------------------
 
 # Detecte repertoire du script
 ($DIR=$0) =~ s/([^\/\\]+)$//;
@@ -15,13 +18,13 @@ my $dir = getcwd;
 print "Current dir is: $dir\n";
 print "Running dir for doxygen must be: $DIR/../..\n";
 
-if (! -s "doc/dev/dolibarr-doxygen") {
+if (! -s "doc/dev/dolibarr-doxygen.conf") {
     print "Error: current directory for building Dolibarr doxygen documentation is not correct.\n";
     exit 1;   
 }
 
 print "Running doxygen, please wait...\n";
-$result=`doxygen doc/dev/dolibarr-doxygen 2>&1`;
+$result=`doxygen doc/dev/dolibarr-doxygen.conf 2>&1`;
 
 print $result;
 
