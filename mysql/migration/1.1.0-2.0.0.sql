@@ -143,7 +143,7 @@ UPDATE llx_rights_def set perms= "adsl", subperms="requete"            where id=
 UPDATE llx_rights_def set perms= "adsl", subperms="commander"          where id="204";
 UPDATE llx_rights_def set perms= "adsl", subperms="gerer"              where id="205";
 UPDATE llx_rights_def set perms= "contrat", subperms="paiement"        where id="215";
-
+delete from llx_rights_def where perms is null and subperms is null;
 
 alter table llx_facturedet add fk_code_ventilation integer NOT NULL DEFAULT 0;
 
