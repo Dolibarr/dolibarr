@@ -56,7 +56,7 @@ if ($action == 'save')
   }
   else
     {
-      print "<p>erreur, votre mot de passe n'est pas vérifié, merci de <a href=\"javascript:back()\">retourner à la page de saisie</a> pour corriger votre erreur</p>\n";
+      print "<p>erreur, votre mot de passe n'est pas vérifié, merci de retourner à la page de saisie pour corriger votre erreur</p>\n";
     }
 }
 else
