@@ -27,8 +27,8 @@ create table llx_product_price
   fk_product      integer NOT NULL,
   date_price      datetime NOT NULL,
   price           double,
-  tva_tx          double default 19.6,
+  tva_tx          double DEFAULT 19.6,
   fk_user_author  integer,
-  envente         tinyint default 1
+  envente         tinyint DEFAULT 1
 )type=innodb;
 

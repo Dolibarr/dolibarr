@@ -26,14 +26,14 @@ create table llx_fichinter
 (
   rowid           SERIAL PRIMARY KEY,
   fk_soc          integer NOT NULL,
-  fk_projet       integer default 0,     -- projet auquel est rattache la fiche
+  fk_projet       integer DEFAULT 0,     -- projet auquel est rattache la fiche
   ref             varchar(30) NOT NULL,  -- number
-  datec           timestamp,              -- date de creation
-  date_valid      timestamp,              -- date de validation
+  datec           timestamp without time zone,              -- date de creation
+  date_valid      timestamp without time zone,              -- date de validation
   datei           date,                  -- date de l'intervention
   fk_user_author  integer,   -- createur de la fiche
   fk_user_valid   integer,   -- valideur de la fiche
-  fk_statut       smallint  default 0,
+  fk_statut       smallint  DEFAULT 0,
   duree           real,
   note            text
 );

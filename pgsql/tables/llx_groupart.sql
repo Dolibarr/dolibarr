@@ -26,8 +26,8 @@ create table llx_groupart
   rowid           SERIAL PRIMARY KEY,
   osc_id          integer NOT NULL,
   tms             timestamp,
-  nom		  varchar(64),
-  groupart	  CHAR(8) CHECK (groupart IN ('artiste','groupe')) NOT NULL,
+  nom		          varchar(64),
+  groupart	      CHAR(8) CHECK (groupart IN ('artiste','groupe')) NOT NULL,
   description     text NOT NULL,
   fk_user_author  integer
 );

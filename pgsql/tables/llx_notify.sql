@@ -25,9 +25,9 @@ create table llx_notify
 (
   rowid           SERIAL PRIMARY KEY,
   tms             timestamp,
-  daten           timestamp,           -- date de la notification
+  daten           timestamp without time zone,           -- date de la notification
   fk_action       integer NOT NULL,
   fk_contact      integer NOT NULL,
-  objet_type	  CHAR(10) CHECK (objet_type IN ('ficheinter','facture','propale')),
+  objet_type	    CHAR(10) CHECK (objet_type IN ('ficheinter','facture','propale')),
   objet_id        integer NOT NULL
 );

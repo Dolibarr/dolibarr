@@ -26,7 +26,7 @@ create table llx_paiementcharge
   datec           datetime,           -- date de creation
   tms             timestamp,
   datep           datetime,           -- payment date
-  amount          real default 0,
+  amount          real DEFAULT 0,
   fk_typepaiement integer NOT NULL,
   num_paiement    varchar(50),
   note            text,

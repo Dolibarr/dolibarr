@@ -25,7 +25,7 @@ create table llx_groupart
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   osc_id          integer NOT NULL,
   tms             timestamp,
-  nom		  varchar(64),
+  nom             varchar(64),
   groupart        enum("artiste","groupe") NOT NULL,
   description     text NOT NULL,
   fk_user_author  integer

@@ -26,10 +26,10 @@ create table llx_product_price
   rowid           SERIAL PRIMARY KEY,
   tms             timestamp,
   fk_product      integer NOT NULL,
-  date_price      timestamp NOT NULL,
+  date_price      timestamp without time zone NOT NULL,
   price           double precision,
-  tva_tx          double precision default 19.6,
+  tva_tx          double precision DEFAULT 19.6,
   fk_user_author  integer,
-  envente         smallint default 1
+  envente         smallint DEFAULT 1
 );
 

@@ -26,16 +26,16 @@ create table llx_facturedet
 (
   rowid           SERIAL PRIMARY KEY,
   fk_facture      integer NOT NULL,
-  fk_product      integer NOT NULL DEFAULT 0,
+  fk_product      integer DEFAULT 0 NOT NULL,
   description     text,
-  tva_taux        real default 19.6, -- taux tva
+  tva_taux        real DEFAULT 19.6, -- taux tva
   qty		  			  real,              -- quantité
-  remise_percent  real default 0,    -- pourcentage de remise
-  remise          real default 0,    -- montant de la remise
+  remise_percent  real DEFAULT 0,    -- pourcentage de remise
+  remise          real DEFAULT 0,    -- montant de la remise
   subprice        real,              -- prix avant remise
   price           real,               -- prix final
-  date_start      timestamp,          -- date debut si service
-  date_end        timestamp           -- date fin si service
+  date_start      timestamp without time zone,          -- date debut si service
+  date_end        timestamp without time zone           -- date fin si service
 );
 
 CREATE INDEX llx_facturedet_fk_facture ON llx_facturedet (fk_facture);

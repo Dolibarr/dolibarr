@@ -22,7 +22,7 @@
 
 create table llx_pointmort
 (
-  month        timestamp,
+  month        timestamp without time zone,
   amount       real
 );
 

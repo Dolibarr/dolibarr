@@ -27,15 +27,15 @@ create table llx_livre
   oscid           integer NOT NULL,
   tms             timestamp,
   status          smallint,
-  date_ajout      timestamp,
-  ref		  varchar(12),
-  title		  varchar(64),
-  annee		  smallint,
+  date_ajout      timestamp without time zone,
+  ref             varchar(12),
+  title           varchar(64),
+  annee           smallint,
   description     text,
   prix            decimal(15,4),
   fk_editeur      integer,
   fk_user_author  integer,
-  frais_de_port   smallint default 1,
+  frais_de_port   smallint DEFAULT 1,
 
 UNIQUE(ref)
 

@@ -29,15 +29,15 @@ create table llx_product
   label              varchar(255),
   description        text,
   price              double,
-  tva_tx             double default 19.6,
+  tva_tx             double DEFAULT 19.6,
   fk_user_author     integer,
-  envente            tinyint default 1,
-  nbvente            integer default 0,
-  fk_product_type    integer default 0,
+  envente            tinyint DEFAULT 1,
+  nbvente            integer DEFAULT 0,
+  fk_product_type    integer DEFAULT 0,
   duration           varchar(6),
-  stock_propale      integer default 0,
-  stock_commande     integer default 0,
-  seuil_stock_alerte integer default 0
+  stock_propale      integer DEFAULT 0,
+  stock_commande     integer DEFAULT 0,
+  seuil_stock_alerte integer DEFAULT 0
 
 )type=innodb;
 

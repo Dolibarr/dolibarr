@@ -23,20 +23,20 @@
 
 create table llx_product
 (
-  rowid           SERIAL PRIMARY KEY,
-  datec           timestamp,
-  tms             timestamp,
-  ref             varchar(15),
-  label           varchar(255),
-  description     text,
-  price           double precision,
-  tva_tx          double precision default 19.6,
-  fk_user_author  integer,
-  envente         smallint default 1,
-  nbvente         integer default 0,
-  fk_product_type integer default 0,
-  duration        varchar(6),
-  stock_propale      integer default 0,
-  stock_commande     integer default 0,
-  seuil_stock_alerte integer default 0
+  rowid              SERIAL PRIMARY KEY,
+  datec              timestamp without time zone,
+  tms                timestamp,
+  ref                varchar(15) UNIQUE,
+  label              varchar(255),
+  description        text,
+  price              double precision,
+  tva_tx             double precision DEFAULT 19.6,
+  fk_user_author     integer,
+  envente            smallint DEFAULT 1,
+  nbvente            integer DEFAULT 0,
+  fk_product_type    integer DEFAULT 0,
+  duration           varchar(6),
+  stock_propale      integer DEFAULT 0,
+  stock_commande     integer DEFAULT 0,
+  seuil_stock_alerte integer DEFAULT 0
 );

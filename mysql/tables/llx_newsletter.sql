@@ -32,7 +32,7 @@ create table llx_newsletter
   email_body         text,
   target             smallint,
   sql_target         text,
-  status             smallint NOT NULL DEFAULT 0,
+  status             smallint DEFAULT 0 NOT NULL,
   date_send_request  datetime,   -- debut de l'envoi demandé
   date_send_begin    datetime,   -- debut de l'envoi
   date_send_end      datetime,   -- fin de l'envoi

@@ -25,13 +25,13 @@ create table llx_paiementfourn
 (
   rowid             SERIAL PRIMARY KEY,
   tms               timestamp,
-  datec             timestamp,          -- date de creation de l'enregistrement
-  fk_facture_fourn  integer,           -- facture
-  datep             timestamp,          -- date de paiement
-  amount            real default 0,    -- montant
-  fk_user_author    integer,           -- auteur
-  fk_paiement       integer NOT NULL,  -- moyen de paiement
-  num_paiement      varchar(50),       -- numéro de paiement (cheque)
+  datec             timestamp without time zone,  -- date de creation de l'enregistrement
+  fk_facture_fourn  integer,                      -- facture
+  datep             timestamp without time zone,  -- date de paiement
+  amount            real DEFAULT 0,               -- montant
+  fk_user_author    integer,                      -- auteur
+  fk_paiement       integer NOT NULL,             -- moyen de paiement
+  num_paiement      varchar(50),                  -- numéro de paiement (cheque)
   note              text,
   fk_bank           integer NOT NULL
 );

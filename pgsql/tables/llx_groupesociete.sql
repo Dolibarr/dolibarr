@@ -26,10 +26,10 @@ create table llx_groupesociete
   rowid           serial PRIMARY KEY,
   parent          integer UNIQUE,
   tms             timestamp,
-  datec	          timestamp,                            -- creation date
+  datec	          timestamp without time zone,         -- creation date
   nom             varchar(60),                         -- company name
   note            text,                                --
-  remise          real           default 0,            -- remise systématique pour le client
+  remise          real           DEFAULT 0,            -- remise systématique pour le client
   fk_user_author  integer
 
 )

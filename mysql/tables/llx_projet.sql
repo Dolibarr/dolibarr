@@ -26,11 +26,11 @@ create table llx_projet
   fk_soc           integer  NOT NULL,
   fk_statut        smallint NOT NULL,
   tms              timestamp,
-  dateo            date,  -- date d'ouverture du projet
+  dateo            date,         -- date d'ouverture du projet
   ref              varchar(50),
   title            varchar(255),
-  fk_user_resp     integer,   -- responsable du projet
-  fk_user_creat    integer,   -- createur du projet
+  fk_user_resp     integer,      -- responsable du projet
+  fk_user_creat    integer,      -- createur du projet
   note             text,
 
   UNIQUE INDEX(ref)

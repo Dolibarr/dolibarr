@@ -24,7 +24,7 @@
 create table llx_product_fournisseur
 (
   rowid           SERIAL PRIMARY KEY,
-  datec           timestamp,
+  datec           timestamp without time zone,
   tms             timestamp,
   fk_product      integer,
   fk_soc          integer,

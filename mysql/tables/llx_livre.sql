@@ -27,14 +27,14 @@ create table llx_livre
   tms             timestamp,
   status          tinyint,
   date_ajout      datetime,
-  ref		  varchar(12),
-  title		  varchar(64),
-  annee		  smallint(64),
+  ref             varchar(12),
+  title           varchar(64),
+  annee           smallint(64),
   description     text,
   prix            decimal(15,4),
   fk_editeur      integer,
   fk_user_author  integer,
-  frais_de_port   tinyint default 1,
+  frais_de_port   tinyint DEFAULT 1,
 
   UNIQUE(ref)
 )type=innodb;

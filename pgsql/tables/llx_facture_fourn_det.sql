@@ -27,10 +27,10 @@ create table llx_facture_fourn_det
   fk_facture_fourn  integer NOT NULL,
   fk_product        integer NULL,
   description       text,
-  pu_ht             real default 0,
-  qty               smallint default 1,
-  total_ht          real default 0,
-  tva_taux          real default 0,
-  tva               real default 0,
-  total_ttc         real default 0
+  pu_ht             real DEFAULT 0,
+  qty               smallint DEFAULT 1,
+  total_ht          real DEFAULT 0,
+  tva_taux          real DEFAULT 0,
+  tva               real DEFAULT 0,
+  total_ttc         real DEFAULT 0
 );

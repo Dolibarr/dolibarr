@@ -28,7 +28,7 @@ create table llx_groupesociete
   datec	          datetime,                            -- creation date
   nom             varchar(60),                         -- company name
   note            text,                                --
-  remise          real           default 0,            -- remise systématique pour le client
+  remise          real           DEFAULT 0,            -- remise systématique pour le client
   fk_user_author  integer
 
 )type=innodb;

@@ -26,7 +26,7 @@ create table llx_paiement_facture
   rowid           serial PRIMARY KEY,
   fk_paiement     integer,
   fk_facture      integer,
-  amount          real     default 0
+  amount          real     DEFAULT 0
 );
 
 CREATE INDEX llx_paiement_facture_fk_paiement ON llx_paiement_facture(fk_paiement);
