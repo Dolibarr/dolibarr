@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,16 @@ Class pdf_adytek extends FPDF{
       $this->description = "Modèle de facture avec remise et infos réglement à la mode de chez nous";
     }
 
+
+    /*!
+    		\brief Renvoi le dernier message d'erreur de création de facture
+    */
+    Function error()
+    {
+        return $this->error;
+    }
+
+
   Function write_pdf_file($facid)
     {
       global $user;
@@ -46,7 +57,8 @@ Class pdf_adytek extends FPDF{
 	      umask(0);
 	      if (! mkdir($dir, 0755))
 		{
-		  print "Impossible de créer $dir !";
+                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+                    return 0;
 		}
 	    }
 
@@ -197,12 +209,14 @@ Class pdf_adytek extends FPDF{
 	    }
 	  else
 	    {
-	      print "Erreur : le répertoire $dir n'existe pas !";
+                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+                    return 0;
 	    }
 	}
       else
 	{
-	  print "FAC_OUTPUTDIR non définit !";
+            $this->error="Erreur: FAC_OUTPUTDIR non défini !";
+            return 0;
 	}
     }
   /*

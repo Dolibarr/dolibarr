@@ -21,13 +21,47 @@
 *
 */
 
+
+/*!	\file pdf_crabe.modules.php
+		\brief Classe permettant de générer lune facture au modèle Crabe
+		\author	Laurent Destailleur
+		\version $Revision$
+*/
+
 Class pdf_crabe {
+    var $error='';
+    
+    /*!
+    		\brief Constructeur
+    		\param	db		objet base de donnée
+    */
     Function pdf_crabe($db=0)
     {
         $this->db = $db;
         $this->description = "Modèle de facture classique (Gère l'option fiscale de facturation TVA et le choix du mode de règlement à afficher)";
     }
 
+
+    /*!
+    		\brief Renvoi le dernier message d'erreur de création de facture
+    */
+    Function error()
+    {
+        return $this->error;
+    }
+
+
+    /*!
+    		\brief Fonction générant la facture sur le disque
+    		\param	facid		id de la facture à générer
+            \remarks Variables utilisées
+    		\remarks FAC_OUTPUTDIR
+    		\remarks FACTURE_CODEPRODUITSERVICE
+    		\remarks FACTURE_CHQ_NUMBER
+    		\remarks FACTURE_RIB_NUMBER
+    		\remarks FAC_OUTPUTDIR
+    		\return	1=ok, 0=ko
+    */
     Function write_pdf_file($facid)
     {
         global $user;
@@ -44,7 +78,8 @@ Class pdf_crabe {
                 umask(0);
                 if (! mkdir($dir, 0755))
                 {
-                    print "Erreur: Impossible de créer $dir !";
+                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+                    return 0;
                 }
             }
 
@@ -212,13 +247,16 @@ Class pdf_crabe {
             }
             else
             {
-                print "Erreur : le répertoire $dir n'existe pas !";
+                $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+                return 0;
             }
         }
         else
         {
-            print "Erreur: FAC_OUTPUTDIR non défini !";
+            $this->error="Erreur: FAC_OUTPUTDIR non défini !";
+            return 0;
         }
+        $this->error="Erreur: Erreur inconnue";
         return 0;   // Erreur par defaut
     }
 
@@ -302,8 +340,8 @@ Class pdf_crabe {
         }
         else
         {
-            print "Erreur : ".$this->db->error()."<br>".$sql;
-            return -1;
+            $this->error="Echec requete SQL";
+            return 0;
         }
 
     }

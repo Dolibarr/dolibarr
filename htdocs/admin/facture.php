@@ -24,26 +24,15 @@ require("./pre.inc.php");
 if (!$user->admin)
   accessforbidden();
 
-/*
-if ($HTTP_POST_VARS["action"] == 'update')
-{
-  dolibarr_set_const($db, "FAC_PDF_INTITULE2",$HTTP_POST_VARS["nom2"]);
-  dolibarr_set_const($db, "FAC_PDF_INTITULE",$HTTP_POST_VARS["nom"]);
-  dolibarr_set_const($db, "FAC_PDF_ADRESSE",$HTTP_POST_VARS["adresse"]);
-  dolibarr_set_const($db, "FAC_PDF_TEL",$HTTP_POST_VARS["tel"]);
-  dolibarr_set_const($db, "FAC_PDF_FAX",$HTTP_POST_VARS["fax"]);
-  dolibarr_set_const($db, "FAC_PDF_SIREN",$HTTP_POST_VARS["siren"]);
-  dolibarr_set_const($db, "FAC_PDF_SIRET",$HTTP_POST_VARS["siret"]);
-
-  Header("Location: facture.php");
-}
-*/
 
 $facture_addon_var      = FACTURE_ADDON;
 $facture_addon_var_pdf  = FACTURE_ADDON_PDF;
 $facture_rib_number_var = FACTURE_RIB_NUMBER;
 $facture_chq_number_var = FACTURE_CHQ_NUMBER;
 $facture_tva_option     = FACTURE_TVAOPTION;
+
+$typeconst=array('yesno','texte','chaine');
+
 
 if ($_GET["action"] == 'set')
 {
@@ -65,11 +54,30 @@ if ($_POST["action"] == 'settvaoption')
 {
   if (dolibarr_set_const($db, "FACTURE_TVAOPTION",$_POST["optiontva"])) $facture_tva_option = $_POST["optiontva"];
 }
+
+if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
+{
+	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''));
+	{
+	  	print $db->error();
+	}
+}
+
+if ($_GET["action"] == 'delete')
+{
+	if (! dolibarr_del_const($db, $_GET["rowid"]));
+	{
+	  	print $db->error();
+	}
+}
+
+
 llxHeader();
 
 $dir = "../includes/modules/facture/";
 
 print_titre("Configuration du module Factures");
+
 
 /*
  *  Module numérotation
@@ -77,13 +85,13 @@ print_titre("Configuration du module Factures");
 print "<br>";
 print_titre("Module de numérotation des factures");
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
-print '<TR class="liste_titre">';
+print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
+print '<tr class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Description</td>';
 print '<td align="center" width="60">Activé</td>';
 print '<td width="80">&nbsp;</td>';
-print "</TR>\n";
+print "</tr>\n";
 
 clearstatcache();
 
@@ -130,7 +138,7 @@ print '</table>';
 print '<br>';
 print_titre("Modèles de facture pdf");
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
 print '<tr class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Description</td>';
@@ -189,7 +197,8 @@ print '</table>';
 print '<br>';
 print_titre( "Mode de règlement à afficher sur les factures");
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
+$var=True;
 
 print '<form action="facture.php" method="post">';
 print '<input type="hidden" name="action" value="setribchq">';
@@ -197,11 +206,11 @@ print '<tr class="liste_titre">';
 print '<td>Mode règlement à proposer</td>';
 print '<td align="right"><input type="submit" value="Modifier"></td>';
 print "</tr>\n";
-print '<tr '.$bc[True].'>';
+$var=!$var;
+print '<tr '.$bc[$var].'>';
 print "<td>Proposer paiement par RIB sur le compte</td>";
 print "<td>";
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0";
-$var=True;
 if ($db->query($sql))
 {
   $num = $db->num_rows();
@@ -230,8 +239,8 @@ if ($db->query($sql))
   }
 }
 print "</td></tr>";
-
-print '<tr '.$bc[False].'>';
+$var=!$var;
+print '<tr '.$bc[$var].'>';
 print "<td>Proposer paiement par chèque à l'ordre et adresse du titulaire du compte</td>";
 print "<td>";
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0";
@@ -267,20 +276,6 @@ if ($db->query($sql))
 print "</td></tr>";
 print "</form>";
 print "</table>";
-$db->close();
-
-/*
- *  Repertoire
- */
-print '<br>';
-print_titre("Chemins d'accés aux documents");
-
-print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
-print '<tr class="liste_titre">';
-print '<td>Nom</td><td>Valeur</td>';
-print "</tr>\n";
-print '<tr '.$bc[True].'><td width=\"140\">Répertoire</td><td>'.FAC_OUTPUTDIR.'</td></tr>';
-print "</table>";
 
 
 /*
@@ -289,19 +284,107 @@ print "</table>";
 print '<br>';
 print_titre("Options fiscales de facturation de la TVA");
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
 print '<form action="facture.php" method="post">';
 print '<input type="hidden" name="action" value="settvaoption">';
 print '<tr class="liste_titre">';
 print '<td>Option</td><td>Description</td>';
 print '<td align="right"><input type="submit" value="Modifier"></td>';
 print "</tr>\n";
-print "<tr ".$bc[True]."><td width=\"140\"><input type=\"radio\" name=\"optiontva\" value=\"reel\"".($facture_tva_option != "franchise"?" checked":"")."> Option réel</td>";
+$var=True;
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optiontva\" value=\"reel\"".($facture_tva_option != "franchise"?" checked":"")."> Option réel</td>";
 print "<td colspan=\"2\">L'option 'réel' est la plus courante. Elle est à destination des entreprises et professions libérales.\nChaque produits/service vendu est soumis à la TVA (Dolibarr propose le taux standard par défaut à la création d'une facture). Cette dernière est récupérée l'année suivante suite à la déclaration TVA pour les produits/services achetés et est reversée à l'état pour les produits/services vendus.</td></tr>\n";
-print "<tr ".$bc[False]."><td width=\"140\"><input type=\"radio\" name=\"optiontva\" value=\"franchise\"".($facture_tva_option == "franchise"?" checked":"")."> Option franchise</td>";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optiontva\" value=\"franchise\"".($facture_tva_option == "franchise"?" checked":"")."> Option franchise</td>";
 print "<td colspan=\"2\">L'option 'franchise' est utilisée par les particuliers ou professions libérales à titre occasionnel avec de petits chiffres d'affaires.\nChaque produits/service vendu est soumis à une TVA de 0 (Dolibarr propose le taux 0 par défaut à la création d'une facture cliente). Il n'y a pas de déclaration ou récupération de TVA, et les factures qui gèrent l'option affichent la mention obligatoire \"TVA non applicable - art-293B du CGI\".</td></tr>\n";
 print "</form>";
 print "</table>";
+
+
+/*
+ *  Autres constantes
+ */
+print '<br>';
+print_titre("Autres constantes relatives aux factures");
+
+print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>Nom</td>';
+print '<td>Valeur</td>';
+print '<td>Type</td>';
+print '<td>Note</td>';
+print "<td>Action</td>";
+print "</tr>\n";
+
+
+# Affiche lignes des constantes
+$form = new Form($db);
+$exclude="'FACTURE_ADDON','FACTURE_ADDON_PDF','FACTURE_CHQ_NUMBER','FACTURE_RIB_NUMBER','FACTURE_TVAOPTION'"; # Lignes exclues car affichées précédemment
+
+$sql = "SELECT rowid, name, value, type, note FROM llx_const ";
+$sql.= "WHERE name like 'FAC%' ";
+$sql.= "AND name not in ($exclude)";
+$sql.= "ORDER BY name ASC";
+$result = $db->query($sql);
+
+if ($result) 
+{
+  $num = $db->num_rows();
+  $i = 0;
+  $var=True;
+
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);
+      $var=!$var;
+
+      print '<form action="facture.php" method="POST">';
+      print '<input type="hidden" name="action" value="update">';
+      print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+      print '<input type="hidden" name="constname" value="'.$obj->name.'">';
+
+      print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
+
+      print '<td>';
+      if ($obj->type == 'yesno')
+	{
+	  $form->selectyesnonum('constvalue',$obj->value);
+	  print '</td><td>';
+	  $form->select_array('consttype',array('yesno','texte','chaine'),0);
+	}
+      elseif ($obj->type == 'texte')
+	{
+	  print '<textarea name="constvalue" cols="35" rows="4" wrap="soft">';
+	  print $obj->value;
+	  print "</textarea>\n";
+	  print '</td><td>';
+	  $form->select_array('consttype',array('yesno','texte','chaine'),1);
+	}
+      else
+	{
+	  print '<input type="text" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
+	  print '</td><td>';
+	  $form->select_array('consttype',array('yesno','texte','chaine'),2);
+	}
+      print '</td><td>';
+
+      print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
+      print '</td><td>';
+      print '<input type="Submit" value="Update" name="Button"> &nbsp; ';
+      print '<a href="const.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
+      print "</td></tr>\n";
+
+      print '</form>';
+      $i++;
+    }
+}
+
+print "</table>\n";
+
+print "<br>\n";
+
+$db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

@@ -32,36 +32,39 @@ print_titre("Configuration autre (Dolibarr version ".DOL_VERSION.")");
 //print_r(get_defined_constants());
 print "<br>\n";
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print '<TR class="liste_titre">';
-print '<TD>Nom</TD>';
-print '<TD>Valeur</TD>';
-print '<TD>Type</TD>';
-print '<TD>Note</TD>';
-print "<TD>Action</TD>";
-print "</TR>\n";
 
-$form = new Form($db);
 $typeconst=array('yesno','texte','chaine');
 
-
-if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
+if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-	if (! dolibarr_set_const($db, $HTTP_POST_VARS["constname"],$HTTP_POST_VARS["constvalue"],$typeconst[$HTTP_POST_VARS["consttype"]],1,isset($HTTP_POST_VARS["constnote"])?$HTTP_POST_VARS["constnote"]:''));
+	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:''));
 	{
 	  	print $db->error();
 	}
 }
-
 
 if ($_GET["action"] == 'delete')
 {
-	if (! dolibarr_del_const($db, $HTTP_POST_VARS["constname"]));
+	if (! dolibarr_del_const($db, $_GET["rowid"]));
 	{
 	  	print $db->error();
 	}
 }
 
+
+
+print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>Nom</td>';
+print '<td>Valeur</td>';
+print '<td>Type</td>';
+print '<td>Note</td>';
+print "<td>Action</td>";
+print "</tr>\n";
+
+
+# Affiche lignes des constantes
+$form = new Form($db);
 
 if ($all==1){
   $sql = "SELECT rowid, name, value, type, note FROM llx_const ORDER BY name ASC";
@@ -80,7 +83,7 @@ if ($result)
       $obj = $db->fetch_object( $i);
       $var=!$var;
 
-      print '<form action="'.$PHP_SELF.'" method="POST">';
+      print '<form action="const.php" method="POST">';
       print '<input type="hidden" name="action" value="update">';
       print '<input type="hidden" name="rowid" value="'.$rowid.'">';
       print '<input type="hidden" name="constname" value="'.$obj->name.'">';
@@ -96,7 +99,7 @@ if ($result)
 	}
       elseif ($obj->type == 'texte')
 	{
-	  print '<textarea name="constvalue" cols="35" rows="5" wrap="soft">';
+	  print '<textarea name="constvalue" cols="35" rows="4" wrap="soft">';
 	  print $obj->value;
 	  print "</textarea>\n";
 	  print '</td><td>';
@@ -113,16 +116,18 @@ if ($result)
       print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
       print '</td><td>';
       print '<input type="Submit" value="Update" name="Button"> &nbsp; ';
-      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
+      print '<a href="const.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
       print "</td></tr>\n";
 
       print '</form>';
       $i++;
     }
 }
-$var=!$var;
 
-print '<form action="'.$PHP_SELF.'" method="POST">';
+
+# Affiche ligne d'ajout
+$var=!$var;
+print '<form action="const.php" method="POST">';
 print '<input type="hidden" name="action" value="add">';
 
 print "<tr $bc[$var] class=value><td><input type=\"text\" size=\"15\" name=\"constname\" value=\"\"></td>\n";
@@ -142,6 +147,8 @@ print "</td>\n";
 print '</form>';
 	
 print '</tr>';
+
+
 
 print '</table>';
 

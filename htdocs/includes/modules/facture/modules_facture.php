@@ -58,6 +58,12 @@ function jupiter_get_num_explain()
 Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003';
 }
 
+
+/*!
+		\brief Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
+		\param	db  		objet base de donnée
+		\param	facid		id de la facture à créer
+*/
 function facture_pdf_create($db, $facid)
 {
   
@@ -79,7 +85,7 @@ function facture_pdf_create($db, $facid)
 	}
       else
 	{
-	  print "Erreur";
+	  print $obj->error();
 	  return 0;
 	}
     }

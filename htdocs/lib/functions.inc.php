@@ -122,13 +122,13 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 /*!
 		\brief effacement d'une constante dans la base de données
 		\param	db			base de données
-		\param	name		nom de la constante
+		\param	name		nom ou rowid de la constante
 		\remarks retourne 0 pour raté, 1 pour réussi
 */
 
 function dolibarr_del_const($db, $name)
 {
-  $sql = "DELETE FROM llx_const WHERE name='$name'";
+  $sql = "DELETE FROM llx_const WHERE name='$name' or rowid='$name'";
 
   if ($db->query($sql))
     {
