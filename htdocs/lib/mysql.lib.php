@@ -22,7 +22,7 @@
  *
  */
 
-/*!	    \file htdocs/lib/mysql.lib.php
+/**	    \file htdocs/lib/mysql.lib.php
 		\brief Classe permettant de gérér la database de dolibarr.
 		\author Fabien Seisen
 		\author Rodolphe Quiedeville.
@@ -32,7 +32,7 @@
 		Ensemble des fonctions permettant de gérer la database de dolibarr.
 */
 
-/*!     \class DoliDb
+/**     \class DoliDb
 		\brief Classe permettant de gérér la database de dolibarr
 
 		Ensemble des fonctions permettant de gérer la database de dolibarr
@@ -46,7 +46,7 @@ class DoliDb
   var $ERROR_DUPLICATE=1062;
   var $ERROR_TABLEEXISTS=1050;
 
-/*!
+/**
 		\brief      Ouverture d'une connection vers le serveur et éventuellement une database.
 		\param	    type		type de base de données (mysql ou pgsql)
 		\param	    host		addresse de la base de données
@@ -121,7 +121,7 @@ class DoliDb
       return $this->ok;
     }
 
-/*!
+/**
 		\brief      Selectionne une database.
 		\param	    database		nom de la database
 		\return	    resource
@@ -132,7 +132,7 @@ class DoliDb
       return mysql_select_db($database, $this->db);
     }
 
-/*!
+/**
 		\brief      Connection vers le serveur
 		\param	    host		addresse de la base de données
 		\param	    login		nom de l'utilisateur autorisé
@@ -147,7 +147,7 @@ class DoliDb
       return $this->db;
     }
 
-/*!
+/**
 		\brief      Connexion sur une base de donnée
 		\param	    database		nom de la database
 		\return	    result			resultat 1 pour ok, 0 pour non ok
@@ -165,7 +165,7 @@ class DoliDb
       }
   }
 
-/*!
+/**
 		\brief      Copie d'une database.
 		\return	    resource
 */
@@ -177,7 +177,7 @@ class DoliDb
       return $db2;
     }
 
-/*!
+/**
 		\brief      Ouverture d'une connection vers une database.
 		\param	    host		addresse de la base de données
 		\param	    login		nom de l'utilisateur autorisé
@@ -191,7 +191,7 @@ class DoliDb
       return $this->db;
     }
 
-/*!
+/**
 		\brief      Fermeture d'une connection vers une database.
 		\return	    resource
 */
@@ -201,7 +201,7 @@ class DoliDb
     return mysql_close($this->db);
   }
 
-/*!
+/**
 		\brief      Debut d'une transaction.
 		\param	    do
 		\return	    string
@@ -219,7 +219,7 @@ class DoliDb
       }
   }
 
-/*!
+/**
 		\brief      Ecriture d'une transaction.
 		\param	    do
 		\return	    string
@@ -237,7 +237,7 @@ class DoliDb
       }
   }
 
-/*!
+/**
 		\brief      Effacement d'une transaction et retour au ancienne valeurs.
 		\param	    do
 		\return	    string
@@ -255,7 +255,7 @@ class DoliDb
       }
   }
 
-/*!
+/**
 		\brief      Effectue une requete et renvoi le resultset de réponse de la base
 		\param	    query		contenu de la query
 		\param	    limit
@@ -273,7 +273,7 @@ class DoliDb
       return $this->results;
     }
 
-/*!
+/**
 		\brief      Liste des tables dans une database.
 		\param	    database		nom de la database
 		\return	    resource
@@ -285,7 +285,7 @@ class DoliDb
     return  $this->results;
   }
 
-/*!
+/**
 		\brief      Renvoie les données de la requete.
 		\param	    nb				contenu de la query
 		\param	    fieldname	    nom du champ
@@ -297,7 +297,7 @@ class DoliDb
       return mysql_result($this->results, $nb, $fieldname);
     }
 
-/*!
+/**
 		\brief      Libère le dernier resultset utilisé sur cette connexion.
 		\return	    resource
 */
@@ -307,7 +307,7 @@ class DoliDb
       return mysql_free_result($this->results);
     }
 
-/*!
+/**
 		\brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
         \param      resultset   curseur de la requete voulue
 		\return	    resource
@@ -320,7 +320,7 @@ class DoliDb
         return mysql_fetch_object($resultset);
   	}
 
-/*!
+/**
 		\brief      défini les limites de la requète.
 		\param	    limit
 		\param	    offset
@@ -339,29 +339,30 @@ class DoliDb
         }
     }
 
-/*!
-		\brief      formatage de la date en format unix.
+
+/**
+		\brief      Formatage par la base de données d'un champ de la base au format Timestamp ou Date (YYYY-MM-DD HH:MM:SS)
+		            afin de retourner une donnée toujours au format universel date tms unix.
 		\param	    fname
 		\return	    date
 */
-
   function pdate($fname)
     {
       return "unix_timestamp($fname)";
     }
 
-/*!
-		\brief      formatage de la date en fonction des locales.
+/**
+		\brief      Formatage de la date en fonction des locales.
 		\param	    fname
 		\return	    date
 */
-
   function idate($fname)
     {
       return strftime("%Y%m%d%H%M%S",$fname);
     }
 
-/*!
+
+/**
 		\brief      Renvoie les données dans un tableau.
 		\return	    array
 */
@@ -371,7 +372,7 @@ class DoliDb
       return mysql_fetch_array($this->results);
     }
 
-/*!
+/**
 		\brief      Renvoie les données comme un tableau.
 		\return	    array
 */
@@ -381,7 +382,7 @@ class DoliDb
       return mysql_fetch_row($this->results);
     }
 
-/*!
+/**
 		\brief      Obtient les données d'un colonne et renvoie les données sous forme d'objet.
         \return     array
 */
@@ -392,7 +393,7 @@ class DoliDb
     }
 
 
-/*!
+/**
 		\brief      Renvoie le nombre de lignes dans le
 		            resultat d'une requete SELECT
 		\see    	affected_rows
@@ -404,7 +405,7 @@ class DoliDb
       return mysql_num_rows($this->results);
     }
 
-/*!
+/**
 		\brief      Renvoie le nombre de lignes dans le
 		            resultat d'une requete INSERT, DELETE ou UPDATE
 		\see    	num_rows
@@ -419,7 +420,7 @@ class DoliDb
     }
 
 
-/*!
+/**
 		\brief      Renvoie le nombre de champs dans le resultat de la requete.
 		\return	    int
 */
@@ -429,7 +430,7 @@ class DoliDb
       return mysql_num_fields($this->results);
     }
 
-/*!
+/**
 		\brief      Renvoie la derniere requete soumise par la methode query()
 		\return	    lastquery
 */
@@ -439,7 +440,7 @@ class DoliDb
       return $this->lastquery;
     }
 
-/*!
+/**
 		\brief      Renvoie le texte de l'erreur mysql de l'operation precedente.
 		\return	    error_text
 */
@@ -449,7 +450,7 @@ class DoliDb
       return mysql_error($this->db);
     }
 
-/*!
+/**
 		\brief      Renvoie la valeur numerique de l'erreur de l'operation precedente.
 					pour etre exploiter par l'appelant et détecter les erreurs du genre:
 					echec car doublons, table deja existante...
@@ -464,7 +465,7 @@ class DoliDb
       return mysql_errno($this->db);
     }
 
-/*!
+/**
 		\brief      Obtient l'id genéré par le précedent INSERT.
 		\return     id
 */
@@ -474,7 +475,7 @@ class DoliDb
       return mysql_insert_id($this->db);
     }
 
-/*!
+/**
 		\brief      Retourne le dsn pear
 		\return     dsn
 */
