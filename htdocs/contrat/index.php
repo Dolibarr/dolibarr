@@ -63,17 +63,30 @@ if ( $db->query($sql) )
   print_liste_field_titre("Libellé",$PHP_SELF, "p.label");
   print "</td><td>";
   print_liste_field_titre("Société",$PHP_SELF, "s.nom");
-  print "</td>";
+  print '</td><td align="center">Etat</td>';
   print "</TR>\n";
     
   $var=True;
   while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object( $i);
+      $obj = $db->fetch_object( $i);
       $var=!$var;
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?id=$objp->cid\">$objp->label</a></td>\n";
-      print "<TD><a href=\"../comm/fiche.php3?socid=$objp->sidp\">$objp->nom</a></TD>\n";
+      print "<TD><a href=\"fiche.php?id=$obj->cid\">$obj->label</a></td>\n";
+      print "<TD><a href=\"../comm/fiche.php3?socid=$obj->sidp\">$obj->nom</a></TD>\n";
+      print '<td align="center">';
+      if ($obj->enservice == 1)
+	{
+	  print "En service</td>";
+	}
+      elseif($obj->enservice == 2)
+	{
+	  print "En service</td>";
+	}
+      else
+	{
+	  print "A mettre en service</td>";
+	}
       print "</TR>\n";
       $i++;
     }
