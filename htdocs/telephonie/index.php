@@ -54,11 +54,20 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Recherche ligne</td>';
 print "</tr>\n";
 print "<tr $bc[1]>";
-print '<td>Numéro <input name="search_ligne" size="12"></td></tr>';
-print '</table>';
+print '<td>Numéro <input name="search_ligne" size="12"><input type="submit"></td></tr>';
+print '</table></form>';
 
 print '<br />';
 
+print '<form method="GET" action="'.DOL_URL_ROOT.'/telephonie/client/liste.php">';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td>Recherche client</td>';
+print "</tr>\n";
+print "<tr $bc[1]>";
+print '<td>Nom <input name="search_client" size="12"><input type="submit"></td></tr>';
+print '</table></form>';
+
+print '<br />';
 
 $sql = "SELECT distinct statut, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
@@ -71,21 +80,23 @@ if ($db->query($sql))
   $ligne = new LigneTel($db);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Lignes Statuts</td><td valign="center">Nb</td>';
-  print "</tr>\n";
+  print '<tr class="liste_titre"><td>Lignes Statuts</td><td align="right">Nb</td>';
+  print "<td>&nbsp;</td></tr>\n";
   $var=True;
 
-  while ($i < min($num,$conf->liste_limit))
+  while ($i < $num)
     {
       $obj = $db->fetch_object($i);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
       print "<td>".$ligne->statuts[$obj->statut]."</td>\n";
-      print "<td>".$obj->cc."</td>\n";
+      print '<td align="right">'.$obj->cc."</td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?statut='.$obj->statut.'"><img border="0" src="./ligne/graph'.$obj->statut.'.png"></a></td>';
       print "</tr>\n";
       $i++;
     }
+  
   print "</table>";
   $db->free();
 }
