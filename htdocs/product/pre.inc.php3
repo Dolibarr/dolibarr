@@ -47,7 +47,7 @@ function llxHeader($head = "", $urlp = "")
   if (defined("MAIN_MODULE_BOUTIQUE") && MAIN_MODULE_BOUTIQUE)
     {
 
-      $menu->add_submenu("osc-liste.php", "Osc");
+      $menu->add("osc-liste.php", "Osc");
       $menu->add_submenu("osc-liste.php?reqstock=epuise", "Produits Epuisés");
 
 
