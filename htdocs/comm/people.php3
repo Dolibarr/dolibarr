@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,40 +15,58 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 require("./pre.inc.php3");
+require("../contact.class.php3");
 
 $db = new Db();
-if ($sortorder == "") {
+if ($sortorder == "") 
+{
   $sortfield="lower(s.nom)";
   $sortorder="ASC";
 }
 
-if ($action == 'add') {
+if ($action == 'add') 
+{
 
   $email = trim($email);
 
-  if (strlen(trim($name)) + strlen(trim($firstname)) > 0) {
-    $sql = "INSERT INTO socpeople (datec, fk_soc,name, firstname, poste, phone,fax,email) ";
-    $sql .= " VALUES (now(),$socid,'$name','$firstname','$poste','$phone','$fax','$email')";
-    $result = $db->query($sql);
-    if ($result) {
-      Header("Location: fiche.php3?socid=$socid");
+  if (strlen(trim($name)) + strlen(trim($firstname)) > 0) 
+    {
+      $sql = "INSERT INTO socpeople (datec, fk_soc,name, firstname, poste, phone,fax,email) ";
+      $sql .= " VALUES (now(),$socid,'$name','$firstname','$poste','$phone','$fax','$email')";
+      $result = $db->query($sql);
+      if ($result) 
+	{
+	  Header("Location: fiche.php3?socid=$socid");
+      }
     }
-  }
 }
-if ($action == 'update') {
-  if (strlen(trim($name)) + strlen(trim($firstname)) > 0) {
+if ($action == 'update') 
+{
+  if (strlen(trim($name)) + strlen(trim($firstname)) > 0) 
+    {
+    
+      $contact = new Contact($db);
 
-    $email = trim($email);
 
-    $sql = "UPDATE socpeople set name='$name', firstname='$firstname', poste='$poste', phone='$phone',fax='$fax',email='$email', note='$note'";
-    $sql .= " WHERE idp=$contactid";
-    $result = $db->query($sql);
-    if ($result) {
-      Header("Location: fiche.php3?socid=$socid");
+      $contact->name = $name;
+      $contact->firstname = $firstname;
+      $contact->poste = $poste;
+      $contact->phone = $phone;
+      $contact->fax = $fax;
+      $contact->note = $note;
+      $contact->email = $email;
+
+      $result = $contact->update($contactid);
+      if ($result) 
+	{
+	  Header("Location: fiche.php3?socid=$socid");
+	}
     }
-  }
 }
 
 llxHeader();
@@ -170,7 +185,7 @@ if ($socid > 0) {
     }
   
     print "<form method=\"post\" action=\"people.php3?socid=$socid\">";
-    print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+    print '<input type="hidden" name="action" value="update">';
     print "<input type=\"hidden\" name=\"contactid\" value=\"$contactid\">";
     print "<table border=0>";
     print "<tr><td>Numéro</td><td>$obj->idp</td>";
