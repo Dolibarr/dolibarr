@@ -19,7 +19,7 @@
  */
 body {
   background: #e0ebeb; 
-  font-family: sans-serif; font-size: 1.0em; 
+  font-family: sans-serif; font-size: 0.9em; 
 }
 /*
  *   Menu superieur
@@ -56,21 +56,21 @@ td.border {
 
 .menu { 
         background: #b3cccc; 
-        font-size: 1.0em; font-weight: bold; 
+        font-size: 0.9em; font-weight: bold; 
         color: #000000; 
         text-decoration: none }
 
 .menusel
 { 
   background: #bbbb88; 
-  font-size: 1.0em; font-weight: bold; 
+  font-size: 0.9em; font-weight: bold; 
   color: #000000; 
   text-decoration: none }
 
 .submenu 
 { 
   background: #b3cccc; 
-  font-size: 1.0em;
+  font-size: 0.9em;
   color: #000000; 
   text-decoration: none }
 
@@ -82,7 +82,7 @@ a.impayee { font-weight: bold }
  */
 
 a.leftmenu {              
-             font-size: 1.0em; 
+             font-size: 0.9em; 
              font-weight: bold; 
              color: #202020; 
              }
@@ -92,7 +92,7 @@ td.barre {
            border-bottom: 1px solid #000000;
            background: #b3cccc;
            font-family: Helvetica, Verdana;
-           font-size: 1.0em; 
+           font-size: 0.9em; 
            color: #000000; 
            text-decoration: none }
 
@@ -103,7 +103,7 @@ td.barre_select {
 
 div.titre { 
             font-family: Helvetica, Verdana;
-            font-size: 1.0em; 
+            font-size: 0.9em; 
             font-weight: bold; 
             color: #336666; 
             text-decoration: none }
@@ -113,20 +113,20 @@ div.titre {
 tr.liste_titre { 
                  background: #669999; 
                  font-family: Helvetica, Verdana;
-                 font-size: 1.0em;
+                 font-size: 0.9em;
                  font-weight: bold;
                  }
 
 tr.pair	{ 
           background: #b3cccc; 
           font-family: Helvetica, Verdana;
-          font-size: 1.0em; 
+          font-size: 0.9em; 
           }
 
 tr.impair { 
             background: #cceeee; 
             font-family: Helvetica, Verdana;
-            font-size: 1.0em; 
+            font-size: 0.9em; 
             }
 
 /*
@@ -134,18 +134,18 @@ tr.impair {
  */
 tr.box_titre { 
                font-family: Helvetica, Verdana;
-               font-size: 1.0em;
+               font-size: 0.9em;
                font-weight: bold;
                }
 
 tr.box_pair { 
               background: #b3cccc; 
-              font-size: 0.9em; 
+              font-size: 0.8em; 
               }
 
 tr.box_impair { 
                 background: #cceeee; 
-                font-size: 0.9em; 
+                font-size: 0.8em; 
                 }
 
 tr.fiche { 
