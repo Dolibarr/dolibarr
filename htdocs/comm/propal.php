@@ -466,10 +466,10 @@ if ($_GET["propalid"])
 		  // Icone d'edition et suppression		  
 		  if ($propal->statut == 0  && $user->rights->propale->creer) 
 		    {
-		      print '<td align="right"><a href="propal.php?facid='.$fac->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'">';
+		      print '<td align="right"><a href="propal.php?propalid='.$propal->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'">';
 		      //print img_edit();
 		      print '</a></td>';
-		      print '<td align="right"><a href="propal.php?facid='.$fac->id.'&amp;action=del_ligneeteline&amp;ligne='.$objp->rowid.'">';
+		      print '<td align="right"><a href="propal.php?propalid='.$propal->id.'&amp;action=del_ligne&amp;ligne='.$objp->rowid.'">';
 		      print img_delete();
 		      print '</a></td>';
 		    }
