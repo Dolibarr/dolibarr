@@ -45,9 +45,6 @@ function llxHeader($head = "", $urlp = "") {
   if ($conf->propal->enabled && $user->rights->propale->lire)
     {
       $menu->add(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
-      $menu->add_submenu("propal.php?viewstatut=0", "Brouillons");
-      $menu->add_submenu("propal.php?viewstatut=1", "Ouvertes");
-      $menu->add_submenu("./propal/stats/", "Statistiques");
     }
 
   $menu->add(DOL_URL_ROOT."/contrat/index.php", "Contrats");
@@ -60,15 +57,6 @@ function llxHeader($head = "", $urlp = "") {
   if ($conf->fichinter->enabled ) 
     {
       $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
-    }
-
-  if ($conf->produit->enabled || $conf->service->enabled)
-    {
-	  $chaine="";
-	  if ($conf->produit->enabled) { $chaine.="Produits"; }
-	  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
-	  if ($conf->service->enabled) { $chaine.="Services"; }
-      $menu->add(DOL_URL_ROOT."/product/index.php", "Produits/Services");
     }
 
   if ($conf->projet->enabled ) 
