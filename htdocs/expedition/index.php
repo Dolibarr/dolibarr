@@ -29,9 +29,13 @@ print_titre("Expeditions");
 print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top" width="30%">';
-/*
- *
- */
+
+print '<form method="post" action="liste.php">';
+print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+print '<tr class="liste_titre"><td colspan="2">Rechercher une expédition</td></tr>';
+print "<tr $bc[1]><td>";
+print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
+print "</table></form>\n";
 
 /*
  * Expeditions à valider
@@ -43,16 +47,14 @@ if ($socidp)
   $sql .= " AND c.fk_soc = $socidp";
 }
 
-print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
-print '<tr class="liste_titre">';
-print '<td colspan="3">'.translate("Expeditions à valider").'</td></tr>';
-
-
 if ( $db->query($sql) ) 
 {
   $num = $db->num_rows();
   if ($num)
     {
+      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<tr class="liste_titre">';
+      print '<td colspan="3">'.translate("Expeditions à valider").'</td></tr>';
       $i = 0;
       
       while ($i < $num)
@@ -64,14 +66,10 @@ if ( $db->query($sql) )
 	  print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a></td></tr>';
 	  $i++;
 	}
+      print "</table><br>";
     }
 }
-print "</table><br>";
 
-/*
- *
- */
-print '</td><td valign="top" width="70%">';
 
 /*
  * Commandes à traiter
@@ -105,8 +103,15 @@ if ( $db->query($sql) )
     }
 }
 
+
 /*
- * Commandes à traiter
+ *
+ */
+print '</td><td valign="top" width="70%">';
+
+
+/*
+ * Commandes en traitement
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 2";
