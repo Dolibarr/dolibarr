@@ -48,16 +48,21 @@ function llxHeader($head = "", $urlp = "", $title="")
     {
       $menu->add(DOL_URL_ROOT."/product/index.php?type=0", $langs->trans("Products"));
       $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("List"));
-      if ($user->societe_id == 0)
-    	$menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
+
+      if ($user->societe_id == 0 && $user->rights->produit->creer)
+	{
+	  $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
+	}
     }
   
   if ($conf->service->enabled)
     {
       $menu->add(DOL_URL_ROOT."/product/index.php?type=1", $langs->trans("Services"));
       $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=1", $langs->trans("List"));
-      if ($user->societe_id == 0)
-	    $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=1", $langs->trans("NewService"));
+      if ($user->societe_id == 0  && $user->rights->produit->creer)
+	{
+	  $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=1", $langs->trans("NewService"));
+	}
     }
 
   if ($conf->boutique->enabled)
