@@ -26,7 +26,7 @@ llxHeader();
 
 $db = new Db();
 if ($sortfield == "") {
-  $sortfield="lower(e.nom)";
+  $sortfield="lower(c.customers_lastname)";
 }
 if ($sortorder == "") {
   $sortorder="ASC";
@@ -37,30 +37,37 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des Editeurs", $page, $PHP_SELF);
+print_barre_liste("Liste des notifications", $page, $PHP_SELF);
 
-$sql = "SELECT e.rowid, e.nom FROM llx_editeur as e";
-  
+$sql = "SELECT c.customers_id, c.customers_lastname, c.customers_firstname, p.products_name, p.products_id";
+$sql .= " FROM ".DB_NAME_OSC.".products_notifications as n,".DB_NAME_OSC.".products_description as p";
+$sql .= ",".DB_NAME_OSC.".customers as c";
+$sql .= " WHERE n.customers_id = c.customers_id AND p.products_id=n.products_id";
+$sql .= " AND p.language_id = ".OSC_LANGUAGE_ID;
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
  
-if ( $db->query($sql) ) {
+if ( $db->query($sql) )
+{
   $num = $db->num_rows();
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Nom",$PHP_SELF, "e.nom");
+  print_liste_field_titre("Client",$PHP_SELF, "c.customers_lastname");
   print "</td>";
+  print "<td>Produit</td>";
   print "</TR>\n";
   $var=True;
-  while ($i < $num) {
-    $objp = $db->fetch_object( $i);
-    $var=!$var;
-    print "<TR $bc[$var]>";
-    print "<TD width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->nom</a></TD>\n";
-    print "</TR>\n";
-    $i++;
-  }
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object( $i);
+      $var=!$var;
+      print "<TR $bc[$var]>";
+      print "<TD width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->customers_firstname $objp->customers_lastname</a></TD>\n";
+      print '<td><a href="/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_name."</a></td>";
+      print "</TR>\n";
+      $i++;
+    }
   print "</TABLE>";
   $db->free();
 }

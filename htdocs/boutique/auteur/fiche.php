@@ -22,8 +22,6 @@
 
 require("./pre.inc.php");
 
-llxHeader();
-
 $db = new Db();
 
 if ($action == 'add') {
@@ -40,6 +38,14 @@ if ($action == 'addga') {
   $auteur->linkga($id, $ga);
 }
 
+if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $auteur = new Auteur($db);
+  $result = $auteur->fetch($id);
+  $auteur->delete();
+  Header("Location: index.php");
+}
+
 
 if ($action == 'update' && !$cancel) {
   $auteur = new Auteur($db);
@@ -48,6 +54,10 @@ if ($action == 'update' && !$cancel) {
 
   $auteur->update($id, $user);
 }
+
+llxHeader();
+
+
 
 /*
  *
@@ -83,6 +93,37 @@ else
 
 	  $livres = $auteur->liste_livre();
 
+	  /*
+	   * Confirmation de la suppression de l'auteur
+	   *
+	   */
+	  
+	  if ($action == 'delete')
+	    {
+	      
+	      print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
+	      print '<input type="hidden" name="action" value="confirm_delete">';
+	      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+	      
+	      print '<tr><td colspan="3">Supprimer un auteur</td></tr>';
+	      
+	      print '<tr><td class="delete">Etes-vous sur de vouloir supprimer cet auteur ?</td><td class="delete">';
+	      $htmls = new Form($db);
+	      
+	      $htmls->selectyesno("confirm","no");
+	      
+	      print "</td>\n";
+	      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+	      print '</table>';
+	      print "</form>\n";  
+	    }
+	  
+	  /*
+	   * Edition
+	   *
+	   */
+
+
 	  if ($action == 'edit')
 	    {
 	      print '<div class="titre">Edition de la fiche Auteur : '.$auteur->nom.'</div><br>';
@@ -107,7 +148,7 @@ else
 
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print '<td width="20%">Nom</td><td width="30%">'.$auteur->nom.'</td></tr>';
+	  print '<td width="20%">Nom</td><td width="80%">'.$auteur->nom.'</td></tr>';
 
 	  print '<tr><td>Livres</td><td>';
 
@@ -142,9 +183,6 @@ else
 /* ************************************************************************** */
 
 print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
 
 if ($action == 'create')
 {
@@ -154,7 +192,20 @@ else
 {
   print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
 }
-print '<td width="20%" align="center">-</td>';    
+
+print '<td width="20%" align="center">-</td>';
+print '<td width="20%" align="center">-</td>';
+print '<td width="20%" align="center">-</td>';
+
+if(sizeof($livres)==0 && $id)
+{
+  print '<td width="20%" align="center">[<a href="fiche.php?action=delete&id='.$id.'">Supprimer</a>]</td>';
+}
+else
+{
+  print '<td width="20%" align="center">[Supprimer]</td>';
+}
+
 print '</table><br>';
 
 

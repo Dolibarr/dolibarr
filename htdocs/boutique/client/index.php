@@ -37,12 +37,10 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des notifications", $page, $PHP_SELF);
+print_barre_liste("Liste des clients", $page, $PHP_SELF);
 
-$sql = "SELECT c.customers_id, c.customers_lastname, c.customers_firstname";
-$sql .= " FROM ".DB_NAME_OSC.".products_notifications as n,".DB_NAME_OSC.".products_description as p";
-$sql .= ",".DB_NAME_OSC.".customers as c";
-$sql .= " WHERE n.customers_id = c.customers_id AND p.products_id=n.products_id";
+$sql = "SELECT c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, c.customers_newsletter";
+$sql .= " FROM ".DB_NAME_OSC.".customers as c";
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
  
@@ -52,8 +50,10 @@ if ( $db->query($sql) )
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Nom",$PHP_SELF, "e.nom");
-  print "</td>";
+  print_liste_field_titre("Prénom",$PHP_SELF, "c.customers_firstname");
+  print "</td><td>";
+  print_liste_field_titre("Nom",$PHP_SELF, "c.customers_lastname");
+  print '</td><td>Email</td><td align="center">Newsletter</td>';
   print "</TR>\n";
   $var=True;
   while ($i < $num)
@@ -61,7 +61,10 @@ if ( $db->query($sql) )
       $objp = $db->fetch_object( $i);
       $var=!$var;
       print "<TR $bc[$var]>";
-      print "<TD width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->nom</a></TD>\n";
+      print '<TD><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_firstname."</a></TD>\n";
+      print '<TD><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_lastname."</a></TD>\n";
+      print "<TD>$objp->customers_email_address</TD>\n";
+      print "<TD align=\"center\">$objp->customers_newsletter</TD>\n";
       print "</TR>\n";
       $i++;
     }

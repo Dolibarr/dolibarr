@@ -117,7 +117,6 @@ foreach ($modules as $key => $value)
   print '</td></tr>';
 }
 
-
 print '</table>';
 
 llxFooter();

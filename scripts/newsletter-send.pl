@@ -24,6 +24,7 @@ $SYSLOG_LEVEL = 'local3';
 use strict;
 use vars qw($SYSLOG_LEVEL);
 use DBI;
+use Net::SMTP;
 use Text::Wrap;
 use Getopt::Long;
 use Sys::Syslog qw(:DEFAULT setlogsock);
@@ -41,7 +42,7 @@ unless (defined $ENV{"DBI_DSN"}) {
 }
 
 
-my($dbh, $sth, $sthi, $i, $sqli, $sql, $stha, $digest, $mesg);
+my($dbh, $sth, $sthi, $i, $sqli, $sql, $stha, $digest);
 
 print "Running in verbose mode level $verbose\n" if $verbose>0;
 
@@ -49,9 +50,9 @@ my $sl = Sys::Syslog::setlogsock('unix');
 $sl = Sys::Syslog::openlog('send-newsletter.pl', 'pid', $SYSLOG_LEVEL);
 $sl = Sys::Syslog::syslog('info', 'Start');
 
-print "Start on "  if $verbose>0;
+print "Start\n"  if $verbose>0;
 
-print "Open DBI connection\n" if $verbose>3;
+print "DBI connection : open\n" if $verbose>3;
 $dbh = DBI->connect() || die $DBI::errstr;
 
 #
@@ -74,21 +75,19 @@ $dbh = DBI->connect() || die $DBI::errstr;
 
 my $sqli = "SELECT rowid, email_subject, email_from_name, email_from_email, email_replyto, email_body, target, sql_target, status, date_send_request, date_send_begin, date_send_end, nbsent";
 
-$sqli .= " FROM llx_newsletter WHERE status=1 AND date_send_request < now()";
+$sqli .= " FROM llx_newsletter WHERE status=2 AND date_send_request < now()";
 $sthi = $dbh->prepare($sqli);
 
 $sthi->execute;
 
 my ($hsri);
-while ( $hsri = $sthi->fetchrow_hashref )
-{
+while ( $hsri = $sthi->fetchrow_hashref ) {
 
     #
     # Update newsletter
     #
-    if (!$debug)
-    {
-	$stha = $dbh->prepare("UPDATE llx_newsletter SET date_send_begin=now() WHERE rwoid=" . $hsri->{"rowid"});
+    if (!$debug) {
+	$stha = $dbh->prepare("UPDATE llx_newsletter SET status=4,date_send_begin=now() WHERE rowid=" . $hsri->{"rowid"});
 	$stha->execute;
 	$stha->finish;
     }
@@ -96,42 +95,62 @@ while ( $hsri = $sthi->fetchrow_hashref )
     #
     #
     #
+    my ($fromemail, $from, $replyto, $subject, $mesg);
 
-    $from    = $hsri->{"email_from_name"} . "<" . $hsri->{"email_from_email"} . ">";
-    $replyto = $hsri->{"email_replyto"};
-    $mesg    = $hsri->{"email_body"};
-    $subject = $hsri->{"email_subject"};
-    $sql     = $hsri->{"sql_target"};
+    $from      = $hsri->{"email_from_name"} . " <" . $hsri->{"email_from_email"} . ">";
+    $fromemail = $hsri->{"email_from_email"};
+    $replyto   = $hsri->{"email_replyto"};
+    $mesg      = $hsri->{"email_body"};
+    $subject   = $hsri->{"email_subject"};
+    $sql       = $hsri->{"sql_target"};
+
+    print "Message de : $from\n" if $verbose;
 
     #
     # Read dest
     #
 
-    if ($sql)
-    {
+    if ($sql) {
 
 	$sth = $dbh->prepare($sql);
 	$sth->execute;
 
-	my($nbdest) = (0);
+	my($nbdest, $nberror) = (0,0);
     
-	while ( $hsr = $sth->fetchrow_hashref )
+	while (my $hsr = $sth->fetchrow_hashref )
 	{
 
 	    if (length($hsr->{"email"}) > 0)
 	    {
-		my $firstname = $hsr->{"prenom"};
-		my $name = $hsr->{"nom"};
+		my $firstname = $hsr->{"firstname"};
+		my $lastname = $hsr->{"name"};
+		my $email = "$firstname $lastname <".$hsr->{"email"}.">";
 		
-		my $gm = mail_it($hsr->{"email"}, 
-				 $from, 
-				 $subject,
-				 $mesg,
-				 $replyto);
+
+		if (!$debug)
+		{
+
+		    if (! mail_it($hsr->{"email"},
+				  $email,
+				  $fromemail, 
+				  $from,
+				  $subject,
+				  $mesg,
+				  $replyto))
+		    {
+			$nberror++;
+			print $nberror;
+
+		    }
+		    
+		}
+		else
+		{
+		    print "$nbdest : Mail $from -> ".$email."\n" if $verbose;
+		}
 	    }
 	    
-	    $nbdest++;
-	    
+	    $nbdest++;	    
 	}
 
 	$sth->finish;
@@ -141,18 +160,22 @@ while ( $hsri = $sthi->fetchrow_hashref )
 	#
 	if (!$debug)
 	{
-	    $stha = $dbh->prepare("UPDATE llx_newsletter SET status=3,date_send_end=now(), nbsent=$nbdest WHERE rowid=" . $hsri->{"rowid"});
+	    $stha = $dbh->prepare("UPDATE llx_newsletter SET status=3,date_send_end=now(), nbsent=$nbdest, nberror=$nberror WHERE rowid=" . $hsri->{"rowid"});
 	    $stha->execute;
 	    $stha->finish;
 	}
+    } else {
+	print "No sql request";
     }
 
 }
 $sthi->finish;
 
-print "Close DBI connection\n" if $verbose>3;
+print "DBI connection : close\n" if $verbose>3;
 
 $dbh->disconnect;
+
+print "End\n" if $verbose>0;
 #
 # 
 #
@@ -161,7 +184,6 @@ $dbh->disconnect;
 $sl = Sys::Syslog::syslog('info', 'End');
 
 Sys::Syslog::closelog();
-
 
 #
 #
@@ -174,7 +196,7 @@ sub print_help {
 }
 
 sub mail_it {
-    my ($to, $from, $subject, $mesg, $replyto) = @_;
+    my ($toemail, $to, $fromemail, $from, $subject, $mesg, $replyto) = @_;
     my ($smtp);
 
     $mesg = wrap("","",$mesg);
@@ -183,24 +205,38 @@ sub mail_it {
 			   Hello => 'localhost',
 			   Timeout => 30);
     
-    if ($smtp)
-    {
-	$smtp->mail($from);
-	$smtp->to($to);
+    if ($smtp) {
+
+	print "Mail $from -> ".$to."\n" if $verbose;
+
+	if ($smtp->verify($toemail)) {
+
+	    $smtp->mail($fromemail);
+	    $smtp->to($toemail);
     
-	$smtp->data();
-	$smtp->datasend("From: $from\n");
-	$smtp->datasend("Reply-To: $replyto\n") if $replyto;
-	$smtp->datasend("Content-Type: text/plain; charset=\"iso-8859-1\"\n");
-	$smtp->datasend("To: $to\n");
-	$smtp->datasend("Subject: $subject\n");
-	$smtp->datasend("X-Mailer: Dolibarr\n");
-	$smtp->datasend("\n");
+	    $smtp->data();
+	    $smtp->datasend("From: $from\n");
+	    $smtp->datasend("Reply-To: $replyto\n") if $replyto;
+	    $smtp->datasend("Content-Type: text/plain; charset=\"iso-8859-1\"\n");
+	    $smtp->datasend("To: $to\n");
+	    $smtp->datasend("Subject: $subject\n");
+	    $smtp->datasend("X-Mailer: Dolibarr\n");
+	    $smtp->datasend("\n");
 	
-	$smtp->datasend($mesg);
+	    $smtp->datasend($mesg);
+	    
+	    $smtp->dataend();
+
+	    return 1;
+
+	} else {
+	    return 0;
+	}
 	
-	$smtp->dataend();
 	$smtp->quit;
+
+    } else {
+	return 0;
     }
 }
 

@@ -171,17 +171,17 @@ class Auteur {
    *
    *
    */
-  Function delete($user) {
+  Function delete() {
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
+    $livres = $this->liste_livre();
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories WHERE products_id = $idosc";
+    if (sizeof($livres) == 0)
+      {
+	$sql = "DELETE FROM llx_auteur WHERE rowid = $this->id ";
+	$return = $this->db->query($sql) ;
+      }
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
-	      
-    $sql = "DELETE FROM llx_livre WHERE rowid = $id";
-	    
-    
+
   }
 
 

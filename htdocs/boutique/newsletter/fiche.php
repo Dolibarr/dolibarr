@@ -27,7 +27,11 @@ $db = new Db();
 if ($action == 'add') {
   $newsletter = new Newsletter($db);
 
-  $newsletter->nom = $nom;
+  $newsletter->email_subject    = $HTTP_POST_VARS["email_subject"];
+  $newsletter->email_from_name  = $HTTP_POST_VARS["email_from_name"];
+  $newsletter->email_from_email = $HTTP_POST_VARS["email_from_email"];
+  $newsletter->email_replyto    = $HTTP_POST_VARS["email_replyto"];
+  $newsletter->email_body       = $HTTP_POST_VARS["email_body"];
 
   $id = $newsletter->create($user);
 }
@@ -42,7 +46,11 @@ if ($action == 'update' && !$cancel)
 {
   $newsletter = new Newsletter($db);
 
-  $newsletter->nom = $nom;
+  $newsletter->email_subject    = $HTTP_POST_VARS["email_subject"];
+  $newsletter->email_from_name  = $HTTP_POST_VARS["email_from_name"];
+  $newsletter->email_from_email = $HTTP_POST_VARS["email_from_email"];
+  $newsletter->email_replyto    = $HTTP_POST_VARS["email_replyto"];
+  $newsletter->email_body       = $HTTP_POST_VARS["email_body"];
 
   $newsletter->update($id, $user);
 }
@@ -54,6 +62,21 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
   $newsletter->delete();
   Header("Location: index.php");
 }
+
+if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $newsletter = new Newsletter($db);
+  $result = $newsletter->fetch($id);
+  $newsletter->validate($user);
+}
+
+if ($HTTP_POST_VARS["action"] == 'confirm_send' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $newsletter = new Newsletter($db);
+  $result = $newsletter->fetch($id);
+  $newsletter->send($user);
+}
+
 
 llxHeader();
 
@@ -70,14 +93,13 @@ if ($action == 'create')
   print '<div class="titre">Nouvelle Newsletter</div><br>';
       
   print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-  print "<tr>";
-  print '<td>Emetteur nom</td><td><input name="nom" size="30" value=""></td></tr>';
-  print '<td>Emetteur email</td><td><input name="nom" size="40" value=""></td></tr>';
-  print '<td>Email de réponse</td><td><input name="nom" size="40" value=""></td><td>Si vide, le mail de l\'émetteur est utilisé</tr>';
-  print '<td>Sujet</td><td><input name="nom" size="30" value=""></td></tr>';
-  print '<td>Cible</td><td><input name="nom" size="40" value=""></td></tr>';
-  print '<td>Texte</td><td><textarea name="body" rows="10" cols="60"></textarea></td></tr>';
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
+  print '<tr><td width="20%">Emetteur nom</td><td><input name="email_from_name" size="30" value=""></td></tr>';
+  print '<tr><td width="20%">Emetteur email</td><td><input name="email_from_email" size="40" value=""></td></tr>';
+  print '<tr><td width="20%">Email de réponse</td><td><input name="email_replyto" size="40" value=""> (facultatif)</td></tr>';
+  print '<tr><td width="20%">Sujet</td><td width="80%"><input name="email_subject" size="30" value=""></td></tr>';
+  print '<tr><td width="20%">Cible</td><td><input name="nom" size="40" value=""></td></tr>';
+  print '<tr><td width="20%" valign="top">Texte</td><td width="80%"><textarea name="email_body" rows="10" cols="60"></textarea></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="Créer"></td></tr>';
   print '</table>';
   print '</form>';
 
@@ -117,6 +139,41 @@ else
 	      print '</table>';
 	      print "</form>\n";  
 	    }
+
+	  /*
+	   * Confirmation de la validation
+	   *
+	   */	  
+	  if ($action == 'valid')
+	    {
+	      $htmls = new Form($db);
+	      $htmls->form_confirm($PHP_SELF.'?id='.$id,
+				   "Valider une newsletter",
+				   "Etes-vous sûr de vouloir valider cette newsletter ?");
+	    }
+	  /*
+	   *
+	   *
+	   */
+	  if ($action == 'send')
+	    {
+	      
+	      print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
+	      print '<input type="hidden" name="action" value="confirm_send">';
+	      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+	      
+	      print '<tr><td colspan="3">Envoi de newsletter</td></tr>';
+	      
+	      print '<tr><td class="delete">Etes-vous sur de vouloir envoyer cette newsletter ?</td><td class="delete">';
+	      $htmls = new Form($db);
+	      
+	      $htmls->selectyesno("confirm","no");
+	      
+	      print "</td>\n";
+	      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+	      print '</table>';
+	      print "</form>\n";  
+	    }
 	  
 	  /*
 	   * Edition de la fiche
@@ -132,9 +189,16 @@ else
 	      print '<input type="hidden" name="action" value="update">';
 	      
 	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-	      print "<tr>";
-	      print '<td width="20%">Nom</td><td><input name="nom" size="40" value="'.$newsletter->nom.'"></td>';
 
+	      print '<tr><td>Emetteur nom</td><td><input name="email_from_name" size="30" value="'.$newsletter->email_from_name.'"></td></tr>';
+	      print '<tr><td>Emetteur email</td><td><input name="email_from_email" size="40" value="'.$newsletter->email_from_email.'"></td></tr>';
+	      print '<tr><td>Email de réponse</td><td><input name="email_replyto" size="40" value="'.$newsletter->email_replyto.'"></td></tr>';
+	      
+	      print "<tr>";
+	      print '<td width="20%">Sujet</td>';
+	      print '<td><input name="email_subject" size="40" value="'.$newsletter->email_subject.'"></td>';
+
+	      print '<tr><td width="20%" valign="top">Texte</td><td width="80%"><textarea name="email_body" rows="10" cols="60">'.$newsletter->email_body.'</textarea></td></tr>';
 
 	      print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer">&nbsp;<input type="submit" value="Annuler" name="cancel"></td></tr>';
 	      
@@ -144,23 +208,35 @@ else
 	      
 	    }    
 
+	  /*
+	   * Affichage de la fiche
+	   *
+	   */
+
 	  print '<div class="titre">Fiche Newsletter : '.$newsletter->titre.'</div><br>';
 
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-	  print "<tr>";
-	  print '<td width="20%">Nom</td><td width="80%">'.$newsletter->nom.'</td></tr>';
 
-	  print '<tr><td>Livres</td><td>';
-
-	  foreach ($livres as $key => $value)
-	    {
-	      print '<a href="../livre/fiche.php?id='.$key.'">'.$value."<br>\n";
-	    }
-	  print "</td></tr>";
+	  print '<tr><td width="20%">Emetteur nom</td><td>'.$newsletter->email_from_name.'</td></tr>';
+	  print '<tr><td width="20%">Emetteur email</td><td>'.$newsletter->email_from_email.'</td></tr>';
+	  print '<tr><td width="20%">Email de réponse</td><td>'.$newsletter->email_replyto.'</td></tr>';	  
+	  print '<tr><td width="20%">Nom</td><td width="80%">'.$newsletter->email_subject.'</td></tr>';
+	  print '<tr><td width="20%" valign="top">Texte</td><td width="80%">'.nl2br($newsletter->email_body).'</td></tr>';
 
 	  print "</table>";
 
+	  if ($newsletter->status == 3)
+	    {
+	      print "<br />";
+	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 
+	      print '<tr><td width="20%">Début de l\'envoi</td><td width="30%">'.strftime("%d %B %Y %H:%M:%S",$newsletter->date_send_begin).'</td>';
+	      print '<td width="20%">Nombre de mails envoyés</td><td width="30%">'.$newsletter->nbsent.'</td></tr>';
+
+	      print '<tr><td width="20%">Fin de l\'envoi</td><td width="30%">'.strftime("%d %B %Y %H:%M:%S",$newsletter->date_send_end).'</td>';
+	      print '<td width="20%">Nombre de mails en erreur</td><td width="30%">'.$newsletter->nberror.'</td></tr>';
+	      print "</table>";
+	    }
 
 	}
       else
@@ -183,27 +259,47 @@ else
 /* ************************************************************************** */
 
 print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
-print '<td width="20%" align="center">-</td>';
 
 if ($action == 'create')
 {
   print '<td width="20%" align="center">-</td>';
 }
-else
+elseif ($newsletter->status == 0)
 {
   print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
 }
+else
+{
+  print '<td width="20%" align="center">-</td>';
+}
+
+if ($newsletter->status == 0 && $id)
+{
+  print '<td width="20%" align="center">[<a href="fiche.php?action=valid&id='.$id.'">Valider</a>]</td>';
+}
+else
+{
+  print '<td width="20%" align="center">-</td>';
+}
+
+if ($newsletter->status == 1)
+{
+  print '<td width="20%" align="center">[<a href="fiche.php?action=send&id='.$id.'">Envoyer</a>]</td>';
+}
+else
+{
+  print '<td width="20%" align="center">-</td>';
+}
 
 print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
 
-if(sizeof($livres)==0 && $id)
+if($id && $newsletter->status == 0)
 {
   print '<td width="20%" align="center">[<a href="fiche.php?action=delete&id='.$id.'">Supprimer</a>]</td>';
 }
 else
 {
-  print '<td width="20%" align="center">[Supprimer]</td>';
+  print '<td width="20%" align="center">-</td>';
 }
 
 

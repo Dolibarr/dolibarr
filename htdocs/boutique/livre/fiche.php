@@ -293,11 +293,6 @@ else
 /* ************************************************************************** */
 
 print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
-print '<td width="20%" align="center">-</td>';
-
-print '<td width="20%" align="center">[<a href="fiche.php?action=updateosc&id='.$id.'">Update Osc</a>]</td>';
-
-print '<td width="20%" align="center">-</td>';
 
 if ($action == 'create')
 {
@@ -307,6 +302,10 @@ else
 {
   print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
 }
+
+print '<td width="20%" align="center">-</td>';
+print '<td width="20%" align="center">[<a href="fiche.php?action=updateosc&id='.$id.'">Update Osc</a>]</td>';
+print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';    
 print '</table><br>';
 

@@ -130,25 +130,56 @@ class Editeur {
     
     return $result;
   }
+  /*
+   *
+   *
+   *
+   */
+  Function liste_livre()
+  {
+    $ga = array();
 
+    $sql = "SELECT a.rowid, a.title FROM llx_livre as a";
+    $sql .= " WHERE a.fk_editeur = ".$this->id;
+    $sql .= " ORDER BY a.title";
 
+    if ($this->db->query($sql) )
+      {
+	$nump = $this->db->num_rows();
+	
+	if ($nump)
+	  {
+	    $i = 0;
+	    while ($i < $nump)
+	      {
+		$obj = $this->db->fetch_object($i);
+		
+		$ga[$obj->rowid] = $obj->title;
+		$i++;
+	      }
+	  }
+	return $ga;
+      }
+    else
+      {
+	print $this->db->error();
+      }    
+  }
   /*
    *
    *
    */
-  Function delete($user) {
+  Function delete() {
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
+    $livres = $this->liste_livre();
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories WHERE products_id = $idosc";
+    if (sizeof($livres) == 0)
+      {
+	$sql = "DELETE FROM llx_editeur WHERE rowid = $this->id ";
+	$return = $this->db->query($sql) ;
+      }
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
-	      
-    $sql = "DELETE FROM llx_livre WHERE rowid = $id";
-	    
-    
+
   }
-
-
 }
 ?>

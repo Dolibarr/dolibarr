@@ -254,7 +254,7 @@ function print_titre($titre)
  *
  *
  */
-function print_barre_liste($titre,$page,$file,$options='')
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='')
  {
   global $conf;
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
@@ -268,6 +268,18 @@ function print_barre_liste($titre,$page,$file,$options='')
      print '<tr><td><div class="titre">'.$titre.'</div></td>';
    }
   print '<td align="right">';
+
+  if (strlen($sortfield))
+    {
+      $options .= "&sortfield=$sortfield";
+    }
+
+  if (strlen($sortorder))
+    {
+      $options .= "&sortorder=$sortorder";
+    }
+
+
   if ($page > 0) 
     {
       print '<a href="'.$file.'?page='.($page-1).$options.'"><img alt="Page précédente" src="/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';

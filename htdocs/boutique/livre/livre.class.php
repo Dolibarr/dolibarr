@@ -335,6 +335,7 @@ class Livre {
       {
 	$sql = "UPDATE ".DB_NAME_OSC.".products ";
 	$sql .= "SET products_model = '".$this->ref."'";
+	$sql .= ", products_image = '".strtolower($this->ref).".jpg'";
 	$sql .= ", products_price = ".$this->price."";
 
 	$sql .= " WHERE products_id = " . $this->oscid;
@@ -345,7 +346,7 @@ class Livre {
 	  }
 	else
 	  {
-	    print $this->db->error() . ' in ' . $sql;
+	    print $this->db->error() . ' in <br />' . $sql;
 	  }
       }
     else
@@ -409,11 +410,14 @@ class Livre {
 
     $sql .= " WHERE rowid = " . $id;
 
-    if ( $this->db->query($sql) ) {
-      return 1;
-    } else {
-      print $this->db->error() . ' in ' . $sql;
-    }
+    if ( $this->db->query($sql) )
+      {
+	return 1;
+      }
+    else
+      {
+	print $this->db->error() . ' in ' . $sql;
+      }
   }
   /*
    *
