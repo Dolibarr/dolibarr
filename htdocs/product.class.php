@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,18 @@
  *
  */
 
+/*!
+	    \file       htdocs/product.class.php
+        \ingroup    produit
+		\brief      Fichier de la classe des produits prédéfinis
+		\version    $Revision$
+*/
+
+
+/*! \class Product
+		\brief Classe permettant la gestion des produits prédéfinis
+*/
+
 class Product
 {
   var $db ;
@@ -35,16 +48,21 @@ class Product
   var $duration_value;
   var $duration_unit;
 
+  /**
+   *    \brief  Constructeur de la classe
+   *    \param  DB          handler accès base de données
+   *    \param  id          id produit (0 par defaut)
+   */
   function Product($DB, $id=0)
     {
       $this->db = $DB;
       $this->id   = $id ;
       $this->envente = 0;
     }  
-  /*
-   *
-   *
-   *
+
+  /**
+   *    \brief  Vérifie que la référence produit est non null
+   *    \return int         1 si ok, 0 sinon
    */
   function check()
     {
@@ -67,9 +85,10 @@ class Product
 	  return 1;
 	}      
     }
+
   /**
-   *
-   *
+   *    \brief  Insère le produit en base
+   *    \param  user        utilisateur qui effectue l'insertion
    */
   function create($user) 
     {
@@ -116,7 +135,7 @@ class Product
 		}
 	      else
 		{
-		  print $this->db->error() . ' in ' . $sql;
+		  dolibarr_print_error($this->db);
 		  return -1;
 		}
 	    }
@@ -126,10 +145,11 @@ class Product
 	    }
 	}
     }
+
   /**
-   *
-   *
-   *
+   *    \brief  Mise à jour du produit en base
+   *    \param  id          id du produit
+   *    \param  user        utilisateur qui effectue l'insertion
    */
   function update($id, $user)
   {
@@ -161,32 +181,34 @@ class Product
       }
     else
       {
-	print $this->db->error() . ' in ' . $sql;
+		  dolibarr_print_error($this->db);
       }
   }
+
   /**
-   *
-   *
+   *    \brief  Ajoute un changement de prix en base dans l'historique des prix
+   *    \param  user        utilisateur qui modifie le prix
    */
   function _log_price($user) 
     {
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
-		$sql .= "WHERE fk_product = ".$this->id;
-		$sql .= " ,fk_user_author = ".$user->id;
-		$sql .= " ,price = ".ereg_replace(",",".",$this->price);
-		$sql .= " ,envente = ".$this->envente;
-		$sql .= " ,tva_tx = ".$this->tva_tx;
-		
-		$this->db->query($sql);
-		
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price ";
-      $sql .= " SET date_price= now()";
-      $sql .= " ,fk_product = ".$this->id;
-      $sql .= " ,fk_user_author = ".$user->id;
-      $sql .= " ,price = ".ereg_replace(",",".",$this->price);
-      $sql .= " ,envente = ".$this->envente;
-      $sql .= " ,tva_tx = ".$this->tva_tx;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
+        $sql .= "WHERE date_price = now()";
+        $sql .= " and fk_product = ".$this->id;
+        $sql .= " and fk_user_author = ".$user->id;
+        $sql .= " and price = ".ereg_replace(",",".",$this->price);
+        $sql .= " and envente = ".$this->envente;
+        $sql .= " and tva_tx = ".$this->tva_tx;
+        
+        $this->db->query($sql);
+        
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price ";
+        $sql .= " SET date_price = now()";
+        $sql .= " ,fk_product = ".$this->id;
+        $sql .= " ,fk_user_author = ".$user->id;
+        $sql .= " ,price = ".ereg_replace(",",".",$this->price);
+        $sql .= " ,envente = ".$this->envente;
+        $sql .= " ,tva_tx = ".$this->tva_tx;
       
       if ($this->db->query($sql) )
 	{
@@ -194,13 +216,15 @@ class Product
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+	  dolibarr_print_error($this->db);
 	  return 0;
 	}
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief  Modifie le prix d'un produit/service
+   *    \param  id          id du produit/service à modifier
+   *    \param  user        utilisateur qui modifie le prix
    */
   function update_price($id, $user)
   {
@@ -218,7 +242,7 @@ class Product
 	  }
 	else
 	  {
-	    print $this->db->error() . ' in ' . $sql;
+        dolibarr_print_error($this->db);
 	    return -1;
 	  }
       }
@@ -228,10 +252,10 @@ class Product
 	return -2;
       }
   }
+
   /**
-   *
-   *
-   *
+   *    \brief  Charge le produit/service en mémoire
+   *    \param  id          id du produit/service à charger
    */
   function fetch ($id)
     {    
@@ -292,13 +316,15 @@ class Product
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	  return -1;
 	}
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief  Renvoie le nombre de propale incluant le produit/service
+   *    \param  socid       id societe
+   *    \return int         nombre d'inclusion
    */
   function count_propale($socid=0)
     {
@@ -322,9 +348,11 @@ class Product
 	  return 0;
 	}
     }
-  /*
-   *
-   *
+
+  /**
+   *    \brief  Renvoie le nombre de client avec propale incluant le produit/service
+   *    \param  socid       id societe
+   *    \return int         nombre d'inclusion
    */
   function count_propale_client($socid=0)
     {
@@ -348,9 +376,11 @@ class Product
 	  return 0;
 	}
     }
-  /*
-   *
-   *
+
+  /**
+   *    \brief  Renvoie le nombre de facture incluant le produit/service
+   *    \param  socid       id societe
+   *    \return int         nombre d'inclusion
    */
   function count_facture($socid=0)
     {
@@ -375,11 +405,12 @@ class Product
 	  return 0;
 	}
     }
-  /*
-   *
-   *
-   */
 
+  /**
+   *    \brief  Renvoie des stats
+   *    \param  sql         requete a exécuter
+   *    \return array       tableau ?
+   */
   function _get_stats($sql)
     {
       $result = $this->db->query($sql) ;
@@ -426,9 +457,11 @@ class Product
       return array_reverse($result);
 
     }
-  /*
-   *
-   *
+
+  /**
+   *    \brief  Renvoie le nombre de ventes du produit/service par mois
+   *    \param  socid       id societe
+   *    \return array       nombre de vente par mois
    */
   function get_nb_vente($socid=0)
     {
@@ -443,9 +476,11 @@ class Product
 
       return $this->_get_stats($sql);
     }
+
   /**
-   *Renvoie le nombre de facture dans lesquelles figure le produit
-   *
+   *    \brief  Renvoie le nombre de factures dans lesquelles figure le produit par mois
+   *    \param  socid       id societe
+   *    \return array       nombre de factures par mois
    */
   function get_num_vente($socid=0)
     {
@@ -460,9 +495,11 @@ class Product
 
       return $this->_get_stats($sql);
     }
+
   /**
-   *Renvoie le nombre de proaple dans lesquelles figure le produit
-   *
+   *    \brief  Renvoie le nombre de propales dans lesquelles figure le produit par mois
+   *    \param  socid       id societe
+   *    \return array       nombre de propales par mois
    */
   function get_num_propal($socid=0)
   {
@@ -477,9 +514,12 @@ class Product
 
       return $this->_get_stats($sql);
     }
-  /*
-   *
-   *
+
+  /**
+   *    \brief  Lie un fournisseur au produit/service
+   *    \param  user        utilisateur qui fait le lien
+   *    \param  id_fourn    id du fournisseur
+   *    \param  ref_fourn   reference chez le fournisseur
    */
   function add_fournisseur($user, $id_fourn, $ref_fourn) 
     {
@@ -502,7 +542,7 @@ class Product
 		}
 	      else
 		{
-		  print $this->db->error() . ' in ' . $sql;
+    	  dolibarr_print_error($this->db);
 		  return -1;
 		}
 	    }
@@ -513,13 +553,15 @@ class Product
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+	  dolibarr_print_error($this->db);
 	  return -3;
 	}
     }
-  /*
-   *
-   *
+
+  /**
+   *    \brief  Délie un fournisseur au produit/service
+   *    \param  user        utilisateur qui défait le lien
+   *    \param  id_fourn    id du fournisseur
    */
   function remove_fournisseur($user, $id_fourn) 
     {
@@ -532,13 +574,15 @@ class Product
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+	  dolibarr_print_error($this->db);
 	  return -1;
 	}
     }
-  /*
-   *
-   *
+
+  /**
+   *    \brief  Entre un nombre de piece du produit en stock dans un entrepôt
+   *    \param  id_entrepot     id de l'entrepot
+   *    \param  nbpiece         nombre de pieces
    */
   function create_stock($id_entrepot, $nbpiece)
   {
@@ -553,13 +597,17 @@ class Product
       }
     else
       {
-	print $this->db->error() . ' in ' . $sql;
+    dolibarr_print_error($this->db);
 	return -1;
       }    
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief  Ajuste le stock d'un entrepôt pour le produit à une valeure donnée
+   *    \param  user            utilisateur qui demande l'ajustement
+   *    \param  id_entrepot     id de l'entrepot
+   *    \param  nbpiece         nombre de pieces
+   *    \param  mouvement       0 = ajout, 1 = suppression
    */
   function correct_stock($user, $id_entrepot, $nbpiece, $mouvement)
   {
@@ -581,20 +629,21 @@ class Product
       }
     else
       {
-	print $this->db->error() . ' in ' . $sql;
-	$this->db->rollback();
-	return -1;
+	  dolibarr_print_error($this->db);
+  	  $this->db->rollback();
+	  return -1;
       }        
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief  Augment ou réduit la valeur de stock pour le produit
+   *    \param  user            utilisateur qui demande l'ajustement
+   *    \param  id_entrepot     id de l'entrepot
+   *    \param  nbpiece         nombre de pieces
+   *    \param  mouvement       0 = ajout, 1 = suppression
    */
   function ajust_stock($user, $id_entrepot, $nbpiece, $mouvement)
   {
-    /* mouvement = 0 -> ajouter
-     * mouvement = 1 -> supprimer
-     */
     $op[0] = "+" . trim($nbpiece);
     $op[1] = "-" . trim($nbpiece);
 
@@ -623,25 +672,26 @@ class Product
 		  }
 		else
 		  {
-		    print $this->db->error() . ' in ' . $sql;
+      	    dolibarr_print_error($this->db);
 		    $this->db->rollback();
 		    return -2;
 		  }
 	      }
 	    else
 	      {
-		print $this->db->error() . ' in ' . $sql;
+  	    dolibarr_print_error($this->db);
 		$this->db->rollback();
 		return -1;
 	      } 
 	  }
 	else
 	  {
-	    print $this->db->error() . ' in ' . $sql;
+ 	    dolibarr_print_error($this->db);
 	    $this->db->rollback();
 	    return -3;
 	  }    
       }
   }
+
 }
 ?>
