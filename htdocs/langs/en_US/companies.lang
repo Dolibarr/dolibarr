@@ -48,3 +48,7 @@ CustomerAccount=Customer account
 SupplierAccount=Supplier account
 LastProspect=Last
 CompanyDeleted=Company "%s" deleted from database.
+ListOfContacts=List of contacts
+ListOfCompanies=List of companies
+ShowCompany=Show company
+ShowContact=Show contact

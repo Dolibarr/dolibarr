@@ -48,3 +48,7 @@ CustomerAccount=Compte client
 SupplierAccount=Compte fournisseur
 LastProspect=Derniers
 CompanyDeleted=La société "%s" a été supprimée de la base.
+ListOfContacts=Liste des contacts
+ListOfCompanies=Liste des sociétés
+ShowCompany=Afficher société
+ShowContact=Afficher contact

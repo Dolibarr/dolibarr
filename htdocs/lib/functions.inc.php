@@ -291,49 +291,50 @@ function dolibarr_print_object_info($object)
 
 /**
   \brief    Formatage du telephone
-  \param	phone			numéro de telephone à formater
-  \return   phone			numéro de téléphone formaté
-  \remarks  ne tient pas en compte le format belge 02/211 34 83
-  \remarks  formattage automatique des numero non formates
-  \remarks  ajouté la prise en charge les numéros de 7, 9, 11 et 12 chiffres	
+  \param	phone			Numéro de telephone à formater
+  \return   phone			Numéro de téléphone formaté
+  \remarks  Ne tient pas en compte le format belge 02/211 34 83
+  \remarks  Formattage automatique des numero non formates
 */
-function dolibarr_print_phone($phone)
+function dolibarr_print_phone($phone,$country="FR")
 {
+    $phone=trim($phone);
     if (strstr($phone, ' ')) { return $phone; }
-    if (strlen(trim($phone)) == 10) {
-    return substr($phone,0,2)." ".substr($phone,2,2)." ".substr($phone,4,2)." ".substr($phone,6,2)." ".substr($phone,8,2);
+    if (strtoupper($country) == "FR") {
+        // France
+        if (strlen($phone) == 10) {
+            return substr($phone,0,2)."&nbsp;".substr($phone,2,2)."&nbsp;".substr($phone,4,2)."&nbsp;".substr($phone,6,2)."&nbsp;".substr($phone,8,2);
+        }
+        elseif (strlen($phone) == 7)
+        {
+            return substr($phone,0,3)."&nbsp;".substr($phone,3,2)."&nbsp;".substr($phone,5,2);
+        }
+        elseif (strlen($phone) == 9)
+        {
+            return substr($phone,0,2)."&nbsp;".substr($phone,2,3)."&nbsp;".substr($phone,5,2)."&nbsp;".substr($phone,7,2);
+        }
+        elseif (strlen($phone) == 11)
+        {
+            return substr($phone,0,3)."&nbsp;".substr($phone,3,2)."&nbsp;".substr($phone,5,2)."&nbsp;".substr($phone,7,2)."&nbsp;".substr($phone,9,2);
+        }
+        elseif (strlen($phone) == 12)
+        {
+            return substr($phone,0,4)."&nbsp;".substr($phone,4,2)."&nbsp;".substr($phone,6,2)."&nbsp;".substr($phone,8,2)."&nbsp;".substr($phone,10,2);
+        }
     }
-    elseif (strlen(trim($phone)) == 7)
-    {
-    return substr($phone,0,3)." ".substr($phone,3,2)." ".substr($phone,5,2);
-    }
-    elseif (strlen(trim($phone)) == 9)
-    {
-    return substr($phone,0,2)." ".substr($phone,2,3)." ".substr($phone,5,2)." ".substr($phone,7,2);
-    }
-    elseif (strlen(trim($phone)) == 11)
-    {
-    return substr($phone,0,3)." ".substr($phone,3,2)." ".substr($phone,5,2)." ".substr($phone,7,2)." ".substr($phone,9,2);
-    }
-    elseif (strlen(trim($phone)) == 12)
-    {
-    return substr($phone,0,4)." ".substr($phone,4,2)." ".substr($phone,6,2)." ".substr($phone,8,2)." ".substr($phone,10,2);
-    }
-    else
-    {
     return $phone;
-    }
 }
 
 
 /**
-        \brief  Affiche logo dédié aux actions
+        \brief  Affiche logo propre à une notion (fonction générique)
+        \param  alt     Texte sur le alt de l'image
+        \param  object  Objet pour lequel il faut afficher le logo (exemple: user, group, action, bill, contract, propal, product, ...)
 */
-function img_actions($alt = "default")
+function img_object($alt, $object)
 {
   global $conf,$langs;
-  if ($alt=="default") $alt=$langs->trans("Rendez-vous");
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/object_actions.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/object_'.$object.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**

@@ -1,7 +1,10 @@
 # Dolibarr language file - en_US - suppliers
 Suppliers=Suppliers
+Supplier=Supplier
 AddSupplier=Add a supplier
 SupplierRemoved=Supplier removed
-NewSupplier=Nes supplier
+NewSupplier=New supplier
 History=History
 OrderCard=Order card
+ListOfSuppliers=List of suppliers
+ShowSupplier=Show supplier

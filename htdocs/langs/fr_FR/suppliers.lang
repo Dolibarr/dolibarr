@@ -1,7 +1,10 @@
 # Dolibarr language file - fr_FR - suppliers
 Suppliers=Fournisseurs
+Supplier=Fournisseur
 AddSupplier=Ajouter un fournisseur
 SupplierRemoved=Fournisseur supprimé
 NewSupplier=Nouveau fournisseur
 History=Historique
 OrderCard=Fiche commande
+ListOfSuppliers=Liste des fournisseurs
+ShowSupplier=Afficher fournisseur
