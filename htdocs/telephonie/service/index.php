@@ -23,7 +23,7 @@ require("./pre.inc.php");
 
 if (!$user->rights->telephonie->lire) accessforbidden();
 
-llxHeader('','Telephonie - Contrats');
+llxHeader('','Telephonie - Services');
 
 /*
  *
