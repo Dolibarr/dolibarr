@@ -66,20 +66,27 @@ if ($_GET["id"])
   
   if ( $result )
     { 
+      // Efface rep obsolete
+	  if(is_dir(DOL_DOCUMENT_ROOT."/document/produits"))
+	    rmdir(DOL_DOCUMENT_ROOT."/document/produits");
+
+      // Création répertoire pour images générées
       $dir = DOL_DOCUMENT_ROOT."/document/produit/".$product->id;
       if (! file_exists($dir))
 	{
+	  
 	  umask(0);
-	  if(is_dir(DOL_DOCUMENT_ROOT."/document/produits"))
-	    rmdir(DOL_DOCUMENT_ROOT."/document/produits");
-	  //mkdir(DOL_DOCUMENT_ROOT."/document");
-	  if(!file_exists(DOL_DOCUMENT_ROOT."/document/produit"))
+	  if(!file_exists(DOL_DOCUMENT_ROOT."/document/produit")) {
+  	    mkdir(DOL_DOCUMENT_ROOT."/document");
 	    mkdir(DOL_DOCUMENT_ROOT."/document/produit");
+	  }
 	  if (! mkdir($dir, 0755))
 	    {
 	      $mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
 	    }
 	}
+
+
       $img_propal_name = "propal12mois.png";
       $filenbpropal = $dir . "/" . $img_propal_name;
       $filenbvente  = $dir . "/vente12mois.png";
