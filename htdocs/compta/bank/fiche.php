@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,7 +155,7 @@ else
 
       if ($user->admin) 
 	{
-	  print '<td width="25%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+	  print '<td width="25%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
 	}
       else
 	{
