@@ -130,6 +130,36 @@ tr.impair {
             font-size: 1.0em; 
             }
 
+/*
+ *
+ */
+tr.box_titre { 
+               font-family: Helvetica, Verdana;
+               font-size: 1.0em;
+               font-weight: bold;
+               }
+
+tr.box_pair { 
+              background: #b3cccc; 
+              font-family: Helvetica, Verdana; 
+              font-size: 0.9em; 
+              }
+
+tr.box_impair { 
+                background: #cceeee; 
+                font-family: Helvetica, Verdana;
+                font-size: 0.9em; 
+                }
+
+tr.fiche { 
+           font-family: Helvetica, Verdana;
+           font-size: 0.6em; 
+           }
+
+/*
+ *
+ */
+
 td.valeur { 
             font-weight: bold;
             }
