@@ -40,7 +40,7 @@ $year_current = $_GET["year"];;
 if (! $year_current) { $year_current = strftime("%Y", time()); }
 
 
-print_titre("Résumé annuel des journaux comptables");
+print_titre("Bilan mensuel Entrées/Sorties pour la caisse");
 print '<br>';
 
 
