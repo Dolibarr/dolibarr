@@ -174,7 +174,7 @@ class Expedition
    */
   Function fetch ($id)
     {
-      $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande";
+      $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot";
       $sql .= ", ".$this->db->pdate("e.date_expedition")." as date_expedition ";
       $sql .= " FROM llx_expedition as e";
       $sql .= " WHERE e.rowid = $id";
@@ -191,7 +191,7 @@ class Expedition
 	  $this->commande_id     = $obj->fk_commande;
 	  $this->user_author_id  = $obj->fk_user_author;
 	  $this->date            = $obj->date_expedition;
-
+	  $this->entrepot_id     = $obj->fk_entrepot;
 	  $this->db->free();
 	  
 	  if ($this->statut == 0)
