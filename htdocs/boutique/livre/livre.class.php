@@ -456,7 +456,7 @@ class Livre {
 
     $sql = "UPDATE llx_livre ";
     $sql .= " SET title = '" . trim($this->titre) ."'";
-    $sql .= ", ref = '" . trim(strtoupper($this->ref)) ."'";
+    $sql .= ", ref = '" . trim($this->ref) ."'";
     $sql .= ", prix = " . $this->price ."";
     $sql .= ", annee = " . $this->annee ;
     $sql .= ", fk_editeur = " . $this->editeurid ;
