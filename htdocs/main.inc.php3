@@ -28,6 +28,7 @@ if (! include ("conf/conf.php"))
 
 
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
+define('DOL_URL_ROOT', $dolibarr_main_url_root);
 
 require (DOL_DOCUMENT_ROOT."/conf/conf.class.php3");
 /*
@@ -242,13 +243,16 @@ function top_menu($head)
   //  print "<HTML><HEAD>";
   print $head;
   //  print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
-  print '<LINK REL="stylesheet" TYPE="text/css" HREF="/'.$conf->css.'">';
+  print '<LINK REL="stylesheet" TYPE="text/css" HREF="'.DOL_URL_ROOT.'/'.$conf->css.'">';
   print "\n";
-  if (defined("MAIN_TITLE")){
-    print "<title>".MAIN_TITLE."</title>";
-  }else{
-    print '<title>Dolibarr</title>';
-  }
+  if (defined("MAIN_TITLE"))
+    {
+      print "<title>".MAIN_TITLE."</title>";
+    }
+  else
+    {
+      print '<title>Dolibarr</title>';
+    }
   print "\n";
 
 
