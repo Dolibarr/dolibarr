@@ -1471,13 +1471,16 @@ else
 	  /* Facture non trouvée */
 	  print "Facture inexistante";
 	}
-    } else {
+    }
+  else
+    {
+      
       /***************************************************************************
        *                                                                         *
        *                      Mode Liste                                         *
        *                                                                         *
        ***************************************************************************/
-      $page=$_GET["page"];
+      $page = $_GET["page"];
       $sortorder=$_GET["sortorder"];
       $sortfield=$_GET["sortfield"];
       $month=$_GET["month"];
@@ -1535,19 +1538,23 @@ else
 	  }
 	  $sql .= " f.rowid DESC ";
 	
-	  $sql .= $db->plimit($limit,$offset);
+	  $sql .= $db->plimit($limit+1,$offset);
 	
 	  $result = $db->query($sql);
 	}
+
       if ($result)
 	{
 	  $num = $db->num_rows();
-	  if ($socidp) {
-            $soc = new Societe($db);
-            $soc->fetch($socidp);
-	  }
-	  print_barre_liste("Factures client".($socidp?" $soc->nom":""),$page,$_SERVER["PHP_SELF"],"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
+	  if ($socidp)
+	    {
+	      $soc = new Societe($db);
+	      $soc->fetch($socidp);
+	    }
+	  
+	  print_barre_liste("Factures client".($socidp?" $soc->nom":""),$page,"facture.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+	  
 	  $i = 0;
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
@@ -1559,7 +1566,25 @@ else
 	  print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp",'align="right"',$sortfield);
 	  print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye","","&amp;socidp=$socidp",'align="right"',$sortfield);
 	  print "</tr>\n";
-      
+
+	  // Lignes des champs de filtre
+	  print '<form method="post" action="societe.php">';
+	  print '<tr class="liste_titre">';
+	  print '<td valign="right">';
+	  print '<input class="fat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+	  print '</td><td>&nbsp;</td>';
+	  print '<td valign="right">';
+	  print '<input class="fat" type="text" name="search_societe" value="'.$search_societe.'">';
+	  print '</td><td>';
+	  print '<input class="fat" type="text" name="search_societe" value="'.$search_societe.'">';
+	  print '</td><td>&nbsp;</td><td colspan="2" align="center">';
+	  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
+	  print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
+	  print '</td>';
+	  print "</tr>\n";
+	  print '</form>';
+
+
 	  if ($num > 0) 
 	    {
 	      $var=True;
