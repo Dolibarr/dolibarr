@@ -6,3 +6,4 @@ ContractStatusRunning=En service
 ContractStatusClosed=Clôturé
 Contracts=Contrats
 Contract=Contrat
+AddContract=Créer contrat

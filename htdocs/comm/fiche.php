@@ -389,22 +389,25 @@ if ($_socid > 0)
 
     if ($conf->propal->enabled && $user->rights->propale->creer)
       {
-	print '<a class="tabAction" href="addpropal.php?socidp='.$objsoc->id.'&amp;action=create">Proposition</a>';
+    $langs->load("propal");
+	print '<a class="tabAction" href="addpropal.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
       }
 
     if ($user->rights->contrat->creer)
       {
-	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$objsoc->id.'&amp;action=create">Contrat</a>';
+    $langs->load("contracts");
+	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContract").'</a>';
       }
 
     if ($conf->commande->enabled && $user->rights->commande->creer)
       {
-	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("Order").'</a>';
+    $langs->load("orders");
+	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a>';
       }
 
     if ($conf->projet->enabled && $user->rights->projet->creer)
       {
-	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$objsoc->id.'&action=create">'.$langs->trans("Project").'</a>';
+	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$objsoc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
       }
 
     if ($conf->fichinter->enabled)
