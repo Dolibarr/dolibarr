@@ -265,9 +265,6 @@ else
 	  print '<tr><td valign="top">Login</td>';
 	  print '<td><input size="10" maxlength="8" type="text" name="login" value="'.$fuser->login.'"></td></tr>';
 	  
-	  print '<tr><td valign="top">Password</td>';
-	  print '<td class="valeur"><input size="30" type="text" name="password" value="'.$fuser->pass.'"></td></tr>';
-
 	  print '<tr><td valign="top">Email</td>';
 	  print '<td><input size="30" type="text" name="email" value="'.$fuser->email.'"></td></tr>';
 	  
