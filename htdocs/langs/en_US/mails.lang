@@ -37,8 +37,10 @@ NbOfRecipients=Number of recipients
 TotalNbOfDistinctRecipients=Total number of distinct recipients
 NoTargetYet=No recipients defined yet
 AddRecipients=Add recipients
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactProspects=All contacts for all prospect companies
 MailingModuleDescContactCustomers=All contacts for all customer companies
+MailingModuleDescDolibarrUsers=All Dolibarr users
 RecipientSelectionModules=Active modules for recipients selection
 MailSelectedRecipients=Selected recipients
 MailingArea=Mailings area
