@@ -52,6 +52,8 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("/product/categorie/", "Catégories");
 
+  $menu->add("/product/promotion/", "Promotions");
+
   left_menu($menu->liste);
 }
 ?>
