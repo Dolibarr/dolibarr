@@ -55,6 +55,8 @@ class modPrelevement extends DolibarrModules
     $this->const_name = "MAIN_MODULE_PRELEVEMENT";
     $this->const_config = MAIN_MODULE_PRELEVEMENT;
 
+    $this->data_directory = DOL_DATA_ROOT . "/prelevement/bon/";
+
     // Dépendances
     $this->depends = array();
     $this->requiredby = array();
