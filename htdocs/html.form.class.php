@@ -36,11 +36,14 @@ class Form
   }
   
   /*
-   * Retourne la liste déroulante des départements/province/cantons
-   * avec un affichage avec rupture sur le pays
-   *
+   * \brief     Retourne la liste déroulante des départements/province/cantons 
+   *            avec un affichage avec rupture sur le pays
+   * \remarks   La cle de la liste est le code (il peut y avoir plusieurs entrée pour
+   *            un code donnée mais dans ce cas, le champ pays et lang diffère).
+   *            Ainsi les liens avec les départements se font sur un département
+   *            independemment de nom som.
    */
-  function select_departement($selected='')
+  function select_departement($selected='',$htmlname='departement_id')
   {
     // On recherche les départements/cantons/province active d'une region et pays actif
     $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM ";
@@ -51,7 +54,7 @@ class Form
     
     if ($this->db->query($sql))
       {
-    print '<select name="departement_id">';
+    print '<select name="'.$htmlname.'">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
@@ -72,11 +75,11 @@ class Form
 		  
 		  if ($selected > 0 && $selected == $obj->rowid)
 		    {
-		      print '<option value="'.$obj->rowid.'" selected>['.$obj->code.'] '.$obj->nom.'</option>';
+		      print '<option value="'.$obj->code.'" selected>['.$obj->code.'] '.$obj->nom.'</option>';
 		    }
 		  else
 		    {
-		      print '<option value="'.$obj->rowid.'">['.$obj->code.'] '.$obj->nom.'</option>';
+		      print '<option value="'.$obj->code.'">['.$obj->code.'] '.$obj->nom.'</option>';
 		    }
 		}
 		$i++;
@@ -90,17 +93,69 @@ class Form
   }
   
   /*
-   * Retourne la liste déroulante des pays actifs
+   * \brief     Retourne la liste déroulante des regions actives dont le pays est actif
+   * \remarks   La cle de la liste est le code (il peut y avoir plusieurs entrée pour
+   *            un code donnée mais dans ce cas, le champ pays et lang diffère).
+   *            Ainsi les liens avec les regions se font sur une region independemment
+   *            de nom som.
+   */
+  function select_region($selected='',$htmlname='region_id')
+  {
+    $sql = "SELECT r.rowid, r.code_region as code, r.nom as libelle, r.active, p.libelle as libelle_pays FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p";
+    $sql .= " WHERE r.fk_pays=p.rowid AND r.active = 1 and p.active = 1 ORDER BY libelle_pays, libelle ASC";
+
+    if ($this->db->query($sql))
+      {
+    print '<select name="'.$htmlname.'">';
+	$num = $this->db->num_rows();
+	$i = 0;
+	if ($num)
+	  {
+	    $pays='';
+	    while ($i < $num)
+	      {
+		$obj = $this->db->fetch_object( $i);
+		if ($obj->code == 0) {
+		  print '<option value="0">&nbsp;</option>';
+		}
+		else {
+		  if ($pays == '' || $pays != $obj->libelle_pays) {
+		    // Affiche la rupture
+		    print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
+		    $pays=$obj->libelle_pays;   
+		  }
+		  
+		  if ($selected > 0 && $selected == $obj->code)
+		    {
+		      print '<option value="'.$obj->code.'" selected>'.$obj->libelle.'</option>';
+		    }
+		  else
+		    {
+		      print '<option value="'.$obj->code.'">'.$obj->libelle.'</option>';
+		    }
+		}
+		$i++;
+	      }
+	  }
+    print '</select>';
+      }
+    else {
+      dolibarr_print_error($this->db);
+    }
+  }
+
+  /*
+   * \brief     Retourne la liste déroulante des pays actifs
    *
    */
-  function select_pays($selected='')
+  function select_pays($selected='',$htmlname='pays_id')
   {
     $sql = "SELECT rowid, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
     $sql .= " WHERE active = 1 ORDER BY libelle ASC";
 
     if ($this->db->query($sql))
       {
-    print '<select name="pays_id">';
+    print '<select name="'.$htmlname.'">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
@@ -122,6 +177,39 @@ class Form
     print '</select>';
       }
   }
+
+
+  /*
+   * \brief     Retourne la liste déroulante des langues disponibles
+   * \param     
+   */
+  function select_lang($selected='',$htmlname='lang_id')
+  {
+    global $langs;
+    
+    $langs_available=$langs->get_available_languages();
+    
+    print '<select name="'.$htmlname.'">';
+	$num = count($langs_available);
+	$i = 0;
+	if ($num)
+	  {
+	    while ($i < $num)
+	      {
+		if ($selected == $langs_available[$i])
+		  {
+		    print '<option value="'.$langs_available[$i].'" selected>'.$langs_available[$i].'</option>';
+		  }
+		else
+		  {
+		    print '<option value="'.$langs_available[$i].'">'.$langs_available[$i].'</option>';
+		  }
+		$i++;
+	      }
+	  }
+    print '</select>';
+  }
+
 
   /*
    * Retourne la liste déroulante des sociétés
@@ -610,7 +698,7 @@ class Form
     		\param	tableau de key+valeur
     		\param	key présélectionnée
     		\param	1 si il faut un valeur "-" dans la liste, 0 sinon
-    		\param	1 pour affiche la key dans la valeur "[key] value"
+    		\param	1 pour afficher la key dans la valeur "[key] value"
     */
   function select_array($name, $array, $id='', $empty=0, $key_libelle=0)
     {
