@@ -95,7 +95,6 @@ if ($viewall) { $nbline=0; }
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account";
 $sql .= " FROM llx_bank as b "; 
 
-
 if ($credit) {
     $sql .= " WHERE b.amount " . $credit;
 }
@@ -106,44 +105,37 @@ $result = $db->query($sql);
 if ($result) {
   $var=True;  
   $num = $db->num_rows();
-  $i = 0; $total = 0;
-  
-  $sep = 0;
+  $i = 0;   
   
   while ($i < $num) {
     $objp = $db->fetch_object( $i);
-    $total = $total + $objp->amount;
-    $time = time();
-    if ($i > ($nbline - $viewline)) {
-      
 
-      $var=!$var;
+    $var=!$var;
 
-      print "<tr $bc[$var]>";
-      print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
+    print "<tr $bc[$var]>";
+    print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
       
-      if ($objp->num_chq) {
-	print "<td>CHQ $objp->num_chq - $objp->label</td>";
-      } else {
-	print "<td>$objp->label</td>";
-      }
-      
-      if ($objp->amount < 0) {
-	print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
-      } else {
-	print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
-      }
-      
-      if ($total > 0) {
-	print "<td align=\"right\">".price($total)."</TD>\n";
-      } else {
-	print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
-      }
-      
-      print "<td align=\"right\"><small>".$objp->fk_account."</small></TD>\n";
-      print "</tr>";
+    if ($objp->num_chq) {
+      print "<td>CHQ $objp->num_chq - $objp->label</td>";
+    } else {
+      print "<td>$objp->label</td>";
     }
-
+    
+    if ($objp->amount < 0) {
+      print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
+    } else {
+      print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
+    }
+    
+    if ($total > 0) {
+      print "<td align=\"right\">".price($total)."</TD>\n";
+    } else {
+      print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
+    }
+      
+    print "<td align=\"right\"><small>".$objp->fk_account."</small></TD>\n";
+    print "</tr>";
+    
     $i++;
   }
   $db->free();
