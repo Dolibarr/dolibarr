@@ -32,21 +32,21 @@ if (!$user->rights->produit->lire)
 
 llxHeader("","","Fiche produit");
 
-if ($HTTP_POST_VARS["action"] == "create_stock")
+if ($_POST["action"] == "create_stock")
 {
   $product = new Product($db);
   $product->id = $_GET["id"];
-  $product->create_stock($HTTP_POST_VARS["id_entrepot"], $HTTP_POST_VARS["nbpiece"]);
+  $product->create_stock($_POST["id_entrepot"], $_POST["nbpiece"]);
 }
 
-if ($HTTP_POST_VARS["action"] == "correct_stock")
+if ($_POST["action"] == "correct_stock")
 {
   $product = new Product($db);
   $product->id = $_GET["id"];
   $product->correct_stock($user, 
-			  $HTTP_POST_VARS["id_entrepot"], 
-			  $HTTP_POST_VARS["nbpiece"],
-			  $HTTP_POST_VARS["mouvement"]);
+			  $_POST["id_entrepot"], 
+			  $_POST["nbpiece"],
+			  $_POST["mouvement"]);
 }
 
 
@@ -58,12 +58,12 @@ if ($cancel == 'Annuler')
  *
  *
  */
-if ($id)
+if ($_GET["id"])
 {
   if ($action <> 're-edit')
     {
       $product = new Product($db);
-      $result = $product->fetch($id);
+      $result = $product->fetch($_GET["id"]);
     }
   
   if ( $result )
@@ -87,14 +87,14 @@ if ($id)
 	    }
 	  print '</td></tr>';
 	  print "<tr><td>Libellé</td><td>$product->libelle</td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$product->id.'">Statistiques</a></td></tr>';
 	  print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
 	  print '<td valign="top" rowspan="2">';
-	  print 'Fournisseurs [<a href="../fiche.php?id='.$id.'&amp;action=ajout_fourn">Ajouter</a>]';
+	  print 'Fournisseurs [<a href="../fiche.php?id='.$product->id.'&amp;action=ajout_fourn">Ajouter</a>]';
 	  
 	  $sql = "SELECT s.nom, s.idp";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
-	  $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product =$id";
+	  $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product =$product->id";
 	  $sql .= " ORDER BY lower(s.nom)";
 	  
 	  if ( $db->query($sql) )
@@ -156,7 +156,7 @@ if ($id)
   if ($_GET["action"] == "correction")
     {
       print_titre ("Correction du stock");
-      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+      print "<form action=\"$PHP_SELF?id=$product->id\" method=\"post\">\n";
       print '<input type="hidden" name="action" value="correct_stock">';
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">Entrepôt</td><td width="20%"><select name="id_entrepot">';
@@ -195,7 +195,7 @@ if ($id)
   if ($_GET["action"] == "definir")
     {
       print_titre ("Créer un stock");
-      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+      print "<form action=\"$PHP_SELF?id=$product->id\" method=\"post\">\n";
       print '<input type="hidden" name="action" value="create_stock">';
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">Entrepôt</td><td width="40%"><select name="id_entrepot">';
@@ -233,32 +233,19 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print '<br><table id="actions" width="100%" cellspacing="0" cellpadding="3">';
+print "<br><div class=\"tabsAction\">\n";
 
-print '<td width="20%" align="center">-</td>';
-
-print '<td width="20%" align="center">-</td>';
-
-if ($action == '')
+if ($_GET["action"] == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<td width="20%" align="center"><a href="../fiche.php?action=edit&amp;id='.$id.'">Editer</a></td>';
+      print '<a class="tabAction" href="../fiche.php?action=edit&amp;id='.$product->id.'">Editer</a>';
     }
-  else
-    {
-      print '<td width="20%" align="center">-</td>';    
-    }
-}
-else
-{
-  print '<td width="20%" align="center">-</td>';
-}
-print '<td width="20%" align="center">-</td>';    
-print '<td width="20%" align="center"><a href="product.php?id='.$id.'&amp;action=correction">Correction stock</a></td>';
 
-print '</table><br>';
+}
 
+print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
+print '</div>';
 
 $db->close();
 
