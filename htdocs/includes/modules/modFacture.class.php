@@ -57,12 +57,15 @@ class modFacture
     $const[5][1] = "chaine";
     $const[6][0] = "FAC_PDF_INTITULE2";
     $const[6][1] = "chaine";
+    $const[7][0] = "FAC_OUTPUTDIR";
+    $const[7][1] = "chaine";
+    $const[7][2] = $GLOBALS["DOCUMENT_ROOT"] . "/document/facture";
 
     foreach ($const as $key => $value)
       {
 	$name = $const[$key][0];
 	$type = $const[$key][1];
-
+	$val  = $const[$key][2];
 
 	$sql = "SELECT count(*) FROM llx_const WHERE name ='".$name."'";
 
@@ -72,8 +75,14 @@ class modFacture
 	    
 	    if ($row[0] == 0)
 	      {
-
-		$sql = "INSERT INTO llx_const (name,type) VALUES ('".$name."','".$type."')";
+		if (strlen($val))
+		  {
+		    $sql = "INSERT INTO llx_const (name,type,value) VALUES ('".$name."','".$type."','".$val."')";
+		  }
+		else
+		  {
+		    $sql = "INSERT INTO llx_const (name,type) VALUES ('".$name."','".$type."')";
+		  }
 
 		if ( $this->db->query($sql) )
 		  {
