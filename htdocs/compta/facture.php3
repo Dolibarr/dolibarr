@@ -348,8 +348,12 @@ else
 /* *************************************************************************** */
 {
   
-  if ($facid > 0) {
+  if ($facid > 0)
+    {
     
+      $fac = New Facture($db);
+      $fac->fetch($facid);
+
     $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.fk_user_author, f.note";
     $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
 
@@ -400,11 +404,11 @@ else
 	print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
 	
 	print '<tr><td>Montant</td>';
-	print '<td align="right" colspan="2"><b>'.price($obj->amount).'</b></td>';
+	print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
 	print '<td>euros HT</td></tr>';
-	print '<tr><td>TVA</td><td align="right" colspan="2">'.tva($obj->amount).'</td>';
+	print '<tr><td>TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
 	print '<td>euros</td></tr>';
-	print '<tr><td>Total</td><td align="right" colspan="2">'.price($obj->total).'</td>';
+	print '<tr><td>Total</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
 	print '<td>euros TTC</td></tr>';
 	
 	print "</table>";
@@ -854,7 +858,7 @@ else
 	$sql .= " AND date_format(f.datef, '%Y') = $year";
       }
   
-    $sql .= " ORDER BY $sortfield $sortorder ";
+    $sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
     $sql .= $db->plimit($limit + 1,$offset);
 
     $result = $db->query($sql);
@@ -875,66 +879,73 @@ else
 	print '<td>&nbsp;</td>';
 	print "</TR>\n";
       
-	if ($num > 0) {
-	  $var=True;
-	  while ($i < $num) {
-	    $objp = $db->fetch_object( $i);
-	    $var=!$var;
-	    
-	    print "<TR $bc[$var]>";
-	    print "<td><a href=\"facture.php3?facid=$objp->facid\">";
-	    if ($objp->paye)
+	if ($num > 0) 
+	  {
+	    $var=True;
+	    while ($i < min($num,$limit))
 	      {
-		print $objp->facnumber;
-	      }
-	    else
-	      {
-		print '<b>'.$objp->facnumber.'</b>';
-	      }
-	  print "</a></TD>\n";
-	  print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
-	  
-	  if ($objp->df > 0 ) {
-	    print "<TD align=\"right\">";
-	    $y = strftime("%Y",$objp->df);
-	    $m = strftime("%m",$objp->df);
+		$objp = $db->fetch_object( $i);
+		$var=!$var;
 	    
-	    print strftime("%d",$objp->df)."\n";
-	    print " <a href=\"facture.php3?year=$y&month=$m\">";
-	    print strftime("%B",$objp->df)."</a>\n";
-	    print " <a href=\"facture.php3?year=$y\">";
-	    print strftime("%Y",$objp->df)."</a></TD>\n";
-	  } else {
-	    print "<TD align=\"right\"><b>!!!</b></TD>\n";
+		print "<TR $bc[$var]>";
+		print "<td><a href=\"facture.php3?facid=$objp->facid\">";
+		if ($objp->paye)
+		  {
+		    print $objp->facnumber;
+		  }
+		else
+		  {
+		    print '<b>'.$objp->facnumber.'</b>';
+		  }
+		print "</a></TD>\n";
+		print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+		
+		if ($objp->df > 0 )
+		  {
+		    print "<TD align=\"right\">";
+		    $y = strftime("%Y",$objp->df);
+		    $m = strftime("%m",$objp->df);
+		    
+		    print strftime("%d",$objp->df)."\n";
+		    print " <a href=\"facture.php3?year=$y&month=$m\">";
+		    print strftime("%B",$objp->df)."</a>\n";
+		    print " <a href=\"facture.php3?year=$y\">";
+		    print strftime("%Y",$objp->df)."</a></TD>\n";
+		  }
+		else
+		  {
+		    print "<TD align=\"right\"><b>!!!</b></TD>\n";
+		  }
+		
+		print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
+		
+		if (! $objp->paye)
+		  {
+		    print '<td align="center">impayée</td>';
+		  }
+		else
+		  {
+		    print '<td>&nbsp;</td>';
+		  }
+		
+		print "</TR>\n";
+		$i++;
+		$j++;
+		
+	      }
 	  }
+	if ($i == 0) { $i=1; }  if ($j == 0) { $j=1; }
 	
-	  print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
-
-	  if (! $objp->paye)
-	    {
-	      print '<td align="center">impayée</td>';
-	    }
-	  else
-	    {
-	      print '<td>&nbsp;</td>';
-	    }
-	
-	  print "</TR>\n";
-	  $i++;
-	  $j++;
-	
-	}
+	print "</TABLE>";
+	$db->free();
       }
-      if ($i == 0) { $i=1; }  if ($j == 0) { $j=1; }
-
-      print "</TABLE>";
-      $db->free();
-    } else {
-      print $db->error();
-    }
-
+    else
+      {
+	print $db->error();
+      }
+    
   }
-
+  
 }
 
 $db->close();
