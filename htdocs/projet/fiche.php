@@ -33,6 +33,10 @@ require("../facture.class.php");
 require("../commande/commande.class.php");
 
 $langs->load("projects");
+$langs->load("companies");
+$langs->load("bills");
+$langs->load("orders");
+
 
 $user->getrights('projet');
 
@@ -65,7 +69,7 @@ if ($_POST["action"] == 'update' && $user->rights->projet->creer)
   $_GET["id"]=$projet->id;  // On retourne sur la fiche projet
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 {
   $projet = new Project($db);
   $projet->id = $_GET["id"];
@@ -73,54 +77,38 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
   Header("Location: index.php");
 }
 
-llxHeader("","Projet","Projet");
+llxHeader("",$langs->trans("Project"),"Projet");
 
 
 if ($_GET["action"] == 'delete')
 {
-
-  print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
-  print '<input type="hidden" name="action" value="confirm_delete">';
-  print '<table class="border" id="actions" cellspacing="0" width="100%" cellpadding="3">';
-  
-  print '<tr><td colspan="3">Supprimer le projet</td></tr>';
-  
-  print '<tr><td class="delete">Etes-vous sur de vouloir supprimer ce projet ?</td><td class="delete">';
   $htmls = new Form($db);
-  
-  $htmls->selectyesno("confirm","no");
-  
-  print "</td>\n";
-  print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
-  print '</table>';
-  print "</form>\n";  
+  $htmls->form_confirm("fiche.php?id=$id","Supprimer un projet","Etes-vous sur de vouloir supprimer cet projet ?","confirm_delete");
 }
 
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
-  print_titre("Nouveau projet");
+  print_titre($langs->trans("NewProject"));
 
   print '<form action="fiche.php?socidp='.$_GET["socidp"].'" method="post">';
-  ?>
-  <table class="border" cellpadding="3" cellspacing="0">
-  <input type="hidden" name="action" value="add">
-  <tr><td>Société</td><td>
-  <?php 
+
+  print '<table class="border">';
+  print '<input type="hidden" name="action" value="add">';
+  print '<tr><td>'.$langs->trans("Company").'</td><td>';
+
   $societe = new Societe($db);
   $societe->fetch($_GET["socidp"]); 
   print $societe->nom_url;
 
-  ?>
-  </td></tr>
-  <?php
-  print '<tr><td>Créateur</td><td>'.$user->fullname.'</td></tr>';
-  ?>
-  <tr><td><?php echo $langs->trans("Ref") ?></td><td><input size="10" type="text" name="ref"></td></tr>
-  <tr><td>Titre</td><td><input size="30" type="text" name="title"></td></tr>
-  <tr><td colspan="2"><input type="submit" value="<?php echo $langs->trans("Save") ?>"></td></tr>
-  </table>
-  </form>
-  <?php
+  print '</td></tr>';
+
+  print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
+
+  print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="10" type="text" name="ref"></td></tr>';
+  print '<tr><td>'.$langs->trans("Title").'</td><td><input size="30" type="text" name="title"></td></tr>';
+  print '<tr><td colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+  print '</table>';
+  print '</form>';
 
 } else {
   /*
@@ -146,13 +134,13 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
   if ($conf->commande->enabled) {
       $head[$h][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
-      $head[$h][1] = 'Commandes';
+      $head[$h][1] = $langs->trans("Orders");
       $h++;
   }
   
   if ($conf->facture->enabled) {
       $head[$h][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
-      $head[$h][1] = 'Factures';
+      $head[$h][1] = $langs->trans("Bills");
       $h++;
   }
  
@@ -164,8 +152,8 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
       print '<input type="hidden" name="action" value="update">';
       print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 
-      print '<table class="border" cellpadding="3" cellspacing="0" width="50%">';
-      print '<tr><td>Société</td><td>'.$projet->societe->nom.'</td></tr>';      
+      print '<table class="border" width="50%">';
+      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->nom.'</td></tr>';      
       print '<tr><td>'.$langs->trans("Title").'</td><td><input name="title" value="'.$projet->title.'"></td></tr>';      
       print '<tr><td>'.$langs->trans("Ref").'</td><td><input name="ref" value="'.$projet->ref.'"></td></tr>';
       print '</table>';
@@ -174,16 +162,20 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
     }
   else
     {
-      print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+      print '<table class="border" width="100%">';
       print '<tr><td width="20%">'.$langs->trans("Title").'</td><td>'.$projet->title.'</td>';  
       print '<td width="20%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
-      print '<tr><td>Société</td><td colspan="3">'.$projet->societe->nom_url.'</a></td></tr>';
+      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$projet->societe->nom_url.'</a></td></tr>';
       print '</table>';
       print '<br>';
     }
 
   print '</div>';
 
+
+  /*
+   * Boutons actions
+   */
   if ($user->rights->projet->creer == 1)
     {
       print '<div class="tabsAction">';
@@ -202,6 +194,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
     }
 
 }
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
