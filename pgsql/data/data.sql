@@ -188,6 +188,138 @@ insert into llx_const (name, value, type) values ('FICHEINTER_OUTPUT_URL','/htdo
 insert into llx_const (name, value, type) values ('SOCIETE_OUTPUTDIR','/htdocs/document/societe','chaine');
 insert into llx_const (name, value, type) values ('SOCIETE_OUTPUT_URL','/htdocs/document/societe','chaine');
 
+
+-- Dictionnaires llx_c
+
+--
+-- Descriptif du plan comptable FR PCG99-ABREGE
+--
+
+delete from llx_c_accountingsystem;
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  1,1,'PCG99-ABREGE','CAPIT', 'CAPITAL',  'Capital','101');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  2,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Ecarts de réévaluation','105');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  3,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Réserve légale','1061');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  4,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Réserves statutaires ou contractuelles','1063');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  5,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Réserves réglementées','1064');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  6,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Autres réserves','1068');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  7,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Compte de l''exploitant','108');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  8,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'résultat de l''exercice','12');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  9,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Amortissements dérogatoires','145');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 10,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Provision spéciale de réévaluation','146');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 11,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Plus-values réinvesties','147');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 12,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Autres provisions réglementées','148');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 13,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Provisions pour risques et charges','15');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 14,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'emprunts et dettes assimilees','16');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 15,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'immobilisations incorporelles','20');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 16,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Frais d''établissement','201');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 17,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Droit au bail','206');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 18,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Fonds commercial','207');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 19,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Autres immobilisations incorporelles','208');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 20,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'immobilisations corporelles','21');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 21,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'immobilisations en cours','23');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 22,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'autres immobilisations financieres','27');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 23,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Amortissements des immobilisations incorporelles','280');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 24,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Amortissements des immobilisations corporelles','281');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 25,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Provisions pour dépréciation des immobilisations incorporelles','290');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 26,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Provisions pour dépréciation des immobilisations corporelles','291');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 27,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Provisions pour dépréciation des autres immobilisations financières','297');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 28,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'matieres premières','31');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 29,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'autres approvisionnements','32');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 30,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'en-cours de production de biens','33');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 31,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'en-cours de production de services','34');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 32,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'stocks de produits','35');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 33,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'stocks de marchandises','37');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 34,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des matières premières','391');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 35,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des autres approvisionnements','392');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 36,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des en-cours de production de biens','393');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 37,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des en-cours de production de services','394');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 38,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des stocks de produits','395');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 39,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des stocks de marchandises','397');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 40,1,'PCG99-ABREGE','TIERS', 'SUPPLIER', 'Fournisseurs et Comptes rattachés','400');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 41,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Fournisseurs débiteurs','409');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 42,1,'PCG99-ABREGE','TIERS', 'CUSTOMER', 'Clients et Comptes rattachés','410');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 43,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Clients créditeurs','419');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 44,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Personnel','421');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 45,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Personnel','428');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 46,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Sécurité sociale et autres organismes sociaux','43');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 47,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Etat - impôts sur bénéfice','444');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 48,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Etat - Taxes sur chiffre affaire','445');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 49,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Autres impôts, taxes et versements assimilés','447');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 50,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Groupe et associes','45');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 51,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Associés','455');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 52,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Débiteurs divers et créditeurs divers','46');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 53,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'comptes transitoires ou d''attente','47');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 54,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Charges à répartir sur plusieurs exercices','481');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 55,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Charges constatées d''avance','486');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 56,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Produits constatés d''avance','487');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 57,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Provisions pour dépréciation des comptes de clients','491');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 58,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Provisions pour dépréciation des comptes de débiteurs divers','496');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 59,1,'PCG99-ABREGE','FINAN', 'XXXXXX',   'valeurs mobilières de placement','50');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 60,1,'PCG99-ABREGE','FINAN', 'BANK',     'banques, établissements financiers et assimilés','51');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 61,1,'PCG99-ABREGE','FINAN', 'CASH',     'Caisse','53');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 62,1,'PCG99-ABREGE','FINAN', 'XXXXXX',   'régies d''avance et accréditifs','54');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 63,1,'PCG99-ABREGE','FINAN', 'XXXXXX',   'virements internes','58');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 64,1,'PCG99-ABREGE','FINAN', 'XXXXXX',   'Provisions pour dépréciation des valeurs mobilières de placement','590');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 65,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Achats','60');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 66,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'variations des stocks','603');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 67,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Services extérieurs','61');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 68,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Autres services extérieurs','62');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 69,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Impôts, taxes et versements assimiles','63');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 70,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Rémunérations du personnel','641');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 71,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Rémunération du travail de l''exploitant','644');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 72,1,'PCG99-ABREGE','CHARGE','SOCIAL',   'Charges de sécurité sociale et de prévoyance','645');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 73,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Cotisations sociales personnelles de l''exploitant','646');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 74,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Autres charges de gestion courante','65');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 75,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Charges financières','66');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 76,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Charges exceptionnelles','67');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 77,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Dotations aux amortissements et aux provisions','681');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 78,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Dotations aux amortissements et aux provisions','686');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 79,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Dotations aux amortissements et aux provisions','687');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 80,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Participation des salariés aux résultats','691');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 81,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Impôts sur les bénéfices','695');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 82,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Imposition forfaitaire annuelle des sociétés','697');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 83,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Produits','699');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 84,1,'PCG99-ABREGE','PROD',  'PRODUCT',  'Ventes de produits finis','701');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 85,1,'PCG99-ABREGE','PROD',  'SERVICE',  'Prestations de services','706');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 86,1,'PCG99-ABREGE','PROD',  'PRODUCT',  'Ventes de marchandises','707');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 87,1,'PCG99-ABREGE','PROD',  'PRODUCT',  'Produits des activités annexes','708');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 88,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Rabais, remises et ristournes accordés par l''entreprise','709');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 89,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Variation des stocks','713');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 90,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Production immobilisée','72');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 91,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Produits nets partiels sur opérations à long terme','73');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 92,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Subventions d''exploitation','74');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 93,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Autres produits de gestion courante','75');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 94,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Jetons de présence et rémunérations d''administrateurs, gérants,...','753');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 95,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Ristournes perçues des coopératives','754');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 96,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Quotes-parts de résultat sur opérations faites en commun','755');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 97,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Produits financiers','76');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 98,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Produits exceptionnels','77');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 99,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Reprises sur amortissements et provisions','781');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (100,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Reprises sur provisions pour risques','786');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (101,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Reprises sur provisions','787');
+insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (102,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Transferts de charges','79');
+
+
+--
+-- Types action comm
+--
+
+delete from llx_c_actioncomm;
+insert into llx_c_actioncomm (id, code, type, libelle) values ( 1, 'AC_TEL',  'system', 'Appel Téléphonique');
+insert into llx_c_actioncomm (id, code, type, libelle) values ( 2, 'AC_FAX',  'system', 'Envoi Fax');
+insert into llx_c_actioncomm (id, code, type, libelle) values ( 3, 'AC_PROP', 'system', 'Envoi Proposition');
+insert into llx_c_actioncomm (id, code, type, libelle) values ( 4, 'AC_EMAIL','system', 'Envoi Email');
+insert into llx_c_actioncomm (id, code, type, libelle) values ( 5, 'AC_RDV',  'system', 'Prendre rendez-vous');
+insert into llx_c_actioncomm (id, code, type, libelle) values ( 9, 'AC_FAC',  'system', 'Envoi Facture');
+insert into llx_c_actioncomm (id, code, type, libelle) values (10, 'AC_REL',  'system', 'Relance effectuée');
+insert into llx_c_actioncomm (id, code, type, libelle) values (11, 'AC_CLO',  'system', 'Clôture');
+
+--
+-- Ape
+--
+delete from llx_c_ape;
+
+
 --
 -- Types de charges
 --
@@ -197,123 +329,23 @@ insert into llx_c_chargesociales (id,libelle,deductible) values ( 1, 'Allocation
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 2, 'GSG Deductible',1);
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 3, 'GSG/CRDS NON Deductible',0);
 
---
--- Types action
---
-
-delete from llx_c_actioncomm;
-insert into llx_c_actioncomm (id, lang, type, libelle) values ( 0, 'all',   'system', '-');
-insert into llx_c_actioncomm (id, lang, type, libelle) values ( 1, 'fr_FR', 'system', 'Appel Téléphonique');
-insert into llx_c_actioncomm (id, lang, type, libelle) values ( 2, 'fr_FR', 'system', 'Envoi Fax');
-insert into llx_c_actioncomm (id, lang, type, libelle) values ( 3, 'fr_FR', 'system', 'Envoi Proposition');
-insert into llx_c_actioncomm (id, lang, type, libelle) values ( 4, 'fr_FR', 'system', 'Envoi Email');
-insert into llx_c_actioncomm (id, lang, type, libelle) values ( 5, 'fr_FR', 'system', 'Prendre rendez-vous');
-insert into llx_c_actioncomm (id, lang, type, libelle) values ( 9, 'fr_FR', 'system', 'Envoi Facture');
-insert into llx_c_actioncomm (id, lang, type, libelle) values (10, 'fr_FR', 'system', 'Relance effectuée');
-insert into llx_c_actioncomm (id, lang, type, libelle) values (11, 'fr_FR', 'system', 'Clôture');
 
 --
---
---
-
-delete from llx_c_stcomm;
-insert into llx_c_stcomm (id,libelle) values (-1, 'NE PAS CONTACTER');
-insert into llx_c_stcomm (id,libelle) values ( 0, 'Jamais contacté');
-insert into llx_c_stcomm (id,libelle) values ( 1, 'A contacter');
-insert into llx_c_stcomm (id,libelle) values ( 2, 'Contact en cours');
-insert into llx_c_stcomm (id,libelle) values ( 3, 'Contactée');
-
-
---
--- Types d'entreprise
+-- Civilites
 --
 
-delete from llx_c_typent;
-insert into llx_c_typent (id,libelle) values (  0, 'Indifférent');
-insert into llx_c_typent (id,libelle) values (  1, 'Start-up');
-insert into llx_c_typent (id,libelle) values (  2, 'Grand groupe');
-insert into llx_c_typent (id,libelle) values (  3, 'PME/PMI');
-insert into llx_c_typent (id,libelle) values (  4, 'Administration');
-insert into llx_c_typent (id,libelle) values (100, 'Autres');
-
---
--- Pays
---
-
-delete from llx_c_pays;
-insert into llx_c_pays (rowid,libelle,code) values (0, '-',               '');
-insert into llx_c_pays (rowid,libelle,code) values (1, 'France',          'FR');
-insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgique',        'BE');
-insert into llx_c_pays (rowid,libelle,code) values (3, 'Italie',          'IT');
-insert into llx_c_pays (rowid,libelle,code) values (4, 'Espagne',         'ES');
-insert into llx_c_pays (rowid,libelle,code) values (5, 'Allemagne',       'DE');
-insert into llx_c_pays (rowid,libelle,code) values (6, 'Suisse',          'CH');
-insert into llx_c_pays (rowid,libelle,code) values (7, 'Royaume uni',     'GB');
-insert into llx_c_pays (rowid,libelle,code) values (8, 'Irlande',         'IE');
-insert into llx_c_pays (rowid,libelle,code) values (9, 'Chine',           'CN');
-insert into llx_c_pays (rowid,libelle,code) values (10, 'Tunisie',        'TN');
-insert into llx_c_pays (rowid,libelle,code) values (11, 'Etats Unis',     'US');
-insert into llx_c_pays (rowid,libelle,code) values (12, 'Maroc',          'MA');
-insert into llx_c_pays (rowid,libelle,code) values (13, 'Algérie',        'DZ');
-insert into llx_c_pays (rowid,libelle,code) values (14, 'Canada',         'CA');
-insert into llx_c_pays (rowid,libelle,code) values (15, 'Togo',           'TG');
-insert into llx_c_pays (rowid,libelle,code) values (16, 'Gabon',          'GA');
-insert into llx_c_pays (rowid,libelle,code) values (17, 'Pays Bas',       'NL');
-insert into llx_c_pays (rowid,libelle,code) values (18, 'Hongrie',        'HU');
-insert into llx_c_pays (rowid,libelle,code) values (19, 'Russie',         'RU');
-insert into llx_c_pays (rowid,libelle,code) values (20, 'Suède',          'SE');
-insert into llx_c_pays (rowid,libelle,code) values (21, 'Côte d\'Ivoire', 'CI');
-insert into llx_c_pays (rowid,libelle,code) values (23, 'Sénégal',        'SN');
-insert into llx_c_pays (rowid,libelle,code) values (24, 'Argentine',      'AR');
-insert into llx_c_pays (rowid,libelle,code) values (25, 'Cameroun',       'CM');
-
---
--- Regions
---
-
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
--- Regions de France
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (101,1,  1,'97105',3,'Guadeloupe');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (102,1,  2,'97209',3,'Martinique');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (103,1,  3,'97302',3,'Guyane');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (104,1,  4,'97411',3,'Réunion');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (105,1, 11,'75056',1,'Île-de-France');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (106,1, 21,'51108',0,'Champagne-Ardenne');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (107,1, 22,'80021',0,'Picardie');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (108,1, 23,'76540',0,'Haute-Normandie');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (109,1, 24,'45234',2,'Centre');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (110,1, 25,'14118',0,'Basse-Normandie');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (111,1, 26,'21231',0,'Bourgogne');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (112,1, 31,'59350',2,'Nord-Pas-de-Calais');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (113,1, 41,'57463',0,'Lorraine');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (114,1, 42,'67482',1,'Alsace');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (115,1, 43,'25056',0,'Franche-Comté');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (116,1, 52,'44109',4,'Pays de la Loire');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (117,1, 53,'35238',0,'Bretagne');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (118,1, 54,'86194',2,'Poitou-Charentes');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (119,1, 72,'33063',1,'Aquitaine');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (120,1, 73,'31555',0,'Midi-Pyrénées');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (121,1, 74,'87085',2,'Limousin');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (122,1, 82,'69123',2,'Rhône-Alpes');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (123,1, 83,'63113',1,'Auvergne');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (124,1, 91,'34172',2,'Languedoc-Roussillon');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (125,1, 93,'13055',0,'Provence-Alpes-Côte d\'Azur');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (126,1, 94,'2A004',0,'Corse');
-
---
--- Regions de Belgique
---
-
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (201,2,201,'',1,'Flandre');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (202,2,202,'',2,'Wallonie');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (203,2,203,'',3,'Bruxelles-Capitale');
+delete from llx_c_civilite;
+insert into llx_c_civilite (rowid, code, civilite, active) values (1 , 'MME',  'Madame', 1);
+insert into llx_c_civilite (rowid, code, civilite, active) values (3 , 'MR',   'Monsieur', 1);
+insert into llx_c_civilite (rowid, code, civilite, active) values (5 , 'MLE',  'Mademoiselle', 1);
+insert into llx_c_civilite (rowid, code, civilite, active) values (7 , 'MTRE', 'Maître', 1);
 
 
 --
 -- Departements/Cantons/Provinces
 --
 
-insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,0,'0',0,'-','-');
+insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,'0','0',0,'-','-');
 -- Departements de France
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',5,'AIN','Ain');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (22,'02','02408',5,'AISNE','Aisne');
@@ -433,51 +465,24 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'11','',2,'NAMUR','Namur');
 
 --
--- Provinces de Belgique - en Néerlandais
---
-
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANTWERP','Antwerp');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (203,'02','',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'04','',1,'VLAMS-BRABANT','Vlams-Brabant');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'05','',1,'WEST-VLANDEREN','West-Vlanderen');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'06','',1,'OOST-VLANDEREN','Oost-Vlanderen');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'09','',1,'LIMBURG','Limburg');
-
---
 -- Effectif des sociétés
 --
 
 delete from llx_c_effectif;
-insert into llx_c_effectif (id,libelle) values (0,  'Non spécifié');
-insert into llx_c_effectif (id,libelle) values (1,  '1 - 5');
-insert into llx_c_effectif (id,libelle) values (2,  '6 - 10');
-insert into llx_c_effectif (id,libelle) values (3,  '11 - 50');
-insert into llx_c_effectif (id,libelle) values (4,  '51 - 100');
-insert into llx_c_effectif (id,libelle) values (5,  '100 - 500');
-insert into llx_c_effectif (id,libelle) values (6,  '> 500');
+insert into llx_c_effectif (id,code,libelle) values (0, 'EF0',       '-');
+insert into llx_c_effectif (id,code,libelle) values (1, 'EF1-5',     '1 - 5');
+insert into llx_c_effectif (id,code,libelle) values (2, 'EF6-10',    '6 - 10');
+insert into llx_c_effectif (id,code,libelle) values (3, 'EF11-50',   '11 - 50');
+insert into llx_c_effectif (id,code,libelle) values (4, 'EF51-100',  '51 - 100');
+insert into llx_c_effectif (id,code,libelle) values (5, 'EF100-500', '100 - 500');
+insert into llx_c_effectif (id,code,libelle) values (6, 'EF500-',    '> 500');
 
-delete from llx_c_paiement;
-insert into llx_c_paiement (id,code,libelle,type) values (0, '',		'-', 3);
-insert into llx_c_paiement (id,code,libelle,type) values (1, 'TIP', 'TIP', 1);
-insert into llx_c_paiement (id,code,libelle,type) values (2, 'VIR', 'Virement', 2);
-insert into llx_c_paiement (id,code,libelle,type) values (3, 'PRE', 'Prélèvement', 1);
-insert into llx_c_paiement (id,code,libelle,type) values (4, 'LIQ', 'Liquide', 0);
-insert into llx_c_paiement (id,code,libelle,type) values (5, 'VAD', 'Paiement en ligne', 0);
-insert into llx_c_paiement (id,code,libelle,type) values (6, 'CB',  'Carte Bancaire', 1);
-insert into llx_c_paiement (id,code,libelle,type) values (7, 'CHQ', 'Chèque', 2);
-
-delete from llx_c_propalst;
-insert into llx_c_propalst (id,label) values (0, 'Brouillon');
-insert into llx_c_propalst (id,label) values (1, 'Ouverte');
-insert into llx_c_propalst (id,label) values (2, 'Signée');
-insert into llx_c_propalst (id,label) values (3, 'Non Signée');
-insert into llx_c_propalst (id,label) values (4, 'Facturée');
 
 --
 -- Formes juridiques
 --
 
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (0, 0,'Non renseignée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (0, 0,'-');
 
 -- Pour la France: Extrait de http://www.insee.fr/fr/nom_def_met/nomenclatures/cj/cjniveau2.htm
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,11,'Artisan Commerçant');
@@ -547,130 +552,123 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'GIE  -
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,110,'GEIE - Groupement européen d\'intérêt économique');
 
 --
--- Civilites
+-- Types paiement
 --
 
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (1 , 'MME', 'fr_FR', 0, 'Madame', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (3 , 'MR',  'fr_FR', 0, 'Monsieur', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (5 , 'MLE', 'fr_FR', 0, 'Mademoiselle', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (7 , 'MTRE','fr_FR', 0, 'Maître', 1);
-
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (21, 'MME', 'fr_BE', 0, 'Madame', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (23, 'MR',  'fr_BE', 0, 'Monsieur', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (25, 'MLE', 'fr_BE', 0, 'Mademoiselle', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (27, 'MTRE','fr_BE', 0, 'Maître', 1);
-
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (32, 'MME', 'nl_BE', 0, 'Mevrouw', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (34, 'MR',  'nl_BE', 0, 'Meneer', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (36, 'MLE', 'nl_BE', 0, 'Juffrouw', 1);
-
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (41, 'MME', 'en_US', 0, 'Madam', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (43, 'MR',  'en_US', 0, 'Mister', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (45, 'MLE', 'en_US', 0, 'Misses', 1);
-
+delete from llx_c_paiement;
+insert into llx_c_paiement (id,code,libelle,type) values (0, '',    '-', 3);
+insert into llx_c_paiement (id,code,libelle,type) values (1, 'TIP', 'TIP', 1);
+insert into llx_c_paiement (id,code,libelle,type) values (2, 'VIR', 'Virement', 2);
+insert into llx_c_paiement (id,code,libelle,type) values (3, 'PRE', 'Prélèvement', 1);
+insert into llx_c_paiement (id,code,libelle,type) values (4, 'LIQ', 'Liquide', 0);
+insert into llx_c_paiement (id,code,libelle,type) values (5, 'VAD', 'Paiement en ligne', 0);
+insert into llx_c_paiement (id,code,libelle,type) values (6, 'CB',  'Carte Bancaire', 1);
+insert into llx_c_paiement (id,code,libelle,type) values (7, 'CHQ', 'Chèque', 2);
 
 --
--- Descriptif du plan comptable FR PCG99-ABREGE
+-- Pays
 --
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  1,1,'PCG99-ABREGE','CAPIT', 'CAPITAL',  'Capital','101');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  2,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Ecarts de réévaluation','105');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  3,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Réserve légale','1061');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  4,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Réserves statutaires ou contractuelles','1063');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  5,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Réserves réglementées','1064');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  6,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Autres réserves','1068');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  7,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Compte de l''exploitant','108');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  8,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'résultat de l''exercice','12');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (  9,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Amortissements dérogatoires','145');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 10,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Provision spéciale de réévaluation','146');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 11,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Plus-values réinvesties','147');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 12,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Autres provisions réglementées','148');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 13,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'Provisions pour risques et charges','15');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 14,1,'PCG99-ABREGE','CAPIT', 'XXXXXX',   'emprunts et dettes assimilees','16');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 15,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'immobilisations incorporelles','20');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 16,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Frais d''établissement','201');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 17,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Droit au bail','206');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 18,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Fonds commercial','207');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 19,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Autres immobilisations incorporelles','208');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 20,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'immobilisations corporelles','21');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 21,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'immobilisations en cours','23');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 22,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'autres immobilisations financieres','27');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 23,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Amortissements des immobilisations incorporelles','280');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 24,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Amortissements des immobilisations corporelles','281');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 25,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Provisions pour dépréciation des immobilisations incorporelles','290');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 26,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Provisions pour dépréciation des immobilisations corporelles','291');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 27,1,'PCG99-ABREGE','IMMO',  'XXXXXX',   'Provisions pour dépréciation des autres immobilisations financières','297');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 28,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'matieres premières','31');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 29,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'autres approvisionnements','32');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 30,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'en-cours de production de biens','33');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 31,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'en-cours de production de services','34');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 32,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'stocks de produits','35');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 33,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'stocks de marchandises','37');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 34,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des matières premières','391');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 35,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des autres approvisionnements','392');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 36,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des en-cours de production de biens','393');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 37,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des en-cours de production de services','394');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 38,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des stocks de produits','395');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 39,1,'PCG99-ABREGE','STOCK', 'XXXXXX',   'Provisions pour dépréciation des stocks de marchandises','397');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 40,1,'PCG99-ABREGE','TIERS', 'SUPPLIER', 'Fournisseurs et Comptes rattachés','400');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 41,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Fournisseurs débiteurs','409');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 42,1,'PCG99-ABREGE','TIERS', 'CUSTOMER', 'Clients et Comptes rattachés','410');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 43,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Clients créditeurs','419');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 44,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Personnel','421');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 45,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Personnel','428');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 46,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Sécurité sociale et autres organismes sociaux','43');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 47,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Etat - impôts sur bénéfice','444');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 48,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Etat - Taxes sur chiffre affaire','445');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 49,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Autres impôts, taxes et versements assimilés','447');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 50,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Groupe et associes','45');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 51,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Associés','455');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 52,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Débiteurs divers et créditeurs divers','46');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 53,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'comptes transitoires ou d''attente','47');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 54,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Charges à répartir sur plusieurs exercices','481');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 55,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Charges constatées d''avance','486');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 56,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Produits constatés d''avance','487');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 57,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Provisions pour dépréciation des comptes de clients','491');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 58,1,'PCG99-ABREGE','TIERS', 'XXXXXX',   'Provisions pour dépréciation des comptes de débiteurs divers','496');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 59,1,'PCG99-ABREGE','FINAN', 'XXXXXX',   'valeurs mobilières de placement','50');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 60,1,'PCG99-ABREGE','FINAN', 'BANK',     'banques, établissements financiers et assimilés','51');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 61,1,'PCG99-ABREGE','FINAN', 'CASH',     'Caisse','53');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 62,1,'PCG99-ABREGE','FINAN', 'XXXXXX',   'régies d''avance et accréditifs','54');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 63,1,'PCG99-ABREGE','FINAN', 'XXXXXX',   'virements internes','58');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 64,1,'PCG99-ABREGE','FINAN', 'XXXXXX',   'Provisions pour dépréciation des valeurs mobilières de placement','590');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 65,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Achats','60');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 66,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'variations des stocks','603');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 67,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Services extérieurs','61');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 68,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Autres services extérieurs','62');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 69,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Impôts, taxes et versements assimiles','63');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 70,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Rémunérations du personnel','641');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 71,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Rémunération du travail de l''exploitant','644');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 72,1,'PCG99-ABREGE','CHARGE','SOCIAL',   'Charges de sécurité sociale et de prévoyance','645');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 73,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Cotisations sociales personnelles de l''exploitant','646');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 74,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Autres charges de gestion courante','65');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 75,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Charges financières','66');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 76,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Charges exceptionnelles','67');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 77,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Dotations aux amortissements et aux provisions','681');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 78,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Dotations aux amortissements et aux provisions','686');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 79,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Dotations aux amortissements et aux provisions','687');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 80,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Participation des salariés aux résultats','691');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 81,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Impôts sur les bénéfices','695');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 82,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Imposition forfaitaire annuelle des sociétés','697');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 83,1,'PCG99-ABREGE','CHARGE','XXXXXX',   'Produits','699');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 84,1,'PCG99-ABREGE','PROD',  'PRODUCT',  'Ventes de produits finis','701');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 85,1,'PCG99-ABREGE','PROD',  'SERVICE',  'Prestations de services','706');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 86,1,'PCG99-ABREGE','PROD',  'PRODUCT',  'Ventes de marchandises','707');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 87,1,'PCG99-ABREGE','PROD',  'PRODUCT',  'Produits des activités annexes','708');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 88,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Rabais, remises et ristournes accordés par l''entreprise','709');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 89,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Variation des stocks','713');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 90,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Production immobilisée','72');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 91,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Produits nets partiels sur opérations à long terme','73');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 92,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Subventions d''exploitation','74');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 93,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Autres produits de gestion courante','75');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 94,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Jetons de présence et rémunérations d''administrateurs, gérants,...','753');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 95,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Ristournes perçues des coopératives','754');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 96,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Quotes-parts de résultat sur opérations faites en commun','755');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 97,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Produits financiers','76');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 98,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Produits exceptionnels','77');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES ( 99,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Reprises sur amortissements et provisions','781');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (100,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Reprises sur provisions pour risques','786');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (101,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Reprises sur provisions','787');
-insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, pcg_subtype, label, account_number) VALUES (102,1,'PCG99-ABREGE','PROD',  'XXXXXX',   'Transferts de charges','79');
+
+delete from llx_c_pays;
+insert into llx_c_pays (rowid,code,libelle) values (0,  ''  , '-'              );
+insert into llx_c_pays (rowid,code,libelle) values (1,  'FR', 'France'         );
+insert into llx_c_pays (rowid,code,libelle) values (2,  'BE', 'Belgique'       );
+insert into llx_c_pays (rowid,code,libelle) values (3,  'IT', 'Italie'         );
+insert into llx_c_pays (rowid,code,libelle) values (4,  'ES', 'Espagne'        );
+insert into llx_c_pays (rowid,code,libelle) values (5,  'DE', 'Allemagne'      );
+insert into llx_c_pays (rowid,code,libelle) values (6,  'CH', 'Suisse'         );
+insert into llx_c_pays (rowid,code,libelle) values (7,  'GB', 'Royaume uni'    );
+insert into llx_c_pays (rowid,code,libelle) values (8,  'IE', 'Irlande'        );
+insert into llx_c_pays (rowid,code,libelle) values (9,  'CN', 'Chine'          );
+insert into llx_c_pays (rowid,code,libelle) values (10, 'TN', 'Tunisie'        );
+insert into llx_c_pays (rowid,code,libelle) values (11, 'US', 'Etats Unis'     );
+insert into llx_c_pays (rowid,code,libelle) values (12, 'MA', 'Maroc'          );
+insert into llx_c_pays (rowid,code,libelle) values (13, 'DZ', 'Algérie'        );
+insert into llx_c_pays (rowid,code,libelle) values (14, 'CA', 'Canada'         );
+insert into llx_c_pays (rowid,code,libelle) values (15, 'TG', 'Togo'           );
+insert into llx_c_pays (rowid,code,libelle) values (16, 'GA', 'Gabon'          );
+insert into llx_c_pays (rowid,code,libelle) values (17, 'NL', 'Pays Bas'       );
+insert into llx_c_pays (rowid,code,libelle) values (18, 'HU', 'Hongrie'        );
+insert into llx_c_pays (rowid,code,libelle) values (19, 'RU', 'Russie'         );
+insert into llx_c_pays (rowid,code,libelle) values (20, 'SE', 'Suède'          );
+insert into llx_c_pays (rowid,code,libelle) values (21, 'CI', 'Côte d\'Ivoire' );
+insert into llx_c_pays (rowid,code,libelle) values (23, 'SN', 'Sénégal'        );
+insert into llx_c_pays (rowid,code,libelle) values (24, 'AR', 'Argentine'      );
+insert into llx_c_pays (rowid,code,libelle) values (25, 'CM', 'Cameroun'       );
+
+--
+-- Types etat propales
+--
+
+delete from llx_c_propalst;
+insert into llx_c_propalst (id,code,label) values (0, 'PR_DRAFT',     'Brouillon');
+insert into llx_c_propalst (id,code,label) values (1, 'PR_OPEN',      'Ouverte');
+insert into llx_c_propalst (id,code,label) values (2, 'PR_SIGNED',    'Signée');
+insert into llx_c_propalst (id,code,label) values (3, 'PR_NOTSIGNED', 'Non Signée');
+insert into llx_c_propalst (id,code,label) values (4, 'PR_FAC',       'Facturée');
+
+--
+-- Types action st
+--
+
+delete from llx_c_stcomm;
+insert into llx_c_stcomm (id,code,libelle) values (-1, 'ST_NO',    'Ne pas contacter');
+insert into llx_c_stcomm (id,code,libelle) values ( 0, 'ST_NEVER', 'Jamais contacté');
+insert into llx_c_stcomm (id,code,libelle) values ( 1, 'ST_TODO',  'A contacter');
+insert into llx_c_stcomm (id,code,libelle) values ( 2, 'ST_PEND',  'Contact en cours');
+insert into llx_c_stcomm (id,code,libelle) values ( 3, 'ST_DONE',  'Contactée');
+
+--
+-- Types entreprises
+--
+
+delete from llx_c_typent;
+insert into llx_c_typent (id,code,libelle) values (  0, 'TE_UNKNOWN', 'Indifférent');
+insert into llx_c_typent (id,code,libelle) values (  1, 'TE_STARTUP', 'Start-up');
+insert into llx_c_typent (id,code,libelle) values (  2, 'TE_GROUP',   'Grand groupe');
+insert into llx_c_typent (id,code,libelle) values (  3, 'TE_MEDIUM',  'PME/PMI');
+insert into llx_c_typent (id,code,libelle) values (  4, 'TE_ADMIN',   'Administration');
+insert into llx_c_typent (id,code,libelle) values (100, 'TE_OTHER',   'Autres');
+
+--
+-- Regions
+--
+
+delete from llx_c_regions;
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
+-- Regions de France
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (101,1,  1,'97105',3,'Guadeloupe');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (102,1,  2,'97209',3,'Martinique');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (103,1,  3,'97302',3,'Guyane');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (104,1,  4,'97411',3,'Réunion');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (105,1, 11,'75056',1,'Île-de-France');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (106,1, 21,'51108',0,'Champagne-Ardenne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (107,1, 22,'80021',0,'Picardie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (108,1, 23,'76540',0,'Haute-Normandie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (109,1, 24,'45234',2,'Centre');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (110,1, 25,'14118',0,'Basse-Normandie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (111,1, 26,'21231',0,'Bourgogne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (112,1, 31,'59350',2,'Nord-Pas-de-Calais');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (113,1, 41,'57463',0,'Lorraine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (114,1, 42,'67482',1,'Alsace');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (115,1, 43,'25056',0,'Franche-Comté');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (116,1, 52,'44109',4,'Pays de la Loire');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (117,1, 53,'35238',0,'Bretagne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (118,1, 54,'86194',2,'Poitou-Charentes');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (119,1, 72,'33063',1,'Aquitaine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (120,1, 73,'31555',0,'Midi-Pyrénées');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (121,1, 74,'87085',2,'Limousin');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (122,1, 82,'69123',2,'Rhône-Alpes');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (123,1, 83,'63113',1,'Auvergne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (124,1, 91,'34172',2,'Languedoc-Roussillon');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (125,1, 93,'13055',0,'Provence-Alpes-Côte d\'Azur');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (126,1, 94,'2A004',0,'Corse');
+
+--
+-- Regions de Belgique
+--
+
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (201,2,201,'',1,'Flandre');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (202,2,202,'',2,'Wallonie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (203,2,203,'',3,'Bruxelles-Capitale');
+

@@ -23,7 +23,8 @@
 create table llx_c_stcomm
 (
   id       SERIAL PRIMARY KEY,
-	lang     varchar(8) default 'all' not null,
-  libelle  varchar(30)
+	code     varchar(12) unique not null,
+  libelle  varchar(30),
+	active   smallint default 1 not null
 );
 

@@ -24,13 +24,13 @@
 create table llx_c_departements
 (
   rowid       serial PRIMARY KEY,
-  code_departement char(3),
+  code_departement varchar(6) not null,
   fk_region   integer,
   cheflieu    varchar(7),
   tncc        integer,
   ncc         varchar(50),
   nom         varchar(50),
-  active      smallint default 1
+  active      smallint default 1 not null
 );
 
 CREATE INDEX llx_c_departements_fk_region ON llx_c_departements(fk_region);

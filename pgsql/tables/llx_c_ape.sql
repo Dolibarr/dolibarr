@@ -26,6 +26,6 @@ create table llx_c_ape
   rowid       serial UNIQUE,
   code_ape    varchar(5) PRIMARY KEY,
   libelle     varchar(255),
-  active      smallint default 1
+  active      smallint default 1 not null
 );
 

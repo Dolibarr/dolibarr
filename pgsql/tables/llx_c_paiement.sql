@@ -32,10 +32,10 @@
 create table llx_c_paiement
 (
   id         SERIAL PRIMARY KEY,
-	lang       varchar(8) default 'all' not null,
 	code			 varchar(6),
   libelle    varchar(30),
-  type       smallint	
+  type       smallint,
+	active     smallint default 1 not null
 );
 
 

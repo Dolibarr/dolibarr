@@ -22,9 +22,7 @@
 create table llx_c_civilite
 (
   rowid       serial PRIMARY KEY,
-	lang        varchar(8) default 'all' not null,
-	code        varchar(6),
-  fk_pays     integer default 1,
+	code        varchar(6) unique not null,
   civilite		varchar(50),
   active      smallint default 1
 );
