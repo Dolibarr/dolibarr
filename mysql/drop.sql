@@ -81,6 +81,8 @@ drop table if exists llx_compta_account;
 
 drop table if exists llx_concert ;
 
+drop table if exists llx_cond_reglement ;
+
 drop table if exists llx_const;
 
 drop table if exists llx_cotisation;
