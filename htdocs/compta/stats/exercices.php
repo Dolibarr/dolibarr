@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 require("./pre.inc.php3");
@@ -60,7 +60,7 @@ function get_ca ($db, $year, $socidp) {
 function propals ($db, $year, $month) {
   global $bc;
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-  $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
+  $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
   $sql .= " AND c.id in (1,2)";
   $sql .= " AND date_format(p.datep, '%Y') = $year ";
   $sql .= " AND round(date_format(p.datep, '%m')) = $month ";
@@ -131,7 +131,7 @@ function factures ($db, $year, $month, $paye) {
   global $bc;
 
   $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-  $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
+  $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
   $sql .= " AND date_format(f.datef, '%Y') = $year ";
   $sql .= " AND round(date_format(f.datef, '%m')) = $month ";
   $sql .= " ORDER BY f.datef DESC ";
@@ -255,37 +255,39 @@ function pt ($db, $sql, $year) {
   }
 }
 
-function ppt ($db, $year, $socidp) {
+function ppt ($db, $year, $socidp)
+{
   global $bc;
   print "<table width=\"100%\">";
 
+  print "<tr><td align=\"center\" width=\"30%\">";
+  print "CA ".($year - 1);
+  
+  print "</td><td align=\"center\">CA $year</td>";
+  print "<td valign=\"top\">Delta</td></tr>";
   print "<tr><td valign=\"top\" width=\"30%\">";
-  print "CA Prévisionnel basé sur les propal $year";
   
-  print "</td><td valign=\"top\">CA Réalisé $year</td>";
-  print "<td valign=\"top\">Delta $year</td></tr>";
-  
-  print "<tr><td valign=\"top\" width=\"30%\">";
-  
-  $sql = "SELECT sum(f.price - f.remise) as sum, round(date_format(f.datep,'%m')) as dm";
-  $sql .= " FROM llx_propal as f WHERE fk_statut in (1,2) AND date_format(f.datep,'%Y') = $year ";
+  $sql = "SELECT sum(f.amount) as sum, round(date_format(f.datef, '%m')) as dm";
+  $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = ".($year-1);
 
-  if ($socidp) {
-    $sql .= " AND f.fk_soc = $socidp";
-  }
+  if ($socidp)
+    {
+      $sql .= " AND f.fk_soc = $socidp";
+    }
 
   $sql .= " GROUP BY dm";
   
-  $prev = pt($db, $sql, $year);
+  $prev = pt($db, $sql, $year - 1);
   
   print "</td><td valign=\"top\" width=\"30%\">";
   
   $sql = "SELECT sum(f.amount) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = $year ";
 
-  if ($socidp) {
-    $sql .= " AND f.fk_soc = $socidp";
-  }
+  if ($socidp)
+    {
+      $sql .= " AND f.fk_soc = $socidp";
+    }
   $sql .= " GROUP BY dm";
   
   $ca = pt($db, $sql, $year);
@@ -299,27 +301,23 @@ function ppt ($db, $year, $socidp) {
   print "</TR>\n";
 
   $var = 1 ;
-  for ($b = 1 ; $b <= 12 ; $b++) {
-    $var=!$var;
+  for ($b = 1 ; $b <= 12 ; $b++)
+    {
+      $var=!$var;
 
-    $delta = $ca[$b] - $prev[$b];
-    $deltat = $deltat + $delta ;
-    print "<TR $bc[$var]>";
-    print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
-    print "<TD align=\"right\">".price($delta)."</TD>\n";	  
-    print "</TR>\n";
-  }
-
-  $ayear = $year - 1;
-  $acat = get_ca($db, $ayear, $socidp) - get_ca_propal($db, $ayear, $socidp);
+      $delta = $ca[$b] - $prev[$b];
+      $deltat = $deltat + $delta ;
+      print "<TR $bc[$var]>";
+      print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
+      print "<TD align=\"right\">".price($delta)."</TD>\n";
+      print "</TR>\n";
+    }
 
 
-  print "<tr><td align=\"right\">Total :</td><td align=\"right\">".price($deltat)."</td></tr>";
-  print "<tr><td align=\"right\">Rappel $ayear :</td><td align=\"right\">".price($acat)."</td></tr>";
-  print "<tr><td align=\"right\">Soit :</td><td align=\"right\"><b>".price($acat+$deltat)."</b></td></tr>";
+  print '<tr><td align="right">Total :</td><td align="right"><b>'.price($deltat).'<b></td></tr>';
 
-  print "</table>";
-  print "</td></tr></table>";
+  print '</table>';
+  print '</td></tr></table>';
 
 }
 
@@ -330,21 +328,18 @@ function ppt ($db, $year, $socidp) {
 
 llxHeader();
 
-
 $db = new Db();
 
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $socidp = $user->societe_id;
+}
 
 ppt($db, 2002, $socidp);
 
-
-
-if ($details == 1) {
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr><td valign=\"top\" width=\"50%\">";
-  factures ($db, $year, $month, 1);
-  print "</td><td valign=\"top\" width=\"50%\">";
-  propals ($db, $year, $month);
-  print "</td></tr></table>";
-}
 $db->close();
 
 
