@@ -19,27 +19,11 @@
 -- $Source$
 --
 -- ========================================================================
---
--- Statut des lignes
---
--- 0 a commander
--- 1 commandée
--- 2 recue
--- 3 probleme
---
 
-create table llx_telephonie_societe_ligne_statut (
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              datetime,
-  fk_ligne         integer NOT NULL,
-  statut           smallint NOT NULL,
-  fk_user          integer,
-  comment          varchar(255)
+create table llx_telephonie_fournisseur (
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  nom             varchar(255),
+  email_commande  varchar(255),
+  commande_active tinyint default 0
 
 )type=innodb;
-
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD INDEX (fk_ligne);
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD INDEX (fk_user);
-
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD FOREIGN KEY (fk_ligne) REFERENCES llx_telephonie_societe_ligne(rowid);
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD FOREIGN KEY (fk_user) REFERENCES llx_user(rowid);

@@ -19,27 +19,13 @@
 -- $Source$
 --
 -- ========================================================================
+
 --
--- Statut des lignes
+ALTER TABLE llx_telephonie_facture ADD INDEX (fk_facture);
+ALTER TABLE llx_telephonie_facture ADD INDEX (fk_ligne);
+
 --
--- 0 a commander
--- 1 commandée
--- 2 recue
--- 3 probleme
 --
+ALTER TABLE llx_telephonie_facture ADD FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
 
-create table llx_telephonie_societe_ligne_statut (
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              datetime,
-  fk_ligne         integer NOT NULL,
-  statut           smallint NOT NULL,
-  fk_user          integer,
-  comment          varchar(255)
-
-)type=innodb;
-
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD INDEX (fk_ligne);
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD INDEX (fk_user);
-
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD FOREIGN KEY (fk_ligne) REFERENCES llx_telephonie_societe_ligne(rowid);
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD FOREIGN KEY (fk_user) REFERENCES llx_user(rowid);
+ALTER TABLE llx_telephonie_facture ADD FOREIGN KEY (fk_ligne) REFERENCES llx_telephonie_societe_ligne (rowid);
