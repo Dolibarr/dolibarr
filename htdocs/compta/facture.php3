@@ -22,7 +22,7 @@
 require("./pre.inc.php3");
 
 $user->getrights('facture');
-if (!$user->rights->produit->lire)
+if (!$user->rights->facture->lire)
   accessforbidden();
 
 require("../facture.class.php3");
