@@ -45,7 +45,8 @@ function llxHeader($head = "") {
 
     while ($i < $num) {
       $objp = $db->fetch_object($i);
-      $menu->add_submenu("account.php3?account=" . $objp->rowid,  $objp->label);
+      $menu->add("account.php3?account=" . $objp->rowid,  $objp->label);
+      $menu->add_submenu("releve.php3","Relevés");
 
       $i++;
     }
@@ -59,7 +60,7 @@ function llxHeader($head = "") {
   $menu->add_submenu("bilan.php3","Bilan");
   $menu->add_submenu("virement.php3","Virement");
 
-  $menu->add_submenu("releve.php3","Relevés");
+
   $menu->add_submenu("config.php3","Config");
 
   $menu->add("/compta/facture.php3","Factures");

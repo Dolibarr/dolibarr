@@ -31,7 +31,12 @@ llxHeader();
 $db = new Db();
 
 if (! $num) {
-
+  /*
+   *
+   * Vue liste
+   *
+   *
+   */
   print "<b>Releves bancaires</b>";
 
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
@@ -41,7 +46,7 @@ if (! $num) {
   print "</TR>\n";
  
   $sql = "SELECT distinct(b.num_releve) as numr";
-  $sql .= " FROM llx_bank as b ORDER BY numr DESC";
+  $sql .= " FROM llx_bank as b WHERE fk_account = $account ORDER BY numr DESC";
   $result = $db->query($sql);
   if ($result) {
     $var=True;  
@@ -58,8 +63,12 @@ if (! $num) {
   print "</table>";
 
 } else {
+  /*
+   * Vue d'un releves
+   *
+   */
   if ($rel == 'prev') {
-    $sql = "SELECT distinct(num_releve) FROM llx_bank WHERE num_releve < $num ORDER BY num_releve DESC";
+    $sql = "SELECT distinct(num_releve) FROM llx_bank WHERE num_releve < $num AND fk_account = $account ORDER BY num_releve DESC";
     $result = $db->query($sql);
     if ($result) {
       $var=True;  
@@ -71,7 +80,7 @@ if (! $num) {
       }
     }
   } elseif ($rel == 'next') {
-    $sql = "SELECT distinct(num_releve) FROM llx_bank WHERE num_releve > $num ORDER BY num_releve ASC";
+    $sql = "SELECT distinct(num_releve) FROM llx_bank WHERE num_releve > $num AND fk_account = $account ORDER BY num_releve ASC";
     $result = $db->query($sql);
     if ($result) {
       $var=True;  
@@ -100,7 +109,7 @@ if (! $num) {
   print "</TR>\n";
  
 
-  $sql = "SELECT sum(amount) FROM llx_bank WHERE num_releve < $num";
+  $sql = "SELECT sum(amount) FROM llx_bank WHERE num_releve < $num AND fk_account = $account";
   if ( $db->query($sql) ) {
     $total = $db->result (0, 0);
     $db->free();
@@ -108,7 +117,7 @@ if (! $num) {
 
 
   $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve";
-  $sql .= " FROM llx_bank as b WHERE num_releve=$num";
+  $sql .= " FROM llx_bank as b WHERE num_releve=$num AND fk_account = $account";
   $sql .= " ORDER BY dateo ASC";
   $result = $db->query($sql);
   if ($result) {
