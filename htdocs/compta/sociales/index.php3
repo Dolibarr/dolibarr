@@ -64,7 +64,7 @@ print_titre("Charges");
 
 print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print "<TR class=\"liste_titre\">";
-print '<td>Date</td><TD>Charges</td><td align="right">Montant</td><td>&nbsp;</td>';
+print '<td>Date</td><TD colspan="2">Charges</td><td align="right">Montant</td><td>&nbsp;</td>';
 print "</TR>\n";
 
 
