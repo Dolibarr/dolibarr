@@ -303,7 +303,7 @@ if ($id)
   $act->contact->fetch($act->contact->id);
   
 
-  if ($action == 'edit')
+  if ($_GET["action"] == 'edit')
     {      
       print_titre ("Edition de la fiche action");
       print '<form action="fiche.php?id='.$id.'" method="post">';
