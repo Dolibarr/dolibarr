@@ -89,7 +89,7 @@ class DoliDb {
 
 			// Essai connexion serveur
 			
-			$this->db = $this->connect($host, $user, $pass);
+			$this->db = $this->connect($host, $user, $pass,$name);
 
 			if ($this->db)
 				{
@@ -182,7 +182,7 @@ class DoliDb {
 			else
 				return 0;
 		}
-  }
+  
 
 /*!
 		\brief copie d'une database.
@@ -488,6 +488,11 @@ class DoliDb {
 			return pg_affected_rows($this->db); 
     }
 
+	function getdsn()
+		{
+		  $pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
+			return $pear;
+		}
+	
 }
-
 ?>
