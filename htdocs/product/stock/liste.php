@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,13 +117,12 @@ if ($result)
       print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
     }
 
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print '<table class="noborder" width="100%">';
 
-  print "<tr class=\"liste_titre\"><td>";
+  print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&envente=$envente&type=$type");
-  print "</td><td>";
   print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&type=$type");
-  print "</td><td align=\"right\">Prix de vente</td>";
+  print "<td align=\"right\">Prix de vente</td>";
   print "</tr>\n";
   
   print '<tr class="liste_titre">';

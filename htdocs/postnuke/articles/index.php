@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,32 +49,32 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Titre.","index.php", "p.pn_title");
+  print "<table class=\"noborder\" width=\"100%\">";
+  print "<tr class=\"liste_titre\">";
+  print_liste_field_titre($langs->trans("Ref"),"index.php", "p.pn_title");
   print '<td colspan="3">&nbsp;</td>';
-  print "</TR>\n";
+  print "</tr>\n";
   $var=True;
   while ($i < $num)
     {
       $objp = $db->fetch_object();
       $var=!$var;
-      print "<TR $bc[$var]>";
+      print "<tr $bc[$var]>";
       
       print '<td><a href="fiche.php?id='.$objp->pn_sid.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche livre"></a>&nbsp;';
       
-      print "<a href=\"fiche.php?id=$objp->pn_sid\">$objp->pn_title</a></TD>\n";
-      print "<TD width='70%'><a href=\"fiche.php?id=$objp->pn_sid\">$objp->title</a></TD>\n";
+      print "<a href=\"fiche.php?id=$objp->pn_sid\">$objp->pn_title</a></td>\n";
+      print "<td width='70%'><a href=\"fiche.php?id=$objp->pn_sid\">$objp->title</a></td>\n";
             
-      print "</TR>\n";
+      print "</tr>\n";
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 $db->close();

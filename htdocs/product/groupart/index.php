@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,23 +49,23 @@ $sql .= $db->plimit( $limit ,$offset);
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-  print "<TR class=\"liste_titre\"><td>";
+  print "<table class=\"noborder\" width=\"100%\">";
+  print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"index.php", "p.ref");
-  print "</td>";
-  print "<td></td>";
-  print "</TR>\n";
+  print "<td>&nbsp;</td>";
+  print "</tr>\n";
+
   $var=True;
   while ($i < $num) {
     $objp = $db->fetch_object( $i);
     $var=!$var;
-    print "<TR $bc[$var]>";
-    print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->nom</a></TD>\n";
-    print "<TD>".ucfirst(strtolower(strtoupper($objp->groupart)))."</TD>\n";
-    print "</TR>\n";
+    print "<tr $bc[$var]>";
+    print "<td><a href=\"fiche.php?id=$objp->rowid\">$objp->nom</a></td>\n";
+    print "<td>".ucfirst(strtolower(strtoupper($objp->groupart)))."</td>\n";
+    print "</tr>\n";
     $i++;
   }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 

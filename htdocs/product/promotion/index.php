@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,23 +64,21 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-  print '<p><TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-  print "<TR class=\"liste_titre\"><td>";
+  print '<table class=\"noborder width="100%">';
+  print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"index.php", "p.products_model");
-  print "</td><td>";
   print_liste_field_titre("Titre","index.php", "pd.products_name");
-  print "</td>";
-  print "</td><td></td><td></td><td>Fin</td>";
+  print "<td>&nbsp;</td><td>&nbsp;</td><td>Fin</td>";
   print '<td align="right">Prix initial</td>';
   print '<td align="right">Prix remisé</td>';
-  print "</TR>\n";
+  print "</tr>\n";
   $var=True;
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
       
-      print "<TR $bc[$var]>";
+      print "<tr $bc[$var]>";
       print '<td>'.$objp->products_model."</td>";
       print '<td>'.$objp->products_name."</td>";
 

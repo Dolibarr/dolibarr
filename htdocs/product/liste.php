@@ -163,13 +163,11 @@ if ($result)
 
   print '<table class="noborder" width="100%">';
 
-  print "<tr class=\"liste_titre\"><td>";
+  print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente&amp;type=$type&fourn_id=$fourn_id");
-  print "</td><td>";
   print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id");
-  print "</td><td align=\"right\">";
-  print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id");
-  print "</td></tr>\n";
+  print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id","",'align=\"right\"');
+  print "</tr>\n";
   
   print '<tr class="liste_titre">';
   print '<form action="liste.php?type='.$type.'" method="post">';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
+ * Copyright (C) 2003 Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,10 +68,9 @@ if ($id)
 	{
 	  $num = $db->num_rows();
 	  $i = 0;
-	  print "<p><table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-	  print "<tr class=\"liste_titre\"><td>".$langs->trans("Ref")."</td><td>";
+	  print "<table class=\"noborder\" width=\"100%\">";
+	  print "<tr class=\"liste_titre\"><td>".$langs->trans("Ref")."</td>";
 	  print_liste_field_titre("Titre","index.php", "l.title");
-	  print "</td>";
 	  print '<td colspan="3">&nbsp;</td>';
 	  print "</tr>\n";
 	  $var=True;
@@ -78,10 +78,9 @@ if ($id)
 	    {
 	      $objp = $db->fetch_object( $i);
 	      $var=!$var;
-	      print "<TR $bc[$var]>";
-	      print '<TD><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></TD>';
-	      print '<TD width="70%"><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->title.'</a></TD>';
-	      
+	      print "<tr $bc[$var]>";
+	      print '<td><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></TD>';
+	      print '<td width="70%"><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->title.'</a></TD>';
 	      
 	      if ($objp->status == 1)
 		{
@@ -98,9 +97,9 @@ if ($id)
 		  print '<img src="/theme/'.$conf->theme.'/img/icon_status_red.png" border="0"></a></td>';
 		}
 	      
-	      print '<TD align="right">';
+	      print '<td align="right">';
 	      print '<a href="'.OSC_CATALOG_URL.'product_info.php?products_id='.$objp->oscid.'">Fiche en ligne</a></TD>';
-	      print "</TR>\n";
+	      print "</tr>\n";
 	      $i++;
 	    }
 	  print "</TABLE>";
@@ -131,12 +130,12 @@ else
     {
       $num = $db->num_rows();
       $i = 0;
-      print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-      print "<TR class=\"liste_titre\"><td>";
+      print "<table class=\"noborder\" width=\"100%\">";
+      print "<tr class=\"liste_titre\">";
       print_liste_field_titre("Titre","index.php", "a.title");
-      print "</td>";
-      print "<td></td>";
-      print "</TR>\n";
+      print "<td>&nbsp;</td>";
+      print "</tr>\n";
+
       $var=True;
       while ($i < $num)
 	{

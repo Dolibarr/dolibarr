@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,14 +68,13 @@ if ($result)
   
   print_barre_liste($texte, $page, "mouvement.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
-  print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
-  print "<tr class=\"liste_titre\"><td>";
+  print '<table class=\"noborder" width="100%">';
+  print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"mouvement.php", "p.ref","");
-  print "</td><TD align=\"center\">Unités</TD><td>";
+  print "<td align=\"center\">Unités</td>";
   print_liste_field_titre("Date","mouvement.php", "m.datem","");
-  print "</td><td>";
   print_liste_field_titre("Entrepôt","mouvement.php", "s.label","");
-  print "</td></tr>\n";
+  print "</tr>\n";
     
   $var=True;
   while ($i < min($num,$limit))

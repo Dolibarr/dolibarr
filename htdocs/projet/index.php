@@ -72,12 +72,12 @@ $pagenext = $page + 1;
  * 
  */
 print '<br>';
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-print '<tr class="liste_titre"><td>';
-print_liste_field_titre("Titre","index.php","p.title");
-print '</td><td>'.$langs->trans("Ref").'</td><td>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans("Title"),"index.php","p.title");
+print '<td>'.$langs->trans("Ref").'</td>';
 print_liste_field_titre("Société","index.php","s.nom");
-print "</td></tr>\n";
+print "</tr>\n";
 
 $sql = "SELECT s.nom, s.idp, p.rowid as projectid, p.ref, p.title, s.client,".$db->pdate("p.dateo")." as do";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";

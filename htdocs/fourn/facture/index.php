@@ -122,28 +122,15 @@ if ($result)
   
   print_barre_liste("Liste des factures fournisseurs", $page, "index.php",'', $sortfield, $sortorder,'',$num);
 
-
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td>';
-  print_liste_field_titre("Numéro","index.php","facnumber");
-  print '</td>';
-  print '<td>';
-  print_liste_field_titre("Date","index.php","fac.datef");
-  print '</td>';
+  print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber");
+  print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef");
   print '<td>'.$langs->trans("Label").'</td>';
-  print '<td>';
-  print_liste_field_titre("Société","index.php","s.nom");
-  print '</td>';
-  print '<td align="right">';
-  print_liste_field_titre("Montant HT","index.php","fac.total_ht");
-  print '</td>';
-  print '<td align="right">';
-  print_liste_field_titre("Montant TTC","index.php","fac.total_ttc");
-  print '</td>';
-  print '<td align="center">';
-  print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye");
-  print '</td>';
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom");
+  print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","","",'align="right"');
+  print_liste_field_titre($langs->trans("AmountTTC"),"index.php","fac.total_ttc","","",'align="right"');
+  print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye","","",'align="center"');
   print "</tr>\n";
   $var=True;
   while ($i < min($num,$limit))

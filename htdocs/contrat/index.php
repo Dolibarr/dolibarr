@@ -90,20 +90,12 @@ if ( $db->query($sql) )
   print '<table class="noborder" width="100%">';
 
   print '<tr class="liste_titre">';
-  print '<td>';
   print_liste_field_titre($langs->trans("Ref"),"index.php", "c.rowid");
-  print "</td><td>";
   print_liste_field_titre($langs->trans("Label"),"index.php", "p.label");
-  print "</td><td>";
   print_liste_field_titre($langs->trans("Company"),"index.php", "s.nom");
-  print '</td><td align="center">';
-  print_liste_field_titre($langs->trans("Status"),"index.php", "c.enservice");
-  print '</td>';
-  print '</td><td align="center">';
-  print_liste_field_titre("Date Fin","index.php", "c.fin_validite");
-  print '</td><td align="center">';
-  print_liste_field_titre($langs->trans("Action"),"index.php", "c.next");
-  print '</td>';
+  print_liste_field_titre($langs->trans("Status"),"index.php", "c.enservice","","",'align="center"');
+  print_liste_field_titre("Date Fin","index.php", "c.fin_validite","","",'align="center"');
+  print_liste_field_titre($langs->trans("Action"),"index.php", "c.next","","",'align="center"');
   print "</tr>\n";
     
   $now=mktime();

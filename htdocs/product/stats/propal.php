@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,15 +95,12 @@ if ($_GET["id"])
 	  $num = $db->num_rows();
     
 	  $i = 0;
-	  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-	  print '<TR class="liste_titre">';
-	  print '<TD>Num&eacute;ro</TD>';
-	  print '<td>';
-	  print_liste_field_titre("Société","propal.php","s.nom","","&amp;id=$product->id&amp;socidp=$socidp");
-	  print '</td><TD align="right">';
-	  print_liste_field_titre("Date","propal.php","f.datef","","&amp;id=$product->id&amp;socidp=$socidp");
-	  print '</td>';
-	  print "</TR>\n";
+	  print "<table class=\"noborder\" width=\"100%\">";
+	  print '<tr class="liste_titre">';
+	  print_liste_field_titre($langs->trans("Ref"),"propal.php","p.rowid","","&amp;id=$product->id&amp;socidp=$socidp");
+	  print_liste_field_titre($langs->trans("Company"),"propal.php","s.nom","","&amp;id=$product->id&amp;socidp=$socidp");
+	  print_liste_field_titre($langs->trans("Date")"Date","propal.php","f.datef","","&amp;id=$product->id&amp;socidp=$socidp",'align="right"');
+	  print "</tr>\n";
 	  
 	  if ($num > 0)
 	    {

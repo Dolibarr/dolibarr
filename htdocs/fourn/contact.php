@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,13 +108,10 @@ if ($result) {
   }
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print "<td>";
   print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin);
-  print "</td><td>";
   print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin);
-  print "</td><td>";
   print_liste_field_titre($langs->trans("Company"),"contact.php","lower(s.nom)", $begin);
-  print '</td><td>'.$langs->trans("Email").'</td><td>'.$langs->trans("Phone").'</td>';
+  print '<td>'.$langs->trans("Email").'</td><td>'.$langs->trans("Phone").'</td>';
   print "</tr>\n";
   $var=True;
   $i = 0;

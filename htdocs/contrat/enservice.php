@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,20 +65,15 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   $i = 0;
 
-
   print_barre_liste("Liste des contrats en service", $page, "enservice.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print '<table class="noborder" width="100%">';
 
-  print '<tr class="liste_titre"><td>';
+  print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Label"),"enservice.php", "p.label");
-  print "</td><td>";
-  print_liste_field_titre("Société","enservice.php", "s.nom");
-  print "</td>";
+  print_liste_field_titre($langs->trans("Company"),"enservice.php", "s.nom");
   print "<td align=\"center\">".$langs->trans("Status")."</td>";
-  print "<td align=\"center\">";
-  print_liste_field_titre("Date fin","enservice.php", "date_fin_validite");
-  print '</td>';
+  print_liste_field_titre("Date fin","enservice.php", "date_fin_validite","","",'align=\"center\"');
   print "</tr>\n";
 
   $now=mktime();

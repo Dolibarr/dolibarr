@@ -48,20 +48,12 @@ if ($result)
   
   print "<br>";
   
-  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+  print "<table class=\"noborder\" width=\"100%\">";
   print '<tr class="liste_titre">';
-  print "<td>";
   print_liste_field_titre($langs->trans("LastName"),"index.php","name");
-  print "</td>";
-  print "<td>";
   print_liste_field_titre($langs->trans("FirstName"),"index.php","firstname");
-  print "</td>";
-  print "<td>";
   print_liste_field_titre($langs->trans("Login"),"index.php","login");
-  print "</td>";
-  print "<td>";
   print_liste_field_titre($langs->trans("Code"),"index.php","code");
-  print "</td>";
   print "</tr>\n";
   $var=True;
   while ($i < $num)

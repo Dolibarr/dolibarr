@@ -158,9 +158,9 @@ if ($result)
       $sortorder="DESC";
     }
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td valign="center">';
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom");
-  print '</td><td>'.$langs->trans("Town").'</td>';
+  print '<tr class="liste_titre">';
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"');
+  print '<td>'.$langs->trans("Town").'</td>';
   print "</tr>\n";
   $var=True;
 

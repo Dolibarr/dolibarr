@@ -71,11 +71,11 @@ if ( $db->query($sql) )
   print_barre_liste("Liste des fiches d'intervention", $page, "index.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
 
   $i = 0;
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre_new ("Num","index.php","f.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
-  print_liste_field_titre_new ("Société","index.php","s.nom","","&amp;socid=$socid",'',$sortfield);
-  print_liste_field_titre_new ("Date","index.php","f.datei","","&amp;socid=$socid",'',$sortfield);
+  print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&amp;socid=$socid",'',$sortfield);
+  print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","","&amp;socid=$socid",'',$sortfield);
   print '<td align="center">'.$langs->trans("Duration").'</td>';
   print '<td align="center">'.$langs->trans("Status").'</td><td>&nbsp;</td>';
   print "</tr>\n";

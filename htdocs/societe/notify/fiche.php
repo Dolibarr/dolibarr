@@ -20,7 +20,11 @@
  * $Source$
  *
  */
+
 require("pre.inc.php");
+
+$langs->load("companies");
+
 /*
  * Sécurité accés client
  */
@@ -132,11 +136,10 @@ if ( $soc->fetch($soc->id) )
    *
    */
 
-  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr><td width="20%">Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
-
-  print '<tr><td valign="top">Adresse</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>CP</td><td class="valeur">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
+  print '<table class="border"width="100%">';
+  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td class="valeur">'.$soc->nom.'</td></tr>';
+  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
+  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$soc->cp.' / '.$soc->ville.'</td></tr>';
 
   print '</table><br></div>';
 
@@ -153,10 +156,10 @@ if ( $soc->fetch($soc->id) )
     {
       $sortfield="c.name";
     }
-  print '<table width="100%" class="noborder" cellspacing="0" cellpadding="3">';
+  print '<table width="100%" class="noborder">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre_new ("Contact","fiche.php","c.name","","&socid=$socid",'',$sortfield);
-  print_liste_field_titre_new ("Action","fiche.php","a.titre","","&socid=$socid",'',$sortfield);
+  print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name","","&socid=$socid",'',$sortfield);
+  print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre","","&socid=$socid",'',$sortfield);
   print '<td>&nbsp;</td>';
   print '</tr>';
 

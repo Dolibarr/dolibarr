@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,15 +73,12 @@ if ($result)
   $i = 0;
     
 
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print '<TR class="liste_titre">';
-  print "<TD valign=\"center\">";
-  print_liste_field_titre("Société","index.php","s.nom");
-  print "</td><td>";
-  print_liste_field_titre("Contact","index.php","c.name");
-  print "</td><td>";
-  print_liste_field_titre("Action","index.php","a.titre");
-  print "</td></tr>\n";
+  print "<table class=\noborder\" width=\"100%\">";
+  print '<tr class="liste_titre">';
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign=\"center\"');
+  print_liste_field_titre($langs->trans("Contact"),"index.php","c.name");
+  print_liste_field_titre($langs->trans("Action"),"index.php","a.titre");
+  print "</tr>\n";
   $var=True;
   while ($i < $num)
     {
@@ -88,14 +86,14 @@ if ($result)
     
       $var=!$var;
     
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       print "<td>".$obj->firstname." ".$obj->name."</td>\n";
       print "<td>".$obj->titre."</td>\n";      
       print "</tr>\n";
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
