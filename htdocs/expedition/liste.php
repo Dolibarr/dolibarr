@@ -44,7 +44,7 @@ if ($user->societe_id > 0)
 /*                   Fin des  Actions                                         */
 /******************************************************************************/
 
-llxHeader();
+llxHeader('','Liste des expéditions','ch-expedition.html');
 
 if ($_GET["sortfield"] == "")
 {
@@ -60,7 +60,7 @@ $offset = $limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 
-$sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition" ;
+$sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut" ;
 $sql .= " FROM llx_expedition as e ";
 $sql_add = " WHERE ";
 if ($socidp)
@@ -73,6 +73,8 @@ if (strlen($HTTP_POST_VARS["sf_ref"]) > 0)
 {
   $sql .= $sql_add . " e.ref like '%".$HTTP_POST_VARS["sf_ref"] . "%'";
 }
+
+$expedition = new Expedition($db);
 
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1,$offset);
@@ -87,11 +89,11 @@ if ( $db->query($sql) )
   
   print '<TR class="liste_titre">';
   
-  print_liste_field_titre_new ("Réf",$PHP_SELF,"p.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
+  print_liste_field_titre_new ("Réf",$PHP_SELF,"e.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
   
-  print_liste_field_titre_new ("Date",$PHP_SELF,"c.date_expedition","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
+  print_liste_field_titre_new ("Date",$PHP_SELF,"e.date_expedition","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
   
-  print_liste_field_titre_new ("Statut",$PHP_SELF,"p.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
+  print_liste_field_titre_new ("Statut",$PHP_SELF,"e.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
   print "</tr>\n";
   $var=True;
   
@@ -125,7 +127,7 @@ if ( $db->query($sql) )
       print " <a href=\"propal.php?year=$y\">";
       print strftime("%Y",$objp->date_expedition)."</a></TD>\n";      
       
-      print '<td align="center">'.$objp->statut.'</td>';
+      print '<td align="center">'.$expedition->statuts[$objp->fk_statut].'</td>';
       print "</tr>\n";
       
       $i++;
