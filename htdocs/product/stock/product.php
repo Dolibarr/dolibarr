@@ -22,10 +22,12 @@
  *
  */
 
-/**	    \file       htdocs/product/stock/product.php
-        \ingroup    stock
-		\brief      Page de la fiche produit
-		\version    $Revision$
+
+/*!
+  \file       htdocs/product/stock/product.php
+  \ingroup    product
+  \brief      Page de la fiche produit
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -118,6 +120,10 @@ if ($_GET["id"])
             $head[$h][1] = $langs->trans("Stock");
             $hselected=$h;
             $h++;
+	    
+	    $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+	    $head[$h][1] = 'Fournisseurs';
+	    $h++;
         }
 	if ($conf->fournisseur->enabled) {
 	  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
