@@ -90,9 +90,13 @@ else
     }
 }
 
+if (! defined(MAIN_INFO_SOCIETE_PAYS))
+{
+  define(MAIN_INFO_SOCIETE_PAYS,"1");
+}
+
 // On charge le fichier lang principal
 $langs->load("main");
-
 
 /*
  *
@@ -101,9 +105,6 @@ if (defined("MAIN_NOT_INSTALLED"))
 {
   Header("Location: install/index.php");
 }
-
-
-
 
 
 /*!
