@@ -58,15 +58,23 @@ if ($action == 'update' && $cancel <> 'Annuler')
 {
   $product = new Product($db);
 
-  $product->ref = $ref;
-  $product->libelle = $libelle;
-  $product->price = $price;
+  $product->ref = $HTTP_POST_VARS["ref"];
+  $product->libelle = $HTTP_POST_VARS["libelle"];
+  $product->price = $HTTP_POST_VARS["price"];
   $product->tva_tx = $HTTP_POST_VARS["tva_tx"];
-  $product->description = $desc;
+  $product->description = $HTTP_POST_VARS["desc"];
+  $product->envente = $HTTP_POST_VARS["statut"];
 
-  $product->update($id, $user);
-  $action = '';
-  $mesg = 'Fiche mise à jour';
+  if (  $product->update($id, $user))
+    {
+      $action = '';
+      $mesg = 'Fiche mise à jour';
+    }
+  else
+    {
+      $action = 'edit';
+      $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+    }
 }
 /*
  *
@@ -87,7 +95,7 @@ if ($action == 'create')
   print '<tr><td>Taux TVA</td><TD>';
   $html = new Form($db);
   print $html->select_tva("tva_tx");
-  print '</td></tr>';    
+  print ' %</td></tr>';    
   print "<tr><td valign=\"top\">Description</td><td>";
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
@@ -107,7 +115,7 @@ else
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr class="liste_titre">';
 	  print '<form action="index.php3" method="post">';
-	  print '<td>Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
+	  print '<td valign="center">Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
 	  print '</form><form action="index.php3" method="post">';
 	  print '<td>Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';
 	  print '</form><td>&nbsp;</td></tr></table>';
@@ -137,7 +145,7 @@ else
 	  print "<br>Factures : ".$product->count_facture();
 	  print '</td></tr>';
 
-	  print '<tr><td>Taux TVA</td><TD>'.$product->tva_tx.'</td></tr>';
+	  print '<tr><td>Taux TVA</td><TD>'.$product->tva_tx.' %</td></tr>';
 	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
 	  print "</table>";
 	}
@@ -156,6 +164,19 @@ else
 	  print '<tr><td>Taux TVA</td><TD>';
 	  $html = new Form($db);
 	  print $html->select_tva("tva_tx", $product->tva_tx);
+	  print '</td></tr>';
+	  print '<tr><td>Statut</td><TD>';
+	  print '<select name="statut">';
+	  if ($product->envente)
+	    {
+	      print '<option value="1" SELECTED>En vente</option>';
+	      print '<option value="0">Hors Vente</option>';
+	    }
+	  else
+	    {
+	      print '<option value="1">En vente</option>';
+	      print '<option value="0" SELECTED>Hors Vente</option>';
+	    }
 	  print '</td></tr>';
 	  print "<tr><td valign=\"top\">Description</td><td>";
 	  print '<textarea name="desc" rows="8" cols="50">';
