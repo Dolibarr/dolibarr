@@ -117,60 +117,6 @@ if ($account)
   /*
    *
    */
-
-  /*
-   * Formulaire de recherche
-   *
-   */  
-  print '<form method="post" action="'."$PHP_SELF?account=$account".'">';
-  print '<input type="hidden" name="action" value="search">';
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-  print "<TR>";
-  print '<td>&nbsp;</td>';
-  print '<td>&nbsp;</td><td><input type="text" name="req_desc" value="'.$HTTP_POST_VARS["req_desc"].'" size="24"></TD>';
-  print '<td align="right"><input type="text" name="req_debit" size="6"></TD>';
-  print '<td align="right"><input type="text" name="req_credit" size="6"></TD>';
-  print '<td align="center"><input type="submit" value="Chercher"></td>';
-  print '<td align="center"><a href="rappro.php?account='.$account.'">Rappro</a></td>';
-
-  print "</tr>\n";
-  print "</form>";
-  /*
-   *
-   *
-   */
-  print "<form method=\"post\" action=\"$PHP_SELF?vline=$vline&account=$account\">";
-  print '<input type="hidden" name="action" value="add">';
-  print "<tr class=\"liste_titre\">";
-  print "<td>Date</td><td>Type</td><td>Description</TD>";
-  print "<td align=\"right\">Débit</TD>";
-  print "<td align=\"right\">Crédit</TD>";
-  print "<td align=\"right\">Solde</td>";
-  print "<td align=\"right\">Relevé</td></tr>";
-
-  if ($HTTP_POST_VARS["req_desc"]) 
-    { 
-      $sql_rech = " AND lower(b.label) like '%".strtolower($HTTP_POST_VARS["req_desc"])."%'";
-    }
-
-  $sql = "SELECT count(*) FROM llx_bank WHERE 1=1";
-  if ($account) { $sql .= " AND fk_account=$account"; }
-  $sql .= $sql_rech;
-  if ( $db->query($sql) )
-    {
-      $nbline = $db->result (0, 0);
-      $db->free();
-    
-      if ($nbline > $viewline )
-	{
-	  $limit = $nbline - $viewline ;
-	}
-      else
-	{
-	  $limit = $viewline;
-	}
-    }
-  
   $sql = "SELECT rowid, label FROM llx_bank_categ;";
   $result = $db->query($sql);
   if ($result)
@@ -186,8 +132,92 @@ if ($account)
 	}
       $db->free();
     }
-  
-  
+  /*
+   *
+   *
+   */
+  if ($HTTP_POST_VARS["req_desc"]) 
+    { 
+      $sql_rech = " AND lower(b.label) like '%".strtolower($HTTP_POST_VARS["req_desc"])."%'";
+    }
+  /*
+   *
+   *
+   */
+  $sql = "SELECT count(*) FROM llx_bank WHERE 1=1";
+  if ($account) { $sql .= " AND fk_account=$account"; }
+  $sql .= $sql_rech;
+  if ( $db->query($sql) )
+    {
+      $nbline = $db->result (0, 0);
+      $total_lines = $nbline;
+      $db->free();
+    
+      if ($nbline > $viewline )
+	{
+	  $limit = $nbline - $viewline ;
+	}
+      else
+	{
+	  $limit = $viewline;
+	}
+    }
+
+  if ($page > 0)
+    {
+      $limitsql = $nbline - ($page * $viewline);
+      if ($limitsql < $viewline)
+	{
+	  $limitsql = $viewline;
+	}
+      $nbline = $limitsql;
+    }
+  else
+    {
+      $page = 0;
+      $limitsql = $nbline;
+    }
+
+  /*
+   * Formulaire de recherche
+   *
+   */  
+  print '<form method="post" action="'."$PHP_SELF?account=$account".'">';
+  print '<input type="hidden" name="action" value="search">';
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
+  print "<TR>";
+  print '<td>';
+  if ($limitsql > $viewline)
+    {
+      print '<a href="account.php?account='.$account.'&amp;page='.($page+1).'"><img alt="Page précédente" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
+    }
+  if ($total_lines > $limitsql )
+    {
+      print '<a href="account.php?account='.$account.'&amp;page='.($page-1).'"><img alt="Page suivante" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
+    }
+  print '</td>';
+  print '<td>&nbsp;</td><td><input type="text" name="req_desc" value="'.$HTTP_POST_VARS["req_desc"].'" size="24"></TD>';
+  print '<td align="right"><input type="text" name="req_debit" size="6"></TD>';
+  print '<td align="right"><input type="text" name="req_credit" size="6"></TD>';
+  print '<td align="center"><input type="submit" value="Chercher"></td>';
+  print '<td align="center"><a href="rappro.php?account='.$account.'">Rappro</a></td>';
+  print "</tr>\n";
+  print "</form>\n";
+  /*
+   *
+   *
+   */
+  print "<form method=\"post\" action=\"$PHP_SELF?vline=$vline&amp;account=$account\">";
+  print '<input type="hidden" name="action" value="add">';
+  print "<tr class=\"liste_titre\">";
+  print "<td>Date</td><td>Type</td><td>Description</TD>";
+  print "<td align=\"right\">Débit</TD>";
+  print "<td align=\"right\">Crédit</TD>";
+  print "<td align=\"right\">Solde</td>";
+  print "<td align=\"right\">Relevé</td></tr>";
+  // DEBUG
+  // print "<tr><td>$nbline</td><td>$viewline</td><td>total_lines $total_lines</td><td>limitsql $limitsql</td></tr>";
+      
   /* Another solution
    * create temporary table solde type=heap select amount from llx_bank limit 100 ;
    * select sum(amount) from solde ;
@@ -220,6 +250,7 @@ if ($account)
 	}
     }
   $sql .= " ORDER BY b.dateo ASC";
+  $sql .= $db->plimit($limitsql, 0);
 
   $result = $db->query($sql);
   if ($result)
@@ -227,7 +258,6 @@ if ($account)
       $var=True;  
       $num = $db->num_rows();
       $i = 0; $total = 0;
-      
       $sep = 0;
       
       while ($i < $num)
@@ -272,14 +302,24 @@ if ($account)
 		  
 	      if ($objp->num_chq)
 		{
-		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&account=$account\">CHQ $objp->num_chq - $objp->label</a></td>";
+		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$account\">CHQ $objp->num_chq - $objp->label</a></td>";
 		}
 	      else
 		{
 		  //Xavier DUTOIT : Ajout d'un lien pour modifier la ligne
-		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&account=$account\">$objp->label</a>&nbsp;</td>";
-					
-//		print "<td>$objp->label&nbsp;</td>";
+		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$account\">$objp->label</a>&nbsp;";
+		  /*
+		   * Ajout les liens
+		   */
+		  $urls_line = $acct->get_url($objp->rowid);
+		  $numurl = sizeof($urls_line);
+		  $k = 0;
+		  while ($k < $numurl)
+		    {
+		      print ' <a href="'.$urls_line[$k][0].$urls_line[$k][1].'">'.$urls_line[$k][2].'</a>';
+		      $k++;
+		    }
+		  print '</td>';
 		}
 	      
 	      if ($objp->amount < 0)
@@ -309,11 +349,11 @@ if ($account)
 	      
 	      if ($objp->rappro)
 		{
-		  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&account=$account\">$objp->num_releve</a></td>";
+		  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$account\">$objp->num_releve</a></td>";
 		}
 	      else
 		{
-		  print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid&account=$account\">[Del]</a></td>";
+		  print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&amp;rowid=$objp->rowid&amp;account=$account&amp;page=$page\">[Del]</a></td>";
 		}
 	      
 	      print "</tr>";
