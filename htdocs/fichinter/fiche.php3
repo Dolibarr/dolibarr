@@ -432,6 +432,15 @@ if ($id)
 $sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, fk_projet";
 $sql .= " FROM societe as s, llx_fichinter as f ";
 $sql .= " WHERE f.fk_soc = s.idp ";
+if ($socidp)
+{
+  $sql .= "AND s.idp = $socidp";
+}
+if (isset($fichinter))
+{
+  $sql .= "AND s.idp = $fichinter->societe_id";
+}
+
 $sql .= " ORDER BY f.datei DESC ;";
 
 if ( $db->query($sql) )
