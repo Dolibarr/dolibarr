@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 
@@ -39,7 +39,7 @@ function llxHeader($head = "")
   $menu->add_submenu("search.php3","Recherche");
 
   $db = new Db();
-  $sql = "SELECT rowid, label FROM llx_bank_account";
+  $sql = "SELECT rowid, label FROM llx_bank_account where clos = 0";
   $result = $db->query($sql);
   if ($result)
     {
