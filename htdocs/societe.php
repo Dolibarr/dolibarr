@@ -125,23 +125,21 @@ if ($user->societe_id > 0)
   $sql .= " AND s.idp = " . $user->societe_id;
 }
 
+if ($socname)
+{
+  $search_nom=$socname;
+}
 
 if (strlen($stcomm)) {
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
 if ($search_nom) {
-  $sql .= " AND s.nom LIKE '%".$search_nom."%'";
+  $sql .= " AND (s.nom LIKE '%".$search_nom."%' OR s.code_client LIKE '%".$search_nom."%')";
 }
 
 if ($search_ville) {
   $sql .= " AND s.ville LIKE '%".$search_ville."%'";
-}
-
-if ($socname)
-{
-  $sql .= " AND s.nom like '%".$socname."%'";
-  $search_nom=$socname;
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
