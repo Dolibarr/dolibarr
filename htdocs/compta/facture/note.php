@@ -47,6 +47,9 @@ if ($user->societe_id > 0)
 }
 
 
+$facture = new Facture($db);
+$facture->fetch($_GET["facid"]);
+
 
 /******************************************************************************/
 /*                     Actions                                                */
@@ -54,12 +57,9 @@ if ($user->societe_id > 0)
 
 if ($_POST["action"] == 'update' && $user->rights->facture->creer)
 {
-
-
-  $facture = new Facture($db);
-  $facture->fetch($_GET["facid"]);
   $facture->update_note($_POST["note"]);
 }
+
 
 /******************************************************************************/
 /*                   Fin des  Actions                                         */
@@ -68,15 +68,9 @@ if ($_POST["action"] == 'update' && $user->rights->facture->creer)
 
 llxHeader();
 
-$html = new Form($db);
-
 
 if ($_GET["facid"])
 {
-  $facture = new Facture($db);
-  if ( $facture->fetch($_GET["facid"]) ) 
-    {
-
       $soc = new Societe($db, $facture->socidp);
       $soc->fetch($facture->socidp);
 
@@ -86,13 +80,13 @@ if ($_GET["facid"])
       $head[$h][1] = $langs->trans("CardBill");
       $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$facture->id;
-      $head[$h][1] = $langs->trans("Apercu");
+      $head[$h][1] = $langs->trans("Preview");
       $h++;
 
       if ($facture->mode_reglement == 3)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$facture->id;
-	  $head[$h][1] = $langs->trans("Prélèvement");
+	  $head[$h][1] = $langs->trans("StandingOrders");
 	  $h++;
 	}
       
@@ -108,30 +102,16 @@ if ($_GET["facid"])
                   
 	  
       print '<table class="border" width="100%">';
-      
-      print '<tr><td>'.$langs->trans("Company").'</td><td>';
-      if ($soc->client == 1)
-	{
-	  $url = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
-	}
-      else
-	{
-	  $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$soc->id;
-	}
-      print '<a href="'.$url.'">'.$soc->nom.'</a></td>';
-      print '<td>'.$langs->trans("Status").'</td><td align="center"><b>'.$facture->statut_libelle.'</b></td></tr>';
 
-      print '<tr><td>'.$langs->trans("Date").'</td><td>'.strftime("%A %d %B %Y",$facture->date);
-      if ($facture->fin_validite)
-	{
-	  print " (".strftime("%d %B %Y",$facture->fin_validite).")";
-	}
-      print '</td>';
+      print '<tr><td>'.$langs->trans("Company").'</td>';
+      print '<td>';
+      print '<b><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
       
-      print '<td>'.$langs->trans("Author").'</td><td>';
-      $author = new User($db, $facture->user_author);
-      $author->fetch('');
-      print $author->fullname.'</td></tr>';
+      print "<td>Conditions de réglement</td><td>" . $facture->cond_reglement ."</td></tr>";
+      
+      print '<tr><td>'.$langs->trans("Date").'</td>';
+      print "<td>".strftime("%A %d %B %Y",$facture->date)."</td>\n";
+      print "<td>Date limite de réglement</td><td>" . strftime("%d %B %Y",$facture->date_lim_reglement) ."</td></tr>";
       
       print '<tr><td valign="top" colspan="4">'.$langs->trans("Note").' :</td></tr>';
 
@@ -165,9 +145,9 @@ if ($_GET["facid"])
       print "</div>";
       
       
-    }
-  
 }
+
 $db->close();
+
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

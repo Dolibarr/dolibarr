@@ -51,7 +51,7 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$facture->id;
 $head[$h][1] = $langs->trans("CardBill");
 $h++;
 $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$facture->id;
-$head[$h][1] = $langs->trans("Apercu");
+$head[$h][1] = $langs->trans("Preview");
 $h++;
 $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$facture->id;
 $head[$h][1] = $langs->trans("Note");

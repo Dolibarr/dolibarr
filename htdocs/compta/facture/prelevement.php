@@ -100,10 +100,10 @@ if ($_GET["facid"] > 0)
       $head[$h][1] = $langs->trans("CardBill");
       $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
-      $head[$h][1] = $langs->trans("Apercu");
+      $head[$h][1] = $langs->trans("Preview");
       $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
-      $head[$h][1] = $langs->trans("Prélévement");
+      $head[$h][1] = $langs->trans("StandingOrders");
       $hselected = $h;
       $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;

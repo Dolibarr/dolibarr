@@ -458,7 +458,7 @@ $html = new Form($db);
 if ($_GET["action"] == 'create') 
 {
   
-  print_titre("Emettre une facture");
+  print_titre($langs->trans("NewBill"));
 
   if ($_GET["propalid"])
     {
@@ -686,7 +686,7 @@ if ($_GET["action"] == 'create')
 	  /*
 	   *
 	   */	  
-	  print '<tr><td colspan="3" align="center"><input type="submit" name="bouton" value="Créer brouillon"></td></tr>';
+	  print '<tr><td colspan="3" align="center"><input type="submit" name="bouton" value="'.$langs->trans("CreateDraft").'"></td></tr>';
 	  print "</form>\n";
 	  print "</table>\n";
 
@@ -695,11 +695,11 @@ if ($_GET["action"] == 'create')
 	      /*
 	       * Produits
 	       */
-	      print_titre("Produits");
+	      print_titre($langs->trans("Products"));
 	      
 	      print '<table class="noborder" width="100%">';
-	      print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>Produit</td>';
-	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
+	      print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
+	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = ".$_GET["propalid"];
@@ -759,9 +759,9 @@ if ($_GET["action"] == 'create')
 	    {
 	      print_titre("Produits");
 	      
-	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-	      print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>Produit</td>';
-	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
+	      print '<table class="noborder" width="100%">';
+	      print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
+	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.subprice, pt.qty, p.rowid as prodid, pt.remise_percent";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as pt, ".MAIN_DB_PREFIX."product as p";
@@ -833,13 +833,13 @@ else
         $hselected = $h;
         $h++;
         $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
-        $head[$h][1] = $langs->trans("Apercu");
+        $head[$h][1] = $langs->trans("Preview");
         $h++;      
 
 	if ($fac->mode_reglement == 3)
 	  {
 	    $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
-	    $head[$h][1] = $langs->trans("StandingOrder");
+	    $head[$h][1] = $langs->trans("StandingOrders");
 	    $h++;
 	  }
 
@@ -964,7 +964,7 @@ else
 	      print "</table>";
 	      $db->free();
 	    } else {
-	      print $db->error();
+	      dolibarr_print_error($db);
 	    }
 	
 	  print "</td></tr>";
@@ -1467,7 +1467,7 @@ else
 	      if ($num)
 		{
 		  $i = 0; $total = 0;
-		  print "<p>";
+		  print "<br>";
 		  if ($num >1)
 		    {
 		      print_titre("Propositions commerciales associées");
@@ -1523,6 +1523,8 @@ else
       $sortfield=$_GET["sortfield"];
       $month=$_GET["month"];
       $year=$_GET["year"];
+      
+      $fac=new Facture($db);
       
       if ($page == -1)
 	{
@@ -1674,7 +1676,7 @@ else
 			}
 		    }
 
-		  print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("Bill"),"bill")."</a> ";
+		  print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").'</a> ';
 		  print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment."</td>\n";
 		
 		  if ($objp->df > 0 )
@@ -1693,11 +1695,12 @@ else
 		    {
 		      print "<td align=\"center\"><b>!!!</b></td>\n";
 		    }
-		  print '<td><a href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		  print '<td><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom.'</a></td>';
 		
 		  print "<td align=\"right\">".price($objp->total)."</td>";
 		  print "<td align=\"right\">".price($objp->total_ttc)."</td>";
 		  print "<td align=\"right\">".price($objp->am)."</td>";	
+
 		  // Affiche statut de la facture
 		  if (! $objp->paye)
 		    {
@@ -1739,7 +1742,7 @@ else
 	    }
 	
 	  print "</table>";
-	  $db->free();
+	  $db->free($result);
 	}
       else
 	{

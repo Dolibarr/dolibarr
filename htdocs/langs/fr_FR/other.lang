@@ -7,6 +7,7 @@ ErrorPasswordDiffers=Les mots de passe ne sont pas identiques, veuillez les sais
 ErrorForbidden=Accès non autorisé.<br>Vous essayez d'accéder à une page, zone ou fonction qui n'est pas autorisée pour votre compte utilisateur.
 ErrorForbidden2=Les permissions pour ce login peuvent être attribuée par l'administrateur Dolibarr via le menu %s->%s.
 ErrorForbidden3=Dolibarr ne semble pas fonctionner au sein d'une session authentifiée. Consulter la documentation d'installation de Dolibarr pour connaitre comment gérer les autentifications (htaccess, mod_auth ou autre...).
+ErrorNoImagickReadimage=La fonction imagick_readimage n'est pas présente sur ce PHP. L'aperçu n'est donc pas disponible.
 AddTrip=Créer déplacement
 Tools=Outils
 Birthday=Anniversaire

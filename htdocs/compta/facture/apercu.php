@@ -78,14 +78,14 @@ if ($_GET["facid"] > 0)
       $head[$h][1] = $langs->trans("CardBill");
       $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
-      $head[$h][1] = $langs->trans("Apercu");
+      $head[$h][1] = $langs->trans("Preview");
       $hselected = $h;
       $h++;
 
       if ($fac->mode_reglement == 3)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
-	  $head[$h][1] = $langs->trans("Prélèvement");
+	  $head[$h][1] = $langs->trans("StandingOrders");
 	  $h++;
 	}
 
@@ -206,7 +206,8 @@ if ($_GET["facid"] > 0)
                 imagick_writeimage( $handle, $file .".png");
             }
             else {
-                print "Les fonctions <i>imagick</i> ne sont pas disponibles sur ce PHP";
+                $langs->load("other");
+                print $langs->trans("ErrorNoImagickReadimage");
             }
         }
         
