@@ -168,13 +168,13 @@
   <xsl:template match="table/tr[@id='limitdate']">
     <tr>
       <td class="titre">
-	Durée
+	Echéance
       </td>
       <td class="valeur">
 	<xsl:apply-templates select="@*|node()"/>
       </td>
       <td class="titre">
-	Duration
+	Limit date
       </td>
     </tr>
   </xsl:template>
