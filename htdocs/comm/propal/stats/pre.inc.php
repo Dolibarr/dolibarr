@@ -33,7 +33,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add(DOL_URL_ROOT."/comm/propal.php", "Propositions");
 
-  $menu->add(DOL_URL_ROOT."index.php", "Statistiques");
+  $menu->add("index.php", "Statistiques");
 
   left_menu($menu->liste);
 }
