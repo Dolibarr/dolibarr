@@ -32,6 +32,7 @@ function llxHeader($head = "", $urlp = "") {
   $menu = new Menu();
 
   $menu->add("index.php", "Dolibarr");
+  $menu->add_submenu("facture.php", "Factures");
 
   $menu->add("boxes.php", "Boites");
 
