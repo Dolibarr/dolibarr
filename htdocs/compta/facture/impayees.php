@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -65,8 +65,6 @@ llxHeader('','Factures impayées');
 $page = $_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
-$month=$_GET["month"];
-$year=$_GET["year"];
 
 if ($page == -1)
 {
@@ -93,10 +91,7 @@ if ($user->rights->facture->lire)
 
   if ($socidp)
     $sql .= " AND s.idp = $socidp";
-  
-  if ($month > 0)
-    $sql .= " AND date_format(f.datef, '%m') = $month";
-  
+   
   if ($_GET["filtre"])
     {
       $filtrearr = split(",", $_GET["filtre"]);
@@ -126,9 +121,6 @@ if ($user->rights->facture->lire)
     {
       $sql .= " AND f.total_ttc = '".$_GET["search_montant_ttc"]."'";
     }
-  
-  if ($year > 0)
-    $sql .= " AND date_format(f.datef, '%Y') = $year";
   
   if (strlen($_POST["sf_ref"]) > 0)
     {
@@ -212,20 +204,13 @@ if ($user->rights->facture->lire)
 		  if ($objp->df > 0 )
 		    {
 		      print "<td align=\"center\">";
-		      $y = strftime("%Y",$objp->df);
-		      $m = strftime("%m",$objp->df);
-		      
-		      print strftime("%d",$objp->df)."\n";
-		      print ' <a href="impayees.php?year='.$y.'&amp;month='.$m.'">';
-		      print substr(strftime("%B",$objp->df),0,3)."</a>\n";
-		      print ' <a href="impayees.php?year='.$y.'">';
-		      print strftime("%Y",$objp->df)."</a></TD>\n";
+		      print strftime("%d %b %Y",$objp->df)."</td>\n";
 		    }
 		  else
 		    {
 		      print "<td align=\"center\"><b>!!!</b></td>\n";
 		    }
-		  print '<td><a href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		
 		  print "<td align=\"right\">".price($objp->total)."</td>";
 		  print "<td align=\"right\">".price($objp->total_ttc)."</td>";
