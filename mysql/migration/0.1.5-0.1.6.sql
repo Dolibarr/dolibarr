@@ -20,3 +20,6 @@ create table llx_action_def
   titre           varchar(255) NOT NULL,
   description     text
 );
+
+
+insert into llx_action_def (rowid,titre,description) VALUES (1,'Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention');
