@@ -35,22 +35,24 @@ if ($_POST["action"] == 'confirm_rejet')
   if ( $_POST["confirm"] == 'yes')
     {
 
+      $daterej = mktime(2, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]); 
+  
       $lipre = new LignePrelevement($db, $user);
 
       if ($lipre->fetch($_GET["id"]) == 0)
 	{
 	  
-	  if ($_POST["motif"] > 0)
+	  if ($_POST["motif"] > 0 && $daterej < time())
 	    {
 	      $rej = new RejetPrelevement($db, $user);
 	      
-	      $rej->create($user, $_GET["id"], $_POST["motif"], $lipre->bon_rowid);
+	      $rej->create($user, $_GET["id"], $_POST["motif"], $daterej, $lipre->bon_rowid);
 	      
 	      Header("Location: ligne.php?id=".$_GET["id"]);
 	    }
 	  else
 	    {
-	      Header("Location: ligne.php?id=".$_GET["id"]."&action=rejet&socid=".$_GET["socid"]."&previd=".$_GET["previd"]);
+	      Header("Location: ligne.php?id=".$_GET["id"]."&action=rejet");
 	    }
 	}
     }
@@ -88,7 +90,23 @@ if ($_GET["id"])
       print '<tr><td width="20%">Statut</td><td>';
       print '<img src="./statut'.$lipre->statut.'.png">&nbsp;';
       print $lipre->statuts[$lipre->statut].'</td></tr>';
-      
+
+      if ($lipre->statut == 3)
+	{
+	  $rej = new RejetPrelevement($db, $user);
+	  $resf = $rej->fetch($lipre->id);
+	  if ($resf == 0)
+	    {
+	      print '<tr><td width="20%">Motif du rejet</td><td>'.$rej->motif.'</td></tr>';
+	      print '<tr><td width="20%">Date du rejet</td><td>'.strftime("%d %B %Y",$rej->date_rejet).'</td></tr>';
+	    }
+	  else
+	    {
+	      print '<tr><td width="20%">'.$resf.'</td></tr>';
+	    }
+	}
+
+
       print '</table><br />';
     }
   else
@@ -119,6 +137,10 @@ if ($_GET["id"])
       print '</select>';
       print '</td></tr>';
 
+      print '<tr><td class="valid">Date du rejet</td>';
+      print '<td colspan="2" class="valid">';
+      print $html->select_date();
+      print '</td></tr>';
       print '<tr><td class="valid">Motif du rejet</td>';
       print '<td class="valid">';
       print '<select name="motif">';
