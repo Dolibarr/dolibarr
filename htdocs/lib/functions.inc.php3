@@ -30,7 +30,7 @@ function loginFunction()
   /**
    * Change the HTML output so that it fits to your
    * application.     */
-  print '<html><head><title>Dolibarr Authentification</head><body>';
+  print '<html><head><title>Dolibarr Authentification</title></head><body>';
   print '<p>Dolibarr Authentification';
   echo "<form method=\"post\" action=\"" . $_SERVER['PHP_SELF'] . "\">";
   print '<table><tr>';
