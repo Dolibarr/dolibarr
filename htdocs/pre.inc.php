@@ -82,7 +82,7 @@ function llxHeader($head = "") {
         $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
     }
 
-  if ($conf->produit->enabled || $conf->service->enabled)
+  if (($conf->produit->enabled || $conf->service->enabled) && $user->rights->produit->lire)
     {
       $langs->load("products");
       $chaine="";
@@ -137,7 +137,7 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/compta/dons/index.php", $langs->trans("Donations"));
     }
 
-  if ($conf->fournisseur->enabled)
+  if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire)
     {
       $langs->load("suppliers");
       $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
