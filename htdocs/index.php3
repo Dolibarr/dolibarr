@@ -81,6 +81,25 @@ if ($db->ok) {
 
   print "</table><br>";
 
+  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr><td valign="top" width="50%">';
+
+  print "<TABLE border=\"1\" cellspacing=\"0\" cellpadding=\"2\">";
+  print "<TR bgcolor=\"orange\">";
+  print "<td>Description</td><td>Valeur</TD>";
+  print "</TR>\n";
+
+  $sql = "SELECT count(*) FROM societe WHERE fk_stcomm=2";
+  if (valeur($sql)) {
+    $var=!$var;
+    print "<tr $bc[$var]><td><a href=\"comm/index.php3?stcomm=2\">Société en cours de contact</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+  }
+
+  print "</table><br>";
+
+
+
+
   print '</td><td valign="top">';
 
 
