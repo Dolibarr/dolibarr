@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,10 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 
 require("./pre.inc.php3");
-
 require("./propal.class.php3");
 
 $db = new Db();
@@ -29,10 +28,12 @@ $db = new Db();
 $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM societe as s WHERE s.idp = $socidp;";
 
 $result = $db->query($sql);
-if ($result) {
-  if ( $db->num_rows() ) {
-    $objsoc = $db->fetch_object(0);
-  }
+if ($result) 
+{
+  if ( $db->num_rows() ) 
+    {
+      $objsoc = $db->fetch_object(0);
+    }
   $db->free();
 }
 
@@ -63,27 +64,28 @@ if ($action == 'add') {
    *   Generation
    *
    */
-  if ($id) {
-    //    print "<hr><b>Génération du PDF</b><p>";
+  if ($id) 
+    {
 
-    //$DBI = "dbi:mysql:dbname=lolixdev:host=espy:user=rodo";
+      //$gljroot = "/home/www/dolibarr/dolibarr/htdocs";
 
-    $gljroot = "/home/www/dolibarr/dolibarr/htdocs";
+      $command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name.":host=localhost\" ";
+      $command .= " ; ./propal-tex.pl --propal=".$id ." --pdf --ps --output=".$conf->propal->outputdir;
+      $command .= " --templates=".$conf->propal->templatesdir;
+      
+      $output = system($command);
+      //print "<p>command : $command<br>";
+      //print $output;
 
-    $command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name.":host=localhost\" ";
-    $command .= " ; ./propal-tex.pl --propal=".$id ." --pdf --ps --output=".$conf->propal->outputdir;
-    $command .= " --templates=".$conf->propal->templatesdir;
-
-    $output = system($command);
-    //print "<p>command : $command<br>";
-    //print $output;
-
-    
-    //    Header("Location: propal.php3?propalid=$id");
-
-  } else {
-    print $db->error();
-  }
+      /*
+       * Renvoie directement sur la fiche
+       */
+      //Header("Location: propal.php3?propalid=$id");
+    }
+  else
+    {
+      print $db->error();
+    }
 }
 
 llxHeader();
@@ -111,7 +113,7 @@ if ($action == 'create') {
       }
     }
     
-    print "<form action=\"$PHP_SELF?socidp=$socidp\" method=\"post\">";
+    print "<form action=\"propal.php3?socidp=$socidp\" method=\"post\">";
     print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
     print '<table border="1" cellspacing="0" cellpadding="3" width="100%"><tr><td width="50%" valign="top">';
@@ -307,7 +309,7 @@ if ( $db->query($sql) ) {
     $objp = $db->fetch_object( $i);
     $var=!$var;
     print "<TR $bc[$var]>";
-    print "<TD><a href=\"index.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+    print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
     print "<TD><a href=\"propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
     print "<TD>$objp->lst</TD>\n";
       

@@ -36,8 +36,65 @@ llxHeader();
 
 $db = new Db();
 
+/******************************************************************************/
+/*                     Actions                                                */
+/******************************************************************************/
 
-if ($action == 'setstatut') {
+if ($action == 'add') 
+{
+  $propal = new Propal($db, $socidp);
+
+  $propal->remise = $remise;
+  $propal->datep = $db->idate(mktime(12, 1 , 1, $pmonth, $pday, $pyear));
+
+  $propal->contactid = $contactidp;
+  $propal->projetidp = $projetidp;
+
+  $propal->author = $user->id;
+  $propal->note = $note;
+
+  $propal->ref = $ref;
+
+  $propal->add_product($idprod1,$qty1);
+  $propal->add_product($idprod2,$qty2);
+  $propal->add_product($idprod3,$qty3);
+  $propal->add_product($idprod4,$qty4);
+  
+  $id = $propal->create();
+  
+  /*
+   *
+   *   Generation
+   *
+   */
+  if ($id) 
+    {
+
+      //$gljroot = "/home/www/dolibarr/dolibarr/htdocs";
+
+      $command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name.":host=localhost\" ";
+      $command .= " ; ./propal-tex.pl --propal=".$id ." --pdf --ps --output=".$conf->propal->outputdir;
+      $command .= " --templates=".$conf->propal->templatesdir;
+      
+      $output = system($command);
+      //print "<p>command : $command<br>";
+      //print $output;
+
+      /*
+       * Renvoie directement sur la fiche
+       */
+      //Header("Location: propal.php3?propalid=$id");
+      $propalid = $id;
+    }
+  else
+    {
+      print $db->error();
+    }
+}
+
+
+if ($action == 'setstatut') 
+{
   /*
    *  Cloture de la propale
    */
@@ -45,24 +102,37 @@ if ($action == 'setstatut') {
   $propal->id = $propalid;
   $propal->cloture($user->id, $statut, $note);
 
-} elseif ( $action == 'delete' ) {
+} 
+elseif ( $action == 'delete' ) 
+{
   $sql = "DELETE FROM llx_propal WHERE rowid = $propalid;";
-  if ( $db->query($sql) ) {
+  if ( $db->query($sql) ) 
+    {
 
-    $sql = "DELETE FROM llx_propaldet WHERE fk_propal = $propalid ;";
-    if ( $db->query($sql) ) {
-      print "<b><font color=\"red\">Propal supprimée</font></b>";
-    } else {
+      $sql = "DELETE FROM llx_propaldet WHERE fk_propal = $propalid ;";
+      if ( $db->query($sql) ) 
+	{
+	  print "<b><font color=\"red\">Propal supprimée</font></b>";
+	}
+      else
+	{
+	  print $db->error();
+	  print "<p>$sql";
+	} 
+    }
+  else
+    {
       print $db->error();
       print "<p>$sql";
-    } 
-  } else {
-    print $db->error();
-    print "<p>$sql";
-  }
+    }
   $propalid = 0;
   $brouillon = 1;
 }
+
+
+/******************************************************************************/
+/*                   Fin des  Actions                                         */
+/******************************************************************************/
 /*
  *
  * Mode fiche
