@@ -43,7 +43,7 @@ Class pdf_tourteau {
 
       if (! file_exists($dir))
 	{
-	  mkdir($dir);
+	  mkdir($dir, 755);
 	}
       
 
