@@ -69,9 +69,10 @@ function llxHeader($head = "")
 
   $menu->add("/compta/facture.php3","Factures");
 
-  $menu->add("/compta/bank/bplc.php","Transactions BPLC");
-
-  $menu->add("/compta/ca.php3","Chiffres d'affaires");
+  if (COMPTA_ONLINE_PAYMENT_BPLC)
+    {
+      $menu->add("/compta/bank/bplc.php","Transactions BPLC");
+    }
 
   left_menu($menu->liste);
 
