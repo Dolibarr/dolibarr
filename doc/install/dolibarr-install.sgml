@@ -42,6 +42,7 @@ Installation et mise à jour de Dolibarr
 	<item>php4</item>
 	<item>php4-mysql</item>
 	<item>php4-curl (pour la partie gestion des adhérents)</item>
+	<item>php4-gd (pour les graphiques)</item>
 	<item>Apache</item>
       </itemize>
       Pour la gestion de l'authentification, Dolibarr fonctionne soit avec mod-auth-mysql soit avec Pear. Cette dernière est plus facile à installer.
