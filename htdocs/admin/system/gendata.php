@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -43,7 +43,7 @@ pas utiliser sur une base de données en production, les opérations ne sont pas r
 
 <a href="gendata.php">Home</a><br> 
 <br>
-<?PHP
+<?php
 include_once "../../societe.class.php";
 include_once "../../contact.class.php";
 include_once "../../facture.class.php";

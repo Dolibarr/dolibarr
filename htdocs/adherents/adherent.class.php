@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -146,7 +146,7 @@ class Adherent
     $texttosend = preg_replace ($patterns, $replace, $text);
     $subjectosend = preg_replace ($patterns, $replace, $subject);
     if (defined('ADHERENT_MAIL_FROM') && ADHERENT_MAIL_FROM != ''){
-	  return mail($recipients,$subjectosend,$texttosend,"From: ".ADHERENT_MAIL_FROM."\nReply-To: ".ADHERENT_MAIL_FROM."\nX-Mailer: PHP/" . phpversion());
+	  return mail($recipients,$subjectosend,$texttosend,"From: ".ADHERENT_MAIL_FROM."\nReply-To: ".ADHERENT_MAIL_FROM."\nX-Mailer: php/" . phpversion());
     }else{
       return mail($recipients,$subjectosend,$texttosend);
     }

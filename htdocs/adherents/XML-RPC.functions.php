@@ -9,9 +9,9 @@
  * This code is Open Source, released under terms similar to the Artistic License.
  * Read the license at http://www.keithdevens.com/software/license/
  * 
- * Note: this code requires version 4.1.0 or higher of PHP.
+ * Note: this code requires version 4.1.0 or higher of php.
  * 
- * Adaptation pour fonctionnner en PHP 5.0
+ * Adaptation pour fonctionnner en php 5.0
  * 
  * $Id$
  * $Source$
@@ -272,7 +272,7 @@ function & XMLRPC_adjustValue(&$current_node){
 					$temp = array($temp2);
 					#I do the temp assignment because it avoids copying,
 					# since I can put a reference in the array
-					#PHP's reference model is a bit silly, and I can't just say:
+					#php's reference model is a bit silly, and I can't just say:
 					# $temp = array(&XMLRPC_adjustValue(&$temp));
 				}
 			}
