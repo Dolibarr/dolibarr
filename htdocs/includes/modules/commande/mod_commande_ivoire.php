@@ -30,7 +30,7 @@ Class mod_commande_ivoire
 
   Function info()
     {
-      return "Renvoie le numéro sous la forme numérique la plus simple 1,2,3, ...";      
+      return "Renvoie le numéro sous la forme numérique C0M1, COM2, COM3, ...";      
     }
 
   function commande_get_num($obj_soc=0)
@@ -48,7 +48,7 @@ Class mod_commande_ivoire
       
       $y = strftime("%y",time());
       
-      return $num;
+      return 'COM'.($num+1);
     }
 }
 
