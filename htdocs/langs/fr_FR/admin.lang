@@ -24,6 +24,7 @@ ModuleFamilyHr=Ressources humaines
 ModuleFamilyProjects=Projets/Travail collaboratif
 ModuleFamilyOther=Autre
 ModuleFamilyTechnic=Modules techniques, interfaces
+ModuleFamilyExperimental=Modules experimentaux (ne pas utiliser en production)
 ModuleFamilyFinancial=Modules financiers (Compta/trésorerie)
 DictionnaryCompanyType=Formes juridiques
 DictionnaryCanton=Départements/Provinces/Cantons
