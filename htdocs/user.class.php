@@ -281,6 +281,9 @@ class User
 		  if ($obj->fk_id == 82)
 		    $this->rights->commande->creer = 1;
 						
+		  if ($obj->fk_id == 84)
+		    $this->rights->commande->valider = 1;
+
 		  if ($obj->fk_id == 89)
 		    $this->rights->commande->supprimer = 1;
 		}
