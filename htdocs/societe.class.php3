@@ -129,43 +129,48 @@ class Societe {
    *
    *
    */
-  Function fetch($socid) {
-    $this->id = $socid;
+  Function fetch($socid)
+    {
+      $this->id = $socid;
 
-    $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc,";
+      $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc,";
+      $sql .= " s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
+      $sql .= " FROM llx_societe as s";
+      $sql .= " WHERE s.idp = ".$this->id;
 
-    $sql .= " s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
+      $result = $this->db->query($sql);
 
-    $sql .= " FROM llx_societe as s";
-    $sql .= " WHERE s.idp = ".$this->id;
+      if ($result)
+	{
+	  if ($this->db->num_rows())
+	    {
+	      $obj = $this->db->fetch_object(0);
 
-    $result = $this->db->query($sql);
+	      $this->nom = stripslashes($obj->nom);
+	      $this->adresse =  stripslashes($obj->address);
+	      $this->cp = $obj->cp;
+	      $this->ville =  stripslashes($obj->ville);
+	      
+	      $this->url = $obj->url;
+	      $this->tel = $obj->tel;
+	      $this->fax = $obj->fax;
+	      
+	      $this->siren = $obj->siren;
+	      
+	      $this->client = $obj->client;
+	      $this->fournisseur = $obj->fournisseur;
+	      
+	      $this->note = $obj->note;
 
-    if ($result) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object(0);
-
-	$this->nom = stripslashes($obj->nom);
-	$this->adresse =  stripslashes($obj->address);
-	$this->cp = $obj->cp;
-	$this->ville =  stripslashes($obj->ville);
-
-	$this->url = $obj->url;
-	$this->tel = $obj->tel;
-	$this->fax = $obj->fax;
-
-	$this->siren = $obj->siren;
-
-	$this->client = $obj->client;
-	$this->fournisseur = $obj->fournisseur;
-
-	$this->note = $obj->note;
-
-      }
-      $this->db->free();
-    } else {
-      print $this->db->error();
-    }
+	      return 1;
+	      
+	    }
+	  $this->db->free();
+	}
+      else
+	{
+	  print $this->db->error();
+	}
   }
   /*
    *
