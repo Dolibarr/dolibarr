@@ -188,7 +188,7 @@ $html = new Form($db);
  *
  *
  ************************************************************************/
-if ($action == 'create') 
+if ($_GET["action"] == 'create') 
 {
   print_titre("Créer une commande");
 
@@ -205,7 +205,7 @@ if ($action == 'create')
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp ";
       $sql .= "FROM ".MAIN_DB_PREFIX."societe as s ";
-      $sql .= "WHERE s.idp = $socidp";      
+      $sql .= "WHERE s.idp = ".$_GET["socidp"];      
     }
 
   if ( $db->query($sql) ) 
@@ -247,7 +247,7 @@ if ($action == 'create')
 
 	  print "<tr><td>Projet :</td><td>";
 	  $proj = new Project($db);
-	  $html->select_array("projetid",$proj->liste_array($socidp),0,1);
+	  $html->select_array("projetid",$proj->liste_array($soc->id),0,1);
 	  print "</td></tr>";
 	  
 	  if ($propalid > 0)
