@@ -76,7 +76,7 @@ class DoliDb
      \param	    name		nom de la database
      \return        int			1 en cas de succès, 0 sinon
   */
-  function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '')
+  function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '', $newlink=0)
   {
     global $conf;
     $this->transaction_opened=0;
@@ -90,7 +90,7 @@ class DoliDb
     
     // Essai connexion serveur
     
-    $this->db = $this->connect($host, $user, $pass);
+    $this->db = $this->connect($host, $user, $pass, $newlink);
     
     if ($this->db)
       {
@@ -148,9 +148,9 @@ class DoliDb
      \return		resource	handler d'accès à la base
   */
   
-  function connect($host, $login, $passwd)
+  function connect($host, $login, $passwd, $newlink=0)
   {
-    $this->db  = @mysql_connect($host, $login, $passwd);
+    $this->db  = @mysql_connect($host, $login, $passwd, $newlink);
     //print "Resultat fonction connect: ".$this->db;
     return $this->db;
   }
