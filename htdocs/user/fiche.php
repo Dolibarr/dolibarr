@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,32 +62,45 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
     }
 }
 
+/**
+ *  Action ajout user
+ */
 if ($_POST["action"] == 'add' && $user->admin)
 {
-    $edituser = new User($db,0);
-
-    $edituser->nom           = $_POST["nom"];
-    $edituser->note          = $_POST["note"];
-    $edituser->prenom        = $_POST["prenom"];
-    $edituser->login         = $_POST["login"];
-    $edituser->email         = $_POST["email"];
-    $edituser->admin         = $_POST["admin"];
-    $edituser->webcal_login  = $_POST["webcal_login"];
-
-    $id = $edituser->create();
-
-    if ($id) {
-        if (isset($_POST['password']) && $_POST['password']!='' )
-        {
-          $edituser->password($_POST['password'],$conf->password_encrypted);
+    $message="";
+    if (! $_POST["nom"]) {
+            $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
+            $action="create";       // Go back to create page
+    }
+    if (! $_POST["login"]) {
+            $message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
+            $action="create";       // Go back to create page
+    }
+    if (! $message) {
+        $edituser = new User($db,0);
+    
+        $edituser->nom           = trim($_POST["nom"]);
+        $edituser->note          = trim($_POST["note"]);
+        $edituser->prenom        = trim($_POST["prenom"]);
+        $edituser->login         = trim($_POST["login"]);
+        $edituser->email         = trim($_POST["email"]);
+        $edituser->admin         = trim($_POST["admin"]);
+        $edituser->webcal_login  = trim($_POST["webcal_login"]);
+    
+        $id = $edituser->create();
+    
+        if ($id) {
+            if (isset($_POST['password']) && trim($_POST['password']))
+            {
+              $edituser->password(trim($_POST['password']),$conf->password_encrypted);
+            }
+    
+            Header("Location: fiche.php?id=$id");
+        }           
+        else {
+            $message='<div class="error">'.$langs->trans("LoginAlreadyExists",$edituser->login).'</div>';
+            $action="create";       // Go back to create page
         }
-
-        Header("Location: fiche.php?id=$id");
-    }           
-    else {
-        //dolibarr_print_error($db,$edituser->error());
-        $message=$langs->trans("LoginAlreadyExists");
-        $action="create";       // Go back to create page
     }
 }
 
@@ -140,18 +153,18 @@ if ($action == 'create')
 
     print_titre($langs->trans("NewUser"));
 
-    if ($message) { print $message."<br>"; }
+    if ($message) { print "<br>".$message."<br>"; }
 
     print '<form action="fiche.php" method="post">';
     print '<input type="hidden" name="action" value="add">';
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td valign="top" width="20%">'.$langs->trans("Firstname").'</td>';
-    print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
-
     print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
     print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
+
+    print '<tr><td valign="top" width="20%">'.$langs->trans("Firstname").'</td>';
+    print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
 
     print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
     print '<td class="valeur"><input size="20" type="text" name="login" value=""></td></tr>';
