@@ -148,7 +148,7 @@ if ($_GET["action"] == 'password' && $user->admin)
   $edituser = new User($db, $_GET["id"]);
   $edituser->fetch();
 
-  if ($edituser->password('',$conf->password_encrypted))
+  if ($edituser->password($user,'',$conf->password_encrypted))
     {
       $message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
     }
