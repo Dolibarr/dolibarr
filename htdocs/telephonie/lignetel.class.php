@@ -219,10 +219,11 @@ class LigneTel {
     {
 
       $sql = "SELECT rowid, fk_client_comm, fk_soc, fk_soc_facture, fk_fournisseur";
-      $sql .= " , ligne, remise, note, statut, fk_commercial, isfacturable";
+      $sql .= " , ligne, remise, note, statut, isfacturable";
       $sql .= " , mode_paiement, fk_concurrent, code_analytique";
       $sql .= " , fk_user_creat, fk_user_commande";
       $sql .= " , fk_contrat ";
+      $sql .= " , fk_commercial, fk_commercial_suiv";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as tl";
 
       if ($id > 0)
@@ -241,22 +242,23 @@ class LigneTel {
 	      $obj = $this->db->fetch_object(0);
 
 	      $this->id = $obj->rowid;
-	      $this->socid             = $obj->fk_soc;
-	      $this->numero            = $obj->ligne;
-	      $this->contrat           = $obj->fk_contrat;
-	      $this->remise            = $obj->remise;
-	      $this->client_comm_id    = $obj->fk_client_comm;
-	      $this->client_id         = $obj->fk_soc;
-	      $this->client_facture_id = $obj->fk_soc_facture;
-	      $this->fournisseur_id    = $obj->fk_fournisseur;
-	      $this->commercial_id     = $obj->fk_commercial;
-	      $this->concurrent_id     = $obj->fk_concurrent;
-	      $this->statut            = $obj->statut;
-	      $this->mode_paiement     = $obj->mode_paiement;
-	      $this->code_analytique   = $obj->code_analytique;
+	      $this->socid              = $obj->fk_soc;
+	      $this->numero             = $obj->ligne;
+	      $this->contrat            = $obj->fk_contrat;
+	      $this->remise             = $obj->remise;
+	      $this->client_comm_id     = $obj->fk_client_comm;
+	      $this->client_id          = $obj->fk_soc;
+	      $this->client_facture_id  = $obj->fk_soc_facture;
+	      $this->fournisseur_id     = $obj->fk_fournisseur;
+	      $this->commercial_id      = $obj->fk_commercial;
+	      $this->commercial_suiv_id = $obj->fk_commercial_suiv;
+	      $this->concurrent_id      = $obj->fk_concurrent;
+	      $this->statut             = $obj->statut;
+	      $this->mode_paiement      = $obj->mode_paiement;
+	      $this->code_analytique    = $obj->code_analytique;
 
-	      $this->user_creat        = $obj->fk_user_creat;
-	      $this->user_commande     = $obj->fk_user_commande;
+	      $this->user_creat         = $obj->fk_user_creat;
+	      $this->user_commande      = $obj->fk_user_commande;
 
 	      if ($obj->isfacturable == 'oui')
 		{
