@@ -13,7 +13,8 @@ create table llx_rights_def
   id            integer PRIMARY KEY,
   libelle       varchar(255),
   module        varchar(12),
-  type          enum('r','w','m','d','a')
+  type          enum('r','w','m','d','a'),
+  bydefault     tinyint default 0
 );
 
 
@@ -38,3 +39,14 @@ create table llx_user_rights
   UNIQUE(fk_user,fk_id)
 );
 
+insert into llx_rights_def values (30,'Tous les droits sur les produits','produit','a');
+insert into llx_rights_def values (31,'Lire les produits','produit','r');
+insert into llx_rights_def values (32,'Créer modifier les produits','produit','w');
+insert into llx_rights_def values (33,'Modifier les produits d\'autrui','produit','m');
+insert into llx_rights_def values (34,'Supprimer les produits','produit','d');
+
+insert into llx_rights_def values (40,'Tous les droits sur les projets','projet','a');
+insert into llx_rights_def values (41,'Lire les projets','projet','r');
+insert into llx_rights_def values (42,'Créer modifier les projets','projet','w');
+insert into llx_rights_def values (43,'Modifier les projets d\'autrui','projet','m');
+insert into llx_rights_def values (44,'Supprimer les projets','projet','d');
