@@ -74,6 +74,8 @@ class Contact
    */
   Function update($id, $user=0)
     {
+      $this->error = array();
+
       $this->email = trim($this->email);
 
       $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET name='$this->name', firstname='$this->firstname'";
@@ -82,11 +84,9 @@ class Contact
       $sql .= ", email='$this->email'";
       $sql .= ", note='$this->note'";
 
-  $contact->address       = $HTTP_POST_VARS["adresse"];
-  $contact->cp            = $HTTP_POST_VARS["cp"];
-  $contact->ville         = $HTTP_POST_VARS["ville"];
-
-
+      $contact->address       = $HTTP_POST_VARS["adresse"];
+      $contact->cp            = $HTTP_POST_VARS["cp"];
+      $contact->ville         = $HTTP_POST_VARS["ville"];
 
       $sql .= ", phone = '$this->phone_pro'";
       $sql .= ", phone_perso = '$this->phone_perso'";
@@ -131,28 +131,41 @@ class Contact
 		  if ($this->poste)
 		    $info["title"] = utf8_encode($this->poste);
 		  
-		  //$info["homePostalAddress"] = "AdressePersonnelle\nVIlle";
-		  //$info["street"] = "street";
-		  //$info["postalCode"] = "postalCode";
-		  //$info["postalAddress"] = "postalAddress";
+		  if ($this->socid > 0)
+		    {
+		      $soc = new Societe($this->db);
+		      $soc->fetch($this->socid);
+		      $info["o"] = $soc->nom;
+		    }
 		  
-		  /*		  $info["objectclass"][0] = "top";
-		  $info["objectclass"][1] = "person";
-		  $info["objectclass"][2] = "organizationalPerson";
-		  */
-		  $info["objectclass"] = "inetOrgPerson";
-		  // $info["objectclass"][1] = "phpgwContact"; // compatibilite egroupware
+                  $info["objectclass"][0] = "organizationalPerson";
+                  $info["objectclass"][1] = "inetOrgPerson";
+                  $info["objectclass"][2] = "phpgwContact"; // compatibilite egroupware
 
-		  // add data to directory
-		  $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name).", ".LDAP_SERVER_DN ;
-		  
+                  $info['uidnumber'] = $id;
+
+                  $info['phpgwTz']      = 0;
+                  $info['phpgwMailType'] = 'INTERNET';
+                  $info['phpgwMailHomeType'] = 'INTERNET';
+
+                  $info["uid"] = $id. ":".$info["sn"];
+                  $info["phpgwContactTypeId"] = 'n';
+                  $info["phpgwContactCatId"] = 0;
+                  $info["phpgwContactAccess"] = "public";
+                  $info["phpgwContactOwner"] = 7;
+		  $info["givenName"] = $info["sn"];
+
+                  if ($this->phone_mobile)
+		    $info["phpgwCellTelephoneNumber"] = dolibarr_print_phone($this->phone_mobile);
+
+                  //$dn = "uid=".$info["uid"].","."cn=".$info["cn"].", ".LDAP_SERVER_DN ;
+                  $dn = "cn=".$info["cn"].", ".LDAP_SERVER_DN ;
+
 		  $r = @ldap_delete($ds, $dn);
-		  
-		  $dn = "cn=".$info["cn"].", ".LDAP_SERVER_DN ;
-		  
+		  		  
 		  if (! ldap_add($ds, $dn, $info))
 		    {
-		      print ldap_errno();
+		      $this->error[0] = ldap_err2str(ldap_errno($ds));
 		    }
 		}
 	      else
