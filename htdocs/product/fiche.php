@@ -635,7 +635,6 @@ print "\n</div>\n";
 
 
 
-
 if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 {
   $htmls = new Form($db);
