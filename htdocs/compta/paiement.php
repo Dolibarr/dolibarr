@@ -36,6 +36,12 @@ include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
 
 
+$socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+
+
 if ($_POST["action"] == 'add_paiement')
 {
   if ($_POST["paiementid"] > 0)
@@ -159,16 +165,16 @@ if ($_GET["action"] == 'create')
 
 	  print '<form action="paiement.php?action=create&facid='.$facid.'" method="post">';
 	  print '<input type="hidden" name="action" value="add_paiement">';
-	  print '<table cellspacing="0" class="border" width="100%" cellpadding="3">';
+	  print '<table class="border" width="100%">';
 	  
-	  print "<tr><td>Société :</td><td colspan=\"2\">$obj->nom</td></tr>\n";
+	  print "<tr><td>".$langs->trans("Company")." :</td><td colspan=\"2\">$obj->nom</td></tr>\n";
 	  
 	  print "<input type=\"hidden\" name=\"facid\" value=\"$facid\">";
 	  print "<input type=\"hidden\" name=\"facnumber\" value=\"$obj->facnumber\">";
 	  print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
 	  print "<input type=\"hidden\" name=\"societe\" value=\"$obj->nom\">";
 	  
-	  print "<tr><td>Date :</td><td>";
+	  print "<tr><td>".$langs->trans("Date")." :</td><td>";
 	  print_date_select();
 	  print '</td>';
 	  print '<td>'.$langs->trans("Comments").'</td></tr>';
@@ -212,7 +218,7 @@ if ($_GET["action"] == 'create')
 		  print '<option value="'.$objopt->rowid.'"';
 		  if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
 		    {
-		      print ' SELECTED';
+		      print ' selected';
 		    }
 		  print '>'.$objopt->label.'</option>';
 		  $i++;
@@ -244,12 +250,12 @@ if ($_GET["action"] == 'create')
 		  print '<tr><td colspan="3">';
 		  print '<table class="noborder" width="100%">';
 		  print '<tr class="liste_titre">';
-		  print '<td>Facture</td><td align="center">Date</td>';
-		  print '<td align="right">Montant TTC</td>';	      
-		  print '<td align="right">Reçu</TD>';
+		  print '<td>Facture</td><td align="center">'.$langs->trans("Date").'</td>';
+		  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';	      
+		  print '<td align="right">Reçu</td>';
 		  print '<td align="right">Reste à payer</td>';
-		  print '<td align="center">Montant</td>';
-		  print "</TR>\n";
+		  print '<td align="center">'.$langs->trans("Amount").'</td>';
+		  print "</tr>\n";
 	      
 		  $var=True;
 		  $total=0;
@@ -263,7 +269,7 @@ if ($_GET["action"] == 'create')
 		      print "<tr $bc[$var]>";
 		  
 		      print '<td><a href="facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
-		      print "</a></TD>\n";
+		      print "</a></td>\n";
 		      
 		      if ($objp->df > 0 )
 			{
@@ -272,10 +278,10 @@ if ($_GET["action"] == 'create')
 			}
 		      else
 			{
-			  print "<td align=\"center\"><b>!!!</b></TD>\n";
+			  print "<td align=\"center\"><b>!!!</b></td>\n";
 			}
 		      
-		      print '<td align="right">'.price($objp->total_ttc)."</TD>";
+		      print '<td align="right">'.price($objp->total_ttc)."</td>";
 		      print '<td align="right">'.price($objp->am)."</td>";
 		      print '<td align="right">'.price($objp->total_ttc - $objp->am)."</td>";
 		      
@@ -313,7 +319,7 @@ if ($_GET["action"] == 'create')
 	    }
 	  else
 	    {
-	      print $sql ."<br>".$db->error();
+	      dolibarr_print_error($db);
 	    }
 	  /*
 	   *
@@ -331,7 +337,11 @@ if ($_GET["action"] == 'create')
     }
 } 
 
-if ($action == '')
+
+/**
+ *  \brief      Affichage de la liste des paiement
+ */
+if (! $_GET["action"])
 {
   
   if ($page == -1)
@@ -370,10 +380,10 @@ if ($action == '')
 
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
-      print "<td>Facture</td>";
-      print "<td>Date</td>";
-      print_liste_field_titre($langs->trans("Type"),"paiement.php","c.libelle","","");
-      print_liste_field_titre($langs->trans("Amount"),"paiement.php","c.libelle","","",'align="right"');
+      print_liste_field_titre($langs->trans("Bill"),"paiement.php","facnumber","","","",$sortfield);
+      print_liste_field_titre($langs->trans("Date"),"paiement.php","dp","","","",$sortfield);
+      print_liste_field_titre($langs->trans("Type"),"paiement.php","libelle","","","",$sortfield);
+      print_liste_field_titre($langs->trans("Amount"),"paiement.php","fa_amount","","",'align="right"',$sortfield);
       print "<td>&nbsp;</td>";
       print "</tr>\n";
       
