@@ -22,6 +22,18 @@
  * $Source$
  */
 
+/*!
+	    \file       htdocs/account.class.php
+        \ingroup    bank
+		\brief      Fichier de la classe des comptes bancaires
+		\version    $Revision$
+*/
+
+
+/*! \class Account
+		\brief      Classe permettant la gestion des comptes bancaires
+*/
+
 class Account
 {
   var $rowid;
