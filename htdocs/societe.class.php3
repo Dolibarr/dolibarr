@@ -92,7 +92,7 @@ class Societe {
 
     $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc,";
 
-    $sql .= " s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren";
+    $sql .= " s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
 
     $sql .= " FROM societe as s";
     $sql .= " WHERE s.idp = ".$this->id;
@@ -114,6 +114,10 @@ class Societe {
 	$this->ville = $obj->ville;
 
 	$this->siren = $obj->siren;
+
+	$this->client = $obj->client;
+	$this->fournisseur = $obj->fournisseur;
+
 	$this->note = $obj->note;
 
       }

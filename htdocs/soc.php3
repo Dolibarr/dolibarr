@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 
@@ -135,11 +135,12 @@ if ($action == 'create') {
   print '<tr><td colspan="2"><input type="submit" value="Mettre a jour"></td></tr>';
   print '</table>';
   print '</form>';
+
 } else {
 
   $soc = new Societe($db);
   $soc->id = $socid;
-  $soc->fetch();
+  $soc->fetch($socid);
   print "[<a href=\"soc.php3?socid=$socid&action=edit\">Editer</a>]";
   print '<table border="1" cellpadding="3" cellspacing="0">';
   print '<tr><td>Nom</td><td>'.$soc->nom.'</td></tr>';
@@ -152,13 +153,9 @@ if ($action == 'create') {
 
   print '<tr><td>Siren</td><td>'.$soc->siren.'</td></tr>';
 
-  print '<tr><td>Type</td><td><select name="type">';
-  print '</select>';
+  print '<tr><td>Client</td><td>'.$soc->client.'</td></tr>';
+  print '<tr><td>Fournisseur</td><td>'.$soc->fournisseur.'</td></tr>';
 
-  print '<tr><td>Effectif</td><td><select name="effectif">';
-  print '</select>';
-
-  print '</td></tr>';
 
   print '</table>';
 
