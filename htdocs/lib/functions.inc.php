@@ -257,44 +257,39 @@ function dolibarr_print_object_info($object)
 
 /*!
   \brief    Formatage du telephone
-  \param	  phone			numéro de telephone à formater
+  \param	phone			numéro de telephone à formater
   \return   phone			numéro de téléphone formaté
   \remarks  ne tient pas en compte le format belge 02/211 34 83
-	\remarks  formattage automatique des numero non formates
-	\remarks  ajouté la prise en charge les numéros de 7, 9, 11 et 12 chiffres	
+  \remarks  formattage automatique des numero non formates
+  \remarks  ajouté la prise en charge les numéros de 7, 9, 11 et 12 chiffres	
 */
 
 function dolibarr_print_phone($phone)
 {
-     if (strstr($phone, ' ')) return $phone;
-     if (strlen(trim($phone)) == 10)
-     {
-       return substr($phone,0,2)." ".substr($phone,2,2)." 
-".substr($phone,4,2)." ".substr($phone,6,2)." ".substr($phone,8,2);
-     }
-     elseif (strlen(trim($phone)) == 7)
-     {
-       return substr($phone,0,3)." ".substr($phone,3,2)." ".substr($phone,5,2);
-     }
-     elseif (strlen(trim($phone)) == 9)
-     {
-       return substr($phone,0,2)." ".substr($phone,2,3)." 
-".substr($phone,5,2)." ".substr($phone,7,2);
-     }
-     elseif (strlen(trim($phone)) == 11)
-     {
-       return substr($phone,0,3)." ".substr($phone,3,2)." 
-".substr($phone,5,2)." ".substr($phone,7,2)." ".substr($phone,9,2);
-     }
-     elseif (strlen(trim($phone)) == 12)
-     {
-       return substr($phone,0,4)." ".substr($phone,4,2)." 
-".substr($phone,6,2)." ".substr($phone,8,2)." ".substr($phone,10,2);
-     }
-     else
-     {
-       return $phone;
-     }
+    if (strstr($phone, ' ')) { return $phone; }
+    if (strlen(trim($phone)) == 10) {
+    return substr($phone,0,2)." ".substr($phone,2,2)." ".substr($phone,4,2)." ".substr($phone,6,2)." ".substr($phone,8,2);
+    }
+    elseif (strlen(trim($phone)) == 7)
+    {
+    return substr($phone,0,3)." ".substr($phone,3,2)." ".substr($phone,5,2);
+    }
+    elseif (strlen(trim($phone)) == 9)
+    {
+    return substr($phone,0,2)." ".substr($phone,2,3)." ".substr($phone,5,2)." ".substr($phone,7,2);
+    }
+    elseif (strlen(trim($phone)) == 11)
+    {
+    return substr($phone,0,3)." ".substr($phone,3,2)." ".substr($phone,5,2)." ".substr($phone,7,2)." ".substr($phone,9,2);
+    }
+    elseif (strlen(trim($phone)) == 12)
+    {
+    return substr($phone,0,4)." ".substr($phone,4,2)." ".substr($phone,6,2)." ".substr($phone,8,2)." ".substr($phone,10,2);
+    }
+    else
+    {
+    return $phone;
+    }
 }
 
 
