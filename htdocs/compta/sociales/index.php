@@ -92,14 +92,15 @@ print "<br>\n";
 //    print "<br>\n";
 //}
 
-print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 print "<tr class=\"liste_titre\">";
 print '<td>';
 print_liste_field_titre("Num",$PHP_SELF,"id");
+print '</td>';
+print '<td>';
+print_liste_field_titre("Echéance",$PHP_SELF,"de");
 print '</td><td>';
-print_liste_field_titre("Echéance/Date",$PHP_SELF,"de");
-print '</td><td>';
-print_liste_field_titre("Période",$PHP_SELF,"periode");
+print '&nbsp;';
 print '</td><td align="left">';
 print_liste_field_titre("Type",$PHP_SELF,"type");
 print '</td><td align="left">';
@@ -150,7 +151,7 @@ if ( $db->query($sql) )
       $var = !$var;
       print "<tr $bc[$var]>";
       print '<td width="80"><a href="charges.php?id='.$obj->id.'">'.$obj->id.'</a></td>';
-      print '<td>'.strftime("%d %b %y",$obj->de).'</td>';
+      print '<td width="110">'.dolibarr_print_date($obj->de).'</td>';
       print '<td>';
       if ($obj->periode) {
       	print '<a href="index.php?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a>';
@@ -159,11 +160,11 @@ if ( $db->query($sql) )
       }
       print '</td>';
       print '<td>'.$obj->type_lib.'</td><td>'.$obj->libelle.'</td>';
-      print '<td align="right">'.price($obj->amount).'</td>';
+      print '<td align="right" width="100">'.price($obj->amount).'</td>';
       
       if ($obj->paye)
 	{
-	  print '<td align="center" class="normal">'.strftime("%d/%m/%y",$obj->dp).'</td>';
+	  print '<td align="center" class="normal" width="100"><a class="payee" href="'.$PHP_SELF.'?filtre=paye:1">Oui</a></td>';
 	  print '<td>&nbsp;</td>';
 	} else {
 	  print '<td align="center"><a class="impayee" href="'.$PHP_SELF.'?filtre=paye:0">Non</a></td>';
@@ -208,7 +209,7 @@ if ( $db->query($sql) )
 }
 print '</select>';
 print '</td>';
-print '<td align="left"><input type="text" size="20" name="libelle"></td>';
+print '<td align="left"><input type="text" size="24" name="libelle"></td>';
 print '<td align="right"><input type="text" size="6" name="amount"></td>';
 print '<td>&nbsp;</td>';
 

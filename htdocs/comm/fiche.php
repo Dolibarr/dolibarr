@@ -371,9 +371,14 @@ if ($socid > 0)
 	print '<a class="tabAction" href="../fichinter/fiche.php?socidp='.$objsoc->id.'&amp;action=create">Intervention</a>';
       }
 
+//    if ($user->societe_id == 0)
+//    {
+//        if ($user->rights->facture->creer) {
+//            print "<a class=\"tabAction\" href=\"facture.php?action=create&socidp=$objsoc->idp\">".translate("Créer Facture")."</a>";
+//        }
+//    }
+
     print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a>';
-    
-    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$socid.'">Notifications</a>';
     
     print '</div>';
     print '<br>';

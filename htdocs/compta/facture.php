@@ -1017,7 +1017,7 @@ else
         print '</tr>';
 	    print "</form>";
 	  }
-	print "</table>\n";
+	print "</table><br>\n";
 
 	/*
 	 * Fin Ajout ligne

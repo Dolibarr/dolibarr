@@ -319,7 +319,6 @@ else
 
   print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a>';
   
-  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$socid.'">Notifications</a>';
   print '</div>';
 /*
  *

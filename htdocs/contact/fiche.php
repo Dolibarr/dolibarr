@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,25 +26,25 @@ require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
 $error = array();
 
-if ($HTTP_POST_VARS["action"] == 'add') 
+if ($_POST["action"] == 'add') 
 {
   $contact = new Contact($db);
 
-  $contact->socid        = $HTTP_POST_VARS["socid"];
+  $contact->socid        = $_POST["socid"];
 
-  $contact->name         = $HTTP_POST_VARS["name"];
-  $contact->firstname    = $HTTP_POST_VARS["firstname"];
-  $contact->poste        = $HTTP_POST_VARS["poste"];
-  $contact->address      = $HTTP_POST_VARS["adresse"];
-  $contact->cp           = $HTTP_POST_VARS["cp"];
-  $contact->ville        = $HTTP_POST_VARS["ville"];
-  $contact->fax          = $HTTP_POST_VARS["fax"];
-  $contact->note         = $HTTP_POST_VARS["note"];
-  $contact->email        = $HTTP_POST_VARS["email"];
-  $contact->phone_pro    = $HTTP_POST_VARS["phone_pro"];
-  $contact->phone_perso  = $HTTP_POST_VARS["phone_perso"];
-  $contact->phone_mobile = $HTTP_POST_VARS["phone_mobile"];  
-  $contact->jabberid     = $HTTP_POST_VARS["jabberid"];
+  $contact->name         = $_POST["name"];
+  $contact->firstname    = $_POST["firstname"];
+  $contact->poste        = $_POST["poste"];
+  $contact->address      = $_POST["adresse"];
+  $contact->cp           = $_POST["cp"];
+  $contact->ville        = $_POST["ville"];
+  $contact->fax          = $_POST["fax"];
+  $contact->note         = $_POST["note"];
+  $contact->email        = $_POST["email"];
+  $contact->phone_pro    = $_POST["phone_pro"];
+  $contact->phone_perso  = $_POST["phone_perso"];
+  $contact->phone_mobile = $_POST["phone_mobile"];  
+  $contact->jabberid     = $_POST["jabberid"];
 
   $_GET["id"] =  $contact->create($user);
 }
@@ -52,8 +53,8 @@ if ($_GET["action"] == 'delete')
 {
   $contact = new Contact($db);
 
-  $contact->old_name      = $HTTP_POST_VARS["old_name"];
-  $contact->old_firstname = $HTTP_POST_VARS["old_firstname"];
+  $contact->old_name      = $_POST["old_name"];
+  $contact->old_firstname = $_POST["old_firstname"];
 
   $result = $contact->delete($_GET["id"]);
 
@@ -65,27 +66,27 @@ if ($action == 'update')
 {
   $contact = new Contact($db);
 
-  $contact->old_name      = $HTTP_POST_VARS["old_name"];
-  $contact->old_firstname = $HTTP_POST_VARS["old_firstname"];
+  $contact->old_name      = $_POST["old_name"];
+  $contact->old_firstname = $_POST["old_firstname"];
 
-  $contact->socid         = $HTTP_POST_VARS["socid"];
-  $contact->name          = $HTTP_POST_VARS["name"];
-  $contact->firstname     = $HTTP_POST_VARS["firstname"];
-  $contact->poste         = $HTTP_POST_VARS["poste"];
+  $contact->socid         = $_POST["socid"];
+  $contact->name          = $_POST["name"];
+  $contact->firstname     = $_POST["firstname"];
+  $contact->poste         = $_POST["poste"];
 
-  $contact->address       = $HTTP_POST_VARS["adresse"];
-  $contact->cp            = $HTTP_POST_VARS["cp"];
-  $contact->ville         = $HTTP_POST_VARS["ville"];
+  $contact->address       = $_POST["adresse"];
+  $contact->cp            = $_POST["cp"];
+  $contact->ville         = $_POST["ville"];
 
-  $contact->phone_pro     = $HTTP_POST_VARS["phone_pro"];
-  $contact->phone_perso   = $HTTP_POST_VARS["phone_perso"];
-  $contact->phone_mobile  = $HTTP_POST_VARS["phone_mobile"];
-  $contact->fax           = $HTTP_POST_VARS["fax"];
-  $contact->note          = $HTTP_POST_VARS["note"];
-  $contact->email         = $HTTP_POST_VARS["email"];
-  $contact->jabberid      = $HTTP_POST_VARS["jabberid"];
+  $contact->phone_pro     = $_POST["phone_pro"];
+  $contact->phone_perso   = $_POST["phone_perso"];
+  $contact->phone_mobile  = $_POST["phone_mobile"];
+  $contact->fax           = $_POST["fax"];
+  $contact->note          = $_POST["note"];
+  $contact->email         = $_POST["email"];
+  $contact->jabberid      = $_POST["jabberid"];
 
-  $result = $contact->update($HTTP_POST_VARS["contactid"], $user);
+  $result = $contact->update($_POST["contactid"], $user);
   
   $error = $contact->error;
 }
@@ -107,11 +108,21 @@ if ($action == 'create_user')
 
 llxHeader();
 
+/*
+ * Onglets
+ */
 print '<div class="tabs">';
-print '<a href="fiche.php?id='.$_GET["id"].'" id="active" class="tab">Général</a>';
-print '<a href="perso.php?id='.$_GET["id"].'" class="tab">Informations personnelles</a>';
-print '<a class="tab" href="vcard.php?id='.$_GET["id"].'">VCard</a>';
-print '<a class="tab" href="info.php?id='.$_GET["id"].'">Info</a>';
+if ($_GET["id"] > 0)
+{
+    # Si edition contact deja existant
+    print '<a href="fiche.php?id='.$_GET["id"].'" id="active" class="tab">Général</a>';
+    print '<a href="perso.php?id='.$_GET["id"].'" class="tab">Informations personnelles</a>';
+    print '<a class="tab" href="vcard.php?id='.$_GET["id"].'">VCard</a>';
+    print '<a class="tab" href="info.php?id='.$_GET["id"].'">Info</a>';
+}
+else {
+    print '<a href="'.$PHP_SELF.'?socid='.$_GET["socid"].'&amp;action=create" id="active" class="tab">Général</a>';
+}
 print '</div>';
 
 if ($mesg)
@@ -135,7 +146,7 @@ if ($_GET["action"] == 'create')
 
   print "<form method=\"post\" action=\"fiche.php\">";
   print '<input type="hidden" name="action" value="add">';
-  print '<table class="border" border="0" width="100%">';
+  print '<table class="border" width="100%">';
 
   if ($_GET["socid"] > 0)
     {
@@ -146,21 +157,24 @@ if ($_GET["action"] == 'create')
   print '<tr><td>Nom</td><td><input name="name" type="text" size="20" maxlength="80"></td>';
   print '<td>Prenom</td><td><input name="firstname" type="text" size="15" maxlength="80"></td>';
 
-  print '<td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80"></td></tr>';
+  print '<td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td></tr>';
 
-  print '<tr><td>Poste</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80"></td>';
+  print '<tr><td>Poste</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td>';
 
-  print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80"></td></tr>';
+  print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
-  print '<tr><td>Adresse</td><td colspan="3"><input name="adresse" type="text" size="18" maxlength="80"></td>';
+  print '<tr><td>Adresse</td><td colspan="3"><input name="adresse" type="text" size="50" maxlength="80"></td>';
 
-  print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80"></td></tr>';
+  print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
-  print '<tr><td>CP Ville</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="ville" type="text" size="20" maxlength="80"></td>';
+  print '<tr><td>CP Ville</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
 
   print '<td>Fax</td><td><input name="fax" type="text" size="18" maxlength="80"></td></tr>';
-  print '<tr><td>Email</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80"></td></tr>';
-  print '<tr><td>Note</td><td colspan="5"><textarea name="note"></textarea></td></tr>';
+  print '<tr><td>Email</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
+
+  print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
+
+  print '<tr><td>Note</td><td colspan="5"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
   print '<tr><td align="center" colspan="6"><input type="submit" value="Ajouter"></td></tr>';
   print "</table>";
   print "</form>";
@@ -174,15 +188,15 @@ elseif ($_GET["action"] == 'edit')
 
   print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
   print '<input type="hidden" name="action" value="update">';
-  print '<input type="hidden" name="socid" value="'.$contact->socid.'">';
   print '<input type="hidden" name="contactid" value="'.$contact->id.'">';
   print '<input type="hidden" name="old_name" value="'.$contact->name.'">';
   print '<input type="hidden" name="old_firstname" value="'.$contact->firstname.'">';
-  print '<table class="border" cellpadding="3" celspacing="0" border="0" width="100%">';
+  print '<table class="border" width="100%">';
 
   if ($_GET["socid"] > 0)
     {
       print '<tr><td>Société</td><td colspan="5">'.$objsoc->nom.'</td>';
+      print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
     }
 
   print '<tr><td>Nom</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
@@ -194,7 +208,7 @@ elseif ($_GET["action"] == 'edit')
 
   print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
-  print '<tr><td>Adresse</td><td colspan="3"><input name="adresse" type="text" size="18" maxlength="80"></td>';
+  print '<tr><td>Adresse</td><td colspan="3"><input name="adresse" type="text" size="50" maxlength="80"></td>';
 
   print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
@@ -205,11 +219,9 @@ elseif ($_GET["action"] == 'edit')
 
   print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
 
-  print '<tr><td>Note</td><td colspan="5"><textarea name="note"></textarea></td></tr>';
+  print '<tr><td>Note</td><td colspan="5"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
+  print '<tr><td align="center" colspan="6"><input type="submit" value="Enregistrer"></td></tr>';
   print "</table>";
-
-  print '<div class="FicheSubmit"><input type="submit" value="Enregistrer">';
-  
 
   print "</form>";
 }

@@ -207,16 +207,15 @@ if ($socid > 0)
     /*
      *
      */
-    print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
-
+    print "<table width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">\n";
+    print '<tr><td valign="top" width="50%">';
+ 
     /*
     *
     *
     */
 
-    print '<table width="100%" border="0"><tr>';
-    print '<tr><td valign="top">';
-    print '<table class="border" cellspacing="0" width="100%">';
+    print '<table class="border" cellpadding="2" cellspacing="0" width="100%">';
     print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$objsoc->nom.'</td></tr>';
     print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($objsoc->adresse)."<br>$objsoc->cp $objsoc->ville</td></tr>";
     print '<tr><td>Tel</td><td>'.$objsoc->tel.'&nbsp;</td><td>Fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
@@ -273,21 +272,21 @@ if ($socid > 0)
             {
                 $objp = $db->fetch_object( $i);
                 $var=!$var;
-                print "<TR $bc[$var]>";
-                print "<TD><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+                print "<tr $bc[$var]>";
+                print "<td><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
                 if ($objp->df > 0 )
                 {
-                    print "<TD align=\"right\">".strftime("%d %B %Y",$objp->df)."</TD>\n";
+                    print "<td align=\"right\">".dolibarr_print_date($objp->df)."</td>\n";
                 }
                 else
                 {
-                    print "<TD align=\"right\"><b>!!!</b></TD>\n";
+                    print "<td align=\"right\"><b>!!!</b></td>\n";
                 }
-                print "<TD align=\"right\">".number_format($objp->amount, 2, ',', ' ')."</TD>\n";
+                print "<td align=\"right\">".number_format($objp->amount, 2, ',', ' ')."</td>\n";
 
                 $fac = new Facture($db);
-                print "<TD align=\"center\">".($fac->LibStatut($objp->paye,$objp->statut))."</TD>\n";
-                print "</TR>\n";
+                print "<td align=\"center\">".($fac->LibStatut($objp->paye,$objp->statut))."</td>\n";
+                print "</tr>\n";
                 $i++;
             }
             $db->free();
@@ -345,17 +344,16 @@ if ($socid > 0)
 
     if ($user->societe_id == 0)
     {
-        if ($user->rights->facture->creer)
-        print "<a class=\"tabAction\" href=\"facture.php?action=create&socidp=$objsoc->idp\">".translate("Facturer")."</a>";
+        if ($user->rights->facture->creer) {
+            print "<a class=\"tabAction\" href=\"facture.php?action=create&socidp=$objsoc->idp\">".translate("Créer Facture")."</a>";
+        }
         print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$objsoc->idp&action=create\">Créer Déplacement</a>";
     }
 
     print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a>';
 
-    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$socid.'">Notifications</a>';
-
     print '</div>';
-    print '<br>';
+    print "<br>\n";
 
     /*
      *
@@ -381,7 +379,7 @@ if ($socid > 0)
          * Liste des contacts
          *
          */
-        print '<table width="100%" cellspacing="1" border="0" cellpadding="2">';
+        print '<table class="noborder" width="100%" cellspacing="1" cellpadding="2">';
 
         print '<tr class="liste_titre"><td><b>Pr&eacute;nom Nom</b></td>';
         print '<td><b>Poste</b></td><td><b>T&eacute;l</b></td>';
@@ -402,18 +400,17 @@ if ($socid > 0)
             print '<td>';
             //print '<a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">';
             //print '<img border="0" src="/theme/'.$conf->theme.'/img/filenew.png"></a>&nbsp;';
-            print '<a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;</td>';
-
+            print '<a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>';
             if ($obj->note)
             {
-                print "<br><b>".nl2br($obj->note);
+                print "<br>".nl2br($obj->note);
             }
             print "</td>";
             print "<td>$obj->poste&nbsp;</td>";
             print '<td><a href="../comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
             print '<td><a href="../comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
             print '<td><a href="../comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
-            print "<td align=\"center\"><a href=\"../comm/people.php?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">".img_edit()."</a></td>";
+            print "<td align=\"center\"><a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">".img_edit()."</a></td>";
             print "</tr>\n";
             $i++;
             $tag = !$tag;

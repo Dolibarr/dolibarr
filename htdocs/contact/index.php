@@ -47,14 +47,11 @@ if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-if ($_GET["view"] == 'phone')
-{
-  $titre = "Liste des contacts (Vue téléphone)";
-}
-else
-{
-  $titre = "Liste des contacts";
-}
+if ($_GET["view"] == 'phone') { $text="(Vue Téléphones)"; }
+if ($_GET["view"] == 'mail') { $text="(Vue EMail)"; }
+if ($_GET["view"] == 'recent') { $text="(Récents)"; }
+
+$titre = "Liste des contacts $text";
 
 /*
  *
