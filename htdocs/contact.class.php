@@ -136,6 +136,10 @@ class Contact
 		      $soc = new Societe($this->db);
 		      $soc->fetch($this->socid);
 		      $info["o"] = $soc->nom;
+		      if ($soc->ville)
+			{
+			  $info["l"] = $soc->ville;
+			}
 		    }
 		  
                   $info["objectclass"][0] = "organizationalPerson";
