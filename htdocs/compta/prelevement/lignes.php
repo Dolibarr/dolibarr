@@ -30,30 +30,6 @@ require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
  */
 if ($user->societe_id > 0) accessforbidden();
 
-if ($_POST["action"] == 'confirm_rejet')
-{
-  if ( $_POST["confirm"] == 'yes')
-    {
-      if ($_POST["motif"] > 0)
-	{
-	  $rej = new RejetPrelevement($db, $user);
-	  
-	  $rej->create($user, $_GET["id"], $_GET["socid"], $_GET["previd"], $_POST["motif"]);
-	  
-	  Header("Location: lignes.php?id=".$_GET["id"]);
-	}
-      else
-	{
-	  Header("Location: lignes.php?id=".$_GET["id"]."&action=rejet&socid=".$_GET["socid"]."&previd=".$_GET["previd"]);
-	}
-    }
-  else
-    {
-      Header("Location: lignes.php?id=".$_GET["id"]);
-    }
-}
-
-
 llxHeader('','Bon de prélèvement');
 
 $h = 0;
@@ -100,55 +76,6 @@ if ($_GET["id"])
     {
       print "Erreur";
     }
-}
-
-if ($_GET["action"] == 'rejet')
-{
-  $html = new Form($db);
-
-  $soc = new Societe($db);
-  $soc->fetch($_GET["socid"]);
-
-  //$html->form_confirm("factures.php"."?id=".$_GET["id"]."&amp;socid=".$_GET["socid"]."&amp;previd=".$_GET["previd"],"Rejet de prélèvement","Etes-vous sûr de vouloir saisir un rejet de prélèvement pour la société ".$soc->nom." ?","confirm_rejet");
-
-  $rej = new RejetPrelevement($db, $user);
-
-  print '<form method="post" action="lignes.php?id='.$_GET["id"]."&amp;socid=".$_GET["socid"]."&amp;previd=".$_GET["previd"].'">';
-  print '<input type="hidden" name="action" value="confirm_rejet">';
-  print '<table class="border" width="100%">';
-  print '<tr><td colspan="3">Rejet de prélèvement</td></tr>';
-  print '<tr><td class="valid">Etes-vous sûr de vouloir saisir un rejet de prélèvement pour la société '.$soc->nom.' ?</td>';
-  print '<td colspan="2" class="valid">';
-  print '<select name="confirm">';
-  print '<option value="yes">oui</option>';
-  print '<option value="no" selected>non</option>';
-  print '</select>';
-  print '</td></tr>';
-
-  print '<tr><td class="valid">Motif du rejet</td>';
-  print '<td class="valid">';
-  print '<select name="motif">';
-  print '<option value="0">(Motif du Rejet)</option>';
-
-  foreach($rej->motifs as $key => $value)
-    {
-      print '<option value="'.$key.'">'.$value.'</option>';
-    }
-  print '</select>';
-  print '</td>';
-  print '<td class="valid" align="center">';
-  print '<input type="submit" value="Confirmer"></td></tr>';
-
-  print '</table></form>';
-
-
-
-
-  print '<table class="border" width="100%">';
-  
-  print '<tr><td width="20%">Référence</td><td>'.$bon->ref.'</td></tr>';
-
-  print '</table><br />';
 }
 
 $page = $_GET["page"];
