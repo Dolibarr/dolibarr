@@ -75,7 +75,7 @@ if ($id)
       print '<td valign="top" rowspan="2">';
       print "Propositions commerciales : ".$product->count_propale();
       print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
-      print "<br>Factures : ".$product->count_facture();
+      print '<br><a href="facture.php?id='.$id.'">Factures</a> : '.$product->count_facture();
       print '</td></tr>';
       print '<tr><td>Prix</td><TD>'.price($product->price).'</td></tr>';
       print "</table>";
