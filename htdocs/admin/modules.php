@@ -59,7 +59,7 @@ if ($_GET["action"] == 'reset' && $user->admin)
   if ($modName)
     {
       $file = $modName . ".class.php";
-      include("../includes/modules/$file");
+      include_once("../includes/modules/$file");
       $objMod = new $modName($db);
       $objMod->remove();
     }
@@ -103,7 +103,7 @@ while (($file = readdir($handle))!==false)
 
       if ($modName)
 	{
-	  include("../includes/modules/$file");
+	  include_once("../includes/modules/$file");
 	  $objMod = new $modName($db);
 
 	  if ($objMod->numero > 0)

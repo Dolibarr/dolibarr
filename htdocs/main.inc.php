@@ -22,7 +22,7 @@
  */
 define('DOL_VERSION','1.2.0-DEV');
 
-if (! include ("conf/conf.php"))
+if (! include_once("conf/conf.php"))
 {
   print "Votre système n'est pas configuré, rendez-vous à l'url <a href=\"install.php\">install.php</a>";
   exit ;  
