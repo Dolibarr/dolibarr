@@ -779,3 +779,27 @@ create table llx_commandedet
   subprice       real,          
   price          real           
 )type=innodb;
+
+
+
+
+create table llx_societe_rib
+(
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_soc         integer NOT NULL,
+  datec          datetime,
+  tms            timestamp,
+  label          varchar(30),
+  bank           varchar(255),
+  code_banque    varchar(7),
+  code_guichet   varchar(6),
+  number         varchar(255),
+  cle_rib        varchar(5),
+  bic            varchar(10),
+  iban_prefix    varchar(5),
+  domiciliation  varchar(255),
+  proprio        varchar(60),
+  adresse_proprio varchar(255)
+
+
+)type=innodb;
