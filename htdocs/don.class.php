@@ -315,6 +315,33 @@ class Don
       }    
   }
   /*
+   * Classé comme payé, le don a été recu
+   *
+   */
+  Function set_commentaire($rowid, $commentaire='')
+  {
+    $sql = "UPDATE llx_don SET note = '$commentaire'";
+
+    $sql .=  " WHERE rowid = $rowid ;";
+
+    if ( $this->db->query( $sql) )
+      {
+	if ( $this->db->affected_rows() )
+	  {
+	    return 1;
+	  }
+	else
+	  {
+	    return 0;
+	  }
+      }
+    else
+      {
+	print "Err : ".$this->db->error();
+	return 0;
+      }    
+  }
+  /*
    * Classé comme encaissé
    *
    */
