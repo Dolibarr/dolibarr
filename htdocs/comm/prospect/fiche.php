@@ -364,7 +364,12 @@ if ($socid > 0)
        *      Listes des actions effectuees
        *
        */
-
+	      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+	      $sql .= " WHERE a.fk_soc = $societe->id ";
+	      $sql .= " AND u.rowid = a.fk_user_author";
+	      $sql .= " AND c.id=a.fk_action AND a.percent = 100";
+	      $sql .= " ORDER BY a.datea DESC, a.id DESC";
       if ( $db->query($sql) )
 	{
 
@@ -379,12 +384,7 @@ if ($socid > 0)
 	      print '<tr>';
 	      print '<td valign="top">';
 	      
-	      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-	      $sql .= " WHERE a.fk_soc = $societe->id ";
-	      $sql .= " AND u.rowid = a.fk_user_author";
-	      $sql .= " AND c.id=a.fk_action AND a.percent = 100";
-	      $sql .= " ORDER BY a.datea DESC, a.id DESC";
+
 	      
 	      print '<table width="100%" cellspacing="0" border="0" cellpadding="2">';
 	      
