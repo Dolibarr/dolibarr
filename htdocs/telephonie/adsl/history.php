@@ -56,35 +56,40 @@ if ($_GET["id"])
 
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-      print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td></tr>';
+      print '<tr><td width="20%">Numéro de support</td><td colspan="2">'.dolibarr_print_phone($ligne->numero).'</td></tr>';
 
 	      	     
       $client = new Societe($db, $ligne->client_id);
       $client->fetch($ligne->client_id);
 
-      print '<tr><td width="20%">Client</td><td>'.$client->nom.'</td></tr>';
+      print '<tr><td width="20%">Client</td><td colspan="2">'.$client->nom.'</td></tr>';
 
-      print '<tr><td width="20%">Statut</td><td>';
+      print '<tr><td width="20%">Statut</td><td colspan="2">';
       print '<img src="./statut'.$ligne->statut.'.png">&nbsp;';
       print $ligne->statuts[$ligne->statut];
       print '</td></tr>';
 
-      /* Contacts */
+      print '<tr class="liste_titre"><td colspan="3">Historique</td></tr>';
+
+      /* historique */
 	     
       $sql = "SELECT ".$db->pdate("l.tms").", l.statut, l.fk_user, u.name, u.firstname, l.comment";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_adsl_ligne_statut as l";
       $sql .= ",".MAIN_DB_PREFIX."user as u";
       $sql .= " WHERE u.rowid = l.fk_user AND l.fk_ligne = ".$ligne->id;
       $sql .= " ORDER BY l.tms DESC ";
-      if ( $db->query( $sql) )
+
+      $resql = $db->query($sql);
+
+      if ( $resql )
 	{
-	  $num = $db->num_rows();
+	  $num = $db->num_rows($resql);
 	  if ( $num > 0 )
 	    {
 	      $i = 0;
 	      while ($i < $num)
 		{
-		  $row = $db->fetch_row($i);
+		  $row = $db->fetch_row($resql);
 
 		  print '<tr><td valign="top" width="20%">'.strftime("%a %d %B %Y %H:%M:%S",$row[0]).'</td>';
 
@@ -95,11 +100,11 @@ if ($_GET["id"])
 		      print '<br />'.$row[5];
 		    }
 
-		  print '</td><td colspan="2">'.$row[4] . " " . $row[3] . "</td></tr>";
+		  print '</td><td>'.$row[4] . " " . $row[3] . "</td></tr>";
 		  $i++;
 		}
 	    }
-	  $db->free();
+	  $db->free($resql);
 	}
       else
 	{
@@ -122,14 +127,6 @@ else
 {
   print "Error";
 }
-
-
-/* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
-/* ************************************************************************** */
-
 
 $db->close();
 
