@@ -39,7 +39,7 @@ textarea  { font: helvetica, verdana, arial, sans-serif; }
 	font-family: arial,verdana,helvetica, sans-serif;
 	font-size: 100%;
 	border: 1px solid #ccd7e0;
-	background-image : url(/images/button_bg.gif);
+	background-image : url(/theme/freelug/img/button_bg.gif);
 	background-position : bottom;
 }
 
@@ -103,6 +103,11 @@ div.fiche
 /*
  *   Menu superieur et 1ere ligne tableau
  */
+
+table.topbarre
+{ 
+	cell-spacing: 0;
+}
 
 .menu 
 { 
@@ -497,13 +502,33 @@ div.titre {
  *
  */
 tr.liste_titre { 
-                 color: #FFFFFF;
-                 background: #777799; 
-                 font-family: Helvetica, Verdana;
-                 font-size: 1.0em;
-                 font-weight: bold;
-                 white-space: nowrap;
-                 }
+color: #FFFFFF;
+background: #777799; 
+font: helvetica, verdana, arial, sans-serif;
+font-weight: bold;
+border-left: 1px solid #FFFFFF;
+border-right: 1px solid #FFFFFF;
+border-top: 1px solid #FFFFFF;
+border-bottom: 1px solid #FFFFFF;
+white-space: nowrap;
+font-size: 1.0em;
+}
+
+th { 
+color: #FFFFFF;
+background: #777799; 
+font: helvetica, verdana, arial, sans-serif;
+font-weight: bold;
+border-left: 1px solid #FFFFFF;
+border-right: 1px solid #FFFFFF;
+border-top: 1px solid #FFFFFF;
+border-bottom: 1px solid #FFFFFF;
+white-space: nowrap;
+font-size: 1.0em;
+}
+
+
+
 
 tr.pair { 
           background: #dcdcd0;           
