@@ -139,6 +139,8 @@ drop table if exists llx_propal_model_pdf;
 
 drop table if exists llx_propaldet;
 
+drop table if exists llx_rights_def;
+
 drop table if exists llx_service;
 
 drop table if exists llx_societe;
@@ -160,6 +162,8 @@ drop table if exists llx_transaction_bplc ;
 drop table if exists llx_tva;
 
 drop table if exists llx_user;
+
+drop table if exists llx_user_rights;
 
 drop table if exists llx_ventes;
 
