@@ -1,0 +1,31 @@
+README (English) for build tools
+################################
+
+All sub-directories of "build" directory contains files required to build
+automatically Dolibarr packages.
+
+To build Dolibarr packages, launch the script
+> perl makepack-build.pl
+
+
+The build directory and all its contents is absolutely not require to make
+Dolibarr working. It is here only to build Dolibarr packages, and those
+generated packages will not contains this "build" directory.
+
+
+We can find in "build", folowwing sub-directories:
+
+* deb:
+To build Debian package.
+
+* rpm:
+To build Redhat or Mandrake package.
+
+* tgz:
+To build tgz package (containing Dolibarr files et setup documentation).
+
+* exe:
+To build exe package for Windows.
+
+* pad:
+To build a PAD file descriptor to promote Dolibarr new versions.

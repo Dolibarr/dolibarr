@@ -1,31 +1,34 @@
-README FR build
+README (French) for build tools
+################################
 
-Les sous répertoires du répertoire build contiennent tous les fichiers
+Les sous répertoires du répertoire "build" contiennent tous les fichiers
 requis pour packager Dolibarr de manière automatisé.
 
-Pour cela, il suffit de lancer le script
+Pour construire les packages Dolibarr, il suffit de lancer le script
 > perl makepack-build.pl
 
 
 Le répertoire build et tout ce qu'il contient n'est absolument pas requis
-pour faire fonctionner Dolibarr. Ils ne servent qu'à la génération du package,
-lequel package, une fois construit, n'inclut aucun d'eux.
+pour faire fonctionner Dolibarr. Ils ne servent qu'à la génération des
+packages, lequels packages, une fois construit, n'incluent par le répertoire
+"build".
 
-On trouve ainsi les sous-répertoires suivants:
 
-* debian:
-Permet de construire un package debian
+On trouve dans "build", les sous-répertoires suivants:
+
+* deb:
+Permet de construire un package Debian.
 
 * rpm:
-Permet de construire un package redhat ou mandrake
+Permet de construire un package Redhat ou Mandrake.
 
 * tgz:
 Permet de construire un package tgz (ne contenant que les fichiers
-et instructions d'installation manuelle)
+et instructions d'installation manuelle).
 
 * exe:
-Permet de construire un package exe pour windows
+Permet de construire un package exe pour Windows.
 
 * pad:
 Permet de construire un fichier descriptif PAD pour la promotion
-de nouvelles versions de Dolibarr
+de nouvelles versions de Dolibarr.
