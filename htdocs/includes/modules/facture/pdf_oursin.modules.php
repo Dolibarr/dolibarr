@@ -80,18 +80,18 @@ class pdf_oursin extends ModelePDFFactures
     \param	    facid	id de la facture à générer
     \return	    int     1=ok, 0=ko
     \remarks    Variables utilisées
+	\remarks    MAIN_INFO_SOCIETE_NOM
+    \remarks    MAIN_INFO_SIRET
+    \remarks    MAIN_INFO_SIREN
+    \remarks    MAIN_INFO_CAPITAL
+    \remarks    MAIN_INFO_TVAINTRA
     \remarks    FAC_PDF_LOGO
     \remarks    FACTURE_CODEPRODUITSERVICE
     \remarks    FACTURE_CHQ_NUMBER
     \remarks    FACTURE_RIB_NUMBER
     \remarks    FAC_PDF_INTITULE
-    \remarks    FAC_PDF_INTITULE2
     \remarks    FAC_PDF_TEL
     \remarks    FAC_PDF_ADRESSE
-    		\remarks    MAIN_INFO_SIRET
-    		\remarks    MAIN_INFO_SIREN
-    \remarks    MAIN_INFO_CAPITAL
-    \remarks    MAIN_INFO_TVAINTRA
   */
   function write_pdf_file($facid)
   {
