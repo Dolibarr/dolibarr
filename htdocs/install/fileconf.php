@@ -58,7 +58,7 @@ else
   if (!is_writable("../conf/conf.php"))
     {
       print '<div class="error">';
-      print "Le fichier <b>conf.php</b> n'est pas accessible en écriture, vérififiez les droits sur celui-ci, reportez-vous à la ".$docurl."<br>";
+      print "Le fichier <b>conf.php</b> n'est pas accessible en écriture, vérifiez les droits sur celui-ci, reportez-vous à la ".$docurl."<br>";
       
       print '</div>';
       $err++;
