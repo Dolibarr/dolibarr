@@ -30,6 +30,7 @@ $modules["MAIN_MODULE_SOCIETE"][0] = "Module societe";
 $modules["MAIN_MODULE_SOCIETE"][1] = "MAIN_MODULE_SOCIETE";
 $modules["MAIN_MODULE_SOCIETE"][2] = MAIN_MODULE_SOCIETE;
 $modules["MAIN_MODULE_SOCIETE"][3] = "Module société";
+$modules["MAIN_MODULE_SOCIETE"][4] = "modSociete";
 
 $modules["MAIN_MODULE_COMMERCIAL"][0] = "Module commercial";
 $modules["MAIN_MODULE_COMMERCIAL"][1] = "MAIN_MODULE_COMMERCIAL";
