@@ -38,8 +38,8 @@ function propals ($db, $year, $month) {
   $result = $db->query($sql);
   $num = $db->num_rows();
   $i = 0;
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR bgcolor=\"#e0e0e0\"><td colspan=\"3\"><b>Propal</b></td></tr>";
+  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<tr class=\"liste_titre\"><td colspan=\"5\"><b>Propal</b></td></tr>";
 
   $oldstatut = -1;
   $subtotal = 0;
@@ -55,28 +55,28 @@ function propals ($db, $year, $month) {
       }
       $subtotal = 0;
 
-      print "<TR bgcolor=\"#e0e0e0\">";
-      print "<TD>Societe</td>";
-      print "<TD>Réf</TD>";
-      print "<TD align=\"right\">Date</TD>";
-      print "<TD align=\"right\">Prix</TD>";
-      print "<TD align=\"center\">Statut</TD>";
-      print "</TR>\n";
+      print "<tr class=\"liste_titre\">";
+      print "<td>Societe</td>";
+      print "<td>Réf</td>";
+      print "<td align=\"right\">Date</td>";
+      print "<td align=\"right\">Prix</td>";
+      print "<td align=\"center\">Statut</td>";
+      print "</tr>\n";
       $var=True;
     }
   
     $var=!$var;
-    print "<TR $bc[$var]>";
+    print "<tr $bc[$var]>";
     
-    print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
+    print "<td><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></td>\n";
     
-    print "<TD><a href=\"../../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+    print "<td><a href=\"../../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
     
-    print "<TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+    print "<td align=\"right\">".dolibarr_print_date($objp->dp)."</td>\n";
     
-    print "<TD align=\"right\">".price($objp->price)."</TD>\n";
-    print "<TD align=\"center\">$objp->statut</TD>\n";
-    print "</TR>\n";
+    print "<td align=\"right\">".price($objp->price)."</td>\n";
+    print "<td align=\"center\">$objp->statut</td>\n";
+    print "</tr>\n";
     
     $total = $total + $objp->price;
     $subtotal = $subtotal + $objp->price;
@@ -88,7 +88,7 @@ function propals ($db, $year, $month) {
   print "<tr>";
   print "<td colspan=\"3\" align=\"right\"><b>Total : ".price($total)."</b></td>";
   print "<td align=\"left\"><b>Euros HT</b></td></tr>";
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 
 }
@@ -115,39 +115,39 @@ function factures ($db, $year, $month, $paye) {
       if ($num > 0)
 	{
 	  $i = 0;
-	  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-	  print "<TR bgcolor=\"orange\"><td colspan=\"3\"><b>Factures</b></td></tr>";
-	  print "<TR bgcolor=\"orange\">";
-	  print "<TD>Societe</td>";
-	  print "<TD>Num</TD>";
-	  print "<TD align=\"right\">Date</TD>";
-	  print "<TD align=\"right\">Montant</TD>";
-	  print "<TD align=\"right\">Payé</TD>";
-	  print "</TR>\n";
+	  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+	  print "<tr class=\"liste_titre\"><td colspan=\"5\"><b>Factures</b></td></tr>";
+	  print "<tr class=\"liste_titre\">";
+	  print "<td>Societe</td>";
+	  print "<td>Num</td>";
+	  print "<td align=\"right\">Date</td>";
+	  print "<td align=\"right\">Montant</td>";
+	  print "<td align=\"right\">Payé</td>";
+	  print "</tr>\n";
 	  $var=True;
 	  while ($i < $num)
 	    {
 	      $objp = $db->fetch_object( $i);
 	      $var=!$var;
-	      print "<TR $bc[$var]>";
-	      print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
-	      print "<TD><a href=\"../facture.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+	      print "<tr $bc[$var]>";
+	      print "<td><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></td>\n";
+	      print "<td><a href=\"../facture.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
 	      if ($objp->df > 0 )
 		{
-		  print "<TD align=\"right\">".strftime("%d %B %Y",$objp->df)."</TD>\n";
+		  print "<td align=\"right\">".dolibarr_print_date($objp->df)."</td>\n";
 		}
 	      else
 		{
-		  print "<TD align=\"right\"><b>!!!</b></TD>\n";
+		  print "<td align=\"right\"><b>!!!</b></td>\n";
 		}
 	      
-	      print "<TD align=\"right\">".price($objp->total)."</TD>\n";
+	      print "<td align=\"right\">".price($objp->total)."</td>\n";
 	      
 	      $payes[1] = "oui";
 	      $payes[0] = "<b>non</b>";
 	      	      
-	      print "<TD align=\"right\">".$payes[$objp->paye]."</TD>\n";
-	      print "</TR>\n";
+	      print "<td align=\"right\">".$payes[$objp->paye]."</td>\n";
+	      print "</tr>\n";
 	      
 	      $total = $total + $objp->total;
 	      
@@ -155,7 +155,7 @@ function factures ($db, $year, $month, $paye) {
 	    }
 	  print "<tr><td colspan=\"4\" align=\"right\">";
 	  print "<b>Total : ".price($total)."</b></td><td></td></tr>";
-	  print "</TABLE>";
+	  print "</table>";
 	  $db->free();
 	}
     }
@@ -174,8 +174,8 @@ function pt ($db, $sql, $year) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
     print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-    print "<TR class=\"liste_titre\">";
-    print "<TD>Mois</TD>";
+    print "<tr class=\"liste_titre\">";
+    print "<td>Mois</td>";
     print "<td align=\"right\">Montant</td></tr>\n";
     $var=True;
     $month = 1 ;
@@ -186,20 +186,20 @@ function pt ($db, $sql, $year) {
 
       if ($obj->dm > $month ) {
 	for ($b = $month ; $b < $obj->dm ; $b++) {
-	  print "<TR $bc[$var]>";
-	  print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
-	  print "<TD align=\"right\">0</TD>\n";	  
-	  print "</TR>\n";
+	  print "<tr $bc[$var]>";
+	  print "<td>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</td>\n";
+	  print "<td align=\"right\">0</td>\n";	  
+	  print "</tr>\n";
 	  $var=!$var;
 	  $ca[$b] = 0;
 	}
       }
 
       if ($obj->sum > 0) {
-	print "<TR $bc[$var]>";
+	print "<tr $bc[$var]>";
 	print "<td><a href=\"comp.php?details=1&year=$year&month=$obj->dm\">";
-	print strftime("%B",mktime(12,0,0,$obj->dm, 1, $year))."</TD>\n";
-	print "<TD align=\"right\">".price($obj->sum)."</TD>\n";
+	print strftime("%B",mktime(12,0,0,$obj->dm, 1, $year))."</td>\n";
+	print "<td align=\"right\">".price($obj->sum)."</td>\n";
 	
 	print "</TR>\n";
 	$month = $obj->dm + 1;
@@ -218,10 +218,10 @@ function pt ($db, $sql, $year) {
     if ($beg <= 12 ) {
       for ($b = $beg + 1 ; $b < 13 ; $b++) {
 	$var=!$var;
-	print "<TR $bc[$var]>";
-	print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
-	print "<TD align=\"right\">0</TD>\n";	  
-	print "</TR>\n";
+	print "<tr $bc[$var]>";
+	print "<td>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</td>\n";
+	print "<td align=\"right\">0</td>\n";	  
+	print "</tr>\n";
 	$ca[$b] = 0;
       }
     }
@@ -241,7 +241,7 @@ function ppt ($db, $year, $socidp)
   global $bc,$conf;
   print "<table width=\"100%\">";
 
-  print '<tr><td align="center" valign="top" width="30%">';
+  print '<tr class="liste_titre"><td align="center" valign="top" width="30%">';
   print "CA Prévisionnel basé sur les propal $year";
   
   print "</td><td align=\"center\" valign=\"top\">CA Réalisé $year</td>";
@@ -281,10 +281,10 @@ function ppt ($db, $year, $socidp)
   print "</td><td valign=\"top\" width=\"30%\">";
   
   print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-  print "<TR class=\"liste_titre\">";
-  print "<TD>Mois</TD>";
-  print "<TD align=\"right\">Montant</TD>";
-  print "</TR>\n";
+  print "<tr class=\"liste_titre\">";
+  print "<td>Mois</TD>";
+  print "<td align=\"right\">Montant</td>";
+  print "</tr>\n";
 
   $var = 1 ;
   for ($b = 1 ; $b <= 12 ; $b++)
@@ -293,10 +293,10 @@ function ppt ($db, $year, $socidp)
 
       $delta = $ca[$b] - $prev[$b];
       $deltat = $deltat + $delta ;
-      print "<TR $bc[$var]>";
-      print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
-      print "<TD align=\"right\">".price($delta)."</TD>\n";	  
-      print "</TR>\n";
+      print "<tr $bc[$var]>";
+      print "<td>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</td>\n";
+      print "<td align=\"right\">".price($delta)."</td>\n";	  
+      print "</tr>\n";
     }
   
   $ayear = $year - 1;
@@ -327,8 +327,10 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
+$cyear = isset($_GET["year"])?$_GET["year"]:0;
+if (! $cyear) { $cyear = strftime ("%Y", time()); }
 
-$cyear = strftime ("%Y", time());
+print_fiche_titre("Chiffre d'Affaire transformé (prévu-réalisé)",($cyear?"<a href='$PHP_SELF?year=".($cyear-1)."'>".img_previous()."</a> Année $cyear <a href='$PHP_SELF?year=".($cyear+1)."'>".img_next()."</a>":""));
 
 ppt($db, $cyear, $socidp);
 
