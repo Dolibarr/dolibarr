@@ -235,7 +235,6 @@ if ($user->comm > 0 && $conf->commercial )
  */
 
 $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
-//$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s ";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
 $sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
 $sql .= " GROUP BY f.facnumber";   
@@ -305,7 +304,7 @@ else
  */
 if ($user->societe_id == 0)
 {
-  $sql = "SELECT ff.rowid, ff.facnumber, ff.libelle, ff.total_ttc as amount";
+  $sql = "SELECT ff.rowid, ff.facnumber, ff.libelle, ff.total_ttc";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
   $sql .= " WHERE ff.paye=0";
   
@@ -327,7 +326,7 @@ if ($user->societe_id == 0)
     	  print '<tr '.$bc[$var].'><td width="20%"><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_file().'</a>';
 	      print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
 	      print '<td><a href="../fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->libelle.'</a></td>';
-	      print '<td align="right">'.price($obj->amount).'</td>';
+	      print '<td align="right">'.price($obj->total_ttc).'</td>';
 	      print '</tr>';
     	  $total +=  $obj->total_ttc;
     	  $totalam +=  $obj->am;
