@@ -44,10 +44,10 @@ function llxHeader($head = "")
   if ($result)
     {
 
-      $num = $db->num_rows();
+      $numr = $db->num_rows();
       $i = 0; 
 
-      while ($i < $num) 
+      while ($i < $numr) 
 	{
 	  $objp = $db->fetch_object($i);
 	  $menu->add("account.php3?account=" . $objp->rowid,  $objp->label);
