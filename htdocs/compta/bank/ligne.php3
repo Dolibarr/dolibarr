@@ -4,7 +4,7 @@
  * $Source$
  */
 require("./pre.inc.php3");
-require("./functions.inc.php3");
+
 llxHeader();
 $db = new Db();
 
@@ -16,7 +16,13 @@ if ($action == 'class') {
 
   $sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
   $result = $db->query($sql);
+}
 
+if ($action == 'update') {
+  $author = $GLOBALS["REMOTE_USER"];
+
+  $sql = "update llx_bank set label='$label' where rowid = $rowid;";
+  $result = $db->query($sql);
 }
 
 $sql = "SELECT rowid, label FROM llx_bank_categ;";
@@ -35,16 +41,16 @@ if ($result) {
 
 print "<b>Edition de la ligne</b>";
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-print "<TR bgcolor=\"orange\">";
+print "<TR class=\"liste_titre\">";
 print "<td>Date</td><td>Description</TD>";
-print "<td align=\"right\"><a href=\"$PHP_SELF?vue=debit\">Debit</a></TD>";
-print "<td align=\"right\"><a href=\"$PHP_SELF?vue=credit\">Credit</a></TD>";
+print "<td align=\"right\">Debit</TD>";
+print "<td align=\"right\">Credit</TD>";
 print "<td align=\"center\">Releve</TD>";
 print "<td align=\"center\">Auteur</TD>";
 
 print "</TR>\n";
 
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.author";
+$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.author, b.num_chq";
 $sql .= " FROM llx_bank as b WHERE rowid=$rowid";
 $sql .= " ORDER BY dateo ASC";
 $result = $db->query($sql);
@@ -63,7 +69,7 @@ if ($result) {
     print "<input type=\"hidden\" name=\"rowid\" value=\"$objp->rowid\">";
 
     print "<td>".strftime("%d %b %Y",$objp->do)."</TD>\n";
-    print "<td>$objp->label</td>";
+    print "<td>$objp->num_chq $objp->label</td>";
     if ($objp->amount < 0) {
       print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
     } else {
@@ -74,11 +80,21 @@ if ($result) {
     print "<td align=\"center\">$objp->author</td>";
 
     print "</tr>";
+
     print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"5\">";
     print "<select name=\"cat1\">$options";
 
     print "</select>&nbsp;";
     print "<input type=\"submit\" value=\"add\"></td>";
+    print "</tr>";
+
+    print "</form><form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
+    print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+
+    print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"5\">";
+    print '<input name="label" value="'.$objp->label.'">';
+
+    print "<input type=\"submit\" value=\"update\"></td>";
     print "</tr>";
 
     print "</form>";
@@ -91,7 +107,7 @@ print "</table>";
 print "<p>Classé dans</p>";
 
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-print "<TR bgcolor=\"orange\">";
+print "<TR class=\"liste_titre\">";
 print "<td>Description</TD>";
 print "</TR>\n";
 
