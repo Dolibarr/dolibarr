@@ -25,7 +25,6 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 
 class GraphLignesResiliationWeek extends GraphBar {
 
-
   Function GraphLignesResiliationWeek($DB, $file)
   {
     $this->db = $DB;
@@ -39,26 +38,23 @@ class GraphLignesResiliationWeek extends GraphBar {
   }
 
 
-  Function GraphMakeGraph()
+  Function ReadDatas()
   {
     $num = 0;
 
-    $sql = "SELECT count(*), date_format(tms,'%x%v')";
+    $sql = "SELECT count(*), date_format(tms,'%y%v')";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne_statut";
     $sql .= " WHERE statut = 6";
-    $sql .= " GROUP BY date_format(tms,'%x%v') ASC";
+    $sql .= " GROUP BY date_format(tms,'%y%v') ASC";
     
-    $result = $this->db->query($sql);
-
-
-    if ($result)
+    if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
 	
 	$i = 0;
 	$j = 0;
-	$datas = array();
-	$labels = array();
+	$this->datas = array();
+	$this->labels = array();
 	$oldweek = 0;
 	$clients = array();
 		
@@ -66,42 +62,8 @@ class GraphLignesResiliationWeek extends GraphBar {
 	  {
 	    $row = $this->db->fetch_row();
 
-	    if ($oldweek == 0) 
-	      {
-		$oldweek = $row[1];
-		array_push($clients, $row[0]);
-
-		$datas[$j] = 1;
-		$labels[$j] = $row[1];
-	      }	    
-	    else
-	      {
-
-		if ($row[1] == $labels[$j])
-		  {
-		    if (! in_array($row[0], $clients))
-		    {
-		      array_push($clients, $row[0]);
-		      $datas[$j]++;
-		    }
-		  }
-		else
-		  {
-		    $j++;
-		    if (! in_array($row[0], $clients))
-		      {
-			array_push($clients, $row[0]);
-			$datas[$j] = 1;
-		      }
-		    else
-		      {
-			$datas[$j] = 0;
-		      }
-
-		    $labels[$j] = $row[1];
-		  }
-
-	      }
+	    $this->datas[$row[1]] = $row[0];
+	    $this->labels[$i] = $row[1];
 
 	    $i++;
 	  }
@@ -112,40 +74,54 @@ class GraphLignesResiliationWeek extends GraphBar {
       {
 	print $this->db->error() . ' ' . $sql;
       }                  
+  }
+  /*
+   *
+   *
+   */
+  Function GraphMakeGraph()
+  {
+
+    $this->ReadDatas();
 
     $datas_new = array();
     $labels_new = array();
-    $j = 0 ;
 
-    $datas_new[0] = $datas[0];
-    $labels_new[0] = ceil(substr($labels[0],-2));
+    $max = strftime("%y%V", time());
+    print $max;
+    $week = $max;
+    $year = substr($week,0,2);
+    $smwee = substr($max, -2);
 
-    for ($i = 1 ; $i < sizeof($labels) ; $i++)
+    for ($i = 0 ; $i < 18 ; $i++)
       {
-	if (substr($labels[$i], -2) - substr($labels[$i-1], -2) > 1)
+
+	$datas_new[$i] = $this->datas[$year.$smwee];
+
+	$labels_new[$i] = ceil($smwee);
+
+	if (($smwee - 1) == 0)
 	  {
-	    for ($k = 1 ; $k < ($labels[$i] - $labels[$i-1]) ; $k++)
+	    $smwee = strftime("%V",mktime(12,0,2,12,31,"20".substr("00".($year - 1), -2)));
+
+	    if ($smwee == '01')
 	      {
-		$datas_new[$i+$j] = 0;
-		$labels_new[$i+$j] = ceil(substr($labels[$i-1], -2) + $k) ; // suppression du 0
-
-		$j++;
+		$smwee = 52;
 	      }
+
+	    $year = substr("00".($year - 1), -2);
 	  }
-
-	$datas_new[$i+$j] = $datas[$i];
-	$labels_new[$i+$j] = ceil(substr($labels[$i], - 2));
+	else
+	  {
+	    $smwee = substr("00".($smwee -1), -2);
+	  }
       }
 
-    $nbel = sizeof($datas_new);
-
-    for ($i = 0 ; $i < ($nbel - 18) ; $i++)
-      {
-	array_shift($datas_new);
-	array_shift($labels_new);
-      }
+    $datas_new = array_reverse($datas_new);
+    $labels_new = array_reverse($labels_new);
 
     $this->GraphDraw($this->file, $datas_new, $labels_new);
+
   }
 }
 ?>
