@@ -332,7 +332,7 @@ if ($propalid)
 	  if ($obj->statut == 0)
 	    {
 
-	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ORDER BY p.nbvente DESC LIMIT 20";
+	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p WHERE p.envente=1 ORDER BY p.nbvente DESC LIMIT 20";
 	      if ( $db->query($sql) )
 		{
 		  $opt = "<option value=\"0\" SELECTED></option>";
