@@ -87,7 +87,7 @@ if ($_POST["action"] == 'update')
 }
 
 
-llxHeader("","","Fiche Service");
+llxHeader("","Téléphonie - Fiche Service");
 
 if ($cancel == $langs->trans("Cancel"))
 {
@@ -109,15 +109,15 @@ if ($_GET["action"] == 'create')
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
   print '<tr><td>Libellé</td><td>';
-  print '<input type="text" name="libelle">';
+  print '<input type="text" size="30" name="libelle">';
   print '</td></tr>';
 
   print '<tr><td>Libellé Facture</td><td>';
-  print '<input type="text" name="libelle_facture">';
+  print '<input type="text" size="50" name="libelle_facture">';
   print '</td></tr>';
 
   print '<tr><td>Montant HT</td><td>';
-  print '<input type="text" name="montant">';
+  print '<input type="text" size="8" name="montant">';
   print '&nbsp; euros HT</td></tr>';
 
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
@@ -145,10 +145,6 @@ else
 	      $hselected = $h;
 	      $h++;
 	      
-	      $head[$h][0] = DOL_URL_ROOT."/telephonie/service/factures.php?id=".$service->id;
-	      $head[$h][1] = $langs->trans('Factures');
-	      $h++;
-
 	      dolibarr_fiche_head($head, $hselected, 'Service : '.$service->numero);
 
 	      print_fiche_titre('Fiche Service', $mesg);
