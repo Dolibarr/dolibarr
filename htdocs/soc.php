@@ -151,9 +151,9 @@ if ($_GET["action"] == 'create')
       print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
       print '</select></td>';
 
-      print '<td>'.$langs->trans('Supplier').'</td><td><select name="fournisseur">';
-      print_oui_non($soc->fournisseur);
-      print '</select></td></tr>';
+      print '<td>'.$langs->trans('Supplier').'</td><td>';
+      print $form->selectyesnonum("fournisseur",$soc->fournisseur);
+      print '</td></tr>';
 
       print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans('Add').'"></td></tr>';
       print '</table>';
@@ -231,10 +231,8 @@ elseif ($_GET["action"] == 'edit')
 	  print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
       print '</select></td>';
 
-      print '<td>Fournisseur</td><td><select name="fournisseur">';
-      print_oui_non($soc->fournisseur);
-      print '</select>';
-      
+      print '<td>'.$langs->trans('Supplier').'</td><td>';
+      print $form->selectyesnonum("fournisseur",$soc->fournisseur);
       print '</td></tr>';
       
       print '<tr><td align="center" colspan="4"><input type="submit" value="Mettre à jour"></td></tr>';
