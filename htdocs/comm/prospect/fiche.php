@@ -76,8 +76,15 @@ if ($socid > 0)
       $h = 1;
       
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
-      $head[$h][1] = 'Fiche prospect';
+      $head[$h][1] = 'Prospect';
       $h++;
+
+      if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/sl/fiche.php?id='.$societe->id;
+	  $head[$h][1] = 'Fiche catalogue';
+	  $h++;
+	}
       
       if ($soc->fournisseur)
 	{
