@@ -220,7 +220,7 @@ if ($_GET["action"] == 'create')
 
   print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
-  print '<tr><td>'.$langs->trans("Company").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
+  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
 
   print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80"></td></tr>';
   print '<tr><td>'.$langs->trans("Email").'</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
@@ -232,7 +232,8 @@ if ($_GET["action"] == 'create')
   print '<tr><td>Contact facturation</td><td colspan="5"><select name="facturation"><option value="0">Non<option value="1">Oui</select></td></tr>';
 
   print '<tr><td align="center" colspan="6"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
-  print "</table>";
+  print "</table><br>";
+
   print "</form>";
 }
 elseif ($_GET["action"] == 'edit') 
@@ -273,7 +274,7 @@ elseif ($_GET["action"] == 'edit')
 
   print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
-  print '<tr><td>CP Ville</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
+  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
 
   print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
   print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
@@ -344,11 +345,6 @@ else
     */
 
   }
-  
-  
-  /*
-   *
-   */
 
   if ($contact->jabberid)
     print 'Jabber : '.$contact->jabberid ."<br>";

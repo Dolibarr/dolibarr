@@ -80,28 +80,35 @@ $titre = "Liste des contacts $text";
  */
 
 $sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax ";
-$sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.idp = p.fk_soc)";
+$sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p ";
+$sql .= "LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.idp = p.fk_soc) ";
 
-
+$sql .= "WHERE 1=1 ";
 if (strlen($_GET["userid"]))  // statut commercial
 {
-  $sql .= " WHERE p.fk_user=".$_GET["userid"];
+  $sql .= " AND p.fk_user=".$_GET["userid"];
 }
 
-if (strlen($_GET["search_nom"])) // filtre sur la premiere lettre du nom
+if (strlen($_GET["search_nom"])) // filtre sur le nom
 {
-  $sql .= " WHERE upper(p.name) like '%".$_GET["search_nom"]."%'";
+  $sql .= " AND upper(p.name) like '%".$_GET["search_nom"]."%'";
 }
-
-if (strlen($_GET["search_prenom"])) // filtre sur la premiere lettre du nom
+if (strlen($_GET["search_prenom"])) // filtre sur le prenom
 {
-  $sql .= " WHERE upper(p.firstname) like '%".$_GET["search_prenom"]."%'";
+  $sql .= " AND upper(p.firstname) like '%".$_GET["search_prenom"]."%'";
+}
+if (strlen($_GET["search_societe"])) // filtre sur la societe
+{
+  $sql .= " AND upper(s.nom) like '%".$_GET["search_societe"]."%'";
+}
+if (strlen($_GET["search_email"])) // filtre sur l'email
+{
+  $sql .= " AND upper(p.email) like '%".$_GET["search_email"]."%'";
 }
 
 if ($contactname)
 {
-  $sql .= " WHERE (p.name like '%".$contactname."%' OR p.firstname like '%".$contactname."%') ";
+  $sql .= " AND (p.name like '%".$contactname."%' OR p.firstname like '%".$contactname."%') ";
 }
 
 if ($socid) 
@@ -130,11 +137,11 @@ if ($result)
 
   print '<table class="noborder" width="100%">';
 
+  // Ligne des titres
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Lastname"),"index.php","lower(p.name)", $begin);
-  print_liste_field_titre($langs->trans("Firstname"),"index.php","lower(p.firstname)", $begin);
-  print_liste_field_titre($langs->trans("Company"),"index.php","lower(s.nom)", $begin);
-
+  print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "", "", $sortfield);
+  print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, "", "", $sortfield);
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, "", "", $sortfield);
   print '<td>'.$langs->trans("Phone").'</td>';
 
   if ($_GET["view"] == 'phone')
@@ -144,23 +151,46 @@ if ($result)
     }
   else
     {
-      print '<td>'.$langs->trans("EMail").'</td>';
+      print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, "", "", $sortfield);
     }
-
+  print '<td>&nbsp;</td>';
   print "</tr>\n";
 
+  // Ligne des champs de filtres
   print '<form method="get" action="index.php">';
   print '<tr class="liste_titre">';
-  print '<td valign="right">';
-  print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
+  print '<td>';
+  print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
   print '</td>';
-  print '<td valign="right">';
-  print '<input type="text" name="search_prenom" value="'.$_GET["search_prenom"].'">';
-  print '</td><td colspan="2"><input type="submit"></td><td>&nbsp;</td></tr>';
+  print '<td>';
+  print '<input class="flat" type="text" name="search_prenom" value="'.$_GET["search_prenom"].'">';
+  print '</td>';
+  print '<td>';
+  print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
+  print '</td>';
+  print '<td>';
+  print '&nbsp;';
+  print '</td>';
 
+  if ($_GET["view"] == 'phone')
+    {
+      print '<td>';
+      print '&nbsp;';
+      print '</td>';
+      print '<td>';
+      print '&nbsp;';
+      print '</td>';
+    }
+  else
+    {
+      print '<td>';
+      print '<input class="flat" type="text" name="search_email" value="'.$_GET["search_email"].'">';
+      print '</td>';
+    }
 
-
-
+  print '<td><input class="button" type="submit" value="'.$langs->trans("Search").'"></td>';
+  print '</tr>';
+  print '</form>';
 
   $var=True;
   while ($i < min($num,$limit))
@@ -175,27 +205,19 @@ if ($result)
       print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">';
       print img_file();
       print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.$obj->name.'</a></td>';
-      print "<td>$obj->firstname</TD>";
-      
-      print '<td>';
-      if ($obj->nom)
-	{
-	  print '<a href="contact.php?socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0" alt="Filtre"></a>&nbsp;';
-	}
-      print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
-      
-      
+      print '<td>'.$obj->firstname.'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
 
       if ($_GET["view"] == 'phone')
 	{      
 	  print '<td>'.dolibarr_print_phone($obj->phone_mobile).'&nbsp;</td>';
       
-	  print '<td>'.dolibarr_print_phone($obj->fax).'&nbsp;</td>';
+	  print '<td colspan="2">'.dolibarr_print_phone($obj->fax).'&nbsp;</td>';
 	}
       else
 	{
-	  print '<td>';
+	  print '<td colspan="2">';
         if (! $obj->email) {
             print '&nbsp;';
         }
@@ -224,10 +246,9 @@ else
 /*
  * PhProjekt
  *
- *
  */
 
-if (2==1 && strlen($_GET["search_nom"]) OR strlen($_GET["search_prenom"]))
+if (2==1 && (strlen($_GET["search_nom"]) OR strlen($_GET["search_prenom"])))
 {
 
 
@@ -319,9 +340,8 @@ else
   print $db->error();
   print "<br>".$sql;
 }
+
 }
-
-
 
 
 
