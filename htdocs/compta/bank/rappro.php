@@ -54,12 +54,13 @@ if ($action == 'del') {
 }
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label;";
 $result = $db->query($sql);
+$options="";
 if ($result) {
   $var=True;  
   $num = $db->num_rows();
   $i = 0;
-  $options = "<option value=\"0\" SELECTED></option>";
   while ($i < $num) {
+    if ($options == "") { $options = "<option value=\"0\" selected>&nbsp;</option>"; }
     $obj = $db->fetch_object($i);
     $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
   }
@@ -86,7 +87,7 @@ $acct->fetch($account);
 print_titre('Rapprochement bancaire compte : <a href="account.php?account='.$account.'">'.$acct->label.'</a>');
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rappro=0 AND fk_account=$account AND dateo <= now()";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rappro=0 AND fk_account=$account";
 $sql .= " ORDER BY dateo ASC LIMIT 10";
 
 
@@ -100,15 +101,15 @@ if ($result)
 	print "<br>Pas de transactions saisies en attente de rapprochement, pour ce compte bancaire.<br>";
   }
   else {
-	print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-	print "<TR class=\"liste_titre\">";
+	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	print "<tr class=\"liste_titre\">";
 	print "<td>Date</td><td>Description</TD>";
 	print "<td align=\"right\">Debit</TD>";
 	print "<td align=\"right\">Credit</TD>";
 	print "<td align=\"center\">Releve</TD>";
 	print '<td align="center" colspan="2">Rappro</td>';
 	print '<td align="center">&nbsp;</td>';
-	print "</TR>\n";
+	print "</tr>\n";
   }
 
   $i = 0;
@@ -134,11 +135,18 @@ if ($result)
 	  print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
 	}
     
-      print "<td align=\"right\">";
-      print "<input name=\"num_releve\" type=\"text\" value=\"$last_releve\" size=\"6\" maxlength=\"6\"></td>";
-      print "<td align=\"center\"><select name=\"rappro\"><option value=\"1\">oui</option><option value=\"0\" selected>non</option></select></td>";
-      print "<td align=\"center\"><input type=\"submit\" value=\"do\"></td>";
-      
+      if ($objp->do <= mktime() ) {
+	      print "<td align=\"center\">";
+	      print "<input name=\"num_releve\" type=\"text\" value=\"$last_releve\" size=\"8\" maxlength=\"6\"></td>";
+	      print "<td align=\"center\"><select name=\"rappro\"><option value=\"1\">oui</option><option value=\"0\" selected>non</option></select></td>";
+	      print "<td align=\"center\"><input type=\"submit\" value=\"do\"></td>";
+	  }
+	  else {
+	      print "<td align=\"right\" colspan=\"3\">";
+		  print "Ecriture future. Ne peut pas encore être rapprochée.";
+		  print "</td>";
+      }
+              
       if ($objp->rappro)
 	{
 	  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
@@ -147,9 +155,16 @@ if ($result)
 	{
 	  if ($user->rights->banque->modifier)
 	    {
-	      print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id\">";
-	      print img_delete();
-	      print "</a></td>";
+	      print "<td align=\"center\">";
+	      if ($objp->do <= mktime() ) {
+	      	print "<a href=\"$PHP_SELF?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id\">";
+	      	print img_delete();
+	      	print "</a>";
+	      }
+	      else {
+	      	print "&nbsp;";	// On n'empeche la suppression car le raprochement ne pourra se faire qu'après la date passée et que l'écriture apparaissent bien sur le compte.
+	      }
+	      print "</td>";
 	    }
 	  else
 	    {
@@ -159,10 +174,14 @@ if ($result)
 
       print "</tr>";
       print "<tr $bc[$var]><td>&nbsp;</td><td>".$objp->fk_type.($objp->num_chq?" ".$objp->num_chq:"")."</td><td colspan=\"6\">";
-      print "<select name=\"cat1\">$options";
-      
-      print "</select>";
-      print "</tr>";
+      if ($options) {
+      	print "<select name=\"cat1\">$options";
+      	print "</select>";
+      }
+      else {
+      	print "&nbsp;";
+      }
+      print "</td></tr>";
       print "</form>";
       $i++;
     }
