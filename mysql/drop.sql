@@ -19,8 +19,6 @@
 -- $Source$
 --
 
-drop table if exists c_anexpe;
-
 drop table if exists c_actioncomm;
 
 drop table if exists c_chargesociales;
