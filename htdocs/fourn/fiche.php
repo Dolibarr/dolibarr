@@ -257,7 +257,7 @@ if ( $societe->fetch($socid) )
    *
    */
   print '</td></tr>';
-  print '</table>' . "\n";
+  print '</table>' . "<br>\n";
   print '</div>';
 
   /*
