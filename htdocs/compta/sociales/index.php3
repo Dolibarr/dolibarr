@@ -55,7 +55,7 @@ if ($action == 'del_bookmark') {
   $result = $db->query($sql);
 }
 
-print_titre("Charges");
+print_titre("Charges $year");
 
 /*
  *
@@ -64,13 +64,16 @@ print_titre("Charges");
 
 print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print "<TR class=\"liste_titre\">";
-print '<td>Date</td><TD colspan="2">Charges</td><td align="right">Montant</td><td>&nbsp;</td>';
+print '<td>Echeance</td><td>Période</td><TD colspan="2">Charges</td><td align="right">Montant</td><td>&nbsp;</td>';
 print "</TR>\n";
 
 
-$sql = "SELECT c.libelle as nom, s.amount, s.date_ech, s.date_pai, s.libelle, s.paye";
+$sql = "SELECT c.libelle as nom, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as dp";
 $sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id";
+if ($year > 0) {
+  $sql .= " AND date_format(s.periode, '%Y') = $year";
+}
 $sql .= " ORDER BY lower(s.date_ech) DESC";
 
 if ( $db->query($sql) ) {
@@ -81,7 +84,8 @@ if ( $db->query($sql) ) {
     $obj = $db->fetch_object( $i);
     $var = !$var;
     print "<tr $bc[$var]>";
-    print '<td>'.$obj->date_ech.'</td>';
+    print '<td>'.strftime("%d/%m/%y",$obj->de).'</td>';
+    print '<td><a href="index.php3?year='.strftime("%Y",$obj->dp).'">'.strftime("%Y",$obj->dp).'</a></td>';
     print '<td>'.$obj->nom.'</td><td>'.$obj->libelle.'</td>';
     print '<td align="right">'.price($obj->amount).'</td>';
     print '<td>';
