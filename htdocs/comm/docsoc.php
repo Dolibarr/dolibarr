@@ -151,31 +151,32 @@ if ($socid > 0)
 
       $handle=opendir($upload_dir);
 
-      print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
-
-      while (($file = readdir($handle))!==false)
+      if ($handle)
 	{
-	  if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+
+	  print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
+
+	  while (($file = readdir($handle))!==false)
 	    {
-	      print '<tr><td>';
-	      echo '<a href="/document/societe/'.$socid.'/'.$file.'">'.$file.'</a>';
-	      print "</td>\n";
-	      
-	      print '<td align="right">'.filesize($upload_dir."/".$file). ' bytes</td>';
-	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($upload_dir."/".$file)).'</td>';
+	      if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+		{
+		  print '<tr><td>';
+		  echo '<a href="/document/societe/'.$socid.'/'.$file.'">'.$file.'</a>';
+		  print "</td>\n";
+		  
+		  print '<td align="right">'.filesize($upload_dir."/".$file). ' bytes</td>';
+		  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($upload_dir."/".$file)).'</td>';
+		  
+		  print '<td>';
+		  echo '<a href="'.$PHP_SELF.'?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">Delete</a>';
+		  print "</td></tr>\n";
+		}
+	    }
 
-	      print '<td>';
-	      echo '<a href="'.$PHP_SELF.'?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">Delete</a>';
-	      print "</td></tr>\n";
-	   }
+	  print "</table>";
+
+	  closedir($handle);
 	}
-
-      print "</table>";
-
-      closedir($handle);
-
-
-
     }
   else
     {
