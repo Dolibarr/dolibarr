@@ -39,6 +39,7 @@ if (!$user->admin && $user->societe_id > 0)
 
 
 $year = $_GET["year"];
+if (! $year) { $year=date("Y"); }
 
 require("../../includes/modules/rapport/pdf_paiement.class.php");
 
@@ -63,9 +64,10 @@ llxHeader();
  * Affichage liste des paiements
  *
  */
-print_titre("Rapport paiements");
+print_titre("Rapport paiements".($year?" $year":""));
 
-print '<form method="post" action="rapport.php?year='.$year.'">';
+// Formulaire de génération
+print '<br><form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="action" value="gen">';
 $cmonth = date("n", time());
 $syear = date("Y", time());
@@ -114,38 +116,43 @@ print "</select>\n";
 print '<input type="submit" value="'.$langs->trans("Create").'">';
 print '</form>';
 
+
 clearstatcache();
 
-$handle=opendir($dir);
 
-while (($file = readdir($handle))!==false)
-{
-  if (is_dir($dir.$file) && substr($file, 0, 1) <> '.')
+if (is_dir($dir)) {
+    $handle=opendir($dir);
+    while (($file = readdir($handle))!==false)
     {
-      print '<a href="rapport.php?year='.$file.'">'.$file.'</a> ';
+      if (is_dir($dir.$file) && substr($file, 0, 1) <> '.')
+        {
+          print '<a href="rapport.php?year='.$file.'">'.$file.'</a> ';
+        }
     }
 }
 
 if ($year)
 {
-  $handle=opendir($dir.'/'.$year);
-  print '<br>';
-  print '<table width="100%" class="noborder">';
-  print '<tr class="liste_titre"><td>Rapport</td><td align="right">'.$langs->trans("Size").'</td><td align="right">'.$langs->trans("Date").'</td></tr>';
-  $var=true;
-  while (($file = readdir($handle))!==false)
-    {
-      if (substr($file, 0, 8) == 'paiement')
-	{
-	  $var=!$var;
-	  $tfile = $dir . '/'.$year.'/'.$file;
-	  $relativepath = $year.'/'.$file;
-	  print "<tr $bc[$var]>".'<td><a href="/document.php?modulepart=facture_paiement&file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
-	  print '<td align="right">'.filesize($tfile). ' bytes</td>';
-	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($tfile)).'</td></tr>';
-	}
+  if (is_dir($dir.'/'.$year)) {
+      $handle=opendir($dir.'/'.$year);
+      print '<br>';
+      print '<table width="100%" class="noborder">';
+      print '<tr class="liste_titre"><td>Rapport</td><td align="right">'.$langs->trans("Size").'</td><td align="right">'.$langs->trans("Date").'</td></tr>';
+      $var=true;
+      while (($file = readdir($handle))!==false)
+        {
+          if (substr($file, 0, 8) == 'paiement')
+    	{
+    	  $var=!$var;
+    	  $tfile = $dir . '/'.$year.'/'.$file;
+    	  $relativepath = $year.'/'.$file;
+    	  print "<tr $bc[$var]>".'<td><a href="/document.php?modulepart=facture_paiement&file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+    	  print '<td align="right">'.filesize($tfile). ' bytes</td>';
+    	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($tfile)).'</td></tr>';
+    	}
+        }
+      print '</table>';
     }
-  print '</table>';
 }
 $db->close();
  
