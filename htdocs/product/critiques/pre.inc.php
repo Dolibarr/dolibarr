@@ -20,6 +20,7 @@
  *
  */
 require("../../main.inc.php3");
+require("./critique.class.php");
 
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf;
