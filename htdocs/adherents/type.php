@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@
  *
  */
 
-/*! \file htdocs/adherents/type.php
+/**
+        \file       htdocs/adherents/type.php
         \ingroup    adherent
 		\brief      Page de configuration des types d'adhérents
 		\version    $Revision$
@@ -31,6 +32,9 @@
 require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
+
+$langs->load("members");
+
 
 if ($_POST["action"] == 'add' && $user->admin) 
 {
@@ -81,7 +85,8 @@ if ($_GET["action"] == 'commentaire')
 
 llxHeader();
 
-print_titre("Configuration des types d'adhérents");
+
+print_titre($langs->trans("MembersTypeSetup"));
 print '<br>';
 
 /* ************************************************************************** */
@@ -124,8 +129,7 @@ if ($result)
 }
 else
 {
-  print $sql;
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 
@@ -135,7 +139,7 @@ else
      *
      */
     print '<div class="tabsAction">';
-    print "<a class=\"tabAction\" href=\"type.php?action=create\">Nouveau Type</a>";
+    print "<a class=\"tabAction\" href=\"type.php?action=create\">".$langs->trans("NewType")."</a>";
     print "</div>";
 
 

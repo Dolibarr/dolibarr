@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *
  */
 
-/*! \file htdocs/adherents/options.php
+/**     \file       htdocs/adherents/options.php
         \ingroup    adherent
 		\brief      Page de configuratin des champs optionnels
 		\version    $Revision$
@@ -30,6 +30,8 @@
 
 require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
+
+$langs->load("members");
 
 $adho = new AdherentOptions($db);
 $form = new Form($db);
@@ -75,7 +77,7 @@ llxHeader();
 
 
 
-print_titre("Configuration des champs optionnels");
+print_titre($langs->trans("OptionalFieldsSetup"));
 print '<br>';
 
 /* ************************************************************************** */
@@ -87,11 +89,11 @@ print '<br>';
 $array_options=$adho->fetch_name_optionals();
 $array_label=$adho->fetch_name_optionals_label();
 
-print "<table class=\"noborder\">";
+print "<table class=\"noborder\" width=\"100%\">";
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Label").'</td>';
-print "<td>Nom de l'attribut</td>";
+print '<td>'.$langs->trans("AttributeCode").'</td>';
 print '<td>'.$langs->trans("Type").'</td><td width="80">&nbsp;</td>';
 print "</tr>\n";
   
@@ -120,7 +122,7 @@ print "</table>";
  *
  */
 print '<div class="tabsAction">';
-print "<a class=\"tabAction\" href=\"options.php?action=create\">Nouvel attribut</a>";
+print "<a class=\"tabAction\" href=\"options.php?action=create\">".$langs->trans("NewAttribute")."</a>";
 print "</div>";
 
 
@@ -140,7 +142,7 @@ if ($_GET["action"] == 'create') {
   print '<input type="hidden" name="action" value="add">';
 
   print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40"></td></tr>';  
-  print '<tr><td>Nom de l\'attribut (pas d\'espace et uniquement des carateres alphanumeriques)</td><td class="valeur"><input type="text" name="attrname" size="40"></td></tr>';  
+  print '<tr><td>'.$langs->trans("AttributeCode").' (pas d\'espace et uniquement des carateres alphanumeriques)</td><td class="valeur"><input type="text" name="attrname" size="40"></td></tr>';  
   print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">';
   $form->select_array('type',array('varchar'=>'chaine',
 				   'text'=>'texte',
