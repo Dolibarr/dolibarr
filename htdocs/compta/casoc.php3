@@ -32,8 +32,7 @@ print_barre_liste("Chiffre d'affaire par société", $page, $PHP_SELF);
  *
  */
 
-$sql = "SELECT sum(f.amount) as ca";
-$sql .= " FROM llx_facture as f";
+$sql = "SELECT sum(f.amount) as ca FROM llx_facture as f";
  
 $result = $db->query($sql);
 if ($result) {
