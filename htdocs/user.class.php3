@@ -20,7 +20,8 @@
  * $Source$
  */
 
-class User {
+class User
+{
   var $db;
 
   var $id;
@@ -48,6 +49,15 @@ class User {
       $this->compta = 0;
       $this->limite_liste = 0;
 
+      $this->rights->facture->lire = 0;
+      $this->rights->facture->creer = 0;
+      $this->rights->facture->modifier = 0;
+      $this->rights->facture->supprimer = 0;
+
+      $this->rights->produit->lire = 0;
+      $this->rights->produit->creer = 0;
+      $this->rights->produit->modifier = 0;
+      $this->rights->produit->supprimer = 0;
       return 1;
   }
   /*
@@ -55,18 +65,283 @@ class User {
    *
    *
    */
+  Function addrights($rid)
+    {
+      if (strlen($rid) == 2)
+	{
+	  $topid = substr($rid,0,1);
+	  $lowid = substr($rid,1,1);
+	  if ($lowid == 1)
+	    {
+	      $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
+	      if ($this->db->query($sql))
+		{
+		}
+	    }
 
+	  if ($lowid > 1)
+	    {
+	      $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
+	      if ($this->db->query($sql))
+		{
+		}
+	      $nid = $topid . "1";
+	      $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+	      if ($this->db->query($sql))
+		{
+		  
+		}
+	      else
+		{
+		  print $sql;
+		}
+	    }
+	  
+	  if ($lowid == 0)
+	    {
+	      for ($i = 1 ; $i < 10 ; $i++)
+		{
+		  $nid = $topid . "$i";
+		  $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+		  if ($this->db->query($sql))
+		    {
+		      
+		    }
+		  else
+		    {
+		      print $sql;
+		    }
+		}
+	    }
+
+	}
+      return 1;
+    }
+  /*
+   *
+   *
+   */
+  Function delrights($rid)
+    {
+      if (strlen($rid) == 2)
+	{
+	  $topid = substr($rid,0,1);
+	  $lowid = substr($rid,1,1);
+	  if ($lowid > 1)
+	    {
+	      $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id=$rid";
+	      if ($this->db->query($sql))
+		{
+		}
+	    }
+
+	  if ($lowid == 1)
+	    {
+	      $fid = $topid . "0";
+	      $lid = $topid . "9";
+	      $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id >= $fid AND fk_id <= $lid";
+	      if ($this->db->query($sql))
+		{
+		  
+		}
+	      else
+		{
+		  print $sql;
+		}
+	    }
+	  
+	  if ($lowid == 0)
+	    {
+	      for ($i = 1 ; $i < 10 ; $i++)
+		{
+		  $nid = $topid . "$i";
+		  $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id=$nid";
+		  if ($this->db->query($sql))
+		    {
+		      
+		    }
+		  else
+		    {
+		      print $sql;
+		    }
+		}
+	    }
+
+	}
+      return 1;
+    }
+  /*
+   *
+   *
+   */
+  Function getrights($module='')
+    {
+      /*
++----+---------------------------------------------------+---------+------+
+| id | libelle                                           | module  | type |
++----+---------------------------------------------------+---------+------+
+|  1 | Tous les droits                                   | all     | a    |
+| 10 | Tous les droits sur les factures                  | facture | a    |
+| 11 | Lire les factures                                 | facture | r    |
+| 12 | Créer modifier les factures                       | facture | w    |
+| 13 | Modifier les factures d'autrui                    | facture | m    |
+| 14 | Supprimer les factures                            | facture | d    |
+| 20 | Tous les droits sur les propositions commerciales | propale | a    |
+| 21 | Lire les propositions commerciales                | propale | r    |
+| 22 | Créer modifier les propositions commerciales      | propale | w    |
+| 23 | Modifier les propositions commerciales d'autrui   | propale | m    |
+| 24 | Supprimer les propositions commerciales           | propale | d    |
++----+---------------------------------------------------+---------+------+
+	*/
+	$sql = "SELECT fk_user, fk_id FROM llx_user_rights WHERE fk_user= $this->id";
+	/*
+	if ($module)
+	  {
+	    $sql .= " AND module = '$module'";
+	  }
+	*/
+	if ($this->db->query($sql))
+	  {
+	    $rr=array();
+	    $num = $this->db->num_rows();
+	    $i = 0;
+	    while ($i < $num)
+	      {
+		$obj = $this->db->fetch_object($i);
+
+		if ($module == 'facture' or $module == '')
+		  {
+		    if ($obj->fk_id == 1 or $obj->fk_id == 10)
+		      {
+			$this->rights->facture->lire = 1;
+			$this->rights->facture->creer = 1;
+			$this->rights->facture->modifier = 1;
+			$this->rights->facture->supprimer = 1;
+		      }
+		    else
+		      {
+			if ($obj->fk_id == 11)
+			  $this->rights->facture->lire = 1;
+			
+			if ($obj->fk_id == 12)
+			  $this->rights->facture->creer = 1;
+			
+			if ($obj->fk_id == 13)
+			  $this->rights->facture->modifier = 1;
+			
+			if ($obj->fk_id == 14)
+			  $this->rights->facture->supprimer = 1;
+		      }
+		  }
+		if ($module == 'propale' or $module == '')
+		  {
+		    if ($obj->fk_id == 1 or $obj->fk_id == 20)
+		      {
+			$this->rights->propale->lire = 1;
+			$this->rights->propale->creer = 1;
+			$this->rights->propale->modifier = 1;
+			$this->rights->propale->supprimer = 1;
+		      }
+		    else
+		      {
+			if ($obj->fk_id == 21)
+			  $this->rights->propale->lire = 1;
+			
+			if ($obj->fk_id == 22)
+			  $this->rights->propale->creer = 1;
+			
+			if ($obj->fk_id == 23)
+			  $this->rights->propale->modifier = 1;
+			
+			if ($obj->fk_id == 24)
+			  $this->rights->propale->valider = 1;
+
+			if ($obj->fk_id == 25)
+			  $this->rights->propale->envoyer = 1;
+
+			if ($obj->fk_id == 26)
+			  $this->rights->propale->cloturer = 1;
+
+			if ($obj->fk_id == 27)
+			  $this->rights->propale->supprimer = 1;
+		      }
+		  }
+		if ($module == 'produit' or $module == '')
+		  {
+		    if ($obj->fk_id == 1 or $obj->fk_id == 30)
+		      {
+			$this->rights->produit->lire = 1;
+			$this->rights->produit->creer = 1;
+			$this->rights->produit->modifier = 1;
+			$this->rights->produit->supprimer = 1;
+		      }
+		    else
+		      {
+			if ($obj->fk_id == 31)
+			  $this->rights->produit->lire = 1;
+			
+			if ($obj->fk_id == 32)
+			  $this->rights->produit->creer = 1;
+			
+			if ($obj->fk_id == 33)
+			  $this->rights->produit->modifier = 1;
+			
+			if ($obj->fk_id == 34)
+			  $this->rights->produit->supprimer = 1;
+		      }
+		  }
+		if ($module == 'projet' or $module == '')
+		  {
+		    if ($obj->fk_id == 1 or $obj->fk_id == 40)
+		      {
+			$this->rights->projet->lire = 1;
+			$this->rights->projet->creer = 1;
+			$this->rights->projet->modifier = 1;
+			$this->rights->projet->supprimer = 1;
+		      }
+		    else
+		      {
+			if ($obj->fk_id == 41)
+			  $this->rights->projet->lire = 1;
+			
+			if ($obj->fk_id == 42)
+			  $this->rights->projet->creer = 1;
+			
+			if ($obj->fk_id == 43)
+			  $this->rights->projet->modifier = 1;
+			
+			if ($obj->fk_id == 44)
+			  $this->rights->projet->supprimer = 1;
+		      }
+		  }
+		$i++;
+	      }
+	    //	    $this->db->free();	    
+	  }
+	else
+	  {
+	    print $this->db->error();
+	  }
+    }
+
+  /*
+   *
+   *
+   */
   Function fetch($login='')
     {
 
       //$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta, u.login, u.pass, u.webcal_login, u.note";
       //$sql .= " FROM llx_user as u";
       $sql = "SELECT * FROM llx_user as u";
-    if ($this->id) {
-      $sql .= " WHERE u.rowid = $this->id";
-    } else {
-      $sql .= " WHERE u.login = '$login'";
-    }
+      if ($this->id)
+	{
+	  $sql .= " WHERE u.rowid = $this->id";
+	}
+      else
+	{
+	  $sql .= " WHERE u.login = '$login'";
+	}
   
     $result = $this->db->query($sql);
 
@@ -88,6 +363,8 @@ class User {
 	    $this->code = $obj->code;
 	    $this->email = $obj->email;
 	    
+	    $this->contact_id = $obj->fk_socpeople;
+
 	    $this->comm = $obj->module_comm;
 	    $this->compta = $obj->module_compta;
 	    
@@ -98,7 +375,7 @@ class User {
 	    $this->societe_id = $obj->fk_societe;
 	  }
 	$this->db->free();
-	
+
       }
     else
       {
@@ -107,6 +384,42 @@ class User {
   }
   /*
    *
+   *
+   *
+   */
+  Function delete()
+    {
+
+      if ($this->contact_id) 
+	{
+
+	  $sql = "DELETE FROM llx_user WHERE rowid = $this->id";
+  
+	  $result = $this->db->query($sql);
+
+	  $sql = "UPDATE llx_socpeople SET fk_user = 0 WHERE idp = $this->contact_id";
+	    
+	  if ($this->db->query($sql)) 
+	    {
+	      
+	    }
+	}
+      else
+	{
+	  $sql = "UPDATE llx_user SET login = '' WHERE rowid = $this->id";
+  
+	  $result = $this->db->query($sql);
+	}
+
+      $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id";
+
+      if ($this->db->query($sql)) 
+	{
+	    
+	}
+
+  }
+  /*
    *
    *
    */
@@ -133,6 +446,7 @@ class User {
 		    {
 		      $this->id = $this->db->last_insert_id();
 		      $this->update();
+		      $this->set_default_rights();
 		      return $this->id;      
 		    }
 		}
@@ -151,7 +465,95 @@ class User {
    *
    *
    */
+  Function create_from_contact($contact)
+    {
+      $this->nom = $contact->nom;
+      $this->prenom = $contact->prenom;
+      $this->email = $contact->email;
 
+      $this->login = strtolower(substr($contact->prenom, 0, 3)) . strtolower(substr($contact->nom, 0, 3));
+
+      $sql = "SELECT login FROM llx_user WHERE login ='$this->login'";
+
+      if ($this->db->query($sql)) 
+	{
+	  $num = $this->db->num_rows();
+	  $this->db->free();
+
+	  if ($num) 
+	    {
+	      $this->errorstr = "Ce login existe déjà";
+	      return 0;
+	    }
+	  else
+	    {            
+	      $sql = "INSERT INTO llx_user (datec, login, fk_socpeople, fk_societe)";
+	      $sql .= " VALUES (now(),'$this->login',$contact->id, $contact->societeid);";
+	      if ($this->db->query($sql))
+		{
+		  if ($this->db->affected_rows()) 
+		    {
+		      $this->id = $this->db->last_insert_id();
+		      $this->admin = 0;
+		      $this->update();
+		      
+		      $sql = "UPDATE llx_socpeople SET fk_user = $this->id WHERE idp = $contact->id";
+		      $this->db->query($sql);
+
+		      $this->set_default_rights();
+
+		      return $this->id;
+		    }
+		}
+	      else
+		{
+		  print $this->db->error();
+		}
+	    }
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+      
+    }
+  /*
+   *
+   *
+   */
+  Function set_default_rights()
+    {
+      $sql = "SELECT id FROM llx_rights_def WHERE bydefault = 1";
+
+      if ($this->db->query($sql)) 
+	{
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  $rd = array();
+	  while ($i < $num)
+	    {
+	      $row = $this->db->fetch_row($i);
+	      $rd[$i] = $row[0];
+	      $i++;
+	    }
+	  $this->db->free();
+	}
+      $i = 0;
+      while ($i < $num)
+	{
+	  $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
+	  if ($this->db->query($sql)) 
+	    {
+
+	    }
+	  $i++;
+	}
+    }
+
+  /*
+   *
+   *
+   */
   Function update()
     {
       $sql = "SELECT login FROM llx_user WHERE login ='$this->login' AND rowid <> $this->id";
@@ -168,6 +570,8 @@ class User {
 	    }
 	  else
 	    {            
+	      if (!strlen($this->code))
+		$this->code = $this->login;
 
 	      $sql = "UPDATE llx_user SET ";
 	      $sql .= " name = '$this->nom'";
@@ -178,6 +582,7 @@ class User {
 	      $sql .= ", webcal_login = '$this->webcal_login'";
 	      $sql .= ", module_comm = $this->comm";
 	      $sql .= ", module_compta = $this->compta";
+	      $sql .= ", code = '$this->code'";
 	      $sql .= ", note = '$this->note'";
 	      $sql .= " WHERE rowid = $this->id";
 	      
@@ -192,7 +597,7 @@ class User {
 		}
 	      else
 		{
-		  print $this->db->error();
+		  print $this->db->error() ."<br>$sql";
 		}
 	    }
 	}
