@@ -211,17 +211,17 @@ if ($propalid) {
 
 	  print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
-	  print '<tr><td>Société</td><td colspan="2"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	  print '<tr><td>Société</td><td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td>Statut</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
 
-	  print '<tr><td>Date</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td>';
+	  print '<tr><td>Date</td><td>'.strftime("%A %d %B %Y",$obj->dp).'</td>';
 
-	  print '<td>Auteur</td><td colspan="2">';
+	  print '<td>Auteur</td><td>';
 	  $author = new User($db, $obj->fk_user_author);
 	  $author->fetch('');
 	  print $author->fullname.'</td></tr>';
 
-	  print "<tr><td>Destinataire</td><td colspan=\"2\">$obj->firstname $obj->name &lt;$obj->email&gt;</td>";
+	  print "<tr><td>Destinataire</td><td>$obj->firstname $obj->name &lt;$obj->email&gt;</td>";
 
 	  print '<td valign="top" colspan="2" width="50%" rowspan="7">Note :<br>'. nl2br($obj->note)."</td></tr>";
 	  
@@ -238,12 +238,12 @@ if ($propalid) {
 	   *
 	   */
 
-	  print "<tr><td bgcolor=\"$color1\">Montant HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->price)." euros</td></tr>";
+	  print "<tr><td>Montant HT</td><td align=\"right\">".price($obj->price)." euros</td></tr>";
 	  /*
 	   *
 	   */
 	  
-	  print "<tr><td bgcolor=\"$color1\">Remise</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->remise)." euros</td></tr>";
+	  print "<tr><td>Remise</td><td align=\"right\">".price($obj->remise)." euros</td></tr>";
 	  
 	  /*
 	   *
@@ -251,7 +251,7 @@ if ($propalid) {
 	  
 	  $totalht = $propal->price - $propal->remise ;
 	  
-	  print "<tr><td bgcolor=\"$color1\">Total HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\"><b>".price($totalht)."</b> euros</td></tr>";
+	  print "<tr><td>Total HT</td><td align=\"right\"><b>".price($totalht)."</b> euros</td></tr>";
 	  /*
 	   *
 	   */
