@@ -108,8 +108,8 @@ class Auth_Container_DB extends Auth_Container
                                     );
         }
 
-        if (DB::isError($this->db) || PEAR::isError($this->db)) {
-            return PEAR::raiseError($this->db->getMessage(), $this->db->getCode());
+        if (DB::isError($this->db) || DOLIPEAR::isError($this->db)) {
+            return DOLIPEAR::raiseError($this->db->getMessage(), $this->db->getCode());
         } else {
             return true;
         }
@@ -131,7 +131,7 @@ class Auth_Container_DB extends Auth_Container
     {
         if (!DB::isConnection($this->db)) {
             $res = $this->_connect($this->options['dsn']);
-            if(DB::isError($res) || PEAR::isError($res)){
+            if(DB::isError($res) || DOLIPEAR::isError($res)){
                 return $res;
             }
         }

@@ -224,12 +224,12 @@ class DB
 
     function &factory($type)
     {
-        @include_once(DOL_DOCUMENT_ROOT."/includes/pear/DB/${type}.php");
+        include_once(DOL_DOCUMENT_ROOT."/includes/pear/DB/${type}.php");
 
         $classname = "DB_${type}";
 
         if (!class_exists($classname)) {
-            return PEAR::raiseError(null, DB_ERROR_NOT_FOUND,
+            return DOLIPEAR::raiseError(null, DB_ERROR_NOT_FOUND,
                                     null, null, null, 'DB_Error', true);
         }
 
@@ -275,12 +275,12 @@ class DB
             // expose php errors with sufficient debug level
             include_once DOL_DOCUMENT_ROOT."/includes/pear/DB/${type}.php";
         } else {
-            @include_once DOL_DOCUMENT_ROOT."/includes/pear/DB/${type}.php";
+            include_once DOL_DOCUMENT_ROOT."/includes/pear/DB/${type}.php";
         }
 
         $classname = "DB_${type}";
         if (!class_exists($classname)) {
-            return PEAR::raiseError(null, DB_ERROR_NOT_FOUND, null, null,
+            return DOLIPEAR::raiseError(null, DB_ERROR_NOT_FOUND, null, null,
                                     "Unable to include the DB/{$type}.php file for `$dsn'",
                                     'DB_Error', true);
         }

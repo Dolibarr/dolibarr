@@ -29,7 +29,7 @@
 //               be registered here.
 //
 
-require_once "DB/common.php";
+require_once DOL_DOCUMENT_ROOT."/includes/pear/DB/common.php";
 
 class DB_mysql extends DB_common
 {

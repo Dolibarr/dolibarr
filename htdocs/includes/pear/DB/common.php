@@ -26,9 +26,9 @@
  * inherited by all such.
  */
 
-require_once "PEAR.php";
+require_once DOL_DOCUMENT_ROOT."/includes/pear/PEAR.php";
 
-class DB_common extends PEAR
+class DB_common extends DOLIPEAR
 {
     // {{{ properties
     /**
@@ -136,7 +136,7 @@ class DB_common extends PEAR
     */
     function DB_common()
     {
-        $this->PEAR('DB_Error');
+        $this->DOLIPEAR('DB_Error');
         $this->features = array();
         $this->errorcode_map = array();
         $this->fetchmode = DB_FETCHMODE_ORDERED;
@@ -283,7 +283,7 @@ class DB_common extends PEAR
                 $mode    = $this->_default_error_mode;
                 $options = $this->_default_error_options;
             }
-            return PEAR::raiseError($code, null, $mode, $options, null, null, true);
+            return DOLIPEAR::raiseError($code, null, $mode, $options, null, null, true);
         }
 
         if ($userinfo === null) {
@@ -294,7 +294,7 @@ class DB_common extends PEAR
             $userinfo .= " [nativecode=$nativecode]";
         }
 
-        return PEAR::raiseError(null, $code, $mode, $options, $userinfo,
+        return DOLIPEAR::raiseError(null, $code, $mode, $options, $userinfo,
                                   'DB_Error', true);
     }
 
