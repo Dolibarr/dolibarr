@@ -91,28 +91,31 @@ if ($_GET["id"])
 
 	  print '<tr><td width="50%" valign="top" align="center">';
 
-	  $img_root = DOL_DATA_ROOT."/graph/telephonie/";
-	  $file = "client/".substr($soc->id,0,1)."/".$soc->id."/graphca.png";
+	  $mesg_no_graph = 'Nous avons pas assez de données à ce jour pour générer ce graphique.';
 
-	  if (file_exists($img_root . $file)) 
+	  $img_root = DOL_DATA_ROOT."/graph/".substr($soc->id,-1)."/telephonie/client/";
+
+	  $file = $img_root.$soc->id."/graphca.png";
+
+	  if (file_exists($file)) 
 	    {
 	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
 	    }
 	  else
 	    {
-	      print 'Nous avons pas assez de données à ce jour pour générer ce graphique.';
+	      print $mesg_no_graph;
 	    }
 
 	  print '</td><td width="50%" valign="top" align="center">';
 
-	  $file = "client/".substr($soc->id,0,1)."/".$soc->id."/graphgain.png";
-	  if (file_exists($img_root . $file)) 
+	  $file = $img_root.$soc->id."/graphgain.png";
+	  if (file_exists($file)) 
 	    {
 	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
 	    }
 	  else
 	    {
-	      print 'Nous avons pas assez de données à ce jour pour générer ce graphique.';
+	      print $mesg_no_graph;
 	    }
 
 	  print '</td></tr>';
@@ -123,26 +126,28 @@ if ($_GET["id"])
 
 	  print '<tr><td width="50%" valign="top" align="center">';
 
-	  $file = "client/".substr($soc->id,0,1)."/".$soc->id."/graphappelsdureemoyenne.png";
-	  if (file_exists($img_root . $file)) 
+	  $file = $img_root.$soc->id."/graphappelsdureemoyenne.png";
+
+	  if (file_exists($file)) 
 	    {
 	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
 	    }
 	  else
 	    {
-	      print 'Nous avons pas assez de données à ce jour pour générer ce graphique.';
+	      print $mesg_no_graph;
 	    }
 
 	  print '</td><td width="50%" valign="top" align="center">';
 
-	  $file = "client/".substr($soc->id,0,1)."/".$soc->id."/nb-comm-mensuel.png";
-	  if (file_exists($img_root . $file)) 
+	  $file = $img_root.$soc->id."/nb-comm-mensuel.png";
+
+	  if (file_exists($file)) 
 	    {
 	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
 	    }
 	  else
 	    {
-	      print 'Nous avons pas assez de données à ce jour pour générer ce graphique.';
+	      print $mesg_no_graph;
 	    }
 
 	  print '</td></tr></table>';

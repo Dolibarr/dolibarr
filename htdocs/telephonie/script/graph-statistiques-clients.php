@@ -139,12 +139,14 @@ class Process
 	  {
 	    //print ".";	
 	    
-	    $file = $img_root . "client/".substr($client,0,1)."/".$client."/graphca.png";
+	    $img_root = DOL_DATA_ROOT."/graph/".substr($client,-1)."/telephonie/client/";
+
+	    $file = $img_root . $client."/graphca.png";
 	    $graphca = new GraphCa($this->db, $file);
 	    $graphca->client = $client;
 	    $graphca->GraphDraw();
 
-  $file = $img_root . "client/".substr($client,0,1)."/".$client."/graphgain.png";
+	    $file = $img_root . $client."/graphgain.png";
 
 	    $graphgain = new GraphGain ($this->db, $file);
 	    $graphgain->client = $client;
@@ -164,14 +166,14 @@ class Process
 	    $this->db->query($sql);
 
 
-	    $file = $img_root . "client/".substr($client,0,1)."/".$client."/graphappelsdureemoyenne.png";
+	    $file = $img_root . $client."/graphappelsdureemoyenne.png";
 	    
 	    $graphgain = new GraphAppelsDureeMoyenne ($this->db, $file);
 	    $graphgain->client = $client;
 	    $graphgain->show_console = 0 ;
 	    $graphgain->GraphDraw();
 	    
-	    $file = $img_root . "client/".substr($client,0,1)."/".$client."/nb-comm-mensuel.png";
+	    $file = $img_root . $client."/nb-comm-mensuel.png";
 	    
 	    $graphx = new GraphCommNbMensuel ($this->db, $file);
 	    $graphx->client = $client;
@@ -180,6 +182,7 @@ class Process
 
 	  }       
       }
+
     dolibarr_syslog("Fin client ".$this->ident);
 
   }
