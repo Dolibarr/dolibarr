@@ -37,16 +37,18 @@ $nbexternalrss = $obj->nb;
 
 if ($_POST["action"] == 'add')
 {
-    $external_rss_url = "external_rss_url_" . $_POST["norss"];
-    if(isset($_POST[$external_rss_url])) {
+
+    $external_rss_urlrss = "external_rss_urlrss_" . $_POST["norss"];
+
+    if(isset($_POST[$external_rss_urlrss])) {
       $external_rss_title = "external_rss_title_" . $_POST["norss"];
-      $external_rss_urlrss = "external_rss_urlrss_" . $_POST["norss"];
+      //$external_rss_url = "external_rss_url_" . $_POST["norss"];
       
-      $sql  = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXTERNAL_RSS_URL_" . $_POST["norss"] . "', value='".$_POST[$external_rss_url]."', visible=0"; 
+      //$sql  = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXTERNAL_RSS_URL_" . $_POST["norss"] . "', value='".$_POST[$external_rss_url]."', visible=0"; 
       $sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "', value='".$_POST[$external_rss_title]."', visible=0";
       $sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "', value='".$_POST[$external_rss_urlrss]."', visible=0";
       
-      if ($db->query($sql) && $db->query($sql1) && $db->query($sql2))
+      if ($db->query($sql1) && $db->query($sql2))
 	{
 	  // la constante qui a été lue en avant du nouveau set
 	  // on passe donc par une variable pour avoir un affichage cohérent
@@ -60,32 +62,39 @@ if ($_POST["action"] == 'add')
 
 if ($_POST["delete"])
 {
-    // TODO Code pour supprimer
-
-
+    if(isset($_POST["norss"])) {
+      $sql  = "DELETE FROM ".MAIN_DB_PREFIX."const where name = 'EXTERNAL_RSS_URL_" . $_POST["norss"]."'";
+      $sql1 = "DELETE FROM ".MAIN_DB_PREFIX."const where name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"]."'";
+      $sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const where name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"]."'";
+      
+      $result = $db->query($sql);
+      $result = $db->query($sql1);
+      $result = $db->query($sql2);
+      if (! $result) {
+        dolibarr_print_error($db); 
+      }
+    }
 }
 
 if ($_POST["modify"])
 {
-  for ($i = 0; $i < $nbexternalrss; $i++) {
-    $external_rss_url = "external_rss_url_" . $i;
-    if(isset($$external_rss_url)) {
-      $external_rss_title = "external_rss_title_" . $i;
-      $external_rss_urlrss = "external_rss_urlrss_" . $i;
-      $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_URL_" . $i . "', value='".$$external_rss_url."', visible=0"; 
-      $sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_TITLE_" . $i . "', value='".$$external_rss_title."', visible=0";
-      $sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_URLRSS_" . $i . "', value='".$$external_rss_urlrss."', visible=0";
+    $external_rss_urlrss = "external_rss_urlrss_" . $_POST["norss"];
+    if(isset($_POST[$external_rss_urlrss])) {
+      $external_rss_title = "external_rss_title_" . $_POST["norss"];
+      //$external_rss_url = "external_rss_url_" . $i;
+      //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_URL_" . $_POST["norss"] . "', value='". $_POST[$external_rss_url]."', visible=0"; 
+      $sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "', value='". $_POST[$external_rss_title]."', visible=0";
+      $sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "', value='". $_POST[$external_rss_urlrss]."', visible=0";
       
-      if ($db->query($sql) && $db->query($sql1) && $db->query($sql2))
+      if ($db->query($sql1) && $db->query($sql2))
 	{
-	  // la constante qui a été lue en avant du nouveau set
-	  // on passe donc par une variable pour avoir un affichage cohérent
-	  print "Enregistrement confirmé pour le site " . $$external_rss_title . "\n";
+	  print "Enregistrement confirmé pour le flux RSS " . $_POST[$external_rss_title] . "\n";
+	  // TODO Mettre a jour constante dans environnement pour avoir affichage qui suit ok
+
 	}
       else
-	print "Erreur d'enregistement pour le site " . $$external_rss_title . "\n";
+	  print "Erreur d'enregistement pour le flux RSS " . $_POST[$external_rss_title] . "\n";
     }
-  }
 }
 
 
@@ -117,10 +126,12 @@ Exemples:<ul>
   <td>Titre</td>
   <td><input type="text" name="external_rss_title_<?php echo $nbexternalrss ?>" value="<?php echo @constant("EXTERNAL_RSS_TITLE_" . $nbexternalrss) ?>" size="45"></td>
 </tr>
+<!--
 <tr>
   <td>URL du site</td>
   <td><input type="text" name="external_rss_url_<?php echo $nbexternalrss ?>" value="<?php echo @constant('EXTERNAL_RSS_URL_' . $nbexternalrss) ?>" size="45"></td>
 </tr>
+-->
 <tr>
   <td>URL du RSS</td>
   <td><input type="text" name="external_rss_urlrss_<?php echo $nbexternalrss ?>" value="<?php echo @constant("EXTERNAL_RSS_URLRSS_" . $nbexternalrss) ?>" size="45"></td>
@@ -143,16 +154,18 @@ Exemples:<ul>
 for($i = 0; $i < $nbexternalrss; $i++) {
   print "<tr class=\"liste_titre\">
 <form name=\"externalrssconfig\" action=\"external_rss.php\" method=\"post\">
-  <td colspan=\"2\">Syndication du site numéro " . ($i+1) . "</td>
+  <td colspan=\"2\">Syndication du flux numéro " . ($i+1) . "</td>
 </tr>
 <tr>
   <td>Titre</td>
   <td><input type=\"text\" name=\"external_rss_title_" . $i . "\" value=\"" . @constant("EXTERNAL_RSS_TITLE_" . $i) . "\" size=\"45\"></td>
 </tr>
+<!--
 <tr>
   <td>URL du site</td>
   <td><input type=\"text\" name=\"external_rss_url_" . $i . "\" value=\"". @constant("EXTERNAL_RSS_URL_" . $i) . "\" size=\"45\"></td>
 </tr>
+-->
 <tr>
   <td>URL du RSS</td>
   <td><input type=\"text\" name=\"external_rss_urlrss_" . $i . "\" value=\"" . @constant("EXTERNAL_RSS_URLRSS_" . $i) . "\" size=\"45\"></td>
@@ -161,7 +174,7 @@ for($i = 0; $i < $nbexternalrss; $i++) {
 <td colspan=\"2\">
 <input type=\"submit\" name=\"modify\" value=\"".$langs->trans("Modify")."\">
 <input type=\"submit\" name=\"delete\" value=\"".$langs->trans("Delete")."\">
-<input type=\"hidden\" value=\"$i\">
+<input type=\"hidden\" name=\"norss\"  value=\"$i\">
 </td>
 </form>
 </tr>
