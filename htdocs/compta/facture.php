@@ -261,7 +261,7 @@ if ($action == 'send')
 
       $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
       
-      if (file_exists($file))
+      if (is_readable($file))
 	{
 	  $sendto = $soc->contact_get_email($HTTP_POST_VARS["destinataire"]);
 	  $sendtoid = $HTTP_POST_VARS["destinataire"];
@@ -301,12 +301,12 @@ if ($action == 'send')
 	}
       else
 	{
-	  dolibarr_syslog("Le fichier PDF n'existe pas");
+	  dolibarr_syslog("Impossible de lire :".$file);
 	}
     }
   else
     {
-      dolibarr_syslog("Impossible de lire la facture");
+      dolibarr_syslog("Impossible de lire les données de la facture");
     }
 }
 /*
