@@ -72,14 +72,9 @@ if ($result)
       $obj = $db->fetch_object( $i);
 
       print '<tr class="pair"><td>'.$obj->name.'</td><td>' . $pos[$obj->position] . '</td><td>';
-
-
       print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=delete">Supprimer</a>';
-
       array_push($boxes, $obj->box_id);
-
       print '</td></tr>';
-
       $i++;
     }
 }
