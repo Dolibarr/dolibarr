@@ -56,7 +56,7 @@ function llxHeader($head = "") {
   $menu->add("/compta/facture.php3","Factures");
   $menu->add_submenu("paiement.php3","Paiements");
 
-  if ($user->comm > 0 && $conf->commercial ) 
+  if ($user->comm > 0 && $conf->commercial && MAIN_MODULE_PROPALE) 
     {
       $menu->add("/compta/propal.php3","Propales");
     }
@@ -86,6 +86,8 @@ function llxHeader($head = "") {
     {
       $menu->add("tva/index.php3","TVA");
     }
+
+  $menu->add("/compta/caisse/index.php","Caisse");
 
   if ($user->societe_id == 0) 
     {
