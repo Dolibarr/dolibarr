@@ -204,9 +204,8 @@ Class pdf_propale_jaune
 
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = "Tous les montants sont exprimés en euros";
+      $titre = "Montants en euros";
       $pdf->Text(10,280, $titre);
-
     }
 
   Function _pagehead(&$pdf, $propale)
@@ -240,7 +239,6 @@ Class pdf_propale_jaune
 	}  
       $pdf->rect(10, 40, 80, 40);      
 
-
       $pdf->SetXY(10,5);
       $pdf->SetFont('Arial','B',16);
       $pdf->SetTextColor(0,0,200);
@@ -270,7 +268,5 @@ Class pdf_propale_jaune
       $pdf->SetXY(110,90);
       $pdf->MultiCell(100, 10, "Date : " . strftime("%d %B %Y", $propale->date));            
     }
-
 }
-
 ?>
