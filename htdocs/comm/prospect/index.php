@@ -62,6 +62,40 @@ if ($conf->propal->enabled)
   print "<tr $bc[1]><td>";
   print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
   print "</table></form><br>\n";
+}
+
+/*
+ *
+ *
+ */  
+
+$sql = "SELECT count(*) as cc, st.libelle";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
+$sql .= " WHERE s.fk_stcomm = st.id AND s.client=2 GROUP BY st.libelle";
+
+if ( $db->query($sql) )
+{
+  $num = $db->num_rows();
+  $i = 0;
+  if ($num > 0 )
+    {
+      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<tr class="liste_titre">';
+      print '<td colspan="2">Prospects par statut</td></tr>';
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->libelle."</a></td><td>".$obj->cc."</td></tr>";
+	  $i++;
+	}
+      print "</table><br>";
+    }
+}
+
+
+if ($conf->propal->enabled) 
+{
   
   $sql = "SELECT p.rowid, p.ref";
   $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
@@ -88,7 +122,6 @@ if ($conf->propal->enabled)
 	}
     }
 }
-
 /*
  * Actions commerciales a faire
  *
