@@ -51,7 +51,12 @@ class User {
 
     $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.module_comm, u.module_compta";
     $sql .= " FROM llx_user as u";
-    $sql .= " WHERE u.login = '$login'";
+
+    if ($this->id) {
+      $sql .= " WHERE u.rowid = $this->id";
+    } else {
+      $sql .= " WHERE u.login = '$login'";
+    }
   
     $result = $this->db->query($sql);
 

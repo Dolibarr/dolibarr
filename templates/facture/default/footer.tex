@@ -1,0 +1,74 @@
+%
+% footer.tex
+% $Id$
+%
+
+\multicolumn{2}{r}{} & \multicolumn{2}{r}{Remise H.T.}   & \multicolumn{1}{r}{#REMISEHT#} \\
+
+\multicolumn{2}{r}{} & \multicolumn{2}{r}{Total H.T.}   & \multicolumn{1}{r}{#TOTALHT#} \\
+
+
+
+\multicolumn{2}{r}{} & \multicolumn{2}{r}{TVA à 19.60\%} & \multicolumn{1}{r}{#TVA#} \\
+
+%\cline{3-5}
+\hhline{~~===}
+\multicolumn{2}{r}{} & \multicolumn{2}{r}{{\large \textbf{Total en euros}}} & \multicolumn{1}{r}{{\large \textbf{#TOTALTTC#}}} \\
+\cline{3-5}
+%\cline{3-5}
+
+\multicolumn{2}{r}{} & \multicolumn{2}{r}{{\large Soit en Francs}} & \multicolumn{1}{r}{{\large #FRANCS#}} \\
+
+
+
+\end{tabular}
+
+\end{flushright}
+
+
+
+\begin{flushleft}
+\noindent
+
+Conditions de r\'eglement : \`a  r\'eception de facture
+
+Cette facture est relative \`a notre proposition commerciale : #NUMPROPALE#
+
+
+\end{flushleft}
+
+
+\begin{flushright}
+\begin{tabular}{llll}
+\\
+\cline{2-2}
+
+& Paris, le #DATE# \\
+\\
+\\
+\\
+\\
+\end{tabular}
+\end{flushright}
+
+\begin{flushleft}
+\noindent
+
+Si vous souhaitez payer cette facture par virement, merci de
+prendre connaissance de nos coordonn\'ees bancaire :
+\end{flushleft}
+
+
+\begin{tabular}{llll}
+Banque & Agence & Num\'ero de compte & Cl\'e \\
+\textsf{30003}  & \textsf{03590}  & \textsf{00020812156} & \textsf{38} \\
+\end{tabular}
+
+\begin{tabular}{ll}
+IBAN :& \textsf{FR76 30003 03590 00020812156 38} \\
+\end{tabular}
+
+\begin{tabular}{ll}
+BIC-ADRESSE SWIFT : & \textsf{SOGEFRPP} \\
+\end{tabular}
+\end{document}
