@@ -65,7 +65,17 @@ if ($action == 'add_paiement')
 
   $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
   $acc->addline($datepaye, $paiementid, $label, $amount, $num_paiement);
+}
+/*
+ *
+ */
+if ($action == 'del_paiement')
+{
+  $paiement = new Paiement($db);
+  $paiement->id = $paiementid;
+  $paiement->delete();
 
+  $action = '';
 }
 /*
  *
@@ -420,6 +430,10 @@ else
 	    print "<td>Date</td>";
 	    print "<td>Type</td>";
 	    print "<td align=\"right\">Montant</TD><td>&nbsp;</td>";
+	    if (! $obj->paye)
+	      {
+		print "<td>&nbsp;</td>";
+	      }
 	    print "</TR>\n";
     
 	    $var=True;
@@ -430,7 +444,11 @@ else
 		print "<TR $bc[$var]>";
 		print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
 		print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
-		print '<TD align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
+		print '<td align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
+		if (! $obj->paye)
+		  {
+		    print '<td><a href="facture.php3?facid='.$facid.'&action=del_paiement&paiementid='.$objp->rowid.'">Del</a>';
+		  }
 		print "</tr>";
 		$total = $total + $objp->amount;
 		$i++;
