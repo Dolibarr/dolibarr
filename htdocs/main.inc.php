@@ -347,12 +347,10 @@ function top_menu($head, $title="")
   //  print '<BASE href="'.DOL_URL_ROOT.'/">';
 
   print '<link rel="top" title="Accueil" href="'.DOL_URL_ROOT.'/">';
-  //  print '<link rel="help" title="HowToUseWiki" href="HowToUseWiki">';
+  print '<link rel="help" title="Aide" href="http://www.dolibarr.com/aide.fr.html">';
 
   print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
   print '<link rel="author" title="Equipe de développement" href="http://www.dolibarr.com/dev.fr.html">'."\n";
-
-  //print '<link rel="next" title="Equipe de développement" href="http://www.dolibarr.com/dev.fr.html" />';
 
   print '<link rel="stylesheet" TYPE="text/css" HREF="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
   print '<link rel="stylesheet" TYPE="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
