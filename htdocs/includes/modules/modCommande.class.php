@@ -33,6 +33,8 @@ class modCommande extends modDolibarrModules
   Function modCommande($DB)
   {
     $this->db = $DB ;
+    $this->const = array();
+    $this->boxes = array();
   }
   /*
    *
@@ -45,11 +47,10 @@ class modCommande extends modDolibarrModules
     /*
      *  Activation du module
      */
-    $const = array();
 
     $sql = array();
     
-    return $this->_init($const, $sql);
+    return $this->_init($this->const, $sql);
 
   }
   /*

@@ -36,6 +36,7 @@ class modFacture extends modDolibarrModules
     $this->depends = array("MAIN_MODULE_SOCIETE","MAIN_MODULE_COMPTABILITE");
 
     $this->const = array();
+    $this->boxes = array();
 
     $this->const[0][0] = "FAC_PDF_INTITULE";
     $this->const[0][1] = "chaine";
@@ -72,6 +73,11 @@ class modFacture extends modDolibarrModules
     $this->const[8][1] = "chaine";
     $this->const[8][2] = "pluton";
 
+    $this->boxes[0][0] = "Factures";
+    $this->boxes[0][1] = "box_factures.php";
+
+    $this->boxes[1][0] = "Factures impayées";
+    $this->boxes[1][1] = "box_factures_imp.php";
   }
   /*
    *
@@ -92,10 +98,10 @@ class modFacture extends modDolibarrModules
 		 "insert into llx_rights_def values (14,'Valider les factures','facture','d',0);",
 		 "insert into llx_rights_def values (15,'Envoyer les factures aux clients','facture','d',0);",
 		 "insert into llx_rights_def values (16,'Emettre des paiements sur les factures','facture','d',0);",
-		 "insert into llx_rights_def values (19,'Supprimer les factures','facture','d',0);"
+		 "insert into llx_rights_def values (19,'Supprimer les factures','facture','d',0);",
 		 );
     
-    return $this->_init($this->const, $sql);
+    return $this->_init($sql);
   }
   /*
    *
@@ -103,7 +109,9 @@ class modFacture extends modDolibarrModules
    */
   Function remove()
   {
-    $sql = array("DELETE FROM llx_rights_def WHERE module = 'facture';");
+    $sql = array(
+		 "DELETE FROM llx_rights_def WHERE module = 'facture';"
+		 );
 
     return $this->_remove($sql);
   }

@@ -38,19 +38,43 @@ class modDolibarrModules
    *
    */
 
-  Function _init($const, $array_sql)
+  Function _init($array_sql)
   {
     /*
      *  Activation du module
      */
     $err = 0;
 
-
-    foreach ($const as $key => $value)
+    foreach ($this->boxes as $key => $value)
       {
-	$name = $const[$key][0];
-	$type = $const[$key][1];
-	$val  = $const[$key][2];
+	$titre = $this->boxes[$key][0];
+	$file  = $this->boxes[$key][1];
+
+	$sql = "SELECT count(*) FROM llx_boxes_def WHERE name ='".$titre."'";
+
+	if ( $this->db->query($sql) )
+	  {
+	    $row = $this->db->fetch_row($sql);	    
+	    if ($row[0] == 0)
+	      {
+		$sql = "insert into llx_boxes_def (name, file) values ('".$titre."','".$file."')";
+		if (! $this->db->query($sql) )
+		  {
+		    $err++;
+		  }
+	      }
+	  }
+	else
+	  {
+	    $err++;
+	  }
+      }
+
+    foreach ($this->const as $key => $value)
+      {
+	$name = $this->const[$key][0];
+	$type = $this->const[$key][1];
+	$val  = $this->const[$key][2];
 
 	$sql = "SELECT count(*) FROM llx_const WHERE name ='".$name."'";
 
@@ -126,6 +150,23 @@ class modDolibarrModules
       {
 	return 1;
       }
+
+    /*
+     * Boites
+     */
+    foreach ($this->boxes as $key => $value)
+      {
+	$titre = $this->boxes[$key][0];
+	$file  = $this->boxes[$key][1];
+
+	$sql = "DELETE FROM llx_boxes_def WHERE file = '".$file."'";
+	if (! $this->db->query($sql) )
+	  {
+	    $err++;
+	  }
+      }
+
   }
+
 }
 ?>

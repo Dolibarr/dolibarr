@@ -36,6 +36,7 @@ class modPropale extends modDolibarrModules
     $this->depends = array("MAIN_MODULE_SOCIETE","MAIN_MODULE_COMMERCIAL");
 
     $this->const = array();
+    $this->boxes = array();
     /*
      *  Constantes
      */
@@ -46,6 +47,9 @@ class modPropale extends modDolibarrModules
     $this->const[1][0] = "PROPALE_ADDON";
     $this->const[1][1] = "chaine";
     $this->const[1][2] = "mod_propale_ivoire";
+
+    $this->boxes[0][0] = "Proposition commerciales";
+    $this->boxes[0][1] = "box_propales.php";
   }
   /*
    *
@@ -66,12 +70,11 @@ class modPropale extends modDolibarrModules
 		 "insert into llx_rights_def values (25,'Envoyer les propositions commerciales aux clients','propale','d',0);",
 		 "insert into llx_rights_def values (26,'Clôturer les propositions commerciales','propale','d',0);",
 		 "insert into llx_rights_def values (27,'Supprimer les propositions commerciales','propale','d',0);",
-		 "INSERT INTO llx_boxes_def (name,file) VALUES('Proposition commerciales', 'box_propales.php');",
 		 "REPLACE INTO llx_propal_model_pdf SET nom = '".$this->const[0][2]."'",
 		 );
     //"insert into llx_rights_def values (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
     
-    return $this->_init($this->const, $sql);
+    return $this->_init($sql);
 
   }
   /*
@@ -81,7 +84,6 @@ class modPropale extends modDolibarrModules
   Function remove()
   {
     $sql = array(
-		 "DELETE FROM llx_boxes_def WHERE file = 'box_propales.php';",
 		 "DELETE FROM llx_rights_def WHERE module = 'propale';"
 		 );
 
