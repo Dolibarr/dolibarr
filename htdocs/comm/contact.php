@@ -125,17 +125,16 @@ if ($result)
     $sortorder="DESC";
   }
   
-  print '<p><TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-  print "<TR class=\"liste_titre\">";
-  print "<TD>";
+  print '<p><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>';
   print_liste_field_titre("Nom",$PHP_SELF,"lower(p.name)", $begin);
   print "</td><td>";
   print_liste_field_titre("Prénom",$PHP_SELF,"lower(p.firstname)", $begin);
   print "</td><td>";
   print_liste_field_titre("Société",$PHP_SELF,"lower(s.nom)", $begin);
   print "</td><TD>email</TD>";
-  print '<TD>Téléphone</TD><td>&nbsp;</td>';
-  print "</TR>\n";
+  print '<td>Téléphone</td>';
+  print "</tr>\n";
   $var=True;
   $i = 0;
   while ($i < min($num,$limit))
@@ -145,8 +144,8 @@ if ($result)
       $var=!$var;
 
       print "<TR $bc[$var]>";
-
-      print '<TD><a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></TD>';
+      print '<TD><a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.img_file();
+      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></TD>';
       print "<TD>$obj->firstname</TD>";
       
       print '<TD><a href="contact.php?type='.$type.'&socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0" alt="filtrer"></a>&nbsp;';
@@ -156,14 +155,6 @@ if ($result)
       
       print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
       
-      if ($user->societe_id == 0) 
-	{
-	  print "<TD><a href=\"addpropal.php?socidp=$obj->idp&setcontact=$obj->cidp&action=create\">[Propal]</A></td>\n";
-	}
-      else
-	{
-	  print "<td>&nbsp;</td>";
-	}
       print "</TR>\n";
       $i++;
     }
