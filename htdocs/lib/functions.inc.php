@@ -542,6 +542,7 @@ function accessforbidden()
 function dolibarr_print_error($db='',$msg='')
 {
   global $langs;
+
   print "Dolibarr a détecté une erreur technique.<br>\n";
   print "Voici les informations qui pourront aider au diagnostique:<br><br>\n";
 
@@ -550,15 +551,23 @@ function dolibarr_print_error($db='',$msg='')
   print "<b>QUERY_STRING:</b> ".$_SERVER["QUERY_STRING"]."<br>\n";;
   print "<b>Referer:</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
   
+  $syslog="url=".$_SERVER["REQUEST_URI"];
+  $syslog.=", query_string=".$_SERVER["QUERY_STRING"];
+  
   if ($db) {
     print "<br>\n";
     print "<b>Requete dernier acces en base:</b> ".$db->lastquery()."<br>\n";
     print "<b>Code retour dernier acces en base:</b> ".$db->errno()."<br>\n";
     print "<b>Information sur le dernier accès en base:</b> ".$db->error()."<br>\n";
+    $syslog=", sql=".$db->lastquery();
+    $syslog=", db_error=".$db->error();
   }
   if ($msg) {
     print "<b>Message:</b> ".$msg."<br>\n" ;
+    $syslog=", msg=".$msg;
   }
+  dolibarr_syslog("Error $syslog");
+
   exit;
 }
 
