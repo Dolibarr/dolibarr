@@ -48,6 +48,8 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add_submenu("./propal/stats/", "Statistiques");
     }
 
+  $menu->add(DOL_URL_ROOT."/contrat/index.php", "Contrats");
+
   if ($conf->commande->enabled ) 
     {
       $menu->add(DOL_URL_ROOT."/commande/index.php", "Commandes");
@@ -64,11 +66,9 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add(DOL_URL_ROOT."/product/index.php", "Produits");
     }
 
-  $menu->add(DOL_URL_ROOT."/contrat/index.php", "Contrats");
-
   if ($conf->service->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/service/index.php", "Services");
+      $menu->add(DOL_URL_ROOT."/product/index.php", "Services");	# Pour l'instant product et service partagent le meme rep.
     }
 
   $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
