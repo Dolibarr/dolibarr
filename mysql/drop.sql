@@ -117,6 +117,8 @@ drop table if exists llx_notify ;
 
 drop table if exists llx_paiement;
 
+drop table if exists llx_paiementfourn;
+
 drop table if exists llx_pointmort;
 
 drop table if exists llx_product;
