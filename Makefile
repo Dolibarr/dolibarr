@@ -20,7 +20,7 @@
 # General Makefile
 #
 
-FILE=dolibarr-0.4.1
+FILE=dolibarr-0.5.0
 
 tar:
 	rm -fr dolibarr-*.tar.gz* $(FILE)
