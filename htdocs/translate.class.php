@@ -18,7 +18,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * ************************************************************************* */
 
-Class Translate {
+/*!	\file htdocs/translate.class.php
+		\brief  Fichier de la classe de traduction
+		\author	Laurent Destailleur
+		\version $Revision$
+*/
+
+
+/*! \class Translate
+		\brief Classe permettant de gérer les traductions
+*/
+
+class Translate {
 
     var $tab_loaded=array();
     var $tab_translate=array();
@@ -27,6 +38,11 @@ Class Translate {
     var $dir;
     var $debug;
 
+    /**
+    *    \brief     Constructeur de la classe
+    *    \param     dir             repertoire racine des fichiers de traduction
+    *    \param     defaultlang     langue par defaut à utiliser
+    */
     function Translate($dir = "", $defaultlang = "") {
         $this->dir=$dir;
         $this->defaultlang=$defaultlang;
@@ -34,7 +50,11 @@ Class Translate {
         $this->tab_translate = array();
     }
 
-    
+    /*!     
+    		\brief  Charge en mémoire le tableau de traduction pour un domaine particulier
+                    Si le domaine est deja chargé, la fonction ne fait rien
+            \param  domain      Nom du domain (fichier lang) à charger
+    */
     function Load($domain = "main") {
         if ($this->tab_loaded[$domain]) { return; }   # Ce fichier est deja chargé
 
@@ -67,21 +87,25 @@ Class Translate {
 
     }
 
+    /*!     
+    		\brief      Retourne la liste des domaines chargées en memoire
+            \return     array       Tableau des domaines chargées
+    */
     function list_domainloaded() {
         return join(",",array_keys($this->tab_loaded));
     }
     
     
     /*
-    *  Return translated version of parameter string
-    *  [fr] Retourne la version traduite du texte passé en paramètre
-    *       Si il n'y a pas de correspondance pour ce texte, il est retourn
-    *       "tel quel" précédé d'un "<b>[vo]</b> <i>" et terminé par un </i>
-    *
-    *  @access     public
-    *  @return     string     translated version of parameter string, or original version of this string with "<b>[vo]</b> <i>" before and "</i>" after
-    *  @param      string     $str  original string to translate
-    *  @param      int        $mark bolean, 1 or nothing: add [vo] if this translation does not exists, 0 don't add [vo] tags
+    *  \brief       Retourne la version traduite du texte passé en paramètre
+    *               Si il n'y a pas de correspondance pour ce texte, il est retourné
+    *               "tel quel" précédé d'un "<b>[vo]</b> <i>" et terminé par un </i>
+    *  [en]         Return translated version of parameter string
+    *  \param       str         original string to translate
+    *  \param       param1      chaine de param1
+    *  \param       param2      chaine de param1
+    *  \param       param3      chaine de param1
+    *  \return      string      translated version of parameter string, or original version of this string with "<b>[vo]</b> <i>" before and "</i>" after
     */
     function trans($str, $param1='', $param2='', $param3='') {
         if ($this->tab_translate[$str]) {
@@ -92,10 +116,8 @@ Class Translate {
     }
 
     /**
-    *  Return the list of available languages
-    *
-    *  @access     public
-    *  @return     array: list of languages
+    *  \brief       Retourne la liste des langues disponibles
+    *  \return      array     list of languages
     */
     function get_available_languages()
     {
@@ -111,11 +133,10 @@ Class Translate {
     }
     
     /**
-    *  Send header and return a string of html start page
-    *  [fr] Expédie le header correct et retourne le début de la page html
-    *
-    *  @access     public
-    *  @return     string
+    *  \brief       Expédie le header correct et retourne le début de la page html
+    *  [en]         Send header and return a string of html start page
+    *  \access      public
+    *  \return      string      html header avec charset
     */
     function lang_header()
     {
@@ -127,7 +148,6 @@ Class Translate {
     
         return $texte;
     }
-
 
 }
 
