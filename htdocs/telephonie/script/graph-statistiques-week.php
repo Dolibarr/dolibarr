@@ -67,6 +67,13 @@ if ($verbose) print "Graph : Lignes actives$file\n";
 $graph = new GraphLignesActives($db, $file);
 $graph->GraphMakeGraph();
 
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/statut.class.php");
+
+$file = $img_root . "lignes/lignes.statut.png";
+if ($verbose) print "Graph : Lignes statut $file\n";
+$graph = new GraphLignesStatut($db, $file);
+$graph->GraphMakeGraph();
+
 /***********************************************************************/
 /*
 /* Lignes commandes

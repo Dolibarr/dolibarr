@@ -39,6 +39,8 @@ print '<tr><td valign="top">';
 
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/lignes.actives.png" alt="Lignes Actives" title="Lignes Actives"><br /><br />'."\n";
 
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/lignes.statut.png" alt="Lignes Actives" title="Lignes Actives"><br /><br />'."\n";
+
 print '</td><td valign="top">';
 
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/resiliations.hebdomadaire.png" alt="Résiliation de lignes" title="Résiliation de Lignes"><br /><br />'."\n";
