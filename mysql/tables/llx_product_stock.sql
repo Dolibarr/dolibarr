@@ -27,8 +27,6 @@ create table llx_product_stock
   fk_product      integer NOT NULL,
   fk_entrepot     integer NOT NULL,
   reel            integer,  -- stock réel
-  commande        integer,  -- stock commande
-  proposition     integer,  -- stock proposition commerciale
 
   key(fk_product),
   key(fk_entrepot)
