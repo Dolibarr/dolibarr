@@ -11,12 +11,12 @@ create table llx_bank_url
 create table llx_actioncomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
-  datea          datetime,           -- action date
+  datea          datetime,           
   fk_action      integer,
-  label          varchar(50),        -- libelle de l'action
+  label          varchar(50),        
   fk_soc         integer,
   fk_contact     integer default 0,
-  fk_user_action integer,            -- id de la personne qui doit effectuer l'action
+  fk_user_action integer,            
   fk_user_author integer,
   priority       smallint,
   percent        smallint,
@@ -32,31 +32,31 @@ create table llx_actioncomm
 create table llx_societe
 (
   idp            integer AUTO_INCREMENT PRIMARY KEY,
-  id             varchar(32),                         -- private id
-  active         smallint       default 0,            --
-  parent         integer        default 0,            --
+  id             varchar(32),                         
+  active         smallint       default 0,            
+  parent         integer        default 0,            
   tms            timestamp,
-  datec	         datetime,                            -- creation date
-  datea	         datetime,                            -- activation date
-  nom            varchar(60),                         -- company name
-  address        varchar(255),                        -- company adresse
-  cp             varchar(10),                         -- zipcode
-  ville          varchar(50),                         -- town
-  fk_pays        integer        default 0,            --
-  tel            varchar(20),                         -- phone number
-  fax            varchar(20),                         -- fax number
-  url            varchar(255),                        --
-  fk_secteur     integer        default 0,            --
-  fk_effectif    integer        default 0,            --
-  fk_typent      integer        default 0,            --
-  siren	         varchar(9),                          --
-  description    text,                                --
-  fk_stcomm      smallint       default 0,            -- commercial statut
-  note           text,                                --
-  services       integer        default 0,            --
-  prefix_comm    varchar(5),                          -- prefix commercial
-  client         smallint       default 0,            -- client oui/non
-  fournisseur    smallint       default 0,            -- fournisseur oui/non
+  datec	         datetime,                            
+  datea	         datetime,                            
+  nom            varchar(60),                         
+  address        varchar(255),                        
+  cp             varchar(10),                         
+  ville          varchar(50),                         
+  fk_pays        integer        default 0,            
+  tel            varchar(20),                         
+  fax            varchar(20),                         
+  url            varchar(255),                        
+  fk_secteur     integer        default 0,            
+  fk_effectif    integer        default 0,            
+  fk_typent      integer        default 0,            
+  siren	         varchar(9),                          
+  description    text,                                
+  fk_stcomm      smallint       default 0,            
+  note           text,                                
+  services       integer        default 0,            
+  prefix_comm    varchar(5),                          
+  client         smallint       default 0,            
+  fournisseur    smallint       default 0,            
 
   UNIQUE INDEX(prefix_comm)
 );
@@ -73,18 +73,21 @@ create table llx_socstatutlog
 
 create table llx_socpeople
 (
-  idp         integer AUTO_INCREMENT PRIMARY KEY,
-  datec       datetime,
-  fk_soc      integer,
-  name        varchar(50),
-  firstname   varchar(50),
-  address     varchar(255),
-  poste       varchar(80),
-  phone       varchar(30),
-  fax         varchar(30),
-  email       varchar(255),
-  fk_user     integer default 0,
-  note        text
+  idp          integer AUTO_INCREMENT PRIMARY KEY,
+  datec        datetime,
+  fk_soc       integer,
+  name         varchar(50),
+  firstname    varchar(50),
+  address      varchar(255),
+  poste        varchar(80),
+  phone        varchar(30),
+  phone_perso  varchar(30),
+  phone_mobile varchar(30),
+  fax          varchar(30),
+  email        varchar(255),
+  jabberid     varchar(255),
+  fk_user      integer default 0,
+  note         text
 );
 
 create table llx_transaction_bplc
@@ -113,13 +116,13 @@ create table llx_user_rights
 create table llx_todocomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
-  datea          datetime,     -- date de l'action
-  label          varchar(50),  -- libelle de l'action
-  fk_user_action integer,      -- id de la personne qui doit effectuer l'action
-  fk_user_author integer,      -- id auteur de l'action
-  fk_soc         integer,      -- id de la societe auquel est rattachee l'action
-  fk_contact     integer,      -- id du contact sur laquelle l'action 
-                               --    doit etre effectuee
+  datea          datetime,     
+  label          varchar(50),  
+  fk_user_action integer,      
+  fk_user_author integer,      
+  fk_soc         integer,      
+  fk_contact     integer,      
+                               
   note           text
 );
 
@@ -129,11 +132,11 @@ create table llx_adherent
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
-  public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
+  public           smallint NOT NULL DEFAULT 0, 
   fk_adherent_type smallint,
-  morphy           enum('mor','phy') NOT NULL, -- personne morale / personne physique
-  datevalid        datetime,  -- date de validation
-  datec            datetime,  -- date de creation
+  morphy           enum('mor','phy') NOT NULL, 
+  datevalid        datetime,  
+  datec            datetime,  
   prenom           varchar(50),
   nom              varchar(50),
   societe          varchar(50),
@@ -142,14 +145,14 @@ create table llx_adherent
   ville            varchar(50),
   pays             varchar(50),
   email            varchar(255),
-  login            varchar(50) NOT NULL,      -- login utilise pour editer sa fiche
-  pass             varchar(50),      -- pass utilise pour editer sa fiche
-  naiss            date,             -- date de naissance
-  photo		   varchar(255),     -- url vers la photo de l'adherent
+  login            varchar(50) NOT NULL,      
+  pass             varchar(50),      
+  naiss            date,             
+  photo		   varchar(255),     
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer NOT NULL,
   fk_user_valid    integer NOT NULL,
-  datefin          datetime NOT NULL, -- date de fin de validité de la cotisation
+  datefin          datetime NOT NULL, 
   note             text,
 
   UNIQUE INDEX(login)
@@ -159,9 +162,9 @@ create table llx_don
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
-  fk_statut       smallint NOT NULL DEFAULT 0,-- etat du don promesse/valid
-  datec           datetime,         -- date de création de l'enregistrement
-  datedon         datetime,         -- date du don/promesse
+  fk_statut       smallint NOT NULL DEFAULT 0,
+  datec           datetime,         
+  datedon         datetime,         
   amount          real default 0,
   fk_paiement     integer,
   prenom          varchar(50),
@@ -172,8 +175,8 @@ create table llx_don
   ville           varchar(50),
   pays            varchar(50),
   email           varchar(255),
-  public          smallint NOT NULL DEFAULT 1, -- le don est-il public (0,1)
-  fk_don_projet   integer NOT NULL, -- projet auquel est fait le don
+  public          smallint NOT NULL DEFAULT 1, 
+  fk_don_projet   integer NOT NULL, 
   fk_user_author  integer NOT NULL,
   fk_user_valid   integer NOT NULL,
   note            text
@@ -184,8 +187,8 @@ create table llx_facture_fourn
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
   facnumber  varchar(50) NOT NULL,
   fk_soc     integer NOT NULL,
-  datec      datetime,    -- date de creation de la facture
-  datef      date,        -- date de la facture
+  datec      datetime,    
+  datef      date,        
   libelle    varchar(255),
   paye       smallint default 0 NOT NULL,
   amount     real     default 0 NOT NULL,
@@ -198,8 +201,8 @@ create table llx_facture_fourn
 
   fk_statut  smallint default 0 NOT NULL,
 
-  fk_user_author  integer,   -- createur de la facture
-  fk_user_valid   integer,   -- valideur de la facture
+  fk_user_author  integer,   
+  fk_user_valid   integer,   
 
   note       text,
 
@@ -210,7 +213,7 @@ create table llx_notify
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
-  daten           datetime,           -- date de la notification
+  daten           datetime,           
   fk_action       integer NOT NULL,
   fk_contact      integer NOT NULL,
   objet_type      enum('ficheinter','facture','propale'),
@@ -246,13 +249,13 @@ create table llx_fichinter
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc          integer NOT NULL,
-  fk_projet       integer default 0,     -- projet auquel est rattache la fiche
-  ref             varchar(30) NOT NULL,  -- number
-  datec           datetime,              -- date de creation 
-  date_valid      datetime,              -- date de validation
-  datei           date,                  -- date de l'intervention
-  fk_user_author  integer,               -- createur de la fiche
-  fk_user_valid   integer,               -- valideur de la fiche
+  fk_projet       integer default 0,     
+  ref             varchar(30) NOT NULL,  
+  datec           datetime,              
+  date_valid      datetime,              
+  datei           date,                  
+  fk_user_author  integer,               
+  fk_user_valid   integer,               
   fk_statut       smallint  default 0,
   duree           real,
   note            text,
@@ -271,10 +274,10 @@ create table llx_action_def
 
 create table llx_soc_events
 (
-  rowid         integer AUTO_INCREMENT PRIMARY KEY,  -- public id
-  fk_soc        int          NOT NULL,            --
-  dateb	        datetime    NOT NULL,            -- begin date
-  datee	        datetime    NOT NULL,            -- end date
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,  
+  fk_soc        int          NOT NULL,            
+  dateb	        datetime    NOT NULL,            
+  datee	        datetime    NOT NULL,            
   title         varchar(100) NOT NULL,
   url           varchar(255),
   description   text
@@ -284,7 +287,7 @@ create table llx_const
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   name        varchar(255),
-  value       text, -- max 65535 caracteres
+  value       text, 
   type        enum('yesno','texte','chaine'),
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
@@ -296,7 +299,7 @@ create table llx_compta
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   datec             datetime,
-  datev             date,           -- date de valeur
+  datev             date,           
   amount            real NOT NULL default 0,
   label             varchar(255),
   fk_compta_account integer,
@@ -322,7 +325,7 @@ create table llx_notify_def
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
-  datec           date,             -- date de creation
+  datec           date,             
   fk_action       integer NOT NULL,
   fk_soc          integer NOT NULL,
   fk_contact      integer NOT NULL
@@ -355,7 +358,7 @@ create table llx_cond_reglement
   actif           tinyint default 1,
   libelle         varchar(255),
   libelle_facture text,
-  fdm             tinyint,    -- reglement fin de mois
+  fdm             tinyint,    
   nbjour          smallint
 );
 
@@ -373,7 +376,7 @@ create table llx_entrepot
   tms             timestamp,
   label           varchar(255),
   description     text,
-  statut          tinyint default 1, -- 1 ouvert, 0 fermé
+  statut          tinyint default 1, 
   fk_user_author  integer
 );
 
@@ -438,17 +441,17 @@ create table llx_voyage
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   datec           datetime,
 
-  dateo           date,                    -- date operation
-  date_depart     datetime,                -- date du voyage
-  date_arrivee    datetime,                -- date du voyage
-  amount          real NOT NULL default 0, -- prix du billet
-  reduction       real NOT NULL default 0, -- montant de la reduction obtenue
+  dateo           date,                    
+  date_depart     datetime,                
+  date_arrivee    datetime,                
+  amount          real NOT NULL default 0, 
+  reduction       real NOT NULL default 0, 
   depart          varchar(255),
   arrivee         varchar(255),
-  fk_type         smallint,                -- Train, Avion, Bateaux
+  fk_type         smallint,                
   fk_reduc        integer,
-  distance        integer,                 -- distance en kilometre
-  dossier         varchar(50),             -- numero de dossier
+  distance        integer,                 
+  dossier         varchar(50),             
   note            text
 );
 
@@ -483,13 +486,13 @@ create table llx_voyage_reduc
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   datec           datetime,
-  datev           date,           -- date de valeur
-  date_debut      date,           -- date operation
+  datev           date,           
+  date_debut      date,           
   date_fin        date,
   amount          real NOT NULL default 0,
   label           varchar(255),
   numero          varchar(255),
-  fk_type         smallint,       -- Train, Avion, Bateaux
+  fk_type         smallint,       
   note            text
 );
 
@@ -507,8 +510,8 @@ create table llx_tva
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
-  datep           date,           -- date de paiement
-  datev           date,           -- date de valeur
+  datep           date,           
+  datev           date,           
   amount          real NOT NULL default 0,
   label           varchar(255),
   note            text
@@ -542,21 +545,21 @@ create table llx_bank
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   datec           datetime,
-  datev           date,           -- date de valeur
-  dateo           date,           -- date operation
+  datev           date,           
+  dateo           date,           
   amount          real NOT NULL default 0,
   label           varchar(255),
   fk_account      integer,
   fk_user_author  integer,
   fk_user_rappro  integer,
-  fk_type         varchar(4),     -- CB, Virement, cheque
+  fk_type         varchar(4),     
   num_releve      varchar(50),
   num_chq         int,
   rappro          tinyint default 0,
   note            text,
 
 
-  author          varchar(40) -- a supprimer apres migration
+  author          varchar(40) 
 );
 
 create table llx_co_pr
@@ -585,15 +588,15 @@ create table llx_commande
   tms              timestamp,
   fk_soc           integer,
   fk_soc_contact   integer,
-  fk_projet        integer default 0,     -- projet auquel est rattache la commande
-  ref              varchar(30) NOT NULL,  -- propal number
-  date_creation    datetime,              -- date de creation 
-  date_valid       datetime,              -- date de validation
-  date_cloture     datetime,              -- date de cloture
-  date_commande    date,                  -- date de la commande
-  fk_user_author   integer,               -- createur de la commande
-  fk_user_valid    integer,               -- valideur de la commande
-  fk_user_cloture  integer,               -- cloture de la propale signee ou non signee
+  fk_projet        integer default 0,     
+  ref              varchar(30) NOT NULL,  
+  date_creation    datetime,              
+  date_valid       datetime,              
+  date_cloture     datetime,              
+  date_commande    date,                  
+  fk_user_author   integer,               
+  fk_user_valid    integer,               
+  fk_user_cloture  integer,               
   source           smallint NOT NULL,
   fk_statut        smallint  default 0,
   amount_ht        real      default 0,
@@ -621,7 +624,7 @@ create table llx_adherent_options
 (
   optid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
-  adhid            integer NOT NULL, -- id de l'adherent auquel correspond ces attributs optionnel 
+  adhid            integer NOT NULL, 
 
   UNIQUE INDEX(adhid)
 );
@@ -664,17 +667,27 @@ create table c_typent
   libelle   varchar(30)
 );
 
+create table llx_co_fa
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande integer NOT NULL,
+  fk_facture  integer NOT NULL,
+
+  key(fk_commande),
+  key(fk_facture)
+);
+
 create table llx_projet
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc           integer  NOT NULL,
   fk_statut        smallint NOT NULL,
   tms              timestamp,
-  dateo            date,  -- date d'ouverture du projet
+  dateo            date,  
   ref              varchar(50),
   title            varchar(255),
-  fk_user_resp     integer,   -- responsable du projet
-  fk_user_creat    integer,   -- createur du projet
+  fk_user_resp     integer,   
+  fk_user_creat    integer,   
   note             text,
 
   UNIQUE INDEX(ref)
@@ -712,7 +725,7 @@ create table llx_facture_rec
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   titre              varchar(50) NOT NULL,
   fk_soc             integer NOT NULL,
-  datec              datetime,  -- date de creation
+  datec              datetime,  
 
   amount             real     default 0 NOT NULL,
   remise             real     default 0,
@@ -721,9 +734,9 @@ create table llx_facture_rec
   total              real     default 0,
   total_ttc          real     default 0,
 
-  fk_user_author     integer,   -- createur
-  fk_projet          integer,   -- projet auquel est associé la facture
-  fk_cond_reglement  integer,   -- condition de reglement
+  fk_user_author     integer,   
+  fk_projet          integer,   
+  fk_cond_reglement  integer,   
 
   note               text,
 
@@ -733,8 +746,8 @@ create table llx_facture_rec
 create table llx_chargesociales
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
-  date_ech   datetime NOT NULL, -- date d'echeance
-  date_pai   datetime, -- date de paiements
+  date_ech   datetime NOT NULL, 
+  date_pai   datetime, 
   libelle    varchar(80),
   fk_type    integer,
   amount     real     default 0 NOT NULL,
@@ -772,8 +785,8 @@ create table llx_facture
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   facnumber          varchar(50) NOT NULL,
   fk_soc             integer NOT NULL,
-  datec              datetime,  -- date de creation de la facture
-  datef              date,      -- date de la facture
+  datec              datetime,  
+  datef              date,      
   paye               smallint default 0 NOT NULL,
   amount             real     default 0 NOT NULL,
   remise             real     default 0,
@@ -783,12 +796,12 @@ create table llx_facture
   total_ttc          real     default 0,
   fk_statut          smallint default 0 NOT NULL,
   author             varchar(50),
-  fk_user            integer,   -- createur de la facture
-  fk_user_author     integer,   -- createur de la propale
-  fk_user_valid      integer,   -- valideur de la propale
-  fk_projet          integer,   -- projet auquel est associé la facture
-  fk_cond_reglement  integer,   -- condition de reglement
-  date_lim_reglement date,      -- date limite de reglement
+  fk_user            integer,   
+  fk_user_author     integer,   
+  fk_user_valid      integer,   
+  fk_projet          integer,   
+  fk_cond_reglement  integer,   
+  date_lim_reglement date,      
   note               text,
 
   UNIQUE INDEX (facnumber),
@@ -801,12 +814,12 @@ create table llx_facturedet
   fk_facture      integer NOT NULL,
   fk_product      integer NOT NULL default 0,
   description     text,
-  tva_taux        real default 19.6, -- taux tva
-  qty		  real,              -- quantité
-  remise_percent  real default 0,    -- pourcentage de remise
-  remise          real default 0,    -- montant de la remise
-  subprice        real,              -- prix avant remise
-  price           real               -- prix final
+  tva_taux        real default 19.6, 
+  qty		  real,              
+  remise_percent  real default 0,    
+  remise          real default 0,    
+  subprice        real,              
+  price           real               
 );
 
 create table llx_paiement
@@ -814,7 +827,7 @@ create table llx_paiement
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_facture      integer,
   datec           datetime,
-  datep           datetime,           -- payment date
+  datep           datetime,           
   amount          real default 0,
   author          varchar(50),
   fk_paiement     integer NOT NULL,
@@ -858,16 +871,16 @@ create table llx_propal
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc          integer,
   fk_soc_contact  integer,
-  fk_projet       integer default 0,     -- projet auquel est rattache la propale
-  ref             varchar(30) NOT NULL,  -- propal number
-  datec           datetime,              -- date de creation 
-  fin_validite    datetime,              -- date de fin de validite
-  date_valid      datetime,              -- date de validation
-  date_cloture    datetime,              -- date de cloture
-  datep           date,                  -- date de la propal
-  fk_user_author  integer,               -- createur de la propale
-  fk_user_valid   integer,               -- valideur de la propale
-  fk_user_cloture integer,               -- cloture de la propale signee ou non signee
+  fk_projet       integer default 0,     
+  ref             varchar(30) NOT NULL,  
+  datec           datetime,              
+  fin_validite    datetime,              
+  date_valid      datetime,              
+  date_cloture    datetime,              
+  datep           date,                  
+  fk_user_author  integer,               
+  fk_user_valid   integer,               
+  fk_user_cloture integer,               
   fk_statut       smallint  default 0,
   price           real      default 0,
   remise_percent  real      default 0,
@@ -892,8 +905,8 @@ create table llx_ventes
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc        integer NOT NULL,
   fk_product    integer NOT NULL,
-  dated         datetime,         -- date debut
-  datef         datetime,         -- date fin
+  dated         datetime,         
+  datef         datetime,         
   price         real,
   author	varchar(30),
   active        smallint DEFAULT 0 NOT NULL,
@@ -906,12 +919,12 @@ create table llx_propaldet
   fk_propal      integer,
   fk_product     integer,
   description    text,
-  tva_tx         real default 19.6, -- taux tva
-  qty		 real,              -- quantité
-  remise_percent real default 0,    -- pourcentage de remise
-  remise         real default 0,    -- montant de la remise
-  subprice       real,              -- prix avant remise
-  price          real               -- prix final
+  tva_tx         real default 19.6, 
+  qty		 real,              
+  remise_percent real default 0,    
+  remise         real default 0,    
+  subprice       real,              
+  price          real               
 );
 
 create table llx_don_projet
@@ -946,7 +959,7 @@ create table llx_product_stock
   tms             timestamp,
   fk_product      integer NOT NULL,
   fk_entrepot     integer NOT NULL,
-  reel            integer,  -- stock réel
+  reel            integer,  
 
   key(fk_product),
   key(fk_entrepot)
@@ -986,12 +999,12 @@ create table llx_commandedet
   fk_product     integer,
   label          varchar(255),
   description    text,
-  tva_tx         real default 19.6, -- taux tva
-  qty		 real,              -- quantité
-  remise_percent real default 0,    -- pourcentage de remise
-  remise         real default 0,    -- montant de la remise
-  subprice       real,              -- prix avant remise
-  price          real               -- prix final
+  tva_tx         real default 19.6, 
+  qty		 real,              
+  remise_percent real default 0,    
+  remise         real default 0,    
+  subprice       real,              
+  price          real               
 );
 
 create table llx_adherent_type
@@ -1003,7 +1016,7 @@ create table llx_adherent_type
   cotisation       enum('yes','no') NOT NULL DEFAULT 'yes',
   vote             enum('yes','no') NOT NULL DEFAULT 'yes',
   note             text,
-  mail_valid       text -- mail envoye a la validation
+  mail_valid       text 
 );
 
 create table llx_facturedet_rec
@@ -1012,19 +1025,19 @@ create table llx_facturedet_rec
   fk_facture      integer NOT NULL,
   fk_product      integer,
   description     text,
-  tva_taux       real default 19.6, -- taux tva
-  qty		 real,              -- quantité
-  remise_percent real default 0,    -- pourcentage de remise
-  remise         real default 0,    -- montant de la remise
-  subprice       real,              -- prix avant remise
-  price          real               -- prix final
+  tva_taux       real default 19.6, 
+  qty		 real,              
+  remise_percent real default 0,    
+  remise         real default 0,    
+  subprice       real,              
+  price          real               
 );
 
 create table llx_adherent_options_label
 (
-  name             varchar(64) PRIMARY KEY, -- nom de l'attribut
+  name             varchar(64) PRIMARY KEY, 
   tms              timestamp,
-  label            varchar(255) NOT NULL -- label correspondant a l'attribut
+  label            varchar(255) NOT NULL 
 );
 
 create table llx_expedition_methode
@@ -1037,17 +1050,25 @@ create table llx_expedition_methode
   statut           tinyint default 0
 );
 
+create table llx_birthday_alert
+(
+  rowid        integer AUTO_INCREMENT PRIMARY KEY,
+  date_alert   date,
+  fk_contact   integer, 
+  fk_user      integer
+);
+
 create table llx_expedition
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
   ref                   varchar(30) NOT NULL,
   fk_commande           integer,
-  date_creation         datetime,              -- date de creation 
-  date_valid            datetime,              -- date de validation
-  date_expedition       date,                  -- date de l'expedition
-  fk_user_author        integer,               -- createur
-  fk_user_valid         integer,               -- valideur
+  date_creation         datetime,              
+  date_valid            datetime,              
+  date_expedition       date,                  
+  fk_user_author        integer,               
+  fk_user_valid         integer,               
   fk_entrepot           integer,
   fk_expedition_methode integer,
   fk_statut             smallint  default 0,
@@ -1064,7 +1085,7 @@ create table llx_expeditiondet
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_expedition     integer not null,
   fk_commande_ligne integer not null,
-  qty               real,              -- quantité
+  qty               real,              
 
   key(fk_expedition),
   key(fk_commande_ligne)
@@ -1162,11 +1183,11 @@ create table llx_newsletter
   target             smallint,
   sql_target         text,
   status             smallint NOT NULL DEFAULT 0,
-  date_send_request  datetime,   -- debut de l'envoi demandé
-  date_send_begin    datetime,   -- debut de l'envoi
-  date_send_end      datetime,   -- fin de l'envoi
-  nbsent             integer,    -- nombre de mails envoyés
-  nberror            integer,    -- nombre de mails envoyés
+  date_send_request  datetime,   
+  date_send_begin    datetime,   
+  date_send_end      datetime,   
+  nbsent             integer,    
+  nberror            integer,    
   fk_user_author     integer,
   fk_user_valid      integer,
   fk_user_modif      integer
@@ -1192,13 +1213,13 @@ create table llx_paiementfourn
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   tms               timestamp,
-  datec             datetime,          -- date de creation de l'enregistrement
-  fk_facture_fourn  integer,           -- facture
-  datep             datetime,          -- date de paiement
-  amount            real default 0,    -- montant
-  fk_user_author    integer,           -- auteur
-  fk_paiement       integer NOT NULL,  -- moyen de paiement
-  num_paiement      varchar(50),       -- numéro de paiement (cheque)
+  datec             datetime,          
+  fk_facture_fourn  integer,           
+  datep             datetime,          
+  amount            real default 0,    
+  fk_user_author    integer,           
+  fk_paiement       integer NOT NULL,  
+  num_paiement      varchar(50),       
   note              text
 );
 
