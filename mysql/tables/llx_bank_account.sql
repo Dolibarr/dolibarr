@@ -30,14 +30,16 @@ create table llx_bank_account
   datec          datetime,
   tms            timestamp,
   label          varchar(30),
-  bank           varchar(255),
+  bank           varchar(60),
   code_banque    varchar(7),
   code_guichet   varchar(6),
   number         varchar(255),
   cle_rib        varchar(5),
   bic            varchar(10),
   iban_prefix    varchar(5),
-  domiciliation  varchar(50),
+  domiciliation  varchar(255),
+  proprio        varchar(60),
+  adresse_proprio varchar(255),
   courant        smallint default 0 not null,
   clos           smallint default 0 not null
 );
