@@ -22,130 +22,239 @@
 -- Ne pas hésiter a compléter ce fichier avec de nouvelles valeurs, plus on a
 -- de données, mieux on peut tester l'appli.
 -- ===========================================================================
+
 delete from llx_tva;
 insert into llx_tva (datep, datev, amount) values ('2001-11-11','2001-10-01', 1960.00);
 insert into llx_tva (datep, datev, amount) values ('2001-04-11','2001-01-01', 2000.00);
 
 delete from llx_facture_fourn;
 
-insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note)
 values ('LOL-509',1,'2001-05-09','2001-05-09',1,1000,0,196,1196,1,NULL,NULL,'');
-insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note)
 values ('LOL-510',1,'2001-09-09','2001-09-09',1,100,0,19.6,119.6,1,NULL,NULL,'');
 
-insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note)
 values ('02-1-YHGT',2,now(),'2002-01-01',1,100,0,19.6,119.6,1,NULL,NULL,'');
 
-insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note)
 values ('02-5-YHGT',2,now(),'2002-05-01',1,1000,0,196,1196,1,NULL,NULL,'');
 
-insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note)
 values ('02-10-YHGT',2,now(),'2002-10-01',1,1000,0,196,1196,1,NULL,NULL,'');
-insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note)
 values ('02-11-YHGT',2,now(),'2002-11-01',1,1000,0,196,1196,1,NULL,NULL,'');
-insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note)
 values ('02-12-YHGT',2,now(),'2002-12-01',1,1000,0,196,1196,1,NULL,NULL,'');
 
-
+UPDATE ONLY llx_const SET name = 'MAIN_THEME', value = 'yellow', type = 'chaine', visible = 1 WHERE name = 'MAIN_THEME';
 
 delete from llx_user;
-insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,admin,webcal_login)
-values ('Quiedeville','Rodolphe','RQ','rodo','CRnN0Tam/s7z.',1,1,1,'rodo');
+
+insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login,admin)
+values ('demo','demo','DEMO','demo','demo',1,1,'demo',1);
 
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
-values ('demo','demo','DEMO','demo','demo',1,0,'demo');
+values ('demo1','demo1','DM1','demo1','demo',1,1,'demo1');
 
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
-values ('demo1','demo1','DM1','demo1','demo',1,0,'demo1');
-insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
-values ('demo2','demo2','DM2','demo2','demo',1,0,'demo2');
+values ('demo2','demo2','DM2','demo2','demo',1,1,'demo2');
+
+INSERT INTO llx_user_rights VALUES (1,11);
+INSERT INTO llx_user_rights VALUES (1,12);
+INSERT INTO llx_user_rights VALUES (1,13);
+INSERT INTO llx_user_rights VALUES (1,14);
+INSERT INTO llx_user_rights VALUES (1,15);
+INSERT INTO llx_user_rights VALUES (1,16);
+INSERT INTO llx_user_rights VALUES (1,17);
+INSERT INTO llx_user_rights VALUES (1,18);
+INSERT INTO llx_user_rights VALUES (1,19);
+INSERT INTO llx_user_rights VALUES (1,21);
+INSERT INTO llx_user_rights VALUES (1,22);
+INSERT INTO llx_user_rights VALUES (1,23);
+INSERT INTO llx_user_rights VALUES (1,24);
+INSERT INTO llx_user_rights VALUES (1,25);
+INSERT INTO llx_user_rights VALUES (1,26);
+INSERT INTO llx_user_rights VALUES (1,27);
+INSERT INTO llx_user_rights VALUES (1,28);
+INSERT INTO llx_user_rights VALUES (1,29);
+INSERT INTO llx_user_rights VALUES (1,31);
+INSERT INTO llx_user_rights VALUES (1,32);
+INSERT INTO llx_user_rights VALUES (1,33);
+INSERT INTO llx_user_rights VALUES (1,34);
+INSERT INTO llx_user_rights VALUES (1,35);
+INSERT INTO llx_user_rights VALUES (1,36);
+INSERT INTO llx_user_rights VALUES (1,37);
+INSERT INTO llx_user_rights VALUES (1,38);
+INSERT INTO llx_user_rights VALUES (1,39);
+INSERT INTO llx_user_rights VALUES (1,41);
+INSERT INTO llx_user_rights VALUES (1,42);
+INSERT INTO llx_user_rights VALUES (1,43);
+INSERT INTO llx_user_rights VALUES (1,44);
+INSERT INTO llx_user_rights VALUES (1,45);
+INSERT INTO llx_user_rights VALUES (1,46);
+INSERT INTO llx_user_rights VALUES (1,47);
+INSERT INTO llx_user_rights VALUES (1,48);
+INSERT INTO llx_user_rights VALUES (1,49);
+INSERT INTO llx_user_rights VALUES (1,61);
+INSERT INTO llx_user_rights VALUES (1,62);
+INSERT INTO llx_user_rights VALUES (1,63);
+INSERT INTO llx_user_rights VALUES (1,64);
+INSERT INTO llx_user_rights VALUES (1,65);
+INSERT INTO llx_user_rights VALUES (1,66);
+INSERT INTO llx_user_rights VALUES (1,67);
+INSERT INTO llx_user_rights VALUES (1,68);
+INSERT INTO llx_user_rights VALUES (1,69);
+
+
 --
--- Societe
+-- Societe les fournisseurs sont sur les numéros pairs
 --
-delete from societe;
-insert into societe (nom,datec,cp,ville,tel,fax, client, prefix_comm, fournisseur)
-values ('Bolix SA',now(),'56350','Allaire','01 40 15 03 18','01 40 15 06 18',1,'LO',1);
+delete from llx_societe;
 
-insert into societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
 values ('Cumulo',now(),'56610','Arradon','01 40 15 03 18','01 40 15 06 18',1,'CU');
 
-insert into societe (nom,cp,ville,tel,fax,client, prefix_comm)
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm, fournisseur)
+values ('Bolix SA',now(),'56350','Allaire','01 40 15 03 18','01 40 15 06 18',1,'LO',1);
+
+insert into llx_societe (nom,cp,ville,tel,fax,client, prefix_comm)
 values ('Doli INC.','29300','Arzano','01 55 55 03 18','01 55 55 55 55',1,'DO');
 
-insert into societe (nom,cp,ville,tel,fax,client, prefix_comm,url)
-values ('Foo SARL','22300','Ploubezre','01 55 55 03 18','01 55 55 55 55',1,'FOO','www.gnu.org');
+insert into llx_societe (nom,cp,ville,tel,fax,client, prefix_comm,url, fournisseur)
+values ('Foo SARL','22300','Ploubezre','01 55 55 03 18','01 55 55 55 55',1,'FOO','www.gnu.org',1);
 
-insert into societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
 values ('Talphinfo',now(),'29400','Bodilis','01 40 15 03 18','01 40 15 06 18',1,'AP');
 
-insert into societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+values (20,'Bouleau','22800','Le Foeil','01 55 55 03 18','01 55 55 55 55',1,'BTP');
+
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
 values ('Valphanix',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',1,'AL');
 
-insert into societe (nom,cp,ville,tel,fax,client,url)
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+values (101,'Cerisier','22290','Goudelin','01 55 55 03 18','01 55 55 55 55',1,'CER');
+
+insert into llx_societe (nom,cp,ville,tel,fax,client,url)
 values ('Turin','29890','Brignogan-Plage','01 55 55 03 18','01 55 55 55 55',1,'http://www.ot-brignogan-plage.fr/');
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+values (100,'Chêne','22330','Le Gouray','01 55 55 03 18','01 55 55 55 55',1,'DEL');
+
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Yratin SA','29660','Carantec','01 55 55 03 18','01 55 55 55 55',1);
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Raggos SARL','29233','Cléder','01 55 55 03 18','01 55 55 55 55',1);
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Pruitosa','29870','Coat-Méal','01 55 55 03 18','01 55 55 55 55',1);
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Stratus','29120','Combrit','01 55 55 03 18','01 55 55 55 55',1);
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Nimbus','29490','Guipavas','01 55 55 03 18','01 55 55 55 55',1);
 
-insert into societe (nom,cp,ville,tel,fax,client)
+insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Iono','22110','Rostrenen','01 55 55 03 18','01 55 55 55 55',1);
 --
 -- Contact
 --
-delete from socpeople;
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (10,1,'Victoire','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (11,1,'Tourin','Pierre','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (12,1,'Patrick','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (13,1,'Myriam','Isabelle','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+delete from llx_socpeople;
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email,poste)
+values (10,1,'Maréchal','Ferdinand','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net','Administrateur système');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (11,5,'Pejat','Jean-Marie','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email,poste)
+values (12,1,'Poulossière','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net','Directeur technique');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (13,6,'Myriam','Isabelle','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (20,2,'Corin','Arnaud','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (30,3,'Phil','Breizh','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (30,3,'Philippine','Sagan','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (31,3,'Marie','Jeanne','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (41,4,'Alix','Victor','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (41,4,'Alix','Hopper','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (14,7,'Victoire','Renoir','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (15,7,'Baudelaire','Matthias','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (16,8,'Hugo','Benjamin','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (17,9,'Rembrandt','Stéphanie','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (18,10,'Picasso','Myriam','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (19,11,'Beethoven','John','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (22,11,'Dumas','Elisabeth','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (21,10,'','Joséphine','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 --
 --
 -- Produits
 --
 --
-delete from llx_product;
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('RJ451MR','Câble Réseaux RJ45 1m rouge','Câble Réseaux RJ45 1m rouge',10,19.6);
 
-insert into llx_product (ref, label, description, price)
-values ('CRRJ452M','Câble Réseaux RJ45 2m','Câble Réseaux RJ45 2m',10);
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('RJ454M','Câble Réseaux RJ45 4m','Câble Réseaux RJ45 4m\n couleur suivant stock',19.5,19.6);
 
-insert into llx_product (ref, label, description, price)
-values ('3COMSW8','Switch Cisco 8 ports 100Mbits','Switch Cisco 8 ports 100Mbits',1000);
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('RJ452M','Câble Réseaux RJ45 2m','Câble Réseaux RJ45 2m',10,19.6);
 
-insert into llx_product (ref, label, description, price)
-values ('ALPH','Station Alpha Serie 3w','Configuration Alpha',9750);
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('RJ458M','Câble Réseaux RJ45 8m','Câble Réseaux RJ45 8m',10,19.6);
 
-insert into llx_product (ref, label, description, price)
-values ('HUB8-10','Hub 8 ports 10Mbits','Hub 8 ports',750);
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('RJ4515M','Câble Réseaux RJ45 15m','Câble Réseaux RJ45 15m',10,19.6);
 
-insert into llx_product (ref, label, description, price)
-values ('PB-16','Pan. Brass. 16','Panneau de brassage extensible, incluant 1 barre de 16 prises',650);
+insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
+values ('HEB12MS','Hébergement serveur 12 mois','Hébergement serveur 12 mois',2400,19.6,1,'12m');
 
-insert into llx_product (ref, label, description, price)
-values ('PB-32','Pan. Brass. 32','Panneau de brassage extensible, incluant 2 barres de 16 prises',1200);
+insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
+values ('HEB03MS','Hébergement serveur 3 mois','Hébergement serveur 3 mois',600,19.6,1,'3m');
+
+insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
+values ('HEB06MS','Hébergement serveur 6 mois','Hébergement serveur 6 mois',1200,19.6,1,'6m');
+
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('SW8','Switch 8 ports 100Mbits','Switch 8 ports 100Mbits',1000,19.6);
+
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('SER1U','Serveur 1U Serie 3W','Serveur avec 1G de RAM et 2 processeurs',9750,19.6);
+
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('HUB8-10','Hub 8 ports 10Mbits','Hub 8 ports',750,19.6);
+
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('PB-16','Pan. Brass. 16','Panneau de brassage extensible, incluant 1 barre de 16 prises',650,19.6);
+
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('PB-32','Pan. Brass. 32','Panneau de brassage extensible, incluant 2 barres de 16 prises',1200,19.6);
+
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('HB-USB1','Hub Usb 4 ports','Hub USB 4 ports avec bloc d\'alimentation indépendant',31,19.6);
+
+--
+-- Liens produits fournisseurs
+--
+insert into llx_product_fournisseur (datec, fk_product,fk_soc,ref_fourn,fk_user_author)
+values (now(),1,2,'2313487',1);
+insert into llx_product_fournisseur (datec, fk_product,fk_soc,ref_fourn,fk_user_author)
+values (now(),2,2,'2313409',1);
+insert into llx_product_fournisseur (datec, fk_product,fk_soc,ref_fourn,fk_user_author)
+values (now(),3,2,'2323134',1);
+insert into llx_product_fournisseur (datec, fk_product,fk_soc,ref_fourn,fk_user_author)
+values (now(),3,4,'2313784',1);
 
 --
 --
@@ -158,89 +267,57 @@ values (1, 'FI-LP-1','2001-12-05','2001-12-05','2001-12-05',1,1,1,4,'Mise à jour
 --
 -- Actions commerciales
 --
-delete from actioncomm;
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+delete from llx_actioncomm;
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact)
 values ('2002-04-06',1,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact)
 values ('2002-04-05',2,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact)
 values ('2002-04-05',1,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact)
 values ('2002-04-02',3,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact)
 values ('2002-04-02',3,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact)
 values ('2002-03-05',3,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact)
 values ('2002-03-04',1,1,1,1);
-insert into actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact) 
+insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_contact)
 values ('2001-03-05',1,1,1,1);
 --
 --
 --
 --
-insert into societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
-values (20,'Bouleau','22800','Le Foeil','01 55 55 03 18','01 55 55 55 55',1,'BTP');
-
-insert into societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
-values (101,'Cerisier','22290','Goudelin','01 55 55 03 18','01 55 55 55 55',1,'CER');
-
-insert into societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
-values (100,'Chêne','22330','Le Gouray','01 55 55 03 18','01 55 55 55 55',1,'DEL');
-
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm,datec)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm,datec)
 values ('Peuplier','22300','Lanmérin','01 55 55 03 18','01 55 55 55 55',1,'JP',now());
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm,datec)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm,datec)
 values ('Poirier','22290','Lannebert','01 55 55 03 18','01 55 55 55 55',1,'PO',now());
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Orme','22400','Noyal','01 55 55 03 18','01 55 55 55 55',1,'ORM');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Pin','22200','Pabu','01 55 55 03 18','01 55 55 55 55',1,'PIN');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Merisier','22510','Penguily','01 55 55 03 18','01 55 55 55 55',1,'IKE');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Hêtre','22480','Peumerit-Quintin','01 55 55 03 18','01 55 55 55 55',1,'CAS');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Saule','22800','Quintin','01 55 55 03 18','01 55 55 55 55',1,'ME');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Poirier','22940','Plaintel','01 55 55 03 18','01 55 55 55 55',1,'CEG');
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values ('Tek','22300','Rospez','01 55 55 03 18','01 55 55 55 55',1,'LMT');
 --
 --
 --
 --
-delete from llx_service;
-
-insert into llx_service values ( 1,now(),now(),'FDEVC1','Forfait Dev, CAT. 1','',500,NULL,now(),NULL,2,2);
-insert into llx_service values ( 2,now(),now(),'FDEVC2','Forfait Dev, CAT. 2','',700,NULL,now(),NULL,2,2);
-insert into llx_service values ( 3,now(),now(),'FDEVC3','Forfait Dev, CAT. 3','',900,NULL,now(),NULL,2,2);
-
-insert into llx_service values ( 4,now(),now(),'FADMC1','Forfait Adm, CAT. 1','',600,NULL,now(),NULL,2,2);
-insert into llx_service values ( 5,now(),now(),'FADMC2','Forfait Adm, CAT. 2','',800,NULL,now(),NULL,2,2);
-
-insert into llx_service values ( 6,now(),now(),'FAUDC1','Forfait Aud, CAT. 2','',800,NULL,now(),NULL,2,2);
-insert into llx_service values ( 7,now(),now(),'FAUDC2','Forfait Aud, CAT. 3','',1000,NULL,now(),NULL,2,2);
-
-
-insert into llx_service values ( 8,now(),now(),'RDEVC1','Régie Dev, CAT. 1','',400,NULL,now(),NULL,2,2);
-insert into llx_service values ( 9,now(),now(),'RDEVC2','Régie Dev, CAT. 2','',600,NULL,now(),NULL,2,2);
-insert into llx_service values (10,now(),now(),'RDEVC3','Régie Dev, CAT. 3','',800,NULL,now(),NULL,2,2);
-
-insert into llx_service values (11,now(),now(),'RADMC1','Régie Adm, CAT. 1','',500,NULL,now(),NULL,2,2);
-insert into llx_service values (12,now(),now(),'RADMC2','Régie Adm, CAT. 2','',700,NULL,now(),NULL,2,2);
-
-insert into llx_service values (13,now(),now(),'RAUDC1','Régie Aud, CAT. 2','',700,NULL,now(),NULL,2,2);
-insert into llx_service values (14,now(),now(),'RAUDC2','Régie Aud, CAT. 3','',900,NULL,now(),NULL,2,2);
-
 
 delete from llx_propal;
 delete from llx_propaldet;
@@ -255,30 +332,73 @@ insert into llx_compta_account (datec, number, label, fk_user_author) values (no
 -- Charges sociales (mais non on n'en paye pas trop ;-)
 --
 delete from llx_chargesociales;
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values
 ('2002-05-15',NULL,'Acompte 1er Trimestre 2002',1,120,0,'2002-1-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values
 ('2002-05-15',NULL,'Acompte 1er Trimestre 2002',2,200,0,'2002-1-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values
 ('2002-05-15',NULL,'Acompte 1er Trimestre 2002',3,170,0,'2002-1-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values
 ('2002-02-15','2002-02-10','Acompte 4ème Trimestre 2001',1,120,1,'2001-10-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values
 ('2002-02-15','2002-02-10','Acompte 4ème Trimestre 2001',2,200,1,'2001-10-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values
 ('2002-02-15','2002-02-10','Acompte 4ème Trimestre 2001',3,170,1,'2001-10-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values
 ('2001-11-15','2001-10-10','Acompte 3ème Trimestre 2001',1,70,1,'2001-7-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values
 ('2001-11-15','2001-10-10','Acompte 3ème Trimestre 2001',2,180,1,'2001-7-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values
 ('2001-11-15','2001-10-10','Acompte 3ème Trimestre 2001',3,150,1,'2001-7-1');
 
+--
+-- Dumping data for table `llx_bank`
+--
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-01-13','2002-01-13',4000,'Dépôt liquide',1,1,1,'DEP',200201,NULL,1,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-01-14','2002-01-14',-20,'Liquide',1,1,1,'CB',200201,NULL,1,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-02-14','2002-02-14',-23.2,'Essence',1,1,1,'CB',200201,NULL,1,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-02-15','2002-02-15',-53.32,'Cartouches imprimante',1,1,1,'CB',200202,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-02-17','2002-02-17',-100,'Liquide',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-02-18','2002-02-18',-153.32,'Restaurant',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-02-20','2002-02-20',-1532,'Réparation climatisation',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-02-21','2002-02-21',-100,'Liquide',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-02-22','2002-02-22',-46,'Timbres postes',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-03-02','2002-03-02',-60,'Liquide',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-03-02','2002-03-02',-25.66,'Essence',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-03-03','2002-03-03',-60,'Liquide',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-03-04','2002-03-04',-15.2,'Café',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-03-06','2002-03-06',-12.3,'Péage',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-03-06','2002-03-06',-25.3,'Péage',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-03-06','2002-03-06',-9.6,'Tickets de bus',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author)
+VALUES (now(),'2002-03-13','2002-03-13',-10,'Liquide',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+
+--
+-- Dumping data for table `llx_bank_account`
+--
+
+--INSERT INTO llx_bank_account (rowid, datec, tms, label, bank, code_banque, code_guichet, number, cle_rib, bic, iban_prefix, domiciliation, courant, clos) VALUES (1,'2001-01-01 13:06:11',20031014173428,'CCP','La PosteToto','','','','','','','',1,0);

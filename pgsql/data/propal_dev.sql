@@ -1,13 +1,25 @@
--- MySQL dump 8.21
+-- ===========================================================================
+-- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
--- Host: localhost    Database: dolibarr
----------------------------------------------------------
--- Server version	3.23.49-log
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--===========================================================================
 
 --
 -- Dumping data for table 'llx_propal'
 --
-
 
 INSERT INTO llx_propal (rowid, fk_soc, fk_soc_contact, fk_projet, ref, datec, date_valid, date_cloture, datep, fk_user_author, fk_user_valid, fk_user_cloture, fk_statut, price, remise, tva, total, note) VALUES (1,1,10,0,'PR-BO-020509','2002-05-09 03:04:29','2002-05-09 03:04:37','2002-05-09 03:04:42','2002-05-09',1,1,1,2,10000,0,1960,11960,'----------\r\n');
 INSERT INTO llx_propal (rowid, fk_soc, fk_soc_contact, fk_projet, ref, datec, date_valid, date_cloture, datep, fk_user_author, fk_user_valid, fk_user_cloture, fk_statut, price, remise, tva, total, note) VALUES (2,1,11,0,'PR-BO-020111','2002-05-09 03:08:33','2002-05-09 03:36:25','2002-05-09 03:36:29','2002-01-11',1,1,1,2,20,0,3.92,23.92,'----------\r\n');
@@ -22,16 +34,9 @@ INSERT INTO llx_propal (rowid, fk_soc, fk_soc_contact, fk_projet, ref, datec, da
 INSERT INTO llx_propal (rowid, fk_soc, fk_soc_contact, fk_projet, ref, datec, date_valid, date_cloture, datep, fk_user_author, fk_user_valid, fk_user_cloture, fk_statut, price, remise, tva, total, note) VALUES (11,4,41,0,'PR-FOO-020304','2002-05-09 14:44:08','2002-05-09 14:44:18','2002-05-09 14:44:22','2002-03-04',1,1,1,2,12110,0,2373.56,14483.56,'----------\r\n');
 INSERT INTO llx_propal (rowid, fk_soc, fk_soc_contact, fk_projet, ref, datec, date_valid, date_cloture, datep, fk_user_author, fk_user_valid, fk_user_cloture, fk_statut, price, remise, tva, total, note) VALUES (12,2,20,0,'PR-CU-020509','2002-05-09 15:01:37','2002-05-09 15:01:45','2002-05-09 15:01:49','2002-05-09',1,1,1,2,36250,0,7105,43355,'----------\r\n');
 
--- MySQL dump 8.21
---
--- Host: localhost    Database: dolibarr
----------------------------------------------------------
--- Server version	3.23.49-log
-
 --
 -- Dumping data for table 'llx_propaldet'
 --
-
 
 INSERT INTO llx_propaldet (rowid, fk_propal, fk_product, qty, price) VALUES (1,1,2,10,1000);
 INSERT INTO llx_propaldet (rowid, fk_propal, fk_product, qty, price) VALUES (2,2,1,2,10);
