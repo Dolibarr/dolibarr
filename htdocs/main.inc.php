@@ -20,7 +20,7 @@
  * $Source$
  *
  */
-define('DOL_VERSION','1.0.0-RC2');
+define('DOL_VERSION','1.0.0-RC3');
 
 if (! include ("conf/conf.php"))
 {
@@ -255,7 +255,7 @@ if (defined("MAIN_MODULE_COMPTABILITE"))
   $conf->compta->enabled=MAIN_MODULE_COMPTABILITE;
 }
 
-if (defined("MAIN_MODULE_DON"))
+if (defined("MAIN_MODULE_DON") && MAIN_MODULE_DON)
 {
   $conf->don->enabled=MAIN_MODULE_DON;
 }
