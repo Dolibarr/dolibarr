@@ -1152,6 +1152,7 @@ else
 	   *
 	   */
 	  $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
+	  $filedetail = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . "-detail.pdf";
 	
 	  print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
 
@@ -1169,6 +1170,17 @@ else
 	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	      print '</tr>';
 	           	
+	      if (file_exists($filedetail)) // facture détaillée supplémentaire
+		{
+		  $encfile = urlencode($filedetail);
+		  print "<tr $bc[0]><td>Facture détaillée</td>";
+		  
+		  print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$fac->ref.'-detail.pdf</a></td>';		  
+		  print '<td align="right">'.filesize($filedetail). ' bytes</td>';
+		  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedetail)).'</td>';
+		  print '</tr>';
+		}
+
 	      print "</table>\n";
 	    }
 
