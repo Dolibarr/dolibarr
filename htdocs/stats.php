@@ -40,7 +40,7 @@ $sql = array(
 
 print_fiche_titre('Statistiques produits et services', $mesg);
       
-print '<table class="liste" border="1" width="100%" cellspacing="0" cellpadding="4">';
+print '<table class="liste" width="100%">';
 
 foreach ($sql as $key => $value)
 {

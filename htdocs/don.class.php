@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,18 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/don.class.php
+        \ingroup    don
+		\brief      Fichier de la classe des dons
+		\version    $Revision$
+*/
+
+
+/*! \class Don
+		\brief Classe permettant la gestion des dons
+*/
 
 class Don
 {
@@ -43,6 +56,7 @@ class Don
 
   var $projet;
   var $errorstr;
+
   /*
    * Statut du don
    * 0 : promesse non validée
@@ -50,16 +64,21 @@ class Don
    * 2 : don validé
    * 3 : don payé
    *
-   *
+   */
+
+  /*
+   *    \brief  Constructeur
+   *    \param  DB          handler d'accès base
+   *    \param  soc_idp     id société
    */
   function Don($DB, $soc_idp="") 
     {
       $this->db = $DB ;
       $this->modepaiementid = 0;
     }
+
+
   /*
-   *
-   *
    *
    */
   function print_error_list()
@@ -70,6 +89,7 @@ class Don
 	print "<li>" . $this->errorstr[$i];
       }
   }
+
   /*
    *
    *
@@ -142,11 +162,6 @@ class Don
 	    }
 	}
       
-      /*
-       * Return errors
-       *
-       */
-
       if ($err)
 	{
 	  $this->errorstr = $error_string;
@@ -158,21 +173,25 @@ class Don
 	}
 
     }
+
   /*
-   * Création
-   *
-   *
+   *    \brief  Création du don en base
+   *    \param  userid      utilisateur qui crée le don
    */
   function create($userid) 
     {
-      /*
-       *  Insertion dans la base
-       */
-
       $this->date = $this->db->idate($this->date);
 
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public, fk_don_projet, note, fk_user_author, datedon, email)";
-      $sql .= " VALUES (now(), $this->amount, $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, $this->projetid, '$this->commentaire', $userid, '$this->date','$this->email')";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public,";
+      if ($this->projetid) {
+        $sql .= " fk_don_projet,";
+      }
+      $sql .= " note, fk_user_author, datedon, email)";
+      $sql .= " VALUES (now(), $this->amount, $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, ";
+      if ($this->projetid) {
+        $sql .= " $this->projetid,";
+      }
+      $sql .= " '$this->commentaire', $userid, '$this->date','$this->email')";
       
       $result = $this->db->query($sql);
       
@@ -182,15 +201,14 @@ class Don
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+      dolibarr_print_error($this->db);
 	  return 0;
 	}  
     }
 
   /*
-   * Mise à jour
-   *
+   *    \brief  Mise à jour du don
+   *    \param  userid      utilisateur qui crée le don
    *
    */
   function update($userid) 
@@ -209,7 +227,7 @@ class Don
       $sql .= ",ville='".$this->ville."'";
       $sql .= ",pays='".$this->pays."'";
       $sql .= ",public=".$this->public;
-      $sql .= ",fk_don_projet=".$this->projetid;
+      if ($this->projetid) {    $sql .= ",fk_don_projet=".$this->projetid; }
       $sql .= ",note='".$this->commentaire."'";
       $sql .= ",datedon='".$this->date."'";
       $sql .= ",email='".$this->email."'";
@@ -225,18 +243,16 @@ class Don
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+      dolibarr_print_error($this->db);
 	  return 0;
 	}  
     }
 
   /*
-   * Suppression du don
-   *
+   *    \brief  Suppression du don de la base
+   *    \param  rowid   id du don à supprimer 
    */
   function delete($rowid)
-
   {
     
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
@@ -254,20 +270,21 @@ class Don
       }
     else
       {
-	print "Err : ".$this->db->error();
-	return 0;
+      dolibarr_print_error($this->db);
+	  return 0;
       }    
   }
+
   /*
-   * Fetch
-   *
+   *    \brief  Charge l'objet don en mémoire depuis la base de donnée
+   *    \param  rowid   id du don à charger
    *
    */
   function fetch($rowid)
   {
     $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
-    $sql .= " FROM ".MAIN_DB_PREFIX."don as d, ".MAIN_DB_PREFIX."don_projet as p, ".MAIN_DB_PREFIX."c_paiement as cp";
-    $sql .= " WHERE p.rowid = d.fk_don_projet AND cp.id = d.fk_paiement AND d.rowid = $rowid";
+    $sql .= " FROM ".MAIN_DB_PREFIX."don as d, ".MAIN_DB_PREFIX."c_paiement as cp LEFT JOIN ".MAIN_DB_PREFIX."don_projet as p";
+    $sql .= " ON p.rowid = d.fk_don_projet WHERE cp.id = d.fk_paiement AND d.rowid = $rowid";
 
     if ( $this->db->query( $sql) )
       {
@@ -298,12 +315,15 @@ class Don
       }
     else
       {
-	print $this->db->error();
+      dolibarr_print_error($this->db);
       }
     
   }
+
   /*
-   * Suppression du don
+   *    \brief  Valide une promesse de don
+   *    \param  rowid   id du don à modifier
+   *    \param  userid  utilisateur qui valide la promesse
    *
    */
   function valid_promesse($rowid, $userid)
@@ -324,12 +344,15 @@ class Don
       }
     else
       {
-	print "Err : ".$this->db->error();
-	return 0;
+      dolibarr_print_error($this->db);
+	  return 0;
       }    
   }
+
   /*
-   * Classé comme payé, le don a été recu
+   *    \brief  Classe le don comme payé, le don a été recu
+   *    \param  rowid           id du don à modifier
+   *    \param  modepaiementd   mode de paiement
    *
    */
   function set_paye($rowid, $modepaiement='')
@@ -355,12 +378,15 @@ class Don
       }
     else
       {
-	print "Err : ".$this->db->error();
-	return 0;
+      dolibarr_print_error($this->db);
+	  return 0;
       }    
   }
+
   /*
-   * 
+   *    \brief  Défini le commentaire
+   *    \param  rowid           id du don à modifier
+   *    \param  commentaire     commentaire à définir ('' par défaut)
    *
    */
   function set_commentaire($rowid, $commentaire='')
@@ -382,12 +408,14 @@ class Don
       }
     else
       {
-	print "Err : ".$this->db->error();
-	return 0;
+      dolibarr_print_error($this->db);
+	  return 0;
       }    
   }
+
   /*
-   * Classé comme encaissé
+   *    \brief  Classe le don comme encaissé
+   *    \param  rowid   id du don à modifier
    *
    */
   function set_encaisse($rowid)
@@ -408,12 +436,13 @@ class Don
       }
     else
       {
-	print "Err : ".$this->db->error();
-	return 0;
+      dolibarr_print_error($this->db);
+	  return 0;
       }    
   }
+
   /*
-   * Somme des dons encaissés
+   *    \brief  Somme des dons encaissés
    */
   function sum_actual()
   {
@@ -429,8 +458,9 @@ class Don
 
       }
   }
-  /* Paiement recu en attente d'encaissement
-   * 
+
+  /*
+   *    \brief  Paiement recu en attente d'encaissement
    *
    */
   function sum_pending()
@@ -447,8 +477,9 @@ class Don
 
       }
   }
+
   /*
-   * Somme des promesses de dons validées
+   *    \brief  Somme des promesses de dons validées
    *
    */
   function sum_intent()
