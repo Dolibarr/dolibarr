@@ -90,7 +90,8 @@ else
     }
 }
 
-
+// On charge le fichier lang principal
+$langs->load("main");
 
 
 /*
@@ -119,7 +120,6 @@ function top_menu($head, $title="", $target="")
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html>";
 
-  $langs->load("main");
   print $langs->lang_header();
   print $head;
 
