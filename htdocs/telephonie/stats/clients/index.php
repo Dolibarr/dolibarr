@@ -117,10 +117,6 @@ print "</table>";
 
 print '</td>';
 
-print '</td><td valign="top" width="70%">';
-
-print '<img src="./graphclient.php" width="420" height="260"><br /><br />';
-
 print '</td></tr>';
 
 print '</table>';
