@@ -22,6 +22,7 @@
 require("./pre.inc.php");
 require("./project.class.php");
 require("../propal.class.php");
+require("../facture.class.php");
 
 if ($HTTP_POST_VARS["action"] == 'update')
 {
@@ -128,43 +129,74 @@ if ($action == 'create')
 
       if (sizeof($propales)>0 && is_array($propales))
 	{
-
 	  print_titre('Listes des propales associées au projet');
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  
 	  print '<TR class="liste_titre">';
-	  print "<TD>Réf</TD>";
-	  print '<TD>Date</TD>';
-	  print '<TD align="right">Prix</TD>';
-	  print '<TD align="center">Statut</TD>';
-	  print '</TR>';
+	  print '<td>Réf</td><td>Date</td><td align="right">Prix</TD>';
+	  print '<td align="center">Statut</td></tr>';
 	  
-	  for ($i = 0; $i<sizeof($propales);$i++){
-	    $propale = new Propal($db);
-	    $propale->fetch($propales[$i]);
-	    
-	    $var=!$var;
-	    print "<TR $bc[$var]>";
-	    print "<TD><a href=\"../comm/propal.php?propalid=$propale->id\">$propale->ref</a></TD>\n";
-	    
-	    print '<TD>'.strftime("%d %B %Y",$propale->datep).'</a></TD>';
-	    
-	    print '<TD align="right">'.price($propale->price).'</TD>';
-	    print '<TD align="center">'.$propale->statut.'</TD>';
-	    print '</TR>';
-	    
-	    $total = $total + $propale->price;
-	  }
+	  for ($i = 0; $i<sizeof($propales);$i++)
+	    {
+	      $propale = new Propal($db);
+	      $propale->fetch($propales[$i]);
+	      
+	      $var=!$var;
+	      print "<tr $bc[$var]>";
+	      print "<td><a href=\"../comm/propal.php?propalid=$propale->id\">$propale->ref</a></td>\n";
+	      
+	      print '<td>'.strftime("%d %B %Y",$propale->datep).'</td>';
+	      
+	      print '<TD align="right">'.price($propale->price).'</TD>';
+	      print '<TD align="center">'.$propale->statut.'</TD>';
+	      print '</TR>';
+	      
+	      $total = $total + $propale->price;
+	    }
 	  
 	  print '<tr><td>'.$i.' propales</td>';
 	  print '<td colspan="2" align="right"><b>Total : '.price($total).'</b></td>';
-	  print '<td align="left"><b>Euros HT</b></td></tr>';
+	  print '<td align="left"><b>'.MAIN_MONNAIE.' HT</b></td></tr></table>';
+	}
+      /*
+       * Factures
+       *
+       */
+      $factures = $projet->get_facture_list();
+
+      if (sizeof($factures)>0 && is_array($factures))
+	{
+	  print_titre('Listes des factures associées au projet');
+	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  
+	  print '<TR class="liste_titre">';
+	  print '<td>Réf</td><td>Date</td><td align="right">Prix</TD>';
+	  print '<td align="center">Statut</td></tr>';
+	  
+	  for ($i = 0; $i<sizeof($factures);$i++)
+	    {
+	      $facture = new Facture($db);
+	      $facture->fetch($factures[$i]);
+	      
+	      $var=!$var;
+	      print "<TR $bc[$var]>";
+	      print "<TD><a href=\"../compta/facture.php?facid=$facture->id\">$facture->ref</a></TD>\n";	      
+	      print '<td>'.strftime("%d %B %Y",$facture->date).'</td>';	      
+	      print '<TD align="right">'.price($facture->total_ht).'</td>';
+	      print '<TD align="center">'.$facture->statut.'</td></tr>';
+	      
+	      $total = $total + $facture->total_ht;
+	    }
+	  
+	  print '<tr><td>'.$i.' factures</td>';
+	  print '<td colspan="2" align="right"><b>Total : '.price($total).'</b></td>';
+	  print '<td align="left"><b>'.MAIN_MONNAIE.' HT</b></td></tr>';
 	  print "</TABLE>";
 	}
     }
   
   
-  print "<p><TABLE id=\"actions\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+  print '<p><table id="actions" border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
   
   if ($action == "edit")
     {
@@ -172,14 +204,14 @@ if ($action == 'create')
     }
   else
     {
-      print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id&action=edit\">Editer</a></td>";
+      print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id&amp;action=edit\">Editer</a></td>";
     }
   
   print '<td align="center" width="20%">-</td>';
   print '<td align="center" width="20%">-</td>';
   print '<td align="center" width="20%">-</td>';
   
-  print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id&action=delete\">Supprimer</a></td>";
+  print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id&amp;action=delete\">Supprimer</a></td>";
 
   print "</tr></table>";
 
