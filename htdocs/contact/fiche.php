@@ -199,18 +199,26 @@ if ($_GET["socid"] > 0)
 
 if ($_GET["action"] == 'create')
 {
-    /*
-     * Fiche en mode creation
-     *
-     */
+  /*
+   * Fiche en mode creation
+   *
+   */
+  
   print '<br>';
 
-  print "<form method=\"post\" action=\"fiche.php\">";
+  print '<form method="post" action="fiche.php">';
   print '<input type="hidden" name="action" value="add">';
   print '<table class="border" width="100%">';
 
   if ($_GET["socid"] > 0)
     {
+
+      /* On remplit avec le numéro de la société par défaut */
+      if (strlen(trim($contact->phone_pro)) == 0)
+	{
+	  $contact->phone_pro = $objsoc->tel;
+	}
+      
       print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">'.$objsoc->nom.'</td>';
       print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
       print '</td></tr>';
