@@ -155,15 +155,19 @@ close (FH);
 #
 # Body
 #
-
+my ($line) = (0);
 open (FH, "<$tempfilename") || die "can't open $tempfilename: $!";	
 while (<FH>)  {
     print FC $_;
     print FC "\\\\\n";
+    $line++;
 }
 close (FH);
 
-
+while ($line < 15) {
+    print FC "\\\\\n";
+    $line++;
+}
 
 #
 # Footer

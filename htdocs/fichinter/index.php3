@@ -35,7 +35,7 @@ if ($sortfield == "") {
 
 print_titre("Liste des fiches d'intervention");
 
-$sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut";
+$sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
 $sql .= " FROM societe as s, llx_fichinter as f ";
 $sql .= " WHERE f.fk_soc = s.idp ";
 $sql .= " ORDER BY f.datei DESC ;";
@@ -48,7 +48,8 @@ if ( $db->query($sql) ) {
   print "<TD>Num</TD>";
   print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
   print "<TD>Date</TD>";
-  print "<TD>Statut</TD>";
+  print '<TD align="center">Durée</TD>';
+  print "<TD>Statut</TD><td>&nbsp;</td>";
   print "</TR>\n";
   $var=True;
   while ($i < $num) {
@@ -58,6 +59,7 @@ if ( $db->query($sql) ) {
     print "<TD><a href=\"fiche.php3?id=$objp->fichid\">$objp->ref</a></TD>\n";
     print "<TD><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
     print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+    print '<TD align="center">'.sprintf("%.1f",$objp->duree).'</TD>';
     print "<TD>$objp->fk_statut</TD>\n";
     print '<TD align="center"><a href="fiche.php3?socidp='.$objp->idp.'&action=create">[Fiche Inter]</A></td>';    
     print "</TR>\n";
