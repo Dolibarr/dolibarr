@@ -493,7 +493,7 @@ else
       {
 	print "<hr><b>Génération de la facture</b><br>";
 	$command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name."\" ";
-	$command .= " ; ./tex-facture.pl --html -vv --facture=$facid --pdf --output=".$conf->facture->outputdir;
+	$command .= " ; ./texfacture.pl --html -vv --facture=$facid --pdf --output=".$conf->facture->outputdir;
 	$command .= " --templates=".$conf->facture->templatesdir;
 	
 	$output = system($command);
