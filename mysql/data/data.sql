@@ -1,4 +1,4 @@
--- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -19,6 +19,11 @@
 -- $Source$
 --
 -- Valeurs pour les bases de langues francaises
+--
+
+--
+-- Ne pas place de commentaire en fin de ligne, ce fichier est parsé lors
+-- de l'install et tous les sigles '--' sont supprimés.
 --
 
 insert into llx_cond_reglement values (1,1,1, "A réception","Réception de facture",0,0);
@@ -51,15 +56,12 @@ insert into llx_const(name, value, type, note) values ('MAIN_NOT_INSTALLED','1',
 
 insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
 
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','Thème par défaut');
+insert into llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','Thème par défaut');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
+INSERT INTO llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
 
-insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
-
-
-
-insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage du formulaire de recherche des sociétés dans la barre de gauche');
+INSERT INTO llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage du formulaire de recherche des sociétés dans la barre de gauche');
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage du formulaire de recherche des contacts dans la barre de gauche');
 
 insert into llx_const(name, value, type, note) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine');
