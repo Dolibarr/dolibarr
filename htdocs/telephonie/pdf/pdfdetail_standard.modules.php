@@ -22,6 +22,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT."/telephonie/pdf/pdfdetail_standard.modeles.php";
+require_once DOL_DOCUMENT_ROOT."/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php";
 
 class pdfdetail_standard {
@@ -29,24 +30,27 @@ class pdfdetail_standard {
   function pdfdetail_standard ($db=0, $ligne, $year, $month, $factel)
     { 
       $this->db = $db;
-      $this->description = "Modèle de facture standard";
+      $this->description = "Modèle de facture détaillée standard";
       $this->ligne = $ligne;
       $this->year  = $year;
       $this->month = $month;
       $this->factel = $factel;
     }
 
+  /*
+   *
+   *
+   */
 
-  function write_pdf_file($facid, $ligne)
+  function write_pdf_file($factel, $ligne)
     {
-      global $user;
-      $fac = new Facture($this->db,"",$facid);
-      $fac->fetch($facid);  
+
+      $fac = new Facture($this->db,"",$factel->fk_facture);
+      $fac->fetch($factel->fk_facture);  
       $fac->fetch_client();
 
       $objlignetel = new LigneTel($this->db);
       $result = $objlignetel->fetch($ligne);
-
 
       if (defined("FAC_OUTPUTDIR"))
 	{
@@ -65,6 +69,7 @@ class pdfdetail_standard {
 
 	  if (file_exists($dir))
 	    {
+
 	      $this->pdf = new pdfdetail_standard_modeles('P','mm','A4');
 
 	      $this->pdf->fac = $fac;
@@ -216,10 +221,10 @@ class pdfdetail_standard {
 			      $dt =  $s ." sec" ; 
 			    }
 			}
-
+		      
 		      $this->pdf->SetXY(110, $Y);
 		      $this->pdf->MultiCell(50, $line_height,$dt, 0,'R',$var);
-
+		      
 		      $this->pdf->SetXY(160, $Y);
 		      $this->pdf->MultiCell(20, $line_height,$obj->cc, 0,'R',$var);
 
@@ -352,7 +357,7 @@ class pdfdetail_standard {
 	      
 	      $graph->Add($p1);
 
-	      $file_graph = "/tmp/graph-".$this->ligne.".jpg";
+	      $file_graph = "/tmp/graph".$this->ligne.".jpg";
 
 	      $handle = $graph->Stroke($file_graph);
 
@@ -476,6 +481,7 @@ class pdfdetail_standard {
 	      $this->pdf->Output($file);
 	      $this->filename = $file;
 
+	      dolibarr_syslog("Write $file");
 
 	      if(file_exists($file_graph))
 		{
