@@ -60,32 +60,32 @@ if ($result)
 }
 
 print '<table width="100%" class="border" cellspacing="0" cellpadding="3">';
-print '<tr class="liste_titre"><td>&nbsp;</td>';
-
+print '<tr ><td>&nbsp;</td>';
 
 $year_current = strftime("%Y",time());
+$nbyears = 3;
 
-if ($year_current < (MAIN_START_YEAR + 4))
+if ($year_current < (MAIN_START_YEAR + $nbyears))
 {
   $year_start = MAIN_START_YEAR;
-  $year_end = (MAIN_START_YEAR + 3);
+  $year_end = (MAIN_START_YEAR + $nbyears - 1);
 }
 else
 {
-  $year_start = $year_current - 3;
+  $year_start = $year_current - ($nbyears + 1);
   $year_end = $year_current ;
 }
 
-
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="center" width="14%">'.$annee.'</td>';
+  print '<td align="center" width="10%">'.$annee.'</td>';
 }
-print '</tr>';
+print '<td width="50%" rowspan="13">&nbsp;</td></tr>';
+
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
   $var=!$var;
-  print "<TR $bc[$var]>";
+  print "<tr $bc[$var]>";
 
   print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
