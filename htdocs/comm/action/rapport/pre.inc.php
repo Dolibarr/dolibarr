@@ -19,37 +19,48 @@
  * $Source$
  *
  */
+
+/*!	    \file       htdocs/admin/pre.inc.php
+		\brief      Fichier gestionnaire du menu de gauche de l'espace configuration
+		\version    $Revision$
+*/
+
 require("../../../main.inc.php");
 require("./rapport.pdf.php");
 
 function llxHeader($head = "", $urlp = "") {
-    global $conf;
-    
-  /*
-   *
-   *
-   */
+  global $conf,$user,$langs;
+
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/comm/action/", "Actions");
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/action/?time=today", "Aujourd'hui");
+  $menu->add(DOL_URL_ROOT."/comm/action/", $langs->trans("Actions"));
 
-  $menu->add(DOL_URL_ROOT."/comm/clients.php", "Clients");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/action/?time=today", $langs->trans("Today"));
+  $menu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/", $langs->trans("Reporting"));
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php", "Contacts");
-
-  $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", "Prospects");
-
-  $menu->add(DOL_URL_ROOT."/comm/propal.php", "Propales");
-
-  if ($conf->projet->enabled) {
-    $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
+  if ($conf->societe->enabled) {
+    $langs->load("companies");
+    $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
+    $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php", $langs->trans("Contacts"));
   }
-
-  $menu->add(DOL_URL_ROOT."/comm/action/rapport/", "Rapport");
+  
+  if ($conf->commercial->enabled) {
+    $langs->load("commercial");
+    $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("Prospects"));
+  }
+  
+  if ($conf->propal->enabled) {
+    $langs->load("propal");
+    $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Propales"));
+  }
+  
+  if ($conf->projet->enabled) {
+    $langs->load("projects");
+    $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
+  }
 
   left_menu($menu->liste);
 
