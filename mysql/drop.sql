@@ -133,6 +133,8 @@ drop table if exists llx_pointmort;
 
 drop table if exists llx_product;
 
+drop table if exists llx_product_price;
+
 drop table if exists llx_projet;
 
 drop table if exists llx_propal;
