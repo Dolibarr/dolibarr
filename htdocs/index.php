@@ -27,6 +27,11 @@ llxHeader();
 $userstring=$user->prenom . ' ' . $user->nom .' ['.$user->code.']';
 print_fiche_titre($langs->trans("WelcomeString",dolibarr_print_date(mktime(),"%A %d %B %Y"),$userstring), '<a href="about.php">'.$langs->trans("About").'</a>');
 
+if (defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
+{
+  print "<br>".nl2br(MAIN_MOTD);
+}
+
 print "<br>\n";
 
 /*
