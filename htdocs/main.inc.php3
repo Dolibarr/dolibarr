@@ -73,7 +73,8 @@ define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/font/');
 $db = new DoliDb();
 
 // PEAR
-//require("DB.php");
+@include "DB.php";
+@include "PEAR/Info.php";
 //$dbpear = new DB();
 //
 //
