@@ -101,14 +101,14 @@ if ($result)
   
   if ($ref || $snom || $sall)
     {
-      llxHeader("","","Dolibarr - Recherche Produit/Service");
+      llxHeader("","","Recherche Produit/Service");
 
       print_barre_liste("Recherche d'un produit ou service", $page, $PHP_SELF, "&sref=$sref&snom=$snom&envente=$envente", $sortfield, $sortorder,'',$num);
     }
   else
     {
       $texte = "Liste des ".$types[$type]."s";
-      llxHeader("","","Dolibarr - ".$texte);
+      llxHeader("","",$texte);
       if (isset($envente) && $envente == 0)
 	{
 	  $texte .= " hors vente";

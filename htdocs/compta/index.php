@@ -30,7 +30,7 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-llxHeader();
+llxHeader("","Accueil Compta");
 
 /*
  *
@@ -111,6 +111,39 @@ if ($user->comm > 0 && $conf->commercial )
 	}
     }
 }
+/*
+ * Factures brouillons
+ */
+
+$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM llx_facture as f, llx_societe as s WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
+
+if ( $db->query($sql) )
+{
+  $num = $db->num_rows();
+  $i = 0;
+
+  if ($num)
+    {
+      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<TR class="liste_titre">';
+      print '<td colspan="2">Factures brouillons</td></tr>';
+
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var=!$var;
+	  print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber.'</td>';
+	  print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  $i++;
+	}
+      
+      print "</table><br>";
+    }
+}
+else
+{
+  print $sql;
+}
 
 /*
  * Charges a payer
@@ -151,43 +184,6 @@ if ($user->societe_id == 0)
     {
       print $db->error();
     }
-}
-/*
- * Factures impayées
- */
-
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM llx_facture as f, llx_societe as s WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut > 0";
-if ($socidp)
-{
-  $sql .= " AND f.fk_soc = $socidp";
-}
-
-if ( $db->query($sql) )
-{
-  $num = $db->num_rows();
-  $i = 0;
-
-  if ($num)
-    {
-      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-      print "<TR class=\"liste_titre\">";
-      print '<td colspan="2">Factures impayées</td></tr>';
-
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object( $i);
-	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber.'</td>';
-	  print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
-	  $i++;
-	}
-      print "</table><br>";
-    }
-  $db->free();
-}
-else
-{
-  print $sql;
 }
 
 /*
@@ -241,6 +237,44 @@ if ($user->societe_id == 0)
 print '</ul></div><br>';
 
 
+/*
+ * Factures impayées
+ */
+
+$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM llx_facture as f, llx_societe as s WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut > 0";
+if ($socidp)
+{
+  $sql .= " AND f.fk_soc = $socidp";
+}
+
+if ( $db->query($sql) )
+{
+  $num = $db->num_rows();
+  $i = 0;
+
+  if ($num)
+    {
+      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print "<TR class=\"liste_titre\">";
+      print '<td colspan="2">Factures impayées</td></tr>';
+
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var=!$var;
+	  print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber.'</td>';
+	  print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  $i++;
+	}
+      print "</table><br>";
+    }
+  $db->free();
+}
+else
+{
+  print $sql;
+}
+
 
 $result = 0;
 if ( $result ) {
@@ -268,39 +302,6 @@ if ( $result ) {
  *
  */
 
-/*
- * Factures brouillons
- */
-
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM llx_facture as f, llx_societe as s WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
-
-if ( $db->query($sql) )
-{
-  $num = $db->num_rows();
-  $i = 0;
-
-  if ($num)
-    {
-      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-      print '<TR class="liste_titre">';
-      print '<td colspan="2">Factures brouillons</td></tr>';
-
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object( $i);
-	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber.'</td>';
-	  print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
-	  $i++;
-	}
-      
-      print "</table><br>";
-    }
-}
-else
-{
-  print $sql;
-}
 
 /*
  * Factures a payer

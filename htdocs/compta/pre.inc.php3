@@ -21,15 +21,14 @@
  */
 require("../main.inc.php3");
 
-function llxHeader($head = "") {
+function llxHeader($head = "", $title="") {
   global $user, $conf;
-
 
   /*
    *
    *
    */
-  top_menu($head);
+  top_menu($head, $title);
 
   $menu = new Menu();
 

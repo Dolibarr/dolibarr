@@ -36,7 +36,7 @@ if ($action == 'update')
  *
  */
 
-llxHeader();
+llxHeader("","","Accueil Produits et services");
 
 print_titre("Produits et services");
 
