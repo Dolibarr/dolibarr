@@ -123,6 +123,38 @@ else
 }
 
 print "<HR><BR>\n";
+
+/*
+ * Gestion banquaire
+ */
+print '<table border="1" cellpadding="3" cellspacing="0">';
+print "<tr $bc[$var] class=value><td>Gestion Banquaire</td><td>Gestion banquaire des adherents";
+print '</td><td align="center">';
+
+if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE == 1)
+{
+  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+  print "</td><td>\n";
+  print '<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_BANK_USE">désactiver</a>';
+  print '</td></tr>';
+  print '</table>';
+  // Edition des varibales globales rattache au theme Mailman 
+  $constantes=array('ADHERENT_BANK_USE_AUTO',
+		    'ADHERENT_BANK_ACCOUNT',
+		    'ADHERENT_BANK_CATEGORIE'
+		    );
+  form_constantes($constantes);
+}
+else
+{
+  print "&nbsp;";
+  print "</td><td>\n";
+  print '<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_BANK_USE">activer</a>';
+  print '</td></tr>';
+  print '</table>';
+}
+
+print "<HR><BR>\n";
 /*
  * Spip
  */
