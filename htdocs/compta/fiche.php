@@ -371,7 +371,7 @@ if ($socid > 0)
         print '<tr class="liste_titre"><td><b>Pr&eacute;nom Nom</b></td>';
         print '<td><b>Poste</b></td><td><b>T&eacute;l</b></td>';
         print "<td><b>Fax</b></td><td><b>Email</b></td>";
-        print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id."&amp;action=create\">".$langs->trans("Add")."</a></td></tr>";
+        print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id."&amp;action=create\">".$langs->trans("AddContact")."</a></td></tr>";
 
         $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $societe->id  ORDER by p.datec";
         $result = $db->query($sql);
@@ -410,7 +410,7 @@ if ($socid > 0)
          *
          */
         print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-        print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$societe->id.'">Actions effectuées</a></td></tr>';
+        print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
         print '<tr>';
         print '<td valign="top">';
 

@@ -118,8 +118,10 @@ if ( $soc->fetch($soc->id) )
       
   $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
   $head[$h][1] = 'Notifications';
-
-  dolibarr_fiche_head($head, $h);
+  $hselected=$h;
+  $h++;
+  
+  dolibarr_fiche_head($head, $hselected, $soc->nom);
 
   /*
    *

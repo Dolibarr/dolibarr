@@ -361,19 +361,18 @@ if ($_socid > 0)
 
     if ($conf->commande->enabled && $user->rights->commande->creer)
       {
-	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->id.'&amp;action=create">Commande</a>';
+	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("Order").'</a>';
       }
 
     if ($conf->projet->enabled && $user->rights->projet->creer)
       {
-	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$objsoc->id.'&action=create">Projet</a>';
+	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$objsoc->id.'&action=create">'.$langs->trans("Project").'</a>';
       }
 
     if ($conf->fichinter->enabled)
       {
 	print '<a class="tabAction" href="../fichinter/fiche.php?socidp='.$objsoc->id.'&amp;action=create">Intervention</a>';
       }
-
   
     print '</div>';
     print '<br>';
@@ -403,10 +402,10 @@ if ($_socid > 0)
        */
       print '<table width="100%" cellspacing="1" border="0" cellpadding="2">';
 
-      print '<tr class="liste_titre"><td>Pr&eacute;nom Nom</td>';
-      print '<td>Poste</td><td>T&eacute;l</td>';
-      print "<td>Fax</td><td>Email</td>";
-      print "<td align=\"center\"><a href=\"../contact/fiche.php?socid=$objsoc->id&action=create\">".$langs->trans("Add")."</a></td></tr>";
+      print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
+      print '<td>Poste</td><td>'.$langs->trans("Tel").'</td>';
+      print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
+      print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td></tr>";
     
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->id  ORDER by p.datec";
       $result = $db->query($sql);
@@ -449,7 +448,7 @@ if ($_socid > 0)
        *
        */
       print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">Actions à faire</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$objsoc->id.'&afaire=1">Nouvelle action</a></td></tr>';
+      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$objsoc->id.'&afaire=1">'.$langs->trans("AddActionToDo").'</a></td></tr>';
       print '<tr>';
       print '<td colspan="2" valign="top">';
 
@@ -528,7 +527,7 @@ if ($_socid > 0)
        *
        */
       print '<table class="noborder" width="100%" cellspacing=0 cellpadding=2>';
-      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">Actions effectuées</a></td></tr>';
+      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
       print '<tr>';
       print '<td valign="top">';
 

@@ -24,7 +24,12 @@
 require("./pre.inc.php");
 require("../contact.class.php");
 
+$langs->load("bills");
+$langs->load("companies");
+
+
 llxHeader();
+
 $socid = $_GET["socid"];
 /*
  * Sécurité accés client
@@ -150,12 +155,9 @@ if ( $societe->fetch($socid) )
   /*
    * Boutons Actions
    */
-  $langs->load("bills");
-  $langs->load("companies");
   
   print '<div class="tabsAction">';
   print '<a class="tabAction" href="facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("CreateBill").'</a>';
-  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
   print '</div>';
     
 
@@ -171,7 +173,7 @@ if ( $societe->fetch($socid) )
   print '<tr class="liste_titre"><td><b>'.$langs->trans("FirstName").' '.$langs->trans("LastName").'</b></td>';
   print '<td><b>Poste</b></td><td><b>'.$langs->trans("Tel").'</b></td>';
   print "<td><b>".$langs->trans("Fax")."</b></td><td><b>".$langs->trans("EMail")."</b></td>";
-  print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">Ajouter</a></td></tr>";
+  print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td></tr>";
     
   $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
   $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $societe->id  ORDER by p.datec";

@@ -158,7 +158,7 @@ if ($_GET["action"] == 'create')
 
   $caction = new CActioncomm($db);
   
-  if ($afaire <> 1)
+  if ($_GET["afaire"] <> 1)
     {
       $caction->fetch($db, $_GET["actionid"]);
       
@@ -214,7 +214,7 @@ if ($_GET["action"] == 'create')
    */   
   else 
     {      
-      if($afaire <> 1)
+      if ($_GET["afaire"] <> 1)
 	{
 	  print_titre ("Action effectuée");	  
 	  print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
@@ -234,7 +234,7 @@ if ($_GET["action"] == 'create')
       print_titre ("Prochaine Action à faire");
 
       print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
-      if($afaire <> 1)
+      if ($_GET["afaire"] <> 1)
 	{
 	  print '<tr><td width="10%">'.$langs->trans("Add").'</td><td><input type="checkbox" name="todo"></td></tr>';
 	}
@@ -273,7 +273,7 @@ if ($_GET["action"] == 'create')
  */
 if ($_GET["id"])
 {
-  if ($action == 'delete')
+  if ($_GET["action"] == 'delete')
     {
       print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
       print '<input type="hidden" name="action" value="confirm_delete">';
