@@ -71,7 +71,7 @@ class pnArticle {
    */
   Function fetch ($id) {
     
-    $sql = "SELECT p.pn_sid, p.pn_title, p.pn_bodytext FROM " . PN_DB_NAME . "." . PN_TABLE_STORIES_NAME . " as p";
+    $sql = "SELECT p.pn_sid, p.pn_title, p.pn_hometext FROM " . PN_DB_NAME . "." . PN_TABLE_STORIES_NAME . " as p";
 
     if ($id)
       {
