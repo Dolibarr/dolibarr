@@ -1464,47 +1464,24 @@ insert into llx_c_pays (rowid,libelle,code) values (25, 'Cameroun',       'CM');
 
 delete from llx_c_regions;
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (01,'97105',3,'Guadeloupe');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (02,'97209',3,'Martinique');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (03,'97302',3,'Guyane');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (04,'97411',3,'Réunion');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (11,'75056',1,'Île-de-France');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (21,'51108',0,'Champagne-Ardenne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (22,'80021',0,'Picardie');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (23,'76540',0,'Haute-Normandie');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (24,'45234',2,'Centre');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (25,'14118',0,'Basse-Normandie');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (26,'21231',0,'Bourgogne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (31,'59350',2,'Nord-Pas-de-Calais');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (41,'57463',0,'Lorraine');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (42,'67482',1,'Alsace');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (43,'25056',0,'Franche-Comté');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (52,'44109',4,'Pays de la Loire');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (53,'35238',0,'Bretagne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (54,'86194',2,'Poitou-Charentes');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (72,'33063',1,'Aquitaine');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (73,'31555',0,'Midi-Pyrénées');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (74,'87085',2,'Limousin');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (82,'69123',2,'Rhône-Alpes');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (83,'63113',1,'Auvergne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (91,'34172',2,'Languedoc-Roussillon');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (93,'13055',0,'Provence-Alpes-Côte d\'Azur');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (94,'2A004',0,'Corse');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (01,'97105',1,'Flandre');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (02,'97209',2,'Wallonie');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (03,'97302',3,'Bruxelles-Capitale');
 
 delete from llx_c_departements;
 insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,0,'0',0,'-','-');
 
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',5,'ANVERS','Anvers');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'02','02408',5,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (22,'03','03190',5,'BRABANT-WALLON','Brabant-Wallon');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (83,'04','04070',5,'BRABANT-FLAMAND','Brabant-Flamand');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'05','05061',4,'FLANDRE-OCCIDENTALE','Flandre-Occidentale');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'06','06088',4,'FLANDRE-ORIENTALE','Flandre-Orientale');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'07','07186',4,'HAINAUT','Hainaut');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'08','08105',5,'LIEGE','Liège');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (21,'09','09105',4,'LIMBOURG','Limbourg');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (73,'10','10387',5,'LUXEMBOURG','Luxembourg');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (21,'11','11069',5,'NAMUR','Namur');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',1,'ANVERS','Anvers');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'02','02408',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (22,'03','03190',2,'BRABANT-WALLON','Brabant-Wallon');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (83,'04','04070',1,'BRABANT-FLAMAND','Brabant-Flamand');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'05','05061',1,'FLANDRE-OCCIDENTALE','Flandre-Occidentale');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'06','06088',1,'FLANDRE-ORIENTALE','Flandre-Orientale');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'07','07186',2,'HAINAUT','Hainaut');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'08','08105',2,'LIEGE','Liège');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (21,'09','09105',1,'LIMBOURG','Limbourg');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (73,'10','10387',2,'LUXEMBOURG','Luxembourg');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (21,'11','11069',2,'NAMUR','Namur');
 
 delete from llx_c_effectif;
 insert into llx_c_effectif (id,libelle) values (0,  'Non spécifié');
@@ -1536,25 +1513,11 @@ insert into llx_c_forme_juridique (code, libelle) values (0,'Non renseignée');
 
 insert into llx_c_forme_juridique (code, libelle) values (1,'Indépendant');
 insert into llx_c_forme_juridique (code, libelle) values (2,'SC - Coopérative');
+insert into llx_c_forme_juridique (code, libelle) values (2,'SCRL - Coopérative à responsabilité limitée');
 insert into llx_c_forme_juridique (code, libelle) values (3,'SPRL - Société à responsabilité limitée');
 insert into llx_c_forme_juridique (code, libelle) values (4,'SA - Société Anonyme');
-insert into llx_c_forme_juridique (code, libelle) values (5,'ONG - Organisation non gouvernementale');
-
-
-insert into llx_c_forme_juridique (code, libelle) values (22,'Société créée de fait');
-insert into llx_c_forme_juridique (code, libelle) values (23,'Société en participation');
-
-
 insert into llx_c_forme_juridique (code, libelle) values (52,'Société en nom collectif');
 insert into llx_c_forme_juridique (code, libelle) values (53,'Société en commandite');
-
-insert into llx_c_forme_juridique (code, libelle) values (62,'Groupement d\'intérêt économique');
-
 insert into llx_c_forme_juridique (code, libelle) values (71,'Administration publique');
-
-
 insert into llx_c_forme_juridique (code, libelle) values (91,'Syndicat de propriétaires');
 insert into llx_c_forme_juridique (code, libelle) values (93,'Fondations');
-
-
-
