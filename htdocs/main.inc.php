@@ -133,7 +133,7 @@ function top_menu($head, $title="", $target="")
   print '<link rel="stylesheet" type="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
   print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
 
-  // Definition en laternate style sheet des feuilles de styles les plus maintenues
+  // Definition en l'aternate style sheet des feuilles de styles les plus maintenues
   print '<link rel="alternate styleSheet" type="text/css" title="Rodolphe" href="'.DOL_URL_ROOT.'/theme/rodolphe/rodolphe.css">'."\n";
   print '<link rel="alternate styleSheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
   print '<link rel="alternate styleSheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css">'."\n";
@@ -159,23 +159,25 @@ function top_menu($head, $title="", $target="")
   print '<body>';
   print '<div class="body">';
 
+  
   /*
-   * Mise à jour entre 2 versions
-   *
+   * Si la constante MAIN_NEED_UPDATE est définie (par le script de migration sql en général), c'est que
+   * les données ont besoin d'un remaniement. Il faut passer le update.php
    */
-  if (defined("MAIN_NEED_UPDATE"))
-    {
-       $langs->load("admin");
-      print '<div class="fiche">'."\n";
-      print '<table class="noborder" width="100%">';
-      print '<tr><td>';
-      print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/admin/system/update.php');
-      print '</td></tr>';
-      print "</table>";
-      llxFooter();
-      exit;
-    }
-
+  if (defined("MAIN_NEED_UPDATE") && MAIN_NEED_UPDATE)
+  {
+    $langs->load("admin");
+    print '<div class="fiche">'."\n";
+    print '<table class="noborder" width="100%">';
+    print '<tr><td>';
+    print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/admin/system/update.php');
+    print '</td></tr>';
+    print "</table>";
+    llxFooter();
+    exit;
+  }
+  
+  
   /*
    * Barre de menu supérieure
    *
