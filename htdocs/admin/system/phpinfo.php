@@ -22,6 +22,10 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 llxHeader();
 
 ob_start(); 
@@ -54,8 +58,9 @@ $chaine = eregi_replace('a:link.*underline','',$chaine);
 $chaine = eregi_replace('table.*important; }','',$chaine);
 $chaine = eregi_replace('<hr />','',$chaine);
 $chaine = eregi_replace('</body></html>','',$chaine);
+$chaine = eregi_replace('body, td, th, h1, h2 {font-family: sans-serif;}','',$chaine);
 
-print "$chaine\n";
+print "<center>$chaine</center>\n";
 print "<br>\n";
 
 llxfooter();
