@@ -148,24 +148,34 @@ if ($action == 'create') {
   print "[<a href=\"soc.php3?socid=$socid&action=edit\">Editer</a>]";
   print '<table border="1" cellpadding="3" cellspacing="0">';
   print '<tr><td>Nom</td><td>'.$soc->nom.'</td></tr>';
-  print '<tr><td valign="top">Adresse</td><td>'.nl2br($soc->adresse).'</td></tr>';
+  print '<tr><td valign="top">Adresse</td><td>'.nl2br($soc->adresse).'&nbsp;</td></tr>';
   print '<tr><td>CP</td><td>'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
 
   print '<tr><td>Tel</td><td>'.$soc->tel.'</td></tr>';
   print '<tr><td>Fax</td><td>'.$soc->fax.'</td></tr>';
   print '<tr><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
 
-  print '<tr><td>Siren</td><td>'.$soc->siren.'</td></tr>';
-
+  print '<tr><td>Siren</td><td>'.$soc->siren.'&nbsp;</td></tr>';
   print '<tr><td>Client</td><td>'.$soc->client.'</td></tr>';
   print '<tr><td>Fournisseur</td><td>'.$soc->fournisseur.'</td></tr>';
-
-
   print '</table>';
 
+  clearstatcache();
 
+  $docdir = $GLOBALS["DOCUMENT_ROOT"] . "/document/societe/$socid";
+  $url = "/document/societe/$socid";
+
+  if (file_exists ($docdir)) {
+    print "<p>$docdir<p>";
+    print '<a href="'.$url.'">Documents</a>';
+  } else {
+   
+    mkdir ("$docdir", 0700);
+    if (file_exists ($docdir)) {
+      print '<a href="'.$url.'">Documents</a>';
+    }
+  }
 }
-
 
 $db->close();
 
