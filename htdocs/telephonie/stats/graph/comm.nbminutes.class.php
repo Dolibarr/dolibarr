@@ -20,93 +20,86 @@
  *
  */
 
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/brouzouf.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 
-class GraphAppelsDureeMoyenne extends GraphBrouzouf{
+class GraphCommNbMinutes extends GraphBar{
 
 
-  Function GraphAppelsDureeMoyenne($DB, $file)
+  Function GraphCommNbMinutes($DB, $file)
   {
+    $this->name = "comm.nbminutes";
     $this->db = $DB;
     $this->file = $file;
-
+    $this->showframe = true;
     $this->client = 0;
     $this->contrat = 0;
-    $this->titre = "Durée moyenne des appels";
+    $this->titre = "Nombre de minutes";
 
-    //$this->type = "LinePlot";
+    $this->barcolor = "bisque2";
 
-    $this->barcolor = "pink";
+    $this->datas = array();
+    $this->labels = array();
   }
 
+  Function Graph($datas='', $labels='')
+  {    
+    $this->GetDatas();
 
-  Function GraphDraw()
+    if (sizeof($this->datas))
+      {
+	$this->GraphDraw($this->file, $this->datas, $this->labels);
+      }
+  }
+
+  Function GetDatas()
   {
-    $num = 0;
-    
+
+    $sql = "SELECT date_format(td.date,'%Y%m'), sum(duree)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
+
     if ($this->client == 0 && $this->contrat == 0)
       {
-	$sql = "SELECT date_format(date,'%Y%m'), sum(duree), count(duree)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-	$sql .= " GROUP BY date_format(date,'%Y%m') ASC ";
+	$sql .= " GROUP BY date_format(td.date, '%Y%m') ASC";
       }
     elseif ($this->client > 0 && $this->contrat == 0)
       {
-	$sql = "SELECT date_format(td.date,'%Y%m'), sum(td.duree), count(td.duree)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 
 	$sql .= " WHERE td.ligne = s.ligne";
 	$sql .= " AND s.fk_client_comm = ".$this->client;
+
 	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
-      }
+      }    
     elseif ($this->client == 0 && $this->contrat > 0)
       {
-	$sql = "SELECT date_format(td.date,'%Y%m'), sum(td.duree), count(td.duree)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 
 	$sql .= " WHERE td.ligne = s.ligne";
 	$sql .= " AND s.fk_contrat = ".$this->contrat;
-	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
-      }
 
-    
+	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
+      }    
+
     if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
 	$i = 0;
-	$labels = array();
-	
+		
 	while ($i < $num)
 	  {
-	    $row = $this->db->fetch_row();
-
-	    $labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
-	    $datas[$i] = ($row[1] / $row[2] ) ;	    
+	    $row = $this->db->fetch_row();	
+	    
+	    $this->labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
+	    $this->datas[$i] = $row[1];
 	    
 	    $i++;
-	  }
-	
+	  }	
 	$this->db->free();
       }
     else 
       {
-	print $this->db->error() . ' ' . $sql;
-	exit ;
-      }
-    
-
-    if ($this->show_console)
-      {
-	print $this->client . " " . $cv[$i - 1]."\n";
-      }    
-
-    if ($num > 1)
-      {
-	$this->GraphMakeGraph($datas, $labels);
+	dolibarr_syslog("Error");
       }
   }
-
-}   
+}  
 ?>
