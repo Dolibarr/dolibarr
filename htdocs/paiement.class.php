@@ -204,6 +204,25 @@ class Paiement
 	return 0;
       }    
   }
+  
+  /*
+   * Mise a jour du lien entre le paiement et la ligne dans llx_bank générée
+   *
+   */
+  Function update_fk_bank($id_bank)
+    {
+    $sql = "UPDATE llx_paiement set fk_bank = ".$id_bank." where rowid = ".$this->id;
+    $result = $this->db->query($sql);
+    if ($result) 
+        {	    
+    	return 1;
+        }
+    else {
+	    print $this->db->error() ."<br>".$sql;
+    	return 0;
+        }
+    }
+
   /*
    * Information sur l'objet
    *
