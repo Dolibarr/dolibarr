@@ -22,6 +22,10 @@
 require("./pre.inc.php3");
 $user->getrights('produit');
 
+if (!$user->rights->produit->lire)
+  accessforbidden();
+
+
 if (strlen($type) == 0)
 {
   $type = 0;
@@ -65,13 +69,6 @@ if ($action == 'update')
     {
       $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
     }
-
-if ($user->rights->produit->lire == 0)
-{
-  // sécurité
-  $sql .= " AND 1 = 2";
-}
-
 
   $sql .= " ORDER BY $sortfield $sortorder ";
   $sql .= $db->plimit($limit + 1 ,$offset);
