@@ -263,7 +263,7 @@ if ($propalid)
 
 	  $color1 = "#e0e0e0";
 
-	  print "<table class=\"tablefsoc\" border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
+	  print "<table class=\"border\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
 	  print '<tr><td>Société</td><td colspan="3"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td>Statut</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
@@ -487,40 +487,41 @@ if ($propalid)
 	   */
 	  if ($obj->statut < 2)
 	    {
-	      print "<br><table class=\"tableab\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+	      print '<p><table id="actions" width="100%"><tr>';
 	  
 	      if ($obj->statut == 0)
 		{
 		  if ($user->rights->propale->supprimer)
 		    {
-		      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=delete\">Supprimer</a>]</td>";
+		      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=delete\">Supprimer</a>]</td>";
 		    }
 		  else
 		    {
-		      print "<td align=\"center\" width=\"25%\">-</td>";
+		      print "<td width=\"20%\">-</td>";
 		    }
 		}
 	      else
 		{
 		  if ($obj->statut == 1 && $user->rights->propale->cloturer)
 		    {
-		      print "<td align=center>[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Cloturer</a>]</td>";
+		      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Cloturer</a>]</td>";
 		    }
 		  else
 		    {
-		      print "<td align=\"center\" width=\"25%\">-</td>";
+		      print "<td width=\"20%\">-</td>";
 		    }
 		} 
+	      print "<td width=\"20%\">-</td>";
 	      /*
 	       *
 	       */
 	      if ($obj->statut < 2 && $user->rights->propale->creer)
 		{
-		  print '<td align="center" width="25%">[<a href="'.$PHP_SELF."?propalid=$propalid&action=pdf\">Générer</a>]</td>";
+		  print '<td width="20%">[<a href="'.$PHP_SELF."?propalid=$propalid&action=pdf\">Générer</a>]</td>";
 		}
 	      else
 		{
-		  print '<td align="center" width="25%">-</td>';
+		  print '<td width="20%">-</td>';
 		}
 	    
 	      /*
@@ -533,22 +534,22 @@ if ($propalid)
 		    {
 		      if ($user->rights->propale->envoyer)
 			{
-			  print "<td align=\"center\" width=\"25%\">";
+			  print "<td width=\"20%\">";
 			  print "[<a href=\"$PHP_SELF?propalid=$propalid&action=presend\">Envoyer la proposition</a>]</td>";
 			}
 		      else
 			{
-			  print '<td align="center" width="25%">-</td>';
+			  print '<td width="20%">-</td>';
 			}
 		    }
 		  else
 		    {
-		      print '<td bgcolor="#e0e0e0" align="center" width="25%">! Propale non generee !</td>';
+		      print '<td bgcolor="#e0e0e0" align="center" width="20%">! Propale non generee !</td>';
 		    }
 		}
 	      else
 		{
-		  print "<td align=\"center\" width=\"25%\">-</td>";
+		  print "<td align=\"center\" width=\"20%\">-</td>";
 		}
 	      /*
 	       * 
@@ -557,27 +558,27 @@ if ($propalid)
 		{
 		  if ($user->rights->propale->valider)
 		    {
-		      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
+		      print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
 		    }
 		  else
 		    {
-		      print '<td align="center" width="25%">-</td>';
+		      print '<td align="center" width="20%">-</td>';
 		    }
 		}
 	      elseif ($obj->statut == 1)
 		{
 		  if ($user->rights->propale->creer)
 		    {
-		      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=modif\">Modifier</a>]</td>";
+		      print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=modif\">Modifier</a>]</td>";
 		    }
 		  else
 		    {
-		      print '<td align="center" width="25%">-</td>';
+		      print '<td align="center" width="20%">-</td>';
 		    }
 		}
 	      else
 		{
-		  print '<td align="center" width="25%">-</td>';
+		  print '<td align="center" width="20%">-</td>';
 		}
 	      print "</tr></table>";
 	    }
@@ -628,9 +629,9 @@ if ($propalid)
 	   *
 	   */
 	  
-	  print '<table width="100%" cellspacing=2><tr><td width="50%" valign="top">';
+	  print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
 	  print_titre('<a href="propal/document.php?id='.$propal->id.'">Documents</a>');
-	  print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  
 	  $file = PROPALE_OUTPUTDIR . "/$obj->ref/$obj->ref.pdf";
 	  if (file_exists($file))
