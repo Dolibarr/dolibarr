@@ -75,7 +75,8 @@ print "</div>";
 
 
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
-$sql .= "FROM llx_societe as s, socpeople as p, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
+$sql .= " FROM llx_societe as s, llx_socpeople as p, c_stcomm as st";
+$sql .= " WHERE s.fk_stcomm = st.id AND s.fournisseur = 1 AND s.idp = p.fk_soc";
 
 if (strlen($stcomm)) {
   $sql .= " AND s.fk_stcomm=$stcomm";
@@ -127,7 +128,7 @@ if ($result) {
     print "<TD>$obj->firstname</TD>";
 
     print '<TD><a href="contact.php3?socid='.$obj->idp.'"><img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
-    print "<a href=\"index.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
+    print "<a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
     print "<TD>$obj->email&nbsp;</TD>\n";
     print '<td><a href="actioncomm.php3?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
 
