@@ -97,3 +97,9 @@ td.valeur
 { 
   font-weight: bold;
   }
+
+td.delete
+{ 
+  background: red;
+  font-weight: bold;
+  }
