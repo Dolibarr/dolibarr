@@ -159,7 +159,7 @@ class Facture
   Function fetch($rowid, $societe_id=0)
     {
 
-      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.libelle, f.note, f.paye, f.fk_statut, f.fk_user_author";
+      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.libelle, c.libelle_facture, f.note, f.paye, f.fk_statut, f.fk_user_author";
       $sql .= " FROM llx_facture as f, llx_cond_reglement as c";
       $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
       
@@ -189,6 +189,7 @@ class Facture
 	      $this->statut             = $obj->fk_statut;
 	      $this->date_lim_reglement = $obj->dlr;
 	      $this->cond_reglement     = $obj->libelle;
+	      $this->cond_reglement_facture = $obj->libelle_facture;
 	      $this->projetid           = $obj->fk_projet;
 	      $this->note               = stripslashes($obj->note);
 	      $this->user_author        = $obj->fk_user_author;
