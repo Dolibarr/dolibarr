@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  * $Source$
  *
  */
+ 
 require("./pre.inc.php");
 
 $langs->load("companies");
@@ -54,9 +55,7 @@ $offset = $limit * $page ;
 
 
 /*
- *
  * Mode liste
- *
  *
  */
 
@@ -110,8 +109,7 @@ if ($result) {
       print '<td width="13%">'.$obj->name.'</td>';
       print '<td width="13%">'.$obj->firstname.'</td>';
       
-      print '<td><a href="contact.php?socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
-      print "<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
+      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
       print "<td>$obj->email&nbsp;</td>\n";
       print '<td>'.$obj->phone.'</td>';
       
@@ -120,10 +118,11 @@ if ($result) {
     }
   print "</table>";
   $db->free();
-} else {
-  print_barre_liste("Liste des contacts $label",$page, "contact.php");
-  
-  print $db->error();
+
+}
+else
+{
+  dolibarr_print_error($db);
 }
 
 $db->close();
