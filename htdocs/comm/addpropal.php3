@@ -23,8 +23,6 @@
 require("./pre.inc.php3");
 require("./propal_model_pdf.class.php3");
 
-$db = new Db();
-
 $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM llx_societe as s WHERE s.idp = $socidp;";
 
 $result = $db->query($sql);
