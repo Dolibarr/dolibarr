@@ -69,38 +69,50 @@ if ($action == "delete")
  *
  *
  */
-print_titre("Notifications");
-
 $soc = new Societe($db);
 $soc->id = $socid;
 if ( $soc->fetch($socid) ) 
 {
+  $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$_GET["socid"];
+  $head[0][1] = "Fiche société";
+  $h = 1;
+  if ($soc->client==1)
+    {
+      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
+      $head[$h][1] = 'Fiche client';
+      $h++;
+    }
 
-  print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr><td width="20%">Nom</td><td class="valeur">'.$soc->nom.'</td>';
-  print '<td align="center">';
-  if ($soc->client)
+  if ($soc->client==2)
     {
-      print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche commercial</a>';
+      $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$socid;
+      $head[$h][1] = 'Fiche prospect';
+      $h++;
     }
-  else
+  if ($soc->fournisseur)
     {
-      print '-';
+      $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
+      $head[$h][1] = 'Fiche fournisseur';
+      $h++;
     }
-  print '</td><td align="center">';
-  if ($soc->client)
-    {
-      print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid.'">Fiche compta</a>';
-    }
-  else
-    {
-      print '-';
-    }
-  print '</td></tr>';
-  print '<tr><td valign="top">Adresse</td><td class="valeur" colspan="3">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>CP</td><td class="valeur" colspan="3">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
 
-  print '</table>';
+  $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
+  $head[$h][1] = 'Notifications';
+
+  dolibarr_fiche_head($head, $h);
+
+  /*
+   *
+   *
+   */
+
+  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+  print '<tr><td width="20%">Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
+
+  print '<tr><td valign="top">Adresse</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
+  print '<tr><td>CP</td><td class="valeur">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
+
+  print '</table><br></div>';
 
   /*
    *
@@ -114,7 +126,7 @@ if ( $soc->fetch($socid) )
       $sortfield="c.name";
     }
 
-  print '<br><table width="100%" border="0" cellspacing="0" cellpadding="3">';
+  print '<table width="100%" border="0" cellspacing="0" cellpadding="3">';
   print '<tr class="liste_titre">';
   print_liste_field_titre_new ("Contact",$PHP_SELF,"c.name","","&socid=$socid",'',$sortfield);
   print_liste_field_titre_new ("Action",$PHP_SELF,"a.titre","","&socid=$socid",'',$sortfield);
@@ -131,13 +143,13 @@ if ( $soc->fetch($socid) )
       $var=True;
       while ($i < $num)
 	{
-	  $var = !$var;
 	  $obj = $db->fetch_object( $i);
 	  
 	  print '<tr '.$bc[$var].'><td>'.$obj->firstname . " ".$obj->name.'</td>';
 	  print '<td>'.$obj->titre.'</td>';
-	  print '<td><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">Supprimer</a>';
+	  print '<td align="center"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a>';
 	  $i++;
+	  $var = !$var;
 	}
       $db->free();
     }
@@ -171,21 +183,19 @@ if ( $soc->fetch($socid) )
   $html = new Form($db);
   print '<form action="fiche.php?socid='.$socid.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
-  print '<tr><td>';
+  print '<tr '.$bc[$var].'><td>';
   $html->select_array("contactid",$soc->contact_email_array());
   print '</td>';
   print '<td>';
   $html->select_array("actionid",$actions);
   print '</td>';
-  print '<td><input type="submit" value="Ajouter"></td>';
+  print '<td align="center"><input type="submit" value="Ajouter"></td>';
   print '</tr></form></table>';
 
 }
 /*
  *
  */
-
-
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
