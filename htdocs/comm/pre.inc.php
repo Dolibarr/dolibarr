@@ -87,11 +87,13 @@ function llxHeader($head = "", $title = "")
       $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
     }
 
-  $menu->add(DOL_URL_ROOT."/comm/mailing/", "Mailing");
+      $langs->load("mails");
+      $menu->add(DOL_URL_ROOT."/comm/mailing/", $langs->trans("EMailings"));
 
   if ($conf->fichinter->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
+      $langs->load("interventions");
+      $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
     }
 
   if ($conf->produit->enabled || $conf->service->enabled)

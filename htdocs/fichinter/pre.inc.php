@@ -19,23 +19,20 @@
  * $Source$
  *
  */
+
+
 require("../main.inc.php");
 
 function llxHeader($head = "", $urlp = "")
 {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/comm/clients.php","Clients");
-
-  $menu->add("index.php","Fiches d'intervention");
+  $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
+  $menu->add("index.php", $langs->trans("Interventions"));
 
   left_menu($menu->liste);
 }

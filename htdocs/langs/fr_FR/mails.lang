@@ -1,5 +1,8 @@
 # Dolibarr language file - fr_FR - mails
 Mailing=Mailing
+EMailing=Mailing
+Mailings=Mailings
+EMailings=Mailings
 MailCard=Fiche mailing
 MailTargets=Destinataires
 MailRecipients=Destinataires
