@@ -30,14 +30,13 @@ $etape = 1;
 
 $conffile = "../conf/conf.php";
 
-# Répertoire des pages dolibarr
+// Répertoire des pages dolibarr
 $main_dir=isset($_POST["main_dir"])?$_POST["main_dir"]:'';
-# Répertoire des documents générés (factures, etc...)
+// Répertoire des documents générés (factures, etc...)
 $main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
 # En attendant que le main_data_dir soit géré de manière autonome,
 # on le force à sa valeur fixe des anciennes versions.
 if (! $main_data_dir) { $main_data_dir="$main_dir/document"; }
-
 
 if ($_POST["action"] == "set")
 {
@@ -70,9 +69,8 @@ if ($_POST["action"] == "set")
       fputs($fp, '$dolibarr_main_document_root="'.$main_dir.'";');
       fputs($fp,"\n");
 
-      # Pas encore géré
-      #fputs($fp, '$dolibarr_main_data_root="'.$main_data_dir.'";');
-      #fputs($fp,"\n");
+      fputs($fp, '$dolibarr_main_data_root="'.$main_data_dir.'";');
+      fputs($fp,"\n");
 
       fputs($fp, '$dolibarr_main_db_host="'.$_POST["db_host"].'";');
       fputs($fp,"\n");
