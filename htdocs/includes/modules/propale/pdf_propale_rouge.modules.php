@@ -1,0 +1,251 @@
+<?PHP
+/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * or see http://www.gnu.org/
+ *
+ * $Id$
+ * $Source$
+ *
+ */
+
+Class pdf_propale_rouge {
+
+  Function pdf_propale_rouge($db=0)
+    { 
+      $this->db = $db;
+      $this->description = "Modèle de propale par défaut";
+    }
+
+  Function write_pdf_file($id)
+    {
+
+      $propale = new Propal($this->db,"",$id);
+      if ($propale->fetch($id))
+	{
+
+	  if (defined("PROPALE_OUTPUTDIR"))
+	    {
+	      $dir = PROPALE_OUTPUTDIR . "/" . $propale->ref . "/" ;
+	      
+	      if (! file_exists($dir))
+		{
+		  mkdir($dir, 755);
+		}
+	    }	  
+	  
+	  $file = $dir . $propale->ref . ".pdf";
+	  
+	  if (file_exists($dir))
+	    {
+
+	      $pdf=new FPDF('P','mm','A4');
+	      $pdf->Open();
+	      $pdf->AddPage();
+	      
+	      $this->_pagehead($pdf, $propale);
+
+	      /*
+	       */
+	      $tab_top = 100;
+	      $tab_height = 110;	      
+	      /*
+	       *
+	       */  
+	      
+	      $pdf->SetFillColor(220,220,220);
+
+	      $pdf->SetTextColor(0,0,0);
+	      $pdf->SetFont('Arial','', 10);
+
+	      $pdf->SetXY (10, $tab_top + 10 );
+
+	      $iniY = $pdf->GetY();
+	      $curY = $pdf->GetY();
+	      $nexY = $pdf->GetY();
+
+	      for ($i = 0 ; $i < sizeof($propale->lignes) ; $i++)
+		{
+
+		  $curY = $nexY;
+
+		  $pdf->SetXY (30, $curY );
+
+		  $pdf->MultiCell(100, 5, $propale->lignes[$i]->desc, 0, 'J', 0);
+
+		  $nexY = $pdf->GetY();
+		 
+		  $pdf->SetXY (10, $curY );
+
+		  $pdf->MultiCell(20, 5, $propale->lignes[$i]->ref, 0, 'C');
+
+		  $pdf->SetXY (133, $curY );		  
+		  $pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
+		  
+		  $pdf->SetXY (145, $curY );
+		  $pdf->MultiCell(10, 5, $propale->lignes[$i]->qty, 0, 'C');
+
+		  $pdf->SetXY (156, $curY );
+		  $pdf->MultiCell(18, 5, price($propale->lignes[$i]->price), 0, 'R', 0);
+	      
+		  $pdf->SetXY (174, $curY );
+		  $total = price($propale->lignes[$i]->price * $propale->lignes[$i]->qty);
+		  $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+		  
+		  $pdf->line(10, $curY, 200, $curY );
+
+		  if ($nexY > 220)
+		    {
+		      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+		      $pdf->AddPage();
+		      $nexY = $iniY;
+		      $this->_pagehead($pdf, $propale);
+		      $pdf->SetTextColor(0,0,0);
+		      $pdf->SetFont('Arial','', 10);
+		    }
+		}
+	      
+	      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+	      /*
+	       *
+	       */
+	      $tab2_top = 212;
+	      $tab2_height = 24;
+	      $pdf->SetFont('Arial','', 12);
+	      
+	      $pdf->Rect(132, $tab2_top, 68, $tab2_height);
+	      
+	      $pdf->line(132, $tab2_top + $tab2_height - 24, 200, $tab2_top + $tab2_height - 24 );
+	      $pdf->line(132, $tab2_top + $tab2_height - 16, 200, $tab2_top + $tab2_height - 16 );
+	      $pdf->line(132, $tab2_top + $tab2_height - 8, 200, $tab2_top + $tab2_height - 8 );
+	      
+	      $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
+	      
+	      $pdf->SetXY (132, $tab2_top + 0);
+	      $pdf->MultiCell(42, 8, "Total HT", 0, 'R', 0);
+	      
+	      $pdf->SetXY (132, $tab2_top + 8);
+	      $pdf->MultiCell(42, 8, "Total TVA", 0, 'R', 0);
+	      
+	      $pdf->SetXY (132, $tab2_top + 16);
+	      $pdf->MultiCell(42, 8, "Total TTC", 1, 'R', 1);
+	      
+	      $pdf->SetXY (174, $tab2_top + 0);
+	      $pdf->MultiCell(26, 8, price($propale->total_ht), 0, 'R', 0);
+	      
+	      $pdf->SetXY (174, $tab2_top + 8);
+	      $pdf->MultiCell(26, 8, price($propale->total_tva), 0, 'R', 0);
+	      
+	      $pdf->SetXY (174, $tab2_top + 16);
+	      $pdf->MultiCell(26, 8, price($propale->total_ttc), 1, 'R', 1);
+	      
+	      /*
+	       *
+	       */
+	      	      
+	      $pdf->Output($file);
+	  
+	    }
+	}
+    }
+
+  Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+    {
+
+      $pdf->SetFont('Arial','',12);
+            
+      $pdf->Text(30,$tab_top + 5,'Désignation');
+      
+      $pdf->line(132, $tab_top, 132, $nexY);
+      $pdf->Text(134,$tab_top + 5,'TVA');
+      
+      $pdf->line(144, $tab_top, 144, $nexY);
+      $pdf->Text(147,$tab_top + 5,'Qté');
+      
+      $pdf->line(156, $tab_top, 156, $nexY);
+      $pdf->Text(160,$tab_top + 5,'P.U.');
+      
+      $pdf->line(174, $tab_top, 174, $nexY);
+      $pdf->Text(187,$tab_top + 5,'Total');
+      
+      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
+
+
+      $pdf->SetTextColor(0,0,0);
+      $pdf->SetFont('Arial','',10);
+      $titre = "Montants exprimés en euros";
+      $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
+
+    }
+
+  Function _pagehead(&$pdf, $propale)
+    {
+      $pdf->SetXY(10,5);
+      if (defined("FAC_PDF_INTITULE"))
+	{
+	  $pdf->SetTextColor(0,0,200);
+	  $pdf->SetFont('Arial','B',14);
+	  $pdf->MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
+	}
+      
+      $pdf->SetTextColor(70,70,170);
+      if (defined("FAC_PDF_ADRESSE"))
+	{
+	  $pdf->SetFont('Arial','',12);
+	  $pdf->MultiCell(40, 5, FAC_PDF_ADRESSE);
+	}
+      if (defined("FAC_PDF_TEL"))
+	{
+	  $pdf->SetFont('Arial','',10);
+	  $pdf->MultiCell(40, 5, "Tél : ".FAC_PDF_TEL);
+	}  
+      if (defined("FAC_PDF_SIREN"))
+	{
+	  $pdf->SetFont('Arial','',10);
+	  $pdf->MultiCell(40, 5, "SIREN : ".FAC_PDF_SIREN);
+	}  
+      
+      if (defined("FAC_PDF_INTITULE2"))
+	{
+	  $pdf->SetXY(100,5);
+	  $pdf->SetFont('Arial','B',14);
+	  $pdf->SetTextColor(0,0,200);
+	  $pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
+	}
+      /*
+       * Adresse Client
+       */
+      $pdf->SetTextColor(0,0,0);
+      $pdf->SetFont('Arial','B',12);
+      $propale->fetch_client();
+      $pdf->SetXY(102,42);
+      $pdf->MultiCell(66,5, $propale->client->nom);
+      $pdf->SetFont('Arial','B',11);
+      $pdf->SetXY(102,47);
+      $pdf->MultiCell(66,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
+      $pdf->rect(100, 40, 100, 40);
+      
+      
+      $pdf->SetTextColor(200,0,0);
+      $pdf->SetFont('Arial','B',14);
+      $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $propale->date));
+      $pdf->Text(11, 94, "Proposition commerciale : ".$propale->ref);
+      
+      
+    }
+
+}
+
+?>
