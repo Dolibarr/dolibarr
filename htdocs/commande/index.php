@@ -22,7 +22,7 @@
 
 require("./pre.inc.php");
 
-llxHeader();
+llxHeader("", 'Commandes','ch-commande.html');
 
 print_titre("Commandes");
 
@@ -71,13 +71,9 @@ if ( $db->query($sql) )
       print "</table><br>";
     }
 }
-/*
- *
- */
-print '</td><td valign="top" width="70%">';
 
 /*
- * Dernières commandes
+ * Commandes à traiter
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 1";
@@ -108,8 +104,14 @@ if ( $db->query($sql) )
       print "</table><br>";
     }
 }
+
 /*
- * Dernières commandes
+ *
+ */
+print '</td><td valign="top" width="70%">';
+
+/*
+ * 
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 2 ";
@@ -118,7 +120,6 @@ if ($socidp)
   $sql .= " AND c.fk_soc = $socidp";
 }
 $sql .= " ORDER BY c.rowid DESC";
-$sql .= $db->plimit(5, 0);
 if ( $db->query($sql) ) 
 {
   $num = $db->num_rows();
@@ -127,7 +128,7 @@ if ( $db->query($sql) )
       $i = 0;
       print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="2">5 dernières commandes</td></tr>';
+      print '<td colspan="2">Commandes en traitement</td></tr>';
       
       while ($i < $num)
 	{
