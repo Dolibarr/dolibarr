@@ -4,6 +4,7 @@
     <!entity ch-update system "update.sgml">
     <!entity ch-propale system "propale.sgml">
     <!entity ch-facture	system "facture.sgml">
+    <!entity ch-produit	system "produit.sgml">
     <!entity ch-annexe system "annexe.sgml">
 ]
 >
@@ -27,6 +28,7 @@
     &ch-update;
     &ch-propale;
     &ch-facture;
+    &ch-produit;
     &ch-annexe;
 
   </book>
