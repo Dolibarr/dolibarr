@@ -71,7 +71,7 @@ $rej = new RejetPrelevement($db, $user);
  *
  *
  */
-$sql = "SELECT p.rowid, pr.motif, p.ref";
+$sql = "SELECT pl.rowid, pr.motif, p.ref, pl.statut";
 $sql .= " , s.idp, s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
@@ -98,7 +98,7 @@ if ($result)
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre("Bon N°","rejets.php","p.ref",'',$urladd);
+  print_liste_field_titre("Ligne N°","rejets.php","p.ref",'',$urladd);
   print_liste_field_titre("Société","rejets.php","s.nom",'',$urladd);
   print_liste_field_titre("Motif","rejets.php","pr.motif","",$urladd);
   print '</tr>';
@@ -112,8 +112,10 @@ if ($result)
       $obj = $db->fetch_object($i);	
 
       print "<tr $bc[$var]><td>";
+      print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
+      print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$obj->rowid.'">';
 
-      print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
+      print substr('000000'.$obj->rowid, -6)."</a></td>";
 
       print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom)."</a></td>\n";
 
