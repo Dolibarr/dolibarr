@@ -85,6 +85,10 @@ td.border
 /*
  *   Barre de gauche
  */
+
+a.normal{ font-weight: normal } 
+a.impayee { font-weight: bold }
+
 a.leftmenu 
 { 
   font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
