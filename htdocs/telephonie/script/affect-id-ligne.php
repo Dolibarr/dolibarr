@@ -26,51 +26,77 @@
 require ("../../master.inc.php");
 
 $error = 0;
+$stop = 0 ;
 
-for ($i = 0 ; $i < 50 ; $i++)
+$sql = "SELECT distinct(ligne) as l, count(*)";
+$sql .= " FROM llx_telephonie_societe_ligne";
+$sql .= " GROUP by l DESC "; 
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  
+  if ($num)
+    {
+      $row = $db->fetch_row();	
+      if ( $row[1] > 1)
+	{
+	  print "Doublons ligne $row[0]\n";
+	  $stop = 1;
+	}
+    }
+  $db->free(); 
+}
+
+if ($stop == 0)
 {
 
-  $sql = "SELECT fk_ligne, ligne";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-  $sql .= " WHERE fk_ligne is null";
-  $sql .= " LIMIT 1";
-
-  if ($db->query($sql))
+  for ($i = 0 ; $i < 5000 ; $i++)
     {
-      $num = $db->num_rows();
-  
-      if ($num)
+
+      $sql = "SELECT fk_ligne, ligne";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+      $sql .= " WHERE fk_ligne is null";
+      $sql .= " LIMIT 1";
+      
+      if ($db->query($sql))
 	{
-	  $row = $db->fetch_row();	
-	  $ligne = $row[1];
+	  $num = $db->num_rows();
+	  
+	  if ($num)
+	    {
+	      $row = $db->fetch_row();	
+	      $ligne = $row[1];
+	    }
+	  $db->free(); 
 	}
-      $db->free(); 
-    }
-
-  $sql = "SELECT rowid, ligne";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-  $sql .= " WHERE ligne =".$ligne;
-
-  if ($db->query($sql))
-    {
-      $num = $db->num_rows();
-  
-      if ($num)
+      
+      $sql = "SELECT rowid, ligne";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+      $sql .= " WHERE ligne =".$ligne;
+      
+      if ($db->query($sql))
 	{
-	  $row = $db->fetch_row();
-	  $id = $row[0];
+	  $num = $db->num_rows();
+	  
+	  if ($num)
+	    {
+	      $row = $db->fetch_row();
+	      $id = $row[0];
+	    }
+	  $db->free();
 	}
-      $db->free();
-    }
-
-  $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_communications_details";
-  $sql .= " SET fk_ligne = ".$id;
-  $sql .= " WHERE ligne =".$ligne;
-
-  if ($db->query($sql))
-    {
-      print "$ligne -> $id -> "; 
-      print $db->affected_rows()."\n";
+      
+      $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_communications_details";
+      $sql .= " SET fk_ligne = ".$id;
+      $sql .= " WHERE ligne =".$ligne;
+      
+      if ($db->query($sql))
+	{
+	  print "$ligne -> $id -> "; 
+	  print $db->affected_rows()."\n";
+	}
     }
 }
+
 ?>
