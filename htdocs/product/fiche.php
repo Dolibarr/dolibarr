@@ -236,6 +236,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 //llxHeader("","",$langs->trans("CardProduct".$product->type));
 llxHeader("","",$langs->trans("CardProduct0"));
 
+
 /*
  * Création du produit
  *
@@ -346,7 +347,7 @@ else
 		  if ($conf->stock->enabled)
 		    {
 		      $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-		      $head[$h][1] = 'Stock';
+		      $head[$h][1] = $langs->trans("Stock");
 		      $h++;
 		    }
 
@@ -484,7 +485,8 @@ else
 	  print '</table>';
 	  print '</form>';
 	}
-      
+
+     
       /*
        * Ajouter un fournisseur
        *
@@ -603,6 +605,7 @@ else
     }
 }
 
+
 /* ************************************************************************** */
 /*                                                                            */ 
 /* Barre d'action                                                             */ 
@@ -615,7 +618,7 @@ if ($_GET["action"] == '')
 {
     if ($product->type == 0 && $user->rights->produit->commander && $num_fournisseur == 1)
     {
-        print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">'.$langs->trans("Commander").'</a>';
+        print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">'.$langs->trans("Order").'</a>';
     }
     if ( $user->rights->produit->creer)
     {
@@ -627,7 +630,7 @@ if ($_GET["action"] == '')
     }
     if ($product->type == 0 && $conf->stock->enabled)
     {
-        print '<a class="tabAction" href="stock/product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
+        print '<a class="tabAction" href="stock/product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
     }
 }
 
@@ -644,9 +647,9 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
   if($user->rights->propale->creer)
     {
       print "<tr>".'<td width="50%" valign="top">';
-      print_titre("AddToMyProposals") . '</td>';
+      print_titre($langs->trans("AddToMyProposals")) . '</td>';
       print '<td width="50%" valign="top">';
-      print_titre("AddToOtherProposals") . '</td>';
+      print_titre($langs->trans("AddToOtherProposals")) . '</td>';
       print '</tr>';
 
       print "<tr>".'<td width="50%" valign="top">';
@@ -714,9 +717,9 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
       $langs->load("bills");
 
       print "<tr>".'<td width="50%" valign="top">';
-      print_titre("AddToMyBills");
+      print_titre($langs->trans("AddToMyBills"));
       print '</td><td width="50%" valign="top">';
-      print_titre("AddToOtherBills");
+      print_titre($langs->trans("AddToOtherBills"));
       print '</td></tr>';
 
       print "<tr>".'<td width="50%" valign="top">';
