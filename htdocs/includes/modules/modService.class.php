@@ -35,11 +35,14 @@ class modService extends DolibarrModules
   {
     $this->db = $DB ;
     $this->numero = 53 ;
+    
+    $this->family = "products";
     $this->name = "Service";
     $this->description = "Gestion des services";
     $this->const_name = "MAIN_MODULE_SERVICE";
     $this->const_config = MAIN_MODULE_SERVICE;
 
+    // Dépendances
     $this->depends = array("modProduit");
     $this->requiredby = array("modContrat");
 

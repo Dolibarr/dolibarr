@@ -112,6 +112,7 @@ print 'Certains modules nécessitent des droits qu\'il vous faudra affecter aux u
 print '<br>';
 print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print '<tr class="liste_titre">';
+print '<td>Famille</td>';
 print '<td>Nom</td>';
 print '<td>Info</td>';
 print '<td align="center">Actif</td>';
@@ -140,29 +141,40 @@ while (($file = readdir($handle))!==false)
 	  if ($objMod->numero > 0)
 	    {
 	      $j = $objMod->numero;
-	      $modules[$objMod->numero] = $modName;
+//	      $modules[$objMod->numero] = $modName;
 	    }
 	  else
 	    {
 	      $j = 1000 + $i;
 	    }
-	  $modules[$j] = $modName;
-	  $orders[$i] = $j;
+	  $modules[$i] = $modName;
+	  $numero[$i] = $j;
+	  $orders[$i] = "$objMod->family"."_".$j;   // Tri par famille puis numero module
 	  $j++;
 	  $i++;
 	}
     }
 }
 
-sort($orders);
+asort($orders);
 $var=True;
 
+$familylib=array(
+'crm'=>'Gestion client (CRM)',
+'products'=>'Gestion produits',
+'hr'=>'Ressources humaines',
+'projects'=>'Projets/Travail collaboratif',
+'other'=>'Autre',
+'technic'=>'Modules techniques, interfaces',
+'financial'=>'Modules financiers (Compta/trésorerie)'
+);
 foreach ($orders as $key => $value)
 {
+  $tab=split('_',$value);
+  $family=$tab[0]; $numero=$tab[1];
+  
   $var=!$var;
-	
-  $modName = $modules[$orders[$key]];
-
+  $modName = $modules[$key];
   if ($modName)
     {
       $objMod = new $modName($db);
@@ -171,8 +183,14 @@ foreach ($orders as $key => $value)
   $const_name = $objMod->const_name;
   $const_value = $objMod->const_config;
   
-  print "<tr $bc[$var]><td>";
-  echo $objMod->name;
+  print "<tr $bc[$var]>";
+
+  print "<td class='body'>";
+  if ($family!=$oldfamily) { print '<div class="titre">'.$familylib[$family].'</td>'; $oldfamily=$family; }
+  else { print '&nbsp;'; }
+  print "</td>";
+  print "<td>";
+  print $objMod->name;
   print "</td><td>\n";
   print $objMod->description;
   print '</td><td align="center">';

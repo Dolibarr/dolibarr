@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,15 +33,18 @@ class modBanque extends DolibarrModules
 
   Function modBanque($DB)
   {
-    $this->nom = "Banque";
-    $this->numero = 85 ;
     $this->db = $DB ;
-    $this->depends = array();
+    $this->numero = 85 ;
 
+    $this->family = "financial";
     $this->name = "Banque";
     $this->description = "Gestion des comptes bancaires";
     $this->const_name = "MAIN_MODULE_BANQUE";
     $this->const_config = MAIN_MODULE_BANQUE;
+
+    // Dépendances
+    $this->depends = array();
+    $this->requiredby = array();
 
     $this->const = array();
     $this->boxes = array();

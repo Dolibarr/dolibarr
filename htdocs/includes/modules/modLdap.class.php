@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +31,20 @@ class modLdap extends DolibarrModules
   Function modLdap($DB)
   {
     $this->db = $DB ;
+    $this->numero = 200 ;
 
     $this->name = "Ldap";
+    $this->family = "technic";
     $this->description = "Synchronisation Ldap";
     $this->const_name = "MAIN_MODULE_LDAP";
     $this->const_config = MAIN_MODULE_LDAP;
+
+    // Config pages
     $this->config_page_url = "ldap.php";
+
+    // Dépendances
     $this->depends = array();
+    $this->requiredby = array();
 
     $this->const = array();
     $this->boxes = array();

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +34,19 @@ class modFacture extends DolibarrModules
   {
     $this->db = $DB ;
     $this->numero = 30 ;
+    
+    $this->family = "financial";
     $this->name = "Factures";
     $this->description = "Gestion des factures";
     $this->const_name = "MAIN_MODULE_FACTURE";
     $this->const_config = MAIN_MODULE_FACTURE;
 
+    // Dépendances
     $this->depends = array("modSociete","modComptabilite");
+    $this->requiredby = array();
+
     $this->config_page_url = "facture.php";
+
     $this->const = array();
     $this->boxes = array();
 

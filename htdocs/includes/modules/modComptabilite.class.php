@@ -33,18 +33,22 @@ class modComptabilite extends DolibarrModules
 
   Function modComptabilite($DB)
   {
-    $this->nom = "Module comptabilité";
-    $this->numero = 10 ;
     $this->db = $DB ;
-    $this->depends = array();
-    $this->requiredby = array("modFacture");
-
+    $this->numero = 10 ;
+    
+    $this->family = "financial";
     $this->name = "Comptabilite";
     $this->description = "Gestion sommaire de comptabilité";
     $this->const_name = "MAIN_MODULE_COMPTABILITE";
     $this->const_config = MAIN_MODULE_COMPTABILITE;
 
+    // Config pages
 	$this->config_page_url = "compta.php";
+
+    // Dépendances
+    $this->depends = array();
+    $this->requiredby = array("modFacture");
+
     $this->const = array();
     $this->boxes = array();
   }

@@ -34,13 +34,16 @@ class modSociete extends DolibarrModules
   {
     $this->db = $DB ;
     $this->numero = 1 ;
+
+    $this->family = "crm";
     $this->name = "Module societe";
     $this->description = "Module société";
     $this->const_name = "MAIN_MODULE_SOCIETE";
     $this->const_config = MAIN_MODULE_SOCIETE;
 
+    // Dépendances
     $this->depends = array();
-    $this->requiredby = array("modFacture","modFournisseur","modFicheinter","modPropale");
+    $this->requiredby = array("modFacture","modFournisseur","modFicheinter","modPropale","modContrat","modCommande");
 
     $this->const = array();
     $this->boxes = array();

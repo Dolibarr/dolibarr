@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur       <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +35,16 @@ class modCommercial extends DolibarrModules
   {
     $this->db = $DB ;
     $this->numero = 2 ;
-    $this->depends = array();
 
+    $this->family = "crm";
     $this->name = "Commercial";
     $this->description = "Gestion commercial";
     $this->const_name = "MAIN_MODULE_COMMERCIAL";
     $this->const_config = MAIN_MODULE_COMMERCIAL;
+
+    // Dépendances
+    $this->depends = array("modSociete");
+    $this->requiredby = array("modPropale","modContrat","modCommande",);
 
     $this->const = array();
     $this->boxes = array();

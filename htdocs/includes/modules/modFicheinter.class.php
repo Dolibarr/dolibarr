@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +34,19 @@ class modFicheinter  extends DolibarrModules
   {
     $this->db = $DB ;
     $this->numero = 70 ;
+    
+    $this->family = "crm";
     $this->name = "Fiche d'intervention";
     $this->description = "Gestion des fiches d'intervention";
     $this->const_name = "MAIN_MODULE_FICHEINTER";
     $this->const_config = MAIN_MODULE_FICHEINTER;
 
-    $this->depends = array("modSociete");
+    // Config pages
     $this->config_page_url = "fichinter.php";
+
+    // Dépendances
+    $this->depends = array("modSociete");
+    $this->requiredby = array();
 
     $this->const = array();
     $this->boxes = array();

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +35,19 @@ class modExpedition extends DolibarrModules
   {
     $this->db = $DB ;
     $this->numero = 80 ;
+
+    $this->family = "crm";
     $this->name = "Expedition";
     $this->description = "Gestion des expéditions";
     $this->const_name = "MAIN_MODULE_EXPEDITION";
     $this->const_config = MAIN_MODULE_EXPEDITION;
 
+    // Config pages
     $this->config_page_url = "expedition.php";
+
+    // Dépendances
+    $this->depends = array();
+    $this->requiredby = array();
 
     $this->const = array();
     $this->boxes = array();

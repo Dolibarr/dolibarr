@@ -34,11 +34,11 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add(DOL_URL_ROOT."/admin/index.php", "Configuration générale");
 
+  $menu->add(DOL_URL_ROOT."/admin/ihm.php", "Configuration IHM");
+
   $menu->add(DOL_URL_ROOT."/admin/dict.php", "Configuration dictionnaires");
 
   $menu->add(DOL_URL_ROOT."/admin/const.php", "Configuration autre");
-
-  $menu->add(DOL_URL_ROOT."/admin/ihm.php", "Configuration IHM");
 
   $menu->add(DOL_URL_ROOT."/admin/modules.php", "Modules");
 
@@ -48,8 +48,6 @@ function llxHeader($head = "", $urlp = "") {
     {
       $menu->add_submenu(DOL_URL_ROOT."/admin/external_rss.php", "Syndication");
     }
-
-  //$menu->add_submenu("sqltables.php", "Tables");
 
   $menu->add("system/", "Système");
 

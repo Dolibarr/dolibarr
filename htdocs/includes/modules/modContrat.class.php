@@ -34,12 +34,16 @@ class modContrat extends DolibarrModules
   {
     $this->db = $DB ;
     $this->numero = 54 ;
+    
+    $this->family = "crm";
     $this->name = "Contrats";
     $this->description = "Gestion des contrats de services";
     $this->const_name = "MAIN_MODULE_CONTRAT";
     $this->const_config = MAIN_MODULE_CONTRAT;
 
+    // Dépendances
     $this->depends = array("modService");
+    $this->requiredby = array();
 
     $this->const = array();
     $this->boxes = array();

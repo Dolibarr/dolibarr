@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +32,17 @@ class modDon  extends DolibarrModules
   Function modDon($DB)
   {
     $this->db = $DB ;
+    $this->numero = 700 ;
 
+    $this->family = "finance";
     $this->name = "Don";
     $this->description = "Gestion des dons (expérimental)";
     $this->const_name = "MAIN_MODULE_DON";
     $this->const_config = MAIN_MODULE_DON;
 
+    // Dépendances
     $this->depends = array();
+    $this->requiredby = array();
 
     $this->const = array();
     $this->boxes = array();

@@ -34,14 +34,20 @@ class modBoutique extends DolibarrModules
   Function modBoutique($DB)
   {
     $this->db = $DB ;
+    $this->numero = 86 ;
 
+    $this->family = "products";
     $this->name = "Boutique";
     $this->description = "Gestion des boutiques";
     $this->const_name = "MAIN_MODULE_BOUTIQUE";
     $this->const_config = MAIN_MODULE_BOUTIQUE;
 
-    $this->depends = array();
+    // Config pages
     $this->config_page_url = array("boutique.php","osc-languages.php");
+
+    // Dépendances
+    $this->depends = array();
+    $this->requiredby = array();
 
     $this->const = array();
     $this->boxes = array();

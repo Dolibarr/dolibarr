@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,14 +35,22 @@ class modCommande extends DolibarrModules
   {
     $this->db = $DB ;
     $this->numero = 25 ;
+
+    $this->family = "crm";
     $this->name = "Commande";
     $this->description = "Gestion des commandes";
     $this->const_name = "MAIN_MODULE_COMMANDE";
     $this->const_config = MAIN_MODULE_COMMANDE;
 
+    // Config pages
+    $this->config_page_url = "commande.php";
+
+    // Dépendances
+    $this->depends = array();
+    $this->requiredby = array();
+
     $this->const = array();
     $this->boxes = array();
-    $this->config_page_url = "commande.php";
     $this->boxes[0][0] = "Commandes";
     $this->boxes[0][1] = "box_commandes.php";
   }
