@@ -60,7 +60,8 @@ class TelephonieTarif {
     if ($type == 'achat')
       {
 	$sql = "SELECT prefix, temporel, fixe";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_achat WHERE fk_fournisseur = " . $fournisseur_id;
+	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_achat ";
+	$sql .= " WHERE fk_fournisseur = " . $fournisseur_id;
 	
       }
     elseif ($type == 'vente')
@@ -98,15 +99,14 @@ class TelephonieTarif {
 	    
 	    $i++;
 	  }
-	
 
-	/*
-	 *
-	 *
-	 */
-	
+	$this->db->free();	
       }
-    $this->db->free();
+    else
+      {
+	dolibarr_syslog("TelephonieTarif::_load_tarif Erreur 1");
+	dolibarr_syslog($this->db->error());
+      }
 
     /*
      * Tarifs client
