@@ -219,7 +219,7 @@ class FactureFourn
   Function fetch($rowid)
     {
 
-      $sql = "SELECT fk_soc,facnumber,amount,remise,".$this->db->pdate(datef)."as df";
+      $sql = "SELECT fk_soc,libelle,facnumber,amount,remise,".$this->db->pdate(datef)."as df";
       $sql .= ", total_ht, total_tva, total_ttc";
       $sql .= " FROM llx_facture_fourn WHERE rowid=$rowid;";
       
@@ -229,9 +229,10 @@ class FactureFourn
 	    {
 	      $obj = $this->db->fetch_object(0);
 	      
-	      $this->id     = $rowid;
-	      $this->datep  = $obj->dp;
-	      $this->ref    = $obj->facnumber;
+	      $this->id      = $rowid;
+	      $this->datep   = $obj->dp;
+	      $this->ref     = $obj->facnumber;
+	      $this->libelle = $obj->libelle;
 
 	      $this->remise = $obj->remise;
 	      $this->socidp = $obj->fk_soc;
