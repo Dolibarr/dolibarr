@@ -163,7 +163,7 @@ if ($action == 'del_paiement' && $user->rights->facture->paiement)
  *
  */
 
-if ($action == 'valid' && $user->rights->facture->valider)
+if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] == yes && $user->rights->facture->valider)
 {
   $fac = new Facture($db);
   $fac->fetch($facid);
@@ -200,7 +200,7 @@ if ($action == 'addligne' && $user->rights->facture->creer)
 			  $HTTP_POST_VARS["pu"],
 			  $HTTP_POST_VARS["qty"],
 			  $HTTP_POST_VARS["tva_tx"],
-			  "NULL",
+			  0,
 			  $HTTP_POST_VARS["remise_percent"]);
 }
 
@@ -222,11 +222,14 @@ if ($action == 'deleteline' && $user->rights->facture->creer)
   $result = $fac->deleteline($rowid);
 }
 
-if ($action == 'delete' && $user->rights->facture->supprimer) 
+if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
 {
-  $fac = new Facture($db);
-  $fac->delete($facid);
-  $facid = 0 ;
+  if ($user->rights->facture->supprimer ) 
+    {
+      $fac = new Facture($db);
+      $fac->delete($facid);
+      $facid = 0 ;
+    }
 }
 
 /*
@@ -576,7 +579,26 @@ else
 	  $author->fetch();
 	  
 	  print_titre("Facture : ".$fac->ref);
+
+	  /*
+	   * Confirmation de la suppression de la facture
+	   *
+	   */
+	  if ($action == 'delete')
+	    {
+	      $html->form_confirm("$PHP_SELF?facid=$facid","Supprimer la facture","Etes-vous sûr de vouloir supprimer cette facture ?","confirm_delete");
+	    }
 	  
+	  /*
+	   * Confirmation de la validation
+	   *
+	   */
+	  if ($action == 'valid')
+	    {
+	      $numfa = facture_get_num($soc);
+	      $html->form_confirm("$PHP_SELF?facid=$facid","Valider la facture","Etes-vous sûr de vouloir valider cette facture avec le numéro $numfa ?","confirm_valid");
+	    }
+
 	  /*
 	   *   Facture
 	   */
