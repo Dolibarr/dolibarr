@@ -40,7 +40,7 @@ if ($socid > 0) {
 
   print_titre($soc->nom);
 
-  print '<table class="tablefsoc" border="1" width="100%" cellspacing="0" cellpadding="3">';
+  print '<table class="border" border="1" width="100%" cellspacing="0" cellpadding="3">';
   print "<tr><td>";
   print "<form method=\"post\" action=\"socnote.php?socid=$soc->id\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";

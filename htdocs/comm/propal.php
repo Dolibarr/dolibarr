@@ -476,7 +476,7 @@ if ($propalid)
 	    {
 	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="setremise">';
-	      print '<table class="tablefsoc" cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
+	      print '<table class="border" cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
 	      print '<input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%';
 	      print '<input type="submit" value="Appliquer">';
 	      print '</td></tr></table></form>';
@@ -676,7 +676,7 @@ if ($propalid)
 		{
 		  print_titre("Propale envoyée");
 
-		  print "<TABLE class=\"tablefsoc\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+		  print "<TABLE class=\"border\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
 		  print "<tr><td>Date</td><td>Auteur</td></TR>\n";
 	      
 

@@ -182,7 +182,7 @@ if ($action=='create')
       print '<input type="hidden" name="contactid" value="'.$contactid.'">';
       print '<input type="hidden" name="socid" value="'.$socid.'">';
       
-      print '<table class="tablefsoc" width="100%" border="1" cellspacing="0" cellpadding="3">';
+      print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
 
       print '<tr><td colspan="2"><div class="titre">Rendez-vous</div></td></tr>';
       print '<tr><td width="10%">Société</td><td width="40%">';
@@ -220,7 +220,7 @@ if ($action=='create')
 	{
 
 	  print_titre ("Action effectuée");	  
-	  print '<table class="tablefsoc" width="100%" border="1" cellspacing="0" cellpadding="3">';
+	  print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
 	  
 	  print '<tr><td width="10%">Action</td><td>'.$caction->libelle.'</td></tr>';
 	  print '<tr><td width="10%">Société</td><td width="40%">';
@@ -236,7 +236,7 @@ if ($action=='create')
 
       print_titre ("Prochaine Action à faire");
 
-      print '<table class="tablefsoc" width="100%" border="1" cellspacing="0" cellpadding="3">';
+      print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
       if($afaire <> 1)
 	{
 	  print '<tr><td width="10%">Ajouter</td><td><input type="checkbox" name="todo"></td></tr>';
@@ -308,7 +308,7 @@ if ($id)
       print_titre ("Edition de la fiche action");
       print '<form action="fiche.php?id='.$id.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
-      print '<table class="tablefsoc" width="100%" border="1" cellspacing="0" cellpadding="3">';
+      print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
       print '<tr><td width="20%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
       print '<tr><td width="20%">Société</td>';
       print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
@@ -337,7 +337,7 @@ if ($id)
     {      
       print_titre ("Action commerciale");
       
-      print '<table class="tablefsoc" width="100%" border="1" cellspacing="0" cellpadding="3">';
+      print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
       print '<tr><td width="20%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
       print '<tr><td width="20%">Société</td>';
       print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';

@@ -58,7 +58,7 @@ if ($action == 'create')
 
   print '<div class="titre">Nouveau réglement TVA</div><br>';
       
-  print '<table class="tablefsoc" border="1" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" border="1" width="100%" cellspacing="0" cellpadding="4">';
   print "<tr>";
   print '<td>Date de paiement</td><td>';
   print $html->select_date("","datev");

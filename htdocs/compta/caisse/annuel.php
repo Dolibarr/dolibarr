@@ -79,7 +79,7 @@ if ($db->query($sql))
     }
 }
 
-print '<table class="tablefsoc" width="100%" border="1" cellspacing="0" cellpadding="4">';
+print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Mois</td>';
 
 $year_current = strftime("%Y",time());
