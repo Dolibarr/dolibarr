@@ -55,7 +55,9 @@ print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="c
 $sql = "SELECT count(*) as cc , c.name, c.firstname, c.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."user as c";
-$sql .= " WHERE c.rowid = l.fk_commercial GROUP BY c.name ORDER BY cc DESC";
+$sql .= " WHERE c.rowid = l.fk_commercial";
+$sql .= " AND l.statut <> 7";
+$sql .= " GROUP BY c.name ORDER BY cc DESC";
 
 $result = $db->query($sql);
 if ($result)

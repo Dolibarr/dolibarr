@@ -66,6 +66,7 @@ if ($_GET["commid"])
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
   $sql .= " WHERE l.fk_commercial = ".$comm->id;
   $sql .= " AND date_commande IS NOT NULL";
+  $sql .= " AND l.statut <> 7";
   $sql .= " GROUP BY date_format(date_commande,'%Y/%m') DESC";
  
  $result = $db->query($sql);
