@@ -23,17 +23,24 @@
  *
  */
 
+/*!	\file htdocs/compta/bank/account.php
+		\ingroup    banque
+		\brief      Page de détail des transactions bancaires
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 if (!$user->rights->banque->lire)
   accessforbidden();
+
 
 $account=isset($_GET["account"])?$_GET["account"]:$_POST["account"];
 $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
 
-if ($action == 'add' && $account)
+if ($_POST["action"] == 'add' && $account)
 {    
 
   if ($_POST["credit"] > 0)
@@ -56,25 +63,23 @@ if ($action == 'add' && $account)
 
   $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1);
 
-  //print "<p>Account: insertid=$insertid - " . $action . " : ".$_GET["account"] . " - " . $_POST["account"]." - ".$account."</p>\n";
-
-  if ($insertid == '')
+  if ($insertid)
     {
-      print "Erreur: Probleme d'insertion : ".$db->error();
+        Header("Location: account.php?account=" . $account);
     }
   else
     {
-      Header("Location: account.php?account=" . $account);
+        dolibarr_print_error($db);
     }
 }
-if ($action == 'del' && $account && $user->rights->banque->modifier)
+if ($_GET["action"] == 'del' && $account && $user->rights->banque->modifier)
 {
   $acct=new Account($db,$account);
-  $acct->deleteline($_GET[$rowid]);
+  $acct->deleteline($_GET["rowid"]);
 }
 
+
 /***********************************************************************************
- *
  *
  *
  */
@@ -206,8 +211,9 @@ if ($account > 0)
   print '</td>';
   print "</tr>\n";
   print "</form>\n";
+
   /*
-   *
+   * Affiche tableau des transactions bancaires
    *
    */
   if ($user->rights->banque->modifier)
@@ -217,14 +223,12 @@ if ($account > 0)
       print '<input type="hidden" name="vline" value="' . $vline . '">';
       print '<input type="hidden" name="account" value="' . $acct->id . '">';
     }
+
   print '<tr class="liste_titre">';
   print '<td>Date Ope</td><td>Valeur</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
   print '<td align="right">Débit</td><td align="right">Crédit</td><td align="right">Solde</td>';
   print '<td align="center">Relevé</td></tr>';
 
-  // DEBUG
-  // print "<tr><td>$nbline</td><td>$viewline</td><td>total_lines $total_lines</td><td>limitsql $limitsql</td></tr>";
-      
   /* Another solution
    * create temporary table solde type=heap select amount from llx_bank limit 100 ;
    * select sum(amount) from solde ;
@@ -253,8 +257,6 @@ if ($account > 0)
 	}
     }
 
-//  $sql .= " AND b.dateo <= now()";
-
   $sql .= " ORDER BY b.datev ASC";
   $sql .= $db->plimit($limitsql, 0);
 
@@ -265,12 +267,12 @@ if ($account > 0)
     }
 
   /*
-   * Opérations hors factures
+   * Formulaire de saisie d'une opération hors factures
    *
    */
   if ($user->rights->banque->modifier)
     {
-      print "<tr><td colspan=\"7\">&nbsp;</td></tr>\n";
+      print "<tr><td colspan=\"8\">&nbsp;</td></tr>\n";
       print "<tr>";
       print "<td align=\"left\" colspan=\"8\"><b>Saisie d'une transaction hors facture</b></td></tr>";
       print '<tr>';
@@ -337,7 +339,7 @@ function _print_lines($db,$sql,$acct)
 	      if ($objp->do > $time && !$sep)
 		{
 		  $sep = 1 ;
-		  print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
+		  print "<tr><td align=\"right\" colspan=\"6\">&nbsp;</td>";
 		  print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
 		  print "<td>&nbsp;</td>";
 		  print '</tr>';
@@ -346,15 +348,7 @@ function _print_lines($db,$sql,$acct)
 	      print "<tr $bc[$var]>";
 	      print "<td>".strftime("%d %b %y",$objp->do)."</td>\n";
 	      print "<td>".strftime("%d/%m/%y",$objp->dv)."</td>\n";
-	      print "<td>".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</TD>\n";
-		  
-//	      if ($objp->num_chq)
-//		{
-//		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a></td>";
-//		}
-//	      else
-//		{
-		  //Xavier DUTOIT : Ajout d'un lien pour modifier la ligne
+	      print "<td>".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
 		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a>";
 		  /*
 		   * Ajout les liens
@@ -368,31 +362,30 @@ function _print_lines($db,$sql,$acct)
 		      $k++;
 		    }
 		  print '</td>';
-//		}
 	      
 	      if ($objp->amount < 0)
 		{
-		  print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
+		  print "<td align=\"right\">".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
 		}
 	      else
 		{
-		  print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
+		  print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</td>\n";
 		}
 	      
 	      if ($action !='search')
 		{
 		  if ($total > 0)
 		    {
-		      print '<td align="right">'.price($total)."</TD>\n";
+		      print '<td align="right">'.price($total)."</td>\n";
 		    }
 		  else
 		    {
-		      print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
+		      print "<td align=\"right\"><b>".price($total)."</b></td>\n";
 		    }
 		}
 	      else
 		{
-		  print '<td align="right">-</TD>';
+		  print '<td align="right">-</td>';
 		}
 	      
 	      if ($objp->rappro)
