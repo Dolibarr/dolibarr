@@ -22,6 +22,8 @@
  */
 require("./pre.inc.php");
 
+$user->getrights('banque');
+
 /*
  * Sécurité accés client
  */
