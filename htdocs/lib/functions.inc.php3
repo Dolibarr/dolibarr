@@ -286,7 +286,7 @@ function print_oui_non($value)
  */
 function print_date_select($set_time='')
 {
-  if (! isset($set_time))
+  if (! $set_time)
     {
       $set_time = time();
     }
@@ -305,8 +305,10 @@ function print_date_select($set_time='')
   $strmonth[12] = "D&eacute;cembre";
     
   $smonth = 1;
-  $syear = date("Y", $set_time);
+
   $cday = date("d", $set_time);
+  $cmonth = date("n", $set_time);
+  $syear = date("Y", $set_time);
 
   print "<select name=\"reday\">";    
 
@@ -324,7 +326,7 @@ function print_date_select($set_time='')
 
   print "</select>";
 
-  $cmonth = date("n", $set_time);
+
   print "<select name=\"remonth\">";    
   for ($month = $smonth ; $month < $smonth + 12 ; $month++)
     {
