@@ -45,7 +45,6 @@ insert into llx_rights_def values (44,'Supprimer les projets','projet','d',0);
 insert into llx_rights_def values (50,'Tous les droits sur les utilisateurs','utilisateur','a',0);
 insert into llx_rights_def values (51,'Lire les utilisateurs','utilisateur','r',1);
 insert into llx_rights_def values (52,'Créer modifier les utilisateurs','utilisateur','w',0);
-insert into llx_rights_def values (53,'Modifier les utilisateurs d\'autrui','utilisateur','m',0);
 insert into llx_rights_def values (54,'Supprimer les utilisateurs','utilisateur','d',0);
 
 create table llx_user_rights
