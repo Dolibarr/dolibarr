@@ -43,7 +43,7 @@ create table llx_adherent
   ville            varchar(50),
   pays             varchar(50),
   email            varchar(255),
-  login            varchar(50),      -- login utilise pour editer sa fiche
+  login            varchar(50) NOT NULL,      -- login utilise pour editer sa fiche
   pass             varchar(50),      -- pass utilise pour editer sa fiche
   naiss            date,             -- date de naissance
   photo		   varchar(255),     -- url vers la photo de l'adherent
