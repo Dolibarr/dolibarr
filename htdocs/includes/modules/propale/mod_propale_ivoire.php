@@ -21,13 +21,32 @@
  *
  */
 
-Class mod_propale_ivoire
+
+/*!	\file htdocs/includes/modules/propale/mod_propale_ivoire.php
+		\ingroup    propale
+		\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Ivoire
+		\version    $Revision$
+*/
+
+
+/*!	\class mod_propale_ivoire
+		\brief      Classe du modèle de numérotation de référence de propale Ivoire
+*/
+
+class mod_propale_ivoire extends ModeleNumRefPropales
 {
+    /*!     \brief      Renvoi la description du modele de numérotation
+     *      \return     string      Texte descripif
+     */
   function info()
     {
-      return "Renvoie le numéro sous la forme PR0012";      
+      return "Renvoie le numéro sous la forme PR040001";
     }
 
+    /*!     \brief      Renvoie la référence de propale suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
   function propale_get_num($objsoc=0)
     { 
       global $db;

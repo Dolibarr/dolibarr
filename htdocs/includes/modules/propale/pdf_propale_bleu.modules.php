@@ -21,9 +21,23 @@
  *
  */
 
-Class pdf_propale_bleu
+/*!	\file htdocs/includes/modules/propale/pdf_propale_bleu.modules.php
+        \ingroup    propale
+		\brief      Fichier de la classe permettant de générer les propales au modèle Bleu
+		\version    $Revision$
+*/
+
+
+/*!	\class pdf_propale_bleu
+		\brief  Classe permettant de générer les propales au modèle Bleu
+*/
+
+class pdf_propale_bleu extends ModelePDFPropales
 {
 
+    /*!		\brief  Constructeur
+    		\param	db		handler accès base de donnée
+    */
   function pdf_propale_bleu($db=0)
     { 
       $this->db = $db;
@@ -31,6 +45,10 @@ Class pdf_propale_bleu
       $this->description = "Modèle de propale sans remise.";
     }
 
+    /*!
+    		\brief  Fonction générant la propale sur le disque
+    		\param	id		id de la propale à générer
+    */
   function write_pdf_file($id)
     {
       global $user;

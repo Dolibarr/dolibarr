@@ -21,9 +21,23 @@
  *
  */
 
-Class pdf_propale_adytek
+/*!	\file htdocs/includes/modules/propale/pdf_propale_adytek.modules.php
+        \ingroup    propale
+		\brief      Fichier de la classe permettant de générer les propales au modèle Adytek
+		\version    $Revision$
+*/
+
+
+/*!	\class pdf_propale_adytek
+		\brief  Classe permettant de générer les propales au modèle Adytek
+*/
+
+class pdf_propale_adytek extends ModelePDFPropales
 {
 
+    /*!		\brief  Constructeur
+    		\param	db		handler accès base de donnée
+    */
   function pdf_propale_adytek($db=0)
     {
       $this->db = $db;
@@ -31,6 +45,10 @@ Class pdf_propale_adytek
       $this->description = "Modèle de proposition Adytek";
     }
 
+    /*!
+    		\brief  Fonction générant la propale sur le disque
+    		\param	id		id de la propale à générer
+    */
   function write_pdf_file($id)
     {
       global $user;

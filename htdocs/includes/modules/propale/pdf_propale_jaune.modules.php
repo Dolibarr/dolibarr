@@ -21,9 +21,23 @@
  *
  */
 
-Class pdf_propale_jaune
+/*!	\file htdocs/includes/modules/propale/pdf_propale_jaune.modules.php
+        \ingroup    propale
+		\brief      Fichier de la classe permettant de générer les propales au modèle Jaune
+		\version    $Revision$
+*/
+
+
+/*!	\class pdf_propale_jaune
+		\brief  Classe permettant de générer les propales au modèle Jaune
+*/
+
+class pdf_propale_jaune extends ModelePDFPropales
 {
 
+    /*!		\brief  Constructeur
+    		\param	db		handler accès base de donnée
+    */
   function pdf_propale_jaune($db=0)
     { 
       $this->db = $db;
@@ -31,6 +45,10 @@ Class pdf_propale_jaune
       $this->description = "Modèle de proposition Jaune";
     }
 
+    /*!
+    		\brief  Fonction générant la propale sur le disque
+    		\param	id		id de la propale à générer
+    */
   function write_pdf_file($id)
     {
       global $user;

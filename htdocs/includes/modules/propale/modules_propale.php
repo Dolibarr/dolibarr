@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,23 +22,114 @@
  *
  */
 
+/*!	\file htdocs/includes/modules/propale/modules_propale.php
+		\ingroup    propale
+		\brief      Fichier contenant la classe mère de generation des propales en PDF
+		            et la classe mère de numérotation des propales
+		\version    $Revision$
+*/
+
+
+
+/*!	\class ModelePDFPropales
+		\brief  Classe mère des modèles de propale
+*/
+
+class ModelePDFPropales extends FPDF
+{
+    var $error='';
+
+    /*!  \brief      Constructeur
+     */
+    function ModelePDFFactures()
+    {
+    
+    }
+
+   /*! 
+        \brief Renvoi le dernier message d'erreur de création de propale
+    */
+    function pdferror()
+    {
+        return $this->error;
+    }
+
+}
+
+
+/*!	\class ModeleNumRefPropales
+		\brief  Classe mère des modèles de numérotation des références de propales
+*/
+
+class ModeleNumRefPropales
+{
+    var $error='';
+
+    /*!     \brief      Constructeur
+     */
+    function ModeleNumRefPropales()
+    {
+    
+    }
+
+    /*!     \brief      Renvoi la description par defaut du modele de numérotation
+     *      \return     string      Texte descripif
+     */
+    function getDesc()
+    {
+        global $langs;
+        $langs->load("propale");
+        return $langs->trans("NoDescription");
+    }
+
+    /*!     \brief      Renvoi un exemple de numérotation
+     *      \return     string      Example
+     */
+    function getExample()
+    {
+        global $langs;
+        $langs->load("propale");
+        return $langs->trans("NoExample");
+    }
+
+   /*! 
+        \brief Renvoi le dernier message d'erreur de création de propale
+    */
+    function numreferror()
+    {
+        return $this->error;
+    }
+
+}
+
+
+/*!
+		\brief      Crée une propale sur disque en fonction du modèle de PROPALE_ADDON_PDF
+		\param	    db  		objet base de donnée
+		\param	    facid		id de la facture à créer
+*/
 function propale_pdf_create($db, $facid, $modele='')
 {
-  
+  global $langs;
+  $langs->load("propale");
+ 
   $dir = DOL_DOCUMENT_ROOT."/includes/modules/propale/";
 
+  // Positionne modele sur le nom du modele de facture à utiliser
   if (! strlen($modele))
     {
-      if (defined("PROPALE_ADDON_PDF"))
+      if (defined("PROPALE_ADDON_PDF") && PROPALE_ADDON_PDF)
 	{
 	  $modele = PROPALE_ADDON_PDF;
 	}
       else
 	{
+      print $langs->trans("Error")." ".$langs->trans("Error_PROPALE_ADDON_PDF_NotDefined");
 	  return 0;
 	}
     }
 
+  // Charge le modele
   $file = "pdf_propale_".$modele.".modules.php";
   if (file_exists($dir.$file))
     {
@@ -46,11 +138,19 @@ function propale_pdf_create($db, $facid, $modele='')
   
       $obj = new $classname($db);
 
-      return $obj->write_pdf_file($facid);
+      if ( $obj->write_pdf_file($facid) > 0)
+	{
+	  return 1;
+	}
+      else
+	{
+	  dolibarr_print_error($db,$obj->pdferror());
+	  return 0;
+	}
     }
   else
     {
-      print "Erreur : $modele";
+      print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
       return 0;
     }
 }

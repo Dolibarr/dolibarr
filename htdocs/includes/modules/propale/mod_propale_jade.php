@@ -21,13 +21,31 @@
  *
  */
 
-Class mod_propale_jade
+/*!	\file htdocs/includes/modules/propale/mod_propale_jade.php
+		\ingroup    propale
+		\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Jade
+		\version    $Revision$
+*/
+
+
+/*!	\class mod_propale_jade
+		\brief      Classe du modèle de numérotation de référence de propale Jade
+*/
+
+class mod_propale_jade extends ModeleNumRefPropales
 {
+    /*!     \brief      Renvoi la description du modele de numérotation
+     *      \return     string      Texte descripif
+     */
   function info()
     {
-      return "Renvoie le numéro sous la forme PROP2, PROP3";      
+      return "Renvoie le numéro sous la forme PROP1, PROP2, ...";      
     }
 
+    /*!     \brief      Renvoie la référence de propale suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
   function propale_get_num($objsoc=0)
     { 
       global $db;
