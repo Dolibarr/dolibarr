@@ -60,7 +60,7 @@ Function dolibarr_ldap_getversion($ds)
 
 Function dolibarr_ldap_setversion($ds,$version)
 {
-	$ldapsetversion = ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version)
+	$ldapsetversion = ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version);
 
   return $ldapsetversion;
 }
