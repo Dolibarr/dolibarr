@@ -47,7 +47,7 @@ if ($action == 'delete')
 
   print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
   print '<input type="hidden" name="action" value="confirm_delete">';
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  print '<table class="tableab" cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print '<tr><td colspan="3">Supprimer le projet</td></tr>';
   
@@ -70,7 +70,7 @@ if ($action == 'create')
 
   print '<form action="index.php?socidp='.$socidp.'" method="post">';
   ?>
-  <table border="1" cellpadding="4" cellspacing="0">
+  <table class="tablefsoc" border="1" cellpadding="4" cellspacing="0">
   <input type="hidden" name="action" value="create">
   <tr><td>Société</td><td>
   <?PHP 
@@ -109,7 +109,7 @@ if ($action == 'create')
     {  
       print '<form method="post" action="fiche.php?id='.$id.'">';
       print '<input type="hidden" name="action" value="update">';
-      print '<table border="1" cellpadding="4" cellspacing="0">';
+      print '<table class="tablefsoc" border="1" cellpadding="4" cellspacing="0">';
       print '<tr><td>Société</td><td>'.$projet->societe->nom.'</td></tr>';      
       print '<tr><td>Ref</td><td><input name="ref" value="'.$projet->ref.'"></td></tr>';
       print '<tr><td>Titre</td><td><input name="title" value="'.$projet->title.'"></td></tr>';
@@ -117,7 +117,7 @@ if ($action == 'create')
     }
   else
     {
-      print '<table border="1" cellpadding="4" cellspacing="0" width="100%">';
+      print '<table class="tablefsoc" border="1" cellpadding="4" cellspacing="0" width="100%">';
       print '<tr><td>Société</td><td><a href="../comm/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
       
       print '<tr><td width="20%">Réf</td><td>'.$projet->ref.'</td></tr>';
@@ -164,7 +164,7 @@ if ($action == 'create')
     }
   
   
-  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+  print "<p><TABLE class=\"tableab\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
   
   if ($action == "edit")
     {
