@@ -152,9 +152,9 @@ require (DOL_DOCUMENT_ROOT ."/translate.class.php");
 require (DOL_DOCUMENT_ROOT ."/boxes.php");
 require (DOL_DOCUMENT_ROOT ."/address.class.php");
 require (DOL_DOCUMENT_ROOT ."/notify.class.php");
-require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf.php");
+require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf152/fpdf.php");
 
-define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/font/');
+define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/font/');
 /*
  * Definition de toutes les Constantes globales d'environement
  *
