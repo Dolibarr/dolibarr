@@ -22,8 +22,8 @@
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/brouzouf.class.php");
 
-class GraphCa extends GraphBrouzouf{
-
+class GraphCa extends GraphBrouzouf
+{
 
   Function GraphCa($DB, $file)
   {
@@ -39,7 +39,6 @@ class GraphCa extends GraphBrouzouf{
 
   Function GraphDraw()
   {
-    $num = 0;
     $ligne = new LigneTel($this->db);
     
     if ($this->client == 0)
@@ -60,8 +59,7 @@ class GraphCa extends GraphBrouzouf{
 	$sql .= " GROUP BY date ASC";
       }
     
-    $result = $this->db->query($sql);
-    if ($result)
+    if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
 	$i = 0;
