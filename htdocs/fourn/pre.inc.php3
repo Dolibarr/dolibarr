@@ -37,14 +37,19 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("/fourn/index.php3", "Fournisseurs");
 
+  /*
+   * Sécurité accés client
+   */
+  if ($user->societe_id > 0) 
+    {
 
-  $menu->add_submenu("/soc.php3?&action=create","Nouvelle société");
-  $menu->add_submenu("contact.php3","Contacts");
+      $menu->add_submenu("/soc.php3?&action=create","Nouvelle société");
+      $menu->add_submenu("contact.php3","Contacts");
 
 
-  $menu->add("/fourn/facture/index.php3", "Factures");
-  $menu->add_submenu("/fourn/facture/fiche.php3?action=create","Nouvelle");
-
+      $menu->add("/fourn/facture/index.php3", "Factures");
+      $menu->add_submenu("/fourn/facture/fiche.php3?action=create","Nouvelle");
+    }
   left_menu($menu->liste);
 }
 
