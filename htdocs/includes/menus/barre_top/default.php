@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,6 @@
 
 global $PHP_SELF;
 
-
 $nbofentries=0;
 if ($conf->commercial->enabled)   $nbofentries++;
 if ($conf->adherent->enabled)     $nbofentries++;
@@ -31,16 +30,16 @@ if ($conf->compta->enabled) $nbofentries++;
 if ($conf->produit->enabled || $conf->service->enabled) $nbofentries++; 
 if ($conf->webcalendar->enabled)   $nbofentries++; 
 
-
-print '<table cellpadding=0 cellspacing=0 width="100%"><tr>';
+print '<table cellpadding="0" cellspacing="0" width="100%"><tr>';
 
 if (! $nbofentries) {
-    print '<td>&nbsp;</td>';
+  print '<td>&nbsp;</td>';
 }
-else {
-    $widthtd=floor(100/$nbofentries);
-
-    if ($conf->commercial->enabled)
+else
+{
+  $widthtd=floor(100/$nbofentries);
+  
+  if ($conf->commercial->enabled)
     {
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "commercial") { $class="menusel"; }
