@@ -198,7 +198,7 @@ Class pdf_bernique {
       $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
 
       $pdf->SetFont('Arial','U',12);
-      $titre = "Conditions de réglement : à réception de facture.";
+      $titre = "Conditions de réglement : ".$fac->cond_reglement_facture;
       $pdf->SetXY(200 - $pdf->GetStringWidth($titre), $tab3_top + 10);
       $pdf->MultiCell(120, 5, $titre, 0, 'J');
     }

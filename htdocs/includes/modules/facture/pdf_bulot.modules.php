@@ -151,7 +151,8 @@ Class pdf_bulot {
 	      
 	      $pdf->SetFont('Arial','U',12);
 	      $pdf->SetXY(10, 220);
-	      $pdf->MultiCell(190, 5, "Conditions de réglement : à réception de facture.", 0, 'J');
+	      $titre = "Conditions de réglement : ".$fac->cond_reglement_facture;
+	      $pdf->MultiCell(190, 5, $titre, 0, 'J');
 	      
 	      $pdf->SetFont('Arial','',9);
 	      $pdf->SetXY(10, 265);
