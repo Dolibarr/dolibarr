@@ -52,15 +52,16 @@ class Fichinter {
     /*
      *  Insertion dans la base
      */
+    if (!strlen($this->duree)) { $this->duree = 0; }
+
     $sql = "INSERT INTO llx_fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree) ";
     $sql .= " VALUES ($this->socidp, $this->date, now(), '$this->ref', $this->author, '$this->note', $this->duree)";
     $sqlok = 0;
       
     if (! $this->db->query($sql) ) {
-
       print $this->db->error() . '<b><br>'.$sql;
     }
-    return 1;
+    return $this->db->last_insert_id();
   }
   /*
    *
@@ -114,15 +115,37 @@ class Fichinter {
    *
    *
    */
-  Function valid($userid) {
+  Function valid($userid, $outputdir) {
+
+    $this->fetch($this->id);
+
     $sql = "UPDATE llx_fichinter SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
     $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
     
     if ($this->db->query($sql) ) {
+
+      /*
+       * Set generates files readonly
+       *
+       */
+      $file = $outputdir . "/$this->ref/$this->ref.tex";
+      print $file;
+      if (is_writeable($file)) {
+	chmod($file, 0444);
+      }
+      $file = $outputdir . "/$this->ref/$this->ref.ps";
+      if (is_writeable($file)) {
+	chmod($file, 0444);
+      }
+      $file = $outputdir . "/$this->ref/$this->ref.pdf";
+      if (is_writeable($file)) {
+	chmod($file, 0444);
+      }
       return 1;
     } else {
       print $this->db->error() . ' in ' . $sql;
     }
+
   }
   /*
    *

@@ -34,13 +34,13 @@ llxHeader();
 
     <table width="100%" cellspacing="3">
 	<tr>
-	  <td width="50%" class="dash">
+	  <td width="50%" class="dash" valign="top">
 	    <a href="/comm/">Commercial</a>
 	    <ul>
 	      <li><a href="/comm/propal.php3">Propositions commerciales</a>
 	    </ul>
 	  </td>
-	  <td width="50%" class="dash">
+	  <td width="50%" class="dash" valign="top">
 	    <a href="/compta">Compta</a>
 	    <ul>
 	      <li><a href="/compta/resultat/">Résultat</A>

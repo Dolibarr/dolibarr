@@ -199,8 +199,7 @@ $dbh->disconnect if $dbh;
 #
 #
 if (-r "$outputdir/$numfiche.tex" ) {
-
-    system("cd $outputdir/ ; recode -d iso8859-1..ltex < $numfiche.tex > recode-$numfiche.tex"); 
+    system("cd $outputdir/ ; recode -q -d iso8859-1..ltex < $numfiche.tex > recode-$numfiche.tex"); 
 }
 #
 #

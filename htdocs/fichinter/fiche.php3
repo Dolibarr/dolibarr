@@ -21,7 +21,6 @@
  */
 
 require("./pre.inc.php3");
-
 require("./fichinter.class.php3");
 
 $db = new Db();
@@ -47,7 +46,8 @@ llxHeader();
 if ($action == 'valid') {
   $fichinter = new Fichinter($db);
   $fichinter->id = $id;
-  $fichinter->valid($user->id);
+  $fichinter->valid($user->id, $conf->fichinter->outputdir);
+
 }
 
 if ($action == 'add') {
@@ -67,6 +67,7 @@ if ($action == 'add') {
 
   $id = $fichinter->create();
 }
+
 if ($action == 'update') {
   $fichinter = new Fichinter($db);
 
@@ -114,7 +115,7 @@ if ($action == 'generate') {
 /*
  *
  * Mode creation
- * Creation d'une nouvelle propale
+ * Creation d'une nouvelle fiche d'intervention
  *
  */
 if ($action == 'create') {
@@ -380,20 +381,27 @@ if ($id) {
   $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.pdf";
   if (file_exists($file)) {
     
-    print '<tr><td>PDF</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.pdf">'.$fichinter->ref.'.pdf</a></td></tr>';
+    print '<tr><td>PDF</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.pdf">'.$fichinter->ref.'.pdf</a></td>';
+    print '<td align="right">'.filesize($file). ' bytes</td>';
+    print '<td>'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+    print '</tr>';
   }
   $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.ps";
   if (file_exists($file)) {    
-    print '<tr><td>PS</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.ps">'.$fichinter->ref.'.ps</a></td></tr>';
+    print '<tr><td>PS</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.ps">'.$fichinter->ref.'.ps</a></td>';
+    print '<td align="right">'.filesize($file).' bytes</td>';
+    print '<td>'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+    print '</tr>';
   }
 
   $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.tex";
   if (file_exists($file)) {    
     print '<tr><td>tex</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.tex">'.$fichinter->ref.'.tex</a>';
-
     print '&nbsp;[<a href="texview.php3?fichinter_ref='.$fichinter->ref.'">view</a>]';
-
-    print '</td></tr>';
+    print '</td>';
+    print '<td align="right">'.filesize($file).' bytes</td>';
+    print '<td>'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+    print '</tr>';
   }
 
 
