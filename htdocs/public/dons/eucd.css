@@ -1,5 +1,5 @@
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
-   Copyright (C) 2002 Loic Dachary <loic@gnu.org>
+   Copyright (C) 2002 Loic Dachary         <loic@gnu.org>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,14 +18,17 @@
    $Id$
    $Source$
 */
-body {
+body
+{
        color: black;  
        font-family: arial, sans-serif;
        background-color: white;
 }
-table.main {
-             border: 0 solid;
-             }
+
+table.main
+{
+	border: 0 solid;
+}
 
 table.formulaire {
                    border: 0 solid;

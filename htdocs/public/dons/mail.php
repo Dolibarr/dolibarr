@@ -1,4 +1,4 @@
-<?PHP
+<?php
 $subject = "EUCD.INFO promesse de don de $don->amount euros pour sauver la copie privée";
 
 $body ="

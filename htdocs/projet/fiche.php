@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -105,14 +105,14 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   <table class="border" cellpadding="3" cellspacing="0">
   <input type="hidden" name="action" value="add">
   <tr><td>Société</td><td>
-  <?PHP 
+  <?php 
   $societe = new Societe($db);
   $societe->fetch($_GET["socidp"]); 
   print $societe->nom_url;
 
   ?>
   </td></tr>
-  <?PHP
+  <?php
   print '<tr><td>Créateur</td><td>'.$user->fullname.'</td></tr>';
   ?>
   <tr><td><?php echo $langs->trans("Ref") ?></td><td><input size="10" type="text" name="ref"></td></tr>
@@ -120,7 +120,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   <tr><td colspan="2"><input type="submit" value="<?php echo $langs->trans("Save") ?>"></td></tr>
   </table>
   </form>
-  <?PHP
+  <?php
 
 } else {
   /*
