@@ -208,7 +208,7 @@ $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
  */
 if (defined("MAIN_NOT_INSTALLED"))
 {
-  Header("Location: install.php");
+  Header("Location: install/index.php");
 }
 
 

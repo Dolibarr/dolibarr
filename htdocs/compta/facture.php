@@ -390,8 +390,7 @@ if ($_GET["action"] == 'pdf')
   facture_pdf_create($db, $_GET["facid"]);
 } 
 
-
-llxHeader();
+llxHeader('','Facture','Facture');
 
 $html = new Form($db);
 

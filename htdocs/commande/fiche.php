@@ -681,11 +681,6 @@ else
 	      {
 		print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=delete">Supprimer</a>';
 	      } 
-	    elseif ($commande->statut == 1 && abs($resteapayer) > 0 && $user->rights->commande->envoyer) 
-	      {
-		print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=presend">Envoyer</a>';
-	      }
-
 	    
 	    if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
 	      {

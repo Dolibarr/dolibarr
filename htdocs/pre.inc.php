@@ -110,7 +110,7 @@ function llxHeader($head = "") {
   if ($conf->commande->enabled)
     {
       $menu->add(DOL_URL_ROOT."/commande/index.php", "Commandes");
-	  if ($conf->expedition->enabled) {
+      if ($conf->expedition->enabled) {
       	$menu->add_submenu(DOL_URL_ROOT."/expedition/index.php", "Expéditions");
       }
     }
