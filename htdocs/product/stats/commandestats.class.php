@@ -35,7 +35,7 @@ class CommandeStats
   Function getNbCommandeByYear()
   {
     $result = array();
-    $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*)  FROM llx_commande GROUP BY dm DESC";
+    $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*)  FROM llx_commande GROUP BY dm DESC WHERE fk_statut > 0";
     if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
@@ -59,7 +59,7 @@ class CommandeStats
   {
     $result = array();
     $sql = "SELECT date_format(date_commande,'%m') as dm, count(*)  FROM llx_commande";
-    $sql .= " WHERE date_format(date_commande,'%Y') = $year";
+    $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
     $sql .= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))
@@ -91,7 +91,7 @@ class CommandeStats
   {
     $result = array();
     $sql = "SELECT date_format(date_commande,'%m') as dm, sum(total_ht)  FROM llx_commande";
-    $sql .= " WHERE date_format(date_commande,'%Y') = $year";
+    $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
     $sql .= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))
@@ -123,7 +123,7 @@ class CommandeStats
   {
     $result = array();
     $sql = "SELECT date_format(date_commande,'%m') as dm, avg(total_ht)  FROM llx_commande";
-    $sql .= " WHERE date_format(date_commande,'%Y') = $year";
+    $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
     $sql .= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))
