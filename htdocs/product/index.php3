@@ -67,9 +67,9 @@ if ($snom)
   $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
 }
 
-  $sql .= " ORDER BY $sortfield $sortorder ";
-  $sql .= $db->plimit($limit + 1 ,$offset);
-  $result = $db->query($sql) ;
+$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= $db->plimit($limit + 1 ,$offset);
+$result = $db->query($sql) ;
 
 if ($result)
 {
