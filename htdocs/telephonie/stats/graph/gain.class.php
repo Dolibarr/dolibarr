@@ -127,9 +127,7 @@ class GraphGain extends GraphBrouzouf{
 		$row = $this->db->fetch_row($i);	
 		if ( $row[0] > 0)
 		  {
-		    print "(".$this->client.":".$this->total_gain.")";
 		    $this->total_gain = ($this->total_gain - $row[0]);
-		    print "(".$this->client.":".$this->total_gain.")";
 		  }
 		$i++;
 	      }
