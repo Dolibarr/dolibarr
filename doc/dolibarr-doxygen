@@ -30,7 +30,7 @@ PROJECT_NUMBER         = 1.2.0
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = dev/dolibarr-phpdoc
+OUTPUT_DIRECTORY       = doc/dev/dolibarr-phpdoc
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 2 levels of 10 sub-directories under the output directory of each output 
@@ -416,7 +416,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = dolibarr-1.2.0/htdocs/lib
+INPUT                  = htdocs
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
