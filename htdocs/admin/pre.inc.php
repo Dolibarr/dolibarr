@@ -21,7 +21,7 @@
  */
 require("../main.inc.php");
 
-function llxHeader($head = "", $urlp = "") {
+function llxHeader($head = "", $title="", $help_url='')
   global $user, $conf, $langs;
 
   /*
@@ -47,7 +47,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("system/", $langs->trans("System"));
 
-  left_menu($menu->liste);
+  left_menu($menu->liste, $help_url);
 }
 
 ?>
