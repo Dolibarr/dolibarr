@@ -170,11 +170,13 @@ class Contact
 	
 	if ($ldapbind)
 	  {
+	   
+	    $info["objectclass"][0] = "top";
+ 	    $info["objectclass"][1] = "person";
+	    $info["objectclass"][2] = "organizationalPerson";
+	    $info["objectclass"][3] = "inetOrgPerson";
 	    
-	    $info["objectclass"][0] = "organizationalPerson";
-	    $info["objectclass"][1] = "inetOrgPerson";
-	    
-	    $info["ou"] = People;
+	    $info["ou"] = 'People';
 	    $info["cn"] = utf8_encode($this->firstname." ".$this->name);
 	    $info["sn"] = utf8_encode($this->name);
 	    $info["givenName"] = utf8_encode($this->firstname);
@@ -199,10 +201,10 @@ class Contact
 		if ($soc->ville)
 		  {
 		    if ($soc->address)
-		      $info["street"] = ($soc->address);
+		      $info["street"] = utf8_encode($soc->address);
 		    
 		    if ($soc->cp)
-		      $info["postalCode"] = ($soc->cp);
+		      $info["postalCode"] = utf8_encode($soc->cp);
 		    
 		    $info["l"] = utf8_encode($soc->ville);
 		  }
@@ -218,12 +220,11 @@ class Contact
 	      $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
 	    
 	    if ($this->note)
-	      			$info["description"] = ($this->note);
+	      $info["description"] = ($this->note);
 	    
-	    if(LDAP_SERVER_TYPE == "egroupware")
-	      {
-		
-		$info["objectclass"][2] = "phpgwContact"; // compatibilite egroupware
+	    if(LDAP_SERVER_TYPE == 'egroupware')
+	      {		
+		$info["objectclass"][4] = "phpgwContact"; // compatibilite egroupware
 		
 		if ($this->email)
 		  $info["rfc822Mailbox"] = $this->email;
@@ -238,6 +239,12 @@ class Contact
 		$info["phpgwContactTypeId"] = 'n';
 		$info["phpgwContactCatId"] = 0;
 		$info["phpgwContactAccess"] = "public";
+
+		if (strlen($user->egroupware_id) == 0)
+		  {
+		    $user->egroupware_id = 1;
+		  }
+
 		$info["phpgwContactOwner"] = $user->egroupware_id;
 		
 		if ($this->phone_mobile)
@@ -251,14 +258,16 @@ class Contact
 	    
 	    $dnshort = explode(",", LDAP_SERVER_DN,2);
 	    
-	    $dn = "cn=".$info["cn"].","."ou=".$info["ou"].",".$dnshort[1];
+	    // TODO comprendre pourquoi cela ne marche plus
+	    //$dn = "cn=".$info["cn"].","."ou=".$info["ou"].",".$dnshort[1];
+
+	    $dn = "cn=".$info["cn"].",".$dnshort[1];
 	    
-	    $r = @ldap_delete($ds, $dn);
-	    
-	    if (! ldap_add($ds, $dn, $info))
+	    $r = @ldap_delete($ds, $dn);	   
+
+	    if (! @ldap_add($ds, $dn, $info))
 	      {
 		$this->error[0] = ldap_err2str(ldap_errno($ds));
-		var_dump($info);
 	      }
 	  }
 	else
