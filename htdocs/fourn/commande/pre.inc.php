@@ -21,7 +21,7 @@
  */
 require("../../main.inc.php");
 
-function llxHeader($head = "", $urlp = "")
+function llxHeader($head = "", $title = "")
 {
   global $user, $langs;
   $langs->load("orders");
@@ -29,7 +29,7 @@ function llxHeader($head = "", $urlp = "")
    *
    *
    */
-  top_menu($head);
+  top_menu($head, $title);
 
   $menu = new Menu();
 
