@@ -96,7 +96,7 @@ print "<tr $bc[0]><td>".$langs->trans("Version")."</td><td>" . $row[1] . "</td><
 print "<tr $bc[1]><td width=\"240\">".$langs->trans("Type")."</td><td>" . $conf->db->type . "</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("Host")."</td><td>" . $conf->db->host . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("Password")."</td><td>" . ereg_replace(".","\*",$conf->db->pass) . "&nbsp;</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("Password")."</td><td>" . ereg_replace(".","*",$conf->db->pass) . "&nbsp;</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
 
 print '</table>';
