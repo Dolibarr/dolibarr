@@ -885,7 +885,7 @@ if ($_GET["propalid"])
 
 
       $i = 0;
-      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 
       print '<TR class="liste_titre">';
 
@@ -905,8 +905,10 @@ if ($_GET["propalid"])
 	  $objp = $db->fetch_object( $i);
 	  $now = time();
 	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<TD><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+	  print "<tr $bc[$var]>";
+	  print '<td><a href="propal.php?propalid='.$objp->propalid.'">';
+	  print img_file();
+	  print "</a>&nbsp;<a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
 	  print "<TD><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
 	  
 	  if ( $now > $objp->dfv && $objp->dfv > 0 )
