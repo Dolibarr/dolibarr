@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,9 @@
 require("./pre.inc.php");
 require("./paiementfourn.class.php");
 
+$facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
+$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+
 /*
  * Sécurité accés client
  */
@@ -39,18 +43,18 @@ if ($action == 'add') {
   $paiementfourn = new PaiementFourn($db);
 
   $paiementfourn->facid        = $facid;
-  $paiementfourn->facnumber    = $facnumber;
+  $paiementfourn->facnumber    = $_POST['facnumber'];
   $paiementfourn->datepaye     = $db->idate(mktime(12, 0 , 0,
 					      $_POST["remonth"], 
 					      $_POST["reday"], 
 					      $_POST["reyear"])); 
-  $paiementfourn->amount       = $amount;
-  $paiementfourn->accountid    = $accountid;
-  $paiementfourn->societe      = $societe;
-  $paiementfourn->author       = $author;
-  $paiementfourn->paiementid   = $paiementid;
-  $paiementfourn->num_paiement = $num_paiement;
-  $paiementfourn->note         = $note;
+  $paiementfourn->amount       = $_POST['amount'];
+  $paiementfourn->accountid    = $_POST['accountid'];
+  $paiementfourn->societe      = $_POST['societe'];
+  $paiementfourn->author       = $_POST['author'];
+  $paiementfourn->paiementid   = $_POST['paiementid'];
+  $paiementfourn->num_paiement = $_POST['num_paiement'];
+  $paiementfourn->note         = $_POST['note'];
 
   if ( $paiementfourn->create($user) )
     {
