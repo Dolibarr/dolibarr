@@ -84,7 +84,11 @@ if ($action == 'payed')
 if ($action == 'addligne') 
 {
   $fac = new Facture($db);
-  $result = $fac->addline($facid,$HTTP_POST_VARS["desc"],$HTTP_POST_VARS["pu"],$HTTP_POST_VARS["qty"]);
+  $result = $fac->addline($facid,
+			  $HTTP_POST_VARS["desc"],
+			  $HTTP_POST_VARS["pu"],
+			  $HTTP_POST_VARS["qty"],
+			  $HTTP_POST_VARS["tva_tx"]);
 }
 
 if ($action == 'updateligne') 
@@ -211,6 +215,7 @@ if ($action == 'pdf')
   print facture_pdf_create($db, $facid); // définit dans /includes/modules/facture/modules_facture.php
 } 
 
+$html = new Form($db);
 
 /*
  *
@@ -221,6 +226,7 @@ if ($action == 'pdf')
  */
 if ($action == 'create') 
 {
+
   print_titre("Emettre une facture");
 
   if ($propalid) 
@@ -513,7 +519,9 @@ else
 	    print "</TR>\n";
 	    print '<input type="hidden" name="action" value="addligne">';
 	    print '<tr><td><textarea name="desc" cols="60" rows="3"></textarea></td>';
-	    print '<td align="center"><input type="text" name="tva_tx" size="4" value="19.6"></td>';
+	    print '<td align="center">';
+	    print $html->select_tva("tva_tx");
+	    print '</td>';
 	    print '<td align="center"><input type="text" name="qty" size="2"></td>';
 	    print '<td align="right"><input type="text" name="pu" size="8"></td>';
 	    print '</tr>';       
