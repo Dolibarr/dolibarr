@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,11 @@ require("../../../main.inc.php");
 require(DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require(DOL_DOCUMENT_ROOT."/telephonie/fournisseurtel.class.php");
 require(DOL_DOCUMENT_ROOT."/telephonie/ligne/commande/commandetableur.class.php");
-require(DOL_DOCUMENT_ROOT."/telephonie/ligne/commande/telephonie.commande.class.php");
 
 $user->getrights('telephonie');
 
 function llxHeader($head = "", $title="") {
-  global $user, $conf;
+  global $user;
 
   /*
    *
