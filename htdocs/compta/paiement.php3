@@ -21,7 +21,7 @@
  */
 require("./pre.inc.php3");
 require("../paiement.class.php");
-llxHeader();
+require("./bank/account.class.php");
 
 $db = new Db();
 
@@ -34,10 +34,14 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-
-if ($action == 'add') {
-  $datepaye = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear));
-
+/*
+ * Traitement des action
+ */
+/*
+if ($action == 'add')
+{
+  $datepaye = $db->idate(mktime(12, 0 , 0, $remonth, $reday, $reyear));
+  print $reday;
   $paiement = new Paiement($db);
 
   $paiement->facid        = $facid;  
@@ -50,9 +54,23 @@ if ($action == 'add') {
 
   $paiement->create();
 
-  $action = '';
+  $label = "Réglement facture N°";
 
-} elseif ($action == 'create') {
+  $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
+  $acc->addline($datepaye, $paiementid, $label, $amount, $num_paiement);
+
+  $action = '';
+}
+*/
+/*
+ * Affichage
+ */
+
+llxHeader();
+
+
+if ($action == 'create') 
+{
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
   $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
@@ -71,80 +89,34 @@ if ($action == 'add') {
       print '<input type="hidden" name="action" value="add_paiement">';
       print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
-      print "<tr class=\"liste_titre\"><td colspan=\"3\">Facture</td>";
+      print "<tr class=\"liste_titre\"><td colspan=\"3\">Facture</td>\n";
 
-      print "<tr><td>Numéro :</td><td colspan=\"2\">$obj->facnumber</td></tr>";
-      print "<tr><td>Société :</td><td colspan=\"2\">$obj->nom</td></tr>";
+      print "<tr><td>Numéro :</td><td colspan=\"2\">$obj->facnumber</td></tr>\n";
+      print "<tr><td>Société :</td><td colspan=\"2\">$obj->nom</td></tr>\n";
 
       print "<tr><td>Montant :</td><td colspan=\"2\">".price($obj->total)." euros TTC</td></tr>";
 
       $sql = "SELECT sum(p.amount) FROM llx_paiement as p WHERE p.fk_facture = $facid;";
       $result = $db->query($sql);
-      if ($result) {
-	$sumpayed = $db->result(0,0);
-	$db->free();
-      }
+      if ($result)
+	{
+	  $sumpayed = $db->result(0,0);
+	  $db->free();
+	}
       print '<tr><td>Déjà payé</td><td colspan=\"2\"><b>'.price($sumpayed).'</b> euros TTC</td></tr>';
-
+      
       print "<tr class=\"liste_titre\"><td colspan=\"3\">Paiement</td>";
-
 
       print "<input type=\"hidden\" name=\"facid\" value=\"$facid\">";
       print "<input type=\"hidden\" name=\"facnumber\" value=\"$obj->facnumber\">";
       print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
       print "<input type=\"hidden\" name=\"societe\" value=\"$obj->nom\">";
 
-      $strmonth[1] = "Janvier";
-      $strmonth[2] = "F&eacute;vrier";
-      $strmonth[3] = "Mars";
-      $strmonth[4] = "Avril";
-      $strmonth[5] = "Mai";
-      $strmonth[6] = "Juin";
-      $strmonth[7] = "Juillet";
-      $strmonth[8] = "Ao&ucirc;t";
-      $strmonth[9] = "Septembre";
-      $strmonth[10] = "Octobre";
-      $strmonth[11] = "Novembre";
-      $strmonth[12] = "D&eacute;cembre";
-      
 
       print "<tr><td>Date :</td><td>";
-      $cday = date("d", time());
-      print "<select name=\"pday\">";    
-      for ($day = 1 ; $day < $sday + 32 ; $day++) {
-	if ($day == $cday) {
-	  print "<option value=\"$day\" SELECTED>$day";
-	} else {
-	  print "<option value=\"$day\">$day";
-	}
-      }
-      print "</select>";
-      $cmonth = date("n", time());
-      print "<select name=\"pmonth\">";    
-      for ($month = 1 ; $month <= 12 ; $month++) {
-	if ($month == $cmonth) {
-	  print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
-	} else {
-	  print "<option value=\"$month\">" . $strmonth[$month];
-	}
-      }
-      print "</select>";
-      
-      print "<select name=\"pyear\">";
-      $syear = date("Y", time() ) ;
-      print "<option value=\"".($syear-1)."\">".($syear-1);
-      print "<option value=\"$syear\" SELECTED>$syear";
-
-      for ($year = $syear +1 ; $year < $syear + 5 ; $year++) {
-	print "<option value=\"$year\">$year";
-      }
-      print "</select></td>";
-
-      print "<td rowspan=\"5\">Commentaires :<br>";
-      print '<textarea name="comment" wrap="soft" cols="40" rows="10"></textarea></td></tr>';
-
-      $author = $GLOBALS["REMOTE_USER"];
-      print "<input type=\"hidden\" name=\"author\" value=\"$author\">\n";
+      print_date_select();
+      print "</td>";
+      print "<td>Commentaires</td></tr>";
 
       print "<tr><td>Type :</td><td><select name=\"paiementid\">\n";
 
@@ -160,8 +132,31 @@ if ($action == 'add') {
 	  $i++;
 	}
       }
-      print "</select><br>";
+      print "</select>";
+      print "</td>\n";
+      print "<td rowspan=\"5\">";
+      print '<textarea name="comment" wrap="soft" cols="40" rows="10"></textarea></td></tr>';
+
+      print "<tr><td>Compte à créditer :</td><td><select name=\"accountid\">\n";
+
+      $sql = "SELECT rowid, label FROM llx_bank_account ORDER BY rowid";
+  
+      $result = $db->query($sql);
+      if ($result)
+	{
+	  $num = $db->num_rows();
+	  $i = 0; 
+	  while ($i < $num)
+	    {
+	      $objopt = $db->fetch_object( $i);
+	      print "<option value=\"$objopt->rowid\">$objopt->label</option>\n";
+	      $i++;
+	    }
+	}
+      print "</select>";
       print "</td></tr>\n";
+
+
       print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Num du cheque ou virement</em></td></tr>\n";
       print "<tr><td valign=\"top\">&nbsp;</td><td>Reste à payer : <b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
       print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\"></td></tr>\n";
