@@ -308,17 +308,17 @@ if ($action == 'send')
 	  $subject = "Facture $fac->ref";
 	  $message = "Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
 	  $filename = "$fac->ref.pdf";
-	  
+
 	  $replyto = $HTTP_POST_VARS["replytoname"] . " <".$HTTP_POST_VARS["replytomail"] .">";
-	  
+
 	  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$file, "application/pdf", $filename);
-	  
+
 	  if ( $mailfile->sendfile() )
 	    {
 
 	      $sendto = htmlentities($sendto);
 	      
-	      $sql = "INSERT INTO llx_actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), 9 ,$fac->socidp ,'Envoyée à $sendto',$fac->id, $sendtoid, $user->id, 'Envoi Facture par mail',100);";
+	      $sql = "INSERT INTO llx_actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '9' ,'$fac->socidp' ,'Envoyée à $sendto','$fac->id','$sendtoid','$user->id', 'Envoi Facture par mail',100);";
 
 	      if (! $db->query($sql) )
 		{
@@ -405,11 +405,11 @@ if ($_GET["action"] == 'create')
 	  $obj = $db->fetch_object(0);
 
 	  $soc = new Societe($db);
-	  $soc->fetch($societe_id);
+	  $soc->fetch($obj->idp);
        
 	  print '<form action="'.$PHP_SELF.'" method="post">';
 	  print '<input type="hidden" name="action" value="add">';
-	  print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
+	  print '<input type="hidden" name="socid" value="'.$obj->idp.'">' ."\n";
 	  print '<input type="hidden" name="remise_percent" value="0">';
 
 	  print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
