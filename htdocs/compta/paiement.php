@@ -72,7 +72,7 @@ if ($_POST["action"] == 'add_paiement')
       $paiement->amounts      = $amounts;   // Tableau de montant
       $paiement->paiementid   = $_POST["paiementid"];
       $paiement->num_paiement = $_POST["num_paiement"];
-      $paiement->note         = $_POST["note"];
+      $paiement->note         = $_POST["comment"];
       $paiement_id = $paiement->create($user);
 
       if ($paiement_id > 0)
@@ -81,13 +81,13 @@ if ($_POST["action"] == 'add_paiement')
           $total=0;
           foreach ($paiement->amounts as $key => $value)
           {
-                $facid = $key;
-                $value = trim($value);
-                $amount = round(ereg_replace(",",".",$value), 2);
-                if (is_numeric($amount))
-                  {
+	    $facid = $key;
+	    $value = trim($value);
+	    $amount = round(ereg_replace(",",".",$value), 2);
+	    if (is_numeric($amount))
+	      {
                 $total += $amount;
-                  }
+	      }
           }
 	  
           // Insertion dans llx_bank
@@ -97,9 +97,10 @@ if ($_POST["action"] == 'add_paiement')
 	  $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementid, $label, $total, $paiement->num_paiement, '', $user);
 	  
 	  // Mise a jour fk_bank dans llx_paiement. On connait ainsi le paiement qui a généré l'écriture bancaire
-	  if ($bank_line_id) {
-	    $paiement->update_fk_bank($bank_line_id);
-	  }
+	  if ($bank_line_id)
+	    {
+	      $paiement->update_fk_bank($bank_line_id);
+	    }
 	  
           // Mise a jour liens (pour chaque facture concernées par le paiement)
           foreach ($paiement->amounts as $key => $value)
