@@ -441,6 +441,10 @@ if ($_socid > 0)
        * Liste des contacts
        *
        */
+      if (defined("MAIN_MODULE_CLICKTODIAL") && MAIN_MODULE_CLICKTODIAL==1)
+	{
+	  $user->fetch_clicktodial(); // lecture des infos de clicktodial
+	}
       print '<table class="noborder" width="100%">';
 
       print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
