@@ -2,7 +2,7 @@
 Version=Version
 GlobalSetup=Général
 GUISetup=Interface
-DictionnarySetup=Configuration des Dictionnaires
+DictionnarySetup=Dictionnaires
 ComptaSetup=Configuration du module Comptabilité
 OtherOptions=Autres options
 OtherSetup=Divers
