@@ -146,10 +146,10 @@ insert into llx_const (name, value, type) values ('FAC_OUTPUT_URL','/htdocs/docu
 insert into llx_const (name, value, type) values ('FAC_PDF_INTITULE','Facture','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_MEL','facture@societe.com','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_WWW','http://www.societe.com','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_LOGO','/htdocs/documents/logo','chaine');
-insert into llx_const (name, value, type) values ('FAC_CAPITAL_EURO','18600','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_TVA_INTRA','BE 443 698 678','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_RCS','634 674','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_LOGO','/documents/logo','chaine');
+insert into llx_const (name, value, type) values ('FAC_CAPITAL_EURO','0','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_TVA_INTRA','','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_RCS','','chaine');
 
 --
 -- Propales
@@ -221,9 +221,10 @@ insert into llx_c_typent (id,libelle) values (100, 'Autres');
 -- Pays
 --
 
+insert into llx_c_pays (rowid,libelle,code) values (0, '-',               '');
 insert into llx_c_pays (rowid,libelle,code) values (1, 'France',          'FR');
 insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgique',        'BE');
-insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgie',        	'BE');
+insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgie',          'BE');
 insert into llx_c_pays (rowid,libelle,code) values (3, 'Italie',          'IT');
 insert into llx_c_pays (rowid,libelle,code) values (4, 'Espagne',         'ES');
 insert into llx_c_pays (rowid,libelle,code) values (5, 'Allemagne',       'DE');
