@@ -1,5 +1,6 @@
 <!DOCTYPE debiandoc public "-//DebianDoc//DTD DebianDoc//EN"
 [
+    <!entity ch-misc system "misc.sgml">
     <!entity ch-propale system "propale.sgml">
     <!entity ch-facture	system "facture.sgml">
     <!entity ch-produit	system "produit.sgml">
@@ -25,6 +26,7 @@
     &ch-propale;
     &ch-facture;
     &ch-produit;
+    &ch-misc;
     &ch-annexe;
 
   </book>
