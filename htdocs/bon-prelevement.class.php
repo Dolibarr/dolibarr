@@ -33,6 +33,7 @@ class BonPrelevement
   var $emetteur_code_guichet;
   var $emetteur_numero_compte;
   var $emetteur_code_etablissement;
+  var $total;
 
   function BonPrelevement($DB, $filename) 
     {
@@ -65,7 +66,7 @@ class BonPrelevement
 
     $nbfactures = sizeof($this->factures);
 
-    $total = 0;
+    $this->total = 0;
 
     for ($i = 0 ; $i < $nbfactures ; $i++)
       {
@@ -78,7 +79,7 @@ class BonPrelevement
 
 	if ($fac->client->bank_account->verif())
 	  {
-	    $total = $total + $fac->total_ttc;
+	    $this->total = $this->total + $fac->total_ttc;
 
 	    $this->EnregDestinataire($fac);
 	  }
@@ -89,7 +90,7 @@ class BonPrelevement
 	  }
       }
 
-    $this->EnregTotal($total);
+    $this->EnregTotal($this->total);
 
     fclose($this->file);
   }
