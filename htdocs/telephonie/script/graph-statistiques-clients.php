@@ -87,7 +87,6 @@ if ($db->query($sql))
 $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_client_stats";
 $db->query($sql);
 
-print "Graph $client\n";
 foreach ($clients as $client)
 {
   print ".";
@@ -136,4 +135,5 @@ foreach ($clients as $client)
 
   */
 }
+print "\n";
 ?>
