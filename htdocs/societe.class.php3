@@ -133,7 +133,7 @@ class Societe {
     {
       $this->id = $socid;
 
-      $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc,";
+      $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm,";
       $sql .= " s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
       $sql .= " FROM llx_societe as s";
       $sql .= " WHERE s.idp = ".$this->id;
@@ -157,6 +157,8 @@ class Societe {
 	      $this->fax = $obj->fax;
 	      
 	      $this->siren = $obj->siren;
+
+	      $this->prefix_comm = $obj->prefix_comm;
 	      
 	      $this->client = $obj->client;
 	      $this->fournisseur = $obj->fournisseur;
