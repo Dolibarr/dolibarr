@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
         \file       htdocs/actioncomm.class.php
         \ingroup    commercial
         \brief      Fichier de la classe des actions commerciales
@@ -29,7 +29,7 @@
 */
 
 
-/*!     \class      ActionComm
+/**     \class      ActionComm
 	    \brief      Classe permettant la gestion des actions commerciales
 */
 
@@ -171,6 +171,7 @@ class ActionComm
   /**
    *    \brief      Supprime l'action de la base
    *    \param      id      id de l'action a effacer
+   *    \return     int     1 en cas de succès
    */
   function delete($id)
     {      
@@ -184,7 +185,7 @@ class ActionComm
 
   /**
    *    \brief      Met a jour l'action en base
-   *    \param      id      id de l'action a effacer
+   *    \return     int     1 en cas de succès
    */
   function update()
     {

@@ -26,7 +26,7 @@
  *
  */
 
-/*!	    \file       htdocs/lib/functions.inc.php
+/**	    \file       htdocs/lib/functions.inc.php
 		\brief      Ensemble de fonctions de base de dolibarr sous forme d'include
 		\author     Rodolphe Quiedeville
 		\author	    Jean-Louis Bergamo
@@ -39,10 +39,10 @@
 */
 
 
-/*!
-		\brief  Renvoi vrai si l'email est syntaxiquement valide
-		\param	address     adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
-        \return boolean     true si email valide, false sinon
+/**
+		\brief      Renvoi vrai si l'email est syntaxiquement valide
+		\param	    address     adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+        \return     boolean     true si email valide, false sinon
 */
 function ValidEmail($address)
 {
@@ -59,6 +59,11 @@ function ValidEmail($address)
     }
 }
 
+/**
+		\brief      Renvoi vrai si l'email a un nom de domaine qui résoud via dns
+		\param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+        \return     boolean     true si email valide, false sinon
+*/
 function check_mail ($mail)
 {
   list($user, $domain) = split("@", $mail, 2);
@@ -73,7 +78,7 @@ function check_mail ($mail)
 }
 
 
-/*!
+/**
 		\brief      Envoi des messages dolibarr dans syslog.
 		\param	    message		message a envoyer a syslog
         \param      level       Niveau de l'erreur
@@ -90,7 +95,7 @@ function dolibarr_syslog($message, $level=LOG_ERR)
 }
 
 
-/*!
+/**
 		\brief      Affiche le header d'une fiche
 		\param	    links		liens
 		\param	    active      0 par défaut
@@ -130,7 +135,7 @@ function dolibarr_fiche_head($links, $active=0, $title='')
   print "<div class=\"tabBar\">\n<br>\n";
 }
 
-/*!
+/**
 		\brief      Insertion d'une constante dans la base de données.
 		\param	    db          handler d'accès base
 		\param	    name		nom de la constante
@@ -169,7 +174,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     }
 }
 
-/*!
+/**
 		\brief      Effacement d'une constante dans la base de données
 		\param	    db          handler d'accès base
 		\param	    name		nom ou rowid de la constante
@@ -190,7 +195,7 @@ function dolibarr_del_const($db, $name)
     }
 }
 
-/*!
+/**
 		\brief  Formattage des nombres
 		\param	ca			valeur a formater
 		\return	int			valeur formatée
@@ -217,7 +222,7 @@ function dolibarr_print_ca($ca)
     return $cat;
 }
 
-/*!
+/**
 		\brief  Formattage de la date
 		\param	time        date timestamp ou au format YYYY-MM-DD
 		\param	format      format de la date "%d %b %Y"
@@ -251,7 +256,7 @@ function dolibarr_print_date($time,$format="%d %b %Y")
 }
 
 
-/*!
+/**
 		\brief  Affiche les informations d'un objet
 		\param	object			objet a afficher
 */
@@ -284,7 +289,7 @@ function dolibarr_print_object_info($object)
         print $langs->trans("DateClosing")." : " . dolibarr_print_date($object->date_modification,"%A %d %B %Y %H:%M:%S") . '<br>';
 }
 
-/*!
+/**
   \brief    Formatage du telephone
   \param	phone			numéro de telephone à formater
   \return   phone			numéro de téléphone formaté
@@ -321,7 +326,7 @@ function dolibarr_print_phone($phone)
 }
 
 
-/*!
+/**
         \brief  Affiche logo dédié aux actions
 */
 function img_actions($alt = "default")
@@ -333,7 +338,7 @@ function img_actions($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/object_actions.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo fichier
 */
 function img_file($alt = "default")
@@ -345,7 +350,7 @@ function img_file($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
   \brief Affiche logo dossier
 */
 function img_folder($alt = "default")
@@ -357,7 +362,7 @@ function img_folder($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/folder.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
   \brief Affiche logo nouveau fichier
 
 */
@@ -370,7 +375,7 @@ function img_file_new($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/filenew.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo pdf
 */
 function img_pdf($alt = "default")
@@ -382,7 +387,7 @@ function img_pdf($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/pdf.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo +
 */
 function img_edit_add($alt = "default")
@@ -393,7 +398,7 @@ function img_edit_add($alt = "default")
   }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit_add.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
-/*!
+/**
         \brief  Affiche logo -
 */
 function img_edit_remove($alt = "default")
@@ -405,7 +410,7 @@ function img_edit_remove($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit_remove.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo editer/modifier fiche
 */
 function img_edit($alt = "default")
@@ -417,7 +422,7 @@ function img_edit($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo effacer
 */
 function img_delete($alt = "default")
@@ -429,7 +434,7 @@ function img_delete($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo désactiver
 */
 function img_disable($alt = "default")
@@ -442,7 +447,7 @@ function img_disable($alt = "default")
 }
 
 
-/*!
+/**
         \brief  Affiche logo info
 */
 function img_info($alt = "default")
@@ -454,7 +459,7 @@ function img_info($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo warning
 */
 function img_warning($alt = "default")
@@ -466,7 +471,7 @@ function img_warning($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/warning.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo alerte
 */
 function img_alerte($alt = "default")
@@ -478,7 +483,7 @@ function img_alerte($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/alerte.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo téléphone in
 */
 function img_phone_in($alt = "default")
@@ -490,7 +495,7 @@ function img_phone_in($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo téléphone out
 */
 function img_phone_out($alt = "default")
@@ -502,7 +507,7 @@ function img_phone_out($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call_out.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo suivant
 */
 function img_next($alt = "default")
@@ -514,7 +519,7 @@ function img_next($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/next.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
         \brief  Affiche logo précédent
 */
 function img_previous($alt = "default")
@@ -526,7 +531,7 @@ function img_previous($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/previous.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/*!
+/**
 		\brief      fonction de login
 		\remarks    il faut changer le code html dans la fonction pour changer le design
 */
@@ -555,7 +560,7 @@ function loginfunction()
   </form>';
 }
 
-/*!
+/**
 		\brief      Affiche message erreur de type acces interdit et arrete le programme
 		\remarks    l'appel a cette fonction termine le code
 */
@@ -569,7 +574,7 @@ function accessforbidden()
   exit(0);
 }
 
-/*!
+/**
 		\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostique et la remontée des bugs.
         On doit appeler cette fonction quand une erreur technique bloquante est rencontrée.
         Toutefois, il faut essayer de ne l'appeler qu'au sein de page php, les classes devant
@@ -633,7 +638,7 @@ function dolibarr_print_error($db='',$msg='')
 }
 
 
-/*!
+/**
 		\brief  Deplacer les fichiers telechargés
 		\param	src_file	fichier source
 		\param	dest_file	fichier de destination
@@ -652,7 +657,7 @@ function doliMoveFileUpload($src_file, $dest_file)
 }
 
 
-/*!
+/**
 		\brief  
 		\param	db      handler d'accès base
 		\param	user    object utilisateur
@@ -718,7 +723,7 @@ function dolibarr_user_page_param($db, &$user)
     }
 }
 
-/*!
+/**
 		\brief  Transcodage de francs en euros
 		\param	zonein		zone de depart
 		\param	devise		type de devise
@@ -921,13 +926,15 @@ function transcoS2L($zonein,$devise)
 } // fin fonction transcoS2L
 
 
-/*!
-		\brief  Affichage du titre d'une liste
-		\param	name
-		\param	file
-		\param	field
-		\param	begin ("" par defaut)
-		\param	options ("" par defaut)
+/**
+		\brief      Affichage de la ligne de titre d'un tabelau
+		\param	    name
+		\param	    file
+		\param	    field
+		\param	    begin       ("" par defaut)
+		\param	    options     ("" par defaut)
+		\param      td          paramètres de l'attribut td ("" par defaut)
+		\param      sortfield   nom du champ sur lequel est effectué le tri du tableau
 */
 function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="")
 {
@@ -948,7 +955,7 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
     print "</td>";
 }
 
-/*!
+/**
 		\brief  Affichage d'un titre
 		\param	titre			le titre a afficher
 */
@@ -957,7 +964,7 @@ function print_titre($titre)
   print '<div class="titre">'.$titre.'</div>';
 }
 
-/*!
+/**
 		\brief  Affichage d'un titre d'une fiche, aligné a gauche
 		\param	titre			le titre a afficher
 		\param	mesg			message suplémentaire à afficher à droite
@@ -973,7 +980,7 @@ function print_fiche_titre($titre, $mesg='')
   print '</tr></table>'."\n";
 }
 
-/*!
+/**
 		\brief  Effacement d'un fichier
 		\param	file			fichier a effacer
 */
@@ -983,7 +990,7 @@ function dol_delete_file($file)
 }
 
 
-/*!
+/**
 		\brief  Fonction print_barre_liste
 		\param	titre			titre de la page
 		\param	page			numéro de la page
@@ -1043,7 +1050,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
   print '</td></tr></table><br>';
 }
 
-/*!
+/**
 		\brief  Fonction servant a afficher les fleches de navigation dans les pages de listes
 		\param	page			numéro de la page
 		\param	file			lien
@@ -1065,7 +1072,7 @@ function print_fleche_navigation($page,$file,$options='', $nextpage)
 }
 
 
-/*!
+/**
 		\brief      Fonction servant a afficher un menu déroulant sur le type de paiement
 		\param	    db          handler d'accès base
 		\param	    nomselect   Nom de la zone select html
@@ -1096,7 +1103,7 @@ function print_type_paiement_select($db,$nomselect,$value=-1)
   print "</select>\n";
 }
 
-/*!
+/**
 		\brief      Fonction servant a afficher les mois dans un liste déroulante
 		\param	    set_time ("" par defaut)
 */
@@ -1174,7 +1181,7 @@ function print_date_select($set_time='')
   print "</select>\n";
   
 }
-/*!
+/**
 		\brief  Fonction servant a afficher les heures/minutes dans un liste déroulante
 		\param	prefix
 		\param	begin (1 par defaut)
@@ -1197,7 +1204,7 @@ function print_heure_select($prefix,$begin=1,$end=23) {
   print "</select>\n";  
 }
 
-/*!
+/**
 		\brief  Fonction servant a afficher une durée dans une liste déroulante
 		\param	prefix  prefix
 */
@@ -1221,7 +1228,7 @@ function print_duree_select($prefix)
 }
 
 
-/*!
+/**
 		\brief  Fonction qui retourne un montant monétaire formaté
 		\param	amount		montant a formater
 		\param	html		formatage html ou pas (0 par defaut)
@@ -1244,7 +1251,7 @@ function price($amount, $html=0)
 
 }
 
-/*!
+/**
 		\brief  Fonction qui convertit des euros en francs
 		\param	euros   	somme en euro à convertir
 		\return price       prix converti et formaté    
@@ -1254,7 +1261,7 @@ function francs($euros)
   return price($euros * 6.55957);
 }
 
-/*!
+/**
 		\brief  Fonction qui calcule la tva
 		\param	euros			somme en euro
 		\param	taux			taux de tva
@@ -1266,7 +1273,7 @@ function tva($euros, $taux=19.6)
   return sprintf("%01.2f",($euros * $taux));
 }
 
-/*!
+/**
 		\brief  Fonction qui calcule le montant tva incluse
 		\param	euros			somme en euro
 		\param	taux			taux de tva
@@ -1276,7 +1283,7 @@ function inctva($euros, $taux=1.196)
   return sprintf("%01.2f",($euros * $taux));
 }
 
-/*!
+/**
 		\brief  Renvoie oui ou non dans la langue choisie
 		\param	yesno			variable pour test si oui ou non
 		\param	case			Oui/Non ou oui/non
@@ -1291,7 +1298,7 @@ function yn($yesno, $case=1) {
 }
 
 
-/*!
+/**
 		\brief      Fonction pour créer un mot de passe aléatoire
 		\param	    longueur    longueur du mot de passe (8 par defaut)
 		\param	    sel			donnée aléatoire
@@ -1319,7 +1326,7 @@ function creer_pass_aleatoire($longueur = 8, $sel = "") {
   return $pass;
 }
 
-/*!
+/**
 		\brief      Fonction pour initialiser sel
 		\remarks    la fonction a été prise sur http://www.uzine.net/spip
 */
@@ -1329,7 +1336,7 @@ function initialiser_sel() {
   $htsalt = '$1$'.creer_pass_aleatoire();
 }
 
-/*!
+/**
 		\brief  Fonction pour qui retourne le rowid d'un departement par son code
 		\param  db          handler d'accès base
 		\param	code		Code région

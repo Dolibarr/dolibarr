@@ -19,10 +19,11 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/propale.php
-  \ingroup    propale
-  \brief      Page d'administration/configuration du module Propale
-  \version    $Revision$
+/**
+    \file       htdocs/telephonie/config/index.php
+    \ingroup    telephonie
+    \brief      Page configuration telephonie
+    \version    $Revision$
 */
 
 require("./pre.inc.php");
