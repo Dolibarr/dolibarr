@@ -346,7 +346,7 @@ class Propal
 	      $this->ref_url = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$this->id.'">'.$this->ref.'</a>';
 
 	      /*
-	       * Lignes
+	       * Lignes produits
 	       */
 
 	      $sql = "SELECT p.rowid, p.label, p.description, p.ref, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice";
@@ -369,7 +369,7 @@ class Propal
 		      $ligne->qty            = $objp->qty;
 		      $ligne->ref            = $objp->ref;
 		      $ligne->tva_tx         = $objp->tva_tx;
-		      $ligne->subprice          = $objp->subprice;
+		      $ligne->subprice       = $objp->subprice;
 		      $ligne->remise_percent = $objp->remise_percent;
 		      $ligne->price          = $objp->price;
 		      $ligne->product_id     = $objp->rowid;
@@ -377,7 +377,6 @@ class Propal
 		      $this->lignes[$i]      = $ligne;
 		      $i++;
 		    }
-	    
 		  $this->db->free();
 		} 
 	      else
@@ -386,10 +385,9 @@ class Propal
 		}
 
 	      /*
-	       * Lignes
+	       * Lignes génériques
 	       */
-
-	      $sql = "SELECT d.qty, d.description, d.price, d.tva_tx, d.rowid";
+	      $sql = "SELECT d.qty, d.description, d.price, d.tva_tx, d.rowid, d.remise_percent";
 	      $sql .= " FROM llx_propaldet as d";
 	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = 0";
 	
@@ -401,15 +399,19 @@ class Propal
 		  
 		  while ($j < $num)
 		    {
-		      $objp              = $this->db->fetch_object($i);
-		      $ligne             = new PropaleLigne();
-		      $ligne->desc       = stripslashes($objp->description);
-		      $ligne->qty        = $objp->qty;
-		      $ligne->ref        = $objp->ref;
-		      $ligne->tva_tx     = $objp->tva_tx;
-		      $ligne->price      = $objp->price;
-		      $ligne->product_id = $objp->rowid;
-		      $this->lignes[$i]  = $ligne;
+		      $objp                  = $this->db->fetch_object($i);
+		      $ligne                 = new PropaleLigne();
+		      $ligne->libelle        = stripslashes($objp->description);
+		      $ligne->desc           = stripslashes($objp->description);
+		      $ligne->qty            = $objp->qty;
+		      $ligne->ref            = $objp->ref;
+		      $ligne->tva_tx         = $objp->tva_tx;
+		      $ligne->subprice       = $objp->subprice;
+		      $ligne->remise_percent = $objp->remise_percent;
+		      $ligne->price          = $objp->price;
+		      $ligne->product_id     = 0;
+
+		      $this->lignes[$i]      = $ligne;
 		      $i++;
 		      $j++;
 		    }
