@@ -68,7 +68,7 @@ if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   $projet = new Project($db);
-  $projet->id = $_POST["id"];
+  $projet->id = $_GET["id"];
   $projet->delete();
   Header("Location: index.php");
 }
