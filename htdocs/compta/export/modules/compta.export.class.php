@@ -64,7 +64,7 @@ class ComptaExport
 	    $obj = $this->db->fetch_object();
 
 	    $this->linec[$i][0] = $obj->datef;
-	    $this->linec[$i][1] = $obj->facnumber;
+	    $this->linec[$i][1] = $obj->facid;
 	    $this->linec[$i][2] = $obj->code_client;
 	    $this->linec[$i][3] = $obj->nom;
 	    $this->linec[$i][4] = $obj->numero;
