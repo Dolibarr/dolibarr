@@ -440,12 +440,21 @@ class Commande
    *
    *
    */
-  Function fetch_lignes()
+  Function fetch_lignes($only_product=0)
   {
     $this->lignes = array();
+
     $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-    $sql .= " FROM llx_commandedet as l WHERE l.fk_commande = $this->id ORDER BY l.rowid";
-	  
+
+    if ($only_product==1)
+      {
+	$sql .= " FROM llx_commandedet as l LEFT JOIN llx_product as p ON (p.rowid = l.fk_product) WHERE l.fk_commande = ".$this->id." AND p.fk_product_type <> 1 ORDER BY l.rowid";
+      }
+    else
+      {
+	$sql .= " FROM llx_commandedet as l WHERE l.fk_commande = $this->id ORDER BY l.rowid";	  
+      }
+
     $result = $this->db->query($sql);
     if ($result)
       {
