@@ -23,6 +23,7 @@
 
 MYSQL=mysql 
 BASE=dolibarr
+OPTIONS=
 
 all:
 	cd tables \
@@ -52,7 +53,7 @@ droptable:
 	&& make drop
 
 load:
-	$(MYSQL) $(BASE) < data/data.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < data/data.sql
 
 drop: dropdb droppriv
 

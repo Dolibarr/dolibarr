@@ -18,55 +18,56 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
-MYSQL=mysql -f
+MYSQL=mysql
 BASE=dolibarr
+OPTIONS=-f
 
 all:	show
 
 create:
-	$(MYSQL) $(BASE) < actioncomm.sql
-	$(MYSQL) $(BASE) < c_actioncomm.sql
-	$(MYSQL) $(BASE) < c_chargesociales.sql
-	$(MYSQL) $(BASE) < c_effectif.sql
-	$(MYSQL) $(BASE) < c_paiement.sql
-	$(MYSQL) $(BASE) < c_pays.sql
-	$(MYSQL) $(BASE) < c_propalst.sql
-	$(MYSQL) $(BASE) < c_stcomm.sql
-	$(MYSQL) $(BASE) < c_typent.sql
-	$(MYSQL) $(BASE) < llx_bank.sql
-	$(MYSQL) $(BASE) < llx_bank_account.sql
-	$(MYSQL) $(BASE) < llx_bank_categ.sql
-	$(MYSQL) $(BASE) < llx_bank_class.sql
-	$(MYSQL) $(BASE) < llx_bookmark.sql
-	$(MYSQL) $(BASE) < llx_chargesociales.sql
-	$(MYSQL) $(BASE) < llx_compta.sql
-	$(MYSQL) $(BASE) < llx_compta_account.sql
-	$(MYSQL) $(BASE) < llx_don.sql
-	$(MYSQL) $(BASE) < llx_don_projet.sql
-	$(MYSQL) $(BASE) < llx_fa_pr.sql
-	$(MYSQL) $(BASE) < llx_facture.sql
-	$(MYSQL) $(BASE) < llx_facture_fourn.sql
-	$(MYSQL) $(BASE) < llx_fichinter.sql
-	$(MYSQL) $(BASE) < llx_paiement.sql
-	$(MYSQL) $(BASE) < llx_pointmort.sql
-	$(MYSQL) $(BASE) < llx_product.sql
-	$(MYSQL) $(BASE) < llx_projet.sql
-	$(MYSQL) $(BASE) < llx_propal.sql
-	$(MYSQL) $(BASE) < llx_propaldet.sql
-	$(MYSQL) $(BASE) < llx_service.sql
-	$(MYSQL) $(BASE) < llx_soc_recontact.sql
-	$(MYSQL) $(BASE) < llx_tva.sql
-	$(MYSQL) $(BASE) < llx_user.sql
-	$(MYSQL) $(BASE) < llx_ventes.sql
-	$(MYSQL) $(BASE) < llx_voyage.sql
-	$(MYSQL) $(BASE) < llx_voyage_reduc.sql
-	$(MYSQL) $(BASE) < societe.sql
-	$(MYSQL) $(BASE) < socpeople.sql
-	$(MYSQL) $(BASE) < socstatutlog.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < actioncomm.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < c_actioncomm.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < c_chargesociales.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < c_effectif.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < c_paiement.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < c_pays.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < c_propalst.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < c_stcomm.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < c_typent.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank_account.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank_categ.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank_class.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_bookmark.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_chargesociales.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_compta.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_compta_account.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_don.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_don_projet.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_fa_pr.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_facture.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_facture_fourn.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_fichinter.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_paiement.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_pointmort.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_product.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_projet.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_propal.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_propaldet.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_service.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_soc_recontact.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_tva.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_user.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_ventes.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_voyage.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_voyage_reduc.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < societe.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < socpeople.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < socstatutlog.sql
 
 
 drop:
-	$(MYSQL) $(BASE) < drop.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < drop.sql
 
 show:
-	$(MYSQL) $(BASE) -e 'show tables'
+	$(MYSQL) $(OPTIONS) $(BASE) -e 'show tables'
