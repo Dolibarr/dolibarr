@@ -34,6 +34,9 @@ class Graph
     $this->datacolor = array(array(204,204,179),
 			     array(187,187,136),
 			     array(235,235,224));
+
+    $this->precision_y = 0;
+
     return 1;
   }
   
@@ -54,7 +57,7 @@ class Graph
     $graph->SetPlotAreaPixels(60,10,$w-10,$h-30) ;
 
     $graph->SetBackgroundColor($this->bgcolor);
-
+    $graph->SetPrecisionY($this->precision_Y);
     $graph->SetDataColors($this->datacolor, $this->bordercolor);
 
     $graph->SetOutputFile($file);
@@ -66,7 +69,12 @@ class Graph
 
     //Draw it
     $graph->DrawGraph();
+  }
 
+  function SetPrecisionY($which_prec)
+  {
+    $this->precision_y = $which_prec;
+    return true;
   }
 }
 
