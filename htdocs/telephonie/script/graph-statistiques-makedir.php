@@ -74,8 +74,6 @@ for ($j = 0 ; $j < 10 ; $j++)
 {
   $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/client/";
   $i++;
-  $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/contrat/";
-  $i++;
   $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/ligne/";
   $i++;
   $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/commercial/";
@@ -97,14 +95,57 @@ if ($db->query($sql))
     {
       $row = $db->fetch_row();	
       
-      $dirs[$i] = DOL_DATA_ROOT."/graph/telephonie/client/".substr($row[0],0,1)."/".$row[0]."/";
-     
+      $dirs[$i] = DOL_DATA_ROOT."/graph/telephonie/client/".substr($row[0],0,1)."/".$row[0]."/";     
       $i++;
+
+      $dirs[$i] = DOL_DATA_ROOT."/graph/".substr($row[0],-1)."/telephonie/client/".$row[0]."/";     
+      $i++;
+
       $j++;
     }
 }
 
- 
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."telephonie_contrat";
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $j = 0;
+  
+  while ($j < $num)
+    {
+      $row = $db->fetch_row();	
+      
+      $dirs[$i] = DOL_DATA_ROOT."/graph/".substr($row[0],-1)."/telephonie/contrat/".$row[0]."/";
+      $i++;
+
+      $j++;
+    }
+}
+
+/*
+ *
+ */ 
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $j = 0;
+  
+  while ($j < $num)
+    {
+      $row = $db->fetch_row();	
+      
+      $dirs[$i] = DOL_DATA_ROOT."/graph/".substr($row[0],-1)."/telephonie/ligne/".$row[0]."/";
+      $i++;
+
+      $j++;
+    }
+}
+/*
+ *
+ */
 
 if (is_array($dirs))
 {
