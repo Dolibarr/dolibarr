@@ -29,8 +29,8 @@
 	  <br />
 	  <a href="donations.fr.php">Dons</a><br />	  
 	  <script language="php">
-	    //include("http://eucd.info/thermometer.php");
-	    //print moneyMeter($totaal_ontvangen+$post_donaties+$post_sponsoring, $totaal_pending, $post_intent);
+	    require("/var/www/www.eucd.info/htdocs/thermometer.php");
+	    print moneyMeter($totaal_ontvangen+$post_donaties+$post_sponsoring, $totaal_pending, $post_intent);
 	  </script>
 
 	</td>

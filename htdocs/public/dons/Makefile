@@ -31,10 +31,13 @@ RSYNC=/usr/bin/rsync
 ROPT=-av
 RSSH=-e ssh
 
-all: 
+prim: 
 	$(XSLTPROC) eucd.xsl don.xhtml > don.php
 	$(XSLTPROC) eucd.xsl erreur.xhtml > erreur.php
 	$(XSLTPROC) eucd.xsl merci.xhtml > merci.php
+
+
+all: $(ENPAGES) $(FRPAGES)
 
 
 $(ENPAGES) $(FRPAGES): %.html: %.xhtml fsfe-fr.xsl navigation.en.xsl navigation.fr.xsl
