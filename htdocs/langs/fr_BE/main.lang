@@ -1,0 +1,37 @@
+# Dolibarr language file - fr_BE - main
+charset="iso-8859-1"
+yes=oui
+no=non
+Home=Accueil
+Help=Aide
+Activate=Activer
+Activated=Activé
+Add=Ajouter
+Delete=Supprimer
+Resiliate=Résilier
+Cancel=Annuler
+Modify=Modifier
+Edit=Editer
+Show=Voir
+Search=Rechercher
+ChooseLangage=Choisissez votre langue
+User=Utilisateur
+Users=Utilisateurs
+Group=Groupe
+Groups=Groupes
+Name=Nom
+Value=Valeur
+Type=Type
+Note=Note
+Action=Action
+About=A propos
+WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et vous êtes connectés comme</font> %s
+Number=Nombre
+DevelopmentTeam=Equipe de développement
+Logout=Deconnexion
+Setup=Configuration
+Alert=Alerte
+Previous=Précédent
+Next=Suivant
+ErrorForbidden=Accès non autorisé
+Cards=Fiches

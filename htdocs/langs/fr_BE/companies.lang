@@ -1,0 +1,23 @@
+# Dolibarr language file - fr_BE - soc
+NewCompany=Nouvelle société (prospect, client, fournisseur)
+Company=Société
+Companies=Sociétés
+Name=Nom
+Surname=Prénom
+Address=Adresse
+State=Province
+Country=Pays
+Phone=Téléphone
+Fax=Fax
+Zip=Code postal
+Town=Ville
+Web=Web
+ProfIdSiren=SIREN
+ProfIdSiret=SIRET
+ProfIdApe=APE
+TVAIntra=Numéro de TVA Intracommunautaire
+ProspectCustomer=Prospect / Client
+Prospect=Prospect
+Customer=Client
+Supplier=Fournisseur
+ComanyList=Liste des sociétés
