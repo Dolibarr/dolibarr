@@ -266,7 +266,7 @@ if ($conf->facture->enabled)
    *
    */
   
-  $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
+  $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc, sum(pf.amount) as am";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
   $sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
   if ($socidp)
@@ -283,9 +283,9 @@ if ($conf->facture->enabled)
       if ($num)
 	{
 	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td colspan="2">Factures clients impayées ('.$num.')</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
+	  print '<tr class="liste_titre"><td colspan="2">Factures clients impayées ('.$num.')</td><td align="right">Montant HT</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
 	  $var = True;
-	  $total = $totalam = 0;
+	  $total_ttc = $totalam = $total = 0;
 	  while ($i < $num)
 	    {
 	      $obj = $db->fetch_object();
@@ -296,15 +296,18 @@ if ($conf->facture->enabled)
 		  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>';
 		  print '&nbsp;<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
 		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+		  print '<td align="right">'.price($obj->total).'</td>';
 		  print '<td align="right">'.price($obj->total_ttc).'</td>';
 		  print '<td align="right">'.price($obj->am).'</td></tr>';
 		}
-	      $total +=  $obj->total_ttc;
+	      $total_ttc +=  $obj->total_ttc;
+		  $total += $obj->total;
 	      $totalam +=  $obj->am;
 	      $i++;
 	    }
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td colspan="4" align="left">Reste à encaisser : '.price($total-$totalam).'</td></tr>';
+	  print "<tr $bc[$var]><td colspan=\"2\" align=\"right\"><i>Total : </i></td><td align=\"right\"><i>".price($total)."</i></td><td align=\"right\"><i>".price($total_ttc)."</i></td><td align=\"right\"><i>".price($totalam)."</i></td></tr>";
+	  print '<tr '.$bc[$var].'><td colspan="4" align="right"><i>Reste à encaisser : '.price($total_ttc-$totalam).'</i></td><td>&nbsp;</td></tr>';
 	  print "</table><br>";
 	}
       $db->free();
