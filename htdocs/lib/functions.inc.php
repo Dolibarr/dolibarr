@@ -1015,11 +1015,12 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
       $nextpage = 0;
     }
 
-  print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
+  print '<table width="100%" class="noborder">';
 
- if ($page > 0)
+ if ($page > 0 || $num > $conf->liste_limit)
    {
-     print '<tr><td><div class="titre">'.$titre.' - page '.($page+1).'</div></td>';
+     print '<tr><td><div class="titre">'.$titre.' - page '.($page+1);
+     print '</div></td>';
    }
  else
    {
@@ -1043,11 +1044,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
       $options .= "&amp;sortorder=$sortorder";
     }
 
-  // affichage des fleches de navigation
+  // Affichage des fleches de navigation
 
-  print_fleche_navigation($page,$file,$options, $nextpage);
+  print_fleche_navigation($page,$file,$options,$nextpage);
 
-  print '</td></tr></table>';
+  print '</td></tr></table><br>';
 }
 
 /*!
