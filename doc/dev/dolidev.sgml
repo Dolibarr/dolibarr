@@ -1,0 +1,90 @@
+<!doctype linuxdoc system>
+
+<article>
+
+<!-- Title information -->
+
+<title>Dolibarr documentation développeur</title>
+<author>
+ <name>Rodolphe Quiédeville</name>
+</author>
+<date>$Id$</date>
+
+<abstract>
+Documentation à l'usage des développeurs de Dolibarr.
+</abstract>
+
+<!-- Table of contents -->
+<toc>
+
+<!-- Begin the document -->
+  
+<sect>
+<heading>Configuration</heading>
+<p>
+  Définition des constantes utilisées
+</p>
+
+<sect1>
+<heading>Liste des constantes utilisées dans la configuration</heading>
+      <p>
+      <list>
+	<item>DB_NAME_OSC
+	    <p>Nom de la base de données d'oscommerce</p>
+	</item>
+	<item>DONS_FORM</item>
+	<item>FAC_PDF_ADRESSE
+	  <p>Adresse imprimée sur les factures</p>
+	</item>
+	<item>FAC_PDF_FAX
+	  <p>Numéro de Fax imprimé sur les factures</p>
+	</item>
+	<item>FAC_PDF_SIREN
+	  <p>Numéro de SIREN affiché sur les factures</p>
+	</item>
+	<item>MAIN_DEBUG</item>
+	<item>MAIN_THEME</item>
+	<item>MAIN_TITLE</item>
+	<item>MAIN_SPIP_DB
+	  <p>Nom de la base de données SPIP</p>
+	</item>
+	<item>MAIN_SPIP_PASS</item>
+	<item>OSC_CATALOG_URL
+	  <p>URL du catalogue Oscommerce</p>
+	</item>
+	<item>OSC_CATALOG_DIRECTORY</item>
+	<item>OSC_DIRECTORY</item>
+	<item>OSC_IMAGE_DEFAULT</item>
+	<item>PN_DB_NAME
+	  <p>Nom de la base Postnuke</p>
+	</item>
+	<item>PN_TABLE_STORIES_NAME</item>
+	<item>SIZE_LISTE_LIMIT</item>
+      </list>
+    </p>
+</sect1>
+
+  </sect>
+
+
+
+<sect>
+<heading>Propositions commerciales</heading>
+
+  <p>
+    Propositions commerciales
+  </p>
+  
+  <sect1>
+ <heading>Modèles</heading>
+    <p>
+      Deux modèles de proposition sont fournit avec Dolibarr, mais vous pouvez en créer autant que vous le souhaitez. Pour cela il vous suffit de créer une nouvelle classe dans un fichier dont le nom doit être de la forme pdf_propale_MISC.modules.php où MISC est une chaine de caractère de votre choix. Une fois ce fichier créé la classe qu'il définit doit se nommer pdf_propale_MISC.
+    </p>
+    <p>
+      Le nom (MISC) ne doit pas dépasser 50 caractères.
+    </p>
+  </sect>
+
+
+
+</article>
