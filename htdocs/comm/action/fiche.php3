@@ -44,56 +44,59 @@ $db = new Db();
  */
 if ($action=='add_action') 
 {
-  $contact = new Contact($db);
-  $contact->fetch($contactid);
+  if ($contactid)
+    {
+      $contact = new Contact($db);
+      $contact->fetch($contactid);
+    }
   $societe = new Societe($db);
   $societe->fetch($socid);
 
-  $actioncomm = new ActionComm($db);
-  
-  $actioncomm->date = $db->idate(mktime($HTTP_POST_VARS["achour"],
-					$HTTP_POST_VARS["acmin"],
-					0,
-					$HTTP_POST_VARS["acmonth"],
-					$HTTP_POST_VARS["acday"],
-					$HTTP_POST_VARS["acyear"])
-				 );
-  if ($actionid == 5) 
+  if ($HTTP_POST_VARS["afaire"] <> 1)
     {
-      $actioncomm->percent = 0;
+
+      $actioncomm = new ActionComm($db);
+      
+      $actioncomm->date = $db->idate(mktime($HTTP_POST_VARS["achour"],
+					    $HTTP_POST_VARS["acmin"],
+					    0,
+					    $HTTP_POST_VARS["acmonth"],
+					    $HTTP_POST_VARS["acday"],
+					    $HTTP_POST_VARS["acyear"])
+				     );
+      if ($actionid == 5) 
+	{
+	  $actioncomm->percent = 0;
+	}
+      else
+	{
+	  $actioncomm->percent = 100;
+	}
+      $actioncomm->priority = 2;
+      $actioncomm->type = $actionid;
+      $actioncomm->contact = $contactid;
+      
+      $actioncomm->user = $user;
+      
+      $actioncomm->societe = $socid;
+      $actioncomm->note = $note;
+      
+      $actioncomm->add($user);
     }
-  else
-    {
-      $actioncomm->percent = 100;
-    }
-  $actioncomm->priority = 2;
-  $actioncomm->type = $actionid;
-  $actioncomm->contact = $contactid;
-
-  $actioncomm->user = $user;
-
-  $actioncomm->societe = $socid;
-  $actioncomm->note = $note;
-
-  $actioncomm->add($user);
 
   if ($todo == 'on' )
     {
 
       $todo = new ActionComm($db);
-      $todo->type = 0;
-      $todo->date = $db->idate(mktime(12,0,0,$remonth, $reday, $reyear));
-      
-      $todo->libelle = $todo_label;
+      $todo->type     = $actionid;
+      $todo->date     = $db->idate(mktime(12,0,0,$remonth, $reday, $reyear));
+      $todo->libelle  = $todo_label;
       $todo->priority = 2;
-      $todo->societe = $societe->id;
-      $todo->contact = $contactid;
-      
-      $todo->user = $user;
-      
-      $todo->note = $todo_note;
-      
-      $todo->percent = 0;
+      $todo->societe  = $societe->id;
+      $todo->contact  = $contactid;
+      $todo->user     = $user;
+      $todo->note     = $todo_note;
+      $todo->percent  = 0;
       
       $todo->add($user);
       
@@ -127,6 +130,14 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
   Header("Location: index.php");
 }
 
+if ($action=='update')
+{
+  $action = new Actioncomm($db);
+  $action->fetch($id);
+  $action->percent     = $HTTP_POST_VARS["percent"];
+  $action->contact->id = $HTTP_POST_VARS["scontactid"];
+  $action->update();
+}
 
 /******************************************************************************/
 /*                                                                            */
@@ -135,21 +146,28 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
 /******************************************************************************/
 
 llxHeader();
+$html = new Form($db);
 /*
  *
  *
  *
  */
-if ($action=='create' && $actionid && $contactid) {
-  $caction = new CActioncomm();
-  $caction->fetch($db, $actionid);
 
-  $contact = new Contact($db);
-  $contact->fetch($contactid);
+if ($action=='create')
+{
 
+  $caction = new CActioncomm($db);
+
+  if ($afaire <> 1)
+    {
+      $caction->fetch($db, $actionid);
+
+      $contact = new Contact($db);
+      $contact->fetch($contactid);
+    }
   $societe = new Societe($db);
   $societe->get_nom($socid);
-
+      
   /*
    * Rendez-vous
    *
@@ -182,9 +200,7 @@ if ($action=='create' && $actionid && $contactid) {
 
       print '<tr><td valign="top">Commentaire</td><td>';
       print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
-      
-      print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
-  
+      print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';  
       print '</form></table>';
     }
   /* 
@@ -195,36 +211,51 @@ if ($action=='create' && $actionid && $contactid) {
    */   
   else 
     {
-      $html = new Form($db);
-      print_titre ("Action effectuée");
-
       print '<form action="'.$PHP_SELF.'?socid='.$socid.'" method="post">';
       print '<input type="hidden" name="action" value="add_action">';
-
+      
       print '<input type="hidden" name="actionid" value="'.$actionid.'">';
       print '<input type="hidden" name="contactid" value="'.$contactid.'">';
       print '<input type="hidden" name="socid" value="'.$socid.'">';
       
-      print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
-            
-      print '<tr><td width="10%">Action</td><td>'.$caction->libelle.'</td></tr>';
-      print '<tr><td width="10%">Société</td><td width="40%">';
-      print '<a href="../fiche.php3?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
-      print '<tr><td width="10%">Contact</td><td width="40%">'.$contact->fullname.'</td></tr>';
-      print '<td>Date</td><td>';
-      print $html->select_date('','ac',1,1);
-      print '</td></tr>';
-      print '<tr><td valign="top">Commentaire</td><td>';
-      print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
-      print "</table><p />";
+      if($afaire <> 1)
+	{
+
+	  print_titre ("Action effectuée");	  
+	  print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
+	  
+	  print '<tr><td width="10%">Action</td><td>'.$caction->libelle.'</td></tr>';
+	  print '<tr><td width="10%">Société</td><td width="40%">';
+	  print '<a href="../fiche.php3?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
+	  print '<tr><td width="10%">Contact</td><td width="40%">'.$contact->fullname.'</td></tr>';
+	  print '<td>Date</td><td>';
+	  print $html->select_date('','ac',1,1);
+	  print '</td></tr>';
+	  print '<tr><td valign="top">Commentaire</td><td>';
+	  print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
+	  print "</table><p />";
+	}
 
       print_titre ("Prochaine Action à faire");
 
       print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
+      if($afaire <> 1)
+	{
+	  print '<tr><td width="10%">Ajouter</td><td><input type="checkbox" name="todo"></td></tr>';
+	}
+      else
+	{
+	  print '<input type="hidden" name="todo" value="on">';
+	  print '<input type="hidden" name="afaire" value="1">';
+	  print '<tr><td width="10%">Société</td><td width="40%">';
+	  print '<a href="../fiche.php3?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
+	}
 
-      print '<tr><td width="10%">Ajouter</td><td><input type="checkbox" name="todo"></td></tr>';
       print '<tr><td width="10%">Date</td><td width="40%">';
-      print_date_select();
+      print $html->select_date();
+      print '</td></tr>';
+      print '<tr><td width="10%">Action</td><td>';
+      $html->select_array("actionid",  $caction->liste_array(), 0);
       print '</td></tr>';
       print '<tr><td width="10%">Action</td><td><input type="text" name="todo_label" size="30"></td></tr>';
       print '<tr><td width="10%">Calendrier</td><td><input type="checkbox" name="todo_webcal"></td></tr>';
@@ -244,10 +275,8 @@ if ($action=='create' && $actionid && $contactid) {
  */
 if ($id)
 {
-
   if ($action == 'delete')
     {
-
       print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
       print '<input type="hidden" name="action" value="confirm_delete">';
       print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
@@ -267,40 +296,81 @@ if ($id)
   
   $act = new ActionComm($db);
   $act->fetch($id);
-
+  
   $act->societe->fetch($act->societe->id);
   $act->author->fetch($act->author->id);
   $act->contact->fetch($act->contact->id);
+  
 
-  print_titre ("Action commerciale");
-
-  print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
-  print '<tr><td width="10%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
-  print '<tr><td width="10%">Société</td>';
-  print '<td width="40%"><a href="../fiche.php3?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
-
-  print '<td width="10%">Contact</td><td width="40%">'.$act->contact->fullname.'</td></tr>';
-  print '<tr><td>Auteur</td><td>'.$act->author->fullname.'</td>';
-  print '<td>Date</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td></tr>';
-  if ($act->objet_url)
-    {
-      print '<tr><td>Objet lié</td>';
-      print '<td colspan="3">'.$act->objet_url.'</td></tr>';
+  if ($action == 'edit')
+    {      
+      print_titre ("Edition de la fiche action");
+      print '<form action="fiche.php3?id='.$id.'" method="post">';
+      print '<input type="hidden" name="action" value="update">';
+      print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
+      print '<tr><td width="20%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
+      print '<tr><td width="20%">Société</td>';
+      print '<td width="30%"><a href="../fiche.php3?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
+      
+      print '<td width="20%">Contact</td><td width="30%">';
+      $html->select_array("scontactid",  $act->societe->contact_array(), $act->contact->id, 1);
+      print '</td></tr>';
+      print '<tr><td>Date</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
+      print '<td>Auteur</td><td>'.$act->author->fullname.'</td></tr>';
+      print '<tr><td>Pourcentage réalisé</td><td colspan="3"><input name="percent" value="'.$act->percent.'">%</td></tr>';
+      if ($act->objet_url)
+	{
+	  print '<tr><td>Objet lié</td>';
+	  print '<td colspan="3">'.$act->objet_url.'</td></tr>';
+	}
+      
+      if ($act->note)
+	{
+	  print '<tr><td valign="top">Commentaire</td><td colspan="3">';
+	  print nl2br($act->note).'</td></tr>';
+	}
+      print '<tr><td align="center" colspan="4"><input type="submit" value="Enregister"</td></tr>';
+      print '</table></form>';
     }
-
-  if ($act->note)
-    {
-      print '<tr><td valign="top">Commentaire</td><td colspan="3">';
-      print nl2br($act->note).'</td></tr>';
+  else
+    {      
+      print_titre ("Action commerciale");
+      
+      print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
+      print '<tr><td width="20%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
+      print '<tr><td width="20%">Société</td>';
+      print '<td width="30%"><a href="../fiche.php3?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
+      
+      print '<td width="10%">Contact</td><td width="40%">'.$act->contact->fullname.'</td></tr>';
+      print '<tr><td>Date</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
+      print '<td>Auteur</td><td>'.$act->author->fullname.'</td></tr>';
+      print '<tr><td>Pourcentage réalisé</td><td colspan="4">'.$act->percent.' %</td></tr>';
+      if ($act->objet_url)
+	{
+	  print '<tr><td>Objet lié</td>';
+	  print '<td colspan="3">'.$act->objet_url.'</td></tr>';
+	}
+      
+      if ($act->note)
+	{
+	  print '<tr><td valign="top">Commentaire</td><td colspan="3">';
+	  print nl2br($act->note).'</td></tr>';
+	}
+      print '</table>';
     }
-  print '</table>';
-
   /*
    *
    */
   print '<br><table border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
-
-  print '<td align="center" width="20%">-</td>';
+  print '<td align="center" width="20%">';
+  if ($action=='edit')
+    {
+      print '<a href="fiche.php3?id='.$act->id.'">Annuler</a></td>';
+    }
+  else
+    {
+      print '<a href="fiche.php3?action=edit&id='.$act->id.'">Editer</a></td>';
+    }
   print '<td align="center" width="20%">-</td>';
   print '<td align="center" width="20%">-</td>';
   print '<td align="center" width="20%">-</td>';
