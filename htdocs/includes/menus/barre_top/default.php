@@ -20,26 +20,56 @@
  *
  */
 
-
-
-print '<TD width="15%" class="menu" align="center">';
-if ($user->comm > 0 && $conf->commercial ) 
+if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/comm/'))
 {
-  print '<A class="menu" href="/comm/">Commercial</A></TD>';
+  print '<TD width="15%" class="menusel" align="center">';
+  if ($user->comm > 0 && $conf->commercial ) 
+    {
+      print '<A class="menusel" href="'.DOL_URL_ROOT.'/comm/">Commercial</A></TD>';
+    }
+  else
+    {
+      print '-';
+    }
 }
 else
 {
-  print '-';
+  print '<TD width="15%" class="menu" align="center">';
+  if ($user->comm > 0 && $conf->commercial ) 
+    {
+      print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/">Commercial</A></TD>';
+    }
+  else
+    {
+      print '-';
+    }
 }
 
-print '<TD width="15%" class="menu" align="center">';
-if ($user->compta > 0)
+
+if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/compta/'))
 {
-  print '<A class="menu" href="/compta/">Compta</A></TD>';
-} 
+  print '<TD width="15%" class="menusel" align="center">';
+  if ($user->compta > 0)
+    {
+      print '<A class="menusel" href="/compta/">Compta</A></TD>';
+    } 
+  else
+    {
+  print '-';
+    }
+}
 else
 {
-  print '-';
+  
+  print '<TD width="15%" class="menu" align="center">';
+  if ($user->compta > 0)
+    {
+      print '<A class="menu" href="/compta/">Compta</A></TD>';
+    } 
+  else
+    {
+      print '-';
+    }
 }
 
 print '<TD width="15%" class="menu" align="center">';
