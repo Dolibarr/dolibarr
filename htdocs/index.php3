@@ -32,24 +32,7 @@ llxHeader();
       td.dash { border: 1px dashed #c0C0C0; }
     </style>
 
-    <table width="100%" cellspacing="3">
-	<tr>
-	  <td width="50%" class="dash" valign="top">
-	    <a href="/comm/"><?PHP print translate("Commercial"); ?></a>
-	    <ul>
-	      <li><a href="/comm/propal.php3">Propositions commerciales</a>
-	    </ul>
-	  </td>
-	  <td width="50%" class="dash" valign="top">
-	    <a href="/compta">Compta</a>
-	    <ul>
-	      <li><a href="/compta/resultat/">Résultat</A>
-	      <li><a href="/compta/tva/">TVA</A>
-	    </ul>
-	  </td>
-	</tr>
 
-    </table>
 <?PHP
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

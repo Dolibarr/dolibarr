@@ -21,6 +21,11 @@
  */
 require("../../main.inc.php3");
 
+$libelle[0] = "Promesses non validées";
+$libelle[1] = "Promesses validées";
+$libelle[2] = "Dons payés";
+$libelle[3] = "Dons encaissés";
+
 function llxHeader($head = "") {
   global $user, $conf;
 

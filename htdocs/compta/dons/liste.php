@@ -66,7 +66,7 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Dons", $page, $PHP_SELF, "&statut=$statut");
+  print_barre_liste($libelle[$statut], $page, $PHP_SELF, "&statut=$statut");
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
   print '<TR class="liste_titre">';

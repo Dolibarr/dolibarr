@@ -46,11 +46,6 @@ if ($result)
 
 print_barre_liste("Dons", $page, $PHP_SELF);
 
-$libelle[0] = "Promesses non validées";
-$libelle[1] = "Promesses validées";
-$libelle[2] = "Dons payés";
-$libelle[3] = "Dons encaissés";
-
 print '<TABLE border="0" cellspacing="0" cellpadding="4">';
 print '<TR class="liste_titre">';
 print "<td>&nbsp;</td>";
