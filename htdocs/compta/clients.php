@@ -20,11 +20,21 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/compta/clients.php
+        \ingroup    compta
+		\brief      Page accueil des clients
+		\version    $Revision$
+*/
+ 
 require("./pre.inc.php");
 require("../contact.class.php");
-require("../lib/webcal.class.php");
 require("../cactioncomm.class.php");
 require("../actioncomm.class.php");
+if ($conf->webcal->enabled) {
+    require("../lib/webcal.class.php");
+}
 
 llxHeader();
 
