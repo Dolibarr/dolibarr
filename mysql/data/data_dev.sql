@@ -22,6 +22,8 @@
 -- Ne pas hésiter a compléter ce fichier avec de nouvelles valeurs, plus on a
 -- de données, mieux on peut tester l'appli.
 -- ===========================================================================
+DELETE FROM llx_const WHERE name = 'MAIN_NOT_INSTALLED';
+
 delete from llx_tva;
 insert into llx_tva (datep, datev, amount) values ('2001-11-11','2001-10-01', 1960.00);
 insert into llx_tva (datep, datev, amount) values ('2001-04-11','2001-01-01', 2000.00);
@@ -46,7 +48,14 @@ values ('02-11-YHGT',2,now(),'2002-11-01',1,1000,0,196,1196,1,NULL,NULL,'');
 insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
 values ('02-12-YHGT',2,now(),'2002-12-01',1,1000,0,196,1196,1,NULL,NULL,'');
 
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_THEME',  'yellow','chaine',1);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_THEME',  'dev','chaine',1);
+
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_NOM','Barridol','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_TVAINTRA','654871132187','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_CAPITAL','15000','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SIREN','123456789','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_APE','721Z','chaine',0);
+
 
 delete from llx_user;
 
@@ -58,6 +67,9 @@ values ('demo1','demo1','DM1','demo1','demo',1,1,'demo1');
 
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
 values ('demo2','demo2','DM2','demo2','demo',1,1,'demo2');
+
+
+DELETE FROM llx_user_rights;
 
 INSERT INTO llx_user_rights VALUES (1,11);
 INSERT INTO llx_user_rights VALUES (1,12);
@@ -105,33 +117,31 @@ INSERT INTO llx_user_rights VALUES (1,67);
 INSERT INTO llx_user_rights VALUES (1,68);
 INSERT INTO llx_user_rights VALUES (1,69);
 
-
-
 --
 -- Societe les fournisseurs sont sur les numéros pairs
 --
 delete from llx_societe;
 
-insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
-values ('Cumulo',now(),'56610','Arradon','01 40 15 03 18','01 40 15 06 18',1,'CU');
+insert into llx_societe (nom,address,datec,cp,ville,tel,fax, client, prefix_comm)
+values ('Cumulo','3 place de la République',now(),'56610','Arradon','01 40 15 03 18','01 40 15 06 18',1,'CU');
 
-insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm, fournisseur)
-values ('Bolix SA',now(),'56350','Allaire','01 40 15 03 18','01 40 15 06 18',1,'LO',1);
+insert into llx_societe (nom,address,datec,cp,ville,tel,fax, client, prefix_comm, fournisseur, url, fk_forme_juridique)
+values ('Bolix SA','13 rue Pierre Mendès France',now(),'56350','Allaire','01 40 15 03 18','01 40 15 06 18',1,'LO',1,'www.dolibarr.com',54);
 
-insert into llx_societe (nom,cp,ville,tel,fax,client, prefix_comm)
-values ('Doli INC.','29300','Arzano','01 55 55 03 18','01 55 55 55 55',1,'DO');
+insert into llx_societe (nom,address,cp,ville,tel,fax,client, prefix_comm)
+values ('Doli INC.','Rue du Port','29300','Arzano','01 55 55 03 18','01 55 55 55 55',1,'DO');
 
-insert into llx_societe (nom,cp,ville,tel,fax,client, prefix_comm,url, fournisseur)
-values ('Foo SARL','22300','Ploubezre','01 55 55 03 18','01 55 55 55 55',1,'FOO','www.gnu.org',1);
+insert into llx_societe (nom,address,cp,ville,tel,fax,client, prefix_comm,url, fournisseur)
+values ('Foo SARL','3bis Avenue de la Liberté','22300','Ploubezre','01 55 55 03 18','01 55 55 55 55',1,'FOO','www.gnu.org',1);
 
-insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
-values ('Talphinfo',now(),'29400','Bodilis','01 40 15 03 18','01 40 15 06 18',1,'AP');
+insert into llx_societe (nom,address,datec,cp,ville,tel,fax, client, prefix_comm)
+values ('Talphinfo','Place Dolores Ibarruri',now(),'29400','Bodilis','01 40 15 03 18','01 40 15 06 18',1,'AP');
 
 insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values (20,'Bouleau','22800','Le Foeil','01 55 55 03 18','01 55 55 55 55',1,'BTP');
 
 insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
-values ('Valphanix',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',1,'AL');
+values ('Valphanix',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',2,'AL');
 
 insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values (101,'Cerisier','22290','Goudelin','01 55 55 03 18','01 55 55 55 55',1,'CER');
@@ -159,6 +169,17 @@ values ('Nimbus','29490','Guipavas','01 55 55 03 18','01 55 55 55 55',1);
 
 insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Iono','22110','Rostrenen','01 55 55 03 18','01 55 55 55 55',1);
+
+
+
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm,address)
+values ('Bolan',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',2,'CAL','104 Avenue de la Marne');
+
+
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm,address)
+values ('Travail Temporaire Boharssais',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',2,'TTBOH','125 Rue des moineaux');
+
+
 --
 -- Contact
 --
@@ -412,6 +433,8 @@ VALUES (now(),'2002-03-13','2002-03-13',-10,'Liquide',1,1,NULL,'CB',NULL,NULL,0,
 --
 -- Dumping data for table `llx_bank_account`
 --
+
+DELETE FROM llx_bank_account;
 
 INSERT INTO llx_bank_account (rowid, datec, tms, label, bank, code_banque, code_guichet, number, cle_rib, bic, iban_prefix, domiciliation, courant, clos) VALUES (1,'2001-01-01 13:06:11',20031014173428,'CCP','La PosteToto','','','','','','','',1,0);
 
