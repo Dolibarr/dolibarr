@@ -1,7 +1,5 @@
 <!DOCTYPE debiandoc public "-//DebianDoc//DTD DebianDoc//EN"
 [
-    <!entity ch-installation system "installation.sgml">
-    <!entity ch-update system "update.sgml">
     <!entity ch-propale system "propale.sgml">
     <!entity ch-facture	system "facture.sgml">
     <!entity ch-produit	system "produit.sgml">
@@ -24,8 +22,6 @@
 
     <toc sect>
 
-    &ch-installation;
-    &ch-update;
     &ch-propale;
     &ch-facture;
     &ch-produit;
