@@ -25,6 +25,8 @@ require("./pre.inc.php");
 require("../contact.class.php");
 
 $langs->load("companies");
+$langs->load("suppliers");
+$langs->load("orders");
 
 llxHeader();
 
