@@ -20,16 +20,7 @@
  */
 require("./pre.inc.php");
 
-llxHeader();
-
 $dir = "../includes/modules/facture/";
-
-if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
 
 //
 // TODO mettre cette section dans la base de données
@@ -54,6 +45,7 @@ $modules["MAIN_MODULE_COMMANDE"][0] = "Module commande";
 $modules["MAIN_MODULE_COMMANDE"][1] = "MAIN_MODULE_COMMANDE";
 $modules["MAIN_MODULE_COMMANDE"][2] = MAIN_MODULE_COMMANDE;
 $modules["MAIN_MODULE_COMMANDE"][3] = "Module de gestion des commandes";
+$modules["MAIN_MODULE_COMMANDE"][4] = "modCommande";
 
 $modules["MAIN_MODULE_FACTURE"][0] = "Module facture";
 $modules["MAIN_MODULE_FACTURE"][1] = "MAIN_MODULE_FACTURE";
@@ -122,7 +114,7 @@ $modules["MAIN_MODULE_EXTERNAL_RSS"][2] = MAIN_MODULE_EXTERNAL_RSS;
 $modules["MAIN_MODULE_EXTERNAL_RSS"][3] = "Module de gestion de syndication de sites externes";
 $modules["MAIN_MODULE_EXTERNAL_RSS"][4] = "modExternalRss";
 
-if ($action == 'set')
+if ($action == 'set' && $user->admin)
 {
   $sql = "REPLACE INTO llx_const SET name = '".$value."', value='1', visible = 0";
 
@@ -137,11 +129,13 @@ if ($action == 'set')
 	  include("../includes/modules/$file");
 	  $objMod = new $modName($db);
 	  $objMod->init();
+
+	  Header("Location: modules.php");
 	}
     }
 }
 
-if ($action == 'reset')
+if ($action == 'reset' && $user->admin)
 {
   $sql = "REPLACE INTO llx_const SET name = '".$value."', value='0', visible = 0";
 
@@ -156,11 +150,23 @@ if ($action == 'reset')
 	  include("../includes/modules/$file");
 	  $objMod = new $modName($db);
 	  $objMod->remove();
+
+	  Header("Location: modules.php");
 	}
     }
 }
 
 $db->close();
+
+llxHeader();
+
+if (!$user->admin)
+{
+  print "Forbidden";
+  llxfooter();
+  exit;
+}
+
 
 print_titre("Modules");
 
