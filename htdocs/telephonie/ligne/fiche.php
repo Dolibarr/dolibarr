@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,9 @@
  *
  */
 
-require("./pre.inc.php");
-
+require "./pre.inc.php";
+require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
+require_once DOL_DOCUMENT_ROOT.'/telephonie/telephonie.contrat.class.php';
 
 $mesg = '';
 
@@ -34,7 +35,7 @@ $s = strftime("%S",$dt);
 if ($_POST["action"] == 'add')
 {
   $ligne = new LigneTel($db);
-
+  $ligne->contrat        = $_POST["contrat"];
   $ligne->numero         = $_POST["numero"];
   $ligne->client_comm    = $_POST["client_comm"];
   $ligne->client         = $_POST["client"];
@@ -52,6 +53,7 @@ if ($_POST["action"] == 'add')
   else
     {
       $_GET["action"] = 'create';
+      $_GET["contratid"] = $_POST["contrat"];
     }
   
 }
@@ -147,6 +149,36 @@ if ($_GET["action"] == 'confirmresilier')
 			    $_POST["reday"],
 			    $_POST["reyear"]));
 
+  $comm = new User($db,$ligne->commercial_id);
+  $comm->fetch();
+
+  $soc = new Societe($db);
+  $soc->fetch($ligne->socid);
+
+  /* 
+   * Envoi mail au commercial responsable
+   *
+   */
+
+  $subject = "Résiliation de la ligne ".$ligne->numero;
+  $sendto = $comm->prenom . " " .$comm->nom . "<".$comm->email.">";
+  $from = $user->prenom . " " .$user->nom . "<".$user->email.">";
+
+  $message = "La ligne numéro ".$ligne->numero;
+  $message .= " de la société : ".$soc->nom;
+  $message .= ", a été désactivée le ".strftime("%d/%m/%Y",mktime($h, $m , $s, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]));
+  $message .= " pour la raison suivante : ".$_POST["commentaire"];
+  $message .= ".";
+  $message .= "\n\n--\n";
+  $message .= "Ceci est un message automatique envoyé par Dolibarr";
+
+  $mailfile = new DolibarrMail($subject,
+			       $sendto,
+			       $from,
+			       $message);
+  $mailfile->sendfile();
+
+
   if ( $ligne->set_statut($user, 6, $datea, $_POST["commentaire"]) == 0)
     {
       Header("Location: fiche.php?id=".$ligne->id);
@@ -202,11 +234,10 @@ if ($cancel == $langs->trans("Cancel"))
 }
 
 /*
- * Création
+ * Création en 2 étape
  *
  */
-
-if ($_GET["action"] == 'create')
+if ($_GET["action"] == 'create1')
 {
   $form = new Form($db);
   print_titre("Nouvelle ligne");
@@ -221,10 +252,8 @@ if ($_GET["action"] == 'create')
       $ligne = new LigneTel($db);
     }
 
-  print "<form action=\"fiche.php\" method=\"post\">\n";
-  print '<input type="hidden" name="action" value="add">';
-  print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-
+  print '<form action="fiche.php" method="GET">';
+  print '<input type="hidden" name="action" value="create_line">';
       
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
@@ -250,141 +279,204 @@ if ($_GET["action"] == 'create')
   $form->select_array("client_comm",$ff,$ligne->client_comm);
   print '</td></tr>';
 
-
-
-  print '<tr><td width="20%">Numéro</td><td><input name="numero" size="12" value="'.$ligne->numero.'"></td></tr>';
-
-  print '<tr><td width="20%">Client (Agence/Filiale)</td><td >';
-  $ff = array();
-  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
-  if ( $db->query( $sql) )
-    {
-      $num = $db->num_rows();
-      if ( $num > 0 )
-	{
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $db->fetch_row();
-	      $ff[$row[0]] = $row[1] . " (".$row[2].")";
-	      $i++;
-	    }
-	}
-      $db->free();      
-    }
-  $form->select_array("client",$ff,$ligne->client);
-  print '</td></tr>';
-
-  print '<tr><td width="20%">Client à facturer</td><td >';
-  $ff = array();
-  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
-  if ( $db->query( $sql) )
-    {
-      $num = $db->num_rows();
-      if ( $num > 0 )
-	{
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $db->fetch_row();
-	      $ff[$row[0]] = $row[1] . " (".$row[2].")";
-	      $i++;
-	    }
-	}
-      $db->free();     
-    }
-  $form->select_array("client_facture",$ff,$ligne->client_facture);
-  print '</td></tr>';
-
-  print '<tr><td width="20%">Fournisseur</td><td >';
-  $ff = array();
-  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
-  if ( $db->query( $sql) )
-    {
-      $num = $db->num_rows();
-      if ( $num > 0 )
-	{
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $db->fetch_row();
-	      $ff[$row[0]] = $row[1];
-	      $i++;
-	    }
-	}
-      $db->free();
-      
-    }
-  $form->select_array("fournisseur",$ff,$ligne->fournisseur);
-  print '</td></tr>';
-
-  /*
-   * Commercial
-   */
-
-  print '<tr><td width="20%">Commercial</td><td >';
-  $ff = array();
-  $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
-  if ( $db->query( $sql) )
-    {
-      $num = $db->num_rows();
-      if ( $num > 0 )
-	{
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $db->fetch_row($i);
-	      $ff[$row[0]] = $row[1] . " " . $row[2];
-	      $i++;
-	    }
-	}
-      $db->free();
-      
-    }
-
-  $form->select_array("commercial",$ff,$ligne->commercial);
-
-  print '</td></tr>';
-
-  /*
-   * Concurrents
-   */
-
-  print '<tr><td width="20%">Fournisseur précédent</td><td >';
-  $ff = array();
-  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_concurrents ORDER BY rowid ";
-  if ( $db->query( $sql) )
-    {
-      $num = $db->num_rows();
-      if ( $num > 0 )
-	{
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $db->fetch_row($i);
-	      $ff[$row[0]] = $row[1];
-	      $i++;
-	    }
-	}
-      $db->free();
-      
-    }
-  $form->select_array("concurrent",$ff,$ligne->concurrent);
-  print '</td></tr>';
-
-  print '<tr><td width="20%">Remise LMN</td><td><input name="remise" size="3" maxlength="2" value="'.$ligne->remise.'">&nbsp;%</td></tr>'."\n";
-  
-  print '<tr><td width="20%" valign="top">Note</td><td>'."\n";
-  print '<textarea name="note" rows="4" cols="50">'."\n";
-  print stripslashes($ligne->note);
-  print '</textarea></td></tr>'."\n";
-
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
   print '</table>'."\n";
   print '</form>';
 }
+elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
+{
+
+  $contrat = new TelephonieContrat($db);
+  $contrat->fetch($_GET["contratid"]);
+
+
+  $form = new Form($db);
+  print_titre("Nouvelle ligne sur le contrat : ".$contrat->ref);
+
+  if (is_object($ligne))
+    {
+      // La création a échouée
+      print $ligne->error_message;
+    }
+  else
+    {
+      $ligne = new LigneTel($db);
+    }
+
+      
+  $socc = new Societe($db);
+  //if ( $socc->fetch($_GET["client_comm"]) == 1)
+  if ( $socc->fetch($contrat->client_comm_id) == 1)
+    {
+
+      if (strlen($socc->code_client) == 0)
+	{
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<tr><td width="20%">Client</td><td >';  
+	  print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$socc->id.'">'.$socc->nom.'</a>';
+	  print '</td></tr>';
+	  
+	  print '<tr><td width="20%">Code client</td><td >';  
+	  print $socc->code_client;
+	  print '</td></tr>';
+	  print '</table><br /><br />';
+	  print 'Impossible de créer une ligne pour cette société, vous devez au préalablement lui affecter un code client.';
+	}
+      elseif (strlen($socc->code_client) > 0 && $socc->check_codeclient() <> 0)
+	{
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<tr><td width="20%">Client</td><td >';  
+	  print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$socc->id.'">'.$socc->nom.'</a>';
+	  print '</td></tr>';
+	  
+	  print '<tr><td width="20%">Code client</td><td >';  
+	  print $socc->code_client;
+	  print '</td></tr>';
+	  print '</table><br /><br />';
+	  print 'Le code client de cette société est incorrect, vous devez lui affecter un code client correct.';
+	}
+      else
+	{
+	  print '<form action="fiche.php" method="post">';
+	  print '<input type="hidden" name="action" value="add">';
+	  print '<input type="hidden" name="contrat" value="'.$contrat->id.'">'."\n";
+	  print '<input type="hidden" name="client_comm" value="'.$socc->id.'">'."\n";
+	  
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<tr><td width="20%">Client</td><td >';  
+	  print $socc->nom;
+	  print '</td></tr>';
+	  
+	  print '<tr><td width="20%">Code client</td><td >';  
+	  print $socc->code_client;
+	  print '</td></tr>';
+	  
+	  
+	  print '<tr><td width="20%">Numéro</td><td><input name="numero" size="12" value="'.$ligne->numero.'"></td></tr>';
+	  
+	  $client = new Societe($db, $contrat->client_id);
+	  $client->fetch($contrat->client_id);
+	  
+	  print '<tr><td width="20%">Client (Agence/Filiale)</td><td colspan="2">';
+	  print $client->nom.'<br />';
+	  
+	  print $client->cp . " " .$client->ville;
+	  print '</td></tr>';
+	  print '<input type="hidden" name="client" value="'.$contrat->client_id.'">';
+
+	  $client_facture = new Societe($db);
+	  $client_facture->fetch($contrat->client_facture_id);
+	  
+	  print '<tr><td width="20%">Client Facturé</td><td>';
+	  print $client_facture->nom.'<br />';
+	  print $client_facture->cp . " " .$client_facture->ville;
+	  
+	  print '</td><td>';
+	  print '<input type="hidden" name="client_facture" value="'.$contrat->client_facture_id.'">';
+
+	  print '<tr><td width="20%">Fournisseur</td><td >';
+	  $ff = array();
+	  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
+	  if ( $db->query( $sql) )
+	    {
+	      $num = $db->num_rows();
+	      if ( $num > 0 )
+		{
+		  $i = 0;
+		  while ($i < $num)
+		    {
+		      $row = $db->fetch_row();
+		      $ff[$row[0]] = $row[1];
+		      $i++;
+		    }
+		}
+	      $db->free();
+	      
+	    }
+	  $form->select_array("fournisseur",$ff,$ligne->fournisseur);
+	  print '</td></tr>';
+	  
+	  /*
+	   * Commercial
+	   */
+	  
+      print '<tr><td width="20%">Commercial</td><td >';
+      $ff = array();
+      $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
+      if ( $db->query( $sql) )
+	{
+	  $num = $db->num_rows();
+	  if ( $num > 0 )
+	    {
+	      $i = 0;
+	      while ($i < $num)
+		{
+		  $row = $db->fetch_row($i);
+		  $ff[$row[0]] = $row[1] . " " . $row[2];
+		  $i++;
+		}
+	    }
+	  $db->free();
+	  
+	}
+      
+      $form->select_array("commercial",$ff,$ligne->commercial);
+      
+      print '</td></tr>';
+      
+      /*
+       * Concurrents
+       */
+      
+      print '<tr><td width="20%">Fournisseur précédent</td><td >';
+      $ff = array();
+      $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_concurrents ORDER BY rowid ";
+      if ( $db->query( $sql) )
+	{
+	  $num = $db->num_rows();
+	  if ( $num > 0 )
+	    {
+	      $i = 0;
+	      while ($i < $num)
+		{
+		  $row = $db->fetch_row($i);
+		  $ff[$row[0]] = $row[1];
+		  $i++;
+		}
+	    }
+	  $db->free();
+	  
+	}
+      $form->select_array("concurrent",$ff,$ligne->concurrent);
+      print '</td></tr>';
+      
+      print '<tr><td width="20%">Remise LMN</td><td><input name="remise" size="3" maxlength="2" value="'.$ligne->remise.'">&nbsp;%</td></tr>'."\n";
+      
+      print '<tr><td width="20%" valign="top">Note</td><td>'."\n";
+      print '<textarea name="note" rows="4" cols="50">'."\n";
+      print stripslashes($ligne->note);
+      print '</textarea></td></tr>'."\n";
+      
+      print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
+      print '</table>'."\n";
+      print '</form>';
+
+	}
+      
+    }
+  else
+    {
+      print "Erreur";
+    }
+
+}
 else
 {
+  /*
+   * Mode Visualisation
+   *
+   *
+   */
   if ($_GET["id"] or $_GET["numero"])
     {
       if ($_GET["action"] <> 're-edit')
@@ -411,6 +503,10 @@ else
 	      $hselected = $h;
 	      $h++;
 	      
+	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/factures.php?id=".$ligne->id;
+	      $head[$h][1] = $langs->trans('Factures');
+	      $h++;
+
 	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/infoc.php?id=".$ligne->id;
 	      $head[$h][1] = $langs->trans('Infos');
 	      $h++;
@@ -422,6 +518,10 @@ else
 	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/conso.php?id=".$ligne->id;
 	      $head[$h][1] = $langs->trans('Conso');
 	      $h++;
+
+	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/stat.php?id=".$ligne->id;
+	      $head[$h][1] = $langs->trans('Stats');
+	      $h++;
 	      
 	      dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
 
@@ -429,13 +529,21 @@ else
       
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
+	      if ($ligne->contrat)
+		{
+		  $contrat = new TelephonieContrat($db);
+		  $contrat->fetch($ligne->contrat);
+
+		  print '<tr><td width="20%">Contrat</td><td colspan="2">'.$contrat->ref_url.'</a></td></tr>';
+		}
+
 	      $client_comm = new Societe($db, $ligne->client_comm_id);
 	      $client_comm->fetch($ligne->client_comm_id);
 
-	      print '<tr><td width="20%">Client</td><td colspan="2">';
+	      print '<tr><td width="20%">Client</td><td>';
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
 
-	      print $client_comm->nom.'</a> '.$client_comm->code_client;
+	      print $client_comm->nom.'</a></td><td>'.$client_comm->code_client;
 	      print '</td></tr>';
 
 	      print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
@@ -449,6 +557,8 @@ else
 
 	      print $client->cp . " " .$client->ville;
 	      print '</td></tr>';
+
+
 
 	      $client_facture = new Societe($db);
 	      $client_facture->fetch($ligne->client_facture_id);
@@ -471,6 +581,23 @@ else
 
 	      print '</td></tr>';
 
+	      print '<tr><td width="20%">Fournisseur</td><td>';
+
+	      $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur";
+	      $sql .= " WHERE commande_active = 1 AND rowid = ".$ligne->fournisseur_id;
+
+	      if ( $db->query( $sql) )
+		{
+		  $num = $db->num_rows();
+		  if ( $num > 0 )
+		    {			  
+		      $row = $db->fetch_row();
+		      print $row[1];
+		    }
+		  $db->free();	      
+		}	      	      
+	      print '</td></tr>';
+
 	      print '<tr><td width="20%">Remise LMN</td><td colspan="2">'.$ligne->remise.'&nbsp;%</td></tr>';
 
 	      $commercial = new User($db, $ligne->commercial_id);
@@ -479,7 +606,7 @@ else
 	      print '<tr><td width="20%">Commercial</td>';
 	      print '<td colspan="2">'.$commercial->fullname.'</td></tr>';
 
-	      print '<tr><td width="20%">Fournisseur précédent</td>';
+	      print '<tr><td width="20%">Concurrent précédent</td>';
 	      print '<td colspan="2">'.$ligne->print_concurrent_nom().'</td></tr>';
 
 	      print '<tr><td width="20%">Statut</td><td colspan="2">';	  
@@ -576,122 +703,99 @@ else
 	      print '<input type="hidden" name="action" value="update">';
 	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-	      
-	      print '<tr><td width="20%">Client</td><td colspan="2">';
-	      print '<select name="client_comm">';
-	      
-	      $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
-	      if ( $db->query( $sql) )
-		{
-		  $num = $db->num_rows();
-		  if ( $num > 0 )
-		    {
-		      $i = 0;
-		      while ($i < $num)
-			{
-			  $row = $db->fetch_row($i);
-			  print '<option value="'.$row[0] .'"';
-			  if ($row[0] == $ligne->client_comm_id)
-			    {
-			      print " SELECTED";
-			    }
-			  print '>'.$row[1]. " (".$row[2].")";
-		      $i++;
-			}
-		    }
-		  $db->free();      
-		}
-	      
-	      print '</select></td></tr>';
 
-	      print '<tr><td width="20%">Numéro</td><td><input name="numero" size="12" value="'.$ligne->numero.'"></td></tr>';
-	      
-	      print '<tr><td width="20%">Client (Agence/Filiale)</td><td colspan="2">';
-	      print '<select name="client">';
-	      
-	      $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
-	      if ( $db->query( $sql) )
-		{
-		  $num = $db->num_rows();
-		  if ( $num > 0 )
-		    {
-		      $i = 0;
-		      while ($i < $num)
-			{
-			  $row = $db->fetch_row($i);
-			  print '<option value="'.$row[0] .'"';
-			  if ($row[0] == $ligne->client_id)
-			    {
-			      print " SELECTED";
-			    }
-			  print '>'.$row[1]. " (".$row[2].")";
-		      $i++;
-			}
-		    }
-		  $db->free();      
-		}
-	      
-	      print '</select></td></tr>';
-	      
-	      print '<tr><td width="20%">Client à facturer</td><td colspan="2">'."\n";
-	      print '<select name="client_facture">'."\n";
-	      
-	      
-	      $sql = "SELECT idp, nom,ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
-	      if ( $db->query( $sql) )
-		{
-		  $num = $db->num_rows();
-		  if ( $num > 0 )
-		    {
-		      $i = 0;
-		      while ($i < $num)
-			{
-			  $row = $db->fetch_row($i);
-			  print '<option value="'.$row[0] .'"';
-			  if ($row[0] == $ligne->client_facture_id)
-			    {
-			      print " SELECTED";
-			    }
-			  print '>'.$row[1]. " (".$row[2].")";
-			  
-			  $i++;
-			}
-		    }
-		  $db->free();     
-		}
-	      
-	      print '</select></td></tr>';
-	      
-	      print '<tr><td width="20%">Fournisseur</td><td colspan="2">';
-	      print '<select name="fournisseur">';
-	      
-	      $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
-	      if ( $db->query( $sql) )
-		{
-		  $num = $db->num_rows();
-		  if ( $num > 0 )
-		    {
-		      $i = 0;
-		      while ($i < $num)
-			{
-			  $row = $db->fetch_row($i);
-			  print '<option value="'.$row[0] .'"';
-			  if ($row[0] == $ligne->fournisseur_id)
-			    {
-			      print " SELECTED";
-			    }
-			  print '>'.$row[1];
+	      $client_comm = new Societe($db, $ligne->client_comm_id);
+	      $client_comm->fetch($ligne->client_comm_id);
 
-
-			  $i++;
-			}
-		    }
-		  $db->free();	      
+	      print '<tr><td width="20%">Client</td><td>';
+	      print $client_comm->nom;
+	      print '</td></tr>';
+	      print '<input type="hidden" name="client_comm" value="'.$client_comm->id.'">'."\n";
+	      
+	      print '<tr><td width="20%">Numéro</td><td>';
+	      if ($ligne->statut == -1)
+		{
+		  print '<input name="numero" size="12" value="'.$ligne->numero.'">';
 		}
+	      else
+		{
+		  print '<input type="hidden" name="numero" value="'.$ligne->numero.'">';
+		  print dolibarr_print_phone($ligne->numero);
+		}
+	      print '</td></tr>';
+
+	      $client = new Societe($db, $ligne->client_id);
+	      $client->fetch($ligne->client_id);
 	  
-	      print '</select></td></tr>';
+	      print '<tr><td width="20%">Client (Agence/Filiale)</td><td>';
+	      print $client->nom.'<br />';
+	      
+	      print $client->cp . " " .$client->ville;
+	      print '</td></tr>';
+	      print '<input type="hidden" name="client" value="'.$ligne->client_id.'">';
+
+	      $client_facture = new Societe($db);
+	      $client_facture->fetch($ligne->client_facture_id);
+	      
+	      print '<tr><td width="20%">Client Facturé</td><td>';
+	      print $client_facture->nom.'<br />';
+	      print $client_facture->cp . " " .$client_facture->ville;
+	      
+	      print '</td></tr>';
+	      print '<input type="hidden" name="client_facture" value="'.$ligne->client_facture_id.'">';
+
+	      print '<tr><td width="20%">Fournisseur</td><td>';
+
+	      if ($ligne->statut == -1)
+		{
+		  print '<select name="fournisseur">';
+	      
+		  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
+		  if ( $db->query( $sql) )
+		    {
+		      $num = $db->num_rows();
+		      if ( $num > 0 )
+			{
+			  $i = 0;
+			  while ($i < $num)
+			    {
+			      $row = $db->fetch_row($i);
+			      print '<option value="'.$row[0] .'"';
+			      if ($row[0] == $ligne->fournisseur_id)
+				{
+				  print " SELECTED";
+				}
+			      print '>'.$row[1];
+			      $i++;
+			    }
+			}
+		      $db->free();	      
+		    }
+		  
+		  print '</select>';
+		}
+	      else
+		{
+		  print '<input type="hidden" name="fournisseur" value="'.$ligne->fournisseur_id.'">';
+
+		  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur";
+		  $sql .= " WHERE commande_active = 1 AND rowid = ".$ligne->fournisseur_id;
+
+		  if ( $db->query( $sql) )
+		    {
+		      $num = $db->num_rows();
+		      if ( $num > 0 )
+			{			  
+			  $row = $db->fetch_row();
+			  print $row[1];
+			}
+		      $db->free();	      
+		    }
+		}
+
+	      print '</td></tr>';
 	  
-	      print "\n".'<tr><td width="20%">Commercial</td><td colspan="2">';
+	      print "\n".'<tr><td width="20%">Commercial</td><td>';
 	      print '<select name="commercial">';
 	  
 	      $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
@@ -725,7 +829,7 @@ else
 	       * Commercial
 	       */
 	  
-	      print '<tr><td width="20%">Fournisseur précédent</td><td colspan="2">';
+	      print '<tr><td width="20%">Fournisseur précédent</td><td>';
 	      print '<select name="concurrent">';
 	  
 	      $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_concurrents ORDER BY nom ";
@@ -764,7 +868,7 @@ else
 	      print '<textarea name="note" rows="4" cols="50">';
 	      print "</textarea></td></tr>";
 	  
-	      print '<tr><td>&nbsp;</td><td><input type="submit" value="Mettre à jour">';
+	      print '<tr><td align="center" colspan="2"><input type="submit" value="Mettre à jour">';
 	      print '<a href="fiche.php?id='.$ligne->id.'">Annuler</a></td></tr>';
 	      print '</table>'."\n";
 	      print '</form>'."\n";
@@ -980,6 +1084,7 @@ if ($_GET["action"] == '')
   print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$ligne->id\">".$langs->trans("Contact")."</a>";
 
   print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Edit")."</a>";
+      
 }
 
 print "</div>";
