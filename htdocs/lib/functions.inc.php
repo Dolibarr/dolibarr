@@ -25,6 +25,14 @@
 $yn[0] = "non";
 $yn[1] = "oui";
 
+Function dolibarr_print_object_info($object)
+{
+  print "Créé par  : " . $object->user_creation->fullname . '<br>';
+  print "Date de création : " . strftime("%A %d %B %Y %H:%M:%S",$object->date_creation) . '<br>';
+  print "Modifié par  : " . '<br>';
+  print "Date de modification : " . strftime("%A %d %B %Y %H:%M:%S",$object->date_modification) . '<br>';
+}
+
 Function dolibarr_print_phone($phone)
 {
   if (strlen(trim($phone)) == 10)
@@ -481,7 +489,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
   print_fleche_navigation($page,$file,$options, $nextpage);
 
-  print '</td></tr></table><p>';
+  print '</td></tr></table>';
 }
 
 /*
