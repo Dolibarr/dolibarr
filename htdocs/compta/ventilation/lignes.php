@@ -64,7 +64,7 @@ if ($result)
   $num_lignes = $db->num_rows();
   $i = 0; 
   
-  print_barre_liste("Lignes de facture ventilées",$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
+  print_barre_liste("Lignes de facture ventilées",$page,"lignes.php","",$sortfield,$sortorder,'',$num_lignes);
 
   if ($num_lignes)
     {
