@@ -256,7 +256,8 @@ class Form {
 	    {
 	      $array[0] = "-";
 	    }
-	  sort  ($array);
+	  reset($array);
+
 	  while (list($key, $value) = each ($array))
 	    {
 	      print "<option value=\"$key\" ";
