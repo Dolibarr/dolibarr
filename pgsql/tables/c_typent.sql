@@ -18,7 +18,7 @@
 --
 -- ========================================================================
 
-create table c_typent
+create table llx_c_typent
 (
   id        SERIAL,
   libelle   varchar(30)

@@ -18,7 +18,7 @@
 --
 -- ===================================================================
 
-create table c_propalst
+create table llx_c_propalst
 (
   id              SERIAL,
   label           varchar(30)

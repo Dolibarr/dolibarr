@@ -18,7 +18,7 @@
 --
 -- ========================================================================
 
-create table c_effectif
+create table llx_c_effectif
 (
   id SERIAL,
   libelle varchar(30)

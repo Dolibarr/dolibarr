@@ -28,7 +28,7 @@
 -- 1 : sortie d'argent
 -- 2 : entrée ou sortie d'argent
 
-create table c_paiement
+create table llx_c_paiement
 (
   id         SERIAL,
   libelle    varchar(30),

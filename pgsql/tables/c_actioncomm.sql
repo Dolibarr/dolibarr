@@ -21,7 +21,7 @@
 --
 -- ========================================================================
 
-create table c_actioncomm
+create table llx_c_actioncomm
 (
   id         SERIAL,
   libelle    varchar(30),

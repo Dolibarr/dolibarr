@@ -27,15 +27,15 @@ OPTIONS=-U $(OWNER)
 all:	show
 
 create:	
-	$(SQL) $(OPTIONS) $(BASE) < actioncomm.sql
-	$(SQL) $(OPTIONS) $(BASE) < c_actioncomm.sql
-	$(SQL) $(OPTIONS) $(BASE) < c_chargesociales.sql
-	$(SQL) $(OPTIONS) $(BASE) < c_effectif.sql
-	$(SQL) $(OPTIONS) $(BASE) < c_paiement.sql
-	$(SQL) $(OPTIONS) $(BASE) < c_pays.sql
-	$(SQL) $(OPTIONS) $(BASE) < c_propalst.sql
-	$(SQL) $(OPTIONS) $(BASE) < c_stcomm.sql
-	$(SQL) $(OPTIONS) $(BASE) < c_typent.sql
+	$(SQL) $(OPTIONS) $(BASE) < llx_actioncomm.sql
+	$(SQL) $(OPTIONS) $(BASE) < llx_c_actioncomm.sql
+	$(SQL) $(OPTIONS) $(BASE) < llx_c_chargesociales.sql
+	$(SQL) $(OPTIONS) $(BASE) < llx_c_effectif.sql
+	$(SQL) $(OPTIONS) $(BASE) < llx_c_paiement.sql
+	$(SQL) $(OPTIONS) $(BASE) < llx_c_pays.sql
+	$(SQL) $(OPTIONS) $(BASE) < llx_c_propalst.sql
+	$(SQL) $(OPTIONS) $(BASE) < llx_c_stcomm.sql
+	$(SQL) $(OPTIONS) $(BASE) < llx_c_typent.sql
 	$(SQL) $(OPTIONS) $(BASE) < llx_adherent.sql
 	$(SQL) $(OPTIONS) $(BASE) < llx_bank.sql
 	$(SQL) $(OPTIONS) $(BASE) < llx_bank_account.sql

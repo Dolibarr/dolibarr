@@ -18,7 +18,7 @@
 --
 -- ========================================================================
 
-create table c_stcomm
+create table llx_c_stcomm
 (
   id       SERIAL,
   libelle  varchar(30)

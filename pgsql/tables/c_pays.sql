@@ -18,7 +18,7 @@
 --
 -- ========================================================================
 
-create table c_pays
+create table llx_c_pays
 (
   id       SERIAL,
   libelle  varchar(25),

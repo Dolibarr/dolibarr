@@ -20,29 +20,29 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 
-drop table actioncomm;
+drop table llx_actioncomm;
 
-drop table bots;
+drop table llx_bots;
 
-drop table c_anexpe;
+drop table llx_c_anexpe;
 
-drop table c_actioncomm;
+drop table llx_c_actioncomm;
 
-drop table c_chargesociales;
+drop table llx_c_chargesociales;
 
-drop table c_effectif;
+drop table llx_c_effectif;
 
-drop table c_paiement ;
+drop table llx_c_paiement ;
 
-drop table c_pays ;
+drop table llx_c_pays ;
 
-drop table c_prestatype ;
+drop table llx_c_prestatype ;
 
-drop table c_propalst ;
+drop table llx_c_propalst ;
 
-drop table c_stcomm;
+drop table llx_c_stcomm;
 
-drop table c_typent ;
+drop table llx_c_typent ;
 
 drop table llx_adherent;
 

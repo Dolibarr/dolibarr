@@ -20,7 +20,7 @@
 -- $Source$
 --
 -- ========================================================================
-create table c_chargesociales
+create table llx_c_chargesociales
 (
   id          SERIAL,
   libelle     varchar(80),
