@@ -339,7 +339,61 @@ create table llx_commandedet
   price          real           
 )type=innodb;
 
+create table llx_commande_fournisseur
+(
+  rowid               integer AUTO_INCREMENT PRIMARY KEY,
+  tms                 timestamp,
+  fk_soc              integer,
+  fk_soc_contact      integer,
+  fk_projet           integer DEFAULT 0,   
+  ref                 varchar(30) NOT NULL,
+  date_creation       datetime,            
+  date_valid          datetime,            
+  date_cloture        datetime,            
+  date_commande       date,                
+  fk_methode_commande integer default 0,
+  fk_user_author      integer,             
+  fk_user_valid       integer,             
+  fk_user_cloture     integer,             
+  source              smallint NOT NULL,
+  fk_statut           smallint  default 0,
+  amount_ht           real      default 0,
+  remise_percent      real      default 0,
+  remise              real      default 0,
+  tva                 real      default 0,
+  total_ht            real      default 0,
+  total_ttc           real      default 0,
+  note                text,
+  model_pdf           varchar(50),
 
+  UNIQUE INDEX (ref)
+)type=innodb;
+
+create table llx_commande_fournisseur_log
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  datelog          datetime NOT NULL,
+  fk_commande      integer NOT NULL,
+  fk_statut        smallint NOT NULL,
+  fk_user          integer NOT NULL
+)type=innodb;
+
+create table llx_commande_fournisseurdet
+(
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande    integer,
+  fk_product     integer,
+  ref            varchar(50),
+  label          varchar(255),
+  description    text,
+  tva_tx         real DEFAULT 19.6,
+  qty            real,             
+  remise_percent real DEFAULT 0,
+  remise         real DEFAULT 0,
+  subprice       real,          
+  price          real           
+)type=innodb;
 
 
 create table llx_societe_rib
