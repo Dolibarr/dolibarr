@@ -177,7 +177,7 @@ if ($socid > 0)
     print '</td><td valign="top" width="50%">';
     /*
      *
-     * Liste des projets associés
+     * Liste des factures associées
      *
      */
     $sql  = "SELECT p.rowid,p.libelle,p.facnumber,".$db->pdate("p.datef")." as df";
