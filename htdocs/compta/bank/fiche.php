@@ -280,7 +280,7 @@ else
       print '<input type="hidden" name="action" value="update">';
       print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
       
-      print '<table class="border">';
+      print '<table class="border" width="100%">';
       
       print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
       print '<td colspan="3"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
