@@ -218,7 +218,7 @@ if ($action == 'send')
 
 	      $sendto = htmlentities($sendto);
 	      
-	      $sql = "INSERT INTO llx_actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label) VALUES (now(), 9 ,$fac->socidp ,'Envoyée à $sendto',$fac->id, $sendtoid, $user->id, 'Envoi Facture par mail');";
+	      $sql = "INSERT INTO llx_actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), 9 ,$fac->socidp ,'Envoyée à $sendto',$fac->id, $sendtoid, $user->id, 'Envoi Facture par mail',100);";
 
 	      if (! $db->query($sql) )
 		{
@@ -872,6 +872,17 @@ else
       {
 	$sql .= " AND date_format(f.datef, '%m') = $month";
       }
+
+    if ($filtre)
+      {
+	$filtrearr = split(",", $filtre);
+	foreach ($filtrearr as $fil)
+	  {
+	    $filt = split(":", $fil);
+	    $sql .= " AND " . $filt[0] . " = " . $filt[1];
+	  }
+      }
+
     if ($year > 0)
       {
 	$sql .= " AND date_format(f.datef, '%Y') = $year";
@@ -907,17 +918,25 @@ else
 		$var=!$var;
 
 		print "<tr $bc[$var]>";
-		print "<td><a href=\"facture.php3?facid=$objp->facid\">";
 		if ($objp->paye)
 		  {
-		    print $objp->facnumber;
+		    $class = "normal";
 		  }
 		else
 		  {
-		    print '<b>'.$objp->facnumber.'</b>';
+		    if ($objp->fk_statut == 0)
+		      {
+			$class = "normal";
+		      }
+		    else
+		      {
+			$class = "impayee";
+		      }
 		  }
+
+		print '<td><a class="'.$class.'" href="facture.php3?facid='.$objp->facid.'">' . $objp->facnumber;
 		print "</a></TD>\n";
-		print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+		print '<TD><a class="'.$class.'" href="fiche.php3?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		
 		if ($objp->df > 0 )
 		  {
@@ -926,9 +945,9 @@ else
 		    $m = strftime("%m",$objp->df);
 		    
 		    print strftime("%d",$objp->df)."\n";
-		    print " <a href=\"facture.php3?year=$y&month=$m\">";
+		    print ' <a class="'.$class.'" href="facture.php3?year='.$y.'&month='.$m.'">';
 		    print strftime("%B",$objp->df)."</a>\n";
-		    print " <a href=\"facture.php3?year=$y\">";
+		    print ' <a class="'.$class.' "href="facture.php3?year='.$y.'">';
 		    print strftime("%Y",$objp->df)."</a></TD>\n";
 		  }
 		else
@@ -946,7 +965,7 @@ else
 		      }
 		    else
 		      {
-			print '<td align="center">impayée</td>';
+			print '<td align="center"><a href="facture.php3?filtre=paye:0,fk_statut:1">impayée</a></td>';
 		      }
 		  }
 		else
@@ -964,7 +983,7 @@ else
       }
     else
       {
-	print $db->error();
+	print $db->error() . "<br>" . $sql;
       }    
   }
   
