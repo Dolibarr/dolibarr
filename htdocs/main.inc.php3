@@ -65,6 +65,7 @@ require (DOL_DOCUMENT_ROOT ."/html.form.class.php");
 require (DOL_DOCUMENT_ROOT ."/translate.class.php");
 require (DOL_DOCUMENT_ROOT ."/boxes.php");
 require (DOL_DOCUMENT_ROOT ."/address.class.php");
+require (DOL_DOCUMENT_ROOT ."/notify.class.php");
 require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf.php");
 
 define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/font/');
