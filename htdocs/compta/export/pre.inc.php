@@ -44,8 +44,11 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
 
-  $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
-
+  if (!$user->rights->compta->ventilation->creer)
+    {
+      $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
+    }
+      
   $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
 
   $menu->add(DOL_URL_ROOT."/compta/export/",$langs->trans("Export"));
