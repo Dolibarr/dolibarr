@@ -29,3 +29,4 @@ DictionnaryCountry=Pays
 DictionnaryCivility=Titres de civilité
 DictionnaryActions=Liste des actions
 AlwaysActive=Toujours actif
+UpdateRequired=Votre système nécessite une mise à jour. Pour cela cliquez sur <a href="%s">Mettre à jour</a>.

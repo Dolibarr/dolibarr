@@ -29,3 +29,4 @@ DictionnaryCountry=Countries
 DictionnaryCivility=Civility title
 DictionnaryActions=Actions list
 AlwaysActive=Always active
+UpdateRequired=Your system need to be updated. For this click on <a href="%s">Update now</a>.
