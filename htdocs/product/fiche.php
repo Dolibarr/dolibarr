@@ -245,11 +245,11 @@ else
 	{ 
 	  if ($action <> 'edit' && $action <> 're-edit')
 	    {
-          /*
-           *  Fiche en visu
-           */
-
-          // Zone recherche
+	      /*
+	       *  Fiche en visu
+	       */
+	      
+	      // Zone recherche
 	      print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 	      print '<tr class="liste_titre">';
 	      print '<form action="liste.php?type='.$product->type.'" method="post"><td>';
@@ -257,18 +257,18 @@ else
 	      print '</td></form><form action="liste.php" method="post"><td>';
 	      print 'Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
 	      print '</td></form></tr></table>';
-          print '<br>';
+	      print '<br>';
           
 	      print($mesg);
 
-    	  $head[0][0] = DOL_URL_ROOT."$PHP_SELF?id=".$id;
-    	  $head[0][1] = 'Fiche '.$types[$product->type].' : '.$product->ref;
-    	  $h = 1;
-    	  $a = 0;
-    
-    	  dolibarr_fiche_head($head, $a);
-
-  
+	      $head[0][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+	      $head[0][1] = 'Fiche';
+	      
+	      $head[1][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
+	      $head[1][1] = 'Prix';
+	      
+	      dolibarr_fiche_head($head, 0, 'Fiche '.$types[$product->type].' : '.$product->ref);
+	      	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
 	      print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
