@@ -244,6 +244,9 @@ if ($_GET["propalid"])
   $a = 0;
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
   $head[$h][1] = "Note";
+  $h++;
+  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
+  $head[$h][1] = "Info";
 
   dolibarr_fiche_head($head, $a, $societe->nom);
 
@@ -525,7 +528,7 @@ if ($_GET["propalid"])
 		{
 		  if ($propal->statut == 1 && $user->rights->propale->cloturer)
 		    {
-		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=statut\">Cloturer</a>";
+		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=statut\">Clôturer</a>";
 		    }
 		} 
 
@@ -669,15 +672,30 @@ if ($_GET["propalid"])
 	    {
 	      $coms = $propal->commande_liste_array();
 	      print '<br><table class="border" width="100%" cellspacing="0" cellpadding="3">';
-	      print "<tr><td>Commande Num.</td></tr>\n";
-	      
-	      for ($i = 0 ; $i < $nb_commande ; $i++)
+
+	      if ($nb_commande == 1)
+
 		{
-		  print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
-		  print "</tr>\n";
+		  print "<tr><td>Commande rattachée : ";
+		  print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a>";
+		  print "</td></tr>\n";
+		}
+	      else
+		{
+		  print "<tr><td>Commandes rattachées</td></tr>\n";
+	      
+		  for ($i = 0 ; $i < $nb_commande ; $i++)
+		    {
+		      print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
+		      print "</tr>\n";
+		    }
 		}
 	      print "</table>";
 	    }
+
+
+
+
 	  //	  print '<a href="propal.php?propalid=$propalid&amp;action=commande\">Générer</a>";
 	  /*
 	   *
@@ -770,46 +788,13 @@ if ($_GET["propalid"])
 	{
 	  print "Num rows = " . $db->num_rows();
 	  print "<p><b>$sql";
-	}
-      /*
-       * Voir le suivi des actions
-       *
-       *
-       *
-       */
-      if ($suivi)
-	{
-	  $validor = new User($db, $obj->fk_user_valid);
-	  $validor->fetch('');
-	  $cloturor = new User($db, $obj->fk_user_cloture);
-	  $cloturor->fetch('');
-	  
-	  print 'Suivi des actions<br>';
-	  print '<table cellspacing=0 border=1 cellpadding=3>';
-	  print '<tr><td>&nbsp;</td><td>Nom</td><td>Date</td></tr>';
-	  print '<tr><td>Création</td><td>'.$author->fullname.'</td>';
-	  print '<td>'.$obj->datec.'</td></tr>';
-	  
-	  print '<tr><td>Validation</td><td>'.$validor->fullname.'&nbsp;</td>';
-	  print '<td>'.$obj->date_valid.'&nbsp;</td></tr>';
-	  
-	  print '<tr><td>Cloture</td><td>'.$cloturor->fullname.'&nbsp;</td>';
-	  print '<td>'.$obj->date_cloture.'&nbsp;</td></tr>';      
-	  print '</table>';
-	}
-      else 
-	{
-	  print '<p><a href="propal.php?propalid='.$propal->id.'&amp;suivi=1">Voir le suivi des actions </a>';
-	}
-      
+	}      
     }
   else
     {
       print $db->error();
       print "<p><b>$sql";
-    }
-  
-
+    }  
   /*
    *
    *
