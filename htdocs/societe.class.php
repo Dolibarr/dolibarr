@@ -302,7 +302,7 @@ class Societe {
 	    }
 	  else
 	    {
-	      print "Aucun enregistrement trouvé<br>$sql";
+	      dolibarr_syslog("Erreur Societe::Fetch aucune societe avec id=".$this->id);
 	      $result = -2;
 	    }
 
