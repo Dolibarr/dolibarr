@@ -305,54 +305,58 @@ class User
     }
 
   /**
-   *    \brief      Charge dans l'objet user, la liste des permissions auxquels l'utilisateur a droit
+   *    \brief      Charge dans l'objet user, la liste des permissions auxquelles l'utilisateur a droit
    *    \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
    */
 	 
   function getrights($module='')
     {
-      if ($this->all_permissions_are_loaded)
-      {
-        // Si les permissions ont déja été chargé pour ce user, on quitte
-        return;
-      }
-
-      /*
-       * Récupération des droits
-       */
-      $sql = "SELECT r.module, r.perms, r.subperms ";
-      $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
-      $sql .= " WHERE r.id = u.fk_id AND u.fk_user= $this->id AND r.perms IS NOT NULL";
-      if ($this->db->query($sql))
-	{
-	  $num = $this->db->num_rows();
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $this->db->fetch_row();
-
-	      if (strlen($row[1]) > 0)
-		{
-
-		  if (strlen($row[2]) > 0)
-		    {
-		      $this->rights->$row[0]->$row[1]->$row[2] = 1;
-		    }
-		  else
-		    {
-		      $this->rights->$row[0]->$row[1] = 1;
-		    }
-
-		}
-	      $i++;
-	    }
-	}
-
+        if ($this->all_permissions_are_loaded)
+        {
+            // Si les permissions ont déja été chargé pour ce user, on quitte
+            return;
+        }
+        
+        // Récupération des droits utilisateurs + récupération des droits groupes
+        $sql = "SELECT r.module, r.perms, r.subperms";
+        $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as r";
+        $sql .= " WHERE r.id = ur.fk_id AND ur.fk_user= $this->id AND r.perms IS NOT NULL";
+        $sql .= " UNION ALL";
+        $sql .= " SELECT r.module, r.perms, r.subperms";
+        $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr, ".MAIN_DB_PREFIX."usergroup_user as gu, ".MAIN_DB_PREFIX."rights_def as r";
+        $sql .= " WHERE r.id = gr.fk_id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user= $this->id AND r.perms IS NOT NULL";
+        
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $row = $this->db->fetch_row($result);
+        
+                if (strlen($row[1]) > 0)
+                {
+        
+                    if (strlen($row[2]) > 0)
+                    {
+                        $this->rights->$row[0]->$row[1]->$row[2] = 1;
+                    }
+                    else
+                    {
+                        $this->rights->$row[0]->$row[1] = 1;
+                    }
+        
+                }
+                $i++;
+            }
+        }
+        
         if ($module == '')
         {
-          // Si module etait non defini, alors on a tout chargé, on peut donc considérer
-          // que les droits sont en cache (car tous chargés) pour cet instance de user
-          $this->all_permissions_are_loaded=1;
+            // Si module etait non defini, alors on a tout chargé, on peut donc considérer
+            // que les droits sont en cache (car tous chargés) pour cet instance de user
+            $this->all_permissions_are_loaded=1;
         }
         
     }
