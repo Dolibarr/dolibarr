@@ -50,7 +50,7 @@ $(DOC).pdf: $(FRPAGES)
 	$(DEBIANDOC2HTML) $(HOPTIONS) $<
 
 put:
-	$(RSYNC) $(ROPT) $(RSSH) dolibarr-dev.html rodolphe.quiedeville.org:/home/www/www.dolibarr.com/htdocs/documentation
+	$(RSYNC) $(ROPT) $(RSSH) *pdf dolibarr-dev.html rodolphe.quiedeville.org:/home/www/www.dolibarr.com/htdocs/documentation
 
 clean:
 	rm -f *pdf *pslinuxdoc --backend=latex -o pdf dolidev.sgml
