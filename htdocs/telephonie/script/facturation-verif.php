@@ -30,7 +30,6 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 
-
 $error = 0;
 
 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
@@ -40,7 +39,6 @@ if ( $db->query($sql) )
   $row = $db->fetch_row();
   print $row[0]." lignes de communications\n";
 }
-
 
 /*******************************************************************************
  *
@@ -52,16 +50,18 @@ $tarif_achat = new TelephonieTarif($db, 1, "achat");
 $tarif_vente = new TelephonieTarif($db, 1, "vente");
 
 $sql = "SELECT distinct(num) FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
+
+$resql = $db->query($sql);
   
-if ( $db->query($sql) )
+if ( $resql )
 {
-  $nums = $db->num_rows();
+  $nums = $db->num_rows($resql);
 
   $i = 0;
 
   while($i < $nums)
     {
-      $row = $db->fetch_row();
+      $row = $db->fetch_row($resql);
 
       $numero = $row[0];
 
@@ -103,7 +103,4 @@ if ( $db->query($sql) )
   $db->free();
 }
 print "\n";
-
-unset ($nums, $row, $tarif_achat, $tarif_vente);
-
 ?>
