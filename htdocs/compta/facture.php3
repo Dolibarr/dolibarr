@@ -375,9 +375,6 @@ else
 	print '<tr><td>Total</td><td align="right" colspan="2">'.price($obj->total).'</td>';
 	print '<td>euros TTC</td></tr>';
 	
-	print '<tr><td>Statut</td><td align="center">'.$obj->statut.'</td>';
-	print "<td>Payé</td>";
-	print "<td align=\"center\"><b>".$yn[$obj->paye]."</b></td></tr>";
 	print "</table>";
 	
 	print "</td><td valign=\"top\">";
