@@ -747,78 +747,90 @@ else
 	 * Fin Ajout ligne
 	 *
 	 */
-	if ($user->societe_id == 0 && $fac->paye == 0)
+	if ($user->societe_id == 0)
 	  {
 	    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
 	
 	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
 	      {
-		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
+		print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
 	      } 
 	    elseif ($fac->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer) 
 	      {
-		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=presend\">Envoyer</a>]</td>";
+		print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&action=presend\">Envoyer</a>]</td>";
 	      }
 	    else
 	      {
-		print "<td align=\"center\" width=\"25%\">-</td>";
+		print "<td align=\"center\" width=\"20%\">-</td>";
 	      } 
 	    
 	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
 	      {
-		print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
+		print "<td align=\"center\" width=\"20%\">[<a href=\"paiement.php?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
 	      }
 	    else
 	      {
-		print "<td align=\"center\" width=\"25%\">-</td>";
+		print "<td align=\"center\" width=\"20%\">-</td>";
 	      }
 	    
 	    if ($fac->statut == 1 && abs($resteapayer) == 0 && $fac->paye == 0) 
 	      {
 		if ($user->rights->facture->paiement)
 		  {
-		    print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
+		    print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
 		  }
 		else
 		  {
-		    print '<td align="center" width="25%">-</td>';
+		    print '<td align="center" width="20%">-</td>';
 		  }
 	      }
 	    elseif ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer) 
 	      {
-		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=prerelance\">Envoyer une relance</a>]</td>";
+		print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&action=prerelance\">Envoyer une relance</a>]</td>";
 	      }
 	    else
 	      {
-		print '<td align="center" width="25%">-</td>';
+		print '<td align="center" width="20%">-</td>';
 	      }
 	    
 	    if ($fac->statut == 0 && $fac->total_ht > 0) 
 	      {
 		if ($user->rights->facture->valider)
 		  {
-		    print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=valid\">Valider</a>]</td>";
+		    print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&action=valid\">Valider</a>]</td>";
 		  }
 		else
 		  {
-		    print '<td align="center" width="25%">-</td>';
+		    print '<td align="center" width="20%">-</td>';
 		  }
 	      }
 	    elseif ($fac->statut == 1 && $fac->paye == 0)
 	      {
 		if ($user->rights->facture->creer)
 		  {
-		    print "<td align=\"center\" width=\"25%\"><a href=\"facture.php?facid=$facid&action=pdf\">Générer la facture</a></td>";
+		    print "<td align=\"center\" width=\"20%\"><a href=\"facture.php?facid=$facid&action=pdf\">Générer la facture</a></td>";
 		  }
 		else
 		  {
-		    print '<td align="center" width="25%">-</td>';
+		    print '<td align="center" width="20%">-</td>';
 		  }
 	      }
 	    else
 	      {
-		print '<td align="center" width="25%">-</td>';
+		print '<td align="center" width="20%">-</td>';
 	      }
+
+	    if ($fac->statut > 0)
+	      {
+		print '<td align="center" width="20%">-</td>';
+		// RODO TODO
+		//print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$facid.'&action=create">Récurrente</a></td>';
+	      }
+	    else
+	      {
+		print '<td align="center" width="20%">-</td>';
+	      }
+
 	    print "</tr></table>";
 	  }
 	print "<p>\n";
