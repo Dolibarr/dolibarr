@@ -290,6 +290,29 @@ class Facture
       
       $notify = New Notify($this->db);
       $notify->send($action_notify, $this->socidp, $mesg, "facture", $rowid, $filepdf);
+      /*
+       * Update Stats
+       *
+       */
+      $sql = "SELECT fk_product FROM llx_facturedet WHERE fk_facture = ".$this->id;
+      $sql .= " AND fk_product IS NOT NULL";
+
+      $result = $this->db->query($sql);
+
+      if ($result)
+	{
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  while ($i < $num)	  
+	    {
+	      $obj = $this->db->fetch_object($i);
+
+	      $sql = "UPDATE llx_product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
+	      $db2 = $this->db->clone();
+	      $result = $db2->query($sql);
+	      $i++;
+	    }
+	}
 
       return $result;
     }
