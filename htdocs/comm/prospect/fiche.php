@@ -168,7 +168,7 @@ if ($socid > 0)
 	$num = $db->num_rows();
 	if ($num >0 )
 	  {
-	    print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php?socidp=$societe->id\">Liste des propales ($num)</td></tr>";
+	    print "<tr $bc[$var]><td colspan=\"4\"><a href=\"../propal.php?socidp=$societe->id\">Liste des propales ($num)</td></tr>";
 	    $var=!$var;
 	  }
 	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
@@ -176,7 +176,7 @@ if ($socid > 0)
 	  {
 	    $objp = $db->fetch_object( $i);
 	    print "<tr $bc[$var]>";
-	    print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
+	    print "<td><a href=\"../propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
 	    if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
 	      {
 		print " <b>&gt; 15 jours</b>";
@@ -313,7 +313,7 @@ if ($socid > 0)
 
 	  if ($obj->propalrowid)
 	    {
-	      print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+	      print '<td width="40%"><a href="../propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
 	    }
 	  else
 	    {
