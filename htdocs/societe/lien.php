@@ -78,7 +78,11 @@ if($_GET["socid"])
   $h = 1;
 
   $head[$h][0] = 'lien.php?socid='.$soc->id;
-  $head[$h][1] = 'Lien';
+  $head[$h][1] = $langs->trans("Links");
+  $h++;
+
+  $head[$h][0] = 'commerciaux.php?socid='.$soc->id;
+  $head[$h][1] = $langs->trans("SalesRepresentative");
   $h++;
 
   $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
@@ -106,7 +110,7 @@ if($_GET["socid"])
   print $soc->code_client;
   if ($soc->check_codeclient() <> 0)
     {
-      print "Code incorrect";
+      print $langs->trans("WrongCode");
     }
   print '</td></tr>';
 
@@ -126,7 +130,7 @@ if($_GET["socid"])
       $socm = new Societe($db);
       $socm->fetch($soc->parent);
       
-      print '<tr><td>Maison mère</td><td colspan="3">'.$socm->nom_url.' ('.$socm->code_client.')<br />'.$socm->ville.'</td></tr>';
+      print '<tr><td>'.$langs->trans("ParentCompany").'</td><td colspan="3">'.$socm->nom_url.' '.($socm->code_client?"(".$socm->code_client.")":"").'<br />'.$socm->ville.'</td></tr>';
     }
 
   print '</table>';
@@ -235,7 +239,7 @@ if($_GET["socid"])
 		      print "&nbsp;";
 		    }
 		  
-		  print '</td><td><a href="lien.php?socid='.$_GET["socid"].'&amp;select='.$obj->idp.'">Sélectionner</a></td>';
+		  print '</td><td><a href="lien.php?socid='.$_GET["socid"].'&amp;select='.$obj->idp.'">'.$langs->trans("Select").'</a></td>';
 		  
 		  print '</tr>'."\n";
 		  $i++;

@@ -31,6 +31,7 @@ require("./pre.inc.php");
 $user->getrights();
 
 $langs->load("companies");
+$langs->load("commercial");
 $langs->load("customers");
 $langs->load("suppliers");
 
@@ -93,11 +94,11 @@ if($_GET["socid"])
   $h = 1;
 
   $head[$h][0] = 'lien.php?socid='.$soc->id;
-  $head[$h][1] = 'Lien';
+  $head[$h][1] = $langs->trans("Links");
   $h++;
 
   $head[$h][0] = 'commerciaux.php?socid='.$soc->id;
-  $head[$h][1] = 'Commerciaux';
+  $head[$h][1] = $langs->trans("SalesRepresentative");
   $h++;
 
   $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
@@ -111,15 +112,20 @@ if($_GET["socid"])
    */
 
   print '<table class="border" width="100%">';
-  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td></tr>';
+  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
 
-  print '<tr><td valign="top">'.$langs->trans('Address')."</td><td>".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
+  print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
 
-  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td></tr>';
+  print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
+  print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
 
+  print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';
+
+  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
+  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
 
   print '<tr><td>';
-  print $langs->trans('Code client').'</td><td>';
+  print $langs->trans('CustomerCode').'</td><td colspan="3">';
   print $soc->code_client;
   if ($soc->check_codeclient() <> 0)
     {
@@ -127,7 +133,7 @@ if($_GET["socid"])
     }
   print '</td></tr>';
 
-  print '<tr><td>'.$langs->trans('Web').'</td><td>';
+  print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
   if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
   print '</td></tr>';
   
@@ -136,7 +142,7 @@ if($_GET["socid"])
       $socm = new Societe($db);
       $socm->fetch($soc->parent);
       
-      print '<tr><td>Maison mère</td><td>'.$socm->nom_url.' ('.$socm->code_client.')<br />'.$socm->ville.'</td></tr>';
+      print '<tr><td>'.$langs->trans("ParentCompany").'</td><td>'.$socm->nom_url.' ('.$socm->code_client.')<br />'.$socm->ville.'</td></tr>';
     }
 
   /* ********** */
@@ -148,6 +154,9 @@ if($_GET["socid"])
   $sql .= " AND sc.fk_user = u.rowid";
   $sql .= " ORDER BY u.name ASC ";
   
+  print '<tr><td valign="top">'.$langs->trans("SalesRepresentative").'</td>';
+  print '<td colspan="3">';
+
   $result = $db->query($sql);
   if ($result)
     {
@@ -157,23 +166,22 @@ if($_GET["socid"])
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object();    
-
-	  print '<tr><td>Commercial</td><td>';
 	  print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
 	  print '&nbsp;';
 	  print '<a href="commerciaux.php?socid='.$_GET["socid"].'&amp;delcommid='.$obj->rowid.'">';
 	  print img_delete();
-	  print '</a></td></tr>'."\n";
+	  print '</a><br>';
 	  $i++;
 	}
       
-      print "</table>";
       $db->free();
     }
   else
     {
       dolibarr_print_error($db);
     }
+  if($i == 0) { print $langs->trans("NoSalesRepresentativeAffected"); }
+  print "</td></tr>";
   
 
   print '</table>';
@@ -188,7 +196,8 @@ if($_GET["socid"])
        *
        */
       
-      $title=$langs->trans("Liste des utilisateurs");
+      $langs->load("users");
+      $title=$langs->trans("ListOfUsers");
       
       $sql = "SELECT u.rowid, u.name, u.firstname";
       $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -205,7 +214,7 @@ if($_GET["socid"])
 	  // Lignes des titres
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
-	  print '<td>'.$langs->trans("Nom").'</td>';
+	  print '<td>'.$langs->trans("Name").'</td>';
 	  print '<td>&nbsp;</td>';
 	  print "</tr>\n";
 	  
@@ -217,7 +226,7 @@ if($_GET["socid"])
 	      $var=!$var;    
 	      print "<tr $bc[$var]><td>";
 	      print stripslashes($obj->firstname)." " .stripslashes($obj->name)."</td>\n";
-	      print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">Sélectionner</a></td>';
+	      print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
 	      
 	      print '</tr>'."\n";
 	      $i++;
