@@ -1,7 +1,7 @@
 # Dolibarr language file - fr_BE - admin
-GlobalSetup=Configuration générale
-GUISetup=Configuration Interface
-DictionnarySetup=Configuration dictionnaires
+GlobalSetup=Configuration Générale
+GUISetup=Configuration de l'Interface
+DictionnarySetup=Configuration des dictionnaires
 OtherSetup=Configuration diverses
 Modules=Modules
 Boxe=Boite
@@ -26,7 +26,7 @@ DictionnaryCompanyType=Formes juridiques
 DictionnaryCanton=Provinces
 DictionnaryRegion=Régions
 DictionnaryCountry=Pays
-DictionnaryCivility=Titres de civilité
+DictionnaryCivility=Titres
 DictionnaryActions=Liste des actions
 AlwaysActive=Toujours actif
 
