@@ -16,8 +16,10 @@ alter table llx_user drop column module_comm;
 alter table llx_user drop column module_compta;
 
 alter table llx_user_rights add rowid integer AUTO_INCREMENT PRIMARY KEY;
-alter table llx_facture add fk_mode_reglement integer after fk_cond_reglement ;
 
+alter table llx_facture add fk_cond_reglement integer;
+alter table llx_facture add fk_mode_reglement integer after fk_cond_reglement ;
+ 
 alter table llx_socpeople add cp varchar(25) after address;
 alter table llx_socpeople add ville varchar(255) after cp;
 
