@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,6 +238,10 @@ if (defined("MAIN_MODULE_TELEPHONIE"))
 {
   $conf->telephonie->enabled=MAIN_MODULE_TELEPHONIE;
 }
+if (defined("MAIN_MODULE_PRELEVEMENT"))
+{
+  $conf->prelevement->enabled=MAIN_MODULE_PRELEVEMENT;
+}
 if (defined("MAIN_MODULE_WEBCALENDAR"))
 {
   $conf->webcal->enabled=MAIN_MODULE_WEBCALENDAR;
@@ -247,7 +251,6 @@ if (defined("MAIN_MODULE_FACTURE"))
   $conf->facture->enabled=MAIN_MODULE_FACTURE;
   require (DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 }
-
 if (defined("MAIN_MODULE_PROPALE"))
 {
   $conf->propal->enabled=MAIN_MODULE_PROPALE;
