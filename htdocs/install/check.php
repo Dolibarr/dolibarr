@@ -39,17 +39,18 @@ pHeader($langs->trans("DolibarrWelcome"), "licence");   // Etape suivante = lice
 
 print $langs->trans("InstallEasy")."<br>";
 
-
+// Si fichier présent et lisible
 if (is_readable($conffile))
 {
-  $confexists=1;
-  include_once($conffile);
+    $confexists=1;
+    include_once($conffile);
 }
 else
 {
-  $confexists=0;
-  $fp = @fopen("$conffile", "w");
-  if($fp)
+    // Si non on le crée        
+    $confexists=0;
+    $fp = @fopen("$conffile", "w");
+    if($fp)
     {
       @fwrite($fp, '<?php');
       @fputs($fp,"\n");
@@ -58,12 +59,13 @@ else
     }
 }
 
+// Si fichier absent et n'a pu etre créé
 if (!file_exists($conffile))
 {
   print "<br /><br />";
   print "Le fichier de configuration <b>conf.php</b> n'existe pas !";
   print "<br />";
-  print "Vous devez créer un fichier <b>htdocs/conf/conf.php</b> et donner les droits d'écriture dans celui-ci au serveur Apache.";
+  print "Vous devez créer un fichier <b>htdocs/conf/conf.php</b> et donner les droits d'écriture dans celui-ci au serveur web durant le processus d'installation.";
   print "<br /><br />";
 
   print 'Corrigez le problème et <a href="index.php">rechargez la page</a>.';
@@ -72,35 +74,36 @@ if (!file_exists($conffile))
 }
 else
 {
-  if (!is_writable($conffile))
+    print "<br /><br />";
+    // Si ficiher présent mais ne peut etre modifié
+    if (!is_writable($conffile))
     {
-      print "<br /><br />";
-      if ($confexists) {
-        print $langs->trans("ConfFileExists");
-      }
-      else {
-        print $langs->trans("ConfFileCouldBeCreated");
-      }
-      print "<br />";
-      print $langs->trans("ConfFileIsNotWritable");
-      print "<br />";
-
-      $err++;
+        if ($confexists) {
+            print $langs->trans("ConfFileExists");
+        }
+        else {
+            print $langs->trans("ConfFileCouldBeCreated");
+        }
+        print "<br />";
+        print $langs->trans("ConfFileIsNotWritable");
+        print "<br />";
+    
+        $err++;
     }
-  else
+    // Si fichier présent et peut etre modifié
+    else
     {
-      print "<br /><br />";
-      if ($confexists) {
-        print $langs->trans("ConfFileExists");
-      }
-      else {
-        print $langs->trans("ConfFileCouldBeCreated");
-      }
-      print "<br />";
-      print $langs->trans("ConfFileIsWritable");
-      print "<br /><br />";
-      print $langs->trans("YouCanContinue");
-
+        if ($confexists) {
+            print $langs->trans("ConfFileExists");
+        }
+        else {
+            print $langs->trans("ConfFileCouldBeCreated");
+        }
+        print "<br />";
+        print $langs->trans("ConfFileIsWritable");
+        print "<br /><br />";
+        print $langs->trans("YouCanContinue");
+    
     }
 }
 
