@@ -107,9 +107,9 @@ class LigneTel {
     if (strlen(trim($this->numero)) == 10)
       {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-	$sql .= " (fk_soc, fk_client_comm, ligne, fk_soc_facture, fk_fournisseur, note, remise, fk_commercial, statut, fk_user_creat, fk_concurrent)";
+	$sql .= " (fk_soc, fk_client_comm, ligne, fk_soc_facture, fk_fournisseur, note, remise, fk_commercial, statut, fk_user_creat, fk_concurrent, fk_contrat)";
 	$sql .= " VALUES (";
-	$sql .= " $this->client,$this->client_comm,'$this->numero',$this->client_facture,$this->fournisseur, '$this->note','$this->remise',$this->commercial, -1,$user->id, $this->concurrent)";
+	$sql .= " $this->client,$this->client_comm,'$this->numero',$this->client_facture,$this->fournisseur, '$this->note','$this->remise',$this->commercial, -1,$user->id, $this->concurrent, $this->contrat)";
 	
 	if ( $this->db->query($sql) )
 	  {
@@ -152,7 +152,12 @@ class LigneTel {
 
   function fetch($ligne, $id = 0)
     {
-      $sql = "SELECT rowid, fk_client_comm, fk_soc, fk_soc_facture, fk_fournisseur, ligne, remise, note, statut, fk_commercial, isfacturable, mode_paiement, fk_concurrent, code_analytique";
+
+      $sql = "SELECT rowid, fk_client_comm, fk_soc, fk_soc_facture, fk_fournisseur";
+      $sql .= " , ligne, remise, note, statut, fk_commercial, isfacturable";
+      $sql .= " , mode_paiement, fk_concurrent, code_analytique";
+      $sql .= " , fk_user_creat, fk_user_commande";
+      $sql .= " , fk_contrat ";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as tl";
 
       if ($id > 0)
@@ -173,6 +178,7 @@ class LigneTel {
 	      $this->id = $obj->rowid;
 	      $this->socid             = $obj->fk_soc;
 	      $this->numero            = $obj->ligne;
+	      $this->contrat           = $obj->fk_contrat;
 	      $this->remise            = $obj->remise;
 	      $this->client_comm_id    = $obj->fk_client_comm;
 	      $this->client_id         = $obj->fk_soc;
@@ -183,6 +189,9 @@ class LigneTel {
 	      $this->statut            = $obj->statut;
 	      $this->mode_paiement     = $obj->mode_paiement;
 	      $this->code_analytique   = $obj->code_analytique;
+
+	      $this->user_creat        = $obj->fk_user_creat;
+	      $this->user_commande     = $obj->fk_user_commande;
 
 	      if ($obj->isfacturable == 'oui')
 		{
