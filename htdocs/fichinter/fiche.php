@@ -399,7 +399,7 @@ if ($_GET["id"])
       if (file_exists($file))
 	{
 	  print "<tr $bc[0]><td>Ficheinter PDF</a></td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=ficheinter&file='.urlencode($relativepath).'">'.$fichinter->ref.'.pdf</a></td>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=ficheinter&file='.urlencode($relativepath).'.pdf">'.$fichinter->ref.'.pdf</a></td>';
 	  print '<td align="right">'.filesize($file). ' bytes</td>';
 	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
 	}  
