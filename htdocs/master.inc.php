@@ -43,7 +43,8 @@ else
 
 if (! isset($dolibarr_main_db_type))
 {	
-  exit('Erreur la variale $dolibarr_main_db_type n\'est pas définie dans le fichier de configuration');
+  $dolibarr_main_db_type='mysql';
+  //exit('Erreur la variale $dolibarr_main_db_type n\'est pas définie dans le fichier de configuration');
 }
 
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
