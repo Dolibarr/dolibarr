@@ -42,7 +42,7 @@ llxHeader();
 
 print '<div class="tabs">';
 print '<a href="fiche.php?id='.$_GET["id"].'" id="active" class="tab">Paiement</a>';
-print '<a class="tab" href="info.php?id='.$_GET["id"].'">Info</a>';
+print '<a class="tab" href="info.php?id='.$_GET["id"].'">'.img_info().'</a>';
 print '</div>';
 
 print '<div class="tabBar">';
