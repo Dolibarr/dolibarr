@@ -23,13 +23,12 @@
 
 create table llx_prelevement_rejet
 (
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  fk_soc           integer NOT NULL,
-  fk_prelevement   integer,
-  amount           real DEFAULT 0,     -- montant total du prelevement
-  motif            integer,
-  note             text,
-  date_creation    datetime,
-  fk_user_creation integer
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  fk_prelevement_lignes integer,
+  amount                real DEFAULT 0,     -- montant total du prelevement
+  motif                 integer,
+  note                  text,
+  date_creation         datetime,
+  fk_user_creation      integer
 
 )type=innodb;
