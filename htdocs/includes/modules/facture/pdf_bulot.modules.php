@@ -219,33 +219,59 @@ Class pdf_bulot {
       
       $pdf->SetXY (132, $tab2_top + 0);
       $pdf->MultiCell(42, $tab2_hl, "Total HT", 0, 'R', 0);
-      
-      $pdf->SetXY (132, $tab2_top + $tab2_hl);
-      $pdf->MultiCell(42, $tab2_hl, "Remise", 0, 'R', 0);
-      
-      $pdf->SetXY (132, $tab2_top + $tab2_hl * 2);
-      $pdf->MultiCell(42, $tab2_hl, "Total HT aprés remise", 0, 'R', 0);
-      
-      $pdf->SetXY (132, $tab2_top + $tab2_hl * 3);
-      $pdf->MultiCell(42, $tab2_hl, "Total TVA", 0, 'R', 0);
-      
-      $pdf->SetXY (132, $tab2_top + $tab2_hl * 4);
-      $pdf->MultiCell(42, $tab2_hl, "Total TTC", 0, 'R', 1);
-      
+
       $pdf->SetXY (174, $tab2_top + 0);
       $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
       
-      $pdf->SetXY (174, $tab2_top + $tab2_hl);
-      $pdf->MultiCell(26, $tab2_hl, price($fac->remise), 0, 'R', 0);
+      if ($fac->remise > 0)
+	{
+	  $pdf->SetXY (132, $tab2_top + $tab2_hl);
+	  $pdf->MultiCell(42, $tab2_hl, "Remise", 0, 'R', 0);
+	  
+	  $pdf->SetXY (174, $tab2_top + $tab2_hl);
+	  $pdf->MultiCell(26, $tab2_hl, price($fac->remise), 0, 'R', 0);
+	  
+	  $pdf->SetXY (132, $tab2_top + $tab2_hl * 2);
+	  $pdf->MultiCell(42, $tab2_hl, "Total HT aprés remise", 0, 'R', 0);
       
-      $pdf->SetXY (174, $tab2_top + $tab2_hl * 2);
-      $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
-      
-      $pdf->SetXY (174, $tab2_top + $tab2_hl * 3);
+	  $pdf->SetXY (174, $tab2_top + $tab2_hl * 2);
+	  $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
+
+	  $index = 3;
+	}
+      else
+	{
+	  $index = 1;
+	}
+
+      $pdf->SetXY (132, $tab2_top + $tab2_hl * $index);
+      $pdf->MultiCell(42, $tab2_hl, "Total TVA", 0, 'R', 0);
+
+      $pdf->SetXY (174, $tab2_top + $tab2_hl * $index);
       $pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
+            
+      $pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+1));
+      $pdf->MultiCell(42, $tab2_hl, "Total TTC", 0, 'R', 1);
       
-      $pdf->SetXY (174, $tab2_top + $tab2_hl * 4);
+      $pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+1));
       $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 1);
+
+      $deja_regle = $fac->getSommePaiement();
+
+      if ($deja_regle > 0)
+	{
+	  $pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+2));
+	  $pdf->MultiCell(42, $tab2_hl, "Déjà réglé", 0, 'R', 0);
+
+	  $pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+2));
+	  $pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
+
+	  $pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+3));
+	  $pdf->MultiCell(42, $tab2_hl, "Reste à payer", 0, 'R', 1);
+
+	  $pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+3));
+	  $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 1);
+	}
     }
   /*
    *
