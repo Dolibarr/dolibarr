@@ -115,7 +115,10 @@ else
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print '<tr><td width="20%">Libellé</td><td>'.$entrepot->libelle.'</td>';
 	      print "<tr><td valign=\"top\">Description</td><td>".nl2br($entrepot->description)."</td></tr>";
-	      print '<tr><td width="20%">statut</td><td>'.$entrepot->statuts[$entrepot->statut].'</td>';
+	      print '<tr><td width="20%">statut</td><td>'.$entrepot->statuts[$entrepot->statut].'</td></tr>';
+	      print '<tr><td valign="top">Nb de produits</td><td>';
+	      print $entrepot->nb_products();
+	      print "</td></tr>";
 	      print "</table>";
 	    }
 	}
@@ -145,6 +148,7 @@ else
 	      print '<option value="0">Fermé</option><option value="1" SELECTED>Ouvert</option>';
 	    }
 	  print '</td></tr>';
+
 	  print "<tr>".'<td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
 	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
 	  print '</table>';
