@@ -430,7 +430,20 @@ else
   if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
   print '</td></tr>';
   
-  print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td>';
+  print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td>';
+
+  if ($soc->check_siren() == 0)
+    {
+      print '<a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;';
+    }
+  else
+    {
+      print '<a class="error">'.$soc->siren;
+      // Siren invalide
+      print "&nbsp;Code Siren Invalide !</a>";
+    }
+
+  print '</td>';
 
   print '<td>'.$langs->trans('ProfIdSiret').'</td><td>'.$soc->siret.'</td></tr>';
 
