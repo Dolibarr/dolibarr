@@ -40,6 +40,7 @@ if ($HTTP_POST_VARS["action"] == 'add' or $HTTP_POST_VARS["action"] == 'update')
   $soc->adresse        = $HTTP_POST_VARS["adresse"];
   $soc->cp             = $HTTP_POST_VARS["cp"];
   $soc->ville          = $HTTP_POST_VARS["ville"];
+  $soc->pays_id        = $HTTP_POST_VARS["pays_id"];
   $soc->departement_id = $HTTP_POST_VARS["departement_id"];
   $soc->tel            = $HTTP_POST_VARS["tel"];
   $soc->fax            = $HTTP_POST_VARS["fax"];
@@ -88,6 +89,10 @@ if ($action == 'create')
 
   print '<td>Département</td><td>';
   print $form->select_departement(0);
+  print '</td></tr>';
+
+  print '<tr><td>Pays</td><td colspan="3">';
+  print $form->select_pays($soc->pays_id);
   print '</td></tr>';
 
   print '<tr><td>Téléphone</td><td><input type="text" name="tel"></td>';
@@ -155,6 +160,11 @@ elseif ($action == 'edit')
       print '<td>Département</td><td>';
       print $form->select_departement($soc->departement_id);
       print '</td></tr>';      
+
+      print '<tr><td>Pays</td><td colspan="3">';
+      print $form->select_pays($soc->pays_id);
+      print '</td></tr>';
+
       print '<tr><td>Téléphone</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
       print '<td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
       print '<tr><td>Web</td><td colspan="3">http://<input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
@@ -269,7 +279,8 @@ else
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$soc->nom.'</td></tr>';
   print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;';
-  print '<br>'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
+  print '<br>'.$soc->cp.'&nbsp;'.$soc->ville.'<br>'.$soc->pays.'</td></tr>';
+
   
   print '<tr><td>Téléphone</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
   print '<td>Fax</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
