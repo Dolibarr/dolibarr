@@ -1,8 +1,13 @@
 # Dolibarr language file - en_US - soc
 ErrorBadEMail=EMail %s is wrong
 MenuNewCompany=New company
+MenuNewCustomer=New customer
+MenuNewProspect=New prospect
+MenuNewSupplier=New supplier
 MenuSocGroup=Groups
 NewCompany=New company (prospect, customer, supplier)
+NewSocGroup=Nouveau companies group
+SocGroup=Group of companies
 Company=Company
 Companies=Companies
 Name=Name
@@ -32,3 +37,6 @@ CompanyList=Companies' list
 AddContact=Add new contact
 PersonalInformations=Personal data
 CustomerCode=Customer code
+SupplierCode=Supplier code
+CustomerAccount=Customer account
+SupplierAccount=Supplier account
