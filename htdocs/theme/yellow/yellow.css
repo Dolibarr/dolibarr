@@ -159,6 +159,14 @@ td.barre {
            color: #000000; 
            text-decoration: none }
 
+td.auteurs { 
+           border: 1px dashed #000000;
+
+           background: #ccccb3;
+           color: #000000; 
+           text-decoration: none }
+
+
 td.barre_select { 
                   background: #ccccb3; 
                   color: #000000 
