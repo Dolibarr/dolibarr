@@ -33,20 +33,15 @@ class Conf {
     $this->db = new DbConf();
 
     $this->propal = new PropalConf();
-
     $this->facture = new FactureConf();
-
     $this->fichinter = new FicheInterConf();
-
     $this->webcal = new WebcalConf();
-
     $this->produit = new ProduitConf();
-
     $this->service = new ServiceConf();
-
     $this->adherent = new AdherentConf();
-
     $this->domaine = new domaineConf();
+
+    $this->commercial = 0;
 
     $this->readonly = 0;
 
