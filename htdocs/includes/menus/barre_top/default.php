@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,6 @@
  * $Source$
  *
  */
-
-$nbofentries=0;
-if ($conf->commercial->enabled)   $nbofentries++;
-if ($conf->adherent->enabled)     $nbofentries++;
-if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled) $nbofentries++; 
-if ($conf->produit->enabled || $conf->service->enabled) $nbofentries++; 
-if ($conf->webcal->enabled)   $nbofentries++; 
 
 if ($conf->commercial->enabled)
 {
@@ -122,12 +115,20 @@ if ($conf->webcal->enabled)
   $langs->load("other");
   
   $class="";
-  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "webcalendar") { $class="menusel"; }
-  elseif (ereg("^".DOL_URL_ROOT."\/projet\/",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/webcalendar\/",$_SERVER["PHP_SELF"])) { $class="menusel"; }
+  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "webcalendar")
+   {
+      $class='class="tmenu" id="sel"';
+   }
+  elseif (ereg("^".DOL_URL_ROOT."\/projet\/",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/webcalendar\/",$_SERVER["PHP_SELF"]))
+   {
+      $class='class="tmenu" id="sel"';
+   }
+  else 
+   {
+      $class = 'class="tmenu"';
+   }
   
-  print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-  print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/projet/webcal.php"'.($target?" target=$target":"").'>'.$langs->trans("Calendar").'</a>';
-  print '</td>';
+  print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/webcal.php"'.($target?" target=$target":"").'>'.$langs->trans("Calendar").'</a>';
 };
 
 
