@@ -179,7 +179,7 @@ if ($result)
       print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       
       
-	  print '<td><a href="action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
 
       if ($_GET["view"] == 'phone')
 	{
@@ -191,7 +191,7 @@ if ($result)
 	}
       else
 	{
-	  print '<td><a href="action/fiche.php?action=create&amp;actionid=4&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+	  print '<td><a href="mailto:'.$obj->email.'">'.$obj->email.'</a>&nbsp;</td>';
 	}
 
       print "</TR>\n";
