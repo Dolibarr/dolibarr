@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,8 +46,12 @@ if ($_GET["id"])
 	{
 	  $h=0;
 	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/fiche.php?id=".$soc->id;
-	  $head[$h][1] = $langs->trans("Lignes");
+	  $head[$h][1] = $langs->trans("Contrats");
 	  $hselected = $h;
+	  $h++;
+
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/lignes.php?id=".$soc->id;
+	  $head[$h][1] = $langs->trans("Lignes");
 	  $h++;
 
 	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/factures.php?id=".$soc->id;
@@ -81,18 +85,16 @@ if ($_GET["id"])
 
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  
-	  //print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
-	  //print '<td>Facturée : '.$ligne->facturable.'</td></tr>';
-	  
 	  /* Lignes */
 	     
-	  $sql = "SELECT s.idp as socidp, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise, ss.nom as agence";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+	  $sql = "SELECT count(l.rowid) as cc, c.rowid, c.ref, ss.nom as agence";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 	  $sql .= " , ".MAIN_DB_PREFIX."societe as ss";
-	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
-	  $sql .= " WHERE l.fk_client_comm = s.idp AND l.fk_fournisseur = f.rowid";
-	  $sql .= " AND l.fk_soc = ss.idp ";
-	  $sql .= " AND s.idp = ".$soc->id;
+	  $sql .= " WHERE c.fk_client_comm = ".$soc->id;
+	  $sql .= " AND c.fk_soc = ss.idp ";
+	  $sql .= " AND l.fk_contrat = c.rowid";
+	  $sql .= " GROUP BY c.rowid";
 	  
 	  if ( $db->query( $sql) )
 	    {
@@ -103,10 +105,8 @@ if ($_GET["id"])
 
 		  $ligne = new LigneTel($db);
 
-		  print '<tr class="liste_titre"><td width="15%" valign="center">Ligne';
-		  print '</td><td>Agence/Filiale</td><td align="center">Statut</td><td align="center">Remise LMN';
-		  print '</td><td>Fournisseur</td>';
-
+		  print '<tr class="liste_titre"><td width="15%" valign="center">Contrat';
+		  print '</td><td>Agence/Filiale</td><td align="center">Nb Lignes</td>';
 		  print "</tr>\n";
 
 		  while ($i < $num)
@@ -116,20 +116,17 @@ if ($_GET["id"])
 
 		      print "<tr $bc[$var]><td>";
 
-		      print '<img src="../graph'.$obj->statut.'.png">&nbsp;';
-      
-		      print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">';
+		      print '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->rowid.'">';
 		      print img_file();
       
 		      print '</a>&nbsp;';
 
-		      print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
+		      print '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
 		      print '<td>'.$obj->agence."</td>\n";
-		      print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
 
-		      print '<td align="center">'.$obj->remise." %</td>\n";
-		      print "<td>".$obj->fournisseur."</td>\n";
+		      print '<td align="center">'.$obj->cc."</td>\n";
+
 		      print "</tr>\n";
 		      $i++;
 		    }
