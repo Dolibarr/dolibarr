@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +23,10 @@ require("./pre.inc.php");
 
 llxHeader();
 
-print_titre("Constantes de configuration Dolibarr");
+print_titre("Configuration autre (Dolibarr version ".DOL_VERSION.")");
 
 //print_r(get_defined_constants());
+print "<br>\n";
 
 print '<table border="1" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
@@ -43,9 +45,9 @@ if ($user->admin)
     {
       
       if (isset($HTTP_POST_VARS["consttype"]) && $HTTP_POST_VARS["consttype"] != ''){
-	$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='".$typeconst[$HTTP_POST_VARS["consttype"]]."'";
+	$sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='".$typeconst[$HTTP_POST_VARS["consttype"]]."'";
       }else{
-	$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."'";
+	$sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."'";
       }
       
       
@@ -58,7 +60,7 @@ if ($user->admin)
 
   if ($action == 'delete')
     {
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE rowid='$rowid'";
+      $sql = "DELETE FROM llx_const WHERE rowid='$rowid'";
       
       $result = $db->query($sql);
       if (!$result)
@@ -69,9 +71,9 @@ if ($user->admin)
 }
 
 if ($all==1){
-  $sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const ORDER BY name ASC";
+  $sql = "SELECT rowid, name, value, type, note FROM llx_const ORDER BY name ASC";
 }else{
-  $sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE visible = 1 ORDER BY name ASC";
+  $sql = "SELECT rowid, name, value, type, note FROM llx_const WHERE visible = 1 ORDER BY name ASC";
 }
 $result = $db->query($sql);
 if ($result) 
@@ -117,8 +119,8 @@ if ($result)
 
       print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
       print '</td><td>';
-      print '<input type="Submit" value="Update" name="Button"><BR>';
-      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=delete">Delete</a>';
+      print '<input type="Submit" value="Update" name="Button"> &nbsp; ';
+      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
       print "</td></tr>\n";
 
       print '</form>';
