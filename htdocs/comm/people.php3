@@ -69,13 +69,12 @@ if ($action == 'update')
     }
 }
 
-llxHeader();
+/*
+ *
+ *
+ */
 
-if ($page == -1) { $page = 0 ; }
-$limit = 26;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+llxHeader();
 
 if ($socid > 0) 
 {
@@ -220,13 +219,23 @@ if ($socid > 0)
    *
    *
    */
+  if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
+    {
+      print "<p>";
+      print_titre("Fiche d'intervention");
+    }
+  /*
+   *
+   *
+   */
+
   print '<P><table width="100%" cellspacing="0" border="0" cellpadding="2">';
   
   print "<tr class=\"liste_titre\"><td>Action</td>";
   print "<td>Fax</td><td>Email</td>";
 
   $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-  $sql .= " FROM actioncomm as a, c_actioncomm as c, llx_user as u ";
+  $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u ";
   $sql .= " WHERE a.fk_soc = $objsoc->idp ";
   $sql .= " AND u.rowid = a.fk_user_author";
   $sql .= " AND c.id=a.fk_action ";

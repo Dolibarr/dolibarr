@@ -27,9 +27,11 @@ class Project {
   var $ref;
   var $title;
   var $socidp;
+  var $societe;
 
   Function Project($DB) {
     $this->db = $DB;
+    $this->societe = new Societe($DB);
   }
   /*
    *
@@ -58,7 +60,7 @@ class Project {
 
   Function fetch($rowid) {
 
-    $sql = "SELECT title, ref FROM llx_projet WHERE rowid=$rowid;";
+    $sql = "SELECT fk_soc, title, ref FROM llx_projet WHERE rowid=$rowid;";
 
     if ($this->db->query($sql) ) {
       if ($this->db->num_rows()) {
@@ -67,7 +69,7 @@ class Project {
 	$this->id = $rowid;
 	$this->ref = $obj->ref;
 	$this->title = $obj->title;
-
+	$this->societe->id = $obj->fk_soc;
 	$this->db->free();
       }
     } else {

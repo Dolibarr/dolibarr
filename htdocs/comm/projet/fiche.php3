@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * $Id$
  * $Source$
@@ -28,7 +28,8 @@ llxHeader("","../");
 
 $db = new Db();
 
-if ($action == 'create') {
+if ($action == 'create')
+{
   print_titre("Nouveau projet");
 
   print '<form action="index.php3?socidp='.$socidp.'" method="post">';
@@ -66,53 +67,81 @@ if ($action == 'create') {
   $projet = new Project($db);
   $projet->fetch($id);
 
-  print '<table border=1 cellpadding="1" cellspacing="0">';
-  print '<tr><td>Société</td><td></td></tr>';
+  $projet->societe->fetch($projet->societe->id);
 
-  print '<tr><td>Ref</td><td>'.$projet->ref.'</td></tr>';
-  print '<tr><td>Titre</td><td>'.$projet->title.'</td></tr>';
-  print '</table>';
   
-  $propales = $projet->get_propal_list();
-
-  if (sizeof($propales)>0 && is_array($propales)) {
-
-    print '<p>Listes des propales associées au projet';
-    print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-
-    print "<TR bgcolor=\"#e0e0e0\">";
-    print "<TD>Réf</TD>";
-    print '<TD>Date</TD>';
-    print '<TD align="right">Prix</TD>';
-    print '<TD align="center">Statut</TD>';
-    print '</TR>';
-
-    for ($i = 0; $i<sizeof($propales);$i++){
-      $propale = new Propal($db);
-      $propale->fetch($propales[$i]);
-
-      $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"../propal.php3?propalid=$propale->id\">$propale->ref</a></TD>\n";
-
-      print '<TD>'.strftime("%d %B %Y",$propale->datep).'</a></TD>';
+  if ($action == 'edit')
+    {
+  
+      print '<table border="1" cellpadding="4" cellspacing="0">';
+      print '<tr><td>Société</td><td>'.$projet->societe->nom.'</td></tr>';
       
-      print '<TD align="right">'.price($propale->price).'</TD>';
-      print '<TD align="center">statut</TD>';
-      print '</TR>';
-  
-      $total = $total + $propale->price;
+      print '<tr><td>Ref</td><td>'.$projet->ref.'</td></tr>';
+      print '<tr><td>Titre</td><td>'.$projet->title.'</td></tr>';
+      print '</table>';
+      
+    }
+  else
+    {
+      print '<table border="1" cellpadding="4" cellspacing="0">';
+      print '<tr><td>Société</td><td>'.$projet->societe->nom.'</td></tr>';
+      
+      print '<tr><td>Ref</td><td>'.$projet->ref.'</td></tr>';
+      print '<tr><td>Titre</td><td>'.$projet->title.'</td></tr>';
+      print '</table>';
+
+      $propales = $projet->get_propal_list();
+
+      if (sizeof($propales)>0 && is_array($propales)) {
+
+	print '<p>Listes des propales associées au projet';
+	print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	
+	print "<TR bgcolor=\"#e0e0e0\">";
+	print "<TD>Réf</TD>";
+	print '<TD>Date</TD>';
+	print '<TD align="right">Prix</TD>';
+	print '<TD align="center">Statut</TD>';
+	print '</TR>';
+	
+	for ($i = 0; $i<sizeof($propales);$i++){
+	  $propale = new Propal($db);
+	  $propale->fetch($propales[$i]);
+	  
+	  $var=!$var;
+	  print "<TR $bc[$var]>";
+	  print "<TD><a href=\"../propal.php3?propalid=$propale->id\">$propale->ref</a></TD>\n";
+	  
+	  print '<TD>'.strftime("%d %B %Y",$propale->datep).'</a></TD>';
+	  
+	  print '<TD align="right">'.price($propale->price).'</TD>';
+	  print '<TD align="center">statut</TD>';
+	  print '</TR>';
+	  
+	  $total = $total + $propale->price;
+	}
+	
+	print '<tr><td>'.$i.' propales</td>';
+	print '<td colspan="2" align="right"><b>Total : '.price($total).'</b></td>';
+	print '<td align="left"><b>Euros HT</b></td></tr>';
+	print "</TABLE>";
+      } else {
+	print "pas de propales";
+      }
     }
 
-    print '<tr><td>'.$i.' propales</td>';
-    print '<td colspan="2" align="right"><b>Total : '.price($total).'</b></td>';
-    print '<td align="left"><b>Euros HT</b></td></tr>';
-    print "</TABLE>";
 
-    
-  } else {
-    print "pas de propales";
-  }
+  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+	
+  print "<td align=\"center\" width=\"25%\"><a href=\"fiche.php3?id=$id&action=edit\">Editer</a></td>";
+	  
+  print "<td align=\"center\" width=\"25%\">-</td>";	  
+  
+  print "<td align=\"center\" width=\"25%\">-</td>";
+  
+  print "<td align=\"center\" width=\"25%\">-</td>";
+  
+  print "</tr></table>";
 
 
 }
