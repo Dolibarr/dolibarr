@@ -26,21 +26,11 @@ require("../../chargesociales.class.php");
 /*
  *
  */
+$user->getrights('compta');
+if (!$user->rights->compta->resultat)
+  accessforbidden();
 
 llxHeader();
-
-$user->getrights('compta');
-
-if (!$user->admin && !$user->rights->compta->resultat)
-  accessforbidden();
-  
-?>
-<style type="text/css">
-td.border { border: 1px solid #000000}
-</style>
-
-
-<?PHP
 
 print_titre("Résultat");
 
