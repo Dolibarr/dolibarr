@@ -17,7 +17,7 @@
  *
  * $Id$
  * $Source$
- * $Tag$
+ *
  */
 require("./pre.inc.php3");
 require("../facture.class.php3");
@@ -170,7 +170,7 @@ if ($action == 'send')
 
   $soc = new Societe($db, $fac->socidp);
 
-  $file = $conf->facture->outputdir . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
+  $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
 
   if (file_exists($file))
     {
@@ -218,9 +218,9 @@ if ($action == 'pdf')
 {
   /*
    * Generation de la facture
-   *
+   * définit dans /includes/modules/facture/modules_facture.php
    */
-  print facture_pdf_create($db, $facid); // définit dans /includes/modules/facture/modules_facture.php
+  print facture_pdf_create($db, $facid);
 } 
 
 $html = new Form($db);
@@ -608,32 +608,30 @@ else
 	print_titre("Documents");
 	print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
 	
-	$file = $conf->facture->outputdir . "/" . $obj->facnumber . "/" . $obj->facnumber . ".pdf";
+	$file = FAC_OUTPUTDIR . "/" . $obj->facnumber . "/" . $obj->facnumber . ".pdf";
 	
 	
 	if (file_exists($file))
 	  {
 	    print "<tr $bc[0]><td>Facture PDF</a></td>";
-	    print '<td><a href="'.$conf->facture->outputurl."/".$obj->facnumber."/".$obj->facnumber.'.pdf">'.$obj->facnumber.'.pdf</a></td>';
+	    print '<td><a href="'.FAC_OUTPUT_URL."/".$obj->facnumber."/".$obj->facnumber.'.pdf">'.$obj->facnumber.'.pdf</a></td>';
 	    print '<td align="right">'.filesize($file). ' bytes</td>';
 	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	    print '</tr>';
 	  }  
 	
-	$file = $conf->facture->outputdir . "/" . $obj->facnumber . "/" . $obj->facnumber . ".ps";
+	$file = FAC_OUTPUTDIR . "/" . $obj->facnumber . "/" . $obj->facnumber . ".ps";
 	
 	if (file_exists($file))
 	  {
 	    print "<tr $bc[0]><td>Facture Postscript</a></td>";
-	    print '<td><a href="'.$conf->facture->outputurl."/".$obj->facnumber."/".$obj->facnumber.'.ps">'.$obj->facnumber.'.ps</a></td>';
+	    print '<td><a href="'.FAC_OUTPUT_URL."/".$obj->facnumber."/".$obj->facnumber.'.ps">'.$obj->facnumber.'.ps</a></td>';
 	    print '<td align="right">'.filesize($file). ' bytes</td>';
 	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	    print '</tr>';
 	    
 	    
 	  }
-	// Tant que d'autres documents ne sont pas attachés à la facture on oublie
-	//print '<tr $bc[0]><td colspan="4">(<a href="'.$conf->facture->outputurl.'/'.$obj->facnumber.'/">liste...</a>)</td></tr>';  
 	
 	print "</table>\n";
 	print "</td>";
