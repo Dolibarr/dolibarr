@@ -197,6 +197,8 @@ class DolibarrModules
 		if (! @mkdir($dir, 0755))
 		  {
 		    $this->error = "Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+		    dolibarr_syslog("Erreur: impossible de créer $dir");
+
 		  }
 	      }	
 	  }
