@@ -16,32 +16,113 @@
 Table des matières
 ------------------
 
-     1.        Propositions commerciales
-     1.1.      Créer une proposition commerciale
-     1.2.      Modèles de proposition
+     1.        Introduction
+     1.1.      Obtenir de l'aide
 
-     2.        Facturation
-     2.1.      Facture
-     2.2.      Paiements
-     2.3.      Factures récurrentes
+     2.        Commandes
+     2.1.      Commande
 
-     3.        Produits
-     3.1.      Aspect général
+     3.        Propositions commerciales
+     3.1.      Créer une proposition commerciale
+     3.2.      Modèles de proposition
 
-     4.        Divers
-     4.1.      Configurer les Taux de TVA
+     4.        Facturation
+     4.1.      Facture
+     4.2.      Paiements
+     4.3.      Factures récurrentes
+
+     5.        Produits
+     5.1.      Aspect général
+
+     6.        Expeditions
+     6.1.      Expedition
+
+     7.        Divers
+     7.1.      Configurer les Taux de TVA
 
 
 -------------------------------------------------------------------------------
 
 
-1. Propositions commerciales
+1. Introduction
+---------------
+
+
+1.1. Obtenir de l'aide
+----------------------
+
+1.1.1. Obtenir de l'aide sur Dolibarr
+-------------------------------------
+
+     Si vous avez une question sur les fonctionnalités de Dolibarr ou si
+     vous avez un problème pour l'installer ou l'utiliser adressez votre
+     question à la liste des utilisateurs, vous trouverez son adresse sur
+     dolibarr.com
+
+1.1.2. Contrat de support
+-------------------------
+
+     Vous pouvez souscrire un contrat de support auprés de Rodolphe
+     Quiédeville qui prend en compte la gestion d'incident par mail et
+     téléphone et la résolution des bugs.
+
+
+-------------------------------------------------------------------------------
+
+
+2. Commandes
+------------
+
+     Module de commande.
+
+
+2.1. Commande
+-------------
+
+2.1.1. Créer une commande
+-------------------------
+
+     La création d'une commande se fait à partir de la fiche client dans la
+     partie commerciale de l'application.  Le lien permettant cela se
+     trouve dans la barre d'action de la fiche.
+
+     Une commande est automatiquement créée lors de la clotûre d'une
+     proposition commerciales.  Cette commande est créée à l'état de
+     brouillon.
+
+2.1.2. Clôturer une commande
+----------------------------
+
+     Une fois qu'une commande a été entièrement expédiée, il faut retourner
+     sur sa fiche pour clôturer la commande.
+
+2.1.3. Supprimer une commande
+-----------------------------
+
+     Pour supprimer une commande il vous faut ouvrir la fiche de celle-ci.
+     Une commande ne peut être supprimée que si celle-ci est à l'état de
+     brouillon.  La suppression d'un commande entraine l'effacement de
+     toutes les données s'y afférant.  Une commande supprimée ne peut pas
+     être récupérée.
+
+2.1.4. Modifier une commande
+----------------------------
+
+     Pour modifier une commande il vous faut ouvrir la fiche de celle-ci.
+     Une commande ne peut être modifiée que si celle-ci est à l'état de
+     brouillon.
+
+
+-------------------------------------------------------------------------------
+
+
+3. Propositions commerciales
 ----------------------------
 
      Propositions commerciales
 
 
-1.1. Créer une proposition commerciale
+3.1. Créer une proposition commerciale
 --------------------------------------
 
      La création d'une proposition commerciale se fait à partir de la fiche
@@ -49,7 +130,7 @@ Table des matières
      en haut à gauche sur la fiche, sous la barre de menu général.
 
 
-1.2. Modèles de proposition
+3.2. Modèles de proposition
 ---------------------------
 
      Dolibarr sait gérer plusieurs modèles de propositions.  Vous pouvez
@@ -61,23 +142,23 @@ Table des matières
 -------------------------------------------------------------------------------
 
 
-2. Facturation
+4. Facturation
 --------------
 
      Module de facturation.
 
 
-2.1. Facture
+4.1. Facture
 ------------
 
-2.1.1. Créer une facture
+4.1.1. Créer une facture
 ------------------------
 
      La création d'une facture se fait à partir de la fiche client dans la
      partie comptable.  Le lien permettant cela se trouve en haut à gauche
      sur la fiche, sous la barre de menu générale.
 
-2.1.2. Supprimer une facture
+4.1.2. Supprimer une facture
 ----------------------------
 
      Pour supprimer une facture il vous faut ouvrir la fiche de celle-ci.
@@ -86,24 +167,24 @@ Table des matières
      toutes les données s'y afférant.  Une facture supprimée ne peut pas
      être récupérée.
 
-2.1.3. Modifier une facture
+4.1.3. Modifier une facture
 ---------------------------
 
      Pour modifier une facture il vous faut ouvrir la fiche de celle-ci.
      Une facture ne peut être modifiée que si celle-ci est à l'état de
      brouillon.
 
-2.1.4. Cycle de vie d'une facture
+4.1.4. Cycle de vie d'une facture
 ---------------------------------
 
-2.1.4.1. Brouillon
+4.1.4.1. Brouillon
 ------------------
 
      Lors de sa création une facture est considéré dans l'état de
      brouillon, dans cet état il n'st possible que de "Valider" ou de
      supprimer" une facture.
 
-2.1.4.2. Validée
+4.1.4.2. Validée
 ----------------
 
      Une facture validée est une facture qui a été vérifiée par les
@@ -114,43 +195,43 @@ Table des matières
      un paiement', 'Effectuer une relance', 'Classer comme payée' une fois
      l'intégralité des paiements étant égale au total TTC de la facture.
 
-2.1.4.3. Payée
+4.1.4.3. Payée
 --------------
 
      L'état ultime de la facture qui nous remplit tous de joie.  La seule
      action possible sur une facture payée est la consultation de celle-ci.
 
 
-2.2. Paiements
+4.2. Paiements
 --------------
 
-2.2.1. Création (émission)
+4.2.1. Création (émission)
 --------------------------
 
      La création d'un paiement s'effectue depuis la fiche de la facture
      correspondante.  La création n'est possible que si et seulement si la
      facture n'est pas dans l'état 'Payée'.
 
-2.2.2. Suppression
+4.2.2. Suppression
 ------------------
 
      La suppression d'un paiement s'effectue depuis la fiche de la facture
      correspondante.  La suppression n'est possible que si et seulement si
      la facture n'est pas dans l'état 'Payée'.
 
-2.2.3. Modification
+4.2.3. Modification
 -------------------
 
      La modification d'un paiement n'est pas possible vous devez pour cela
      supprimer le paiement puis en créer un nouveau.
 
 
-2.3. Factures récurrentes
+4.3. Factures récurrentes
 -------------------------
 
      Cette fonctionnalité est apparue dans la version 1.1.0
 
-2.3.1. Créer une facture récurrente
+4.3.1. Créer une facture récurrente
 -----------------------------------
 
      La création d'une facture récurrente s'effectue depuis une facture
@@ -166,7 +247,7 @@ Table des matières
 -------------------------------------------------------------------------------
 
 
-3. Produits
+5. Produits
 -----------
 
      Tout élément vendu dans Dolibarr est considéré comme un produit.  Les
@@ -177,7 +258,7 @@ Table des matières
      support inclue forcément une durée.
 
 
-3.1. Aspect général
+5.1. Aspect général
 -------------------
 
      La création d'un produit s'effectue depuis le menu gauche de
@@ -187,11 +268,51 @@ Table des matières
 -------------------------------------------------------------------------------
 
 
-4. Divers
+6. Expeditions
+--------------
+
+     Module de gestion des expéditions.
+
+
+6.1. Expedition
+---------------
+
+6.1.1. Créer une expedition
+---------------------------
+
+     La création d'une expedition se fait à partir de la fiche commande.
+
+     La création d'une expédition se fait en deux étape, la première
+     consistant à choisir l'entrepôt de départ des produits.  Si une
+     commande est constituée de produits se trouvant dans des entrepôts
+     disctincts il faudra créer autant d'expédition que d'entrepôt
+     concerné.
+
+     Lors de la création d'une expédition les stocks sont controlès la
+     quantité de produit est alors automatiuquement ajusté au nombre se
+     trouvant réellement en stock.
+
+     Lors de la création de la première expédition sur une commande, la
+     commande passe alors à l'état 'En traitement'.
+
+6.1.2. Supprimer une expedition
+-------------------------------
+
+     Pour supprimer une expedition il vous faut ouvrir la fiche de
+     celle-ci.  Une expedition ne peut être supprimée que si celle-ci est à
+     l'état de brouillon.  La suppression d'un expedition entraine
+     l'effacement de toutes les données s'y afférant.  Une expedition
+     supprimée ne peut pas être récupérée.
+
+
+-------------------------------------------------------------------------------
+
+
+7. Divers
 ---------
 
 
-4.1. Configurer les Taux de TVA
+7.1. Configurer les Taux de TVA
 -------------------------------
 
      Les taux de TVA sont configurables, par défaut les taux de tva
