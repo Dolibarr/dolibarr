@@ -72,12 +72,11 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num) {
     $objp = $db->fetch_object( $i);
-    $var=!$var;
 
     if(! file_exists(OSC_CATALOG_DIRECTORY."images/".$objp->ref.".jpg"))
       {
+	$var=!$var;
 	print "<TR $bc[$var]>";
-
 	print '<td><a href="fiche.php?id='.$objp->rowid.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche livre"></a>&nbsp;';
 	
 	print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
