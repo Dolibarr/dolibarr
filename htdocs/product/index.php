@@ -46,9 +46,9 @@ llxHeader("","",$langs->trans("ProductsAndServices"));
 
 print '<div class="formsearch"><form action="liste.php" method="post">';
 print '<input type="hidden" name="type" value="'.$product->type.'">';
-print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
-
-print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
+print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
+print ' &nbsp; ';
+print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
 print '</form></div>';
 
 print_titre($langs->trans("ProductsAndServices"));
