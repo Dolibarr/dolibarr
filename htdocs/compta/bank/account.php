@@ -121,22 +121,20 @@ if ($account > 0)
    *
    *
    */
+  $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."bank as b";
+  $sql .= " WHERE b.fk_account=".$acct->id;
+  $sql_rech="";
   if ($_POST["req_desc"]) 
     { 
-      $sql_rech = " AND lower(b.label) like '%".strtolower($_POST["req_desc"])."%'";
+      $sql_rech .= " AND b.label like '%".strtolower($_POST["req_desc"])."%'";
       $mode_search = 1;
     }
   else 
     {
   	  $mode_search = 0;
     }
-
-  /*
-   *
-   *
-   */
-  $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."bank as b WHERE 1=1";
-  $sql .= " AND b.fk_account=".$acct->id;
+  if ($_POST["req_debit"])  $sql_rech.=" AND amount = -".$_POST["req_debit"];
+  if ($_POST["req_credit"])  $sql_rech.=" AND amount = ".$_POST["req_credit"];
 
   $sql .= $sql_rech;
   if ( $db->query($sql) )
