@@ -83,7 +83,10 @@ class WebcalConf {
   Function WebcalConf() {
     $this->enabled = 1;
 
+    $this->url = "http://webcalendar.lafrere.lan/";
+
     $this->db = new DbConf();
+    $this->db->user = "webcal";
     $this->db->name = "webcal";
     
   }
