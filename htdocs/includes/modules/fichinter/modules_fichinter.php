@@ -24,7 +24,7 @@
 function fichinter_pdf_create($db, $facid)
 {
   
-  $dir = $GLOBALS["DOCUMENT_ROOT"]."/includes/modules/fichinter/";
+  $dir = DOL_DOCUMENT_ROOT."/includes/modules/fichinter/";
 
   if (defined("FICHEINTER_ADDON_PDF"))
     {
