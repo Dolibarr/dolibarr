@@ -124,6 +124,10 @@ if ($_GET["id"])
 
       print '</td></tr>';
 
+      print '<tr><td width="20%">Statut</td><td>';
+      print '<img src="./statut'.$bon->statut.'.png">&nbsp;';
+      print $lipre->statuts[$lipre->statut].'</td></tr>';
+
       if($bon->date_trans <> 0)
 	{
 	  $muser = new User($db, $bon->user_trans);
