@@ -26,18 +26,9 @@ class Conf {
 
   Function Conf()
     {
-      /* A conserver */
       $this->db = new DbConf();
       
-      /* A verifier */
-      
-      $this->theme = "dolibarr";
-      
-      $this->css = "theme/".$this->theme."/".$this->theme.".css";
-      
       $this->liste_limit = 10;
-      
-      $this->societe    = 1;
       
       $this->voyage     = 0;
       
@@ -53,10 +44,7 @@ class Conf {
       
       $this->readonly = 0;
 
-      $this->years = 2001;
-
-      $this->password_encrypted = 1;
-
+      $this->password_encrypted = 0;
     }  
 }
 
@@ -68,16 +56,12 @@ class ComptaConf
     }
 }
 
-class PropalConf {
-  Function PropalConf() {
+class PropalConf
+{
+  Function PropalConf()
+    {
 
-    $this->fromtoname = "Service Commercial";
-    $this->fromtomail = "commercial@propal.com";
-
-    $this->replytoname = "Service Commercial";
-    $this->replytomail = "commercial@propal.com";
-
-  }
+    }
 }
 /*
  * Base de données

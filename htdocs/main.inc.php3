@@ -75,10 +75,6 @@ $user = new User($db);
 
 $user->fetch($GLOBALS["REMOTE_USER"]);
 
-if ($user->limite_liste <> $conf->liste_limit)
-{
-  $conf->liste_limit = $user->limite_liste;
-}
 /*
  * Definition de toutes les Constantes globales d'envirronement
  *
@@ -153,6 +149,15 @@ if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
 if (defined("SIZE_LISTE_LIMIT"))
 {
   $conf->liste_limit=SIZE_LISTE_LIMIT;
+}
+else
+{
+  $conf->liste_limit=20;
+}
+
+if ($user->limite_liste <> $conf->liste_limit)
+{
+  $conf->liste_limit = $user->limite_liste;
 }
 
 if (defined("MAIN_THEME"))

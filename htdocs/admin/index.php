@@ -24,13 +24,10 @@ llxHeader();
 
 print_titre("Configuration Dolibarr (version ".DOL_VERSION.")");
 
-
-
 print '<table border="1" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td><td>Valeur</td><td>Action</td>';
 print "</TR>\n";
-
 
 print '<tr><td>Version</td><td>' . DOL_VERSION . '</td><td>&nbsp;</td></tr>';
 print '<tr><td>css</td><td>' . $conf->css . '</td><td>&nbsp;</td></tr>';

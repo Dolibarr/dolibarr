@@ -41,10 +41,10 @@ all: $(DOC).pdf $(DOC).html
 %.ps:	%.sgml $(FRPAGES)
 	$(DEBIANDOC2PS) $(OPTIONS) $<
 
-%.pdf:	%.sgml
+%.pdf:	$(FRPAGES)
 	$(DEBIANDOC2PDF) $(OPTIONS) $<
 
-%.html: %.sgml $(FRPAGES)
+%.html: $(FRPAGES)
 	$(DEBIANDOC2HTML) $(HOPTIONS) $<
 
 put:

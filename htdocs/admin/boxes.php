@@ -36,7 +36,6 @@ if ($HTTP_POST_VARS["action"] == 'add')
 
 if ($action == 'delete')
 {
-
   $sql = "DELETE FROM llx_boxes WHERE rowid=$rowid";
 
   $result = $db->query($sql);
@@ -51,8 +50,6 @@ if ($action == 'delete')
 $boxes = array();
 
 $pos[0] = "Homepage";
-$pos[1] = "Gauche";
-$pos[2] = "Droite";
 
 print '<table border="1" cellpadding="3" cellspacing="0">';
 

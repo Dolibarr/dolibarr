@@ -24,18 +24,17 @@ llxHeader();
 
 $db = new Db();
 
-$upload_dir = SOCIETE_DOCUMENT_DIR . "/" . $socid . "/";
+$upload_dir = SOCIETE_OUTPUTDIR . "/" . $socid . "/";
+
+if (! is_dir($upload_dir))
+{
+  mkdir($upload_dir);
+}
 
 function do_upload ($socid)
 {
   global $upload_dir;
   global $local_file, $error_msg;
-
-  if (! is_dir($upload_dir))
-    {
-      mkdir($upload_dir, 0755);
-    }
-
 
   if (move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . $_FILES['userfile']['name']))
     {
@@ -61,7 +60,7 @@ if ($action=='delete')
   dol_delete_file($file);
 }
 
-if ( $sendit ) 
+if ( $sendit )
 {
   do_upload ($socid);
 }
@@ -139,9 +138,8 @@ if ($socid > 0)
       print "</td>\n";
       
       print "</table>";
-      
-      echo '<FORM NAME="userfile" ACTION="docsoc.php?socid='.$socid.'" ENCTYPE="multipart/form-data" METHOD="POST">';
-      
+
+      echo '<FORM NAME="userfile" ACTION="docsoc.php?socid='.$socid.'" ENCTYPE="multipart/form-data" METHOD="POST">';      
       print '<input type="hidden" name="max_file_size" value="2000000">';
       print '<input type="file"   name="userfile" size="40" maxlength="80">';
       print '<BR>';
