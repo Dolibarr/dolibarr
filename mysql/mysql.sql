@@ -21,21 +21,15 @@ create table llx_service
 create table actioncomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
-  datea          datetime,         -- action date
+  datea          datetime,           -- action date
   fk_action      integer,
-
-  label          varchar(50),  -- libelle de l'action
-
+  label          varchar(50),        -- libelle de l'action
   fk_soc         integer,
   fk_contact     integer default 0,
-
-  fk_user_action integer,      -- id de la personne qui doit effectuer l'action
+  fk_user_action integer,            -- id de la personne qui doit effectuer l'action
   fk_user_author integer,
-
   priority       smallint,
-
   percent        smallint,
-
   note           text,
   propalrowid    integer,
   fk_facture     integer
@@ -49,7 +43,6 @@ create table llx_transaction_bplc
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   tms               timestamp,
-
   ipclient          varchar(20),
   num_transaction   varchar(10), 
   date_transaction  varchar(10), 
@@ -57,7 +50,6 @@ create table llx_transaction_bplc
   num_autorisation  varchar(10),
   cle_acceptation   varchar(5),
   code_retour       integer,
-
   ref_commande      integer
 
 );
@@ -74,7 +66,6 @@ create table llx_todocomm
                                --    doit etre effectuee
   note           text
 );
-
 
 
 create table llx_adherent
@@ -95,10 +86,10 @@ create table llx_adherent
   ville            varchar(50),
   pays             varchar(50),
   email            varchar(255),
-  login            varchar(50), -- login utilise pour editer sa fiche
-  pass             varchar(50), -- pass utilise pour editer sa fiche
-  naiss            date, -- date de naissance
-  photo		   varchar(255), -- url vers la photo de l'adherent
+  login            varchar(50),      -- login utilise pour editer sa fiche
+  pass             varchar(50),      -- pass utilise pour editer sa fiche
+  naiss            date,             -- date de naissance
+  photo		   varchar(255),     -- url vers la photo de l'adherent
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer NOT NULL,
   fk_user_valid    integer NOT NULL,
@@ -197,20 +188,13 @@ create table llx_fichinter
   fk_soc          integer NOT NULL,
   fk_projet       integer default 0,     -- projet auquel est rattache la fiche
   ref             varchar(30) NOT NULL,  -- number
-
   datec           datetime,              -- date de creation 
   date_valid      datetime,              -- date de validation
-
   datei           date,                  -- date de l'intervention
-
-  fk_user_author  integer,   -- createur de la fiche
-
-  fk_user_valid   integer,   -- valideur de la fiche
-
+  fk_user_author  integer,               -- createur de la fiche
+  fk_user_valid   integer,               -- valideur de la fiche
   fk_statut       smallint  default 0,
-
   duree           real,
-
   note            text,
 
   UNIQUE INDEX (ref)
@@ -272,19 +256,14 @@ create table llx_bank_account
   tms            timestamp,
   label          varchar(30),
   bank           varchar(255),
-
   code_banque    varchar(7),
   code_guichet   varchar(6),
   number         varchar(255),
   cle_rib        varchar(5),
   bic            varchar(10),
-
   iban_prefix    varchar(5),
-
   domiciliation  varchar(50),
-
   courant        smallint default 0 not null,
-
   clos           smallint default 0 not null
 );
 
@@ -302,9 +281,10 @@ create table llx_user
   code          varchar(4),
   email         varchar(255),
   admin         smallint default 0,
-  webcal_login   varchar(25),
+  webcal_login  varchar(25),
   module_comm   smallint default 1,
   module_compta smallint default 1,
+  fk_societe    integer default 0,
   note          text,
 
   UNIQUE INDEX(login)
@@ -356,7 +336,6 @@ create table llx_voyage_reduc
   fk_type         smallint,       -- Train, Avion, Bateaux
   note            text
 );
-
 
 create table c_paiement
 (
@@ -475,7 +454,6 @@ create table c_pays
   libelle  varchar(25),
   code     char(2)      NOT NULL
 );
-
 
 
 
@@ -670,22 +648,15 @@ create table llx_propal
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc          integer,
   fk_soc_contact  integer,
-  fk_projet       integer default 0, -- projet auquel est rattache la propale
+  fk_projet       integer default 0,     -- projet auquel est rattache la propale
   ref             varchar(30) NOT NULL,  -- propal number
-
   datec           datetime,              -- date de creation 
   date_valid      datetime,              -- date de validation
   date_cloture    datetime,              -- date de cloture
-
   datep           date,                  -- date de la propal
-
-  fk_user_author  integer,   -- createur de la propale
-
-  fk_user_valid   integer,   -- valideur de la propale
-
-  fk_user_cloture integer,   -- cloture de la propale signee ou non signee
-
-
+  fk_user_author  integer,               -- createur de la propale
+  fk_user_valid   integer,               -- valideur de la propale
+  fk_user_cloture integer,               -- cloture de la propale signee ou non signee
   fk_statut       smallint  default 0,
   price           real      default 0,
   remise          real      default 0,
@@ -702,7 +673,7 @@ create table llx_soc_recontact
   fk_soc     integer,
   datere     datetime,
   author     varchar(15)
-);-- ===================================================================
+);
 
 create table llx_ventes
 (
@@ -746,7 +717,6 @@ create table llx_cotisation
   cotisation      real,
   note            text
 );
-
 
 create table llx_adherent_type
 (
@@ -810,9 +780,7 @@ create table llx_lieu_concert
   tms              timestamp,
   nom              varchar(64) NOT NULL,
   description      text,
-
   ville            varchar(64) NOT NULL,
-
   fk_user_author   integer
 );
 
@@ -840,10 +808,8 @@ create table llx_auteur
   oscid           integer NOT NULL,
   tms             timestamp,
   nom		  varchar(32),
-
   fk_user_author  integer
 );
-
 
 create table llx_editeur
 (
@@ -851,7 +817,6 @@ create table llx_editeur
   oscid           integer NOT NULL,
   tms             timestamp,
   nom		  varchar(32),
-
   fk_user_author  integer
 );
 
