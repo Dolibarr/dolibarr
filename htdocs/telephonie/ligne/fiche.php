@@ -1109,7 +1109,7 @@ if ($_GET["action"] == '')
   print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$ligne->id\">".$langs->trans("Contact")."</a>";
     }
 
-  if ( $user->rights->telephonie->ligne_activer && $ligne->statut < 4)
+  if ( $ligne->statut < 4)
     {
       print "<a class=\"tabAction\" href=\"fiche.php?action=editremise&amp;id=$ligne->id\">".$langs->trans("Changer la remise")."</a>";
     }
