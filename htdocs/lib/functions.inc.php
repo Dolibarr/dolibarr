@@ -35,8 +35,10 @@
 
 
 /*!
-		\brief envoi des messages dolibarr dans syslog
+		\brief  Envoi des messages dolibarr dans syslog.
 		\param	message		message a envoyer a syslog
+
+        Le \a message est envoyé dans syslog dans la catégorie LOG_USER.
 */
 
 function dolibarr_syslog($message)
@@ -51,10 +53,10 @@ function dolibarr_syslog($message)
 }
 
 /*!
-		\brief header d'une fiche
-		\param	links		liens
-		\param	active
-		\remarks active = 0 par défaut
+		\brief      Affiche le header d'une fiche
+		\param	    links		liens
+		\param	    active      0 par défaut
+		\param      title
 */
 
 
@@ -91,18 +93,16 @@ function dolibarr_fiche_head($links, $active=0, $title='')
 }
 
 /*!
-		\brief insertion d'une constantes dans la base de données
-		\param	db			base de données
-		\param	name		nom de la constante
-		\param	value		valeur de la constante
-		\param	type		type de constante
-		\param	visible	la constante est t'elle visible
-		\param	note		explication de la constante
-		\remarks type = chaine par défaut
-		\remarks visible = 0 par défaut
-		\remarks retourne 0 pour raté, 1 pour réussi
+		\brief      Insertion d'une constante dans la base de données.
+		\param	    db          handler d'accès base
+		\param	    name		nom de la constante
+		\param	    value		valeur de la constante
+		\param	    type		type de constante (chaine par défaut)
+		\param	    visible	    la constante est t'elle visible (0 par défaut)
+		\param	    note		explication de la constante
+		\return     0 pour raté, 1 pour réussi
+        \see        dolibarr_del_const
 */
-
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {
   $sql = "REPLACE INTO llx_const SET name = '$name', value='$value', visible=$visible, type='$type', note='$note'";
@@ -118,10 +118,11 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 }
 
 /*!
-		\brief effacement d'une constante dans la base de données
-		\param	db			base de données
-		\param	name		nom ou rowid de la constante
-		\remarks retourne 0 pour raté, 1 pour réussi
+		\brief      Effacement d'une constante dans la base de données
+		\param	    db          handler d'accès base
+		\param	    name		nom ou rowid de la constante
+		\return     0 pour raté, 1 pour réussi
+        \see        dolibarr_set_const
 */
 
 function dolibarr_del_const($db, $name)
@@ -139,9 +140,9 @@ function dolibarr_del_const($db, $name)
 }
 
 /*!
-		\brief formattage des nombres
+		\brief  Formattage des nombres
 		\param	ca			valeur a formater
-		\return	cat			valeur formatée
+		\return	int			valeur formatée
 */
 
 function dolibarr_print_ca($ca)
@@ -167,10 +168,10 @@ function dolibarr_print_ca($ca)
 }
 
 /*!
-		\brief formattage de la date
-		\param	time       date timestamp ou au format YYYY-MM-DD
-		\param	format     format de la date "%d %b %Y"
-		\remarks retourne la date formatée
+		\brief  Formattage de la date
+		\param	time        date timestamp ou au format YYYY-MM-DD
+		\param	format      format de la date "%d %b %Y"
+		\return string      date formatée
 */
 
 function dolibarr_print_date($time,$format="%d %b %Y")
@@ -202,7 +203,7 @@ function dolibarr_print_date($time,$format="%d %b %Y")
 
 
 /*!
-		\brief affiche les informations d'un objet
+		\brief  Affiche les informations d'un objet
 		\param	object			objet a afficher
 */
 
@@ -227,10 +228,10 @@ function dolibarr_print_object_info($object)
 }
 
 /*!
-  \brief formattage du telephone
+  \brief    Formattage du telephone
   \param	phone			numéro de telephone à formater
-  \return phone			numéro de téléphone formaté
-  \remarks net tient pas en compte le format belge 02/211 34 83
+  \return   phone			numéro de téléphone formaté
+  \remarks  net tient pas en compte le format belge 02/211 34 83
 */
 
 function dolibarr_print_phone($phone)
@@ -435,7 +436,7 @@ function img_previous($alt = "default")
 
 /*!
 		\brief fonction de login
-		\remarks if faut changer le code html dans la fonction pour changer le design
+		\remarks    il faut changer le code html dans la fonction pour changer le design
 		\remarks	le css devrait etre pris dans le repetoire de dolibarr et ne pas etre en dur !
 */
 
@@ -518,7 +519,8 @@ function loginfunction()
 }
 
 /*!
-		\brief Affiche message erreur de type acces interdit
+		\brief      Affiche message erreur de type acces interdit et arrete le programme
+		\remarks    l'appel a cette fonction termine le code
 */
 
 function accessforbidden()
@@ -532,7 +534,9 @@ function accessforbidden()
 }
 
 /*!
-		\brief Affiche message erreur system avec toutes les informations pour faciliter le diagnostique et la remontée des bugs
+		\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostique et la remontée des bugs
+        On doit appeler cette fonction quand une erreur technique bloquante est rencontrée
+		\remarks    l'appel a cette fonction termine le code
 */
 
 function dolibarr_print_error($db='',$msg='')
@@ -559,9 +563,10 @@ function dolibarr_print_error($db='',$msg='')
 }
 
 /*!
-		\brief deplacer les fichiers telechargés
+		\brief  Deplacer les fichiers telechargés
 		\param	src_file	fichier source
 		\param	dest_file	fichier de destination
+		\return int         le resultat du move_uploaded_file
 */
 
 function doliMoveFileUpload($src_file, $dest_file)
@@ -576,6 +581,12 @@ function doliMoveFileUpload($src_file, $dest_file)
   return move_uploaded_file($src_file, $file_name);
 }
 
+
+/*!
+		\brief  
+		\param	db      handler d'accès base
+		\param	user    object utilisateur
+*/
 
 function dolibarr_user_page_param($db, &$user)
 {
@@ -632,10 +643,10 @@ function dolibarr_user_page_param($db, &$user)
 }
 
 /*!
-		\brief transcodage de francs en euros
+		\brief  Transcodage de francs en euros
 		\param	zonein		zone de depart
 		\param	devise		type de devise
-		\return	r
+		\return	r           resultat transcodé
 */
 
 function transcoS2L($zonein,$devise)
@@ -836,14 +847,12 @@ function transcoS2L($zonein,$devise)
 
 
 /*!
-		\brief affichage du titre d'une liste
+		\brief  Affichage du titre d'une liste
 		\param	name
 		\param	file
 		\param	field
-		\param	begin
-		\param	options
-		\remarks begin = "" par défaut
-		\remarks options = "" par défaut
+		\param	begin ("" par defaut)
+		\param	options ("" par defaut)
 */
 
 function print_liste_field_titre($name, $file, $field, $begin="", $options="")
@@ -862,14 +871,10 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="")
 		\param	name
 		\param	file
 		\param	field
-		\param	begin
-		\param	options
-		\param	td
-		\param	sortfield
-		\remarks begin = "" par défaut
-		\remarks options = "" par défaut
-		\remarks td = "" par défaut
-		\remarks sortfield = "" par défaut
+		\param	begin ("" par defaut)
+		\param	options ("" par defaut)
+		\param	td ("" par defaut)
+		\param	sortfield ("" par defaut)
 */
 
 function print_liste_field_titre_new($name, $file, $field, $begin="", $options="", $td="", $sortfield="")
@@ -892,7 +897,7 @@ function print_liste_field_titre_new($name, $file, $field, $begin="", $options="
 }
 
 /*!
-		\brief affichage d'un titre
+		\brief  Affichage d'un titre
 		\param	titre			le titre a afficher
 */
 
@@ -902,9 +907,9 @@ function print_titre($titre)
 }
 
 /*!
-		\brief affichage d'un titre d'une fiche aligné a droite
+		\brief  Affichage d'un titre d'une fiche, aligné a gauche
 		\param	titre			le titre a afficher
-		\param	mesg			message afficher
+		\param	mesg			message suplémentaire à afficher à droite
 */
 
 function print_fiche_titre($titre, $mesg='')
@@ -919,7 +924,7 @@ function print_fiche_titre($titre, $mesg='')
 }
 
 /*!
-		\brief effacement d'un fichier
+		\brief  Effacement d'un fichier
 		\param	file			fichier a effacer
 */
 
@@ -930,7 +935,7 @@ function dol_delete_file($file)
 
 
 /*!
-		\brief fonction print_barre_liste
+		\brief  Fonction print_barre_liste
 		\param	titre			titre de la page
 		\param	page			numéro de la page
 		\param	file			lien
@@ -938,6 +943,7 @@ function dol_delete_file($file)
 		\param	sortfield
 		\param	sortorder
 		\param	form
+		\param	num             nombre d'élément total
 */
 
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $form='', $num=-1)
@@ -989,11 +995,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 }
 
 /*!
-		\brief fonction servant a afficher les fleches de navigation dans les pages de listes
+		\brief  Fonction servant a afficher les fleches de navigation dans les pages de listes
 		\param	page			numéro de la page
 		\param	file			lien
-		\param	options
-		\param	nextpage	page suivante
+		\param	options         autres parametres d'url a propager dans les liens ("" par defaut)
+		\param	nextpage	    page suivante
 */
 
 function print_fleche_navigation($page,$file,$options='', $nextpage)
@@ -1012,9 +1018,10 @@ function print_fleche_navigation($page,$file,$options='', $nextpage)
 
 
 /*!
-		\brief fonction servant a afficher un menu déroulant sur le type de paiement
-		\param	value
-		\remarks value peut avoir la valeur 0 ou 1
+		\brief      Fonction servant a afficher un menu déroulant sur le type de paiement
+		\param	    db          handler d'accès base
+		\param	    nomselect   Nom de la zone select html
+		\param	    value       Critere de filtrage sur les type de paiement
 */
 
 function print_type_paiement_select($db,$nomselect,$value=-1)
@@ -1043,9 +1050,8 @@ function print_type_paiement_select($db,$nomselect,$value=-1)
 }
 
 /*!
-		\brief fonction servant a afficher les mois dans un liste déroulante
-		\param	set_time
-		\remarks set_time = '' par défaut
+		\brief      Fonction servant a afficher les mois dans un liste déroulante
+		\param	    set_time ("" par defaut)
 */
 
 function print_date_select($set_time='')
@@ -1123,12 +1129,10 @@ function print_date_select($set_time='')
   
 }
 /*!
-		\brief fonction servant a afficher les heures/minutes dans un liste déroulante
+		\brief  Fonction servant a afficher les heures/minutes dans un liste déroulante
 		\param	prefix
-		\param	begin
-		\param	end
-		\remarks begin = 1 par défaut
-		\remarks end = 23 par défaut
+		\param	begin (1 par defaut)
+		\param	end (23 par defaut)
 */
 
 function print_heure_select($prefix,$begin=1,$end=23) {
@@ -1149,7 +1153,7 @@ function print_heure_select($prefix,$begin=1,$end=23) {
 }
 
 /*!
-		\brief fonction servant a afficher une durée dans une liste déroulante
+		\brief  Fonction servant a afficher une durée dans une liste déroulante
 		\param	prefix
 */
 
@@ -1174,11 +1178,10 @@ function print_duree_select($prefix)
 
 
 /*!
-		\brief fonction qui retourne un montant monétaire formaté
+		\brief  Fonction qui retourne un montant monétaire formaté
 		\param	amount		montant a formater
-		\param	html			formatage html ou pas
-		\remarks html = 0 par défaut
-		\remarks fnction utilisée dans les pdf et les pages html
+		\param	html		formatage html ou pas (0 par defaut)
+		\remarks fonction utilisée dans les pdf et les pages html
 
 */
 
@@ -1199,7 +1202,7 @@ function price($amount, $html=0)
 }
 
 /*!
-		\brief fonction qui convertit des euros en francs
+		\brief  Fonction qui convertit des euros en francs
 		\param	euros			somme en euro à convertir
 		\return price
 */
@@ -1210,7 +1213,7 @@ function francs($euros)
 }
 
 /*!
-		\brief fonction qui calcule la tva
+		\brief  Fonction qui calcule la tva
 		\param	euros			somme en euro
 		\param	taux			taux de tva
 */
@@ -1223,7 +1226,7 @@ function tva($euros, $taux=19.6)
 }
 
 /*!
-		\brief fonction qui calcule le montant tva incluse
+		\brief  Fonction qui calcule le montant tva incluse
 		\param	euros			somme en euro
 		\param	taux			taux de tva
 */
@@ -1233,7 +1236,7 @@ function inctva($euros, $taux=1.196)
 }
 
 /*!
-		\brief Renvoie oui ou non dans la langue choisie
+		\brief  Renvoie oui ou non dans la langue choisie
 		\param	yesno			variable pour test si oui ou non
 		\param	case			Oui/Non ou oui/non
 */
@@ -1247,7 +1250,7 @@ function yn($yesno, $case=1) {
 }
 
 /*!
-		\brief fonction qui affiche des statistiques
+		\brief  Fonction qui affiche des statistiques
 		\param	basename
 		\param	bc1
 		\param	bc2
@@ -1298,10 +1301,10 @@ function stat_print($basename,$bc1,$bc2,$ftc, $jour) {
 }
 
 /*!
-		\brief fonction qui permet d'envoyer les infos dans un fichier de log
-		\param	str				chaine a mettre dans le fichier
-		\param	log				nom du fichier de log
-		\remarks cette fonction ne marchera qui si la constante MAIN_DEBUG = 1
+		\brief      Fonction qui permet d'envoyer les infos dans un fichier de log
+		\param	    str				chaine a mettre dans le fichier
+		\param	    log				nom du fichier de log
+		\remarks    Cette fonction ne marchera qui si la constante MAIN_DEBUG = 1
 */
 
 function logfile($str,$log="/var/log/dolibarr/dolibarr.log")
@@ -1333,11 +1336,10 @@ function logfile($str,$log="/var/log/dolibarr/dolibarr.log")
 }
 
 /*!
-		\brief fonction pour créer un mot de passe aléatoire
-		\param	longueur	longueur du mot de passe
-		\param	sel				donnée aléatoire
-		\remarks la longueur est fixée a 8 par défaut
-		\remarks la fonction a été prise sur http://www.uzine.net/spip
+		\brief      Fonction pour créer un mot de passe aléatoire
+		\param	    longueur	longueur du mot de passe (8 par defaut)
+		\param	    sel				donnée aléatoire
+		\remarks    la fonction a été prise sur http://www.uzine.net/spip
 */
 
 function creer_pass_aleatoire($longueur = 8, $sel = "") {
@@ -1363,8 +1365,8 @@ function creer_pass_aleatoire($longueur = 8, $sel = "") {
 }
 
 /*!
-		\brief fonction pour initialiser sel
-		\remarks la fonction a été prise sur http://www.uzine.net/spip
+		\brief      Fonction pour initialiser sel
+		\remarks    la fonction a été prise sur http://www.uzine.net/spip
 */
 
 function initialiser_sel() {
@@ -1374,10 +1376,10 @@ function initialiser_sel() {
 }
 
 /*!
-		\brief fonction pour qui retourne le rowid d'un departement par son code
-		\param	db				base de données
-		\param	code			code région
-		\param	pays_id		id du pays
+		\brief  Fonction pour qui retourne le rowid d'un departement par son code
+		\param  db          handler d'accès base
+		\param	code		Code région
+		\param	pays_id		Id du pays
 */
 
 function departement_rowid($db,$code, $pays_id)
