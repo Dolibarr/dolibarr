@@ -40,6 +40,17 @@ ALTER TABLE llx_usergroup_rights ADD FOREIGN KEY (fk_usergroup)    REFERENCES ll
 
 alter table llx_facture add  increment           varchar(10);
 
+create table llx_societe_commerciaux
+(
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  fk_soc        integer,
+  fk_user       integer,
+
+  UNIQUE INDEX(fk_soc, fk_user)
+)type=innodb;
+
+
+
 delete from llx_const where name like '%_OUTPUT_URL';
 delete from llx_const where name like 'MAIN_START_YEAR';
 
