@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ function llxHeader($head = "") {
 
   $menu->add("../charges/","Charges");
   $menu->add_submenu("index.php3","Prest. Sociales");
+  $menu->add_submenu("/compta/sociales/conf.php","Conf");
 
   $menu->add("../ca.php3","Chiffres d'affaires");
 
