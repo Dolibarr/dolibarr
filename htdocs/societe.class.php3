@@ -40,7 +40,7 @@ class Societe {
 
     $this->db = $DB;
     $this->id = $id;
-    
+    $this->fournisseur = 0;
     return 1;
   }
   /*
@@ -50,8 +50,10 @@ class Societe {
    */
   Function create() {
 
+    print $this->url;
+
     $sql = "INSERT INTO societe (nom, datec, datea, client) ";
-    $sql .= " VALUES ('".trim($this->nom)."', now(), now(), $this->client)";
+    $sql .= " VALUES ('".trim($this->nom)."', now(), now(), $this->client);";
 
     if ($this->db->query($sql) ) {
       $id = $this->db->last_insert_id();
@@ -71,9 +73,10 @@ class Societe {
      * Force au statut de fournisseur si ce n'est pas un client
      * sinon l'entreprise disparait de toutes les listes
      */
-    if ($this->client == 0 ) {
-      $this->fournisseur = 1;
-    }
+    if ($this->client == 0 )
+      {
+	$this->fournisseur = 1;
+      }
 
     $sql = "UPDATE societe ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
@@ -86,9 +89,12 @@ class Societe {
     $sql .= ",siren = '" . trim($this->siren) ."'";
     $sql .= ",client = " . $this->client ;
     $sql .= ",fournisseur = " . $this->fournisseur ;
-    $sql .= " WHERE idp = " . $id;
+    $sql .= " WHERE idp = " . $id .";";
 
-    $this->db->query($sql);
+    if (! $this->db->query($sql)) 
+      {
+	print $this->db->error();
+      }
   }
   /*
    *
@@ -141,59 +147,77 @@ class Societe {
    *
    */
 
-  Function attribute_prefix() {
-    $sql = "SELECT nom FROM societe WHERE idp = $this->id";
-    if ( $this->db->query( $sql) ) {
-      if ( $this->db->num_rows() ) {
-      $nom = $this->db->result(0,0);
-      $this->db->free();
+  Function attribute_prefix()
+    {
+      $sql = "SELECT nom FROM societe WHERE idp = $this->id";
+      if ( $this->db->query( $sql) )
+	{
+	  if ( $this->db->num_rows() )
+	    {
+	      $nom = $this->db->result(0,0);
+	      $this->db->free();
+	      
+	      $prefix = strtoupper(substr($nom, 0, 2));
       
-      $prefix = strtoupper(substr($nom, 0, 2));
-      
-      $sql = "SELECT count(*) FROM societe WHERE prefix_comm = '$prefix'";
-      if ( $this->db->query( $sql) ) {
-	if ( $this->db->result(0, 0) ) {
-	  $this->db->free();
-	} else {
-	  $this->db->free();
-	  $sql = "UPDATE societe set prefix_comm='$prefix' WHERE idp=$this->id";
-	  
-	  if ( $this->db->query( $sql) ) {
-	    
-	  } else {
-	    print $this->db->error();
-	  }
+	      $sql = "SELECT count(*) FROM societe WHERE prefix_comm = '$prefix'";
+	      if ( $this->db->query( $sql) )
+		{
+		  if ( $this->db->result(0, 0) )
+		    {
+		      $this->db->free();
+		    }
+		  else
+		    {
+		      $this->db->free();
+
+		      $sql = "UPDATE societe set prefix_comm='$prefix' WHERE idp=$this->id";
+		      
+		      if ( $this->db->query( $sql) )
+			{
+			  
+			}
+		      else
+			{
+			  print $this->db->error();
+			}
+		    }
+		}
+	      else
+		{
+		  print $this->db->error();
+		}
+	    }
 	}
-      } else {
-	print $this->db->error();
-      }
-      }
-    } else {
-      print $this->db->error();
+      else
+	{
+	  print $this->db->error();
+	}
+      return $prefix;
     }
-    return $prefix;
-  }
   /*
    *
    *
    *
    */
 
-  Function get_nom($id) {
+  Function get_nom($id)
+    {
 
-    $sql = "SELECT nom FROM societe WHERE idp=$id;";
-
-    $result = $this->db->query($sql);
-
-    if ($result) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object($result , 0);
-
-	$this->nom = $obj->nom;
-
+      $sql = "SELECT nom FROM societe WHERE idp=$id;";
+      
+      $result = $this->db->query($sql);
+      
+    if ($result)
+      {
+	if ($this->db->num_rows())
+	  {
+	    $obj = $this->db->fetch_object($result , 0);
+	    
+	    $this->nom = $obj->nom;
+	    
+	  }
+	$this->db->free();
       }
-      $this->db->free();
-    }
   }
 
 

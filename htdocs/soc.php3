@@ -25,31 +25,29 @@ require("pre.inc.php3");
 
 llxHeader();
 $db = new Db();
-if ($sortorder == "") {
-  $sortfield="lower(s.nom)";
-  $sortorder="ASC";
-}
 
-if ($page == -1) { $page = 0 ; }
-$limit = 26;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
-if ($action == 'add') {
+if ($action == 'add')
+{
   $soc = new Societe($db);
   $soc->nom = $nom;
 
-  $soc->tel = $tel;
-  $soc->fax = $fax;
-  $soc->url = $url;
+  $soc->adresse = $adresse;
+  $soc->cp      = $cp;
+  $soc->ville   = $ville;
 
-  $soc->client = 1;
+  $soc->tel     = $tel;
+  $soc->fax     = $fax;
+  $soc->url     = $url;
+  $soc->siren   = $siren;
+  $soc->client  = 1;
+  $soc->fournisseur = $fournisseur;
 
   $socid = $soc->create();
 }
 
-if ($action == 'update') {
+if ($action == 'update')
+{
   $soc = new Societe($db);
 
   $soc->nom = $nom;
@@ -73,10 +71,12 @@ if ($action == 'update') {
  *
  */
 
-if ($action == 'create') {
+if ($action == 'create') 
+{
   print '<div class="titre">Nouveau client</div><br>';
   print '<form action="soc.php3" method="post">';
   print '<input type="hidden" name="action" value="add">';
+  print '<input type="hidden" name="fournisseur" value="0">';
 
   print '<table border="1" cellpadding="3" cellspacing="0">';
   print '<tr><td>Nom</td><td><input type="text" name="nom"></td></tr>';
@@ -101,7 +101,9 @@ if ($action == 'create') {
   print '<tr><td colspan="2" align="center"><input type="submit" value="Ajouter"></td></tr>';
   print '</table>';
   print '</form>';
-} elseif ($action == 'edit') {
+}
+elseif ($action == 'edit')
+{
   print '<div class="titre">Edition de la société</div><br>';
 
   $soc = new Societe($db);
@@ -165,16 +167,20 @@ if ($action == 'create') {
   $docdir = $GLOBALS["DOCUMENT_ROOT"] . "/document/societe/$socid";
   $url = "/document/societe/$socid";
 
-  if (file_exists ($docdir)) {
-    print "<p>$docdir<p>";
-    print '<a href="'.$url.'">Documents</a>';
-  } else {
-   
-    mkdir ("$docdir", 2775);
-    if (file_exists ($docdir)) {
+  if (file_exists ($docdir))
+    {
+      print "<p>$docdir<p>";
       print '<a href="'.$url.'">Documents</a>';
     }
-  }
+  else
+    {
+   
+    mkdir ("$docdir", 2775);
+    if (file_exists ($docdir))
+      {
+	print '<a href="'.$url.'">Documents</a>';
+      }
+    }
 }
 
 $db->close();
