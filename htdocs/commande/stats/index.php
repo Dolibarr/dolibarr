@@ -54,7 +54,11 @@ $stats = new CommandeStats($db, $socidp);
 $year = strftime("%Y", time());
 $data = $stats->getNbCommandeByMonthWithPrevYear($year);
 
-if (! is_dir($conf->commande->dir_images)) { mkdir($conf->commande->dir_images); }
+if (! is_dir($conf->commande->dir_images))
+{ 
+    mkdir($conf->commande->dir_output);
+    mkdir($conf->commande->dir_images);
+}
 
 $filename = $conf->commande->dir_images."/nbcommande2year-".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$year.'.png';

@@ -89,6 +89,8 @@ class modCommande extends DolibarrModules
     */
   function init()
   {
+    global $conf;
+    
     // Permissions
     $this->remove();
 
@@ -116,6 +118,10 @@ class modCommande extends DolibarrModules
     $this->rights[4][1] = 'Supprimer les commandes';
     $this->rights[4][2] = 'd';
     $this->rights[4][3] = 0;
+
+    // Dir
+    $this->dirs[0] = $conf->commande->dir_output;
+    $this->dirs[1] = $conf->commande->dir_images;
 
     $sql = array();
 
