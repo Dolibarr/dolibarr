@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
  * $Source$
  *
  */
-require("../main.inc.php3");
+require("../../main.inc.php3");
+require("./album.class.php");
+require("../groupart/groupart.class.php");
 
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf;
@@ -32,31 +34,24 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/product/index.php3", "Produits");
-
-  $menu->add_submenu("fiche.php3?&action=create","Nouveau produit");
-
-  $menu->add_submenu("osc-liste.php", "Osc");
-  $menu->add_submenu("osc-liste.php?reqstock=epuise", "Produits Epuisés");
-
-
-  $menu->add("osc-reviews.php", "Critiques");
-
-  $menu->add_submenu("osc-productsbyreviews.php", "Meilleurs produits");
-
   $menu->add("/product/album/", "Albums");
-  $menu->add("/product/groupart/", "Groupes/Artistes");
 
-  $menu->add("/product/categorie/", "Catégories");
+  $menu->add_submenu("../osc-liste.php", "Osc");
+  $menu->add_submenu("../osc-liste.php?reqstock=epuise", "Produits Epuisés");
 
-  $menu->add("/service/index.php3", "Services");
+  $menu->add_submenu("/product/album/fiche.php?&action=create","Nouvel album");
 
-  $menu->add("/comm/clients.php3", "Clients");
+  $menu->add("/product/groupart/", "Artistes/Groupes");
 
-  $menu->add("/fourn/index.php3", "Fournisseurs");
+  $menu->add_submenu("/product/groupart/fiche.php?&action=create","Nouvel Artiste/Groupe");
 
-  $menu->add_submenu("/soc.php3?&action=create","Nouvelle sociétée");
-  $menu->add_submenu("contact.php3","Contacts");
+  $menu->add("/product/concert/", "Concerts");
+
+  $menu->add_submenu("/product/concert/fiche.php?&action=create","Nouveau concert");
+
+  $menu->add("../osc-reviews.php", "Critiques");
+
+  $menu->add_submenu("../osc-productsbyreviews.php", "Meilleurs produits");
 
 
   left_menu($menu->liste);
