@@ -54,6 +54,10 @@ class BonPrelevement
 
       $this->numero_national_emetteur = "";
 
+      $this->methodes_trans = array();
+
+      $this->methodes_trans[0] = "Internet";
+
       return 1;
     }
   /*
@@ -65,6 +69,10 @@ class BonPrelevement
     $sql = "SELECT p.rowid, p.ref, p.amount, p.note, p.credite";
     $sql .= ",".$this->db->pdate("p.datec")." as dc";
 
+    $sql .= ",".$this->db->pdate("p.date_trans")." as date_trans";
+    $sql .= " , method_trans, fk_user_trans";
+    $sql .= ",".$this->db->pdate("p.date_credit")." as date_credit";
+    $sql .= " , fk_user_credit";
     $sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
     $sql .= " WHERE p.rowid=".$rowid;
       
@@ -82,6 +90,13 @@ class BonPrelevement
 	    $this->datec              = $obj->dc;
 	    $this->credite            = $obj->credite;
 	    
+	    $this->date_trans         = $obj->date_trans;
+	    $this->method_trans       = $obj->method_trans;
+	    $this->user_trans         = $obj->fk_user_trans;
+
+	    $this->date_credit         = $obj->date_credit;
+	    $this->user_credit         = $obj->fk_user_credit;
+
 	    return 0;
 	  }
 	else
@@ -183,6 +198,103 @@ class BonPrelevement
 	return -2;
       }
   }
+  /**
+   *
+   *
+   */
+  function set_infocredit($user, $date)
+  {
+    $error == 0;
+
+    if ($this->db->query("BEGIN"))
+      {
+
+
+	$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement ";
+	$sql .= " SET fk_user_credit = ".$user->id;
+	$sql .= " , date_credit='".$this->db->idate($date)."'";
+	$sql .= " WHERE rowid=".$this->id;
+      
+	$result=$this->db->query($sql);
+	if (! $result)
+	  {
+	    dolibarr_syslog("bon-prelevment::set_infotrans Erreur 1");
+	    dolibarr_syslog($this->db->error());
+	    $error++;
+	  }
+
+	/*
+	 * Fin de la procédure
+	 *
+	 */
+	if ($error == 0)
+	  {
+	    $this->db->query("COMMIT");
+	    return 0;
+	  }
+	else
+	  {
+	    $this->db->query("ROLLBACK");
+	    dolibarr_syslog("bon-prelevment::set_infotrans ROLLBACK ");
+	    return -1;
+	  }		
+      }
+    else
+      {
+	
+	dolibarr_syslog("bon-prelevment::set_infotrans Ouverture transaction SQL impossible ");
+	return -2;
+      }
+  }
+  /**
+   *
+   *
+   */
+  function set_infotrans($user, $date, $method)
+  {
+    $error == 0;
+
+    if ($this->db->query("BEGIN"))
+      {
+
+
+	$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement ";
+	$sql .= " SET fk_user_trans = ".$user->id;
+	$sql .= " , date_trans='".$this->db->idate($date)."'";
+	$sql .= " , method_trans=".$method;
+	$sql .= " WHERE rowid=".$this->id;
+      
+	$result=$this->db->query($sql);
+	if (! $result)
+	  {
+	    dolibarr_syslog("bon-prelevment::set_infotrans Erreur 1");
+	    dolibarr_syslog($this->db->error());
+	    $error++;
+	  }
+
+	/*
+	 * Fin de la procédure
+	 *
+	 */
+	if ($error == 0)
+	  {
+	    $this->db->query("COMMIT");
+	    return 0;
+	  }
+	else
+	  {
+	    $this->db->query("ROLLBACK");
+	    dolibarr_syslog("bon-prelevment::set_infotrans ROLLBACK ");
+	    return -1;
+	  }		
+      }
+    else
+      {
+	
+	dolibarr_syslog("bon-prelevment::set_infotrans Ouverture transaction SQL impossible ");
+	return -2;
+      }
+  }
 
   /**
    *    \brief      Recupére la liste des factures concernées
@@ -226,8 +338,8 @@ class BonPrelevement
       return $arr;
     }
 
-  /*
-   *
+  /** 
+   * Génération d'un bon de prélèvement
    *
    */
   function Generate()
