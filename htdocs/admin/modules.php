@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,9 @@
  * $Source$
  */
  
-/*!
-    \file       htdocs/admin/modules.php
-    \brief      Page de configuration et activation des modules
-    \version    $Revision$
+/**     \file       htdocs/admin/modules.php
+        \brief      Page de configuration et activation des modules
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -34,9 +33,6 @@ if (!$user->admin)
     accessforbidden();
 
 
-//
-// TODO mettre cette section dans la base de données
-//
 
 if ($_GET["action"] == 'set' && $user->admin)
 {
@@ -53,6 +49,9 @@ if ($_GET["action"] == 'reset' && $user->admin)
 }
 
 
+/**     \brief      Active un module
+        \param      value   Nom du module a activer
+*/
 function Activate($value)
 {
     global $db, $modules;
@@ -76,6 +75,10 @@ function Activate($value)
 
 }
 
+
+/**     \brief      Désactive un module
+        \param      value   Nom du module a désactiver
+*/
 function UnActivate($value)
 {
     global $db, $modules;
@@ -100,8 +103,6 @@ function UnActivate($value)
     Header("Location: modules.php");
 }
 
-
-$db->close();
 
 
 llxHeader("","");
