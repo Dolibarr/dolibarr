@@ -23,7 +23,6 @@
 create table llx_birthday_alert
 (
   rowid        integer AUTO_INCREMENT PRIMARY KEY,
-  date_alert   date,
   fk_contact   integer, -- pointe sur llx_socpeople
   fk_user      integer
 );
