@@ -102,6 +102,7 @@ function llxHeader($head = "", $title="", $help_url='')
   // Vision des recettes-dépenses
   if ($conf->banque->enabled && $user->rights->banque->lire)
     { 
+      $langs->load("banks");
       $menu->add(DOL_URL_ROOT."/compta/bank/",$langs->trans("Bank"));
     }
   
