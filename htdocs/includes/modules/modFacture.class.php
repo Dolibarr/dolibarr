@@ -20,14 +20,16 @@
  *
  */
 
-class modFacture {
+class modFacture
+{
 
   /*
    * Initialisation
    *
    */
 
-  Function modFacture($DB) {
+  Function modFacture($DB)
+  {
     $this->db = $DB ;
   }
   /*
@@ -36,7 +38,8 @@ class modFacture {
    *
    */
 
-  Function init() {
+  Function init()
+  {
     /*
      *  Activation du module
      */
