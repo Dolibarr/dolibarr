@@ -27,6 +27,21 @@ require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
 $error = array();
 
+
+if ($_GET["action"] == 'create_user' && $user->admin) 
+{
+    // Recuperation contact actuel
+    $contact = new Contact($db);
+    $result = $contact->fetch($_GET["id"]);
+
+    // Creation user
+    $nuser = new User($db);
+    $nuser->nom = $contact->nom;
+    $nuser->prenom = $contact->prenom;
+    $nuser->create_from_contact($contact);
+
+}
+
 if ($_POST["action"] == 'add') 
 {
   if (! $_POST["name"] && ! $_POST["firstname"]) {
@@ -101,16 +116,6 @@ if ($_POST["action"] == 'update')
   $result = $contact->update($_POST["contactid"], $user);
 
   if ($contact->error) { array_push($error,$contact->error); }
-}
-
-if ($_GET["action"] == 'create_user')
-{
-  $nuser = new User($db);
-  $contact = new Contact($db);
-  $nuser->nom = $contact->nom;
-  $nuser->prenom = $contact->prenom;
-  $result = $contact->fetch($contactid);
-  $nuser->create_from_contact($contact);
 }
 
 /*
@@ -297,6 +302,9 @@ else
   if ($contact->jabberid)
     print 'Jabber : '.$contact->jabberid ."<br>";
 
+  if($contact->user_id)
+    print 'Utilisateur avec accés : <a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$contact->user_id.'">Fiche utilisateur</a><br>';
+
   print '</td><td valign="top">';
 
   if ($contact->phone_pro)
@@ -327,9 +335,15 @@ else
     {
       print '<div class="tabsAction">';
       
-      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=edit">Editer</a>';    
+      print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">Editer</a>';    
 
-      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=deleteWARNING">Supprimer</a>';
+      print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=deleteWARNING">Supprimer</a>';
+
+
+      if ($contact->user_id == 0 && $user->admin)
+	{
+	  print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=create_user">Créer un compte</a>';
+	}
       
       print "</div>";      
     }
