@@ -139,15 +139,29 @@ if ($HTTP_POST_VARS["action"] == 'addproduct' && $user->rights->propale->creer)
   /*
    *  Ajout d'une ligne produit dans la propale
    */
+  if (strlen($HTTP_POST_VARS["np_desc"]) &&
+      strlen($HTTP_POST_VARS["np_price"]))
+    {
+
+      $propal = new Propal($db);
+      $propal->id = $propalid;
+      
+      if (empty ($HTTP_POST_VARS["np_qty"]))
+	$HTTP_POST_VARS["np_qty"]=1;
+      
+      $propal->insert_product_generic($HTTP_POST_VARS["np_desc"], 
+				      $HTTP_POST_VARS["np_price"], 
+				      $HTTP_POST_VARS["np_qty"],
+				      $HTTP_POST_VARS["np_tva_tx"]);
+    } 
+}
+
+if ($HTTP_POST_VARS["action"] == 'setremise' && $user->rights->propale->creer) 
+{
   $propal = new Propal($db);
   $propal->id = $propalid;
 
-  if (empty ($HTTP_POST_VARS["np_qty"]))
-    $HTTP_POST_VARS["np_qty"]=1;
-  $propal->insert_product_generic($HTTP_POST_VARS["np_desc"], 
-				  $HTTP_POST_VARS["np_price"], 
-				  $HTTP_POST_VARS["np_qty"],
-				  $HTTP_POST_VARS["np_tva_tx"]);
+  $propal->set_remise($user, $HTTP_POST_VARS["remise"]);
 } 
 
 
@@ -188,6 +202,15 @@ if ( $action == 'delete' && $user->rights->propale->supprimer )
   $brouillon = 1;
 }
 
+if ($valid == 1 && $user->rights->propale->valider)
+{
+  $propal = new Propal($db);
+  $propal->fetch($propalid);
+  $propal->update_price($propalid);
+  propale_pdf_create($db, $propalid);
+  $propal->valid($user);
+}
+
 
 /******************************************************************************/
 /*                   Fin des  Actions                                         */
@@ -203,13 +226,6 @@ if ($propalid)
   $propal = new Propal($db);
   $propal->fetch($propalid);
 
-
-  if ($valid == 1 && $user->rights->propale->valider)
-    {
-      $propal->update_price($propalid);
-      propale_pdf_create($db, $propalid);
-      $propal->valid($user);
-    }
   /*
    *
    */
@@ -253,7 +269,7 @@ if ($propalid)
 
 	  print "<tr><td>Destinataire</td><td>$obj->firstname $obj->name &lt;$obj->email&gt;</td>";
 
-	  print '<td valign="top" colspan="2" width="50%" rowspan="7">Note :<br>'. nl2br($obj->note)."</td></tr>";
+	  print '<td valign="top" colspan="2" width="50%" rowspan="7">Note :<br>'. nl2br($propal->note)."</td></tr>";
 	  
 	  if ($obj->fk_projet) 
 	    {
@@ -268,20 +284,19 @@ if ($propalid)
 	   *
 	   */
 
-	  print "<tr><td>Montant HT</td><td align=\"right\">".price($obj->price)." euros</td></tr>";
+	  print '<tr><td>Montant HT</td><td align="right">'.price($obj->price + $obj->remise).' euros</td></tr>';
 	  /*
 	   *
 	   */
 	  
-	  print "<tr><td>Remise</td><td align=\"right\">".price($obj->remise)." euros</td></tr>";
+	  print '<tr><td>Remise</td>';
+	  print "<td align=\"right\">".price($obj->remise)." euros</td></tr>";
 	  
 	  /*
 	   *
 	   */
 	  
-	  $totalht = $propal->price - $propal->remise ;
-	  
-	  print "<tr><td>Total HT</td><td align=\"right\"><b>".price($totalht)."</b> euros</td></tr>";
+	  print '<tr><td>Total HT</td><td align="right"><b>'.price($obj->price).'</b> euros</td></tr>';
 	  /*
 	   *
 	   */
@@ -300,6 +315,19 @@ if ($propalid)
 	      print $obj->note . "\n----------\n";
 	      print '</textarea><br><input type="submit" value="Valider">';
 	      print "</form>";
+	    }
+	  /*
+	   *
+	   *
+	   */
+	  if ($propal->brouillon == 1)
+	    {
+	      print '<form action="propal.php3?propalid='.$propalid.'" method="post">';
+	      print '<input type="hidden" name="action" value="setremise">';
+	      print '<table><tr><td>Remise</td><td align="right">';
+	      print '<input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%';
+	      print '<input type="submit" value="Appliquer">';
+	      print '</td></tr></table></form>';
 	    }
 
 	  /*
