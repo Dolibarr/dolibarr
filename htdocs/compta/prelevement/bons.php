@@ -25,7 +25,7 @@ $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 
-llxHeader('','Telephonie - Ligne - Liste');
+llxHeader('','Prélèvements - Bons');
 /*
  * Sécurité accés client
  */
@@ -35,12 +35,8 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($sortorder == "") {
-  $sortorder="DESC";
-}
-if ($sortfield == "") {
-  $sortfield="p.datec";
-}
+if ($sortorder == "") $sortorder="DESC";
+if ($sortfield == "") $sortfield="p.datec";
 
 /*
  * Recherche
@@ -61,13 +57,8 @@ $pagenext = $page + 1;
  *
  */
 $sql = "SELECT p.rowid, p.ref, p.amount,".$db->pdate("p.datec")." as datec";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
-
-if ($_GET["search_client"])
-{
-  $sel =urldecode($_GET["search_client"]);
-  $sql .= " AND s.nom LIKE '%".$sel."%'";
-}
+$sql .= ", p.statut";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
@@ -79,7 +70,7 @@ if ($result)
   
   $urladd= "&amp;statut=".$_GET["statut"];
 
-  print_barre_liste("Prélèvements", $page, "bons.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste("Bons de prélèvements", $page, "bons.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
@@ -95,11 +86,8 @@ if ($result)
   print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
   print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
   print '<td>&nbsp;</td>';
-
-
   print '</form>';
   print '</tr>';
-
 
   $var=True;
 
@@ -109,10 +97,7 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
-
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowi.'">';
-      print img_file();      
-      print '</a>&nbsp;';
+      print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
