@@ -1,7 +1,8 @@
 <?PHP
 /* Copyright (c) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
- * 
+ * Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -113,6 +114,43 @@ class Form {
 		else
 		  {
 		    print '<option value="'.$obj->rowid.'">'.$obj->libelle.'</option>';
+		  }
+		$i++;
+	      }
+	  }
+      }
+    print '</select>';
+  }
+
+
+/*
+   * Retourne la liste déroulante des civilite actives
+   *
+   */
+
+  Function select_civilite($selected='')
+  {
+    print '<select name="civilite_id">';
+
+    $sql = "SELECT rowid, civilite, active FROM llx_c_civilite";
+    $sql .= " WHERE active = 1";
+
+    if ($this->db->query($sql))
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
+	if ($num)
+	  {
+	    while ($i < $num)
+	      {
+		$obj = $this->db->fetch_object( $i);
+		if ($selected == $obj->rowid)
+		  {
+		    print '<option value="'.$obj->rowid.'" selected>'.$obj->civilite.'</option>';
+		  }
+		else
+		  {
+		    print '<option value="'.$obj->rowid.'">'.$obj->civilite.'</option>';
 		  }
 		$i++;
 	      }
