@@ -25,37 +25,9 @@ require_once DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_worksh
 
 class ComptaExportPoivre
 {
-  function ComptaExportPoivre ()
+  function ComptaExportPoivre ($DB)
   {
-
-  }
-
-  function Create()
-  {
-
-    $this->date = time();
-
-    $this->datef = "commande-".strftime("%d%b%y-%HH%M", $this->date);
-
-    $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->datef.".xls";
-
-    if (strlen(trim($this->fournisseur->email_commande)) == 0)
-      {
-	return -3;
-      }
-
-    if (file_exists($fname))
-      {
-	return 2;
-      }
-    else
-      {
-	$res = $this->CreateFile($fname);
-	$res = $res + $this->LogSql();
-	$res = $res + $this->MailFile($fname);
-
-	return $res;
-      }
+    $this->db = $DB;
   }
 
   /**
@@ -76,6 +48,8 @@ class ComptaExportPoivre
 
     $this->line_out[$j] = $line_in[$i];
 
+    //print "$j ".$this->line_out[$j][8] . "<br>";
+
     for ( $i = 1 ; $i < $n ; $i++)
       {
 	// On agrège les lignes avec le même code comptable
@@ -89,6 +63,9 @@ class ComptaExportPoivre
 	    $j++;
 	    $this->line_out[$j] = $line_in[$i];
 	  }
+	
+	//	print "$j ".$this->line_out[$j][8] . "<br>";
+    
       }
 
     dolibarr_syslog("ComptaExportPoivre::Agregate " . sizeof($this->line_out) . " lignes en sorties");
@@ -96,94 +73,245 @@ class ComptaExportPoivre
     return 0;
   }
 
-  function Export($linec)
+  function Export($linec, $linep)
   {
+    $error = 0;
 
     dolibarr_syslog("ComptaExportPoivre::Export");
     dolibarr_syslog("ComptaExportPoivre::Export " . sizeof($linec) . " lignes en entrées");
 
     $this->Agregate($linec);
 
-    
-    $fname = "/tmp/exportcompta";
+    $this->db->query("BEGIN");
 
-    $fp = fopen($fname,'w');
+    $dt = strftime('EC%y%m', time());
 
-    // Pour les factures
+    $sql = "SELECT count(ref) FROM ".MAIN_DB_PREFIX."export_compta";
+    $sql .= " WHERE ref like '$dt%'";
 
-    // Date Opération 040604 pour 4 juin 2004
-    // VE -> ventilation
-    // code Compte général
-    // code client
-    // Intitulé
-    // Numéro de pièce
-    // Montant
-    // Type opération D pour Débit ou C pour Crédit
-    // Date d'échéance, = à la date d'opération si pas d'échéance
-    // EUR pour Monnaie en Euros
-    
-    // Pour les paiements
-
-    $i = 0;
-    $j = 0;
-    $n = sizeof($this->line_out);
-
-    $oldfacture = 0;
-
-    for ( $i = 0 ; $i < $n ; $i++)
+    if ($this->db->query($sql))
       {
-	if ( $oldfacture <> $this->line_out[$i][1])
-	  {
-	    // Ligne client
-	    fputs($fp, strftime("%d%m%y",$this->line_out[$i][0]) . "\t");
-	    fputs($fp, "VE" ."\t");
-	    fputs($fp, "\t");
-	    fputs($fp, '411000000' ."\t");
-	    fputs($fp, $this->line_out[$i][3]." Facture" ."\t");
-	    fputs($fp, $this->line_out[$i][5] . "\t"); // Numéro de facture
-	    fputs($fp, ereg_replace(",",".",$this->line_out[$i][7]) ."\t"); // Montant total TTC de la facture
-	    fputs($fp, 'D' . "\t"); // D pour débit
-	    fputs($fp, strftime("%d%m%y",$this->line_out[$i][0]) . "\t"); // Date d'échéance
-	    fputs($fp, "EUR"); // Monnaie
-	    fputs($fp, "\n");
+	$row = $this->db->fetch_row();
+	$cc = $row[0];
+      }
+    else
+      {
+	$error++;
+	dolibarr_syslog("ComptaExportPoivre::Export Erreur Select");
+      }
 
-	    // Ligne TVA
-	    fputs($fp, strftime("%d%m%y",$this->line_out[$i][0]) . "\t");
-	    fputs($fp, "VE" ."\t");
-	    fputs($fp, "\t");
-	    fputs($fp, '4457119' ."\t");
-	    fputs($fp, $this->line_out[$i][3]." Facture" ."\t");
-	    fputs($fp, $this->line_out[$i][5] . "\t");             // Numéro de facture
-	    fputs($fp, ereg_replace(",",".",$this->line_out[$i][6]) ."\t");              // Montant de TVA
-	    fputs($fp, 'C' . "\t");                       // C pour crédit
-	    fputs($fp, strftime("%d%m%y",$this->line_out[$i][0]) . "\t"); // Date d'échéance
-	    fputs($fp, "EUR"); // Monnaie
-	    fputs($fp, "\n");
+
+    if (!$error)
+      {
+	$ref = $dt . substr("000".$cc, -2);
+		
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."export_compta (ref, date_export)";
+	$sql .= " VALUES ('$ref', now())";
+	
+	if ($this->db->query($sql))
+	  {
+	    $ecid = $this->db->last_insert_id();
+	  }
+	else
+	  {
+	    $error++;
+	    dolibarr_syslog("ComptaExportPoivre::Export Erreur INSERT");
+	  }
+      }
+
+
+    if (!$error)
+      {
+	dolibarr_syslog("ComptaExportPoivre::Export ref : $ref");
+
+	$this->id = $this->db->last_insert_id();
+
+	$fxname = DOL_DATA_ROOT."/compta/export/".$ref.".xls";
+
+	$workbook = &new writeexcel_workbook($fxname);
+
+	$page = &$workbook->addworksheet('Export');
+
+	$page->set_column(0,0,8); // A
+	$page->set_column(1,1,6); // B
+	$page->set_column(2,2,9); // C
+	$page->set_column(3,3,14); // D
+	$page->set_column(4,4,40); // E
+
+    
+	// Pour les factures
+
+	// Date Opération 040604 pour 4 juin 2004
+	// VE -> ventilation
+	// code Compte général
+	// code client
+	// Intitulé
+	// Numéro de pièce
+	// Montant
+	// Type opération D pour Débit ou C pour Crédit
+	// Date d'échéance, = à la date d'opération si pas d'échéance
+	// EUR pour Monnaie en Euros
+    
+	// Pour les paiements
+
+	$i = 0;
+	$j = 0;
+	$n = sizeof($this->line_out);
+
+	$oldfacture = 0;
+
+	for ( $i = 0 ; $i < $n ; $i++)
+	  {
+	    if ( $oldfacture <> $this->line_out[$i][1])
+	      {
+		// Ligne client
+		$page->write_string($j, 0, strftime("%d%m%y",$this->line_out[$i][0]));
+		$page->write_string($j, 1,  "VE");
+		$page->write_string($j, 2,  "41100000");
+		$page->write_string($j, 3, stripslashes($this->line_out[$i][2]));
+		$page->write_string($j, 4, stripslashes($this->line_out[$i][3])." Facture");
+		$page->write_string($j, 5, $this->line_out[$i][9]); // Numéro de facture
+		$page->write($j, 6, ereg_replace(",",".",$this->line_out[$i][7]));
+		$page->write_string($j, 7, 'D' ); // D pour débit
+
+		$j++;
+
+		// Ligne TVA
+		$page->write_string($j, 0, strftime("%d%m%y",$this->line_out[$i][0]));
+		$page->write_string($j, 1, "VE");
+		$page->write_string($j, 2, '4457119');
+
+		$page->write_string($j, 4, stripslashes($this->line_out[$i][3])." Facture");
+		$page->write_string($j, 5, $this->line_out[$i][9]); // Numéro de facture
+		$page->write($j, 6, ereg_replace(",",".",$this->line_out[$i][6])); // Montant de TVA
+		$page->write_string($j, 7, 'C'); // C pour crédit
 	    
-	    $oldfacture = $this->line_out[$i][1];
+		$oldfacture = $this->line_out[$i][1];
+		$j++;
+	      }
+	    $page->write_string($j, 0, strftime("%d%m%y",$this->line_out[$i][0]));
+	    $page->write_string($j, 1, 'VE');
+	    $page->write_string($j, 2, $this->line_out[$i][4]); // Code Comptable
+	    $page->write_string($j, 4, $this->line_out[$i][3]." Facture");
+	    $page->write_string($j, 5, $this->line_out[$i][9]);                  // Numéro de facture
+	    $page->write($j, 6, ereg_replace(",",".",round($this->line_out[$i][8], 2)));  // Montant de la ligne
+	    $page->write_string($j, 7, 'C');                     // C pour crédit
+
 	    $j++;
 	  }
 
-	fputs($fp, strftime("%d%m%y",$this->line_out[$i][0]) ."\t");
-	fputs($fp, 'VE' ."\t");
-	fputs($fp, $this->line_out[$i][4]."\t"); // Code Comptable
-	fputs($fp, "\t");
-	fputs($fp, $this->line_out[$i][3]." Facture" ."\t");
-	fputs($fp, $this->line_out[$i][5]."\t");                  // Numéro de facture
-	fputs($fp, ereg_replace(",",".",round($this->line_out[$i][8], 2)) ."\t");  // Montant de la ligne
-	fputs($fp, 'C' . "\t");                     // C pour crédit
-	fputs($fp, strftime("%d%m%y",$this->line_out[$i][0]) . "\t"); // Date d'échéance
-	fputs($fp, "EUR"); // Monnaie
-	fputs($fp, "\n");
+	// Tag des lignes de factures
+	$n = sizeof($linec);
+	for ( $i = 0 ; $i < $n ; $i++)
 
+	  {
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet";
+	    $sql .= " SET fk_export_compta=".$ecid;
+	    $sql .= " WHERE rowid = ".$linec[$i][10];
 
+	    if (!$this->db->query($sql))
+	      {
+		$error++;
+	      }
+	  }
 
-	$j++;
+	// Pour les paiements
+
+	// Date Opération 040604 pour 4 juin 2004
+	// CE -> caisse d'epargne
+	// code Compte général
+	// code client
+	// Intitulé
+	// Numéro de pièce
+	// Montant
+	// Type opération D pour Débit ou C pour Crédit
+	// Date d'échéance, = à la date d'opération si pas d'échéance
+	// EUR pour Monnaie en Euros
+    
+	$i = 0;
+	//    $j = 0;
+	$n = sizeof($linep);
+
+	$oldfacture = 0;
+
+	for ( $i = 0 ; $i < $n ; $i++)
+	  {
+	    /*
+	     * En cas de rejet ou paiement en négatif on inverse debit et credit
+	     *
+	     *
+	     */
+	    if ($linep[$i][5] >= 0)
+	      {
+		$debit = "D";
+		$credit = "C";
+	      }
+	    else
+	      {
+		$debit = "C";
+		$credit = "D";
+	      }
+
+	    $page->write_string($j,0, strftime("%d%m%y",$linep[$i][0]));
+	    $page->write_string($j,1, 'CE');
+
+	    $page->write_string($j,2, '5122000');
+
+	    if ($linep[$i][6] == 'Prélèvement')
+	      {
+		$linep[$i][6] = 'Prelevement';
+	      }
+
+	    $page->write_string($j,4, stripslashes($linep[$i][3])." ".stripslashes($linep[$i][6])); // 
+	    $page->write_string($j,5, $linep[$i][7]);                  // Numéro de facture
+	    $page->write($j,6, ereg_replace(",",".",round($linep[$i][5], 2)));  // Montant de la ligne
+	    $page->write_string($j,7,$debit);
+	
+	    $j++;
+
+	    $page->write_string($j,0, strftime("%d%m%y",$linep[$i][0]));
+	    $page->write_string($j,1, 'CE');
+
+	    $page->write_string($j,2, '41100000');
+	    $page->write_string($j,3, $linep[$i][2]);
+	    $page->write_string($j,4, stripslashes($linep[$i][3])." ".stripslashes($linep[$i][6])); // 
+	    $page->write_string($j,5, $linep[$i][7]);                  // Numéro de facture
+	    $page->write($j,6, ereg_replace(",",".",round($linep[$i][5], 2)));  // Montant de la ligne
+	    $page->write_string($j,7, $credit);
+	
+	    $j++;
+
+	  }
+	$workbook->close();    
+
+	// Tag des lignes de factures
+	$n = sizeof($linep);
+	for ( $i = 0 ; $i < $n ; $i++)
+
+	  {
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."paiement";
+	    $sql .= " SET fk_export_compta=".$ecid;
+	    $sql .= " WHERE rowid = ".$linep[$i][1];
+
+	    if (!$this->db->query($sql))
+	      {
+		$error++;
+	      }
+	  }
 
       }
 
-    fclose($fp);
-    
+    if (!$error)
+      {
+	$this->db->query("COMMIT");
+	dolibarr_syslog("ComptaExportPoivre::Export COMMIT");
+      }
+    else
+      {
+	$this->db->query("ROLLBACK");
+	dolibarr_syslog("ComptaExportPoivre::Export ROLLBACK");
+      }
+
     return 0;
   }
 }
