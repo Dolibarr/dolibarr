@@ -114,9 +114,9 @@ if ($result)
   print '<form method="get" action="clients.php">';
   print '<tr class="liste_titre">';
   print '<td valign="right">';
-  print '<input type="text" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
+  print '<input type="text" class="flat" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
   print '</td><td valign="right">';
-  print '<input type="text" name="search_code" value="'.$_GET["search_code"].'">';
+  print '<input type="text" class="flat" name="search_code" value="'.$_GET["search_code"].'">';
   print '</td><td>&nbsp;</td><td align="center"><input class="button" type="submit" value="'.$langs->trans("Search").'">';
   print "</td>";
   print "</tr>\n";

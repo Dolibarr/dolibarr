@@ -135,9 +135,9 @@ if ($result)
   print '<form method="get" action="prospects.php">';
   print '<tr class="liste_titre">';
   print '<td valign="right">';
-  print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
+  print '<input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'">';
   print '</td><td>';
-  print '<input type="text" name="search_ville" value="'.$_GET["search_nom"].'">';
+  print '<input type="text" class="flat" name="search_ville" value="'.$_GET["search_nom"].'">';
   print "</td><td>&nbsp;</td>";
   print "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>";
   print "</tr>\n";

@@ -229,3 +229,11 @@ div.formsearch
   vertical-align: center;
 }
 
+.flat  {
+	font-family: arial,verdana,helvetica, sans-serif;
+	font-size: 100%;
+	font-weight: normal;
+	border: 1px solid #ccd7e0;
+	background-image : url(img/button_bg.gif);
+	background-position : bottom;
+}
