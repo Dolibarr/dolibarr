@@ -131,6 +131,7 @@ class Societe {
     $sql .= ",siren = '" . trim($this->siren) ."'";
     $sql .= ",siret = '" . trim($this->siret) ."'";
     $sql .= ",ape = '" . trim($this->ape) ."'";
+    $sql .= ",prefix_comm = '" . trim($this->prefix_comm) ."'";
     $sql .= ",tva_intra = '" . trim($this->tva_intra) ."'";
     $sql .= ",capital = '" . $this->capital ."'";
     $sql .= ",fk_effectif = '" . $this->effectif_id ."'";
@@ -140,10 +141,15 @@ class Societe {
     $sql .= " WHERE idp = '" . $id ."';";
     if ($this->db->query($sql)) 
       {
-
+	return 0;
       }
     else
       {
+	if ($this->db->errno() == 1062)
+	  {
+	    // Doublons sur le prefix commercial
+	    return -1;
+	  }
 	print $this->db->error();
       }
   }

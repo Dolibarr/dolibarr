@@ -52,6 +52,7 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
   $soc->siren                = $_POST["siren"];
   $soc->siret                = $_POST["siret"];
   $soc->ape                  = $_POST["ape"];
+  $soc->prefix_comm          = $_POST["prefix_comm"];
   $soc->capital              = $_POST["capital"];
   $soc->tva_intra            = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
   $soc->forme_juridique_code = $_POST["forme_juridique_code"];
@@ -61,7 +62,16 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 
   if ($_POST["action"] == 'update')
     {
-      $soc->update($_GET["socid"]);
+      $result = $soc->update($_GET["socid"]);
+      if ($result == -1)
+	{
+	  $soc->id = $_GET["socid"];
+	  // doublon sur le prefix comm
+	  $no_reload = 1;
+	  $mesg = "Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
+	  $_GET["action"]= "edit";
+	}
+	
     }
   if ($_POST["action"] == 'add')
     {
@@ -160,15 +170,21 @@ elseif ($_GET["action"] == 'edit')
 
   if ($_GET["socid"])
     {
-      $soc = new Societe($db);
-      $soc->id = $_GET["socid"];
-      $soc->fetch($_GET["socid"]);
-
+      if ($no_reload <> 1)
+	{
+	  $soc = new Societe($db);
+	  $soc->id = $_GET["socid"];
+	  $soc->fetch($_GET["socid"]);
+	}
+      print $mesg;	  
       print '<form action="soc.php?socid='.$soc->id.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
 
       print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
-      print '<tr><td>Nom</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
+      print '<tr><td>Nom</td><td><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td>';
+
+      print '<td>Préfix</td><td colspan="3"><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
+
       print '<tr><td valign="top">'.$langs->trans('Adresse').'</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft">';
       print $soc->adresse;
       print '</textarea></td></tr>';
@@ -285,7 +301,7 @@ else
    */
   
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$soc->nom.'</td></tr>';
+  print '<tr><td width="20%">Nom</td><td>'.$soc->nom.'</td><td>Préfix</td><td>'.$soc->prefix_comm.'</td></tr>';
 
   print "<tr><td valign=\"top\">".$langs->trans('Adresse')."</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
 
