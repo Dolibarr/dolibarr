@@ -27,6 +27,9 @@ include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
  *
  */
 
+$facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
+
+
 if ($HTTP_POST_VARS["action"] == 'add_paiement')
 {
 
@@ -66,7 +69,7 @@ if ($HTTP_POST_VARS["action"] == 'add_paiement')
 	  if ( $paiement->fetch($paiement_id) )
 	    {
 	      $fac = new Facture($db);
-	      $fac->fetch($HTTP_POST_VARS["facid"]);
+	      $fac->fetch($facid);
 	      $fac->fetch_client();
 	  
 	      $label = "Règlement facture";
@@ -116,7 +119,7 @@ llxHeader();
 if ($_GET["action"] == 'create') 
 {
   $facture = new Facture($db);
-  $facture->fetch($_GET["facid"]);
+  $facture->fetch($facid);
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total_ttc as total, f.facnumber";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
