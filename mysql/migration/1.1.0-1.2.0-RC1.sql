@@ -662,6 +662,11 @@ insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values
 insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (43, 'MR',  'en_US', 0, 'Mister', 1);
 insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (45, 'MLE', 'en_US', 0, 'Misses', 1);
 
+--
+--
+--
+--
+
 create table llx_societe_remise
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -674,12 +679,6 @@ create table llx_societe_remise
 
 )type=innodb;
 
-
-
---
---
---
---
 create table llx_so_gr
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
@@ -712,3 +711,51 @@ create table llx_groupesociete
 
 )type=innodb;
 
+--
+--
+--
+--
+
+create table llx_commande
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_soc           integer,
+  fk_soc_contact   integer,
+  fk_projet        integer default 0,
+  ref              varchar(30) NOT NULL,
+  date_creation    datetime,            
+  date_valid       datetime,            
+  date_cloture     datetime,            
+  date_commande    date,                
+  fk_user_author   integer,             
+  fk_user_valid    integer,             
+  fk_user_cloture  integer,             
+  source           smallint NOT NULL,
+  fk_statut        smallint  default 0,
+  amount_ht        real      default 0,
+  remise_percent   real      default 0,
+  remise           real      default 0,
+  tva              real      default 0,
+  total_ht         real      default 0,
+  total_ttc        real      default 0,
+  note             text,
+  model_pdf        varchar(50),
+  facture          tinyint default 0,   
+  UNIQUE INDEX (ref)
+)type=innodb;
+
+create table llx_commandedet
+(
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande    integer,
+  fk_product     integer,
+  label          varchar(255),
+  description    text,
+  tva_tx         real default 19.6,
+  qty		 real,             
+  remise_percent real default 0,
+  remise         real default 0,
+  subprice       real,          
+  price          real           
+)type=innodb;
