@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2003 Éric Seigne <erics@rycks.com>
+/* Copyright (C) 2003 Éric Seigne          <erics@rycks.com>
  * Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +25,47 @@ require("./pre.inc.php");
 llxHeader();
 
 if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
+  accessforbidden();
+
 
 $def = array();
 
 // positionne la variable pour le nombre de rss externes
-$nbexternalrss = 1;
+$db->query("select count(*) nb from ".MAIN_DB_PREFIX."const where name like 'EXTERNAL_RSS_URLRSS_%'");
+$obj = $db->fetch_object(0);
+$nbexternalrss = $obj->nb;
 
-if ($action == 'save')
+if ($_POST["action"] == 'add')
+{
+    $external_rss_url = "external_rss_url_" . $_POST["norss"];
+    if(isset($_POST[$external_rss_url])) {
+      $external_rss_title = "external_rss_title_" . $_POST["norss"];
+      $external_rss_urlrss = "external_rss_urlrss_" . $_POST["norss"];
+      
+      $sql  = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXTERNAL_RSS_URL_" . $_POST["norss"] . "', value='".$_POST[$external_rss_url]."', visible=0"; 
+      $sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "', value='".$_POST[$external_rss_title]."', visible=0";
+      $sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "', value='".$_POST[$external_rss_urlrss]."', visible=0";
+      
+      if ($db->query($sql) && $db->query($sql1) && $db->query($sql2))
+	{
+	  // la constante qui a été lue en avant du nouveau set
+	  // on passe donc par une variable pour avoir un affichage cohérent
+	  print "Nouveau flux RSS ajouté\n";
+	  $nbexternalrss++;
+	}
+      else
+  	  print "Erreur d'enregistement\n";
+    }
+}
+
+if ($_POST["delete"])
+{
+    // TODO Code pour supprimer
+
+
+}
+
+if ($_POST["modify"])
 {
   for ($i = 0; $i < $nbexternalrss; $i++) {
     $external_rss_url = "external_rss_url_" . $i;
@@ -50,10 +80,10 @@ if ($action == 'save')
 	{
 	  // la constante qui a été lue en avant du nouveau set
 	  // on passe donc par une variable pour avoir un affichage cohérent
-	  print "<p>Enregistrement confirmé pour le site " . $$external_rss_title . "</p>\n";
+	  print "Enregistrement confirmé pour le site " . $$external_rss_title . "\n";
 	}
       else
-	print "<p>Erreur d'enregistement pour le site " . $$external_rss_title . "</p>\n";
+	print "Erreur d'enregistement pour le site " . $$external_rss_title . "\n";
     }
   }
 }
@@ -63,9 +93,11 @@ if ($action == 'save')
  * Affichage du formulaire de saisie
  */
   
-print_fiche_titre("Configuration du lien vers un site syndiqué", $mesg);
-  
-print "\n<p align=\"justify\">Attention, pour la récupération des données au format RSS, les urls en https ne marchent pas pour l'instant. </p>
+print_fiche_titre("Configuration des imports de flux RSS", $mesg);
+
+?>
+
+Attention, pour la récupération des données au format RSS, les urls en https ne marchent pas pour l'instant.
 Exemples:<ul>
   <li>WikiApril / http://wiki.april.org / http://wiki.april.org/RecentChanges?format=rss (et tous les sites phpwiki)</li>
   <li>LinuxFR / http://linuxfr.org / http://www.linuxfr.org/backend.rss</li>
@@ -75,15 +107,43 @@ Exemples:<ul>
   <li>Docs d'AbulÉdu / http://docs.abuledu.org / http://docs.abuledu.org/backend.php3 (et tous les sites spip)</li>
  </ul>
  
-<form name=\"externalrssconfig\" action=\"" . $_SERVER['SCRIPT_NAME'] . "\" method=\"post\">
-<table class=\"border\" cellpadding=\"3\" cellspacing=\"0\">\n";
+<form name="externalrssconfig" action="external_rss.php" method="post">
 
-// Pour l'instant on fait un seul RSS externe, mais c'est sans soucis qu'on passe à plus !
-// ptet définir une variable pour NBMAX_RSS_EXTERNE ... modifier en fonction le fichier
-// ../pre.inc.php
+<table class="border" cellpadding="2" cellspacing="0">
+<tr class="liste_titre">
+  <td colspan="2">Syndication d'un nouveau flux RSS</td>
+</tr>
+<tr>
+  <td>Titre</td>
+  <td><input type="text" name="external_rss_title_<?php echo $nbexternalrss ?>" value="<?php echo @constant("EXTERNAL_RSS_TITLE_" . $nbexternalrss) ?>" size="45"></td>
+</tr>
+<tr>
+  <td>URL du site</td>
+  <td><input type="text" name="external_rss_url_<?php echo $nbexternalrss ?>" value="<?php echo @constant('EXTERNAL_RSS_URL_' . $nbexternalrss) ?>" size="45"></td>
+</tr>
+<tr>
+  <td>URL du RSS</td>
+  <td><input type="text" name="external_rss_urlrss_<?php echo $nbexternalrss ?>" value="<?php echo @constant("EXTERNAL_RSS_URLRSS_" . $nbexternalrss) ?>" size="45"></td>
+</tr>
+<tr><td colspan="2">
+<input type="submit"  value="<?php echo $langs->trans("Add") ?>">
+<input type="hidden" name="action" value="add">
+<input type="hidden" name="norss" value="<?php echo $nbexternalrss ?>">
+</td>
+</table>
+
+</form>
+
+<br>
+
+<table class="border" cellpadding="3" cellspacing="0">
+
+<?php
+
 for($i = 0; $i < $nbexternalrss; $i++) {
   print "<tr class=\"liste_titre\">
-  <th colspan=\"2\">Syndication du site numéro " . ($i+1) . "</th>
+<form name=\"externalrssconfig\" action=\"external_rss.php\" method=\"post\">
+  <td colspan=\"2\">Syndication du site numéro " . ($i+1) . "</td>
 </tr>
 <tr>
   <td>Titre</td>
@@ -96,41 +156,26 @@ for($i = 0; $i < $nbexternalrss; $i++) {
 <tr>
   <td>URL du RSS</td>
   <td><input type=\"text\" name=\"external_rss_urlrss_" . $i . "\" value=\"" . @constant("EXTERNAL_RSS_URLRSS_" . $i) . "\" size=\"45\"></td>
-</tr>\n";
-}
-
-clearstatcache();
-  
-print "<tr>
-<td colspan=\"2\"><input type=\"submit\" name=\"envoyer\" value=\"Enregistrer\"></td>
 </tr>
-</table>
-<input type=\"hidden\" name=\"action\" value=\"save\"></form>\n";
-
-/*
- *
- *
- */
-
-print_titre("Résultat du fetch");
-
-// à modifier si on a plus d'un module RSS externe !
-if (defined("MAIN_MODULE_EXTERNAL_RSS") && MAIN_MODULE_EXTERNAL_RSS)
-{
-  print '<a href="'.EXTERNAL_RSS_URL_0.'">'.EXTERNAL_RSS_TITLE_0.'</a><br><br>';
-  require_once("../includes/magpierss/rss_fetch.inc");
-
-  $rss = fetch_rss( EXTERNAL_RSS_URLRSS_0 );
-  
-  foreach ($rss->items as $item)
-    {
-      $href = $item['link'];
-      $title = $item['title'];
-      print '<div class="titre"><a href="'.$href.'">'.$title.'</a></div><br>';
-    }
+<tr>
+<td colspan=\"2\">
+<input type=\"submit\" name=\"modify\" value=\"".$langs->trans("Modify")."\">
+<input type=\"submit\" name=\"delete\" value=\"".$langs->trans("Delete")."\">
+<input type=\"hidden\" value=\"$i\">
+</td>
+</form>
+</tr>
+";
 }
+?>
+
+</table>
+
+<?php 
+
 
 $db->close();
 
 llxFooter();
+
 ?>
