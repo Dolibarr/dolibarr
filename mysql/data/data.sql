@@ -22,6 +22,8 @@
 -- Valeurs pour les bases de langues francaises
 --
 
+insert into llx_sqltables (name, loaded) values ('llx_album',0);
+
 --
 -- Boites
 --
