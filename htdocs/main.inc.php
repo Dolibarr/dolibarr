@@ -130,6 +130,7 @@ else
 		      "passwordcol" => "pass",
 		      "cryptType" => "none",
 		      );
+
       $aDol = new DOLIAuth("DB", $params, "loginFunction");
       $aDol->start();
       $result = $aDol->getAuth();
@@ -659,6 +660,8 @@ function llxFooter($foot='')
    */
   print "</table>\n";
 
+  /* Supression temporaire, mauvais affichage sur petit ecran
+
   print '<p id="powered-by-dolibarr">';
   print '<a href="http://savannah.gnu.org/bugs/?group_id=1915">Bug report</a>&nbsp;';
   //  print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>&nbsp;'.$foot.'</p>';
@@ -666,12 +669,14 @@ function llxFooter($foot='')
   print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a></p>';
   if (!empty ($dolibarr_auto_user))
     {
-  print '<p>
+      print '<p>
       <a href="http://validator.w3.org/check/referer"><img border="0"
           src="http://www.w3.org/Icons/valid-html40"
           alt="Valid HTML 4.0!" height="31" width="88"></a>
-    </p>';
+      </p>';
     }
+  */
+
   print "</body></html>";
 }
 ?>
