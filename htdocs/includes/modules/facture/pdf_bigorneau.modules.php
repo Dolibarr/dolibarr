@@ -22,23 +22,25 @@
  *
  */
 
-Class pdf_bigorneau {
+/*!	\file htdocs/includes/modules/facture/pdf_bigorneau.modules.php
+        \ingroup    facture
+		\brief      Fichier de la classe permettant de générer les factures au modèle Bigorneau
+		\author	    Laurent Destailleur
+		\version    $Revision$
+*/
+
+
+/*!	\class pdf_bigorneau
+		\brief  Classe permettant de générer les factures au modèle Bigorneau
+*/
+
+class pdf_bigorneau extends ModelePDFFactures {
 
   function pdf_bigorneau($db=0)
     { 
       $this->db = $db;
       $this->description = "Modèle de facture sans boite info réglement";
     }
-
-
-    /*!
-    		\brief Renvoi le dernier message d'erreur de création de facture
-    */
-    function error()
-    {
-        return $this->error;
-    }
-
 
   function write_pdf_file($facid)
     {

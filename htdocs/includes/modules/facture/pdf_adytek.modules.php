@@ -22,7 +22,19 @@
  *
  */
 
-Class pdf_adytek extends FPDF{
+/*!	\file htdocs/includes/modules/facture/pdf_adytek.modules.php
+        \ingroup    facture
+		\brief      Fichier de la classe permettant de générer les factures au modèle Adytek
+		\author	    Laurent Destailleur
+		\version    $Revision$
+*/
+
+
+/*!	\class pdf_adytek
+		\brief  Classe permettant de générer les factures au modèle Adytek
+*/
+
+class pdf_adytek extends ModelePDFFactures {
 
   function pdf_adytek($db=0)
     {
@@ -30,17 +42,7 @@ Class pdf_adytek extends FPDF{
       $this->description = "Modèle de facture avec remise et infos réglement à la mode de chez nous";
     }
 
-
-    /*!
-    		\brief Renvoi le dernier message d'erreur de création de facture
-    */
-    function error()
-    {
-        return $this->error;
-    }
-
-
-  function write_pdf_file($facid)
+   function write_pdf_file($facid)
     {
       global $user;
       $fac = new Facture($this->db,"",$facid);
@@ -409,11 +411,24 @@ Class pdf_adytek extends FPDF{
       $tab4_hl = 6;
       $tab4_sl = 4;
       $ligne = 2;
-      if (defined("FAC_PDF_LOGO"))
-      {
-        $pdf->SetXY(10,5);
-        $pdf->Image(FAC_PDF_LOGO, 10, 5,45.0, 25.0, 'PNG');
-      }
+
+        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
+        {
+            if (file_exists(FAC_PDF_LOGO)) {
+                $pdf->SetXY(10,5);
+                $pdf->Image(FAC_PDF_LOGO, 10, 5,45.0, 25.0, 'PNG');
+            }
+            else {
+                $pdf->SetTextColor(200,0,0);
+                $pdf->SetFont('Arial','B',8);
+                $pdf->MultiCell(80, 3, "Logo file '".FAC_PDF_LOGO."' was not found", 0, 'L');
+                $pdf->MultiCell(80, 3, "Go to setup to change path.", 0, 'L');
+            }
+        }
+        else if (defined("FAC_PDF_INTITULE"))
+        {
+            $pdf->MultiCell(80, 6, FAC_PDF_INTITULE, 0, 'L');
+        }
 
       $pdf->SetDrawColor(192,192,192);
       $pdf->line(9, 5, 200, 5 );

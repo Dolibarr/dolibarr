@@ -22,21 +22,24 @@
  *
  */
 
-Class pdf_bulot {
+/*!	\file htdocs/includes/modules/facture/pdf_bulot.modules.php
+        \ingroup    facture
+		\brief      Fichier de la classe permettant de générer les factures au modèle Bulot
+		\author	    Laurent Destailleur
+		\version    $Revision$
+*/
+
+
+/*!	\class pdf_bulot
+		\brief  Classe permettant de générer les factures au modèle Bulot
+*/
+
+class pdf_bulot extends ModelePDFFactures {
 
   function pdf_bulot($db=0)
     { 
       $this->db = $db;
       $this->description = "Modèle de facture avec remise et infos réglement";
-    }
-
-
-    /*!
-    		\brief Renvoi le dernier message d'erreur de création de facture
-    */
-    function error()
-    {
-        return $this->error;
     }
 
 

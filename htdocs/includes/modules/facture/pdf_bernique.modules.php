@@ -22,23 +22,25 @@
  *
  */
 
-Class pdf_bernique {
+/*!	\file htdocs/includes/modules/facture/pdf_bernique.modules.php
+        \ingroup    facture
+		\brief      Fichier de la classe permettant de générer les factures au modèle Bernique
+		\author	    Laurent Destailleur
+		\version    $Revision$
+*/
+
+
+/*!	\class pdf_bernique
+		\brief  Classe permettant de générer les factures au modèle Bernique
+*/
+
+class pdf_bernique extends ModelePDFFactures  {
 
   function pdf_bernique($db=0)
     { 
       $this->db = $db;
       $this->description = "Modèle pour les factures avec plusieurs taux de tva, inclus aussi le numéro de TVA Intracommunautaire";
     }
-
-
-    /*!
-    		\brief Renvoi le dernier message d'erreur de création de facture
-    */
-    function error()
-    {
-        return $this->error;
-    }
-
 
   function write_pdf_file($facid)
     {

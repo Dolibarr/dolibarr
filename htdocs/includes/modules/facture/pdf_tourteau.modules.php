@@ -22,22 +22,25 @@
  *
  */
 
-Class pdf_tourteau {
+/*!	\file htdocs/includes/modules/facture/pdf_tourteau.modules.php
+        \ingroup    facture
+		\brief      Fichier de la classe permettant de générer les factures au modèle Tourteau
+		\author	    Laurent Destailleur
+		\version    $Revision$
+*/
+
+
+/*!	\class pdf_tourteau
+		\brief  Classe permettant de générer les factures au modèle Tourteau
+*/
+
+class pdf_tourteau extends ModelePDFFactures {
 
   function pdf_tourteau($db=0)
     { 
       $this->db = $db;
       $this->description = "Modèle de facture sans remise";
     }
-
-    /*!
-    		\brief Renvoi le dernier message d'erreur de création de facture
-    */
-    function error()
-    {
-        return $this->error;
-    }
-
 
   function write_pdf_file($facid)
     {

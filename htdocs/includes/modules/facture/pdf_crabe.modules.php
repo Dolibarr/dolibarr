@@ -21,26 +21,22 @@
 *
 */
 
-/*!	\file pdf_crabe.modules.php
-		\brief  Fichier de la classe permettant de générer les factures au modèle Crabe
-		\author	Laurent Destailleur
-		\version $Revision$
+/*!	\file htdocs/includes/modules/facture/pdf_crabe.modules.php
+        \ingroup    facture
+		\brief      Fichier de la classe permettant de générer les factures au modèle Crabe
+		\author	    Laurent Destailleur
+		\version    $Revision$
 */
-
-
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-
 
 
 /*!	\class pdf_crabe
 		\brief  Classe permettant de générer les factures au modèle Crabe
 */
 
-Class pdf_crabe {
-    var $error='';
+class pdf_crabe extends ModelePDFFactures
+{
     
-    /*!
-    		\brief  Constructeur
+    /*!		\brief  Constructeur
     		\param	db		handler accès base de donnée
     */
     function pdf_crabe($db)
@@ -53,15 +49,6 @@ Class pdf_crabe {
         $this->option_codeproduitservice = 1;      // Affiche code produit-service FACTURE_CODEPRODUITSERVICE
         $this->option_tvaintra = 1;                // Affiche tva intra MAIN_INFO_TVAINTRA
         $this->option_capital = 1;                 // Affiche capital MAIN_INFO_CAPITAL
-    }
-
-
-    /*!
-    		\brief Renvoi le dernier message d'erreur de création de facture
-    */
-    function error()
-    {
-        return $this->error;
     }
 
 
@@ -151,11 +138,13 @@ Class pdf_crabe {
                         $prodser = new Product($this->db);
 
                         $prodser->fetch($fac->lignes[$i]->produit_id);
-                        $codeproduitservice=" (Code produit ".$prodser->ref.")";
+                        if ($prodser->ref) {
+                            $codeproduitservice=" - Code produit ".$prodser->ref;
+                        }
                     }
                     if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end) {
                         // Affichage durée si il y en a une
-                        $codeproduitservice=" (Du ".dolibarr_print_date($fac->lignes[$i]->date_start)." au ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
+                        $codeproduitservice.=" (Du ".dolibarr_print_date($fac->lignes[$i]->date_start)." au ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
                     }
                     $pdf->MultiCell(118, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
 
@@ -505,7 +494,8 @@ Class pdf_crabe {
             else {
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(80, 6, "Logo file '".FAC_PDF_LOGO."' was not found", 0, 'L');
+                $pdf->MultiCell(80, 3, "Logo file '".FAC_PDF_LOGO."' was not found", 0, 'L');
+                $pdf->MultiCell(80, 3, "Go to setup to change path to logo file.", 0, 'L');
             }
         }
         else if (defined("FAC_PDF_INTITULE"))
