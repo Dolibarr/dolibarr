@@ -20,6 +20,12 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/product/stock/index.php
+        \brief      Page accueil stocks produits
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 /*
@@ -27,11 +33,11 @@ require("./pre.inc.php");
  *
  */
 
-llxHeader("","","Stocks");
+llxHeader("","",$langs->trans("Stocks"));
 
-print_titre("Stocks");
+print_titre($langs->trans("Stocks"));
 
-print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<table class="border" width="100%">';
 print '<tr><td valign="top" width="30%">';
 
 $sql = "SELECT e.label, e.rowid, e.statut FROM ".MAIN_DB_PREFIX."entrepot as e";
@@ -50,7 +56,7 @@ if ($result)
   
   if ($num > 0)
     {
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="noborder" width="100%">';
 
       print '<tr class="liste_titre"><td colspan="2">Entrepôts</td></tr>';
     
@@ -72,7 +78,7 @@ if ($result)
 }
 else
 {
-  print $db->error() . "<br>" .$sql;
+  dolibarr_print_error($db);
 }
 
 print '</td><td valign="top" width="70%">';

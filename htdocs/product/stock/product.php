@@ -45,7 +45,7 @@ $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
 
-llxHeader("","","Fiche produit");
+llxHeader("","",$langs->trans("ProductCard"));
 
 if ($_POST["action"] == "create_stock")
 {
@@ -84,8 +84,8 @@ if ($_GET["id"])
         print '<div class="formsearch">';
         print '<form action="liste.php" method="post">';
         print '<input type="hidden" name="type" value="'.$product->type.'">';
-        print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"> &nbsp;';
-        print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
+        print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"> &nbsp;';
+        print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
         print '</form></div>';
         
         
@@ -102,7 +102,7 @@ if ($_GET["id"])
         if($product->type == 0)
         {
             $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-            $head[$h][1] = 'Stock';
+            $head[$h][1] = $langs->trans("Stock");
             $hselected=$h;
             $h++;
         }
@@ -115,26 +115,24 @@ if ($_GET["id"])
       
       print($mesg);    	      
       
-      print_fiche_titre('Fiche stock : '.$product->ref, $mesg);
-	  
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+      print '<table class="border" width="100%">';
       print "<tr>";
       print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
       print '<td width="40%">';
       if ($product->envente)
 	{
-	  print "En vente";
+	  print $langs->trans("OnSell");
 	}
       else
 	{
-	  print "<b>Cet article n'est pas en vente</b>";
+	  print $langs->trans("NotOnSell");
 	}
       print '</td></tr>';
       print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
       print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$product->id.'">'.$langs->trans("Statistics").'</a></td></tr>';
-      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
+      print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
       print '<td valign="top" rowspan="2">';
-      print 'Fournisseurs [<a href="../fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("Add").'</a>]';
+      print $langs->trans("Suppliers").' [<a href="../fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("Add").'</a>]';
       
       $sql = "SELECT s.nom, s.idp";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
@@ -145,7 +143,7 @@ if ($_GET["id"])
 	{
 	  $num = $db->num_rows();
 	  $i = 0;
-	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	  print '<table class="noborder" width="100%">';
 	  $var=True;      
 	  while ($i < $num)
 	    {
@@ -167,7 +165,7 @@ if ($_GET["id"])
        * Contenu des stocks
        *
        */
-      print '<br><table class="border" width="100%" cellspacing="0" cellpadding="3">';
+      print '<br><table class="border" width="100%">';
       print '<tr class="liste_titre"><td width="40%">Entrepôt</td><td width="60%">Valeur du stock</td></tr>';
       $sql = "SELECT e.rowid, e.label, ps.reel FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps";
       $sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = $product->id";
@@ -188,8 +186,6 @@ if ($_GET["id"])
       print '<tr><td align="right">'.$langs->trans("Total").':</td><td>'.$total."</td></tr></table>";
       print '<br>';
 
-
-
     }
   print '</div>';
 
@@ -202,7 +198,7 @@ if ($_GET["id"])
       print_titre ("Correction du stock");
       print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
       print '<input type="hidden" name="action" value="correct_stock">';
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="3"><tr>';
+      print '<table class="border" width="100%"><tr>';
       print '<td width="20%">Entrepôt</td><td width="20%"><select name="id_entrepot">';
       
       $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e WHERE statut = 1";    
@@ -241,7 +237,7 @@ if ($_GET["id"])
       print_titre ("Créer un stock");
       print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
       print '<input type="hidden" name="action" value="create_stock">';
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="3"><tr>';
+      print '<table class="border" width="100%"><tr>';
       print '<td width="20%">Entrepôt</td><td width="40%"><select name="id_entrepot">';
       
       $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";    
@@ -267,7 +263,7 @@ if ($_GET["id"])
 }
 else
 {
-  print "Error";
+  dolibarr_print_error();
 }
 
 
@@ -277,7 +273,7 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print "<br><div class=\"tabsAction\">\n";
+print "<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] <> 'correction')
 {
@@ -285,7 +281,9 @@ if ($_GET["action"] <> 'correction')
 }
 print '</div>';
 
+
 $db->close();
+
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
