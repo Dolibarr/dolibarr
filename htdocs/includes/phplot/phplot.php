@@ -390,27 +390,31 @@ class PHPlot
   function SetXDataLabelAngle($which_xdla) { 
     $this->x_datalabel_angle = $which_xdla;
     return true;
-	}
-	function SetXScaleType($which_xst) { 
-		$this->xscale_type = $which_xst;
-		return true;
-	}
-	function SetYScaleType($which_yst) { 
-		$this->yscale_type = $which_yst;
-		if ($this->x_axis_position <= 0) { 
-			$this->x_axis_position = 1;
-		}
-		return true;
-	}
+  }
 
-	function SetPrecisionX($which_prec) {
-		$this->x_precision = $which_prec;
-		return true;
-	}
-	function SetPrecisionY($which_prec) {
-		$this->y_precision = $which_prec;
-		return true;
-	}
+  function SetXScaleType($which_xst) { 
+    $this->xscale_type = $which_xst;
+    return true;
+  }
+	
+  function SetYScaleType($which_yst) { 
+    $this->yscale_type = $which_yst;
+    if ($this->x_axis_position <= 0) { 
+      $this->x_axis_position = 1;
+    }
+    return true;
+  }
+  
+  function SetPrecisionX($which_prec) {
+    $this->x_precision = $which_prec;
+    return true;
+  }
+
+  function SetPrecisionY($which_prec)
+  {
+    $this->y_precision = $which_prec;
+    return true;
+  }
 
 
 	function SetIndexColors() { //Internal Method called to set colors and preserve state
