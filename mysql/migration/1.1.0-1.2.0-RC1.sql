@@ -18,6 +18,9 @@ alter table llx_societe add ape       varchar(4) after siret;
 alter table llx_societe add tva_intra varchar(20) after ape;
 alter table llx_societe add capital real after tva_intra;
 alter table llx_societe add rubrique varchar(255);
+alter table llx_societe add remise_client real default 0;
+
+
 
 alter table llx_societe add fk_forme_juridique integer default 0 after fk_typent;
 
@@ -658,9 +661,17 @@ insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values
 insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (43, 'MR',  'en_US', 0, 'Mister', 1);
 insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (45, 'MLE', 'en_US', 0, 'Misses', 1);
 
+create table llx_societe_remise
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_soc          integer NOT NULL,
+  tms             timestamp,
+  datec	          datetime,                            -- creation date
+  fk_user_auhtor  integer,                             -- utilisateur qui a créé l'info
+  remise_client   real           default 0,            -- remise systématique pour le client
+  note            text
 
-
-
+)type=innodb;
 
 
 
