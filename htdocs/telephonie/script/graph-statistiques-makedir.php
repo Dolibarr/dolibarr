@@ -188,7 +188,7 @@ function create_dir($dir)
 	  umask(0);
 	  if (! @mkdir($dir, 0755))
 	    {
-	      print  "Erreur: Le répertoire ".basename($dir)." n'existe pas et Dolibarr n'a pu le créer.";
+	      die ("Erreur: Le répertoire ".$dir." n'existe pas et Dolibarr n'a pu le créer.");
 	    }
 	}
     }
