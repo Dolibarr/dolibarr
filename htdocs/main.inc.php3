@@ -138,6 +138,12 @@ if (defined("MAIN_MODULE_COMMANDE"))
   $conf->commande->enabled=MAIN_MODULE_COMMANDE;
 }
 
+if (defined("MAIN_MODULE_SOCIETE"))
+{
+  $conf->societe = 1 ; 
+}
+
+
 if (defined("MAIN_MODULE_COMMERCIAL"))
 {
   $conf->commercial->enabled=MAIN_MODULE_COMMERCIAL;
