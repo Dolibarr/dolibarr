@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,9 +61,10 @@ if ($HTTP_POST_VARS["action"] == 'add' && $user->admin)
   $edituser->webcal_login  = $HTTP_POST_VARS["webcal_login"];
 
   $id = $edituser->create();
-  if (isset($_POST['password']) && $_POST['password']!='' ){
-    $edituser->password($_POST['password'],$conf->password_encrypted);
-  }
+  if (isset($_POST['password']) && $_POST['password']!='' )
+    {
+      $edituser->password($_POST['password'],$conf->password_encrypted);
+    }
 }
 
 if ($_POST["action"] == 'update' && $user->admin) 
