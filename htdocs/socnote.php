@@ -23,23 +23,25 @@
 require("./pre.inc.php");
 
 if ($_POST["action"] == 'add') {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='$note' WHERE idp=$socid";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$_POST["note"]."' WHERE idp=".$_POST["socid"];
   $result = $db->query($sql);
+
+  $_GET["socid"]=$_POST["socid"];   // Pour retour sur fiche
 }
 /*
  *
  */
 llxHeader();
 
-if ($socid > 0) {
+if ($_GET["socid"] > 0) {
 
-  $societe = new Societe($db, $socid);
-  $societe->fetch($socid);
+  $societe = new Societe($db, $_GET["socid"]);
+  $societe->fetch($_GET["socid"]);
   /*
    *
    */
 
-      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$_GET["socid"];
+      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
       $head[0][1] = "Fiche société";
       $h = 1;
 
@@ -89,12 +91,13 @@ if ($socid > 0) {
 
   print_titre($societe->nom);
 
-  print "<form method=\"post\" action=\"socnote.php?socid=$societe->id\">";
+  print "<form method=\"post\" action=\"socnote.php\">";
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
   print '<tr><td width="50%" valign="top">';
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-  print "<textarea name=\"note\" cols=\"60\" rows=\"10\">$societe->note</textarea><br>";
+  print "<input type=\"hidden\" name=\"socid\" value=\"".$societe->id."\">";
+  print "<textarea name=\"note\" cols=\"60\" rows=\"10\">".$societe->note."</textarea><br>";
   print '</td><td width="50%" valign="top">'.nl2br($societe->note).'</td>';
   print "</td></tr>";
   print "</table>";
