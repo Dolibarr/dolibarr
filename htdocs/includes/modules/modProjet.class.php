@@ -21,6 +21,15 @@
  *
  */
 
+/*!     \defgroup   projet     Module projet
+        \brief      Module pour inclure le detail par projets dans les autres modules
+*/
+
+/*!
+        \file       htdocs/includes/modules/modProjet.class.php
+        \brief      Fichier de description et activation du module Projet
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modProjet extends DolibarrModules

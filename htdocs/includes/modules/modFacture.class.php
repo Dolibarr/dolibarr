@@ -20,6 +20,16 @@
  * $Source$
  *
  */
+
+/*!     \defgroup   facture     Module facture
+        \brief      Module pour gérer les factures clients et/ou fournisseurs
+*/
+
+/*!
+        \file       htdocs/includes/modules/modFacture.class.php
+        \brief      Fichier de description et activation du module Facture
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modFacture extends DolibarrModules

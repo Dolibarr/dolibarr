@@ -21,6 +21,15 @@
  *
  */
 
+/*!     \defgroup   banque     Module banque
+        \brief      Module pour gérer la tenue d'un compte bancaire et rapprochements
+*/
+
+/*!
+        \file       htdocs/includes/modules/modBanque.class.php
+        \brief      Fichier de description et activation du module Banque
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modBanque extends DolibarrModules

@@ -20,6 +20,15 @@
  *
  */
 
+/*!     \defgroup   caisse     Module caisse
+        \brief      Module pour gérer la tenue d'une ou plusieurs caisses liquides
+*/
+
+/*!
+        \file       htdocs/includes/modules/modCaisse.class.php
+        \brief      Fichier de description et activation du module Caisse
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modCaisse extends DolibarrModules

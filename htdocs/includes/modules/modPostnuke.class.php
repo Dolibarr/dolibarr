@@ -20,6 +20,16 @@
  * $Source$
  *
  */
+
+/*!     \defgroup   postnuke     Module postnuke
+        \brief      Module d'interfacage avec Postnuke
+*/
+
+/*!
+        \file       htdocs/includes/modules/modPostNuke.class.php
+        \brief      Fichier de description et activation du module Postnuke
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modPostnuke extends DolibarrModules

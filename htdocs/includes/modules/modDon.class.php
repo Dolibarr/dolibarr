@@ -20,6 +20,16 @@
  * $Source$
  *
  */
+
+/*!     \defgroup   don     Module don
+        \brief      Module pour gérer le suivi des dons
+*/
+
+/*!
+        \file       htdocs/includes/modules/modDon.class.php
+        \brief      Fichier de description et activation du module Don
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modDon  extends DolibarrModules

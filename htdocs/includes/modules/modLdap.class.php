@@ -20,6 +20,16 @@
  * $Source$
  *
  */
+
+/*!     \defgroup   ldap     Module ldap
+        \brief      Module pour interfacer les contacts avec un annuaire Ldap
+*/
+
+/*!
+        \file       htdocs/includes/modules/modLdap.class.php
+        \brief      Fichier de description et activation du module Ldap
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modLdap extends DolibarrModules

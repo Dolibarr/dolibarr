@@ -20,6 +20,16 @@
  * $Source$
  *
  */
+
+/*!     \defgroup   ecternalrss     Module ExternalRss
+        \brief      Module pour inclure des informations externes RSS
+*/
+
+/*!
+        \file       htdocs/includes/modules/modExternalRss.class.php
+        \brief      Fichier de description et activation du module ExternalRss
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modExternalRss extends DolibarrModules

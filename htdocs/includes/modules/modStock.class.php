@@ -21,6 +21,15 @@
  *
  */
 
+/*!     \defgroup   stock     Module stock
+        \brief      Module pour gérer la tenue de stocks produits
+*/
+
+/*!
+        \file       htdocs/includes/modules/modStock.class.php
+        \brief      Fichier de description et activation du module Stock
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modStock extends DolibarrModules

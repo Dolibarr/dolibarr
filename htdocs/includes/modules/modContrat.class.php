@@ -20,6 +20,15 @@
  *
  */
 
+/*!     \defgroup   contrat     Module contrat
+        \brief      Module pour gérer la tenue de contrat de services
+*/
+
+/*!
+        \file       htdocs/includes/modules/modContrat.class.php
+        \brief      Fichier de description et activation du module Contrat
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modContrat extends DolibarrModules

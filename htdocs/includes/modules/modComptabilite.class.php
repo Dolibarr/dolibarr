@@ -21,6 +21,15 @@
  *
  */
 
+/*!     \defgroup   comptabilite     Module comptabilite
+        \brief      Module pour inclure des fonctions de comptabilité (gestion de comptes comptables et rapports)
+*/
+
+/*!
+        \file       htdocs/includes/modules/modComptabilite.class.php
+        \brief      Fichier de description et activation du module Comptabilite
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modComptabilite extends DolibarrModules

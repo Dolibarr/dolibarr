@@ -21,6 +21,15 @@
  *
  */
 
+/*!     \defgroup   boutique     Module boutique
+        \brief      Module pour gérer une boutique et interface avec OSC
+*/
+
+/*!
+        \file       htdocs/includes/modules/modBoutique.class.php
+        \brief      Fichier de description et activation du module Boutique
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modBoutique extends DolibarrModules

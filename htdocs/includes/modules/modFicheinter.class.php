@@ -20,6 +20,16 @@
  * $Source$
  *
  */
+
+/*!     \defgroup   ficheinter     Module fiche interventions
+        \brief      Module pour gérer la tenue de fiches d'interventions
+*/
+
+/*!
+        \file       htdocs/includes/modules/modFicheinter.class.php
+        \brief      Fichier de description et activation du module Ficheinter
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modFicheinter  extends DolibarrModules

@@ -21,6 +21,15 @@
  *
  */
 
+/*!     \defgroup   expedition     Module expedition
+        \brief      Module pour gérer les expeditions de produits
+*/
+
+/*!
+        \file       htdocs/includes/modules/modExpeditione.class.php
+        \brief      Fichier de description et activation du module Expedition
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modExpedition extends DolibarrModules

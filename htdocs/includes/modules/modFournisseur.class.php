@@ -21,6 +21,16 @@
  *
  */
 
+/*!     \defgroup   fournisseur     Module fournisseur
+        \brief      Module pour gérer des sociétés et contacts de type fournisseurs
+*/
+
+/*!
+        \file       htdocs/includes/modules/modFournisseur.class.php
+        \brief      Fichier de description et activation du module Fournisseur
+*/
+
+
 include_once "DolibarrModules.class.php";
 
 class modFournisseur extends DolibarrModules

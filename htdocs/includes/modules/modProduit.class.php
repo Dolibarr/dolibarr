@@ -21,6 +21,15 @@
  *
  */
 
+/*!     \defgroup   produit     Module produit
+        \brief      Module pour gérer le suivi de produits prédéfinis
+*/
+
+/*!
+        \file       htdocs/includes/modules/modProduit.class.php
+        \brief      Fichier de description et activation du module Produit
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modProduit extends DolibarrModules

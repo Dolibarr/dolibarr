@@ -21,6 +21,16 @@
  *
  */
 
+/*!     \defgroup   webcalendar     Module webcalendar
+        \brief      Module pour inclure webcalendar dans Dolibarr et
+                    intégrer les évênement Dolibarr directement dans le calendrier
+*/
+
+/*!
+        \file       htdocs/includes/modules/modWebcalendar.class.php
+        \brief      Fichier de description et activation du module Webcalendar
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modWebcalendar extends DolibarrModules

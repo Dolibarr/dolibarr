@@ -21,6 +21,15 @@
  *
  */
 
+/*!     \defgroup   societe     Module societe
+        \brief      Module pour gérer les societes et contacts clients
+*/
+
+/*!
+        \file       htdocs/includes/modules/modSociete.class.php
+        \brief      Fichier de description et activation du module Societe
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modSociete extends DolibarrModules

@@ -21,6 +21,15 @@
  *
  */
 
+/*!     \defgroup   service     Module service
+        \brief      Module pour gérer le suivi de services prédéfinis
+*/
+
+/*!
+        \file       htdocs/includes/modules/modService.class.php
+        \brief      Fichier de description et activation du module Service
+*/
+
 include_once "DolibarrModules.class.php";
 
 class modService extends DolibarrModules
