@@ -40,21 +40,25 @@ function llxHeader($head = "") {
 
   $menu->add_submenu("/comm/propal.php3", "Propales");
 
-  $menu->add("/compta/", "Comptabilité");
+  if ($user->compta > 0) 
+    {
+      $menu->add("/compta/", "Comptabilité");
 
-  $menu->add_submenu("/compta/facture.php3", "Factures");
+      $menu->add_submenu("/compta/facture.php3", "Factures");
+    }
 
-  if ($conf->fichinter->enabled ) {
-
-    $menu->add("/fichinter/", "Fiches d'intervention");
-
-  }
+  if ($conf->fichinter->enabled ) 
+    {
+      $menu->add("/fichinter/", "Fiches d'intervention");
+    }
 
   $menu->add("/fourn/index.php3", "Fournisseurs");
 
   $menu->add("/product/", "Produits");
 
   $menu->add("/service/", "Services");
+
+  $menu->add("/adherents/", "Adherents");
 
   $menu->add("/user/", "Utilisateurs");
 

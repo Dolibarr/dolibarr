@@ -21,6 +21,19 @@
  */
 require("../main.inc.php3");
 
+$strmonth[1] = "Janvier";
+$strmonth[2] = "F&eacute;vrier";  
+$strmonth[3] = "Mars";  
+$strmonth[4] = "Avril";  
+$strmonth[5] = "Mai"; 
+$strmonth[6] = "Juin"; 
+$strmonth[7] = "Juillet";  
+$strmonth[8] = "Ao&ucirc;t"; 
+$strmonth[9] = "Septembre";
+$strmonth[10] = "Octobre";
+$strmonth[11] = "Novembre";
+$strmonth[12] = "D&eacute;cembre";
+
 function llxHeader($head = "") {
   global $user, $conf;
 
@@ -56,28 +69,29 @@ function llxHeader($head = "") {
 
   $menu->add("bank/index.php3","Bank");
 
-  if ($conf->voyage) {
+  if ($conf->voyage) 
+    {
 
-    $menu->add("voyage/index.php3","Voyages");
+      $menu->add("voyage/index.php3","Voyages");
 
-    $menu->add_submenu("voyage/index.php3","Voyages");
-    $menu->add_submenu("voyage/reduc.php3","Reduc");
-  }
+      $menu->add_submenu("voyage/index.php3","Voyages");
+      $menu->add_submenu("voyage/reduc.php3","Reduc");
+    }
 
   $menu->add("ligne.php3","Compta");
   $menu->add_submenu("ligne.php3","Lignes");
   $menu->add_submenu("config.php3","Configuration");
 
 
-  if ($user->compta > 0) {
+  if ($user->compta > 0) 
+    {
 
-  } else {
-    $menu->clear();
-    $menu->add("/index.php3","Accueil");
-
-
-
-  }
+    } 
+  else 
+    {
+      $menu->clear();
+      $menu->add("/index.php3","Accueil");      
+    }
 
   left_menu($menu->liste);
 
