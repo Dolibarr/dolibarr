@@ -389,7 +389,11 @@ if ($id) {
 
   $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.tex";
   if (file_exists($file)) {    
-    print '<tr><td>tex</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.tex">'.$fichinter->ref.'.tex</a></td></tr>';
+    print '<tr><td>tex</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.tex">'.$fichinter->ref.'.tex</a>';
+
+    print '&nbsp;[<a href="texview.php3?fichinter_ref='.$fichinter->ref.'">view</a>]';
+
+    print '</td></tr>';
   }
 
 
