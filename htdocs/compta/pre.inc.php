@@ -32,7 +32,9 @@ require("../main.inc.php");
 function llxHeader($head = "", $title="", $help_url='')
 {
   global $user, $conf, $langs;
-
+  
+  $user->getrights('banque');
+  
   top_menu($head, $title);
 
   $menu = new Menu();
