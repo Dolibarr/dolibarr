@@ -94,7 +94,7 @@ class Contact
 	  print $this->db->error() . '<br>' . $sql;
 	}
 
-      if (define('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
+      if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
 	{
 	  $ds = dolibarr_ldap_connect();
 
@@ -265,7 +265,7 @@ class Contact
 	  print $this->db->error() . '<br>' . $sql;
 	}
 
-      if (define('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
+      if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
 	{
 	  $ds = dolibarr_ldap_connect();
       
