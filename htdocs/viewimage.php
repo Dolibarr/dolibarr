@@ -125,6 +125,19 @@ if ($modulepart)
         $original_file=$conf->produit->dir_images.'/'.$original_file;
     }
 
+    // Wrapping pour les produits
+    if ($modulepart == 'product')
+    {
+        $user->getrights('produit');
+        if ($user->rights->produit->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->produit->dir_output.'/'.$original_file;
+
+	dolibarr_syslog($original_file);
+    }
+
     // Wrapping pour les graph telephonie
     if ($modulepart == 'telephoniegraph')
     {
