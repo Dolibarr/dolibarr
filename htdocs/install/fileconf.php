@@ -109,24 +109,26 @@ exemples :<br>
 </tr>
 
 
-<tr>
-<td valign="top" class="label">
-<?php print "Répertoire contenant les documents générés"; ?>
-</td><td  class="label" valign="top"><input type="text" size="60" value="
-<?php
+<?php /* mis en commentaire eric seigne 2004, quand ça sera géré, cf etape1.php ligne 43
+	 <tr>
+	 <td valign="top" class="label">
+	 <?php print "Répertoire contenant les documents générés"; ?>
+	 </td><td  class="label" valign="top"><input type="text" size="60" value="
+	 <?php
 
-//print ereg_replace("htdocs","document",$dolibarr_main_document_root);
-print $dolibarr_main_document_root."/document";
+	 //print ereg_replace("htdocs","document",$dolibarr_main_document_root);
+	 print $dolibarr_main_document_root."/document";
+	 ?>
+	 " name="main_data_dir">
+	 </td><td class="comment">
+	 Sans le slash "/" à la fin<br>
+	 exemples :<br>
+	 <li>/var/www/dolibarr/document</li>
+	 <li>C:/wwwroot/dolibarr/document</li>
+	 </td>
+	 </tr>
+*/
 ?>
-" name="main_data_dir">
-</td><td class="comment">
-Sans le slash "/" à la fin<br>
-exemples :<br>
-<li>/var/www/dolibarr/document</li>
-<li>C:/wwwroot/dolibarr/document</li>
-</td>
-</tr>
-
 
 <tr>
 <td valign="top" class="label">

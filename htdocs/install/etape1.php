@@ -38,9 +38,12 @@ $main_dir=isset($_POST["main_dir"])?$_POST["main_dir"]:'';
 // Répertoire des documents générés (factures, etc...)
 $main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
 
-# En attendant que le main_data_dir soit géré de manière autonome,
-# on le force à sa valeur fixe des anciennes versions.
+// En attendant que le main_data_dir soit géré de manière autonome,
+// on le force à sa valeur fixe des anciennes versions.
+// Eric Seigne 2004
+$main_data_dir="$main_dir/document";
 
+// Quand ça sera géré !
 if (! $main_data_dir) { $main_data_dir="$main_dir/document"; }
 
 if ($_POST["action"] == "set")
