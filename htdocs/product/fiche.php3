@@ -25,6 +25,8 @@ require("../propal.class.php3");
 require("../facture.class.php3");
 
 $user->getrights('produit');
+$user->getrights('propale');
+$user->getrights('facture');
 $mesg = '';
 
 if (!$user->rights->produit->lire)
@@ -330,112 +332,124 @@ if ($id && $action == '' && $product->envente)
   $propal = New Propal($db);
 
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
-
-  print '<tr><td width="50%" valign="top">';
-  print_titre("Ajouter ma proposition");
-  print '</td><td width="50%" valign="top">';
-  print_titre("Ajouter aux autres propositions");
-  print '</td></tr>';
-  print '<tr><td width="50%" valign="top">';
-  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp";
-  $sql .= " FROM llx_societe as s, llx_propal as p";
-  $sql .=" WHERE p.fk_soc = s.idp AND p.fk_statut = 0 AND p.fk_user_author = ".$user->id;
-  $sql .= " ORDER BY p.datec DESC, tms DESC";
-
-  if ( $db->query($sql) )
+  if($user->rights->propale->creer)
     {
-      $num = $db->num_rows();
-      $i = 0;
-      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-      $var=True;      
-      while ($i < $num)
+      print '<tr><td width="50%" valign="top">';
+      print_titre("Ajouter ma proposition") . '</td>';
+      if($user->rights->propale->creer)
 	{
-	  $objp = $db->fetch_object( $i);
-	  
-	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<td><a href=\"../comm/propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-	  print "<td><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
-	  print "<td>". strftime("%d %B %Y",$objp->dp)."</td>\n";
-	  print '<form method="POST" action="fiche.php3?id='.$id.'">';
-	  print '<input type="hidden" name="action" value="addinpropal">';
-	  print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
-	  print '<input type="text" name="qty" size="3" value="1">';
-	  print '</td><td>';
-	  print '<input type="submit" value="Ajouter">';
-	  print "</td>";
-	  print '</form></tr>';
-	  $i++;
-	}      
-      print "</table>";
-      $db->free();
-    }
-
-  print '</td><td width="50%" valign="top">';
-
-  $otherprop = $propal->liste_array(1, '<>'.$user->id);
-  if (sizeof($otherprop))
-  {
-    print '<form method="POST" action="fiche.php3?id='.$id.'">';
-    print '<input type="hidden" name="action" value="addinpropal">';
-    print '<table border="1" width="100%" cellpadding="3" cellspacing="0">';
-    print "<tr><td>Autres Propositions</td><td>";
-    $htmls->select_array("propalid", $otherprop);
-    print '</td><td>';
-    print '<input type="text" name="qty" size="3" value="1">';
-    print '</td><td>';
-    print '<input type="submit" value="Ajouter">';
-    print "</td></tr>";
-    print '</table></form>';
-  }
-  print '</td></tr>';
-
-  print '<tr><td width="50%" valign="top">';
-  print_titre("Ajouter ma facture");
-  print '</td><td width="50%" valign="top">';
-  print_titre("Ajouter aux autres factures");
-  print '</td></tr>';
-  print '<tr><td width="50%" valign="top">';
-  $sql = "SELECT s.nom, s.idp, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
-  $sql .= " FROM llx_societe as s, llx_facture as f";
-  $sql .=" WHERE f.fk_soc = s.idp AND f.fk_statut = 0 AND f.fk_user_author = ".$user->id;
-  $sql .= " ORDER BY f.datec DESC, f.rowid DESC";
-
-  if ( $db->query($sql) )
-    {
-      $num = $db->num_rows();
-      $i = 0;
-      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-      $var=True;      
-      while ($i < $num)
+	  print '<td width="50%" valign="top">';
+	  print_titre("Ajouter aux autres propositions") . '</td>';
+	}
+      print '</tr>';
+      print '<tr><td width="50%" valign="top">';
+      $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp";
+      $sql .= " FROM llx_societe as s, llx_propal as p";
+      $sql .=" WHERE p.fk_soc = s.idp AND p.fk_statut = 0 AND p.fk_user_author = ".$user->id;
+      $sql .= " ORDER BY p.datec DESC, tms DESC";
+      
+      if ( $db->query($sql) )
 	{
-	  $objp = $db->fetch_object( $i);
-	  
-	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<td><a href=\"../compta/facture.php3?facid=$objp->factureid\">$objp->facnumber</a></TD>\n";
-	  print "<td><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
-	  print "<td>". strftime("%d %B %Y",$objp->df)."</td>\n";
-	  print '<form method="POST" action="fiche.php3?id='.$id.'">';
-	  print '<input type="hidden" name="action" value="addinfacture">';
-	  print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
-	  print '<input type="text" name="qty" size="3" value="1">';
-	  print '</td><td>';
-	  print '<input type="submit" value="Ajouter">';
-	  print "</td>";
-	  print '</form></tr>';
-	  $i++;
-	}      
-      print "</table>";
-      $db->free();
-    }
-  else
-    {
-      print $db->error() . "<br>" . $sql;
-    }
-  print '</td><td width="50%" valign="top">';
-  print '</td></tr></table>';
+	  $num = $db->num_rows();
+	  $i = 0;
+	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  $var=True;      
+	  while ($i < $num)
+	    {
+	      $objp = $db->fetch_object( $i);	  
+	      $var=!$var;
+	      print "<TR $bc[$var]>";
+	      print "<td><a href=\"../comm/propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+	      print "<td><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+	      print "<td>". strftime("%d %B %Y",$objp->dp)."</td>\n";
+	      print '<form method="POST" action="fiche.php3?id='.$id.'">';
+	      print '<input type="hidden" name="action" value="addinpropal">';
+	      print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
+	      print '<input type="text" name="qty" size="3" value="1">';
+	      print '</td><td>';
+	      print '<input type="submit" value="Ajouter">';
+	      print "</td>";
+	      print '</form></tr>';
+	      $i++;
+	    }      
+	  print "</table>";
+	  $db->free();
+	}
 
+      print '</td>';
+
+      if($user->rights->propale->creer)
+	{
+	  print '<td width="50%" valign="top">';
+
+	  $otherprop = $propal->liste_array(1, '<>'.$user->id);
+	  if (sizeof($otherprop))
+	    {
+	      print '<form method="POST" action="fiche.php3?id='.$id.'">';
+	      print '<input type="hidden" name="action" value="addinpropal">';
+	      print '<table border="1" width="100%" cellpadding="3" cellspacing="0">';
+	      print "<tr><td>Autres Propositions</td><td>";
+	      $htmls->select_array("propalid", $otherprop);
+	      print '</td><td>';
+	      print '<input type="text" name="qty" size="3" value="1">';
+	      print '</td><td>';
+	      print '<input type="submit" value="Ajouter">';
+	      print "</td></tr>";
+	      print '</table></form>';
+	    }
+	  print '</td>';
+	}
+      print '</tr>';
+    }
+
+  if($user->rights->facture->creer)
+    {
+      print '<tr><td width="50%" valign="top">';
+      print_titre("Ajouter ma facture");
+      print '</td><td width="50%" valign="top">';
+      print_titre("Ajouter aux autres factures");
+      print '</td></tr>';
+      print '<tr><td width="50%" valign="top">';
+      $sql = "SELECT s.nom, s.idp, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
+      $sql .= " FROM llx_societe as s, llx_facture as f";
+      $sql .=" WHERE f.fk_soc = s.idp AND f.fk_statut = 0 AND f.fk_user_author = ".$user->id;
+      $sql .= " ORDER BY f.datec DESC, f.rowid DESC";
+      
+      if ( $db->query($sql) )
+	{
+	  $num = $db->num_rows();
+	  $i = 0;
+	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  $var=True;      
+	  while ($i < $num)
+	    {
+	      $objp = $db->fetch_object( $i);
+	      
+	      $var=!$var;
+	      print "<TR $bc[$var]>";
+	      print "<td><a href=\"../compta/facture.php3?facid=$objp->factureid\">$objp->facnumber</a></TD>\n";
+	      print "<td><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
+	      print "<td>". strftime("%d %B %Y",$objp->df)."</td>\n";
+	      print '<form method="POST" action="fiche.php3?id='.$id.'">';
+	      print '<input type="hidden" name="action" value="addinfacture">';
+	      print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
+	      print '<input type="text" name="qty" size="3" value="1">';
+	      print '</td><td>';
+	      print '<input type="submit" value="Ajouter">';
+	      print "</td>";
+	      print '</form></tr>';
+	      $i++;
+	    }      
+	  print "</table>";
+	  $db->free();
+	}
+      else
+	{
+	  print $db->error() . "<br>" . $sql;
+	}
+      print '</td><td width="50%" valign="top">';
+      print '</td></tr></table>';
+    }
 }
 
 
