@@ -23,26 +23,35 @@
 
 /*! 
   \file       htdocs/fourn/commande/liste.php
-  \ingroup    commande
+  \ingroup    fournisseur
   \brief      Liste des commandes fournisseurs
   \version    $Revision$
 */
 
 require("./pre.inc.php");
 
-$page = $_GET["page"];
+$page  = ( is_numeric($_GET["page"]) ?  $_GET["page"] : 0 );
+$socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
-$socid = $_GET["socid"];
+
+$title = $langs->trans("SuppliersOrders");
 
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
-llxHeader('','Liste des commandes fournisseurs');
-
-/*
- * Sécurité accés client/fournisseur
- */
+// Sécurité accés client/fournisseur
 if ($user->societe_id > 0) $socid = $user->societe_id;
+
+
+if ($socid > 0)
+{
+  $fourn = new Fournisseur($db);
+  $fourn->fetch($socid);
+  $title .= ' (<a href="liste.php">'.$fourn->nom.'</a>)';
+}
+
+llxHeader('',$title);
+
 
 if ($sortorder == "") $sortorder="DESC";
 if ($sortfield == "") $sortfield="cf.date_creation";
@@ -88,7 +97,7 @@ if ($resql)
   $i = 0;
   
 
-  print_barre_liste($langs->trans("SuppliersOrders"), $page, "liste.php", "", $sortfield, $sortorder, '', $num);
+  print_barre_liste($title, $page, "liste.php", "", $sortfield, $sortorder, '', $num);
 
   print '<table class="liste">';
   print '<tr class="liste_titre">';
