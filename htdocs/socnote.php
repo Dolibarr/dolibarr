@@ -101,7 +101,7 @@ if ($_GET["socid"] > 0) {
   print '</td><td width="50%" valign="top">'.nl2br($societe->note).'</td>';
   print "</td></tr>";
   print "</table>";
-  print '<input type="submit" value="Enregistrer"></form>';
+  print '<input type="submit" value="'.$langs->trans("Save").'"></form>';
 }
 
 $db->close();
