@@ -673,20 +673,19 @@ if ($propalid) {
     {
       $num = $db->num_rows();
       $i = 0;
-      print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
       print '<TR class="liste_titre">';
-      print "<TD>";
-      print_liste_field_titre ("Réf",$PHP_SELF,"p.ref");
-      print "</TD><td>";
-      print_liste_field_titre ("Société",$PHP_SELF,"s.nom");
-      print '</td><TD align="right" colspan="2">';
-      print_liste_field_titre ("Date",$PHP_SELF,"p.datep");
-      print '</td><TD align="right">';
-      print_liste_field_titre ("Prix",$PHP_SELF,"p.price");
-      print "</td><TD align=\"center\">";
-      print_liste_field_titre ("Statut",$PHP_SELF,"p.fk_statut");
-      print "</td></tr>\n";
+
+      print_liste_field_titre_new ("Réf",$PHP_SELF,"p.ref","","&socidp=$socidp",'width="15%"',$sortfield);
+
+      print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","&socidp=$socidp",'width="30%"',$sortfield);
+
+      print_liste_field_titre_new ("Date",$PHP_SELF,"p.datep","","&socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
+      print_liste_field_titre_new ("Prix",$PHP_SELF,"p.price","","&socidp=$socidp", ' width="20%" align="right"',$sortfield);
+
+      print_liste_field_titre_new ("Statut",$PHP_SELF,"p.fk_statut","","&socidp=$socidp",'width="10%" align="center"',$sortfield);
+      print "</tr>\n";
       $var=True;
       
       while ($i < $num)
