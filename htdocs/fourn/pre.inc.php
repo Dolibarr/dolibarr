@@ -62,26 +62,23 @@ function llxHeader($head = "", $title="", $addons='') {
       $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
     }
   
-  if ($conf->facture->enabled)
+
+  $langs->load("bills");
+  $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
+  
+  if ($user->societe_id == 0) 
     {
-      $langs->load("bills");
-      $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
-      
-      if ($user->societe_id == 0) 
-	{
-	  $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"));
-	}
-      
-      $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
+      $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"));
     }
   
+  $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
+  
+  
 
-  if ($conf->commande->enabled)
-  {
-      $langs->load("orders");
-      $menu->add_submenu(DOL_URL_ROOT."/fourn/commande/",$langs->trans("Orders"));
-  }
-
+  
+  $langs->load("orders");
+  $menu->add(DOL_URL_ROOT."/fourn/commande/",$langs->trans("Orders"));
+  
   if ($conf->produit->enabled || $conf->service->enabled)
   {
       $menu->add(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("Products"));
