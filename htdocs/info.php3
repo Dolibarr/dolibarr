@@ -49,6 +49,7 @@ if ($conf->don->enabled) {
   print '<tr><td bgcolor="#e0e0e0" colspan="2">Dons</td></tr>';
   print '<tr><td>Paiement en ligne</td><td>' . $conf->don->onlinepayment . '</td></tr>';
   print '<tr><td>Don minimum</td><td>' . $conf->don->minimum . '</td></tr>';
+  print '<tr><td>Email Moderateurs</td><td>'.$conf->don->email_moderator.'</td></tr>';
 }
 
 
