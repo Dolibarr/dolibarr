@@ -52,6 +52,7 @@ $search_prenom=isset($_GET["search_prenom"])?$_GET["search_prenom"]:$_POST["sear
 $search_societe=isset($_GET["search_societe"])?$_GET["search_societe"]:$_POST["search_societe"];
 $search_email=isset($_GET["search_email"])?$_GET["search_email"]:$_POST["search_email"];
 
+$type = isset($_GET["type"])?$_GET["type"]:$_POST["type"];
 $view=isset($_GET["view"])?$_GET["view"]:$_POST["view"];
 
 $contactname=isset($_GET["contactname"])?$_GET["contactname"]:$_POST["contactname"];
@@ -72,10 +73,11 @@ if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
+if ($type == "f") { $text.=$langs->trans("Suppliers")." "; }
+if ($type == "c") { $text.=$langs->trans("Customers")." "; }
 if ($view == 'phone')  { $text="(Vue Téléphones)"; }
 if ($view == 'mail')   { $text="(Vue EMail)"; }
 if ($view == 'recent') { $text="(Récents)"; }
-
 $titre = "Liste des contacts $text";
 
 if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
@@ -98,11 +100,11 @@ $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p ";
 $sql .= "LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.idp = p.fk_soc) ";
 
 $sql .= "WHERE 1=1 ";
+
 if ($_GET["userid"])    // statut commercial
 {
   $sql .= " AND p.fk_user=".$_GET["userid"];
 }
-
 if ($search_nom)        // filtre sur le nom
 {
   $sql .= " AND upper(p.name) like '%".$search_nom."%'";
@@ -118,6 +120,15 @@ if ($search_societe)    // filtre sur la societe
 if ($search_email)      // filtre sur l'email
 {
   $sql .= " AND upper(p.email) like '%".$search_email."%'";
+}
+
+if ($type == "f")        // filtre sur type
+{
+  $sql .= " AND fournisseur = 1";
+}
+if ($type == "c")        // filtre sur type
+{
+  $sql .= " AND client = 1";
 }
 
 if ($contactname)
@@ -158,9 +169,9 @@ if ($result)
 
   // Ligne des titres
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
-  print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, "&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, "&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
+  print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
+  print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
   print '<td>'.$langs->trans("Phone").'</td>';
 
   if ($_GET["view"] == 'phone')
@@ -170,7 +181,7 @@ if ($result)
     }
   else
     {
-      print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, "", "", $sortfield);
+      print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
     }
   print '<td>&nbsp;</td>';
   print "</tr>\n";
