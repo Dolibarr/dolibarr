@@ -97,16 +97,16 @@ if ($_GET["id"])
       $head[0][1] = 'Fiche';
 	
       $head[1][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-      $head[1][1] = 'Prix';
+      $head[1][1] = $langs->trans("Price");
 	
       $head[2][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-      $head[2][1] = 'Statistiques';
+      $head[2][1] = $langs->trans("Statistics");
 		
       dolibarr_fiche_head($head, 2, 'Fiche '.$types[$product->type].' : '.$product->ref);
 	      
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
-      print '<td width="20%">Référence</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
-      print '<td>Statistiques</td></tr>';
+      print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
+      print '<td>'.$langs->trans("Statistics").'</td></tr>';
       print "<tr><td>Libellé</td><td>$product->libelle</td>";
       print '<td valign="top" rowspan="2">';
       print '<a href="propal.php?id='.$product->id.'">Propositions commerciales</a> : '.$product->count_propale($socid);

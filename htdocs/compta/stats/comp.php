@@ -57,9 +57,9 @@ function propals ($db, $year, $month) {
 
       print "<tr class=\"liste_titre\">";
       print "<td>Societe</td>";
-      print "<td>Réf</td>";
+      print "<td>".$langs->trans("Ref")."</td>";
       print "<td align=\"right\">Date</td>";
-      print "<td align=\"right\">Prix</td>";
+      print "<td align=\"right\">".$langs->trans("Price")."</td>";
       print "<td align=\"center\">Statut</td>";
       print "</tr>\n";
       $var=True;

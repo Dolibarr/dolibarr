@@ -224,10 +224,10 @@ if ($_GET["propalid"])
 	    }
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<tr>";
-	  print "<td>Numéro</td>";
+	  print '<td>'.$langs->trans("Ref").'</td>';
 	  print '<td>'.$langs->trans("Date").'</td>';
 	  print '<td>'.$langs->trans("Author").'</td>';
-	  print '<td align="right">Prix</td>';
+	  print '<td align="right">'.$langs->trans("Price").'</td>';
 	  print "</tr>\n";
 	  
 	  $var=True;
@@ -308,10 +308,10 @@ if ($_GET["propalid"])
      */
     print_titre("Produits");
     
-    print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
-    print "<TR class=\"liste_titre\">";
-    print "<td>Réf</td><td>Produit</td>";
-    print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
+    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+    print "<tr class=\"liste_titre\">";
+    print "<td>".$langs->trans("Ref")."</td><td>Produit</td>";
+    print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
     
     $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
     $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal =".$propal->id;
@@ -465,10 +465,10 @@ if ($_GET["propalid"])
       $i = 0;
       print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
       print '<tr class="liste_titre">';
-      print_liste_field_titre_new ("Réf","propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);
+      print_liste_field_titre_new ($langs->trans("Ref"),"propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);
       print_liste_field_titre_new ("Société","propal.php","s.nom","&viewstatut=$viewstatut","",'',$sortfield);
       print_liste_field_titre_new ("Date","propal.php","p.datep","&viewstatut=$viewstatut","",'align="right" colspan="2"',$sortfield);
-      print_liste_field_titre_new ("Prix","propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
+      print_liste_field_titre_new ($langs->trans("Price"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
       print_liste_field_titre_new ("Statut","propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="center"',$sortfield);
       print "</tr>\n";
 

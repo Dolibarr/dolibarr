@@ -71,8 +71,8 @@ if ($id)
 	  $num = $db->num_rows();
 	  $i = 0;
 	  print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
-	  print '<TR class="liste_titre"><td align="left" width="40%">Produits</td>';
-	  print '<td align="center">Nombre</td><td align="right">Prix</td><td align="right">Prix final</td>';
+	  print '<tr class="liste_titre"><td align="left" width="40%">Produits</td>';
+	  print '<td align="center">'.$langs->trans("Number").'</td><td align="right">'.$langs->trans("Price").'</td><td align="right">Prix final</td>';
 	  print "</tr>\n";
 	  $var=True;
 	  while ($i < $num) 

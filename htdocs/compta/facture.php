@@ -620,7 +620,7 @@ if ($_GET["action"] == 'create')
 	      
 	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	      print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
-	      print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
+	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
@@ -680,7 +680,7 @@ if ($_GET["action"] == 'create')
 	      
 	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	      print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
-	      print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
+	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.subprice, pt.qty, p.rowid as prodid, pt.remise_percent";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as pt, ".MAIN_DB_PREFIX."product as p";
@@ -1329,8 +1329,8 @@ else
 		  print '<tr class="liste_titre">';
 		  print "<td>Numéro</td>";
 		  print "<td>Date</td>";
-		  print '<td align="right">Prix</td>';
-		  print "</TR>\n";
+		  print '<td align="right">'.$langs->trans("Price").'</td>';
+		  print "</tr>\n";
 		
 		  $var=True;
 		  while ($i < $num)
@@ -1345,7 +1345,7 @@ else
 		      $total = $total + $objp->price;
 		      $i++;
 		    }
-		  print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b> $_MONNAIE HT</td></tr>\n";
+		  print "<tr><td align=\"right\" colspan=\"3\">".$langs->trans("TotalHT").": <b>".price($total)."</b> ".MAIN_MONNAIE."</td></tr>\n";
 		  print "</table>";
 		}
 	    } else {

@@ -291,7 +291,7 @@ else
 	      $head[0][1] = 'Fiche';
 	      
 	      $head[1][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-	      $head[1][1] = 'Prix';
+	      $head[1][1] = $langs->trans("Price");
 	      $h = 2;
 	      if($product->type == 0)
 		{

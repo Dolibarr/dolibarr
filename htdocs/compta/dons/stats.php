@@ -24,7 +24,8 @@ require("./pre.inc.php");
 
 llxHeader();
 
-print_titre("Statistiques");
+
+print_titre($langs->trans("Statistics"));
 
 $sql = "SELECT d.amount";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d, ".MAIN_DB_PREFIX."don_projet as p";

@@ -256,8 +256,8 @@ if ($_GET["id"] > 0)
 		  print_titre("Facture associée");
 		}
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-	      print '<tr><td>Numéro</td><td>Date</td><td>Auteur</td>';
-	      print '<td align="right">Prix</td>';
+	      print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Author").'</td>';
+	      print '<td align="right">'.$langs->trans("Price").'</td>';
 	      print "</tr>\n";
 	      
 	      $var=True;

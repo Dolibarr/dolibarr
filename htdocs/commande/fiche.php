@@ -331,7 +331,7 @@ if ($_GET["action"] == 'create')
 	      
 	      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 	      print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
-	      print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
+	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";

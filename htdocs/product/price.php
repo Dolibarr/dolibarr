@@ -59,10 +59,10 @@ $head[0][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
 $head[0][1] = 'Fiche';
 
 $head[1][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-$head[1][1] = 'Prix';
+$head[1][1] = $langs->trans("Price");
 
 $head[2][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-$head[2][1] = 'Statistiques';
+$head[2][1] = $langs->trans("Statistics");
 
 
 dolibarr_fiche_head($head, 1, 'Fiche '.$types[$product->type].' : '.$product->ref);

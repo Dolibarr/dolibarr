@@ -171,7 +171,7 @@ if ($action == 'create')
   print "<tr>";
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Titre</td><td><input name="titre" size="40" value=""></td></tr>';
-  print '<tr><td>Prix</td><TD><input name="price" size="10" value=""></td></tr>';    
+  print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value=""></td></tr>';    
 
   print '<tr><td>Frais de port</td><td><select name="fdp">';
   print '<option value="1" SELECTED>oui</option>';
@@ -271,7 +271,7 @@ else
 	      print '<tr><td>Titre</td><td><input name="titre" size="40" value="'.$livre->titre.'"></td></tr>';
 
 	      print '<tr><td>Année</td><TD><input name="annee" size="6" maxlenght="4" value="'.$livre->annee.'"></td></tr>';
-	      print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.price($livre->price).'"></td></tr>';
+	      print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value="'.price($livre->price).'"></td></tr>';
 	      print '<tr><td>Frais de port</td><td><select name="fdp">';
 	      if ($livre->frais_de_port)
 		{
@@ -396,7 +396,7 @@ else
 	      print $value."</a><br>\n";
 	    }
 	  print "</td></tr>";
-	  print '<tr><td>Prix</td><TD>'.price($livre->price).'</td></tr>';    
+	  print '<tr><td>'.$langs->trans("Price").'</td><TD>'.price($livre->price).'</td></tr>';    
 	  print '<tr><td>Frais de port</td><td>';
 	  if ($livre->frais_de_port)
 	    {

@@ -71,9 +71,9 @@ if ($action == 'create')
       
   print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
   print "<tr>";
-  print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
+  print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Titre</td><td><input name="titre" size="40" value=""></td></tr>';
-  print '<tr><td>Prix</td><TD><input name="price" size="10" value=""></td></tr>';    
+  print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value=""></td></tr>';    
   print "<tr><td valign=\"top\">Description</td><td>";
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
@@ -97,10 +97,10 @@ else
       
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print "<td>Référence</td><td>$album->ref</td>\n";
+	  print "<td>".$langs->trans("Ref")."</td><td>$album->ref</td>\n";
 	  print "<td>Statut</td><td>$album->status</td></tr>\n";
 	  print "<td>Titre</td><td>$album->titre</td>\n";
-	  print '<td>Prix</td><TD>'.price($album->price).'</td></tr>';    
+	  print '<td>'.$langs->trans("Price").'</td><TD>'.price($album->price).'</td></tr>';    
 	  print '<tr><td valign="top">Description</td><td valign="top">'.nl2br($album->description)."</td>";
 
 	  $gas = $album->liste_groupart();
@@ -120,11 +120,11 @@ else
 	  print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
 	  print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	  
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<tr>";
-	  print '<td>Référence</td><td><input name="ref" size="20" value="'.$album->ref.'"></td></tr>';
+	  print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$album->ref.'"></td></tr>';
 	  print '<td>Libellé</td><td><input name="titre" size="40" value="'.$album->titre.'"></td></tr>';
-	  print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.$album->price.'"></td></tr>';    
+	  print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value="'.$album->price.'"></td></tr>';    
 	  print "<tr><td valign=\"top\">Description</td><td>";
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $album->description;

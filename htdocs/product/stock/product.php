@@ -69,7 +69,7 @@ if ($_GET["id"])
       $head[0][1] = 'Fiche';
       
       $head[1][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-      $head[1][1] = 'Prix';
+      $head[1][1] = $langs->trans("Price");
       $h = 2;
       
       $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
@@ -77,7 +77,7 @@ if ($_GET["id"])
       $h++;
       
       $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-      $head[$h][1] = 'Statistiques';
+      $head[$h][1] = $langs->trans("Statistics");
       
       dolibarr_fiche_head($head, 2, 'Fiche '.$types[$product->type].' : '.$product->ref);
       
@@ -85,9 +85,9 @@ if ($_GET["id"])
       
       print_fiche_titre('Fiche stock : '.$product->ref, $mesg);
 	  
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
       print "<tr>";
-      print '<td width="20%">Référence</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
+      print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
       print '<td width="40%">';
       if ($product->envente)
 	{
@@ -99,7 +99,7 @@ if ($_GET["id"])
 	}
       print '</td></tr>';
       print "<tr><td>Libellé</td><td>$product->libelle</td>";
-      print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$product->id.'">Statistiques</a></td></tr>';
+      print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$product->id.'">'.$langs->trans("Statistics").'</a></td></tr>';
       print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
       print '<td valign="top" rowspan="2">';
       print 'Fournisseurs [<a href="../fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("Add").'</a>]';

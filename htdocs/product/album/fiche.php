@@ -76,7 +76,7 @@ if ($action == 'create')
   print "<tr>";
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Titre</td><td><input name="titre" size="40" value=""></td></tr>';
-  print '<tr><td>Prix</td><TD><input name="price" size="10" value=""></td></tr>';    
+  print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value=""></td></tr>';    
   print "<tr><td valign=\"top\">Description</td><td>";
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
@@ -111,7 +111,7 @@ else
 	  print '<td rowspan="6" valign="top">'.nl2br($album->description)."</td>";
 	  print "<tr><td>Titre</td><td>$album->titre</td></tr>\n";
 	  print "<tr><td>Annee</td><td>$album->annee</td></tr>\n";
-	  print '<tr><td>Prix</td><TD>'.price($album->price).'</td></tr>';    
+	  print '<tr><td>'.$langs->trans("Price").'</td><TD>'.price($album->price).'</td></tr>';    
 
 	  print '<td valign="top">Artiste/Groupe</td><td>';
 	  foreach ($gas as $key => $value)
@@ -141,7 +141,7 @@ else
 	      print "</textarea></td></tr>";
 
 	      print '<tr><td>Année</td><TD><input name="annee" size="6" maxlenght="4" value="'.$album->annee.'"></td></tr>';
-	      print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.$album->price.'"></td></tr>';    
+	      print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value="'.$album->price.'"></td></tr>';    
 
 	      print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer"></td></tr>';
 	      
