@@ -1,0 +1,8 @@
+<?PHP
+/*
+ * Ce fichier définit les taux de tva
+ *
+ */
+$txtva[0] = '17';
+
+?>
