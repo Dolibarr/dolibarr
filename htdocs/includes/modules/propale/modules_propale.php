@@ -39,13 +39,6 @@ class ModelePDFPropales extends FPDF
 {
     var $error='';
 
-    /*!  \brief      Constructeur
-     */
-    function ModelePDFFactures()
-    {
-    
-    }
-
    /*! 
         \brief Renvoi le dernier message d'erreur de création de propale
     */
@@ -100,6 +93,7 @@ class ModeleNumRefPropales
 		\brief      Crée une propale sur disque en fonction du modèle de PROPALE_ADDON_PDF
 		\param	    db  		objet base de donnée
 		\param	    facid		id de la facture à créer
+		\param	    modele		force le modele à utiliser ('' par defaut)
 */
 function propale_pdf_create($db, $facid, $modele='')
 {
