@@ -34,6 +34,8 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
+$commande = new CommandeFournisseur($db);
+
 print_barre_liste("Commandes fournisseurs", $page, "index.php", "", $sortfield, $sortorder, '', $num);
 
 print '<table class="noborder" width="100%">';
@@ -57,18 +59,20 @@ if ($result)
   $i = 0;
   
   print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre"><td>Statut</td><td align="center">Nb</td>';
+  print '<tr class="liste_titre"><td>Statut</td><td align="center">Nb</td><td>&nbsp;</td>';
   print "</tr>\n";
   $var=True;
 
-  while ($i < min($num,$conf->liste_limit))
+  while ($i < $num)
     {
       $row = $db->fetch_row();
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td><img src="statut'.$row[1].'.png"></td>';
+      print '<td>'.$commande->statuts[$row[1]].'</td>';
       print '<td align="center">'.$row[0].'</td>';
+      print '<td align="center"><a href="liste.php?statut='.$row[1].'"><img src="statut'.$row[1].'.png" border="0" alt="Statut"></a></td>';
+
       print "</tr>\n";
       $i++;
     }
