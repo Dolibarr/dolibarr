@@ -362,7 +362,8 @@ if ($mainmenu) {
         if($user->admin)
         {
           $langs->load("admin");
-          $newmenu->add(DOL_URL_ROOT."/comm/mailing.php?mainmenu=outils", $langs->trans("Mailings"));
+          $newmenu->add(DOL_URL_ROOT."/comm/mailing/index.php?mainmenu=tools", $langs->trans("Mailings"));
+          $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?action=create", $langs->trans("NewMailing"));
 
         }
     }
