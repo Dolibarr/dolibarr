@@ -137,7 +137,7 @@ class Facture
   Function fetch($rowid)
     {
 
-      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.remise,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.libelle, f.note";
+      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.remise,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.libelle, f.note, f.paye";
       $sql .= " FROM llx_facture as f, llx_cond_reglement as c";
       $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
       
@@ -154,6 +154,7 @@ class Facture
 	      $this->total_ht  = $obj->amount;
 	      $this->total_tva = $obj->tva;
 	      $this->total_ttc = $obj->total;
+	      $this->paye      = $obj->paye;
 	      $this->remise    = $obj->remise;
 	      $this->socidp    = $obj->fk_soc;
 	      $this->date_lim_reglement = $obj->dlr;
