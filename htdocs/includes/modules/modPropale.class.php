@@ -96,6 +96,7 @@ class modPropale extends DolibarrModules
     */
   function init()
   {       
+
     // Permissions et valeurs par défaut
     $this->remove();
 
@@ -133,6 +134,7 @@ class modPropale extends DolibarrModules
     $this->rights[6][1] = 'Supprimer les propositions commerciales'; // libelle de la permission
     $this->rights[6][2] = 'd'; // type de la permission (déprécié à ce jour)
     $this->rights[6][3] = 0; // La permission est-elle une permission par défaut
+
 
 
     $sql = array(
