@@ -332,10 +332,10 @@ else
 	      print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
 	      print '</form></div>';
 	      
-          $h=0;
+	      $h=0;
           
-          $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
-          $head[$h][1] = $langs->trans("Card");
+	      $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+	      $head[$h][1] = $langs->trans("Card");
 	      $hselected = $h;
 	      $h++;
 	      
@@ -343,13 +343,21 @@ else
 	      $head[$h][1] = $langs->trans("Price");
 	      $h++;
 
-          if($product->type == 0)
-          {
-            $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-            $head[$h][1] = 'Stock';
-            $h++;
-          }
+	      if($product->type == 0)
+		{
+		  if ($conf->stock->enabled)
+		    {
+		      $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+		      $head[$h][1] = 'Stock';
+		      $h++;
+		    }
 
+		  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+		  $head[$h][1] = 'Fournisseurs';
+		  $h++;
+
+		}
+	      
 	      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
 	      $head[$h][1] = $langs->trans('Statistics');
 	      $h++;
