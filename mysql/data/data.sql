@@ -63,9 +63,6 @@ insert into llx_const (name, value, type, note) values ('MAIN_START_YEAR','2004'
 insert into llx_const (name, value, type, note) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
 insert into llx_const (name, value, type, note) values ('MAIN_DEBUG','1','yesno','Debug ..');
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage formulaire de recherche des Contacts dans la barre de gauche',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage formulaire de recherche des Sociétés dans la barre de gauche',0);
-
 insert into llx_const (name, value, type, note, visible) values ('COMPTA_BANK_FACTURES','1','yesno','Menu factures dans la partie bank',0);
 insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine',0);
 
@@ -75,6 +72,9 @@ insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_
 insert into llx_const (name, value, type, note, visible) values ('MAIN_THEME','yellow','chaine','Thème par défaut',0);
 insert into llx_const (name, value, type, note, visible) values ('SIZE_LISTE_LIMIT','20','chaine','Taille des listes',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_BARRETOP','default.php','chaine','Module de gestion de la barre de menu du haut',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_LANG_DEFAULT','fr','chaine','Langue par défaut pour les écrans Dolibarr',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage formulaire de recherche des Contacts dans la barre de gauche',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage formulaire de recherche des Sociétés dans la barre de gauche',0);
 
 --
 -- Dons
