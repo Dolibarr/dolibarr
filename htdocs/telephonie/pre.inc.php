@@ -34,12 +34,16 @@ function llxHeader($head = "", $title="") {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/telephonie/adsl/", "ADSL");
+  if (TELEPHONIE_MODULE_ADSL == 1)
+    $menu->add(DOL_URL_ROOT."/telephonie/adsl/", "ADSL");
 
   $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/simulation/fiche.php", "Simulation");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/simulation/fiche.php?action=create", "Nouvelle");
+  if (TELEPHONIE_MODULE_SIMULATION == 1)
+    {
+      $menu->add(DOL_URL_ROOT."/telephonie/simulation/fiche.php", "Simulation");
+      $menu->add_submenu(DOL_URL_ROOT."/telephonie/simulation/fiche.php?action=create", "Nouvelle");
+    }
 
   $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
