@@ -184,6 +184,10 @@ values ('PB-16','Pan. Brass. 16','Panneau de brassage extensible, incluant 1 bar
 insert into llx_product (ref, label, description, price, tva_tx)
 values ('PB-32','Pan. Brass. 32','Panneau de brassage extensible, incluant 2 barres de 16 prises',1200,19.6);
 
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('HB-USB1','Hub Usb 4 ports','Hub USB 4 ports avec bloc d\'alimentation indépendant',31,19.6);
+
+
 --
 --
 -- Fichinter
