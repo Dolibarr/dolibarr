@@ -21,9 +21,21 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/fourn/facture/fiche.php
+        \ingroup    facture
+		\brief      Page des la fiche facture fournisseur
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("./paiementfourn.class.php");
 require("../../facturefourn.class.php");
+
+$langs->load("bills");
+$langs->load("companies");
+
 
 /*
  * Sécurité accés client
@@ -174,9 +186,10 @@ llxHeader();
 
 if ($mesg) { print "<br>$mesg<br>"; }
 
+
 /*
  *
- * Fiche de creation
+ * Fiche facture en mode creation
  *
  */
 
@@ -191,7 +204,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
       
   print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
-  print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
+  print '<table class="border" width="100%">';
   print '<tr><td>Société</td>';
 
   print '<td><select name="socidp">';
@@ -222,7 +235,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
   print '</select></td>';
   print '<td>'.$langs->trans("Comments").'</td></tr>';
 
-  print '<tr><td>Numéro</td><td><input name="facnumber" type="text"></td>';
+  print '<tr><td>'.$langs->trans("Ref").'</td><td><input name="facnumber" type="text"></td>';
 
   print '<td rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="30" rows="6"></textarea></td></tr>';
   if ($_GET["action"] == 'copy')
@@ -240,7 +253,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
   print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
   print "</table><br>";
 
-  print '<table cellspacing="0" cellpadding="3" class="border" width="100%">';
+  print '<table class="border" width="100%">';
   print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Tx TVA</td></tr>';
 
   for ($i = 1 ; $i < 9 ; $i++)
@@ -271,7 +284,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
 else
 {
   /*
-   * Visualisation
+   * Fiche facture en mode edition
    *
    */
   if ($_GET["facid"] > 0)
@@ -280,25 +293,21 @@ else
       $fac = new FactureFourn($db);
       $fac->fetch($_GET["facid"]);
 
-      /*
-       * Fiche facture en mode edition
-       *
-       */
       if ($_GET["action"] == "edit")
 	{
 
-	  print_titre('Facture : '.$fac->ref);
+	  print_titre($langs->trans("Bill").' : '.$fac->ref);
 	  
 	  print '<form action="fiche.php?facid='.$fac->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update">';
       
-	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-	  print "<tr><td width=\"20%\">Société</td>";
+	  print '<table class="border" width="100%">';
+	  print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
       
 	  print '<td width="20%">'.stripslashes($fac->socnom).'</td>';
 	  print '<td width="60%" valign="top">'.$langs->trans("Comments").'</tr>';
       
-	  print "<tr>".'<td valign="top">Numéro</td><td valign="top">';
+	  print '<tr><td valign="top">'.$langs->trans("Ref").'</td><td valign="top">';
 	  print '<input name="facnumber" type="text" value="'.$fac->ref.'"></td>';
       
 	  print '<td rowspan="7" width="60%" valign="top">';
@@ -308,9 +317,9 @@ else
 	  
 	  print '<tr><td valign="top">'.$langs->trans("Label").'</td><td>';
 	  print '<input size="30" name="libelle" type="text" value="'.stripslashes($fac->libelle).'"></td></tr>';      
-	  print "<tr>".'<td>Montant HT</td>';
+	  print '<tr><td>'.$langs->trans("AmountTTC").'</td>';
 	  print '<td valign="top">'.price($fac->total_ht).'</td></tr>';      
-	  print "<tr><td>Date</td><td>";
+	  print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	  
 	  print_date_select($fac->datep);
 	  
@@ -334,10 +343,10 @@ else
 	   *
 	   */	  
 	  print "<p><form action=\"fiche.php?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
-	  print '<table class="noborder" cellspacing="0" cellpadding="2" width="100%">';
+	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Total HT</td>';
-	  print '<td align="center">Taux TVA</td>';
-	  print '<td align="center">TVA</td>';
+	  print '<td align="center">'.$langs->trans("VATRate").'</td>';
+	  print '<td align="center">'.$langs->trans("VAT").'</td>';
 	  print '<td align="right">'.$langs->trans("TotalTTC").'</td><td>&nbsp;</td></tr>';
 	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 	    {
@@ -375,28 +384,29 @@ else
 	}
       else
 	{
-	  /*
-	   * Affichage en visu
-	   *
-	   */
+      /*
+       * Fiche facture en mode edition
+       *
+       */
+	  $h=0;
 	  
-	  $head[0][0] = "fiche.php?facid=".$fac->id;
-	  $head[0][1] = 'Facture : '.$fac->ref;
-	  $h = 1;
-	  $a = 0;
+	  $head[$h][0] = "fiche.php?facid=".$fac->id;
+	  $head[$h][1] = $langs->trans("Bill").' : '.$fac->ref;
+	  $hselected = $h;
+	  $h++;
 	  
-	  dolibarr_fiche_head($head, $a);
+	  dolibarr_fiche_head($head, $hselected);
 
-	  print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
+	  print "<table border=\"0\" width=\"100%\">";
 	  print '<tr><td width="50%" valign="top">';
 	  /*
 	   *   Facture
 	   */
-	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-	  print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$fac->socidp\">$fac->socnom</a></b></td>";
+	  print '<table class="border" width="100%">';
+	  print "<tr><td>".$langs->trans("Company")."</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$fac->socidp\">$fac->socnom</a></b></td>";
 	  print "<td align=\"right\"><a href=\"index.php?socid=$fac->socidp\">Autres factures</a></td>\n";
 	  print "</tr>";
-	  print "<tr><td>Date</td><td colspan=\"4\">".dolibarr_print_date($fac->datep,"%A %d %B %Y")."</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("Date")."</td><td colspan=\"4\">".dolibarr_print_date($fac->datep,"%A %d %B %Y")."</td></tr>\n";
 	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="4">';
 	  print $fac->libelle;
 	  print "</td>";
@@ -412,7 +422,7 @@ else
 	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="4">'.$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 	  
 	  print "<tr>".'<td>&nbsp</td><td>'.$langs->trans("TotalHT").'</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
-	  print '<td align="right">TVA</td><td align="right">'.price($fac->total_tva)."</td></tr>";
+	  print '<td align="right">'.$langs->trans("VAT").'</td><td align="right">'.price($fac->total_tva)."</td></tr>";
 	  print "<tr>".'<td>&nbsp</td><td>'.$langs->trans("TotalTTC").'</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
 	  if (strlen($fac->note))
 	    {
@@ -430,7 +440,7 @@ else
 	  $sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."c_paiement as c ";
 	  $sql .= " WHERE p.fk_facture_fourn = ".$fac->id." AND p.fk_paiement = c.id";
-	  
+
 	  $result = $db->query($sql);
 
 	  if ($result)
@@ -438,9 +448,10 @@ else
 	      $num = $db->num_rows();
 	      $i = 0; $total = 0;
 
-	      echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	      echo '<table class="noborder" width="100%">';
+	      print '<tr><td colspan="2">'.$langs->trans("Paiements").'</td></tr>';
 	      print "<tr class=\"liste_titre\">";
-	      print "<td>Date</td>";
+	      print '<td>'.$langs->trans("Date").'</td>';
 	      print '<td>'.$langs->trans("Type").'</td>';
 
 	      if ($fac->statut == 1 && $fac->paye == 0 && $user->societe_id == 0)
