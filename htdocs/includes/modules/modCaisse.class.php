@@ -60,10 +60,10 @@ class modCaisse extends DolibarrModules
      * Permissions
      */    
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (120,'Tous les droits sur les caisses','banque','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (121,'Lire les caisses liquide','banque','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (121,'Créer, supprimer transactions','banque','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (123,'Configurer les caisses (créer, gérer catégories)','banque','w',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (130,'Tous les droits sur les caisses','banque','a',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (131,'Lire les caisses liquide','banque','r',1);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (131,'Créer, supprimer transactions','banque','r',1);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (133,'Configurer les caisses (créer, gérer catégories)','banque','w',0);",
 		 );
     
     return $this->_init($sql);

@@ -236,6 +236,14 @@ if (defined("MAIN_MODULE_COMPTABILITE"))
 {
   $conf->compta->enabled=MAIN_MODULE_COMPTABILITE;
 }
+if (defined("MAIN_MODULE_BANQUE"))
+{
+  $conf->banque->enabled=MAIN_MODULE_BANQUE;
+}
+if (defined("MAIN_MODULE_CAISSE"))
+{
+  $conf->caisse->enabled=MAIN_MODULE_CAISSE;
+}
 if (defined("MAIN_MODULE_DON"))
 {
   $conf->don->enabled=MAIN_MODULE_DON;

@@ -26,7 +26,7 @@ global $PHP_SELF;
 $nbofentries=0;
 if ($conf->commercial->enabled)   $nbofentries++;
 if ($conf->adherent->enabled)     $nbofentries++;
-if ($conf->compta->enabled) $nbofentries++; 
+if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled) $nbofentries++; 
 if ($conf->produit->enabled || $conf->service->enabled) $nbofentries++; 
 if ($conf->webcal->enabled)   $nbofentries++; 
 
@@ -59,13 +59,13 @@ else
       print '</td>';
     }
     
-    if ($conf->compta->enabled)
+    if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled)
     {
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "compta") { $class="menusel"; }
       elseif (ereg("^".DOL_URL_ROOT."\/compta\/",$PHP_SELF)) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/compta/index.php"'.($target?" target=$target":"").'>Compta</A>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/compta/index.php"'.($target?" target=$target":"").'>Compta/Tréso</A>';
       print '</td>';
     }
     

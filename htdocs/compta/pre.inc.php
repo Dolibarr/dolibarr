@@ -72,21 +72,24 @@ function llxHeader($head = "", $title="") {
       $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
     }
 
-  if ($conf->compta->tva && $user->societe_id == 0)
+  if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
     {
       $menu->add(DOL_URL_ROOT."/compta/tva/index.php","TVA");
     }
-  $menu->add(DOL_URL_ROOT."/compta/charges/index.php","Charges");
-
+  if ($conf->compta->enabled)
+    {
+    $menu->add(DOL_URL_ROOT."/compta/charges/index.php","Charges");
+    }
 
 
   // Vision des recettes-dépenses
-
-  $menu->add(DOL_URL_ROOT."/compta/bank/","Banques");
-
-  if ($user->societe_id == 0)
+  if ($conf->banque->enabled)
+   { 
+    $menu->add(DOL_URL_ROOT."/compta/bank/","Banques");
+    }
+  if ($conf->caisse->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisse");
+      $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisses");
     }
 
   $menu->add(DOL_URL_ROOT."/compta/stats/","CA / Résultats");
