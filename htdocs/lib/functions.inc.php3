@@ -231,7 +231,7 @@ function transcoS2L($zonein,$devise)
 
 
 
-function print_liste_field_titre($name, $file, $field, $begin="", $options)
+function print_liste_field_titre($name, $file, $field, $begin="", $options="")
  {
   global $conf;
 
