@@ -270,7 +270,7 @@ else
 	      print "<tr><td>Libellé</td><td>$product->libelle</td>";
 	      print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
 	      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
-	      print '<td valign="top" rowspan="4">';
+	      print '<td valign="top" rowspan="3">';
 	      print 'Fournisseurs [<a href="fiche.php?id='.$id.'&amp;action=ajout_fourn">Ajouter</a>]';
 
 	      $sql = "SELECT s.nom, s.idp";
@@ -350,7 +350,7 @@ else
 
 	  if ($action == 'edit_price' && $user->rights->produit->creer)
 	    {
-	      print '<hr><div class="titre">Nouveau prix</div><br>';
+	      print '<br><div class="titre">Nouveau prix</div>';
 	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="update_price">';
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -496,50 +496,31 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print '<br><table id="actions" width="100%" cellspacing="0" cellpadding="3">';
-if ($action == '')
-{
-  if ($user->rights->produit->modifier || $user->rights->produit->creer)
-    {
-      print '<td width="20%" align="center"><a href="fiche.php?action=edit_price&amp;id='.$id.'">Changer le prix</a></td>';
-    }
-  else
-    {
-      print '<td width="20%" align="center">-</td>';    
-    }
-}
-else
-{
-  print '<td width="20%" align="center">-</td>';
-}
-print '<td width="20%" align="center">-</td>';
+print "<br><div class=\"tabsAction\">\n";
 
 if ($action == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<td width="20%" align="center"><a href="fiche.php?action=edit&amp;id='.$id.'">Editer</a></td>';
-    }
-  else
-    {
-      print '<td width="20%" align="center">-</td>';    
+      print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$id.'">Changer le prix</a>';
     }
 }
-else
+
+if ($action == '')
 {
-  print '<td width="20%" align="center">-</td>';
+  if ($user->rights->produit->modifier || $user->rights->produit->creer)
+    {
+      print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$id.'">Editer</a>';
+    }
 }
-print '<td width="20%" align="center">-</td>';    
 if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
 {
-  print '<td width="20%" align="center"><a href="stock/product.php?id='.$id.'&amp;action=correction">Correction stock</a></td>';
-}
-else
-{
-  print '<td width="20%" align="center">-</td>';    
+  print '<a class="tabAction" href="stock/product.php?id='.$id.'&amp;action=correction">Correction stock</a>';
 }
 
-print '</table><br>';
+print "</div>";
+
+
 
 if ($id && $action == '' && $product->envente)
 {
