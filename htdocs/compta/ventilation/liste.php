@@ -85,8 +85,8 @@ if ($result)
     {
       echo '<table class="noborder" width="100%">';
       print "<tr class=\"liste_titre\"><td>Facture</td>";
-      print '<td width="54%">'.$langs->trans("Description").'</td>';
-      print '<td width="20%" align="right">&nbsp;</td>';
+      print '<td>'.$langs->trans("Description").'</td>';
+      print '<td align="right">&nbsp;</td>';
       print '<td>&nbsp;</td>';
       print "</tr>\n";
     }
