@@ -41,13 +41,7 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
-
-print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
-print "<tr><td>";
-print "<a href=\"$PHP_SELF\">Liste</a></td>";
-print "<td bgcolor=\"#e0E0E0\" align=\"center\">[<a href=\"fiche.php3?action=create\">Nouveau service</a>]</td>";
-print '</table>';
+print '<div class="titre">Liste des services</div><br>';
 
  /*
   *

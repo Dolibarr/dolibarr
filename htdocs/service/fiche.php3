@@ -52,21 +52,33 @@ if ($action == 'set_datefin') {
   $service->stop_comm($id, $user->id, $datefin);
 }
 
+if ($action == 'update') {
+  $service = new Service($db);
+
+  $service->ref = $ref;
+  $service->libelle = $label;
+  $service->price = $price;
+  $service->description = $desc;
+
+  $service->update($id, $user);
+}
+
+
 if ($action == 'create') {
 
-  print "Nouveau service<br>";
+  print '<div class="titre">Nouveau service</div><br>';
   print '<form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<table border="1" cellpadding="3" cellspacing="0">';
 
   print '<tr><td valign="top">Référence</td>';
-  print '<td><input size="12" type="text" name="ref"</td></tr>';
+  print '<td><input size="12" type="text" name="ref"></td></tr>';
   
   print '<tr><td valign="top">Libelle</td>';
-  print '<td><input size="30" type="text" name="label"</td></tr>';
+  print '<td><input size="30" type="text" name="label"></td></tr>';
   
   print '<tr><td valign="top">Prix</td>';
-  print '<td><input size="8" type="text" name="price"</td></tr>';
+  print '<td><input size="8" type="text" name="price"></td></tr>';
   
   print '<tr><td valign="top">Description</td><td>';
   print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
@@ -81,23 +93,15 @@ if ($action == 'create') {
   print '<tr><td align="center" colspan="2"><input type="submit"></td></tr>';
   print '</form>';
   print '</table>';
+
 } else {
 
   if ($id) {
 
-    print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
-    print '<tr><td><a href="index.php3">Liste</a></td>';
-
-    print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=datedeb&id='.$id.'">Date de debut</a>]</td>';
-    print '<td width="20%">&nbsp;</td>';
-    print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=datefin&id='.$id.'">Date de fin</a>]</td>';
-    print '<td></td>';
-    print '<td></td>';
-    print '</table><br>';
-    
-
     $service = new Service($db);
     $service->fetch($id);
+
+    print '<div class="titre">Fiche service</div><br>';
 
     print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
 
@@ -123,9 +127,22 @@ if ($action == 'create') {
     }
 
     print '<tr><td valign="top">Description</td><td colspan="3">';
-    print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
-    print "</textarea></td></tr>";
+    print nl2br($service->description);
     print '</table>';
+
+
+    print '<br><table width="100%" border="1" cellspacing="0" cellpadding="0">';
+
+    print '<td width="20%">Barre d\'action</td>';
+
+    print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+
+    print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=datedeb&id='.$id.'">Date de debut</a>]</td>';
+    print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=datefin&id='.$id.'">Date de fin</a>]</td>';
+    print '<td width="20%" align="center">-</td>';
+
+    print '</table><br>';
+    
 
     /*
      *
@@ -157,6 +174,37 @@ if ($action == 'create') {
       print '<td><input type="submit"></td></tr>';
       print '</table></form><br>';
     }
+    /*
+     *
+     * Mode edition
+     *
+     */
+
+    if ($action == 'edit') {
+      print '<hr><div class="titre">Editer la fiche service</div><br>';
+      print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
+      print '<input type="hidden" name="action" value="update">';
+      print '<table border="1" cellpadding="3" cellspacing="0">';
+      
+      print '<tr><td valign="top">Référence</td>';
+      print '<td><input size="12" type="text" name="ref" value="'.$service->ref.'"></td></tr>';
+      
+      print '<tr><td valign="top">Libelle</td>';
+      print '<td><input size="30" type="text" name="label" value="'.$service->libelle.'"></td></tr>';
+      
+      print '<tr><td valign="top">Prix</td>';
+      print '<td><input size="8" type="text" name="price" value="'.$service->price.'"></td></tr>';
+      
+      print '<tr><td valign="top">Description</td><td>';
+      print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
+      print $service->description;
+      print "</textarea></td></tr>";
+      
+      print '<tr><td align="center" colspan="2"><input type="submit"></td></tr>';
+      print '</form>';
+      print '</table>';
+    }
+
 
   }
 
