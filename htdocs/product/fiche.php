@@ -298,9 +298,16 @@ else
 	      
 	      $head[1][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
 	      $head[1][1] = 'Prix';
-	      
-	      $head[2][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-	      $head[2][1] = 'Statistiques';
+	      $h = 2;
+	      if($product->type == 0)
+		{
+		  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+		  $head[$h][1] = 'Stock';
+		  $h++;
+		}
+
+	      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+	      $head[$h][1] = 'Statistiques';
 
 	      dolibarr_fiche_head($head, 0, 'Fiche '.$types[$product->type].' : '.$product->ref);
 	      print($mesg);    	      
@@ -428,7 +435,7 @@ else
       if ($_GET["action"] == 'ajout_fourn' && $user->rights->produit->creer)
 	{
 	  print_titre ("Ajouter un fournisseur");
-	  print '<form action="fiche.php" method="post">';
+	  print '<form action="fiche.php?id='.$product->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="add_fourn">';
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
