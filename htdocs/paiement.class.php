@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,15 +220,17 @@ class Paiement
 
 	      $this->id                = $obj->idp;
 
-	      $cuser = new User($this->db, $obj->fk_user_creat);
-	      $cuser->fetch();
+		  if ($obj->fk_user_creat) {
+	      	$cuser = new User($this->db, $obj->fk_user_creat);
+	      	$cuser->fetch();
+	      	$this->user_creation     = $cuser;
+	      }
 
-	      $this->user_creation     = $cuser;
-
-	      $muser = new User($this->db, $obj->fk_user_modif);
-	      $muser->fetch();
-
-	      $this->user_modification = $muser;
+		  if ($obj->fk_user_modif) {
+	        $muser = new User($this->db, $obj->fk_user_modif);
+	        $muser->fetch();
+  	        $this->user_modification = $muser;
+	      }
 
 	      $this->date_creation     = $obj->datec;
 	      $this->date_modification = $obj->tms;
