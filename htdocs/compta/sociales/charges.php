@@ -140,7 +140,7 @@ if ($chid > 0)
     		
     		$resteapayer = $cha->amount - $totalpaye;
     
-    		print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
+    		print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
     		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">".$conf->monnaie."</td></tr>\n";
     	      }
     	    print "</table>";

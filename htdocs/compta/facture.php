@@ -953,12 +953,12 @@ else
 
 	      if ($fac->paye == 0)
 		{
-		  print "<tr><td colspan=\"2\" align=\"right\">Total déjà payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$conf->monnaie."</td></tr>\n";
+		  print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPayed")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$conf->monnaie."</td></tr>\n";
 		  print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" style=\"border: 1px solid;\">".price($fac->total_ttc)."</td><td>".MAIN_MONNAIE."</td></tr>\n";
 		
 		  $resteapayer = $fac->total_ttc - $totalpaye;
 
-		  print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
+		  print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
 		  print "<td align=\"right\" style=\"border: 1px solid;\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td>".$conf->monnaie."</td></tr>\n";
 		}
 	      print "</table>";

@@ -183,7 +183,7 @@ if ( $db->query($sql) )
 	  $i++;
 	}
       $var=!$var;
-      print '<tr '.$bc[$var].'><td colspan="2" align="left">Reste à encaisser : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td><td align="right">'.price($totalam).'</td></tr>';
+      print '<tr '.$bc[$var].'><td colspan="2" align="left">'.$langs->trans("RemainderToTake").' : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td><td align="right">'.price($totalam).'</td></tr>';
       print "</table><br>";
     }
   $db->free();

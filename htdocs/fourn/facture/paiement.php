@@ -184,7 +184,7 @@ if ($action == 'create')
       print "</select>";
       print "</td></tr>\n";
 
-      print "<tr><td valign=\"top\">Reste à payer :</td><td><b>".price($total - $sumpayed)."</b> euros</td></tr>\n";
+      print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay")." :</td><td><b>".price($total - $sumpayed)."</b> euros</td></tr>\n";
       print "<tr><td valign=\"top\">".$langs->trans("AmountTTC")." :</td><td><input name=\"amount\" type=\"text\" value=\"".($total - $sumpayed)."\"></td></tr>\n";
       print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
       print "</form>\n";

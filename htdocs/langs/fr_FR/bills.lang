@@ -55,3 +55,6 @@ GlobalDiscount=Remise globale
 NumberOfBills=Nb de factures
 NumberOfBillsByMonth=Nb de factures par mois
 ShowBill=Afficher facture
+AlreadyPayed=Déjà payé
+RemainderToPay=Reste à payer
+RemainderToTake=Reste à encaisser

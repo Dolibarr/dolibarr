@@ -298,6 +298,10 @@ class pdf_adytek extends ModelePDFFactures {
 
   function _tableau_tot(&$pdf, $fac)
     {
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
+        
       $tab2_top = 212;
       $tab2_hl = 5;
       $tab2_height = $tab2_hl * 4;
@@ -360,7 +364,7 @@ class pdf_adytek extends ModelePDFFactures {
 	  $pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
 	  $pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+3));
-	  $pdf->MultiCell(42, $tab2_hl, "Reste à payer", 0, 'R', 1);
+	  $pdf->MultiCell(42, $tab2_hl, $langs->trans("RemainderToPay"), 0, 'R', 1);
 
 	  $pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+3));
 	  $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 1);

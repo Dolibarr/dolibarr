@@ -55,4 +55,7 @@ GlobalDiscount=Global discount
 NumberOfBills=Nb of bills
 NumberOfBillsByMonth=Nb of bills by month
 ShowBill=Show bill
+AlreadyPayed=Already payed
+RemainderToPay=Remainder to pay
+RemainderToTake=Remainder to take
 

@@ -496,7 +496,7 @@ class pdf_oursin extends ModelePDFFactures
 	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+3));
 	$pdf->SetTextColor(22,137,210);
 	$pdf->SetFont('Arial','B', 11);
-	$pdf->MultiCell($col2x-$col1x, $tab2_hl, "Reste à payer", 0, 'L', 0);
+	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("RemainderToPay"), 0, 'L', 0);
 
 	$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+3));
 	$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 0);

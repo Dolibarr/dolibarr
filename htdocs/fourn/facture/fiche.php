@@ -501,7 +501,7 @@ else
 	      if ($fac->statut > 0)
 		{
 		  $resteapayer = abs($fac->total_ttc - $total);	      
-		  print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
+		  print "<tr $bc[1]><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
 		  print '<td align="right"><b>'.price($resteapayer)."</b></td><td$tdsup>".$conf->monnaie."</td>";
 		  print "</tr>\n";
 		}

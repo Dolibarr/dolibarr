@@ -234,7 +234,7 @@ if ($_GET["action"] == 'create')
 	  print "</select>";
 	  print "</td></tr>\n";
 
-      print "<tr><td valign=\"top\">Reste à payer :</td><td><b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
+      print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay").":</td><td><b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
 //      print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\"></td></tr>\n";
 	  	  
 	  /*
@@ -261,10 +261,10 @@ if ($_GET["action"] == 'create')
 		  print '<table class="noborder" width="100%">';
 		  print '<tr class="liste_titre">';
 		  print '<td>Charge</td><td align="center">Date échéance</td>';
-		  print '<td align="right">Montant TTC</td>';	      
-		  print '<td align="right">Déjà payé TTC</td>';
-		  print '<td align="right">Reste à payer TTC</td>';
-		  print '<td align="right">Montant</td>';
+		  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';	      
+		  print '<td align="right">'.$langs->trans("AlreadyPayed").'</td>';
+		  print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
+		  print '<td align="right">'.$langs->trans("Amount").'</td>';
 		  print "</tr>\n";
 	      
 		  $var=True;

@@ -253,8 +253,8 @@ if ($_GET["action"] == 'create')
 		  print '<tr class="liste_titre">';
 		  print '<td>Facture</td><td align="center">'.$langs->trans("Date").'</td>';
 		  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';	      
-		  print '<td align="right">Reçu</td>';
-		  print '<td align="right">Reste à payer</td>';
+		  print '<td align="right">'.$langs->trans("Received").'</td>';
+		  print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
 		  print '<td align="center">'.$langs->trans("Amount").'</td>';
 		  print "</tr>\n";
 	      

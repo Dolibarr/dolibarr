@@ -192,7 +192,7 @@ class pdf_tourteau extends ModelePDFFactures {
 		  $pdf->MultiCell(42, 8, "Déjà réglé", 0, 'R', 0);
 		  
 		  $pdf->SetXY (132, $tab2_top + 32);
-		  $pdf->MultiCell(42, 8, "Reste à payer", 1, 'R', 1);
+		  $pdf->MultiCell(42, 8, $langs->trans("RemainderToPay"), 1, 'R', 1);
 		  
 		  $pdf->SetXY (174, $tab2_top + 24);
 		  $pdf->MultiCell(26, 8, price($deja_regle), 0, 'R', 0);

@@ -307,7 +307,7 @@ if ($conf->facture->enabled)
 	      $i++;
 	    }
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; (Reste à encaisser: '.price($total_ttc-$totalam).')</i></td><td align="right"><i>'.price($total)."</i></td><td align=\"right\"><i>".price($total_ttc)."</i></td><td align=\"right\"><i>".price($totalam)."</i></td></tr>";
+	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; ('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</i></td><td align="right"><i>'.price($total)."</i></td><td align=\"right\"><i>".price($total_ttc)."</i></td><td align=\"right\"><i>".price($totalam)."</i></td></tr>";
 	  print "</table><br>";
 	}
       $db->free();
@@ -384,7 +384,7 @@ if ($conf->facture->enabled) {
     	      $i++;
             }
           $var=!$var;
-          print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; (Reste à payer : '.price($total_ttc-$totalam).')</td><td align="right">'.price($total).'</td><td align="right">'.price($total_ttc).'</td></tr>';
+          print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; ('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</td><td align="right">'.price($total).'</td><td align="right">'.price($total_ttc).'</td></tr>';
     	  print '</table><br>';
     	}
         }
