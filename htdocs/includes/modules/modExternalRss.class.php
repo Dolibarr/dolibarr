@@ -19,8 +19,9 @@
  * $Source$
  *
  */
+include_once "DolibarrModules.class.php";
 
-class modExternalRss
+class modExternalRss extends DolibarrModules
 {
 
   /*
@@ -31,6 +32,21 @@ class modExternalRss
   Function modExternalRss($DB)
   {
     $this->db = $DB ;
+
+    $this->name = "Syndication";
+    $this->description = "Module de gestion de syndication de sites externes";
+    $this->const_name = "MAIN_MODULE_EXTERNALRSS";
+    $this->const_config = MAIN_MODULE_EXTERNALRSS;
+
+    $this->depends = array();
+
+    $this->boxes = array();
+    /*
+     * Boites
+     */
+    $this->boxes[0][0] = "Syndication";
+    $this->boxes[0][1] = "box_external_rss.php";
+
   }
   /*
    *
@@ -44,12 +60,9 @@ class modExternalRss
      *  Activation du module
      */
     
-    $sql = "INSERT INTO llx_boxes_def (name,file) VALUES('Syndication', 'box_external_rss.php');";
+    $sql = array();
 
-    if ( $this->db->query($sql) )
-      {
-	
-      }
+    return $this->_init($sql);
   }
   /*
    *
@@ -57,12 +70,9 @@ class modExternalRss
    */
   Function remove()
   {
-    $sql = "DELETE FROM llx_boxes_def WHERE file = 'box_external_rss.php';";
+    $sql = array();
 
-    if ( $this->db->query($sql) )
-      {
-	
-      }
+    return $this->_remove($sql);
   }
 }
 ?>
