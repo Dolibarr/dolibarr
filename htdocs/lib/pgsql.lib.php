@@ -335,13 +335,16 @@ class DoliDb
     }
 
 /*!
-		\brief renvoie les données comme un objet.
+		\brief  Renvoie la ligne courante (comme un objet) pour le curseur statement.
+        \param  statement   curseur de la requete voulue
 		\return	resource
 */
 
-  function fetch_object()
+  function fetch_object($statement=0)
     {
-			return pg_fetch_object($this->results);
+        // Si statement n'est pas fourni, on prend le dernier utilisé sur cette connexion
+        if (! is_resource($statement)) { $statement=$this->results; }
+        return pg_fetch_object($statement);
   	}
 
 /*!
