@@ -23,6 +23,11 @@
  *
  */
 
+/**
+    \file       htdocs/install/etape1.php
+    \brief      Génère le fichier conf.php avec les informations issues de l'étape précédente
+    \version    $Revision$
+*/
 
 include_once("./inc.php");
 
@@ -44,14 +49,14 @@ $main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
 $main_data_dir=ereg_replace("htdocs","documents",$main_dir);
 
 // Quand ça sera géré !
-if (! $main_data_dir) { $main_data_dir="$main_dir/document"; }
+if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 
 if ($_POST["action"] == "set")
 {
   umask(0);
   print '<h2>Enregistrement des valeurs</h2>';
 
-  print '<table cellspacing="0" width="100%" cellpadding="4" border="0">';
+  print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
   $error=0;
   $fp = fopen("$conffile", "w");
   

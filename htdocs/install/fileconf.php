@@ -23,61 +23,27 @@
  * $Source$
  *
  */
+
+/**
+    \file       htdocs/install/fileconf.php
+    \brief      Demande les infos qui constituerons le contenu du fichier conf.php. Ce fichier sera remplie à l'étape suivante
+    \version    $Revision$
+*/
+
 include("./inc.php");
 pHeader("Fichier de configuration","etape1");
 
 $conf = "../conf/conf.php";
 
+// Ici, le fichier conf.php existe et est forcément editable car le test a été fait précédemment.
+include($conf);
 
-if (is_readable($conf))
-{
-  include ($conf);
-}
-else
-{
-  $fp = @fopen("$conf", "w");
-  if($fp)
-    {
-      @fwrite($fp, '<?php');
-      @fputs($fp,"\n");
-      @fputs($fp,"?>");
-      fclose($fp);
-    }
-}
+print '<table border="0" cellpadding="1" cellspacing="0">';
+print '<tr>';
+print '<td valign="top" class="label">';
+print "Répertoire d'installation";
 
-$docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
-
-if (!file_exists($conf))
-{
-  print '<div class="error">';
-  print "Le fichier <b>conf.php</b> n'existe pas reportez-vous à la ".$docurl." pour créer ce fichier<br>";
-  print '</div>';
-  $err++;
-}
-else
-{
-
-  if (!is_writable("../conf/conf.php"))
-    {
-      print '<div class="error">';
-      print "Le fichier <b>conf.php</b> n'est pas accessible en écriture, vérifiez les droits sur celui-ci, reportez-vous à la ".$docurl."<br>";
-      
-      print '</div>';
-      $err++;
-    }
-}
-
-if ($err == 0)
-{
-?>
-
-
-<table border="0" cellpadding="4" cellspacing="0">
-<tr>
-<td valign="top" class="label">
-<?php print "Répertoire d'installation"; ?>
-</td>
-<?php
+print "</td>";
 
 if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
@@ -184,13 +150,6 @@ $dolibarr_main_db_host = "localhost";
 &nbsp;
 
 
-<!--
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-
-document.write('<input type = "button" name = "valide" value="confirmer" onclick="alert(this.form.elements[\'db_type\'].options[this.form.elements[\'db_type\'].selectedIndex].value);" >')
-
--->
-
 <td class="comment">Type de la base de donnée (MySql par défaut ou alors PostgreSql).</td>
 
 </tr>
@@ -207,7 +166,7 @@ document.write('<input type = "button" name = "valide" value="confirmer" onclick
 <tr>
 <td class="label">Nom de la base de données</td>
 
-<td class="label" valign="top"><input type="text" name="db_name" value="<?php print $dolibarr_main_db_name ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_name" value="<?php echo $dolibarr_main_db_name ?>"></td>
 <td class="comment">Nom de la base de données Dolibarr (sera créée si nécessaire)</td>
 </tr>
 
@@ -251,7 +210,9 @@ document.write('<input type = "button" name = "valide" value="confirmer" onclick
 </tr>
 
 </table>
+
 <?php
-}
+
 pFooter($err);
+
 ?>

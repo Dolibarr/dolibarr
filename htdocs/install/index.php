@@ -23,7 +23,7 @@
 
 /**
     \file       htdocs/install/index.php
-    \brief      Test si le fichier conf existe et si il n'existe pas, test la possibilité de le créer
+    \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
     \version    $Revision$
 */
 
@@ -78,6 +78,7 @@ else
     }
 }
 
+// Si pas d'erreur, on affiche le bouton pour passer à l'étape suivante
 if ($err == 0) pFooter();
 
 ?>
