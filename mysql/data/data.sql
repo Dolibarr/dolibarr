@@ -28,7 +28,7 @@ insert into llx_sqltables (name, loaded) values ('llx_album',0);
 --
 delete from llx_action_def;
 insert into llx_action_def (rowid,titre,description,objet_type) VALUES (1,'Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention','ficheinter');
-insert into llx_action_def (rowid,titre,description,objet_type) VALUES (2,'Cloture facture','Déclenché lors de la cloture d\'une fiche d\'intervention','facture');
+insert into llx_action_def (rowid,titre,description,objet_type) VALUES (2,'Validation facture','Déclenché lors de la validation d\'une facture','facture');
 
 --
 -- Boites
