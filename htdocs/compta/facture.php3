@@ -17,7 +17,7 @@
  *
  * $Id$
  * $Source$
- * $tag$
+ * $Tag$
  */
 require("./pre.inc.php3");
 require("../facture.class.php3");
