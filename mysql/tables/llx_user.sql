@@ -1,9 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
--- $Id$
--- $Source$
---
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 2 of the License, or
@@ -18,6 +15,9 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
+-- $Id$
+-- $Source$
+--
 -- ===========================================================================
 
 create table llx_user
@@ -26,7 +26,7 @@ create table llx_user
   datec         datetime,
   tms           timestamp,
   login         varchar(8),
-  pass          varchar(8),
+  pass          varchar(32),
   name          varchar(50),
   firstname     varchar(50),
   code          varchar(4),
