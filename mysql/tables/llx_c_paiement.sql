@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 -- 1 : sortie d'argent
 -- 2 : entrée ou sortie d'argent
 
-create table c_paiement
+create table llx_c_paiement
 (
   id         integer PRIMARY KEY,
   libelle    varchar(30),
