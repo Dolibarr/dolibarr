@@ -235,7 +235,7 @@ function top_menu($head)
     define("MAIN_MENU_BARRETOP","default.php");
   }
 
-  require("includes/menus/barre_top/".MAIN_MENU_BARRETOP);
+  require($GLOBALS["DOCUMENT_ROOT"]."/includes/menus/barre_top/".MAIN_MENU_BARRETOP);
 
   print '<TD width="15%" class="menu" align="center">'.strftime(" %d %B - %H:%M",time()).'</TD>';
 
