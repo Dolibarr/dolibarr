@@ -117,13 +117,13 @@ $result = $db->query($sql) ;
 
 if ($result)
 {
-    $num = $db->num_rows();
+    $num = $db->num_rows($result);
     
     $i = 0;
   
     if ($num == 1 && (isset($_POST["sall"]) or $snom or $sref))
     {
-        $objp = $db->fetch_object($i);
+        $objp = $db->fetch_object($result);
         Header("Location: fiche.php?id=$objp->rowid");
     }
     
@@ -197,7 +197,7 @@ if ($result)
   $var=True;
   while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]><td>";
       print "<a href=\"fiche.php?id=$objp->rowid\">";
@@ -210,7 +210,7 @@ if ($result)
       print "</tr>\n";
       $i++;
     }
-  $db->free();
+  $db->free($result);
 
   print "</table>";
 
