@@ -52,6 +52,18 @@ if ($_GET["action"] == "new")
   }
 }
 
+if ($_GET["action"] == "delete")
+{
+  $fact = new Facture($db);
+  if ($fact->fetch($_GET["facid"]))
+  {
+    $result = $fact->demande_prelevement_delete($user,$_GET["did"]);
+    if ($result == 0)
+      {
+	Header("Location: prelevement.php?facid=".$fact->id);
+      }
+  }
+}
 
 /*
  * Sécurité accés client
@@ -149,7 +161,7 @@ if ($_GET["facid"] > 0)
       print '<td align="center">Date demande</td>';
       print '<td align="center">Date traitement</td>';
       print '<td align="center">Bon prélèvement</td>';
-      print '<td align="center">Utilisateur</td>';
+      print '<td align="center">Utilisateur</td><td>&nbsp;</td><td>&nbsp;</td>';
       print '</tr>';      
       $var=True;
 
@@ -180,6 +192,10 @@ if ($_GET["facid"] > 0)
 	      print '<td align="center">En attente de traitement</td>';
 	      print '<td align="center">-</td>';
 	      print '<td align="center" colspan="2">'.$obj->firstname." ".$obj->name.'</td>';	      
+	      print '<td>';
+	      print '<a href="prelevement.php?facid='.$fac->id.'&amp;action=delete&amp;did='.$obj->rowid.'">';
+	      print img_delete();
+	      print '</a></td>';
 	      print "</tr>\n";
 	      $i++;
 	    }
@@ -223,6 +239,8 @@ if ($_GET["facid"] > 0)
 	      print '">'.$obj->fk_prelevement."</a></td>\n";
 
 	      print '<td align="center" colspan="2">'.$obj->firstname." ".$obj->name.'</td>';
+
+	      print '<td>-</td>';
 	      
 	      print "</tr>\n";
 	      $i++;
