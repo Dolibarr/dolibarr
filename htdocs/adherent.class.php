@@ -285,7 +285,7 @@ class Adherent
 	    $this->pays           = stripslashes($obj->pays);
 	    $this->datefin        = $obj->datefin;
 	    $this->commentaire    = stripslashes($obj->note);
-	    $this->cp             = $obj->morphy;
+	    $this->morphy         = $obj->morphy;
 	  }
       }
     else
