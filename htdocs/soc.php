@@ -72,7 +72,7 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 llxHeader();
 $form = new Form($db);
 
-if ($_GET["action"] == 'create') 
+if ($_GET["action"] == 'create' && $user->rights->societe->creer)
 {
   /*
    * Fiche societe en mode création
@@ -270,7 +270,7 @@ else
   $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
   $head[$h][1] = 'Notifications';
 
-  dolibarr_fiche_head($head, 0);
+  dolibarr_fiche_head($head, 0, $soc->nom);
 
   /*
    * Fiche société en mode visu
