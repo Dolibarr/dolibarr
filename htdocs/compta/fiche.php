@@ -262,7 +262,7 @@ if ($socid > 0)
             if ($num > 0)
             {
                 print "<tr $bc[$var]>";
-                print "<td colspan=\"4\"><a href=\"facture.php?socidp=$societe->id\">Liste des factures ($num)</td></tr>";
+                print "<td colspan=\"4\"><a href=\"facture.php?socidp=$societe->id\">Liste des factures clients ($num)</td></tr>";
             }
 
             while ($i < $num && $i < 5)
