@@ -36,6 +36,7 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
+$socname=$_GET["socname"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 $page=$_GET["page"];
@@ -63,19 +64,31 @@ $langs->load("suppliers");
  *
  *
  */
-if ($mode == 'search') {
-  if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
-    $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-  }
-      
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object(0);
-      $socid = $obj->idp;
+if ($_GET["mode"] == 'search')
+{
+  if ($_GET["mode-search"] == 'soc')
+    {
+      $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
+      $sql .= " WHERE lower(s.nom) like '%".strtolower($_GET["socname"])."%'";
     }
-    $db->free();
-  }
+  
+  if ( $db->query($sql) )
+    {
+      if ( $db->num_rows() == 1)
+	{
+	  $obj = $db->fetch_object(0);
+	  $socid = $obj->idp;
+	}
+      $db->free();
+    }
+  /*
+   * Sécurité accés client
+   */
+  if ($user->societe_id > 0) 
+    {
+      $action = '';
+      $socid = $user->societe_id;
+    }  
 }
 
 /*
@@ -84,10 +97,13 @@ if ($mode == 'search') {
  *
  */
 
+  $title=$langs->trans("CompanyList");
+
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id";
 
-if ($user->societe_id > 0) {
+if ($user->societe_id > 0)
+{
   $sql .= " AND s.idp = " . $user->societe_id;
 }
 
@@ -100,7 +116,9 @@ if (strlen($begin)) {
   $sql .= " AND upper(s.nom) like '$begin%'";
 }
 
-if ($socname) {
+if ($socname)
+{
+  $title_filtre .= " contenant '$socname'";
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
 }
 
@@ -114,22 +132,20 @@ if ($result)
 
   $params = "&amp;socname=$socname";
 
-  print_barre_liste($langs->trans("CompanyList"), $page, $PHP_SELF,$params,$sortfield,$sortorder,'',$num);
+  print_barre_liste($title, $page, $PHP_SELF,$params,$sortfield,$sortorder,'',$num);
     
-  if ($sortorder == "DESC") 
+  if ($title_filtre)
     {
-      $sortorder="ASC";
-    } 
-  else
-    {
-      $sortorder="DESC";
+      print "Filtre : $title_filtre";
+      print '  <a href="societe.php">Supprimer le filtre</a>';
     }
+
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
   print '<tr class="liste_titre">';
-  print '<td>';
+  print '<td width="25%">';
   print_liste_field_titre($langs->trans("Company"),$PHP_SELF,"s.nom", $params);
-  print "</td><td>";
+  print '</td><td width="25%">';
   print_liste_field_titre($langs->trans("Town"),$PHP_SELF,"s.ville",$params);
   print '</td><td colspan="2" align="center">'.$langs->trans("Cards").'</td>';
   print "</tr>\n";

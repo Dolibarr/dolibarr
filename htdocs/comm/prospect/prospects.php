@@ -45,6 +45,11 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
+$socname=$_GET["socname"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+$page=$_GET["page"];
+
 $page = $user->page_param["page"];
 if ($page == -1) { $page = 0 ; }
 
@@ -74,7 +79,7 @@ if ($user->societe_id)
   $sql .= " AND s.idp = " .$user->societe_id;
 }
 
-if ($_GET["socname"])
+if ($socname)
 {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
   $sortfield = "lower(s.nom)";
@@ -105,7 +110,7 @@ if ($result)
 {
   $num = $db->num_rows();
 
-  if ($num == 1)
+  if ($num == 1 && $socname)
     {
       $obj = $db->fetch_object(0);
       Header("Location: fiche.php?socid=$obj->idp");
@@ -137,17 +142,8 @@ if ($result)
   }
   print "</div>";
 
-
   $i = 0;
   
-  if ($sortorder == "DESC")
-    {
-      $sortorder="ASC";
-    }
-  else
-    {
-      $sortorder="DESC";
-    }
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<TR class="liste_titre">';
   print "<TD valign=\"center\">";
@@ -181,7 +177,6 @@ if ($result)
 
       if ($user->societe_id == 0)
 	{
-
 	  print "<TD align=\"center\"><a href=\"addpropal.php?socidp=$obj->idp&action=create\">".strftime("%d/%b/%y",$obj->datec)."</A></td>\n";
 
 	}
@@ -204,9 +199,6 @@ if ($result)
 	      print '<td></td>';
 	    }
 	}
-
-
-
 
       print "</TR>\n";
       $i++;
