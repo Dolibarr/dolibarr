@@ -174,4 +174,23 @@ alter table llx_voyage type=INNODB;
 
 alter table llx_voyage_reduc type=INNODB;
 
+alter table llx_bank_url type=INNODB;
+
+alter table llx_birthday_alert type=INNODB;
+
+alter table llx_c_actioncomm type=INNODB;
+
+alter table llx_co_fa type=INNODB;
+
+alter table llx_entrepot type=INNODB;
+
+alter table llx_facture_rec type=INNODB;
+
+alter table llx_facturedet_rec type=INNODB;
+
+alter table llx_product_fournisseur type=INNODB;
+
+alter table llx_product_stock type=INNODB;
+
+alter table llx_stock_mouvement type=INNODB;
 
