@@ -27,7 +27,7 @@ llxHeader();
 $db = new Db();
 if ($sortfield == "")
 {
-  $sortfield="lower(l.title)";
+  $sortfield="lower(l.ref)";
 }
 if ($sortorder == "")
 {
@@ -55,7 +55,7 @@ if ($searchvalue)
 }
   
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit ,$offset);
+//$sql .= $db->plimit( $limit ,$offset);
  
 if ( $db->query($sql) )
 {
