@@ -50,7 +50,7 @@ print '<tr><td valign="top" width="30%">';
  * Nombre de produits et/ou services
  */
 $prodser = array();
-$sql = "SELECT count(*), fk_product_type, envente FROM ".MAIN_DB_PREFIX."product as p GROUP BY fk_product_type";
+$sql = "SELECT count(*), fk_product_type, envente FROM ".MAIN_DB_PREFIX."product as p GROUP BY fk_product_type, envente";
 if ($db->query($sql))
 {
   $num = $db->num_rows();
