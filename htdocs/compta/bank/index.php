@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/compta/bank/index.php
+        \ingroup    banque
+		\brief      Page accueil banque
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("./bank.lib.php");
 require("../../tva.class.php");
