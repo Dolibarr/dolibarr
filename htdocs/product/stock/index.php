@@ -21,13 +21,15 @@
  *
  */
 
-/**     \file       htdocs/product/stock/index.php
+/**
+        \file       htdocs/product/stock/index.php
         \ingroup    stock
         \brief      Page accueil stocks produits
         \version    $Revision$
 */
 
-require("./pre.inc.php");
+require_once("./pre.inc.php");
+require_once("./entrepot.class.php");
 
 /*
  *
@@ -37,8 +39,9 @@ require("./pre.inc.php");
 llxHeader("","",$langs->trans("Stocks"));
 
 print_titre($langs->trans("Stocks"));
+print '<br>';
 
-print '<table class="border" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr><td valign="top" width="30%">';
 
 $sql = "SELECT e.label, e.rowid, e.statut FROM ".MAIN_DB_PREFIX."entrepot as e";
@@ -46,33 +49,32 @@ $sql .= " ORDER BY e.statut DESC ";
 $sql .= $db->plimit(15 ,0);
 $result = $db->query($sql) ;
 
-$statuts[0] = "Fermé";
-$statuts[1] = "Ouvert";
-
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
 
   $i = 0;
   
   if ($num > 0)
     {
+      $entrepot=new Entrepot($db);
+      
       print '<table class="noborder" width="100%">';
 
-      print '<tr class="liste_titre"><td colspan="2">Entrepôts</td></tr>';
+      print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Warehouses").'</td></tr>';
     
       $var=True;
       while ($i < $num)
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td>\n";
-	  print '<td align="right">'.$statuts[$objp->statut].'</td>';
+	  print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"),"stock")." ".$objp->label."</a></td>\n";
+	  print '<td align="right">'.$entrepot->LibStatut($objp->statut).'</td>';
 	  print "</tr>\n";
 	  $i++;
 	}
-      $db->free();
+      $db->free($result);
 
       print "</table>";
     }

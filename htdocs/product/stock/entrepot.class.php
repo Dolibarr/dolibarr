@@ -190,24 +190,44 @@ class Entrepot
   /**
    *    \brief      Renvoie le stock (nombre de produits) de l'entrepot
    */
-  function nb_products()
-  {
-    $sql = "SELECT sum(reel) FROM llx_product_stock WHERE fk_entrepot = ".$this->id;
+    function nb_products()
+    {
+        $sql = "SELECT sum(reel) FROM llx_product_stock WHERE fk_entrepot = ".$this->id;
+        
+          $result = $this->db->query($sql) ;
+        
+          if ( $result )
+        {
+          $row = $this->db->fetch_row(0);
+          return $row[0];
+        
+          $this->db->free();
+        }
+          else
+        {
+          return 0;
+        }
+    }
 
-      $result = $this->db->query($sql) ;
 
-      if ( $result )
-	{
-	  $row = $this->db->fetch_row(0);
-	  return $row[0];
-
-	  $this->db->free();
-	}
-      else
-	{
-	  return 0;
-	}
-  }
+    /**
+     *    \brief      Retourne le libellé du statut d'un entrepot (ouvert, fermé)
+     *    \return     string      Libellé
+     */
+    function getLibStatut()
+    {
+    	return $this->LibStatut($this->statut);
+    }
+    
+    /**
+     *    \brief      Renvoi le libellé d'un statut donné
+     *    \param      statut      id statut
+     *    \return     string      Libellé
+     */
+    function LibStatut($statut)
+    {
+        return $this->statuts[$statut];
+    }
   
 }
 ?>

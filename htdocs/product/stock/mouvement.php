@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/product/stock/mouvement.php
+/**
+        \file       htdocs/product/stock/mouvement.php
         \ingroup    stock
         \brief      Page liste des mouvements de stocks
         \version    $Revision$
@@ -30,14 +31,10 @@
 require("./pre.inc.php");
 $user->getrights('produit');
 
-if (!$user->rights->produit->lire)
-  accessforbidden();
+$langs->load("products");
 
+if (!$user->rights->produit->lire) accessforbidden();
 
-/*
- *
- *
- */
 
 $page = $_GET["page"];
 $sortfield = $_GET["sortfield"];
@@ -49,13 +46,8 @@ if ($page < 0) {
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
   
-if ($sortfield == "") {
-  $sortfield="m.datem"; }
-     
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
+if (! $sortfield) $sortfield="m.datem";
+if (! $sortorder) $sortorder="DESC";
   
 $sql = "SELECT p.rowid, p.label as produit, s.label as stock, m.value, ".$db->pdate("m.datem")." as datem, s.rowid as entrepot_id";
 $sql .= " FROM llx_product as p, llx_entrepot as s, llx_stock_mouvement as m";
@@ -67,11 +59,11 @@ $result = $db->query($sql) ;
 
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
 
   $i = 0;
   
-  $texte = "Liste des mouvements";
+  $texte = $langs->trans("ListOfStockMovements");
   llxHeader("","",$texte);
   
   print_barre_liste($texte, $page, "mouvement.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
@@ -87,7 +79,7 @@ if ($result)
   $var=True;
   while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td><a href=\"../fiche.php?id=$objp->rowid\">$objp->produit</a></td>\n";
@@ -97,7 +89,7 @@ if ($result)
       print "</tr>\n";
       $i++;
     }
-  $db->free();
+  $db->free($result);
 
   print "</table>";
 
