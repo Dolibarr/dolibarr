@@ -49,7 +49,7 @@ $sth->execute;
 
 # get emails of adherents
 while (my @row = $sth->fetchrow_array ){
-    print int($row[0]);
+    print "$row[0]\n";
     push (@adh,$row[0]);
 }
 
