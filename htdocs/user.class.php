@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (c) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (c) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -413,6 +413,7 @@ class User
 	      $this->webcal_login = $obj->webcal_login;
 	      
 	      $this->societe_id = $obj->fk_societe;
+	      $this->egroupware_id = $obj->egroupware_id;
 	    }
 	  $this->db->free();
 	  
