@@ -37,7 +37,7 @@ if ($vline) {
   $viewline = 50;
 }
 
-print_titre("Recherche compte bancaire");
+print_titre("Recherche écriture bancaire");
 
 print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
