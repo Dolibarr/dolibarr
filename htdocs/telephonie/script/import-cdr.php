@@ -66,7 +66,7 @@ else
 	      
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_import_cdr";
 	      
-		  $sql .= "(idx,ligne,date,heure,num,dest,dureetext,tarif,montant,duree)";
+		  $sql .= "(idx,ligne,date,heure,num,dest,dureetext,tarif,montant,duree, fichier)";
 	      
 		  $sql .= " VALUES (";
 		  $sql .= "$index";
@@ -79,6 +79,7 @@ else
 		  $sql .= ",'".ereg_replace('"','',$tarif_fourn)."'";
 		  $sql .= ",".ereg_replace(',','.',$montant);
 		  $sql .= ",".ereg_replace('"','',$duree_secondes);
+		  $sql .= ",'".ereg_replace('"','',$file)."'";
 		  $sql .= ")";
 	      
 		  if (! $db->query($sql))
