@@ -127,7 +127,7 @@ class GraphLignesCommandesWeek extends GraphBarAcc {
 
 	$datas_new[$i] = $datas[$year.$smwee] - $datas_rej[$year.$smwee];
 	$datas_new_rej[$i] = $datas_rej[$year.$smwee];
-	$labels_new[$i] = $smwee;
+	$labels_new[$i] = ceil($smwee);
 
 	if (($smwee - 1) == 0)
 	  {
