@@ -222,16 +222,16 @@ class Societe {
 	
 	
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
-	$sql .= " SET nom = '" . trim($this->nom) ."'"; // Champ obligatoire
+	$sql .= " SET nom = '" . addslashes(trim($this->nom)) ."'"; // Champ obligatoire
 	
 	if (trim($this->adresse))  
-	  { $sql .= ",address = '" . trim($this->adresse) ."'"; }
+	  { $sql .= ",address = '" . addslashes(trim($this->adresse)) ."'"; }
 	
 	if (trim($this->cp))
 	  { $sql .= ",cp = '" . trim($this->cp) ."'"; }
 	
 	if (trim($this->ville))
-	  { $sql .= ",ville = '" . trim($this->ville) ."'"; }
+	  { $sql .= ",ville = '" . addslashes(trim($this->ville)) ."'"; }
 	
 	if (trim($this->departement_id)) 
 	  { $sql .= ",fk_departement = '" . $this->departement_id ."'"; }
@@ -298,14 +298,19 @@ class Societe {
 	  }
 	else
 	  {
-	    if ($this->db->errno() == $this->db->ERROR_DUPLICATE)
-	      {
-		// Doublon
-$this->error_message = "Erreur, le prefix '".$this->prefix_comm."' existe déjà vous devez en choisir un autre";
-		$result =  -1;
-	      }	    
+        if ($this->db->errno() == $this->db->ERROR_DUPLICATE)
+        {
+            // Doublon
+            $this->error_message = "Erreur, le prefix '".$this->prefix_comm."' existe déjà vous devez en choisir un autre";
+            $result =  -1;
+        }
+        else
+        {
+            dolibarr_syslog("Societe::Update echec sql=$sql");
+            $result =  -2;
+        }	    
 	  }
-      }
+    }
 
     return $result;
 
@@ -429,7 +434,7 @@ $this->error_message = "Erreur, le prefix '".$this->prefix_comm."' existe déjà v
 	}
       else
 	{
-	  dolibarr_syslog("Erreur Societe::Fetch");
+	  dolibarr_syslog("Erreur Societe::Fetch echec sql=$sql");
 	  $result = -3;
 	}
 
