@@ -453,9 +453,9 @@ if ($action == 'create')
 	      
 	      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 	      print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
-	      print '<td align="right">Prix</td><td align="center">&nbsp;</td><td align="center">Qté.</td></tr>';
+	      print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
-	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid";
+	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
 	      $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
 	      $sql .= " ORDER BY pt.rowid ASC";
 	      $result = $db->query($sql);
@@ -468,14 +468,38 @@ if ($action == 'create')
 		    {
 		      $objp = $db->fetch_object($i);
 		      $var=!$var;
-		      print "<tr $bc[$var]><td>[$objp->ref]</TD>\n";
+		      print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
 		      print '<td>'.$objp->product.'</td>';
 		      print "<td align=\"right\">".price($objp->price)."</TD>";
-		      print '<td>&nbsp;</td>';
+		      print '<td align="center">'.$objp->remise_percent.' %</td>';
 		      print "<td align=\"center\">".$objp->qty."</td></tr>\n";
 		      $i++;
 		    }
 		}
+	      $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
+	      $sql .= " FROM llx_propaldet as pt  WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
+	      $sql .= " ORDER BY pt.rowid ASC";
+	      if ($db->query($sql)) 
+		{
+		  $num = $db->num_rows();
+		  $i = 0;	
+		  while ($i < $num) 
+		    {
+		      $objp = $db->fetch_object($i);
+		      $var=!$var;
+		      print "<tr $bc[$var]><td>&nbsp;</td>\n";
+		      print '<td>'.$objp->product.'</td>';
+		      print '<td align="right">'.price($objp->price).'</td>';
+		      print '<td align="center">'.$objp->remise_percent.' %</td>';
+		      print "<td align=\"center\">".$objp->qty."</td></tr>\n";
+		      $i++;
+		    }
+		}
+	      else
+		{
+		  print $sql;
+		}
+
 	      print '</table>';
 	    }	  
 	}
@@ -530,9 +554,7 @@ else
 	    {
 	      print '<td rowspan="4" valign="top">';
 	    }
-	  
-	  $_MONNAIE="euros";
-	  
+	  	  
 	  /*
 	   * Paiements
 	   */
@@ -594,7 +616,7 @@ else
 	
 	print '<tr><td>Montant</td>';
 	print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-	print '<td>euros HT</td></tr>';
+	print '<td>'.MAIN_MONNAIE.' HT</td></tr>';
 
 	if ($fac->remise_percent > 0)
 	  {
@@ -604,9 +626,9 @@ else
 	  }
 
 	print '<tr><td>TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
-	print '<td>euros</td></tr>';
+	print '<td>'.MAIN_MONNAIE.'</td></tr>';
 	print '<tr><td>Total</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
-	print '<td>euros TTC</td></tr>';
+	print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
 	if ($fac->note)
 	  {
 	    print '<tr><td colspan="5">Note : '.nl2br($fac->note)."</td></tr>";
@@ -823,9 +845,9 @@ else
 
 	    if ($fac->statut > 0)
 	      {
-		print '<td align="center" width="20%">-</td>';
-		// RODO TODO
-		//print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$facid.'&action=create">Récurrente</a></td>';
+		//print '<td align="center" width="20%">-</td>';
+
+		print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$facid.'&action=create">Récurrente</a></td>';
 	      }
 	    else
 	      {
