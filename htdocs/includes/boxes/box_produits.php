@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 if ($user->rights->produit->lire)
 {
   $info_box_head = array();
-  $info_box_head[] = array('text' => "Les 5 derniers produits enregistrés");
+  $info_box_head[] = array('text' => "Les 5 derniers produits/services enregistrés");
 
   $info_box_contents = array();
 
