@@ -1,5 +1,6 @@
 <!DOCTYPE debiandoc public "-//DebianDoc//DTD DebianDoc//EN"
 [
+    <!entity ch-main	system "main.sgml">
     <!entity ch-constantes	system "constantes.sgml">
     <!entity ch-propale	system "propale.sgml">
 ]
@@ -20,6 +21,7 @@
 
     <toc sect>
 
+    &ch-main;
     &ch-constantes;
     &ch-propale;
 
