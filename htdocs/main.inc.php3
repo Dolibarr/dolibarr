@@ -399,7 +399,7 @@ Function left_menu($menu)
       if (defined("MAIN_MODULE_PRODUIT") && MAIN_MODULE_PRODUIT > 0)
 	{
 	  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">Produits</A>';
-	  print '<form action="'.DOL_URL_ROOT.'/product/">';
+	  print '<form action="'.DOL_URL_ROOT.'/product/" method="post">';
 	  print '<input type="text" class="flat" name="sall" size="10">&nbsp;';
 	  print '<input type="submit" class="flat" value="go">';
 	  print '</form>';
