@@ -21,6 +21,7 @@ TVAIntra=Intracommunautary VAT
 ProspectCustomer=Prospect / Customer
 Prospect=Prospect
 Customer=Customer
+CustomerDiscount=Customer Discount
 Supplier=Supplier
 CompanyList=Companies' list
 AddContact=Add new contact

@@ -21,6 +21,7 @@ TVAIntra=Intracommunautary VAT
 ProspectCustomer=Vooruitzicht / Klant
 Prospect=Vooruitzicht
 Customer=Klant
+CustomerDiscount=De klant Korting
 Supplier=Leverancier
 CompanyList=Bedrijven lijst
 AddContact=Voeg contact toe
