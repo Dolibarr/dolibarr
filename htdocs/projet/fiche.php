@@ -124,78 +124,9 @@ if ($action == 'create')
       print '<tr><td width="20%">Réf</td><td>'.$projet->ref.'</td></tr>';
       print '<tr><td width="20%">Titre</td><td>'.$projet->title.'</td></tr>';
       print '</table>';
-
-      $propales = $projet->get_propal_list();
-
-      if (sizeof($propales)>0 && is_array($propales))
-	{
-	  print_titre('Listes des propositions commerciales associées au projet');
-	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-	  
-	  print '<TR class="liste_titre">';
-	  print '<td>Réf</td><td>Date</td><td align="right">Prix</TD>';
-	  print '<td align="center">Statut</td></tr>';
-	  
-	  for ($i = 0; $i<sizeof($propales);$i++)
-	    {
-	      $propale = new Propal($db);
-	      $propale->fetch($propales[$i]);
-	      
-	      $var=!$var;
-	      print "<tr $bc[$var]>";
-	      print "<td><a href=\"../comm/propal.php?propalid=$propale->id\">$propale->ref</a></td>\n";
-	      
-	      print '<td>'.strftime("%d %B %Y",$propale->datep).'</td>';
-	      
-	      print '<TD align="right">'.price($propale->price).'</TD>';
-	      print '<TD align="center">'.$propale->statut.'</TD>';
-	      print '</TR>';
-	      
-	      $total = $total + $propale->price;
-	    }
-	  
-	  print '<tr><td>'.$i.' propales</td>';
-	  print '<td colspan="2" align="right"><b>Total : '.price($total).'</b></td>';
-	  print '<td align="left"><b>'.MAIN_MONNAIE.' HT</b></td></tr></table>';
-	}
-      /*
-       * Factures
-       *
-       */
-      $factures = $projet->get_facture_list();
-
-      if (sizeof($factures)>0 && is_array($factures))
-	{
-	  print_titre('Listes des factures associées au projet');
-	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-	  
-	  print '<TR class="liste_titre">';
-	  print '<td>Réf</td><td>Date</td><td align="right">Prix</TD>';
-	  print '<td align="center">Statut</td></tr>';
-	  
-	  for ($i = 0; $i<sizeof($factures);$i++)
-	    {
-	      $facture = new Facture($db);
-	      $facture->fetch($factures[$i]);
-	      
-	      $var=!$var;
-	      print "<TR $bc[$var]>";
-	      print "<TD><a href=\"../compta/facture.php?facid=$facture->id\">$facture->ref</a></TD>\n";	      
-	      print '<td>'.strftime("%d %B %Y",$facture->date).'</td>';	      
-	      print '<TD align="right">'.price($facture->total_ht).'</td>';
-	      print '<TD align="center">'.$facture->statut.'</td></tr>';
-	      
-	      $total = $total + $facture->total_ht;
-	    }
-	  
-	  print '<tr><td>'.$i.' factures</td>';
-	  print '<td colspan="2" align="right"><b>Total : '.price($total).'</b></td>';
-	  print '<td align="left"><b>'.MAIN_MONNAIE.' HT</b></td></tr>';
-	  print "</TABLE>";
-	}
     }
-  
-  
+
+
   print '<p><table id="actions" border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
   
   if ($action == "edit")
@@ -215,8 +146,72 @@ if ($action == 'create')
 
   print "</tr></table>";
 
-}
+  if ($_GET["action"] == '')
+    {
+      $propales = $projet->get_propal_list();
+      
+      if (sizeof($propales)>0 && is_array($propales))
+	{
+	  print_titre('Listes des propositions commerciales associées au projet');
+	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  
+	  print '<TR class="liste_titre">';
+	  print '<td>Réf</td><td>Date</td><td align="right">Prix</td></tr>';
+	  
+	  for ($i = 0; $i<sizeof($propales);$i++)
+	    {
+	      $propale = new Propal($db);
+	      $propale->fetch($propales[$i]);
+	      
+	      $var=!$var;
+	      print "<tr $bc[$var]>";
+	      print "<td><a href=\"../comm/propal.php?propalid=$propale->id\">$propale->ref</a></td>\n";
+	      
+	      print '<td>'.strftime("%d %B %Y",$propale->datep).'</td>';
+	      
+	      print '<td align="right">'.price($propale->price).'</td></tr>';
+	      $total = $total + $propale->price;
+	    }
+	  
+	  print '<tr><td>'.$i.' propales</td>';
+	  print '<td align="right"><b>Total : '.price($total).'</b></td>';
+	  print '<td align="left"><b>'.MAIN_MONNAIE.' HT</b></td></tr></table>';
+	}
+      /*
+       * Factures
+       *
+       */
+      $factures = $projet->get_facture_list();
 
+      if (sizeof($factures)>0 && is_array($factures))
+	{
+	  print_titre('Listes des factures associées au projet');
+	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  
+	  print '<TR class="liste_titre">';
+	  print '<td>Réf</td><td>Date</td><td align="right">Prix</td></tr>';
+	  
+	  for ($i = 0; $i<sizeof($factures);$i++)
+	    {
+	      $facture = new Facture($db);
+	      $facture->fetch($factures[$i]);
+	      
+	      $var=!$var;
+	      print "<TR $bc[$var]>";
+	      print "<TD><a href=\"../compta/facture.php?facid=$facture->id\">$facture->ref</a></TD>\n";	      
+	      print '<td>'.strftime("%d %B %Y",$facture->date).'</td>';	      
+	      print '<TD align="right">'.price($facture->total_ht).'</td></tr>';
+	      
+	      $total = $total + $facture->total_ht;
+	    }
+	  
+	  print '<tr><td>'.$i.' factures</td>';
+	  print '<td align="right"><b>Total : '.price($total).'</b></td>';
+	  print '<td align="left"><b>'.MAIN_MONNAIE.' HT</b></td></tr>';
+	  print "</TABLE>";
+	}
+    }
+}
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
