@@ -29,6 +29,7 @@ class FournisseurTelephonie {
   {
     $this->db = $DB;
     $this->id = $id;
+    $this->classdir = DOL_DOCUMENT_ROOT.'/telephonie/fournisseur/commande/';
     return 1;
   }
   /**
@@ -130,9 +131,7 @@ class FournisseurTelephonie {
   {
     clearstatcache();
  
-    $dir = DOL_DOCUMENT_ROOT.'/telephonie/fournisseur/commande/';
-
-    $handle=opendir($dir);
+    $handle=opendir($this->classdir);
 
     $arr = array();
 
@@ -141,12 +140,12 @@ class FournisseurTelephonie {
 
 	dolibarr_syslog($file);
 	
-	if (is_readable($dir.$file) && substr($file, 0, 8) == 'commande' && substr($file, -10) == '.class.php')
+	if (is_readable($this->classdir.$file) && substr($file, 0, 8) == 'commande' && substr($file, -10) == '.class.php')
 	  {
 
 	    $name = substr($file, 9, strlen($file) -19);
 
-	    $filebis = $dir . $file;
+	    $filebis = $this->classdir . $file;
       
 	    // Chargement de la classe de numérotation
 	    $classname = "CommandeMethode".ucfirst($name);
@@ -161,5 +160,30 @@ class FournisseurTelephonie {
       }
     return $arr;
   }
+  /**
+   *
+   *
+   *
+   *
+   */
+  function CreateCommande($user)
+  {
+    dolibarr_syslog("FournisseurTelephonie::CreateCommande User:$user->id");
+
+    $fileclass = $this->classdir.'commande.'.$this->class_commande.'.class.php';
+
+    require_once($fileclass);
+
+    $classname = "CommandeMethode".ucfirst($this->class_commande);
+
+    dolibarr_syslog("FournisseurTelephonie::CreateCommande user $classname");
+
+    $ct = new $classname($this->db, $user, $this);
+	
+    $result = $ct->create();
+	
+    return $result;
+  }
+
 }
 ?>

@@ -146,7 +146,7 @@ if ($result)
 
       print "<tr $bc[$var]><td>";
      
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->rowid.'">';
       print img_file();      
       print '</a>&nbsp;';
 
