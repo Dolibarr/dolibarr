@@ -27,3 +27,4 @@ ErrorCreateBankAccount=Créer un compte bancaire puis aller dans la Configuration
 BillFrom=Émetteur
 BillTo=Adressé à
 AmountInCurrency=Montants exprimés en
+ActionsOnBill=Actions sur la facture
