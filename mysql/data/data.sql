@@ -57,7 +57,7 @@ insert into llx_const(name, value, type, note) values ('COMPTA_ONLINE_PAYMENT_BP
 
 insert into llx_const(name, value, type, note) values ('COMPTA_BANK_FACTURES','1','yesno','Menu factures dans la partie bank');
 
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','dolibarr','chaine','theme principal');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','theme principal');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_RESIL','Votre adhesion sur %SERVEUR% vient d\'etre resilie.\r\nNous esperons vous revoir tres bientot','texte','Mail de Resiliation');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_VALID','MAIN\r\nVotre adhesion vient d\'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante : \r\n%SERVEUR%public/adherents/','texte','Mail de validation');
