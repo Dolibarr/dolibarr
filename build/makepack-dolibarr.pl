@@ -90,12 +90,13 @@ $BUILDROOT="$TEMP/buildroot";
 
 
 my $copyalreadydone=0;
+my $batch=0;
 
 print "Makepack version $VERSION\n";
 print "Building package for $PROJECT $MAJOR.$MINOR\n";
 
 for (0..@ARGV-1) {
-	if ($ARGV[$_] =~ /^-*target=(\w+)/i)    { $target=$1; }
+	if ($ARGV[$_] =~ /^-*target=(\w+)/i)    { $target=$1; $batch=1; }
 }
 
 # Choose package targets
@@ -177,7 +178,7 @@ print "\n";
 # Check if there is at least on target to build
 #----------------------------------------------
 $nboftargetok=0;
-foreach $target (keys %CHOOSEDTARGET) {
+foreach my $target (keys %CHOOSEDTARGET) {
     if ($CHOOSEDTARGET{$target} < 0) { next; }
     $nboftargetok++;
 }
@@ -205,7 +206,7 @@ if ($nboftargetok) {
     
     # Build package for each target
     #------------------------------
-    foreach $target (keys %CHOOSEDTARGET) {
+    foreach my $target (keys %CHOOSEDTARGET) {
         if ($CHOOSEDTARGET{$target} < 0) { next; }
     
         print "\nBuild package for target $target\n";
@@ -278,7 +279,7 @@ if ($nboftargetok) {
 }
 
 print "\n----- Summary -----\n";
-foreach $target (keys %CHOOSEDTARGET) {
+foreach my $target (keys %CHOOSEDTARGET) {
     if ($CHOOSEDTARGET{$target} < 0) {
         print "Package $target not built (bad requirement).\n";
     } else {
@@ -286,7 +287,9 @@ foreach $target (keys %CHOOSEDTARGET) {
     }
 }
 
-print "\nPress key to finish...";
-my $WAITKEY=<STDIN>;
+if (! $btach) {
+    print "\nPress key to finish...";
+    my $WAITKEY=<STDIN>;
+}
 
 0;
