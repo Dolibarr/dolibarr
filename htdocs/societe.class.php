@@ -38,7 +38,8 @@ class Societe {
   var $fournisseur;
  
 
-  Function Societe($DB, $id=0) {
+  Function Societe($DB, $id=0)
+  {
     global $config;
 
     $this->db = $DB;
@@ -52,10 +53,8 @@ class Societe {
    *
    *
    */
-  Function create() {
-
-    print $this->url;
-
+  Function create()
+  {
     $sql = "INSERT INTO llx_societe (nom, datec, datea, client) ";
     $sql .= " VALUES ('".trim($this->nom)."', now(), now(), $this->client);";
 
@@ -73,26 +72,30 @@ class Societe {
    *
    */
   Function update($id)
-    {
+  {
+    if (strlen(trim($this->nom)) == 0)
+      {
+	$this->nom = "VALEUR MANQUANTE";
+      }
 
-      $sql = "UPDATE llx_societe ";
-      $sql .= " SET nom = '" . trim($this->nom) ."'";
-      $sql .= ",address = '" . trim($this->adresse) ."'";
-      $sql .= ",cp = '" . trim($this->cp) ."'";
-      $sql .= ",ville = '" . trim($this->ville) ."'";
-      $sql .= ",tel = '" . trim($this->tel) ."'";
-      $sql .= ",fax = '" . trim($this->fax) ."'";
-      $sql .= ",url = '" . trim($this->url) ."'";
-      $sql .= ",siren = '" . trim($this->siren) ."'";
-      $sql .= ",client = " . $this->client ;
-      $sql .= ",fournisseur = " . $this->fournisseur ;
-      $sql .= " WHERE idp = " . $id .";";
-      
-      if (! $this->db->query($sql)) 
+    $sql = "UPDATE llx_societe ";
+    $sql .= " SET nom = '" . trim($this->nom) ."'";
+    $sql .= ",address = '" . trim($this->adresse) ."'";
+    $sql .= ",cp = '" . trim($this->cp) ."'";
+    $sql .= ",ville = '" . trim($this->ville) ."'";
+    $sql .= ",tel = '" . trim($this->tel) ."'";
+    $sql .= ",fax = '" . trim($this->fax) ."'";
+    $sql .= ",url = '" . trim($this->url) ."'";
+    $sql .= ",siren = '" . trim($this->siren) ."'";
+    $sql .= ",client = " . $this->client ;
+    $sql .= ",fournisseur = " . $this->fournisseur ;
+    $sql .= " WHERE idp = " . $id .";";
+    
+    if (! $this->db->query($sql)) 
       {
 	print $this->db->error();
       }
-    }
+  }
 
   /*
    * Suppression d'une societe. 
