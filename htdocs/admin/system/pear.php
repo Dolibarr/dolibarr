@@ -20,13 +20,18 @@
  */
 require("./pre.inc.php");
 
+if (class_exists("PEAR_Info"));
+{
+  @require_once "PEAR/Info.php";
+}
+
 llxHeader();
 
 print_titre("Pear");
 
 $info = new PEAR_Info();
 $info->getConfig();
-//$info->getPackages();
+$info->getPackages();
 
 llxFooter();
 ?>
