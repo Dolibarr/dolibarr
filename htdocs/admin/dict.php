@@ -181,7 +181,7 @@ if ($_POST["actionadd"]) {
         $result = $db->query($sql);
         if (!$result)
         {
-            if ($db->errno() == $db->ERROR_DUPLICATE) {
+            if ($db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS) {
                 $msg="Une entrée pour cette clé existe déjà<br>";
             }
             else {

@@ -188,7 +188,7 @@ class Product
     }
     else
     {
-        if ($this->db->errno() == $this->db->ERROR_DUPLICATE) {
+        if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS) {
             $this->mesg_error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
             return -1;
         }

@@ -23,17 +23,18 @@
  */
 
 /**	    
-	   \file       htdocs/lib/mysql.lib.php
-	   \brief      Fichier de la classe permettant de gérer une base mysql
-	   \author     Fabien Seisen
-	   \author     Rodolphe Quiedeville.
-	   \author     Laurent Destailleur.
-	   \version    $Revision$
+        \file       htdocs/lib/mysql.lib.php
+        \brief      Fichier de la classe permettant de gérer une base mysql
+        \author     Fabien Seisen
+        \author     Rodolphe Quiedeville.
+        \author     Laurent Destailleur.
+        \version    $Revision$
 */
 
 
-/**     \class      DoliDb
-	\brief      Classe permettant de gérér la database de dolibarr
+/**
+        \class      DoliDb
+        \brief      Classe permettant de gérér la database de dolibarr
 */
 
 class DoliDb
@@ -47,10 +48,24 @@ class DoliDb
   
   var $ok;
   
-  // Constantes pour code erreurs
-  var $ERROR_DUPLICATE=1062;
-  var $ERROR_TABLEEXISTS=1050;
-  
+  // Constantes pour conversion code erreur MySql en code erreur générique
+  var $errorcode_map = array(
+            1004 => DB_ERROR_CANNOT_CREATE,
+            1005 => DB_ERROR_CANNOT_CREATE,
+            1006 => DB_ERROR_CANNOT_CREATE,
+            1007 => DB_ERROR_ALREADY_EXISTS,
+            1008 => DB_ERROR_CANNOT_DROP,
+            1046 => DB_ERROR_NODBSELECTED,
+            1050 => DB_ERROR_TABLE_ALREADY_EXISTS,
+            1051 => DB_ERROR_NOSUCHTABLE,
+            1054 => DB_ERROR_NOSUCHFIELD,
+            1062 => DB_ERROR_RECORD_ALREADY_EXISTS,
+            1064 => DB_ERROR_SYNTAX,
+            1100 => DB_ERROR_NOT_LOCKED,
+            1136 => DB_ERROR_VALUE_COUNT_ON_ROW,
+            1146 => DB_ERROR_NOSUCHTABLE,
+            1048 => DB_ERROR_CONSTRAINT,
+        );  
   
   /**
      \brief      Ouverture d'une connection vers le serveur et éventuellement une database.
@@ -447,27 +462,26 @@ class DoliDb
   }
     
   /**
-     \brief      Renvoie le texte de l'erreur mysql de l'operation precedente.
-     \return	    error_text
+     \brief     Renvoie le code erreur generique de l'operation precedente.
+     \return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+  */
+    
+  function errno()
+  {
+        if (isset($this->errorcode_map[mysql_errno($this->db)])) {
+            return $this->errorcode_map[mysql_errno($this->db)];
+        }
+        return DB_ERROR;
+  }
+    
+  /**
+     \brief     Renvoie le texte de l'erreur mysql de l'operation precedente.
+     \return    error_text
   */
     
   function error()
   {
     return mysql_error($this->db);
-  }
-    
-  /**
-     \brief      Renvoie la valeur numerique de l'erreur de l'operation precedente.
-     pour etre exploiter par l'appelant et détecter les erreurs du genre:
-     echec car doublons, table deja existante...
-     \return     error_num
-  */
-    
-  function errno()
-  {
-    // $ERROR_DUPLICATE=1062;
-    // $ERROR_TABLEEXISTS=1050;
-    return mysql_errno($this->db);
   }
     
   /**

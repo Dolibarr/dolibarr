@@ -139,7 +139,7 @@ class Societe {
         }
         else
         {
-            if ($this->db->errno() == $this->db->ERROR_DUPLICATE)
+            if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
             {
                 $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
             }
@@ -348,7 +348,7 @@ class Societe {
 	  }
 	else
 	  {
-	    if ($this->db->errno() == $this->db->ERROR_DUPLICATE)
+	    if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
 	      {
 		// Doublon
 		$this->error = $langs->trans("ErrorPrefixAlreadyExists",$this->prefix_comm);

@@ -135,7 +135,7 @@ class FactureFourn
     }
     else
     {
-        if ($this->db->errno() == $this->db->ERROR_DUPLICATE) {
+        if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS) {
             print "Erreur : Une facture possédant cet id existe déjà";
         }
         else {
