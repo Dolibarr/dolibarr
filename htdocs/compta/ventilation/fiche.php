@@ -31,6 +31,8 @@ require("./pre.inc.php");
 
 $mesg = '';
 
+if (!$user->rights->compta->ventiler) accessforbidden();
+
 if ($_POST["action"] == 'ventil' && $user->rights->compta->ventiler)
 {
   $sql = " UPDATE ".MAIN_DB_PREFIX."facturedet";
@@ -58,12 +60,12 @@ $sql .= " ORDER BY numero ASC";
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0; 
   
   while ($i < $num)
     {
-      $row = $db->fetch_row();
+      $row = $db->fetch_row($result);
       $cgs[$row[0]] = $row[1] . ' ' . $row[2];
       $i++;
     }
@@ -75,7 +77,7 @@ if ($result)
  */
 $form = new Form($db);
 
-if($_GET["id"] && $user->rights->compta->ventiler)
+if($_GET["id"])
 {
   $sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice, ".$db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end, l.fk_code_ventilation ";
   $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
