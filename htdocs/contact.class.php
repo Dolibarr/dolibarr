@@ -79,16 +79,20 @@ class Contact
 
       $this->email = trim($this->email);
 
+      $this->phone_pro = ereg_replace(" ","",$this->phone_pro);
+
+      if (strlen($this->phone_pro) == 0 && $this->socid > 0)
+	{
+	  $soc = new Societe($this->db);
+	  $soc->fetch($this->socid);
+	  $this->phone_pro = $soc->tel;
+	}
+
       $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET name='$this->name', firstname='$this->firstname'";
       $sql .= ", poste='$this->poste'";
       $sql .= ", fax='$this->fax'";
       $sql .= ", email='$this->email'";
       $sql .= ", note='$this->note'";
-
-      $contact->address       = $HTTP_POST_VARS["adresse"];
-      $contact->cp            = $HTTP_POST_VARS["cp"];
-      $contact->ville         = $HTTP_POST_VARS["ville"];
-
       $sql .= ", phone = '$this->phone_pro'";
       $sql .= ", phone_perso = '$this->phone_perso'";
       $sql .= ", phone_mobile = '$this->phone_mobile'";
