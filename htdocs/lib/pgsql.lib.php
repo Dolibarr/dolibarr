@@ -68,15 +68,21 @@ class DoliDb
         global $conf;
         $this->transaction_opened=0;
     
-        if ($host == '') $host = $conf->db->host;
-        if ($user == '') $user = $conf->db->user;
-        if ($pass == '') $pass = $conf->db->pass;
-        if ($name == '') $name = $conf->db->name;
+        if (! $host) $host = $conf->db->host;
+        if (! $user) $user = $conf->db->user;
+        if (! $pass) $pass = $conf->db->pass;
+        if (! $name) $name = $conf->db->name;
     
         //print "Name DB: $host,$user,$pass,$name<br>";
+        if (! $host)
+        {
+        	$this->connected = 0;
+        	$this->ok = 0;
+        	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
+            return $this->ok;
+        }
     
         // Essai connexion serveur
-    
         $this->db = $this->connect($host, $user, $pass, $name);
     
         if ($this->db)
@@ -91,7 +97,6 @@ class DoliDb
         }
     
         // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
-    
         if ($this->connected && $name)
         {
             if ($this->select_db($name) == 1)
