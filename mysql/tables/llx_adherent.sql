@@ -52,7 +52,6 @@ create table llx_adherent
   fk_user_valid    integer NOT NULL,
   datefin          datetime NOT NULL, -- date de fin de validité de la cotisation
   note             text,
-  fk_bank          int(11) default NULL,
  
   UNIQUE INDEX(login)
 );
