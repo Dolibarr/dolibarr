@@ -21,7 +21,7 @@
  */
 require("./pre.inc.php");
 require("../../propal.class.php");
-require("../../graph.class.php");
+//require("../../graph.class.php");
 
 llxHeader();
 
@@ -54,10 +54,10 @@ if ($id)
 
       if (! file_exists($filev) or $action == 'recalcul')
 	{
-	  $px = new Graph();
+	  $px = new BarGraph();
 	  $graph_data = $product->get_num_vente();
 	  $px->draw($filev, $graph_data);
-	  $px = new Graph();
+	  $px = new BarGraph();
 	  $graph_data = $product->get_nb_vente();
 	  $px->draw($filenv, $graph_data);
 	  $mesg = "Graphiques générés";
