@@ -23,8 +23,6 @@ require("./pre.inc.php3");
 require("./fichinter.class.php3");
 require("../project.class.php3");
 
-$db = new Db();
-
 /*
  * Sécurité accés client
  */

@@ -30,10 +30,8 @@ if ($user->societe_id > 0)
   exit;
 }
 
-
 llxHeader();
 
-$db = new Db();
 
 /*
  *

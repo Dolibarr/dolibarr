@@ -22,8 +22,6 @@
 
 require("./pre.inc.php");
 
-$db = new Db();
-
 if ($action == 'add') {
   $editeur = new Editeur($db);
 

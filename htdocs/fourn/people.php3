@@ -21,7 +21,6 @@
  */
 require("./pre.inc.php3");
 
-$db = new Db();
 if ($sortorder == "")
 {
   $sortfield="lower(s.nom)";

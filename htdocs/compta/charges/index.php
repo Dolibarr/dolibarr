@@ -23,8 +23,6 @@ require("./pre.inc.php3");
 
 llxHeader();
 
-$db = new Db();
-
 function valeur($sql)
 {
   global $db;
@@ -41,7 +39,6 @@ function valeur($sql)
 /*
  *
  */
-$db = new Db();
 
 print_titre("Charges");
 

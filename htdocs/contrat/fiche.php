@@ -26,7 +26,6 @@ require("../facture.class.php3");
 
 llxHeader();
 
-$db = new Db();
 $mesg = '';
 
 if ($action == 'add')

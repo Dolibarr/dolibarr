@@ -42,7 +42,6 @@ print '<tr><td>user</td><td>' . $conf->db->user . '&nbsp;</td><td>&nbsp;</td></t
 print '<tr><td>pass</td><td>' . $conf->db->pass . '&nbsp;</td><td>&nbsp;</td></tr>';
 print '<tr><td>Database name</td><td>' . $conf->db->name . '</td><td>&nbsp;</td></tr>';
 
-
 print '</table>';
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");

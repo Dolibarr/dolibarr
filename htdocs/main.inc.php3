@@ -72,6 +72,11 @@ define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/font/');
 
 $db = new DoliDb();
 
+// PEAR
+//require("DB.php");
+//$dbpear = new DB();
+//
+//
 $user = new User($db);
 
 $user->fetch($GLOBALS["REMOTE_USER"]);
