@@ -53,6 +53,8 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add(DOL_URL_ROOT."/product/", "Produits");
     }
 
+  $menu->add(DOL_URL_ROOT."/contrat/", "Contrats");
+
   if ($conf->service->enabled ) 
     {
       $menu->add(DOL_URL_ROOT."/service/", "Services");
