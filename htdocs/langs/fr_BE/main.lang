@@ -10,6 +10,7 @@ ErrorSQL=Erreur SQL
 ErrorLogoFileNotFound=Le fichier logo '%s' n'a pas été trouvé
 ErrorGoToGlobalSetup=Aller dans la Configuration générale pour corriger
 ErrorGoToModuleSetup=Aller dans la Configuration du module pour corriger
+ErrorFailedToSendMail=Echec de l'envoi du mail (emetteur=%s, destinataire=%s)
 yes=oui
 Yes=Oui
 no=non

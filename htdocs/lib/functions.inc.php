@@ -227,26 +227,35 @@ function dolibarr_print_date($time,$format="%d %b %Y")
 
 function dolibarr_print_object_info($object)
 {
-  print "Créé par  : " . $object->user_creation->fullname . '<br>';
-  print "Date de création : " . strftime("%A %d %B %Y %H:%M:%S",$object->date_creation) . '<br>';
+    global $langs;
+        
+    if (isset($object->user_creation))
+        print $langs->trans("CreatedBy")." : " . $object->user_creation->fullname . '<br>';
 
-  if (isset($object->user_modification))
-    print "Modifié par  : " . $object->user_modification->fullname . '<br>';
+    if (isset($object->date_creation))
+        print $langs->trans("DateCreation")." : " . dolibarr_print_date($object->date_creation,"%A %d %B %Y %H:%M:%S") . '<br>';
+    
+    if (isset($object->user_modification))
+        print $langs->trans("ModifiedBy")." : " . $object->user_modification->fullname . '<br>';
+        
+    if (isset($object->date_modification))
+        print $langs->trans("DateModification")." : " . dolibarr_print_date($object->date_modification,"%A %d %B %Y %H:%M:%S") . '<br>';
+    
+    if (isset($object->user_validation))
+        print $langs->trans("ValidatedBy")." : " . $object->user_validation->fullname . '<br>';
+    
+    if (isset($object->date_validation))
+        print $langs->trans("DateValidation")." : " . dolibarr_print_date($object->date_modification,"%A %d %B %Y %H:%M:%S") . '<br>';
 
+    if (isset($object->user_cloture))
+        print $langs->trans("ClosedBy")." : " . $object->user_cloture->fullname . '<br>';
 
-  if (isset($object->date_modification))
-    print "Date de modification : " . strftime("%A %d %B %Y %H:%M:%S",$object->date_modification) . '<br>';
-
-  if (isset($object->user_validation))
-    print "Validé par  : " . $object->user_validation->fullname . '<br>';
-
-  if (isset($object->user_cloture))
-    print "Cloturé par  : " . $object->user_cloture->fullname . '<br>';
-
+    if (isset($object->date_cloture))
+        print $langs->trans("DateClosing")." : " . dolibarr_print_date($object->date_modification,"%A %d %B %Y %H:%M:%S") . '<br>';
 }
 
 /*!
-  \brief    Formattage du telephone
+  \brief    Formatage du telephone
   \param	phone			numéro de telephone à formater
   \return   phone			numéro de téléphone formaté
   \remarks  net tient pas en compte le format belge 02/211 34 83
