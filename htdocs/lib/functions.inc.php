@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2000-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -25,6 +25,17 @@
 
 $yn[0] = "non";
 $yn[1] = "oui";
+
+Function dolibarr_syslog($message)
+{
+  define_syslog_variables();
+
+  openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+  
+  syslog(LOG_WARNING, $message);
+
+  closelog();
+}
 
 Function dolibarr_fiche_head($links, $active=0)
 {
