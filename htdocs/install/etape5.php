@@ -88,8 +88,10 @@ if ($HTTP_POST_VARS["action"] == "set")
 <br>
 
 <?PHP
-print "Votre système est maintenant configuré, il ne vous reste plus qu'a sélectionner les modules que vous souhaitez utiliser. Pour cela cliquer sur l'url ci-dessous : <br>";
-print '<a href="'.$dolibarr_main_url_root .'/admin/modules.php">Configurer les modules</a>';
+print "Votre système est maintenant installé.<br>";
+print "Il vous reste à le configurer selon vos besoins (Choix de l'apparence, des fonctionnalités, etc...). Pour cela, cliquez sur le lien ci-dessous:<br>";
+
+print '<br><a href="'.$dolibarr_main_url_root .'/admin/index.php">Accès à l\'espace configuration</a>';
 
 pFooter(1);
 ?>
