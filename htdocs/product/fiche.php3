@@ -32,11 +32,11 @@ if ($action == 'add')
 {
   $product = new Product($db);
 
-  $product->ref = $ref;
-  $product->libelle = $libelle;
-  $product->price = $price;
+  $product->ref = $HTTP_POST_VARS["ref"];
+  $product->libelle = $HTTP_POST_VARS["libelle"];
+  $product->price = $HTTP_POST_VARS["price"];
   $product->tva_tx = $HTTP_POST_VARS["tva_tx"];
-  $product->description = $desc;
+  $product->description = $HTTP_POST_VARS["desc"];
 
   $id = $product->create($user);
   $action = '';
@@ -53,7 +53,6 @@ if ($action == 'addinpropal')
   $mesg = 'Produit ajouté à la proposition ';
   $mesg .= '<a href="../comm/propal.php3?propalid='.$propal->id.'">'.$propal->ref.'</a>';
 }
-
 
 if ($action == 'update' && $cancel <> 'Annuler')
 {
@@ -105,19 +104,39 @@ else
 
       if ( $result )
 	{ 
+	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<tr class="liste_titre">';
+	  print '<form action="index.php3" method="post">';
+	  print '<td>Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
+	  print '</form><form action="index.php3" method="post">';
+	  print '<td>Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';
+	  print '</form><td>&nbsp;</td></tr></table>';
+
+
 	  print_fiche_titre('Fiche produit : '.$product->ref, $mesg);
       
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
 	  print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
-	  print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
+	  print '<td>';
+	  if ($product->envente)
+	    {
+	      print "En vente";
+	    }
+	  else
+	    {
+	      print "Cet article n'est plus en vente";
+	    }
+	  print '</td></tr>';
 	  print "<td>Libellé</td><td>$product->label</td>";
+	  print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
+	  print '<tr><td>Prix</td><TD>'.price($product->price).'</td>';
 	  print '<td valign="top" rowspan="4">';
 	  print "Propositions commerciales : ".$product->count_propale();
 	  print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
 	  print "<br>Factures : ".$product->count_facture();
 	  print '</td></tr>';
-	  print '<tr><td>Prix</td><TD>'.price($product->price).'</td></tr>';
+
 	  print '<tr><td>Taux TVA</td><TD>'.$product->tva_tx.'</td></tr>';
 	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
 	  print "</table>";
