@@ -36,17 +36,13 @@ print_titre("Projets");
 print '<table width="100%">';
 print '<tr>';
 
-if($socidp && $user->societe_id == 0)
-{
-  print '<td>[<a href="fiche.php3?socidp='.$socidp.'&action=create">Nouveau projet</a>]</td>';
-}
 print '</tr></table>';
 
 /*
  * Traitements des actions
  *
  */
-if ($action == 'create') {
+if ($HTTP_POST_VARS["action"] == 'create') {
 
   $pro = new Project($db);
   $pro->socidp = $socidp;
