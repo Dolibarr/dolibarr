@@ -183,11 +183,13 @@ if ($_POST["action"] == 'add')
 	      print $db->error();
 		}
 	    }
-	  
+	
+	  if ($facid)
+	    {
+	      Header("Location: facture.php?facid=".$facid);
+	    }
 	}
     }
-
-  $action = '';  
 }
 /*
  *
