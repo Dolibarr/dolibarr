@@ -284,7 +284,7 @@ class Propal
   Function fetch($rowid)
     {
 
-      $sql = "SELECT ref,total,price,remise,tva,fk_soc,".$this->db->pdate(datep)."as dp, model_pdf ";
+      $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact,".$this->db->pdate(datep)."as dp, model_pdf ";
       $sql .= " FROM llx_propal WHERE rowid=$rowid;";
 
       if ($this->db->query($sql) )
@@ -304,6 +304,7 @@ class Propal
 	      $this->total_tva = $obj->tva;
 	      $this->total_ttc = $obj->total;
 	      $this->socidp    = $obj->fk_soc;
+	      $this->contactid = $obj->fk_soc_contact;
 	      $this->modelpdf  = $obj->model_pdf;
 	      $this->lignes = array();
 	      $this->db->free();
