@@ -8,8 +8,8 @@ alter table  llx_product add stock_commande integer default 0;
 
 alter table  llx_product add seuil_stock_alerte integer default 0;
 
-
 alter table `llx_groupart` add `description` text after `groupart` ;
+
 
 alter table llx_socpeople add phone_perso varchar(30) after phone ;
 alter table llx_socpeople add phone_mobile varchar(30) after phone_perso ;
@@ -26,10 +26,8 @@ create table llx_birthday_alert
   fk_user      integer
 );
 
-
 alter table llx_facture_fourn drop index facnumber ;
-alter table llx_facture_fourn add unique index (facnumber, fk_soc) ;=======
-ALTER TABLE `llx_groupart` ADD `description` TEXT AFTER `groupart` ;
+alter table llx_facture_fourn add unique index (facnumber, fk_soc) ;
 
 
 create table llx_co_fa
