@@ -171,7 +171,16 @@ class Product
   function _log_price($user) 
     {
 
-      $sql = "REPLACE INTO ".MAIN_DB_PREFIX."product_price ";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
+		$sql .= "WHERE fk_product = ".$this->id;
+		$sql .= " ,fk_user_author = ".$user->id;
+		$sql .= " ,price = ".ereg_replace(",",".",$this->price);
+		$sql .= " ,envente = ".$this->envente;
+		$sql .= " ,tva_tx = ".$this->tva_tx;
+		
+		$this->db->query($sql);
+		
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price ";
       $sql .= " SET date_price= now()";
       $sql .= " ,fk_product = ".$this->id;
       $sql .= " ,fk_user_author = ".$user->id;
