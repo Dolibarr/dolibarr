@@ -30,8 +30,8 @@ if (file_exists ($thermlib))
    */
 
   $conf = new Conf();
-  $db = new Db();
-  $dontherm = new Don($db);
+  $dbt = new Db();
+  $dontherm = new Don($dbt);
 
   $actualValue = $dontherm->sum_actual();
   $pendingValue = $dontherm->sum_pending();
@@ -39,5 +39,6 @@ if (file_exists ($thermlib))
  
   print moneyMeter($actualValue, $pendingValue, $intentValue);
 
+  $dbt->close();
 }
 ?>
