@@ -141,13 +141,19 @@ values (41,4,'Alix','Victor','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net'
 delete from llx_product;
 
 insert into llx_product (ref, label, description, price, tva_tx)
-values ('CRRJ452M','Câble Réseaux RJ45 2m','Câble Réseaux RJ45 2m',10,19.6);
+values ('RJ452M','Câble Réseaux RJ45 2m','Câble Réseaux RJ45 2m',10,19.6);
 
 insert into llx_product (ref, label, description, price, tva_tx)
-values ('3COMSW8','Switch 8 ports 100Mbits','Switch 8 ports 100Mbits',1000,19.6);
+values ('RJ458M','Câble Réseaux RJ45 8m','Câble Réseaux RJ45 8m',10,19.6);
 
 insert into llx_product (ref, label, description, price, tva_tx)
-values ('ALPH','Serveur 1U Serie 3W','Serveur avec 1G de RAM et 2 processeurs',9750,19.6);
+values ('RJ4515M','Câble Réseaux RJ45 15m','Câble Réseaux RJ45 15m',10,19.6);
+
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('SW8','Switch 8 ports 100Mbits','Switch 8 ports 100Mbits',1000,19.6);
+
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('SER1U','Serveur 1U Serie 3W','Serveur avec 1G de RAM et 2 processeurs',9750,19.6);
 
 insert into llx_product (ref, label, description, price, tva_tx)
 values ('HUB8-10','Hub 8 ports 10Mbits','Hub 8 ports',750,19.6);
