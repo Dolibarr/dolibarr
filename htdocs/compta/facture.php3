@@ -145,6 +145,7 @@ if ($action == 'send')
     {
 
       $sendto = $soc->contact_get_email($HTTP_POST_VARS["destinataire"]);
+      $sendtoid = $HTTP_POST_VARS["destinataire"];
 
       if (strlen($sendto))
 	{
@@ -159,8 +160,10 @@ if ($action == 'send')
 	  
 	  if ( $mailfile->sendfile() )
 	    {
+
+	      $sendto = htmlentities($sendto);
 	      
-	      $sql = "INSERT INTO actioncomm (datea,fk_action,fk_soc,note,fk_facture) VALUES (now(), 9 ,$fac->socidp ,'Envoyée à $sendndto',$fac->id);";
+	      $sql = "INSERT INTO actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label) VALUES (now(), 9 ,$fac->socidp ,'Envoyée à $sendto',$fac->id, $sendtoid, $user->id, 'Envoi Facture par mail');";
 
 	      if (! $db->query($sql) )
 		{
