@@ -132,14 +132,13 @@ if ( $db->query($sql) )
  */
 print '</td><td valign="top" width="70%">';
 
-$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.fk_user_author, a.fk_contact, p.name, s.nom as sname";
-$sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_socpeople as p, llx_societe as s";
-$sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND a.fk_user_action = $user->id AND a.fk_contact = p.idp AND p.fk_soc = s.idp";
+$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_societe as s";
+$sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc AND a.fk_user_action = $user->id";
 $sql .= " ORDER BY a.datea DESC";
 
 if ( $db->query($sql) ) 
 {
-
   print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
   print '<TR class="liste_titre">';
   print '<td colspan="4">Actions à faire</td>';
@@ -152,7 +151,8 @@ if ( $db->query($sql) )
       $var=!$var;
       
       print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td>";
-      print "<td><a href=\"action/fiche.php3?id=$obj->id\">$obj->libelle $obj->label</a></td><td>$obj->name</td><td>$obj->sname</td></tr>";
+      print "<td><a href=\"action/fiche.php3?id=$obj->id\">$obj->libelle $obj->label</a></td>";
+      print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
       $i++;
     }
   $db->free();
