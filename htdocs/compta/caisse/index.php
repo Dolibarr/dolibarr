@@ -120,24 +120,23 @@ for ($jour = 1 ; $jour < 32 ; $jour++)
 
   
   print '<td align="right" width="10%">&nbsp;';
-      $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-      if ($encaiss[$case]>0)
-	{
-	  print price($encaiss[$case]);
-	}
-      print "</td>";
-
-      print '<td align="right" width="10%">&nbsp;';
-      $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-      if ($decaiss[$case]>0)
-	{
-	  print price($decaiss[$case]);
-	}
-      print "</td>";
+  $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
+  if ($encaiss[$case]>0)
+    {
+      print price($encaiss[$case]);
     }
-
+  print "</td>";
+  
+  print '<td align="right" width="10%">&nbsp;';
+  $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
+  if ($decaiss[$case]>0)
+    {
+      print price($decaiss[$case]);
+    }
+  print "</td>";
   print '</tr>';
 }
+
 
 print "</table>";
 
