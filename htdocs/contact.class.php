@@ -129,12 +129,13 @@ class Contact
 	ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 	
 	$ldapbind = dolibarr_ldap_bind($ds);
-	
+
 	if ($ldapbind)
 	  {
 	    $info["cn"] = utf8_encode($this->firstname." ".$this->name);
 	    $info["sn"] = utf8_encode($this->name);
-	    
+	    $info["ou"] = "People";
+
 	    if ($this->email)
 	      $info["rfc822Mailbox"] = $this->email;
 		  
@@ -149,7 +150,7 @@ class Contact
 	    
 	    if ($this->poste)
 	      $info["title"] = utf8_encode($this->poste);
-	    
+
 	    if ($this->socid > 0)
 	      {
 		$soc = new Societe($this->db);
@@ -160,32 +161,32 @@ class Contact
 		    $info["l"] = utf8_encode($soc->ville);
 		  }
 	      }
-	    
+
 	    $info["objectclass"][0] = "organizationalPerson";
 	    $info["objectclass"][1] = "inetOrgPerson";
-	    $info["objectclass"][2] = "phpgwContact"; // compatibilite egroupware
-	    
-	    $info['uidnumber'] = $this->id;
-	    
-	    $info['phpgwTz']      = 0;
-	    $info['phpgwMailType'] = 'INTERNET';
-	    $info['phpgwMailHomeType'] = 'INTERNET';
-	    
+//	    $info["objectclass"][2] = "phpgwContact"; // compatibilite egroupware
+
+//	    $info['uidnumber'] = $this->id;
+
+//	    $info['phpgwTz']      = 0;
+//	    $info['phpgwMailType'] = 'INTERNET';
+//	    $info['phpgwMailHomeType'] = 'INTERNET';
+
 	    $info["uid"] = $this->id. ":".$info["sn"];
-	    $info["phpgwContactTypeId"] = 'n';
-	    $info["phpgwContactCatId"] = 0;
-	    $info["phpgwContactAccess"] = "public";
-	    $info["phpgwContactOwner"] = $user->egroupware_id;
+//	    $info["phpgwContactTypeId"] = 'n';
+//	    $info["phpgwContactCatId"] = 0;
+//	    $info["phpgwContactAccess"] = "public";
+//	    $info["phpgwContactOwner"] = $user->egroupware_id;
 	    $info["givenName"] = utf8_encode($this->firstname);
-	    
-	    if ($this->phone_mobile)
-	      $info["phpgwCellTelephoneNumber"] = dolibarr_print_phone($this->phone_mobile);
-	    
+
+//	    if ($this->phone_mobile)
+//	      $info["phpgwCellTelephoneNumber"] = dolibarr_print_phone($this->phone_mobile);
+
 	    //$dn = "uid=".$info["uid"].","."cn=".$info["cn"].", ".LDAP_SERVER_DN ;
-	    $dn = "cn=".$info["cn"].", ".LDAP_SERVER_DN ;
-	    
-	    $r = @ldap_delete($ds, $dn);
-	    
+	    //$dn = "cn=".$info["cn"].", ".LDAP_SERVER_DN ;
+
+	    $r = @ldap_delete($ds, LDAP_SERVER_DN);
+
 	    if (! ldap_add($ds, $dn, $info))
 	      {
 		$this->error[0] = ldap_err2str(ldap_errno($ds));

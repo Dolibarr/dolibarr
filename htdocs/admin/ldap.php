@@ -31,11 +31,11 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
   $db->query($sql);
 
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_LOGIN', value='".$HTTP_POST_VARS["login"]."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_PASS', value='".$HTTP_POST_VARS["pass"]."', visible=0";
 
   $db->query($sql);
 
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_PASS', value='".$HTTP_POST_VARS["pass"]."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_TYPE', value='".$HTTP_POST_VARS["type"]."', visible=0";
 
   $db->query($sql);
 
@@ -73,8 +73,8 @@ print "</tr>\n";
 print '<tr><td>Serveur LDAP</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
 
 print '<tr><td>DN</td><td>'.LDAP_SERVER_DN.'</td></tr>';
-print '<tr><td>Login</td><td>'.LDAP_SERVER_LOGIN.'</td></tr>';
 print '<tr><td>Pass</td><td>'.LDAP_SERVER_PASS.'</td></tr>';
+print '<tr><td>Type</td><td>'.LDAP_SERVER_TYPE.'</td></tr>';
 
 print '</table>';
 
@@ -94,11 +94,14 @@ print '</td></tr>';
 print '<tr><td>DN</td><td>';
 print '<input size="25" type="text" name="dn" value="'.LDAP_SERVER_DN.'">';
 print '</td></tr>';
-print '<tr><td>Login</td><td>';
-print '<input size="25" type="text" name="login" value="'.LDAP_SERVER_LOGIN.'">';
-print '</td></tr>';
 print '<tr><td>Pass</td><td>';
 print '<input size="25" type="text" name="pass" value="'.LDAP_SERVER_PASS.'">';
+print '</td></tr>';
+
+print '<tr><td><select name="type">';
+print '<option value="openldap" selected>OpenLdap';
+print '<option value="egroupware">Egroupware';
+print '</select>';
 print '</td></tr>';
 
 print '<tr><td><input type="submit" value="changer"></td></tr>';
@@ -106,7 +109,7 @@ print '</table></form>';
 
 print '</td></tr></table>';
 
-print '<a href="ldap.php?action=test">test</a><br>';
+print '<a href="ldap.php?action=test">test de connection</a><br>';
 
 if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test')
 {
@@ -114,25 +117,25 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test'
 
   if ($ds)
     {
-      print "connect ok<br>";
+      print "connection réussie<br>";
 
-      //ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+      ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 
       $ldapbind = dolibarr_ldap_bind($ds);
 
       if ($ldapbind)
 	{
-	  print "bind ok<br>";
+	  print "connection au dn réussi<br>";
 	}
       else
 	{
-	  print "bind erreur<br>";
+	  print "connection au dn raté<br>";
 	}
       ldap_close($ds);
     }
   else
     {
-      print "connect erreur<br>";
+      print "connection échouée<br>";
     }
 }
 

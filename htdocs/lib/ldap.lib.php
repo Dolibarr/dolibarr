@@ -31,15 +31,15 @@ Function dolibarr_ldap_connect()
 
 Function dolibarr_ldap_bind($ds)
 {
-  if (defined("LDAP_SERVER_PASS") && LDAP_SERVER_PASS)
+  if (defined("LDAP_SERVER_PASS") && LDAP_SERVER_DN && LDAP_SERVER_PASS)
     {
-      $ldapbind = ldap_bind($ds, LDAP_SERVER_LOGIN, LDAP_SERVER_PASS);
+      $ldapbind = ldap_bind($ds, LDAP_SERVER_DN, LDAP_SERVER_PASS);
     }
-  else
+/*  else
     {
-      $ldapbind = ldap_bind($ds, $dn);
+      $ldapbind = ldap_bind($ds, $dn); -- connection anonyme desactivee
     }
-
+*/
   return $ldapbind;
 }
 
