@@ -33,8 +33,6 @@
 		Ensemble de fonctions de base de dolibarr sous forme d'include
 */
 
-$yn[0] = "non";
-$yn[1] = "oui";
 
 /*!
 		\brief envoi des messages dolibarr dans syslog
@@ -297,7 +295,7 @@ function img_edit_add($alt = "default")
 /*!
   \brief Affiche logo -
 */
-function img_edit_removed($alt = "default")
+function img_edit_remove($alt = "default")
 {
   if ($alt="default") {
     global $langs;
@@ -527,7 +525,8 @@ function accessforbidden()
 
 function dolibarr_print_error($db='',$msg='')
 {
-  print "Dolibarr a détectée une erreur technique.<br>\n";
+  global $langs;
+  print "Dolibarr a détecté une erreur technique.<br>\n";
   print "Voici les informations qui pourront aider au diagnostique:<br><br>\n";
 
   print "<b>Serveur:</b>".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
@@ -1236,10 +1235,23 @@ function tva($euros, $taux=19.6)
 		\param	euros			somme en euro
 		\param	taux			taux de tva
 */
-
 function inctva($euros, $taux=1.196)
 {
   return sprintf("%01.2f",($euros * $taux));
+}
+
+/*!
+		\brief Renvoie oui ou non dans la langue choisie
+		\param	yesno			variable pour test si oui ou non
+		\param	case			Oui/Non ou oui/non
+*/
+function yn($yesno, $case=1) {
+    global $langs;
+    if ($yesno == 0 || $yesno == 'no' || $yesno == 'false') 
+        return $case?$langs->trans("No"):$langs->trans("no");
+    if ($yesno == 1 || $yesno == 'yes' || $yesno == 'true') 
+        return $case?$langs->trans("Yes"):$langs->trans("yes");
+    return "unknown";
 }
 
 /*!
@@ -1250,8 +1262,6 @@ function inctva($euros, $taux=1.196)
 		\param	ftc
 		\param	jour
 */
-
-
 function stat_print($basename,$bc1,$bc2,$ftc, $jour) {
 
   $db = pg_Connect("","","","","$basename");

@@ -1,0 +1,11 @@
+# Dolibarr language file - en_US - users
+UserCard=User card
+Permission=Permission
+Permissions=Permissions
+SendNewPassword=Send new password
+AvailableRights=Available permissions
+OwnedRights=Owned permissions
+DisableUser=Disable user
+NewUser=New user
+CreateUser=Create user
+LoginAlreadyExists=This login already exists

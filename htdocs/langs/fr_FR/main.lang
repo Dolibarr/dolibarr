@@ -1,7 +1,9 @@
 # Dolibarr language file - fr_FR - main
 charset="iso-8859-1"
 yes=oui
+Yes=Oui
 no=non
+No=Non
 Home=Accueil
 Help=Aide
 Activate=Activer
@@ -31,6 +33,7 @@ Parameters=Paramètres
 Value=Valeur
 Type=Type
 Note=Note
+Description=Description
 Action=Action
 About=A propos
 WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et vous êtes connectés sous le user</font> %s
@@ -59,3 +62,5 @@ Total=Total
 TotalHT=Total HT
 TotalTTC=Total TTC
 Delta=Ecart
+Module=Module
+Option=Option
