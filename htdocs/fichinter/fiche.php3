@@ -34,19 +34,20 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-
-$sql = "SELECT s.nom, s.idp, s.prefix_comm FROM societe as s WHERE s.idp = $socidp;";
-
-$result = $db->query($sql);
-if ($result)
+if ($socidp)
 {
-  if ( $db->num_rows() )
-    {
-      $objsoc = $db->fetch_object(0);
-    }
-  $db->free();
-}
+  $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM societe as s WHERE s.idp = $socidp;";
 
+  $result = $db->query($sql);
+  if ($result)
+    {
+      if ( $db->num_rows() )
+	{
+	  $objsoc = $db->fetch_object(0);
+	}
+      $db->free();
+    }
+}
 
 llxHeader();
 /*
@@ -68,15 +69,11 @@ if ($action == 'add')
   $fichinter = new Fichinter($db);
 
   $fichinter->date = $db->idate(mktime(12, 1 , 1, $pmonth, $pday, $pyear));
-
   $fichinter->socidp = $socidp;
   $fichinter->duree = $duree;
-
   $fichinter->projet_id = $projetidp;
-
   $fichinter->author = $user->id;
   $fichinter->note = $note;
-
   $fichinter->ref = $ref;
 
   $id = $fichinter->create();
@@ -87,15 +84,11 @@ if ($action == 'update')
   $fichinter = new Fichinter($db);
 
   $fichinter->date = $db->idate(mktime(12, 1 , 1, $remonth, $reday, $reyear));
-
   $fichinter->socidp = $socidp;
   $fichinter->duree = $duree;
-
   $fichinter->projet_id = $projetidp;
-
   $fichinter->author = $user->id;
   $fichinter->note = $note;
-
   $fichinter->ref = $ref;
 
   $fichinter->update($id);
@@ -109,10 +102,7 @@ if ($action == 'generate')
 {
   if ($id)
     {
-
-
       //$DBI = "dbi:mysql:dbname=lolixdev:host=espy:user=rodo";
-
       $command = 'export LC_TIME=fr_FR ; export DBI_DSN="dbi:'.$conf->db->type.':dbname='.$conf->db->name.':host='.$conf->db->host.'"';
 
       $command .= " ; ./tex-fichinter.pl --fichinter=".$id ;
@@ -122,7 +112,6 @@ if ($action == 'generate')
       
       $output = system($command);
       print $output;
-
       print "<p>command : <b>$command<br>";
       
     }
@@ -139,13 +128,10 @@ if ($action == 'generate')
  */
 if ($action == 'create')
 {
-
   print_titre("Création d'une fiche d'intervention");
-
 
   if ( $objsoc->prefix_comm )
     {
-
       $numpr = "FI-" . $objsoc->prefix_comm . "-" . strftime("%y%m%d", time());
       
       $sql = "SELECT count(*) FROM llx_propal WHERE ref like '$numpr%'";
@@ -158,6 +144,9 @@ if ($action == 'create')
 	    $numpr .= "." . ($num + 1);
 	  }
 	}
+
+      $fix = new Fichinter($db);
+      $numpr = $fix->get_new_num($objsoc->prefix_comm);
     
       print "<form action=\"$PHP_SELF?socidp=$socidp\" method=\"post\">";
       
@@ -251,8 +240,7 @@ if ($action == 'create')
 	print '<a href=/comm/projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
       }
       print '</td></tr>';
-      
-      
+            
       print '<tr><td valign="top">Commentaires</td>';
       print "<td><textarea name=\"note\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea>";
       print '</td></tr>';
@@ -260,9 +248,8 @@ if ($action == 'create')
       print '<tr><td colspan="2" align="center">';
       print "<input type=\"submit\" value=\"Enregistrer\">";
       print '</td></tr>';
-      print "</table>";  
-      
-      print "</form>";
+      print '</table>';      
+      print '</form>';
       
       print "<hr noshade>";
     }
@@ -458,62 +445,7 @@ if ($id)
   
 }
 
-/*
- *
- * Liste des fiches
- *
- */
-$sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, fk_projet";
-$sql .= " FROM societe as s, llx_fichinter as f ";
-$sql .= " WHERE f.fk_soc = s.idp ";
-if ($socidp)
-{
-  $sql .= " AND s.idp = $socidp";
-}
-if ($fichinter > 0)
-{
-  $sql .= " AND s.idp = $fichinter->societe_id";
-}
 
-$sql .= " ORDER BY f.datei DESC ;";
-
-if ( $db->query($sql) )
-{
-  $num = $db->num_rows();
-  $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\">";
-  print "<TD>Num</TD>";
-  print "<TD>Société</td>";
-  print "<TD>Date</TD>";
-  print "<TD>Statut</TD><td>&nbsp;</td>";
-  print "</TR>\n";
-  $var=True;
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php3?id=$objp->fichid\">$objp->ref</a></TD>\n";
-      print "<TD><a href=\"/comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
-      print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-      print "<TD>$objp->fk_statut</TD>\n";
-      
-      print '<TD align="center"><a href="fiche.php3?socidp='.$objp->idp.'&action=create">[Fiche Inter]</A></td>';
-      
-      print "</TR>\n";
-      
-      $i++;
-    }
-  
-  print "</TABLE>";
-  $db->free();
-}
-else
-{
-  print $db->error();
-  print "<p>$sql";
-}
 $db->close();
 llxFooter();
 ?>
