@@ -57,6 +57,8 @@ class modTelephonie extends DolibarrModules
 
     $this->special = 1;
 
+    $this->dirs = array();
+
     // Dépendances
     $this->depends = array();
     $this->requiredby = array();
@@ -87,47 +89,13 @@ class modTelephonie extends DolibarrModules
      * Documents
      *
      */
-    if (defined("DOL_DATA_ROOT"))
-	{
-	  $dir = DOL_DATA_ROOT . "/telephonie/" ;
-	  
-	  if (! file_exists($dir))
-	    {
-	      umask(0);
-	      if (! mkdir($dir, 0755))
-		{
-                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
-		}
-	    }
-
-
-	  $dir[0] = DOL_DATA_ROOT . "/telephonie/ligne/" ;	  
-	  $dir[1] = DOL_DATA_ROOT . "/telephonie/ligne/commande" ;	 
-	  $dir[2] = DOL_DATA_ROOT . "/telephonie/logs" ;
-
-
-	  for ($i = 0 ; $i < sizeof($dir) ; $i++)
-	    {
-	      if (is_dir($dir[$i]))
-		{
-		  dolibarr_syslog ("Le dossier '".$dir[$i]."' existe");
-		}
-	      else
-		{
-		  if (! @mkdir($dir[$i], 0755))
-		    {
-		      print "<tr><td>Impossible de créer : ".$dir[$i]."</td><td bgcolor=\"red\">Erreur</td></tr>";
-		      $error++;
-		    }
-		  else
-		    {
-		      dolibarr_syslog ("Le dossier '".$dir[$i]."' a ete créé");
-		    }
-		}
-	    }
-	}
-
-
+    $this->dirs[0] = DOL_DATA_ROOT . "/telephonie/" ;
+    $this->dirs[1] = DOL_DATA_ROOT . "/telephonie/ligne/" ;	  
+    $this->dirs[2] = DOL_DATA_ROOT . "/telephonie/ligne/commande" ;	 
+    $this->dirs[3] = DOL_DATA_ROOT . "/telephonie/logs" ;
+    $this->dirs[4] = DOL_DATA_ROOT . "/telephonie/client" ;
+    $this->dirs[5] = DOL_DATA_ROOT . "/telephonie/client/rapports" ;
+    
     return $this->_init($sql);
 
 
