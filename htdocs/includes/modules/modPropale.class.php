@@ -44,7 +44,8 @@ class modPropale
      *  Activation du module
      */
     $const[0][0] = "PROPALE_ADDON_PDF";
-    $const[0][1] = "propale_rouge";
+    $const[0][1] = "chaine";
+    $const[0][2] = "propale_rouge";
 
     foreach ($const as $key => $value)
       {

@@ -58,7 +58,8 @@ class modFacture
     $const[6][0] = "FAC_PDF_INTITULE2";
     $const[6][1] = "chaine";
     $const[7][0] = "FACTURE_ADDON_PDF";
-    $const[7][1] = "tourteau";
+    $const[7][1] = "chaine";
+    $const[7][2] = "tourteau";
 
     foreach ($const as $key => $value)
       {
