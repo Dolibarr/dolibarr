@@ -21,6 +21,9 @@
  */
 require("../../main.inc.php3");
 
+$types[0] = "produit";
+$types[1] = "service";
+
 function llxHeader($head = "", $urlp = "")
 {
   global $user, $conf;
