@@ -38,8 +38,9 @@ function llxHeader($head = "", $title="", $help_url='')
 
   if ($conf->prelevement->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/prelevement/","Bon prélèv.");
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste.php","Liste");
+      $menu->add(DOL_URL_ROOT."/compta/prelevement/","Prélèvements");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php","Bons");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php","Demandes");
     }
 
   $langs->load("bills");
