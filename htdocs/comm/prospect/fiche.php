@@ -142,13 +142,16 @@ if ($socid > 0)
     print "<tr><td>Statut</td><td colspan=\"2\">$societe->statut_commercial</td>";
     print '<td> ';
     print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=-1&amp;action=cstc">';
-    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm-1.png" border="0" alt="'.$alt.'">';
+    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm-1.png" border="0" alt="Ne pas contacter" title="Ne pas contacter">';
     print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=0&amp;action=cstc">';
-    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm0.png" border="0" alt="'.$alt.'">';
+    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm0.png" border="0" alt="Jamais contactée" title="Jamais contactée">';
     print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=1&amp;action=cstc">';
-    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm1.png" border="0" alt="'.$alt.'">';
+    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm1.png" border="0" alt="A contacter" title="A contacter">';
     print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=2&amp;action=cstc">';
-    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm2.png" border="0" alt="'.$alt.'">';
+    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm2.png" border="0" alt="Contact en cours" title="Contact en cours">';
+    print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=3&amp;action=cstc">';
+    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm3.png" border="0" alt="Contactée" title="Contactée">';
+
     print '</a>';
     print '</td></tr>';
     print "</table></div>";
