@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -23,10 +23,10 @@
  */
 
 /**
-    \file       htdocs/contact/fiche.php
-    \ingroup    societe
-    \brief      Onglet général d'un contact
-    \version    $Revision$
+   \file       htdocs/contact/fiche.php
+   \ingroup    societe
+   \brief      Onglet général d'un contact
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -35,34 +35,35 @@ require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
 $langs->load("companies");
 
-
 $error = array();
 
 
 if ($_GET["action"] == 'create_user' && $user->admin) 
 {
-    // Recuperation contact actuel
-    $contact = new Contact($db);
-    $result = $contact->fetch($_GET["id"]);
-
-    // Creation user
-    $nuser = new User($db);
-    $nuser->nom = $contact->nom;
-    $nuser->prenom = $contact->prenom;
-    $nuser->create_from_contact($contact);
+  // Recuperation contact actuel
+  $contact = new Contact($db);
+  $result = $contact->fetch($_GET["id"]);
+  
+  // Creation user
+  $nuser = new User($db);
+  $nuser->nom = $contact->nom;
+  $nuser->prenom = $contact->prenom;
+  $nuser->create_from_contact($contact);
 }
 
 if ($_POST["action"] == 'add') 
 {
-  if (! $_POST["name"] && ! $_POST["firstname"]) {
-    array_push($error,'Le champ nom ou prénom est obligatoire.');
-    $_GET["action"]="create";
-  }
-  else {
+  if (! $_POST["name"] && ! $_POST["firstname"])
+    {
+      array_push($error,'Le champ nom ou prénom est obligatoire.');
+      $_GET["action"]="create";
+    }
+  else
+    {
       $contact = new Contact($db);
-    
+      
       $contact->socid        = $_POST["socid"];
-    
+      
       $contact->name         = $_POST["name"];
       $contact->firstname    = $_POST["firstname"];
       $contact->civilite_id	 = $_POST["civilite_id"];
@@ -80,7 +81,7 @@ if ($_POST["action"] == 'add')
       $contact->note         = $_POST["note"];
     
       $_GET["id"] =  $contact->create($user);
-  }
+    }
 }
 
 if ($_POST["action"] == 'confirm_delete' AND $_POST["confirm"] == 'yes') 
@@ -186,8 +187,8 @@ if ($_GET["id"] > 0)
  */
 if ($_GET["action"] == 'delete')
 {
-    $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Supprimer le contact","Êtes-vous sûr de vouloir supprimer ce contact&nbsp;?","confirm_delete");
-    print '<br>';
+  $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Supprimer le contact","Êtes-vous sûr de vouloir supprimer ce contact&nbsp;?","confirm_delete");
+  print '<br>';
 }
 
 if ($_GET["socid"] > 0)
@@ -224,9 +225,9 @@ if ($_GET["action"] == 'create')
       print '</td></tr>';
     }
   else {
-      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">';
-      print $form->select_societes('','socid');
-      print '</td></tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">';
+    print $form->select_societes('','socid');
+    print '</td></tr>';
   }
 
   print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="5">';
@@ -246,7 +247,9 @@ if ($_GET["action"] == 'create')
 
   print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
-  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
+  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.$contact->cp.'">&nbsp;';
+
+  print '<input name="ville" type="text" size="20" value="'.$contact->ville.'" maxlength="80"></td>';
 
   print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80"></td></tr>';
   print '<tr><td>'.$langs->trans("Email").'</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
@@ -264,10 +267,10 @@ if ($_GET["action"] == 'create')
 }
 elseif ($_GET["action"] == 'edit') 
 {
-    /*
-     * Fiche en mode edition
-     *
-     */
+  /*
+   * Fiche en mode edition
+   *
+   */
     
   print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
   print '<input type="hidden" name="action" value="update">';
@@ -299,7 +302,10 @@ elseif ($_GET["action"] == 'edit')
 
   print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
-  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
+  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.$contact->cp.'">&nbsp;';
+
+  print '<input name="ville" type="text" size="20" value="'.$contact->ville.'" maxlength="80"></td>';
+
 
   print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
   print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
@@ -340,46 +346,54 @@ else
 
   print '<tr><td valign="top">';
   
-  if ($contact->name || $contact->firstname) {
-    print $langs->trans("Name").' : '.$contact->name.' '.$contact->firstname ."<br>";
-  }
-
-  if ($contact->poste)
-    print 'Poste : '.$contact->poste ."<br>";
-
-  if ($contact->email) {
-    print $langs->trans("EMail").' : '.$contact->email ."<br>";
-    
-    if (!ValidEmail($contact->email))
+  if ($contact->name || $contact->firstname)
     {
-        print "<b>".$langs->trans("ErrorBadEMail",$contact->email)."</b><br>";
+      print $langs->trans("Name").' : '.$contact->name.' '.$contact->firstname ."<br>";
     }
   
-    /*
-     * Pose des problèmes en cas de non connexion au Réseau
-     * et en cas ou la fonction checkdnsrr n'est pas disponible dans php
-     * (cas fréquent sur certains hébergeurs)
-     */
-    /*
-    if (!check_mail($contact->email))
+  if ($contact->poste)
+    print 'Poste : '.$contact->poste ."<br>";
+  
+  if ($contact->email)
     {
-      print "<b>Email invalide, nom de domaine incorrecte !</b><br>";
+      print $langs->trans("EMail").' : '.$contact->email ."<br>";
+      
+      if (!ValidEmail($contact->email))
+	{
+	  print "<b>".$langs->trans("ErrorBadEMail",$contact->email)."</b><br>";
+	}
+      
+      /*
+       * Pose des problèmes en cas de non connexion au Réseau
+       * et en cas ou la fonction checkdnsrr n'est pas disponible dans php
+       * (cas fréquent sur certains hébergeurs)
+       */
+      /*
+	if (!check_mail($contact->email))
+	{
+	print "<b>Email invalide, nom de domaine incorrecte !</b><br>";
+	}
+      */
+      
     }
-    */
-
-  }
+  
+  if ($contact->address || $contact->ville)
+    {
+      print 'Adresse : '.$contact->address ."<br>";
+      print 'Adresse : '.$contact->cp . " ".$contact->ville ."<br>";
+    }
 
   if ($contact->jabberid)
     print 'Jabber : '.$contact->jabberid ."<br>";
-
+  
   if($contact->user_id)
     print 'Utilisateur avec accés : <a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$contact->user_id.'">Fiche utilisateur</a><br>';
-
+  
   print '</td><td valign="top">';
-
+  
   if ($contact->phone_pro)
     print 'Tel Pro : '.$contact->phone_pro ."<br>";
-
+  
   if ($contact->phone_perso)
     print 'Tel Perso : '.$contact->phone_perso."<br>";
 
@@ -420,28 +434,28 @@ else
     }
 
 
-    // Historique des actions vers ce contact
-    print_titre ("Historique des actions pour ce contact");
+  // Historique des actions vers ce contact
+  print_titre ("Historique des actions pour ce contact");
     
-    print '<table width="100%" class="noborder">';
+  print '<table width="100%" class="noborder">';
     
-    print "<tr class=\"liste_titre\">";
-    print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("Actions")."</td>";
-    print "<td>".$langs->trans("CreatedBy")."</td></tr>";
+  print "<tr class=\"liste_titre\">";
+  print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("Actions")."</td>";
+  print "<td>".$langs->trans("CreatedBy")."</td></tr>";
     
-    $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-    $sql .= " WHERE fk_contact = ".$contact->id;
-    $sql .= " AND u.rowid = a.fk_user_author";
-    $sql .= " AND c.id=a.fk_action ";
+  $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+  $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+  $sql .= " WHERE fk_contact = ".$contact->id;
+  $sql .= " AND u.rowid = a.fk_user_author";
+  $sql .= " AND c.id=a.fk_action ";
     
-    if ($contactid) 
+  if ($contactid) 
     {
       $sql .= " AND fk_contact = $contactid";
     }
-    $sql .= " ORDER BY a.datea DESC, a.id DESC";
+  $sql .= " ORDER BY a.datea DESC, a.id DESC";
     
-    if ( $db->query($sql) ) 
+  if ( $db->query($sql) ) 
     {
       $i = 0 ; $num = $db->num_rows(); $tag = True;
       while ($i < $num) 
@@ -466,11 +480,11 @@ else
           $tag = !$tag;
         }
     }
-    else 
+  else 
     {
       dolibarr_print_error($db);
     }
-    print "</table>";
+  print "</table>";
   
 }
 
