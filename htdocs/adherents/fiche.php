@@ -24,9 +24,10 @@ require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
-require(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
-require(DOL_DOCUMENT_ROOT."/paiement.class.php");
+//require(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
+//require(DOL_DOCUMENT_ROOT."/paiement.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/XML-RPC.functions.php");
+require(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 $adho = new AdherentOptions($db);
 $errmsg='';
@@ -53,9 +54,36 @@ if ($HTTP_POST_VARS["action"] == 'cotisation')
       if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == 0){
 	$adh->add_to_mailman(ADHERENT_MAILMAN_LISTS_COTISANT);
       }
-      $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
+      $crowid=$adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
       if (defined("ADHERENT_MAIL_COTIS") && defined("ADHERENT_MAIL_COTIS_SUBJECT")){
 	$adh->send_an_email($adh->email,ADHERENT_MAIL_COTIS,ADHERENT_MAIL_COTIS_SUBJECT);
+      }
+      // insertion dans la gestion banquaire si configure pour
+      if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 &&
+	  defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
+	$dateop=strftime("%Y%m%d",time());
+	//$dateop="$reyear$remonth$reday";
+	$amount=$cotisation;
+	$acct=new Account($db,ADHERENT_BANK_ACCOUNT);
+	$insertid=$acct->addline($dateop, $HTTP_POST_VARS["operation"], $HTTP_POST_VARS["label"], $amount, $HTTP_POST_VARS["num_chq"],ADHERENT_BANK_CATEGORIE);
+	if ($insertid == '')
+	  {
+	    print "<p> Probleme d'insertion : ".$db->error();
+	  }
+	else
+	  {
+	    // met a jour la table cotisation
+	    $sql="UPDATE llx_cotisation SET fk_bank=$insertid WHERE rowid=$crowid ";
+	    $result = $db->query($sql);
+	    if ($result) 
+	      {
+		//Header("Location: $PHP_SELF");
+	      }
+	    else
+	      {
+		print "<p> Probleme d'insertion $sql : ".$db->error(); 
+	      }
+	  }
       }
     }
   $action = "edit";
@@ -131,6 +159,33 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	if ($cotisation > 0)
 	  {     
 	    $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
+	    // insertion dans la gestion banquaire si configure pour
+	    if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 &&
+		defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
+	      $dateop=strftime("%Y%m%d",time());
+	      //$dateop="$reyear$remonth$reday";
+	      $amount=$cotisation;
+	      $acct=new Account($db,ADHERENT_BANK_ACCOUNT);
+	      $insertid=$acct->addline($dateop, $HTTP_POST_VARS["operation"], $HTTP_POST_VARS["label"], $amount, $HTTP_POST_VARS["num_chq"],ADHERENT_BANK_CATEGORIE);
+	      if ($insertid == '')
+		{
+		  print "<p> Probleme d'insertion : ".$db->error();
+		}
+	      else
+		{
+		  // met a jour la table cotisation
+		  $sql="UPDATE llx_cotisation SET fk_bank=$insertid WHERE rowid=$crowid ";
+		  $result = $db->query($sql);
+		  if ($result) 
+		    {
+		      //Header("Location: $PHP_SELF");
+		    }
+		  else
+		    {
+		      print "<p> Probleme d'insertion $sql : ".$db->error(); 
+		    }
+		}
+	    }
 	  }
 	Header("Location: liste.php");
       }
@@ -311,14 +366,30 @@ if ($action == 'create') {
   print "</td></tr>\n";
   print "<tr><td>Mode de paiement</td><td>\n";
   
-  $paiement = new Paiement($db);
+  print '<select name="operation">';
+  print '<option value="CHQ" SELECTED>Chèque';
+  print '<option value="CB">Carte Bleue';
+  print '<option value="DEP">Espece';
+  print '<option value="TIP">TIP';
+  print '<option value="PRE">PRE';
+  print '<option value="VIR">Virement';
+  print '</select>';
+  //  $paiement = new Paiement($db);
 
-  $paiement->select("modepaiement","crédit");
+  //  $paiement->select("modepaiement","crédit");
 
   print "</td></tr>\n";
-
+  if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 && 
+      defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
+    print "<tr><td>Numero de cheque</td><td>\n";
+    print '<input name="num_chq" type="text" size="6">';
+    print "</td></tr>\n";
+  }
   print '<tr><td>Cotisation</td><td><input type="text" name="cotisation" size="6"> euros</td></tr>';
-
+   if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 && 
+       defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
+     print '<tr><td>Libelle</td><td><input name="label" type="text" size=20 value="Cotisation " ></td></tr>';
+   }
   print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
   print "</form>\n";
   print "</table>\n";
@@ -680,8 +751,12 @@ if ($rowid > 0)
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print '<tr>';
-
-  print '<td rowspan="6" valign="top">';
+  if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 && 
+      defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
+    print '<td rowspan="8" valign="top">';
+  }else{
+    print '<td rowspan="6" valign="top">';
+  }
 
   /*
    *
@@ -767,12 +842,30 @@ if ($rowid > 0)
       print "</td></tr>";
       print "<tr><td>Mode de paiement</td><td>\n";
       
-      $paiement = new Paiement($db);
+      print '<select name="operation">';
+      print '<option value="CHQ" SELECTED>Chèque';
+      print '<option value="CB">Carte Bleue';
+      print '<option value="DEP">Espece';
+      print '<option value="TIP">TIP';
+      print '<option value="PRE">PRE';
+      print '<option value="VIR">Virement';
+      print '</select>';
+      //      $paiement = new Paiement($db);
       
-      $paiement->select("modepaiement","crédit");
-      
+      //$paiement->select("modepaiement","crédit");
       print "</td></tr>\n";
+      
+      if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 && 
+	  defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
+	print "<tr><td>Numero de cheque</td><td>\n";
+	print '<input name="num_chq" type="text" size="6">';
+	print "</td></tr>\n";
+      }
       print '<tr><td>Cotisation</td><td colspan="2"><input type="text" name="cotisation" size="6"> euros</td></tr>';
+      if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 && 
+	  defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
+	print '<tr><td>Libelle</td><td colspan="2"><input name="label" type="text" size=20 value="Cotisation '.stripslashes($adh->prenom).' '.stripslashes($adh->nom).' '.strftime("%Y",$adh->datefin).'" ></td></tr>';
+      }
       print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"</td></tr>';
       print "</form>\n";  
     }
