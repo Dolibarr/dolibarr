@@ -1,5 +1,5 @@
 -- ===========================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ create table llx_facture
   remise          real     default 0,
   tva             real     default 0,
   total           real     default 0,
+  total_ttc       real     default 0,
   fk_statut       smallint default 0 NOT NULL,
   author          varchar(50),
   fk_user         integer,   -- createur de la facture
