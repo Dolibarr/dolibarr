@@ -61,19 +61,38 @@ if ($result)
     }
 }
 
-print '<table width="100%" border="1">';
-print '<tr class="liste_titre"><td></td>';
+print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
+print '<tr class="liste_titre"><td>&nbsp;</td>';
 
-for ($annee = 2001 ; $annee < 2006 ; $annee++)
+
+$year_current = strftime("%Y",time());
+
+//$year_current = 2005;
+
+if ($year_current < (MAIN_START_YEAR + 4))
+{
+  $year_start = MAIN_START_YEAR;
+  $year_end = (MAIN_START_YEAR + 3);
+}
+else
+{
+  $year_start = $year_current - 3;
+  $year_end = $year_current ;
+}
+
+
+for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
   print '<td align="center" width="14%">'.$annee.'</td>';
 }
 print '</tr>';
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-  print '<tr>';
+  $var=!$var;
+  print "<TR $bc[$var]>";
+
   print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
-  for ($annee = 2001 ; $annee < 2006 ; $annee++)
+for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
       print '<td align="right">&nbsp;';
       $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
