@@ -101,9 +101,15 @@ drop table if exists llx_service;
 
 drop table if exists llx_soc_recontact;
 
+drop table if exists llx_train;
+
 drop table if exists llx_user;
 
 drop table if exists llx_ventes;
+
+drop table if exists llx_voyage;
+
+drop table if exists llx_voyage_reduc;
 
 drop table if exists login ;
 

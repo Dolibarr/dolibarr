@@ -1,4 +1,6 @@
 -- ===================================================================
+-- Copyright (C) 2000-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+--
 -- $Id$
 -- $Source$
 --
@@ -27,10 +29,15 @@ create table llx_bank
   dateo           date,           -- date operation
   amount          real NOT NULL default 0,
   label           varchar(255),
-  author          varchar(50),
+  fk_account      integer,
+  fk_user_author  integer,
+  fk_user_rappro  integer,
   fk_type         smallint,       -- CB, Virement, cheque
   num_releve      varchar(50),
   num_chq         int,
   rappro          tinyint default 0,
-  note            text
+  note            text,
+
+
+  author          varchar(40) -- a supprimer apres migration
 );
