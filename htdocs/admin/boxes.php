@@ -31,13 +31,13 @@ print_titre("Boites");
 
 print "<br>";
 print "Les boites sont des cartouches d'informations réduites qui s'affichent sur certaines pages. Vous pouvez choisir ou non d'activer ces cartouches en cliquant sur 'Ajouter' ou la poubelle pour les désactiver. ";
-print "Seules les boites en rapport avec un module actif sont présentées.<br>\n";
+print "Seules les boites en rapport avec un <a href=\"modules.php\">module</a> actif sont présentées.<br>\n";
 
 
-if ($HTTP_POST_VARS["action"] == 'add')
+if ($_POST["action"] == 'add')
 {
 
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$HTTP_POST_VARS["rowid"].",".$HTTP_POST_VARS["constvalue"].");";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$_POST["rowid"].",".$_POST["constvalue"].");";
 
   $result = $db->query($sql);
 }
