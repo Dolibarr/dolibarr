@@ -22,7 +22,7 @@
 
 if (! include ("conf/conf.php"))
 {
-  print "Votre système n'est pas configuré, rendez-vous à l'url <a href=\"/install.php\">install.php</a>";
+  print "Votre système n'est pas configuré, rendez-vous à l'url <a href=\"install.php\">install.php</a>";
   exit ;  
 }
 
