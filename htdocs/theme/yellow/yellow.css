@@ -17,14 +17,16 @@
  * $Id$
  * $Source$
  *
+ * Mainteneur : Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  */
-body 
-{
+body {
   margin: 0px;
   background: #ebebe0; 
   font-family: sans-serif; font-size: 0.95em; 
 }
-
+/*
+ * Onglets
+ */
 
 div.tabBar {
   color: #436976;
@@ -33,7 +35,6 @@ div.tabBar {
   margin: 0em 0em 1.5em 0em;
   border: 1px solid #8CACBB;
 }
-
 
 div.tabs {
   margin: 0em;
@@ -72,7 +73,6 @@ a.tabAction {
 a.tabAction:hover {
   background: #dee7ec;
 }
-
 
 a.tab#active {
   background: #dee7ec;
