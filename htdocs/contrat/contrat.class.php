@@ -36,15 +36,42 @@ class Contrat
     $this->db = $DB ;
     $this->product = new Product($DB);
     $this->societe = new Societe($DB);
+    $this->user_service = new User($DB);
+    $this->user_cloture = new User($DB);
   }
   /*
    *
    *
    *
    */
-  Function fetch ($id)
+  Function mise_en_service($user)
+  {
+    $sql = "UPDATE llx_contrat SET enservice = 1";
+    $sql .= " , mise_en_service = now(), fk_user_mise_en_service = ".$user->id;
+    $sql .= " WHERE rowid = ".$this->id;
+
+    $result = $this->db->query($sql) ;
+  }
+  /*
+   *
+   *
+   */
+  Function cloture($user)
+  {
+    $sql = "UPDATE llx_contrat SET enservice = 2";
+    $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
+    $sql .= " WHERE rowid = ".$this->id;
+
+    $result = $this->db->query($sql) ;
+  }
+  /*
+   *
+   *
+   */  Function fetch ($id)
     {    
-      $sql = "SELECT rowid, enservice, fk_soc, fk_product";
+      $sql = "SELECT rowid, enservice, fk_soc, fk_product, ".$this->db->pdate("mise_en_service")." as datemise";
+      $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_cloture")." as datecloture";
+      $sql .= ", fk_user_cloture";
       $sql .= " FROM llx_contrat WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
@@ -55,8 +82,12 @@ class Contrat
 
 	  $this->id          = $result["rowid"];
 	  $this->enservice   = $result["enservice"];
+	  $this->mise_en_service   = $result["datemise"];
+	  $this->date_cloture   = $result["datecloture"];
 	  $this->product->fetch($result["fk_product"]);
 	  $this->societe->fetch($result["fk_soc"]);
+	  $this->user_service->id = $result["fk_user_mise_en_service"];
+	  $this->user_cloture->id = $result["fk_user_cloture"];
 	  $this->db->free();
 	}
       else

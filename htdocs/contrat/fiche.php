@@ -37,6 +37,20 @@ if ($action == 'add')
   $action = '';
 }
 
+if ($action == 'miseenservice')
+{
+  $contrat = new Contrat($db);
+  $contrat->id = $id;
+  $contrat->mise_en_service($user);
+}
+
+if ($action == 'cloture')
+{
+  $contrat = new Contrat($db);
+  $contrat->id = $id;
+  $contrat->cloture($user);
+}
+
 if ($action == 'update' && $cancel <> 'Annuler')
 {
   $product = new Product($db);
@@ -111,9 +125,9 @@ else
       
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print '<td width="20%">Service</td><td width="40%">'.$product->ref.'</td>';
-	  print '<td>';
-	  if ($product->enservice)
+	  print '<td width="20%">Service</td><td width="40%">'.$contrat->product->label_url.'</td>';
+	  print '<td colspan="2">';
+	  if ($contrat->enservice)
 	    {
 	      print "En service";
 	    }
@@ -122,35 +136,19 @@ else
 	      print "<b>Ce contrat n'est pas en service</b>";
 	    }
 	  print '</td></tr>';
-	  print '<td>Société</td><td>'.$contrat->societe->nom_url.'</td>';
-	  print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
+	  print '<td>Société</td><td colspan="4">'.$contrat->societe->nom_url.'</td></tr>';
 
-	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
+	  print "<tr><td valign=\"top\">Mis en service</td><td>".strftime("%A %e %B %Y à %H:%M",$contrat->mise_en_service)."</td>";
+	  $contrat->user_service->fetch();
+	  print '<td>par</td><td>'.$contrat->user_service->fullname.'</td></tr>';
 
-	  if ($product->type == 1)
+	  if ($contrat->enservice == 2)
 	    {
-	      print '<tr><td>Durée</td><TD>'.$product->duration_value.'&nbsp;';
-	      if ($product->duration_value > 1)
-		{
-		  $plu = "s";
-		}
-	      switch ($product->duration_unit) 
-		{
-		case "d":
-		  print "jour$plu&nbsp;";
-		  break;
-		case "w":
-		  print "semaine$plu&nbsp;";
-		  break;
-		case "m":
-		  print 'mois&nbsp;';
-		  break;
-		case "y":
-		  print "an$plu&nbsp;";
-		  break;
-		}
-	      print '</td></tr>';
+	      print "<tr><td valign=\"top\">Cloturé</td><td>".strftime("%A %e %B %Y à %H:%M",$contrat->date_cloture)."</td>";
+	      $contrat->user_cloture->fetch();
+	      print '<td>par</td><td>'.$contrat->user_cloture->fullname.'</td></tr>';
 	    }
+
 
 	  print "</table>";
 	}
@@ -218,135 +216,26 @@ else
 
 print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
 print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
 
-if ($action == 'create')
+if ($contrat->enservice)
 {
   print '<td width="20%" align="center">-</td>';
 }
 else
 {
-  print '<td width="20%" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+  print '<td width="20%" align="center">[<a href="fiche.php?action=miseenservice&id='.$id.'">Mise en service</a>]</td>';
 }
-print '<td width="20%" align="center">-</td>';    
-print '</table><br>';
-
-if ($id && $action == '' && $product->envente)
+print '<td width="20%" align="center">-</td>';
+print '<td width="20%" align="center">-</td>';
+if ($contrat->enservice == 1)
 {
-
-  $htmls = new Form($db);
-  $propal = New Propal($db);
-
-  print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
-
-  print '<tr><td width="50%" valign="top">';
-  print_titre("Ajouter ma proposition");
-  print '</td><td width="50%" valign="top">';
-  print_titre("Ajouter aux autres propositions");
-  print '</td></tr>';
-  print '<tr><td width="50%" valign="top">';
-  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp";
-  $sql .= " FROM llx_societe as s, llx_propal as p";
-  $sql .=" WHERE p.fk_soc = s.idp AND p.fk_statut = 0 AND p.fk_user_author = ".$user->id;
-  $sql .= " ORDER BY p.datec DESC, tms DESC";
-
-  if ( $db->query($sql) )
-    {
-      $num = $db->num_rows();
-      $i = 0;
-      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-      $var=True;      
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object( $i);
-	  
-	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<td><a href=\"../comm/propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-	  print "<td><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
-	  print "<td>". strftime("%d %B %Y",$objp->dp)."</td>\n";
-	  print '<form method="POST" action="fiche.php3?id='.$id.'">';
-	  print '<input type="hidden" name="action" value="addinpropal">';
-	  print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
-	  print '<input type="text" name="qty" size="3" value="1">';
-	  print '</td><td>';
-	  print '<input type="submit" value="Ajouter">';
-	  print "</td>";
-	  print '</form></tr>';
-	  $i++;
-	}      
-      print "</table>";
-      $db->free();
-    }
-
-  print '</td><td width="50%" valign="top">';
-
-  $otherprop = $propal->liste_array(1, '<>'.$user->id);
-  if (sizeof($otherprop))
-  {
-    print '<form method="POST" action="fiche.php3?id='.$id.'">';
-    print '<input type="hidden" name="action" value="addinpropal">';
-    print '<table border="1" width="100%" cellpadding="3" cellspacing="0">';
-    print "<tr><td>Autres Propositions</td><td>";
-    $htmls->select_array("propalid", $otherprop);
-    print '</td><td>';
-    print '<input type="text" name="qty" size="3" value="1">';
-    print '</td><td>';
-    print '<input type="submit" value="Ajouter">';
-    print "</td></tr>";
-    print '</table></form>';
-  }
-  print '</td></tr>';
-
-  print '<tr><td width="50%" valign="top">';
-  print_titre("Ajouter ma facture");
-  print '</td><td width="50%" valign="top">';
-  print_titre("Ajouter aux autres factures");
-  print '</td></tr>';
-  print '<tr><td width="50%" valign="top">';
-  $sql = "SELECT s.nom, s.idp, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
-  $sql .= " FROM llx_societe as s, llx_facture as f";
-  $sql .=" WHERE f.fk_soc = s.idp AND f.fk_statut = 0 AND f.fk_user_author = ".$user->id;
-  $sql .= " ORDER BY f.datec DESC, f.rowid DESC";
-
-  if ( $db->query($sql) )
-    {
-      $num = $db->num_rows();
-      $i = 0;
-      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-      $var=True;      
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object( $i);
-	  
-	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<td><a href=\"../compta/facture.php3?facid=$objp->factureid\">$objp->facnumber</a></TD>\n";
-	  print "<td><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
-	  print "<td>". strftime("%d %B %Y",$objp->df)."</td>\n";
-	  print '<form method="POST" action="fiche.php3?id='.$id.'">';
-	  print '<input type="hidden" name="action" value="addinfacture">';
-	  print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
-	  print '<input type="text" name="qty" size="3" value="1">';
-	  print '</td><td>';
-	  print '<input type="submit" value="Ajouter">';
-	  print "</td>";
-	  print '</form></tr>';
-	  $i++;
-	}      
-      print "</table>";
-      $db->free();
-    }
-  else
-    {
-      print $db->error() . "<br>" . $sql;
-    }
-  print '</td><td width="50%" valign="top">';
-  print '</td></tr></table>';
-
+  print '<td width="20%" align="center">[<a href="fiche.php?action=cloture&id='.$id.'">Clôturer</a>]</td>';
 }
-
+else
+{
+  print '<td width="20%" align="center">-</td>';
+}
+print '</table><br>';
 
 $db->close();
 
