@@ -73,8 +73,8 @@ print "</tr>\n";
 print '<tr><td>Serveur LDAP</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
 
 print '<tr><td>DN</td><td>'.LDAP_SERVER_DN.'</td></tr>';
-print '<tr><td>DN</td><td>'.LDAP_SERVER_LOGIN.'</td></tr>';
-print '<tr><td>DN</td><td>'.LDAP_SERVER_PASS.'</td></tr>';
+print '<tr><td>Login</td><td>'.LDAP_SERVER_LOGIN.'</td></tr>';
+print '<tr><td>Pass</td><td>'.LDAP_SERVER_PASS.'</td></tr>';
 
 print '</table>';
 
@@ -119,6 +119,7 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test'
       //ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 
       $ldapbind = dolibarr_ldap_bind($ds);
+
       if ($ldapbind)
 	{
 	  print "bind ok<br>";
