@@ -120,8 +120,8 @@ class Contact
     $sql .= ", name='$this->name'";
     $sql .= ", firstname='$this->firstname'";
     $sql .= ", address='$this->address'";
-//    $sql .= ", cp='$this->cp'";
-//    $sql .= ", ville='$this->ville'";
+    $sql .= ", cp='$this->cp'";
+    $sql .= ", ville='$this->ville'";
     $sql .= ", poste='$this->poste'";
     $sql .= ", fax='$this->fax'";
     $sql .= ", email='$this->email'";
@@ -344,7 +344,11 @@ class Contact
    */
   function fetch($_id, $user=0)
     {
-        $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname, c.address, c.birthday as birthday, poste, phone, phone_perso, phone_mobile, fax, c.email, jabberid, c.note";
+        $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname";
+	$sql .= ", c.address, c.cp, c.ville";
+	$sql .= ", c.birthday as birthday, poste";
+	$sql .= ", phone, phone_perso, phone_mobile, fax, c.email, jabberid, c.note";
+
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= " WHERE c.idp = ". $_id;
     
@@ -362,6 +366,8 @@ class Contact
                 $this->prenom         = $obj->firstname;
     
                 $this->address        = $obj->address;
+                $this->cp             = $obj->cp;
+                $this->ville          = $obj->ville;
     
                 $this->societeid      = $obj->fk_soc;
                 $this->socid          = $obj->fk_soc;
