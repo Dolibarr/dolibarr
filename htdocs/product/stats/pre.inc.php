@@ -38,6 +38,8 @@ function llxHeader($head = "", $urlp = "")
   $menu->add_submenu("../fiche.php3?&action=create","Nouveau produit");
 
   $menu->add_submenu("../popuprop.php", "Popularité");
+
+  $menu->add("./", "Statistiques");
    
   left_menu($menu->liste);
   /*
