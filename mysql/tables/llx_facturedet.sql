@@ -23,12 +23,12 @@ create table llx_facturedet
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_facture      integer NOT NULL,
-  fk_product      integer,
+  fk_product      integer NOT NULL default 0,
   description     text,
-  tva_taux       real default 19.6, -- taux tva
-  qty		 real,              -- quantité
-  remise_percent real default 0,    -- pourcentage de remise
-  remise         real default 0,    -- montant de la remise
-  subprice       real,              -- prix avant remise
-  price          real               -- prix final
+  tva_taux        real default 19.6, -- taux tva
+  qty		  real,              -- quantité
+  remise_percent  real default 0,    -- pourcentage de remise
+  remise          real default 0,    -- montant de la remise
+  subprice        real,              -- prix avant remise
+  price           real               -- prix final
 );
