@@ -25,31 +25,34 @@ require("./pre.inc.php");
 llxHeader();
 
 $db = new Db();
-if ($sortfield == "") {
+if ($sortfield == "")
+{
   $sortfield="lower(l.title)";
 }
-if ($sortorder == "") {
+if ($sortorder == "")
+{
   $sortorder="ASC";
 }
-
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-
-print_barre_liste("Liste des Livres", $page, $PHP_SELF);
+print_barre_liste("Liste des Livres", $page, $PHP_SELF, "", $sortfield, $sortorder);
 
 $sql = "SELECT l.rowid, l.title, l.oscid, l.ref, l.status FROM llx_livre as l";
   
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
  
-if ( $db->query($sql) ) {
+if ( $db->query($sql) )
+{
   $num = $db->num_rows();
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\"><td>Réf.</td><td>";
+  print "<TR class=\"liste_titre\"><td>";
+  print_liste_field_titre("Réf.",$PHP_SELF, "l.ref");
+  print "</td><td>";
   print_liste_field_titre("Titre",$PHP_SELF, "l.title");
   print "</td>";
   print '<td colspan="3">&nbsp;</td>';
@@ -59,7 +62,10 @@ if ( $db->query($sql) ) {
     $objp = $db->fetch_object( $i);
     $var=!$var;
     print "<TR $bc[$var]>";
-    print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
+
+    print '<td><a href="fiche.php?id='.$objp->rowid.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche livre"></a>&nbsp;';
+
+    print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
     print "<TD width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->title</a></TD>\n";
 
 
