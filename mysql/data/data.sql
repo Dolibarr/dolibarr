@@ -518,15 +518,25 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,107,'GIE  -
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'GEIE - Groupement européen d\'intérêt économique');
 
 --
--- Formules de politesses
+-- Civilites
 --
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (1, 2, 'Madame', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (2, 2, 'Mevrouw', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (3, 2, 'Monsieur', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (4, 2, 'Meneer', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (5, 2, 'Mademoiselle', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (6, 2, 'Juffrouw', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (7, 2, 'Maître', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (1 , 'MME', 'fr_FR', 0, 'Madame', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (3 , 'MR',  'fr_FR', 0, 'Monsieur', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (5 , 'MLE', 'fr_FR', 0, 'Mademoiselle', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (7 , 'MTRE','fr_FR', 0, 'Maître', 1);
+
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (21, 'MME', 'fr_BE', 0, 'Madame', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (23, 'MR',  'fr_BE', 0, 'Monsieur', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (25, 'MLE', 'fr_BE', 0, 'Mademoiselle', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (27, 'MTRE','fr_BE', 0, 'Maître', 1);
+
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (32, 'MME', 'nl_BE', 0, 'Mevrouw', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (34, 'MR',  'nl_BE', 0, 'Meneer', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (36, 'MLE', 'nl_BE', 0, 'Juffrouw', 1);
+
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (41, 'MME', 'en_US', 0, 'Madam', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (43, 'MR',  'en_US', 0, 'Mister', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (45, 'MLE', 'en_US', 0, 'Misses', 1);
 
 
 --
