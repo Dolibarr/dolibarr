@@ -53,8 +53,9 @@ class mod_facture_saturne extends ModeleNumRefFactures
     }
 
     /*!     \brief      Renvoie la référence de facture suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \return     string      Texte descripif
+     *      \param      objsoc                  Objet société
+     *      \param      prefixe_additionnel     Prefix additionnel
+     *      \return     string                  Texte descripif
      */
     function getNumRef($objsoc=0, $prefixe_additionnel)
     { 
