@@ -97,7 +97,7 @@ print "</table></form><br>";
 /*
 * Factures brouillons
 */
-if ($conf->facture->enabled)
+if ($conf->facture->enabled && $user->rights->facture->lire)
 {
   
   $sql  = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
@@ -294,7 +294,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 }
 
 
-if ($conf->facture->enabled)
+if ($conf->facture->enabled && $user->rights->facture->lire)
 {
   
   /*
