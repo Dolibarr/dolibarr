@@ -38,8 +38,7 @@ function do_upload ($upload_dir)
       mkdir($upload_dir, 0755);
     }
 
-
-  if (move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
+  if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
     {
       print "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s.\n";
       //print_r($_FILES);
@@ -84,7 +83,7 @@ if ($id > 0)
       print "<tr><td><div class=\"titre\">Documents associés à la proposition : ".$propal->ref_url."</div></td>";
       print "</tr></table>";
 
-      echo '<FORM NAME="userfile" ACTION="document.php?id='.$propal->id.'" ENCTYPE="multipart/form-data" METHOD="POST">';      
+      echo '<FORM NAME="userfile" ACTION="document.php?id='.$propal->id.'" ENCTYPE="multipart/form-data" METHOD="POST">';
       print '<input type="hidden" name="max_file_size" value="2000000">';
       print '<input type="file"   name="userfile" size="40" maxlength="80"><br>';
       print '<input type="submit" value="Upload File!" name="sendit">';
@@ -104,13 +103,13 @@ if ($id > 0)
 	      if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 		{
 		  print '<tr><td>';
-		  echo '<a href="'.DOL_URL_ROOT.'/document/propale/'.$propal->ref.'/'.$file.'">'.$file.'</a>';
+		  echo '<a target="_blank" href="'.DOL_URL_ROOT.'/document/propale/'.$propal->ref.'/'.$file.'">'.$file.'</a>';
 		  print "</td>\n";
 		  
 		  print '<td align="right">'.filesize($upload_dir."/".$file). ' bytes</td>';
 		  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($upload_dir."/".$file)).'</td>';
 		  
-		  print '<td>';
+		  print '<td align="center">';
 		  if ($file == $propal->ref . '.pdf')
 		    {
 		      echo '-';
