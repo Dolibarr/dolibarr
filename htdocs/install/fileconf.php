@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004 Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,16 +78,31 @@ if ($err == 0)
 </td><td  class="label" valign="top"><input type="text" size="60" value="
 <?PHP
 
-if(strlen($dolibarr_main_url_root) == 0)
+if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
-$dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,strlen($_SERVER["SCRIPT_FILENAME"])- 21 );
+	# Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
+	# ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
+	if (eregi('php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('php\.exe$',$_SERVER["SCRIPT_FILENAME"])) {
+		$dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
+		if (! eregi('\/dolibarr\/htdocs$',$dolibarr_main_document_root)) {
+			$dolibarr_main_document_root.="/dolibarr/htdocs";
+		}
+	}
+	else {
+		$dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,strlen($_SERVER["SCRIPT_FILENAME"])- 21 );
+		# Nettoyage du path proposé
+		$dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);	# Gere les chemins windows avec double "\"
+		$dolibarr_main_document_root = ereg_replace('[\\\\\/]$','',$dolibarr_main_document_root);	# Supprime le "\" ou "/" de fin
+	}
 }
- print $dolibarr_main_document_root 
+print $dolibarr_main_document_root;
 ?>
 " name="main_dir">
 </td><td class="comment">
 Sans le slash "/" à la fin<br>
-exemple : /var/www/dolibarr/htdocs
+exemples :<br>
+<li>/var/www/dolibarr/htdocs</li>
+<li>C:/wwwroot/dolibarr/htdocs</li>
 </td>
 </tr>
 
@@ -96,24 +112,31 @@ URL Racine</td><td valign="top" class="label"><input type="text" size="60" name=
 <?PHP 
 if(strlen($main_url) > 0)
   $dolibarr_main_url_root=$main_url;
-if(strlen($dolibarr_main_url_root) == 0)
+if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
-  $dolibarr_main_url_root = substr($_SERVER["SCRIPT_URI"],0,strlen($_SERVER["SCRIPT_URI"])-21);
+	if (isset($_SERVER["SCRIPT_URI"])) {	# Si défini
+		$dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
+	}
+	else {									# SCRIPT_URI n'est pas toujours défini (Exemple: Apache 2.0.44 pour Windows)
+		$dolibarr_main_url_root="http://".$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"];
+	}
+	$dolibarr_main_url_root = substr($dolibarr_main_url_root,0,strlen($dolibarr_main_url_root)-12);
+	# Nettoyage de l'URL proposée
+	$dolibarr_main_url_root = ereg_replace('\/$','',$dolibarr_main_url_root);	# Supprime le /
+	$dolibarr_main_url_root = ereg_replace('\/index\.php$','',$dolibarr_main_url_root);	# Supprime le /index.php
+	$dolibarr_main_url_root = ereg_replace('\/install$','',$dolibarr_main_url_root);	# Supprime le /install
 }
 
 print $dolibarr_main_url_root ;
-
 ?>">
 </td><td class="comment">
-exemples : 
-<ul>
+exemples :<br> 
 <li>http://dolibarr.lafrere.net</li>
 <li>http://www.lafrere.net/dolibarr</li>
-</ul>
 </tr>
 
 <tr>
-<td colspan="3" align="center"><h2>Base de données<h2></td>
+<td colspan="3" align="center"><h2>Base de données Dolibarr<h2></td>
 </tr>
 <?PHP
 if (!isset($dolibarr_main_db_host))
@@ -125,30 +148,29 @@ $dolibarr_main_db_host = "localhost";
 <td valign="top" class="label">Serveur</td>
 
 <td valign="top" class="label"><input type="text" name="db_host" value="<?PHP print $dolibarr_main_db_host ?>"></td>
-<td class="comment">Nom du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</div></td>
+<td class="comment">Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</div></td>
 
 </tr>
 
 <tr>
-<td class="label">Nom de la base</td>
+<td class="label">Nom de la base de données</td>
 
 <td class="label" valign="top"><input type="text" name="db_name" value="<?PHP print $dolibarr_main_db_name ?>"></td>
-<td class="comment">Nom de votre base de données</td>
+<td class="comment">Nom de la base de données Dolibarr (sera créée si nécessaire)</td>
 </tr>
 
 <tr class="bg1">
 <td class="label" valign="top">Login</td>
 
-<td class="label"><input type="text" name="db_user" value="<?PHP print $dolibarr_main_db_user ?>"></td>
-<td class="comment">Laisser vide si vous vous connectez en anonyme</td>
+<td class="label"><input type="text" name="db_user" value="<?PHP print isset($dolibarr_main_db_user)?$dolibarr_main_db_user:'' ?>"></td>
+<td class="comment">Login de l'administrateur de la base de données Dolibarr. Laisser vide si vous vous connectez en anonymous</td>
 </tr>
 
 <tr>
 <td class="label" valign="top">Mot de passe</td>
 
-<td class="label"><input type="text" name="db_pass" value="<?PHP print $dolibarr_main_db_pass ?>"></td>
-<td class="comment">Laisser vide si vous vous connectez en anonyme</div>
-</td>
+<td class="label"><input type="text" name="db_pass" value="<?PHP print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:'' ?>"></td>
+<td class="comment">Mot de passe de l'administrateur de la base de données Dolibarr. Laisser vide si vous vous connectez en anonymous</td>
 </tr>
 
 <tr>
@@ -166,14 +188,14 @@ $dolibarr_main_db_host = "localhost";
 
 <tr>
 <td class="label" valign="top">Login</td>
-<td class="label"><input type="text" name="db_user_root" value="<?PHP if(isset($db_user_root)) print $db_user_root; ?>"></td>
-<td class="label"><div class="comment">Login de l'utilisateur ayant les droits de création de la base de données, inutile si vous êtes chez un hébergeur, votre base de données est déjà créée. Laisser vide si vous vous connectez en anonymous</div>
+<td class="label" valign="top"><input type="text" name="db_user_root" value="<?PHP if(isset($db_user_root)) print $db_user_root; ?>"></td>
+<td class="label"><div class="comment">Login de l'utilisateur ayant les droits de création de la base de données, inutile si votre base est déjà créée (comme lorsque vous êtes chez un hébergeur). Laisser vide si vous vous connectez en anonymous</div>
 </td>
 </tr>
 
 <tr>
 <td class="label" valign="top">Mot de passe</td>
-<td class="label"><input type="text" name="db_pass_root" value="<?PHP if(isset($db_pass_root)) print $db_pass_root; ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_pass_root" value="<?PHP if(isset($db_pass_root)) print $db_pass_root; ?>"></td>
 <td class="label"><div class="comment">Laisser vide si l'utilisateur n'a pas de mot de passe</div>
 </td>
 </tr>
