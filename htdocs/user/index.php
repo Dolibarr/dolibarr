@@ -44,7 +44,7 @@ if (! $sortfield) {
 
 print_titre($langs->trans("ListOfUsers"));
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login";
+$sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login, ".$db->pdate("u.datec")." as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 if ($sortfield) { $sql.=" ORDER BY $sortfield $sortorder"; }
 
@@ -62,6 +62,7 @@ if ($result)
     print_liste_field_titre($langs->trans("Firstname"),"index.php","u.firstname","","","",$sortfield);
     print_liste_field_titre($langs->trans("Login"),"index.php","u.login","","","",$sortfield);
     print_liste_field_titre($langs->trans("Code"),"index.php","u.code","","","",$sortfield);
+    print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec","","","",$sortfield);
     print "</tr>\n";
     $var=True;
     while ($i < $num)
@@ -81,6 +82,7 @@ if ($result)
             print '<td><a class="impayee" href="fiche.php?id='.$obj->rowid.'">'.img_file().' Inactif</a></td>';
         }
         print '<td>'.$obj->code.'</td>';
+        print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"%d %b %Y").'</td>';
         print "</tr>\n";
         $i++;
     }

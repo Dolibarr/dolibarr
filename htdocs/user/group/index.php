@@ -54,7 +54,7 @@ llxHeader();
 
 print_titre($langs->trans("ListOfGroups"));
 
-$sql = "SELECT g.rowid, g.nom";
+$sql = "SELECT g.rowid, g.nom, ".$db->pdate("g.datec")." as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 if ($sortfield) {
     $sql .= " ORDER BY ".$sortfield;
@@ -74,6 +74,7 @@ if ($result)
   print "<table class=\"noborder\" width=\"100%\">";
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("LastName"),"index.php","g.nom","","","",$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"),"index.php","g.datec","","","",$sortfield);
   print "</tr>\n";
   $var=True;
   while ($i < $num)
@@ -83,7 +84,7 @@ if ($result)
       
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_file().' '.$obj->nom.'</a></td>';
-
+      print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"%d %b %Y").'</td>';
       print "</tr>\n";
       $i++;
     }

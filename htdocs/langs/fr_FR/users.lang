@@ -31,3 +31,5 @@ CreateGroup=Créér le groupe
 RemoveFromGroup=Supprimer du groupe
 PasswordChangedAndSentTo=Mot de passe changé et envoyé à %s
 MenuUsersAndGroups=Utilisateurs & Groupes
+LastGroupsCreated=Les derniers groupes créés
+LastUsersCreated=Les %s derniers utilisateurs créés
