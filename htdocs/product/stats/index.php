@@ -21,9 +21,13 @@
  *
  */
 
+/*! \file htdocs/product/stats/index.php
+        \brief      Page accueil statistiques produits
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../../propal.class.php");
-//require("../../graph.class.php");
 
 llxHeader();
 
@@ -95,38 +99,41 @@ print '</table>';
 
 
 // Stats des produits en factures, propale, ...
-#print '<br>';
-#print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-#print "<tr class=\"liste_titre\">";
-#print "<td>Produit/Service</td>";
-#print "<td>Qté en facture</td>";
-#print "<td>Qté en propale</td>";
-#print "</tr>\n";
-#$sql = "SELECT p.label, sum(f.qty) as sumf, sum(pr.qty) as sumpr FROM ".MAIN_DB_PREFIX."product as p";
-#$sql.=" left join ".MAIN_DB_PREFIX."facturedet as f on p.rowid = f.fk_product";
-#$sql.=" left join ".MAIN_DB_PREFIX."propaldet as pr on p.rowid = pr.fk_product";
-#$sql.=" group by p.label";
-#if ($db->query($sql))
-#{
-#  $num = $db->num_rows();
-#  $i = 0;
-#      while ($i < $num)
-#	{
-#		$obj = $db->fetch_object( $i);
-#		print "<tr ".$bc[$var].">";
-#		print "<td>".$obj->label."</td>";
-#		print "<td>".$obj->sumf."</td>";
-#		print "<td>".$obj->sumpr."</td>";
-#		print '</tr>';
-#		$i++;
-#	}
-#}
-#else {
-#	print $db->error()." $sql";	
-#}
-#print "</table>\n";
-#$db->free();
+/*
+print '<br>';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print "<tr class=\"liste_titre\">";
+print "<td>Produit/Service</td>";
+print "<td>Qté en facture</td>";
+print "<td>Qté en propale</td>";
+print "</tr>\n";
+$sql = "SELECT p.label, sum(f.qty) as sumf, sum(pr.qty) as sumpr FROM ".MAIN_DB_PREFIX."product as p";
+$sql.=" left join ".MAIN_DB_PREFIX."facturedet as f on p.rowid = f.fk_product";
+$sql.=" left join ".MAIN_DB_PREFIX."propaldet as pr on p.rowid = pr.fk_product";
+$sql.=" group by p.label";
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0;
+      while ($i < $num)
+	{
+		$obj = $db->fetch_object( $i);
+		print "<tr ".$bc[$var].">";
+		print "<td>".$obj->label."</td>";
+		print "<td>".$obj->sumf."</td>";
+		print "<td>".$obj->sumpr."</td>";
+		print '</tr>';
+		$i++;
+	}
+}
+else {
+	print $db->error()." $sql";	
+}
+print "</table>\n";
+$db->free();
+*/
 
+       
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");

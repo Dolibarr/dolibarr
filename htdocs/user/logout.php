@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2003 Xavier Dutoit <doli@sydesy.com>
+ * Copyright (C) 2003 Xavier Dutoit        <doli@sydesy.com>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +22,10 @@
  *
  */
 
-/**
-* Pour se déconnecter
-* @package User
+/*! \file htdocs/user/logout.php
+        \brief  Fichier de deconnexion
 */
+
 if (!empty ($_SERVER["REMOTE_USER"]))
    die("La d&eacute;connection ne fonctionne actuellement que pour l'authentification par pear");
 
