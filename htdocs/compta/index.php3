@@ -50,14 +50,22 @@ function valeur($sql) {
 $db = new Db();
 
 
-if ($action == 'add_bookmark') {
+if ($action == 'add_bookmark')
+{
+  $sql = "DELETE FROM llx_bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
+  if (! $db->query($sql) )
+    {
+      print $db->error();
+    }
   $sql = "INSERT INTO llx_bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
-  if (! $db->query($sql) ) {
-    print $db->error();
-  }
+  if (! $db->query($sql) )
+    {
+      print $db->error();
+    }
 }
 
-if ($action == 'del_bookmark') {
+if ($action == 'del_bookmark')
+{
   $sql = "DELETE FROM llx_bookmark WHERE rowid=$bid";
   $result = $db->query($sql);
 }
@@ -176,7 +184,8 @@ $sql .= " FROM llx_societe as s, llx_bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
 $sql .= " ORDER BY lower(s.nom) ASC";
 
-if ( $db->query($sql) ) {
+if ( $db->query($sql) )
+{
   $num = $db->num_rows();
   $i = 0;
 
@@ -185,16 +194,17 @@ if ( $db->query($sql) ) {
   print "<TD colspan=\"2\">Bookmark</td>";
   print "</TR>\n";
 
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
-    $var = !$var;
-    print "<tr $bc[$var]>";
-    print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-    print '<td align="right"><a href="index.php3?action=del_bookmark&bid='.$obj->bid.'">';
-    print '<img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
-    print '</tr>';
-    $i++;
-  }
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);
+      $var = !$var;
+      print "<tr $bc[$var]>";
+      print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+      print '<td align="right"><a href="index.php3?action=del_bookmark&bid='.$obj->bid.'">';
+      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+      print '</tr>';
+      $i++;
+    }
   print '</table>';
 }
 /*
@@ -233,12 +243,12 @@ if ( $result ) {
 
 
 /*
- * Charges a payer
+ * Factures a payer
  *
  */
 if ($user->societe_id == 0)
 {
-  $sql = "SELECT ff.amount, ff.libelle";
+  $sql = "SELECT ff.total_ttc as amount, ff.libelle, ff.rowid";
   $sql .= " FROM llx_facture_fourn as ff";
   $sql .= " WHERE ff.paye=0";
   
@@ -249,7 +259,7 @@ if ($user->societe_id == 0)
 	{
 	  print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<TR class="liste_titre">';
-	  print '<TD colspan="2">Charges à payer</td>';
+	  print '<TD colspan="2">Factures à payer</td>';
 	  print "</TR>\n";
 	  $i = 0;
 	  
@@ -258,7 +268,7 @@ if ($user->societe_id == 0)
 	      $obj = $db->fetch_object( $i);
 	      $var = !$var;
 	      print "<tr $bc[$var]>";
-	      print '<td>'.$obj->libelle.'</td>';
+	      print '<td><a href="../fourn/facture/fiche.php3?facid='.$obj->rowid.'">'.$obj->libelle.'</a></td>';
 	      print '<td align="right">'.price($obj->amount).'</td>';
 	      print '</tr>';
 	      $i++;
