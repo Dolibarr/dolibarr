@@ -230,6 +230,8 @@ class pdf_propale_vert extends ModelePDFPropales
 
   function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
+      global $langs;
+      
       $yt = 100;
       $pdf->SetFont('Arial','',10);
             
