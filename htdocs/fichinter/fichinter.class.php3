@@ -161,11 +161,13 @@ class Fichinter {
 	      $this->statut     = $obj->fk_statut;
 	      
 	      $this->db->free();
+	      return 1;
 	    }
 	}
       else
 	{
 	  print $this->db->error();
+	  return 0;
 	}    
     }
   /*
