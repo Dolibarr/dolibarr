@@ -71,17 +71,45 @@ if ($_GET["action"] == 'delete')
 
 if ($_GET["action"] == 'switch')
 {
-    // \todo faire permutation
+    // On permute les valeur du champ box_order des 2 lignes de la table boxes
+    $db->begin();
+
+    $sql="SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["switchfrom"];
+    $resultfrom = $db->query($sql);
+    if ($resultfrom)
+    {
+        $objfrom = $db->fetch_object($resultfrom);
+    } else
+    {
+        dolibarr_print_error($db);   
+    }
+    $sql="SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["switchto"];
+    $resultto = $db->query($sql);
+    if ($resultto)
+    {
+        $objto = $db->fetch_object($resultto);
+    } else
+    {
+        dolibarr_print_error($db);   
+    }
+    if ($objfrom && $objto) {
+        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objto->box_order." WHERE rowid=".$_GET["switchfrom"];
+        $resultupdatefrom = $db->query($sql);
+        if (! $resultupdatefrom) { dolibarr_print_error($db); }
+        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objfrom->box_order." WHERE rowid=".$_GET["switchto"];
+        $resultupdateto = $db->query($sql);
+        if (! $resultupdateto) { dolibarr_print_error($db); }
+    }        
+
+    if ($resultupdatefrom && $resultupdateto)
+    {
+        $db->commit();
+    }
+    else {
+        $db->rollback();
+    }
 
 }
-
-
-
-
-// On renumérote l'ordre des boites si tout est à 0 (pour compatibilite avec anciennes versions)
-// \todo
-
-
 
 
 /*
@@ -90,7 +118,7 @@ if ($_GET["action"] == 'switch')
  *
  */
 
-$sql  = "SELECT b.rowid, b.box_id, b.position, d.name";
+$sql  = "SELECT b.rowid, b.box_id, b.position, b.box_order, d.name";
 $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
 $sql .= " where b.box_id = d.rowid";
 $sql .= " ORDER by position, box_order";
@@ -98,18 +126,26 @@ $result = $db->query($sql);
 
 if ($result) 
 {
-  $num = $db->num_rows();
-  $i = 0;
-
-  while ($i < $num)
+    $num = $db->num_rows();
+    $i = 0;
+    $decalage=0;    
+    while ($i < $num)
     {
-      $var = ! $var;
-      $obj = $db->fetch_object($result);
-      $boxes[$obj->position][$obj->box_id]=1;
-      $i++;
+        $var = ! $var;
+        $obj = $db->fetch_object($result);
+        $boxes[$obj->position][$obj->box_id]=1;
+        $i++;
+        
+        // On renumérote l'ordre des boites si l'une d'elle est à 0 (Ne doit arriver que sur des anciennes versions)
+        if ($obj->box_order==0) $decalage++;
+        if ($decalage) {
+            $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=box_order+".$decalage." WHERE rowid=".$obj->rowid;
+            $db->query($sql);
+        }
     }
+
+    $db->free($result);
 }
-$db->free();
 
 
 /*
@@ -162,8 +198,9 @@ if ($result)
     
         $i++;
     }
+
+    $db->free($result);
 }
-$db->free();
 
 print '</table>';
 
@@ -228,15 +265,10 @@ if ($result)
       $obj=$objnext;
     }
 
-
-
+    $db->free($result);
 }
 
 
-
-
-
-$db->free();
 
 print '</table><br>';
 
