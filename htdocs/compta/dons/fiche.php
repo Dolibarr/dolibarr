@@ -130,13 +130,13 @@ if ($action == 'create') {
   
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   
-  print "<tr><td>Date du don :</td><td>";
+  print "<tr><td>Date du don</td><td>";
   print_date_select();
   print "</td>";
   
   print '<td rowspan="11" valign="top">Commentaires :<br>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
-  print "<tr><td>Type :</td><td>\n";
+  print "<tr><td>Mode de paiement</td><td>\n";
   
   $paiement = new Paiement($db);
 
@@ -144,7 +144,7 @@ if ($action == 'create') {
 
   print "</td></tr>\n";
 
-  print "<tr><td>Projet :</td><td><select name=\"projetid\">\n";
+  print "<tr><td>Projet</td><td><select name=\"projetid\">\n";
   
   $sql = "SELECT rowid, libelle FROM llx_don_projet ORDER BY rowid";
   
@@ -166,7 +166,7 @@ if ($action == 'create') {
   print "</select><br>";
   print "</td></tr>\n";
 
-  print "<tr><td>Don public :</td><td><select name=\"public\">\n";
+  print "<tr><td>Don public</td><td><select name=\"public\">\n";
   
   print '<option value="1">oui</option>';
   print '<option value="0">non</option>';
@@ -205,7 +205,7 @@ if ($rowid > 0 && $action == 'edit')
   print "<form action=\"$PHP_SELF\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
-  print "<tr><td>Date du don :</td><td>";
+  print "<tr><td>Date du don</td><td>";
   print strftime("%d %B %Y",$don->date);
   print "</td>";
   
@@ -214,7 +214,7 @@ if ($rowid > 0 && $action == 'edit')
 
   if ($don->statut == 1)
     {
-      print "<tr><td>Type :</td><td>";
+      print "<tr><td>Mode de paiement</td><td>";
       $paiement = new Paiement($db);
       $paiement->select("modepaiement","crédit", $don->modepaiementid);
       print "</td></tr>\n";
@@ -222,14 +222,14 @@ if ($rowid > 0 && $action == 'edit')
 
   if ($don->statut > 1)
     {
-      print "<tr><td>Type :</td><td>";
+      print "<tr><td>Mode de paiement</td><td>";
       print $don->modepaiement;
       print "</td></tr>\n";
     }
 
-  print '<tr><td>Projet :</td><td>'.$don->projet.'</td></tr>';
+  print '<tr><td>Projet</td><td>'.$don->projet.'</td></tr>';
 
-  print "<tr><td>Don public :</td><td>";
+  print "<tr><td>Don public</td><td>";
 
   print $yn[$don->public];
   print "</td></tr>\n";
@@ -253,7 +253,7 @@ if ($rowid > 0 && $action == 'edit')
    * Case 1
    */
 
-  print '<td align="center" width="25%"><a href="edit.php?rowid='.$don->id.'">Editer</a></td>';
+  print '<td align="center" width="25%">[<a href="edit.php?rowid='.$don->id.'">Editer</a>]</td>';
 	
   /*
    * Case 2
@@ -298,7 +298,7 @@ if ($rowid > 0 && $action == 'edit')
     }
   elseif ($don->statut == 2)
     {
-      print "<td align=\"center\" width=\"25%\"><a href=\"$PHP_SELF?rowid=$don->id&action=set_encaisse\">Encaissé</a></td>";
+      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=set_encaisse\">Encaisser</a>]</td>";
     }
   else
     {

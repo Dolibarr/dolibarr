@@ -37,6 +37,7 @@ if ($action == 'update')
       $don->id          = $HTTP_POST_VARS["rowid"];
       $don->prenom      = $prenom;
       $don->nom         = $nom;  
+      $don->statut      = $HTTP_POST_VARS["statutid"];  
       $don->societe     = $societe;
       $don->adresse     = $adresse;
       $don->amount      = $amount;
@@ -67,6 +68,8 @@ if ($action == 'update')
 llxHeader();
 
 
+if ($rowid)
+{
 
   $don = new Don($db);
   $don->id = $rowid;
@@ -92,13 +95,27 @@ llxHeader();
   print "<input type=\"hidden\" name=\"action\" value=\"update\">";
   print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
   
-  print "<tr><td>Date du don :</td><td>";
+  print "<tr><td>Date du don</td><td>";
   print_date_select($don->date);
   print "</td>";
   
-  print '<td rowspan="11" valign="top">Commentaires :<br>';
+  print '<td rowspan="13" valign="top">Commentaires :<br>';
   print '<textarea name="comment" wrap="soft" cols="40" rows="15">'.$don->commentaire.'</textarea></td></tr>';
-  print "<tr><td>Type :</td><td>\n";
+
+  print "<tr><td>Statut du don</td><td>";
+
+  $listst[0] = "Promesse à valider";
+  $listst[1] = "Promesse validée";
+  $listst[2] = "Don payé";
+  $listst[3] = "Don encaissé";
+
+
+  $sel = new Form($db);
+  $sel->select_array("statutid",$listst,$don->statut);
+
+  print "</td></tr>";
+
+  print "<tr><td>Mode de paiement</td><td>\n";
   
   $paiement = new Paiement($db);
 
@@ -106,7 +123,7 @@ llxHeader();
 
   print "</td></tr>\n";
 
-  print "<tr><td>Projet :</td><td>\n";
+  print "<tr><td>Projet</td><td>\n";
 
   $prj = new ProjetDon($db);
   $listeprj = $prj->liste_array();
@@ -118,17 +135,17 @@ llxHeader();
   print "<br>";
   print "</td></tr>\n";
 
-  print "<tr><td>Don public :</td><td><select name=\"public\">\n";
-if ($don->public) 
-{
-  print '<option value="1" SELECTED>oui</option>';
-  print '<option value="0">non</option>';
-}
-else
-{
-  print '<option value="1">oui</option>';
-  print '<option value="0" SELECTED>non</option>';
-}
+  print "<tr><td>Don public</td><td><select name=\"public\">\n";
+  if ($don->public) 
+    {
+      print '<option value="1" SELECTED>oui</option>';
+      print '<option value="0">non</option>';
+    }
+  else
+    {
+      print '<option value="1">oui</option>';
+      print '<option value="0" SELECTED>non</option>';
+    }
   print "</select><br>";
   print "</td></tr>\n";
 
@@ -145,7 +162,7 @@ else
   print "</form>\n";
   print "</table>\n";
        
-
+}
 
 $db->close();
 

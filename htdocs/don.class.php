@@ -213,6 +213,7 @@ class Don
       $sql .= ",note='".$this->commentaire."'";
       $sql .= ",datedon='".$this->date."'";
       $sql .= ",email='".$this->email."'";
+      $sql .= ",fk_statut=".$this->statut;
 
       $sql .= " WHERE rowid = $this->id";
       
