@@ -18,11 +18,14 @@
  * $Source$
  *
  */
+
+@import url("new.css");
+
 body 
 {
-  background: #dcdad5; 
-  margin: 0px;
-  font-family: sans-serif; font-size: 0.7em;
+  background: white;
+  font-family: sans-serif;
+  font-size: 0.7em;
 }
 
 /*
@@ -31,12 +34,21 @@ body
 div.tabs 
 {
   float: none;
-  margin: 0em;
-  padding: 0em 0em;
+  margin: 0px;
+  padding: 0px;
   text-align: left;
- font-family: sans-serif; font-size: 0.7em;
-
+  font-family: sans-serif; font-size: 12px;
   }
+
+div.tabBar
+{
+  float: none;
+  background: #dcdcd3;
+  padding: 0em 0.5em 0.5em;
+  margin: 0em 0em 0.5em 0em;
+  border: 1px solid #8CACBB;
+  }
+
 
 a.tabTitle {
  background: #436976;
@@ -71,12 +83,6 @@ a.tabimage {
   white-space: nowrap;
 }
 
-div.tabBar {
-  background: #dcdcd3;
-  padding: 0em 0.5em 0.5em;
-  margin: 0em 0em 0.5em 0em;
-  border: 1px solid #8CACBB;
-}
 
 div.tabsAction {
   margin: 0em 0em 0.5em 0em ;
@@ -165,7 +171,7 @@ a {
     color: #000000;
     }
 
-a:hover { text-decoration: underline;  }
+
 
 td.menu { 
           border-bottom: 1px solid #000000;

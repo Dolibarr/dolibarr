@@ -44,6 +44,13 @@ if ($action == 'update')
 
 llxHeader("","",$langs->trans("ProductsAndServices"));
 
+print '<div class="formsearch"><form action="liste.php" method="post">';
+print '<input type="hidden" name="type" value="'.$product->type.'">';
+print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
+
+print 'Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
+print '</form></div>';
+
 print_titre($langs->trans("ProductsAndServices"));
 
 print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
@@ -69,8 +76,8 @@ if ($db->query($sql))
   $db->free();
 }
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Number").'</td></tr>';
+print '<table class="liste">';
+print '<tr><th colspan="2">'.$langs->trans("Number").'</th></tr>';
 if ($conf->produit->enabled)
 {
     print "<tr $bc[0]>";
@@ -113,9 +120,9 @@ if ($result)
     
   if ($num > 0)
     {
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+      print '<table class="liste">';
 
-      print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastRecorded").'</td></tr>';
+      print '<tr><th colspan="3">'.$langs->trans("LastRecorded").'</th></tr>';
     
       $var=True;
       while ($i < $num)

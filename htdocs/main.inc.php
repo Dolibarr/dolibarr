@@ -474,7 +474,7 @@ function top_menu($head, $title="", $target="")
 
   print "</head>\n";
   print '<body>';
-
+  print '<div class="body">';
   /*
    * Mise à jour entre 2 versions
    *
@@ -489,52 +489,33 @@ function top_menu($head, $title="", $target="")
     }
 
   /*
-   * Barre superieure
+   * Barre de menu supérieure
    *
    */
+  print '<div class="tmenu">'."\n";
 
-  print '<table class="topbarre" width="100%">';
-  print "<tr>";
+  print '<a class="tmenu" href="'.DOL_URL_ROOT.'/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Home").'</a>';
 
-  // Sommet menu de gauche, lien accueil
-  $class="";
-  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "accueil") { $class="menusel"; }
-  elseif (ereg("^".DOL_URL_ROOT."\/[^\\\/]+$",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/user\/",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/admin\/",$_SERVER["PHP_SELF"])) { $class="menusel"; }
-  print '<td width="200" class="menu"><table cellpadding=0 cellspacing=0 width="100%"><tr><td class="'.$class.'" align=center><a class="'.$class.'" href="'.DOL_URL_ROOT.'/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Home").'</a></td></tr></table></td>';
-
-  // Sommet géré par gestionnaire de menu du haut
-  print '<td class="menu">';
   if (!defined(MAIN_MENU_BARRETOP))
     {
       define("MAIN_MENU_BARRETOP","default.php");
     }
   require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".MAIN_MENU_BARRETOP);
-  print '</td>';
+
 
   // Logout
-  print '<td width="120" class="menu" align="center" valign="center">' ;
+
   if (! $_SERVER["REMOTE_USER"])  // Propose ou non de se deloguer si authentication Apache ou non
     {
-      print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->login.'</a>' ;
-
+      print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->login.'</a>' ;
       print '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
-      print '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" alt="'.$langs->trans("Logout").'" title="'.$langs->trans("Logout").'"></a>';
-
+      print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" alt="'.$langs->trans("Logout").'" title="'.$langs->trans("Logout").'"></a>';      
     }
   else
     {
       print $user->login ;
     }
-  print '</td>';
-  
-  print "</tr>\n";
-
-  /*
-   * Table principale
-   *
-   */
-  print '<tr><td valign="top">';
-
+  print "</div><!-- class=tmenu -->\n";
 }
 
 /*
@@ -551,17 +532,25 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
    *
    */
   print "\n<!-- Debut left menu -->\n";
-
+  print '<div class="vmenu">'."\n";
+  
   for ($i = 0 ; $i < sizeof($menu) ; $i++) 
     {
-      print '<div class="leftmenu">'."\n";
-      print '<a class="leftmenu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a>';
+      if (($i%2==0))
+	{
+	  print '<div class="blockvmenuimpair">'."\n";
+	}
+      else
+	{
+	  print '<div class="blockvmenupair">'."\n";
+	}
+      print '<a class="vmenu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a><br>';
 
       for ($j = 2 ; $j < sizeof($menu[$i]) - 1 ; $j = $j +2) 
 	{
-	  print '<br><a class="leftsubmenu" href="'.$menu[$i][$j].'">'.$menu[$i][$j+1].'</a>';
-	}      
-      print "</div>\n";
+	  print '<a class="vsmenu" href="'.$menu[$i][$j].'">'.$menu[$i][$j+1].'</a><br>';
+	}
+      print '</div>';
     }
 
   /*
@@ -572,69 +561,62 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
   if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0) $addzonerecherche=1;
   if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0) $addzonerecherche=1;
   
-  if ($addzonerecherche) {
-    
-    print '<div class="leftmenu">'."\n";
-
-    if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
-    {
-      $langs->load("companies");
-    
-      if (strstr($_SERVER["SCRIPT_URL"], "/comm/prospect/"))
-      {
-        $url=DOL_URL_ROOT.'/comm/prospect/prospects.php';
-      }
-      else
-      {
-        $url=DOL_URL_ROOT.'/societe.php';
-      }
-    
-      printSearchForm($url,DOL_URL_ROOT.'/comm/clients.php',$langs->trans("Companies"),'soc','socname');
+  if ($addzonerecherche)
+    {    
+      if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
+	{
+	  $langs->load("companies");
+	  
+	  if (strstr($_SERVER["SCRIPT_URL"], "/comm/prospect/"))
+	    {
+	      $url=DOL_URL_ROOT.'/comm/prospect/prospects.php';
+	    }
+	  else
+	    {
+	      $url=DOL_URL_ROOT.'/societe.php';
+	    }
+	  
+	  printSearchForm($url,DOL_URL_ROOT.'/comm/clients.php',$langs->trans("Companies"),'soc','socname');
+	}
+      
+      if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
+	{
+	  $langs->load("companies");
+	  printSearchForm(DOL_URL_ROOT.'/contact/index.php',DOL_URL_ROOT.'/contact/index.php',$langs->trans("Contacts"),'contact','contactname');
+	}
+      
+      if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0)
+	{
+	  $langs->load("products");
+	  printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/',$langs->trans("Products")."/".$langs->trans("Services"),'products','sall');
+	}                  
     }
-    
-    if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
-    {
-      $langs->load("companies");
-      printSearchForm(DOL_URL_ROOT.'/contact/index.php',DOL_URL_ROOT.'/contact/index.php',$langs->trans("Contacts"),'contact','contactname');
-    }
-    
-    if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0)
-    {
-      $langs->load("products");
-      printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/',$langs->trans("Products")."/".$langs->trans("Services"),'products','sall');
-    }
-
-    print "</div>";
-
-  }
-
+  
   /*
    * Zone de recherche supplémentaire
    */
-
+  
   if (strlen($form_search) > 0)
     {
-      print '<div class="leftmenu">';
       print $form_search;
-      print '</div>';
     }
-
+  
   /*
    * Lien vers l'aide en ligne
    */
 
   if (strlen($help_url) > 0)
     {
-      print '<div class="leftmenu">';
+
       define('MAIN_AIDE_URL','http://www.dolibarr.com/wikidev/index.php');
-      print '<a class="leftmenu" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">'.$langs->trans("Help").'</a></div>';
+      print '<a class="leftmenu" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">'.$langs->trans("Help").'</a>';
     }
 
-
-
+  print "</div>\n";
   print "<!-- Fin left menu -->\n";
-  print "</td>";
-  print "<td valign=\"top\" colspan=\"2\">\n";
+
+
+  print '<div class="fiche">'."\n";
 
 }
 
@@ -649,13 +631,15 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
  */
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
-	  print '<form action="'.$urlaction.'" method="post">';
-	  print '<a class="menu" href="'.$urlobject.'">'.$title.'</a><br>';
-	  print '<input type="hidden" name="mode" value="search">';
-	  print '<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
-	  print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
-	  print '<input type="submit" class="flat" value="go">';
-	  print "</form>\n";
+  print '<div class="vblockmenupair">';
+  print '<form action="'.$urlaction.'" method="post">';
+  print '<a class="vmenu" href="'.$urlobject.'">'.$title.'</a><br>';
+  print '<input type="hidden" name="mode" value="search">';
+  print '<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
+  print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
+  print '<input type="submit" class="flat" value="go">';
+  print "</form>\n";
+  print "</div>\n";
 }
 
 
@@ -666,29 +650,8 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 function llxFooter($foot='') 
 {
   global $dolibarr_auto_user;
-  print "\n</td></tr>\n";
-  /*
-   *
-   */
-  print "</table>\n";
-
-  /* Suppression temporaire, mauvais affichage sur petit ecran
-
-  print '<p id="powered-by-dolibarr">';
-  print '<a href="http://savannah.gnu.org/bugs/?group_id=1915">Bug report</a>&nbsp;';
-  //  print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>&nbsp;'.$foot.'</p>';
-  // Suppression temporaire du footer
-  print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a></p>';
-  if (!empty ($dolibarr_auto_user))
-    {
-      print '<p>
-      <a href="http://validator.w3.org/check/referer"><img border="0"
-          src="http://www.w3.org/Icons/valid-html40"
-          alt="Valid HTML 4.0!" height="31" width="88"></a>
-      </p>';
-    }
-  */
-
-  print "</body></html>";
+  print "\n".'</div><!-- div class="fiche" -->'."\n";
+  print '</div><!-- div class="body" -->'."\n";
+  print "</body>\n</html>\n";
 }
 ?>
