@@ -43,9 +43,9 @@ function llxHeader($head = "") {
 
       if ($user->rights->societe->creer)
 	{
-	  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", "Nouvelle société");
+	  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewCompany"));
 	}
-      $menu->add_submenu(DOL_URL_ROOT."/societe/groupe/index.php", $langs->trans("SocGroup"));
+      $menu->add_submenu(DOL_URL_ROOT."/societe/groupe/index.php", $langs->trans("MenuSocGroup"));
       $menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
     }
 
