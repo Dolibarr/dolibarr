@@ -50,6 +50,34 @@ if ($action == 'del')
     }
 }
 
+// positionne la variable pour le test d'affichage de l'icone
+
+$propale_addon_var_pdf = PROPALE_ADDON_PDF;
+
+if ($action == 'setpdf')
+{
+  $sql = "REPLACE INTO llx_const SET name = 'PROPALE_ADDON_PDF', value='".$value."', visible=0";
+
+  if ($db->query($sql))
+    {
+      // la constante qui a été lue en avant du nouveau set
+      // on passe donc par une variable pour avoir un affichage cohérent
+      $propale_addon_var_pdf = $value;
+    }
+  /*
+   * On la set active
+   */
+  $sql = "INSERT INTO llx_propal_model_pdf (nom) VALUES ('".$value."')";
+
+  if ($db->query($sql))
+    {
+
+    }
+
+}
+
+
+
 $def = array();
 
 $sql = "SELECT nom FROM llx_propal_model_pdf";
@@ -66,22 +94,6 @@ if ($db->query($sql))
 else
 {
   print $db->error();
-}
-
-// positionne la variable pour le test d'affichage de l'icone
-
-$propale_addon_var_pdf = PROPALE_ADDON_PDF;
-
-if ($action == 'setpdf')
-{
-  $sql = "REPLACE INTO llx_const SET name = 'PROPALE_ADDON_PDF', value='".$value."', visible=0";
-
-  if ($db->query($sql))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      $propale_addon_var_pdf = $value;
-    }
 }
 
 $dir = "../includes/modules/propale/";
