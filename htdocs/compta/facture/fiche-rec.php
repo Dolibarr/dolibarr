@@ -436,7 +436,7 @@ else
 
 		print '<td><a class="'.$class.'" href="fiche-rec.php?facid='.$objp->facid.'">' . $objp->titre;
 		print "</a></TD>\n";
-		print '<TD><a class="'.$class.'" href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		print '<TD><a class="'.$class.'" href="../fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		
 		print "<TD align=\"right\">".price($objp->total)."</TD>\n";
 		
