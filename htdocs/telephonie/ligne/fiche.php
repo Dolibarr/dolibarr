@@ -54,8 +54,22 @@ if ($_POST["action"] == 'add')
     {
       $_GET["action"] = 'create';
       $_GET["contratid"] = $_POST["contrat"];
+    }  
+}
+
+if ($_POST["action"] == 'updateremise')
+{
+  $ligne = new LigneTel($db);
+  $ligne->id = $_GET["id"];
+
+  if ( $ligne->SetRemise($user, $_POST["remise"], $_POST["comment"]) == 0)
+    {
+      Header("Location: fiche.php?id=".$ligne->id);
     }
-  
+  else
+    {
+      $_GET["action"] = 'editremise';
+    }  
 }
 
 if ($_POST["action"] == 'addcontact')
@@ -590,7 +604,7 @@ else
 
 	      print '</td></tr>';
 
-	      print '<tr><td width="20%">Fournisseur</td><td>';
+	      print '<tr><td width="20%">Fournisseur</td><td colspan="2">';
 
 	      $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur";
 	      $sql .= " WHERE commande_active = 1 AND rowid = ".$ligne->fournisseur_id;
@@ -607,7 +621,8 @@ else
 		}	      	      
 	      print '</td></tr>';
 
-	      print '<tr><td width="20%">Remise LMN</td><td colspan="2">'.$ligne->remise.'&nbsp;%</td></tr>';
+	      print '<tr><td width="20%">Remise LMN</td><td>'.$ligne->remise.'&nbsp;%</td>';
+	      print '<td><a href="remises.php?id='.$ligne->id.'">historique</a></td></tr>';
 
 	      $commercial = new User($db, $ligne->commercial_id);
 	      $commercial->fetch();
@@ -662,17 +677,33 @@ else
 	  
 	      /* Fin Contacts */
 
-	      if ($_GET["action"] <> 'edit' && 0)
+
+	      print "</table><br />";
+
+	      if ($_GET["action"] == "editremise" &&  $ligne->statut <> 6)
 		{
-		  print '<tr><td width="20%">Point de rentabilité</td><td colspan="2">';	  
+		  /**
+		   * Edition de la remise
+		   */
 
-
-		  print '<img src="./graphrent.php?remise='.$ligne->remise.'">';
-		  
+		  print '<form action="fiche.php?id='.$ligne->id.'" method="POST">';
+		  print '<input type="hidden" name="action" value="updateremise">';
+		  print '<table class="border" width="100%" cellpadding="4" cellspacing="0">';
+		  print '<tr class="liste_titre"><td colspan="2">Modification de la remise Local/Mobile/National</td></tr>';
+		  print '<tr><td>Nouvelle remise LMN</td><td>';
+		  print '<input size="4" type="text" name="remise" value="'.$ligne->remise.'" maxlength="3">&nbsp;%';
 		  print '</td></tr>';
+
+		  print '<tr><td width="20%">Commentaire</td><td><input size="40" type="text" name="comment"></td></tr>';
+
+		  print '<tr><td align="center" colspan="2"><input type="submit" name="Activer"></td></tr>';
+
+		  print '</table><br />';
+		  
+		  print '</form>';
 		}
 
-	      print "</table>";
+
 	    }
 	
 
@@ -870,7 +901,7 @@ else
 	       */
 
 
-	      print '<tr><td width="20%">Remise LMN</td><td><input name="remise" size="3" maxlength="2" value="'.$ligne->remise.'">&nbsp;%</td></tr>';
+	      print '<tr><td width="20%">Remise LMN</td><td>'.$ligne->remise.'&nbsp;%</td></tr>';
 	  
 
 	      print '<tr><td width="20%" valign="top">Note</td><td>';
@@ -1089,10 +1120,18 @@ if ($_GET["action"] == '')
     {
       print "<a class=\"tabAction\" href=\"fiche.php?action=annuleresilier&amp;id=$ligne->id\">".$langs->trans("Annuler la demande de résiliation")."</a>";
     }
-
+  
+  if ( $user->rights->telephonie->ligne_activer && $ligne->statut <> 6)
+    {
   print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$ligne->id\">".$langs->trans("Contact")."</a>";
+    }
 
-  print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Edit")."</a>";
+  print "<a class=\"tabAction\" href=\"fiche.php?action=editremise&amp;id=$ligne->id\">".$langs->trans("Changer la remise")."</a>";
+
+  if ( $user->rights->telephonie->ligne_activer && $ligne->statut == -1)
+    {
+      print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Edit")."</a>";
+    }
       
 }
 
