@@ -33,66 +33,13 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/comm/clients.php3", "Clients");
+  $menu->add("../facture.php3","Factures");
 
-  if ($conf->don->enabled)
-    {
-      $menu->add("/compta/dons/","Dons");
-    }
+  $menu->add_submenu("../paiement.php3","Paiements");
 
-  $menu->add("/compta/facture.php3","Factures");
-  $menu->add_submenu("/compta/paiement.php3","Paiements");
-
-  if ($user->comm > 0 && $conf->commercial ) 
-    {
-      $menu->add("/compta/propal.php3","Propales");
-    }
-
-  /*
-   * Sécurité accés client
-   */
-  if ($user->societe_id == 0) 
-    {
-      $menu->add("/compta/charges/index.php3","Charges");
-      $menu->add_submenu("/compta/sociales/","Prest. Sociales");
-    }
-  $menu->add("ca.php3","Chiffre d'affaire");
-
-  if ($user->societe_id == 0) 
-    {
-      $menu->add_submenu("/compta/prev.php3","Prévisionnel");
-      $menu->add_submenu("/compta/comp.php3","Comparatif");
-      $menu->add_submenu("/compta/exercices.php3","Exercices");
-      $menu->add_submenu("/compta/casoc.php3","Par société");
-    }
-
-
-  if ($conf->compta->tva && $user->societe_id == 0)
-    {
-      $menu->add("/compta/tva/index.php3","TVA");
-    }
-
-  if ($user->societe_id == 0) 
-    {
-      $menu->add("/compta/resultat/","Résultats");
-      $menu->add("/compta/bank/index.php3","Bank");
-    }
-
-
-  $menu->add("/fourn/index.php3", "Fournisseurs");
-
-  if ($user->compta > 0) 
-    {
-
-    } 
-  else 
-    {
-      $menu->clear();
-      $menu->add("/index.php3","Accueil");      
-    }
+  $menu->add(DOL_URL_ROOT."/compta/stats/","Chiffre d'affaire");
 
   left_menu($menu->liste);
-
 }
 
 ?>
