@@ -36,6 +36,7 @@ create table llx_propal
   fk_user_cloture integer,               -- cloture de la propale signee ou non signee
   fk_statut       smallint  default 0,
   price           real      default 0,
+  remise_percent  real      default 0,
   remise          real      default 0,
   tva             real      default 0,
   total           real      default 0,
