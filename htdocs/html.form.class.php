@@ -320,15 +320,18 @@ class Form
 
 
 
-/*
+  /*
    * Retourne la liste déroulante des civilite actives
    *
    */
 
   function select_civilite($selected='')
   {
-    $sql = "SELECT rowid, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
+    global $conf;
+    
+    $sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
     $sql .= " WHERE active = 1";
+    $sql .= " AND lang='".$conf->langage."'";
 
     if ($this->db->query($sql))
       {
@@ -342,11 +345,11 @@ class Form
 		$obj = $this->db->fetch_object( $i);
 		if ($selected == $obj->rowid)
 		  {
-		    print '<option value="'.$obj->rowid.'" selected>'.$obj->civilite.'</option>';
+		    print '<option value="'.$obj->code.'" selected>'.$obj->civilite.'</option>';
 		  }
 		else
 		  {
-		    print '<option value="'.$obj->rowid.'">'.$obj->civilite.'</option>';
+		    print '<option value="'.$obj->code.'">'.$obj->civilite.'</option>';
 		  }
 		$i++;
 	      }
