@@ -1,0 +1,60 @@
+\begin{theindex}
+
+  \item {calcul\_\discretionary {-}{}{}price}
+    \subitem {price.lib.php}, \hyperpage{7}
+
+  \indexspace
+
+  \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}bind}
+    \subitem {ldap.lib.php}, \hyperpage{4}
+  \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}connect}
+    \subitem {ldap.lib.php}, \hyperpage{4}
+  \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}getversion}
+    \subitem {ldap.lib.php}, \hyperpage{4}
+  \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}setversion}
+    \subitem {ldap.lib.php}, \hyperpage{4}
+  \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unacc}
+    \subitem {ldap.lib.php}, \hyperpage{5}
+  \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unbind}
+    \subitem {ldap.lib.php}, \hyperpage{5}
+
+  \indexspace
+
+  \item {htdocs/lib/ldap.lib.php}, \hyperpage{3}
+  \item {htdocs/lib/mysql.lib.php}, \hyperpage{6}
+  \item {htdocs/lib/price.lib.php}, \hyperpage{7}
+  \item {htdocs/lib/thermometer.php}, \hyperpage{8}
+  \item {htdocs/lib/webcal.class.php}, \hyperpage{9}
+
+  \indexspace
+
+  \item {ldap.lib.php}
+    \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}bind}, 
+		\hyperpage{4}
+    \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}connect}, 
+		\hyperpage{4}
+    \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}getversion}, 
+		\hyperpage{4}
+    \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}setversion}, 
+		\hyperpage{4}
+    \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unacc}, 
+		\hyperpage{5}
+    \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unbind}, 
+		\hyperpage{5}
+
+  \indexspace
+
+  \item {moneyMeter}
+    \subitem {thermometer.php}, \hyperpage{8}
+
+  \indexspace
+
+  \item {price.lib.php}
+    \subitem {calcul\_\discretionary {-}{}{}price}, \hyperpage{7}
+
+  \indexspace
+
+  \item {thermometer.php}
+    \subitem {moneyMeter}, \hyperpage{8}
+
+\end{theindex}

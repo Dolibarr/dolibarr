@@ -1,0 +1,142 @@
+\hypertarget{ldap_8lib_8php}{
+\section{R\'{e}f\'{e}rence du fichier htdocs/lib/ldap.lib.php}
+\label{ldap_8lib_8php}\index{htdocs/lib/ldap.lib.php@{htdocs/lib/ldap.lib.php}}
+}
+Librairie contenant les fonctions pour acc\`{e}der au serveur ldap.  
+
+
+\subsection*{Fonctions}
+\begin{CompactItemize}
+\item 
+\hyperlink{ldap_8lib_8php_a0}{dolibarr\_\-ldap\_\-connect} ()
+\begin{CompactList}\small\item\em ouverture d'une connection vers le serveur ldap. \item\end{CompactList}\item 
+\hyperlink{ldap_8lib_8php_a1}{dolibarr\_\-ldap\_\-bind} (\$ds)
+\begin{CompactList}\small\item\em bind au serveur ldap. \item\end{CompactList}\item 
+\hyperlink{ldap_8lib_8php_a2}{dolibarr\_\-ldap\_\-unbind} (\$ds)
+\begin{CompactList}\small\item\em unbind du serveur ldap. \item\end{CompactList}\item 
+\hyperlink{ldap_8lib_8php_a3}{dolibarr\_\-ldap\_\-getversion} (\$ds)
+\begin{CompactList}\small\item\em verification de la version du serveur ldap. \item\end{CompactList}\item 
+\hyperlink{ldap_8lib_8php_a4}{dolibarr\_\-ldap\_\-setversion} (\$ds, \$version)
+\begin{CompactList}\small\item\em changement de la version du serveur ldap. \item\end{CompactList}\item 
+\hyperlink{ldap_8lib_8php_a5}{dolibarr\_\-ldap\_\-unacc} (\$str)
+\begin{CompactList}\small\item\em permet d'enlever les accents d'une chaine. \item\end{CompactList}\end{CompactItemize}
+
+
+\subsection{Description d\'{e}taill\'{e}e}
+Librairie contenant les fonctions pour acc\`{e}der au serveur ldap. 
+
+\begin{Desc}
+\item[Auteur:]Rodolphe Quiedeville. 
+
+Benoit Mortier. \end{Desc}
+\begin{Desc}
+\item[Version:]1.2.\end{Desc}
+Ensemble des fonctions permettant d'acc\`{e}der \`{a} un serveur ldap.
+
+D\'{e}finition dans le fichier \hyperlink{ldap_8lib_8php-source}{ldap.lib.php}.
+
+\subsection{Documentation des fonctions}
+\hypertarget{ldap_8lib_8php_a1}{
+\index{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_bind@{dolibarr\_\-ldap\_\-bind}}
+\index{dolibarr_ldap_bind@{dolibarr\_\-ldap\_\-bind}!ldap.lib.php@{ldap.lib.php}}
+\subsubsection[dolibarr\_\-ldap\_\-bind]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-ldap\_\-bind (\$ {\em ds})}}
+\label{ldap_8lib_8php_a1}
+
+
+bind au serveur ldap. 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em ds}]\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Renvoie:]bool \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 54 du fichier ldap.lib.php.\hypertarget{ldap_8lib_8php_a0}{
+\index{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_connect@{dolibarr\_\-ldap\_\-connect}}
+\index{dolibarr_ldap_connect@{dolibarr\_\-ldap\_\-connect}!ldap.lib.php@{ldap.lib.php}}
+\subsubsection[dolibarr\_\-ldap\_\-connect]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-ldap\_\-connect ()}}
+\label{ldap_8lib_8php_a0}
+
+
+ouverture d'une connection vers le serveur ldap. 
+
+\begin{Desc}
+\item[Renvoie:]resource \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 40 du fichier ldap.lib.php.\hypertarget{ldap_8lib_8php_a3}{
+\index{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_getversion@{dolibarr\_\-ldap\_\-getversion}}
+\index{dolibarr_ldap_getversion@{dolibarr\_\-ldap\_\-getversion}!ldap.lib.php@{ldap.lib.php}}
+\subsubsection[dolibarr\_\-ldap\_\-getversion]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-ldap\_\-getversion (\$ {\em ds})}}
+\label{ldap_8lib_8php_a3}
+
+
+verification de la version du serveur ldap. 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em ds}]\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Renvoie:]version \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 84 du fichier ldap.lib.php.\hypertarget{ldap_8lib_8php_a4}{
+\index{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_setversion@{dolibarr\_\-ldap\_\-setversion}}
+\index{dolibarr_ldap_setversion@{dolibarr\_\-ldap\_\-setversion}!ldap.lib.php@{ldap.lib.php}}
+\subsubsection[dolibarr\_\-ldap\_\-setversion]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-ldap\_\-setversion (\$ {\em ds}, \$ {\em version})}}
+\label{ldap_8lib_8php_a4}
+
+
+changement de la version du serveur ldap. 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em ds}]\item[{\em version}]\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Renvoie:]version \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 101 du fichier ldap.lib.php.\hypertarget{ldap_8lib_8php_a5}{
+\index{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_unacc@{dolibarr\_\-ldap\_\-unacc}}
+\index{dolibarr_ldap_unacc@{dolibarr\_\-ldap\_\-unacc}!ldap.lib.php@{ldap.lib.php}}
+\subsubsection[dolibarr\_\-ldap\_\-unacc]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-ldap\_\-unacc (\$ {\em str})}}
+\label{ldap_8lib_8php_a5}
+
+
+permet d'enlever les accents d'une chaine. 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em str}]\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Renvoie:]string \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 114 du fichier ldap.lib.php.\hypertarget{ldap_8lib_8php_a2}{
+\index{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_unbind@{dolibarr\_\-ldap\_\-unbind}}
+\index{dolibarr_ldap_unbind@{dolibarr\_\-ldap\_\-unbind}!ldap.lib.php@{ldap.lib.php}}
+\subsubsection[dolibarr\_\-ldap\_\-unbind]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-ldap\_\-unbind (\$ {\em ds})}}
+\label{ldap_8lib_8php_a2}
+
+
+unbind du serveur ldap. 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em ds}]\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Renvoie:]bool \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 70 du fichier ldap.lib.php.
