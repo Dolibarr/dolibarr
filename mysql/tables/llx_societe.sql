@@ -50,8 +50,9 @@ create table llx_societe
   note           text,                                --
   services       integer        default 0,            --
   prefix_comm    varchar(5),                          -- prefix commercial
-  client         smallint       default 0,            -- client oui/non
+  client         int            default 0,            -- client oui/non
   fournisseur    smallint       default 0,            -- fournisseur oui/non
+  rubrique       varchar(255),                        -- champ rubrique libre
 
   UNIQUE INDEX(prefix_comm)
 )type=innodb;
