@@ -1,9 +1,9 @@
-- envoyer un mail sur validation de coitsation
+Fait - envoyer un mail sur validation de coitsation
 - mettre le nombre d'adherents ayant cotise en bas de la liste
 - savoir dans la fiche adherents, si il est abonnee aux listes/spip/glasnost
-- faire des stats sur les cotis (moyenne par adherents)
-- ne pas afficher le / apres Prenom Nom lorsque le champs suivant est vide (details mais ca aide a lire)
+Fait - faire des stats sur les cotis (moyenne par adherents)
+Fait - ne pas afficher le / apres Prenom Nom lorsque le champs suivant est vide (details mais ca aide a lire)
 - faire un compatge automatique du nombre d'adherents
 - eventuellement aussi sur la page Adherent cotisant, faire la disctinction membres zeune et autre
-- dans la liste des cotisants, changer l'ordre de classement par defaut (avec possibilite de pourvoir le changer)
+Fait - dans la liste des cotisants, changer l'ordre de classement par defaut (avec possibilite de pourvoir le changer)
 

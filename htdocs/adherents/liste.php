@@ -144,7 +144,15 @@ if ($result)
       print "</tr>";
       $i++;
     }
-  print "</table>";
+  print "</table><BR>\n";
+  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  
+  print '<TR>';
+  print '<TD align="right">';
+  print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+  print '</TD>';
+  print "</table><BR>\n";
+
 }
 else
 {

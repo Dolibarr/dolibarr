@@ -32,6 +32,7 @@ print '<p><TABLE border="0" cellspacing="0" cellpadding="4">';
 print '<TR class="liste_titre">';
 print "<td>Type</td>";
 print "<td>Nb</td>";
+print "<td>Cotisant</td>";
 print "</TR>\n";
 
 $var=True;
@@ -39,6 +40,9 @@ $var=True;
 
 $sql = "SELECT count(*) as somme , t.libelle FROM llx_adherent as d, llx_adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid  AND d.statut = 1 GROUP BY t.libelle";
+
+$Adherents=array();
+$Cotisants=array();
 
 $result = $db->query($sql);
 
@@ -49,19 +53,50 @@ if ($result)
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
-
-      $var=!$var;
-      print "<TR $bc[$var]>";
-      print '<TD><a href="liste.php">'.$objp->libelle.'</a></TD>';
-      print '<TD align="right">'.$objp->somme.'</TD>';
-
-      print "</tr>";
-
+      $Adherents[$objp->libelle]=$objp->somme;
       $i++;
     }
   $db->free();
 
 }
+
+$sql = "SELECT count(*) as somme , t.libelle FROM llx_adherent as d, llx_adherent_type as t";
+$sql .= " WHERE d.fk_adherent_type = t.rowid  AND d.statut = 1 AND d.datefin >= ".time()." GROUP BY t.libelle";
+
+$result = $db->query($sql);
+
+if ($result) 
+{
+  $num = $db->num_rows();
+  $i = 0;
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object( $i);
+      $Cotisants[$objp->libelle]=$objp->somme;
+      $i++;
+    }
+  $db->free();
+
+}
+$SommeA=0;
+$SommeC=0;
+
+foreach ($Adherents as $key=>$value){
+  $var=!$var;
+  print "<TR $bc[$var]>";
+  print '<TD><a href="liste.php">'.$key.'</a></TD>';
+  print '<TD align="right">'.$value.'</TD>';
+  print '<TD align="right">'.$Cotisants[$key].'</TD>';
+  print "</TR>\n";
+  $SommeA+=$value;
+  $SommeC+=$Cotisants[$key];
+}
+$var=!$var;
+print "<TR $bc[$var]>";
+print '<TD> <B>Total</B> </TD>';
+print '<TD align="right"><B>'.$SommeA.'</B></TD>';
+print '<TD align="right"><B>'.$SommeC.'</B></TD>';
+print "<TR>\n";
 
 print "</table>";
 
