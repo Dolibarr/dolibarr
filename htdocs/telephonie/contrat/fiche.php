@@ -25,12 +25,6 @@ require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
 
 $mesg = '';
 
-$dt = time();
-
-$h = strftime("%H",$dt);
-$m = strftime("%M",$dt);
-$s = strftime("%S",$dt);
-
 if ($_POST["action"] == 'add')
 {
   $contrat = new TelephonieContrat($db);
@@ -91,7 +85,6 @@ if ($_POST["action"] == 'addcontact')
     {
       Header("Location: fiche.php?id=".$contrat->id);
     }
-
 }
 
 if ($_GET["action"] == 'delcontact')
@@ -115,8 +108,6 @@ if ($_GET["action"] == 'delete')
   $contrat->delete() ;    
   Header("Location: index.php");
 }
-
-
 
 llxHeader("","","Fiche Contrat");
 
@@ -420,7 +411,24 @@ else
 	      $head[$h][1] = $langs->trans("Contrat");
 	      $hselected = $h;
 	      $h++;
+
+	      $nser = $contrat->count_associated_services();
 	      
+	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/services.php?id=".$contrat->id;
+	      if ($nser > 0)
+		{
+		  $head[$h][1] = $langs->trans("Services")." (".$nser.")";
+		}
+	      else
+		{
+		  $head[$h][1] = $langs->trans("Services");
+		}
+	      $h++;
+
+	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/info.php?id=".$contrat->id;
+	      $head[$h][1] = $langs->trans("Infos");
+	      $h++;
+
 	      dolibarr_fiche_head($head, $hselected, 'Contrat : '.$contrat->ref);
 
 	      print_fiche_titre('Fiche Contrat', $mesg);
