@@ -42,6 +42,7 @@ class Propal
       $this->db = $DB ;
       $this->socidp = $soc_idp;
       $this->products = array();
+      $this->remise = 0;
     }
   /*
    *
