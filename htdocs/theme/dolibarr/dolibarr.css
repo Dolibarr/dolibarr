@@ -53,6 +53,9 @@ td.menu {
   color: #000000; 
   text-decoration: none }
 
+a.normal{ font-weight: normal } 
+a.impayee { font-weight: bold }
+
 
 /*
  *   Barre de gauche
