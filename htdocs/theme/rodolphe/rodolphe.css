@@ -20,7 +20,7 @@
  */
 body 
 {
-  background: #cac8c0; 
+  background: #dcdad5; 
   margin: 0px;
   font-family: sans-serif; font-size: 0.9em; 
 }
@@ -158,6 +158,26 @@ div.menus {
             border: 1px dashed #ccccb3;
             }
 
+a.leftmenu { 
+             font-weight: bold; 
+             color: #202020;
+             }
+
+a.leftsubmenu { 
+                font-weight: normal; 
+                color: #202020;
+                margin: 1em 1em 1em 1em;
+                }
+
+div.leftmenu { 
+               text-align: left;
+               border-right: 1px solid #000000;
+               border-bottom: 1px solid #000000;
+               cell-spacing: 0;
+               margin: 1em 0em 0em 0em;
+               }
+
+
 .menu 
 { 
   font-weight: bold; 
@@ -182,14 +202,9 @@ a.impayee { font-weight: bold }
  *   Barre de gauche
  */
 
-a.leftmenu { 
-             font-weight: bold; 
-             color: #202020;
-             }
-
 td.barre 
 { 
-  border: 1px solid #000000;
+  border-right: 1px solid #000000;
   text-decoration: none
   }
 
@@ -206,17 +221,19 @@ div.titre {
  *
  */
 tr.liste_titre { 
-                 background: #dcdff4; 
+                 background: #cacaca; 
                  border: 1px solid #000000;
                  font-weight: bold;
                  text-decoration: none }
 
 tr.pair	{ 
-          background: #dcdff4; 
+          background: #dfdfdf; 
+          border-bottom: 1px solid #000000;
           text-decoration: none }
 
 tr.impair { 
-            background: #ccb3cc; 
+            background: #dfdfdf; 
+            border-bottom: 1px solid #000000;
             text-decoration: none }
 /*
  *
@@ -225,12 +242,14 @@ tr.box_titre {
                font-weight: bold; }
 
 tr.box_pair { 
-              background: #ccb3cc; 
-              font-size: 0.8em; }
+              border-bottom: 1px solid #000000;
+              font-size: 0.8em;
+              }
 
-tr.box_impair { 
-                background: #eeccee; 
-                font-size: 0.8em; }
+tr.box_impair {
+                border-bottom: 1px solid #000000;
+                font-size: 0.8em;
+                }
 
 tr.fiche { 
            font-family: Helvetica, Verdana;
