@@ -1000,26 +1000,6 @@ function print_fleche_navigation($page,$file,$options='', $nextpage)
 
 
 /*!
-		\brief fonction servant a afficher un menu déroulant avec oui ou non
-		\param	value
-		\remarks value peut avoir la valeur 0 ou 1
-*/
-
-function print_oui_non($value)
-{
-  if ($value)
-    {
-      print '<option value="0">non';
-      print '<option value="1" selected>oui';
-    }
-  else
-    {
-      print '<option value="0" selected>non';
-      print '<option value="1">oui';
-    }
-}
-
-/*!
 		\brief fonction servant a afficher un menu déroulant sur le type de paiement
 		\param	value
 		\remarks value peut avoir la valeur 0 ou 1
