@@ -77,7 +77,7 @@ class Product
 
       $sql = "INSERT INTO llx_product (datec, fk_user_author, fk_product_type, price)";
       $sql .= " VALUES (now(),".$user->id.",$this->type, " . ereg_replace(",",".",$this->price) . ")";
-      $result = $this->db->query($sql)
+      $result = $this->db->query($sql);
       if ( $result )
 	{
 	  $id = $this->db->last_insert_id();
