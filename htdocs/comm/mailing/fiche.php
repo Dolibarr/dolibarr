@@ -108,7 +108,7 @@ if ($_POST["action"] == 'update')
   $mil = new Mailing($db);
 
   $mil->id           = $_POST["id"];
-  $mil->from         = $_POST["from"];
+  $mil->email_from   = $_POST["from"];
   $mil->titre        = $_POST["titre"];
   $mil->sujet        = $_POST["sujet"];
   $mil->body         = $_POST["body"];
