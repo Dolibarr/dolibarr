@@ -20,6 +20,17 @@
  * $Source$
  */
 
+/**
+        \file       htdocs/chargesociales.class.php
+		\ingroup    facture
+		\brief      Fichier de la classe des charges sociales
+		\version    $Revision$
+*/
+
+
+/**     \class      PaiementCharge
+		\brief      Classe permettant la gestion des paiements des charges
+*/
 class PaiementCharge {
     var $db;
     
@@ -56,10 +67,11 @@ class PaiementCharge {
                     $total += $amount;
                 }
             }
+            $total = round(ereg_replace(",",".",$total), 2);
             if ($total > 0)
             {
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount, fk_typepaiement, num_paiement, note, fk_user_creat)";
-                $sql .= " VALUES ($this->chid, now(), $this->datepaye, $total, $this->paiementtype, '$this->num_paiement', '$this->note', $user->id)";
+                $sql .= " VALUES ($this->chid, now(), $this->datepaye, '$total', $this->paiementtype, '$this->num_paiement', '$this->note', $user->id)";
 
                 if ( $this->db->query($sql) )
                 {
@@ -108,9 +120,10 @@ class PaiementCharge {
     }
 }
 
-/*
-* La tva collectée n'est calculée que sur les factures payées.
-*
+
+/**     \class      ChargeSociales
+		\brief      Classe permettant la gestion des paiements des charges
+                    La tva collectée n'est calculée que sur les factures payées.
 */
 class ChargeSociales {
     var $db;
