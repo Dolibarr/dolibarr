@@ -63,7 +63,7 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 
   if ($_POST["action"] == 'update')
     {
-      $result = $soc->update($_GET["socid"]);
+      $result = $soc->update($_GET["socid"],$user);
       if ($result == -1)
 	{
 	  $soc->id = $_GET["socid"];

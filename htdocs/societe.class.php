@@ -58,19 +58,19 @@ class Societe {
     return 1;
   }
   /*
-   *
+   * \brief     Crée une société
    *
    *
    */
   function create($user='')
   {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, client) ";
-    $sql .= " VALUES ('".trim($this->nom)."', now(), now(), '$this->client');";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat) ";
+    $sql .= " VALUES ('".trim($this->nom)."', now(), now(), '".$user->id."');";
 
     if ($this->db->query($sql) ) {
       $id = $this->db->last_insert_id();
 
-      $result=$this->update($id,$user);
+      $result=$this->update($id);
       if ($result < 0) { return $result; }
 
       return $id;
@@ -127,19 +127,20 @@ class Societe {
     if (trim($this->ville))           { $sql .= ",ville = '" . trim($this->ville) ."'"; }
     if (trim($this->departement_id))  { $sql .= ",fk_departement = '" . $this->departement_id ."'"; }
     if (trim($this->pays_id))         { $sql .= ",fk_pays = '" . $this->pays_id ."'"; }
-    if (trim($this->tel))             { $sql .= ",tel = '" . $this->tel ."'"; }
-    if (trim($this->fax))             { $sql .= ",fax = '" . $this->fax ."'"; }
+    if (trim($this->tel))             { $sql .= ",tel = '" . trim($this->tel) ."'"; }
+    if (trim($this->fax))             { $sql .= ",fax = '" . trim($this->fax) ."'"; }
     if (trim($this->url))             { $sql .= ",url = '" . trim($this->url) ."'"; }
     if (trim($this->siren))           { $sql .= ",siren = '" . trim($this->siren) ."'"; }
     if (trim($this->siret))           { $sql .= ",siret = '" . trim($this->siret) ."'"; }
     if (trim($this->ape))             { $sql .= ",ape = '" . trim($this->ape) ."'"; }
     if (trim($this->prefix_comm))     { $sql .= ",prefix_comm = '" . trim($this->prefix_comm) ."'"; }
     if (trim($this->tva_intra))       { $sql .= ",tva_intra = '" . trim($this->tva_intra) ."'"; }
-    if (trim($this->capital))         { $sql .= ",capital = '" . $this->capital ."'"; }
-    if (trim($this->effectif_id))     { $sql .= ",fk_effectif = '" . $this->effectif_id ."'"; }
-    if (trim($this->forme_juridique)) { $sql .= ",fk_forme_juridique = '" . $this->forme_juridique_code ."'"; }
+    if (trim($this->capital))         { $sql .= ",capital = '" . trim($this->capital) ."'"; }
+    if (trim($this->effectif_id))     { $sql .= ",fk_effectif = '" . trim($this->effectif_id) ."'"; }
+    if (trim($this->forme_juridique)) { $sql .= ",fk_forme_juridique = '" . trim($this->forme_juridique_code) ."'"; }
     if (trim($this->client))          { $sql .= ",client = '" . $this->client ."'"; }
     if (trim($this->fournisseur))     { $sql .= ",fournisseur = '" . $this->fournisseur ."'"; }
+    if ($user)                        { $sql .= ",fk_user_modif = '".$user->id."'"; }
     $sql .= " WHERE idp = '" . $id ."'";
 
     if ($this->db->query($sql)) 
