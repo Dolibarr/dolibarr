@@ -35,19 +35,6 @@ llxHeader("","../");
 print_titre("Projets");
 
 /*
- * Traitements des actions
- *
- */
-if ($HTTP_POST_VARS["action"] == 'create')
-{
-  $pro = new Project($db);
-  $pro->socidp = $socidp;
-  $pro->ref = $ref;
-  $pro->title = $title;
-  $pro->create( $user->id);
-}
-
-/*
  *
  * Affichage
  *
