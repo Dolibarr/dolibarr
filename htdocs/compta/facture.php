@@ -791,6 +791,14 @@ else
         $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
         $head[$h][1] = $langs->trans("Apercu");
         $h++;      
+
+	if ($fac->mode_reglement == 3)
+	  {
+	    $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
+	    $head[$h][1] = $langs->trans("Prélèvement");
+	    $h++;
+	  }
+
         $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
         $head[$h][1] = $langs->trans("Note");
         $h++;      
@@ -1506,7 +1514,7 @@ else
 	  if ($sortfield == "")
 	    $sortfield="f.datef";
 
-	  $sql = "SELECT s.nom,s.idp,f.facnumber,f.total,f.total_ttc,".$db->pdate("f.datef")." as df, f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
+	  $sql = "SELECT s.nom,s.idp,f.facnumber,f.increment,f.total,f.total_ttc,".$db->pdate("f.datef")." as df, f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	  $sql .= ",".MAIN_DB_PREFIX."facture as f";
 	  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
@@ -1642,7 +1650,7 @@ else
 		    }
 
 		  print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_file()."</a>&nbsp;\n";
-		  print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
+		  print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment."</td>\n";
 		
 		  if ($objp->df > 0 )
 		    {
