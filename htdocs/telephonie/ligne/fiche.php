@@ -45,12 +45,15 @@ if ($_POST["action"] == 'add')
   $ligne->remise         = $_POST["remise"];
   $ligne->note           = $_POST["note"];
 
-
-  if ( $ligne->create($user) )
+  if ( $ligne->create($user) == 0)
     {
       Header("Location: fiche.php?id=".$ligne->id);
     }
-
+  else
+    {
+      $_GET["action"] = 'create';
+    }
+  
 }
 
 if ($_POST["action"] == 'addcontact')
@@ -197,10 +200,7 @@ if ($cancel == $langs->trans("Cancel"))
 {
   $action = '';
 }
-/*
- * Affichage
- *
- */
+
 /*
  * Création
  *
@@ -208,17 +208,28 @@ if ($cancel == $langs->trans("Cancel"))
 
 if ($_GET["action"] == 'create')
 {
-  $ligne = new LigneTel($db);
+  $form = new Form($db);
+  print_titre("Nouvelle ligne");
+
+  if (is_object($ligne))
+    {
+      // La création a échouée
+      print $ligne->error_message;
+    }
+  else
+    {
+      $ligne = new LigneTel($db);
+    }
+
   print "<form action=\"fiche.php\" method=\"post\">\n";
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-  print_titre("Nouvelle ligne");
+
       
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-  print '<tr><td width="20%">Client</td><td colspan="2">';
-  print '<select name="client_comm">';
-
+  print '<tr><td width="20%">Client</td><td >';
+  $ff = array();
   $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
   if ( $db->query( $sql) )
     {
@@ -229,22 +240,22 @@ if ($_GET["action"] == 'create')
 	  while ($i < $num)
 	    {
 	      $row = $db->fetch_row($i);
-	      print '<option value="'.$row[0].'">'.$row[1] . " (".$row[2].")";
+	      $ff[$row[0]] = $row[1] . " (".$row[2].")";
+
 	      $i++;
 	    }
 	}
       $db->free();      
     }
+  $form->select_array("client_comm",$ff,$ligne->client_comm);
+  print '</td></tr>';
 
-  print '</select></td></tr>';
 
 
+  print '<tr><td width="20%">Numéro</td><td><input name="numero" size="12" value="'.$ligne->numero.'"></td></tr>';
 
-  print '<tr><td width="20%">Numéro</td><td><input name="numero" size="12" value=""></td></tr>';
-
-  print '<tr><td width="20%">Client (Agence/Filiale)</td><td colspan="2">';
-  print '<select name="client">';
-
+  print '<tr><td width="20%">Client (Agence/Filiale)</td><td >';
+  $ff = array();
   $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
   if ( $db->query( $sql) )
     {
@@ -254,20 +265,18 @@ if ($_GET["action"] == 'create')
 	  $i = 0;
 	  while ($i < $num)
 	    {
-	      $row = $db->fetch_row($i);
-	      print '<option value="'.$row[0].'">'.$row[1] . " (".$row[2].")";
+	      $row = $db->fetch_row();
+	      $ff[$row[0]] = $row[1] . " (".$row[2].")";
 	      $i++;
 	    }
 	}
       $db->free();      
     }
+  $form->select_array("client",$ff,$ligne->client);
+  print '</td></tr>';
 
-  print '</select></td></tr>';
-
-  print '<tr><td width="20%">Client à facturer</td><td colspan="2">';
-  print '<select name="client_facture">';
-
-
+  print '<tr><td width="20%">Client à facturer</td><td >';
+  $ff = array();
   $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
   if ( $db->query( $sql) )
     {
@@ -277,19 +286,18 @@ if ($_GET["action"] == 'create')
 	  $i = 0;
 	  while ($i < $num)
 	    {
-	      $row = $db->fetch_row($i);
-	      print '<option value="'.$row[0].'">'.$row[1] . " (".$row[2].")";
+	      $row = $db->fetch_row();
+	      $ff[$row[0]] = $row[1] . " (".$row[2].")";
 	      $i++;
 	    }
 	}
       $db->free();     
     }
+  $form->select_array("client_facture",$ff,$ligne->client_facture);
+  print '</td></tr>';
 
-  print '</select></td></tr>';
-
-  print '<tr><td width="20%">Fournisseur</td><td colspan="2">';
-  print '<select name="fournisseur">';
-
+  print '<tr><td width="20%">Fournisseur</td><td >';
+  $ff = array();
   $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
   if ( $db->query( $sql) )
     {
@@ -299,23 +307,23 @@ if ($_GET["action"] == 'create')
 	  $i = 0;
 	  while ($i < $num)
 	    {
-	      $row = $db->fetch_row($i);
-	      print '<option value="'.$row[0].'">'.$row[1];
+	      $row = $db->fetch_row();
+	      $ff[$row[0]] = $row[1];
 	      $i++;
 	    }
 	}
       $db->free();
       
     }
-  print '</select></td></tr>';
+  $form->select_array("fournisseur",$ff,$ligne->fournisseur);
+  print '</td></tr>';
 
   /*
    * Commercial
    */
 
-  print '<tr><td width="20%">Commercial</td><td colspan="2">';
-  print '<select name="commercial">';
-
+  print '<tr><td width="20%">Commercial</td><td >';
+  $ff = array();
   $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
   if ( $db->query( $sql) )
     {
@@ -326,22 +334,24 @@ if ($_GET["action"] == 'create')
 	  while ($i < $num)
 	    {
 	      $row = $db->fetch_row($i);
-	      print '<option value="'.$row[0].'">'.$row[1] . " " . $row[2];
+	      $ff[$row[0]] = $row[1] . " " . $row[2];
 	      $i++;
 	    }
 	}
       $db->free();
       
     }
-  print '</select></td></tr>';
+
+  $form->select_array("commercial",$ff,$ligne->commercial);
+
+  print '</td></tr>';
 
   /*
    * Concurrents
    */
 
-  print '<tr><td width="20%">Fournisseur précédent</td><td colspan="2">';
-  print '<select name="concurrent">';
-
+  print '<tr><td width="20%">Fournisseur précédent</td><td >';
+  $ff = array();
   $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_concurrents ORDER BY rowid ";
   if ( $db->query( $sql) )
     {
@@ -352,24 +362,25 @@ if ($_GET["action"] == 'create')
 	  while ($i < $num)
 	    {
 	      $row = $db->fetch_row($i);
-	      print '<option value="'.$row[0].'">'.$row[1];
+	      $ff[$row[0]] = $row[1];
 	      $i++;
 	    }
 	}
       $db->free();
       
     }
-  print '</select></td></tr>';
+  $form->select_array("concurrent",$ff,$ligne->concurrent);
+  print '</td></tr>';
 
-
-  print '<tr><td width="20%">Remise LMN</td><td><input name="remise" size="3" maxlength="2" value="">&nbsp;%</td></tr>';
+  print '<tr><td width="20%">Remise LMN</td><td><input name="remise" size="3" maxlength="2" value="'.$ligne->remise.'">&nbsp;%</td></tr>'."\n";
   
-  print '<tr><td width="20%" valign="top">Note</td><td>';
-  print '<textarea name="note" rows="4" cols="50">';
-  print "</textarea></td></tr>";
+  print '<tr><td width="20%" valign="top">Note</td><td>'."\n";
+  print '<textarea name="note" rows="4" cols="50">'."\n";
+  print stripslashes($ligne->note);
+  print '</textarea></td></tr>'."\n";
 
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
-  print '</table>';
+  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
+  print '</table>'."\n";
   print '</form>';
 }
 else
