@@ -358,13 +358,19 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 		$actionmsg2="Relance Facture par mail";
 	      }
 	      $message = $_POST["message"];
-	      $filename = $fac->ref.".pdf";
-		      
 	      $replyto = $_POST["replytoname"] . " <".$_POST["replytomail"] .">";
-		      
+
+	      $filepath[0] = $file;
+	      $filename[0] = $fac->ref.".pdf";
+	      $mimetype[0] = "application/pdf";
+	      $filepath[1] = $_FILES['addedfile']['tmp_name'];
+	      $filename[1] = $_FILES['addedfile']['name'];
+	      $mimetype[1] = $_FILES['addedfile']['type'];
+	      $replyto = $_POST["replytoname"]. " <".$_POST["replytomail"].">";
+	      
 	      // Envoi de la facture
-	      $mailfile = new CMailFile($subject,$sendto,$replyto,$message,array ($file),array ("application/pdf"),array ($filename));
-		      
+	      $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath, $mimetype,$filename,$sendtocc);
+
 	      if ( $mailfile->sendfile() )
 		{		  
 		  $sendto = htmlentities($sendto);
@@ -1291,27 +1297,34 @@ else
 	      $replytomail = $user->email;
 	      $from_mail = $replytomail;
 	    
-	      $form = new Form($db);	    
+	      $form = new Form($db);
 
-	      print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
+	      print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
 	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	      print '<input type="hidden" name="action" value="send">';
 	      print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
 	      print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
-	      print '<br>';
+	      print "<br>\n";
 	    
 	      // From
-	      print "<table class=\"border\" width=\"100%\">";
-	      print "<tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>$from_name".($from_mail?" &lt;$from_mail&gt;":"")."</td></tr>";
-	      print "<tr><td>".$langs->trans("MailReply")."</td><td>$replytoname".($replytomail?" &lt;$replytomail&gt;":"");
-	      print "</td></tr>";
-          print "</table>";
+	      print "<table class=\"border\" width=\"100%\">\n";
+	      print "  <tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>$from_name".($from_mail?" &lt;$from_mail&gt;":"")."</td></tr>\n";
+	      print "  <tr><td>".$langs->trans("MailReply")."</td><td>$replytoname".($replytomail?" &lt;$replytomail&gt;":"");
+	      print "</td></tr>\n";
           
 	      // To
-	      print "<table class=\"border\" width=\"100%\">";
-	      print '<tr><td width=\"180\">'.$langs->trans("MailTo").'</td><td>';
+	      print '  <tr><td width=\"180\">'.$langs->trans("MailTo").'</td><td>';
 	      $form->select_array("receiver",$soc->contact_email_array());
-	      print " ".$langs->trans("or")." <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
+	      print " ".$langs->trans("or")." <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>\n";
+
+	      // CC
+	      print '  <tr><td width=\"180\">'.$langs->trans("MailCC").'</td><td>';
+	      print "<input size=\"30\" name=\"sendtocc\"></td></tr>\n";
+
+	      // File
+	      print "  <tr><td valign=\"top\">" . $langs->trans("MailFile"). "</td><td><input type=\"file\" name=\"addedfile\" size=\"40\" maxlength=\"80\"></td></tr>\n";
+
+	      print "</table>";
 
 	      // Topic + Message
 	      $defaultmessage="Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
@@ -1319,7 +1332,7 @@ else
 	    
 	      print "<br><center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center>\n";
 
-          print "</form>\n";
+	      print "</form>\n";
 	    }
 
 	  if ($_GET["action"] == 'prerelance')
@@ -1336,7 +1349,7 @@ else
 	    
 	      $form = new Form($db);	    
 
-	      print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
+	      print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
 	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	      print '<input type="hidden" name="action" value="relance">';
 	      print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
@@ -1344,25 +1357,32 @@ else
 	      print '<br>';
 	    
 	      // From
-	      print "<table class=\"border\" width=\"100%\">";
-	      print "<tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>$from_name".($from_mail?" &lt;$from_mail&gt;":"")."</td></tr>";
-	      print "<tr><td>".$langs->trans("MailReply")."</td><td>$replytoname".($replytomail?" &lt;$replytomail&gt;":"");
-	      print "</td></tr>";
-          print "</table>";
+	      print "<table class=\"border\" width=\"100%\">\n";
+	      print "  <tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>$from_name".($from_mail?" &lt;$from_mail&gt;":"")."</td></tr>\n";
+	      print "  <tr><td>".$langs->trans("MailReply")."</td><td>$replytoname".($replytomail?" &lt;$replytomail&gt;":"");
+	      print "</td></tr>\n";
           
 	      // To
-	      print "<table class=\"border\" width=\"100%\">";
-	      print '<tr><td width=\"180\">'.$langs->trans("MailTo").'</td><td>';
+	      print '  <tr><td width=\"180\">'.$langs->trans("MailTo").'</td><td>';
 	      $form->select_array("receiver",$soc->contact_email_array());
-	      print " ".$langs->trans("or")." <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
-	    
-          // Affiche la partie mail topic + message + file
+	      print " ".$langs->trans("or")." <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>\n";
+
+	      // CC
+	      print '  <tr><td width=\"180\">'.$langs->trans("MailCC").'</td><td>';
+	      print "<input size=\"30\" name=\"sendtocc\"></td></tr>\n";
+
+	      // File
+	      print "  <tr><td valign=\"top\">" . $langs->trans("MailFile"). "</td><td><input type=\"file\" name=\"addedfile\" size=\"40\" maxlength=\"80\"></td></tr>\n";
+
+	      print "</table>";
+
+	      // Topic + Message
 	      $defaultmessage="Nous apportons à votre connaissance que la facture ".$fac->ref." ne semble toujours pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n";
-          $form->mail_topicmessagefile(0,1,0,$defaultmessage);
-        
-          print "<br><center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center>\n";
-        
-          print "</form\n";	
+	      $form->mail_topicmessagefile(0,1,0,$defaultmessage);
+	    
+	      print "<br><center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center>\n";
+
+	      print "</form\n";	
 	    }
 	
 	  /*
