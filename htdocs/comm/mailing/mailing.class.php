@@ -38,15 +38,18 @@ class Mailing
    *    \brief  Constructeur de la classe
    *    \param  DB          handler accès base de données
    */
-  function Mailing($DB, $soc_idp="")
+  function Mailing($DB)
     {
-      $this->db = $DB ;
-      $this->db_table = MAIN_DB_PREFIX."mailing";
-
-      $this->statuts[0] = "En préparation";
-      $this->statuts[1] = "Validé";
-      $this->statuts[2] = "Approuvé";
-      $this->statuts[3] = "Envoyé";
+        global $langs;
+        $langs->load("mails");
+        
+        $this->db = $DB ;
+        $this->db_table = MAIN_DB_PREFIX."mailing";
+        
+        $this->statuts[0] = $langs->trans("MailingStatusDraft");
+        $this->statuts[1] = $langs->trans("MailingStatusValidated");
+        $this->statuts[2] = $langs->trans("MailingStatusApproved");
+        $this->statuts[3] = $langs->trans("MailingStatusSent");
   }
   
   /**
@@ -78,8 +81,9 @@ class Mailing
 	  return -1;
 	}
     }
+    
   /**
-   * \brief     Update les infos du mailing
+   *    \brief     Update les infos du mailing
    */
   function update()
     {
@@ -101,6 +105,7 @@ class Mailing
 	  return -1;
 	}
     }
+    
   /**
    *    \brief      Recupére l'objet mailing
    *    \param      rowid       id du mailing
@@ -159,8 +164,8 @@ class Mailing
 
 
   /**
-   * \brief     Valide le mailing
-   * \param     user      objet user qui valide
+   *    \brief     Valide le mailing
+   *    \param     user      objet user qui valide
    */
   function valid($user)
     {
@@ -183,8 +188,8 @@ class Mailing
     }
 
   /**
-   * \brief     Approuve le mailing
-   * \param     user      objet user qui approuve
+   *    \brief     Approuve le mailing
+   *    \param     user      objet user qui approuve
    */
   function approve($user)
     {
@@ -206,15 +211,17 @@ class Mailing
 
 
   /**
-   * \brief     Supprime le mailing
-   * \param     rowid      id du mailing à supprimer
+   *    \brief     Supprime le mailing
+   *    \param     rowid      id du mailing à supprimer
    */
   function delete($rowid)
   {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing";
     $sql .= " WHERE fk_facture = ".$rowid;
     
+    $this->db->query($sql);
   }
+  
 }
 
 ?>

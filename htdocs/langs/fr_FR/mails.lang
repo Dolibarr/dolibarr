@@ -20,3 +20,7 @@ MailingResult=Résultat de l'envoi de mails
 TestMailing=Tester mailing
 ValidMailing=Valider mailing
 ApproveMailing=Approuver mailing
+MailingStatusDraft=Brouillon
+MailingStatusValidated=Validé
+MailingStatusApproved=Apprové
+MailingStatusSent=Envoyé
