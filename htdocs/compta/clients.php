@@ -30,7 +30,6 @@
  
 require("./pre.inc.php");
 require("../contact.class.php");
-require("../cactioncomm.class.php");
 require("../actioncomm.class.php");
 if ($conf->webcal->enabled) {
     require("../lib/webcal.class.php");

@@ -21,10 +21,17 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/comm/action/rapport/index.php
+        \ingroup    commercial
+		\brief      Page accueil des rapports des actions commerciales
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 require("../../../contact.class.php");
-require("../../../cactioncomm.class.php");
 require("../../../actioncomm.class.php");
 
 /*

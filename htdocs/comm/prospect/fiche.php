@@ -30,7 +30,6 @@
 
 require("./pre.inc.php");
 require("../../contact.class.php");
-require("../../cactioncomm.class.php");
 require("../../actioncomm.class.php");
 
 $langs->load('companies');
