@@ -70,12 +70,12 @@ function llxHeader($head = "")
 
   if (defined("COMPTA_BANK_FACTURES") && COMPTA_BANK_FACTURES)
     {
-      $menu->add("/compta/facture.php3","Factures");
+      $menu->add(DOL_URL_ROOT."/compta/facture.php3","Factures");
     }
 
   if (defined("COMPTA_ONLINE_PAYMENT_BPLC") && COMPTA_ONLINE_PAYMENT_BPLC)
     {
-      $menu->add("/compta/bank/bplc.php","Transactions BPLC");
+      $menu->add(DOL_URL_ROOT."/compta/bank/bplc.php","Transactions BPLC");
     }
 
   left_menu($menu->liste);

@@ -46,19 +46,19 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/compta/clients.php3", "Clients");
+  $menu->add(DOL_URL_ROOT."/compta/clients.php3", "Clients");
 
   if ($conf->don->enabled)
     {
-      $menu->add("/compta/dons/","Dons");
+      $menu->add(DOL_URL_ROOT."/compta/dons/","Dons");
     }
 
-  $menu->add("/compta/facture.php3","Factures");
+  $menu->add(DOL_URL_ROOT."/compta/facture.php3","Factures");
   $menu->add_submenu("paiement.php3","Paiements");
 
   if ($user->comm > 0 && $conf->commercial && MAIN_MODULE_PROPALE) 
     {
-      $menu->add("/compta/propal.php3","Propales");
+      $menu->add(DOL_URL_ROOT."/compta/propal.php3","Propales");
     }
 
   /*
@@ -87,7 +87,7 @@ function llxHeader($head = "") {
       $menu->add("tva/index.php3","TVA");
     }
 
-  $menu->add("/compta/caisse/index.php","Caisse");
+  $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisse");
 
   if ($user->societe_id == 0) 
     {
@@ -97,7 +97,7 @@ function llxHeader($head = "") {
     }
 
 
-  $menu->add("/fourn/index.php3", "Fournisseurs");
+  $menu->add(DOL_URL_ROOT."/fourn/index.php3", "Fournisseurs");
 
   /*
    *  $menu->add("ligne.php3","Compta");
@@ -112,7 +112,7 @@ function llxHeader($head = "") {
   else 
     {
       $menu->clear();
-      $menu->add("/index.php3","Accueil");      
+      $menu->add(DOL_URL_ROOT."/","Accueil");      
     }
 
   left_menu($menu->liste);

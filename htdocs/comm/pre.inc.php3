@@ -32,30 +32,30 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/comm/clients.php3", "Clients");
+  $menu->add(DOL_URL_ROOT."/comm/clients.php3", "Clients");
 
-  $menu->add_submenu("/comm/contact.php3", "Contacts");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php3", "Contacts");
 
-  $menu->add("/comm/action/", "Actions");
+  $menu->add(DOL_URL_ROOT."/comm/action/", "Actions");
 
-  $menu->add("/comm/propal.php3", "Propales");
+  $menu->add(DOL_URL_ROOT."/comm/propal.php3", "Propales");
 
   $menu->add_submenu("propal.php3?viewstatut=0", "Brouillons");
   $menu->add_submenu("propal.php3?viewstatut=1", "Ouvertes");
 
   if ($conf->fichinter->enabled ) 
     {
-      $menu->add("/fichinter/", "Fiches d'intervention");
+      $menu->add(DOL_URL_ROOT."/fichinter/", "Fiches d'intervention");
     }
 
   if ($conf->produit->enabled )
     {
-      $menu->add("/product/", "Produits");
+      $menu->add(DOL_URL_ROOT."/product/", "Produits");
     }
 
   if ($conf->service->enabled ) 
     {
-      $menu->add("/service/", "Services");
+      $menu->add(DOL_URL_ROOT."/service/", "Services");
     }
 
   $menu->add("projet/", "Projets");
