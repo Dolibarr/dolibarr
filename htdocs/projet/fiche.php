@@ -24,6 +24,10 @@ require("../propal.class.php");
 require("../facture.class.php");
 require("../commande/commande.class.php");
 
+$user->getrights('projet');
+if (!$user->rights->projet->lire)
+  accessforbidden();
+
 if ($HTTP_POST_VARS["action"] == 'update')
 {
   $projet = new Project($db);
@@ -117,7 +121,7 @@ if ($_GET["action"] == 'create')
  
   dolibarr_fiche_head($head, 0);
 
-  if ($action == 'edit')
+  if ($_GET["action"] == 'edit')
     {  
       print '<form method="post" action="fiche.php?id='.$id.'">';
       print '<input type="hidden" name="action" value="update">';
@@ -137,22 +141,24 @@ if ($_GET["action"] == 'create')
       print '</table>';
     }
 
+  print '</div>';
 
-  print '</div><div class="tabsAction">';
-
-  
-  if ($action == "edit")
+  if ($user->rights->projet->creer == 1)
     {
-      print '<a class="tabAction" href="fiche.php?id='.$id.'">Annuler</a>';
+      print '<div class="tabsAction">';
+      if ($_GET["action"] == "edit")
+	{
+	  print '<a class="tabAction" href="fiche.php?id='.$projet->id.'">Annuler</a>';
+	}
+      else
+	{
+	  print '<a class="tabAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">Editer</a>';
+	}
+      
+      print '<a class="tabAction" href="fiche.php?id='.$projet->id.'&amp;action=delete">Supprimer</a>';
+      
+      print "</div>";
     }
-  else
-    {
-      print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=edit">Editer</a>';
-    }
-    
-  print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=delete">Supprimer</a>';
-
-  print "</div>";
 
 }
 $db->close();
