@@ -5,6 +5,16 @@
 -- sans AUCUNE erreur ni warning
 -- ;
 
+create table llx_usergroup_rights
+(
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  fk_usergroup  integer NOT NULL,
+  fk_id         integer NOT NULL,
+
+  UNIQUE(fk_usergroup,fk_id)
+)type=innodb;
+
+
 alter table llx_facture add  increment           varchar(10);
 
 delete from llx_const where name like '%_OUTPUT_URL';
