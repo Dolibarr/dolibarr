@@ -69,6 +69,41 @@ class Form {
   /*
    *
    *
+   */
+  Function select_pays($selected='', $addnsp=0)
+  {
+    print '<select name="pays_id">';
+
+    $sql = "SELECT rowid, libelle, active FROM llx_c_pays";
+    $sql .= " WHERE active = 1 ORDER BY code ASC";
+    
+    if ($this->db->query($sql))
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
+	if ($num)
+	  {
+	    while ($i < $num)
+	      {
+		$obj = $this->db->fetch_object( $i);
+		if ($selected == $obj->rowid)
+		  {
+		    print '<option value="'.$obj->rowid.'" SELECTED>'.$obj->libelle.'</option>';
+		  }
+		else
+		  {
+		    print '<option value="'.$obj->rowid.'">'.$obj->libelle.'</option>';
+		  }
+		$i++;
+	      }
+	  }
+      }
+    print '</select>';
+  }
+
+  /*
+   *
+   *
    *
    */
   Function form_confirm($page, $title, $question, $action)
