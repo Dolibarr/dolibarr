@@ -148,7 +148,7 @@ class DoliDb {
   Function query($query, $limit="", $offset="")
     {
       $query = trim($query);
-      print "<p>$query</p>\n";
+      //print "<p>$query</p>\n";
       $this->results = mysql_query($query, $this->db);
       return $this->results;
     }
