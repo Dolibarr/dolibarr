@@ -826,14 +826,15 @@ else
 	    echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 	    if ($num_lignes)
 	      {
-		print "<TR class=\"liste_titre\">";
+		print "<tr class=\"liste_titre\">";
 		print '<td width="54%">Description</td>';
-		print '<td width="8%" align="center">Tva</td>';
-		print '<td width="8%" align="center">Quantité</td>';
+		print '<td width="8%" align="right">Tva</td>';
+		print '<td width="12%" align="right">P.U. HT</td>';
+		print '<td width="8%" align="right">Quantité</td>';
 		print '<td width="8%" align="right">Remise</td>';
-		print '<td width="12%" align="right">P.U.</td>';
-		print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
-		print "</TR>\n";
+		print '<td width="10%" align="right">Montant HT</td>';
+		print '<td>&nbsp;</td><td>&nbsp;</td>';
+		print "</tr>\n";
 	      }
 	    $var=True;
 	    while ($i < $num_lignes)
@@ -849,8 +850,10 @@ else
 		  {
 		print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
 		  }
-		print '<TD align="center">'.$objp->tva_taux.' %</TD>';
-		print '<TD align="center">'.$objp->qty.'</TD>';
+
+		print '<TD align="right">'.$objp->tva_taux.' %</TD>';
+		print '<TD align="right">'.price($objp->subprice)."</td>\n";
+		print '<TD align="right">'.$objp->qty.'</TD>';
 		if ($objp->remise_percent > 0)
 		  {
 		    print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -859,7 +862,9 @@ else
 		  {
 		    print '<td>&nbsp;</td>';
 		  }
-		print '<TD align="right">'.price($objp->subprice)."</td>\n";
+		print '<TD align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+	    
+	    // Icone d'edition et suppression		  
 		if ($fac->statut == 0  && $user->rights->facture->creer) 
 		  {
 		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
@@ -880,12 +885,13 @@ else
 		    print "<form action=\"$PHP_SELF?facid=$fac->id\" method=\"post\">";
 		    print '<input type="hidden" name="action" value="updateligne">';
 		    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-		    print "<TR $bc[$var]>";
-		    print '<TD colspan="2"><textarea name="desc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></TD>';
-		    print '<TD align="center"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></TD>';
-		    print '<TD align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
-		    print '<TD align="right"><input size="8" type="text" name="price" value="'.price($objp->subprice).'"></td>';
-		    print '<td align="right" colspan="2"><input type="submit" value="Enregistrer"></td>';
+		    print "<tr $bc[$var]>";
+		    print '<td><textarea name="desc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
+		    print '<td>&nbsp;</td>';
+		    print '<td align="right"><input size="8" type="text" name="price" value="'.price($objp->subprice).'"></td>';
+		    print '<td align="right"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></TD>';
+		    print '<td align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
+		    print '<td align="center" colspan="3"><input type="submit" value="Enregistrer"></td>';
 		    print '</tr>' . "\n";
 		    print "</form>\n";
 		  }
@@ -911,24 +917,24 @@ else
 
 	    print "<form action=\"$PHP_SELF?facid=$fac->id\" method=\"post\">";
 	    //	    echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
-	    print "<TR class=\"liste_titre\">";
+	    print "<tr class=\"liste_titre\">";
 	    print '<td width="54%">Description</td>';
-	    print '<td width="8%" align="center">Tva</td>';
-	    print '<td width="8%" align="center">Quantité</td>';
+	    print '<td width="8%" align="right">Tva</td>';
+	    print '<td width="12%" align="right">P.U. HT</TD>';
+	    print '<td width="8%" align="right">Quantité</td>';
 	    print '<td width="8%" align="right">Remise</td>';
-	    print '<td width="12%" align="right">P.U.</TD>';
 	    print '<td>&nbsp;</td>';
 	    print '<td>&nbsp;</td>';
-	    print "</TR>\n";
+	    print '<td>&nbsp;</td>';
+	    print "</tr>\n";
 	    print '<input type="hidden" name="action" value="addligne">';
 	    print '<tr><td><textarea name="desc" cols="60" rows="2"></textarea></td>';
-	    print '<td align="center">';
+	    print '<td align="right">';
 	    print $html->select_tva("tva_tx",$conf->defaulttx);
 	    print '</td>';
-	    print '<td align="center"><input type="text" name="qty" value="1" size="2"></td>';
-	    print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
 	    print '<td align="right"><input type="text" name="pu" size="8"></td>';
-
+	    print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
+	    print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
 	    print '<td align="center" colspan="3"><input type="submit" value="Ajouter"></td></tr>';
 
 	    print "</form>";
