@@ -31,7 +31,7 @@ class infoBox
     $bcx[1] = 'class="box_impair"';
     $nbcol=sizeof($contents[0]);
 
-    print '<table width="100%" cellpadding="3" cellspacing="0" class="noborder">';
+    print '<table width="100%" cellpadding="2" cellspacing="0" class="noborder">';
 
     print '<tr class="box_titre"><td';
     if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
@@ -40,7 +40,7 @@ class infoBox
     for ($i=0, $n=sizeof($contents); $i<$n; $i++)
       {
 	$var=!$var;
-	print '<tr '.$bcx[$var].'>';
+	print '<tr valign="top" '.$bcx[$var].'>';
 
 	for ($j=0, $m=sizeof($contents[$i]); $j<$m; $j++)
 	  {
