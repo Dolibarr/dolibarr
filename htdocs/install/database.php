@@ -20,14 +20,18 @@
  *
  */
 
-$conf = "../conf/conf.php";
+include_once("./inc.php");
 
-if (is_readable($conf))
+$setuplang=$_POST["selectlang"];
+$langs->defaultlang=$setuplang;
+$langs->load("install");
+
+
+if (is_readable($conffile))
 {
-  include ($conf);
+  include_once($conffile);
 }
 
-include("./inc.php");
 pHeader();
 
 

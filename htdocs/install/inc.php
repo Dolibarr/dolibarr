@@ -22,44 +22,75 @@
  *
  */
 
-$etapes=5;
+/**	    \file       htdocs/install/inc.php
+		\brief      Fichier include du programme d'installation
+		\version    $Revision$
+*/
+
+
 $docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
+$conffile = "../conf/conf.php";
+
+
+// Récupère langues du navigateur et defini langcode
+$langpref=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
+$langpref=eregi_replace(";[^,]*","",$langpref);
+$langpref=eregi_replace("-","_",$langpref);
+$langlist=split("[;,]",$langpref);
+$langpart=split("_",$langlist[0]);
+if ($langpart[1]) $langcode=$langpart[0]."_".strtoupper($langpart[1]);
+else $langcode=$langpart[0]."_".strtoupper($langpart[0]);
+// Defini objet langs
+require_once("../translate.class.php");
+$langs = new Translate("../langs", $langcode);
+
+
 
 function pHeader($soutitre,$next)
 {
+    global $langs;
+    $langs->load("main");
+    $langs->load("admin");
 
-print '
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=iso8859-1">
-<link rel="stylesheet" type="text/css" href="./default.css">
-<title>Dolibarr Installation</title>
-</head>
-<body>
-<div class="titre">
-<span class="titre"><a class="titre" href="index.php">Dolibarr Installation</a></span>
-</div>
-';
- print '<form action="'.$next.'.php" method="POST">
-<input type="hidden" name="action" value="set">';
-print '<div class="main"><div class="soustitre">'.$soutitre.'</div>
-<div class="main-inside">
-';
+    print '<html>';
+    print '<head>';
+    print '<meta http-equiv="content-type" content="text/html; charset=iso8859-1">';
+    print '<link rel="stylesheet" type="text/css" href="./default.css">';
+    print '<title>'.$langs->trans("DolibarrSetup").'</title>';
+    print '</head>';
+    print '<body>';
+
+    print '<div class="titre">';
+    print '<span class="titre"><a class="titre" href="index.php">'.$langs->trans("DolibarrSetup").'</a></span>';
+    print '</div>';
+
+    print '<form action="'.$next.'.php" method="POST"><input type="hidden" name="action" value="set">';
+    print '<div class="main">';
+    if ($soutitre) {
+        print '<div class="soustitre">'.$soutitre.'</div>';
+    }
+    print '<div class="main-inside">';
 }
 
 
-function pFooter($nonext=0)
+function pFooter($nonext=0,$addlang=1)
 {
-print '</div></div>';
-if ($nonext == 0)
-  {
-    print '<div class="barrebottom"><input type="submit" value="Etape suivante ->"></div>';
-  }
-print '
-</form>
-</body>
-</html>';
+    global $langs;
+    $langs->load("main");
+    $langs->load("admin");
+    
+    print '</div></div>';
+    if (! $nonext)
+      {
+        print '<div class="barrebottom"><input type="submit" value="'.$langs->trans("NextStep").' ->"></div>';
+      }
+    if ($addlang) {
+        print '<input type="hidden" name="selectlang" value="'.$langs->defaultlang.'">';
     }
+    print '</form>';
+    print '</body>';
+    print '</html>';
+}
 
 
 function dolibarr_syslog($message)

@@ -29,13 +29,16 @@
         \version    $Revision$
 */
 
-include("./inc.php");
+include_once("./inc.php");
+
+$setuplang=$_POST["selectlang"];
+$langs->defaultlang=$setuplang;
+$langs->load("install");
+
 pHeader("Fichier de configuration","etape1");
 
-$conf = "../conf/conf.php";
-
 // Ici, le fichier conf.php existe et est forcément editable car le test a été fait précédemment.
-include($conf);
+include_once($conffile);
 
 print '<table border="0" cellpadding="1" cellspacing="0">';
 

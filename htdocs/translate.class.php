@@ -147,10 +147,10 @@ class Translate {
      *  \return      array     list of languages
      */
 		
-    function get_available_languages()
+    function get_available_languages($langdir=DOL_DOCUMENT_ROOT)
     {
       // On parcour le répertoire langs pour détecter les langues disponibles
-      $handle=opendir(DOL_DOCUMENT_ROOT ."/langs");
+      $handle=opendir($langdir ."/langs");
       $langs_available=array();
       while ($file = trim(readdir($handle))){
     	if($file != "." && $file != ".." && $file != "CVS") {

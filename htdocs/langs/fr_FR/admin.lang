@@ -1,5 +1,6 @@
 # Dolibarr language file - fr_FR - admin
 Version=Version
+DolibarrSetup=Installation Dolibarr
 GlobalSetup=Général
 GUISetup=Interface
 DictionnarySetup=Dictionnaires

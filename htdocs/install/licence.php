@@ -20,7 +20,12 @@
  *
  */
 
-include("./inc.php");
+include_once("./inc.php");
+
+$setuplang=$_POST["selectlang"];
+$langs->defaultlang=$setuplang;
+$langs->load("install");
+
 pHeader("Licence d'utilisation","fileconf");
 
 print '<pre>';

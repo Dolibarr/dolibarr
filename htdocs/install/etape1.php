@@ -31,11 +31,13 @@
 
 include_once("./inc.php");
 
+$setuplang=$_POST["selectlang"];
+$langs->defaultlang=$setuplang;
+$langs->load("install");
+
 pHeader("Fichier de configuration","etape2");
 
 $etape = 1;
-
-$conffile = "../conf/conf.php";
 
 // Répertoire des pages dolibarr
 $main_dir=isset($_POST["main_dir"])?$_POST["main_dir"]:'';

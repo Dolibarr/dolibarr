@@ -27,60 +27,53 @@
     \version    $Revision$
 */
 
-include("./inc.php");
-pHeader("Bienvenu dans Dolibarr", "licence");   // Etape suivante = license
+include_once("./inc.php");
 
 
-print "Nous avons fait en sorte que l'installation soit le plus simple possible, vous n'avez qu'à suivre les étapes une à une.";
-
-
-$conf = "../conf/conf.php";
-
-
-if (is_readable($conf))
+// Si fichier conf existe deja, on est pas sur une premiere install,
+// on ne passe donc pas par la page de choix de langue
+if (file_exists($conffile))
 {
-  include ($conf);
-}
-else
-{
-  $fp = @fopen("$conf", "w");
-  if($fp)
-    {
-      @fwrite($fp, '<?php');
-      @fputs($fp,"\n");
-      @fputs($fp,"?>");
-      fclose($fp);
-    }
+    header("Location: check.php");
 }
 
-if (!file_exists($conf))
-{
-  print "<br /><br />Le fichier de configuration <b>conf.php</b> n'existe pas !<br />";
-  print "Vous devez créer un fichier <b>htdocs/conf/conf.php</b> et donner les droits d'écriture dans celui-ci au serveur Apache.<br /><br />";
 
-  print 'Corrigez le problème et <a href="index.php">rechargez la page</a>';
+pHeader("", "check");   // Etape suivante = index2
 
-  $err++;
-}
-else
-{
-  if (!is_writable("../conf/conf.php"))
-    {
-      print "<br /><br />Le fichier de configuration <b>conf.php</b> existe.<br />";
-      print "Le fichier <b>conf.php</b> n'est pas accessible en écriture, vérifiez les droits sur celui-ci, le serveur Apache doit avoir le droit d'écrire dans ce fichier le temps de la configuration (chmod 666 par exemple)<br>";
-      
 
-      $err++;
-    }
-  else
-    {
-      print "<br /><br />Le fichier de configuration <b>conf.php</b> existe.<br />";
-      print "Le fichier <b>conf.php</b> est accessible en écriture<br /><br />Vous pouvez continuer...";
+print '<center><img src="../theme/dolibarr_logo.png"></center>';
 
-    }
-}
+// Propose la langue d'installation
+$langs->load("admin");
+$langs_available=$langs->get_available_languages("..");
+$selected=$langs->defaultlang;
+
+print '<br><br>';
+print '<table><tr>';
+print '<td>'.$langs->trans("DefaultLanguage").' : </td><td align="left"> &nbsp;';
+print '<select name="selectlang">';
+$num = count($langs_available);
+$i = 0;
+if ($num)
+  {
+while ($i < $num)
+  {
+    if ($selected == $langs_available[$i])
+      {
+	print '<option value="'.$langs_available[$i].'" selected>'.$langs_available[$i].'</option>';
+      }
+    else
+      {
+	print '<option value="'.$langs_available[$i].'">'.$langs_available[$i].'</option>';
+      }
+    $i++;
+  }
+  }
+print '</select></td>';
+print '</tr></table>';
+
 
 // Si pas d'erreur, on affiche le bouton pour passer à l'étape suivante
-if ($err == 0) pFooter();
+if ($err == 0) pFooter(0,0);
 
 ?>

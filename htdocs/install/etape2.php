@@ -20,15 +20,19 @@
  * $Source$
  *
  */
-include("./inc.php");
+include_once("./inc.php");
+
+$setuplang=$_POST["selectlang"];
+$langs->defaultlang=$setuplang;
+$langs->load("install");
+
 pHeader("Création des objets de la base","etape4");
 
 $etape = 2;
 
-$conf = "../conf/conf.php";
-if (file_exists($conf))
+if (file_exists($conffile))
 {
-  include($conf);
+  include_once($conffile);
 }
 
 if($dolibarr_main_db_type == "mysql")
