@@ -20,7 +20,8 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/facture.php
+/**	
+        \file       htdocs/admin/facture.php
 		\ingroup    facture
 		\brief      Page d'administration/configuration du module Facture
 		\version    $Revision$
@@ -362,6 +363,8 @@ print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optiontv
 print "<td colspan=\"2\">L'option 'franchise' est utilisée par les particuliers ou professions libérales à titre occasionnel avec de petits chiffres d'affaires.\nChaque produits/service vendu est soumis à une TVA de 0 (Dolibarr propose le taux 0 par défaut à la création d'une facture cliente). Il n'y a pas de déclaration ou récupération de TVA, et les factures qui gèrent l'option affichent la mention obligatoire \"TVA non applicable - art-293B du CGI\".</td></tr>\n";
 print "</form>";
 print "</table>";
+
+print "<br>";
 
 $db->close();
 
