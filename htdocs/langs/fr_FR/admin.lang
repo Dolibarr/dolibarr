@@ -113,3 +113,5 @@ WebCalSetupSaved=Les identifiants Webcalendar ont été sauvegardés avec succès.
 WebCalTestOk=La connection au serveur '%s' sur la base '%s' par le user '%s' a réussi.
 WebCalTestKo1=La connection au serveur '%s' a réussi mais la base '%s' n'a pu être accédée.
 WebCalTestKo2=La connection au serveur '%s' par le user '%s' à échoué.
+##### Clicktodial setup #####
+ClickToDialSetup=Configuration du click to dial

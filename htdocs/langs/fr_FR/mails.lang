@@ -1,0 +1,22 @@
+# Dolibarr language file - fr_FR - mails
+Mailing=Mailing
+MailCard=Fiche mailing
+MailTargets=Destinataires
+MailTitle=Titre
+MailTopic=Sujet du mail
+MailFrom=Emetteur
+MailReply=Réponse à
+MailTo=Destinataire(s)
+MailCC=Copie à
+MailTopic=Sujet du mail
+MailText=Message
+MailFile=Joindre un fichier
+MailMessage=Message
+NewMailing=Nouveau mailing
+PrepareMailing=Preparer mailing
+CreateMailing=Créer mailing
+MailingDesc=Cette page vous permet d'envoyer des mailings à un groupe de personnes.
+MailingResult=Résultat de l'envoi de mails
+TestMailing=Tester mailing
+ValidMailing=Valider mailing
+ApproveMailing=Approuver mailing

@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +20,9 @@
  * $Source$
  */
  
-/*!	\file htdocs/admin/ldap.php
-		\ingroup    ldap
-		\brief      Page d'administration/configuration du module Ldap
+/**	    \file       htdocs/admin/clicktodial.php
+		\ingroup    clicktodial
+		\brief      Page d'administration/configuration du module clicktodial
 		\version    $Revision$
 */
 
@@ -50,7 +49,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
     }
   else
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
 }
 
@@ -61,23 +60,24 @@ llxHeader();
  *
  */
 
-print_titre("Configuration du click to dial");
+print_titre($langs->trans("ClickToDialSetup"));
 
+print '<br>';
 print '<form method="post" action="clicktodial.php">';
 print '<input type="hidden" name="action" value="setvalue">';
-print '<table class="border" cellpadding="4" cellspacing="0">';
-print '<TR class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Nouvelle Valeur</td><td>Valeur actuelle</td>';
+print '<table class="border">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("NewValue").'</td><td>'.$langs->trans("CurrentValue").'</td>';
 print "</tr>\n";
 print '<tr><td>';
-print 'URL</td><td>';
+print $langs->trans("URL").'</td><td>';
 print '<input size="25" type="text" name="url" value="'.CLICKTODIAL_URL.'">';
 print '</td><td>';
 print CLICKTODIAL_URL;
 print '</td></tr>';
 
-print '<tr><td colspan="3" align="center"><input type="submit" value="changer"></td></tr>';
+print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
 
 /*
