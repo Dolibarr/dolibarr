@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004 Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004 Sebastien DiCintio   <sdicintio@ressource-toi.org>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,9 @@
  *
  */
 
-/**
-    \file       htdocs/install/fileconf.php
-    \brief      Demande les infos qui constituerons le contenu du fichier conf.php. Ce fichier sera remplie à l'étape suivante
-    \version    $Revision$
+/**     \file       htdocs/install/fileconf.php
+        \brief      Demande les infos qui constituerons le contenu du fichier conf.php. Ce fichier sera remplie à l'étape suivante
+        \version    $Revision$
 */
 
 include("./inc.php");
@@ -144,12 +143,12 @@ $dolibarr_main_db_host = "localhost";
 
 <td class="label"><select name='db_type'>
 <option value='mysql'<?php echo (!$dolibarr_main_db_type||$dolibarr_main_db_type=='mysql')?" selected":"" ?>>MySql</option>
-<option value='pgsql'<?php echo ($dolibarr_main_db_type=='pgsql')?" selected":"" ?>>PostgreSQL</option>
+<option value='pgsql'<?php echo ($dolibarr_main_db_type=='pgsql')?" selected":"" ?>>PostgreSQL (expérimental, non opérationnel)</option>
 </select>
 &nbsp;
 </td>
 
-<td class="comment">Type de la base de donnée (MySql par défaut ou alors PostgreSql).</td>
+<td class="comment">Type de la base de donnée</td>
 
 </tr>
 

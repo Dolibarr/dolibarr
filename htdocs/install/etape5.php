@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004 Sebastien DiCintio   <sdicintio@ressource-toi.org>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,12 @@
  * $Source$
  *
  */
+
+/**     \file       htdocs/install/etape5.php
+        \brief      Page de fin d'installation
+        \version    $Revision$
+*/
+
 include("./inc.php");
 $success=0;
 
@@ -99,7 +105,7 @@ if ($_POST["action"] == "set")
 print "Votre système est maintenant installé.<br>";
 print "Il vous reste à le configurer selon vos besoins (Choix de l'apparence, des fonctionnalités, etc...). Pour cela, cliquez sur le lien ci-dessous:<br>";
 
-print '<br><a href="'.$dolibarr_main_url_root .'/admin/index.php">Accès à l\'espace configuration</a>';
+print '<br><a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home">Accès à l\'espace configuration</a>';
 
 pFooter(1);
 ?>
