@@ -113,6 +113,28 @@ if ($conf->produit->enabled || $conf->service->enabled)
 
 }
 
+
+      
+  $class="";
+  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "commercial")
+    {
+      $class='class="tmenu" id="sel"'; 
+    }
+  elseif (ereg("^".DOL_URL_ROOT."\/fourn\/",$_SERVER["PHP_SELF"]))
+    {
+      $class='class="tmenu" id="sel"';
+    }
+  else
+    {
+      $class = 'class="tmenu"';
+    }
+
+  print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Fournisseur").'</a>';
+
+
+
+
+
 if ($conf->webcal->enabled)
 {
   $langs->load("other");
