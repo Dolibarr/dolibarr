@@ -88,6 +88,10 @@ class DolibarrModules
 	    $err++;
 	  }
       }
+    /*
+     * Définit les constantes associées
+     *
+     */
 
     foreach ($this->const as $key => $value)
       {
@@ -129,7 +133,26 @@ class DolibarrModules
 	  }
       }
 
-
+    /*
+     * Créé les répertoires
+     *
+     */
+    if (is_array($this->dirs))
+      {
+	foreach ($this->dirs as $key => $value)
+	  {
+	    $dir = $value;
+	    
+	    if (! file_exists($dir))
+	      {
+		umask(0);
+		if (! @mkdir($dir, 0755))
+		  {
+		    $this->error = "Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+		  }
+	      }	
+	  }
+      }
     /*
      *
      */
