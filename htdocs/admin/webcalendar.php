@@ -49,6 +49,7 @@ $phpwebcalendar_dbname=trim($_POST["phpwebcalendar_dbname"]);
 $phpwebcalendar_user=trim($_POST["phpwebcalendar_user"]);
 $phpwebcalendar_pass=trim($_POST["phpwebcalendar_pass"]);
 $phpwebcalendar_pass2=trim($_POST["phpwebcalendar_pass2"]);
+$phpwebcalendar_syncro=trim($_POST["phpwebcalendar_syncro"]);
 $actionsave=$_POST["save"];
 $actiontest=$_POST["test"];
 
@@ -87,7 +88,13 @@ if ($actionsave)
 			$sql4 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_PASS','".$phpwebcalendar_pass."',0);";
 			$result4=$db->query($sql4);
 
-            if ($result && $result1 && $result2 && $result3 && $result4)
+			$sql5 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_SYNCRO';";
+			$db->query($sql5);
+			
+			$sql5 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_SYNCRO','".$phpwebcalendar_syncro."',0);";
+			$result5=$db->query($sql5);
+
+            if ($result && $result1 && $result2 && $result3 && $result4 && $result5)
             {
                 $ok = "<br><font class=\"ok\">Les identifiants Webcalendar ont été sauvegardés avec succès.</font>";
             }
@@ -103,7 +110,8 @@ if (! $phpwebcalendar_host)     { $phpwebcalendar_host=PHPWEBCALENDAR_HOST; }
 if (! $phpwebcalendar_dbname)   { $phpwebcalendar_dbname=PHPWEBCALENDAR_DBNAME; }
 if (! $phpwebcalendar_user)     { $phpwebcalendar_user=PHPWEBCALENDAR_USER; }
 if (! $phpwebcalendar_pass)     { $phpwebcalendar_pass=PHPWEBCALENDAR_PASS; }
-if (! $phpwebcalendar_pass2)     { $phpwebcalendar_pass2=PHPWEBCALENDAR_PASS; }
+if (! $phpwebcalendar_pass2)    { $phpwebcalendar_pass2=PHPWEBCALENDAR_PASS; }
+if (! $phpwebcalendar_syncro)   { $phpwebcalendar_syncro="nobydefault"; }
 
 
 /**
@@ -140,18 +148,27 @@ print "<table class=\"noborder\">
 <td><input type=\"password\" name=\"phpwebcalendar_pass2\" value=\"" . $phpwebcalendar_pass2 ."\" size=\"45\"></td>
 </tr>
 <tr class=\"impair\">
+<td>".$langs->trans("WebCalSyncro")."</td>
+<td>";
+print '<select name="phpwebcalendar_syncro">';
+print '<option value="always"'.($phpwebcalendar_syncro=='always'?' selected':'').'>'.$langs->trans("WebCalAllways");
+print '<option value="yesbydefault"'.($phpwebcalendar_syncro=='yesbydefault'?' selected':'').'>'.$langs->trans("WebCalYesByDefault");
+print '<option value="nobydefault"'.(!$phpwebcalendar_syncro || $phpwebcalendar_syncro=='nobydefault'?' selected':'').'>'.$langs->trans("WebCalNoByDefault");
+print '<option value="never"'.($phpwebcalendar_syncro=='never'?' selected':'').'>'.$langs->trans("WebCalNever");
+print '</select>';
+print "</td>
+</tr>
+<tr class=\"pair\">
 <td colspan=\"2\" align=\"center\">
 <input type=\"submit\" name=\"test\" value=\"".$langs->trans("TestConnection")."\">
 <input type=\"submit\" name=\"save\" value=\"".$langs->trans("Save")."\">
 </td>
-</tr>\n";
-
-clearstatcache();
-
-print "
+</tr>
 </table>
 </form>\n";
 
+
+clearstatcache();
 
 if ($ok) print "$ok<br>";
 

@@ -292,6 +292,7 @@ if (defined("MAIN_MODULE_WEBCALENDAR"))
   $conf->webcal->db->user=PHPWEBCALENDAR_USER;
   $conf->webcal->db->pass=PHPWEBCALENDAR_PASS;
   $conf->webcal->db->name=PHPWEBCALENDAR_DBNAME;
+  $conf->webcal->syncro=PHPWEBCALENDAR_SYNCRO;
 }
 if (defined("MAIN_MODULE_FACTURE"))
 {
