@@ -51,6 +51,8 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/config/", "Configuration");
 
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/compta.php", "Compta");
+
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/concurrents/liste.php", "Concurrents");
 
   left_menu($menu->liste);
