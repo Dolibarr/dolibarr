@@ -263,7 +263,8 @@ if ($_GET["propalid"])
    */
   if ($_GET["action"] == 'delete')
     {
-      $html->form_confirm("propal.php?propalid=$propal->id","Supprimer la proposition","Etes-vous sûr de vouloir supprimer cette proposition ?","confirm_delete");
+      $html->form_confirm("propal.php?propalid=$propal->id",$langs->trans("DeleteProp"),$langs->trans("ConfirmDeleteProp"),"confirm_delete");
+      print '<br>';
     }
   /*
    *
@@ -297,7 +298,8 @@ if ($_GET["propalid"])
 	    }
 
 	  print "<table class=\"border\" width=\"100%\">";
-
+        $rowspan=4;
+        
 	  print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
 	  if ($societe->client == 1)
 	    {
@@ -322,11 +324,14 @@ if ($_GET["propalid"])
 	  $author->fetch('');
 	  print $author->fullname.'</td></tr>';
 
-	  print "<tr><td>".$langs->trans("To")."</td><td colspan=\"3\">$obj->firstname $obj->name".($obj->email?"&lt;$obj->email&gt;":"")."</td>";
+	  $langs->load("mails");
+	  print "<tr><td>".$langs->trans("MailTo")."</td><td colspan=\"3\">$obj->firstname $obj->name".($obj->email?" &lt;$obj->email&gt;":"")."</td>";
 
-	  print '<td valign="top" colspan="2" width="50%" rowspan="4">'.$langs->trans("Note").' :<br>'. nl2br($propal->note)."</td></tr>";
+	  if ($conf->projet->enabled && $propal->projet_id) $rowspan++;
+                
+	  print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans("Note").' :<br>'. nl2br($propal->note)."</td></tr>";
 	  
-	  if ($propal->projet_id) 
+	  if ($conf->projet->enabled && $propal->projet_id) 
 	    {
           $langs->load("projects");
           
