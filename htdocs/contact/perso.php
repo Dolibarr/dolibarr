@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/contact/perso.php
         \ingroup    societe
 		\brief      Onglet informations personnelles d'un contact
@@ -66,12 +66,13 @@ $contact->fetch($_GET["id"], $user);
 
 
 $h=0;
+
 $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
-$head[$h][1] = "Général";
+$head[$h][1] = $langs->trans("General");
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
-$head[$h][1] = 'Informations personnelles';
+$head[$h][1] = $langs->trans("PersonalInformations");
 $hselected=$h;
 $h++;
 

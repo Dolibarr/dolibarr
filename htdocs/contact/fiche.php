@@ -160,12 +160,12 @@ if ($_GET["id"] > 0)
   
   $h=0;
   $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
-  $head[$h][1] = "Général";
+  $head[$h][1] = $langs->trans("General");
   $hselected=$h;
   $h++;
   
   $head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
-  $head[$h][1] = 'Informations personnelles';
+  $head[$h][1] = $langs->trans("PersonalInformations");
   $h++;
   
   $head[$h][0] = DOL_URL_ROOT.'/contact/vcard.php?id='.$_GET["id"];
@@ -196,9 +196,13 @@ if ($_GET["socid"] > 0)
   $objsoc->fetch($_GET["socid"]);
 }
 
+
 if ($_GET["action"] == 'create')
 {
-  // Fiche en mode creation
+    /*
+     * Fiche en mode creation
+     *
+     */
   print '<br>';
 
   print "<form method=\"post\" action=\"fiche.php\">";
@@ -252,7 +256,10 @@ if ($_GET["action"] == 'create')
 }
 elseif ($_GET["action"] == 'edit') 
 {
-  // Fiche en mode edition
+    /*
+     * Fiche en mode edition
+     *
+     */
     
   print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
   print '<input type="hidden" name="action" value="update">';
@@ -403,66 +410,61 @@ else
 
       print "</div><br>";
     }
-}
 
 
-// Historique des actions vers ce contact
-print_titre ("Historique des actions pour ce contact");
-
-print '<table width="100%" class="noborder">';
-
-print "<tr class=\"liste_titre\">";
-print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("Actions")."</td>";
-print "<td>".$langs->trans("CreatedBy")."</td></tr>";
-
-$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-$sql .= " WHERE fk_contact = ".$contact->id;
-$sql .= " AND u.rowid = a.fk_user_author";
-$sql .= " AND c.id=a.fk_action ";
-
-if ($contactid) 
-{
-  $sql .= " AND fk_contact = $contactid";
-}
-$sql .= " ORDER BY a.datea DESC, a.id DESC";
-
-if ( $db->query($sql) ) 
-{
-  $i = 0 ; $num = $db->num_rows(); $tag = True;
-  while ($i < $num) 
+    // Historique des actions vers ce contact
+    print_titre ("Historique des actions pour ce contact");
+    
+    print '<table width="100%" class="noborder">';
+    
+    print "<tr class=\"liste_titre\">";
+    print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("Actions")."</td>";
+    print "<td>".$langs->trans("CreatedBy")."</td></tr>";
+    
+    $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+    $sql .= " WHERE fk_contact = ".$contact->id;
+    $sql .= " AND u.rowid = a.fk_user_author";
+    $sql .= " AND c.id=a.fk_action ";
+    
+    if ($contactid) 
     {
-      $obj = $db->fetch_object();
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      
-      print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
-      if ($obj->propalrowid) 
-        {
-          print "<td><a href=\"propal.php?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
-        } 
-      else 
-        {
-          print "<td>$obj->libelle</td>";
-        }
-      
-      print "<td>$obj->code&nbsp;</td>";
-      print "</tr>\n";
-      $i++;
-      $tag = !$tag;
+      $sql .= " AND fk_contact = $contactid";
     }
-}
-else 
-{
-  dolibarr_print_error($db);
-}
-print "</table>";
+    $sql .= " ORDER BY a.datea DESC, a.id DESC";
+    
+    if ( $db->query($sql) ) 
+    {
+      $i = 0 ; $num = $db->num_rows(); $tag = True;
+      while ($i < $num) 
+        {
+          $obj = $db->fetch_object();
+          $var=!$var;
+          print "<tr $bc[$var]>";
+          
+          print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
+          if ($obj->propalrowid) 
+            {
+              print "<td><a href=\"propal.php?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
+            } 
+          else 
+            {
+              print "<td>$obj->libelle</td>";
+            }
+          
+          print "<td>$obj->code&nbsp;</td>";
+          print "</tr>\n";
+          $i++;
+          $tag = !$tag;
+        }
+    }
+    else 
+    {
+      dolibarr_print_error($db);
+    }
+    print "</table>";
   
-
-
-
-
-
+}
 
 $db->close();
 
