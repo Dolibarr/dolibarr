@@ -84,8 +84,8 @@ function propals ($db, $year, $month) {
   }
   print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($subtotal)."</b></td>\n";
   print "<td align=\"left\">Euros HT</td></tr>\n";
-  print "<tr><td colspan=\"2\" align=\"right\"><b>Total ~ ".francs($total) ." FF HT</b></td>";
-  print "<td colspan=\"2\" align=\"right\"><b>Total : ".price($total)."</b></td>";
+  print "<tr>";
+  print "<td colspan=\"3\" align=\"right\"><b>Total : ".price($total)."</b></td>";
   print "<td align=\"left\"><b>Euros HT</b></td></tr>";
   print "</TABLE>";
   $db->free();
@@ -147,8 +147,8 @@ function factures ($db, $year, $month, $paye) {
 	      
 	      $i++;
 	    }
-	  print "<tr><td colspan=\"3\" align=\"right\"><b>Total ~ ".francs($total)." FF HT</b></td>";
-	  print "<td  align=\"right\"><b>Total : ".price($total)."</b></td><td></td></tr>";
+	  print "<tr><td colspan=\"4\" align=\"right\">";
+	  print "<b>Total : ".price($total)."</b></td><td></td></tr>";
 	  print "</TABLE>";
 	  $db->free();
 	}
