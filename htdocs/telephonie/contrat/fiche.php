@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,15 +84,28 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 if ($_POST["action"] == 'addcontact')
 {
-  $ligne = new LigneTel($db);
-  $ligne->id = $_GET["id"];
+  $contrat = new TelephonieContrat($db);
+  $contrat->id = $_GET["id"];
 
-  if ( $ligne->add_contact($_POST["contact_id"]) )
+  if ( $contrat->add_contact_facture($_POST["contact_id"]) )
     {
-      Header("Location: fiche.php?id=".$ligne->id);
+      Header("Location: fiche.php?id=".$contrat->id);
     }
 
 }
+
+if ($_GET["action"] == 'delcontact')
+{
+  $contrat = new TelephonieContrat($db);
+  $contrat->id = $_GET["id"];
+
+  if ( $contrat->del_contact_facture($_GET["contact_id"]) )
+    {
+      Header("Location: fiche.php?id=".$contrat->id);
+    }
+}
+
+
 
 if ($_GET["action"] == 'delete')
 {
@@ -103,17 +116,6 @@ if ($_GET["action"] == 'delete')
   Header("Location: index.php");
 }
 
-
-if ($_GET["action"] == 'delcontact')
-{
-  $ligne = new LigneTel($db);
-  $ligne->id = $_GET["id"];
-
-  if ( $ligne->del_contact($_GET["contact_id"]) )
-    {
-      Header("Location: fiche.php?id=".$ligne->id);
-    }
-}
 
 
 llxHeader("","","Fiche Contrat");
@@ -488,11 +490,13 @@ else
 	      */
 
 
-	      /* Contacts 
-	     
+	      /* Contacts */
+	      print '<tr><td valign="top" width="20%">Contact facture</td>';
+	      print '<td valign="top" colspan="2">';
+
 	      $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
 	      $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
-	      $sql .= ",".MAIN_DB_PREFIX."telephonie_contact_facture as cf";
+	      $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_contact_facture as cf";
 	      $sql .= " WHERE c.idp = cf.fk_contact AND cf.fk_contrat = ".$contrat->id." ORDER BY name ";
 	      if ( $db->query( $sql) )
 		{
@@ -504,8 +508,7 @@ else
 			{
 			  $row = $db->fetch_row($i);
 
-			  print '<tr><td valign="top" width="20%">Contact facture '.$i.'</td>';
-			  print '<td valign="top" colspan="2">'.$row[1] . " " . $row[2] . " &lt;".$row[3]."&gt;</td></tr>";
+			  print $row[1] . " " . $row[2] . " &lt;".$row[3]."&gt;<br />";
 			  $i++;
 			}
 		    }
@@ -516,8 +519,8 @@ else
 		{
 		  print $sql;
 		}
-	  
-	       Fin Contacts */
+	      print '</td></tr>';
+	      /* Fin Contacts */
 
 	      print "</table><br />";
 
@@ -792,16 +795,17 @@ else
 	    {
 	      print_fiche_titre('Ajouter un contact', $mesg);
 
-	      print "<form action=\"fiche.php?id=$ligne->id\" method=\"post\">\n";
+	      print '<form action="fiche.php?id='.$contrat->id.'" method="post">';
 	      print '<input type="hidden" name="action" value="addcontact">';
 
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-
 	      $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
 	      $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
-	      $sql .= ",".MAIN_DB_PREFIX."telephonie_contact_facture as cf";
-	      $sql .= " WHERE c.idp = cf.fk_contact AND cf.fk_ligne = ".$ligne->id." ORDER BY name ";
+	      $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_contact_facture as cf";
+	      $sql .= " WHERE c.idp = cf.fk_contact ";
+	      $sql .= " AND cf.fk_contrat = ".$contrat->id." ORDER BY name ";
+
 	      if ( $db->query( $sql) )
 		{
 		  $num = $db->num_rows();
@@ -815,7 +819,7 @@ else
 			  print '<tr><td valign="top" width="20%">Contact facture '.$i.'</td>';
 			  print '<td valign="top">'.$row[1] . " " . $row[2] . " &lt;".$row[3]."&gt;";
 			  print '</td><td>';
-			  print '<a href="fiche.php?id='.$ligne->id.'&amp;action=delcontact&amp;contact_id='.$row[0].'">';
+			  print '<a href="fiche.php?id='.$contrat->id.'&amp;action=delcontact&amp;contact_id='.$row[0].'">';
 			  print img_delete();
 			  print "</a></td></tr>";
 			  $i++;
@@ -832,7 +836,11 @@ else
 
 	      print '<tr><td valign="top" width="20%">Contact</td><td valign="top" colspan="2">';
 	  	 
-	      $sql = "SELECT idp, name, firstname, email FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$ligne->client_facture_id." ORDER BY name ";
+	      $sql = "SELECT idp, name, firstname, email ";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."socpeople ";
+	      $sql .= " WHERE fk_soc in (".$contrat->client_facture_id.",".$contrat->client_id.")";
+	      $sql .= " ORDER BY name ";
+
 	      if ( $db->query( $sql) )
 		{
 		  print '<select name="contact_id">';
@@ -858,7 +866,7 @@ else
 	  
 	      print '<p>Contact auquel est envoyé la facture par email</p></td></tr>';
 	  	  
-	      print '<tr><td>&nbsp;</td><td>';
+	      print '<tr><td colspan="3" align="center">';
 	      if ($num > 0)
 		{
 		  print '<input type="submit" value="Ajouter">';

@@ -47,7 +47,7 @@ class TelephonieContrat {
    * Creation du contrat
    * Le commercial qui fait le suivi est par defaut le commercial qui a signe
    */
-  function create($user)
+  function create($user, $isfacturable='oui', $mode_paiement='pre')
   {
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_contrat";
     $sql .= " (ref, fk_soc, fk_client_comm, fk_soc_facture, note";
@@ -64,6 +64,8 @@ class TelephonieContrat {
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_contrat";
 	$sql .= " SET ref='".substr("00000000".$this->id,-8)."'";
+	$sql .= " , isfacturable = '".$isfacturable."'";
+	$sql .= " , mode_paiement = '".$mode_paiement."'";
 	$sql .= " WHERE rowid=".$this->id;
 	$this->db->query($sql);
 
@@ -97,8 +99,7 @@ class TelephonieContrat {
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_contrat";
 	$sql .= " SET ";
-	$sql .= " fk_client_comm = ".$this->client_comm;
-	$sql .= ", fk_soc = ".$this->client ;
+	$sql .= " fk_soc = ".$this->client ;
 	$sql .= ", fk_soc_facture = ".$this->client_facture;
 	$sql .= ", fk_commercial_suiv = ".$this->commercial_suiv_id;
 	$sql .= ", mode_paiement = '".$this->mode_paiement."'";
@@ -118,7 +119,10 @@ class TelephonieContrat {
       {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
 	$sql .= " SET ";
-	$sql .= " mode_paiement = '".$this->mode_paiement."'";
+	$sql .= " fk_soc = ".$this->client ;
+	$sql .= ", fk_soc_facture = ".$this->client_facture;
+	$sql .= ", fk_commercial_suiv = ".$this->commercial_suiv_id;
+	$sql .= ", mode_paiement = '".$this->mode_paiement."'";
 	$sql .= " WHERE fk_contrat = ".$this->id;
 	
 	
@@ -223,6 +227,34 @@ class TelephonieContrat {
     $sql .= " WHERE rowid = ".$this->id;
 
     $this->db->query($sql);
+  }
+  /*
+   *
+   *
+   *
+   */
+  function add_contact_facture($cid)
+  {
+
+    $this->del_contact_facture($cid);
+        
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_contrat_contact_facture";
+    $sql .= " (fk_contrat, fk_contact) ";
+    $sql .= " VALUES ($this->id, $cid )";
+    
+    $this->db->query($sql);
+  }
+  /*
+   *
+   *
+   */
+  function del_contact_facture($cid)
+  {
+        
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_contrat_contact_facture";
+    $sql .= " WHERE fk_contrat=".$this->id." AND fk_contact=".$cid;
+    
+    return $this->db->query($sql);   
   }
 }
 
