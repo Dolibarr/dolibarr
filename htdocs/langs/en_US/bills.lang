@@ -20,6 +20,7 @@ SearchABill=Search a bill
 Send=Send
 SendRemind=Send reminder
 DoPaiement=Do payment
+DoPayment=Do payment
 BuildPDF=Build PDF
 RebuildPDF=Rebuild PDF
 VAT=VAT

@@ -20,6 +20,7 @@ SearchABill=Rechercher une facture
 Send=Envoyer
 SendRemind=Envoyer rappel
 DoPaiement=Émettre paiement
+DoPayment=Émettre paiement
 BuildPDF=Générer le PDF
 RebuildPDF=Regénérer le PDF
 VAT=TVA

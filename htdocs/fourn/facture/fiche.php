@@ -298,7 +298,7 @@ else
       if ($_GET["action"] == "edit")
 	{
 
-	  print_titre($langs->trans("Bill").' : '.$fac->ref);
+	  print_titre($langs->trans("Bill").': '.$fac->ref);
 	  
 	  print '<form action="fiche.php?facid='.$fac->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update">';
@@ -403,7 +403,7 @@ else
 	  $h=0;
 	  
 	  $head[$h][0] = "fiche.php?facid=".$fac->id;
-	  $head[$h][1] = $langs->trans("Bill").' : '.$fac->ref;
+	  $head[$h][1] = $langs->trans("Bill").': '.$fac->ref;
 	  $hselected = $h;
 	  $h++;
 	  
@@ -555,18 +555,6 @@ else
 
       print "<div class=\"tabsAction\">\n";
   
-      if ($fac->statut == 0 && $user->societe_id == 0)
-	{
-	  if ($_GET["action"] != "edit")
-	    {
-	      print '<a class="tabAction" href="index.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-	    }
-	}
-      elseif ($fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
-	{
-	  print '<a class="tabAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("DoPaiement").'</a>';
-	}
-      
       if ($fac->statut == 0 && $user->societe_id == 0)    
 	{
 	  if ($_GET["action"] == "edit")
@@ -577,6 +565,11 @@ else
 	    {
 	      print '<a class="tabAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
 	    }
+	}
+      
+      if ($fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
+	{
+	  print '<a class="tabAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("DoPaiement").'</a>';
 	}
       
       if ($fac->statut == 1 && price($resteapayer) <= 0 && $fac->paye == 0  && $user->societe_id == 0)
@@ -597,6 +590,14 @@ else
 	    }
 	}
       
+      if ($fac->statut == 0 && $user->societe_id == 0)
+	{
+	  if ($_GET["action"] != "edit")
+	    {
+	      print '<a class="butDelete" href="index.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+	    }
+	}
+
       print "</div>";
       
     }
