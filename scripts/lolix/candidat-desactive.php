@@ -44,7 +44,7 @@ $tlimit = $now - (86400 * 35); // 35 jours
 $sql = "SELECT c.idp";
 $sql .= " FROM lolixfr.candidat as c";
 $sql .= " WHERE c.active = 1";
-$sql .= " AND datea > ".$db->idate($tlimit);
+$sql .= " AND datea < ".$db->idate($tlimit);
 $sql .= " ORDER BY c.datea ASC";
 $sql .= " LIMIT 3";
 
