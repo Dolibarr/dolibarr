@@ -28,26 +28,27 @@
 -- 3 probleme
 --
 create table llx_telephonie_societe_ligne (
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  datec            datetime,
-  fk_contrat       integer,
-  fk_client_comm   integer NOT NULL,      -- Client décideur
-  fk_soc           integer NOT NULL,
-  ligne            varchar(12) NOT NULL,
-  fk_soc_facture   integer NOT NULL,
-  statut           smallint DEFAULT 0,
-  fk_fournisseur   integer NOT NULL,
-  remise           real DEFAULT 0,
-  note             text,
-  fk_commercial    integer NOT NULL,
-  fk_concurrent    integer DEFAULT 1 NOT NULL,
-  fk_user_creat    integer,
-  date_commande    datetime,
-  fk_user_commande integer,
-  isfacturable     enum('oui','non') DEFAULT 'oui',
-  mode_paiement    enum('vir','pre') DEFAULT 'pre',
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
+  datec              datetime,
+  fk_contrat         integer,
+  fk_client_comm     integer NOT NULL,      -- Client décideur
+  fk_soc             integer NOT NULL,
+  ligne              varchar(12) NOT NULL,
+  fk_soc_facture     integer NOT NULL,
+  statut             smallint DEFAULT 0,
+  fk_fournisseur     integer NOT NULL,
+  remise             real DEFAULT 0,
+  note               text,
+  fk_commercial      integer NOT NULL,
+  fk_commercial_suiv integer NOT NULL,
+  fk_concurrent      integer DEFAULT 1 NOT NULL,
+  fk_user_creat      integer,
+  date_commande      datetime,
+  fk_user_commande   integer,
+  isfacturable       enum('oui','non') DEFAULT 'oui',
+  mode_paiement      enum('vir','pre') DEFAULT 'pre',
 
-  code_analytique  varchar(12),
+  code_analytique    varchar(12),
 
   UNIQUE INDEX(fk_soc, ligne)
 )type=innodb;
