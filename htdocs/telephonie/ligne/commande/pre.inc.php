@@ -60,7 +60,7 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/fournisseurs.php", "Fournisseurs");
+  $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/", "Fournisseurs");
 
 
   left_menu($menu->liste);

@@ -31,7 +31,24 @@ class FournisseurTelephonie {
     $this->id = $id;
     return 1;
   }
-  /*
+  /**
+   *
+   *
+   */
+  function create()
+  {
+    $res = 0;
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_fournisseur";
+    $sql .= " (nom, email_commande, commande_active)";
+    $sql .= " VALUES ('".$this->nom."','".$this->email_commande."',1)";
+
+    if (! $this->db->query($sql) )
+      {
+	$res = -1;
+      }
+    return $res;
+  }
+  /**
    *
    *
    */
@@ -65,6 +82,40 @@ class FournisseurTelephonie {
 	  return -2;
 	}
     }
+  /**
+   *
+   *
+   */
+  function active()
+  {
+    $res = 0;
+    $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_fournisseur";
+    $sql .= " SET  commande_active = 1";
+    $sql .= " WHERE rowid = ".$this->id;
+
+    if (! $this->db->query($sql) )
+      {
+	$res = -1;
+      }
+    return $res;
+  }
+  /**
+   *
+   *
+   */
+  function desactive()
+  {
+    $res = 0;
+    $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_fournisseur";
+    $sql .= " SET  commande_active = 0";
+    $sql .= " WHERE rowid = ".$this->id;
+
+    if (! $this->db->query($sql) )
+      {
+	$res = -1;
+      }
+    return $res;
+  }
 }
 
 ?>

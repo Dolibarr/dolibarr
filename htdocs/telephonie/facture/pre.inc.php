@@ -56,7 +56,7 @@ function llxHeader($head = "", $title="") {
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/facture/check.php", "Verif");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/facture/stats.php", "Stats");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/fournisseurs.php", "Fournisseurs");
+  $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/", "Fournisseurs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/statca/", "Chiffre d'affaire");
 

@@ -62,7 +62,7 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT f.nom, f.email_commande";
+$sql = "SELECT f.rowid, f.nom, f.email_commande, f.commande_active";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -79,12 +79,11 @@ if ($result)
   print '<tr class="liste_titre">';
   print_liste_field_titre("Société","fournisseurs.php","s.nom");
   print '<td>Email de commande</td>';
+  print '<td align="center">Commande possible</td>';
 
   if($user->rights->telephonie->fournisseur->config)
     {
-      print '<tr class="liste_titre">';
-      print '<td><input type=""></td>';
-      print '<td>Email de commande</td>';
+      print '<td>&nbsp;</td>';
     }
 
   print "</tr>\n";
@@ -98,6 +97,22 @@ if ($result)
       print "<tr $bc[$var]>";
       print "<td>".$obj->nom."</td>\n";
       print "<td>".$obj->email_commande."</td>\n";
+      print '<td align="center">'.$langs->trans($yesno[$obj->commande_active])."</td>\n";
+
+      if($user->rights->telephonie->fournisseur->config)
+	{
+	  print '<td align="center">';
+	  if ($obj->commande_active)
+	    {
+	      print '<a href="fiche.php?action=desactive&amp;id='.$obj->rowid.'">Désactive</a>';
+	    }
+	  else
+	    {
+	      print '<a href="fiche.php?action=active&amp;id='.$obj->rowid.'">Active</a>';
+	    }
+	  print '</td>';
+	}
+
       print "</tr>\n";
       $i++;
     }

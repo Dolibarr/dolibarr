@@ -20,8 +20,7 @@
  *
  */
 require("../../main.inc.php");
-require(DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
-
+require(DOL_DOCUMENT_ROOT."/telephonie/fournisseurtel.class.php");
 $user->getrights('telephonie');
 
 function llxHeader($head = "", $title="") {
@@ -45,12 +44,6 @@ function llxHeader($head = "", $title="") {
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/liste.php", "Liste");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/fiche.php?action=create", "Nouvelle ligne");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/listecommande.php", "En commande");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/communications.php", "Communications");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/groupe.php", "Groupes");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/numdata.php", "Numéros data");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
 
@@ -58,9 +51,17 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/", "Fournisseurs");
+  $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/index.php", "Fournisseurs");
+
+  if($user->rights->telephonie->fournisseur->config)
+    {
+      $menu->add_submenu(DOL_URL_ROOT."/telephonie/fournisseur/fiche.php?action=create", "Nouveau");
+    }
 
   $menu->add(DOL_URL_ROOT."/telephonie/statca/", "Chiffre d'affaire");
+
+  if ($user->admin)
+    $menu->add(DOL_URL_ROOT."/telephonie/config/", "Configuration");
 
   left_menu($menu->liste);
 }
