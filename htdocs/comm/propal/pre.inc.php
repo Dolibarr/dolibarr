@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/comm/propal/pre.inc.php
+        \ingroup    propale
+		\brief      Fichier de gestion du menu gauche du module propale
+		\version    $Revision$
+*/
+
 require("../../main.inc.php");
 
 function llxHeader($head = "", $urlp = "") {

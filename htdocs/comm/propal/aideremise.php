@@ -21,9 +21,9 @@
  *
  */
 
-/**
-* Gestion d'une proposition commerciale
-* @package propale
+/*! \file htdocs/comm/propal/aideremise.php
+        \ingroup    propale
+        \brief      Page de simulation des remises
 */
 
 require("./pre.inc.php");

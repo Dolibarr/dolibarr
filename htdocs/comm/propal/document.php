@@ -18,6 +18,13 @@
  * $Id$
  * $Source$
  */
+
+/*! \file htdocs/comm/propal/document.php
+        \ingroup    propale
+		\brief      Page de gestion des documents attachées à une proposition commerciale
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $user->getrights('propale');

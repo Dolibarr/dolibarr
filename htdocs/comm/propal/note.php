@@ -21,9 +21,10 @@
  *
  */
 
-/**
-* Fiche d'information sur une proposition commerciale
-* @package propale
+/*! \file htdocs/comm/propal/note.php
+        \ingroup    propale
+        \brief      Fiche d'information sur une proposition commerciale
+		\version    $Revision$
 */
 
 require("./pre.inc.php");

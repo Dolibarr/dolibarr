@@ -19,6 +19,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/comm/propal/info.php
+        \ingroup    propale
+		\brief      Page d'affichage des infos d'une proposition commerciale
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $user->getrights('propale');
