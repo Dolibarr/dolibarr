@@ -96,7 +96,7 @@ if ($_GET["propalid"])
 	  print '<tr><td>'.$langs->trans("Company").'</td><td>';
 	  if ($societe->client == 1)
 	    {
-	      $url ='../fiche.php?socid='.$societe->id;
+	      $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
 	    }
 	  else
 	    {
@@ -117,7 +117,7 @@ if ($_GET["propalid"])
 	  $author->fetch('');
 	  print $author->fullname.'</td></tr>';
 
-	  print '<tr><td valign="top" colspan="4">Note :<br>'. nl2br($propal->note)."</td></tr>";
+	  print '<tr><td valign="top" colspan="4">'.$langs->trans("Note").' :<br>'. nl2br($propal->note)."</td></tr>";
 	  
 	  if ($_GET["action"] == 'edit')
 	    {
@@ -136,7 +136,7 @@ if ($_GET["propalid"])
 	   * Actions
 	   */
 	  print '</div>';
-	  print '<p><div class="tabsAction">';
+	  print '<br><div class="tabsAction">';
 	  
 	  if ($user->rights->propale->creer && $_GET["action"] <> 'edit')
 	    {
