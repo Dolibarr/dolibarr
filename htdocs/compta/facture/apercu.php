@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -77,6 +77,14 @@ if ($_GET["facid"] > 0)
       $head[$h][1] = $langs->trans("Apercu");
       $hselected = $h;
       $h++;
+
+      if ($fac->mode_reglement == 3)
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
+	  $head[$h][1] = $langs->trans("Prélèvement");
+	  $h++;
+	}
+
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
       $head[$h][1] = $langs->trans("Note");
       $h++;      
