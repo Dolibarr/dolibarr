@@ -74,7 +74,8 @@ class User
 
       // Preference utilisateur
       $this->userpreflimite_liste = 0;
-
+      $this->clicktodial_enabled = 0;
+		  
       $this->all_permissions_are_loaded = 0;
 
       return 1;
@@ -921,7 +922,74 @@ class User
       return $this->errorstr;
     }
   
+  /**
+   * Lecture des infos de click to dial
+   *
+   */
+  function fetch_clicktodial()
+    {
+      
+      $sql = "SELECT login, pass, poste FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
+      $sql .= " WHERE u.fk_user = ".$this->id;
+      
+      $result = $this->db->query($sql);
 
+      if ($result) 
+	{
+	  if ($this->db->num_rows()) 
+	    {
+	      $obj = $this->db->fetch_object();
+
+	      $this->clicktodial_login = $obj->login;
+	      $this->clicktodial_password = $obj->pass;
+	      $this->clicktodial_poste = $obj->poste;
+
+	      if (strlen(trim($this->clicktodial_login)) && 
+		  strlen(trim($this->clicktodial_password)) && 
+		  strlen(trim($this->clicktodial_poste)))
+		{
+		  $this->clicktodial_enabled = 1;
+		}
+
+	    }
+
+	  $this->db->free();
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+    }
+  /**
+   * Mise à jour des infos de click to dial
+   *
+   */
+  function update_clicktodial()
+    {
+      
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_clicktodial";
+      $sql .= " WHERE fk_user = ".$this->id;
+
+      $result = $this->db->query($sql);
+
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_clicktodial";
+      $sql .= " (fk_user,login,pass,poste)";
+      $sql .= " VALUES (".$this->id;
+      $sql .= ", '". $this->clicktodial_login ."'";
+      $sql .= ", '". $this->clicktodial_password ."'";
+      $sql .= ", '". $this->clicktodial_poste."')";
+      
+      $result = $this->db->query($sql);
+
+      if ($result) 
+	{
+	  return 0;
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+    }
 }
 
 ?>
