@@ -40,9 +40,9 @@
 
 class MenuTop {
 
-    var $require_left=array();    // Si doit etre en phase avec un gestionnaire de menu gauche particulier
-    var $showhome=true;           // Faut-il afficher le menu Accueil par le main.inc.php
-
+    var $require_left=array();  // Si doit etre en phase avec un gestionnaire de menu gauche particulier
+    var $showhome=true;         // Faut-il afficher le menu Accueil par le main.inc.php
+    var $atarget="";            // Valeur du target a utiliser dans les liens
     
     /**
      *    \brief      Constructeur
@@ -81,7 +81,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members"'.($target?" target=$target":"").'>'.$langs->trans("Members").'</a>';
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Members").'</a>';
         }
         
         if ($conf->commercial->enabled)
@@ -102,7 +102,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial"'.($target?" target=$target":"").'>'.$langs->trans("Commercial").'</a>';
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a>';
         
         }
         
@@ -124,7 +124,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy"'.($target?" target=$target":"").'>'.$langs->trans("Accountancy")."/".$langs->trans("Treasury").'</a>';
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Accountancy")."/".$langs->trans("Treasury").'</a>';
         
         }
         
@@ -151,7 +151,7 @@ class MenuTop {
             if ($conf->service->enabled) { $chaine.="Services"; }
         
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products"'.($target?" target=$target":"").'>'.$chaine.'</a>';
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products"'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a>';
         
         }
         
@@ -174,7 +174,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=supplier"'.($target?" target=$target":"").'>'.$langs->trans("Suppliers").'</a>';
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=supplier"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a>';
         }
         
         
@@ -196,7 +196,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/webcal.php?mainmenu=webcal"'.($target?" target=$target":"").'>'.$langs->trans("Calendar").'</a>';
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/webcal.php?mainmenu=webcal"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a>';
         };
     }
     

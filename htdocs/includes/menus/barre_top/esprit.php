@@ -39,8 +39,9 @@
 
 class MenuTop {
 
-    var $require_left=array();    // Si doit etre en phase avec un gestionnaire de menu gauche particulier
-    var $showhome=true;           // Faut-il afficher le menu Accueil par le main.inc.php
+    var $require_left=array();  // Si doit etre en phase avec un gestionnaire de menu gauche particulier
+    var $showhome=true;         // Faut-il afficher le menu Accueil par le main.inc.php
+    var $atarget="";            // Valeur du target a utiliser dans les liens
 
     
     /**
@@ -62,10 +63,10 @@ class MenuTop {
         $langs->load("commercial");
         $langs->load("other");
         
-        print '<a class="tmenu" href="/boutique/livre/">'.$langs->trans("Books").'</a>';
-        print '<a class="tmenu" href="/boutique/client/">'.$langs->trans("Customers").'</a>';
-        print '<a class="tmenu" href="/product/critiques/">'.$langs->trans("Criticals").'</a>';
-        print '<a class="tmenu" href="/product/categorie/">'.$langs->trans("Categories").'</a>';
+        print '<a class="tmenu" href="/boutique/livre/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Books").'</a>';
+        print '<a class="tmenu" href="/boutique/client/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Customers").'</a>';
+        print '<a class="tmenu" href="/product/critiques/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Criticals").'</a>';
+        print '<a class="tmenu" href="/product/categorie/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Categories").'</a>';
     }
 
 }

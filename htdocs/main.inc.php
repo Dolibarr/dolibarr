@@ -186,6 +186,7 @@ function top_menu($head, $title="", $target="")
   // Autres entrées du menu par le gestionnaire
   require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
   $menutop = new MenuTop($db);
+  $menutop->atarget=$target;
   if (! isset($menutop->showhome) || $menutop->showhome) {       // Entrée Home/Accueil du menu
       $id="";
       if ($_GET["mainmenu"] == "home" || ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home")) { $id="sel"; }
