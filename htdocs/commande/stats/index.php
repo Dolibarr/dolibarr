@@ -93,7 +93,6 @@ while (list($key, $value) = each ($rows))
 }
 
 print '</table>';
-$db->free();
 
 
 $db->close();
