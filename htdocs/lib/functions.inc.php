@@ -60,9 +60,14 @@ function dolibarr_syslog($message)
 */
 
 
-function dolibarr_fiche_head($links, $active=0)
+function dolibarr_fiche_head($links, $active=0, $title='')
 {
   print "<!-- fiche --><div class=\"tabs\">\n";
+
+  if (strlen($title))
+    {
+      print '<a class="tabTitle">'.$title.'</a>';
+    }
 
   for ($i = 0 ; $i < sizeof($links) ; $i++)
     {
@@ -172,26 +177,29 @@ function dolibarr_print_ca($ca)
 
 function dolibarr_print_date($time,$format="%d %b %Y")
 {
-    # Analyse de la date
-    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$time,$reg)) {
-        // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
-        $syear = $reg[1];
-        $smonth = $reg[2];
-        $sday = $reg[3];
-        $shour = $reg[4];
-        $smin = $reg[5];
-        if ($syear < 1970 && $_SERVER["WINDIR"]) {
-            # Le formatage ne peut etre appliqué car windows ne supporte pas la fonction
-            # mktime si l'année est inférieur à 1970. On retourne un format fixe
-            return "$syear-$smonth-$sday";
-        } else {
-            return strftime($format,mktime($shour,$smin,0,$smonth,$sday,$syear));
-        }
-    }
-    else {
-        // Date est un timestamps
-        return strftime($format,$time);
-    }
+  // Analyse de la date
+  if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$time,$reg)) {
+    // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+    $syear = $reg[1];
+    $smonth = $reg[2];
+    $sday = $reg[3];
+    $shour = $reg[4];
+    $smin = $reg[5];
+    if ($syear < 1970 && $_SERVER["WINDIR"])
+      {
+	// Le formatage ne peut etre appliqué car windows ne supporte pas la fonction
+	// mktime si l'année est inférieur à 1970. On retourne un format fixe
+	return "$syear-$smonth-$sday";
+      }
+    else
+      {
+	return strftime($format,mktime($shour,$smin,0,$smonth,$sday,$syear));
+      }
+  }
+  else {
+    // Date est un timestamps
+    return strftime($format,$time);
+  }
 }
 
 
