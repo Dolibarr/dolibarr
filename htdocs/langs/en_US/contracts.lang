@@ -4,3 +4,5 @@ ContractStatus=Contract status
 ContractStatusNotRunning=Not running
 ContractStatusRunning=Running
 ContractStatusClosed=Closed
+Contracts=Contracts
+Contract=Contract

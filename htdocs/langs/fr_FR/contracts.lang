@@ -4,3 +4,5 @@ ContractStatus=Statut du contrat
 ContractStatusNotRunning=Hors service
 ContractStatusRunning=En service
 ContractStatusClosed=Clôturé
+Contracts=Contrats
+Contract=Contrat
