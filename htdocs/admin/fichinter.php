@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
@@ -43,18 +43,18 @@ if (!$user->admin)
 $ficheinter_addon_var_pdf = FICHEINTER_ADDON_PDF;
 
 
-if ($action == 'setpdf')
+if ($_GET["action"] == 'setpdf')
 {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'FICHEINTER_ADDON_PDF' ;";
-	$db->query($sql);$sql ='';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-	('FICHEINTER_ADDON_PDF','".$value."',0) ; ";
-
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'FICHEINTER_ADDON_PDF' ;";
+  $db->query($sql);$sql ='';
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('FICHEINTER_ADDON_PDF','".$_GET["value"]."',0) ; ";
+  
   if ($db->query($sql))
     {
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
-      $ficheinter_addon_var_pdf = $value;
+      $ficheinter_addon_var_pdf = $_GET["value"];
     }
 }
 
