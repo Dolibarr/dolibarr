@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ function pt ($db, $sql, $date) {
     $total = 0 ;
     print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
     print "<TR class=\"liste_titre\">";
-    print "<TD width=\"60%\">$date</TD>";
+    print "<TD nowrap width=\"60%\">$date</TD>";
     print "<TD align=\"right\">Montant</TD>";
     print "<td>&nbsp;</td>\n";
     print "</TR>\n";
@@ -76,15 +77,15 @@ function pt ($db, $sql, $date) {
       $obj = $db->fetch_object( $i);
       $var=!$var;
       print "<TR $bc[$var]>";
-      print "<TD>$obj->dm</TD>\n";
+      print "<TD nowrap>$obj->dm</TD>\n";
       $total = $total + $obj->amount;
 
-      print "<TD align=\"right\">".price($obj->amount)."</TD><td align=\"right\">".$total."</td>\n";
+      print "<TD nowrap align=\"right\">".price($obj->amount)."</TD><td nowrap align=\"right\">".$total."</td>\n";
       print "</TR>\n";
             
       $i++;
     }
-    print "<tr class=\"total\"><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
+    print "<tr class=\"total\"><td align=\"right\">Total :</td><td nowrap align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
     
     print "</TABLE>";
     $db->free();
@@ -101,7 +102,11 @@ llxHeader();
 
 $tva = new Tva($db);
 
-print_titre( "TVA Solde : " . price($tva->solde($year)) . " euros");
+$textprevyear="<a href=\"$PHP_SELF?year=" . ($year-1) . "\">Année précédente (" . ($year-1) . ")</a>";
+// On n'affiche pas "Année suivante" si c'est dans le futur !
+if($year < strftime("%Y",time()))
+  $textnextyear=" - <a href=\"$PHP_SELF?year=" . ($year+1) . "\">Année suivante (" . ($year+1) . ")</a>";
+print_titre( "<table border=\"0\" width=\"100%\"><tr><td nowrap>TVA Solde : " . price($tva->solde($year)) . " euros </td><td align=\"right\">$textprevyear $textnextyear</td></tr></table>");
 
 if ($year == 0 ) {
   $year_current = strftime("%Y",time());
@@ -111,6 +116,7 @@ if ($year == 0 ) {
   $year_current = $year;
   $year_start = $year;
 }
+
 echo '<table width="100%">';
 echo '<tr><td width="50%" valign="top">TVA collectée</td>';
 echo '<td>Tva Réglée</td></tr>';
@@ -133,30 +139,30 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
   for ($m = 1 ; $m < 13 ; $m++ ) {
     $var=!$var;
     print "<TR $bc[$var]>";
-    print '<TD>'.strftime("%b %Y",mktime(0,0,0,$m,1,$y)).'</TD>';
+    print '<TD nowrap>'.strftime("%b %Y",mktime(0,0,0,$m,1,$y)).'</TD>';
     
     $x_coll = tva_coll($db, $y, $m);
-    print "<TD align=\"right\">".price($x_coll)."</TD>";
+    print "<TD nowrap align=\"right\">".price($x_coll)."</TD>";
     
     $x_paye = tva_paye($db, $y, $m);
-    print "<TD align=\"right\">".price($x_paye)."</TD>";
+    print "<TD nowrap align=\"right\">".price($x_paye)."</TD>";
     
     $diff = $x_coll - $x_paye;
     $total = $total + $diff;
     $subtotal = $subtotal + $diff;
     
-    print "<td align=\"right\">".price($diff)."</td>\n";
+    print "<td nowrap align=\"right\">".price($diff)."</td>\n";
     print "<td>&nbsp;</td>\n";
     print "</TR>\n";
     
     $i++;
     if ($i > 2) {
-      print '<tr class="total"><td align="right" colspan="3">Sous total :</td><td align="right">'.price($subtotal).'</td><td align="right"><small>'.price($subtotal * 0.8).'</small></td>';
+      print '<tr class="total"><td align="right" colspan="3">Sous total :</td><td nowrap align="right">'.price($subtotal).'</td><td nowrap align="right"><small>'.price($subtotal * 0.8).'</small></td>';
       $i = 0;
       $subtotal = 0;
     }
   }
-  print '<tr class="total"><td align="right" colspan="3">Total :</td><td align="right"><b>'.price($total).'</b></td>';
+  print '<tr class="total"><td align="right" colspan="3">Total :</td><td nowrap align="right"><b>'.price($total).'</b></td>';
   print "<td>&nbsp;</td>\n";
   print "</TABLE>";
 

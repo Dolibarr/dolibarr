@@ -488,7 +488,7 @@ if ($_GET["action"] == 'create')
 	       */
 	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ";
 	      $sql .= " WHERE envente = 1";
-	      $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
+	      $sql .= " ORDER BY p.nbvente DESC";
 	      if ( $db->query($sql) )
 		{
 		  $opt = "<option value=\"0\" SELECTED></option>";
