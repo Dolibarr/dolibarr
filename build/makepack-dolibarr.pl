@@ -135,20 +135,21 @@ foreach my $target (keys %CHOOSEDTARGET) {
         print "Test requirement for target $target: Search '$req'... ";
         $ret=`"$req" 2>&1`;
         $coderetour=$?; $coderetour2=$coderetour>>8;
-        if ($coderetour != 0 && ($coderetour2 == 1 && $OS =~ /windows/) || ($coderetour2 == 127 && $OS !~ /windows/) && $PROGPATH) { 
-            # If error not found, we try in PROGPATH
+        if ($coderetour != 0 && (($coderetour2 == 1 && $OS =~ /windows/ && $ret !~ /Usage/i) || ($coderetour2 == 127 && $OS !~ /windows/)) && $PROGPATH) { 
+            # Not found error, we try in PROGPATH
             $ret=`"$PROGPATH/$ALTERNATEPATH{$req}/$req\" 2>&1`;
             $coderetour=$?; $coderetour2=$coderetour>>8;
             $REQUIREMENTTARGET{$target}="$PROGPATH/$ALTERNATEPATH{$req}/$req";
         }    
 
-        if ($coderetour == 0 || ($coderetour2 > 1 && $coderetour2 < 127) || $ret =~ /Usage/) {
-            # Pas erreur ou erreur autre que programme absent
-            print " Found ".$REQUIREMENTTARGET{$target}."\n";
-        } else {
+        if ($coderetour != 0 && (($coderetour2 == 1 && $OS =~ /windows/ && $ret !~ /Usage/i) || ($coderetour2 == 127 && $OS !~ /windows/))) {
+            # Not found error
             print "Not found\nCan't build target $target. Requirement '$req' not found in PATH\n";
             $CHOOSEDTARGET{$target}=-1;
             last;
+        } else {
+            # Pas erreur ou erreur autre que programme absent
+            print " Found ".$REQUIREMENTTARGET{$target}."\n";
         }
     }
 }
