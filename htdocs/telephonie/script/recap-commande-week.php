@@ -164,7 +164,7 @@ function Generate($date_gen, $db, $date_now, $email)
   $sqlall .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
   $sqlall .= " AND l.fk_soc_facture = r.idp ";
   $sqlall .= " AND l.fk_commercial = comm.rowid ";
-  $sqlall .= " AND date_format(l.date_commande,'%Y%v') = '".strftime("%Y%v", $date_gen)."'";
+  $sqlall .= " AND date_format(l.date_commande,'%Y%v') = '".strftime("%Y%V", $date_gen)."'";
   /*
    *
    */
