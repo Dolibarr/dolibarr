@@ -21,14 +21,26 @@
  *
  */
 
-include("./inc.php");
+include_once("../lib/mysql.lib.php");
+include_once("./inc.php");
+
 pHeader("Fichier de configuration","etape2");
 
 $etape = 1;
 
 $conffile = "../conf/conf.php";
 
-if ($HTTP_POST_VARS["action"] == "set")
+# main_dir = Rep pages html
+$main_dir=isset($_POST["main_dir"])?$_POST["main_dir"]:'';
+# data_dir = Rep fichiers générés (factures, etc...)
+$main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
+
+# TODO En attendant que le main_data_dir soit géré
+# par la page précédente, on le force à sa valeur fixe des anciennes versions.
+if (! $main_data_dir) { $main_data_dir="$main_dir/document"; }
+
+
+if ($_POST["action"] == "set")
 {
   umask(0);
   print '<h2>Enregistrement des valeurs</h2>';
@@ -38,14 +50,14 @@ if ($HTTP_POST_VARS["action"] == "set")
   $fp = fopen("$conffile", "w");
   if($fp)
     {
-      if (substr($HTTP_POST_VARS["main_dir"], strlen($HTTP_POST_VARS["main_dir"]) -1) == "/")
+      if (substr($main_dir, strlen($main_dir) -1) == "/")
 	{
-	  $HTTP_POST_VARS["main_dir"] = substr($HTTP_POST_VARS["main_dir"], 0, strlen($HTTP_POST_VARS["main_dir"])-1);
+	  $main_dir = substr($main_dir, 0, strlen($main_dir)-1);
 	}
 
-      if (substr($HTTP_POST_VARS["main_url"], strlen($HTTP_POST_VARS["main_url"]) -1) == "/")
+      if (substr($_POST["main_url"], strlen($_POST["main_url"]) -1) == "/")
 	{
-	  $HTTP_POST_VARS["main_url"] = substr($HTTP_POST_VARS["main_url"], 0, strlen($HTTP_POST_VARS["main_url"])-1);
+	  $_POST["main_url"] = substr($_POST["main_url"], 0, strlen($_POST["main_url"])-1);
 	}
 
       clearstatcache();
@@ -53,22 +65,25 @@ if ($HTTP_POST_VARS["action"] == "set")
       fwrite($fp, '<?PHP');
       fputs($fp,"\n");
 
-      fputs($fp, '$dolibarr_main_document_root="'.$HTTP_POST_VARS["main_dir"].'";');
+      fputs($fp, '$dolibarr_main_url_root="'.$_POST["main_url"].'";');
       fputs($fp,"\n");
 
-      fputs($fp, '$dolibarr_main_url_root="'.$HTTP_POST_VARS["main_url"].'";');
+      fputs($fp, '$dolibarr_main_document_root="'.$main_dir.'";');
       fputs($fp,"\n");
 
-      fputs($fp, '$dolibarr_main_db_host="'.$HTTP_POST_VARS["db_host"].'";');
+      fputs($fp, '$dolibarr_main_data_root="'.$main_data_dir.'";');
       fputs($fp,"\n");
 
-      fputs($fp, '$dolibarr_main_db_name="'.$HTTP_POST_VARS["db_name"].'";');
+      fputs($fp, '$dolibarr_main_db_host="'.$_POST["db_host"].'";');
       fputs($fp,"\n");
 
-      fputs($fp, '$dolibarr_main_db_user="'.$HTTP_POST_VARS["db_user"].'";');
+      fputs($fp, '$dolibarr_main_db_name="'.$_POST["db_name"].'";');
       fputs($fp,"\n");
 
-      fputs($fp, '$dolibarr_main_db_pass="'.$HTTP_POST_VARS["db_pass"].'";');
+      fputs($fp, '$dolibarr_main_db_user="'.$_POST["db_user"].'";');
+      fputs($fp,"\n");
+
+      fputs($fp, '$dolibarr_main_db_pass="'.$_POST["db_pass"].'";');
       fputs($fp,"\n");
 
       fputs($fp, '?>');
@@ -94,35 +109,34 @@ if ($HTTP_POST_VARS["action"] == "set")
   
   if ($error == 0)
     {
-      $dir[0] = $HTTP_POST_VARS["main_dir"]."/document/facture";
-      $dir[1] = $HTTP_POST_VARS["main_dir"]."/document/propale";
-      $dir[2] = $HTTP_POST_VARS["main_dir"]."/document/societe";
-      $dir[3] = $HTTP_POST_VARS["main_dir"]."/document/ficheinter";
-      $dir[4] = $HTTP_POST_VARS["main_dir"]."/document/produit";
-      $dir[5] = $HTTP_POST_VARS["main_dir"]."/document/images";
-      $dir[6] = $HTTP_POST_VARS["main_dir"]."/document/rapport";
+        $dir[0] = "$datadir/facture";
+        $dir[1] = "$datadir/propale";
+        $dir[2] = "$datadir/societe";
+        $dir[3] = "$datadir/ficheinter";
+        $dir[4] = "$datadir/produit";
+        $dir[5] = "$datadir/rapport";
+        $dir[6] = "$datadir/images";
 
-      if (! is_dir($HTTP_POST_VARS["main_dir"]))
+      if (! is_dir($main_dir))
 	{
-	  print "<tr><td>Le dossier ".$HTTP_POST_VARS["main_dir"]." n'existe pas !</td><td>Erreur</td></tr>";
+	  print "<tr><td>Le dossier '".$main_dir."' n'existe pas !</td><td>Erreur</td></tr>";
 	  $error++;
 	}
       else
 	{	      
-	  dolibarr_syslog ("Le dossier ".$HTTP_POST_VARS["main_dir"]." existe");
+	  dolibarr_syslog ("Le dossier '".$main_dir."' existe");
 	  /*
 	   * Répertoire des documents
 	   */
-	  if (! is_dir($HTTP_POST_VARS["main_dir"]."/document"))
+	  if (! is_dir($main_data_dir))
 	    {
-	      @mkdir($HTTP_POST_VARS["main_dir"]."/document", 0755);
+	      @mkdir($main_data_dir, 0755);
 	    }
-	  
 	      
-	  if (! is_dir($HTTP_POST_VARS["main_dir"]."/document"))
+	  if (! is_dir($main_data_dir))
 	    {
-	      print "<tr><td>Le dossier ".$HTTP_POST_VARS["main_dir"]."/document n'existe pas !<p>";
-	      print "- Vous devez créer le dossier : <b>".$HTTP_POST_VARS["main_dir"]."/document</b> et permettre au serveur web d'écrire dans celui-ci";
+	      print "<tr><td>Le dossier '$main_data_dir' n'existe pas ! ";
+	      print "Vous devez créer ce dossier et permettre au serveur web d'écrire dans celui-ci";
 	      print '</td><td bgcolor="red">Erreur</td></tr>';
 	      $error++;
 	    }
@@ -132,7 +146,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 		{
 		  if (is_dir($dir[$i]))
 		    {
-		      dolibarr_syslog ("Le dossier ".$dir[$i]." existe");
+		      dolibarr_syslog ("Le dossier '".$dir[$i]."' existe");
 		    }
 		  else
 		    {
@@ -143,7 +157,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 			}
 		      else
 			{
-			  dolibarr_syslog ("Le dossier ".$dir[$i]." create ok");
+			  dolibarr_syslog ("Le dossier '".$dir[$i]."' create ok");
 			}
 		    }
 		}
@@ -156,12 +170,11 @@ if ($HTTP_POST_VARS["action"] == "set")
    */
   if ($error == 0)
     {
-      require ($dolibarr_main_document_root . "/lib/mysql.lib.php");
-      require ($dolibarr_main_document_root . "/conf/conf.class.php");
+      include_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
 	  // TODO
 	  // Il y a encore des pb ds la procédure d'install qui ne passe dans pas tous les cas
-	  // (exemple, rien n'existe et on veut crée une base avec un compte admin != root)
+	  // (exemple, rien n'existe et on veut créer une base avec un compte admin != root)
 	  // L'algorithme ne semble pas adapté à tous les cas, il devrait etre remplacé par le suivant:
 	  //
 	  // On essaie l'accès par le user admin dolibarr
@@ -179,13 +192,13 @@ if ($HTTP_POST_VARS["action"] == "set")
 	  //     si compte admin n'existe pas deja et db_create_user non positionné, erreur compte admin inexistant "Veuillez cocher pour le créer"
 
       // Si creation utilisateur admin demandée, on le crée
-      if (isset($HTTP_POST_VARS["db_create_user"]) && $HTTP_POST_VARS["db_create_user"] == "on")
+      if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 	{
 	  $conf = new Conf();
 	  $conf->db->host = $dolibarr_main_db_host;
 	  $conf->db->name = "mysql";
-	  $conf->db->user = isset($HTTP_POST_VARS["db_user_root"])?$HTTP_POST_VARS["db_user_root"]:"";
-	  $conf->db->pass = isset($HTTP_POST_VARS["db_pass_root"])?$HTTP_POST_VARS["db_pass_root"]:"";
+	  $conf->db->user = isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
+	  $conf->db->pass = isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
 	  //print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->pass;
 	  $db = new DoliDb();
 	  
@@ -223,17 +236,16 @@ if ($HTTP_POST_VARS["action"] == "set")
 	}
             
       // Tentative accès serveur et base par le user admin dolibarr
+      
       $conf = new Conf();
       $conf->db->host = $dolibarr_main_db_host;
       $conf->db->name = $dolibarr_main_db_name;
       $conf->db->user = $dolibarr_main_db_user;
       $conf->db->pass = $dolibarr_main_db_pass;
-	  //print "$dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name";
+	  //print $conf->db->host.",".$conf->db->name.",".$conf->db->user.",".$conf->db->pass;
 	  $db = new DoliDb();
       $ok = 1;
       
-      if ($ok)
-	{
 	  if ($db->connected == 1)
 	    {
 	      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>OK</td></tr>";
@@ -243,7 +255,6 @@ if ($HTTP_POST_VARS["action"] == "set")
 	      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>ERREUR</td></tr>";
 	      $ok = 0;
 	    }
-	}
       
       if ($ok)
 	{
@@ -264,30 +275,30 @@ if ($HTTP_POST_VARS["action"] == "set")
 	      print "<tr><td>Echec de connexion à la base : $dolibarr_main_db_name</td><td>Warning</td></tr>";
 	      print '<tr><td colspan="2">Création de la base : '.$dolibarr_main_db_name.'</td></tr>';
 	      
-	      $db->close();
 	      $conf = new Conf();
 	      $conf->db->host = $dolibarr_main_db_host;
 	      $conf->db->name = "mysql";
-	      $conf->db->user = isset($HTTP_POST_VARS["db_user_root"])?$HTTP_POST_VARS["db_user_root"]:"";
-	      $conf->db->pass = isset($HTTP_POST_VARS["db_pass_root"])?$HTTP_POST_VARS["db_pass_root"]:"";
-	      $db = new DoliDb();
+	      $conf->db->user = isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
+	      $conf->db->pass = isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
+
+	      $dbt = new DoliDb();  // Ne pas prendre $db comme nom de variable car dejà pris pour connexion précédente et bug mémoire sur php windows dans ce cas
 	      
 	      if ($ok)
 		{
-		  if ($db->connected == 1)
+		  if ($dbt->connected == 1)
 		    {
-		      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$HTTP_POST_VARS["db_user_root"]."</td><td>OK</td></tr>";
+		      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>OK</td></tr>";
 		    }
 		  else
 		    {
-		      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$HTTP_POST_VARS["db_user_root"]."</td><td>ERREUR</td></tr>";
+		      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>ERREUR</td></tr>";
 		      $ok = 0;
 		    }
 		}
 	      
 	      if ($ok)
 		{  
-		  if($db->database_selected == 1)
+		  if($dbt->database_selected == 1)
 		    {
 		    }
 		  else
@@ -300,7 +311,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 	      
 	      if ($ok)
 		{
-		  if ($db->create_db ($dolibarr_main_db_name))
+		  if ($dbt->create_db ($dolibarr_main_db_name))
 		    {			      			      
 		      print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>OK</td></tr>";
 		    }
