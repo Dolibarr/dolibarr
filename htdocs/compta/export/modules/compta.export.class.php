@@ -169,7 +169,15 @@ class ComptaExport
 	    $this->linep[$i][4] = $obj->facnumber;
 	    $this->linep[$i][5] = $obj->amount;
 	    $this->linep[$i][6] = $obj->libelle;
-	    $this->linep[$i][7] = $obj->increment;
+
+	    if (strlen(trim( $obj->increment)) > 0)
+	      {
+		$this->linep[$i][7] = $obj->increment;
+	      }
+	    else
+	      {
+		$this->linep[$i][7] = $obj->facnumber;
+	      }
 
 	    $i++;
 	  }

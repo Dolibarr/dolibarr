@@ -111,7 +111,8 @@ class ComptaExportPoivre
 	
 	if ($this->db->query($sql))
 	  {
-	    $ecid = $this->db->last_insert_id(MAIN_DB_PREFIX."export_compta");
+	    $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."export_compta");
+	    $this->ref = $ref;
 	  }
 	else
 	  {
@@ -124,8 +125,6 @@ class ComptaExportPoivre
     if (!$error)
       {
 	dolibarr_syslog("ComptaExportPoivre::Export ref : $ref");
-
-	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."export_compta");
 
 	$fxname = DOL_DATA_ROOT."/compta/export/".$ref.".xls";
 
@@ -201,9 +200,9 @@ class ComptaExportPoivre
 	    $page->write_string($j, 1, 'VE');
 	    $page->write_string($j, 2, $this->line_out[$i][4]); // Code Comptable
 	    $page->write_string($j, 4, $this->line_out[$i][3]." Facture");
-	    $page->write_string($j, 5, $this->line_out[$i][5]);                  // Numéro de facture
+	    $page->write_string($j, 5, $this->line_out[$i][5]);               // Numéro de facture
 	    $page->write_string($j, 6, strftime("%d%m%y",$this->line_out[$i][0]));
-	    $page->write($j, 6, ereg_replace(",",".",round($this->line_out[$i][8], 2)));  // Montant de la ligne
+	    $page->write($j, 7, ereg_replace(",",".",round($this->line_out[$i][8], 2)));  // Montant de la ligne
 	    $page->write_string($j, 8, 'C');                     // C pour crédit
 	    $page->write_string($j, 9, 'EUR'); // D pour débit
 
@@ -216,7 +215,7 @@ class ComptaExportPoivre
 
 	  {
 	    $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet";
-	    $sql .= " SET fk_export_compta=".$ecid;
+	    $sql .= " SET fk_export_compta=".$this->id;
 	    $sql .= " WHERE rowid = ".$linec[$i][10];
 
 	    if (!$this->db->query($sql))
@@ -274,8 +273,11 @@ class ComptaExportPoivre
 
 	    $page->write_string($j,4, stripslashes($linep[$i][3])." ".stripslashes($linep[$i][6])); // 
 	    $page->write_string($j,5, $linep[$i][7]);                  // Numéro de facture
-	    $page->write($j,6, ereg_replace(",",".",round(abs($linep[$i][5]), 2)));  // Montant de la ligne
-	    $page->write_string($j,7,$debit);
+
+	    $page->write_string($j,6, strftime("%d%m%y",$linep[$i][0]));
+	    $page->write($j,7, ereg_replace(",",".",round(abs($linep[$i][5]), 2)));  // Montant de la ligne
+	    $page->write_string($j,8,$debit);
+	    $page->write_string($j,9,'EUR');
 	
 	    $j++;
 
@@ -286,8 +288,11 @@ class ComptaExportPoivre
 	    $page->write_string($j,3, $linep[$i][2]);
 	    $page->write_string($j,4, stripslashes($linep[$i][3])." ".stripslashes($linep[$i][6])); // 
 	    $page->write_string($j,5, $linep[$i][7]);                  // Numéro de facture
-	    $page->write($j,6, ereg_replace(",",".",round(abs($linep[$i][5]), 2)));  // Montant de la ligne
-	    $page->write_string($j,7, $credit);
+
+	    $page->write_string($j,6, strftime("%d%m%y",$linep[$i][0]));
+	    $page->write($j,7, ereg_replace(",",".",round(abs($linep[$i][5]), 2)));  // Montant de la ligne
+	    $page->write_string($j,8, $credit);
+	    $page->write_string($j,9, 'EUR');
 	
 	    $j++;
 
@@ -300,7 +305,7 @@ class ComptaExportPoivre
 
 	  {
 	    $sql = "UPDATE ".MAIN_DB_PREFIX."paiement";
-	    $sql .= " SET fk_export_compta=".$ecid;
+	    $sql .= " SET fk_export_compta=".$this->id;
 	    $sql .= " WHERE rowid = ".$linep[$i][1];
 
 	    if (!$this->db->query($sql))

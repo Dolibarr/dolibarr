@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@
 require("./pre.inc.php");
 
 require("./ComptaJournalPaiement.class.php");
+require("./ComptaJournalVente.class.php");
 
 if ($_GET["action"] == 'export')
 {
@@ -41,12 +42,18 @@ if ($_GET["action"] == 'export')
 
   print $exc->error_message;
 
-  $jp= new ComptaJournalPaiement($db);
-  $jp->GeneratePdf();
+  /* Génération du journal des Paiements */
 
+  $jp= new ComptaJournalPaiement($db);
+  $jp->GeneratePdf($user, $exc->id, $exc->ref);
+
+  /* Génération du journal des Ventes */
+
+  $jp= new ComptaJournalVente($db);
+  $jp->GeneratePdf($user, $exc->id, $exc->ref);
 }
 
-llxHeader();
+llxHeader('','Compta - Export');
 
 print_titre("Export Comptable");
 
@@ -54,7 +61,7 @@ print '<table border="0" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
 
-print '<br><a href="index.php?action=export">Export</a><br>';
+print '<br><a href="index.php?action=export">Nouvel Export</a><br>';
 
 $dir = DOL_DATA_ROOT."/compta/export/";
 
@@ -77,7 +84,6 @@ while (($file = readdir($handle))!==false)
       print '</tr>';
     }
 }
-
 
 print "</table>";
 
