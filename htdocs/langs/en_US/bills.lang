@@ -1,3 +1,12 @@
 # Dolibarr language file - en_US - bills
 Bill=Bill
 Bills=Bills
+ClassifyPayed=Classify 'Payed'
+ClassifyCanceled=Classify 'Abandonned'
+Send=Send
+SendRemind=Send remind
+DoPaiement=Do paiement
+BuildPDF=Build PDF
+RebuildPDF=Rebuild PDF
+VAT=VAT
+Amount=Amount

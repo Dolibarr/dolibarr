@@ -27,6 +27,8 @@ $user->getrights('facture');
 if (!$user->rights->facture->lire)
   accessforbidden();
 
+$langs->load("bills");
+
 require("../facture.class.php");
 require("../lib/CMailFile.class.php");
 require("../paiement.class.php");
@@ -214,12 +216,6 @@ if ($_GET["action"] == 'payed' && $user->rights->facture->paiement)
   $result = $fac->set_payed($_GET["facid"]);
 }
 
-if ($_GET["action"] == 'canceled' && $user->rights->facture->paiement) 
-{
-  $fac = new Facture($db);
-  $result = $fac->set_canceled($_GET["facid"]);
-}
-
 if ($_POST["action"] == 'setremise' && $user->rights->facture->creer) 
 {
   $fac = new Facture($db);
@@ -296,6 +292,18 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
       Header("Location: facture.php");
     }
 }
+
+if ($_POST["action"] == 'confirm_canceled' && $_POST["confirm"] == yes)
+{
+  if ($user->rights->facture->supprimer ) 
+    {
+      $fac = new Facture($db);
+      $result = $fac->set_canceled($_GET["facid"]);
+      $_GET["facid"] = 0 ;
+      Header("Location: facture.php");
+    }
+}
+
 
 /*
  *
@@ -754,6 +762,15 @@ else
 	    {
 	      $html->form_confirm($_SERVER["PHP_SELF"]."?facid=$fac->id","Supprimer la facture","Etes-vous sûr de vouloir supprimer cette facture ?","confirm_delete");
 	    }
+
+	  /*
+	   * Confirmation du classement abandonné
+	   *
+	   */
+	  if ($_GET["action"] == 'canceled')
+	    {
+	      $html->form_confirm($_SERVER["PHP_SELF"]."?facid=$fac->id","Classer la facture à l'état 'Abandonnée'","La totalité du paiement de cette facture n'a pas été réalisée. Etes-vous sûr de vouloir abandonner définitivement cette facture ?","confirm_canceled");
+	    }
 	  
 	  /*
 	   * Confirmation de la validation
@@ -1052,7 +1069,7 @@ else
 		{
 		  if ($user->rights->facture->valider)
 		    {
-		      print '<a class="tabAction" href="facture.php?facid='.$fac->id.'&amp;action=valid">Valider</a>';
+		      print '<a class="tabAction" href="facture.php?facid='.$fac->id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
 		    }
 		}
 	      else
@@ -1062,11 +1079,11 @@ else
 		    {
 		      if ($fac->paye == 0)
 			{
-			  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Générer le PDF</a>";
+			  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("BuildPDF")."</a>";
 			}
 		      else
 			{
-			  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Regénérer le PDF</a>";
+			  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("RebuildPDF")."</a>";
 			}		  	
 		    }
 		}
@@ -1074,38 +1091,38 @@ else
 	      // Supprimer
 	      if ($fac->statut == 0 && $user->rights->facture->supprimer)
 		{
-		  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=delete\">Supprimer</a>";
+		  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 		} 
 
 	      // Envoyer
 	      if ($fac->statut == 1 && $user->rights->facture->envoyer)
 		{
-		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">Envoyer</a>";
+		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">".$langs->trans("Send")."</a>";
 		}
 	    
 	      // Envoyer une relance
 	      if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer) 
 		{
-		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">Envoyer relance</a>";
+		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">".$langs->trans("SendRemind")."</a>";
 		}
 
 	      // Emettre paiement 
 	      if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->paiement)
 		{
-		  print "<a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">Emettre paiement</a>";
+		  print "<a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">".$langs->trans("DoPaiement")."</a>";
 		}
 	    
 	      // Classer 'payé'
 	      if ($fac->statut == 1 && price($resteapayer) <= 0 
 		  && $fac->paye == 0 && $user->rights->facture->paiement)
 		{
-		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a>";
+		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>";
 		}
 	    
-	      // Classer 'annulée' (possible si validée et aucun paiement n'a encore eu lieu)
-	      if ($fac->statut == 1 && $fac->paye == 0 && $totalpaye == 0 && $user->rights->facture->paiement)
+	      // Classer 'abandonnée' (possible si validée et pas encore classer payée)
+	      if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
 		{
-		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=canceled\">Classer 'Annulée'</a>";
+		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=canceled\">".$langs->trans("ClassifyCanceled")."</a>";
 		}
 
 	      // Récurrente
@@ -1494,7 +1511,7 @@ else
 			}
 		      elseif ($objp->fk_statut == 3)
 			{
-			  print '<td align="center">annulée</td>';
+			  print '<td align="center">abandonnée</td>';
 			}
 		      else
 			{

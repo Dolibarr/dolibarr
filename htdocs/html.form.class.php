@@ -289,6 +289,8 @@ class Form
    */
   Function form_confirm($page, $title, $question, $action)
   {
+    global $langs;
+    
     print '<form method="post" action="'.$page.'">';
     print '<input type="hidden" name="action" value="'.$action.'">';
     print '<table cellspacing="0" class="border" width="100%" cellpadding="3">';
@@ -299,7 +301,7 @@ class Form
     $this->selectyesno("confirm","no");
     
     print "</td>\n";
-    print '<td class="valid" align="center"><input type="submit" value="Confirmer"</td></tr>';
+    print '<td class="valid" align="center"><input type="submit" value="'.$langs->trans("Confirm").'"</td></tr>';
     print '</table>';
     print "</form>\n";  
   }

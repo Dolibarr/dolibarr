@@ -432,7 +432,7 @@ class Facture
     }
 
   /**
-   * Retourne le libellé du statut d'une facture (brouillon, validée, annulée, payée)
+   * Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
    *
    */
   Function get_libstatut()
@@ -459,7 +459,7 @@ class Facture
       $return = $this->db->query( $sql);
     }
   /**
-   * Tag la facture comme annulée
+   * Tag la facture comme abandonnée
    *
    */
   Function set_canceled($rowid)
@@ -913,7 +913,7 @@ class Facture
 		if (! $paye)
 		  {
 		    if ($statut == 0) return 'Brouillon (à valider)';
-		    if ($statut == 3) return 'Annulée';
+		    if ($statut == 3) return 'Abandonnée';
 			return 'Validée (à payer)';
 		  }
 		else
