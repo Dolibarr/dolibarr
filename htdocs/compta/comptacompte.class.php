@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,51 +60,61 @@ class ComptaCompte
     {
       if (strlen(trim($this->numero)) && strlen(trim($this->intitule)))
 	{
-
 	  $sql = "SELECT count(*)";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."compta_compte_generaux ";
 	  $sql .= " WHERE numero = '" .trim($this->numero)."'";
 	  
-	  $result = $this->db->query($sql) ;
+	  $resql = $this->db->query($sql) ;
 	  
-	  if ( $result )
+	  if ( $resql )
 	    {
-	      $row = $this->db->fetch_array();
+	      $row = $this->db->fetch_array($resql);
 	      if ($row[0] == 0)
 		{
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."compta_compte_generaux (date_creation, fk_user_author, numero,intitule)";
 		  $sql .= " VALUES (now(),".$user->id.",'".$this->numero."','".$this->intitule."')";
 		  
-		  $result = $this->db->query($sql);
-		  if ( $result )
+		  $resql = $this->db->query($sql);
+		  if ( $resql )
 		    {
 		      $id = $this->db->last_insert_id(MAIN_DB_PREFIX."compta_compte_generaux");
 		      
 		      if ($id > 0)
 			{
 			  $this->id = $id;
-			  return 0;
+			  $result = 0;
 			}
 		      else
 			{
-			  return -2;
+			  $result = -2;
+			  dolibarr_syslog("ComptaCompte::Create Erreur $result lecture ID");
 			}
 		    }
 		  else
 		    {
-		      return -1;
+		      $result = -1;
+		      dolibarr_syslog("ComptaCompte::Create Erreur $result INSERT Mysql");
 		    }
 		}
 	      else
 		{
-		  return -3;
+		  $result = -3;
+		  dolibarr_syslog("ComptaCompte::Create Erreur $result SELECT Mysql");
 		}
+	    }
+	  else
+	    {
+	      $result = -5;
+	      dolibarr_syslog("ComptaCompte::Create Erreur $result SELECT Mysql");
 	    }
 	}
       else
 	{
-	  return -4;
+	  $result = -4;
+	  dolibarr_syslog("ComptaCompte::Create Erreur  $result Valeur Manquante");
 	}
+
+      return $result;
     }
 }
 ?>
