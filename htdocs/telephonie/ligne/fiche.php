@@ -1094,12 +1094,12 @@ print "\n<br>\n<div class=\"tabsAction\">\n";
 if ($_GET["action"] == '')
 {
 
-  if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 3)
+  if ( $user->rights->telephonie->ligne->resilier && $ligne->statut == 3)
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=resilier&amp;id=$ligne->id\">".$langs->trans("Resilier")."</a>";
+      print "<a class=\"tabAction\" href=\"fiche.php?action=resilier&amp;id=$ligne->id\">".$langs->trans("Demander la résiliation")."</a>";
     }
 
-  if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 4)
+  if ( $user->rights->telephonie->ligne->resilier && $ligne->statut == 4)
     {
       print "<a class=\"tabAction\" href=\"fiche.php?action=annuleresilier&amp;id=$ligne->id\">".$langs->trans("Annuler la demande de résiliation")."</a>";
     }
