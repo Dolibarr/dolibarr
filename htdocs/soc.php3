@@ -139,7 +139,7 @@ elseif ($action == 'edit')
 
   print '</td></tr>';
 
-  print '<tr><td colspan="2"><input type="submit" value="Mettre a jour"></td></tr>';
+  print '<tr><td align="center" colspan="2"><input type="submit" value="Mettre a jour"></td></tr>';
   print '</table>';
   print '</form>';
 
@@ -161,18 +161,46 @@ elseif ($action == 'edit')
   print '<tr><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
 
   print '<tr><td>Siren</td><td>'.$soc->siren.'&nbsp;</td></tr>';
-  print '<tr><td>Client</td><td>'.$soc->client.'</td></tr>';
-  if ($soc->fournisseur)
+
+  if ($soc->client)
     {
-      print '<tr><td>Fournisseur</td><td>'.$soc->fournisseur.'</td><td><a href="/fourn/">Fiche</td></tr>';
+      print '<tr><td>Client</td><td>oui</td></tr>';
     }
   else
     {
-      print '<tr><td>Fournisseur</td><td>'.$soc->fournisseur.'</td></tr>';
+      print '<tr><td>Client</td><td>non</td></tr>';
     }
+
+  if ($soc->fournisseur)
+    {
+      print '<tr><td>Fournisseur</td><td>oui</td></tr>';
+    }
+  else
+    {
+      print '<tr><td>Fournisseur</td><td>non</td></tr>';
+    }
+
   print '</table>';
 
-  print "[<a href=\"soc.php3?socid=$socid&action=edit\">Editer</a>]";
+  /*
+   *
+   */
+
+
+
+  print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
+
+ 
+  print '<td width="20%" align="center">[<a href="soc.php3?socid='.$socid.'&action=edit">Editer</a>]</td>';
+  print '<td width="20%" align="center">-</td>';
+  print '<td width="20%" align="center">-</td>';
+  print '<td width="20%" align="center">-</td>';
+  print '<td width="20%" align="center">-</td>';
+  print '</table><br>';
+
+/*
+ *
+ */
 
   clearstatcache();
 
@@ -181,7 +209,6 @@ elseif ($action == 'edit')
 
   if (file_exists ($docdir))
     {
-      print "<p>$docdir<p>";
       print '<a href="'.$url.'">Documents</a>';
     }
   else
