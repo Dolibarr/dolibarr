@@ -2,8 +2,9 @@
 
 if ($action == "set")
 {
-  print "- Enregistrement des valeurs<br>";
-
+  print '<table cellspacing="0" cellpadding="4" border="1">';
+  print '<tr><td colspan="2">Enregistrement des valeurs</td></tr>';
+  $error=0;
   $fp = fopen("conf/conf.php", "w");
   if($fp)
     {
@@ -22,35 +23,6 @@ if ($action == "set")
 
       fwrite($fp, '<?PHP');
       fputs($fp,"\n");
-
-      if (! is_dir($HTTP_POST_VARS["main_dir"]))
-	{
-	  print "- Erreur le dossier ".$HTTP_POST_VARS["main_dir"]." n'existe pas !<br>";
-	}
-      else
-	{
-	  if (! is_dir($HTTP_POST_VARS["main_dir"]."/document"))
-	    {
-	      print "- Vous devez créer le dossier : <b>".$HTTP_POST_VARS["main_dir"]."/document</b> et permettre au serveur web d'écrire dans celui-ci";
-	    }
-	  else
-	    {
-	      if (! is_dir($HTTP_POST_VARS["main_dir"]."/document/facture"))
-		{
-		  if (! mkdir($HTTP_POST_VARS["main_dir"]."/document/facture"))
-		    {
-		      print "- Impossible de créer : ".$HTTP_POST_VARS["main_dir"]."/document/facture";
-		    }
-		}
-	      if (! is_dir($HTTP_POST_VARS["main_dir"]."/document/propale"))
-		{
-		  if (! mkdir($HTTP_POST_VARS["main_dir"]."/document/propale"))
-		    {
-		      print "- Impossible de créer : ".$HTTP_POST_VARS["main_dir"]."/document/propale";
-		    }
-		}
-	    }
-	}
 
       fputs($fp, '$dolibarr_main_document_root="'.$HTTP_POST_VARS["main_dir"].'";');
       fputs($fp,"\n");
@@ -78,8 +50,57 @@ if ($action == "set")
 	  include ("conf/conf.php");
 	}
 
-      print "- Configuration enregistré<br>";
-      print "- test de connexion à la base de données<br>";
+      print "<tr><td>Configuration enregistrée</td><td>OK</td>";
+
+      print '<tr><td colspan="2">Test des répertoires</td></tr>';
+
+      if (! is_dir($HTTP_POST_VARS["main_dir"]))
+	{
+	  print "<tr><td>Le dossier ".$HTTP_POST_VARS["main_dir"]." n'existe pas !</td><td>Erreur</td></tr>";
+	  $error++;
+	}
+      else
+	{
+
+	  print "<tr><td>Le dossier ".$HTTP_POST_VARS["main_dir"]." existe</td><td>OK</td></tr>";
+
+	  if (! is_dir($HTTP_POST_VARS["main_dir"]."/document"))
+	    {
+	      print "<tr><td>Le dossier ".$HTTP_POST_VARS["main_dir"]." n'existe pas !<p>";
+	      print "- Vous devez créer le dossier : <b>".$HTTP_POST_VARS["main_dir"]."/document</b> et permettre au serveur web d'écrire dans celui-ci";
+	      print "</td><td>Erreur</td></tr>";
+	    }
+	  else
+	    {
+	      $dir[0] = $HTTP_POST_VARS["main_dir"]."/document/facture";
+	      $dir[1] = $HTTP_POST_VARS["main_dir"]."/document/propale";
+	      $dir[2] = $HTTP_POST_VARS["main_dir"]."/document/societe";
+	      $dir[3] = $HTTP_POST_VARS["main_dir"]."/document/ficheinter";
+
+	      for ($i = 0 ; $i < sizeof($dir) ; $i++)
+		{
+
+		  if (is_dir($dir[$i]))
+		    {
+		      print "<tr><td>Le dossier ".$dir[$i]." existe</td><td>OK</td></tr>";
+		    }
+		  else
+		    {
+		      if (! @mkdir($dir[$i]))
+			{
+			  print "<tr><td>Impossible de créer : ".$dir[$i]."</td><td>Erreur</td></tr>";
+			  $error++;
+			}
+		      else
+			{
+			  print "<tr><td>Création de : ".$dir[$i]." réussie</td><td>OK</td></tr>";
+			}
+		    }
+		}
+	    }
+	}
+
+      print '<tr><td colspan="2">test de connexion à la base de données</td></tr>';
       require ($dolibarr_main_document_root . "/lib/mysql.lib.php3");
       require ($dolibarr_main_document_root . "/conf/conf.class.php3");
       $conf = new Conf();
@@ -97,24 +118,41 @@ if ($action == "set")
 
       $sql[3] = "REPLACE INTO llx_const SET name = 'PROPALE_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/propale', visible=0, type='chaine'";
 
+      $sql[4] = "REPLACE INTO llx_const SET name = 'FICHEINTER_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/ficheinter', visible=0, type='chaine'";
+
+      $sql[5] = "REPLACE INTO llx_const SET name = 'FICHEINTER_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/ficheinter', visible=0, type='chaine'";
+
+      $sql[6] = "REPLACE INTO llx_const SET name = 'SOCIETE_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/societe', visible=0, type='chaine'";
+
+      $sql[7] = "REPLACE INTO llx_const SET name = 'SOCIETE_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/societe', visible=0, type='chaine'";
       $result = 0;
       for ($i=0; $i < sizeof($sql);$i++)
 	{
       
 	  if ($db->query($sql[$i]))
 	    {
-	      print "-- requete sql $i<br>";
+	      print "<tr><td>requete sql $i</td><td>OK</td></tr>";
 	      $result++;
+	    }
+	  else
+	    {
+	      print "<tr><td>requete sql $i</td><td>Erreur</td></tr>";
 	    }
 	}
 
       if ($result == sizeof($sql))
 	{
-	  print "- connexion réussie à la base de données<br>";
-	  print '<a href="'.$dolibarr_main_url_root .'/">Go !</a>';
+	  print "<tr><td>connexion réussie à la base de données</td><td>OK</td></tr>";
+	  print '</table>';
+
+	  if ($error == 0)
+	    {
+	      print '<h1><a href="'.$dolibarr_main_url_root .'/">Go !</a></h1>';
+	    }
 	}
       else
 	{
+	  print '</table>';
 	  print $db->error();
 	}
       $db->close();
