@@ -41,4 +41,6 @@ MailingModuleDescContactProspects=All contacts for all prospect companies
 MailingModuleDescContactCustomers=All contacts for all customer companies
 RecipientSelectionModules=Active modules for recipients selection
 MailSelectedRecipients=Selected recipients
+MailingArea=Mailings area
+LastMailings=Last %s mailings
 

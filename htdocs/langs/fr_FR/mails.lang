@@ -41,3 +41,5 @@ MailingModuleDescContactProspects=Tous les contacts de toutes les sociétés props
 MailingModuleDescContactCustomers=Tous les contacts de toutes les sociétés clientes
 RecipientSelectionModules=Modules actifs de sélection de destinataires
 MailSelectedRecipients=Destinataires sélectionnés
+MailingArea=Espace Mailings
+LastMailings=Les %s derniers mailings
