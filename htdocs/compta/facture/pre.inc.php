@@ -40,6 +40,7 @@ function llxHeader($head = "", $title="", $help_url='') {
     }
 
   $menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
 
   $menu->add(DOL_URL_ROOT."/contrat/","Contrats");
 
