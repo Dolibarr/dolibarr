@@ -104,10 +104,10 @@ class modTelephonie extends DolibarrModules
     $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[2][4] = 'ligne_commander';
 
-    $this->rights[3][0] = 143; // id de la permission
-    $this->rights[3][1] = 'Activer une ligne'; // libelle de la permission
-    $this->rights[3][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[3][0] = 143;
+    $this->rights[3][1] = 'Activer une ligne';
+    $this->rights[3][2] = 'w';
+    $this->rights[3][3] = 0;
     $this->rights[3][4] = 'ligne_activer';
 
     $this->rights[4][0] = 144; // id de la permission
@@ -163,6 +163,13 @@ class modTelephonie extends DolibarrModules
     $this->rights[11][3] = 0;
     $this->rights[11][4] = 'contrat';
     $this->rights[11][5] = 'paiement';
+
+    $this->rights[12][0] = 193;
+    $this->rights[12][1] = 'Résilier des lignes';
+    $this->rights[12][2] = 'w';
+    $this->rights[12][3] = 0;
+    $this->rights[12][4] = 'ligne';
+    $this->rights[12][5] = 'resilier';
 
     // Dir
     $this->dirs[0] = $conf->telephonie->dir_output;
