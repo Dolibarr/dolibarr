@@ -243,11 +243,14 @@ if ($_GET["action"] == 'create')
   print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
-  print '<div class="titre">Nouveau '.$types[$_GET["type"]].'</div><br>'."\n";
+  print '<div class="titre">';
+  if ($_GET["type"]==0) { print $langs->trans("NewProduct"); }
+  if ($_GET["type"]==1) { print $langs->trans("NewService"); }
+  print '</div><br>'."\n";
       
   print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
   print '<tr>';
-  print '<td>Référence</td><td><input name="ref" size="20" value="'.$product->ref.'">';
+  print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
   if ($_error == 1)
     {
       print "Cette référence existe déjà";
@@ -255,15 +258,16 @@ if ($_GET["action"] == 'create')
   print '</td></tr>';
   print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
   print '<tr><td>Prix de vente</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
-  print '<tr><td>Taux TVA</td><TD>';
-
-
+ 
+  $langs->load("bills");
+  print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
   print $html->select_tva("tva_tx");
   print '</td></tr>';
+ 
   print '<tr><td>'.$langs->trans("Status").'</td><td>';
   print '<select name="statut">';
-  print '<option value="1">En vente</option>';
-  print '<option value="0" selected>Hors Vente</option>';
+  print '<option value="1">'.$langs->trans("OnSell").'</option>';
+  print '<option value="0" selected>'.$langs->trans("NotOnSell").'</option>';
   print '</td></tr>';
   
   if ($_GET["type"] == 0 && defined("MAIN_MODULE_STOCK"))
@@ -402,10 +406,11 @@ else
 
 	      print '</td></tr>';
 
-	      print '<tr><td>Taux TVA</td><TD>'.$product->tva_tx.' %</td></tr>';
+	      $langs->load("bills");
+	      print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.' %</td></tr>';
 	      if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
 		{
-		  print '<tr><td><a href="stock/product.php?id='.$product->id.'">Stock</a></td>';
+		  print '<tr><td><a href="stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
 		  if ($product->no_stock)
 		    {
 		      print "<td>Pas de définition de stock pour ce produit";
@@ -527,7 +532,8 @@ else
 	  print "<tr>".'<td width="20%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
 	  print '<td>'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
-	  print "<tr>".'<td>Taux TVA</td><td colspan="2">';
+	  $langs->load("bills");
+	  print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">';
 	  $html = new Form($db);
 	  print $html->select_tva("tva_tx", $product->tva_tx);
 	  print '</td></tr>';
@@ -723,6 +729,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 
   if($user->rights->facture->creer)
     {
+      $langs->load("bills");
+
       print "<tr>".'<td width="50%" valign="top">';
       print_titre("Ajouter à ma facture");
       print '</td><td width="50%" valign="top">';

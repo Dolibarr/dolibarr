@@ -10,6 +10,7 @@ DoPaiement=Emettre paiement
 BuildPDF=Générer le PDF
 RebuildPDF=Regénérer le PDF
 VAT=TVA
+VATRate=Taux TVA
 Amount=Montant
 BillStatusDraft=Brouillon (à valider)
 BillStatusPayed=Payée
