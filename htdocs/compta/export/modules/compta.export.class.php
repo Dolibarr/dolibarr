@@ -17,8 +17,22 @@
  *
  * $Id$
  * $Source$
- *
+ * $File:$
  */
+
+/**
+
+   \file       htdocs/compta/export/modules/compta.export.class.php
+   \ingroup    compta
+   \brief      Fichier de la classe d'export compta
+   \version    $Revision$
+
+*/
+
+
+/**     \class      ComptaExport
+	\brief      Classe permettant les exports comptables
+*/
 
 
 class ComptaExport
@@ -30,6 +44,10 @@ class ComptaExport
     $this->classe_export = $classe;
     $this->error_message = '';
   }
+
+  /*
+   *
+   */
 
   function ReadLines()
   {
@@ -162,8 +180,13 @@ class ComptaExport
   {
     $error = 0;
 
+    dolibarr_syslog("ComptaExport::Export");
+
     $error += $this->ReadLines();
     $error += $this->ReadLinesPayment();
+
+    dolibarr_syslog("ComptaExport::Export Lignes de factures  : ".sizeof($this->linec));
+    dolibarr_syslog("ComptaExport::Export Lignes de paiements : ".sizeof($this->linep));
 
     if (!$error && (sizeof($this->linec) > 0 || sizeof($this->linep) > 0))
       {
@@ -171,7 +194,7 @@ class ComptaExport
 
 	$objexport_name = "ComptaExport".$this->classe_export;
 
-	$objexport = new $objexport_name($this->db);
+	$objexport = new $objexport_name($this->db, $this->user);
 
 	$objexport->Export($this->linec, $this->linep);
       }
