@@ -93,8 +93,9 @@ class modPropale
 		 "insert into llx_rights_def values (21,'Lire les propositions commerciales','propale','r',1);",
 		 "insert into llx_rights_def values (22,'Créer modifier les propositions commerciales','propale','w',0);",
 		 "insert into llx_rights_def values (24,'Valider les propositions commerciales','propale','d',0);",
-		 "insert into llx_rights_def values (25,'Clôturer les propositions commerciales','propale','d',0);",
-		 "insert into llx_rights_def values (26,'Supprimer les propositions commerciales','propale','d',0);"
+		 "insert into llx_rights_def values (25,'Envoyer les propositions commerciales aux clients','propale','d',0);",
+		 "insert into llx_rights_def values (26,'Clôturer les propositions commerciales','propale','d',0);",
+		 "insert into llx_rights_def values (27,'Supprimer les propositions commerciales','propale','d',0);"
 		 );
     //"insert into llx_rights_def values (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
     for ($i = 0 ; $i < sizeof($sql) ; $i++)
