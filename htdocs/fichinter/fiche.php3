@@ -231,7 +231,7 @@ if ($action == 'create')
       }
       print '</td></tr>';
             
-      print '<tr><td valign="top">Commentaires</td>';
+      print '<tr><td valign="top">Description</td>';
       print "<td><textarea name=\"note\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea>";
       print '</td></tr>';
       
@@ -303,7 +303,7 @@ if ($action == 'edit')
   print '</td></tr>';
 
 
-  print '<tr><td valign="top">Commentaires</td>';
+  print '<tr><td valign="top">Description</td>';
   print '<td><textarea name="note" wrap="soft" cols="60" rows="15">';
   print $fichinter->note;
   print '</textarea>';
@@ -329,94 +329,100 @@ if ($action == 'edit')
 
 if ($id)
 {
-
-  $fichinter = new Fichinter($db);
-  $fichinter->fetch($id);
-
   print_titre("Fiche d'intervention");
 
-  print '<table border="1" cellspadding="3" cellspacing="0" width="100%">';
-  print '<tr><td width="20%">Date</td><td>'.strftime("%A %d %B %Y",$fichinter->date).'</td></tr>';
-    
-  print '<tr><td>Numéro</td><td>'.$fichinter->ref.'</td></tr>';
-  print '<tr><td>Durée</td><td>'.$fichinter->duree.'</td></tr>';
-  print '<tr><td valign="top">Projet</td><td>&nbsp;</td></tr>';
-  print '<tr><td valign="top">Commentaires</td>';
-  print '<td colspan="3">';
-  print nl2br($fichinter->note);
-  print '</td></tr>';
-
-  print '</td></tr>';
-  print "</table>";  
-
-  /*
-   *
-   */
-  print '<br><table border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
-
-  if ($user->societe_id == 0)
+  $fichinter = new Fichinter($db);
+  if (  $fichinter->fetch($id) )
     {
+      $fichinter->fetch_client();
 
-      if ($fichinter->statut == 0)
-	{
-	  print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=edit">Mettre à jour</a></td>';
-	}
-      else
-	{
-	  print '<td align="center" width="20%">-</td>';
-	}
-
-      print '<td align="center" width="20%">-</td>';
+      print '<table border="1" cellspadding="3" cellspacing="0" width="100%">';
+      print '<tr><td>Société</td><td><a href="../comm/fiche.php3?socid='.$fichinter->client->id.'">'.$fichinter->client->nom.'</a></td></tr>';
+      print '<tr><td width="20%">Date</td><td>'.strftime("%A %d %B %Y",$fichinter->date).'</td></tr>';
+      print '<tr><td>Numéro</td><td>'.$fichinter->ref.'</td></tr>';
+      print '<tr><td>Durée</td><td>'.$fichinter->duree.'</td></tr>';
+      print '<tr><td valign="top">Projet</td><td>&nbsp;</td></tr>';
+      print '<tr><td valign="top">Description</td>';
+      print '<td colspan="3">';
+      print nl2br($fichinter->note);
+      print '</td></tr>';
       
-      $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.pdf";
+      print '</td></tr>';
+      print "</table>";  
 
-      if ($fichinter->statut == 0 or !file_exists($file))
-	{
-	  print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=generate">Génération du pdf</a></td>';
-	}
-      else
-	{
-	  print '<td align="center" width="20%">-</td>';
-	}
+      /*
+       *
+       */
+      print '<br><table border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
 
-      print '<td align="center" width="20%">-</td>';
+      if ($user->societe_id == 0)
+	{
       
-      if ($fichinter->statut == 0)
-	{
-	  print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=valid">Valider</a></td>';
+	  if ($fichinter->statut == 0)
+	    {
+	      print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=edit">Mettre à jour</a></td>';
+	    }
+	  else
+	    {
+	      print '<td align="center" width="20%">-</td>';
+	    }
+	  
+	  print '<td align="center" width="20%">-</td>';
+	  
+	  $file = FICHEINTER_OUTPUTDIR . "/$fichinter->ref/$fichinter->ref.pdf";
+	  
+	  if ($fichinter->statut == 0 or !file_exists($file))
+	    {
+	      print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=generate">Génération du pdf</a></td>';
+	    }
+	  else
+	    {
+	      print '<td align="center" width="20%">-</td>';
+	    }
+	  
+	  print '<td align="center" width="20%">-</td>';
+	  
+	  if ($fichinter->statut == 0)
+	    {
+	      print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=valid">Valider</a></td>';
+	    }
+	  else
+	    {
+	      print '<td align="center" width="20%">-</td>';
+	    }
+	  
 	}
       else
 	{
 	  print '<td align="center" width="20%">-</td>';
+	  print '<td align="center" width="20%">-</td>';
+	  print '<td align="center" width="20%">-</td>';
+	  print '<td align="center" width="20%">-</td>';
+	  print '<td align="center" width="20%">-</td>';
 	}
+  
+      print '</tr></table>';
+  
+      print "<table width=\"50%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
+      print_titre("Documents générés");
+      print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
+      
+      $file = FICHEINTER_OUTPUTDIR . "/$fichinter->ref/$fichinter->ref.pdf";
+      if (file_exists($file))
+	{
+	  print "<tr $bc[0]><td>Ficheinter PDF</a></td>";
+	  print '<td><a href="'.FICHEINTER_OUTPUT_URL.'/'.$fichinter->ref.'/'.$fichinter->ref.'.pdf">'.$fichinter->ref.'.pdf</a></td>';
+	  print '<td align="right">'.filesize($file). ' bytes</td>';
+	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
+	}  
+      
+      print "</table></td></tr></table>\n";
       
     }
   else
     {
-      print '<td align="center" width="20%">-</td>';
-      print '<td align="center" width="20%">-</td>';
-      print '<td align="center" width="20%">-</td>';
-      print '<td align="center" width="20%">-</td>';
-      print '<td align="center" width="20%">-</td>';
+      print "Fiche inexistante";
     }
-  
-  print '</tr></table>';
-  
-  print "<table width=\"50%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
-  print_titre("Documents générés");
-  print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
-  
-  $file = FICHEINTER_OUTPUTDIR . "/$fichinter->ref/$fichinter->ref.pdf";
-  if (file_exists($file))
-    {
-      print "<tr $bc[0]><td>Ficheinter PDF</a></td>";
-      print '<td><a href="'.FICHEINTER_OUTPUT_URL.'/'.$fichinter->ref.'/'.$fichinter->ref.'.pdf">'.$fichinter->ref.'.pdf</a></td>';
-      print '<td align="right">'.filesize($file). ' bytes</td>';
-      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
-    }  
-  
-  print "</table></td></tr></table>\n";
-  
 }
 
 
