@@ -22,10 +22,10 @@
  */
  
 /**
-	    \file       htdocs/compta/prelevement/fiche.php
-        \ingroup    prelevement
-		\brief      Fiche prelevement
-		\version    $Revision$
+   \file       htdocs/compta/prelevement/fiche.php
+   \ingroup    prelevement
+   \brief      Fiche prelevement
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -116,7 +116,7 @@ if ($_GET["id"])
 
       $encfile = urlencode(DOL_DATA_ROOT.'/prelevement/bon/'.$bon->ref);
 
-      print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;file='.$encfile.'">'.$bon->ref.'</a>';
+      print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.$encfile.'">'.$bon->ref.'</a>';
 
       print '</td></tr>';
 
