@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -132,7 +132,7 @@ class DolibarrMail
 	  }
 
 	//$out = $out . "Content-type: " . $mimetype_list[$i] . "; name=\"".$filename_list[$i]."\";\n";         
-	$out = $out . "Content-type: " . $mimetype_list[$i]."\n";// . "; name=\"".$filename_list[$i]."\";\n";         
+	$out = $out . "Content-type: " . $mimetype_list[$i]."\n";
 	$out = $out . "Content-Transfer-Encoding: base64\n";
 	$out = $out . "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"\n\n";
 	$out = $out . $encoded . "\n";
@@ -159,13 +159,13 @@ class DolibarrMail
       }
     else
       {
-	dolibarr_syslog("DolibarrMail::encode_file");
+	dolibarr_syslog("DolibarrMail::encode_file Erreur");
       }
     return $encoded;
   }
   
   /**
-    \brief permet d'envoyer un fichier
+    \brief envoi le mail
   */
   
   function sendfile()
@@ -180,11 +180,12 @@ class DolibarrMail
 
     if ($this->errors_to)
       {
-	dolibarr_syslog("DolibarrMail::sendfile errorsto ".$this->errors_to);
+	dolibarr_syslog("DolibarrMail::sendfile with errorsto : ".$this->errors_to);
 	$res = mail($this->addr_to,$this->subject,stripslashes($message_comp),$headers,"-f".$this->errors_to);
       }
     else
       {
+	dolibarr_syslog("DolibarrMail::sendfile without errorsto");
 	$res = mail($this->addr_to,$this->subject,stripslashes($message_comp),$headers);
       }
 
