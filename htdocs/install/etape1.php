@@ -9,7 +9,7 @@
  <div class="main-inside">
 <?PHP
 include("./inc.php");
-$etape = 2;
+$etape = 1;
 print "<h2>Installation de Dolibarr - Etape $etape/$etapes</h2>";
 
 $conf = "../conf/conf.php";
@@ -123,86 +123,173 @@ if ($HTTP_POST_VARS["action"] == "set")
 			}
 		    }
 		}
-	    }
-	  
-
-	  /*
-	   * Base de données
-	   *
-	   */
-	  require ($dolibarr_main_document_root . "/lib/mysql.lib.php");
-	  require ($dolibarr_main_document_root . "/conf/conf.class.php");
-	  
-	  $conf = new Conf();
-	  $conf->db->host = $dolibarr_main_db_host;
-	  $conf->db->name = $dolibarr_main_db_name;
-	  $conf->db->user = $dolibarr_main_db_user;
-	  $conf->db->pass = $dolibarr_main_db_pass;
-	  $db = new DoliDb();
-	  $ok = 0;
-	  if ($db->connected == 1)
-	    {
-	      print "<tr><td>Connexion réussie au serveur : $dolibarr_main_db_host</td><td>OK</td></tr>";
-	      
-	      if($db->database_selected == 1)
-		{
-		  //
-		  // Connexion base existante
-		  // 
-		  print "<tr><td>Connexion réussie à la base : $dolibarr_main_db_name</td><td>OK</td></tr>";
-		  
-		  $ok = 1 ;
-		}
-	      else
-		{
-		  //
-		  // Création de la base
-		  //
-
-		  print "<tr><td>Echec de connexion à la base : $dolibarr_main_db_name</td><td>Warning</td></tr>";
-		  
-		  $ok = 0;
-		  
-		  print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>-</td></tr>";
-		  
-		  if ($db->create_db ($dolibarr_main_db_name))
-		    {
-		      print "<tr><td>Création de la base réussie : $dolibarr_main_db_name</td><td>OK</td></tr>";
-		      $db->select_db ($dolibarr_main_db_name);
-		    }
-		  else
-		    {
-		      print "<tr><td>Echec de création de la base : $dolibarr_main_db_name</td><td>ERREUR</td></tr>";
-		    }
-		}
-	    }            
+	    }	  	 	  
 	}
     }
   else
     {
       print "Erreur le système à besoin d'écrire dans le fichier $conf veuillez mettre les droits correct pour cela.";
     }
+  
+
+  /*
+   * Base de données
+   *
+   */
+  require ($dolibarr_main_document_root . "/lib/mysql.lib.php");
+  require ($dolibarr_main_document_root . "/conf/conf.class.php");
+
+  if ($HTTP_POST_VARS["db_create_user"] == "on")
+    {
+      $conf = new Conf();
+      $conf->db->host = $dolibarr_main_db_host;
+      $conf->db->name = "mysql";
+      $conf->db->user = $HTTP_POST_VARS["db_user_root"];
+      $conf->db->pass = $HTTP_POST_VARS["db_user_pass"];
+      $db = new DoliDb();
+	  
+      $sql = "INSERT INTO user ";
+      $sql .= "(Host,User,password)";
+      $sql .= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass'))";
+
+      $db->query($sql);
+
+      $sql = "INSERT INTO db ";
+      $sql .= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
+      $sql .= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_name','$dolibarr_main_db_user'";
+      $sql .= ",'Y','Y','Y','Y','Y','Y','Y','Y')";
+
+      if ($db->query($sql))
+	{
+
+	  $db->query("flush privileges");
+
+	  print "<tr><td>Création de l'utilisateur : $dolibarr_main_db_user</td><td>OK</td></tr>";
+	}
+      else
+	{
+	  print "<tr><td>Création de l'utilisateur : $dolibarr_main_db_user</td><td>ERREUR</td></tr>";
+	}
+
+      $db->close();
+
+    }
+
+  
+  $conf = new Conf();
+  $conf->db->host = $dolibarr_main_db_host;
+  $conf->db->name = $dolibarr_main_db_name;
+  $conf->db->user = $dolibarr_main_db_user;
+  $conf->db->pass = $dolibarr_main_db_pass;
+  $db = new DoliDb();
+  $ok = 1;
+
+  if ($ok)
+    {
+      if ($db->connected == 1)
+	{
+	  print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>OK</td></tr>";
+	}
+      else
+	{
+	  print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>ERREUR</td></tr>";
+	  $ok = 0;	      
+	}
+    }
+  
+  if ($ok)
+    {
+      if($db->database_selected == 1)
+	{
+	  //
+	  // Connexion base existante
+	  // 
+	  print "<tr><td>Connexion réussie à la base : $dolibarr_main_db_name</td><td>OK</td></tr>";
+	  
+	  $ok = 1 ;
+	}
+      else
+	{
+	  //
+	  // Création de la base
+	  //
+	  
+	  print "<tr><td>Echec de connexion à la base : $dolibarr_main_db_name</td><td>Warning</td></tr>";
+	  print '<tr><td colspan="2">Création de la base : '.$dolibarr_main_db_name.'</td></tr>';
+	  	  
+	  $db->close();
+	  $conf = new Conf();
+	  $conf->db->host = $dolibarr_main_db_host;
+	  $conf->db->name = "mysql";
+	  $conf->db->user = $HTTP_POST_VARS["db_user_root"];
+	  $conf->db->pass = $HTTP_POST_VARS["db_user_pass"];
+	  $db = new DoliDb();
+	  
+	  if ($ok)
+	    {
+	      if ($db->connected == 1)
+		{
+		  print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$HTTP_POST_VARS["db_user_root"]."</td><td>OK</td></tr>";
+		}
+	      else
+		{
+		  print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$HTTP_POST_VARS["db_user_root"]."</td><td>ERREUR</td></tr>";
+		  $ok = 0;
+		}
+	    }
+	  
+	  if ($ok)
+	    {  
+	      if($db->database_selected == 1)
+		{
+		}
+	      else
+		{
+		  print "<tr><td>Vérification des droits de création</td><td>ERREUR</td></tr>";
+		  print '<tr><td colspna="2">-- Droits insuffissant</td></tr>';
+		  $ok = 0;
+		}
+	    }
+	  
+	  if ($ok)
+	    {
+	      if ($db->create_db ($dolibarr_main_db_name))
+		{			      			      
+		  print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>OK</td></tr>";
+		}
+	      else
+		{
+		  print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>ERREUR</td></tr>";
+		  $ok = 0;
+		}
+	    }
+	  
+	}
+    }    
+  
+
 }
 
-if (file_exists("$conf"))
-{
-  include ("$conf");
-}
-else
-{
-  print "$conf does not exists<br>";
-}
 
 ?>
 </table>
 </div>
 </div>
 
+<?PHP
+if ($ok)
+{
+print '
 <div class="barrebottom">
 <form action="etape2.php" method="POST">
 <input type="hidden" name="action" value="set">
 <input type="submit" value="Etape suivante ->">
 </form>
 </div>
+';
+}
+?>
+
 </body>
 </html>
+

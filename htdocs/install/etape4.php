@@ -10,7 +10,7 @@
 
 <?PHP
 include("./inc.php");
-$etape = 5;
+$etape = 4;
 print "<h2>Installation de Dolibarr - Etape $etape/$etapes</h2>";
 
 $conf = "../conf/conf.php";
@@ -43,9 +43,9 @@ if ($HTTP_POST_VARS["action"] == "set")
       print '<tr><td>Compte administrateur :</td><td>';
       print '<input name="login"></td></tr>';
       print '<tr><td>Mot de passe :</td><td>';
-      print '<input type="password" name="login"></td></tr>';
+      print '<input type="password" name="pass"></td></tr>';
       print '<tr><td>Vérification du mot de passe :</td><td>';
-      print '<input type="password" name="login"></td></tr>';
+      print '<input type="password" name="pass_verif"></td></tr>';
       print '</table>';
       $db->close();
     }

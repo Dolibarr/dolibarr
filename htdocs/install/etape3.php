@@ -10,7 +10,7 @@
 
 <?PHP
 include("./inc.php");
-$etape = 4;
+$etape = 3;
 print "<h2>Installation de Dolibarr - Etape $etape/$etapes</h2>";
 
 $conf = "../conf/conf.php";
@@ -96,7 +96,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 </div>
 </div>
 <div class="barrebottom">
-<form action="etape5.php" method="POST">
+<form action="etape4.php" method="POST">
 <input type="hidden" name="action" value="set">
 <input type="submit" value="Etape suivante ->">
 </form>

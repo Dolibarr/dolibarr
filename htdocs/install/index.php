@@ -110,7 +110,7 @@ exemples :
 
 <tr class="bg1">
 <td valign="top">Serveur</td><td valign="top"><input type="text" name="db_host" value="<?PHP print $dolibarr_main_db_host ?>"></td>
-<td>Nom du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</td>
+<td><div class="comment">Nom du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</div></td>
 </tr>
 
 <tr class="bg2">
@@ -134,7 +134,17 @@ exemples :
 </td>
 </tr>
 
-<td colspan="3" align="center"><h2>Base de données - Accés super utilisateur</h2></td>
+<tr class="bg1">
+<td valign="top">Créer l'utilisateur</td>
+<td>
+<input type="checkbox" name="db_create_user">
+</td><td><div class="comment">Cocher cette option si l'utilisateur doit-être créé</div>
+</td>
+</tr>
+
+
+
+<tr><td colspan="3" align="center"><h2>Base de données - Accés super utilisateur</h2></td></tr>
 
 <tr class="bg1">
 <td valign="top">Login</td>

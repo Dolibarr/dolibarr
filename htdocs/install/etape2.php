@@ -9,7 +9,7 @@
  <div class="main-inside">
 <?PHP
 include("./inc.php");
-$etape = 3;
+$etape = 2;
 print "<h2>Installation de Dolibarr - Etape $etape/$etapes</h2>";
 
 $conf = "../conf/conf.php";
@@ -46,63 +46,100 @@ if ($HTTP_POST_VARS["action"] == "set")
 	  print "<tr><td>Connexion réussie à la base : $dolibarr_main_db_name</td><td>OK</td></tr>";
 
 	  $ok = 1 ;
-	}
-      else
-	{
-	  print "<tr><td>Echec de connexion à la base : $dolibarr_main_db_name</td><td>ERREUR</td></tr>";
-
-	  $ok = 0;
-
-	  print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>-</td></tr>";
-
-	  if ($db->create_db ($dolibarr_main_db_name))
+	  
+	  $result = $db->list_tables($dolibarr_db_name);
+	  if ($result)
 	    {
-	      print "<tr><td>Création de la base réussie : $dolibarr_main_db_name</td><td>OK</td></tr>";
-	      $db->select_db ($dolibarr_main_db_name);
-
-	      // Création des tables
-	      $dir = "../../mysql/tables/";
-
-	      $handle=opendir($dir);
-
-	      while (($file = readdir($handle))!==false)
+	      print "toto";
+	      while ($row = $db->fetch_row())
 		{
-		  if (substr($file, strlen($file) - 4) == '.sql' && 
-		      substr($file,0,4) == 'llx_')
-		    {
-		      $name = substr($file, 0, strlen($file) - 4);
-		      print "<tr><td>Création de la table $name</td>";
-		      $buffer = '';
-		      $fp = fopen($dir.$file,"r");
-		      if ($fp)
-			{
-			  while (!feof ($fp))
-			    {
-			      $buffer .= fgets($fp, 4096);
-			    }
-			  fclose($fp);
-			}
+		  print "Table : $row[0]\n";
+		}
+	    }
 
+	  // Création des tables
+	  $dir = "../../mysql/tables/";
+	  
+	  $handle=opendir($dir);
+	  
+	  while (($file = readdir($handle))!==false)
+	    {
+	      if (substr($file, strlen($file) - 4) == '.sql' && 
+		  substr($file,0,4) == 'llx_')
+		{
+		  $name = substr($file, 0, strlen($file) - 4);
+		  print "<tr><td>Création de la table $name</td>";
+		  $buffer = '';
+		  $fp = fopen($dir.$file,"r");
+		  if ($fp)
+		    {
+		      while (!feof ($fp))
+			{
+			  $buffer .= fgets($fp, 4096);
+			}
+		      fclose($fp);
+		    }
+		  
+		  if ($db->query($buffer))
+		    {
+		      print "<td>OK</td></tr>";
+		    }
+		  else
+		    {
+		      print "<td>ERREUR</td></tr>";
+		      $error++;
+		    }
+		}
+	      
+	    }
+	  closedir($handle);
+	  
+	  //
+	  // Données
+	  //
+	  $dir = "../../mysql/data/";
+	  $file = "data.sql";
+
+	  $fp = fopen($dir.$file,"r");
+	  if ($fp)
+	    {
+	      while (!feof ($fp))
+		{
+		  $buffer = fgets($fp, 4096);
+
+		  if (strlen(trim(ereg_replace("--","",$buffer))))
+		    {
 		      if ($db->query($buffer))
 			{
-			  print "<td>OK</td></tr>";
+			  $ok = 1;
 			}
 		      else
 			{
-			  print "<td>ERREUR</td></tr>";
-			  $error++;
+			  $ok = 0;
+			  print $db->error();
+			  print "<p>".$buffer."</p>";
 			}
 		    }
-
 		}
-	      closedir($handle);	     
+	      fclose($fp);
+	    }
+	  
+	  print "<tr><td>Chargement des données de base</td>";
+	  if ($ok)
+	    {	  
+	      print "<td>OK</td></tr>";
 	    }
 	  else
 	    {
-	      print "<tr><td>Erreur lors de la création de : $dolibarr_main_db_name</td><td>ERREUR</td></tr>";
+	      $ok = 1 ;
 	    }
 
 	}
+      else
+	{
+	  print "<tr><td>Erreur lors de la création de : $dolibarr_main_db_name</td><td>ERREUR</td></tr>";
+	}
+
     }
   print '</table>';
 
@@ -112,7 +149,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 </div>
 </div>
 <div class="barrebottom">
-<form action="etape4.php" method="POST">
+<form action="etape3.php" method="POST">
 <input type="hidden" name="action" value="set">
 <input type="submit" value="Etape suivante ->">
 </form>

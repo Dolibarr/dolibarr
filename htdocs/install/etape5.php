@@ -38,10 +38,10 @@ if ($HTTP_POST_VARS["action"] == "set")
   $ok = 0;
   if ($db->connected == 1)
     {
-      $sql = "INSERT INTO llx_user(datec,login,pass,admin) VALUES (now()";
+      $sql = "INSERT INTO llx_user(datec,login,pass,admin,name,code) VALUES (now()";
       $sql .= ",'".$HTTP_POST_VARS["login"]."'";
       $sql .= ",'".$HTTP_POST_VARS["pass"]."'"; 
-      $sql .= ",1)";       
+      $sql .= ",1,'Administrateur','ADM')";
     }
   
   if ($db->query($sql))
@@ -58,6 +58,14 @@ if ($HTTP_POST_VARS["action"] == "set")
 
   $db->close();
 }
+
+
+print '<div class="main">
+ <div class="main-inside">';
+	      print "Votre système est maintenant configuré, il ne vous reste plus qu'a sélectionner les modules que vous souhaitez utiliser. Pour cela cliquer sur l'url ci-dessous : <br>";
+	      print '<a href="'.$dolibarr_main_url_root .'/admin/modules.php">Configurer les modules</a></div></div>';
+
+
 
 ?>
 </div>
