@@ -60,7 +60,7 @@ if ($_GET["action"] == 'delete')
  */
 $boxes = array();
 
-$pos[0] = "Homepage";
+$pos = array("Homepage");
 
 print '<table class="noborder" cellpadding="3" cellspacing="0">';
 
