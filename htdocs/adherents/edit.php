@@ -52,6 +52,8 @@ if ($action == 'update')
       $adh->typeid      = $HTTP_POST_VARS["type"];
       $adh->commentaire = $HTTP_POST_VARS["comment"];
       $adh->morphy      = $HTTP_POST_VARS["morphy"];
+      // recuperation du statut
+      $adh->statut      = $HTTP_POST_VARS["statut"];
       
       if ($adh->update($user->id) ) 
 	{	  
@@ -122,6 +124,7 @@ if ($rowid)
   
   print "<input type=\"hidden\" name=\"action\" value=\"update\">";
   print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
+  print "<input type=\"hidden\" name=\"statut\" value=\"".$adh->statut."\">";
 
   $htmls = new Form($db);
 
