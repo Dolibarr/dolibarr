@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,20 @@
  * $Source$
  *
  */
+
+
+/**
+    \file       htdocs/index.php
+    \brief      Page accueil par defaut
+    \version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+
+// Simule le menu par défaut sur Home
+$_GET["mainmenu"]="home";
+
 
 llxHeader();
 
@@ -33,6 +46,7 @@ if (defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
 }
 
 print "<br>\n";
+
 
 /*
  * Boites
