@@ -416,8 +416,8 @@ else
 	      $num = $db->num_rows();
 	      $i = 0; $total = 0;
 
-	      echo '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-	      print "<TR class=\"liste_titre\">";
+	      echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	      print "<tr class=\"liste_titre\">";
 	      print "<td>Date</td>";
 	      print "<td>Type</td>";
 
