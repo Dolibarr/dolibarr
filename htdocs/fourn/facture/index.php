@@ -43,6 +43,9 @@ if ($_GET["action"] == 'delete')
   $facid = 0 ;
 }
 
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
