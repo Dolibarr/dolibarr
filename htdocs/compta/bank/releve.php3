@@ -1,5 +1,6 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/********************************************************************************
+ * Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,13 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- */
-
-/*
  * $Id$
  * $Source$
  *
- * $num
+ *******************************************************************************/
+ 
+/* $num
  * $rel
  * $ve
  */
@@ -101,7 +101,7 @@ if (! $num) {
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
-  print "<td>Date</td><td>Description</TD>";
+  print "<td>Date</td><td></td><td>Description</TD>";
   print "<td align=\"right\"><a href=\"$PHP_SELF?vue=debit\">Debit</a></TD>";
   print "<td align=\"right\"><a href=\"$PHP_SELF?vue=credit\">Credit</a></TD>";
   print "<td align=\"right\">Solde</TD>";
@@ -116,7 +116,7 @@ if (! $num) {
   }
 
 
-  $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq";
+  $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
   $sql .= " FROM llx_bank as b WHERE num_releve=$num AND fk_account = $account";
   $sql .= " ORDER BY dateo ASC";
   $result = $db->query($sql);
@@ -124,8 +124,8 @@ if (! $num) {
     $var=True;  
     $numrows = $db->num_rows();
     $i = 0; 
-    print "<tr><td colspan=\"3\"><a href=\"$PHP_SELF?num=$num&ve=1&rel=$rel\">vue etendue</a></td>";
-    print "<td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td align=\"right\"><small>".francs($total)."</small></td></tr>\n";
+    print "<tr><td colspan=\"4\"><a href=\"$PHP_SELF?num=$num&ve=1&rel=$rel\">vue etendue</a></td>";
+    print "<td align=\"right\" colspan=\"2\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td align=\"right\"><small>".francs($total)."</small></td></tr>\n";
     while ($i < $numrows) {
       $objp = $db->fetch_object( $i);
       $total = $total + $objp->amount;
@@ -134,6 +134,7 @@ if (! $num) {
       print "<tr $bc[$var]>";
 
       print "<td>".strftime("%d %b %Y",$objp->do)."</TD>\n";
+      print '<td>'.$objp->fk_type.'</td>';
       print "<td>$objp->num_chq $objp->label";
 
       if ($ve) {

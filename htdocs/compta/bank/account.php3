@@ -83,7 +83,7 @@ if ($account) {
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
-  print "<td>Date</td><td>Description</TD>";
+  print "<td>Date</td><td></td><td>Description</TD>";
   print "<td align=\"right\">Debit</TD>";
   print "<td align=\"right\">Credit</TD>";
   print "<td align=\"right\">Solde</TD>";
@@ -125,7 +125,7 @@ if ($account) {
    * select sum(amount) from solde ;
    */
 
-  $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq";
+  $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
   $sql .= " FROM llx_bank as b "; if ($account) { $sql .= " WHERE fk_account=$account"; }
   if ($vue) {
     if ($vue == 'credit') {
@@ -160,21 +160,25 @@ if ($account) {
 	  if ($objp->do > $time && !$sep) {
 	    $sep = 1 ;
 	    print "<tr><td align=\"right\" colspan=\"4\">Total :</td>";
-	    print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td><td></td><td align=\"right\"><small>".francs($total - $objp->amount)."</small></td></tr>\n";
-	    print "<tr>";
+	    print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
+	    print "<td></td>";
+	    print '<td align="right"><small>'.francs($total - $objp->amount).'</small></td>';
+	    print '</tr><tr>';
 	    print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
 	    print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
+	    print '<td></td>';
 	    print "<td>CHQ<input name=\"num_chq\" type=\"text\" size=4>&nbsp;-";
 	    print "<input name=\"label\" type=\"text\" size=40></td>";
 	    print "<td><input name=\"debit\" type=\"text\" size=8></td>";
 	    print "<td><input name=\"credit\" type=\"text\" size=8></td>";
 	    print "<td colspan=\"3\" align=\"center\"><select name=\"cat1\">$options</select></td>";
-	    print "</tr><tr><td colspan=\"2\">Format : YYYYMMDD - 20010826</td><td>0000.00</td>";
+	    print "</tr><tr><td colspan=\"3\">Format : YYYYMMDD - 20010826</td><td>0000.00</td>";
 	    print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
 	  }
 
 	  print "<tr $bc[$var]>";
 	  print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
+	  print "<td>".$objp->fk_type."</TD>\n";
 
 	  if ($objp->num_chq) {
 	    print "<td>CHQ $objp->num_chq - $objp->label</td>";
