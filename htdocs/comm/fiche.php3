@@ -151,8 +151,14 @@ if ($socid > 0) {
 	print "<td align=\"center\"><a href=\"docsoc.php?socid=$objsoc->idp\">Documents</a></td>";
 	print "<td align=\"center\"><a href=\"index.php3?socidp=$objsoc->idp&action=add_bookmark\">[Bookmark]</a></td>";
 	print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
-	print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
-	print "<td align=\"center\"><a href=\"../fichinter/fiche.php3?socidp=$objsoc->idp&action=create\">[Intervention]</a></td>";
+	if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
+	  {
+	    print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
+	  }
+	if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
+	  {
+	    print "<td align=\"center\"><a href=\"../fichinter/fiche.php3?socidp=$objsoc->idp&action=create\">[Intervention]</a></td>";
+	  }
 	print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
 	print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td></tr>";
       }
