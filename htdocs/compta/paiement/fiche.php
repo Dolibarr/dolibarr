@@ -35,6 +35,7 @@ require("../../facture.class.php");
 $user->getrights('facture');
 
 $langs->load("bills");
+$langs->load("banks");
 $langs->load("companies");
 
 
