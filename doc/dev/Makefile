@@ -45,11 +45,11 @@ all: $(DOC).pdf $(DOC).html
 $(DOC).pdf: $(FRPAGES)
 	$(DEBIANDOC2PDF) $(OPTIONS) $(DOC).sgml
 
-$(DOC).html: $(FRPAGES)
+%.html: %.sgml $(FRPAGES)
 	$(DEBIANDOC2HTML) $(HOPTIONS) $<
 
 put:
-	$(RSYNC) $(ROPT) $(RSSH) dolibarr-dev.html rodolphe.quiedeville.org:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/doc
+	$(RSYNC) $(ROPT) $(RSSH) dolibarr-dev.html rodolphe.quiedeville.org:/home/www/www.dolibarr.com/htdocs/documentation
 
 clean:
 	rm -f *pdf *ps
