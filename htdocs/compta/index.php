@@ -264,7 +264,7 @@ if ($conf->facture->enabled)
     {
       $sql .= " AND f.fk_soc = $socidp";
     }
-  $sql .= " GROUP BY f.facnumber";   
+  $sql .= " GROUP BY f.facnumber,f.rowid,s.nom, s.idp, f.total_ttc";   
   
   if ( $db->query($sql) )
     {

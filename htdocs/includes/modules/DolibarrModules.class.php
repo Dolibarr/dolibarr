@@ -51,8 +51,11 @@ class DolibarrModules
   {
     // Insère les constantes
     $err = 0;
-
-    $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '".$this->const_name."', value='1', visible = 0";
+    $sql_del = "delete from ".MAIN_DB_PREFIX."const where name = '".$this->const_name."';";
+		$this->db->query($sql_del);
+		$sql ="insert into ".MAIN_DB_PREFIX."const (name,value,visible) values
+		('".$this->const_name."','1',0);";
+    //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '".$this->const_name."', value='1', visible = 0";
 
     if (!$this->db->query($sql))
       {
@@ -101,16 +104,16 @@ class DolibarrModules
 	    
 	    if ($row[0] == 0)
 	      {
-	        // Si non trouve
+	        // Si non trouve // '$visible'
             if (strlen($note)){
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note','$visible')";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note',0);";
             }elseif (strlen($val))
             {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val','$visible')";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val',0);";
             }
             else
             {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type','$visible')";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type',0);";
             }
             
             if (! $this->db->query($sql) )
