@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,8 +99,8 @@ class Form
                     {
                         print '<option value="'.$obj->rowid.'">';
                     }
-                    # Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                    print '['.$obj->code.'] '.($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                    print $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
                     print '</option>';
                 }
                 $i++;
@@ -204,8 +205,8 @@ class Form
                 {
                     print '<option value="'.$obj->rowid.'">';
                 }
-                # Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                if ($obj->code) { print '['.$obj->code.'] '; }
+                // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                if ($obj->code) { print $obj->code . ' - '; }
                 print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
                 print '</option>';
                 $i++;
@@ -399,7 +400,7 @@ class Form
                 {
                     print '<option value="'.$obj->code.'">';
                 }
-                # Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                 print ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->civilite!='-'?$obj->civilite:''));
                 print '</option>';
                 $i++;
@@ -457,8 +458,8 @@ class Form
                     {
                         print '<option value="'.$obj->code.'">';
                     }
-                    # Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                    print '['.$obj->code.'] '.($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                    print $obj->code . ' - ' .($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
                     print '</option>';
                 }
                 $i++;
@@ -574,7 +575,7 @@ class Form
     $strmonth[11] = "Novembre";
     $strmonth[12] = "D&eacute;cembre";
     
-    # Analyse de la date de préselection
+    // Analyse de la date de préselection
     if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg)) {
         // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
         $syear = $reg[1];
