@@ -43,8 +43,8 @@ all: $(DOC).pdf $(DOC).html
 	$(DEBIANDOC2PS) $(OPTIONS) $<
 
 $(DOC).pdf: $(FRPAGES)
-#$(DEBIANDOC2PDF) $(OPTIONS) $(DOC).sgml
-	linuxdoc --backend=latex -o pdf dolidev.sgml
+	$(DEBIANDOC2PDF) $(OPTIONS) $(DOC).sgml
+	#linuxdoc --backend=latex -o pdf dolidev.sgml
 
 %.html: %.sgml $(FRPAGES)
 	$(DEBIANDOC2HTML) $(HOPTIONS) $<
