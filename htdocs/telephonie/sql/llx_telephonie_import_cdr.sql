@@ -22,6 +22,7 @@
 
 create table llx_telephonie_import_cdr (
   idx            integer,
+  fk_ligne       integer NOT NULL,
   ligne          varchar(255) NOT NULL,
   date           varchar(255) NOT NULL,
   heure          varchar(255) NOT NULL,
