@@ -336,6 +336,11 @@ else
   print $soc->tva_intra;
   print '</td></tr>';
 
+  print '<tr><td><a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit() ."</a>&nbsp;";
+  print $langs->trans('RIB').'</td><td colspan="3">';
+  print $soc->display_rib();
+  print '</td></tr>';
+
   print '</table>';
   print "<br></div>\n";
   /*
