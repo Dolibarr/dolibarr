@@ -37,45 +37,60 @@ if (!$user->admin)
 // TODO mettre cette section dans la base de données
 //
 
+$modules["MAIN_MODULE_COMMERCIAL"][0] = "Module commercial";
+$modules["MAIN_MODULE_COMMERCIAL"][1] = "MAIN_MODULE_COMMERCIAL";
+$modules["MAIN_MODULE_COMMERCIAL"][2] = MAIN_MODULE_COMMERCIAL;
+$modules["MAIN_MODULE_COMMERCIAL"][3] = "Module commercial";
+
+$modules["MAIN_MODULE_COMPTABILITE"][0] = "Module comptabilité";
+$modules["MAIN_MODULE_COMPTABILITE"][1] = "MAIN_MODULE_COMPTABILITE";
+$modules["MAIN_MODULE_COMPTABILITE"][2] = MAIN_MODULE_COMPTABILITE;
+$modules["MAIN_MODULE_COMPTABILITE"][3] = "Module comptabilité";
+
 $modules["MAIN_MODULE_COMMANDE"][0] = "Module commande";
 $modules["MAIN_MODULE_COMMANDE"][1] = "MAIN_MODULE_COMMANDE";
 $modules["MAIN_MODULE_COMMANDE"][2] = MAIN_MODULE_COMMANDE;
-$modules["MAIN_MODULE_COMMANDE"][3] = "Module des gestion des commandes";
+$modules["MAIN_MODULE_COMMANDE"][3] = "Module de gestion des commandes";
 
 $modules["MAIN_MODULE_FACTURE"][0] = "Module facture";
 $modules["MAIN_MODULE_FACTURE"][1] = "MAIN_MODULE_FACTURE";
 $modules["MAIN_MODULE_FACTURE"][2] = MAIN_MODULE_FACTURE;
-$modules["MAIN_MODULE_FACTURE"][3] = "Module des gestion des factures";
+$modules["MAIN_MODULE_FACTURE"][3] = "Module de gestion des factures";
+
+$modules["MAIN_MODULE_PRODUIT"][0] = "Module produit";
+$modules["MAIN_MODULE_PRODUIT"][1] = "MAIN_MODULE_PRODUIT";
+$modules["MAIN_MODULE_PRODUIT"][2] = MAIN_MODULE_PRODUIT;
+$modules["MAIN_MODULE_PRODUIT"][3] = "Module de gestion des produits";
 
 $modules["MAIN_MODULE_PROPALE"][0] = "Module propale";
 $modules["MAIN_MODULE_PROPALE"][1] = "MAIN_MODULE_PROPALE";
 $modules["MAIN_MODULE_PROPALE"][2] = MAIN_MODULE_PROPALE;
-$modules["MAIN_MODULE_PROPALE"][3] = "Module des gestion des propositions commerciales";
+$modules["MAIN_MODULE_PROPALE"][3] = "Module de gestion des propositions commerciales";
 
 $modules["MAIN_MODULE_FICHEINTER"][0] = "Module fiche intervention";
 $modules["MAIN_MODULE_FICHEINTER"][1] = "MAIN_MODULE_FICHEINTER";
 $modules["MAIN_MODULE_FICHEINTER"][2] = MAIN_MODULE_FICHEINTER;
-$modules["MAIN_MODULE_FICHEINTER"][3] = "Module des gestion des fiche d'intervention";
+$modules["MAIN_MODULE_FICHEINTER"][3] = "Module de gestion des fiche d'intervention";
 
 $modules["MAIN_MODULE_DON"][0] = "Module don";
 $modules["MAIN_MODULE_DON"][1] = "MAIN_MODULE_DON";
 $modules["MAIN_MODULE_DON"][2] = MAIN_MODULE_DON;
-$modules["MAIN_MODULE_DON"][3] = "Module des gestion des dons";
+$modules["MAIN_MODULE_DON"][3] = "Module de gestion des dons";
 
 $modules["MAIN_MODULE_ADHERENT"][0] = "Module adherent";
 $modules["MAIN_MODULE_ADHERENT"][1] = "MAIN_MODULE_ADHERENT";
 $modules["MAIN_MODULE_ADHERENT"][2] = MAIN_MODULE_ADHERENT;
-$modules["MAIN_MODULE_ADHERENT"][3] = "Module des gestion des adherents";
+$modules["MAIN_MODULE_ADHERENT"][3] = "Module de gestion des adherents";
 
 $modules["MAIN_MODULE_FOURNISSEUR"][0] = "Module fournisseur";
 $modules["MAIN_MODULE_FOURNISSEUR"][1] = "MAIN_MODULE_FOURNISSEUR";
 $modules["MAIN_MODULE_FOURNISSEUR"][2] = MAIN_MODULE_FOURNISSEUR;
-$modules["MAIN_MODULE_FOURNISSEUR"][3] = "Module des gestion des fournisseurs";
+$modules["MAIN_MODULE_FOURNISSEUR"][3] = "Module de gestion des fournisseurs";
 
 $modules["MAIN_MODULE_BOUTIQUE"][0] = "Module boutique";
 $modules["MAIN_MODULE_BOUTIQUE"][1] = "MAIN_MODULE_BOUTIQUE";
 $modules["MAIN_MODULE_BOUTIQUE"][2] = MAIN_MODULE_BOUTIQUE;
-$modules["MAIN_MODULE_BOUTIQUE"][3] = "Module des gestion des boutiques";
+$modules["MAIN_MODULE_BOUTIQUE"][3] = "Module de gestion des boutiques";
 
 if ($action == 'set')
 {
@@ -109,10 +124,8 @@ print '<td align="center">Activé</td>';
 print '<td>&nbsp;</td>';
 print "</TR>\n";
 
-
 foreach ($modules as $key => $value)
 {
-
   $titre = $modules[$key][0];
   $const_name = $modules[$key][1];
   $const_value = $modules[$key][2];

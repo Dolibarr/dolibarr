@@ -33,7 +33,7 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  if ($conf->societe ) 
+  if ($conf->societe && $conf->commercial->enabled) 
     {
       $menu->add("/societe.php", "Sociétés","company");
 
@@ -43,7 +43,7 @@ function llxHeader($head = "") {
 	}
     }
 
-  if ($conf->commercial ) 
+  if ($conf->commercial->enabled ) 
     {
       $menu->add("/comm/index.php3", "Commercial");
 
@@ -52,7 +52,7 @@ function llxHeader($head = "") {
       $menu->add_submenu("/comm/propal.php3", "Propales");
     }
 
-  if ($user->compta > 0) 
+  if ($conf->compta->enabled ) 
     {
       $menu->add("/compta/", "Comptabilité");
 
@@ -67,6 +67,19 @@ function llxHeader($head = "") {
   if ($conf->produit->enabled )
     {
       $menu->add("/product/", "Produits");
+
+      if ($conf->boutique->enabled)
+	{
+	  if ($conf->boutique->livre->enabled)
+	    {
+	      $menu->add_submenu("/boutique/livre/", "Livres");
+	    }
+	  
+	  if ($conf->boutique->album->enabled)
+	    {
+	      $menu->add_submenu("/product/album/", "Albums");
+	    }
+	}
     }
 
   if ($conf->service->enabled ) 

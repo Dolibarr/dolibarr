@@ -128,6 +128,16 @@ if (defined("MAIN_MODULE_COMMANDE"))
   $conf->commande->enabled=MAIN_MODULE_COMMANDE;
 }
 
+if (defined("MAIN_MODULE_COMMERCIAL"))
+{
+  $conf->commercial->enabled=MAIN_MODULE_COMMERCIAL;
+}
+
+if (defined("MAIN_MODULE_COMPTABILITE"))
+{
+  $conf->compta->enabled=MAIN_MODULE_COMPTABILITE;
+}
+
 if (defined("MAIN_MODULE_DON"))
 {
   $conf->don->enabled=MAIN_MODULE_DON;
@@ -146,6 +156,16 @@ if (defined("MAIN_MODULE_FICHEINTER"))
 if (defined("MAIN_MODULE_ADHERENT"))
 {
   $conf->adherent->enabled=MAIN_MODULE_ADHERENT;
+}
+
+if (defined("MAIN_MODULE_PRODUIT"))
+{
+  $conf->produit->enabled=MAIN_MODULE_PRODUIT;
+}
+
+if (defined("MAIN_MODULE_BOUTIQUE"))
+{
+  $conf->boutique->enabled=MAIN_MODULE_BOUTIQUE;
 }
 
 if (defined("BOUTIQUE_LIVRE"))

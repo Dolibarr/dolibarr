@@ -48,6 +48,11 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add("osc-languages.php", "OSC Languages $toto");
     }
 
+  if ($conf->boutique->enabled)
+    {
+      $menu->add("boutique.php", "Boutique");
+    }
+
   $menu->add("phpinfo.php", "phpinfo");
 
   $menu->add_submenu("phpinfo.php?what=conf", "Conf");
