@@ -53,6 +53,10 @@ drop table if exists llx_adherent_options_label;
 
 drop table if exists llx_album;
 
+drop table if exists llx_album_to_groupart ;
+
+drop table if exists llx_appro ;
+
 drop table if exists llx_auteur;
 
 drop table if exists llx_bank;
@@ -75,9 +79,13 @@ drop table if exists llx_compta;
 
 drop table if exists llx_compta_account;
 
+drop table if exists llx_concert ;
+
 drop table if exists llx_const;
 
 drop table if exists llx_cotisation;
+
+drop table if exists llx_domain ;
 
 drop table if exists llx_don;
 
@@ -97,7 +105,11 @@ drop table if exists llx_fichinter;
 
 drop table if exists llx_groupart;
 
+drop table if exists llx_lieu_concert ;
+
 drop table if exists llx_livre;
+
+drop table if exists llx_livre_to_auteur ;
 
 drop table if exists llx_paiement;
 
@@ -116,6 +128,10 @@ drop table if exists llx_service;
 drop table if exists llx_soc_recontact;
 
 drop table if exists llx_sqltables;
+
+drop table if exists llx_todocomm ;
+
+drop table if exists llx_transaction_bplc ;
 
 drop table if exists llx_tva;
 
