@@ -308,7 +308,13 @@ class Propal
       /*
        *
        */
-      $sql = "UPDATE ".MAIN_DB_PREFIX."propal set price='$this->total_ht', tva='$this->total_tva', total='$this->total_ttc', remise='$this->total_remise' WHERE rowid = $this->id";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
+      $sql .= " price='".  ereg_replace(",",".",$this->total_ht)."'";
+      $sql .= ", tva='".   ereg_replace(",",".",$this->total_tva)."'";
+      $sql .= ", total='". ereg_replace(",",".",$this->total_ttc)."'";
+      $sql .= ", remise='".ereg_replace(",",".",$this->total_remise)."'";
+      $sql .=" WHERE rowid = $this->id";
+
       if ( $this->db->query($sql) )
 	{
 	  return 1;
