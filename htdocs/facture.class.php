@@ -148,6 +148,9 @@ class Facture
 	  $remise = 0 ;
 	}
 
+      if (strlen($this->mode_reglement)==0) $this->mode_reglement = 0;
+
+
       if (! $this->projetid)
 	{
 	  $this->projetid = "NULL";
@@ -157,8 +160,14 @@ class Facture
       $tva = tva($totalht);
       $total = $totalht + $tva;
 
-      $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, remise_percent, datef, note, fk_user_author,fk_projet, fk_cond_reglement, date_lim_reglement) ";
-      $sql .= " VALUES ('$number','$socid', now(), '$totalht', '$remise','$this->remise_percent', ".$this->db->idate($this->date).",'".addslashes($this->note)."',$user->id, $this->projetid, $this->cond_reglement,".$this->db->idate($datelim).")";      
+      $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, remise_percent";
+      $sql .= ", datef, note, fk_user_author,fk_projet";
+      $sql .= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement) ";
+
+      $sql .= " VALUES ('$number','$socid', now(), '$totalht', '$remise'";
+      $sql .= ",'$this->remise_percent', ".$this->db->idate($this->date);
+      $sql .= ",'".addslashes($this->note)."',$user->id, $this->projetid";
+      $sql .= ",".$this->cond_reglement.",".$this->mode_reglement.",".$this->db->idate($datelim).")";      
       if ( $this->db->query($sql) )
 	{
 	  $this->id = $this->db->last_insert_id();
