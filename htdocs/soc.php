@@ -103,7 +103,7 @@ if ($action == 'create')
   print '</td></tr>';
 
   print '<tr><td>'.$langs->trans('Téléphone').'</td><td><input type="text" name="tel"></td>';
-  print '<td>'.$langs->trans('Adresse').'</td><td><input type="text" name="fax"></td></tr>';
+  print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax"></td></tr>';
 
   print '<tr><td>Web</td><td colspan="3">http://<input size="40" type="text" name="url"></td></tr>';
 
