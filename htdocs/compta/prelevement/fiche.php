@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,18 @@
  * $Source$
  *
  */
+ 
+/**
+	    \file       htdocs/compta/prelevement/fiche.php
+        \ingroup    prelevement
+		\brief      Fiche prelevement
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("bills");
+
 
 /*
  * Sécurité accés client
@@ -61,16 +73,16 @@ llxHeader('','Bon de prélèvement');
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Fiche");
+$head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;      
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Factures");
+$head[$h][1] = $langs->trans("Bills");
 $h++;  
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Statistiques");
+$head[$h][1] = $langs->trans("Statistics");
 $h++;  
 
 $prev_id = $_GET["id"];
@@ -93,10 +105,10 @@ if ($_GET["id"])
 
       print '<table class="border" width="100%">';
 
-      print '<tr><td width="20%">Référence</td><td>'.$bon->ref.'</td></tr>';
-      print '<tr><td width="20%">Date</td><td>'.strftime("%d %b %Y",$bon->datec).'</td></tr>';
-      print '<tr><td width="20%">Montant</td><td>'.price($bon->amount).'</td></tr>';
-      print '<tr><td width="20%">Fichier</td><td>';
+      print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->ref.'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.strftime("%d %b %Y",$bon->datec).'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 
       $encfile = urlencode(DOL_DATA_ROOT.'/prelevement/bon/'.$bon->ref);
 
@@ -159,7 +171,7 @@ if ($_GET["id"])
     }
   else
     {
-      print "Erreur";
+      dolibarr_print_error($db);
     }
 }
 
