@@ -453,7 +453,7 @@ if ($_GET["action"] == 'create')
 	  print '<input type="hidden" name="socid" value="'.$obj->idp.'">' ."\n";
 	  print '<input type="hidden" name="remise_percent" value="0">';
 
-	  print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<table class="border" width="100%">';
 	  
 	  print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$soc->nom.'</td>';
 	  print '<td class="border">'.$langs->trans("Comment").'</td></tr>';
@@ -907,7 +907,7 @@ else
 	      print '<input type="hidden" name="action" value="setremise">';
 	      print '<table class="border" cellpadding="3" cellspacing="0"><tr><td>Remise</td><td align="right">';
 	      print '<input type="text" name="remise" size="3" value="'.$fac->remise_percent.'">%';
-	      print '<input type="submit" value="Appliquer">';
+	      print '<input type="submit" value="'.$langs->trans("Save").'">';
 	      print '</td></tr></table></form>';
 	    }
 
@@ -1196,10 +1196,10 @@ else
 	  print '</td><td valign="top" width="50%">';
 
 	  /*
-	   * Liste des actions propres aux document
+	   * Liste des actions propres à la facture
 	   *
 	   */
-	  $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note, code ";
+	  $sql = "SELECT id, ".$db->pdate("a.datea")." as da,  a.note, code ";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."user as u ";
 	  $sql .= " WHERE a.fk_user_author = u.rowid and a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $fac->id";
     
@@ -1209,11 +1209,11 @@ else
 	      $num = $db->num_rows();
 	      if ($num)
 		{
-		  print_titre("Actions sur les documents");
+		  print_titre($langs->trans("ActionsOnBill"));
     
 		  $i = 0; $total = 0;
 		  print '<table class="border" width="100%">';
-		  print '<tr '.$bc[$var].'><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Action").'</td><td>'.$langs->trans("By").'</td></tr>';
+		  print '<tr '.$bc[$var].'><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Action").'</td><td>'.$langs->trans("By").'</td></tr>';
           print "\n";
           
 		  $var=True;
@@ -1222,7 +1222,8 @@ else
 		      $objp = $db->fetch_object( $i);
 		      $var=!$var;
 		      print "<tr $bc[$var]>";
-		      print "<td>".dolibarr_print_date($objp->da)."</td>\n";
+		      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.$objp->id.'</a></td>';
+		      print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
 		      print '<td>'.stripslashes($objp->note).'</td>';
 		      print '<td>'.$objp->code.'</td>';
 		      print "</tr>\n";
