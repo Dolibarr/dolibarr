@@ -28,33 +28,41 @@ if (!$user->admin && !$user->rights->compta->charges)
   accessforbidden();
 
 require("../../chargesociales.class.php");
-require("../../paiement.class.php");
+//require("../../paiement_charge.class.php");
 require("../bank/account.class.php");
-
 
 llxHeader();
 
+
+$chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 
 /* *************************************************************************** */
 /*                                                                             */
 /* Mode fiche                                                                  */
 /*                                                                             */
 /* *************************************************************************** */
-if ($_GET["id"] > 0)
+if ($chid > 0)
     {      
       $html = new Form($db);
 
-      $cha = New ChargeSociales($db);
-      if ( $cha->fetch($_GET["id"]) > 0)
+      $cha = new ChargeSociales($db);
+
+      if ( $cha->fetch($chid) > 0)
 	{	  
+
 	  /*
 	   *   Charge
 	   */
-	  print_titre("Charge sociale : ".$cha->id);
-      print "<br>";
 
+	  //$head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+	  $head[0][1] = "Charge sociale : No $cha->id";
+	  $h = 1;
+	  $a = 0;
+
+	  dolibarr_fiche_head($head, $a);
+  	  
 	  /*
-	   * Confirmation de la suppression de la facture
+	   * Confirmation de la suppression de la charge
 	   *
 	   */
 	  if ($_GET["action"] == 'delete')
@@ -65,25 +73,83 @@ if ($_GET["id"] > 0)
       print "<form action=\"$PHP_SELF?id=$cha->id&amp;action=update\" method=\"post\">";
 
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-	  print "<tr><td>Type</td><td colspan=\"3\">$cha->type_libelle</td></tr>";
-	  print "<tr><td>Période</td><td colspan=\"3\">NA</td></tr>";
+
+	  print "<tr><td>Type</td><td>$cha->type_libelle</td><td>Paiements</td></tr>";
+
+	  print "<tr><td>Période</td><td>NA</td>";
+      print '<td rowspan="5" valign="top">';
+	  	  
+    	  /*
+    	   * Paiements
+    	   */
+    	$sql = "SELECT ".$db->pdate("datep")." as dp, p.amount,";
+    	$sql .= "c.libelle as paiement_type, p.num_paiement, p.rowid";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p, ".MAIN_DB_PREFIX."c_paiement as c ";
+    	$sql .= " WHERE p.fk_charge = ".$chid." AND p.fk_typepaiement = c.id";
+    	$sql .= " ORDER BY dp DESC";
+    	
+    	$result = $db->query($sql);
+    	if ($result)
+    	  {
+    	    $num = $db->num_rows();
+    	    $i = 0; $total = 0;
+    	    echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+    	    print '<tr class="liste_titre"><td>Date</td><td>Type</td>';
+    	    print "<td align=\"right\">Montant</TD><td>&nbsp;</td></tr>";
+        
+    	    $var=True;
+    	    while ($i < $num)
+    	      {
+    		$objp = $db->fetch_object( $i);
+    		$var=!$var;
+    		print "<tr $bc[$var]><td>";
+    		//print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_file().'</a>';
+    		print dolibarr_print_date($objp->dp)."</td>\n";
+    		print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
+    		print '<td align="right">'.price($objp->amount)."</td><td>".MAIN_MONNAIE."</td>\n";
+    		print "</tr>";
+    		$totalpaye += $objp->amount;
+    		$i++;
+    	      }
+    
+    	    if ($fac->paye == 0)
+    	      {
+    		print "<tr><td colspan=\"2\" align=\"right\">Total payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".MAIN_MONNAIE."</td></tr>\n";
+    		print "<tr><td colspan=\"2\" align=\"right\">Réclamé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($cha->amount)."</td><td bgcolor=\"#d0d0d0\">".MAIN_MONNAIE."</td></tr>\n";
+    		
+    		$resteapayer = $cha->amount - $totalpaye;
+    
+    		print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
+    		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">".MAIN_MONNAIE."</td></tr>\n";
+    	      }
+    	    print "</table>";
+    	    $db->free();
+    	  } else {
+    	    print $db->error();
+    	  }
+    	  print "</td>";
+
+	  print "</tr>";
+
       if ($cha->paye==0) {
-          print '<tr><td>Libellé</td><td colspan=\3\"><input type="text" name="desc" size="60" value='.stripslashes($cha->lib).'></td></tr>';
-    	  print "<tr><td>Date d'échéance</td><td><input type=\"text\" name=\"amount\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\"></td><td>Date de paiement</td><td>NA</td>";
-    	  print "<tr><td>Montant</td><td><b><input type=\"text\" name=\"amount\" value=\"$cha->amount\"></b></td><td colspan=\"2\">&nbsp;</td></tr>";
+          print '<tr><td>Libellé</td><td><input type="text" name="desc" size="40" value='.stripslashes($cha->lib).'></td></tr>';
+    	  print "<tr><td>Date d'échéance</td><td><input type=\"text\" name=\"amount\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\"></td></tr>";
+    	  print "<tr><td>Montant TTC</td><td><b><input type=\"text\" name=\"amount\" value=\"$cha->amount\"></b></td></tr>";
         }
       else {
-          print '<tr><td>Libellé</td><td colspan=\3\">'.stripslashes($cha->lib).'</td></tr>';
-    	  print "<tr><td>Date d'échéance</td><td>".strftime("%Y%m%d",$cha->date_ech)."</td><td>Date de paiement</td><td>".strftime("%Y%m%d",$cha->date_pai)."</td>";
-    	  print "<tr><td>Montant</td><td><b>$cha->amount</b></td><td colspan=\"2\">&nbsp;</td></tr>";
+          print '<tr><td>Libellé</td><td>'.stripslashes($cha->lib).'</td></tr>';
+    	  print "<tr><td>Date d'échéance</td><td>".dolibarr_print_date($cha->date_ech)."</td></tr>";
+    	  print "<tr><td>Montant TTC</td><td><b>".price($cha->amount)."</b></td></tr>";
       }
-	  print "<tr><td>Statut</td><td>".($cha->paye==0?"Non paye":"Payé")."</td><td colspan=\"2\">&nbsp;</td></tr>";
+
+
+	  print "<tr><td>Statut</td><td>".$cha->getLibStatut()."</td></tr>";
       print "</table>";
     
     
      print "</form>\n";
 
-        
+	print '</div>';
 
     if (! $_GET["action"]) {
 
@@ -91,7 +157,7 @@ if ($_GET["id"] > 0)
 	   *   Boutons actions
 	   */
 
-	    print "<br><div class=\"tabsAction\">\n";
+	    print "<div class=\"tabsAction\">\n";
 
 	    // Supprimer
 	    if ($cha->paye == 0 && $user->rights->facture->supprimer)
@@ -102,7 +168,7 @@ if ($_GET["id"] > 0)
 	    // Emettre paiement 
 	    if ($cha->paye == 0 && $user->rights->facture->paiement)
 	      {
-		print "<a class=\"tabAction\" href=\"$PHP_SELF?id=$cha->id&amp;action=create\">Emettre paiement</a>";
+		print "<a class=\"tabAction\" href=\"../paiement_charge.php?id=$cha->id&amp;action=create\">Emettre paiement</a>";
 	      }
 	    
 	    // Classer 'payé'
@@ -114,11 +180,6 @@ if ($_GET["id"] > 0)
 	    print "</div>";
     }
 
-	if ($_GET["action"] == 'create')
-	  {
-    	print "Cette fonction n'a pas encore été implémentée";
-
-	  }
 	if ($_GET["action"] == 'payed')
 	  {
     	print "Cette fonction n'a pas encore été implémentée";
