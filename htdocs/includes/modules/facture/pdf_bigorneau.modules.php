@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/facture/pdf_bigorneau.modules.php
+/**    	\file       htdocs/includes/modules/facture/pdf_bigorneau.modules.php
 		\ingroup    facture
 		\brief      Fichier de la classe permettant de générer les factures au modèle Bigorneau
 		\author	    Laurent Destailleur
@@ -30,8 +30,8 @@
 */
 
 
-/*!	\class pdf_bigorneau
-		\brief  Classe permettant de générer les factures au modèle Bigorneau
+/**    	\class      pdf_bigorneau
+		\brief      Classe permettant de générer les factures au modèle Bigorneau
 */
 
 class pdf_bigorneau extends ModelePDFFactures {
@@ -44,8 +44,8 @@ class pdf_bigorneau extends ModelePDFFactures {
 
   function write_pdf_file($facid)
     {
-      global $user;
-        global $langs;
+      global $user,$langs,$conf;
+      
         $langs->load("main");
         $langs->load("bills");
         $langs->load("products");

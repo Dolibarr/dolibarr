@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 *
 */
 
-/*!	\file htdocs/includes/modules/facture/pdf_crabe.modules.php
+/**   	\file       htdocs/includes/modules/facture/pdf_crabe.modules.php
 		\ingroup    facture
 		\brief      Fichier de la classe permettant de générer les factures au modèle Crabe
 		\author	    Laurent Destailleur
@@ -29,14 +29,14 @@
 */
 
 
-/*!	\class pdf_crabe
-		\brief  Classe permettant de générer les factures au modèle Crabe
+/**	    \class      pdf_crabe
+		\brief      Classe permettant de générer les factures au modèle Crabe
 */
 
 class pdf_crabe extends ModelePDFFactures
 {
     
-    /*!		\brief  Constructeur
+    /**		\brief  Constructeur
     		\param	db		handler accès base de donnée
     */
     function pdf_crabe($db)
@@ -52,7 +52,7 @@ class pdf_crabe extends ModelePDFFactures
     }
 
 
-    /*!
+    /**
     		\brief      Fonction générant la facture sur le disque
     		\param	    facid	id de la facture à générer
     		\return	    int     1=ok, 0=ko
