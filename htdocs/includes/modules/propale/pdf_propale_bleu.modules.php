@@ -211,31 +211,31 @@ Class pdf_propale_bleu
       if (defined("FAC_PDF_INTITULE"))
 	{
 	  $pdf->SetTextColor(0,0,200);
-	  $pdf->SetFont('Arial','B',14);
+	  $pdf->SetFont('Times','B',14);
 	  $pdf->MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
 	}
       
       $pdf->SetTextColor(70,70,170);
       if (defined("FAC_PDF_ADRESSE"))
 	{
-	  $pdf->SetFont('Arial','',12);
+	  $pdf->SetFont('Times','',12);
 	  $pdf->MultiCell(40, 5, FAC_PDF_ADRESSE);
 	}
       if (defined("FAC_PDF_TEL"))
 	{
-	  $pdf->SetFont('Arial','',10);
+	  $pdf->SetFont('Times','',10);
 	  $pdf->MultiCell(40, 5, "Tél : ".FAC_PDF_TEL);
 	}  
       if (defined("FAC_PDF_SIREN"))
 	{
-	  $pdf->SetFont('Arial','',10);
+	  $pdf->SetFont('Times','',10);
 	  $pdf->MultiCell(40, 5, "SIREN : ".FAC_PDF_SIREN);
 	}  
       
       if (defined("FAC_PDF_INTITULE2"))
 	{
 	  $pdf->SetXY(100,5);
-	  $pdf->SetFont('Arial','B',14);
+	  $pdf->SetFont('Times','B',14);
 	  $pdf->SetTextColor(0,0,200);
 	  $pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
 	}
@@ -243,18 +243,18 @@ Class pdf_propale_bleu
        * Adresse Client
        */
       $pdf->SetTextColor(0,0,0);
-      $pdf->SetFont('Arial','B',12);
+      $pdf->SetFont('Courier','B',12);
       $propale->fetch_client();
       $pdf->SetXY(102,42);
       $pdf->MultiCell(66,5, $propale->client->nom);
-      $pdf->SetFont('Arial','B',11);
+      $pdf->SetFont('Courier','B',11);
       $pdf->SetXY(102,47);
       $pdf->MultiCell(66,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
       $pdf->rect(100, 40, 100, 40);
       
       
       $pdf->SetTextColor(200,0,0);
-      $pdf->SetFont('Arial','B',12);
+      $pdf->SetFont('Courier','B',12);
       $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $propale->date));
       $pdf->Text(11, 94, "Proposition commerciale : ".$propale->ref);
       
