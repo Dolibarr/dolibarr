@@ -81,7 +81,7 @@ print "</form></table><br>";
  */
 if ($user->comm > 0 && $conf->commercial ) 
 {
-  $sql = "SELECT p.rowid, p.ref, s.nom FROM llx_propal as p, llx_societe as s";
+  $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM llx_propal as p, llx_societe as s";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 2";
   if ($socidp)
     {
@@ -103,7 +103,8 @@ if ($user->comm > 0 && $conf->commercial )
 	    {
 	      $var=!$var;
 	      $obj = $db->fetch_object($i);
-	      print "<tr $bc[$var]><td><a href=\"propal.php3?propalid=$obj->rowid\">$obj->ref</a></td><td align=\"right\">".$obj->nom."</td></tr>";
+	      print "<tr $bc[$var]><td><a href=\"propal.php3?propalid=$obj->rowid\">$obj->ref</a></td>";
+	      print '<td align="right"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
 	    }
 	  print "</table><br>";
@@ -237,7 +238,7 @@ if ($user->societe_id == 0)
   print '<li><a href="./resultat/">Résultats</a></li>';
   print '<li><a href="bank/index.php">Banque</a></li>';
 }
-print '</ul></div>';
+print '</ul></div><br>';
 
 
 
