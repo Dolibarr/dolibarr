@@ -20,6 +20,24 @@
  *
  */
 
+/**
+  * librairie contenant les fonctions pour calculer un prix
+	*
+  * @package price.lib.php
+	* @author Rodolphe Quiedeville
+	* @version 1.2
+	*
+	*/
+
+/**
+ * permet de calculer un prix
+ *
+ * @access public
+ * @param integer $products
+ * @param integer $remise_percent
+ * @return integer $result
+ */
+
 Function calcul_price($products, $remise_percent)
 {
   $total_ht = 0;

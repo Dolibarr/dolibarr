@@ -20,6 +20,28 @@
  * $Source$
  *
  */
+
+ /**
+  * librairie contenant les fonctions pour afficher un thermometre
+	* monetaire
+	*
+  * @package thermometer.php
+  * @author Timothy Kanters
+	* @author Rodolphe Quiedeville
+	* @version 1.2
+	*
+	*/
+
+/**
+ * permet d'afficher un thermometre monetaire
+ *
+ * @access public
+ * @param integer $actualValue
+ * @param integer $pendingValue
+ * @param integer $intendValue
+ * @return string $thermometer $htmlLegenda
+ */
+
 function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
   /*
     This function returns the html for the moneymeter.

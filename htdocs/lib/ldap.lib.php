@@ -27,7 +27,9 @@
 	* serveur ldap
 	*
   * @package ldap.lib
-	* @version 1.9
+	* @author Rodolphe Quiedeville
+	* @author Benoit Mortier
+	* @version 1.2
 	*
 	*/
 

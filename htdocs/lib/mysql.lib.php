@@ -22,6 +22,19 @@
  *
  */
 
+/**
+  * classe DoliDb
+	*
+	* Classe contenant les fonctions pour gere la database de dolibarr
+	*
+  * @package mysql.lib.php
+	* @author Fabien Seisen
+	* @author Rodolphe Quiedeville
+	* @author Laurent Destailleur
+	* @version 1.2
+	*
+	*/
+
 class DoliDb {
   var $db, $results, $ok, $connected, $database_selected;
 

@@ -20,28 +20,55 @@
  *
  */
 
+/**
+  * classe Webcal
+	*
+	* Classe permettant d'acceder a la database webcalendar
+	*
+  * @package Webcal
+	* @author Rodolphe Quiedeville
+	* @version 1.2
+	*
+	*/
+
 class Webcal {
   var $localdb;
   var $heure = -1;
   var $duree = 0;
 
+/**
+ * permet la connection a la base de donnée webcal
+ *
+ * @access public
+ *
+ */
 
   Function Webcal()
     {
       global $conf;
-      
+
       $this->localdb = new Db($conf->webcal->db->type,
 			      $conf->webcal->db->host,
 			      $conf->webcal->db->user,
 			      $conf->webcal->db->pass,
 			      $conf->webcal->db->name);
     }
-  
+
+/**
+ * ajoute une entree dans le calendrier de l'utilsateur
+ *
+ * @access public
+ * @param string $user
+ * @param integer $date
+ * @param string $texte
+ * @param string $desc
+ */
+
   Function add($user, $date, $texte, $desc)
     {
-      
+
       $id = $this->get_next_id();
-      
+
       $cal_id = $id;
       $cal_create_by = $user->webcal_login;
       $cal_date = strftime('%Y%m%d', $date);
@@ -54,49 +81,57 @@ class Webcal {
       $cal_access = "P";
       $cal_name = $texte;
       $cal_description = $desc;
-      
-      $sql = "INSERT INTO webcal_entry (cal_id, cal_create_by,cal_date,cal_time,cal_mod_date, cal_mod_time,cal_duration,cal_priority,cal_type, cal_access, cal_name,cal_description)";
-      
-      $sql .= " VALUES ($cal_id, '$cal_create_by', $cal_date, $cal_time,$cal_mod_date, $cal_mod_time, $cal_duration,$cal_priority,'$cal_type', '$cal_access', '$cal_name','$cal_description');";
-      
-      if ( $this->localdb->query($sql) )
-	{
-	  
-	  $sql = "INSERT INTO webcal_entry_user (cal_id, cal_login, cal_status)";
-	  $sql .= " VALUES ($cal_id, '$cal_create_by', 'A')";
-	  
-	  if ( $this->localdb->query($sql) )
-	    {
-	    
-	    }
-	  else
-	    {
-	      $error = $this->localdb->error() . '<br>' .$sql;
-	    }
-	}
+
+      $sql = "INSERT INTO webcal_entry (cal_id, cal_create_by,cal_date,cal_time,cal_mod_date,
+			cal_mod_time,cal_duration,cal_priority,cal_type, cal_access, cal_name,cal_description)";
+
+      $sql .= " VALUES ($cal_id, '$cal_create_by', $cal_date, $cal_time,$cal_mod_date, $cal_mod_time,
+			$cal_duration,$cal_priority,'$cal_type', '$cal_access', '$cal_name','$cal_description')";
+
+			if ( $this->localdb->query($sql) )
+				{
+
+	  			$sql = "INSERT INTO webcal_entry_user (cal_id, cal_login, cal_status)";
+	  			$sql .= " VALUES ($cal_id, '$cal_create_by', 'A')";
+
+					if ( $this->localdb->query($sql) )
+	    			{
+
+	    			}
+					else
+	    			{
+	      			$error = $this->localdb->error() . '<br>' .$sql;
+	    			}
+				}
       else
-	{
-	  $error = $this->localdb->error() . '<br>' .$sql;
-	}
-      
-      $this->localdb->close();
-    }
+				{
+	  			$error = $this->localdb->error() . '<br>' .$sql;
+				}
+
+      	$this->localdb->close();
+    	}
   
-  
+/**
+ * obtient l'id suivant
+ *
+ * @access public
+ * @return integer $id
+ */
+
   Function get_next_id()
     {
 
       $sql = "SELECT max(cal_id) FROM webcal_entry";
 
       if ($this->localdb->query($sql))
-	{
-	  $id = $this->localdb->result(0, 0) + 1;
-	  return $id;
-	}
+				{
+	  			$id = $this->localdb->result(0, 0) + 1;
+	  			return $id;
+				}
       else
-	{
-	  print $this->localdb->error();
-	}
+				{
+	  			print $this->localdb->error();
+				}
     }
 }
 ?>
