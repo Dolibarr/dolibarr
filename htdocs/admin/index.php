@@ -67,11 +67,11 @@ if ($_GET["action"] == 'edit')
   print '<tr class="pair"><td width="50%">Capital</td><td>';
   print '<input name="capital" size="20" value="' . MAIN_INFO_CAPITAL . '"></td></tr>';
 
-  print '<tr class="impair"><td width="50%">Identifiant professionnel (SIREN,...)</td><td>';
+  print '<tr class="impair"><td width="50%">Identifiant professionnel (SIREN,SIRET,...)</td><td>';
   print '<input name="siren" size="20" value="' . MAIN_INFO_SIREN . '"></td></tr>';
 
-  print '<tr class="pair"><td width="50%">RCS</td><td>';
-  print '<input name="rcs" size="20" value="' . MAIN_INFO_RCS . '"></td></tr>';
+  print '<tr class="pair"><td width="50%">Code de l''activité économique</td><td>';
+  print '<input name="rcs" size="20" value="' . MAIN_INFO_APE . '"></td></tr>';
 
   print '<tr><td colspan="2" align="center">';
   print '<input type="submit" value="Enregistrer"></td></tr>';
