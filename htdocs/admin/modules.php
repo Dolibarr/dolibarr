@@ -129,11 +129,11 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("Modules"));
 
 if (!$_GET["spe"])
 {
-    print "<br>".$langs->trans("ModulesDesc")."<br>\n";
+    print $langs->trans("ModulesDesc")."<br>\n";
 }
 else
 {
-    print "<br>".$langs->trans("ModulesSpecialDesc")."<br>\n";
+    print $langs->trans("ModulesSpecialDesc")."<br>\n";
 }
 
 
