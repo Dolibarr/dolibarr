@@ -35,11 +35,17 @@ function llxHeader($head = "") {
 
   $menu->add("index.php","Adherents");
   $menu->add_submenu("liste.php","liste");
-  $menu->add_submenu("fiche.php?action=create","nouvel adhérent");
 
+  if ($user->admin)
+    {
+      $menu->add_submenu("fiche.php?action=create","nouvel adhérent");
+    }
   $menu->add("cotisations.php","Cotisations");
 
-  $menu->add("type.php","Configuration");
+  if ($user->admin)
+    {
+      $menu->add("type.php","Configuration");
+    }
 
   left_menu($menu->liste);
 
