@@ -44,7 +44,10 @@ class ActionComm
       $this->db = $db;
       $this->societe = new Societe($db);
       $this->author = new User($db);
-      $this->contact = new Contact($db);      
+      if (class_exists("Contact"))
+      {
+	$this->contact = new Contact($db);
+      }
     }
   /*
    *
