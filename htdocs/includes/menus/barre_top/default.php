@@ -27,7 +27,7 @@ if (defined('MAIN_MODULE_COMMERCIAL') && MAIN_MODULE_COMMERCIAL == 1)
       print '<TD width="15%" class="menusel" align="center">';
       if ($user->comm > 0 && $conf->commercial ) 
 	{
-	  print '<A class="menusel" href="'.DOL_URL_ROOT.'/comm/">Commercial</A></TD>';
+	  print '<A class="menusel" href="'.DOL_URL_ROOT.'/comm/index.php">Commercial</A></TD>';
 	}
       else
 	{
@@ -39,7 +39,7 @@ if (defined('MAIN_MODULE_COMMERCIAL') && MAIN_MODULE_COMMERCIAL == 1)
       print '<TD width="15%" class="menu" align="center">';
       if ($user->comm > 0 && $conf->commercial ) 
 	{
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/">Commercial</A></TD>';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/index.php">Commercial</A></TD>';
 	}
       else
 	{
