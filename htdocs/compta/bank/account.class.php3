@@ -55,7 +55,7 @@ class Account {
   }
 
   Function solde() {
-    $sql = "SELECT sum(amount) FROM llx_bank WHERE fk_account=$this->id AND dateo <" . $this->db->idate(time() );
+    $sql = "SELECT sum(amount) FROM llx_bank WHERE fk_account=$this->id AND dateo <=" . $this->db->idate(time() );
 
     $result = $this->db->query($sql);
 
