@@ -158,12 +158,14 @@ close (FH);
 my ($line) = (0);
 open (FH, "<$tempfilename") || die "can't open $tempfilename: $!";	
 while (<FH>)  {
+    print FC "\n";
     print FC $_;
-    print FC "\\\\\n";
+    print FC "\\\\";
+    print FC "\n";
     $line++;
 }
 close (FH);
-
+print FC "\n";
 while ($line < 15) {
     print FC "\\\\\n";
     $line++;
