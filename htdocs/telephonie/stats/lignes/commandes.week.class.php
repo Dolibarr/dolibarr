@@ -152,6 +152,33 @@ class GraphLignesCommandesWeek extends GraphBarAcc {
 
     $this->LabelAngle = 0;
 
+    /*
+     * Insertion Base
+     *
+     */
+    $type = "commandes.hebdomadaire";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
+    $sql .= " WHERE graph = '".$type."'";
+    $this->db->query($sql);
+
+    for ($i = 0 ; $i < sizeof($datas_new) ; $i++)
+      {
+
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+	$sql .= " (graph, ord, valeur) VALUES (";
+	$sql .= "'".$type."'";
+	$sql .= ",'".$labels_new[$i]."'";
+	$sql .= ",'".$datas_new[$i]."');";
+	if (! $this->db->query($sql))
+	  {
+	    print $this->db->error();
+	  }
+      }
+    /*
+     *
+     *
+     */
+
     $this->GraphDraw($this->file, $datas_new, $labels_new, $datas_new_rej);
   }
 }   
