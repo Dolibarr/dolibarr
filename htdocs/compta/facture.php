@@ -46,7 +46,8 @@ if ($user->societe_id > 0)
 }
 /*
  *
- */	
+ */ 
+
 if ($HTTP_POST_VARS["action"] == 'classin') 
 {
   $facture = new Facture($db);
@@ -374,7 +375,6 @@ $html = new Form($db);
 if ($_GET["action"] == 'create') 
 {
   print_titre("Emettre une facture");
-
   if ($propalid)
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
@@ -397,7 +397,7 @@ if ($_GET["action"] == 'create')
     }
 
 
-  if ( $societe_id ) 
+  if ( $db->query($sql) ) 
     {
       $num = $db->num_rows();
       if ($num)
@@ -488,7 +488,7 @@ if ($_GET["action"] == 'create')
 	       */
 	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ";
 	      $sql .= " WHERE envente = 1";
-	      $sql .= " ORDER BY p.nbvente DESC";
+	      $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
 	      if ( $db->query($sql) )
 		{
 		  $opt = "<option value=\"0\" SELECTED></option>";
@@ -1294,7 +1294,7 @@ else
 	  }
 
 	
-	$sql .= " ORDER BY $sortfield $sortorder, rowid DESC LIMIT 20";
+	$sql .= " ORDER BY $sortfield $sortorder, rowid DESC";
 	$sql .= $db->plimit($limit + 1,$offset);
 	
 	$result = $db->query($sql);
