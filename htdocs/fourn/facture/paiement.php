@@ -36,6 +36,11 @@ require("./paiementfourn.class.php");
 $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
+
 /*
  * Sécurité accés client
  */
@@ -96,7 +101,7 @@ if ($action == 'create')
 
 	  $total = $obj->total_ttc;
 
-      print_titre("Émettre un paiement");
+      print_titre($langs->trans("DoPayment"));
       print '<form action="paiement.php?facid='.$facid.'" method="post">';
       print '<input type="hidden" name="action" value="add">';
       print '<table class="border" width="100%">';
@@ -107,17 +112,17 @@ if ($action == 'create')
       print '<a href="fiche.php?facid='.$facid.'">'.$obj->facnumber.'</a></td></tr>';
       print "<tr><td>".$langs->trans("Company")." :</td><td colspan=\"2\">$obj->nom</td></tr>";
 
-      print "<tr><td>".$langs->trans("Amount")." :</td><td colspan=\"2\">".price($obj->total_ttc)." euros TTC</td></tr>";
+      print "<tr><td>".$langs->trans("AmountTTC")." :</td><td colspan=\"2\">".price($obj->total_ttc)." euros</td></tr>";
 
       $sql = "SELECT sum(p.amount) FROM ".MAIN_DB_PREFIX."paiementfourn as p WHERE p.fk_facture_fourn = $facid;";
       $result = $db->query($sql);
       if ($result) {
-	$sumpayed = $db->result(0,0);
-	$db->free();
+    	$sumpayed = $db->result(0,0);
+	    $db->free();
       }
-      print '<tr><td>Déjà payé :</td><td colspan="2"><b>'.price($sumpayed).'</b> euros TTC</td></tr>';
+      print '<tr><td>'.$langs->trans("AlreadyPayed").' :</td><td colspan="2"><b>'.price($sumpayed).'</b> euros</td></tr>';
 
-      print "<tr class=\"liste_titre\"><td colspan=\"3\">Paiement</td>";
+      print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Payment")."</td>";
 
       print "<input type=\"hidden\" name=\"facid\" value=\"$facid\">";
       print "<input type=\"hidden\" name=\"facnumber\" value=\"$obj->facnumber\">";
@@ -179,8 +184,8 @@ if ($action == 'create')
       print "</select>";
       print "</td></tr>\n";
 
-      print "<tr><td valign=\"top\">Reste à payer :</td><td><b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
-      print "<tr><td valign=\"top\">".$langs->trans("Amount")." :</td><td><input name=\"amount\" type=\"text\" value=\"".($total - $sumpayed)."\"></td></tr>\n";
+      print "<tr><td valign=\"top\">Reste à payer :</td><td><b>".price($total - $sumpayed)."</b> euros</td></tr>\n";
+      print "<tr><td valign=\"top\">".$langs->trans("AmountTTC")." :</td><td><input name=\"amount\" type=\"text\" value=\"".($total - $sumpayed)."\"></td></tr>\n";
       print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
       print "</form>\n";
       print "</table>\n";
@@ -218,7 +223,7 @@ if ($action == '') {
       $i = 0; 
       $var=True;
 
-      print_barre_liste("Paiements", $page, "paiement.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+      print_barre_liste($langs->trans("Payments"), $page, "paiement.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
@@ -226,7 +231,7 @@ if ($action == '') {
       print '<td>'.$langs->trans("Company").'</td>';
       print '<td>'.$langs->trans("Date").'</td>';
       print '<td>'.$langs->trans("Type").'</td>';
-      print '<td align="right">'.$langs->trans("Amount").'</td>';
+      print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
       print "<td>&nbsp;</td></tr>";
     
       while ($i < min($num,$limit))
@@ -234,9 +239,10 @@ if ($action == '') {
 	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"fiche.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
+	  print "<td><a href=\"fiche.php?facid=$objp->facid\">".img_object($langs->trans("ShowBill"),"bill")."</a> ";
+	  print "<a href=\"fiche.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
 	  print '<td>'.$objp->nom.'</td>';
-	  print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";
+	  print "<td>".dolibarr_print_date($objp->dp)."</td>\n";
 	  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
 	  print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';	
 	  print "</tr>";
