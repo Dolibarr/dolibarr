@@ -72,7 +72,10 @@ print '<input type="text"   name="value1" value="'.TELEPHONIE_MARGE_MINI.'" size
 
 print '</td><td><input type="submit"></td></tr>';
 
-
+print '<tr class="pair"><td>';
+print 'Compte de ventilation</td><td align="center">';
+print TELEPHONIE_COMPTE_VENTILATION;
+print '</td><td>-</td><td>TELEPHONIE_EMAIL_FACTURATION_EMAIL</td></tr>';
 
 print '<tr class="pair"><td>';
 print 'Email facturation FROM</td><td align="center">';
