@@ -39,13 +39,24 @@ if (!$user->rights->facture->lire)
 $langs->load("bills");
 
 require("../facture.class.php");
-require("../lib/CMailFile.class.php");
 require("../paiement.class.php");
-require("../project.class.php");
-require("../propal.class.php");
-require("../contrat/contrat.class.php");
-require("../commande/commande.class.php");
+if ($conf->projet->enabled) {
+    require("../project.class.php");
+}
+if ($conf->propal->enabled) {
+    require("../propal.class.php");
+}
+if ($conf->contrat->enabled) {
+    require("../contrat/contrat.class.php");
+}
+if ($conf->commande->enabled) {
+    require("../commande/commande.class.php");
+}
+require("../lib/CMailFile.class.php");
 
+
+
+if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 /*
  * Sécurité accés client
  */
@@ -811,7 +822,7 @@ else
 	  /*
 	   *   Facture
 	   */
-	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
+	  print '<table class="border" width="100%">';
 	  print '<tr><td>'.$langs->trans("Customer").'</td>';
 	  print '<td colspan="3">';
 	  print '<b><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
@@ -860,7 +871,7 @@ else
 	      $num = $db->num_rows();
 	      $i = 0; $total = 0;
 	      print '<table class="noborder" width="100%">';
-	      print '<tr class="liste_titre"><td>Date</td><td>'.$langs->trans("Type").'</td>';
+	      print '<tr class="liste_titre"><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Type").'</td>';
 	      print '<td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
     
 	      $var=True;
@@ -925,7 +936,7 @@ else
 	    {
 	      print '<form action="facture.php?facid='.$fac->id.'" method="post">';
 	      print '<input type="hidden" name="action" value="setremise">';
-	      print '<table class="border" cellpadding="3" cellspacing="0"><tr><td>Remise</td><td align="right">';
+	      print '<table class="border"><tr><td>Remise</td><td align="right">';
 	      print '<input type="text" name="remise" size="3" value="'.$fac->remise_percent.'">%';
 	      print '<input type="submit" value="'.$langs->trans("Save").'">';
 	      print '</td></tr></table></form>';
@@ -1272,7 +1283,7 @@ else
 	    
 	    
 	  /*
-	   *
+	   * Choix d'un projet
 	   *
 	   */
 	  if ($_GET["action"] == 'classer')
@@ -1291,6 +1302,7 @@ else
 
 	      print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr></table></form></p>';
 	    }
+
 	  /*
 	   *
 	   *
@@ -1522,18 +1534,22 @@ else
       if ($result)
 	{
 	  $num = $db->num_rows();
-	  print_barre_liste("Factures clients",$page,$_SERVER["PHP_SELF"],"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+	  if ($socidp) {
+            $soc = new Societe($db);
+            $soc->fetch($socidp);
+	  }
+	  print_barre_liste("Factures client".($socidp?" $soc->nom":""),$page,$_SERVER["PHP_SELF"],"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	  $i = 0;
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
-	  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp");
-	  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socidp=$socidp",'align="center"');
-	  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socidp=$socidp");
-	  print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","","&amp;socidp=$socidp",'align="right"');
-	  print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socidp=$socidp",'align="right"');
-	  print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp",'align="right"');
-	  print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye","","&amp;socidp=$socidp",'align="right"');
+	  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp","",$sortfield);
+	  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socidp=$socidp",'align="center"',$sortfield);
+	  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socidp=$socidp","",$sortfield);
+	  print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","","&amp;socidp=$socidp",'align="right"',$sortfield);
+	  print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socidp=$socidp",'align="right"',$sortfield);
+	  print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp",'align="right"',$sortfield);
+	  print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye","","&amp;socidp=$socidp",'align="right"',$sortfield);
 	  print "</tr>\n";
       
 	  if ($num > 0) 

@@ -297,13 +297,13 @@ if ($socid > 0)
     $sql .= " FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $societe->id";
     if ( $db->query($sql) )
       {
-        print '<table border="1" cellspacing="0" width="100%" cellpadding="1">';
+        print '<table class="border" width="100%">';
         $i = 0 ;
         $num = $db->num_rows();
         if ($num > 0)
 	  {
             $tag = !$tag; print "<tr $bc[$tag]>";
-            print "<td colspan=\"2\"><a href=\"../projet/index.php?socidp=$societe->id\">liste des projets ($num)</td></tr>";
+            print "<td colspan=\"2\"><a href=\"../projet/index.php?socidp=$societe->id\">Liste des projets ($num)</td></tr>";
 	  }
         while ($i < $num && $i < 5)
 	  {
