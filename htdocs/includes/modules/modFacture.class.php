@@ -57,9 +57,6 @@ class modFacture
     $const[5][1] = "chaine";
     $const[6][0] = "FAC_PDF_INTITULE2";
     $const[6][1] = "chaine";
-    $const[7][0] = "FAC_OUTPUTDIR";
-    $const[7][1] = "chaine";
-    $const[7][2] = $GLOBALS["DOCUMENT_ROOT"] . "/document/facture";
 
     foreach ($const as $key => $value)
       {
