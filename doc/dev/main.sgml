@@ -5,6 +5,46 @@
   <p>
     Quelques grandes règles.
   </p>
+
+  <sect id="main-dev">Développeurs
+
+    <p>
+      Participer au développement d'un projet libre implique
+      d'utiliser les outils mis en place par le mainteneur du
+      projet. Pour développer sur Dolibarr il faut :
+    <p>
+    <p>
+      <list>
+	<item>lire ce document ;-)</item>
+
+	<item>se créer un compte sur <url id="http://savannah.gnu.org/"
+	name="Savannah"></item>
+
+	<item>s'inscrire sur la <url id="http://mail.nongnu.org/mailman/listinfo/dolibarr-dev" name="liste
+	de discussions des développeur"></item>
+
+	<item>s'inscrire sur la <url
+	id="http://mail.nongnu.org/mailman/listinfo/dolibarr-cvs" name="liste
+	cvs">. Cette liste est est lecture seule, elle permet aux
+	développeurs de suivre l'activité des commits</item>
+
+	<item>Respecter les notices de copyright, cela inclus la mise
+	à jour de celles-ci lorsqu'un développeur modifie de façon
+	conséquente un fichier ou ajoute dans un fichier une
+	fonctionnalité nouvelles.</item>
+
+	<item>Prendre conscience des contraintes qu'implique
+	l'utilisation de la GPL comme licence pour le projet, lors de
+	l'utilisation d'une librairie dans Dolibarr si celle-ci n'est
+	pas sous GPL discutez-en sur la liste des développeurs au péalable</item>
+      </list>
+    </p>
+
+    <p>
+      Ces quelques obligations n'ont pour seul but que le
+      développement se fasse dans les meilleures conditions possibles.
+    </p>
+  </sect>
   
   <sect id="main-java">Languages
     <p>
@@ -34,7 +74,7 @@
 
     <sect1 id="main-popup">Popup
       <p>
-	Les popup windows ne doivent pas être authorisé.
+	Les popup windows ne doivent pas être utilisé.
       </p>
     </sect1>
 
