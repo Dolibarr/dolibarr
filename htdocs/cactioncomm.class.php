@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,15 +64,18 @@ class CActioncomm {
 	}    
     }
   /*
-   *
-   *
+   * \brief     Renvoi la liste des type d'actions existant
+   * \param     active  1 ou 0 pour un filtre sur l'etat actif ou non ('' par defaut)
    *
    */
-  function liste_array()
+  function liste_array($active='')
   {
     $ga = array();
 
     $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm";
+    if ($active != '') {
+        $sql.=" WHERE active=$active";
+    }
     $sql .= " ORDER BY id";
 
     if ($this->db->query($sql) )
@@ -93,7 +97,7 @@ class CActioncomm {
       }
     else
       {
-	print $this->db->error();
+    dolibarr_print_error($this->db);
       }    
   }
 
