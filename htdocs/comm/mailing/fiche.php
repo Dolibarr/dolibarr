@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +21,17 @@
  *
  */
 
+/**     \file       htdocs/comm/mailing/fiche.php
+        \brief      Fiche mailing, onglet général
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
+$langs->load("mails");
+
 $mesg = '';
+
 
 if ($_POST["action"] == 'add')
 {
@@ -38,6 +47,7 @@ if ($_POST["action"] == 'add')
       Header("Location: fiche.php?id=".$mil->id);
     }
 }
+
 
 if ($_POST["action"] == 'update')
 {
@@ -55,6 +65,7 @@ if ($_POST["action"] == 'update')
     }
 }
 
+
 if ($_POST["action"] == 'confirm_valide')
 {
   
@@ -70,7 +81,7 @@ if ($_POST["action"] == 'confirm_valide')
 	}
       else
 	{
-	  print "Erreur";
+	  dolibarr_print_error($db);
 	}
     }
   else
@@ -94,7 +105,7 @@ if ($_POST["action"] == 'confirm_approve')
 	}
       else
 	{
-	  print "Erreur";
+	  dolibarr_print_error($db);
 	}
     }
   else
@@ -103,9 +114,13 @@ if ($_POST["action"] == 'confirm_approve')
     }
 }
 
+
+
+
+
 llxHeader("","","Fiche Mailing");
 
-if ($cancel == $langs->trans("Cancel"))
+if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
   $action = '';
 }
@@ -122,17 +137,17 @@ if ($_GET["action"] == 'create')
   print '<form action="fiche.php" method="post">'."\n";
   print '<input type="hidden" name="action" value="add">';
 
-  print_titre("Nouveau Mailing");
+  print_titre($langs->trans("NewMailing"));
       
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" width="100%">';
 
-  print '<tr><td width="20%">Titre</td><td><input name="titre" size="30" value=""></td></tr>';
+  print '<tr><td width="20%">'.$langs->trans("MailTitle").'</td><td><input name="titre" size="30" value=""></td></tr>';
 
-  print '<tr><td width="20%">Sujet</td><td><input name="sujet" size="40" value=""> (sujet du mail)</td></tr>';
+  print '<tr><td width="20%">'.$langs->trans("MailTopic").'</td><td><input name="sujet" size="40" value=""></td></tr>';
 
-  print '<tr><td width="20%" valign="top">Message</td><td><textarea cols="30" rows="8" name="body"></textarea></td></tr>';
+  print '<tr><td width="20%" valign="top">'.$langs->trans("MailMessage").'</td><td><textarea cols="30" rows="8" name="body"></textarea></td></tr>';
 
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Créer"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("CreateMailing").'"></td></tr>';
   print '</table>';
   print '</form>';
 }
@@ -144,12 +159,12 @@ else
 
       $h=0;
       $head[$h][0] = DOL_URL_ROOT."/comm/mailing/fiche.php?id=".$mil->id;
-      $head[$h][1] = $langs->trans("Fiche");
+      $head[$h][1] = $langs->trans("MailCard");
       $hselected = $h;
       $h++;
       
       $head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$mil->id;
-      $head[$h][1] = $langs->trans('Destinatires');
+      $head[$h][1] = $langs->trans('MailTargets');
       $h++;
       
       dolibarr_fiche_head($head, $hselected, substr($mil->titre,0,20));
@@ -166,6 +181,7 @@ else
 			      "Confirmez-vous la validation du mailing ?",
 			      "confirm_valide");
 	}
+	
       /*
        * Confirmation de l'approbation du mailing
        *
@@ -180,17 +196,12 @@ else
       
       print_titre("Mailing");
       
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="border" width="100%">';
       
-      print '<tr><td width="20%">Titre</td><td colspan="3">'.$mil->titre.'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
       
-      print '<tr><td width="20%">Emetteur</td><td>'.htmlentities($mil->email_from).'</td>';
-      print '<td>Email</td><td>'.htmlentities($mil->email_from).'</td></tr>';
-      
-      print '<tr><td width="20%" valign="top">Message</td><td colspan="3">';
-      
-      print 'Sujet : '.$mil->sujet.'<br/><br />';
-      print nl2br($mil->body).'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("MailSender").'</td><td>'.htmlentities($mil->email_from).'</td>';
+      print '<td>'.$langs->trans("EMail").'</td><td>'.htmlentities($mil->email_from).'</td></tr>';
       
       //print '<tr><td width="20%">Réponse</td><td>'.htmlentities($mil->email_replyto).'</td></tr>';
       //print '<tr><td width="20%">Retour Erreur</td><td>'.htmlentities($mil->email_errorsto).'</td></tr>';
@@ -200,21 +211,20 @@ else
 	  print '<tr><td width="20%">Nb destinataires</td><td colspan="3">'.$mil->nbemail.'</td></tr>';
 	}
 
-      print '<tr><td width="20%">Statut</td><td colspan="3">'.$mil->statuts[$mil->statut].'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->statuts[$mil->statut].'</td></tr>';
 
       $uc = new User($db, $mil->user_creat);
       $uc->fetch();
-      print '<tr><td width="20%">Créé par</td><td>'.$uc->fullname.'</td>';
-      print '<td>le</td>';
+      print '<tr><td width="20%">'.$langs->trans("CreatedBy").'</td><td>'.$uc->fullname.'</td>';
+      print '<td>'.$langs->trans("DateCreation").'</td>';
       print '<td>'.strftime("%d %b %Y %H:%M", $mil->date_creat).'</td></tr>';
-      
 
       if ($mil->statut > 0)
 	{
 	  $uv = new User($db, $mil->user_valid);
 	  $uv->fetch();
-	  print '<tr><td width="20%">Validé par</td><td>'.$uv->fullname.'</td>';
-	  print '<td>le</td>';
+	  print '<tr><td width="20%">'.$langs->trans("ValidatedBy").'</td><td>'.$uv->fullname.'</td>';
+	  print '<td>'.$langs->trans("Date").'</td>';
 	  print '<td>'.strftime("%d %b %Y %H:%M", $mil->date_valid).'</td></tr>';
 	}
 
@@ -222,28 +232,42 @@ else
 	{
 	  $ua = new User($db, $mil->user_appro);
 	  $ua->fetch();
-	  print '<tr><td width="20%">Approuvé par</td><td>'.$ua->fullname.'</td>';
-	  print '<td>le</td>';
+	  print '<tr><td width="20%">'.$langs->trans("ApprovedBy").'</td><td>'.$ua->fullname.'</td>';
+	  print '<td>'.$langs->trans("Date").'</td>';
 	  print '<td>'.strftime("%d %b %Y %H:%M", $mil->date_appro).'</td></tr>';
 	}
       
-      print '</table>';
+      // Contenu du mail
+      print '<tr><td width="20%">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$mil->sujet.'</td></tr>';
+
+      print '<tr><td width="20%" valign="top">'.$langs->trans("MailMessage").'</td><td colspan="3">';
+      print nl2br($mil->body).'</td></tr>';
+
+
+      print '</table><br>';
+      
+      print "</div>";
+      
+      
+      /*
+       * Boutons d'action
+       */
       
       print "\n\n<div class=\"tabsAction\">\n";
       
       if ($_GET["action"] == '')
 	{
 	  
-	  print '<a class="tabAction" href="fiche.php?action=test&amp;id='.$mil->id.'">'.$langs->trans("Tester").'</a>';
+	  print '<a class="tabAction" href="fiche.php?action=test&amp;id='.$mil->id.'">'.$langs->trans("TestMailing").'</a>';
 	  
 	  if ($mil->statut == 0)
 	    {
-	      print '<a class="tabAction" href="fiche.php?action=valide&amp;id='.$mil->id.'">'.$langs->trans("Valider").'</a>';
+	      print '<a class="tabAction" href="fiche.php?action=valide&amp;id='.$mil->id.'">'.$langs->trans("ValidMailing").'</a>';
 	    }
 	  
 	  if ($mil->statut == 1 && $mil->nbemail > 0)
 	    {
-	      print '<a class="tabAction" href="fiche.php?action=approve&amp;id='.$mil->id.'">'.$langs->trans("Approuver").'</a>';
+	      print '<a class="tabAction" href="fiche.php?action=approve&amp;id='.$mil->id.'">'.$langs->trans("ApproveMailing").'</a>';
 	    }
 	  
 

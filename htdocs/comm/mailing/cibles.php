@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +21,28 @@
  *
  */
 
+/**     \file       htdocs/comm/mailing/cibles.php
+        \brief      Page des cibles de mailing
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("mails");
 
 $mesg = '';
 
 
-llxHeader("","","Fiche mailing");
+llxHeader("","",$langs->trans("MailCard"));
 
-if ($cancel == $langs->trans("Cancel"))
+if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
   $action = '';
 }
 
+
 /*
- * Création
+ * Fiche mailing en mode création
  *
  */
 
@@ -46,20 +55,20 @@ if ($mil->fetch($_GET["id"]) == 0)
 
   $h=0;
   $head[$h][0] = DOL_URL_ROOT."/comm/mailing/fiche.php?id=".$mil->id;
-  $head[$h][1] = $langs->trans("Fiche");
+  $head[$h][1] = $langs->trans("MailCard");
   $h++;
       
   $head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$mil->id;
-  $head[$h][1] = $langs->trans('Destinatires');
+  $head[$h][1] = $langs->trans("MailTargets");
   $hselected = $h;
   $h++;
       
   dolibarr_fiche_head($head, $hselected, substr($mil->titre,0,20));
       
       
-  print_titre("Mailing");
+  print_titre($langs->trans("Mailing"));
       
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" width="100%">';
       
   print '<tr><td width="20%">Nom</td><td>'.$mil->titre.'</td></tr>';
   print '</table>';
@@ -78,7 +87,7 @@ if ($mil->fetch($_GET["id"]) == 0)
       $num = $db->num_rows();
 
       print '<br /><table class="noborder" width="100%">';
-      print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Destinataires").'</td></tr>';
+      print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("MailTargets").'</td></tr>';
       $var = true;
       $i = 0;
       
