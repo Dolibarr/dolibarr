@@ -32,6 +32,7 @@
 create table llx_c_paiement
 (
   id         SERIAL PRIMARY KEY,
+	code			 varchar(6),
   libelle    varchar(30),
   type       smallint	
 );

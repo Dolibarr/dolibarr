@@ -34,7 +34,7 @@ create table llx_contrat
   fk_facture      integer NOT NULL default 0,
   fk_facturedet   integer NOT NULL default 0,
   fk_user_author  integer NOT NULL,
-  fk_user_mise_en_service integer NOT NULL,
-  fk_user_cloture integer NOT NULL
+  fk_user_mise_en_service integer,
+  fk_user_cloture integer
 );
 

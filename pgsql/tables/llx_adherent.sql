@@ -53,3 +53,4 @@ create table llx_adherent
   note             text
 );
 
+CREATE UNIQUE INDEX llx_adherent_login ON llx_adherent (login);
