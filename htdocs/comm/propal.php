@@ -276,7 +276,16 @@ if ($_GET["propalid"])
 
 	  print "<table class=\"border\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
-	  print '<tr><td>Société</td><td colspan="3"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	  print '<tr><td>Société</td><td colspan="3">';
+	  if ($objp->client == 1)
+	    {
+	      $url ='fiche.php?socid='.$obj->idp;
+	    }
+	  else
+	    {
+	      $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$obj->idp;
+	    }
+	  print '<a href="'.$url.'">'.$obj->nom.'</a></td>';
 	  print '<td>Statut</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
 
 	  print '<tr><td>Date</td><td colspan="3">'.strftime("%A %d %B %Y",$obj->dp);
