@@ -125,6 +125,7 @@ class Facture
 	    }
 
 	  /*
+	   * Produits
 	   *
 	   */
 	  for ($i = 0 ; $i < sizeof($this->products) ; $i++)
@@ -561,8 +562,8 @@ class Facture
 	  return -1;
 	}
     }
-  /*
-   *
+  /**
+   * Applique une remise
    *
    */
   Function set_remise($user, $remise)
@@ -587,8 +588,8 @@ class Facture
 	    }
 	}
   }
-  /*
-   *
+  /**
+   * Envoie une relance
    *
    *
    */
@@ -673,7 +674,6 @@ class Facture
 
   /*
    *
-   * Génération du PDF
    *
    */
   Function pdf()
