@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -385,7 +386,7 @@ class Propal
 	      /*
 	       * Lignes génériques
 	       */
-	      $sql = "SELECT d.qty, d.description, d.price, d.tva_tx, d.rowid, d.remise_percent";
+	      $sql = "SELECT d.qty, d.description, d.price, d.subprice, d.tva_tx, d.rowid, d.remise_percent";
 	      $sql .= " FROM llx_propaldet as d";
 	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = 0";
 	
