@@ -19,17 +19,73 @@
  *
  */
 
+BODY 
+{
+  background: #e0ebeb; 
+  font-family: Helvetica, Verdana; font-size: 12px; 
+  text-decoration: none 
+}
+/*
+ *   Menu superieur
+ */
+.menu 
+{ 
+  background: #b3cccc; 
+  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
+  color: #000000; 
+  text-decoration: none }
 
-TD.barre_select { background: #d9dcc2 }
+.submenu 
+{ 
+  background: #b3cccc; 
+  font-family: Helvetica, Verdana; font-size: 14px;
+  color: #000000; 
+  text-decoration: none }
 
-TD.barre { background: #e0e0e0 }
 
-.menu	{ background: #d9dcc2; font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; color: #391ff2; text-decoration: none }
+/*
+ *   Barre de gauche
+ */
 
-DIV.titre { font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; color: #101010; text-decoration: none }
+TD.barre 
+{ 
+  background: #b3cccc;
+  font-family: Helvetica, Verdana; font-size: 14px; 
+  color: #000000; 
+  text-decoration: none }
+
+TD.barre_select 
+{ 
+  background: #b3cccc; 
+  color: #000000 
+  }
+
+
+
+DIV.titre 
+{ 
+  font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; 
+  color: #336666; 
+  text-decoration: none }
 /*
  *
  */
-TR.liste_titre  { background: #b0b0b0; font-family: Helvetica, Verdana; font-weight: bold; font-size: 14px; text-decoration: none }
-TR.pair	        { background: #d0d0d0; font-family: Helvetica, Verdana; font-size: 12px; text-decoration: none }
-TR.impair	{ background: #e0e0e0; font-family: Helvetica, Verdana; font-size: 12px; text-decoration: none }
+TR.liste_titre  
+{ 
+  background: #669999; 
+  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
+  text-decoration: none }
+
+TR.pair	        
+{ 
+  background: #b3cccc; 
+  font-family: Helvetica, Verdana; font-size: 12px; 
+  text-decoration: none }
+
+TR.impair	
+{ 
+  background: #cceeee; 
+  font-family: Helvetica, Verdana; font-size: 12px; 
+  text-decoration: none }
+
+
