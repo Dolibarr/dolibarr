@@ -103,8 +103,8 @@ class Contact
       
 	  if ($ldapbind)
 	    {
-	      $info["cn"] = $this->firstname." ".$this->name;
-	      $info["sn"] = $this->name;
+	      $info["cn"] = ldap_unacc($this->firstname." ".$this->name);
+	      $info["sn"] = ldap_unacc($this->name);
 	      if ($this->email)
 		$info["rfc822Mailbox"] = $this->email;
 	      
@@ -121,7 +121,6 @@ class Contact
 		$info["mobile"] = $this->phone_mobile;
 	      
 	      //$info["homePostalAddress"] = "AdressePersonnelle\nVIlle";
-
 	      //$info["street"] = "street";
 	      //$info["postalCode"] = "postalCode";
 	      //$info["postalAddress"] = "postalAddress";
