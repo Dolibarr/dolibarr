@@ -40,7 +40,7 @@ if (! file_exists($dirback))
 
 $handle=opendir($dir);
 
-dolibarr_syslog("Lecture repertoire $dir");
+if ($verbose) dolibarr_syslog("Lecture repertoire $dir");
 
 while (($file = readdir($handle))!==false)
 {
@@ -50,7 +50,7 @@ while (($file = readdir($handle))!==false)
       if (is_readable($dir.$file))
 	{
 	  
-	  dolibarr_syslog("Lecture $file");	  
+	  if ($verbose) dolibarr_syslog("Lecture $file");	  
 	  
 	  if (! file_exists($dirdone))
 	    {
@@ -74,8 +74,7 @@ while (($file = readdir($handle))!==false)
 	  else
 	    {
 	      dolibarr_syslog("Le fichier $file a déjà été traité");
-	}
-	  
+	    }	  
 	}
       else
 	{
