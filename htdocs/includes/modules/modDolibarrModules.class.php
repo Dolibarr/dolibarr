@@ -142,15 +142,6 @@ class modDolibarrModules
 	  }
       }
 
-    if ($err > 0)
-      {
-	return 0;
-      }
-    else
-      {
-	return 1;
-      }
-
     /*
      * Boites
      */
@@ -166,6 +157,14 @@ class modDolibarrModules
 	  }
       }
 
+    if ($err > 0)
+      {
+	return 0;
+      }
+    else
+      {
+	return 1;
+      }
   }
 
 }
