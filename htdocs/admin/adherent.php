@@ -246,12 +246,12 @@ llxFooter();
 
 function form_constantes($tableau){
   // Variables globales
-  global $db,$bc;
+  global $db,$bc,$langs;
   $form = new Form($db);
   print '<table class="noborder" cellpadding="3" cellspacing="0">';
   print '<tr class="liste_titre">';
   print '<td>'.$langs->trans("Description").'</td>';
-  print '<td>Valeur</td>';
+  print '<td>'.$langs->trans("Value").'</td>';
   print '<td>'.$langs->trans("Type").'</td>';
   //print '<td>Note</td>';
   print "<td>Action</td>";
