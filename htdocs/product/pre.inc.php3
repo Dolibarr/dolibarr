@@ -55,8 +55,9 @@ function llxHeader($head = "", $urlp = "")
       
       $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
     }      
-     
-  $menu->add(DOL_URL_ROOT."/service/index.php3", "Services");
+    
+  // La notion de service est abandonnée pour le moment 
+  //  $menu->add(DOL_URL_ROOT."/service/index.php3", "Services");
 
   left_menu($menu->liste);
   /*
