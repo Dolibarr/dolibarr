@@ -198,10 +198,10 @@ if ($propalid)
       $result = $db->query($sql);
       if ($result)
 	{
-	  $num = $db->num_rows();
+	  $num_fac_asso = $db->num_rows();
 	  $i = 0; $total = 0;
 	  print "<br>";
-	  if ($num > 1)
+	  if ($num_fac_asso > 1)
 	    {
 	      print_titre("Factures associées");
 	    }
@@ -211,14 +211,14 @@ if ($propalid)
 	    }
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<tr>";
-	  print "<td>Num</td>";
+	  print "<td>Numéro</td>";
 	  print "<td>Date</td>";
 	  print "<td>Auteur</td>";
 	  print '<td align="right">Prix</td>';
 	  print "</tr>\n";
 	  
 	  $var=True;
-	  while ($i < $num)
+	  while ($i < $num_fac_asso)
 	    {
 	      $objp = $db->fetch_object( $i);
 	      $var=!$var;
@@ -267,17 +267,16 @@ if ($propalid)
 	      print '<td align="center" width="25%">-</td>';
 	    }
 	  
-	  print "<td align=\"center\" width=\"25%\">-</td>";
-	  print "<td align=\"center\" width=\"25%\">-</td>";
+	  print '<td align="center" width="25%">-</td>';
+	  print '<td align="center" width="25%">-</td>';
 	  
-
-	  if ($obj->statut == 2)
+	  if ($obj->statut == 2 && $num_fac_asso)
 	    {
 	      print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=setstatut&statut=4\">Facturée</a>]</td>";
 	    }
 	  else	
 	    {
-	      print "<td align=\"center\" width=\"25%\">-</td>";
+	      print '<td align="center" width="25%">-</td>';
 	    }
 	  print "</tr></table>";
 	}
@@ -289,39 +288,77 @@ if ($propalid)
       print "Num rows = " . $db->num_rows();
       print "<p><b>$sql";
     }
+
+    /*
+     * Produits
+     */
+    print_titre("Produits");
+    
+    print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+    print "<TR class=\"liste_titre\">";
+    print "<td>Réf</td><td>Produit</td>";
+    print '<td align="right">Prix</td><td align="center">&nbsp;</td><td align="center">Qté.</td></tr>';
+    
+    $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid";
+    $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
+    
+    $result = $db->query($sql);
+    if ($result) 
+      {
+	$num = $db->num_rows();
+	$i = 0;	
+	$var=True;	
+	while ($i < $num) 
+	  {
+	    $objp = $db->fetch_object($i);
+	    $var=!$var;
+	    print "<tr $bc[$var]><td>[$objp->ref]</TD>\n";
+	    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php3?id='.$objp->prodid.'">'.$objp->product.'</td>';
+	    print "<td align=\"right\">".price($objp->price)."</TD>";
+	    print '<td>&nbsp;</td>';
+	    print "<td align=\"center\">".$objp->qty."</td></tr>\n";
+	    $i++;
+	  }
+      }
+    print '</table>';
+    
+
     /*
      * Voir le suivi des actions
      *
      *
      *
      */
-    if ($suivi) {
-      $validor = new User($db, $obj->fk_user_valid);
-      $validor->fetch('');
-      $cloturor = new User($db, $obj->fk_user_cloture);
-      $cloturor->fetch('');
-      
-      print '<p><a href="'.$PHP_SELF.'?propalid='.$propal->id.'">Cacher le suivi des actions </a>';
-      print '<table cellspacing=0 border=1 cellpadding=3>';
-      print '<tr><td>&nbsp;</td><td>Nom</td><td>Date</td></tr>';
-      print '<tr><td>Création</td><td>'.$author->fullname.'</td>';
-      print '<td>'.$obj->datec.'</td></tr>';
-
-      print '<tr><td>Validation</td><td>'.$validor->fullname.'&nbsp;</td>';
-      print '<td>'.$obj->date_valid.'&nbsp;</td></tr>';
-      
-      print '<tr><td>Cloture</td><td>'.$cloturor->fullname.'&nbsp;</td>';
-      print '<td>'.$obj->date_cloture.'&nbsp;</td></tr>';      
-      print '</table>';
-    } else {
-      print '<p><a href="'.$PHP_SELF.'?propalid='.$propal->id.'&suivi=1">Voir le suivi des actions </a>';
-    }
-
+    if ($suivi)
+      {
+	$validor = new User($db, $obj->fk_user_valid);
+	$validor->fetch('');
+	$cloturor = new User($db, $obj->fk_user_cloture);
+	$cloturor->fetch('');
+	
+	print '<p><a href="'.$PHP_SELF.'?propalid='.$propal->id.'">Cacher le suivi des actions </a>';
+	print '<table cellspacing=0 border=1 cellpadding=3>';
+	print '<tr><td>&nbsp;</td><td>Nom</td><td>Date</td></tr>';
+	print '<tr><td>Création</td><td>'.$author->fullname.'</td>';
+	print '<td>'.$obj->datec.'</td></tr>';
+	
+	print '<tr><td>Validation</td><td>'.$validor->fullname.'&nbsp;</td>';
+	print '<td>'.$obj->date_valid.'&nbsp;</td></tr>';
+	
+	print '<tr><td>Cloture</td><td>'.$cloturor->fullname.'&nbsp;</td>';
+	print '<td>'.$obj->date_cloture.'&nbsp;</td></tr>';      
+	print '</table>';
+      }
+    else
+      {
+	print '<p><a href="'.$PHP_SELF.'?propalid='.$propal->id.'&suivi=1">Voir le suivi des actions </a>';
+      }
+    
   } else {
     print $db->error();
     print "<p><b>$sql";
   }
-
+  
 
   /*
    *
