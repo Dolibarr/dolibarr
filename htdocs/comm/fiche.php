@@ -183,6 +183,13 @@ if ($socid > 0)
 	  $h++;
 	}
 
+    if ($user->societe_id == 0)
+      {
+	$head[$h][0] = DOL_URL_ROOT."/comm/index.php?socidp=$objsoc->id&action=add_bookmark";
+	$head[$h][1] = '<img border="0" src="/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
+	$head[$h][2] = 'image';
+      }
+
     dolibarr_fiche_head($head, $hselected);
 
     /*
@@ -217,10 +224,6 @@ if ($socid > 0)
 
     print "</table>";
 
-    if ($user->societe_id == 0)
-    {
-    print "[<a href=\"index.php?socidp=$objsoc->id&action=add_bookmark\">Bookmark fiche</a>]<br>";
-    }
     print "<br>";
     
     /*
@@ -353,17 +356,17 @@ if ($socid > 0)
 
     if ($conf->propal->enabled && $user->rights->propale->creer)
       {
-	print '<a class="tabAction" href="addpropal.php?socidp='.$objsoc->id.'&amp;action=create">Créer une proposition</a>';
+	print '<a class="tabAction" href="addpropal.php?socidp='.$objsoc->id.'&amp;action=create">Proposition</a>';
       }
 
     if ($conf->commande->enabled && $user->rights->commande->creer)
       {
-	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->id.'&amp;action=create">Créer une commande</a>';
+	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->id.'&amp;action=create">Commande</a>';
       }
 
     if ($conf->projet->enabled && $user->rights->projet->creer)
       {
-	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a>';
+	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$socid.'&action=create">Projet</a>';
       }
 
     if ($conf->fichinter->enabled)
@@ -378,7 +381,6 @@ if ($socid > 0)
 //        }
 //    }
 
-    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a>';
     
     print '</div>';
     print '<br>';
@@ -423,8 +425,9 @@ if ($socid > 0)
 	print "<tr $bc[$var]>";
 
 	print '<td>';
-
-	print '<a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+      print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
+      print img_file();
+      print '</a>&nbsp;<a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
 	if ($obj->note)
 	  {
