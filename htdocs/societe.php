@@ -140,8 +140,8 @@ if ($search_ville) {
 
 if ($socname)
 {
-  $title_filtre .= "'$socname'";
   $sql .= " AND s.nom like '%".$socname."%'";
+  $search_nom=$socname;
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -156,6 +156,7 @@ if ($result)
 
   print_barre_liste($title, $page, "societe.php",$params,$sortfield,$sortorder,'',$num);
     
+  // Lignes des titres
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom", $params,"&search_nom=$search_nom&search_ville=$search_ville","",$sortfield);
@@ -163,6 +164,7 @@ if ($result)
   print '<td colspan="2" align="center">&nbsp;</td>';
   print "</tr>\n";
 
+  // Lignes des champs de filtre
   print '<form method="post" action="societe.php">';
   print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';

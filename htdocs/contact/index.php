@@ -151,6 +151,11 @@ if ($result)
 
   print '<table class="noborder" width="100%">';
 
+  if ($contactname)
+    {
+      print $langs->trans("Filter")." (".$langs->trans("Lastname")." ".$langs->trans("or")." ".$langs->trans("Firstname")."): $contactname";
+    }
+
   // Ligne des titres
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
