@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,10 +22,10 @@
 create table llx_facturedet
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  fk_facture      integer,
+  fk_facture      integer NOT NULL,
   fk_product      integer,
-  datec           datetime,
-  note            varchar(255),
-  price           real default 0
+  desc            text,
+  price           real default 0,
+  qty             smallint
 
 );
