@@ -58,8 +58,9 @@ print '<form method="post" action="propale.php?action=nbprod">';
 print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>Nom</td>';
-print '<td>Valeur</td><td>&nbsp;</td>';
+print '<td>Valeur</td><td>&nbsp;</td><td>&nbsp;</td>';
 print "</tr>\n";
+
 print '<tr class="pair"><td>';
 print 'Nombre de ligne produits</td><td align="center">';
 print '<input size="3" type="text" name="value" value="'.TELEPHONIE_EMAIL_FACTURATION_EMAIL.'">';
@@ -70,13 +71,13 @@ print '</td><td><input type="submit" value="changer"></td></tr>';
 print '<tr class="pair"><td>';
 print 'Email facturation FROM</td><td align="center">';
 print TELEPHONIE_EMAIL_FACTURATION_EMAIL;
-print '</td><td>TELEPHONIE_EMAIL_FACTURATION_EMAIL</td></tr>';
+print '</td><td>-</td><td>TELEPHONIE_EMAIL_FACTURATION_EMAIL</td></tr>';
 
 
 print '<tr class="impair"><td>';
 print 'Email facturation BCC</td><td align="center">';
 print TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC;
-print '</td><td>TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC</td></tr>';
+print '</td><td>-</td><td>TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC</td></tr>';
 
 
 print '<tr class="pair"><td>Module ADSL</td>';
@@ -103,6 +104,32 @@ else
   print 'non</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_SIMULATION&amp;value=1">Changer</a>';
 }
 print '</td><td>TELEPHONIE_MODULE_SIMULATION</td></tr>';
+
+
+print '<tr class="pair"><td>Module GROUPES</td>';
+print '<td align="center">';
+if (TELEPHONIE_MODULE_GROUPES == 1)
+{
+  print 'oui</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_GROUPES&amp;value=0">Changer</a>';
+}
+else
+{
+  print 'non</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_GROUPES&amp;value=1">Changer</a>';
+}
+print '</td><td>TELEPHONIE_MODULE_GROUPES</td></tr>';
+
+
+print '<tr class="pair"><td>Module NUMDATA</td>';
+print '<td align="center">';
+if (TELEPHONIE_MODULE_NUMDATA == 1)
+{
+  print 'oui</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_NUMDATA&amp;value=0">Changer</a>';
+}
+else
+{
+  print 'non</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_NUMDATA&amp;value=1">Changer</a>';
+}
+print '</td><td>TELEPHONIE_MODULE_NUMDATA</td></tr>';
 
 
 print '</table></form>';
