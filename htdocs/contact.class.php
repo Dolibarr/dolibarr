@@ -213,7 +213,7 @@ class Contact
     {
 
       $sql = "UPDATE llx_socpeople SET ";
-      $sql .= " birthday='".$this->birthday)."'";
+      $sql .= " birthday='".$this->birthday."'";
       $sql .= " WHERE idp=$id";
 
       $result = $this->db->query($sql);
