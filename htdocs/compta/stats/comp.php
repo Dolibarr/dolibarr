@@ -25,7 +25,7 @@ require("./lib.inc.php");
 
 function propals ($db, $year, $month) {
   global $bc;
-  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
   $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
   $sql .= " AND c.id in (1,2,4)";
   $sql .= " AND date_format(p.datep, '%Y') = $year ";
@@ -243,7 +243,7 @@ function ppt ($db, $year, $socidp)
   
   print "<tr><td valign=\"top\" width=\"30%\">";
   
-  $sql = "SELECT sum(f.price - f.remise) as sum, round(date_format(f.datep,'%m')) as dm";
+  $sql = "SELECT sum(f.price) as sum, round(date_format(f.datep,'%m')) as dm";
   $sql .= " FROM llx_propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep,'%Y') = $year ";
 
   if ($socidp)
