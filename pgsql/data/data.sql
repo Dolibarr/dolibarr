@@ -568,7 +568,7 @@ insert into llx_c_stcomm (id,code,libelle) values ( 3, 'ST_DONE',  'Contactée');
 --
 
 delete from llx_c_typent;
-insert into llx_c_typent (id,code,libelle) values (  0, 'TE_UNKNOWN', 'Indifférent');
+insert into llx_c_typent (id,code,libelle) values (  0, 'TE_UNKNOWN', '-');
 insert into llx_c_typent (id,code,libelle) values (  1, 'TE_STARTUP', 'Start-up');
 insert into llx_c_typent (id,code,libelle) values (  2, 'TE_GROUP',   'Grand groupe');
 insert into llx_c_typent (id,code,libelle) values (  3, 'TE_MEDIUM',  'PME/PMI');
