@@ -78,11 +78,6 @@ if (strlen($stcomm))
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
-if (strlen($user->page_param["begin"]))
-{
-  $sql .= " AND upper(s.nom) like '".$user->page_param["begin"]."%'";
-}
-
 if ($user->societe_id)
 {
   $sql .= " AND s.idp = " .$user->societe_id;
@@ -124,24 +119,6 @@ if ($result)
   $urladd="page=$page&amp;stcomm=$stcomm";
 
   print_barre_liste($langs->trans("ProspectList"), $page, "prospects.php",'&amp;stcomm='.$_GET["stcomm"],"","",'',$num);
-
-  print '<div align="center">';
-
-  print "| <a href=\"prospects.php?page=$pageprev&amp;stcomm=$stcomm&amp;begin=%25\">*</a>\n| ";
-  for ($ij = 65 ; $ij < 91; $ij++) {
-    print "<a href=\"prospects.php?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
-    
-    if ($user->page_param["begin"] == chr($ij) )
-      {
-	print  "<b>&gt;" . chr($ij) . "&lt;</b>" ; 
-      } 
-    else
-      {
-	print  chr($ij);
-      } 
-    print "</a> | ";
-  }
-  print "</div>";
 
   $i = 0;
   
