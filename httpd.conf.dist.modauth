@@ -1,0 +1,94 @@
+#
+# Fichier d'exemple pour Dolibarr
+#
+# Utilisez ce fichier si vous voulez l'authentification
+# par le module apache-mod-auth-mysql
+#
+# $Id$
+# $Source$
+#
+<VirtualHost dolibarr.lafrere.lan>
+  ServerAdmin webmaster.fr@lolix.org
+  DocumentRoot /home/www/dolibarr/dolibarr/htdocs
+  ServerName dolibarr.lafrere.lan
+  ErrorLog  /home/www/dolibarr/logs/error.log
+  CustomLog /home/www/dolibarr/logs/access.log combined
+
+  ErrorDocument 401 /public/error-401.html
+
+  php_flag register_globals on
+
+  <Location />
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Order deny,allow
+    Deny from all
+
+    AuthType 				Basic
+
+    # N'utilisez la ligne suivante que si vous utilisez aussi
+    # le module d'authentification basé sur postgresql
+    #Auth_MySQL_Authoritative		on
+    
+    # Utilisez les lignes suivantes si le serveur Apache ne 
+    # peut se logger en anonymous (ce qui est conseillé ;-)
+    # rq. erics: sur ma debian je n'ai pas le droit de mettre ces
+    # instructions dans un <virtualhost> ... (apache 1.3.27.0-2)
+    #AuthMySQL_DefaultHost <host>
+    #AuthMySQL_DefaultUser <user>
+    #AuthMySQL_DefaultPassword <pass>
+
+    Auth_MySQL_DB 			dolibarr
+    Auth_MySQL_Password_Table 		llx_user
+    Auth_MySQL_Username_Field 		login
+    Auth_MySQL_Password_Field 		pass
+
+    # Pour l'instant les pass sont enregistrés en clair
+    # le stockage crypté est dans la TODO
+
+    Auth_MySQL_Encrypted_Passwords 	off
+
+    AuthName        			"Dolibarr"
+
+    require valid-user
+    satisfy any
+  </Location>
+
+  <Location /public/>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Order deny,allow
+    Allow from all
+  </Location>
+
+  <Location /theme/>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Order deny,allow
+    Allow from all
+  </Location>
+
+  <LocationMatch /public/adherents/priv_*>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Order deny,allow
+    Deny from all
+
+    AuthType 				Basic
+    Auth_MySQL_Authoritative		on
+    Auth_MySQL_DB 			dolibarr
+    Auth_MySQL_Password_Table 		llx_adherent
+    Auth_MySQL_Username_Field 		login
+    Auth_MySQL_Password_Field 		pass
+    Auth_MySQL_Encrypted_Passwords 	off
+    AuthName        			"Adherents"
+
+    require valid-user
+    satisfy any
+  </LocationMatch>
+
+</VirtualHost>
+
+
+
+
