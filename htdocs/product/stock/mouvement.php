@@ -30,6 +30,10 @@ if (!$user->rights->produit->lire)
  *
  */
 
+$page = $_GET["page"];
+$sortfield = $_GET["sortfield"];
+$sortorder = $_GET["sortorder"];
+
 if ($page < 0) { 
   $page = 0 ; }
 
