@@ -5,7 +5,11 @@ alter table llx_societe add tva_intra varchar(20) after ape;
 alter table llx_societe add capital real after tva_intra;
 alter table llx_societe add rubrique varchar(255);
 
+alter table llx_societe add fk_user_creat integer;
+alter table llx_societe add fk_user_modif integer;
+
 alter table llx_socpeople add civilite smallint;
+alter table llx_socpeople add fk_user_modif integer;
 
 alter table llx_propal add fin_validite datetime ;
 
