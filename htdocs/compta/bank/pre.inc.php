@@ -52,7 +52,6 @@ function llxHeader($head = "")
 	  $objp = $db->fetch_object($i);
 	  $menu->add("account.php?account=" . $objp->rowid,  $objp->label);
 	  $menu->add_submenu("releve.php?account=" . $objp->rowid ,"Relevés");
-	  $menu->add_submenu("rappro.php?account=".$objp->rowid,"Rappro");
 	  $i++;
 	}
     }
