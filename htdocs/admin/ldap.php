@@ -39,31 +39,34 @@ if (!$user->admin)
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_HOST';";
-	$db->query($sql);$sql='';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-	('LDAP_SERVER_HOST','".$_POST["host"]."',0);";
+  $db->query($sql);
 
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('LDAP_SERVER_HOST','".$_POST["host"]."',0);";
+	
   $db->query($sql);
 
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_DN';";
-	$db->query($sql);$sql='';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+  $db->query($sql);
+
+  
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
 	('LDAP_SERVER_DN','".$_POST["dn"]."',0);";
   $db->query($sql);
 
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_PASS';";
-	$db->query($sql);$sql='';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_PASS';";
+  $db->query($sql);
+  
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
 	('LDAP_SERVER_PASS','".$_POST["pass"]."',0);";
 
   $db->query($sql);
 
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_TYPE';";
-	$db->query($sql);$sql='';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-	('LDAP_SERVER_TYPE','".$_POST["type"]."',0);";
   $db->query($sql);
 
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('LDAP_SERVER_TYPE','".$_POST["type"]."',0);";
 
   if ($db->query($sql))
     {
