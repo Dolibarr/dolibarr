@@ -1373,5 +1373,10 @@ function departement_rowid($db,$code, $pays_id)
     }
 }
 
+function get_exdir($num)
+{
+  $num = substr("000".$num, -3);
+  return substr($num, 0,1).'/'.substr($num, 1,1).'/'.substr($num, 2,1).'/';
+}
 
 ?>
