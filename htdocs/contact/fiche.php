@@ -208,6 +208,7 @@ if ($_GET["action"] == 'create')
    * Fiche en mode creation
    *
    */
+  print_fiche_titre($langs->trans("AddContact"));
   
   print '<br>';
 
