@@ -37,10 +37,6 @@ table:
 	cd tables \
 	&& make create
 
-data:
-	cd data \
-	&& make load
-
 dev:
 	cd data \
 	&& make dev
