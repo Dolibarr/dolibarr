@@ -46,6 +46,9 @@ class Societe {
     $this->id = $id;
     $this->client = 0;
     $this->fournisseur = 0;
+    $this->effectif_id  = 0;
+    $this->forme_juridique_id  = 0;
+
     return 1;
   }
   /*
@@ -96,6 +99,8 @@ class Societe {
     $sql .= ",ape = '" . trim($this->ape) ."'";
     $sql .= ",tva_intra = '" . trim($this->tva_intra) ."'";
     $sql .= ",capital = " . $this->capital;
+    $sql .= ",fk_effectif = " . $this->effectif_id ;
+    $sql .= ",fk_forme_juridique = " . $this->forme_juridique_id ;
     $sql .= ",client = " . $this->client ;
     $sql .= ",fournisseur = " . $this->fournisseur ;
     $sql .= " WHERE idp = " . $id .";";
@@ -104,6 +109,81 @@ class Societe {
       {
 	print $this->db->error();
       }
+  }
+
+  /*
+   *
+   *
+   */
+  Function fetch($socid)
+    {
+      $this->id = $socid;
+
+      $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
+      $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
+      $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
+      $sql .= ", e.libelle as effectif, e.id as effectif_id";
+      $sql .= ", s.fk_forme_juridique as forme_juridique_id, fj.libelle as forme_juridique";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+      $sql .= ", ".MAIN_DB_PREFIX."c_effectif as e";
+      $sql .= ", ".MAIN_DB_PREFIX."c_forme_juridique as fj";
+
+      $sql .= " WHERE s.idp = ".$this->id;
+      $sql .= " AND s.fk_effectif = e.id";
+      $sql .= " AND s.fk_forme_juridique = fj.code";
+      $result = $this->db->query($sql);
+
+      if ($result)
+	{
+	  if ($this->db->num_rows())
+	    {
+	      $obj = $this->db->fetch_object(0);
+
+	      $this->nom = stripslashes($obj->nom);
+	      $this->adresse =  stripslashes($obj->address);
+	      $this->cp = $obj->cp;
+	      $this->ville =  stripslashes($obj->ville);
+	      
+	      $this->url = $obj->url;
+
+	      $this->tel = $obj->tel;
+	      $this->fax = $obj->fax;
+	      
+	      $this->siren     = $obj->siren;
+	      $this->siret     = $obj->siret;
+	      $this->ape       = $obj->ape;
+	      $this->capital   = $obj->capital;
+
+	      $this->tva_intra      = $obj->tva_intra;
+	      $this->tva_intra_code = substr($obj->tva_intra,0,2);
+	      $this->tva_intra_num  = substr($obj->tva_intra,2);
+
+	      $this->effectif       = $obj->effectif;
+	      $this->effectif_id    = $obj->effectif_id;
+
+	      $this->forme_juridique_id  = $obj->forme_juridique_id;
+	      $this->forme_juridique  = $obj->forme_juridique;
+
+	      $this->prefix_comm = $obj->prefix_comm;
+	      
+	      $this->client = $obj->client;
+	      $this->fournisseur = $obj->fournisseur;
+	      
+	      $this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
+
+	      $this->rubrique = $obj->rubrique;
+	      
+	      $this->note = $obj->note;
+
+	      return 1;
+	      
+	    }
+	  $this->db->free();
+	}
+      else
+	{
+	  print $this->db->error();
+	}
   }
 
   /*
@@ -179,71 +259,6 @@ class Societe {
 	} 
       return $facimp;
     }
-
-  /*
-   *
-   *
-   */
-  Function fetch($socid)
-    {
-      $this->id = $socid;
-
-      $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
-      $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
-      $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, rubrique";
-      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-
-      $sql .= " WHERE s.idp = ".$this->id;
-
-      $result = $this->db->query($sql);
-
-      if ($result)
-	{
-	  if ($this->db->num_rows())
-	    {
-	      $obj = $this->db->fetch_object(0);
-
-	      $this->nom = stripslashes($obj->nom);
-	      $this->adresse =  stripslashes($obj->address);
-	      $this->cp = $obj->cp;
-	      $this->ville =  stripslashes($obj->ville);
-	      
-	      $this->url = $obj->url;
-
-	      $this->tel = $obj->tel;
-	      $this->fax = $obj->fax;
-	      
-	      $this->siren     = $obj->siren;
-	      $this->siret     = $obj->siret;
-	      $this->ape       = $obj->ape;
-	      $this->capital   = $obj->capital;
-
-	      $this->tva_intra = $obj->tva_intra;
-	      $this->tva_intra_code = substr($obj->tva_intra,0,2);
-	      $this->tva_intra_num = substr($obj->tva_intra,2);
-
-
-	      $this->prefix_comm = $obj->prefix_comm;
-	      
-	      $this->client = $obj->client;
-	      $this->fournisseur = $obj->fournisseur;
-	      
-	      $this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
-
-	      $this->rubrique = $obj->rubrique;
-	      
-	      $this->note = $obj->note;
-
-	      return 1;
-	      
-	    }
-	  $this->db->free();
-	}
-      else
-	{
-	  print $this->db->error();
-	}
-  }
   /*
    *
    *
@@ -418,7 +433,62 @@ class Societe {
 	}
       
     }
-
+  /*
+   *
+   *
+   */
+  Function effectif_array()
+    {
+      $effs = array();
+      /*
+       * Lignes
+       */      
+      $sql = "SELECT id, libelle";
+      $sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
+      $sql .= " ORDER BY id ASC";
+      if ($this->db->query($sql))
+	{
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  
+	  while ($i < $num)
+	    {
+	      $objp = $this->db->fetch_object($i);
+	      $effs[$objp->id] = $objp->libelle;
+	      $i++;
+	    }
+	  $this->db->free();
+	} 
+      return $effs;
+    }
+  /*
+   *
+   *
+   */
+  Function forme_juridique_array()
+    {
+      $fj = array();
+      /*
+       * Lignes
+       */      
+      $sql = "SELECT code, libelle";
+      $sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+      $sql .= " ORDER BY code ASC";
+      if ($this->db->query($sql))
+	{
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  
+	  while ($i < $num)
+	    {
+	      $objp = $this->db->fetch_object($i);
+	      $fj[$objp->code] = $objp->libelle;
+	      $i++;	  
+	    }
+	  $this->db->free();
+	} 
+      return $fj;
+    }
 }
 
 ?>
