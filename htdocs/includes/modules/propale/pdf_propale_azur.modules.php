@@ -144,7 +144,7 @@ class pdf_propale_azur extends ModelePDFPropales
                     // Description produit
                     $codeproduitservice="";
                     $pdf->SetXY (11, $curY );
-                    if (defined("FACTURE_CODEPRODUITSERVICE") && FACTURE_CODEPRODUITSERVICE) {
+                    if (defined("PROPALE_CODEPRODUITSERVICE") && PROPALE_CODEPRODUITSERVICE) {
                         // Affiche code produit si ligne associée à un code produit
 
                         $prodser = new Product($this->db);
@@ -166,9 +166,9 @@ class pdf_propale_azur extends ModelePDFPropales
                     $pdf->SetXY (121, $curY);
                     $pdf->MultiCell(10, 5, $prop->lignes[$i]->tva_taux, 0, 'C');
 
-                    // Prix unitaire HT
+                    // Prix unitaire HT avant remise
                     $pdf->SetXY (133, $curY);
-                    $pdf->MultiCell(16, 5, price($prop->lignes[$i]->price), 0, 'R', 0);
+                    $pdf->MultiCell(16, 5, price($prop->lignes[$i]->subprice), 0, 'R', 0);
 
                     // Quantité
                     $pdf->SetXY (151, $curY);
