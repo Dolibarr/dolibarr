@@ -33,7 +33,11 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("new.php","Nouvel adherent");
+  $menu->add("","Non adherent");
+  $menu->add_submenu("new.php","Inscription");
+  $menu->add("","Adherents");
+  $menu->add_submenu("priv_edit.php","Edition de sa fiche");
+  $menu->add_submenu("priv_liste.php","Liste des adherents");
   /*
   $menu->add_submenu("liste.php?statut=1","Adhérents à ce jour");
   $menu->add_submenu("liste.php?statut=-1","Adhésions à valider");
@@ -53,10 +57,11 @@ function llxHeader($head = "") {
     {
       $menu->add("type.php","Configuration");
     }
-  left_menu($menu->liste);
   */
+  left_menu($menu->liste);
+
   // remplacement de la barre de gauche
-  print '</td><td valign="top" width="85%" colspan="6">';
+  //  print '</td><td valign="top" width="85%" colspan="6">';
 
 }
 

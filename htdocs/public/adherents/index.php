@@ -25,9 +25,14 @@ llxHeader();
 
 $db = new Db();
 
-print_titre("Gestion des adherents");
+print_titre("Gestion des adhesions a l'association");
 
 print '<p><TABLE border="0" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td colspan=2>Les menus ci-contre correspondent a:</td></tr>';
+print '<tr><td>-Inscription :</td><td> Formulaires d\'inscription pour les non-adherents</td></tr>';
+print '<tr><td>-Edition de sa fiche :</td><td> Permet d\'editer sa fiche d\'adherent</td></tr>';
+print '<tr><td>-Liste des adherents :</td><td> Permet de voir la liste des adherents (reserve aux adherents)</td></tr>';
+/*
 print '<TR class="liste_titre">';
 print "<td>Type</td>";
 print "<td>Nb</td>";
@@ -61,7 +66,6 @@ if ($result)
   $db->free();
 
 }
-
 print "</table>";
 
 print '<form action="liste.php" method="post" name="action" value="search">';
@@ -78,9 +82,10 @@ print 'Nom/Prénom <input type="text" name="search" class="flat" size="20">';
 print '&nbsp; <input class="flat" type="submit" value="Chercher">';
 print '</td></tr>';
 print "</table></form>";
+*/
 
 
-
+print '</table>';
 
 $db->close();
 

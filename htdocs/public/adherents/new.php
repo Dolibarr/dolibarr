@@ -55,8 +55,8 @@ if ($HTTP_POST_VARS["action"] == 'add')
     $error+=1;
     $errmsg .="Password invalide<BR>\n";
   }
-  if (isset($naiss) && $nais !=''){
-    if (!ereg("^\d\d\d\d\-\d\d\-\d\d",$naiss)){
+  if (isset($naiss) && $naiss !=''){
+    if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$naiss)){
       $error+=1;
       $errmsg .="Date de naissance invalide (Format AAAA-MM-JJ)<BR>\n";
     }
@@ -95,7 +95,8 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	    $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
 	  }
 	// Envoi d'un Email de confirmation au nouvel adherent
-	$mesg="Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\n\nPrenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\nhttp://$SERVER_NAME/adherents/private/edit.php\n\n";
+	$mesg=preg_replace("/%INFO%/","Prenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note",$conf->adherent->email_new);
+	//$mesg="Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\n\nPrenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\nhttp://$SERVER_NAME/adherents/private/edit.php\n\n";
 	mail($email,"Votre adhesion sur http://$SERVER_NAME/",$mesg);
 	Header("Location: new.php?action=added");
       }

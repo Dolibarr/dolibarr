@@ -26,8 +26,8 @@ llxHeader();
 
 $db = new Db();
 
-if ($sortorder == "") {  $sortorder="DESC"; }
-if ($sortfield == "") {  $sortfield="d.nom"; }
+if ($sortorder == "") {  $sortorder="ASC"; }
+if ($sortfield == "") {  $sortfield="nom"; }
 
 if ($page == -1) { $page = 0 ; }
 
@@ -35,16 +35,11 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (! isset($statut))
-{
-  $statut = 1 ;
-}
-
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin";
-$sql .= " , d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
-$sql .= " FROM llx_adherent as d, llx_adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+$sql = "select rowid,prenom,nom, societe, cp,ville,email,naiss,photo from llx_adherent where statut=1 ORDER BY  $sortfield $sortorder ". $db->plimit($conf->liste_limit, $offset);
+//$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, cp, ville, d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
+//$sql .= " FROM llx_adherent as d, llx_adherent_type as t";
+//$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
+//$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
 if ($result) 
@@ -58,24 +53,25 @@ if ($result)
   print '<TR class="liste_titre">';
 
 
-  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.prenom\">Prenom</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.nom\">Nom</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.societe\">Société</a></td>\n";
+  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.prenom\">Prenom</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.nom\">Nom</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.societe\">Société</a></td>\n";
 
   print "<td>";
-  print_liste_field_titre("Date cotisation",$PHP_SELF,"t.cotisation","&page=$page&statut=$statut");
+  print_liste_field_titre("Date naissance",$PHP_SELF,"naiss","&page=$page");
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("Email",$PHP_SELF,"d.email","&page=$page&statut=$statut");
+  print_liste_field_titre("Email",$PHP_SELF,"email","&page=$page");
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("Type",$PHP_SELF,"t.libelle","&page=$page&statut=$statut");
+  print_liste_field_titre("CP",$PHP_SELF,"cp","&page=$page");
   print "</td>\n";
 
+  print "<td>";
+  print_liste_field_titre("Vile",$PHP_SELF,"ville","&page=$page");
+  print "</td>\n";
 
-  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.morphy\">Personne</a></td>\n";
-  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.statut\">Statut</a></td>\n";
-  print "<td>Action</td>\n";
+  print "<td>Photo</td>\n";
   print "</TR>\n";
     
   $var=True;
@@ -84,34 +80,16 @@ if ($result)
       $objp = $db->fetch_object( $i);
       $var=!$var;
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
-      print "<TD>";
-      if ($objp->cotisation == 'yes')
-	{
-	  if ($objp->datefin < time())
-	    {
-	      print "<b><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->datefin)."</a> - Cotisation non recue</b></td>\n";
-	    }
-	  else 
-	    {
-	      print "<a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->datefin)."</a></td>\n";
-	    }
-	}
-      else 
-	{
-	  print "&nbsp;</td>";
-	}
-
+      print "<TD><a href=\"priv_fiche.php?rowid=$objp->rowid\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
+      print "<TD>$objp->naiss</TD>\n";
       print "<TD>$objp->email</TD>\n";
-      print "<TD>$objp->type</TD>\n";
-      print "<TD>$objp->morphy</TD>\n";
-      print "<td>";
-      if ($objp->statut == -1)
-	{
-	  print '<a href="fiche.php?rowid='.$objp->rowid.'">A valider</a>';
-	}
-      print "</td>";
-      print "<TD><a href=\"edit.php?rowid=$objp->rowid\">Editer</a><br><a href=\"fiche.php?rowid=$objp->rowid&action=resign\">Resilier</a><br><a href=\"fiche.php?rowid=$objp->rowid&action=delete\">Supprimer</a></TD>\n";
+      print "<TD>$objp->cp</TD>\n";
+      print "<TD>$objp->ville</TD>\n";
+      if (isset($objp->photo) && $objp->photo!= ''){
+	print "<TD><A HREF=\"$objp->photo\"><IMG SRC=\"$objp->photo\" HEIGHT=64 WIDTH=64></A></TD>\n";
+      }else{
+	print "<TD>&nbsp;</TD>\n";
+      }
       print "</tr>";
       $i++;
     }

@@ -24,7 +24,9 @@ require("../../adherent.class.php");
 require("../../adherent_type.class.php");
 
 $db = new Db();
-
+$errmsg='';
+$num=0;
+$error=0;
 /* 
  * Enregistrer les modifs
  */
@@ -34,53 +36,99 @@ if ($action == 'update')
 
   if ($HTTP_POST_VARS["bouton"] == "Enregistrer")
     {
+      if (isset($_SERVER["REMOTE_USER"])){
+	$adh = new Adherent($db);
+	$adh->fetch_login($_SERVER["REMOTE_USER"]);
+	if ($HTTP_POST_VARS["rowid"] == $adh->id){
+	  // user and rowid is the same => good
 
-      $adh = new Adherent($db);
-
-      $adh->id          = $HTTP_POST_VARS["rowid"];
-      $adh->prenom      = $prenom;
-      $adh->nom         = $nom;  
-      $adh->societe     = $societe;
-      $adh->adresse     = $adresse;
-      $adh->amount      = $amount;
-      $adh->cp          = $cp;
-      $adh->ville       = $HTTP_POST_VARS["ville"];
-      $adh->email       = $HTTP_POST_VARS["email"];
-      $adh->login       = $HTTP_POST_VARS["login"];
-      $adh->pass        = $HTTP_POST_VARS["pass"];
-      $adh->naiss       = $HTTP_POST_VARS["naiss"];
-      $adh->photo       = $HTTP_POST_VARS["photo"];
-      $adh->date        = mktime(12, 0 , 0, $remonth, $reday, $reyear);
-      $adh->note        = $HTTP_POST_VARS["note"];
-      $adh->pays        = $HTTP_POST_VARS["pays"];
-      $adh->typeid      = $HTTP_POST_VARS["type"];
-      $adh->commentaire = $HTTP_POST_VARS["comment"];
-      $adh->morphy      = $HTTP_POST_VARS["morphy"];
-      // recuperation du statut et public
-      $adh->statut      = $HTTP_POST_VARS["statut"];
-      $adh->public      = $HTTP_POST_VARS["public"];
-      
-      if ($adh->update($user->id) ) 
-	{	  
-	  Header("Location: fiche.php?rowid=$adh->id&action=edit");
+	  // test some values
+	  // test si le login existe deja
+	  $sql = "SELECT rowid,login FROM llx_adherent WHERE login='$login';";
+	  $result = $db->query($sql);
+	  if ($result) {
+	    $num = $db->num_rows();
+	  }
+	  if (!isset($nom) || !isset($prenom) || $prenom=='' || $nom==''){
+	    $error+=1;
+	    $errmsg .="Nom et Prenom obligatoires<BR>\n";
+	  }
+	  if (!isset($email) || $email == '' || !ereg('@',$email)){
+	    $error+=1;
+	    $errmsg .="Adresse Email invalide<BR>\n";
+	  }
+	  if ($num !=0){
+	    $obj=$db->fetch_object(0);
+	    if ($obj->rowid != $adh->id){
+	      $error+=1;
+	      $errmsg .="Login deja utilise. Veuillez en changer<BR>\n";
+	    }
+	  }
+	  if (isset($naiss) && $naiss !=''){
+	    if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$naiss)){
+	      $error+=1;
+	      $errmsg .="Date de naissance invalide (Format AAAA-MM-JJ)<BR>\n";
+	    }
+	  }
+	  if (!$error){
+	    // email a peu pres correct et le login n'existe pas
+	    $adh->id          = $HTTP_POST_VARS["rowid"];
+	    $adh->prenom      = $prenom;
+	    $adh->nom         = $nom;  
+	    $adh->societe     = $societe;
+	    $adh->adresse     = $adresse;
+	    $adh->amount      = $amount;
+	    $adh->cp          = $cp;
+	    $adh->ville       = $HTTP_POST_VARS["ville"];
+	    $adh->email       = $HTTP_POST_VARS["email"];
+	    $adh->login       = $HTTP_POST_VARS["login"];
+	    $adh->pass        = $HTTP_POST_VARS["pass"];
+	    $adh->naiss       = $HTTP_POST_VARS["naiss"];
+	    $adh->photo       = $HTTP_POST_VARS["photo"];
+	    $adh->date        = mktime(12, 0 , 0, $remonth, $reday, $reyear);
+	    $adh->note        = $HTTP_POST_VARS["note"];
+	    $adh->pays        = $HTTP_POST_VARS["pays"];
+	    $adh->typeid      = $HTTP_POST_VARS["type"];
+	    $adh->commentaire = $HTTP_POST_VARS["comment"];
+	    $adh->morphy      = $HTTP_POST_VARS["morphy"];
+	    // recuperation du statut et public
+	    $adh->statut      = $HTTP_POST_VARS["statut"];
+	    if (isset($public)){
+	      $public=1;
+	    }else{
+	      $public=0;
+	    }
+	    $adh->public      = $public;
+	    
+	    if ($adh->update($user->id) ) 
+	      {	  
+		$mesg=preg_replace("/%INFO%/","Prenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note",$conf->adherent->email_edit);
+		mail($email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
+		
+		//Header("Location: fiche.php?rowid=$adh->id&action=edit");
+		Header("Location: $PHP_SELF");
+	      }
+	  }
+	}else{
+	  Header("Location: $PHP_SELF");
 	}
+      }
     }
   else
     {
-      Header("Location: fiche.php?rowid=$rowid&action=edit");
+      //Header("Location: fiche.php?rowid=$rowid&action=edit");
+      Header("Location: $PHP_SELF");
     }
 }
 
 
 llxHeader();
 
-
-if ($rowid)
-{
+if (isset($_SERVER["REMOTE_USER"])){
 
   $adh = new Adherent($db);
-  $adh->id = $rowid;
-  $adh->fetch($rowid);
+  $adh->login = $_SERVER["REMOTE_USER"];
+  $adh->fetch_login($_SERVER["REMOTE_USER"]);
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
   $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
@@ -98,8 +146,16 @@ if ($rowid)
 
   $adht = new AdherentType($db);
 
-  print_titre("Edition de la fiche adhérent");
+  print_titre("Edition de la fiche adhérent de $adh->prenom $adh->nom");
 
+  if ($errmsg != ''){
+    print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+    
+    print '<th>Erreur dans le formulaire</th>';
+    print "<tr><td class=\"delete\"><b>$errmsg</b></td></tr>\n";
+    //  print "<FONT COLOR=\"red\">$errmsg</FONT>\n";
+    print '</table>';
+  }
 
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
@@ -123,7 +179,11 @@ if ($rowid)
   print '<tr><td>Password</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
   print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
   print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
-
+  if ($adh->public==1){
+    print '<tr><td>Profil public ?</td><td> Oui </td></tr>';
+  }else{
+    print '<tr><td>Profil public ?</td><td> Non </td></tr>';
+  }
   print "</table>\n";
 
   print "<hr>";
@@ -132,9 +192,9 @@ if ($rowid)
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-  print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
+  print "<input type=\"hidden\" name=\"rowid\" value=\"$adh->id\">";
   print "<input type=\"hidden\" name=\"statut\" value=\"".$adh->statut."\">";
-  print "<input type=\"hidden\" name=\"public\" value=\"".$adh->public."\">";
+  //  print "<input type=\"hidden\" name=\"public\" value=\"".$adh->public."\">";
 
   $htmls = new Form($db);
 
@@ -170,6 +230,11 @@ if ($rowid)
   print '<tr><td>Password</td><td><input type="text" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
   print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$adh->naiss.'"></td></tr>';
   print '<tr><td>URL photo</td><td><input type="text" name="photo" size="40" value="'.$adh->photo.'"></td></tr>';
+  if ($adh->public==1){
+    print '<tr><td>Profil public ?</td><td><input type="checkbox" name="public" checked></td></tr>';
+  }else{
+    print '<tr><td>Profil public ?</td><td><input type="checkbox" name="public"></td></tr>';
+  }
   print '<tr><td colspan="2" align="center">';
   print '<input type="submit" name="bouton" value="Enregistrer">&nbsp;';
   print '<input type="submit" value="Annuler">';
