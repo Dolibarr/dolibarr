@@ -86,8 +86,8 @@ if ($db->query($sql))
   $db->free();
 }
 
-print '<table class="liste">';
-print '<tr><th colspan="2">'.$langs->trans("Number").'</th></tr>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Number").'</td></tr>';
 if ($conf->produit->enabled)
 {
     print "<tr $bc[0]>";
@@ -130,9 +130,9 @@ if ($result)
     
   if ($num > 0)
     {
-      print '<table class="liste">';
+      print '<table class="noborder" width="100%">';
 
-      print '<tr><th colspan="3">'.$langs->trans("LastRecorded").'</th></tr>';
+      print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastRecorded").'</td></tr>';
     
       $var=True;
       while ($i < $num)
