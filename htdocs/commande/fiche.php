@@ -21,10 +21,10 @@
  *
  */
 
-/*!	\file htdocs/commande/fiche.php
-		\ingroup    commande
-		\brief      Fiche commande
-		\version    $Revision$
+/*!	        \file       htdocs/commande/fiche.php
+	        \ingroup    commande
+	        \brief      Fiche commande
+	        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -175,10 +175,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
     }
 }
 
-/*
- *
- */
-if ($action == 'pdf')
+if ($_GET["action"] == 'pdf')
 {
   /*
    * Generation de la commande
@@ -186,6 +183,7 @@ if ($action == 'pdf')
    */
   commande_pdf_create($db, $_GET["id"]);
 } 
+
 
 llxHeader('',$langs->trans("OrderCard"),"Commande");
 
@@ -404,7 +402,7 @@ else
   $id = $_GET["id"];
   if ($id > 0)
     {
-      $commande = New Commande($db);
+      $commande = new Commande($db);
       if ( $commande->fetch($id) > 0)
 	{	  
 	  $soc = new Societe($db);
@@ -457,7 +455,7 @@ else
 	      print '<input type="hidden" name="action" value="setremise">';
 	    }
 
-	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
+	  print '<table class="border" width="100%">';
 	  print "<tr><td>".$langs->trans("Customer")."</td>";
 	  print '<td colspan="2">';
 	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
@@ -498,14 +496,14 @@ else
 	  print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 	  print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
 	  print '<td>'.MAIN_MONNAIE.'</td>';
-	  print '<td rowspan="4" valign="top">Note :</td></tr>';
+	  print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :</td></tr>';
 
 	  print '<tr><td>Remise globale</td><td align="right">';
 
 	  if ($commande->brouillon == 1 && $user->rights->commande->creer) 
 	    {
 	      print '<input type="text" name="remise" size="3" value="'.$commande->remise_percent.'">%';
-	      print '</td><td><input type="submit" value="Appliquer">';
+	      print '</td><td><input type="submit" value="'.$langs->trans("Save").'">';
 	    }
 	  else
 	    {
@@ -533,7 +531,7 @@ else
 	   * Lignes de commandes
 	   *
 	   */
-	  echo '<br><table border="0" width="100%" cellspacing="0" cellpadding="3">';	  
+	  echo '<br><table class="noborder" width="100%">';	  
 
 	  $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l WHERE l.fk_commande = $id ORDER BY l.rowid";
@@ -548,9 +546,9 @@ else
 		{
 		  print '<tr class="liste_titre">';
 		  print '<td width="54%">'.$langs->trans("Description").'</td>';
-		  print '<td width="8%" align="center">Tva</td>';
-		  print '<td width="8%" align="center">Quantité</td>';
-		  print '<td width="8%" align="right">Remise</td>';
+		  print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
+		  print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
 		  print '<td width="12%" align="right">P.U.</td>';
 		  print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
 		  print "</tr>\n";
@@ -559,7 +557,7 @@ else
 	      while ($i < $num)
 		{
 		  $objp = $db->fetch_object();
-		  print "<TR $bc[$var]>";
+		  print "<tr $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
 		      print '<td>';
@@ -601,7 +599,7 @@ else
 		      print '<input type="hidden" name="action" value="updateligne">';
 		      print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
 		      print "<tr $bc[$var]>";
-		      print '<td colspan="2"><textarea name="eldesc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></TD>';
+		      print '<td colspan="2"><textarea name="eldesc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
 		      print '<td align="center"><input size="4" type="text" name="elqty" value="'.$objp->qty.'"></TD>';
 		      print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
 		      print '<td align="right"><input size="8" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
@@ -691,7 +689,7 @@ else
 	
 	    if ($commande->statut == 0 && $user->rights->commande->supprimer)
 	      {
-		print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=delete">Supprimer</a>';
+		print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 	      } 
 	    
 	    if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
@@ -704,7 +702,7 @@ else
 	      {
 		if ($user->rights->commande->valider)
 		  {
-		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=valid">Valider</a>';
+		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
 		  }
 	      }
 	    
@@ -713,7 +711,7 @@ else
 		$nb_expedition = $commande->nb_expedition();
 		if ($user->rights->commande->valider && $nb_expedition == 0)
 		  {
-		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=annuler">Annuler la commande</a>';
+		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans("Cancel").'</a>';
 		  }
 	      }
 
@@ -738,7 +736,7 @@ else
 	      {
 		print_titre("Expéditions");
 		$i = 0; $total = 0;
-		print '<table border="1" cellspacing="0" cellpadding="4" width="100%">';
+		print '<table class="border" width="100%">';
 		print "<tr $bc[$var]><td>Expédition</td><td>Date</td></tr>\n";
 		
 		$var=True;
@@ -759,6 +757,7 @@ else
 	    print $db->error();
 	  }
 	print "&nbsp;</td><td>";
+	
 	/*
 	 * Liste des factures
 	 */
@@ -775,7 +774,7 @@ else
 		print_titre("Factures");
 		$i = 0; $total = 0;
 		print '<table class="border" width="100%">';
-		print "<tr $bc[$var]><td>Facture</td><td>Date</td></tr>\n";
+		print "<tr $bc[$var]><td>Facture</td><td>".$langs->trans("Date")."</td></tr>\n";
 		
 		$var=True;
 		while ($i < $num)
@@ -806,7 +805,7 @@ else
 	  {
 
 	    print_titre("Documents");
-	    print '<table width="100%" cellspacing="0" class="border" cellpadding="3">';
+	    print '<table width="100%" class="border">';
 	    
 	    print "<tr $bc[0]><td>Commande PDF</td>";
 	    print '<td><a href="'.FAC_OUTPUT_URL."/".$commande->ref."/".$commande->ref.'.pdf">'.$commande->ref.'.pdf</a></td>';
@@ -825,7 +824,7 @@ else
 	  {	    
 	    print '<p><form method="post" action="fiche.php?id='.$commande->id.'">';
 	    print '<input type="hidden" name="action" value="classin">';
-	    print '<table cellspacing="0" class="border" cellpadding="3">';
+	    print '<table class="border">';
 	    print '<tr><td>Projet</td><td>';
 	    
 	    $proj = new Project($db);
