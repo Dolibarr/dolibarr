@@ -10,6 +10,7 @@ NewSocGroup=Nouveau groupement de sociétés
 SocGroup=Groupement de sociétés
 Company=Société
 Companies=Sociétés
+ParentCompany=Maison mère
 Name=Nom
 Lastname=Nom
 Firstname=Prénom

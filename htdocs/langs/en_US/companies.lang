@@ -10,6 +10,7 @@ NewSocGroup=Nouveau companies group
 SocGroup=Group of companies
 Company=Company
 Companies=Companies
+ParentCompany=Parent company
 Name=Name
 Lastname=Lastname
 Firstname=Firstname
