@@ -58,7 +58,7 @@ if ($fourn_id > 0)
   $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
 
-if ($HTTP_POST_VARS["sall"])
+if ($_POST["sall"])
 {
   $sql .= " WHERE lower(p.ref) like '%".strtolower($sall)."%'";
   $sql .= " OR lower(p.label) like '%".strtolower($sall)."%'";
@@ -114,7 +114,7 @@ if ($result)
     {
       llxHeader("","","Recherche Produit/Service");
 
-      print_barre_liste("Recherche d'un produit ou service", $page, $PHP_SELF, "&sref=$sref&snom=$snom&amp;envente=$envente", $sortfield, $sortorder,'',$num);
+      print_barre_liste("Recherche d'un produit ou service", $page, "liste.php", "&sref=$sref&snom=$snom&amp;envente=$envente", $sortfield, $sortorder,'',$num);
     }
   else
     {
@@ -129,17 +129,17 @@ if ($result)
 	  $envente=1;
 	}
        
-      print_barre_liste($texte, $page, $PHP_SELF, "&sref=$sref&snom=$snom&fourn_id=$fourn_id&amp;type=$type", $sortfield, $sortorder,'',$num);
+      print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id&amp;type=$type", $sortfield, $sortorder,'',$num);
     }
 
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf",$PHP_SELF, "p.ref","&amp;envente=$envente&amp;type=$type&fourn_id=$fourn_id");
+  print_liste_field_titre("Réf","liste.php", "p.ref","&amp;envente=$envente&amp;type=$type&fourn_id=$fourn_id");
   print "</td><td>";
-  print_liste_field_titre("Libellé",$PHP_SELF, "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id");
+  print_liste_field_titre("Libellé","liste.php", "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id");
   print "</td><TD align=\"right\">";
-  print_liste_field_titre("Prix de vente",$PHP_SELF, "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id");
+  print_liste_field_titre("Prix de vente","liste.php", "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id");
   print "</td></tr>\n";
   
   print '<tr class="liste_titre">';

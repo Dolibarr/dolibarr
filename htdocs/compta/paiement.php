@@ -33,9 +33,9 @@ $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
 
 if ($_POST["action"] == 'add_paiement')
 {
-  if ($HTTP_POST_VARS["paiementid"] > 0)
+  if ($_POST["paiementid"] > 0)
     {
-
+      
       $datepaye = $db->idate(mktime(12, 0 , 0,
 				    $_POST["remonth"], 
 				    $_POST["reday"],
@@ -48,11 +48,11 @@ if ($_POST["action"] == 'add_paiement')
 	  if (substr($key,0,7) == 'amount_')
 	    {
 	      $other_facid = substr($key,7);
-	  
+	      
 	      $amounts[$other_facid] = $_POST[$key];
 	    }
 	}
-
+      
       // TODO Mettre toute la chaine dans une même transaction
 
       // Creation de la ligne paiement
@@ -361,14 +361,14 @@ if ($action == '')
       $i = 0; 
       $var=True;
       
-      print_barre_liste("Paiements", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
+      print_barre_liste("Paiements", $page, "paiement.php","",$sortfield,$sortorder,'',$num);
 
       print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
       print '<TR class="liste_titre">';
       print "<td>Facture</td>";
       print "<td>Date</td>";
       print "<td>";
-      print_liste_field_titre("Type",$PHP_SELF,"c.libelle","","");
+      print_liste_field_titre("Type","paiement.php","c.libelle","","");
       print '</td><td align="right">Montant</TD>';
       print "<td>&nbsp;</td>";
       print "</TR>\n";

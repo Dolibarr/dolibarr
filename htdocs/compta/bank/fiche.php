@@ -56,29 +56,26 @@ if ($_POST["action"] == 'add')
   $id = $account->create($user->id);
 }
 
-if ($action == 'update')
+if ($_POST["action"] == 'update')
 {
-  $account = new Account($db, $id);
-  $account->fetch($id);
+  $account = new Account($db, $_GET["id"]);
+  $account->fetch($_GET["id"]);
 
-  $account->bank         = $_POST["bank"];
-  $account->label        = $_POST["label"];
-
-  $account->courant      = $_POST["courant"];
-  $account->clos         = $_POST["clos"];
-
-  $account->code_banque  = $_POST["code_banque"];
-  $account->code_guichet = $_POST["code_guichet"];
-  $account->number       = $_POST["number"];
-  $account->cle_rib      = $_POST["cle_rib"];
-  $account->bic          = $_POST["bic"];
-  $account->iban_prefix  = $_POST["iban_prefix"];
-  $account->domiciliation = $_POST["domiciliation"];
-
-  $account->proprio 	 = $_POST["proprio"];
+  $account->bank            = $_POST["bank"];
+  $account->label           = $_POST["label"];
+  $account->courant         = $_POST["courant"];
+  $account->clos            = $_POST["clos"];
+  $account->code_banque     = $_POST["code_banque"];
+  $account->code_guichet    = $_POST["code_guichet"];
+  $account->number          = $_POST["number"];
+  $account->cle_rib         = $_POST["cle_rib"];
+  $account->bic             = $_POST["bic"];
+  $account->iban_prefix     = $_POST["iban_prefix"];
+  $account->domiciliation   = $_POST["domiciliation"];
+  $account->proprio 	    = $_POST["proprio"];
   $account->adresse_proprio = $_POST["adresse_proprio"];
 
-  $account->update($id, $user);
+  $account->update($_GET["id"], $user);
 }
 
 
@@ -89,15 +86,15 @@ if ($action == 'update')
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($action == 'create')
+if ($_GET["action"] == 'create')
 {
   print_titre("Nouveau compte bancaire");
 
-  print '<form action="'.$PHP_SELF.'" method="post">';
+  print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="clos" value="0">';
 
-  print '<table border="1" cellpadding="3" cellspacing="0">';
+  print '<table class="border" cellpadding="3" cellspacing="0">';
 
   print '<tr><td valign="top">Banque</td>';
   print '<td colspan="3"><input size="30" type="text" name="bank" value=""></td></tr>';
@@ -153,46 +150,46 @@ if ($action == 'create')
 /* ************************************************************************** */
 else
 {
-  if ($id && $action != 'edit') 
+  if ($_GET["id"] && $_GET["action"] != 'edit') 
     {
-      $account = new Account($db, $id);
-      $account->fetch($id);
+      $account = new Account($db, $_GET["id"]);
+      $account->fetch($_GET["id"]);
 
     /*
      * Affichage onglets
      */
     $h = 0;
     
-    $head[$h][0] = DOL_URL_ROOT."$PHP_SELF";
+    $head[$h][0] = "fiche.php?id=$account->id";
     $head[$h][1] = "Compte bancaire $account->number";
     $h++;
 
-      dolibarr_fiche_head($head, $hselected);
+    dolibarr_fiche_head($head, $hselected);
 
-      print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+    print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
       
-      print '<tr><td valign="top">Banque</td>';
-      print '<td colspan="3">'.$account->bank.'</td></tr>';
+    print '<tr><td valign="top">Banque</td>';
+    print '<td colspan="3">'.$account->bank.'</td></tr>';
 
-      print '<tr><td valign="top">Libellé</td>';
-      print '<td colspan="3">'.$account->label.'</td></tr>';
-
-      print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
-      print '<tr><td>'.$account->code_banque.'</td>';
-      print '<td>'.$account->code_guichet.'</td>';
-      print '<td>'.$account->number.'</td>';
-      print '<td>'.$account->cle_rib.'</td></tr>';
-      
-      print '<tr><td valign="top">Clé IBAN</td>';
-      print '<td colspan="3">'.$account->iban_prefix.'</td></tr>';
-      
-      print '<tr><td valign="top">Identifiant BIC</td>';
-      print '<td colspan="3">'.$account->bic.'</td></tr>';
-
-      /*      
-      print '<tr><td valign="top">Domiciliation</td>';
-      print '<td colspan="3">'.$account->domiciliation.'</td></tr>';
-      */
+    print '<tr><td valign="top">Libellé</td>';
+    print '<td colspan="3">'.$account->label.'</td></tr>';
+    
+    print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
+    print '<tr><td>'.$account->code_banque.'</td>';
+    print '<td>'.$account->code_guichet.'</td>';
+    print '<td>'.$account->number.'</td>';
+    print '<td>'.$account->cle_rib.'</td></tr>';
+    
+    print '<tr><td valign="top">Clé IBAN</td>';
+    print '<td colspan="3">'.$account->iban_prefix.'</td></tr>';
+    
+    print '<tr><td valign="top">Identifiant BIC</td>';
+    print '<td colspan="3">'.$account->bic.'</td></tr>';
+    
+    /*      
+	    print '<tr><td valign="top">Domiciliation</td>';
+	    print '<td colspan="3">'.$account->domiciliation.'</td></tr>';
+    */
 
       print '<tr><td valign="top">Compte Courant</td>';
       print '<td colspan="3">'.$yn[$account->courant].'</td></tr>';
@@ -225,7 +222,7 @@ else
 
       if ($user->admin) 
 	{
-	  print '<a class="tabAction" href="fiche.php?action=edit&id='.$id.'">Editer</a>';
+	  print '<a class="tabAction" href="fiche.php?action=edit&id='.$account->id.'">Editer</a>';
 	}
 
     print '</div>';
@@ -238,24 +235,24 @@ else
   /*                                                                            */
   /* ************************************************************************** */
       
-  if ($id && $action == 'edit' && $user->admin) 
-	{
-
-      $account = new Account($db, $id);
-      $account->fetch($id);
-
-	  $form = new Form($db);
-
+  if ($_GET["id"] && $_GET["action"] == 'edit' && $user->admin) 
+    {
+	  
+      $account = new Account($db, $_GET["id"]);
+      $account->fetch($_GET["id"]);
+      
+      $form = new Form($db);
+      
       print '<div class="titre">Compte bancaire</div><br>';
-
-	  print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
-	  print '<input type="hidden" name="action" value="update">';
-	  
-	  print '<table border="1" cellpadding="3" cellspacing="0">';
-	  
-	  print '<tr><td valign="top">Banque</td>';
-	  print '<td colspan="3"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
-	  
+      
+      print '<form action="fiche.php?id='.$account->id.'" method="post">';
+      print '<input type="hidden" name="action" value="update">';
+      
+      print '<table class="border" cellpadding="3" cellspacing="0">';
+      
+      print '<tr><td valign="top">Banque</td>';
+      print '<td colspan="3"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
+      
 	  print '<tr><td valign="top">Libellé</td>';
 	  print '<td colspan="3"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
 	  

@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,12 @@ require("../../includes/modules/rapport/pdf_paiement.class.php");
 
 $dir = DOL_DOCUMENT_ROOT."/document/rapport/";
 
-if ($HTTP_POST_VARS["action"] == 'gen')
+if ($_POST["action"] == 'gen')
 {
   $rap = new pdf_paiement($db);
-  $rap->write_pdf_file($dir, $HTTP_POST_VARS["remonth"], $HTTP_POST_VARS["reyear"]);
+  $rap->write_pdf_file($dir, $_POST["remonth"], $_POST["reyear"]);
   
-  $year = $HTTP_POST_VARS["reyear"];
+  $year = $_POST["reyear"];
 }
 
 llxHeader();

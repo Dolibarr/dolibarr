@@ -89,13 +89,13 @@ if ($action == 'update')
 $result = $db->query($sql);
 }
 
-if ($HTTP_POST_VARS["action"] == 'type')
+if ($_POST["action"] == 'type')
 {
   $sql = "update ".MAIN_DB_PREFIX."bank set fk_type='$value' where rowid = $rowid;";
   $result = $db->query($sql);
 }
 
-if ($HTTP_POST_VARS["action"] == 'num_releve')
+if ($_POST["action"] == 'num_releve')
 {
   $sql = "update ".MAIN_DB_PREFIX."bank set num_releve=$num_rel where rowid = $rowid;";
   $result = $db->query($sql);
@@ -121,7 +121,7 @@ if ($result)
 if ($action == 'delete_categ')
 {
   $html = new Form($db);
-  $html->form_confirm("$PHP_SELF?rowid=$rowid&amp;cat1=$fk_categ","Supprimer dans la catégorie","Etes-vous sûr de vouloir supprimer le classement dans la catégorie ?","confirm_delete_categ");
+  $html->form_confirm("ligne.php?rowid=$rowid&amp;cat1=$fk_categ","Supprimer dans la catégorie","Etes-vous sûr de vouloir supprimer le classement dans la catégorie ?","confirm_delete_categ");
 }
 
 print_titre("Edition de la ligne");
@@ -155,7 +155,7 @@ if ($result)
 
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<form method=\"post\" action=\"$PHP_SELF?rowid=$rowid&amp;account=$account\">";
+      print "<form method=\"post\" action=\"ligne.php?rowid=$rowid&amp;account=$account\">";
       print "<input type=\"hidden\" name=\"action\" value=\"class\">";
  
       print "<td>".strftime("%d %b %Y",$objp->do)."</td>\n";
@@ -185,7 +185,7 @@ if ($result)
 
       print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"5\">";
       
-      print "<form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
+      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
       print '<input type="hidden" name="action" value="type">';
       print '<select name="value">';
       print '<option value="CHQ"'.($objp->fk_type == 'CHQ'?' selected':'').'>CHQ</option>';
@@ -211,7 +211,7 @@ if ($result)
 
       print "<tr $bc[$var]><td>Compte</td><td colspan=\"5\"><a href=\"account.php?account=$account\">".$acct->label."</a></td></tr>";
 
-      print "<form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
+      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
       print "<input type=\"hidden\" name=\"action\" value=\"update\">";
     
       print "<tr $bc[$var]><td>Libell&eacute;</td><td colspan=\"5\">";
@@ -232,7 +232,7 @@ if ($result)
       }
       print "</form>";
       
-      print "<form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
+      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
       print '<input type="hidden" name="action" value="num_releve">';
       print "<tr $bc[$var]><td>Relevé</td><td colspan=\"5\">";
       print '<input name="num_rel" value="'.$objp->num_releve.'">';

@@ -25,7 +25,7 @@ require("../../paiement.class.php");
 
 $user->getrights('facture');
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == 'yes' && $user->rights->facture->creer)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->facture->creer)
 {
   $paiement = new Paiement($db);
   $paiement->id = $_GET["id"];
@@ -63,7 +63,7 @@ $html = new Form($db);
  if ($_GET["action"] == 'delete')
    {
 	 print '<br>';
-     $html->form_confirm("$PHP_SELF?id=$paiement->id","Supprimer le paiement","Etes-vous sûr de vouloir supprimer ce paiement ?","confirm_delete");
+     $html->form_confirm("fiche.php?id=$paiement->id","Supprimer le paiement","Etes-vous sûr de vouloir supprimer ce paiement ?","confirm_delete");
    }
  
 

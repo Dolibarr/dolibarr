@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,27 +28,27 @@ $mesg = '';
 
 llxHeader("","","Fiche entrepôt");
 
-if ($HTTP_POST_VARS["action"] == 'add')
+if ($_POST["action"] == 'add')
 {
   $entrepot = new Entrepot($db);
 
-  $entrepot->ref         = $HTTP_POST_VARS["ref"];
-  $entrepot->libelle     = $HTTP_POST_VARS["libelle"];
-  $entrepot->description = $HTTP_POST_VARS["desc"];
-  $entrepot->statut      = $HTTP_POST_VARS["statut"];
+  $entrepot->ref         = $_POST["ref"];
+  $entrepot->libelle     = $_POST["libelle"];
+  $entrepot->description = $_POST["desc"];
+  $entrepot->statut      = $_POST["statut"];
 
   $id = $entrepot->create($user);
   $action = '';
 }
 
-if ($HTTP_POST_VARS["action"] == 'update' && $cancel <> 'Annuler')
+if ($_POST["action"] == 'update' && $cancel <> 'Annuler')
 {
   $entrepot = new Entrepot($db);
   if ($entrepot->fetch($id))
     {
-      $entrepot->libelle     = $HTTP_POST_VARS["libelle"];
-      $entrepot->description = $HTTP_POST_VARS["desc"];
-      $entrepot->statut      = $HTTP_POST_VARS["statut"];
+      $entrepot->libelle     = $_POST["libelle"];
+      $entrepot->description = $_POST["desc"];
+      $entrepot->statut      = $_POST["statut"];
       
       if ( $entrepot->update($id, $user))
 	{
@@ -79,7 +79,7 @@ if ($cancel == 'Annuler')
  */
 if ($_GET["action"] == 'create')
 {
-  print "<form action=\"$PHP_SELF\" method=\"post\">\n";
+  print "<form action=\"fiche.php\" method=\"post\">\n";
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="type" value="'.$type.'">'."\n";
   print_titre("Nouvel entrepôt");
@@ -129,7 +129,7 @@ else
 	{
 	  print_fiche_titre('Edition de la fiche entrepot', $mesg);
 
-	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	  print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
 	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -171,14 +171,14 @@ else
 print "<br><div class=\"tabsAction\">\n";
 
 if ($action == '' && ($user->rights->produit->modifier || $user->rights->produit->creer))
-    {
-      print "<a class=\"tabAction\" href=\"$PHP_SELF?action=edit_price&id=$id\">Changer le prix</a>";
-    }
+{
+  print "<a class=\"tabAction\" href=\"fiche.php?action=edit_price&id=$id\">Changer le prix</a>";
+}
 
 if ($action == '')
-	{
-    print "<a class=\"tabAction\" href=\"$PHP_SELF?action=edit&id=$id\">Editer</a>";
-	}
+{
+  print "<a class=\"tabAction\" href=\"fiche.php?action=edit&id=$id\">Editer</a>";
+}
 
 print "</div>";
 
