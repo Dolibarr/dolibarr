@@ -33,7 +33,7 @@ require("./pre.inc.php");
 require_once("../contact.class.php");
 require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
-$langs->load("company");
+$langs->load("companies");
 
 
 $error = array();
