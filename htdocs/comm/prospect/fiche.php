@@ -20,18 +20,28 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/comm/prospect/fiche.php
+        \ingroup    prospect
+		\brief      Page de la fiche prospect
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../../contact.class.php");
 require("../../cactioncomm.class.php");
 require("../../actioncomm.class.php");
+
+$langs->load('companies');
 
 $user->getrights('propale');
 $user->getrights('fichinter');
 $user->getrights('commande');
 $user->getrights('projet');
 
-$langs->load('companies');
 
+$socid = isset($_GET["id"])?$_GET["id"]:$_GET["socid"];		// Fonctionne si on passe id ou socid
 
 if ($_GET["action"] == 'cstc')
 {
@@ -42,10 +52,7 @@ if ($_GET["action"] == 'cstc')
 
 llxHeader();
 
-/*
- *
- */
-$socid = isset($_GET["id"])?$_GET["id"]:$_GET["socid"];		// Fonctionne si on passe id ou socid
+
 /*
  * Sécurité si un client essaye d'accéder à une autre fiche que la sienne
  */
@@ -53,6 +60,8 @@ if ($user->societe_id > 0)
 {
   $socid = $user->societe_id;
 }
+
+
 /*********************************************************************************
  *
  * Mode fiche
@@ -81,6 +90,7 @@ if ($socid > 0)
       
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
       $head[$h][1] = 'Prospect';
+      $hselected=$h;
       $h++;
 
       if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
@@ -97,19 +107,20 @@ if ($socid > 0)
 	  $h++;
 	}
       $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-      $head[$h][1] = 'Note';      
+      $head[$h][1] = $langs->trans("Note");      
       $h++;
       if ($user->societe_id == 0)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
-	  $head[$h][1] = 'Documents';
+	  $head[$h][1] = $langs->trans("Documents");
 	  $h++;
 	}
 
       $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
-      $head[$h][1] = 'Notifications';
+      $head[$h][1] = $langs->trans("Notifications");
 
-      dolibarr_fiche_head($head, 1, $societe->nom);
+
+      dolibarr_fiche_head($head, $hselected, $societe->nom);
 
     /*
      *
@@ -117,10 +128,10 @@ if ($socid > 0)
      */
     print '<table width="100%" border="0">';
     print '<tr><td valign="top">';
-    print '<table class="border" cellspacing="0" cellpadding="3" border="1" width="100%">';
+    print '<table class="border" width="100%">';
 
-    print "<tr><td>Téléphone</td><td align=\"center\">".dolibarr_print_phone($societe->tel)."&nbsp;</td><td>fax</td><td align=\"center\">".dolibarr_print_phone($societe->fax)."&nbsp;</td></tr>";
-    print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($societe->address)."<br>$societe->cp $societe->ville</td></tr>";
+    print "<tr><td>".$langs->trans("Phone")."</td><td align=\"center\">".dolibarr_print_phone($societe->tel)."&nbsp;</td><td>fax</td><td align=\"center\">".dolibarr_print_phone($societe->fax)."&nbsp;</td></tr>";
+    print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->address)."<br>$societe->cp $societe->ville</td></tr>";
 
     print '<tr><td>Siret</td><td>'.$societe->siret.'</td>';
     print '<td>Capital</td><td>'.$societe->capital.'</td></tr>';
@@ -153,7 +164,7 @@ if ($socid > 0)
 
     print '</a>';
     print '</td></tr>';
-    print "</table></div>";
+    print "</table><br></div>";
 
     /*
      *
@@ -167,7 +178,7 @@ if ($socid > 0)
      *
      */
     $var = true;
-    print '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
+    print '<table class="noborder" width="100%">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
     $sql .= " AND s.idp = $societe->id ORDER BY p.datep DESC";
@@ -202,12 +213,11 @@ if ($socid > 0)
       }
     
     print "</table>";
-    /*
-     *
-     *
-     */
+
     print "</td></tr>";
     print "</table>\n</div>\n";
+
+
     /*
      * Barre d'action
      *
@@ -233,7 +243,7 @@ if ($socid > 0)
      * Liste des contacts
      *
      */
-    print '<table width="100%" cellspacing="1" border="0" cellpadding="2">';
+    print '<table width="100%" class="noborder">';
 
     print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Name").'</td>';
     print '<td>Poste</td><td colspan="2">'.$langs->trans("Tel").'</td>';
@@ -287,8 +297,8 @@ if ($socid > 0)
        *      Listes des actions a faire
        *
        */
-      print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-      print '<tr class="liste_titre"><td>Actions à faire</td><td align="right"> [<a href="../action/fiche.php?action=create&socid='.$socid.'&afaire=1">Nouvelle action</a>]</td></tr>';
+      print '<table width="100%" class="noborder">';
+      print '<tr class="liste_titre"><td>'.$langs->trans("ActionsToDo").'</td><td align="right"> [<a href="../action/fiche.php?action=create&socid='.$socid.'&afaire=1">'.$langs->trans("AddAction").'</a>]</td></tr>';
       print '<tr>';
       print '<td colspan="2" valign="top">';
 
@@ -300,7 +310,7 @@ if ($socid > 0)
       $sql .= " ORDER BY a.datea DESC, a.id DESC";
 
       if ( $db->query($sql) ) {
-	print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
+	print "<table width=\"100%\" class=\"noborder\">\n";
 
 	$i = 0 ; $num = $db->num_rows();
 	while ($i < $num) {
@@ -313,27 +323,27 @@ if ($socid > 0)
 	  if ($oldyear == strftime("%Y",$obj->da) )
 	    {
 	      //print '<td align="center">|</td>';
-				 print '<td align="center">' .strftime("%Y",$obj->da)."</TD>\n";
+				 print '<td align="center">' .strftime("%Y",$obj->da)."</td>\n";
 	    } 
 	  else 
 	    {
-	    print '<td align="center">' .strftime("%Y",$obj->da)."</TD>\n"; 
+	    print '<td align="center">' .strftime("%Y",$obj->da)."</td>\n"; 
 	    $oldyear = strftime("%Y",$obj->da);
 	    }
 
 	  if ($oldmonth == strftime("%Y%b",$obj->da) )
 		 {
 	   // print '<td align="center">|</td>';
-		 print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+		 print "<TD align=\"center\">" .strftime("%b",$obj->da)."</td>\n"; 
 	  } 
 		else 
 		{
-	    print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+	    print "<TD align=\"center\">" .strftime("%b",$obj->da)."</td>\n"; 
 	    $oldmonth = strftime("%Y%b",$obj->da);
 	  }
 	  
-	  print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
-	  print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
+	  print "<TD>" .strftime("%d",$obj->da)."</td>\n"; 
+	  print "<TD>" .strftime("%H:%M",$obj->da)."</td>\n";
 
 	  print '<td width="10%">&nbsp;</td>';
 
@@ -349,6 +359,7 @@ if ($socid > 0)
 	      print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a>';
 	    }
 	  print '</td>';
+
 	  /*
 	   * Contact pour cette action
 	   *
@@ -374,7 +385,7 @@ if ($socid > 0)
 
 	$db->free();
       } else {
-	print $db->error();
+	    dolibarr_print_error($db);
       }
       print "</td></tr></table>";
 
@@ -399,7 +410,7 @@ if ($socid > 0)
 	    {
 
 	      print '<table width="100%" class="noborder">';
-	      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">Actions effectuées</a></td></tr>';
+	      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
 	      print '<tr>';
 	      print '<td valign="top">';
 	      	      
@@ -420,7 +431,7 @@ if ($socid > 0)
 		    }
 		  else
 		    {
-		      print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+		      print "<td align=\"center\">" .strftime("%Y",$obj->da)."</td>\n"; 
 		      $oldyear = strftime("%Y",$obj->da);
 		    }
 		  
@@ -430,7 +441,7 @@ if ($socid > 0)
 		    }
 		  else
 		    {
-		      print "<td align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+		      print "<td align=\"center\">" .strftime("%b",$obj->da)."</td>\n"; 
 		      $oldmonth = strftime("%Y%b",$obj->da);
 		    }
 		  
@@ -486,7 +497,7 @@ if ($socid > 0)
 	}
       else
 	{
-	  print $db->error();
+	  dolibarr_print_error($db);
 	}
 
       /*
@@ -496,7 +507,7 @@ if ($socid > 0)
        */
       if (strlen(trim($societe->note)))
 	{
-	  print '<table border="1" width="100%" cellspacing="0" bgcolor="#e0e0e0">';
+	  print '<table class="border" width="100%" bgcolor="#e0e0e0">';
 	  print "<tr><td>".nl2br($societe->note)."</td></tr>";
 	  print "</table>";
 	}
@@ -510,7 +521,7 @@ if ($socid > 0)
     } 
   else
     {
-      print $db->error() . "<br>" . $sql;
+	  dolibarr_print_error($db);
     }
 }
 else

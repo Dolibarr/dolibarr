@@ -20,7 +20,21 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/comm/index.php
+        \ingroup    commercial
+		\brief      Page acceuil de la zone commercial
+		\version    $Revision$
+*/
+ 
 require("./pre.inc.php");
+if ($conf->contrat->enabled) {
+	  require_once("../contrat/contrat.class.php");
+}
+	  
+$langs->load("commercial");
+$langs->load("orders");
 
 $user->getrights('propale');
 $user->getrights('fichinter');
@@ -76,7 +90,7 @@ if ($_GET["action"] == 'del_bookmark')
 
 print_titre("Espace commercial");
 
-print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
+print '<table border="0" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
 
@@ -87,7 +101,7 @@ print '<tr><td valign="top" width="30%">';
  */
 if ($conf->propal->enabled) {
 	print '<form method="post" action="propal.php">';
-	print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
 	print "<tr $bc[1]><td>";
 	print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
@@ -103,7 +117,7 @@ if ($conf->propal->enabled) {
 	  $i = 0;
 	  if ($num > 0 )
 	    {
-	      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	      print '<table class="noborder" width="100%">';
 	      print "<tr class=\"liste_titre\">";
 	      print "<td colspan=\"2\">Propositions commerciales brouillons</td></tr>";
 	      
@@ -137,7 +151,7 @@ if ($conf->commande->enabled)
       $num = $db->num_rows();
       if ($num)
         {
-	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
 	  print '<td colspan="2">'.$langs->trans("OrdersToValid").'</td></tr>';
           $i = 0;
@@ -177,9 +191,9 @@ if ( $db->query($sql) )
 
       $i = 0;
 
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" width="100%">';
       print "<tr class=\"liste_titre\">";
-      print "<td colspan=\"2\">Bookmark</td>";
+      print "<td colspan=\"2\">".$langs->trans("Bookmark")."</td>";
       print "</tr>\n";
       
       while ($i < $num)
@@ -197,8 +211,8 @@ if ( $db->query($sql) )
     }
 }
 
-
 print '</td><td valign="top" width="70%">';
+
 
 /*
  * Dernières actions commerciales effectuées
@@ -218,7 +232,7 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
 
-  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td colspan="4">Dernières actions effectuées</td></tr>';
   $var = true;
   $i = 0;
@@ -243,8 +257,9 @@ if ( $db->query($sql) )
 } 
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
+
 
 /*
  * Actions commerciales a faire
@@ -265,8 +280,8 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   if ($num > 0)
     { 
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<tr class="liste_titre"><td colspan="4">Actions à faire</td></tr>';
+      print '<table class="noborder" width="100%">';
+      print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ActionsToDo").'</td></tr>';
       $var = true;
       $i = 0;
       
@@ -306,9 +321,7 @@ else
  */
 if ($conf->contrat->enabled)
 {
-  $labelservice[0]="Hors service";
-  $labelservice[1]="En service";
-  $labelservice[2]="Cloturé";
+  $langs->load("contracts");
   
   $sql = "SELECT s.nom, s.idp, c.enservice, c.rowid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p WHERE c.fk_soc = s.idp and c.fk_product = p.rowid";
@@ -325,10 +338,12 @@ if ($conf->contrat->enabled)
       
       if ($num > 0)
 	{
-	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-	  print '<tr class="liste_titre"><td colspan="3">Les 5 derniers contrats</td></tr>';
+	  print '<table class="noborder" width="100%">';
+	  print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastContracts",5).'</td></tr>';
 	  $i = 0;
 	  
+      $contrat=new Contrat($db);
+      
 	  $var=false;
 	  while ($i < $num)
 	    {
@@ -336,7 +351,7 @@ if ($conf->contrat->enabled)
 	      print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".img_file()."</a>&nbsp;";
 	      print "<a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".$obj->ref."</a></td>";
 	      print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
-	      print "<td align=\"right\">".$labelservice[$obj->enservice]."</td></tr>\n";
+	      print "<td align=\"right\">".$contrat->LibStatut($obj->enservice)."</td></tr>\n";
 	      $var=!$var;
 	      $i++;
 	    }
@@ -345,7 +360,7 @@ if ($conf->contrat->enabled)
     }
   else
     {
-      print $db->error();   
+      dolibarr_print_error($db);   
     }  
 }
 
@@ -370,7 +385,7 @@ if ($conf->propal->enabled) {
       $i = 0;
       if ($num > 0)
 	{
-	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td colspan="4">Les 5 dernières propositions commerciales ouvertes</td></tr>';
 	  $var=false;
 	  while ($i < $num)
@@ -412,7 +427,7 @@ if ($conf->propal->enabled) {
 	    $num = $db->num_rows();
 	      
 	    $i = 0;
-	    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';      
+	    print '<table class="noborder" width="100%">';      
 	    print '<tr class="liste_titre"><td colspan="6">Les 5 dernières propositions commerciales fermées</td></tr>';
 	    $var=False;	      
 	    while ($i < $num)
@@ -438,8 +453,8 @@ if ($conf->propal->enabled) {
 		
 		print "<td align=\"right\">";
 		print strftime("%e %b %Y",$objp->dp)."</td>\n";	  
-		print "<td align=\"right\">".price($objp->price)."</TD>\n";
-		print "<td align=\"center\">$objp->statut</TD>\n";
+		print "<td align=\"right\">".price($objp->price)."</td>\n";
+		print "<td align=\"center\">$objp->statut</td>\n";
 		print "</tr>\n";
 		$i++;
 		$var=!$var;

@@ -38,9 +38,9 @@ $user->getrights('fichinter');
 $user->getrights('commande');
 $user->getrights('projet');
 
-
 $langs->load("orders");
 $langs->load("companies");
+$langs->load("contracts");
 
 
 llxHeader();
@@ -656,7 +656,7 @@ if ($_socid > 0)
        */
       if ($objsoc->note)
 	{
-	  print '<table border="1" width="100%" cellspacing="0" bgcolor="#e0e0e0">';
+	  print '<table class="border" width="100%" bgcolor="#e0e0e0">';
 	  print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
 	  print "</table>";
 	}
@@ -668,7 +668,7 @@ if ($_socid > 0)
 
     }
   } else {
-    print $db->error() . "<br>" . $sql;
+    dolibarr_print_error($db);
   }
 
 $db->close();
