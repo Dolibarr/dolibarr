@@ -240,7 +240,13 @@ function loginFunction()
   }
   </style>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
-  </head><body>
+  <script language="javascript">
+  function donnefocus(){
+   document.identification.username.focus();
+  }
+  </script>
+  </head>
+  <body onload="donnefocus();">
   <div class="main">
   <div class="header">';
   print 'Dolibarr '.DOL_VERSION;
@@ -249,7 +255,7 @@ function loginFunction()
   <div class="main-inside">
   ';
 
-  echo '<form method="post" action="' . $_SERVER['PHP_SELF'] . '">';
+  echo '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" name="identification">';
   print '<table><tr>';
   print '<td>Login : </td><td><input type="text" name="username"></td></tr>';;
   print '<tr><td>Password : </td><td><input type="password" name="password"></td></tr>';
