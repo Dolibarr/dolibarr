@@ -739,7 +739,50 @@ class Societe {
 
       }
   }
+  /**
+   *
+   *
+   *
+   */
+  function add_commercial($user, $commid)
+  {
+    if ($this->id > 0 && $commid > 0)
+      {
+	$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
+	$sql .= " WHERE fk_soc = " . $this->id ." AND fk_user =".$commid;
+	  
+	$this->db->query($sql);
 
+	$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux ";
+	$sql .= " ( fk_soc, fk_user )";
+	$sql .= " VALUES (".$this->id.",".$commid.")";
+	  
+	if (! $this->db->query($sql) )
+	  {
+	    dolibarr_syslog("Societe::add_commercial Erreur");
+	  }
+
+      }
+  }
+  /**
+   *
+   *
+   *
+   */
+  function del_commercial($user, $commid)
+  {
+    if ($this->id > 0 && $commid > 0)
+      {
+	$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
+	$sql .= " WHERE fk_soc = " . $this->id ." AND fk_user =".$commid;
+	  
+	if (! $this->db->query($sql) )
+	  {
+	    dolibarr_syslog("Societe::del_commercial Erreur");
+	  }
+
+      }
+  }
   /**
    *    \brief      Renvoie le nom d'une societe a partir d'un id
    *    \param      id      id de la société recherchée
