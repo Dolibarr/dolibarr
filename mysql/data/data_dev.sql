@@ -311,3 +311,34 @@ insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,pe
 insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
 ('2001-11-15','2001-10-10','Acompte 3ème Trimestre 2001',3,150,1,'2001-7-1');
 
+-- MySQL dump 9.09
+--
+-- Host: localhost    Database: dolibarr
+---------------------------------------------------------
+-- Server version	4.0.15-log
+
+--
+-- Dumping data for table `llx_bank`
+--
+
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-01-14','2002-01-14',20,'Liquide',1,NULL,NULL,'CB',NULL,NULL,1,NULL,NULL);
+
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-02-14','2002-02-14',23.2,'Essence',1,NULL,NULL,'CB',NULL,NULL,1,NULL,NULL);
+
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-02-15','2002-02-15',53.32,'Cartouches imprimante',1,NULL,NULL,'CB',NULL,NULL,1,NULL,NULL);
+
+-- MySQL dump 9.09
+--
+-- Host: localhost    Database: dolibarr
+---------------------------------------------------------
+-- Server version	4.0.15-log
+
+--
+-- Dumping data for table `llx_bank_account`
+--
+
+INSERT INTO llx_bank_account (rowid, datec, tms, label, bank, code_banque, code_guichet, number, cle_rib, bic, iban_prefix, domiciliation, courant, clos) VALUES (1,'2001-01-01 13:06:11',20031014173428,'CCP','La PosteToto','','','','','','','',1,0);
+
