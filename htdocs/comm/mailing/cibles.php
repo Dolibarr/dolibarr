@@ -70,7 +70,7 @@ if ($mil->fetch($_GET["id"]) == 0)
       
   print '<table class="border" width="100%">';
       
-  print '<tr><td width="20%">Nom</td><td>'.$mil->titre.'</td></tr>';
+  print '<tr><td width="20%">'.$langs->trans("Title").'</td><td>'.$mil->titre.'</td></tr>';
   print '</table>';
       
   /*
