@@ -83,10 +83,11 @@ if ($account) {
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
-  print "<td>Date</td><td></td><td>Description</TD>";
+  print "<td>Date</td><td>chq</td><td>Description</TD>";
   print "<td align=\"right\">Debit</TD>";
   print "<td align=\"right\">Credit</TD>";
   print "<td align=\"right\">Solde</TD>";
+  print "<td align=\"right\">Rel</td>";
   print "<td align=\"right\">Francs</td>";
   print "</TR>\n";
   
@@ -151,7 +152,10 @@ if ($account) {
       if ($i > ($nbline - $viewline)) {
 
 	if (!$psol) {
-	  print "<tr $bc[$var]><td colspan=\"4\">&nbsp;</td><td align=\"right\">".price($total)."</b></td><td align=\"right\">".francs($total)."</td></tr>\n";
+	  print "<tr $bc[$var]><td colspan=\"4\">&nbsp;</td>";
+	  print "<td align=\"right\">".price($total)."</b></td>";
+	  print "<td align=\"right\">".francs($total)."</td>\n";
+	  print '<td colspan="2">&nbsp;</td></tr>';
 	  $psol = 1;
 
 	} else {
@@ -159,7 +163,7 @@ if ($account) {
 
 	  if ($objp->do > $time && !$sep) {
 	    $sep = 1 ;
-	    print "<tr><td align=\"right\" colspan=\"4\">Total :</td>";
+	    print "<tr><td align=\"right\" colspan=\"5\">Total :</td>";
 	    print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
 	    print "<td></td>";
 	    print '<td align="right"><small>'.francs($total - $objp->amount).'</small></td>';
@@ -172,7 +176,7 @@ if ($account) {
 	    print "<td><input name=\"debit\" type=\"text\" size=8></td>";
 	    print "<td><input name=\"credit\" type=\"text\" size=8></td>";
 	    print "<td colspan=\"3\" align=\"center\"><select name=\"cat1\">$options</select></td>";
-	    print "</tr><tr><td colspan=\"3\">Format : YYYYMMDD - 20010826</td><td>0000.00</td>";
+	    print "</tr><tr><td colspan=\"3\"><small>YYYYMMDD</small></td><td>0000.00</td>";
 	    print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
 	  }
 
@@ -218,21 +222,21 @@ if ($account) {
   }
 
   if ($sep) {
-    print "<tr><td align=\"right\" colspan=\"4\">Total :</td>";
+    print "<tr><td align=\"right\" colspan=\"5\">Total :</td>";
     print "<td align=\"right\"><b>".price($total)."</b></td><td align=\"right\">".francs($total)."</td></tr>\n";
   } else {
 
-    print "<tr><td align=\"right\" colspan=\"4\">Total :</td>";
+    print "<tr><td align=\"right\" colspan=\"5\">Total :</td>";
     print "<td align=\"right\"><b>".price($total)."</b></td><td align=\"right\">".francs($total)."</td></tr>\n";
     print "<tr>";
     print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
     print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
-    print "<td>CHQ<input name=\"num_chq\" type=\"text\" size=4>&nbsp;-";
+    print "<td><input name=\"num_chq\" type=\"text\" size=4></td><td>";
     print "<input name=\"label\" type=\"text\" size=40></td>";
     print "<td><input name=\"debit\" type=\"text\" size=8></td>";
     print "<td><input name=\"credit\" type=\"text\" size=8></td>";
     print "<td colspan=\"2\" align=\"center\"><select name=\"cat1\">$options</select></td>";
-    print "</tr><tr><td colspan=\"2\">Format : YYYYMMDD - 20010826</td><td>0000.00</td>";
+    print '</tr><tr><td colspan="2"><small>YYYYMMDD</small></td><td>0000.00</td>';
 
     print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
 
