@@ -24,9 +24,13 @@ require("./pre.inc.php");
 
 llxHeader();
 
-if ($page == -1) { 
-  $page = 0 ; 
-}
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+$page=$_GET["page"];
+$statut=isset($_GET["statut"])?$_GET["statut"]:1;
+$socid=$_GET["socid"];
+
+
 /*
  * Sécurité accés client
  */
@@ -35,6 +39,9 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
+
+
+if ($page == -1) { $page = 0 ; }
 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -48,6 +55,7 @@ if ($sortorder == "")
 {
   $sortorder="DESC";
 }
+
 
 $sql = "SELECT c.rowid as cid, c.enservice, ".$db->pdate("c.fin_validite")." as fin_validite, c.fin_validite-sysdate() as delairestant, p.label, p.rowid as pid, s.nom, s.idp as sidp";
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
