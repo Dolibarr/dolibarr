@@ -30,6 +30,8 @@
 
 require("./pre.inc.php");
 
+$langs->load("propal");
+
 $user->getrights('propale');
 $user->getrights('fichinter');
 $user->getrights('commande');
@@ -53,10 +55,10 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-$socname=$_GET["socname"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
-$page=$_GET["page"];
+$socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 $page = $user->page_param["page"];
 if ($page == -1) { $page = 0 ; }
@@ -121,13 +123,13 @@ if ($result)
 
   $urladd="page=$page&amp;stcomm=$stcomm";
 
-  print_barre_liste("Liste des prospects", $page, "prospects.php",'&amp;stcomm='.$_GET["stcomm"],"","",'',$num);
+  print_barre_liste($langs->trans("ProspectList"), $page, "prospects.php",'&amp;stcomm='.$_GET["stcomm"],"","",'',$num);
 
   print '<div align="center">';
 
-  print "| <A href=\"prospects.php?page=$pageprev&amp;stcomm=$stcomm&amp;begin=%25\">*</A>\n| ";
+  print "| <a href=\"prospects.php?page=$pageprev&amp;stcomm=$stcomm&amp;begin=%25\">*</a>\n| ";
   for ($ij = 65 ; $ij < 91; $ij++) {
-    print "<A href=\"prospects.php?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
+    print "<a href=\"prospects.php?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
     
     if ($user->page_param["begin"] == chr($ij) )
       {
@@ -137,7 +139,7 @@ if ($result)
       {
 	print  chr($ij);
       } 
-    print "</A> | ";
+    print "</a> | ";
   }
   print "</div>";
 
@@ -145,11 +147,12 @@ if ($result)
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","","","valign=\"center\">");
-  print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville");
-  print_liste_field_titre("Département","prospects.php","s.fk_departement","","","align=\"center\"");
-  print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm");
-  print_liste_field_titre("Insertion","prospects.php","s.datec");
+  print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","","","valign=\"center\"",$sortfield);
+  print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","","","",$sortfield);
+  print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","","","align=\"center\"",$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","","","align=\"center\"",$sortfield);
+  print_liste_field_titre($langs->trans("Created"),"prospects.php","s.datec","","","align=\"center\"",$sortfield);
+  print '<td align="center">'.$langs->trans("Action").'</td>';
   print '<td colspan="4">&nbsp;</td>';
   print "</tr>\n";
   $var=true;
@@ -163,19 +166,20 @@ if ($result)
       print "<tr $bc[$var]>";
       print '<td width="35%"><a href="fiche.php?id='.$obj->idp.'">';
       print img_file();
-      print "</a>&nbsp;<a href=\"fiche.php?id=$obj->idp\">$obj->nom</A></td>\n";
-      print "<td>".$obj->ville."&nbsp;</td>\n";
-      print "<td align=\"center\">$obj->departement</td>\n";
-      print "<td>".$obj->stcomm."</td>\n";
+      print "</a>&nbsp;<a href=\"fiche.php?id=$obj->idp\">$obj->nom</A></td>";
+      print "<td>".$obj->ville."&nbsp;</td>";
+      print "<td align=\"center\">$obj->departement</td>";
+      print "<td align=\"center\">".$obj->stcomm."</td>";
+      print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
 
       if ($user->societe_id == 0)
 	{
-	  print "<td align=\"center\"><a href=\"addpropal.php?socidp=$obj->idp&action=create\">".strftime("%d/%b/%y",$obj->datec)."</A></td>\n";
+	  print "<td align=\"center\"><a href=\"".DOL_URL_ROOT."/comm/addpropal.php?socidp=$obj->idp&action=create\">".$langs->trans("AddProp")."</a></td>\n";
 
 	}
       else
 	{
-	  print "<td>&nbsp;</td>\n";
+	  print "<td>&nbsp;</td>";
 	}
 
       $sts = array(-1,0,1,2);
