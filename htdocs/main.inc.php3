@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ $rtplang->debug=1;
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
 
-$a = setlocale("LC_TIME", "FRENCH");
+setlocale(LC_TIME, "fr_FR");
 
 /*
  * Barre de menu supérieure
