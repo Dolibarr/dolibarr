@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
  * $Source$
  * 
  */
+require (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 class Contact 
 {
-
   var $bs;
   var $db;
 
@@ -35,7 +35,6 @@ class Contact
 
   Function Contact($DB, $id=0) 
     {
-
       $this->db = $DB;
       $this->id = $id;
       
@@ -48,21 +47,120 @@ class Contact
    */
   Function create($user)
   {
-    $sql = "INSERT INTO llx_socpeople (datec, fk_soc,name) ";
-    $sql .= " VALUES (now(),$this->socid,'$this->nom')";
+    if (!$this->socid)
+      {
+	$this->socid = 0;
+      }
 
-    if ($this->db->query($sql) ) {
-      $id = $this->db->last_insert_id();
+    $sql = "INSERT INTO llx_socpeople (datec, fk_soc, name, fk_user) ";
+    $sql .= " VALUES (now(),$this->socid,'$this->name',$user->id)";
 
-      return $id;
-    }
+    if ($this->db->query($sql) )
+      {
+	$id = $this->db->last_insert_id();
 
+	$this->update($id);
+
+	return $id;
+      }
+    else
+      {
+	print $this->db->error() . '<br>' . $sql;
+      }
   }
+  /*
+   *
+   *
+   */
+  Function update($id)
+    {
 
+      $this->email = trim($this->email);
+
+      $sql = "UPDATE llx_socpeople SET name='$this->name', firstname='$this->firstname'";
+      $sql .= ", poste='$this->poste'";
+      $sql .= ", fax='$this->fax'";
+      $sql .= ", email='$this->email'";
+      $sql .= ", note='$this->note'";
+      $sql .= ", phone = '$this->phone_pro'";
+      $sql .= ", phone_perso = '$this->phone_perso'";
+      $sql .= ", phone_mobile = '$this->phone_mobile'";
+      $sql .= " WHERE idp=$id";
+
+      $result = $this->db->query($sql);
+
+      if (!$result) 
+	{
+	  print $this->db->error() . '<br>' . $sql;
+	}
+
+
+      $host = "localhost";
+      $dn   = "cn=admin, dc=rodo, dc=lan";
+      $pass = "secret";
+
+      $ds = ldap_connect($host);
+
+      if ($ds)
+	{
+	  ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+
+	  $ldapbind=ldap_bind($ds, $dn, $pass);
+      
+	  if ($ldapbind)
+	    {
+	      $info["cn"] = $this->firstname." ".$this->name;
+	      $info["sn"] = $this->name;
+	      if ($this->email)
+		$info["rfc822Mailbox"] = $this->email;
+	      
+	      if ($this->phone_pro)
+		$info["telephoneNumber"] = $this->phone_pro;
+	      	      
+	      if ($this->phone_perso)
+		$info["homePhone"] = $this->phone_perso;
+
+	      if ($this->poste)
+		$info["title"] = $this->poste;
+
+	      if ($this->phone_mobile)
+		$info["mobile"] = $this->phone_mobile;
+	      
+	      //$info["homePostalAddress"] = "AdressePersonnelle\nVIlle";
+
+	      $info["street"] = "street";
+	      $info["postalCode"] = "postalCode";
+	      $info["postalAddress"] = "postalAddress";
+
+	      $info["objectclass"] = "inetOrgPerson";
+	      
+	      // add data to directory
+	      $r = @ldap_delete($ds, "cn=".$this->old_firstname." ".$this->old_name.", dc=rodo, dc=lan");
+	      $r = ldap_add($ds, "cn=".$info["cn"].", dc=rodo, dc=lan", $info);
+	    }
+	  else
+	    {
+	      echo "LDAP bind failed...";
+	    }
+	  
+
+	  ldap_close($ds);
+	}
+      else
+	{
+	  echo "Unable to connect to LDAP server";
+	}
+      
+      return $result;
+    }
+  /*
+   *
+   *
+   */
   Function fetch($id) 
     {
 
-      $sql = "SELECT c.idp, c.fk_soc, c.name, c.firstname, c.email";
+      $sql = "SELECT c.idp, c.fk_soc, c.name, c.firstname, c.email, phone, phone_perso, phone_mobile";
       $sql .= " FROM llx_socpeople as c";
       $sql .= " WHERE c.idp = $id";
       
@@ -74,12 +172,19 @@ class Contact
 	    {
 	      $obj = $this->db->fetch_object($result , 0);
 
-	      $this->id = $obj->idp;
-	      $this->nom = $obj->name;
-	      $this->prenom = $obj->firstname;
+	      $this->id        = $obj->idp;
+	      $this->name      = $obj->name;
+	      $this->firstname = $obj->firstname;
+	      $this->nom       = $obj->name;
+	      $this->prenom    = $obj->firstname;
 	      $this->societeid = $obj->fk_soc;
-	      $this->fullname = $this->prenom . ' ' . $this->nom;
+	      $this->fullname  = $this->firstname . ' ' . $this->name;
 	      
+	      $this->phone_pro    = $obj->phone;
+	      $this->phone_perso  = $obj->phone_perso;
+	      $this->phone_mobile = $obj->phone_mobile;
+
+
 	      $this->code = $obj->code;
 	      $this->email = $obj->email;
 	      $this->mail = $obj->email;
@@ -93,26 +198,52 @@ class Contact
 	  print $this->db->error();
 	}
     }
-
   /*
    *
    *
    */
-
-  Function update($id)
+  Function delete($id)
     {
-
-      $this->email = trim($this->email);
-
-      $sql = "UPDATE llx_socpeople set name='$this->name', firstname='$this->firstname', poste='$this->poste', phone='$this->phone',fax='$this->fax',email='$this->email', note='$this->note'";
+      $sql = "DELETE FROM llx_socpeople";
       $sql .= " WHERE idp=$id";
 
       $result = $this->db->query($sql);
 
       if (!$result) 
 	{
-	  print $this->db->error();
+	  print $this->db->error() . '<br>' . $sql;
 	}
+
+      $ds = dolibarr_ldap_connect();
+
+      if ($ds)
+	{
+	  ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+
+	  $ldapbind=dolibarr_ldap_bind($ds);
+      
+	  if ($ldapbind)
+	    {	      
+	      // delete from ldap directory
+	      $dn = "cn=".$this->old_firstname." ".$this->old_name.", ".LDAP_SERVER_DN ;
+
+	      print $dn;
+
+	      $r = ldap_delete($ds, $dn);
+	    }
+	  else
+	    {
+	      echo "LDAP bind failed...";
+	    }
+	  
+
+	  ldap_close($ds);
+	}
+      else
+	{
+	  echo "Unable to connect to LDAP server";
+	}
+      
       return $result;
     }
 
