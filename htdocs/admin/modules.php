@@ -79,7 +79,7 @@ $modules["MAIN_MODULE_BOUTIQUE"][3] = "Module des gestion des boutiques";
 
 if ($action == 'set')
 {
-  $sql = "REPLACE INTO llx_const SET name = '".$value."', value='1'";
+  $sql = "REPLACE INTO llx_const SET name = '".$value."', value='1', visible = 0";
 
   if ($db->query($sql))
     {
@@ -89,7 +89,7 @@ if ($action == 'set')
 
 if ($action == 'reset')
 {
-  $sql = "REPLACE INTO llx_const SET name = '".$value."', value='0'";
+  $sql = "REPLACE INTO llx_const SET name = '".$value."', value='0', visible = 0";
 
   if ($db->query($sql))
     {
