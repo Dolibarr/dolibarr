@@ -23,7 +23,8 @@
 create table llx_album_to_groupart
 (
   fk_album        integer NOT NULL,
-  fk_groupart     integer NOT NULL
+  fk_groupart     integer NOT NULL,
+
+  unique key(fk_album, fk_groupart)
 );
 
-alter table  llx_album_to_groupart add unique key (fk_album, fk_groupart);

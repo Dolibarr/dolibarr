@@ -23,7 +23,7 @@
 create table llx_livre_to_auteur
 (
   fk_livre       integer NOT NULL,
-  fk_auteur      integer NOT NULL
-);
+  fk_auteur      integer NOT NULL,
 
-alter table  llx_livre_to_auteur add unique key (fk_livre, fk_auteur);
+  unique index (fk_livre, fk_auteur)
+);
