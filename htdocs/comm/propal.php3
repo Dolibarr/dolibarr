@@ -556,14 +556,8 @@ if ($propalid)
 	      
 		  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype, $filename);
 	      
-		  if ( $mailfile->sendfile() )
-		    {
-		
-		      print "<p>envoy&eacute; &agrave; $sendto";
-		      print "<p>envoy&eacute; par ".htmlentities($replyto);
-		    }
-		  else
-		    {
+		  if (! $mailfile->sendfile() )
+		    {	       
 		      print "<b>!! erreur d'envoi";
 		    }
 		}
