@@ -5,8 +5,10 @@
 -- sans AUCUNE erreur ni warning
 -- 
 
-alter table llx_rights_def add perms varchar(255);
-alter table llx_rights_def add subperms varchar(255);
+alter table llx_rights_def add perms varchar(255) after module;
+alter table llx_rights_def add subperms varchar(255) after perms;
+
+alter table llx_facture add fk_code_ventialtion integer NOT NULL DEFAULT 0;
 
 
 alter table llx_contrat add fk_facturedet integer NOT NULL default 0 after fk_facture;
