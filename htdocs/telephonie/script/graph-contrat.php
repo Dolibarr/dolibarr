@@ -29,6 +29,4 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/ProcessGraphContrats.class.ph
 $process = new ProcessGraphContrats( $childrenNow, $clientPerChild );
 $process->go("269");
  
-}
-
 ?>
