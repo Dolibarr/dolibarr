@@ -39,9 +39,6 @@ llxHeader();
 
 $db = new Db();
 
-if ($page == -1) { $page = 0 ; }
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
 /*
  *
  *
@@ -111,34 +108,46 @@ if ($action=='add_action')
   
 }
 
-
 /*
  *
  *  Liste
  *
  */
 
+if ($page == -1) { $page = 0 ; }
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+if ($sortorder == "")
+{
+  $sortorder="DESC";
+}
+if ($sortfield == "")
+{
+  $sortfield="a.datea";
+}
+
+
 if ($socid) 
 {
   $societe = new Societe($db);
   $societe->fetch($socid);
 
-  print_barre_liste("Liste des actions commerciales effectuées sur " . $societe->nom,$page, $PHP_SELF);
-
   $sql = "SELECT a.id,".$db->pdate("a.datea")." as da, c.libelle, u.code, a.note, u.name, u.firstname ";
   $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u";
-$sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
+  $sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
  
  if ($type)
    {
      $sql .= " AND c.id = $type";
    }
 
- $sql .= " ORDER BY a.datea DESC";
+ $sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
+ $sql .= $db->plimit($limit + 1,$offset);
 
  if ( $db->query($sql) )
    {
      $num = $db->num_rows();
+     print_barre_liste("Liste des actions commerciales effectuées sur " . $societe->nom,$page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
      $i = 0;
      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
      print '<TR class="liste_titre">';
@@ -147,7 +156,7 @@ $sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.
      print "</TR>\n";
      $var=True;
      
-     while ($i < $num)
+     while ($i < min($num,$limit))
        {
 	 $obj = $db->fetch_object( $i);
 	 
@@ -169,9 +178,6 @@ $sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.
 }
 else
 {
-  
-  print_barre_liste("Liste des actions commerciales effectuées",$page, $PHP_SELF);
-  
   $sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact ";
   $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_societe as s, llx_user as u";
   $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
@@ -182,12 +188,13 @@ else
     }
   
   $sql .= " ORDER BY a.datea DESC";
-  $sql .= $db->plimit( $limit, $offset);
+  $sql .= $db->plimit( $limit + 1, $offset);
   
   
   if ( $db->query($sql) )
     {
       $num = $db->num_rows();
+      print_barre_liste("Liste des actions commerciales effectuées sur " . $societe->nom,$page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
       $i = 0;
       print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
       print '<TR class="liste_titre">';
@@ -198,7 +205,7 @@ else
       print "<TD align=\"right\">Auteur</TD>";
       print "</TR>\n";
       $var=True;
-      while ($i < $num) {
+      while ($i < min($num,$limit)) {
 	$obj = $db->fetch_object( $i);
 	
 	$var=!$var;
