@@ -43,26 +43,27 @@ if (!empty ($_SERVER["REMOTE_USER"]))
 {
     // Authentification Apache OK, on va chercher les infos du user
     $user->fetch($_SERVER["REMOTE_USER"]);
-}  
+
+    //print "REMOTE_USER:".$_SERVER["REMOTE_USER"];
+    //exit;
+}
 else
 {
-    // Authentification Apache OK ou non active
+    // Authentification Apache KO ou non active
   if (!empty ($dolibarr_auto_user))
     {
+      // Mode forcé sur un utilisateur (pour debug, demo, ...)
       $user->fetch($dolibarr_auto_user);
     }
   else
     {
-      // /usr/share/pear
-      
-      //require_once "Auth/Auth.php";
+      // Pas d'authentification Apache ni de mode forcé, on demande le login
       require_once DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php";
 			
       $pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
-			
+		
       $params = array(
-//		      "dsn" => $conf->db->getdsn(),
-		      "dsn" =>$pear, //$db->getdsn($dolibarr_main_db_type,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_host,$dolibarr_main_db_name),
+		      "dsn" =>$pear,
 		      "table" => MAIN_DB_PREFIX."user",
 		      "usernamecol" => "login",
 		      "passwordcol" => "pass",
@@ -75,20 +76,23 @@ else
       if ($result)
 	{ 
         // Authentification Auth OK, on va chercher les infos du user
-				dolibarr_syslog ("auth demarre va chercher les infos du user");
+        dolibarr_syslog ("auth demarre va chercher les infos du user");
         $user->fetch($aDol->getUsername());
 	}
       else
 	{
-	  /*
-	   * Le début de la page est affiché par
-	   * loginfunction
-	   */
+	  // Le début de la page a été affiché par loginfunction. On ferme juste la page
 	  print "</div>\n</div>\n</body>\n</html>";
-	  die ;	  
+      exit;
 	}
     }
 }
+
+// Si le login n'a pu être récupéré, on est identifié avec un compte qui n'existe pas.
+// Tentative de hacking ?
+if (! $user->login) accessforbidden();
+
+
 
 if (! defined(MAIN_INFO_SOCIETE_PAYS))
 {
