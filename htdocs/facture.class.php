@@ -71,13 +71,23 @@ class Facture
    */
   Function create($user)
     {
-      /*
-       * On positionne en mode brouillon la facture
-       */
+      /* On positionne en mode brouillon la facture */
       $this->brouillon = 1;
-      /*
-       *
-       */
+
+      /* Facture récurrente */
+      if ($this->fac_rec > 0)
+	{
+	  require_once DOL_DOCUMENT_ROOT . '/compta/facture/facture-rec.class.php';
+	  $_facrec = new FactureRec($this->db, $this->fac_rec);
+	  $_facrec->fetch($this->fac_rec);
+
+	  $this->projetid       = $_facrec->projetid;
+	  $this->cond_reglement = $_facrec->cond_reglement_id;
+	  $this->amount         = $_facrec->amount;
+	  $this->remise         = $_facrec->remise;
+	  $this->remise_percent = $_facrec->remise_percent;
+	}
+
       $sql = "SELECT fdm,nbjour FROM llx_cond_reglement WHERE rowid = $this->cond_reglement";
       if ($this->db->query($sql) )
 	{
@@ -126,7 +136,6 @@ class Facture
 	      $sql = "INSERT INTO llx_fa_pr (fk_facture, fk_propal) VALUES (".$this->id.",".$this->propalid.")";
 	      $this->db->query($sql);
 	    }
-
 	  /*
 	   * Produits
 	   *
@@ -150,6 +159,39 @@ class Facture
 		  print $sql . '<br>' . $this->db->error() .'<br>';
 		}
 	    }
+	  /*
+	   * Produits de la facture récurrente
+	   *
+	   */
+	  if ($this->fac_rec > 0)
+	    {
+	      for ($i = 0 ; $i < sizeof($_facrec->lignes) ; $i++)
+		{
+		  if ($_facrec->lignes[$i]->produit_id)
+		    {
+		      $prod = new Product($this->db, $_facrec->lignes[$i]->produit_id);
+		      $prod->fetch($_facrec->lignes[$i]->produit_id);
+		    }
+		  
+		  $result_insert = $this->addline($this->id, 
+						  $_facrec->lignes[$i]->desc,
+						  $_facrec->lignes[$i]->price,
+						  $_facrec->lignes[$i]->qty,
+						  $_facrec->lignes[$i]->tva_taux,
+						  $_facrec->lignes[$i]->produit_id,
+						  $_facrec->lignes[$i]->remise_percent);
+		  
+		  
+		  if ( $result_insert < 0)
+		    {
+		      print $sql . '<br>' . $this->db->error() .'<br>';
+		    }
+		}
+	    }
+	  /*
+	   *
+	   *
+	   */
 	  $this->updateprice($this->id);	  
 	  return $this->id;
 	}
@@ -168,7 +210,7 @@ class Facture
   Function fetch($rowid, $societe_id=0)
     {
 
-      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.libelle, c.libelle_facture, f.note, f.paye, f.fk_statut, f.fk_user_author";
+      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.rowid as cond_regl_id, c.libelle, c.libelle_facture, f.note, f.paye, f.fk_statut, f.fk_user_author";
       $sql .= " FROM llx_facture as f, llx_cond_reglement as c";
       $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
       
@@ -197,6 +239,7 @@ class Facture
 	      $this->socidp             = $obj->fk_soc;
 	      $this->statut             = $obj->fk_statut;
 	      $this->date_lim_reglement = $obj->dlr;
+	      $this->cond_reglement_id  = $obj->cond_regl_id;
 	      $this->cond_reglement     = $obj->libelle;
 	      $this->cond_reglement_facture = $obj->libelle_facture;
 	      $this->projetid           = $obj->fk_projet;
@@ -215,7 +258,7 @@ class Facture
 	       * Lignes
 	       */
 
-	      $sql = "SELECT l.description, l.price, l.qty, l.rowid, l.tva_taux";
+	      $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent";
 	      $sql .= " FROM llx_facturedet as l WHERE l.fk_facture = ".$this->id;
 	
 	      $result = $this->db->query($sql);
@@ -228,10 +271,12 @@ class Facture
 		    {
 		      $objp = $this->db->fetch_object($i);
 		      $faclig = new FactureLigne();
-		      $faclig->desc = stripslashes($objp->description);
-		      $faclig->qty  = $objp->qty;
-		      $faclig->price = $objp->price;
-		      $faclig->tva_taux = $objp->tva_taux;
+		      $faclig->desc           = stripslashes($objp->description);
+		      $faclig->qty            = $objp->qty;
+		      $faclig->price          = $objp->price;
+		      $faclig->tva_taux       = $objp->tva_taux;
+		      $faclig->remise_percent = $objp->remise_percent;
+		      $faclig->produit_id     = $objp->fk_product;
 		      $this->lignes[$i] = $faclig;
 		      $i++;
 		    }
@@ -377,7 +422,7 @@ class Facture
 	   *
 	   */
 	  $sql = "SELECT fk_product FROM llx_facturedet WHERE fk_facture = ".$this->id;
-	  $sql .= " AND fk_product IS NOT NULL";
+	  $sql .= " AND fk_product > 0";
 	  
 	  $result = $this->db->query($sql);
 	  
@@ -426,7 +471,7 @@ class Facture
    * Ajoute une ligne de facture
    *
    */
-  Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL', $remise_percent=0)
+  Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
     {
       if ($this->brouillon)
 	{
@@ -453,6 +498,7 @@ class Facture
 	    }
 	  else
 	    {
+	      print "<br>$sql<br>";
 	      return -1;
 	    }
 	}
