@@ -36,7 +36,7 @@ all: $(DOC).pdf $(DOC).html $(DOC).txt
 	cd ../../htdocs/install/doc/ ; linuxdoc --language=french --backend=html -c latin ../../../doc/install/dolibarr-install.sgml
 
 put:
-	$(RSYNC) $(ROPT) $(RSSH) *pdf *html www.dolibarr.com:/home/www/www.dolibarr.com/htdocs/documentation
+	$(RSYNC) $(ROPT) $(RSSH) ../../htdocs/install/doc/*html www.dolibarr.com:/home/www/www.dolibarr.com/htdocs/documentation
 
 clean:
 	rm -f *pdf *ps *out *tpt *sasp
