@@ -43,7 +43,7 @@ class modFicheinter
     /*
      *  Activation du module
      */
-    print "toto";
+
     /*
      * Permissions
      */
