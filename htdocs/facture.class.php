@@ -546,7 +546,7 @@ class Facture
     }
 
   /**
-   * Ajoute une ligne de facture (associé à aucun produit/servcie prédéfini)
+   * Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
    *
    */
   Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='')
@@ -558,16 +558,24 @@ class Facture
 	      $qty=1;
 	    }
 	  $remise = 0;
-	  $price = round(ereg_replace(",",".",$pu), 2);
-	  $subprice = $price;
+	  $_price = $pu;
+	  $subprice = $pu;
+
 	  if (trim(strlen($remise_percent)) > 0)
 	    {
-	      $remise = round(($pu * $remise_percent / 100), 2);
-	      $price = $pu - $remise;
+	      $remise = ($pu * $remise_percent / 100);
+	      $_price = ($pu - $remise);
 	    }
+	  print $_price;
 
+	  /* Formatage des prix */
+	  $_price    = ereg_replace(",",".",$_price);
+	  $subprice  = ereg_replace(",",".",$subprice);
+	  print $_price;
+	  
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end)";
 	  $sql .= " VALUES ($facid, '".addslashes($desc)."','$price','$qty','$txtva',$fk_product,'$remise_percent','$subprice','$remise', ";
+
 	  if ($datestart) { $sql.= "'$datestart', "; }
 	  else { $sql.=" null, "; }
 	  if ($dateend) { $sql.= "'$dateend' "; }
@@ -599,7 +607,7 @@ class Facture
 	      $qty=1;
 	    }
 	  $remise = 0;
-	  $price = round(ereg_replace(",",".",$pu), 2);
+	  $price = ereg_replace(",",".",$pu);
 	  $subprice = $price;
 	  if (trim(strlen($remise_percent)) > 0)
 	    {
@@ -611,12 +619,20 @@ class Facture
 	      $remise_percent=0;
 	    }
 
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc',price='$price',subprice='$subprice',remise='$remise',remise_percent='$remise_percent',qty='$qty'";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc'";
+	  $sql .= ",price='"    .     ereg_replace(",",".",$price)."'";
+	  $sql .= ",subprice='" .     ereg_replace(",",".",$subprice)."'";
+	  $sql .= ",remise='".        ereg_replace(",",".",$remise)."'";
+	  $sql .= ",remise_percent='".ereg_replace(",",".",$remise_percent)."'";
+	  $sql .= ",qty='$qty'";
+
   	  if ($datestart) { $sql.= ",date_start='$datestart'"; }
 	  else { $sql.=",date_start=null"; }
 	  if ($dateend) { $sql.= ",date_end='$dateend'"; }
 	  else { $sql.=",date_end=null"; }
+
 	  $sql .= " WHERE rowid = $rowid ;";
+
 	  $result = $this->db->query( $sql);
       if ($result) {
 	    $this->updateprice($this->id);
@@ -685,7 +701,13 @@ class Facture
 	   *
 	   */
 
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET amount ='$this->amount_ht', remise='$this->total_remise', total='$this->total_ht', tva='$this->total_tva', total_ttc='$this->total_ttc'";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture ";
+	  $sql .= "SET amount ='".ereg_replace(",",".",$this->amount_ht)."'";
+	  $sql .= ", remise='".   ereg_replace(",",".",$this->total_remise)."'";
+	  $sql .= ", total='".    ereg_replace(",",".",$this->total_ht)."'";
+	  $sql .= ", tva='".      ereg_replace(",",".",$this->total_tva)."'";
+	  $sql .= ", total_ttc='".ereg_replace(",",".",$this->total_ttc)."'";
+	  
 	  $sql .= " WHERE rowid = $facid ;";
 	  
 	  if ( $this->db->query($sql) )
