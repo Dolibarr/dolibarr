@@ -377,14 +377,14 @@ Function _print_lines($db,$sql, $acct)
 		  
 	      print "<tr $bc[$var]>";
 	      print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
-	      print "<td>".$objp->fk_type."</TD>\n";
+	      print "<td>".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</TD>\n";
 		  
-	      if ($objp->num_chq)
-		{
-		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">CHQ $objp->num_chq - $objp->label</a></td>";
-		}
-	      else
-		{
+//	      if ($objp->num_chq)
+//		{
+//		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a></td>";
+//		}
+//	      else
+//		{
 		  //Xavier DUTOIT : Ajout d'un lien pour modifier la ligne
 		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a>";
 		  /*
@@ -399,7 +399,7 @@ Function _print_lines($db,$sql, $acct)
 		      $k++;
 		    }
 		  print '</td>';
-		}
+//		}
 	      
 	      if ($objp->amount < 0)
 		{
