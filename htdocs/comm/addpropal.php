@@ -80,11 +80,12 @@ if ($action == 'create')
   print_date_select();
   print "</td>";
   
-  print '<td rowspan="4" colspan="2" valign="top">';
+  print '<td rowspan="5" colspan="2" valign="top">';
   print '<textarea name="note" wrap="soft" cols="40" rows="6"></textarea>';
   
   print '<tr><td>Auteur</td><td>'.$user->fullname.'</td></tr>';
-  print "<tr><td>Numéro</td><td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
+  print '<tr><td>Numéro</td><td><input name="ref" value="'.$numpr.'"></td></tr>'."\n";
+  print '<tr><td>Validité</td><td><input name="duree_validite" size="5" value="15"> jours</td></tr>';
   /*
    *
    * Destinataire de la propale

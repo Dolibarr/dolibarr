@@ -103,7 +103,7 @@ class Propal
 	    }
 	}
     }
-  /*
+  /**
    *
    *
    */
@@ -181,7 +181,7 @@ class Propal
 	    }
 	}
     }
-  /*
+  /**
    *
    *
    *
@@ -191,8 +191,10 @@ class Propal
       /*
        *  Insertion dans la base
        */
-      $sql = "INSERT INTO llx_propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, model_pdf) ";
-      $sql .= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0, $this->datep, now(), '$this->ref', $this->author, '$this->note','$this->modelpdf')";
+      $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+
+      $sql = "INSERT INTO llx_propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, model_pdf, fin_validite) ";
+      $sql .= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author, '$this->note','$this->modelpdf',".$this->db->idate($this->fin_validite).")";
       $sqlok = 0;
       
       if ( $this->db->query($sql) )
@@ -304,7 +306,7 @@ class Propal
   Function fetch($rowid)
     {
 
-      $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact,".$this->db->pdate(datep)."as dp, model_pdf, note, fk_statut, remise_percent";
+      $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact,".$this->db->pdate("datep")."as dp,".$this->db->pdate("fin_validite")."as dfv, model_pdf, note, fk_statut, remise_percent";
       $sql .= " FROM llx_propal WHERE rowid=$rowid;";
 
       if ($this->db->query($sql) )
@@ -315,6 +317,7 @@ class Propal
 	  
 	      $this->id             = $rowid;
 	      $this->datep          = $obj->dp;
+	      $this->fin_validite   = $obj->dfv;
 	      $this->date           = $obj->dp;
 	      $this->ref            = $obj->ref;
 	      $this->price          = $obj->price;
@@ -329,7 +332,7 @@ class Propal
 	      $this->contactid      = $obj->fk_soc_contact;
 	      $this->modelpdf       = $obj->model_pdf;
 	      $this->note           = $obj->note;
-
+	      $this->statut         = $obj->fk_statut;
 	      if ($obj->fk_statut == 0)
 		{
 		  $this->brouillon = 1;
@@ -503,10 +506,12 @@ class Propal
   /**
    * Cloture de la propale
    *
-   *
    */
   Function cloture($user, $statut, $note)
     {
+      $this->statut = $statut;
+
+
       $sql = "UPDATE llx_propal SET fk_statut = $statut, note = '$note', date_cloture=now(), fk_user_cloture=$user->id";
       $sql .= " WHERE rowid = $this->id;";
       
@@ -516,8 +521,9 @@ class Propal
 	    {
 	      /* Propale signée */
 	      include_once DOL_DOCUMENT_ROOT . "/commande/commande.class.php";
-	      $commande = new Commande($this->db);
-	      $commande->create_from_propale($user, $this->id);
+
+	      $this->create_commande($user);
+
 	      return 1;
 	    }
 	  else
@@ -531,8 +537,22 @@ class Propal
 	  print $this->db->error() . ' in ' . $sql;
 	}
     }
-  /*
+  /**
    *
+   *
+   */
+  Function create_commande($user)
+    {
+      if ($this->statut == 2)
+	{
+	  /* Propale signée */
+	  include_once DOL_DOCUMENT_ROOT . "/commande/commande.class.php";
+	  $commande = new Commande($this->db);
+	  $commande->create_from_propale($user, $this->id);
+	  return 1;
+	}
+    }
+  /**
    *
    *
    */
@@ -551,7 +571,7 @@ class Propal
 	  print $this->db->error() . ' in ' . $sql;
 	}
     }
-  /*
+  /**
    *
    *
    */
@@ -590,6 +610,38 @@ class Propal
 		  $obj = $this->db->fetch_object($i);
 		  
 		  $ga[$obj->rowid] = $obj->ref;
+		  $i++;
+		}
+	    }
+	  return $ga;
+	}
+      else
+	{
+	  print $this->db->error();
+	}      
+    }
+  /**
+   * Renvoie un tableau contenant les numéros de commandes associées
+   *
+   */
+  Function commande_liste_array ()
+    {
+      $ga = array();
+
+      $sql = "SELECT fk_commande FROM llx_co_pr";      
+      $sql .= " WHERE fk_propale = " . $this->id;
+      if ($this->db->query($sql) )
+	{
+	  $nump = $this->db->num_rows();
+	  
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object($i);
+		  
+		  $ga[$i] = $obj->fk_commande;
 		  $i++;
 		}
 	    }

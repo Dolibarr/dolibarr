@@ -67,14 +67,16 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
 }
 
 
-if ($action == 'add') 
+if ($HTTP_POST_VARS["action"] == 'add') 
 {
   $propal = new Propal($db, $socidp);
 
-  $propal->datep = $db->idate(mktime(12, 1 , 1, 
-				     $HTTP_POST_VARS["remonth"], 
-				     $HTTP_POST_VARS["reday"], 
-				     $HTTP_POST_VARS["reyear"]));
+  $propal->datep = mktime(12, 1 , 1, 
+			  $HTTP_POST_VARS["remonth"], 
+			  $HTTP_POST_VARS["reday"], 
+			  $HTTP_POST_VARS["reyear"]);
+
+  $propal->duree_validite = $HTTP_POST_VARS["duree_validite"];
 
   $propal->contactid = $HTTP_POST_VARS["contactidp"];
   $propal->projetidp = $HTTP_POST_VARS["projetidp"];
@@ -121,6 +123,17 @@ if ($HTTP_POST_VARS["action"] == 'setstatut' && $user->rights->propale->cloturer
   $propal->fetch($propalid);
   $propal->cloture($user, $statut, $note);
 } 
+
+if ($_GET["action"] == 'commande')
+{
+  /*
+   *  Cloture de la propale
+   */
+  $propal = new Propal($db);
+  $propal->fetch($propalid);
+  $propal->create_commande($user);
+} 
+
 
 if ($action == 'modif' && $user->rights->propale->creer) 
 {
@@ -263,7 +276,12 @@ if ($propalid)
 	  print '<tr><td>Société</td><td colspan="3"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td>Statut</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
 
-	  print '<tr><td>Date</td><td colspan="3">'.strftime("%A %d %B %Y",$obj->dp).'</td>';
+	  print '<tr><td>Date</td><td colspan="3">'.strftime("%A %d %B %Y",$obj->dp);
+	  if ($propal->fin_validite)
+	    {
+	      print " (".strftime("%d %B %Y",$propal->fin_validite).")";
+	    }
+	  print '</td>';
 
 	  print '<td>Auteur</td><td>';
 	  $author = new User($db, $obj->fk_user_author);
@@ -396,7 +414,9 @@ if ($propalid)
 		  print "<TD align=\"right\">".price($objp->subprice)."</td>";
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
-		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">Supprimer</a></td>';
+		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">';
+		      print img_delete();
+		      print '</a></td>';
 		    }
 		  else
 		    {
@@ -502,7 +522,7 @@ if ($propalid)
 		      print "<td width=\"20%\">-</td>";
 		    }
 		} 
-	      print "<td width=\"20%\">-</td>";
+	      print '<td width="20%">-</td>';
 	      /*
 	       *
 	       */
@@ -535,7 +555,7 @@ if ($propalid)
 		    }
 		  else
 		    {
-		      print '<td bgcolor="#e0e0e0" align="center" width="20%">! Propale non generee !</td>';
+		      print '<td bgcolor="#e0e0e0" align="center" width="20%">! Proposition non génerée !</td>';
 		    }
 		}
 	      else
@@ -632,7 +652,7 @@ if ($propalid)
 	  $file = PROPALE_OUTPUTDIR . "/$obj->ref/$obj->ref.pdf";
 	  if (file_exists($file))
 	    {
-	      print "<tr $bc[0]><td>Propale PDF</td>";
+	      print "<tr $bc[0]><td>PDF</td>";
 	      print '<td><a href="'.PROPALE_OUTPUT_URL.'/'.$propal->ref.'/'.$propal->ref.'.pdf">'.$propal->ref.'.pdf</a></td>';
 	      print '<td align="right">'.filesize($file). ' bytes</td>';
 	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
@@ -648,6 +668,24 @@ if ($propalid)
 	      print '</td></tr>';
 	    }
 	  print "</table>\n";
+	  /*
+	   *
+	   */
+	  $nb_commande = sizeof($propal->commande_liste_array());
+	  if ($nb_commande > 0)
+	    {
+	      $coms = $propal->commande_liste_array();
+	      print '<br><table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	      print "<tr><td>Commande Num.</td></tr>\n";
+	      
+	      for ($i = 0 ; $i < $nb_commande ; $i++)
+		{
+		  print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
+		  print "</tr>\n";
+		}
+	      print "</table>";
+	    }
+	  //	  print '<a href="'.$PHP_SELF."?propalid=$propalid&amp;action=commande\">Générer</a>";
 	  /*
 	   *
 	   */
@@ -667,7 +705,7 @@ if ($propalid)
 		{
 		  print_titre("Propale envoyée");
 
-		  print "<TABLE class=\"border\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+		  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 		  print "<tr><td>Date</td><td>Auteur</td></TR>\n";
 	      
 
@@ -802,7 +840,7 @@ if ($propalid)
   $pageprev = $page - 1;
   $pagenext = $page + 1;
 
-  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp,".$db->pdate("p.fin_validite")." as dfv, c.label as statut, c.id as statutid";
   $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
 
   if ($socidp)
@@ -857,18 +895,15 @@ if ($propalid)
       while ($i < min($num,$limit))
 	{
 	  $objp = $db->fetch_object( $i);
-	  
+	  $now = time();
 	  $var=!$var;
 	  print "<TR $bc[$var]>";
 	  print "<TD><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
 	  print "<TD><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
 	  
-	  $now = time();
-	  $lim = 3600 * 24 * 15 ;
-	  
-	  if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
+	  if ( $now > $objp->dfv && $objp->dfv > 0 )
 	    {
-	      print "<td><b> &gt; 15 jours</b></td>";
+	      print "<td>".strftime("%d %b %Y",$objp->dfv)."</td>";
 	    }
 	  else
 	    {
