@@ -577,7 +577,7 @@ if ($id && $action == '' && $product->envente)
 	{
 	  $num = $db->num_rows();
 	  $i = 0;
-	  print '<table class="tableab" border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table id="actions" border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  $var=True;      
 	  while ($i < $num)
 	    {

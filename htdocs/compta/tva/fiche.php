@@ -169,7 +169,7 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print '<br><table class="tableab" width="100%" border="1" cellspacing="0" cellpadding="3">';
+print '<br><table id="actions" width="100%" border="1" cellspacing="0" cellpadding="3">';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';

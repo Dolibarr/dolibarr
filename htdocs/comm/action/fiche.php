@@ -280,7 +280,7 @@ if ($id)
     {
       print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
       print '<input type="hidden" name="action" value="confirm_delete">';
-      print '<table class="tableab" cellspacing="0" border="1" width="100%" cellpadding="3">';
+      print '<table id="actions" cellspacing="0" border="1" width="100%" cellpadding="3">';
       
       print '<tr><td colspan="3">Supprimer l\'action</td></tr>';
       
@@ -362,7 +362,7 @@ if ($id)
   /*
    *
    */
-  print '<br><table class="tableab" border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
+  print '<br><table id="actions" border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
   print '<td align="center" width="20%">';
   if ($action=='edit')
     {

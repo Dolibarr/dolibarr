@@ -321,7 +321,7 @@ else
 
       print '</table>';
 
-      print '<br><table class="tableab" width="100%" border="1" cellspacing="0" cellpadding="2">'."<tr>";
+      print '<br><table id="actions" width="100%" border="1" cellspacing="0" cellpadding="2">'."<tr>";
 
       if ($user->admin) 
 	{

@@ -47,7 +47,7 @@ if ($action == 'delete')
 
   print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
   print '<input type="hidden" name="action" value="confirm_delete">';
-  print '<table class="tableab" cellspacing="0" border="1" width="100%" cellpadding="3">';
+  print '<table id="actions" cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print '<tr><td colspan="3">Supprimer le projet</td></tr>';
   
@@ -164,7 +164,7 @@ if ($action == 'create')
     }
   
   
-  print "<p><TABLE class=\"tableab\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+  print "<p><TABLE id=\"actions\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
   
   if ($action == "edit")
     {
