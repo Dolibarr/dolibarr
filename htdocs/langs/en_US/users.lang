@@ -13,3 +13,5 @@ CreateUser=Create user
 LoginAlreadyExists=This login already exists
 ListOfUsers=List of users
 Administrator=Administrator
+DefaultRights=Default permissions
+DefaultRightsDesc=Define here default permissions that are permissions automatically granted to a new created user.
