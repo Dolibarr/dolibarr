@@ -199,6 +199,64 @@ else
   print $db->error();
 }
 
+/*
+ * Dernières propales
+ *
+ */
+
+$sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+$sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut > 0";
+
+if ($socidp)
+{ 
+  $sql .= " AND s.idp = $socidp"; 
+}
+
+$sql .= " ORDER BY p.rowid DESC";
+$sql .= $db->plimit(5, 0);
+
+if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      
+      $i = 0;
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';      
+      print '<tr class="liste_titre"><td colspan="6">Dernières propositions commerciales</td></tr>';
+      $var=True;
+      
+      while ($i < $num)
+	{
+	  $objp = $db->fetch_object( $i);
+	  
+	  $var=!$var;
+	  print "<tr $bc[$var]>";
+	  print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+	  print "<td><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
+	  
+	  $now = time();
+	  $lim = 3600 * 24 * 15 ;
+	  
+	  if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
+	    {
+	      print "<td><b> &gt; 15 jours</b></td>";
+	    }
+	  else
+	    {
+	      print "<td>&nbsp;</td>";
+	    }
+	  
+	  print "<td align=\"right\">";
+	  print strftime("%d %B %Y",$objp->dp)."</td>\n";	  
+	  print "<td align=\"right\">".price($objp->price)."</TD>\n";
+	  print "<td align=\"center\">$objp->statut</TD>\n";
+	  print "</tr>\n";
+	  $i++;
+	}
+            
+      print "</table>";
+      $db->free();
+    }
+
 
 print '</td></tr>';
 
