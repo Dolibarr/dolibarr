@@ -29,18 +29,20 @@
 require ("../../master.inc.php");
 
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
-//require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
-
 
 $error = 0;
 
 $datetime = time();
 
 $date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
+
+/*
+ * On facture les communications du mois précédent
+ */
 
 $month = strftime("%m", $datetime);
 $year = strftime("%Y", $datetime);
@@ -54,78 +56,6 @@ else
 {
   $month = substr("00".($month - 1), -2) ;
 }
-
-$month = "01";
-$year = "2005";
-
-
-
-/*******************************************************************************
- *
- * Verifie la présence des tarifs adequat
- *
- */
-
-$tarif_achat = new TelephonieTarif($db, 1, "achat");
-$tarif_vente = new TelephonieTarif($db, 1, "vente");
-
-$sql = "SELECT distinct(num) FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
-  
-if ( $db->query($sql) )
-{
-  $nums = $db->num_rows();
-  $i = 0;
-
-  while($i < $nums)
-    {
-      $row = $db->fetch_row();
-
-      $numero = $row[0];
-
-      /* Reformatage du numéro */
-
-      if (substr($numero,0,2) == '00') /* International */
-	{
-	}     
-      elseif (substr($numero,0,2) == '06') /* Telephones Mobiles */
-	{	
-	  $numero = "0033".substr($numero,1);
-	}
-      elseif (substr($numero,0,4) == substr($objp->client,0,4) ) /* Tarif Local */
-	{
-	  $numero = "0033999".substr($numero, 1);
-	}
-      else
-	{
-	  $numero = "0033".substr($numero, 1);
-	}	  
-
-      /* Recherche du tarif */
-      
-      if (! $tarif_achat->cout($numero, $x, $y, $z))
-	{
-	  print "\nTarif achat manquant pour $numero\n";
-	  exit(1);
-	}
-      
-      if (! $tarif_vente->cout($numero, $x, $y, $z))
-	{
-	  print "\nTarif vente manquant pour $numero\n";
-	  exit(1);
-	}
-
-      print ".";
-      $i++;
-    }
-  $db->free();
-}
-print "\n";
-
-unset ($nums, $row, $tarif_achat, $tarif_vente);
-
-$file_log_import = fopen(DOL_DATA_ROOT."/telephonie/logs/$date.log","w");
-$file_log        = fopen(DOL_DATA_ROOT."/telephonie/logs/$date.html","w");
-$file_details    = fopen(DOL_DATA_ROOT."/telephonie/logs/$date-detail.html","w");
 
 /********************************************************
  *
@@ -147,7 +77,7 @@ if ( $db->query($sql) )
 
 /**
  *
- * Lectures de différentes lignes
+ * Lectures des différentes lignes dans la table d'import
  *
  */
 
@@ -176,7 +106,7 @@ if (!$error)
 	  $i++;
 	}            
       $db->free();
-      print "$i lignes trouvées\n";
+      dolibarr_syslog("$i lignes trouvées");
     }
   else
     {
@@ -188,16 +118,11 @@ if (!$error)
  *
  * Traitements
  *
+ *
  */
 
 if (!$error)
 {
-  _log($file_log, '<a href="detail.html">detail</a><table border="1" cellpadding="2" cellspacing="0">');
-  _log($file_log, '<tr><td colspan=2>Client</td><td>Nb Appel</td><td>Duree moyenne</td><td>Inter</td>');
-  _log($file_log, '<td>Inter</td><td>Nat</td><td bgcolor="pink">Cout Fourn.</td>');
-  _log($file_log, '<td bgcolor="blue">Fourn. Calculé</td></tr>');
-
-  _log($file_details, '<table border="1" cellpadding="2" cellspacing="0">');
 
   foreach ($clients as $client)
     {
@@ -220,8 +145,7 @@ if (!$error)
 	}
       else
 	{
-	  $error = 2;
-	  
+	  $error = 2;	  
 	  print "Error ($error): Aucune société rattachée à la ligne : $client\n";
 	}
       
@@ -242,6 +166,7 @@ if (!$error)
 	}      
 	 
       /*
+       *
        * Calcul de la facture
        *
        */
@@ -260,6 +185,7 @@ if (!$error)
 	}	  
 
       /*
+       *
        * Insertion des données dans la base
        *
        */
@@ -299,12 +225,12 @@ if (!$error)
       if (!$error)
 	{
 	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
-	  $sql .= " WHERE ligne = $client ";//AND 1=2"; // !!ARNING
+	  $sql .= " WHERE ligne = $client ";
 
 	  if (! $db->query($sql))
 	    {
 	      $error++;
-	      print "Erreur de suppression dans llx_telephonie_import_cdr\n";
+	      dolibarr_syslog("Erreur de suppression dans llx_telephonie_import_cdr");
 	    }
 	}
 
@@ -325,26 +251,15 @@ if (!$error)
 	  dolibarr_syslog("Annulation de la transaction");
 	}
 
-
-      _log($file_log,  "</tr>");
-
-      
     } /* fin de la boucle */
 
   /*
    *
    *
    */
-
-  _log($file_log,  "</table>");
-  _log($file_details,  "</table>");
 }
 
 $db->close();
-_log($file_log,  "\n");
-fclose($file_log);
-fclose($file_log_import);
-fclose($file_details);
 
 dolibarr_syslog("Conso mémoire ".memory_get_usage() );
 
@@ -359,10 +274,12 @@ dolibarr_syslog("Conso mémoire ".memory_get_usage() );
 function calcul($client, $db, &$total_cout_achat, &$total_cout_vente, &$total_cout_fourn, $ligne, $client_id=0)
 {
   $error = 0;
-  global $file_log, $file_details;
-  $total = 0;
-  $nbinter = 0;$nbmob=0;$nbnat=0;
-  $duree = 0;
+
+  $total   = 0;
+  $nbinter = 0;
+  $nbmob   = 0;
+  $nbnat   = 0;
+  $duree   = 0;
 
   $fournisseur_id = 1;
 
@@ -425,12 +342,5 @@ function calcul($client, $db, &$total_cout_achat, &$total_cout_vente, &$total_co
 }
 
 
-function _log($file, $text)
-{
-  if ($file)
-    {
-      fputs($file, $text);
-      fputs($file, "\n");
-    }
-}
+
 ?>
