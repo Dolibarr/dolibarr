@@ -107,16 +107,26 @@ class Paiement
   /**
    *    \brief      Création du paiement en base
    *    \param      user       object utilisateur qui crée
+   *    \param      no_commit  le begin et le commit sont fait par l'appelant
    *
    */
 	 
-  function create($user)
+  function create($user, $no_commit = 0)
   {
     $sql_err = 0;
     /*
      *  Insertion dans la base
      */
-    if ($this->db->begin())
+    if ($no_commit == 0)
+      {
+	$result = $this->db->begin();
+      }
+    else
+      {
+	$result = 1;
+      }
+
+    if ($result)
       {
 	$total = 0;
 	
@@ -174,12 +184,18 @@ class Paiement
 
 	if ( $total > 0 && $sql_err == 0 )
 	  {
-	    $this->db->commit();
+	    if ($no_commit == 0)
+	      {
+		$this->db->commit();
+	      }
 	    return $this->id;
 	  }
 	else
 	  {
-	    $this->db->rollback();
+	    if ($no_commit == 0)
+	      {
+		$this->db->rollback();
+	      }
 	    return -1;
 	  }
 	
