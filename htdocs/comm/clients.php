@@ -76,11 +76,11 @@ if ($socname)
 
 if ($sortorder == "")
 {
-  $sortorder="DESC";
+  $sortorder="ASC";
 }
 if ($sortfield == "")
 {
-  $sortfield="s.datec";
+  $sortfield="s.nom";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
@@ -93,26 +93,7 @@ if ($result)
 
   llxHeader();
 
-
   print_barre_liste("Liste des clients", $page, "clients.php","&amp;begin=$begin",$sortfield,$sortorder,"",$num);
-
-  print '<div align="center">';
-
-  print "| <A href=\"clients.php?page=$pageprevamp;stcomm=$stcommamp;sortfield=$sortfieldamp;sortorder=$sortorderamp;aclasser=$aclasseramp;coord=$coord&amp;begin=$begin\">*</A>\n| ";
-  for ($ij = 65 ; $ij < 91; $ij++) {
-    print "<A href=\"clients.php?begin=" . chr($ij) . "&amp;stcomm=$stcomm\" class=\"T3\">";
-    
-    if ($begin == chr($ij) )
-      {
-	print  "<b>&gt;" . chr($ij) . "&lt;</b>" ; 
-      } 
-    else
-      {
-	print  chr($ij);
-      } 
-    print "</a> | ";
-  }
-  print "</div>";
 
   $i = 0;
   
