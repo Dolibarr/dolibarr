@@ -189,7 +189,7 @@ if ($socid > 0)
       {
 	print '<td align="center"><a href="../comm/fiche.php3?socid='.$objsoc->idp.'">Commercial</a></td>';
 	print "<td align=\"center\"><a href=\"../comm/docsoc.php?socid=$objsoc->idp\">Documents</a></td>";
-	print "<td align=\"center\"><a href=\"index.php3?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
+	print "<td align=\"center\"><a href=\"index.php?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
 	if ($user->rights->facture->creer)
 	  print "<td>[<a href=\"facture.php3?action=create&socidp=$objsoc->idp\">".translate("Facture")."</a>]</td>";
 	print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
@@ -292,7 +292,7 @@ if ($socid > 0)
       $num = $db->num_rows();
       if ($num > 0) {
 	$tag = !$tag; print "<tr $bc[$tag]>";
-	print "<td colspan=\"2\"><a href=\"projet/index.php3?socidp=$objsoc->idp\">liste des projets ($num)</td></tr>";
+	print "<td colspan=\"2\"><a href=\"projet/index.php?socidp=$objsoc->idp\">liste des projets ($num)</td></tr>";
       }
       while ($i < $num && $i < 5) {
 	$obj = $db->fetch_object( $i);
@@ -323,7 +323,7 @@ if ($socid > 0)
     if ($action == 'changevalue') {
 
       print "<HR noshade>";
-      print "<form action=\"index.php3?socid=$objsoc->idp\" method=\"post\">";
+      print "<form action=\"index.php?socid=$objsoc->idp\" method=\"post\">";
       print "<input type=\"hidden\" name=\"action\" value=\"cabrecrut\">";
       print "Cette société est un cabinet de recrutement : ";
       print "<select name=\"selectvalue\">";

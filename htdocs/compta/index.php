@@ -204,7 +204,7 @@ if ( $db->query($sql) )
       $var = !$var;
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-      print '<td align="right"><a href="index.php3?action=del_bookmark&bid='.$obj->bid.'">';
+      print '<td align="right"><a href="index.php?action=del_bookmark&bid='.$obj->bid.'">';
       print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
       print '</tr>';
       $i++;
