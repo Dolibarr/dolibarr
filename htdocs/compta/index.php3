@@ -141,7 +141,7 @@ if ($user->comm > 0 && $conf->commercial )
  */
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
 print "<TR class=\"liste_titre\">";
-print '<td colspan="2">'.translate("Bills").'</td>';
+print '<td colspan="2">'.translate("Factures").'</td>';
 print "</TR>\n";
 
 $sql = "SELECT facnumber, rowid FROM llx_facture WHERE paye = 0";
