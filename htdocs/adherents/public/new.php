@@ -92,7 +92,7 @@ llxHeader();
 if (isset($action) && $action== 'added'){
   print "<FONT COLOR=\"blue\">Nouvel Adhérent ajouté. En attente de validation</FONT><BR>\n";
 }
-if (isset($errmsg) && $errmsg != ''){
+if ($errmsg != ''){
   print "<FONT COLOR=\"red\">$errmsg</FONT><BR>\n";
 }
 
