@@ -129,7 +129,7 @@ mod-auth-mysql.
 
 <p>
  Pour configurer Dolibarr accédez à la page
- <tscreen><verb>/install.php</verb></tscreen>, pour vous logger utlisez
+ <tscreen><verb>/install/index.php</verb></tscreen>, pour vous logger utlisez
  le login <bf>admin</bf> avec le mot de passe <bf>admin</bf>.
 </p>
 
