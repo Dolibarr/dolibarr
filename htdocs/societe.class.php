@@ -83,9 +83,9 @@ class Societe {
       }
     else
       {
-	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/mod_code_client_leopard.php';
+	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/mod_codeclient_leopard.php';
 	
-	$var = "mod_code_client_leopard";
+	$var = "mod_codeclient_leopard";
       }
 
 	$this->mod_codeclient = new $var;
