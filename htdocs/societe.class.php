@@ -195,7 +195,20 @@ class Societe {
 	      $this->client = $obj->client;
 	      $this->fournisseur = $obj->fournisseur;
 	      
-	      $this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
+	      if ($this->client == 1)
+		{
+
+		  $this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">'.$obj->nom.'</a>';
+		}
+	      elseif($this->client == 2)
+		{
+		  $this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$this->id.'">'.$obj->nom.'</a>';
+		}
+	      else
+		{
+		  $this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
+		}
+
 
 	      $this->rubrique = $obj->rubrique;
 	      
