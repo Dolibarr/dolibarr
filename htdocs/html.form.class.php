@@ -27,7 +27,7 @@ class Form
 {
   var $db;
   var $errorstr;
-
+  
 
   function Form($DB)
   {
@@ -296,17 +296,17 @@ class Form
   
   /*
    * Retourne le nom d'un pays
-   *
+   * 
    */
   function pays_name($id)
   {
     $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."c_pays";
-    $sql .= " WHERE rowid=$id";
-
+    $sql .= " WHERE rowid=$id;";
+		
     if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
-
+  
 	if ($num)
 	  {
 	    $obj = $this->db->fetch_object(0);
@@ -318,6 +318,7 @@ class Form
 	  }
 
       }
+	
   }
 
 

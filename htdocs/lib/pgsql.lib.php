@@ -2,7 +2,7 @@
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Sebastien Di Cintio  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,8 @@
 
 
 
-class DoliDb {
+class DoliDb 
+{
   var $db, $results, $ok, $connected, $database_selected;
 	
 	  
@@ -330,7 +331,6 @@ class DoliDb {
 
   function free()
     {
-		
       return pg_free_result($this->results);
     }
 
@@ -341,9 +341,7 @@ class DoliDb {
 
   function fetch_object()
     {
-			$cpt=0;
-			
-			return pg_fetch_object($this->results,$cpt);
+			return pg_fetch_object($this->results);
   	}
 
 /*!
@@ -395,7 +393,7 @@ class DoliDb {
 
   function fetch_array()
     {
-			return pg_fetch_array($his->results);
+			return pg_fetch_array($this->results);
     }
 
 /*!
@@ -405,7 +403,7 @@ class DoliDb {
 
   function fetch_row()
     {
-			return pg_fetch_row($his->results);
+			return pg_fetch_row($this->results);
     }
 
 /*!
@@ -475,7 +473,7 @@ class DoliDb {
 
   function last_insert_id()
     {
-			return pg_last_oid($this->db);
+			return pg_last_oid($this->results);
     }
 
 /*!
@@ -485,7 +483,7 @@ class DoliDb {
 
   function affected_rows()
     {
-			return pg_affected_rows($this->db); 
+			return pg_affected_rows($this->results); 
     }
 
 /*!

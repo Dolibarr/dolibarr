@@ -79,6 +79,10 @@ if ($_GET["action"] == 'setpdf')
   /*
    * On la set active
    */
+	 $sql_del = "delete from ".MAIN_DB_PREFIX."propal_model_pdf 
+	 where nom = '".$_GET["value"]."';";
+	 $db->query($sql_del);
+	 
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$_GET["value"]."')";
 
   if ($db->query($sql))

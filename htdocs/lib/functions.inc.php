@@ -105,9 +105,20 @@ function dolibarr_fiche_head($links, $active=0, $title='')
 */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {
-  $sql = "REPLACE INTO llx_const SET name = '$name', value='$value', visible=$visible, type='$type', note='$note'";
+ 		 
+		 $sql = "delete from llx_const where name = '$name';"; 		
+		 $db->query($sql);	
+		 //$sql = "REPLACE INTO llx_const SET name = '$name', value='$value', visible=$visible, type='$type', note='$note'";
+		 $sqql = "insert into llx_const(name,value,type,visible,note) values 
+		 ('$name','$value','$type',$visible,'$note');";
+		 
+		 
+		//$sql = "delete from llx_const where name = '$name' and value = '$value' ;";
+		//$db->query($sql);
+		
+		//$sql2 = "insert into llx_const values('$name','$value','$type',$visible,'$note');";
 
-  if ($db->query($sql))
+  if ($db->query($sqql))
     {
       return 1;
     }
@@ -603,11 +614,17 @@ function dolibarr_user_page_param($db, &$user)
     {
       if ($key == "sortfield")
 	{
-	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
+	
+		$sql = "delete from ".MAIN_DB_PREFIX."user_param where fk_user = $user->id ;"; 
+	  $db->query($sql);
+		$sql = "insert into ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
+		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');	";
+		
+	  /*$sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
 	  $sql .= " SET fk_user =".$user->id;
 	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
 	  $sql .= " ,param='sortfield'";
-	  $sql .= " ,value='".urlencode($value)."'";
+	  $sql .= " ,value='".urlencode($value)."'";*/
 
 	  $db->query($sql);
 	  $user->page_param["sortfield"] = $value;
@@ -617,35 +634,49 @@ function dolibarr_user_page_param($db, &$user)
 
       if ($key == "sortorder")
 	{
-	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
+	  /*$sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
 	  $sql .= " SET fk_user =".$user->id;
 	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
 	  $sql .= " ,param='sortorder'";
-	  $sql .= " ,value='".urlencode($value)."'";
-
+	  $sql .= " ,value='".urlencode($value)."'";*/
+    $sql = "delete from ".MAIN_DB_PREFIX."user_param where fk_user = $user->id ;"; 
+	  $db->query($sql);
+		$sql = "insert into ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
+		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');	";
+		
 	  $db->query($sql);
 	  $user->page_param["sortorder"] = $value;
 	}
       if ($key == "begin")
 	{
-	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
+	  /*$sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
 	  $sql .= " SET fk_user =".$user->id;
 	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
 	  $sql .= " ,param='begin'";
-	  $sql .= " ,value='".$value."'";
-
+	  $sql .= " ,value='".$value."'";*/
+    $sql = "delete from ".MAIN_DB_PREFIX."user_param where fk_user = $user->id ;"; 
 	  $db->query($sql);
+		
+		$sql = "insert into ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
+		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');	";
+	  $db->query($sql);
+		
 	  $user->page_param["begin"] = $value;
 	}
       if ($key == "page")
 	{
-	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
+	  /*$sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
 	  $sql .= " SET fk_user =".$user->id;
 	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
 	  $sql .= " ,param='page'";
-	  $sql .= " ,value='".$value."'";
-
+	  $sql .= " ,value='".$value."'";*/
+    $sql = "delete from ".MAIN_DB_PREFIX."user_param where fk_user = $user->id ;"; 
 	  $db->query($sql);
+		
+		$sql = "insert into ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
+		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');	";
+	  $db->query($sql);
+		
 	  $user->page_param["page"] = $value;
 	}
     }
