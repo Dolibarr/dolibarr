@@ -81,7 +81,7 @@ class Propal
 	      if ($this->db->query($sql) )
 		{
 		  
-		  $this->update_price($this->id);
+		  $this->update_price();
 		  
 		  return 1;
 		}
@@ -111,7 +111,7 @@ class Propal
 	  if ($this->db->query($sql) )
 	    {
 	      
-	      if ($this->update_price($this->id) > 0)
+	      if ($this->update_price() > 0)
 		{	      
 		  return 1;
 		}
@@ -152,7 +152,7 @@ class Propal
 	  if ($this->db->query($sql) )
 	    {
 	      
-	      $this->update_price($this->id);
+	      $this->update_price();
 	      
 	      return 1;
 	    }
@@ -208,7 +208,7 @@ class Propal
 		  /*
 		   *
 		   */
-		  $this->update_price($this->id);
+		  $this->update_price();
 		  /*
 		   *  Affectation au projet
 		   */
@@ -234,79 +234,53 @@ class Propal
    *
    *
    */
-  Function update_price($rowid)
+  Function update_price()
     {
-      $totalht=0;
-      $totaltva=0;
-      $totalttc=0;
-      $total_remise=0;
-      $t = 0;
+      include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
+
       /*
-       *  Remise
+       *  Liste des produits a ajouter
        */
-      $sql = "SELECT remise_percent FROM llx_propal WHERE rowid = $rowid";
+      $sql = "SELECT price, qty, tva_tx FROM llx_propaldet WHERE fk_propal = $this->id";
       if ( $this->db->query($sql) )
 	{
-	  $remise_percent = $this->db->result(0, 0);
-	  $this->db->free();	  
-      
-	  /*
-	   *  Total des produits a ajouter
-	   */
-	  $sql = "SELECT price, qty, tva_tx FROM llx_propaldet WHERE fk_propal = $rowid";
-	  if ( $this->db->query($sql) )
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  
+	  while ($i < $num)
 	    {
-	      $num = $this->db->num_rows();
-	      $i = 0;
-
-	      while ($i < $num)
-		{
-		  $obj = $this->db->fetch_object($i);
-
-		  $lprice = ($obj->qty * $obj->price);
-
-		  if ($remise_percent > 0)
-		    {
-		      $ligne_remise = ($lprice * $remise_percent / 100);
-		      $total_remise = $total_remise + $ligne_remise;
-		      $lprice = $lprice - $ligne_remise;
-		    }
-
-		  $totalht = $totalht + $lprice;
-
-		  $ligne_tva = ($lprice * ($obj->tva_tx / 100));
-
-		  $totaltva = $totaltva + $ligne_tva;
-
-		  $i++;
-		}
-
-	      $this->db->free();
-	      
-	      /*
-	       *  Calcul TVA
-	       */
-	      $totaltva = round($totaltva, 2);
-	      $totalht = round($totalht, 2);
-	      $totalttc = $totalht + $totaltva;
-	      /*
-	       *
-	       */
-	      $sql = "UPDATE llx_propal set price=$totalht, tva=$totaltva, total=$totalttc, remise=$total_remise WHERE rowid = $rowid";
-	      if ( $this->db->query($sql) )
-		{
-		  return 1;
-		}
-	      else
-		{
-		  print "Erreur mise à jour du prix<p>".$sql;
-		  return -1;
-		}
+	      $obj = $this->db->fetch_object($i);
+	      $products[$i][0] = $obj->price;
+	      $products[$i][1] = $obj->qty;
+	      $products[$i][2] = $obj->tva_tx;
+	      $i++;
 	    }
 	}
-      
-    }
+      $calculs = calcul_price($products, $this->remise_percent);
 
+      $totalht = $calculs[0];
+      $totaltva = $calculs[1];
+      $totalttc = $calculs[2];
+      $total_remise = $calculs[3];
+
+      $this->remise         = $total_remise;
+      $this->total_ht       = $totalht;
+      $this->total_tva      = $totaltva;
+      $this->total_ttc      = $totalttc;
+      /*
+       *
+       */
+      $sql = "UPDATE llx_propal set price=$totalht, tva=$totaltva, total=$totalttc, remise=$total_remise WHERE rowid = $this->id";
+      if ( $this->db->query($sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print "Erreur mise à jour du prix<p>".$sql;
+	  return -1;
+	}
+    }
   /*
    *
    *
@@ -329,7 +303,7 @@ class Propal
 	      $this->date           = $obj->dp;
 	      $this->ref            = $obj->ref;
 	      $this->price          = $obj->price;
-	      $this->remise          = $obj->remise;
+	      $this->remise         = $obj->remise;
 	      $this->remise_percent = $obj->remise_percent;
 	      $this->total          = $obj->total;
 	      $this->total_ht       = $obj->price;
@@ -465,12 +439,15 @@ class Propal
       if ($user->rights->propale->creer)
 	{
 
-	  $sql = "UPDATE llx_propal SET remise_percent = ".ereg_replace(",",".",$remise);
+	  $remise = ereg_replace(",",".",$remise);
+
+	  $sql = "UPDATE llx_propal SET remise_percent = ".$remise;
 	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 	  
 	  if ($this->db->query($sql) )
 	    {
-	      $this->update_price($this->id);
+	      $this->remise_percent = $remise;
+	      $this->update_price();
 	      return 1;
 	    }
 	  else
