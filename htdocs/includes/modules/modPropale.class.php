@@ -20,7 +20,9 @@
  *
  */
 
-class modPropale
+include_once "modDolibarrModules.class.php";
+
+class modPropale extends modDolibarrModules
 {
 
   /*
@@ -41,43 +43,11 @@ class modPropale
   Function init()
   {
     /*
-     *  Activation du module
+     *  Constantes
      */
     $const[0][0] = "PROPALE_ADDON_PDF";
     $const[0][1] = "chaine";
     $const[0][2] = "rouge";
-
-    foreach ($const as $key => $value)
-      {
-	$name = $const[$key][0];
-	$type = $const[$key][1];
-	$val  = $const[$key][2];
-
-	$sql = "SELECT count(*) FROM llx_const WHERE name ='".$name."'";
-
-	if ( $this->db->query($sql) )
-	  {
-	    $row = $this->db->fetch_row($sql);
-	    
-	    if ($row[0] == 0)
-	      {
-		if (strlen($val))
-		  {
-		    $sql = "INSERT INTO llx_const (name,type,value) VALUES ('".$name."','".$type."','".$val."')";
-		  }
-		else
-		  {
-		    $sql = "INSERT INTO llx_const (name,type) VALUES ('".$name."','".$type."')";
-		  }
-
-		if ( $this->db->query($sql) )
-		  {
-
-		  }
-	      }
-	  }
-      }
-
        
     /*
      * Permissions et valeurs par défaut
@@ -95,11 +65,8 @@ class modPropale
 		 "REPLACE INTO llx_const SET name = 'PROPALE_ADDON', value='mod_propale_ivoire', visible=0"
 		 );
     //"insert into llx_rights_def values (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
-    for ($i = 0 ; $i < sizeof($sql) ; $i++)
-      {
-	$this->db->query($sql[$i]);
-      }
-
+    
+    return $this->_init($const, $sql);
 
   }
   /*
@@ -108,16 +75,12 @@ class modPropale
    */
   Function remove()
   {
-
     $sql = array(
 		 "DELETE FROM llx_boxes_def WHERE file = 'box_propales.php';",
 		 "DELETE FROM llx_rights_def WHERE module = 'propale';"
 		 );
 
-    for ($i = 0 ; $i < sizeof($sql) ; $i++)
-      {
-	$this->db->query($sql[$i]);
-      }
+    return $this->_remove($sql);
 
   }
 }
