@@ -312,7 +312,7 @@ class Propal
       $sql .= " price='".  ereg_replace(",",".",$this->total_ht)."'";
       $sql .= ", tva='".   ereg_replace(",",".",$this->total_tva)."'";
       $sql .= ", total='". ereg_replace(",",".",$this->total_ttc)."'";
-      $sql .= ", remise='".ereg_replace(",",".",$this->total_remise)."'";
+      $sql .= ", remise='".ereg_replace(",",".",$this->remise)."'";
       $sql .=" WHERE rowid = $this->id";
 
       if ( $this->db->query($sql) )
