@@ -58,7 +58,6 @@ if ( $result )
       $hselected=$h;
       $h++;
       
-
       
       dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
       
@@ -110,6 +109,7 @@ if ( $result )
       print '<tr class="liste_titre">';
       print '<td>Date</td>';
       print '<td align="center">Remise</td>';
+      print '<td>Commentaire</td>';
       print '<td>Utilisateur</td>';
       print '</tr>';
 
@@ -133,6 +133,8 @@ if ( $result )
 		  print '<tr><td valign="top" width="20%">'.strftime("%a %d %B %Y %H:%M:%S",$row[0]).'</td>';
 
 		  print '<td align="center">'.$row[1].'&nbsp;%</td>';
+		  print '<td>'.stripslashes($row[3]).'&nbsp;</td>';
+
 		  print '<td>'.$row[5] . " " . $row[4] . "</td></tr>";
 		  $i++;
 		}
