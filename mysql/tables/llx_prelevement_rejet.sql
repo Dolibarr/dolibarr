@@ -26,8 +26,8 @@ create table llx_prelevement_rejet
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   fk_prelevement_lignes integer,
   motif                 integer,
-  note                  text,
   date_creation         datetime,
-  fk_user_creation      integer
+  fk_user_creation      integer,
+  note                  text
 
 )type=innodb;
