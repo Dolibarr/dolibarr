@@ -207,7 +207,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
 	  $obj = $db->fetch_object($i);
 	  print '<option value="'.$obj->idp;
 
-	  if ($socid == $obj->idp)
+	  if ($_GET["socid"] == $obj->idp)
 	    {
 	      print '" SELECTED>'.$obj->nom.'</option>';
 	    }
