@@ -50,7 +50,7 @@ if ($result)
   $db->free();
 }
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 print '<tr class="liste_titre"><td>Comptes courants</td><td>Banque</td>';
 print '<td align="left">Numéro</td><td align="right">Solde</td><td align="center">Clos</td>';
 print "</tr>\n";
@@ -133,25 +133,18 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
 
 print "</table>";
 
-print '<p><table id="actions" width="100%" cellspacing="0" cellpadding="4">'."<tr>";
 
-/*
- * Case 1
- */
+print "<br><div class=\"tabsAction\">\n";
 
-print '<td align="center" width="20%">';
-print '<a href="fiche.php?action=create">Nouveau compte</a></td>';
-/*
- * Case 2
- */
+if ($user->rights->banque->configurer) {
+	print '<a class="tabAction" href="fiche.php?action=create">Nouveau compte</a>';
+	print '<a class="tabAction" href="config.php">Configurer</a>';
+}
+if ($user->rights->banque->modifier) {
+	print '<a class="tabAction" href="categ.php">Catégories</a>';
+}
 
-print '<td align="center" width="20%"><a href="config.php">Configurer</a></td>';
-print '<td align="center" width="20%">-</td>';
-print '<td align="center" width="20%">';
-print '<a href="categ.php">Catégories</a></td>';
-print '<td align="center" width="20%">-</td>';
-
-print "</table>";
+print "</div>";
 
 
 $db->close();
