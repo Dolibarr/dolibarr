@@ -331,6 +331,17 @@ create table llx_bank_account
 
 
 
+create table llx_cond_reglement
+(
+  rowid           integer PRIMARY KEY,
+  sortorder       smallint,
+  actif           tinyint default 1,
+  libelle         varchar(255),
+  libelle_facture text,
+  fdm             tinyint,    -- reglement fin de mois
+  nbjour          smallint
+);
+
 create table llx_propal_model_pdf
 (
   nom         varchar(50) PRIMARY KEY,
@@ -615,24 +626,26 @@ create table llx_fa_pr
 
 create table llx_facture
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  facnumber       varchar(50) NOT NULL,
-  fk_soc          integer NOT NULL,
-  datec           datetime,  -- date de creation de la facture
-  datef           date,      -- date de la facture
-  paye            smallint default 0 NOT NULL,
-  amount          real     default 0 NOT NULL,
-  remise          real     default 0,
-  tva             real     default 0,
-  total           real     default 0,
-  total_ttc       real     default 0,
-  fk_statut       smallint default 0 NOT NULL,
-  author          varchar(50),
-  fk_user         integer,   -- createur de la facture
-  fk_user_author  integer,   -- createur de la propale
-  fk_user_valid   integer,   -- valideur de la propale
-  fk_projet       integer,   -- projet auquel est associé la facture
-  note       text,
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
+  facnumber          varchar(50) NOT NULL,
+  fk_soc             integer NOT NULL,
+  datec              datetime,  -- date de creation de la facture
+  datef              date,      -- date de la facture
+  paye               smallint default 0 NOT NULL,
+  amount             real     default 0 NOT NULL,
+  remise             real     default 0,
+  tva                real     default 0,
+  total              real     default 0,
+  total_ttc          real     default 0,
+  fk_statut          smallint default 0 NOT NULL,
+  author             varchar(50),
+  fk_user            integer,   -- createur de la facture
+  fk_user_author     integer,   -- createur de la propale
+  fk_user_valid      integer,   -- valideur de la propale
+  fk_projet          integer,   -- projet auquel est associé la facture
+  fk_cond_reglement  integer,   -- condition de reglement
+  date_lim_reglement date,      -- date limite de reglement
+  note               text,
 
   UNIQUE INDEX (facnumber)
 );
@@ -677,7 +690,7 @@ create table llx_product
   label           varchar(255),
   description     text,
   price           double,
-  tva_tx          double,
+  tva_tx          double default 19.6,
   fk_user_author  integer,
   envente         tinyint default 1,
   nbvente         integer default 0
@@ -842,6 +855,7 @@ create table llx_livre
   prix            decimal(15,4),
   fk_editeur      integer,
   fk_user_author  integer,
+  frais_de_port   tinyint default 1,
 
   UNIQUE(ref)
 );
@@ -918,6 +932,14 @@ create table llx_paiementfourn
   num_paiement      varchar(50),       -- numéro de paiement (cheque)
   note              text
 );
+
+
+insert into llx_cond_reglement values (1,1,1, "A réception","Réception de facture",0,0);
+insert into llx_cond_reglement values (2,2,1, "30 jours","Réglement à 30 jours",0,30);
+insert into llx_cond_reglement values (3,3,1, "30 jours fin de mois","Réglement à 30 jours fin de mois",1,30);
+insert into llx_cond_reglement values (4,4,1, "60 jours","Réglement à 60 jours",0,60);
+insert into llx_cond_reglement values (5,5,1, "60 jours fin de mois","Réglement à 60 jours fin de mois",1,60);
+
 
 insert into llx_sqltables (name, loaded) values ('llx_album',0);
 
