@@ -37,4 +37,28 @@ Renvoie le numéro de facture sous une forme numérique simple, la première factur
 
 }
 
+
+function facture_pdf_create($db, $facid)
+{
+  
+  $dir = $GLOBALS["DOCUMENT_ROOT"]."/includes/modules/facture/";
+
+  if (defined("FACTURE_ADDON_PDF"))
+    {
+
+      $file = "pdf_".FACTURE_ADDON_PDF.".modules.php";
+
+      $classname = "pdf_".FACTURE_ADDON_PDF;
+      require_once($dir.$file);
+
+      $obj = new $classname($db);
+
+      return $obj->write_pdf_file($facid);
+    }
+  else
+    {
+      return 0;
+    }
+}
+
 ?>
