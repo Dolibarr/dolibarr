@@ -249,9 +249,9 @@ class Fichinter
 	}
       
     }
+
   /*
-   *
-   *
+   *    \brief      Charge la liste des clients depuis la base
    *
    */
   function fetch_client()
@@ -260,6 +260,18 @@ class Fichinter
       $client->fetch($this->societe_id);
       $this->client = $client;	
     }
+
+  /*
+   *    \brief      Charge les infos du projet depuis la base
+   *
+   */
+ function fetch_projet()
+    {
+      $projet = new Project($this->db);
+      $projet->fetch($this->projet_id);
+      $this->projet = $projet->title;	
+    }
+    
 }    
 ?>
     
