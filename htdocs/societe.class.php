@@ -1179,6 +1179,46 @@ class Societe {
 	  }
       }
   }
+
+  /**
+   *    \brief  Verifie la validite du siren
+   */
+  function check_siren()
+  {
+    if (strlen($this->siren) == 9)
+      {
+	$sum = 0;
+
+	for ($i = 0 ; $i < 10 ; $i = $i+2)
+	  {
+	    $sum = $sum + substr($this->siren, (8 - $i), 1);
+	  }
+
+	for ($i = 1 ; $i < 9 ; $i = $i+2)
+	  {
+	    $ps = 2 * substr($this->siren, (8 - $i), 1);
+
+	    if ($ps > 9)
+	      {
+		$ps = substr($ps, 0,1) + substr($ps, 1 ,1);
+	      }
+	    $sum = $sum + $ps;
+	  }
+
+	if (substr($sum, -1) == 0)
+	  {
+	    return 0;
+	  }
+	else
+	  {
+	    return -1;
+	  }
+      }
+    else
+      {
+	return -2;
+      }
+  }
 }
 
 ?>
