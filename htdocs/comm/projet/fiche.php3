@@ -21,44 +21,25 @@
  */
 
 require("./pre.inc.php3");
-
 require("./project.class.php3");
 require("../propal.class.php3");
 
 llxHeader("","../");
-print "<table width=\"100%\">";
-print "<tr><td>Projets</td>";
-
-print "</table>";
 
 $db = new Db();
 
-if ($sortfield == "") {
-  $sortfield="lower(p.label)";
-}
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-
-
-if ($page == -1) { $page = 0 ; }
-$limit = 26;
-$offset = $limit * $page ;
-
 if ($action == 'create') {
-
+  print_titre("Nouveau projet");
 
   print '<form action="index.php3?socidp='.$socidp.'" method="post">';
   ?>
-
-
   <table border=1 cellpadding="1" cellspacing="0">
   <input type="hidden" name="action" value="create">
   <tr><td>Société</td><td>
-<?PHP 
-   $societe = new Societe($db);
- $societe->get_nom($socidp); 
- print $societe->nom; 
+  <?PHP 
+  $societe = new Societe($db);
+  $societe->get_nom($socidp); 
+  print '<a href="../fiche.php3?socid='.$socidp.'">'.$societe->nom.'</a>'; 
 
   ?>
   </td></tr>
@@ -67,7 +48,7 @@ if ($action == 'create') {
   ?>
   <tr><td>Référence</td><td><input size="10" type="text" name="ref"></td></tr>
   <tr><td>Titre</td><td><input size="30" type="text" name="title"></td></tr>
-  <tr><td colspan="2"><input type="submit"></td></tr>
+  <tr><td colspan="2"><input type="submit" value="Enregistrer"></td></tr>
   </table>
   </form>
   <?PHP
@@ -78,6 +59,9 @@ if ($action == 'create') {
    *
    *
    */
+
+  print_titre("Projet");
+
   $propales = array();
   $projet = new Project($db);
   $projet->fetch($id);
@@ -133,7 +117,7 @@ if ($action == 'create') {
 
 }
 
-
+$db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
