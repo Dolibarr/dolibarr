@@ -357,7 +357,7 @@ class pdf_crabe extends ModelePDFFactures
             	    $oper = 'LIQ';
             	    break;
             	  case 5:
-            	    $oper = 'WWW';
+            	    $oper = 'VAD';
             	    break;
             	  case 6:
             	    $oper = 'CB';
