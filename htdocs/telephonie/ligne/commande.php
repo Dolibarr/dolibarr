@@ -104,11 +104,13 @@ if ($_GET["id"] or $_GET["numero"])
 	  $ok_commande = 1;
 	}
 
-      print "1. ".$ok_commande .'<br>';
-      print "2. ".$ftx->commande_enable .'<br>';
-      print "3. ".$user->rights->telephonie->ligne_commander.'<br>';
-      print "4. ".($ligne->statut == 1 or $ligne->statut == -1) .'<br>';
-      print "5. ".($client_facture->verif_rib() or $ligne->mode_paiement == 'vir');
+      print '<table>';
+      print "<tr><td>Numéro correct </td><td> ".$ok_commande .'</td></tr>';
+      print "<tr><td>Commandes ouvertes auprès du fournisseur </td><td> ".$ftx->commande_enable .'</td></tr>';
+      print "<tr><td>Permission pour l'utilisateur de commander des lignes </td><td> ".$user->rights->telephonie->ligne_commander.'</td></tr>';
+      print "<tr><td>Statut de la ligne compatible </td><td> ".($ligne->statut == 1 or $ligne->statut == -1) .'</td></tr>';
+      print "<tr><td>Rib ok ou mode de règlement par virement </td><td> ".($client_facture->verif_rib() or $ligne->mode_paiement == 'vir').'</td></tr>';
+      print '</table>';
 
     }
 }
