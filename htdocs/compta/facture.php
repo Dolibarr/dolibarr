@@ -130,6 +130,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
 
 	  if ($HTTP_POST_VARS["commandeid"])
 	    {
+	      $facture->commandeid = $HTTP_POST_VARS["commandeid"];
 	      $facid = $facture->create($user);
 
 	      if ($facid)
