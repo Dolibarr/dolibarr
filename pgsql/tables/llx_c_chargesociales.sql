@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004	   Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2004	     Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ create table llx_c_chargesociales
 (
   id          SERIAL PRIMARY KEY,
   libelle     varchar(80),
-  deductible  tinyint NOT NULL default 0,
-	active      tinyint default 1  NOT NULL
+  deductible  integer NOT NULL default 0,
+	active      integer default 1  NOT NULL
 );
 
 

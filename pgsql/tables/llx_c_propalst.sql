@@ -25,6 +25,6 @@ create table llx_c_propalst
   id              SERIAL PRIMARY KEY,
 	code            varchar(12) unique not null,
   label           varchar(30),
-	active          tinyint default 1 not null
+	active          integer default 1 not null
 );
 
