@@ -30,6 +30,8 @@
 require("./pre.inc.php");
 
 $langs->load("companies");
+$langs->load("propal");
+$langs->load("bills");
 
 $user->getrights('propale');
 
@@ -58,7 +60,7 @@ if ($user->societe_id > 0)
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
   if ($user->rights->propale->supprimer ) 
     {
@@ -115,8 +117,8 @@ if ($_POST["action"] == 'add')
 if ($_GET["action"] == 'pdf')
 {
   $propal = new Propal($db);
-  $propal->fetch($propalid);
-  propale_pdf_create($db, $propalid, $propal->modelpdf);
+  $propal->fetch($_GET["propalid"]);
+  propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
 }
 
 if ($_POST["action"] == 'setstatut' && $user->rights->propale->cloturer) 
@@ -239,18 +241,22 @@ if ($_GET["propalid"])
 
   $societe = new Societe($db);
   $societe->fetch($propal->soc_id);
+  $h=0;
 
-  $head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-  $head[0][1] = "Proposition commerciale : $propal->ref";
-  $h = 1;
-  $a = 0;
+  $head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+  $head[$h][1] = $langs->trans("Prop").": $propal->ref";
+  $hselected=$h;
+  $h++;
+
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
   $head[$h][1] = $langs->trans("Note");
   $h++;
+
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
   $head[$h][1] = $langs->trans("Info");
+  $h++;
 
-  dolibarr_fiche_head($head, $a, $societe->nom);
+  dolibarr_fiche_head($head, $hselected, $societe->nom);
 
   /*
    * Confirmation de la suppression de la propale
@@ -303,7 +309,7 @@ if ($_GET["propalid"])
 	      $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
 	    }
 	  print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-	  print '<td>'.$langs->trans("Status").'</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
+	  print '<td>'.$langs->trans("Status").'</td><td align="left"><b>'.$obj->lst.'</b></td></tr>';
 
 	  print '<tr><td>'.$langs->trans("Date").'</td><td colspan="3">'.strftime("%A %d %B %Y",$propal->date);
 	  if ($propal->fin_validite)
@@ -317,9 +323,9 @@ if ($_GET["propalid"])
 	  $author->fetch('');
 	  print $author->fullname.'</td></tr>';
 
-	  print "<tr><td>Destinataire</td><td colspan=\"3\">$obj->firstname $obj->name &lt;$obj->email&gt;</td>";
+	  print "<tr><td>".$langs->trans("To")."</td><td colspan=\"3\">$obj->firstname $obj->name &lt;$obj->email&gt;</td>";
 
-	  print '<td valign="top" colspan="2" width="50%" rowspan="5">'.$langs->trans("Note").' :<br>'. nl2br($propal->note)."</td></tr>";
+	  print '<td valign="top" colspan="2" width="50%" rowspan="4">'.$langs->trans("Note").' :<br>'. nl2br($propal->note)."</td></tr>";
 	  
 	  if ($propal->projet_id) 
 	    {
@@ -364,7 +370,7 @@ if ($_GET["propalid"])
 	   *
 	   */
 
-	  print "</table>";
+	  print "</table><br>";
 
 	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
 	    {
@@ -375,7 +381,7 @@ if ($_GET["propalid"])
 	  if ($_GET["action"] == 'statut') 
 	    {
 	      print "<form action=\"propal.php?propalid=$propal->id\" method=\"post\">";
-	      print '<br><table class="border" cellpadding="3" cellspacing="0">';
+	      print '<br><table class="border">';
 	      print '<tr><td>Clôturer comme : <input type="hidden" name="action" value="setstatut">';
 	      print "<select name=\"statut\">";
 	      print "<option value=\"2\">Signée";
@@ -386,20 +392,16 @@ if ($_GET["propalid"])
 	      print '</textarea></td></tr><tr><td align="center"><input type="submit" value="Valider"></td>';
 	      print "</tr></table></form>";
 	    }
-	  /*
-	   *
-	   *
-	   */
 
 	  /*
 	   * Produits
 	   */
-	  print_titre("Produits");
+	  print_titre($langs->trans("ProductsAndServices"));
 	  print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-	  print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
-	  print "<TR class=\"liste_titre\">";
-	  print '<td>'.$langs->trans("Ref").'</td><td>Produit</td>';
-	  print '<td align="center">Tva</td><td align="center">Qté.</td><td align="center">Remise</td><td align="right">P.U.</td>';
+	  print '<table class="noborder" width="100%">';
+	  print "<tr class=\"liste_titre\">";
+	  print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("ProductOrService").'</td>';
+	  print '<td align="center">'.$langs->trans("VAT").'</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">Remise</td><td align="right">P.U.</td>';
 	  if ($propal->statut == 0)
 	    {
 	      print "<td>&nbsp;</td>";
@@ -421,7 +423,7 @@ if ($_GET["propalid"])
 		{
 		  $objp = $db->fetch_object($result);
 		  $var=!$var;
-		  print "<TR $bc[$var]>";
+		  print "<tr $bc[$var]>";
 		  print "<td>[$objp->ref]</td>\n";
 		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</a></td>';
 		  print '<td align="center">'.$objp->tva_tx.' %</td>';
@@ -451,12 +453,12 @@ if ($_GET["propalid"])
 		{
 		  $objp = $db->fetch_object();
 		  $var=!$var;
-		  print "<TR $bc[$var]><td>&nbsp;</td>\n";
+		  print "<tr $bc[$var]><td>&nbsp;</td>\n";
 		  print '<td>'.$objp->description.'</td>';
 		  print '<td align="center">'.$objp->tva_tx.' %</td>';
 		  print "<td align=\"center\">".$objp->qty."</td>\n";
 		  print '<td align="center">'.$objp->remise_percent.' %</td>';
-		  print "<TD align=\"right\">".price($objp->subprice)."</td>";
+		  print "<td align=\"right\">".price($objp->subprice)."</td>";
 		  if ($propal->statut == 0 && $user->rights->propale->creer)
 		    {
 		      print '<td align="center"><a href="propal.php?propalid='.$propal->id.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">';
@@ -492,15 +494,14 @@ if ($_GET["propalid"])
 		}
 	      else
 		{
-		  print $db->error();
+		  dolibarr_print_error($db);
 		}
 
+
 	      /*
-	       * Produits génériques
-	       *
+	       * Ligne d'ajout de produits/services personalisé
 	       */
 	      $var=!$var;
-
 
 	      print '<tr '.$bc[$var].'>';
 	      print '<td>&nbsp;</td>';
@@ -514,8 +515,7 @@ if ($_GET["propalid"])
 	      print '</tr>';
 
 	      /*
-	       * Produits
-	       *
+	       * Ligne d'ajout de produits/services prédéfinis
 	       */
 	      $var=!$var;
 	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"2\"><select name=\"idprod\">$opt</select></td>";
@@ -526,43 +526,43 @@ if ($_GET["propalid"])
 	      print "</tr>\n";
 	    }
 	  print "</table>";
-	  print '</form>';
+	  print '</form><br>';
 
+	  print '</div>';
 
 	  /*
-	   * Actions
+	   * Barre d'actions
 	   */
-	  print '</div>';
 	  if ($propal->statut < 2)
 	    {
 	      print '<p><div class="tabsAction">';
 	  
+          // Valid
 	      if ($propal->statut == 0)
 		{
-		  if ($user->rights->propale->supprimer)
+		  if ($user->rights->propale->valider)
 		    {
-		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=delete\">Supprimer</a>";
+		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;valid=1\">".$langs->trans("Valid")."</a>";
 		    }
 
 		}
-	      else
-		{
-		  if ($propal->statut == 1 && $user->rights->propale->cloturer)
-		    {
-		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=statut\">Clôturer</a>";
-		    }
-		} 
 
-	      /*
-	       *
-	       */
+          // Save
+	     if ($propal->statut == 1)
+		{
+		  if ($user->rights->propale->creer)
+		    {
+		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=modif\">".$langs->trans("Save")."</a>";
+		    }
+		}
+
+          // Build PDF
 	      if ($propal->statut < 2 && $user->rights->propale->creer)
 		{
-		  print '<a class="tabAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">Générer</a>';
+		  print '<a class="tabAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">'.$langs->trans("BuildPDF").'</a>';
 		}	   
-	      /*
-	       *
-	       */
+
+          // Send
 	      if ($propal->statut == 1)
 		{
 		  $file = PROPALE_OUTPUTDIR. "/$obj->ref/$obj->ref.pdf";
@@ -575,27 +575,29 @@ if ($_GET["propalid"])
 
 		    }
 		}
-	      /*
-	       * 
-	       */
+
+          // Delete
 	      if ($propal->statut == 0)
 		{
-		  if ($user->rights->propale->valider)
+		  if ($user->rights->propale->supprimer)
 		    {
-		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;valid=1\">Valider</a>";
-		    }
-
-		}
-	      elseif ($propal->statut == 1)
-		{
-		  if ($user->rights->propale->creer)
-		    {
-		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=modif\">Modifier</a>";
+		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 		    }
 		}
 
 	      print "</div>";
 	    }
+
+          // Close
+	      if ($propal->statut != 0)
+		{
+		  if ($propal->statut == 1 && $user->rights->propale->cloturer)
+		    {
+		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=statut\">".$langs->trans("Close")."</a>";
+		    }
+		} 
+
+
 
 	  /*
 	   * Envoi de la propale par mail
@@ -640,6 +642,7 @@ if ($_GET["propalid"])
 	      $actioncomm->note        = "Envoyée à ".$_POST["sendto"];
 	      $actioncomm->add($user);
 	    }
+
 	  /*
 	   *
 	   */
@@ -649,14 +652,15 @@ if ($_GET["propalid"])
 	      print '<input type="hidden" name="action" value="setpdfmodel">';
 	    }	  
 	  print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
-	  print_titre('<a href="propal/document.php?id='.$propal->id.'">Documents</a>');
+	  print_titre('<a href="propal/document.php?id='.$propal->id.'">'.$langs->trans("Document").'</a>');
 
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-	  
+
 	  /*
 	   *
 	   */
 
+	  print '<table class="border" width="100%">';
+	  
 	  $file = PROPALE_OUTPUTDIR . "/$propal->ref/$propal->ref.pdf";
 	  if (file_exists($file))
 	    {
@@ -669,11 +673,6 @@ if ($_GET["propalid"])
 	      print '<td align="right">'.filesize($file). ' bytes</td>';
 	      print '<td align="right">'.strftime("%d %B %Y %H:%M:%S",filemtime($file)).'</td></tr>';
 	    }  
-	  /*
-	   *
-	   *
-	   */
-
 
 	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
 	    {
@@ -681,10 +680,11 @@ if ($_GET["propalid"])
 	      $html = new Form($db);
 	      $modelpdf = new Propal_Model_pdf($db);
 	      $html->select_array("modelpdf",$modelpdf->liste_array(),$propal->modelpdf);
-	      print '</td><td colspan="2"><input type="submit" value="Changer">';
+	      print '</td><td colspan="2"><input type="submit" value="'.$langs->trans("Save").'">';
 	      print '</td></tr>';
 	    }
 	  print "</table>\n";
+
 	  /*
 	   *
 	   */
@@ -692,7 +692,7 @@ if ($_GET["propalid"])
 	  if ($nb_commande > 0)
 	    {
 	      $coms = $propal->commande_liste_array();
-	      print '<br><table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<br><table class="border" width="100%">';
 
 	      if ($nb_commande == 1)
 
@@ -739,8 +739,8 @@ if ($_GET["propalid"])
 		{
 		  print_titre("Propale envoyée");
 
-		  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-		  print "<tr><td>".$langs->trans("Date")."</td><td>".$langs->trans("Author")."</td></TR>\n";
+		  print '<table class="border" width="100%">';
+		  print "<tr><td>".$langs->trans("Date")."</td><td>".$langs->trans("Author")."</td></tr>\n";
 	      
 
 		  while ($i < $num)
@@ -770,6 +770,7 @@ if ($_GET["propalid"])
 	    {
 	      print '</form>';
 	    }
+
 	  /*
 	   *
 	   *
@@ -802,7 +803,7 @@ if ($_GET["propalid"])
 	      print "<tr><td valign=\"top\">Message</td><td colspan=\"6\"><textarea rows=\"5\" cols=\"40\" name=\"message\">$message</textarea></td></tr>";
 	      
 	      print "</table>";
-	      print "<input type=\"submit\" value=\"Envoyer\">";
+	      print "<input type=\"submit\" value=\"".$langs->trans("Send")."\">";
 	      print "</form>";
 	    }
 	  

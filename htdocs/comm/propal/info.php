@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,8 @@
 
 require("./pre.inc.php");
 
+$langs->load("propal");
+
 $user->getrights('propale');
 if (!$user->rights->propale->lire)
   accessforbidden();
@@ -46,19 +49,22 @@ if ($_GET["propalid"])
   
   $societe = new Societe($db);
   $societe->fetch($propal->soc_id);
+  $h=0;
   
-  $head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-  $head[0][1] = "Proposition commerciale : $propal->ref";
-  $h = 1;
-  $a = 0;
-  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
-  $head[$h][1] = "Note";
+  $head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+  $head[$h][1] = $langs->trans("Prop").": $propal->ref";
   $h++;
+
+  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
+  $head[$h][1] = $langs->trans("Note");
+  $h++;
+
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
-  $head[$h][1] = "Info";
-  $a=$h;
+  $head[$h][1] = $langs->trans("Info");
+  $hselected=$h;
+  $h++;
   
-  dolibarr_fiche_head($head, $a, $societe->nom);
+  dolibarr_fiche_head($head, $hselected, $societe->nom);
   
   $propal->info($propal->id);
   dolibarr_print_object_info($propal);

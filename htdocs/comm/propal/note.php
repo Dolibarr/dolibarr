@@ -28,13 +28,15 @@
 */
 
 require("./pre.inc.php");
+require("../../propal.class.php");
+
+$langs->load("propal");
 
 $user->getrights('propale');
 if (!$user->rights->propale->lire)
   accessforbidden();
 
 
-require("../../propal.class.php");
 /*
  * Sécurité accés client
  */
@@ -71,16 +73,20 @@ if ($_GET["propalid"])
       $societe = new Societe($db);
       if ( $societe->fetch($propal->soc_id) ) 
 	{
-
-	  $head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-	  $head[0][1] = "Proposition commerciale : $propal->ref";
-	  $h = 1;
-	  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
-	  $head[$h][1] = "Note";
-	  $hselected = 1;
-	  $h++;
-	  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
-	  $head[$h][1] = "Info";
+      $h=0;
+      
+      $head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+      $head[$h][1] = $langs->trans("Prop").": $propal->ref";
+      $h++;
+    
+      $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
+      $head[$h][1] = $langs->trans("Note");
+      $hselected=$h;
+      $h++;
+    
+      $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
+      $head[$h][1] = $langs->trans("Info");
+      $h++;
 	   
 	  dolibarr_fiche_head($head, $hselected, $societe->nom);
                   	  

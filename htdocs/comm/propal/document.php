@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +27,15 @@
 */
 
 require("./pre.inc.php");
+require_once("../../propal.class.php");
 
 $user->getrights('propale');
+
 if (!$user->rights->propale->lire)
   accessforbidden();
 
 
-require_once("../../propal.class.php");
+
 llxHeader();
 
 function do_upload ($upload_dir)
@@ -140,13 +143,14 @@ if ($id > 0)
     }
   else
     {
-      print $db->error() . "<br>" . $sql;
+      dolibarr_print_error($db);
     }
 }
 else
 {
   print "Erreur";
 }
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
