@@ -205,86 +205,82 @@ else
 	{ 
 	  if ($action <> 'edit' && $action <> 're-edit')
 	    {
-	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-	  print '<tr class="liste_titre">';
-	  print '<form action="liste.php?type='.$product->type.'" method="post">';
-	  print '<td valign="center">Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
-	  print '</form><form action="liste.php" method="post">';
-	  print '<td>Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';
-	  print '</form><td>&nbsp;</td></tr></table>';
+	      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<tr class="liste_titre">';
+	      print '<form action="liste.php?type='.$product->type.'" method="post">';
+	      print '<td valign="center">Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
+	      print '</form><form action="liste.php" method="post">';
+	      print '<td>Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';
+	      print '</form><td>&nbsp;</td></tr></table>';
 
 
-	  print_fiche_titre('Fiche '.$types[$product->type].' : '.$product->ref, $mesg);
+	      print_fiche_titre('Fiche '.$types[$product->type].' : '.$product->ref, $mesg);
       
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-	  print "<tr>";
-	  print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
-	  print '<td>';
-	  if ($product->envente)
-	    {
-	      print "En vente";
-	    }
-	  else
-	    {
-	      print "<b>Cet article n'est pas en vente</b>";
-	    }
-	  print '</td></tr>';
-	  print "<td>Libellé</td><td>$product->libelle</td>";
-	  print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
-	  print '<tr><td>Prix de vente</td><TD>'.price($product->price).'</td>';
-	  print '<td valign="top" rowspan="4">';
-	  print "Propositions commerciales : ".$product->count_propale();
-	  print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
-	  print "<br>Factures : ".$product->count_facture();
-	  print '</td></tr>';
-
-	  print "<tr>".'<td>Taux TVA</td><TD>'.$product->tva_tx.' %</td></tr>';
-	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
-
-	  if ($product->type == 1)
-	    {
-	      print "<tr>".'<td>Durée</td><TD>'.$product->duration_value.'&nbsp;';
-	      if ($product->duration_value > 1)
+	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	      print "<tr>";
+	      print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
+	      print '<td>';
+	      if ($product->envente)
 		{
-		  $plu = "s";
+		  print "En vente";
 		}
-	      switch ($product->duration_unit) 
+	      else
 		{
-		case "d":
-		  print "jour$plu&nbsp;";
-		  break;
-		case "w":
-		  print "semaine$plu&nbsp;";
-		  break;
-		case "m":
-		  print 'mois&nbsp;';
-		  break;
-		case "y":
-		  print "an$plu&nbsp;";
-		  break;
+		  print "<b>Cet article n'est pas en vente</b>";
 		}
 	      print '</td></tr>';
+	      print "<td>Libellé</td><td>$product->libelle</td>";
+	      print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
+	      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
+	      print '<td valign="top" rowspan="4">';
+	      print "Propositions commerciales : ".$product->count_propale();
+	      print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
+	      print "<br>Factures : ".$product->count_facture();
+	      print '</td></tr>';
+
+	      print "<tr>".'<td>Taux TVA</td><TD>'.$product->tva_tx.' %</td></tr>';
+	      print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
+
+	      if ($product->type == 1)
+		{
+		  print "<tr>".'<td>Durée</td><TD>'.$product->duration_value.'&nbsp;';
+		  if ($product->duration_value > 1)
+		    {
+		      $plu = "s";
+		    }
+		  switch ($product->duration_unit) 
+		    {
+		    case "d":
+		      print "jour$plu&nbsp;";
+		      break;
+		    case "w":
+		      print "semaine$plu&nbsp;";
+		      break;
+		    case "m":
+		      print 'mois&nbsp;';
+		      break;
+		    case "y":
+		      print "an$plu&nbsp;";
+		      break;
+		    }
+		  print '</td></tr>';
+		}
+
+	      print "</table>";
 	    }
 
-	  print "</table>";
-	}
-
-      if ($action == 'edit_price' && $user->rights->produit->creer)
-	{
-	  print '<hr><div class="titre">Nouveau prix</div><br>';
-
-	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
-	  print '<input type="hidden" name="action" value="update_price">';
-	  
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-
-	  print "<tr>".'<td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
-
-	  print "<tr>".'<td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
-	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
-	  print '</table>';
-	  print '</form>';
-	}    
+	  if ($action == 'edit_price' && $user->rights->produit->creer)
+	    {
+	      print '<hr><div class="titre">Nouveau prix</div><br>';
+	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	      print '<input type="hidden" name="action" value="update_price">';
+	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<tr><td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
+	      print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
+	      print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+	      print '</table>';
+	      print '</form>';
+	    }    
 	}
 
     
