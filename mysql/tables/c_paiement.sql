@@ -19,10 +19,19 @@
 -- $Source$
 --
 -- ========================================================================
+
+--
+-- Type :
+--
+-- 0 : entrée d'argent
+-- 1 : sortie d'argent
+-- 2 : entrée ou sortie d'argent
+
 create table c_paiement
 (
   id         integer PRIMARY KEY,
-  libelle    varchar(30)
+  libelle    varchar(30),
+  type       integer
 );
 
 
