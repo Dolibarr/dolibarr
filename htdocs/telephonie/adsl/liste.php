@@ -43,7 +43,7 @@ if ($user->societe_id > 0)
 
 $offset = $conf->liste_limit * $page ;
 if ($sortorder == "") $sortorder="ASC";
-if ($sortfield == "") $sortfield="la.statut";
+if ($sortfield == "") $sortfield="la.statut ASC, s.nom";
 
 /*
  * Mode Liste
