@@ -39,6 +39,8 @@ create table llx_adherent
   ville            varchar(50),
   pays             varchar(50),
   email            varchar(255),
+  login            varchar(50), -- login utilise pour editer sa fiche
+  pass             varchar(50), -- pass utilise pour editer sa fiche
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer NOT NULL,
   fk_user_valid    integer NOT NULL,
