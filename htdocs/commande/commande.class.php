@@ -77,6 +77,12 @@ class Commande
 	}
 
       $this->soc_id = $propal->soc_id;
+
+      /* Définit la société comme un client */
+      $soc = new Societe($this->db);
+      $soc->id = $this->soc_id;
+      $soc->set_as_client();
+
       $this->propale_id = $propal->id;
       return $this->create($user);
     }
@@ -115,12 +121,12 @@ class Commande
 		}
 	      else
 		{
-		  print "Impossible de lire " ;
+		  print "Impossible de lire le module de numérotation";
 		}
 	    }
 	  else
 	    {
-	      print "Impossible de lire " ;
+	      print "Le module de numérotation n'est pas définit" ;
 	    }
 	}
       return $result ;
