@@ -101,15 +101,15 @@
 	  <tr id="public">
 	    <select name="public">
 	      <script language="php">
-		if ($HTTP_POST_VARS["public"] == 0)
+		if ($HTTP_POST_VARS["public"] == "FALSE")
 		{
-		print '&lt;option value="1"&gt;oui/yes&lt;/option&gt;';
-		print '&lt;option value="0" SELECTED&gt;non/no&lt;/option&gt;';
+		print '&lt;option value="TRUE"&gt;oui/yes&lt;/option&gt;';
+		print '&lt;option value="FALSE" SELECTED&gt;non/no&lt;/option&gt;';
 		}
 		else
 		{
-		print '&lt;option value="1" SELECTED&gt;oui/yes&lt;/option&gt;';
-		print '&lt;option value="0"&gt;non/no&lt;/option&gt;';
+		print '&lt;option value="TRUE" SELECTED&gt;oui/yes&lt;/option&gt;';
+		print '&lt;option value="FALSE"&gt;non/no&lt;/option&gt;';
 		}
 	    </script>
 	    </select>
