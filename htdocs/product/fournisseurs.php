@@ -87,6 +87,13 @@ if ($_GET["id"])
 	  /*
 	   *  En mode visu
 	   */
+	  // Zone recherche
+	  print '<div class="formsearch">';
+	  print '<form action="liste.php" method="post">';
+	  print '<input type="hidden" name="type" value="'.$product->type.'">';
+	  print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"> &nbsp;';
+	  print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
+	  print '</form></div>';	  
 	  
 	  $h=0;
 	  
