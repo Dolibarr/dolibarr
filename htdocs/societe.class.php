@@ -177,6 +177,10 @@ class Societe {
     if (trim($this->client))          { $sql .= ",client = '" . $this->client ."'"; }
     if (trim($this->fournisseur))     { $sql .= ",fournisseur = '" . $this->fournisseur ."'"; }
     if ($user)                        { $sql .= ",fk_user_modif = '".$user->id."'"; }
+
+
+    $sql .= " , code_client = '". strtoupper(ereg_replace("[^[:alnum:]]", "", $this->code_client)) ."'";
+
     $sql .= " WHERE idp = '" . $id ."'";
 
     if ($this->db->query($sql)) 
@@ -209,7 +213,7 @@ class Societe {
       $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
       $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
       $sql .= ", e.libelle as effectif, e.id as effectif_id";
-      $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique";
+      $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique, s.code_client";
       $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client";
       $sql .= ", p.libelle as pays";
       $sql .= ", st.libelle as stcomm";
@@ -255,6 +259,8 @@ class Societe {
 	      $this->siret     = $obj->siret;
 	      $this->ape       = $obj->ape;
 	      $this->capital   = $obj->capital;
+
+	      $this->code_client = $obj->code_client;
 
 	      $this->tva_intra      = $obj->tva_intra;
 	      $this->tva_intra_code = substr($obj->tva_intra,0,2);
