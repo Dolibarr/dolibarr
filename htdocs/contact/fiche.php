@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,10 @@
  */
 
 /**
-   \file       htdocs/contact/fiche.php
-   \ingroup    societe
-   \brief      Onglet général d'un contact
-   \version    $Revision$
+        \file       htdocs/contact/fiche.php
+        \ingroup    societe
+        \brief      Onglet général d'un contact
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -37,6 +37,7 @@ $langs->load("companies");
 $langs->load("users");
 
 $error = array();
+$socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
 
 
 if ($_GET["action"] == 'create_user' && $user->admin) 
@@ -54,12 +55,18 @@ if ($_GET["action"] == 'create_user' && $user->admin)
 
 if ($_POST["action"] == 'add') 
 {
-  if (! $_POST["name"] && ! $_POST["firstname"])
+  if (! $_POST["name"])
     {
-      array_push($error,'Le champ nom ou prénom est obligatoire.');
+      array_push($error,$langs->trans("ErrorFieldRequired",$langs->trans("Lastname")));
       $_GET["action"]="create";
     }
-  else
+  if (! $_POST["firstname"])
+    {
+      array_push($error,$langs->trans("ErrorFieldRequired",$langs->trans("Firstname")));
+      $_GET["action"]="create";
+    }
+
+  if ($_POST["name"] && $_POST["firstname"])
     {
       $contact = new Contact($db);
       
@@ -132,6 +139,7 @@ if ($_POST["action"] == 'update')
     }
 }
 
+
 /*
  *
  *
@@ -140,6 +148,11 @@ if ($_POST["action"] == 'update')
 llxHeader();
 $form = new Form($db);
 
+if ($socid)
+{
+  $objsoc = new Societe($db);
+  $objsoc->fetch($socid);
+}
 
 // Affiche les erreurs
 if (sizeof($error))
@@ -195,13 +208,6 @@ if ($_GET["action"] == 'delete')
   print '<br>';
 }
 
-if ($_GET["socid"] > 0)
-{
-  $objsoc = new Societe($db);
-  $objsoc->fetch($_GET["socid"]);
-}
-
-
 if ($_GET["action"] == 'create')
 {
   /*
@@ -216,16 +222,16 @@ if ($_GET["action"] == 'create')
   print '<input type="hidden" name="action" value="add">';
   print '<table class="border" width="100%">';
 
-  if ($_GET["socid"] > 0)
+  if ($socid)
     {
-
-      /* On remplit avec le numéro de la société par défaut */
+      // On remplit avec le numéro de la société par défaut
       if (strlen(trim($contact->phone_pro)) == 0)
-	{
+    	{
 	  $contact->phone_pro = $objsoc->tel;
-	}
+	    }
       
-      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">'.$objsoc->nom.'</td>';
+      print '<tr><td>'.$langs->trans("Company").'</td>';
+      print '<td colspan="5"><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$socid.'">'.$objsoc->nom.'</a></td>';
       print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
       print '</td></tr>';
     }
