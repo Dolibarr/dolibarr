@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (c) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (c) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -23,14 +23,16 @@
  * $Source$
  */
 
-/*!	    \file       htdocs/html.form.class.php
-		\brief      Fichier de la classe des fonctions prédéfinie de composants html
-		\version    $Revision$
+/*!
+  \file       htdocs/html.form.class.php
+  \brief      Fichier de la classe des fonctions prédéfinie de composants html
+  \version    $Revision$
 */
 
 
-/*!     \class Form
-		\brief Classe permettant la génération de composants html
+/*!
+  \class Form
+  \brief Classe permettant la génération de composants html
 */
 
 class Form
@@ -39,7 +41,7 @@ class Form
   var $errorstr;
   
   /*!	\brief     Constructeur
-		\param     DB      handler d'accès base de donnée
+    \param     DB      handler d'accès base de donnée
   */
 	
   function Form($DB)
@@ -71,47 +73,47 @@ class Form
     $sql .= "ORDER BY code_pays, code ASC";
     
     if ($this->db->query($sql))
-    {
+      {
         print '<select name="'.$htmlname.'">';
         $num = $this->db->num_rows();
         $i = 0;
         if ($num)
-        {
+	  {
             $pays='';
             while ($i < $num)
-            {
+	      {
                 $obj = $this->db->fetch_object();
                 if ($obj->code == 0) {
-                    print '<option value="0">&nbsp;</option>';
+		  print '<option value="0">&nbsp;</option>';
                 }
                 else {
-                    if ($pays == '' || $pays != $obj->libelle_pays) {
-                        // Affiche la rupture
-                        print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
-                        $pays=$obj->libelle_pays;
-                    }
+		  if ($pays == '' || $pays != $obj->libelle_pays) {
+		    // Affiche la rupture
+		    print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
+		    $pays=$obj->libelle_pays;
+		  }
     
-                    if ($selected > 0 && $selected == $obj->rowid)
+		  if ($selected > 0 && $selected == $obj->rowid)
                     {
-                        print '<option value="'.$obj->rowid.'" selected>';
+		      print '<option value="'.$obj->rowid.'" selected>';
                     }
-                    else
+		  else
                     {
-                        print '<option value="'.$obj->rowid.'">';
+		      print '<option value="'.$obj->rowid.'">';
                     }
-                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                    print $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
-                    print '</option>';
+		  // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+		  print $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+		  print '</option>';
                 }
                 $i++;
-            }
-        }
+	      }
+	  }
         print '</select>';
-    }
+      }
     else {
-        dolibarr_print_error($this->db);
+      dolibarr_print_error($this->db);
     }
- }
+  }
   
   /*
    *    \brief      Retourne la liste déroulante des regions actives dont le pays est actif
@@ -131,7 +133,7 @@ class Form
 
     if ($this->db->query($sql))
       {
-    print '<select name="'.$htmlname.'">';
+	print '<select name="'.$htmlname.'">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
@@ -162,7 +164,7 @@ class Form
 		$i++;
 	      }
 	  }
-    print '</select>';
+	print '</select>';
       }
     else {
       dolibarr_print_error($this->db);
@@ -186,38 +188,38 @@ class Form
     $sql .= " ORDER BY code ASC;";
     
     if ($this->db->query($sql))
-    {
+      {
         print '<select name="'.$htmlname.'">';
         $num = $this->db->num_rows();
         $i = 0;
         if ($num)
-        {
+	  {
             $foundselected=false;
             while ($i < $num)
-            {
+	      {
                 $obj = $this->db->fetch_object();
                 if ($selected > 0 && $selected == $obj->rowid)
-                {
+		  {
                     $foundselected=true;
                     print '<option value="'.$obj->rowid.'" selected>';
-                }
+		  }
                 else
-                {
+		  {
                     print '<option value="'.$obj->rowid.'">';
-                }
+		  }
                 // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                 if ($obj->code) { print $obj->code . ' - '; }
                 print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
                 print '</option>';
                 $i++;
-            }
-        }
+	      }
+	  }
         print '</select>';
         return 0;
-    }
+      }
     else {
-        dolibarr_print_error($this->db);
-        return 1;
+      dolibarr_print_error($this->db);
+      return 1;
     }
   }
 
@@ -234,23 +236,23 @@ class Form
     $langs_available=$langs->get_available_languages();
     
     print '<select name="'.$htmlname.'">';
-	$num = count($langs_available);
-	$i = 0;
-	if ($num)
+    $num = count($langs_available);
+    $i = 0;
+    if ($num)
+      {
+	while ($i < $num)
 	  {
-	    while ($i < $num)
+	    if ($selected == $langs_available[$i])
 	      {
-		if ($selected == $langs_available[$i])
-		  {
-		    print '<option value="'.$langs_available[$i].'" selected>'.$langs_available[$i].'</option>';
-		  }
-		else
-		  {
-		    print '<option value="'.$langs_available[$i].'">'.$langs_available[$i].'</option>';
-		  }
-		$i++;
+		print '<option value="'.$langs_available[$i].'" selected>'.$langs_available[$i].'</option>';
 	      }
+	    else
+	      {
+		print '<option value="'.$langs_available[$i].'">'.$langs_available[$i].'</option>';
+	      }
+	    $i++;
 	  }
+      }
     print '</select>';
   }
 
@@ -269,7 +271,7 @@ class Form
 
     if ($this->db->query($sql))
       {
-    print '<select name="'.$htmlname.'">';
+	print '<select name="'.$htmlname.'">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
@@ -277,18 +279,18 @@ class Form
 	    while ($i < $num)
 	      {
 		$obj = $this->db->fetch_object();
-		  if ($selected > 0 && $selected == $obj->idp)
-		    {
-		      print '<option value="'.$obj->idp.'" selected>'.$obj->nom.'</option>';
-		    }
-		  else
-		    {
-		      print '<option value="'.$obj->idp.'">'.$obj->nom.'</option>';
-		    }
+		if ($selected > 0 && $selected == $obj->idp)
+		  {
+		    print '<option value="'.$obj->idp.'" selected>'.$obj->nom.'</option>';
+		  }
+		else
+		  {
+		    print '<option value="'.$obj->idp.'">'.$obj->nom.'</option>';
+		  }
 		$i++;
 	      }
 	  }
-    print '</select>';
+	print '</select>';
       }
     else {
       dolibarr_print_error($this->db);
@@ -310,33 +312,34 @@ class Form
 
     if ($this->db->query($sql))
       {
-    print '<select name="'.$htmlname.'">';
+	print '<select name="'.$htmlname.'">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
 	  {
 	    while ($i < $num)
 	      {
-  		  $obj = $this->db->fetch_object();
+		$obj = $this->db->fetch_object();
 
-		  if ($selected && $selected == $obj->idp)
-		    {
-		      print '<option value="'.$obj->idp.'" selected>'.$obj->name.' '.$obj->firstname.'</option>';
-		    }
-		  else
-		    {
-		      print '<option value="'.$obj->idp.'">'.$obj->name.' '.$obj->firstname.'</option>';
-		    }
+		if ($selected && $selected == $obj->idp)
+		  {
+		    print '<option value="'.$obj->idp.'" selected>'.$obj->name.' '.$obj->firstname.'</option>';
+		  }
+		else
+		  {
+		    print '<option value="'.$obj->idp.'">'.$obj->name.' '.$obj->firstname.'</option>';
+		  }
 		$i++;
 	      }
 	  }
-    print '</select>';
+	print '</select>';
       }
-    else {
-      dolibarr_print_error($this->db);
-    }
+    else
+      {
+	dolibarr_print_error($this->db);
+      }
   }
-
+  
   
   /*
    *    \brief      Retourne le nom d'un pays
@@ -366,8 +369,6 @@ class Form
 	
   }
 
-
-
   /*
    *    \brief      Retourne la liste déroulante des civilite actives
    *    \param      selected    civilite pré-sélectionnée
@@ -382,34 +383,34 @@ class Form
     $sql .= " WHERE active = 1";
     
     if ($this->db->query($sql))
-    {
+      {
         print '<select name="civilite_id">';
         print '<option value="">&nbsp;</option>';
         $num = $this->db->num_rows();
         $i = 0;
         if ($num)
-        {
+	  {
             while ($i < $num)
-            {
+	      {
                 $obj = $this->db->fetch_object();
                 if ($selected == $obj->code)
-                {
+		  {
                     print '<option value="'.$obj->code.'" selected>';
-                }
+		  }
                 else
-                {
+		  {
                     print '<option value="'.$obj->code.'">';
-                }
+		  }
                 // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                 print ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->civilite!='-'?$obj->civilite:''));
                 print '</option>';
                 $i++;
-            }
-        }
+	      }
+	  }
         print '</select>';
-    }
+      }
     else {
-        dolibarr_print_error($this->db);
+      dolibarr_print_error($this->db);
     }
     
   }
@@ -430,45 +431,45 @@ class Form
     $sql .= " AND f.active = 1 AND p.active = 1 ORDER BY code_pays, code ASC";
     
     if ($this->db->query($sql))
-    {
+      {
         print '<select name="forme_juridique_code">';
         $num = $this->db->num_rows();
         $i = 0;
         if ($num)
-        {
+	  {
             $pays='';
             while ($i < $num)
-            {
+	      {
                 $obj = $this->db->fetch_object();
                 if ($obj->code == 0) {
-                    print '<option value="0">&nbsp;</option>';
+		  print '<option value="0">&nbsp;</option>';
                 }
                 else {
-                    if ($pays == '' || $pays != $obj->libelle_pays) {
-                        // Affiche la rupture
-                        print '<option value="0">----- '.$obj->libelle_pays." -----</option>\n";
-                        $pays=$obj->libelle_pays;
-                    }
+		  if ($pays == '' || $pays != $obj->libelle_pays) {
+		    // Affiche la rupture
+		    print '<option value="0">----- '.$obj->libelle_pays." -----</option>\n";
+		    $pays=$obj->libelle_pays;
+		  }
     
-                    if ($selected > 0 && $selected == $obj->code)
+		  if ($selected > 0 && $selected == $obj->code)
                     {
-                        print '<option value="'.$obj->code.'" selected>';
+		      print '<option value="'.$obj->code.'" selected>';
                     }
-                    else
+		  else
                     {
-                        print '<option value="'.$obj->code.'">';
+		      print '<option value="'.$obj->code.'">';
                     }
-                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                    print $obj->code . ' - ' .($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
-                    print '</option>';
+		  // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+		  print $obj->code . ' - ' .($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+		  print '</option>';
                 }
                 $i++;
-            }
-        }
+	      }
+	  }
         print '</select>';
-    }
+      }
     else {
-        dolibarr_print_error($this->db);
+      dolibarr_print_error($this->db);
     }
   }
   
@@ -507,9 +508,9 @@ class Form
   function select_tva($name='', $defaulttx = '')
   {
     if (! strlen(trim($name)))
-    {
-      $name = "tauxtva";
-    }
+      {
+	$name = "tauxtva";
+      }
 
     $file = DOL_DOCUMENT_ROOT . "/conf/tva.local.php";
     if (is_readable($file))
@@ -559,7 +560,7 @@ class Form
   {
     if (! $set_time && ! $empty)
       {
-	    $set_time = time();
+	$set_time = time();
       }
 
     $strmonth[1] = "Janvier";
@@ -577,20 +578,20 @@ class Form
     
     // Analyse de la date de préselection
     if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg)) {
-        // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
-        $syear = $reg[1];
-        $smonth = $reg[2];
-        $sday = $reg[3];
-        $shour = $reg[4];
-        $smin = $reg[5];
+      // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+      $syear = $reg[1];
+      $smonth = $reg[2];
+      $sday = $reg[3];
+      $shour = $reg[4];
+      $smin = $reg[5];
     }
     else {
-        // Date est un timestamps
-        $syear = date("Y", $set_time);
-        $smonth = date("n", $set_time);
-        $sday = date("d", $set_time);
-        $shour = date("H", $set_time);
-        $smin = date("i", $set_time);
+      // Date est un timestamps
+      $syear = date("Y", $set_time);
+      $smonth = date("n", $set_time);
+      $sday = date("d", $set_time);
+      $shour = date("H", $set_time);
+      $smin = date("i", $set_time);
     }
     
     print '<select name="'.$prefix.'day">';    
@@ -619,7 +620,6 @@ class Form
       }
     
     print "</select>";
-    
     
     print '<select name="'.$prefix.'month">';    
     if ($empty || $set_time == -1)
@@ -715,105 +715,105 @@ class Form
    *
    */
   function select($name, $sql, $id='')
-    {
+  {
 
-      $result = $this->db->query($sql);
-      if ($result)
-	{
+    $result = $this->db->query($sql);
+    if ($result)
+      {
 
-	  print '<select name="'.$name.'">';
+	print '<select name="'.$name.'">';
 
-	  $num = $this->db->num_rows();
-	  $i = 0;
+	$num = $this->db->num_rows();
+	$i = 0;
 	  
-	  if (strlen("$id"))
-	    {	    	      
-	      while ($i < $num)
-		{
-		  $row = $this->db->fetch_row($i);
-		  print "<option value=\"$row[0]\" ";
-		  if ($id == $row[0])
-		    {
-		      print "selected";
-		    }
-		  print ">$row[1]</option>\n";
-		  $i++;
-		}
-	    }
-	  else
-	    {
-	      while ($i < $num)
-		{
-		  $row = $this->db->fetch_row($i);
-		  print "<option value=\"$row[0]\">$row[1]</option>\n";
-		  $i++;
-		}
-	    }
+	if (strlen("$id"))
+	  {	    	      
+	    while ($i < $num)
+	      {
+		$row = $this->db->fetch_row($i);
+		print "<option value=\"$row[0]\" ";
+		if ($id == $row[0])
+		  {
+		    print "selected";
+		  }
+		print ">$row[1]</option>\n";
+		$i++;
+	      }
+	  }
+	else
+	  {
+	    while ($i < $num)
+	      {
+		$row = $this->db->fetch_row($i);
+		print "<option value=\"$row[0]\">$row[1]</option>\n";
+		$i++;
+	      }
+	  }
 
-	  print "</select>";
-	}
-      else 
-	{
-	  print $this->db->error();
-	}
+	print "</select>";
+      }
+    else 
+      {
+	print $this->db->error();
+      }
 
-    }
+  }
     
-    /*!
-    		\brief Affiche un select à partir d'un tableau
-    		\param	name            nom de la zone select
-    		\param	array           tableau de key+valeur
-    		\param	id              key présélectionnée
-    		\param	empty           1 si il faut un valeur " " dans la liste, 0 sinon
-    		\param	key_libelle     1 pour afficher la key dans la valeur "[key] value"
-    */
+  /*!
+    \brief Affiche un select à partir d'un tableau
+    \param	name            nom de la zone select
+    \param	array           tableau de key+valeur
+    \param	id              key présélectionnée
+    \param	empty           1 si il faut un valeur " " dans la liste, 0 sinon
+    \param	key_libelle     1 pour afficher la key dans la valeur "[key] value"
+  */
 		
   function select_array($name, $array, $id='', $empty=0, $key_libelle=0)
-    {
-        print '<select name="'.$name.'">';
+  {
+    print '<select name="'.$name.'">';
         
-        $i = 0;
+    $i = 0;
         
-        if (strlen($id)) {
-            if ($empty == 1)
-            {
-                $array[0] = "&nbsp;";
-            }
-            reset($array);
-        }
-        
-        while (list($key, $value) = each ($array))
-        {
-            print "<option value=\"$key\" ";
-
-            // Si il faut présélectionner une valeur
-            if ($id && $id == $key)
-            {
-                print "selected";
-            }
-
-            if ($key_libelle)
-            {
-                print ">[$key] $value</option>\n";  
-            }
-            else
-            {
-                if ($value=="-") { $value="&nbsp;"; }
-                print ">$value</option>\n";
-            }
-        }
-        
-        print "</select>";
+    if (strlen($id)) {
+      if ($empty == 1)
+	{
+	  $array[0] = "&nbsp;";
+	}
+      reset($array);
     }
+        
+    while (list($key, $value) = each ($array))
+      {
+	print "<option value=\"$key\" ";
+
+	// Si il faut présélectionner une valeur
+	if ($id && $id == $key)
+	  {
+	    print "selected";
+	  }
+
+	if ($key_libelle)
+	  {
+	    print ">[$key] $value</option>\n";  
+	  }
+	else
+	  {
+	    if ($value=="-") { $value="&nbsp;"; }
+	    print ">$value</option>\n";
+	  }
+      }
+        
+    print "</select>";
+  }
   /*
    *    \brief  Renvoie la chaîne de caractère décrivant l'erreur
    *
    */
 	 
   function error()
-    {
-      return $this->errorstr;
-    }
+  {
+    return $this->errorstr;
+  }
 
 
   /*
@@ -864,13 +864,13 @@ class Form
    *
    */
   function checkbox($name,$checked=0,$value=1)
-    {
-      if ($checked==1){
-	print "<input type=\"checkbox\" name=\"$name\" value=\"$value\" checked />\n";
-      }else{
-	print "<input type=\"checkbox\" name=\"$name\" value=\"$value\" />\n";
-      }
+  {
+    if ($checked==1){
+      print "<input type=\"checkbox\" name=\"$name\" value=\"$value\" checked />\n";
+    }else{
+      print "<input type=\"checkbox\" name=\"$name\" value=\"$value\" />\n";
     }
+  }
 
   /*
    *    \brief  Affiche la partie de formulaire pour saisie d'un mail
@@ -883,41 +883,42 @@ class Form
 
     $langs->load("other");
 
-	print "<table class=\"border\" width=\"100%\">";
+    print "<table class=\"border\" width=\"100%\">";
 
-	// Topic
-    if ($withtopic) {
-        print "<tr>";
-    	print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
-        print "<td>";
-    	print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"\">";
-        print "</td></tr>";
-    }
+    // Topic
+    if ($withtopic)
+      {
+	print "<tr>";
+	print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
+	print "<td>";
+	print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"\">";
+	print "</td></tr>";
+      }
     
     // Message
-    if ($withbody) {
-        print "<tr>";
-        print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
-        print "<td>";
-    	print "<textarea rows=\"8\" cols=\"72\" name=\"message\">";
-        print $defaultbody;
-    	print "</textarea>";
-    	print "</td></tr>";
-    }
+    if ($withbody)
+      {
+	print "<tr>";
+	print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
+	print "<td>";
+	print "<textarea rows=\"8\" cols=\"72\" name=\"message\">";
+	print $defaultbody;
+	print "</textarea>";
+	print "</td></tr>";
+      }
     	
-	// Si fichier joint
-    if ($withfile) {
-        print "<tr>";
-        print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
-    	print "<td>";
-    	print "<input type=\"file\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
-    	print "</td></tr>";
-    }
+    // Si fichier joint
+    if ($withfile)
+      {
+	print "<tr>";
+	print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
+	print "<td>";
+	print "<input type=\"file\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
+	print "</td></tr>";
+      }
     
     print "</table>";
-    
   }
-
 }
 
 ?>
