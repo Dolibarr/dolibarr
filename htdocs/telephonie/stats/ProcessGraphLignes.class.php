@@ -118,7 +118,7 @@ class ProcessGraphLignes
 	    $graphduree = new GraphAppelsDureeMoyenne ($this->db, $file);
 	    $graphduree->ligne = $ligne;
 	    $graphduree->show_console = 0 ;
-	    $graphduree->GraphDraw();
+	    $graphduree->Graph();
 	    
 	    /* Nb de communication */
 
