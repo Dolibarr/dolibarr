@@ -30,7 +30,15 @@ $FILENAMEZIP="$PROJECT-$MAJOR.$MINOR";
 $FILENAMERPM="$PROJECT-$MAJOR.$MINOR-$RPMSUBVERSION";
 $FILENAMEDEB="$PROJECT-$MAJOR.$MINOR";
 $FILENAMEEXE="$PROJECT-$MAJOR.$MINOR";
-$RPMSRC="/usr/src/redhat/SOURCES";
+if (-d "/usr/src/redhat") {
+    # redhat
+    $RPMDIR="/usr/src/redhat";
+}
+if (-d "/usr/src/RPM") {
+    # mandrake
+    $RPMDIR="/usr/src/RPM";
+}
+
 
 use vars qw/ $REVISION $VERSION /;
 $REVISION='$Revision$'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
@@ -222,20 +230,19 @@ if ($nboftargetok) {
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
     		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
 
-    		print "Move $FILENAMETGZ.tgz to $RPMSRC/$FILENAMETGZ.tgz\n";
-    		if (rename("$BUILDROOT/$FILENAMETGZ.tgz","$RPMSRC/$FILENAMETGZ.tgz")==0) {
-    		    print "Error: Failed to rename '$BUILDROOT/$FILENAMETGZ.tgz' into '$RPMSRC/$FILENAMETGZ.tgz'\n";
-    		}
+    		print "Move $FILENAMETGZ.tgz to $RPMDIR/SOURCES/$FILENAMETGZ.tgz\n";
+    		$cmd="mv \"$BUILDROOT/$FILENAMETGZ.tgz\" \"$RPMDIR/SOURCES/$FILENAMETGZ.tgz\"";
+            $ret=`$cmd`;
 
     		print "Copy $SOURCE/build/rpm/${BUILDFIC} to $BUILDROOT\n";
     		$ret=`cp -p "$SOURCE/build/rpm/${BUILDFIC}" "$BUILDROOT"`;
-    		#rename("$SOURCE/build/rpm/${BUILDFIC}","$BUILDROOT");
     
     		print "Launch RPM build (rpm --clean -ba $BUILDROOT/${BUILDFIC})\n";
     		$ret=`rpm --clean -ba $BUILDROOT/${BUILDFIC}`;
     	
-    		print "Move /usr/src/RPM/RPMS/noarch/${FILENAMERPM}.noarch.rpm into $SOURCE/build/${FILENAMERPM}.noarch.rpm\n";
-    		rename("/usr/src/RPM/RPMS/noarch/${FILENAMERPM}.noarch.rpm","$SOURCE/build/${FILENAMERPM}.noarch.rpm");
+   		    print "Move $RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm into $SOURCE/build/${FILENAMERPM}.noarch.rpm\n";
+   		    $cmd="mv \"$RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm\" \"$SOURCE/build/${FILENAMERPM}.noarch.rpm\"";
+    		$ret=`$cmd`;
     		next;
     	}
     	
