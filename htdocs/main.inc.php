@@ -24,7 +24,7 @@
  *
  */
 
-/*!
+/**
     \file       htdocs/master.inc.php
     \brief      Fichier de formatage générique des ecrans Dolibarr
     \version    $Revision$
@@ -107,7 +107,7 @@ if (defined("MAIN_NOT_INSTALLED"))
 }
 
 
-/*!
+/**
  *  \brief      Affiche en-tête html + la barre de menu supérieure
  *  \param      head    lignes d'en-tete head
  *  \param      title   titre page web
@@ -213,24 +213,32 @@ function top_menu($head, $title="", $target="")
 }
 
 
-/*!
+/**
  *  \brief      Affiche barre de menu gauche
  *  \param      menu            Objet du menu gauche
  *  \param      help_url        Url pour le lien aide ('' par defaut)
- *  \param      form_search     Formulaire de recherche permanant
- *  \param      author          Auteur de la page pour ajout en en-tete html
+ *  \param      form_search     Formulaire de recherche permanant supplémentaire
  */
  
-function left_menu($menu, $help_url='', $form_search='', $author='') 
+function left_menu($menu, $help_url='', $form_search='') 
 {
   global $user, $conf, $langs;
 
+
+  if (! defined(MAIN_MENU_BARRELEFT))
+    {
+      define("MAIN_MENU_BARRELEFT","default.php");
+    }
+
+  // Si un gestionnaire de menu gauche est actif, on l'utilise:
+  // Ce gestionnnaire est libre d'écrasé ou non l'objet $menu qui détermine le menu à afficher.
+  require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".MAIN_MENU_BARRELEFT);
+
+ 
+
   print '<div class="vmenuplusfiche" width="158">'."\n";
 
-  /*
-   * Colonne de gauche
-   *
-   */
+  // Colonne de gauche
   print "\n<!-- Debut left vertical menu -->\n";
   print '<div class="vmenu">'."\n";
   
@@ -253,9 +261,7 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
       print '</div>';
     }
 
-  /*
-   * Affichage des zones de recherche permanantes
-   */
+  // Affichage des zones de recherche permanantes
   $addzonerecherche=0;
   if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0) $addzonerecherche=1;
   if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0) $addzonerecherche=1;
@@ -286,19 +292,13 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
       print '</div>';
     }
   
-  /*
-   * Zone de recherche supplémentaire
-   */
-  
+  // Zone de recherche supplémentaire
   if (strlen($form_search) > 0)
     {
       print $form_search;
     }
   
-  /*
-   * Lien vers l'aide en ligne
-   */
-
+  // Lien vers l'aide en ligne
   if (strlen($help_url) > 0)
     {
 
@@ -319,7 +319,7 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
 
 
 
-/*!
+/**
  * \brief   Affiche une zone de recherche
  * \param   urlaction       url du post
  * \param   urlobject       url du lien sur titre de la zone de recherche
@@ -340,7 +340,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 }
 
 
-/*!
+/**
  * \brief   Impression du pied de page
  * \param   foot    Non utilisé
  */

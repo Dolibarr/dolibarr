@@ -71,6 +71,7 @@ PermanentLeftSearchForm=Zone de recherche permanente du menu de gauche
 Skin=Thème visuel
 MaxSizeList=Longueur maximale des listes
 MenuTopManager=Gestionnaire du menu du haut
+MenuLeftManager=Gestionnaire du menu de gauche
 MessageOfDay=Message du jour
 DefaultLanguage=Langue par défaut à utiliser (code langue)
 SystemSuccessfulyUpdated=Votre système a été mis à jour avec succès
