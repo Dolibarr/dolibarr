@@ -74,6 +74,7 @@ function llxHeader($head = "") {
 
   if ($user->societe_id == 0) 
     {
+      $menu->add_submenu("cumul.php","Cumuls");
       $menu->add_submenu("prev.php3","Prévisionnel");
       $menu->add_submenu("comp.php3","Comparatif");
       $menu->add_submenu("exercices.php3","Exercices");
