@@ -34,6 +34,10 @@ case "$1" in
 		. /usr/share/wwwconfig-common/php.get
 		# Set up web server.
 		for server in $webservers ; do
+			typestr='application/x-httpd-php'
+			extension='.php3'
+			. /usr/share/wwwconfig-common/apache-addtype_all.sh
+		        . /usr/share/wwwconfig-common/apache-php.get
 		        . /usr/share/wwwconfig-common/apache-run.get
 			trustuser=$webuser
 			#
