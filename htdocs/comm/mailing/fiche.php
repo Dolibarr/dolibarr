@@ -30,12 +30,21 @@ require("./pre.inc.php");
 
 $langs->load("mails");
 
-$mesg = '';
+$message = '';
 
 
 llxHeader("","","Fiche Mailing");
 
 
+// Action envoi mailing pour tous
+if ($_GET["action"] == 'sendall')
+{
+    // Pour des raisons de sécurité, on ne permet pas cette fonction via l'IHM,
+    // on affiche donc juste un message
+    $message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
+    $message.="php ./scripts/mailing-send.php ".$_GET["id"];
+    $_GET["action"]='';
+}
 
 // Action envoi test mailing
 if ($_POST["action"] == 'send')
@@ -333,11 +342,11 @@ else
                     print '<a class="tabAction" href="fiche.php?action=valide&amp;id='.$mil->id.'">'.$langs->trans("ValidMailing").'</a>';
                 }
 
-/*                if ($mil->statut == 1 && $mil->nbemail > 0)
+                if ($mil->statut == 1 && $mil->nbemail > 0)
                 {
-                    print '<a class="tabAction" href="fiche.php?action=approve&amp;id='.$mil->id.'">'.$langs->trans("ApproveMailing").'</a>';
+                    print '<a class="tabAction" href="fiche.php?action=sendall&amp;id='.$mil->id.'">'.$langs->trans("SendMailing").'</a>';
                 }
-*/
+
                 if ($mil->statut <= 1)
                 {
                     print '<a class="butDelete" href="fiche.php?action=delete&amp;id='.$mil->id.'">'.$langs->trans("DeleteMailing").'</a>';

@@ -49,5 +49,5 @@ TargetsStatistics=Targets statistics
 NbOfProspectsContacts=Unique contacts for all prospects
 NbOfCustomersContacts=Unique contacts for all customers
 MailNoChangePossible=Recipients for validated mailing can't be changed
-
-
+SendMailing=Send mailing
+MailingNeedCommand=For securities reason, sending a mailing can only be performed from command line. Ask your administrator to launch the following command to send the mailing to all recipients:

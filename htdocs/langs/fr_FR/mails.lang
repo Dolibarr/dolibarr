@@ -49,3 +49,5 @@ TargetsStatistics=Statistiques destinataires
 NbOfProspectsContacts=Contacts uniques tous prospects
 NbOfCustomersContacts=Contacts uniques tous clients
 MailNoChangePossible=Destinataires d'un mailing validé non modifiables
+SendMailing=Envoi mailing
+MailingNeedCommand=Pour des raisons de sécurité, l'envoi d'un mailing de masse ne peut être réalisé qu'en ligne de commande. Demander à votre administrateur de lancer la commande suivante pour envoyer le mailing à tous les destinataires:
