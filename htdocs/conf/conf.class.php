@@ -35,7 +35,6 @@ class Conf
       $this->compta    = new ComptaConf();
       $this->propal    = new PropalConf();
       $this->facture   = new FactureConf();
-      $this->fichinter = new FicheInterConf();
       $this->webcal    = new WebcalConf();
       $this->produit   = new ProduitConf();
       $this->service   = new ServiceConf();
