@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
- * Copyright (C) 2004 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,6 +204,11 @@ if ($action == 'add_paiement')
   $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
   //paiementid est correct, il contient "CHQ ou VIR par exemple"
   $bank_line_id = $acc->addline($datepaye, $paiementid, $label, $amount, $num_paiement);
+
+  // TODO
+  // Mise a jour fk_bank dans llx_paiement
+  // $acc->update_fk_bank($paiement_id,$bank_line_id);
+
   $acc->add_url_line($bank_line_id, $fac->id, DOL_URL_ROOT.'/compta/facture.php?facid=', $fac->ref);
   $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
 }
