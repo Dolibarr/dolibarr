@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,8 @@ if (!$user->rights->produit->lire)
  *
  *
  */
+$type=$_GET["type"];
+
 $page = $_GET["page"];
 $sortfield = $_GET["sortfield"];
 $sortorder = $_GET["sortorder"];
@@ -112,7 +115,8 @@ if ($result)
     {
       llxHeader("","","Recherche Produit/Service");
 
-      print_barre_liste("Recherche d'un produit ou service", $page, "liste.php", "&sref=$sref&snom=$snom&amp;envente=$envente", $sortfield, $sortorder,'',$num);
+      $texte = "Recherche d'un produit ou service";
+      print_barre_liste($texte, $page, "liste.php", "&sref=".$_POST["sref"]."&snom=".$_POST["snom"]."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
     }
   else
     {
@@ -130,12 +134,12 @@ if ($result)
       print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id&amp;type=$type", $sortfield, $sortorder,'',$num);
     }
 
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 
   print "<tr class=\"liste_titre\"><td>";
   print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente&amp;type=$type&fourn_id=$fourn_id");
   print "</td><td>";
-  print_liste_field_titre("Libellé","liste.php", "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id");
+  print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id");
   print "</td><td align=\"right\">";
   print_liste_field_titre("Prix de vente","liste.php", "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id");
   print "</td></tr>\n";
@@ -157,10 +161,10 @@ if ($result)
       print "<a href=\"fiche.php?id=$objp->rowid\">";
       print img_file();
       print "</a>&nbsp;";
-      print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
-      print "<TD>$objp->label</TD>\n";
-      print '<TD align="right">'.price($objp->price).'</TD>';
-      print "</TR>\n";
+      print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
+      print "<td>$objp->label</td>\n";
+      print '<td align="right">'.price($objp->price).'</td>';
+      print "</tr>\n";
       $i++;
     }
   $db->free();
@@ -170,7 +174,7 @@ if ($result)
 }
 else
 {
-  print $db->error() . "<br>" .$sql;
+  dolibarr_print_error($db);
 }
 
 
