@@ -344,7 +344,20 @@ function img_file($alt = "default")
 }
 
 /*!
-        \brief  Affiche logo nouveau fichier
+  \brief Affiche logo dossier
+*/
+function img_folder($alt = "default")
+{
+  if ($alt=="default") {
+    global $langs;
+    $alt=$langs->trans("Dossier");
+  }
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/folder.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/*!
+  \brief Affiche logo nouveau fichier
+
 */
 function img_file_new($alt = "default")
 {
