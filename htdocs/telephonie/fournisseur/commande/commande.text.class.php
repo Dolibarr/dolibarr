@@ -150,6 +150,10 @@ class CommandeMethodeText
 
     if ($fp)
       {
+	fwrite ($fp, "Numcli;");
+	fwrite ($fp, "nomclient;");
+	fwrite ($fp, "NDI\n");
+
 	$ligneids = array();
 	
 	$sqlall = "SELECT s.nom, s.idp as socid, l.ligne, l.statut, l.rowid";
@@ -167,14 +171,13 @@ class CommandeMethodeText
 	/*
 	 *
 	 */
-	
 	$sql = $sqlall;
 	
 	$sql .= " AND l.statut in (1,4)";
 	$sql .= " ORDER BY l.statut ASC";
 	
 	$result = $this->db->query($sql);
-	
+
 	if ($result)
 	  {
 	    $i = 0;
@@ -229,7 +232,6 @@ class CommandeMethodeText
 		$lint->set_statut($this->user, 5);
 	      }
 	  }
-
 	
 	return 0;
 	
