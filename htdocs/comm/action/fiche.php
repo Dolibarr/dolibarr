@@ -481,7 +481,7 @@ if ($_GET["id"])
       print '<a class="tabAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Edit").'</a>';
     }
     
-    print '<a class="tabAction" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
+    print '<a class="butDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
     print '</div>';
 }
 
