@@ -36,8 +36,7 @@
 //session_register("fix_left_menu");
 
 require("./pre.inc.php");
-include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
-//include_once("../../allpre.inc.php");
+include_once $dolibarr_main_document_root."/lib/".$conf->db->type.".lib.php";
 
 $langs->load("admin");
 $langs->load("user");
@@ -90,7 +89,8 @@ print "<br>\n";
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
-if($dolibarr_main_db_type == "mysql")
+
+if ($conf->db->type == 'mysql')
 {
 $sql = "SHOW VARIABLES LIKE 'version'";
 }
