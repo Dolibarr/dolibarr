@@ -25,16 +25,18 @@ if (!$user->admin)
   accessforbidden();
 
 
-if ($HTTP_POST_VARS["action"] == 'update')
+if ($_POST["action"] == 'update')
 {
-  dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$HTTP_POST_VARS["nom"]);
-  dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$HTTP_POST_VARS["tva"]);
+  dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
+  dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
+  dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
 
-  Header("Location: $PHP_SELF");
+  Header("Location: index.php");
 }
 
 
 llxHeader();
+$form = new Form($db);
 
 print_titre("Configuration générale (Dolibarr version ".DOL_VERSION.")");
 
@@ -42,7 +44,7 @@ print "<br>\n";
 
 if ($_GET["action"] == 'edit')
 {
-  print '<form method="post" action="'.$PHP_SELF.'">';
+  print '<form method="post" action="index.php">';
   print '<input type="hidden" name="action" value="update">';
 
   print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
@@ -50,6 +52,11 @@ if ($_GET["action"] == 'edit')
 
   print '<tr class="impair"><td>Nom de la société/association</td><td>';
   print '<input name="nom" value="'. MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
+
+  print '<tr class="pair"><td>Pays de la société</td><td>';
+  print $form->select_pays(MAIN_INFO_SOCIETE_PAYS);
+  print '</td></tr>';
+
 
   print '<tr class="pair"><td width="50%">Numéro de tva intracommunautaire</td><td>';
   print '<input name="tva" size="20" value="' . MAIN_INFO_TVAINTRA . '"></td></tr>';
@@ -64,12 +71,17 @@ else
   print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr class="liste_titre"><td>Informations sur la société/association</td><td>Valeur</td></tr>';
   print '<tr class="impair"><td width="50%">Nom de la société/association</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
+
+  print '<tr class="pair"><td>Pays de la société</td><td>';
+  print $form->pays_name(MAIN_INFO_SOCIETE_PAYS);
+  print '</td></tr>';
+
   print '<tr class="pair"><td>Numéro de tva intracommunautaire</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
   print '</table><br>';
 
   print '<div class="tabsAction">';
 
-  print '<a class="tabAction" href="'.$PHP_SELF.'?action=edit">Editer</a>';
+  print '<a class="tabAction" href="index.php?action=edit">Editer</a>';
 
   print '</div>';
 
