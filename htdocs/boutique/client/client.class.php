@@ -20,6 +20,16 @@
  *
  */
 
+/*!	\file Client.class.php
+		\brief Classe permettant de gèrer des clients de la boutique online
+		\author	Rodolphe Quiedeville
+		\version $Revision$
+*/
+
+/*! \class Client
+		\brief Classe permettant de gèrer des clients de la boutique online
+*/
+
 class Client {
   var $db ;
 
@@ -29,12 +39,13 @@ class Client {
   Function Client($DB, $id=0) {
     $this->db = $DB;
     $this->id = $id ;
-  }  
-  /*
-   *
-   *
-   *
-   */
+  }
+
+/*!
+		\brief fonction permettant de recupèrer les informations d'un clients de la boutique
+		\param id				id du client
+*/
+
   Function fetch ($id) {
     
     $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".DB_NAME_OSC.".customers WHERE customers_id = $id";

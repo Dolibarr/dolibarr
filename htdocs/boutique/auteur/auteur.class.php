@@ -20,6 +20,16 @@
  *
  */
 
+/*!	\file auteur.class.php
+		\brief Classe permettant de gèrer des auteurs
+		\author	Rodolphe Quideville
+		\version $Revision$
+*/
+
+/*! \class Auteur
+		\brief Classe permettant de gèrer des auteurs
+*/
+
 class Auteur {
   var $db ;
 
@@ -29,33 +39,36 @@ class Auteur {
   Function Auteur($DB, $id=0) {
     $this->db = $DB;
     $this->id = $id ;
-  }  
+  }
+
   /*
    *
    *
    *
    */
-  Function create($user) {
+
+	Function create($user) {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."auteur (fk_user_author) VALUES (".$user->id.")";
-    
+
     if ($this->db->query($sql) )
       {
 	$id = $this->db->last_insert_id();
-	
+
 	if ( $this->update($id, $user) )
 	  {
 	    return $id;
 	  }
       }
-    
+
   }
 
   /*
    *
    *
    */
-  Function liste_array ()
+
+	Function liste_array ()
   {
     $ga = array();
 
@@ -64,14 +77,14 @@ class Auteur {
     if ($this->db->query($sql) )
       {
 	$nump = $this->db->num_rows();
-	
+
 	if ($nump)
 	  {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
 		$obj = $this->db->fetch_object($i);
-		
+
 		$ga[$obj->rowid] = $obj->nom;
 		$i++;
 	      }
@@ -82,14 +95,15 @@ class Auteur {
       {
 	print $this->db->error();
       }
-    
+
   }
   /*
    *
    *
    *
    */
-  Function update($id, $user)
+
+	Function update($id, $user)
   {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."auteur ";
@@ -103,12 +117,14 @@ class Auteur {
       print $this->db->error() . ' in ' . $sql;
     }
   }
-  /*
+
+	/*
    *
    *
    *
    */
-  Function liste_livre($id_type='', $status=0)
+
+	Function liste_livre($id_type='', $status=0)
   {
     $ga = array();
     if ($id_type == 'oscid')
@@ -130,14 +146,14 @@ class Auteur {
     if ($this->db->query($sql) )
       {
 	$nump = $this->db->num_rows();
-	
+
 	if ($nump)
 	  {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
 		$row = $this->db->fetch_row($i);
-		
+
 		$ga[$row[0]] = $row[1];
 		$i++;
 	      }
@@ -147,15 +163,17 @@ class Auteur {
     else
       {
 	print $this->db->error();
-      }    
+      }
   }
-  /*
+
+	/*
    *
    *
    *
    */
-  Function fetch ($id) {
-    
+
+	Function fetch ($id) {
+
     $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."auteur WHERE rowid = $id";
 
     $result = $this->db->query($sql) ;
@@ -166,14 +184,14 @@ class Auteur {
 
 	$this->id      = $result["rowid"];
 	$this->nom     = stripslashes($result["nom"]);
-	
+
 	$this->db->free();
       }
     else
       {
 	print $this->db->error();
       }
-    
+
     return $result;
   }
 
@@ -182,7 +200,8 @@ class Auteur {
    *
    *
    */
-  Function delete() {
+
+	Function delete() {
 
     $livres = $this->liste_livre();
 

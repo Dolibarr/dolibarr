@@ -53,10 +53,23 @@
 //	  Added some labels :
 //	        5160, 5161, 5162, 5163,5164 : thanx to Al Canton : acanton@adams-blake.com
 //		8600 						: thanx to Kunal Walia : kunal@u.washington.edu
-//	  + : Added 3mm to the position of labels to avoid errors 
+//	  + : Added 3mm to the position of labels to avoid errors
 ////////////////////////////////////////////////////
 
 //require_once('fpdf.php');
+
+/*!	\file PDF_card.class.php
+		\brief Classe afin d'éditer au format PDF des étiquettes au format Avery ou personnalisé
+		\author Steve Dillon
+		\author	Laurent Passebecq
+		\author	Rodolphe Quiedville
+		\author	Jean Louis Bergamo.
+		\version $Revision$
+*/
+
+/*! \class PDF_card
+		\brief Classe afin d'éditer au format PDF des étiquettes au format Avery ou personnalisé
+*/
 
 class PDF_card extends FPDF {
 
@@ -74,19 +87,19 @@ class PDF_card extends FPDF {
   var $_Line_Height	= 10;	// Hauteur par défaut d'une ligne
   var $_Metric 		= 'mm';	// Type of metric.. Will help to calculate good values
   var $_Metric_Doc 	= 'mm';	// Type of metric for the doc..
-  
+
   var $_COUNTX = 1;
   var $_COUNTY = 1;
   var $_First = 1;
-  
+
   // Listing of labels size
   var $_Avery_Labels = array (
-			      '5160'=>array('name'=>'5160',	
-					    'paper-size'=>'letter',	
-					    'metric'=>'mm',	
-					    'marginLeft'=>1.762,	
-					    'marginTop'=>10.7,		
-					    'NX'=>3,	
+			      '5160'=>array('name'=>'5160',
+					    'paper-size'=>'letter',
+					    'metric'=>'mm',
+					    'marginLeft'=>1.762,
+					    'marginTop'=>10.7,
+					    'NX'=>3,
 					    'NY'=>10,	
 					    'SpaceX'=>3.175,	
 					    'SpaceY'=>0,	
