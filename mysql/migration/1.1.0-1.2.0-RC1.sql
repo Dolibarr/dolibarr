@@ -5,6 +5,8 @@
 -- sans AUCUNE erreur ni warning
 -- ;
 
+alter table llx_facture add  increment           varchar(10);
+
 delete from llx_const where name like '%_OUTPUT_URL';
 delete from llx_const where name like 'MAIN_START_YEAR';
 
