@@ -48,7 +48,7 @@ class Product
   Function create($user) 
     {
 
-      $sql = "INSERT INTO llx_product (fk_user_author, fk_product_type) VALUES (".$user->id.",$this->type)";
+      $sql = "INSERT INTO llx_product (datec, fk_user_author, fk_product_type) VALUES (now(),".$user->id.",$this->type)";
       
       if ($this->db->query($sql) )
 	{
