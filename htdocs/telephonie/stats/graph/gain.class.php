@@ -31,6 +31,7 @@ class GraphGain extends GraphBrouzouf{
     $this->file = $file;
 
     $this->client = 0;
+    $this->contrat = 0;
     $this->titre = "Gain (euros HT)";
 
     $this->barcolor = "blue";
@@ -40,24 +41,33 @@ class GraphGain extends GraphBrouzouf{
   Function GraphDraw()
   {
     $num = 0;
-    $ligne = new LigneTel($this->db);
     
-    if ($this->client == 0)
+    if ($this->client == 0 && $this->contrat == 0)
       {
-	$sql = "SELECT date, sum(gain), sum(cout_vente), sum(fourn_montant)";
+	$sql = "SELECT date, sum(gain)";
 	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";   
 	$sql .= " WHERE fk_facture is not null";    
 	$sql .= " GROUP BY date ASC";
       }
-    else
+    elseif ($this->client > 0 && $this->contrat == 0)
       {
-	$sql = "SELECT date, sum(gain), sum(cout_vente), sum(fourn_montant)";
+	$sql = "SELECT date, sum(gain)";
 	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";   
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 	$sql .= " WHERE fk_facture is not null";
 	$sql .= " AND s.rowid = fk_ligne";
 	$sql .= " AND s.fk_client_comm = ".$this->client;
 	$sql .= " GROUP BY date ASC";
+      }
+    elseif ($this->client == 0 && $this->contrat > 0)
+      {
+	$sql = "SELECT tf.date, sum(tf.gain)";
+	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
+	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";
+	$sql .= " WHERE tf.fk_facture is not null";
+	$sql .= " AND s.rowid = tf.fk_ligne";
+	$sql .= " AND s.fk_contrat = ".$this->contrat;
+	$sql .= " GROUP BY tf.date ASC";
       }
     
     $result = $this->db->query($sql);
@@ -66,29 +76,19 @@ class GraphGain extends GraphBrouzouf{
       {
 	$num = $this->db->num_rows();
 	$i = 0;
-	$j = -1;
 	$labels = array();
-	$cf = array();
-	$cv = array();
-	$gg = array();
-	
+
 	$this->total_gain = 0;
-	$this->total_ca = 0;
-	$this->total_cout = 0;
 
 	while ($i < $num)
 	  {
-	    $row = $this->db->fetch_row($i);	
+	    $row = $this->db->fetch_row();
 	    
-	    $cf[$i] = $row[3];
-	    $cv[$i] = $row[2];
-	    $g[$i]  = $row[1];
+	    $g[$i] = $row[1];
 
 	    $labels[$i] = substr($row[0],5,2)."/".substr($row[0],2,2);
 	    
 	    $this->total_gain += $row[1];
-	    $this->total_ca   += $row[2];
-	    $this->total_cout += $row[3];
 
 	    $i++;
 	  }
@@ -138,7 +138,6 @@ class GraphGain extends GraphBrouzouf{
       {
 	print $this->client . " " . $g[$i - 1]."\n";
       }    
-
 
     if ($num > 0)
       {
