@@ -287,15 +287,9 @@ if ($_GET["action"] == 'create')
 		      
 		      print '<td align="center">';
 
-		      if ($objp->total_ttc <> $objp->am)
-			{
-			  $namef = "amount_".$objp->facid;
-			  print '<input type="text" size="8" name="'.$namef.'">';
-			}
-		      else
-			{
-			  print '-';
-			}
+		      $namef = "amount_".$objp->facid;
+		      print '<input type="text" size="8" name="'.$namef.'">';
+
 		      print "</td></tr>\n";
 		      $total+=$objp->total;
 		      $total_ttc+=$objp->total_ttc;
