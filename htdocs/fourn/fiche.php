@@ -295,7 +295,7 @@ if ( $societe->fetch($socid) )
 
   print '<br><table class="noborder" width="100%">';
 
-  print '<tr class="liste_titre"><td><b>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</b></td>';
+  print '<tr class="liste_titre"><td><b>'.$langs->trans("Contact").'</b></td>';
   print '<td><b>Poste</b></td><td><b>'.$langs->trans("Tel").'</b></td>';
   print "<td><b>".$langs->trans("Fax")."</b></td><td><b>".$langs->trans("EMail")."</b></td>";
   print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td></tr>";
@@ -313,8 +313,8 @@ if ( $societe->fetch($socid) )
 
       print '<td>';
       print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
-      print img_file();
-      print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+      print img_object($langs->trans("ShowContact"),"contact");
+      print ' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
       if ($obj->note)
 	{
