@@ -60,6 +60,47 @@ class BonPrelevement
    *
    *
    */
+  function Fetch($rowid)
+  {
+    $sql = "SELECT p.rowid, p.ref, p.amount, p.note";
+    $sql .= ",".$this->db->pdate("p.datec")." as dc";
+
+    $sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
+    $sql .= " WHERE p.rowid=".$rowid;
+      
+    $result=$this->db->query($sql);
+    if ($result)
+      {
+	if ($this->db->num_rows($result))
+	  {
+	    $obj = $this->db->fetch_object();
+	    
+	    $this->id                 = $obj->rowid;
+	    $this->ref                = $obj->ref;
+	    $this->amount             = $obj->amount;
+	    $this->note               = stripslashes($obj->note);
+	    $this->datec              = $obj->dc;
+	    
+	    return 0;
+	  }
+	else
+	  {
+	    dolibarr_syslog("bon-prelevment::Fetch Erreur aucune ligne retournée");
+	    return -1;
+	  }
+      }
+    else
+      {
+	dolibarr_syslog("bon-prelevment::Fetch Erreur ");
+	dolibarr_syslog($sql);
+	return -2;
+      }
+  }
+
+  /*
+   *
+   *
+   */
   function Generate()
   {
     $this->EnregEmetteur();
