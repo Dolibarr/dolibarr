@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,15 +36,15 @@ class Conf {
     $this->commercial = 0;
     $this->voyage     = 0;
 
-    $this->compta   = new ComptaConf();
-    $this->propal = new PropalConf();
-    $this->facture = new FactureConf();
+    $this->compta    = new ComptaConf();
+    $this->propal    = new PropalConf();
+    $this->facture   = new FactureConf();
     $this->fichinter = new FicheInterConf();
-    $this->webcal = new WebcalConf();
-    $this->produit = new ProduitConf();
-    $this->service = new ServiceConf();
-    $this->adherent = new AdherentConf();
-    $this->domaine = new domaineConf();
+    $this->webcal    = new WebcalConf();
+    $this->produit   = new ProduitConf();
+    $this->service   = new ServiceConf();
+    $this->adherent  = new AdherentConf();
+    $this->domaine   = new DomaineConf();
 
     $this->readonly = 0;
 
