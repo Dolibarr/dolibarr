@@ -36,6 +36,7 @@ $facture_addon_var = FACTURE_ADDON;
 $facture_addon_var_pdf = FACTURE_ADDON_PDF;
 $facture_rib_number_var = FACTURE_RIB_NUMBER;
 $facture_chq_number_var = FACTURE_CHQ_NUMBER;
+$facture_tva_option = FACTURE_TVAOPTION;
 
 if ($action == 'set')
 {
@@ -82,16 +83,29 @@ if ($action == 'setpdf')
     }
 }
 
+if ($action == 'settvaoption')
+{
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_TVAOPTION', value='".$optiontva."', visible=0, type='chaine'";
+
+  if ($db->query($sql))
+    {
+      // la constante qui a été lue en avant du nouveau set
+      // on passe donc par une variable pour avoir un affichage cohérent
+      $facture_tva_option = $optiontva;
+    }
+}
+
+
 $dir = "../includes/modules/facture/";
 
 print_titre("Module de numérotation");
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table border="1" cellpadding="3" cellspacing="0" width=\"100%\">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Info</td>';
-print '<td align="center">Activé</td>';
-print '<td>&nbsp;</td>';
+print '<td align="center" width="60">Activé</td>';
+print '<td width="80">&nbsp;</td>';
 print "</TR>\n";
 
 clearstatcache();
@@ -115,17 +129,16 @@ while (($file = readdir($handle))!==false)
       if ($facture_addon_var == "$file")
 	{
 	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+      print '</td><td align="center">';
+      print '&nbsp;';
 	}
       else
 	{
-	  print "&nbsp;";
+	  print '&nbsp;';
+      print '</td><td align="center">';
+      print '<a href="facture.php?action=set&value='.$file.'">Activer</a>';
 	}
-
-      print "</td><td>\n";
-
-      print '<a href="facture.php?action=set&value='.$file.'">activer</a>';
-
-      print '</td></tr>';
+	print "</td></tr>\n";
     }
 }
 closedir($handle);
@@ -137,12 +150,12 @@ print '</table>';
 
 print_titre("Modèles de facture pdf");
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table border="1" cellpadding="3" cellspacing="0" width=\"100%\">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Info</td>';
-print '<td align="center">Activé</td>';
-print '<td>&nbsp;</td>';
+print '<td align="center" width="60">Activé</td>';
+print '<td width="80">&nbsp;</td>';
 print "</TR>\n";
 
 clearstatcache();
@@ -169,17 +182,17 @@ while (($file = readdir($handle))!==false)
       if ($facture_addon_var_pdf == "$name")
 	{
 	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+      print '</td><td align="center">';
+      print '&nbsp;';
 	}
       else
 	{
-	  print "&nbsp;";
+	  print '&nbsp;';
+      print '</td><td align="center">';
+      print '<a href="facture.php?action=setpdf&value='.$name.'">Activer</a>';
 	}
+	print "</td></tr>\n";
 
-      print "</td><td>\n";
-
-      print '<a href="facture.php?action=setpdf&value='.$name.'">activer</a>';
-
-      print '</td></tr>';
     }
 }
 closedir($handle);
@@ -194,16 +207,16 @@ print '</table>';
 
 print_titre( "Mode de règlement à afficher sur les factures");
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table border="1" cellpadding="3" cellspacing="0" width=\"100%\">';
 
 print '<form action="facture.php" method="post">';
 print '<input type="hidden" name="action" value="setribchq">';
 print '<tr class="liste_titre">';
-print '<td>Mode règlement</td>';
-print '<td><input type="submit" value="Modifier">';
+print '<td>Mode règlement à proposer</td>';
+print '<td><input type="submit" value="Modifier"></td>';
 print "</tr>\n";
 print '<tr class="pair">';
-print "<td>Virement par RIB sur le compte</td>";
+print "<td>Proposer paiement par RIB sur le compte</td>";
 print "<td><select name=\"rib\">";
 print '<option value="0">Ne pas afficher</option>';
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
@@ -229,7 +242,7 @@ if ($db->query($sql))
 print "</select></td></tr>";
 
 print '<tr class="pair">';
-print "<td>Ordre et adresse pour chèque à déposer sur le compte</td>";
+print "<td>Proposer paiement par chèque à l'ordre et adresse du titulaire du compte</td>";
 print "<td><select name=\"chq\">";
 print '<option value="0">Ne pas afficher</option>';
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
@@ -264,12 +277,33 @@ $db->close();
 
 print_titre("Chemins d'accés aux documents");
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table border="1" cellpadding="3" cellspacing="0" width=\"100%\">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td><td>Valeur</td>';
 print "</TR>\n";
 print '<tr class="pair"><td>Répertoire</td><td>'.FAC_OUTPUTDIR.'</td></tr>';
 print '<tr class="pair"><td>URL</td><td><a href="'.FAC_OUTPUT_URL.'">'.FAC_OUTPUT_URL.'</a></td></tr>';
+print "</table>";
+
+
+/*
+ * Options fiscale
+ */
+
+print_titre("Options fiscales de facturation de la TVA");
+
+print '<table border="1" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<form action="facture.php" method="post">';
+print '<input type="hidden" name="action" value="settvaoption">';
+print '<TR class="liste_titre">';
+print '<td>Option</td><td>Description</td>';
+print '<td><input type="submit" value="Modifier"></td>';
+print "</TR>\n";
+print "<tr class=\"pair\"><td width=\"120\"><input type=\"radio\" name=\"optiontva\" value=\"reel\"".($facture_tva_option != "franchise"?" checked":"")."> Option réel</td>";
+print "<td colspan=\"2\">L'option 'réel' est la plus courante. Elle est à destination des entreprises et professions libérales.\nChaque produits/service vendu est soumis à la TVA (Dolibarr propose le taux standard par défaut à la création d'une facture). Cette dernière est récupérée l'année suivante suite à la déclaration TVA pour les produits/services achetés et est reversée à l'état pour les produits/services vendus.</td></tr>\n";
+print "<tr class=\"pair\"><td width=\"120\"><input type=\"radio\" name=\"optiontva\" value=\"franchise\"".($facture_tva_option == "franchise"?" checked":"")."> Option franchise</td>";
+print "<td colspan=\"2\">L'option 'franchise' est celle des professions libérales à titre occasionnel, utilisée pour les petits chiffres d'affaires.\nChaque produits/service vendu est soumis à une TVA de 0 (Dolibarr propose le taux 0 par défaut à la création d'une facture cliente). Il n'y a pas de déclaration ou récupération de TVA, et les factures affichent la mention obligatoire \"TVA non applicable - art-293B du CGI\".</td></tr>\n";
+print "</form>";
 print "</table>";
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
