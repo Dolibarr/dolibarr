@@ -38,7 +38,7 @@ $month=$_GET["month"];
 if (! $year) { $year = strftime("%Y", time()); }
 
 
-print_titre("Détail recettes-dépenses par client/fournisseur.".($year?"&nbsp; <a href='$PHP_SELF?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='$PHP_SELF?year=".($year+1)."'>".img_next()."</a>":""));
+print_fiche_titre("Détail recettes-dépenses par client/fournisseur",($year?"&nbsp; <a href='$PHP_SELF?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='$PHP_SELF?year=".($year+1)."'>".img_next()."</a>":""));
 
 print '<br>';
 
