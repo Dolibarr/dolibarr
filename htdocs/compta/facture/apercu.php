@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *
  */
 
-/*!	    \file       htdocs/compta/facture/apercu.php
+/**	    \file       htdocs/compta/facture/apercu.php
 		\ingroup    facture
 		\brief      Page de l'onglet aperçu d'une facture
 		\version    $Revision$
@@ -37,6 +37,10 @@ if (!$user->rights->facture->lire)
 $langs->load("bills");
 
 require_once("../../facture.class.php");
+if ($conf->projet->enabled) {
+    require_once("../../projet/project.class.php");
+}
+
 
 /*
  * Sécurité accés client
