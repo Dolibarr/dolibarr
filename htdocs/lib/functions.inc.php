@@ -826,13 +826,20 @@ function print_duree_select($prefix)
  * Fonction utilisée dans les pdf et les pages
  * html
  */
-function price($amount)
+function price($amount, $html=0)
 {
-  return number_format($amount, 2, '.', ' ');
-  /* TODO implémenter cela plus tard
-   *$dec='.'; $thousand=' ';	
-   *return ereg_replace(' ','&nbsp;',number_format($amount, 2, $dec, $thousand));
-   */
+  if ($html)
+    {
+
+      $dec='.'; $thousand=' ';	
+      return ereg_replace(' ','&nbsp;',number_format($amount, 2, $dec, $thousand));
+   
+    }
+  else
+    {
+      return number_format($amount, 2, '.', ' ');
+    }
+
 }
 
 function francs($euros)
