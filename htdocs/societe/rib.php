@@ -97,7 +97,7 @@ $account->fetch();
 
       if (!$account->verif())
 	{
-	  print "Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
+	  print '<h1><font color="red"><b>Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.</b></font></h1>';
 	}
 
       print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
