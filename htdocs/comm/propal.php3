@@ -527,15 +527,15 @@ if ($propalid)
 	   *
 	   */
 	  
-	  print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
-	  print_titre("Documents générés");
+	  print '<table width="100%" cellspacing=2><tr><td width="50%" valign="top">';
+	  print_titre('<a href="propal/document.php?id='.$propal->id.'">Documents</a>');
 	  print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
 	  
 	  $file = PROPALE_OUTPUTDIR . "/$obj->ref/$obj->ref.pdf";
 	  if (file_exists($file))
 	    {
 	      print "<tr $bc[0]><td>Propale PDF</a></td>";
-	      print '<td><a href="'.PROPALE_OUTPUT_URL.'/'.$obj->ref.'/'.$obj->ref.'.pdf">'.$obj->ref.'.pdf</a></td>';
+	      print '<td><a href="'.PROPALE_OUTPUT_URL.'/'.$propal->ref.'/'.$propal->ref.'.pdf">'.$propal->ref.'.pdf</a></td>';
 	      print '<td align="right">'.filesize($file). ' bytes</td>';
 	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
 	    }  
