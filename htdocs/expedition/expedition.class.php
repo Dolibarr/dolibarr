@@ -136,7 +136,6 @@ class Expedition
   Function create_line($transaction, $commande_ligne_id, $qty)
   {
     $error = 0;
-    $mouvS = new MouvementStock($this->db);
 
     $idprod = 0;
     $j = 0;
@@ -147,11 +146,6 @@ class Expedition
 	    $idprod = $this->commande->lignes[$j]->product_id;
 	  }
 	$j++;
-      }
-
-    if (! $mouvS->livraison($this->user, $idprod, $this->entrepot_id, $qty, 0) )
-      {
-	$error++;
       }
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (fk_expedition, fk_commande_ligne, qty)";
@@ -213,6 +207,8 @@ class Expedition
    */
   Function valid($user)
     {
+      require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
+
       $result = 0;
       if ($user->rights->expedition->valider)
 	{
@@ -223,6 +219,29 @@ class Expedition
 	  if ($this->db->query($sql) )
 	    {
 	      $result = 1;
+
+	      /*
+	       * Enregistrement d'un mouvement de stock
+	       * pour chaque ligne produit de l'expedition
+	       */
+
+	      $sql = "SELECT cd.fk_product,  ed.qty ";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed";
+	      $sql .= " WHERE ed.fk_expedition = $this->id AND cd.rowid = ed.fk_commande_ligne ";
+	  
+	      if ($this->db->query($sql))
+		{
+		  $num = $this->db->num_rows();
+		  $i=0;
+		  while($i < $num)
+		    {
+		      $mouvS = new MouvementStock($this->db);
+		      $obj = $this->db->fetch_object($i);
+		      $mouvS->livraison($user, $obj->fk_product, $this->entrepot_id, $obj->qty, 0);
+		      $i++;
+		    }
+		}
+
 	    }
 	  else
 	    {
