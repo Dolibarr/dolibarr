@@ -711,7 +711,8 @@ create table llx_product
   fk_user_author  integer,
   envente         tinyint default 1,
   nbvente         integer default 0,
-  fk_product_type integer default 0
+  fk_product_type integer default 0,
+  duration        varchar(6)
 );
 
 
