@@ -41,7 +41,7 @@ Renvoie le numéro de facture sous une forme numérique simple, la première factur
 function facture_pdf_create($db, $facid)
 {
   
-  $dir = $GLOBALS["DOCUMENT_ROOT"]."/includes/modules/facture/";
+  $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
 
   if (defined("FACTURE_ADDON_PDF"))
     {
@@ -58,6 +58,7 @@ function facture_pdf_create($db, $facid)
   else
     {
       return 0;
+      print "Erreur FACTURE_ADDON_PDF non définit !";
     }
 }
 
