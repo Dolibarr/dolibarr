@@ -317,7 +317,7 @@ class Facture
 		  while ($i < $num)
 		    {
 		      $objp = $this->db->fetch_object($i);
-		      $faclig = new FactureLigne();
+		      $faclig = new FactureLigne($this->db);
 		      $faclig->desc           = stripslashes($objp->description);
 		      $faclig->qty            = $objp->qty;
 		      $faclig->price          = $objp->price;
