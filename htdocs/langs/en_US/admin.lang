@@ -1,15 +1,21 @@
 # Dolibarr language file - en_US - admin
+Version=Version
 GlobalSetup=Global setup
 GUISetup=GUI setup
 DictionnarySetup=Dictionnary setup
+ComptaSetup=Accounting module setup
+OtherOptions=Other options
 OtherSetup=Other setup
 Modules=Modules
-Boxe=Boxe
+ModulesCommon=Common modules
+ModulesSpecial=Special modules
+Box=Box
 Boxes=Boxes
 System=System
 Rights=Permissions
 BoxesDesc=Boxes are screen area that show some informations on some pages. You can choose between showing or not a such box by selecting target page en clicking 'Activate', or by clicking the dustbin to disable it. Only boxes about enabled <a href="modules.php">modules</a> are shown.
 ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module.
+ModulesSpecialDesc=Special modules are very specific or rarely used modules.
 BoxesAvailable=Boxes available
 BoxesActivated=Boxes activated
 ActivateOn=Activate on
@@ -21,6 +27,7 @@ ModuleFamilyHr=Human Ressource Management
 ModuleFamilyProjects=Projects/Collaborative work
 ModuleFamilyOther=Other
 ModuleFamilyTechnic=Technical Modules
+ModuleFamilyExperimental=Experimental modules
 ModuleFamilyFinancial=Financial Modules (Accountancy/Treasury)
 DictionnaryCompanyType=Juridical kinds of company
 DictionnaryCanton=Cantons
