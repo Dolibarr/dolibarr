@@ -1,0 +1,259 @@
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *
+ */
+body 
+{
+  background: #333333; 
+  font-family: Helvetica, Verdana; font-size: 12px; 
+}
+/*
+ *   Menu superieur
+ */
+table.topbarre { 
+                 cell-spacing: 0;
+                 }
+/*
+ * Tables
+ */
+table#wiborder { 
+                 border-collapse:collapse; 
+                 }
+
+table#wiborder td { 
+                    border: outset 1pt; 
+                    border-collapse:collapse; 
+                    padding: 3pt;
+                    }
+
+a { 
+    text-decoration: none;
+    font-weight: bold;
+    color: #eeeeee;
+    }
+
+a:hover {     text-decoration: underline;    color: #eeeeee;  }
+
+td.menu { 
+          border-right: 1px solid #888888;
+          border-bottom: 1px solid #777777;
+          }
+
+td.menusel { 
+            border-top: 1px solid #999999;
+            border-right: 1px solid #aaaaaa;
+            border-bottom: 1px solid #aaaaaa;
+            border-left: 1px solid #999999;
+             }
+
+td.border { 
+            border-top: 1px solid #555555;
+            border-right: 1px solid #888888;
+            border-bottom: 1px solid #777777;
+            border-left: 1px solid #666666;
+            }
+
+div.menus { 
+            background: #444444; 
+            color: #eeeeee;
+            border-top:    1px dashed #555555;
+            border-right:  1px dashed #888888;
+            border-bottom: 1px dashed #777777;
+            border-left:   1px dashed #666666;
+            }
+
+
+.menu 
+{ 
+  background: #444444; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
+  color: #dddddd; 
+  text-decoration: none }
+
+.menusel
+{ 
+  background: #666666; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
+  color: #eeeeee; 
+  text-decoration: none }
+
+.submenu 
+{ 
+  background: #444444; 
+  font-family: Helvetica, Verdana; font-size: 1.0em;
+  color: #bbbbbb; 
+  text-decoration: none }
+
+a.normal{ font-weight: normal } 
+a.impayee { font-weight: bold }
+
+/*
+ *   Barre de gauche
+ */
+
+a.leftmenu { 
+             font-family: Helvetica, Verdana; 
+             font-size: 1.0em; 
+             font-weight: bold; 
+             color: #cccccc; 
+  }
+
+td.barre { 
+           border-right: 1px solid #777777;
+           border-bottom: 1px solid #888888;
+           background: #444444;
+           font-family: Helvetica, Verdana;
+           font-size: 1.0em; 
+           color: #aaaaaa; 
+           text-decoration: none }
+
+td.barre_select { 
+                  background: #666666; 
+                  color: #eeeeee 
+                  }
+
+div.titre { 
+            font-family: Helvetica, Verdana; 
+            font-size: 1.0em; 
+            font-weight: bold; 
+            color: #dddddd; 
+            text-decoration: none }
+/*
+ *
+ */
+.liste { 
+                 background: #666666; 
+                 color: #dddddd;
+                 border-top:    1px dashed #555555;
+            border-right:  1px dashed #888888;
+            border-bottom: 1px dashed #777777;
+            border-left:   1px dashed #666666;
+                 }
+
+
+tr.liste_titre { 
+                 background: #666666; 
+                 font-family: Helvetica, Verdana;
+                 font-size: 1.0em;
+                 font-weight: bold;
+                 color: #dddddd;
+                 }
+
+tr.pair { 
+          background: #777777; 
+          font-family: Helvetica, Verdana; 
+          font-size: 1.0em;
+          color: #eeeeee;
+                           border-top:    1px dashed #555555;
+            border-right:  1px dashed #888888;
+            border-bottom: 1px dashed #777777;
+            border-left:   1px dashed #666666; 
+          }
+
+tr.impair { 
+            background: #666666; 
+            font-family: Helvetica, Verdana;
+            font-size: 1.0em;
+            color: #eeeeee;
+                             border-top:    1px dashed #555555;
+            border-right:  1px dashed #888888;
+            border-bottom: 1px dashed #777777;
+            border-left:   1px dashed #666666;
+            }
+/*
+ *
+ */
+
+tr.box_titre { 
+               font-family: Helvetica, Verdana;
+               font-size: 1.0em;
+               font-weight: bold;
+               color: #dddddd;
+               }
+
+tr.box_pair { 
+              background: #666666; 
+              font-family: Helvetica, Verdana; 
+              font-size: 0.9em; 
+              color: #eeeeee;
+              }
+
+tr.box_impair { 
+                background: #777777; 
+                font-family: Helvetica, Verdana;
+                font-size: 0.9em;
+                color: #eeeeee; 
+                }
+
+tr.fiche { 
+           font-family: Helvetica, Verdana;
+           font-size: 0.6em; 
+           }
+
+/*
+ *
+ */
+
+input.flat
+{ 
+  border: 0
+ }
+
+td.valeur
+{ 
+  font-weight: bold;
+  }
+
+td.delete { 
+            background: red;
+            font-weight: bold;
+            }
+
+td.valid { 
+           background: pink;
+           font-weight: bold;
+           }
+
+td.small { 
+           font-size: 0.8em;
+           }
+
+tr.nonpayed { 
+              font-size: 0.9em; font-weight: bold;
+              }
+
+
+p#powered-by-dolibarr {
+	position: fixed;
+	margin: 0;
+	padding: 0;
+	bottom: 2px;
+	left: 0px;
+	z-index: 2;
+	color: #eeeeee;
+}
+
+p#powered-by-dolibarr a {
+	border: 1px solid black;
+	text-decoration: none;
+	color: #eeeeee;
+	font-size: 0.9em;
+	padding-right: 5px;
+	padding-left: 5px;
+}
