@@ -123,9 +123,9 @@ class Facture
       $totalht = ($amount - $remise);
       $tva = tva($totalht);
       $total = $totalht + $tva;
-      
+
       $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, remise_percent, datef, note, fk_user_author,fk_projet, fk_cond_reglement, date_lim_reglement) ";
-      $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $this->remise_percent, ".$this->db->idate($this->date).",'$this->note',$user->id, $this->projetid, $this->cond_reglement,".$this->db->idate($datelim).")";      
+      $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $this->remise_percent, ".$this->db->idate($this->date).",'".addslashes($this->note)."',$user->id, $this->projetid, $this->cond_reglement,".$this->db->idate($datelim).")";      
       if ( $this->db->query($sql) )
 	{
 	  $this->id = $this->db->last_insert_id();
@@ -206,7 +206,7 @@ class Facture
 	}
       else
 	{
-	  print $this->db->error() . '<b><br>'.$sql;
+	  print "Erreur facture.class fonction create: ".$this->db->error() . '<br>'.$sql.'<br>';
 	  return 0;
 	}
     }
@@ -429,7 +429,7 @@ class Facture
    */
   Function get_libstatut()
     {
-		return LibStatut($this->paye,$this->statut);
+		return $this->LibStatut($this->paye,$this->statut);
     }
 
   /**
@@ -558,7 +558,7 @@ class Facture
 	    }
 
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
-	  $sql .= " VALUES ($facid, '$desc', $price, $qty, $txtva, $fk_product, $remise_percent, $subprice, $remise) ;";
+	  $sql .= " VALUES ($facid, '".addslashes($desc)."', $price, $qty, $txtva, $fk_product, $remise_percent, $subprice, $remise) ;";
 
 	  if ( $this->db->query( $sql) )
 	    {
@@ -567,7 +567,7 @@ class Facture
 	    }
 	  else
 	    {
-	      print "<br>$sql<br>";
+	      print "Erreur facture.class fonction addline : ".$this->db->error()."<br>$sql<br>";
 	      return -1;
 	    }
 	}
