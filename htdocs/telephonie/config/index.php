@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,15 +63,15 @@ print '</td><td><input type="submit" value="changer"></td></tr>';
 
 
 print '<tr class="pair"><td>';
-print 'Email facturation</td><td align="center">';
+print 'Email facturation FROM</td><td align="center">';
 print TELEPHONIE_EMAIL_FACTURATION_EMAIL;
-print '</td><td><input type="submit" value="changer"></td></tr>';
+print '</td><td>TELEPHONIE_EMAIL_FACTURATION_EMAIL</td></tr>';
 
 
 print '<tr class="pair"><td>';
-print 'Email facturation</td><td align="center">';
+print 'Email facturation BCC</td><td align="center">';
 print TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC;
-print '</td><td><input type="submit" value="changer"></td></tr>';
+print '</td><td>TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC</td></tr>';
 
 print '</table></form>';
 
