@@ -85,20 +85,29 @@ class Societe {
 	 
   function create($user='')
   {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat) ";
-    $sql .= " VALUES ('".trim($this->nom)."', now(), now(), '".$user->id."');";
 
-    if ($this->db->query($sql) ) {
-      $id = $this->db->last_insert_id();
+    $result = $this->verify();
 
-      $result=$this->update($id);
-      if ($result < 0) { return $result; }
+    if ($result == 0)
+      {
 
-      return $id;
-    } else {
-    	dolibarr_print_error($this->db);
-    }        
-        
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat) ";
+	$sql .= " VALUES ('".trim($this->nom)."', now(), now(), '".$user->id."');";
+	
+	if ($this->db->query($sql) )
+	  {
+	    $this->id = $this->db->last_insert_id();
+	  }
+	
+	$result = $this->update($this->id);
+
+	return $result;
+      }
+    else
+      {
+	return -1;
+      }      
+    
   }
 
   /**
@@ -109,10 +118,10 @@ class Societe {
   function verify()
   {
     $result = 0;
-
+    $this->error_message = "";
     if (strlen(trim($this->nom)) == 0)
       {
-	$this->error_message = "Le nom de la société ne peut être vide";
+	$this->error_message = "Le nom de la société ne peut être vide.\n";
 	$result = -2;
       }
 
@@ -122,17 +131,17 @@ class Societe {
       {
 	if ($rescode == -1)
 	  {
-	    $this->error_message = "La syntaxe du code client est incorrecte.";
+	    $this->error_message .= "La syntaxe du code client est incorrecte.\n";
 	  }
 
 	if ($rescode == -2)
 	  {
-	    $this->error_message = "Vous devez saisir un code client.";
+	    $this->error_message .= "Vous devez saisir un code client.\n";
 	  }
 
 	if ($rescode == -3)
 	  {
-	    $this->error_message = "Ce code client est déjà utilisé.";
+	    $this->error_message .= "Ce code client est déjà utilisé.\n";
 	  }
 
 	$result = -3;
@@ -273,18 +282,10 @@ $this->error_message = "Erreur, le prefix '".$this->prefix_comm."' existe déjà v
 	  }
       }
 
-
     return $result;
 
   }
   
-
-
-
-
-
-
-
   /**
    *    \brief      Recupére l'objet societe
    *    \param      socid       id de la société à charger en mémoire

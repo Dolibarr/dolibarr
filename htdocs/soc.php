@@ -92,18 +92,17 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 
   if ($_POST["action"] == 'add')
     {
-      $socid = $soc->create($user);
+      $result = $soc->create($user);
 
-      if ($socid > 0) {
-        Header("Location: soc.php?socid=$socid");
-      }
-      elseif ($socid == -1) {
-        $mesg="Erreur, cette société existe déjà sous ce nom ou pour ce prefix commercial";
-        $_GET["action"]='create';
-      }
-      else {
-        dolibarr_print_error($db); 
-      }
+      if ($result == 0)
+	{
+	  Header("Location: soc.php?socid=".$soc->id);
+	}
+      else
+	{
+	  $_GET["action"]='create';
+	  //dolibarr_print_error($db); 
+	}
     }
 }
 
@@ -128,12 +127,18 @@ if ($_GET["action"] == 'create')
       print_titre($langs->trans("NewCompany"));
       print "<br>\n";
       
-      print $mesg;	  
+      if ($soc->error_message)
+	{
+	  print '<div class="errormessage">';
+	  print nl2br($soc->error_message);
+	  print '</div>';
+	}
+
       print '<form action="soc.php" method="post">';
       print '<input type="hidden" name="action" value="add">';
       
       print '<table class="border" width="100%">';
-      print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" name="nom"></td></tr>';
+      print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
       print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
       print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp">&nbsp;';
       print $langs->trans('Town').'&nbsp;<input type="text" name="ville"></td>';
