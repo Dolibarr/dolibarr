@@ -420,6 +420,7 @@ else
 		  $authorfullname=$author->fullname;
 	  }
 	  print "<tr><td>Auteur</td><td colspan=\"4\">$authorfullname</td>";
+	  print "<tr><td>Statut:</td><td colspan=\"4\">".$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 	  
 	  print "<tr>".'<td>&nbsp</td><td>Total HT</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
 	  print '<td align="right">TVA</td><td align="right">'.price($fac->total_tva)."</td></tr>";

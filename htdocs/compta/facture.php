@@ -1353,9 +1353,9 @@ else
 	if ($month > 0)
 	  $sql .= " AND date_format(f.datef, '%m') = $month";
 	
-	if ($filtre)
+	if ($_GET["filtre"])
 	  {
-	    $filtrearr = split(",", $filtre);
+	    $filtrearr = split(",", $_GET["filtre"]);
 	    foreach ($filtrearr as $fil)
 	      {
 		$filt = split(":", $fil);
@@ -1404,7 +1404,7 @@ else
 	print_liste_field_titre("Montant TTC",$PHP_SELF,"f.total_ttc","","&amp;socidp=$socidp");
 	print '</td><td align="right">';
 	print_liste_field_titre("Reçu",$PHP_SELF,"am","","&amp;socidp=$socidp");
-	print '</td><td align="right">';
+	print '</td><td align="center">';
 	print_liste_field_titre("Statut",$PHP_SELF,"fk_statut,paye","","&amp;socidp=$socidp");
 	print '</td>';
 	print "</tr>\n";

@@ -22,6 +22,7 @@
  */
 require("./pre.inc.php");
 require("../../contact.class.php");
+require("../../facturefourn.class.php");
 
 llxHeader();
 
@@ -32,12 +33,6 @@ if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
-}
-
-if ($action == 'note')
-{
-  $sql = "UPDATE societe SET note='$note' WHERE idp=$socid";
-  $result = $db->query($sql);
 }
 
 if ($action == 'delete')
@@ -94,7 +89,7 @@ if ($sortfield == "")
 }
 
 
-$sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.total_ht, fac.total_ttc, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid, fac.facnumber";
+$sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid, fac.facnumber";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac ";
 $sql .= " WHERE fac.fk_soc = s.idp";
 
@@ -102,6 +97,15 @@ if ($socid)
 {
   $sql .= " AND s.idp = $socid";
 }
+if ($_GET["filtre"])
+  {
+    $filtrearr = split(",", $_GET["filtre"]);
+    foreach ($filtrearr as $fil)
+      {
+	$filt = split(":", $fil);
+	$sql .= " AND " . $filt[0] . " = " . $filt[1];
+      }
+  }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit+1, $offset);
 
@@ -116,23 +120,27 @@ if ($result)
 
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<TR class="liste_titre">';
-  print '<TD>Numéro</TD>';
-  print '<TD>';
+  print '<tr class="liste_titre">';
+  print '<td>';
+  print_liste_field_titre("Numéro",$PHP_SELF,"facnumber");
+  print '</td>';
+  print '<td>';
   print_liste_field_titre("Date",$PHP_SELF,"fac.datef");
-  print '</TD>';
-  print '<TD>Libellé</TD>';
+  print '</td>';
+  print '<td>Libellé</TD>';
   print '<td>';
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
   print '</td>';
-  print '<TD align="right">';
+  print '<td align="right">';
   print_liste_field_titre("Montant HT",$PHP_SELF,"fac.total_ht");
   print '</td>';
-  print '<TD align="right">';
+  print '<td align="right">';
   print_liste_field_titre("Montant TTC",$PHP_SELF,"fac.total_ttc");
   print '</td>';
-  print '<td align="center">Payé</td>';
-  print "</TR>\n";
+  print '<td align="center">';
+  print_liste_field_titre("Statut",$PHP_SELF,"fk_statut,paye");
+  print '</td>';
+  print "</tr>\n";
   $var=True;
   while ($i < min($num,$limit))
     {
@@ -145,15 +153,48 @@ if ($result)
       print "<td>".strftime("%d %b %Y",$obj->datef)."</td>\n";
       print '<td>'.stripslashes("$obj->libelle").'</td>';
       print "<td><a href=\"../fiche.php?socid=$obj->socid\">$obj->nom</A></td>\n";
-      print '<TD align="right">'.price($obj->total_ht).'</td>';
+      print '<td align="right">'.price($obj->total_ht).'</td>';
       print '<td align="right">'.price($obj->total_ttc).'</td>';
-      print '<TD align="center">'.($obj->paye||$obj->total_ht==0?"":"<a class=\"impayee\" href=\"\">").($obj->total_ht==0?"brouillon":$yn[$obj->paye]).($obj->paye||$obj->total_ht==0?"":"</a>").'</TD>';
+      // Affiche statut de la facture
+		if ($obj->paye)
+		  {
+		    $class = "normal";
+		  }
+		else
+		  {
+		    if ($obj->fk_statut == 0)
+		      {
+			$class = "normal";
+		      }
+		    else
+		      {
+			$class = "impayee";
+		      }
+		  }
+      if (! $obj->paye)
+        {
+          if ($obj->fk_statut == 0)
+            {
+      	print '<td align="center">brouillon</td>';
+            }
+          elseif ($obj->fk_statut == 3)
+            {
+      	print '<td align="center">annulée</td>';
+            }
+          else
+            {
+      	print '<td align="center"><a class="'.$class.'" href="'.$PHP_SELF.'?filtre=paye:0,fk_statut:1">'.($obj->am?"commencé":"impayée").'</a></td>';
+            }
+        }
+      else
+        {
+          print '<td align="center">payée</td>';
+        }
 
-
-      print "</TR>\n";
+      print "</tr>\n";
       $i++;
     }
-    print "</TABLE>";
+    print "</table>";
     $db->free();
 }
 else

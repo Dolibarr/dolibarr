@@ -423,6 +423,24 @@ class FactureFourn
     {
 
     }
+
+  /**
+   * Renvoi un libellé du statut
+   *
+   */
+  Function LibStatut($paye,$statut)
+    {
+		if (! $paye)
+		  {
+		    if ($statut == 0) return 'Brouillon (à valider)';
+		    if ($statut == 3) return 'Annulée';
+			return 'Validée (à payer)';
+		  }
+		else
+		  {
+		    return 'Payée';
+    	  }
+    }
   
 }
 ?>
