@@ -32,7 +32,7 @@
 //session_register("fix_left_menu");
 
 //include_once("../../allpre.inc.php");
-include_once("./pre.inc.php");
+require("./pre.inc.php");
 
 llxHeader();
 
