@@ -1,3 +1,11 @@
 # Dolibarr language file - fr_FR - products
 Products=Produits
 Services=Services
+Product=Produit
+Service=Service
+ProductsAndServices=Produits et Services
+ProductsOnSell=Produits en vente
+ProductsNotOnSell=Produits hors vente
+ServicesOnSell=Services en vente
+ServicesNotOnSell=Services hors vente
+LastRecorded=Derniers produits/services en vente enregistrés
