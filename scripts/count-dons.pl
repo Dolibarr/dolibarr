@@ -21,9 +21,10 @@
 #
 use DBI;
 
-my $dbh = DBI->connect($ARGV[1]) || die $DBI::errstr ;
+my $dbh = DBI->connect($ARGV[2]) || die $DBI::errstr ;
 
-my $sql = 'SELECT sum(amount) FROM llx_don WHERE fk_statut = ' .$ARGV[0];
+my $sql = 'SELECT sum(amount) FROM llx_don';
+$sql .= ' WHERE fk_statut = ' .$ARGV[1].' AND fk_don_projet = '.$ARGV[0];
 
 my $sth = $dbh->prepare("$sql") || die $dbh->errstr ;
 $sth->execute;
