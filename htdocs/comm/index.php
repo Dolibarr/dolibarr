@@ -75,36 +75,38 @@ print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top" width="30%">';
 
-print '<form method="post" action="propal.php">';
-print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
-print "<tr $bc[1]><td>";
-print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
-print "</table></form>\n";
+if ($conf->propal->enabled) {
+	print '<form method="post" action="propal.php">';
+	print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+	print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
+	print "<tr $bc[1]><td>";
+	print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
+	print "</table></form><br>\n";
 
-$sql = "SELECT p.rowid, p.ref";
-$sql .= " FROM llx_propal as p";
-$sql .= " WHERE p.fk_statut = 0";
-
-if ( $db->query($sql) )
-{
-  $num = $db->num_rows();
-  $i = 0;
-  if ($num > 0 )
-    {
-      print '<br><table border="0" cellspacing="0" cellpadding="3" width="100%">';
-      print "<TR class=\"liste_titre\">";
-      print "<td colspan=\"2\">Propositions commerciales brouillons</td></tr>";
-      
-      while ($i < $num)
+	$sql = "SELECT p.rowid, p.ref";
+	$sql .= " FROM llx_propal as p";
+	$sql .= " WHERE p.fk_statut = 0";
+	
+	if ( $db->query($sql) )
 	{
-	  $obj = $db->fetch_object( $i);
-	  $var=!$var;
-	  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
-	  $i++;
+	  $num = $db->num_rows();
+	  $i = 0;
+	  if ($num > 0 )
+	    {
+	      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+	      print "<TR class=\"liste_titre\">";
+	      print "<td colspan=\"2\">Propositions commerciales brouillons</td></tr>";
+	      
+	      while ($i < $num)
+		{
+		  $obj = $db->fetch_object( $i);
+		  $var=!$var;
+		  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
+		  $i++;
+		}
+	      print "</table><br>";
+	    }
 	}
-      print "</table><br>";
-    }
 }
 
 /*
@@ -248,64 +250,65 @@ if ( $db->query($sql) )
     }
 }
 
-
 /*
  * Dernières propales
  *
  */
 
-$sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-$sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut > 1";
-if ($socidp)
-{ 
-  $sql .= " AND s.idp = $socidp"; 
-}
+if ($conf->propal->enabled) {
 
-$sql .= " ORDER BY p.rowid DESC";
-$sql .= $db->plimit(5, 0);
-
-if ( $db->query($sql) )
-    {
-      $num = $db->num_rows();
-      
-      $i = 0;
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';      
-      print '<tr class="liste_titre"><td colspan="6">Dernières propositions commerciales</td></tr>';
-      $var=True;
-      
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object( $i);
-	  
-	  $var=!$var;
-	  print "<tr $bc[$var]>";
-	  print '<td width="12%"><a href="propal.php?propalid='.$objp->propalid.'">'.$objp->ref.'</a></td>';
-	  print "<td width=\"30%\"><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
-	  
-	  $now = time();
-	  $lim = 3600 * 24 * 15 ;
-	  
-	  if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
-	    {
-	      print "<td><b> &gt; 15 jours</b></td>";
-	    }
-	  else
-	    {
-	      print "<td>&nbsp;</td>";
-	    }
-	  
-	  print "<td align=\"right\">";
-	  print strftime("%d %B %Y",$objp->dp)."</td>\n";	  
-	  print "<td align=\"right\">".price($objp->price)."</TD>\n";
-	  print "<td align=\"center\">$objp->statut</TD>\n";
-	  print "</tr>\n";
-	  $i++;
+	$sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+	$sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut > 1";
+	if ($socidp)
+	{ 
+	  $sql .= " AND s.idp = $socidp"; 
 	}
-            
-      print "</table>";
-      $db->free();
-    }
-
+	
+	$sql .= " ORDER BY p.rowid DESC";
+	$sql .= $db->plimit(5, 0);
+	
+	if ( $db->query($sql) )
+	    {
+	    $num = $db->num_rows();
+	      
+	    $i = 0;
+	    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';      
+	    print '<tr class="liste_titre"><td colspan="6">Dernières propositions commerciales</td></tr>';
+	    $var=True;
+	      
+	    while ($i < $num)
+		{
+		  $objp = $db->fetch_object( $i);
+		  
+		  $var=!$var;
+		  print "<tr $bc[$var]>";
+		  print '<td width="12%"><a href="propal.php?propalid='.$objp->propalid.'">'.$objp->ref.'</a></td>';
+		  print "<td width=\"30%\"><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
+		  
+		  $now = time();
+		  $lim = 3600 * 24 * 15 ;
+		  
+		  if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
+		    {
+		      print "<td><b> &gt; 15 jours</b></td>";
+		    }
+		  else
+		    {
+		      print "<td>&nbsp;</td>";
+		    }
+		  
+		  print "<td align=\"right\">";
+		  print strftime("%d %B %Y",$objp->dp)."</td>\n";	  
+		  print "<td align=\"right\">".price($objp->price)."</TD>\n";
+		  print "<td align=\"center\">$objp->statut</TD>\n";
+		  print "</tr>\n";
+		  $i++;
+		}
+	            
+		print "</table>";
+		$db->free();
+	}
+}
 
 
 print '</td></tr>';
@@ -313,7 +316,6 @@ print '</table>';
 
 $db->close();
  
-
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
