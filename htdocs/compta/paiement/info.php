@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +20,24 @@
  * $Source$
  *
  */
+
+/*!	\file htdocs/compta/paiement/info.php
+		\ingroup    facture
+		\brief      Onglet info d'un paiement
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../../paiement.class.php");
-/*
- *
- *
- */
+
+$langs->load("bills");
+$langs->load("companies");
+
 llxHeader();
 
 print '<div class="tabs">';
-print '<a class="tab" href="fiche.php?id='.$_GET["id"].'">Paiement</a>';
-print '<a class="tab" href="info.php?id='.$_GET["id"].'" id="active">Info</a>';
+print '<a class="tab" href="fiche.php?id='.$_GET["id"].'">'.$langs->trans("Payment").'</a>';
+print '<a class="tab" href="info.php?id='.$_GET["id"].'" id="active">'.$langs->trans("Info").'</a>';
 print '</div>';
 print '<div class="tabBar">';
 
@@ -42,7 +50,9 @@ $paiement = new Paiement($db);
 $paiement->fetch($_GET["id"], $user);
 $paiement->info($_GET["id"]);
 
+print '<table width="100%"><tr><td>';
 dolibarr_print_object_info($paiement);
+print '</td></tr></table>';
 
 $db->close();
 

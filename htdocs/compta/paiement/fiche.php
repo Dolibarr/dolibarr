@@ -20,10 +20,21 @@
  * $Source$
  *
  */
+
+/*!	\file htdocs/compta/paiement/fiche.php
+		\ingroup    facture
+		\brief      Onglet paiement d'un paiement
+		\version    $Revision$
+*/
+
+
 require("./pre.inc.php");
 require("../../paiement.class.php");
 
 $user->getrights('facture');
+
+$langs->load("bills");
+$langs->load("companies");
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->facture->creer)
 {
@@ -42,8 +53,8 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user-
 llxHeader();
 
 print '<div class="tabs">';
-print '<a href="fiche.php?id='.$_GET["id"].'" id="active" class="tab">Paiement</a>';
-print '<a class="tab" href="info.php?id='.$_GET["id"].'">Info</a>';
+print '<a href="fiche.php?id='.$_GET["id"].'" id="active" class="tab">'.$langs->trans("Payment").'</a>';
+print '<a class="tab" href="info.php?id='.$_GET["id"].'">'.$langs->trans("Info").'</a>';
 print '</div>';
 
 print '<div class="tabBar">';
@@ -69,13 +80,15 @@ $html = new Form($db);
 
 print '<table class="noborder" width="100%">';
 
-print '<tr><td valign="top">Numéro : '.$paiement->numero."<br>";
+print '<tr><td valign="top">';
 
-print 'Date : '.strftime("%d %B %Y",$paiement->date)."&nbsp;<br>";
+print $langs->trans("Numero").' : '.$paiement->numero."<br>";
 
-print $langs->trans("Type").' : '.$paiement->type_libelle."&nbsp;<br>";
+print $langs->trans("Date").' : '.strftime("%d %B %Y",$paiement->date)."<br>";
 
-print 'Montant : '.$paiement->montant."&nbsp;".MAIN_MONNAIE."<br>";
+print $langs->trans("Type").' : '.$paiement->type_libelle."<br>";
+
+print $langs->trans("Amount").' : '.$paiement->montant."&nbsp;".MAIN_MONNAIE."<br>";
 
 print '</td></tr>';
 print "</table>";
@@ -98,10 +111,10 @@ if ($db->query($sql))
   
   $i = 0;
 
-  print '<br><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<br><table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td>Facture</td><td>Société</td>';
-  print '<td align="right">Montant TTC</td>';	      
+  print '<td>'.$langs->trans("Bill").'</td><td>'.$langs->trans("Company").'</td>';
+  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';	      
   print "</tr>\n";
   
   if ($num > 0) 
@@ -136,16 +149,14 @@ if ($db->query($sql))
  *
  *
  */
-  print "</div>";
+  print "<br></div>";
 
   if ($user->societe_id == 0 && $allow_delete)
     {
       print '<div class="tabsAction">';
-      // L'edition est pour l'instant inutile
-      //print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=edit">Editer</a>';    
 
       if ($_GET["action"] != 'delete') { 
-      	print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=delete">Supprimer</a>';
+      	print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=delete">'.$langs->trans("Delete").'</a>';
       }
       
       print "</div>";      

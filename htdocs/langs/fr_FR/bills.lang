@@ -1,6 +1,8 @@
 # Dolibarr language file - fr_FR - bills
 Bill=Facture
 Bills=Factures
+Payment=Paiement
+Payments=Paiements
 ClassifyPayed=Classer 'Payée'
 ClassifyCanceled=Classer 'Abandonnée'
 CreateBill=Créer Facture

@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - bills
 Bill=Bill
 Bills=Bills
+Payment=Payment
+Payments=Payments
 ClassifyPayed=Classify 'Payed'
 ClassifyCanceled=Classify 'Abandonned'
 CreateBill=Create Bill
