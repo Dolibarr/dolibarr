@@ -139,12 +139,39 @@ if ($_GET["facid"] > 0)
       print '<td align="right" colspan="2"><b>'.price($fac->total_ttc).'</b></td>';
       print '<td>'.$conf->monnaie.'</td><td>&nbsp;</td></tr>';
 
+      print '<tr><td>RIB</td><td colspan="4">';
+      print $soc->display_rib();
+      print '</td></tr>';
+
       print "</table>";
+
+      /*
+       *
+       *
+       */
+
+      $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
+      $sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
+      $sql .= " , pfd.fk_prelevement, pfd.amount";
+      $sql .= " , u.name, u.firstname";
+      $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+      $sql .= " , ".MAIN_DB_PREFIX."user as u";
+      $sql .= " WHERE fk_facture = ".$fac->id;
+      $sql .= " AND pfd.fk_user_demande = u.rowid";
+      $sql .= " AND pfd.traite = 0";
+      $sql .= " ORDER BY pfd.date_demande DESC";
+      
+      $result_sql = $db->query($sql);
+      if ($result_sql)
+	{
+	  $num = $db->num_rows();
+	}
+
 
       print "<div class=\"tabsAction\">\n";
       
       // Valider
-      if ($fac->statut > 0 && $fac->paye == 0 && $fac->mode_reglement == 3)
+      if ($fac->statut > 0 && $fac->paye == 0 && $fac->mode_reglement == 3 && $num == 0)
 	{
 	  if ($user->rights->facture->creer)
 	    {
@@ -156,31 +183,19 @@ if ($_GET["facid"] > 0)
       /*
        * Prélèvement
        */
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';      
       print '<td align="center">Date demande</td>';
       print '<td align="center">Date traitement</td>';
+      print '<td align="center">Montant</td>';
       print '<td align="center">Bon prélèvement</td>';
       print '<td align="center">'.$langs->trans("User").'</td><td>&nbsp;</td><td>&nbsp;</td>';
       print '</tr>';      
       $var=True;
 
-      $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
-      $sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
-      $sql .= " , pfd.fk_prelevement";
-      $sql .= " , u.name, u.firstname";
-      $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-      $sql .= " , ".MAIN_DB_PREFIX."user as u";
-      $sql .= " WHERE fk_facture = ".$fac->id;
-      $sql .= " AND pfd.fk_user_demande = u.rowid";
-      $sql .= " AND pfd.traite = 0";
-      $sql .= " ORDER BY pfd.date_demande DESC";
-      
-      $result = $db->query($sql);
-      if ($result)
+      if ($result_sql)
 	{
-	  $num = $db->num_rows();
 	  $i = 0;
 	  
 	  while ($i < $num)
@@ -191,6 +206,7 @@ if ($_GET["facid"] > 0)
 	      print "<tr $bc[$var]>";	      	      
 	      print '<td align="center">'.strftime("%d/%m/%Y",$obj->date_demande)."</td>\n";
 	      print '<td align="center">En attente de traitement</td>';
+	      print '<td align="center">'.price($obj->amount).'</td>';
 	      print '<td align="center">-</td>';
 	      print '<td align="center" colspan="2">'.$obj->firstname." ".$obj->name.'</td>';	      
 	      print '<td>';
@@ -235,6 +251,7 @@ if ($_GET["facid"] > 0)
 	      print '<td align="center">'.strftime("%d/%m/%Y",$obj->date_demande)."</td>\n";
 
 	      print '<td align="center">'.strftime("%d/%m/%Y",$obj->date_traite)."</td>\n";
+	      print '<td align="center">'.price($obj->amount).'</td>';
 	      print '<td align="center">';
 	      print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$obj->fk_prelevement;
 	      print '">'.$obj->fk_prelevement."</a></td>\n";
