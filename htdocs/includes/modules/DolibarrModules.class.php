@@ -2,6 +2,7 @@
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,21 +55,21 @@ class DolibarrModules
     // Insère les constantes
     $err = 0;
     $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."';";
-		$this->db->query($sql_del);
-		$sql ="INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-		('".$this->const_name."','1',0);";
+    $this->db->query($sql_del);
 
+    $sql ="INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+		('".$this->const_name."','1',0);";
     if (!$this->db->query($sql))
       {
 	$err++;
       }
-
+    
     // Insère les boxes dans llx_boxes_def
     foreach ($this->boxes as $key => $value)
       {
 	$titre = $this->boxes[$key][0];
 	$file  = $this->boxes[$key][1];
-
+	
 	$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."boxes_def WHERE name ='".$titre."'";
 
 	if ( $this->db->query($sql) )
@@ -110,21 +111,21 @@ class DolibarrModules
 	    if ($row[0] == 0)
 	      {
 	        // Si non trouve // '$visible'
-            if (strlen($note)){
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note',0);";
-            }elseif (strlen($val))
-            {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val',0);";
-            }
-            else
-            {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type',0);";
-            }
-            
-            if (! $this->db->query($sql) )
-            {
-            $err++;
-            }
+		if (strlen($note)){
+		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note',0);";
+		}elseif (strlen($val))
+		  {
+		    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val',0);";
+		  }
+		else
+		  {
+		    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type',0);";
+		  }
+		
+		if (! $this->db->query($sql) )
+		  {
+		    $err++;
+		  }
 	      }
 	  }
 	else
@@ -173,7 +174,7 @@ class DolibarrModules
 		$sql .= "(".$r_id.",'".$r_desc."','".$r_modul."','".$r_type."',".$r_def.");";
 	      }
 
-
+	    //	    print "<pre>DEBUG ERIC: $sql</pre>\n";
 	    if ( $this->db->query($sql) )
 	      {
 	      }
