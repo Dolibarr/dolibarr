@@ -175,44 +175,54 @@ class Fichinter {
    *
    *
    */
-  Function valid($userid, $outputdir) {
+  Function valid($userid, $outputdir)
+    {
 
-    $this->fetch($this->id);
+      $this->fetch($this->id);
 
-    $sql = "UPDATE llx_fichinter SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
-    $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+      $sql = "UPDATE llx_fichinter SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
+      $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
     
-    if ($this->db->query($sql) ) {
-
-      /*
-       * Set generates files readonly
-       *
-       */
-      $file = $outputdir . "/$this->ref/$this->ref.tex";
-      print $file;
-      if (is_writeable($file)) {
-	chmod($file, 0444);
-      }
-      $file = $outputdir . "/$this->ref/$this->ref.ps";
-      if (is_writeable($file)) {
-	chmod($file, 0444);
-      }
-      $file = $outputdir . "/$this->ref/$this->ref.pdf";
-      if (is_writeable($file)) {
-	chmod($file, 0444);
-      }
-      return 1;
-    } else {
-      print $this->db->error() . ' in ' . $sql;
+      if ($this->db->query($sql) )
+	{
+	  /*
+	   * Set generates files readonly
+	   *
+	   */
+	  $file = $outputdir . "/$this->ref/$this->ref.tex";
+	  print $file;
+	  if (is_writeable($file))
+	    {
+	      chmod($file, 0444);
+	    }
+	  $file = $outputdir . "/$this->ref/$this->ref.ps";
+	  if (is_writeable($file))
+	    {
+	      chmod($file, 0444);
+	    }
+	  $file = $outputdir . "/$this->ref/$this->ref.pdf";
+	  if (is_writeable($file)) {
+	    chmod($file, 0444);
+	  }
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	}
+      
     }
-
-  }
   /*
    *
    *
    *
    */
-
+  Function fetch_client()
+    {
+      $client = new Societe($this->db);
+      $client->fetch($this->societe_id);
+      $this->client = $client;	
+    }
 }    
 ?>
     
