@@ -40,6 +40,11 @@ else
     }
 }
 
+if (! isset($dolibarr_main_db_type))
+{	
+  exit('Erreur la variale $dolibarr_main_db_type n\'est pas définie dans le fichier de configuration');
+}
+
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);
 
