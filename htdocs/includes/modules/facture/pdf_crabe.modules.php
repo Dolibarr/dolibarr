@@ -94,12 +94,12 @@ Class pdf_crabe {
 		  $pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
 		  
 		  $pdf->SetXY (145, $curY);
+		  $pdf->MultiCell(16, 5, price($fac->lignes[$i]->price), 0, 'R', 0);
+	      
+		  $pdf->SetXY (164, $curY);
 		  $pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'C');
 		  
-		  $pdf->SetXY (156, $curY);
-		  $pdf->MultiCell(18, 5, price($fac->lignes[$i]->price), 0, 'R', 0);
-	      
-		  $pdf->SetXY (174, $curY);
+		  $pdf->SetXY (173, $curY);
 		  $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
 		  $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
 
@@ -194,7 +194,7 @@ Class pdf_crabe {
 	}
       else
 	{
-	  print "FAC_OUTPUTDIR non définit !";
+	  print "Erreur: FAC_OUTPUTDIR non défini !";
 	}
     }
   /*
@@ -275,7 +275,7 @@ Class pdf_crabe {
 	  $pdf->MultiCell(26, $tab2_hl, price($fac->remise), 0, 'R', 0);
 	  
 	  $pdf->SetXY (132, $tab2_top + $tab2_hl * 2);
-	  $pdf->MultiCell(42, $tab2_hl, "Total HT aprés remise", 0, 'R', 0);
+	  $pdf->MultiCell(42, $tab2_hl, "Total HT après remise", 0, 'R', 0);
       
 	  $pdf->SetXY (174, $tab2_top + $tab2_hl * 2);
 	  $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
@@ -329,13 +329,13 @@ Class pdf_crabe {
       $pdf->Text(134,$tab_top + 5,'TVA');
       
       $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-      $pdf->Text(147,$tab_top + 5,'Qté');
+      $pdf->Text(147,$tab_top + 5,'P.U. HT');
       
-      $pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-      $pdf->Text(160,$tab_top + 5,'P.U.');
+      $pdf->line(162, $tab_top, 162, $tab_top + $tab_height);
+      $pdf->Text(165,$tab_top + 5,'Qté');
       
       $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-      $pdf->Text(187,$tab_top + 5,'Total');
+      $pdf->Text(185,$tab_top + 5,'Total HT');
       
       $pdf->Rect(10, $tab_top, 190, $tab_height);
       $pdf->line(10, $tab_top + 10, 200, $tab_top + 10 );
