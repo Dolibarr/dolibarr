@@ -33,6 +33,8 @@ if (substr($sapi_type, 0, 3) == 'cgi')
 }
 
 require ("../../htdocs/master.inc.php");
+require(DOL_DOCUMENT_ROOT."/lolix/cv/cv.class.php");
+
 
 $error = 0;
 
