@@ -23,8 +23,6 @@ RSYNC=/usr/bin/rsync
 ROPT=-av
 RSSH=-e ssh
 
-FRPAGES = $(shell find * -regex '.*\.sgml' -print )
-
 all: $(DOC).pdf $(DOC).html $(DOC).txt
 
 
