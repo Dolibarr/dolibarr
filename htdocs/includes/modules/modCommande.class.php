@@ -20,9 +20,9 @@
  *
  */
 
-include_once "modDolibarrModules.class.php";
+include_once "DolibarrModules.class.php";
 
-class modCommande extends modDolibarrModules
+class modCommande extends DolibarrModules
 {
 
   /*
@@ -33,6 +33,12 @@ class modCommande extends modDolibarrModules
   Function modCommande($DB)
   {
     $this->db = $DB ;
+    $this->numero = 25 ;
+    $this->name = "Commande";
+    $this->description = "Gestion des commandes";
+    $this->const_name = "MAIN_MODULE_COMMANDE";
+    $this->const_config = MAIN_MODULE_COMMANDE;
+
     $this->const = array();
     $this->boxes = array();
     $this->config_page_url = "commande.php";
@@ -56,8 +62,6 @@ class modCommande extends modDolibarrModules
 		 "insert into llx_rights_def values (82,'Créer modifier les commandes','commande','w',0);",
 		 //"insert into llx_rights_def values (83,'Modifier les commandes d\'autrui','commande','m',0);",
 		 "insert into llx_rights_def values (84,'Valider les commandes','commande','d',0);",
-		 "insert into llx_rights_def values (85,'Envoyer les commandes aux clients','commande','d',0);",
-		 "insert into llx_rights_def values (86,'Emettre des paiements sur les commandes','commande','d',0);",
 		 "insert into llx_rights_def values (89,'Supprimer les commandes','commande','d',0);",
 		 );
     

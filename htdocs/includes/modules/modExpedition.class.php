@@ -20,9 +20,9 @@
  *
  */
 
-include_once "modDolibarrModules.class.php";
+include_once "DolibarrModules.class.php";
 
-class modExpedition extends modDolibarrModules
+class modExpedition extends DolibarrModules
 {
 
   /*
@@ -33,6 +33,12 @@ class modExpedition extends modDolibarrModules
   Function modExpedition($DB)
   {
     $this->db = $DB ;
+    $this->numero = 80 ;
+    $this->name = "Expedition";
+    $this->description = "Gestion des expéditions";
+    $this->const_name = "MAIN_MODULE_EXPEDITION";
+    $this->const_config = MAIN_MODULE_EXPEDITION;
+
     $this->const = array();
     $this->boxes = array();
   }

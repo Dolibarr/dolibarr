@@ -19,8 +19,9 @@
  * $Source$
  *
  */
+include_once "DolibarrModules.class.php";
 
-class modFicheinter
+class modFicheinter  extends DolibarrModules
 {
 
   /*
@@ -31,8 +32,19 @@ class modFicheinter
   Function modFicheinter($DB)
   {
     $this->db = $DB ;
-    $this->depends = array("MAIN_MODULE_SOCIETE");
+    $this->numero = 70 ;
+    $this->name = "Fiche d'intervention";
+    $this->description = "Gestion des fiches d'intervention";
+    $this->const_name = "MAIN_MODULE_FICHEINTER";
+    $this->const_config = MAIN_MODULE_FICHEINTER;
+
+    $this->depends = array("modSociete");
     $this->config_page_url = "fichinter.php";
+
+    $this->depends = array();
+
+    $this->const = array();
+    $this->boxes = array();
   }
   /*
    *
@@ -55,13 +67,8 @@ class modFicheinter
 		 "INSERT INTO llx_rights_def VALUES (62,'Créer modifier les fiches d\'intervention','ficheinter','w',0);",
 		 "INSERT INTO llx_rights_def VALUES (64,'Supprimer les fiches d\'intervention','ficheinter','d',0);"
 		 );
-    //"INSERT INTO llx_rights_def VALUES (63,'Modifier les fiches d\'intervention d\'autrui','ficheinter','m',0);",
-    for ($i = 0 ; $i < sizeof($sql) ; $i++)
-      {
-	$this->db->query($sql[$i]);
-      }
 
-
+    return $this->_init($sql);
   }
   /*
    *
@@ -69,9 +76,9 @@ class modFicheinter
    */
   Function remove()
   {
-    $sql = "DELETE FROM llx_rights_def WHERE module = 'ficheinter';";
-    $this->db->query($sql);
+    $sql = array("DELETE FROM llx_rights_def WHERE module = 'ficheinter';");
 
+    return $this->_remove($sql);
   }
 }
 ?>
