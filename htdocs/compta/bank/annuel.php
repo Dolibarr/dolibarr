@@ -27,6 +27,10 @@ require("./pre.inc.php");
 
 llxHeader();
 
+// Récupère info du compte
+$acct = new Account($db);
+$acct->fetch($_GET["account"]);
+
 /*
  * Sécurité accés client
  */
@@ -35,10 +39,10 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-print_titre("Bilan mensuel Entrées/Sorties pour ce compte bancaire");
+print_titre("Rapport mensuel Entrées/Sorties, compte : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>");
 print '<br>';
 
-# Le bilan est basé sur lx_bank (car doit inclure les transactions sans facture)
+# Ce rapport de trésorerie est basé sur llx_bank (car doit inclure les transactions sans facture)
 # plutot que sur llx_paiement + llx_paiementfourn
 
 $sql = "SELECT sum(f.amount), date_format(f.dateo,'%Y-%m') as dm";

@@ -33,7 +33,7 @@ function llxHeader($head = "")
 
   $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisse");
 
-  $menu->add_submenu(DOL_URL_ROOT."/compta/caisse/annuel.php","Bilan mensuel E/S");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/caisse/annuel.php","Rapport mensuel E/S");
 
   left_menu($menu->liste);
 }

@@ -52,7 +52,7 @@ function llxHeader($head = "")
 	  $objp = $db->fetch_object($i);
 	  $menu->add(DOL_URL_ROOT."/compta/bank/account.php?account=" . $objp->rowid,  $objp->label);
 	  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=" . $objp->rowid ,"Relevés");
-      $menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilanmens.php?account=" . $objp->rowid ,"Bilan mensuel E/S");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=" . $objp->rowid ,"Rapport mensuel E/S");
 	  $i++;
 	}
     }

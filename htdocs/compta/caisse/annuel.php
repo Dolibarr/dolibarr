@@ -40,7 +40,7 @@ $year_current = $_GET["year"];;
 if (! $year_current) { $year_current = strftime("%Y", time()); }
 
 
-print_titre("Bilan mensuel Entrées/Sorties pour la Caisse");
+print_titre("Rapport mensuel Entrées/Sorties, compte: Caisse");
 print '<br>';
 
 
