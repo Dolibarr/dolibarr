@@ -49,7 +49,7 @@ class Form {
 	  $num = $this->db->num_rows();
 	  $i = 0;
 	  
-	  if (strlen($id))
+	  if (strlen("$id"))
 	    {	    	      
 	      while ($i < $num)
 		{

@@ -59,8 +59,7 @@ if ($action == 'add')
       print "Erreur";
       $action = "create";
     }
-
-} 
+}
 
 if ($action == 'delete')
 {
@@ -130,10 +129,6 @@ if ($action == 'create') {
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-  print "<input type=\"hidden\" name=\"facid\" value=\"$facid\">";
-  print "<input type=\"hidden\" name=\"facnumber\" value=\"$obj->facnumber\">";
-  print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
-  print "<input type=\"hidden\" name=\"societe\" value=\"$obj->nom\">";
   
   print "<tr><td>Date du don :</td><td>";
   print_date_select();

@@ -159,7 +159,7 @@ class Don
 
     }
   /*
-   *
+   * Création
    *
    *
    */
@@ -173,6 +173,48 @@ class Don
 
       $sql = "INSERT INTO llx_don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public, fk_don_projet, note, fk_user_author, datedon, email)";
       $sql .= " VALUES (now(), $this->amount, $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, $this->projetid, '$this->commentaire', $userid, '$this->date','$this->email')";
+      
+      $result = $this->db->query($sql);
+      
+      if ($result) 
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}  
+    }
+
+  /*
+   * Mise à jour
+   *
+   *
+   */
+  Function update($userid) 
+    {
+      
+      $this->date = $this->db->idate($this->date);
+
+      $sql = "UPDATE llx_don SET ";
+      $sql .= "amount = " . $this->amount;
+      $sql .= ",fk_paiement = ".$this->modepaiementid;
+      $sql .= ",prenom = '".$this->prenom ."'";
+      $sql .= ",nom='".$this->nom."'";
+      $sql .= ",societe='".$this->societe."'";
+      $sql .= ",adresse='".$this->adresse."'";
+      $sql .= ",cp='".$this->cp."'";
+      $sql .= ",ville='".$this->ville."'";
+      $sql .= ",pays='".$this->pays."'";
+      $sql .= ",public=".$this->public;
+      $sql .= ",fk_don_projet=".$this->projetid;
+      $sql .= ",note='".$this->commentaire."'";
+      $sql .= ",datedon='".$this->date."'";
+      $sql .= ",email='".$this->email."'";
+
+      $sql .= " WHERE rowid = $this->id";
       
       $result = $this->db->query($sql);
       
@@ -222,7 +264,7 @@ class Don
    */
   Function fetch($rowid)
   {
-    $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email";
+    $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
     $sql .= " FROM llx_don as d, llx_don_projet as p, c_paiement as cp";
     $sql .= " WHERE p.rowid = d.fk_don_projet AND cp.id = d.fk_paiement AND d.rowid = $rowid";
 
@@ -245,6 +287,7 @@ class Don
 	    $this->email          = stripslashes($obj->email);
 	    $this->pays           = stripslashes($obj->pays);
 	    $this->projet         = $obj->projet;
+	    $this->projetid       = $obj->fk_don_projet;
 	    $this->public         = $obj->public;
 	    $this->modepaiementid = $obj->fk_paiement;
 	    $this->modepaiement   = $obj->libelle;
