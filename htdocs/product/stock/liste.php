@@ -21,77 +21,34 @@
  *
  */
 
-/**     \file       htdocs/product/stock/liste.php
+/**
+        \file       htdocs/product/stock/liste.php
         \ingroup    stock
         \brief      Page liste des stocks
         \version    $Revision$
 */
 
 require("./pre.inc.php");
-$user->getrights('produit');
+require_once("./entrepot.class.php");
 
-if (!$user->rights->produit->lire)
+$user->getrights('stocks');
+$langs->load("stocks");
+
+if (!$user->rights->stock->lire)
   accessforbidden();
 
-if ($action == 'update')
-{
-  $sql = "UPDATE llx_product SET description='$desc' where rowid = $rowid";
-  $db->query($sql);
-}
 
-/*
- *
- *
- */
-
-if ($page < 0) { 
-  $page = 0 ; }
-
+if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
   
-if ($sortfield == "") {
-  $sortfield="p.tms"; }
-     
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
+if (! $sortfield) $sortfield="e.label";
+if (! $sortorder) $sortorder="ASC";
+
   
-$sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p";
-
-if ($_POST["sall"])
-{
-  $sql .= " WHERE lower(p.ref) like '%".strtolower($sall)."%'";
-  $sql .= " OR lower(p.label) like '%".strtolower($sall)."%'";
-}
-else
-{
-  if (strlen($type) == 0)
-    {
-      $type = 0;
-    }
-
-  $sql .= " WHERE p.fk_product_type = $type";
-  if ($sref)
-    {
-      $sql .= " AND lower(p.ref) like '%".strtolower($sref)."%'";
-    }
-  if ($snom)
-    {
-      $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
-    }
-  if (isset($envente) && strlen($envente) > 0)
-    {
-      $sql .= " AND p.envente = $envente";
-    }
-  else
-    {
-      $sql .= " AND p.envente = 1";
-    }
-}
-
-$sql .= " ORDER BY $sortfield $sortorder ";
+$sql = "SELECT e.rowid as ref, e.label, e.statut, e.lieu, e.address, e.cp, e.ville, e.fk_pays";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
 $result = $db->query($sql) ;
 
@@ -101,57 +58,37 @@ if ($result)
 
   $i = 0;
   
-  if ($num == 1 && (isset($sall) or isset($snom) or isset($sref)))
-    {
-      $objp = $db->fetch_object($result);
-      Header("Location: fiche.php?id=$objp->rowid");
-    }
-  
-  if ($ref || $snom || $sall)
-    {
-      llxHeader("","","Recherche Produit/Service");
+  llxHeader("","",$langs->trans("ListOfWarehouses"));
 
-      print_barre_liste("Recherche d'un produit ou service", $page, "liste.php", "&sref=$sref&snom=$snom&envente=$envente", $sortfield, $sortorder,'',$num);
-    }
-  else
-    {
-      $texte = "Liste des ".$types[$type]."s";
-      llxHeader("","",$texte);
-      if (isset($envente) && $envente == 0)
-	{
-	  $texte .= " hors vente";
-	}
-      print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
-    }
+  print_barre_liste($langs->trans("ListOfWarehouses"), $page, "liste.php", "", $sortfield, $sortorder,'',$num);
 
   print '<table class="noborder" width="100%">';
 
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&envente=$envente&type=$type");
-  print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&type=$type");
-  print "<td align=\"right\">Prix de vente</td>";
+  print_liste_field_titre($langs->trans("Ref"),"liste.php", "e.ref","");
+  print_liste_field_titre($langs->trans("Label"),"liste.php", "e.label","");
+  print_liste_field_titre($langs->trans("Status"),"liste.php", "e.statut","");
+  print_liste_field_titre($langs->trans("LocationSummary"),"liste.php", "e.lieu","");
   print "</tr>\n";
   
-  print '<tr class="liste_titre">';
-  print '<form action="liste.php?type='.$type.'" method="post">';
-  print '<td><input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
-  print '</form><form action="liste.php" method="post">';
-  print '<td><input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';
-  print '</form><td>&nbsp;</td></tr>';
-  
-  
-  $var=True;
-  while ($i < min($num,$limit))
-    {
-      $objp = $db->fetch_object($result);
-      $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
-      print "<TD>$objp->label</TD>\n";
-      print '<TD align="right">'.price($objp->price).'</TD>';
-      print "</TR>\n";
-      $i++;
+  if ($num) {
+      $entrepot=new Entrepot($db);
+    
+      $var=True;
+      while ($i < min($num,$limit))
+        {
+          $objp = $db->fetch_object($result);
+          $var=!$var;
+          print "<tr $bc[$var]>";
+          print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
+          print '<td>'.$objp->label.'</td>';
+          print '<td>'.$entrepot->LibStatut($objp->statut).'</td>';
+          print '<td>'.$entrepot->lieu.'</td>';
+          print "</tr>\n";
+          $i++;
+        }
     }
+    
   $db->free($result);
 
   print "</table>";

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/product/stock/entrepot.class.php
+/**
+	    \file       htdocs/product/stock/entrepot.class.php
 		\ingroup    stock
 		\brief      Fichier de la classe de gestion des entrepots
 		\version    $Revision$
@@ -34,12 +35,18 @@
 
 class Entrepot
 {
-  var $db ;
-
-  var $id ;
+  var $db;
+  var $error;
+  
+  var $id;
   var $libelle;
   var $description;
   var $statut;
+  var $lieu;
+  var $address;
+  var $cp;
+  var $ville;
+  var $pays_id;
 
   /*
    *    \brief      Constructeur de l'objet entrepot
@@ -62,23 +69,24 @@ class Entrepot
     {
 	  // Si libelle non defini, erreur
 	  if ($this->libelle == '') {
-  		  $this->mesg_error = "Libellé obligatoire";
+  		  $this->error = "Libellé obligatoire";
 		  return 0;
 	  }
 	  
-      if ($this->db->begin())
-	{
+      $this->db->begin();
+      
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author)";
 	  $sql .= " VALUES (now(),".$user->id.")";
 
-	  if ($this->db->query($sql) )
+	  $result=$this->db->query($sql);
+	  if ($result)
 	    {
 	      $id = $this->db->last_insert_id(MAIN_DB_PREFIX."entrepot");	      
 	      if ($id > 0)
 		{
 		  $this->id = $id;
 
-		  if ( $this->update($id, $user) )
+		  if ( $this->update($id, $user) > 0)
 		    {
 		      $this->db->commit();
 		      return $id;
@@ -86,16 +94,21 @@ class Entrepot
 		  else
 		    {
 		      $this->db->rollback();
+		      return -3;
 		    }
-
-
+		}
+		else {
+            $this->error="Failed to get insert id";
+  	        return -2;
 		}
 	    }
 	  else
 	    {
+          $this->error="Failed to insert warehouse";
+          $this->db->rollback();
 	      return -1;
 	    }
-	}
+
     }
 
   /*
@@ -105,13 +118,25 @@ class Entrepot
    */
   function update($id, $user)
     {
-      if (strlen(trim($this->libelle)))
-	{
+      $this->libelle=trim($this->libelle);
+      $this->description=trim($this->description);
+
+      $this->lieu=trim($this->lieu);
+      $this->address=trim($this->address);
+      $this->cp=trim($this->cp);
+      $this->ville=trim($this->ville);
+      $this->pays_id=trim($this->pays_id);
+      
 	  $sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
-	  $sql .= " SET label = '" . trim($this->libelle) ."'";
-	  $sql .= ",description = '" . trim($this->description) ."'";
+	  $sql .= " SET label = '" . $this->libelle ."'";
+	  $sql .= ",description = '" . $this->description ."'";
 	  $sql .= ",statut = " . $this->statut ;
-	  
+	  $sql .= ",description = '" . $this->description ."'";
+	  $sql .= ",lieu = '" . $this->lieu ."'";
+	  $sql .= ",address = '" . $this->address ."'";
+	  $sql .= ",cp = '" . $this->cp ."'";
+	  $sql .= ",ville = '" . $this->ville ."'";
+	  $sql .= ",fk_pays = " . $this->pays_id?$this->pays_id:'0' ;
 	  $sql .= " WHERE rowid = " . $id;
 	  
 	  if ( $this->db->query($sql) )
@@ -120,15 +145,11 @@ class Entrepot
 	    }
 	  else
 	    {
+          $this->error=$this->db->error()." sql=$sql";;
 	      return -1;
 	    }
 	}
-      else
-	{
-	  $this->mesg_error = "Vous devez indiquer une référence";
-	  return 0;
-	}
-    }
+
 
   /**
    *    \brief      Recupéeration de la base d'un entrepot
@@ -136,30 +157,84 @@ class Entrepot
    */
   function fetch ($id)
     {    
-      $sql = "SELECT rowid, label, description, statut";
-      $sql .= " FROM ".MAIN_DB_PREFIX."entrepot WHERE rowid = $id";
+        $sql  = "SELECT rowid, label, description, statut, lieu, address, cp, ville, fk_pays";
+        $sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
+        $sql .= " WHERE rowid = $id";
+        
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $obj=$this->db->fetch_object($result);
+        
+            $this->id             = $obj->rowid;
+            $this->ref            = $obj->rowid;
+            $this->libelle        = $obj->label;
+            $this->description    = $obj->description;
+            $this->statut         = $obj->statut;
+            $this->lieu           = $obj->lieu; 
+            $this->address        = $obj->address;
+            $this->cp             = $obj->cp;
+            $this->ville          = $obj->ville;
+            $this->pays_id        = $obj->pays_id;
+        
+            $this->db->free($result);
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+   }
 
-      $result = $this->db->query($sql) ;
 
-      if ( $result )
+  /*
+   * \brief     Charge les informations d'ordre info dans l'objet entrepot
+   * \param     id      id de l'entrepot a charger
+   */
+  function info($id) 
+    {
+      $sql  = "SELECT e.rowid, ".$this->db->pdate("datec")." as datec,";
+      $sql .= " ".$this->db->pdate("tms")." as datem,";
+      $sql .= " fk_user_author";
+      $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+      $sql .= " WHERE e.rowid = ".$id;
+      
+      $result=$this->db->query($sql);
+      if ($result) 
 	{
-	  $result = $this->db->fetch_array();
+	  if ($this->db->num_rows($result)) 
+	    {
+	      $obj = $this->db->fetch_object($result);
 
-	  $this->id             = $result["rowid"];
-	  $this->ref            = $result["ref"];
-	  $this->libelle        = stripslashes($result["label"]);
-	  $this->description    = stripslashes($result["description"]);
-	  $this->statut         = $result["statut"];
+	      $this->id = $obj->rowid;
 
-	  $this->db->free();
-	  return 1;
+          if ($obj->fk_user_author) {
+    	      $cuser = new User($this->db, $obj->fk_user_author);
+    	      $cuser->fetch();
+    	      $this->user_creation     = $cuser;
+          }
+          
+          if ($obj->fk_user_valid) {
+    	      $vuser = new User($this->db, $obj->fk_user_valid);
+    	      $vuser->fetch();
+    	      $this->user_validation = $vuser;
+          }
+          
+	      $this->date_creation     = $obj->datec;
+	      $this->date_modification = $obj->datem;
+
+	    }
+	    
+	  $this->db->free($result);
+
 	}
       else
 	{
-	  print $this->db->error();
-	  return -1;
+	  dolibarr_print_error($this->db);
 	}
-  }
+    }
+
 
   /**
    *    \brief      Renvoie la liste des entrepôts ouverts

@@ -31,18 +31,36 @@
 require_once("./pre.inc.php");
 require_once("./entrepot.class.php");
 
-/*
- *
- *
- */
+$user->getrights("stocks");
+$langs->load("stocks");
+
+if (!$user->rights->stock->lire)
+  accessforbidden();
+
 
 llxHeader("","",$langs->trans("Stocks"));
 
-print_titre($langs->trans("Stocks"));
+print_titre($langs->trans("StocksArea"));
 print '<br>';
+
 
 print '<table class="noborder" width="100%">';
 print '<tr><td valign="top" width="30%">';
+
+
+/*
+ * Zone recherche entrepot
+ */
+print '<form method="post" action="liste.php">';
+print '<table class="noborder" width="100%">';
+print "<tr class=\"liste_titre\">";
+print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
+print "<tr $bc[0]><td>";
+print $langs->trans("Ref").' :</td><td><input class="flat" type="text" size="20" name="sf_ref"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print "</table></form><br>";
+
+
+
 
 $sql = "SELECT e.label, e.rowid, e.statut FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql .= " ORDER BY e.statut DESC ";
@@ -51,37 +69,36 @@ $result = $db->query($sql) ;
 
 if ($result)
 {
-  $num = $db->num_rows($result);
+    $num = $db->num_rows($result);
 
-  $i = 0;
-  
-  if ($num > 0)
+    $i = 0;
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Warehouses").'</td></tr>';
+
+    if ($num)
     {
-      $entrepot=new Entrepot($db);
-      
-      print '<table class="noborder" width="100%">';
+        $entrepot=new Entrepot($db);
 
-      print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Warehouses").'</td></tr>';
-    
-      $var=True;
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object($result);
-	  $var=!$var;
-	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"),"stock")." ".$objp->label."</a></td>\n";
-	  print '<td align="right">'.$entrepot->LibStatut($objp->statut).'</td>';
-	  print "</tr>\n";
-	  $i++;
-	}
-      $db->free($result);
+        $var=True;
+        while ($i < $num)
+        {
+            $objp = $db->fetch_object($result);
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"),"stock")." ".$objp->label."</a></td>\n";
+            print '<td align="right">'.$entrepot->LibStatut($objp->statut).'</td>';
+            print "</tr>\n";
+            $i++;
+        }
+        $db->free($result);
 
-      print "</table>";
     }
+    print "</table>";
 }
 else
 {
-  dolibarr_print_error($db);
+    dolibarr_print_error($db);
 }
 
 print '</td><td valign="top" width="70%">';

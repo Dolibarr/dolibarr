@@ -41,6 +41,7 @@ function llxHeader($head = "", $urlp = "", $title="")
   $menu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"));
 
   $menu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("NewWarehouse"));
+  $menu->add_submenu(DOL_URL_ROOT."/product/stock/liste.php", $langs->trans("List"));
 
   $menu->add(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"));
 
