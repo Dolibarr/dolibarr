@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003 Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+/* Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/external_rss.php
+/**	    \file       htdocs/admin/external_rss.php
 		\ingroup    external_rss
 		\brief      Page d'administration/configuration du module ExternalRss
 		\version    $Revision$
@@ -48,45 +48,54 @@ $nbexternalrss = $obj->nb;
 
 if ($_POST["action"] == 'add')
 {
-
     $external_rss_urlrss = "external_rss_urlrss_" . $_POST["norss"];
-
+    
     if(isset($_POST[$external_rss_urlrss])) {
-      $external_rss_title = "external_rss_title_" . $_POST["norss"];
-      //$external_rss_url = "external_rss_url_" . $_POST["norss"];
-			
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name ='EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "'; ";
-      $db->query($sql); $sql='';
-			$sql1 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "','".$_POST[$external_rss_title]."',0) ;";
-						
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name ='EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "'; ";
-			$db->query($sql);$sql='';
-		$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "','".$_POST[$external_rss_urlrss]."',0) ;";
-			      
-      if ($db->query($sql1) && $db->query($sql2))
-	{
-        header("Location: external_rss.php");
-	}
-      else
-        dolibarr_print_error($db); 
+        $external_rss_title = "external_rss_title_" . $_POST["norss"];
+        //$external_rss_url = "external_rss_url_" . $_POST["norss"];
+        
+        $db->begin();
+        
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name ='EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "'; ";
+        $db->query($sql);
+        
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name ='EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "'; ";
+        $db->query($sql);
+
+        $sql1 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "','".$_POST[$external_rss_title]."',0) ;";
+        $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "','".$_POST[$external_rss_urlrss]."',0) ;";
+        
+        if ($db->query($sql1) && $db->query($sql2))
+        {
+            $db->commit();
+            header("Location: external_rss.php");
+            }
+        else
+            $db->rollback();
+            dolibarr_print_error($db); 
     }
 }
 
 if ($_POST["delete"])
 {
     if(isset($_POST["norss"])) {
-      $sql  = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URL_" . $_POST["norss"]."'";
-      $sql1 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"]."'";
-      $sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"]."'";
-      
-      $result = $db->query($sql);
-      $result = $db->query($sql1);
-      $result = $db->query($sql2);
-      if ($result) {
-        header("Location: external_rss.php");
-      } else {
-        dolibarr_print_error($db); 
-      }
+        $db->begin();
+
+        $sql1 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URL_" . $_POST["norss"]."'";
+        $sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"]."'";
+        $sql3 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"]."'";
+        
+        $result1 = $db->query($sql1);
+        $result2 = $db->query($sql2);
+        $result3 = $db->query($sql3);
+
+        if ($result1 && $result2 && $result3) {
+            $db->commit();
+            header("Location: external_rss.php");
+        } else {
+            $db->rollback();
+            dolibarr_print_error($db); 
+        }
     }
 }
 
@@ -94,25 +103,27 @@ if ($_POST["modify"])
 {
     $external_rss_urlrss = "external_rss_urlrss_" . $_POST["norss"];
     if(isset($_POST[$external_rss_urlrss])) {
-      $external_rss_title = "external_rss_title_" . $_POST["norss"];
-      //$external_rss_url = "external_rss_url_" . $i;
-			
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"]."';";
-			$db->query($sql);$sql='';
-			$sql1 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-			('" . "EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "',". $_POST[$external_rss_title]."',0) ;";
-			
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"]."';";
-			$db->query($sql);$sql='';
-			$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES 
-			('" . "EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "','". $_POST[$external_rss_urlrss]."',0)";
-      
-      if ($db->query($sql1) && $db->query($sql2))
-	{
-        header("Location: external_rss.php");
-	}
-      else
-        dolibarr_print_error($db); 
+        $db->begin();
+
+        $external_rss_title = "external_rss_title_" . $_POST["norss"];
+               
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"]."';";
+        $db->query($sql);
+        
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"]."';";
+        $db->query($sql);
+
+        $sql1 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES('" . "EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "','". $_POST[$external_rss_title]."',0) ;";
+        $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES('" . "EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "','". $_POST[$external_rss_urlrss]."',0)";
+       
+        if ($db->query($sql1) && $db->query($sql2))
+        {
+            $db->commit();
+            header("Location: external_rss.php");
+        }
+        else
+            $db->rollback();
+            dolibarr_print_error($db); 
     }
 }
 
