@@ -37,7 +37,7 @@ llxHeader();
 
 print_fiche_titre('Statistiques factures', $mesg);
 
-$stats = new FactureStats($db);
+$stats = new FactureStats($db, $socidp);
 $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);
 $filev = "/document/images/nbfacture2year-$year.png";
@@ -50,12 +50,12 @@ $px->SetHeight(280);
 
 $px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
       
-$sql = "SELECT count(*), date_format(datef,'%Y') as dm, sum(total)  FROM llx_facture WHERE fk_statut > 0 GROUP BY dm DESC ";
+$sql = "SELECT count(*), date_format(datef,'%Y') as dm, sum(total) FROM llx_facture WHERE fk_statut > 0 ";
 if ($socidp)
 {
   $sql .= " AND fk_soc = $socidp";
 }
-	
+$sql .= " GROUP BY dm DESC ";
 if ($db->query($sql))
 {
   $num = $db->num_rows();

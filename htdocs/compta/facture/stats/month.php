@@ -21,6 +21,14 @@
  */
 
 require("./pre.inc.php");
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
 
 llxHeader();
 $year = $_GET["year"];
@@ -35,7 +43,7 @@ print '<a href="month.php?year='.($year + 1).'">'.($year + 1).'</a>';
  *
  *
  */
-$stats = new FactureStats($db);
+$stats = new FactureStats($db, $socidp);
 
 $dir = DOL_DOCUMENT_ROOT;
 
