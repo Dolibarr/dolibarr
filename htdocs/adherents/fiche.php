@@ -197,12 +197,11 @@ if ($HTTP_POST_VARS["action"] == 'confirm_add_spip' && $HTTP_POST_VARS["confirm"
 /* Création d'une fiche                                                       */
 /*                                                                            */
 /* ************************************************************************** */
-if ($errmsg != ''){
+if ($errmsg != '')
+{
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-  
   print '<th>Erreur dans l\'execution du  formulaire</th>';
   print "<tr><td class=\"delete\"><b>$errmsg</b></td></tr>\n";
-  //  print "<FONT COLOR=\"red\">$errmsg</FONT>\n";
   print '</table>';
 }
 
