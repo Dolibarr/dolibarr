@@ -20,56 +20,75 @@
  *
  */
 
-if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/comm/'))
+if (defined('MAIN_MODULE_COMMERCIAL') && MAIN_MODULE_COMMERCIAL == 1)
 {
-  print '<TD width="15%" class="menusel" align="center">';
-  if ($user->comm > 0 && $conf->commercial ) 
+  if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/comm/'))
     {
-      print '<A class="menusel" href="'.DOL_URL_ROOT.'/comm/">Commercial</A></TD>';
+      print '<TD width="15%" class="menusel" align="center">';
+      if ($user->comm > 0 && $conf->commercial ) 
+	{
+	  print '<A class="menusel" href="'.DOL_URL_ROOT.'/comm/">Commercial</A></TD>';
+	}
+      else
+	{
+	  print '-</td>';
+	}
     }
   else
     {
-      print '-';
+      print '<TD width="15%" class="menu" align="center">';
+      if ($user->comm > 0 && $conf->commercial ) 
+	{
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/">Commercial</A></TD>';
+	}
+      else
+	{
+	  print '-</td>';
+	}
+    }
+}
+elseif (defined('MAIN_MODULE_ADHERENT') && MAIN_MODULE_ADHERENT == 1)
+{
+  print '<TD width="15%" class="menu" align="center">';
+  print '<A class="menu" href="'.DOL_URL_ROOT.'/adherents/">Adhérents</A></TD>';
+}
+else
+{
+  print '<TD width="15%" class="menu" align="center">-</td>';
+}
+
+
+if (defined('MAIN_MODULE_COMPTABILITE') && MAIN_MODULE_COMPTABILITE == 1)
+{
+  if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/compta/'))
+    {
+      print '<TD width="15%" class="menusel" align="center">';
+      if ($user->compta > 0)
+	{
+	  print '<A class="menusel" href="'.DOL_URL_ROOT.'/compta/">Compta</A></TD>';
+	} 
+      else
+	{
+	  print '-';
+	}
+    }
+  else
+    {
+      
+      print '<TD width="15%" class="menu" align="center">';
+      if ($user->compta > 0)
+	{
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/compta/">Compta</A></TD>';
+	} 
+      else
+	{
+	  print '-';
+	}
     }
 }
 else
 {
-  print '<TD width="15%" class="menu" align="center">';
-  if ($user->comm > 0 && $conf->commercial ) 
-    {
-      print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/">Commercial</A></TD>';
-    }
-  else
-    {
-      print '-';
-    }
-}
-
-
-if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/compta/'))
-{
-  print '<TD width="15%" class="menusel" align="center">';
-  if ($user->compta > 0)
-    {
-      print '<A class="menusel" href="'.DOL_URL_ROOT.'/compta/">Compta</A></TD>';
-    } 
-  else
-    {
-  print '-';
-    }
-}
-else
-{
-  
-  print '<TD width="15%" class="menu" align="center">';
-  if ($user->compta > 0)
-    {
-      print '<A class="menu" href="'.DOL_URL_ROOT.'/compta/">Compta</A></TD>';
-    } 
-  else
-    {
-      print '-';
-    }
+  print '<TD width="15%" class="menu" align="center">-</td>';
 }
 
 if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/product/'))
