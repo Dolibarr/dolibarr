@@ -19,44 +19,40 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/system/pre.inc.php
+		\brief      Page des infos système de la base de donnée
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
 
-//include "/home/vegeta/www/dolibarr/htdocs/conf/conf.php";
-// ici comme ça j'ai la style sheet!
-
-/*$conf = "../../conf/conf.php";
-if (file_exists($conf))
-{
- include($conf);
-}*/
-
-	include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
-	
- 
+$langs->load("admin");
 
 if (!$user->admin)
   accessforbidden();
 	
 llxHeader();
 
+print_titre($langs->trans("DatabaseConfiguration"));
+
 if($dolibarr_main_db_type=="mysql")
 {
- 	print_titre("Configuration MySql");
   $sql = "SHOW VARIABLES";
 	$base=1;
 }
 else
 {
-	print_titre("Configuration Pgsql");
 	$sql = "select name,setting from pg_settings;";
 	$base=2;
 }
 
 print '<br>';
-print '<table class="noborder" cellpadding="3" cellspacing="1">';
+print '<table class="noborder">';
 print '<tr class="liste_titre">';
-print '<td>Propriétés&nbsp;du&nbsp;serveur</td>';
-print '<td>Valeur</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 
@@ -68,16 +64,16 @@ if ($result)
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-			if($base==1)
-      	print '<td>'.$objp->Variable_name.'</td><td>'.$objp->Value.'</td>';
-			else
-			  print '<td>'.$objp->name.'</td><td>'.$objp->setting.'</td>';
-      print '</tr>';
-
-      $i++;
+        $objp = $db->fetch_object( $i);
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        if($base==1)
+            print '<td>'.$objp->Variable_name.'</td><td>'.$objp->Value.'</td>';
+        else
+            print '<td>'.$objp->name.'</td><td>'.$objp->setting.'</td>';
+        print '</tr>';
+        
+        $i++;
     }
 }
 print '</table>';

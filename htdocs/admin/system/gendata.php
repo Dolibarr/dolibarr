@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +19,24 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/system/gendata.php
+		\brief      Page de génération de données aléatoires pour les commandes et expedition
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
 
 $user->getrights('commande');
 $user->getrights('expedition');
 
+if (!$user->admin)
+  accessforbidden();
+
 llxHeader();
+
 ?>
 <h2>Attention : Ceci est un générateur de données aléatoires, ne 
 pas utiliser sur une base de données en production, les opérations ne sont pas réversibles</h2>
@@ -51,7 +64,7 @@ $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
 if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;	
 while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0];      $i++; } } else { print "err"; }
 
-print '<table border="1"><tr>';
+print '<table class="border"><tr>';
 print '<td><a href="gendata.php?action=societe">Sociétés</a></td>';
 print '<td><a href="gendata.php?action=product">Produits</a></td>';
 print '<td><a href="gendata.php?action=facture">Factures</a></td>';

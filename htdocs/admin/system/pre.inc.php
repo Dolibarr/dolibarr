@@ -19,42 +19,52 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/system/pre.inc.php
+		\brief      Gestionnaire menu page infos système
+		\version    $Revision$
+*/
+
 require("../../main.inc.php");
 
 function llxHeader($head = "", $urlp = "") {
-  /*
-   *
-   *
-   */
-  top_menu($head);
+    global $langs;
 
-  $menu = new Menu();
-
-  $menu->add("index.php", "Résumé");
-
-  $menu->add(DOL_URL_ROOT."/about.php", "Dolibarr");
-  $menu->add_submenu("constall.php", "Tous&nbsp;les&nbsp;paramètres");
-
-  $menu->add("os.php", "OS");
-
-  $menu->add("web.php", "Serveur Web");
-
-  $menu->add("phpinfo.php", "Php");
-
-  $menu->add_submenu("phpinfo.php?what=conf", "Conf");
-
-  $menu->add_submenu("phpinfo.php?what=env", "Env");
-
-  $menu->add_submenu("phpinfo.php?what=modules", "Modules");
-
-  $menu->add("pear.php", "Pear");
-  $menu->add_submenu("pear_packages.php", "Paquets");
-
-  $menu->add("mysql.php", "Base de données");
-  $menu->add_submenu("mysql-tables.php", "Tables");
-  $menu->add_submenu("mysql-tables-contraintes.php", "Tables Contraintes");
-
-  left_menu($menu->liste);
+    $langs->load("admin");
+    
+    /*
+    *
+    *
+    */
+    top_menu($head);
+    
+    $menu = new Menu();
+    
+    $menu->add("index.php", $langs->trans("Summary"));
+    
+    $menu->add(DOL_URL_ROOT."/about.php", "Dolibarr");
+    $menu->add_submenu("constall.php", $langs->trans("AllParameters"));
+    
+    $menu->add("os.php", $langs->trans("OS"));
+    
+    $menu->add("web.php", $langs->trans("WebServer"));
+    
+    $menu->add("phpinfo.php", $langs->trans("Php"));
+    
+    $menu->add_submenu("phpinfo.php?what=conf", $langs->trans("PhpConf"));
+    
+    $menu->add_submenu("phpinfo.php?what=env", $langs->trans("PhpEnv"));
+    
+    $menu->add_submenu("phpinfo.php?what=modules", $langs->trans("PhpModules"));
+    
+    $menu->add("pear.php", $langs->trans("Pear"));
+    $menu->add_submenu("pear_packages.php", $langs->trans("PearPackages"));
+    
+    $menu->add("mysql.php", $langs->trans("Database"));
+    $menu->add_submenu("mysql-tables.php", $langs->trans("Tables"));
+    $menu->add_submenu("mysql-tables-contraintes.php", $langs->trans("Constraints"));
+    
+    left_menu($menu->liste);
 }
 
 ?>

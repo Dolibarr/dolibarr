@@ -19,8 +19,16 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/system/mysql-tables.php
+		\brief      Page d'infos des tables de la base
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
+
+$langs->load("admin");
 
 if (!$user->admin)
   accessforbidden();
@@ -34,100 +42,96 @@ if ($_GET["action"] == 'convert')
 
 llxHeader();
 	
+print_titre($langs->trans("Tables")." ".ucfirst($dolibarr_main_db_type));
+
 if($dolibarr_main_db_type=="mysql")
 {
- 	
- print_titre("Tables Mysql");
-
-print '<br>';
-print '<table class="noborder" cellpadding="4" cellspacing="1">';
-print '<tr class="liste_titre">';
-print '<td>Nom de la table</td>';
-print '<td colspan="2">'.$langs->trans("Type").'</td>';
-print '<td>Format lignes</td>';
-print '<td>Nb enr.</td>';
-print '<td>Avg_row_length</td>';
-print '<td>Data_length</td>';
-print '<td>Max_Data_length</td>';
-print '<td>Index_length</td>';
-print '<td>Last check</td>';
-print "</tr>\n";
-
-$sql = "SHOW TABLE STATUS";
-
-$result = $db->query($sql);
-if ($result) 
-{
-  $num = $db->num_rows();
-  $var=True;
-  $i=0;
-  while ($i < $num)
+    print '<br>';
+    print '<table class="noborder">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("TableName").'</td>';
+    print '<td colspan="2">'.$langs->trans("Type").'</td>';
+    print '<td>'.$langs->trans("TableLineFormat").'</td>';
+    print '<td>'.$langs->trans("NbOfRecord").'</td>';
+    print '<td>Avg_row_length</td>';
+    print '<td>Data_length</td>';
+    print '<td>Max_Data_length</td>';
+    print '<td>Index_length</td>';
+    print '<td>Last check</td>';
+    print "</tr>\n";
+    
+    $sql = "SHOW TABLE STATUS";
+    
+    $result = $db->query($sql);
+    if ($result) 
     {
-      $row = $db->fetch_row($i);
-      $var=!$var;
-      print "<TR $bc[$var]>";
-
-      print '<td>'.$row[0].'</td>';
-      print '<td>'.$row[1].'</td>';
-      if ($row[1] == "MyISAM")
-	{
-	  print '<td><a href="mysql-tables.php?action=convert&amp;table='.$row[0].'">Convertir</a></td>';
-	}
-      else
-	{
-	  print '<td>-</td>';
-	}
-      print '<td>'.$row[2].'</td>';
-      print '<td align="right">'.$row[3].'</td>';
-      print '<td align="right">'.$row[4].'</td>';
-      print '<td align="right">'.$row[5].'</td>';
-      print '<td align="right">'.$row[6].'</td>';
-      print '<td align="right">'.$row[7].'</td>';
-      print '<td align="right">'.$row[12].'</td>';
-      print '</tr>';
-      $i++;
+      $num = $db->num_rows();
+      $var=True;
+      $i=0;
+      while ($i < $num)
+        {
+          $row = $db->fetch_row($i);
+          $var=!$var;
+          print "<TR $bc[$var]>";
+    
+          print '<td>'.$row[0].'</td>';
+          print '<td>'.$row[1].'</td>';
+          if ($row[1] == "MyISAM")
+    	{
+    	  print '<td><a href="mysql-tables.php?action=convert&amp;table='.$row[0].'">Convertir</a></td>';
+    	}
+          else
+    	{
+    	  print '<td>-</td>';
+    	}
+          print '<td>'.$row[2].'</td>';
+          print '<td align="right">'.$row[3].'</td>';
+          print '<td align="right">'.$row[4].'</td>';
+          print '<td align="right">'.$row[5].'</td>';
+          print '<td align="right">'.$row[6].'</td>';
+          print '<td align="right">'.$row[7].'</td>';
+          print '<td align="right">'.$row[12].'</td>';
+          print '</tr>';
+          $i++;
+        }
     }
-}
-
 }
 else
 {
-print_titre("Tables Mysql");
-print '<br>';
-print '<table class="noborder" cellpadding="4" cellspacing="1">';
-print '<tr class="liste_titre">';
-print '<td>Nom de la table</td>';
-print '<td>Nombre de tuples lu</td>';
-print '<td>Nb index fetcher.</td>';
-print '<td>Nbre de tuples inserer</td>';
-print '<td>Nbre de tuple modifier</td>';
-print '<td>Nbre de tuple supprimer</td>';
-print "</tr>\n";
-$sql = "select relname,seq_tup_read,idx_tup_fetch,n_tup_ins,n_tup_upd,n_tup_del
-				from pg_stat_user_tables;";
-				
-$result = $db->query($sql);
-if ($result) 
-{
-  $num = $db->num_rows();
-  $var=True;
-  $i=0;
-  while ($i < $num)
+    print '<br>';
+    print '<table class="noborder">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("TableName").'</td>';
+    print '<td>Nombre de tuples lu</td>';
+    print '<td>Nb index fetcher.</td>';
+    print '<td>Nbre de tuples inserer</td>';
+    print '<td>Nbre de tuple modifier</td>';
+    print '<td>Nbre de tuple supprimer</td>';
+    print "</tr>\n";
+    $sql = "select relname,seq_tup_read,idx_tup_fetch,n_tup_ins,n_tup_upd,n_tup_del from pg_stat_user_tables;";
+    				
+    $result = $db->query($sql);
+    if ($result) 
     {
-      $row = $db->fetch_row($i);
-      $var=!$var;
-      print "<TR $bc[$var]>";
-			print '<td align="right">'.$row[0].'</td>';
-      print '<td align="right">'.$row[1].'</td>';
-      print '<td align="right">'.$row[2].'</td>';
-      print '<td align="right">'.$row[3].'</td>';
-      print '<td align="right">'.$row[4].'</td>';
-			print '<td align="right">'.$row[5].'</td>';
-			print '</tr>';
-      $i++;
-		}
-}
-print '</table>';
+      $num = $db->num_rows();
+      $var=True;
+      $i=0;
+      while ($i < $num)
+        {
+            $row = $db->fetch_row($i);
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            print '<td align="right">'.$row[0].'</td>';
+            print '<td align="right">'.$row[1].'</td>';
+            print '<td align="right">'.$row[2].'</td>';
+            print '<td align="right">'.$row[3].'</td>';
+            print '<td align="right">'.$row[4].'</td>';
+            print '<td align="right">'.$row[5].'</td>';
+            print '</tr>';
+            $i++;
+    		}
+    }
+    print '</table>';
 }
 llxFooter();
 ?>

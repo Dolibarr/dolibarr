@@ -20,7 +20,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
+
+/*!	\file htdocs/admin/system/phpinfo.php
+		\brief      Page des infos système de PHP
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
 
 if (!$user->admin)
   accessforbidden();

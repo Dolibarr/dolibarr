@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,15 @@
  * $Source$
  *
  */
+
+/*!	\file htdocs/admin/system/update.php
+		\brief      Page de mise a jour Dolibarr
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
 
 $user->getrights('facture');
 
@@ -44,7 +53,7 @@ if ($user->societe_id > 0)
 /*
  *
  */	
-print_titre("Mise à jour système");
+print_titre($langs->trans("SystemUpdate"));
 $err = 0;
 /*
  * Factures
@@ -97,7 +106,7 @@ $db->close();
 
 if ($err == 0)
 {
-  print "<p><b>Votre système a été mise à jour avec succés.</b>";
+  print '<br><b>'.$langs->trans("SystemSuccessfulyUpdated").'</b>';
 }
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");

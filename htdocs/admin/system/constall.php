@@ -19,7 +19,16 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/system/constall.php
+		\brief      Page d'info de toutes les constantes
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
+
 
 if (!$user->admin)
   accessforbidden();
@@ -27,10 +36,10 @@ if (!$user->admin)
 
 llxHeader();
 
-print_titre("Liste de tous les paramètres de configuration Dolibarr");
+print_titre($langs->trans("SummaryConst"));
 
 print '<br>';
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
+print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';

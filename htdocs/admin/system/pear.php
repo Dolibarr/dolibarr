@@ -19,7 +19,15 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/system/pear.php
+		\brief      Page des infos système de PEAR
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
 
 if (!$user->admin)
   accessforbidden();
@@ -27,7 +35,8 @@ if (!$user->admin)
 
 llxHeader();
 
-print "TODO";
+// \todo
+print $langs->trans("NotYetAvailable");
 
 //include_once "PEAR/Info.php";
 //$info = new PEAR_Info();

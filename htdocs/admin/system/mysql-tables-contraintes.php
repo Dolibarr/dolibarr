@@ -19,40 +19,54 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/system/mysql-tables-contraintes.php
+		\brief      Page d'info des contraintes de la base
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
+
+$langs->load("admin");
+
 
 if (!$user->admin)
   accessforbidden();
 
 
 llxHeader();
+
+
+print_titre($langs->trans("Constraints"));
+
 if($dolibarr_main_db_type=="mysql")
 {
-print_titre("Tables Mysql - Contraintes");
 $sql = "SHOW TABLE STATUS";
 $base=1;
 }
 else
 {
-print_titre("Tables PostreSql - Contraintes");
-$sql = "select conname,contype from  pg_constraint;";
+$sql = "select conname,contype from pg_constraint;";
 $base=2;
 }
+
 print '<br>';
-print '<table class="noborder" cellpadding="4" cellspacing="1">';
+print '<table class="noborder">';
 print '<tr class="liste_titre">';
+
 if($base==1)
 {
-print '<td>Tables</td>';
+print '<td>'.$langs->trans("Tables").'</td>';
 print '<td>'.$langs->trans("Type").'</td>';
-print '<td>Contraintes</td>';
+print '<td>'.$langs->trans("Constraints").'</td>';
 }
 else
 {
- print '<td>Contraintes</td>';
- print '<td>Type de la contrainte</td>';
+ print '<td>'.$langs->trans("Constraints").'</td>';
+ print '<td>'.$langs->trans("ConstraintsType").'</td>';
 }
+
 print "</tr>\n";
 
 
@@ -71,8 +85,9 @@ if ($result)
 
       print '<td>'.$row[0].'</td>';
       print '<td>'.$row[1].'</td>';
-      print '<td align="left">'.$row[14].'</td>';
-
+      if($base==1) {
+        print '<td align="left">'.$row[14].'</td>';
+      }
       print '</tr>';
       $i++;
     }

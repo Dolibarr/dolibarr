@@ -20,80 +20,87 @@
  * $Source$
  */
 
-// Choix du menu à garder fixe
-// Ceci va servir pour garder le menu fixe quelquesoit les liens cliqué
+/*!	\file htdocs/admin/system/index.php
+		\brief      Page accueil infos système
+		\version    $Revision$
+*/
+
+// \todo eldy Choix du menu à garder fixe à finir.
+// Ceci va servir pour garder le menu fixe quelquesoit les liens cliqués
 // dans ce menu. Cela permet d'appeler des pages en dehors sans perdre
 // le menu qui nous intéresse.
-// ELDY: A finir
 //session_start();
 //$fix_top_menu="accueil";
 //$fix_left_menu="system";
 //session_register("fix_top_menu");
 //session_register("fix_left_menu");
 
-//include_once("../../allpre.inc.php");
 require("./pre.inc.php");
+//include_once("../../allpre.inc.php");
+
+$langs->load("admin");
+$langs->load("user");
+
 
 if (!$user->admin)
   accessforbidden();
 
 llxHeader();
 
-print_titre("Résumé des informations systèmes Dolibarr");
+print_titre($langs->trans("SummarySystem"));
 
 print "<br>\n";
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibar</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">Version</td><td>" . DOL_VERSION . "</td></tr>\n";
-//print "<tr $bc[1]><td width=\"240\">Version de la base de données</td><td>" . DOL_VERSION_DB . "</td></tr>\n";
+print '<table class="noborder" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibarr</td></tr>\n";
+print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>" . DOL_VERSION . "</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print "<tr class=\"liste_titre\"><td colspan=\"2\">OS</td></tr>\n";
+print '<table class="noborder" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("OS")."</td></tr>\n";
 // Récupère la version de l'OS
 ob_start(); 
 phpinfo();
 $chaine = ob_get_contents(); 
 ob_end_clean(); 
 eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
-print "<tr $bc[1]><td width=\"240\">Version</td><td>".$reg[1]."</td></tr>\n";
+print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$reg[1]."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print "<tr class=\"liste_titre\"><td colspan=\"2\">Serveur Web</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">Version</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
-print "<tr $bc[0]><td>document root</td><td>" . DOL_DOCUMENT_ROOT . "</td></tr>\n";
+print '<table class="noborder" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("WebServer")."</td></tr>\n";
+print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("DocumentRootServer")."</td><td>" . DOL_DOCUMENT_ROOT . "</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print "<tr class=\"liste_titre\"><td colspan=\"2\">PHP</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">Version</td><td>".phpversion()."</td></tr>\n";
-print "<tr $bc[0]><td>Liaison Web-PHP</td><td>".php_sapi_name()."</td></tr>\n";
+print '<table class="noborder" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Php")."</td></tr>\n";
+print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".phpversion()."</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("PhpWebLink")."</td><td>".php_sapi_name()."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print "<tr class=\"liste_titre\"><td colspan=\"2\">Base de données</td></tr>\n";
+print '<table class="noborder" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
 $sql = "SHOW VARIABLES LIKE 'version'";
 $result = $db->query($sql);
 if ($result)  
 {
   $row = $db->fetch_row();
 }
-print "<tr $bc[0]><td>Version</td><td>" . $row[1] . "</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("Version")."</td><td>" . $row[1] . "</td></tr>\n";
 print "<tr $bc[1]><td width=\"240\">".$langs->trans("Type")."</td><td>" . $conf->db->type . "</td></tr>\n";
-print "<tr $bc[0]><td>Host</td><td>" . $conf->db->host . "</td></tr>\n";
-print "<tr $bc[1]><td>User</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
-print "<tr $bc[0]><td>Pass</td><td>" . $conf->db->pass . "&nbsp;</td></tr>\n";
-print "<tr $bc[1]><td>Database name</td><td>" . $conf->db->name . "</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("Host")."</td><td>" . $conf->db->host . "</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("Password")."</td><td>" . $conf->db->pass . "&nbsp;</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
 
 print '</table>';
 

@@ -19,17 +19,24 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/system/pear_packages.php
+		\brief      Page des infos système des packages PEAR
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
 
 if (!$user->admin)
   accessforbidden();
 
 
-//require_once "PEAR/Info.php";
-
 llxHeader();
 
-print "TODO";
+// \todo Afficher info PEAR
+print $langs->trans("NotYetAvailable");
 
 //$info = new PEAR_Info();
 //$info->getPackages();
