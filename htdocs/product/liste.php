@@ -61,8 +61,8 @@ if ($_GET["fourn_id"] > 0)
 
 if ($_POST["sall"])
 {
-  $sql .= " WHERE lower(p.ref) like '%".strtolower($sall)."%'";
-  $sql .= " OR lower(p.label) like '%".strtolower($sall)."%'";
+  $sql .= " WHERE lower(p.ref) like '%".strtolower($_POST["sall"])."%'";
+  $sql .= " OR lower(p.label) like '%".strtolower($_POST["sall"])."%'";
 }
 else
 {
@@ -72,13 +72,13 @@ else
     }
 
   $sql .= " WHERE p.fk_product_type = $type";
-  if ($sref)
+  if ($_POST["sref"])
     {
-      $sql .= " AND lower(p.ref) like '%".strtolower($sref)."%'";
+      $sql .= " AND lower(p.ref) like '%".strtolower($_POST["sref"])."%'";
     }
-  if ($snom)
+  if ($_POST["snom"])
     {
-      $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
+      $sql .= " AND lower(p.label) like '%".strtolower($_POST["snom"])."%'";
     }
   if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
     {
@@ -105,13 +105,13 @@ if ($result)
 
   $i = 0;
   
-  if ($num == 1 && (isset($sall) or isset($snom) or isset($sref)))
+  if ($num == 1 && (isset($_POST["sall"]) or isset($_POST["snom"]) or isset($_POST["sref"])))
     {
       $objp = $db->fetch_object($i);
       Header("Location: fiche.php?id=$objp->rowid");
     }
   
-  if ($ref || $snom || $sall)
+  if ($_POST["sref"] || $_POST["snom"] || $_POST["sall"])
     {
       llxHeader("","","Recherche Produit/Service");
 
