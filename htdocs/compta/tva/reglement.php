@@ -57,7 +57,7 @@ if ($result)
       print "<TD>$obj->dm</TD>\n";
       $total = $total + $obj->amount;
       
-      print "<TD align=\"right\">".price($obj->amount)."</TD>";
+      print "<TD align=\"right\">".price($obj->amount)."</td><td>&nbsp;</td>";
       print "</TR>\n";
       
       $i++;
