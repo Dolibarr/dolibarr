@@ -48,7 +48,7 @@ if (! strlen($_GET["num"]))
   $pagenext = $page + 1;
 
   $sql = "SELECT distinct(b.num_releve) as numr";
-  $sql .= ' FROM ".MAIN_DB_PREFIX."bank as b WHERE fk_account = '.$_GET["account"].' ORDER BY numr DESC';
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE fk_account = ".$_GET["account"]." ORDER BY numr DESC";
   $sql .= $db->plimit($limit + 1,$offset);
 
   $result = $db->query($sql);
