@@ -30,6 +30,7 @@
 create table llx_telephonie_societe_ligne (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   datec            datetime,
+  fk_contrat       integer,
   fk_client_comm   integer NOT NULL,      -- Client décideur
   fk_soc           integer NOT NULL,
   ligne            varchar(12) NOT NULL,
