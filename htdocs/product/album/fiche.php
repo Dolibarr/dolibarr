@@ -24,8 +24,6 @@ require("./pre.inc.php");
 
 llxHeader();
 
-$db = new Db();
-
 if ($action == 'add') {
   $album = new Album($db);
 

@@ -24,11 +24,13 @@ require("./pre.inc.php");
 
 llxHeader();
 
-$db = new Db();
-if ($sortfield == "") {
+if ($sortfield == "")
+{
   $sortfield="lower(a.title)";
 }
-if ($sortorder == "") {
+
+if ($sortorder == "")
+{
   $sortorder="ASC";
 }
 
