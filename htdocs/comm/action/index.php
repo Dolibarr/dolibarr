@@ -172,7 +172,7 @@ if ($socid)
 	  {
 	    $cont = new Contact($db);
 	    $cont->fetch($obj->fk_contact);
-	    print '<a href="'.DOL_URL_ROOT.'/comm/contact.php3?id='.$cont->id.'">'.$cont->fullname.'</a>';
+	    print '<a href="'.DOL_URL_ROOT.'/comm/people.php3?socid='.$obj->socidp.'&contactid='.$cont->id.'">'.$cont->fullname.'</a>';
 	  }
 	else
 	  {
@@ -262,7 +262,7 @@ else
 	  {
 	    $cont = new Contact($db);
 	    $cont->fetch($obj->fk_contact);
-	    print '<a href="'.DOL_URL_ROOT.'/comm/contact.php3?id='.$cont->id.'">'.$cont->fullname.'</a>';
+	    print '<a href="'.DOL_URL_ROOT.'/comm/people.php3?socid='.$obj->socidp.'&contactid='.$cont->id.'">'.$cont->fullname.'</a>';
 	  }
 	else
 	  {
