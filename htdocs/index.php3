@@ -40,17 +40,20 @@ $result = $db->query($sql);
 if ($result) 
 {
   $num = $db->num_rows();
-  $i = 0;
+  $j = 0;
   
-  while ($i < $num)
+  while ($j < $num)
     {
-      $obj = $db->fetch_object( $i);
-
-      $boxs = "includes/boxes/".$obj->file;
-
-      include($boxs);
-      $i++;
+      $obj = $db->fetch_object($j);
+      $boxes[$j] = "includes/boxes/".$obj->file;
+      $j++;
     }
+}
+ 
+for ($ii=0, $ni=sizeof($boxes); $ii<$ni; $ii++)
+{
+  include($boxes[$ii]);
+  print "<br>";
 }
 
 $db->close();
