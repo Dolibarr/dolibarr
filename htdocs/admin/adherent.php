@@ -206,7 +206,10 @@ $constantes=array('ADH_TEXT_NEW_ADH',
 		  'MAIN_MAIL_RESIL',
 		  'MAIN_MAIL_VALID_SUBJECT',
 		  'MAIN_MAIL_VALID',
-		  'MAIN_MAIL_FROM'
+		  'MAIN_MAIL_FROM',
+		  'ADH_CARD_HEADER_TEXT',
+		  'ADH_CARD_TEXT',
+		  'ADH_CARD_FOOTER_TEXT'
 		  );
 form_constantes($constantes);
 
