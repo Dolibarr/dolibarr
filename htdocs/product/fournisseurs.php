@@ -112,9 +112,12 @@ llxHeader("","",$langs->trans("CardProduct".$product->type));
 	      
 	      if($product->type == 0)
 		{
-		  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-		  $head[$h][1] = 'Stock';
-		  $h++;
+		  if ($conf->stock->enabled)
+		    {
+		      $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+		      $head[$h][1] = 'Stock';
+		      $h++;
+		    }
 		  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
 		  $head[$h][1] = 'Fournisseurs';
 		  $hselected = $h;
