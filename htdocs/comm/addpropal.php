@@ -217,7 +217,7 @@ if ($_GET["action"] == 'create')
     {
       print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
       print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
-      print '<td><input type="text" size="3" name="remise'.$i.'" value="0"> %</td></tr>';
+      print '<td><input type="text" size="3" name="remise'.$i.'" value="'.$soc->remise_client.'"> %</td></tr>';
     }
   
   print "</table>";
