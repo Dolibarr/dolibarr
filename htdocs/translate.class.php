@@ -160,7 +160,7 @@ class Translate {
         $charset=$this->trans("charset");
         if (! $charset) $charset="iso-8859-1";
     
-        header("Content-Type: text/html; charset=$charset");
+        //header("Content-Type: text/html; charset=$charset");
         $texte .= "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$charset\">\n";
     
         return $texte;
