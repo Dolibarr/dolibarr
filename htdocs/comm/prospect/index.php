@@ -187,7 +187,7 @@ if ( $db->query($sql) )
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"../propal.php?propalid=".$obj->rowid."\">";
+	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"../propal.php?propalid=".$obj->rowid."\">";
 	  print img_file();
 	  print '</a>&nbsp;<a href="../propal.php?propalid='.$obj->rowid.'">'.$obj->ref.'</a></td>';
 
