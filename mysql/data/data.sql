@@ -35,8 +35,6 @@ insert into llx_boxes_def (name, file) values ('Propales','box_propales.php');
 -- Constantes de configuration
 --
 insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
-insert into llx_const(name, value, type) values ('DB_NAME_OSC','catalog','chaine');
-insert into llx_const(name, value, type) values ('OSC_LANGUAGE_ID','1','chaine');
 
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage du formulaire de recherche des sociétés dans la barre de gauche');
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage du formulaire de recherche des contacts dans la barre de gauche');
@@ -71,6 +69,11 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_USER','user',
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_PASS','pass','chaine','Pass de connection');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_SERVEUR','localhost','chaine','serveur spip');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_DB','spip','chaine','db spip');
+
+INSERT INTO llx_const(name, value, type) VALUES ('DB_NAME_OSC','catalog','chaine');
+INSERT INTO llx_const(name, value, type) VALUES ('OSC_LANGUAGE_ID','1','chaine');
+INSERT INTO llx_const(name, value, type) VALUES ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
+
 
 --
 -- Constantes 
