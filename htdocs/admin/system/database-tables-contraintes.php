@@ -23,8 +23,8 @@
  */
 
 /*!	\file htdocs/admin/system/database-tables-contraintes.php
-		\brief      Page d'info des contraintes de la base
-		\version    $Revision$
+  \brief      Page d'info des contraintes de la base
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -44,14 +44,14 @@ print_titre($langs->trans("Constraints"));
 
 if ($conf->db->type == 'mysql')
 {
-$sql = "SHOW TABLE STATUS";
-$base=1;
+  $sql = "SHOW TABLE STATUS";
+  $base=1;
 }
 
 if ($conf->db->type == 'pgsql')
 {
-$sql = "select conname,contype from pg_constraint;";
-$base=2;
+  $sql = "SELECT conname,contype FROM pg_constraint;";
+  $base=2;
 }
 
 print '<br>';
@@ -60,9 +60,9 @@ print '<tr class="liste_titre">';
 
 if($base==1)
 {
-print '<td>'.$langs->trans("Tables").'</td>';
-print '<td>'.$langs->trans("Type").'</td>';
-print '<td>'.$langs->trans("Constraints").'</td>';
+  print '<td>'.$langs->trans("Tables").'</td>';
+  print '<td>'.$langs->trans("Type").'</td>';
+  print '<td>'.$langs->trans("Constraints").'</td>';
 }
 else
 {
@@ -71,7 +71,6 @@ else
 }
 
 print "</tr>\n";
-
 
 
 $result = $db->query($sql);
@@ -88,9 +87,10 @@ if ($result)
 
       print '<td>'.$row[0].'</td>';
       print '<td>'.$row[1].'</td>';
-      if($base==1) {
-        print '<td align="left">'.$row[14].'</td>';
-      }
+      if ($base==1)
+	{
+	  print '<td align="left">'.$row[14].'</td>';
+	}
       print '</tr>';
       $i++;
     }
