@@ -51,6 +51,7 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/comm/index.php", "Commercial");
 
       $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php", "Clients");
+      $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php", "Prospects");
 
       if ($user->rights->propale->lire)
 	$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
@@ -71,10 +72,10 @@ function llxHeader($head = "") {
 
   if ($conf->produit->enabled || $conf->service->enabled)
     {
-	  $chaine="";
-	  if ($conf->produit->enabled) { $chaine.="Produits"; }
-	  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
-	  if ($conf->service->enabled) { $chaine.="Services"; }
+      $chaine="";
+      if ($conf->produit->enabled) { $chaine.="Produits"; }
+      if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+      if ($conf->service->enabled) { $chaine.="Services"; }
       $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
 
       if ($conf->boutique->enabled)
