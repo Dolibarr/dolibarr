@@ -41,17 +41,17 @@ print_titre("Résultat $year");
 print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print '<TR class="liste_titre">';
 print "<TD>Num&eacute;ro</TD>";
-print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD><td align=\"right\">Solde</td>";
+print "<TD align=\"center\" colspan=\"2\">Montant</TD><td align=\"right\">Solde</td>";
 print "</TR>\n";
 
-$sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
+$sql = "SELECT s.nom,sum(f.amount) as amount";
 $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
   
 if ($year > 0) {
   $sql .= " AND date_format(f.datef, '%Y') = $year";
 }
   
-$sql .= " ORDER BY f.fk_statut, f.paye, f.datef DESC ";
+$sql .= " GROUP BY s.nom ASC";
   
 $result = $db->query($sql);
 if ($result) {
@@ -68,14 +68,7 @@ if ($result) {
       print "<TR $bc[$var]>";
       print "<td>Facture <a href=\"/compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a> $objp->nom</TD>\n";
       
-      if ($objp->df > 0 ) {
-	print "<TD align=\"right\">";
-	print strftime("%d/%m/%y",$objp->df)."</a></TD>\n";
-      } else {
-	print "<TD align=\"right\"><b>!!!</b></TD>\n";
-      }
-      
-      print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
+      print "<TD align=\"right\">".price($objp->amount)."</TD><td>&nbsp;</td>\n";
       
       $total = $total + $objp->amount;
       print "<TD align=\"right\">".price($total)."</TD>\n";
@@ -94,13 +87,13 @@ if ($result) {
  */
 
 
-$sql = "SELECT c.libelle as nom, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye";
+$sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
 $sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id";
 if ($year > 0) {
   $sql .= " AND date_format(s.periode, '%Y') = $year";
 }
-$sql .= " ORDER BY lower(s.date_ech) DESC";
+$sql .= " GROUP BY c.libelle DESC";
 
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
@@ -110,10 +103,8 @@ if ( $db->query($sql) ) {
     $obj = $db->fetch_object( $i);
     $var = !$var;
     print "<tr $bc[$var]>";
-    print '<td>'.$obj->nom.' - '.$obj->libelle.'</td>';
-    print '<td align="right">'.strftime("%d/%m/%y",$obj->de).'</td>';
-    print '<td align="right">'.price($obj->amount).'</td>';
-
+    print '<td>'.$obj->nom.'</td>';
+    print '<td>&nbsp;</td><td align="right">'.price($obj->amount).'</td>';
     $total = $total - $obj->amount;
     print "<TD align=\"right\">".price($total)."</TD>\n";
 
