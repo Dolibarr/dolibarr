@@ -68,7 +68,7 @@ print '<td>Date</td><TD>Charges</td><td align="right">Montant</td><td>&nbsp;</td
 print "</TR>\n";
 
 
-$sql = "SELECT c.libelle as nom, s.amount, s.date_ech, s.date_pai, s.libelle";
+$sql = "SELECT c.libelle as nom, s.amount, s.date_ech, s.date_pai, s.libelle, s.paye";
 $sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id";
 $sql .= " ORDER BY lower(s.date_ech) DESC";
@@ -84,7 +84,13 @@ if ( $db->query($sql) ) {
     print '<td>'.$obj->date_ech.'</td>';
     print '<td>'.$obj->nom.' '.$obj->libelle.'</td>';
     print '<td align="right">'.price($obj->amount).'</td>';
-    print '<td><img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+    print '<td>';
+    if ($obj->paye) {
+      print "&nbsp;";
+    } else {
+      print '<img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a>';
+    }
+    print '</td>';
     print '</tr>';
     $i++;
   }
