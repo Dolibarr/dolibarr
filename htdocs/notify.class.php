@@ -43,7 +43,7 @@ class Notify
    *
    *
    */
-  Function send($action, $socid, $texte, $file="")
+  Function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
     {
       $sql = "SELECT s.nom, c.email, c.idp, c.name, c.firstname, a.titre,n.rowid";
       $sql .= " FROM llx_socpeople as c, llx_action_def as a, llx_notify_def as n, llx_societe as s";
@@ -79,14 +79,15 @@ class Notify
 		    {
 		      $sendto = htmlentities($sendto);
 	      
-		      $sql = "INSERT INTO llx_actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label) VALUES (now(), 9 ,$fac->socidp ,'Envoyée à $sendto',$fac->id, $sendtoid, $user->id, 'Envoi Facture par mail');";
-		      /*
-		      if (! $this->db->query($sql) )
+		      $sql = "INSERT INTO llx_notify (daten, fk_action, fk_contact, objet_type, objet_id)";
+		      $sql .= " VALUES (now(), $action ,$obj->idp , '$objet_type', $objet_id);";
+		      $db2 = $this->db->clone();
+		      if (! $db2->query($sql) )
 			{
-			  print $this->db->error();
+			  print $db2->error();
 			  print "<p>$sql</p>";
-			}     
-		      */
+			}
+
 		    }
 		  else
 		    {
