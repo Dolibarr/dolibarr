@@ -196,13 +196,13 @@ if ($_POST["action"] == 'add')
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->facture->valider)
 {
   $fac = new Facture($db);
-  $fac->fetch($facid);
+  $fac->fetch($_GET["facid"]);
   $soc = new Societe($db);
   $soc->fetch($fac->socidp);
-  $result = $fac->set_valid($facid, $user, $soc);
+  $result = $fac->set_valid($fac->id, $user, $soc);
   if ($result)
     {
-     facture_pdf_create($db, $facid);
+     facture_pdf_create($db, $fac->id);
     }
 }
 
@@ -746,10 +746,10 @@ else
 	   * Confirmation de la validation
 	   *
 	   */
-	  if ($action == 'valid')
+	  if ($_GET["action"] == 'valid')
 	    {
 	      $numfa = facture_get_num($soc);
-	      $html->form_confirm("$PHP_SELF?facid=$fac->id","Valider la facture","Etes-vous sûr de vouloir valider cette facture avec le numéro $numfa ?","confirm_valid");
+	      $html->form_confirm("facture.php?facid=$fac->id","Valider la facture","Etes-vous sûr de vouloir valider cette facture avec le numéro $numfa ?","confirm_valid");
 	    }
 
 	  /*
@@ -1038,7 +1038,7 @@ else
 	      {
 		if ($user->rights->facture->valider)
 		  {
-		    print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=valid\">Valider</a>";
+		    print '<a class="tabAction" href="facture.php?facid='.$fac->id.'&amp;action=valid">Valider</a>';
 		  }
 		}
 	    else
