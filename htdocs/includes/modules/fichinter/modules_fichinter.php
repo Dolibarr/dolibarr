@@ -64,17 +64,10 @@ class ModeleNumRefFicheinter
 {
     var $error='';
 
-    /*!     \brief      Constructeur
-     */
-    function ModeleNumRefFicheinter()
-    {
-    
-    }
-
     /*!     \brief      Renvoi la description par defaut du modele de numérotation
      *      \return     string      Texte descripif
      */
-    function getDesc()
+    function info()
     {
         global $langs;
         $langs->load("ficheinter");

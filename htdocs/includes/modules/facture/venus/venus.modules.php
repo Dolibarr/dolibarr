@@ -38,7 +38,7 @@ class NumRefFacturesVenus extends ModeleNumRefFactures
     /*!     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
-    function getDesc()
+    function info()
     {
 
       return '

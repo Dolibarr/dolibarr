@@ -38,7 +38,7 @@ class NumRefFacturesNeptune extends ModeleNumRefFactures
     /*!     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
-    function getDesc()
+    function info()
     {
       $texte = '
     Identique à pluton, avec un correcteur au moyen de la constante FACTURE_NEPTUNE_DELTA.';

@@ -67,17 +67,10 @@ class ModeleNumRefFactures
 {
     var $error='';
 
-    /*!     \brief      Constructeur
-     */
-    function ModeleNumRefFactures()
-    {
-    
-    }
-
     /*!     \brief      Renvoi la description par defaut du modele de numérotation
      *      \return     string      Texte descripif
      */
-    function getDesc()
+    function info()
     {
         global $langs;
         $langs->load("bills");

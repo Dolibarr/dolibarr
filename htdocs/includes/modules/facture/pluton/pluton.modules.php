@@ -39,7 +39,7 @@ class NumRefFacturesPluton extends ModeleNumRefFactures
     /*!     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
-    function getDesc()
+    function info()
     {
       return '
     Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la quinzième facture ayant le numéro 15.';

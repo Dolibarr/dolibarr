@@ -38,7 +38,7 @@ class NumRefFacturesJupiter extends ModeleNumRefFactures
     /*!     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
-    function getDesc()
+    function info()
     {
       return '
     Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003';
