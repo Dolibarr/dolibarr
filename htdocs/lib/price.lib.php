@@ -60,12 +60,13 @@ Function calcul_price($products, $remise_percent)
    * Sommes et arrondis
    */
   $j=0;
-  $result[4] = array();
+  $result[5] = array();
+
   foreach ($tva as $key => $value)
     {
       $tva[$key] = round($tva[$key], 2);
       $total_tva = $total_tva + $tva[$key];
-      $result[5][$j] = $tva[$key];
+      $result[5][$key] = $tva[$key];
       $j++;
     }
   
