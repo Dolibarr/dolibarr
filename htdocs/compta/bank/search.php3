@@ -39,8 +39,8 @@ print "<TR class=\"liste_titre\">";
 print "<td>Date</td><td>Description</TD>";
 print "<td align=\"right\">Debit</TD>";
 print "<td align=\"right\">Credit</TD>";
-print "<td align=\"right\">Solde</TD>";
-print "<td align=\"right\">Francs</td>";
+print "<td align=\"right\">Type</TD>";
+print "<td align=\"right\">Compte</td>";
 print "</TR>\n";
 ?>
 
@@ -51,10 +51,16 @@ print "</TR>\n";
 <input type="text" name="description">
 </td>
 <td>
-<input type="text" name="debit">
+<input type="text" name="credit">
 </td>
 <td>
-<input type="text" name="credit">
+<select name="type">
+<option value="%">%
+<option value="CHQ">CHQ
+<option value="CB">CB
+<option value="VIR">VIR
+<option value="PRE">PRE
+</select>
 </td>
 <td colspan="2">
 <input type="submit">
@@ -92,8 +98,9 @@ if ($result) {
 if ($viewall) { $nbline=0; }
 
 
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account";
+$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account, b.fk_type";
 $sql .= " FROM llx_bank as b "; 
+$sql .= " WHERE fk_type like '" . $type . "'";
 
 $si=0;
 
@@ -107,11 +114,7 @@ if ($description) {
   $sqlw[$si] .= " b.label like '%" . $description . "%'";
 }
 
-if ($si>0) {
-  $sql .= " WHERE " . $sqlw[1];
-}
-
-for ($i = 2 ; $i <= $si; $i++) {
+for ($i = 1 ; $i <= $si; $i++) {
  $sql .= " AND " . $sqlw[$i];
 }
 
@@ -144,11 +147,8 @@ if ($result) {
       print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
     }
     
-    if ($total > 0) {
-      print "<td align=\"right\">".price($total)."</TD>\n";
-    } else {
-      print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
-    }
+    print "<td align=\"right\">".$obj->fktype."</TD>\n";
+
       
     print "<td align=\"right\"><small>".$objp->fk_account."</small></TD>\n";
     print "</tr>";
@@ -161,9 +161,9 @@ if ($result) {
 }
 
 
-print "</table>";
+print "</table><p><small>";
 
-
+print "$sql</small>";
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
