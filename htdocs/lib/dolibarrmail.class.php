@@ -1,4 +1,28 @@
 <?php
+/* Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * or see http://www.gnu.org/
+ *
+ * $Id$
+ * $Source$
+ *
+ */
+
 /* notes from Dan Potter:
 Sure. I changed a few other things in here too though. One is that I let
 you specify what the destination filename is (i.e., what is shows up as in
@@ -19,12 +43,12 @@ to chunk_split
 /* Note: if you don't have base64_encode on your sytem it will not work */
 
 /*!	\file htdocs/lib/CMailFile.class.php
-		\brief Classe permettant d'envoyer des attachements par mail
-		\author Dan Potter.
-		\author	Eric Seigne
-		\author	Rodolphe Quiedeville
-		\author	Laurent Destailleur.
-		\version $Revision$
+  \brief Classe permettant d'envoyer des mail avec attachements, recriture de CMailFile
+  \author Dan Potter.
+  \author	Eric Seigne
+  \author	Rodolphe Quiedeville
+  \author	Laurent Destailleur.
+  \version $Revision$
 */
 
 /*! \class CMailFile
@@ -51,20 +75,20 @@ class DolibarrMail
   var $smtp_headers;
 
 /*!
-		\brief CMailFile
-		\param subject
-		\param to
-		\param from
-		\param msg
-		\param filename_list
-		\param mimetype_list
-		\param mimefilename_list
-		\param addr_cc
-		\param addr_bcc
+  \brief DolibarrMail
+  \param subject
+  \param to
+  \param from
+  \param msg
+  \param filename_list
+  \param mimetype_list
+  \param mimefilename_list
+  \param addr_cc
+  \param addr_bcc
 */
 
   // CMail("sujet","email_to","email_from","email_msg",tableau du path de fichiers,tableau de type mime,tableau de noms fichiers,"chaine cc")
-  function DolibarrMail($subject,$to,$from,$msg)
+  function DolibarrMail($subject, $to, $from, $msg)
     {
       $this->from = $from;
 
@@ -75,6 +99,10 @@ class DolibarrMail
       $this->addr_bcc = "";
       $this->addr_cc = "";
       $this->reply_to = "";
+
+      dolibarr_syslog("DolibarrMail::DolibarrMail");
+      dolibarr_syslog("DolibarrMail::DolibarrMail to : ".$this->addr_to);
+      dolibarr_syslog("DolibarrMail::DolibarrMail from : ".$this->from);
     }
 
   /*!
@@ -84,8 +112,10 @@ class DolibarrMail
     \param mimefilename_list
   */
 
-  function PrepareFile($filename_list,$mimetype_list,$mimefilename_list)
+  function PrepareFile($filename_list, $mimetype_list, $mimefilename_list)
   {
+    dolibarr_syslog("DolibarrMail::PrepareFile");
+
     $this->mime_headers="";
 
     $this->smtp_headers = $this->write_smtpheaders();
@@ -95,8 +125,8 @@ class DolibarrMail
 	$this->mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
 
 	$this->text_encoded = $this->attach_file($filename_list,
-						  $mimetype_list,
-						  $mimefilename_list);
+						 $mimetype_list,
+						 $mimefilename_list);
       }
     $this->text_body = $this->write_body($this->message, $filename_list);
   }
@@ -144,13 +174,17 @@ class DolibarrMail
   
   function encode_file($sourcefile)
   {
-    //      print "<pre> on encode $sourcefile </pre>\n";
+    //      print "<pre>on encode $sourcefile </pre>\n";
     if (is_readable($sourcefile))
       {
 	$fd = fopen($sourcefile, "r");
 	$contents = fread($fd, filesize($sourcefile));
 	$encoded = $this->my_chunk_split(base64_encode($contents));
 	fclose($fd);
+      }
+    else
+      {
+	dolibarr_syslog("DolibarrMail::encode_file");
       }
     return $encoded;
   }
@@ -161,6 +195,8 @@ class DolibarrMail
   
   function sendfile()
   {
+    dolibarr_syslog("DolibarrMail::sendfile");
+
     $headers .= $this->smtp_headers . $this->mime_headers;
     $message = $this->text_body . $this->text_encoded;
 
@@ -180,6 +216,10 @@ class DolibarrMail
 	$out = "--" . $this->mime_boundary . "\n";
 	$out = $out . "Content-Type: text/plain; charset=\"iso8859-15\"\n\n";
 	//	  $out = $out . "Content-Type: text/plain; charset=\"us-ascii\"\n\n";
+      }
+    else
+      {
+	dolibarr_syslog("DolibarrMail::write_body");
       }
     $out = $out . $this->message . "\n";
     return $out;
@@ -268,7 +308,7 @@ class DolibarrMail
 	else
 	  {
 	    $out = $out . $stmp . "\r\n";
-	  $stmp = ""; $len = 0;
+	    $stmp = ""; $len = 0;
 	  }
       }
     return $out;
