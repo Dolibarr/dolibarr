@@ -26,5 +26,6 @@ create table llx_cotisation
   datec           datetime,
   fk_adherent     integer,
   dateadh         datetime,
+  cotisation      real,
   note            text
 );
