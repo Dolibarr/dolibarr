@@ -1,16 +1,22 @@
---
+-- $Revision$
 --
 -- Attention à l ordre des requetes
 -- ce fichier doit être chargé sur une version 1.1.0 
 -- sans AUCUNE erreur ni warning
 -- 
-alter table llx_rights_def add perms varchar(255) after module;
-alter table llx_rights_def add subperms varchar(255) after perms;
+
+alter table llx_rights_def add perms varchar(255);
+alter table llx_rights_def add subperms varchar(255);
 
 
 alter table llx_contrat add fk_facturedet integer NOT NULL default 0 after fk_facture;
 alter table llx_contrat change fk_user_cloture fk_user_cloture integer;
 alter table llx_contrat change fk_user_mise_en_service fk_user_mise_en_service integer;
+alter table llx_contrat add   datec    datetime after tms;
+alter table llx_contrat add   date_contrat    datetime after datec;
+alter table llx_contrat change enservice statut SMALLINT(6) DEFAULT 0;
+alter table llx_contrat add   fk_commercial_signature integer NOT NULL after fk_soc;
+alter table llx_contrat add   fk_commercial_suivi     integer NOT NULL after fk_commercial_signature;
 
 alter table llx_facturedet add date_start date;
 alter table llx_facturedet add date_end   date;
@@ -72,7 +78,6 @@ alter table llx_paiementfourn add fk_bank integer NOT NULL after note ;
 
 
 alter table c_actioncomm     rename llx_c_actioncomm ;
-alter table c_chargesociales rename llx_c_chargesociales ;
 alter table c_effectif       rename llx_c_effectif ;
 alter table c_paiement       rename llx_c_paiement ;
 alter table c_pays           rename llx_c_pays ;
@@ -499,8 +504,6 @@ create table llx_c_ape
 delete from llx_c_ape;
 
 
-drop table if exists llx_c_chargesociales;
-
 create table llx_c_chargesociales
 (
   id          integer PRIMARY KEY,
@@ -509,10 +512,11 @@ create table llx_c_chargesociales
   active      tinyint default 1  NOT NULL
 )type=innodb;
 
-delete from llx_c_chargesociales;
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 2, 'GSG Deductible',1);
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 3, 'GSG/CRDS NON Deductible',0);
+
+drop table c_chargesociales;
 
 
 drop table if exists llx_c_civilite;
@@ -918,4 +922,3 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (201,2,201,'',1,'Flandre');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (202,2,202,'',2,'Wallonie');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (203,2,203,'',3,'Bruxelles-Capitale');
-
