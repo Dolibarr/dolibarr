@@ -22,14 +22,15 @@
  */
 
 /*!
-        \file       htdocs/commande/stats/pre.inc.php
-        \ingroup    commandes
-		\brief      Gestionnaire du menu commandes
-		\version    $Revision$
+  \file       htdocs/commande/stats/pre.inc.php
+  \ingroup    commandes
+  \brief      Gestionnaire du menu commandes
+  \version    $Revision$
 */
 
 require("../../main.inc.php");
 require("../../bargraph.class.php");
+$langs->load("orders");
 
 function llxHeader($head = "", $title="", $help_url='')
 {
@@ -41,12 +42,12 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
   $menu->add_submenu(DOL_URL_ROOT."/commande/liste.php", $langs->trans("List"));
+  $menu->add_submenu(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"));
 
-  if ($conf->expedition->enabled) {
-    $menu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
-  }
-  
-  $menu->add(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"));
+  if ($conf->expedition->enabled) 
+    {
+      $menu->add(DOL_URL_ROOT."/expedition/", $langs->trans("Sendings"));
+    }
 
   left_menu($menu->liste, $help_url);
 }

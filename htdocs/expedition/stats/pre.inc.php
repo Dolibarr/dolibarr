@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,26 +21,22 @@
  */
 require("../../main.inc.php");
 require("../../bargraph.class.php");
+$langs->load("orders");
 
-function llxHeader($head = "", $urlp = "")
+function llxHeader($head = "", $title="", $urlp = "")
 {
   global $langs;
   
-  top_menu($head);
+  top_menu($head, $title);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
+  $menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
 
-
-  $menu->add("./", $langs->trans("Statistics"));
-
+  $menu->add(DOL_URL_ROOT."/expedition/", $langs->trans("Sendings"));
+  $menu->add_submenu(DOL_URL_ROOT."/expedition/liste.php", $langs->trans("List"));
+  $menu->add_submenu(DOL_URL_ROOT."/expedition/stats/", $langs->trans("Statistics"));
    
   left_menu($menu->liste);
-  /*
-   *
-   *
-   */
-
 }
 ?>

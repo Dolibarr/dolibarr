@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,17 +22,15 @@
  */
 
 /**
-        \file       htdocs/commande/pre.inc.php
-        \ingroup    commandes
-		\brief      Gestionnaire du menu commandes
-		\version    $Revision$
+   \file       htdocs/commande/pre.inc.php
+   \ingroup    commandes
+   \brief      Gestionnaire du menu commandes
+   \version    $Revision$
 */
 
 require("../main.inc.php");
 require("./commande.class.php");
-
 $langs->load("orders");
-
 
 function llxHeader($head = "", $title="", $help_url='')
 {
@@ -44,13 +42,12 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
   $menu->add_submenu(DOL_URL_ROOT."/commande/liste.php", $langs->trans("List"));
+  $menu->add_submenu(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"));
 
   if ($conf->expedition->enabled) {
     $menu->add(DOL_URL_ROOT."/expedition/", $langs->trans("Sendings"));
   }
   
-  $menu->add(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"));
-
   left_menu($menu->liste, $help_url);
 }
 ?>

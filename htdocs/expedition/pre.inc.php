@@ -31,17 +31,12 @@
 require("../main.inc.php");
 require("../commande/commande.class.php");
 require("./expedition.class.php");
-
 $langs->load("orders");
 
 function llxHeader($head = "", $title="", $help_url='')
 {
-  global $user, $conf, $langs;
+  global $langs;
 
-  /*
-   *
-   *
-   */
   top_menu($head, $title);
 
   $menu = new Menu();
@@ -50,8 +45,7 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/expedition/", $langs->trans("Sendings"));
   $menu->add_submenu(DOL_URL_ROOT."/expedition/liste.php", $langs->trans("List"));
-
-  $menu->add(DOL_URL_ROOT."/expedition/stats/", $langs->trans("Statistics"));
+  $menu->add_submenu(DOL_URL_ROOT."/expedition/stats/", $langs->trans("Statistics"));
 
   left_menu($menu->liste, $help_url, $form_search, $author);
 }
