@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,7 +258,10 @@ class Product
       return array_reverse($result);
 
     }
-
+  /*
+   *
+   *
+   */
   Function get_nb_vente()
     {
       $sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
@@ -268,7 +271,10 @@ class Product
 
       return $this->_get_stats($sql);
     }
-
+  /*
+   *
+   *
+   */
   Function get_num_vente()
     {
       $sql = "SELECT count(*), date_format(f.datef, '%Y%m') ";
