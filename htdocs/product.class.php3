@@ -68,23 +68,31 @@ class Product
    */
   Function update($id, $user)
     {
-
-      $sql = "UPDATE llx_product ";
-      $sql .= " SET label = '" . trim($this->libelle) ."'";
-      $sql .= ",ref = '" . trim($this->ref) ."'";
-      $sql .= ",price = " . $this->price ;
-      $sql .= ",tva_tx = " . $this->tva_tx ;
-      $sql .= ",description = '" . trim($this->description) ."'";
-      
-      $sql .= " WHERE rowid = " . $id;
-      
-      if ( $this->db->query($sql) )
+      if (strlen(trim($this->ref)))
 	{
-	  return 1;
+	  $sql = "UPDATE llx_product ";
+	  $sql .= " SET label = '" . trim($this->libelle) ."'";
+	  $sql .= ",ref = '" . trim($this->ref) ."'";
+	  $sql .= ",price = " . ereg_replace(",",".",$this->price);
+	  $sql .= ",tva_tx = " . $this->tva_tx ;
+	  $sql .= ",envente = " . $this->envente ;
+	  $sql .= ",description = '" . trim($this->description) ."'";
+	  
+	  $sql .= " WHERE rowid = " . $id;
+	  
+	  if ( $this->db->query($sql) )
+	    {
+	      return 1;
+	    }
+	  else
+	    {
+	      print $this->db->error() . ' in ' . $sql;
+	    }
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+	  $this->mesg_error = "Vous devez indiquer une référence";
+	  return 0;
 	}
     }
   /*
@@ -95,7 +103,7 @@ class Product
   Function fetch ($id)
     {
     
-      $sql = "SELECT rowid, ref, label, description, price, tva_tx";
+      $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente";
       $sql .= " FROM llx_product WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
@@ -106,10 +114,12 @@ class Product
 
 	  $this->id          = $result["rowid"];
 	  $this->ref         = $result["ref"];
-	  $this->label       = $result["label"];
-	  $this->description = $result["description"];
+	  $this->label       = stripslashes($result["label"]);
+	  $this->description = stripslashes($result["description"]);
 	  $this->price       = $result["price"];
 	  $this->tva_tx      = $result["tva_tx"];
+	  $this->nbvente     = $result["nbvente"];
+	  $this->envente     = $result["envente"];
 	}
       $this->db->free();
       return $result;
