@@ -40,7 +40,8 @@ create table actioncomm
   percent        smallint,
 
   note           text,
-  propalrowid    integer
+  propalrowid    integer,
+  fk_facture     integer
 );
 
 --create table llx_todocomm
