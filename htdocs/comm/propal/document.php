@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ if ($id > 0)
 		    }
 		  else
 		    {
-		      echo '<a href="'.$PHP_SELF.'?id='.$propal->id.'&action=delete&urlfile='.urlencode($file).'">Supprimer</a>';
+		      echo '<a href="document.php?id='.$propal->id.'&action=delete&urlfile='.urlencode($file).'">Supprimer</a>';
 		    }
 		  print "</td></tr>\n";
 		}

@@ -117,13 +117,13 @@ if ($result)
 
   $urladd="page=$page&amp;stcomm=$stcomm";
 
-  print_barre_liste("Liste des prospects", $page, $PHP_SELF,'&amp;stcomm='.$_GET["stcomm"],"","",'',$num);
+  print_barre_liste("Liste des prospects", $page, "prospects.php",'&amp;stcomm='.$_GET["stcomm"],"","",'',$num);
 
   print '<div align="center">';
 
-  print "| <A href=\"$PHP_SELF?page=$pageprev&amp;stcomm=$stcomm&amp;begin=%25\">*</A>\n| ";
+  print "| <A href=\"prospects.php?page=$pageprev&amp;stcomm=$stcomm&amp;begin=%25\">*</A>\n| ";
   for ($ij = 65 ; $ij < 91; $ij++) {
-    print "<A href=\"$PHP_SELF?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
+    print "<A href=\"prospects.php?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
     
     if ($user->page_param["begin"] == chr($ij) )
       {
@@ -151,16 +151,16 @@ if ($result)
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<TR class="liste_titre">';
   print "<TD valign=\"center\">";
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print_liste_field_titre("Société","prospects.php","s.nom");
   print "</td><td>";
-  print_liste_field_titre("Ville",$PHP_SELF,"s.ville");
+  print_liste_field_titre("Ville","prospects.php","s.ville");
   print "</td>";
   print "<td align=\"center\">";
-  print_liste_field_titre("Département",$PHP_SELF,"s.fk_departement");
+  print_liste_field_titre("Département","prospects.php","s.fk_departement");
   print "</td><td>";
-  print_liste_field_titre("Statut",$PHP_SELF,"s.fk_stcomm");
+  print_liste_field_titre("Statut","prospects.php","s.fk_stcomm");
   print "</td><td>";
-  print_liste_field_titre("Insertion",$PHP_SELF,"s.datec");
+  print_liste_field_titre("Insertion","prospects.php","s.datec");
   print '</td><td colspan="4">&nbsp;</td>';
   print "</TR>\n";
   $var=True;

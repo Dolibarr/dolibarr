@@ -40,7 +40,7 @@ require("../../propal.class.php");
  */
 if ($user->societe_id > 0) 
 {
-  $action = '';
+  unset($_GET["action"]);
   $socidp = $user->societe_id;
 }
 
@@ -48,13 +48,12 @@ if ($user->societe_id > 0)
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_GET["valid"] == 1 && $user->rights->propale->valider)
+if ($_POST["action"] == 'update' && $user->rights->propale->creer)
 {
   $propal = new Propal($db);
   $propal->fetch($_GET["propalid"]);
-  $propal->update_price($_GET["propalid"]);
-  propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
-  $propal->valid($user);
+  $propal->update_note($_POST["note"]);
+
 }
 
 llxHeader();
@@ -113,7 +112,11 @@ if ($_GET["propalid"])
 	  
 	  if ($_GET["action"] == 'edit')
 	    {
+	      print '<form method="post" action="note.php?propalid='.$propal->id.'">';
+	      print '<input type="hidden" name="action" value="update">';
 	      print '<tr><td valign="top" colspan="4"><textarea name="note" cols="80" rows="8">'.$propal->note."</textarea></td></tr>";
+	      print '<tr><td align="center" colspan="4"><input type="submit" value="Enregistrer"></td></tr>';
+	      print '</form>';
 	    }
 
 
@@ -128,7 +131,7 @@ if ($_GET["propalid"])
 	  
 	  if ($user->rights->propale->creer && $_GET["action"] <> 'edit')
 	    {
-	      print "<a class=\"tabAction\" href=\"$PHP_SELF?propalid=$propal->id&amp;action=edit\">Editer</a>";
+	      print "<a class=\"tabAction\" href=\"note.php?propalid=$propal->id&amp;action=edit\">Editer</a>";
 	    }
 	  
 	  print "</div>";
