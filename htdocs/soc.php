@@ -79,6 +79,10 @@ if ($action == 'create')
    * Fiche societe en mode création
    */
   $soc = new Societe($db);
+  if ($_GET["type"]=='f') { $soc->fournisseur=1; }
+  if ($_GET["type"]=='c') { $soc->client=1; }
+  if ($_GET["type"]=='p') { $soc->client=2; }
+  
   print '<div class="titre">Nouvelle société (prospect, client, fournisseur)</div><br>';
   print '<form action="soc.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
@@ -126,9 +130,9 @@ if ($action == 'create')
   print '</td></tr>';
   
   print '<tr><td>Prospect / Client</td><td><select name="client">';
-  print '<option value="2" selected>Prospect'; 
-  print '<option value="1">Client'; 
-  print '<option value="0">Ni client, ni prospect'; 
+  print '<option value="2"'.($soc->client==2?' selected':'').'>Prospect</option>';
+  print '<option value="1"'.($soc->client==1?' selected':'').'>Client</option>';
+  print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
   print '</select></td>';
 
   print '<td>Fournisseur</td><td><select name="fournisseur">';
@@ -199,25 +203,9 @@ elseif ($action == 'edit')
       print '</td></tr>';
 
       print '<tr><td>Prospect / Client</td><td><select name="client">';
-      if ($soc->client == 2)
-	{
-	  print '<option value="2" selected>Prospect</option>';
-	  print '<option value="1">Client</option>';
-	  print '<option value="0">Ni client, ni prospect</option>';
-	}
-      elseif ($soc->client == 1)
-	{
-	  print '<option value="2">Prospect</option>'; 
-	  print '<option value="1" selected>Client</option>'; 
-	  print '<option value="0">Ni client, ni prospect</option>'; 
-	}
-      else
-	{
-	  print '<option value="2">Prospect</option>';
-	  print '<option value="1">Client</option>';
-	  print '<option value="0" selected>Ni client, ni prospect</option>';
-	}
-
+	  print '<option value="2"'.($soc->client==2?' selected':'').'>Prospect</option>';
+	  print '<option value="1"'.($soc->client==1?' selected':'').'>Client</option>';
+	  print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
       print '</select></td>';
 
       print '<td>Fournisseur</td><td><select name="fournisseur">';

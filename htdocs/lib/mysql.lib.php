@@ -25,6 +25,10 @@
 class DoliDb {
   var $db, $results, $ok, $connected, $database_selected;
 
+  // Constantes pour code erreurs
+  var $ERROR_DUPLICATE=1062;
+  var $ERROR_TABLEEXISTS=1050;
+
   Function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '') 
   // Se connecte au serveur et éventuellement à une base (si spécifié)
   // Renvoie 1 en cas de succès, 0 sinon
@@ -140,6 +144,8 @@ class DoliDb {
     return mysql_close($this->db);
   }
 
+
+  // Start transaction
   Function begin($do=1)
   {
     if ($do)
@@ -152,6 +158,7 @@ class DoliDb {
       }
   }
 
+  // Commit transaction
   Function commit($do=1)
   {
     if ($do)
@@ -164,6 +171,7 @@ class DoliDb {
       }
   }
 
+  // Rollback transaction
   Function rollback($do=1)
   {
     if ($do)
@@ -260,8 +268,8 @@ class DoliDb {
 
   Function errno()
     {
-	  // 1050 Table already exists
-	  // 1062 Duplicate key
+      // $ERROR_DUPLICATE=1062;
+      // $ERROR_TABLEEXISTS=1050;
       return mysql_errno($this->db);
     }
 

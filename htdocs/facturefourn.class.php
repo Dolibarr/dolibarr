@@ -61,95 +61,6 @@ class FactureFourn
 
     $this->lignes = array();
   }
-  /*
-   *
-   *
-   *
-   */
-  Function add_ligne($label, $amount, $tauxtva, $qty=1, $write=0)
-  {
-    $i = sizeof($this->lignes);
-
-    $this->lignes[$i][0] = $label;
-    $this->lignes[$i][1] = $amount;
-    $this->lignes[$i][2] = $tauxtva;
-    $this->lignes[$i][3] = $qty;
-
-    if ($write)
-      {
-
-	for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-	  {	 
-
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
-	    $sql .= " VALUES ($this->id);";
-	    if ($this->db->query($sql) ) 
-	      {
-		$idligne = $this->db->last_insert_id();
-
-		$this->update_ligne($idligne,
-				    $this->lignes[$i][0],
-				    $this->lignes[$i][1],
-				    $this->lignes[$i][2],
-				    $this->lignes[$i][3]);
-	      }
-	    else
-	      {
-		print $this->db->error();
-	      }
-	  }
-	/*
-	 * Mise à jour prix
-	 */
-
-	$this->updateprice($this->id);
-      }
-  }
-  /*
-   *
-   */
-  Function update_ligne($id, $label, $puht, $tauxtva, $qty=1)
-  {
-
-    $puht = ereg_replace(",",".",$puht);
-
-    $totalht  = $puht * $qty;
-    $tva      = tva($totalht, $tauxtva);
-    $totalttc = $totalht + $tva;
-
-
-    $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det ";
-    $sql .= "SET description ='".$label."'";
-    $sql .= ", pu_ht = " . $puht;
-    $sql .= ", qty =".$qty;
-    $sql .= ", total_ht=".$totalht;
-    $sql .= ", tva=".$tva;
-    $sql .= ", tva_taux=".$tauxtva;
-    $sql .= ", total_ttc=".$totalttc;
-
-    $sql .= " WHERE rowid = $id";
-
-    if (! $this->db->query($sql) ) 
-      {
-	print $this->db->error() . '<b><br>'.$sql;
-      }
-  }
-  /*
-   *
-   */
-  Function delete_ligne($id)
-  {
-
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det ";
-    $sql .= " WHERE rowid = $id";
-
-    if (! $this->db->query($sql) ) 
-      {
-	print $this->db->error() . '<b><br>'.$sql;
-      }
-    $this->updateprice($this->id);
-    return 1;
-  }
 
   /*
    * Création d'une facture fournisseur
@@ -191,27 +102,34 @@ class FactureFourn
 	      {
 		$idligne = $this->db->last_insert_id();
 
-		$this->update_ligne($idligne,
+		$this->updateline($idligne,
 				    $this->lignes[$i][0],
 				    $this->lignes[$i][1],
 				    $this->lignes[$i][2],
 				    $this->lignes[$i][3]);
 	      }
 	  }
-	/*
-	 * Mise à jour prix
-	 */
-
-	$this->updateprice($this->id);
-
-	return $this->id;
-      }
+	  
+        /*
+         * Mise à jour prix
+         */
+        
+        $this->updateprice($this->id);
+        
+        return $this->id;
+    }
     else
-      {
-	print $this->db->error() . '<b><br>'.$sql;
-	return 0;
-      }
-  }
+    {
+        if ($this->db->errno() == $this->db->ERROR_DUPLICATE) {
+            print "Erreur : Une facture possédant cet id existe déjà";
+        }
+        else {
+            print "Erreur : ".$this->db->error() . '<b><br>'.$sql;
+        }
+    
+        return 0;
+    }
+   }
 
   /*
    *
@@ -347,38 +265,81 @@ class FactureFourn
       }
     }
 
-  /*
-   *
-   *
-   */
-  Function addline($facid, $desc, $pu, $qty)
-    {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture,description,price,qty) VALUES ($facid, '$desc', $pu, $qty) ;";
-      $result = $this->db->query( $sql);
 
-      $this->updateprice($facid);
+  /*
+   * Ajout ligne facture fourn
+   */
+  Function addline($desc, $pu, $tauxtva, $qty)
+    {
+
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
+	    $sql .= " VALUES ($this->id);";
+	    if ($this->db->query($sql) ) 
+	      {
+		$idligne = $this->db->last_insert_id();
+
+ 		$this->updateline($idligne, $desc, $pu, $tauxtva, $qty);
+	      }
+	    else
+	      {
+		print $this->db->error();
+	      }
+
+        // Mise a jour prix facture
+        $this->updateprice($this->id);
+
     }
   /*
-   *
+   * Mise a jour ligne facture fourn
    *
    */
-  Function updateline($rowid, $desc, $pu, $qty)
+  Function updateline($id, $label, $puht, $tauxtva, $qty=1)
     {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facture-fourn_det set description='$desc',price=$pu,qty=$qty WHERE rowid = $rowid ;";
-      $result = $this->db->query( $sql);
-
-      $this->updateprice($this->id);
+        $puht = ereg_replace(",",".",$puht);
+        
+        $totalht  = $puht * $qty;
+        $tva      = tva($totalht, $tauxtva);
+        $totalttc = $totalht + $tva;
+        
+        
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det ";
+        $sql .= "SET description ='".$label."'";
+        $sql .= ", pu_ht = " . $puht;
+        $sql .= ", qty =".$qty;
+        $sql .= ", total_ht=".$totalht;
+        $sql .= ", tva=".$tva;
+        $sql .= ", tva_taux=".$tauxtva;
+        $sql .= ", total_ttc=".$totalttc;
+        
+        $sql .= " WHERE rowid = $id";
+        
+        if (! $this->db->query($sql) )
+        {
+            print $this->db->error() . '<b><br>'.$sql;
+        }
+        
+        // Mise a jour prix facture
+        $this->updateprice($this->id);
     }
   /*
-   *
+   * Supprime ligne facture fourn
    *
    */
   Function deleteline($rowid)
     {
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det WHERE rowid = $rowid;";
-      $result = $this->db->query( $sql);
+        // Supprime ligne
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det ";
+        $sql .= " WHERE rowid = $rowid";
+        
+        if (! $this->db->query($sql) ) 
+          {
+        print "Erreur : ".$this->db->error() . '<b><br>'.$sql;
+          }
 
-      $this->updateprice($this->id);
+        // Mise a jour prix facture
+        $this->updateprice($this->id);
+
+        return 1;
     }
   /*
    *

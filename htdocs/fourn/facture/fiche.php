@@ -114,7 +114,7 @@ if ($action == 'add')
       $facid = $facfou->create($user);
 
       // Ajout des lignes de factures      
-      if ($facid) {
+      if ($facid > 0) {
           for ($i = 1 ; $i < 9 ; $i++)
             {
               $label = "label$i";
@@ -122,16 +122,18 @@ if ($action == 'add')
               $tauxtva = "tauxtva$i";
               $qty = "qty$i";
               
-              if (strlen($$label) && $$amount > 0)
+              if (strlen($$label) > 0 && $$amount > 0)
         	{
         	  $atleastoneline=1;
-        	  $facfou->add_ligne($$label, $$amount, $$tauxtva, $$qty);
+        	  $facfou->addline($$label, $$amount, $$tauxtva, $$qty, 1);
         	}
             }
+
+          $db->commit();
       }
-
-      $db->commit();
-
+      else {
+          $db->rollback();
+      }
     }
     else {
         $mesg="<div class=\"error\">Erreur: Un numéro de facture fournisseur est obligatoire.</div>";
@@ -142,21 +144,16 @@ if ($action == 'del_ligne')
 {
   $facfou = new FactureFourn($db,"",$facid);
 
-  if ($facfou->delete_ligne($ligne_id))
-    {
-      $action="edit";
-    }
+  $facfou->deleteline($ligne_id);
+
+  $action="edit";
 }
 
 if ($action == 'add_ligne')
 {
   $facfou = new FactureFourn($db,"", $facid);
 
-  $facfou->add_ligne($_POST["label"],
-		     $_POST["amount"], 
-		     $_POST["tauxtva"], 
-		     $_POST["qty"],
-		     1);
+  $facfou->addline($_POST["label"], $_POST["amount"], $_POST["tauxtva"], $_POST["qty"]);
   
   $action="edit";
 }
