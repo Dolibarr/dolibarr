@@ -85,6 +85,25 @@ class modPropale
 	
       }
        
+    /*
+     * Permissions
+     */
+    $sql = array(
+		 "insert into llx_rights_def values (20,'Tous les droits sur les propositions commerciales','propale','a',0);",
+		 "insert into llx_rights_def values (21,'Lire les propositions commerciales','propale','r',1);",
+		 "insert into llx_rights_def values (22,'Créer modifier les propositions commerciales','propale','w',0);",
+		 "insert into llx_rights_def values (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
+		 "insert into llx_rights_def values (24,'Valider les propositions commerciales','propale','d',0);"
+		 "insert into llx_rights_def values (25,'Clôturer les propositions commerciales','propale','d',0);"
+		 "insert into llx_rights_def values (26,'Supprimer les propositions commerciales','propale','d',0);"
+		 );
+    
+    for ($i = 0 ; $i < sizeof($sql) ; $i++)
+      {
+	$this->db->query($sql[$i]);
+      }
+
+
   }
   /*
    *
@@ -99,6 +118,9 @@ class modPropale
       {
 	
       }
+
+    $sql = "DELETE FROM llx_rights_def WHERE module = 'propale';";
+    $this->db->query($sql);
 
   }
 }
