@@ -378,7 +378,7 @@ class Societe {
 	      $nom = preg_replace("/[[:punct:]]/","",$this->db->result(0,0));
 	      $this->db->free();
 	      
-	      $prefix = strtoupper(substr($nom, 0, 4));
+	      $prefix = $this->genprefix($nom,4);
       
 	      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
 	      if ( $this->db->query( $sql) )
@@ -415,6 +415,37 @@ class Societe {
 	}
       return $prefix;
     }
+
+  /**
+   *    \brief      Génère le préfix de la société
+   *    \param      nom         nom de la société
+   *    \param      taille      taille du prefix à retourner
+   *    \param      mot         l'indice du mot à utiliser
+   *
+   */
+  function genprefix($nom, $taille=4,$mot=0)
+  {
+    $retour = "";
+    $tab = explode(" ",$nom);
+    if($mot < count($tab)) {
+      $prefix = substr($tab[$mot],0,$taille);
+      //On vérifie que ce prefix n'a pas déjà été pris ...
+      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
+      if ( $this->db->query( $sql) )
+	{
+	  if ( $this->db->result(0, 0) )
+	    {
+	      $this->db->free();
+	      $retour = $this->genprefix($nom,$taille,$mot+1);
+	    }
+	  else
+	    {
+	      $retour = $prefix;
+	    }
+	}
+    }
+    return $retour;
+  }
 
   /**
    *    \brief     Définit la société comme un client
