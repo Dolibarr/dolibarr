@@ -50,13 +50,10 @@ if ($_POST["action"] == 'add')
       
       if ($db->query($sql1) && $db->query($sql2))
 	{
-	  // la constante qui a été lue en avant du nouveau set
-	  // on passe donc par une variable pour avoir un affichage cohérent
-	  print "Nouveau flux RSS ajouté\n";
-	  $nbexternalrss++;
+        header("Location: external_rss.php");
 	}
       else
-  	  print "Erreur d'enregistement\n";
+        dolibarr_print_error($db); 
     }
 }
 
@@ -70,7 +67,9 @@ if ($_POST["delete"])
       $result = $db->query($sql);
       $result = $db->query($sql1);
       $result = $db->query($sql2);
-      if (! $result) {
+      if ($result) {
+        header("Location: external_rss.php");
+      } else {
         dolibarr_print_error($db); 
       }
     }
@@ -88,12 +87,10 @@ if ($_POST["modify"])
       
       if ($db->query($sql1) && $db->query($sql2))
 	{
-	  print "Enregistrement confirmé pour le flux RSS " . $_POST[$external_rss_title] . "\n";
-	  // TODO Mettre a jour constante dans environnement pour avoir affichage qui suit ok
-
+        header("Location: external_rss.php");
 	}
       else
-	  print "Erreur d'enregistement pour le flux RSS " . $_POST[$external_rss_title] . "\n";
+        dolibarr_print_error($db); 
     }
 }
 
