@@ -117,5 +117,5 @@ insert into c_propalst (id,label) values (4, 'Facturée');
 --
 -- Utilisateur
 --
-insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,admin,webcal_login)
-values ('Quiedeville','Rodolphe','RQ','rodo','CRnN0Tam/s7z.',1,1,1,'rodo');
+--insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,admin,webcal_login)
+--values ('Quiedeville','Rodolphe','RQ','rodo','CRnN0Tam/s7z.',1,1,1,'rodo');
