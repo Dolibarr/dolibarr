@@ -173,6 +173,17 @@ Function img_alerte($alt = "Alerte")
 }
 
 
+Function img_next($alt = "Suivant")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/next.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+Function img_previous($alt = "Précédent")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/previous.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+
 function loginFunction()
 {
   /**
