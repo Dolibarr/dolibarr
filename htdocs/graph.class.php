@@ -25,42 +25,16 @@ class Graph
   var $errorstr;
 
   /**
-   * Initialisation
+   * Prépare le graphique
    *
    */
-
-  Function Graph($data=array())
-  {
-    $this->data = $data;
-    
-    include_once(DOL_DOCUMENT_ROOT."/includes/phplot/phplot.php");
-
-    $this->bgcolor = array(235,235,224);
-    //$this->bgcolor = array(235,235,200);
-    $this->bordercolor = array(235,235,224);
-    $this->datacolor = array(array(204,204,179),
-			     array(187,187,136),
-			     array(235,235,224));
-
-    $this->precision_y = 0;
-
-    $this->width = 400;
-    $this->height = 200;
-
-    return 1;
-  }
-  
-  /**
-   * Dessine le graphique
-   *
-   */
-  Function draw($file, $data, $title='')
+  Function prepare($file, $data, $title='')
   {
     //Define the object
-    $graph = new PHPlot($this->width, $this->height);
-    $graph->SetIsInline(1);
+    $this->graph = new PHPlot($this->width, $this->height);
+    $this->graph->SetIsInline(1);
 
-    $graph->SetPlotType('bars');
+    $this->graph->SetPlotType( $this->PlotType );
 
     if (isset($this->MaxValue))
       {
@@ -73,7 +47,7 @@ class Graph
 	    $max++;
 	  }
 
-	$graph->SetPlotAreaWorld(0,0,12,$this->MaxValue);
+	$this->graph->SetPlotAreaWorld(0,0,12,$this->MaxValue);
 
 	$j = 0;
 	for ($i = 1 ; $i < 11 ; $i++)
@@ -90,55 +64,55 @@ class Graph
 	  }
 	rsort($nts);
 
-	$graph->SetNumVertTicks($nts[0]);
+	$this->graph->SetNumVertTicks($nts[0]);
       }
     else
       {
-	$graph->SetPlotAreaPixels(60, 10, $this->width-10, $this->height - 30) ;
+	$this->graph->SetPlotAreaPixels(60, 10, $this->width-10, $this->height - 30) ;
       }
 
-    $graph->SetBackgroundColor($this->bgcolor);
+    $this->graph->SetBackgroundColor($this->bgcolor);
 
     // TODO
-    //$graph->SetPrecisionY($this->precision_Y);
+    //$this->graph->SetPrecisionY($this->precision_Y);
 
-    $graph->SetDataColors($this->datacolor, $this->bordercolor);
+    $this->graph->SetDataColors($this->datacolor, $this->bordercolor);
 
-    $graph->SetYGridLabelType("data");
+    $this->graph->SetYGridLabelType("data");
 
-    $graph->SetOutputFile($file);
+    $this->graph->SetOutputFile($file);
 
     //Set some data
-    $graph->SetDataValues($data);
+    $this->graph->SetDataValues($data);
 
-    //    $graph->SetVertTickIncrement(0);
+    //    $this->graph->SetVertTickIncrement(0);
 
-    $graph->SetDrawYGrid(1); 
+    $this->graph->SetDrawYGrid(1); 
 
     //
     if (strlen($title))
       {
-	$graph->SetTitle = $title;
+	$this->graph->SetTitle = $title;
       }
 
-    //    $graph->SetSkipBottomTick(1);
+    //    $this->graph->SetSkipBottomTick(1);
 
     // Affiche les valeurs
-    //$graph->SetDrawDataLabels('1');
-    //$graph->SetLabelScalePosition('1');
+    //$this->graph->SetDrawDataLabels('1');
+    //$this->graph->SetLabelScalePosition('1');
 
-    $graph->SetVertTickPosition('plotleft');
+    $this->graph->SetVertTickPosition('plotleft');
 
-    $graph->SetMarginsPixels(100,50,10,30);
+    $this->graph->SetMarginsPixels(100,50,10,30);
 
     if (isset($this->Legend))
       {
-	$graph->SetLegend($this->Legend);
-	$graph->SetLegendWorld(12,$this->MaxValue);
+	$this->graph->SetLegend($this->Legend);
+	$this->graph->SetLegendWorld(12,$this->MaxValue);
       }
 
     //Draw it
-    $graph->DrawGraph();
+    //    $this->graph->DrawGraph();
   }
 
   Function SetPrecisionY($which_prec)
@@ -170,6 +144,21 @@ class Graph
   Function SetHeight($h)
   {
     $this->height = $h;
+  }
+
+  Function ResetBgColor()
+  {
+    unset($this->bgcolor);
+  }
+  
+  Function SetBgColor($bg_color = array(255,255,255))
+  {
+    $this->bgcolor = $bg_color;
+  }
+
+  Function ResetDataColor()
+  {
+    unset($this->datacolor);
   }
 
   Function GetMaxValue()
