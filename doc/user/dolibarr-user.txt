@@ -63,6 +63,8 @@ Table des matières
 
         * php4-mysql
 
+        * php4-curl (pour la partie gestion des adhérents)
+
         * Apache
 
         * libapache-mod-auth-mysql
