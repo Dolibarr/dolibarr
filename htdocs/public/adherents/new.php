@@ -31,36 +31,37 @@ $errmsg='';
 $num=0;
 $error=0;
 
-if ($HTTP_POST_VARS["action"] == 'add') 
+if ($_POST["action"] == 'add') 
 {
   // test si le login existe deja
-  if(!isset($login) || $login=''){
+  $login=$_POST["login"];
+  if(!isset($_POST["login"]) || $_POST["login"]=''){
     $error+=1;
-    $errmsg .="Login vide. Veuillez en positionner un<BR>\n";
+    $errmsg .="Login $login vide. Veuillez en positionner un<BR>\n";
   }
-  $sql = "SELECT login FROM llx_adherent WHERE login='$login';";
+  $sql = "SELECT login FROM llx_adherent WHERE login='".$login."';";
   $result = $db->query($sql);
   if ($result) {
     $num = $db->num_rows();
   }
-  if (!isset($nom) || !isset($prenom) || $prenom=='' || $nom==''){
+  if (!isset($_POST["nom"]) || !isset($_POST["prenom"]) || $_POST["prenom"]=='' || $_POST["nom"]==''){
     $error+=1;
     $errmsg .="Nom et Prenom obligatoires<BR>\n";
   }
-  if (!isset($email) || $email == '' || !ereg('@',$email)){
+  if (!isset($_POST["email"]) || $_POST["email"] == '' || !ereg('@',$_POST["email"])){
     $error+=1;
     $errmsg .="Adresse Email invalide<BR>\n";
   }
   if ($num !=0){
     $error+=1;
-    $errmsg .="Login deja utilise. Veuillez en changer<BR>\n";
+    $errmsg .="Login ".$login." deja utilise. Veuillez en changer<BR>\n";
   }
-  if (!isset($pass1) || !isset($pass2) || $pass1 == '' || $pass2 == '' || $pass1!=$pass2){
+  if (!isset($_POST["pass1"]) || !isset($_POST["pass2"]) || $_POST["pass1"] == '' || $_POST["pass2"] == '' || $_POST["pass1"]!=$_POST["pass2"]){
     $error+=1;
     $errmsg .="Password invalide<BR>\n";
   }
-  if (isset($naiss) && $naiss !=''){
-    if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$naiss)){
+  if (isset($_POST["naiss"]) && $_POST["naiss"] !=''){
+    if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$_POST["naiss"])){
       $error+=1;
       $errmsg .="Date de naissance invalide (Format AAAA-MM-JJ)<BR>\n";
     }
@@ -74,23 +75,23 @@ if ($HTTP_POST_VARS["action"] == 'add')
     // email a peu pres correct et le login n'existe pas
     $adh = new Adherent($db);
     $adh->statut      = -1;
-    $adh->public      = $public;
-    $adh->prenom      = $prenom;
-    $adh->nom         = $nom;  
-    $adh->societe     = $societe;
-    $adh->adresse     = $adresse;
-    $adh->cp          = $cp;
-    $adh->ville       = $ville;
-    $adh->email       = $email;
+    $adh->public      = $_POST["public"];
+    $adh->prenom      = $_POST["prenom"];
+    $adh->nom         = $_POST["nom"];  
+    $adh->societe     = $_POST["societe"];
+    $adh->adresse     = $_POST["adresse"];
+    $adh->cp          = $_POST["cp"];
+    $adh->ville       = $_POST["ville"];
+    $adh->email       = $_POST["email"];
     $adh->login       = $login;
-    $adh->pass        = $pass1;
-    $adh->naiss       = $naiss;
-    $adh->photo       = $photo;
-    $adh->note        = $note;
-    $adh->pays        = $pays;
-    $adh->typeid      = $type;
-    $adh->commentaire = $HTTP_POST_VARS["comment"];
-    $adh->morphy      = $HTTP_POST_VARS["morphy"];
+    $adh->pass        = $_POST["pass1"];
+    $adh->naiss       = $_POST["naiss"];
+    $adh->photo       = $_POST["photo"];
+    $adh->note        = $_POST["note"];
+    $adh->pays        = $_POST["pays"];
+    $adh->typeid      = $_POST["type"];
+    $adh->commentaire = $_POST["comment"];
+    $adh->morphy      = $_POST["morphy"];
     
     foreach($_POST as $key => $value){
       if (ereg("^options_",$key)){
@@ -146,7 +147,7 @@ print '<li> Les champs Commencant par un <FONT COLOR="red">*</FONT> sont obligat
 print '<li> Les champs Commencant par un <FONT COLOR="blue">*</FONT> seront affiche sur la liste publique des membres. Si vous ne souhaite pas cela <b>DECOCHEZ</b> la case public ci dessous'; 
 print "<li> Les login et password vous serviront a editer vos coordonnees ulterieurement<BR>\n";
 print "</ul><BR>\n";
-print "<form action=\"$PHP_SELF\" method=\"post\">\n";
+print "<form action=\"$PHP_SELF\" method=\"POST\">\n";
 print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
 print '<input type="hidden" name="action" value="add">';
