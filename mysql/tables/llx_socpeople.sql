@@ -25,7 +25,7 @@ create table llx_socpeople
   idp            integer AUTO_INCREMENT PRIMARY KEY,
   datec          datetime,
   tms            timestamp,
-  fk_soc         integer,
+  fk_soc         integer,           -- lien vers la societe
   civilite       varchar(6),
   name           varchar(50),
   firstname      varchar(50),
