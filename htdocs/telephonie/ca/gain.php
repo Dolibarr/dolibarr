@@ -35,17 +35,16 @@ llxHeader('','Telephonie - CA par client');
  *
  *
  */
-
-print_titre("CA par client cumulé");
-
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td width="50%" valign="top">';
 
-
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 if ($sortorder == "") $sortorder="DESC";
 if ($sortfield == "") $sortfield="ca";
@@ -54,25 +53,24 @@ $sql = "SELECT nom, ca, gain, cout, marge";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_stats";
 $sql .= " , " .MAIN_DB_PREFIX."societe";
 $sql .= " WHERE idp = fk_client_comm";
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= " LIMIT 30";
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
-  $ligne = new LigneTel($db);
+
+  print_barre_liste("CA cumulé par client", $page, "gain.php", $urladd, $sortfield, $sortorder, '', $num);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>Client</td><td align="right">Chiffre d\'affaire</td>';
   print '<td align="right">Gain</td>';
 
-  print_liste_field_titre("Marge","gain.php","marge");
-
+  print_liste_field_titre("Marge","gain.php","marge",'','','align="right"');
   print "</tr>\n";
   $var=True;
 
-  while ($i < $num)
+  while ($i < min($num,$conf->liste_limit))
     {
       $row = $db->fetch_row($i);	
       $var=!$var;
