@@ -169,6 +169,8 @@ if ($result)
   print "</TABLE></p>";
   $db->free();
 } else {
+  print_barre_liste("Liste des contacts $label",$page, $PHP_SELF);
+
   print $db->error();
 }
 
