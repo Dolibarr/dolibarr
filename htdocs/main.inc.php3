@@ -143,12 +143,20 @@ if (defined("MAIN_MODULE_FICHEINTER"))
   $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
 }
 
-
 if (defined("MAIN_MODULE_ADHERENT"))
 {
   $conf->adherent->enabled=MAIN_MODULE_ADHERENT;
 }
 
+if (defined("BOUTIQUE_LIVRE"))
+{
+  $conf->boutique->livre->enabled=BOUTIQUE_LIVRE;
+}
+
+if (defined("BOUTIQUE_ALBUM"))
+{
+  $conf->boutique->album->enabled=BOUTIQUE_ALBUM;
+}
 
 /*
  */
