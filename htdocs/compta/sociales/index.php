@@ -104,7 +104,7 @@ print '</td><td align="right">';
 print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount");
 print '</td><td align="center">';
 print_liste_field_titre($langs->trans("Status"),"index.php","s.paye");
-print '</td><td>&nbsp;</td>';
+print '</td>';
 print "</tr>\n";
 
 
@@ -150,7 +150,10 @@ if ( $db->query($sql) )
 
       $var = !$var;
       print "<tr $bc[$var]>";
-      print '<td width="80"><a href="charges.php?id='.$obj->id.'">'.$obj->id.'</a></td>';
+      print '<td width="80">';
+      print '<a href="charges.php?id='.$obj->id.'">'.img_file().' '.$obj->id.'</a>';
+      print '</td>';
+
       print '<td width="110">'.dolibarr_print_date($obj->de).'</td>';
       print '<td>';
       if ($obj->periode) {
@@ -164,18 +167,9 @@ if ( $db->query($sql) )
       
       if ($obj->paye)
 	{
-	  print '<td align="center" class="normal" width="100"><a class="payee" href="index.php?filtre=paye:1">Payé</a></td>';
-	  print '<td>&nbsp;</td>';
+	  print '<td align="center" class="normal"><a class="payee" href="index.php?filtre=paye:1">Payé</a></td>';
 	} else {
 	  print '<td align="center"><a class="impayee" href="index.php?filtre=paye:0">Impayé</a></td>';
-	  print '<td align="center" nowrap>';
-	  if ($user->rights->compta->charges->creer) {
-	    print '<a href="charges.php?action=edit&id='.$obj->id.'">'.img_edit().'</a>';
-	  }
-	  if ($user->rights->compta->charges->supprimer) {
-	    print ' &nbsp; <a href="index.php?action=del&id='.$obj->id.'">'.img_delete().'</a>';
-	  }
-	  print '</td>';
 	}
       print '</tr>';
       $i++;
@@ -183,7 +177,7 @@ if ( $db->query($sql) )
 }
 else
 {
-  print "Error :".$db->error()." - $sql";
+  dolibarr_print_error($db);
 }
 
 /*
@@ -218,9 +212,8 @@ if ($user->rights->compta->charges->creer) {
     print '</td>';
     print '<td align="left"><input type="text" size="24" name="libelle"></td>';
     print '<td align="right"><input type="text" size="6" name="amount"></td>';
-    print '<td>&nbsp;</td>';
     
-    print '<td><input type="submit" value="'.$langs->trans("Add").'"></form></td>';
+    print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></form></td>';
     print '</tr>';
 }
 
