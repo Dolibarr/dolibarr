@@ -59,7 +59,7 @@ if ($socidp)
 }
 $sql .= " GROUP BY dm";
 
-pt($db, $sql,"Mois cumulés");
+pt($db, $sql,"Suivi cumul par mois");
 
 
 print "<br>"; 
@@ -72,7 +72,7 @@ if ($socidp)
 }
 $sql .= " GROUP BY dm DESC";
 
-pt($db, $sql,"Année");
+pt($db, $sql,"Suivi cumul par année");
 
 print "</td></tr></table>";
 
@@ -112,8 +112,6 @@ function pt ($db, $sql, $date)
 	  print "<TD align=\"right\">".$total."</TD><td>&nbsp;</td>\n";
 	  print "</TR>\n";
 	  
-	  $total = $total + $obj->amount;
-      
 	  $i++;
 	}
       print '<tr class="total"><td  align="right">Total :</td><td align="right"><b>'.price($total).'</b></td><td>'.MAIN_MONNAIE.'&nbsp;HT</td></tr>';
