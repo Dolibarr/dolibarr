@@ -24,7 +24,7 @@ create table llx_c_forme_juridique
 (
   code       integer PRIMARY KEY,
   libelle    varchar(255),
-  active     tinyint default 1,
+  active     tinyint default 1
 
 )type=innodb;
 
