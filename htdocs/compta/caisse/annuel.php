@@ -81,8 +81,8 @@ if ($db->query($sql))
     }
 }
 
-print '<table width="100%" border="1">';
-print '<tr class="liste_titre"><td></td>';
+print '<table width="100%" border="1" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td>Mois</td>';
 
 $year_current = strftime("%Y",time());
 
