@@ -75,7 +75,7 @@ class FactureRec
 	   */
 	  	  	  	  
 	  $sql = "INSERT INTO llx_facture_rec (titre, fk_soc, datec, amount, remise, remise_percent, note, fk_user_author,fk_projet, fk_cond_reglement) ";
-	  $sql .= " VALUES ('$this->titre', $facsrc->socidp, now(), $facsrc->amount, $facsrc->remise, $facsrc->remise_percent, '$this->note',$user->id, $facsrc->projetid, $facsrc->cond_reglement_id)";      
+	  $sql .= " VALUES ('$this->titre', '$facsrc->socidp', now(), '$facsrc->amount', '$facsrc->remise', '$facsrc->remise_percent', '$this->note','$user->id', '$facsrc->projetid', '$facsrc->cond_reglement_id')";      
 	  if ( $this->db->query($sql) )
 	    {
 	      $this->id = $this->db->last_insert_id();
@@ -379,7 +379,7 @@ class FactureRec
 	    }
 
 	  $sql = "INSERT INTO llx_facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
-	  $sql .= " VALUES ($facid, '$desc', $price, $qty, $txtva, $fk_product, $remise_percent, $subprice, $remise) ;";
+	  $sql .= " VALUES ('$facid', '$desc', '$price', '$qty', '$txtva', '$fk_product', '$remise_percent', '$subprice', '$remise') ;";
 
 	  if ( $this->db->query( $sql) )
 	    {
