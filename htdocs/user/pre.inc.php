@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,13 @@ function llxHeader($head = "", $urlp = "")
   if($user->admin)
     {
       $menu->add_submenu(DOL_URL_ROOT."/user/fiche.php?&amp;action=create", $langs->trans("NewUser"));
+    }
+
+  $menu->add(DOL_URL_ROOT."/user/group/", "Groupes");
+
+  if($user->admin)
+    {
+      $menu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?&amp;action=create","Nouveau groupe");
     }
 
 
