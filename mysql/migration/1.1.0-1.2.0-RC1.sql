@@ -803,3 +803,7 @@ create table llx_societe_rib
 
 
 )type=innodb;
+
+
+
+alter table llx_c_civilite drop fk_pays;
