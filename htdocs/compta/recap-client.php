@@ -200,7 +200,7 @@ if ($socid > 0)
 		print "<tr $bc[$var]>";
 
 		print "<td align=\"right\">".dolibarr_print_date($fac->date)."</td>\n";
-		print "<td><a href=\"../compta/facture.php?facid=$objp->facid\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
+		print "<td><a href=\"../compta/facture.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
 		
 		print '<td align="right">'.number_format($fac->total_ttc, 2, ',', ' ')."</td>\n";
 		$solde = $solde + $fac->total_ttc;
@@ -230,7 +230,7 @@ if ($socid > 0)
 			//$var=!$var;
 			print "<tr $bc[$var]>";
 			print '<td align="right">'.dolibarr_print_date($objp->dp)."</td>\n";
-			print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_file().' Paiement '.$objp->rowid.'</td>';
+			print '<td><a href="paiement/fiche.php?id='.$objp->rowid.'">'.img_file().' Paiement '.$objp->rowid.'</td>';
 			print "<td>&nbsp;</td>\n";
 			print '<td align="right">'.price($objp->amount).'</td>';
 			$solde = $solde - $objp->amount;
