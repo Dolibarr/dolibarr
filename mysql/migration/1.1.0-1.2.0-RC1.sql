@@ -449,6 +449,17 @@ create table llx_user_param
   UNIQUE (fk_user,page,param)
 )type=innodb;
 
+create table llx_cash_account
+(
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  datec          datetime,
+  tms            timestamp,
+  label          varchar(30),
+  courant        smallint default 0 not null,
+  clos           smallint default 0 not null,
+  account_number varchar(8)
+)type=innodb;
+
 create table llx_cash
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
