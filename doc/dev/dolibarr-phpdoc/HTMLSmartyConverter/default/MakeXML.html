@@ -1,0 +1,1024 @@
+<html>
+<head>
+<title>Docs For Class MakeXML</title>
+<link rel="stylesheet" type="text/css" href="../media/style.css">
+</head>
+<body>
+
+<table border="0" cellspacing="0" cellpadding="0" height="48" width="100%">
+  <tr>
+    <td class="header_top">default</td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+  <tr>
+    <td class="header_menu">
+  		  [ <a href="../classtrees_default.html" class="menu">class tree: default</a> ]
+		  [ <a href="../elementindex_default.html" class="menu">index: default</a> ]
+		  [ <a href="../elementindex.html" class="menu">all elements</a> ]
+    </td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+</table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="200" class="menu">
+      <b>Packages:</b><br />
+              <a href="../li_default.html">default</a><br />
+              <a href="../li_ldap.lib.html">ldap.lib</a><br />
+              <a href="../li_mysql.lib.php.html">mysql.lib.php</a><br />
+              <a href="../li_price.lib.php.html">price.lib.php</a><br />
+              <a href="../li_thermometer.php.html">thermometer.php</a><br />
+              <a href="../li_Webcal.html">Webcal</a><br />
+            <br /><br />
+                        <b>Files:</b><br />
+      	  <div class="package">
+			<a href="../default/_jabber_class_jabber_php.html">		class.jabber.php
+		</a><br>
+			<a href="../default/_CMailFile_class_php.html">		CMailFile.class.php
+		</a><br>
+			<a href="../default/_functions_inc_php.html">		functions.inc.php
+		</a><br>
+			<a href="../default/_vcard_vcard_class_php.html">		vcard.class.php
+		</a><br>
+	  </div><br />
+      
+            <b>Classes:</b><br />
+        <div class="package">
+		    		<a href="../default/CJP_StandardConnector.html">CJP_StandardConnector</a><br />
+	    		<a href="../default/CMailFile.html">CMailFile</a><br />
+	    		<a href="../default/Jabber.html">Jabber</a><br />
+	    		<a href="../default/MakeXML.html">MakeXML</a><br />
+	    		<a href="../default/vCard.html">vCard</a><br />
+	  </div>
+                </td>
+    <td>
+      <table cellpadding="10" cellspacing="0" width="100%" border="0"><tr><td valign="top">
+
+<h1>Class: MakeXML</h1>
+Source Location: /jabber/class.jabber.php<br /><br />
+
+
+
+<table width="100%" border="0">
+<tr><td valign="top">
+
+<h3><a href="#class_details">Class Overview</a></h3>
+<pre><a href="../default/Jabber.html">Jabber</a>
+   |
+   --MakeXML</pre><br />
+<div class="description">*************************************************************************</div><br /><br />
+
+
+
+
+
+
+
+</td>
+
+<td valign="top">
+<h3><a href="#class_vars">Variables</a></h3>
+<ul>
+    <li><a href="../default/MakeXML.html#var$nodes">$nodes</a></li>
+  </ul>
+</td>
+
+<td valign="top">
+<h3><a href="#class_methods">Methods</a></h3>
+<ul>
+    <li><a href="../default/MakeXML.html#methodMakeXML">MakeXML</a></li>
+    <li><a href="../default/MakeXML.html#methodAddPacketDetails">AddPacketDetails</a></li>
+    <li><a href="../default/MakeXML.html#methodBuildPacket">BuildPacket</a></li>
+    <li><a href="../default/MakeXML.html#method_preg_grep_keys">_preg_grep_keys</a></li>
+  </ul>
+</td>
+
+</tr></table>
+<hr />
+
+<table width="100%" border="0"><tr>
+
+
+
+
+<td valign="top">
+<h3>Inherited Variables</h3>
+<div class="tags">
+<h4>Class: <a href="../default/Jabber.html">Jabber</a></h4>
+<dl>
+<dt>
+  <a href="../default/Jabber.html#var$connected">Jabber::$connected</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$connection">Jabber::$connection</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$CONNECTOR">Jabber::$CONNECTOR</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$delay_disconnect">Jabber::$delay_disconnect</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$enable_logging">Jabber::$enable_logging</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$error_codes">Jabber::$error_codes</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$iq_sleep_timer">Jabber::$iq_sleep_timer</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$iq_version_name">Jabber::$iq_version_name</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$iq_version_os">Jabber::$iq_version_os</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$iq_version_version">Jabber::$iq_version_version</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$jid">Jabber::$jid</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$keep_alive_id">Jabber::$keep_alive_id</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$last_ping_time">Jabber::$last_ping_time</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$log_array">Jabber::$log_array</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$log_filehandler">Jabber::$log_filehandler</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$log_filename">Jabber::$log_filename</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$packet_queue">Jabber::$packet_queue</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$password">Jabber::$password</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$port">Jabber::$port</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$resource">Jabber::$resource</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$returned_keep_alive">Jabber::$returned_keep_alive</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$roster">Jabber::$roster</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$server">Jabber::$server</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$stream_id">Jabber::$stream_id</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$subscription_queue">Jabber::$subscription_queue</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$txnid">Jabber::$txnid</a>
+  
+</dt>
+<dd>
+   
+</dd>
+<dt>
+  <a href="../default/Jabber.html#var$username">Jabber::$username</a>
+  
+</dt>
+<dd>
+   
+</dd>
+</dl>
+</div>
+</td>
+
+<td valign="top">
+<h3>Inherited Methods</h3>
+<div class="tags">
+<h4>Class: <a href="../default/Jabber.html">Jabber</a></h4>
+<dl>
+    <dt>
+    <a href="../default/Jabber.html#methodJabber">Jabber::Jabber()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodAccountRegistration">Jabber::AccountRegistration()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodAddToLog">Jabber::AddToLog()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodCallHandler">Jabber::CallHandler()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodConnect">Jabber::Connect()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodCruiseControl">Jabber::CruiseControl()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodDisconnect">Jabber::Disconnect()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetFirstFromQueue">Jabber::GetFirstFromQueue()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetFromQueueById">Jabber::GetFromQueueById()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromIqError">Jabber::GetInfoFromIqError()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromIqFrom">Jabber::GetInfoFromIqFrom()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromIqId">Jabber::GetInfoFromIqId()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromIqKey">Jabber::GetInfoFromIqKey()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromIqType">Jabber::GetInfoFromIqType()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromMessageBody">Jabber::GetInfoFromMessageBody()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromMessageError">Jabber::GetInfoFromMessageError()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromMessageFrom">Jabber::GetInfoFromMessageFrom()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromMessageId">Jabber::GetInfoFromMessageId()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromMessageSubject">Jabber::GetInfoFromMessageSubject()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromMessageThread">Jabber::GetInfoFromMessageThread()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromMessageType">Jabber::GetInfoFromMessageType()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromPresenceFrom">Jabber::GetInfoFromPresenceFrom()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromPresencePriority">Jabber::GetInfoFromPresencePriority()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromPresenceShow">Jabber::GetInfoFromPresenceShow()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromPresenceStatus">Jabber::GetInfoFromPresenceStatus()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetInfoFromPresenceType">Jabber::GetInfoFromPresenceType()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodGetvCard">Jabber::GetvCard()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_">Jabber::Handler_iq_()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_jabber_iq_agent">Jabber::Handler_iq_jabber_iq_agent()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_jabber_iq_agents">Jabber::Handler_iq_jabber_iq_agents()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_jabber_iq_auth">Jabber::Handler_iq_jabber_iq_auth()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_jabber_iq_autoupdate">Jabber::Handler_iq_jabber_iq_autoupdate()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_jabber_iq_oob">Jabber::Handler_iq_jabber_iq_oob()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_jabber_iq_private">Jabber::Handler_iq_jabber_iq_private()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_jabber_iq_register">Jabber::Handler_iq_jabber_iq_register()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_jabber_iq_roster">Jabber::Handler_iq_jabber_iq_roster()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_jabber_iq_search">Jabber::Handler_iq_jabber_iq_search()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_jabber_iq_time">Jabber::Handler_iq_jabber_iq_time()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_iq_jabber_iq_version">Jabber::Handler_iq_jabber_iq_version()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_message_chat">Jabber::Handler_message_chat()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_message_error">Jabber::Handler_message_error()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_message_groupchat">Jabber::Handler_message_groupchat()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_message_headline">Jabber::Handler_message_headline()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_message_normal">Jabber::Handler_message_normal()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_NOT_IMPLEMENTED">Jabber::Handler_NOT_IMPLEMENTED()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_presence_available">Jabber::Handler_presence_available()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_presence_error">Jabber::Handler_presence_error()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_presence_subscribe">Jabber::Handler_presence_subscribe()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_presence_subscribed">Jabber::Handler_presence_subscribed()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_presence_unavailable">Jabber::Handler_presence_unavailable()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_presence_unsubscribe">Jabber::Handler_presence_unsubscribe()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodHandler_presence_unsubscribed">Jabber::Handler_presence_unsubscribed()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodListen">Jabber::Listen()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodPrintLog">Jabber::PrintLog()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodRosterAddUser">Jabber::RosterAddUser()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodRosterExistsJID">Jabber::RosterExistsJID()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodRosterRemoveUser">Jabber::RosterRemoveUser()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodRosterUpdate">Jabber::RosterUpdate()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodSendAuth">Jabber::SendAuth()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodSendError">Jabber::SendError()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodSendIq">Jabber::SendIq()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodSendMessage">Jabber::SendMessage()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodSendPacket">Jabber::SendPacket()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodSendPresence">Jabber::SendPresence()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodStripJID">Jabber::StripJID()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodSubscribe">Jabber::Subscribe()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodSubscriptionAcceptRequest">Jabber::SubscriptionAcceptRequest()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodSubscriptionDenyRequest">Jabber::SubscriptionDenyRequest()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodTransportRegistration">Jabber::TransportRegistration()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodTransportRegistrationDetails">Jabber::TransportRegistrationDetails()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodTraverseXMLize">Jabber::TraverseXMLize()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodUnsubscribe">Jabber::Unsubscribe()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#methodxmlize">Jabber::xmlize()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#method_array_htmlspecialchars">Jabber::_array_htmlspecialchars()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#method_check_connected">Jabber::_check_connected()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#method_close_logfile">Jabber::_close_logfile()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#method_create_logfile">Jabber::_create_logfile()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#method_get_packet_type">Jabber::_get_packet_type()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#method_listen_incoming">Jabber::_listen_incoming()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#method_sendauth_0k">Jabber::_sendauth_0k()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#method_sendauth_digest">Jabber::_sendauth_digest()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#method_sendauth_plaintext">Jabber::_sendauth_plaintext()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#method_split_incoming">Jabber::_split_incoming()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+    <dt>
+    <a href="../default/Jabber.html#method_xml_depth">Jabber::_xml_depth()</a>
+
+  </dt>
+  <dd>
+    
+  </dd>
+  </dl>
+</div>
+</td>
+
+</tr></table>
+<hr />
+
+<a name="class_details"></a>
+<h3>Class Details</h3>
+<div class="tags">
+[line 1717]<br />
+*************************************************************************<br /><br /><p>*************************************************************************</p><br /></div><br /><br />
+<div class="top">[ <a href="#top">Top</a> ]</div><br />
+
+<hr />
+<a name="class_vars"></a>
+<h3>Class Variables</h3>
+<div class="tags">
+	<a name="var$nodes"></a>
+	<p></p>
+	<h4>$nodes = <span class="value"></span></h4>
+	<p>[line 1719]</p>
+  
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>mixed</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+</div><br />
+
+<hr />
+<a name="class_methods"></a>
+<h3>Class Methods</h3>
+<div class="tags">
+  <hr />
+	<a name="methodMakeXML"></a>
+	<h3>constructor MakeXML <span class="smalllinenumber">[line 1722]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>MakeXML MakeXML(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		<br /><br />
+
+
+
+
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodAddPacketDetails"></a>
+	<h3>method AddPacketDetails <span class="smalllinenumber">[line 1729]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void AddPacketDetails(
+mixed
+$string, [mixed
+$value = NULL])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		<br /><br />
+
+
+
+
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodBuildPacket"></a>
+	<h3>method BuildPacket <span class="smalllinenumber">[line 1754]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void BuildPacket(
+[mixed
+$array = NULL])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		<br /><br />
+
+
+
+
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="method_preg_grep_keys"></a>
+	<h3>method _preg_grep_keys <span class="smalllinenumber">[line 1812]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void _preg_grep_keys(
+mixed
+$pattern, mixed
+$array)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		<br /><br />
+
+
+
+
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+</div><br />
+
+        <div class="credit">
+		    <hr />
+		    Documentation generated on Mon, 21 Jun 2004 23:58:50 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.2.3</a>
+	      </div>
+      </td></tr></table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
