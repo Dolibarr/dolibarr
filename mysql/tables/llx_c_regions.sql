@@ -22,10 +22,12 @@
 
 create table llx_c_regions
 (
+  rowid       integer AUTO_INCREMENT UNIQUE,
   code_region integer PRIMARY KEY,
   cheflieu    varchar(7),
   tncc        integer,
-  nom         varchar(50)
+  nom         varchar(50),
+  active      tinyint default 1
 )type=innodb;
 
 
