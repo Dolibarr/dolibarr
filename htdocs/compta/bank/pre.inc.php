@@ -21,19 +21,23 @@
  * $Source$
  *
  */
-require("../../main.inc.php");
-require("./account.class.php");
+
+/*!
+	    \file   	htdocs/compta/bank/pre.inc.php
+  	    \ingroup    compta
+  	    \brief  	Fichier gestionnaire du menu compta banque
+*/
+
+require_once("../../main.inc.php");
+require_once("./account.class.php");
 
 $user->getrights('banque');
 
+
 function llxHeader($head = "")
 {
-  global $db, $user, $conf, $account;
+  global $db, $user, $conf;
 
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();

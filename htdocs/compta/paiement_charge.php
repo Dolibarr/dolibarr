@@ -19,12 +19,17 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/compta/paiement_charge.php
+		\ingroup    compta
+		\brief      Page de création d'un paiement d'une charge
+		\version    $Revision$
+*/
+
 include_once("./pre.inc.php");
 include_once("../chargesociales.class.php");
 include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
-/*
- *
- */
 
 $chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 

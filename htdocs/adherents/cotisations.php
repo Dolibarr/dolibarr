@@ -65,7 +65,7 @@ if ($_POST["action"] == '2bank' && $_POST["rowid"] !=''){
 	    $objp = $db->fetch_object($result);
 	    $amount=$objp->cotisation;
 	    $acct=new Account($db,ADHERENT_BANK_ACCOUNT);
-	    $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE);
+	    $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE,$user);
 	    if ($insertid == '')
 	      {
 		   dolibarr_print_error($db);
@@ -147,14 +147,14 @@ if ($result)
   print "<table class=\"noborder\">\n";
   print '<tr class="liste_titre">';
   print "<td>Annee</td>";
-  print '<td align="right">Montant</td>';
-  print "<td align=\"right\">Nombre</td>";
-  print "<td align=\"right\">Moyenne</td>\n";
+  print '<td align="right">'.$langs->trans("Amount").'</td>';
+  print '<td align="right">'.$langs->trans("Number").'</td>';
+  print '<td align="right">'.$langs->trans("Average").'</td>';
   print "</tr>\n";
 
   foreach ($Total as $key=>$value){
     $var=!$var;
-    print "<tr $bc[$var]><td><A HREF=\"cotisations.php?statut=$statut&date_select=$key\">$key</A></TD><TD align=\"right\">".price($value)."</TD><TD align=\"right\">".$Number[$key]."</TD><TD align=\"right\">".price($value/$Number[$key])."</TD></TR>\n";
+    print "<tr $bc[$var]><td><A HREF=\"cotisations.php?statut=$statut&date_select=$key\">$key</A></td><td align=\"right\">".price($value)."</td><td align=\"right\">".$Number[$key]."</td><td align=\"right\">".price($value/$Number[$key])."</td></tr>\n";
   }
   print "</table><br>\n";
 
@@ -183,7 +183,7 @@ if ($result)
       print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->dateadh)."</a></td>\n";
       print '<td align="right">'.price($objp->cotisation).'</td>';
       $total+=price($objp->cotisation);
-      print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></TD>\n";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
       if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
 	if ($objp->bank !='' ){
 	  print "<td>Deposé</td>";

@@ -20,13 +20,18 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/compta/paiement.php
+		\ingroup    compta
+		\brief      Page de création d'un paiement
+		\version    $Revision$
+*/
+
 include_once("./pre.inc.php");
 include_once("../paiement.class.php");
 include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
-/*
- *
- */
 
 $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
 

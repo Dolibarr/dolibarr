@@ -20,7 +20,8 @@
  *
  */
 
-/*!	\file htdocs/compta/sociales/charges.php
+/*!	
+        \file       htdocs/compta/sociales/charges.php
 		\ingroup    compta
 		\brief      Fiche d'une charge sociale
 		\version    $Revision$
@@ -38,7 +39,6 @@ if (!$user->admin && !$user->rights->compta->charges)
   accessforbidden();
 
 require("../../chargesociales.class.php");
-require("../bank/account.class.php");
 
 llxHeader();
 

@@ -22,7 +22,7 @@
  *
  */
 
-/*!	\file htdocs/compta/facture.php
+/*!	    \file       htdocs/compta/facture.php
 		\ingroup    facture
 		\brief      Page de création d'une facture
 		\version    $Revision$
@@ -43,7 +43,6 @@ require("../lib/CMailFile.class.php");
 require("../paiement.class.php");
 require("../project.class.php");
 require("../propal.class.php");
-require("./bank/account.class.php");
 require("../contrat/contrat.class.php");
 require("../commande/commande.class.php");
 

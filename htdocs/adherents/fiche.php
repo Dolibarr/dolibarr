@@ -78,7 +78,7 @@ if ($_POST["action"] == 'cotisation')
             //$dateop="$reyear$remonth$reday";
             $amount=$cotisation;
             $acct=new Account($db,ADHERENT_BANK_ACCOUNT);
-            $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE);
+            $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE,$user);
             if ($insertid == '')
             {
                 dolibarr_print_error($db);

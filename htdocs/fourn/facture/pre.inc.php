@@ -20,17 +20,19 @@
  * $Source$
  *
  */
+
+/*!
+	    \file   	htdocs/fourn/facture/pre.inc.php
+  	    \ingroup    fournisseur,facture
+  	    \brief  	Fichier gestionnaire du menu factures fournisseurs
+*/
+
 require("../../main.inc.php");
 
-include_once DOL_DOCUMENT_ROOT."/compta/bank/account.class.php";
 
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf;
 
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();

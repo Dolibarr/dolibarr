@@ -125,12 +125,12 @@ class Account
 	return $lines;
       }
   }
-  /*
-   * Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
-   *
+
+  /**
+   *    \brief      Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
+   *    \return     int     rowid de l'entrée ajoutée
    */
-  // FIXME  function addline($date, $oper, $label, $amount, $num_chq='', $categorie='',$user)
-  function addline($date, $oper, $label, $amount, $num_chq='', $categorie='')
+  function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user='')
   {
     if ($this->rowid)
       {

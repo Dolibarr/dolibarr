@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/*!	
+        \file       htdocs/fourn/facture/paiementfourn.class.php
+		\ingroup    fournisseur, facture
+		\brief      Page de création de paiement factures fournisseurs
+		\version    $Revision$
+*/
+
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 class PaiementFourn
