@@ -230,7 +230,7 @@ print '<table border="1" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td><td>Valeur</td>';
 print "</TR>\n";
-print '<tr><td>Répertoire</td><td><a href="file:/'.FAC_OUTPUTDIR.'">'.FAC_OUTPUTDIR.'</a></td></tr>';
+print '<tr><td>Répertoire</td><td>'.FAC_OUTPUTDIR.'</td></tr>';
 print '<tr><td>URL</td><td><a href="'.FAC_OUTPUT_URL.'">'.FAC_OUTPUT_URL.'</a></td></tr>';
 print "</table>";
 
