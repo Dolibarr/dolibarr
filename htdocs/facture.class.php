@@ -314,17 +314,20 @@ class Facture
 		} 
 	      else
 		{
-    	  dolibarr_print_error($this->db);
+		  //dolibarr_print_error($this->db);
+		  dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid, Erreur dans fetch des lignes");
 		}
 	    }
 	  else
 	    {
-    	  dolibarr_print_error($this->db);
+	      //dolibarr_print_error($this->db);
+	      dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid numrows=0");
 	    }
 	}
       else
 	{
-	  dolibarr_print_error($this->db);
+	  //dolibarr_print_error($this->db);
+	  dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid Erreur dans fetch de la facture");
 	}    
     }
 
