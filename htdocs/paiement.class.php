@@ -139,20 +139,19 @@ class Paiement
 	      {
 		$sql_err++;
 	      }
-		
-
-	    if ( $sql_err == 0 )
-	      {
-		$this->db->commit();
-		return $this->id;
-	      }
-	    else
-	      {
-		$this->rollback();
-		return -1;
-	      }
-
 	  }
+
+    if ( $total > 0 && $sql_err == 0 )
+      {
+	$this->db->commit();
+	return $this->id;
+      }
+    else
+      {
+	$this->db->rollback();
+	return -1;
+      }
+
       }
   }
   /*
