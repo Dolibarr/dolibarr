@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (c) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (c) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,6 +144,27 @@ class Form {
       {
 	print '<option value="yes">oui</option>';
 	print '<option value="no" SELECTED>non</option>';
+      }
+    print '</select>';
+  }
+  /*
+   *
+   * Yes/No
+   *
+   */
+  Function selectyesnonum($name,$value='')
+  {
+    print '<select name="'.$name.'">';
+
+    if ($value == 1) 
+      {
+	print '<option value="1" SELECTED>oui</option>';
+	print '<option value="0">non</option>';
+      }
+    else
+      {
+	print '<option value="1">oui</option>';
+	print '<option value="0" SELECTED>non</option>';
       }
     print '</select>';
   }
