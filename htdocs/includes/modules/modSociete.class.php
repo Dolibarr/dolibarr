@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,7 +59,12 @@ class modSociete extends DolibarrModules
     /*
      * Permissions
      */
-    $sql = array();
+    $sql = array(
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (120,'Tous les droits sur les sociétés','societe','a',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (121,'Lire les societes','societe','r',1);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (122,'Créer modifier les societes','societe','w',0);",
+		 "insert INTO ".MAIN_DB_PREFIX."rights_def values (129,'Supprimer les sociétés','societe','d',0);"
+		 );
     
     return $this->_init($sql);
   }
@@ -69,7 +74,9 @@ class modSociete extends DolibarrModules
    */
   Function remove()
   {
-    $sql = array();
+    $sql = array(
+		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'societe';",
+		 );
 
     return $this->_remove($sql);
   }
