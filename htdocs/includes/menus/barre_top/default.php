@@ -101,9 +101,13 @@ else
 }
 
 print '<TD width="15%" class="'.$class.'" align="center">';
-if ($conf->produit->enabled ) 
+if ($conf->produit->enabled || $conf->service->enabled) 
 {
-  print '<A class="'.$class.'" href="'.DOL_URL_ROOT.'/product/?type=0">Produits</a>';
+  $chaine="";
+  if ($conf->produit->enabled) { $chaine.="Produits"; }
+  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+  if ($conf->service->enabled) { $chaine.="Services"; }
+  print '<A class="'.$class.'" href="'.DOL_URL_ROOT.'/product/?type=0">'.$chaine.'</a>';
 }
 else
 {
