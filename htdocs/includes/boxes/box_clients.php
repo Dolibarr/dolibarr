@@ -51,5 +51,4 @@ if ($result)
 }
 
 new infoBox($info_box_head, $info_box_contents);
-
 ?>
