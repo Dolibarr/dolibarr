@@ -395,7 +395,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 
 	      if ( $mailfile->sendfile() )
 		{		  
-          $msg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$sendto,$from).'.</div>';
+          $msg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$from,$sendto).'.</div>';
 
 		  $sendto = htmlentities($sendto);
 			  
