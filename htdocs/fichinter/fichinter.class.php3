@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
  *
  */
 
-class Fichinter {
+class Fichinter 
+{
   var $id;
   var $db;
   var $socidp;
@@ -177,6 +178,7 @@ class Fichinter {
    */
   Function valid($userid, $outputdir)
     {
+      $action_notify = 1; // ne pas modifier cette valeur
 
       $this->fetch($this->id);
 
@@ -189,8 +191,8 @@ class Fichinter {
 	   * Set generates files readonly
 	   *
 	   */
+	  umask(0);
 	  $file = $outputdir . "/$this->ref/$this->ref.tex";
-	  print $file;
 	  if (is_writeable($file))
 	    {
 	      chmod($file, 0444);
@@ -200,10 +202,21 @@ class Fichinter {
 	    {
 	      chmod($file, 0444);
 	    }
-	  $file = $outputdir . "/$this->ref/$this->ref.pdf";
-	  if (is_writeable($file)) {
-	    chmod($file, 0444);
-	  }
+	  $filepdf = FICHEINTER_OUTPUTDIR . "/$this->ref/$this->ref.pdf";
+	  if (is_writeable($filepdf)) 
+	    {
+	      chmod($filepdf, 0444);
+	    }
+
+	  /*
+	   * Notify
+	   *
+	   */
+	  $mesg = "La fiche d'intervention ".$this->ref." a été validée.\n";
+
+	  $notify = New Notify($this->db);
+	  $notify->send($action_notify, $mesg, $filepdf);
+
 	  return 1;
 	}
       else
