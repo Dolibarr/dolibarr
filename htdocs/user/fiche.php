@@ -38,6 +38,9 @@ $form = new Form($db);
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 
+/**
+ * Actions
+ */
 if ($_GET["subaction"] == 'addrights' && $user->admin)
 {
   $edituser = new User($db,$_GET["id"]);
@@ -97,7 +100,7 @@ if ($_POST["action"] == 'add' && $user->admin)
       Header("Location: fiche.php?id=$id");
     }           
     else {
-      $message='<div class="error">'.$langs->trans("LoginAlreadyExists",$edituser->login).'</div>';
+      $message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
       $action="create";       // Go back to create page
     }
   }
@@ -133,7 +136,7 @@ if ($_GET["action"] == 'password' && $user->admin)
 
   if ($edituser->password('',$conf->password_encrypted))
     {
-      $message = "Mot de passe changé et envoyé à $edituser->email";
+      $message = $langs->trans("PasswordChangedAndSentTo",$edituser->email);
     }
 }
 
@@ -152,7 +155,8 @@ if ($action == 'create')
 
   print_titre($langs->trans("NewUser"));
 
-  if ($message) { print "<br>".$message."<br>"; }
+  print "<br>";
+  if ($message) { print $message."<br>"; }
 
   print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
@@ -228,11 +232,14 @@ else
 	  $h++;
         }
     
+      if ($conf->bookmark4u->enabled)
+        {
       $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
-      $head[$h][1] = $langs->trans("Addons");
+      $head[$h][1] = $langs->trans("Bookmark4u");
       $h++;
-    
-      dolibarr_fiche_head($head, $hselected, $fuser->fullname);
+        }
+        
+      dolibarr_fiche_head($head, $hselected, $langs->trans("User")." : ".$fuser->fullname);
 
 
       /*
@@ -291,10 +298,13 @@ else
 	  // Droits possédés
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>&nbsp</td><td>'.$langs->trans("OwnedRights").'</td><td>'.$langs->trans("Module").'</td></tr>';
+
 	  $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
 	  $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.module, r.id ASC";
 	  $var = True;
-	  if ($db->query($sql))
+	  $result=$db->query($sql);
+	  
+	  if ($result)
             {
 	      $num = $db->num_rows();
 	      $i = 0;
@@ -314,6 +324,9 @@ else
 		  $i++;
                 }
             }
+      else {
+        dolibarr_print_error($db); 
+      }
 	  print '</table>';
 	  print '</td></tr>';
         }
@@ -328,8 +341,8 @@ else
 	  print '<table class="border" width="100%">';
 	    
 	  print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-	  print '<td colspan="2" width="50%" class="valeur">'.$fuser->nom.'</td>';
-	  print '<td align="center" valign="middle" width="50%" rowspan="8">';
+	  print '<td width="50%" class="valeur">'.$fuser->nom.'</td>';
+	  print '<td align="center" valign="middle" width="25%" rowspan="8">';
 	  if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
 	  {
 	        print '<img src="'.DOL_URL_ROOT.'/image.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
@@ -340,26 +353,26 @@ else
 	  print '</td></tr>';
 
 	  print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-	  print '<td colspan="2" width="50%" class="valeur">'.$fuser->prenom.'</td>';
+	  print '<td width="50%" class="valeur">'.$fuser->prenom.'</td>';
 	  print "</tr>\n";
 	    
 	  print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
-	  print '<td colspan="2" width="50%" class="valeur">'.$fuser->login.'</td></tr>';
+	  print '<td width="50%" class="valeur">'.$fuser->login.'</td></tr>';
 
 	  print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
-	  print '<td colspan="2" width="50%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
+	  print '<td width="50%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
 	  print "</tr>\n";
             
 	  print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
-	  print '<td colspan="2" class="valeur">'.yn($fuser->admin).'</td>';
+	  print '<td class="valeur">'.yn($fuser->admin).'</td>';
 	  print "</tr>\n";
 
 	  print '<tr><td width="25%" valign="top">'.$langs->trans("DateCreation").'</td>';
-	  print '<td colspan="2" class="valeur">'.dolibarr_print_date($fuser->datec).'</td>';
+	  print '<td class="valeur">'.dolibarr_print_date($fuser->datec).'</td>';
 	  print "</tr>\n";
 
 	  print '<tr><td width="25%" valign="top">'.$langs->trans("DateModification").'</td>';
-	  print '<td colspan="2" class="valeur">'.dolibarr_print_date($fuser->datem).'</td>';
+	  print '<td class="valeur">'.dolibarr_print_date($fuser->datem).'</td>';
 	  print "</tr>\n";
 
 	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("ContactCard").'</td>';
@@ -375,18 +388,17 @@ else
 	  print '</td>';
 	  print "</tr>\n";
 	  
-
 	  if ($fuser->societe_id > 0)
 	    {
 	      $societe = new Societe($db);
 	      $societe->fetch($fuser->societe_id);
 	      print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Company").'</td>';
-	      print '<td colspan="3">'.$societe->nom.'&nbsp;</td>';
+	      print '<td colspan="2">'.$societe->nom.'&nbsp;</td>';
 	      print "</tr>\n";
 	    }
 
 	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-	  print '<td colspan="3" class="valeur">'.nl2br($fuser->note).'&nbsp;</td>';
+	  print '<td colspan="2" class="valeur">'.nl2br($fuser->note).'&nbsp;</td>';
 	  print "</tr>\n";
 
 	  // Autres caractéristiques issus des autres modules
@@ -394,7 +406,7 @@ else
             {
 	      $langs->load("other");
 	      print '<tr><td width="25%" valign="top">'.$langs->trans("LoginWebcal").'</td>';
-	      print '<td colspan="3">'.$fuser->webcal_login.'&nbsp;</td>';
+	      print '<td colspan="2">'.$fuser->webcal_login.'&nbsp;</td>';
 	      print "</tr>\n";
             }
 
@@ -435,12 +447,22 @@ else
        */
       if ($_GET["action"] == 'edit' && $user->admin)
         {
-	  print '<form action="fiche.php?id='.$fuser->id.'" method="post">';
+
+      print '<form action="fiche.php?id='.$fuser->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update">';
 	  print '<table width="100%" class="border">';
 
-	  print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
-	  print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';
+	  print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+	  print '<td width="50%" class="valeur"><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td>';
+	  print '<td align="center" valign="middle" width="25%" rowspan="6">';
+	  if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
+	  {
+	        print '<img src="'.DOL_URL_ROOT.'/image.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
+	  }
+	  else {
+	        print '<img src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
+	  }
+	  print '</td></tr>';
 
 	  print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
 	  print '<td><input size="30" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
@@ -473,12 +495,14 @@ else
 	  // Autres caractéristiques issus des autres modules
 	  $langs->load("other");
 	  print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-	  print '<td class="valeur"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
+	  print '<td class="valeur" colspan="2"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
 
-	  print "<tr>".'<td align="center" colspan="2"><input value="'.$langs->trans("Save").'" type="submit"></td></tr>';
+	  print '<tr><td align="center" colspan="3"><input value="'.$langs->trans("Save").'" type="submit"></td></tr>';
 
 	  print '</table><br>';
 	  print '</form>';
+
+
         }
 
     }

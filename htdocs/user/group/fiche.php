@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@
  */
 
 /**
-   \file       htdocs/user/fiche.php
-   \brief      Onglet user et permissions de la fiche utilisateur
+   \file       htdocs/user/group/fiche.php
+   \brief      Onglet groupes utilisateurs
    \version    $Revision$
 */
 
@@ -57,7 +58,7 @@ if ($_POST["action"] == 'add' && $user->admin)
       }           
     else
       {
-	$message='<div class="error">'.$langs->trans("LoginAlreadyExists",$edituser->login).'</div>';
+	$message='<div class="error">'.$langs->trans("ErrorGroupAlreadyExists",$editgroup->nom).'</div>';
 	$action="create";       // Go back to create page
       }
   }
@@ -97,8 +98,9 @@ llxHeader();
 if ($action == 'create')
 {
   print_titre($langs->trans("NewGroup"));
+  print "<br>";
 
-  if ($message) { print "<br>".$message."<br>"; }
+  if ($message) { print $message."<br>"; }
 
   print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
@@ -140,7 +142,7 @@ else
       $hselected=$h;
       $h++;
         
-      dolibarr_fiche_head($head, $hselected, $group->nom);
+      dolibarr_fiche_head($head, $hselected, $langs->trans("Group")." : ".$group->nom);
 
       /*
        * Confirmation suppression
@@ -148,7 +150,7 @@ else
       if ($action == 'delete')
         {
 	  $html = new Form($db);
-	  $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_delete");
+	  $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAGroup"),$langs->trans("ConfirmDisableGroup",$fuser->login),"confirm_delete");
         }
 
 
@@ -168,8 +170,11 @@ else
 
       $uss = array();
      
+      // On sélectionne les user qui ne sont pas déjà dans le groupe 
       $sql = "SELECT u.rowid, u.name, u.firstname, u.code ";
-      $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+      $sql .= " FROM ".MAIN_DB_PREFIX."user as u ";
+      $sql .= " LEFT JOIN llx_usergroup_user ug ON u.rowid = ug.fk_user";
+      $sql .= " WHERE ug.fk_usergroup IS NULL";
       $sql .= " ORDER BY u.name";
       
       $result = $db->query($sql);
@@ -186,6 +191,9 @@ else
 	      $i++;
 	    }
 	}
+	else {
+	    dolibarr_print_error($db);   
+	}
       
       if ($user->admin)
 	{
@@ -193,11 +201,11 @@ else
 	  print '<form action="fiche.php?id='.$group->id.'" method="post">'."\n";
 	  print '<input type="hidden" name="action" value="adduser">';
 	  print '<table class="noborder" width="100%">'."\n";
-	  print '<tr class="liste_titre"><td>Ajouter</td>'."\n";
+	  print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Users").'</td>'."\n";
 	  print '<td>';
 	  print $form->select_array("user",$uss);
-	  print '</td><td>';
-	  print '<input type="submit">';
+	  print '</td><td align="left">';
+	  print '<input type="submit" class=button value="'.$langs->trans("Add").'">';
 	  print '</td></tr>'."\n";	  
 	  print '</table></form>'."\n";
 	}  
@@ -222,10 +230,10 @@ else
 	  
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
-	  print '<td>'.$langs->trans("LastName").'</td>';
-	  print '<td>'.$langs->trans("FirstName").'</td>';
+	  print '<td width="25%">'.$langs->trans("LastName").'</td>';
+	  print '<td width="25%">'.$langs->trans("FirstName").'</td>';
 	  print '<td>'.$langs->trans("Code").'</td>';
-	  print "<td>-</td></tr>\n";
+	  print "<td>&nbsp;</td></tr>\n";
 	  $var=True;
 	  while ($i < $num)
 	    {
@@ -241,7 +249,7 @@ else
 		{
 		  
 		  print '<a href="fiche.php?id='.$group->id.'&amp;action=removeuser&amp;user='.$obj->rowid.'">';
-		  print img_delete();
+		  print img_delete($langs->trans("RemoveFromGroup"));
 		}
 	      else
 		{

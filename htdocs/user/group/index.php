@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
  
-/*!
+/**
         \file       htdocs/user/index.php
         \brief      Page d'accueil de la gestion des utilisateurs
         \version    $Revision$
@@ -31,13 +31,37 @@ require("./pre.inc.php");
 
 $langs->load("users");
 
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page = $_GET["page"];
+if ($page < 0) { 
+  $page = 0 ; }
+
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+  
+if ($sortfield == "") {
+  $sortfield="g.nom"; }
+     
+if ($sortorder == "")
+{
+  $sortorder="ASC";
+}
+
+
+
 llxHeader();
 
 print_titre($langs->trans("ListOfGroups"));
 
 $sql = "SELECT g.rowid, g.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-$sql .= " ORDER BY g.nom ASC";
+if ($sortfield) {
+    $sql .= " ORDER BY ".$sortfield;
+}
+if ($sortorder) {
+    $sql .= " ".$sortorder;
+}
 
 $result = $db->query($sql);
 if ($result)
@@ -49,7 +73,7 @@ if ($result)
   
   print "<table class=\"noborder\" width=\"100%\">";
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("LastName"),"index.php","name","","","",$sortfield);
+  print_liste_field_titre($langs->trans("LastName"),"index.php","g.nom","","","",$sortfield);
   print "</tr>\n";
   $var=True;
   while ($i < $num)

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
  * $Source$
  */
 
-/*!
+/**
   \file       htdocs/user/clicktodial.php
   \brief      Gestion des infos de click to dial
   \version    $Revision$
@@ -82,16 +83,22 @@ if ($_GET["id"])
       $h++;
     }
   
+  if ($conf->bookmark4u->enabled)
+    {
   $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
-  $head[$h][1] = $langs->trans("Addons");
+  $head[$h][1] = $langs->trans("Bookmark4u");
   $h++;
+    }
   
-  $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
-  $head[$h][1] = $langs->trans("ClickToDial");
-  $hselected=$h;
-  $h++;
-
-  dolibarr_fiche_head($head, $hselected, $fuser->fullname);
+  if ($conf->clicktodial->enabled)
+    {
+      $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
+      $head[$h][1] = $langs->trans("ClickToDial");
+      $hselected=$h;
+      $h++;
+    }
+    
+  dolibarr_fiche_head($head, $hselected, $langs->trans("User")." : ".$fuser->fullname);
   
   /*
    * Fiche en mode visu

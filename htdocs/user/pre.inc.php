@@ -21,9 +21,9 @@
  */
 
 /**
-    \file       htdocs/user/pre.inc.php
-    \brief      Gestionnaire menu fichier users
-    \version    $Revision$
+        \file       htdocs/user/pre.inc.php
+        \brief      Gestionnaire menu fichier users
+        \version    $Revision$
 */
 
 require("../main.inc.php");
@@ -47,11 +47,11 @@ function llxHeader($head = "", $urlp = "")
       $menu->add_submenu(DOL_URL_ROOT."/user/fiche.php?&amp;action=create", $langs->trans("NewUser"));
     }
 
-  $menu->add(DOL_URL_ROOT."/user/group/", "Groupes");
+  $menu->add(DOL_URL_ROOT."/user/group/", $langs->trans("Groups"));
 
   if($user->admin)
     {
-      $menu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?&amp;action=create","Nouveau groupe");
+      $menu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?&amp;action=create", $langs->trans("NewGroup"));
     }
 
 

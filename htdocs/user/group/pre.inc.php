@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2002,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +19,13 @@
  * $Id$
  * $Source$
  */
+
+/**   
+        \file   	    htdocs/compta/pre.inc.php
+        \brief  	    Fichier gestionnaire du menu groupe d'utilisateur
+        \version    $Revision$
+*/
+
 require("../../main.inc.php");
 
 require(DOL_DOCUMENT_ROOT.'/usergroup.class.php');
@@ -25,6 +33,7 @@ require(DOL_DOCUMENT_ROOT.'/usergroup.class.php');
 function llxHeader($head = "", $urlp = "")
 {
   global $user, $langs;
+
   /*
    *
    *
@@ -33,14 +42,14 @@ function llxHeader($head = "", $urlp = "")
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/user/", "Utilisateurs");
+  $menu->add(DOL_URL_ROOT."/user/", $langs->trans("Users"));
 
   if($user->admin)
     {
-      $menu->add_submenu("fiche.php?&amp;action=create",$langs->trans("NewUser"));
+      $menu->add_submenu(DOL_URL_ROOT."/user/fiche.php?&amp;action=create",$langs->trans("NewUser"));
     }
 
-  $menu->add(DOL_URL_ROOT."/user/group/", "Groupes");
+  $menu->add(DOL_URL_ROOT."/user/group/", $langs->trans("Groups"));
 
   if($user->admin)
     {
