@@ -49,6 +49,14 @@ $modules["MAIN_MODULE_COMMANDE"][2] = MAIN_MODULE_COMMANDE;
 $modules["MAIN_MODULE_COMMANDE"][3] = "Module de gestion des commandes";
 $modules["MAIN_MODULE_COMMANDE"][4] = "modCommande";
 
+$modules["MAIN_MODULE_EXPEDITION"][0] = "Module expedition";
+$modules["MAIN_MODULE_EXPEDITION"][1] = "MAIN_MODULE_EXPEDITION";
+$modules["MAIN_MODULE_EXPEDITION"][2] = MAIN_MODULE_EXPEDITION;
+$modules["MAIN_MODULE_EXPEDITION"][3] = "Module de gestion des expeditions";
+$modules["MAIN_MODULE_EXPEDITION"][4] = "modExpedition";
+
+
+
 $modules["MAIN_MODULE_FACTURE"][0] = "Module facture";
 $modules["MAIN_MODULE_FACTURE"][1] = "MAIN_MODULE_FACTURE";
 $modules["MAIN_MODULE_FACTURE"][2] = MAIN_MODULE_FACTURE;
