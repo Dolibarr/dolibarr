@@ -158,26 +158,33 @@ class Propal {
    *
    *
    */
-  Function fetch($rowid) {
+  Function fetch($rowid)
+    {
 
-    $sql = "SELECT ref,price,remise,".$this->db->pdate(datep)."as dp FROM llx_propal WHERE rowid=$rowid;";
+      $sql = "SELECT ref,price,remise,".$this->db->pdate(datep)."as dp FROM llx_propal WHERE rowid=$rowid;";
 
-    if ($this->db->query($sql) ) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object(0);
-
-	$this->id = $rowid;
-	$this->datep = $obj->dp;
-	$this->ref = $obj->ref;
-	$this->price = $obj->price;
-	$this->remise = $obj->remise;
-	
-	$this->db->free();
-      }
-    } else {
-      print $this->db->error();
-    }    
-  }
+      if ($this->db->query($sql) )
+	{
+	  if ($this->db->num_rows())
+	    {
+	      $obj = $this->db->fetch_object(0);
+	  
+	      $this->id = $rowid;
+	      $this->datep = $obj->dp;
+	      $this->ref = $obj->ref;
+	      $this->price = $obj->price;
+	      $this->remise = $obj->remise;
+	      
+	      $this->db->free();
+	    }
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error();
+	  return 0;
+	}    
+    }
   /*
    *
    *
