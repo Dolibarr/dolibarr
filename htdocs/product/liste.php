@@ -50,7 +50,13 @@ if ($sortorder == "")
   $sortorder="DESC";
 }
   
-$sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref";
+$sql .= " FROM llx_product as p";
+
+if ($fourn_id > 0)
+{
+  $sql .= ", llx_product_fournisseur as pf";
+}
 
 if ($HTTP_POST_VARS["sall"])
 {
@@ -83,6 +89,11 @@ else
     }
 }
 
+if ($fourn_id > 0)
+{
+  $sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = $fourn_id";
+}
+
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
 $result = $db->query($sql) ;
@@ -113,17 +124,22 @@ if ($result)
 	{
 	  $texte .= " hors vente";
 	}
-      print_barre_liste($texte, $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+      else
+	{
+	  $envente=1;
+	}
+       
+      print_barre_liste($texte, $page, $PHP_SELF, "&sref=$sref&snom=$snom&fourn_id=$fourn_id", $sortfield, $sortorder,'',$num);
     }
 
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf",$PHP_SELF, "p.ref","&envente=$envente&type=$type");
+  print_liste_field_titre("Réf",$PHP_SELF, "p.ref","&envente=$envente&type=$type&fourn_id=$fourn_id");
   print "</td><td>";
-  print_liste_field_titre("Libellé",$PHP_SELF, "p.label","&envente=$envente&type=$type");
+  print_liste_field_titre("Libellé",$PHP_SELF, "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id");
   print "</td><TD align=\"right\">";
-  print_liste_field_titre("Prix de vente",$PHP_SELF, "p.price","&envente=$envente&type=$type");
+  print_liste_field_titre("Prix de vente",$PHP_SELF, "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id");
   print "</td></tr>\n";
   
   print '<tr class="liste_titre">';
