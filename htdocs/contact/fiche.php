@@ -23,6 +23,8 @@ require("./pre.inc.php");
 require("../contact.class.php");
 require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
+$error = array();
+
 if ($HTTP_POST_VARS["action"] == 'add') 
 {
   $contact = new Contact($db);
@@ -69,6 +71,7 @@ if ($action == 'update')
   $contact->old_name      = $HTTP_POST_VARS["old_name"];
   $contact->old_firstname = $HTTP_POST_VARS["old_firstname"];
 
+  $contact->socid         = $HTTP_POST_VARS["socid"];
   $contact->name          = $HTTP_POST_VARS["name"];
   $contact->firstname     = $HTTP_POST_VARS["firstname"];
   $contact->poste         = $HTTP_POST_VARS["poste"];
@@ -86,7 +89,8 @@ if ($action == 'update')
   $contact->jabberid      = $HTTP_POST_VARS["jabberid"];
 
   $result = $contact->update($HTTP_POST_VARS["contactid"], $user);
-
+  
+  $error = $contact->error;
 }
 
 if ($action == 'create_user') 
@@ -173,6 +177,7 @@ elseif ($_GET["action"] == 'edit')
 
   print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
   print '<input type="hidden" name="action" value="update">';
+  print '<input type="hidden" name="socid" value="'.$contact->socid.'">';
   print '<input type="hidden" name="contactid" value="'.$contact->id.'">';
   print '<input type="hidden" name="old_name" value="'.$contact->name.'">';
   print '<input type="hidden" name="old_firstname" value="'.$contact->firstname.'">';
@@ -265,6 +270,12 @@ else
   print "</table>";
 
   print nl2br($contact->note);
+
+  if (sizeof($error))
+    {
+      print $error[0];
+
+    }
 
   print "</div>";
 
