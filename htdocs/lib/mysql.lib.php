@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2001 Fabien Seisen <seisen@linuxfr.org>
+/* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -242,6 +243,13 @@ class DoliDb {
   Function error()
     {
       return mysql_error($this->db);
+    }
+
+  Function errno()
+    {
+	  // 1050 Table already exists
+	  // 1062 Duplicate key
+      return mysql_errno($this->db);
     }
 
   Function last_insert_id()
