@@ -188,15 +188,15 @@ else
 	   * Droits
 	   */
 
-      print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
-    
-      print '<tr><td width="25%" valign="top">Nom</td>';
-      print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
-      print '<td width="25%" valign="top">Prénom</td>';
-      print '<td width="25%" class="valeur">'.$fuser->prenom.'</td></tr>';
+	  print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
+	  
+	  print '<tr><td width="25%" valign="top">Nom</td>';
+	  print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
+	  print '<td width="25%" valign="top">Prénom</td>';
+	  print '<td width="25%" class="valeur">'.$fuser->prenom.'</td></tr>';
 
-      print '<tr><td valign="top" colspan="2">';
-	  print '<table>';
+	  print '<tr><td valign="top" colspan="2">';
+	  print '<table width="100%" border="0" cellpadding="2" cellspacing="0">';
 	  $sql = "SELECT r.id, r.libelle, r.module FROM llx_rights_def as r ORDER BY r.id ASC";
 
 	  if ($db->query($sql))
@@ -224,7 +224,7 @@ else
 	  /*
 	   * Droits
 	   */
-	  print '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+	  print '<table width="100%" border="0" cellpadding="2" cellspacing="0">';
 	  $sql = "SELECT r.libelle, r.module FROM llx_rights_def as r, llx_user_rights as ur";
 	  $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
 	  $var = True;
