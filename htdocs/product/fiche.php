@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -326,11 +326,14 @@ else
 	      print '</td></tr>';
 	      print '<tr><td>Libellé</td><td colspan="2">'.$product->libelle.'</td></tr>';
 	      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
-          if ($product->type == 1) {
-          	$nblignefour=4;
-          } else {
-          	$nblignefour=3;
-          } 
+	      if ($product->type == 0)
+		{
+		  $nblignefour=4;
+		}
+	      else
+		{
+		  $nblignefour=3;
+		} 
 	      print '<td valign="top" rowspan="'.$nblignefour.'">';
 	      print 'Fournisseurs [<a href="fiche.php?id='.$product->id.'&amp;action=ajout_fourn">Ajouter</a>]';
 
