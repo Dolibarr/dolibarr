@@ -132,23 +132,28 @@ if ($action == 'create')
 
     $sql = "SELECT p.rowid, p.title FROM llx_projet as p WHERE p.fk_soc = $socidp";
     
-    if ( $db->query($sql) ) {
-      $i = 0 ;
-      $numprojet = $db->num_rows();
-      while ($i < $numprojet) {
-	$projet = $db->fetch_object($i);
-	print "<option value=\"$projet->rowid\">$projet->title</option>";
-	$i++;
+    if ( $db->query($sql) )
+      {
+	$i = 0 ;
+	$numprojet = $db->num_rows();
+	while ($i < $numprojet)
+	  {
+	    $projet = $db->fetch_object($i);
+	    print "<option value=\"$projet->rowid\">$projet->title</option>";
+	    $i++;
+	  }
+	$db->free();
       }
-      $db->free();
-    } else {
-      print $db->error();
-    }
+    else
+      {
+	print $db->error();
+      }
     print '</select>';
-    if ($numprojet==0) {
-      print 'Cette societe n\'a pas de projet.<br>';
-      print '<a href=projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
-    }
+    if ($numprojet==0)
+      {
+	print 'Cette societe n\'a pas de projet.<br>';
+	print '<a href=projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
+      }
     print '</td></tr>';
 
     print "</table>";
@@ -204,14 +209,14 @@ if ($action == 'create')
      */
     if ($numdest > 0)
       {
-	print "<input type=\"submit\" value=\"Enregistrer\">";
+	print '<input type="submit" value="Enregistrer">';
       }
     print "</form>";
     
   }
   else
     {
-      print "Vous devez d'abord associer un prefixe commercial a cette societe" ;
+      print "Vous devez d'abord associer un prefixe commercial à cette société" ;
     }
 }
 
