@@ -49,8 +49,8 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td width="30%" valign="top">';
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td colspan="2">Lignes suivies</td></tr>';
-print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td></tr>';
+print '<tr class="liste_titre"><td colspan="3">Lignes suivies</td></tr>';
+print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td><td>&nbsp;</td></tr>';
 
 $sql = "SELECT count(*) as cc , c.name, c.firstname, c.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
@@ -77,8 +77,8 @@ if ($result)
 
       print '<td width="50%" valign="top">';
       print '<a href="commercial.php?commid='.$row[3];
-      print '">'.$row[2]." ". $row[1].'</a></td><td align="center">'.$row[0].'</td></tr>';
-	  
+      print '">'.$row[2]." ". $row[1].'</a></td><td align="center">'.$row[0].'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?commercial_suiv='.$row[3].'">Voir</a></td></tr>';
       $i++;
     }
   $db->free();
