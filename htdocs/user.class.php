@@ -476,6 +476,27 @@ class User
 		    $this->rights->contrat->desactiver = 1;
 		}
 
+	      if ($module == 'fournisseur' or $module == '')
+		{
+		  if ($obj->fk_id == 181)
+		    $this->rights->fournisseur->commande->lire = 1;
+
+		  if ($obj->fk_id == 182)
+		    $this->rights->fournisseur->commande->creer = 1;
+
+		  if ($obj->fk_id == 183)
+		    $this->rights->fournisseur->commande->valider = 1;
+
+		  if ($obj->fk_id == 184)
+		    $this->rights->fournisseur->commande->approuver = 1;
+
+		  if ($obj->fk_id == 185)
+		    $this->rights->fournisseur->commande->commander = 1;
+
+		  if ($obj->fk_id == 186)
+		    $this->rights->fournisseur->commande->cloturer = 1;
+		}
+
 	      $i++;
 	  }
 	    $this->db->free();	    
