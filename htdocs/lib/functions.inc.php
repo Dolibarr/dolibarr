@@ -93,10 +93,40 @@ Function dolibarr_print_phone($phone)
     }
 }
 
+Function dolibarr_print_ca($ca)
+{
+  if ($ca > 1000)
+    {
+      $cat = round(($ca / 1000),2);
+      $cat = "$cat Keuros";
+    }
+  else
+    {
+      $cat = round($ca,2);
+      $cat = "$cat euros";
+    }
+
+  if ($ca > 1000000)
+    {
+      $cat = round(($ca / 1000000),2);
+      $cat = "$cat Meuros";
+    }
+
+
+  return $cat;
+}
+
+
 Function img_file($alt = "Voir")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png" border="0" alt="'.$alt.'">';
 }
+
+Function img_file_new($alt = "Voir")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/filenew.png" border="0" alt="'.$alt.'">';
+}
+
 
 Function img_pdf($alt = "Voir")
 {
