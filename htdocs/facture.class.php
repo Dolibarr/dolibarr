@@ -598,11 +598,6 @@ class Facture
 		  $i++;
 		}
 	    }
-	  /*
-	   * Contrats
-	   */      
-	  $contrat = new Contrat($this->db);
-	  $contrat->create_from_facture($this->id, $user, $this->socidp);
       
 	  return $result;
 	}
