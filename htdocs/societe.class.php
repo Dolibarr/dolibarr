@@ -324,7 +324,7 @@ class Societe {
 	      $nom = preg_replace("/[[:punct:]]/","",$this->db->result(0,0));
 	      $this->db->free();
 	      
-	      $prefix = strtoupper(substr($nom, 0, 2));
+	      $prefix = strtoupper(substr($nom, 0, 4));
       
 	      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
 	      if ( $this->db->query( $sql) )
