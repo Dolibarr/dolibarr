@@ -22,7 +22,7 @@
 
 create table llx_cond_reglement
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  rowid           integer PRIMARY KEY,
   sortorder       smallint,
   actif           tinyint default 1,
   libelle         varchar(255),
