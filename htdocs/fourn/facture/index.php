@@ -122,6 +122,31 @@ if ($_GET["filtre"])
       }
   }
 
+if ($_GET["search_ref"])
+  {
+    $sql .= " AND fac.facnumber like '%".$_GET["search_ref"]."%'";
+  }
+
+if ($_GET["search_libelle"])
+  {
+    $sql .= " AND fac.libelle like '%".$_GET["search_libelle"]."%'";
+  }
+
+if ($_GET["search_societe"])
+  {
+    $sql .= " AND s.nom like '%".$_GET["search_societe"]."%'";
+  }
+
+if ($_GET["search_montant_ht"])
+  {
+    $sql .= " AND fac.total_ht = '".$_GET["search_montant_ht"]."'";
+  }
+
+if ($_GET["search_montant_ttc"])
+  {
+    $sql .= " AND fac.total_ttc = '".$_GET["search_montant_ttc"]."'";
+  }
+
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit+1, $offset);
 
 $result = $db->query($sql);
@@ -148,7 +173,29 @@ if ($result)
   print_liste_field_titre($langs->trans("AmountTTC"),"index.php","fac.total_ttc","&amp;socid=$socid","",'align="right"',$sortfield);
   print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye","&amp;socid=$socid","",'align="center"',$sortfield);
   print "</tr>\n";
-  $var=True;
+
+  // Lignes des champs de filtre
+  print '<form method="get" action="index.php">';
+  print '<tr class="liste_titre">';
+  print '<td valign="right">';
+  print '<input class="fat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
+  print '</td><td>&nbsp;</td>';
+  print '<td align="left">';
+  print '<input class="fat" type="text" name="search_libelle" value="'.$_GET["search_libelle"].'">';
+  print '</td>';
+  print '<td align="left">';
+  print '<input class="fat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
+  print '</td><td align="right">';
+  print '<input class="fat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
+  print '</td><td align="right">';
+  print '<input class="fat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
+  print '</td><td colspan="2" align="center">';
+  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
+  print '</td>';
+  print "</tr>\n";
+  print '</form>';
+
+		$var=True;
   while ($i < min($num,$limit))
     {
       $obj = $db->fetch_object();      
