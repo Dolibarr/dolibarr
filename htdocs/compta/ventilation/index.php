@@ -95,7 +95,7 @@ if ($resql)
       print '<tr><td>'.$row[1].'</td><td align="center">'.$row[0].'</td></tr>';
       $i++;
     }
-  $db->free($result);
+  $db->free($resql);
 }
 print "</table>\n";
 
