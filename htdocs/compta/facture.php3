@@ -29,90 +29,84 @@ $db = new Db();
 $yn[1] = "oui";
 $yn[0] = "<b>non</b>";
 	
-if ($action == 'valid') {
-  $sql = "UPDATE llx_facture set fk_statut = 1 WHERE rowid = $facid ;";
-  $result = $db->query( $sql);
+if ($action == 'valid') 
+{
+  $fac = new Facture($db);
+  $result = $fac->set_valid($facid, $user->id);
 }
 
-if ($action == 'payed') {
-  $sql = "UPDATE llx_facture set paye = 1 WHERE rowid = $facid ;";
-  $result = $db->query( $sql);
+if ($action == 'payed') 
+{
+  $fac = new Facture($db);
+  $result = $fac->set_payed($facid);
 }
 
-if ($action == 'delete') {
-  $sql = "DELETE FROM llx_facture WHERE rowid = $facid;";
-  if ( $db->query( $sql) ) {
-    $sql = "DELETE FROM llx_fa_pr WHERE fk_facture = $facid;";
-    if (! $db->query( $sql) ) {
-      print $db->error();
-    }
-  } else {
-    print $db->error();
-  }
+if ($action == 'delete') 
+{
+  $fac = new Facture($db);
+  $fac->delete($facid);
   $facid = 0 ;
 }
 
 
-
-if ($action == 'add') {
+if ($action == 'add') 
+{
   $datefacture = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear)); 
+  
+  if (! $propalid) 
+    {
 
-  if (! $propalid) {
-
-    $facture = new Facture($db, $socid);
-    $facture->number = $facnumber;
-    $facture->date = $datefacture;
-
-    $facture->note = $note;
-    $facture->amount = $amount;
-    $facture->remise = $remise;
-
-    $facture->create($user->id, $statut, $note);
-
-  } else {
-
-    $sql = "INSERT INTO llx_facture (facnumber, fk_soc, datec, datef, note, amount, remise, tva, total, author) ";
-    $sql .= " VALUES ('$facnumber', $socid, now(), $datefacture,'$note', $amount, $remise, $tva, $total, '$author');";
-    $result = $db->query($sql);
-    
-    if ($result) {
-
-      $sql = "SELECT rowid, facnumber FROM llx_facture WHERE facnumber='$facnumber';";
-      $result = $db->query($sql);
-      if ($result) {
-	$objfac = $db->fetch_object( 0);
-	$facid = $objfac->rowid;
-	$facnumber = $objfac->facnumber;
-	$action = '';
-	
-	$sql = "INSERT INTO llx_fa_pr (fk_facture,fk_propal) VALUES ($facid, $propalid);";
-	$result = $db->query($sql);
-
-
-	/*
-	 *
-	 * Génération du PDF
-	 *
-	 */
-	
-	//      print "<hr><b>Génération du PDF</b><p>";
-	
-	//      $command = "export DBI_DSN=\"".$GLOBALS["DBI"]."\" ";
-	//      $command .= " ; ../../scripts/facture-tex.pl --facture=$facid --pdf --ps"  ;
-	
-	//      $output = system($command);
-	//      print "<p>command : $command<br>";
+      $facture = new Facture($db, $socid);
+      $facture->number = $facnumber;
+      $facture->date = $datefacture;
       
-      }
-    } else {
-      print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
-      print "<p>Retour à la <a href=\"propal.php3?propalid=$propalid\">propal</a>";
-      print $db->error();
+      $facture->note = $note;
+      $facture->amount = $amount;
+      $facture->remise = $remise;
+      
+      $facture->create($user->id, $statut, $note);
+
     }
-  }
+  else
+    {
+
+      $facture = new Facture($db, $socid);
+
+      $facture->number   = $facnumber;
+      $facture->date     = $datefacture;      
+      $facture->note     = $note;
+      $facture->amount   = $amount;
+      $facture->remise   = $remise;
+      $facture->propalid = $propalid;
+
+      if ($facture->create($user->id) )
+	{
+
+	      /*
+	       *
+	       * Génération du PDF
+	       *
+	       */
+	      
+	      //      print "<hr><b>Génération du PDF</b><p>";
+	      
+	      //      $command = "export DBI_DSN=\"".$GLOBALS["DBI"]."\" ";
+	      //      $command .= " ; ../../scripts/facture-tex.pl --facture=$facid --pdf --ps"  ;
+	      
+	      //      $output = system($command);
+	      //      print "<p>command : $command<br>";
+	      
+	}
+      else
+	{
+	  print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
+	  print "<p>Retour à la <a href=\"propal.php3?propalid=$propalid\">propal</a>";
+	  print $db->error();
+	}
+    }
   $facid = $facid;
   $action = '';
-
+  
 }
 /*
  *
@@ -122,139 +116,162 @@ if ($action == 'add') {
  *
  */
 
-if ($action == 'create') {
+if ($action == 'create') 
+{
   print_titre("Emettre une facture");
 
-  if ($propalid) {
+  if ($propalid) 
+    {
 
-    $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
-    $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
-
-    $sql .= " AND p.rowid = $propalid";
-  } else {
-
-    $sql = "SELECT s.nom, s.prefix_comm, s.idp ";
-    $sql .= "FROM societe as s ";
-    $sql .= "WHERE s.idp = $socidp";
-    
-  }
-
-  if ( $db->query($sql) ) {
-    $num = $db->num_rows();
-    if ($num) {
-      $obj = $db->fetch_object( 0);
-
-      $numfa = "F-" . $obj->prefix_comm . "-" . strftime("%y%m%d", time());
-
-      print "<form action=\"$PHP_SELF\" method=\"post\">";
-      print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-      print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
-
-      print '<table cellspacing="0" border="1" width="100%">';
-
-      print "<tr bgcolor=\"#e0e0e0\"><td>Société :</td><td>$obj->nom</td></tr>";
-
-      if ($propalid) {
-	$amount = ($obj->price - $obj->remise);
-	print '<input type="hidden" name="amount"   value="'.$amount.'">';
-	print '<input type="hidden" name="total"    value="'.$obj->total.'">';
-	print '<input type="hidden" name="remise"   value="'.$obj->remise.'">';
-	print '<input type="hidden" name="tva"      value="'.$obj->tva.'">';
-	print '<input type="hidden" name="propalid" value="'.$propalid.'">';
-
-	print "<tr><td>Propal :</td><td>$obj->ref</td></tr>";
-	print '<tr bgcolor="#e0e0e0"><td>Montant HT :</td><td align="right">'.price($amount).'</td></tr>';
-	print "<tr bgcolor=\"#e0e0e0\"><td>TVA 19.6% :</td><td align=\"right\">".price($obj->tva)."</td></tr>";
-	print "<tr bgcolor=\"#e0e0e0\"><td>Total TTC :</td><td align=\"right\">".price($obj->total)."</td></tr>";
-
-      } else {
-	
-	print '<tr bgcolor="#e0e0e0"><td>Montant HT :</td><td>';
-
-	print '<input name="amount" type="text" value=""></td></tr>';
-
-	print '</td></tr>';
-
-	print '<tr bgcolor="#e0e0e0"><td>Remise :</td><td>';
-	print '<input name="remise" type="text" value=""></td></tr>';
-	print '</td></tr>';
-
-
-      }
-
-      print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
-      print "<tr><td>Auteur :</td><td>".$user->fullname."</td></tr>";
-
-      $strmonth[1] = "Janvier";   $strmonth[2] = "F&eacute;vrier";   $strmonth[3] = "Mars";       $strmonth[4] = "Avril";  
-      $strmonth[5] = "Mai"; $strmonth[6] = "Juin"; $strmonth[7] = "Juillet";          $strmonth[8] = "Ao&ucirc;t"; 
-      $strmonth[9] = "Septembre"; $strmonth[10] = "Octobre";
-      $strmonth[11] = "Novembre"; $strmonth[12] = "D&eacute;cembre";
-
-      print "<tr><td>Date :</td><td>";
-      $cday = date("d", time());
-      print "<select name=\"pday\">";    
-      for ($day = 1 ; $day < $sday + 32 ; $day++) {
-	if ($day == $cday) {
-	  print "<option value=\"$day\" SELECTED>$day";
-	} else {
-	  print "<option value=\"$day\">$day";
-	}
-      }
-      print "</select>";
-      $cmonth = date("n", time());
-      print "<select name=\"pmonth\">";    
-      for ($month = 1 ; $month <= 12 ; $month++) {
-	if ($month == $cmonth) {
-	  print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
-	} else {
-	  print "<option value=\"$month\">" . $strmonth[$month];
-	}
-      }
-      print "</select>";
+      $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
+      $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
       
-      print "<select name=\"pyear\">";
-      $syear = date("Y", time() ) ;
-      print "<option value=\"".($syear-1)."\">".($syear-1);
-      print "<option value=\"$syear\" SELECTED>$syear";
-
-      for ($year = $syear +1 ; $year < $syear + 5 ; $year++) {
-	print "<option value=\"$year\">$year";
-      }
-      print "</select></td></tr>";
-      print "<tr><td>Numéro :</td><td> <input name=\"facnumber\" type=\"text\" value=\"$numfa\"></td></tr>";
-
-      print '<tr><td colspan="2">Commentaires :<br></td></tr>';
-      print '<tr><td colspan="2">';
-      print '<textarea name="note" wrap="soft" cols="60" rows="15"></textarea></td></tr>';
-
-      print "<tr><td colspan=\"3\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
-      print "</form>";
-      print "</table>";
-
+      $sql .= " AND p.rowid = $propalid";
+    } else {
+      
+      $sql = "SELECT s.nom, s.prefix_comm, s.idp ";
+      $sql .= "FROM societe as s ";
+      $sql .= "WHERE s.idp = $socidp";
+      
     }
-  } else {
-    print $db->error();
-  }
+
+  if ( $db->query($sql) ) 
+    {
+      $num = $db->num_rows();
+      if ($num) {
+	$obj = $db->fetch_object(0);
+	
+	$numfa = "F-" . $obj->prefix_comm . "-" . strftime("%y%m%d", time());
+	
+	print "<form action=\"$PHP_SELF\" method=\"post\">";
+	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+	print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
+	
+	print '<table cellspacing="0" border="1" width="100%">';
+	
+	print "<tr bgcolor=\"#e0e0e0\"><td>Société :</td><td>$obj->nom</td></tr>";
+	
+	if ($propalid)
+	  {
+	    $amount = ($obj->price - $obj->remise);
+	    print '<input type="hidden" name="amount"   value="'.$amount.'">';
+	    print '<input type="hidden" name="total"    value="'.$obj->total.'">';
+	    print '<input type="hidden" name="remise"   value="'.$obj->remise.'">';
+	    print '<input type="hidden" name="tva"      value="'.$obj->tva.'">';
+	    print '<input type="hidden" name="propalid" value="'.$propalid.'">';
+	    
+	    print "<tr><td>Propal :</td><td>$obj->ref</td></tr>";
+	    print '<tr bgcolor="#e0e0e0"><td>Montant HT :</td><td>'.price($amount).'</td></tr>';
+	    print "<tr bgcolor=\"#e0e0e0\"><td>TVA 19.6% :</td><td>".price($obj->tva)."</td></tr>";
+	    print "<tr bgcolor=\"#e0e0e0\"><td>Total TTC :</td><td>".price($obj->total)."</td></tr>";
+	  
+	  }
+	else
+	  {
+	    
+	    print '<tr bgcolor="#e0e0e0"><td>Montant HT :</td><td>';	    
+	    print '<input name="amount" type="text" value=""></td></tr>';	    
+	    print '</td></tr>';
+	    
+	    print '<tr bgcolor="#e0e0e0"><td>Remise :</td><td>';
+	    print '<input name="remise" type="text" value=""></td></tr>';
+	    print '</td></tr>';
+	  }
+	
+	print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
+	print "<tr><td>Auteur :</td><td>".$user->fullname."</td></tr>";
+	
+	print "<tr><td>Date :</td><td>";
+	$cday = date("d", time());
+	print "<select name=\"pday\">";    
+	for ($day = 1 ; $day < $sday + 32 ; $day++)
+	  {
+	    if ($day == $cday)
+	      {
+		print "<option value=\"$day\" SELECTED>$day";
+	      }
+	    else
+	      {
+		print "<option value=\"$day\">$day";
+	      }
+	  }
+	print "</select>";
+	$cmonth = date("n", time());
+	print "<select name=\"pmonth\">";    
+	for ($month = 1 ; $month <= 12 ; $month++)
+	  {
+	    if ($month == $cmonth)
+	      {
+		print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
+	      }
+	    else 
+	      {
+		print "<option value=\"$month\">" . $strmonth[$month];
+	      }
+	  }
+	print "</select>";
+	
+	print "<select name=\"pyear\">";
+	$syear = date("Y", time() ) ;
+	print "<option value=\"".($syear-1)."\">".($syear-1);
+	print "<option value=\"$syear\" SELECTED>$syear";
+	
+	for ($year = $syear +1 ; $year < $syear + 5 ; $year++)
+	  {
+	    print "<option value=\"$year\">$year";
+	  }
+	print "</select></td></tr>";
+	print "<tr><td>Numéro :</td><td> <input name=\"facnumber\" type=\"text\" value=\"$numfa\"></td></tr>";
+	
+	print '<tr><td colspan="2">Commentaires :<br></td></tr>';
+	print '<tr><td colspan="2">';
+	print '<textarea name="note" wrap="soft" cols="60" rows="15"></textarea></td></tr>';
+	
+	print "<tr><td colspan=\"3\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
+	print "</form>";
+	print "</table>";
+	
+      }
+    } 
+  else 
+    {
+      print $db->error();
+    }
 
 
-} else {
-
+} 
+else 
+/* *************************************************************************** */
+/*                                                                             */
+/*                                                                             */
+/*                                                                             */
+/* *************************************************************************** */
+{
+  
   if ($facid > 0) {
-
-    $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.author, f.note";
+    
+    $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.fk_user_author, f.note";
     $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
 
     $result = $db->query( $sql);
   
-    if ($result) {
-      $num = $db->num_rows();
-      if ($num) {
-	$obj = $db->fetch_object( $i);    
+    if ($result)
+      {
+	$num = $db->num_rows();
+	if ($num)
+	  {
+	    $obj = $db->fetch_object( $i);    
+	  }
+	$db->free();
       }
-      $db->free();
-    } else {
-      print $db->error();
-    }
+    else
+      {
+	print $db->error();
+      }
+
+    $author = new User($db);
+    $author->id = $obj->fk_user_author;
+    $author->fetch();
 
     print_titre("Facture : ".$obj->facnumber);
   
@@ -264,17 +281,25 @@ if ($action == 'create') {
      *   Facture
      */
     print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
-    print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td></tr>";
+    print "<tr><td>Société</td>";
+    print "<td colspan=\"3\">";
+    print "<b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td></tr>";
 
-    print "<tr><td>Date</td><td colspan=\"3\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
-    print "<tr><td>".translate("Author")."</td><td colspan=\"3\">$obj->author</td>";
+    print "<tr><td>Date</td>";
+    print "<td colspan=\"3\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
+    print "<tr><td>".translate("Author")."</td><td colspan=\"3\">$author->fullname</td>";
   
-    print '<tr><td>Montant</td><td align="right" colspan="2"><b>'.price($obj->amount).'</b></td><td>euros HT</td></tr>';
-    print '<tr><td>TVA</td><td align="right" colspan="2">'.tva($obj->amount).'</td><td>euros</td></tr>';
-    print '<tr><td>Total</td><td align="right" colspan="2">'.price($obj->total).'</td><td>euros TTC</td></tr>';
+    print '<tr><td>Montant</td>';
+    print '<td align="right" colspan="2"><b>'.price($obj->amount).'</b></td>';
+    print '<td>euros HT</td></tr>';
+    print '<tr><td>TVA</td><td align="right" colspan="2">'.tva($obj->amount).'</td>';
+    print '<td>euros</td></tr>';
+    print '<tr><td>Total</td><td align="right" colspan="2">'.price($obj->total).'</td>';
+    print '<td>euros TTC</td></tr>';
 
     print '<tr><td>Statut</td><td align="center">'.$obj->statut.'</td>';
-    print "<td>Paye</td><td align=\"center\" bgcolor=\"#f0f0f0\"><b>".$yn[$obj->paye]."</b></td></tr>";
+    print "<td>".translate("Payed")."</td>";
+    print "<td align=\"center\" bgcolor=\"#f0f0f0\"><b>".$yn[$obj->paye]."</b></td></tr>";
     print "</table>";
   
     print "</td><td valign=\"top\">";
@@ -332,27 +357,54 @@ if ($action == 'create') {
     print "</table>";
 
     print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
-  
-    if ($obj->statut == 0) {
-      print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
-    } else {
-      print "<td align=\"center\" width=\"25%\">-</td>";
-    } 
-    if ($obj->statut == 1 && $resteapayer > 0) {
-      print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
-    } else {
-      print "<td align=\"center\" width=\"25%\">-</td>";
-    }
-    if ($obj->statut == 1 && abs($resteapayer == 0) && $obj->paye == 0) {
-      print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
-    } else {
-      print "<td align=\"center\" width=\"25%\">-</td>";
-    }
-    if ($obj->statut == 0) {
-      print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=valid\">Valider</a>]</td>";
-    } else {
-      print "<td align=\"center\" width=\"25%\"><a href=\"facture.php3?facid=$facid&action=pdf\">Générer la facture</a></td>";
-    }
+    /*
+     * Ajouter une ligne
+     *
+     */
+    if ($obj->statut == 0) 
+      {
+
+      }
+    /*
+     * Fin Ajout ligne
+     *
+     */
+    
+    if ($obj->statut == 0) 
+      {
+	print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
+      } 
+    else 
+      {
+	print "<td align=\"center\" width=\"25%\">-</td>";
+      } 
+
+    if ($obj->statut == 1 && $resteapayer > 0) 
+      {
+	print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
+      }
+    else
+      {
+	print "<td align=\"center\" width=\"25%\">-</td>";
+      }
+
+    if ($obj->statut == 1 && abs($resteapayer == 0) && $obj->paye == 0) 
+      {
+	print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
+      }
+    else
+      {
+	print "<td align=\"center\" width=\"25%\">-</td>";
+      }
+    
+    if ($obj->statut == 0) 
+      {
+	print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=valid\">Valider</a>]</td>";
+      }
+    else
+      {
+	print "<td align=\"center\" width=\"25%\"><a href=\"facture.php3?facid=$facid&action=pdf\">Générer la facture</a></td>";
+      }
     print "</tr></table><p>";
 
     /*

@@ -40,8 +40,6 @@ if ($action == 'add')
   $soc->fax     = $fax;
   $soc->url     = $url;
   $soc->siren   = $siren;
-  $soc->client  = 1;
-  $soc->fournisseur = $fournisseur;
 
   $socid = $soc->create();
 }
@@ -73,7 +71,7 @@ if ($action == 'update')
 
 if ($action == 'create') 
 {
-  print '<div class="titre">Nouveau client</div><br>';
+  print '<div class="titre">Nouvelle société</div><br>';
   print '<form action="soc.php3" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="fournisseur" value="0">';
@@ -90,13 +88,7 @@ if ($action == 'create')
 
   print '<tr><td>Siren</td><td><input type="text" name="siren"></td></tr>';
 
-  print '<tr><td>Type</td><td><select name="type">';
-  print '</select>';
 
-  print '<tr><td>Effectif</td><td><select name="effectif">';
-  print '</select>';
-
-  print '</td></tr>';
 
   print '<tr><td colspan="2" align="center"><input type="submit" value="Ajouter"></td></tr>';
   print '</table>';

@@ -34,6 +34,7 @@ class Facture {
   var $total;
   var $note;
   var $db_table;
+  var $propalid;
 
   /*
    * Initialisation
@@ -49,6 +50,7 @@ class Facture {
     $this->remise = 0;
     $this->tva = 0;
     $this->total = 0;
+    $this->propalid = 0;
   }
   /*
    *
@@ -56,7 +58,7 @@ class Facture {
    *
    */
 
-  Function create() {
+  Function create($userid) {
     /*
      *  Insertion dans la base
      */
@@ -65,22 +67,38 @@ class Facture {
     $amount = $this->amount;
     $remise = $this->remise;
 
-    if (! $remise) { $remise = 0 ; }
+    if (! $remise) {
+      $remise = 0 ;
+    }
 
     $totalht = ($amount - $remise);
     $tva = tva($totalht);
     $total = $totalht + $tva;
     
-
-    $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, datef, note, amount, remise, tva, total) ";
-    $sql .= " VALUES ('$number', $socid, now(), $this->date,'$note', $amount, $remise, $tva, $total);";
+    $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, tva, total, datef, note, fk_user_author) ";
+    $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $tva, $total, $this->date,'$note',$userid);";
       
-    if ( $this->db->query($sql) ) {
+    if ( $this->db->query($sql) )
+      {
+	$this->id = $this->db->last_insert_id();
 
-    } else {
-      print $this->db->error() . '<b><br>'.$sql;
-    }
-    return $this->id;
+	$sql = "INSERT INTO llx_fa_pr (fk_facture,fk_propal) VALUES ($this->id, $this->propalid);";
+	if ( $this->db->query($sql) ) 
+	  {
+	    return $this->id;
+	  }
+	else
+	  {
+	    print $this->db->error() . '<b><br>'.$sql;
+	    return $this->id;
+	  }
+
+      }
+    else
+      {
+	print $this->db->error() . '<b><br>'.$sql;
+	return 0;
+      }
   }
 
   /*
@@ -124,5 +142,70 @@ class Facture {
     }
   }
 
+  /*
+   * Suppression de la facture
+   *
+   */
+  Function delete($rowid)
+    {
+
+      $sql = "DELETE FROM llx_facture WHERE rowid = $rowid AND fk_statut = 0;";
+
+      if ( $this->db->query( $sql) )
+	{
+	  if ( $this->db->affected_rows() )
+	    {
+	      $sql = "DELETE FROM llx_fa_pr WHERE fk_facture = $rowid;";
+
+	      if ($this->db->query( $sql) )
+		{
+		  return 1;
+		}
+	      else
+		{
+		  print "Err : ".$this->db->error();
+		  return 0;
+		}
+	    }
+	}
+      else
+	{
+	  print "Err : ".$this->db->error();
+	  return 0;
+	}
+
+
+    }
+
+  Function set_payed($rowid)
+    {
+      $sql = "UPDATE llx_facture set paye = 1 WHERE rowid = $rowid ;";
+      $return = $this->db->query( $sql);
+    }
+
+  Function set_valid($rowid, $userid)
+    {
+      $sql = "UPDATE llx_facture set fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid ;";
+      $result = $this->db->query( $sql);
+    }
+
+  /*
+   *
+   * Génération du PDF
+   *
+   */
+  Function pdf()
+    {
+
+      
+      print "<hr><b>Génération du PDF</b><p>";
+      
+      $command = "export DBI_DSN=\"".$GLOBALS["DBI"]."\" ";
+      $command .= " ; ../../scripts/facture-tex.pl --facture=$facid --pdf --ps"  ;
+      
+      $output = system($command);
+      print "<p>command : $command<br>";
+    }
+  
 }    
 ?>
