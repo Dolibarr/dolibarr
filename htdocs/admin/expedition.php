@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,9 +126,13 @@ $dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/";
  * Méthode de livraison
  */
 
+print_titre("Configuration du module Expedition/Livraisons");
+
+print "<br>";
+
 print_titre("Méthode de livraison");
 
-print '<table class="border" cellpadding="3" cellspacing="0">';
+print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print '<tr class="liste_titre">';
 print '<td>Nom</td><td>Info</td>';
 print '<td align="center" colspan="2">Actif</td>';
@@ -190,14 +195,15 @@ closedir($handle);
 
 print '</table>';
 
+print '<br>';
 
 /*
- * PDF
+ *
  */
 
 print_titre("Modèles bordereau de livraison");
 
-print '<table class="border" cellpadding="3" cellspacing="0">';
+print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print '<tr class="liste_titre">';
 print '<td>Nom</td><td>Info</td>';
 print '<td align="center" colspan="2">Actif</td>';

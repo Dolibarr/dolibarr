@@ -43,36 +43,25 @@ print "</TR>\n";
 
 $form = new Form($db);
 $typeconst=array('yesno','texte','chaine');
-if ($user->admin)
-{
-  if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
-    {
-      
-      if (isset($HTTP_POST_VARS["consttype"]) && $HTTP_POST_VARS["consttype"] != ''){
-	$sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='".$typeconst[$HTTP_POST_VARS["consttype"]]."'";
-      }else{
-	$sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."'";
-      }
-      
-      
-      $result = $db->query($sql);
-      if (!$result)
-	{
-	  print $db->error();
-	}
-    }
 
-  if ($action == 'delete')
-    {
-      $sql = "DELETE FROM llx_const WHERE rowid='$rowid'";
-      
-      $result = $db->query($sql);
-      if (!$result)
+
+if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
+{
+	if (! dolibarr_set_const($db, $HTTP_POST_VARS["constname"],$HTTP_POST_VARS["constvalue"],$typeconst[$HTTP_POST_VARS["consttype"]],0,isset($HTTP_POST_VARS["constnote"])?$HTTP_POST_VARS["constnote"]:''));
 	{
-	  print $db->error();
+	  	print $db->error();
 	}
-    }
 }
+
+
+if ($_GET["action"] == 'delete')
+{
+	if (! dolibarr_del_const($db, $HTTP_POST_VARS["constname"]));
+	{
+	  	print $db->error();
+	}
+}
+
 
 if ($all==1){
   $sql = "SELECT rowid, name, value, type, note FROM llx_const ORDER BY name ASC";

@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +93,7 @@ print_titre("Gestion des adhérents : Configurations de parametres");
 /*
  * Mailman
  */
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print "<tr $bc[$var] class=value><td>Mailman</td><td>Système de mailing listes";
 print '</td><td align="center">';
 
@@ -127,7 +128,7 @@ print "<HR><BR>\n";
 /*
  * Gestion banquaire
  */
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print "<tr $bc[$var] class=value><td>Gestion Banquaire</td><td>Gestion banquaire des adherents";
 print '</td><td align="center">';
 
@@ -159,7 +160,7 @@ print "<HR><BR>\n";
  * Spip
  */
 $var=!$var;
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print "<tr $bc[$var] class=value><td>Spip</td><td>Système de publication en ligne";
 print '</td><td align="center">';
 
@@ -193,7 +194,7 @@ print "<HR><BR>\n";
  * Glasnost
  */
 $var=!$var;
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print "<tr $bc[$var] class=value><td>Glasnost</td><td>Système de vote en ligne";
 print '</td><td align="center">';
 
@@ -226,7 +227,7 @@ $var=!$var;
 /*
  * Edition des varibales globales non rattache a un theme specifique 
  */
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print "<tr $bc[$var] class=value><td>Variables globales</td><td>Variables globales non rattachées a un thème";
 print '</td></tr>';
 print '</table>';
@@ -256,7 +257,7 @@ function form_constantes($tableau){
   // Variables globales
   global $db,$bc;
   $form = new Form($db);
-  print '<table border="1" cellpadding="3" cellspacing="0">';
+  print '<table class="noborder" cellpadding="3" cellspacing="0">';
   print '<TR class="liste_titre">';
   print '<TD>Description</TD>';
   print '<TD>Valeur</TD>';
@@ -305,8 +306,8 @@ function form_constantes($tableau){
       
       //      print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
       //      print '</td><td>';
-      print '<input type="Submit" value="Update" name="Button"><BR>';
-      print '<a href="'.$PHP_SELF.'?name=$const&action=unset">Delete</a>';
+      print '<input type="Submit" value="Update" name="Button"> &nbsp;';
+      print '<a href="'.$PHP_SELF.'?name='.$const.'&action=unset">'.img_delete().'</a>';
       print "</td></tr>\n";
       
       print '</form>';

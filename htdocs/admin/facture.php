@@ -58,6 +58,10 @@ if ($action == 'settvaoption')
 
 $dir = "../includes/modules/facture/";
 
+print_titre("Configuration du module Factures");
+
+print "<br>";
+
 print_titre("Module de numérotation des factures");
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';

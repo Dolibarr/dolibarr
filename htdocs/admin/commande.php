@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,11 +53,13 @@ if ($action == 'setmod')
 
 $dir = "../includes/modules/commande/";
 
-print_titre("Configuration des commandes");
+print_titre("Configuration du module Commandes");
 
-print_titre("Module de numérotation");
+print "<br>";
 
-print '<table class="border" cellpadding="3" cellspacing="0">';
+print_titre("Module de numérotation des commandes");
+
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td><td>Info</td>';
 print '<td align="center">Activé</td><td>&nbsp;</td>';
@@ -80,22 +83,21 @@ if ($handle)
 
 	  print '<tr class="pair"><td>'.$modCommande->nom."</td><td>\n";
 	  print $modCommande->info();
-	  print '</td><td align="center">';
+	  print '</td>';
 	  
 	  if ($commande_addon_var == "$file")
 	    {
+	      print '<td align="center">';
 	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+		  print '</td><td>&nbsp;</td>';
 	    }
 	  else
 	    {
-	      print "&nbsp;";
+		  print '<td>&nbsp;</td>';
+		  print '<td align="center"><a href="'.$PHP_SELF.'?action=setmod&amp;value='.$file.'">activer</a></td>';
 	    }
-	  
-	  print "</td><td>\n";
-	  
-	  print '<a href="commande.php?action=setmod&value='.$file.'">activer</a>';
-	  
-	  print '</td></tr>';
+
+	  print '</tr>';
 	}
     }
   closedir($handle);

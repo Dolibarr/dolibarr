@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,15 +106,19 @@ if ($action == 'setmod')
  *
  */
 
-print_titre("Module de numérotation");
+print_titre("Configuration du module Propositions Commerciales");
 
-print '<table class="border" cellpadding="3" cellspacing="0">';
-print '<TR class="liste_titre">';
+print "<br>";
+
+print_titre("Module de numérotation des propositions commerciales");
+
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<tr class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Info</td>';
 print '<td align="center">Activé</td>';
 print '<td>&nbsp;</td>';
-print "</TR>\n";
+print "</tr>\n";
 
 clearstatcache();
 
@@ -131,24 +136,23 @@ if ($handle)
 
 	  $modPropale = new $file;
 
-	  print '<tr class="pair"><td>'.$file."</td><td>\n";
+	  print '<tr class="pair"><td width="140">'.$file."</td><td>\n";
 	  print $modPropale->info();
-	  print '</td><td align="center">';
+	  print '</td>';
 	  
 	  if ($propale_addon_var == "$file")
 	    {
+	      print '<td align="center">';
 	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+		  print '</td><td>&nbsp;</td>';
 	    }
 	  else
 	    {
-	      print "&nbsp;";
+		  print '<td>&nbsp;</td>';
+		  print '<td align="center"><a href="'.$PHP_SELF.'?action=setmod&amp;value='.$file.'">activer</a></td>';
 	    }
 	  
-	  print "</td><td>\n";
-	  
-	  print '<a href="propale.php?action=setmod&amp;value='.$file.'">activer</a>';
-	  
-	  print '</td></tr>';
+	  print '</tr>';
 	}
     }
   closedir($handle);
@@ -187,13 +191,13 @@ $dir = "../includes/modules/propale/";
 
 print_titre("Modèles de propale pdf");
 
-print '<table class="border" cellpadding="3" cellspacing="0">';
-print '<TR class="liste_titre">';
-print '<td>Nom</td>';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="140">Nom</td>';
 print '<td>Info</td>';
-print '<td align="center" colspan="2">Actif</td>';
-print '<td align="center" colspan="2">Défaut</td>';
-print "</TR>\n";
+print '<td colspan="2">Actif</td>';
+print '<td colspan="2">Défaut</td>';
+print "</tr>\n";
 
 clearstatcache();
 
@@ -257,12 +261,12 @@ print '</table>';
  */
 print_titre("Formulaire de création");
 print '<form method="post" action="propale.php?action=nbprod">';
-print '<table class="border" cellpadding="3" cellspacing="0">';
-print '<TR class="liste_titre">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<tr class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Valeur</td><td>&nbsp;</td>';
-print "</TR>\n";
-print '<tr><td>';
+print "</tr>\n";
+print '<tr class="pair"><td>';
 print 'Nombre de ligne produits</td><td align="center">';
 print '<input size="3" type="text" name="value" value="'.PROPALE_NEW_FORM_NB_PRODUCT.'">';
 print '</td><td><input type="submit" value="changer"></td></tr></table></form>';

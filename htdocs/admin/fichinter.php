@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,12 +50,16 @@ if ($action == 'setpdf')
 $dir = "../includes/modules/fichinter/";
 
 /*
- * PDF
+ *
  */
+
+print_titre("Configuration du module Fiches d'interventions");
+
+print "<br>";
 
 print_titre("Modèles de fiche d'intervention pdf");
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Info</td>';
