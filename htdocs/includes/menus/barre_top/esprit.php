@@ -40,6 +40,8 @@
 class MenuTop {
 
     var $require_left=array();    // Si doit etre en phase avec un gestionnaire de menu gauche particulier
+    var $showhome=true;           // Faut-il afficher le menu Accueil par le main.inc.php
+
     
     /**
      *    \brief      Constructeur
@@ -56,7 +58,6 @@ class MenuTop {
      */
     function showmenu()
     {
-
         global $conf,$langs;
         $langs->load("commercial");
         $langs->load("other");
@@ -65,7 +66,6 @@ class MenuTop {
         print '<a class="tmenu" href="/boutique/client/">'.$langs->trans("Customers").'</a>';
         print '<a class="tmenu" href="/product/critiques/">'.$langs->trans("Criticals").'</a>';
         print '<a class="tmenu" href="/product/categorie/">'.$langs->trans("Categories").'</a>';
-
     }
 
 }

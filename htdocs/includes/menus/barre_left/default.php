@@ -41,7 +41,8 @@
 
 class MenuLeft {
 
-    var $require_top=array("");    // Si doit etre en phase avec un gestionnaire de menu du haut particulier
+    var $require_top=array("");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
+
     
     /**
      *    \brief      Constructeur
@@ -62,23 +63,34 @@ class MenuLeft {
     {
         global $user, $conf, $langs;
 
+        $alt=0;
         for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++) 
         {
-          if (($i%2==0))
-        {
-          print '<div class="blockvmenuimpair">'."\n";
-        }
-          else
-        {
-          print '<div class="blockvmenupair">'."\n";
-        }
-          print '<a class="vmenu" href="'.$this->menu_array[$i][0].'">'.$this->menu_array[$i][1].'</a><br>';
-        
-          for ($j = 2 ; $j < sizeof($this->menu_array[$i]) - 1 ; $j = $j +2) 
-        {
-          print '<a class="vsmenu" href="'.$this->menu_array[$i][$j].'">'.$this->menu_array[$i][$j+1].'</a><br>';
-        }
-          print '</div>';
+            $alt++;
+            if ($this->menu_array[$i]['level']==0) {
+                if (($alt%2==0))
+                {
+                    print '<div class="blockvmenuimpair">'."\n";
+                }
+                else
+                {
+                    print '<div class="blockvmenupair">'."\n";
+                }
+            }
+
+            if ($this->menu_array[$i]['level']==0) {
+                print '<a class="vmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
+            }
+            if ($this->menu_array[$i]['level']==1) {
+                print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
+            }
+            if ($this->menu_array[$i]['level']==2) {
+                print '&nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
+            }
+            
+            if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)  {
+                print '</div>';
+            }
         }
 
     }

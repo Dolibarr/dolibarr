@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,46 +21,62 @@
  * 
  */
 
-/*!
-    \file       htdocs/menu.class.php
-    \brief      Fichier de la classe de gestion du menu gauche
-    \version    $Revision$
+/**     \file       htdocs/menu.class.php
+        \brief      Fichier de la classe de gestion du menu gauche
+        \version    $Revision$
 */
 
 
-/*!
-    \class      Menu
-    \brief      Classe de gestion du menu gauche
+/**
+        \class      Menu
+        \brief      Classe de gestion du menu gauche
 */
 
 class Menu {
-  var $liste;
 
-  function Menu() {
-    $this->liste = array();
-  }
-
-  function clear() {
-    $this->liste = array();
-  }
+    var $liste;
 
 
-  function add($url, $titre) {
+    /**
+     *  \brief      Constructeur classe menu
+     */
+    function Menu()
+    {
+        $this->liste = array();
+    }
 
-    $i = sizeof($this->liste);
+    /**
+     *  \brief      Vide l'objet menu de ces entrées
+     */
+    function clear()
+    {
+        $this->liste = array();
+    }
 
-    $this->liste[$i][0] = $url;
-    $this->liste[$i][1] = $titre;
+    /**
+     *  \brief      Ajoute une entrée de menu
+     *  \param      url         Url a suivre sur le clic
+     *  \param      titre       Libelle menu à afficher
+     *  \level      niveau      Niveau du menu à ajouter
+     */
+    function add($url, $titre, $level=0)
+    {
+        $i = sizeof($this->liste);
+        $this->liste[$i]['url'] = $url;
+        $this->liste[$i]['titre'] = $titre;
+        $this->liste[$i]['level'] = $level;
+    }
 
-  }
-
-  function add_submenu($url, $titre) {
-
-    $i = sizeof($this->liste) - 1;
-    $j = sizeof($this->liste[$i]);
-
-    $this->liste[$i][$j] = $url;
-    $this->liste[$i][$j+1] = $titre;
-  }
+    /**
+     *  \brief      Ajoute une entrée de menu de niveau inférieur
+     *  \param      url         Url a suivre sur le clic
+     *  \param      titre       Libelle menu à afficher
+     *  \level      niveau      Niveau du menu à ajouter
+     */
+    function add_submenu($url, $titre, $level=1)
+    {
+        $i = sizeof($this->liste) - 1;
+        $this->add($url,$titre,$level);
+    }
 
 }

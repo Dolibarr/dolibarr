@@ -41,6 +41,8 @@
 class MenuTop {
 
     var $require_left=array();    // Si doit etre en phase avec un gestionnaire de menu gauche particulier
+    var $showhome=true;           // Faut-il afficher le menu Accueil par le main.inc.php
+
     
     /**
      *    \brief      Constructeur
@@ -66,7 +68,7 @@ class MenuTop {
             $langs->load("members");
         
             $class="";
-            if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "adherent")
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "adherent")
             {
                 $class='class="tmenu" id="sel"';
             }
@@ -87,7 +89,7 @@ class MenuTop {
             $langs->load("commercial");
         
             $class="";
-            if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "commercial")
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
             {
                 $class='class="tmenu" id="sel"';
             }
@@ -109,7 +111,7 @@ class MenuTop {
             $langs->load("compta");
         
             $class="";
-            if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "compta")
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "compta")
             {
                 $class='class="tmenu" id="sel"';
             }
@@ -131,7 +133,7 @@ class MenuTop {
             $langs->load("products");
         
             $class="";
-            if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "product")
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "product")
             {
                 $class='class="tmenu" id="sel"';
             }
@@ -159,7 +161,7 @@ class MenuTop {
             $langs->load("suppliers");
         
             $class="";
-            if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "supplier")
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "supplier")
             {
                 $class='class="tmenu" id="sel"';
             }
@@ -181,7 +183,7 @@ class MenuTop {
             $langs->load("other");
         
             $class="";
-            if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "webcalendar")
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "webcalendar")
             {
                 $class='class="tmenu" id="sel"';
             }
