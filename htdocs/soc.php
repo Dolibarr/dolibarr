@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -23,7 +23,6 @@
  */
 
 require("pre.inc.php");
-
 
 /*
  * Sécurité accés client
@@ -153,12 +152,12 @@ elseif ($action == 'edit')
       print '<input type="hidden" name="action" value="update">';
 
       print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
-      print '<tr><td>Nom</td><td><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
-      print '<tr><td valign="top">Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft">';
+      print '<tr><td>Nom</td><td colspan="3"><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
+      print '<tr><td valign="top">Adresse</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft">';
       print $soc->adresse;
       print '</textarea></td></tr>';
       
-      print '<tr><td>CP</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
+      print '<tr><td>CP</td><td colspan="3"><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
       print 'Ville&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
       
       print '<tr><td>Téléphone</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
@@ -207,7 +206,7 @@ elseif ($action == 'edit')
       
       print '</td></tr>';
       
-      print '<tr><td align="center" colspan="2"><input type="submit" value="Mettre à jour"></td></tr>';
+      print '<tr><td align="center" colspan="4"><input type="submit" value="Mettre à jour"></td></tr>';
       print '</table>';
       print '</form>';
     }
@@ -218,29 +217,48 @@ else
   $soc->id = $socid;
   $soc->fetch($socid);
 
-
-  print '<div class="tabs">';
-  print '<a href="soc.php?socid='.$_GET["socid"].'" id="active" class="tab">Fiche société</a>';
-
+  $head[0][0] = 'soc.php?socid='.$soc->id;
+  $head[0][1] = "Fiche société";
+  $h = 1;
   if ($soc->client==1)
     {
-      print '<a class="tab" href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche client</a>';
+      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
+      $head[$h][1] = 'Fiche client';
+      $h++;
     }
+
   if ($soc->client==2)
     {
-      print '<a class="tab" href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$socid.'">Fiche prospect</a>';
+      $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$soc->id;
+      $head[$h][1] = 'Fiche prospect';
+      $h++;
     }
   if ($soc->fournisseur)
     {
-      print '<a class="tab" href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid.'">Fiche fournisseur</a>';
+      $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
+      $head[$h][1] = 'Fiche fournisseur';
+      $h++;
+    }
+  $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
+  $head[$h][1] = 'Note';
+  $h++;
+  
+  if ($user->societe_id == 0)
+    {
+      $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$soc->id;
+      $head[$h][1] = 'Documents';
+      $h++;
     }
 
+  $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
+  $head[$h][1] = 'Notifications';
 
-  print '<a class="tab" href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id.'">Notifications</a>';
-        
-  print '</div>';
-  print '<div class="tabBar"><br>';
-    
+  dolibarr_fiche_head($head, 0);
+
+  /*
+   *
+   */
+  
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$soc->nom.'</td></tr>';
   print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
