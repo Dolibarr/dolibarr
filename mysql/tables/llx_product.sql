@@ -31,6 +31,6 @@ create table llx_product
   price           double,
   tva_tx          double,
   fk_user_author  integer,
-  nbvente         integer
+  nbvente         integer default 0
 );
 
