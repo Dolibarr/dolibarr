@@ -28,6 +28,7 @@ create table llx_propal
   fk_projet       integer default 0,     -- projet auquel est rattache la propale
   ref             varchar(30) NOT NULL,  -- propal number
   datec           datetime,              -- date de creation 
+  fin_validite    datetime,              -- date de fin de validite
   date_valid      datetime,              -- date de validation
   date_cloture    datetime,              -- date de cloture
   datep           date,                  -- date de la propal
