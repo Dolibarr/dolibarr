@@ -28,6 +28,9 @@
 if (!empty ($_SERVER["REMOTE_USER"]))
    die("La d&eacute;connection ne fonctionne actuellement que pour l'authentification par pear");
 
+include_once("conf/conf.php");
+define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
+
 require_once "../includes/pear/Auth/Auth.php";
 
 $a = new Auth("DB");
