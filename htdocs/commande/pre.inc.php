@@ -22,7 +22,8 @@
 require("../main.inc.php3");
 require("./commande.class.php");
 
-function llxHeader($head = "", $urlp = "") {
+function llxHeader($head = "", $urlp = "")
+{
   global $user, $conf;
 
   /*
@@ -33,7 +34,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/commande/", "Commandes");
+  $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
 
   left_menu($menu->liste);
   /*

@@ -25,7 +25,8 @@ require("../editeur/editeur.class.php");
 require("../auteur/auteur.class.php");
 require("../../product/categorie/categorie.class.php");
 
-function llxHeader($head = "", $urlp = "") {
+function llxHeader($head = "", $urlp = "")
+{
   global $user, $conf;
 
   /*
@@ -36,27 +37,27 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/boutique/livre/", "Livres");
+  $menu->add(DOL_URL_ROOT."/boutique/livre/", "Livres");
 
-  $menu->add_submenu("/boutique/livre/fiche.php?&action=create","Nouvel ouvrage");
+  $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/fiche.php?&action=create","Nouvel ouvrage");
 
-  $menu->add_submenu("/boutique/livre/vignettes.php","Vignettes manquantes");
+  $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/vignettes.php","Vignettes manquantes");
 
-  $menu->add("/boutique/auteur/", "Auteurs");
+  $menu->add(DOL_URL_ROOT."/boutique/auteur/", "Auteurs");
 
-  $menu->add_submenu("/boutique/auteur/fiche.php?&action=create","Nouvel auteur");
+  $menu->add_submenu(DOL_URL_ROOT."/boutique/auteur/fiche.php?&action=create","Nouvel auteur");
 
-  $menu->add("/boutique/editeur/", "Editeurs");
+  $menu->add(DOL_URL_ROOT."/boutique/editeur/", "Editeurs");
 
-  $menu->add_submenu("/boutique/editeur/fiche.php?&action=create","Nouvel éditeur");
+  $menu->add_submenu(DOL_URL_ROOT."/boutique/editeur/fiche.php?&action=create","Nouvel éditeur");
 
-  $menu->add("/product/categorie/", "Catégories");
+  $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
 
-  $menu->add("/product/promotion/", "Promotions");
+  $menu->add(DOL_URL_ROOT."/product/promotion/", "Promotions");
 
   if (defined("MAIN_MODULE_POSTNUKE") && MAIN_MODULE_POSTNUKE)
     {
-      $menu->add("/postnuke/articles/", "Editorial");
+      $menu->add(DOL_URL_ROOT."/postnuke/articles/", "Editorial");
     }
 
   left_menu($menu->liste);
