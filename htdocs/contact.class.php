@@ -74,6 +74,7 @@ class Contact
    */
   Function update($id, $user=0)
     {
+      $this->id = $id;
       $this->error = array();
 
       $this->email = trim($this->email);
