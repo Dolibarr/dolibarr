@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,15 @@
  *
  */
 
+/**     \file       htdocs/product/stock/fiche.php
+        \group      stock
+        \brief      Page fiche entrepot
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("products");
 
 
 $mesg = '';
@@ -52,18 +60,18 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
       
       if ( $entrepot->update($_GET["id"], $user))
 	{
-	  $action = '';
+	  $_GET["cancel"] = '';
 	  $mesg = 'Fiche mise à jour';
 	}
       else
 	{
-	  $action = 're-edit';
+	  $_GET["cancel"] = 're-edit';
 	  $mesg = 'Fiche non mise à jour !' . "<br>" . $entrepot->mesg_error;
 	}
     }
   else
     {
-      $action = 're-edit';
+      $_GET["cancel"] = 're-edit';
       $mesg = 'Fiche non mise à jour !' . "<br>" . $entrepot->mesg_error;
     }
 }
@@ -71,16 +79,14 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 llxHeader("","","Fiche entrepôt");
 
-if ($cancel == $langs->trans("Cancel"))
+if ($_GET["cancel"] == $langs->trans("Cancel"))
 {
-  $action = '';
+  $_GET["action"] = '';
 }
+
+
 /*
- * Affichage
- *
- */
-/*
- * Création
+ * Affichage fiche en mode création
  *
  */
 
@@ -89,18 +95,18 @@ if ($_GET["action"] == 'create')
   print "<form action=\"fiche.php\" method=\"post\">\n";
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-  print_titre("Nouvel entrepôt");
+  print_titre($langs->trans("NewWarehouse"));
       
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" width="100%">';
   print '<tr><td width="20%">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value=""></td></tr>';
   print '<tr><td width="20%" valign="top">'.$langs->trans("Description").'</td><td>';
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
-  print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="2">';
+  print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>';
   print '<select name="statut">';
-  print '<option value="0" selected>Fermé</option><option value="1">Ouvert</option>';
+  print '<option value="0" selected>'.$langs->trans("WarehouseClosed").'</option><option value="1">'.$langs->trans("WarehouseOpened").'</option>';
   print '</td></tr>';
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
+  print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
   print '</table>';
   print '</form>';      
 }
@@ -116,14 +122,14 @@ else
 
       if ( $result )
 	{ 
-	  if ($action <> 'edit' && $action <> 're-edit')
+	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	    {
 	      print_fiche_titre('Fiche entrepot', $mesg);
       
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<table class="border" width="100%">';
 	      print '<tr><td width="20%">'.$langs->trans("Label").'</td><td>'.$entrepot->libelle.'</td>';
 	      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($entrepot->description).'</td></tr>';
-	      print '<tr><td width="20%">statut</td><td>'.$entrepot->statuts[$entrepot->statut].'</td></tr>';
+	      print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>'.$entrepot->statuts[$entrepot->statut].'</td></tr>';
 	      print '<tr><td valign="top">Nb de produits</td><td>';
 	      print $entrepot->nb_products();
 	      print "</td></tr>";
@@ -132,14 +138,14 @@ else
 	}
 
     
-      if (($_GET["action"] == 'edit' || $action == 're-edit') && 1)
+      if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && 1)
 	{
 	  print_fiche_titre('Edition de la fiche entrepot', $mesg);
 
 	  print "<form action=\"fiche.php?id=$entrepot->id\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
 	  
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%">';
 	  print '<tr><td width="20%">'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$entrepot->libelle.'"></td></tr>';
 	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
 	  print '<textarea name="desc" rows="8" cols="50">';
@@ -147,14 +153,9 @@ else
 	  print "</textarea></td></tr>";
 	  print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="2">';
 	  print '<select name="statut">';
-	  if ($entrepot->statut == 0)
-	    {
-	      print '<option value="0" selected>Fermé</option><option value="1">Ouvert</option>';
-	    }
-	  else
-	    {
-	      print '<option value="0">Fermé</option><option value="1" SELECTED>Ouvert</option>';
-	    }
+      print '<option value="0" '.($entrepot->statut == 0?"selected":"").'>'.$langs->trans("WarehouseClosed").'</option>';
+      print '<option value="1" '.($entrepot->statut == 0?"":"selected").'>'.$langs->trans("WarehouseOpened").'</option>';
+      print '</select>';
 	  print '</td></tr>';
 
 	  print "<tr>".'<td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
@@ -165,9 +166,10 @@ else
     }
   else
     {
-      print "Error";
+      dolibarr_print_error($db);
     }
 }
+
 
 /* ************************************************************************** */
 /*                                                                            */ 
@@ -177,12 +179,7 @@ else
 
 print "<br><div class=\"tabsAction\">\n";
 
-if ($action == '' && ($user->rights->produit->modifier || $user->rights->produit->creer))
-{
-  print "<a class=\"tabAction\" href=\"fiche.php?action=edit_price&id=$id\">Changer le prix</a>";
-}
-
-if ($action == '')
+if ($_GET["action"] == '')
 {
   print "<a class=\"tabAction\" href=\"fiche.php?action=edit&id=$entrepot->id\">".$langs->trans("Edit")."</a>";
 }
