@@ -635,7 +635,6 @@ create table llx_c_civilite
   rowid       integer PRIMARY KEY,
   lang        varchar(8) default 'all' not null,
   code        varchar(6),
-  fk_pays     integer default 0,
   civilite	  varchar(50),
   active      tinyint default 1
 )type=innodb;
@@ -644,23 +643,23 @@ alter table llx_socpeople change civilite civilite varchar(6);
 
 delete from llx_c_civilite;
 
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (1 , 'MME', 'fr_FR', 0, 'Madame', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (3 , 'MR',  'fr_FR', 0, 'Monsieur', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (5 , 'MLE', 'fr_FR', 0, 'Mademoiselle', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (7 , 'MTRE','fr_FR', 0, 'Maître', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (1 , 'MME', 'fr_FR', 'Madame', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (3 , 'MR',  'fr_FR', 'Monsieur', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (5 , 'MLE', 'fr_FR', 'Mademoiselle', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (7 , 'MTRE','fr_FR', 'Maître', 1);
 
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (21, 'MME', 'fr_BE', 0, 'Madame', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (23, 'MR',  'fr_BE', 0, 'Monsieur', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (25, 'MLE', 'fr_BE', 0, 'Mademoiselle', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (27, 'MTRE','fr_BE', 0, 'Maître', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (21, 'MME', 'fr_BE', 'Madame', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (23, 'MR',  'fr_BE', 'Monsieur', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (25, 'MLE', 'fr_BE', 'Mademoiselle', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (27, 'MTRE','fr_BE', 'Maître', 1);
 
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (32, 'MME', 'nl_BE', 0, 'Mevrouw', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (34, 'MR',  'nl_BE', 0, 'Meneer', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (36, 'MLE', 'nl_BE', 0, 'Juffrouw', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (32, 'MME', 'nl_BE', 'Mevrouw', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (34, 'MR',  'nl_BE', 'Meneer', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (36, 'MLE', 'nl_BE', 'Juffrouw', 1);
 
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (41, 'MME', 'en_US', 0, 'Madam', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (43, 'MR',  'en_US', 0, 'Mister', 1);
-insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (45, 'MLE', 'en_US', 0, 'Misses', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (41, 'MME', 'en_US', 'Madam', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (43, 'MR',  'en_US', 'Mister', 1);
+insert into llx_c_civilite (rowid, code, lang, civilite, active) values (45, 'MLE', 'en_US', 'Misses', 1);
 
 --
 --
@@ -804,6 +803,3 @@ create table llx_societe_rib
 
 )type=innodb;
 
-
-
-alter table llx_c_civilite drop fk_pays;
