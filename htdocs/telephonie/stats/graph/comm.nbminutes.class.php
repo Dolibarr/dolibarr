@@ -31,10 +31,12 @@ class GraphCommNbMinutes extends GraphBar{
     $this->db = $DB;
     $this->file = $file;
     $this->showframe = true;
+
     $this->client = 0;
     $this->contrat = 0;
-    $this->titre = "Nombre de minutes";
+    $this->ligne = 0;
 
+    $this->titre = "Nombre de minutes";
     $this->barcolor = "bisque2";
 
     $this->datas = array();
@@ -57,11 +59,11 @@ class GraphCommNbMinutes extends GraphBar{
     $sql = "SELECT date_format(td.date,'%Y%m'), sum(duree)";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
 
-    if ($this->client == 0 && $this->contrat == 0)
+    if ($this->client == 0 && $this->contrat == 0 && $this->ligne == 0)
       {
 	$sql .= " GROUP BY date_format(td.date, '%Y%m') ASC";
       }
-    elseif ($this->client > 0 && $this->contrat == 0)
+    elseif ($this->client > 0 && $this->contrat == 0 && $this->ligne == 0)
       {
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 
@@ -70,7 +72,7 @@ class GraphCommNbMinutes extends GraphBar{
 
 	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
       }    
-    elseif ($this->client == 0 && $this->contrat > 0)
+    elseif ($this->client == 0 && $this->contrat > 0 && $this->ligne == 0)
       {
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 
@@ -79,6 +81,13 @@ class GraphCommNbMinutes extends GraphBar{
 
 	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
       }    
+    elseif ($this->client == 0 && $this->contrat == 0 && $this->ligne > 0)
+      {
+	$sql .= " WHERE td.fk_ligne = ".$this->ligne;
+
+	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
+      }    
+
 
     if ($this->db->query($sql))
       {
