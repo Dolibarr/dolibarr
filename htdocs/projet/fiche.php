@@ -28,16 +28,30 @@ $user->getrights('projet');
 if (!$user->rights->projet->lire)
   accessforbidden();
 
-if ($HTTP_POST_VARS["action"] == 'update')
+if ($_POST["action"] == 'add' && $user->rights->projet->creer)
+{
+  $pro = new Project($db);
+  $pro->socidp = $_GET["socidp"];
+  $pro->ref = $_POST["ref"];
+  $pro->title = $_POST["title"];
+  $pro_id = $pro->create( $user->id);
+
+  if ($pro_id)
+    {
+      Header("Location:fiche.php?id=$pro_id");
+    }
+}
+
+if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 {
   $projet = new Project($db);
   $projet->id = $id;
-  $projet->ref = $HTTP_POST_VARS["ref"];
-  $projet->title = $HTTP_POST_VARS["title"];
+  $projet->ref = $_POST["ref"];
+  $projet->title = $_POST["title"];
   $projet->update();
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   $projet = new Project($db);
   $projet->id = $id;
@@ -45,12 +59,12 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
   Header("Location: index.php");
 }
 
-llxHeader("","../");
+llxHeader("","Projet","Projet");
 
 if ($_GET["action"] == 'delete')
 {
 
-  print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
+  print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
   print '<input type="hidden" name="action" value="confirm_delete">';
   print '<table id="actions" cellspacing="0" border="1" width="100%" cellpadding="3">';
   
@@ -67,20 +81,18 @@ if ($_GET["action"] == 'delete')
   print "</form>\n";  
 }
 
-
-
-if ($_GET["action"] == 'create')
+if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
   print_titre("Nouveau projet");
 
-  print '<form action="index.php?socidp='.$socidp.'" method="post">';
+  print '<form action="fiche.php?socidp='.$_GET["socidp"].'" method="post">';
   ?>
   <table class="border" border="1" cellpadding="4" cellspacing="0">
-  <input type="hidden" name="action" value="create">
+  <input type="hidden" name="action" value="add">
   <tr><td>Société</td><td>
   <?PHP 
   $societe = new Societe($db);
-  $societe->fetch($socidp); 
+  $societe->fetch($_GET["socidp"]); 
   print $societe->nom_url;
 
   ?>
