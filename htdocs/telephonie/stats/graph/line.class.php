@@ -61,6 +61,9 @@ class GraphLine extends DolibarrGraph {
     $b2plot->SetFillColor($this->barcolor);
     
     $graph->xaxis->scale->SetGrace(20);
+    
+    $graph->yaxis->scale->SetAutoMin(0);
+
 
     $LabelAngle = 45;
     if ($this->LabelAngle <> $LabelAngle && $this->LabelAngle > 0)
