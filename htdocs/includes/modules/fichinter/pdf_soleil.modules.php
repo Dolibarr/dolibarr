@@ -21,16 +21,33 @@
  *
  */
 
-Class pdf_soleil
+/*!	\file htdocs/includes/modules/ficheinter/pdf_soleil.modules.php
+        \ingroup    ficheinter
+		\brief      Fichier de la classe permettant de générer les fiches d'intervention au modèle Soleil
+		\version    $Revision$
+*/
+
+
+/*!	\class pdf_soleil
+		\brief  Classe permettant de générer les fiches d'intervention au modèle Soleil
+*/
+
+class pdf_soleil extends ModelePDFFicheinter
 {
 
+    /*!		\brief  Constructeur
+    		\param	db		handler accès base de donnée
+    */
   function pdf_soleil($db=0)
     { 
       $this->db = $db;
       $this->description = "Modèle de fiche d'intervention stantdard";
     }
 
-
+    /*!
+    		\brief  Fonction générant la fiche d'intervention sur le disque
+    		\param	id		id de la fiche intervention à générer
+    */
   function write_pdf_file($id)
     {
 
