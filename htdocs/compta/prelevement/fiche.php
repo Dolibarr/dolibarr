@@ -21,19 +21,22 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
-
-llxHeader('','Bon de prélèvement');
 /*
  * Sécurité accés client
  */
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0) accessforbidden();
+
+if ($_POST["action"] == 'confirm_credite' && $_POST["confirm"] == yes)
 {
-  $action = '';
-  $socidp = $user->societe_id;
+  $bon = new BonPrelevement($db,"");
+  $bon->id = $_GET["id"];
+  $bon->set_credite();
+
+  Header("Location: fiche.php?id=".$_GET["id"]);
 }
+
+
+llxHeader('','Bon de prélèvement');
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
@@ -41,8 +44,9 @@ $head[$h][1] = $langs->trans("Fiche");
 $hselected = $h;
 $h++;      
 
-dolibarr_fiche_head($head, $hselected, 'Prélèvement');
-
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Factures");
+$h++;  
 
 $prev_id = $_GET["id"];
 
@@ -52,6 +56,16 @@ if ($_GET["id"])
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
+      dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
+
+      if ($_GET["action"] == 'credite')
+	{
+	  $html = new Form($db);
+
+	  $html->form_confirm("fiche.php?id=".$bon->id,"Classer comme crédité","Etes-vous sûr de vouloir classer ce bon de prélèvement comme crédité sur votre compte bancaire ?","confirm_credite");
+	  print '<br />';
+	}
+
       print '<table class="border" width="100%">';
 
       print '<tr><td width="20%">Référence</td><td>'.$bon->ref.'</td></tr>';
@@ -64,97 +78,36 @@ if ($_GET["id"])
       print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;file='.$encfile.'">'.$bon->ref.'</a>';
 
       print '</td></tr>';
-      print '</table>';
+      print '</table><br />';
     }
   else
     {
       print "Erreur";
     }
-
-
 }
 
+/* ************************************************************************** */
+/*                                                                            */
+/* Barre d'action                                                             */
+/*                                                                            */
+/* ************************************************************************** */
 
+print "\n</div>\n<div class=\"tabsAction\">\n";
 
-if ($page == -1) { $page = 0 ; }
-
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
-
-
-if ($sortorder == "") {
-  $sortorder="DESC";
-}
-if ($sortfield == "") {
-  $sortfield="p.datec";
-}
-
-/*
- * Liste des factures
- *
- *
- *
- */
-$sql = "SELECT p.rowid, ".$db->pdate("p.datec")." as datec";
-$sql .= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc as amount";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-$sql .= " , ".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE p.rowid=".$prev_id;
-$sql .= " AND pf.fk_prelevement = p.rowid";
-$sql .= " AND pf.fk_facture = f.rowid";
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
-
-$result = $db->query($sql);
-if ($result)
-{
-  $num = $db->num_rows();
-  $i = 0;
+if ($_GET["action"] == '')
+{  
   
-  $urladd= "&amp;id=".$_GET["id"];
-
-  print_barre_liste("Factures", $page, "fiche.php", $urladd, $sortfield, $sortorder, '', $num);
-  print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre">';
-
-  print_liste_field_titre("Facture","fiche.php","p.ref");
-  print_liste_field_titre("Date","fiche.php","p.datec","","",'align="center"');
-
-  print '</tr>';
-
-
-  $var=True;
-
-  while ($i < min($num,$conf->liste_limit))
-    {
-      $obj = $db->fetch_object($i);	
-      $var=!$var;
-
-      print "<tr $bc[$var]><td>";
-
-      print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
-      print img_file();      
-      print '</a>&nbsp;';
-
-      print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
-
-      print '<td align="center">'.strftime("%d/%m/%Y",$obj->datec)."</td>\n";
-
-      print "</tr>\n";
-      $i++;
+  if ($bon->credite == 0)
+    {      
+      print "<a class=\"tabAction\" href=\"fiche.php?action=credite&amp;id=$bon->id\">".$langs->trans("Classer crédité")."</a>";
     }
-  print "</table>";
-  $db->free();
-}
-else 
-{
-  print $db->error() . ' ' . $sql;
+
+
+      
 }
 
-$db->close();
+print "</div>";
+
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
