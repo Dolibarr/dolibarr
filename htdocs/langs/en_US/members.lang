@@ -1,3 +1,9 @@
 # Dolibarr language file - en_US - members
 Members=Members
 Attributs=Attributes
+Person=Person
+MembersList=List of members
+MembersListToValid=List of members to be validated
+MembersListValid=List of valid members
+MembersListResiliated=List of resiliated members
+DateAbonment=Abonment date

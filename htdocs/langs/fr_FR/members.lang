@@ -1,3 +1,9 @@
 # Dolibarr language file - fr_FR - members
 Members=Adhérents
 Attributs=Attributs
+Person=Personne
+MembersList=Liste des adhérents
+MembersListToValid=Liste des adhérents à valider
+MembersListValid=Liste des adhérents valides
+MembersListResiliated=Liste des adhérents résiliés
+DateAbonment=Date cotisation
