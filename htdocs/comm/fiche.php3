@@ -25,10 +25,10 @@ require("../lib/webcal.class.php3");
 require("../cactioncomm.class.php3");
 require("../actioncomm.class.php3");
 
-
 llxHeader();
-
-$db = new Db();
+$user->getrights('propale');
+$user->getrights('projet');
+//$db = new Db();
 
 if ($sortorder == "") {
   $sortorder="ASC";
@@ -150,10 +150,12 @@ if ($socid > 0) {
 	print "<td align=\"center\"><a href=\"../compta/fiche.php3?socid=$objsoc->idp\">Compta</a></td>";
 	print "<td align=\"center\"><a href=\"docsoc.php?socid=$objsoc->idp\">Documents</a></td>";
 	print "<td align=\"center\"><a href=\"index.php3?socidp=$objsoc->idp&action=add_bookmark\">[Bookmark]</a></td>";
-	print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
+	if ($user->rights->projet->creer)
+	  print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
 	if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
 	  {
-	    print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
+	    if ($user->rights->propale->creer)
+	      print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
 	  }
 	if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
 	  {
