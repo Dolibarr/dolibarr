@@ -17,13 +17,279 @@
  * $Id$
  * $Source$
  */
+
+
+/***** Style du fond *****/
 body {
   margin: 0px;
   background: #ebebe0; 
   font-family: sans-serif; font-size: 0.95em; 
 }
+.body {
+  background: #ebebe0; 
+  color: #101010;
+  font-family: sans-serif; font-size: 0.95em; 
+}
+
+/***** Styles par défaut *****/
+a:link    { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:visited { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:active  { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:hover   { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
+input     { font: helvetica, verdana, arial, sans-serif; }
+textarea  { font: helvetica, verdana, arial, sans-serif; }
+.button  {
+	font-family: arial,verdana,helvetica, sans-serif;
+	font-size: 100%;
+	border: 1px solid #ccd7e0;
+	background-image : url(/images/button_bg.gif);
+	background-position : bottom;
+}
+
+
+div.body
+{
+    margin-top: 1px;
+    margin-bottom: 0;
+    margin-right: 3px;
+    margin-left: 3px;
+    display:block;
+    padding:0px;
+    font-family:arial,tahoma,verdana,helvetica;
+    font-size:12px;
+}
+
+div.tmenu
+{
+    float: top;
+    display:block;
+    white-space: nowrap;
+    border:0;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    padding: 3px 1em 0em;
+    margin: 0em 0em 0.2em 0em;
+    font-weight:bold;
+    font-size:12px;
+    height: 18px;
+    background: #dcdcb3; 
+    color: #000000; 
+    text-decoration: none;
+}
+
+div.vmenuplusfiche
+{
+    float: left;
+    margin-right: 6px;
+}
+
+div.vmenu
+{
+    display:block;
+    float: left;
+    margin-right: 2px;
+    padding: 0px;
+    padding-bottom: 0px;
+    width: 158px;
+}
+
+div.fiche
+{
+    position: absolute;
+    display: block;
+    top: 28px;
+    margin-right: 6px;
+    margin-top: 0px;
+}
+
+
 /*
- * Onglets
+ *   Menu superieur et 1ere ligne tableau
+ */
+
+table.topbarre
+{ 
+	cell-spacing: 0;
+}
+
+.menu { 
+    background: #b3c5cc; 
+    font-size: 12px; 
+    color: #000000; 
+    text-decoration: none;
+}
+.menusel
+{ 
+    background: #a8bdc0;
+    font-size: 12px; font-weight: bold; 
+    color: #000000; 
+    text-decoration: none;
+}
+
+a.tmenu
+{
+  color: #234046;
+  padding: 0em 1.5em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #dcdcb3;
+  font-weight:bold;
+  font-size:12px;
+}
+a.tmenu#sel
+{ 
+  color: #234046;
+  background: #eeeecc;
+  padding: 0em 1.5em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #eeeecc;
+}
+a.tmenu:hover
+{
+  color: #234046;
+  background: #eeeecc;
+  padding: 0em 1.5em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #eeeecc;
+  text-decoration: none;
+}
+
+a.login
+{
+  position: absolute;
+  right: 27px;
+  top: 3px;
+
+  color: #234046;
+  padding: 0em 1.5em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #dcdcb3;
+  font-weight:bold;
+  font-size:12px;
+}
+a.login:hover
+{
+  color:black;
+}
+img.login
+{
+  position: absolute;
+  right: 9px;
+  top: 3px;
+
+  padding:2px;
+  text-decoration:none;
+  color:white;
+  font-weight:bold;
+}
+
+
+/*
+ *   Barre de gauche
+ */
+
+a.vmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+
+a.vsmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+
+a.help:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+
+div.blockvmenupair
+{
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	background: #dcdcb3;
+	font: helvetica, verdana, arial, sans-serif;
+	color: #000000; 
+	text-align:left;
+	text-decoration: none;
+    padding: 3px;
+    margin: 1px 0px 0px 0px;
+}
+
+div.blockvmenuimpair
+{
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	background: #dcdcb3;
+	font: helvetica, verdana, arial, sans-serif;
+	color: #000000; 
+	text-align:left;
+	text-decoration: none;
+    padding: 3px;
+    margin: 1px 0px 0px 0px;
+}
+
+div.help
+{
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	background: #f0f0f0;
+	font: helvetica, verdana, arial, sans-serif;
+	color: #000000; 
+	text-align:left;
+	text-decoration: none;
+    padding: 3px;
+    margin: 1px 0px 0px 0px;
+}
+
+
+.flat  {
+	font-family: arial,verdana,helvetica, sans-serif;
+	font-size: 100%;
+	border: 1px solid #ccd7e0;
+	background-image : url(img/button_bg.gif);
+	background-position : bottom;
+}
+
+td.barre { 
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	background: #b3c5cc;
+	font: helvetica, verdana, arial, sans-serif;
+	color: #000000; 
+	text-align:left;
+	text-decoration: none
+}
+
+td.barre_select { 
+	background: #b3c5cc; 
+	color: #000000 
+}
+
+form {
+    padding: 0.1em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;
+}
+
+
+/*
+ *   Barre recherche
+ */
+div.formsearch
+{
+  display: block;
+  float: none;
+  clear: right;
+  background: #dee7ec;
+  top: 0px;
+  left: 130px;
+  padding: 4px; 
+  vertical-align: center;
+  margin-bottom: 10px;
+}
+
+
+/*
+ *   Barre onglets
  */
 div.tabBar {
   background: #dcdcd3;
@@ -229,6 +495,12 @@ div.leftmenu {
   color: #000000; 
   text-decoration: none }
 
+/*
+ *   Normal, warning, erreurs
+ */
+.ok      { color: #114466; }
+.warning { color: #777711; }
+.error   { color: #550000; }
 
 .submenu 
 { 
@@ -269,6 +541,9 @@ td.barre_select {
                   color: #000000 
                   }
 
+/*
+ *  ???
+ */
 div.titre { 
             font-weight: bold; 
             color: #666633; 
@@ -314,7 +589,7 @@ tr.fiche {
            font-family: Helvetica, Verdana;
            font-size: 0.6em; }
 /*
- *
+ * Widgets standard
  */
 
 input.flat
@@ -345,6 +620,11 @@ tr.nonpayed {
               font-size: 0.95em; font-weight: bold;
               }
 
+
+
+/*
+ *  Objets debug
+ */
 
 p#powered-by-dolibarr {
 	position: fixed;
