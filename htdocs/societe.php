@@ -124,8 +124,8 @@ if ($result) {
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
   print "</td><TD>";
   print_liste_field_titre("Ville",$PHP_SELF,"s.ville");
-  print "</td><td>email</TD>";
-  print "<TD align=\"center\">Statut</TD><td>&nbsp;</td>";
+  print "</td>";
+  print '</td><td colspan="2">&nbsp;</td>';
   print "</TR>\n";
   $var=True;
   while ($i < $num) {
@@ -136,7 +136,6 @@ if ($result) {
     print "<TR $bc[$var]>";
     print "<TD><a href=\"soc.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
     print "<TD>".$obj->ville."&nbsp;</TD>\n";
-    print "<TD>&nbsp;</TD>\n";
     print '<TD align="center">';
     if ($obj->client)
       {
