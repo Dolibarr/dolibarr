@@ -22,7 +22,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/fourn/facture/fiche.php
         \ingroup    facture
 		\brief      Page des la fiche facture fournisseur
@@ -210,7 +210,9 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
   print '<td><select name="socidp">';
 
   $sql = "SELECT s.nom, s.prefix_comm, s.idp";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur = 1 ORDER BY s.nom ASC";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+  $sql .= " WHERE s.fournisseur = 1";
+  $sql .= " ORDER BY s.nom ASC";
 
   if ( $db->query($sql) )
     {
@@ -223,7 +225,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
 
 	  if ($_GET["socid"] == $obj->idp)
 	    {
-	      print '" SELECTED>'.$obj->nom.'</option>';
+	      print '" selected>'.$obj->nom.'</option>';
 	    }
 	  else
 	    {
@@ -344,7 +346,10 @@ else
 	   */	  
 	  print "<p><form action=\"fiche.php?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
 	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">'.$langs->trans("TotalHT").'</td>';
+	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td>';
+	  print '<td align="center">P.U. HT</td>';
+	  print '<td align="center">'.$langs->trans("Qty").'</td>';
+	  print '<td align="center">'.$langs->trans("TotalHT").'</td>';
 	  print '<td align="center">'.$langs->trans("VATRate").'</td>';
 	  print '<td align="center">'.$langs->trans("VAT").'</td>';
 	  print '<td align="right">'.$langs->trans("TotalTTC").'</td><td>&nbsp;</td></tr>';
@@ -449,7 +454,7 @@ else
 	      $i = 0; $total = 0;
 
 	      echo '<table class="noborder" width="100%">';
-	      print '<tr><td colspan="2">'.$langs->trans("Paiements").'</td></tr>';
+	      print '<tr><td colspan="2">'.$langs->trans("Payments").'</td></tr>';
 	      print "<tr class=\"liste_titre\">";
 	      print '<td>'.$langs->trans("Date").'</td>';
 	      print '<td>'.$langs->trans("Type").'</td>';
@@ -458,7 +463,7 @@ else
 		{
 		  $tdsup=' colspan="2"';
 		}
-	      print "<td align=\"right\">Montant</td><td$tdsup>&nbsp;</td>";
+	      print "<td align=\"right\">".$langs->trans("AmountTTC")."</td><td$tdsup>&nbsp;</td>";
 	      print "</tr>\n";
 	      
 	      $var=True;
@@ -483,7 +488,7 @@ else
 		  $total = $total + $objp->amount;
 		  $i++;
 		}
-	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td$tdsup>".$conf->monnaie."</td></tr>\n";
+	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">".$langs->trans("Total")." :</td><td align=\"right\"><b>".price($total)."</b></td><td$tdsup>".$conf->monnaie."</td></tr>\n";
 	      
 
 	      if ($fac->statut > 0)
@@ -508,10 +513,13 @@ else
 	   * Lignes
 	   *
 	   */	  
-	  print '<p><table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">Qantité</td><td align="center">Total HT</td>';
-	  print '<td align="center">Taux TVA</td>';
-	  print '<td align="center">TVA</td>';
+	  print '<p><table class="noborder" width="100%">';
+	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td>';
+	  print '<td align="center">P.U. HT</td>';
+	  print '<td align="center">'.$langs->trans("Qty").'</td>';
+	  print '<td align="center">'.$langs->trans("TotalHT").'</td>';
+	  print '<td align="center">'.$langs->trans("VATRate").'</td>';
+	  print '<td align="center">'.$langs->trans("VAT").'</td>';
 	  print '<td align="right">'.$langs->trans("TotalTTC").'</td></tr>';
 	  $var=1;
 	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
