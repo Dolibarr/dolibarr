@@ -136,7 +136,7 @@ class Contact
 		  //$info["postalCode"] = "postalCode";
 		  //$info["postalAddress"] = "postalAddress";
 		  
-		  $info["objectclass"] = "inetOrgPerson";
+		  $info["objectclass"] = "inetOrgPerson organizationalPerson";
 		  
 		  // add data to directory
 		  $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name).", ".LDAP_SERVER_DN ;
