@@ -29,5 +29,8 @@ tar:
 	tar --exclude-from tar.exclude -cvvf $(FILE).tar $(FILE)/
 	gzip $(FILE).tar
 	md5sum $(FILE).tar.gz > $(FILE).tar.gz.md5sum
+
+
+put:
 	scp $(FILE).tar.gz* rodolphe.quiedeville.org:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/dl/
 	scp $(FILE).tar.gz rodolphe@subversions.gnu.org:/upload/dolibarr
