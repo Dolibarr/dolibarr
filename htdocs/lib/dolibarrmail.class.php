@@ -188,10 +188,6 @@ class DolibarrMail
 
     $this->text_body = $this->write_body();
 
-    print nl2br($this->smtp_headers);
-    print nl2br($this->mime_headers);
-    print nl2br($this->text_body);
-
     $headers = $this->smtp_headers . $this->mime_headers;
     $message_comp = $this->text_body . $this->text_encoded;
 
@@ -199,9 +195,9 @@ class DolibarrMail
 
     return $res; 
   }
-  /*
-   *
-   *
+  /**
+   * Ecrit le mail dans un fichier
+   * Utilisation pour le debuggage 
    */
   function write_to_file()
   {
