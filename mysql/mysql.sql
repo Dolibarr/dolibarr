@@ -229,7 +229,7 @@ create table llx_contrat
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
-  enservice       tinyint,
+  enservice       smallint default 0,
   mise_en_service datetime,
   fin_validite    datetime,
   date_cloture    datetime,
