@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +24,17 @@ require("./pre.inc.php");
 require("../contact.class.php");
 require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
-if ($HTTP_POST_VARS["action"] == 'update') 
+if ($_POST["action"] == 'update') 
 {
   $contact = new Contact($db);
-  $contact->id = $HTTP_POST_VARS["contactid"];
+  $contact->id = $_POST["contactid"];
 
-  $contact->birthday = $HTTP_POST_VARS["reyear"].'-'.$HTTP_POST_VARS["remonth"].'-'.$HTTP_POST_VARS["reday"];
+  $contact->birthday = $_POST["reyear"].'-'.$_POST["remonth"].'-'.$_POST["reday"];
 			
 
-  $contact->birthday_alert = $HTTP_POST_VARS["birthday_alert"];
+  $contact->birthday_alert = $_POST["birthday_alert"];
 
-  $result = $contact->update_perso($HTTP_POST_VARS["contactid"], $user);
+  $result = $contact->update_perso($_POST["contactid"], $user);
 }
 
 /*
@@ -110,15 +111,17 @@ else
       $objsoc = new Societe($db);
       $objsoc->fetch($contact->socid);
 
-      print 'Société : '.$objsoc->nom.'<br>';
+      print 'Société : '.$objsoc->nom_url.'<br>';
     }
 
-  if ($contact->birthday)
-    print 'Date de naissance : '.strftime("%d %B %Y",$contact->birthday);
+  if ($contact->birthday) {
+    print 'Date de naissance : '.dolibarr_print_date($contact->birthday);
 
-  if ($contact->birthday_alert)
-    print ' (alerte)';
-
+    if ($contact->birthday_alert)
+      print ' (alerte active)<br>';
+    else
+      print ' (alerte inactive)<br>';
+  }
   print "<br>";
 
   print "</div>";
