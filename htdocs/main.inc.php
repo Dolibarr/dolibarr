@@ -552,7 +552,7 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
    * Colonne de gauche
    *
    */
-  print "\n<!-- Debut left menu -->\n";
+  print "\n<!-- Debut left vertical menu -->\n";
   print '<div class="vmenu">'."\n";
   
   for ($i = 0 ; $i < sizeof($menu) ; $i++) 
@@ -634,11 +634,11 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
     {
 
       define('MAIN_AIDE_URL','http://www.dolibarr.com/wikidev/index.php');
-      print '<a class="leftmenu" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">'.$langs->trans("Help").'</a>';
+      print '<div class="help"><a class="help" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">'.$langs->trans("Help").'</a></div>';
     }
 
   print "</div>\n";
-  print "<!-- Fin left menu -->\n";
+  print "<!-- Fin left vertical menu -->\n";
 
   print '</div>'."\n";
   print '<div class="vmenuplusfiche">'."\n";
@@ -664,7 +664,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
   print '<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
   print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
   print '<input type="submit" class="flat" value="go">';
-  print "</form>\n";
+  print "</form>";
 }
 
 
