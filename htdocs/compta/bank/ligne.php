@@ -27,6 +27,21 @@ if (!$user->rights->banque->modifier)
 
 llxHeader();
 
+if ($_GET["action"] == 'dvnext')
+{
+  $ac = new Account($db);
+  $ac->datev_next($_GET["rowid"]);
+}
+
+
+if ($_GET["action"] == 'dvprev')
+{
+  $ac = new Account($db);
+  $ac->datev_previous($_GET["rowid"]);
+}
+
+
+
 if ($_POST["action"] == 'confirm_delete_categ' && $_POST["confirm"] == yes)
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = $rowid AND fk_categ = $cat1";
@@ -119,7 +134,7 @@ print "<td align=\"center\">Auteur</TD>";
 
 print "</TR>\n";
 
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.author, b.num_chq, b.fk_type, fk_account";
+$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.author, b.num_chq, b.fk_type, fk_account";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=$rowid";
 $sql .= " ORDER BY dateo ASC";
 $result = $db->query($sql);
@@ -142,11 +157,11 @@ if ($result)
       print "<form method=\"post\" action=\"$PHP_SELF?rowid=$rowid&amp;account=$account\">";
       print "<input type=\"hidden\" name=\"action\" value=\"class\">";
  
-      print "<td>".strftime("%d %b %Y",$objp->do)."</TD>\n";
+      print "<td>".strftime("%d %b %Y",$objp->do)."</td>\n";
       print "<td>$objp->label</td>";
       if ($objp->amount < 0)
 	{
-	  print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
+	  print "<td align=\"right\">".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
 	}
       else
 	{
@@ -157,6 +172,16 @@ if ($result)
       print "<td align=\"center\">$objp->author</td>";      
       print "</tr>";
       
+      print "<tr $bc[$var]>";
+      print '<td colspan="5">Date de valeur : '.strftime("%d %b %Y",$objp->dv)."</td>\n";
+      
+      print '<td><a href="ligne.php?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
+      print img_previous() . "</a> ";
+      print '<a href="ligne.php?action=dvnext&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
+      print img_next() ."</a></td>";
+
+      print '</tr>';
+
       print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"5\">";
       print $objp->fk_type .' - ';
       print $objp->num_chq;

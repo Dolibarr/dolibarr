@@ -143,8 +143,10 @@ class Account
 	    break;
 	  }
 	
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
-	$sql .= " VALUES (now(), '$date', '$label', '" . ereg_replace(",",".",$amount) . "','$author','$num_chq', '$this->rowid', '$oper')";
+	$datev = $date;
+
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, author, num_chq,fk_account, fk_type)";
+	$sql .= " VALUES (now(), '$date', '$datev', '$label', '" . ereg_replace(",",".",$amount) . "','$author','$num_chq', '$this->rowid', '$oper')";
 
 
 	if ($this->db->query($sql))
