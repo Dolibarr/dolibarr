@@ -375,15 +375,16 @@ class MenuLeft {
               $newmenu->add(DOL_URL_ROOT."/product/stats/", $langs->trans("Statistics"), 0, $user->rights->produit->lire);
               if ($conf->propal->enabled)
                 {
-                  $newmenu->add_submenu(DOL_URL_ROOT."/product/popuprop.php", $langs->trans("Popularity"), 0, $user->rights->propale->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/product/popuprop.php", $langs->trans("Popularity"), 1, $user->rights->propale->lire);
                 }
               
               if ($conf->stock->enabled)
                 {
                     // \todo mettre droits pour module stock
-                  $newmenu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"));
-                  $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("NewWarehouse"));
-                  $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"));
+                  $newmenu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"), 0, $user->rights->stock->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("NewWarehouse"), 1, $user->rights->stock->creer);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/liste.php", $langs->trans("List"), 1, $user->rights->stock->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"), 1, $user->rights->stock->mouvement->lire);
                 }
             }
         
@@ -397,37 +398,34 @@ class MenuLeft {
         
               if ($conf->societe->enabled && $conf->fournisseur->enabled) 
                 {
-                    $newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"));
+                    $newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 0, $user->rights->societe->lire);
             
                     // Sécurité accés client
                     if ($user->societe_id == 0) 
                     {
-                      $newmenu->add_submenu(DOL_URL_ROOT."/soc.php??leftmenu=suppliers&action=create&type=f",$langs->trans("NewSupplier"),1);
+                      $newmenu->add_submenu(DOL_URL_ROOT."/soc.php??leftmenu=suppliers&action=create&type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer);
                     }
-                    if ($conf->societe->enabled)
-                    {
-                      $newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&type=f",$langs->trans("Contacts"));
-                    }
+                    $newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&type=f",$langs->trans("Contacts"), 1, $user->rights->societe->lire);
               }
               
               if ($conf->facture->enabled)
                 {
                   $langs->load("bills");
-                  $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
+                  $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"), 0, $user->rights->facture->lire);
                   
                   if ($user->societe_id == 0) 
             	{
-            	  $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"));
+            	  $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"), 1, $user->rights->facture->creer);
             	}
                   
-                  $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
+                  $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"), 1, $user->rights->facture->lire);
                 }
               
               if ($conf->commande->enabled)
               {
                   $langs->load("orders");
-                  $newmenu->add(DOL_URL_ROOT."/fourn/commande/index.php?leftmenu=suppliers",$langs->trans("Orders"));
-                  $newmenu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php?leftmenu=suppliers", $langs->trans("List"));
+                  $newmenu->add(DOL_URL_ROOT."/fourn/commande/index.php?leftmenu=suppliers",$langs->trans("Orders"), 0, $user->rights->fournisseur->commande->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php?leftmenu=suppliers", $langs->trans("List"), 1, $user->rights->fournisseur->commande->lire);
               }
             
             }
@@ -451,7 +449,8 @@ class MenuLeft {
                 if ($conf->projet->enabled ) 
                 {
                   $langs->load("projects");
-                  $newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"));
+                  $newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire);
+                  // \todo $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?leftmenu=mailing&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
                 }
 
             }

@@ -166,7 +166,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a>';
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Customers").'</a>';
         
         }
         
