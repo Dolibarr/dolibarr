@@ -30,6 +30,7 @@ create table llx_adherent
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
+  public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
   fk_adherent_type smallint,
   morphy           enum('mor','phy') NOT NULL, -- personne morale / personne physique
   datevalid        datetime,  -- date de validation
@@ -44,7 +45,7 @@ create table llx_adherent
   email            varchar(255),
   login            varchar(50), -- login utilise pour editer sa fiche
   pass             varchar(50), -- pass utilise pour editer sa fiche
-  annif            date, -- date d'anniversaire
+  naiss            date, -- date de naissance
   photo		   varchar(255), -- url vers la photo de l'adherent
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer NOT NULL,
