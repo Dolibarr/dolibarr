@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -235,6 +235,52 @@ class Product
 	  return 0;
 	}
   }
+
+  /**
+   * \brief Modifie le prix d'achat pour un fournisseur
+   * \param fourn_id    id du fournisseur
+   * \param qty         quantite pour lequel le prix est valide
+   * \param buyprice       prix d'achat
+   *
+   */
+  function update_buyprice($id_fourn, $qty, $buyprice, $user) 
+    {        
+
+        $sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
+        $sql .= " WHERE ";
+        $sql .= " fk_product = ".$this->id;
+        $sql .= " AND fk_soc = ".$id_fourn;
+        $sql .= " AND quantity = ".$qty;
+
+	if ($this->db->query($sql) )
+	  {
+
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price ";
+	    $sql .= " SET datec = now()";
+	    $sql .= " ,fk_product = ".$this->id;
+	    $sql .= " ,fk_soc = ".$id_fourn;
+	    $sql .= " ,fk_user = ".$user->id;
+	    $sql .= " ,price = ".ereg_replace(",",".",$buyprice);
+	    $sql .= " ,quantity = ".$qty;
+	    
+	    if ($this->db->query($sql) )
+	      {
+		return 0;	      
+	      }
+	    else
+	      {
+		print $sql .  " ". $this->db->error();
+		dolibarr_print_error($this->db);
+		return 2;
+	      }
+	  }
+	else
+	  {
+	    print $sql .  " ". $this->db->error();
+	    dolibarr_print_error($this->db);
+	    return 2;
+	  }
+    }
 
   /**
    *    \brief  Modifie le prix d'un produit/service
@@ -567,7 +613,7 @@ class Product
 		}
 	      else
 		{
-    	  dolibarr_print_error($this->db);
+		  
 		  return -1;
 		}
 	    }
@@ -582,6 +628,60 @@ class Product
 	  return -3;
 	}
     }
+
+  /**
+   *    \brief  Renvoie le nombre de fournisseurs
+   *    \return int         nombre de fournisseur
+   */
+	 
+  function count_fournisseur()
+    {
+      $sql = "SELECT fk_soc";
+      $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur as p";
+      $sql .= " WHERE p.fk_product = ".$this->id;
+
+      $result = $this->db->query($sql) ;
+
+      if ( $result )
+	{
+	  $num = $this->db->num_rows();
+
+	  if ($num == 1)
+	    {
+	      $row = $this->db->fetch_row();
+	      $this->fourn_appro_open = $row[0];
+	      return 1;
+	    }
+	  else
+	    {
+	      return 0;
+	    }
+	}
+      else
+	{
+	  return 0;
+	}
+    }
+
+  /**
+   *
+   *
+   */
+  function fastappro($user)
+  {
+    include_once DOL_DOCUMENT_ROOT."/fournisseur.class.php";
+
+    $nbf = $this->count_fournisseur();
+    if ($nbf == 1)
+      {
+	dolibarr_syslog("Product::fastappro");
+	$fournisseur = new Fournisseur($this->db);
+	$fournisseur->fetch($this->fourn_appro_open);
+
+	$fournisseur->ProductCommande($user, $this->id);
+      }
+
+  }
 
   /**
    *    \brief  Délie un fournisseur au produit/service
@@ -721,6 +821,25 @@ class Product
 	  }    
       }
   }
+  /**
+   *    \brief  Charge les informations relatives à un fournisseur
+   *    \param  id          id du fournisseur
+   */
+	 
+  function fetch_fourn_data ($id)
+    {    
+      $sql = "SELECT rowid, ref_fourn";
+      $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur ";
+      $sqL .= " WHERE fk_product = ".$this->id;
 
+      $result = $this->db->query($sql) ;
+
+      if ( $result )
+	{
+	  $result = $this->db->fetch_array();
+
+	  $this->ref_fourn          = $result["ref_fourn"];
+	}
+    }
 }
 ?>
