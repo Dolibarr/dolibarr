@@ -59,19 +59,13 @@ function llxHeader($head = "")
     }
   $db->close;
 
-  $menu->add("index.php3","Bank");
-
+  $menu->add("index.php3","Banque");
 
   $menu->add_submenu("budget.php3","Budgets");
   $menu->add_submenu("bilan.php3","Bilan");
   $menu->add_submenu("virement.php3","Virement");
 
   $menu->add_submenu("config.php3","Config");
-
-  if (defined("COMPTA_BANK_FACTURES") && COMPTA_BANK_FACTURES)
-    {
-      $menu->add(DOL_URL_ROOT."/compta/facture.php3","Factures");
-    }
 
   if (defined("COMPTA_ONLINE_PAYMENT_BPLC") && COMPTA_ONLINE_PAYMENT_BPLC)
     {
