@@ -28,8 +28,6 @@ require ("../../master.inc.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
@@ -134,8 +132,7 @@ $graph->GraphMakeGraph();
 $sql = "SELECT distinct fk_commercial";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
 
-$result = $db->query($sql);
-if ($result)
+if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
