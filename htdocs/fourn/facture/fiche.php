@@ -68,7 +68,7 @@ if($_GET["action"] == 'deletepaiement')
 
 if ($_POST["action"] == 'modif_libelle')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set libelle = '$form_libelle' WHERE rowid = $facid ;";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set libelle = '$form_libelle' WHERE rowid = ".$_GET["facid"]." ;";
   $result = $db->query( $sql);
 }
 
@@ -82,7 +82,7 @@ if ($_POST["action"] == 'update')
   $sql .= ", libelle='".trim($_POST["libelle"])."'";
   $sql .= ", note='".$_POST["note"]."'";
   $sql .= ", datef = '$datefacture'";
-  $sql .= " WHERE rowid = $facid ;";
+  $sql .= " WHERE rowid = ".$_GET['facid']." ;";
   $result = $db->query( $sql);
 }
 
@@ -379,7 +379,7 @@ else
 	   *
 	   */
 	  
-	  $head[0][0] = DOL_URL_ROOT."fiche.php?facid=".$fac->id;
+	  $head[0][0] = "fiche.php?facid=".$fac->id;
 	  $head[0][1] = 'Facture : '.$fac->ref;
 	  $h = 1;
 	  $a = 0;
@@ -537,7 +537,7 @@ else
 	}
       elseif ($fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
 	{
-	  print '<a class="tabAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">Emmettre un paiement</a>';
+	  print '<a class="tabAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">Émettre un paiement</a>';
 	}
       
       if ($fac->statut == 0 && $user->societe_id == 0)    

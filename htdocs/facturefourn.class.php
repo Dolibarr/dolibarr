@@ -154,7 +154,7 @@ class FactureFourn
     {
       $sql = "SELECT fk_soc,libelle,facnumber,amount,remise,".$this->db->pdate(datef)."as df";
       $sql .= ", total_ht, total_tva, total_ttc, fk_user_author";
-      $sql .= ", fk_statut, paye";
+      $sql .= ", fk_statut, paye, f.note";
       $sql .= ", s.nom as socnom, s.idp as socidp";
       $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."societe as s";
       $sql .= " WHERE f.rowid=$rowid AND f.fk_soc = s.idp ;";
@@ -184,7 +184,7 @@ class FactureFourn
 
 	      $this->socidp = $obj->socidp;
 	      $this->socnom = $obj->socnom;
-
+	      $this->note = $obj->note;
 	      $this->db->free();
 
 	      /* 
