@@ -55,7 +55,7 @@ class GraphPie extends DolibarrGraph {
     
     $pieplot = new PiePlot($datas);
     
-    $pieplot->SetCenter(0.33,0.5);
+    $pieplot->SetCenter(0.30,0.53);
     
     // Label font and color setup
     $pieplot->SetFont(FF_FONT1,FS_BOLD);
@@ -71,7 +71,7 @@ class GraphPie extends DolibarrGraph {
     
     // Legends
     $pieplot->SetLegends($labels);
-    $graph->legend->Pos(0.05,0.15);
+    $graph->legend->Pos(0.04,0.15);
     
     $graph->Add($pieplot);
     
