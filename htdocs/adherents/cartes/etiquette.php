@@ -35,7 +35,11 @@ require_once('PDF_card.class.php');
 
 //$pdf = new PDF_Label(array('name'=>'perso1', 'marginLeft'=>1, 'marginTop'=>1, 'NX'=>2, 'NY'=>7, 'SpaceX'=>0, 'SpaceY'=>0, 'width'=>99.1, 'height'=>'38.1', 'metric'=>'mm', 'font-size'=>14), 1, 2);
 //$pdf = new PDF_card('CARD', 1, 1);
-$pdf = new PDF_card('L7163', 1, 1);
+if (defined("ADHERENT_ETIQUETTE_TYPE") && ADHERENT_ETIQUETTE_TYPE !=''){
+  $pdf = new PDF_card(ADHERENT_ETIQUETTE_TYPE, 1, 1);
+}else{
+  $pdf = new PDF_card('L7163', 1, 1);
+}
 
 $pdf->Open();
 $pdf->AddPage();
