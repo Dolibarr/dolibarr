@@ -89,10 +89,10 @@ if ( $action == 'delete' )
  *
  *
  */
-if ($propalid)
+if ($_GET["propalid"])
 {
   $propal = new Propal($db);
-  $propal->fetch($propalid);
+  $propal->fetch($_GET["propalid"]);
 
   if ($valid == 1)
     {
@@ -109,7 +109,7 @@ if ($propalid)
    */
   $sql = "SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture";
   $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c, llx_socpeople as x";
-  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = $propalid";
+  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = ".$propal->id;
 
   $result = $db->query($sql);
 
@@ -183,7 +183,7 @@ if ($propalid)
 
       if ($action == 'statut')
 	{
-	  print "<form action=\"$PHP_SELF?propalid=$propalid\" method=\"post\">";
+	  print "<form action=\"$PHP_SELF?propalid=".$propal->id."\" method=\"post\">";
 	  print "<input type=\"hidden\" name=\"action\" value=\"setstatut\">";
 	  print "<select name=\"statut\">";
 	  print "<option value=\"2\">Signée";
@@ -205,7 +205,7 @@ if ($propalid)
        * Factures associees
        */
       $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
-      $sql .= " FROM llx_facture as f, llx_fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = $propalid";
+      $sql .= " FROM llx_facture as f, llx_fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
 
       $result = $db->query($sql);
       if ($result)
@@ -272,7 +272,7 @@ if ($propalid)
 	  if ($obj->statut == 2 && $user->rights->facture->creer)
 	    {
 	      print '<td width="20%">';
-	      print "<a href=\"facture.php?propalid=$propalid&action=create\">Emettre une facture</td>";
+	      print "<a href=\"facture.php?propalid=".$propal->id."&action=create\">Emettre une facture</td>";
 	    }
 	  else
 	    {
@@ -285,7 +285,7 @@ if ($propalid)
 	  
 	  if ($obj->statut == 2 && $num_fac_asso)
 	    {
-	      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=setstatut&statut=4\">Facturée</a>]</td>";
+	      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=".$propal->id."&action=setstatut&statut=4\">Facturée</a>]</td>";
 	    }
 	  else	
 	    {
@@ -313,7 +313,7 @@ if ($propalid)
     print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
     
     $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
-    $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
+    $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal =".$propal->id;
     $sql .= " ORDER BY pt.rowid ASC";
     if ($db->query($sql)) 
       {
@@ -334,7 +334,7 @@ if ($propalid)
       }
 
     $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
-    $sql .= " FROM llx_propaldet as pt  WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
+    $sql .= " FROM llx_propaldet as pt  WHERE  pt.fk_propal = ".$propal->id." AND pt.fk_product = 0";
     $sql .= " ORDER BY pt.rowid ASC";
     if ($db->query($sql)) 
       {
