@@ -62,3 +62,4 @@ RemainderToTake=Remainder to take
 CreateDraft=Create draft
 SendBillRef=Send bill %s
 SendReminderBillRef=Send bill %s (reminder)
+NoOtherBills=No other drafts bills

@@ -25,3 +25,5 @@ PropalStatusDraft=Draft (need to be validated)
 PropalStatusValidated=Validated (proposal is opened)
 ListOfProposals=List of commercial proposals
 ActionsOnPropal=Tasks on proposal
+NoOpenedPropals=No opened commercial proposals
+NoOtherOpenedPropals=No other opened commercial proposals

@@ -25,3 +25,5 @@ PropalStatusDraft=Brouillon (à valider)
 PropalStatusValidated=Validée (propale ouverte)
 ListOfProposals=Liste des devis/propositions commerciales
 ActionsOnPropal=Actions sur la proposition
+NoOpenedPropals=Pas de propositions ouvertes
+NoOtherOpenedPropals=Pas d'autres propositions ouvertes

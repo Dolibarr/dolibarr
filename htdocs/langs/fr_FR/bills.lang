@@ -65,3 +65,4 @@ SendReminderBillRef=Relance facture %s
 ShowBill=Afficher facture
 StandingOrders=Prélèvements
 StandingOrder=Prélèvement
+NoOtherBills=Pas d'autres factures brouillons
