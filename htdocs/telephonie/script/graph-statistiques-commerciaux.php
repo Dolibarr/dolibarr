@@ -116,9 +116,14 @@ if ($result)
  */
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/contrats.class.php");
       
-$file = $img_root . "commercials/contrats.png";
-if ($verbose) print "Graph : Comemrciaux contrats $file\n";
+$file = $img_root . "commercials/contrats-suivis.png";
+if ($verbose) print "Graph : Commerciaux contrats $file\n";
 $graph = new GraphCommerciauxContrats($db, $file);
-$graph->GraphMakeGraph();
+$graph->GraphMakeGraph("suivi");
+
+$file = $img_root . "commercials/contrats-signes.png";
+if ($verbose) print "Graph : Commerciaux contrats $file\n";
+$graph = new GraphCommerciauxContrats($db, $file);
+$graph->GraphMakeGraph("signe");
 
 ?>
