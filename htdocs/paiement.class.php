@@ -97,6 +97,37 @@ class Paiement
    *
    *
    */
+  Function delete()
+  {
+    $sql = "SELECT llx_paiement.rowid FROM llx_facture, llx_paiement WHERE  llx_paiement.rowid = ".$this->id;
+    $sql .= " AND llx_paiement.fk_facture = llx_facture.rowid AND llx_facture.paye = 0";
 
+    $result = $this->db->query($sql);
+    
+    if ($result) 
+      {
+	if ($this->db->num_rows() == 1)
+	  {
+	    $sql = "DELETE FROM llx_paiement WHERE llx_paiement.rowid = ".$this->id;
+
+	    $result = $this->db->query($sql);
+	    
+	    if ($result) 
+	      {
+		return 1;
+	      }
+	    else
+	      {
+		print $this->db->error() ."<br>".$sql;
+		return 0;
+	      }
+	  }
+      }
+    else
+      {
+	print $this->db->error() ."<br>".$sql;
+	return 0;
+      }
+  }
 }
 ?>
