@@ -96,7 +96,7 @@ class MenuTop {
             $langs->load("members");
         
             $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "adherent")
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
             {
                 $class='class="tmenu" id="sel"';
             }
