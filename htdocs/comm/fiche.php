@@ -32,7 +32,15 @@ $user->getrights('commande');
 $user->getrights('projet');
 
 
+$langs->load("orders");
+$langs->load("companies");
+
+
 llxHeader();
+
+
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
 
 if ($sortorder == "") {
   $sortorder="ASC";
@@ -198,14 +206,14 @@ if ($_socid > 0)
      */
     print '<table width="100%" border="0">';
     print '<tr><td valign="top">';
-    print '<table class="border" cellpadding="3" cellspacing="0" border="1" width="100%">';
+    print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
 
-    print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">';
+    print '<tr><td width="20%">'.$langs->trans("FirstName").'</td><td width="80%" colspan="3">';
     print $objsoc->nom;
     print '</td></tr>';
-    print "<tr><td valign=\"top\">Adresse</td><td colspan=\"3\">".nl2br($objsoc->adresse)."<br>".$objsoc->cp." ".$objsoc->ville." ".$objsoc->pays."</td></tr>";
-    print '<tr><td>Téléphone</td><td>'.dolibarr_print_phone($objsoc->tel).'&nbsp;</td><td>Fax</td><td>'.dolibarr_print_phone($objsoc->fax).'&nbsp;</td></tr>';
-    print "<tr><td>Web</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
+    print "<tr><td valign=\"top\">".$langs->trans("Address")."</td><td colspan=\"3\">".nl2br($objsoc->adresse)."<br>".$objsoc->cp." ".$objsoc->ville." ".$objsoc->pays."</td></tr>";
+    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($objsoc->tel).'&nbsp;</td><td>Fax</td><td>'.dolibarr_print_phone($objsoc->fax).'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
 
     print "<tr><td>Siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
     print "<td>prefix</td><td>";
@@ -220,7 +228,7 @@ if ($_socid > 0)
 
     print "</td></tr>";
 
-    print "<tr><td>Type</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
+    print "<tr><td>".$langs->trans("Type")."</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
 
     print "</table>";
 
@@ -241,7 +249,7 @@ if ($_socid > 0)
      *
      */
     $var = true;
-    print '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
+    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="1">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
     $sql .= " AND s.idp = ".$objsoc->id." ORDER BY p.datep DESC";
@@ -319,7 +327,7 @@ if ($_socid > 0)
     $sql  = "SELECT p.rowid,p.title,p.ref,".$db->pdate("p.dateo")." as do";
     $sql .= " FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $objsoc->id";
     if ( $db->query($sql) ) {
-      print "<table border=1 cellspacing=0 width=100% cellpadding=\"1\">";
+      print "<table class=\"border\" cellspacing=0 width=100% cellpadding=\"1\">";
       $i = 0 ; 
       $num = $db->num_rows();
       if ($num > 0) {
@@ -400,12 +408,14 @@ if ($_socid > 0)
        * Liste des contacts
        *
        */
-      print '<table width="100%" cellspacing="1" border="0" cellpadding="2">';
+      print '<table class="noborder" width="100%" cellspacing="1" cellpadding="2">';
 
       print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
-      print '<td>Poste</td><td>'.$langs->trans("Tel").'</td>';
+      print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
       print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
-      print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td></tr>";
+      print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td>";
+      print '<td>&nbsp;</td>';
+      print "</tr>";
     
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->id  ORDER by p.datec";
       $result = $db->query($sql);
@@ -417,9 +427,9 @@ if ($_socid > 0)
 	print "<tr $bc[$var]>";
 
 	print '<td>';
-      print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
-      print img_file();
-      print '</a>&nbsp;<a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+    print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
+    print img_file();
+    print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
 	if ($obj->note)
 	  {
@@ -430,10 +440,16 @@ if ($_socid > 0)
 	print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->phone.'</a>&nbsp;</td>';
 	print '<td><a href="action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->fax.'</a>&nbsp;</td>';
 	print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->email.'</a>&nbsp;</td>';
-	print "<td align=\"center\">";
+
+	print '<td align="center">';
 	print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
 	print img_edit();
 	print '</a></td>';
+	
+    print '<td align="center"><a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">';
+    print img_actions();
+    print '</a></td>';
+	
 	print "</tr>\n";
 	$i++;
 	$tag = !$tag;
@@ -472,19 +488,19 @@ if ($_socid > 0)
 	  if ($oldyear == strftime("%Y",$obj->da) ) {
 	    print '<td align="center">|</td>';
 	  } else {
-	    print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+	    print "<td align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
 	    $oldyear = strftime("%Y",$obj->da);
 	  }
 
 	  if ($oldmonth == strftime("%Y%b",$obj->da) ) {
 	    print '<td align="center">|</td>';
 	  } else {
-	    print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+	    print "<td align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
 	    $oldmonth = strftime("%Y%b",$obj->da);
 	  }
 	  
-	  print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
-	  print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
+	  print "<td>" .strftime("%d",$obj->da)."</td>\n"; 
+	  print "<td>" .strftime("%H:%M",$obj->da)."</td>\n";
 
 	  print '<td width="10%">&nbsp;</td>';
 

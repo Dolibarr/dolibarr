@@ -21,6 +21,8 @@
  */
 require("./pre.inc.php");
 
+$langs->load("company");
+
 require("../../contact.class.php");
 require("../../lib/webcal.class.php");
 require("../../cactioncomm.class.php");
@@ -47,58 +49,38 @@ if ($_POST["action"] == 'add_action')
       $contact = new Contact($db);
       $contact->fetch($_POST["contactid"]);
     }
-  $societe = new Societe($db);
-  $societe->fetch($_POST["socid"]);
-
-  if ($_POST["afaire"] <> 1)
+  if ($_POST["socid"])
     {
-      $actioncomm = new ActionComm($db);
-
-      $actioncomm->priority = 2;
-      $actioncomm->type = $_POST["actionid"];
-      
-      $actioncomm->date = $db->idate(mktime($_POST["heurehour"],
-					    $_POST["heuremin"],
-					    0,
-					    $_POST["acmonth"],
-					    $_POST["acday"],
-					    $_POST["acyear"])
-				     );
-      if ($_POST["actionid"] == 5) 
-	{
-	  $actioncomm->percent = 0;
-	}
-      else
-	{
-	  $actioncomm->percent = 100;
-	}
-
-      $actioncomm->contact = $_POST["contactid"];
-      
-      $actioncomm->user = $user;
-      
-      $actioncomm->societe = $_POST["socid"];
-      $actioncomm->note = $_POST["note"];
-      
-      $actioncomm->add($user);
+      $societe = new Societe($db);
+      $societe->fetch($_POST["socid"]);
     }
 
-  if ($todo == 'on' )
-    {
+  if ($_POST["actionid"]) {
 
-      $todo = new ActionComm($db);
-      $todo->type     = $_POST["nextactionid"];
-      $todo->date     = $db->idate(mktime(12,0,0,$remonth, $reday, $reyear));
-      $todo->libelle  = $todo_label;
-      $todo->priority = 2;
-      $todo->societe  = $societe->id;
-      $todo->contact  = $contactid;
-      $todo->user     = $user;
-      $todo->note     = $todo_note;
-      $todo->percent  = 0;
-      
-      $todo->add($user);
-      
+    $actioncomm = new ActionComm($db);
+
+    $actioncomm->type = $_POST["actionid"];
+    $actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
+    $actioncomm->libelle  = $_POST["label"];
+    
+    $actioncomm->date = $db->idate(mktime($_POST["heurehour"],
+    			    $_POST["heuremin"],
+    			    0,
+    			    $_POST["acmonth"],
+    			    $_POST["acday"],
+    			    $_POST["acyear"])
+    		     );
+    
+    $actioncomm->percent = isset($_POST["percentage"])?$_POST["percentage"]:0;
+    
+    $actioncomm->user = $user;
+    
+    $actioncomm->societe = isset($_POST["socid"])?$_POST["socid"]:0;
+    $actioncomm->contact = isset($_POST["contactid"])?$_POST["contactid"]:0;
+    $actioncomm->note = $_POST["note"];
+    
+    $actioncomm->add($user);
+     
       if ($conf->webcal && $todo_webcal == 'on')
 	{
 	  $webcal = new Webcal();
@@ -106,166 +88,220 @@ if ($_POST["action"] == 'add_action')
 	  $webcal->heure = $heurehour . $heuremin . '00';
 	  $webcal->duree = ($dureehour * 60) + $dureemin;
     
-	  if ($actionid == 5)
+	  if ($_POST["actionid"] == 5)
 	    {
 	      $libelle = "Rendez-vous avec ".$contact->fullname;
-	      $libelle .= "\n" . $todo->libelle;
+	      $libelle .= "\n" . $actioncomm->libelle;
 	    }
 	  else
 	    {
-	      $libelle = $todo->libelle;
+	      $libelle = $actioncomm->libelle;
 	    }
 	  
-	  $webcal->add($user, $todo->date, $societe->nom, $libelle);
+	  $webcal->add($user, $actioncomm->date, $societe->nom, $libelle);
 	}
-  }
+
   //  Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=$socid");
   Header("Location: ".$_POST["from"]);
+
+  } else {
+    
+    print "Le type d'action n'a pas été choisi";
+    
+  }
+
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
   $actioncomm = new ActionComm($db);
   $actioncomm->delete($id);
   Header("Location: index.php");
 }
 
-if ($action=='update')
+if ($_POST["action"] == 'update')
 {
   $action = new Actioncomm($db);
-  $action->fetch($id);
+  $action->fetch($_POST["id"]);
   $action->percent     = $_POST["percent"];
-  $action->contact->id = $_POST["scontactid"];
+  $action->contact->id = $_POST["contactid"];
   $action->update();
+
+  Header("Location: ".$_POST["from"]);
 }
 
-/******************************************************************************/
-/*                                                                            */
-/*                  Fin des   Actions                                         */
-/*                                                                            */
-/******************************************************************************/
+
+
 
 llxHeader();
+
 $html = new Form($db);
+
+
 /*
- *
- *
+ * Affichage fiche action vierge en mode creation
  *
  */
 
 if ($_GET["action"] == 'create')
 {
-
   $caction = new CActioncomm($db);
   
-  if ($_GET["afaire"] <> 1)
+  if ($_GET["contactid"])
     {
-      $caction->fetch($db, $_GET["actionid"]);
       
       $contact = new Contact($db);
       $contact->fetch($_GET["contactid"]);
     }
-  $societe = new Societe($db);
-  $societe->get_nom($_GET["socid"]);
-  
-  print '<form action="fiche.php?socid='.$_GET["socid"].'" method="post">';
+
+  print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
   print '<input type="hidden" name="action" value="add_action">';
-  print '<input type="hidden" name="actionid" value="'.$_GET["actionid"].'">'."\n";      
-  print '<input type="hidden" name="contactid" value="'.$_GET["contactid"].'">';
-  print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
 
   /*
-   * Rendez-vous
+   * Si action de type Rendez-vous
    *
    */
   if ($_GET["actionid"] == 5) 
     {
+	  print_titre ("Saisie d'une action Rendez-vous");	  
+      print "<br>";
 
       print '<input type="hidden" name="date" value="'.$db->idate(time()).'">'."\n";
       
-      print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 
+      // Type d'action
       print '<tr><td colspan="2"><div class="titre">Rendez-vous</div></td></tr>';
-      print '<tr><td width="10%">Société</td><td width="40%">';
-      print '<a href="../fiche.php?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
-      print '<tr><td width="10%">Contact</td><td width="40%">'.$contact->fullname.'</td></tr>';
-      print '<tr><td width="10%">Date</td><td width="40%">';
-      $html= new Form($db);
+      print '<input type="hidden" name="actionid" value="5">';
+
+      // Societe, contact
+	  print '<tr><td width="10%">'.$langs->trans("Action concernant la companie").'</td><td width="40%">';
+      if ($_GET["socid"]) {
+          $societe = new Societe($db);
+          $nomsoc=$societe->get_nom($_GET["socid"]);
+          print '<a href="../fiche.php?socid='.$_GET["socid"].'">'.$nomsoc.'</a>';
+          print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
+      }
+      else {  
+          print $html->select_societes('','socid',1,1);
+      }
+	  print '</td></tr>';
+    
+      // Si la societe est imposée, on propose ces contacts
+      if ($_GET["socid"]) {
+    	  print '<tr><td width="10%">'.$langs->trans("Action concernant le contact").'</td><td width="40%">';
+          print $html->select_contacts($_GET["socid"],'','contactid',1,1);
+    	  print '</td></tr>';
+      }
+
+      print '<tr><td width="10%">'.$langs->trans("Date").'</td><td width="40%">';
       $html->select_date('','ac');
       print '</td></tr>';
-      print '<tr><td width="10%">Heure</td><td width="40%">';
+      print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
       print_heure_select("heure",8,20);
       print '</td></tr>';
-      print '<tr><td width="10%">Durée</td><td width="40%">';
+      print '<tr><td width="10%">'.$langs->trans("Duration").'</td><td width="40%">';
       print_duree_select("duree");
       print '</td></tr>';
 
       print '<tr><td valign="top">Commentaire</td><td>';
       print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
-      print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';  
-      print '</form></table>';
+      print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';  
+      print '</table>';
     }
+
   /* 
-   *
-   * Action autre que rendez-vous
-   *
+   * Si action de type autre que rendez-vous
    *
    */   
   else 
     {      
-      if ($_GET["afaire"] <> 1)
-	{
-	  print_titre ("Action effectuée");	  
-	  print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
-	  
-	  print '<tr><td width="10%">Action</td><td>'.$caction->libelle.'</td></tr>';
-	  print '<tr><td width="10%">Société</td><td width="40%">';
-	  print '<a href="../fiche.php?socid='.$_GET["socid"].'">'.$societe->nom.'</a></td></tr>';
-	  print '<tr><td width="10%">Contact</td><td width="40%">'.$contact->fullname.'</td></tr>';
-	  print '<td>Date</td><td>';
-	  print $html->select_date('','ac',1,1);
+	  print_titre ("Saisie d'une action");	  
+      print "<br>";
+      
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+
+      // Type d'action
+      print '<tr><td width="10%">'.$langs->trans("Action").'</td><td>';
+      if ($_GET["actionid"]) {
+        print '<input type="hidden" name="actionid" value="'.$_GET["actionid"].'">'."\n";      
+        print $caction->get_nom($_GET["actionid"]);
+      } else {
+        $html->select_array("actionid",  $caction->liste_array(), 0);
+      }
+      print '</td></tr>';
+
+      print '<tr><td width="10%">'.$langs->trans("Label").'</td><td><input type="text" name="todo_label" size="30"></td></tr>';
+
+      // Societe, contact
+	  print '<tr><td width="10%">'.$langs->trans("Action concernant la companie").'</td><td width="40%">';
+      if ($_GET["socid"]) {
+          $societe = new Societe($db);
+          $nomsoc=$societe->get_nom($_GET["socid"]);
+          print '<a href="../fiche.php?socid='.$_GET["socid"].'">'.$nomsoc.'</a>';
+          print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
+      }
+      else {  
+          print $html->select_societes('','socid',1,1);
+      }
 	  print '</td></tr>';
-	  print '<tr><td valign="top">Commentaire</td><td>';
-	  print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
-	  print "</table><p />";
-	}
+    
+      // Si la societe est imposée, on propose ces contacts
+      if ($_GET["socid"]) {
+    	  print '<tr><td width="10%">'.$langs->trans("Action concernant le contact").'</td><td width="40%">';
+          print $html->select_contacts($_GET["socid"],'','contactid',1,1);
+    	  print '</td></tr>';
+      }
 
-      print_titre ("Prochaine Action à faire");
-
-      print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
-      if ($_GET["afaire"] <> 1)
+      // Avancement
+      if ($_GET["afaire"] == 1)
 	{
-	  print '<tr><td width="10%">'.$langs->trans("Add").'</td><td><input type="checkbox" name="todo"></td></tr>';
-	}
-      else
-	{
+	  print '<input type="hidden" name="percentage" value="0">';
 	  print '<input type="hidden" name="todo" value="on">';
-	  print '<input type="hidden" name="afaire" value="1">';
-	  print '<tr><td width="10%">Société</td><td width="40%">';
-	  print '<a href="../fiche.php?socid='.$_GET["socid"].'">'.$societe->nom.'</a></td></tr>';
+	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>To do / 0%</td></tr>';
+	}
+      elseif ($_GET["afaire"] == 2)
+	{
+	  print '<input type="hidden" name="percentage" value="100">';
+	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>Done / 100%</td></tr>';
+    } else 
+	{
+	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0%"></td></tr>';
 	}
 
-      print '<tr><td width="10%">Date</td><td width="40%">';
-      print $html->select_date();
+      // Date
+      print '<tr><td width="10%">'.$langs->trans("Date").'</td><td width="40%">';
+      if ($_GET["afaire"] == 1)
+    	{
+            print $html->select_date('','ac');
+      } else if ($_GET["afaire"] == 2) {
+            print $html->select_date('','ac',1,1);
+      } else {
+            print $html->select_date('','ac',1,1);
+      }
       print '</td></tr>';
-      print '<tr><td width="10%">Action</td><td>';
-      $html->select_array("nextactionid",  $caction->liste_array(), 0);
-      print '</td></tr>';
-      print '<tr><td width="10%">Action</td><td><input type="text" name="todo_label" size="30"></td></tr>';
-      if (defined("MAIN_MODULE_WEBCALENDAR") && MAIN_MODULE_WEBCALENDAR)
+
+      // Lien avec celendrier si module activé
+      if ($conf->webcal->enabled)
 	{
-	  print '<tr><td width="10%">Calendrier</td><td><input type="checkbox" name="todo_webcal"></td></tr>';
+	  $langs->load("other");
+	  print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td><td><input type="checkbox" name="todo_webcal"></td></tr>';
 	}
-      print '<tr><td valign="top">Commentaire</td><td>';
+
+      // Description
+      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
       print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
+
       print '</table>';
   
-      print '<p align="center"><input type="submit" value="Enregistrer"></p>';
+      print '<p align="center"><input type="submit" value="'.$langs->trans("Add").'"></p>';
 
-      print "</form>";
     }
+
+    print "</form>";
 }
+
 /*
  *
  *
@@ -273,6 +309,7 @@ if ($_GET["action"] == 'create')
  */
 if ($_GET["id"])
 {
+  // Confirmation suppression action
   if ($_GET["action"] == 'delete')
     {
       print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
@@ -299,19 +336,22 @@ if ($_GET["id"])
   $act->author->fetch($act->author->id);
   $act->contact->fetch($act->contact->id);
   
-
+  // Fiche action en mode edition
   if ($_GET["action"] == 'edit')
     {      
       print_titre ("Edition de la fiche action");
-      print '<form action="fiche.php?id='.$_GET["id"].'" method="post">';
+      print '<form action="fiche.php" method="post">';
       print '<input type="hidden" name="action" value="update">';
-      print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
+      print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+      print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
+
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
       print '<tr><td width="20%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
       print '<tr><td width="20%">Société</td>';
       print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
       
       print '<td width="20%">Contact</td><td width="30%">';
-      $html->select_array("scontactid",  $act->societe->contact_array(), $act->contact->id, 1);
+      $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
       print '</td></tr>';
       print '<tr><td>'.$langs->trans("Author").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
       print '<td>'.$langs->trans("Author").'</td><td>'.$act->author->fullname.'</td></tr>';
@@ -332,6 +372,7 @@ if ($_GET["id"])
     }
   else
     {      
+      // Affichage fiche action en mode visu
       print_titre ("Action commerciale");
       
       print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';

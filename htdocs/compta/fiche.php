@@ -366,12 +366,14 @@ if ($socid > 0)
          * Liste des contacts
          *
          */
-        print '<table class="noborder" width="100%" cellspacing="1" cellpadding="2">';
+      print '<table class="noborder" width="100%" cellspacing="1" cellpadding="2">';
 
-        print '<tr class="liste_titre"><td><b>Pr&eacute;nom Nom</b></td>';
-        print '<td><b>Poste</b></td><td><b>T&eacute;l</b></td>';
-        print "<td><b>Fax</b></td><td><b>Email</b></td>";
-        print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id."&amp;action=create\">".$langs->trans("AddContact")."</a></td></tr>";
+      print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
+      print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
+      print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
+      print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td>";
+      print '<td>&nbsp;</td>';
+      print "</tr>";
 
         $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $societe->id  ORDER by p.datec";
         $result = $db->query($sql);
@@ -385,9 +387,10 @@ if ($socid > 0)
             print "<tr $bc[$var]>";
 
             print '<td>';
-            //print '<a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$societe->id.'">';
-            //print '<img border="0" src="/theme/'.$conf->theme.'/img/filenew.png"></a>&nbsp;';
-            print '<a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->firstname.' '. $obj->name.'</a>';
+            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
+            print img_file();
+            print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+
             if ($obj->note)
             {
                 print "<br>".nl2br($obj->note);
@@ -397,7 +400,16 @@ if ($socid > 0)
             print '<td><a href="../comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
             print '<td><a href="../comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
             print '<td><a href="../comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
-            print "<td align=\"center\"><a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">".img_edit()."</a></td>";
+
+        	print '<td align="center">';
+        	print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+        	print img_edit();
+        	print '</a></td>';
+        	
+            print '<td align="center"><a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">';
+            print img_actions();
+            print '</a></td>';
+
             print "</tr>\n";
             $i++;
             $tag = !$tag;

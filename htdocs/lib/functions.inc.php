@@ -246,6 +246,18 @@ function dolibarr_print_phone($phone)
 }
 
 /*!
+  \brief Affiche logo dédié aux actions
+*/
+function img_actions($alt = "default")
+{
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Rendez-vous");
+  }
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/object_actions.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/*!
   \brief Affiche logo fichier
 */
 function img_file($alt = "default")
