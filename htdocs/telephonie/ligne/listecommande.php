@@ -131,7 +131,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object();	
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
