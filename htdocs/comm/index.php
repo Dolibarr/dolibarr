@@ -319,7 +319,7 @@ else
  * Derniers contrat
  *
  */
-if ($conf->contrat->enabled)
+if ($conf->contrat->enabled && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
   $langs->load("contracts");
   
