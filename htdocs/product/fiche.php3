@@ -110,7 +110,7 @@ else
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
 	  print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
-	  print '<td>Statistiques</td></tr>';
+	  print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
 	  print "<td>Libellé</td><td>$product->label</td>";
 	  print '<td valign="top" rowspan="4">';
 	  print "Propositions commerciales : ".$product->count_propale();
