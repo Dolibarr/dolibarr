@@ -71,6 +71,10 @@ class modFournisseur extends DolibarrModules
     $this->boxes = array();
     $this->boxes[0][0] = "Derniers founisseurs";
     $this->boxes[0][1] = "box_fournisseurs.php";
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'fournisseur';
   }
 
    /**
@@ -79,6 +83,48 @@ class modFournisseur extends DolibarrModules
     */
   function init()
   {
+    $this->remove();
+
+    $this->rights[0][0] = 170; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur les fournisseurs'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[1][0] = 180; // id de la permission
+    $this->rights[1][1] = 'Tous les droits sur les commandes fournisseurs'; // libelle de la permission
+    $this->rights[1][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[1][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[2][0] = 181;
+    $this->rights[2][1] = 'Lire les commandes fournisseur';
+    $this->rights[2][2] = 'w';
+    $this->rights[2][3] = 0;
+
+    $this->rights[3][0] = 182;
+    $this->rights[3][1] = 'Créer une commande fournisseur';
+    $this->rights[3][2] = 'w';
+    $this->rights[3][3] = 0;
+
+    $this->rights[4][0] = 183;
+    $this->rights[4][1] = 'Valider une commande fournisseur';
+    $this->rights[4][2] = 'w';
+    $this->rights[4][3] = 0;
+
+    $this->rights[5][0] = 184;
+    $this->rights[5][1] = 'Approuver les commandes fournisseur';
+    $this->rights[5][2] = 'w';
+    $this->rights[5][3] = 0;
+
+    $this->rights[6][0] = 185;
+    $this->rights[6][1] = 'Commander une commande fournisseur';
+    $this->rights[6][2] = 'w';
+    $this->rights[6][3] = 0;
+
+    $this->rights[7][0] = 186;
+    $this->rights[7][1] = 'Clotûrer les commandes fournisseur';
+    $this->rights[7][2] = 'w';
+    $this->rights[7][3] = 0;
+
     $sql = array();
   
     return $this->_init($sql);
@@ -90,7 +136,7 @@ class modFournisseur extends DolibarrModules
    */
   function remove()
   {
-    $sql = array();
+    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'fournisseur';");
 
     return $this->_remove($sql);
   }
