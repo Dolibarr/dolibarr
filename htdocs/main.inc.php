@@ -90,7 +90,6 @@ require DOL_DOCUMENT_ROOT ."/user.class.php";
 //require "Smarty.class.php";
 
 
-
 $db = new DoliDb();
 $user = new User($db);
 
@@ -111,31 +110,13 @@ if (!empty ($_SERVER["REMOTE_USER"]))
 }  
 else
 {
-    // Authentification Apache KO ou non active
+    // Authentification Apache OK ou non active
   if (!empty ($dolibarr_auto_user))
     {
       $user->fetch($dolibarr_auto_user);
     }
   else
     {
-      // Test si Pear est operationnel
-      $ispearinstalled=0;
-
-      $modules_list = get_loaded_extensions();
-      foreach ($modules_list as $module) 
-	{
-	  if ($module == 'pear') { $ispearinstalled=1; }
-	}
-      $ispearinstalled=1; // MODIF RODO, le test ne marche pas
-
-      if (! $ispearinstalled) {
-        print "Pour fonctionner, Dolibarr a besoin :<br>\n";
-        print "- Soit du module PHP 'pear' (actuellement, votre php contient les modules suivant: ".join($modules_list,',')."<br>\n";
-        print "- Soit d'avoir son répertoire htdocs protégé par une authentification Web basique (Exemple pour Apache: Utilisation des directives Authxxx dans la configuration, ou utilisation du fichier .htaccess).<br>\n";
-        print "<br><br>Vous devez respecter un de ces pré-requis pour continuer.\n";
-        exit ;  
-      }
-
       // /usr/share/pear
       
       //require_once "Auth/Auth.php";
