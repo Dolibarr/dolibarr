@@ -1,0 +1,13 @@
+# Dolibarr language file - fr_FR - boxes
+BoxLastRssInfos=Fil informations RSS
+BoxLastProducts=Derniers produits/services
+BoxLastProductsInContract=Derniers produits/services contractés
+BoxLastSupplierBills=Dernières factures fournisseur
+BoxLastCustomerBills=Dernières factures client
+BoxOldestUnpayedCustomerBills=Plus anciennes factures client impayées
+BoxOldesUnpayedSupplierBills=Plus anciennes factures fournisseur impayées
+BoxLastProposals=Dernières propositions commerciales
+BoxLastProspects=Derniers prospects
+BoxLastCustomers=Derniers clients
+BoxLastCustomerOrders=Dernières commandes
+BoxLastSuppliers=Derniers fournisseurs

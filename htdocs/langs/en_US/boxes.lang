@@ -1,0 +1,13 @@
+# Dolibarr language file - en_US - boxes
+BoxLastRssInfos=Rss informations
+BoxLastProducts=Last products/services
+BoxLastProductsInContract=Last contracted products/services
+BoxLastSupplierBills=Last supplier bills
+BoxLastCustomerBills=Last customer bills
+BoxOldestUnpayedCustomerBills=Oldest unpayed customer bills
+BoxOldesUnpayedSupplierBills=Oldest unpayed supplier bills
+BoxLastProposals=Last commercial proposals
+BoxLastProspects=Last prospects
+BoxLastCustomers=Last customers
+BoxLastCustomerOrders=Last customer orders
+BoxLastSuppliers=Last suppliers
