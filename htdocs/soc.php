@@ -146,7 +146,7 @@ if ($_GET["action"] == 'create')
       print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
   
       print '<tr><td>Forme juridique</td><td colspan="3">';
-      print $form->select_forme_juridique($soc->forme_juridique_code);
+			print $form->select_forme_juridique($soc->forme_juridique_code);
       print '</td></tr>';
   
       print '<tr><td>Effectif</td><td colspan="3">';
@@ -204,19 +204,19 @@ elseif ($_GET["action"] == 'edit')
       print $soc->adresse;
       print '</textarea></td></tr>';
       
-      print '<tr><td>CP</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
+      print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
       print 'Ville&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td>';
-      print '<td>Département/Province/Canton</td><td>';
+      print '<td>'.$langs->trans('State').'</td><td>';
       print $form->select_departement($soc->departement_id);
       print '</td></tr>';      
 
-      print '<tr><td>Pays</td><td colspan="3">';
+      print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
       print $form->select_pays($soc->pays_id);
       print '</td></tr>';
 
       print '<tr><td>'.$langs->trans('Téléphone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
-      print '<tr><td>Web</td><td colspan="3">http://<input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
+      print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">http://<input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
       
       print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
       print '<td>'.$langs->trans('ProfIdSiret').'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
@@ -233,14 +233,14 @@ elseif ($_GET["action"] == 'edit')
       print $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
       print '</td></tr>';
 
-      print '<tr><td colspan="2">Numéro de TVA Intracommunautaire</td><td colspan="2">';
+      print '<tr><td colspan="2">'.$langs->trans('TVAIntra').'</td><td colspan="2">';
 
       print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
       print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
 
       print '</td></tr>';
 
-      print '<tr><td>Prospect / Client</td><td><select name="client">';
+      print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td><select name="client">';
 	  print '<option value="2"'.($soc->client==2?' selected':'').'>Prospect</option>';
 	  print '<option value="1"'.($soc->client==1?' selected':'').'>Client</option>';
 	  print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
@@ -324,17 +324,17 @@ else
   if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
   print '</td></tr>';
   
-  print '<tr><td>Siren</td><td><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td>';
+  print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td>';
 
-  print '<td>Siret</td><td>'.$soc->siret.'</td></tr>';
+  print '<td>'.$langs->trans('ProfIdSiret').'</td><td>'.$soc->siret.'</td></tr>';
 
-  print '<tr><td>Ape</td><td>'.$soc->ape.'</td>';
+  print '<tr><td>'.$langs->trans('ProfIdApe').'</td><td>'.$soc->ape.'</td>';
   print '<td>Capital</td><td>'.$soc->capital.' '.MAIN_MONNAIE.'</td></tr>';
 
   print '<tr><td>Forme juridique</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
   print '<tr><td>Effectif</td><td colspan="3">'.$soc->effectif.'</td></tr>';
 
-  print '<tr><td colspan="2">Numéro de TVA Intracommunautaire</td><td colspan="2">';
+  print '<tr><td colspan="2">'.$langs->trans('TVAIntra').'</td><td colspan="2">';
   print $soc->tva_intra;
   print '</td></tr>';
 
