@@ -29,10 +29,8 @@
 require("./pre.inc.php3");
 
 llxHeader();
-$db = new Db();
 
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
+$db = new Db();
 
 
 if ($action == 'add') {
@@ -171,8 +169,11 @@ if ($action == '') {
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0;
-    print "<p><b>Paiements</b><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print "<TR bgcolor=\"orange\">";
+
+    print_barre_liste("Paiements", $page, $PHP_SELF);
+    print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+
+    print '<TR class="liste_titre">';
     print "<td>Facture</td>";
     print "<td>Date</td>";
     print "<td>Type</TD>";

@@ -1,6 +1,4 @@
 #
-# General Makefile for Mysql database
-#
 # Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 #
 # $Id$
@@ -19,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+# General Makefile for Mysql database
 #
 
 MYSQL=mysql 
@@ -79,10 +79,3 @@ createpriv:
 	$(MYSQL) mysql -e "update db set index_priv      = 'Y'  where db='$(BASE)' ; "
 	$(MYSQL) mysql -e "update db set alter_priv      = 'Y'  where db='$(BASE)' ; "
 	$(MYSQL) mysql -e "flush privileges ; "
-
-
-
-#
-# $Id$
-# $Source$
-#

@@ -18,3 +18,29 @@ Configuration :
 Apache :
 	- un fichier httpd.conf.sample est fournit vous pouvez vous en
 	servir pour configurer votre serveur
+
+Installation
+------------
+	Base de données :
+	
+	Vous trouverez un fichier Makefile dans le repertoire mysql/
+qui contient toutes les commandes pour creer la base, les tables et
+les data.
+
+	'make create' cree la base de donnee 'dolibarr' vous pouvez
+changer le nom de la base avec la commande 'make create
+BASE=autrenom', pensez a executer 'make create' avec un utilisateur
+ayant les droits de creation de base. Les droits sur la base sont cree
+en meme temps, si vous souhaitez les changer vous pouvez editer le
+fichier Makefile.
+
+
+	'make table' cree les tables
+
+	'make load' charge les donnees necessaire dans les tables de
+constantes.
+
+	'make dev' charge un ensemble de donnees de test
+
+	Une fois ces 3 commandes passees votre base de donnees est
+pretes a etre utilisee.

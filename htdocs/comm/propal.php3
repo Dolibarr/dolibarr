@@ -34,10 +34,6 @@ require("./actioncomm.class.php3");
 
 llxHeader();
 
-
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
-
 $db = new Db();
 
 if ($sortfield == "") {
@@ -522,7 +518,7 @@ if ($propalid) {
   if ( $db->query($sql) ) {
     $num = $db->num_rows();
     $i = 0;
-    print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+    print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
     $oldstatut = -1;
     $subtotal = 0;
@@ -533,25 +529,24 @@ if ($propalid) {
 	$oldstatut = $objp->statut;
 
 	if ($i > 0) {
-	  print "<tr><td align=\"right\" colspan=\"6\">Total : <b>".price($subtotal)."</b></td>\n";
+	  print "<tr><td align=\"right\" colspan=\"5\">Total : <b>".price($subtotal)."</b></td>\n";
 	  print "<td align=\"left\">Euros HT</td></tr>\n";
 	}
 	$subtotal = 0;
 	
-	print "<TR bgcolor=\"#e0e0e0\">";
-	print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
+	print '<TR class="liste_titre">';
 	print "<TD>Réf</TD>";
 	print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
 	print "<TD align=\"right\" colspan=\"2\">Date</TD>";
 	print "<TD align=\"right\">Prix</TD>";
-	print "<TD align=\"center\">Statut [<a href=\"$PHP_SELF?viewstatut=$objp->statutid\">Filtre</a>]</TD>";
+	print "<TD align=\"center\">Statut <a href=\"$PHP_SELF?viewstatut=$objp->statutid\">";
+	print '<img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a></td>';
 	print "</TR>\n";
 	$var=True;
       }
       
       $var=!$var;
       print "<TR $bc[$var]>";
-      print "<TD>[<a href=\"$PHP_SELF?socidp=$objp->idp\">Filtre</a>]</TD>\n";
       print "<TD><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
       print "<TD><a href=\"index.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      
       
@@ -572,9 +567,7 @@ if ($propalid) {
       print " <a href=\"propal.php3?year=$y&month=$m\">";
       print strftime("%B",$objp->dp)."</a>\n";
       print " <a href=\"propal.php3?year=$y\">";
-      print strftime("%Y",$objp->dp)."</a></TD>\n";
-      
-      //print "<TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+      print strftime("%Y",$objp->dp)."</a></TD>\n";      
       
       print "<TD align=\"right\">".price($objp->price)."</TD>\n";
       print "<TD align=\"center\">$objp->statut</TD>\n";
@@ -585,11 +578,11 @@ if ($propalid) {
       
       $i++;
     }
-    print "<tr><td align=\"right\" colspan=\"6\">Total : <b>".price($subtotal)."</b></td>\n";
+    print "<tr><td align=\"right\" colspan=\"5\">Total : <b>".price($subtotal)."</b></td>\n";
     print "<td align=\"left\">Euros HT</td></tr>\n";
     
     
-    print "<tr><td></td><td>$i propales</td><td align=\"right\"><small>Soit : ".francs($total)." FF HT</small></td>";
+    print "<tr><td></td><td>$i propales</td>";
     print "<td colspan=\"3\" align=\"right\"><b>Total : ".price($total)."</b></td>";
     print "<td align=\"left\"><b>Euros HT</b></td></tr>";
     print "</TABLE>";

@@ -43,10 +43,8 @@ $yn["f"] = "non";
 
 llxHeader();
 
-print "<table width=\"100%\">";
-print "<tr><td>Propositions commerciales pour <b><a href=\"index.php3?socid=$socidp\">$objsoc->nom</a></b></td>";
-print "</tr>";
-print "</table>";
+print_titre("Propositions commerciales pour <b><a href=\"index.php3?socid=$socidp\">$objsoc->nom</a></b>");
+
 
 if ($action == 'add') {
   $propal = new Propal($db, $socidp);
@@ -322,5 +320,5 @@ if ( $db->query($sql) ) {
   print "<p>$sql";
 }
 $db->close();
-llxFooter();
+llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

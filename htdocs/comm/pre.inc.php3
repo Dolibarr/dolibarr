@@ -24,23 +24,15 @@ require("../main.inc.php3");
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf;
 
-
   /*
    *
    *
    */
   top_menu($head);
 
-
-  print "<TABLE border=\"1\" width=\"100%\" cellpadding=\"0\">";
-  print "<TR><TD valign=\"top\" align=\"right\">";
+  print "<TR><TD valign=\"top\" align=\"right\" class=\"barre\">";
 
   print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<center><b>" . $conf->db->name . " - " . $user->code ."</B></center>";
-  print "<A href=\"".$urlp."../\">Accueil</A><br>";
-  print "<A href=\"".$urlp."bookmark.php3\">Bookmark</A>";
-  print "</td></tr>";
 
   print '<TR><TD class="barre" valign="top" align="right">';
   print "<div align=\"center\"><A href=\"".$urlp."index.php3\">Clients</A></div>\n";
@@ -100,11 +92,6 @@ function llxHeader($head = "", $urlp = "") {
   print "<input type=\"submit\" value=\"go\">";
   print "</form>";
 
-
-  print "<form action=\"index.php3\">";
-  print "Soc : <input type=\"text\" name=\"socid\" size=\"5\">";
-  print "<input type=\"submit\" value=\"id\">";
-  print "</form>";
   print "</td></tr>";
 
   print "</table>";

@@ -31,15 +31,10 @@ function llxHeader($head = "", $urlp = "") {
   top_menu($head);
 
 
-  print "<TABLE border=\"1\" width=\"100%\" cellpadding=\"0\">";
   print "<TR><TD valign=\"top\" align=\"right\">";
 
   print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print "<center><b>" . $GLOBALS["dbname"] . " - " . $user->code ."</B></center>";
-  print "<A href=\"".$urlp."../\">Accueil</A><br>";
-  print "<A href=\"".$urlp."bookmark.php3\">Bookmark</A>";
-  print "</td></tr>";
+
 
   print '<TR><TD class="barre" valign="top" align="right">';
   print "<CENTER><A href=\"".$urlp."../comm/index.php3\">Societe</A></CENTER>\n";

@@ -33,7 +33,7 @@ if ($sortorder == "") {
 }
 
 if ($page == -1) { $page = 0 ; }
-$limit = 26;
+$limit = $conf->liste_limit;
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -76,7 +76,7 @@ if ( $db->query($sql) ) {
   print "</TABLE>";
   $db->free();
 } else {
-  print $this->db->error() . ' in ' . $sql;
+  print $db->error() . ' in ' . $sql;
 }
 
 

@@ -81,6 +81,8 @@ drop table if exists llx_fa_pr;
 
 drop table if exists llx_facture;
 
+drop table if exists llx_facture_fourn;
+
 drop table if exists llx_fichinter;
 
 drop table if exists llx_paiement;
@@ -95,6 +97,8 @@ drop table if exists llx_propal;
 
 drop table if exists llx_propaldet;
 
+drop table if exists llx_service;
+
 drop table if exists llx_soc_recontact;
 
 drop table if exists llx_user;
@@ -102,34 +106,6 @@ drop table if exists llx_user;
 drop table if exists llx_ventes;
 
 drop table if exists login ;
-
-drop table if exists of_statutlog;
-
-drop table if exists offre;
-
-drop table if exists outil ;
-
-drop table if exists outiloffre;
-
-drop table if exists poste_resume ;
-
-drop table if exists typent_resume ;
-
-drop table if exists rech_cand;
-
-drop table if exists rech_soc;
-
-drop table if exists rescontact;
-
-drop table if exists rescontactinfo;
-
-drop table if exists resmessage;
-
-drop table if exists res_appoint;
-
-drop table if exists res_statutlog;
-
-drop table if exists secteur_resume ;
 
 drop table if exists socappoint ;
 

@@ -22,10 +22,7 @@
 require("./pre.inc.php3");
 
 llxHeader();
-print '<div class="titre">Factures émises</div>';
 
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
 
 $db = new Db();
 if ($sortfield == "") {
@@ -39,18 +36,18 @@ $yn["t"] = "oui";
 $yn["f"] = "non";
 
 if ($page == -1) { $page = 0 ; }
-$limit = 26;
+$limit = $conf->limit_liste;
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-print "<P>Brouillons<p>";
+print_barre_liste("Factures",$page,$PHP_SELF);
 
 $sep = 0;
 $sept = 0;
 
 $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
-$sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.fk_statut = 0";
+$sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
   
 if ($socidp) {
   $sql .= " AND s.idp = $socidp";
@@ -71,12 +68,12 @@ if ($result) {
 
   $i = 0;
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR bgcolor=\"orange\">";
+    print '<TR class="liste_titre">';
   print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
   print "<TD>Num&eacute;ro</TD>";
   print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
   print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
-  print "<TD align=\"right\">Payé</TD><TD align=\"right\">Moyenne</TD>";
+  print "<TD align=\"right\">Payé</TD>";
   print "</TR>\n";
 
   if ($num > 0) {
@@ -87,17 +84,15 @@ if ($result) {
 
       if ($objp->paye && !$sep) {
 	print "<tr><td></td><td>$i factures</td><td colspan=\"2\" align=\"right\">";
-	print "<small>Total : ".francs($total)." FF</small></td>";
-	print "<td align=\"right\">Sous Total :<b> ".price($total)."</b></td><td>euros HT</td>";
-	print "<td align=\"right\">Moyenne :<b> ".price($total / ($i+1))."</b></td></tr>";
+	print "&nbsp;</small></td>";
+	print "<td align=\"right\">Sous Total :<b> ".price($total)."</b></td><td>euros HT</td></tr>";
 
-	print "<TR bgcolor=\"orange\">";
+	print '<TR class="liste_titre">';
 	print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
 	print "<TD>Num&eacute;ro</TD>";
 	print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
 	print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
-	print "<TD align=\"right\">Payé</TD><TD align=\"right\">Moyenne</TD>";
-	print "</TR>\n";
+	print "<TD align=\"right\">Payé</TD></TR>\n";
 	$sep = 1 ; $j = 0;
 	$subtotal = 0;
       }
@@ -129,7 +124,7 @@ if ($result) {
       $total = $total + $objp->amount;
       $subtotal = $subtotal + $objp->amount;	  
       print "<TD align=\"right\">".$yn[$objp->paye]."</TD>\n";
-      print "<TD align=\"right\">".price($subtotal / ($j + 1))."</TD>\n";
+
       print "</TR>\n";
       $i++;
       $j++;
@@ -137,137 +132,17 @@ if ($result) {
     }
   }
   if ($i == 0) { $i=1; }  if ($j == 0) { $j=1; }
-  print "<tr><td></td><td>$j factures</td><td colspan=\"2\" align=\"right\">";
-  print "<small>Total : ".francs($subtotal)." FF</small></td>";
-  print "<td align=\"right\">Sous Total :<b> ".price($subtotal)."</b></td><td>euros HT</td>";
-  print "<td align=\"right\">Moyenne :<b> ".price($subtotal/ $j)."</b></td></tr>";
+  print "<tr><td></td><td>$j factures</td><td colspan=\"2\" align=\"right\">&nbsp;</td>";
+  print "<td align=\"right\">Sous Total :<b> ".price($subtotal)."</b></td><td>euros HT</td></tr>";
 
-  print "<tr bgcolor=\"#d0d0d0\"><td></td><td>$i factures</td><td colspan=\"2\" align=\"right\">";
-  print "<small>Total : ".francs($total)." FF</small></td>";
-  print "<td align=\"right\"><b>Total : ".price($total)."</b></td><td>euros HT</td>";
-  print "<td align=\"right\"><b>Moyenne : ".price($total/ $i)."</b></td></tr>";
+  print "<tr bgcolor=\"#d0d0d0\"><td></td><td>$i factures</td><td colspan=\"2\" align=\"right\">&nbsp;</td>";
+  print "<td align=\"right\"><b>Total : ".price($total)."</b></td><td>euros HT</td></tr>";
 
   print "</TABLE>";
   $db->free();
 } else {
   print $db->error();
 }
-
-/*
- *
- *
- *
- */
-print "<P>Validées<br>";
-
-$sep = 0;
-$sept = 0;
-$subtotal=0;
-
-$sql = "SELECT s.nom, s.idp, f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-$sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.fk_statut > 0";
-  
-if ($socidp) {
-  $sql .= " AND s.idp = $socidp";
-}
-  
-if ($month > 0) {
-  $sql .= " AND date_part('month', date(f.datef)) = $month";
-}
-if ($year > 0) {
-    $sql .= " AND date_part('year', date(f.datef)) = $year";
-}
-  
-$sql .= " ORDER BY f.paye, f.datef DESC ";
-    
-$result = $db->query($sql);
-if ($result) {
-  $num = $db->num_rows();
-
-  $l=0;
-  $k=0;
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR bgcolor=\"orange\">";
-  print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
-  print "<TD>Num&eacute;ro</TD>";
-  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
-  print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
-  print "<TD align=\"right\">Payé</TD><TD align=\"right\">Moyenne</TD>";
-  print "</TR>\n";
-  $var=True;
-  if ($num > 0) {
-    while ($l < $num) {
-      $objp = $db->fetch_object( $l);
-      $var=!$var;
-
-      if ($objp->paye && !$sep) {
-	print "<tr><td></td><td>$l factures</td><td colspan=\"2\" align=\"right\">";
-	print "<small>Total : ".francs($total)." FF</small></td>";
-	print "<td align=\"right\">Sous Total :<b> ".price($total)."</b></td><td>euros HT</td>";
-	print "<td align=\"right\">Moyenne :<b> ".price($total / ($l+1))."</b></td></tr>";
-
-	print "<TR bgcolor=\"orange\">";
-	print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
-	print "<TD>Num&eacute;ro</TD>";
-	print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
-	print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
-	print "<TD align=\"right\">Payé</TD><TD align=\"right\">Moyenne</TD>";
-	print "</TR>\n";
-	$sep = 1 ; $k = 0;
-	$subtotal = 0;
-      }
-
-      print "<TR $bc[$var]>";
-      print "<TD>[<a href=\"$PHP_SELF?socidp=$objp->idp\">Filtre</a>]</TD>\n";
-      print "<td><a href=\"facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
-      print "<TD><a href=\"../comm/index.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
-	
-      if ($objp->df > 0 ) {
-	print "<TD align=\"right\">";
-	$y = strftime("%Y",$objp->df);
-	$m = strftime("%m",$objp->df);
-	  
-	print strftime("%d",$objp->df)."\n";
-	print " <a href=\"facture.php3?year=$y&month=$m\">";
-	print strftime("%B",$objp->df)."</a>\n";
-	print " <a href=\"facture.php3?year=$y\">";
-	print strftime("%Y",$objp->df)."</a></TD>\n";
-      } else {
-	print "<TD align=\"right\"><b>!!!</b></TD>\n";
-      }
-	
-      print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
-	
-      $yn[1] = "oui";
-      $yn[0] = "<b>non</b>";
-	
-      $total = $total + $objp->amount;
-      $subtotal = $subtotal + $objp->amount;	  
-      print "<TD align=\"right\">".$yn[$objp->paye]."</TD>\n";
-      print "<TD align=\"right\">".price($subtotal / ($k + 1))."</TD>\n";
-      print "</TR>\n";
-      $l++;
-      $k++;
-
-    }
-  }
-  if ($l == 0) { $l=1; }  if ($k == 0) { $k=1; }
-  print "<tr><td></td><td>$k factures</td><td colspan=\"2\" align=\"right\">";
-  print "<small>Total : ".francs($subtotal)." FF</small></td>";
-  print "<td align=\"right\">Sous Total :<b> ".price($subtotal)."</b></td><td>euros HT</td>";
-  print "<td align=\"right\">Moyenne :<b> ".price($subtotal/ $k)."</b></td></tr>";
-
-  print "<tr bgcolor=\"#d0d0d0\"><td></td><td>".($l+$i)." factures</td><td colspan=\"2\" align=\"right\">";
-  print "<small>Total : ".francs($total)." FF</small></td>";
-  print "<td align=\"right\"><b>Total : ".price($total)."</b></td><td>euros HT</td>";
-  print "<td align=\"right\"><b>Moyenne : ".price($total/ ($l+$i))."</b></td></tr>";
-
-  print "</TABLE>";
-  $db->free();
-} else {
-  print $db->error();
-}
-
 
 
 

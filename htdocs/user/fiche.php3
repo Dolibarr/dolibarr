@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * $Id$
  * $Source$
@@ -35,10 +35,10 @@ if ($action == 'add') {
   $service->price = $price;
   $service->description = $desc;
 
-  $id = $service->create($user);
+  $id = $service->create($user->id);
 
   if ($comm_now && $id) {
-    $service->start_comm($id, $user);
+    $service->start_comm($id, $user->id);
   }
 
 }
@@ -62,7 +62,11 @@ if ($action == 'update') {
 
   $service->update($id, $user);
 }
-
+/*
+ * Nouvel utilisateur
+ *
+ *
+ */
 
 if ($action == 'create') {
 
@@ -95,85 +99,42 @@ if ($action == 'create') {
   print '</table>';
 
 } else {
-
   if ($id) {
+    $fuser = new User($db, $id);
+    $fuser->fetch();
 
-    $service = new Service($db);
-    $service->fetch($id);
-
-    print '<div class="titre">Fiche service</div><br>';
+    print '<div class="titre">Fiche utilisateur</div><br>';
 
     print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
-
-    print '<tr><td valign="top">Référence</td>';
-    print '<td bgcolor="#e0e0e0">'.$service->ref.'</td>';
-    print '<td valign="top">Créé le</td>';
-    print '<td>'.$service->tms.'</td></tr>';
     
-    print '<tr><td valign="top">Libelle</td>';
-    print '<td bgcolor="#e0e0e0">'.$service->libelle.'</td>';
-    print '<td valign="top">Début comm</td>';
-    print '<td>'.$service->debut.'</td></tr>';
+    print '<tr><td valign="top">Nom</td>';
+    print '<td bgcolor="#e0e0e0">'.$fuser->nom.'</td>';
+    print '<td valign="top">Prénom</td>';
+    print '<td>'.$fuser->prenom.'</td></tr>';
   
-    print '<tr><td valign="top">Prix</td>';
-    print '<td>'.price($service->price).'</td>';
-
-    print '<td valign="top">Fin comm</td>';
-
-    if ($service->fin_epoch < time()) {
-      print '<td bgcolor="#99ffff"><b>'.$service->fin.'&nbsp;</b></td></tr>';
-    } else {
-      print '<td>'.$service->fin.'&nbsp;</td></tr>';
-    }
-
-    print '<tr><td valign="top">Description</td><td colspan="3">';
-    print nl2br($service->description);
+    print '<tr><td valign="top">Login</td>';
+    print '<td bgcolor="#e0e0e0">'.$fuser->login.'</td>';
+    print '<td valign="top">Pass</td>';
+    print '<td>'.$fuser->pass.'</td></tr>';
+  
+    print '<tr><td width="25%" valign="top">Webcal Login</td>';
+    print '<td width="25%" bgcolor="#e0e0e0">'.$fuser->webcal_login.'</td>';
+    print '<td width="25%" valign="top">Pass</td>';
+    print '<td width="25%">'.$fuser->pass.'</td></tr>';
+  
     print '</table>';
 
 
-    print '<br><table width="100%" border="1" cellspacing="0" cellpadding="0">';
+    print '<br><table width="100%" border="1" cellspacing="0" cellpadding="2">';
 
     print '<td width="20%">Barre d\'action</td>';
-
     print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
-
-    print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=datedeb&id='.$id.'">Date de debut</a>]</td>';
-    print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=datefin&id='.$id.'">Date de fin</a>]</td>';
+    print '<td width="20%" align="center">-</td>';
+    print '<td width="20%" align="center">-</td>';
     print '<td width="20%" align="center">-</td>';
 
-    print '</table><br>';
-    
 
-    /*
-     *
-     *
-     *
-     */
-    if ($action == 'datedeb') {
-      print '<p><b>Affectation de la date de début de commercialisation</b></p>';
-      print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
-      print '<input type="hidden" name="action" value="set_datedeb">';
-      print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
-      print '<tr><td>Date de debut de commercialisation</td>';
-      print '<td><input size="10" type="text" name="datedeb" value="'.strftime("%Y-%m-%d", time()).'"></td>';
-      print '<td><input type="submit"></td></tr>';
-      print '</table></form><br>';
-    }
-    /*
-     *
-     *
-     *
-     */
-    if ($action == 'datefin') {
-      print '<p><b>Affectation de la date de fin de commercialisation</b></p>';
-      print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
-      print '<input type="hidden" name="action" value="set_datefin">';
-      print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
-      print '<tr><td>Date de fin de commercialisation</td>';
-      print '<td><input size="10" type="text" name="datefin" value="'.strftime("%Y-%m-%d", time()).'"></td>';
-      print '<td><input type="submit"></td></tr>';
-      print '</table></form><br>';
-    }
+    print '</table><br>';
     /*
      *
      * Mode edition

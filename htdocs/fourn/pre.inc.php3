@@ -19,11 +19,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-
-require ("../../main.inc.php3");
+require("../main.inc.php3");
 
 function llxHeader($head = "", $urlp = "") {
-  global $conf, $user;
+  global $user, $conf;
+
 
   /*
    *
@@ -34,35 +34,49 @@ function llxHeader($head = "", $urlp = "") {
   print "<TR><TD valign=\"top\" align=\"right\">";
 
   print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
-  /*
-   *
-   */
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<div align=\"center\"><A href=\"".$urlp."propal.php3\">Propal</A></div>\n";
-  print "<A href=\"".$urlp."analyse.php3\">Recap</A><br>\n";
+
+  print '<TR><TD class="barre_select" valign="top" align="right">';
+  print "<div align=\"center\"><A href=\"".$urlp."index.php3\">Fournisseur</A></div>\n";
+  print "<A href=\"".$urlp."../soc.php3?&action=create\">Nouvelle société</A><BR>\n";
+  print "<A href=\"".$urlp."contact.php3\">Contacts</A><BR><br>\n";
+
+  print "</TD></TR>";
+
+
+  print '<TR><TD class="barre" valign="top" align="right">';
+  print "<div align=\"center\"><A href=\"".$urlp."actioncomm.php3\">Actions</A></div>\n";
   print "</TD></TR>";
   /*
    *
    */
-  print "<TR><TD valign=\"top\" align=\"right\" bgcolor=\"#e0e0e0\">";
 
-  print "<A href=\"".$urlp."../../compta/\">Factures</A><BR>\n";
-
-  print "<A href=\"".$urlp."../../product/\">Produits</A><BR>\n";
-
+  print '<TR><TD class="barre" valign="top" align="right">';
+  print '<div align="center"><A href="'.$urlp.'../compta/">Factures</A></div>';
+  print "</TD></TR>";
+  /*
+   *
+   */
+  print '<TR><TD class="barre" valign="top" align="right">';
+  print '<div align="center"><A href="'.$urlp.'../product/">Produits</A></div>';
+  print '<div align="center"><A href="'.$urlp.'../service/">Services</A></div>';
   print "</td></tr>";
-
-  print "<tr><td align=\"right\" valign=\"top\">";
+  /*
+   *
+   */
+  /*
+   *
+   */
+  print '<TR><TD class="barre" valign="top" align="right">';
   print "<CENTER><A href=\"".$urlp."index.php3\">Societes</A></CENTER>\n";
-  print "<form action=\"".$urlp."index.php3\">";
+  print "<form action=\"index.php3\">";
   print '<input type="hidden" name="mode" value="search">';
   print '<input type="hidden" name="mode-search" value="soc">';
   print '<input type="text" name="socname" size="8">&nbsp;';
   print "<input type=\"submit\" value=\"go\">";
   print "</form>";
 
-  print "<CENTER><A href=\"".$urlp."index.php3\">Contacts</A></CENTER>\n";
-  print "<form action=\"../index.php3\">";
+  print "<CENTER><A href=\"".$urlp."contact.php3\">Contacts</A></CENTER>\n";
+  print "<form action=\"".$urlp."contact.php3\">";
   print '<input type="hidden" name="mode" value="search">';
   print '<input type="hidden" name="mode-search" value="contact">';
   print "<input type=\"text\" name=\"contactname\" size=\"8\">&nbsp;";
@@ -71,7 +85,7 @@ function llxHeader($head = "", $urlp = "") {
 
 
   print "<form action=\"index.php3\">";
-  print "<input type=\"text\" name=\"socid\" size=\"5\">";
+  print "Soc : <input type=\"text\" name=\"socid\" size=\"5\">";
   print "<input type=\"submit\" value=\"id\">";
   print "</form>";
   print "</td></tr>";

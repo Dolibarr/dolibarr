@@ -31,8 +31,10 @@ class User {
   var $code;
   var $email;
   var $admin;
+  var $login;
   var $comm;
   var $compta;
+  var $webcal_login;
 
   Function User($DB, $id=0) {
 
@@ -47,9 +49,9 @@ class User {
    *
    */
 
-  Function fetch($login) {
+  Function fetch($login='') {
 
-    $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta,webcal_login";
+    $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta, u.login, u.webcal_login";
     $sql .= " FROM llx_user as u";
 
     if ($this->id) {
@@ -76,6 +78,10 @@ class User {
 
 	$this->comm = $obj->module_comm;
 	$this->compta = $obj->module_compta;
+	
+	$this->login = $obj->login;
+	$this->webcal_login = $obj->webcal_login;
+
       }
       $this->db->free();
 

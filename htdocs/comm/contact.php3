@@ -55,8 +55,8 @@ print "</DIV><P>";
 
 
 /*
- * Mode liste
  *
+ * Mode liste
  *
  *
  */
@@ -81,6 +81,10 @@ if ($contactname) {
   $sortorder = "ASC";
 }
 
+if ($socid) {
+  $sql .= " AND s.idp = $socid";
+}
+
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
 $result = $db->query($sql);
@@ -98,7 +102,7 @@ if ($result) {
   print "<td>Action</td><TD>Nom</TD>";
   print "<TD>Prénom</TD>";
   print "<TD>email</TD>";
-  print "<TD><a href=\"contact.php3?sortfield=lower(s.nom)&sortorder=$sortorder&begin=$begin\">Societe</a></td>";
+  print "<TD colspan=\"2\"><a href=\"contact.php3?sortfield=lower(s.nom)&sortorder=$sortorder&begin=$begin\">Societe</a></td>";
   print '<TD align="center">Statut</TD><td>&nbsp;</td>';
   print "</TR>\n";
   $var=True;
@@ -116,6 +120,7 @@ if ($result) {
     print "<TD>$obj->name</TD>";
     print "<TD>$obj->firstname</TD>";
     print "<TD>$obj->email&nbsp;</TD>\n";
+    print '<TD><a href="contact.php3?socid='.$obj->idp.'"><img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a></td>';
     print "<TD><a href=\"index.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
     print '<TD align="center">'.$obj->stcomm.'</TD>';
     print "<TD><a href=\"addpropal.php3?socidp=$obj->idp&setcontact=$obj->cidp&action=create\">[Propal]</A></td>\n";

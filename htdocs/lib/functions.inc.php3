@@ -24,7 +24,31 @@
  * $Source$
  *
  */
-
+function print_titre($titre) {
+  global $conf;
+  print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
+  print '<tr><td><div class="titre">'.$titre.'</div></td>';
+  print '</tr></table>';
+}
+/*
+ *
+ *
+ */
+function print_barre_liste($titre,$page,$file) {
+  global $conf;
+  print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
+  print '<tr><td><div class="titre">'.$titre.'</div></td>';
+  print '<td align="right">';
+  if ($page > 0) {
+    print '<a href="'.$file.'?page='.($page-1).'"><img src="/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
+  }
+  print '<a href="'.$file.'?page='.($page+1).'"><img src="/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
+  print '</td></tr></table>';
+}
+/*
+ *
+ *
+ */
 function print_date_select() {
   $strmonth[1] = "Janvier";
   $strmonth[2] = "F&eacute;vrier";

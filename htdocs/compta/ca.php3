@@ -22,15 +22,15 @@
 require("./pre.inc.php3");
 
 function pt ($db, $sql, $date) {
-  $bc[0]="bgcolor=\"#90c090\"";
-  $bc[1]="bgcolor=\"#b0e0b0\"";
+  $bc[0]="class=\"pair\"";
+  $bc[1]="class=\"impair\"";
 
   $result = $db->query($sql);
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
-    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print "<TR bgcolor=\"orange\">";
+    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+    print "<TR class=\"liste_titre\">";
     print "<TD width=\"60%\">$date</TD>";
     print "<TD align=\"right\">Montant</TD>";
     print "<td>&nbsp;</td>\n";
@@ -49,7 +49,6 @@ function pt ($db, $sql, $date) {
       $i++;
     }
     print '<tr><td align="right">Total :</td><td align="right"><b>'.price($total).'</b></td><td>euros&nbsp;HT</td></tr>';
-    print '<tr><td align="right"><small>Total :</td><td align="right"><small>'.francs($total).'</b></td><td><small>Francs HT</td></tr>';
     
     print "</TABLE>";
     $db->free();
@@ -71,7 +70,7 @@ if ($sortorder == "") {
 }
 
 
-print "<b>Chiffres d'affaires en euros HT</b><P>";
+print_titre("Chiffres d'affaires en euros HT");
 
 print "<table width=\"100%\">";
 print "<tr><td valign=\"top\">";

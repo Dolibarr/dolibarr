@@ -28,6 +28,10 @@ class Conf {
 
   Function Conf() {
 
+    $this->theme = "dolibarr";
+
+    $this->liste_limit = 10;
+
     $this->db = new DbConf();
 
     $this->propal = new PropalConf();

@@ -31,20 +31,21 @@ function llxHeader($head = "") {
    */
   top_menu($head);
      
-
-  print "<TABLE border=\"1\" width=\"100%\">";
   print "<TR><TD valign=\"top\" align=\"right\">";
   /*
    * Colonne de gauche
    *
    */
   print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
+
   print "<TR><TD valign=\"top\" align=\"right\">";
-
-  print "<center><b>" . $conf->db->name . " - " . $user->code ."</B></center>";
-  print "<A href=\"/\">Accueil</A><br>";
-
+  print "<div align=\"center\"><A href=\"/comm/index.php3\">Clients</A></div>\n";
   print '</td></tr>';
+
+  print "<TR><TD valign=\"top\" align=\"right\">";
+  print "<div align=\"center\"><A href=\"/fourn/index.php3\">Fournisseurs</A></div>\n";
+  print '</td></tr>';
+
 
   print "<TR><TD valign=\"top\" align=\"right\">";
   print "<center><A href=\"/comm/propal.php3\">Propales</A></center>\n";
@@ -70,7 +71,7 @@ function llxHeader($head = "") {
 
 
   print "<TR><TD valign=\"top\" align=\"right\">";
-  print '<div align="center"><A href="user.php3">Utilisateurs</div></A>';
+  print '<div align="center"><A href="user/index.php3">Utilisateurs</div></A>';
   print '</td></tr>';
 
   print '<TR><TD valign="top" align="center">';

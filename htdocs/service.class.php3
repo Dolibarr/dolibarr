@@ -45,14 +45,14 @@ class Service {
    *
    *
    */
-  Function create($userid) {
+  Function create($user) {
 
-    $sql = "INSERT INTO llx_service (datec, fk_user_author) VALUES (now(), $userid)";
+    $sql = "INSERT INTO llx_service (datec, fk_user_author) VALUES (now(), ".$user->id.")";
 
     if ($this->db->query($sql) ) {
       $id = $this->db->last_insert_id();
 
-      if ( $this->update($id, $userid) ) {
+      if ( $this->update($id, $user) ) {
 	return $id;
       }
     } else {
@@ -86,7 +86,7 @@ class Service {
    *
    *
    */
-  Function start_comm($id, $userid, $datedeb=0) {
+  Function start_comm($id, $user, $datedeb=0) {
 
     $sql = "UPDATE llx_service ";
     if ($datedeb) {
@@ -94,7 +94,7 @@ class Service {
     } else {
       $sql .= " SET debut_comm = now()";
     }
-    $sql .= ",fk_user_modif = " . $userid ;
+    $sql .= ",fk_user_modif = " . $user->id ;
 
     $sql .= " WHERE rowid = " . $id;
 
@@ -109,7 +109,7 @@ class Service {
    *
    *
    */
-  Function stop_comm($id, $userid, $datefin=0) {
+  Function stop_comm($id, $user, $datefin=0) {
 
     $sql = "UPDATE llx_service ";
     if ($datefin) {
@@ -117,7 +117,7 @@ class Service {
     } else {
       $sql .= " SET fin_comm = now()";
     }
-    $sql .= ",fk_user_modif = " . $userid ;
+    $sql .= ",fk_user_modif = " . $user->id ;
 
     $sql .= " WHERE rowid = " . $id;
 

@@ -32,50 +32,40 @@ function llxHeader($head = "") {
   top_menu($head);
 
 
-
-  print "<TABLE border=\"1\" width=\"100%\">";
   print "<TR><TD valign=\"top\" align=\"right\">";
 
   print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
-  print "<TR><TD valign=\"top\" align=\"right\">";
 
-  print "<center><b>" . $conf->db->name . " - " . $user->code ."</B></center>";
-  print "<A href=\"/\">Accueil</A>";
-
-  print "</td></tr>";
-
-  print '<TR><TD bgcolor="#e0e0e0" valign="top" align="right">';
+  print '<TR><TD class="barre_select" valign="top" align="right">';
   print '<div align="center"><A href="/compta/index.php3">Factures</A></div><p>';
   print "<A href=\"paiement.php3\">Paiements</A><BR>\n";
   print "<A href=\"fac.php3\">admin fac</A><BR>\n";
-
   print "</td></tr>";
-  print "<TR><TD valign=\"top\" align=\"right\">";
 
-  print "<CENTER>Chiffres d'affaires</CENTER><br>\n";
+  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
+  print "<div align=\"center\">Chiffres d'affaires</div><br>\n";
   print "<A href=\"ca.php3\">Réalisé</A><BR>\n";
   print "<A href=\"prev.php3\">Prévisionnel</A><BR>\n";
   print "<A href=\"comp.php3\">Comparatif</A>\n";
-
   print "</td></tr>";
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
+  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
   print "<CENTER>Analyses</CENTER><br>\n";
   print "<A href=\"casoc.php3\">CA par societe</A><BR>\n";
   print "<A href=\"pointmort.php3\">Point mort</A><BR>\n";
   print "<A href=\"tva.php3\">TVA</A><BR>\n";
   print "</td></tr>";
 
-  print "<TR><TD valign=\"top\" align=\"center\">";
+  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
   print "<A href=\"/comm/propal.php3\">Propal</A><BR>\n";
   print "</td></tr>";
 
-  print "<TR><TD valign=\"top\" align=\"center\">";
+  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
   print "<A href=\"bank/index.php3\">Bank</A><BR>\n";
   print "</td></tr>";
 
 
-  print "<TR><TD valign=\"top\" align=\"center\">";
+  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
   print "<A href=\"/comm/index.php3\">Societes</A>\n";
   print "<form action=\"/comm/index.php3\">";
   print "<input type=\"text\" name=\"socname\" size=\"8\">";
