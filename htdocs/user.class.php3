@@ -176,145 +176,103 @@ class User
    */
   Function getrights($module='')
     {
+      $sql = "SELECT fk_user, fk_id FROM llx_user_rights WHERE fk_user= $this->id";
       /*
-+----+---------------------------------------------------+---------+------+
-| id | libelle                                           | module  | type |
-+----+---------------------------------------------------+---------+------+
-|  1 | Tous les droits                                   | all     | a    |
-| 10 | Tous les droits sur les factures                  | facture | a    |
-| 11 | Lire les factures                                 | facture | r    |
-| 12 | Créer modifier les factures                       | facture | w    |
-| 13 | Modifier les factures d'autrui                    | facture | m    |
-| 14 | Supprimer les factures                            | facture | d    |
-| 20 | Tous les droits sur les propositions commerciales | propale | a    |
-| 21 | Lire les propositions commerciales                | propale | r    |
-| 22 | Créer modifier les propositions commerciales      | propale | w    |
-| 23 | Modifier les propositions commerciales d'autrui   | propale | m    |
-| 24 | Supprimer les propositions commerciales           | propale | d    |
-+----+---------------------------------------------------+---------+------+
-	*/
-	$sql = "SELECT fk_user, fk_id FROM llx_user_rights WHERE fk_user= $this->id";
-	/*
 	if ($module)
-	  {
-	    $sql .= " AND module = '$module'";
-	  }
-	*/
-	if ($this->db->query($sql))
-	  {
-	    $rr=array();
-	    $num = $this->db->num_rows();
-	    $i = 0;
-	    while ($i < $num)
-	      {
-		$obj = $this->db->fetch_object($i);
+	{
+	$sql .= " AND module = '$module'";
+	}
+      */
+      if ($this->db->query($sql))
+	{
+	  $rr=array();
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  while ($i < $num)
+	    {
+	      $obj = $this->db->fetch_object($i);
+	      
+	      if ($module == 'facture' or $module == '')
+		{
+		  if ($obj->fk_id == 11)
+		    $this->rights->facture->lire = 1;
+		  
+		  if ($obj->fk_id == 12)
+		    $this->rights->facture->creer = 1;
+		  
+		  if ($obj->fk_id == 13)
+		    $this->rights->facture->modifier = 1;
+		  
+		  if ($obj->fk_id == 14)
+		    $this->rights->facture->valider = 1;
 
-		if ($module == 'facture' or $module == '')
-		  {
-		    if ($obj->fk_id == 1 or $obj->fk_id == 10)
-		      {
-			$this->rights->facture->lire = 1;
-			$this->rights->facture->creer = 1;
-			$this->rights->facture->modifier = 1;
-			$this->rights->facture->supprimer = 1;
-		      }
-		    else
-		      {
-			if ($obj->fk_id == 11)
-			  $this->rights->facture->lire = 1;
-			
-			if ($obj->fk_id == 12)
-			  $this->rights->facture->creer = 1;
-			
-			if ($obj->fk_id == 13)
-			  $this->rights->facture->modifier = 1;
-			
-			if ($obj->fk_id == 14)
-			  $this->rights->facture->supprimer = 1;
-		      }
-		  }
-		if ($module == 'propale' or $module == '')
-		  {
-		    if ($obj->fk_id == 1 or $obj->fk_id == 20)
-		      {
-			$this->rights->propale->lire = 1;
-			$this->rights->propale->creer = 1;
-			$this->rights->propale->modifier = 1;
-			$this->rights->propale->supprimer = 1;
-		      }
-		    else
-		      {
-			if ($obj->fk_id == 21)
-			  $this->rights->propale->lire = 1;
-			
-			if ($obj->fk_id == 22)
-			  $this->rights->propale->creer = 1;
-			
-			if ($obj->fk_id == 23)
-			  $this->rights->propale->modifier = 1;
-			
-			if ($obj->fk_id == 24)
-			  $this->rights->propale->valider = 1;
+		  if ($obj->fk_id == 15)
+		    $this->rights->facture->envoyer = 1;
 
-			if ($obj->fk_id == 25)
-			  $this->rights->propale->envoyer = 1;
+		  if ($obj->fk_id == 16)
+		    $this->rights->facture->paiement = 1;
 
-			if ($obj->fk_id == 26)
-			  $this->rights->propale->cloturer = 1;
+		  if ($obj->fk_id == 19)
+		    $this->rights->facture->supprimer = 1;
+		  
+		}
+	      if ($module == 'propale' or $module == '')
+		{
+		  if ($obj->fk_id == 21)
+		    $this->rights->propale->lire = 1;
+		  
+		  if ($obj->fk_id == 22)
+		    $this->rights->propale->creer = 1;
+		  
+		  if ($obj->fk_id == 23)
+		    $this->rights->propale->modifier = 1;
+		  
+		  if ($obj->fk_id == 24)
+		    $this->rights->propale->valider = 1;
+		  
+		  if ($obj->fk_id == 25)
+		    $this->rights->propale->envoyer = 1;
+		  
+		  if ($obj->fk_id == 26)
+		    $this->rights->propale->cloturer = 1;
+		  
+		  if ($obj->fk_id == 27)
+		    $this->rights->propale->supprimer = 1;
+		}
+	    
+	      if ($module == 'produit' or $module == '')
+		{
 
-			if ($obj->fk_id == 27)
-			  $this->rights->propale->supprimer = 1;
-		      }
-		  }
-		if ($module == 'produit' or $module == '')
-		  {
-		    if ($obj->fk_id == 1 or $obj->fk_id == 30)
-		      {
-			$this->rights->produit->lire = 1;
-			$this->rights->produit->creer = 1;
-			$this->rights->produit->modifier = 1;
-			$this->rights->produit->supprimer = 1;
-		      }
-		    else
-		      {
-			if ($obj->fk_id == 31)
-			  $this->rights->produit->lire = 1;
+		  if ($obj->fk_id == 31)
+		    $this->rights->produit->lire = 1;
 			
-			if ($obj->fk_id == 32)
-			  $this->rights->produit->creer = 1;
+		  if ($obj->fk_id == 32)
+		    $this->rights->produit->creer = 1;
 			
-			if ($obj->fk_id == 33)
-			  $this->rights->produit->modifier = 1;
+		  if ($obj->fk_id == 33)
+		    $this->rights->produit->modifier = 1;
 			
-			if ($obj->fk_id == 34)
-			  $this->rights->produit->supprimer = 1;
-		      }
-		  }
-		if ($module == 'projet' or $module == '')
-		  {
-		    if ($obj->fk_id == 1 or $obj->fk_id == 40)
-		      {
-			$this->rights->projet->lire = 1;
-			$this->rights->projet->creer = 1;
-			$this->rights->projet->modifier = 1;
-			$this->rights->projet->supprimer = 1;
-		      }
-		    else
-		      {
-			if ($obj->fk_id == 41)
-			  $this->rights->projet->lire = 1;
+		  if ($obj->fk_id == 34)
+		    $this->rights->produit->supprimer = 1;
+
+		}
+	      if ($module == 'projet' or $module == '')
+		{
+
+		  if ($obj->fk_id == 41)
+		    $this->rights->projet->lire = 1;
 			
-			if ($obj->fk_id == 42)
-			  $this->rights->projet->creer = 1;
+		  if ($obj->fk_id == 42)
+		    $this->rights->projet->creer = 1;
 			
-			if ($obj->fk_id == 43)
-			  $this->rights->projet->modifier = 1;
+		  if ($obj->fk_id == 43)
+		    $this->rights->projet->modifier = 1;
 			
-			if ($obj->fk_id == 44)
-			  $this->rights->projet->supprimer = 1;
-		      }
-		  }
-		$i++;
+		  if ($obj->fk_id == 44)
+		    $this->rights->projet->supprimer = 1;
+
+		}
+	      $i++;
 	      }
 	    //	    $this->db->free();	    
 	  }
