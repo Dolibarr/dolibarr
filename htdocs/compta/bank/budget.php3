@@ -123,7 +123,7 @@ else
 	  print "<td align=\"right\">".strftime("%d %B %Y",$objp->do)."</TD>\n";
 	  
 	  print "<td><a href=\"ligne.php3?rowid=$objp->rowid\">$objp->label</a></td>";
-	  print "<td align=\"right\">".price(abs($objp->amount))."</td>";
+	  print "<td align=\"right\">".price(abs($objp->amount))."</td><td>&nbsp;</td>";
 	  print "</tr>";
 	  $i++;
 	  $total = $total + $objp->amount;
@@ -138,6 +138,9 @@ else
   print "</table>";
   
 }
+
+print '<a href="categ.php3">Editer</a>';
+
 
 
 $db->close();
