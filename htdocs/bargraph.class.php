@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (c) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,14 +26,25 @@ class BarGraph extends Graph
 {
   var $db;
   var $errorstr;
-
+  
   /**
    * Initialisation
-   *
+   * Retour: 0 si ko, 1 si ok
    */
 
-  Function BarGraph($data=array())
-  {
+  Function BarGraph($data=array()) {
+    
+	$modules_list = get_loaded_extensions();
+	$isgdinstalled=0;
+	foreach ($modules_list as $module) 
+	{
+    	if ($module == 'gd') { $isgdinstalled=1; }
+	}
+	if (! $isgdinstalled) {
+    	$this->errorstr="Erreur: Le module GD pour PHP ne semble pas disponible. Il est requis pour générer les graphiques.";
+    	return;
+	}
+
     $this->data = $data;
     
     include_once(DOL_DOCUMENT_ROOT."/includes/phplot/phplot.php");
@@ -51,15 +63,18 @@ class BarGraph extends Graph
 
     $this->PlotType = 'bars';
 
-    return 1;
+    return;
+  }
+
+  Function isGraphKo() {
+    return $this->errorstr;
   }
 
   /**
    * Dessine le graphique
    *
    */
-  Function draw($file, $data, $title='')
-  {
+  Function draw($file, $data, $title='') {
     $this->prepare($file, $data, $title);
     
     if (substr($this->MaxValue,0,1) == 1)

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,20 +50,23 @@ if ($id)
 	    }
 	}
 
-      $filev = $dir . "/vente12mois.png";
-      $filenv = $dir . "/vendu12mois.png";
-
-      if (! file_exists($filev) or $action == 'recalcul')
-	{
-	  $px = new BarGraph();
-	  $graph_data = $product->get_num_vente();
-	  $px->draw($filev, $graph_data);
-	  $px = new BarGraph();
-	  $graph_data = $product->get_nb_vente();
-	  $px->draw($filenv, $graph_data);
-	  $mesg = "Graphiques générés";
-	}
-
+      $filenbvente = $dir . "/vente12mois.png";
+      $filenbpiece = $dir . "/vendu12mois.png";
+        
+        if (! file_exists($filenbvente) or $action == 'recalcul')
+        {
+            $px = new BarGraph();
+            $mesg = $px->isGraphKo();
+            if (! $mesg) {
+                $graph_data = $product->get_num_vente();
+                $px->draw($filenbvente, $graph_data);
+                $px = new BarGraph();
+                $graph_data = $product->get_nb_vente();
+                $px->draw($filenbpiece, $graph_data);
+                $mesg = "Graphiques générés";
+            }
+        }
+        
       print_fiche_titre('Fiche produit : '.$product->ref, $mesg);
       
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
@@ -88,9 +92,17 @@ if ($id)
       print '<img src="'.DOL_URL_ROOT.'/document/produit/'.$product->id.'/vendu12mois.png" alt="Ventes sur les 12 derniers mois">';
       
       print '</td></tr><tr>';
-      print '<td>Généré le '.strftime("%d %b %Y %H:%M:%S",filemtime($filev)).'</td>';
+      if (file_exists($filenbvente) && filemtime($filenbvente)) {
+        print '<td>Généré le '.dolibarr_print_date(filemtime($filenbvente),"%d %b %Y %H:%M:%S").'</td>';
+      } else {
+        print '<td>Graphique non généré</td>';
+      }
       print '<td align="center">[<a href="fiche.php?id='.$id.'&amp;action=recalcul">Re-calculer</a>]</td>';
-      print '<td>Généré le '.strftime("%d %b %Y %H:%M:%S",filemtime($filev)).'</td>';
+      if (file_exists($filenbpiece) && filemtime($filenbpiece)) {
+        print '<td>Généré le '.dolibarr_print_date(filemtime($filenbpiece),"%d %b %Y %H:%M:%S").'</td>';
+      } else {
+        print '<td>Graphique non généré</td>';
+      }
       print '<td align="center">[<a href="fiche.php?id='.$id.'&amp;action=recalcul">Re-calculer</a>]</td>';
       print '</tr></table>';
 

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,36 +25,36 @@ require("./pre.inc.php");
 require("./propalestats.class.php");
 
 llxHeader();
-$year = $_GET["year"];
-$mesg = '';
 
-print_fiche_titre('Statistiques des propositions commerciales '.$year, $mesg);
+$year = isset($_GET["year"])?$_GET["year"]:date("Y",time());
 
-print '<a href="month.php?year='.($year - 1).'">'.($year - 1).'</a> - ';
-print '<a href="month.php?year='.($year + 1).'">'.($year + 1).'</a>';
+$mesg = '<a href="month.php?year='.($year - 1).'">'.img_previous().'</a> ';
+$mesg.= "Année $year";
+$mesg.= ' <a href="month.php?year='.($year + 1).'">'.img_next().'</a>';
 
 /*
  *
  *
  */
-$stats = new PropaleStats($db);
+
+print_fiche_titre('Statistiques des propositions commerciales', $mesg);
 
 $dir = DOL_DOCUMENT_ROOT;
 
-////////////////////////
-
+$stats = new PropaleStats($db);
 $data = $stats->getNbByMonth($year);
 
 $filev = "/document/images/propale$year.png";
 
 $px = new BarGraph($data);
-$px->SetMaxValue($px->GetMaxValue());
-$px->SetWidth(500);
-$px->SetHeight(280);
-
-$px->draw($dir.$filev, $data, $year);
-
-/////
+$mesg = $px->isGraphKo();
+if (! $mesg) {
+    $px->SetMaxValue($px->GetMaxValue());
+    $px->SetWidth(500);
+    $px->SetHeight(280);
+    
+    $px->draw($dir.$filev, $data, $year);
+}
 
 $res = $stats->getAmountByMonth($year);
 
@@ -67,13 +68,15 @@ for ($i = 1 ; $i < 13 ; $i++)
 $file_amount = "/document/images/propalamount$year.png";
 
 $px = new BarGraph($data);
-$px->SetYLabel("Montant");
-$px->SetMaxValue($px->GetAmountMaxValue());
-$px->SetWidth(500);
-$px->SetHeight(250);
-
-$px->draw($dir.$file_amount, $data, $year);
-
+$mesg = $px->isGraphKo();
+if (! $mesg) {
+    $px->SetYLabel("Montant");
+    $px->SetMaxValue($px->GetAmountMaxValue());
+    $px->SetWidth(500);
+    $px->SetHeight(250);
+    
+    $px->draw($dir.$file_amount, $data, $year);
+}
 $res = $stats->getAverageByMonth($year);
 
 $data = array();
@@ -83,26 +86,32 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 $file_avg = "/document/images/propalaverage$year.png";
-$px = new BarGraph($data);
-$px->SetYLabel("Montant moyen");
-$px->SetMaxValue($px->GetAmountMaxValue());
-$px->SetWidth(500);
-$px->SetHeight(250);
-$px->draw($dir.$file_avg, $data, $year);
 
+$px = new BarGraph($data);
+$mesg = $px->isGraphKo();
+if (! $mesg) {
+    $px->SetYLabel("Montant moyen");
+    $px->SetMaxValue($px->GetAmountMaxValue());
+    $px->SetWidth(500);
+    $px->SetHeight(250);
+    $px->draw($dir.$file_avg, $data, $year);
+}
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td align="center">Nombre par mois</td>';
 print '<td align="center">';
-print '<img src="'.DOL_URL_ROOT.$filev.'">';
+if ($mesg) { print $mesg; }
+else { print '<img src="'.DOL_URL_ROOT.$filev.'">'; }
 print '</td></tr>';
 print '<tr><td align="center">Sommes</td>';
 print '<td align="center">';
-print '<img src="'.DOL_URL_ROOT.$file_amount.'">';
+if ($mesg) { print $mesg; }
+else { print '<img src="'.DOL_URL_ROOT.$file_amount.'">'; }
 print '</td></tr>';
 print '<tr><td align="center">Montant moyen</td>';
 print '<td align="center">';
-print '<img src="'.DOL_URL_ROOT.$file_avg.'">';
+if ($mesg) { print $mesg; }
+else { print '<img src="'.DOL_URL_ROOT.$file_avg.'">'; }
 print '</td></tr></table>';
 
 $db->close();

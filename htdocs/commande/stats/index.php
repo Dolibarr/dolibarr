@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,19 +47,23 @@ $data = $stats->getNbCommandeByMonthWithPrevYear($year);
 $filev = "/document/images/nbcommande2year.png";
 
 $px = new BarGraph($data);
-$px->SetMaxValue($px->GetMaxValue());
-$px->SetWidth(450);
-$px->SetHeight(280);
-$px->SetYLabel("Nombre de commande");
-$px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
-      
+$mesg = $px->isGraphKo();
+if (! $mesg) {
+    $px->SetMaxValue($px->GetMaxValue());
+    $px->SetWidth(450);
+    $px->SetHeight(280);
+    $px->SetYLabel("Nombre de commande");
+    $px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
+}      
 $rows = $stats->getNbByYear();
 $num = sizeof($rows);
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td align="center">Année</td><td width="10%">Nb de commande</td><td align="center">Somme des commandes</td>';
 print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-print 'Nombre de commande par mois<br><img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">';
+print 'Nombre de commande par mois<br>';
+if ($mesg) { print $mesg; }
+else { print '<img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">'; }
 print '</td></tr>';
 $i = 0;
 while (list($key, $value) = each ($rows))

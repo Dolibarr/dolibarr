@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,12 +44,14 @@ $data = $stats->getNbByMonthWithPrevYear($year);
 $filev = "/document/images/nbfacture2year-$year.png";
 
 $px = new BarGraph($data);
-$px->SetMaxValue($px->GetMaxValue());
-$px->SetLegend(array($year - 1, $year));
-$px->SetWidth(450);
-$px->SetHeight(280);
-
-$px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
+$mesg = $px->isGraphKo();
+if (! $mesg) {
+    $px->SetMaxValue($px->GetMaxValue());
+    $px->SetLegend(array($year - 1, $year));
+    $px->SetWidth(450);
+    $px->SetHeight(280);
+    $px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
+}
       
 $sql = "SELECT count(*), date_format(datef,'%Y') as dm, sum(total) FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0 ";
 if ($socidp)
@@ -63,7 +66,9 @@ if ($db->query($sql))
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr><td align="center">Année</td><td width="10%">Nb de facture</td><td align="center">Somme des factures</td>';
   print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-  print 'Nombre de facture par mois<br><img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">';
+  print 'Nombre de facture par mois<br>';
+  if ($mesg) { print $mesg; }
+  else { print '<img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">'; }
   print '</td></tr>';
   $i = 0;
   while ($i < $num)
