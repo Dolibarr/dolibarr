@@ -42,6 +42,7 @@ create:
 	$(MYSQL) $(BASE) < llx_compta.sql
 	$(MYSQL) $(BASE) < llx_compta_account.sql
 	$(MYSQL) $(BASE) < llx_don.sql
+	$(MYSQL) $(BASE) < llx_don_projet.sql
 	$(MYSQL) $(BASE) < llx_fa_pr.sql
 	$(MYSQL) $(BASE) < llx_facture.sql
 	$(MYSQL) $(BASE) < llx_facture_fourn.sql

@@ -61,6 +61,8 @@ drop table if exists llx_compta_account;
 
 drop table if exists llx_don;
 
+drop table if exists llx_don_projet;
+
 drop table if exists llx_fa_pr;
 
 drop table if exists llx_facture;
