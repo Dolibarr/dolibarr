@@ -37,8 +37,11 @@ if (strtolower(substr($dolibarr_main_url_root, 0, 7)) == 'https:/')
 {
   $uri = substr($dolibarr_main_url_root, 8);
 }
-
-$pos = substr(strstr ($uri, '/'), 1);
+$pos = strstr ($uri, '/');
+if ($pos == '/')
+{
+  $pos = '';
+}
 define('DOL_URL_ROOT', $pos);
 
 require (DOL_DOCUMENT_ROOT."/conf/conf.class.php3");
