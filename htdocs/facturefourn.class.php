@@ -222,6 +222,7 @@ class FactureFourn
 
       $sql = "SELECT fk_soc,libelle,facnumber,amount,remise,".$this->db->pdate(datef)."as df";
       $sql .= ", total_ht, total_tva, total_ttc, fk_user_author";
+      $sql .= ", fk_statut, paye";
       $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f WHERE f.rowid=$rowid;";
       
       if ($this->db->query($sql) )
@@ -242,7 +243,10 @@ class FactureFourn
 	      $this->total_tva = $obj->total_tva;
 	      $this->total_ttc = $obj->total_ttc;
 
-		  $this->author    = $obj->fk_user_author;
+	      $this->author    = $obj->fk_user_author;
+
+	      $this->statut = $obj->fk_statut;
+	      $this->paye   = $obj->paye;
 
 	      $this->db->free();
 
