@@ -32,6 +32,17 @@ require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
 
 $error = 0;
 
+$puser = new user($db, PRELEVEMENT_USER);
+$puser->fetch();
+dolibarr_syslog("Prélèvements effectués par ".$puser->fullname." [".PRELEVEMENT_USER."]");
+
+dolibarr_syslog("Raison sociale : ".PRELEVEMENT_RAISON_SOCIALE);
+dolibarr_syslog("Numéro Nation Emetteur : ".PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR);
+
+dolibarr_syslog("Code etablissement : ".PRELEVEMENT_CODE_BANQUE);
+dolibarr_syslog("Code guichet       : ". PRELEVEMENT_CODE_GUICHET);
+dolibarr_syslog("Numero compte      : ".PRELEVEMENT_NUMERO_COMPTE);
+
 /*
  *
  * Lectures des factures a prélever
