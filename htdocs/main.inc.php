@@ -512,7 +512,7 @@ function top_menu($head, $title="", $target="")
       print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->login.'</a>' ;
 
       print '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
-      print '<img border="0" src="/theme/'.$conf->theme.'/img/logout.png" alt="Logout" title="Logout"></a>';
+      print '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" alt="Logout" title="Logout"></a>';
 
     }
   else
