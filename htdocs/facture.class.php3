@@ -89,23 +89,14 @@ class Facture {
       {
 	$this->id = $this->db->last_insert_id();
 
-	$sql = "INSERT INTO llx_fa_pr (fk_facture,fk_propal) VALUES ($this->id, $this->propalid);";
-	if ( $this->db->query($sql) ) 
-	  {
-	    return $this->id;
-	  }
-	else
-	  {
-	    print $this->db->error() . '<b><br>'.$sql;
-	    return $this->id;
-	  }
-
+	return $this->id;
       }
     else
       {
 	print $this->db->error() . '<b><br>'.$sql;
 	return 0;
       }
+
   }
 
   /*
