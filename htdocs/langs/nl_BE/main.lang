@@ -1,5 +1,5 @@
 # Dolibarr language file - nl_BE - main
-charset="iso-8859-1"
+charset=iso-8859-1
 Error=Fout
 ErrorForbidden=Toegangs verboden
 ErrorFileDoesNotExists=Bestand %s Bestaat Niet

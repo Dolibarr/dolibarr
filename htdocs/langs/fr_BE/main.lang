@@ -1,5 +1,5 @@
 # Dolibarr language file - fr_BE - main
-charset="iso-8859-1"
+charset=iso-8859-1
 Error=Erreur
 ErrorForbidden=L'accès est interdit
 ErrorFileDoesNotExists=Le fichier %s n'existe pas

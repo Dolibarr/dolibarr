@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - main
-charset="iso-8859-1"
+charset=iso-8859-1
 Error=Error
 ErrorFileDoesNotExists=File %s does not exists
 ErrorCanNotCreateDir=Can not create dir %s
