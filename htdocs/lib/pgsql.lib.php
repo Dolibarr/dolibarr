@@ -24,7 +24,7 @@
  *
  */
 
-/*!	\file postresql.lib.php
+/*!	\file pgsql.lib.php
 		\brief Classe permettant de gérér la database postgresql de dolibarr.
 		\author Fabien Seisen
 		\author Rodolphe Quiedeville.
