@@ -93,14 +93,14 @@ if ( $db->query($sql) )
   if ($num)
     {
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<TR class="liste_titre">';
+      print '<tr class="liste_titre">';
       print '<td colspan="2">Factures brouillons</td></tr>';
       $var = True;
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
+	  print '<tr '.$bc[$var].'><td width="92"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
 	  print '<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
