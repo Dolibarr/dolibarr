@@ -37,6 +37,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/actives.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.week.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/clients/clients.week.class.php");
 
 $error = 0;
 
@@ -151,6 +152,12 @@ if ($result)
       $graph->width = 400;
       $graph->GraphMakeGraph($row[0]);
 
+
+      $file = $img_root . "commercials/".$row[0]."/clients.hebdomadaire.png";
+      print "Graph : Lignes commandes$file\n";
+      $graph = new GraphClientsWeek($db, $file);
+      $graph->width = 400;
+      $graph->GraphMakeGraph($row[0]);
 
       $i++;
     }
