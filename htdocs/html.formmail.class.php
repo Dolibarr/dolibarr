@@ -44,7 +44,7 @@ class FormMail
   var $replytomail;
   var $toname;
   var $tomail;
-
+  
   var $withfrom;
   var $withto;
   var $withtocc;
@@ -83,6 +83,7 @@ class FormMail
     $this->withtoreadonly=0;
     $this->withtoccreadonly=0;
     $this->withtopicreadonly=0;
+    $this->withbodyreadonly=0;
    
     return 1;
   }
@@ -167,7 +168,14 @@ class FormMail
         print "<tr>";
         print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
         print "<td>";
-        print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"\">";
+        if ($this->withtopicreadonly) {
+            print $this->withtopic;
+            print "<input type=\"hidden\" size=\"60\" name=\"subject\" value=\"".$this->withtopic."\">";
+        }
+        else
+        {
+            print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"".$this->withtopic."\">";
+        }
         print "</td></tr>\n";
     }
 
@@ -187,6 +195,7 @@ class FormMail
         $defaultmessage="";
 
         // \todo    A partir du type, proposer liste de messages dans table llx_models
+        if ($this->param["models"]=='body') { $defaultmessage=$this->withbody; }
         if ($this->param["models"]=='facture_send')    { $defaultmessage="Veuillez trouver ci-joint la facture __FACREF__\n\nCordialement\n\n"; }
         if ($this->param["models"]=='facture_relance') { $defaultmessage="Nous apportons à votre connaissance que la facture  __FACREF__ ne semble toujours pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n"; }
 
@@ -196,9 +205,15 @@ class FormMail
         print "<tr>";
         print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
         print "<td>";
-        print "<textarea rows=\"8\" cols=\"72\" name=\"message\">";
+        if (! $this->withbodyreadonly) {
+            print '<textarea cols="72" rows="8" name="message">';
+        }
         print $defaultmessage;
-        print "</textarea>";
+        if (! $this->withbodyreadonly) {
+            print '</textarea>';
+        } else {
+            print '<input type="hidden" name="message" value="'.$defaultmessage.'">';
+        }
         print "</td></tr>\n";
     }
     	

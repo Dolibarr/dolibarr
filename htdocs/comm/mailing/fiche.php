@@ -86,12 +86,12 @@ if ($_POST["action"] == 'add')
 {
   $mil = new Mailing($db);
 
-  $mil->from         = $_POST["from"];
+  $mil->email_from   = $_POST["from"];
   $mil->titre        = $_POST["titre"];
   $mil->sujet        = $_POST["sujet"];
   $mil->body         = $_POST["body"];
 
-  if ($mil->create($user))
+  if ($mil->create($user) >= 0)
     {
       Header("Location: fiche.php?id=".$mil->id);
     }

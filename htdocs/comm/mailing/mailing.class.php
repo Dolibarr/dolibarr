@@ -145,7 +145,7 @@ class Mailing
       $sql .= " SET titre = '".addslashes($this->titre)."'";
       $sql .= " , sujet = '".addslashes($this->sujet)."'";
       $sql .= " , body = '".addslashes($this->body)."'";
-      $sql .= " , email_from = '".$this->from."'";
+      $sql .= " , email_from = '".$this->email_from."'";
       $sql .= " WHERE rowid = ".$this->id;
 
       $result=$this->db->query($sql);

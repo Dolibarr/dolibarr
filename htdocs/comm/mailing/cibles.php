@@ -110,72 +110,72 @@ if ($mil->fetch($_GET["id"]) == 0)
     
 
     // Affiche les listes de sélection
-    print '<table class="noborder" width=\"100%\">';
-    print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("RecipientSelectionModules").'</td>';
-    print '<td align="center">'.$langs->trans("NbOfRecipients").'</td>';
-    print '<td align="center" width="120">';
     if ($mil->statut == 0) {
-       print $langs->trans("Actions");
-    }
-    print '</td>';
-    print "</tr>\n";
-    
-    clearstatcache();
-    
-    $handle=opendir($dir);
-    
-    $var=True;
-    while (($file = readdir($handle))!==false)
-    {
-        if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-        {
-            if (eregi("(.*)\.(.*)\.(.*)",$file,$reg)) {
-                $var = !$var;
-                $modulename=$reg[1];
-    
-                // Chargement de la classe
-                $file = $dir."/".$modulename.".modules.php";
-                $classname = "mailing_".$modulename;
-                require_once($file);
-    
-                print '<tr '.$bc[$var].'>';
-    
-                print '<td>';
-                $obj = new $classname($db);
-                print $obj->getDesc();
-                print '</td>';
-    
-                /*
-                print '<td width=\"100\">';
-                print $modulename;
-                print "</td>";
-                */
-                print '<td align="center">'.$obj->getNbOfRecipients().'</td>';
-
-                print '<td align="center">';
-                if ($mil->statut == 0) {
-                    print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST"><input type="submit" value="'.$langs->trans("Add").'"></form>';
-                }
-                else {
-                    //print $langs->trans("MailNoChangePossible");
-                    print "&nbsp;";
-                }
-                print '</td>';
-            }
-            print "</tr>\n";
+        print '<table class="noborder" width=\"100%\">';
+        print '<tr class="liste_titre">';
+        print '<td>'.$langs->trans("RecipientSelectionModules").'</td>';
+        print '<td align="center">'.$langs->trans("NbOfRecipients").'</td>';
+        print '<td align="center" width="120">';
+        if ($mil->statut == 0) {
+           print $langs->trans("Actions");
         }
-    }
-    closedir($handle);
+        print '</td>';
+        print "</tr>\n";
+        
+        clearstatcache();
+        
+        $handle=opendir($dir);
+        
+        $var=True;
+        while (($file = readdir($handle))!==false)
+        {
+            if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+            {
+                if (eregi("(.*)\.(.*)\.(.*)",$file,$reg)) {
+                    $var = !$var;
+                    $modulename=$reg[1];
+        
+                    // Chargement de la classe
+                    $file = $dir."/".$modulename.".modules.php";
+                    $classname = "mailing_".$modulename;
+                    require_once($file);
+        
+                    print '<tr '.$bc[$var].'>';
+        
+                    print '<td>';
+                    $obj = new $classname($db);
+                    print $obj->getDesc();
+                    print '</td>';
+        
+                    /*
+                    print '<td width=\"100\">';
+                    print $modulename;
+                    print "</td>";
+                    */
+                    print '<td align="center">'.$obj->getNbOfRecipients().'</td>';
+    
+                    print '<td align="center">';
+                    if ($mil->statut == 0) {
+                        print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST"><input type="submit" value="'.$langs->trans("Add").'"></form>';
+                    }
+                    else {
+                        //print $langs->trans("MailNoChangePossible");
+                        print "&nbsp;";
+                    }
+                    print '</td>';
+                }
+                print "</tr>\n";
+            }
+        }
+        closedir($handle);
 
-    if ($mil->statut == 0) {
         print '<tr>';
         print '<td>&nbsp;</td><td>&nbsp;</td><td align="center"><form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST"><input type="submit" value="'.$langs->trans("Clear").'"></form></td>';
         print '</tr>';
+
+        print '</table><br>';
     }
     
-    print '</table><br>';
-
 
     // Liste des destinataires électionnés
     $NBMAX=100;
