@@ -41,13 +41,6 @@ class ModelePDFFactures extends FPDF
 {
     var $error='';
 
-    /*!  \brief      Constructeur
-     */
-    function ModelePDFFactures()
-    {
-    
-    }
-
    /*! 
         \brief Renvoi le dernier message d'erreur de création de facture
     */
@@ -139,7 +132,7 @@ function facture_pdf_create($db, $facid)
 
 
 /*!
-		\brief      Renvoie la référence de facture suivante non utilisé en fonction du module 
+		\brief      Renvoie la référence de facture suivante non utilisée en fonction du module 
 		            de numérotation actif défini dans FACTURE_ADDON
 		\param	    soc  		objet societe
 		\return     string      reference libre pour la facture
