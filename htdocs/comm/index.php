@@ -129,7 +129,7 @@ if ( $db->query($sql) )
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">'.translate("Commandes à valider").'</td></tr>';
-      $var = True;
+      $var = False;
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object($i);
@@ -235,7 +235,7 @@ if ( $db->query($sql) )
     {
       print '<table class="noborder" cellspacing="0" cellpadding="4" width="100%">';
       print '<tr class="liste_titre"><td colspan="4">Propositions commerciales ouvertes</td></tr>';
-      $var=True;
+      $var=False;
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object( $i);
@@ -275,7 +275,7 @@ if ($conf->propal->enabled) {
 	    $i = 0;
 	    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';      
 	    print '<tr class="liste_titre"><td colspan="6">Dernières propositions commerciales</td></tr>';
-	    $var=True;	      
+	    $var=False;	      
 	    while ($i < $num)
 	      {
 		$objp = $db->fetch_object( $i);		  
