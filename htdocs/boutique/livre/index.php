@@ -86,7 +86,6 @@ if ( $db->query($sql) )
 	print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_green.png" border="0"></a></td>';
 	print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_red_light.png" border="0"></a></td>';
 	print '<TD align="right"><a href="'.OSC_CATALOG_URL.'product_info.php?products_id='.$objp->oscid.'">Fiche en ligne</a></TD>';
-
       }
     else
       {

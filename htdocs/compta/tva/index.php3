@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,17 +42,19 @@ function tva_coll($db, $y,$m) {
  *
  *
  */
-function tva_paye($db, $y,$m) {
-  $sql = "SELECT sum(f.tva) as amount"; 
+function tva_paye($db, $y,$m)
+{
+  $sql = "SELECT sum(f.total_tva) as amount"; 
   $sql .= " FROM llx_facture_fourn as f WHERE f.paye = 1";
   $sql .= " AND date_format(f.datef,'%Y') = $y";
   $sql .= " AND date_format(f.datef,'%m') = $m";
 
   $result = $db->query($sql);
-  if ($result) {
-    $obj = $db->fetch_object ( 0 );
-    return $obj->amount;
-  }
+  if ($result)
+    {
+      $obj = $db->fetch_object ( 0 );
+      return $obj->amount;
+    }
 }
 
 function pt ($db, $sql, $date) {
@@ -101,7 +103,7 @@ $db = new Db();
 
 $tva = new Tva($db);
 
-print "Solde :" . price($tva->solde($year));
+print_titre( "TVA Solde : " . price($tva->solde($year)) . " euros");
 
 if ($year == 0 ) {
   $year_current = strftime("%Y",time());
@@ -112,7 +114,7 @@ if ($year == 0 ) {
   $year_start = $year;
 }
 echo '<table width="100%">';
-echo '<tr><td width="50%" valign="top"><b>TVA collectée</b></td>';
+echo '<tr><td width="50%" valign="top">TVA collectée</td>';
 echo '<td>Tva Réglée</td></tr>';
 
 for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {

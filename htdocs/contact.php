@@ -119,11 +119,11 @@ if ($result)
 
       print "<TR $bc[$var]>";
 
-      print "<TD>$obj->name</TD>";
+      print '<TD><a href="/comm/people.php3?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></TD>';
       print "<TD>$obj->firstname</TD>";
       
       print '<TD><a href="contact.php?socid='.$obj->idp.'"><img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
-      print "<a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print "<a href=\"/comm/fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
       
       print '<td><a href="action/fiche.php3?action=create&actionid=4&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
       

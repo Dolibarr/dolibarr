@@ -69,25 +69,34 @@ if ($_POST["action"] == 'update' && $user->admin)
   $edituser->email         = $_POST["email"];
   $edituser->admin         = $_POST["admin"];
   $edituser->webcal_login  = $_POST["webcal_login"];
-  if (isset($_POST["module_compta"]) && $_POST["module_compta"] ==1){
-    $edituser->compta  = 1;
-  }else{
-    $edituser->compta  = 0;
-  }
-  if (isset($_POST["module_comm"]) && $_POST["module_comm"] ==1){
-    $edituser->comm  = 1;
-  }else{
-    $edituser->comm  = 0;
-  }
+
+  if (isset($_POST["module_compta"]) && $_POST["module_compta"] ==1)
+    {
+      $edituser->compta  = 1;
+    }
+  else
+    {
+      $edituser->compta  = 0;
+    }
+  
+  if (isset($_POST["module_comm"]) && $_POST["module_comm"] ==1)
+    {
+      $edituser->comm  = 1;
+    }
+  else
+    {
+      $edituser->comm  = 0;
+    }
 
   //  if (! $edituser->update($id, $user))
   if (! $edituser->update())
     {
       print $edituser->error();
     }
-  if (isset($password) && $password !='' ){
-    $edituser->password($password,$conf->password_encrypted);
-  }
+  if (isset($password) && $password !='' )
+    {
+      $edituser->password($password,$conf->password_encrypted);
+    }
 }
 
 if ($action == 'password' && $user->admin) 
@@ -97,7 +106,7 @@ if ($action == 'password' && $user->admin)
 
   if ($edituser->password('',$conf->password_encrypted))
     {
-      print "Mot de passe changé et envoyé à $edituser->email<p>";
+      $message = "Mot de passe changé et envoyé à $edituser->email";
     }
 }
 
@@ -171,7 +180,7 @@ else
       $fuser = new User($db, $id);
       $fuser->fetch();
 
-      print '<div class="titre">Fiche utilisateur</div><br>';
+      print '<div class="titre">Fiche utilisateur</div><b>'.$message.'</b><br>';
 
       print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
     
@@ -195,6 +204,11 @@ else
       print '<td width="25%" valign="top">Module Commercial</td>';
       print '<td width="25%"  class="valeur">'.$yn[$fuser->comm].'</td></tr>';
 
+      print '<tr><td width="25%" valign="top">Id Société</td>';
+      print '<td width="25%"  class="valeur">'.$fuser->societe_id.'&nbsp;</td>';
+      print '<td width="25%" valign="top">&nbsp;</td>';
+      print '<td width="25%"  class="valeur">&nbsp;</td></tr>';
+
       print '<tr><td width="25%" valign="top">Note</td>';
       print '<td colspan="3"  class="valeur">'.nl2br($fuser->note).'&nbsp;</td></tr>';
 
@@ -213,7 +227,7 @@ else
 
       print '<td width="25%" align="center">-</td>';
 
-      if ($user->id == $id)
+      if ($user->id == $id or $user->admin)
 	{
 	  print '<td width="25%" align="center">[<a href="fiche.php3?action=password&id='.$id.'">Nouveau mot de passe</a>]</td>';
 	}

@@ -86,7 +86,7 @@ print '<tr class="liste_titre"><td></td>';
 
 $year_current = strftime("%Y",time());
 
-if ($year_current > (MAIN_START_YEAR + 2))
+if ($year_current < (MAIN_START_YEAR + 2))
 {
   $year_start = MAIN_START_YEAR;
   $year_end = (MAIN_START_YEAR + 2);

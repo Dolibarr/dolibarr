@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * $Id$
  * $Source$
@@ -25,14 +25,17 @@ llxHeader();
 
 $db = new Db();
 
-function valeur($sql) {
+function valeur($sql)
+{
   global $db;
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() ) {
-      $valeur = $db->result(0,0);
+  if ( $db->query($sql) )
+    {
+      if ( $db->num_rows() )
+	{
+	  $valeur = $db->result(0,0);
+	}
+      $db->free();
     }
-    $db->free();
-  }
   return $valeur;
 }
 /*
@@ -41,18 +44,15 @@ function valeur($sql) {
 $db = new Db();
 
 
-if ($action == 'add') {
+if ($action == 'add')
+{
   $sql = "INSERT INTO llx_chargesociales (fk_type, libelle, date_ech,amount) ";
   $sql .= " VALUES ($type,'$libelle','$date',$amount);";
 
-  if (! $db->query($sql) ) {
-    print $db->error();
-  }
-}
-
-if ($action == 'del_bookmark') {
-  $sql = "DELETE FROM llx_bookmark WHERE rowid=$bid";
-  $result = $db->query($sql);
+  if (! $db->query($sql) )
+    {
+      print $db->error();
+    }
 }
 
 print_titre("Charges sociales $year");
@@ -73,34 +73,40 @@ print "</TR>\n";
 $sql = "SELECT c.libelle as nom, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,".$db->pdate("s.date_pai")." as dp";
 $sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id";
-if ($year > 0) {
+if ($year > 0)
+{
   $sql .= " AND date_format(s.periode, '%Y') = $year";
 }
 $sql .= " ORDER BY lower(s.date_ech) DESC";
 
-if ( $db->query($sql) ) {
+if ( $db->query($sql) )
+{
   $num = $db->num_rows();
   $i = 0;
 
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
-    $var = !$var;
-    print "<tr $bc[$var]>";
-    print '<td>'.strftime("%d %b %y",$obj->de).'</td>';
-    print '<td><a href="index.php3?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a></td>';
-    print '<td>'.$obj->nom.'</td><td>'.$obj->libelle.'</td>';
-    print '<td align="right">'.price($obj->amount).'</td>';
-
-    if ($obj->paye) {
-      print '<td colspan="2">'.strftime("%d/%m/%y",$obj->dp).'</td>';
-    } else {
-      print '<td><img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
-      print '<td><img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);
+      $var = !$var;
+      print "<tr $bc[$var]>";
+      print '<td>'.strftime("%d %b %y",$obj->de).'</td>';
+      print '<td><a href="index.php3?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a></td>';
+      print '<td>'.$obj->nom.'</td><td>'.$obj->libelle.'</td>';
+      print '<td align="right">'.price($obj->amount).'</td>';
+      
+      if ($obj->paye)
+	{
+	  print '<td colspan="2">'.strftime("%d/%m/%y",$obj->dp).'</td>';
+	} else {
+	  print '<td><img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+	  print '<td><img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+	}
+      print '</tr>';
+      $i++;
     }
-    print '</tr>';
-    $i++;
-  }
-} else {
+}
+else
+{
   print $db->error();
 }
 /*
@@ -118,21 +124,22 @@ print '<td colspan="2"><select name="type">';
 $sql = "SELECT c.id, c.libelle as nom FROM c_chargesociales as c";
 $sql .= " ORDER BY lower(c.libelle) ASC";
 
-if ( $db->query($sql) ) {
+if ( $db->query($sql) )
+{
   $num = $db->num_rows();
   $i = 0;
 
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
-    print '<option value="'.$obj->id.'">'.$obj->nom;
-    $i++;
-  }
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);
+      print '<option value="'.$obj->id.'">'.$obj->nom;
+      $i++;
+    }
 }
 print '</select>';
 
 print '<input type="text" size="20" name="libelle"></td>';
 print '<td align="right"><input type="text" size="6" name="amount"></td>';
-
 
 print '<tr><td><input type="submit"></form></td>';
 

@@ -36,7 +36,7 @@ if ($user->societe_id > 0)
 
 if ($socidp)
 {
-  $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM societe as s WHERE s.idp = $socidp;";
+  $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM llx_societe as s WHERE s.idp = $socidp;";
 
   $result = $db->query($sql);
   if ($result)
@@ -95,14 +95,18 @@ if ($action == 'update')
 }
 /*
  *
- *   Generation
+ *   Generation du pdf
  *
  */
 if ($action == 'generate')
 {
   if ($id)
     {
+
+      print fichinter_pdf_create($db, $id);
+
       //$DBI = "dbi:mysql:dbname=lolixdev:host=espy:user=rodo";
+      /*
       $command = 'export LC_TIME=fr_FR ; export DBI_DSN="dbi:'.$conf->db->type.':dbname='.$conf->db->name.':host='.$conf->db->host.'"';
 
       $command .= " ; ./tex-fichinter.pl --fichinter=".$id ;
@@ -113,7 +117,7 @@ if ($action == 'generate')
       $output = system($command);
       print $output;
       print "<p>command : <b>$command<br>";
-      
+      */
     }
   else
     {
@@ -140,9 +144,10 @@ if ($action == 'create')
 	{
 	  $num = $db->result(0, 0);
 	  $db->free();
-	  if ($num > 0) {
-	    $numpr .= "." . ($num + 1);
-	  }
+	  if ($num > 0)
+	    {
+	      $numpr .= "." . ($num + 1);
+	    }
 	}
 
       $fix = new Fichinter($db);
@@ -251,7 +256,6 @@ if ($action == 'create')
       print '</table>';      
       print '</form>';
       
-      print "<hr noshade>";
     }
   else
     {

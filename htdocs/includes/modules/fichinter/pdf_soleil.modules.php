@@ -39,7 +39,7 @@ Class pdf_soleil {
       if (defined("FICHEINTER_OUTPUTDIR"))
 	{
 
-	  $dir = FAC_OUTPUTDIR . "/" . $fich->ref . "/" ;
+	  $dir = FICHEINTER_OUTPUTDIR . "/" . $fich->ref . "/" ;
 	  $file = $dir . $fich->ref . ".pdf";
 	  
 	  if (! file_exists($dir))
@@ -91,7 +91,7 @@ Class pdf_soleil {
 	       */
 	      $pdf->SetTextColor(0,0,0);
 	      $pdf->SetFont('Arial','B',12);
-	      $fac->fetch_client();
+	      //$fac->fetch_client();
 	      $pdf->SetXY(102,42);
 	      $pdf->MultiCell(66,5, $fac->client->nom);
 	      $pdf->SetFont('Arial','B',11);
@@ -166,102 +166,12 @@ Class pdf_soleil {
 	      /*
 	       *
 	       */
-	      
-	      $tab2_top = 212;
-	      $tab2_height = 24;
-	      $pdf->SetFont('Arial','', 12);
-	      
-	      $pdf->Rect(132, $tab2_top, 68, $tab2_height);
-	      
-	      $pdf->line(132, $tab2_top + $tab2_height - 24, 200, $tab2_top + $tab2_height - 24 );
-	      $pdf->line(132, $tab2_top + $tab2_height - 16, 200, $tab2_top + $tab2_height - 16 );
-	      $pdf->line(132, $tab2_top + $tab2_height - 8, 200, $tab2_top + $tab2_height - 8 );
-	      
-	      $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
-	      
-	      $pdf->SetXY (132, $tab2_top + 0);
-	      $pdf->MultiCell(42, 8, "Total HT", 0, 'R', 0);
-	      
-	      $pdf->SetXY (132, $tab2_top + 8);
-	      $pdf->MultiCell(42, 8, "Total TVA", 0, 'R', 0);
-	      
-	      $pdf->SetXY (132, $tab2_top + 16);
-	      $pdf->MultiCell(42, 8, "Total TTC", 1, 'R', 1);
-	      
-	      $pdf->SetXY (174, $tab2_top + 0);
-	  $pdf->MultiCell(26, 8, price($fac->total_ht), 0, 'R', 0);
-	  
-	  $pdf->SetXY (174, $tab2_top + 8);
-	  $pdf->MultiCell(26, 8, price($fac->total_tva), 0, 'R', 0);
-	  
-	  $pdf->SetXY (174, $tab2_top + 16);
-	  $pdf->MultiCell(26, 8, price($fac->total_ttc), 1, 'R', 1);
-	  
-	  /*
-	   *
-	   */
 
-	  $tab3_top = 240;
-	  $tab3_height = 18;
-	  $tab3_width = 60;
 	  
-	  $pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
-	  
-	  $pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
-	  $pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
-	  
-	  $pdf->line(30, $tab3_top, 30, $tab3_top + $tab3_height );
-
-	  $pdf->SetFont('Arial','',8);
-	  $pdf->SetXY (10, $tab3_top - 6);
-	  $pdf->MultiCell(60, 6, "Informations complémentaires", 0, 'L', 0);
-	  $pdf->SetXY (10, $tab3_top );
-	  $pdf->MultiCell(20, 6, "Réglé le", 0, 'L', 0);
-	  $pdf->SetXY (10, $tab3_top + 6);
-	  $pdf->MultiCell(20, 6, "Chèque N°", 0, 'L', 0);
-	  $pdf->SetXY (10, $tab3_top + 12);
-	  $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
-	  /*
-	   *
-	   */
-	  if (defined("FACTURE_RIB_NUMBER"))
-	    {
-	      if (FACTURE_RIB_NUMBER > 0)
-		{
-		  $account = new Account($this->db);
-		  $account->fetch(FACTURE_RIB_NUMBER);
-
-		  $pdf->SetXY (10, 40);		  
-		  $pdf->SetFont('Arial','U',8);
-		  $pdf->MultiCell(40, 4, "Coordonnées bancaire", 0, 'L', 0);
-		  $pdf->SetFont('Arial','',8);
-		  $pdf->MultiCell(40, 4, "Code banque : " . $account->code_banque, 0, 'L', 0);
-		  $pdf->MultiCell(40, 4, "Code guichet : " . $account->code_guichet, 0, 'L', 0);
-		  $pdf->MultiCell(50, 4, "Numéro compte : " . $account->number, 0, 'L', 0);
-		  $pdf->MultiCell(40, 4, "Clé RIB : " . $account->cle_rib, 0, 'L', 0);
-		  $pdf->MultiCell(40, 4, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
-		  $pdf->MultiCell(40, 4, "Prefix IBAN : " . $account->iban_prefix, 0, 'L', 0);
-		  $pdf->MultiCell(40, 4, "BIC : " . $account->bic, 0, 'L', 0);
-		}
+	      $pdf->Output($file);
+	      
 	    }
-
-	  /*
-	   *
-	   *
-	   */
-
-	  $pdf->SetFont('Arial','U',12);
-	  $pdf->SetXY(10, 220);
-	  $pdf->MultiCell(190, 5, "Conditions de réglement : à réception de facture.", 0, 'J');
-	  
-	  $pdf->SetFont('Arial','',9);
-	  $pdf->SetXY(10, 265);
-	  $pdf->MultiCell(190, 5, "Accepte le réglement des sommes dues par chèques libellés à mon nom en ma qualité de Membre d'une Association de Gestion agréée par l'Administration Fiscale.", 0, 'J');
-	  
-	  $pdf->Output($file);
-	  
 	}
-    }
     }
 }
 

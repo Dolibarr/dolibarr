@@ -24,37 +24,40 @@ class Conf {
   var $readonly;
   var $dbi;
 
-  Function Conf() {
+  Function Conf()
+    {
+      /* A conserver */
+      $this->db = new DbConf();
+      
+      /* A verifier */
+      
+      $this->theme = "dolibarr";
+      
+      $this->css = "theme/".$this->theme."/".$this->theme.".css";
+      
+      $this->liste_limit = 10;
+      
+      $this->societe    = 1;
+      
+      $this->voyage     = 0;
+      
+      $this->compta    = new ComptaConf();
+      $this->propal    = new PropalConf();
+      $this->facture   = new FactureConf();
+      $this->fichinter = new FicheInterConf();
+      $this->webcal    = new WebcalConf();
+      $this->produit   = new ProduitConf();
+      $this->service   = new ServiceConf();
+      $this->adherent  = new AdherentConf();
+      $this->domaine   = new DomaineConf();
+      
+      $this->readonly = 0;
 
-    $this->theme = "dolibarr";
+      $this->years = 2001;
 
-    $this->css = "theme/".$this->theme."/".$this->theme.".css";
+      $this->password_encrypted = 1;
 
-    $this->liste_limit = 10;
-
-    $this->db = new DbConf();
-
-    $this->societe    = 1;
-
-    $this->voyage     = 0;
-
-    $this->compta    = new ComptaConf();
-    $this->propal    = new PropalConf();
-    $this->facture   = new FactureConf();
-    $this->fichinter = new FicheInterConf();
-    $this->webcal    = new WebcalConf();
-    $this->produit   = new ProduitConf();
-    $this->service   = new ServiceConf();
-    $this->adherent  = new AdherentConf();
-    $this->domaine   = new DomaineConf();
-
-    $this->readonly = 0;
-
-    $this->years = 2001;
-
-    $this->password_encrypted = 1;
-
-  }  
+    }  
 }
 
 class ComptaConf
@@ -74,8 +77,6 @@ class PropalConf {
     $this->replytoname = "Service Commercial";
     $this->replytomail = "commercial@propal.com";
 
-    $this->templatesdir = "/home/www/dolibarr/dolibarr/templates/propal/default";
-    $this->outputdir    = "/home/www/dolibarr/dolibarr/htdocs/document/propal";
     /*
      * Without ended slash
      */
@@ -84,15 +85,16 @@ class PropalConf {
 }
 /*
  * Base de données
- *
+ * Ne pas modifier ces valeurs
  */
+
 class DbConf {
   Function DbConf() {
     $this->type = "mysql";
-    $this->host = "localhost";
+    $this->host = "";
     $this->user = "";
     $this->pass = "";
-    $this->name = "dolibarr";
+    $this->name = "";
 /*
  * If you want to activate virtualhosting you need tou use these lines and add 
  * this to your pache virtualhost file
@@ -111,6 +113,7 @@ class DbConf {
 */
 
   }
+
 }
 /*
  * Calendrier

@@ -96,7 +96,7 @@ function pt ($db, $sql, $date)
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
-    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+    print '<p><TABLE border="1" width="100%" cellspacing="0" cellpadding="3">';
     print "<TR class=\"liste_titre\">";
     print "<TD width=\"60%\">$date</TD>";
     print "<TD align=\"right\">Montant</TD>";

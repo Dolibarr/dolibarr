@@ -19,7 +19,8 @@
  * $Source$
  */
 
-class Account {
+class Account
+{
   var $rowid;
 
   var $bank;
@@ -33,9 +34,10 @@ class Account {
   var $bic;
   var $iban_prefix;
 
-  Function Account($DB, $rowid=0) {
+  Function Account($DB, $rowid=0)
+  {
     global $config;
-
+    
     $this->clos = 0;
     $this->db = $DB;
     $this->rowid = $rowid;
@@ -46,11 +48,18 @@ class Account {
    *
    *
    */
-  /*
-   *
-   *
-   *
-   */
+
+  Function addline($date, $oper, $label, $amount, $num_chq="")
+  {
+    $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
+    $sql .= " VALUES (now(), $date, '$label', $amount,'$author',$num_chq,$this->rowid,'$operation')";
+
+    if ($this->db->query($sql))
+      {
+	return 1;
+      }
+  }
+
   Function create()
     {
       $sql = "INSERT INTO llx_bank_account (datec, label) values (now(),'$this->label');";
@@ -138,6 +147,10 @@ class Account {
 	    $this->iban_prefix   = $obj->iban_prefix;
 	  }
 	$this->db->free();
+      }
+    else
+      {
+	print $this->db->error();
       }
   }
   /*

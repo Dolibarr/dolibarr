@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,41 +27,11 @@ require("../../tva.class.php3");
  *
  */
 
-function pt ($db, $sql, $date) {
+function pt ($db, $sql, $date)
+{
   global $bc; 
 
-  $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-    $i = 0; 
-    $total = 0 ;
-    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print "<TR class=\"liste_titre\">";
-    print "<TD width=\"60%\">$date</TD>";
-    print "<TD align=\"right\">Montant</TD>";
-    print "<td>&nbsp;</td>\n";
-    print "</TR>\n";
-    $var=True;
-    while ($i < $num) {
-      $obj = $db->fetch_object( $i);
-      $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD>$obj->dm</TD>\n";
-      $total = $total + $obj->amount;
 
-      print "<TD align=\"right\">".price($obj->amount)."</TD>";
-      print "<td align=\"right\">".$total."</td>\n";
-      print "</TR>\n";
-            
-      $i++;
-    }
-    print "<tr><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
-    
-    print "</TABLE>";
-    $db->free();
-  } else {
-    print $db->error();
-  }
 }
 
 /*
@@ -74,32 +44,50 @@ $db = new Db();
 
 $tva = new Tva($db);
 
-print_titre("Tva Réglée");
+print_titre("Réglements TVA");
 
-echo '<table width="100%">';
+$sql = "SELECT amount, date_format(f.datev,'%d-%M-%Y') as dm";
+$sql .= " FROM llx_tva as f ";
+$sql .= " Order  BY dm DESC";
 
-for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
-
-  echo '<tr>';
-  echo '<td valign="top" width="50%">';
-
-  print "<table width=\"100%\">";
-  print "<tr><td valign=\"top\">";
-
-  $sql = "SELECT amount, date_format(f.datev,'%d-%M-%Y') as dm";
-  $sql .= " FROM llx_tva as f ";
-  $sql .= " Order  BY dm DESC";
+$result = $db->query($sql);
+if ($result)
+{
+  $num = $db->num_rows();
+  $i = 0; 
+  $total = 0 ;
+  print '<p><TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
+  print '<TR class="liste_titre">';
+  print "<TD width=\"60%\">Date</TD>";
+  print "<TD align=\"right\">Montant</TD>";
+  print "<td>&nbsp;</td>\n";
+  print "</TR>\n";
+  $var=True;
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);
+      $var=!$var;
+      print "<TR $bc[$var]>";
+      print "<TD>$obj->dm</TD>\n";
+      $total = $total + $obj->amount;
+      
+      print "<TD align=\"right\">".price($obj->amount)."</TD>";
+      print "<td align=\"right\">".$total."</td>\n";
+      print "</TR>\n";
+      
+      $i++;
+    }
+  print "<tr><td align=\"right\">Total :</td>";
+  print "<td align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
   
-  pt($db, $sql,"Date");
-  
-  print "</td></tr></table>";
-
-  echo '</td></tr>';
+  print "</TABLE>";
+  $db->free();
 }
-
-echo '</table>';
-
-
+else
+{
+  print $db->error();
+}
+  
 
 $db->close();
 

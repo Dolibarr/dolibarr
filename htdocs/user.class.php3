@@ -202,11 +202,11 @@ class User {
    *
    *
    */
-  Function password($password='',$password_encrypted=0)
+  Function password($password='', $password_encrypted = 0)
     {
       if (! $password)
 	{
-	  $password =  substr(crypt(uniqid("")),0,8);
+	  $password =  strtolower(substr(md5(uniqid(rand())),0,6));
 	}
 
       if ($password_encrypted)

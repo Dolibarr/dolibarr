@@ -121,8 +121,7 @@ class Fichinter {
 	       *$num = 'FI-' . $prefix_comm . '-' . substr($num, strlen($num) - 4, 4);
 	       */
 	      $num = substr($num, 3);
-	      $num = substr(strstr($num, "-"),1);
-	      print $num."</br>";
+	      $num = substr(strstr($num, "-"),1);	      
 
 	      $num = $num + 1;
 	      //$num = '0000' . $num;
