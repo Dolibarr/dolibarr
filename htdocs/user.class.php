@@ -270,8 +270,21 @@ class User
 			
 		  if ($obj->fk_id == 44)
 		    $this->rights->projet->supprimer = 1;
-
 		}
+
+	      if ($module == 'commande' or $module == '')
+		{
+
+		  if ($obj->fk_id == 81)
+		    $this->rights->commande->lire = 1;
+			
+		  if ($obj->fk_id == 82)
+		    $this->rights->commande->creer = 1;
+						
+		  if ($obj->fk_id == 89)
+		    $this->rights->commande->supprimer = 1;
+		}
+
 	      if ($module == 'adherent' or $module == '')
 		{
 
