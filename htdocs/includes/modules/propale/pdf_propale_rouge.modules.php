@@ -38,7 +38,7 @@
 class pdf_propale_rouge extends ModelePDFPropales
 {
 
-  /*!	\brief      Constructeur
+  /**	\brief      Constructeur
         \param	    db	    handler accès base de donnée
   */
   function pdf_propale_rouge($db=0)
@@ -50,10 +50,14 @@ class pdf_propale_rouge extends ModelePDFPropales
     }
   
 
+  /**	\brief      Renvoi dernière erreur
+        \return     string      Dernière erreur
+  */
   function pdferror() 
   {
       return $this->error();
   }
+  
   
   /**
         \brief      Fonction générant la propale sur le disque
@@ -62,7 +66,7 @@ class pdf_propale_rouge extends ModelePDFPropales
   */
   function write_pdf_file($id)
     {
-      global $user,$conf;
+      global $user,$conf,$langs;
       
       $propale = new Propal($this->db,"",$id);
       if ($propale->fetch($id))

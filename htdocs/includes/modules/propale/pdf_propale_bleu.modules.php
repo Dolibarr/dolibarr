@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@
 class pdf_propale_bleu extends ModelePDFPropales
 {
 
-    /*!		\brief  Constructeur
+    /**		\brief  Constructeur
     		\param	db		handler accès base de donnée
     */
   function pdf_propale_bleu($db=0)
@@ -47,19 +48,23 @@ class pdf_propale_bleu extends ModelePDFPropales
     }
 
 
+  /**	\brief      Renvoi dernière erreur
+        \return     string      Dernière erreur
+  */
   function pdferror() 
   {
       return $this->error();
   }
   
+  
   /**
-    		\brief  Fonction générant la propale sur le disque
-    		\param	id		id de la propale à générer
-   		\return	    int     1=ok, 0=ko
+        	\brief      Fonction générant la propale sur le disque
+         	\param	    id		id de la propale à générer
+    		\return	    int     1=ok, 0=ko
     */
   function write_pdf_file($id)
     {
-      global $user,$conf;
+      global $user,$conf,$langs;
       
       $propale = new Propal($this->db,"",$id);
       if ($propale->fetch($id))
