@@ -131,6 +131,7 @@ function propale_pdf_create($db, $facid, $modele='')
 	}
       else
 	{
+	  dolibarr_syslog("Erreur dans propale_pdf_create");
 	  dolibarr_print_error($db,$obj->pdferror());
 	  return 0;
 	}

@@ -43,31 +43,45 @@ class pdf_propale_vert extends ModelePDFPropales
       $this->db = $db;
       $this->name = "vert";
       $this->description = "Affichage de la remise par produit";
+      $this->error = "";
     }
 
-    /*!
+
+  function pdferror() 
+  {
+      return $this->error();
+  }
+  
+  /**
     		\brief  Fonction générant la propale sur le disque
     		\param	id		id de la propale à générer
+   		\return	    int     1=ok, 0=ko
     */
   function write_pdf_file($id)
     {
-      global $user;
+      global $user,$conf;
+      
       $propale = new Propal($this->db,"",$id);
       if ($propale->fetch($id))
 	{
 
-	  if (defined("PROPALE_OUTPUTDIR"))
+	  if ($conf->propal->dir_output)
 	    {
-	      $dir = PROPALE_OUTPUTDIR . "/" . $propale->ref ;
+	      $dir = $conf->propal->dir_output . "/" . $propale->ref ;
+          if (! file_exists($dir))
+	    {
 	      umask(0);
-	      if (! file_exists($dir))
+                if (! mkdir($dir, 0755))
 		{
-		  mkdir($dir, 0755);
+                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                    return 0;
+                }
 		}
 	    }
 	  else
 	    {
-	      print "PROPALE_OUTPUTDIR non définit !";
+            $this->error=$langs->trans("ErrorConstantNotDefined","PROPALE_OUTPUTDIR");
+            return 0;
 	    }
 	  
 	  $file = $dir . "/" . $propale->ref . ".pdf";

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,54 +22,71 @@
  *
  */
 
-/*! \file htdocs/includes/modules/propale/pdf_propale_rouge.modules.php
-    \ingroup    propale
-    \brief      Fichier de la classe permettant de générer les propales au modèle Rouge
-    \version    $Revision$
+/** 
+        \file       htdocs/includes/modules/propale/pdf_propale_rouge.modules.php
+        \ingroup    propale
+        \brief      Fichier de la classe permettant de générer les propales au modèle Rouge
+        \version    $Revision$
 */
 
 
-/*! \class pdf_propale_rouge
-    \brief  Classe permettant de générer les propales au modèle Rouge
+/**
+        \class      pdf_propale_rouge
+        \brief      Classe permettant de générer les propales au modèle Rouge
 */
 
 class pdf_propale_rouge extends ModelePDFPropales
 {
 
-  /*!		\brief  Constructeur
-    \param	db		handler accès base de donnée
+  /*!	\brief      Constructeur
+        \param	    db	    handler accès base de donnée
   */
   function pdf_propale_rouge($db=0)
     { 
       $this->db = $db;
       $this->name = "rouge";
       $this->description = "Modèle de propale par défaut";
+      $this->error = "";
     }
   
-  /*! \brief  Fonction générant la propale sur le disque
-      \param	id		id de la propale à générer
+
+  function pdferror() 
+  {
+      return $this->error();
+  }
+  
+  /**
+        \brief      Fonction générant la propale sur le disque
+        \param	    id		id de la propale à générer
+   		\return	    int     1=ok, 0=ko
   */
   function write_pdf_file($id)
     {
-      global $user;
+      global $user,$conf;
+      
       $propale = new Propal($this->db,"",$id);
       if ($propale->fetch($id))
 	{
 	  
-	  if (defined("PROPALE_OUTPUTDIR"))
+	  if ($conf->propal->dir_output)
 	    {
-	      $dir = PROPALE_OUTPUTDIR . "/" . $propale->ref ;
-	      umask(0);
-	      if (! file_exists($dir))
-		{
-		  mkdir($dir, 0755);
-		}
+	      $dir = $conf->propal->dir_output . "/" . $propale->ref ;
+          if (! file_exists($dir))
+            {
+                umask(0);
+                if (! mkdir($dir, 0755))
+                {
+                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                    return 0;
+                }
+            }
 	    }
 	  else
 	    {
-	      print "PROPALE_OUTPUTDIR non définit !";
+            $this->error=$langs->trans("ErrorConstantNotDefined","PROPALE_OUTPUTDIR");
+            return 0;
 	    }
-	  
+
 	  $file = $dir . "/" . $propale->ref . ".pdf";
 	  
 	  if (file_exists($dir))
@@ -203,10 +221,6 @@ class pdf_propale_rouge extends ModelePDFPropales
 		}  
 
 
-	      /*
-	       *
-	       */
-	      	      
 	      $pdf->Output($file);
 	      return 1;
 	    }

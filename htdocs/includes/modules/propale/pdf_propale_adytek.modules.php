@@ -43,31 +43,45 @@ class pdf_propale_adytek extends ModelePDFPropales
       $this->db = $db;
       $this->name = "Adytek";
       $this->description = "Modèle de proposition Adytek";
+      $this->error = "";
     }
 
-    /*!
+
+  function pdferror() 
+  {
+      return $this->error();
+  }
+  
+  /**
     		\brief  Fonction générant la propale sur le disque
     		\param	id		id de la propale à générer
+   		\return	    int     1=ok, 0=ko
     */
   function write_pdf_file($id)
     {
-      global $user;
+      global $user,$conf;
+      
       $propale = new Propal($this->db,"",$id);
       if ($propale->fetch($id))
 	{
 
-	  if (defined("PROPALE_OUTPUTDIR"))
+	  if ($conf->propal->dir_output)
 	    {
-	      $dir = PROPALE_OUTPUTDIR . "/" . $propale->ref ;
-	      umask(0);
+	      $dir = $conf->propal->dir_output . "/" . $propale->ref ;
 	      if (! file_exists($dir))
 		{
-		  mkdir($dir, 0755);
+                umask(0);
+                if (! mkdir($dir, 0755))
+                {
+                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                    return 0;
+                }
 		}
 	    }
 	  else
 	    {
-	      print "PROPALE_OUTPUTDIR non définit !";
+            $this->error=$langs->trans("ErrorConstantNotDefined","PROPALE_OUTPUTDIR");
+            return 0;
 	    }
 
 	  $file = $dir . "/" . $propale->ref . ".pdf";
