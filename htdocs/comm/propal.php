@@ -233,7 +233,7 @@ if ($propalid)
   print "</table>";
 
   /*
-   * Confirmation de la suppression de l'adhérent
+   * Confirmation de la suppression de la propale
    *
    */
   if ($action == 'delete')
