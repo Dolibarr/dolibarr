@@ -120,7 +120,7 @@ class GraphLignesCommandesWeek extends GraphBar {
 
     $nbel = sizeof($datas_new);
 
-    for ($i = 0 ; $i < ($nbel - 22) ; $i++)
+    for ($i = 0 ; $i < ($nbel - 18) ; $i++)
       {
 	array_shift($datas_new);
 	array_shift($labels_new);
