@@ -23,12 +23,10 @@
 
 require("./pre.inc.php");
 
-$user->getrights('compta');
-
 if (!$user->rights->banque->lire)
   accessforbidden();
 
-if ($HTTP_POST_VARS["action"] == 'add' && $account)
+if ($HTTP_POST_VARS["action"] == 'add' && $_GET["account"])
 {    
   if ($credit > 0)
     {
@@ -40,14 +38,18 @@ if ($HTTP_POST_VARS["action"] == 'add' && $account)
     }
   
   $dateop = "$dateoy" . "$dateo";
-  $acct=new Account($db,$account);
-  $insertid=$acct->addline($dateop, $operation, $label, $amount, $num_chq,$cat1);
-  //  $insertid=bank_add_line($db,$dateop, $label, $amount,$author,$num_chq,$account,$operation,$cat1);
-  if ($insertid == ''){
-    print "<p> Probleme d'insertion : ".$db->error();
-  }else{
-    Header("Location: $PHP_SELF?account=$account");
-  }
+  $acct=new Account($db,$_GET["account"]);
+
+  $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq,$cat1);
+
+  if ($insertid == '')
+    {
+      print "<p> Probleme d'insertion : ".$db->error();
+    }
+  else
+    {
+      Header("Location: $PHP_SELF?account=$acct->id");
+    }
     /*
   if ($num_chq)
     {
@@ -85,7 +87,7 @@ if ($action == 'del' && $account && $user->rights->banque->modifier)
   //bank_delete_line($db, $rowid);
 }
 
-/*
+/***********************************************************************************
  *
  *
  *
@@ -103,8 +105,8 @@ if ($_GET["account"] > 0)
     {
       $viewline = 20;
     }
-  $acct=new Account($db);
-  $acct->fetch($account);
+  $acct = new Account($db);
+  $acct->fetch($_GET["account"]);
 
   $sql = "SELECT rowid, label FROM llx_bank_categ;";
   $result = $db->query($sql);
@@ -157,7 +159,8 @@ if ($_GET["account"] > 0)
    */
   $sql = "SELECT count(*) FROM llx_bank as b WHERE 1=1";
   $sql .= " AND b.dateo <= now()";
-  if ($account) { $sql .= " AND b.fk_account=$account"; }
+  $sql .= " AND b.fk_account=".$acct->id;
+
   $sql .= $sql_rech;
   if ( $db->query($sql) )
     {
@@ -194,18 +197,18 @@ if ($_GET["account"] > 0)
    * Formulaire de recherche
    *
    */  
-  print '<form method="post" action="'."$PHP_SELF?account=$account".'">';
+  print '<form method="post" action="'.$PHP_SELF.'?account='.$acct->id.'">';
   print '<input type="hidden" name="action" value="search">';
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print "<TR>";
   print '<td>';
   if ($limitsql > $viewline)
     {
-      print '<a href="account.php?account='.$account.'&amp;page='.($page+1).'"><img alt="Page précédente" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
+      print '<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).'"><img alt="Page précédente" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
     }
   if ($total_lines > $limitsql )
     {
-      print '<a href="account.php?account='.$account.'&amp;page='.($page-1).'"><img alt="Page suivante" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
+      print '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'"><img alt="Page suivante" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
     }
   print '</td>';
   print '<td>&nbsp;</td><td><input type="text" name="req_desc" value="'.$HTTP_POST_VARS["req_desc"].'" size="24"></TD>';
@@ -215,7 +218,7 @@ if ($_GET["account"] > 0)
   print '<td align="center">';
   if ($user->rights->banque->modifier)
     {
-      print '<a href="rappro.php?account='.$account.'">Rappro</a>';
+      print '<a href="rappro.php?account='.$acct->id.'">Rappro</a>';
     }
   else
     {
@@ -230,7 +233,7 @@ if ($_GET["account"] > 0)
    */
   if ($user->rights->banque->modifier)
     {
-      print "<form method=\"post\" action=\"$PHP_SELF?vline=$vline&amp;account=$account\">";
+      print '<form method="post" action="'.$PHP_SELF.'?vline='.$vline.'&amp;account='.$acct->id.'">';
       print '<input type="hidden" name="action" value="add">';
     }
   print '<tr class="liste_titre">';
@@ -247,11 +250,7 @@ if ($_GET["account"] > 0)
 
   $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
   $sql .= " FROM llx_bank as b ";
-
-  if ($account) 
-    { 
-      $sql .= " WHERE fk_account=$account";
-    }
+  $sql .= " WHERE fk_account=".$acct->id;
 
   if ($req_debit) 
     { 
@@ -381,7 +380,7 @@ Function _print_lines($db,$sql, $acct)
 	      else
 		{
 		  //Xavier DUTOIT : Ajout d'un lien pour modifier la ligne
-		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$account\">$objp->label</a>&nbsp;";
+		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a>&nbsp;";
 		  /*
 		   * Ajout les liens
 		   */
