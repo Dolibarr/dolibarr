@@ -438,9 +438,7 @@ function print_liste_field_titre_new($name, $file, $field, $begin="", $options="
 
 function print_titre($titre)
 {
-  print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
-  print '<tr><td><div class="titre">'.$titre.'</div></td>';
-  print '</tr></table>';
+  print '<div class="titre">'.$titre.'</div>';
 }
 /*
  *
