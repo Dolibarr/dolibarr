@@ -34,7 +34,7 @@ class modDon  extends DolibarrModules
     $this->db = $DB ;
     $this->numero = 700 ;
 
-    $this->family = "finance";
+    $this->family = "financial";
     $this->name = "Don";
     $this->description = "Gestion des dons (expérimental)";
     $this->const_name = "MAIN_MODULE_DON";
