@@ -51,6 +51,8 @@ class Paiement
      *  Insertion dans la base
      */
     
+    $this->amount = ereg_replace(",",".",$this->amount);
+
     $sql = "INSERT INTO llx_paiement (fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note)";
     $sql .= " VALUES ($this->facid, now(), $this->datepaye,$this->amount,'$this->author', $this->paiementid, '$this->num_paiement', '$this->note')";
     
