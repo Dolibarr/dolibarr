@@ -27,6 +27,8 @@ class AdherentType
   var $statut;
   var $cotisation;  // Soumis à la cotisation
   var $errorstr;
+  var $mail_valid; // mail envoye lors de la validation
+  var $commentaire; // commentaire
   /*
    *
    *
@@ -94,6 +96,8 @@ class AdherentType
       $sql .= "libelle = '".$this->libelle ."'";
       $sql .= ",statut=".$this->statut;
       $sql .= ",cotisation='".$this->cotisation."'";
+      $sql .= ",note='".$this->commentaire."'";
+      $sql .= ",mail_valid='".$this->mail_valid."'";
 
       $sql .= " WHERE rowid = $this->id";
       
@@ -145,7 +149,7 @@ class AdherentType
    */
   Function fetch($rowid)
   {
-    $sql = "SELECT d.rowid, d.libelle, d.statut, d.cotisation";
+    $sql = "SELECT *";
     $sql .= " FROM llx_adherent_type as d";
     $sql .= " WHERE d.rowid = $rowid";
 
@@ -160,6 +164,8 @@ class AdherentType
 	    $this->libelle        = $obj->libelle;
 	    $this->statut         = $obj->statut;
 	    $this->cotisation     = $obj->cotisation;
+	    $this->mail_valid     = $obj->mail_valid;
+	    $this->commentaire    = $obj->note;
 	  }
       }
     else

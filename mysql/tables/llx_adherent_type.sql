@@ -29,5 +29,6 @@ create table llx_adherent_type
   statut           smallint NOT NULL DEFAULT 0,
   libelle          varchar(50),
   cotisation       enum('yes','no') NOT NULL DEFAULT 'yes',
-  note             text
+  note             text,
+  mail_valid       text -- mail envoye a la validation
 );

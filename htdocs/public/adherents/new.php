@@ -102,9 +102,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	    $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
 	  }
 	// Envoi d'un Email de confirmation au nouvel adherent
-	//$mesg=preg_replace("/%INFO%/","Prenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass1\nNote : $note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_new);
-	//mail($email,"Votre adhesion sur http://$SERVER_NAME/",$mesg);
-	$adh->send_an_email($email,$conf->adherent->email_new,'Vos coordonnees sur %SERVEUR%');
+	$adh->send_an_email($email,$conf->adherent->email_new,$conf->adherent->email_new_subject);
 	Header("Location: new.php?action=added");
       }
   }

@@ -195,10 +195,15 @@ class AdherentConf {
     $this->use_mailman = 1;
     $this->mailman_dir = "/home/httpd/adherents.j1b.org/htdocs/adherents/ml/mailman";
     $this->mailman_lists = array('lists1','list2');
-    $this->email_new = "Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\nhttp://$SERVER_NAME/public/adherents/priv_edit.php\n\n";
-    $this->email_edit = "Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\nhttp://$SERVER_NAME/public/adherents/priv_edit.php\n\n";
-    $this->email_valid = "Votre adhesion vient d'etre validee. Voici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\nhttp://$SERVER_NAME/public/adherents/priv_edit.php\n\n";
-    $this->email_resil = "Votre adhesion sur http://$SERVER_NAME/ vient d'etre resilie.\nNous esperons vous revoir bientot\n";
+    $this->email_new = "Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\n%SERVEUR%public/adherents/\n\n";
+    $this->email_new_subject = 'Vos coordonnees sur %SERVEUR%';
+    $this->email_edit = "Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\n%SERVEUR%public/adherents/\n\n";
+    $this->email_edit_subject = 'Vos coordonnees sur %SERVEUR%';
+    $this->email_valid = "Votre adhesion vient d'etre validee. Voici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\n%SERVEUR%public/adherents/\n\n";
+    $this->email_valid_subject = 'Vos coordonnees sur %SERVEUR%';
+    $this->email_resil = "Votre adhesion sur %SERVEUR% vient d'etre resilie.\nNous esperons vous revoir bientot\n";
+    $this->email_resil_subject = 'Vos coordonnees sur %SERVEUR%';
+
   }
 }
 /*

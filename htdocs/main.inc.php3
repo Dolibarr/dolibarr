@@ -84,17 +84,45 @@ if (defined("MAIN_MAIL_RESIL"))
 {
   $conf->adherent->email_resil=MAIN_MAIL_RESIL;
 }
+if (defined("MAIN_MAIL_RESIL_SUBJECT"))
+{
+  $conf->adherent->email_resil_subject=MAIN_MAIL_RESIL_SUBJECT;
+}
 if (defined("MAIN_MAIL_VALID"))
 {
   $conf->adherent->email_valid=MAIN_MAIL_VALID;
+}
+if (defined("MAIN_MAIL_VALID_SUBJECT"))
+{
+  $conf->adherent->email_valid_subject=MAIN_MAIL_VALID_SUBJECT;
 }
 if (defined("MAIN_MAIL_EDIT"))
 {
   $conf->adherent->email_edit=MAIN_MAIL_EDIT;
 }
+if (defined("MAIN_MAIL_EDIT_SUBJECT"))
+{
+  $conf->adherent->email_edit_subject=MAIN_MAIL_EDIT_SUBJECT;
+}
 if (defined("MAIN_MAIL_NEW"))
 {
   $conf->adherent->email_new=MAIN_MAIL_NEW;
+}
+if (defined("MAIN_MAIL_NEW_SUBJECT"))
+{
+  $conf->adherent->email_new_subject=MAIN_MAIL_NEW_SUBJECT;
+}
+if (defined("MAIN_MAILMAN_DIR"))
+{
+  $conf->adherent->mailman_dir=MAIN_MAILMAN_DIR;
+}
+if (defined("MAIN_MAILMAN_LISTS"))
+{
+  $conf->adherent->mailman_lists=explode(',',MAIN_MAILMAN_DIR);
+}
+if (defined("MAIN_USE_MAILMAN"))
+{
+  $conf->adherent->use_mailman=MAIN_USE_MAILMAN;
 }
 /*
  */

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +21,10 @@
  *
  */
 require("./pre.inc.php");
-require("../adherent.class.php");
-require("../adherent_type.class.php");
-require("../cotisation.class.php");
-require("../paiement.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherent.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherent_type.class.php");
+//require($GLOBALS["DOCUMENT_ROOT"]."/cotisation.class.php");
+//require($GLOBALS["DOCUMENT_ROOT"]."/paiement.class.php");
 
 
 $db = new Db();
@@ -37,7 +38,8 @@ if ($HTTP_POST_VARS["action"] == 'add' && $user->admin)
   $adht->libelle     = $HTTP_POST_VARS["libelle"];
   $adht->cotisation  = $HTTP_POST_VARS["cotisation"];
   $adht->commentaire = $HTTP_POST_VARS["comment"];
-  
+  $adht->mail_valid  = $HTTP_POST_VARS["mail_valid"];
+
   if ($adht->create($user->id) ) 
     {	  
       Header("Location: type.php");
@@ -52,7 +54,8 @@ if ($HTTP_POST_VARS["action"] == 'update' && $user->admin)
   $adht->libelle     = $HTTP_POST_VARS["libelle"];
   $adht->cotisation  = $HTTP_POST_VARS["cotisation"];
   $adht->commentaire = $HTTP_POST_VARS["comment"];
-  
+  $adht->mail_valid  = $HTTP_POST_VARS["mail_valid"];
+
   if ($adht->update($user->id) ) 
     {	  
       Header("Location: type.php");
@@ -97,7 +100,7 @@ if ($result)
   
   print '<TR class="liste_titre">';
   print "<td>Id</td>";
-  print "<td>Libellé</td><td>Soumis à cotisation</td><td>&nbsp;</td>";
+  print "<td>Libellé</td><td>Cotisation ?</td><td>&nbsp;</td>";
   print "</TR>\n";
   
   $var=True;
@@ -160,19 +163,23 @@ print "</tr></table></form><p>";
 
 if ($action == 'create') {
 
-  $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
-  $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
-  $sql .= " AND f.rowid = $facid";
+  /*
+   * $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
+   *  $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
+   *  $sql .= " AND f.rowid = $facid";
 
-  $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-    if ($num) {
-      $obj = $db->fetch_object( 0);
+   *  $result = $db->query($sql);
+   *  if ($result) {
+   *    $num = $db->num_rows();
+   *    if ($num) {
+   *      $obj = $db->fetch_object( 0);
+   *
+   *      $total = $obj->total;
+   *    }
+   *  }
 
-      $total = $obj->total;
-    }
-  }
+  */
+  
   print_titre("Nouveau type");
   print "<form action=\"$PHP_SELF\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
@@ -187,8 +194,10 @@ if ($action == 'create') {
   print '<option value="no">non</option></select>';
   
   print '<tr><td valign="top">Commentaires :</td><td>';
-  print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
+  print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
 
+  print '<tr><td valign="top">Mail d\'acceuil :</td><td>';
+  print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea></td></tr>";
 
   print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
   print "</form>\n";
@@ -216,8 +225,13 @@ if ($rowid > 0 && $action == 'edit')
   print '<tr><td>Soumis à cotisation</td><td class="valeur">'.$adht->cotisation.'&nbsp;</td></tr>';
   print '<tr><td valign="top">Commentaires</td>';
 
-  print '<td valign="top" width="50%">';
+  print '<td valign="top" width="75%" class="valeur">';
   print nl2br($adht->commentaire).'&nbsp;</td></tr>';
+
+  print '<tr><td valign="top">Mail d\'acceuil</td>';
+
+  print '<td valign="top" width="75%" class="valeur">';
+  print nl2br($adht->mail_valid).'&nbsp;</td></tr>';
 
   print "</table>\n";
 
@@ -241,7 +255,10 @@ if ($rowid > 0 && $action == 'edit')
   $htmls->selectyesno("cotisation",$adht->cotisation);
   
   print '<tr><td valign="top">Commentaires :</td><td>';
-  print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\">".$adht->commentaire."</textarea></td></tr>";
+  print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\">".$adht->commentaire."</textarea></td></tr>";
+
+  print '<tr><td valign="top">Mail d\'acceuil :</td><td>';
+  print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\">".$adht->mail_valid."</textarea></td></tr>";
 
   print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"</td></tr>';
   print '</table>';
