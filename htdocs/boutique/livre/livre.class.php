@@ -399,7 +399,14 @@ class Livre {
 	$sql .= "SET products_model = '".$this->ref."'";
 	$sql .= ", products_image = '".$this->image."'";
 	$sql .= ", products_price = ".ereg_replace(",",".",$this->price)."";
-	$sql .= ", products_weight = ".ereg_replace(",",".",$this->price)."";
+	if ($this->frais_de_port)
+	  {
+	    $sql .= ", products_weight = ".ereg_replace(",",".",$this->price)."";
+	  }
+	else
+	  {
+	    $sql .= ", products_weight = 0";
+	  }
 
 	$sql .= " WHERE products_id = " . $this->oscid;
 
@@ -470,6 +477,7 @@ class Livre {
     $sql .= ", annee = " . $this->annee ;
     $sql .= ", fk_editeur = " . $this->editeurid ;
     $sql .= ", description = '" . trim($this->description) ."'";
+    $sql .= ", frais_de_port = " . $this->frais_de_port ."";
 
     $sql .= " WHERE rowid = " . $id;
 
@@ -489,7 +497,7 @@ class Livre {
    */
   Function fetch ($id, $oscid=0) {
     
-    $sql = "SELECT rowid, fk_editeur, ref, prix, annee, oscid, title, description FROM llx_livre";
+    $sql = "SELECT rowid, fk_editeur, ref, prix, annee, oscid, title, description, frais_de_port FROM llx_livre";
     if ($id)
       {
 	$sql .= " WHERE rowid = $id";
@@ -505,14 +513,15 @@ class Livre {
       {
 	$result = $this->db->fetch_array();
 
-	$this->id          = $result["rowid"];
-	$this->ref         = $result["ref"];
-	$this->price       = $result["prix"];
-	$this->annee       = $result["annee"];
-	$this->editeurid   = $result["fk_editeur"];
-	$this->titre       = stripslashes($result["title"]);
-	$this->description = stripslashes($result["description"]);
-	$this->oscid       = $result["oscid"];
+	$this->id            = $result["rowid"];
+	$this->ref           = $result["ref"];
+	$this->price         = $result["prix"];
+	$this->frais_de_port = $result["frais_de_port"];
+	$this->annee         = $result["annee"];
+	$this->editeurid     = $result["fk_editeur"];
+	$this->titre         = stripslashes($result["title"]);
+	$this->description   = stripslashes($result["description"]);
+	$this->oscid         = $result["oscid"];
 	
 	$this->db->free();
 
