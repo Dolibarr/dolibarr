@@ -51,18 +51,20 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-llxHeader();
-
-if ($action == 'setstatut')
+if ($_GET["action"] == 'setstatut')
 {
   /*
    *  Classée la facture comme facturée
    */
   $propal = new Propal($db);
-  $propal->id = $propalid;
-  $propal->cloture($user->id, $statut, $note);
+  $propal->id = $_GET["propalid"];
+  $propal->cloture($user, $_GET["statut"], $note);
 
 }
+
+llxHeader();
+
+
 
 if ( $action == 'delete' )
 {
