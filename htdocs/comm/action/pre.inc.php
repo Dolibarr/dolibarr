@@ -39,14 +39,16 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
+
   $menu->add(DOL_URL_ROOT."/comm/action/", $langs->trans("Actions"));
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/action/?time=today", $langs->trans("Today"));
+  $menu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/", $langs->trans("Reporting"));
 
   if ($conf->societe->enabled) {
     $langs->load("companies");
 
-    $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customer"));
+    $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
 
     $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php", $langs->trans("Contacts"));
   }
@@ -68,8 +70,6 @@ function llxHeader($head = "", $urlp = "") {
 
     $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
   }
-
-  $menu->add(DOL_URL_ROOT."/comm/action/rapport/", $langs->trans("Reporting"));
 
   left_menu($menu->liste);
 
