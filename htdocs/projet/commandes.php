@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*! \file htdocs/projet/commandes.php
+/**     \file       htdocs/projet/commandes.php
         \ingroup    projet commande
 		\brief      Page des commandes par projet
 		\version    $Revision$
@@ -34,6 +34,8 @@ require("../commande/commande.class.php");
 
 $langs->load("projects");
 $langs->load("companies");
+$langs->load("orders");
+
 
 llxHeader("","../");
 
@@ -67,18 +69,15 @@ if ($conf->facture->enabled) {
   $h++;
 }
  
-dolibarr_fiche_head($head, $hselected);
+dolibarr_fiche_head($head, $hselected, $langs->trans("Project").": ".$projet->ref);
 
-/*
- *
- *
- */
+
 $projet->societe->fetch($projet->societe->id);
 
 print '<table class="border" width="100%">';
-print '<tr><td width="20%">'.$langs->trans("Title").'</td><td>'.$projet->title.'</td>';  
-print '<td width="20%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
-print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3"><a href="../comm/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
+print '<tr><td>'.$langs->trans("Company").'</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
+print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
 print '</table><br>';
 
 /*
@@ -90,7 +89,7 @@ $total = 0 ;
 if (sizeof($commandes)>0 && is_array($commandes))
 {
   print_titre('Listes des commandes associées au projet');
-  print '<table border="0" width="100%">';
+  print '<table class="noborder" width="100%">';
   
   print '<tr class="liste_titre">';
   print '<td width="15%">'.$langs->trans("Ref").'</td><td width="25%">Date</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
@@ -109,9 +108,9 @@ if (sizeof($commandes)>0 && is_array($commandes))
       $total = $total + $commande->total_ht;
     }
   
-  print '<tr><td>'.$i.' commandes</td><td>&nbsp;</td>';
+  print '<tr><td colspan="2">'.$i.' '.$langs->trans("Orders").'</td>';
   print '<td align="right">'.$langs->trans("TotalHT").': '.price($total).'</td>';
-  print '<td align="right">'.$conf->monnaie.'</td></tr>';
+  print '<td align="left">'.$conf->monnaie.'</td></tr>';
   print "</table>";
 }    
 

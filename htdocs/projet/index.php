@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
  *
  */
 
-/*!
-        \file       htdocs/projet/index.php
+/**     \file       htdocs/projet/index.php
         \ingroup    projet
 		\brief      Page d'accueil du module projet
 		\version    $Revision$
@@ -50,7 +49,7 @@ $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 if ($sortfield == "")
 {
-  $sortfield="lower(s.nom)";
+  $sortfield="p.ref";
 }
 if ($sortorder == "")
 {
@@ -72,8 +71,8 @@ $pagenext = $page + 1;
 print '<br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Ref"),"index.php","s.idp","","","",$sortfield);
-print_liste_field_titre($langs->trans("Title"),"index.php","p.title","","","",$sortfield);
+print_liste_field_titre($langs->trans("Ref"),"index.php","p.ref","","","",$sortfield);
+print_liste_field_titre($langs->trans("Label"),"index.php","p.title","","","",$sortfield);
 print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield);
 print "</tr>\n";
 

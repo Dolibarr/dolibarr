@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*! \file htdocs/projet/fiche.php
+/**     \file       htdocs/projet/fiche.php
         \ingroup    projet
 		\brief      Fiche projet
 		\version    $Revision$
@@ -60,13 +60,17 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 
 if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 {
-  $projet = new Project($db);
-  $projet->id = $_POST["id"];
-  $projet->ref = $_POST["ref"];
-  $projet->title = $_POST["title"];
-  $projet->update();
-
-  $_GET["id"]=$projet->id;  // On retourne sur la fiche projet
+  if (! $_POST["cancel"]) {
+      $projet = new Project($db);
+      $projet->id = $_POST["id"];
+      $projet->ref = $_POST["ref"];
+      $projet->title = $_POST["title"];
+      $projet->update();
+    
+      $_GET["id"]=$projet->id;  // On retourne sur la fiche projet
+    } else {
+      $_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+    }
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
@@ -80,19 +84,13 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 llxHeader("",$langs->trans("Project"),"Projet");
 
 
-if ($_GET["action"] == 'delete')
-{
-  $htmls = new Form($db);
-  $htmls->form_confirm("fiche.php?id=$id","Supprimer un projet","Etes-vous sur de vouloir supprimer cet projet ?","confirm_delete");
-}
-
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
   print_titre($langs->trans("NewProject"));
 
   print '<form action="fiche.php?socidp='.$_GET["socidp"].'" method="post">';
 
-  print '<table class="border">';
+  print '<table class="border" width="100%">';
   print '<input type="hidden" name="action" value="add">';
   print '<tr><td>'.$langs->trans("Company").'</td><td>';
 
@@ -105,12 +103,13 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
 
   print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="10" type="text" name="ref"></td></tr>';
-  print '<tr><td>'.$langs->trans("Title").'</td><td><input size="30" type="text" name="title"></td></tr>';
-  print '<tr><td colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
   print '</table>';
   print '</form>';
 
 } else {
+
   /*
    * Fiche projet en mode visu
    *
@@ -147,7 +146,15 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
       $h++;
   }
  
-  dolibarr_fiche_head($head,  $hselected);
+  dolibarr_fiche_head($head,  $hselected, $langs->trans("Project").": ".$projet->ref);
+
+
+    if ($_GET["action"] == 'delete')
+    {
+      $htmls = new Form($db);
+      $htmls->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAProject"),$langs->trans("ConfirmDeleteAProject"),"confirm_delete");
+      print "<br>";
+    }
 
   if ($_GET["action"] == 'edit')
     {  
@@ -156,19 +163,20 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
       print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 
       print '<table class="border" width="50%">';
-      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->nom.'</td></tr>';      
-      print '<tr><td>'.$langs->trans("Title").'</td><td><input name="title" value="'.$projet->title.'"></td></tr>';      
+      print '<tr><td>'.$langs->trans("Company").'</td><td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</td></tr>';      
       print '<tr><td>'.$langs->trans("Ref").'</td><td><input name="ref" value="'.$projet->ref.'"></td></tr>';
+      print '<tr><td>'.$langs->trans("Label").'</td><td><input name="title" value="'.$projet->title.'"></td></tr>';      
+      print '<tr><td align="center" colspan="2"><input name="update" type="submit" Value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
       print '</table>';
-      print '<p><input type="submit" Value="'.$langs->trans("Modify").'"></p>';
+      print '<br>';
       print '</form>';
     }
   else
     {
       print '<table class="border" width="100%">';
-      print '<tr><td width="20%">'.$langs->trans("Title").'</td><td>'.$projet->title.'</td>';  
-      print '<td width="20%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
-      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$projet->societe->nom_url.'</a></td></tr>';
+      print '<tr><td>'.$langs->trans("Company").'</td><td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
+      print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
       print '</table>';
       print '<br>';
     }
@@ -182,17 +190,13 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   if ($user->rights->projet->creer == 1)
     {
       print '<div class="tabsAction">';
-      if ($_GET["action"] == "edit")
-	{
-	  print '<a class="tabAction" href="fiche.php?id='.$projet->id.'">'.$langs->trans("Cancel").'</a>';
-	}
-      else
+
+      if ($_GET["action"] != "edit")
 	{
 	  print '<a class="tabAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+      print '<a class="butDelete" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 	}
-      
-      print '<a class="tabAction" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-      
+
       print "</div>";
     }
 
