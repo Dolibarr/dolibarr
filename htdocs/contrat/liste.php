@@ -92,11 +92,7 @@ if ( $db->query($sql) )
 
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Ref"),"index.php", "c.rowid","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Label"),"index.php", "p.label","","","",$sortfield);
   print_liste_field_titre($langs->trans("Company"),"index.php", "s.nom","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"index.php", "c.statut","","",'align="center"',$sortfield);
-  print_liste_field_titre("Date Fin","index.php", "c.fin_validite","","",'align="center"',$sortfield);
-  print '<td>'.$langs->trans("Action").'</td>';
   print "</tr>\n";
     
   $now=mktime();
@@ -109,50 +105,10 @@ if ( $db->query($sql) )
       print "<td><a href=\"fiche.php?id=$obj->cid\">";
       print img_file();
       print "</a>&nbsp;<a href=\"fiche.php?id=$obj->cid\">$obj->cid</a></td>\n";
-      print "<td><a href=\"../product/fiche.php?id=$obj->pid\">$obj->label</a></td>\n";
       print "<td><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></td>\n";
 
-      // Affiche statut contrat
-      if ($obj->statut == 1)
-	{
-        if (! $obj->fin_validite || $obj->fin_validite >= $now) {
-      	  $class = 'normal';
-    	  $statut= $langs->trans("ContractStatusRunning");
-        }
-        else {            
-      	  $class = 'error';
-    	  $statut= $langs->trans("ContractStatusRunning").', '.img_warning().' '.$langs->trans("ContractStatusExpired");
-        }
-	}
-      elseif($obj->statut == 2)
-	{
-   	  $class = "normal";
-	  $statut= $langs->trans("Closed");
-	}
-      else
-	{
-  	  $class = "warning";
-	  $statut= $langs->trans("ContractStatusToRun");
-	}
-    print "<td align=\"center\" class=\"$class\">";
-    print "$statut";
-	print "</td>";
-	
-	print "<td align=\"center\">";
-    if ($obj->statut > 0) {
-        print dolibarr_print_date($obj->fin_validite);
-    }
-    else {
-        print "&nbsp;";   
-    }
-    print "</td>\n";
-    
-    print '<td>';
-    // \todo Créer action "Renouveler"
-    print '</td>';    
-
-    print "</tr>\n";
-    $i++;
+      print "</tr>\n";
+      $i++;
     }
   $db->free();
 
