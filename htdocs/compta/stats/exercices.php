@@ -96,7 +96,7 @@ function propals ($db, $year, $month) {
 function factures ($db, $year, $month, $paye) {
   global $bc;
 
-  $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
+  $sql = "SELECT s.nom, s.idp, f.facnumber, f.total as amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
   $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
   $sql .= " AND date_format(f.datef, '%Y') = $year ";
   $sql .= " AND round(date_format(f.datef, '%m')) = $month ";
@@ -232,7 +232,7 @@ function ppt ($db, $year, $socidp)
   print "<td valign=\"top\">Delta</td></tr>";
   print "<tr><td valign=\"top\" width=\"30%\">";
   
-  $sql = "SELECT sum(f.amount) as sum, round(date_format(f.datef, '%m')) as dm";
+  $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = ".($year-1);
 
   if ($socidp)
@@ -246,7 +246,7 @@ function ppt ($db, $year, $socidp)
   
   print "</td><td valign=\"top\" width=\"30%\">";
   
-  $sql = "SELECT sum(f.amount) as sum, round(date_format(f.datef, '%m')) as dm";
+  $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = $year ";
 
   if ($socidp)
