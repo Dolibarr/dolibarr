@@ -114,7 +114,7 @@ if ($_GET["facid"] > 0)
     	    }
     	  else
     	    {
-    	      print '<a href="facture.php?facid='.$fac->id.'&amp;action=classer">Classer la facture</a>';
+    	      print '-';
     	    }
     	  print "&nbsp;</td>";
 	}
@@ -129,14 +129,10 @@ if ($_GET["facid"] > 0)
        * Documents
        *
        *
-       */
-
-      
+       */      
       $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
       $filedetail = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . "-detail.pdf";
 	
-
-
       if (file_exists($file))
 	{
 	  $encfile = urlencode($file);
@@ -177,20 +173,19 @@ if ($_GET["facid"] > 0)
 	      $reason      = imagick_failedreason( $handle ) ;
 	      $description = imagick_faileddescription( $handle ) ;
 	      
-	      print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n" ;
-	      
+	      print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
 	    }
 	  
 	  imagick_convert( $handle, "PNG" ) ;
-	  /*
-	    if ( !imagick_resize( $handle, 700, 700, IMAGICK_FILTER_UNKNOWN, 0, "200+200!" ) )
+
+	  if ( imagick_iserror( $handle ) )
 	    {
-	    $reason      = imagick_failedreason( $handle ) ;
-	    $description = imagick_faileddescription( $handle ) ;
-	    
-	    print "imagick_resize() failed<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n" ;
+	      $reason      = imagick_failedreason( $handle ) ;
+	      $description = imagick_faileddescription( $handle ) ;
+	      
+	      print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
 	    }
-	  */
+
 	  imagick_writeimage( $handle, $file .".png");
 	}
 
