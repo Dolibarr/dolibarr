@@ -23,8 +23,9 @@ create table llx_don
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
+  statut          smallint,         -- etat du don promesse/valid
   datec           datetime,
-  datep           datetime,           -- payment date
+  datep           datetime,         -- payment date
   amount          real default 0,
   mode            varchar(20),
   nom             varchar(255),
@@ -33,7 +34,7 @@ create table llx_don
   ville           varchar(50),
   pays            varchar(50),
   public          smallint NOT NULL DEFAULT 1, -- le don est-il public (0,1)
-  fk_don_projet   integer NOT NULL,   -- projet auquel est fait le don
+  fk_don_projet   integer NOT NULL, -- projet auquel est fait le don
   fk_user_author  integer NOT NULL,
   note            text
 );
