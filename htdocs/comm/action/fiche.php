@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  */
  
 /**
-	    \file       htdocs/comm/action/fiche.php
-        \ingroup    commercial
-		\brief      Page de la fiche action commercial
-		\version    $Revision$
+   \file       htdocs/comm/action/fiche.php
+   \ingroup    commercial
+   \brief      Page de la fiche action commercial
+   \version    $Revision$
 */
  
 require("./pre.inc.php");
@@ -67,89 +67,96 @@ if ($_POST["action"] == 'add_action')
       $societe->fetch($_POST["socid"]);
     }
 
-  if ($_POST["actionid"]) {
-
-    $actioncomm = new ActionComm($db);
-
-    $actioncomm->type = $_POST["actionid"];
-    $actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
-    $actioncomm->libelle  = $_POST["label"];
-    
-    $actioncomm->date = $db->idate(mktime($_POST["heurehour"],
-    			    $_POST["heuremin"],
-    			    0,
-    			    $_POST["acmonth"],
-    			    $_POST["acday"],
-    			    $_POST["acyear"])
-    		     );
-    
-    $actioncomm->percent = isset($_POST["percentage"])?$_POST["percentage"]:0;
-    
-    $actioncomm->user = $user;
-    
-    $actioncomm->societe = isset($_POST["socid"])?$_POST["socid"]:0;
-    $actioncomm->contact = isset($_POST["contactid"])?$_POST["contactid"]:0;
-    $actioncomm->note = $_POST["note"];
-     
-    // On definit la ressource webcal si le module webcal est actif
-    $webcal=0;
-    if ($conf->webcal->enabled && $_POST["todo_webcal"] == 'on')
+  if ($_POST["actionid"])
     {
-        $webcal = new Webcal();
-
-        if (! $webcal->localdb->ok) {
-            // Si la creation de l'objet n'as pu se connecter
-            $error="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user."). L'option de mise a jour Webcalendar a été ignorée.";
-            $webcal=-1;
-        }
-        else
-        {
-            $webcal->heure = $_POST["heurehour"] . $_POST["heuremin"] . '00';
-            $webcal->duree = ($_POST["dureehour"] * 60) + $_POST["dureemin"];
-            
-            if ($_POST["actionid"] == 5)
-            {
-              $libelle = "Rendez-vous avec ".$contact->fullname;
-              $libelle .= "\n" . $actioncomm->libelle;
-            }
-            else
-            {
-              $libelle = $actioncomm->libelle;
-            }
-            
-            $webcal->date=mktime($_POST["heurehour"],
-    			    $_POST["heuremin"],
-    			    0,
-    			    $_POST["acmonth"],
-    			    $_POST["acday"],
-    			    $_POST["acyear"]);
-            $webcal->texte=$societe->nom;
-            $webcal->desc=$libelle;
-        }
+      
+      $actioncomm = new ActionComm($db);
+      
+      $actioncomm->type = $_POST["actionid"];
+      $actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
+      $actioncomm->libelle  = $_POST["label"];
+      
+      $actioncomm->date = $db->idate(mktime($_POST["heurehour"],
+					    $_POST["heuremin"],
+					    0,
+					    $_POST["acmonth"],
+					    $_POST["acday"],
+					    $_POST["acyear"])
+				     );
+      
+      $actioncomm->percent = isset($_POST["percentage"])?$_POST["percentage"]:0;
+      
+      $actioncomm->user = $user;
+      
+      $actioncomm->societe = isset($_POST["socid"])?$_POST["socid"]:0;
+      $actioncomm->contact = isset($_POST["contactid"])?$_POST["contactid"]:0;
+      $actioncomm->note = $_POST["note"];
+      
+      // On definit la ressource webcal si le module webcal est actif
+      $webcal=0;
+      if ($conf->webcal->enabled && $_POST["todo_webcal"] == 'on')
+	{
+	  $webcal = new Webcal();
+	  
+	  if (! $webcal->localdb->ok)
+	    {
+	      // Si la creation de l'objet n'as pu se connecter
+	      $error="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user."). L'option de mise a jour Webcalendar a été ignorée.";
+	      $webcal=-1;
+	    }
+	  else
+	    {
+	      $webcal->heure = $_POST["heurehour"] . $_POST["heuremin"] . '00';
+	      $webcal->duree = ($_POST["dureehour"] * 60) + $_POST["dureemin"];
+	      
+	      if ($_POST["actionid"] == 5)
+		{
+		  $libelle = "Rendez-vous avec ".$contact->fullname;
+		  $libelle .= "\n" . $actioncomm->libelle;
+		}
+	      else
+		{
+		  $libelle = $actioncomm->libelle;
+		}
+	      
+	      $webcal->date=mktime($_POST["heurehour"],
+				   $_POST["heuremin"],
+				   0,
+				   $_POST["acmonth"],
+				   $_POST["acday"],
+				   $_POST["acyear"]);
+	      $webcal->texte=$societe->nom;
+	      $webcal->desc=$libelle;
+	    }
+	}
+      
+      // On crée l'action (avec ajout eventuel dans webcal si défini)
+      $idaction=$actioncomm->add($user, $webcal);
+      
+      if ($idaction > 0)
+	{
+	  if (! $actioncomm->error)
+	    {
+	      // Si pas d'erreur
+	      Header("Location: ".$_POST["from"]);
+	    }
+	  else
+	    {
+	      // Si erreur
+	      $_GET["id"]=$idaction;
+	      $error=$actioncomm->error;
+	    }
+	}
+      else
+	{
+	  dolibarr_print_error($db);        
+	}
     }
-
-    // On crée l'action (avec ajout eventuel dans webcal si défini)
-    $idaction=$actioncomm->add($user, $webcal);
-
-    if ($idaction > 0) {
-        if (! $actioncomm->error) {
-            // Si pas d'erreur
-            Header("Location: ".$_POST["from"]);
-        }
-        else {
-            // Si erreur
-            $_GET["id"]=$idaction;
-            $error=$actioncomm->error;
-        }
-    } else {
-        dolibarr_print_error($db);        
+  else
+    {
+      print "Le type d'action n'a pas été choisi";
     }
-  } else {
-    
-    print "Le type d'action n'a pas été choisi";
-    
-  }
-
+  
 }
 
 /*
@@ -179,14 +186,9 @@ if ($_POST["action"] == 'update')
   Header("Location: ".$_POST["from"]);
 }
 
-
-
-
 llxHeader();
 
 $html = new Form($db);
-
-
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -199,8 +201,7 @@ if ($_GET["action"] == 'create')
   $caction = new CActioncomm($db);
   
   if ($_GET["contactid"])
-    {
-      
+    {      
       $contact = new Contact($db);
       $contact->fetch($_GET["contactid"]);
     }
@@ -215,7 +216,7 @@ if ($_GET["action"] == 'create')
    */
   if ($_GET["actionid"] == 5) 
     {
-	  print_titre ($langs->trans("AddActionRendezVous"));	  
+      print_titre ($langs->trans("AddActionRendezVous"));	  
       print "<br>";
 
       print '<input type="hidden" name="date" value="'.$db->idate(time()).'">'."\n";
@@ -228,23 +229,26 @@ if ($_GET["action"] == 'create')
 
       // Societe, contact
 	  print '<tr><td width="10%">'.$langs->trans("ActionOnCompany").'</td><td width="40%">';
-      if ($_GET["socid"]) {
+      if ($_GET["socid"])
+	{
           $societe = new Societe($db);
           $nomsoc=$societe->get_nom($_GET["socid"]);
           print '<a href="../fiche.php?socid='.$_GET["socid"].'">'.$nomsoc.'</a>';
           print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
-      }
-      else {  
-          print $html->select_societes('','socid',1,1);
-      }
-	  print '</td></tr>';
-    
+	}
+      else
+	{  
+	  print $html->select_societes('','socid',1,1);
+	}
+      print '</td></tr>';
+      
       // Si la societe est imposée, on propose ces contacts
-      if ($_GET["socid"]) {
-    	  print '<tr><td width="10%">'.$langs->trans("ActionOnContact").'</td><td width="40%">';
+      if ($_GET["socid"])
+	{
+	  print '<tr><td width="10%">'.$langs->trans("ActionOnContact").'</td><td width="40%">';
           print $html->select_contacts($_GET["socid"],'','contactid',1,1);
     	  print '</td></tr>';
-      }
+	}
 
       print '<tr><td width="10%">'.$langs->trans("Date").'</td><td width="40%">';
       $html->select_date('','ac');
@@ -259,7 +263,7 @@ if ($_GET["action"] == 'create')
       add_row_for_webcal_link();
         
       print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td>';
-      print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
+      print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
       print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';  
       print '</table>';
     }
@@ -270,43 +274,49 @@ if ($_GET["action"] == 'create')
    */   
   else 
     {      
-	  print_titre ($langs->trans("AddAction"));
+      print_titre ($langs->trans("AddAction"));
       print "<br>";
       
 	  print '<table class="border" width="100%">';
 
       // Type d'action actifs
       print '<tr><td width="10%">'.$langs->trans("Action").'</td><td>';
-      if ($_GET["actionid"]) {
-        print '<input type="hidden" name="actionid" value="'.$_GET["actionid"].'">'."\n";      
-        print $caction->get_nom($_GET["actionid"]);
-      } else {
-        $html->select_array("actionid",  $caction->liste_array(1), 0);
-      }
+      if ($_GET["actionid"])
+	{
+	  print '<input type="hidden" name="actionid" value="'.$_GET["actionid"].'">'."\n";      
+	  print $caction->get_nom($_GET["actionid"]);
+	}
+      else
+	{
+	  $html->select_array("actionid",  $caction->liste_array(1), 0);
+	}
       print '</td></tr>';
-
+      
       print '<tr><td width="10%">'.$langs->trans("Label").'</td><td><input type="text" name="todo_label" size="30"></td></tr>';
-
+      
       // Societe, contact
-	  print '<tr><td width="10%">'.$langs->trans("ActionOnCompany").'</td><td width="40%">';
-      if ($_GET["socid"]) {
-          $societe = new Societe($db);
-          $nomsoc=$societe->get_nom($_GET["socid"]);
-          print '<a href="../fiche.php?socid='.$_GET["socid"].'">'.$nomsoc.'</a>';
-          print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
-      }
-      else {  
-          print $html->select_societes('','socid',1,1);
-      }
-	  print '</td></tr>';
-    
+      print '<tr><td width="10%">'.$langs->trans("ActionOnCompany").'</td><td width="40%">';
+      if ($_GET["socid"])
+	{
+	  $societe = new Societe($db);
+	  $nomsoc=$societe->get_nom($_GET["socid"]);
+	  print '<a href="../fiche.php?socid='.$_GET["socid"].'">'.$nomsoc.'</a>';
+	  print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
+	}
+      else 
+	{  
+	  print $html->select_societes('','socid',1,1);
+	}
+      print '</td></tr>';
+      
       // Si la societe est imposée, on propose ces contacts
-      if ($_GET["socid"]) {
-    	  print '<tr><td width="10%">'.$langs->trans("ActionOnContact").'</td><td width="40%">';
+      if ($_GET["socid"])
+	{
+	  print '<tr><td width="10%">'.$langs->trans("ActionOnContact").'</td><td width="40%">';
           print $html->select_contacts($_GET["socid"],'','contactid',1,1);
     	  print '</td></tr>';
-      }
-
+	}
+      
       // Avancement
       if ($_GET["afaire"] == 1)
 	{
@@ -318,49 +328,46 @@ if ($_GET["action"] == 'create')
 	{
 	  print '<input type="hidden" name="percentage" value="100">';
 	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>Done / 100%</td></tr>';
-    } else 
-	{
-	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0%"></td></tr>';
-	}
-
+	} else 
+	  {
+	    print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0%"></td></tr>';
+	  }
+      
       // Date
       print '<tr><td width="10%">'.$langs->trans("Date").'</td><td width="40%">';
       if ($_GET["afaire"] == 1)
-      {
-            $html->select_date('','ac');
-            print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
-            print_heure_select("heure",8,20);
-            print '</td></tr>';
-      } 
-	  else if ($_GET["afaire"] == 2) 
-			{
-            $html->select_date('','ac',1,1);
-            print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
-            print_heure_select("heure",8,20);
-            print '</td></tr>';
-      } 
+	{
+	  $html->select_date('','ac');
+	  print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+	  print_heure_select("heure",8,20);
+	  print '</td></tr>';
+	} 
+      else if ($_GET["afaire"] == 2) 
+	{
+	  $html->select_date('','ac',1,1);
+	  print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+	  print_heure_select("heure",8,20);
+	  print '</td></tr>';
+	} 
       else 
-	  {
-            $html->select_date('','ac',1,1);
-            print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
-            print_heure_select("heure",8,20);
-            print '</td></tr>';
-      }
+	{
+	  $html->select_date('','ac',1,1);
+	  print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+	  print_heure_select("heure",8,20);
+	  print '</td></tr>';
+	}
       print '</td></tr>';
-
+      
       add_row_for_webcal_link();
-
+      
       // Description
       print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-      print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
+      print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
 
-
-      print '</table>';
-  
+      print '</table>';  
       print '<p align="center"><input type="submit" value="'.$langs->trans("Add").'"></p>';
 
     }
-
     print "</form>";
 }
 
