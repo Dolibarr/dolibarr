@@ -45,7 +45,7 @@ function llxHeader($head = "") {
   $menu->add_submenu("index.php3?year=".$yc-1,$yc-1);
   $menu->add_submenu("index.php3?year=".$yc-2,$yc-2);
 
-  $menu->add("reglement.php","Reglement");
+  $menu->add("reglement.php","Réglements");
 
   left_menu($menu->liste);
 }
