@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 require("./pre.inc.php3");
@@ -153,10 +153,6 @@ function ppt ($db) {
   print "<tr><td colspan=\"2\" align=\"right\">Totaux en euros :</td><td align=\"right\">$totalca</td>";
   print "<td align=\"right\">$totalpm</td><td align=\"right\" bgcolor=\"#f0f0f0\">$pmt</td>";
   print "<td colspan=\"4\">&nbsp;</td></tr>";
-  print "<tr><td colspan=\"2\" align=\"right\">Totaux en francs :</td><td align=\"right\">".francs($totalca)."</td>";
-  print "<td align=\"right\">".francs($totalpm)."</td>";
-  print "<td align=\"right\">".francs($pmt)."</td>";
-  print "<td colspan=\"4\">&nbsp;</td></tr>";
   print "</table>";
 }
 
@@ -168,8 +164,6 @@ function ppt ($db) {
 llxHeader();
 
 print "<b>Point mort</b>";
-
-
 
 ppt($db, 0);
 
