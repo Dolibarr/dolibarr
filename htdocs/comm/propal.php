@@ -886,7 +886,7 @@ if ($_GET["propalid"])
 
 
       $i = 0;
-      print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
       print '<TR class="liste_titre">';
 
