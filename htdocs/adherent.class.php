@@ -51,16 +51,16 @@ class Adherent
    *
    */
   Function Adherent($DB, $id='') 
-    {
-      $this->db = $DB ;
-      $this->id = $id;
-      $this->statut = -1;
-      // l'adherent n'est pas public par defaut
-      $this->public = 0;
-      // les champs optionnels sont vides
-      $this->array_options=array();
-    }
-
+  {
+    $this->db = $DB ;
+    $this->id = $id;
+    $this->statut = -1;
+    // l'adherent n'est pas public par defaut
+    $this->public = 0;
+    // les champs optionnels sont vides
+    $this->array_options=array();
+  }
+  
   /*
    * function envoyant un email au destinataire (recipient) avec le text fourni en parametre.
    * La particularite de cette fonction est de remplacer certains champs par leur valeur pour l'adherent
@@ -72,55 +72,58 @@ class Adherent
    * ...
    */
   Function send_an_email($recipients,$text,$subject="Vos coordonnees sur %SERVEUR%")
-    {
-      $patterns = array (
-			 '/%PRENOM%/',
-			 '/%NOM%/',
-			 '/%INFOS%/',
-			 '/%INFO%/',
-			 '/%SERVEUR%/',
-			 '/%SOCIETE%/',
-			 '/%ADRESSE%/',
-			 '/%CP%/',
-			 '/%VILLE%/',
-			 '/%PAYS%/',
-			 '/%EMAIL%/',
-			 '/%NAISS%/',
-			 '/%PHOTO%/',
-			 '/%LOGIN%/',
-			 '/%PASS%/'
-			 );
-      $infos = "Prenom : $this->prenom\nNom : $this->nom\nSociete : $this->societe\nAdresse : $this->adresse\nCP : $this->cp\nVille : $this->ville\nPays : $this->pays\nEmail : $this->email\nLogin : $this->login\nPassword : $this->pass\nDate de naissance : $this->naiss\nPhoto : $this->photo\n";
-      if ($this->public == 1){
+  {
+    $patterns = array (
+		       '/%PRENOM%/',
+		       '/%NOM%/',
+		       '/%INFOS%/',
+		       '/%INFO%/',
+		       '/%SERVEUR%/',
+		       '/%SOCIETE%/',
+		       '/%ADRESSE%/',
+		       '/%CP%/',
+		       '/%VILLE%/',
+		       '/%PAYS%/',
+		       '/%EMAIL%/',
+		       '/%NAISS%/',
+		       '/%PHOTO%/',
+		       '/%LOGIN%/',
+		       '/%PASS%/'
+		       );
+    $infos = "Prenom : $this->prenom\nNom : $this->nom\nSociete : $this->societe\nAdresse : $this->adresse\nCP : $this->cp\nVille : $this->ville\nPays : $this->pays\nEmail : $this->email\nLogin : $this->login\nPassword : $this->pass\nDate de naissance : $this->naiss\nPhoto : $this->photo\n";
+    if ($this->public == 1)
+      {
 	$infos.="Fiche Publique : Oui\n";
-      }else{
+      }
+    else
+      {
 	$infos.="Fiche Publique : Non\n";
       }
-      $replace = array (
-			$this->prenom,
-			$this->nom,
-			$infos,
-			$infos,
-			"http://".$_SERVER["SERVER_NAME"]."/",
-			$this->societe,
-			$this->adresse,
-			$this->cp,
-			$this->ville,
-			$this->pays,
+    $replace = array (
+		      $this->prenom,
+		      $this->nom,
+		      $infos,
+		      $infos,
+		      "http://".$_SERVER["SERVER_NAME"]."/",
+		      $this->societe,
+		      $this->adresse,
+		      $this->cp,
+		      $this->ville,
+		      $this->pays,
 			$this->email,
-			$this->naiss,
-			$this->photo,
-			$this->login,
-			$this->pass
-			);
-      $texttosend = preg_replace ($patterns, $replace, $text);
-      $subjectosend = preg_replace ($patterns, $replace, $subject);
-      if (defined('MAIN_MAIL_FROM') && MAIN_MAIL_FROM != ''){
+		      $this->naiss,
+		      $this->photo,
+		      $this->login,
+		      $this->pass
+		      );
+    $texttosend = preg_replace ($patterns, $replace, $text);
+    $subjectosend = preg_replace ($patterns, $replace, $subject);
+    if (defined('MAIN_MAIL_FROM') && MAIN_MAIL_FROM != ''){
 	return mail($recipients,$subjectosend,$texttosend,"From: ".MAIN_MAIL_FROM."\nReply-To: ".MAIN_MAIL_FROM."\nX-Mailer: PHP/" . phpversion());
-      }else{
-	return mail($recipients,$subjectosend,$texttosend);
-      }
+    }else{
+      return mail($recipients,$subjectosend,$texttosend);
     }
+  }
   /*
    *
    *
@@ -271,24 +274,23 @@ class Adherent
    */
   Function update() 
     {
-      
 
       $sql = "UPDATE llx_adherent SET ";
       $sql .= "prenom = '".$this->prenom ."'";
-      $sql .= ",nom='".$this->nom."'";
+      $sql .= ",nom='"    .$this->nom."'";
       $sql .= ",societe='".$this->societe."'";
       $sql .= ",adresse='".$this->adresse."'";
-      $sql .= ",cp='".$this->cp."'";
-      $sql .= ",ville='".$this->ville."'";
-      $sql .= ",pays='".$this->pays."'";
-      $sql .= ",note='".$this->commentaire."'";
-      $sql .= ",email='".$this->email."'";
-      $sql .= ",login='".$this->login."'";
-      $sql .= ",pass='".$this->pass."'";
-      $sql .= ",naiss='".$this->naiss."'";
-      $sql .= ",photo='".$this->photo."'";
-      $sql .= ",public='".$this->public."'";
-      $sql .= ",statut=".$this->statut;
+      $sql .= ",cp='"     .$this->cp."'";
+      $sql .= ",ville='"  .$this->ville."'";
+      $sql .= ",pays='"   .$this->pays."'";
+      $sql .= ",note='"   .$this->commentaire."'";
+      $sql .= ",email='"  .$this->email."'";
+      $sql .= ",login='"  .$this->login."'";
+      $sql .= ",pass='"   .$this->pass."'";
+      $sql .= ",naiss='"  .$this->naiss."'";
+      $sql .= ",photo='"  .$this->photo."'";
+      $sql .= ",public='" .$this->public."'";
+      $sql .= ",statut="  .$this->statut;
       $sql .= ",fk_adherent_type=".$this->typeid;
       $sql .= ",morphy='".$this->morphy."'";
 
@@ -299,18 +301,21 @@ class Adherent
       if (!$result)
 	{
 	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
+	  print "<br>$sql<br>";
 	  return 0;
 	}
-      if(sizeof($this->array_options) > 0 ){
-	$sql = "REPLACE INTO llx_adherent_options SET adhid = $this->id";
-	foreach($this->array_options as $key => $value){
-	  // recupere le nom de l'attribut
-	  $attr=substr($key,8);
-	  $sql.=",$attr = '".$this->array_options[$key]."'";
+
+      if (sizeof($this->array_options) > 0 )
+	{
+	  $sql = "REPLACE INTO llx_adherent_options SET adhid = $this->id";
+	  foreach($this->array_options as $key => $value)
+	    {
+	      // recupere le nom de l'attribut
+	      $attr=substr($key,8);
+	      $sql.=",$attr = '".$this->array_options[$key]."'";
+	    }
+	  $result = $this->db->query($sql);
 	}
-	$result = $this->db->query($sql);
-      }
 	
       if ($result) 
 	{
@@ -371,16 +376,21 @@ class Adherent
    *
    */
   /* Fetch adherent corresponding to login passed in argument */
-  Function fetch_login($login){
+  Function fetch_login($login)
+  {
     $sql = "SELECT rowid FROM llx_adherent WHERE login='$login' LIMIT 1";
-    if ( $this->db->query( $sql) ){
-      if ($this->db->num_rows()){
-	$obj = $this->db->fetch_object(0);
-	$this->fetch($obj->rowid);
+    if ( $this->db->query( $sql) )
+      {
+	if ($this->db->num_rows())
+	  {
+	    $obj = $this->db->fetch_object(0);
+	    $this->fetch($obj->rowid);
+	  }
       }
-    }else{
-      print $this->db->error();
-    }
+    else
+      {
+	print $this->db->error();
+      }
   }
   /* Fetch adherent corresponding to rowid passed in argument */
   Function fetch($rowid)
@@ -592,10 +602,12 @@ class Adherent
       // mailman
       if (defined("MAIN_USE_MAILMAN") && MAIN_USE_MAILMAN == 1)
 	{
-	  if(!$this->add_to_mailman()){
-	    $err+=1;
-	  }
+	  if(!$this->add_to_mailman())
+	    {
+	      $err+=1;
+	    }
 	}
+      
       if ($adht->vote == 'yes' && 
 	  defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1 &&
 	  defined("MAIN_USE_GLASNOST_AUTO") && MAIN_USE_GLASNOST_AUTO ==1
@@ -994,105 +1006,112 @@ class Adherent
    *
    */
   Function add_to_mailman()
-    {
-      if (defined("MAIN_MAILMAN_URL") && MAIN_MAILMAN_URL != '' && defined("MAIN_MAILMAN_LISTS") && MAIN_MAILMAN_LISTS != '')
-	{
-	  $lists=explode(',',MAIN_MAILMAN_LISTS);
-	  foreach ($lists as $list)
-	    {
-	      // on remplace dans l'url le nom de la liste ainsi
-	      // que l'email et le mot de passe
-	      $patterns = array (
-				 '/%LISTE%/',
-				 '/%EMAIL%/',
-				 '/%PASS%/'
-				 );
-	      $replace = array (
-				$list,
-				$this->email,
-				$this->pass
-				);
-	      $curl_url = preg_replace ($patterns, $replace, MAIN_MAILMAN_URL);
-
-	      $ch = curl_init();
-	      curl_setopt($ch, CURLOPT_URL,"$curl_url");
-	      //curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
-	      curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); 
-	      curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-	      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-	      curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-	      //curl_setopt($ch, CURLOPT_POST, 0);
-	      //curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
-	      //--- Start buffering
-	      //ob_start();
-	      $result=curl_exec ($ch);
-	      logfile($result);
-	      //--- End buffering and clean output
-	      //ob_end_clean();
-	      if (curl_error($ch) > 0)
-		{
-		  // error 
-		  return 0;
-		}
-	      curl_close ($ch); 
+  {
+    if (defined("MAIN_MAILMAN_URL") && MAIN_MAILMAN_URL != '' && defined("MAIN_MAILMAN_LISTS") && MAIN_MAILMAN_LISTS != '')
+      {
+	$lists=explode(',',MAIN_MAILMAN_LISTS);
+	foreach ($lists as $list)
+	  {
+	    // on remplace dans l'url le nom de la liste ainsi
+	    // que l'email et le mot de passe
+	    $patterns = array (
+			       '/%LISTE%/',
+			       '/%EMAIL%/',
+			       '/%PASS%/'
+			       );
+	    $replace = array (
+			      $list,
+			      $this->email,
+			      $this->pass
+			      );
+	    $curl_url = preg_replace ($patterns, $replace, MAIN_MAILMAN_URL);
+		  
+	    $ch = curl_init();
+	    curl_setopt($ch, CURLOPT_URL,"$curl_url");
+	    //curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); 
+	    curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+	    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+	    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+	    //curl_setopt($ch, CURLOPT_POST, 0);
+	    //curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
+	    //--- Start buffering
+	    //ob_start();
+	    $result=curl_exec ($ch);
+	    logfile($result);
+	    //--- End buffering and clean output
+	    //ob_end_clean();
+	    if (curl_error($ch) > 0)
+	      {
+		// error 
+		return 0;
+	      }
+	    curl_close ($ch); 
 	      
-	    }
-	  return 1;
-	}else{
-	  $this->errorstr="Constantes de connection non definies";
-	  return 0;
-	}
-    }
+	  }
+	return 1;
+      }
+    else
+      {
+	$this->errorstr="Constantes de connection non definies";
+	return 0;
+      }
+  }
+
+
 
   Function del_to_mailman()
-    {
-      if (defined("MAIN_MAILMAN_UNSUB_URL") && MAIN_MAILMAN_UNSUB_URL != '' && defined("MAIN_MAILMAN_LISTS") && MAIN_MAILMAN_LISTS != '')
-	{
-	  $lists=explode(',',MAIN_MAILMAN_LISTS);
-	  foreach ($lists as $list)
-	    {
-	      // on remplace dans l'url le nom de la liste ainsi
-	      // que l'email et le mot de passe
-	      $patterns = array (
-				 '/%LISTE%/',
-				 '/%EMAIL%/',
-				 '/%PASS%/'
-				 );
-	      $replace = array (
-				$list,
-				$this->email,
-				$this->pass
-				);
-	      $curl_url = preg_replace ($patterns, $replace, MAIN_MAILMAN_UNSUB_URL);
-
-	      $ch = curl_init();
-	      curl_setopt($ch, CURLOPT_URL,"$curl_url");
-	      //curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
-	      curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); 
-	      curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-	      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-	      curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-	      //curl_setopt($ch, CURLOPT_POST, 0);
-	      //curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
-	      //--- Start buffering
-	      //ob_start();
-	      $result=curl_exec ($ch);
-	      logfile($result);
-	      //--- End buffering and clean output
-	      //ob_end_clean();
-	      if (curl_error($ch) > 0)
-		{
-		  // error 
-		  return 0;
-		}
-	      curl_close ($ch); 
-	      
-	    }
-	  return 1;
-	}else{
-	  $this->errorstr="Constantes de connection non definies";
-	  return 0;
-	}
-    }
+  {
+    if (defined("MAIN_MAILMAN_UNSUB_URL") && MAIN_MAILMAN_UNSUB_URL != '' && defined("MAIN_MAILMAN_LISTS") && MAIN_MAILMAN_LISTS != '')
+      {
+	$lists=explode(',',MAIN_MAILMAN_LISTS);
+	foreach ($lists as $list)
+	  {
+	    // on remplace dans l'url le nom de la liste ainsi
+	    // que l'email et le mot de passe
+	    $patterns = array (
+			       '/%LISTE%/',
+			       '/%EMAIL%/',
+			       '/%PASS%/'
+			       );
+	    $replace = array (
+			      $list,
+			      $this->email,
+			      $this->pass
+			      );
+	    $curl_url = preg_replace ($patterns, $replace, MAIN_MAILMAN_UNSUB_URL);
+	    
+	    $ch = curl_init();
+	    curl_setopt($ch, CURLOPT_URL,"$curl_url");
+	    //curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); 
+	    curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+	    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+	    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+	    //curl_setopt($ch, CURLOPT_POST, 0);
+	    //curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
+	    //--- Start buffering
+	    //ob_start();
+	    $result=curl_exec ($ch);
+	    logfile($result);
+	    //--- End buffering and clean output
+	    //ob_end_clean();
+	    if (curl_error($ch) > 0)
+	      {
+		// error 
+		return 0;
+	      }
+	    curl_close ($ch); 
+	    
+	  }
+	return 1;
+      }
+    else
+      {
+	$this->errorstr="Constantes de connection non definies";
+	return 0;
+      }
+  }
+  
 }
 ?>
