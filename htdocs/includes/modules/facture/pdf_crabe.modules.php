@@ -54,8 +54,8 @@ class pdf_crabe extends ModelePDFFactures
 
     /*!
     		\brief  Fonction générant la facture sur le disque
-    		\param	facid		id de la facture à générer
-    		\return	 int    1=ok, 0=ko
+    		\param	    facid	id de la facture à générer
+    		\return	    int     1=ok, 0=ko
             \remarks Variables utilisées
     		\remarks FAC_OUTPUTDIR
             \remarks FAC_PDF_LOGO
@@ -76,6 +76,11 @@ class pdf_crabe extends ModelePDFFactures
     function write_pdf_file($facid)
     {
         global $user;
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
+        $langs->load("products");
+
         $fac = new Facture($this->db,"",$facid);
         $fac->fetch($facid);
         if (defined("FAC_OUTPUTDIR"))
@@ -89,7 +94,7 @@ class pdf_crabe extends ModelePDFFactures
                 umask(0);
                 if (! mkdir($dir, 0755))
                 {
-                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;
                 }
             }
@@ -104,10 +109,9 @@ class pdf_crabe extends ModelePDFFactures
                 $this->_pagehead($pdf, $fac);
 
                 $pdf->SetTitle($fac->ref);
-                $pdf->SetSubject("Facture");
+                $pdf->SetSubject($langs->trans("Bill"));
                 $pdf->SetCreator("Dolibarr ".DOL_VERSION);
                 $pdf->SetAuthor($user->fullname);
-                //$pdf->Keywords("Facture");
 
                 $pdf->SetMargins(10, 10, 10);
                 $pdf->SetAutoPageBreak(1,0);
@@ -139,14 +143,14 @@ class pdf_crabe extends ModelePDFFactures
 
                         $prodser->fetch($fac->lignes[$i]->produit_id);
                         if ($prodser->ref) {
-                            $codeproduitservice=" - Code produit ".$prodser->ref;
+                            $codeproduitservice=" - ".$langs->trans("ProductCode")." ".$prodser->ref;
                         }
                     }
                     if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end) {
                         // Affichage durée si il y en a une
-                        $codeproduitservice.=" (Du ".dolibarr_print_date($fac->lignes[$i]->date_start)." au ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
+                        $codeproduitservice.=" (".$langs->trans("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
                     }
-                    $pdf->MultiCell(118, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
+                    $pdf->MultiCell(108, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
 
                     $nexY = $pdf->GetY();
 
@@ -202,8 +206,8 @@ class pdf_crabe extends ModelePDFFactures
                     $pdf->SetXY (10, 228);
                     $pdf->SetTextColor(200,0,0);
                     $pdf->SetFont('Arial','B',8);
-                    $pdf->MultiCell(90, 3, "Aucun mode de règlement défini.",0,'L',0);
-                    $pdf->MultiCell(90, 3, "Créer un compte bancaire puis aller dans la Configuration du module facture pour définir les modes de règlement.",0,'L',0);
+                    $pdf->MultiCell(90, 3, $langs->trans("ErrorNoPaiementModeConfigured"),0,'L',0);
+                    $pdf->MultiCell(90, 3, $langs->trans("ErrorCreateBankAccount"),0,'L',0);
                     $pdf->SetTextColor(0,0,0);
                 }
 
@@ -275,27 +279,31 @@ class pdf_crabe extends ModelePDFFactures
             }
             else
             {
-                $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                 return 0;
             }
         }
         else
         {
-            $this->error="Erreur: FAC_OUTPUTDIR non défini !";
+            $this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
             return 0;
         }
-        $this->error="Erreur: Erreur inconnue";
+        $this->error=$langs->trans("ErrorUnknown");
         return 0;   // Erreur par defaut
     }
 
 
     /*
-    *
-    *
-    *
+    *   \brief      Affiche tableau des versement
+    *   \param      pdf     objet PDF
+    *   \param      fac     objet facture
     */
     function _tableau_versements(&$pdf, $fac)
     {
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
+        
         $tab3_posx = 120;
         $tab3_top = 240;
         $tab3_width = 80;
@@ -308,13 +316,13 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->Rect($tab3_posx, $tab3_top-1, $tab3_width, $tab3_height);
 
         $pdf->SetXY ($tab3_posx, $tab3_top-1 );
-        $pdf->MultiCell(20, 4, "Paiement", 0, 'L', 0);
+        $pdf->MultiCell(20, 4, $langs->trans("Payment"), 0, 'L', 0);
         $pdf->SetXY ($tab3_posx+21, $tab3_top-1 );
-        $pdf->MultiCell(20, 4, "Montant", 0, 'L', 0);
+        $pdf->MultiCell(20, 4, $langs->trans("Amount"), 0, 'L', 0);
         $pdf->SetXY ($tab3_posx+41, $tab3_top-1 );
-        $pdf->MultiCell(20, 4, "Type", 0, 'L', 0);
+        $pdf->MultiCell(20, 4, $langs->trans("Type"), 0, 'L', 0);
         $pdf->SetXY ($tab3_posx+60, $tab3_top-1 );
-        $pdf->MultiCell(20, 4, "Num", 0, 'L', 0);
+        $pdf->MultiCell(20, 4, $langs->trans("Ref"), 0, 'L', 0);
 
         $sql = "SELECT ".$this->db->pdate("p.datep")."as date, p.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
         $sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
@@ -369,15 +377,24 @@ class pdf_crabe extends ModelePDFFactures
         }
         else
         {
-            $this->error="Echec requete SQL";
+            $this->error=$langs->trans("ErrorSQL")." $sql";
             return 0;
         }
 
     }
 
-
+    /*
+    *   \brief      Affiche le total à payer
+    *   \param      pdf         objet PDF
+    *   \param      fac         objet facture
+    *   \param      deja_regle  montant deja regle
+    */
     function _tableau_tot(&$pdf, $fac, $deja_regle)
     {
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
+
         $tab2_top = 207;
         $tab2_hl = 5;
         $tab2_height = $tab2_hl * 4;
@@ -392,7 +409,7 @@ class pdf_crabe extends ModelePDFFactures
         // Tableau total
         $col1x=120; $col2x=174;
         $pdf->SetXY ($col1x, $tab2_top + 0);
-        $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT", 0, 'L', 0);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalHT"), 0, 'L', 0);
 
         $pdf->SetXY ($col2x, $tab2_top + 0);
         $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
@@ -419,13 +436,13 @@ class pdf_crabe extends ModelePDFFactures
         }
 
         $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-        $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total TVA", 0, 'L', 0);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT"), 0, 'L', 0);
 
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
         $pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
 
         $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+1));
-        $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total TTC", 0, 'L', 1);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalTTC"), 0, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+1));
         $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 1);
@@ -447,40 +464,51 @@ class pdf_crabe extends ModelePDFFactures
     }
 
     /*
-    * Grille des lignes de factures
+    *   \brief      Affiche la grille des lignes de factures
+    *   \param      pdf     objet PDF
     */
     function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
+        
         $pdf->Rect( 10, $tab_top, 190, $tab_height);
         $pdf->line( 10, $tab_top+8, 200, $tab_top+8 );
 
         $pdf->SetFont('Arial','',10);
 
-        $pdf->Text(11,$tab_top + 5,'Désignation');
+        $pdf->Text(12,$tab_top + 5, $langs->trans("Label"));
 
         $pdf->line(120, $tab_top, 120, $tab_top + $tab_height);
-        $pdf->Text(122, $tab_top + 5,'TVA');
+        $pdf->Text(122, $tab_top + 5, $langs->trans("VAT"));
 
         $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
         $pdf->Text(135, $tab_top + 5,'P.U. HT');
 
         $pdf->line(150, $tab_top, 150, $tab_top + $tab_height);
-        $pdf->Text(153, $tab_top + 5,'Qté');
+        $pdf->Text(153, $tab_top + 5, $langs->trans("Qty"));
 
         $pdf->line(162, $tab_top, 162, $tab_top + $tab_height);
         $pdf->Text(163, $tab_top + 5,'Remise');
 
         $pdf->line(177, $tab_top, 177, $tab_top + $tab_height);
-        $pdf->Text(185, $tab_top + 5,'Total HT');
+        $pdf->Text(185, $tab_top + 5, $langs->trans("TotalHT"));
 
     }
 
     /*
-    *
-    *
+    *   \brief      Affiche en-tête facture
+    *   \param      pdf     objet PDF
+    *   \param      fac     objet facture
     */
     function _pagehead(&$pdf, $fac)
     {
+        global $conf;
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
+        
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B',13);
 
@@ -494,8 +522,8 @@ class pdf_crabe extends ModelePDFFactures
             else {
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(80, 3, "Logo file '".FAC_PDF_LOGO."' was not found", 0, 'L');
-                $pdf->MultiCell(80, 3, "Go to setup to change path to logo file.", 0, 'L');
+                $pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",FAC_PDF_LOGO), 0, 'L');
+                $pdf->MultiCell(80, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
             }
         }
         else if (defined("FAC_PDF_INTITULE"))
@@ -506,11 +534,11 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetFont('Arial','B',13);
         $pdf->SetXY(100,5);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 10, "Facture no ".$fac->ref, '' , 'R');
+        $pdf->MultiCell(100, 10, $langs->trans("Bill")." ".$fac->ref, '' , 'R');
         $pdf->SetFont('Arial','',12);
         $pdf->SetXY(100,11);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 10, "Date : " . strftime("%d %b %Y", mktime()), '', 'R');
+        $pdf->MultiCell(100, 10, $langs->trans("Date")." : " . dolibarr_print_date(mktime(),"%d %b %Y"), '', 'R');
 
         /*
         * Emetteur
@@ -519,7 +547,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY(10,$posy-5);
-        $pdf->MultiCell(66,5, "Emetteur:");
+        $pdf->MultiCell(66,5, $langs->trans("BillFrom").":");
 
 
         $pdf->SetXY(10,$posy);
@@ -564,7 +592,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY(102,$posy-5);
-        $pdf->MultiCell(80,5, "Adressé à:");
+        $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
         $pdf->SetFont('Arial','B',11);
         $fac->fetch_client();
         $pdf->SetXY(102,$posy+4);
@@ -579,7 +607,7 @@ class pdf_crabe extends ModelePDFFactures
         */
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',10);
-        $titre = "Montants exprimés en euros";
+        $titre = $langs->trans("AmountInCurrency")." ".$conf->monnaie;
         $pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
         /*
         */
@@ -587,11 +615,17 @@ class pdf_crabe extends ModelePDFFactures
     }
 
     /*
-    *
-    *
+    *   \brief      Affiche le pied de page de la facture
+    *   \param      pdf     objet PDF
+    *   \param      fac     objet facture
     */
    function _pagefoot(&$pdf, $fac)
     {
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
+        $langs->load("companies");
+        
         $footy=13;
         $pdf->SetFont('Arial','',8);
 
@@ -606,13 +640,13 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->SetY(-$footy);
             $pdf->SetTextColor(200,0,0);
             $pdf->SetFont('Arial','B',8);
-            $pdf->MultiCell(190, 3, "Numéro de TVA intracommunautaire pas encore configuré.",0,'L',0);
-            $pdf->MultiCell(190, 3, "Aller dans la Configuration générale pour le définir ou l'effacer.",0,'L',0);
+            $pdf->MultiCell(190, 3, $langs->trans("ErrorVATIntraNotConfigured"),0,'L',0);
+            $pdf->MultiCell(190, 3, $langs->trans("ErrorGoToGlobalSetup"),0,'L',0);
             $pdf->SetTextColor(0,0,0);
         }
         elseif (MAIN_INFO_TVAINTRA != '') {
             $pdf->SetY(-$footy);
-            $pdf->MultiCell(190, 3, "Numéro de TVA intracommunautaire : ".MAIN_INFO_TVAINTRA, 0, 'C');
+            $pdf->MultiCell(190, 3,  $langs->trans("TVAIntra")." : ".MAIN_INFO_TVAINTRA, 0, 'C');
         }
 
         $pdf->SetXY(-10,-10);
