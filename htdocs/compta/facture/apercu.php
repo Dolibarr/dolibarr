@@ -22,9 +22,9 @@
  *
  */
 
-/*!	\file htdocs/compta/facture.php
+/*!	\file htdocs/compta/facture/apercu.php
 		\ingroup    facture
-		\brief      Page de création d'une facture
+		\brief      Page de l'onglet aperçu d'une facture
 		\version    $Revision$
 */
 
@@ -90,7 +90,7 @@ if ($_GET["facid"] > 0)
       /*
        *   Facture
        */
-      print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
+      print '<table class="border" width="100%">';
       print '<tr><td>'.$langs->trans("Customer").'</td>';
       print '<td colspan="3">';
       print '<b><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
@@ -137,7 +137,7 @@ if ($_GET["facid"] > 0)
 	{
 	  $encfile = urlencode($file);
 	  print_titre("Documents");
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	  print '<table class="border" width="100%">';
 	  
 	  print "<tr $bc[0]><td>Facture PDF</td>";
 	  

@@ -23,8 +23,8 @@
  */
 
 /*!
-	    \file       htdocs/account.class.php
-        \ingroup    bank
+	    \file       htdocs/compta/bank/account.class.php
+        \ingroup    banque
 		\brief      Fichier de la classe des comptes bancaires
 		\version    $Revision$
 */

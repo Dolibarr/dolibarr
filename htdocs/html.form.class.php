@@ -749,11 +749,11 @@ class Form
     
     /*!
     		\brief Affiche un select à partir d'un tableau
-    		\param	nom de la zone select
-    		\param	tableau de key+valeur
-    		\param	key présélectionnée
-    		\param	1 si il faut un valeur "-" dans la liste, 0 sinon
-    		\param	1 pour afficher la key dans la valeur "[key] value"
+    		\param	name            nom de la zone select
+    		\param	array           tableau de key+valeur
+    		\param	id              key présélectionnée
+    		\param	empty           1 si il faut un valeur "-" dans la liste, 0 sinon
+    		\param	key_libelle     1 pour afficher la key dans la valeur "[key] value"
     */
   function select_array($name, $array, $id='', $empty=0, $key_libelle=0)
     {
