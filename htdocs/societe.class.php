@@ -250,27 +250,29 @@ class Societe {
 
       // Cette fonction permet de supprimer le répertoire de la societe
       // Meme s'il contient des documents.
-      function deldir($dir){
-	$current_dir = opendir($dir);
-	while($entryname = readdir($current_dir)){
-	  if(is_dir("$dir/$entryname") and ($entryname != "." and $entryname!="..")){
-	    deldir("${dir}/${entryname}");
-	  }elseif($entryname != "." and $entryname!=".."){
-	    unlink("${dir}/${entryname}");
-	  }
-	}
-	closedir($current_dir);
-	rmdir(${dir});
-      } 
-
+      function deldir($dir)
+	{
+	  $current_dir = opendir($dir);
+	  while($entryname = readdir($current_dir))
+	    {
+	      if(is_dir("$dir/$entryname") and ($entryname != "." and $entryname!=".."))
+		{
+		  deldir("${dir}/${entryname}");
+		}
+	      elseif($entryname != "." and $entryname!="..")
+		{
+		  unlink("${dir}/${entryname}");
+		}
+	    }
+	  closedir($current_dir);
+	  rmdir(${dir});
+	} 
+      
       if (file_exists ($docdir))
 	{
 	  deldir($docdir);
 	}
     }
-  
-  
-
   /*
    *
    *
@@ -355,6 +357,22 @@ class Societe {
 	  print $this->db->error();
 	}
       return $prefix;
+    }
+  /**
+   * Définit la société comme un client
+   *
+   *
+   */
+  Function set_as_client()
+    {
+      if ($this->id)
+	{
+	  $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+	  $sql .= " SET client = 1";
+	  $sql .= " WHERE idp = " . $this->id .";";
+	  
+	  return $this->db->query($sql);
+	}
     }
   /*
    *
