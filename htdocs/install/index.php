@@ -24,12 +24,57 @@
 include("./inc.php");
 pHeader("Bienvenu dans Dolibarr", "licence");
 
-?>
-<p>
-Nous avons fait en sorte que l'installation soit le plus simple possible, vous n'avez qu'à suivre les étapes une à une.
 
-<?php
+print '<p>';
+print "Nous avons fait en sorte que l'installation soit le plus simple possible, vous n'avez qu'à suivre les étapes une à une.";
 
-pFooter();
+
+$conf = "../conf/conf.php";
+
+
+if (is_readable($conf))
+{
+  include ($conf);
+}
+else
+{
+  $fp = @fopen("$conf", "w");
+  if($fp)
+    {
+      @fwrite($fp, '<?php');
+      @fputs($fp,"\n");
+      @fputs($fp,"?>");
+      fclose($fp);
+    }
+}
+
+
+if (!file_exists($conf))
+{
+  print "<br /><br />Le fichier de configuration <b>conf.php</b> n'existe pas !<br />";
+  print "Vous devez créer un fichier <b>htdocs/conf/conf.php</b> et donner les droits d'écriture dans celui-ci au serveur Apache.<br />";
+
+  $err++;
+}
+else
+{
+
+  if (!is_writable("../conf/conf.php"))
+    {
+      print "<br /><br />Le fichier de configuration <b>conf.php</b> existe.<br />";
+      print "Le fichier <b>conf.php</b> n'est pas accessible en écriture, vérifiez les droits sur celui-ci, le serveur Apache doit avoir le droit d'écrire dans ce fichier le temps de la configuration (chmod 666 par exemple)<br>";
+      
+
+      $err++;
+    }
+  else
+    {
+      print "<br /><br />Le fichier de configuration <b>conf.php</b> existe.<br />";
+      print "Le fichier <b>conf.php</b> est pas accessible en écriture<br /><br />Vous pouvez continuer";
+
+    }
+}
+
+if ($err == 0) pFooter();
 
 ?>
