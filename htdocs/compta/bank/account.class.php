@@ -200,7 +200,6 @@ class Account
    *
    *
    */
-
   Function update()
     {      
       if (strlen($this->label)==0)
@@ -301,6 +300,62 @@ class Account
 	$this->db->free();
       }
   }
+  /*
+   *
+   *
+   */
+  Function datev_next($rowid)
+    {      
+      $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
+
+      $sql .= " datev = adddate(datev, interval 1 day)";
+
+      $sql .= " WHERE rowid = $rowid";
+      
+      $result = $this->db->query($sql);
+	      
+      if ($result) 
+	{
+	  if ($this->db->affected_rows()) 
+	    {
+	      return 1;		      
+	    }		  
+	}
+      else
+	{
+	  print $this->db->error();
+	  print "<p>$sql</p>";
+	  return 0;
+	}
+    }
+  /*
+   *
+   *
+   */
+  Function datev_previous($rowid)
+    {      
+      $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
+
+      $sql .= " datev = adddate(datev, interval -1 day)";
+
+      $sql .= " WHERE rowid = $rowid";
+      
+      $result = $this->db->query($sql);
+	      
+      if ($result) 
+	{
+	  if ($this->db->affected_rows()) 
+	    {
+	      return 1;		      
+	    }		  
+	}
+      else
+	{
+	  print $this->db->error();
+	  print "<p>$sql</p>";
+	  return 0;
+	}
+    }
 
 
 }
