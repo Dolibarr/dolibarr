@@ -33,8 +33,7 @@ $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
 
 if ($_POST["action"] == 'add_paiement')
 {
-
-  if ($_POST["paiementid"] > 0)
+  if ($HTTP_POST_VARS["paiementid"] > 0)
     {
 
       $datepaye = $db->idate(mktime(12, 0 , 0,
@@ -82,33 +81,33 @@ if ($_POST["action"] == 'add_paiement')
 	  
           // Insertion dans llx_bank
           $label = "Règlement facture";
-	      $acc = new Account($db, $_POST["accountid"]);
-	      //paiementid contient "CHQ ou VIR par exemple"
-	      $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementid, $label, $total, $paiement->num_paiement, '', $user);
+	  $acc = new Account($db, $_POST["accountid"]);
+	  //paiementid contient "CHQ ou VIR par exemple"
+	  $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementid, $label, $total, $paiement->num_paiement, '', $user);
 	  
-	      // Mise a jour fk_bank dans llx_paiement. On connait ainsi le paiement qui a généré l'écriture bancaire
-	      if ($bank_line_id) {
-	        $paiement->update_fk_bank($bank_line_id);
-	      }
+	  // Mise a jour fk_bank dans llx_paiement. On connait ainsi le paiement qui a généré l'écriture bancaire
+	  if ($bank_line_id) {
+	    $paiement->update_fk_bank($bank_line_id);
+	  }
 	  
           // Mise a jour liens (pour chaque facture concernées par le paiement)
           foreach ($paiement->amounts as $key => $value)
-          {
+	    {
               $facid = $key;
       	      $fac = new Facture($db);
-	          $fac->fetch($facid);
-	          $fac->fetch_client();
-	          $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
-	          $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);	  
-          }
-
-	      $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-	      Header("Location: $loc");
+	      $fac->fetch($facid);
+	      $fac->fetch_client();
+	      $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
+	      $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);	  
+	    }
+	  
+	  $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+	  Header("Location: $loc");
 	}
       else
 	{
-        // Il y a eu erreur
-      $fiche_erreur_message = "Echec de la création du paiement";
+	  // Il y a eu erreur
+	  $fiche_erreur_message = "Echec de la création du paiement";
 	}
     }
   else
@@ -327,14 +326,15 @@ if ($_GET["action"] == 'create')
     }
 } 
 
-if ($action == '') {
+if ($action == '')
+{
   
   if ($page == -1)
     $page = 0 ;
   
   $limit = $conf->liste_limit;
   $offset = $limit * $page ;
-
+  
   if ($sortorder == "")
     $sortorder="DESC";
   
