@@ -89,6 +89,8 @@ else
       print "- société $s<br>";
       $soc = new Societe($db);
       $soc->nom = "Société aléatoire num ".time();
+      $villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
+      $soc->ville = $villes[rand(0,sizeof($villes)-1)];
       $soc->client = 1;
       $socid = $soc->create();
       
