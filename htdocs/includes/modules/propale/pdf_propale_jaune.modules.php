@@ -33,7 +33,7 @@ Class pdf_propale_jaune
 
   Function write_pdf_file($id)
     {
-
+      global $user;
       $propale = new Propal($this->db,"",$id);
       if ($propale->fetch($id))
 	{
@@ -59,6 +59,11 @@ Class pdf_propale_jaune
 
 	      $pdf=new FPDF('P','mm','A4');
 	      $pdf->Open();
+
+	      $pdf->SetTitle($fac->ref);
+	      $pdf->SetCreator("Dolibarr ".DOL_VERSION);
+	      $pdf->SetAuthor($user->fullname);
+
 	      $pdf->AddPage();
 	      
 	      $this->_pagehead($pdf, $propale);
