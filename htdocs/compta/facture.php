@@ -1177,7 +1177,7 @@ else
 		}
 
 	      // Emettre paiement 
-	      if ($fac->statut == 1 && $user->rights->facture->paiement)
+	      if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
 		{
 		  print "  <a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">".$langs->trans("DoPaiement")."</a>\n";
 		}
