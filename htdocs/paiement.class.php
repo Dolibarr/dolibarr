@@ -60,7 +60,7 @@ class Paiement
 	{
 	  if ($this->db->num_rows()) 
 	    {
-	      $obj = $this->db->fetch_object($result , 0);
+	      $obj = $this->db->fetch_object(0);
 
 	      $this->id             = $obj->rowid;
 	      $this->date           = $obj->dp;
