@@ -474,3 +474,13 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,107,'Admini
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,108,'Syndicat de propriétaires');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'Fondations');
 
+--
+-- Formules de politesses
+--
+INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (1, 2, 'Madame', 1);
+INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (2, 2, 'Mevrouw', 1);
+INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (3, 2, 'Monsieur', 1);
+INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (4, 2, 'Meneer', 1);
+INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (5, 2, 'Mademoiselle', 1);
+INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (6, 2, 'Juffrouw', 1);
+INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (7, 2, 'Maître', 1);
