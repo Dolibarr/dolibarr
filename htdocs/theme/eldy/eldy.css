@@ -541,6 +541,14 @@ div.message {
   border-right: 1px solid #8CACBB;
 }
 
+div.errormessage {
+                   font-weight: bold;
+  background: #FF0000;
+  padding: 0.5em 0.5em 0.5em 0.5em;
+  margin: 1em 0em 1em 0em;
+  border: 1px solid #000000;
+}
+
 
 /*
  * Widgets standard
