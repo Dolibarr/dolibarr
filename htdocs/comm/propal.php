@@ -104,7 +104,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
   if ($id) 
     {
       propale_pdf_create($db, $id, $HTTP_POST_VARS["modelpdf"]);
-      $propalid = $id;
+      $_GET["propalid"] = $id;
     }
 }
 
@@ -236,12 +236,17 @@ if ($_GET["propalid"])
   $propal = new Propal($db);
   $propal->fetch($_GET["propalid"]);
 
-  /*
-   *
-   */
-  print "<table width=\"100%\">";
-  print "<tr><td><div class=\"titre\">Proposition commerciale : $propal->ref</div></td>";
-  print "</table>";
+  $societe = new Societe($db);
+  $societe->fetch($propal->soc_id);
+
+  $head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+  $head[0][1] = "Proposition commerciale : $propal->ref";
+  $h = 1;
+  $a = 0;
+  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
+  $head[$h][1] = "Note";
+
+  dolibarr_fiche_head($head, $a);
 
   /*
    * Confirmation de la suppression de la propale
@@ -277,18 +282,18 @@ if ($_GET["propalid"])
 	  print "<table class=\"border\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
 	  print '<tr><td>Société</td><td colspan="3">';
-	  if ($objp->client == 1)
+	  if ($societe->client == 1)
 	    {
-	      $url ='fiche.php?socid='.$obj->idp;
+	      $url ='fiche.php?socid='.$societe->id;
 	    }
 	  else
 	    {
-	      $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$obj->idp;
+	      $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
 	    }
-	  print '<a href="'.$url.'">'.$obj->nom.'</a></td>';
+	  print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
 	  print '<td>Statut</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
 
-	  print '<tr><td>Date</td><td colspan="3">'.strftime("%A %d %B %Y",$obj->dp);
+	  print '<tr><td>Date</td><td colspan="3">'.strftime("%A %d %B %Y",$propal->date);
 	  if ($propal->fin_validite)
 	    {
 	      print " (".strftime("%d %B %Y",$propal->fin_validite).")";
@@ -304,10 +309,10 @@ if ($_GET["propalid"])
 
 	  print '<td valign="top" colspan="2" width="50%" rowspan="4">Note :<br>'. nl2br($propal->note)."</td></tr>";
 	  
-	  if ($obj->fk_projet) 
+	  if ($propal->projet_id) 
 	    {
 	      $projet = new Project($db);
-	      $projet->fetch($obj->fk_projet); 
+	      $projet->fetch($propal->projet_id); 
 	      print '<tr><td>Projet</td><td colspan="3">';
 	      print '<a href="../projet/fiche.php?id='.$projet->id.'">';
 	      print $projet->title.'</a></td></tr>';
@@ -367,7 +372,7 @@ if ($_GET["propalid"])
 	    {
 	      print "<td>&nbsp;</td>";
 	    }
-	  print "</TR>\n";
+	  print "</tr>\n";
 
 	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.tva_tx, pt.remise_percent, pt.subprice";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propal->id";
@@ -391,15 +396,11 @@ if ($_GET["propalid"])
 		  print "<td align=\"center\">".$objp->qty."</td>\n";
 		  print '<td align="center">'.$objp->remise_percent.' %</td>';
 		  print '<td align="right">'.price($objp->subprice).'</td>';
-		  if ($obj->statut == 0 && $user->rights->propale->creer)
+		  if ($propal->statut == 0 && $user->rights->propale->creer)
 		    {
 		      print '<td align="center"><a href="propal.php?propalid='.$propal->id.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">';
 		      print img_delete();
 		      print '</a></td>';
-		    }
-		  else
-		    {
-		      print '<td>-</td>';
 		    }
 		  print "</tr>";
 
@@ -424,7 +425,7 @@ if ($_GET["propalid"])
 		  print "<td align=\"center\">".$objp->qty."</td>\n";
 		  print '<td align="center">'.$objp->remise_percent.' %</td>';
 		  print "<TD align=\"right\">".price($objp->subprice)."</td>";
-		  if ($obj->statut == 0 && $user->rights->propale->creer)
+		  if ($propal->statut == 0 && $user->rights->propale->creer)
 		    {
 		      print '<td align="center"><a href="propal.php?propalid='.$propal->id.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">';
 		      print img_delete();
@@ -439,7 +440,7 @@ if ($_GET["propalid"])
 		}
 	    }
 
-	  if ($obj->statut == 0 && $user->rights->propale->creer)
+	  if ($propal->statut == 0 && $user->rights->propale->creer)
 	    {
 	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p WHERE p.envente=1 ORDER BY p.nbvente DESC LIMIT 20";
 	      // RyXéo on a ORDER BY p.ref et pas de limit
@@ -508,102 +509,71 @@ if ($_GET["propalid"])
 	  /*
 	   * Actions
 	   */
-	  if ($obj->statut < 2)
+	  print '</div>';
+	  if ($propal->statut < 2)
 	    {
-	      print '<p><table id="actions" width="100%"><tr>';
+	      print '<p><div class="tabsAction">';
 	  
-	      if ($obj->statut == 0)
+	      if ($propal->statut == 0)
 		{
 		  if ($user->rights->propale->supprimer)
 		    {
-		      print "<td width=\"20%\"><a href=\"$PHP_SELF?propalid=$propal->id&amp;action=delete\">Supprimer</a></td>";
+		      print "<a class=\"tabAction\" href=\"$PHP_SELF?propalid=$propal->id&amp;action=delete\">Supprimer</a>";
 		    }
-		  else
-		    {
-		      print "<td width=\"20%\">-</td>";
-		    }
+
 		}
 	      else
 		{
-		  if ($obj->statut == 1 && $user->rights->propale->cloturer)
+		  if ($propal->statut == 1 && $user->rights->propale->cloturer)
 		    {
-		      print "<td width=\"20%\"><a href=\"$PHP_SELF?propalid=$propal->id&amp;action=statut\">Cloturer</a></td>";
-		    }
-		  else
-		    {
-		      print "<td width=\"20%\">-</td>";
+		      print "<a class=\"tabAction\" href=\"$PHP_SELF?propalid=$propal->id&amp;action=statut\">Cloturer</a>";
 		    }
 		} 
-	      print '<td width="20%">-</td>';
+
 	      /*
 	       *
 	       */
-	      if ($obj->statut < 2 && $user->rights->propale->creer)
+	      if ($propal->statut < 2 && $user->rights->propale->creer)
 		{
-		  print '<td width="20%"><a href="'.$PHP_SELF."?propalid=$propal->id&amp;action=pdf\">Générer</a></td>";
+		  print '<a class="tabAction" href="'.$PHP_SELF."?propalid=$propal->id&amp;action=pdf\">Générer</a>";
 		}
-	      else
-		{
-		  print '<td width="20%">-</td>';
-		}
+
 	    
 	      /*
 	       *
 	       */
-	      if ($obj->statut == 1)
+	      if ($propal->statut == 1)
 		{
 		  $file = PROPALE_OUTPUTDIR. "/$obj->ref/$obj->ref.pdf";
 		  if (file_exists($file))
 		    {
 		      if ($user->rights->propale->envoyer)
 			{
-			  print "<td width=\"20%\">";
-			  print "<a href=\"$PHP_SELF?propalid=$propal->id&amp;action=presend\">Envoyer la proposition</a></td>";
+			  print "<a class=\"tabAction\" href=\"$PHP_SELF?propalid=$propal->id&amp;action=presend\">Envoyer la proposition</a>";
 			}
-		      else
-			{
-			  print '<td width="20%">-</td>';
-			}
+
 		    }
-		  else
-		    {
-		      print '<td bgcolor="#e0e0e0" align="center" width="20%">! Proposition non génerée !</td>';
-		    }
-		}
-	      else
-		{
-		  print "<td align=\"center\" width=\"20%\">-</td>";
 		}
 	      /*
 	       * 
 	       */
-	      if ($obj->statut == 0)
+	      if ($propal->statut == 0)
 		{
 		  if ($user->rights->propale->valider)
 		    {
-		      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?propalid=$propal->id&amp;valid=1\">Valider</a></td>";
+		      print "<a class=\"tabAction\" href=\"$PHP_SELF?propalid=$propal->id&amp;valid=1\">Valider</a>";
 		    }
-		  else
-		    {
-		      print '<td align="center" width="20%">-</td>';
-		    }
+
 		}
-	      elseif ($obj->statut == 1)
+	      elseif ($propal->statut == 1)
 		{
 		  if ($user->rights->propale->creer)
 		    {
-		      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?propalid=$propal->id&amp;action=modif\">Modifier</a></td>";
-		    }
-		  else
-		    {
-		      print '<td align="center" width="20%">-</td>';
+		      print "<a class=\"tabAction\" href=\"$PHP_SELF?propalid=$propal->id&amp;action=modif\">Modifier</a>";
 		    }
 		}
-	      else
-		{
-		  print '<td align="center" width="20%">-</td>';
-		}
-	      print "</tr></table>";
+
+	      print "</div>";
 	    }
 
 	  /*
@@ -612,13 +582,13 @@ if ($_GET["propalid"])
 	   */
 	  if ($action == 'send')
 	    {
-	      $file = PROPALE_OUTPUTDIR . "/$obj->ref/$obj->ref.pdf";
+	      $file = PROPALE_OUTPUTDIR . "/$propal->ref/$propal->ref.pdf";
 	      if (file_exists($file))
 		{
 	      
-		  $subject = "Notre proposition commerciale $obj->ref";
+		  $subject = "Notre proposition commerciale $propal->ref";
 		  $filepath[0] = $file ;
-		  $filename[0] = "$obj->ref.pdf";
+		  $filename[0] = "$propal->ref.pdf";
 		  $mimetype[0] = "application/pdf";
 		  $filepath[1] = $_FILES['addedfile']['tmp_name'];
 		  $filename[1] = $_FILES['addedfile']['name'];
@@ -662,7 +632,7 @@ if ($_GET["propalid"])
 
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  
-	  $file = PROPALE_OUTPUTDIR . "/$obj->ref/$obj->ref.pdf";
+	  $file = PROPALE_OUTPUTDIR . "/$propal->ref/$propal->ref.pdf";
 	  if (file_exists($file))
 	    {
 	      print "<tr $bc[0]><td>PDF</td>";
@@ -761,7 +731,7 @@ if ($_GET["propalid"])
 	      $from_name = $user->fullname ; //$conf->propal->fromtoname;
 	      $from_mail = $user->email; //conf->propal->fromtomail;
 	      
-	      $message = "Veuillez trouver ci-joint notre proposition commerciale $obj->ref\n\nCordialement\n\n";
+	      $message = "Veuillez trouver ci-joint notre proposition commerciale $propal->ref\n\nCordialement\n\n";
 
 	      print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"$PHP_SELF?propalid=$propal->id&amp;action=send\">\n";
 	      print "<input type=\"hidden\" name=\"replytoname\" value=\"$replytoname\">\n";
