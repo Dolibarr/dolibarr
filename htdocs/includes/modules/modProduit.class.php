@@ -44,17 +44,14 @@ class modProduit extends DolibarrModules
     $this->const = array();
     $this->boxes = array();
 
-    $this->boxes[0][0] = "Services vendus";
-    $this->boxes[0][1] = "box_services_vendus.php";
-    $this->boxes[1][0] = "Derniers produits";
-    $this->boxes[1][1] = "box_produits.php";
+    $this->boxes[0][0] = "Derniers produits";
+    $this->boxes[0][1] = "box_produits.php";
   }
   /*
    *
    *
    *
    */
-
   Function init()
   {
     /*
