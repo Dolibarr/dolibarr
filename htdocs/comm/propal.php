@@ -112,15 +112,14 @@ if ($action == 'pdf')
   propale_pdf_create($db, $propalid, $propal->modelpdf);
 }
 
-if ($action == 'setstatut' && $user->rights->propale->cloturer) 
+if ($HTTP_POST_VARS["action"] == 'setstatut' && $user->rights->propale->cloturer) 
 {
   /*
    *  Cloture de la propale
    */
   $propal = new Propal($db);
   $propal->fetch($propalid);
-  $propal->cloture($user->id, $statut, $note);
-
+  $propal->cloture($user, $statut, $note);
 } 
 
 if ($action == 'modif' && $user->rights->propale->creer) 
@@ -273,7 +272,7 @@ if ($propalid)
 
 	  print "<tr><td>Destinataire</td><td colspan=\"3\">$obj->firstname $obj->name &lt;$obj->email&gt;</td>";
 
-	  print '<td valign="top" colspan="2" width="50%" rowspan="7">Note :<br>'. nl2br($propal->note)."</td></tr>";
+	  print '<td valign="top" colspan="2" width="50%" rowspan="4">Note :<br>'. nl2br($propal->note)."</td></tr>";
 	  
 	  if ($obj->fk_projet) 
 	    {
@@ -309,8 +308,8 @@ if ($propalid)
 	  if ($action == 'statut') 
 	    {
 	      print "<form action=\"$PHP_SELF?propalid=$propalid\" method=\"post\">";
-	      print '<table border="1" cellpadding="3" cellspacing="0">';
-	      print "<tr><td>Clôturer comme : <input type=\"hidden\" name=\"action\" value=\"setstatut\">";
+	      print '<br><table class="border" cellpadding="3" cellspacing="0">';
+	      print '<tr><td>Clôturer comme : <input type="hidden" name="action" value="setstatut">';
 	      print "<select name=\"statut\">";
 	      print "<option value=\"2\">Signée";
 	      print "<option value=\"3\">Non Signée";
