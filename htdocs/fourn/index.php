@@ -24,9 +24,14 @@
 require("./pre.inc.php");
 require("../contact.class.php");
 
-$langs->load("companies");
+
+$page = $_GET["page"];
+$sortorder = $_GET["sortorder"];
+$sortfield = $_GET["sortfield"];
+
 $langs->load("suppliers");
 $langs->load("orders");
+$langs->load("companies");
 
 llxHeader();
 
@@ -39,71 +44,11 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="nom";
-}
-
-
-if ($action == 'note')
-{
-  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='$note' WHERE idp=$socid";
-  $result = $db->query($sql);
-}
-
-if ($action == 'stcomm') {
-  if ($stcommid <> 'null' && $stcommid <> $oldstcomm) {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."socstatutlog (datel, fk_soc, fk_statut, author) ";
-    $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $user->login . "')";
-    $result = @$db->query($sql);
-
-    if ($result) {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
-      $result = $db->query($sql);
-    } else {
-      $errmesg = "ERREUR DE DATE !";
-    }
-  }
-
-  if ($actioncommid) {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
-    $result = @$db->query($sql);
-
-    if (!$result) {
-      $errmesg = "ERREUR DE DATE !";
-    }
-  }
-}
-
-/*
- * Recherche
- *
- *
- */
-if ($mode == 'search') {
-  if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
-    $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-  }
-      
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object();
-      $socid = $obj->idp;
-    }
-    $db->free();
-  }
-}
-
 if ($page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
-
 
 /*
  * Mode Liste
@@ -121,25 +66,26 @@ if ($sortfield == "")
   $sortfield="nom";
 }
 
-
 $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
-
-if (strlen($stcomm)) {
-  $sql .= " AND s.fk_stcomm=$stcomm";
-}
 
 if ($socidp) {
   $sql .= " AND s.idp=$socidp";
-}
-
-if (strlen($begin)) {
-  $sql .= " AND upper(s.nom) like '$begin%'";
 }
 
 if ($socname) {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
   $sortfield = "lower(s.nom)";
   $sortorder = "ASC";
+}
+
+if (strlen($_GET["search_nom"]))
+{
+  $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
+}
+
+if (strlen($_GET["search_ville"]))
+{
+  $sql .= " AND s.ville LIKE '%".$_GET["search_ville"]."%'";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -151,19 +97,22 @@ if ($result)
   $i = 0;
   
   print_barre_liste("Liste des fournisseurs", $page, "index.php", "", $sortfield, $sortorder, '', $num);
-  if ($sortorder == "DESC")
-    {
-      $sortorder="ASC";
-    }
-  else
-    {
-      $sortorder="DESC";
-    }
+
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"');
   print '<td>'.$langs->trans("Town").'</td>';
   print "</tr>\n";
+
+
+  print '<tr class="liste_titre">';
+  print '<form action="index.php" method="GET">';
+  print '<td><input type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+  print '<td><input type="text" name="search_ville" value="'.$_GET["search_ville"].'"><input type="submit"></td>';
+
+  print '</form>';
+  print '</tr>';
+
   $var=True;
 
   while ($i < min($num,$conf->liste_limit))
