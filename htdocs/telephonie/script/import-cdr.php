@@ -94,9 +94,7 @@ else
 		    }
 		  else
 		    {
-		      print $duree_secondes."\n";
-		      //print "Ligne : $cont ignorée\n";
-		      exit ;
+		      print "Ligne : $cont ignorée\n";
 		    }
 		}
 	      else
