@@ -42,11 +42,11 @@ class GraphCommerciauxContrats extends GraphPie {
 
     if ($type == 'suivi')
       {
-	$this->titre = "Contrat suivis par commercial";
+	$this->titre = "Contrats suivis par commercial";
       }
     else
       {
-	$this->titre = "Contrat signés par commercial";
+	$this->titre = "Contrats signés par commercial";
       }
 
     $sql = "SELECT u.firstname, u.name, count(*) as cc";
