@@ -46,7 +46,7 @@ class User {
       $this->id = $id;
       $this->comm = 0;
       $this->compta = 0;
-      $this->limite_liste = 20;
+      $this->limite_liste = 0;
 
       return 1;
   }
