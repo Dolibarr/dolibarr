@@ -47,8 +47,6 @@ function llxHeader($head = "") {
   /*
    * A automatiser
    */
-  $menu->add_submenu("index.php?year=2002","2002");
-  $menu->add_submenu("index.php?year=2001","2001");
 
   left_menu($menu->liste);
 }
