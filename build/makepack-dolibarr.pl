@@ -81,7 +81,7 @@ if (! $TEMP || ! -d $TEMP) {
 $BUILDROOT="$TEMP/buildroot";
 
 
-my $copyalreadydone=1;
+my $copyalreadydone=0;
 
 # Choose package targets
 #-----------------------
