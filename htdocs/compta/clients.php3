@@ -36,9 +36,6 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-
-$db = new Db();
-
 if ($sortorder == "") {
   $sortorder="ASC";
 }
@@ -167,9 +164,9 @@ $pagenext = $page + 1;
  *
  *
  */
-print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder);
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM llx_societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
+$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm ";
+$sql .= " FROM llx_societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
 
 if (strlen($stcomm))
 {
@@ -193,7 +190,7 @@ if ($socname)
   $sortorder = "ASC";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -201,6 +198,8 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
+  print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
+
   if ($sortorder == "DESC")
     {
       $sortorder="ASC";
@@ -210,15 +209,14 @@ if ($result)
       $sortorder="DESC";
     }
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-  print '<TR class="liste_titre">';
-  print "<TD valign=\"center\">";
+  print '<TR class="liste_titre"><td valign="center">';
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-  print "</td><TD>Ville</TD>";
-  print "<TD align=\"center\">Préfix</td><td colspan=\"2\">&nbsp;</td>";
-  print "</TR>\n";
+  print "</td><td>Ville</td>";
+  print "<td align=\"center\">Préfix</td><td colspan=\"2\">&nbsp;</td></tr>\n";
+
   $var=True;
 
-  while ($i < $num)
+  while ($i < min($num,$conf->liste_limit))
     {
       $obj = $db->fetch_object( $i);
       
