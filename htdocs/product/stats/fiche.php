@@ -71,21 +71,19 @@ if ($_GET["id"])
 	    rmdir(DOL_DOCUMENT_ROOT."/document/produits");
 
       // Création répertoire pour images générées
-      $dir = DOL_DOCUMENT_ROOT."/document/produit/".$product->id;
+      $dir = $conf->produit->dir_images."/".$product->id;
       if (! file_exists($dir))
 	{
 	  
 	  umask(0);
-	  if(!file_exists(DOL_DOCUMENT_ROOT."/document/produit")) {
-  	    mkdir(DOL_DOCUMENT_ROOT."/document");
-	    mkdir(DOL_DOCUMENT_ROOT."/document/produit");
+	  if(!file_exists($conf->produit->dir_images)) {
+  	    mkdir($conf->produit->dir_images);
 	  }
 	  if (! mkdir($dir, 0755))
 	    {
 	      $mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
 	    }
 	}
-
 
       $img_propal_name = "propal12mois.png";
       $filenbpropal = $dir . "/" . $img_propal_name;
@@ -176,10 +174,10 @@ if ($_GET["id"])
       print '<td align="center" width="50%" colspan="2">Nombre de pièces vendues</td></tr>';
       print '<tr><td align="center" colspan="2">';
 
-      print '<img src="'.DOL_URL_ROOT.'/document/produit/'.$product->id.'/vente12mois.png" alt="Ventes sur les 12 derniers mois">';
+      print '<img src="'.$conf->produit->url_images."/".$product->id.'/vente12mois.png" alt="Ventes sur les 12 derniers mois">';
       
       print '</td><td align="center" colspan="2">';
-      print '<img src="'.DOL_URL_ROOT.'/document/produit/'.$product->id.'/vendu12mois.png" alt="Ventes sur les 12 derniers mois">';
+      print '<img src="'.$conf->produit->url_images."/".$product->id.'/vendu12mois.png" alt="Ventes sur les 12 derniers mois">';
       
       print '</td></tr><tr>';
       if (file_exists($filenbvente) && filemtime($filenbvente))
@@ -206,7 +204,7 @@ if ($_GET["id"])
       print '<td align="center" width="50%" colspan="2">-</td></tr>';
       print '<tr><td align="center" colspan="2">';
 
-      print '<img src="'.DOL_URL_ROOT.'/document/produit/'.$product->id.'/'.$img_propal_name.'" alt="Propales sur les 12 derniers mois">';
+      print '<img src="'.$conf->produit->url_images."/".$product->id.'/'.$img_propal_name.'" alt="Propales sur les 12 derniers mois">';
       
       print '</td><td align="center" colspan="2">TODO AUTRE GRAPHIQUE';
 
