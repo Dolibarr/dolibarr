@@ -63,11 +63,10 @@ class pdf_crabe extends ModelePDFFactures
     		\remarks    FACTURE_RIB_NUMBER
     		\remarks    FAC_PDF_INTITULE
     		\remarks    FAC_PDF_INTITULE2
-    		\remarks    FAC_PDF_SIREN
-    		\remarks    FAC_PDF_SIRET
     		\remarks    FAC_PDF_TEL
     		\remarks    FAC_PDF_ADRESSE
-    		\remarks    MAIN_INFO_RCS
+    		\remarks    MAIN_INFO_SIRET
+    		\remarks    MAIN_INFO_SIREN
     		\remarks    MAIN_INFO_CAPITAL
     		\remarks    MAIN_INFO_TVAINTRA
     */
@@ -573,15 +572,15 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->SetFont('Arial','',10);
             $pdf->MultiCell(40, 4, "Tél : ".FAC_PDF_TEL);
         }
-        if (defined("FAC_PDF_SIRET"))
+        if (defined("MAIN_INFO_SIRET"))
         {
             $pdf->SetFont('Arial','',10);
-            $pdf->MultiCell(60, 4, "SIRET : ".FAC_PDF_SIRET);
+            $pdf->MultiCell(60, 4, "SIRET : ".MAIN_INFO_SIRET);
         }
-        elseif (defined("FAC_PDF_SIREN"))
+        elseif (defined("MAIN_INFO_SIREN"))
         {
             $pdf->SetFont('Arial','',10);
-            $pdf->MultiCell(60, 4, "SIREN : ".FAC_PDF_SIREN);
+            $pdf->MultiCell(60, 4, "SIREN : ".MAIN_INFO_SIREN);
         }
 
 

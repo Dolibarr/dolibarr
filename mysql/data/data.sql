@@ -150,9 +150,6 @@ insert into llx_const (name, value, type) values ('FAC_PDF_INTITULE','Facture','
 insert into llx_const (name, value, type) values ('FAC_PDF_MEL','facture@societe.com','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_WWW','http://www.societe.com','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_LOGO','/documents/logo/mylogo.png','chaine');
-insert into llx_const (name, value, type) values ('FAC_CAPITAL_EURO','0','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_TVA_INTRA','','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_RCS','','chaine');
 
 --
 -- Propales

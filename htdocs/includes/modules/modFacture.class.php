@@ -88,24 +88,17 @@ class modFacture extends DolibarrModules
     $this->const[3][1] = "chaine";
     $this->const[3][2] = "02 97 00 00 00";
 
-    $this->const[4][0] = "FAC_PDF_SIREN";
+    $this->const[4][0] = "FAC_PDF_INTITULE2";
     $this->const[4][1] = "chaine";
-    $this->const[4][2] = "123 456 789";
+    $this->const[4][2] = "";
 
-    $this->const[5][0] = "FAC_PDF_SIRET";
+    $this->const[5][0] = "FACTURE_ADDON_PDF";
     $this->const[5][1] = "chaine";
-    $this->const[5][2] = "123 456 789 012";
+    $this->const[5][2] = "bulot";
 
-    $this->const[6][0] = "FAC_PDF_INTITULE2";
+    $this->const[6][0] = "FACTURE_ADDON";
     $this->const[6][1] = "chaine";
-
-    $this->const[7][0] = "FACTURE_ADDON_PDF";
-    $this->const[7][1] = "chaine";
-    $this->const[7][2] = "bulot";
-
-    $this->const[8][0] = "FACTURE_ADDON";
-    $this->const[8][1] = "chaine";
-    $this->const[8][2] = "pluton";
+    $this->const[6][2] = "pluton";
 
     // Boites
     $this->boxes = array();

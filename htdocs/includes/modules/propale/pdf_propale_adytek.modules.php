@@ -259,13 +259,13 @@ class pdf_propale_adytek extends ModelePDFPropales
    function _pagefoot(&$pdf, $propale)
    {
     $pdf->SetFont('Arial','I',8);
-    // FAC_PDF_ADRESSE  FAC_PDF_TEL  FAC_PDF_SIREN
+    // FAC_PDF_ADRESSE  FAC_PDF_TEL
 
     $pdf->SetFont('Arial','',8);
     $pdf->SetY(-13);
-    $pdf->MultiCell(190, 3, FAC_PDF_INTITULE . " - SARL au Capital de " . FAC_CAPITAL_EURO." - " . FAC_PDF_RCS." " . FAC_PDF_SIREN , 0, 'C');
+    $pdf->MultiCell(190, 3, FAC_PDF_INTITULE . " - SARL au Capital de " . MAIN_INFO_CAPITAL . " - " . MAIN_INFO_RCS." " . MAIN_INFO_SIREN , 0, 'C');
     $pdf->SetY(-10);
-    $pdf->MultiCell(190, 3, "N° TVA Intracommunautaire : " . FAC_PDF_TVA_INTRA  , 0, 'C');
+    $pdf->MultiCell(190, 3, "N° TVA Intracommunautaire : " . MAIN_INFO_TVAINTRA  , 0, 'C');
     $pdf->SetXY(-10,-10);
     $pdf->MultiCell(10, 3, $pdf->PageNo().'/{nb}', 0, 'R');
 

@@ -89,10 +89,10 @@ class pdf_soleil extends ModelePDFFicheinter
 		  $pdf->SetFont('Arial','',10);
 		  $pdf->MultiCell(40, 5, "Tél : ".FAC_PDF_TEL);
 		}  
-	      if (defined("FAC_PDF_SIREN"))
+	      if (defined("MAIN_INFO_SIREN"))
 		{
 		  $pdf->SetFont('Arial','',10);
-		  $pdf->MultiCell(40, 5, "SIREN : ".FAC_PDF_SIREN);
+		  $pdf->MultiCell(40, 5, "SIREN : ".MAIN_INFO_SIREN);
 		}  
 	      
 	      if (defined("FAC_PDF_INTITULE2"))
