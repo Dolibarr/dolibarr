@@ -25,7 +25,14 @@ $original_file = urldecode($_GET["file"]);
 
 $filename = basename ($original_file);
 
-header('Content-type: application/pdf');
+if ($_GET["type"])
+{
+  header('Content-type: '.$_GET["type"]);
+}
+else
+{
+  header('Content-type: application/pdf');
+}
 
 header('Content-Disposition: attachment; filename="'.$filename.'"');
 
