@@ -49,13 +49,13 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td width="30%" valign="top">';
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-
+print '<tr class="liste_titre"><td colspan="2">Lignes suivies</td></tr>';
 print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td></tr>';
 
 $sql = "SELECT count(*) as cc , c.name, c.firstname, c.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."user as c";
-$sql .= " WHERE c.rowid = l.fk_commercial";
+$sql .= " WHERE c.rowid = l.fk_commercial_suiv";
 $sql .= " AND l.statut <> 7";
 $sql .= " GROUP BY c.name ORDER BY cc DESC";
 
@@ -87,7 +87,47 @@ else
 {
   print $db->error() . ' ' . $sql;
 }
+print '</table><br />';
 
+print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td colspan="2">Lignes signées</td></tr>';
+print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td></tr>';
+
+$sql = "SELECT count(*) as cc , c.name, c.firstname, c.rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= " , ".MAIN_DB_PREFIX."user as c";
+$sql .= " WHERE c.rowid = l.fk_commercial_sign";
+$sql .= " AND l.statut <> 7";
+$sql .= " GROUP BY c.name ORDER BY cc DESC";
+
+$result = $db->query($sql);
+if ($result)
+{
+  $num = $db->num_rows();
+  $i = 0;
+  $datas = array();
+  $legends = array();
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($i);	
+
+      $var=!$var;
+
+      print "<tr $bc[$var]>";
+
+      print '<td width="50%" valign="top">';
+      print '<a href="commercial.php?commid='.$row[3];
+      print '">'.$row[2]." ". $row[1].'</a></td><td align="center">'.$row[0].'</td></tr>';
+	  
+      $i++;
+    }
+  $db->free();
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
 print '</table>';
 
 print '</td>';
