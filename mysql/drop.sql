@@ -253,7 +253,6 @@ drop table if exists llx_catalog_societe;
 
 drop table if exists llx_catalogsoc;
 
-
 drop table if exists llx_groupesociete;
 drop table if exists llx_groupesociete_remise;
 drop table if exists llx_mailing;
@@ -264,3 +263,19 @@ drop table if exists llx_so_gr;
 
 drop table if exists llx_user_alert;
 drop table if exists llx_user_param;
+
+drop table if exists llx_bookmark4u_login;
+drop table if exists llx_c_methode_commande_fournisseur;
+drop table if exists llx_compta_compte_generaux;
+drop table if exists llx_contratdet;
+drop table if exists llx_contratdet_log;
+drop table if exists llx_export_compta;
+drop table if exists llx_prelevement;
+drop table if exists llx_prelevement_facture;
+drop table if exists llx_prelevement_facture_demande;
+drop table if exists llx_prelevement_rejet;
+drop table if exists llx_product_fournisseur_price;
+drop table if exists llx_societe_commerciaux;
+drop table if exists llx_user_clicktodial;
+drop table if exists llx_usergroup;
+drop table if exists llx_usergroup_user;
