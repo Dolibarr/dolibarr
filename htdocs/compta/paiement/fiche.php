@@ -30,6 +30,7 @@
 
 require("./pre.inc.php");
 require("../../paiement.class.php");
+require("../../facture.class.php");
 
 $user->getrights('facture');
 
@@ -98,17 +99,15 @@ $html = new Form($db);
 
    }
 
+print '<br>';
 
 print '<table class="noborder" width="100%">';
 
 print '<tr><td valign="top">';
 
-print $langs->trans("Numero").' : '.$paiement->numero."<br>";
-
-print $langs->trans("Date").' : '.strftime("%d %B %Y",$paiement->date)."<br>";
-
+print $langs->trans("Date").' : '.dolibarr_print_date($paiement->date)."<br>";
 print $langs->trans("Type").' : '.$paiement->type_libelle."<br>";
-
+if ($paiement->numero) { print $langs->trans("Numero").' : '.$paiement->numero."<br>"; }
 print $langs->trans("Amount").' : '.$paiement->montant."&nbsp;".$conf->monnaie."<br>";
 
 print '</td></tr>';
@@ -121,7 +120,7 @@ print nl2br($paiement->note);
  *
  */
 $allow_delete = 1 ;
-$sql = "SELECT f.facnumber, f.total_ttc, pf.amount, f.rowid as facid, f.paye, s.nom, s.idp";
+$sql = "SELECT f.facnumber, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom, s.idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE pf.fk_facture = f.rowid AND f.fk_soc = s.idp";
 $sql .= " AND pf.fk_paiement = ".$paiement->id;
@@ -135,7 +134,7 @@ if ($db->query($sql))
   print '<br><table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td>'.$langs->trans("Bill").'</td><td>'.$langs->trans("Company").'</td>';
-  print '<td align="right">'.$langs->trans("AmountTTC").'</td><td>&nbsp;</td>';
+  print '<td align="right">'.$langs->trans("AmountTTC").'</td><td align="center">'.$langs->trans("Status").'</td>';
   print "</tr>\n";
   
   if ($num > 0) 
@@ -152,7 +151,9 @@ if ($db->query($sql))
 	  print ' <a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
 	  print "</a></td>\n";
 	  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">' . $objp->nom.'</a></td>';
-	  print '<td align="right">'.price($objp->amount).'</td><td align="center">'.$objp->paye.'</td>';
+	  print '<td align="right">'.price($objp->amount).'</td>';
+	  $fac=new Facture($db);
+	  print '<td align="center">'.$fac->LibStatut($objp->paye,$objp->fk_statut).'</td>';
 	  print "</tr>\n";
 	  if ($objp->paye == 1)
 	    {
@@ -165,12 +166,15 @@ if ($db->query($sql))
   $var=!$var;
   print "<tr $bc[$var]>";
   print '<td>&nbsp;</td>';
-  print '<td align="right">Total</td>';
+  print '<td align="right">'.$langs->trans("Total").'</td>';
   print '<td align="right">'.price($total).'</td><td>&nbsp;</td>';
   print "</tr>\n";
 
   print "</table>\n";
   $db->free();	
+}
+else {
+    dolibarr_print_error($db);   
 }
 
 
@@ -183,7 +187,7 @@ print '<div class="tabsAction">';
 
 if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET["action"] == '')
 {
-  print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=valide">'.$langs->trans("Valider").'</a>';
+  print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=valide">'.$langs->trans("Valid").'</a>';
 }
 
 
