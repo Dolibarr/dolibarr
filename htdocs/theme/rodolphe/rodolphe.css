@@ -21,7 +21,7 @@
 body 
 {
   background: #ebe0eb; 
-  font-family: Helvetica, Verdana; font-size: 12px; 
+  font-family: sans-serif; font-size: 0.9em; 
 }
 /*
  *   Menu superieur
@@ -69,66 +69,123 @@ td.border {
             border-left: 1px solid #000000;
             }
 
+div.menus { 
+            background: #eeeecc; 
+            color: #bbbb88;
+            border-top:    1px dashed #ccccb3;
+            border-right:  1px dashed #ccccb3;
+            border-bottom: 1px dashed #ccccb3;
+            border-left:   1px dashed #ccccb3;
+            }
+
 .menu 
 { 
   background: #ccb3cc; 
-  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
+  font-weight: bold; 
+  color: #000000; 
+  text-decoration: none }
+
+.menusel
+{ 
+  background: #bbbb88; 
+  font-weight: bold; 
   color: #000000; 
   text-decoration: none }
 
 .submenu 
 { 
   background: #ccb3cc; 
-  font-family: Helvetica, Verdana; font-size: 14px;
   color: #000000; 
   text-decoration: none }
 
+a.normal{ font-weight: normal } 
+a.impayee { font-weight: bold }
 
 /*
  *   Barre de gauche
  */
 
-TD.barre 
+a.leftmenu { 
+             font-weight: bold; 
+             color: #202020; }
+
+td.barre 
 { 
+  border-right: 1px solid #000000;
+  border-bottom: 1px solid #000000;
   background: #ccb3cc;
-  font-family: Helvetica, Verdana; font-size: 14px; 
   color: #000000; 
   text-decoration: none }
 
-TD.barre_select 
-{ 
-  background: #ccb3cc; 
-  color: #000000 
-  }
+td.barre_select { 
+                  background: #ccb3cc; 
+                  color: #000000 
+                  }
 
-
-
-DIV.titre 
-{ 
-  font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; 
-  color: #663366; 
-  text-decoration: none }
+div.titre { 
+            font-weight: bold; 
+            color: #663366; 
+            text-decoration: none }
 /*
  *
  */
-TR.liste_titre  
-{ 
-  background: #996699; 
-  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
-  text-decoration: none }
+tr.liste_titre { 
+                 background: #996699; 
+                 font-weight: bold;
+                 text-decoration: none }
 
-TR.pair	        
-{ 
-  background: #ccb3cc; 
-  font-family: Helvetica, Verdana; font-size: 12px; 
-  text-decoration: none }
+tr.pair	{ 
+          background: #ccb3cc; 
+          text-decoration: none }
 
-TR.impair	
-{ 
-  background: #eeccee; 
-  font-family: Helvetica, Verdana; font-size: 12px; 
-  text-decoration: none }
+tr.impair { 
+            background: #eeccee; 
+            text-decoration: none }
+/*
+ *
+ */
+tr.box_titre { 
+               font-weight: bold; }
 
+tr.box_pair { 
+              background: #ccb3cc; 
+              font-size: 0.8em; }
+
+tr.box_impair { 
+                background: #eeccee; 
+                font-size: 0.8em; }
+
+tr.fiche { 
+           font-family: Helvetica, Verdana;
+           font-size: 0.6em; }
+
+input.flat
+{ 
+  border: 0
+ }
+
+td.valeur
+{ 
+  font-weight: bold;
+  }
+
+td.delete { 
+            background: red;
+            font-weight: bold; }
+
+td.valid { 
+           background: pink;
+           font-weight: bold; }
+
+td.small { 
+           font-size: 0.8em; }
+
+tr.nonpayed { 
+              font-size: 0.8em;
+              font-weight: bold; }
+/*
+ *
+ */
 
 p#powered-by-dolibarr {
 	position: fixed;
