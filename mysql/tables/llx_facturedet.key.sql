@@ -1,4 +1,4 @@
--- ============================================================================
+-- ===================================================================
 -- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -17,10 +17,9 @@
 --
 -- $Id$
 -- $Source$
---
--- ===========================================================================
+-- ===================================================================
 
 -- Supprimme orhpelins pour permettre montée de la clé
-DELETE llx_usergroup_rights FROM llx_usergroup_rights LEFT JOIN llx_usergroup ON llx_usergroup_rights.fk_user = llx_usergroup.rowid WHERE llx_usergroup.rowid IS NULL;
+DELETE llx_facturedet FROM llx_facturedet LEFT JOIN llx_facture ON llx_facturedet.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;
 
-ALTER TABLE llx_usergroup_rights ADD FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);
+ALTER TABLE llx_facturedet       ADD CONSTRAINT facturedet_fk_facture_rowid	FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);

@@ -21,6 +21,8 @@
 -- ===========================================================================
 
 -- Supprimme orhpelins pour permettre montée de la clé
-DELETE llx_usergroup_rights FROM llx_usergroup_rights LEFT JOIN llx_usergroup ON llx_usergroup_rights.fk_user = llx_usergroup.rowid WHERE llx_usergroup.rowid IS NULL;
+DELETE llx_paiement_facture FROM llx_paiement_facture LEFT JOIN llx_facture ON llx_paiement_facture.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;
+DELETE llx_paiement_facture FROM llx_paiement_facture LEFT JOIn llx_paiement ON llx_paiement_facture.fk_facture = llx_paiement.rowid WHERE llx_paiement.rowid IS NULL;
 
-ALTER TABLE llx_usergroup_rights ADD FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);
+ALTER TABLE llx_paiement_facture  ADD CONSTRAINT paiement_facture_fk_facture	FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
+ALTER TABLE llx_paiement_facture  ADD CONSTRAINT paiement_facture_fk_paiement	FOREIGN KEY (fk_paiement) REFERENCES llx_paiement (rowid);

@@ -18,9 +18,7 @@
 -- $Id$
 -- $Source$
 --
--- ===========================================================================
+-- ============================================================================
 
--- Supprimme orhpelins pour permettre montée de la clé
-DELETE llx_usergroup_rights FROM llx_usergroup_rights LEFT JOIN llx_usergroup ON llx_usergroup_rights.fk_user = llx_usergroup.rowid WHERE llx_usergroup.rowid IS NULL;
 
-ALTER TABLE llx_usergroup_rights ADD FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);
+ALTER TABLE llx_socpeople        ADD CONSTRAINT socpeople_fk_soc_idp		FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);

@@ -1,4 +1,4 @@
--- ============================================================================
+-- ===================================================================
 -- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -18,9 +18,6 @@
 -- $Id$
 -- $Source$
 --
--- ===========================================================================
+-- ===================================================================
 
--- Supprimme orhpelins pour permettre montée de la clé
-DELETE llx_usergroup_rights FROM llx_usergroup_rights LEFT JOIN llx_usergroup ON llx_usergroup_rights.fk_user = llx_usergroup.rowid WHERE llx_usergroup.rowid IS NULL;
-
-ALTER TABLE llx_usergroup_rights ADD FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);
+ALTER TABLE llx_fichinter        ADD CONSTRAINT fichinter_fk_soc_idp		FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);

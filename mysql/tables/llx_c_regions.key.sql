@@ -1,5 +1,8 @@
--- ============================================================================
+-- ========================================================================
 -- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+--
+-- $Id$
+-- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,12 +18,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
--- $Source$
---
--- ===========================================================================
+-- ========================================================================
 
--- Supprimme orhpelins pour permettre montée de la clé
-DELETE llx_usergroup_rights FROM llx_usergroup_rights LEFT JOIN llx_usergroup ON llx_usergroup_rights.fk_user = llx_usergroup.rowid WHERE llx_usergroup.rowid IS NULL;
 
-ALTER TABLE llx_usergroup_rights ADD FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);
+ALTER TABLE llx_c_regions        ADD CONSTRAINT c_regions_fk_pays		FOREIGN KEY (fk_pays)     REFERENCES llx_c_pays (rowid);

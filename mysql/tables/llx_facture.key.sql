@@ -21,14 +21,11 @@
 --
 -- ============================================================================
 
---
---
 ALTER TABLE llx_facture ADD INDEX (fk_soc);
 
 ALTER TABLE llx_facture ADD INDEX (fk_user_author);
 ALTER TABLE llx_facture ADD INDEX (fk_user_valid);
---
---
+
 ALTER TABLE llx_facture ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
 
 ALTER TABLE llx_facture ADD FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
