@@ -31,6 +31,8 @@ if (!$user->admin && $user->societe_id > 0)
 
 
 
+$year = $_GET["year"];
+
 require("../../includes/modules/rapport/pdf_paiement.class.php");
 
 $dir = DOL_DOCUMENT_ROOT."/document/rapport/";
@@ -50,7 +52,7 @@ llxHeader();
  *
  *
  */
-print_titre("Rapport paiements");
+print_titre("Rapport paiements (EN COURS DE DEVELOPPEMENT)");
 
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="action" value="gen">';
@@ -109,7 +111,7 @@ while (($file = readdir($handle))!==false)
 {
   if (is_dir($dir.$file) && substr($file, 0, 1) <> '.')
     {
-      print '<a href="index.php?year='.$file.'">'.$file.'</a> ';
+      print '<a href="rapport.php?year='.$file.'">'.$file.'</a> ';
     }
 }
 
@@ -118,7 +120,7 @@ if ($year)
   $handle=opendir($dir.'/'.$year);
   
   print '<table width="100%" id="wiborder">';
-  print '<tr><td>Rapport</td><td>Taille</td><td>Date de génération</td></tr>';
+  print '<tr><td>Rapport</td><td align="right">Taille</td><td align="right">Date de génération</td></tr>';
   while (($file = readdir($handle))!==false)
     {
       if (substr($file, 0, 8) == 'paiement')
