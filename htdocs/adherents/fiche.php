@@ -523,7 +523,7 @@ if ($rowid > 0)
        * Case 1
        */
       
-      print '<td align="center" width="25%" class=\"bouton\">[<a href="edit.php?rowid='.$adh->id.'">Editer</a>]</td>';
+      print '<td align="center" width="25%" class="bouton">[<a href="edit.php?rowid='.$adh->id.'">Editer</a>]</td>';
       
       /*
        * Case 2
@@ -563,6 +563,7 @@ if ($rowid > 0)
 	/*
 	 * Case 1 & 2
 	 */
+	/* retrait car bug inexplicable pour l'instant
 	if ($adh->is_in_glasnost() == 1){
 	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>\n";
 	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>]</td>\n";
@@ -570,6 +571,9 @@ if ($rowid > 0)
 	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>]</td>\n";
 	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>\n";
 	}
+	*/
+	print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>]</td>\n";
+	print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>]</td>\n";
       }else{
 	/*
 	 * Case 1
