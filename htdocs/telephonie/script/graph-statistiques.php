@@ -47,13 +47,12 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/ca.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camoyen.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/gain.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/heureappel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/joursemaine.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camoyen.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/appelsdureemoyenne.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbmensuel.class.php");
-
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/actives.class.php");
 
 $error = 0;
@@ -116,7 +115,7 @@ if (is_array($dirs))
 /***********************************************************************/
 
 $file = $img_root . "lignes/lignes.actives.png";
-if ($verbose) print "Graph : Lignes actives$file\n";
+if ($verbose) print "Lignes actives ($file)\n";
 $graph = new GraphLignesActives($db, $file);
 $graph->GraphMakeGraph();
 
@@ -127,7 +126,7 @@ $graph->GraphMakeGraph();
 /***********************************************************************/
 
 $file = $img_root . "ca/ca.mensuel.png";
-if ($verbose) print "Graph : Chiffre d'affaire mensuel $file\n";
+if ($verbose) print "Chiffre d'affaire mensuel ($file)\n";
 $graphca = new GraphCa($db, $file);
 $graphca->GraphDraw();
 
@@ -138,9 +137,8 @@ $graphca->GraphDraw();
 /*
 /************************************************************************/
 
-if ($verbose) print "\nGraph ca moyen\n";
-
 $file = $img_root . "ca/gain_moyen_par_client.png";
+if ($verbose) print "Graph ca moyen\n";
 $graphgain = new GraphCaMoyen ($db, $file);
 $graphgain->show_console = 0 ;
 $graphgain->GraphDraw();
@@ -184,6 +182,7 @@ if ($db->query($sql))
 }
 
 $file = $img_root . "communications/heure_appel_nb.png";
+if ($verbose) print "Heures d'appels\n";
 $graphha = new GraphHeureAppel ($db, $file);
 $graphha->GraphDraw($heure_appel_nb);
 
