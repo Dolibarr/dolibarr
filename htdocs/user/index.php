@@ -21,7 +21,7 @@
  *
  */
  
-/*!
+/**
         \file       htdocs/user/index.php
         \brief      Page d'accueil de la gestion des utilisateurs
         \version    $Revision$
@@ -44,7 +44,7 @@ if (! $sortfield) {
 
 print_titre($langs->trans("ListOfUsers"));
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login, u.module_comm, u.module_compta";
+$sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 if ($sortfield) { $sql.=" ORDER BY $sortfield $sortorder"; }
 

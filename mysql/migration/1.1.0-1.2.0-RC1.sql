@@ -5,6 +5,9 @@
 -- sans AUCUNE erreur ni warning
 -- ;
 
+alter table llx_user drop column module_comm;
+alter table llx_user drop column module_compta;
+
 alter table llx_user_rights add rowid integer AUTO_INCREMENT PRIMARY KEY;
 alter table llx_facture add fk_mode_reglement integer after fk_cond_reglement ;
 
@@ -244,30 +247,6 @@ create table llx_user_param
   param         varchar(255),
   value         varchar(255),
   UNIQUE (fk_user,page,param)
-)type=innodb;
-
-create table llx_cash_account
-(
-  rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  datec          datetime,
-  tms            timestamp,
-  label          varchar(30),
-  courant        smallint default 0 not null,
-  clos           smallint default 0 not null,
-  account_number varchar(8)
-)type=innodb;
-
-create table llx_cash
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  datec           datetime,
-  dateo           date NOT NULL,
-  amount          real NOT NULL default 0,
-  label           varchar(255),
-  fk_account      integer,
-  fk_user_author  integer,
-  fk_type         varchar(4),
-  note            text
 )type=innodb;
 
 

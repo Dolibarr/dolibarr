@@ -844,8 +844,6 @@ class User
 	      $sql .= ", email = '$this->email'";
 	      $sql .= ", admin = $this->admin";
 	      $sql .= ", webcal_login = '$this->webcal_login'";
-	      $sql .= ", module_comm = 1";
-	      $sql .= ", module_compta = 1";
 	      $sql .= ", code = '$this->code'";
 	      $sql .= ", note = '$this->note'";
 	      $sql .= " WHERE rowid = $this->id;";
