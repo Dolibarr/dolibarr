@@ -72,7 +72,7 @@ if ($action == 'update')
 	}
       else
 	{
-	  Header("Location: edit.php?rowid=$adh->id");
+	  Header("Location: $PHP_SELF?rowid=$adh->id");
 	}
 
     }

@@ -50,7 +50,9 @@ function llxHeader($head = "") {
 
   if ($user->admin)
     {
-      $menu->add("type.php","Configuration");
+      $menu->add("index.php","Configuration");
+      $menu->add_submenu("type.php","Type d'adhérent");
+      $menu->add_submenu("options.php","Champs optionnels");
     }
 
   left_menu($menu->liste);

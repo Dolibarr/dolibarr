@@ -146,6 +146,28 @@ class AdherentOptions
       }
 
   }
+
+  /*
+   * Modification d'un attribut
+   *
+   */
+  Function update($attrname,$type='varchar',$length=255)
+
+  {
+    $sql = "ALTER TABLE llx_adherent_options MODIFY COLUMN $attrname $type($length)";
+
+    if ( $this->db->query( $sql) )
+      {
+	return 1;
+      }
+    else
+      {
+	print "Err : ".$this->db->error();
+	print "<h2><br>$sql<br></h2>";
+	return 0;
+      }
+
+  }
   
   /*
    * fetch optional attribute name
