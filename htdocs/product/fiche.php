@@ -165,7 +165,7 @@ if ($action == 'create')
   print '<input type="hidden" name="type" value="'.$type.'">'."\n";
   print '<div class="titre">Nouveau '.$types[$type].'</div><br>'."\n";
       
-  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class=tablefprod border="1" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr>';
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
   print "<tr>".'<td>Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
@@ -378,7 +378,7 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
+print '<br><table class=tableab width="100%" border="1" cellspacing="0" cellpadding="3">';
 if ($action == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
@@ -509,7 +509,7 @@ if ($id && $action == '' && $product->envente)
 	{
 	  $num = $db->num_rows();
 	  $i = 0;
-	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class=tableab border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  $var=True;      
 	  while ($i < $num)
 	    {
