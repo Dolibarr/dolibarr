@@ -33,7 +33,7 @@
 require("./pre.inc.php");
 
 if (!$user->admin)
-accessforbidden();
+    accessforbidden();
 
 
 llxHeader();
@@ -43,128 +43,101 @@ print '<br>';
 
 $def = array();
 
-$phpwebcalendar_url=$_POST["phpwebcalendar_url"];
-$phpwebcalendar_host=$_POST["phpwebcalendar_host"];
-$phpwebcalendar_dbname=$_POST["phpwebcalendar_dbname"];
-$phpwebcalendar_user=$_POST["phpwebcalendar_user"];
-$phpwebcalendar_pass=$_POST["phpwebcalendar_pass"];
-$phpwebcalendar_pass2=$_POST["phpwebcalendar_pass2"];
+$phpwebcalendar_url=trim($_POST["phpwebcalendar_url"]);
+$phpwebcalendar_host=trim($_POST["phpwebcalendar_host"]);
+$phpwebcalendar_dbname=trim($_POST["phpwebcalendar_dbname"]);
+$phpwebcalendar_user=trim($_POST["phpwebcalendar_user"]);
+$phpwebcalendar_pass=trim($_POST["phpwebcalendar_pass"]);
+$phpwebcalendar_pass2=trim($_POST["phpwebcalendar_pass2"]);
 $actionsave=$_POST["save"];
 $actiontest=$_POST["test"];
 
 // Positionne la variable pour le test d'affichage de l'icone
 if ($actionsave)
 {
-    if (trim($phpwebcalendar_pass) == trim($phpwebcalendar_pass2))
+    if ($phpwebcalendar_pass == $phpwebcalendar_pass2)
     {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_URL';";
-						
-						$db->query($sql);
-						
-						$sql='';
-						
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-						('PHPWEBCALENDAR_URL','".$phpwebcalendar_url."',0);"; 
-						
-						$db->query($sql);
-						
-						$sql='';
-						
-						$sql1 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_HOST';";
-						
-						$db->query($sql1);
-						
-						$sql1 = '';
-						
-						$sql1 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_HOST','".$phpwebcalendar_host."',0);"; 
+			$db->query($sql);
+			
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES	('PHPWEBCALENDAR_URL','".$phpwebcalendar_url."',0);"; 
+			$result=$db->query($sql);
+			
+			$sql1 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_HOST';";
+			$db->query($sql1);
+			
+			$sql1 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_HOST','".$phpwebcalendar_host."',0);"; 
+			$result1=$db->query($sql1);
+									
+			$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_DBNAME';";
+			$db->query($sql2);
+			
+			$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_DBNAME','".$phpwebcalendar_dbname."',0);";
+			$result2=$db->query($sql2);
+			
+			$sql3 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_USER' ;";
+			$db->query($sql3);
+			
+			$sql3 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_USER','".$phpwebcalendar_user."',0);";
+			$result3=$db->query($sql3);
+			
+			$sql4 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_PASS';";
+			$db->query($sql4);
+			
+			$sql4 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_PASS','".$phpwebcalendar_pass."',0);";
+			$result4=$db->query($sql4);
 
-						$db->query($sql1);
-												
-						$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_DBNAME';";
-						
-						$db->query($sql2);
-						
-						$sql2='';
-						
-						$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-						('PHPWEBCALENDAR_DBNAME','".$phpwebcalendar_dbname."',0);";
-						
-						$db->query($sql2);
-						
-						$sql2='';
-						
-						$sql3 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_USER' ;";
-						
-						$db->query($sql3);
-						
-						$sql3='';
-						
-						$sql3 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-						('PHPWEBCALENDAR_USER','".$phpwebcalendar_user."',0);";
-						
-						$sql4 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_PASS';";
-						
-						$db->query($sql4);
-						
-						$sql4='';
-						
-						$sql4 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-						('PHPWEBCALENDAR_PASS','".$phpwebcalendar_pass."',0);";
-
-						$db->query($sql4);
-
-            if ($db->query($sql) && $db->query($sql1) && $db->query($sql2) && $db->query($sql3) && $db->query($sql4))
+            if ($result && $result1 && $result2 && $result3 && $result4)
             {
-                // la constante qui a été lue en avant du nouveau set
-                // on passe donc par une variable pour avoir un affichage cohérent
-                define("PHPWEBCALENDAR_URL",   $phpwebcalendar_url);
-                define("PHPWEBCALENDAR_HOST",  $phpwebcalendar_host);
-                define("PHPWEBCALENDAR_DBNAME",$phpwebcalendar_dbname);
-                define("PHPWEBCALENDAR_USER",  $phpwebcalendar_user);
-                define("PHPWEBCALENDAR_PASS",  $phpwebcalendar_pass);
-                $ok = "<p>Les identifiants webcalendar ont été sauvegardés.</p>";
+                $ok = "<br><font class=\"ok\">Les identifiants Webcalendar ont été sauvegardés avec succès.</font>";
             }
     }
     else
     {
-        $ok="<p>Le mot de passe n'est pas identique, veuillez le saisir à nouveau</p><br>\n";
+        $ok="<br><font class=\"error\">Le mot de passe n'est pas identique, veuillez le saisir à nouveau</font><br>\n";
     }
 }
+
+if (! $phpwebcalendar_url)      { $phpwebcalendar_url=PHPWEBCALENDAR_URL; }
+if (! $phpwebcalendar_host)     { $phpwebcalendar_host=PHPWEBCALENDAR_HOST; }
+if (! $phpwebcalendar_dbname)   { $phpwebcalendar_dbname=PHPWEBCALENDAR_DBNAME; }
+if (! $phpwebcalendar_user)     { $phpwebcalendar_user=PHPWEBCALENDAR_USER; }
+if (! $phpwebcalendar_pass)     { $phpwebcalendar_pass=PHPWEBCALENDAR_PASS; }
+if (! $phpwebcalendar_pass2)     { $phpwebcalendar_pass2=PHPWEBCALENDAR_PASS; }
 
 
 /**
  * Affichage du formulaire de saisie
  */
-
 print '<form name="phpwebcalendarconfig" action="webcalendar.php" method="post">';
-print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"1\">
+print "<table class=\"noborder\">
 <tr class=\"liste_titre\">
 <td>".$langs->trans("Parameter")."</td>
 <td>".$langs->trans("Value")."</td>
 </tr>
 <tr class=\"impair\">
 <td>Adresse URL d'accès au calendrier</td>
-<td><input type=\"text\" name=\"phpwebcalendar_url\" value=\"". PHPWEBCALENDAR_URL . "\" size=\"45\"></td>
+<td><input type=\"text\" name=\"phpwebcalendar_url\" value=\"". $phpwebcalendar_url . "\" size=\"45\"></td>
 </tr>
 <tr class=\"pair\">
 <td>Serveur où la base du calendrier est hébergée</td>
-<td><input type=\"text\" name=\"phpwebcalendar_host\" value=\"". PHPWEBCALENDAR_HOST . "\" size=\"45\"></td>
+<td><input type=\"text\" name=\"phpwebcalendar_host\" value=\"". $phpwebcalendar_host . "\" size=\"45\"></td>
 </tr>
 <tr class=\"impair\">
 <td>Nom de la base de données</td>
-<td><input type=\"text\" name=\"phpwebcalendar_dbname\" value=\"". PHPWEBCALENDAR_DBNAME . "\" size=\"45\"></td>
+<td><input type=\"text\" name=\"phpwebcalendar_dbname\" value=\"". $phpwebcalendar_dbname . "\" size=\"45\"></td>
 </tr>
 <tr class=\"pair\">
 <td>Identifiant d'accès à la base</td>
-<td><input type=\"text\" name=\"phpwebcalendar_user\" value=\"". PHPWEBCALENDAR_USER . "\" size=\"45\"></td>
+<td><input type=\"text\" name=\"phpwebcalendar_user\" value=\"". $phpwebcalendar_user . "\" size=\"45\"></td>
 </tr>
 <tr class=\"impair\">
 <td>".$langs->trans("Password")."</td>
-<td><input type=\"password\" name=\"phpwebcalendar_pass\" value=\"" . PHPWEBCALENDAR_PASS . "\" size=\"45\"></td>
+<td><input type=\"password\" name=\"phpwebcalendar_pass\" value=\"" . $phpwebcalendar_pass . "\" size=\"45\"></td>
 </tr>
 <tr class=\"pair\">
 <td>".$langs->trans("PasswordRetype")."</td>
-<td><input type=\"password\" name=\"phpwebcalendar_pass2\" value=\"" . PHPWEBCALENDAR_PASS ."\" size=\"45\"></td>
+<td><input type=\"password\" name=\"phpwebcalendar_pass2\" value=\"" . $phpwebcalendar_pass2 ."\" size=\"45\"></td>
 </tr>
 <tr class=\"impair\">
 <td colspan=\"2\" align=\"center\">
@@ -180,30 +153,28 @@ print "
 </form>\n";
 
 
-/**
-* Test de la connection a la database webcalendar
-*
-*/
 if ($ok) print "$ok<br>";
 
+
+// Test de la connection a la database webcalendar
 if ($actiontest)
 {
-    $conf = new Conf();
+    $webcal = new DoliDb('',$phpwebcalendar_host,$phpwebcalendar_user,$phpwebcalendar_pass,$phpwebcalendar_dbname);
 
-    $conf->db->host = $phpwebcalendar_host;
-    $conf->db->name = $phpwebcalendar_dbname;
-    $conf->db->user = $phpwebcalendar_user;
-    $conf->db->pass = $phpwebcalendar_pass;
-
-    $webcal = new DoliDb();
-
-    if ($webcal->connected == 1)
+    if ($webcal->connected == 1 && $webcal->database_selected == 1)
     {
-        print "<p class=\"ok\">La connection à la base de données '$phpwebcalendar_dbname' à réussi</p><br>";
+        print "<br><font class=\"ok\">La connection au serveur '$phpwebcalendar_host' sur la base '$phpwebcalendar_dbname' a réussi.</font><br>";
+        $webcal->close();
+    }
+    elseif ($webcal->connected == 1)
+    {
+        print "<br><font class=\"error\">La connection au serveur '$phpwebcalendar_host' a réussi mais la base '$phpwebcalendar_dbname' n'a pu être accédée.</font><br>";
         $webcal->close();
     }
     else
-    print "<p class=\"error\">La connection à la base de données '$phpwebcalendar_dbname' à échoué.</p><br>";
+    {
+        print "<br><font class=\"error\">La connection au serveur '$phpwebcalendar_host' à échoué.</font><br>";
+    }
 }
 
 
