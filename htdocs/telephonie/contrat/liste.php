@@ -110,6 +110,7 @@ if ($result)
 
   print_barre_liste("Contrats", $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
+  print '<form action="liste.php" method="GET">'."\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
 
@@ -123,7 +124,6 @@ if ($result)
   print "</tr>\n";
 
   print '<tr class="liste_titre">';
-  print '<form action="liste.php" method="GET">';
   print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
   print '<td><input type="text" name="search_client" value="'. $_GET["search_client"].'" size="10"></td>';
   print '<td><input type="text" name="search_client_agence" value="'. $_GET["search_client_agence"].'" size="10"></td>';
@@ -131,9 +131,6 @@ if ($result)
 
 
   print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'""></td>';
-  print '<td>&nbsp;</td>';
-
-  print '</form>';
   print '</tr>';
 
   $var=True;
@@ -161,6 +158,7 @@ if ($result)
       $i++;
     }
   print "</table>";
+  print '</form>';
   $db->free();
 }
 else 
