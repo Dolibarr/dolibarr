@@ -56,7 +56,7 @@ class GraphBarAcc extends DolibarrGraph {
     
     // Margins : left, right, top, bottom
 
-    $graph->img->SetMargin(40,20,20,30);
+    $graph->img->SetMargin(40,20,20,35);
     
     $b2plot = new BarPlot($datas);
 
@@ -66,11 +66,15 @@ class GraphBarAcc extends DolibarrGraph {
 
     $LabelAngle = 45;
     if ($this->LabelAngle <> $LabelAngle && strlen($this->LabelAngle) > 0)
-      $LabelAngle = $this->LabelAngle;
+      {
+	$LabelAngle = $this->LabelAngle;
+      }
 
-    $graph->xaxis->SetLabelAngle($LabelAngle);
-
-    $graph->xaxis->SetFont(FF_VERDANA,FS_NORMAL,7);
+    if ($this->LabelAngle > 0)
+      {
+	$graph->xaxis->SetLabelAngle($LabelAngle);
+	$graph->xaxis->SetFont(FF_VERDANA,FS_NORMAL,7);
+      }
 
     
     $b1plot = new BarPlot($moys);
@@ -87,10 +91,7 @@ class GraphBarAcc extends DolibarrGraph {
 
     $graph->title->Set($this->titre);    
     $graph->title->SetFont(FF_VERDANA,FS_NORMAL);
-
-    $graph->yaxis->title->SetFont(FF_FONT2);
-    $graph->xaxis->title->SetFont(FF_FONT1);
-    
+  
     $graph->xaxis->SetTickLabels($labels);
 
     $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
