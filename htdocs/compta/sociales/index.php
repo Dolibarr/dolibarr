@@ -64,12 +64,8 @@ if ($_GET["action"] == 'del')
     }
 }
 
-if ($_GET["action"] == 'edit')
-{
-	print "La modification est le paiement des charges n'est pas encore disponible.\nSeule leur saisie est possible, sans interaction avec le compte pour l'instant.\n";
-}
-
-
+$year=$_GET["year"];
+$filtre=$_GET["filtre"];
 
 /*
  *  Affichage liste et formulaire des charges.
@@ -77,20 +73,36 @@ if ($_GET["action"] == 'edit')
 
 print_titre("Charges sociales $year");
 
+print "<br>\n";
+
 print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print "<tr class=\"liste_titre\">";
-print '<td>Echeance/Date</td><td>Période</td><td colspan="2" align="left">';
-print_liste_field_titre("Libellé",$PHP_SELF,"c.libelle");
-print '</td><td align="right">Montant</td><td align="center">Payé</td><td>&nbsp;</td>';
+print '<td>';
+print_liste_field_titre("Echéance/Date",$PHP_SELF,"de");
+print '</td><td>';
+print_liste_field_titre("Période",$PHP_SELF,"periode");
+print '</td><td align="left">';
+print_liste_field_titre("Type",$PHP_SELF,"type");
+print '</td><td align="left">';
+print_liste_field_titre("Libellé",$PHP_SELF,"s.libelle");
+print '</td><td align="right">';
+print_liste_field_titre("Montant",$PHP_SELF,"s.amount");
+print '</td><td align="center">';
+print_liste_field_titre("Payé",$PHP_SELF,"s.paye");
+print '</td><td>&nbsp;</td>';
 print "</tr>\n";
 
 
-$sql = "SELECT s.rowid as id, c.libelle as nom, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,".$db->pdate("s.date_pai")." as dp";
+$sql = "SELECT s.rowid as id, c.libelle as type, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,".$db->pdate("s.date_pai")." as dp";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id";
 if ($year > 0)
 {
-  $sql .= " AND date_format(s.periode, '%Y') = $year";
+    $sql .= " AND date_format(s.periode, '%Y') = $year";
+}
+if ($filtre) {
+    $filtre=ereg_replace(":","=",$filtre);
+    $sql .= " AND $filtre";
 }
 $sql .= " ORDER BY lower(s.date_ech) DESC";
 
@@ -102,6 +114,7 @@ if ( $db->query($sql) )
   while ($i < $num)
     {
       $obj = $db->fetch_object( $i);
+
       $var = !$var;
       print "<tr $bc[$var]>";
       print '<td>'.strftime("%d %b %y",$obj->de).'</td>';
@@ -112,16 +125,16 @@ if ( $db->query($sql) )
       	print '&nbsp;';
       }
       print '</td>';
-      print '<td>'.$obj->nom.'</td><td>'.$obj->libelle.'</td>';
+      print '<td>'.$obj->type.'</td><td>'.$obj->libelle.'</td>';
       print '<td align="right">'.price($obj->amount).'</td>';
       
       if ($obj->paye)
 	{
-	  print '<td align="center">'.strftime("%d/%m/%y",$obj->dp).'</td>';
+	  print '<td align="center" class="normal">'.strftime("%d/%m/%y",$obj->dp).'</td>';
 	  print '<td>&nbsp;</td>';
 	} else {
-	  print '<td align="center">Non</td>';
-	  print '<td align="center"><a href="'.$PHP_SELF.'?action=edit&id='.$obj->id.'">'.img_edit().'</a>';
+	  print '<td align="center"><a class="impayee" href="'.$PHP_SELF.'?filtre=paye:0">Non</a></td>';
+	  print '<td align="center"><a href="charges.php?id='.$obj->id.'">'.img_edit().'</a>';
 	  print ' &nbsp; <a href="'.$PHP_SELF.'?action=del&id='.$obj->id.'">'.img_delete().'</a></td>';
 	}
       print '</tr>';
@@ -132,9 +145,9 @@ else
 {
   print $db->error();
 }
+
 /*
- * 
- *
+ * Forumalaire d'ajout d'une charge
  *
  */
 print '<tr class="form"><form method="post" action="index.php">';
@@ -142,10 +155,9 @@ print '<input type="hidden" name="action" value="add">';
 print '<td><input type="text" size="8" name="date"> YYYYMMDD</td>';
 print '<td>&nbsp;</td>';
 
-print '<td colspan="2" align="left"><select name="type">';
+print '<td align="left"><select name="type">';
 
-
-$sql = "SELECT c.id, c.libelle as nom FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+$sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 $sql .= " ORDER BY lower(c.libelle) ASC";
 
 if ( $db->query($sql) )
@@ -156,13 +168,13 @@ if ( $db->query($sql) )
   while ($i < $num)
     {
       $obj = $db->fetch_object( $i);
-      print '<option value="'.$obj->id.'">'.$obj->nom;
+      print '<option value="'.$obj->id.'">'.$obj->type;
       $i++;
     }
 }
 print '</select>';
-
-print '<input type="text" size="20" name="libelle"></td>';
+print '</td>';
+print '<td align="left"><input type="text" size="20" name="libelle"></td>';
 print '<td align="right"><input type="text" size="6" name="amount"></td>';
 print '<td>&nbsp;</td>';
 
