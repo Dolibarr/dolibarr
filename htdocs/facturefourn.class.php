@@ -152,7 +152,7 @@ class FactureFourn
 	      $obj = $this->db->fetch_object(0);
 	      
 	      $this->id      = $rowid;
-	      $this->datep   = $obj->dp;
+	      $this->datep   = $obj->df;
 	      $this->ref     = $obj->facnumber;
 	      $this->libelle = $obj->libelle;
 
