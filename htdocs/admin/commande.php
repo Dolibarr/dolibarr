@@ -101,13 +101,13 @@ if ($handle)
 	  if ($commande_addon_var == "$file")
 	    {
 	      print '<td align="center">';
-	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	      print img_tick();
 		  print '</td><td>&nbsp;</td>';
 	    }
 	  else
 	    {
 		  print '<td>&nbsp;</td>';
-		  print '<td align="center"><a href="commande.php?action=setmod&amp;value='.$file.'">activer</a></td>';
+		  print '<td align="center"><a href="commande.php?action=setmod&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
 	    }
 
 	  print '</tr>';

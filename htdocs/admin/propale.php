@@ -151,7 +151,7 @@ if ($handle)
 	  if ($propale_addon_var == "$file")
 	    {
 	      print "  <td align=\"center\">";
-	      print "<img src=\"".DOL_URL_ROOT."/theme/".$conf->theme."/img/tick.png\" border=\"0\"></a>";
+    	  print img_tick();
 		  print "</td>\n  <td>&nbsp;</td>\n";
 	    }
 	  else
@@ -229,7 +229,7 @@ while (($file = readdir($handle))!==false)
 
       if (in_array($name, $def))
 	{
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	  print img_tick();
 	  print "</td>\n  <td>";
 	  print '<a href="propale.php?action=del&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
 	}
@@ -244,7 +244,7 @@ while (($file = readdir($handle))!==false)
 
       if ($propale_addon_var_pdf == "$name")
 	{
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	  print img_tick();
 	}
       else
 	{

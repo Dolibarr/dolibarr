@@ -186,22 +186,22 @@ if(is_dir($dir)) {
 	  
 	  if (in_array($name, $def))
 	    {
-	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	      print img_tick();
 	      print "</td><td>\n";
-	      print '<a href="expedition.php?action=set&amp;statut=0&amp;value='.$name.'">désactiver</a>';
+	      print '<a href="expedition.php?action=set&amp;statut=0&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
 	    }
 	  else
 	    {
 	      print "&nbsp;";
 	      print "</td><td>\n";
-	      print '<a href="expedition.php?action=set&amp;statut=1&amp;value='.$name.'">activer</a>';
+	      print '<a href="expedition.php?action=set&amp;statut=1&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
 	    }
 	  
 	  print '</td><td align="center">';
 	  
 	  if ($expedition_default == "$name")
 	    {
-	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	      print img_tick();
 	    }
 	  else
 	    {
@@ -262,22 +262,22 @@ if(is_dir($dir)) {
 	  
 	  if (in_array($name, $def))
 	    {
-	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	      print img_tick();
 	      print "</td><td>\n";
-	      print '<a href="expedition.php?action=del&amp;value='.$name.'">désactiver</a>';
+	      print '<a href="expedition.php?action=del&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
 	    }
 	  else
 	    {
 	      print "&nbsp;";
 	      print "</td><td>\n";
-	      print '<a href="expedition.php?action=set&amp;value='.$name.'">activer</a>';
+	      print '<a href="expedition.php?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
 	    }
 	  
 	  print '</td><td align="center">';
 	  
 	  if ($expedition_addon_var_pdf == "$name")
 	    {
-	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	      print img_tick();
 	    }
 	  else
 	    {
@@ -286,7 +286,7 @@ if(is_dir($dir)) {
 	  
 	  print "</td><td>\n";
 	  
-	  print '<a href="expedition.php?action=setpdf&amp;value='.$name.'">activer</a>';
+	  print '<a href="expedition.php?action=setpdf&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
 	  
 	  print '</td></tr>';
 	}

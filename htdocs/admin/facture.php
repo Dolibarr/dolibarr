@@ -141,7 +141,7 @@ while (($file = readdir($handle))!==false)
       print '<td align="center">';
       if ($facture_addon_var == "$file")
 	{
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	  print img_tick();
       print '</td><td align="center">';
       print '&nbsp;';
 	}
@@ -161,7 +161,7 @@ print '</table>';
 print "<br>";
 print_titre("Date des factures");
 
-print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
+print '<table class="noborder" width=\"100%\">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
@@ -175,15 +175,15 @@ print '</td><td width="60" align="center">';
 
 if (defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION == "1")
 {
-  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+  print img_tick();
   print '</td><td align="center">';
-  print '<a href="facture.php?action=dateforce&amp;value=0">'.$langs->trans("Désactiver").'</a>';
+  print '<a href="facture.php?action=dateforce&amp;value=0">'.$langs->trans("Disable").'</a>';
 }
 else
 {
   print '&nbsp;';
   print '</td><td align="center">';
-  print '<a href="facture.php?action=dateforce&amp;value=1">'.$langs->trans("Activate").'</a>';
+  print '<a href="facture.php?action=dateforce&amp;value=1">'.$langs->trans("Enable").'</a>';
 }
 print "</td></tr>\n";
 
@@ -233,7 +233,7 @@ while (($file = readdir($handle))!==false)
 
       if ($facture_addon_var_pdf == "$name")
 	{
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	  print img_tick();
       print '</td><td align="center">';
       print '&nbsp;';
 	}

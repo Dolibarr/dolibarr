@@ -110,7 +110,7 @@ foreach ($modules as $key => $value)
 
   if ($const_value == 1)
     {
-      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+      print img_tick();
     }
   else
     {
@@ -121,11 +121,11 @@ foreach ($modules as $key => $value)
   
   if ($const_value == 1)
     {
-      print '<a href="boutique.php?action=reset&value='.$const_name.'">Désactiver</a>';
+      print '<a href="boutique.php?action=reset&value='.$const_name.'">'.$langs->trans("Disable").'</a>';
     }
   else
     {
-      print '<a href="boutique.php?action=set&value='.$const_name.'">Activer</a>';
+      print '<a href="boutique.php?action=set&value='.$const_name.'">'.$langs->trans("Activate").'</a>';
     }
   
   print '</td></tr>';

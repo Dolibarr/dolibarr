@@ -519,6 +519,17 @@ function img_up($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
+
+/**
+        \brief  Affiche logo tick
+*/
+function img_tick($alt = "default")
+{
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Active");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
 /**
 		\brief      fonction de login
 		\remarks    il faut changer le code html dans la fonction pour changer le design

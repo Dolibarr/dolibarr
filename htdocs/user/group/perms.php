@@ -22,7 +22,8 @@
  * $Source$
  */
 
-/**     \file       htdocs/user/group/perms.php
+/**
+        \file       htdocs/user/group/perms.php
         \brief      Onglet user et permissions de la fiche utilisateur
         \version    $Revision$
 */
@@ -35,22 +36,22 @@ $langs->load("users");
 
 $form = new Form($db);
 
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 
 
 /**
  * Actions
  */
-if ($_GET["subaction"] == 'addrights' && $user->admin)
+if ($_GET["action"] == 'addrights' && $user->admin)
 {
-  $editgroup = new Usergroup($db,$_GET["id"]);
-  $editgroup->addrights($_GET["rights"]);
+    $editgroup = new Usergroup($db,$_GET["id"]);
+    $editgroup->addrights($_GET["rights"]);
 }
 
-if ($_GET["subaction"] == 'delrights' && $user->admin)
+if ($_GET["action"] == 'delrights' && $user->admin)
 {
-  $editgroup = new Usergroup($db,$_GET["id"]);
-  $editgroup->delrights($_GET["rights"]);
+    $editgroup = new Usergroup($db,$_GET["id"]);
+    $editgroup->delrights($_GET["rights"]);
 }
 
 
@@ -65,120 +66,159 @@ llxHeader('',$langs->trans("Permissions"));
 
 if ($_GET["id"])
 {
-  $fgroup = new Usergroup($db, $_GET["id"]);
-  $fgroup->fetch($_GET["id"]);
-  $fgroup->getrights($_GET["id"]);
-  
-  /*
-   * Affichage onglets
-   */
-  
-  $h = 0;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/user/group/fiche.php?id='.$fgroup->id;
-  $head[$h][1] = $langs->trans("GroupCard");
-  $h++;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$fgroup->id;
-  $head[$h][1] = $langs->trans("GroupRights");
-  $hselected=$h;
-  $h++;
+    $fgroup = new Usergroup($db, $_GET["id"]);
+    $fgroup->fetch($_GET["id"]);
+    $fgroup->getrights($_GET["id"]);
 
-  
-  dolibarr_fiche_head($head, $hselected, $langs->trans("Group").": ".$fgroup->nom);
+    /*
+     * Affichage onglets
+     */
 
-  // Lecture des droits du groupe
-  $sql = "SELECT r.id, r.libelle, r.module ";
-  $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-  $sql .= ", ".MAIN_DB_PREFIX."usergroup_rights as ugr";
-  $sql .= " WHERE ugr.fk_id = r.id AND ugr.fk_usergroup = ".$fgroup->id;
+    $h = 0;
 
-  $result=$db->query($sql);
-	  
-  $perms = array();
+    $head[$h][0] = DOL_URL_ROOT.'/user/group/fiche.php?id='.$fgroup->id;
+    $head[$h][1] = $langs->trans("GroupCard");
+    $h++;
 
-  if ($result)
+    $head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$fgroup->id;
+    $head[$h][1] = $langs->trans("GroupRights");
+    $hselected=$h;
+    $h++;
+
+
+    dolibarr_fiche_head($head, $hselected, $langs->trans("Group").": ".$fgroup->nom);
+
+    // Lecture des droits groupes
+    $permsgroup = array();
+
+    $sql = "SELECT r.id, r.libelle, r.module ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+    $sql .= ", ".MAIN_DB_PREFIX."usergroup_rights as ugr";
+    $sql .= " WHERE ugr.fk_id = r.id AND ugr.fk_usergroup = ".$fgroup->id;
+
+    $result=$db->query($sql);
+
+
+
+    if ($result)
     {
-      $num = $db->num_rows();
-      $i = 0;
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object($i);
+        $num = $db->num_rows($result);
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($result);
 
-	  array_push($perms,$obj->id);
+            array_push($permsgroup,$obj->id);
 
-	  $i++;
-	}
-      $db->free();
+            $i++;
+        }
+        $db->free($result);
     }
-  else
+    else
     {
-      dolibarr_print_error($db); 
+        dolibarr_print_error($db);
     }
-  
-
-  /*
-   * Ecran ajout/suppression permission
-   */
 
 
-  print '<table width="100%" class="noborder">';
-  print '<tr class="liste_titre"><td width="24">&nbsp</td><td width="24">&nbsp</td><td>'.$langs->trans("Permissions").'</td><td>'.$langs->trans("Module").'</td></tr>';
-
-  $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r ORDER BY r.module, r.id ASC";
-	  
-  if ($db->query($sql))
+    // Charge les modules soumis a permissions
+    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
+    $handle=opendir($dir);
+    $modules = array();
+    while (($file = readdir($handle))!==false)
     {
-      $num = $db->num_rows();
-      $i = 0;
-      $var = True;
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object($i);
-	  if ($oldmod <> $obj->module)
-	    {
-	      $oldmod = $obj->module;
-	      $var = !$var;
-	    }
-	  print '<tr '. $bc[$var].'>';
+        if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
+        {
+            $modName = substr($file, 0, strlen($file) - 10);
 
-	  if ( $user->admin )
-	    {
-	      if (in_array($obj->id, $perms))
-		{
-		  print '<td>&nbsp;</td>';
-		  print '<td>';
-		  print '<a href="perms.php?id='.$fgroup->id.'&amp;action=perms&amp;subaction=delrights&amp;rights='.$obj->id.'">'.img_edit_remove().'</a>';
-		  print '</td>';
-		}
-	      else
-		{
-		  print '<td>';
-		  print '<a href="perms.php?id='.$fgroup->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">'.img_edit_add().'</a>';
-		  print '</td>';
-		  print '<td>&nbsp;</td>';
-		}
-	      
-	      print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td>';
-	      print '</tr>';
-	    }
-	  else
-	    {
-	      if (in_array($obj->id, $perms))
-		{
-		  print '<td>&nbsp;</td><td>&nbsp;</td>';
-		  print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td>';
-		  print '</tr>';
-		}
-	    }
-
-		  
-	  $i++;
-	}
+            if ($modName)
+            {
+                include_once("../../includes/modules/$file");
+                $objMod = new $modName($db);
+                if ($objMod->rights_class) {
+                    $modules[$objMod->rights_class]=$modName;
+                    //print "modules[".$objMod->rights_class."]=$modName;";
+                }
+            }
+        }
     }
-  print '</table>';
+
+    /*
+     * Ecran ajout/suppression permission
+     */
+
+
+    print '<table width="100%" class="noborder">';
+    print '<tr class="liste_titre">';
+    if ($user->admin) print '<td width="24">&nbsp</td>';
+    print '<td align="center" width="24">&nbsp;</td>';
+    print '<td>'.$langs->trans("Permissions").'</td>';
+    print '<td>'.$langs->trans("Module").'</td>';
+    print '</tr>';
+
+    $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r ORDER BY r.module, r.id ASC";
+
+    $result=$db->query($sql);
+    if ($result)
+    {
+        $num = $db->num_rows($result);
+        $i = 0;
+        $var = True;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($result);
+            if ($oldmod <> $obj->module)
+            {
+                $oldmod = $obj->module;
+                $var = !$var;
+                print '<tr '. $bc[$var].'>';
+
+                // Recupère objet module
+                $modName=$modules[$obj->module];
+                $file = $modName.".class.php";
+                include_once("../../includes/modules/$file");
+                $objMod = new $modName($db);
+
+                $picto=($objMod->picto?$objMod->picto:'generic');
+            }
+            else
+            {
+                print '<tr '. $bc[$var].'>';
+            }
+
+            if (in_array($obj->id, $permsgroup))
+            {
+                // Own permission by group
+                if ($user->admin)
+                {
+                    print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
+                }
+                print '<td align="left" align="center">';
+                print img_tick();
+                print '</td>';
+            }
+            else
+            {
+                // Do not own permission
+                if ($user->admin)
+                {
+                    print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+                }
+                print '<td>&nbsp</td>';
+            }
+
+            print '<td>'.$obj->libelle . '</td>';
+
+            print '<td>'.img_object('',$picto).' '.$objMod->getName();
+            print '</td>';
+
+            print '</tr>';
+
+            $i++;
+        }
+    }
+    print '</table>';
 }
-      
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");

@@ -110,7 +110,7 @@ if ($handle)
 	  if ($codeclient_addon_var == "$file")
 	    {
 	      print "  <td align=\"center\">\n";
-	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+    	  print img_tick();
 	      print "</td>\n  <td>&nbsp;</td>\n";
 	    }
 	  else
@@ -164,7 +164,7 @@ if ($handle)
 	  if ($codecompta_addon_var == "$file")
 	    {
 	      print '<td align="center">';
-	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+    	  print img_tick();
 	      print '</td><td>&nbsp;</td>';
 	    }
 	  else

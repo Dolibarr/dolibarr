@@ -125,7 +125,7 @@ print "<br>";
  */
 if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
 {
-  $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0">';
+  $lien=img_tick().' ';
   $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_MAILMAN_LISTS',
@@ -151,7 +151,7 @@ print "<hr>\n";
  */
 if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE == 1)
 {
-  $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0">';
+  $lien=img_tick().' ';
   $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_BANK_USE">'.$langs->trans("Disable").'</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_BANK_USE_AUTO',
@@ -175,7 +175,7 @@ print "<hr>\n";
 $var=!$var;
 if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP == 1)
 {
-  $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0">';
+  $lien=img_tick().' ';
   $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_USE_SPIP_AUTO',
@@ -201,7 +201,7 @@ print "<hr>\n";
 $var=!$var;
 if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST == 1)
 {
-  $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0">';
+  $lien=img_tick().' ';
   $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_GLASNOST">'.$langs->trans("Disable").'</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_USE_GLASNOST_AUTO',

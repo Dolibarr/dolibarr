@@ -89,7 +89,7 @@ if ($result)
       if ($obj->bydefault == 1)
 	{
 
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0">';
+	  print img_tick();
 	  print '</td><td>';
 	  print '<a href="perms.php?pid='.$obj->id.'&amp;action=remove">'.img_edit_remove().'</a>';
 	}
