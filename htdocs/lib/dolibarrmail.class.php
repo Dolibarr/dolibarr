@@ -204,6 +204,7 @@ class DolibarrMail
     
     $out = $out . "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
     $out = $out . "X-Sender: $this->from\n";
+    $out = $out . "Errors-to: $this->from\n";
     
     return $out;
   }
