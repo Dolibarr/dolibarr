@@ -34,12 +34,18 @@ function llxHeader($head = "") {
   $menu = new Menu();
 
   $menu->add("index.php","Adherents");
-  $menu->add_submenu("liste.php","liste");
+  $menu->add_submenu("liste.php?statut=1","Adhérents à ce jour");
+  $menu->add_submenu("liste.php?statut=-1","Adhésions à valider");
+
+  $menu->add_submenu("liste.php?statut=0","Adhésions résiliées");
 
   if ($user->admin)
     {
-      $menu->add_submenu("fiche.php?action=create","nouvel adhérent");
+      $menu->add("fiche.php?action=create","Nouvel adhérent");
     }
+
+
+
   $menu->add("cotisations.php","Cotisations");
 
   if ($user->admin)

@@ -34,11 +34,15 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+if (! isset($statut))
+{
+  $statut = 1 ;
+}
 
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin";
-$sql .= " , d.email, t.libelle as type, d.morphy, d.statut";
+$sql .= " , d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
 $sql .= " FROM llx_adherent as d, llx_adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid";
+$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
@@ -66,7 +70,23 @@ if ($result)
       $var=!$var;
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
-      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->datefin)."</a></td>\n";
+      print "<TD>";
+      if ($objp->cotisation == 'yes')
+	{
+	  if ($objp->datefin < time())
+	    {
+	      print "<b><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->datefin)."</a> - Cotisation non recue</b></td>\n";
+	    }
+	  else 
+	    {
+	      print "<a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->datefin)."</a></td>\n";
+	    }
+	}
+      else 
+	{
+	  print "&nbsp;</td>";
+	}
+
       print "<TD>$objp->email</TD>\n";
       print "<TD>$objp->type</TD>\n";
       print "<TD>$objp->morphy</TD>\n";
