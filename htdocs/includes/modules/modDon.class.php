@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,20 +21,21 @@
  *
  */
 
-/**     \defgroup   don     Module don
-        \brief      Module pour gérer le suivi des dons
+/**
+   \defgroup   don     Module don
+   \brief      Module pour gérer le suivi des dons
 */
 
 /**
-        \file       htdocs/includes/modules/modDon.class.php
-        \ingroup    don
-        \brief      Fichier de description et activation du module Don
+   \file       htdocs/includes/modules/modDon.class.php
+   \ingroup    don
+   \brief      Fichier de description et activation du module Don
 */
 
 include_once "DolibarrModules.class.php";
 
 /** \class modDon
-        \brief      Classe de description et activation du module Don
+    \brief      Classe de description et activation du module Don
 */
 
 class modDon  extends DolibarrModules
@@ -55,7 +56,7 @@ class modDon  extends DolibarrModules
     $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_DON";
     $this->const_config = MAIN_MODULE_DON;
-    $this->special = 0;
+    $this->special = 1;
 
     // Dir
     $this->dirs = array();
