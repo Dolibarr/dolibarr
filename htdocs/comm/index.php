@@ -107,26 +107,31 @@ if ($conf->propal->enabled) {
 	print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
 	print "</table></form><br>\n";
 
-	$sql = "SELECT p.rowid, p.ref";
-	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
-	$sql .= " WHERE p.fk_statut = 0";
+	$sql = "SELECT p.rowid, p.ref, p.price, s.nom";
+	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE p.fk_statut = 0 and p.fk_soc = s.idp";
 	
 	if ( $db->query($sql) )
 	{
+	  $total = 0;
 	  $num = $db->num_rows();
 	  $i = 0;
 	  if ($num > 0 )
 	    {
 	      print '<table class="noborder" width="100%">';
 	      print "<tr class=\"liste_titre\">";
-	      print "<td colspan=\"2\">Propositions commerciales brouillons</td></tr>";
+	      print "<td colspan=\"3\">Propositions commerciales brouillons</td></tr>";
 	      
 	      while ($i < $num)
 		{
 		  $obj = $db->fetch_object();
 		  $var=!$var;
-		  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
+		  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
 		  $i++;
+		  $total += $obj->price;
+		}
+		if ($total>0) {
+		  print "<tr $bc[$var]><td colspan=\"2\" align=\"right\"><i>Total</i></td><td align=\"right\"><i>".price($total)."</i></td></tr>";
 		}
 	      print "</table><br>";
 	    }
@@ -377,16 +382,17 @@ if ($conf->propal->enabled) {
       $sql .= " AND s.idp = $socidp"; 
     }
     $sql .= " ORDER BY p.rowid DESC";
-    $sql .= $db->plimit(5, 0);
+//     $sql .= $db->plimit(5, 0);
     
     if ( $db->query($sql) )
     {
+	  $total = 0;
       $num = $db->num_rows();
       $i = 0;
       if ($num > 0)
 	{
 	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td colspan="4">Les 5 dernières propositions commerciales ouvertes</td></tr>';
+	  print '<tr class="liste_titre"><td colspan="4">Propositions commerciales ouvertes et validées</td></tr>';
 	  $var=false;
 	  while ($i < $num)
 	    {
@@ -399,7 +405,11 @@ if ($conf->propal->enabled) {
 	      print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
 	      $var=!$var;
 	      $i++;
+		  $total += $obj->price;
 	    }
+		if ($total>0) {
+		  print "<tr $bc[$var]><td colspan=\"3\" align=\"right\"><i>Total</i></td><td align=\"right\"><i>".price($total)."</i></td></tr>";
+		}
 	  print "</table><br>";
 	}
     }
