@@ -19,6 +19,12 @@
  * $Source$
  */
 require("./pre.inc.php");
+
+$user->getrights('propale');
+if (!$user->rights->propale->lire)
+  accessforbidden();
+
+
 require_once("../../propal.class.php3");
 llxHeader();
 
