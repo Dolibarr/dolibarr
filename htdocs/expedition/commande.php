@@ -276,23 +276,14 @@ if ($_GET["id"] > 0)
        */
       if ($user->societe_id == 0)
 	{
-	  print '<p><table id="actions" width="100%"><tr>';
-	
-	  print '<td align="center" width="20%">-</td>';
-	  print '<td align="center" width="20%">-</td>';
-	    
+	  print '<p><div class="tabsAction">';		    
 	  if ($user->rights->expedition->valider && $reste_a_livrer_total == 0 && $commande->statut < 3)
 	    {
-	      print '<td align="center" width="20%"><a href="commande.php?id='.$commande->id.'&amp;action=cloture">Clôturer</a></td>';
+	      print '<a class="tabAction" href="commande.php?id='.$commande->id.'&amp;action=cloture">Clôturer</a>';
 	    }
-	  else
-	    {
-	      print '<td align="center" width="20%">-</td>';
-	    }
-	    
-	  print '<td align="center" width="20%">-</td>';
-	  print '<td align="center" width="20%">-</td>';
-	  print "</tr></table>";
+
+	  print "</div>";
+
 	}
       /*
        * Déjà livré
