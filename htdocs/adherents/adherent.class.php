@@ -1068,13 +1068,19 @@ class Adherent
   }
 
 
-
+  /*
+   * desonscription de toutes les listes mailman (utile lors de
+   * resiliation d'adhesion)
+   */
   Function del_to_mailman($listes='')
   {
     if (defined("ADHERENT_MAILMAN_UNSUB_URL") && ADHERENT_MAILMAN_UNSUB_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
       {
 	if ($listes==''){
 	  $lists=explode(',',ADHERENT_MAILMAN_LISTS);
+	  if (defined("ADHERENT_MAILMAN_LISTS_cotisant") && ADHERENT_MAILMAN_LISTS !=''){
+	    $lists=array_merge ($lists,explode(',',ADHERENT_MAILMAN_LISTS_COTISANT));
+	  }
 	}else{
 	  $lists=explode(',',$listes);
 	}
