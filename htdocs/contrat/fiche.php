@@ -170,7 +170,7 @@ else
 	      print '<td>Société</td><td colspan="4">'.$contrat->societe->nom_url.'</td></tr>';
 	    }
 
-	  print '<tr><td>Etat</td><td colspan="3">';
+	  print '<tr><td>Statut</td><td colspan="3">';
 	  if ($contrat->enservice)
 	    {
 	      print "En service";
@@ -184,27 +184,38 @@ else
 	    {
 	      print '<form action="fiche.php?id='.$id.'" method="post">';
 	      print '<input type="hidden" name="action" value="miseenservice">';
-	      print '<input type="hidden" name="duration" value="'.$contrat->product->duration.'">';
-	      print '<tr><td>Mis en service</td><td colspan="3">';
+	      print '<tr><td>Date de mise en service</td><td colspan="3">';
 	      print $html->select_date('','re',1,1);
 	      print "&nbsp;";
-	      print '<input type="submit" value="Enregistrer"></td></tr>';
+	      print '</td></tr>';
+	      print '<tr><td>Date de fin</td><td colspan="3">';
+	      
+	      // TODO : Offrir le choix de la date de fin de contrat par la durée prédéfinie ou par
+	      // une date explicite.
+	      print $contrat->product->duration." après";
+	      //print "<br>";$html->select_date('','fin',1,1);
+	      
+	      print '<input type="hidden" name="duration" value="'.$contrat->product->duration.'">';
+	      print '</td></tr>';
+	      print '<tr><td colspan="4" align="center">';
+	      print '<input type="submit" value="Enregistrer">';
+	      print '</td></tr>';
 	      print '</form>';
 	    }
 
 	  if ($contrat->enservice > 0)
 	    {
-	      print "<tr><td valign=\"top\">Mis en service</td><td>".strftime("%A %e %B %Y à %H:%M",$contrat->mise_en_service);
+	      print "<tr><td valign=\"top\">Mis en service</td><td>".dolibarr_print_date($contrat->mise_en_service,"%d %B %Y à %H:%M");
 	      print "</td>";
 	      $contrat->user_service->fetch();
 	      print '<td>par</td><td>'.$contrat->user_service->fullname.'</td></tr>';
 	      
-	      print '<tr><td valign="top">Fin de validité</td><td colspan="3">'.strftime("%A %e %B %Y à %H:%M",$contrat->date_fin_validite);
+	      print '<tr><td valign="top">Fin de validité</td><td colspan="3">'.dolibarr_print_date($contrat->date_fin_validite,"%d %B %Y à %H:%M");
 	    }
 	  
 	  if ($contrat->enservice == 2)
 	    {
-	      print "<tr><td valign=\"top\">Cloturé</td><td>".strftime("%A %e %B %Y à %H:%M",$contrat->date_cloture)."</td>";
+	      print "<tr><td valign=\"top\">Cloturé</td><td>".dolibarr_print_date($contrat->date_cloture,"%d %B %Y à %H:%M")."</td>";
 	      $contrat->user_cloture->fetch();
 	      print '<td>par</td><td>'.$contrat->user_cloture->fullname.'</td></tr>';
 	    }
@@ -232,7 +243,11 @@ print '<div class="tabsAction">';
 
 if (! $contrat->enservice)
 {
-    print '<a class="tabAction" href="fiche.php?request=miseenservice&id='.$id.'">Mise en service</a>';
+    if ($request != 'miseenservice') {
+        print '<a class="tabAction" href="fiche.php?request=miseenservice&id='.$id.'">Mettre en service...</a>';
+    } else {
+        print '<a class="tabAction" href="fiche.php?id='.$id.'">Ne pas mettre en service</a>';
+    }
 }
 elseif ($contrat->enservice == 1)
 {

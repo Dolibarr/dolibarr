@@ -77,7 +77,7 @@ if ( $db->query($sql) )
   print "</td><td>";
   print_liste_field_titre("Société",$PHP_SELF, "s.nom");
   print '</td><td align="center">';
-  print_liste_field_titre("Etat",$PHP_SELF, "c.enservice");
+  print_liste_field_titre("Statut",$PHP_SELF, "c.enservice");
   print '</td>';
   print '</td><td align="center">';
   print_liste_field_titre("Fin",$PHP_SELF, "c.fin_validite");
