@@ -82,7 +82,3 @@ createpriv:
 mysql.sql: $(TABLES) data/data.sql
 	find tables/ -name "*sql" | xargs cat | grep -v ^-- | cut -d "-" -f 1 > mysql.sql
 	cat data/data.sql | grep -v ^-- >> mysql.sql
-
-mysql-BE.sql: $(TABLES) data/data-BE.sql
-	find tables/ -name "*sql" | xargs cat | grep -v ^-- | cut -d "-" -f 1 > mysql-BE.sql
-	cat data/data-BE.sql | grep -v ^-- >> mysql-BE.sql
