@@ -273,10 +273,18 @@ if ($socid > 0)
 	print "</td>";
 	print "<td>$obj->poste&nbsp;</td>";
 
-	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">';
-	print img_phone_out("Appel émis") ;
-	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">';
-	print img_phone_in("Appel reçu") .'</a></td>';
+	print '<td>';
+
+	/*
+	 * Lien click to dial
+	 */
+
+	if (strlen($obj->phone))
+	  {
+	    print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&amp;socid='.$societe->id.'&amp;call='.$obj->phone.'">';
+	    print img_phone_out("Appel émis") ;
+	  }
+	print '</td>';
 
 	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">';
 
