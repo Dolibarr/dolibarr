@@ -25,6 +25,15 @@ require("../project.class.php3");
 
 $db = new Db();
 
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
+
 
 $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM societe as s WHERE s.idp = $socidp;";
 
@@ -399,7 +408,7 @@ if ($id)
 
   print '<br><table border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
 
-  if ($fichinter->statut == 0)
+  if ($fichinter->statut == 0 && $user->societe_id == 0)
     {
 
       print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=edit">Mettre à jour</a></td>';
