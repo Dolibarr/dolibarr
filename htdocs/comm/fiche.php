@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -308,40 +309,41 @@ if ($_socid > 0)
 
     /*
      * Commandes
-     *
+     * Que si le module est actif !
      */
-    print '<table class="border" width="100%">';
-    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.total_ht, p.ref, ".$db->pdate("p.date_commande")." as dp";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp ";
-    $sql .= " AND s.idp = $objsoc->id ORDER BY p.date_commande DESC";
-
-    if ( $db->query($sql) )
-      {
-	$num = $db->num_rows();
-	if ($num >0 )
-	  {
-	    print "<tr $bc[$var]>";
-	    print '<td colspan="4"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->id.'">Liste des commandes ('.$num.')</td></tr>';
-	  }
-	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
-	while ($i < $num && $i < 2)
-	  {
-	    $objp = $db->fetch_object();
-	    $var=!$var;
-	    print "<tr $bc[$var]>";
-	    print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->propalid.'">'.$objp->ref."</a>\n";
-	    if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
-	      {
-		print " <b>&gt; 15 jours</b>";
-	      }
-	    print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	    print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
-	    print '<td align="center" width="100">'.$objp->statut.'</td></tr>';
-	    $i++;
-	  }
-	$db->free();
-      }    
-
+    if($conf->commande->enabled) {
+      print '<table class="border" width="100%">';
+      $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.total_ht, p.ref, ".$db->pdate("p.date_commande")." as dp";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp ";
+      $sql .= " AND s.idp = $objsoc->id ORDER BY p.date_commande DESC";
+      
+      if ( $db->query($sql) )
+	{
+	  $num = $db->num_rows();
+	  if ($num >0 )
+	    {
+	      print "<tr $bc[$var]>";
+	      print '<td colspan="4"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->id.'">Liste des commandes ('.$num.')</td></tr>';
+	    }
+	  $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
+	  while ($i < $num && $i < 2)
+	    {
+	      $objp = $db->fetch_object();
+	      $var=!$var;
+	      print "<tr $bc[$var]>";
+	      print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->propalid.'">'.$objp->ref."</a>\n";
+	      if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
+		{
+		  print " <b>&gt; 15 jours</b>";
+		}
+	      print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+	      print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
+	      print '<td align="center" width="100">'.$objp->statut.'</td></tr>';
+	      $i++;
+	    }
+	  $db->free();
+	}    
+    }
     /*
      *
      * Liste des projets associés
