@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +31,14 @@ print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 print "<TR class=\"liste_titre\">";
 print "<td>id</td><td>Label</td><td>Description</TD>";
 print "<td align=\"left\">Number</a></TD>";
+print "<td align=\"center\">Clos</a></TD>";
 print "</TR>\n";
 
-$sql = "SELECT rowid, label,number,bank from llx_bank_account";
+$sql = "SELECT rowid, label,number,bank,clos from llx_bank_account";
 
 $result = $db->query($sql);
-if ($result) {
+if ($result)
+{
   $var=True;  
   $num = $db->num_rows();
   $i = 0; $total = 0;
@@ -46,8 +48,7 @@ if ($result) {
   while ($i < $num) {
     $objp = $db->fetch_object( $i);
 
-
-    print "<tr><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td><td>$objp->bank</td><td>$objp->number</td></tr>";
+    print "<tr><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td><td>$objp->bank&nbsp;</td><td>$objp->number&nbsp;</td><td align=\"center\">".$yn[$objp->clos]."</td></tr>";
 
 
     $i++;
