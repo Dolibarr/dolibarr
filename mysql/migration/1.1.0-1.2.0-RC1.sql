@@ -1,4 +1,9 @@
 
+alter table llx_societe add siret     varchar(14) after siren;
+alter table llx_societe add ape       varchar(4) after siret;
+alter table llx_societe add tva_intra varchar(20) after ape;
+alter table llx_societe add capital real after tva_intra;
+
 alter table llx_propal add fin_validite datetime ;
 
 alter table llx_entrepot add statut tinyint default 1;
