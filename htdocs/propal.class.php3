@@ -328,15 +328,24 @@ class Propal
    *
    *
    */
-  Function valid($userid) {
-    $sql = "UPDATE llx_propal SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
-    $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-    
-    if ($this->db->query($sql) ) {
-      return 1;
-    } else {
-      print $this->db->error() . ' in ' . $sql;
-    }
+  Function valid($user)
+    {
+
+      if ($user->rights->propale->valider)
+	{
+
+	  $sql = "UPDATE llx_propal SET fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+	  
+	  if ($this->db->query($sql) )
+	    {
+	      return 1;
+	    }
+	  else
+	    {
+	      print $this->db->error() . ' in ' . $sql;
+	    }
+	}
   }
   /*
    *
