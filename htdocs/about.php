@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ Dolibarr est développé par :
 </ul>
 D'autres développeurs y contribuent activement :
 <ul>
-<li>Jean-Louis Bergamo</li>
+<li><a target="blank" href="http://www.ipsyn.net">Jean-Louis Bergamo</a></li>
 <li>Eric Seigne</li>
 </ul>
 
