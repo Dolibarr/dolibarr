@@ -234,7 +234,7 @@ llxHeader("","",$langs->trans("CardProduct".$product->type));
  * Création du produit
  *
  */
-if ($_GET["action"] == 'create')
+if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 {
   $html = new Form($db);
   $nbligne=0;
