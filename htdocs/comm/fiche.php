@@ -186,10 +186,9 @@ if ($socid > 0)
 
     if ($user->societe_id == 0)
       {
-
 	print "<td align=\"center\"><a href=\"../compta/fiche.php?socid=$objsoc->idp\">Compta</a></td>";
 	print "<td align=\"center\">[<a href=\"index.php?socidp=$objsoc->idp&action=add_bookmark\">Bookmark</a>]</td>";
-	print "<td align=\"center\">[<a href=\"../soc.php?socid=$objsoc->idp&action=edit\">Editer</a>]</td></tr>";
+
       }
     print "</table>";
     /*
