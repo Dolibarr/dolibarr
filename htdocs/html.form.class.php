@@ -265,7 +265,7 @@ class Form {
 		{
 		  print "SELECTED";
 		}
-	      print ">$value</option>\n";	      
+	      print ">$value</option>\n";  
 	    }
 	}
       else
