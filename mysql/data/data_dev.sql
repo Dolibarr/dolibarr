@@ -1,5 +1,5 @@
 -- ===========================================================================
--- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -48,12 +48,13 @@ values ('02-11-YHGT',2,now(),'2002-11-01',1,1000,0,196,1196,1,NULL,NULL,'');
 insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
 values ('02-12-YHGT',2,now(),'2002-12-01',1,1000,0,196,1196,1,NULL,NULL,'');
 
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_THEME',  'dev','chaine',1);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_THEME',  'eldy','chaine',1);
 
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SOCIETE_NOM','Barridol','chaine',0);
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_TVAINTRA','654871132187','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_TVAINTRA','12345679012345','chaine',0);
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_CAPITAL','15000','chaine',0);
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SIREN','123456789','chaine',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SIRET','123456789001','chaine',0);
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_APE','721Z','chaine',0);
 
 
@@ -68,55 +69,64 @@ values ('demo1','demo1','DM1','demo1','demo',1,1,'demo1');
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
 values ('demo2','demo2','DM2','demo2','demo',1,1,'demo2');
 
-
 DELETE FROM llx_user_rights;
 
-INSERT INTO llx_user_rights VALUES (1,11);
-INSERT INTO llx_user_rights VALUES (1,12);
-INSERT INTO llx_user_rights VALUES (1,13);
-INSERT INTO llx_user_rights VALUES (1,14);
-INSERT INTO llx_user_rights VALUES (1,15);
-INSERT INTO llx_user_rights VALUES (1,16);
-INSERT INTO llx_user_rights VALUES (1,17);
-INSERT INTO llx_user_rights VALUES (1,18);
-INSERT INTO llx_user_rights VALUES (1,19);
-INSERT INTO llx_user_rights VALUES (1,21);
-INSERT INTO llx_user_rights VALUES (1,22);
-INSERT INTO llx_user_rights VALUES (1,23);
-INSERT INTO llx_user_rights VALUES (1,24);
-INSERT INTO llx_user_rights VALUES (1,25);
-INSERT INTO llx_user_rights VALUES (1,26);
-INSERT INTO llx_user_rights VALUES (1,27);
-INSERT INTO llx_user_rights VALUES (1,28);
-INSERT INTO llx_user_rights VALUES (1,29);
-INSERT INTO llx_user_rights VALUES (1,31);
-INSERT INTO llx_user_rights VALUES (1,32);
-INSERT INTO llx_user_rights VALUES (1,33);
-INSERT INTO llx_user_rights VALUES (1,34);
-INSERT INTO llx_user_rights VALUES (1,35);
-INSERT INTO llx_user_rights VALUES (1,36);
-INSERT INTO llx_user_rights VALUES (1,37);
-INSERT INTO llx_user_rights VALUES (1,38);
-INSERT INTO llx_user_rights VALUES (1,39);
-INSERT INTO llx_user_rights VALUES (1,41);
-INSERT INTO llx_user_rights VALUES (1,42);
-INSERT INTO llx_user_rights VALUES (1,43);
-INSERT INTO llx_user_rights VALUES (1,44);
-INSERT INTO llx_user_rights VALUES (1,45);
-INSERT INTO llx_user_rights VALUES (1,46);
-INSERT INTO llx_user_rights VALUES (1,47);
-INSERT INTO llx_user_rights VALUES (1,48);
-INSERT INTO llx_user_rights VALUES (1,49);
-INSERT INTO llx_user_rights VALUES (1,61);
-INSERT INTO llx_user_rights VALUES (1,62);
-INSERT INTO llx_user_rights VALUES (1,63);
-INSERT INTO llx_user_rights VALUES (1,64);
-INSERT INTO llx_user_rights VALUES (1,65);
-INSERT INTO llx_user_rights VALUES (1,66);
-INSERT INTO llx_user_rights VALUES (1,67);
-INSERT INTO llx_user_rights VALUES (1,68);
-INSERT INTO llx_user_rights VALUES (1,69);
-
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,11);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,12);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,13);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,14);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,15);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,16);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,17);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,18);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,19);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,21);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,22);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,23);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,24);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,25);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,26);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,27);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,28);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,29);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,31);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,32);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,33);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,34);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,35);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,36);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,37);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,38);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,39);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,41);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,42);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,43);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,44);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,45);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,46);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,47);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,48);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,49);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,61);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,62);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,63);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,64);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,65);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,66);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,67);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,68);
+INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,69);
+--
+-- Boites
+--
+DELETE FROM llx_boxes;
+insert into llx_boxes (box_id, position, box_order) VALUES (1,0,1);
+insert into llx_boxes (box_id, position, box_order) VALUES (2,0,2);
+insert into llx_boxes (box_id, position, box_order) VALUES (3,0,3);
+insert into llx_boxes (box_id, position, box_order) VALUES (4,0,4);
+insert into llx_boxes (box_id, position, box_order) VALUES (5,0,5);
+insert into llx_boxes (box_id, position, box_order) VALUES (6,0,6);
+insert into llx_boxes (box_id, position, box_order) VALUES (7,0,7);
 --
 -- Societe les fournisseurs sont sur les numéros pairs
 --
