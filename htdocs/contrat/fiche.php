@@ -37,11 +37,20 @@ if ($action == 'add')
   $action = '';
 }
 
-if ($action == 'miseenservice')
+if ($HTTP_POST_VARS["action"] == 'miseenservice')
 {
   $contrat = new Contrat($db);
   $contrat->id = $id;
-  $contrat->mise_en_service($user);
+  $contrat->fetch($id);
+  $contrat->mise_en_service($user, 
+			    mktime($HTTP_POST_VARS["rehour"],
+				   $HTTP_POST_VARS["remin"],
+				   0,
+				   $HTTP_POST_VARS["remonth"],
+				   $HTTP_POST_VARS["reday"],
+				   $HTTP_POST_VARS["reyear"]),
+			    $HTTP_POST_VARS["duration"]
+			    );
 }
 
 if ($action == 'cloture')
@@ -79,6 +88,9 @@ if ($action == 'update' && $cancel <> 'Annuler')
  *
  *
  */
+$html = new Form($db);
+
+
 if ($action == 'create')
 {
   print "<form action=\"$PHP_SELF?type=$type\" method=\"post\">\n";
@@ -92,7 +104,6 @@ if ($action == 'create')
   print '<td>Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
   print '<tr><td>Prix de vente</td><TD><input name="price" size="10" value=""></td></tr>';    
   print '<tr><td>Taux TVA</td><TD>';
-  $html = new Form($db);
   print $html->select_tva("tva_tx");
   print ' %</td></tr>';    
   print "<tr><td valign=\"top\">Description</td><td>";
@@ -135,13 +146,39 @@ else
 	    {
 	      print "<b>Ce contrat n'est pas en service</b>";
 	    }
-	  print '</td></tr>';
-	  print '<td>Société</td><td colspan="4">'.$contrat->societe->nom_url.'</td></tr>';
+	  print '</td></tr><tr>';	
+	  if ($contrat->factureid)
+	    {
+	      print '<td>Société</td><td>'.$contrat->societe->nom_url.'</td>';
+	      print '<td>Facture</td><td><a href="../compta/facture.php3?facid='.$contrat->factureid.'">Facture</td>';
+	    }
+	  else
+	    {
+	      print '<td>Société</td><td colspan="4">'.$contrat->societe->nom_url.'</td></tr>';
+	    }
 
-	  print "<tr><td valign=\"top\">Mis en service</td><td>".strftime("%A %e %B %Y à %H:%M",$contrat->mise_en_service)."</td>";
-	  $contrat->user_service->fetch();
-	  print '<td>par</td><td>'.$contrat->user_service->fullname.'</td></tr>';
+	  if ($request == 'miseenservice')
+	    {
+	      print '<form action="fiche.php?id='.$id.'" method="post">';
+	      print '<input type="hidden" name="action" value="miseenservice">';
+	      print '<input type="hidden" name="duration" value="'.$contrat->product->duration.'">';
+	      print '<tr><td>Mis en service</td><td colspan="3">';
+	      print $html->select_date('','re',1,1);
+	      print "&nbsp;";
+	      print '<input type="submit" value="Enregistrer"></td></tr>';
+	      print '</form>';
+	    }
 
+	  if ($contrat->enservice > 0)
+	    {
+	      print "<tr><td valign=\"top\">Mis en service</td><td>".strftime("%A %e %B %Y à %H:%M",$contrat->mise_en_service);
+	      print "</td>";
+	      $contrat->user_service->fetch();
+	      print '<td>par</td><td>'.$contrat->user_service->fullname.'</td></tr>';
+	      
+	      print '<tr><td valign="top">Fin de validité</td><td colspan="3">'.strftime("%A %e %B %Y à %H:%M",$contrat->date_fin_validite);
+	    }
+	  
 	  if ($contrat->enservice == 2)
 	    {
 	      print "<tr><td valign=\"top\">Cloturé</td><td>".strftime("%A %e %B %Y à %H:%M",$contrat->date_cloture)."</td>";
@@ -152,55 +189,7 @@ else
 
 	  print "</table>";
 	}
-    
-      if ($action == 'edit')
-	{
-	  print '<hr><div class="titre">Edition de la fiche '.$types[$product->type].' : '.$product->ref.'</div><br>';
-
-	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
-	  print '<input type="hidden" name="action" value="update">';
-	  
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
-	  print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
-	  print '<td>Libellé</td><td><input name="libelle" size="40" value="'.$product->label.'"></td></tr>';
-	  print '<tr><td>Prix de vente</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
-	  print '<tr><td>Taux TVA</td><TD>';
-	  $html = new Form($db);
-	  print $html->select_tva("tva_tx", $product->tva_tx);
-	  print '</td></tr>';
-	  print '<tr><td>Statut</td><TD>';
-	  print '<select name="statut">';
-	  if ($product->envente)
-	    {
-	      print '<option value="1" SELECTED>En vente</option>';
-	      print '<option value="0">Hors Vente</option>';
-	    }
-	  else
-	    {
-	      print '<option value="1">En vente</option>';
-	      print '<option value="0" SELECTED>Hors Vente</option>';
-	    }
-	  print '</td></tr>';
-	  print "<tr><td valign=\"top\">Description</td><td>";
-	  print '<textarea name="desc" rows="8" cols="50">';
-	  print $product->description;
-	  print "</textarea></td></tr>";
-
-	  if ($product->type == 1)
-	    {
-	      print '<tr><td>Durée</td><TD><input name="duration_value" size="6" value="'.$product->duration_value.'">';
-	      print '<input name="duration_unit" type="radio" value="d" selected>jour&nbsp;';
-	      print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
-	      print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
-	      print '<input name="duration_unit" type="radio" value="y">année';
-	      print '</td></tr>';
-	    }
-
-	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer">&nbsp;';
-	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
-	  print '</table>';
-	  print '</form>';
-	}    
+      
     }
   else
     {
@@ -223,7 +212,7 @@ if ($contrat->enservice)
 }
 else
 {
-  print '<td width="20%" align="center">[<a href="fiche.php?action=miseenservice&id='.$id.'">Mise en service</a>]</td>';
+  print '<td width="20%" align="center">[<a href="fiche.php?request=miseenservice&id='.$id.'">Mise en service</a>]</td>';
 }
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
