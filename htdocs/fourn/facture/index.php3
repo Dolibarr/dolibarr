@@ -123,7 +123,7 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print '<TR class="liste_titre">';
   print '<TD>Numéro</TD>';
   print '<TD>Date</TD>';
