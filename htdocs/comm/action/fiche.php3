@@ -95,7 +95,6 @@ if ($action=='add_action')
       
       if ($conf->webcal && $todo_webcal == 'on')
 	{
-
 	  $webcal = new Webcal();
 
 	  $webcal->heure = $heurehour . $heuremin . '00';
@@ -114,7 +113,6 @@ if ($action=='add_action')
 	  $webcal->add($user, $todo->date, $societe->nom, $libelle);
 	}
   }
-
   Header("Location: ".DOL_URL_ROOT."/comm/fiche.php3?socid=$socid");
 }
 
