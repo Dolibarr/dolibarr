@@ -244,7 +244,8 @@ $constantes=array('ADHERENT_TEXT_NEW_ADH',
 		  'ADHERENT_MAIL_FROM',
 		  'ADHERENT_CARD_HEADER_TEXT',
 		  'ADHERENT_CARD_TEXT',
-		  'ADHERENT_CARD_FOOTER_TEXT'
+		  'ADHERENT_CARD_FOOTER_TEXT',
+		  'ADHERENT_ETIQUETTE_TYPE'
 		  );
 form_constantes($constantes);
 

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,6 +94,7 @@ $modules["MAIN_MODULE_ADHERENT"][0] = "Module adherent";
 $modules["MAIN_MODULE_ADHERENT"][1] = "MAIN_MODULE_ADHERENT";
 $modules["MAIN_MODULE_ADHERENT"][2] = MAIN_MODULE_ADHERENT;
 $modules["MAIN_MODULE_ADHERENT"][3] = "Module de gestion des adhérents d'une association";
+$modules["MAIN_MODULE_ADHERENT"][4] = "modAdherent";
 
 $modules["MAIN_MODULE_BOUTIQUE"][0] = "Module boutique";
 $modules["MAIN_MODULE_BOUTIQUE"][1] = "MAIN_MODULE_BOUTIQUE";
