@@ -72,12 +72,12 @@ if ($_GET["action"] == 'add_bookmark')
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$_GET["socidp"]." AND fk_user=".$user->id;
   if (! $db->query($sql) )
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$_GET["socidp"].", now(),".$user->id.");";
   if (! $db->query($sql) )
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
 }
 
@@ -312,7 +312,7 @@ if ( $db->query($sql) )
 } 
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 /*
@@ -323,7 +323,7 @@ if ($conf->contrat->enabled && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
   $langs->load("contracts");
   
-  $sql = "SELECT s.nom, s.idp, c.enservice, c.rowid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
+  $sql = "SELECT s.nom, s.idp, c.statut, c.rowid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p WHERE c.fk_soc = s.idp and c.fk_product = p.rowid";
   if ($socidp)
     { 
