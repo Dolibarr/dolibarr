@@ -327,14 +327,72 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0)
 	  print '</table>'."\n";
 	  print '</form>';
 	  
+	  /*
+	   * Contrats existants
+	   */
+	  $sql = "SELECT c.rowid, c.ref, s.idp as socidp, s.nom ";
+	  $sql .= ", sf.idp as sfidp, sf.nom as sfnom";
+	  $sql .= ", sa.idp as saidp, sa.nom as sanom";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+	  $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
+	  $sql .= " , ".MAIN_DB_PREFIX."societe as sa";
+	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";	  	  
+	  $sql .= " WHERE c.fk_client_comm = s.idp";
+	  $sql .= " AND c.fk_soc = sa.idp";
+	  $sql .= " AND c.fk_soc_facture = sf.idp";	  	 
+	  $sql .= " AND s.idp = ".$_GET["client_comm"];
+	  
+	  $result = $db->query($sql);
+	  if ($result)
+	    {
+	      $num = $db->num_rows();
+	      $i = 0;
+	      if ($num > 0)
+		{
+		  print"<br />\n<!-- debut table -->\n";
+		  print_titre("Contrats existants");
+		  print '<br /><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		  print '<tr class="liste_titre"><td>Réf</td>';	     
+		  print '<td>Client</td><td>Client (Agence/Filiale)</td>';	      
+		  print '<td>Client facturé</td>';
+		  print "</tr>\n";
+		  
+		  $var=True;
+		  
+		  while ($i < $num)
+		    {
+		      $obj = $db->fetch_object();
+		      $var=!$var;
+		      
+		      print "<tr $bc[$var]><td>";
+		      print '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->rowid.'">';
+		      print img_file();      
+		      print '</a>&nbsp;';
+		      print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
+		      
+		      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
+		      
+		      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->sanom).'</a></td>';
+		      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->sfnom).'</a></td>';
+		      
+		      print "</tr>\n";
+		      $i++;
+		    }
+		  print "</table>";
+		}
+	      
+	      $db->free();
+	    }
+	  else 
+	    {
+	      print $db->error() . ' ' . $sql;
+	    }	  
 	}
-      
     }
   else
     {
       print "Erreur";
     }
-
 }
 else
 {
@@ -467,7 +525,8 @@ else
 	     
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      
-	      $sql = "SELECT l.ligne, l.statut, l.rowid, l.remise, f.nom as fournisseur, ss.nom as agence";
+	      $sql = "SELECT l.ligne, l.statut, l.rowid, l.remise, f.nom as fournisseur";
+	      $sql .= ", ss.code_client, ss.nom as agence";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	      $sql .= " , ".MAIN_DB_PREFIX."societe as ss";
 	      $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
@@ -506,7 +565,7 @@ else
 			  
 			  print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
 			  
-			  print '<td>'.$obj->agence."</td>\n";
+			  print '<td>'.$obj->code_client."&nbsp;".$obj->agence."</td>\n";
 			  print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
 			  
 			  print '<td align="center">'.$obj->remise." %</td>\n";
