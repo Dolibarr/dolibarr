@@ -40,7 +40,7 @@ $year_current = $_GET["year"];;
 if (! $year_current) { $year_current = strftime("%Y", time()); }
 
 
-print_titre("Bilan mensuel Entrées/Sorties pour la caisse");
+print_titre("Bilan mensuel Entrées/Sorties pour la Caisse");
 print '<br>';
 
 
@@ -109,7 +109,7 @@ print '</tr>';
 print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="right">Recettes</td><td align="right">Dépenses</td>';
+  print '<td align="right">Débits</td><td align="right">Crédits</td>';
 }
 print '</tr>';
 
@@ -118,22 +118,21 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 {
   $var=!$var;
   print '<tr '.$bc[$var].'>';
-  print "<td><a href=\"index.php?year=$year_current&month=$mois\">".strftime("%B",mktime(1,1,1,$mois,1,$annee))."</a></td>";
+  print "<td>".strftime("%B",mktime(1,1,1,$mois,1,$annee))."</td>";
   for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
-      print '<td align="right" width="10%">&nbsp;';
       $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-      if ($encaiss[$case]>0)
+      print '<td align="right" width="10%">&nbsp;';
+      if ($decaiss[$case]>0)
 	{
-	  print price($encaiss[$case]);
+	  print price($decaiss[$case]);
 	}
       print "</td>";
 
       print '<td align="right" width="10%">&nbsp;';
-      $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-      if ($decaiss[$case]>0)
+      if ($encaiss[$case]>0)
 	{
-	  print price($decaiss[$case]);
+	  print price($encaiss[$case]);
 	}
       print "</td>";
     }
@@ -145,7 +144,7 @@ $var=!$var;
 print "<tr $bc[$var]><td><b>Total annuel</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="right">'.$totsorties[$annee].'</td><td align="right">'.$totentrees[$annee].'</td>';
+  print '<td align="right"><b>'.price($totsorties[$annee]).'</b></td><td align="right"><b>'.price($totentrees[$annee]).'</b></td>';
 }
 print "</tr>\n";
 
