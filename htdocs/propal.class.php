@@ -382,7 +382,7 @@ class Propal
 	      $this->total_ttc      = $obj->total;
 	      $this->socidp         = $obj->fk_soc;
 	      $this->soc_id         = $obj->fk_soc;
-	      $this->projet_id      = $obj->fk_projet;
+	      $this->projetidp      = $obj->fk_projet;
 	      $this->contactid      = $obj->fk_soc_contact;
 	      $this->modelpdf       = $obj->model_pdf;
 	      $this->note           = $obj->note;
