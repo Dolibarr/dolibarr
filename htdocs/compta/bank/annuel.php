@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,26 @@
  * $Source$
  *
  */
+
+/**
+        \file        htdocs/compta/bank/annuel.php
+        \ingroup     banque
+        \brief       Page reporting mensuel Entrées/Sorties d'un compte bancaire
+        \version     $Revision$
+*/
+
 require("./pre.inc.php");
 
-/*
- *
- */
+$year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
+$year_current = strftime("%Y",time());
+if (! $year_start) {
+    $year_start = $year_current - 2;
+    $year_end = $year_current;
+}
+else {
+    $year_end=$year_start+2;   
+}
+
 
 llxHeader();
 
@@ -38,8 +53,9 @@ if ($user->societe_id > 0)
 {
   $socidp = $user->societe_id;
 }
-
-print_titre("Rapport mensuel Entrées/Sorties, compte : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>");
+$title=$langs->trans("IOMonthlyReporting").", ".$langs->trans("BankAccount")." : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>";
+$lien=($year_start?"<a href='annuel.php?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> <a href='annuel.php?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
+print_fiche_titre($title,$lien);
 print '<br>';
 
 # Ce rapport de trésorerie est basé sur llx_bank (car doit inclure les transactions sans facture)
@@ -62,7 +78,7 @@ if ($db->query($sql))
       $i++;
     }
 } else {
-	print "Erreur: SQL $sql";
+    dolibarr_print_error($db);
 }
 
 $sql = "SELECT sum(f.amount), date_format(f.dateo,'%Y-%m') as dm";
@@ -82,25 +98,13 @@ if ($db->query($sql))
       $i++;
     }
 } else {
-    print "Erreur: SQL $sql";
+    dolibarr_print_error($db);
 }
 
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td rowspan=2>'.$langs->trans("Month").'</td>';
 
-$year_current = strftime("%Y",time());
-
-if ($year_current < (MAIN_START_YEAR + 2))
-{
-  $year_start = MAIN_START_YEAR;
-  $year_end = (MAIN_START_YEAR + 2);
-}
-else
-{
-  $year_start = $year_current - 2;
-  $year_end = $year_current;
-}
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
@@ -110,7 +114,7 @@ print '</tr>';
 print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 { 
-  print '<td align="right">Débits</td><td align="right">Crédits</td>';
+  print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td>';
 }
 print '</tr>';
 
@@ -145,7 +149,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 }
 
 $var=!$var;
-print "<tr ".$bc[$var]."><td><b>Total annuel</b></td>";
+print "<tr ".$bc[$var]."><td><b>".$langs->trans("Total")."</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
   print '<td align="right"><b>'.price($totsorties[$annee]).'</b></td><td align="right"><b>'.price($totentrees[$annee]).'</b></td>';

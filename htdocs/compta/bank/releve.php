@@ -70,7 +70,9 @@ if (! isset($_GET["num"]))
   $pagenext = $page + 1;
 
   $sql = "SELECT distinct(b.num_releve) as numr";
-  $sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE fk_account = ".$_GET["account"]." ORDER BY numr DESC";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+  $sql .= " WHERE fk_account = ".$_GET["account"];
+  $sql .= " ORDER BY numr DESC";
   $sql .= $db->plimit($limit,$offset);
 
   $result = $db->query($sql);
@@ -81,7 +83,7 @@ if (! isset($_GET["num"]))
       $numrows = $db->num_rows();
       $i = 0; 
       
-      print_barre_liste("Relevés bancaires, compte : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>", $page, "releve.php","&amp;account=".$_GET["account"],$sortfield,$sortorder,'',$numrows);
+      print_barre_liste($langs->trans("AccountStatements").", ".$langs->trans("BankAccount")." : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>", $page, "releve.php","&amp;account=".$_GET["account"],$sortfield,$sortorder,'',$numrows);
       print '<br>';
       
       print '<table class="noborder" width="100%">';
