@@ -23,6 +23,8 @@
 
 require("./pre.inc.php");
 
+$langs->load("orders");
+
 $user->getrights('commande');
 if (!$user->rights->commande->lire)
   accessforbidden();
@@ -73,9 +75,9 @@ if ($_GET["year"] > 0)
   $sql .= " AND date_format(c.date_commande, '%Y') = $year";
 }
 
-if (strlen($HTTP_POST_VARS["sf_ref"]) > 0)
+if (strlen($_POST["sf_ref"]) > 0)
 {
-  $sql .= " AND c.ref like '%".$HTTP_POST_VARS["sf_ref"] . "%'";
+  $sql .= " AND c.ref like '%".$_POST["sf_ref"] . "%'";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder";
@@ -84,20 +86,21 @@ $sql .= $db->plimit($limit + 1,$offset);
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
-  print_barre_liste("Commandes", $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+  print_barre_liste($langs->trans("Orders"), $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
     
   $i = 0;
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
   
   print '<tr class="liste_titre">';
   
-  print_liste_field_titre_new ("Réf","liste.php","c.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
+  print_liste_field_titre_new ($langs->trans("Ref"),"liste.php","c.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
   
-  print_liste_field_titre_new ("Société","liste.php","s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
+  print_liste_field_titre_new ($langs->trans("Company"),"liste.php","s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
   
-  print_liste_field_titre_new ("Date","liste.php","c.date_commande","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
+  print_liste_field_titre_new ($langs->trans("Date"),"liste.php","c.date_commande","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
   
-  print_liste_field_titre_new ("Statut","liste.php","c.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
+  print_liste_field_titre_new ($langs->trans("Status"),"liste.php","c.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
+
   print "</tr>\n";
   $var=True;
   
@@ -109,7 +112,7 @@ if ( $db->query($sql) )
       
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
+	  print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_file()." $objp->ref</a></td>\n";
 	  print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
 	  
 	  $now = time();
@@ -148,7 +151,7 @@ if ( $db->query($sql) )
     }
   else
     {
-      print $db->error();
+      print dolibarr_print_error($db);
     }
 
 $db->close();

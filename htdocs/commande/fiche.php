@@ -22,8 +22,11 @@
  */
 require("./pre.inc.php");
 
+$langs->load("orders");
+
 $user->getrights('commande');
 $user->getrights('expedition');
+
 if (!$user->rights->commande->lire)
   accessforbidden();
 
@@ -176,7 +179,7 @@ if ($action == 'pdf')
   commande_pdf_create($db, $_GET["id"]);
 } 
 
-llxHeader('','Fiche commande','Commande');
+llxHeader('',$langs->trans("OrderCard"),"Commande");
 
 
 
@@ -404,7 +407,7 @@ else
 
 
 	  $head[0][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
-	  $head[0][1] = "Commande : $commande->ref";
+	  $head[0][1] = $langs->trans("Order").": $commande->ref";
 	  $h = 1;
 	  $a = 0;
 	  
@@ -483,11 +486,11 @@ else
 	    }
 	  print "&nbsp;</td></tr>";
   
-	  print '<tr><td>Montant</td>';
+      // Ligne de 3 colonnes
+	  print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 	  print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-	  print '<td>'.MAIN_MONNAIE.' HT</td>';
-	  
-	  print '<td>Note</td></tr>';
+	  print '<td>'.MAIN_MONNAIE.'</td>';
+	  print '<td rowspan="4" valign="top">Note :</td></tr>';
 
 	  print '<tr><td>Remise globale</td><td align="right">';
 
@@ -502,7 +505,7 @@ else
 	    }
 	  print '</td></tr>';
 
-	  print '<tr><td>TVA</td><td align="right">'.price($commande->total_tva).'</td>';
+	  print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
 	  print '<td>'.MAIN_MONNAIE.'</td></tr>';
 	  print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
 	  print '<td>'.MAIN_MONNAIE.'</td></tr>';

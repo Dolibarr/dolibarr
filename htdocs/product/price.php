@@ -21,6 +21,9 @@
  *
  */
 require("./pre.inc.php");
+
+$langs->load("products");
+
 $user->getrights('produit');
 
 if (!$user->rights->produit->lire)
@@ -61,9 +64,9 @@ $head[1][1] = 'Prix';
 $head[2][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
 $head[2][1] = 'Statistiques';
 
+
 dolibarr_fiche_head($head, 1, 'Fiche '.$types[$product->type].' : '.$product->ref);
 	      	      
-
 
 $sql = "SELECT p.rowid, p.price, ".$db->pdate("p.date_price")." as dp";
 $sql .= " FROM ".MAIN_DB_PREFIX."product_price as p";
@@ -97,8 +100,8 @@ if ($result)
 	  $i++;
 	}
       $db->free();
-
       print "</table>";
+      print "<br>";
     }
 }
 else
@@ -106,7 +109,7 @@ else
   print $db->error() . "<br>" .$sql;
 }
 
-
+print "</div>\n";
 
 $db->close();
 

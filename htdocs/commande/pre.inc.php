@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +23,12 @@
 require("../main.inc.php");
 require("./commande.class.php");
 
+$langs->load("orders");
+
+
 function llxHeader($head = "", $title="", $help_url='')
 {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
   /*
    *
@@ -34,12 +38,14 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
-  $menu->add_submenu(DOL_URL_ROOT."/commande/liste.php", "Liste");
+  $menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
+  $menu->add_submenu(DOL_URL_ROOT."/commande/liste.php", $langs->trans("List"));
 
-  $menu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
-
-  $menu->add(DOL_URL_ROOT."/commande/stats/", "Statistiques");
+  if ($conf->expedition->enabled) {
+    $menu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
+  }
+  
+  $menu->add(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"));
 
   left_menu($menu->liste, $help_url);
 }

@@ -25,6 +25,8 @@ require("./pre.inc.php");
 require("../propal.class.php");
 require("../facture.class.php");
 
+$langs->load("products");
+
 $user->getrights('produit');
 $user->getrights('propale');
 $user->getrights('facture');
@@ -201,9 +203,6 @@ llxHeader("","","Fiche produit");
 /*
  * Création du produit
  *
- *
- *
- *
  */
 if ($_GET["action"] == 'create')
 {
@@ -259,7 +258,6 @@ if ($_GET["action"] == 'create')
 }
 else
 {
-
   if ($_GET["id"])
     {
       if ($_GET["action"] <> 're-edit')
@@ -281,7 +279,7 @@ else
 	      print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 	      print '<tr class="liste_titre">';
 	      print '<form action="liste.php" method="post"><td>';
-				print '<input type="hidden" name="type" value="'.$product->type.'">';
+		  print '<input type="hidden" name="type" value="'.$product->type.'">';
 	      print 'Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
 	      print '</td></form><form action="liste.php" method="post"><td>';
 	      print 'Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
@@ -303,7 +301,7 @@ else
 		}
 
 	      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-	      $head[$h][1] = 'Statistiques';
+	      $head[$h][1] = $langs->trans('Statistics');
 
 	      dolibarr_fiche_head($head, 0, 'Fiche '.$types[$product->type].' : '.$product->ref);
 
@@ -329,8 +327,9 @@ else
 		}
 	      else
 		{
-		  $nblignefour=3;
+		  $nblignefour=4;
 		} 
+		
 	      print '<td valign="top" rowspan="'.$nblignefour.'">';
 	      print 'Fournisseurs [<a href="fiche.php?id='.$product->id.'&amp;action=ajout_fourn">Ajouter</a>]';
 
@@ -349,7 +348,7 @@ else
 		    {
 		      $objp = $db->fetch_object($i);	  
 		      $var=!$var;
-		      print "<TR $bc[$var]>";
+		      print "<tr $bc[$var]>";
 		      print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		      print '<td align="right">';
 		      print '<a href="fiche.php?id='.$product->id.'&amp;action=remove_fourn&amp;id_fourn='.$objp->idp.'">';
