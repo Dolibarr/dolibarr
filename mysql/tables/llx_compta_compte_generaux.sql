@@ -27,5 +27,7 @@ create table llx_compta_compte_generaux
   numero          varchar(50),
   intitule        varchar(255),
   fk_user_author  integer,
-  note            text
+  note            text,
+
+  UNIQUE(numero)
 )type=innodb;
