@@ -29,6 +29,6 @@ create table llx_cotisation
   fk_adherent     integer,
   dateadh         timestamp,
   cotisation      real,
-  fk_bank         int(11) default NULL,
+  fk_bank         integer default NULL,
   note            text
 );

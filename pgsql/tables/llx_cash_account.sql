@@ -28,7 +28,7 @@
 create table llx_cash_account
 (
   rowid          SERIAL PRIMARY KEY,
-  datec          datetime,
+  datec          timestamp,
   tms            timestamp,
   label          varchar(30),
   courant        smallint default 0 not null,

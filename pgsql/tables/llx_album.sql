@@ -25,9 +25,9 @@ create table llx_album
   rowid           serial PRIMARY KEY,
   osc_id          integer NOT NULL,
   tms             timestamp,
-  ref		  varchar(12),
-  title		  varchar(64),
-  annee		  smallint,
+  ref		  				varchar(12),
+  title		  			varchar(64),
+  annee		  			smallint,
   description     text,
   collectif       smallint,
   fk_user_author  integer

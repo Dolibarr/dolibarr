@@ -31,7 +31,7 @@ create table llx_adherent
   statut           smallint NOT NULL DEFAULT 0,
   public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
   fk_adherent_type smallint,
-  morphy           CHAR(3) CHECK (morphy ('mor','phy')) NOT NULL, -- personne morale / personne physique
+  morphy           CHAR(3) CHECK (morphy IN ('mor','phy')) NOT NULL, -- personne morale / personne physique
   datevalid        timestamp,   -- date de validation
   datec            timestamp,  -- date de creation
   prenom           varchar(50),

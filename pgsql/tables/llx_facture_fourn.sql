@@ -44,4 +44,4 @@ create table llx_facture_fourn
   note       text
 );
 
-create unique index llx_facture_fourn_facnumber on llx_facture_fourn(facnumber, fksoc);
+create unique index llx_facture_fourn_facnumber on llx_facture_fourn(facnumber, fk_soc);
