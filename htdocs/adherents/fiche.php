@@ -295,6 +295,13 @@ if ($rowid > 0)
   print '<tr><td>Pass</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
   print '<tr><td>Date de Naissance</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
   print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
+  print '<tr><td>Public ?</td><td class="valeur">';
+  if ($adh->public==1){
+    print 'Yes';
+  }else{
+    print "No";
+  }
+  print '&nbsp;</td></tr>';
 
   print "</table>\n";
 
