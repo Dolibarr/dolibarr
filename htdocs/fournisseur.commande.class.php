@@ -21,15 +21,15 @@
  *
  */
 
-/*!	\file htdocs/commande/commande.class.php
-		\ingroup    commande
-		\brief      Fichier des classes de commandes
+/**	    \file       htdocs/fournisseur.commande.class.php
+		\ingroup    fournisseur,commande
+		\brief      Fichier des classes des commandes fournisseurs
 		\version    $Revision$
 */
 
 
-/*!	\class Commande
-		\brief      Classe de gestion de commande
+/**	    \class      CommandeFournisseur
+		\brief      Classe de gestion de commande fournisseur
 */
 
 class CommandeFournisseur
@@ -38,7 +38,8 @@ class CommandeFournisseur
   var $id ;
   var $brouillon;
 
-  /*!  \brief  Constructeur
+  /**   \brief      Constructeur
+   *    \param      DB      Handler d'accès aux bases de données
    */
   function CommandeFournisseur($DB)
     {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier	<benoit.mortier@opensides.be>
  *
@@ -24,10 +24,9 @@
  *
  */
 
-/**
-    \file       htdocs/master.inc.php
-    \brief      Fichier de formatage générique des ecrans Dolibarr
-    \version    $Revision$
+/**     \file       htdocs/main.inc.php
+        \brief      Fichier de formatage générique des ecrans Dolibarr
+        \version    $Revision$
 */
 
 require("master.inc.php");

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,9 +23,9 @@
  *
  */
 
-/*! \file htdocs/comm/propal/note.php
-        \ingroup    propale
-        \brief      Fiche d'information sur une proposition commerciale
+/**     \file       htdocs/fourn/facture/paiement.php
+        \ingroup    fournisseur,facture
+        \brief      Paiements des factures fournisseurs
 		\version    $Revision$
 */
 

@@ -21,9 +21,9 @@
  *
  */
  
-/**     \file       htdocs/compta/paiement/fiche.php
+/**     \file       htdocs/compta/paiement/rapport.php
 		\ingroup    facture
-		\brief      Onglet paiement d'un paiement
+		\brief      Rapports de paiements
 		\version    $Revision$
 */
 
