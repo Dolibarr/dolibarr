@@ -130,9 +130,18 @@ if ($_GET["id"])
 	  
       if($product->type == 0)
       {
-        $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-        $head[$h][1] = 'Stock';
-        $h++;
+          if ($conf->stock->enabled)
+            {
+                $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+                $head[$h][1] = 'Stock';
+                $h++;
+            }
+
+          if ($conf->fournisseur->enabled) {
+                $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+                $head[$h][1] = $langs->trans("Suppliers");
+                $h++;
+          }
       }
 
       $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
