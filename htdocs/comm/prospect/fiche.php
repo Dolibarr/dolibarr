@@ -282,7 +282,7 @@ if ($socid > 0)
        *
        */
       print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-      print '<tr class="liste_titre"><td>Actions à faire</td><td align="right"> [<a href="action/fiche.php?action=create&socid='.$socid.'&afaire=1">Nouvelle action</a>]</td></tr>';
+      print '<tr class="liste_titre"><td>Actions à faire</td><td align="right"> [<a href="../action/fiche.php?action=create&socid='.$socid.'&afaire=1">Nouvelle action</a>]</td></tr>';
       print '<tr>';
       print '<td colspan="2" valign="top">';
 
