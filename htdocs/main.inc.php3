@@ -75,6 +75,8 @@ $db = new DoliDb();
 
 $user = new User($db);
 
+clearstatcache();
+
 //XAVIER DUTOIT 18/09/2003 : si l'utilisateur n'est pas authentifié apache, on essaie pear Auth
 
 if (!empty ($GLOBALS["REMOTE_USER"]))
