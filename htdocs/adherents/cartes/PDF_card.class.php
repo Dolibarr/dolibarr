@@ -77,7 +77,7 @@ class PDF_card extends FPDF {
   
   var $_COUNTX = 1;
   var $_COUNTY = 1;
-  
+  var $_First = 1;
   
   // Listing of labels size
   var $_Avery_Labels = array (
@@ -176,7 +176,9 @@ class PDF_card extends FPDF {
 					    'SpaceY'=>0,	
 					    'width'=>85,		
 					    'height'=>54,		
-					    'font-size'=>10)
+					    'font-size'=>10,
+					    'logo1'=>'logo1.jpg',
+					    'logo2'=>'logo2.png')
 			      );
   
   // convert units (in to mm, mm to in)
@@ -250,20 +252,40 @@ class PDF_card extends FPDF {
   }
   
   // On imprime une étiqette
-  function Add_PDF_card($texte) {
+  function Add_PDF_card($texte,$header='',$footer='') {
     // We are in a new page, then we must add a page
-    if (($this->_COUNTX ==0) and ($this->_COUNTY==0)) {
+    if (($this->_COUNTX ==0) and ($this->_COUNTY==0) and (!$this->_First==1)) {
       $this->AddPage();
     }
-    
+    $this->_First=0;
     $_PosX = $this->_Margin_Left+($this->_COUNTX*($this->_Width+$this->_X_Space));
     $_PosY = $this->_Margin_Top+($this->_COUNTY*($this->_Height+$this->_Y_Space));
     
     if ($this->_Avery_Name == "CARD") {
+      $Tformat=$this->_Avery_Labels["CARD"];
       $this->_Pointille($_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,1,25);
+      if($Tformat['logo1'] != '' and file_exists($Tformat['logo1'])){
+	$this->image($Tformat['logo1'],$_PosX+$this->_Width-21,$_PosY+1,20,20);
+      }
+      if($Tformat['logo2'] != '' and file_exists($Tformat['logo2'])){
+	$this->image($Tformat['logo2'],$_PosX+$this->_Width-21,$_PosY+25,20,20);
+      }
+      //$this->image('logo1.jpg',$_PosX+$this->_Width-21,$_PosY+1,20);
+      if ($header!=''){
+	$this->SetXY($_PosX, $_PosY+1);
+	$this->Cell($this->_Width, $this->_Line_Height,$header,0,1,'C');
+      }
+      $this->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
+      $this->MultiCell($this->_Width, $this->_Line_Height, $texte);
+      if ($footer!=''){
+	$this->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
+	$this->Cell($this->_Width, $this->_Line_Height,$footer,0,1,'C');
+      }
+      
+    }else{
+      $this->SetXY($_PosX+3, $_PosY+3);
+      $this->MultiCell($this->_Width, $this->_Line_Height, $texte);
     }
-    $this->SetXY($_PosX+3, $_PosY+3);
-    $this->MultiCell($this->_Width, $this->_Line_Height, $texte);
     $this->_COUNTY++;
     
     if ($this->_COUNTY == $this->_Y_Number) {

@@ -41,17 +41,21 @@ Soit on donne le type d'étiquette au format AVERY
 // Dans cet exemple on va commencer l'impression des étiquettes à partir de la seconde colonne (cf les 2 derniers paramètres 1 et 2)
 //$pdf = new PDF_Label(array('name'=>'perso1', 'marginLeft'=>1, 'marginTop'=>1, 'NX'=>2, 'NY'=>7, 'SpaceX'=>0, 'SpaceY'=>0, 'width'=>99.1, 'height'=>'38.1', 'metric'=>'mm', 'font-size'=>14), 1, 2);
 //$pdf = new PDF_card('L7163', 1, 2);
-$pdf = new PDF_card('CARD', 1, 2);
+$pdf = new PDF_card('CARD', 1, 1);
 //$db = new Db();
 
 $pdf->Open();
 $pdf->AddPage();
 
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin, adresse,cp,ville,pays";
+if (!isset($annee)){
+  $now = getdate();
+  $annee=$now['year'];
+}
+$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin, adresse,cp,ville,pays, t.libelle as type";
 $sql .= " , d.email";
-$sql .= " FROM llx_adherent as d";
-$sql .= " WHERE d.statut = 1";
-$sql .= " ORDER BY d.nom ASC ";
+$sql .= " FROM llx_adherent as d, llx_adherent_type as t";
+$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
+$sql .= " ORDER BY d.rowid ASC ";
 
 $result = $db->query($sql);
 if ($result) 
@@ -61,7 +65,7 @@ if ($result)
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
-      $pdf->Add_PDF_card(sprintf("%s\n%s\n%s\n%s\n%s, %s, %s", "N° :".$objp->rowid,$objp->prenom." ".$objp->nom,"<".$objp->email.">", $objp->adresse, $objp->cp, $objp->ville, $objp->pays));
+      $pdf->Add_PDF_card(sprintf("%s\n%s\n%s\n%s\n%s, %s, %s", "Adhérent ".$objp->type." n°".$objp->rowid,$objp->prenom." ".$objp->nom,"<".$objp->email.">", $objp->adresse, $objp->cp, $objp->ville, $objp->pays),$annee,"Association FreeLUG http://www.freelug.org/");
       $i++;
     }
   // On imprime les étiquettes
