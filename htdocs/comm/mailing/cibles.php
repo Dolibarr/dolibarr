@@ -35,6 +35,18 @@ $dir=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
 $mesg = '';
 
 
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
+if ($page == -1) { $page = 0 ; }
+
+$offset = $conf->liste_limit * $_GET["page"] ;
+$pageprev = $_GET["page"] - 1;
+$pagenext = $_GET["page"] + 1;
+
+
+
 /*
  * Actions
  */
@@ -177,24 +189,24 @@ if ($mil->fetch($_GET["id"]) == 0)
     }
     
 
-    // Liste des destinataires électionnés
-    $NBMAX=100;
-    
+    // Liste des destinataires sélectionnés
     $sql  = "SELECT mc.nom, mc.prenom, mc.email";
     $sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
     $sql .= " WHERE mc.fk_mailing=".$mil->id;
-    $sql .= " limit ".($NBMAX+1);
+    if ($sortfield) { $sql .= " ORDER BY $sortfield $sortorder"; }
+    $sql .= $db->plimit($conf->liste_limit+1, $offset);
     
     if ( $db->query($sql) )
     {
         $num = $db->num_rows();
     
-        print_titre($langs->trans("MailSelectedRecipients"));
+        $addu = "&amp;id=".$mil->id."&amp;page=$page";;
+        print_barre_liste($langs->trans("MailSelectedRecipients"), $page, "cibles.php","&amp;id=".$mil->id,$sortfield,$sortorder,"",$num);
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td>'.$langs->trans("Firstname").'</td>';
-        print '<td>'.$langs->trans("Lastname").'</td>';
-        print '<td>'.$langs->trans("EMail").'</td>';
+        print_liste_field_titre($langs->trans("Firstname"),"cibles.php","mc.prenom",$addu,"","",$sortfield);
+        print_liste_field_titre($langs->trans("Lastname"),"cibles.php","mc.nom",$addu,"","",$sortfield);
+        print_liste_field_titre($langs->trans("EMail"),"cibles.php","mc.email",$addu,"","",$sortfield);
         print '</tr>';
         $var = true;
         $i = 0;
