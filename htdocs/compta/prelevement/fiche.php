@@ -25,7 +25,7 @@ $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 
-llxHeader('','Fiche Prélèvement');
+llxHeader('','Bon de prélèvement');
 /*
  * Sécurité accés client
  */
@@ -43,13 +43,38 @@ $h++;
 
 dolibarr_fiche_head($head, $hselected, 'Prélèvement');
 
-  	  
 
-/*
- * Recherche
- *
- *
- */
+$prev_id = $_GET["id"];
+
+if ($_GET["id"])
+{
+  $bon = new BonPrelevement($db,"");
+
+  if ($bon->fetch($_GET["id"]) == 0)
+    {
+      print '<table class="border" width="100%">';
+
+      print '<tr><td width="20%">Référence</td><td>'.$bon->ref.'</td></tr>';
+      print '<tr><td width="20%">Date</td><td>'.strftime("%d %b %Y",$bon->datec).'</td></tr>';
+      print '<tr><td width="20%">Montant</td><td>'.price($bon->amount).'</td></tr>';
+      print '<tr><td width="20%">Fichier</td><td>';
+
+      $encfile = urlencode(DOL_DATA_ROOT.'/prelevement/bon/'.$bon->ref);
+
+      print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;file='.$encfile.'">'.$bon->ref.'</a>';
+
+      print '</td></tr>';
+      print '</table>';
+    }
+  else
+    {
+      print "Erreur";
+    }
+
+
+}
+
+
 
 if ($page == -1) { $page = 0 ; }
 
@@ -57,7 +82,8 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$prev_id = $_GET["id"];
+
+
 if ($sortorder == "") {
   $sortorder="DESC";
 }
@@ -79,13 +105,6 @@ $sql .= " , ".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE p.rowid=".$prev_id;
 $sql .= " AND pf.fk_prelevement = p.rowid";
 $sql .= " AND pf.fk_facture = f.rowid";
-
-if ($_GET["search_client"])
-{
-  $sel =urldecode($_GET["search_client"]);
-  $sql .= " AND s.nom LIKE '%".$sel."%'";
-}
-
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
