@@ -39,14 +39,33 @@ $user->getrights('propale');
 $user->getrights('facture');
 $mesg = '';
 
-if (!$user->rights->produit->lire)
-{
-  accessforbidden();
-}
+if (!$user->rights->produit->lire) accessforbidden();
 
 
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
+
+/*
+ *
+ */
+
+if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
+{
+  if ($_GET["id"])
+    {           
+      $product = new Product($db);
+      $result = $product->fetch($_GET["id"]);
+
+      // if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
+
+      //      var_dump($_FILES);
+
+      $product->add_photo($conf->produit->dir_output, $_FILES['photofile']);
+    }
+}
+/*
+ *
+ */
 
 
 if ($_GET["action"] == 'fastappro')
@@ -357,6 +376,11 @@ else
 		      $head[$h][1] = $langs->trans("Suppliers");
 		      $h++;
 		    }
+
+		  $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
+		  $head[$h][1] = $langs->trans("Photos");
+		  $h++;
+
 		}
 	      
 	      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
@@ -517,8 +541,10 @@ else
 		    }
 	      
 		}
-	      print '</select></td><td>'.$langs->trans("Ref").'</td><td><input name="ref_fourn" size="25" value=""></td></tr>';
-	      print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	      print '</select></td><td>'.$langs->trans("Ref").'</td>';
+	      print '<td><input name="ref_fourn" size="25" value=""></td></tr>';
+	      print '<tr><td colspan="4" align="center">';
+	      print '<input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
 	      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
 	      print '</form>';
@@ -530,10 +556,6 @@ else
 	   */
 	  if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer  && $product->isproduct)
 	    {
-	      $product->add_photo($conf->produit->dir_output);
-
-	      $langs->load("suppliers");
-	  
 	      print_titre($langs->trans("AddPhoto"));
 
 	      print '<form name="userfile" action="fiche.php?id='.$product->id.'" enctype="multipart/form-data" METHOD="POST">';      
@@ -543,7 +565,10 @@ else
 	      print '<td>'.$langs->trans("File").'</td>';
 	      print '<td><input type="file" name="photofile"></td></tr>';
 	  
-	      print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	      print '<tr><td colspan="4" align="center">';
+	      print '<input type="submit" name="sendit" value="'.$langs->trans("Save").'">&nbsp;';
+
+
 	      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
 	      print '</form>';
@@ -674,7 +699,14 @@ if ($_GET["action"] == '')
 
 print "\n</div>\n";
 
-
+/*
+ * Photo
+ *
+ */
+if ($_GET["id"] && $_GET["action"]=='')
+{
+  print $product->show_photo($conf->produit->dir_output);
+}
 
 if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 {
