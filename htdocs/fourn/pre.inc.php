@@ -40,7 +40,7 @@ function llxHeader($head = "", $urlp = "")
    */
   if ($user->societe_id == 0) 
     {
-      $menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create","Nouvelle société");
+      $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create","Nouvelle société");
     }
 
   $menu->add_submenu("contact.php","Contacts");
