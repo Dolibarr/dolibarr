@@ -149,6 +149,10 @@ if ($HTTP_POST_VARS["action"] == "set")
 
 	  if ($error == 0)
 	    {
+
+	      $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
+
+
 print '<div class="main">
  <div class="main-inside">';
 	      print "Votre système est maintenant configuré, il ne vous reste plus qu'a sélectionner les modules que vous souhaitez utiliser. Pour cela cliquer sur l'url ci-dessous : <br>";
