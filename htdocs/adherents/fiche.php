@@ -306,8 +306,23 @@ if ($rowid > 0)
       print '<input type="hidden" name="action" value="cotisation">';
       print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
-      print '<tr><td width="15%">Fin adhésion</td><td width="35%" class="valeur">'.strftime("%d %B %Y",$adh->datefin).'&nbsp;</td>';
-      
+      print '<tr>';
+
+      print '<td rowspan="6">';
+
+      print '</td>';
+
+      print '<td width="15%">Fin adhésion</td>';
+      if ($adh->datefin < time())
+	{
+	  print '<td width="35%" class="delete">';
+	}
+      else
+	{
+	  print '<td width="35%" class="valeur">';
+	}
+      print strftime("%d %B %Y",$adh->datefin).'&nbsp;</td>';
+
       print '<td valign="top" width="50%">&nbsp;</td></tr>';
       
       print '<tr><td colspan="3">Nouvelle adhésion</td></tr>';
@@ -321,7 +336,7 @@ if ($rowid > 0)
 	{
 	  print_date_select();
 	}
-      print "</td><td>&nbsp;</td></tr>";
+      print "</td></tr>";
       print "<tr><td>Mode de paiement</td><td>\n";
       
       $paiement = new Paiement($db);
