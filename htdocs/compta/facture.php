@@ -138,7 +138,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
 		  if ( $comm->fetch($HTTP_POST_VARS["commandeid"]) )
 		    {
 		      $lines = $comm->fetch_lignes();
-		      print_r($lines);
+
 		      for ($i = 0 ; $i < sizeof(lines) ; $i++)
 			{
 			  $result = $facture->addline($facid,
