@@ -62,7 +62,7 @@ else
 		  $duree_text        = $tabline[6];
 		  $tarif_fourn       = $tabline[7];
 		  $montant           = $tabline[8];
-		  $duree_secondes    = $tabline[9];
+		  $duree_secondes    = ereg_replace('"','',$tabline[9]);
 	      
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_import_cdr";
 	      
@@ -78,16 +78,23 @@ else
 		  $sql .= ",'".ereg_replace('"','',$duree_text)."'";
 		  $sql .= ",'".ereg_replace('"','',$tarif_fourn)."'";
 		  $sql .= ",".ereg_replace(',','.',$montant);
-		  $sql .= ",".ereg_replace('"','',$duree_secondes);
+		  $sql .= ",".$duree_secondes;
 		  $sql .= ",'".ereg_replace('"','',$file)."'";
 		  $sql .= ")";
 	      
-		  if (! $db->query($sql))
+		  if (is_int($duree_secondes))
 		    {
-		      dolibarr_syslog("Erreur de traitement de ligne $index");
-		      dolibarr_syslog($db->error());
-		      dolibarr_syslog($sql);
-		      $error++;
+		      if (! $db->query($sql))
+			{
+			  dolibarr_syslog("Erreur de traitement de ligne $index");
+			  dolibarr_syslog($db->error());
+			  dolibarr_syslog($sql);
+			  $error++;
+			}
+		    }
+		  else
+		    {
+		      print "Ligne : $cont ignorée\n";
 		    }
 		}
 	      else
