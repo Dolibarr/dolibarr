@@ -60,6 +60,31 @@ if ($db->query($sql))
     }
 }
 
+for ($j = 0 ; $j < 10 ; $j++)
+{
+  $dirs[$i] = DOL_DATA_ROOT."/graph/telephonie/client/".$j;
+  $i++;
+}
+
+$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe";
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $j = 0;
+  
+  while ($j < $num)
+    {
+      $row = $db->fetch_row();	
+      
+      $dirs[$i] = DOL_DATA_ROOT."/graph/telephonie/client/".substr($row[0],0,1)."/".$row[0]."/";
+     
+      $i++;
+      $j++;
+    }
+}
+
+ 
 
 if (is_array($dirs))
 {
