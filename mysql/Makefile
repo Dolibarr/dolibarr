@@ -41,7 +41,7 @@ data:
 	&& make load
 
 dev:
-	$(MYSQL) $(BASE) < data/data-dev.sql
+	$(MYSQL) $(BASE) < data/data_dev.sql
 
 droptable:
 	cd tables \
