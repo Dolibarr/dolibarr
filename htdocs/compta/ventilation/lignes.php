@@ -1,7 +1,5 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +20,7 @@
  *
  */
 
-
-
 require("./pre.inc.php");
-
 
 if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 /*
@@ -53,12 +48,21 @@ $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
 $sql .= " , ".MAIN_DB_PREFIX."facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."compta_compte_generaux as c";
 
-$sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut = 1 AND l.fk_code_ventilation <> 0 AND c.rowid = l.fk_code_ventilation";
+$sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut = 1 AND l.fk_code_ventilation <> 0 ";
+$sql .= " AND c.rowid = l.fk_code_ventilation";
+
+if (strlen(trim($_GET["search_facture"])))
+{
+  $sql .= " AND f.facnumber like '%".$_GET["search_facture"]."%'";
+}
+
 $sql .= " ORDER BY l.rowid DESC";
 $sql .= $db->plimit($limit+1,$offset);
 
-
 $result = $db->query($sql);
+
+
+
 if ($result)
 {
   $num_lignes = $db->num_rows();
@@ -66,14 +70,19 @@ if ($result)
   
   print_barre_liste("Lignes de facture ventilées",$page,"lignes.php","",$sortfield,$sortorder,'',$num_lignes);
 
-  if ($num_lignes)
-    {
-      echo '<table class="noborder" width="100%">';
-      print "<tr class=\"liste_titre\"><td>Facture</td>";
-      print '<td width="54%">'.$langs->trans("Description").'</td>';
-      print '<td colspan="2" align="center">'.$langs->trans("Compte").'</td>';
-      print "</tr>\n";
-    }
+  print '<form method="GET" action="lignes.php">';
+  print '<table class="noborder" width="100%">';
+  print "<tr class=\"liste_titre\"><td>Facture</td>";
+  print '<td width="54%">'.$langs->trans("Description").'</td>';
+  print '<td colspan="2" align="center">'.$langs->trans("Compte").'</td>';
+  print "</tr>\n";
+  
+  print '<tr class="liste_titre"><td><input name="search_facture" value="'.$_GET["search_facture"].'"></td>';
+  print '<td width="54%">'.$langs->trans("Description").'</td>';
+  print '<td align="center">'.$langs->trans("Compte").'</td>';
+  print '<td align="center"><input type="submit"></td>';
+  print "</tr>\n";
+
   $var=True;
   while ($i < min($num_lignes, $limit))
     {
@@ -96,12 +105,15 @@ if ($result)
       print "</tr>";
       $i++;
     }
-  print "</table>";
+
 }
 else
 {
   print $db->error();
 }
+
+print "</table></form>";
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
