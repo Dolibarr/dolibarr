@@ -315,7 +315,7 @@ class pdf_adytek extends ModelePDFFactures {
       //	      $pdf->line(132, $tab2_top + $tab2_height - 7, 200, $tab2_top + $tab2_height - 7 );
 
       $pdf->SetXY (132, $tab2_top + 0);
-      $pdf->MultiCell(42, $tab2_hl, "Total HT", 0, 'R', 0);
+      $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalHT"), 0, 'R', 0);
 
       $pdf->SetXY (174, $tab2_top + 0);
       $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
@@ -323,7 +323,7 @@ class pdf_adytek extends ModelePDFFactures {
       if ($fac->remise > 0)
 	{
 	  $pdf->SetXY (132, $tab2_top + $tab2_hl);
-	  $pdf->MultiCell(42, $tab2_hl, "Remise", 0, 'R', 0);
+	  $pdf->MultiCell(42, $tab2_hl, $langs->trans("GlobalDiscount"), 0, 'R', 0);
 
 	  $pdf->SetXY (174, $tab2_top + $tab2_hl);
 	  $pdf->MultiCell(26, $tab2_hl, price($fac->remise), 0, 'R', 0);
@@ -342,13 +342,13 @@ class pdf_adytek extends ModelePDFFactures {
 	}
 
       $pdf->SetXY (132, $tab2_top + $tab2_hl * $index);
-      $pdf->MultiCell(42, $tab2_hl, "Total TVA", 0, 'R', 0);
+      $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalVAT"), 0, 'R', 0);
 
       $pdf->SetXY (174, $tab2_top + $tab2_hl * $index);
       $pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
             
       $pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+1));
-      $pdf->MultiCell(42, $tab2_hl, "Total TTC", 0, 'R', 1);
+      $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalTTC"), 0, 'R', 1);
       
       $pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+1));
       $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 1);
@@ -358,7 +358,7 @@ class pdf_adytek extends ModelePDFFactures {
       if ($deja_regle > 0)
 	{
 	  $pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+2));
-	  $pdf->MultiCell(42, $tab2_hl, "Déjà réglé", 0, 'R', 0);
+	  $pdf->MultiCell(42, $tab2_hl, $langs->trans("AlreadyPayed"), 0, 'R', 0);
 
 	  $pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+2));
 	  $pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);

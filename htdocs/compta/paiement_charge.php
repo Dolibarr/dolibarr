@@ -161,14 +161,14 @@ if ($_GET["action"] == 'create')
 
       print "<tr class=\"liste_titre\"><td colspan=\"3\">Charge</td>";
 
-      print '<tr><td>Numéro :</td><td colspan="2">';
+      print '<tr><td>'.$langs->trans("Ref").':</td><td colspan="2">';
       print '<a href="charges.php?id='.$chid.'">'.$chid.'</a></td></tr>';
-	  print "<tr><td>Type charge :</td><td colspan=\"2\">$charge->type_libelle</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("Type").":</td><td colspan=\"2\">$charge->type_libelle</td></tr>\n";
 	  print "<tr><td>Période :</td><td colspan=\"2\">$charge->periode</td></tr>\n";
 	  print '<tr><td>'.$langs->trans("Label").' :</td><td colspan="2">'.$charge->lib."</td></tr>\n";
 	  print "<tr><td>Date échéance :</td><td colspan=\"2\">".dolibarr_print_date($charge->date_ech)."</td></tr>\n";
 
-      print "<tr><td>Montant TTC:</td><td colspan=\"2\">".price($charge->amount)." euros</td></tr>";
+      print '<tr><td>'.$langs->trans("AmountTTC").":</td><td colspan=\"2\">".price($charge->amount)." euros</td></tr>";
 
       $sql = "SELECT sum(p.amount) FROM ".MAIN_DB_PREFIX."paiementcharge as p WHERE p.fk_charge = $chid;";
       $result = $db->query($sql);
@@ -176,18 +176,18 @@ if ($_GET["action"] == 'create')
 	    $sumpayed = $db->result(0,0);
 	    $db->free();
       }
-      print '<tr><td>Déjà payé TTC</td><td colspan="2"><b>'.price($sumpayed).'</b> euros</td></tr>';
+      print '<tr><td>'.$langs->trans("AlreadyPayed").'</td><td colspan="2"><b>'.price($sumpayed).'</b> euros</td></tr>';
 
-      print "<tr class=\"liste_titre\"><td colspan=\"3\">Paiement</td>";
+      print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Payment").'</td>';
 
 	  print "<input type=\"hidden\" name=\"chid\" value=\"$chid\">";
 	  
-	  print "<tr><td>Date :</td><td>";
+	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
 	  print_date_select();
 	  print "</td>";
 	  print '<td>'.$langs->trans("Comments").'</td></tr>';
 	  
-	  print "<tr><td>Type du paiement :</td><td><select name=\"paiementtype\">\n";
+	  print '<tr><td>'.$langs->trans("Type")." :</td><td><select name=\"paiementtype\">\n";
 	  
 	  $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY id";
 	  

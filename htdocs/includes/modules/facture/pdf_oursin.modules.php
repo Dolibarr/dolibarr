@@ -488,7 +488,7 @@ class pdf_oursin extends ModelePDFFactures
     if ($deja_regle > 0)
       {
 	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+2));
-	$pdf->MultiCell($col2x-$col1x, $tab2_hl, "Déjà réglé", 0, 'L', 0);
+	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("AlreadyPayed"), 0, 'L', 0);
 
 	$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+2));
 	$pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);

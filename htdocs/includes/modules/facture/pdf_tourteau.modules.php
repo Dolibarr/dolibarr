@@ -165,13 +165,13 @@ class pdf_tourteau extends ModelePDFFactures {
 	      $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
 	      
 	      $pdf->SetXY (132, $tab2_top + 0);
-	      $pdf->MultiCell(42, 8, "Total HT", 0, 'R', 0);
+	      $pdf->MultiCell(42, 8, $langs->trans("TotalHT"), 0, 'R', 0);
 	      
 	      $pdf->SetXY (132, $tab2_top + 8);
-	      $pdf->MultiCell(42, 8, "Total TVA", 0, 'R', 0);
+	      $pdf->MultiCell(42, 8, $langs->trans("TotalVAT"), 0, 'R', 0);
 	      
 	      $pdf->SetXY (132, $tab2_top + 16);
-	      $pdf->MultiCell(42, 8, "Total TTC", 1, 'R', 1);
+	      $pdf->MultiCell(42, 8, $langs->trans("TotalTTC"), 1, 'R', 1);
 	      
 	      $pdf->SetXY (174, $tab2_top + 0);
 	      $pdf->MultiCell(26, 8, price($fac->total_ht), 0, 'R', 0);
@@ -189,7 +189,7 @@ class pdf_tourteau extends ModelePDFFactures {
 		  $pdf->Rect(132, $tab2_top+$tab2_height, 68, 16);
 
 		  $pdf->SetXY (132, $tab2_top + 24);
-		  $pdf->MultiCell(42, 8, "Déjà réglé", 0, 'R', 0);
+		  $pdf->MultiCell(42, 8, $langs->trans("AlreadyPayed"), 0, 'R', 0);
 		  
 		  $pdf->SetXY (132, $tab2_top + 32);
 		  $pdf->MultiCell(42, 8, $langs->trans("RemainderToPay"), 1, 'R', 1);
