@@ -69,7 +69,7 @@ function llxHeader($head = "", $urlp = "") {
 	  if ($conf->produit->enabled) { $chaine.="Produits"; }
 	  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
 	  if ($conf->service->enabled) { $chaine.="Services"; }
-      $menu->add(DOL_URL_ROOT."/product/index.php", "Produits/Services");
+      $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
     }
 
   if ($conf->projet->enabled ) 

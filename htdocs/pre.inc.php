@@ -69,9 +69,13 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
     }
 
-  if ($conf->produit->enabled )
+  if ($conf->produit->enabled || $conf->service->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/product/index.php", "Produits");
+	  $chaine="";
+	  if ($conf->produit->enabled) { $chaine.="Produits"; }
+	  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+	  if ($conf->service->enabled) { $chaine.="Services"; }
+      $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
 
       if ($conf->boutique->enabled)
 	{
