@@ -22,22 +22,24 @@
  */
 require("./pre.inc.php");
 
-$user->getrights('compta');
+$user->getrights('banque');
 
-if (!$user->admin && !$user->rights->compta->bank)
+if (!$user->admin && !$user->rights->banque)
   accessforbidden();
+
 
 llxHeader();
 
 
 if ($_POST["action"] == 'add')
 {
+  // Creation compte
   $account = new Account($db,0);
 
   $account->bank          = $_POST["bank"];
   $account->label         = $_POST["label"];
 
-  $account->courant       = $_POST["courant"]=='yes'?1:0;
+  $account->courant       = $_POST["courant"];
   $account->clos          = $_POST["clos"];
 
   $account->code_banque   = $_POST["code_banque"];
@@ -57,17 +59,18 @@ if ($_POST["action"] == 'add')
   $id = $account->create($user->id);
   if (! $id) {
         $message=$account->error(); 
-        $_GET["action"]='create';   // Force chargement page creation
+        $_GET["action"]='create';   // Force chargement page en mode creation
   }
   else {
-        $_GET["id"]=$id;                // Force chargement page en mode edition
+        $_GET["id"]=$id;            // Force chargement page en mode visu
   }
 }
 
-if ($_POST["action"] == 'update')
+if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 {
-  $account = new Account($db, $_GET["id"]);
-  $account->fetch($_GET["id"]);
+  // Modification
+  $account = new Account($db, $_POST["id"]);
+  $account->fetch($_POST["id"]);
 
   $account->bank            = $_POST["bank"];
   $account->label           = $_POST["label"];
@@ -83,7 +86,15 @@ if ($_POST["action"] == 'update')
   $account->proprio 	    = $_POST["proprio"];
   $account->adresse_proprio = $_POST["adresse_proprio"];
 
-  $account->update($_GET["id"], $user);
+  $result = $account->update($user);
+  if (! $result) {
+        $message=$account->error(); 
+        $_GET["action"]='edit';     // Force chargement page edition
+  }
+  else {
+        $_GET["id"]=$_POST["id"];   // Force chargement page en mode visu
+  }
+  
 }
 
 
@@ -127,7 +138,7 @@ if ($_GET["action"] == 'create')
   print '<tr><td valign="top">Compte Courant</td>';
   print '<td colspan="3">';
   $form=new Form($db);
-  print $form->selectyesno("courant",isset($_POST["courant"])?$_POST["courant"]:1);
+  print $form->selectyesnonum("courant",isset($_POST["courant"])?$_POST["courant"]:1);
   print '</td></tr>';
 
   print '<tr><td valign="top">Domiciliation</td><td colspan="3">';
@@ -198,33 +209,28 @@ else
     print '<tr><td valign="top">Identifiant BIC</td>';
     print '<td colspan="3">'.$account->bic.'</td></tr>';
     
-    /*      
-	    print '<tr><td valign="top">Domiciliation</td>';
-	    print '<td colspan="3">'.$account->domiciliation.'</td></tr>';
-    */
-
-      print '<tr><td valign="top">Compte Courant</td>';
-      print '<td colspan="3">'.$yn[$account->courant].'</td></tr>';
-
-      print '<tr><td valign="top">Compte Clos</td>';
-      print '<td colspan="3">'.$yn[$account->clos].'</td></tr>';
-  
-      print '<tr><td valign="top">Domiciliation</td><td colspan="3">';
-      print $account->domiciliation;
-      print "</td></tr>\n";
-
-      print '<tr><td valign="top">Nom propriétaire du compte</td><td colspan="3">';
-      print $account->proprio;
-      print "</td></tr>\n";
-
-      print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="3">';
-      print $account->adresse_proprio;
-      print "</td></tr>\n";
-
-      print '</table>';
-      print '<br>';
-
-      print '</div>';
+    print '<tr><td valign="top">Compte Courant</td>';
+    print '<td colspan="3">'.yn($account->courant).'</td></tr>';
+    
+    print '<tr><td valign="top">Compte Clos</td>';
+    print '<td colspan="3">'.yn($account->clos).'</td></tr>';
+    
+    print '<tr><td valign="top">Domiciliation</td><td colspan="3">';
+    print $account->domiciliation;
+    print "</td></tr>\n";
+    
+    print '<tr><td valign="top">Nom propriétaire du compte</td><td colspan="3">';
+    print $account->proprio;
+    print "</td></tr>\n";
+    
+    print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="3">';
+    print $account->adresse_proprio;
+    print "</td></tr>\n";
+    
+    print '</table>';
+    print '<br>';
+    
+    print '</div>';
      
     /*
      * Barre d'actions
@@ -232,7 +238,7 @@ else
      */
     print '<div class="tabsAction">';
 
-      if ($user->admin) 
+      if ($user->rights->banque->configurer) 
 	{
 	  print '<a class="tabAction" href="fiche.php?action=edit&id='.$account->id.'">'.$langs->trans("Edit").'</a>';
 	}
@@ -247,7 +253,7 @@ else
   /*                                                                            */
   /* ************************************************************************** */
       
-  if ($_GET["id"] && $_GET["action"] == 'edit' && $user->admin) 
+  if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configurer) 
     {
 	  
       $account = new Account($db, $_GET["id"]);
@@ -255,10 +261,14 @@ else
       
       $form = new Form($db);
       
-      print '<div class="titre">Compte bancaire</div><br>';
+      print_titre("Edition compte bancaire");
+      print "<br>";
+      
+      if ($message) { print "$message<br><br>\n"; }
       
       print '<form action="fiche.php?id='.$account->id.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
+      print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
       
       print '<table class="border" cellpadding="3" cellspacing="0">';
       
@@ -279,11 +289,6 @@ else
 	  
 	  print '<tr><td valign="top">Identifiant BIC</td>';
 	  print '<td colspan="3"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
-
-	  /*	  
-	  print '<tr><td valign="top">Domiciliation</td>';
-	  print '<td colspan="3"><input size="20" type="text" name="domiciliation" value="'.$account->domiciliation.'"></td></tr>';
-	  */
 
 	  print '<tr><td valign="top">Compte Courant</td>';
 	  print '<td colspan="3">';
@@ -309,7 +314,9 @@ else
 	  print $account->adresse_proprio;
 	  print "</textarea></td></tr>";
 
-	  print '<tr><td align="center" colspan="4"><input value="Enregistrer" type="submit"></td></tr>';
+	  print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Modify").'" type="submit">';
+	  print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+	  print '</td></tr>';
 	  print '</form>';
 	  print '</table>';
 	}

@@ -42,10 +42,12 @@ class Account
   {
     global $config;
     
-    $this->clos = 0;
     $this->db = $DB;
     $this->rowid = $rowid;
+
+    $this->clos = 0;
     $this->solde = 0;    
+
     return 1;
   }
 
@@ -169,7 +171,7 @@ class Account
 	  }
 	else
 	  {
-	    print $this->db->error().' in '.$sql;
+	    dolibarr_print_error($this->db);
 	    return '';
 	  }
       }
@@ -186,7 +188,7 @@ class Account
 
       if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib)) {
             $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
-            return false;
+            return 0;
       }
 
       if (! $pcgnumber) {
@@ -213,7 +215,8 @@ class Account
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
+	  return 0;
 	}
     }
 
@@ -221,19 +224,17 @@ class Account
    *
    *
    */
-  Function error()
+  Function update($user='')
     {      
-        return $this->error;
-    }
-    
-  /*
-   *
-   *
-   */
-  Function update()
-    {      
-      if (strlen($this->label)==0)
-	$this->label = "???";
+      // Chargement librairie pour acces fonction controle RIB
+	  require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
+
+      if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib)) {
+            $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
+            return 0;
+      }
+
+      if (! $this->label) $this->label = "???";
 
       $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
 
@@ -252,24 +253,21 @@ class Account
       $sql .= ",courant = ".$this->courant;
       $sql .= ",clos = ".$this->clos;
 
-      $sql .= " WHERE rowid = $this->id";
+      $sql .= " WHERE rowid = ".$this->id;
       
       $result = $this->db->query($sql);
 	      
       if ($result) 
 	{
-	  if ($this->db->affected_rows()) 
-	    {
-	      return 1;		      
-	    }		  
+      return 1;		      
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<p>$sql</p>";
+	  dolibarr_print_error($this->db);
 	  return 0;
 	}
     }
+
   /*
    *
    *
@@ -306,9 +304,19 @@ class Account
       }
     else
       {
-	    print $this->db->error();
+	    dolibarr_print_error($this->db);
       }
   }
+
+  /*
+   *
+   *
+   */
+  Function error()
+    {      
+        return $this->error;
+    }
+    
   /*
    *
    *
