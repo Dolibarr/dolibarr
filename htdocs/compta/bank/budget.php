@@ -41,7 +41,7 @@ if ($bid == 0)
    */
   print_titre("Budgets");
   
-  print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print "<TR class=\"liste_titre\">";
   echo '<td>Description</TD><td align="center">Nb</td><td align="right">Total</td><td align="right">Moyenne</td>';
   print "</TR>\n";
@@ -99,7 +99,7 @@ else
   
   print_titre("Budget : $budget_name");
 
-  print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print "<TR class=\"liste_titre\">";
   echo '<td align="right">Date</td><td width="60%">Description</td><td align="right">Montant</td><td>&nbsp;</td>';
   print "</TR>\n";
@@ -129,7 +129,7 @@ else
 	  $total = $total + $objp->amount;
 	}
       $db->free();
-      print "<tr><td colspan=\"2\" align=\"right\">Total</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>euros</td></tr>";
+      print "<tr><td colspan=\"2\" align=\"right\">Total</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>".MAIN_MONNAIE."</td></tr>";
     }
   else
     {
@@ -138,10 +138,6 @@ else
   print "</table>";
   
 }
-
-print '<a href="categ.php">Editer</a>';
-
-
 
 $db->close();
 

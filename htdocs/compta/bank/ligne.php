@@ -26,10 +26,18 @@ llxHeader();
 
 if ($action == 'class')
 {
-  $author = $GLOBALS["REMOTE_USER"];
+  $sql = "DELETE FROM llx_bank_class WHERE lineid = $rowid AND fk_categ = $cat1";
+  $db->query($sql);
 
   $sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
-  $result = $db->query($sql);
+  if ($db->query($sql))
+    {
+      
+    }
+  else
+    {
+      print $db->error();
+    }
 }
 
 if ($action == 'update')
@@ -79,13 +87,11 @@ if ($result)
   while ($i < $num)
     {
       $obj = $db->fetch_object($i);
-      $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
+      $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n";
+      $i++;
     }
   $db->free();
 }
-
-$acct=new Account($db,$account);
-$acct->fetch($account);
 
 print_titre("Edition de la ligne");
 print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
@@ -98,7 +104,7 @@ print "<td align=\"center\">Auteur</TD>";
 
 print "</TR>\n";
 
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.author, b.num_chq, b.fk_type";
+$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.author, b.num_chq, b.fk_type, fk_account";
 $sql .= " FROM llx_bank as b WHERE rowid=$rowid";
 $sql .= " ORDER BY dateo ASC";
 $result = $db->query($sql);
@@ -109,15 +115,17 @@ if ($result)
   $i = 0; $total = 0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($i);
       $total = $total + $objp->amount;
       
+      $acct=new Account($db,$objp->fk_account);
+      $acct->fetch($objp->fk_account);
+      $account = $acct->id;
+
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<form method=\"post\" action=\"$PHP_SELF\">";
+      print "<form method=\"post\" action=\"$PHP_SELF?rowid=$rowid&amp;account=$account\">";
       print "<input type=\"hidden\" name=\"action\" value=\"class\">";
-      print "<input type=\"hidden\" name=\"rowid\" value=\"$objp->rowid\">";
-      
  
       print "<td>".strftime("%d %b %Y",$objp->do)."</TD>\n";
       print "<td>$objp->label</td>";
@@ -139,11 +147,11 @@ if ($result)
       print $objp->num_chq;
       print "</tr>";
 
-      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"5\">";
+      print "<tr $bc[$var]><td>Catégorie</td><td colspan=\"5\">";
       print "<select name=\"cat1\">$options";
       
       print "</select>&nbsp;";
-      print "<input type=\"submit\" value=\"Ajouter\"></td>";
+      print '<input type="submit" value="Ajouter"></td>';
       print "</tr>";
       
       print "</form>";
@@ -205,7 +213,7 @@ print "<p>Classé dans</p>";
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print "<TR class=\"liste_titre\">";
-print "<td>Description</TD>";
+print '<td colspan="2">Description</td>';
 print "</TR>\n";
 
 $sql = "SELECT c.label, c.rowid";
