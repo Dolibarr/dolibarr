@@ -21,8 +21,8 @@
  *
  */
 
-/*!	\file htdocs/admin/system/update.php
-		\brief      Page de mise a jour Dolibarr
+/*!	    \file       htdocs/admin/system/update.php
+		\brief      Page de mise a jour de données. Seule l'administrateur y a accès.
 		\version    $Revision$
 */
 
@@ -30,34 +30,25 @@ require("./pre.inc.php");
 
 $langs->load("admin");
 
-$user->getrights('facture');
-
-print "user " . $user->rights->facture->lire . " !";
-
-if (!$user->rights->facture->lire)
+if (!$user->admin)
   accessforbidden();
+
 
 require("../../facture.class.php");
 require("../../propal.class.php");
 
-llxHeader();
 
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
-/*
- *
- */	
+// On appelle pas llxHeader dans le cas de cette page car llxHeader inclus le main.inc.php qui inclut le test
+// si il faut faire une mise à jour et on boucle.
+//llxHeader();
+
+
 print_titre($langs->trans("SystemUpdate"));
 $err = 0;
-/*
- * Factures
- */
+
+
+// Mise a jour pour les factures
+print "Update facture<br>";
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
 if ($db->query($sql))
 {
@@ -71,7 +62,7 @@ if ($db->query($sql))
 	{
 	  if ( $facture->updateprice($row[0]) > 0 )
 	    {
-	      print "(ok $row[0])";
+	      print "(ok $row[0]) ";
 	    }
 	  else
 	    {
@@ -94,6 +85,9 @@ else
   $err++;
 }
 
+
+
+// Fin de mise a jour
 $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_NEED_UPDATE'";
 if (! $db->query($sql))
 {
@@ -109,5 +103,9 @@ if ($err == 0)
   print '<br><b>'.$langs->trans("SystemSuccessfulyUpdated").'</b>';
 }
 
+print '<br><br>';
+print '<a href="/">'.$langs->trans("Home").'</a>';
+
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
 ?>
