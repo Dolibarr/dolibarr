@@ -47,16 +47,29 @@ if ($_GET["id"])
     { 
       print_fiche_titre('Fiche produit : '.$product->ref, $mesg);
       
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="3"><tr>';
+      print '<table class="border" width="100%"><tr>';
       print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
       print '<td><a href="fiche.php?id='.$product->id.'">'.$langs->trans("Statistics").'</a></td></tr>';
       print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
       print '<td valign="top" rowspan="2">';
-      print "Propositions commerciales : ".$product->count_propale($socid);
-      print "<br>Proposé à <b>".$product->count_propale_client($socid)."</b> clients";
-      print "<br>Factures : ".$product->count_facture($socid);
+      // Propals
+      if ($conf->propal->enabled) {
+        $langs->load("propal");
+        print '<a href="propal.php?id='.$product->id.'">'.$langs->trans("Proposals").'</a> : '.$product->count_propale($socid);
+        print " (Proposé à ".$product->count_propale_client($socid)." clients)<br>";
+      }
+      // Commande
+      if ($conf->commande->enabled) {
+        $langs->load("orders");
+        print '<a href="commande.php?id='.$product->id.'">'.$langs->trans("Orders").'</a> : '.$product->count_facture($socid)."<br>";
+      }
+      // Factures
+      if ($conf->facture->enabled) {
+        $langs->load("bills");
+        print '<a href="facture.php?id='.$product->id.'">'.$langs->trans("Bills").'</a> : '.$product->count_facture($socid);
+      }
       print '</td></tr>';
-      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td></tr>';
+      print '<tr><td>'.$langs->trans("CurrentPrice").'</td><td>'.price($product->price).'</td></tr>';
       print "</table>";
 
       if ($page == -1)
@@ -75,6 +88,7 @@ if ($_GET["id"])
 	  $sortfield="p.datep";
 	}
       
+      print "<br>";
       print_barre_liste("Propositions commerciales",$page,"propal.php","&amp;id=$product->id",$sortfield,$sortorder);
       
       $sql = "SELECT distinct(p.rowid), s.nom,s.idp, p.ref,".$db->pdate("p.datep")." as df,p.rowid as facid";
@@ -97,9 +111,9 @@ if ($_GET["id"])
 	  $i = 0;
 	  print "<table class=\"noborder\" width=\"100%\">";
 	  print '<tr class="liste_titre">';
-	  print_liste_field_titre($langs->trans("Ref"),"propal.php","p.rowid","","&amp;id=$product->id&amp;socidp=$socidp");
-	  print_liste_field_titre($langs->trans("Company"),"propal.php","s.nom","","&amp;id=$product->id&amp;socidp=$socidp");
-	  print_liste_field_titre($langs->trans("Date")"Date","propal.php","f.datef","","&amp;id=$product->id&amp;socidp=$socidp",'align="right"');
+	  print_liste_field_titre($langs->trans("Ref"),"propal.php","p.rowid","","&amp;id=".$_GET["id"],'',$sortfield);
+	  print_liste_field_titre($langs->trans("Company"),"propal.php","s.nom","","&amp;id=".$_GET["id"],'',$sortfield);
+	  print_liste_field_titre($langs->trans("Date"),"propal.php","f.datef","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
 	  print "</tr>\n";
 	  
 	  if ($num > 0)
@@ -110,14 +124,14 @@ if ($_GET["id"])
 		  $objp = $db->fetch_object( $i);
 		  $var=!$var;
 		  
-		  print "<TR $bc[$var]>";
+		  print "<tr $bc[$var]>";
 		  print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->facid.'">';
 		  print img_file();
 		  print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->facid.'">';
 		  print $objp->ref;
 		  print "</a></td>\n";
-		  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></TD>';
-		  print "<TD align=\"right\">";
+		  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		  print "<td align=\"right\">";
 		  print strftime("%d %B %Y",$objp->df)."</td>";
 		  print "</tr>\n";
 		  $i++;
@@ -126,7 +140,7 @@ if ($_GET["id"])
 	}
       else
 	{
-	  print $db->error();
+	  dolibarr_print_error($db);
 	}
       print "</table>";
       $db->free();

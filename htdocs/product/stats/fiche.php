@@ -144,9 +144,22 @@ if ($_GET["id"])
       print '<td>'.$langs->trans("Statistics").'</td></tr>';
       print "<tr><td>".$langs->trans("Label")."</td><td>$product->libelle</td>";
       print '<td valign="top" rowspan="2">';
-      print '<a href="propal.php?id='.$product->id.'">Propositions commerciales</a> : '.$product->count_propale($socid);
-      print "<br>Proposé à <b>".$product->count_propale_client($socid)."</b> clients";
-      print '<br><a href="facture.php?id='.$product->id.'">'.$langs->trans("Bills").'</a> : '.$product->count_facture($socid);
+      // Propals
+      if ($conf->propal->enabled) {
+        $langs->load("propal");
+        print '<a href="propal.php?id='.$product->id.'">'.$langs->trans("Proposals").'</a> : '.$product->count_propale($socid);
+        print " (Proposé à ".$product->count_propale_client($socid)." clients)<br>";
+      }
+      // Commande
+      if ($conf->commande->enabled) {
+        $langs->load("orders");
+        print '<a href="commande.php?id='.$product->id.'">'.$langs->trans("Orders").'</a> : '.$product->count_facture($socid)."<br>";
+      }
+      // Factures
+      if ($conf->facture->enabled) {
+        $langs->load("bills");
+        print '<a href="facture.php?id='.$product->id.'">'.$langs->trans("Bills").'</a> : '.$product->count_facture($socid);
+      }
       print '</td></tr>';
       print '<tr><td>'.$langs->trans("CurrentPrice").'</td><td>'.price($product->price).'</td></tr>';
       print "</table>";
