@@ -282,6 +282,7 @@ class Facture
    *    \brief      Recupére l'objet facture et ses lignes de factures
    *    \param      rowid       id de la facture a récupérer
    *    \param      societe_id  id de societe
+   *    \return     int         1 si ok, < 0 si erreur
    */
   function fetch($rowid, $societe_id=0)
     {
@@ -295,7 +296,6 @@ class Facture
       $sql .= ", f.fk_mode_reglement";
       $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."cond_reglement as c";
       $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
-      
       if ($societe_id > 0) 
 	{
 	  $sql .= " AND f.fk_soc = ".$societe_id;
@@ -307,7 +307,7 @@ class Facture
 	  if ($this->db->num_rows($result))
 	    {
 	      $obj = $this->db->fetch_object($result);
-	      
+
 	      $this->id                 = $rowid;
 	      $this->datep              = $obj->dp;
 	      $this->date               = $obj->df;
@@ -329,7 +329,6 @@ class Facture
 	      $this->note               = stripslashes($obj->note);
 	      $this->user_author        = $obj->fk_user_author;
 	      $this->lignes             = array();
-
 	      $this->mode_reglement     = $obj->fk_mode_reglement;
 
 	      if ($this->statut == 0)
@@ -337,7 +336,6 @@ class Facture
 		  $this->brouillon = 1;
 		}
 
-	      $this->db->free();
 
 	      /*
 	       * Lignes
@@ -349,7 +347,7 @@ class Facture
 	      $result2 = $this->db->query($sql);
 	      if ($result2)
 		{
-		  $num = $this->db->num_rows();
+		  $num = $this->db->num_rows($result2);
 		  $i = 0; $total = 0;
 		  
 		  while ($i < $num)
@@ -370,28 +368,30 @@ class Facture
 		      $i++;
 		    }
 	    
-		  $this->db->free();
-
+		  $this->db->free($result2);
+          $this->db->free($result);
 		  return 1;
 		} 
 	      else
 		{
-		  //dolibarr_print_error($this->db);
 		  dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid, Erreur dans fetch des lignes");
+		  return -3;
 		}
 	    }
 	  else
 	    {
-	      //dolibarr_print_error($this->db);
 	      dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid numrows=0");
+		  return -2;
 	    }
+
+      $this->db->free($result);
 	}
       else
 	{
-	  //dolibarr_print_error($this->db);
 	  dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid Erreur dans fetch de la facture");
+	  return -1;
 	}
-    }
+  }
 
   /**
    * \brief     Recupére l'objet client lié à la facture
@@ -832,7 +832,7 @@ class Facture
 
       if ($result)
 	{
-	  $num = $this->db->num_rows();
+	  $num = $this->db->num_rows($result);
 	  $i = 0;
 	  while ($i < $num)	  
 	    {
@@ -845,7 +845,7 @@ class Facture
 	      $i++;
 	    }
 
-	  $this->db->free();
+	  $this->db->free($result);
 	  /*
 	   *
 	   */
@@ -1122,9 +1122,10 @@ class Facture
       $sql .= " FROM ".MAIN_DB_PREFIX."facture as c";
       $sql .= " WHERE c.rowid = ".$id;
       
-      if ($this->db->query($sql)) 
+      $result=$this->db->query($sql);
+      if ($result) 
 	{
-	  if ($this->db->num_rows()) 
+	  if ($this->db->num_rows($result)) 
 	    {
 	      $obj = $this->db->fetch_object($result);
 
@@ -1146,7 +1147,8 @@ class Facture
 	      //$this->date_validation   = $obj->datev; \todo La date de validation n'est pas encore gérée
 
 	    }
-	  $this->db->free();
+	    
+	  $this->db->free($result);
 
 	}
       else
@@ -1316,11 +1318,13 @@ class FactureLigne
 	      $this->date_start     = $objp->date_start;
 	      $this->date_end       = $objp->date_end;
 	      $i++;
+
+    	  $this->db->free($result);
 	  }
 	  else {
     	  dolibarr_print_error($this->db);
 	  }
-	  $this->db->free();
+
     }
 
 }

@@ -68,7 +68,6 @@ class Societe {
 	 
   function Societe($DB, $id=0)
   {
-    global $config;
     $this->db = $DB;
     $this->creation_bit = 0;
 
@@ -397,11 +396,12 @@ class Societe {
     $sql .= " AND s.fk_pays = p.rowid";
     $sql .= " AND s.fk_forme_juridique = fj.code";
 
-    if ($this->db->query($sql))
+    $result=$this->db->query($sql);
+    if ($result)
       {
-	if ($this->db->num_rows())
+	if ($this->db->num_rows($result))
 	  {
-	    $obj = $this->db->fetch_object();
+	    $obj = $this->db->fetch_object($result);
 
 	    $this->date_update = $obj->date_update;
 
@@ -483,7 +483,7 @@ class Societe {
 	    $result = -2;
 	  }
 
-	$this->db->free();
+	$this->db->free($result);
       }
     else
       {
