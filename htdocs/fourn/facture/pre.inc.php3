@@ -34,23 +34,23 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/comm/clients.php3", "Clients");
-
-  $menu->add("/fourn/index.php3", "Fournisseurs");
+  $menu->add(DOL_URL_ROOT."/fourn/index.php3", "Fournisseurs");
 
   if ($user->societe_id == 0) 
     {
-      $menu->add_submenu("/soc.php3?&action=create","Nouvelle société");
+      $menu->add_submenu(DOL_URL_ROOT."/soc.php3?&action=create","Nouvelle société");
     }
 
   $menu->add_submenu("contact.php3","Contacts");
 
-  $menu->add("/fourn/facture/index.php3", "Factures");
+  $menu->add(DOL_URL_ROOT."/fourn/facture/index.php3", "Factures");
 
   if ($user->societe_id == 0) 
     {
       $menu->add_submenu("fiche.php3?action=create","Nouvelle");
     }
+
+  $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", "Paiements");
 
   left_menu($menu->liste);
 }
