@@ -349,6 +349,11 @@ if (defined("MAIN_MODULE_PRODUIT"))
   $conf->produit->enabled=MAIN_MODULE_PRODUIT;
 }
 
+if (defined("MAIN_MODULE_SERVICE"))
+{
+  $conf->service->enabled=MAIN_MODULE_SERVICE;
+}
+
 if (defined("MAIN_MODULE_BOUTIQUE"))
 {
   $conf->boutique->enabled=MAIN_MODULE_BOUTIQUE;
