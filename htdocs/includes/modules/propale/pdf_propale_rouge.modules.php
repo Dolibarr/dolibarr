@@ -33,7 +33,6 @@ Class pdf_propale_rouge
 
   Function write_pdf_file($id)
     {
-
       $propale = new Propal($this->db,"",$id);
       if ($propale->fetch($id))
 	{

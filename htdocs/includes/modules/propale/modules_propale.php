@@ -39,7 +39,6 @@ function propale_pdf_create($db, $facid, $modele='')
     }
 
   $file = "pdf_propale_".$modele.".modules.php";
-
   if (file_exists($dir.$file))
     {
       $classname = "pdf_propale_".$modele;
