@@ -23,7 +23,7 @@
 /*!	\file price.lib.php
   \brief librairie contenant les fonctions pour calculer un prix.
   \author Rodolphe Quiedeville.
-  \version 1.2.
+		\version $Revision$
   
   Ensemble des fonctions permettant de calculer un prix.
 */

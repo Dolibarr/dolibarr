@@ -26,7 +26,7 @@
 		\brief Librairie contenant les fonctions pour accèder au serveur ldap.
 		\author Rodolphe Quiedeville.
 		\author	Benoit Mortier.
-		\version 1.2.
+		\version $Revision$
 
 		Ensemble des fonctions permettant d'accèder à un serveur ldap.
 */

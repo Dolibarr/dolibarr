@@ -23,7 +23,7 @@
 /*!	\file webcal.class.php
 		\brief Classe permettant d'acceder a la database webcalendar.
 		\author Rodolphe Quiedeville.
-		\version 1.2.
+		\version $Revision$
 
 		Ensemble des fonctions permettant d'acceder a la database webcalendar.
 */

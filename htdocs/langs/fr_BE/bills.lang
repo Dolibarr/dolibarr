@@ -1,3 +1,12 @@
 # Dolibarr language file - fr_BE - bills
 Bill=Facture
 Bills=Factures
+ClassifyPayed=Classer 'Payée'
+ClassifyCanceled=Classer 'Abandonnée'
+Send=Envoyer
+SendRemind=Envoyer rappel
+DoPaiement=Emettre paiement
+BuildPDF=Générer le PDF
+RebuildPDF=Regénérer le PDF
+VAT=TVA
+Amount=Montant

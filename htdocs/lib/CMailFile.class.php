@@ -23,7 +23,7 @@ to chunk_split
 		\author Dan Potter.
 		\author	Eric Seigne
 		\author	Laurent Destailleur.
-		\version 1.2.
+		\version $Revision$
 */
 
 /*! \class CMailFile

@@ -860,10 +860,16 @@ function dol_delete_file($file)
 }
 
 
-/*
- *
- *
- */
+/*!
+		\brief fonction print_barre_liste
+		\param	titre			titre de la page
+		\param	page			numéro de la page
+		\param	file			lien
+		\param	options
+		\param	sortfield
+		\param	sortorder
+		\param	form
+*/
 
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $form='', $num=-1)
  {
@@ -1230,6 +1236,7 @@ function stat_print($basename,$bc1,$bc2,$ftc, $jour) {
   $db->close();
 
 }
+
 
 function tab_count($basename,$bc1,$bc2,$ftc) {
 

@@ -25,7 +25,7 @@
 			\brief Classe permettant d'afficher un thermometre.
 			\author Rodolphe Quiedeville.
 			\author	Timothy Kanters.
-			\version 1.2.
+			\version $Revision$
 
 		Ensemble des fonctions permettant d'afficher un thermometre monetaire.
 */
