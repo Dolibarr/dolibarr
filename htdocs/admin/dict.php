@@ -24,6 +24,7 @@ require("./pre.inc.php");
 
 $langs->load("main");
 $langs->load("admin");
+$langs->load("companies");
 
 if (! $user->admin)
 accessforbidden();
