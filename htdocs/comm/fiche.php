@@ -154,10 +154,6 @@ if ($socid > 0)
 	if ($conf->projet->enabled && $user->rights->projet->creer)
 	  print "<td align=\"center\">[<a href=\"../projet/fiche.php?socidp=$objsoc->idp&action=create\">Projet</a>]</td>";
 
-	if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
-	  {
-	    print "<td align=\"center\">[<a href=\"../fichinter/fiche.php?socidp=$objsoc->idp&action=create\">Intervention</a>]</td>";
-	  }
 	print "<td>[<a href=\"../socnote.php?socid=$objsoc->idp\">Notes</a>]</td>";
 	print "<td align=\"center\">[<a href=\"../soc.php?socid=$objsoc->idp&action=edit\">Editer</a>]</td></tr>";
       }
@@ -339,7 +335,12 @@ if ($socid > 0)
       {
 	print '<td align="center" width="20%">-</td>';  
       }
-    print '<td align="center" width="20%">-</td>';
+
+    if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
+      {
+	print '<td align="center" width="20%"><a href="../fichinter/fiche.php?socidp='.$objsoc->idp.'&amp;action=create">Intervention</a></td>';
+      }
+
     print '</tr></table><br>';
 
     /*
@@ -370,7 +371,7 @@ if ($socid > 0)
       print '<tr class="liste_titre"><td>Pr&eacute;nom Nom</td>';
       print '<td>Poste</td><td>T&eacute;l</td>';
       print "<td>Fax</td><td>Email</td>";
-      print "<td align=\"center\"><a href=\"people.php?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
+      print "<td align=\"center\"><a href=\"../contact/fiche.php?socid=$objsoc->idp&action=create\">Ajouter</a></td></tr>";
     
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
       $result = $db->query($sql);
@@ -394,7 +395,7 @@ if ($socid > 0)
 	print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
 	print '<td><a href="action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
 	print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
-	print "<td align=\"center\"><a href=\"people.php?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
+	print "<td align=\"center\"><a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">Modifier</a></td>";
 	print "</tr>\n";
 	$i++;
 	$tag = !$tag;
