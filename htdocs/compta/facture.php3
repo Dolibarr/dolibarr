@@ -89,7 +89,7 @@ if ($action == 'valid')
 {
   $fac = new Facture($db);
   $fac->fetch($facid);
-  $result = $fac->set_valid($facid, $user->id);
+  $result = $fac->set_valid($facid, $user);
   if ($result)
     {
      facture_pdf_create($db, $facid);
