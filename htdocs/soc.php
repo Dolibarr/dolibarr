@@ -251,7 +251,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
       
           print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
           print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
-          print '<br>Vous pouvez vérifier ce numéro sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la commission européenne';
+          print '  '.$langs->trans("VATIntraCheckableOnEUSite");
           print '</td></tr>';
       
           print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td><select name="client">';
