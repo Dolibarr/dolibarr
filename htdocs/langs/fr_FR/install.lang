@@ -42,4 +42,6 @@ SystemIsInstalled=Votre système est maintenant installé.
 YouNeedToPersonalizeSetup=Il vous reste à le configurer selon vos besoins (Choix de l'apparence, des fonctionnalités, etc...). Pour cela, cliquez sur le lien ci-dessous:
 AdminLoginCreatedSuccessfuly=Création du compte administrateur réussie.
 GoToSetupArea=Accès à l'espace configuration
+Examples=Exemples
+WithNoSlashAtTheEnd=Sans le slash "/" à la fin
 
