@@ -35,6 +35,7 @@ $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 $page=$_GET["page"];
 $socid=$_GET["socid"];
+$type=$_GET["type"];
 
 
 /*
@@ -127,7 +128,7 @@ if ($result)
 {
   $num = $db->num_rows();
   
-  print_barre_liste("Liste des contacts $label",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
+  print_barre_liste("Liste des contacts $label",$page, "contact.php", "&amp;type=$type",$sortfield,$sortorder,"",$num);
   
   print "<DIV align=\"center\">";
   
@@ -158,11 +159,11 @@ if ($result)
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>';
-  print_liste_field_titre("Nom","contact.php","lower(p.name)", $begin);
+  print_liste_field_titre("Nom","contact.php","lower(p.name)", $begin,"&amp;type=$type");
   print "</td><td>";
-  print_liste_field_titre("Prénom","contact.php","lower(p.firstname)", $begin);
+  print_liste_field_titre("Prénom","contact.php","lower(p.firstname)", $begin,"&amp;type=$type");
   print "</td><td>";
-  print_liste_field_titre("Société","contact.php","lower(s.nom)", $begin);
+  print_liste_field_titre("Société","contact.php","lower(s.nom)", $begin,"&amp;type=$type");
   print "</td><TD>email</TD>";
   print '<td>Téléphone</td>';
   print "</tr>\n";
