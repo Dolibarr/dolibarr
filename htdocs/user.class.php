@@ -23,20 +23,20 @@
  * $Source$
  */
 
-/*!	\file htdocs/user.class.php
-  	\brief  Fichier de la classe utilisateur
-  	\author Rodolphe Qiedeville
-  	\author Jean-Louis Bergamo
-  	\author Laurent Destailleur
-  	\author Sebastien Di Cintio
-  	\author Benoit Mortier
-  	\version $Revision$
+/**	    \file       htdocs/user.class.php
+  	    \brief      Fichier de la classe utilisateur
+  	    \author     Rodolphe Qiedeville
+  	    \author     Jean-Louis Bergamo
+  	    \author     Laurent Destailleur
+  	    \author     Sebastien Di Cintio
+  	    \author     Benoit Mortier
+  	    \version    $Revision$
 */
 
 
 
-/*! \class User
-		\brief Classe permettant la gestion d'un utilisateur
+/**     \class      User
+		\brief      Classe permettant la gestion d'un utilisateur
 */
 
 class User
@@ -55,11 +55,11 @@ class User
   var $pass;
   var $comm;
   var $compta;
-	var $societe_id;
+  var $societe_id;
   var $webcal_login;
   var $errorstr;
   var $userpref_limite_liste;
-  var $all_permissions_are_loaded;         /*!< \private all_permissions_are_loaded */
+  var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
 
 
   /**
@@ -499,13 +499,6 @@ class User
 	    }
 
 	  $this->db->free();	    
-	  
-	  if ($module == '')
-	    {
-	      // Si module etait non defini, alors on a tout chargé, on peut donc considérer
-	      // que les droits sont cachés (car tous chargés) pour cet instance de user
-	      $this->all_permissions_are_loaded=1;
-	    }
 	}
       else
 	{
@@ -545,6 +538,13 @@ class User
 	    }
 	}
 
+        if ($module == '')
+        {
+          // Si module etait non defini, alors on a tout chargé, on peut donc considérer
+          // que les droits sont en cache (car tous chargés) pour cet instance de user
+          $this->all_permissions_are_loaded=1;
+        }
+        
     }
 
   /**
