@@ -265,8 +265,17 @@ if ( $societe->fetch($socid) )
    */
   
   print '<div class="tabsAction">';
-  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("CreateOrder").'</a>';
-  print '<a class="tabAction" href="facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("CreateBill").'</a>';
+
+  if ($conf->commande->enabled) {
+    $langs->load("orders");
+    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddOrder").'</a>';
+  }
+  
+  if ($conf->facture->enabled) {
+    $langs->load("bills");
+    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddBill").'</a>';
+  }
+  
   print '</div>';
     
 
