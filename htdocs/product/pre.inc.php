@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,13 +79,7 @@ function llxHeader($head = "", $urlp = "", $title="")
       $langs->load("suppliers");
       $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
     }
-    
-  if ($conf->commande->enabled)
-    {
-      $langs->load("orders");
-      $menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
-    }
-  
+      
   $menu->add(DOL_URL_ROOT."/product/stats/", $langs->trans("Statistics"));
   if ($conf->propal->enabled)
     {
