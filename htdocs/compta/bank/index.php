@@ -106,7 +106,6 @@ print "<tr $bc[1]>".'<td colspan="3" align="right"><b>Total</b></td><td align="r
  *
  *
  */
-
 print '<tr class="liste_titre"><td colspan="5">Comptes placements</td></tr>';
 
 for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
@@ -122,7 +121,7 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
     
     print "</td><td>$acc->bank</td><td>$acc->number</td>";
     
-    print '</td><td align="right">'.price($solde).'</td><td>&nbsp;</td></tr>';
+    print '<td align="right">'.price($solde).'</td><td>&nbsp;</td></tr>';
     
     $total += $solde;
   }

@@ -56,7 +56,7 @@ print "<form method=\"post\" action=\"$PHP_SELF\">";
 
 print '<input type="hidden" name="action" value="add">';
 
-print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
+print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print "<tr $bc[1]><td>De</td><td>Vers</td><td>Date</td><td>Libelle</td><td>Montant</td></tr>";
 print "<tr $bc[1]><td>";
 print "<select name=\"account_from\">";
@@ -71,7 +71,7 @@ if ($result)
     while ($i < $num)
       {
 	$objp = $db->fetch_object($i);
-	print "<option value=\"$objp->rowid\">$objp->label</option><br>";
+	print "<option value=\"$objp->rowid\">$objp->label</option>";
 	$i++;
       }
 }
@@ -89,7 +89,7 @@ if ($result)
     while ($i < $num)
       {
 	$objp = $db->fetch_object($i);
-	print "<option value=\"$objp->rowid\">$objp->label</option><br>";
+	print "<option value=\"$objp->rowid\">$objp->label</option>";
 	$i++;
       }
 }
@@ -98,15 +98,12 @@ print "</select></td>\n";
 print "<td>";
 print_date_select();
 print "</td>\n";
-print "<td><input name=\"label\" type=\"text\" size=40></td>";
-print "<td><input name=\"amount\" type=\"text\" size=8></td>";
-
+print '<td><input name="label" type="text" size="40"></td>';
+print '<td><input name="amount" type="text" size="8"></td>';
 
 print "<tr $bc[1]>".'<td colspan="5" align="center"><input type="submit" value="ajouter"</td></tr>';
 
 print "</table></form>";
-
-
 
 $db->close();
 
