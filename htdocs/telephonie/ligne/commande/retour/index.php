@@ -122,10 +122,63 @@ print '</td><td valign="top">';
  *
  */
 
-print_titre("Retour en attente de traitement");
+$sql = "SELECT ";
+$sql .= " cli,mode,situation,date_mise_service,date_resiliation,motif_resiliation,commentaire,fichier, traite ";
+
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande_retour";
+$sql .= " WHERE traite = 0 AND mode = 'PRESELECTION'";
+$sql .= " LIMIT 10";
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+
+  if ($num)
+    {
+
+      $i = 0;
+
+      print_titre("Retour");
+      
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+      print '<tr class="liste_titre"><td>Lignes Statuts</td><td align="center">Resultat</td>';
+      print '<td align="center">Date</td><td>Commentaire</td>';
+      print "</tr>\n";
+      $var=True;
+      
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object();
+	  $var=!$var;
+	  
+	  $ligne = new LigneTel($db);
+	  
+	  if ( $ligne->fetch($obj->cli) == 1);
+	  {
+	    print "<tr $bc[$var]><td>";
+	    print '<img src="'.DOL_URL_ROOT.'/telephonie/ligne/graph'.$ligne->statut.'.png">&nbsp;';
+	    print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?numero='.$obj->cli.'">';
+	    print $obj->cli."</a></td>\n";
+	    print '<td align="center">'.$obj->situation."</td>\n";
+	    print '<td align="center">'.$obj->date_mise_service."</td>\n";
+	    print '<td>'.$obj->commentaire."</td>\n";
+	    print "</tr>\n";
+	  }
+	  $i++;
+	}
+      print "</table><br />";
+    }
+  $db->free();
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
+
+print_titre("Fichiers retour en attente de traitement");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td>Lignes Statuts</td><td>Taille</td><td>Date</td>';
+print '<tr class="liste_titre"><td>Fichier</td><td>Taille</td><td>Date</td>';
 print "</tr>\n";
 $var=True;
 
