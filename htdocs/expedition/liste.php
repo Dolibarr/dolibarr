@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -22,8 +22,8 @@
  */
 
 /*! \file htdocs/expedition/liste.php
-        \ingroup    expedition
-        \brief      Page de la liste des propositions commerciales
+		\ingroup    expedition
+		\brief      Page de la liste des propositions commerciales
 */
 
 require("./pre.inc.php");

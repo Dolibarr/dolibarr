@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -22,7 +22,7 @@
  */
 
 /*! \file htdocs/expedition/pre.inc.php
-        \ingroup    expedition
+		\ingroup    expedition
 		\brief      Fichier de gestion du menu gauche du module expedition
 		\version    $Revision$
 */

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Xavier DUTOIT        <doli@sydesy.com>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
