@@ -115,7 +115,7 @@ if ($action == 'create')
   print '<p><form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
 
-  print '<table border="1" cellpadding="3" cellspacing="0">';
+  print '<table class=tablefuser border="1" cellpadding="3" cellspacing="0">';
 
   print "<tr>".'<td valign="top">Prénom</td>';
   print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
