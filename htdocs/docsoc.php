@@ -61,21 +61,16 @@ if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
     {
       if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
 	{
-	  $mesg = "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s.\n";
+	  $mesg = '<div class="ok">Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s.</div>';
 	  //print_r($_FILES);
 	}
       else
 	{
-	  $mesg = "Le fichier n'a pas été téléchargé";
+	  $mesg = '<div class="error">Le fichier n\'a pas été téléchargé</div>';
 	  // print_r($_FILES);
 	}
       
     }
-}
-
-if ( $error_msg )
-{ 
-  print '<font class="error">'.$error_msg.'</font><br><br>';
 }
 
 
@@ -87,7 +82,7 @@ if ($_GET["action"]=='delete')
 {
   $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
   dol_delete_file($file);
-  $mesg = "Le fichier a été supprimé";
+  $mesg = '<div class="ok">Le fichier a été supprimé</div>';
 }
 
 /*
@@ -184,7 +179,7 @@ if ($socid > 0)
       print '<br></div>';
 
 
-      if ($mesg) { print "$mesg<br><br>"; }
+      if ($mesg) { print "$mesg<br>"; }
 
 
       // Affiche liste des documents existant
@@ -205,7 +200,7 @@ if ($socid > 0)
 		{
 		  $var=!$var;
 		  print "<tr $bc[$var]><td>";
-		  echo '<a href="'.$conf->societe->dir_output. '/'.$socid.'/'.$file.'">'.$file.'</a>';
+		  echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($socid.'/'.$file).'">'.$file.'</a>';
 		  print "</td>\n";
 		  
 		  print '<td align="right">'.filesize($upload_dir."/".$file). ' bytes</td>';
