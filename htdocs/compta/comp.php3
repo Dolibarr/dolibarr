@@ -19,7 +19,7 @@
  *
  */
 require("./pre.inc.php3");
-require("../lib/functions.inc.php3");
+
 $bc[0]="bgcolor=\"#90c090\"";
 $bc[1]="bgcolor=\"#b0e0b0\"";
 
@@ -27,7 +27,7 @@ $a = setlocale("LC_TIME", "FRENCH");
 
 function get_ca_propal ($db, $year, $socidp) {
 
-  $sql = "SELECT sum(f.price) FROM llx_propal as f WHERE fk_statut in (1,2) AND date_part('year', date(f.datep)) = $year ";
+  $sql = "SELECT sum(f.price) as sum FROM llx_propal as f WHERE fk_statut in (1,2) AND date_format(f.datep, '%Y') = $year ";
   if ($socidp) {
     $sql .= " AND f.fk_soc = $socidp";
   }
@@ -43,7 +43,7 @@ function get_ca_propal ($db, $year, $socidp) {
 }
 function get_ca ($db, $year, $socidp) {
   
-  $sql = "SELECT sum(f.amount) FROM llx_facture as f WHERE f.paye = 1 AND date_part('year', date(f.datef)) = $year ";
+  $sql = "SELECT sum(f.amount) as sum FROM llx_facture as f WHERE f.paye = 1 AND date_format(f.datef , '%Y') = $year ";
   if ($socidp) {
     $sql .= " AND f.fk_soc = $socidp";
   }
@@ -61,11 +61,11 @@ function get_ca ($db, $year, $socidp) {
 
 function propals ($db, $year, $month) {
   global $bc;
-  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, int(p.datep) as dp, c.label as statut, c.id as statutid";
+  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
   $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
   $sql .= " AND c.id in (1,2)";
-  $sql .= " AND date_part('year', date(p.datep)) = $year ";
-  $sql .= " AND date_part('month', date(p.datep)) = $month ";
+  $sql .= " AND date_format(p.datep, '%Y') = $year ";
+  $sql .= " AND round(date_format(p.datep, '%m')) = $month ";
 
 
   $sql .= " ORDER BY p.fk_statut";
@@ -86,7 +86,7 @@ function propals ($db, $year, $month) {
     $oldstatut = $objp->statut;
 
     if ($i > 0) {
-      print "<tr><td align=\"right\" colspan=\"4\">Total : <b>$subtotal</b></td>\n";
+      print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($subtotal)."</b></td>\n";
       print "<td align=\"left\">Euros HT</td></tr>\n";
     }
     $subtotal = 0;
@@ -110,7 +110,7 @@ function propals ($db, $year, $month) {
   
   print "<TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
   
-  print "<TD align=\"right\">$objp->price</TD>\n";
+  print "<TD align=\"right\">".price($objp->price)."</TD>\n";
   print "<TD align=\"center\">$objp->statut</TD>\n";
   print "</TR>\n";
   
@@ -119,10 +119,10 @@ function propals ($db, $year, $month) {
   
   $i++;
   }
-  print "<tr><td align=\"right\" colspan=\"4\">Total : <b>$subtotal</b></td>\n";
+  print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($subtotal)."</b></td>\n";
   print "<td align=\"left\">Euros HT</td></tr>\n";
-  print "<tr><td colspan=\"2\" align=\"right\"><b>Total ~ ".round($total * 6.55957)." FF HT</b></td>";
-  print "<td colspan=\"2\" align=\"right\"><b>Total : $total</b></td>";
+  print "<tr><td colspan=\"2\" align=\"right\"><b>Total ~ ".francs($total) ." FF HT</b></td>";
+  print "<td colspan=\"2\" align=\"right\"><b>Total : ".price($total)."</b></td>";
   print "<td align=\"left\"><b>Euros HT</b></td></tr>";
   print "</TABLE>";
   $db->free();
@@ -134,10 +134,10 @@ function factures ($db, $year, $month, $paye) {
   $bc[0]="bgcolor=\"#90c090\"";
   $bc[1]="bgcolor=\"#b0e0b0\"";
 
-  $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, int(f.datef) as df, f.paye, f.rowid as facid ";
+  $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
   $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
-  $sql .= " AND date_part('year', date(f.datef)) = $year ";
-  $sql .= " AND date_part('month', date(f.datef)) = $month ";
+  $sql .= " AND date_format(f.datef, '%Y') = $year ";
+  $sql .= " AND round(date_format(f.datef, '%m')) = $month ";
   $sql .= " ORDER BY f.datef DESC ";
 
   $result = $db->query($sql);
@@ -167,7 +167,7 @@ function factures ($db, $year, $month, $paye) {
 	  print "<TD align=\"right\"><b>!!!</b></TD>\n";
 	}
 	
-	print "<TD align=\"right\">$objp->amount</TD>\n";
+	print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
 	
 	$payes[1] = "oui";
 	$payes[0] = "<b>non</b>";
@@ -180,8 +180,8 @@ function factures ($db, $year, $month, $paye) {
 	
 	$i++;
       }
-      print "<tr><td colspan=\"3\" align=\"right\"><b>Total ~ ".round($total * 6.55957)." FF HT</b></td>";
-      print "<td  align=\"right\"><b>Total : $total</b></td><td></td></tr>";
+      print "<tr><td colspan=\"3\" align=\"right\"><b>Total ~ ".francs($total)." FF HT</b></td>";
+      print "<td  align=\"right\"><b>Total : ".price($total)."</b></td><td></td></tr>";
       print "</TABLE>";
       $db->free();
     }
@@ -218,6 +218,7 @@ function pt ($db, $sql, $year) {
 	  $ca[$b] = 0;
 	}
       }
+
       if ($obj->sum > 0) {
 	print "<TR $bc[$var]>";
 	print "<td><a href=\"comp.php3?details=1&year=$year&month=$obj->dm\">";
@@ -254,6 +255,8 @@ function pt ($db, $sql, $year) {
 
     $db->free();
     return $ca;
+  } else {
+    print $db->error();
   }
 }
 
@@ -269,8 +272,8 @@ function ppt ($db, $year, $socidp) {
   
   print "<tr><td valign=\"top\" width=\"30%\">";
   
-  $sql = "SELECT sum(f.price), date_part('month', date(f.datep)) as dm";
-  $sql .= " FROM llx_propal as f WHERE fk_statut in (1,2) AND date_part('year', date(f.datep)) = $year ";
+  $sql = "SELECT sum(f.price) as sum, round(date_format(f.datep,'%m')) as dm";
+  $sql .= " FROM llx_propal as f WHERE fk_statut in (1,2) AND date_format(f.datep,'%Y') = $year ";
 
   if ($socidp) {
     $sql .= " AND f.fk_soc = $socidp";
@@ -282,8 +285,8 @@ function ppt ($db, $year, $socidp) {
   
   print "</td><td valign=\"top\" width=\"30%\">";
   
-  $sql = "SELECT sum(f.amount), date_part('month', date(f.datef)) as dm";
-  $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND date_part('year', date(f.datef)) = $year ";
+  $sql = "SELECT sum(f.amount) as sum, round(date_format(f.datef, '%m')) as dm";
+  $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = $year ";
 
   if ($socidp) {
     $sql .= " AND f.fk_soc = $socidp";
@@ -304,6 +307,7 @@ function ppt ($db, $year, $socidp) {
   $var = 1 ;
   for ($b = 1 ; $b <= 12 ; $b++) {
     $var=!$var;
+
     $delta = $ca[$b] - $prev[$b];
     $deltat = $deltat + $delta ;
     print "<TR $bc[$var]>";
@@ -334,27 +338,10 @@ llxHeader();
 
 
 $db = new Db();
-if ($sortfield == "") {
-  $sortfield="lower(p.label)";
-}
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
 
-if ($year == 2001) {
 
-  ppt($db, 2001, $socidp);
+ppt($db, 2002, $socidp);
 
-} elseif ($year == 2000) {
-
-  ppt($db, 2000, $socidp);
-
-} else {
-  ppt($db, 2001, $socidp);
-  print "<p>";
-  ppt($db, 2000, $socidp);
-
-}
 
 
 if ($details == 1) {
