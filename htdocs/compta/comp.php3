@@ -223,7 +223,7 @@ function pt ($db, $sql, $year) {
 	print "<TR $bc[$var]>";
 	print "<td><a href=\"comp.php3?details=1&year=$year&month=$obj->dm\">";
 	print strftime("%B",mktime(12,0,0,$obj->dm, 1, $year))."</TD>\n";
-	print "<TD align=\"right\">$obj->sum</TD>\n";
+	print "<TD align=\"right\">".price($obj->sum)."</TD>\n";
 	
 	print "</TR>\n";
 	$month = $obj->dm + 1;
@@ -250,7 +250,7 @@ function pt ($db, $sql, $year) {
       }
     }
 
-    print "<tr><td align=\"right\">Total :</td><td align=\"right\"><b>$total</b></td></tr>";    
+    print "<tr><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td></tr>";    
     print "</table>";
 
     $db->free();
@@ -312,7 +312,7 @@ function ppt ($db, $year, $socidp) {
     $deltat = $deltat + $delta ;
     print "<TR $bc[$var]>";
     print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
-    print "<TD align=\"right\">".$delta."</TD>\n";	  
+    print "<TD align=\"right\">".price($delta)."</TD>\n";	  
     print "</TR>\n";
   }
 
@@ -320,9 +320,9 @@ function ppt ($db, $year, $socidp) {
   $acat = get_ca($db, $ayear, $socidp) - get_ca_propal($db, $ayear, $socidp);
 
 
-  print "<tr><td align=\"right\">Total :</td><td align=\"right\">$deltat</td></tr>";
-  print "<tr><td align=\"right\">Rappel $ayear :</td><td align=\"right\">$acat</td></tr>";
-  print "<tr><td align=\"right\">Soit :</td><td align=\"right\"><b>".($acat+$deltat)."</b></td></tr>";
+  print "<tr><td align=\"right\">Total :</td><td align=\"right\">".price($deltat)."</td></tr>";
+  print "<tr><td align=\"right\">Rappel $ayear :</td><td align=\"right\">".price($acat)."</td></tr>";
+  print "<tr><td align=\"right\">Soit :</td><td align=\"right\"><b>".price($acat+$deltat)."</b></td></tr>";
 
   print "</table>";
   print "</td></tr></table>";

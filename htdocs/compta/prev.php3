@@ -20,7 +20,6 @@
  *
  */
 require("./pre.inc.php3");
-require("../lib/functions.inc.php3");
 
 function pt ($db, $sql, $title) 
 {
