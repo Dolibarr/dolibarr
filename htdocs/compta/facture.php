@@ -55,7 +55,7 @@ $NBLINES=4;
 if ($_POST["action"] == 'classin') 
 {
   $facture = new Facture($db);
-  $facture->fetch($facid);
+  $facture->fetch($_POST["facid"]);
   $facture->classin($_POST["projetid"]);
 }
 /*
@@ -214,10 +214,10 @@ if ($_GET["action"] == 'payed' && $user->rights->facture->paiement)
   $result = $fac->set_payed($_GET["facid"]);
 }
 
-if ($action == 'canceled' && $user->rights->facture->paiement) 
+if ($_GET["action"] == 'canceled' && $user->rights->facture->paiement) 
 {
   $fac = new Facture($db);
-  $result = $fac->set_canceled($facid);
+  $result = $fac->set_canceled($_GET["facid"]);
 }
 
 if ($_POST["action"] == 'setremise' && $user->rights->facture->creer) 
@@ -228,11 +228,10 @@ if ($_POST["action"] == 'setremise' && $user->rights->facture->creer)
   $fac->set_remise($user, $_POST["remise"]);
 } 
 
-
 if ($_POST["action"] == 'addligne' && $user->rights->facture->creer) 
 {
   $fac = new Facture($db);
-  $fac->fetch($_GET["facid"]);
+  $fac->fetch($_POST["facid"]);
   $datestart='';
   $dateend='';
   if ($_POST["date_startyear"] && $_POST["date_startmonth"] && $_POST["date_startday"]) {
@@ -241,7 +240,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->facture->creer)
   if ($_POST["date_endyear"] && $_POST["date_endmonth"] && $_POST["date_endday"]) {
     $dateend=$_POST["date_endyear"].'-'.$_POST["date_endmonth"].'-'.$_POST["date_endday"];
   }
-  $result = $fac->addline($_GET["facid"],
+  $result = $fac->addline($_POST["facid"],
     $_POST["desc"],
     $_POST["pu"],
     $_POST["qty"],
@@ -251,12 +250,14 @@ if ($_POST["action"] == 'addligne' && $user->rights->facture->creer)
     $datestart,
     $dateend
     );
+
+  $_GET["facid"]=$_POST["facid"];   // Pour réaffichage de la fiche en cours d'édition
 }
 
-if ($action == 'updateligne' && $user->rights->facture->creer) 
+if ($_POST["action"] == 'updateligne' && $user->rights->facture->creer) 
 {
-  $fac = new Facture($db,"",$facid);
-  $fac->fetch($facid);
+  $fac = new Facture($db,"",$_POST["facid"]);
+  $fac->fetch($_POST["facid"]);
   $datestart='';
   $dateend='';
   if ($_POST["date_startyear"] && $_POST["date_startmonth"] && $_POST["date_startday"]) {
@@ -266,7 +267,7 @@ if ($action == 'updateligne' && $user->rights->facture->creer)
     $dateend=$_POST["date_endyear"].'-'.$_POST["date_endmonth"].'-'.$_POST["date_endday"];
   }
 
-  $result = $fac->updateline($rowid,
+  $result = $fac->updateline($_POST["rowid"],
 			     $_POST["desc"],
 			     $_POST["price"],
 			     $_POST["qty"],
@@ -274,13 +275,15 @@ if ($action == 'updateligne' && $user->rights->facture->creer)
 			     $datestart,
 			     $dateend
 			     );
+
+  $_GET["facid"]=$_POST["facid"];   // Pour réaffichage de la fiche en cours d'édition
 }
 
-if ($action == 'deleteline' && $user->rights->facture->creer) 
+if ($_GET["action"] == 'deleteline' && $user->rights->facture->creer) 
 {
-  $fac = new Facture($db,"",$facid);
-  $fac->fetch($facid);
-  $result = $fac->deleteline($rowid);
+  $fac = new Facture($db,"",$_GET["facid"]);
+  $fac->fetch($_GET["facid"]);
+  $result = $fac->deleteline($_GET["rowid"]);
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
@@ -288,7 +291,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
   if ($user->rights->facture->supprimer ) 
     {
       $fac = new Facture($db);
-      $fac->delete($_GET["facid"]);
+      $fac->delete($_POST["facid"]);
       $_GET["facid"] = 0 ;
     }
 }
@@ -298,8 +301,8 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
  */
 if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 {
-  $fac = new Facture($db,"",$facid);
-  if ( $fac->fetch($facid) )
+  $fac = new Facture($db,"",$_POST["facid"]);
+  if ( $fac->fetch($_POST["facid"]) )
     {
         $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
       
@@ -377,13 +380,13 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 /*
  * Générer ou regénérer le PDF
  */
-if ($action == 'pdf')
+if ($_GET["action"] == 'pdf')
 {
   /*
    * Generation de la facture
    * définit dans /includes/modules/facture/modules_facture.php
    */
-  facture_pdf_create($db, $facid);
+  facture_pdf_create($db, $_GET["facid"]);
 } 
 
 
@@ -433,7 +436,7 @@ if ($_GET["action"] == 'create')
 	  $soc = new Societe($db);
 	  $soc->fetch($obj->idp);
        
-	  print '<form action="'.$PHP_SELF.'" method="post">';
+	  print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="socid" value="'.$obj->idp.'">' ."\n";
 	  print '<input type="hidden" name="remise_percent" value="0">';
@@ -517,7 +520,7 @@ if ($_GET["action"] == 'create')
 	      $sql .= " ORDER BY p.nbvente DESC LIMIT ".$conf->liste_limit;
 	      if ( $db->query($sql) )
 		{
-		  $opt = "<option value=\"0\" SELECTED></option>";
+		  $opt = "<option value=\"0\" selected></option>";
 		  if ($result)
 		    {
 		      $num = $db->num_rows();	$i = 0;	
@@ -535,7 +538,7 @@ if ($_GET["action"] == 'create')
 		  print $db->error();
 		}
 	      	      
-	      print '<table class="noborder" cellspacing="0">';
+	      print '<table class="noborder" cellspacing="0" cellpadding="2">';
 	      print '<tr><td>Services/Produits prédéfinis</td><td>Quan.</td><td>Remise</td><td> &nbsp; &nbsp; </td>';
           if ($conf->service->enabled) {
               print '<td>Si produit de type service à durée limitée</td></tr>';
@@ -728,7 +731,7 @@ else
 	  $author->fetch();
 
 
-	  $head[0][0] = DOL_URL_ROOT."$PHP_SELF?facid=".$_GET["facid"];
+	  $head[0][0] = DOL_URL_ROOT.$_SERVER["PHP_SELF"]."?facid=".$_GET["facid"];
 	  $head[0][1] = "Facture : $fac->ref";
 	  $h = 1;
 	  $a = 0;
@@ -746,7 +749,7 @@ else
 	   */
 	  if ($_GET["action"] == 'delete')
 	    {
-	      $html->form_confirm("$PHP_SELF?facid=$fac->id","Supprimer la facture","Etes-vous sûr de vouloir supprimer cette facture ?","confirm_delete");
+	      $html->form_confirm($_SERVER["PHP_SELF"]."?facid=$fac->id","Supprimer la facture","Etes-vous sûr de vouloir supprimer cette facture ?","confirm_delete");
 	    }
 	  
 	  /*
@@ -869,7 +872,7 @@ else
 	  {
 	    print '<form action="facture.php?facid='.$fac->id.'" method="post">';
 	    print '<input type="hidden" name="action" value="setremise">';
-	    print '<table cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
+	    print '<table class="border" cellpadding="3" cellspacing="0"><tr><td>Remise</td><td align="right">';
 	    print '<input type="text" name="remise" size="3" value="'.$fac->remise_percent.'">%';
 	    print '<input type="submit" value="Appliquer">';
 	    print '</td></tr></table></form>';
@@ -950,11 +953,12 @@ else
 		print "</tr>";
 	  
 	    // Update ligne de facture
-		if ($action == 'editline' && $rowid == $objp->rowid)
+		if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
 		  {
-		    print "<form action=\"$PHP_SELF?facid=$fac->id\" method=\"post\">";
+		    print "<form action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 		    print '<input type="hidden" name="action" value="updateligne">';
-		    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+		    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+		    print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
 		    print "<tr $bc[$var]>";
 		    print '<td><textarea name="desc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
     	    print '<td align="right">';
@@ -997,8 +1001,7 @@ else
 	if ($fac->statut == 0 && $user->rights->facture->creer) 
 	  {
 
-	    print "<form action=\"$PHP_SELF?facid=$fac->id\" method=\"post\">";
-	    //	    echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
+	    print "<form action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 	    print "<tr class=\"liste_titre\">";
 	    print '<td width="54%">Description</td>';
 	    print '<td width="8%" align="right">Tva</td>';
@@ -1009,6 +1012,7 @@ else
 	    print '<td>&nbsp;</td>';
 	    print '<td>&nbsp;</td>';
 	    print "</tr>\n";
+	    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	    print '<input type="hidden" name="action" value="addligne">';
 	    print '<tr><td><textarea name="desc" cols="60" rows="2"></textarea></td>';
 	    print '<td align="right">';
@@ -1073,13 +1077,13 @@ else
 	    // Envoyer
 	    if ($fac->statut == 1 && $user->rights->facture->envoyer)
 	      {
-	        print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=presend\">Envoyer</a>";
+	        print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">Envoyer</a>";
 	      }
 	    
 	    // Envoyer une relance
 	    if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer) 
 	      {
-		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=prerelance\">Envoyer relance</a>";
+		print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">Envoyer relance</a>";
 	      }
 
 	    // Emettre paiement 
@@ -1092,13 +1096,13 @@ else
 	    if ($fac->statut == 1 && price($resteapayer) <= 0 
 		&& $fac->paye == 0 && $user->rights->facture->paiement)
 	      {
-		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a>";
+		print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a>";
 	      }
 	    
 	    // Classer 'annulée' (possible si validée et aucun paiement n'a encore eu lieu)
 	    if ($fac->statut == 1 && $fac->paye == 0 && $totalpaye == 0 && $user->rights->facture->paiement)
 	      {
-		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=canceled\">Classer 'Annulée'</a>";
+		print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=canceled\">Classer 'Annulée'</a>";
 	      }
 
 	    // Récurrente
@@ -1188,7 +1192,8 @@ else
 	 */
 	if ($_GET["action"] == 'classer')
 	  {	    
-	    print "<p><form method=\"post\" action=\"$PHP_SELF?facid=$fac->id\">\n";
+	    print "<p><form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id\">\n";
+	    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	    print '<input type="hidden" name="action" value="classin">';
 	    print '<table cellspacing="0" class="border" cellpadding="3">';
 	    print '<tr><td>Projet</td><td>';
@@ -1203,7 +1208,7 @@ else
 	 *
 	 *
 	 */
-	if ($action == 'presend')
+	if ($_GET["action"] == 'presend')
 	  {
 	    $replytoname = $user->fullname;
 	    $from_name = $replytoname;
@@ -1211,7 +1216,7 @@ else
 	    $replytomail = $user->email;
 	    $from_mail = $replytomail;
 	    
-	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$fac->id&amp;action=send\">\n";
+	    print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
 	    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	    print '<input type="hidden" name="action" value="send">';
 	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
@@ -1219,7 +1224,7 @@ else
 	    print '<br>';
 	    
 	    print_titre("Envoyer la facture par mail");
-	    print "<table cellspacing=\"0\" border=\"1\" cellpadding=\"3\" width=\"100%\">";
+	    print "<table cellspacing=\"0\" class=\"border\" cellpadding=\"3\" width=\"100%\">";
 	    print "<tr><td>Expéditeur</td><td>$from_name</td><td>$from_mail &nbsp;</td></tr>";
 	    print "<tr><td>Répondre à</td><td>$replytoname</td><td>$replytomail &nbsp;</td></tr>";
 	    print '<tr><td>Destinataire</td><td colspan=\"2\">';
@@ -1238,7 +1243,7 @@ else
 	    print "<center><input class=\"flat\" type=\"submit\" value=\"Envoyer\"></center></form>\n";
 	  }
 
-	if ($action == 'prerelance')
+	if ($_GET["action"] == 'prerelance')
 	  {
 	    $replytoname = $user->fullname;
 	    $from_name = $replytoname;
@@ -1246,7 +1251,7 @@ else
 	    $replytomail = $user->email;
 	    $from_mail = $replytomail;
 	    
-	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$fac->id&amp;action=send\">\n";
+	    print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
 	    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	    print '<input type="hidden" name="action" value="relance">';
 	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
@@ -1254,7 +1259,7 @@ else
 	    print '<br>';
 	    
 	    print_titre("Envoyer une relance par mail");
-	    print "<table cellspacing=\"0\" border=\"1\" cellpadding=\"3\" width=\"100%\">";
+	    print "<table cellspacing=\"0\" class=\"border\" cellpadding=\"3\" width=\"100%\">";
 	    print "<tr><td>Expéditeur</td><td>$from_name</td><td>$from_mail &nbsp;</td></tr>";
 	    print "<tr><td>Répondre à</td><td>$replytoname</td><td>$replytomail &nbsp;</td></tr>";
 	    print '<tr><td>Destinataire</td><td colspan=\"2\">';
@@ -1394,25 +1399,25 @@ else
     if ($result)
       {
 	$num = $db->num_rows();
-	print_barre_liste("Factures clients",$page,$PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+	print_barre_liste("Factures clients",$page,$_SERVER["PHP_SELF"],"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	$i = 0;
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
 	print '<td>';
-	print_liste_field_titre("Numéro",$PHP_SELF,"f.facnumber","","&amp;socidp=$socidp");
+	print_liste_field_titre("Numéro",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp");
 	print '</td><td align="center">';
-	print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&amp;socidp=$socidp");
+	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"f.datef","","&amp;socidp=$socidp");
 	print '</td><td>';
-	print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
+	print_liste_field_titre("Société",$_SERVER["PHP_SELF"],"s.nom","","&amp;socidp=$socidp");
 	print '</td><td align="right">';
-	print_liste_field_titre("Montant HT",$PHP_SELF,"f.total","","&amp;socidp=$socidp");
+	print_liste_field_titre("Montant HT",$_SERVER["PHP_SELF"],"f.total","","&amp;socidp=$socidp");
 	print '</td><td align="right">';
-	print_liste_field_titre("Montant TTC",$PHP_SELF,"f.total_ttc","","&amp;socidp=$socidp");
+	print_liste_field_titre("Montant TTC",$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socidp=$socidp");
 	print '</td><td align="right">';
-	print_liste_field_titre("Reçu",$PHP_SELF,"am","","&amp;socidp=$socidp");
+	print_liste_field_titre("Reçu",$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp");
 	print '</td><td align="center">';
-	print_liste_field_titre("Statut",$PHP_SELF,"fk_statut,paye","","&amp;socidp=$socidp");
+	print_liste_field_titre("Statut",$_SERVER["PHP_SELF"],"fk_statut,paye","","&amp;socidp=$socidp");
 	print '</td>';
 	print "</tr>\n";
       
