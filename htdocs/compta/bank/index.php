@@ -89,19 +89,20 @@ print "<tr>".'<td colspan="3" align="right"><b>'.$langs->trans("Total").'</b></t
 
 print '<tr class="liste_titre"><td colspan="5">Dettes</td></tr>';
 
+
 /*
  * TVA
  */
 if ($conf->compta->tva)
 {
-  $var = !$var;
-  $tva = new Tva($db);
-
-  $tva_solde = $tva->solde();
-
-  $total = $total + $tva_solde;
-
-  print "<tr ".$bc[$var].">".'<td colspan="3">TVA</td><td align="right">'.price($tva_solde).'</td><td>&nbsp;</td></tr>';
+    $var = !$var;
+    $tva = new Tva($db);
+    
+    $tva_solde = $tva->solde();
+    
+    $total = $total + $tva_solde;
+    
+    print "<tr ".$bc[$var].">".'<td colspan="3">'.$langs->trans("VAT").'</td><td align="right">'.price($tva_solde).'</td><td>&nbsp;</td></tr>';
 }
 
 /*
