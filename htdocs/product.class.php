@@ -416,8 +416,8 @@ class Product
 
       return $this->_get_stats($sql);
     }
-  /*
-   *
+  /**
+   *Renvoie le nombre de facture dans lesquelles figure le produit
    *
    */
   Function get_num_vente()
@@ -426,6 +426,19 @@ class Product
       $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
       $sql .= " WHERE f.rowid = d.fk_facture and f.paye = 1 and d.fk_product =".$this->id;
       $sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
+
+      return $this->_get_stats($sql);
+    }
+  /**
+   *Renvoie le nombre de proaple dans lesquelles figure le produit
+   *
+   */
+  Function get_num_propal()
+    {
+      $sql = "SELECT count(*), date_format(p.datep, '%Y%m') ";
+      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p";
+      $sql .= " WHERE p.rowid = d.fk_propal and d.fk_product =".$this->id;
+      $sql .= " GROUP BY date_format(p.datep,'%Y%m') DESC ;";
 
       return $this->_get_stats($sql);
     }
