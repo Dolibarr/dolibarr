@@ -574,7 +574,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetFont('Arial','',12);
         $pdf->SetXY(100,11);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 10, $langs->trans("Date")." : " . dolibarr_print_date(mktime(),"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 10, $langs->trans("Date")." : " . dolibarr_print_date($fac->date,"%d %b %Y"), '', 'R');
 
         /*
         * Emetteur
