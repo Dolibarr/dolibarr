@@ -36,6 +36,8 @@ insert into llx_boxes_def (name, file) values ('Propales','box_propales.php');
 --
 insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
+insert into llx_const(name, value, type) values ('FACTURE_ADDON','venus','chaine');
+
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage du formulaire de recherche des sociétés dans la barre de gauche');
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage du formulaire de recherche des contacts dans la barre de gauche');
 
