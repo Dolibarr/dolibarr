@@ -1,8 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,28 +206,30 @@ if ($HTTP_POST_VARS["action"] == "set")
 				$dir = "../../pgsql/data/";
 				$file = "data.sql";
 				$fp = fopen($dir.$file,"r");
+				$buffer='';
       	if ($fp)
 				{
 					while (!feof ($fp))
 	        {
-	         $buffer = fgets($fp, 4096);
-					}
-					 if ($db->query($buffer))
-		    {
-		      $ok = 1;
-		    }
-		  else
-		    {
-		      if ($db->errno() == 1062)
-			{
-			  // print "<tr><td>Insertion ligne : $buffer</td><td>Déja existante</td></tr>";
-			}
-		      else
-			{
-		      $ok = 0;
-			  print "Erreur SQL ".$db->errno()." sur requete '$buffer': ".$db->error()."<br>";
-			}
-		    }
+	         $buffer .= fgets($fp, 4096);		
+					}			 					 
+							if ($db->query($buffer))
+		    			{
+		      			$ok = 1;
+		    			}
+		  				else
+		    			{
+		      				if ($db->errno() == 1062)
+									{
+			  		// print "<tr><td>Insertion ligne : $buffer</td><td>Déja existante</td></tr>";
+									}	
+		      				else
+									{
+		      					$ok = 0;
+			  						print "Erreur SQL ".$db->errno()." sur requete '$buffer': ".$db->error()."<br>";
+									}
+		    			}						
+					//}//while
 				fclose($fp);
 			}
 		}//else
@@ -259,29 +259,45 @@ if ($HTTP_POST_VARS["action"] == "set")
     {
           			
 	$chem1 = "/facture";
-	$sql[0] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/facture'
+	$sql[0] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/facture',
+						 type = 'chaine',
+						 visible = 0
  						 where name  ='FAC_OUTPUTDIR';" ;
 				
-	$sql[1] = "UPDATE llx_const SET value = '".$dolibarr_main_data_url."/document/facture'
+	$sql[1] = "UPDATE llx_const SET value = '".$dolibarr_main_data_url."/document/facture',
+						type = 'chaine',
+						visible = 0
 						where name  = 'FAC_OUTPUT_URL';" ;
 				
-	$sql[2] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/propale'
+	$sql[2] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/propale',
+						type = 'chaine',
+						visible = 0
 						where name  = 'PROPALE_OUTPUTDIR';" ;
 				
-	$sql[3] = "UPDATE llx_const SET value = '".$dolibarr_main_url_root."/document/propale'
+	$sql[3] = "UPDATE llx_const SET value = '".$dolibarr_main_url_root."/document/propale',
+						type = 'chaine',
+						visible = 0
 						where name  = 'PROPALE_OUTPUT_URL';" ;
 				
-	$sql[4] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/ficheinter'
-						where name  = 'FICHEINTER_OUTPUTDIR';" ;
+	$sql[4] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/ficheinter',
+						 type = 'chaine',
+						 visible = 0
+						 where name  = 'FICHEINTER_OUTPUTDIR';" ;
 				
-	$sql[5] = "UPDATE llx_const SET value='".$dolibarr_main_url_root."/document/ficheinter'
-						where name  = 'FICHEINTER_OUTPUT_URL';" ;
+	$sql[5] = "UPDATE llx_const SET value='".$dolibarr_main_url_root."/document/ficheinter',
+						 type = 'chaine',
+						 visible = 0
+						 where name  = 'FICHEINTER_OUTPUT_URL';" ;
 				
-	$sql[6] = "UPDATE llx_const SET value='".$dolibarr_main_data_root."/societe'
-						where name  = 'SOCIETE_OUTPUTDIR';" ;
+	$sql[6] = "UPDATE llx_const SET value='".$dolibarr_main_data_root."/societe',
+	           type = 'chaine',
+						 visible = 0
+						 where name  = 'SOCIETE_OUTPUTDIR';" ;
 				
-	$sql[7] = "UPDATE llx_const SET value='".$dolibarr_main_url_root."/document/societe'
-						where name  = 'SOCIETE_OUTPUT_URL';" ;
+	$sql[7] = "UPDATE llx_const SET value='".$dolibarr_main_url_root."/document/societe',
+						 type = 'chaine',
+						 visible = 0
+						 where name  = 'SOCIETE_OUTPUT_URL';" ;
 			
 	$result = 0;
 			
@@ -290,6 +306,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 	  if ($db->query($sql[$i]))
 	    {
 	      $result++;
+				
 	    }
 	}
       
