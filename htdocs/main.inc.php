@@ -232,9 +232,17 @@ if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
 
 /*
  * TODO RODO
+ * Modification de quelques variable de conf en fonction des Constantes
  */
-define('MAIN_MONNAIE','euros');
-// Modification de quelques variable de conf en fonction des Constantes
+
+if (defined("MAIN_MONNAIE")) {
+	$conf->monnaie=MAIN_MONNAIE;
+}
+else {
+	$conf->monnaie='euros';	
+	define("MAIN_MONNAIE",'euros');		// TODO Virer cette ligne et remplacer dans le code le MAIN_MONNAIE par $conf->monnaie
+}
+
 /*
  * SIZE_LISTE_LIMIT : constante de taille maximale des listes
  */
