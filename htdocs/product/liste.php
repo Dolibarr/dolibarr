@@ -122,8 +122,9 @@ if ($result)
   print_liste_field_titre("Réf",$PHP_SELF, "p.ref","&envente=$envente&type=$type");
   print "</td><td>";
   print_liste_field_titre("Libellé",$PHP_SELF, "p.label","&envente=$envente&type=$type");
-  print "</td><TD align=\"right\">Prix de vente</TD>";
-  print "</TR>\n";
+  print "</td><TD align=\"right\">";
+  print_liste_field_titre("Prix de vente",$PHP_SELF, "p.price","&envente=$envente&type=$type");
+  print "</td></tr>\n";
   
   print '<tr class="liste_titre">';
   print '<form action="liste.php?type='.$type.'" method="post">';
