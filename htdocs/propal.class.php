@@ -586,6 +586,30 @@ class Propal
 	  print $this->db->error();
 	}      
     }
+  /*
+   *
+   *
+   */
+  Function delete()
+  {
+    $sql = "DELETE FROM llx_propal WHERE rowid = $this->id;";
+    if ( $this->db->query($sql) ) 
+      {
+	$sql = "DELETE FROM llx_propaldet WHERE fk_propal = $this->id ;";
+	if ( $this->db->query($sql) ) 
+	  {
+	    return 1;
+	  }
+	else
+	  {
+	    return -2;
+	  }
+      }
+    else
+      {
+	return -1;
+      }
+  }
 }  
 
 class PropaleLigne  
