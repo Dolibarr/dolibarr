@@ -37,8 +37,17 @@ Renvoie le numéro de facture sous une forme numérique simple, la première factur
 
 function neptune_get_num_explain()
 {
-  return '
+  $texte = '
 Identique à pluton, avec un correcteur au moyen de la constante FACTURE_NEPTUNE_DELTA.';
+  if (defined("FACTURE_NEPTUNE_DELTA"))
+    {
+      $texte .= "Définit et vaut : ".FACTURE_NEPTUNE_DELTA;
+    }
+  else
+    {
+      $texte .= "N'est pas définit";
+    }
+  return $texte;
 }
 
 
