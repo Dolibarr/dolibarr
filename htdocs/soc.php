@@ -36,25 +36,24 @@ if ($user->societe_id > 0)
 if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 {
   $soc = new Societe($db);
-  $soc->nom            = $_POST["nom"];
-  $soc->adresse        = $_POST["adresse"];
-  $soc->cp             = $_POST["cp"];
-  $soc->ville          = $_POST["ville"];
-  $soc->pays_id        = $_POST["pays_id"];
-  $soc->departement_id = $_POST["departement_id"];
-  $soc->tel            = $_POST["tel"];
-  $soc->fax            = $_POST["fax"];
-  $soc->url            = ereg_replace( "http://", "", $_POST["url"] );
-  $soc->siren          = $_POST["siren"];
-  $soc->siret          = $_POST["siret"];
-  $soc->ape            = $_POST["ape"];
-  $soc->capital        = $_POST["capital"];
-  $soc->tva_intra      = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
-
-  $soc->forme_juridique_code= $_POST["forme_juridique_code"];
-  $soc->effectif_id         = $_POST["effectif_id"];
-  $soc->client              = $_POST["client"];
-  $soc->fournisseur         = $_POST["fournisseur"];
+  $soc->nom                  = $_POST["nom"];
+  $soc->adresse              = $_POST["adresse"];
+  $soc->cp                   = $_POST["cp"];
+  $soc->ville                = $_POST["ville"];
+  $soc->pays_id              = $_POST["pays_id"];
+  $soc->departement_id       = $_POST["departement_id"];
+  $soc->tel                  = $_POST["tel"];
+  $soc->fax                  = $_POST["fax"];
+  $soc->url                  = ereg_replace( "http://", "", $_POST["url"] );
+  $soc->siren                = $_POST["siren"];
+  $soc->siret                = $_POST["siret"];
+  $soc->ape                  = $_POST["ape"];
+  $soc->capital              = $_POST["capital"];
+  $soc->tva_intra            = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
+  $soc->forme_juridique_code = $_POST["forme_juridique_code"];
+  $soc->effectif_id          = $_POST["effectif_id"];
+  $soc->client               = $_POST["client"];
+  $soc->fournisseur          = $_POST["fournisseur"];
 
   if ($_POST["action"] == 'update')
     {
@@ -73,7 +72,7 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 llxHeader();
 $form = new Form($db);
 
-if ($action == 'create') 
+if ($_GET["action"] == 'create') 
 {
   /*
    * Fiche societe en mode création
@@ -143,7 +142,7 @@ if ($action == 'create')
   print '</table>';
   print '</form>';
 }
-elseif ($action == 'edit')
+elseif ($_GET["action"] == 'edit')
 {
   /*
    * Fiche societe en mode edition
@@ -151,13 +150,13 @@ elseif ($action == 'edit')
    
   print_titre("Edition de la société");
 
-  if ($socid)
+  if ($_GET["socid"])
     {
       $soc = new Societe($db);
-      $soc->id = $socid;
-      $soc->fetch($socid);
+      $soc->id = $_GET["socid"];
+      $soc->fetch($_GET["socid"]);
 
-      print '<form action="soc.php?socid='.$socid.'" method="post">';
+      print '<form action="soc.php?socid='.$soc->id.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
 
       print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
@@ -225,8 +224,8 @@ elseif ($action == 'edit')
 else
 {
   $soc = new Societe($db);
-  $soc->id = $socid;
-  $soc->fetch($socid);
+  $soc->id = $_GET["socid"];
+  $soc->fetch($_GET["socid"]);
 
   $head[0][0] = 'soc.php?socid='.$soc->id;
   $head[0][1] = "Fiche société";
