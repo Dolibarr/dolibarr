@@ -39,7 +39,7 @@ $facture_rib_number_var = FACTURE_RIB_NUMBER;
 
 if ($action == 'set')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'FACTURE_ADDON', value='".$value."', visible=0";
+  $sql = "REPLACE INTO llx_const SET name = 'FACTURE_ADDON', value='".$value."', visible=0, type='chaine'";
 
   if ($db->query($sql))
     {
