@@ -150,6 +150,8 @@ class GraphLignesCommandesWeek extends GraphBarAcc {
     $datas_new_rej = array_reverse($datas_new_rej);
     $labels_new = array_reverse($labels_new);
 
+    $this->LabelAngle = 0;
+
     $this->GraphDraw($this->file, $datas_new, $labels_new, $datas_new_rej);
   }
 }   
