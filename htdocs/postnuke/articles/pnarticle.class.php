@@ -45,15 +45,12 @@ class pnArticle {
 	$this->annee = 0;
       }
 
-    $sql = "UPDATE llx_livre ";
-    $sql .= " SET title = '" . trim($this->titre) ."'";
-    $sql .= ", ref = '" . trim($this->ref) ."'";
-    $sql .= ", prix = " . $this->price ."";
-    $sql .= ", annee = " . $this->annee ;
-    $sql .= ", fk_editeur = " . $this->editeurid ;
-    $sql .= ", description = '" . trim($this->description) ."'";
+    $sql = "UPDATE ". PN_DB_NAME . "." . PN_TABLE_STORIES_NAME;
+    $sql .= " SET pn_hometext = '" . nl2br(trim($this->body)) ."'";
+    //$sql .= ", pn_title = '" . trim($this->titre) ."'";
 
-    $sql .= " WHERE rowid = " . $id;
+
+    $sql .= " WHERE pn_sid = " . $id;
 
     if ( $this->db->query($sql) )
       {
