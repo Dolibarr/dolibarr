@@ -288,10 +288,12 @@ if ($_GET["account"] > 0)
 
   if ($user->rights->banque->modifier)
     {
-      print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
-      print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
-      print '<tr><td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
-      print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
+	  print "<tr><td colspan=\"7\">&nbsp;</td></tr>\n";
+	  print "<tr>";
+	  print "<td align=\"left\" colspan=\"7\"><b>Saisie d'une transaction hors facture</b></td></tr>";
+	  print '<tr>';
+	  print '<td><input name="dateoy" type="text" size="3" value="'.strftime("%Y",time()).'" maxlength="4">';
+      print '<input name="dateo" type="text" size="3" maxlength="4"></td>';
       print '<td><select name="operation">';
       print '<option value="CB">CB';
       print '<option value="CHQ">CHQ';
@@ -299,15 +301,18 @@ if ($_GET["account"] > 0)
       print '<option value="TIP">TIP';
       print '<option value="PRE">PRE';
       print '<option value="VIR">VIR';
-      print '</select></td>';
-      print '<td><input name="num_chq" type="text" size="4">';
+	  print '</select><input name="num_chq" type="text" size="4"></td>';
+	  print '<td>';
       print '<input name="label" type="text" size="40"></td>';
-      print '<td><input name="debit" type="text" size="8"></td>';
-      print '<td><input name="credit" type="text" size="8"></td>';
+	  print '<td align=right><input name="debit" type="text" size="8"></td>';
+	  print '<td align=right><input name="credit" type="text" size="8"></td>';
       print "<td colspan=\"2\" align=\"center\"><select name=\"cat1\">$options</select></td>";
-      print '</tr><tr><td colspan="3"><small>YYYYMMDD</small></td><td>0000.00</td>';
-      print '<td colspan="3" align="center"><input type="submit" value="Ajouter"></td></tr>';
-    }
+	  print '</tr>';
+	  print '<tr>';
+	  print '<td><small>YYYY MMDD</small></td><td>&nbsp;</td><td>Description</td><td align=right>0000.00</td><td align=right>0000.00</td>';
+	  print '<td colspan="2" align="center"><input type="submit" value="Ajouter"></td>';
+	  print '</tr>';
+	}
   print "</table>";
   if ($user->rights->banque->modifier)
     {
