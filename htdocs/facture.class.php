@@ -493,9 +493,9 @@ class Facture
 	    }
 	  $this->db->free();
 
-	  $total_ttc = $total_ht + $total_tva;
+	  $this->total_ttc = $total_ht + $total_tva;
 	  
-	  $sql = "UPDATE llx_facture SET amount = $amount, remise=$total_remise,  total=$total_ht, tva=$total_tva, total_ttc=$total_ttc";
+	  $sql = "UPDATE llx_facture SET amount = $amount, remise=$total_remise,  total=$total_ht, tva=$total_tva, total_ttc=$this->total_ttc";
 	  $sql .= " WHERE rowid = $facid ;";
 	  
 	  if ( $this->db->query($sql) )
