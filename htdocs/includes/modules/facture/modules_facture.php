@@ -53,7 +53,7 @@ class ModelePDFFactures extends FPDF
 
 
 /*!	\class ModeleNumRefFactures
-		\brief  Classe mère des modèles de numérotation des références de facture
+	\brief  Classe mère des modèles de numérotation des références de facture
 */
 
 class ModeleNumRefFactures
@@ -119,6 +119,7 @@ function facture_pdf_create($db, $facid)
 	}
       else
 	{
+	  dolibarr_syslog("Erreur dans facture_pdf_create");
 	  dolibarr_print_error($db,$obj->pdferror());
 	  return 0;
 	}
@@ -137,7 +138,7 @@ function facture_pdf_create($db, $facid)
 		\param	    soc  		objet societe
 		\return     string      reference libre pour la facture
 */
-function facture_get_num($soc)
+function facture_get_num($soc, $prefixe_additionnel='')
 {
   global $db, $langs;
   $langs->load("bills");
@@ -155,12 +156,13 @@ function facture_get_num($soc)
 
       $obj = new $classname();
 
-      if ( $obj->getNumRef($soc) != "")
+      if ( $obj->getNumRef($soc, $prefixe_additionnel) != "")
 	{
-	  return $obj->getNumRef($soc);
+	  return $obj->getNumRef($soc, $prefixe_additionnel);
 	}
       else
 	{
+	  dolibarr_syslog("Erreur dans facture_get_num");
 	  dolibarr_print_error($db,$obj->numreferror());
 	  return "";
 	}
