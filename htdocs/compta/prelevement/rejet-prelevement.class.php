@@ -55,6 +55,7 @@ class RejetPrelevement
     $this->motifs[1] = "Provision insuffisante";
     $this->motifs[2] = "Tirage contesté";
     $this->motifs[3] = "Pas de bon à payer";
+    $this->motifs[4] = "Opposition sur compte";
 
   }
 
