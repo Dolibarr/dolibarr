@@ -20,12 +20,14 @@
 # General Makefile
 #
 
-FILE=dolibarr-0.1.6.tar
+FILE=dolibarr-0.1.6
 
 tar:
+	mkdir $(FILE)
+	mv * $(FILE)
 	rm -f dolibarr-*.tar.gz*
-	tar --exclude-from tar.exclude -cvvf $(FILE) .
-	gzip $(FILE)
-	md5sum $(FILE).gz > $(FILE).gz.md5sum
-	scp $(FILE).gz* rodolphe.quiedeville.org:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/dl/
-	scp $(FILE).gz rodolphe@subversions.gnu.org:/upload/dolibarr
+	tar --exclude-from $(FILE)/tar.exclude -cvvf $(FILE).tar $(FILE)
+	gzip $(FILE).tar
+	md5sum $(FILE).tar.gz > $(FILE).tar.gz.md5sum
+	scp $(FILE).tar.gz* rodolphe.quiedeville.org:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/dl/
+	scp $(FILE).tar.gz rodolphe@subversions.gnu.org:/upload/dolibarr
