@@ -62,7 +62,7 @@ if ( $db->query($sql) )
       dolibarr_syslog("candidat-desactive: desactivation CV ".$obj->idp);
 
       $cv = new Cv($db);
-      $cv->id = $_GET["id"];
+      $cv->id = $obj->idp;
       $cv->fetch();
       $cv->deactivate();
       $i++;     
