@@ -78,9 +78,9 @@ if (strlen($_GET["begin"])) // filtre sur la premiere lettre du nom
   $sql .= " WHERE upper(p.name) like '".$_GET["begin"]."%'";
 }
 
-if ($contactname) // acces a partir du module de recherche
+if (strlen($_GET["contactname"]) && $_GET["mode"] == "search") // acces a partir du module de recherche
 {
-  $sql .= " AND ( lower(p.name) like '%".strtolower($contactname)."%' OR lower(p.firstname) like '%".strtolower($contactname)."%') ";
+  $sql .= " WHERE ( lower(p.name) like '%".strtolower($_GET["contactname"])."%' OR lower(p.firstname) like '%".strtolower($_GET["contactname"])."%') ";
   $sortfield = "lower(p.name)";
   $sortorder = "ASC";
 }
@@ -194,12 +194,14 @@ if ($result)
 	  print '<td><a href="mailto:'.$obj->email.'">'.$obj->email.'</a>&nbsp;</td>';
 	}
 
-      print "</TR>\n";
+      print "</tr>\n";
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
-} else {
+}
+else
+{
   print $db->error();
   print "<br>".$sql;
 }
