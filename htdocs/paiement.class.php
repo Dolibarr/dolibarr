@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,9 +53,7 @@ class Paiement
       $sql .= " WHERE p.fk_paiement = c.id";
       $sql .=" AND p.rowid = ".$id;      
 
-      $result = $this->db->query($sql);
-      
-      if ($result) 
+      if ($this->db->query($sql)) 
 	{
 	  if ($this->db->num_rows()) 
 	    {
@@ -67,98 +65,91 @@ class Paiement
 	      $this->montant        = $obj->amount;
 	      $this->note           = $obj->note;
 	      $this->type_libelle   = $obj->paiement_type;
+
+	      return 1;
+	    }
+	  else
+	    {
+	      return 0;
 	    }
 	  $this->db->free();
-
-	  //
-	  // Factures concernées
-	  // TODO déplacer dans une autre table l'info pour permettre le paiement
-	  // Sur plusieurs factures
-	  //
-	  $sql = "SELECT p.rowid,".$this->db->pdate("p.datep")." as dp, p.amount";
-	  $sql .=", c.libelle as paiement_type, p.num_paiement";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
-	  $sql .= " WHERE p.fk_paiement = c.id";
-	  $sql .=" AND p.rowid = ".$id;      
-	  
-	  $result = $this->db->query($sql);
-	  
-	  if ($result) 
-	    {
-	      if ($this->db->num_rows()) 
-		{
-		  $obj = $this->db->fetch_object($result , 0);
-		}
-	    }
-
 	}
       else
 	{
 	  print $this->db->error();
+	  return 0;
 	}
     }
   /*
    *
    *
-   *
    */
-  Function create($pid, $user)
+  Function create($user)
   {
+    $sql_err = 0;
     /*
      *  Insertion dans la base
      */
-    if (strlen(trim($this->amount)))
-      {    
-	$this->amount = ereg_replace(",",".",$this->amount);
-
-	if ($pid > 0)
+    if ($this->db->begin())
+      {
+	$total = 0;
+	foreach ($this->amounts as $key => $value)
 	  {
-	    $sql = "INSERT INTO llx_paiement_facture (fk_facture, fk_paiement, amount)";
-	    $sql .= " VALUES ($this->facid, $pid, $this->amount)";
+	    $facid = $key;
+	    $value = trim($value);
+	    $amount = round(ereg_replace(",",".",$value), 2);
 
-	    $result = $this->db->query($sql);
-
-	    $sql = "UPDATE llx_paiement SET amount = amount + ".$this->amount;
-	    $result = $this->db->query($sql);
-
-	    return $pid;
-	  }
-	else
-	  {
-
-	    $sql = "INSERT INTO llx_paiement (fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note, fk_user_creat)";
-	    $sql .= " VALUES ($this->facid, now(), $this->datepaye,$this->amount,'$this->author', $this->paiementid, '$this->num_paiement', '$this->note', $user->id)";
-	
-	    $result = $this->db->query($sql);
-	
-	    if ($result) 
+	    if (is_numeric($amount))
 	      {
+		$total += $amount;
+	      }
+	  }
+
+	if ($total > 0)
+	  {
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
+	    $sql .= " VALUES (now(), $this->datepaye, $total, $this->paiementid, '$this->num_paiement', '$this->note', $user->id)";
+
+	    if ( $this->db->query($sql) )
+	      {
+
 		$this->id = $this->db->last_insert_id();
 
-		$sql = "INSERT INTO llx_paiement_facture (fk_facture, fk_paiement, amount)";
-		$sql .= " VALUES ($this->facid, ".$this->id.", $this->amount)";
-
-		$result = $this->db->query($sql);
-
-		$sql = "UPDATE llx_paiement SET amount = amount + ".$this->amount;
-		$result = $this->db->query($sql);
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note)";
-		$sql .= " VALUES ($this->facid, now(), $this->datepaye,$this->amount,'$this->author', $this->paiementid, '$this->num_paiement', '$this->note')";
-		
-		$result = $this->db->query($sql);
-		
-		if ($result) 
+		foreach ($this->amounts as $key => $value)
 		  {
-		    $this->id = $this->db->last_insert_id();
-		    return $this->id;
+		    $facid = $key;
+		    $value = trim($value);
+		    $amount = round(ereg_replace(",",".",$value), 2);
 		    
+		    if (is_numeric($amount))
+		      {
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
+			$sql .= " VALUES (".$facid.",". $this->id.",". $amount.")";
+			if (! $this->db->query($sql) )
+			  {
+			    $sql_err++;
+			  }
+		      }
 		  }
-		else
-		  {
-		print $this->db->error() ."<br>".$sql;
-	      } 
-	  } 
+	      }
+	    else
+	      {
+		$sql_err++;
+	      }
+		
+
+	    if ( $sql_err == 0 )
+	      {
+		$this->db->commit();
+		return $this->id;
+	      }
+	    else
+	      {
+		$this->rollback();
+		return -1;
+	      }
+
+	  }
       }
   }
   /*
@@ -192,40 +183,23 @@ class Paiement
    */
   Function delete()
   {
-    $sql = "SELECT ".MAIN_DB_PREFIX."paiement.rowid FROM ".MAIN_DB_PREFIX."facture, ".MAIN_DB_PREFIX."paiement WHERE  ".MAIN_DB_PREFIX."paiement.rowid = ".$this->id;
-    $sql .= " AND ".MAIN_DB_PREFIX."paiement.fk_facture = ".MAIN_DB_PREFIX."facture.rowid AND ".MAIN_DB_PREFIX."facture.paye = 0";
-
-    $result = $this->db->query($sql);
+    $sql = "DELETE FROM llx_paiement_facture WHERE fk_paiement = ".$this->id;
     
+    $result = $this->db->query($sql);
+	
     if ($result) 
-      {
-	if ($this->db->num_rows() == 1)
-	  {
-	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiement WHERE ".MAIN_DB_PREFIX."paiement.rowid = ".$this->id;
-
-	    $result = $this->db->query($sql);
-	    
-	    if ($result) 
-	      {
-
-		$sql = "DELETE FROM llx_paiement_facture WHERE fk_paiement.rowid = ".$this->id;
-
-		$result = $this->db->query($sql);
-
-		return 1;
-	      }
-	    else
-	      {
-		print $this->db->error() ."<br>".$sql;
-		return 0;
-	      }
-	  }
+      {	    
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiement WHERE rowid = ".$this->id;
+	
+	$result = $this->db->query($sql);
+	
+	return 1;
       }
     else
       {
 	print $this->db->error() ."<br>".$sql;
 	return 0;
-      }
+      }    
   }
   /*
    * Information sur l'objet
