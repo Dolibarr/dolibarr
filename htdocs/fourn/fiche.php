@@ -24,6 +24,7 @@
 require("./pre.inc.php");
 require("../contact.class.php");
 
+$langs->load("suppliers");
 $langs->load("bills");
 $langs->load("orders");
 $langs->load("companies");
