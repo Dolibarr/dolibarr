@@ -235,6 +235,34 @@ class Product
     }
 
   /**
+   *    \brief  Lit le prix d'achat pour un fournisseur
+   *    \param  id_fourn        Id du fournisseur
+   *    \param  qty             Quantite pour lequel le prix est valide
+   *
+   */
+  function get_buyprice($fourn_id, $qty) 
+    {
+      $result = 0;
+      $sql = "SELECT pf.price";
+      $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf ";
+      $sql .= " WHERE pf.fk_soc = ".$fourn_id;
+      $sql .= " AND pf.fk_product =" .$this->id;
+
+      // TODO Finir ce point
+
+      $sql .= " AND quantity = 1";
+
+      $resql = $this->db->query($sql);
+
+      if ( $resql )
+	{
+	  $row = $this->db->fetch_row($resql);
+	  $this->buyprice = $row[0];
+
+	}
+      return $result;
+    }
+  /**
    *    \brief  Modifie le prix d'achat pour un fournisseur
    *    \param  id_fourn        Id du fournisseur
    *    \param  qty             Quantite pour lequel le prix est valide
