@@ -28,10 +28,6 @@ require ("../../master.inc.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
-
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
-
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/actives.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.week.class.php");
@@ -42,62 +38,8 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/clients/clientsmoyenne.week.c
 
 $error = 0;
 
-/*
- * Création des répertoires
- *
- */
-$dirs[0] = DOL_DATA_ROOT."/graph/";
-$dirs[1] = DOL_DATA_ROOT."/graph/telephonie/";
-$dirs[2] = DOL_DATA_ROOT."/graph/telephonie/communications/";
-$dirs[3] = DOL_DATA_ROOT."/graph/telephonie/factures/";
-$dirs[4] = DOL_DATA_ROOT."/graph/telephonie/ca/";
-$dirs[5] = DOL_DATA_ROOT."/graph/telephonie/client/";
-$dirs[6] = DOL_DATA_ROOT."/graph/telephonie/lignes/";
-$dirs[7] = DOL_DATA_ROOT."/graph/telephonie/commercials/";
-
 $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
-$numdir = sizeof($dirs);
-
-$sql = "SELECT distinct fk_commercial";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-
-if ($db->query($sql))
-{
-  $num = $db->num_rows();
-  $i = 0;
-  
-  while ($i < $num)
-    {
-      $row = $db->fetch_row();	
-      
-      $dirs[($numdir + $i)] = DOL_DATA_ROOT."/graph/telephonie/commercials/".$row[0];
-      
-      $i++;
-    }
-}
-
-
-if (is_array($dirs))
-{
-  foreach ($dirs as $key => $value)
-    {
-      $dir = $value;
-      
-      if (! file_exists($dir))
-	{
-	  umask(0);
-	  if (! @mkdir($dir, 0755))
-	    {
-	      print  "Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
-	    }
-	  else
-	    {
-	      print $dir ." créé\n";
-	    }
-	}	
-    }
-}
 /***********************************************************************/
 /*
 /* Lignes actives
