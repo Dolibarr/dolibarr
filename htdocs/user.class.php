@@ -419,6 +419,18 @@ class User
 		    $this->rights->banque->configurer = 1;
 		}
 
+	      if ($module == 'societe' or $module == '')
+		{
+		  if ($obj->fk_id == 121)
+		    $this->rights->societe->lire = 1;
+
+		  if ($obj->fk_id == 122)
+		    $this->rights->societe->creer = 1;
+
+		  if ($obj->fk_id == 129)
+		    $this->rights->societe->supprimer = 1;
+		}
+
 	      if ($module == 'caisse' or $module == '')
 		{
 		  if ($obj->fk_id == 131)
@@ -431,17 +443,7 @@ class User
 		    $this->rights->caisse->configurer = 1;
 		}
 
-	      if ($module == 'societe' or $module == '')
-		{
-		  if ($obj->fk_id == 121)
-		    $this->rights->societe->lire = 1;
 
-		  if ($obj->fk_id == 122)
-		    $this->rights->societe->creer = 1;
-
-		  if ($obj->fk_id == 129)
-		    $this->rights->societe->supprimer = 1;
-		}
 
 	      $i++;
 	  }
