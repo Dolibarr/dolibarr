@@ -203,6 +203,7 @@ elseif ($action == 'edit')
  */
 
   clearstatcache();
+  umask(0);
 
   $docdir = SOCIETE_OUTPUTDIR . "/$socid";
   $url = SOCIETE_OUTPUT_URL . "/$socid";
@@ -213,8 +214,8 @@ elseif ($action == 'edit')
     }
   else
     {
-      
-      if (! @mkdir ($docdir))
+
+      if (! @mkdir ($docdir, 0775))
 	{
 	  print "<p>Impossible de créer ".$docdir;
 	}
