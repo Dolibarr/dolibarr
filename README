@@ -4,9 +4,18 @@ README
 IMPORTANT
 ---------
 
+Mise à jour de la version 1.0.0 vers 1.1.0
+
+- avant de mettre votre système à jour, vous devez valider toutes vos
+factures, le système de numérotation à changé, désormais un numéro
+provisoire est affecté lors de la création et le numéro final est
+attribué à la validation. Migrer avec des factures en mode brouillon
+peut poser des problèmes.
+
+
 Mise à jour de la version 0.4.0 vers la version 0.5.0
 
 - Lors de la mise à jour vers la version 0.5.0 vous devez désactiver
 et réactiver les modules que vous utilisez. La gestion des droits
-inclues des actions lors de l'activation des modules. Cette étape est
+inclus des actions lors de l'activation des modules. Cette étape est
 indispensable au bon fonctionnement de Dolibarr.
