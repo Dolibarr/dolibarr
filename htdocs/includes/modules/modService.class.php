@@ -89,20 +89,20 @@ class modService extends DolibarrModules
     $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
     $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
 
-    $this->rights[0][0] = 31; // id de la permission
-    $this->rights[0][1] = 'Lire les produits/services'; // libelle de la permission
-    $this->rights[0][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[1][0] = 31; // id de la permission
+    $this->rights[1][1] = 'Lire les produits/services'; // libelle de la permission
+    $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
 
-    $this->rights[0][0] = 32; // id de la permission
-    $this->rights[0][1] = 'Créer modifier les produits/services'; // libelle de la permission
-    $this->rights[0][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[2][0] = 32; // id de la permission
+    $this->rights[2][1] = 'Créer modifier les produits/services'; // libelle de la permission
+    $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
 
-    $this->rights[0][0] = 34; // id de la permission
-    $this->rights[0][1] = 'Supprimer les produits/services'; // libelle de la permission
-    $this->rights[0][2] = 'd'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[3][0] = 34; // id de la permission
+    $this->rights[3][1] = 'Supprimer les produits/services'; // libelle de la permission
+    $this->rights[3][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
 
     $sql = array();
 

@@ -88,20 +88,20 @@ class modBanque extends DolibarrModules
     $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
     $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
 
-    $this->rights[0][0] = 111; // id de la permission
-    $this->rights[0][1] = 'Lire les comptes bancaires'; // libelle de la permission
-    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[1][0] = 111; // id de la permission
+    $this->rights[1][1] = 'Lire les comptes bancaires'; // libelle de la permission
+    $this->rights[1][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[1][3] = 0; // La permission est-elle une permission par défaut
 
-    $this->rights[0][0] = 112; // id de la permission
-    $this->rights[0][1] = 'Créer modifier rapprocher transactions'; // libelle de la permission
-    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[2][0] = 112; // id de la permission
+    $this->rights[2][1] = 'Créer modifier rapprocher transactions'; // libelle de la permission
+    $this->rights[2][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
 
-    $this->rights[0][0] = 113; // id de la permission
-    $this->rights[0][1] = 'Configurer les comptes bancaires (créer, gérer catégories)'; // libelle de la permission
-    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[3][0] = 113; // id de la permission
+    $this->rights[3][1] = 'Configurer les comptes bancaires (créer, gérer catégories)'; // libelle de la permission
+    $this->rights[3][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
 
     $sql = array();
     
