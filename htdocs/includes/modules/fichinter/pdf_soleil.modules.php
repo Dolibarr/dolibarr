@@ -45,7 +45,8 @@ Class pdf_soleil
 	      
 	      if (! file_exists($dir))
 		{
-		  mkdir($dir, 755);
+		  umask(0);
+		  mkdir($dir, 0755);
 		}
 	    }
 	  
