@@ -409,8 +409,17 @@ function top_menu($head, $title="")
 
   print '<td width="15%" class="menu" align="center">'.strftime(" %d %B - %H:%M",time()).'</TD>';
 
-  print '<td width="10%" class="menu" align="center"><a href="'.DOL_URL_ROOT.'/user/logout.php" title="logout">'.$user->login.'</a></td>';
-  print '</tr>';
+  print '<td width="10%" class="menu" align="center">' ;
+
+  if (empty ($GLOBALS["REMOTE_USER"]))
+    {
+      print '<a href="'.DOL_URL_ROOT.'/user/logout.php" title="logout">'.$user->login.'</a>' ;
+    }
+  else
+    {
+      print $user->login ;
+    }
+  print '</td></tr>';
 
   //    print '</table>';
   /*
