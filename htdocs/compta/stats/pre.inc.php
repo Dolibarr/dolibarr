@@ -22,8 +22,6 @@
 require("../../main.inc.php");
 
 function llxHeader($head = "") {
-  global $user, $conf;
-
   /*
    *
    *
@@ -43,6 +41,7 @@ function llxHeader($head = "") {
   $menu->add_submenu("comp.php","Comparatif");
   $menu->add_submenu("exercices.php","Exercices");
   $menu->add_submenu("casoc.php","Par société");
+  $menu->add_submenu("cabyuser.php","Par utilisateur");
 
   left_menu($menu->liste);
 }
