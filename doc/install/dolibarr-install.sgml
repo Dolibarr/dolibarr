@@ -44,9 +44,22 @@ Installation et mise à jour de Dolibarr
 	<item>php4-mysql</item>
 	<item>php4-curl (pour la partie gestion des adhérents)</item>
 	<item>Apache</item>
+      </itemize>
+      Pour la gestion de l'authentification, Dolibarr fonctionne soit avec mod-auth-mysql soit avec Pear. Cette dernière est plus facile à installer.
+      <itemize>
+	<item>Pear (package Auth)</item>
 	<item>libapache-mod-auth-mysql</item>
       </itemize>
     </p>
+    <sect2>
+        <heading>Pear</heading>
+        <p>
+	  Pear est un ensemble de classes et des outils pour les installer et les mettre à jour. La classe utilisée dans Dolibarr est Auth.
+	</p>
+	<p>
+	  Pour plus d'informations sur pear et sur sa configuration, veuillez vous reporter à son site officiel <url url="pear.php.net">.
+	</p>
+    </sect2>
 </sect1>
 
 <sect1>
