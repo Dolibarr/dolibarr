@@ -44,7 +44,11 @@ Class pdf_propale_rouge {
 		{
 		  mkdir($dir, 755);
 		}
-	    }	  
+	    }
+	  else
+	    {
+	      print "PROPALE_OUTPUTDIR non définit !";
+	    }
 	  
 	  $file = $dir . $propale->ref . ".pdf";
 	  
