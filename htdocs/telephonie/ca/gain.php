@@ -21,9 +21,6 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-
 /*
  * Sécurité accés client
  */
@@ -32,7 +29,6 @@ if (!$user->rights->telephonie->lire) accessforbidden();
 if ($user->societe_id > 0) accessforbidden();
 
 llxHeader('','Telephonie - CA par client');
-
 
 /*
  *
@@ -46,11 +42,20 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td width="50%" valign="top">';
 
-$sql = "SELECT nom, ca, gain";
+
+$page = $_GET["page"];
+$sortorder = $_GET["sortorder"];
+$sortfield = $_GET["sortfield"];
+
+if ($sortorder == "") $sortorder="DESC";
+if ($sortfield == "") $sortfield="ca";
+
+$sql = "SELECT nom, ca, gain, cout, marge";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_stats";
 $sql .= " , " .MAIN_DB_PREFIX."societe";
 $sql .= " WHERE idp = fk_client_comm";
-$sql .= " GROUP BY gain DESC";
+$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= " LIMIT 30";
 
 if ($db->query($sql))
 {
@@ -61,10 +66,13 @@ if ($db->query($sql))
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>Client</td><td align="right">Chiffre d\'affaire</td>';
   print '<td align="right">Gain</td>';
+
+  print_liste_field_titre("Marge","gain.php","marge");
+
   print "</tr>\n";
   $var=True;
 
-  while ($i < min($num,$conf->liste_limit))
+  while ($i < $num)
     {
       $row = $db->fetch_row($i);	
       $var=!$var;
@@ -73,6 +81,7 @@ if ($db->query($sql))
       print "<td>".$row[0]."</td>\n";
       print '<td align="right">'.price($row[1])." HT</td>\n";
       print '<td align="right">'.price($row[2])." HT</td>\n";
+      print '<td align="right">'.round($row[4])." %</td>\n";
       print "</tr>\n";
       $i++;
     }
@@ -84,22 +93,10 @@ else
   print $db->error() . ' ' . $sql;
 }
 
-print '</td><td valign="top" align="center" width="50%">';
-
-print '<img src="'.DOL_URL_ROOT.'/telephonie/graph/gain_moyen_par_client.png" alt="GraphCa"><br />';
-
+//print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph=ca/gain_moyen_par_client.png" alt="Gain moyen par client"><br /><br />';
 
 print '</td></tr>';
-
-print '<tr><td width="30%" valign="top">';
-
-
-
-print '</td></tr>';
-
 print '</table>';
-
-
 
 $db->close();
 
