@@ -1,0 +1,18 @@
+Q: Could you please add support for XYZGJGNDF?
+A: Sorry, this project is at its alpha stage. I won't add any new features
+   until there is a stable version.
+
+Q: The files class.ole_pps_root.php and class.ole_pps_file.php are
+   missing. Where can I get them?
+A: They are only required for big file (>7 MB) support and available
+   as a seperate project at
+   http://bettina-attack.de/jonny/view.php?path=/projects/php_ole/
+
+Q: How can I create files bigger than 7 MB?
+A: Use class.writeexcel_workbookbig.inc.php instead of
+   class.writeexcel_workbook.inc.php. You'll need the php_ole project
+   available at
+   http://bettina-attack.de/jonny/view.php?path=/projects/php_ole/
+
+Q: Will you make the project PEAR compliant?
+A: Probably. But this means a lot of work and will require some time.
