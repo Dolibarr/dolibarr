@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * $Id$
  * $Source$
@@ -53,60 +53,70 @@ class ActionComm
    *
    *
    */
-  Function add($author) {
-    $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author, fk_user_action, fk_contact, percent, note,priority) ";
-    $sql .= " VALUES ('$this->date',$this->type,$this->societe, $author->id,";
-    $sql .= $this->user->id . ", $this->contact, $this->percent, '$this->note', $this->priority);";
-
-    if ($this->db->query($sql) ) {
-      return 1;
-    } else {
-      print $this->db->error() . "<br>" . $sql;
+  Function add($author)
+    {
+      $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author, fk_user_action, fk_contact, percent, note,priority) ";
+      $sql .= " VALUES ('$this->date',$this->type,$this->societe, $author->id,";
+      $sql .= $this->user->id . ", $this->contact, $this->percent, '$this->note', $this->priority);";
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error() . "<br>" . $sql;
+	}
     }
-  }
   /*
    *
    *
    *
    */
-  Function fetch($id) {
+  Function fetch($id)
+    {
+      
+      $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note,c.libelle, fk_soc, fk_user_author, fk_contact ";
+      $sql .= "FROM actioncomm as a, c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
 
-    $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note,c.libelle, fk_soc, fk_user_author, fk_contact ";
-    $sql .= "FROM actioncomm as a, c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
-
-    if ($this->db->query($sql) ) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object(0);
-
-	$this->id = $id;
-	$this->type = $obj->libelle;
-	$this->date = $obj->da;
-	$this->note =$obj->note;
-
-	$this->societe->id = $obj->fk_soc;
-
-	$this->author->id = $obj->fk_user_author;
-
-	$this->contact->id = $obj->fk_contact;
-
-	$this->db->free();
+      if ($this->db->query($sql) )
+	{
+	  if ($this->db->num_rows())
+	    {
+	      $obj = $this->db->fetch_object(0);
+	      
+	      $this->id = $id;
+	      $this->type = $obj->libelle;
+	      $this->date = $obj->da;
+	      $this->note =$obj->note;
+	      
+	      $this->societe->id = $obj->fk_soc;
+	      
+	      $this->author->id = $obj->fk_user_author;
+	      
+	      $this->contact->id = $obj->fk_contact;
+	      
+	      $this->db->free();
+	    }
+	}
+      else
+	{
+	  print $this->db->error();
+	}    
+    }
+  /*
+   *
+   *
+   *
+   */
+  Function delete($id)
+    {
+      
+      $sql = "DELETE FROM actioncomm WHERE id=$id;";
+      
+      if ($this->db->query($sql) ) {
+	
       }
-    } else {
-      print $this->db->error();
-    }    
-  }
-  /*
-   *
-   *
-   *
-   */
-  Function delete($id) {
-
-    $sql = "DELETE FROM actioncomm WHERE id=$id;";
-
-    if ($this->db->query($sql) ) {
-
     }
-  }
 }    
 ?>
