@@ -32,6 +32,7 @@ create table llx_livre
   annee		  smallint(64),
   description     text,
   prix            decimal(15,4),
+  fk_editeur      integer,
   fk_user_author  integer
 );
 
