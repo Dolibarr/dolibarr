@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Brian Fraval <brian@fraval.org>
- * Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +87,10 @@ class Societe {
     $sql .= ",fax = '" . trim($this->fax) ."'";
     $sql .= ",url = '" . trim($this->url) ."'";
     $sql .= ",siren = '" . trim($this->siren) ."'";
+    $sql .= ",siret = '" . trim($this->siret) ."'";
+    $sql .= ",ape = '" . trim($this->ape) ."'";
+    $sql .= ",tva_intra = '" . trim($this->tva_intra) ."'";
+    $sql .= ",capital = " . $this->capital;
     $sql .= ",client = " . $this->client ;
     $sql .= ",fournisseur = " . $this->fournisseur ;
     $sql .= " WHERE idp = " . $id .";";
@@ -179,9 +183,11 @@ class Societe {
     {
       $this->id = $socid;
 
-      $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm,";
-      $sql .= " s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
+      $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
+      $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
+      $sql .= ", s.siret, s.capital, s.ape, s.tva_intra";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+
       $sql .= " WHERE s.idp = ".$this->id;
 
       $result = $this->db->query($sql);
@@ -202,7 +208,15 @@ class Societe {
 	      $this->tel = $obj->tel;
 	      $this->fax = $obj->fax;
 	      
-	      $this->siren = $obj->siren;
+	      $this->siren     = $obj->siren;
+	      $this->siret     = $obj->siret;
+	      $this->ape       = $obj->ape;
+	      $this->capital   = $obj->capital;
+
+	      $this->tva_intra = $obj->tva_intra;
+	      $this->tva_intra_code = substr($obj->tva_intra,0,2);
+	      $this->tva_intra_num = substr($obj->tva_intra,2);
+
 
 	      $this->prefix_comm = $obj->prefix_comm;
 	      
