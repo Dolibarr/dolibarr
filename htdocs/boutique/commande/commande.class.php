@@ -52,6 +52,7 @@ class Commande {
 	$result = $this->db->fetch_array();
 
 	$this->id          = $result["orders_id"];
+	$this->client_id   = stripslashes($result["customers_id"]);
 	$this->client_name = stripslashes($result["customers_name"]);
 	
 	$this->db->free();
