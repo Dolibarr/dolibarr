@@ -147,7 +147,7 @@ class mod_codeclient_zebre
   }
 
 
-  function verif_syntax($code)
+  function verif_syntax(&$code)
   {
     $res = 0;
     
