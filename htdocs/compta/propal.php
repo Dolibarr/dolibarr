@@ -115,7 +115,7 @@ if ($_GET["propalid"])
   $result = $db->query($sql);
 
   if ( $result ) {
-    $obj = $db->fetch_object( 0 );
+    $obj = $db->fetch_object($result);
     
     if ($db->num_rows()) {
             
@@ -233,7 +233,7 @@ if ($_GET["propalid"])
 	  $var=True;
 	  while ($i < $num_fac_asso)
 	    {
-	      $objp = $db->fetch_object( $i);
+	      $objp = $db->fetch_object();
 	      $var=!$var;
 	      print "<TR bgcolor=\"#e0e0e0\">";
 	      print "<TD><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a>";
@@ -323,7 +323,7 @@ if ($_GET["propalid"])
 	$var=True;	
 	while ($i < $num) 
 	  {
-	    $objp = $db->fetch_object($i);
+	    $objp = $db->fetch_object();
 	    $var=!$var;
 	    print "<tr $bc[$var]><td>[$objp->ref]</TD>\n";
 	    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</td>';
@@ -343,7 +343,7 @@ if ($_GET["propalid"])
 	$i = 0;	
 	while ($i < $num) 
 	  {
-	    $objp = $db->fetch_object($i);
+	    $objp = $db->fetch_object();
 	    $var=!$var;
 	    print "<tr $bc[$var]><td>&nbsp;</td>\n";
 	    print '<td>'.$objp->product.'</td>';
@@ -474,7 +474,7 @@ if ($_GET["propalid"])
 
       while ($i < min($num, $limit))
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object();
 	
 	  $var=!$var;
 	  print "<tr $bc[$var]>";

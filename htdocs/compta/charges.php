@@ -82,7 +82,7 @@ if ( $db->query($sql) ) {
   $i = 0;
 
   while ($i < $num) {
-    $obj = $db->fetch_object( $i);
+    $obj = $db->fetch_object();
     $var = !$var;
     print "<tr $bc[$var]>";
     print '<td>'.$obj->nom.'</td><td>'.price($obj->total).'</td>';

@@ -156,16 +156,16 @@ if ( $db->query($sql) )
   print '<td align="center">Date</td>';
   print '<td align="center">Taille</td>';
   print "</tr>\n";
-  $var=True;
+  $var=true;
   while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
       
       $var=!$var;
     
-      print "<TR $bc[$var]>";
+      print "<tr $bc[$var]>";
 
-      print "<td>$obj->df</TD>\n";
+      print "<td>$obj->df</td>\n";
       print '<td align="center">'.$obj->cc.'</td>';
 
       print '<td><a href="index.php?action=pdf&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a></td>';

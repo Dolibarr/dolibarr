@@ -146,7 +146,7 @@ if ($_GET["action"] == 'create')
       $num = $db->num_rows();
       if ($num)
 	{
-	  $obj = $db->fetch_object( 0);
+	  $obj = $db->fetch_object($result);
 
 	  $total = $obj->total;
 
@@ -179,7 +179,7 @@ if ($_GET["action"] == 'create')
 	      $i = 0; 
 	      while ($i < $num)
 		{
-		  $objopt = $db->fetch_object( $i);
+		  $objopt = $db->fetch_object($result);
 		  print "<option value=\"$objopt->id\">$objopt->libelle</option>\n";
 		  $i++;
 		}
@@ -203,7 +203,7 @@ if ($_GET["action"] == 'create')
 	      $i = 0; 
 	      while ($i < $num)
 		{
-		  $objopt = $db->fetch_object( $i);
+		  $objopt = $db->fetch_object($result);
 		  print '<option value="'.$objopt->rowid.'"';
 		  if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
 		    {
@@ -237,7 +237,7 @@ if ($_GET["action"] == 'create')
 		{
 		  $i = 0;
 		  print '<tr><td colspan="3">';
-		  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		  print '<table class="noborder" width="100%">';
 		  print '<tr class="liste_titre">';
 		  print '<td>Facture</td><td align="center">Date</td>';
 		  print '<td align="right">Montant TTC</td>';	      
@@ -252,7 +252,7 @@ if ($_GET["action"] == 'create')
 		  
 		  while ($i < $num)
 		    {
-		      $objp = $db->fetch_object($i);
+		      $objp = $db->fetch_object();
 		      $var=!$var;
 		      
 		      print "<tr $bc[$var]>";
@@ -363,7 +363,7 @@ if ($action == '')
       
       print_barre_liste("Paiements", $page, "paiement.php","",$sortfield,$sortorder,'',$num);
 
-      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+      print '<TABLE border="0" width="100%">';
       print '<TR class="liste_titre">';
       print "<td>Facture</td>";
       print "<td>Date</td>";
@@ -375,7 +375,7 @@ if ($action == '')
       
       while ($i < min($num,$limit))
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object();
 	  $var=!$var;
 	  print "<TR $bc[$var]>";
 	  print "<TD><a href=\"facture.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";

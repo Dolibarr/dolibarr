@@ -116,7 +116,7 @@ if ($rowid)
   if ($result) {
     $num = $db->num_rows();
     if ($num) {
-      $obj = $db->fetch_object( 0);
+      $obj = $db->fetch_object($result);
 
       $total = $obj->total;
     }

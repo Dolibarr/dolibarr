@@ -109,7 +109,7 @@ if ($conf->facture->enabled)
 	  $var = True;
 	  while ($i < $num && $i < 20)
 	    {
-	      $obj = $db->fetch_object( $i);
+	      $obj = $db->fetch_object();
 	      $var=!$var;
 	      print '<tr '.$bc[$var].'><td width="92"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
 	      print '<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
@@ -151,7 +151,7 @@ if ($user->societe_id == 0)
 	  $var = True;
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object( $i);
+	      $obj = $db->fetch_object();
 	      $var = !$var;
 	      print "<tr $bc[$var]>";
 	      print '<td>'.$obj->libelle.'</td>';
@@ -191,7 +191,7 @@ if ( $db->query($sql) )
       $var = True;
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object();
 	  $var = !$var;
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
@@ -237,7 +237,7 @@ if ($user->comm > 0 && $conf->commercial->enabled )
 	  while ($i < $num)
 	    {
 	      $var=!$var;
-	      $obj = $db->fetch_object($i);
+	      $obj = $db->fetch_object();
 	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_file()."</a>";
 	      print "&nbsp;<a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
@@ -279,7 +279,7 @@ if ($conf->facture->enabled)
 	  $total = $totalam = 0;
 	  while ($i < $num && $i < 20)
 	    {
-	      $obj = $db->fetch_object( $i);
+	      $obj = $db->fetch_object();
 	      $var=!$var;
 	      print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>';
 	      print '&nbsp;<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
@@ -313,7 +313,7 @@ if ( $result )
   $i = 0;
   while ($i < $db->num_rows() )
     {
-      $obj = $db->fetch_object($i);
+      $obj = $db->fetch_object();
       $var=!$var;
       
       print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td><td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
@@ -345,7 +345,7 @@ if ($user->societe_id == 0)
       $num = $db->num_rows();
       if ($num)
 	{
-	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre"><td colspan="2">Factures fournisseurs à payer</td><td align="right">Montant TTC</td></tr>';
 	  print "</tr>\n";
 	  $i = 0;
@@ -353,7 +353,7 @@ if ($user->societe_id == 0)
 	  $total = $totalam = 0;
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object( $i);
+	      $obj = $db->fetch_object();
 	      $var = !$var;
     	  print '<tr '.$bc[$var].'><td width="20%"><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_file().'</a>';
 	      print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';

@@ -23,6 +23,9 @@
 require("./pre.inc.php");
 require("./propal_model_pdf.class.php");
 
+$langs->load("projects");
+
+
 $user->getrights('propale');
 $user->getrights('fichinter');
 $user->getrights('commande');
@@ -112,7 +115,7 @@ if ($_GET["action"] == 'create')
 	  
 	  while ($i < $numdest)
 	    {
-	      $contact = $db->fetch_object( $i);
+	      $contact = $db->fetch_object();
 	      print '<option value="'.$contact->idp.'"';
 	      if ($contact->idp == $setcontact)
 		{
@@ -159,7 +162,7 @@ if ($_GET["action"] == 'create')
 	  
 	  while ($i < $numprojet)
 	    {
-	      $projet = $db->fetch_object($i);
+	      $projet = $db->fetch_object();
 	      print "<option value=\"$projet->rowid\">$projet->title</option>";
 	      $i++;
 	    }
@@ -169,7 +172,7 @@ if ($_GET["action"] == 'create')
     }
   else
     {
-      print $db->error()."$sql";
+      dolibarr_print_error($db);
     }
 
 
@@ -191,13 +194,13 @@ if ($_GET["action"] == 'create')
   $sql .= " ORDER BY ref DESC";
   if ( $db->query($sql) )
     {
-      $opt = "<option value=\"0\" SELECTED></option>";
+      $opt = "<option value=\"0\" selected></option>";
       if ($result)
 	{
 	  $num = $db->num_rows();	$i = 0;	
 	  while ($i < $num)
 	    {
-	      $objp = $db->fetch_object( $i);
+	      $objp = $db->fetch_object();
 	      $opt .= "<option value=\"$objp->rowid\">[$objp->ref] ".substr($objp->label,0,40)."</option>\n";
 	      $i++;
 	    }
@@ -211,7 +214,7 @@ if ($_GET["action"] == 'create')
   
   print_titre("Services/Produits");
     
-  print '<table class="border" cellspacing="0" cellpadding="3">';
+  print '<table class="border">';
   print '<tr><td>Produit</td><td>Quan.</td><td>Remise</td></tr>';
   for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
     {

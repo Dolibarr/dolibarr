@@ -30,7 +30,7 @@ function pt ($db, $sql) {
     $total = 0 ;
     $month = 1 ;
     while ($i < $num) {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
 
       $ca[$obj->dm] = $obj->sum;
       
@@ -51,7 +51,7 @@ function pm ($db) {
 
     $month = 1 ;
     while ($i < $num) {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
 
       $ca[$obj->dm] = $obj->amount;
       

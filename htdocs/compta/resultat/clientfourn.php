@@ -73,7 +73,7 @@ if ($result) {
   if ($num > 0) {
     $var=True;
     while ($i < $num) {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       $var=!$var;
             
       print "<tr $bc[$var]><td>&nbsp</td>";
@@ -114,7 +114,7 @@ if ($result) {
   if ($num > 0) {
     $var=True;
     while ($i < $num) {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       $var=!$var;
             
       print "<tr $bc[$var]><td>&nbsp</td>";
@@ -155,7 +155,7 @@ if ( $db->query($sql) ) {
   $i = 0;
 
   while ($i < $num) {
-    $obj = $db->fetch_object( $i);
+    $obj = $db->fetch_object();
 
     $total = $total - $obj->amount;
     $subtotal = $subtotal + $obj->amount;
@@ -195,7 +195,7 @@ if ( $db->query($sql) ) {
   $i = 0;
 
   while ($i < $num) {
-    $obj = $db->fetch_object( $i);
+    $obj = $db->fetch_object();
 
     $total = $total - $obj->amount;
     $subtotal = $subtotal + $obj->amount;

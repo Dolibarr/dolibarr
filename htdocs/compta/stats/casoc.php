@@ -55,7 +55,7 @@ if ($result)
 {
   if ($db->num_rows() > 0)
     {
-      $objp = $db->fetch_object(0);
+      $objp = $db->fetch_object($result);
       $catotal = $objp->ca;
     }
 }
@@ -95,7 +95,7 @@ if ($result)
       $var=True;
       while ($i < $num)
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  

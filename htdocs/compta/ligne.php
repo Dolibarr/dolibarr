@@ -30,7 +30,7 @@ if ( $db->query($sql) ) {
   $i = 0;
   $options = "<option value=\"0\" SELECTED></option>";
   while ($i < $num) {
-    $obj = $db->fetch_object($i);
+    $obj = $db->fetch_object();
     $options .= "<option value=\"$obj->rowid\">$obj->number</option>\n"; $i++;
   }
   $db->free();
@@ -99,7 +99,7 @@ if ($action == 'create') {
     if ($num > 0) {
 	$var=True;
 	while ($i < $num) {
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	
 	  print "<TR $bc[$var]>";

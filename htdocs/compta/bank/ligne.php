@@ -81,7 +81,7 @@ if ($_POST["action"] == 'UPDATE')
       $var=True;  
       $amount = str_replace(' ','',$_POST['amount']);
       $num = $db->num_rows();
-      $objp = $db->fetch_object( 0);
+      $objp = $db->fetch_object($result);
       if ($objp->rappro)
         die ("Vous ne pouvez pas modifier une écriture déjà rapprochée");
       $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."' , dateo = '".$_POST["date"]."', amount='$amount' WHERE rowid = $rowid;";
@@ -115,7 +115,7 @@ if ($result)
   $options = "<option value=\"0\" SELECTED></option>";
   while ($i < $num)
     {
-      $obj = $db->fetch_object($i);
+      $obj = $db->fetch_object($result);
       $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n";
       $i++;
     }
@@ -150,7 +150,7 @@ if ($result)
   $i = 0; $total = 0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object($i);
+      $objp = $db->fetch_object($result);
       $total = $total + $objp->amount;
       
       $acct=new Account($db,$objp->fk_account);
@@ -269,7 +269,7 @@ if ($result)
   $i = 0; $total = 0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
 
       $var=!$var;
       print "<tr $bc[$var]>";

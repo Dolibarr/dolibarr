@@ -109,7 +109,7 @@ if ($conf->propal->enabled) {
 	      
 	      while ($i < $num)
 		{
-		  $obj = $db->fetch_object( $i);
+		  $obj = $db->fetch_object();
 		  $var=!$var;
 		  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
 		  $i++;
@@ -144,7 +144,7 @@ if ($conf->commande->enabled)
           $var = False;
           while ($i < $num)
 	    {
-	      $obj = $db->fetch_object($i);
+	      $obj = $db->fetch_object();
 	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"../commande/fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
@@ -184,7 +184,7 @@ if ( $db->query($sql) )
       
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object();
 	  $var = !$var;
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
@@ -225,7 +225,7 @@ if ( $db->query($sql) )
 
   while ($i < $num ) 
 	{
-	  $obj = $db->fetch_object($i);
+	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
@@ -272,7 +272,7 @@ if ( $db->query($sql) )
       
       while ($i < $num ) 
 	{
-	  $obj = $db->fetch_object($i);
+	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
@@ -332,7 +332,7 @@ if ($conf->contrat->enabled)
 	  $var=false;
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object( $i);
+	      $obj = $db->fetch_object();
 	      print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".img_file()."</a>&nbsp;";
 	      print "<a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".$obj->ref."</a></td>";
 	      print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
@@ -375,7 +375,7 @@ if ($conf->propal->enabled) {
 	  $var=false;
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object( $i);
+	      $obj = $db->fetch_object();
 	      print "<tr $bc[$var]><td width=\"15%\"><a href=\"propal.php?propalid=".$obj->propalid."\">".img_file()."</a>&nbsp;";
 	      print "<a href=\"propal.php?propalid=".$obj->propalid."\">".$obj->ref."</a></td>";
 	      print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
@@ -417,7 +417,7 @@ if ($conf->propal->enabled) {
 	    $var=False;	      
 	    while ($i < $num)
 	      {
-		$objp = $db->fetch_object( $i);		  
+		$objp = $db->fetch_object();		  
 		print "<tr $bc[$var]>";
 		print '<td width="15%">';
 		print '<a href="propal.php?propalid='.$objp->propalid.'">'.img_file().'</a>';

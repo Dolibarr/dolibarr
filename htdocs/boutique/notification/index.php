@@ -51,29 +51,29 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\"><td>";
+  print "<table class=\noborder\" width=\"100%\">";
+  print "<tr class=\"liste_titre\"><td>";
   print_liste_field_titre("Client","index.php", "c.customers_lastname");
   print "</td>";
   print "<td>Produit</td>";
-  print "</TR>\n";
+  print "</tr>\n";
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object();
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->customers_firstname $objp->customers_lastname</a></TD>\n";
+      print "<tr $bc[$var]>";
+      print "<td width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->customers_firstname $objp->customers_lastname</a></TD>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_name."</a></td>";
-      print "</TR>\n";
+      print "</tr>\n";
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 $db->close();

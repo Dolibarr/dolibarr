@@ -187,7 +187,7 @@ if ($_GET["action"] == 'create') {
       $i = 0; 
       while ($i < $num) 
 	{
-	  $objopt = $db->fetch_object( $i);
+	  $objopt = $db->fetch_object();
 	  print "<option value=\"$objopt->rowid\">$objopt->libelle</option>\n";
 	  $i++;
 	}    
@@ -260,7 +260,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
       $i = 0; 
       while ($i < $num) 
 	{
-	  $objopt = $db->fetch_object( $i);
+	  $objopt = $db->fetch_object();
 	  print "<option value=\"$objopt->rowid\">$objopt->libelle</option>\n";
 	  $i++;
 	}    

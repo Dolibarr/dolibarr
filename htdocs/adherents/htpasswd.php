@@ -64,7 +64,7 @@ if ($result)
   print "<HR>\n";
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       $htpass=crypt($objp->pass,initialiser_sel());
       print $objp->login.":".$htpass."<BR>\n";
       $i++;

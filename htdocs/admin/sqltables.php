@@ -39,11 +39,11 @@ print_barre_liste("Liste des tables", $page, "sqltables.php");
 
 $sql = "SELECT name, loaded FROM ".MAIN_DB_PREFIX."sqltables";
 
-print "<table class=\noboirder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+print "<table class=\"noborder\" width=\"100%\">";
 print '<tr class="liste_titre">';
-print "<td>Nom</td>";
+print '<td>'.$langs->trans("Name").'</td>';
 print '<td align="center">Chargée</td>';
-print '<td align="center">Action</td>';
+print '<td align="center">'.$langs->trans("Action").'</td>';
   print "</tr>\n";
  
 if ( $db->query($sql) ) {
@@ -52,7 +52,7 @@ if ( $db->query($sql) ) {
 
   $var=True;
   while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+    $objp = $db->fetch_object();
     $var=!$var;
     print "<tr $bc[$var]>";
     print "<td>$objp->name</td>\n";

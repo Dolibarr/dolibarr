@@ -46,7 +46,7 @@ if ($result)
   $num = $db->num_rows();
   $i = 0; 
   while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+    $objp = $db->fetch_object($result);
     $accounts[$i] = $objp->rowid;
     
     $i++;
@@ -57,7 +57,7 @@ if ($result)
 /*
  * Comptes
  */
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>Comptes courants</td><td>Banque</td>';
 print '<td align="left">Numéro</td><td align="right">Solde</td><td align="center">Clos</td>';
 print "</tr>\n";

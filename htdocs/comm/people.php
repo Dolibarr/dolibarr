@@ -86,7 +86,7 @@ if ($_GET["socid"] > 0)
 
   if ($result) 
     {
-      $objsoc = $db->fetch_object( 0);
+      $objsoc = $db->fetch_object($result);
 
       /*
        *
@@ -130,7 +130,7 @@ if ($_GET["socid"] > 0)
 
   while ($i < $num) 
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
       print "<tr>";
       print "<td>$obj->firstname $obj->name</td>";
       print "<td>$obj->poste&nbsp;</td>";
@@ -171,7 +171,7 @@ if ($_GET["socid"] > 0)
 
       if ( $num >0 ) 
 	{
-	  $obj = $db->fetch_object( 0);
+	  $obj = $db->fetch_object();
 	}
   
       print "<form method=\"post\" action=\"people.php?socid=$socid\">";
@@ -227,7 +227,7 @@ if ($_GET["socid"] > 0)
       $i = 0 ; $num = $db->num_rows(); $tag = True;
       while ($i < $num) 
 	{
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  

@@ -153,7 +153,7 @@ class CommActionRapport {
 	  $y2 = 0;
 	  while ($i < $num)
 	    {
-	      $obj = $this->db->fetch_object($i);
+	      $obj = $this->db->fetch_object();
 	      $y = max($pdf->GetY(), $y1, $y2) + 1;
 	      $pdf->SetFont('Arial','',10);
 

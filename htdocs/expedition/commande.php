@@ -156,7 +156,7 @@ if ($_GET["id"] > 0)
 	  $reste_a_livrer = array();
 	  while ($i < $num)
 	    {
-	      $objp = $db->fetch_object( $i);
+	      $objp = $db->fetch_object();
 	      print "<TR $bc[$var]>";
 	      if ($objp->fk_product > 0)
 		{
@@ -258,7 +258,7 @@ if ($_GET["id"] > 0)
 		      $var=True;
 		      while ($i < $num)
 			{
-			  $obja = $db->fetch_object( $i);
+			  $obja = $db->fetch_object($result);
 			  print "<tr $bc[$var]>";
 			  print '<td width="54%">'.$obja->label.'</td><td>'.$obja->entrepot.'</td><td><b>Stock : '.$obja->reel.'</b></td>';
 			  print "</tr>\n";
@@ -302,7 +302,7 @@ if ($_GET["id"] > 0)
 	      
 	  if ($num)
 	    {
-	      print '<br><table class="liste" cellpadding="3" width="100%"><tr>';
+	      print '<br><table class="liste" width="100%"><tr>';
 	      print '<tr class="liste_titre">';
 	      print '<td width="54%">'.$langs->trans("Description").'</td>';
 	      print '<td align="center">Quan. livrée</td>';
@@ -313,7 +313,7 @@ if ($_GET["id"] > 0)
 	      $var=True;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object( $i);
+		  $objp = $db->fetch_object();
 		  print "<TR $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {

@@ -83,7 +83,7 @@ class Auteur {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
-		$obj = $this->db->fetch_object($i);
+		$obj = $this->db->fetch_object();
 
 		$ga[$obj->rowid] = $obj->nom;
 		$i++;

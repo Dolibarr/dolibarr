@@ -79,7 +79,7 @@ if ( $db->query($sql) )
     {
       $sortorder="DESC";
     }
-  print "<p><table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<p><table class=\"noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
   print "<td>&nbsp;</td>";
   print "<td align=\"center\"><a href=\"index.php?sortfield=idp&sortorder=$sortorder&begin=$begin\">Id</a></td>";
@@ -94,7 +94,7 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
       
       $var=!$var;
       $bc1="bgcolor=\"#90c090\"";
@@ -107,24 +107,24 @@ if ( $db->query($sql) )
 	{
 	  $bc=$bc2;
 	}
-      print "<TR $bc>";
-      print "<TD>" . ($i + 1 + ($limit * $page)) . "</TD>";
-      print "<TD align=\"center\"><b>$obj->idp</b></TD>";
-      print "<TD><a href=\"index.php?socid=$obj->idp\">$obj->nom</A></TD>\n";
+      print "<tr $bc>";
+      print "<td>" . ($i + 1 + ($limit * $page)) . "</td>";
+      print "<td align=\"center\"><b>$obj->idp</b></td>";
+      print "<td><a href=\"index.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       
-      print "<TD align=\"center\">$obj->stcomm</TD>\n";
-      print "<TD>$obj->author</TD>\n";
+      print "<td align=\"center\">$obj->stcomm</td>\n";
+      print "<td>$obj->author</TD>\n";
       print "<td>".strftime("%d %b %Y %H:%M", $obj->dateb) ."</td>";
-      print "<TD>[<a href=\"bookmark.php?action=delete&bid=$obj->bid\">Delete</A>]</TD>\n";
-      print "</TR>\n";
+      print "<td>[<a href=\"bookmark.php?action=delete&bid=$obj->bid\">Delete</A>]</TD>\n";
+      print "</tr>\n";
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error()$db;
 }
 
 $db->close();

@@ -91,12 +91,12 @@ if ($result)
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->prenom)."</a></TD>\n";
-      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->nom)."</a></TD>\n";
-      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->societe)."</a></TD>\n";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->prenom)."</a></td>\n";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->nom)."</a></td>\n";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->societe)."</a></td>\n";
       print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".strftime("%d %B %Y",$objp->datedon)."</a></td>\n";
       print "<td>$objp->projet</td>\n";
       print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';

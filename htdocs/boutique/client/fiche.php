@@ -73,34 +73,34 @@ if ($action == 'update' && !$cancel) {
 	    {
 	      $num = $db->num_rows();
 	      $i = 0;
-	      print '<p><TABLE border="0" width="50%" cellspacing="0" cellpadding="4">';
-	      print "<TR class=\"liste_titre\"><td>Commandes</td>";
+	      print '<table class="noborder" width="50%">';
+	      print "<tr class=\"liste_titre\"><td>Commandes</td>";
 	      print "</tr>\n";
 	      $var=True;
 	      while ($i < $num) {
-		$objp = $db->fetch_object( $i);
+		$objp = $db->fetch_object();
 		$var=!$var;
-		print "<TR $bc[$var]>";
+		print "<tr $bc[$var]>";
 		
 		print '<td><a href="'.DOL_URL_ROOT.'/boutique/commande/fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche"></a>&nbsp;';
 		
 		print "<a href=\"".DOL_URL_ROOT."/boutique/commande/fiche.php?id=$objp->orders_id\">".strftime("%d %B %Y",$objp->date_purchased)."</a></TD>\n";
 		
-		print "</TR>\n";
+		print "</tr>\n";
 		$i++;
 	      }
-	      print "</TABLE>";
+	      print "</table>";
 	      $db->free();
 	    }
 	  else
 	    {
-	      print $db->error();
+	      dolibarr_print_error($db);
 	    }
 	  
 	}
       else
 	{
-	  print "Fetch failed";
+	      dolibarr_print_error($db);
 	}
     
 
@@ -117,14 +117,7 @@ if ($action == 'update' && !$cancel) {
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';    
-print '<td width="20%" align="center">-</td>';    
-print '</table><br>';
-
+// Pas d'action
 
 
 $db->close();

@@ -60,33 +60,33 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\"><td>";
+  print "<table class=\"noborder\" width=\"100%\">";
+  print "<tr class=\"liste_titre\"><td>";
   print_liste_field_titre($langs->trans("Ref"),"vignettes.php", "l.ref");
   print "</td><td>";
   print_liste_field_titre("Titre","vignettes.php", "l.title");
   print "</td>";
   print '<td colspan="3">&nbsp;</td>';
-  print "</TR>\n";
+  print "</tr>\n";
   $var=True;
   while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+    $objp = $db->fetch_object();
 
     if(! file_exists(OSC_CATALOG_DIRECTORY."images/".$objp->ref.".jpg"))
       {
 	$var=!$var;
-	print "<TR $bc[$var]>";
+	print "<tr $bc[$var]>";
 	print '<td><a href="fiche.php?id='.$objp->rowid.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche livre"></a>&nbsp;';
 	
 	print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
-	print "<TD width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->title</a></TD>\n";
+	print "<td width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->title</a></TD>\n";
 
 
 	if ($objp->status == 1)
 	  {
 	    print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_green.png" border="0"></a></td>';
 	    print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_red_light.png" border="0"></a></td>';
-	    print '<TD align="right"><a href="'.OSC_CATALOG_URL.'product_info.php?products_id='.$objp->oscid.'">Fiche en ligne</a></TD>';
+	    print '<td align="right"><a href="'.OSC_CATALOG_URL.'product_info.php?products_id='.$objp->oscid.'">Fiche en ligne</a></TD>';
 	    
 	  }
 	else
@@ -96,17 +96,17 @@ if ( $db->query($sql) )
 	    print '<td>&nbsp;</td>';
 	  }
 	
-	print "</TR>\n";
+	print "</tr>\n";
 
       }
     $i++;
   }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 $db->close();

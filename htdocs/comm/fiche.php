@@ -98,7 +98,7 @@ if ($mode == 'search') {
       
   if ( $db->query($sql) ) {
     if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object(0);
+      $obj = $db->fetch_object();
       $socid = $obj->idp;
     }
     $db->free();
@@ -269,7 +269,7 @@ if ($_socid > 0)
 	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
 	while ($i < $num && $i < 2)
 	  {
-	    $objp = $db->fetch_object( $i);
+	    $objp = $db->fetch_object();
 	    print "<tr $bc[$var]>";
 	    print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
 	    if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
@@ -307,7 +307,7 @@ if ($_socid > 0)
 	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
 	while ($i < $num && $i < 2)
 	  {
-	    $objp = $db->fetch_object( $i);
+	    $objp = $db->fetch_object();
 	    $var=!$var;
 	    print "<tr $bc[$var]>";
 	    print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->propalid.'">'.$objp->ref."</a>\n";
@@ -339,7 +339,7 @@ if ($_socid > 0)
 	print "<td colspan=\"2\"><a href=\"../projet/index.php?socidp=$objsoc->id\">liste des projets ($num)</td></tr>";
       }
       while ($i < $num && $i < 5) {
-	$obj = $db->fetch_object( $i);
+	$obj = $db->fetch_object();
 	$tag = !$tag;
 	print "<tr $bc[$tag]>";
 	print '<td><a href="../projet/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
@@ -426,7 +426,7 @@ if ($_socid > 0)
       $i = 0 ; $num = $db->num_rows(); $tag = True;
       while ($i < $num)
 	{
-	$obj = $db->fetch_object( $i);
+	$obj = $db->fetch_object();
 	$var = !$var;
 	print "<tr $bc[$var]>";
 
@@ -486,7 +486,7 @@ if ($_socid > 0)
 	while ($i < $num) {
 	  $var = !$var;
 
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object();
 	  print "<tr $bc[$var]>";
 
 	  if ($oldyear == strftime("%Y",$obj->da) ) 
@@ -578,7 +578,7 @@ if ($_socid > 0)
 	    {
 	      $var = !$var;
 	      
-	      $obj = $db->fetch_object( $i);
+	      $obj = $db->fetch_object();
 	      print "<tr $bc[$var]>";
 	      
 	      if ($oldyear == strftime("%Y",$obj->da) )

@@ -159,7 +159,7 @@ if ( $db->query($sql) )
       print_barre_liste("Liste des actions commerciales réalisées ou à faire", $page, "index.php",'',$sortfield,$sortorder,'',$num);
     }
   $i = 0;
-  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<table class=\"noborder\" width=\"100%\">";
   print '<tr class="liste_titre">';
   print '<td colspan="4">'.$langs->trans("Date").'</td>';
   print '<td>Avancement</td>';
@@ -168,10 +168,10 @@ if ( $db->query($sql) )
   print '<td>Contact</Td>';
   print "<td>".$langs->trans("Comments")."</td><td>".$langs->trans("Author")."</td>";
   print "</tr>\n";
-  $var=True;
+  $var=true;
   while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
       
       $var=!$var;
     

@@ -71,7 +71,7 @@ function factures ($db, $year, $month, $paye)
       print "</TR>\n";
       $var=True;
       while ($i < $num) {
-	$objp = $db->fetch_object( $i);
+	$objp = $db->fetch_object($result);
 	$var=!$var;
 	print "<TR $bc[$var]>";
 	print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
@@ -118,7 +118,7 @@ function pt ($db, $sql, $year) {
     $month = 1 ;
 
     while ($i < $num) {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
       $var=!$var;
 
       if ($obj->dm > $month ) {

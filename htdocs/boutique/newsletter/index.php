@@ -47,7 +47,7 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<table class=\"noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\"><td>";
   print_liste_field_titre("Sujet","index.php", "email_subject");
   print "</td>";
@@ -57,7 +57,7 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
 

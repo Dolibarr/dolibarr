@@ -46,18 +46,18 @@ $sql .= $db->plimit( $limit ,$offset);
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\"><td>";
+  print "<table class=\"noborder\" width=\"100%\">";
+  print "<tr class=\"liste_titre\"><td>";
   print_liste_field_titre("Nom","index.php", "e.nom");
   print "</td>";
-  print "</TR>\n";
+  print "</tr>\n";
   $var=True;
   while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+    $objp = $db->fetch_object();
     $var=!$var;
-    print "<TR $bc[$var]>";
-    print "<TD width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->nom</a></TD>\n";
-    print "</TR>\n";
+    print "<tr $bc[$var]>";
+    print "<td width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->nom</a></td>\n";
+    print "</tr>\n";
     $i++;
   }
   print "</TABLE>";

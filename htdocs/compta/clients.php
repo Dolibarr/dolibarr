@@ -144,7 +144,7 @@ if ($mode == 'search') {
       
   if ( $db->query($sql) ) {
     if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object(0);
+      $obj = $db->fetch_object();
       $socid = $obj->idp;
     }
     $db->free();
@@ -224,7 +224,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
       
       $var=!$var;
 

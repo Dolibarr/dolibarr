@@ -650,7 +650,7 @@ if ($result)
     $var=True;
     while ($i < $num)
     {
-        $objp = $db->fetch_object( $i);
+        $objp = $db->fetch_object($result);
         $var=!$var;
         print "<tr $bc[$var]>";
         print "<td>".dolibarr_print_date($objp->dateadh)."</td>\n";

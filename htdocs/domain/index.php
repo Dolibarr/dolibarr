@@ -63,10 +63,10 @@ if ($result) {
 
   print "<form method=\"post\" action=\"index.php?viewall=$viewall&vline=$vline&account=$account\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-  print "<table class=\"border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+  print "<table class=\"border\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
   print '<td>Date</td><td>'.$langs->trans("Description").'</td>';
-  print "<td align=\"right\">Montant</TD>";
+  print '<td align="right">'.$langs->trans("Amount").'</td>';
   print "<td align=\"right\">Réduction</td>";
   print "</tr>\n";
   
@@ -78,7 +78,7 @@ if ($result) {
   $sep = 0;
 
   while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+    $objp = $db->fetch_object($result);
     $total = $total + $objp->amount;
     $time = time();
 
@@ -88,7 +88,7 @@ if ($result) {
 
     print "<td>$objp->label</td>";
 
-    print '<td><a href="http://www.'.$objp->label.'/">www.'.$objp->label.'</a></TD>';
+    print '<td><a href="http://www.'.$objp->label.'/">www.'.$objp->label.'</a></td>';
 
     print "</tr>";
 
@@ -97,12 +97,10 @@ if ($result) {
   }
   $db->free();
 
-
-
   print "</table></form>";
-} else {
-  print "<p>".$db->error();
 
+} else {
+  dolibarr_print_error($db);
 }
 
 

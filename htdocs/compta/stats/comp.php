@@ -44,7 +44,7 @@ function propals ($db, $year, $month) {
   $oldstatut = -1;
   $subtotal = 0;
   while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+    $objp = $db->fetch_object($result);
 
     if ($objp->statut <> $oldstatut ) {
       $oldstatut = $objp->statut;
@@ -127,7 +127,7 @@ function factures ($db, $year, $month, $paye) {
 	  $var=True;
 	  while ($i < $num)
 	    {
-	      $objp = $db->fetch_object( $i);
+	      $objp = $db->fetch_object($result);
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
 	      print "<td><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></td>\n";
@@ -181,7 +181,7 @@ function pt ($db, $sql, $year) {
     $month = 1 ;
 
     while ($i < $num) {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
       $var=!$var;
 
       if ($obj->dm > $month ) {

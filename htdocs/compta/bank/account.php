@@ -111,7 +111,7 @@ if ($account > 0)
       $options = "<option value=\"0\" SELECTED></option>";
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object($i);
+	  $obj = $db->fetch_object($result);
 	  $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
 	}
       $db->free();
@@ -329,7 +329,7 @@ function _print_lines($db,$sql,$acct)
       
       while ($i < $num)
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object();
 	  $total = $total + $objp->amount;
 	  $time = time();
 	  if ($i >= ($nbline - $viewline))

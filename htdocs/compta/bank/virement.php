@@ -110,7 +110,7 @@ if ($result)
     
     while ($i < $num)
       {
-	$objp = $db->fetch_object($i);
+	$objp = $db->fetch_object($result);
 	print "<option value=\"$objp->rowid\">$objp->label</option>";
 	$i++;
       }
@@ -128,7 +128,7 @@ if ($result)
     
     while ($i < $num)
       {
-	$objp = $db->fetch_object($i);
+	$objp = $db->fetch_object($result);
 	print "<option value=\"$objp->rowid\">$objp->label</option>";
 	$i++;
       }

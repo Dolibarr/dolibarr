@@ -85,21 +85,12 @@ if ($sortfield == "")
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
 
+
 $result = $db->query($sql);
 if ($result)
 {
   $num = $db->num_rows();
-  /*
-  if ($num == 1)
-    {
-      $obj = $db->fetch_object(0);
-      Header("Location: fiche.php?socid=$obj->idp");
-    }
-  else
-    {
-      llxHeader();
-    }
-  */
+
   llxHeader();
 
 
@@ -149,7 +140,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
       
       $var=!$var;
 

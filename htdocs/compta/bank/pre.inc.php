@@ -49,7 +49,7 @@ function llxHeader($head = "")
 
       while ($i < $numr) 
 	{
-	  $objp = $db->fetch_object($i);
+	  $objp = $db->fetch_object($result);
 	  $menu->add(DOL_URL_ROOT."/compta/bank/account.php?account=" . $objp->rowid,  $objp->label);
 	  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=" . $objp->rowid ,"Relevés");
       $menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=" . $objp->rowid ,"Rapport mensuel E/S");

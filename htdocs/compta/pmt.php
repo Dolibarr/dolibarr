@@ -52,12 +52,10 @@ $result = $db->query($sql);
 
 if ($result) {
 
-
-
-  print "<table class=\"noborder\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<table class=\"noborder\">";
   print "<tr bgcolor=\"orange\">";
   print "<td>".$langs->trans("Month")."</td>";
-  print "<td align=\"right\">Montant</td>";
+  print "<td align=\"right\">".$langs->trans("Amount")."</td>";
   print "</tr>\n";
 
   $bc[0]="bgcolor=\"#90c090\"";
@@ -67,16 +65,16 @@ if ($result) {
   $i = 0;
   $num = $db->num_rows();
   while ($i < $num) {
-  $obj = $db->fetch_object( $i);
+  $obj = $db->fetch_object($result);
     $var=!$var;
     
-    print "<TR $bc[$var]>";
+    print "<tr $bc[$var]>";
     
-    print "<TD>".strftime("%Y %B",$obj->dm)."</TD>\n";
-    print "<TD align=\"right\">$obj->amount</TD>\n";
+    print "<td>".strftime("%Y %B",$obj->dm)."</td>\n";
+    print "<td align=\"right\">$obj->amount</td>\n";
 
 
-    print "</TR>\n";
+    print "</tr>\n";
 
 
     $i++;

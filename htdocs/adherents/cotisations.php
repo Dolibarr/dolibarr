@@ -62,13 +62,13 @@ if ($_POST["action"] == '2bank' && $_POST["rowid"] !=''){
 	$num = $db->num_rows();
 	if ($num>0)
 	  {
-	    $objp = $db->fetch_object(0);
+	    $objp = $db->fetch_object($result);
 	    $amount=$objp->cotisation;
 	    $acct=new Account($db,ADHERENT_BANK_ACCOUNT);
 	    $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE);
 	    if ($insertid == '')
 	      {
-		print "<p> Probleme d'insertion : ".$db->error();
+		   dolibarr_print_error($db);
 	      }
 	    else
 	      {
@@ -81,20 +81,19 @@ if ($_POST["action"] == '2bank' && $_POST["rowid"] !=''){
 		  }
 		else
 		  {
-		   print "<p> Probleme d'insertion $sql : ".$db->error(); 
+		   dolibarr_print_error($db);
 		  }
 	      }
 	  }
 	else
 	  {
-	    print "<p>  Probleme SQL : $sql : ".$db->error(); 
+		   dolibarr_print_error($db);
 	  }
       }
     else
       {
-	print "<p>  Probleme SQL : $sql : ".$db->error();
+		   dolibarr_print_error($db);
       }
-	
     
   }
 }
@@ -123,7 +122,7 @@ if ($result)
   $i = 0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       $Total[strftime("%Y",$objp->dateadh)]+=price($objp->cotisation);
       $Number[strftime("%Y",$objp->dateadh)]+=1;
       $i++;
@@ -145,77 +144,64 @@ if ($result)
   
   print_barre_liste("Liste des cotisations", $page, "cotisations.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
 
-  print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">\n";
-  print '<TR class="liste_titre">';
+  print "<table class=\"noborder\">\n";
+  print '<tr class="liste_titre">';
   print "<td>Annee</td>";
-  print '<td align="right">Montant</TD>';
-  print "<td align=\"right\">Nombre</TD>";
-  print "<td align=\"right\">Moyenne</TD>\n";
-  print "</TR>\n";
+  print '<td align="right">Montant</td>';
+  print "<td align=\"right\">Nombre</td>";
+  print "<td align=\"right\">Moyenne</td>\n";
+  print "</tr>\n";
 
   foreach ($Total as $key=>$value){
     $var=!$var;
-    print "<TR $bc[$var]><TD><A HREF=\"cotisations.php?statut=$statut&date_select=$key\">$key</A></TD><TD align=\"right\">".price($value)."</TD><TD align=\"right\">".$Number[$key]."</TD><TD align=\"right\">".price($value/$Number[$key])."</TD></TR>\n";
+    print "<tr $bc[$var]><td><A HREF=\"cotisations.php?statut=$statut&date_select=$key\">$key</A></TD><TD align=\"right\">".price($value)."</TD><TD align=\"right\">".$Number[$key]."</TD><TD align=\"right\">".price($value/$Number[$key])."</TD></TR>\n";
   }
-  print "</table><BR>\n";
+  print "</table><br>\n";
 
-  print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<table class=\"border\">";
 
-  print '<TR class="liste_titre">';
-  //print "<td>Date</td>";
-  print '<TD>';
+  print '<tr class="liste_titre">';
+  print '<td>';
   print_liste_field_titre("Date<BR>","cotisations.php","c.dateadh","&page=$page&statut=$statut");
-  print "</TD>\n";
+  print "</td>\n";
 
-  //print "<td align=\"right\">Montant</TD>";
-  print '<TD>';
+  print '<td>';
   print_liste_field_titre("Montant<BR>","cotisations.php","c.cotisation","&page=$page&statut=$statut");
-  print "</TD>\n";
+  print "</td>\n";
 
-  //print "<td>Prenom Nom / Société</td>";
-  print '<TD>';
-  //  print_liste_field_titre("Prenom","cotisations.php","d.prenom","&page=$page&statut=$statut");
+  print '<td>';
   print_liste_field_titre("Prenom Nom<BR>","cotisations.php","d.nom","&page=$page&statut=$statut");
-  //  print " / Société";
-  print "</TD>\n";
+  print "</td>\n";
 
   if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
-    print '<TD>';
+    print '<td>';
     //  print_liste_field_titre("Bank","cotisations.php","c.fk_bank","&page=$page&statut=$statut");
-    print 'Bank<BR>(Type,Numéro,Libelle)';
-    print "</TD>\n";
+    print 'Bank<br>(Type,Numéro,Libelle)';
+    print "</td>\n";
   }
-  print "</TR>\n";
+  print "</tr>\n";
     
   $var=True;
   $total=0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object();
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->dateadh)."</a></td>\n";
-      print '<TD align="right">'.price($objp->cotisation).'</TD>';
-      //$Total[strftime("%Y",$objp->dateadh)]+=price($objp->cotisation);
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->dateadh)."</a></td>\n";
+      print '<td align="right">'.price($objp->cotisation).'</td>';
       $total+=price($objp->cotisation);
-      /*
-      if ($objp->societe != ''){
-	print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." /<BR>".stripslashes($objp->societe)."</a></TD>\n";
-      }else{
-	print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></TD>\n";
-      }
-      */
-      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></TD>\n";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></TD>\n";
       if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
 	if ($objp->bank !='' ){
-	  print "<TD>Deposé</TD>";
+	  print "<td>Deposé</td>";
 	}else{
-	  print "<TD>";
+	  print "<td>";
 	  print "<form method=\"post\" action=\"cotisations.php\">";
 	  print '<input type="hidden" name="action" value="2bank">';
 	  print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
 	  print '<select name="operation">';
-	  print '<option value="CHQ" SELECTED>CHQ';
+	  print '<option value="CHQ" selected>CHQ';
 	  print '<option value="CB">CB';
 	  print '<option value="DEP">DEP';
 	  print '<option value="TIP">TIP';
@@ -228,7 +214,7 @@ if ($result)
 	  //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
 	  print '<input type="submit" value="Dépot">';
 	  print "</form>\n";
-	  print "</TD>\n";
+	  print "</td>\n";
 	}	  
       }
       print "</tr>";
@@ -250,8 +236,7 @@ if ($result)
 }
 else
 {
-  print $sql;
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 

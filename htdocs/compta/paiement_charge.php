@@ -193,7 +193,7 @@ if ($_GET["action"] == 'create')
 	      $i = 0; 
 	      while ($i < $num)
 		{
-		  $objopt = $db->fetch_object( $i);
+		  $objopt = $db->fetch_object($result);
 		  print "<option value=\"$objopt->id\">$objopt->libelle</option>\n";
 		  $i++;
 		}
@@ -216,7 +216,7 @@ if ($_GET["action"] == 'create')
 	      $i = 0; 
 	      while ($i < $num)
 		{
-		  $objopt = $db->fetch_object( $i);
+		  $objopt = $db->fetch_object($result);
 		  print '<option value="'.$objopt->rowid.'"';
 		  if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
 		    {
@@ -253,7 +253,7 @@ if ($_GET["action"] == 'create')
 		  $num = 1;
 		  $i = 0;
 		  print '<tr><td colspan="3">';
-		  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		  print '<table class="noborder" width="100%">';
 		  print '<tr class="liste_titre">';
 		  print '<td>Charge</td><td align="center">Date échéance</td>';
 		  print '<td align="right">Montant TTC</td>';	      

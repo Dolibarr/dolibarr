@@ -148,7 +148,7 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print '<p><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>';
   print_liste_field_titre($langs->trans("Lastname"),"index.php","lower(p.name)", $begin);
   print "</td><td>";
@@ -173,7 +173,7 @@ if ($result)
   $var=True;
   while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
     
       $var=!$var;
 
@@ -183,7 +183,7 @@ if ($result)
       print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">';
       print img_file();
       print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.$obj->name.'</a></td>';
-      print "<TD>$obj->firstname</TD>";
+      print "<td>$obj->firstname</TD>";
       
       print '<td>';
       if ($obj->nom)
@@ -225,8 +225,7 @@ if ($result)
 }
 else
 {
-  print $db->error();
-  print "<br>".$sql;
+  dolibarr_print_error($db);
 }
 
 $db->close();

@@ -148,7 +148,7 @@ if ($_POST["actionadd"]) {
             $result = $db->query($sql);
             if ($result)
             {
-                $obj = $db->fetch_object(0);
+                $obj = $db->fetch_object($result);
                 $newid=($obj->newid + 1);
                         
             } else {
@@ -369,7 +369,7 @@ if ($_GET["id"])
             // Lignes de valeurs
             while ($i < $num)
             {
-                $obj = $db->fetch_object($i);
+                $obj = $db->fetch_object();
                 $var=!$var;
 
                 print "<tr $bc[$var] class=\"value\">";

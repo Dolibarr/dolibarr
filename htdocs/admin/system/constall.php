@@ -55,7 +55,7 @@ if ($result)
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
       $var=!$var;
 
       print "<tr $bc[$var]><td>$obj->name</td>\n";

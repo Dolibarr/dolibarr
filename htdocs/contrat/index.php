@@ -110,7 +110,7 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$obj->cid\">";

@@ -55,7 +55,7 @@ if ( $db->query($sql) )
   $var=True;
   if ($num > 0)
     {
-      $objp = $db->fetch_object(0);
+      $objp = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td>Somme des commandes</td>';
@@ -69,7 +69,7 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 $sql = "SELECT sum(t.value) as value";
@@ -83,7 +83,7 @@ if ( $db->query($sql) )
   $var=True;
   if ($num > 0)
     {
-      $objp = $db->fetch_object(0);
+      $objp = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td>Somme des frais de port</td>';
@@ -95,7 +95,7 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 

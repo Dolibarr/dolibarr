@@ -141,7 +141,7 @@ if ($user->rights->compta->charges->creer) {
     
       while ($i < $num)
         {
-          $obj = $db->fetch_object( $i);
+          $obj = $db->fetch_object();
           print '<option value="'.$obj->id.'">'.$obj->type;
           $i++;
         }
@@ -217,7 +217,7 @@ if ( $db->query($sql) )
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
 
       $var = !$var;
       print "<tr $bc[$var]>";

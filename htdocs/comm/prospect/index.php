@@ -84,7 +84,7 @@ if ( $db->query($sql) )
       print '<td colspan="2">Prospects par statut</td></tr>';
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  print "<tr $bc[$var]><td><a href=\"prospects.php?page=0&amp;stcomm=".$obj->id."\">".$obj->libelle."</a></td><td>".$obj->cc."</td></tr>";
 	  $i++;
@@ -113,7 +113,7 @@ if ($conf->propal->enabled)
 	  
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object( $i);
+	      $obj = $db->fetch_object();
 	      $var=!$var;
 	      print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
 	      $i++;
@@ -147,7 +147,7 @@ if ( $db->query($sql) )
       $i = 0;
       while ($i < $num ) 
 	{
-	  $obj = $db->fetch_object($i);
+	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td>";
@@ -185,7 +185,7 @@ if ( $db->query($sql) )
       
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"../propal.php?propalid=".$obj->rowid."\">";
 	  print img_file();
@@ -221,7 +221,7 @@ if ( $db->query($sql) )
       
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"../propal.php?propalid=".$obj->rowid."\">";
 	  print img_file();

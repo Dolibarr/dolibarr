@@ -65,17 +65,17 @@ if ($result)
   
   print_barre_liste("Paiements reçus", $page, "liste.php","",$sortfield,$sortorder,'',$num);
   
-  print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td>Date</td><td>';
   print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","","");
-  print '</td><td align="right">Montant</TD>';
+  print '</td><td align="right">'.$langs->trans("Amount").'</td>';
   print "<td>&nbsp;</td>";
   print "</tr>\n";
   
   while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">';

@@ -35,10 +35,11 @@ function pt ($db, $sql, $title) {
   global $bc;
   global $langs;
 
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" width="100%">';
   print '<tr class="liste_titre">';
-  print "<TD>$title</TD>";
-  print "<TD align=\"right\">Montant</TD>";
+  print "<td>$title</td>";
+  print "<td align=\"right\">Montant</td>";
+  print "</tr>\n";
   
   $result = $db->query($sql);
   if ($result) 
@@ -46,17 +47,16 @@ function pt ($db, $sql, $title) {
       $num = $db->num_rows();
       $i = 0; $total = 0 ;
     
-      print "</TR>\n";
       $var=True;
       while ($i < $num) 
 	{
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object($result);
 	  $var=!$var;
-	  print '<TR '.$bc[$var].'>';
-	  print '<TD>'.$obj->dm.'</TD>';
-	  print '<TD align="right">'.price($obj->amount).'</TD>';
+	  print '<tr '.$bc[$var].'>';
+	  print '<td>'.$obj->dm.'</td>';
+	  print '<td align="right">'.price($obj->amount).'</td>';
 	  
-	  print "</TR>\n";
+	  print "</tr>\n";
 	  $total = $total + $obj->amount;
 	  $i++;
 	}
@@ -66,10 +66,10 @@ function pt ($db, $sql, $title) {
     } 
   else 
     {
-      print "<tr><td>".$db->error() . "</td></tr>";
+      dolibarr_print_error($db);
 
     }
-  print "</TABLE>";
+  print "</table>";
       
 }
 /*

@@ -59,7 +59,7 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
 
@@ -76,7 +76,7 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 $db->close();

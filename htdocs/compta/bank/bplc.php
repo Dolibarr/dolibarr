@@ -68,7 +68,7 @@ if ($result) {
   $sep = 0;
 
   while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+    $objp = $db->fetch_object($result);
 
     print "<tr $bc[1]>";
 

@@ -225,7 +225,7 @@ if ($_GET["action"] == 'create')
       $num = $db->num_rows();
       if ($num)
 	{
-	  $obj = $db->fetch_object(0);
+	  $obj = $db->fetch_object();
 
 	  $soc = new Societe($db);
 	  $soc->fetch($obj->idp);
@@ -291,13 +291,13 @@ if ($_GET["action"] == 'create')
 	      $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
 	      if ( $db->query($sql) )
 		{
-		  $opt = "<option value=\"0\" SELECTED></option>";
+		  $opt = "<option value=\"0\" selected></option>";
 		  if ($result)
 		    {
 		      $num = $db->num_rows();	$i = 0;	
 		      while ($i < $num)
 			{
-			  $objp = $db->fetch_object( $i);
+			  $objp = $db->fetch_object();
 			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
 			  $i++;
 			}
@@ -351,7 +351,7 @@ if ($_GET["action"] == 'create')
 		  $var=True;	
 		  while ($i < $num) 
 		    {
-		      $objp = $db->fetch_object($i);
+		      $objp = $db->fetch_object();
 		      $var=!$var;
 		      print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
 		      print '<td>'.$objp->product.'</td>';
@@ -370,7 +370,7 @@ if ($_GET["action"] == 'create')
 		  $i = 0;	
 		  while ($i < $num) 
 		    {
-		      $objp = $db->fetch_object($i);
+		      $objp = $db->fetch_object();
 		      $var=!$var;
 		      print "<tr $bc[$var]><td>&nbsp;</td>\n";
 		      print '<td>'.$objp->product.'</td>';
@@ -558,7 +558,7 @@ else
 	      $var=True;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object( $i);
+		  $objp = $db->fetch_object();
 		  print "<TR $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
@@ -636,7 +636,7 @@ else
 		      $num = $db->num_rows();	$i = 0;	
 		      while ($i < $num)
 			{
-			  $objp = $db->fetch_object( $i);
+			  $objp = $db->fetch_object();
 			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
 			  $i++;
 			}
@@ -744,7 +744,7 @@ else
 		$var=True;
 		while ($i < $num)
 		  {
-		    $objp = $db->fetch_object( $i);
+		    $objp = $db->fetch_object();
 		    $var=!$var;
 		    print "<tr $bc[$var]>";
 		    print '<td><a href="../expedition/fiche.php?id='.$objp->rowid.'">'.stripslashes($objp->ref).'</a></td>';
@@ -774,13 +774,13 @@ else
 	      {
 		print_titre("Factures");
 		$i = 0; $total = 0;
-		print '<table border="1" cellspacing="0" cellpadding="4" width="100%">';
+		print '<table class="border" width="100%">';
 		print "<tr $bc[$var]><td>Facture</td><td>Date</td></tr>\n";
 		
 		$var=True;
 		while ($i < $num)
 		  {
-		    $objp = $db->fetch_object( $i);
+		    $objp = $db->fetch_object();
 		    $var=!$var;
 		    print "<tr $bc[$var]>";
 		    print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.stripslashes($objp->facnumber).'</a></td>';

@@ -154,7 +154,7 @@ class FactureRec
 	{
 	  if ($this->db->num_rows())
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object();
 	      
 	      $this->id                 = $rowid;
 	      $this->datep              = $obj->dp;
@@ -199,7 +199,7 @@ class FactureRec
 		  
 		  while ($i < $num)
 		    {
-		      $objp = $this->db->fetch_object($i);
+		      $objp = $this->db->fetch_object($result);
 		      $faclig = new FactureLigne($this->db);
 		      $faclig->produit_id     = $objp->fk_product;
 		      $faclig->desc           = stripslashes($objp->description);
@@ -333,7 +333,7 @@ class FactureRec
 	      $i = 0;
 	      while ($i < $num)	  
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object($result);
 		  
 		  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
 		  $db2 = $this->db->clone();
@@ -467,7 +467,7 @@ class FactureRec
 	  $i = 0;
 	  while ($i < $num)	  
 	    {
-	      $obj = $this->db->fetch_object($i);
+	      $obj = $this->db->fetch_object($result);
 
 	      $products[$i][0] = $obj->price;
 	      $products[$i][1] = $obj->qty;

@@ -164,7 +164,7 @@ if ($_GET["action"] == 'create')
 	  $var=True;
 	  while ($i < $num)
 	    {
-	      $objp = $db->fetch_object( $i);
+	      $objp = $db->fetch_object();
 
 	      if ($objp->fk_product > 0)
 		{
@@ -435,7 +435,7 @@ else
 	    $var=True;
 	    while ($i < min($num,$limit))
 	      {
-		$objp = $db->fetch_object($i);
+		$objp = $db->fetch_object();
 		$var=!$var;
 
 		print "<tr $bc[$var]>";

@@ -377,7 +377,7 @@ else
 	      $var=True;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object( $i);
+		  $objp = $db->fetch_object($result);
 		  print "<TR $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
@@ -459,7 +459,7 @@ else
 		$var=True;
 		while ($i < $num)
 		  {
-		    $objp = $db->fetch_object( $i);
+		    $objp = $db->fetch_object($result);
 		    print "<TR $bc[$var]>";
 		    if ($objp->fk_product > 0)
 		      {
@@ -521,7 +521,7 @@ else
 		    $var=True;
 		    while ($i < $num)
 		      {
-			$objp = $db->fetch_object( $i);
+			$objp = $db->fetch_object($result);
 			$var=!$var;
 			print "<tr $bc[$var]>";
 			print "<td>".strftime("%d %B %Y",$objp->da)."</TD>\n";

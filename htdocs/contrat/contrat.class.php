@@ -185,7 +185,7 @@ class Contrat
 	  
 	      while ($i < $num)
 		{
-		  $objp = $this->db->fetch_object($i);
+		  $objp = $this->db->fetch_object();
 		  $prowid[$i] = $objp->rowid;
 		  $fdrowid[$i] = $objp->fdrowid;
 		  $i++;

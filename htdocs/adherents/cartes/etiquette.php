@@ -70,7 +70,7 @@ if ($result)
   $i = 0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       // imprime le texte specifique sur la carte
       $pdf->Add_PDF_card(sprintf("%s\n%s\n%s %s\n%s", ucfirst(strtolower($objp->prenom))." ".strtoupper($objp->nom), ucwords(strtolower($objp->adresse)), $objp->cp, strtoupper($objp->ville), ucfirst(strtolower($objp->pays))),'','');
       $i++;

@@ -69,6 +69,7 @@ if ($_POST["action"] == 'classin')
   $facture->fetch($_POST["facid"]);
   $facture->classin($_POST["projetid"]);
 }
+
 /*
  *
  */	
@@ -333,11 +334,11 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	    $sendto = $_POST["sendto"];
 	    $sendtoid = 0;
 	  }
-	  elseif ($_POST["destinataire"]) {
+	  elseif ($_POST["receiver"]) {
 	    // Le destinataire a été fourni via la liste déroulante
 	    $soc = new Societe($db, $fac->socidp);
-	    $sendto = $soc->contact_get_email($_POST["destinataire"]);
-	    $sendtoid = $_POST["destinataire"];
+	    $sendto = $soc->contact_get_email($_POST["receiver"]);
+	    $sendtoid = $_POST["receiver"];
 	  }
 	  
 	  if (strlen($sendto))
@@ -446,7 +447,7 @@ if ($_GET["action"] == 'create')
       $num = $db->num_rows();
       if ($num)
 	{
-	  $obj = $db->fetch_object(0);
+	  $obj = $db->fetch_object();
 
 	  $soc = new Societe($db);
 	  $soc->fetch($obj->idp);
@@ -483,7 +484,7 @@ if ($_GET["action"] == 'create')
 	      $i = 0;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object($i);
+		  $objp = $db->fetch_object();
 		  $conds[$objp->rowid]=$objp->libelle;
 		  $i++;
 		}
@@ -544,7 +545,7 @@ if ($_GET["action"] == 'create')
 		      $num = $db->num_rows();	$i = 0;	
 		      while ($i < $num)
 			{
-			  $objp = $db->fetch_object( $i);
+			  $objp = $db->fetch_object();
 			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
 			  $i++;
 			}
@@ -601,7 +602,7 @@ if ($_GET["action"] == 'create')
 		      print '<option value="0" selected></option>';
 		      while ($i < $num)
 			{
-			  $objp = $db->fetch_object( $i);
+			  $objp = $db->fetch_object();
 			  print "<option value=\"$objp->rowid\">$objp->titre : $objp->amount</option>\n";
 			  $i++;
 			}
@@ -643,7 +644,7 @@ if ($_GET["action"] == 'create')
 		  $var=True;	
 		  while ($i < $num) 
 		    {
-		      $objp = $db->fetch_object($i);
+		      $objp = $db->fetch_object();
 		      $var=!$var;
 		      print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
 		      print '<td>'.$objp->product.'</td>';
@@ -662,7 +663,7 @@ if ($_GET["action"] == 'create')
 		  $i = 0;	
 		  while ($i < $num) 
 		    {
-		      $objp = $db->fetch_object($i);
+		      $objp = $db->fetch_object();
 		      $var=!$var;
 		      print "<tr $bc[$var]><td>&nbsp;</td>\n";
 		      print '<td>'.$objp->product.'</td>';
@@ -705,7 +706,7 @@ if ($_GET["action"] == 'create')
 		  $var=True;	
 		  while ($i < $num) 
 		    {
-		      $objp = $db->fetch_object($i);
+		      $objp = $db->fetch_object();
 		      $var=!$var;
 		      print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
 		      print '<td>'.$objp->product.'</td>';
@@ -853,7 +854,7 @@ else
 	      $var=True;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object( $i);
+		  $objp = $db->fetch_object();
 		  $var=!$var;
 		  print "<tr $bc[$var]><td>";
 		  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_file().'</a>';
@@ -947,7 +948,7 @@ else
 	      $var=True;
 	      while ($i < $num_lignes)
 		{
-		  $objp = $db->fetch_object( $i);
+		  $objp = $db->fetch_object();
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
 		  if ($objp->fk_product > 0)
@@ -1229,7 +1230,7 @@ else
 		  $var=True;
 		  while ($i < $num)
 		    {
-		      $objp = $db->fetch_object( $i);
+		      $objp = $db->fetch_object();
 		      $var=!$var;
 		      print "<tr $bc[$var]>";
 		      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.$objp->id.'</a></td>';
@@ -1276,12 +1277,18 @@ else
 	   */
 	  if ($_GET["action"] == 'presend')
 	    {
+	      print_titre("Envoyer la facture par mail");
+
+	      $langs->load("other");
+	      
 	      $replytoname = $user->fullname;
 	      $from_name = $replytoname;
 
 	      $replytomail = $user->email;
 	      $from_mail = $replytomail;
 	    
+	      $form = new Form($db);	    
+
 	      print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
 	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	      print '<input type="hidden" name="action" value="send">';
@@ -1289,34 +1296,42 @@ else
 	      print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
 	      print '<br>';
 	    
-	      print_titre("Envoyer la facture par mail");
-	      print "<table cellspacing=\"0\" class=\"border\" cellpadding=\"3\" width=\"100%\">";
-	      print "<tr><td>Expéditeur</td><td>$from_name</td><td>$from_mail &nbsp;</td></tr>";
-	      print "<tr><td>Répondre à</td><td>$replytoname</td><td>$replytomail &nbsp;</td></tr>";
-	      print '<tr><td>Destinataire</td><td colspan=\"2\">';
-	    
-	      $form = new Form($db);	    
-	      $form->select_array("destinataire",$soc->contact_email_array());
-	      print " ou <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
+	      // From
+	      print "<table class=\"border\" width=\"100%\">";
+	      print "<tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>$from_name".($from_mail?" &lt;$from_mail&gt;":"")."</td></tr>";
+	      print "<tr><td>".$langs->trans("MailReply")."</td><td>$replytoname".($replytomail?" &lt;$replytomail&gt;":"");
+	      print "</td></tr>";
+          print "</table>";
+          
+	      // To
+	      print "<table class=\"border\" width=\"100%\">";
+	      print '<tr><td width=\"180\">'.$langs->trans("MailTo").'</td><td>';
+	      $form->select_array("receiver",$soc->contact_email_array());
+	      print " ".$langs->trans("or")." <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
 
-	      print '<tr><td>Message</td><td colspan=\"2\">';
-	      print "<textarea rows=\"5\" cols=\"60\" name=\"message\">";
-	      print "Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
-	      print "</textarea></td></tr>";
-
-	      print "</table><br>\n";
+	      // Topic + Message
+	      $defaultmessage="Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
+	      $form->mail_topicmessagefile(0,1,0,$defaultmessage);
 	    
-	      print "<center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center></form>\n";
+	      print "<br><center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center>\n";
+
+          print "</form>\n";
 	    }
 
 	  if ($_GET["action"] == 'prerelance')
 	    {
+	      print_titre("Envoyer une relance par mail");
+
+	      $langs->load("other");
+
 	      $replytoname = $user->fullname;
 	      $from_name = $replytoname;
 
 	      $replytomail = $user->email;
 	      $from_mail = $replytomail;
 	    
+	      $form = new Form($db);	    
+
 	      print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
 	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	      print '<input type="hidden" name="action" value="relance">';
@@ -1324,24 +1339,26 @@ else
 	      print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
 	      print '<br>';
 	    
-	      print_titre("Envoyer une relance par mail");
-	      print "<table cellspacing=\"0\" class=\"border\" cellpadding=\"3\" width=\"100%\">";
-	      print "<tr><td>Expéditeur</td><td>$from_name</td><td>$from_mail &nbsp;</td></tr>";
-	      print "<tr><td>Répondre à</td><td>$replytoname</td><td>$replytomail &nbsp;</td></tr>";
-	      print '<tr><td>Destinataire</td><td colspan=\"2\">';
+	      // From
+	      print "<table class=\"border\" width=\"100%\">";
+	      print "<tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>$from_name".($from_mail?" &lt;$from_mail&gt;":"")."</td></tr>";
+	      print "<tr><td>".$langs->trans("MailReply")."</td><td>$replytoname".($replytomail?" &lt;$replytomail&gt;":"");
+	      print "</td></tr>";
+          print "</table>";
+          
+	      // To
+	      print "<table class=\"border\" width=\"100%\">";
+	      print '<tr><td width=\"180\">'.$langs->trans("MailTo").'</td><td>';
+	      $form->select_array("receiver",$soc->contact_email_array());
+	      print " ".$langs->trans("or")." <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
 	    
-	      $form = new Form($db);	    
-	      $form->select_array("destinataire",$soc->contact_email_array());
-	      print " ou <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
-	    
-	      print '<tr><td>'.$langs->trans("Message").'</td><td colspan=\"2\">';
-	      print "<textarea rows=\"5\" cols=\"60\" name=\"message\">";
-	      print "Nous apportons à votre connaissance que la facture ".$fac->ref." ne semble toujours pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n";
-	      print "</textarea></td></tr>";
-
-	      print "</table><br>\n";
-	    
-	      print "<center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center></form>\n";
+          // Affiche la partie mail topic + message + file
+	      $defaultmessage="Nous apportons à votre connaissance que la facture ".$fac->ref." ne semble toujours pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n";
+          $form->mail_topicmessagefile(0,1,0,$defaultmessage);
+        
+          print "<br><center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center>\n";
+        
+          print "</form\n";	
 	    }
 	
 	  /*
@@ -1378,7 +1395,7 @@ else
 		  $var=True;
 		  while ($i < $num)
 		    {
-		      $objp = $db->fetch_object( $i);
+		      $objp = $db->fetch_object();
 		      $var=!$var;
 		      print "<tr $bc[$var]>";
 		      print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
@@ -1501,7 +1518,7 @@ else
 
 	      while ($i < min($num,$limit))
 		{
-		  $objp = $db->fetch_object($i);
+		  $objp = $db->fetch_object();
 		  $var=!$var;
 
 		  print "<tr $bc[$var]>";

@@ -246,7 +246,7 @@ class Expedition
 		  while($i < $num)
 		    {
 		      $mouvS = new MouvementStock($this->db);
-		      $obj = $this->db->fetch_object($i);
+		      $obj = $this->db->fetch_object();
 		      $mouvS->livraison($user, $obj->fk_product, $this->entrepot_id, $obj->qty, 0);
 		      $i++;
 		    }

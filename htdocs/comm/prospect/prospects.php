@@ -112,7 +112,7 @@ if ($result)
 
   if ($num == 1 && $socname)
     {
-      $obj = $db->fetch_object(0);
+      $obj = $db->fetch_object($result);
       Header("Location: fiche.php?socid=$obj->idp");
     }
   else
@@ -144,9 +144,9 @@ if ($result)
 
   $i = 0;
   
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<TR class="liste_titre">';
-  print "<TD valign=\"center\">";
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre">';
+  print "<td valign=\"center\">";
   print_liste_field_titre("Société","prospects.php","s.nom");
   print "</td><td>";
   print_liste_field_titre("Ville","prospects.php","s.ville");
@@ -158,12 +158,12 @@ if ($result)
   print "</td><td>";
   print_liste_field_titre("Insertion","prospects.php","s.datec");
   print '</td><td colspan="4">&nbsp;</td>';
-  print "</TR>\n";
-  $var=True;
+  print "</tr>\n";
+  $var=true;
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
       
       $var=!$var;
 
@@ -171,13 +171,13 @@ if ($result)
       print '<td width="35%"><a href="fiche.php?id='.$obj->idp.'">';
       print img_file();
       print "</a>&nbsp;<a href=\"fiche.php?id=$obj->idp\">$obj->nom</A></td>\n";
-      print "<TD>".$obj->ville."&nbsp;</TD>\n";
-      print "<TD align=\"center\">$obj->departement</TD>\n";
+      print "<td>".$obj->ville."&nbsp;</td>\n";
+      print "<td align=\"center\">$obj->departement</td>\n";
       print "<td>".$obj->stcomm."</td>\n";
 
       if ($user->societe_id == 0)
 	{
-	  print "<TD align=\"center\"><a href=\"addpropal.php?socidp=$obj->idp&action=create\">".strftime("%d/%b/%y",$obj->datec)."</A></td>\n";
+	  print "<td align=\"center\"><a href=\"addpropal.php?socidp=$obj->idp&action=create\">".strftime("%d/%b/%y",$obj->datec)."</A></td>\n";
 
 	}
       else
@@ -200,15 +200,15 @@ if ($result)
 	    }
 	}
 
-      print "</TR>\n";
+      print "</tr>\n";
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 $db->close();

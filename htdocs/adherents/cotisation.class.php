@@ -289,7 +289,7 @@ class Cotisation
 	if ($this->db->num_rows())
 	  {
 
-	    $obj = $this->db->fetch_object(0);
+	    $obj = $this->db->fetch_object();
 
 	    $this->id             = $obj->rowid;
 	    $this->date           = $obj->datedon;

@@ -60,7 +60,7 @@ if ($result) {
   $i = 0;
   $options = "<option value=\"0\" SELECTED></option>";
   while ($i < $num) {
-    $obj = $db->fetch_object($i);
+    $obj = $db->fetch_object($result);
     $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
   }
   $db->free();
@@ -93,7 +93,7 @@ if ($result) {
   $sep = 0;
 
   while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+    $objp = $db->fetch_object($result);
     $total = $total + $objp->amount;
     $time = time();
 

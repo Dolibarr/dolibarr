@@ -433,7 +433,7 @@ class Adherent
       {
 	if ($this->db->num_rows())
 	  {
-	    $obj = $this->db->fetch_object(0);
+	    $obj = $this->db->fetch_object();
 	    $this->fetch($obj->rowid);
 	  }
       }
@@ -461,7 +461,7 @@ class Adherent
 	if ($this->db->num_rows())
 	  {
 
-	    $obj = $this->db->fetch_object(0);
+	    $obj = $this->db->fetch_object();
 
 	    $this->id             = $obj->rowid;
 	    $this->typeid         = $obj->fk_adherent_type;
@@ -508,7 +508,6 @@ class Adherent
     if ( $this->db->query( $sql) ){
 	if ($this->db->num_rows()){
 	  
-	  //$obj = $this->db->fetch_object(0);
 	  $tab = $this->db->fetch_array();
 	  
 	  foreach ($tab as $key => $value){
@@ -534,7 +533,6 @@ class Adherent
 
     if ( $this->db->query( $sql) ){
       if ($this->db->num_rows()){
-	//$tab = $this->db->fetch_object();
 	//$array_name_options[]=$tab->Field;
 	while ($tab = $this->db->fetch_object()){
 	  if ($tab->Field != 'optid' && $tab->Field != 'tms' && $tab->Field != 'adhid'){

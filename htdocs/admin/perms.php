@@ -70,7 +70,7 @@ if ($result)
   $old = "";
   while ($i < $num)
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
       $var=!$var;
 
       if ($old <> $obj->module)

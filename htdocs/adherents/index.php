@@ -70,7 +70,7 @@ if ($result)
   $i = 0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       $AdherentsAll[$objp->libelle]=$objp->rowid; 
       if ($objp->statut == -1) { $AdherentsAValider[$objp->libelle]=$objp->somme; }
       if ($objp->statut == 1) { $Adherents[$objp->libelle]=$objp->somme; }
@@ -93,7 +93,7 @@ if ($result)
   $i = 0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       $Cotisants[$objp->libelle]=$objp->somme;
       $i++;
     }

@@ -113,7 +113,7 @@ if ($result)
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
       $var=!$var;
 
       print '<form action="compta.php" method="POST">';

@@ -44,7 +44,7 @@ if ($result)
   
   while ($i < $num)
     {
-      $obj = $db->fetch_object($result , $i);
+      $obj = $db->fetch_object($result);
       $row[$i][0] = $obj->rowid ;
       $row[$i][1] = $obj->fk_facture;
       $row[$i][2] = $obj->amount;

@@ -116,7 +116,7 @@ class Account
 	$num = $this->db->num_rows();
 	while ($i < $num)
 	  {
-	    $obj = $this->db->fetch_object($result, $i);
+	    $obj = $this->db->fetch_object($result);
 	    $lines[$i][0] = $obj->url;
 	    $lines[$i][1] = $obj->url_id;
 	    $lines[$i][2] = $obj->label;
@@ -297,7 +297,7 @@ class Account
       {
 	if ($this->db->num_rows())
 	  {
-	    $obj = $this->db->fetch_object($result , 0);
+	    $obj = $this->db->fetch_object($result);
 	    
 	    $this->bank          = $obj->bank;
 	    $this->label         = $obj->label;

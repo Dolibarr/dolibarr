@@ -49,7 +49,7 @@ class Propal_Model_Pdf {
 	      $i = 0;
 	      while ($i < $nump)
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object();
 	      
 		  $projets[$obj->nom] = $obj->nom;
 		  $i++;

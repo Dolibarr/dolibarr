@@ -22,6 +22,8 @@
 
 require("./pre.inc.php");
 
+$langs->load("companies");
+
 llxHeader();
 
 if ($sortfield == "") {
@@ -47,32 +49,32 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Prénom","index.php", "c.customers_firstname");
+  print "<table class=\"noborder\" width=\"100%\">";
+  print "<tr class=\"liste_titre\"><td>";
+  print_liste_field_titre($langs->trans("Firstname"),"index.php", "c.customers_firstname");
   print "</td><td>";
-  print_liste_field_titre("Nom","index.php", "c.customers_lastname");
-  print '</td><td>Email</td><td align="center">Newsletter</td>';
-  print "</TR>\n";
+  print_liste_field_titre($langs->trans("Lastname"),"index.php", "c.customers_lastname");
+  print '</td><td>'.$langs->trans("EMail").'</td><td align="center">Newsletter</td>';
+  print "</tr>\n";
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object();
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print '<TD><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_firstname."</a></TD>\n";
-      print '<TD><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_lastname."</a></TD>\n";
-      print "<TD>$objp->customers_email_address</TD>\n";
-      print "<TD align=\"center\">$objp->customers_newsletter</TD>\n";
-      print "</TR>\n";
+      print "<tr $bc[$var]>";
+      print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_firstname."</a></TD>\n";
+      print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_lastname."</a></TD>\n";
+      print "<td>$objp->customers_email_address</TD>\n";
+      print "<td align=\"center\">$objp->customers_newsletter</TD>\n";
+      print "</tr>\n";
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 $db->close();

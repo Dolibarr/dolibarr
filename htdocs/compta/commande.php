@@ -168,7 +168,7 @@ if ($_GET["id"] > 0)
 	  $var=True;
 	  while ($i < $num)
 	    {
-	      $objp = $db->fetch_object( $i);
+	      $objp = $db->fetch_object();
 	      print "<tr $bc[$var]>";
 	      if ($objp->fk_product > 0)
 		{
@@ -263,7 +263,7 @@ if ($_GET["id"] > 0)
 	      $var=True;
 	      while ($i < $num_fac_asso)
 		{
-		  $objp = $db->fetch_object( $i);
+		  $objp = $db->fetch_object();
 		  $var=!$var;
 		  print "<TR bgcolor=\"#e0e0e0\">";
 		  print "<TD><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a>";

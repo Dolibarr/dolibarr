@@ -85,7 +85,7 @@ if ($result)
   }
 
   if ($_GET["type"]) {
-      $objp = $db->fetch_object(0);
+      $objp = $db->fetch_object($result);
       $titre.=" (".$objp->type.")";
   }
 
@@ -127,7 +127,7 @@ if ($result)
     {
       if ($_GET["type"] && $i==0) { # Fetch deja fait
       } else {
-        $objp = $db->fetch_object($i);
+        $objp = $db->fetch_object($result);
       }
       
       $adh=new Adherent($db);

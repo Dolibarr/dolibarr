@@ -275,7 +275,7 @@ if ($_GET["propalid"])
 
   if ( $result )
     {
-      $obj = $db->fetch_object( 0 );
+      $obj = $db->fetch_object($result);
     
       if ($db->num_rows()) 
 	{
@@ -416,7 +416,7 @@ if ($_GET["propalid"])
 
 	      while ($i < $num) 
 		{
-		  $objp = $db->fetch_object( $i);
+		  $objp = $db->fetch_object($result);
 		  $var=!$var;
 		  print "<TR $bc[$var]>";
 		  print "<td>[$objp->ref]</td>\n";
@@ -446,7 +446,7 @@ if ($_GET["propalid"])
 	      $i = 0;	     
 	      while ($i < $num) 
 		{
-		  $objp = $db->fetch_object( $i);
+		  $objp = $db->fetch_object();
 		  $var=!$var;
 		  print "<TR $bc[$var]><td>&nbsp;</td>\n";
 		  print '<td>'.$objp->description.'</td>';
@@ -473,15 +473,14 @@ if ($_GET["propalid"])
 	    {
 	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p WHERE p.envente=1 ORDER BY p.nbvente DESC LIMIT 20";
 	      // RyXéo on a ORDER BY p.ref et pas de limit
-	      if ( $db->query($sql) )
-		{
-		  $opt = "<option value=\"0\" SELECTED></option>";
+	      $result = $db->query($sql);
 		  if ($result)
 		    {
+    		  $opt = "<option value=\"0\" selected></option>";
 		      $num = $db->num_rows();	$i = 0;	
 		      while ($i < $num)
 			{
-			  $objp = $db->fetch_object( $i);
+			  $objp = $db->fetch_object($result);
 			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] ".substr($objp->label,0,40)."</option>\n";
 			  $i++;
 			}
@@ -743,12 +742,12 @@ if ($_GET["propalid"])
 
 		  while ($i < $num)
 		    {
-		      $objp = $db->fetch_object( $i);
-		      print "<TR><TD>".strftime("%d %B %Y %H:%M:%S",$objp->da)."</TD>\n";
+		      $objp = $db->fetch_object();
+		      print "<tr><td>".strftime("%d %B %Y %H:%M:%S",$objp->da)."</td>\n";
 		      $authoract = new User($db);
 		      $authoract->id = $objp->fk_user_author;
 		      $authoract->fetch('');
-		      print "<TD>$authoract->code</TD></tr>\n";
+		      print "<td>$authoract->code</td></tr>\n";
 		      print "<tr><td colspan=\"2\">$objp->note</td></tr>";
 		      $i++;
 		    }
@@ -899,11 +898,11 @@ if ($_GET["propalid"])
 
       print_liste_field_titre_new ($langs->trans("Status"),"propal.php","p.fk_statut","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="10%" align="center"',$sortfield);
       print "</tr>\n";
-      $var=True;
+      $var=true;
       
       while ($i < min($num,$limit))
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object();
 	  $now = time();
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
@@ -930,7 +929,7 @@ if ($_GET["propalid"])
 	      print "<td>&nbsp;</td>";
 	    }
 	  
-	  print "<TD align=\"right\">";
+	  print "<td align=\"right\">";
 	  $y = strftime("%Y",$objp->dp);
 	  $m = strftime("%m",$objp->dp);
 	  
@@ -940,9 +939,9 @@ if ($_GET["propalid"])
 	  print " <a href=\"propal.php?year=$y\">";
 	  print strftime("%Y",$objp->dp)."</a></TD>\n";      
 	  
-	  print "<TD align=\"right\">".price($objp->price)."</TD>\n";
-	  print "<TD align=\"center\">$objp->statut</TD>\n";
-	  print "</TR>\n";
+	  print "<td align=\"right\">".price($objp->price)."</td>\n";
+	  print "<td align=\"center\">$objp->statut</td>\n";
+	  print "</tr>\n";
 	  
 	  $total = $total + $objp->price;
 	  $subtotal = $subtotal + $objp->price;

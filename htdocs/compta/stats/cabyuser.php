@@ -55,7 +55,7 @@ if ($result)
 {
   if ($db->num_rows() > 0)
     {
-      $objp = $db->fetch_object(0);
+      $objp = $db->fetch_object($result);
       $catotal = $objp->ca;
     }
 }
@@ -84,7 +84,7 @@ if ($result)
   if ($num > 0)
     {
       $i = 0;
-      print "<p><table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+      print "<p><table class=\"noborder\" width=\"100%\">";
       print "<tr class=\"liste_titre\">";
       print "<td>Utilisateur</td>";
       print '<td align="right">Montant</TD><td align="right">Pourcentage</td>';
@@ -92,7 +92,7 @@ if ($result)
       $var=True;
       while ($i < $num)
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  

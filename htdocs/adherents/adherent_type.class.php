@@ -167,7 +167,7 @@ class AdherentType
 	if ($this->db->num_rows())
 	  {
 
-	    $obj = $this->db->fetch_object(0);
+	    $obj = $this->db->fetch_object();
 
 	    $this->id             = $obj->rowid;
 	    $this->libelle        = $obj->libelle;
@@ -200,7 +200,7 @@ class AdherentType
 	      $i = 0;
 	      while ($i < $nump)
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object();
 
 		  $projets[$obj->rowid] = $obj->libelle;
 		  $i++;

@@ -36,7 +36,7 @@ function pt ($db, $sql, $date) {
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
-    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+    print "<TABLE border=\"1\" width=\"100%\">";
     print "<TR class=\"liste_titre\">";
     print "<TD width=\"60%\">$date</TD>";
     print "<TD align=\"right\">Montant</TD>";
@@ -44,7 +44,7 @@ function pt ($db, $sql, $date) {
     print "</TR>\n";
     $var=True;
     while ($i < $num) {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
       $var=!$var;
       print "<TR $bc[$var]>";
       print "<TD>$obj->dm</TD>\n";

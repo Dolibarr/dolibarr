@@ -21,9 +21,15 @@
  *
  */
 
+/*! \file htdocs/boutique/newsletter/fiche.php
+        \ingroup    boutique
+		\brief      Fiche newsletter
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
-if ($action == 'add') {
+if ($_POST["action"] == 'add') {
   $newsletter = new Newsletter($db);
 
   $newsletter->email_subject    = $_POST["email_subject"];
@@ -35,13 +41,13 @@ if ($action == 'add') {
   $id = $newsletter->create($user);
 }
 
-if ($action == 'addga') {
+if ($_POST["action"] == 'addga') {
   $newsletter = new Newsletter($db);
 
   $newsletter->linkga($id, $ga);
 }
 
-if ($action == 'update' && !$cancel)
+if ($_POST["action"] == 'update' && !$cancel)
 {
   $newsletter = new Newsletter($db);
 

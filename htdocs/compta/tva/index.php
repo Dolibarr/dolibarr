@@ -36,7 +36,7 @@ function tva_coll($db, $y,$m) {
 
   $result = $db->query($sql);
   if ($result) {
-    $obj = $db->fetch_object ( 0 );
+    $obj = $db->fetch_object($result);
     return $obj->amount;
   }
 }
@@ -54,7 +54,7 @@ function tva_paye($db, $y,$m)
   $result = $db->query($sql);
   if ($result)
     {
-      $obj = $db->fetch_object ( 0 );
+      $obj = $db->fetch_object($result);
       return $obj->amount;
     }
 }
@@ -75,7 +75,7 @@ function pt ($db, $sql, $date) {
     print "</tr>\n";
     $var=True;
     while ($i < $num) {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td nowrap>$obj->dm</td>\n";

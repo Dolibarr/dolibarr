@@ -60,7 +60,7 @@ if ($result)
   $sep = 0;
 
   while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+    $objp = $db->fetch_object($result);
 
     $var=!$var;
     print "<tr $bc[$var]><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td>";

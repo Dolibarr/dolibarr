@@ -90,7 +90,7 @@ if (! isset($_GET["num"]))
 
       while ($i < min($numrows,$limit))
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  if (! $objp->numr)
 	    { 
@@ -200,7 +200,7 @@ else
 
       while ($i < $numrows)
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  $total = $total + $objp->amount;
 	  
 	  $var=!$var;
@@ -222,23 +222,22 @@ else
 	  
 	  if ($ve)
 	    {
-	      $dc = $db->clone();
 	      $sql = "SELECT label FROM ".MAIN_DB_PREFIX."bank_categ as ct, ".MAIN_DB_PREFIX."bank_class as cl WHERE ct.rowid=cl.fk_categ AND cl.lineid=$objp->rowid";
-	      $resc = $dc->query($sql);
+	      $resc = $db->query($sql);
 	      if ($resc)
 		{
-		  $numc = $dc->num_rows();
+		  $numc = $db->num_rows();
 		  $ii = 0; 
 		  while ($ii < $numc)
 		    {
-		      $objc = $dc->fetch_object($ii);
+		      $objc = $db->fetch_object($resc);
 		      print "<br>-&nbsp;<i>$objc->label</i>";
 		      $ii++;
 		    }
 		}
 	      else
 		{
-		  print $dc->error();
+		  dolibarr_print_error($db);
 		}
 	    }
 	  

@@ -449,7 +449,7 @@ class Commande
 	    {
 	      if ($this->db->num_rows())
 		{
-		  $obj = $this->db->fetch_object(0);
+		  $obj = $this->db->fetch_object();
 		  $this->propale_id = $obj->fk_propale;
 		}
 
@@ -495,7 +495,7 @@ class Commande
 	  {
 	    $ligne = new CommandeLigne();
 
-	    $objp = $this->db->fetch_object( $i);
+	    $objp = $this->db->fetch_object($result);
 
 	    $ligne->id = $objp->rowid;
 
@@ -649,7 +649,7 @@ class Commande
 	  
 	  while ($i < $num)
 	    {
-	      $obj = $this->db->fetch_object($i);
+	      $obj = $this->db->fetch_object();
 	      $products[$i][0] = $obj->price;
 	      $products[$i][1] = $obj->qty;
 	      $products[$i][2] = $obj->tva_tx;

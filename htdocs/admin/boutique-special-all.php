@@ -51,7 +51,7 @@ if ( $db->query($sql) )
   $i = 0;
 
   while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+    $objp = $db->fetch_object();
 
     $livre = new Livre($db);
     if ($livre->fetch($objp->rowid))

@@ -32,7 +32,7 @@ function gljPrintSelect($db, $refid) {
   $num = $db->num_rows();
   $i = 0;
   while ($i < $num) {
-    $obj = $db->fetch_object( $i);
+    $obj = $db->fetch_object();
     print "<OPTION VALUE=$obj->id";
     if ($refid==$obj->id) { 
       print " SELECTED"; 
@@ -63,7 +63,7 @@ function gljCopy_Soc($idsoc, $dbfrom, $dbto) {
 	$result = pg_Exec($connfrom, $sql);
 	if ( $result ) {
 	  if (pg_NumRows($result) ) {
-	    $obj = pg_Fetch_Object($result, 0);
+	    $obj = pg_Fetch_Object($result);
 	    
 	    $sql = "INSERT INTO societe (id, nom, datec, fk_effectif) ";
 	    $sql .= "VALUES ('$idsoc', '$obj->nom', $madate, $obj->fk_effectif)";
@@ -98,7 +98,7 @@ function gljMailLogin ($db, $address, $id, $dbname) {
   
   if ($db->query($sql)) {
     if ($db->num_rows() > 0) {
-      $obj = $db->fetch_object(0);
+      $obj = $db->fetch_object();
       $db->free();
 
       $subject = "Confirmation";
@@ -242,7 +242,7 @@ function gljCreateCompany($db, $company_name, $address, $cp, $ville, $fkpays, $p
       $sql = "SELECT idp FROM societe WHERE id= '$token';";
       if ( $db->query($sql) ) {
 	if ( $db->num_rows() ) {
-	  $obj = $db->fetch_object(0);
+	  $obj = $db->fetch_object();
 	  return $obj->idp;
 	  $db->free();
 	  
@@ -407,7 +407,7 @@ function get_ofid_by_idp ($db, $ofidp) {
   } else {
     if ($db->num_rows() > 0) {
       $row = 0;
-      while($data = $db->fetch_object( $row)) {
+      while($data = $db->fetch_object($result)) {
 	$id = $data->id ;
       }
       return $id;

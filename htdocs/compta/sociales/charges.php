@@ -122,7 +122,7 @@ if ($chid > 0)
     	    $var=True;
     	    while ($i < $num)
     	      {
-    		$objp = $db->fetch_object( $i);
+    		$objp = $db->fetch_object($result);
     		$var=!$var;
     		print "<tr $bc[$var]><td>";
     		print dolibarr_print_date($objp->dp)."</td>\n";

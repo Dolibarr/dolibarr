@@ -84,7 +84,7 @@ if ($result)
   while ($i < $num)
     {
       $var = ! $var;
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
       //print "pos ".$obj->position;
       $boxes[$obj->position][$obj->box_id]=1;
       $i++;
@@ -121,7 +121,7 @@ if ($result)
     while ($i < $num)
     {
         $var = ! $var;
-        $obj = $db->fetch_object( $i);
+        $obj = $db->fetch_object($result);
         
         print '<form action="boxes.php" method="POST">';
         print '<tr '.$bc[$var].'><td>'.$obj->name.'</td><td>' . $obj->file . '</td>';
@@ -171,7 +171,7 @@ if ($result)
   while ($i < $num)
     {
       $var = ! $var;
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
 
       print '<tr '.$bc[$var].'><td>'.$obj->name.'</td>';
       print '<td>&nbsp;</td>';

@@ -58,7 +58,7 @@ if ($_GET["bid"] == 0)
       $var=True;
       while ($i < $num)
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  print "<td><a href=\"budget.php?bid=$objp->rowid\">$objp->label</a></td>";
@@ -116,10 +116,10 @@ else
       $var=True;
       while ($i < $num)
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td align=\"right\">".strftime("%d %B %Y",$objp->do)."</TD>\n";
+	  print "<td align=\"right\">".strftime("%d %B %Y",$objp->do)."</td>\n";
 	  
 	  print "<td><a href=\"ligne.php?rowid=$objp->rowid\">$objp->label</a></td>";
 	  print "<td align=\"right\">".price(0 - $objp->amount)."</td><td>&nbsp;</td>";

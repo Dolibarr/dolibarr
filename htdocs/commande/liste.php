@@ -108,7 +108,7 @@ if ( $db->query($sql) )
 
   while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object();
       
 	  $var=!$var;
 	  print "<tr $bc[$var]>";

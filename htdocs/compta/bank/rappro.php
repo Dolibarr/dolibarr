@@ -88,7 +88,7 @@ if ($result) {
   $i = 0;
   while ($i < $num) {
     if ($options == "") { $options = "<option value=\"0\" selected>&nbsp;</option>"; }
-    $obj = $db->fetch_object($i);
+    $obj = $db->fetch_object($result);
     $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
   }
   $db->free();
@@ -157,7 +157,7 @@ if ($result)
   $i = 0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object();
 
       $var=!$var;
       print "<tr $bc[$var]>";

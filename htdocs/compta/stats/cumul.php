@@ -101,7 +101,7 @@ function pt ($db, $sql, $date)
       $var=True;
       while ($i < $num) 
 	{
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object($result);
 	  $var=!$var;
 	  $total = $total + $obj->amount;
 	  print "<tr $bc[$var]>";

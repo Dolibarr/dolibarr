@@ -44,7 +44,7 @@ if ($result)
   $i = 0; 
   $total = 0 ;
   print '<br>';
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print "<td width=\"60%\">".$langs->trans("Date")."</td>";
   print "<td align=\"right\">".$langs->trans("Amount")."</td>";
@@ -53,7 +53,7 @@ if ($result)
   $var=1;
   while ($i < $num)
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td>".dolibarr_print_date($obj->dm)."</td>\n";

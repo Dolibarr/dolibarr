@@ -23,6 +23,8 @@
  */
 require("./pre.inc.php");
 
+$langs->load("companies");
+
 $user->getrights('propale');
 $user->getrights('fichinter');
 $user->getrights('commande');
@@ -130,7 +132,7 @@ if ($result)
   
   print_barre_liste("Liste des contacts $label",$page, "contact.php", "&amp;type=$type",$sortfield,$sortorder,"",$num);
   
-  print "<DIV align=\"center\">";
+  print "<div align=\"center\">";
   
   print "| <A href=\"contact.php?type=$type&page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
   for ($i = 65 ; $i < 91; $i++) {
@@ -159,45 +161,43 @@ if ($result)
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>';
-  print_liste_field_titre("Nom","contact.php","lower(p.name)", $begin,"&amp;type=$type");
+  print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin,"&amp;type=$type");
   print "</td><td>";
-  print_liste_field_titre("Prénom","contact.php","lower(p.firstname)", $begin,"&amp;type=$type");
+  print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin,"&amp;type=$type");
   print "</td><td>";
-  print_liste_field_titre("Société","contact.php","lower(s.nom)", $begin,"&amp;type=$type");
-  print "</td><TD>email</TD>";
-  print '<td>Téléphone</td>';
+  print_liste_field_titre($langs->trans("Company"),"contact.php","lower(s.nom)", $begin,"&amp;type=$type");
+  print '</td><td>'.$langs->trans("Lastname").'</td>';
+  print '<td>'.$langs->trans("Phone").'</td>';
   print "</tr>\n";
   $var=True;
   $i = 0;
   while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
     
       $var=!$var;
 
-      print "<TR $bc[$var]>";
-      print '<TD><a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.img_file();
+      print "<tr $bc[$var]>";
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.img_file();
       print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></td>';
-      print "<TD>$obj->firstname</TD>";
+      print "<td>$obj->firstname</TD>";
       
-      print '<TD><a href="contact.php?type='.$type.'&socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0" alt="filtrer"></a>&nbsp;';
+      print '<td><a href="contact.php?type='.$type.'&socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0" alt="filtrer"></a>&nbsp;';
       print "<a href=\"".$urlfiche."?socid=$obj->idp\">$obj->nom</A></td>\n";
       
       print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
       
       print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
       
-      print "</TR>\n";
+      print "</tr>\n";
       $i++;
     }
-  print "</TABLE></p>";
+  print "</table></p>";
   $db->free();
 }
 else
 {
-  print_barre_liste("Liste des contacts $label",$page, "contact.php");
-  
-  print $db->error();
+    dolibarr_print_error($db);
 }
 
 $db->close();

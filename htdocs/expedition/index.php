@@ -68,7 +68,7 @@ if ( $db->query($sql) )
       while ($i < $num)
 	{
 	  $var=!$var;
-	  $obj = $db->fetch_object($i);
+	  $obj = $db->fetch_object();
 	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a></td></tr>';
@@ -104,7 +104,7 @@ if ( $db->query($sql) )
       while ($i < $num)
 	{
 	  $var=!$var;
-	  $obj = $db->fetch_object($i);
+	  $obj = $db->fetch_object();
 	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
 	  print "<a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
@@ -146,7 +146,7 @@ if ( $db->query($sql) )
       while ($i < $num)
 	{
 	  $var=!$var;
-	  $obj = $db->fetch_object($i);
+	  $obj = $db->fetch_object();
 	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
 	  print "<a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
@@ -182,7 +182,7 @@ if ( $db->query($sql) )
       while ($i < $num)
 	{
 	  $var=!$var;
-	  $obj = $db->fetch_object($i);
+	  $obj = $db->fetch_object();
 	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
 	  print "<a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';

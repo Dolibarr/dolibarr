@@ -82,7 +82,7 @@ if ($result)
   $i = 0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       // attribut a remplacer
       $replace = array (
 			ucfirst(strtolower($objp->prenom)),

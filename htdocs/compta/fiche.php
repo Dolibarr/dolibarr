@@ -125,7 +125,7 @@ if ($mode == 'search')
     {
         if ( $db->num_rows() == 1)
         {
-            $obj = $db->fetch_object(0);
+            $obj = $db->fetch_object();
             $socid = $obj->idp;
         }
         $db->free();
@@ -260,7 +260,7 @@ if ($socid > 0)
 
             while ($i < $num && $i < 5)
             {
-                $objp = $db->fetch_object( $i);
+                $objp = $db->fetch_object();
                 $var=!$var;
                 print "<tr $bc[$var]>";
                 print "<td><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
@@ -306,7 +306,7 @@ if ($socid > 0)
 	  }
         while ($i < $num && $i < 5)
 	  {
-	    $obj = $db->fetch_object( $i);
+	    $obj = $db->fetch_object();
 	    $tag = !$tag;
             print "<tr $bc[$tag]>";
             print '<td><a href="../projet/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
@@ -388,7 +388,7 @@ if ($socid > 0)
         $var=1;
         while ($i < $num)
         {
-            $obj = $db->fetch_object( $i);
+            $obj = $db->fetch_object($result);
             $var = !$var;
 
             print "<tr $bc[$var]>";
@@ -449,7 +449,7 @@ if ($socid > 0)
             while ($i < $num) {
                 $var = !$var;
 
-                $obj = $db->fetch_object( $i);
+                $obj = $db->fetch_object();
                 print "<tr $bc[$var]>";
 
                 if ($oldyear == strftime("%Y",$obj->da) ) {

@@ -245,8 +245,7 @@ function form_constantes($tableau){
   print '<td>'.$langs->trans("Description").'</td>';
   print '<td>'.$langs->trans("Value").'</td>';
   print '<td>'.$langs->trans("Type").'</td>';
-  //print '<td>Note</td>';
-  print "<td>Action</td>";
+  print '<td>'.$langs->trans("Action").'</td>';
   print "</tr>\n";
   $var=True;
   
@@ -254,7 +253,7 @@ function form_constantes($tableau){
     $sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE name='$const'";
     $result = $db->query($sql);
     if ($result && ($db->num_rows() == 1)) {
-      $obj = $db->fetch_object(0);
+      $obj = $db->fetch_object($result);
       $var=!$var;
       print '<form action="adherent.php" method="POST">';
       print '<input type="hidden" name="action" value="update">';

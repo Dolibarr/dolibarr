@@ -24,6 +24,8 @@
 
 require("./pre.inc.php");
 
+$langs->load("products");
+
 llxHeader();
 
 /*
@@ -70,30 +72,30 @@ if ($id)
 	{
 	  $num = $db->num_rows();
 	  $i = 0;
-	  print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
-	  print '<tr class="liste_titre"><td align="left" width="40%">Produits</td>';
+	  print '<table class="noborder" width="100%">';
+	  print '<tr class="liste_titre"><td align="left" width="40%">'.$langs->trans("Products").'</td>';
 	  print '<td align="center">'.$langs->trans("Number").'</td><td align="right">'.$langs->trans("Price").'</td><td align="right">Prix final</td>';
 	  print "</tr>\n";
 	  $var=True;
 	  while ($i < $num) 
 	    {
-	      $objp = $db->fetch_object( $i);
+	      $objp = $db->fetch_object();
 	      $var=!$var;
-	      print "<TR $bc[$var]>";
+	      print "<tr $bc[$var]>";
 	      print '<td align="left" width="40%">';
 	      print '<a href="fiche.php?id='.$objp->rowid.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" width="16" height="16" alt="Fiche livre"></a>';
 	    
 	      print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->products_name.'</a>';
 	      print "</td>";
 
-	      print '<TD align="center"><a href="fiche.php?id='.$objp->rowid."\">$objp->products_quantity</a></TD>\n";
-	      print "<TD align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->products_price)."</a></TD>\n";
-	      print "<TD align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->final_price)."</a></TD>\n";
+	      print '<td align="center"><a href="fiche.php?id='.$objp->rowid."\">$objp->products_quantity</a></TD>\n";
+	      print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->products_price)."</a></TD>\n";
+	      print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->final_price)."</a></TD>\n";
 	    
-	      print "</TR>\n";
+	      print "</tr>\n";
 	      $i++;
 	    }
-	  print "</TABLE>";
+	  print "</table>";
 	  $db->free();
 	}
       else

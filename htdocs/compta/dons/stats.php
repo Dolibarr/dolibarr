@@ -48,7 +48,7 @@ if ($result)
   $total=0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       $total += $objp->amount;
       $i++;
     }

@@ -66,7 +66,7 @@ if ( $db->query($sql) )
   $i = 0;
 
   while ($i < $num) {
-    $obj = $db->fetch_object( $i);
+    $obj = $db->fetch_object();
     $var = !$var;
     print "<tr $bc[$var]>";
     print '<td><a href="../sociales/index.php?filtre=s.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
@@ -95,7 +95,7 @@ if ( $db->query($sql) ) {
   $i = 0;
 
   while ($i < $num) {
-    $obj = $db->fetch_object( $i);
+    $obj = $db->fetch_object();
     $var = !$var;
     print "<tr $bc[$var]>";
     print '<td>Factures founisseurs</td>';

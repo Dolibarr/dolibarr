@@ -183,7 +183,7 @@ if ($socid > 0)
 	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
 	while ($i < $num && $i < 2)
 	  {
-	    $objp = $db->fetch_object( $i);
+	    $objp = $db->fetch_object();
 	    print "<tr $bc[$var]>";
 	    print "<td><a href=\"../propal.php?propalid=$objp->propalid\">";
 	    print img_file();
@@ -245,7 +245,7 @@ if ($socid > 0)
     $i = 0 ; $num = $db->num_rows(); $tag = True;
     while ($i < $num)
       {
-	$obj = $db->fetch_object( $i);
+	$obj = $db->fetch_object($result);
 	$var = !$var;
 	print "<tr $bc[$var]>";
 	
@@ -306,7 +306,7 @@ if ($socid > 0)
 	while ($i < $num) {
 	  $var = !$var;
 
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object();
 		
 	  print "<tr $bc[$var]>";
 
@@ -398,12 +398,12 @@ if ($socid > 0)
 	  if ($num)
 	    {
 
-	      print '<table width="100%" cellspacing="0" border="0" cellpadding="2">';
+	      print '<table width="100%" class="noborder">';
 	      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">Actions effectuées</a></td></tr>';
 	      print '<tr>';
 	      print '<td valign="top">';
 	      	      
-	      print '<table width="100%" cellspacing="0" border="0" cellpadding="1">';
+	      print '<table width="100%" border="0">';
 	      
 	      $oldyear='';
 	      $oldmonth='';
@@ -411,7 +411,7 @@ if ($socid > 0)
 		{
 		  $var = !$var;
 		  
-		  $obj = $db->fetch_object( $i);
+		  $obj = $db->fetch_object();
 		  print "<tr $bc[$var]>";
 		  
 		  if ($oldyear == strftime("%Y",$obj->da) )
@@ -430,12 +430,12 @@ if ($socid > 0)
 		    }
 		  else
 		    {
-		      print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+		      print "<td align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
 		      $oldmonth = strftime("%Y%b",$obj->da);
 		    }
 		  
-		  print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
-		  print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
+		  print "<td>" .strftime("%d",$obj->da)."</td>\n"; 
+		  print "<td>" .strftime("%H:%M",$obj->da)."</td>\n";
 		  
 		  print '<td width="10%">&nbsp;</td>';
 		  
