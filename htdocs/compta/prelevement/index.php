@@ -88,7 +88,7 @@ else
   print $db->error() . ' ' . $sql;
 }
 
-print '</td><td width="70%">';
+print '</td><td valign="top" width="70%">';
 /*
  * Factures
  *
