@@ -21,23 +21,30 @@
  *
  */
 
-function propale_get_num($objsoc=0)
-{ 
-  global $db;
-
-  $sql = "SELECT count(*) FROM llx_propal";
-
-  if ( $db->query($sql) ) 
+Class mod_propale_jade
+{
+  Function info()
     {
-      $row = $db->fetch_row(0);
-      
-      $num = $row[0];
+      return "Renvoie le numéro sous la forme PROP2, PROP3";      
     }
 
-  $y = strftime("%y",time());
-
-  return  "PROP" . $num;
-
+  function propale_get_num($objsoc=0)
+    { 
+      global $db;
+      
+      $sql = "SELECT count(*) FROM llx_propal";
+      
+      if ( $db->query($sql) ) 
+	{
+	  $row = $db->fetch_row(0);
+	  
+	  $num = $row[0];
+	}
+      
+      $y = strftime("%y",time());
+      
+      return  "PROP" . $num;      
+    }
 }
 
 ?>

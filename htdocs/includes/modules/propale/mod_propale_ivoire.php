@@ -21,23 +21,31 @@
  *
  */
 
-function propale_get_num($objsoc=0)
-{ 
-  global $db;
-
-  $sql = "SELECT count(*) FROM llx_propal";
-
-  if ( $db->query($sql) ) 
+Class mod_propale_ivoire
+{
+  Function info()
     {
-      $row = $db->fetch_row(0);
-      
-      $num = $row[0];
+      return "Renvoie le numéro sous la forme PR0012";      
     }
 
-  $y = strftime("%y",time());
+  function propale_get_num($objsoc=0)
+    { 
+      global $db;
+      
+      $sql = "SELECT count(*) FROM llx_propal";
+      
+      if ( $db->query($sql) ) 
+	{
+	  $row = $db->fetch_row(0);
+	  
+	  $num = $row[0];
+	}
+      
+      $y = strftime("%y",time());
+      
+      return  "PR" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
 
-  return  "PR" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
-
+    }
 }
 
 ?>
