@@ -83,20 +83,18 @@ class CommandeTableur
 	$num = $this->db->num_rows();
       }
 
-    $subject = "Commande Société iBreizh";
+    $subject = "Commande de Lignes";
 
     $sendto = $this->fournisseur->email_commande;
 
     $from = TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC;
 
     $message = "Bonjour,\n\nVeuillez trouver ci-joint notre dernière commande.\n\n";
-    $message .= "Nous avons à ce jour $num ligne(s) commandée(s) pour lesquelles nous attendons la confirmation de présélection.\n\nMerci de nous envoyer les confirmations de présélection à l'adresse comstragex@ibreizh.net\n";
+    $message .= "Nous avons à ce jour $num ligne(s) commandée(s) pour lesquelles nous attendons la confirmation de présélection.\n\n\n";
     $message .= "\n\nCordialement,\n\n";
 
     $message .= "-- \n";
     $message .= $this->user->fullname."\n";
-    $message .= "iBreizh\n";
-    $message .= "Tél : 02 90 92 26 00\n";
 
 
     $mailfile = new DolibarrMail($subject,

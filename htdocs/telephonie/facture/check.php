@@ -56,7 +56,7 @@ if ($page == -1) { $page = 0 ; }
  */
 
 $sql = "SELECT distinct(client), sum(montant) ";
-$sql .= " FROM stragex";
+$sql .= " FROM telephonie_import_cdr";
 
 if ($_GET["search_ligne"])
 {
