@@ -20,44 +20,22 @@
  *
  */
 
+print '<TD width="15%" class="menu" align="center">';
 
+print '<A class="menu" href="/boutique/livre/">Livres</A></TD>';
 
 print '<TD width="15%" class="menu" align="center">';
-if ($user->comm > 0 && $conf->commercial ) 
-{
-  print '<A class="menu" href="/comm/">Livres</A></TD>';
-}
-else
-{
-  print '-';
-}
+
+print '<A class="menu" href="/boutique/auteur/">Auteurs</A></TD>';
 
 print '<TD width="15%" class="menu" align="center">';
-if ($user->compta > 0)
-{
-  print '<A class="menu" href="/compta/">Auteurs</A></TD>';
-} 
-else
-{
-  print '-';
-}
 
-print '<TD width="15%" class="menu" align="center">';
-if ($conf->produit->enabled ) 
-{
-  print '<A class="menu" href="/product/">Editeurs</a>';
-}
-else
-{
-  print '-';
-}
+print '<A class="menu" href="/boutique/editeur/">Editeurs</a>';
 
 print '</td><td width="15%" class="menu" align="center">';
 
 print '-';
 
-
 print '&nbsp;</TD>';
-
 
 ?>
