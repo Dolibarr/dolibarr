@@ -1,7 +1,8 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Class Product
+ *
  * $Id$
+ * $Source$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,30 +21,35 @@
  */
 
 class Product {
-  var $id ;
-  var $price ;
   var $db ;
+
+
+  var $id ;
+  var $ref;
+  var $label;
+  var $description;
+  var $price ;
 
   Function Product($DB, $id=0) {
     $this->db = $DB;
-
     $this->id   = $id ;
-    $this->price = $price ;
-
   }
 
 
-  Function fetch () {
+  Function fetch ($id) {
     
-    $sql = "SELECT rowid, price FROM llx_product WHERE rowid = $this->id";
+    $sql = "SELECT rowid, ref, label, description, price FROM llx_product WHERE rowid = $id";
 
     $result = $this->db->query($sql) ;
 
     if ( $result ) {
       $result = $this->db->fetch_array();
 
-      $this->price     = $result["price"];
-      $this->id        = $result["rowid"];
+      $this->id          = $result["rowid"];
+      $this->ref         = $result["ref"];
+      $this->label       = $result["label"];
+      $this->description = $result["description"];
+      $this->price       = $result["price"];
     }
     return $result;
   }
