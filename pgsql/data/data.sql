@@ -28,11 +28,11 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
-insert into llx_cond_reglement values (1,1,1, 'A réception','Réception de facture',0,0);
-insert into llx_cond_reglement values (2,2,1, '30 jours','Réglement à 30 jours',0,30);
-insert into llx_cond_reglement values (3,3,1, '30 jours fin de mois','Réglement à 30 jours fin de mois',1,30);
-insert into llx_cond_reglement values (4,4,1, '60 jours','Réglement à 60 jours',0,60);
-insert into llx_cond_reglement values (5,5,1, '60 jours fin de mois','Réglement à 60 jours fin de mois',1,60);
+insert into llx_cond_reglement(rowid, code, sortorder, actif, libelle, libelle_facture, fdm, nbjour) values (1,'RECEP',       1,1, 'A réception','Réception de facture',0,0);
+insert into llx_cond_reglement(rowid, code, sortorder, actif, libelle, libelle_facture, fdm, nbjour) values (2,'30D',         2,1, '30 jours','Réglement à 30 jours',0,30);
+insert into llx_cond_reglement(rowid, code, sortorder, actif, libelle, libelle_facture, fdm, nbjour) values (3,'30DENDMONTH', 3,1, '30 jours fin de mois','Réglement à 30 jours fin de mois',1,30);
+insert into llx_cond_reglement(rowid, code, sortorder, actif, libelle, libelle_facture, fdm, nbjour) values (4,'60D',         4,1, '60 jours','Réglement à 60 jours',0,60);
+insert into llx_cond_reglement(rowid, code, sortorder, actif, libelle, libelle_facture, fdm, nbjour) values (5,'60DENDMONTH', 5,1, '60 jours fin de mois','Réglement à 60 jours fin de mois',1,60);
 
 
 insert into llx_sqltables (name, loaded) values ('llx_album',0);
@@ -52,8 +52,6 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE',
 insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','1','chaine','Autorise l\'upload de document',1);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation',1);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr',1);
-
-insert into llx_const (name, value, type, note, visible) values ('MAIN_START_YEAR','2004','chaine','Année de départ',1);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages',1);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_DEBUG','1','yesno','Debug ..',1);
@@ -636,3 +634,54 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (202,2,202,'',2,'Wallonie');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (203,2,203,'',3,'Bruxelles-Capitale');
 
+--
+-- Devises
+--
+
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'BT', 'THB', 1, 'Bath thailandais'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CD', 'DKK', 1, 'Couronnes dannoises'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CN', 'NOK', 1, 'Couronnes norvegiennes'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CS', 'SEK', 1, 'Couronnes suedoises'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CZ', 'CZK', 1, 'Couronnes tcheques'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DA', 'AUD', 1, 'Dollars australiens'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DC', 'CAD', 1, 'Dollars canadiens'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DH', 'HKD', 1, 'Dollars hong kong'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DS', 'SGD', 1, 'Dollars singapour'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DU', 'USD', 1, 'Dollars us'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'EC', 'XEU', 1, 'Ecus'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'ES', 'PTE', 1, 'Escudos'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FB', 'BEF', 1, 'Francs belges'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FF', 'FRF', 1, 'Francs francais'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FL', 'LUF', 1, 'Francs luxembourgeois'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FO', 'NLG', 1, 'Florins'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FS', 'CHF', 1, 'Francs suisses'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LI', 'IEP', 1, 'Livres irlandaises'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LR', 'ITL', 1, 'Lires'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LS', 'GBP', 1, 'Livres sterling'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'MA', 'DEM', 1, 'Deutsch mark'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'MF', 'FIM', 1, 'Mark finlandais'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'PA', 'ARP', 1, 'Pesos argentins'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'PC', 'CLP', 1, 'Pesos chilien'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'PE', 'ESP', 1, 'Pesete'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'PL', 'PLN', 1, 'Zlotys polonais'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'SA', 'ATS', 1, 'Shiliing autrichiens'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'TW', 'TWD', 1, 'Dollar taiwanais'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'YE', 'JPY', 1, 'Yens'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'ZA', 'ZAR', 1, 'Rand africa'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DR', 'GRD', 1, 'Drachme (grece)'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'EU', 'EUR', 1, 'Euros'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'RB', 'BRL', 1, 'Real bresilien'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'SK', 'SKK', 1, 'Couronnes slovaques'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'YC', 'CNY', 1, 'Yuang chinois'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'AE', 'AED', 1, 'Arabes emirats dirham'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CF', 'XAF', 1, 'Francs cfa beac'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'EG', 'EGP', 1, 'Livre egyptienne'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'KR', 'KRW', 1, 'Won coree du sud'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'NZ', 'NZD', 1, 'Dollar neo-zelandais'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'TR', 'TRL', 1, 'Livre turque'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'ID', 'IDR', 1, 'Rupiahs d''indonesie'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'IN', 'INR', 1, 'Roupie indienne'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LT', 'LTL', 1, 'Litas'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'RU', 'SUR', 1, 'Rouble'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FH', 'HUF', 1, 'Forint hongrois'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LK', 'LKR', 1, 'Roupie sri lanka'); 
