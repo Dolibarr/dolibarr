@@ -136,8 +136,10 @@ class Contact
 		  //$info["postalCode"] = "postalCode";
 		  //$info["postalAddress"] = "postalAddress";
 		  
-		  $info["objectclass"] = "inetOrgPerson organizationalPerson";
-		  
+		  $info["objectclass"][0] = "organizationalPerson";
+		  $info["objectclass"][1] = "inetOrgPerson";
+		  $info["objectclass"][2] = "phpgwContact"; // compatibilite egroupware
+
 		  // add data to directory
 		  $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name).", ".LDAP_SERVER_DN ;
 		  
