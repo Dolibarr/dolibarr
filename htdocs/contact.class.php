@@ -103,88 +103,99 @@ class Contact
 
       if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
 	{
-	  $ds = dolibarr_ldap_connect();
-
-	  if ($ds)
-	    {
-	      ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-	      
-	      $ldapbind = dolibarr_ldap_bind($ds);
-	      
-	      if ($ldapbind)
-		{
-		  $info["cn"] = utf8_encode($this->firstname." ".$this->name);
-		  $info["sn"] = utf8_encode($this->name);
-		  
-		  if ($this->email)
-		    $info["rfc822Mailbox"] = $this->email;
-		  
-		  if ($this->phone_pro)
-		    $info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
-		  
-		  if ($this->phone_mobile)
-		    $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
-		  
-		  if ($this->phone_perso)
-		    $info["homePhone"] = dolibarr_print_phone($this->phone_perso);
-		  
-		  if ($this->poste)
-		    $info["title"] = utf8_encode($this->poste);
-		  
-		  if ($this->socid > 0)
-		    {
-		      $soc = new Societe($this->db);
-		      $soc->fetch($this->socid);
-		      $info["o"] = utf8_encode($soc->nom);
-		      if ($soc->ville)
-			{
-			  $info["l"] = utf8_encode($soc->ville);
-			}
-		    }
-		  
-                  $info["objectclass"][0] = "organizationalPerson";
-                  $info["objectclass"][1] = "inetOrgPerson";
-                  $info["objectclass"][2] = "phpgwContact"; // compatibilite egroupware
-
-                  $info['uidnumber'] = $id;
-
-                  $info['phpgwTz']      = 0;
-                  $info['phpgwMailType'] = 'INTERNET';
-                  $info['phpgwMailHomeType'] = 'INTERNET';
-
-                  $info["uid"] = $id. ":".$info["sn"];
-                  $info["phpgwContactTypeId"] = 'n';
-                  $info["phpgwContactCatId"] = 0;
-                  $info["phpgwContactAccess"] = "public";
-                  $info["phpgwContactOwner"] = $user->egroupware_id;
-		  $info["givenName"] = $info["sn"];
-
-                  if ($this->phone_mobile)
-		    $info["phpgwCellTelephoneNumber"] = dolibarr_print_phone($this->phone_mobile);
-
-                  //$dn = "uid=".$info["uid"].","."cn=".$info["cn"].", ".LDAP_SERVER_DN ;
-                  $dn = "cn=".$info["cn"].", ".LDAP_SERVER_DN ;
-
-		  $r = @ldap_delete($ds, $dn);
-		  		  
-		  if (! ldap_add($ds, $dn, $info))
-		    {
-		      $this->error[0] = ldap_err2str(ldap_errno($ds));
-		    }
-		}
-	      else
-		{
-		  echo "LDAP bind failed...";
-		}	 
-	      ldap_close($ds);	    
-	    }
-	  else
-	    {
-	      echo "Unable to connect to LDAP server";
-	    }
+	  update_ldap($user);
 	}
       return $result;
     }
+  /*
+   *
+   *
+   */
+  Function update_ldap($user)
+  {
+    $this->fetch($this->id);
+
+    $ds = dolibarr_ldap_connect();
+    
+    if ($ds)
+      {
+	ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+	
+	$ldapbind = dolibarr_ldap_bind($ds);
+	
+	if ($ldapbind)
+	  {
+	    $info["cn"] = utf8_encode($this->firstname." ".$this->name);
+	    $info["sn"] = utf8_encode($this->name);
+	    
+	    if ($this->email)
+	      $info["rfc822Mailbox"] = $this->email;
+		  
+	    if ($this->phone_pro)
+	      $info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
+	    
+	    if ($this->phone_mobile)
+	      $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
+	    
+	    if ($this->phone_perso)
+	      $info["homePhone"] = dolibarr_print_phone($this->phone_perso);
+	    
+	    if ($this->poste)
+	      $info["title"] = utf8_encode($this->poste);
+	    
+	    if ($this->socid > 0)
+	      {
+		$soc = new Societe($this->db);
+		$soc->fetch($this->socid);
+		$info["o"] = utf8_encode($soc->nom);
+		if ($soc->ville)
+		  {
+		    $info["l"] = utf8_encode($soc->ville);
+		  }
+	      }
+	    
+	    $info["objectclass"][0] = "organizationalPerson";
+	    $info["objectclass"][1] = "inetOrgPerson";
+	    $info["objectclass"][2] = "phpgwContact"; // compatibilite egroupware
+	    
+	    $info['uidnumber'] = $id;
+	    
+	    $info['phpgwTz']      = 0;
+	    $info['phpgwMailType'] = 'INTERNET';
+	    $info['phpgwMailHomeType'] = 'INTERNET';
+	    
+	    $info["uid"] = $id. ":".$info["sn"];
+	    $info["phpgwContactTypeId"] = 'n';
+	    $info["phpgwContactCatId"] = 0;
+	    $info["phpgwContactAccess"] = "public";
+	    $info["phpgwContactOwner"] = $user->egroupware_id;
+	    $info["givenName"] = utf8_encode($this->firstname);
+	    
+	    if ($this->phone_mobile)
+	      $info["phpgwCellTelephoneNumber"] = dolibarr_print_phone($this->phone_mobile);
+	    
+	    //$dn = "uid=".$info["uid"].","."cn=".$info["cn"].", ".LDAP_SERVER_DN ;
+	    $dn = "cn=".$info["cn"].", ".LDAP_SERVER_DN ;
+	    
+	    $r = @ldap_delete($ds, $dn);
+	    
+	    if (! ldap_add($ds, $dn, $info))
+	      {
+		$this->error[0] = ldap_err2str(ldap_errno($ds));
+	      }
+	  }
+	else
+	  {
+	    echo "LDAP bind failed...";
+	  }	 
+	ldap_close($ds);	    
+      }
+    else
+      {
+	echo "Unable to connect to LDAP server";
+      }
+  }
+
 
   /*
    * Mise à jour des infos persos
