@@ -158,6 +158,18 @@ div.tabsAction {
   text-align: right;
 }
 
+a.tabTitle {
+  background: #436976;
+  border: 1px solid #8CACBB;
+  color: white;
+  font: 100% Bold;
+  padding: 0em 1.0em;
+  margin: 0em 0em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+
 a.tab {
   background: white;
   border: 1px solid #8CACBB;
