@@ -36,7 +36,98 @@ class Form {
    *
    *
    */
+  Function select_tva($name='')
+  {
+    if (! strlen(trim($name)))
+    {
+      $name = "tauxtva";
+    }
 
+    print '<select name="'.$name.'">';
+    print '<option value="19.6">19.6';
+    print '<option value="5.5">5.5';
+    print '<option value="0">0';
+    print '</select>';
+  }
+
+
+  Function select_date($set_time='')
+  {
+    if (! $set_time)
+      {
+	$set_time = time();
+      }
+
+    $strmonth[1] = "Janvier";
+    $strmonth[2] = "F&eacute;vrier";
+    $strmonth[3] = "Mars";
+    $strmonth[4] = "Avril";
+    $strmonth[5] = "Mai";
+    $strmonth[6] = "Juin";
+    $strmonth[7] = "Juillet";
+    $strmonth[8] = "Ao&ucirc;t";
+    $strmonth[9] = "Septembre";
+    $strmonth[10] = "Octobre";
+    $strmonth[11] = "Novembre";
+    $strmonth[12] = "D&eacute;cembre";
+    
+    $smonth = 1;
+    
+    $cday = date("d", $set_time);
+    $cmonth = date("n", $set_time);
+    $syear = date("Y", $set_time);
+    
+    print "<select name=\"reday\">";    
+    
+    for ($day = 1 ; $day < $sday + 32 ; $day++) 
+      {
+	if ($day == $cday)
+	  {
+	    print "<option value=\"$day\" SELECTED>$day";
+	  }
+	else 
+	  {
+	    print "<option value=\"$day\">$day";
+	  }
+      }
+    
+    print "</select>";
+    
+    
+    print "<select name=\"remonth\">";    
+    for ($month = $smonth ; $month < $smonth + 12 ; $month++)
+      {
+	if ($month == $cmonth)
+	  {
+	    print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
+	  }
+	else
+	  {
+	    print "<option value=\"$month\">" . $strmonth[$month];
+	  }
+      }
+    print "</select>";
+    
+    print "<select name=\"reyear\">";
+    
+    for ($year = $syear - 2; $year < $syear + 5 ; $year++)
+      {
+	if ($year == $syear)
+	  {
+	    print "<option value=\"$year\" SELECTED>$year";
+	  }
+	else
+	  {
+	    print "<option value=\"$year\">$year";
+	  }
+      }
+    print "</select>\n";
+  
+  }
+  /*
+   *
+   *
+   */
   Function select($name, $sql, $id='')
     {
 
