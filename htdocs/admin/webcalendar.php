@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
+ * Copyright (C) 2003 Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +22,15 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 llxHeader();
 
-if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
+print_titre("Configuration du lien vers le calendrier");
+print '<br>';
+
 
 $def = array();
 
@@ -48,7 +50,7 @@ if ($action == 'save')
 	// la constante qui a été lue en avant du nouveau set
 	// on passe donc par une variable pour avoir un affichage cohérent
 	print "<p>ok bien enregistré</p>\n";
-        print "<p>dans quelques jours je rajoute un test de connexion à la base de données de webcal pour être certain que tout est OK</p>\n";
+	print "<p>dans quelques jours je rajoute un test de connexion à la base de données de webcal pour être certain que tout est OK</p>\n";
 	define("PHPWEBCALENDAR_URL",  $phpwebcalendar_url);
       }
     else
@@ -59,50 +61,53 @@ if ($action == 'save')
       print "<p>erreur, votre mot de passe n'est pas vérifié, merci de retourner à la page de saisie pour corriger votre erreur</p>\n";
     }
 }
-else
-{
-  /*
-   * Affichage du formulaire de saisie
-   */
-  
-  print_titre("Configuration du lien vers le calendrier");
-  
-  print "\n<form name=\"phpwebcalendarconfig\" action=\"" . $_SERVER['SCRIPT_NAME'] . "\" method=\"post\">
-<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">
-<tr>
+
+
+/*
+* Affichage du formulaire de saisie
+*/
+
+print "\n<form name=\"phpwebcalendarconfig\" action=\"" . $PHP_SELF . "\" method=\"post\">
+<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"1\">
+<tr class=\"liste_titre\">
+<td>Paramètre</td>
+<td>Valeur</td>
+</tr>
+<tr class=\"impair\">
   <td>Adresse URL d'accès au calendrier</td>
   <td><input type=\"text\" name=\"phpwebcalendar_url\" value=\"". PHPWEBCALENDAR_URL . "\" size=\"45\"></td>
 </tr>
-<tr>
+<tr class=\"pair\">
   <td>Serveur où la base du calendrier est hébergée</td>
   <td><input type=\"text\" name=\"phpwebcalendar_host\" value=\"". PHPWEBCALENDAR_HOST . "\" size=\"45\"></td>
 </tr>
-<tr>
+<tr class=\"impair\">
   <td>Nom de la base de données</td>
   <td><input type=\"text\" name=\"phpwebcalendar_dbname\" value=\"". PHPWEBCALENDAR_DBNAME . "\" size=\"45\"></td>
 </tr>
-<tr>
+<tr class=\"pair\">
   <td>Identifiant d'accès à la base</td>
   <td><input type=\"text\" name=\"phpwebcalendar_user\" value=\"". PHPWEBCALENDAR_USER . "\" size=\"45\"></td>
 </tr>
-<tr>
+<tr class=\"impair\">
   <td>Mot de passe d'accès à la base</td>
   <td><input type=\"password\" name=\"phpwebcalendar_pass\" value=\"" . PHPWEBCALENDAR_PASS . "\" size=\"45\"></td>
 </tr>
-<tr>
+<tr class=\"pair\">
   <td>Mot de passe (vérification)</td>
   <td><input type=\"password\" name=\"phpwebcalendar_pass2\" value=\"" . PHPWEBCALENDAR_PASS ."\" size=\"45\"></td>
 </tr>
-<tr>
+<tr class=\"impair\">
 <td colspan=\"2\"><input type=\"submit\" name=\"envoyer\" value=\"Enregistrer\"></td>
 </tr>\n";
 
   clearstatcache();
   
-  print "</table>
-<input type=\"hidden\" name=\"action\" value=\"save\"></td>
+  print "
+</table>
+<input type=\"hidden\" name=\"action\" value=\"save\">
 </form>\n";
-}
+
 
 /*
  *
