@@ -30,29 +30,16 @@ require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
  */
 if ($user->societe_id > 0) accessforbidden();
 
-if ($_POST["action"] == 'confirm_rejet')
-{
-  if ( $_POST["confirm"] == yes)
-    {
-      $rej = new RejetPrelevement($db, $user);
-      
-      $rej->create($_GET["id"], $_GET["socid"], $_GET["previd"]);
-      
-      Header("Location: factures.php?id=".$_GET["id"]);
-    }
-  else
-    {
-      Header("Location: factures.php?id=".$_GET["id"]);
-    }
-}
-
-
 llxHeader('','Bon de prélèvement');
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Fiche");
 $h++;      
+
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Lignes");
+$h++;  
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Factures");
@@ -67,17 +54,17 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"]
 $head[$h][1] = $langs->trans("Statistiques");
 $h++;  
 
-$prev_id = $_GET["id"];
 
 if ($_GET["id"])
 {
+  $prev_id = $_GET["id"];
+
   $bon = new BonPrelevement($db,"");
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
 
       dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
-
 
       print '<table class="border" width="100%">';
 
@@ -91,55 +78,33 @@ if ($_GET["id"])
     }
 }
 
-if ($_GET["action"] == 'rejet')
-{
-  $html = new Form($db);
-
-  $soc = new Societe($db);
-  $soc->fetch($_GET["socid"]);
-
-  $html->form_confirm("factures.php"."?id=".$_GET["id"]."&amp;socid=".$_GET["socid"]."&amp;previd=".$_GET["previd"],"Rejet de prélèvement","Etes-vous sûr de vouloir saisir un rejet de prélèvement pour la société ".$soc->nom." ?","confirm_rejet");
-
-  print '<table class="border" width="100%">';
-  
-  print '<tr><td width="20%">Référence</td><td>'.$bon->ref.'</td></tr>';
-
-  print '</table><br />';
-}
 
 $page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
-
-if ($page == -1) { $page = 0 ; }
-
+$sortorder = (empty($_GET["sortorder"])) ? "DESC" : $_GET["sortorder"];
+$sortfield = (empty($_GET["sortfield"])) ? "p.datec" : $_GET["sortfield"];
 $offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
-if ($sortorder == "") {
-  $sortorder="DESC";
-}
-if ($sortfield == "") {
-  $sortfield="p.datec";
-}
 
 /*
  * Liste des factures
  *
  *
  */
-$sql = "SELECT pf.rowid, pf.statut";
+$sql = "SELECT pf.rowid";
 $sql .= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc";
 $sql .= " , s.idp, s.nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
 $sql .= " , ".MAIN_DB_PREFIX."facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE p.rowid=".$prev_id;
-$sql .= " AND pf.fk_prelevement = p.rowid";
+$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
+$sql .= " AND pl.fk_prelevement_bons = p.rowid";
 $sql .= " AND f.fk_soc = s.idp";
 $sql .= " AND pf.fk_facture = f.rowid";
+if ($_GET["id"])
+{
+  $sql .= " AND p.rowid=".$_GET["id"];
+}
 
 if ($_GET["socid"])
 {
@@ -149,6 +114,7 @@ if ($_GET["socid"])
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
+
 if ($result)
 {
   $num = $db->num_rows();
@@ -176,12 +142,13 @@ if ($result)
       print "<tr $bc[$var]><td>";
 
       print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
-      print img_file();      
+      print img_object($langs->trans("ShowBill"),"bill");
       print '</a>&nbsp;';
 
       print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom)."</a></td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">';
+      print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
 
       print '<td align="center">'.price($obj->total_ttc)."</td>\n";
 
@@ -200,18 +167,7 @@ if ($result)
 	  print '<b>Rejeté</b>';
 	}
 
-      print '</td><td>';
-
-      if ($obj->statut == 1)
-	{
-	  print '<a href="factures.php?id='.$_GET["id"].'&amp;action=rejet&amp;socid='.$obj->idp;
-	  print '&amp;previd='.$bon->id.'">';
-	  print "Saisir rejet</a>";
-	}
-
-      print '</td>';
-
-      print "</tr>\n";
+      print "</td></tr>\n";
 
       $total += $obj->total_ttc;
       $var=!$var;
