@@ -21,6 +21,14 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/contact/fiche.php
+        \ingroup    companies
+		\brief      Page de la fiche contact
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require_once("../contact.class.php");
 require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
@@ -138,6 +146,7 @@ if ($_GET["action"] == 'delete')
     }
 
 
+
 /*
  * Onglets
  */
@@ -218,10 +227,6 @@ if ($_GET["action"] == 'create')
 
   print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
 
-//  print '<tr><td>Date de naissance</td><td colspan="5">';
-//  print $form->select_date('','birthday',0,0,1);
-//  print '</td></tr>';
-
   print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
 
   print '<tr><td>Contact facturation</td><td colspan="5"><select name="facturation"><option value="0">Non<option value="1">Oui</select></td></tr>';
@@ -247,7 +252,7 @@ elseif ($_GET["action"] == 'edit')
 
   if ($_GET["socid"] > 0)
     {
-      print '<tr><td>Société</td><td colspan="5">'.$objsoc->nom.'</td>';
+      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">'.$objsoc->nom.'</td>';
       print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
     }
 
@@ -255,8 +260,8 @@ elseif ($_GET["action"] == 'edit')
   print $form->select_civilite($contact->civilite_id);
   print '</td></tr>';
 
-  print '<tr><td>Nom</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
-  print '<td>Prénom</td><td><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td>';
+  print '<tr><td>'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
+  print '<td>'.$langs->trans("Firstname").'</td><td><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td>';
 
   print '<td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td></tr>';
 
@@ -264,18 +269,18 @@ elseif ($_GET["action"] == 'edit')
 
   print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
-  print '<tr><td>Adresse</td><td colspan="3"><input name="adresse" type="text" size="50" maxlength="80" value="'.$contact->address.'"></td>';
+  print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="adresse" type="text" size="50" maxlength="80" value="'.$contact->address.'"></td>';
 
   print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
   print '<tr><td>CP Ville</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
 
-  print '<td>Fax</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
-  print '<tr><td>Email</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
+  print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
 
   print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
 
-  print '<tr><td>Note</td><td colspan="5">';
+  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5">';
   print '<textarea name="note" cols="60" rows="3">';
   print nl2br($contact->note);
   print '</textarea></td></tr>';
@@ -283,7 +288,7 @@ elseif ($_GET["action"] == 'edit')
   print '<tr><td>Contact facturation</td><td colspan="5"><select name="facturation"><option value="0">Non<option value="1">Oui</select></td></tr>';
 
   print '<tr><td colspan="6" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
-  print "</table>";
+  print "</table><br>";
 
   print "</form>";
 }
@@ -297,58 +302,50 @@ else
   $contact = new Contact($db);
   $contact->fetch($_GET["id"], $user);
 
-  print_fiche_titre ("Contact : ". $contact->firstname.' '.$contact->name);
+  print_fiche_titre ($langs->trans("Contact")." : ". $contact->firstname.' '.$contact->name);
+
 
   print '<table class="noborder" width="100%">';
-
 
   if ($contact->socid > 0)
     {
       $objsoc = new Societe($db);
       $objsoc->fetch($contact->socid);
 
-      print '<tr><td>Société : '.$objsoc->nom_url.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Company").' : '.$objsoc->nom_url.'</td></tr>';
     }
-
 
   //TODO Aller chercher le libellé de la civilite a partir de l'id $contact->civilite_id
   //print '<tr><td valign="top">Titre : '.$contact->civilite."<br>";
 
-  print '<tr><td valign="top">Nom : '.$contact->name.' '.$contact->firstname ."<br>";
-
+  print '<tr><td valign="top">'.$langs->trans("Name").' : '.$contact->name.' '.$contact->firstname ."<br>";
 
   if ($contact->poste)
     print 'Poste : '.$contact->poste ."<br>";
 
-  if ($contact->email)
-    print 'Email : '.$contact->email ."<br>";
-
-  /* 
-   * Pas le temps de comprendre les 2 regexp
-   * je laisse les deux, vu ce que cela coute ;-)
-   */
-
-  if (!ValidEmail($contact->email))
+  if ($contact->email) {
+    print $langs->trans("EMail").' : '.$contact->email ."<br>";
+    
+    if (!ValidEmail($contact->email))
     {
-      print "<b>Email invalide !</b><br>";
+        print "<b>".$langs->trans("ErrorBadEMail",$contact->email)."</b><br>";
     }
-
-  if (!valid_email($contact->email))
-    {
-      print "<b>Email invalide, syntaxe incorrecte !</b><br>";
-    }
-
-  /*
-   * Risque de poser des problèmes en cas de non connexion au Réseau
-   * TODO : ajouter une option pour désactiver ce test
-   *
-   */
-
-  if (!check_mail($contact->email))
+  
+    /*
+     * Pose des problèmes en cas de non connexion au Réseau
+     * et en cas ou la fonction checkdnsrr n'est pas disponible dans php
+     * (cas fréquent sur certains hébergeurs)
+     */
+    /*
+    if (!check_mail($contact->email))
     {
       print "<b>Email invalide, nom de domaine incorrecte !</b><br>";
     }
+    */
 
+  }
+  
+  
   /*
    *
    */
@@ -371,7 +368,7 @@ else
     print 'Portable : '.$contact->phone_mobile."<br>";
 
   if($contact->fax)
-    print 'Fax : '.$contact->fax."<br>";
+    print $langs->trans("Fax").' : '.$contact->fax."<br>";
 
   print '</td></tr>';
 
@@ -384,6 +381,7 @@ else
   print "</table><br>";
   
   print "</div>";
+
 
   // Barre d'actions
   if ($user->societe_id == 0)
@@ -402,7 +400,8 @@ else
       print "</div>";      
     }
 }
-  $db->close();
+
+$db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
