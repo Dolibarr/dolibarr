@@ -36,6 +36,8 @@ include("./inc.php");
 $etape = 5;
 print "<h2>Installation de Dolibarr - Etape $etape/$etapes</h2>";
 
+$success=0;
+
 $conf = "../conf/conf.php";
 if (file_exists($conf))
 {
@@ -67,30 +69,33 @@ if ($HTTP_POST_VARS["action"] == "set")
       $sql .= ",1,'Administrateur','ADM')";
     }
   
-  if ($db->query($sql))
+  if ($db->query($sql) || $db->errno() == 1062)
     {
       $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
-      print "Création du compte administrateur réussie";
+      print "Création du compte administrateur réussie<br>";
       $success = 1;
     }
   else
     {
-      print "Echec de la création du compte administrateur";
+      print "Echec de la création du compte administrateur<br>";
     }
   print '</table>';
 
   $db->close();
 }
 
-
-print '<div class="main">
- <div class="main-inside">';
-	      print "Votre système est maintenant configuré, il ne vous reste plus qu'a sélectionner les modules que vous souhaitez utiliser. Pour cela cliquer sur l'url ci-dessous : <br>";
-	      print '<a href="'.$dolibarr_main_url_root .'/admin/modules.php">Configurer les modules</a></div></div>';
-
-
-
 ?>
+<br>
+
+<div class="main">
+<div class="main-inside">
+<?PHP
+print "Votre système est maintenant configuré, il ne vous reste plus qu'a sélectionner les modules que vous souhaitez utiliser. Pour cela cliquer sur l'url ci-dessous : <br>";
+print '<a href="'.$dolibarr_main_url_root .'/admin/modules.php">Configurer les modules</a>';
+?>
+</div>
+</div>
+
 </div>
 </div>
 <?PHP
