@@ -22,6 +22,7 @@
 require("./pre.inc.php");
 
 $user->getrights('commande');
+$user->getrights('expedition');
 if (!$user->rights->commande->lire)
   accessforbidden();
 
@@ -111,15 +112,21 @@ if ($HTTP_POST_VARS["action"] == 'addligne' && $user->rights->commande->creer)
     }
 }
 
-if ($action == 'updateligne' && $user->rights->commande->creer) 
+if ($HTTP_POST_VARS["action"] == 'updateligne' && $user->rights->commande->creer) 
 {
-  $fac = new Commande($db,"",$id);
-  $commande->fetch($id);
-  $result = $commande->updateline(rowid,
-				  $HTTP_POST_VARS["desc"],
-				  $HTTP_POST_VARS["price"],
-				  $HTTP_POST_VARS["qty"],
-				  $HTTP_POST_VARS["remise_percent"]);
+  $commande = new Commande($db,"",$_GET["id"]);
+  if ($commande->fetch($_GET["id"]) )
+    {
+      $result = $commande->update_line($HTTP_POST_VARS["elrowid"],
+				       $HTTP_POST_VARS["eldesc"],
+				       $HTTP_POST_VARS["elprice"],
+				       $HTTP_POST_VARS["elqty"],
+				       $HTTP_POST_VARS["elremise_percent"]);
+    }
+  else
+    {
+      print "Erreur";
+    }
 }
 
 if ($action == 'deleteline' && $user->rights->commande->creer) 
@@ -152,7 +159,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
       $commande = new Commande($db);
       $commande->id = $_GET["id"];
       $commande->delete();
-      Header("Location: liste.php");
+      Header("Location: index.php");
     }
 }
 
@@ -382,6 +389,7 @@ else
 /*                                                                             */
 /* *************************************************************************** */
 {  
+  $id = $_GET["id"];
   if ($id > 0)
     {
       $commande = New Commande($db);
@@ -399,7 +407,7 @@ else
 	   * Confirmation de la suppression de la commande
 	   *
 	   */
-	  if ($action == 'delete')
+	  if ($_GET["action"] == 'delete')
 	    {
 	      $html->form_confirm("$PHP_SELF?id=$id","Supprimer la commande","Etes-vous sûr de vouloir supprimer cette commande ?","confirm_delete");
 	    }
@@ -433,7 +441,7 @@ else
 
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 	  print "<tr><td>Client</td>";
-	  print "<td colspan=\"2\">";
+	  print '<td colspan="2">';
 	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
 	  print '<td width="50%">';
@@ -569,16 +577,16 @@ else
 		    }
 		  print "</tr>";
 		  
-		  if ($action == 'editline' && $rowid == $objp->rowid)
+		  if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
 		    {
 		      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">";
 		      print '<input type="hidden" name="action" value="updateligne">';
-		      print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+		      print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
 		      print "<tr $bc[$var]>";
-		      print '<TD colspan="2"><textarea name="desc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></TD>';
-		      print '<TD align="center"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></TD>';
-		      print '<TD align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
-		      print '<TD align="right"><input size="8" type="text" name="price" value="'.price($objp->subprice).'"></td>';
+		      print '<td colspan="2"><textarea name="eldesc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></TD>';
+		      print '<td align="center"><input size="4" type="text" name="elqty" value="'.$objp->qty.'"></TD>';
+		      print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
+		      print '<td align="right"><input size="8" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
 		      print '<td align="right" colspan="2"><input type="submit" value="Enregistrer"></td>';
 		      print '</tr>' . "\n";
 		      print "</form>\n";
@@ -656,7 +664,7 @@ else
 	 * Fin Ajout ligne
 	 *
 	 */
-	if ($user->societe_id == 0)
+	if ($user->societe_id == 0 && $commande->statut < 3)
 	  {
 	    print '<p><table id="actions" width="100%"><tr>';
 	
@@ -670,14 +678,19 @@ else
 	      }
 	    else
 	      {
-		print "<td align=\"center\" width=\"20%\">-</td>";
+		print '<td align="center" width="20%">-</td>';
 	      } 
 	    
-
-	    print "<td align=\"center\" width=\"20%\">-</td>";
+	    if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
+	      {
+		print '<td align="center" width="20%"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET["id"].'">Expédier</a></td>';
+	      }
+	    else
+	      {
+	    print '<td align="center" width="20%">-</td>';
+	      }
 
 	    
-
 	    print '<td align="center" width="20%">-</td>';
 	    print '<td align="center" width="20%">-</td>';
 	    
@@ -694,7 +707,8 @@ else
 	      }
 	    elseif ($commande->statut == 1)
 	      {
-		if ($user->rights->commande->valider)
+		$nb_expedition = $commande->nb_expedition();
+		if ($user->rights->commande->valider && $nb_expedition == 0)
 		  {
 		    print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id&amp;action=annuler\">Annuler la commande</a></td>";
 		  }
@@ -796,131 +810,13 @@ else
 	 *
 	 *
 	 */
-	if ($action == 'presend')
-	  {
-	    $replytoname = $user->fullname;
-	    $from_name = $replytoname;
-
-	    $replytomail = $user->email;
-	    $from_mail = $replytomail;
-	    
-	    print "<form method=\"post\" action=\"$PHP_SELF?id=$id&amp;action=send\">\n";
-	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
-	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
-	    
-	    print "<p><b>Envoyer la commande par mail</b>";
-	    print "<table cellspacing=0 border=1 cellpadding=3>";
-	    print '<tr><td>Destinataire</td><td colspan="5">';
-	    
-	    $form = new Form($db);	    
-	    $form->select_array("destinataire",$soc->contact_email_array());
-	    
-	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$commande->email\"></td></tr>";
-	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
-	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-	    print "<td>$replytomail</td></tr></table>";
-	    
-	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
-	  }
-
-	if ($action == 'prerelance')
-	  {
-	    $replytoname = $user->fullname;
-	    $from_name = $replytoname;
-
-	    $replytomail = $user->email;
-	    $from_mail = $replytomail;
-	    
-	    print "<form method=\"post\" action=\"$PHP_SELF?id=$id\">\n";
-	    print '<input type="hidden" name="action" value="relance">';
-	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
-	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
-	    
-	    print_titre("Envoyer une relance");
-	    print "<table cellspacing=0 border=1 cellpadding=3>";
-	    print '<tr><td>Destinataire</td><td colspan="5">';
-	    
-	    $form = new Form($db);	    
-	    $form->select_array("destinataire",$soc->contact_email_array());
-	    
-	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$commande->email\"></td></tr>";
-	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
-	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-	    print "<td>$replytomail</td></tr></table>";
-	    
-	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
-	  }
-	
-	/*
-	 *   Propales
-	 *
-	
-	$sql = "SELECT ".$db->pdate("p.datep")." as dp, p.price, p.ref, p.rowid as propalid";
-	$sql .= " FROM llx_propal as p, llx_fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_commande = $id";
-  
-	$result = $db->query($sql);
-	if ($result)
-	  {
-	    $num = $db->num_rows();
-	    if ($num)
-	      {
-		$i = 0; $total = 0;
-		print "<p>";
-		if ($num >1)
-		  {
-		    print_titre("Propositions commerciales associées");
-		  }
-		else
-		  {
-		    print_titre("Proposition commerciale associée");
-		  }
-
-		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-		print '<tr class="liste_titre">';
-		print "<td>Numéro</td>";
-		print "<td>Date</td>";
-		print '<td align="right">Prix</td>';
-		print "</TR>\n";
-		
-		$var=True;
-		while ($i < $num)
-		  {
-		    $objp = $db->fetch_object( $i);
-		    $var=!$var;
-		    print "<TR $bc[$var]>";
-		    print "<TD><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-		    print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-		    print '<TD align="right">'.price($objp->price).'</TD>';
-		    print "</tr>";
-		    $total = $total + $objp->price;
-		    $i++;
-		  }
-		print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b> $_MONNAIE HT</td></tr>\n";
-		print "</table>";
-	      }
-	  } else {
-	    print $db->error();
-	  }
-	
-	 *
-	 *
-	 */
       }
     else
       {
 	/* Commande non trouvée */
 	print "Commande inexistante ou accés refusé";
       }
-  } else {
-    /***************************************************************************
-     *                                                                         *
-     *                      Mode Liste                                         *
-     *                                                                         * 
-     *                                                                         *
-     ***************************************************************************/
-
-  }
-  
+  }  
 }
 
 $db->close();
