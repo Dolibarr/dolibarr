@@ -22,6 +22,11 @@
 require("./pre.inc.php3");
 require("./propal_model_pdf.class.php3");
 
+if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
+{
+  require(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
+}
+
 $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM llx_societe as s WHERE s.idp = $socidp;";
 
 $result = $db->query($sql);
@@ -46,7 +51,9 @@ print_titre("Nouvelle proposition commerciale");
  */
 if ($action == 'create')
 {
-  $numpr = propale_get_num();
+  $obj = PROPALE_ADDON;
+  $modPropale = new $obj;
+  $numpr = $modPropale->propale_get_num();
   $sql = "SELECT count(*) FROM llx_propal WHERE ref like '$numpr%'";
 
   if ( $db->query($sql) )
