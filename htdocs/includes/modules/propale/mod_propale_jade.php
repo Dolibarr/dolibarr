@@ -25,7 +25,7 @@ function propale_get_num($objsoc=0)
 { 
   global $db;
 
-  $sql = "SELECT count(*) FROM llx_propale";
+  $sql = "SELECT count(*) FROM llx_propal";
 
   if ( $db->query($sql) ) 
     {
@@ -36,7 +36,7 @@ function propale_get_num($objsoc=0)
 
   $y = strftime("%y",time());
 
-  return  "PROP" . substr("0000".$num, strlen("0000".$num)-5,5);
+  return  "PROP" . $num;
 
 }
 
