@@ -541,7 +541,7 @@ function dolibarr_print_error($db='',$msg='')
     print "<b>Information sur le dernier accès en base:</b> ".$db->error()."<br>\n";
   }
   if ($msg) {
-    print "Message: $msg<br>\n" ;
+    print "<b>Message:</b> ".$msg."<br>\n" ;
   }
   exit;
 }
