@@ -85,7 +85,16 @@ $pagenext = $page + 1;
  * 
  */
 
-print "<P>";
+print '<p><TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+  
+print '<TR class="liste_titre">';
+print "<TD>";
+print_liste_field_titre("Titre",$PHP_SELF,"p.title");
+print "</td>";
+print "<TD>Réf</TD><td>";
+print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+print "</td></TR>\n";
+
 $sql = "SELECT s.nom, s.idp, p.rowid as projectid, p.ref, p.title,".$db->pdate("p.dateo")." as do";
 $sql .= " FROM llx_societe as s, llx_projet as p";
 $sql .= " WHERE p.fk_soc = s.idp";
@@ -101,15 +110,6 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-  print '<p><TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-  
-  print '<TR class="liste_titre">';
-  print "<TD>";
-  print_liste_field_titre("Titre",$PHP_SELF,"p.title");
-  print "</td>";
-  print "<TD>Réf</TD><td>";
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-  print "</td></TR>\n";
 
   while ($i < $num)
     {
@@ -125,13 +125,15 @@ if ( $db->query($sql) )
       $i++;
     }
   
-  print "</TABLE>";
   $db->free();
 }
 else
 {
   print $db->error();
 }
+
+print "</table>";
+
 
 $db->close();
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
