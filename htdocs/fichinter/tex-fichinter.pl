@@ -59,11 +59,11 @@ print "Output in : $outputdir\n" if $verbose > 1;
 # Fetch datas
 #
 Sys::Syslog::syslog('info', '['.$idfiche.'] Fetch data');
-my ($numfiche, $societe, $date, $ville, $destinataire, $address);
+my ($numfiche, $societe, $date, $ville, $destinataire, $address, $note, $duree);
 
 my $dbh = DBI->connect("","","") || die $DBI::errstr ;
 
-my $sql = "SELECT f.rowid, f.ref, s.nom, s.address, s.cp, s.ville, unix_timestamp(f.datei) as di";
+my $sql = "SELECT f.rowid, f.ref, s.nom, s.address, s.cp, s.ville, unix_timestamp(f.datei) as di, f.duree, f.note";
 $sql .= " FROM llx_fichinter as f, societe as s";
 $sql .= " WHERE s.idp = f.fk_soc AND f.rowid = $idfiche";
 
@@ -83,6 +83,8 @@ if ( $sth->execute ) {
 	$societe       = $hsr->{"nom"};
 	$destinataire  = $hsr->{"firstname"} . " " . $hsr->{"name"};
 	$date          = $hsr->{"di"};
+	$duree          = $hsr->{"duree"};
+	$note          = $hsr->{"note"};
 	$address       = $hsr->{"address"};
 	$ville         = $hsr->{"cp"} . " " . $hsr->{"ville"};
     }
@@ -111,11 +113,18 @@ if (/^(.*)\n(.*)/) {
     print "|$adresse1|\n";
     print "|$adresse2|\n";
 }
-    print "|$address|\n";
+print "|$address|\n";
+
 #
 #
+
+my $tempfilename = "$outputdir/temp";
+open (FT, ">$tempfilename") || die "can't open $tempfilename: $!";	
+print FT $note;
+close (FT);
+
 #
-my $bodyfilename = "$templatesdir/fichinter.tex";
+
 
 unless (open (FC, ">$outputdir/$numfiche.tex") ) {
     print "can't write in $outputdir/$numfiche.tex: $!";
@@ -128,19 +137,51 @@ $date = strftime("%A %d %B %Y", localtime($date));
 #
 # Body
 #
-
+my $bodyfilename = "$templatesdir/header.tex";
 open (FH, "<$bodyfilename") || die "can't open $bodyfilename: $!";	
 while (<FH>)  {
-    s|\#SOCIETE\#|$societe|g;
-    s|\#ADRESSE1\#|$adresse1|g;
-    s|\#ADRESSE2\#|$adresse2|g;
-    s|\#VILLE\#|$ville|g;
-    s|\#DATE\#|$date|g;
-    s|\#NUMFICHE\#|$numfiche|g;
+    s|\_SOCIETE\_|$societe|g;
+    s|\_ADRESSE1\_|$adresse1|g;
+    s|\_ADRESSE2\_|$adresse2|g;
+    s|\_VILLE\_|$ville|g;
+    s|\_DATE\_|$date|g;
+    s|\_DUREE\_|$duree|g;
+    s|\_NUMFICHE\_|$numfiche|g;
     
     print FC $_;
 }
 close (FH);
+
+#
+# Body
+#
+
+open (FH, "<$tempfilename") || die "can't open $tempfilename: $!";	
+while (<FH>)  {
+    print FC $_;
+    print FC "\\\\\n";
+}
+close (FH);
+
+
+
+#
+# Footer
+#
+my $footfilename = "$templatesdir/footer.tex";
+open (FH, "<$footfilename") || die "can't open $footfilename: $!";	
+while (<FH>)  {
+    s|\_SOCIETE\_|$societe|g;
+    s|\_ADRESSE1\_|$adresse1|g;
+    s|\_ADRESSE2\_|$adresse2|g;
+    s|\_VILLE\_|$ville|g;
+    s|\_DATE\_|$date|g;
+    s|\_NUMFICHE\_|$numfiche|g;
+    
+    print FC $_;
+}
+close (FH);
+
 
 #
 #
@@ -162,18 +203,14 @@ system("cd $outputdir/ ; latex recode-$numfiche.tex ");
 
 
 
-if ($do_pdf) {
-    print "<p>Generate pdf file<br>\n";
-    system("cd $outputdir/ ; pdflatex recode-$numfiche.tex > /dev/null");
-    system("cd $outputdir/ ; mv recode-$numfiche.pdf $numfiche.pdf > /dev/null");
-}
-#
-#
-#
-if ($do_ps) {
-    print "Generate ps file\n";
-    system("cd $outputdir/ ; dvips recode-$numfiche.dvi -o $numfiche.ps > /dev/null");
-}
+
+print "<p>Generate pdf file<br>\n";
+system("cd $outputdir/ ; pdflatex recode-$numfiche.tex > /dev/null");
+system("cd $outputdir/ ; mv recode-$numfiche.pdf $numfiche.pdf > /dev/null");
+
+print "Generate ps file\n";
+system("cd $outputdir/ ; dvips recode-$numfiche.dvi -o $numfiche.ps ");
+
 #
 # $outputdir/$numfiche.tex
 #
