@@ -76,30 +76,35 @@ if ($err == 0)
 <tr>
 <td valign="top" class="label">
 <?php print "Répertoire d'installation"; ?>
-</td><td  class="label" valign="top"><input type="text" size="60" value="
+</td>
 <?php
 
 if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
-	// Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
-	// ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
-	if (eregi('php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('php\.exe$',$_SERVER["SCRIPT_FILENAME"])) {
-		$dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
-		//print $dolibarr_main_document_root;
-		if (! eregi('\/dolibarr/htdocs$',$dolibarr_main_document_root)) {
-			$dolibarr_main_document_root.="dolibarr/htdocs";
-		}
-	}
-	else {
-		$dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,strlen($_SERVER["SCRIPT_FILENAME"])- 21 );
-		# Nettoyage du path proposé
-		$dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);	# Gere les chemins windows avec double "\"
-		$dolibarr_main_document_root = ereg_replace('[\\\\\/]$','',$dolibarr_main_document_root);	# Supprime le "\" ou "/" de fin
-	}
+  // Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
+  // ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
+  if (eregi('php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('php\.exe$',$_SERVER["SCRIPT_FILENAME"])) {
+    $dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
+
+    if (! eregi('\/dolibarr/htdocs$',$dolibarr_main_document_root))
+      {
+	$dolibarr_main_document_root.="/dolibarr/htdocs";
+      }
+  }
+  else
+    {
+      $dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,strlen($_SERVER["SCRIPT_FILENAME"])- 21 );
+      // Nettoyage du path proposé
+      // Gere les chemins windows avec double "\"
+      $dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);
+      
+      // Supprime le slash ou antislash final
+      $dolibarr_main_document_root = ereg_replace('[\\\\\/]$','',$dolibarr_main_document_root);	
+												  }
 }
-print $dolibarr_main_document_root;
+
 ?>
-" name="main_dir">
+<td  class="label" valign="top"><input type="text" size="60" value="<?PHP print $dolibarr_main_document_root; ?>" name="main_dir">
 </td><td class="comment">
 Sans le slash "/" à la fin<br>
 exemples :<br>
