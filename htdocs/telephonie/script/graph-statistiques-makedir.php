@@ -32,15 +32,16 @@ $img_root = DOL_DATA_ROOT."/graph/telephonie/";
  */
 $dirs[0] = DOL_DATA_ROOT."/graph/";
 $dirs[1] = DOL_DATA_ROOT."/graph/telephonie/";
-$dirs[2] = DOL_DATA_ROOT."/graph/telephonie/communications/";
-$dirs[3] = DOL_DATA_ROOT."/graph/telephonie/factures/";
-$dirs[4] = DOL_DATA_ROOT."/graph/telephonie/ca/";
-$dirs[5] = DOL_DATA_ROOT."/graph/telephonie/client/";
-$dirs[6] = DOL_DATA_ROOT."/graph/telephonie/lignes/";
-$dirs[7] = DOL_DATA_ROOT."/graph/telephonie/commercials/";
-$dirs[8] = DOL_DATA_ROOT."/graph/telephonie/contrats/";
+$dirs[2] = DOL_DATA_ROOT."/graph/telephonie/ca/";
+$dirs[3] = DOL_DATA_ROOT."/graph/telephonie/client/";
+$dirs[4] = DOL_DATA_ROOT."/graph/telephonie/commercials/";
+$dirs[5] = DOL_DATA_ROOT."/graph/telephonie/communications/";
+$dirs[6] = DOL_DATA_ROOT."/graph/telephonie/contrats/";
+$dirs[7] = DOL_DATA_ROOT."/graph/telephonie/factures/";
+$dirs[8] = DOL_DATA_ROOT."/graph/telephonie/lignes/";
 
-$numdir = sizeof($dirs);
+$numdir = (sizeof($dirs) + 2);
+$i = $numdir ;
 
 $sql = "SELECT distinct fk_commercial";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
@@ -48,15 +49,16 @@ $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
 if ($db->query($sql))
 {
   $num = $db->num_rows();
-  $i = 0;
+  $j = 0;
   
-  while ($i < $num)
+  while ($j < $num)
     {
       $row = $db->fetch_row();	
       
-      $dirs[($numdir + $i)] = DOL_DATA_ROOT."/graph/telephonie/commercials/".$row[0];
+      $dirs[$i] = DOL_DATA_ROOT."/graph/telephonie/commercials/".$row[0];
       
       $i++;
+      $j++;
     }
 }
 
@@ -181,20 +183,16 @@ for ($i = 0 ; $i < 10 ; $i++)
 
 function create_dir($dir)
 {
-  if (file_exists(dirname($dir)))
+
+  if (! file_exists($dir))
     {
-      if (! file_exists($dir))
+      umask(0);
+      if (! @mkdir($dir, 0755))
 	{
-	  umask(0);
-	  if (! @mkdir($dir, 0755))
-	    {
-	      die ("Erreur: Le répertoire ".$dir." n'existe pas et Dolibarr n'a pu le créer.");
-	    }
+	  die ("Erreur: Le répertoire ".$dir." n'existe pas et Dolibarr n'a pu le créer.");
 	}
     }
-  else
-    {
-      create_dir(dirname($dir));
-    }
+
+
 }
 ?>
