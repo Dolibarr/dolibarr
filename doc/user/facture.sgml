@@ -95,6 +95,31 @@
     </sect1>
 
   </sect>
+
+  <sect id="fac-facture-rec">Factures récurrentes
+
+    <p>
+      Cette fonctionnalité est apparue dans la version 1.1.0
+    </p>
+
+    <sect1 id="fac-facture-rec-creation">Créer une facture récurrente
+      <p>
+	La création d'une facture récurrente s'effectue depuis une
+	facture validée qui sert de modèle.
+      </p>
+
+      <p>
+	Dans le formulaire de création si le <em>N.P.</em> contient
+	une valeur cela signifie que le prix du produit a changé
+	depuis la création de la facture qui sert de modèle. Il faut
+	alors indiquer si on souhaite garder le prix de référence on
+	si on crée la facture récurrente avec le nouveau prix du
+	produit.
+      </p>
+    </sect1>
+
+  </sect>
+
 </chapt>
 <!-- Keep this comment at the end of the file
 Local variables:
