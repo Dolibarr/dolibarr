@@ -47,7 +47,14 @@ if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des contacts",$page, $PHP_SELF, '', $sortfield, $sortorder);
+if ($_GET["view"] == 'phone')
+{
+  $titre = "Liste des contacts (Vue téléphone)";
+}
+else
+{
+  $titre = "Liste des contacts";
+}
 
 /*
  *
@@ -56,7 +63,7 @@ print_barre_liste("Liste des contacts",$page, $PHP_SELF, '', $sortfield, $sortor
  *
  */
 
-$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
+$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax ";
 $sql .= "FROM llx_socpeople as p";
 $sql .= " LEFT JOIN llx_societe as s ON (s.idp = p.fk_soc)";
 
@@ -85,11 +92,11 @@ if ($socid)
 
 if($_GET["view"] == "recent")
 {
-  $sql .= " ORDER BY p.datec DESC " . $db->plimit( $limit, $offset);
+  $sql .= " ORDER BY p.datec DESC " . $db->plimit( $limit + 1, $offset);
 }
 else
 {
-  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1, $offset);
 }
 
 $result = $db->query($sql);
@@ -98,6 +105,8 @@ if ($result)
 {
   $num = $db->num_rows();
   $i = 0;
+
+  print_barre_liste($titre ,$page, $PHP_SELF, '&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
   
   if ($sortorder == "DESC") 
     {
@@ -107,7 +116,7 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<p><table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\">";
   print "<TD>";
   print_liste_field_titre("Nom",$PHP_SELF,"lower(p.name)", $begin);
@@ -115,11 +124,24 @@ if ($result)
   print_liste_field_titre("Prénom",$PHP_SELF,"lower(p.firstname)", $begin);
   print "</td><td>";
   print_liste_field_titre("Société",$PHP_SELF,"lower(s.nom)", $begin);
-  print "</td><TD>email</TD>";
-  print '<TD>Téléphone</TD>';
+  print '</td>';
+
+  print '<td>Téléphone</td>';
+
+
+  if ($_GET["view"] == 'phone')
+    {
+      print '<td>Portable</td>';
+      print '<td>Fax</td>';
+    }
+  else
+    {
+      print '<td>email</td>';
+    }
+
   print "</TR>\n";
   $var=True;
-  while ($i < $num) 
+  while ($i < min($num,$limit))
     {
       $obj = $db->fetch_object( $i);
     
@@ -140,10 +162,22 @@ if ($result)
 	}
       print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       
-      print '<td><a href="action/fiche.php?action=create&amp;actionid=4&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
       
-      print '<td><a href="action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+	  print '<td><a href="action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+
+      if ($_GET["view"] == 'phone')
+	{
       
+	  print '<td>'.$obj->phone_mobile.'&nbsp;</td>';
+      
+	  print '<td>'.$obj->fax.'&nbsp;</td>';
+
+	}
+      else
+	{
+	  print '<td><a href="action/fiche.php?action=create&amp;actionid=4&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+	}
+
       print "</TR>\n";
       $i++;
     }
