@@ -116,7 +116,7 @@ else
   print '<td align="right">Debit</TD>';
   print '<td align="right">Credit</TD>';
   print '<td align="right">Solde</TD>';
-  print '<td align="right">Francs</td><td>&nbsp;</td>';
+  print '<td>&nbsp;</td>';
   print "</TR>\n";
  
 
@@ -138,7 +138,7 @@ else
       $numrows = $db->num_rows();
       $i = 0; 
       print "<tr><td colspan=\"3\"><a href=\"$PHP_SELF?num=$num&ve=1&rel=$rel&account=$account\">vue etendue</a></td>";
-      print "<td align=\"right\" colspan=\"2\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td align=\"right\"><small>".francs($total)."</small></td><td>&nbsp;</td></tr>\n";
+      print "<td align=\"right\" colspan=\"2\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
 
       while ($i < $numrows)
 	{
@@ -188,7 +188,6 @@ else
 	    }
     
 	  print "<td align=\"right\">".price($total)."</TD>\n";
-	  print "<td align=\"right\"><small>".francs($objp->amount)."</small></TD>\n";
 	  
 	  print "<td align=\"center\">[<a href=\"ligne.php3?rowid=$objp->rowid&account=$account\">edit</a>]</td>";
 	  
@@ -198,7 +197,7 @@ else
       $db->free();
     }
   print "<tr><td align=\"right\" colspan=\"3\">Total :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td colspan=\"3\">&nbsp;</td></tr>";
-  print "<tr><td align=\"right\" colspan=\"5\"><b>Solde :</b></td><td align=\"right\"><b>".price($total)."</b></td><td align=\"right\"><small>".francs($total)."</small></td><td>&nbsp;</td></tr>\n";
+  print "<tr><td align=\"right\" colspan=\"5\"><b>Solde :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
   print "</table></form>";
   
   print "<a href=\"bank/categ.php3\">Edit Categories</a>";

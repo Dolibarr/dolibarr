@@ -43,7 +43,7 @@ if ($bid == 0)
   
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
-  echo '<td>Description</TD><td>Nb</td><td colspan=\"2\">Total</td><td>Moyenne</td>';
+  echo '<td>Description</TD><td align="center">Nb</td><td align="right">Total</td><td align="right">Moyenne</td>';
   print "</TR>\n";
 
   $sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
@@ -63,9 +63,8 @@ if ($bid == 0)
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  print "<td><a href=\"$PHP_SELF?bid=$objp->rowid\">$objp->label</a></td>";
-	  print "<td>$objp->nombre</td>";
+	  print '<td align="center">'.$objp->nombre.'</td>';
 	  print "<td align=\"right\">".price(abs($objp->somme))."</td>";
-	  print "<td align=\"right\"><small>".francs(abs($objp->somme))."&nbsp;FF</small></td>";
 	  print "<td align=\"right\">".price(abs($objp->somme / $objp->nombre))."</td>";
 	  print "</tr>";
 	  $i++;
@@ -75,7 +74,6 @@ if ($bid == 0)
 
       print '<tr><td colspan="2" align="right">Total</td>';
       print '<td align="right"><b>'.price($total).'</b></td><td colspan="2">&nbsp;</td></tr>';
-      print "<tr><td colspan=\"3\" align=\"right\"><small>soit en francs</td><td align=\"right\"><small>".francs($total)."</td><td>&nbsp;</td></tr>\n";
     }
   else
     {
