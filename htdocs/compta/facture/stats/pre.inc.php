@@ -20,7 +20,7 @@
  *
  */
 require("../../../main.inc.php");
-require(DOL_DOCUMENT_ROOT."/graph.class.php");
+require(DOL_DOCUMENT_ROOT."/bargraph.class.php");
 require("./facturestats.class.php");
 
 function llxHeader($head = "", $urlp = "") {
