@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
+ * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +95,9 @@ function llxHeader($head = "") {
   if ($conf->commande->enabled)
     {
       $menu->add(DOL_URL_ROOT."/commande/index.php", "Commandes");
-      $menu->add_submenu(DOL_URL_ROOT."/expedition/index.php", "Expéditions");
+	  if ($conf->expedition->enabled) {
+      	$menu->add_submenu(DOL_URL_ROOT."/expedition/index.php", "Expéditions");
+      }
     }
 
   if ($conf->don->enabled)

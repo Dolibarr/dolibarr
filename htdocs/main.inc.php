@@ -185,9 +185,77 @@ if (defined("MAIN_NOT_INSTALLED"))
   Header("Location: install.php");
 }
 
+
 /*
- * Inclusion de librairies dépendantes de paramètres de conf
+ * Activation des modules
+ * et inclusion de librairies dépendantes
  */
+if (defined("MAIN_MODULE_COMMANDE"))
+{
+  $conf->commande->enabled=MAIN_MODULE_COMMANDE;
+}
+if (defined("MAIN_MODULE_EXPEDITION"))
+{
+  $conf->expedition->enabled=MAIN_MODULE_EXPEDITION;
+}
+if (defined("MAIN_MODULE_SOCIETE") && MAIN_MODULE_SOCIETE)
+{
+  $conf->societe->enabled=MAIN_MODULE_SOCIETE; 
+  $conf->societe = 1 ; 	// TODO A remplacer par $conf->societe->enabled
+}
+if (defined("MAIN_MODULE_COMMERCIAL"))
+{
+  $conf->commercial->enabled=MAIN_MODULE_COMMERCIAL;
+}
+if (defined("MAIN_MODULE_COMPTABILITE"))
+{
+  $conf->compta->enabled=MAIN_MODULE_COMPTABILITE;
+}
+if (defined("MAIN_MODULE_DON") && MAIN_MODULE_DON)
+{
+  $conf->don->enabled=MAIN_MODULE_DON;
+}
+if (defined("MAIN_MODULE_FOURNISSEUR"))
+{
+  $conf->fournisseur->enabled=MAIN_MODULE_FOURNISSEUR;
+}
+if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
+{
+  require (DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
+  $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
+}
+if (defined("MAIN_MODULE_COMMANDE") && MAIN_MODULE_COMMANDE)
+{
+  $conf->commande->enabled=MAIN_MODULE_COMMANDE;
+}
+if (defined("MAIN_MODULE_ADHERENT"))
+{
+  $conf->adherent->enabled=MAIN_MODULE_ADHERENT;
+}
+if (defined("MAIN_MODULE_PRODUIT"))
+{
+  $conf->produit->enabled=MAIN_MODULE_PRODUIT;
+}
+if (defined("MAIN_MODULE_SERVICE"))
+{
+  $conf->service->enabled=MAIN_MODULE_SERVICE;
+}
+if (defined("MAIN_MODULE_BOUTIQUE"))
+{
+  $conf->boutique->enabled=MAIN_MODULE_BOUTIQUE;
+}
+if (defined("MAIN_MODULE_PROJET"))
+{
+  $conf->projet->enabled=MAIN_MODULE_PROJET;
+}
+if (defined("BOUTIQUE_LIVRE"))
+{
+  $conf->boutique->livre->enabled=BOUTIQUE_LIVRE;
+}
+if (defined("BOUTIQUE_ALBUM"))
+{
+  $conf->boutique->album->enabled=BOUTIQUE_ALBUM;
+}
 if (defined("MAIN_MODULE_FACTURE") && MAIN_MODULE_FACTURE)
 {
   require (DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
@@ -198,9 +266,7 @@ if (defined("MAIN_MODULE_FACTURE") && MAIN_MODULE_FACTURE)
 
   if (defined("FACTURE_ADDON_PDF"))
     require(DOL_DOCUMENT_ROOT ."/includes/modules/facture/pdf_".FACTURE_ADDON_PDF.".modules.php");
-
 }
-
 if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
 {
   $conf->propal->enabled=MAIN_MODULE_PROPALE;
@@ -222,6 +288,7 @@ if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
     }
 }
 
+
 /*
  * TODO RODO
  * Modification de quelques variable de conf en fonction des Constantes
@@ -236,12 +303,23 @@ else {
 }
 
 /*
- * Defini le mode de calcul du CA
+ * Option du module Compta: Defini le mode de calcul du CA
  */
 $conf->compta->mode = 'RECETTES-DEPENSES';	// Par défaut
 if (defined("COMPTA_MODE")) {
 	$conf->compta->mode = COMPTA_MODE; 		// Peut etre 'CREANCES-DETTES' pour un CA en creances-dettes
 }
+
+/*
+ * Option du module Facture
+ */
+if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') {
+	$conf->defaulttx='0';		# Taux par défaut des factures clients
+}
+else {
+	$conf->defaulttx='';		# Pas de taux par défaut des factures clients, le premier sera pris
+}
+
 /*
  * SIZE_LISTE_LIMIT : constante de taille maximale des listes
  */
@@ -253,17 +331,9 @@ else
 {
   $conf->liste_limit=20;
 }
-
 if ($user->limite_liste > 0)
 {
   $conf->liste_limit = $user->limite_liste;
-}
-
-if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') {
-	$conf->defaulttx='0';		# Taux par défaut des factures clients
-}
-else {
-	$conf->defaulttx='';		# Pas de taux par défaut des factures clients, le premier sera pris
 }
 
 if (defined("MAIN_THEME"))
@@ -304,82 +374,6 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
   $conf->adherent->email_new_subject=MAIN_MAIL_NEW_SUBJECT;
 }
 
-if (defined("MAIN_MODULE_COMMANDE"))
-{
-  $conf->commande->enabled=MAIN_MODULE_COMMANDE;
-}
-
-if (defined("MAIN_MODULE_SOCIETE") && MAIN_MODULE_SOCIETE)
-{
-  $conf->societe = 1 ; 
-}
-
-if (defined("MAIN_MODULE_COMMERCIAL"))
-{
-  $conf->commercial->enabled=MAIN_MODULE_COMMERCIAL;
-}
-
-if (defined("MAIN_MODULE_COMPTABILITE"))
-{
-  $conf->compta->enabled=MAIN_MODULE_COMPTABILITE;
-}
-
-if (defined("MAIN_MODULE_DON") && MAIN_MODULE_DON)
-{
-  $conf->don->enabled=MAIN_MODULE_DON;
-}
-
-if (defined("MAIN_MODULE_FOURNISSEUR"))
-{
-  $conf->fournisseur->enabled=MAIN_MODULE_FOURNISSEUR;
-}
-
-if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
-{
-  require (DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
-
-  $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
-}
-
-if (defined("MAIN_MODULE_COMMANDE") && MAIN_MODULE_COMMANDE)
-{
-  $conf->commande->enabled=MAIN_MODULE_COMMANDE;
-}
-
-if (defined("MAIN_MODULE_ADHERENT"))
-{
-  $conf->adherent->enabled=MAIN_MODULE_ADHERENT;
-}
-
-if (defined("MAIN_MODULE_PRODUIT"))
-{
-  $conf->produit->enabled=MAIN_MODULE_PRODUIT;
-}
-
-if (defined("MAIN_MODULE_SERVICE"))
-{
-  $conf->service->enabled=MAIN_MODULE_SERVICE;
-}
-
-if (defined("MAIN_MODULE_BOUTIQUE"))
-{
-  $conf->boutique->enabled=MAIN_MODULE_BOUTIQUE;
-}
-
-if (defined("MAIN_MODULE_PROJET"))
-{
-  $conf->projet->enabled=MAIN_MODULE_PROJET;
-}
-
-if (defined("BOUTIQUE_LIVRE"))
-{
-  $conf->boutique->livre->enabled=BOUTIQUE_LIVRE;
-}
-
-if (defined("BOUTIQUE_ALBUM"))
-{
-  $conf->boutique->album->enabled=BOUTIQUE_ALBUM;
-}
 
 /*
  */
@@ -389,16 +383,18 @@ if(!isset($application_lang))
 }
 $rtplang = new rtplang(DOL_DOCUMENT_ROOT ."/langs", "en", "en", $application_lang);
 $rtplang->debug=1;
+
+setlocale(LC_TIME, "fr_FR");
+
+
 /*
  */
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
 
-setlocale(LC_TIME, "fr_FR");
 
 /*
  * Barre de menu supérieure
- *
  *
  */
 
