@@ -23,13 +23,14 @@
  */
 
 class DoliDb {
-  var $db, $results, $ok;
+  var $db, $results, $ok, $connected, $database_selected;
 
   Function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '') 
     {
-      //      print "Name DB : $host, $user, $pass, $name<br>";
       global $conf; 
-      
+
+	  // print "Name DB : $host, $user, $pass, $name<br>";
+
       if ($host == '')
 	{
 	  $host = $conf->db->host;
@@ -51,7 +52,6 @@ class DoliDb {
 	}
 	
       $this->db = $this->connect($host, $user, $pass);
-      
       if ($this->db)
 	{
 	  $this->connected = 1;
@@ -123,8 +123,7 @@ class DoliDb {
 
   Function close()
   {
-    $this->ret = mysql_close($this->db);
-    return $this->ret;
+    return mysql_close($this->db);
   }
 
   Function begin($do=1)
