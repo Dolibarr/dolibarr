@@ -49,7 +49,7 @@ class Contrat
     $sql = "UPDATE llx_contrat SET enservice = 1";
     $sql .= " , mise_en_service = now(), fk_user_mise_en_service = ".$user->id;
 
-    $sql .= " WHERE rowid = ".$this->id;
+    $sql .= " WHERE rowid = ".$this->id . " AND enservice = 0";
 
     $result = $this->db->query($sql) ;
   }
@@ -61,7 +61,7 @@ class Contrat
   {
     $sql = "UPDATE llx_contrat SET enservice = 2";
     $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
-    $sql .= " WHERE rowid = ".$this->id;
+    $sql .= " WHERE rowid = ".$this->id . " AND enservice = 1";
 
     $result = $this->db->query($sql) ;
   }
