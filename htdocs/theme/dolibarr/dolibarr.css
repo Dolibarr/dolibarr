@@ -28,6 +28,35 @@ table.topbarre
 { 
   cell-spacing: 0;
  }
+/*
+ * Tables
+ */
+table.border {
+               border-collapse: collapse;
+               border: 2px white ridge; }
+
+table.border td {
+                  border: 2px white ridge; }
+
+table.noborder {
+                 border-collapse: collapse;
+                 border: 0px  }
+
+table.noborder td {
+                    border-collapse: collapse;
+                    border: 0px  }
+
+table#actions {
+                 border-collapse: collapse;
+                 border: 1px ridge }
+
+table#actions td {
+                    border-collapse: collapse;
+                    border: 1px ridge }
+
+/*
+ *
+ */
 
 a { 
     text-decoration: none;
