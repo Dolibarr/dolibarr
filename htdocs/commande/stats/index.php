@@ -50,9 +50,9 @@ if ($db->query($sql))
   $num = $db->num_rows();
 
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr><td>Année</td><td width="10%">Nb de commande</td><td>Somme des commandes</td>';
+  print '<tr><td align="center">Année</td><td width="10%">Nb de commande</td><td>Somme des commandes</td>';
   print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-  print '<img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">';
+  print 'Nombre de commande par mois<br><img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">';
   print '</td></tr>';
   $i = 0;
   while ($i < $num)
@@ -61,7 +61,7 @@ if ($db->query($sql))
       $nbproduct = $row[0];
       $year = $row[1];
       print "<tr>";
-      print '<td><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td><td>'.price($row[2]).'</td></tr>';
+      print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td><td>'.price($row[2]).'</td></tr>';
       $i++;
     }
 
