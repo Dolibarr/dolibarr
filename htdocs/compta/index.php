@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,10 +70,10 @@ print '<tr><td valign="top" width="30%">';
  *
  */
 print '<form method="post" action="facture.php">';
-print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="2">Rechercher une facture</td></tr>';
-print "<tr $bc[1]><td>";
+print "<tr $bc[0]><td>";
 print 'Num. : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="Rechercher" class="flat"></td></tr>';
 print "</table></form>";
 
@@ -210,10 +210,10 @@ if ($user->comm > 0 && $conf->commercial )
       if ($num)
 	{
 	  $i = 0;
-	  print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 	  print "<tr class=\"liste_titre\">";
 	  print '<td colspan="2">'.translate("Commandes à facturer").'</td></tr>';
-  
+	  $var = True;
 	  while ($i < $num)
 	    {
 	      $var=!$var;
@@ -245,10 +245,9 @@ if ( $db->query($sql) )
 
   if ($num)
     {
-      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-      print "<TR class=\"liste_titre\">";
-      print '<td colspan="3">Factures impayées</td></tr>';
-
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<tr class="liste_titre"><td colspan="3">Factures impayées</td></tr>';
+      $var = True;
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object( $i);
@@ -267,26 +266,27 @@ else
   print $sql;
 }
 
-
 $result = 0;
-if ( $result ) {
-
-  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-  print "<TR class=\"liste_titre\">";
-  print "<td colspan=\"2\">Actions à faire</td>";
-  print "</TR>\n";
-
+if ( $result )
+{
+  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+  print '<tr class="liste_titre"><td colspan="2">Actions à faire</td>';
+  print "</tr>\n";
+  $var = True;
   $i = 0;
-  while ($i < $db->num_rows() ) {
-    $obj = $db->fetch_object($i);
-    $var=!$var;
-    
-    print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td><td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
-    $i++;
-  }
+  while ($i < $db->num_rows() )
+    {
+      $obj = $db->fetch_object($i);
+      $var=!$var;
+      
+      print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td><td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
+      $i++;
+    }
   $db->free();
   print "</table><br>";
-} else {
+}
+else
+{
   print $db->error();
 }
 /*
@@ -310,12 +310,11 @@ if ($user->societe_id == 0)
       $num = $db->num_rows();
       if ($num)
 	{
-	  print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
-	  print '<TR class="liste_titre">';
-	  print '<TD colspan="2">Factures à payer</td>';
-	  print "</TR>\n";
+	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<tr class="liste_titre"><td colspan="2">Factures à payer</td>';
+	  print "</tr>\n";
 	  $i = 0;
-	  
+	  $var = True;
 	  while ($i < $num)
 	    {
 	      $obj = $db->fetch_object( $i);
