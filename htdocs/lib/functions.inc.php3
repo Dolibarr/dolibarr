@@ -242,6 +242,30 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="")
   print '<img src="/theme/'.$conf->theme.'/img/1uparrow.png" border="0"></a>';
 }
 
+function print_liste_field_titre_new($name, $file, $field, $begin="", $options="", $td="", $sortfield="")
+ {
+   /*
+    * idem à la fonction ci dessus mais ajoute des fonctionnalités
+    *
+    *
+    */
+  global $conf;
+  if ($sortfield == $field)
+    {
+  print '<td class="menusel" '. $td.'>';
+    }
+  else
+    {
+  print '<td '. $td.'>';
+    }
+  print $name."&nbsp;";
+  print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+  print '<img src="/theme/'.$conf->theme.'/img/1downarrow.png" border="0"></a>';
+  print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+  print '<img src="/theme/'.$conf->theme.'/img/1uparrow.png" border="0"></a>';
+  print "</td>";
+}
+
 function print_titre($titre)
 {
   global $conf;
