@@ -20,7 +20,7 @@
  *
  */
 
-require ("./main.inc.php3");
+require ("../main.inc.php3");
 
 
 function llxHeader($head = "") {
@@ -38,42 +38,8 @@ function llxHeader($head = "") {
 
   $menu->add_submenu("/comm/clients.php3", "Clients");
 
-  $menu->add_submenu("/comm/propal.php3", "Propales");
-
-  $menu->add("/compta/", "Comptabilité");
-
   $menu->add_submenu("/compta/", "Factures");
 
-  if ($conf->fichinter->enabled ) {
-
-    $menu->add("/fichinter/", "Fiches d'intervention");
-
-  }
-
-  $menu->add("/fourn/index.php3", "Fournisseurs");
-
-  $menu->add("/product/", "Produits");
-
-  $menu->add("/service/", "Services");
-
-  $menu->add("/user/", "Utilisateurs");
-
-  $menu->add("/info.php3", "Configuration");
-
-  if ($conf->voyage) {
-
-    $menu->add("/compta/voyage/index.php3","Voyages");
-
-    $menu->add_submenu("/compta/voyage/index.php3","Voyages");
-    $menu->add_submenu("/compta/voyage/reduc.php3","Reduc");
-  }
-
-
-  $menu->add("/domain/", "Domaines");
-
-  /*
-   *
-   */
 
   left_menu($menu->liste);
 
