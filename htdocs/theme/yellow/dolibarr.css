@@ -109,6 +109,31 @@ tr.impair
   background: #eeeecc; 
   font-family: Helvetica, Verdana; font-size: 12px; 
   }
+/*
+ *
+ */
+
+tr.box_titre
+{ 
+  background: #999966; 
+  font-family: Helvetica, Verdana; font-size: 0.9em; font-weight: bold;
+  }
+
+tr.box_pair
+{ 
+  background: #dcdcb3; 
+  font-family: Helvetica, Verdana; font-size: 0.8em; 
+  }
+
+tr.box_impair	
+{ 
+  background: #eeeecc; 
+  font-family: Helvetica, Verdana; font-size: 0.8em; 
+  }
+
+/*
+ *
+ */
 
 input.flat
 { 
