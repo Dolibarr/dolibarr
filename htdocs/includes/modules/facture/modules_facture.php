@@ -121,7 +121,7 @@ function facture_pdf_create($db, $facid, $message="")
       if ( $obj->write_pdf_file($facid) > 0)
 	{
         // Succès de la création de la facture. On génère le fichier meta
-        facture_meta_create($db, $_GET["facid"]);
+	  facture_meta_create($db, $facid);
         return 1;
 	}
       else
@@ -147,7 +147,7 @@ function facture_pdf_create($db, $facid, $message="")
 function facture_meta_create($db, $facid, $message="")
 {
     global $langs,$conf;
-    
+
   $fac = new Facture($db,"",$facid);
   $fac->fetch($facid);  
   $fac->fetch_client();
