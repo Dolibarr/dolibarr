@@ -21,3 +21,7 @@ Stock=Stock
 Stocks=Stocks
 OnSell=En vente
 NotOnSell=Hors vente
+UpdatePrice=Changer le prix
+AppliedPricesFrom=Prix de vente pratiqués à partir du
+SellingPrice=Prix de vente
+NewPrice=Nouveau prix

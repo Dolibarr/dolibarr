@@ -132,11 +132,12 @@ if ($_POST["action"] == 'addinpropal')
   $result =  $propal->insert_product($_GET["id"], $_POST["qty"], $_POST["remise_percent"]);
   if ( $result < 0)
     {
-      $mesg = "erreur $result";
+      $mesg = $langs->trans("ErrorUnknown").": $result";
     }
 
   Header("Location: ../comm/propal.php?propalid=".$propal->id);
 }
+
 
 if ($_POST["action"] == 'addinfacture' && 
     ( $user->rights->facture->modifier || $user->rights->facture->creer))
@@ -286,10 +287,10 @@ if ($_GET["action"] == 'create')
   if ($_GET["type"] == 1)
     {
       print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
-      print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
-      print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
-      print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
-      print '<input name="duration_unit" type="radio" value="y">année';
+      print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
+      print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
+      print '<input name="duration_unit" type="radio" value="m">'.$langs->trans("Month").'&nbsp;';
+      print '<input name="duration_unit" type="radio" value="y">'.$langs->trans("Year").'&nbsp;';
       print '</td></tr>';
     }
   
@@ -320,8 +321,8 @@ else
 	      print '<div class="formsearch">';
 	      print '<form action="liste.php" method="post">';
 	      print '<input type="hidden" name="type" value="'.$product->type.'">';
-	      print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"> &nbsp;';
-	      print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
+	      print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"> &nbsp;';
+	      print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
 	      print '</form></div>';
 	      
           $h=0;
@@ -351,7 +352,7 @@ else
 
 
 	      print($mesg);
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<table class="border" width="100%">';
 	      print "<tr>";
 	      print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%">'.$product->ref.'</td>';
 	      print '<td width="40%">';
@@ -376,7 +377,7 @@ else
 		} 
 		
 	      print '<td valign="top" rowspan="'.$nblignefour.'">';
-	      print 'Fournisseurs [<a href="fiche.php?id='.$product->id.'&amp;action=ajout_fourn">Ajouter</a>]';
+	      print $langs->trans("Suppliers").' [<a href="fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("Add").'</a>]';
 
 	      $sql = "SELECT s.nom, s.idp";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
@@ -387,7 +388,7 @@ else
 		{
 		  $num = $db->num_rows();
 		  $i = 0;
-		  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		  print '<table class="noborder" width="100%">';
 		  $var=True;      
 		  while ($i < $num)
 		    {
@@ -433,25 +434,16 @@ else
 	      if ($product->type == 1)
 		{
 		  print '<tr><td>'.$langs->trans("Duration").'</td><TD>'.$product->duration_value.'&nbsp;';
+
 		  if ($product->duration_value > 1)
-		    {
-		      $plu = "s";
-		    }
-		  switch ($product->duration_unit) 
-		    {
-		    case "d":
-		      print "jour$plu&nbsp;";
-		      break;
-		    case "w":
-		      print "semaine$plu&nbsp;";
-		      break;
-		    case "m":
-		      print 'mois&nbsp;';
-		      break;
-		    case "y":
-		      print "an$plu&nbsp;";
-		      break;
-		    }
+  	      {
+            $dur=array("d"=>"Days","w","Weeks","m","Months","y"=>"Years");
+		  }
+          else {
+            $dur=array("d"=>"Day","w","Week","m","Month","y"=>"Year");
+          }
+          print $langs->trans($dur[$product->duration_unit])."&nbsp;";
+
 		  print '</td></tr>';
 		}
 	      print "</table><br>\n";
@@ -466,12 +458,12 @@ else
      */
     if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	{
-	  print '<div class="titre">Nouveau prix</div>';
+	  print '<div class="titre">'.$langs->trans("NewPrice").'</div>';
 	  print '<form action="fiche.php?id='.$product->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update_price">';
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-	  print '<tr><td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
+	  print '<table class="border" width="100%">';
+	  print '<tr><td width="20%">'.$langs->trans('SellingPrice').'</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
 	  print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
 	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	  print '</table>';
@@ -488,8 +480,8 @@ else
 	  print '<form action="fiche.php?id='.$product->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="add_fourn">';
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
-	  print '<td>Fournisseurs</td><td><select name="id_fourn">';
+	  print '<table class="border" width="100%"><tr>';
+	  print '<td>'.$langs->trans("Suppliers").'</td><td><select name="id_fourn">';
 	  
 	  $sql = "SELECT s.idp, s.nom, s.ville FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur=1";	     
 	  $sql .= " ORDER BY lower(s.nom)";
@@ -528,7 +520,7 @@ else
 	  print "<form action=\"fiche.php\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%">';
 	  print "<tr>".'<td width="20%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
 	  print '<td>'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
@@ -541,13 +533,13 @@ else
 	  print '<select name="statut">';
 	  if ($product->envente)
 	    {
-	      print '<option value="1" selected>En vente</option>';
-	      print '<option value="0">Hors Vente</option>';
+	      print '<option value="1" selected>'.$langs->trans("OnSell").'</option>';
+	      print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
 	    }
 	  else
 	    {
-	      print '<option value="1">En vente</option>';
-	      print '<option value="0" selected>Hors Vente</option>';
+	      print '<option value="1">'.$langs->trans("OnSell").'</option>';
+	      print '<option value="0" selected>'.$langs->trans("NotOnSell").'</option>';
 	    }
 	  print '</td></tr>';
 	  if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
@@ -568,43 +560,16 @@ else
 	  if ($product->type == 1)
 	    {
 	      print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="6" maxlength="5" value="'.$product->duration_value.'">';
-	      switch ($product->duration_unit) 
-		{
-		case "d":
-		  print '<input name="duration_unit" type="radio" value="d" checked>jour&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="y">année';
-		  break;
-		case "w":
-		  print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="w" checked>semaine&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="y">année';
-		  break;
-		case "m":
-		  print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="m" checked>mois&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="y">année';
-		  break;
-		case "y":
-		  print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="y" checked>année';
-		  break;
-		default:
-		  print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="y">année';
-		  break;
-		}
+
+		  print '<input name="duration_unit" type="radio" value="d"'.($product->duration_unit=='d'?' checked':'').'>jour&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="w"'.($product->duration_unit=='w'?' checked':'').'>semaine&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="m"'.($product->duration_unit=='m'?' checked':'').'>mois&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="y"'.($product->duration_unit=='y'?' checked':'').'>année';
+
 	      print '</td></tr>';
 	    }
 
-	  print "<tr>".'<td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	  print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
 	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	  print '</table>';
 	  print '</form>';
@@ -612,7 +577,7 @@ else
     }
   else
     {
-      print "Error";
+      print $langs->trans("ErrorUnknown");
     }
 }
 
@@ -628,7 +593,7 @@ if ($_GET["action"] == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$product->id.'">Changer le prix</a>';
+      print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
     }
 }
 

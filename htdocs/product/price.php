@@ -63,8 +63,8 @@ $result = $product->fetch($_GET["id"]);
 print '<div class="formsearch">';
 print '<form action="liste.php" method="post">';
 print '<input type="hidden" name="type" value="'.$product->type.'">';
-print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"> &nbsp;';
-print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
+print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"> &nbsp;';
+print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
 print '</form></div>';
 
 
@@ -94,9 +94,10 @@ $h++;
 dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 	      	      
 
-$sql = "SELECT p.rowid, p.price, ".$db->pdate("p.date_price")." as dp";
-$sql .= " FROM ".MAIN_DB_PREFIX."product_price as p";
+$sql = "SELECT p.rowid, p.price, ".$db->pdate("p.date_price")." as dp, u.login";
+$sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, llx_user as u";
 $sql .= " WHERE fk_product = ".$product->id;
+$sql .= " AND p.fk_user_author = u.rowid ";
 $sql .= " ORDER BY p.date_price DESC ";
 $sql .= $db->plimit(15 ,0);
 $result = $db->query($sql) ;
@@ -109,9 +110,13 @@ if ($result)
     
   if ($num > 0)
     {
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+      print '<table class="noborder" width="100%">';
 
-      print '<tr class="liste_titre"><td colspan="3">Prix de vente pratiqués</td></tr>';
+      print '<tr class="liste_titre">';
+      print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
+      print '<td>'.$langs->trans("Price").'</td>';
+      print '<td>'.$langs->trans("ChangedBy").'</td>';
+      print '</tr>';
     
       $var=True;
       while ($i < $num)
@@ -119,8 +124,9 @@ if ($result)
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td>".strftime("%d %B %Y %H:%M:%S",$objp->dp)."</td>";
+	  print "<td>".dolibarr_print_date($objp->dp,"%d %B %Y %H:%M:%S")."</td>";
 	  print "<td>".price($objp->price)."</td>";
+	  print "<td>".$objp->login."</td>";
 
 	  print "</tr>\n";
 	  $i++;
@@ -132,10 +138,31 @@ if ($result)
 }
 else
 {
-  print $db->error() . "<br>" .$sql;
+  dolibarr_print_error($db);
 }
 
 print "</div>\n";
+
+
+
+/* ************************************************************************** */
+/*                                                                            */ 
+/* Barre d'action                                                             */ 
+/*                                                                            */ 
+/* ************************************************************************** */
+
+print "\n<div class=\"tabsAction\">\n";
+
+if ($_GET["action"] == '')
+{
+  if ($user->rights->produit->modifier || $user->rights->produit->creer)
+    {
+      print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
+    }
+}
+
+print "\n</div>\n";
+
 
 $db->close();
 

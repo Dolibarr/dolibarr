@@ -21,3 +21,7 @@ Stock=Stock
 Stocks=Stocks
 OnSell=On sell
 NotOnSell=Out of Sell
+UpdatePrice=Update price
+AppliedPricesFrom=Applied prices from
+SellingPrice=Selling price
+NewPrice=New price
