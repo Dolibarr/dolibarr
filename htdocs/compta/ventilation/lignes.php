@@ -29,14 +29,12 @@
 
 require("./pre.inc.php");
 
-if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 /*
  * Sécurité accés client
  */
 if ($user->societe_id > 0) 
 {
-  $action = '';
-  $socidp = $user->societe_id;
+  accessforbidden();
 }
 
 llxHeader('');
@@ -80,16 +78,16 @@ if ($result)
   print '<form method="GET" action="lignes.php">';
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\"><td>Facture</td>";
-  print '<td width="54%">'.$langs->trans("Description").'</td>';
-  print '<td>'.$langs->trans("Montant").'</td>';
+  print '<td>'.$langs->trans("Description").'</td>';
+  print '<td align="right">'.$langs->trans("Montant").'</td>';
   print '<td colspan="2" align="center">'.$langs->trans("Compte").'</td>';
   print "</tr>\n";
   
-  print '<tr class="liste_titre"><td><input name="search_facture" value="'.$_GET["search_facture"].'"></td>';
-  print '<td width="54%">&nbsp;</td>';
+  print '<tr class="liste_titre"><td><input name="search_facture" size="8" value="'.$_GET["search_facture"].'"></td>';
+  print '<td><input type="submit"></td>';
   print '<td align="right">&nbsp;</td>';
   print '<td align="center">&nbsp;</td>';
-  print '<td align="center"><input type="submit"></td>';
+  print '<td align="center">&nbsp;</td>';
   print "</tr>\n";
 
   $var=True;
@@ -102,23 +100,13 @@ if ($result)
       print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td>';
 
       print '<td>'.stripslashes(nl2br($objp->description)).'</td>';
-                    
-      print '<td align="right">';
-      print price($objp->price);
-      print '</td>';
-   
-      print '<td>';
-      print $objp->numero;
-      print '</td>';
-
-      print '<td>';
-      print $objp->intitule;
-      print '</td>';
+      print '<td align="right">'.price($objp->price).'</td>';   
+      print '<td align="right">'.$objp->numero.'</td>';
+      print '<td align="left">'.stripslashes($objp->intitule).'</td>';
 
       print "</tr>";
       $i++;
     }
-
 }
 else
 {
