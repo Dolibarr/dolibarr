@@ -46,6 +46,8 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
+  $menu->add("/compta/dons/","Dons");
+
   $menu->add("/compta/facture.php3","Factures");
   $menu->add_submenu("paiement.php3","Paiements");
 
