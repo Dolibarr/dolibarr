@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,12 +71,12 @@ print '<tr><td width="30%" valign="top">';
  *
  */
 
-$sql = "SELECT date_format(f.datef,'%Y%m'),sum(f.total_ttc)";
+$sql = "SELECT date_format(f.datef,'%Y%m'),sum(cout_vente),count(cout_vente)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
 $sql .= " , ".MAIN_DB_PREFIX."facture as f";
 
 $sql .= " WHERE tf.fk_facture = f.rowid";
-$sql .= " GROUP BY date_format(f.datef,'%Y%m')";
+$sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC";
 
 if ($db->query($sql))
 {
@@ -85,7 +85,8 @@ if ($db->query($sql))
   $ligne = new LigneTel($db);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Factures</td><td valign="center">Nb</td>';
+  print '<tr class="liste_titre"><td>Factures</td><td align="right">Somme</td>';  
+  print '<td align="right">Nb</td>';
   print "</tr>\n";
   $var=True;
 
@@ -96,7 +97,8 @@ if ($db->query($sql))
 
       print "<tr $bc[$var]>";
       print "<td>".$row[0]."</td>\n";
-      print "<td>".$row[1]."</td>\n";
+      print '<td align="right">'.price($row[1])."</td>\n";
+      print '<td align="right">'.$row[2]."</td>\n";
       print "</tr>\n";
       $i++;
     }
