@@ -162,6 +162,24 @@ insert into llx_c_forme_juridique (code, libelle) values (99,'Autre personne mor
 
 update llx_paiement set author = null where author = '';
 
+create table llx_paiementcharge
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_charge       integer,
+  datec           datetime,
+  tms             timestamp,
+  datep           datetime,
+  amount          real default 0,
+  fk_typepaiement integer NOT NULL,
+  num_paiement    varchar(50),
+  note            text,
+  fk_bank         integer NOT NULL,
+  fk_user_creat   integer,
+  fk_user_modif   integer
+
+)type=innodb;
+
+
 update llx_const set visible=0 where name like 'ADHERENT%';
 
 drop table llx_c_pays;
