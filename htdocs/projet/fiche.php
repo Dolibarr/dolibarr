@@ -43,7 +43,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
 
 llxHeader("","../");
 
-if ($action == 'delete')
+if ($_GET["action"] == 'delete')
 {
 
   print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
@@ -65,7 +65,7 @@ if ($action == 'delete')
 
 
 
-if ($action == 'create')
+if ($_GET["action"] == 'create')
 {
   print_titre("Nouveau projet");
 
@@ -76,8 +76,8 @@ if ($action == 'create')
   <tr><td>Société</td><td>
   <?PHP 
   $societe = new Societe($db);
-  $societe->get_nom($socidp); 
-  print '<a href="../comm/fiche.php?socid='.$socidp.'">'.$societe->nom.'</a>'; 
+  $societe->fetch($socidp); 
+  print $societe->nom_url;
 
   ?>
   </td></tr>
@@ -131,31 +131,28 @@ if ($action == 'create')
     {
       print '<table class="border" border="1" cellpadding="4" cellspacing="0" width="100%">';
 
-print '<tr><td width="20%">Titre</td><td>'.$projet->title.'</td>';  
-print '<td width="20%">Réf</td><td>'.$projet->ref.'</td></tr>';
-print '<tr><td>Société</td><td colspan="3">'.$projet->societe->nom.$projet->societe->id.'</a></td></tr>';
+      print '<tr><td width="20%">Titre</td><td>'.$projet->title.'</td>';  
+      print '<td width="20%">Réf</td><td>'.$projet->ref.'</td></tr>';
+      print '<tr><td>Société</td><td colspan="3">'.$projet->societe->nom_url.'</a></td></tr>';
       print '</table>';
     }
 
 
-  print '<p><table id="actions" border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
+  print '</div><div class="tabsAction">';
+
   
   if ($action == "edit")
     {
-      print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id\">Annuler</a></td>";
+      print '<a class="tabAction" href="fiche.php?id='.$id.'">Annuler</a>';
     }
   else
     {
-      print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id&amp;action=edit\">Editer</a></td>";
+      print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=edit">Editer</a>';
     }
-  
-  print '<td align="center" width="20%">-</td>';
-  print '<td align="center" width="20%">-</td>';
-  print '<td align="center" width="20%">-</td>';
-  
-  print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id&amp;action=delete\">Supprimer</a></td>";
+    
+  print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=delete">Supprimer</a>';
 
-  print "</tr></table>";
+  print "</div>";
 
 }
 $db->close();
