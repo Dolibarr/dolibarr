@@ -130,5 +130,5 @@ if ($result) {
 
 $db->close();
 
-llxFooter();
+llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
