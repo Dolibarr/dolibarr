@@ -92,7 +92,7 @@ if ($db->query($sql))
 }
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Number").'</td></tr>';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
 if ($conf->produit->enabled)
 {
     print "<tr $bc[0]>";
