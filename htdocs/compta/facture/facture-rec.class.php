@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,11 @@
  *
  */
 
-/*! \file htdocs/compta/facture/facture-rec.class.php
-        \ingroup    facture
-		\brief      Fichier de la classe des factures recurentes
-		\version    $Revision$
+/*! 
+  \file htdocs/compta/facture/facture-rec.class.php
+  \ingroup    facture
+  \brief      Fichier de la classe des factures recurentes
+  \version    $Revision$
 */
 
 
@@ -339,7 +340,7 @@ class FactureRec
 		  $obj = $this->db->fetch_object($result);
 		  
 		  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
-		  $db2 = $this->db->clone();
+		  $db2 = $this->db->dbclone();
 		  $result = $db2->query($sql);
 		  $i++;
 		}

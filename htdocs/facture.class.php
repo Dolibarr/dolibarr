@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
@@ -24,15 +24,17 @@
  */
 
 /**
-    	\file       htdocs/facture.class.php
-		\ingroup    facture
-		\brief      Fichier de la classe des factures clients
-		\version    $Revision$
+
+   \file       htdocs/facture.class.php
+   \ingroup    facture
+   \brief      Fichier de la classe des factures clients
+   \version    $Revision$
+
 */
 
 
 /**     \class      Facture
-		\brief      Classe permettant la gestion des factures clients
+	\brief      Classe permettant la gestion des factures clients
 */
 
 class Facture
@@ -647,7 +649,7 @@ class Facture
 		  $obj = $this->db->fetch_object($result);
 		  
 		  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
-		  $db2 = $this->db->clone();
+		  $db2 = $this->db->dbclone();
 		  $result = $db2->query($sql);
 
 		  $i++;

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,14 +21,16 @@
  *
  */
 
-/**	    \file       htdocs/notify.class.php
-		\brief      Fichier de la classe de gestion des notifications
-		\version    $Revision$
+/**
+   \file       htdocs/notify.class.php
+   \brief      Fichier de la classe de gestion des notifications
+   \version    $Revision$
 */
 
 
-/**	    \class      Notify
-		\brief      Classe de gestion des notifications
+/**	
+   \class      Notify
+   \brief      Classe de gestion des notifications
 */
 
 class Notify
@@ -96,7 +98,7 @@ class Notify
 	      
 		      $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id)";
 		      $sql .= " VALUES (now(), $action ,$obj->idp , '$objet_type', $objet_id);";
-		      $db2 = $this->db->clone();
+		      $db2 = $this->db->dbclone();
 		      if (! $db2->query($sql) )
 			{
 			  print $db2->error();
