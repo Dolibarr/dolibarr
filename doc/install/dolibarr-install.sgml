@@ -95,15 +95,25 @@ Installation et mise à jour de Dolibarr
       Créer un fichier <file>conf/conf.php</file> et donnez les droits d'écriture dans ce fichier à l'utilisateur exécutant le serveur web.
     </p>
 
-    <p>
-      Pour configurer Dolibarr accéder à la page <tscreen><verb>/install.php</verb></tscreen>, pour vous logger utlisez le login admin avec le mot de passe admin.
-    </p>
+<p>
+ Pour configurer Dolibarr accéder à la page
+ <tscreen><verb>/install.php</verb></tscreen>, pour vous logger utlisez
+ le login admin avec le mot de passe admin.
+</p>
 
-    <p>
-      Une fois les valeurs enregistrés, si les controles sont correctes vous n'avez qu'a cliquer sur le lien, 'phase finale de configuration'.
-    </p>
+<p>
+  Si les contrôles sont corrects
+  vous n'avez qu'à cliquer sur le lien, 'Configurer les modules'.
+</p>
+
+<p>
+Une fois les modules configurés il ne reste plus qu'à définir les
+utilisateurs et leurs permissions respectives. Pour cela cliquer sur
+Accueil -> Utilisateurs
+</p>
  </sect1>
 </sect>
+
 
 
 <sect>
