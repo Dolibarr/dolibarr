@@ -444,7 +444,7 @@ function calcul($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente
 
   $comms = array();
 
-  $sql = "SELECT t.idx, t.fk_ligne, t.montant, t.duree, t.num, t.date, t.heure, t.dest";
+  $sql = "SELECT t.idx, t.fk_ligne, t.ligne, t.montant, t.duree, t.num, t.date, t.heure, t.dest";
   $sql .= " , t.fichier, t.fk_fournisseur";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr as t";
   $sql .= " WHERE t.fk_ligne = ".$ligne->id;
