@@ -40,16 +40,16 @@ if ($action == 'add')
 {
   $product = new Product($db);
 
-  $product->ref            = $HTTP_POST_VARS["ref"];
-  $product->libelle        = $HTTP_POST_VARS["libelle"];
-  $product->price          = $HTTP_POST_VARS["price"];
-  $product->tva_tx         = $HTTP_POST_VARS["tva_tx"];
-  $product->type           = $HTTP_POST_VARS["type"];
-  $product->envente        = $HTTP_POST_VARS["statut"];
-  $product->description    = $HTTP_POST_VARS["desc"];
-  $product->duration_value = $HTTP_POST_VARS["duration_value"];
-  $product->duration_unit  = $HTTP_POST_VARS["duration_unit"];
-  $product->seuil_stock_alerte = $HTTP_POST_VARS["seuil_stock_alerte"];
+  $product->ref            = $_POST["ref"];
+  $product->libelle        = $_POST["libelle"];
+  $product->price          = $_POST["price"];
+  $product->tva_tx         = $_POST["tva_tx"];
+  $product->type           = $_POST["type"];
+  $product->envente        = $_POST["statut"];
+  $product->description    = $_POST["desc"];
+  $product->duration_value = $_POST["duration_value"];
+  $product->duration_unit  = $_POST["duration_unit"];
+  $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
 
   $id = $product->create($user);
   $action = '';
@@ -59,8 +59,8 @@ if ($action == 'addinpropal')
 {
   $propal = New Propal($db);
 
-  $propal->fetch($HTTP_POST_VARS["propalid"]);
-  $result =  $propal->insert_product($id, $HTTP_POST_VARS["qty"], $HTTP_POST_VARS["remise_percent"]);
+  $propal->fetch($_POST["propalid"]);
+  $result =  $propal->insert_product($id, $_POST["qty"], $_POST["remise_percent"]);
   if ( $result < 0)
     {
       $mesg = "erreur $result";
@@ -73,7 +73,7 @@ if ($action == 'addinpropal')
   $action = '';
 }
 
-if ($HTTP_POST_VARS["action"] == 'addinfacture' && 
+if ($_POST["action"] == 'addinfacture' && 
     ( $user->rights->facture->modifier || $user->rights->facture->creer))
 {
   $product = new Product($db);
@@ -81,11 +81,11 @@ if ($HTTP_POST_VARS["action"] == 'addinfacture' &&
 
   $facture = New Facture($db);
 
-  $facture->fetch($HTTP_POST_VARS["factureid"]);
-  $facture->addline($HTTP_POST_VARS["factureid"], 
+  $facture->fetch($_POST["factureid"]);
+  $facture->addline($_POST["factureid"], 
 		    addslashes($product->libelle), 
 		    $product->price, 
-		    $HTTP_POST_VARS["qty"], 
+		    $_POST["qty"], 
 		    $product->tva_tx, $id);
 
   $action = '';
@@ -93,12 +93,12 @@ if ($HTTP_POST_VARS["action"] == 'addinfacture' &&
   $mesg .= '<a href="../compta/facture.php?facid='.$facture->id.'">'.$facture->ref.'</a>';
 }
 
-if ($HTTP_POST_VARS["action"] == 'add_fourn' && $cancel <> 'Annuler')
+if ($_POST["action"] == 'add_fourn' && $cancel <> 'Annuler')
 {
   $product = new Product($db);
   if( $product->fetch($id) )
     {
-      if ($product->add_fournisseur($user, $HTTP_POST_VARS["id_fourn"], $HTTP_POST_VARS["ref_fourn"]) > 0)
+      if ($product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]) > 0)
 	{
 	  $action = '';
 	  $mesg = 'Founisseur ajouté';
@@ -112,7 +112,7 @@ if ($HTTP_POST_VARS["action"] == 'add_fourn' && $cancel <> 'Annuler')
 }
 
 
-if ($HTTP_POST_VARS["action"] == 'update' && 
+if ($_POST["action"] == 'update' && 
     $cancel <> 'Annuler' && 
     ( $user->rights->produit->modifier || $user->rights->produit->creer))
 {
@@ -120,15 +120,15 @@ if ($HTTP_POST_VARS["action"] == 'update' &&
   if ($product->fetch($id))
     {
 
-      $product->ref                = $HTTP_POST_VARS["ref"];
-      $product->libelle            = $HTTP_POST_VARS["libelle"];
-      $product->price              = $HTTP_POST_VARS["price"];
-      $product->tva_tx             = $HTTP_POST_VARS["tva_tx"];
-      $product->description        = $HTTP_POST_VARS["desc"];
-      $product->envente            = $HTTP_POST_VARS["statut"];
-      $product->seuil_stock_alerte = $HTTP_POST_VARS["seuil_stock_alerte"];
-      $product->duration_value = $HTTP_POST_VARS["duration_value"];
-      $product->duration_unit = $HTTP_POST_VARS["duration_unit"];
+      $product->ref                = $_POST["ref"];
+      $product->libelle            = $_POST["libelle"];
+      $product->price              = $_POST["price"];
+      $product->tva_tx             = $_POST["tva_tx"];
+      $product->description        = $_POST["desc"];
+      $product->envente            = $_POST["statut"];
+      $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+      $product->duration_value = $_POST["duration_value"];
+      $product->duration_unit = $_POST["duration_unit"];
       
       if ($product->check())
 	{
@@ -151,13 +151,13 @@ if ($HTTP_POST_VARS["action"] == 'update' &&
     }
 }
 
-if ($HTTP_POST_VARS["action"] == 'update_price' && 
+if ($_POST["action"] == 'update_price' && 
     $cancel <> 'Annuler' && 
     ( $user->rights->produit->modifier || $user->rights->produit->creer))
 {
   $product = new Product($db);
   $result = $product->fetch($id);
-  $product->price = $HTTP_POST_VARS["price"];
+  $product->price = $_POST["price"];
 
   if ( $product->update_price($id, $user) > 0 )
     {
@@ -219,7 +219,7 @@ if ($action == 'create')
   print "</textarea></td></tr>";
   if ($_GET["type"] == 1)
     {
-      print "<tr>".'<td>Durée</td><TD><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'">';
+      print "<tr>".'<td>Durée</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
       print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
       print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
       print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
@@ -245,17 +245,30 @@ else
 	{ 
 	  if ($action <> 'edit' && $action <> 're-edit')
 	    {
+          /*
+           *  Fiche en visu
+           */
+
+          // Zone recherche
 	      print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 	      print '<tr class="liste_titre">';
-	      print '<td><form action="liste.php?type='.$product->type.'" method="post">';
+	      print '<form action="liste.php?type='.$product->type.'" method="post"><td>';
 	      print 'Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
-	      print '</form></td><td><form action="liste.php" method="post">';
+	      print '</td></form><form action="liste.php" method="post"><td>';
 	      print 'Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
-	      print '</form></td><td>&nbsp;</td></tr></table>';
+	      print '</td></form></tr></table>';
+          print '<br>';
+          
+	      print($mesg);
 
+    	  $head[0][0] = DOL_URL_ROOT."$PHP_SELF?id=".$id;
+    	  $head[0][1] = 'Fiche '.$types[$product->type].' : '.$product->ref;
+    	  $h = 1;
+    	  $a = 0;
+    
+    	  dolibarr_fiche_head($head, $a);
 
-	      print_fiche_titre('Fiche '.$types[$product->type].' : '.$product->ref, $mesg);
-		  
+  
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
 	      print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
@@ -355,9 +368,11 @@ else
 	      print "</table>";
 	    }
 
+      print "<br></div>\n";
+      
 	  if ($action == 'edit_price' && $user->rights->produit->creer)
 	    {
-	      print '<br><div class="titre">Nouveau prix</div>';
+	      print '<div class="titre">Nouveau prix</div>';
 	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="update_price">';
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -367,13 +382,14 @@ else
 	      print '</table>';
 	      print '</form>';
 	    }
+
 	  /*
 	   * Ajouter un fournisseur
 	   *
 	   */
 	  if ($action == 'ajout_fourn' && $user->rights->produit->creer)
 	    {
-	      print_titre ("Ajouter un founisseur");
+	      print_titre ("Ajouter un fournisseur");
 	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="add_fourn">';
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
@@ -389,7 +405,7 @@ else
 		  while ($i < $num)
 		    {
 		      $obj = $db->fetch_object( $i);
-		      print '<option value="'.$obj->idp.'">'.$obj->nom . " (".$obj->ville.")";
+		      print '<option value="'.$obj->idp.'">'.$obj->nom . ($obj->ville?" ($obj->ville)":"");
 		      $i++;
 		    }
 		}
@@ -402,6 +418,9 @@ else
 
 	}
 
+    /*
+     * Fiche en mode edition
+     */
     
       if (($action == 'edit' || $action == 're-edit') && $user->rights->produit->creer)
 	{
@@ -503,7 +522,7 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print "<br><div class=\"tabsAction\">\n";
+print "<div class=\"tabsAction\">\n";
 
 if ($action == '')
 {

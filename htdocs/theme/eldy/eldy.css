@@ -21,7 +21,7 @@
 
 /***** Style du fond *****/
 body {
-    background-color: #F0F0F0;
+    background-color: #F1F1F1;
 	font: 13px helvetica, verdana, arial, sans-serif;
     margin-top: 0;
     margin-bottom: 0;
@@ -128,7 +128,7 @@ td.barre_select {
  *   Onglets
  */
 div.tabBar {
-  color: #436976;
+  color: #234046;
   background: #dee7ec;
   padding: 0em 1em;
   margin: 0em 0em 2em 0em;
@@ -185,11 +185,11 @@ a.tabAction:hover   { font: helvetica, verdana, arial, sans-serif; background: #
 table.border {
 font: helvetica, verdana, arial, sans-serif; 
 border-collapse: collapse;
-border: 2px white ridge;
+border: 1px white ridge;
 }
 
 table.border td {
-border: 2px white ridge;
+border: 1px solid #6C7C8B;
 }
 
 table.noborder {
@@ -214,6 +214,7 @@ border: 1px ridge
 
 tr.liste_titre { 
 background: #7699A9;
+color: #334444;
 font: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
 border-left: 1px solid #FFFFFF;
@@ -231,12 +232,12 @@ border-left: 1px solid #000000;
 }
 
 tr.pair	{ 
-background: #c0d5dd; 
+background: #e2ebed; 
 font: helvetica, verdana, arial, sans-serif;
 }
 
 tr.impair { 
-background: #dde9e9; 
+background: #c0d5dd;
 font: helvetica, verdana, arial, sans-serif;
 }
 
@@ -253,19 +254,25 @@ font: helvetica, verdana, arial, sans-serif;
  *   Boxes
  */
 tr.box_titre { 
+background: #7699A9;
+color: #334444;
 font: helvetica, verdana, arial, sans-serif;
-background: #7699A9; 
 font-weight: bold;
-}
-
-tr.box_pair { 
-font: helvetica, verdana, arial, sans-serif;
-background: #c0d5dd; 
+border-left: 1px solid #FFFFFF;
+border-right: 1px solid #FFFFFF;
+border-top: 1px solid #FFFFFF;
+border-bottom: 1px solid #FFFFFF;
+white-space: nowrap;
 }
 
 tr.box_impair { 
+background: #e2ebed; 
 font: helvetica, verdana, arial, sans-serif;
-background: #dde9e9; 
+}
+
+tr.box_pair { 
+background: #c0d5dd;
+font: helvetica, verdana, arial, sans-serif;
 }
 
 tr.fiche { 
@@ -338,13 +345,35 @@ div.message {
 
 
 /*
- *
+ * Widgets standard
  */
-
 input.flat
 { 
-  border: 0
- }
+  background: #FDFDFD;
+  padding: 0em 1em;
+  margin: 0em 0em 2em 0em;
+  border: 1px solid #8C9C9B;
+  margin: 0em;
+  padding: 0em 0em;
+}
+input
+{ 
+  background: #FDFDFD;
+  padding: 0em 1em;
+  margin: 0em 0em 2em 0em;
+  border: 1px solid #8C9C9B;
+  margin: 0em;
+  padding: 0em 0em;
+}
+textarea
+{ 
+  background: #FDFDFD;
+  padding: 0em 1em;
+  margin: 0em 0em 2em 0em;
+  border: 1px solid #8C9C9B;
+  margin: 0em;
+  padding: 0em 0em;
+}
 
 td.valeur
 { 

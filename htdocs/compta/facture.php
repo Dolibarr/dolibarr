@@ -766,7 +766,7 @@ else
 	  print "<td colspan=\"3\">".strftime("%A %d %B %Y",$fac->date)."</td>\n";
 	  print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement) ."</td></tr>";
 
-	  print '<tr><td>Projet</td><td colspan="3">';
+	  print '<tr><td height=\"10\">Projet</td><td colspan="3">';
 	  if ($fac->projetid > 0)
 	    {
 	      $projet = New Project($db);
@@ -777,15 +777,14 @@ else
 	    {
 	      print '<a href="facture.php?facid='.$fac->id.'&amp;action=classer">Classer la facture</a>';
 	    }
-	  print "&nbsp;</td><td>Paiements</td></tr>";
+	  print "&nbsp;</td>";
 
-	  print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
-	  
-      print '<td rowspan="6" valign="top">';
+      print '<td rowspan="8" valign="top">';
 	  	  
 	  /*
 	   * Paiements
 	   */
+    print 'Paiements :<br>';
 	$sql = "SELECT ".$db->pdate("datep")." as dp, pf.amount,";
 	$sql .= "c.libelle as paiement_type, p.num_paiement, p.rowid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
@@ -806,11 +805,11 @@ else
 	      {
 		$objp = $db->fetch_object( $i);
 		$var=!$var;
-		print "<TR $bc[$var]><td>";
+		print "<tr $bc[$var]><td>";
 		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_file().'</a>';
-		print "&nbsp;".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-		print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
-		print '<td align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
+		print "&nbsp;".strftime("%d %B %Y",$objp->dp)."</td>\n";
+		print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
+		print '<td align="right">'.price($objp->amount)."</td><td>".MAIN_MONNAIE."</td>\n";
 		print "</tr>";
 		$totalpaye += $objp->amount;
 		$i++;
@@ -818,13 +817,13 @@ else
 
 	    if ($fac->paye == 0)
 	      {
-		print "<tr><td colspan=\"2\" align=\"right\">Total payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>$_MONNAIE</td></tr>\n";
-		print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($fac->total_ttc)."</td><td bgcolor=\"#d0d0d0\">$_MONNAIE</td></tr>\n";
+		print "<tr><td colspan=\"2\" align=\"right\">Total déjà payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".MAIN_MONNAIE."</td></tr>\n";
+		print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" style=\"border: 1px solid;\">".price($fac->total_ttc)."</td><td>".MAIN_MONNAIE."</td></tr>\n";
 		
 		$resteapayer = $fac->total_ttc - $totalpaye;
 
 		print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
-		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
+		print "<td align=\"right\" style=\"border: 1px solid;\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td>".MAIN_MONNAIE."</td></tr>\n";
 	      }
 	    print "</table>";
 	    $db->free();
@@ -834,23 +833,28 @@ else
 	
 	print "</td></tr>";
 	
-    print '<tr><td>Remise globale</td>';
+    print "<tr><td height=\"10\">Auteur</td><td colspan=\"3\">$author->fullname</td>";
+  
+    print '<tr><td height=\"10\">Remise globale</td>';
     print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
     print '<td>%</td></tr>';
 
-	print '<tr><td>Montant HT</td>';
+	print '<tr><td height=\"10\">Montant HT</td>';
 	print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
 	print '<td>'.MAIN_MONNAIE.' HT</td></tr>';
 
-	print '<tr><td>TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
+	print '<tr><td height=\"10\">TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
 	print '<td>'.MAIN_MONNAIE.'</td></tr>';
-	print '<tr><td>Montant TTC</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
+	print '<tr><td height=\"10\">Montant TTC</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
 	print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
-	print '<tr><td>Statut</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
+	print '<tr><td height=\"10\">Statut</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
 	if ($fac->note)
 	  {
-	    print '<tr><td colspan="5">Note : '.nl2br($fac->note)."</td></tr>";
+	    print '<tr><td colspan="4">Note : '.nl2br($fac->note)."</td></tr>";
 	  }
+	else {
+	    print '<tr><td colspan="4">&nbsp;</td></tr>';
+	}
 
 	print "</table><br>";
 
