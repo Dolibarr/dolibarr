@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +130,12 @@ if ($_GET["id"])
             $hselected=$h;
             $h++;
         }
-        
+	if ($conf->fournisseur->enabled) {
+	  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+	  $head[$h][1] = $langs->trans("Suppliers");
+	  $h++;
+	}
+	
         $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
         $head[$h][1] = $langs->trans("Statistics");
         $h++;
