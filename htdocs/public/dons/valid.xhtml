@@ -22,6 +22,10 @@
 	</script>
 
 	<table id="formulaire">
+	  <!-- la ligne projet est invisible -->
+	  <tr id="projet">
+
+	  </tr>
 
 	  <tr id="date">
 	    <script language="php">
@@ -29,9 +33,11 @@
 	      print strftime("%d %B %Y", time());
 	    </script>
 	  </tr>
-	  
-	  <tr id="projet">
 
+	  <tr id="montant">
+	    <script language="php">
+	      print number_format($don->amount, 0, '', ' ');
+	    </script>
 	  </tr>
 
 	  <tr id="prenom">
@@ -82,12 +88,6 @@
 	    </script>
 	  </tr>
 	  
-	  <tr id="montant">
-	    <script language="php">
-	      print number_format($don->amount, 0, '', ' ');
-	    </script>
-	  </tr>
-
 	  <tr id="public">
 	    <script language="php">
 	      $yn[0]="non";

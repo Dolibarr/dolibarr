@@ -163,6 +163,13 @@
 	Amount 
       </td>
     </tr>
+    <tr>
+      <td class="titre">&nbsp;</td>
+      <td class="valeur">
+	<hr />
+      </td>
+      <td class="titre">&nbsp;</td>
+    </tr>
   </xsl:template>
 
   <xsl:template match="table/tr[@id='limitdate']">

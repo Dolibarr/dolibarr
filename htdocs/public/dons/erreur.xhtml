@@ -28,6 +28,10 @@
 	  require("code_valid.php");
 	</script>
 	<table id="formulaire">
+	  <!-- la ligne projet est invisible -->
+	  <tr id="projet">
+
+	  </tr>
 
 	  <tr id="date">
 	    <script language="php">
@@ -36,10 +40,12 @@
 	    </script>
 	  </tr>
 	  
-	  <tr id="projet">
-
+	  <tr id="montant">
+	    <script language="php">
+	      print $don->amount;
+	    </script>
 	  </tr>
-	  
+
 	  <tr id="prenom">
 	    <script language="php">
 	      print $don->prenom;
@@ -86,13 +92,7 @@
 	    <script language="php">
 	      print $don->email;
 	    </script>
-	  </tr>
-	  
-	  <tr id="montant">
-	    <script language="php">
-	      print $don->amount;
-	    </script>
-	  </tr>
+	  </tr>	 
 	  	  
 	  <tr id="public">
 	    <script language="php">

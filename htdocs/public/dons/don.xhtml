@@ -31,17 +31,24 @@
       <form action="index.php" method="post">
 	<table id="formulaire">
 	  <input type="hidden" name="action" value="add" />
+	  <!-- la ligne projet est invisible -->
+	  <tr id="projet">
 
+	  </tr>
 	  <tr id="date">
+
 	    <script language="php">
 	      $a = setlocale("LC_TIME", "FRENCH");
 	      print strftime("%d %B %Y", time());
 	    </script>
 	  </tr>
 	
-	  <tr id="projet">
-
+	  <tr id="montant">
+	    <script language="php">
+	      print '&lt;input type="text" name="montant" size="10" value="'.$HTTP_POST_VARS["montant"].'"&gt;';
+	    </script>
 	  </tr>
+
 	  
 	  <tr id="prenom">
 	    <script language="php">
@@ -88,12 +95,6 @@
 	  <tr id="email">
 	    <script language="php">
 	      print '&lt;input type="text" name="email" size="50" value="'.$HTTP_POST_VARS["email"].'"&gt;';
-	    </script>
-	  </tr>
-
-	  <tr id="montant">
-	    <script language="php">
-	      print '&lt;input type="text" name="montant" size="10" value="'.$HTTP_POST_VARS["montant"].'"&gt;';
 	    </script>
 	  </tr>
 
