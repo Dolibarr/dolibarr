@@ -42,7 +42,7 @@ if ($user->societe_id > 0)
  *
  */	
 print_titre("Mise à jour système");
-
+$err = 0;
 /*
  * Factures
  */
@@ -64,11 +64,13 @@ if ($db->query($sql))
 	  else
 	    {
 	      print "Erreur #2";
+	      $err++;
 	    }
 	}
       else
 	{
 	  print "Erreur #3";
+	  $err++;
 	}
       $i++;
     }
@@ -77,9 +79,23 @@ if ($db->query($sql))
 else
 {
   print "Erreur #1";
+  $err++;
+}
+
+$sql = "DELETE FROM llx_const WHERE name = 'MAIN_NEED_UPDATE'";
+if (! $db->query($sql))
+{
+  print "Erreur #100";
+  $err++;
 }
 
 $db->close();
+
+
+if ($err == 0)
+{
+  print "<p><b>Votre système a été mise à jour avec succés.</b>";
+}
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
