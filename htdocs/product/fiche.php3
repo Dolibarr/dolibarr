@@ -64,7 +64,7 @@ if ($action == 'addinfacture')
   $facture = New Facture($db);
 
   $facture->fetch($HTTP_POST_VARS["factureid"]);
-  $facture->addline($HTTP_POST_VARS["factureid"], $product->description, $product->price, $HTTP_POST_VARS["qty"], $product->tva_tx, $id);
+  $facture->addline($HTTP_POST_VARS["factureid"], $product->label, $product->price, $HTTP_POST_VARS["qty"], $product->tva_tx, $id);
 
   $action = '';
   $mesg = 'Produit ajouté à la facture ';
