@@ -20,6 +20,12 @@
  *
  */
 
+class FactureLigne {
+  Function FactureLigne()
+    {
+    }
+}
+
 class Facture {
   var $id;
   var $db;
@@ -110,7 +116,7 @@ class Facture {
   Function fetch($rowid)
     {
 
-      $sql = "SELECT fk_soc,facnumber,amount,remise,".$this->db->pdate(datef)."as df FROM llx_facture WHERE rowid=$rowid;";
+      $sql = "SELECT fk_soc,facnumber,amount,tva,total,remise,".$this->db->pdate(datef)."as df FROM llx_facture WHERE rowid=$rowid;";
       
       if ($this->db->query($sql) )
 	{
@@ -118,20 +124,66 @@ class Facture {
 	    {
 	      $obj = $this->db->fetch_object(0);
 	      
-	      $this->id     = $rowid;
-	      $this->datep  = $obj->dp;
-	      $this->ref    = $obj->facnumber;
-
-	      $this->remise = $obj->remise;
-	      $this->socidp = $obj->fk_soc;
-	      
+	      $this->id        = $rowid;
+	      $this->datep     = $obj->dp;
+	      $this->date      = $obj->df;
+	      $this->ref       = $obj->facnumber;
+	      $this->total_ht  = $obj->amount;
+	      $this->total_tva = $obj->tva;
+	      $this->total_ttc = $obj->total;
+	      $this->remise    = $obj->remise;
+	      $this->socidp    = $obj->fk_soc;
+	      $this->lignes    = array();
 	      $this->db->free();
+
+	      /*
+	       * Lignes
+	       */
+
+	      $sql = "SELECT l.description, l.price, l.qty, l.rowid, l.tva_taux";
+	      $sql .= " FROM llx_facturedet as l WHERE l.fk_facture = ".$this->id;
+	
+	      $result = $this->db->query($sql);
+	      if ($result)
+		{
+		  $num = $this->db->num_rows();
+		  $i = 0; $total = 0;
+		  
+		  while ($i < $num)
+		    {
+		      $objp = $this->db->fetch_object($i);
+		      $faclig = new FactureLigne();
+		      $faclig->desc = stripslashes($objp->description);
+		      $faclig->qty  = $objp->qty;
+		      $faclig->price = price($objp->price);
+		      $faclig->tva_taux = $objp->tva_taux;
+		      $this->lignes[$i] = $faclig;
+		      $i++;
+		    }
+	    
+		  $this->db->free();
+		} 
+	      else
+		{
+		  print $this->db->error();
+		}
 	    }
 	}
       else
 	{
 	  print $this->db->error();
 	}    
+    }
+  /*
+   *
+   *
+   */
+  Function fetch_client()
+    {
+      $client = new Societe($this->db);
+      $client->fetch($this->socidp);
+      $this->client = $client;
+	
     }
   /*
    *
@@ -225,6 +277,7 @@ class Facture {
 	      print $dir;
 	    }
 	}
+      return $result;
     }
   /*
    *
