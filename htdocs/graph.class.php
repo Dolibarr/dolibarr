@@ -19,14 +19,30 @@
  * $Source$
  */
 
+/**
+	    \file       htdocs/graph.class.php
+		\brief      Fichier de la classe mère de gestion des graph phplot
+		\version    $Revision$
+*/
+
+include_once(DOL_DOCUMENT_ROOT."/includes/phplot/phplot.php");
+
+
+/**
+        \class      Graph
+	    \brief      Classe mère permettant la gestion des graph phplot
+*/
+
 class Graph
 {
   var $db;
   var $errorstr;
 
   /**
-   * Prépare le graphique
-   *
+   *    \brief      Prépare le graphique
+   *    \param      file    Nom du fichier image
+   *    \param      data    Tableau des données
+   *    \param      title   Titre de l'image
    */
   function prepare($file, $data, $title='')
   {

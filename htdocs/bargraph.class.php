@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,30 @@
  * $Source$
  */
 
-include_once DOL_DOCUMENT_ROOT . "/graph.class.php";
+/**
+	    \file       htdocs/bargraph.class.php
+		\brief      Fichier de la classe de gestion de graphs phplot
+		\version    $Revision$
+*/
+
+include_once(DOL_DOCUMENT_ROOT."/graph.class.php");
+
+
+/**
+        \class      BarGraph
+	    \brief      Classe permettant la gestion des graphs phplot
+*/
 
 class BarGraph extends Graph
 {
   var $db;
   var $errorstr;
   
-  /**
-   * Initialisation
-   * Retour: 0 si ko, 1 si ok
-   */
 
+  /**
+   *    \brief      Initialisation
+   *    \return     int     Retour: 0 si ko, 1 si ok
+   */
   function BarGraph($data=array()) {
     
 	$modules_list = get_loaded_extensions();
@@ -47,8 +59,6 @@ class BarGraph extends Graph
 
     $this->data = $data;
     
-    include_once(DOL_DOCUMENT_ROOT."/includes/phplot/phplot.php");
-
     $this->bgcolor = array(235,235,224);
     //$this->bgcolor = array(235,235,200);
     $this->bordercolor = array(235,235,224);
@@ -79,8 +89,10 @@ class BarGraph extends Graph
   }
 
   /**
-   * Dessine le graphique
-   *
+   *    \brief      Génère le fichier graphique sur le disque
+   *    \param      file    Nom du fichier image
+   *    \param      data    Tableau des données
+   *    \param      title   Titre de l'image
    */
   function draw($file, $data, $title='') {
     $this->prepare($file, $data, $title);
@@ -106,8 +118,7 @@ class BarGraph extends Graph
 	$this->graph->SetNumVertTicks(substr($this->MaxValue,0,1));
       }
     
-
-
+    // Génère le fichier $file
     $this->graph->DrawGraph();
   }
 }
