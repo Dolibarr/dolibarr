@@ -210,7 +210,7 @@ if ($socid > 0)
 		print "</tr>\n";
 
 
-		$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount, p.statut";
+		$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, pf.amount, p.statut";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
 		$sql .= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
