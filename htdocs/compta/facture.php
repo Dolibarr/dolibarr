@@ -1294,7 +1294,7 @@ else
 	  }
 
 	
-	$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
+	$sql .= " ORDER BY $sortfield $sortorder, rowid DESC LIMIT 20";
 	$sql .= $db->plimit($limit + 1,$offset);
 	
 	$result = $db->query($sql);
