@@ -53,7 +53,7 @@ function llxHeader($head = "", $urlp = "") {
   $menu->add("boxes.php", "Boites");
 
   $menu->add("const.php", "Constantes");
-
+  $menu->add_submenu("constall.php", "Tout voir");
   $menu->add("mysql.php", "Mysql");
 
   $menu->add_submenu("sqltables.php", "Tables");
