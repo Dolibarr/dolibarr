@@ -74,6 +74,8 @@ class Webcal {
 
   function add($user, $date, $texte, $desc)
     {
+      global $langs;
+      
       // Test si login webcal défini pour le user
       if (! $user->webcal_login) {
         $this->error=$langs->trans("ErrorWebcalLoginNotDefined","<a href=\"/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
