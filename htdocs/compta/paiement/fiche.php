@@ -156,7 +156,7 @@ if ($db->query($sql))
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_file().'</a>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").'</a>';
 	  print ' <a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
 	  print "</a></td>\n";
 	  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">' . $objp->nom.'</a></td>';

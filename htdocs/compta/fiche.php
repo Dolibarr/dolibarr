@@ -281,7 +281,7 @@ if ($socid > 0)
                 $objp = $db->fetch_object();
                 $var=!$var;
                 print "<tr $bc[$var]>";
-                print "<td><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
+                print "<td><a href=\"../compta/facture.php?facid=$objp->facid\">".img_object($langs->trans("ShowBill"),"bill")." ".$objp->facnumber."</a></td>\n";
                 if ($objp->df > 0 )
                 {
                     print "<td align=\"right\">".dolibarr_print_date($objp->df)."</td>\n";
