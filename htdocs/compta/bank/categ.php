@@ -54,11 +54,10 @@ if ($action == 'add')
 print_titre("Catégories");
 print "<form method=\"post\" action=\"$PHP_SELF\">";
 print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-print '<TR class="liste_titre">';
-print "<td>Num</td><td colspan=\"2\">Description</TD>";
-print "</TR>\n";
-
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+print '<tr class="liste_titre">';
+print "<td>Num</td><td colspan=\"2\">Description</td>";
+print "</tr>\n";
 
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label";
 

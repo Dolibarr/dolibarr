@@ -38,14 +38,14 @@ $pagenext = $page + 1;
 
 print_barre_liste("Transactions BPLC", $page, $PHP_SELF);
 
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-print "<TR class=\"liste_titre\">";
+print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print "<tr class=\"liste_titre\">";
 print "<td>Réf. commande</td>";
-print "<td>ip client</td><td>Num. transaction</td><td>Date</TD><td>Heure</td>";
+print "<td>ip client</td><td>Num. transaction</td><td>Date</td><td>Heure</td>";
 print "<td>Num autorisation</td>";
 print "<td>clé acceptation</td>";
 print "<td>code retour</td>";
-print "</TR>\n";
+print "</tr>\n";
 
 $sql = "SELECT ipclient, 
                num_transaction, 

@@ -59,8 +59,10 @@ print "<form method=\"post\" action=\"$PHP_SELF\">";
 
 print '<input type="hidden" name="action" value="add">';
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-print "<tr $bc[1]><td>De</td><td>Vers</td><td>Date</td><td>Libelle</td><td>Montant</td></tr>";
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+print '<tr class="liste_titre">';
+print '<td>De</td><td>Vers</td><td>Date</td><td>Libelle</td><td>Montant</td>';
+print '</tr>';
 print "<tr $bc[1]><td>";
 print "<select name=\"account_from\">";
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
