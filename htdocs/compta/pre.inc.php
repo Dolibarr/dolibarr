@@ -44,20 +44,22 @@ function llxHeader($head = "", $title="") {
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/","Statistiques");
 
-  if ($user->comm > 0 && $conf->commercial && MAIN_MODULE_PROPALE) 
+  if ($user->comm > 0 && $conf->commercial && $conf->propale->enabled) 
     {
       $menu->add(DOL_URL_ROOT."/compta/propal.php","Prop. commerciales");
     }
 
   $menu->add(DOL_URL_ROOT."/contrat/","Contrats");
 
+  $menu->add("stats/","CA / Résultats");
 
-  $menu->add("stats/","Chiffre d'affaire");
+  $menu->add("bank/","Banques");
 
   if ($conf->compta->tva && $user->societe_id == 0)
     {
       $menu->add("tva/index.php","TVA");
     }
+  $menu->add("charges/index.php","Charges");
 
   if ($user->societe_id == 0)
     {

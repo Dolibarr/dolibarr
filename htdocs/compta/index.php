@@ -76,18 +76,6 @@ print '<td colspan="2">Rechercher une facture</td></tr>';
 print "<tr $bc[1]><td>";
 print 'Num. : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="Rechercher" class="flat"></td></tr>';
 print "</table></form>";
-/*
- *
- */
-print '<div class="menus">';
-if ($user->societe_id == 0) 
-{
-  print '<ul>';
-  print '<li><a href="./charges/index.php">Charges</a></li>';
-  print '<li><a href="./resultat/">Résultats</a></li>';
-  print '<li><a href="bank/index.php">Banque</a></li>';
-}
-print '</ul></div><br>';
 
 
 
