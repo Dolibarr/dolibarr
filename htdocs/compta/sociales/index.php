@@ -110,11 +110,11 @@ else
  *
  *
  */
-print '<tr><form method="post" action="index.php">';
+print '<tr class="form"><form method="post" action="index.php">';
 print '<input type="hidden" name="action" value="add">';
 print '<td><input type="text" size="8" name="date"></td>';
 
-print '<td colspan="2"><select name="type">';
+print '<td colspan="2" align="right"><select name="type">';
 
 
 $sql = "SELECT c.id, c.libelle as nom FROM c_chargesociales as c";
@@ -134,7 +134,7 @@ if ( $db->query($sql) )
 }
 print '</select>';
 
-print '<input type="text" size="20" name="libelle"></td>';
+print '<input type="text" size="20" name="libelle"></td><td></td>';
 print '<td align="right"><input type="text" size="6" name="amount"></td>';
 
 print '<tr><td><input type="submit"></form></td>';
