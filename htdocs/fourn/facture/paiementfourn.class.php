@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -130,15 +130,15 @@ class PaiementFourn
 
     if ($filtre == 'crédit')
       {
-	$sql = "SELECT id, libelle FROM c_paiement WHERE type IN (0,2) ORDER BY libelle";
+	$sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement WHERE type IN (0,2) ORDER BY libelle";
       }
     elseif ($filtre == 'débit')
       {
-	$sql = "SELECT id, libelle FROM c_paiement WHERE type IN (1,2) ORDER BY libelle";
+	$sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement WHERE type IN (1,2) ORDER BY libelle";
       }
     else
       {
-	$sql = "SELECT id, libelle FROM c_paiement ORDER BY libelle";
+	$sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY libelle";
       }
     $form->select($name, $sql, $id);
   }
