@@ -25,9 +25,10 @@ require_once DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_worksh
 
 class ComptaExportPoivre
 {
-  function ComptaExportPoivre ($DB)
+  function ComptaExportPoivre ($DB, $USER)
   {
     $this->db = $DB;
+    $this->user = $USER;
   }
 
   /**
@@ -105,8 +106,8 @@ class ComptaExportPoivre
       {
 	$ref = $dt . substr("000".$cc, -2);
 		
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."export_compta (ref, date_export)";
-	$sql .= " VALUES ('$ref', now())";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."export_compta (ref, date_export, fk_user)";
+	$sql .= " VALUES ('$ref', now(),".$this->user->id.")";
 	
 	if ($this->db->query($sql))
 	  {
@@ -169,7 +170,7 @@ class ComptaExportPoivre
 		// Ligne client
 		$page->write_string($j, 0, strftime("%d%m%y",$this->line_out[$i][0]));
 		$page->write_string($j, 1,  "VE");
-		$page->write_string($j, 2,  "41100000");
+		$page->write_string($j, 2,  "4110000");
 		$page->write_string($j, 3, stripslashes($this->line_out[$i][2]));
 		$page->write_string($j, 4, stripslashes($this->line_out[$i][3])." Facture");
 		$page->write_string($j, 5, $this->line_out[$i][5]); // Numéro de facture
@@ -281,7 +282,7 @@ class ComptaExportPoivre
 	    $page->write_string($j,0, strftime("%d%m%y",$linep[$i][0]));
 	    $page->write_string($j,1, 'CE');
 
-	    $page->write_string($j,2, '41100000');
+	    $page->write_string($j,2, '4110000');
 	    $page->write_string($j,3, $linep[$i][2]);
 	    $page->write_string($j,4, stripslashes($linep[$i][3])." ".stripslashes($linep[$i][6])); // 
 	    $page->write_string($j,5, $linep[$i][7]);                  // Numéro de facture
