@@ -137,7 +137,7 @@ $sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.
  if ( $db->query($sql) ) {
    $num = $db->num_rows();
    $i = 0;
-   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
    print '<TR class="liste_titre">';
    print '<TD>Date</TD>';
    print "<TD>Action</TD>";
