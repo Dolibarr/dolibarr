@@ -24,6 +24,7 @@ create table llx_commandedet
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_commande    integer,
   fk_product     integer,
+  label          varchar(255),
   description    text,
   tva_tx         real default 19.6, -- taux tva
   qty		 real,              -- quantité
