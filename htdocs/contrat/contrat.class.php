@@ -44,14 +44,48 @@ class Contrat
    *
    *
    */
-  Function mise_en_service($user)
+  Function mise_en_service($user, $date, $duree)
   {
-    $sql = "UPDATE llx_contrat SET enservice = 1";
-    $sql .= " , mise_en_service = now(), fk_user_mise_en_service = ".$user->id;
+    $duree_value = substr($duree,0,strlen($duree)-1);
+    $duree_unit = substr($duree,-1);
 
+    $month = date("j",$date);
+    $day = date("d",$date);
+    $year = date("Y",$date);
+
+    switch($duree_unit) 
+      {
+      case "d":
+	$day = $day + $duree_value;
+	break;
+      case "w":
+	$day = $day + ($duree_value * 7);
+	break;
+      case "m":
+	$month = $month + $duree_value;
+	break;
+      case "y":
+	$year = $year + $duree_value;
+	break;
+      }
+
+    $fin = mktime(date("H",$date),
+		  date("i",$date),
+		  0,
+		  $month,
+		  $day,
+		  $year);
+
+    $sql = "UPDATE llx_contrat SET enservice = 1";
+    $sql .= " , mise_en_service = ".$this->db->idate($date).", fk_user_mise_en_service = ".$user->id;
+    $sql .= " , fin_validite = ". $this->db->idate($fin);
     $sql .= " WHERE rowid = ".$this->id . " AND enservice = 0";
 
     $result = $this->db->query($sql) ;
+    if (!$result)
+      {
+	print $this->db->error() . "<br>" . $sql;
+      }
   }
   /*
    *
