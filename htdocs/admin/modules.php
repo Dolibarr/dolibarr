@@ -102,10 +102,13 @@ if ($action == 'set')
       $modules[$value][2] = 1;
 
       $modName = $modules[$value][4];
-      $file = $modName . ".class.php";
-      include("../includes/modules/$file");
-      $objMod = new $modName($db);
-      $objMod->init();
+      if ($modName)
+	{
+	  $file = $modName . ".class.php";
+	  include("../includes/modules/$file");
+	  $objMod = new $modName($db);
+	  $objMod->init();
+	}
     }
 }
 
