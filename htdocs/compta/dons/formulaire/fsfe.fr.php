@@ -8,7 +8,26 @@
   <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" marginheight="0" marginwidth="0">
 
 <?PHP
-
+/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *
+ */
 require("../../../main.inc.php3");
 require("../../../projetdon.class.php");
 require("../../../don.class.php");
@@ -136,7 +155,7 @@ $don->fetch($rowid);
 	    <td>
 	      <b>Nom :</b>
 <?PHP print "$don->prenom $don->nom $don->societe" ?><br>
-	      <b>Adresse :</b>_____________________________________________<br>
+	      <b>Adresse :</b><?PHP print "$don->adresse" ?><br>
 	      <b>No</b> ______ <b>Rue</b> _________________________________<br>
 	      <b>Code postal</b> <?PHP print $don->cp; ?> <b>Commune</b> <?PHP print $don->ville; ?><br>
 	    </td>
