@@ -28,7 +28,7 @@ Class pdf_paiement {
       $this->db = $db;
       $this->description = "Liste des paiements";
 
-      $this->dir = $GLOBALS["DOCUMENT_ROOT"]."/document/rapport/";
+      $this->dir = DOL_DOCUMENT_ROOT."/document/rapport/";
 
       $this->file = $this->dir . "paiements" . ".pdf";
 
@@ -122,11 +122,14 @@ Class pdf_paiement {
 
   Function write_pdf_file()
     {
-      global $conf;
-
       if (! file_exists($this->dir))
 	{
-	  mkdir($this->dir, 755);
+	  umask(0);
+	  if (! mkdir($this->dir, 0755))
+	    {
+	      print "Impossible de créer $this->dir !";
+	      die;
+	    }
 	}
       
       $pdf = new FPDF('P','mm','A4');
