@@ -53,24 +53,23 @@ class pdf_crabe extends ModelePDFFactures
 
 
     /*!
-    		\brief  Fonction générant la facture sur le disque
+    		\brief      Fonction générant la facture sur le disque
     		\param	    facid	id de la facture à générer
     		\return	    int     1=ok, 0=ko
-            \remarks Variables utilisées
-            \remarks FAC_PDF_LOGO
-    		\remarks FACTURE_CODEPRODUITSERVICE
-    		\remarks FACTURE_CHQ_NUMBER
-    		\remarks FACTURE_RIB_NUMBER
-    		\remarks FAC_OUTPUTDIR
-    		\remarks FAC_PDF_INTITULE
-    		\remarks FAC_PDF_INTITULE2
-    		\remarks FAC_PDF_SIREN
-    		\remarks FAC_PDF_SIRET
-    		\remarks FAC_PDF_TEL
-    		\remarks FAC_PDF_ADRESSE
-    		\remarks MAIN_INFO_RCS
-    		\remarks MAIN_INFO_CAPITAL
-    		\remarks MAIN_INFO_TVAINTRA
+            \remarks    Variables utilisées
+            \remarks    FAC_PDF_LOGO
+    		\remarks    FACTURE_CODEPRODUITSERVICE
+    		\remarks    FACTURE_CHQ_NUMBER
+    		\remarks    FACTURE_RIB_NUMBER
+    		\remarks    FAC_PDF_INTITULE
+    		\remarks    FAC_PDF_INTITULE2
+    		\remarks    FAC_PDF_SIREN
+    		\remarks    FAC_PDF_SIRET
+    		\remarks    FAC_PDF_TEL
+    		\remarks    FAC_PDF_ADRESSE
+    		\remarks    MAIN_INFO_RCS
+    		\remarks    MAIN_INFO_CAPITAL
+    		\remarks    MAIN_INFO_TVAINTRA
     */
     function write_pdf_file($facid)
     {
