@@ -309,8 +309,14 @@ else {
  */
 $conf->compta->mode = 'RECETTES-DEPENSES';	// Par défaut
 if (defined("COMPTA_MODE")) {
-	$conf->compta->mode = COMPTA_MODE; 		// Peut etre 'CREANCES-DETTES' pour un CA en creances-dettes
+	$conf->compta->mode = RECETTES-DEPENSES; 		// Peut etre 'CREANCES-DETTES' pour un CA en creances-dettes
 }
+
+/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
+ * (pour particuliers ou libéraux en franchise)
+ * En attendant, valeur forcée à 1
+ */
+$conf->compta->tva=1;
 
 /*
  * Option du module Facture
