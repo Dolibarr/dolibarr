@@ -167,7 +167,7 @@ function factures ($db, $year, $month, $paye) {
 
 
 function pt ($db, $sql, $year) {
-  global $bc;
+  global $bc, $langs;
 
   $result = $db->query($sql);
   if ($result) {
@@ -238,7 +238,7 @@ function pt ($db, $sql, $year) {
 
 function ppt ($db, $year, $socidp)
 {
-  global $bc,$conf;
+  global $bc,$conf,$langs;
   print "<table width=\"100%\">";
 
   print '<tr class="liste_titre"><td align="center" valign="top" width="30%">';
