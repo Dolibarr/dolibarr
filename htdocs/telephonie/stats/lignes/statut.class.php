@@ -36,13 +36,27 @@ class GraphLignesStatut extends GraphPie {
     $this->showframe = true;
   }
 
-  Function GraphMakeGraph()
+  Function GraphMakeGraph($commercial_id=0)
   {
     $num = 0;
+
+    if ($commercial_id > 0)
+      {
+	$cuser = new User($this->db, $commercial_id);
+	$cuser->fetch();
+	$this->titre = "Statuts des lignes de ".$cuser->fullname;
+      }
+
 
     $sql = "SELECT statut, count(*)";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
     $sql .= " WHERE statut in (2,3,6,7)";
+
+    if ($commercial_id > 0)
+      {
+	$sql .= " AND fk_commercial_sign =".$commercial_id;
+      }
+
     $sql .= " GROUP BY statut ASC";
     
 
@@ -55,10 +69,15 @@ class GraphLignesStatut extends GraphPie {
     $statuts[6] = "Resiliée";
     $statuts[7] = "Rejetée";
 
-    $this->colors = array('blue','green','red','black');
 
-    $result = $this->db->query($sql);
-    if ($result)
+    $colors_def[2] = 'blue';
+    $colors_def[3] = 'green';
+    $colors_def[6] = 'red';
+    $colors_def[7] = 'black';
+
+    $this->colors = array();
+
+    if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
 	$i = 0;
@@ -71,7 +90,7 @@ class GraphLignesStatut extends GraphPie {
 	    
 	    $datas[$i] = $row[1];
 	    $labels[$i] = $statuts[$row[0]];
-	    
+	    array_push($this->colors, $colors_def[$row[0]]);    
 	    $i++;
 	  }
 	
@@ -81,7 +100,8 @@ class GraphLignesStatut extends GraphPie {
       {
 	print $this->db->error() . ' ' . $sql;
       }
-    
+
+  
     $this->GraphDraw($this->file, $datas, $labels);
   }
 }   
