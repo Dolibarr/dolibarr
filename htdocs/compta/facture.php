@@ -96,7 +96,7 @@ if ($_POST["action"] == 'add')
   $facture->number         = $_POST["facnumber"];
   $facture->date           = $datefacture;      
   $facture->note           = $_POST["note"];
-
+  
   if ($_POST["fac_rec"] > 0)
     {
       /*
@@ -109,6 +109,7 @@ if ($_POST["action"] == 'add')
     {
       $facture->projetid       = $_POST["projetid"];
       $facture->cond_reglement = $_POST["condid"];
+      $facture->mode_reglement = $_POST["mode_reglement"];
       $facture->amount         = $_POST["amount"];
       $facture->remise         = $_POST["remise"];
       $facture->remise_percent = $_POST["remise_percent"];
@@ -459,12 +460,12 @@ if ($_GET["action"] == 'create')
   
   print_titre("Emettre une facture");
 
-  if ($propalid)
+  if ($_GET["propalid"])
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
       $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";      
-      $sql .= " AND p.rowid = $propalid";
+      $sql .= " AND p.rowid = ".$_GET["propalid"];
     }
   else
     {
@@ -490,7 +491,7 @@ if ($_GET["action"] == 'create')
 	  $soc = new Societe($db);
 	  $soc->fetch($obj->idp);
        
-	  print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	  print '<form action="facture.php" method="post">';
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="socid" value="'.$obj->idp.'">' ."\n";
 	  print '<input type="hidden" name="remise_percent" value="0">';
@@ -502,7 +503,7 @@ if ($_GET["action"] == 'create')
 
 	  print '<tr><td>'.$langs->trans("Author").' :</td><td>'.$user->fullname.'</td>';
 	  
-	  print '<td rowspan="5" valign="top">';
+	  print '<td rowspan="6" valign="top">';
 	  print '<textarea name="note" wrap="soft" cols="60" rows="5"></textarea></td></tr>';	
 	  
 	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
@@ -532,15 +533,42 @@ if ($_GET["action"] == 'create')
 	  $html->select_array("condid",$conds);
 	  print "</td></tr>";
 	  
-      if ($conf->projet->enabled) {
-          $langs->load("projects");
-    	  print '<tr><td>'.$langs->trans("Project").' :</td><td>';
-    	  $proj = new Project($db);
-    	  $html->select_array("projetid",$proj->liste_array($socidp));
-    	  print "</td></tr>";
-      } else {
-    	  print "<tr><td colspan=\"2\">&nbsp;</td></tr>";
-      }
+	  /* Mode de réglement */
+
+	  print "<tr><td>Mode de réglement :</td><td>";
+	  $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY libelle";
+	  $result = $db->query($sql);
+	  $modesregl=array();
+	  if ($result)
+	    {
+	      $num = $db->num_rows();
+	      $i = 0;
+	      while ($i < $num)
+		{
+		  $objp = $db->fetch_object();
+		  $modesregl[$objp->id]=$objp->libelle;
+		  $i++;
+		}
+	      $db->free();
+	    }
+	  
+	  $html->select_array("mode_reglement",$modesregl);
+	  print "</td></tr>";
+
+	  /* -- */
+
+	  if ($conf->projet->enabled)
+	    {
+	      $langs->load("projects");
+	      print '<tr><td>'.$langs->trans("Project").' :</td><td>';
+	      $proj = new Project($db);
+	      $html->select_array("projetid",$proj->liste_array($socidp));
+	      print "</td></tr>";
+	    }
+	  else
+	    {
+	      print "<tr><td colspan=\"2\">&nbsp;</td></tr>";
+	    }
       	  
 	  if ($_GET["propalid"] > 0)
 	    {
@@ -550,7 +578,7 @@ if ($_GET["action"] == 'create')
 	      print '<input type="hidden" name="remise"   value="'.$obj->remise.'">'."\n";
 	      print '<input type="hidden" name="remise_percent"   value="'.$obj->remise_percent.'">'."\n";
 	      print '<input type="hidden" name="tva"      value="'.$obj->tva.'">'."\n";
-	      print '<input type="hidden" name="propalid" value="'.$propalid.'">';
+	      print '<input type="hidden" name="propalid" value="'.$_GET["propalid"].'">';
 	      
 	      print '<tr><td>Proposition</td><td colspan="2">'.$obj->ref.'</td></tr>';
 	      print '<tr><td>'.$langs->trans("TotalHT").'</td><td colspan="2">'.price($amount).'</td></tr>';
@@ -674,7 +702,7 @@ if ($_GET["action"] == 'create')
 	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = ".$_GET["propalid"];
 	      $sql .= " ORDER BY pt.rowid ASC";
 	      $result = $db->query($sql);
 	      if ($result) 
@@ -695,7 +723,9 @@ if ($_GET["action"] == 'create')
 		    }
 		}
 	      $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt  WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt ";
+	      $sql .= " WHERE  pt.fk_propal = ".$_GET["propalid"];
+	      $sql .= " AND pt.fk_product = 0";
 	      $sql .= " ORDER BY pt.rowid ASC";
 	      if ($db->query($sql)) 
 		{
