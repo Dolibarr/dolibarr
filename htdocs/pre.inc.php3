@@ -41,6 +41,7 @@ function llxHeader($head = "") {
 	{
 	  $menu->add_submenu("../soc.php3?&action=create", "Nouvelle société");
 	}
+      $menu->add_submenu("/contact.php", "Contacts");
     }
 
   if ($conf->commercial->enabled ) 
