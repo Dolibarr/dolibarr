@@ -23,6 +23,8 @@
 require("./pre.inc.php");
 $user->getrights('produit');
 
+$langs->load("products");
+
 if (!$user->rights->produit->lire)
   accessforbidden();
 
@@ -50,6 +52,14 @@ if ($sortorder == "")
   $sortorder="DESC";
 }
   
+
+/*
+ * Mode Liste
+ *
+ */
+
+$title=$langs->trans("Products and Services");
+
 $sql = "SELECT p.rowid, p.label, p.price, p.ref";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 
@@ -59,10 +69,10 @@ if ($_GET["fourn_id"] > 0)
   $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
 
-if ($_POST["sall"])
+if ($_POST["mode"] == 'search')
 {
-  $sql .= " WHERE lower(p.ref) like '%".strtolower($_POST["sall"])."%'";
-  $sql .= " OR lower(p.label) like '%".strtolower($_POST["sall"])."%'";
+  $sql .= " WHERE p.ref like '%".$_POST["sall"]."%'";
+  $sql .= " OR p.label like '%".$_POST["sall"]."%'";
 }
 else
 {
@@ -74,11 +84,11 @@ else
   $sql .= " WHERE p.fk_product_type = $type";
   if ($_POST["sref"])
     {
-      $sql .= " AND lower(p.ref) like '%".strtolower($_POST["sref"])."%'";
+      $sql .= " AND p.ref like '%".$_POST["sref"]."%'";
     }
   if ($_POST["snom"])
     {
-      $sql .= " AND lower(p.label) like '%".strtolower($_POST["snom"])."%'";
+      $sql .= " AND p.label like '%".$_POST["snom"]."%'";
     }
   if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
     {
@@ -111,26 +121,34 @@ if ($result)
       Header("Location: fiche.php?id=$objp->rowid");
     }
   
-  if ($_POST["sref"] || $_POST["snom"] || $_POST["sall"])
+      if (isset($envente) && $envente == 0)
     {
-      llxHeader("","","Recherche Produit/Service");
+      if (isset($_POST["type"]) || isset($_GET["type"])) {
+        if ($type) { $texte = $langs->trans("ProductsNotOnSell"); }
+        else { $texte = $langs->trans("ServicesNotOnSell"); }
+      } else {
+        $texte = $langs->trans("ProductsAndServicesNotOnSell");
+      }
+    }
+      else
+    {
+      $envente=1;
+      if (isset($_POST["type"]) || isset($_GET["type"])) {
+        if ($type) { $texte = $langs->trans("ProductsOnSell"); }
+        else { $texte = $langs->trans("ServicesOnSell"); }
+      } else {
+        $texte = $langs->trans("ProductsAndServicesOnSell");
+      }
+    }
 
-      $texte = "Recherche d'un produit ou service";
+  llxHeader("","",$texte);
+
+  if ($_POST["sref"] || $_POST["snom"] || $_POST["sall"] || $_POST["search"])
+    {
       print_barre_liste($texte, $page, "liste.php", "&sref=".$_POST["sref"]."&snom=".$_POST["snom"]."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
     }
   else
     {
-      $texte = "Liste des ".$types[$type]."s";
-      llxHeader("","",$texte);
-      if (isset($envente) && $envente == 0)
-	{
-	  $texte .= " hors vente";
-	}
-      else
-	{
-	  $envente=1;
-	}
-       
       print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id&amp;type=$type", $sortfield, $sortorder,'',$num);
     }
 
