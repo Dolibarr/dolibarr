@@ -71,7 +71,7 @@ Class pdf_propale_rouge
 	      /*
 	       */
 	      $tab_top = 100;
-	      $tab_height = 150;
+	      $tab_height = 140;
 	      /*
 	       *
 	       */  
@@ -133,9 +133,9 @@ Class pdf_propale_rouge
 	      /*
 	       *
 	       */
-	      $tab2_top = 254;
+	      $tab2_top = 241;
 	      $tab2_lh = 7;
-	      $tab2_height = $tab2_lh * 3;
+	      $tab2_height = $tab2_lh * 4;
 
 	      $pdf->SetFont('Arial','', 11);
 	      
@@ -151,20 +151,32 @@ Class pdf_propale_rouge
 	      $pdf->MultiCell(42, $tab2_lh, "Total HT", 0, 'R', 0);
 	      
 	      $pdf->SetXY (132, $tab2_top + $tab2_lh);
+	      $pdf->MultiCell(42, $tab2_lh, "Remise HT", 0, 'R', 0);
+
+	      $pdf->SetXY (132, $tab2_top + $tab2_lh*2);
+	      $pdf->MultiCell(42, $tab2_lh, "Total HT aprés remise", 0, 'R', 0);
+
+	      $pdf->SetXY (132, $tab2_top + $tab2_lh*3);
 	      $pdf->MultiCell(42, $tab2_lh, "Total TVA", 0, 'R', 0);
 	      
-	      $pdf->SetXY (132, $tab2_top + ($tab2_lh*2));
+	      $pdf->SetXY (132, $tab2_top + ($tab2_lh*4));
 	      $pdf->MultiCell(42, $tab2_lh, "Total TTC", 1, 'R', 1);
-	      
+
 	      $pdf->SetXY (174, $tab2_top + 0);
-	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_ht), 0, 'R', 0);
+	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_ht + $propale->remise), 0, 'R', 0);
 	      
 	      $pdf->SetXY (174, $tab2_top + $tab2_lh);
+	      $pdf->MultiCell(26, $tab2_lh, price($propale->remise), 0, 'R', 0);
+
+	      $pdf->SetXY (174, $tab2_top + $tab2_lh*2);
+	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_ht), 0, 'R', 0);
+
+	      $pdf->SetXY (174, $tab2_top + $tab2_lh*3);
 	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_tva), 0, 'R', 0);
 	      
-	      $pdf->SetXY (174, $tab2_top + ($tab2_lh*2));
+	      $pdf->SetXY (174, $tab2_top + ($tab2_lh*4));
 	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_ttc), 1, 'R', 1);
-	      
+
 	      /*
 	       *
 	       */
