@@ -121,7 +121,7 @@ class ProcessGraphContrats
 	    $graphduree = new GraphAppelsDureeMoyenne ($this->db, $file);
 	    $graphduree->contrat = $contrat;
 	    $graphduree->show_console = 0 ;
-	    $graphduree->GraphDraw();
+	    $graphduree->Graph();
 	    
 	    /* Nb de communication */
 
