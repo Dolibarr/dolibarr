@@ -666,63 +666,42 @@ else
 	 */
 	if ($user->societe_id == 0 && $commande->statut < 3)
 	  {
-	    print '<p><table id="actions" width="100%"><tr>';
+	    print '<p><div class="tabsAction">';
 	
 	    if ($commande->statut == 0 && $user->rights->commande->supprimer)
 	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?id=$id&amp;action=delete\">Supprimer</a></td>";
+		print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=delete">Supprimer</a>';
 	      } 
 	    elseif ($commande->statut == 1 && abs($resteapayer) > 0 && $user->rights->commande->envoyer) 
 	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?id=$id&amp;action=presend\">Envoyer</a></td>";
-	      }
-	    else
-	      {
-		print '<td align="center" width="20%">-</td>';
-	      } 
-	    
-	    if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
-	      {
-		print '<td align="center" width="20%"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET["id"].'">Expédier</a></td>';
-	      }
-	    else
-	      {
-	    print '<td align="center" width="20%">-</td>';
+		print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=presend">Envoyer</a>';
 	      }
 
 	    
-	    print '<td align="center" width="20%">-</td>';
-	    print '<td align="center" width="20%">-</td>';
+	    if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
+	      {
+		print '<a class="tabAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET["id"].'">Expédier</a>';
+	      }
+	  
 	    
 	    if ($commande->statut == 0) 
 	      {
 		if ($user->rights->commande->valider)
 		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?id=$id&amp;action=valid\">Valider</a></td>";
-		  }
-		else
-		  {
-		    print '<td align="center" width="20%">-</td>';
+		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=valid">Valider</a>';
 		  }
 	      }
-	    elseif ($commande->statut == 1)
+	    
+	    if ($commande->statut == 1)
 	      {
 		$nb_expedition = $commande->nb_expedition();
 		if ($user->rights->commande->valider && $nb_expedition == 0)
 		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id&amp;action=annuler\">Annuler la commande</a></td>";
+		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=annuler">Annuler la commande</a>';
 		  }
-		else
-		  {
-		    print '<td align="center" width="20%">-</td>';
-		  }
-	      }
-	    else
-	      {
-		print '<td align="center" width="20%">-</td>';
 	      }
 
-	    print "</tr></table>";
+	    print "</div>";
 	  }
 	print "<p>\n";
 
