@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,28 +67,28 @@ function pt ($db, $sql, $date) {
     $num = $db->num_rows();
     $i = 0; 
     $total = 0 ;
-    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print "<TR class=\"liste_titre\">";
-    print "<TD nowrap width=\"60%\">$date</TD>";
-    print "<TD align=\"right\">Montant</TD>";
+    print "<table class=\"border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+    print "<tr class=\"liste_titre\">";
+    print "<td nowrap width=\"60%\">$date</td>";
+    print "<td align=\"right\">Montant</td>";
     print "<td>&nbsp;</td>\n";
-    print "</TR>\n";
+    print "</tr>\n";
     $var=True;
     while ($i < $num) {
       $obj = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD nowrap>$obj->dm</TD>\n";
+      print "<tr $bc[$var]>";
+      print "<td nowrap>$obj->dm</td>\n";
       $total = $total + $obj->amount;
 
-      print "<TD nowrap align=\"right\">".price($obj->amount)."</TD><td nowrap align=\"right\">".$total."</td>\n";
-      print "</TR>\n";
+      print "<td nowrap align=\"right\">".price($obj->amount)."</td><td nowrap align=\"right\">".$total."</td>\n";
+      print "</tr>\n";
             
       $i++;
     }
     print "<tr class=\"total\"><td align=\"right\">Total :</td><td nowrap align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
     
-    print "</TABLE>";
+    print "</table>";
     $db->free();
   } else {
     print $db->error();
@@ -111,41 +112,49 @@ if ($year == 0 ) {
   $year_start = $year;
 }
 
-$textprevyear="<a href=\"$PHP_SELF?year=" . ($year_current-1) . "\">Année précédente (" . ($year_current-1) . ")</a>";
+$textprevyear="<a href=\"$PHP_SELF?year=" . ($year_current-1) . "\">".img_previous()."</a>";
 // On n'affiche pas "Année suivante" si c'est dans le futur !
-if(($year < strftime("%Y",time())) && ($year != 0))
-  $textnextyear=" - <a href=\"$PHP_SELF?year=" . ($year_current+1) . "\">Année suivante (" . ($year_current+1) . ")</a>";
-print_titre( "<table border=\"0\" width=\"100%\"><tr><td nowrap>TVA Solde : " . price($tva->solde($year)) . " euros </td><td align=\"right\">$textprevyear $textnextyear</td></tr></table>");
+if(($year < strftime("%Y",time())) && ($year != 0)) {
+  $textnextyear=" <a href=\"$PHP_SELF?year=" . ($year_current+1) . "\">".img_next()."</a>";
+}
+
+print_fiche_titre("TVA Solde : ".price($tva->solde($year_start)),"$textprevyear Année $year_start $textnextyear");
+
 
 echo '<table width="100%">';
-echo '<tr><td width="50%" valign="top">TVA collectée</td>';
-echo '<td>Tva Réglée</td></tr>';
+echo '<tr><td>';
+print_fiche_titre("TVA collectée");
+echo '</td><td>';
+//<td width="50%" valign="top">TVA collectée</td>';
+print_fiche_titre("TVA réglée");
+//echo '<td>Tva Réglée</td></tr>';
+echo '</td></tr>';
 
 for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
 
   echo '<tr><td width="50%" valign="top">';
 
-  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\">";
-  print "<TD width=\"30%\">Année $y</TD>";
-  print "<TD align=\"right\">Collectée</TD>";
-  print "<TD align=\"right\">Payée</TD>";
+  print "<table class=\"border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<tr class=\"liste_titre\">";
+  print "<td width=\"30%\">Année $y</td>";
+  print "<td align=\"right\">Collectée</td>";
+  print "<td align=\"right\">Payée</td>";
   print "<td>&nbsp;</td>\n";
   print "<td>&nbsp;</td>\n";
-  print "</TR>\n";
+  print "</tr>\n";
   $var=True;
   $total = 0;  $subtotal = 0;
   $i=0;
   for ($m = 1 ; $m < 13 ; $m++ ) {
     $var=!$var;
-    print "<TR $bc[$var]>";
-    print '<TD nowrap>'.strftime("%b %Y",mktime(0,0,0,$m,1,$y)).'</TD>';
+    print "<tr $bc[$var]>";
+    print '<td nowrap>'.strftime("%b %Y",mktime(0,0,0,$m,1,$y)).'</td>';
     
     $x_coll = tva_coll($db, $y, $m);
-    print "<TD nowrap align=\"right\">".price($x_coll)."</TD>";
+    print "<td nowrap align=\"right\">".price($x_coll)."</td>";
     
     $x_paye = tva_paye($db, $y, $m);
-    print "<TD nowrap align=\"right\">".price($x_paye)."</TD>";
+    print "<td nowrap align=\"right\">".price($x_paye)."</td>";
     
     $diff = $x_coll - $x_paye;
     $total = $total + $diff;
@@ -153,7 +162,7 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
     
     print "<td nowrap align=\"right\">".price($diff)."</td>\n";
     print "<td>&nbsp;</td>\n";
-    print "</TR>\n";
+    print "</tr>\n";
     
     $i++;
     if ($i > 2) {
@@ -164,16 +173,17 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
   }
   print '<tr class="total"><td align="right" colspan="3">Total :</td><td nowrap align="right"><b>'.price($total).'</b></td>';
   print "<td>&nbsp;</td>\n";
-  print "</TABLE>";
+  print "</table>";
+
 
   echo '</td><td valign="top" width="50%">';
+
 
   /*
    * Réglée
    */
-
-  print "<table width=\"100%\">";
-  print "<tr><td valign=\"top\">";
+//  print "<table class=\"border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+//  print "<tr><td valign=\"top\">";
 
   $sql = "SELECT amount, date_format(f.datev,'%Y-%m') as dm";
   $sql .= " FROM ".MAIN_DB_PREFIX."tva as f WHERE f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ $tva = new Tva($db);
 
 print_titre("Réglements TVA");
 
-$sql = "SELECT amount, date_format(f.datev,'%d-%M-%Y') as dm";
+$sql = "SELECT amount, ".$db->pdate("f.datev")." as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."tva as f ";
 $sql .= " ORDER  BY dm DESC";
 
@@ -42,30 +43,31 @@ if ($result)
   $num = $db->num_rows();
   $i = 0; 
   $total = 0 ;
-  print '<br><TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
-  print '<TR class="liste_titre">';
-  print "<TD width=\"60%\">Date</TD>";
-  print "<TD align=\"right\">Montant</TD>";
+  print '<br>';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print '<tr class="liste_titre">';
+  print "<td width=\"60%\">Date</td>";
+  print "<td align=\"right\">Montant</td>";
   print "<td>&nbsp;</td>\n";
-  print "</TR>\n";
-  $var=True;
+  print "</tr>\n";
+  $var=1;
   while ($i < $num)
     {
       $obj = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD>$obj->dm</TD>\n";
+      print "<tr $bc[$var]>";
+      print "<td>".dolibarr_print_date($obj->dm)."</td>\n";
       $total = $total + $obj->amount;
       
-      print "<TD align=\"right\">".price($obj->amount)."</td><td>&nbsp;</td>";
-      print "</TR>\n";
+      print "<td align=\"right\">".price($obj->amount)."</td><td>&nbsp;</td>";
+      print "</tr>\n";
       
       $i++;
     }
   print "<tr class=\"total\"><td align=\"right\">Total :</td>";
   print "<td align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
   
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
