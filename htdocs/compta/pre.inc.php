@@ -92,6 +92,11 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/compta/stats/","CA / Résultats");
 
+  if (defined("MAIN_MODULE_PRELEVEMENT") && MAIN_MODULE_PRELEVEMENT)
+    {
+      $menu->add(DOL_URL_ROOT."/compta/prelevement/","Bon prélèv.");
+    }
+
   if (! $user->compta) 
     {
       $menu->clear();
