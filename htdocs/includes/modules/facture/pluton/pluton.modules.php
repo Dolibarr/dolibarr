@@ -37,7 +37,7 @@ function facture_get_num($objsoc=0)
 
   $y = strftime("%y",time());
 
-  return  "FA-" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
+  return  "FA" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
 
 }
 
