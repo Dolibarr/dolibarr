@@ -198,8 +198,6 @@ if ($action == 'create')
 	print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td></tr>';
       }
 
-    print "<tr><td align=\"right\" colspan=\"2\">Remise : <input size=\"6\" name=\"remise\" value=\"0\"></td></tr>\n";    
-
     print "</table>";
     /*
      * Si il n'y a pas de contact pour la societe on ne permet pas la creation de propale
@@ -210,7 +208,7 @@ if ($action == 'create')
       }
     print "</form>";
     
-  }
+    }
   else
     {
       print "Vous devez d'abord associer un prefixe commercial à cette société" ;
