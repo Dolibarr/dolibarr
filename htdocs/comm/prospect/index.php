@@ -167,6 +167,38 @@ if ( $db->query($sql) )
       print "</table><br>";
     }
 }
+/*
+ * Sociétés à contacter
+ *
+ */
+$sql = "SELECT s.nom, s.idp";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE  s.fk_stcomm = 1";
+$sql .= " ORDER BY s.tms ASC";
+$sql .= $db->plimit(5, 0);
+
+if ( $db->query($sql) )
+{
+  $num = $db->num_rows();
+  $i = 0;
+  if ($num > 0 )
+    {
+      print '<table border="0" cellspacing="0" cellpadding="4" width="100%">';
+      print '<tr class="liste_titre"><td colspan="4">Sociétés à contacter</td></tr>';
+      
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"../propal.php?propalid=".$obj->rowid."\">";
+	  print img_file();
+	  print '</a>&nbsp;<a href="fiche.php?id='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  $i++;
+	}
+      print "</table><br>";
+    }
+}
+
 
 print '</td></tr>';
 print '</table>';
