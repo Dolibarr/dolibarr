@@ -22,7 +22,7 @@
  *
  */
 require("./pre.inc.php");
-require("../contact.class.php");
+require_once("../contact.class.php");
 require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
 $langs->load("company");
@@ -223,6 +223,9 @@ if ($_GET["action"] == 'create')
 //  print '</td></tr>';
 
   print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
+
+  print '<tr><td>Contact facturation</td><td colspan="5"><select name="facturation"><option value="0">Non<option value="1">Oui</select></td></tr>';
+
   print '<tr><td align="center" colspan="6"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
   print "</table>";
   print "</form>";
@@ -276,6 +279,9 @@ elseif ($_GET["action"] == 'edit')
   print '<textarea name="note" cols="60" rows="3">';
   print nl2br($contact->note);
   print '</textarea></td></tr>';
+
+  print '<tr><td>Contact facturation</td><td colspan="5"><select name="facturation"><option value="0">Non<option value="1">Oui</select></td></tr>';
+
   print '<tr><td colspan="6" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print "</table>";
 

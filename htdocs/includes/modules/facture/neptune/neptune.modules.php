@@ -23,14 +23,14 @@
  */
 
 /*!	\file htdocs/includes/modules/facture/neptune/neptune.modules.php
-		\ingroup    facture
-		\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Neptune
-		\version    $Revision$
+	\ingroup    facture
+	\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Neptune
+	\version    $Revision$
 */
 
 
 /*!	\class mod_facture_neptune
-		\brief      Classe du modèle de numérotation de référence de facture Neptune
+	\brief      Classe du modèle de numérotation de référence de facture Neptune
 */
 class mod_facture_neptune extends ModeleNumRefFactures
 {

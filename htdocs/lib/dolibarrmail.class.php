@@ -81,16 +81,21 @@ class DolibarrMail
 
   function PrepareFile($filename_list,$mimetype_list,$mimefilename_list)
   {
+
+    $this->mime_headers="";
+
     
     $this->smtp_headers = $this->write_smtpheaders();
-    $this->text_body = $this->write_body($this->message, $filename_list);
+
     if (count($filename_list))
       {
 	$this->mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
 	$this->text_encoded = $this->attach_file($filename_list,
-						 $mimetype_list,
-						 $mimefilename_list);
+						  $mimetype_list,
+						  $mimefilename_list);
       }
+    $this->text_body = $this->write_body($this->message, $filename_list);
+
   }
     
   /*!
@@ -102,17 +107,29 @@ class DolibarrMail
   
   function attach_file($filename_list,$mimetype_list,$mimefilename_list)
   {
-    for ($i = 0; $i < count($filename_list); $i++) {
-      $encoded = $this->encode_file($filename_list[$i]);
-      if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
-      $out = $out . "--" . $this->mime_boundary . "\n";
-      if (! $mimetype_list[$i]) { $mimetype_list[$i] = "application/octet-stream"; }
-      $out = $out . "Content-type: " . $mimetype_list[$i] . "; name=\"$filename_list[$i]\";\n";         
-      $out = $out . "Content-Transfer-Encoding: base64\n";
-      $out = $out . "Content-disposition: attachment; filename=\"$filename_list[$i]\"\n\n";
-      $out = $out . $encoded . "\n";
-    }
+    for ($i = 0; $i < count($filename_list); $i++)
+      {
+	$encoded = $this->encode_file($filename_list[$i]);
+
+	if ($mimefilename_list[$i]) 
+	  {
+	    $filename_list[$i] = $mimefilename_list[$i];
+	  }
+
+	$out = $out . "--" . $this->mime_boundary . "\n";
+
+	if (! $mimetype_list[$i])
+	  { 
+	    $mimetype_list[$i] = "application/octet-stream"; 
+	  }
+
+	$out = $out . "Content-type: " . $mimetype_list[$i] . "; name=\"".$filename_list[$i]."\";\n";         
+	$out = $out . "Content-Transfer-Encoding: base64\n";
+	$out = $out . "Content-disposition: attachment; filename=\"".$filename_list[$i]."\"\n\n";
+	$out = $out . $encoded . "\n";
+      }
     $out = $out . "--" . $this->mime_boundary . "--" . "\n";
+
     return $out; 
     // added -- to notify email client attachment is done
   }
@@ -143,6 +160,7 @@ class DolibarrMail
   {
     $headers .= $this->smtp_headers . $this->mime_headers;
     $message = $this->text_body . $this->text_encoded;
+
     return mail($this->addr_to,$this->subject,stripslashes($message),$headers);
   }
   
@@ -176,10 +194,17 @@ class DolibarrMail
     $out = $out . "Content-type: multipart/mixed; ";
     $out = $out . "boundary=\"$this->mime_boundary\"\n";
     $out = $out . "Content-transfer-encoding: 7BIT\n";
-    for($i = 0; $i < count($filename_list); $i++) {
-      if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
-      $out = $out . "X-attachments: $filename_list[$i];\n\n";
-    }
+
+    for($i = 0; $i < count($filename_list); $i++)
+      {
+	if ($mimefilename_list[$i]) 
+	  {
+	    $filename_list[$i] = $mimefilename_list[$i];
+	  }
+
+	$out = $out . "X-attachments: $filename_list[$i];\n\n";
+      }
+
     return $out;
   }
 

@@ -22,15 +22,15 @@
  */
 
 /*!
-	    \file       htdocs/paiement.class.php
-        \ingroup    facture
-		\brief      Fichier de la classe des paiement de factures clients
-		\version    $Revision$
+  \file       htdocs/paiement.class.php
+  \ingroup    facture
+  \brief      Fichier de la classe des paiement de factures clients
+  \version    $Revision$
 */
 
 
 /*! \class Paiement
-		\brief Classe permettant la gestion des paiements des factures clients
+  \brief Classe permettant la gestion des paiements des factures clients
 */
 
 class Paiement 
@@ -41,8 +41,10 @@ class Paiement
   var $datepaye;
   var $amount;
   var $author;
-  var $paiementid; 		// Type de paiement. Stocké dans fk_paiement de llx_paiement qui est lié aux types de paiement de llx_c_paiement
-  var $num_paiement;	// Numéro du CHQ, VIR, etc...
+  var $paiementid; 		// Type de paiement. Stocké dans fk_paiement 
+                                // de llx_paiement qui est lié aux types de 
+                                //paiement de llx_c_paiement
+  var $num_paiement;	        // Numéro du CHQ, VIR, etc...
   var $note;
   // fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
   // fk_paiement dans llx_paiement_facture est le rowid du paiement
@@ -113,6 +115,7 @@ class Paiement
     if ($this->db->begin())
       {
 	$total = 0;
+	
 	foreach ($this->amounts as $key => $value)
 	  {
 	    $facid = $key;
@@ -124,7 +127,8 @@ class Paiement
 		$total += $amount;
 	      }
 	  }
-    $total = ereg_replace(",",".",$total);
+	
+	$total = ereg_replace(",",".",$total);
 
 	if ($total > 0)
 	  {
@@ -146,9 +150,11 @@ class Paiement
 		      {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
 			$sql .= " VALUES ('".$facid."','". $this->id."','". $amount."')";
+
 			if (! $this->db->query($sql) )
 			  {
-	            dolibarr_print_error($this->db);
+			    dolibarr_print_error($this->db);
+		    
 			    $sql_err++;
 			  }
 		      }
@@ -157,22 +163,22 @@ class Paiement
 	      }
 	    else
 	      {
-	    dolibarr_print_error($this->db);
+		dolibarr_print_error($this->db);
 		$sql_err++;
 	      }
 	  }
 
-    if ( $total > 0 && $sql_err == 0 )
-      {
-	$this->db->commit();
-	return $this->id;
-      }
-    else
-      {
-	$this->db->rollback();
-	return -1;
-      }
-
+	if ( $total > 0 && $sql_err == 0 )
+	  {
+	    $this->db->commit();
+	    return $this->id;
+	  }
+	else
+	  {
+	    $this->db->rollback();
+	    return -1;
+	  }
+	
       }
   }
 
@@ -221,7 +227,7 @@ class Paiement
       }
     else
       {
-    dolibarr_print_error($this->db);
+	dolibarr_print_error($this->db);
 	return 0;
       }    
   }
@@ -235,13 +241,14 @@ class Paiement
     $sql = "UPDATE llx_paiement set fk_bank = ".$id_bank." where rowid = ".$this->id;
     $result = $this->db->query($sql);
     if ($result) 
-        {	    
-    	return 1;
-        }
-    else {
- 	    dolibarr_print_error($this->db);
+      {	    
+	return 1;
+      }
+    else
+      {
+	dolibarr_print_error($this->db);
     	return 0;
-        }
+      }
     }
 
   /*
@@ -263,7 +270,7 @@ class Paiement
 
 	      $this->id                = $obj->idp;
 
-		  if ($obj->fk_user_creat) {
+	      if ($obj->fk_user_creat) {
 	      	$cuser = new User($this->db, $obj->fk_user_creat);
 	      	$cuser->fetch();
 	      	$this->user_creation     = $cuser;

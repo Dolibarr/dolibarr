@@ -183,6 +183,7 @@ class CMailFile
       $out = $out . "Reply-To: $addr_from\n";
       $out = $out . "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
       $out = $out . "X-Sender: $addr_from\n";
+      $out = $out . "Return-path: $addr_from\n";
       return $out;
     }
 }
