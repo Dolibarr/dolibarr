@@ -125,7 +125,7 @@ if ($_GET["id"] > 0)
       echo '<table class="liste" width="100%" cellspacing="0" cellpadding="3">';	  
 
       $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-      $sql .= " FROM llx_commandedet as l WHERE l.fk_commande = ".$commande->id." ORDER BY l.rowid";
+      $sql .= " FROM llx_commandedet as l LEFT JOIN llx_product as p ON (p.rowid = l.fk_product) WHERE l.fk_commande = ".$commande->id." AND p.fk_product_type <> 1 ORDER BY l.rowid";
 	  
       $result = $db->query($sql);
       if ($result)
