@@ -235,13 +235,13 @@ function ppt ($db, $year, $socidp)
   global $bc;
   print "<table width=\"100%\">";
 
-  print "<tr class=\"liste_titre\"><td valign=\"top\" width=\"30%\">";
+  print '<tr><td align="center" valign="top" width="30%">';
   print "CA Prévisionnel basé sur les propal $year";
   
-  print "</td><td valign=\"top\">CA Réalisé $year</td>";
-  print "<td valign=\"top\">Delta $year</td></tr>";
+  print "</td><td align=\"center\" valign=\"top\">CA Réalisé $year</td>";
+  print "<td align=\"center\" valign=\"top\">Delta $year</td></tr>";
   
-  print "<tr><td valign=\"top\" width=\"30%\">";
+  print '<tr><td valign="top" align="center" width="30%">';
   
   $sql = "SELECT sum(f.price) as sum, round(date_format(f.datep,'%m')) as dm";
   $sql .= " FROM llx_propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep,'%Y') = $year ";

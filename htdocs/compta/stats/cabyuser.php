@@ -78,9 +78,9 @@ if ($result)
       $i = 0;
       print "<p><TABLE border=\"0\" width=\"50%\" cellspacing=\"0\" cellpadding=\"4\">";
       print "<TR class=\"liste_titre\">";
-      print "<TD>Société</td>";
-      print '<TD align="right">Montant</TD><td align="right">Pourcentage</td>';
-      print "<td>&nbsp;</td></tr>\n";
+      print "<td>Utilisateur</td>";
+      print '<td align="right">Montant</TD><td align="right">Pourcentage</td>';
+      print "</tr>\n";
       $var=True;
       while ($i < $num)
 	{
@@ -88,12 +88,10 @@ if ($result)
 	  $var=!$var;
 	  print "<TR $bc[$var]>";
 	  
-	  print "<TD><a href=\"../fiche.php?socid=$objp->idp\">$objp->name</a></TD>\n";
-	  print '<TD align="right">'.price($objp->ca).'</td>';
+	  print "<td>$objp->firstname $objp->name</td>\n";
+	  print '<td align="right">'.price($objp->ca).'</td>';
 	  print '<td align="right">'.price(100 / $catotal * $objp->ca).'%</td>';
-	  print "<td align=\"center\"><a href=\"../facture.php?socidp=$objp->idp\">Voir les factures</a></TD>\n";
-
-	  print "</TR>\n";
+	  print "</tr>\n";
 	  $i++;
 	}
       print "</TABLE>";
