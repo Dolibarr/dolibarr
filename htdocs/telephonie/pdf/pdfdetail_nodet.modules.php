@@ -19,9 +19,11 @@
  * $Id$
  * $Source$
  *
+ * Génère un PDF de la première page de résumé et un tableur des communications
  */
 
 require_once DOL_DOCUMENT_ROOT."/telephonie/pdf/pdfdetail_standard.modeles.php";
+require_once DOL_DOCUMENT_ROOT."/telephonie/pdf/xlsdetail_nodet.modules.php";
 require_once DOL_DOCUMENT_ROOT."/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php";
 
@@ -50,12 +52,19 @@ class pdfdetail_nodet {
       $fac->fetch_client();
 
       $objlignetel = new LigneTel($this->db);
+
       $result = $objlignetel->fetch($ligne);
 
       if (defined("FAC_OUTPUTDIR"))
 	{
 	  $dir = FAC_OUTPUTDIR . "/" . $fac->ref . "/" ;
+
 	  $file = $dir . $fac->ref . "-$ligne-detail.pdf";
+
+	  if (strlen($objlignetel->code_analytique) > 0)
+	    {
+	      $file = $dir . $fac->ref . "-$ligne-$objlignetel->code_analytique-detail.pdf";
+	    }
 	  
 	  if (! file_exists($dir))
 	    {
@@ -366,6 +375,10 @@ class pdfdetail_nodet {
 		  unlink($file_graph);
 		}
 
+	      /* Génération du tableur */
+
+	      $xlsdet = new xlsdetail_nodet($this->db);
+	      $xlsdet->GenerateFile($objlignetel, $fac, $factel);
 
 	      return 0;
 	    }
