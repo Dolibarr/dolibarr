@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,21 +44,21 @@ class pdf_bernique extends ModelePDFFactures  {
 
   function write_pdf_file($facid)
     {
-      global $user,$langs,$user;
+      global $user,$langs,$conf;
       
-        $langs->load("main");
-        $langs->load("bills");
-        $langs->load("products");
-
+      $langs->load("main");
+      $langs->load("bills");
+      $langs->load("products");
+      
       $fac = new Facture($this->db,"",$facid);
       $fac->fetch($facid);  
         if ($conf->facture->dir_output)
 	{
-
-			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-			$facref = str_replace($forbidden_chars,"_",$fac->ref);
-			$dir = $conf->facture->dir_output . "/" . $facref . "/" ;
-			$file = $dir . $facref . ".pdf";
+	  
+	  $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+	  $facref = str_replace($forbidden_chars,"_",$fac->ref);
+	  $dir = $conf->facture->dir_output . "/" . $facref . "/" ;
+	  $file = $dir . $facref . ".pdf";
 	  
 	  if (! file_exists($dir))
 	    {
@@ -72,7 +72,7 @@ class pdf_bernique extends ModelePDFFactures  {
 	  
 	  if (file_exists($dir))
 	    {
-                // Initialisation facture vierge
+	      // Initialisation facture vierge
 	      $pdf=new FPDF('P','mm','A4');
 	      $pdf->Open();
 	      $pdf->AddPage();
@@ -228,38 +228,43 @@ class pdf_bernique extends ModelePDFFactures  {
     }
 
   function _tableau_tot(&$pdf, $fac, $top, $height)
-    {
-      $tab2_top = $top + $height;
-      $tab2_hl = 5;
-      $tab2_height = $tab2_hl * 4;
-      $pdf->SetFont('Arial','', 9);
-
-      $tvas = $fac->getSumTva();
-      $i = 0;
-
-      $tab4_top = $tab2_top + 2 + ($tab2_hl * 2);
-
-      foreach ($tvas as $key => $value)
-	{
-	  $pdf->SetXY (10, $tab4_top + ( $i * $tab2_hl));
-	  $pdf->MultiCell(25, $tab2_hl, "TVA à ". $key."%", 0, 'L', 0);
-	  $pdf->SetXY (35, $tab4_top + ( $i * $tab2_hl));
-	  $pdf->MultiCell(20, $tab2_hl, price($tvas[$key]), 0, 'R', 0);
-	  $i++;
-	  $pdf->line(10, $tab4_top + ($tab2_hl * $i), 55, $tab4_top + ($tab2_hl * $i) );
-	}
-      $pdf->line(10, $tab4_top, 55, $tab4_top );
-      $pdf->line(10, $tab4_top, 10, $tab4_top + ($tab2_hl * $i));
-      $pdf->line(35, $tab4_top, 35, $tab4_top + ($tab2_hl * $i));
-      $pdf->line(55, $tab4_top, 55, $tab4_top + ($tab2_hl * $i));
-
+  {
+    global $langs;
+    $langs->load("main");
+    $langs->loads("bills"); 
+    
+    
+    $tab2_top = $top + $height;
+    $tab2_hl = 5;
+    $tab2_height = $tab2_hl * 4;
+    $pdf->SetFont('Arial','', 9);
+    
+    $tvas = $fac->getSumTva();
+    $i = 0;
+    
+    $tab4_top = $tab2_top + 2 + ($tab2_hl * 2);
+    
+    foreach ($tvas as $key => $value)
+      {
+	$pdf->SetXY (10, $tab4_top + ( $i * $tab2_hl));
+	$pdf->MultiCell(25, $tab2_hl, "TVA à ". $key."%", 0, 'L', 0);
+	$pdf->SetXY (35, $tab4_top + ( $i * $tab2_hl));
+	$pdf->MultiCell(20, $tab2_hl, price($tvas[$key]), 0, 'R', 0);
+	$i++;
+	$pdf->line(10, $tab4_top + ($tab2_hl * $i), 55, $tab4_top + ($tab2_hl * $i) );
+      }
+    $pdf->line(10, $tab4_top, 55, $tab4_top );
+    $pdf->line(10, $tab4_top, 10, $tab4_top + ($tab2_hl * $i));
+    $pdf->line(35, $tab4_top, 35, $tab4_top + ($tab2_hl * $i));
+    $pdf->line(55, $tab4_top, 55, $tab4_top + ($tab2_hl * $i));
+    
       
-      $pdf->Rect(10, $tab2_top, 190, $tab2_hl * 2);
-      $pdf->line(10, $tab2_top + $tab2_hl, 200, $tab2_top + $tab2_hl);
+    $pdf->Rect(10, $tab2_top, 190, $tab2_hl * 2);
+    $pdf->line(10, $tab2_top + $tab2_hl, 200, $tab2_top + $tab2_hl);
       
-      
-      $pdf->SetXY (132, $tab2_top + 0);
-      $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalHT"), 0, 'R', 0);
+    
+    $pdf->SetXY (132, $tab2_top + 0);
+    $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalHT"), 0, 'R', 0);
       
       $pdf->SetXY (11, $tab2_top + $tab2_hl);
       $pdf->MultiCell(42, $tab2_hl, $langs->trans("Discount")." ". $fac->remise_percent . " %", 0, 'L', 0);
@@ -293,9 +298,9 @@ class pdf_bernique extends ModelePDFFactures  {
    */
   function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
-        global $langs;
-        $langs->load("main");
-        $langs->load("bills");
+      global $langs;
+      $langs->load("main");
+      $langs->load("bills");
       
       $pdf->SetFont('Arial','',10);
       
