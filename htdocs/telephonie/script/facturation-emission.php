@@ -525,10 +525,8 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
       
       if ($fac->client->bank_account->verif() && $ligne->mode_paiement == 'pre')
 	{
-	  $message .= "Facture prélevée sur votre compte numéro ";
+	  $message .= "Cette facture sera prélevée sur votre compte bancaire numéro : ";
 	  $message .= $fac->client->bank_account->number;
-	  $message .= " à partir du ".strftime("%d/%m/%Y",$datetimeprev);
-	  $message .= ".";
 	}
       
       if ($verbose) dolibarr_syslog("Création du pdf facture : $facid");
