@@ -79,8 +79,8 @@ class DolibarrMail
 
       $this->filename_list = array();
 
-      dolibarr_syslog("DolibarrMail::DolibarrMail to : ".$this->addr_to);
-      dolibarr_syslog("DolibarrMail::DolibarrMail from : ".$this->from);
+      //dolibarr_syslog("DolibarrMail::DolibarrMail to : ".$this->addr_to);
+      //dolibarr_syslog("DolibarrMail::DolibarrMail from : ".$this->from);
     }
 
   /**
@@ -180,12 +180,12 @@ class DolibarrMail
 
     if ($this->errors_to)
       {
-	dolibarr_syslog("DolibarrMail::sendfile with errorsto : ".$this->errors_to);
+	//dolibarr_syslog("DolibarrMail::sendfile with errorsto : ".$this->errors_to);
 	$res = mail($this->addr_to,$this->subject,stripslashes($message_comp),$headers,"-f".$this->errors_to);
       }
     else
       {
-	dolibarr_syslog("DolibarrMail::sendfile without errorsto");
+	//dolibarr_syslog("DolibarrMail::sendfile without errorsto");
 	$res = mail($this->addr_to,$this->subject,stripslashes($message_comp),$headers);
       }
 
@@ -225,7 +225,7 @@ class DolibarrMail
       }
     else
       {
-	dolibarr_syslog("DolibarrMail::write_body");
+	//dolibarr_syslog("DolibarrMail::write_body");
       }
 
     $out = $out . $this->message . "\n\n";
