@@ -41,6 +41,7 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/retour/", "Retour");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/commande/retour/liste.php", "Liste");
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/commande/retour/atraiter.php", "A traiter");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/commande/retour/fichiers.php", "Fichiers");
 
 
