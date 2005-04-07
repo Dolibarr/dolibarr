@@ -24,21 +24,20 @@
  * Lots of code inspired from Dan Potter's CMailFile class
  */
 
-
-/**
-    \file       htdocs/lib/dolibarrmail.class.php
-    \brief      Classe permettant d'envoyer des mail avec attachements, recriture de CMailFile
-    \author     Dan Potter.
-    \author     Eric Seigne
-    \author     Rodolphe Quiedeville
-    \author     Laurent Destailleur.
-    \version    $Revision$
+/*!
+  \file       htdocs/lib/dolibarrmail.class.php
+  \brief      Classe permettant d'envoyer des mail avec attachements, recriture de CMailFile
+  \author     Dan Potter.
+  \author     Eric Seigne
+  \author     Rodolphe Quiedeville
+  \author     Laurent Destailleur.
+  \version    $Revision$
 */
 
-/** 
-    \class      DolibarrMail
-    \brief      Classe permettant d'envoyer des attachements par mail
-    \todo       Classe en double avec CMAilFile.class.php
+/*! 
+  \class      DolibarrMail
+  \brief      Classe permettant d'envoyer des attachements par mail
+  \todo       Classe en double avec CMAilFile.class.php
 */
 
 class DolibarrMail
@@ -53,41 +52,38 @@ class DolibarrMail
   var $boundary;
   var $smtp_headers;
 
-/**
-  \brief DolibarrMail
-  \param subject
-  \param to
-  \param from
-  \param msg
-*/
+  /**
+     \brief DolibarrMail
+     \param subject
+     \param to
+     \param from
+     \param msg
+  */
 
   function DolibarrMail($subject, $to, $from, $msg)
-    {
-      $this->from = $from;
+  {
+    $this->subject = $subject;
+    $this->addr_to = $to;
+    $this->from = $from;
+    
+    $this->message = wordwrap($msg, 78);
 
-      $this->message = wordwrap($msg, 78);
-      $this->boundary= md5( uniqid("dolibarr") );
+    $this->errors_to = $from;
 
-      $this->subject = $subject;
-      $this->addr_to = $to;
+    $this->boundary = md5( uniqid("dolibarr") );
 
-      $this->errors_to = $from;
+    $this->addr_bcc = "";
+    $this->addr_cc = "";
+    $this->reply_to = "";
 
-      $this->addr_bcc = "";
-      $this->addr_cc = "";
-      $this->reply_to = "";
-
-      $this->filename_list = array();
-
-      //dolibarr_syslog("DolibarrMail::DolibarrMail to : ".$this->addr_to);
-      //dolibarr_syslog("DolibarrMail::DolibarrMail from : ".$this->from);
-    }
+    $this->filename_list = array();
+  }
 
   /**
-    \brief PrepareFile
-    \param filename_list
-    \param mimetype_list
-    \param mimefilename_list
+     \brief PrepareFile
+     \param filename_list
+     \param mimetype_list
+     \param mimefilename_list
   */
 
   function PrepareFile($filename_list, $mimetype_list, $mimefilename_list)
@@ -107,10 +103,10 @@ class DolibarrMail
   }
     
   /**
-    \brief permet d'attacher un fichier
-    \param filename_list
-    \param mimetype_list
-    \param mimefilename_list
+     \brief permet d'attacher un fichier
+     \param filename_list
+     \param mimetype_list
+     \param mimefilename_list
   */
   
   function attach_file($filename_list,$mimetype_list,$mimefilename_list)
@@ -131,7 +127,6 @@ class DolibarrMail
 	    $mimetype_list[$i] = "application/octet-stream"; 
 	  }
 
-	//$out = $out . "Content-type: " . $mimetype_list[$i] . "; name=\"".$filename_list[$i]."\";\n";         
 	$out = $out . "Content-type: " . $mimetype_list[$i]."\n";
 	$out = $out . "Content-Transfer-Encoding: base64\n";
 	$out = $out . "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"\n\n";
@@ -143,10 +138,10 @@ class DolibarrMail
     // added -- to notify email client attachment is done
   }
   
-/**
-  \brief permet d'encoder un fichier
-  \param sourcefile
-*/
+  /**
+     \brief permet d'encoder un fichier
+     \param sourcefile
+  */
   
   function encode_file($sourcefile)
   {
@@ -165,7 +160,7 @@ class DolibarrMail
   }
   
   /**
-    \brief envoi le mail
+     \brief envoi le mail
   */
   
   function sendfile()
@@ -211,7 +206,7 @@ class DolibarrMail
   }
 
   /**
-    \brief permet d'ecrire le corps du message
+     \brief permet d'ecrire le corps du message
   */
   
   function write_body()
@@ -233,9 +228,9 @@ class DolibarrMail
   }
   
   /**
-    \brief création des headers mime
-    \param filename_list
-    \param mimefilename_list
+     \brief création des headers mime
+     \param filename_list
+     \param mimefilename_list
   */
   
   function write_mimeheaders($filename_list, $mimefilename_list)
@@ -257,9 +252,9 @@ class DolibarrMail
     return $out;
   }
 
-/**
-  \brief création des headers smtp
-*/
+  /**
+     \brief création des headers smtp
+  */
   
   function write_smtpheaders()
   {
@@ -285,5 +280,5 @@ class DolibarrMail
   }
 
 }
-// end script
+
 ?>
