@@ -267,7 +267,6 @@ class Facture
 	   */
 	  $this->_affect_remise_exceptionnelle();
 
-
 	  $this->updateprice($this->id);
 
 	  return $this->id;
