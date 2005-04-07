@@ -26,6 +26,17 @@
 
 require ("../../master.inc.php");
 
+$opt = getopt("l:");
+
+$limit = $opt['l'];
+
+if (strlen($limit) == 0)
+{
+  print "Usage :\n  php facturation-emission.php -l <limit>\n";
+  exit;
+}
+
+
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie.contrat.class.php");
@@ -108,7 +119,7 @@ if (!$error)
   $sql .= " AND f.fk_ligne = l.rowid ";
   $sql .= " AND l.fk_contrat = c.rowid";  
 
-  $sql .= " LIMIT 1";
+  $sql .= " LIMIT $limit";
   
   $contrats = array();
   
