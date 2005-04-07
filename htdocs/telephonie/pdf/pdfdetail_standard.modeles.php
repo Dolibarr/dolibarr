@@ -56,7 +56,7 @@ class pdfdetail_standard_modeles extends FPDF {
     $this->MultiCell(89, 4, $libelle, 0);
 
     $this->SetX(11);
-    $this->MultiCell(80, 4, "Page : ". $this->page ."/".$this->nombre_pages, 0);
+    $this->MultiCell(80, 4, "Page : ". $this->PageNo() ."/{nb}", 0);
 
     // Clients spéciaux
 
