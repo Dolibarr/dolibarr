@@ -51,9 +51,11 @@ $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande_retour";
 $sql .= " WHERE traite = 0";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
-if ($db->query($sql))
+$resql = $db->query($sql);
+
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
 
   print_barre_liste("Retours Fournisseurs", $page, "atraiter.php", "", $sortfield, $sortorder, '', $num);
@@ -66,7 +68,7 @@ if ($db->query($sql))
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object();
+      $obj = $db->fetch_object($resql);
       $var=!$var;
 
       $ligne = new LigneTel($db);
@@ -87,7 +89,7 @@ if ($db->query($sql))
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
