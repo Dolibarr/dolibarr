@@ -50,21 +50,37 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-$mode='recettes';
-if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
+$modecompta = $conf->compta->mode;
+if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
-if ($mode=='creances') {
-	$title="Chiffre d'affaire (".$conf->monnaie." HT, ".$mode.")";
+if ($modecompta=='CREANCES-DETTES') {
+	$title="Chiffre d'affaire (".$conf->monnaie." HT)";
 } else {
-	$title="Chiffre d'affaire (".$conf->monnaie." TTC, ".$mode.")";
+	$title="Chiffre d'affaire (".$conf->monnaie." TTC)";
 }
 $lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."'>".img_next()."</a>":"");
 print_fiche_titre($title,$lien);
 
+
+// Affiche règles de calcul
+print "Ce rapport présente le CA:<br>\n";
+if ($modecompta=="CREANCES-DETTES")
+{
+    print $langs->trans("RulesCADue");
+    print '(Voir le rapport <a href="index.php?year_start='.($year_start).'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées).<br>';
+    print '<br>';
+}
+else {
+    print $langs->trans("RulesCAIn");
+    print '(Voir le rapport en <a href="index.php?year_start='.($year_start).'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée).<br>';
+    print '<br>';
+}
+
 print '<br>';
 
+
 if ($conf->compta->mode == 'CREANCES-DETTES') { 
-	$sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
+	$sql = "SELECT sum(f.total) as amount, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " WHERE f.fk_statut = 1";
 	$sql .= " AND f.paye = 1";
@@ -78,24 +94,28 @@ if ($conf->compta->mode == 'CREANCES-DETTES') {
 	$sql .= "left join ".MAIN_DB_PREFIX."facture as f ";
 	$sql .= "on f.rowid = p.fk_facture";
 }
-
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
 }
 $sql .= " GROUP BY dm DESC";
 
+
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
-  $i = 0; 
-  while ($i < $num)
+    $num = $db->num_rows($result);
+    $i = 0; 
+    while ($i < $num)
     {
-      $row = $db->fetch_row($i);
-      $cum[$row[1]] = $row[0];
-      $i++;
+        $obj = $db->fetch_object($result);
+        $cum[$obj->dm] = $obj->amount;
+        $i++;
     }
+    $db->free($result);
+}
+else {
+    dolibarr_print_error($db);
 }
 
 print '<table width="100%" class="noborder">';

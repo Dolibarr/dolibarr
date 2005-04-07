@@ -54,98 +54,105 @@ $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 
-$title="Résultat comptable, résumé annuel";
+$title="Résultat comptable (HT), résumé annuel";
 $lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."'>".img_next()."</a>":"");
 print_fiche_titre($title,$lien);
 print '<br>';
 
-print "Ce rapport présente la balance entre les recettes et les dépenses facturées aux clients ou fournisseurs. Les dépenses de charges ne sont pas incluses.<br>\n";
+// Affiche règles de calcul
+print "Ce rapport présente la balance entre les recettes et les dépenses facturées aux clients ou fournisseurs:<br>\n";
 if ($modecompta=="CREANCES-DETTES")
 {
-    print 'Il se base sur la date de validation des factures et inclut les factures dues, qu\'elles soient payées ou non';
-    print ' (Voir le rapport <a href="index.php?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées).<br>';
+    print $langs->trans("RulesResultDue");
+    print '(Voir le rapport <a href="index.php?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées).<br>';
     print '<br>';
 }
 else {
-    print 'Il se base sur la date de validation des factures et n\'inclut que les factures effectivement payées';
-    print ' (Voir le rapport en <a href="index.php?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée).<br>';
+    print $langs->trans("RulesResultInOut");
+    print '(Voir le rapport en <a href="index.php?year_start='.$year_start.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée).<br>';
     print '<br>';
 }
 
 /*
  * Factures clients
  */
-$sql = "SELECT sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
-if ($_GET["year"]) {
-	$sql .= " AND f.datef between '".$_GET["year"]."-01-01 00:00:00' and '".$_GET["year"]."-12-31 23:59:59'";
+if ($conf->compta->mode == 'CREANCES-DETTES') { 
+    $sql = "SELECT sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
+} else {
+	$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p ";
+	$sql .= "left join ".MAIN_DB_PREFIX."facture as f ";
+	$sql .= "on f.rowid = p.fk_facture";
 }
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
 }
-if ($modecompta != 'CREANCES-DETTES') { 
-	$sql .= " AND f.paye = 1";
-}
 $sql .= " GROUP BY dm DESC";
+
 
 $result=$db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0; 
-  while ($i < $num)
+    $num = $db->num_rows($result);
+    $i = 0; 
+    while ($i < $num)
     {
-      $row = $db->fetch_object($result);
-      $encaiss[$row->dm] = $row->amount_ht;
-      $encaiss_ttc[$row->dm] = $row->amount_ttc;
-      $i++;
+        $row = $db->fetch_object($result);
+        $encaiss[$row->dm] = $row->amount_ht;
+        $encaiss_ttc[$row->dm] = $row->amount_ttc;
+        $i++;
     }
+    $db->free($result);
 }
 else {
 	dolibarr_print_error($db);	
 }
-$db->free($result);
+
 
 /*
  * Frais, factures fournisseurs.
  */
-$sql = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
-$sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
-if ($_GET["year"]) {
-	$sql .= " AND f.datef between '".$_GET["year"]."-01-01 00:00:00' and '".$_GET["year"]."-12-31 23:59:59'";
+if ($conf->compta->mode == 'CREANCES-DETTES') { 
+    $sql = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
+    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
+} else {
+	$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p ";
+	$sql .= "left join ".MAIN_DB_PREFIX."facture_fourn as f ";
+	$sql .= "on f.rowid = p.fk_facture_fourn";
 }
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
-}
-if ($modecompta != 'CREANCES-DETTES') { 
-	$sql .= " AND f.paye = 1";
 }
 $sql .= " GROUP BY dm DESC";
 
 $result=$db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0; 
-  while ($i < $num)
+    $num = $db->num_rows($result);
+    $i = 0; 
+    while ($i < $num)
     {
-      $row = $db->fetch_object($result);
-      $decaiss[$row->dm] = $row->amount_ht;
-      $decaiss_ttc[$row->dm] = $row->amount_ttc;
-      $i++;
+        $row = $db->fetch_object($result);
+        $decaiss[$row->dm] = $row->amount_ht;
+        $decaiss_ttc[$row->dm] = $row->amount_ttc;
+        $i++;
     }
+    $db->free($result);
 }
 else {
 	dolibarr_print_error($db);	
 }
-$db->free($result);
+
+
 
 /*
- * Tableau
+ * Affiche tableau
  */
 
 print '<table class="noborder" width="100%">';

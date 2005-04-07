@@ -44,20 +44,20 @@ print '<br>';
 
 if ($modecompta=="CREANCES-DETTES")
 {
-    print 'Il se base sur la date de validation des factures et inclut les factures dues, qu\'elles soient payées ou non';
-    print ' (Voir le rapport <a href="clientfourn.php?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées).<br>';
+    print $langs->trans("RulesResultDue");
+    print '(Voir le rapport <a href="clientfourn.php?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées).<br>';
     print '<br>';
 }
 else {
-    print 'Il se base sur la date de validation des factures et n\'inclut que les factures effectivement payées';
-    print ' (Voir le rapport en <a href="clientfourn.php?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée).<br>';
+    print $langs->trans("RulesResultInOut");
+    print '(Voir le rapport en <a href="clientfourn.php?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée).<br>';
     print '<br>';
 }
 
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="10%">&nbsp;</td><td>Elément</td>';
+print '<td width="10%">&nbsp;</td><td>'.$langs->trans("Element").'</td>';
 print "<td align=\"right\">".$langs->trans("AmountHT")."</td>";
 print "<td align=\"right\">".$langs->trans("AmountTTC")."</td>";
 print "</tr>\n";
@@ -66,47 +66,51 @@ print "</tr>\n";
 /*
  * Factures clients
  */
-$sql = "SELECT s.nom, s.idp, sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
-if ($year) {
-	$sql .= " AND f.datef between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
-}
-if ($modecompta != 'CREANCES-DETTES') { 
-	$sql .= " AND f.paye = 1";
-}
-$sql .= " GROUP BY s.nom ASC";
+if ($conf->compta->mode == 'CREANCES-DETTES') { 
+    $sql = "SELECT s.nom, s.idp, sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
+   if ($_GET["year"]) {
+    	$sql .= " AND f.datef between '".$_GET["year"]."-01-01 00:00:00' and '".$_GET["year"]."-12-31 23:59:59'";
+    }
+} else {
+	$sql = "SELECT 'Fournisseurs' as nom, '0' as idp, sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p ";
+	$sql .= "left join ".MAIN_DB_PREFIX."facture as f ";
+	$sql .= "on f.rowid = p.fk_facture";
+    if ($_GET["year"]) {
+    	$sql .= " AND p.datep between '".$_GET["year"]."-01-01 00:00:00' and '".$_GET["year"]."-12-31 23:59:59'";
+    }
+}    
+$sql .= " GROUP BY nom ASC";
 
 
 print '<tr><td colspan="4">Facturation clients</td></tr>';
 
 $result = $db->query($sql);
 if ($result) {
-  $num = $db->num_rows();
-    
-  $i = 0;
-  
-  if ($num > 0) {
-    $var=True;
-    while ($i < $num) {
-      $objp = $db->fetch_object($result);
-      $var=!$var;
+    $num = $db->num_rows($result);
+    $i = 0;
+    $var=true;
+    while ($i < $num)
+    {
+        $objp = $db->fetch_object($result);
+        $var=!$var;
             
-      print "<tr $bc[$var]><td>&nbsp</td>";
-      print "<td>".$langs->trans("Factures")." <a href=\"../facture.php?socidp=$objp->idp\">$objp->nom</td>\n";
-      
-      print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
-      print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
-      
-      $total_ht = $total_ht + $objp->amount_ht;
-      $total_ttc = $total_ttc + $objp->amount_ttc;
-      print "</tr>\n";
-      $i++;
+        print "<tr $bc[$var]><td>&nbsp</td>";
+        print "<td>".$langs->trans("Factures")." <a href=\"../facture.php?socidp=$objp->idp\">$objp->nom</td>\n";
+        
+        print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
+        print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
+        
+        $total_ht = $total_ht + $objp->amount_ht;
+        $total_ttc = $total_ttc + $objp->amount_ttc;
+        print "</tr>\n";
+        $i++;
     }
-  }
-  $db->free();
+    $db->free($result);
 } else {
-  dolibarr_print_error($db);
+    dolibarr_print_error($db);
 }
 print '<tr>';
 print '<td colspan="3" align="right">'.price($total_ht).'</td>';
@@ -116,26 +120,31 @@ print '</tr>';
 /*
  * Frais, factures fournisseurs.
  */
-
-$sql = "SELECT s.nom, s.idp, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
-$sql .= " WHERE f.fk_soc = s.idp"; 
-if ($year) {
-	$sql .= " AND f.datef between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
+if ($conf->compta->mode == 'CREANCES-DETTES') { 
+    $sql = "SELECT s.nom, s.idp, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
+    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
+   if ($_GET["year"]) {
+    	$sql .= " AND f.datef between '".$_GET["year"]."-01-01 00:00:00' and '".$_GET["year"]."-12-31 23:59:59'";
+    }
+} else {
+	$sql = "SELECT 'Fournisseurs' as nom, '0' as idp, sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p ";
+	$sql .= "left join ".MAIN_DB_PREFIX."facture_fourn as f ";
+	$sql .= "on f.rowid = p.fk_facture_fourn";
+    if ($_GET["year"]) {
+    	$sql .= " AND p.datep between '".$_GET["year"]."-01-01 00:00:00' and '".$_GET["year"]."-12-31 23:59:59'";
+    }
 }
-if ($modecompta != 'CREANCES-DETTES') { 
-	$sql .= " AND f.paye = 1";
-}
-$sql .= " GROUP BY s.nom ASC, s.idp";
+$sql .= " GROUP BY nom ASC, idp";
 
 print '<tr><td colspan="4">Facturation fournisseurs</td></tr>';
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
 $result = $db->query($sql);
 if ($result) {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
-  
   if ($num > 0) {
     $var=True;
     while ($i < $num) {
@@ -156,7 +165,7 @@ if ($result) {
       $i++;
     }
   }
-  $db->free();
+  $db->free($result);
 } else {
   dolibarr_print_error($db);
 }

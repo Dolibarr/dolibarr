@@ -22,3 +22,7 @@ SocialContributions=Charges sociales
 AccountancyTreasuryArea=Espace Compta/Tréso
 NewPayment=Nouveau paiement
 ListPayment=Liste des paiements
+RulesResultDue=- Les dépenses de charges ne sont pas incluses.<br>- Il se base sur la date de validation des factures.<br>- Il inclut les factures dues, qu'elles soient payées ou non<br>
+RulesResultInOut=- Les dépenses de charges ne sont pas incluses.<br>- Il se base sur les paiements des factures effectivement réalisés<br>
+RulesCADue=- Il se base sur la date de validation des factures.<br>- Il se base sur les factures dues, qu'elles soient payées ou non<br>
+RulesCAIn=- Il se base sur la date des paiements de factures<br>- Il se base sur les paiements des factures effectivement réalisés<br>
