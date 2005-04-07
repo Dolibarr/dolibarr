@@ -21,11 +21,11 @@
  *
  */
 
-/*!
-  \file       htdocs/projet/index.php
-  \ingroup    projet
-  \brief      Page d'accueil du module projet
-  \version    $Revision$
+/**
+        \file       htdocs/projet/index.php
+        \ingroup    projet
+        \brief      Page d'accueil du module projet
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -43,7 +43,7 @@ if ($user->societe_id > 0)
 
 llxHeader("",$langs->trans("Projects"),"Projet");
 
-print_titre($langs->trans("Projects"));
+print_titre($langs->trans("ProjectsArea"));
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];

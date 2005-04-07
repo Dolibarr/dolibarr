@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - projects
 Project=Projet
 Projects=Projets
+ProjectsArea=Espace projet
 NewProject=Nouveau projet
 AddProject=Créer projet
 DeleteAProject=Supprimer un projet
