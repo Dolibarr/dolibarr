@@ -348,7 +348,7 @@ class Facture
    */
   function fetch($rowid, $societe_id=0)
     {
-      dolibarr_syslog("Facture::Fetch rowid : $rowid, societe_id : $societe_id");
+      //dolibarr_syslog("Facture::Fetch rowid : $rowid, societe_id : $societe_id");
 
       $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent";
       $sql .= ",".$this->db->pdate("f.datef")." as df,f.fk_projet";
@@ -817,7 +817,7 @@ class Facture
    */
   function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='')
   {
-    dolibarr_syslog("Facture::UpdateLine");
+    //dolibarr_syslog("Facture::UpdateLine");
     
     if ($this->brouillon)
       {
@@ -1243,7 +1243,7 @@ class Facture
    */
   function mode_reglement($mode)
   {
-    dolibarr_syslog("Facture::ModeReglement");
+    //dolibarr_syslog("Facture::ModeReglement");
     if ($this->statut > 0 && $this->paye == 0)
       {	  
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
@@ -1275,7 +1275,7 @@ class Facture
    */
   function demande_prelevement($user)
   {
-    dolibarr_syslog("Facture::DemandePrelevement");
+    //dolibarr_syslog("Facture::DemandePrelevement");
 
     $soc = new Societe($this->db);
     $soc->id = $this->socidp;
