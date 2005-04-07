@@ -54,7 +54,7 @@ $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 
-$title="Résultat comptable (HT), résumé annuel";
+$title="Résultat exercice, résumé annuel";
 $lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."'>".img_next()."</a>":"");
 print_fiche_titre($title,$lien);
 print '<br>';
@@ -76,21 +76,22 @@ else {
 /*
  * Factures clients
  */
-if ($conf->compta->mode == 'CREANCES-DETTES') { 
-    $sql = "SELECT sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
+if ($modecompta == 'CREANCES-DETTES') { 
+    $sql  = "SELECT sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
     $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
 } else {
-	$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p ";
-	$sql .= "left join ".MAIN_DB_PREFIX."facture as f ";
-	$sql .= "on f.rowid = p.fk_facture";
+	$sql  = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " ON f.rowid = p.fk_facture";
+	$sql .= " WHERE 1=1";
 }
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
 }
-$sql .= " GROUP BY dm DESC";
+$sql .= " GROUP BY dm";
 
 
 $result=$db->query($sql);
@@ -115,15 +116,16 @@ else {
 /*
  * Frais, factures fournisseurs.
  */
-if ($conf->compta->mode == 'CREANCES-DETTES') { 
-    $sql = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
+if ($modecompta == 'CREANCES-DETTES') { 
+    $sql  = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
     $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
 } else {
 	$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p ";
-	$sql .= "left join ".MAIN_DB_PREFIX."facture_fourn as f ";
-	$sql .= "on f.rowid = p.fk_facture_fourn";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f";
+	$sql .= " ON f.rowid = p.fk_facture_fourn";
+	$sql .= " WHERE 1=1";
 }
 if ($socidp)
 {
@@ -180,19 +182,19 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
     {
       print '<td align="right" width="10%">&nbsp;';
       $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-      if ($encaiss[$case]>0)
+      if ($encaiss_ttc[$case]>0)
 	{
-	  print price($encaiss[$case]);
-	  $totentrees[$annee]+=$encaiss[$case];
+	  print price($encaiss_ttc[$case]);
+	  $totentrees[$annee]+=$encaiss_ttc[$case];
 	}
       print "</td>";
 
       print '<td align="right" width="10%">&nbsp;';
       $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-      if ($decaiss[$case]>0)
+      if ($decaiss_ttc[$case]>0)
 	{
-	  print price($decaiss[$case]);
-	  $totsorties[$annee]+=$decaiss[$case];
+	  print price($decaiss_ttc[$case]);
+	  $totsorties[$annee]+=$decaiss_ttc[$case];
 	}
       print "</td>";
     }
@@ -201,7 +203,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 }
 
 $var=!$var;
-print "<tr $bc[$var]><td><b>".$langs->trans("Total")."</b></td>";
+print "<tr $bc[$var]><td><b>".$langs->trans("TotalTTC")."</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
   print '<td align="right">'.price($totentrees[$annee]).'</td><td align="right">'.price($totsorties[$annee]).'</td>';

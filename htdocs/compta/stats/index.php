@@ -79,7 +79,7 @@ else {
 print '<br>';
 
 
-if ($conf->compta->mode == 'CREANCES-DETTES') { 
+if ($modecompta == 'CREANCES-DETTES') { 
 	$sql = "SELECT sum(f.total) as amount, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " WHERE f.fk_statut = 1";
@@ -197,17 +197,17 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 print "<tr><td align=\"right\"><b>".$langs->trans("Total")." :</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print "<td align=\"right\"><b>".($total[$annee]?price($total[$annee]):"&nbsp;")."</b></td>";
+  print "<td align=\"right\" nowrap><b>".($total[$annee]?price($total[$annee]):"&nbsp;")."</b></td>";
   
   // Pourcentage evol
   if ($total[$annee-1]) {
     if ($annee <= $year_current) {
       if ($total[$annee-1]) {
 	    $percent=(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100);
-	    print '<td align="right"><b>'.($percent>=0?"+$percent":"$percent").'%</b></td>';
+	    print '<td align="right" nowrap><b>'.($percent>=0?"+$percent":"$percent").'%</b></td>';
         }
       else
-	print '<td align="center">+Inf%</td>';
+	print '<td align="center" nowrap>+Inf%</td>';
     }
     else
       {
@@ -228,17 +228,16 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
   
 }
 print "</tr>\n";
-/* en mode recettes/dépenses, il faut compléter avec les montants facturés non réglés
-* et les propales signées mais pas facturées
-* en effet, en recettes-dépenses, on comptabilise lorsque le montant est sur le compte
-* donc il est intéressant d'avoir une vision de ce qui va arriver
-*/
-if ($conf->compta->mode != 'CREANCES-DETTES') { 
+
 /*
-* 
-* Facture non réglées
-* 
-*/
+ * En mode recettes/dépenses, on complète avec les montants facturés non réglés
+ * et les propales signées mais pas facturées. En effet, en recettes-dépenses,
+ * on comptabilise lorsque le montant est sur le compte donc il est intéressant
+ * d'avoir une vision de ce qui va arriver.
+ */
+if ($modecompta != 'CREANCES-DETTES') { 
+  
+  // Factures non réglées
 
   $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
