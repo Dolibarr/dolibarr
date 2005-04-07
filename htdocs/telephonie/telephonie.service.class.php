@@ -55,7 +55,37 @@ class TelephonieService {
 
     $sql .= " WHERE rowid = $this->id";
 
-    if ( $this->db->query($sql) )
+    $resql = $this->db->query($sql);
+
+    if ( $resql )
+      {
+	return 0;
+      }
+    else
+      {
+	print $this->db->error();
+	print $sql ;
+	return -1;
+      }
+  }
+  /*
+   *
+   *
+   */
+  function active($user)
+  {
+
+    $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_service";
+    $sql .= " SET ";
+    $sql .= " statut = 1";
+    $sql .= ", fk_user_modif = $user->id ";
+    $sql .= ", date_modif = now() ";
+
+    $sql .= " WHERE rowid = $this->id AND statut = 0";
+
+    $resql = $this->db->query($sql);
+
+    if ( $resql )
       {
 	return 0;
       }
@@ -102,16 +132,20 @@ class TelephonieService {
   function fetch($id)
     {
       $sql = "SELECT s.rowid, s.libelle, s.libelle_facture, s.montant, s.statut";
+      $sql .= " , s.ref";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_service as s";      
       $sql .= " WHERE s.rowid = ".$id;
 
-      if ($this->db->query($sql))
+      $resql = $this->db->query($sql);
+
+      if ($resql)
 	{
-	  if ($this->db->num_rows())
+	  if ($this->db->num_rows($resql))
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object($resql);
 
 	      $this->id              = $obj->rowid;
+	      $this->ref             = $obj->ref;
 	      $this->libelle         = stripslashes($obj->libelle);
 	      $this->libelle_facture = stripslashes($obj->libelle_facture);
 	      $this->montant         = $obj->montant;
@@ -124,7 +158,7 @@ class TelephonieService {
 	      $result = -2;
 	    }
 
-	  $this->db->free();
+	  $this->db->free($resql);
 	}
       else
 	{
@@ -132,10 +166,8 @@ class TelephonieService {
 	  print $this->db->error();
 	  $result = -1;
 	}
-
+      
       return $result;
-  }
-
+    }
 }
-
 ?>
