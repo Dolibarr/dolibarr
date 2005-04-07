@@ -324,9 +324,10 @@ class MenuLeft {
             
                 	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca","Résultat / Exercice",1,$user->rights->compta->resultat->lire);
                     if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca","Détail client/fourn.",2,$user->rights->compta->resultat->lire);
+                    /* On verra ca avec module compabilité
                     if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php?leftmenu=ca","Compte de résultat",2,$user->rights->compta->resultat->lire);
                     if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php?leftmenu=ca","Bilan",2,$user->rights->compta->resultat->lire);
-                	
+                	*/
                 	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca","Chiffre d'affaire",1,$user->rights->compta->resultat->lire);
                 	
                 	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php?leftmenu=ca","Cumulé",2,$user->rights->compta->resultat->lire);
