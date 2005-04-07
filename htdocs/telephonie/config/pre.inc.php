@@ -53,6 +53,8 @@ function llxHeader($head = "", $title="") {
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/compta.php", "Compta");
 
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/mail.php", "Mails");
+
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/concurrents/liste.php", "Concurrents");
 
   left_menu($menu->liste);
