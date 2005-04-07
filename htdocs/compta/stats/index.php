@@ -238,6 +238,7 @@ print "</tr>\n";
 if ($modecompta != 'CREANCES-DETTES') { 
   
   // Factures non réglées
+  // \todo Ya bug ici. Il faut prendre le reste à payer et non le total des factures non réglèes !
 
   $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
