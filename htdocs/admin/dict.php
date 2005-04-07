@@ -21,7 +21,8 @@
  * $Source$
  */
 
-/**	    \file       htdocs/admin/dict.php
+/**
+	    \file       htdocs/admin/dict.php
 		\ingroup    setup
 		\brief      Page d'administration des dictionnaires de données
 		\version    $Revision$
@@ -83,7 +84,7 @@ $tabsqlsort[1]="pays, code ASC";
 $tabsqlsort[2]="pays, code ASC";
 $tabsqlsort[3]="pays, code ASC";
 $tabsqlsort[4]="libelle ASC";
-$tabsqlsort[5]="c.libelle ASC";
+$tabsqlsort[5]="libelle ASC";
 $tabsqlsort[6]="a.type ASC, a.code ASC";
 $tabsqlsort[7]="a.libelle ASC";
  
