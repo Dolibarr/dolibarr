@@ -179,7 +179,7 @@ foreach ($files as $xfile)
 		      $tabline = explode(",", $cont);
 		      if (sizeof($tabline) == 6)
 			{
-			  $index             = 1;
+			  $index             = $line;
 			  $ligne             = "0".$tabline[0];
 			  $date              = substr($tabline[1],0,10);
 			  
@@ -189,8 +189,29 @@ foreach ($files as $xfile)
 			  $heure             = substr($tabline[1],11,8);
 			  
 			  $numero            = $tabline[3];
-			  $tarif             = "NONE";
-			  $duree_text        = $tabline[4];
+			  $tarif             = $tabline[2];
+
+			  $h = floor(trim($tabline[4]) / 3600);
+			  $m = floor((trim($tabline[4]) - ($h * 3600)) / 60);
+			  $s = (trim($tabline[4]) - ( ($h * 3600 ) + ($m * 60) ) );
+			  
+			  if ($h > 0)
+			    {
+			      $dt = $h . " h " . substr("00".$m, -2) ."mn" . substr("00".$s, -2);
+			    }
+			  else
+			    {
+			      if ($m > 0)
+				{
+				  $dt = substr("00".$m,-2) ."mn" . substr("00".$s, -2);
+				}
+			      else
+				{
+				  $dt =  "00mn".substr("00".$s, -2);
+				}
+			    }
+			  
+			  $duree_text        = $dt;
 			  $tarif_fourn       = "NONE";
 			  $montant           = trim($tabline[5]);
 			  $duree_secondes    = trim($tabline[4]);
