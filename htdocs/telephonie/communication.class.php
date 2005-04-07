@@ -30,63 +30,19 @@ class CommunicationTelephonique {
   var $numero;
   var $montant;
 
-
+  /**
+   * Constructeur
+   *
+   */
   function CommunicationTelephonique()
   {
     return 1;
   }
 
-
-
-  function loghtml($file)
-  {
-    $this->file_details = $file;
-
-    
-    $this->_log( '<tr>');
-    $this->_log( "<td>$this->index");
-    $this->_log( "<td>$this->ligne");
-    $this->_log( "<td>".$this->dest);
-    $this->_log( "<td>".$this->duree);
-    $this->_log( "<td>".$this->montant);
-    $this->_log( "<td>".$cout_calcul);
-
-    if (round($cout_calcul,3) <> $objp->montant)
-      {
-	_log($file_details, "<td bgcolor=pink>".round($cout_calcul,3));
-	$err++;
-      }
-    else
-      {
-	_log($file_details, "<td>".round($cout_calcul,3));
-      }
-    _log($file_details, "<td>$err");
-    
-  }
-
-
-  function logxls()
-  {
-
-    /*
-      $worksheet->write_string($i, 0,  "$objp->ligne");
-      $worksheet->write($i, 1,  "$objp->client");
-      $worksheet->write($i, 2,  "$objp->num");
-      $worksheet->write($i, 3,  $objp->dest);
-      $worksheet->write($i, 4,  $objp->duree);
-      $worksheet->write($i, 5,  $objp->montant);
-            
-      $worksheet->write($i, 7,  $cout_temp_achat, $num1_format);
-      $worksheet->write($i, 8,  $cout_temp_vente, $num1_format);
-      $worksheet->write($i, 9,  $cout_fixe_achat, $num1_format);
-      $worksheet->write($i, 10, $cout_fixe_vente, $num1_format);
-      
-      $j = $i+1;
-      
-      $worksheet->write($i, 11, "=(E$j * H$j / 60) + K$j ", $num1_format);
-    */
-  }
-
+  /**
+   * Calcul le coût de la communication
+   *
+   */
   function cout($tarif_achat, $tarif_vente, $ligne)
   {
     $error = 0;
@@ -129,6 +85,10 @@ class CommunicationTelephonique {
 	$this->remise = $ligne->remise;
       }	  
     
+    /*
+     *
+     *
+     */
     
     if (! $tarif_achat->cout($num, $this->cout_temp_achat, $this->cout_fixe_achat, $tarif_libelle_achat))
       {
@@ -143,10 +103,7 @@ class CommunicationTelephonique {
 	dolibarr_syslog("CommunicationTelephonique::Cout Tarif vente manquant pour $num");
 	$error++;
       }
-    else
-      {
 
-      }
 
     $this->cout_achat = ( ($this->duree * $this->cout_temp_achat / 60) + $this->cout_fixe_achat);
     
@@ -190,12 +147,13 @@ class CommunicationTelephonique {
 
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_communications_details";
-    $sql .= " (ligne, date, numero, duree";
+    $sql .= " (fk_ligne,ligne, date, numero, duree";
     $sql .= ", tarif_achat_temp, tarif_achat_fixe, tarif_vente_temp, tarif_vente_fixe";
     $sql .= ", cout_achat, cout_vente, remise,dest, fourn_montant";
     $sql .= " , fichier_cdr, fk_fournisseur, fk_telephonie_facture)";
 
     $sql .= " VALUES (";
+    $sql .=  $this->fk_ligne.",";
     $sql .= "'$this->ligne','".$db->idate($this->dateheure)."','$this->numero','$this->duree'";
 
     $sql .= ", '$this->cout_temp_achat','$this->cout_fixe_achat','$this->cout_temp_vente','$this->cout_fixe_vente'";
@@ -226,6 +184,30 @@ class CommunicationTelephonique {
       }
   }
 
-}
+  function loghtml($file)
+  {
+    $this->file_details = $file;
 
+    
+    $this->_log( '<tr>');
+    $this->_log( "<td>$this->index");
+    $this->_log( "<td>$this->ligne");
+    $this->_log( "<td>".$this->dest);
+    $this->_log( "<td>".$this->duree);
+    $this->_log( "<td>".$this->montant);
+    $this->_log( "<td>".$cout_calcul);
+
+    if (round($cout_calcul,3) <> $objp->montant)
+      {
+	_log($file_details, "<td bgcolor=pink>".round($cout_calcul,3));
+	$err++;
+      }
+    else
+      {
+	_log($file_details, "<td>".round($cout_calcul,3));
+      }
+    _log($file_details, "<td>$err");
+    
+  }
+}
 ?>

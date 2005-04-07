@@ -97,8 +97,9 @@ if ($result)
 
   print_liste_field_titre("Ligne","liste.php","l.ligne");
   print '<td align="center">Date</td><td align="right">Montant HT</td>';
-  print '<td align="right">Coût fournisseur HT';
-  print '</td><td align="right">Gain</td><td align="center">Facture</td>';
+  print '<td align="right">Coût fournisseur HT</td>';
+  print_liste_field_titre("Gain","liste.php","f.gain",'','','align="right"');
+  print '<td align="center">Facture</td>';
   print "</tr>\n";
 
   print '<tr class="liste_titre">';
