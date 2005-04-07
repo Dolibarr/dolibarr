@@ -307,6 +307,46 @@ class TelephonieContrat {
       }
   }
 
+  /*
+   *
+   *
+   */
+
+  function get_contact_facture()
+  {
+    $this->contact_facture_id = array();        
+    $res   = array();
+    $resid = array();
+
+    $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
+    $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
+    $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_contact_facture as cf";
+    $sql .= " WHERE c.idp = cf.fk_contact ";
+    $sql .= " AND cf.fk_contrat = ".$this->id." ORDER BY name ";
+
+    $resql = $this->db->query($sql);
+
+    if ( $resql )
+      {
+	$num = $this->db->num_rows($resql);
+	if ( $num > 0 )
+	  {
+	    $i = 0;
+	    while ($i < $num)
+	      {
+		$row = $this->db->fetch_row($resql);
+		
+		array_push($res, $row[1] . " " . $row[2] . " &lt;".$row[3]."&gt;");
+		array_push($resid, $row[0]);
+		$i++;
+	      }
+	    
+	    $this->db->free($resql);
+	  }	
+      }
+    $this->contact_facture_id = $resid;
+    return $res;
+  }
 }
 
 ?>
