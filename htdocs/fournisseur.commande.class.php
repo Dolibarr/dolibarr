@@ -185,13 +185,15 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
       if ($user->rights->fournisseur->commande->annuler)
 	{
 
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 6";
+	  $statut = 6;
+
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
 	  $sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1 ;";
 	  
 	  if ($this->db->query($sql) )
 	    {
 	      $result = 0;
-	      $this->log($user, 1, time());
+	      $this->log($user, $statut, time());
 	    }
 	  else
 	    {
