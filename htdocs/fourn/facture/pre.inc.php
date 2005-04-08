@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@
  *
  */
 
-/*!
-  \file       htdocs/fourn/facture/pre.inc.php
-  \ingroup    fournisseur,facture
-  \brief      Fichier gestionnaire du menu factures fournisseurs
+/**
+        \file   	htdocs/fourn/facture/pre.inc.php
+        \ingroup    fournisseur,facture
+        \brief  	Fichier gestionnaire du menu factures fournisseurs
 */
 
 require("../../main.inc.php");
@@ -48,9 +48,21 @@ function llxHeader($head = "", $title = "", $addons='') {
     }
 
 
-  $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
-  $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
+  if ($conf->fournisseur->enabled) 
+    {
+        $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
 
+        // Sécurité accés client
+        if ($user->societe_id == 0) 
+        {
+          $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&type=f",$langs->trans("NewSupplier"));
+        }
+    }
+
+  if ($conf->societe->enabled)
+    {
+      $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
+    }
   
 
   $langs->load("bills");
