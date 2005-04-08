@@ -312,21 +312,24 @@ if ($_GET["id"] > 0)
       print '<img src="statut'.$commande->statut.'.png">&nbsp;';
       print $commande->statuts[$commande->statut];
       print "</td></tr>";
-	  
-      print '<tr><td>'.$langs->trans("Date").'</td>';
-      print '<td colspan="2">';
-      
-      if ($commande->date_commande)
-	{
-	  print strftime("%A %d %B %Y",$commande->date_commande)."\n";
-	}
 
-      print '&nbsp;</td><td width="50%" colspan="3">';
-      if ($commande->methode_commande)
-	{
-	  print "Méthode : " .$commande->methode_commande;
+      if ($commande->methode_commande_id > 0) 
+	{	  
+	  print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
+	  
+	  if ($commande->date_commande)
+	    {
+	      print strftime("%A %d %B %Y",$commande->date_commande)."\n";
+	    }
+	  
+	  print '</td><td width="50%" colspan="3">';
+	  if ($commande->methode_commande)
+	    {
+	      print "Méthode : " .$commande->methode_commande;
+	    }
+	  print "</td></tr>";	  
 	}
-      print "</td></tr>";
+      
       print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';	
       print '<td colspan="3">';
       print "&nbsp;</td></tr>";
