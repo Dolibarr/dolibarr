@@ -58,3 +58,5 @@ ListOfGroupsForUser=Liste des groupes pour cet utilisateur
 UsersToAdd=Utilisateur à ajouter à ce groupe
 GroupsToAdd=Groupes à ajouter pour cet utilisateur
 NoLogin=Pas de login
+CreateDolibarrLogin=Créer un compte Dolibarr
+TasksHistoryForThisContact=Historique des actions pour ce contact

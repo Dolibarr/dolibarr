@@ -432,15 +432,15 @@ else
 
 
   // Barre d'actions
-  if ($user->societe_id == 0)
+  if (! $user->societe_id)
     {
       print '<div class="tabsAction">';
       
       print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';    
 
-      if ($contact->user_id == 0 && $user->admin)
+      if (! $contact->user_id && $user->admin)
 	{
-	  print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=create_user">Créer un compte</a>';
+	  print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
 	}
 
       print '<a class="butDelete" href="fiche.php?id='.$contact->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
@@ -450,7 +450,7 @@ else
 
 
   // Historique des actions vers ce contact
-  print_titre ("Historique des actions pour ce contact");
+  print_titre ($langs->trans("TasksHistoryForThisContact"));
     
   print '<table width="100%" class="noborder">';
     
