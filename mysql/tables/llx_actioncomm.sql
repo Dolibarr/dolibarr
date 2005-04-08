@@ -33,7 +33,7 @@ create table llx_actioncomm
   fk_user_action integer,            -- id de la personne qui doit effectuer l'action
   fk_user_author integer,
   priority       smallint,
-  percent        smallint,
+  percent        smallint NOT NULL default 0,
   note           text,
   propalrowid    integer,
   fk_facture     integer

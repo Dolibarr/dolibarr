@@ -830,6 +830,8 @@ insert into llx_c_actioncomm (id, code, type, libelle) values ( 9, 'AC_FAC',  's
 insert into llx_c_actioncomm (id, code, type, libelle) values (10, 'AC_REL',  'system', 'Relance effectuée');
 insert into llx_c_actioncomm (id, code, type, libelle) values (11, 'AC_CLO',  'system', 'Clôture');
 
+alter table llx_actioncomm change percent percent smallint NOT NULL default 0;
+
 
 drop table if exists llx_c_ape;
 
