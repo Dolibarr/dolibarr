@@ -136,6 +136,13 @@ class modFournisseur extends DolibarrModules
     $this->rights[8][4] = 'commande';
     $this->rights[8][5] = 'cloturer';
 
+    $this->rights[9][0] = 188;
+    $this->rights[9][1] = 'Annuler les commandes fournisseur';
+    $this->rights[9][2] = 'd';
+    $this->rights[9][3] = 0;
+    $this->rights[9][4] = 'commande';
+    $this->rights[9][5] = 'annuler';
+
     $sql = array();
 
     $this->load_datas();
