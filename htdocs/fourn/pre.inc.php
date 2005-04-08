@@ -27,6 +27,7 @@
 */
 
 require("../main.inc.php");
+require_once DOL_DOCUMENT_ROOT."/fournisseur.class.php";
 require(DOL_DOCUMENT_ROOT."/fournisseur.facture.class.php");
 
 $user->getrights('fournisseur');
@@ -49,15 +50,15 @@ function llxHeader($head = "", $title="", $addons='') {
 
   if ($conf->fournisseur->enabled) 
     {
-        $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
-
-        // Sécurité accés client
-        if ($user->societe_id == 0) 
+      $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
+      
+      // Sécurité accés client
+      if ($user->societe_id == 0) 
         {
           $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&type=f",$langs->trans("NewSupplier"));
         }
     }
-
+  
   if ($conf->societe->enabled)
     {
       $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
@@ -73,19 +74,15 @@ function llxHeader($head = "", $title="", $addons='') {
     }
   
   $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
-  
-  
-
-  
+     
   $langs->load("orders");
   $menu->add(DOL_URL_ROOT."/fourn/commande/",$langs->trans("Orders"));
   
   if ($conf->produit->enabled || $conf->service->enabled)
   {
-      $menu->add(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("Products"));
+    $menu->add(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("Products"));
   }
   
   left_menu($menu->liste);
 }
-
 ?>
