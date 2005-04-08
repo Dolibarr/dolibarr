@@ -92,8 +92,6 @@ class ProcessGraphClients
 	  {
 	    $obj = $this->db->fetch_object();	
 	    
-	    $dir = $img_root . "client/".substr($obj->socidp,0,1)."/".$obj->socidp."/";
-	    
 	    $clients[$i] = $obj->socidp;
 	    
 	    $i++;

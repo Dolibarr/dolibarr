@@ -29,7 +29,6 @@ define ('COMMANDETABLEUR_NOEMAIL', -3);
 class CommandeTableur
 {
 
-
   function CommandeTableur ($DB, $USER, $fourn)
   {
     $this->db = $DB;
