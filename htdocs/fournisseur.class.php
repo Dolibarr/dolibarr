@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,16 @@
  *
  */
 
-/*!	\file       htdocs/fournisseur.class.php
-		\ingroup    societe
-		\brief      Fichier de la classe des fournisseurs
-		\version    $Revision$
+/*!
+  \file       htdocs/fournisseur.class.php
+  \ingroup    societe
+  \brief      Fichier de la classe des fournisseurs
+  \version    $Revision$
 */
 
-
-/*! \class Fournisseur
-		\brief Classe permettant la gestion des fournisseur
+/*!
+  \class Fournisseur
+  \brief Classe permettant la gestion des fournisseur
 */
 
 include_once DOL_DOCUMENT_ROOT."/societe.class.php";
@@ -36,9 +37,6 @@ include_once DOL_DOCUMENT_ROOT."/fournisseur.commande.class.php";
 
 class Fournisseur extends Societe {
   var $db;
-
-
- 
 
   /**
    *    \brief  Constructeur de la classe
@@ -81,6 +79,26 @@ class Fournisseur extends Societe {
 	  }
       }
     return $num;
+  }
+
+  function NbProduct()
+  {
+    $sql = "SELECT count(*)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
+    $sql .= " WHERE fk_soc = ".$this->id;
+    
+    $resql = $this->db->query($sql) ;
+    
+    if ( $resql )
+      {
+	$row = $this->db->fetch_row($resql);	    
+	return $row[0];
+      }
+    else
+      {
+	return -1;
+      }
+
   }
 
   function create_commande($user)
