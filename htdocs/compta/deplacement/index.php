@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Eric Seigne          <eric.seigne@ryxeo.com>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/compta/deplacement/index.php
 		\brief      Page liste des déplacements
 */
@@ -43,14 +43,9 @@ $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 $page=$_GET["page"];
 
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
-if ($sortfield == "")
-{
-  $sortfield="d.dated";
-}
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="d.dated";
+
 
 if ($page == -1) { $page = 0 ; }
 
@@ -70,10 +65,11 @@ if ($user->societe_id > 0)
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  print_barre_liste("Liste des déplacements", $page, "index.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
+  $num = $db->num_rows($resql);
+  print_barre_liste($langs->trans("ListOfTrips"), $page, "index.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
   $i = 0;
   print '<table class="noborder" width="100%">';
@@ -110,5 +106,5 @@ else
 }
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ r&eacute;vision $Revision$');
 ?>
