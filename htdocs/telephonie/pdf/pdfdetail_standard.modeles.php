@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/*!
+  \file       htdocs/telephonie/pdf/pdfdetail_standard_modeles.pdf
+  \ingroup    telephonie
+  \brief      Fichier de modèle pdf pour les factures détaillées
+  \version    $Revision$
+*/
+
 class pdfdetail_standard_modeles extends FPDF {
 
   var $client_nom;
