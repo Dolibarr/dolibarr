@@ -91,11 +91,11 @@ print '<tr><td valign="top" width="30%">';
  */
 if ($conf->propal->enabled && $user->rights->propale->lire) {
     $var=false;
-	print '<form method="post" action="propal.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAProposal").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print $langs->trans("Ref").' : <input type="text" class="flat" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print "</table></form><br>\n";
 }
 
@@ -108,7 +108,7 @@ if ($conf->contrat->enabled) {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAContract").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").' : <input type="text" name="search_contract">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print $langs->trans("Ref").' : <input type="text" class="flat" name="search_contract">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print "</table></form><br>\n";
 }
 
@@ -404,7 +404,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 	  while ($i < $num)
 	    {
 	      $obj = $db->fetch_object($result);
-	      print "<tr $bc[$var]><td width=\"15%\"><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td>";
+	      print "<tr $bc[$var]><td width=\"15%\" nowrap><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td>";
 	      print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$obj->nom."</a></td>\n";      
 	      print "<td align=\"right\">";
 	      print strftime("%d %b %Y",$obj->dp)."</td>\n";	  
@@ -452,7 +452,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 	      {
 		$objp = $db->fetch_object();		  
 		print "<tr $bc[$var]>";
-		print '<td width="15%">';
+		print '<td width="15%" nowrap>';
 		print '<a href="propal.php?propalid='.$objp->propalid.'">'.img_file().'</a>';
 		print '&nbsp;<a href="propal.php?propalid='.$objp->propalid.'">'.$objp->ref.'</a></td>';
 		print "<td width=\"30%\"><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";      

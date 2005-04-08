@@ -291,14 +291,14 @@ if ($_socid > 0)
             {
                 $objp = $db->fetch_object();
                 print "<tr $bc[$var]>";
-                print "<td><a href=\"propal.php?propalid=$objp->propalid\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a>\n";
+                print "<td nowrap><a href=\"propal.php?propalid=$objp->propalid\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a>\n";
                 if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
                 {
                     print " <b>&gt; 15 jours</b>";
                 }
-                print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</td>\n";
-                print '<td align="right" width="120">'.price($objp->price).'</td>';
-                print '<td width="100" align="center">'.$objp->statut.'</td></tr>';
+                print "</td><td align=\"right\">".dolibarr_print_date($objp->dp)."</td>\n";
+                print '<td align="right">'.price($objp->price).'</td>';
+                print '<td align="center">'.$objp->statut.'</td></tr>';
                 $var=!$var;
                 $i++;
             }
@@ -344,7 +344,7 @@ if ($_socid > 0)
                 {
                     print " <b>&gt; 15 jours</b>";
                 }
-                print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</td>\n";
+                print "</td><td align=\"right\">".dolibarr_print_date($objp->dp)."</td>\n";
                 print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
                 print '<td align="center" width="100">'.$objp->statut.'</td></tr>';
                 $i++;

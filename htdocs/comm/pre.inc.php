@@ -52,8 +52,9 @@ function llxHeader($head = "", $title = "")
   
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
 
+
   // Prospects
-  $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("Prospects"));
+  $menu->add(DOL_URL_ROOT."/comm/prospect/index.php", $langs->trans("Prospects"));
 
   if ($user->rights->societe->creer)
     {

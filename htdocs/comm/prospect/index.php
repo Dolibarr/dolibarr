@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,26 @@
  * $Source$
  *
  */
+
+/**
+	    \file       htdocs/comm/prospect/index.php
+        \ingroup    commercial
+		\brief      Page acceuil de la zone prospection
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
+$langs->load("propal");
+
 $user->getrights('propale');
+
 
 if ($user->societe_id > 0)
 {
   $socidp = $user->societe_id;
 }
+
 
 llxHeader();
 
@@ -44,11 +56,12 @@ function valeur($sql)
     }
   return $valeur;
 }
+
 /*
  *
  */
 
-print_titre("Espace prospection");
+print_titre($langs->trans("ProspectionArea"));
 
 print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 
@@ -56,35 +69,38 @@ print '<tr><td valign="top" width="30%">';
 
 if ($conf->propal->enabled) 
 {
-  print '<form method="post" action="propal.php">';
-  print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+  print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAProposal").'</td></tr>';
   print "<tr $bc[1]><td>";
-  print $langs->trans("Ref").' : <input type="text" name="sf_ref"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+  print $langs->trans("Ref").' : <input type="text" class="flat" name="sf_ref" size="16">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
   print "</table></form><br>\n";
 }
 
 /*
- *
+ * Prospects par status
  *
  */  
 
 $sql = "SELECT count(*) as cc, st.libelle, st.id";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
-$sql .= " WHERE s.fk_stcomm = st.id AND s.client=2 GROUP BY st.libelle, st.id";
+$sql .= " WHERE s.fk_stcomm = st.id AND s.client=2";
+$sql .= " GROUP BY st.id";
+$sql .= " ORDER BY st.id";
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   if ($num > 0 )
     {
-      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="2">Prospects par statut</td></tr>';
+      print '<td colspan="2">'.$langs->trans("ProspectsByStatus").'</td></tr>';
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object();
+	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
 	  print "<tr $bc[$var]><td><a href=\"prospects.php?page=0&amp;stcomm=".$obj->id."\">".$obj->libelle."</a></td><td>".$obj->cc."</td></tr>";
 	  $i++;
@@ -101,30 +117,34 @@ if ($conf->propal->enabled)
   $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
   $sql .= " WHERE p.fk_statut = 0";
   
-  if ( $db->query($sql) )
+  $resql=$db->query($sql);
+  if ($resql)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $i = 0;
       if ($num > 0 )
 	{
-	  print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
-	  print "<TR class=\"liste_titre\">";
-	  print "<td colspan=\"2\">Propositions commerciales brouillons</td></tr>";
+	  print '<table class="noborder"" width="100%">';
+	  print "<tr class=\"liste_titre\">";
+	  print "<td colspan=\"2\">".$langs->trans("ProposalsDraft")."</td></tr>";
 	  
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object();
+	      $obj = $db->fetch_object($resql);
 	      $var=!$var;
-	      print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
+	      print "<tr $bc[$var]><td>";
+	      print "<a href=\"propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref."</a>";
+	      print "</td></tr>";
 	      $i++;
 	    }
 	  print "</table><br>";
 	}
+      $db->free($resql);
     }
 }
+
 /*
  * Actions commerciales a faire
- *
  *
  */
 print '</td><td valign="top" width="70%">';
@@ -134,35 +154,37 @@ $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm
 $sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc AND a.fk_user_action = $user->id";
 $sql .= " ORDER BY a.datea DESC";
 
-if ( $db->query($sql) ) 
+$resql=$db->query($sql);
+if ($resql) 
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   if ($num > 0)
     {
-      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-      print '<TR class="liste_titre">';
-      print '<td colspan="4">Actions à faire</td>';
-      print "</TR>\n";
+      print '<table class="noborder" width="100%">';
+      print '<tr class="liste_titre">';
+      print '<td colspan="4">'.$langs->trans("ActionsToDo").'</td>';
+      print "</tr>\n";
       
       $i = 0;
       while ($i < $num ) 
 	{
-	  $obj = $db->fetch_object();
+	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id."\">$obj->libelle $obj->label</a></td>";
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id."\">".img_object($langs->trans("ShowAction"),"task").' '."$obj->libelle $obj->label</a></td>";
 	  print '<td><a href="fiche.php?id='.$obj->idp.'">'.$obj->sname.'</a></td>';
 	  $i++;
 	}
       print "</table><br>";
     }
-  $db->free();
+  $db->free($resql);
 } 
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
+
 
 $sql = "SELECT s.nom, s.idp, p.rowid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut = 1";
@@ -180,33 +202,33 @@ if ( $db->query($sql) )
   $i = 0;
   if ($num > 0 )
     {
-      print '<table border="0" cellspacing="0" cellpadding="4" width="100%">';
-      print '<tr class="liste_titre"><td colspan="4">Propositions commerciales ouvertes</td></tr>';
+      print '<table class="noborder" width="100%">';
+      print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
       
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"../propal.php?propalid=".$obj->rowid."\">";
-	  print img_file();
-	  print '</a>&nbsp;<a href="../propal.php?propalid='.$obj->rowid.'">'.$obj->ref.'</a></td>';
+	  print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
 
 	  print "<td width=\"30%\"><a href=\"fiche.php?id=$obj->idp\">$obj->nom</a></td>\n";      
 	  print "<td align=\"right\">";
-	  print strftime("%d %B %Y",$obj->dp)."</td>\n";	  
+	  print dolibarr_print_date($obj->dp)."</td>\n";	  
 	  print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
 	  $i++;
 	}
       print "</table><br>";
     }
 }
+
 /*
  * Sociétés à contacter
  *
  */
 $sql = "SELECT s.nom, s.idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE  s.fk_stcomm = 1";
+$sql .= " WHERE s.fk_stcomm = 1";
 $sql .= " ORDER BY s.tms ASC";
 $sql .= $db->plimit(15, 0);
 
@@ -216,16 +238,16 @@ if ( $db->query($sql) )
   $i = 0;
   if ($num > 0 )
     {
-      print '<table border="0" cellspacing="0" cellpadding="4" width="100%">';
-      print '<tr class="liste_titre"><td colspan="4">Sociétés à contacter</td></tr>';
+      print '<table class="noborder" width="100%">';
+      print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProspectToContact").'</td></tr>';
       
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object();
 	  $var=!$var;
-	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"../propal.php?propalid=".$obj->rowid."\">";
-	  print img_file();
-	  print '</a>&nbsp;<a href="fiche.php?id='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?id=".$obj->idp."\">";
+	  print img_object($langs->trans("ShowContact"),"contact");
+	  print ' '.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
       print "</table><br>";

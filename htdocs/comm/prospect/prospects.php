@@ -100,21 +100,16 @@ if ($socname)
   $sortorder = "ASC";
 }
 
-if (! $sortorder)
-{
-  $sortorder="ASC";
-}
-if (! $sortfield)
-{
-  $sortfield="s.nom";
-}
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="s.nom";
+
 
 $sql .= " ORDER BY $sortfield $sortorder, s.nom ASC " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
 
   if ($num == 1 && $socname)
     {
@@ -148,10 +143,10 @@ if ($result)
   print '<input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'">';
   print '</td><td>';
 
-  print '<input type="text" name="search_ville" value="'.$_GET["search_ville"].'">';
+  print '<input type="text" class="flat" name="search_ville" value="'.$_GET["search_ville"].'">';
   print "</td>";
   print "<td>";
-  print '<input type="submit"></td><td colspan="6">&nbsp;</td>';
+  print '<input type="submit" class="button" value="'.$langs->trans("Search").'"></td><td colspan="3">&nbsp;</td>';
 
   print "</tr>\n";
 
@@ -159,7 +154,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object();
+      $obj = $db->fetch_object($result);
       
       $var=!$var;
 
@@ -173,19 +168,17 @@ if ($result)
       print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
 
       $sts = array(-1,0,1,2);
+      print '<td>';
       foreach ($sts as $key => $value)
 	{
 	  if ($value <> $obj->fk_stcomm)
 	    {
-	      print '<td><a href="prospects.php?pid='.$obj->idp.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$urladd.'">';
-	      print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm'.$value.'.png" border="0" alt="'.$alt.'">';
-	      print '</a></td>';
-	    }
-	  else
-	    {
-	      print '<td></td>';
+	      print '<a href="prospects.php?pid='.$obj->idp.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$urladd.'">';
+          print img_action(0,$value);
+	      print '</a>&nbsp;';
 	    }
 	}
+      print '</td>';
 
       print "</tr>\n";
       $i++;
