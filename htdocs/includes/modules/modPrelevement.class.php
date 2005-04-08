@@ -52,7 +52,7 @@ class modPrelevement extends DolibarrModules
     $this->db = $DB ;
     $this->numero = 57 ;
 
-    $this->family = "technic";
+    $this->family = "financial";
     $this->name = "Prelevement";
     $this->description = "Gestion des Prélèvements";
 
