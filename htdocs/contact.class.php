@@ -344,18 +344,19 @@ class Contact
   function fetch($id, $user=0)
     {
         $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname";
-	$sql .= ", c.address, c.cp, c.ville";
-	$sql .= ", c.birthday as birthday, poste";
-	$sql .= ", phone, phone_perso, phone_mobile, fax, c.email, jabberid, c.note";
-
+        $sql .= ", c.address, c.cp, c.ville";
+        $sql .= ", c.birthday as birthday, poste";
+        $sql .= ", phone, phone_perso, phone_mobile, fax, c.email, jabberid, c.note";
+        
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= " WHERE c.idp = ". $id;
     
-        if ($this->db->query($sql))
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
-            if ($this->db->num_rows())
+            if ($this->db->num_rows($resql))
             {
-                $obj = $this->db->fetch_object();
+                $obj = $this->db->fetch_object($resql);
     
                 $this->id             = $obj->idp;
                 $this->civilite_id    = $obj->civilite_id;
@@ -389,22 +390,23 @@ class Contact
                 $this->note           = $obj->note;
     
             }
-            $this->db->free();
+            $this->db->free($resql);
     
     
             $sql = "SELECT u.rowid ";
             $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
             $sql .= " WHERE u.fk_socpeople = ". $id;
     
-            if ($this->db->query($sql))
+            $resql=$this->db->query($sql);
+            if ($resql)
             {
-                if ($this->db->num_rows())
+                if ($this->db->num_rows($resql))
                 {
-                    $uobj = $this->db->fetch_object();
+                    $uobj = $this->db->fetch_object($resql);
     
                     $this->user_id = $uobj->rowid;
                 }
-                $this->db->free();
+                $this->db->free($resql);
             }
             else
             {
@@ -418,9 +420,10 @@ class Contact
             $sql .= " FROM ".MAIN_DB_PREFIX."contact_facture";
             $sql .= " WHERE fk_contact = ". $id;
     
-            if ($this->db->query($sql))
+            $resql=$this->db->query($sql);
+            if ($resql)
             {
-                if ($this->db->num_rows())
+                if ($this->db->num_rows($resql))
                 {
                     $this->facturation = 1;
                 }
@@ -428,7 +431,7 @@ class Contact
                 {
                     $this->facturation = 0;
                 }
-                $this->db->free();
+                $this->db->free($resql);
             }
             else
             {
@@ -443,15 +446,16 @@ class Contact
                 $sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
                 $sql .= " WHERE fk_user = $user->id AND fk_contact = ".$id;
     
-                if ($this->db->query($sql))
+                $resql=$this->db->query($sql);
+                if ($resql)
                 {
-                    if ($this->db->num_rows())
+                    if ($this->db->num_rows($resql))
                     {
-                        $obj = $this->db->fetch_object();
+                        $obj = $this->db->fetch_object($resql);
     
                         $this->birthday_alert = 1;
                     }
-                    $this->db->free();
+                    $this->db->free($resql);
                  }
                 else
                 {
