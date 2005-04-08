@@ -25,6 +25,8 @@ create table llx_telephonie_client_stats (
   fk_client_comm   integer NOT NULL,      -- Client décideur
   ca               real,
   gain             real,
+  cout             real,
+  marge            real,
 
   UNIQUE INDEX(fk_client_comm)
 )type=innodb;

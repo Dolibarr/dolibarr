@@ -31,8 +31,6 @@ create table llx_telephonie_contrat (
 
   statut             smallint DEFAULT 0,
 
-  remise             real DEFAULT 0,
-  note               text,
   fk_commercial_sign integer NOT NULL,
   fk_commercial_suiv integer NOT NULL,
 
@@ -41,6 +39,8 @@ create table llx_telephonie_contrat (
 
   isfacturable       enum('oui','non') DEFAULT 'oui',
   mode_paiement      enum('vir','pre') DEFAULT 'pre',
+
+  note               text,
 
   UNIQUE (ref)
 

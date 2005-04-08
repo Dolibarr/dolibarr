@@ -20,15 +20,17 @@
 --
 -- ========================================================================
 --
+--
+create table llx_telephonie_contrat_service (
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  fk_contrat       integer NOT NULL,
+  fk_service       integer NOT NULL,
+  montant          real NOT NULL,
 
-create table llx_telephonie_tarif (
-  rowid               integer AUTO_INCREMENT PRIMARY KEY,
-  libelle             varchar(255),
-  libelle_facture     varchar(255),
-  libelle_fournisseur varchar(255),
-  mobile              tinyint,
-  international       tinyint
-
-  UNIQUE INDEX(libelle)
+  fk_user_creat    integer NOT NULL,
+  date_creat       datetime NOT NULL,
+  fk_user_modif    integer,
+  date_modif       datetime
 )type=innodb;
+
 
