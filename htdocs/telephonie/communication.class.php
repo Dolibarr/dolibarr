@@ -125,8 +125,8 @@ class CommunicationTelephonique {
   }
 
   /*
-   * Enregistre la ligne de communications dans llx_telephonie_communications_details
-   *
+   * Enregistre la ligne de communications dans 
+   * llx_telephonie_communications_details
    *
    */
 
@@ -174,7 +174,9 @@ class CommunicationTelephonique {
       }
   }
 
-
+  /*
+   *
+   */
 
   function _log( $text)
   {
@@ -184,10 +186,13 @@ class CommunicationTelephonique {
       }
   }
 
+  /*
+   *
+   */
+
   function loghtml($file)
   {
     $this->file_details = $file;
-
     
     $this->_log( '<tr>');
     $this->_log( "<td>$this->index");

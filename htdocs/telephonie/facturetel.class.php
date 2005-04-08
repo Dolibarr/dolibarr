@@ -22,7 +22,6 @@
 
 class FactureTel {
   var $db;
-
   var $id;
 
   function FactureTel($DB, $id=0)
@@ -86,8 +85,8 @@ class FactureTel {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture";
     $sql .= " SET ";
-    $sql .= " fk_facture = $facid ";
-    $sql .= " WHERE rowid = $this->id";
+    $sql .= " fk_facture = ".$facid ;
+    $sql .= " WHERE rowid = ".$this->id;
 
     if ( $this->db->query($sql) )
       {
@@ -101,7 +100,9 @@ class FactureTel {
       }
   }
 
-
+  /*
+   *
+   */
 
   function get_comm_min_date($date)
   {
@@ -124,6 +125,10 @@ class FactureTel {
 
   }
 
+  /*
+   *
+   */
+
   function get_comm_max_date($date)
   {
     $sql = "SELECT ".$this->db->pdate("max(date)");
@@ -142,9 +147,6 @@ class FactureTel {
 	    return $row[0];
 	  }
       }
-
   }
-
 }
-
 ?>
