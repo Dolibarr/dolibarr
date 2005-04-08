@@ -188,15 +188,12 @@ function top_menu($head, $title="", $target="")
    */
   print '<div class="tmenu">'."\n";
 
-  // Autres entrées du menu par le gestionnaire
+  // Charge le gestionnaire des entrées de menu du haut
   require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
   $menutop = new MenuTop($db);
   $menutop->atarget=$target;
-  if (! isset($menutop->showhome) || $menutop->showhome) {       // Entrée Home/Accueil du menu
-      $id="";
-      if ($_GET["mainmenu"] == "home" || ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home")) { $id="sel"; }
-      print '<a class="tmenu" id="'.$id.'" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&leftmenu="'.($target?" target=$target":"").'>'.$langs->trans("Home").'</a>';
-  }
+
+  // Affiche le menu
   $menutop->showmenu();
   
   // Lien sur fiche du login

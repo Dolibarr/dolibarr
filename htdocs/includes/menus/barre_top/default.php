@@ -34,14 +34,14 @@
 */
 
 
-/**     \class      MenuTop
+/**
+        \class      MenuTop
 	    \brief      Classe permettant la gestion par défaut du menu du haut
 */
 
 class MenuTop {
 
     var $require_left=array();  // Si doit etre en phase avec un gestionnaire de menu gauche particulier
-    var $showhome=true;         // Faut-il afficher le menu Accueil par le main.inc.php
     var $atarget="";            // Valeur du target a utiliser dans les liens
     
     /**
@@ -62,7 +62,18 @@ class MenuTop {
 
         global $conf,$langs;
         
-    
+        // Entrée home
+        $id="";
+        if ($_GET["mainmenu"] == "home" || ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home"))
+        {
+            $id="sel";
+        }
+        if (! ereg("^".DOL_URL_ROOT."\/(adherents|comm|compta|product|fourn|projet)\/",$_SERVER["PHP_SELF"])) {
+            $id="sel";
+        }
+        print '<a class="tmenu" id="'.$id.'" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a>';
+
+        // Entrée adherent
         if ($conf->adherent->enabled)
         {
             $langs->load("members");
@@ -84,6 +95,7 @@ class MenuTop {
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Members").'</a>';
         }
         
+        // Entrée commercial
         if ($conf->commercial->enabled)
         {
             $langs->load("commercial");
@@ -106,6 +118,7 @@ class MenuTop {
         
         }
         
+        // Entrée compta
         if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled)
         {
             $langs->load("compta");
@@ -128,6 +141,7 @@ class MenuTop {
         
         }
         
+        // Entrée produit/service
         if ($conf->produit->enabled || $conf->service->enabled)
         {
             $langs->load("products");
@@ -155,7 +169,7 @@ class MenuTop {
         
         }
         
-        
+        // Entrée fournisseur
         if ($conf->fournisseur->enabled)
         {
             $langs->load("suppliers");
@@ -177,7 +191,7 @@ class MenuTop {
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a>';
         }
         
-        
+        // Entrée webcal
         if ($conf->webcal->enabled)
         {
             $langs->load("other");
@@ -198,6 +212,7 @@ class MenuTop {
         
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/webcal.php?mainmenu=webcal"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a>';
         };
+
     }
     
 }

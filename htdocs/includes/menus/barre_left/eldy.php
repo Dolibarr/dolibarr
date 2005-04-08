@@ -157,9 +157,10 @@ class MenuLeft {
                 $langs->load("companies");
         
                 // Prospects
-                $newmenu->add(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("Prospects"), 0, $user->rights->societe->lire);
+                $newmenu->add(DOL_URL_ROOT."/comm/prospect/index.php?leftmenu=prospects", $langs->trans("Prospects"), 0, $user->rights->societe->lire);
                 
                 $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=prospects&action=create&amp;type=p", $langs->trans("MenuNewProspect"), 1, $user->rights->societe->creer);
+                $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("List"), 1, $user->rights->societe->lire);
                 $newmenu->add_submenu(DOL_URL_ROOT."/comm/contact.php?leftmenu=prospects&type=p", $langs->trans("Contacts"), 1, $user->rights->societe->lire);
 
                 // Clients
@@ -177,7 +178,7 @@ class MenuLeft {
                 {
                   $langs->load("propal");
                   $newmenu->add(DOL_URL_ROOT."/comm/propal.php?leftmenu=propals", $langs->trans("Prop"), 0 ,$user->rights->propale->lire);
-                  if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/socite.php?leftmenu=propals", $langs->trans("NewPropal"), 1, $user->rights->propale->creer);
+                  if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=propals", $langs->trans("NewPropal"), 1, $user->rights->propale->creer);
                   if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=0", $langs->trans("PropalsDraft"), 1, $user->rights->propale->lire);
                   if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=1", $langs->trans("PropalsOpened"), 1, $user->rights->propale->lire);
                   if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"), 1, $user->rights->propale->lire);

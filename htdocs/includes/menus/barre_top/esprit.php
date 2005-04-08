@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004          Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/includes/menus/barre_top/esprit.php
+/**
+	    \file       htdocs/includes/menus/barre_top/esprit.php
 		\brief      Gestionnaire du menu du haut spécialisé vente de CD/livres
 		\version    $Revision$
 
@@ -33,14 +34,14 @@
 */
 
 
-/**     \class      MenuTop
+/**
+        \class      MenuTop
 	    \brief      Classe permettant la gestion du menu du haut Esprit
 */
 
 class MenuTop {
 
     var $require_left=array();  // Si doit etre en phase avec un gestionnaire de menu gauche particulier
-    var $showhome=true;         // Faut-il afficher le menu Accueil par le main.inc.php
     var $atarget="";            // Valeur du target a utiliser dans les liens
 
     
@@ -63,10 +64,14 @@ class MenuTop {
         $langs->load("commercial");
         $langs->load("other");
         
-        print '<a class="tmenu" href="/boutique/livre/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Books").'</a>';
-        print '<a class="tmenu" href="/boutique/client/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Customers").'</a>';
-        print '<a class="tmenu" href="/product/critiques/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Criticals").'</a>';
-        print '<a class="tmenu" href="/product/categorie/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Categories").'</a>';
+        // Entrée home
+        print '<a class="tmenu" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a>';
+
+        // Autres entrées
+        print '<a class="tmenu" href="'.DOL_URL_ROOT.'/boutique/livre/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Books").'</a>';
+        print '<a class="tmenu" href="'.DOL_URL_ROOT.'/boutique/client/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Customers").'</a>';
+        print '<a class="tmenu" href="'.DOL_URL_ROOT.'/product/critiques/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Criticals").'</a>';
+        print '<a class="tmenu" href="'.DOL_URL_ROOT.'/product/categorie/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Categories").'</a>';
     }
 
 }
