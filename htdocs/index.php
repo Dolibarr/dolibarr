@@ -34,7 +34,7 @@ $user->getrights('');
 
 
 // Simule le menu par défaut sur Home
-$_GET["mainmenu"]="home";
+if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 
 
 llxHeader();

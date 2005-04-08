@@ -20,7 +20,8 @@
  *
  */
 
-/**	    \file       htdocs/includes/menus/barre_top/eldy.php
+/**
+	    \file       htdocs/includes/menus/barre_top/eldy.php
 		\brief      Gestionnaire nommé eldy du menu du haut
 		\version    $Revision$
 
@@ -203,7 +204,9 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
             
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/mailing/index.php?mainmenu=tools&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
+            //print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/mailing/index.php?mainmenu=tools&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
+            //print '<a '.$class.' href="'.DOL_URL_ROOT.'/societe.php?mainmenu=tools&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
         }
         
         // Webcal
