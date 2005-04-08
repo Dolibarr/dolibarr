@@ -326,11 +326,18 @@ if ($db->query($sql))
     }
 }
 
+/*
+ *
+ *
+ */
+
 $sql = "SELECT date_format(date, '%Y%m'), sum(duree), count(duree)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
 $sql .= " GROUP BY date_format(date, '%Y%m') ASC";
 
-if ($db->query($sql))
+$resql = $db->query($sql);
+
+if ($resql)
 {
   $durees = array();
   $kilomindurees = array();
@@ -338,13 +345,13 @@ if ($db->query($sql))
   $nombres = array();
   $labels = array();
 
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
 
   $i = 0;
 
   while ($i < $num)
     {
-      $row = $db->fetch_row();
+      $row = $db->fetch_row($resql);
       $labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
       $durees[$i] = $row[1];
       $kilomindurees[$i] = ($row[1]/60000);
@@ -360,6 +367,7 @@ if ($db->query($sql))
 $file = $img_root . "communications/duree.png";
 $graphgain = new GraphBar ($db, $file);
 $graphgain->show_console = 0 ;
+$graphgain->width = 480 ;
 $graphgain->titre = "Nb minutes (milliers)";
 print $graphgain->titre."\n";
 $graphgain->GraphDraw($file, $kilomindurees, $labels);
