@@ -54,7 +54,7 @@ for ($i = 0 ; $i < sizeof($contrats) ; $i++)
 {  
   $numc = 0;
 
-  $sql = "SELECT c.fk_contact FROM llx_telephonie_contact_facture as c, llx_telephonie_societe_ligne as l";
+  $sql = "SELECT distinct(c.fk_contact) FROM llx_telephonie_contact_facture as c, llx_telephonie_societe_ligne as l";
   $sql .= " WHERE l.rowid = c.fk_ligne";
   $sql .= " AND l.fk_contrat = ".$contrats[$i];
 
@@ -70,6 +70,10 @@ for ($i = 0 ; $i < sizeof($contrats) ; $i++)
 	}
       $db->free();
     }
+  else
+    {
+      print "Erreur";
+    }
 
   if ($numc == 1)
     {
@@ -84,6 +88,15 @@ for ($i = 0 ; $i < sizeof($contrats) ; $i++)
       else
 	{
 	  dolibarr_syslog("Update contrat ".$contrats[$i]);
+	}
+    }
+  else
+    {
+
+      if ($numc > 0)
+	{
+	  print "$contrats[$i] $numc\n";
+	  print $sql."\n" ;
 	}
     }
 }
