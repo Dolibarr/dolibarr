@@ -55,7 +55,10 @@ class modPrelevement extends DolibarrModules
     $this->family = "technic";
     $this->name = "Prelevement";
     $this->description = "Gestion des Prélèvements";
-    $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
+
+    $this->revision = explode(" ","$Revision$");
+    $this->version = $this->revision[1];
+
     $this->const_name = "MAIN_MODULE_PRELEVEMENT";
     $this->const_config = MAIN_MODULE_PRELEVEMENT;
     $this->special = 0;
@@ -65,7 +68,7 @@ class modPrelevement extends DolibarrModules
     $this->data_directory = $conf->prelevement->dir_output . "/bon";
 
     // Dépendances
-    $this->depends = array();
+    $this->depends = array("modComptabilite");
     $this->requiredby = array();
 
     // Constantes
