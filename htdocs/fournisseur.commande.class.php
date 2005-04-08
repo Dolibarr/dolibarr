@@ -52,6 +52,7 @@ class CommandeFournisseur
       $this->statuts[3] = "Commandée";
       $this->statuts[4] = "Reçu partiellement";
       $this->statuts[5] = "Clotûrée";
+      $this->statuts[6] = "Annulée";
       $this->statuts[9] = "Refusée";
 
       $this->products = array();
@@ -169,6 +170,38 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
       else
 	{
 	  dolibarr_syslog("CommandeFournisseur::Valid Not Authorized");
+	}
+      return $result ;
+    }
+  /**
+   * Annule la commande
+   * L'annulation se fait après la validation
+   *
+   */
+  function Cancel($user)
+    {
+      //dolibarr_syslog("CommandeFournisseur::Cancel");
+      $result = 0;
+      if ($user->rights->fournisseur->commande->annuler)
+	{
+
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 6";
+	  $sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1 ;";
+	  
+	  if ($this->db->query($sql) )
+	    {
+	      $result = 0;
+	      $this->log($user, 1, time());
+	    }
+	  else
+	    {
+	      dolibarr_syslog("CommandeFournisseur::Cancel Error -1");
+	      $result = -1;
+	    }	  
+	}
+      else
+	{
+	  dolibarr_syslog("CommandeFournisseur::Cancel Not Authorized");
 	}
       return $result ;
     }
