@@ -1,18 +1,18 @@
 -- ===========================================================================
 -- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
--- This program is free software; you can redistribute it and/or modify
+-- This program is free software. you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation; either version 2 of the License, or
+-- the Free Software Foundation. either version 2 of the License, or
 -- (at your option) any later version.
 --
 -- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- but WITHOUT ANY WARRANTY. without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program; if not, write to the Free Software
+-- along with this program. if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
@@ -22,6 +22,8 @@
 -- Ne pas hésiter a compléter ce fichier avec de nouvelles valeurs, plus on a
 -- de données, mieux on peut tester l'appli.
 -- ===========================================================================
+-- ;
+
 DELETE FROM llx_const WHERE name = 'MAIN_NOT_INSTALLED';
 
 delete from llx_tva;
@@ -357,8 +359,9 @@ delete from llx_paiement;
 delete from llx_compta_account;
 insert into llx_compta_account (datec, number, label, fk_user_author) values (now(),'431000','URSSAF',1);
 insert into llx_compta_account (datec, number, label, fk_user_author) values (now(),'654000','Clients',1);
+
 --
--- Charges sociales (mais non on n'en paye pas trop ;-)
+-- Charges sociales
 --
 delete from llx_chargesociales;
 insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
@@ -431,6 +434,7 @@ INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_au
 VALUES (now(),'2002-03-06','2002-03-06',-9.6,'Tickets de bus',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
 INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
 VALUES (now(),'2002-03-13','2002-03-13',-10,'Liquide',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+
 -- MySQL dump 9.09
 --
 -- Host: localhost    Database: dolibarr
