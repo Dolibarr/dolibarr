@@ -76,33 +76,31 @@ if ($_GET["id"])
 	  
 	  print_fiche_titre('Fiche Contrat', $mesg);
 
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-	      $client_comm = new Societe($db, $contrat->client_comm_id);
-	      $client_comm->fetch($contrat->client_comm_id);
-
-	      print '<tr><td width="20%">Référence</td><td>'.$contrat->ref.'</td>';
-	      print '<td colspan="2">Facturé : '.$contrat->facturable.'</td></tr>';
-
-	      print '<tr><td width="20%">Client</td><td>';
-	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
-
-	      print $client_comm->nom.'</a></td><td colspan="2">'.$client_comm->code_client;
-	      print '</td></tr>';
-	      	     
-	      $commercial = new User($db, $contrat->commercial_sign_id);
-	      $commercial->fetch();
-	      $commercial_suiv = new User($db, $contrat->commercial_suiv_id);
-	      $commercial_suiv->fetch();
-
-	      print '<tr><td width="20%">Commercial Suivi/Signature</td>';
-	      print '<td colspan="3">'.$commercial_suiv->fullname.'/'.$commercial->fullname.'</td></tr>';
-
-	      /* Fin Contacts */
-
-	      print "</table><br />";
-
-
+	  $client_comm = new Societe($db, $contrat->client_comm_id);
+	  $client_comm->fetch($contrat->client_comm_id);
+	  
+	  print '<tr><td width="20%">Référence</td><td>'.$contrat->ref.'</td>';
+	  print '<td colspan="2">Facturé : '.$contrat->facturable.'</td></tr>';
+	  
+	  print '<tr><td width="20%">Client</td><td>';
+	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
+	  
+	  print $client_comm->nom.'</a></td><td colspan="2">'.$client_comm->code_client;
+	  print '</td></tr>';
+	  
+	  $commercial = new User($db, $contrat->commercial_sign_id);
+	  $commercial->fetch();
+	  $commercial_suiv = new User($db, $contrat->commercial_suiv_id);
+	  $commercial_suiv->fetch();
+	  
+	  print '<tr><td width="20%">Commercial Suivi/Signature</td>';
+	  print '<td colspan="3">'.$commercial_suiv->fullname.'/'.$commercial->fullname.'</td></tr>';
+	  
+	  print "</table><br />";
+	  
+	  
 	  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
 	  print '<tr><td width="50%" align="center">Chiffre d\'affaire</td>';
 	  print '<td width="50%" align="center">Gain</td></tr>';

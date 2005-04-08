@@ -74,8 +74,6 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
     }
 }
 
-
-
 if ($_POST["action"] == 'addcontact')
 {
   $contrat = new TelephonieContrat($db);
@@ -97,8 +95,6 @@ if ($_GET["action"] == 'delcontact')
       Header("Location: fiche.php?id=".$contrat->id);
     }
 }
-
-
 
 if ($_GET["action"] == 'delete')
 {

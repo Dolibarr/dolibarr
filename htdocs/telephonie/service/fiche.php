@@ -48,15 +48,10 @@ if ($_POST["action"] == 'add')
 
 if ($_GET["action"] == 'active')
 {
-  $service = new LigneTel($db);
-  $service->fetch_by_id($_GET["id"]);
+  $service = new TelephonieService($db);
+  $service->id = $_GET["id"];
 
-  $datea = $db->idate(mktime($h, $m , $s,
-			    $_POST["remonth"], 
-			    $_POST["reday"],
-			    $_POST["reyear"]));
-
-  if ( $service->set_statut($user, 3, $datea) == 0)
+  if ( $service->active($user) == 0)
     {
       Header("Location: fiche.php?id=".$service->id);
     }
@@ -145,7 +140,7 @@ else
 	      $hselected = $h;
 	      $h++;
 	      
-	      dolibarr_fiche_head($head, $hselected, 'Service : '.$service->numero);
+	      dolibarr_fiche_head($head, $hselected, 'Service : '.$service->id);
 
 	      print_fiche_titre('Fiche Service', $mesg);
       
@@ -154,7 +149,7 @@ else
 	      print '<tr><td width="20%">Libellé</td><td>'.$service->libelle.'</td></tr>';
 	      print '<tr><td width="20%">Libellé Facture</td><td>'.$service->libelle_facture.'</td></tr>';
 
-	      print '<tr><td width="20%">Montant HT</td><td>'.dolibarr_print_phone($service->montant).'</td></tr>';
+	      print '<tr><td width="20%">Montant mensuel HT</td><td>'.$service->montant.'</td></tr>';
 	      print '<tr><td width="20%">Statut</td><td>'.$service->statuts[$service->statut].'</td></tr>';
 	      print "</table><br />";
 	      print '</div>';
@@ -195,23 +190,14 @@ else
 	      print '<input name="libelle_facture" size="20" value="'.$service->libelle_facture.'">';
 	      print '</td></tr>';
 
-	      print '<tr><td width="20%">Montant HT</td><td>';
+	      print '<tr><td width="20%">Montant mensuel HT</td><td>';
 	      print '<input name="montant" size="20" value="'.$service->montant.'">&nbsp; euros HT';
 	      print '</td></tr>';
 
-
-
 	      print '<tr><td align="center" colspan="2"><input type="submit">';
-
 	      print '</td></tr>';
 
 	      print '</table>';
-
-	  /*
-	   *
-	   *
-	   *
-	   */
 
 	      print '</div>';
 
@@ -234,12 +220,18 @@ else
 
 print "\n<div class=\"tabsAction\">\n";
 
+if ($_GET["action"] == '' && $service->statut == 0)
+{
+  print "<a class=\"tabAction\" href=\"fiche.php?action=active&amp;id=$service->id\">".$langs->trans("Active")."</a>";
+}
+
+
 if ($_GET["action"] == '')
 {
-
   print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$service->id\">".$langs->trans("Edit")."</a>";
-      
 }
+
+
 
 print "</div>";
 

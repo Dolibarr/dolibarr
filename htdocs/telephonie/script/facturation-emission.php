@@ -213,7 +213,7 @@ if (!$error)
 
 	  if (sizeof($numlignes) > 0)
 	    {
-	      _emails($db, $user, $factures_a_mailer);
+	      _emails($db, $user, $contrat, $factures_a_mailer);
 	    }
 
 	}
@@ -599,9 +599,8 @@ function _prelevements($db, $user, $factures_prev)
 
 
 
-function _emails($db, $user, $factures_a_mailer)
+function _emails($db, $user, $contrat_id, $factures_a_mailer)
 {
-
   /********************************************************************
    *                                                                  *
    *                                                                  *
@@ -618,6 +617,9 @@ function _emails($db, $user, $factures_a_mailer)
 	{
 	  $fact = new Facture($db);
 	  $fact->fetch($fac);
+
+	  $contrat = new TelephonieContrat($db);
+	  $contrat->fetch($contrat_id);
 
 	  $ligne = new LigneTel($db);
 

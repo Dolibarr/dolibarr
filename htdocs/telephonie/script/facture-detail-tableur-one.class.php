@@ -37,7 +37,8 @@ class FactureDetailTableurOne {
     $dir = "/tmp";
     $error = 0;
 
-    $fname = $dir."/".$this->ligne."-".substr('00'.$month, -2)."-".$year.".xls";
+    $dir = FAC_OUTPUTDIR . "/" . $fac->ref . "/" ;
+    $file = $dir . $fac->ref . "-$ligne-$objlignetel->code_analytique-detail.xls";
 
     dolibarr_syslog("Open $fname");
     

@@ -107,6 +107,8 @@ if (!$error)
 
 if (!$error && sizeof($factures))
 {
+  $facok = 0;
+
    foreach ($factures as $facid)
     {
       $error = 0;
@@ -116,13 +118,12 @@ if (!$error && sizeof($factures))
       $factel = new FactureTel($db);
       if ($factel->fetch($facid) == 0)
 	{
-	  
 	  $objligne = new LigneTel($db);
-
+	  
 	  if ($objligne->fetch($factel->ligne) == 1)    
 	    {	      
 	      // Différents modèles de factures détaillées
-	       
+	      
 	      $modele = "standard";
 	      
 	      require_once (DOL_DOCUMENT_ROOT."/telephonie/pdf/pdfdetail_".$modele.".modules.php");
@@ -130,17 +131,21 @@ if (!$error && sizeof($factures))
 	      	      
 	      $facdet = new $class($db, $ligne, $year, $month, $factel);
 	      
-	      if (! $facdet->write_pdf_file($factel, $factel->ligne))
+	      if ($facdet->write_pdf_file($factel, $factel->ligne) == 0)
+		{
+		  $facok++;
+		}
+	      else
 		{
 		  dolibarr_syslog("ERREUR lors de Génération du pdf détaillé");
 		  $error = 19;
 		}
-	      
 	    }
-
 	}
-      
     }
+
+   dolibarr_syslog(sizeof($factures)." factures traitées");
+   dolibarr_syslog($facok." factures générées");
 }
 
 $db->close();

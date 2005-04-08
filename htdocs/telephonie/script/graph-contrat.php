@@ -27,6 +27,6 @@ require ("../../master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/ProcessGraphContrats.class.php");
 
 $process = new ProcessGraphContrats( $childrenNow, $clientPerChild );
-$process->go("269");
+$process->go(269);
  
 ?>

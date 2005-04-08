@@ -57,8 +57,6 @@ function llxHeader($head = "", $title="") {
 
 
 
-  $menu->add(DOL_URL_ROOT."/telephonie/statca/", "Chiffre d'affaire");
-
   left_menu($menu->liste);
 }
 

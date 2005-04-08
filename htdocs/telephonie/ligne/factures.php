@@ -56,6 +56,10 @@ if ($_GET["id"] or $_GET["numero"])
       $hselected = $h;
       $h++;
 	  
+      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/facturesdet.php?id=".$ligne->id;
+      $head[$h][1] = $langs->trans('Factures détaillées');
+      $h++;
+
       $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/infoc.php?id=".$ligne->id;
       $head[$h][1] = $langs->trans('Infos');
       $h++;

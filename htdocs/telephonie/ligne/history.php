@@ -104,6 +104,27 @@ if ($cancel == $langs->trans("Cancel"))
 	      print $ligne->statuts[$ligne->statut];
 	      print '</td></tr>';
 
+	      if ($ligne->user_creat)
+		{
+		  print '<tr><td width="20%">Créé par</td><td colspan="2">';
+
+		  $cuser = new User($db, $ligne->user_creat);
+		  $cuser->fetch();
+
+		  print $cuser->fullname;
+		  print '</td></tr>';
+		}
+	      if ($ligne->user_commande)
+		{
+		  print '<tr><td width="20%">Commandé par</td><td colspan="2">';
+
+		  $couser = new User($db, $ligne->user_commande);
+		  $couser->fetch();
+		  
+		  print $couser->fullname;
+		  print '</td></tr>';
+		}
+
 	      print '<tr class="liste_titre">';
 	      print '<td>Date</td>';
 	      print '<td>Statut</td>';

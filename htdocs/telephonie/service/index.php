@@ -37,24 +37,27 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td width="30%" valign="top">';
 
-$sql = "SELECT libelle, montant ";
+$sql = "SELECT s.rowid , libelle, count(cs.rowid) ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_service as s";
-
+$sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat_service as cs";
+$sql .= " WHERE cs.fk_service = s.rowid";
+$sql .= " GROUP by s.rowid DESC";
+//print $sql;
 if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
 
-
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Libellé</td>';
+  print '<tr class="liste_titre"><td>Libellé</td><td>-</td>';
   print "</tr>\n";
   $var=True;
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($i);	
-      print "<tr><td>".stripslashes($obj->libelle)."</td></tr>";
+      $row = $db->fetch_row();
+      print '<tr><td><a href="fiche.php?id='.$row[0].'">'.stripslashes($row[1])."</a></td>";
+      print '<td>'.$row[2]."</td></tr>";
       $i++;
     }
 
@@ -69,9 +72,10 @@ else
 }
 
 print '<br />';
-
+print '</td><td width="70%" valign="top">&nbsp;';
 
 print '</td>';
+
 
 print '</table>';
 
