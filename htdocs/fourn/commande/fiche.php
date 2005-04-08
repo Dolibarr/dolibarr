@@ -182,6 +182,14 @@ if ($_POST["action"] == 'livraison' && $user->rights->fournisseur->commande->rec
 }
 
 
+if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == yes && $user->rights->fournisseur->commande->annuler)
+{
+  $commande = new CommandeFournisseur($db);
+  $commande->fetch($_GET["id"]);
+  $result = $commande->cancel($user);
+  Header("Location: fiche.php?id=".$_GET["id"]);
+}
+
 /*
  * Créé une commande
  */
@@ -276,7 +284,7 @@ if ($_GET["id"] > 0)
        * Confirmation de l'annulation
        *
        */
-      if ($_GET["action"] == 'annuler')
+      if ($_GET["action"] == 'cancel')
 	{
 	  $html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
 	  print '<br />';
@@ -506,6 +514,11 @@ if ($_GET["id"] > 0)
 	    
 	  if ($commande->statut == 1) 
 	    {
+	      if ($user->rights->fournisseur->commande->annuler)
+		{
+		  print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+		}
+
 	      if ($user->rights->fournisseur->commande->approuver)
 		{
 		  print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
