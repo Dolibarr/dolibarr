@@ -57,3 +57,4 @@ ListOfUsersInGroup=List of users in this group
 ListOfGroupsForUser=List of groups for this user
 UsersToAdd=Users to add to this group
 GroupsToAdd=Groups to add to this user
+NoLogin=No login
