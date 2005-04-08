@@ -362,8 +362,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	      
 	      $soca = new Societe($db);
 	      $soca->fetch($ligne->client_id);
-	      
-	      
+	      	      
 	      /* Insertion des lignes de factures */
 	      $libelle = "";
 
@@ -373,7 +372,6 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 		}
 
 	      $dm = mktime (1,1,1,strftime("%m",$datetime), -1, strftime("%Y",$datetime));
-
 
 	      $libelle .= "Communications téléphoniques de la ligne $ligne->numero";
 	      $libelle .= " mois de ".strftime("%B %Y",$dm);
@@ -556,7 +554,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
        * $ligne
        */
       
-      if ($ligne->facturable)
+      if ($contrat->facturable)
 	{
 	  array_push($factures_a_mailer, $facid);
 	  
