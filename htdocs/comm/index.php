@@ -307,9 +307,9 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task")."</a> ".$obj->libelle.' '.$obj->label.'</a></td>';
+	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.' '.$obj->label.'</a></td>';
 	
-	  print '<td>'. strftime("%d %b %Y",$obj->da);
+	  print '<td>'. dolibarr_print_date($obj->da);
           if (date("U",$obj->da) < time())
           {
 	    print img_warning("Late");
@@ -419,6 +419,10 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 	  print "</table><br>";
 	}
     }
+    else 
+    {
+        dolibarr_print_error($db);
+    }
     
 }
 
@@ -453,9 +457,9 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 		$objp = $db->fetch_object();		  
 		print "<tr $bc[$var]>";
 		print '<td width="15%" nowrap>';
-		print '<a href="propal.php?propalid='.$objp->propalid.'">'.img_file().'</a>';
-		print '&nbsp;<a href="propal.php?propalid='.$objp->propalid.'">'.$objp->ref.'</a></td>';
-		print "<td width=\"30%\"><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";      
+		print '<a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
+		print $objp->ref.'</a></td>';
+		print '<td width="30%"><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom.'</a></td>';
 		
 		$now = time();
 		$lim = 3600 * 24 * 15 ;
@@ -470,7 +474,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 		  }
 		
 		print "<td align=\"right\">";
-		print strftime("%e %b %Y",$objp->dp)."</td>\n";	  
+		print dolibarr_print_date($objp->dp)."</td>\n";	  
 		print "<td align=\"right\">".price($objp->price)."</td>\n";
 		print "<td align=\"center\">$objp->statut</td>\n";
 		print "</tr>\n";
