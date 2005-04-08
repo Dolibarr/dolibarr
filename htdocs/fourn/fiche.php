@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -22,11 +22,11 @@
  *
  */
 
-/**
-   \file       htdocs/fourn/fiche.php
-   \ingroup    fournisseur, facture
-   \brief      Page de fiche fournisseur
-   \version    $Revision$
+/*!
+  \file       htdocs/fourn/fiche.php
+  \ingroup    fournisseur, facture
+  \brief      Page de fiche fournisseur
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -52,69 +52,67 @@ if ($user->societe_id > 0)
  *
  *
  */  
-$societe = new Societe($db);
+$societe = new Fournisseur($db);
 
 if ( $societe->fetch($socid) )
 {
-
   $addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
   $addons[0][1] = $societe->nom;
 
-
   llxHeader('',$langs->trans("SupplierCard").' : '.$societe->nom, $addons);
 
-    /*
-     * Affichage onglets
-     */
-    $h = 0;
+  /*
+   * Affichage onglets
+   */
+  $h = 0;
 
-    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$socid;
-    $head[$h][1] = $langs->trans("Company");
+  $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$socid;
+  $head[$h][1] = $langs->trans("Company");
+  $h++;
+
+  if ($societe->client==1)
+    {
+      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
+      $head[$h][1] = $langs->trans("Customer");
+      $h++;
+    }
+  if ($societe->client==2)
+    {
+      $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$socid;
+      $head[$h][1] = $langs->trans("Prospect");
+      $h++;
+    }
+  if ($societe->fournisseur)
+    {
+      $hselected=$h;
+      $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
+      $head[$h][1] = $langs->trans("Supplier");
+      $h++;
+    }
+
+  if ($conf->compta->enabled) {
+    $langs->load("compta");
+    $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid;
+    $head[$h][1] = $langs->trans("Accountancy");
     $h++;
+  }
 
-    if ($societe->client==1)
+  $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
+  $head[$h][1] = $langs->trans("Note");
+  $h++;
+
+  if ($user->societe_id == 0)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
-        $head[$h][1] = $langs->trans("Customer");
-        $h++;
-    }
-    if ($societe->client==2)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$socid;
-        $head[$h][1] = $langs->trans("Prospect");
-        $h++;
-    }
-    if ($societe->fournisseur)
-    {
-        $hselected=$h;
-        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
-        $head[$h][1] = $langs->trans("Supplier");
-        $h++;
+      $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
+      $head[$h][1] = $langs->trans("Documents");
+      $h++;
     }
 
-    if ($conf->compta->enabled) {
-        $langs->load("compta");
-        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid;
-        $head[$h][1] = $langs->trans("Accountancy");
-        $h++;
-    }
-
-    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Note");
-    $h++;
-
-    if ($user->societe_id == 0)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Documents");
-        $h++;
-    }
-
-    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
-    $head[$h][1] = $langs->trans("Notifications");
-    $h++;
+  $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
+  $head[$h][1] = $langs->trans("Notifications");
+  $h++;
         
-    dolibarr_fiche_head($head, $hselected, $societe->nom);
+  dolibarr_fiche_head($head, $hselected, $societe->nom);
 
   /*
    *
@@ -144,15 +142,16 @@ if ( $societe->fetch($socid) )
    * Liste des produits
    *
    */
-  if ($conf->produit->enabled || $conf->service->enabled) {
+  if ($conf->produit->enabled || $conf->service->enabled)
+    {
       $langs->load("products");
       print '<table class="border" width="100%">';
       $var=!$var;
-	  print "<tr $bc[$var]>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("ProductsAndServices").'</td></tr>';
-      print '</table><br>';
-  }
-
+      print "<tr $bc[$var]>";
+      print '<td><a href="'.DOL_URL_ROOT.'/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("ProductsAndServices").'</td><td align="center">';
+      print $societe->NbProduct();
+      print '</td></tr></table><br>';
+    }
 
   /*
    *
@@ -170,14 +169,14 @@ if ( $societe->fetch($socid) )
       $num = $db->num_rows();
       if ($num > 0)
 	{
-      print '<table class="border" width="100%">';
+	  print '<table class="border" width="100%">';
 	  print "<tr $bc[$var]>";
 	  print "<td colspan=\"2\"><a href=\"commande/liste.php?socid=$societe->id\">".$langs->trans("LastOrders",$num)."</td></tr>";
 	}
       while ($i < $num && $i < 5)
 	{
 	  $obj = $db->fetch_object();
-      $var=!$var;
+	  $var=!$var;
       
 	  print "<tr $bc[$var]>";
 	  print '<td>';
@@ -335,7 +334,7 @@ if ( $societe->fetch($socid) )
 }
 else
 {
-    dolibarr_print_error($db);
+  dolibarr_print_error($db);
 }
 $db->close();
 
