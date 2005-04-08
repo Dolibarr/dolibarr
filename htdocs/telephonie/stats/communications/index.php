@@ -52,10 +52,6 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/communications/destmonth.php';
 $head[$h][1] = "Destinations";
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/communications/rentabilite.php';
-$head[$h][1] = "Rentabilite";
-$h++;
-
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/communications/analyse.php';
 $head[$h][1] = "Analyse";
 $h++;
