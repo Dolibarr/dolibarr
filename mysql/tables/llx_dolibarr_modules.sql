@@ -22,8 +22,7 @@
 
 create table llx_dolibarr_modules
 (
-  rowid          integer     PRIMARY KEY,
-  numero         integer     UNIQUE NOT NULL,
+  numero         integer     PRIMARY KEY,
   active         tinyint     DEFAULT 0 NOT NULL,
   active_date    datetime    NOT NULL,
   active_version varchar(25) NOT NULL
