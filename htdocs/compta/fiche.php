@@ -21,7 +21,8 @@
  *
  */
 
-/**    	\file       htdocs/compta/fiche.php
+/**
+    	\file       htdocs/compta/fiche.php
 		\ingroup    compta
 		\brief      Page de fiche compta
 		\version    $Revision$
@@ -372,6 +373,7 @@ if ($socid > 0)
         }
 
         if ($conf->deplacement->enabled) {
+            $langs->load("trips");
             print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
         }
       }
@@ -414,9 +416,13 @@ if ($socid > 0)
       print '<td>&nbsp;</td>';
       print "</tr>";
 
-        $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = ".$societe->id." ORDER by p.datec";
+        $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+        $sql.= " WHERE p.fk_soc = ".$societe->id;
+        $sql.= " ORDER by p.datec";
+        
         $result = $db->query($sql);
-        $i = 0 ; $num = $db->num_rows();
+        $i = 0 ; $num = $db->num_rows($result);
         $var=1;
         while ($i < $num)
         {
@@ -459,7 +465,7 @@ if ($socid > 0)
         print '<table width="100%" class="noborder">';
         print '<tr class="liste_titre"><td colspan="8"><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
 
-        $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+        $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.propalrowid, a.fk_user_author, fk_contact, u.code, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
         $sql .= " WHERE a.fk_soc = $societe->id ";
         $sql .= " AND u.rowid = a.fk_user_author";
@@ -516,7 +522,7 @@ if ($socid > 0)
                 }
                 /*
                  */
-                print '<td width="20%"><a href="../user.php">'.$obj->code.'</a></td>';
+                print '<td width="20%"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.$obj->code.'</a></td>';
                 print "</tr>\n";
                 $i++;
             }
