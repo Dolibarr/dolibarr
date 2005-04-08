@@ -361,7 +361,25 @@ function img_object($alt, $object)
 }
 
 /**
+        \brief  Affiche logo action
+        \param  alt         Texte sur le alt de l'image
+        \param  numaction   Determine image action
+*/
+function img_action($alt = "default", $numaction)
+{
+  global $conf,$langs;
+  if ($alt=="default") {
+    if ($numaction == -1) $alt=$langs->trans("ChangeDoNotContact");
+    if ($numaction == 0)  $alt=$langs->trans("ChangeNeverContacted");
+    if ($numaction == 1)  $alt=$langs->trans("ChangeToContact");
+    if ($numaction == 2)  $alt=$langs->trans("ChangeContactDone");
+  }
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/**
         \brief  Affiche logo fichier
+        \param  alt     Texte sur le alt de l'image
 */
 function img_file($alt = "default")
 {
@@ -371,7 +389,8 @@ function img_file($alt = "default")
 }
 
 /**
-  \brief Affiche logo dossier
+        \brief  Affiche logo dossier
+        \param  alt     Texte sur le alt de l'image
 */
 function img_folder($alt = "default")
 {
@@ -381,8 +400,8 @@ function img_folder($alt = "default")
 }
 
 /**
-  \brief Affiche logo nouveau fichier
-
+        \brief  Affiche logo nouveau fichier
+        \param  alt     Texte sur le alt de l'image
 */
 function img_file_new($alt = "default")
 {
@@ -393,6 +412,7 @@ function img_file_new($alt = "default")
 
 /**
         \brief  Affiche logo pdf
+        \param  alt     Texte sur le alt de l'image
 */
 function img_pdf($alt = "default")
 {
@@ -403,6 +423,7 @@ function img_pdf($alt = "default")
 
 /**
         \brief  Affiche logo +
+        \param  alt     Texte sur le alt de l'image
 */
 function img_edit_add($alt = "default")
 {
@@ -412,6 +433,7 @@ function img_edit_add($alt = "default")
 }
 /**
         \brief  Affiche logo -
+        \param  alt     Texte sur le alt de l'image
 */
 function img_edit_remove($alt = "default")
 {
@@ -422,6 +444,7 @@ function img_edit_remove($alt = "default")
 
 /**
         \brief  Affiche logo editer/modifier fiche
+        \param  alt     Texte sur le alt de l'image
 */
 function img_edit($alt = "default")
 {
@@ -432,6 +455,7 @@ function img_edit($alt = "default")
 
 /**
         \brief  Affiche logo effacer
+        \param  alt     Texte sur le alt de l'image
 */
 function img_delete($alt = "default")
 {
@@ -442,6 +466,7 @@ function img_delete($alt = "default")
 
 /**
         \brief  Affiche logo désactiver
+        \param  alt     Texte sur le alt de l'image
 */
 function img_disable($alt = "default")
 {
@@ -453,6 +478,7 @@ function img_disable($alt = "default")
 
 /**
         \brief  Affiche logo info
+        \param  alt     Texte sur le alt de l'image
 */
 function img_info($alt = "default")
 {
@@ -463,6 +489,7 @@ function img_info($alt = "default")
 
 /**
         \brief  Affiche logo warning
+        \param  alt     Texte sur le alt de l'image
 */
 function img_warning($alt = "default")
 {
@@ -473,6 +500,7 @@ function img_warning($alt = "default")
 
 /**
         \brief  Affiche logo alerte
+        \param  alt     Texte sur le alt de l'image
 */
 function img_alerte($alt = "default")
 {
@@ -483,6 +511,7 @@ function img_alerte($alt = "default")
 
 /**
         \brief  Affiche logo téléphone in
+        \param  alt     Texte sur le alt de l'image
 */
 function img_phone_in($alt = "default")
 {
@@ -493,6 +522,7 @@ function img_phone_in($alt = "default")
 
 /**
         \brief  Affiche logo téléphone out
+        \param  alt     Texte sur le alt de l'image
 */
 function img_phone_out($alt = "default")
 {
@@ -503,6 +533,7 @@ function img_phone_out($alt = "default")
 
 /**
         \brief  Affiche logo suivant
+        \param  alt     Texte sur le alt de l'image
 */
 function img_next($alt = "default")
 {
@@ -515,6 +546,7 @@ function img_next($alt = "default")
 
 /**
         \brief  Affiche logo précédent
+        \param  alt     Texte sur le alt de l'image
 */
 function img_previous($alt = "default")
 {
@@ -525,6 +557,7 @@ function img_previous($alt = "default")
 
 /**
         \brief  Affiche logo bas
+        \param  alt     Texte sur le alt de l'image
 */
 function img_down($alt = "default")
 {
@@ -535,6 +568,7 @@ function img_down($alt = "default")
 
 /**
         \brief  Affiche logo haut
+        \param  alt     Texte sur le alt de l'image
 */
 function img_up($alt = "default")
 {
@@ -546,6 +580,7 @@ function img_up($alt = "default")
 
 /**
         \brief  Affiche logo tick
+        \param  alt     Texte sur le alt de l'image
 */
 function img_tick($alt = "default")
 {
