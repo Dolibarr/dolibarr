@@ -93,19 +93,19 @@ if ($_GET["id"] > 0)
       print '<img src="statut'.$commande->statut.'.png">&nbsp;';
       print $commande->statuts[$commande->statut];
       print "</td></tr>";
-	  
-      print '<tr><td>'.$langs->trans("Date").'</td>';
-      print '<td colspan="2">'.strftime("%A %e %B %Y",$commande->date_commande)."</td>\n";
 
-      print '<td width="50%">&nbsp;';
-      print "</td></tr>";
+      if ($commande->methode_commande_id > 0) 
+	{	  
+	  print '<tr><td>'.$langs->trans("Date").'</td>';
+	  print '<td colspan="2">'.strftime("%A %e %B %Y",$commande->date_commande)."</td>\n";
+	  print '<td width="50%">&nbsp;';
+	  print "</td></tr>";
+	}
 
       print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';
 	
-      print '<td>';
-      print "&nbsp;</td></tr>";
-  
-      print "</table>";
+      print '<td>&nbsp;</td></tr>';  
+      print "</table>\n";
 	  
       /*
        * Historique
