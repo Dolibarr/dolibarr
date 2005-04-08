@@ -53,6 +53,9 @@ class modFournisseur extends DolibarrModules
     $this->family = "products";
     $this->name = "Fournisseur";
     $this->description = "Gestion des fournisseurs";
+
+    $this->revision = "$Revision$";
+
     $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_FOURNISSEUR";
     $this->const_config = MAIN_MODULE_FOURNISSEUR;
