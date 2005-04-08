@@ -102,7 +102,10 @@ else
     }
   else
     {
-      $sql .= " AND p.envente = 1";
+      if ($fourn_id == 0)
+	{
+	  $sql .= " AND p.envente = 1";
+	}
     }
 }
 
@@ -113,47 +116,49 @@ if ($fourn_id > 0)
 
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
-$result = $db->query($sql) ;
+$resql = $db->query($sql) ;
 
-if ($result)
+if ($resql)
 {
-    $num = $db->num_rows($result);
-    
+    $num = $db->num_rows($resql);
+   
     $i = 0;
   
     if ($num == 1 && (isset($_POST["sall"]) or $snom or $sref))
     {
-        $objp = $db->fetch_object($result);
-        Header("Location: fiche.php?id=$objp->rowid");
+      $objp = $db->fetch_object($resql);
+      Header("Location: fiche.php?id=$objp->rowid");
     }
     
-    if (isset($_GET["envente"]) || isset($_POST["envente"])) {
-        $envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
-    }
-    else {
-        $envente=1;
-    }
+    if (isset($_GET["envente"]) || isset($_POST["envente"]))
+      {
+	$envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
+      }
+    else
+      {
+	$envente=1;
+      }
     
     if (! $envente)
-    {
+      {
         if (isset($_GET["type"]) || isset($_POST["type"])) {
-            $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
-            if ($type) { $texte = $langs->trans("ServicesNotOnSell"); }
-            else { $texte = $langs->trans("ProductsNotOnSell"); }
+	  $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
+	  if ($type) { $texte = $langs->trans("ServicesNotOnSell"); }
+	  else { $texte = $langs->trans("ProductsNotOnSell"); }
         } else {
-            $texte = $langs->trans("ProductsAndServicesNotOnSell");
+	  $texte = $langs->trans("ProductsAndServicesNotOnSell");
         }
-    }
+      }
     else
-    {
+      {
         if (isset($_POST["type"]) || isset($_GET["type"])) {
-            if ($type) { $texte = $langs->trans("ServicesOnSell"); }
-            else { $texte = $langs->trans("ProductsOnSell"); }
+	  if ($type) { $texte = $langs->trans("ServicesOnSell"); }
+	  else { $texte = $langs->trans("ProductsOnSell"); }
         } else {
-            $texte = $langs->trans("ProductsAndServicesOnSell");
+	  $texte = $langs->trans("ProductsAndServicesOnSell");
         }
-    }
-
+      }
+    
   llxHeader("","",$texte);
 
   if ($sref || $snom || $_POST["sall"] || $_POST["search"])
