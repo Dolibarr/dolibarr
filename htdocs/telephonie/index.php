@@ -59,9 +59,11 @@ $sql = "SELECT distinct statut, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " GROUP BY statut";
 
-if ($db->query($sql))
+$resql = $db->query($sql);
+
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   $ligne = new LigneTel($db);
 
@@ -72,7 +74,7 @@ if ($db->query($sql))
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($resql);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -84,7 +86,7 @@ if ($db->query($sql))
     }
   
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
@@ -104,9 +106,11 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
 $sql .= " GROUP BY f.nom";
 
-if ($db->query($sql))
+$resql = $db->query($sql);
+
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -116,7 +120,7 @@ if ($db->query($sql))
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($resql);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -126,7 +130,7 @@ if ($db->query($sql))
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
@@ -141,9 +145,11 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_fa
 $sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
 $sql .= " GROUP BY f.facnumber,f.rowid,s.nom, s.idp, f.total_ttc";   
   
-if ( $db->query($sql) )
+$resql = $db->query($sql);
+
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   
   if ($num)
@@ -154,7 +160,7 @@ if ( $db->query($sql) )
       $total = $totalam = 0;
       while ($i < $num )
 	{
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object($resql);
 	  if ($obj->total_ttc <> $obj->am)
 	    {
 	      $var=!$var;
@@ -172,7 +178,7 @@ if ( $db->query($sql) )
       print '<tr '.$bc[$var].'><td colspan="2" align="left">'.$langs->trans("RemainderToTake").' : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td><td align="right">'.price($totalam).'</td></tr>';
       print "</table><br>";
     }
-  $db->free();
+  $db->free($resql);
 }
 else
 {
