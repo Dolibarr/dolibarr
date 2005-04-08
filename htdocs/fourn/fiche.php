@@ -240,7 +240,7 @@ if ( $societe->fetch($socid) )
 	  print "<tr $bc[$var]>";
 	  print '<td>';
 	  print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
-	  print img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber.'</a> '.substr($obj->libelle,0,40).'...</td>';	    
+	  print img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber.'</a> '.dolibarr_trunc($obj->libelle,40).'</td>';
 	  print "<td align=\"right\" width=\"80\">".dolibarr_print_date($obj->df)."</td>";
 	  print '<td align="right">'.$obj->amount.'</td>';
 	  $fac = new FactureFournisseur($db);

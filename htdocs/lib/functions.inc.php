@@ -314,10 +314,10 @@ function dolibarr_print_object_info($object)
 }
 
 /**
-  \brief    Formatage des numéros de telephone en fonction du format d'un pays
-  \param	phone			Numéro de telephone à formater
-  \param	country			Pays selon lequel formatter
-  \return   string			Numéro de téléphone formaté
+        \brief      Formatage des numéros de telephone en fonction du format d'un pays
+        \param	    phone			Numéro de telephone à formater
+        \param	    country			Pays selon lequel formatter
+        \return     string			Numéro de téléphone formaté
 */
 function dolibarr_print_phone($phone,$country="FR")
 {
@@ -348,6 +348,17 @@ function dolibarr_print_phone($phone,$country="FR")
     return $phone;
 }
 
+/**
+        \brief      Tronque une chaine à une taille donnée en ajoutant les points de suspension si cela dépasse
+        \param      string			Chaine à tronquer
+        \param      size			Longueur max de la chaine
+        \return     string			Chaine tronquée
+*/
+function dolibarr_trunc($string,$size=40)
+{
+    if (sizeof($string) > $size) return substr($string,0,$size).'...';
+    else return $string;  
+}
 
 /**
         \brief  Affiche logo propre à une notion (fonction générique)
