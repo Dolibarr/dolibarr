@@ -76,5 +76,6 @@ TE_OTHER=Autre
 ChangeDoNotContact=Changer statut à 'Ne pas contacter'
 ChangeNeverContacted=Changer statut à 'Jamais contacté'
 ChangeToContact=Changer statut à 'A contacter'
-ChangeContactDone=Changer statut à 'Contact réalisé
+ChangeContactInProcess=Changer statut à 'Contact en cours'
+ChangeContactDone=Changer statut à 'Contact réalisé'
 ProspectsByStatus=Prospects par statut

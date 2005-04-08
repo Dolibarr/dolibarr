@@ -167,7 +167,7 @@ if ($result)
       print "<td align=\"center\">".$obj->stcomm."</td>";
       print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
 
-      $sts = array(-1,0,1,2);
+      $sts = array(-1,0,1,2,3);
       print '<td>';
       foreach ($sts as $key => $value)
 	{

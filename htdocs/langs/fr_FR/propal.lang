@@ -16,6 +16,7 @@ ConfirmDeleteProp=Etes-vous sûr de vouloir effacer cette proposition commerciale
 LastPropals=Les %s dernieres propales
 LastClosedProposals=Les %s dernières propositions commerciales fermées
 AllPropals=Toutes les propales
+LastProposals=Dernières propositions
 SearchAProposal=Rechercher une propale
 ProposalsStatistics=Statistiques des propositions commerciales
 NumberOfProposalsByMonth=Nombre par mois

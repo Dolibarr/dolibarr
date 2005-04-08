@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/comm/prospect/fiche.php
+/**
+	    \file       htdocs/comm/prospect/fiche.php
         \ingroup    prospect
 		\brief      Page de la fiche prospect
 		\version    $Revision$
@@ -32,6 +33,8 @@ require("../../contact.class.php");
 require("../../actioncomm.class.php");
 
 $langs->load('companies');
+$langs->load('projects');
+$langs->load('propal');
 
 $user->getrights('propale');
 $user->getrights('fichinter');
@@ -157,16 +160,15 @@ if ($socid > 0)
     print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$societe->statut_commercial.'</td>';
     print '<td> ';
     print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=-1&amp;action=cstc">';
-    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm-1.png" border="0" alt="Ne pas contacter" title="Ne pas contacter">';
+    print img_action(0,-1);
     print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=0&amp;action=cstc">';
-    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm0.png" border="0" alt="Jamais contactée" title="Jamais contactée">';
+    print img_action(0,0);
     print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=1&amp;action=cstc">';
-    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm1.png" border="0" alt="A contacter" title="A contacter">';
+    print img_action(0,1);
     print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=2&amp;action=cstc">';
-    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm2.png" border="0" alt="Contact en cours" title="Contact en cours">';
+    print img_action(0,2);
     print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=3&amp;action=cstc">';
-    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm3.png" border="0" alt="Contactée" title="Contactée">';
-
+    print img_action(0,3);
     print '</a>';
     print '</td></tr>';
     print "</table><br></div>";
@@ -183,7 +185,7 @@ if ($socid > 0)
      *
      */
     $var = true;
-    print '<table class="noborder" width="100%">';
+    print '<table class="border" width="100%">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
     $sql .= " AND s.idp = $societe->id ORDER BY p.datep DESC";
@@ -193,7 +195,11 @@ if ($socid > 0)
 	$num = $db->num_rows();
 	if ($num >0 )
 	  {
-	    print "<tr $bc[$var]><td colspan=\"4\"><a href=\"../propal.php?socidp=$societe->id\">Liste des propositions commerciales ($num)</td></tr>";
+	    print "<tr $bc[$var]><td colspan=\"4\">";
+        print '<table width="100%" class="noborder"><tr><td>'.$langs->trans("LastProposals").'</td>';
+        print '<td align="right"><a href="../propal.php?socidp='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td>';
+        print '</tr></table>';
+	    print '</td></tr>';
 	    $var=!$var;
 	  }
 	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
@@ -202,15 +208,15 @@ if ($socid > 0)
 	    $objp = $db->fetch_object();
 	    print "<tr $bc[$var]>";
 	    print "<td><a href=\"../propal.php?propalid=$objp->propalid\">";
-	    print img_file();
-	    print "</a>&nbsp;<a href=\"../propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
+	    print img_object($langs->trans("ShowPropal"),"propal");
+	    print " $objp->ref</a>\n";
 	    if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
 	      {
 		print " <b>&gt; 15 jours</b>";
 	      }
-	    print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	    print "<td align=\"right\">".price($objp->price)."</TD>\n";
-	    print "<td align=\"center\">$objp->statut</TD></tr>\n";
+	    print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</td>\n";
+	    print "<td align=\"right\">".price($objp->price)."</td>\n";
+	    print "<td align=\"center\">$objp->statut</td></tr>\n";
 	    $var=!$var;
 	    $i++;
 	  }
@@ -375,8 +381,8 @@ if ($socid > 0)
 		}
 	      else
 		{
-		  print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_file().'</a> ';
-		  print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a>';
+		  print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowAction"),"task").' ';
+		  print $obj->libelle.'</a>';
 		}
 	      print '</td>';
 	      

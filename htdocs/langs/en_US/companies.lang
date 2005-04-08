@@ -76,5 +76,6 @@ TE_OTHER=Other
 ChangeDoNotContact=Change status to 'Do not contact'
 ChangeNeverContacted=Change status to 'Never contacted'
 ChangeToContact=Change status to 'To contact'
+ChangeContactInProcess=Change status to 'Contact in process'
 ChangeContactDone=Change status to 'Contact done'
 ProspectsByStatus=Prospects by status

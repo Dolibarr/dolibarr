@@ -246,7 +246,7 @@ if ( $db->query($sql) )
 	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?id=".$obj->idp."\">";
-	  print img_object($langs->trans("ShowContact"),"contact");
+	  print img_object($langs->trans("ShowCompany"),"company");
 	  print ' '.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}

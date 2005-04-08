@@ -383,9 +383,10 @@ function img_action($alt = "default", $numaction)
     if ($numaction == -1) $alt=$langs->trans("ChangeDoNotContact");
     if ($numaction == 0)  $alt=$langs->trans("ChangeNeverContacted");
     if ($numaction == 1)  $alt=$langs->trans("ChangeToContact");
-    if ($numaction == 2)  $alt=$langs->trans("ChangeContactDone");
+    if ($numaction == 2)  $alt=$langs->trans("ChangeContactInProcess");
+    if ($numaction == 3)  $alt=$langs->trans("ChangeContactDone");
   }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  return '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
