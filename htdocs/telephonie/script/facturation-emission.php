@@ -630,11 +630,13 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 	  $contrat = new TelephonieContrat($db);
 	  $contrat->fetch($contrat_id);
 
+	  $emails = $contrat->get_contact_facture();
+
 	  $ligne = new LigneTel($db);
 
 	  if ($ligne->fetch_by_facture_number($fact->id) == 0)
 	    {
-	      $emails = $ligne->get_contact_facture();
+
 	    }
 
 	  if (sizeof($emails > 0))
