@@ -26,11 +26,12 @@
 
 require ("../../master.inc.php");
 
-$opt = getopt("l:");
+$opt = getopt("l:c:");
 
 $limit = $opt['l'];
+$optcontrat = $opt['c'];
 
-if (strlen($limit) == 0)
+if (strlen($limit) == 0 && strlen($optcontrat) == 0)
 {
   print "Usage :\n  php facturation-emission.php -l <limit>\n";
   exit;
@@ -118,8 +119,16 @@ if (!$error)
   $sql .= " AND f.isfacturable = 'oui'"; 
   $sql .= " AND f.fk_ligne = l.rowid ";
   $sql .= " AND l.fk_contrat = c.rowid";  
-
-  $sql .= " LIMIT $limit";
+  
+  if (strlen($optcontrat) >  0)
+    {
+      $sql .= " AND c.rowid=".$optcontrat;
+      dolibarr_syslog("Limite sur le contrat : ".$optcontrat);
+    }
+  else
+    {
+      $sql .= " LIMIT $limit";
+    }
   
   $contrats = array();
   
