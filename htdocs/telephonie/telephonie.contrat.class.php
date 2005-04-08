@@ -22,7 +22,6 @@
 
 class TelephonieContrat {
   var $db;
-
   var $id;
   var $ligne;
 
@@ -70,8 +69,7 @@ class TelephonieContrat {
 	$this->db->query($sql);
 
 	return 0;
-      }
-    
+      }   
     else
       {
 	$this->error_message = "Echec de la création du contrat";
@@ -114,7 +112,6 @@ class TelephonieContrat {
 	  }
       }
 
-
     if (!$error)
       {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
@@ -133,7 +130,6 @@ class TelephonieContrat {
 	  }
       }
 
-
     if (!$error)
       {
 	$this->db->commit();
@@ -145,15 +141,13 @@ class TelephonieContrat {
 	return -1;
       }
   }
-
-  /**
+  /*
+   *
    *
    *
    */
-
   function fetch($id)
     {
-
       $sql = "SELECT c.rowid, c.ref, c.fk_client_comm, c.fk_soc, c.fk_soc_facture, c.note";
       $sql .= ", c.fk_commercial_sign, c.fk_commercial_suiv";
       $sql .= ", c.isfacturable, c.mode_paiement";
@@ -161,12 +155,13 @@ class TelephonieContrat {
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as c";
       $sql .= " WHERE c.rowid = ".$id;
 
+      $resql = $this->db->query($sql);
 
-      if ($this->db->query($sql))
+      if ($resql)
 	{
-	  if ($this->db->num_rows())
+	  if ($this->db->num_rows($resql))
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object($resql);
 
 	      $this->id                 = $obj->rowid;
 	      $this->socid              = $obj->fk_soc;
@@ -197,7 +192,6 @@ class TelephonieContrat {
 	      $this->ref_url = '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$this->id.'">'.$this->ref.'</a>';
 
 
-
 	      $result = 1;
 	    }
 	  else
@@ -206,7 +200,7 @@ class TelephonieContrat {
 	      $result = -2;
 	    }
 
-	  $this->db->free();
+	  $this->db->free($resql);
 	}
       else
 	{
@@ -218,7 +212,6 @@ class TelephonieContrat {
 
       return $result;
   }
-
   /*
    *
    *
@@ -296,7 +289,6 @@ class TelephonieContrat {
    */
   function remove_service($user, $sid)
   {
-
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_contrat_service";
     $sql .= " (fk_contrat, fk_service, fk_user_creat, date_creat) ";
     $sql .= " VALUES ($this->id, $sid, $user->id, now() )";
@@ -306,12 +298,10 @@ class TelephonieContrat {
 	return 0 ;
       }
   }
-
   /*
    *
    *
    */
-
   function get_contact_facture()
   {
     $this->contact_facture_id = array();        
@@ -348,5 +338,4 @@ class TelephonieContrat {
     return $res;
   }
 }
-
 ?>

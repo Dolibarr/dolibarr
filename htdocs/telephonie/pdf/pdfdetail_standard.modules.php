@@ -21,9 +21,9 @@
  *
  */
 
-require_once DOL_DOCUMENT_ROOT."/telephonie/pdf/pdfdetail_standard.modeles.php";
 require_once DOL_DOCUMENT_ROOT."/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php";
+require_once DOL_DOCUMENT_ROOT."/telephonie/pdf/pdfdetail_standard.modeles.php";
 
 class pdfdetail_standard {
 
@@ -378,7 +378,7 @@ class pdfdetail_standard {
 
 		  while ($i < $num)
 		    {
-		      $obj = $this->db->fetch_object();
+		      $obj = $this->db->fetch_object($resql);
 
 		      $Y = $this->pdf->GetY();
 		
@@ -466,9 +466,9 @@ class pdfdetail_standard {
 	       *
 	       */
 	     
-	      $this->pdf->Close();
-	      
+	      $this->pdf->Close();	      
 	      $this->pdf->Output($file);
+
 	      $this->filename = $file;
 
 	      dolibarr_syslog("Write $file");
@@ -478,12 +478,11 @@ class pdfdetail_standard {
 		  unlink($file_graph);
 		}
 
-
 	      return 0;
 	    }
 	  else
 	    {
-	      $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+	      $this->error="Erreur: répertoire '$dir' n'existe pas, créa impossible.";
 	      return -1;
 	    }
 	}

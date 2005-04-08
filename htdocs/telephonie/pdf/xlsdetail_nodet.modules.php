@@ -33,13 +33,12 @@ class xlsdetail_nodet {
   Function GenerateFile($ligne, $fac, $factel)
   {
     $this->ligne = $ligne;
-
     $error = 0;
 
     $dir = FAC_OUTPUTDIR . "/" . $fac->ref . "/" ;
     $fname = $dir . $fac->ref . "-".$ligne->numero."-".$ligne->code_analytique."-detail.xls";
 
-    dolibarr_syslog("Open file : $fname");
+    //dolibarr_syslog("Open file : $fname");
     
     $workbook = &new writeexcel_workbook($fname);
 
@@ -57,21 +56,20 @@ class xlsdetail_nodet {
     $fdest =& $workbook->addformat();
     $fdest->set_align('vcenter');
 
-    $page->set_column(0,0,12); // A
-    $page->set_column(1,1,20); // B
-    $page->set_column(2,2,15); // C
-    
+    $page->set_column(0,0,12);  // A
+    $page->set_column(1,1,20);  // B
+    $page->set_column(2,2,15);  // C
     $page->set_column(3,3,30);  // D
-    $page->set_column(6,6,7); // G
-    $page->set_column(9,9,7); // J
+    $page->set_column(6,6,7);   // G
+    $page->set_column(9,9,7);   // J
     $page->set_column(12,12,7); // M
               
-    $page->write(0, 0,  "Ligne", $format_titre_agence1);
-    $page->write(0, 1,  "Date", $format_titre);
-    $page->write(0, 2,  "Numero", $format_titre);
-    $page->write(0, 3,  "Destination", $format_titre);
-    $page->write(0, 4,  "Durée", $format_titre);
-    $page->write(0, 5,  "Cout HT", $format_titre);
+    $page->write(0, 0, "Ligne", $format_titre_agence1);
+    $page->write(0, 1, "Date", $format_titre);
+    $page->write(0, 2, "Numero", $format_titre);
+    $page->write(0, 3, "Destination", $format_titre);
+    $page->write(0, 4, "Durée", $format_titre);
+    $page->write(0, 5, "Cout HT", $format_titre);
 
     $sql = "SELECT ligne, date, numero, dest, dureetext, duree, cout_vente";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
@@ -85,7 +83,7 @@ class xlsdetail_nodet {
 	$i = 0;
 	$numsql = $this->db->num_rows($resql);
 
-	dolibarr_syslog($this->ligne->numero . " : ".$numsql);
+	//dolibarr_syslog($this->ligne->numero . " : ".$numsql);
 
 	while ($i < $numsql)
 	  {
@@ -99,7 +97,6 @@ class xlsdetail_nodet {
 	    $page->write_string($xx, 3,  $obj->dest, $fdest);
 	    $page->write($xx, 4,  $obj->duree, $fnb);
 	    $page->write($xx, 5,  $obj->cout_vente, $fp);
-
 	    
 	    $i++;
 	  }
@@ -111,10 +108,9 @@ class xlsdetail_nodet {
       }
     
     $workbook->close();
-    dolibarr_syslog("Close $fname");
+    //dolibarr_syslog("Close $fname");
 
     return $error;
-
   }
 }
 ?>

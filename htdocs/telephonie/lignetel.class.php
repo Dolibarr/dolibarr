@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 
 class LigneTel {
   var $db;
-
   var $id;
   var $ligne;
 
@@ -49,7 +48,6 @@ class LigneTel {
    */
   function update($user)
   {
-
     $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
     $sql .= " SET ";
     $sql .= " ligne = '$this->numero', ";
@@ -217,8 +215,10 @@ class LigneTel {
   {
     return $this->fetch(0, $id);
   }
-
-
+  /*
+   *
+   *
+   */
   function fetch($ligne, $id = 0)
     {
 
@@ -240,11 +240,13 @@ class LigneTel {
 	  $sql .= " WHERE tl.ligne = ".$ligne;
 	}
 
-      if ($this->db->query($sql))
+      $resql = $this->db->query($sql);
+
+      if ($resql)
 	{
-	  if ($this->db->num_rows())
+	  if ($this->db->num_rows($resql))
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object($resql);
 
 	      $this->id = $obj->rowid;
 	      $this->socid              = $obj->fk_soc;
@@ -284,7 +286,7 @@ class LigneTel {
 	      $result = -2;
 	    }
 
-	  $this->db->free();
+	  $this->db->free($resql);
 	}
       else
 	{
@@ -652,12 +654,13 @@ class LigneTel {
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";
       $sql .= " WHERE fk_facture = ".$facnumber;
 
+      $resql = $this->db->query($sql);
 
-      if ($this->db->query($sql))
+      if ($resql)
 	{
-	  if ($this->db->num_rows())
+	  if ($this->db->num_rows($resql))
 	    {
-	      $row = $this->db->fetch_row(0);
+	      $row = $this->db->fetch_row($resql);
 	      
 	      $this->id = $row[0];
 
@@ -667,17 +670,12 @@ class LigneTel {
 	    {
 	      return -1;
 	    }
+	  $this->db->free($resql);
 	}
       else
 	{
 	  return -2;
 	}
     }
-  /*
-   *
-   *
-   */
-
 }
-
 ?>

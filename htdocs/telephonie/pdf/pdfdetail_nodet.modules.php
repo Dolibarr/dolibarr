@@ -22,10 +22,11 @@
  * Génère un PDF de la première page de résumé et un tableur des communications
  */
 
-require_once DOL_DOCUMENT_ROOT."/telephonie/pdf/pdfdetail_standard.modeles.php";
-require_once DOL_DOCUMENT_ROOT."/telephonie/pdf/xlsdetail_nodet.modules.php";
 require_once DOL_DOCUMENT_ROOT."/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php";
+require_once DOL_DOCUMENT_ROOT."/telephonie/pdf/pdfdetail_standard.modeles.php";
+require_once DOL_DOCUMENT_ROOT."/telephonie/pdf/xlsdetail_nodet.modules.php";
+
 
 class pdfdetail_nodet {
 
