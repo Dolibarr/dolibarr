@@ -217,7 +217,7 @@ foreach ($orders as $key => $value)
     $const_value = $objMod->const_config;
 
     if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
-        print "<tr class=\"liste_titre\">\n  <td colspan=\"8\"></td>\n</tr>\n";
+        print "<tr class=\"liste_titre\">\n  <td colspan=\"9\"></td>\n</tr>\n";
         $atleastoneforfamily=0;
     }
 
