@@ -44,7 +44,7 @@ print_fiche_titre($langs->trans("WelcomeString",dolibarr_print_date(mktime(),"%A
 
 if (defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
 {
-  print "<br>".nl2br(MAIN_MOTD);
+  print '<br>'.nl2br(MAIN_MOTD).'<br>';
 }
 
 print "<br>\n";
