@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
@@ -55,7 +55,8 @@ class modCommande extends DolibarrModules
     $this->family = "crm";
     $this->name = "Commande";
     $this->description = "Gestion des commandes clients";
-    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+    $this->revision = explode(" ","$Revision$");
+    $this->version = $this->revision[1];
     $this->const_name = "MAIN_MODULE_COMMANDE";
     $this->const_config = MAIN_MODULE_COMMANDE;
     $this->special = 0;
@@ -68,7 +69,7 @@ class modCommande extends DolibarrModules
     $this->config_page_url = "commande.php";
 
     // Dépendances
-    $this->depends = array("modSociete");
+    $this->depends = array("modCommercial");
     $this->requiredby = array("modExpedition");
 
     // Constantes
