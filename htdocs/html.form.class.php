@@ -556,7 +556,7 @@ class Form
 	print '<option value="'.$txtva[$i].'"';
 	if ($txtva[$i] == $defaulttx)
 	  {
-	    print ' SELECTED>'.$txtva[$i].' %</option>';
+	    print ' selected>'.$txtva[$i].' %</option>';
 	  }
 	else
 	  {
@@ -614,7 +614,8 @@ class Form
       $smin = date("i", $set_time);
     }
     
-    print '<select name="'.$prefix.'day">';    
+    // Jour
+    print '<select class="flat" name="'.$prefix.'day">';    
 
     if ($empty || $set_time == -1)
       {
@@ -641,13 +642,13 @@ class Form
     
     print "</select>";
     
-    print '<select name="'.$prefix.'month">';    
+    print '<select class="flat" name="'.$prefix.'month">';    
     if ($empty || $set_time == -1)
       {
 	print '<option value="0" selected>';
       }
 
-
+    // Mois
     for ($month = 1 ; $month <= 12 ; $month++)
       {
 	if ($month == $smonth)
@@ -661,14 +662,14 @@ class Form
       }
     print "</select>";
 
-    if ($empty || $set_time == -1)
+	// Année
+	if ($empty || $set_time == -1)
       {
-	print '<input type="text" size="5" maxlength="4" name="'.$prefix.'year">';
+	print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year">';
       }
     else
       {
-    
-	print '<select name="'.$prefix.'year">';
+	print '<select class="flat" name="'.$prefix.'year">';
 	
 	for ($year = $syear - 3; $year < $syear + 5 ; $year++)
 	  {
@@ -686,7 +687,7 @@ class Form
 
     if ($h)
       {
-	print '<select name="'.$prefix.'hour">';
+	print '<select class="flat" name="'.$prefix.'hour">';
     
 	for ($hour = 0; $hour < 24 ; $hour++)
 	  {
@@ -707,7 +708,7 @@ class Form
 
 	if ($m)
 	  {
-	    print '<select name="'.$prefix.'min">';
+	    print '<select class="flat" name="'.$prefix.'min">';
 	    
 	    for ($min = 0; $min < 60 ; $min++)
 	      {
@@ -741,7 +742,7 @@ class Form
     if ($result)
       {
 
-	print '<select name="'.$name.'">';
+	print '<select class="flat" name="'.$name.'">';
 
 	$num = $this->db->num_rows();
 	$i = 0;
@@ -790,7 +791,7 @@ class Form
 		
   function select_array($name, $array, $id='', $empty=0, $key_libelle=0)
   {
-    print '<select name="'.$name.'">';
+    print '<select class="flat" name="'.$name.'">';
         
     $i = 0;
         
@@ -855,7 +856,7 @@ class Form
 	$no="0"; 
       }
 
-    print '<select name="'.$name.'">'."\n";
+    print '<select class="flat" name="'.$name.'">'."\n";
 
     if ($value == 'no' || $value == 0) 
       {

@@ -24,17 +24,16 @@
  */
 
 /**
-
-   \file       htdocs/facture.class.php
-   \ingroup    facture
-   \brief      Fichier de la classe des factures clients
-   \version    $Revision$
-
+        \file       htdocs/facture.class.php
+        \ingroup    facture
+        \brief      Fichier de la classe des factures clients
+        \version    $Revision$
 */
 
 
-/**     \class      Facture
-	\brief      Classe permettant la gestion des factures clients
+/**
+        \class      Facture
+        \brief      Classe permettant la gestion des factures clients
 */
 
 class Facture
@@ -76,7 +75,7 @@ class Facture
       $this->propalid = 0;
       $this->projetid = 0;
       $this->id = $facid;
-      $this->prefixe_facture = ''; // utilisé dans le module de numérotation saturne
+      $this->prefixe_facture = '';      // utilisé dans le module de numérotation saturne
       $this->remise_exceptionnelle = 0;
   }
   
@@ -443,7 +442,8 @@ class Facture
 	    }
 	  else
 	    {
-	      dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid numrows=0");
+	      dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid numrows=0 sql=$sql");
+	      $this->error="Bill with id $rowid not found sql=$sql";
 		  return -2;
 	    }
 
