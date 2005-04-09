@@ -43,7 +43,7 @@ if (!$user->admin) accessforbidden();
  */
 if ($_GET["action"] == 'set')
 {
-  $file = DOL_DOCUMENT_ROOT . '/includes/modules/expedition/methode_expedition_'.$_GET["value"].'.modules.php';
+  $file = DOL_DOCUMENT_ROOT . '/expedition/mods/methode_expedition_'.$_GET["value"].'.modules.php';
 
   $classname = 'methode_expedition_'.$_GET["value"];
   require_once($file);
@@ -73,18 +73,8 @@ if ($_GET["action"] == 'setpdf')
       // on passe donc par une variable pour avoir un affichage cohérent
       $expedition_addon_var_pdf = $value;
     }
-  /*
-   * On la set active
-   */
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$value."')";
-  
-  if ($db->query($sql))
-    {
-      
-    }
 
   Header("Location: expedition.php");
-
 }
 
 
@@ -135,7 +125,7 @@ else
   print $db->error();
 }
 
-$dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/";
+$dir = DOL_DOCUMENT_ROOT."/expedition/mods/";
 
 /*
  * Méthode de livraison
@@ -231,6 +221,8 @@ print '<td align="center" colspan="2">'.$langs->trans("Default").'</td>';
 print "</tr>\n";
 
 clearstatcache();
+
+$dir = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/";
 
 if(is_dir($dir))
 {
