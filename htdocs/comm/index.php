@@ -245,22 +245,28 @@ if ($socidp)
 }
 $sql .= " ORDER BY a.datea DESC limit 5";
 
-if ( $db->query($sql) ) 
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
 
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastDoneTasks").'</td></tr>';
   $var = true;
   $i = 0;
 
-  while ($i < $num ) 
+  while ($i < $num) 
 	{
-	  $obj = $db->fetch_object();
+	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.' '.$obj->label.'</a></td>';
+	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task");
+      $transcode=$langs->trans("Action".$obj->code);
+      $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+      print $libelle;
+	  print '</a></td>';
+	  
 	  print "<td>".dolibarr_print_date($obj->da)."</td>";
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
 	  $i++;
@@ -269,7 +275,7 @@ if ( $db->query($sql) )
   // TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
   print "</table><br>";
 
-  $db->free();
+  $db->free($resql);
 } 
 else
 {
@@ -282,7 +288,7 @@ else
  *
  */
 
-$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc";
 if ($socidp)
@@ -291,9 +297,10 @@ if ($socidp)
 }
 $sql .= " ORDER BY a.datea ASC";
 
-if ( $db->query($sql) ) 
+$resql=$db->query($sql);
+if ($resql) 
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   if ($num > 0)
     { 
       print '<table class="noborder" width="100%">';
@@ -301,13 +308,17 @@ if ( $db->query($sql) )
       $var = true;
       $i = 0;
       
-      while ($i < $num ) 
+      while ($i < $num)
 	{
-	  $obj = $db->fetch_object();
+	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.' '.$obj->label.'</a></td>';
+	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task");
+      $transcode=$langs->trans("Action".$obj->code);
+      $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+      print $libelle;
+	  print '</a></td>';
 	
 	  print '<td>'. dolibarr_print_date($obj->da);
           if (date("U",$obj->da) < time())
@@ -323,7 +334,7 @@ if ( $db->query($sql) )
       // TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
       print "</table><br>";
     }
-  $db->free();
+  $db->free($resql);
 } 
 else
 {
