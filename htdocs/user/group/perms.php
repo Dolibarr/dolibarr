@@ -88,6 +88,35 @@ if ($_GET["id"])
 
     dolibarr_fiche_head($head, $hselected, $langs->trans("Group").": ".$fgroup->nom);
 
+    $db->begin();
+
+    // Charge les modules soumis a permissions
+    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
+    $handle=opendir($dir);
+    $modules = array();
+    while (($file = readdir($handle))!==false)
+    {
+        if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
+        {
+            $modName = substr($file, 0, strlen($file) - 10);
+
+            if ($modName)
+            {
+                include_once("../../includes/modules/$file");
+                $objMod = new $modName($db);
+                if ($objMod->rights_class) {
+
+                    $ret=$objMod->insert_permissions();
+
+                    $modules[$objMod->rights_class]=$objMod;
+                    //print "modules[".$objMod->rights_class."]=$objMod;";
+                }
+            }
+        }
+    }
+    
+    $db->commit();
+    
     // Lecture des droits groupes
     $permsgroup = array();
 
@@ -97,8 +126,6 @@ if ($_GET["id"])
     $sql .= " WHERE ugr.fk_id = r.id AND ugr.fk_usergroup = ".$fgroup->id;
 
     $result=$db->query($sql);
-
-
 
     if ($result)
     {
@@ -117,28 +144,6 @@ if ($_GET["id"])
         dolibarr_print_error($db);
     }
 
-
-    // Charge les modules soumis a permissions
-    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
-    $handle=opendir($dir);
-    $modules = array();
-    while (($file = readdir($handle))!==false)
-    {
-        if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
-        {
-            $modName = substr($file, 0, strlen($file) - 10);
-
-            if ($modName)
-            {
-                include_once("../../includes/modules/$file");
-                $objMod = new $modName($db);
-                if ($objMod->rights_class) {
-                    $modules[$objMod->rights_class]=$objMod;
-                    //print "modules[".$objMod->rights_class."]=$objMod;";
-                }
-            }
-        }
-    }
 
     /*
      * Ecran ajout/suppression permission
