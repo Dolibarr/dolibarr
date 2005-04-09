@@ -402,9 +402,9 @@ class DoliDb
 
     /**
         \brief      Défini les limites de la requète.
-        \param	    limit
-        \param	    offset
-        \return	    int		    Limite
+        \param	    limit       nombre maximum de lignes retournées
+        \param	    offset      numéro de la ligne à partir de laquelle recupérer les lignes
+        \return	    string      chaine exprimant la syntax sql de la limite
     */
 
     function plimit($limit=0,$offset=0)
