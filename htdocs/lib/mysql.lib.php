@@ -409,14 +409,10 @@ class DoliDb
 
     function plimit($limit=0,$offset=0)
     {
-        if ($offset > 0)
-        {
-            return " LIMIT $offset,$limit ";
-        }
-        else
-        {
-            return " LIMIT $limit ";
-        }
+        global $conf;
+        if (! $limit) $limit=$conf->liste_limit;
+        if ($offset > 0) return " LIMIT $offset,$limit ";
+        else return " LIMIT $limit ";
     }
 
 
