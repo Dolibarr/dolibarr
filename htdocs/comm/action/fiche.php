@@ -304,7 +304,7 @@ if ($_GET["action"] == 'create')
        *
        */
 
-      print_titre ($langs->trans("AddAction"));
+      print_titre ($langs->trans("AddAnAction"));
       print "<br>";
       
       print '<table class="border" width="100%">';
@@ -352,12 +352,12 @@ if ($_GET["action"] == 'create')
 	{
 	  print '<input type="hidden" name="percentage" value="0">';
 	  print '<input type="hidden" name="todo" value="on">';
-	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("ToDo").' / 0%</td></tr>';
+	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionToDo").' / 0%</td></tr>';
 	}
       elseif ($_GET["afaire"] == 2)
 	{
 	  print '<input type="hidden" name="percentage" value="100">';
-	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("Done").' / 100%</td></tr>';
+	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionDone").' / 100%</td></tr>';
 	} else 
 	  {
 	    print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0%"></td></tr>';
