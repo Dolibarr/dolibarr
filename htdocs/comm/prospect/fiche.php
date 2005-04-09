@@ -130,26 +130,21 @@ if ($socid > 0)
 
       dolibarr_fiche_head($head, $hselected, $societe->nom);
 
-    /*
-     *
+   /*
      *
      */
-    print '<table width="100%" border="0">';
-    print '<tr><td valign="top">';
+    print "<table width=\"100%\">\n";
+    print '<tr><td valign="top" width="50%">'; 
+
     print '<table class="border" width="100%">';
-
-    print "<tr><td>".$langs->trans("Phone")."</td><td align=\"center\">".dolibarr_print_phone($societe->tel)."</td><td>".$langs->trans("Fax")."</td><td align=\"center\">".dolibarr_print_phone($societe->fax)."&nbsp;</td></tr>";
-    print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->address)."<br>$societe->cp $societe->ville</td></tr>";
-
-    print '<tr><td>Siret</td><td>'.$societe->siret.'</td>';
-    print '<td>Capital</td><td>'.$societe->capital.'</td></tr>';
-
-    print '<tr><td>'.$langs->trans("Type")."</td><td>".$societe->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$societe->effectif.'</td></tr>';
-
-    if ($societe->url)
-      {
-	print "<tr><td>".$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
-      }
+    print '<tr><td width="25%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
+    print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse)."</td></tr>";
+    
+    print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td colspan="3">'.$societe->cp." ".$societe->ville.'</td></tr>';
+    print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$societe->pays.'</td></tr>';
+    
+    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.$societe->tel.'&nbsp;</td><td>Fax</td><td>'.$societe->fax.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
     if ($societe->rubrique)
       {
