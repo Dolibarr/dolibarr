@@ -151,103 +151,113 @@ if ($socid > 0)
      *
      */
     print "</td></tr></table>\n";
-    
+    print '<br>';    
+
     print '</div>';
 
 
     if ($conf->facture->enabled && $user->rights->facture->lire)
-      {
+    {
+        // Factures
+        print_fiche_titre("Bills");
+    
         print '<table class="border" width="100%">';
     
         $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df";
-	$sql .= " , f.paye as paye, f.fk_statut as statut, f.rowid as facid ";
+        $sql .= " , f.paye as paye, f.fk_statut as statut, f.rowid as facid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
         $sql .= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
         $sql .= " ORDER BY f.datef DESC";
     
-        if ( $db->query($sql) )
-	  {
-	    $var=true;
-	    $num = $db->num_rows(); $i = 0;
-	    if ($num > 0)
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $var=true;
+            $num = $db->num_rows($resql);
+            if ($num > 0)
             {
-	      print "<tr $bc[$var]>";
-	      print '<td colspan="2">&nbsp;</td>';
-	      print '<td align="right">'.$langs->trans("Debit").'</td>';
-	      print '<td align="right">'.$langs->trans("Credit").'</td>';
-	      print '<td align="right">'.$langs->trans("Solde").'</td>';
-	      print '</tr>';
+                print "<tr $bc[$var]>";
+                print '<td colspan="2">&nbsp;</td>';
+                print '<td align="right">'.$langs->trans("Debit").'</td>';
+                print '<td align="right">'.$langs->trans("Credit").'</td>';
+                print '<td align="right">'.$langs->trans("Solde").'</td>';
+                print '</tr>';
             }
-	    
-	    while ($i < $num)
-	      {
-		$objp = $db->fetch_object();
-		$facs[$i] = $objp->facid;
-		$i++;
-	      }
-	    $db->free();
-
-
-	    $solde = 0;
-
-	    for ($i = 0 ; $i < $num ; $i++)
-	      {
-		$var=!$var;
-
-		$fac = new Facture($db);
-		$fac->fetch($facs[$i]);
-
-		print "<tr $bc[$var]>";
-
-		print "<td align=\"right\">".dolibarr_print_date($fac->date)."</td>\n";
-		print "<td><a href=\"../compta/facture.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
-		
-		print '<td align="right">'.number_format($fac->total_ttc, 2, ',', ' ')."</td>\n";
-		$solde = $solde + $fac->total_ttc;
-
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="right">'.number_format($solde, 2, ',', ' ')."</td>\n";		
-		print "</tr>\n";
-
-
-		$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, pf.amount, p.statut";
-
-		$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
-		$sql .= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
-		$sql .= " WHERE pf.fk_paiement = p.rowid";
-		$sql .= " AND pf.fk_facture = ".$fac->id;	
-
-		$result = $db->query($sql);
-		
-		if ($result)
-		  {
-		    $nump = $db->num_rows();
-		    $j = 0; 
-		    
-		    while ($j < $nump)
-		      {
-			$objp = $db->fetch_object();
-			//$var=!$var;
-			print "<tr $bc[$var]>";
-			print '<td align="right">'.dolibarr_print_date($objp->dp)."</td>\n";
-			print '<td><a href="paiement/fiche.php?id='.$objp->rowid.'">'.img_file().' Paiement '.$objp->rowid.'</td>';
-			print "<td>&nbsp;</td>\n";
-			print '<td align="right">'.price($objp->amount).'</td>';
-			$solde = $solde - $objp->amount;
-			print '<td align="right">'.number_format($solde, 2, ',', ' ')."</td>\n";
-			print '</tr>';
-
-			$j++;
-		      }
-		  }
-	      }
-	  }
+            else
+            {
+                print $langs->trans("NoBills");
+            }
+            
+            $i = 0;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($resql);
+                $facs[$i] = $objp->facid;
+                $i++;
+            }
+            $db->free($resql);
+    
+    
+            $solde = 0;
+    
+            // Boucle sur chaque facture
+            for ($i = 0 ; $i < $num ; $i++)
+            {
+                $var=!$var;
+    
+                $fac = new Facture($db);
+                $fac->fetch($facs[$i]);
+    
+                print "<tr $bc[$var]>";
+    
+                print "<td align=\"right\">".dolibarr_print_date($fac->date)."</td>\n";
+                print "<td><a href=\"../compta/facture.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
+    
+                print '<td align="right">'.number_format($fac->total_ttc, 2, ',', ' ')."</td>\n";
+                $solde = $solde + $fac->total_ttc;
+    
+                print '<td align="right">&nbsp;</td>';
+                print '<td align="right">'.number_format($solde, 2, ',', ' ')."</td>\n";
+                print "</tr>\n";
+    
+                // Paiements
+                $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, pf.amount, p.statut";
+    
+                $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
+                $sql .= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
+                $sql .= " WHERE pf.fk_paiement = p.rowid";
+                $sql .= " AND pf.fk_facture = ".$fac->id;
+    
+                $resql = $db->query($sql);
+                if ($resql)
+                {
+                    $nump = $db->num_rows($resql);
+                    $j = 0;
+    
+                    while ($j < $nump)
+                    {
+                        $objp = $db->fetch_object($resql);
+                        //$var=!$var;
+                        print "<tr $bc[$var]>";
+                        print '<td align="right">'.dolibarr_print_date($objp->dp)."</td>\n";
+                        print '<td><a href="paiement/fiche.php?id='.$objp->rowid.'">'.img_file().' Paiement '.$objp->rowid.'</td>';
+                        print "<td>&nbsp;</td>\n";
+                        print '<td align="right">'.price($objp->amount).'</td>';
+                        $solde = $solde - $objp->amount;
+                        print '<td align="right">'.number_format($solde, 2, ',', ' ')."</td>\n";
+                        print '</tr>';
+    
+                        $j++;
+                    }
+                }
+            }
+        }
         else
-	  {
+        {
             dolibarr_print_error($db);
-	  }
+        }
         print "</table>";
-      }        
+    }      
 }
 else
 {
