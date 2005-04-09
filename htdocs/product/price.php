@@ -22,10 +22,10 @@
  */
 
 /**
-	    \file       htdocs/product/price.php
+        \file       htdocs/product/price.php
         \ingroup    product
-		\brief      Page de la fiche produit
-		\version    $Revision$
+        \brief      Page de la fiche produit
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -35,7 +35,7 @@ $langs->load("products");
 $user->getrights('produit');
 
 if (!$user->rights->produit->lire)
-  accessforbidden();
+accessforbidden();
 
 
 $types[0] = $langs->trans("Product");
@@ -49,7 +49,7 @@ $types[1] = $langs->trans("Service");
  *
  */
 
-llxHeader("","","Prix");
+llxHeader("","",$langs->trans("Price"));
 
 $product = new Product($db);
 $result = $product->fetch($_GET["id"]);
@@ -68,18 +68,18 @@ $h++;
 
 if($product->type == 0)
 {
-  if ($conf->stock->enabled)
+    if ($conf->stock->enabled)
     {
-      $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-      $head[$h][1] = $langs->trans("Stock");
-      $h++;
+        $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+        $head[$h][1] = $langs->trans("Stock");
+        $h++;
     }
 }
-  
+
 if ($conf->fournisseur->enabled) {
-  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-  $head[$h][1] = $langs->trans("Suppliers");
-  $h++;
+    $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+    $head[$h][1] = $langs->trans("Suppliers");
+    $h++;
 }
 
 $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
@@ -92,53 +92,64 @@ $h++;
 
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
-	      	      
+
 
 $sql = "SELECT p.rowid, p.price, ".$db->pdate("p.date_price")." as dp, u.login";
 $sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, llx_user as u";
 $sql .= " WHERE fk_product = ".$product->id;
 $sql .= " AND p.fk_user_author = u.rowid ";
 $sql .= " ORDER BY p.date_price DESC ";
-$sql .= $db->plimit(15 ,0);
+$sql .= $db->plimit();
 $result = $db->query($sql) ;
 
 if ($result)
 {
-  $num = $db->num_rows();
+    $num = $db->num_rows($result);
 
-  $i = 0;
-    
-  if ($num > 0)
+    if (! $num)
     {
-      print '<table class="noborder" width="100%">';
+        $result = $db->free($result) ;
 
-      print '<tr class="liste_titre">';
-      print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
-      print '<td>'.$langs->trans("Price").'</td>';
-      print '<td>'.$langs->trans("ChangedBy").'</td>';
-      print '</tr>';
-    
-      $var=True;
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object( $i);
-	  $var=!$var;
-	  print "<tr $bc[$var]>";
-	  print "<td>".dolibarr_print_date($objp->dp,"%d %B %Y %H:%M:%S")."</td>";
-	  print "<td>".price($objp->price)."</td>";
-	  print "<td>".$objp->login."</td>";
+        // Il doit au moins y avoir la ligne de prix initial.
+        // On l'ajoute donc pour remettre à niveau pb vieilles versions
+        $product->update_price($product->id, $user);
 
-	  print "</tr>\n";
-	  $i++;
-	}
-      $db->free();
-      print "</table>";
-      print "<br>";
+        $result = $db->query($sql) ;
+        $num = $db->num_rows($result);
+    }
+
+    if ($num > 0)
+    {
+        print '<table class="noborder" width="100%">';
+
+        print '<tr class="liste_titre">';
+        print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
+        print '<td>'.$langs->trans("Price").'</td>';
+        print '<td>'.$langs->trans("ChangedBy").'</td>';
+        print '</tr>';
+
+        $var=True;
+        $i = 0;
+        while ($i < $num)
+        {
+            $objp = $db->fetch_object($result);
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            print "<td>".dolibarr_print_date($objp->dp,"%d %B %Y %H:%M:%S")."</td>";
+            print "<td>".price($objp->price)."</td>";
+            print "<td>".$objp->login."</td>";
+
+            print "</tr>\n";
+            $i++;
+        }
+        $db->free($result);
+        print "</table>";
+        print "<br>";
     }
 }
 else
 {
-  dolibarr_print_error($db);
+    dolibarr_print_error($db);
 }
 
 print "</div>\n";
@@ -146,18 +157,18 @@ print "</div>\n";
 
 
 /* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
+/*                                                                            */
+/* Barre d'action                                                             */
+/*                                                                            */
 /* ************************************************************************** */
 
 print "\n<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '')
 {
-  if ($user->rights->produit->modifier || $user->rights->produit->creer)
+    if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
+        print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
     }
 }
 
