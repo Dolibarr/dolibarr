@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ $head[$h][0] = "fiche.php?id=$account->id";
 $head[$h][1] = $langs->trans("BankAccount")." $account->number";
 $h++;
 
-dolibarr_fiche_head($head, 1);
+dolibarr_fiche_head($head, 1, $soc->nom);
 
 $account = new CompanyBankAccount($db, $soc->id);
 $account->fetch();
