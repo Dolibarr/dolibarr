@@ -60,6 +60,8 @@ print '<table class="noborder" width="100%">';
 
 
 // Charge les modules soumis a permissions
+$db->begin();
+
 $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
 $handle=opendir($dir);
 $modules = array();
@@ -74,12 +76,18 @@ while (($file = readdir($handle))!==false)
             include_once("../includes/modules/$file");
             $objMod = new $modName($db);
             if ($objMod->rights_class) {
+
+                $ret=$objMod->insert_permissions();
+
                 $modules[$objMod->rights_class]=$objMod;
                 //print "modules[".$objMod->rights_class."]=$objMod;";
             }
         }
     }
 }
+
+$db->commit();
+
 
 // Affiche lignes des permissions
 $sql ="SELECT r.id, r.libelle, r.module, r.bydefault";
