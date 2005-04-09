@@ -61,7 +61,7 @@ alter table llx_user drop column module_compta;
 
 alter table llx_user_rights add rowid integer AUTO_INCREMENT PRIMARY KEY;
 
-alter table llx_facture add fk_cond_reglement integer;
+alter table llx_facture add fk_cond_reglement integer DEFAULT 1 NOT NULL;
 alter table llx_facture add fk_mode_reglement integer after fk_cond_reglement ;
  
 alter table llx_socpeople add cp varchar(25) after address;
