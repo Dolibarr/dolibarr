@@ -33,12 +33,9 @@ require("../../tva.class.php");
 $langs->load("companies");
 $langs->load("users");
 
+
 llxHeader();
 
-/*
- * Liste
- *
- */
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 $page=$_GET["page"];
@@ -69,6 +66,7 @@ $resql=$db->query($sql);
 if ($resql)
 {
   $num = $db->num_rows($resql);
+
   print_barre_liste($langs->trans("ListOfTrips"), $page, "index.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
   $i = 0;
@@ -79,10 +77,10 @@ if ($resql)
   print_liste_field_titre($langs->trans("Person"),"index.php","u.name","","&socidp=$socidp",'',$sortfield);
   print "</tr>\n";
 
-  $var=True;
+  $var=true;
   while ($i < $num)
     {
-      $objp = $db->fetch_object();
+      $objp = $db->fetch_object($resql);
       $soc = new Societe($db);
       $soc->fetch($objp->idp);
       $var=!$var;
@@ -98,7 +96,7 @@ if ($resql)
     }
   
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else
 {
