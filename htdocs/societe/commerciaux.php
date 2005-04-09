@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +20,11 @@
  * $Source$
  */
 
-/*!
-  \file       htdocs/societe/commerciaux.php
-  \ingroup    societe
-  \brief      Page d'affectations des commerciaux aux societes
-  \version    $Revision$
+/**
+        \file       htdocs/societe/commerciaux.php
+        \ingroup    societe
+        \brief      Page d'affectations des commerciaux aux societes
+        \version    $Revision$
 */
  
 require("./pre.inc.php");
@@ -78,6 +79,7 @@ if($_GET["socid"] && $_GET["delcommid"])
       Header("Location: commerciaux.php?socid=".$_GET["socid"]);
     }
 }
+
 
 llxHeader();
 
@@ -145,8 +147,7 @@ if($_GET["socid"])
       print '<tr><td>'.$langs->trans("ParentCompany").'</td><td>'.$socm->nom_url.' ('.$socm->code_client.')<br />'.$socm->ville.'</td></tr>';
     }
 
-  /* ********** */
-
+  // Liste les commerciaux
   $sql = "SELECT u.rowid, u.name, u.firstname";
   $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
   $sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -154,27 +155,29 @@ if($_GET["socid"])
   $sql .= " AND sc.fk_user = u.rowid";
   $sql .= " ORDER BY u.name ASC ";
   
-  print '<tr><td valign="top">'.$langs->trans("SalesRepresentative").'</td>';
+  print '<tr><td valign="top">'.$langs->trans("SalesRepresentatives").'</td>';
   print '<td colspan="3">';
 
-  $result = $db->query($sql);
-  if ($result)
+  $resql = $db->query($sql);
+  if ($resql)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $i = 0;
       
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object();    
+	  $obj = $db->fetch_object($resql);
+	  print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+      print img_object($langs->trans("ShowUser"),"user").' ';
 	  print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
-	  print '&nbsp;';
+	  print '</a>&nbsp;';
 	  print '<a href="commerciaux.php?socid='.$_GET["socid"].'&amp;delcommid='.$obj->rowid.'">';
 	  print img_delete();
 	  print '</a><br>';
 	  $i++;
 	}
       
-      $db->free();
+      $db->free($resql);
     }
   else
     {
@@ -199,14 +202,14 @@ if($_GET["socid"])
       $langs->load("users");
       $title=$langs->trans("ListOfUsers");
       
-      $sql = "SELECT u.rowid, u.name, u.firstname";
+      $sql = "SELECT u.rowid, u.name, u.firstname, u.code";
       $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
       $sql .= " ORDER BY u.name ASC ";
       
-      $result = $db->query($sql);
-      if ($result)
+      $resql = $db->query($sql);
+      if ($resql)
 	{
-	  $num = $db->num_rows();
+	  $num = $db->num_rows($resql);
 	  $i = 0;
 	  
 	  print_titre($title);
@@ -215,6 +218,7 @@ if($_GET["socid"])
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
 	  print '<td>'.$langs->trans("Name").'</td>';
+	  print '<td>'.$langs->trans("Code").'</td>';
 	  print '<td>&nbsp;</td>';
 	  print "</tr>\n";
 	  
@@ -222,10 +226,14 @@ if($_GET["socid"])
 	  
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object();    
+	      $obj = $db->fetch_object($resql);    
 	      $var=!$var;    
 	      print "<tr $bc[$var]><td>";
-	      print stripslashes($obj->firstname)." " .stripslashes($obj->name)."</td>\n";
+    	  print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+	      print img_object($langs->trans("ShowUser"),"user").' ';
+	      print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
+          print '</a>';
+          print '</td><td>'.$obj->code.'</td>';
 	      print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
 	      
 	      print '</tr>'."\n";
@@ -233,7 +241,7 @@ if($_GET["socid"])
 	    }
 	  
 	  print "</table>";
-	  $db->free();
+	  $db->free($resql);
 	}
       else
 	{
