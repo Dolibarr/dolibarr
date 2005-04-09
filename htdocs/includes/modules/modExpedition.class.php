@@ -52,7 +52,8 @@ class modExpedition extends DolibarrModules
     $this->family = "crm";
     $this->name = "Expedition";
     $this->description = "Gestion des expéditions";
-    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+    $this->revision = explode(" ","$Revision$");
+    $this->version = $this->revision[1];
     $this->const_name = "MAIN_MODULE_EXPEDITION";
     $this->const_config = MAIN_MODULE_EXPEDITION;
     $this->special = 0;
@@ -110,6 +111,9 @@ class modExpedition extends DolibarrModules
     $this->rights[4][2] = 'd';
     $this->rights[4][3] = 0;
     $this->rights[4][4] = 'supprimer';
+
+    // Dir
+    $this->dirs[0] = DOL_DATA_ROOT."/expedition";
 
     $sql = array();
 
