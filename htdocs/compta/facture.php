@@ -632,7 +632,7 @@ if ($_GET["action"] == 'create')
 	      }
 	      for ($i = 1 ; $i <= $NBLINES ; $i++)
 		{
-		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
+		  print '<tr><td><select class="flat" name="idprod'.$i.'">'.$opt.'</select></td>';
 		  print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
 		  print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0">%</td>';
 		  print '<td>&nbsp;</td>';
@@ -666,7 +666,7 @@ if ($_GET["action"] == 'create')
 		  
 		  if ($num > 0)
 		    {
-		      print '<tr><td colspan="3">Factures récurrentes : <select name="fac_rec">';
+		      print '<tr><td colspan="3">Factures récurrentes : <select class="flat" name="fac_rec">';
 		      print '<option value="0" selected></option>';
 		      while ($i < $num)
 			{

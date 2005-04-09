@@ -21,7 +21,8 @@
  *
  */
 
-/**    	\file       htdocs/compta/fiche.php
+/**
+    	\file       htdocs/compta/fiche.php
 		\ingroup    compta
 		\brief      Page de fiche compta
 		\version    $Revision$
@@ -206,8 +207,12 @@ if ($socid > 0)
                 $var=!$var;
     
                 $fac = new Facture($db);
-                $fac->fetch($facs[$i]);
-    
+                $ret=$fac->fetch($facs[$i]);
+                if ($ret < 0) 
+                {
+                    print $fac->error."<br>";
+                    continue;
+                }
                 print "<tr $bc[$var]>";
     
                 print "<td align=\"right\">".dolibarr_print_date($fac->date)."</td>\n";
