@@ -108,7 +108,7 @@ if ($result)
 
     if (! $num)
     {
-        $result = $db->free($result) ;
+        $db->free($result) ;
 
         // Il doit au moins y avoir la ligne de prix initial.
         // On l'ajoute donc pour remettre à niveau pb vieilles versions
