@@ -20,7 +20,8 @@
  * $Source$
  */
 
-/**	    \file       htdocs/compta/bank/rappro.php
+/**
+	    \file       htdocs/compta/bank/rappro.php
 		\ingroup    banque
 		\brief      Page de rapprochement bancaire
 		\version    $Revision$
@@ -60,7 +61,7 @@ if ($_POST["action"] == 'rappro')
     	$result = $db->query($sql);
       }
     } else {
-      print dolibarr_print_error($db,$sql);
+      dolibarr_print_error($db);
     }
   }
   else {
@@ -75,7 +76,7 @@ if ($_GET["action"] == 'del') {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=".$_GET["rowid"];
   $result = $db->query($sql);
   if (!$result) {
-    print dolibarr_print_error($db,$sql);
+    dolibarr_print_error($db);
   }
 }
 
@@ -84,14 +85,14 @@ $result = $db->query($sql);
 $options="";
 if ($result) {
   $var=True;  
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   while ($i < $num) {
     if ($options == "") { $options = "<option value=\"0\" selected>&nbsp;</option>"; }
     $obj = $db->fetch_object($result);
     $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
   }
-  $db->free();
+  $db->free($result);
 }
 
 
@@ -110,7 +111,7 @@ $result = $db->query($sql);
 if ($result)
 {
   $var=True;  
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
 
   if ($num == 0) {
     header("Location: /compta/bank/account.php?account=".$_GET["account"]);
@@ -127,18 +128,19 @@ if ($result)
 
     // Affiche nom des derniers relevés
     $nbmax=5;
+    $liste="";
+  
     $sql = "SELECT distinct num_releve FROM ".MAIN_DB_PREFIX."bank";
     $sql.= " WHERE fk_account=".$_GET["account"];
     $sql.= " ORDER BY num_releve DESC";
     $sql.= " LIMIT ".($nbmax+1);
     print $langs->trans("LastAccountStatements").' : ';
     $resultr=$db->query($sql);
-    $liste="";
     if ($resultr)
     {
-        $num=$db->num_rows();
+        $numr=$db->num_rows($resultr);
         $i=0;
-        while (($i < $num) && ($i < $nbmax))
+        while (($i < $numr) && ($i < $nbmax))
         {
             $objr = $db->fetch_object($resultr);
             $last_releve = $objr->num_releve;
