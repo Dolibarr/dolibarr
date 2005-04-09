@@ -542,7 +542,7 @@ if ($_socid > 0)
         print '<tr>';
         print '<td colspan="2" valign="top">';
 
-        $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+        $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
         $sql .= " WHERE a.fk_soc = $objsoc->id ";
         $sql .= " AND u.rowid = a.fk_user_author";
@@ -589,11 +589,19 @@ if ($_socid > 0)
 
                 if ($obj->propalrowid)
                 {
-                    print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
+                    print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task");
+                      $transcode=$langs->trans("Action".$obj->acode);
+                      $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                      print $libelle;
+                    print '</a></td>';
                 }
                 else
                 {
-                    print '<td width="40%"><a href="action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
+                    print '<td width="40%"><a href="action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
+                      $transcode=$langs->trans("Action".$obj->acode);
+                      $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                      print $libelle;
+                    print '</a></td>';
                 }
                 /*
                  * Contact pour cette action
@@ -629,7 +637,7 @@ if ($_socid > 0)
         print '<tr>';
         print '<td valign="top">';
 
-        $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+        $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
         $sql .= " WHERE a.fk_soc = $objsoc->id ";
         $sql .= " AND u.rowid = a.fk_user_author";
@@ -679,11 +687,19 @@ if ($_socid > 0)
 
                 if ($obj->propalrowid)
                 {
-                    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
+                    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task");
+                      $transcode=$langs->trans("Action".$obj->acode);
+                      $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                      print $libelle;
+                    print '</a></td>';
                 }
                 else
                 {
-                    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
+                    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
+                      $transcode=$langs->trans("Action".$obj->acode);
+                      $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                      print $libelle;
+                    print '</a></td>';
                 }
                 /*
                 * Contact pour cette action

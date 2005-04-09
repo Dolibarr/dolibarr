@@ -361,7 +361,6 @@ class Facture
 	{
 	  $sql .= " AND f.fk_soc = ".$societe_id;
 	}
-
       $result = $this->db->query($sql);
 
       if ($result)
