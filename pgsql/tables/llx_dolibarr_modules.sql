@@ -3,11 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ========================================================================
--- Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
---
--- $Id$
--- $Source$
+-- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,17 +19,18 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
+-- $Id$
+-- $Source$
+--
 -- ========================================================================
 
 
-create table llx_c_methode_commande_fournisseur
+create table llx_dolibarr_modules
 (
-  rowid SERIAL PRIMARY KEY,
-  "code"     varchar(30),
-  "libelle"  varchar(60),
-  "active"   smallint default 1  NOT NULL,
-  UNIQUE(code)
+  numero         integer     PRIMARY KEY,
+  "active"         smallint     DEFAULT 0 NOT NULL,
+  "active_date"    timestamp    NOT NULL,
+  "active_version" varchar(25) NOT NULL
 );
 
-CREATE INDEX idx_llx_c_methode_commande_fournisseur_code ON llx_c_methode_commande_fournisseur (code);
 
