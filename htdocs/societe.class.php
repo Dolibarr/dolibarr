@@ -58,6 +58,9 @@ class Societe {
   var $fournisseur;
   var $code_client;
   var $code_compta;
+  
+  var $stcomm_id;
+  var $statut_commercial;
  
 
   /**
@@ -371,12 +374,15 @@ class Societe {
   }
   
   /**
-   *    \brief      Recupére l'objet societe
+   *    \brief      Charge depuis la base l'objet societe
    *    \param      socid       id de la société à charger en mémoire
+   *    \return     int         >0 si ok, <0 si erreur
    */
 	 
   function fetch($socid)
   {
+    global $langs;
+    
     $this->id = $socid;
 
     $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
@@ -421,8 +427,10 @@ class Societe {
 	    $this->pays_code = $obj->fk_pays?$obj->pays_code:'';
 	    $this->pays = $obj->fk_pays?$obj->pays:'';
 
-	    $this->stcomm_id = $obj->fk_stcomm; // statut commercial
-	    $this->statut_commercial = $obj->stcomm; // statut commercial
+        $transcode=$langs->trans("StatusProspect".$obj->fk_stcomm);
+        $libelle=($transcode!="StatusProspect".$obj->fk_stcomm?$transcode:$obj->stcomm);
+	    $this->stcomm_id = $obj->fk_stcomm;     // id statut commercial
+	    $this->statut_commercial = $libelle;    // libelle statut commercial
 
 	    $this->url = $obj->url;
 
