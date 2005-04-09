@@ -317,13 +317,11 @@ if ($socid > 0)
       print "<p />";
 
       /*
-       *
        *      Listes des actions a faire
-       *
        */
       print '<table width="100%" class="noborder">';
       print '<tr class="liste_titre"><td colspan="8">'.$langs->trans("ActionsToDo").'</td></tr>';
-      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid, a.note ";
+      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid, a.note ";
       $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
       $sql .= " WHERE a.fk_soc = $societe->id ";
       $sql .= " AND u.rowid = a.fk_user_author";
@@ -372,12 +370,19 @@ if ($socid > 0)
 	      print '<td width="40%">';
 	      if ($obj->propalrowid)
 		{
-		  print '<a href="../propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a>';
+		  print '<a href="../propal.php?propalid='.$obj->propalrowid.'">';
+          $transcode=$langs->trans("Action".$obj->acode);
+          $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+          print $libelle;
+		  print '</a>';
 		}
 	      else
 		{
 		  print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowAction"),"task").' ';
-		  print $obj->libelle.'</a>';
+          $transcode=$langs->trans("Action".$obj->acode);
+          $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+          print $libelle;
+		  print '</a>';
 		}
 	      print '</td>';
 	      
@@ -422,9 +427,7 @@ if ($socid > 0)
 	}
       
       /*
-       *
        *      Listes des actions effectuees
-       *
        */
       $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid, a.note ";
       $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";

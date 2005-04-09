@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/cactioncomm.class.php
+/**
+        \file       htdocs/cactioncomm.class.php
         \ingroup    commercial
         \brief      Fichier de la classe des types d'actions commerciales
         \version    $Revision$
@@ -33,120 +34,147 @@
 */
 
 class CActioncomm {
+  var $db;
+
   var $id;
   var $libelle;
+  var $error;
+  
+  var $type_actions=array();
+  
 
   /**
    *    \brief      Constructeur
    *    \param      DB          Handler d'accès base de donnée
    */
-  function CActioncomm($DB=0)
+  function CActioncomm($DB)
     {
       $this->db = $DB;
     }
 
   /**
    *    \brief      Charge l'objet type d'action depuis la base
-   *    \param      db          handle d'accès base
    *    \param      id          id du type d'action à récupérer
    *    \return     int         1=ok, 0=aucune action, -1=erreur
    */
-  function fetch($db, $id)
+  function fetch($id)
     {
+        
+        $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_actioncomm WHERE id=$id;";
+        
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
+        
+                $this->id = $id;
+                $this->libelle = $obj->libelle;
+        
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
 
-      $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_actioncomm WHERE id=$id;";
-      
-      if ($db->query($sql) )
-	{
-	  if ($db->num_rows())
-	    {
-	      $obj = $db->fetch_object();
-	      
-	      $this->id = $id;
-	      $this->libelle = $obj->libelle;
-	      
-	      $db->free();
-
-	      return 1;
-	    }
-	  else
-	    {
-	      return 0;
-	    }
-	}
-      else
-	{
-	  print $db->error();
-	  return -1;
-	}    
+            $this->db->free($resql);
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
     }
 
   /*
-   *    \brief      Renvoi la liste des type d'actions existant
-   *    \param      active      1 ou 0 pour un filtre sur l'etat actif ou non ('' par defaut)
-   *    \return     array       tableau des types d'actions actifs
+   *    \brief      Renvoi la liste des types d'actions existant
+   *    \param      active      1 ou 0 pour un filtre sur l'etat actif ou non ('' par defaut = pas de filtre)
+   *    \return     array       tableau des types d'actions actifs si ok, <0 si erreur
    */
   function liste_array($active='')
   {
+    global $langs;
+    $langs->load("commercial");
+    
     $ga = array();
 
-    $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm";
+    $sql = "SELECT id, code, libelle";
+    $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
     if ($active != '') {
         $sql.=" WHERE active=$active";
     }
     $sql .= " ORDER BY id";
-
-    if ($this->db->query($sql) )
-      {
-	$nump = $this->db->num_rows();
-	
-	if ($nump)
-	  {
-	    $i = 0;
-	    while ($i < $nump)
-	      {
-		$obj = $this->db->fetch_object();
-		
-		$ga[$obj->id] = $obj->libelle;
-		$i++;
-	      }
-	  }
-	return $ga;
-      }
+    
+    $resql=$this->db->query($sql);
+    if ($resql)
+    {
+        $nump = $this->db->num_rows($resql);
+    
+        if ($nump)
+        {
+            $i = 0;
+            while ($i < $nump)
+            {
+                $obj = $this->db->fetch_object($resql);
+    
+                $transcode=$langs->trans("Action".$obj->code);
+                $ga[$obj->id] = ($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+                $i++;
+            }
+        }
+        $this->liste_array=$ga;
+        return $ga;
+    }
     else
-      {
-    dolibarr_print_error($this->db);
-      }    
+    {
+        return -1;
+    }
   }
 
   
   /*
-   *    \brief      Renvoie le nom d'un type d'action
+   *    \brief      Renvoie le nom sous forme d'un libellé traduit d'un type d'action
    *    \param      id          id du type d'action
    *    \return     string      libelle du type d'action
    */
   function get_nom($id)
     {
-
-      $sql = "SELECT libelle nom FROM ".MAIN_DB_PREFIX."c_actioncomm WHERE id='$id';";
+      global $langs;
       
-      $result = $this->db->query($sql);
-      
-    if ($result)
+      if (! isset($this->type_actions[$id]))
       {
-    	if ($this->db->num_rows())
-    	  {
-    	    $obj = $this->db->fetch_object($result);
-    	    return $obj->nom;
-    	  }
-    	$this->db->free();
-       }
-     else {
-        dolibarr_print_error($db);   
-       }    
-       
-    }
-   
+        // Si valeur non disponible en cache
+        $sql = 'SELECT code, libelle';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm';
+        $sql.= " WHERE id='".$id."'";
+        
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+
+                $transcode=$langs->trans("Action".$obj->code);
+                $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+                
+                $this->type_actions[$id]=$libelle; // Met en cache
+                return $libelle;
+            }
+            $this->db->free($result);
+        }
+        else {
+            dolibarr_print_error($db);   
+        }    
+        
+      }
+      else {
+        // Si valeur disponible en cache
+        return $this->type_actions[$id]; 
+      }
+   }
   
 }    
 ?>

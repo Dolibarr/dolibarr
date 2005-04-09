@@ -102,7 +102,10 @@ if ($resql)
 	{
 	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
-	  print "<tr $bc[$var]><td><a href=\"prospects.php?page=0&amp;stcomm=".$obj->id."\">".$obj->libelle."</a></td><td>".$obj->cc."</td></tr>";
+	  print "<tr $bc[$var]><td><a href=\"prospects.php?page=0&amp;stcomm=".$obj->id."\">";
+	  print img_action($langs->trans("Show"),$obj->id).' ';
+	  print $langs->trans("StatusProspect".$obj->id);
+	  print "</a></td><td>".$obj->cc."</td></tr>";
 	  $i++;
 	}
       print "</table><br>";
@@ -149,7 +152,7 @@ if ($conf->propal->enabled)
  */
 print '</td><td valign="top" width="70%">';
 
-$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc AND a.fk_user_action = $user->id";
 $sql .= " ORDER BY a.datea DESC";
@@ -171,9 +174,13 @@ if ($resql)
 	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
 	  
-	  print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id."\">".img_object($langs->trans("ShowAction"),"task").' '."$obj->libelle $obj->label</a></td>";
-	  print '<td><a href="fiche.php?id='.$obj->idp.'">'.$obj->sname.'</a></td>';
+	  print "<tr $bc[$var]><td>".dolibarr_print_date($obj->da)."</td>";
+
+      $transcode=$langs->trans("Action".$obj->code);
+      $libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id."\">".img_object($langs->trans("ShowAction"),"task").' '.$libelle.'</a></td>';
+
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->sname.'</a></td>';
 	  $i++;
 	}
       print "</table><br>";
@@ -212,7 +219,7 @@ if ( $db->query($sql) )
 	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"../propal.php?propalid=".$obj->rowid."\">";
 	  print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
 
-	  print "<td width=\"30%\"><a href=\"fiche.php?id=$obj->idp\">$obj->nom</a></td>\n";      
+	  print "<td width=\"30%\"><a href=\"fiche.php?id=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
 	  print "<td align=\"right\">";
 	  print dolibarr_print_date($obj->dp)."</td>\n";	  
 	  print "<td align=\"right\">".price($obj->price)."</td></tr>\n";

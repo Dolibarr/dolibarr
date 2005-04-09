@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -39,6 +39,7 @@ class ActionComm
   var $db;
 
   var $date;
+  var $type_code;
   var $type;
   var $priority;
   var $user;
@@ -131,17 +132,24 @@ class ActionComm
    */
   function fetch($id)
     {      
-      $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, a.label, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent ";
-      $sql .= "FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
+        global $langs;
+        
+      $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, a.label, c.code, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent";
+      $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
+      $sql.= " WHERE a.id=$id AND a.fk_action=c.id;";
 
-      if ($this->db->query($sql) )
+      $resql=$this->db->query($sql);
+      if ($resql)
 	{
-	  if ($this->db->num_rows())
+	  if ($this->db->num_rows($resql))
 	    {
-	      $obj = $this->db->fetch_object();
+	      $obj = $this->db->fetch_object($resql);
 	      
 	      $this->id = $id;
-	      $this->type = $obj->libelle;
+	      $this->type_code = $obj->code;
+          $transcode=$langs->trans("Action".$obj->code);
+          $type_libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+	      $this->type = $type_libelle;
 	      $this->libelle = $obj->label;
 	      $this->date = $obj->da;
 	      $this->note =$obj->note;
@@ -152,11 +160,11 @@ class ActionComm
 	      $this->fk_facture = $obj->fk_facture;
 	      if ($this->fk_facture)
 		{
-		  $this->objet_url = '<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">Facture</a>';
+		  $this->objet_url = '<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">'.$langs->trans("Bill").'</a>';
 		}
 	      
-	      $this->db->free();
 	    }
+      $this->db->free($resql);
 	}
       else
 	{
