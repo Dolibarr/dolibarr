@@ -286,16 +286,19 @@ elseif ($_GET["action"] == 'edit')
    */
     
   print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
+  print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
   print '<input type="hidden" name="action" value="update">';
   print '<input type="hidden" name="contactid" value="'.$contact->id.'">';
   print '<input type="hidden" name="old_name" value="'.$contact->name.'">';
   print '<input type="hidden" name="old_firstname" value="'.$contact->firstname.'">';
   print '<table class="border" width="100%">';
 
-  if ($_GET["socid"] > 0)
+  if ($contact->socid > 0)
     {
-      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">'.$objsoc->nom.'</td>';
-      print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
+      $objsoc = new Societe($db);
+      $objsoc->fetch($contact->socid);
+
+      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">'.$objsoc->nom_url.'</td></tr>';
     }
 
   print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="5">';
@@ -331,7 +334,7 @@ elseif ($_GET["action"] == 'edit')
   print '</textarea></td></tr>';
 
   print '<tr><td>Contact facturation</td><td colspan="5">';
-  print $form->selectyesno("facturation");
+  print $form->selectyesno("facturation",$contact->facturation);
   print '</td></tr>';
 
   print '<tr><td colspan="6" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
@@ -346,85 +349,60 @@ else
    *
    */
     
-  print '<table class="noborder" width="100%">';
+  print '<table class="border" width="100%">';
 
   if ($contact->socid > 0)
     {
       $objsoc = new Societe($db);
       $objsoc->fetch($contact->socid);
 
-      print '<tr><td>'.$langs->trans("Company").' : '.$objsoc->nom_url.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">'.$objsoc->nom_url.'</td></tr>';
     }
 
+  print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="5">';
   //TODO Aller chercher le libellé de la civilite a partir de l'id $contact->civilite_id
   //print '<tr><td valign="top">Titre : '.$contact->civilite."<br>";
-
-  print '<tr><td valign="top">';
-  
-  if ($contact->name || $contact->firstname)
-    {
-      print $langs->trans("Name").' : '.$contact->name.' '.$contact->firstname ."<br>";
-    }
-  
-  if ($contact->poste)
-    print 'Poste : '.$contact->poste ."<br>";
-  
-  if ($contact->email)
-    {
-      print $langs->trans("EMail").' : '.$contact->email ."<br>";
-      
-      if (!ValidEmail($contact->email))
-	{
-	  print "<b>".$langs->trans("ErrorBadEMail",$contact->email)."</b><br>";
-	}
-      
-      /*
-       * Pose des problèmes en cas de non connexion au Réseau
-       * et en cas ou la fonction checkdnsrr n'est pas disponible dans php
-       * (cas fréquent sur certains hébergeurs)
-       */
-      /*
-	if (!check_mail($contact->email))
-	{
-	print "<b>Email invalide, nom de domaine incorrecte !</b><br>";
-	}
-      */
-      
-    }
-  
-  if ($contact->address || $contact->ville)
-    {
-      print $langs->trans("Address").' :<br>'.$contact->address ."<br>";
-      print $contact->cp . " ".$contact->ville ."<br>";
-    }
-
-  if ($contact->jabberid)
-    print 'Jabber : '.$contact->jabberid ."<br>";
-  
-  if($contact->user_id)
-    print $langs->trans("UserWithDolibarrAccess").': <a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$contact->user_id.'">'.img_object($langs->trans("ShowUser"),"user").' '.$langs->trans("UserCard").'</a><br>';
-  
-  print '</td><td valign="top">';
-  
-  if ($contact->phone_pro)
-    print 'Tel Pro : '.$contact->phone_pro ."<br>";
-  
-  if ($contact->phone_perso)
-    print 'Tel Perso : '.$contact->phone_perso."<br>";
-
-  if($contact->phone_mobile)
-    print 'Portable : '.$contact->phone_mobile."<br>";
-
-  if($contact->fax)
-    print $langs->trans("Fax").' : '.$contact->fax."<br>";
-
+  print $contact->civilite_id;
   print '</td></tr>';
 
-  if ($contact->note) {
-    print '<tr><td>';
-    print nl2br($contact->note);
-    print '</td></tr>';
-  }
+  print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+  print '<td>'.$langs->trans("Firstname").'</td><td>'.$contact->firstname.'</td>';
+
+  print '<td width="15%">Tel Pro</td><td width="15%">'.$contact->phone_pro.'</td></tr>';
+
+  print '<tr><td>Poste/Fonction</td><td colspan="3">'.$contact->poste.'</td>';
+
+  print '<td>Tel Perso</td><td>'.$contact->phone_perso.'</td></tr>';
+
+  print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.$contact->address.'</td>';
+
+  print '<td>Portable</td><td>'.$contact->phone_mobile.'</td></tr>';
+
+  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$contact->cp.'&nbsp;';
+  print $contact->ville.'</td>';
+
+  print '<td>'.$langs->trans("Fax").'</td><td>'.$contact->fax.'</td></tr>';
+
+  print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="5">';
+      if ($contact->email && ! ValidEmail($contact->email))
+	{
+	  print '<div class="error">'.$langs->trans("ErrorBadEMail",$contact->email)."</div>";
+	}
+    else
+    {
+        print $contact->email;
+    }
+  print '</td></tr>';
+
+  print '<tr><td>Jabberid</td><td colspan="5">'.$contact->jabberid.'</td></tr>';
+
+  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5">';
+  print nl2br($contact->note);
+  print '</td></tr>';
+
+  print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="5">';
+  print $yesno[$contact->facturation];
+  print '</td></tr>';
 
   print "</table><br>";
   
