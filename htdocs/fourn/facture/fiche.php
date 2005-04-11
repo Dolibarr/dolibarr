@@ -182,9 +182,7 @@ if ($_GET["action"] == 'add_ligne')
 /*
  *
  */
-llxHeader();
 
-if ($mesg) { print "<br>$mesg<br>"; }
 
 
 /*
@@ -195,6 +193,10 @@ if ($mesg) { print "<br>$mesg<br>"; }
 
 if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
 {
+
+  llxHeader();
+  if ($mesg) { print "<br>$mesg<br>"; }
+
   if ($_GET["action"] == 'copy')
     {
       $fac_ori = new FactureFournisseur($db);
@@ -300,6 +302,17 @@ else
 
       $fac = new FactureFournisseur($db);
       $fac->fetch($_GET["facid"]);
+
+      $societe = new Fournisseur($db);
+
+      if ( $societe->fetch($fac->socidp) )
+	{
+	  $addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$fac->socidp;
+	  $addons[0][1] = $societe->nom;
+	}
+      llxHeader('','', $addons);
+
+      if ($mesg) { print "<br>$mesg<br>"; }
 
       if ($_GET["action"] == "edit")
 	{
@@ -603,14 +616,11 @@ else
 	  print "<a class=\"butAction\" href=\"fiche.php?facid=$fac->id&amp;action=copy&amp;socid=$fac->socidp\">".$langs->trans('Copy')."</a>";
 	}
       
-      if ($fac->statut == 0 && $user->societe_id == 0)
+      if ($_GET["action"] != "edit" && $fac->statut == 0 && $user->rights->fournisseur->facture->creer)
 	{
-	  if ($_GET["action"] != "edit")
-	    {
 	      print '<a class="butActionDelete" href="index.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-	    }
 	}
-
+      
       print "</div>";
       
     }
