@@ -81,7 +81,7 @@ function llxHeader($head = "", $title="", $addons='') {
   
   if ($conf->produit->enabled || $conf->service->enabled)
   {
-    $menu->add(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("Products"));
+    $menu->add(DOL_URL_ROOT."/fourn/product/", $langs->trans("Products"));
   }
   
   left_menu($menu->liste);
