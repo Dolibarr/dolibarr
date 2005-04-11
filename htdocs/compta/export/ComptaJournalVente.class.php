@@ -100,7 +100,7 @@ class ComptaJournalVente  {
 	      $num = $this->db->num_rows($resql);
 	      $i = 0; 
 	      $var = True;
-	      $journ = 'VE';
+	      $journ = 'VI';
 	      $hligne = 5;
 
 	      $wc = array(0,14,6,16,16,90,16,12,4,16);
@@ -186,7 +186,7 @@ class ComptaJournalVente  {
 		      $oldfac = $obj->facid;
 
 		      $pdf->cell($wc[1],$hligne,strftime('%d%m%y',$obj->dp));
-		      $pdf->cell($wc[2],$hligne,'VE');
+		      $pdf->cell($wc[2],$hligne,'VI');
 		      $pdf->cell($wc[3],$hligne,'4110000');
 		      $pdf->cell($wc[4],$hligne,$obj->code_compta);
 		      $pdf->cell($wc[5],$hligne,$socnom .' '.$libelle);
@@ -197,7 +197,7 @@ class ComptaJournalVente  {
 		      $pdf->ln();
 		      
 		      $pdf->cell($wc[1],$hligne,strftime('%d%m%y',$obj->dp));
-		      $pdf->cell($wc[2],$hligne,'VE');
+		      $pdf->cell($wc[2],$hligne,'VI');
 		      $pdf->cell($wc[3],$hligne,'4457119');
 		      $pdf->cell($wc[4],$hligne,'');
 		      $pdf->cell($wc[5],$hligne,$socnom .' '.$libelle);
@@ -209,7 +209,7 @@ class ComptaJournalVente  {
 		    }
 
 		  $pdf->cell($wc[1],$hligne,strftime('%d%m%y',$obj->dp));
-		  $pdf->cell($wc[2],$hligne,'VE');
+		  $pdf->cell($wc[2],$hligne,'VI');
 		  $pdf->cell($wc[3],$hligne,$obj->numero);
 		  $pdf->cell($wc[4],$hligne,'');
 		  $pdf->cell($wc[5],$hligne,$socnom .' '.$libelle);
