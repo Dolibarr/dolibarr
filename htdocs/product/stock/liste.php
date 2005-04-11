@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,8 +46,8 @@ if (! $sortfield) $sortfield="e.label";
 if (! $sortorder) $sortorder="ASC";
 
   
-$sql = "SELECT e.rowid as ref, e.label, e.statut, e.lieu, e.address, e.cp, e.ville, e.fk_pays";
-$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql  = "SELECT e.rowid as ref, e.label, e.statut, e.lieu, e.address, e.cp, e.ville, e.fk_pays";
+$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
 $result = $db->query($sql) ;
@@ -83,7 +83,7 @@ if ($result)
           print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
           print '<td>'.$objp->label.'</td>';
           print '<td>'.$entrepot->LibStatut($objp->statut).'</td>';
-          print '<td>'.$entrepot->lieu.'</td>';
+          print '<td>'.$objp->lieu.'</td>';
           print "</tr>\n";
           $i++;
         }
