@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
  * $Source$
  */
 
-/** 	\file       htdocs/docsoc.php
+/**
+     	\file       htdocs/docsoc.php
 		\brief      Fichier onglet documents liés à la société
 		\ingroup    societe
 		\version    $Revision$
@@ -47,7 +48,7 @@ if (! is_dir($upload_dir))
   umask(0);
   if (! mkdir($upload_dir, 0755))
     {
-      print "Impossible de créer $upload_dir";
+      print $langs->trans("ErrorCanNotCreateDir",$upload_dir);
     }
 }
 
@@ -57,19 +58,19 @@ if (! is_dir($upload_dir))
  */
 if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 {
-  if (is_dir($upload_dir))
+    if (is_dir($upload_dir))
     {
-      if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
-	{
-	  $mesg = '<div class="ok">Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s.</div>';
-	  //print_r($_FILES);
-	}
-      else
-	{
-	  $mesg = '<div class="error">Le fichier n\'a pas été téléchargé</div>';
-	  // print_r($_FILES);
-	}
-      
+        if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
+        {
+            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+            //print_r($_FILES);
+        }
+        else
+        {
+            // Echec transfert (fichier dépassant la limite ?)
+            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+            // print_r($_FILES);
+        }
     }
 }
 
@@ -85,10 +86,9 @@ if ($_GET["action"]=='delete')
   $mesg = '<div class="ok">Le fichier a été supprimé</div>';
 }
 
+
 /*
- *
  * Mode fiche
- *
  *
  */
 
@@ -152,7 +152,6 @@ if ($socid > 0)
        * 
        */
 
-      print_titre("Documents associés");
 
       if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 	{
@@ -174,7 +173,7 @@ if ($socid > 0)
 	}
       else
 	{
-	  print "La gestion des fichiers associés est désactivée sur ce serveur";
+	  print $langs->trans("ErrorAttachedFilesDisabled").".<br>";
 	}
       print '<br></div>';
 
@@ -183,11 +182,11 @@ if ($socid > 0)
 
 
       // Affiche liste des documents existant
+      print_titre($langs->trans("AttachedFiles"));
 
       clearstatcache();
 
       $handle=opendir($upload_dir);
-
       if ($handle)
 	{
 	  print '<table width="100%" class="noborder">';
@@ -218,7 +217,7 @@ if ($socid > 0)
 	}
       else
 	{
-	  print "Impossible d'ouvrir : <b>".$upload_dir."</b>";
+	  print $langs->trans("ErrorCanNotReadDir",$upload_dir);
 	}
     }
   else
