@@ -94,14 +94,7 @@ else
     {
       $sql .= " AND p.label like '%".$snom."%'";
     }
-  if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
-    {
-      $sql .= " AND p.envente = ".$_GET["envente"];
-    }
-  else
-    {
-      $sql .= " AND p.envente = 1";
-    }
+
 }
 
 if ($fourn_id > 0)
@@ -125,38 +118,12 @@ if ($result)
         Header("Location: fiche.php?id=$objp->rowid");
     }
     
-    if (isset($_GET["envente"]) || isset($_POST["envente"])) {
-        $envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
-    }
-    else {
-        $envente=1;
-    }
-    
-    if (! $envente)
-    {
-        if (isset($_GET["type"]) || isset($_POST["type"])) {
-            $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
-            if ($type) { $texte = $langs->trans("ServicesNotOnSell"); }
-            else { $texte = $langs->trans("ProductsNotOnSell"); }
-        } else {
-            $texte = $langs->trans("ProductsAndServicesNotOnSell");
-        }
-    }
-    else
-    {
-        if (isset($_POST["type"]) || isset($_GET["type"])) {
-            if ($type) { $texte = $langs->trans("ServicesOnSell"); }
-            else { $texte = $langs->trans("ProductsOnSell"); }
-        } else {
-            $texte = $langs->trans("ProductsAndServicesOnSell");
-        }
-    }
 
   llxHeader("","",$texte);
 
   if ($sref || $snom || $_POST["sall"] || $_POST["search"])
     {
-      print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
+      print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom, $sortfield, $sortorder,'',$num);
     }
   else
     {
