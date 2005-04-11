@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,70 +22,79 @@
  *
  */
 
-/*!
+/**
         \file       htdocs/about.php
         \brief      Fichier page a propos
         \version    $Revision$
 */
 
-
 require("./pre.inc.php");
+
 
 llxHeader();
 
+
 print_fiche_titre( "Dolibarr ".DOL_VERSION,'');
-?>
 
-<p>
-Dolibarr est publié sous licence GNU/GPL
-</p>
+print '<p>';
+print $langs->trans("Dolibarr est publié sous licence GNU/GPL");
+print '</p>';
 
-<p>
-Dolibarr est développé par :
-<ul>
-<li><a target="blank" href="http://rodolphe.quiedeville.org">Rodolphe Quiédeville</a>
-</ul>
-D'autres développeurs y contribuent activement :
-<ul>
-<li><a target="blank" href="http://www.ipsyn.net">Jean-Louis Bergamo</a></li>
-<li><a target="blank" href="http://www.destailleur.fr/">Laurent Destailleur</a></li>
-<li>Eric Seigne</li>
-<li>Benoit Mortier</li>
-</ul>
+print '<p>';
+print $langs->trans("Dolibarr est développé par :");
 
-<p>
-Informations :
-<ul>
-<li>
-<a target="blank" href="http://www.dolibarr.com/">Site officiel</a> du projet
-<li>
-<a target="blank" href="http://freshmeat.net/projects/dolibarr/">Page sur Freshmeat</a>
+print '<ul>';
+print '<li><a target="blank" href="http://rodolphe.quiedeville.org">Rodolphe Quiédeville</a>';
+print '</ul>';
+print $langs->trans("D'autres développeurs y contribuent activement :");
+print '<ul>';
+print '<li><a target="blank" href="http://www.ipsyn.net">Jean-Louis Bergamo</a></li>';
+print '<li><a target="blank" href="http://www.destailleur.fr/">Laurent Destailleur</a></li>';
+print '<li>Eric Seigne</li>';
+print '<li>Benoit Mortier</li>';
+print '</ul>';
+
+print '<p>';
+
+print $langs->trans("Informations").' :';
+
+print '<ul>';
+print '<li>';
+print '<a target="blank" href="http://www.dolibarr.com/">Site officiel</a>';
+print '<li>';
+print '<a target="blank" href="http://freshmeat.net/projects/dolibarr/">Page sur Freshmeat</a>';
 
 
-<li>
-Les tâches en cours de réalisation sur Dolibarr sont consultable dans le <a target="blank" href="http://savannah.nongnu.org/pm/task.php?group_id=1915&amp;group_project_id=0&amp;func=browse&amp;advsrch=0&amp;set=open">gestionnaire de projet</a> sur Savannah.
-</li>
+print '<li>';
+print 'Les tâches en cours de réalisation sur Dolibarr sont consultable dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projet</a> sur Savannah.';
+print '</li>';
 
-<li>
-Si vous trouvez un bug sur Dolibarr vous pouvez en informer les développeurs sur le <a target="blank" href="http://savannah.gnu.org/bugs/?group_id=1915">système de gestion des bug</a> de Savannah.
+print '<li>';
+print 'Si vous trouvez un bug sur Dolibarr vous pouvez en informer les développeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">système de gestion des bug</a> de Savannah.';
 
-</li>
+print '</li>';
 
-<li>
-Le code source de Dolibarr est consultable par l'<a target="blank" href="http://savannah.nongnu.org/cgi-bin/viewcvs/dolibarr/dolibarr/">interface web du cvs</a>.
-</li>
-</ul>
+print '<li>';
+print 'Le code source de Dolibarr est consultable par l\'<a target="blank" href="http://savannah.nongnu.org/cgi-bin/viewcvs/dolibarr/dolibarr/">interface web du cvs</a>.';
+print '</li>';
+print '</ul>';
 
-<p>
-Vente / Support
-<ul>
-<li>
-Contactez Rodolphe Quiédeville sur <a target="blank" href="http://www.dolibarr.com/">www.dolibarr.com</a>
-</li>
-</ul>
 
-<?php
+// \todo Faut-il inviter l'utilisateur à aller sur le site en français si sa langue n'est pas le français ?
+//if (eregi('^fr_',$conf->langage)
+//{
+    print '<p>';
+    print 'Vente / Support';
+    print '<ul>';
+    print '<li>';
+    print 'Contactez Rodolphe Quiédeville sur <a target="blank" href="http://www.dolibarr.com/">www.dolibarr.com</a>';
+    print '</li>';
+    print '</ul>';
+//}
+
+
 llxFooter();
+
 ?>
 
 
