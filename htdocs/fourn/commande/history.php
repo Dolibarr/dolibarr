@@ -21,10 +21,11 @@
  *
  */
 
-/**	        \file       htdocs/fourn/commande/history.php
-	        \ingroup    commande
-	        \brief      Fiche commande
-	        \version    $Revision$
+/*!
+  \file       htdocs/fourn/commande/history.php
+  \ingroup    commande
+  \brief      Fiche commande
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -36,16 +37,9 @@ $langs->load("companies");
 $user->getrights('fournisseur');
 
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
-
-require_once DOL_DOCUMENT_ROOT."/project.class.php";
-require_once DOL_DOCUMENT_ROOT."/propal.class.php";
-require_once DOL_DOCUMENT_ROOT."/fournisseur.class.php";
-require_once DOL_DOCUMENT_ROOT."/fournisseur.commande.class.php";
-
 /*
  *
  */	
-
 llxHeader('',$langs->trans("History"),"Commande");
 
 $html = new Form($db);
