@@ -705,7 +705,7 @@ class Product
    */
   function fastappro($user)
   {
-    include_once DOL_DOCUMENT_ROOT."/fournisseur.class.php";
+    include_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
 
     $nbf = $this->count_fournisseur();
     if ($nbf == 1)
