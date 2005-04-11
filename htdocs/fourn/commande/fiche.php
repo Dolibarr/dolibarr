@@ -206,7 +206,7 @@ if ($_GET["action"] == 'create')
     }
 }
 
-llxHeader('',$langs->trans("OrderCard"),"Commande");
+llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
 $html = new Form($db);
 
