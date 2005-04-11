@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/const.php
+/**
+    	\file       htdocs/admin/const.php
 		\ingroup    setup
 		\brief      Page d'administration/configuration des constantes autres
 		\version    $Revision$
@@ -109,7 +110,7 @@ if ($all==1){
 $result = $db->query($sql);
 if ($result) 
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   $var=True;
 
