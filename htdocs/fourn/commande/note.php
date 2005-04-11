@@ -55,7 +55,7 @@ if ($_POST["action"] == 'updatenote' && $user->rights->fournisseur->commande->cr
     }
 }
 
-llxHeader('',$langs->trans("OrderCard"),"Commande");
+llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
 $html = new Form($db);
 
