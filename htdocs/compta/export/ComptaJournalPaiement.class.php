@@ -187,7 +187,7 @@ class ComptaJournalPaiement  {
 		    }
 
 
-		  $this->_print_ligne($obj->dp, $facnumber, '4110000', $s, $credit, $debit);
+		  $this->_print_ligne($obj->dp, $facnumber, '41100000', $s, $credit, $debit);
 
 		  if ($obj->amount >= 0)
 		    {

@@ -187,7 +187,7 @@ class ComptaJournalVente  {
 
 		      $pdf->cell($wc[1],$hligne,strftime('%d%m%y',$obj->dp));
 		      $pdf->cell($wc[2],$hligne,'VI');
-		      $pdf->cell($wc[3],$hligne,'4110000');
+		      $pdf->cell($wc[3],$hligne,'41100000');
 		      $pdf->cell($wc[4],$hligne,$obj->code_compta);
 		      $pdf->cell($wc[5],$hligne,$socnom .' '.$libelle);
 		      $pdf->cell($wc[6],$hligne,$facnumber);
