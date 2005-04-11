@@ -164,7 +164,11 @@ if ($result)
       print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print "<td>".$obj->ville."&nbsp;</td>";
       print "<td align=\"center\">$obj->departement</td>";
-      print "<td align=\"center\">".$obj->stcomm."</td>";
+      print "<td align=\"center\">";
+      $transcode=$langs->trans("StatusProspect".$obj->fk_stcomm);
+      $libelle=($transcode!="StatusProspect".$obj->fk_stcomm?$transcode:$obj->stcomm);
+      print $libelle;
+      print "</td>";
       print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
 
       $sts = array(-1,0,1,2,3);
