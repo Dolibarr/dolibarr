@@ -134,15 +134,31 @@ if ($_GET["action"] == 'create')
     }
 
     print '<table class="border" width="100%">';
-    print '<tr><td width="20%">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value=""></td></tr>';
-    print '<tr><td width="20%" valign="top">'.$langs->trans("Description").'</td><td>';
-    print '<textarea name="desc" rows="8" cols="50">';
+    print '<tr><td width="20%">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" value=""></td></tr>';
+    print '<tr><td width="20%" valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+    print '<textarea name="desc" rows="4" cols="60">';
     print "</textarea></td></tr>";
-    print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>';
+
+    print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
+
+    print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
+    print $entrepot->address;
+    print '</textarea></td></tr>';
+
+    print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$entrepot->cp.'"></td>';
+    print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$entrepot->ville.'"></td></tr>';
+    
+    print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+    $form->select_pays($entrepot->pays_id,$entrepot->pays_code);
+    print '</td></tr>';
+
+    print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
     print '<select name="statut">';
     print '<option value="0" selected>'.$langs->trans("WarehouseClosed").'</option><option value="1">'.$langs->trans("WarehouseOpened").'</option>';
     print '</td></tr>';
-    print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
+
+    print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
+
     print '</table>';
     print '</form>';
 }
@@ -187,7 +203,6 @@ else
             print '<table class="border" width="100%">';
             print '<tr><td width="20%">'.$langs->trans("Label").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
-            print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->statuts[$entrepot->statut].'</td></tr>';
 
             print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
 
@@ -201,6 +216,8 @@ else
             print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
             $entrepot->pays;
             print '</td></tr>';
+
+            print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->statuts[$entrepot->statut].'</td></tr>';
 
             print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
             print $entrepot->nb_products();
@@ -229,16 +246,10 @@ else
             print '<textarea name="desc" rows="4" cols="60">';
             print $entrepot->description;
             print "</textarea></td></tr>";
-            print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
-            print '<select name="statut">';
-            print '<option value="0" '.($entrepot->statut == 0?"selected":"").'>'.$langs->trans("WarehouseClosed").'</option>';
-            print '<option value="1" '.($entrepot->statut == 0?"":"selected").'>'.$langs->trans("WarehouseOpened").'</option>';
-            print '</select>';
-            print '</td></tr>';
 
             print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
 
-            print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
+            print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
             print $entrepot->address;
             print '</textarea></td></tr>';
             
@@ -247,6 +258,13 @@ else
             
             print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
             $form->select_pays($entrepot->pays_id,$entrepot->pays_code);
+            print '</td></tr>';
+
+            print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
+            print '<select name="statut">';
+            print '<option value="0" '.($entrepot->statut == 0?"selected":"").'>'.$langs->trans("WarehouseClosed").'</option>';
+            print '<option value="1" '.($entrepot->statut == 0?"":"selected").'>'.$langs->trans("WarehouseOpened").'</option>';
+            print '</select>';
             print '</td></tr>';
 
             print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
