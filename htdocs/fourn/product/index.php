@@ -81,13 +81,13 @@ print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</
 if ($conf->produit->enabled)
 {
     print "<tr $bc[0]>";
-    print '<td><a href="liste.php?type=0&amp;envente=0">'.$langs->trans("Products").'</a></td><td>'.round($prodser[0]).'</td>';
+    print '<td><a href="liste.php?type=0">'.$langs->trans("Products").'</a></td><td>'.round($prodser[0]).'</td>';
     print "</tr>";
 }
 if ($conf->service->enabled)
 {
     print "<tr $bc[1]>";
-    print '<td><a href="liste.php?type=1&amp;envente=1">'.$langs->trans("Services").'</a></td><td>'.round($prodser[1]).'</td>';
+    print '<td><a href="liste.php?type=1">'.$langs->trans("Services").'</a></td><td>'.round($prodser[1]).'</td>';
     print "</tr>";
 }
 print '</table>';
