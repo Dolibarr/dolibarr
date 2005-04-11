@@ -38,7 +38,15 @@ if ($_GET["action"] == 'export')
   include_once DOL_DOCUMENT_ROOT.'/compta/export/modules/compta.export.class.php';
 
   $exc = new ComptaExport($db, $user, 'Poivre');
-  $exc->Export();
+
+  if($_GET["id"] > 0)
+    {
+      $exc->Export($_GET["id"]);
+    }
+  else
+    {
+      $exc->Export();
+    }
 
   print $exc->error_message;
 
@@ -57,16 +65,46 @@ llxHeader('','Compta - Export');
 
 print_titre("Export Comptable");
 
-print '<table border="0" width="100%">';
+print '<br><a href="index.php?action=export">Nouvel Export</a><br>';
 
+
+print '<table border="0" width="100%" cellspacing="4">';
 print '<tr><td valign="top" width="30%">';
 
-print '<br><a href="index.php?action=export">Nouvel Export</a><br>';
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet";
+$sql .= " WHERE fk_export_compta = 0";
+$resql = $db->query($sql);
+if ($resql)
+{
+  $row = $db->fetch_row($resql);
+  $nbfac = $row[0];
+
+  $db->free($resql);
+}
+
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."paiement";
+$sql .= " WHERE fk_export_compta = 0";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $row = $db->fetch_row($resql);
+  $nbp = $row[0];
+
+  $db->free($resql);
+}
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td>Type</td><td>Nb</td></tr>';
+print '<tr><td>Factures</td><td align="right">'.$nbfac.'</td></tr>';
+print '<tr><td>Paiements</td><td align="right">'.$nbp.'</td></tr>';
+print "</table>\n";
+
+print '</td><td valign="top" width="70%">';
 
 $dir = DOL_DATA_ROOT."/compta/export/";
 
-print '<br>';
-print '<table class="noborder">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Date").'</td>';
@@ -86,37 +124,6 @@ while (($file = readdir($handle))!==false)
 }
 
 print "</table>";
-
-print '</td><td valign="top">';
-
-$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet";
-$sql .= " WHERE fk_export_compta = 0";
-$result = $db->query($sql);
-if ($result)
-{
-  $row = $db->fetch_row($result);
-  $nbfac = $row[0];
-
-  $db->free($result);
-}
-
-$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."paiement";
-$sql .= " WHERE fk_export_compta = 0";
-
-$result = $db->query($sql);
-if ($result)
-{
-  $row = $db->fetch_row($result);
-  $nbp = $row[0];
-
-  $db->free($result);
-}
-
-print '<table class="noborder">';
-print '<tr class="liste_titre"><td>Type</td><td>Nb</td></tr>';
-print '<tr><td>Factures</td><td align="right">'.$nbfac.'</td></tr>';
-print '<tr><td>Paiements</td><td align="right">'.$nbp.'</td></tr>';
-print "</table>\n";
 
 print '</td></tr></table>';
 

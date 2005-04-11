@@ -52,7 +52,7 @@ if ($sortfield == "") $sortfield="ec.date_export";
  *
  */
 
-$sql = "SELECT ec.date_export, ec.ref";
+$sql = "SELECT ec.rowid,".$db->pdate("ec.date_export")." as date_export, ec.ref";
 $sql .= " FROM ".MAIN_DB_PREFIX."export_compta as ec";
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -70,8 +70,9 @@ if ($result)
   print '<tr class="liste_titre">';
 
   print_liste_field_titre($langs->trans("Ref"),"liste.php","ec.ref");
+  print_liste_field_titre($langs->trans("Date"),"liste.php","ec.date_export");
 
-  print "</tr>\n";
+  print "<td>-</td></tr>\n";
 
   $var=True;
 
@@ -85,7 +86,8 @@ if ($result)
       print "<tr $bc[$var]>";
 
       print '<td>'.stripslashes($obj->ref).'</td>';
-
+      print '<td>'.strftime("%a %e %b %Y %H:%M:%S",$obj->date_export).'</td>';
+      print '<td><a href="index.php?action=export&amp;id='.$obj->rowid.'">Regénérer</a></td>';
       print "</tr>\n";
       $i++;
     }

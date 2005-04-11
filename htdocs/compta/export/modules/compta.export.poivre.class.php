@@ -74,7 +74,11 @@ class ComptaExportPoivre
     return 0;
   }
 
-  function Export($linec, $linep)
+  /*
+   *
+   *
+   */
+  function Export($linec, $linep, $id=0)
   {
     $error = 0;
 
@@ -85,48 +89,70 @@ class ComptaExportPoivre
 
     $this->db->begin();
 
-    $dt = strftime('EC%y%m', time());
-
-    $sql = "SELECT count(ref) FROM ".MAIN_DB_PREFIX."export_compta";
-    $sql .= " WHERE ref like '$dt%'";
-
-    if ($this->db->query($sql))
+    if ($id == 0)
       {
-	$row = $this->db->fetch_row();
-	$cc = $row[0];
-      }
-    else
-      {
-	$error++;
-	dolibarr_syslog("ComptaExportPoivre::Export Erreur Select");
-      }
-
-
-    if (!$error)
-      {
-	$ref = $dt . substr("000".$cc, -2);
-		
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."export_compta (ref, date_export, fk_user)";
-	$sql .= " VALUES ('$ref', now(),".$this->user->id.")";
+	$dt = strftime('EC%y%m', time());
+	
+	$sql = "SELECT count(ref) FROM ".MAIN_DB_PREFIX."export_compta";
+	$sql .= " WHERE ref like '$dt%'";
 	
 	if ($this->db->query($sql))
 	  {
-	    $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."export_compta");
-	    $this->ref = $ref;
+	    $row = $this->db->fetch_row();
+	    $cc = $row[0];
 	  }
 	else
 	  {
 	    $error++;
-	    dolibarr_syslog("ComptaExportPoivre::Export Erreur INSERT");
+	    dolibarr_syslog("ComptaExportPoivre::Export Erreur Select");
+	  }
+	
+
+	if (!$error)
+	  {
+	    $this->ref = $dt . substr("000".$cc, -2);
+	    
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."export_compta (ref, date_export, fk_user)";
+	    $sql .= " VALUES ('".$this->ref."', now(),".$this->user->id.")";
+	    
+	    if ($this->db->query($sql))
+	      {
+		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."export_compta");
+	      }
+	    else
+	      {
+		$error++;
+		dolibarr_syslog("ComptaExportPoivre::Export Erreur INSERT");
+	      }
+	  }
+      }
+    else
+      {
+	$this->id = $id;
+	
+	$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."export_compta";
+	$sql .= " WHERE rowid = ".$this->id;
+	
+	$resql = $this->db->query($sql);
+
+	if ($resql)
+	  {
+	    $row = $this->db->fetch_row($resql);
+	    $this->ref = $row[0];
+	  }
+	else
+	  {
+	    $error++;
+	    dolibarr_syslog("ComptaExportPoivre::Export Erreur Select");
 	  }
       }
 
 
     if (!$error)
       {
-	dolibarr_syslog("ComptaExportPoivre::Export ref : $ref");
+	dolibarr_syslog("ComptaExportPoivre::Export ref : ".$this->ref);
 
-	$fxname = DOL_DATA_ROOT."/compta/export/".$ref.".xls";
+	$fxname = DOL_DATA_ROOT."/compta/export/".$this->ref.".xls";
 
 	$workbook = &new writeexcel_workbook($fxname);
 
@@ -212,7 +238,6 @@ class ComptaExportPoivre
 	// Tag des lignes de factures
 	$n = sizeof($linec);
 	for ( $i = 0 ; $i < $n ; $i++)
-
 	  {
 	    $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet";
 	    $sql .= " SET fk_export_compta=".$this->id;
@@ -238,7 +263,7 @@ class ComptaExportPoivre
 	// EUR pour Monnaie en Euros
     
 	$i = 0;
-	//    $j = 0;
+	//$j = 0;
 	$n = sizeof($linep);
 
 	$oldfacture = 0;

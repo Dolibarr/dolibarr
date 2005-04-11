@@ -54,8 +54,10 @@ class ComptaExport
     \brief      Lecture des factures dans la base
   */
 
-  function ReadLines()
+  function ReadLines($id=0)
   {
+    dolibarr_syslog("ComptaExport::ReadLines id=".$id);
+
     $error = 0;
 
     $sql = "SELECT f.rowid as facid, f.facnumber, ".$this->db->pdate("f.datef")." as datef";
@@ -76,7 +78,7 @@ class ComptaExport
 
     $sql .= " AND l.fk_code_ventilation <> 0 ";
 
-    $sql .= " AND l.fk_export_compta = 0";
+    $sql .= " AND l.fk_export_compta = ".$id;
 
     $sql .= " AND c.rowid = l.fk_code_ventilation";
 
@@ -125,14 +127,15 @@ class ComptaExport
     \brief      Lecture des paiements dans la base
   */
 
-  function ReadLinesPayment()
+  function ReadLinesPayment($id=0)
   {
+    dolibarr_syslog("ComptaExport::ReadLinesPayment id=".$id);
     $error = 0;
 
     $sql = "SELECT p.rowid as paymentid, f.facnumber";
     $sql .= " ,".$this->db->pdate("p.datep")." as datep";
     $sql .= " , pf.amount";
-    $sql .= " ,s.nom, s.code_compta";
+    $sql .= " , s.nom, s.code_compta";
     $sql .= " , cp.libelle, f.increment";
 
     $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
@@ -141,7 +144,7 @@ class ComptaExport
     $sql .= " , ".MAIN_DB_PREFIX."facture as f";
     $sql .= " , ".MAIN_DB_PREFIX."societe as s";
     
-    $sql .= " WHERE p.fk_export_compta = 0";
+    $sql .= " WHERE p.fk_export_compta = ".$id;
     $sql .= " AND p.rowid = pf.fk_paiement";
     $sql .= " AND cp.id = p.fk_paiement";
     $sql .= " AND f.rowid = pf.fk_facture";
@@ -197,14 +200,14 @@ class ComptaExport
     \brief      Créé le fichier d'export
   */
 
-  function Export()
+  function Export($id=0)
   {
     $error = 0;
 
     dolibarr_syslog("ComptaExport::Export");
 
-    $error += $this->ReadLines();
-    $error += $this->ReadLinesPayment();
+    $error += $this->ReadLines($id);
+    $error += $this->ReadLinesPayment($id);
 
     dolibarr_syslog("ComptaExport::Export Lignes de factures  : ".sizeof($this->linec));
     dolibarr_syslog("ComptaExport::Export Lignes de paiements : ".sizeof($this->linep));
@@ -217,7 +220,7 @@ class ComptaExport
 
 	$objexport = new $objexport_name($this->db, $this->user);
 
-	$objexport->Export($this->linec, $this->linep);
+	$objexport->Export($this->linec, $this->linep, $id);
 
 	$this->id = $objexport->id;
 	$this->ref = $objexport->ref;
