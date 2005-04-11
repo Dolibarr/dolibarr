@@ -151,7 +151,7 @@ if ($socid > 0)
 	print "<tr><td>Rubrique</td><td colspan=\"3\">$societe->rubrique</td></tr>";
       }
 
-    print "<tr><td>Forme juridique</td><td colspan=\"3\">$societe->forme_juridique</td></tr>";
+    print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>;
     print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$societe->statut_commercial.'</td>';
     print '<td> ';
     print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=-1&amp;action=cstc">';

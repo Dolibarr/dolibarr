@@ -236,7 +236,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 
           print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
       
-          print '<tr><td>Forme juridique</td><td colspan="3">';
+          print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
           $form->select_forme_juridique($soc->forme_juridique_code,(defined(COMPANY_CREATE_TWO_STEPS)?$soc->pays_code:0));
           print '</td></tr>';
       
@@ -354,7 +354,7 @@ elseif ($_GET["action"] == 'edit')
 
       print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
 
-      print '<tr><td>Forme juridique</td><td colspan="3">';
+      print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
       $form->select_forme_juridique($soc->forme_juridique_code,0);
       print '</td></tr>';
 
@@ -508,7 +508,7 @@ else
 
   print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$soc->capital.' '.$conf->monnaie.'</td></tr>';
 
-  print '<tr><td>Forme juridique</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
+  print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
 
   print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
 
