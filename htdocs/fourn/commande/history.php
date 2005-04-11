@@ -40,23 +40,27 @@ if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 /*
  *
  */	
-llxHeader('',$langs->trans("History"),"Commande");
-
-$html = new Form($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Mode vue                                                                    */
 /*                                                                             */
 /* *************************************************************************** */
 
 if ($_GET["id"] > 0)
 {
+  $soc = new Societe($db);
   $commande = new CommandeFournisseur($db);
+
   if ( $commande->fetch($_GET["id"]) == 0)
     {	  
-      $soc = new Societe($db);
       $soc->fetch($commande->soc_id);
+
+      $addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
+      $addons[0][1] = $soc->nom;
+
+      llxHeader('',$langs->trans("History"),"CommandeFournisseur",$addons);
+
       $author = new User($db);
       $author->id = $commande->user_author_id;
       $author->fetch();
@@ -64,6 +68,10 @@ if ($_GET["id"] > 0)
       $h = 0;
       $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;
       $head[$h][1] = $langs->trans("Order").": $commande->ref";
+      $h++;
+
+      $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
+      $head[$h][1] = $langs->trans("Note");
       $h++;
 
       $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$commande->id;
