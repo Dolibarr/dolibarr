@@ -280,9 +280,11 @@ if ( $societe->fetch($socid) )
       print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddOrder").'</a>';
     }
 
-  $langs->load("bills");
-  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddBill").'</a>';
-  
+  if ($user->rights->fournisseur->facture->creer)
+    {
+      $langs->load("bills");
+      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddBill").'</a>';
+    }
   print '</div>';
 
   /*
