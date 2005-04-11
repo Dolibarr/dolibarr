@@ -146,6 +146,12 @@ class ComptaJournalVente  {
 		  $price = abs(price($obj->price));
 		  $tva = abs($obj->tva);
 
+		  $facnumber = $obj->facnumber;
+		  if (strlen(trim($obj->increment)) > 0)
+		    {
+		      $facnumber = $obj->increment;
+		    }
+
 		  if (strlen($obj->nom) > 31)
 		  {
 		    $socnom = substr($obj->nom, 0 , 31);
@@ -184,7 +190,7 @@ class ComptaJournalVente  {
 		      $pdf->cell($wc[3],$hligne,'4110000');
 		      $pdf->cell($wc[4],$hligne,$obj->code_compta);
 		      $pdf->cell($wc[5],$hligne,$socnom .' '.$libelle);
-		      $pdf->cell($wc[6],$hligne,$obj->facnumber);
+		      $pdf->cell($wc[6],$hligne,$facnumber);
 		      $pdf->cell($wc[7],$hligne,$amount,0,0,'R');
 		      $pdf->cell($wc[8],$hligne,$d);
 		      $pdf->cell($wc[9],$hligne,strftime('%d%m%y',$obj->dp),0,0,'R');
@@ -195,7 +201,7 @@ class ComptaJournalVente  {
 		      $pdf->cell($wc[3],$hligne,'4457119');
 		      $pdf->cell($wc[4],$hligne,'');
 		      $pdf->cell($wc[5],$hligne,$socnom .' '.$libelle);
-		      $pdf->cell($wc[6],$hligne,$obj->facnumber);
+		      $pdf->cell($wc[6],$hligne,$facnumber);
 		      $pdf->cell($wc[7],$hligne,$tva,0,0,'R');
 		      $pdf->cell($wc[8],$hligne,$c);
 		      $pdf->cell($wc[9],$hligne,strftime('%d%m%y',$obj->dp),0,0,'R');
@@ -207,7 +213,7 @@ class ComptaJournalVente  {
 		  $pdf->cell($wc[3],$hligne,$obj->numero);
 		  $pdf->cell($wc[4],$hligne,'');
 		  $pdf->cell($wc[5],$hligne,$socnom .' '.$libelle);
-		  $pdf->cell($wc[6],$hligne,$obj->facnumber);
+		  $pdf->cell($wc[6],$hligne,$facnumber);
 		  $pdf->cell($wc[7],$hligne,$price,0,0,'R');
 		  $pdf->cell($wc[8],$hligne,$c);
 		  $pdf->cell($wc[9],$hligne,strftime('%d%m%y',$obj->dp),0,0,'R');
