@@ -162,26 +162,22 @@ class Product
     $langs->load("main");
     $langs->load("products");
     
+    if (! $this->libelle) $this->libelle = 'LIBELLE MANQUANT';
     $this->ref = ereg_replace("\"","",stripslashes($this->ref));
     $this->ref = ereg_replace("'","",stripslashes($this->ref));
-    
-    if (strlen(trim($this->libelle)) == 0)
-    {
-        $this->libelle = 'LIBELLE MANQUANT';
-    }
+
+    $this->ref = trim($this->ref);
+    $this->libelle = trim($this->libelle);
+    $this->description = trim($this->description);
     
     $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-    $sql .= " SET label = '" . trim($this->libelle) ."'";
-    if (strlen(trim($this->ref)))
-    {
-        $sql .= ",ref = '" . trim($this->ref) ."'";
-    }
+    $sql .= " SET label = '" . addslashes($this->libelle) ."'";
+    if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
     $sql .= ",tva_tx = " . $this->tva_tx ;
     $sql .= ",envente = " . $this->envente ;
     $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
-    $sql .= ",description = '" . trim($this->description) ."'";
+    $sql .= ",description = '" . addslashes($this->description) ."'";
     $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
-    
     $sql .= " WHERE rowid = " . $id;
     
     if ( $this->db->query($sql) )
