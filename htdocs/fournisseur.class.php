@@ -33,7 +33,7 @@
 */
 
 include_once DOL_DOCUMENT_ROOT."/societe.class.php";
-include_once DOL_DOCUMENT_ROOT."/fournisseur.commande.class.php";
+include_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php";
 
 class Fournisseur extends Societe {
   var $db;
