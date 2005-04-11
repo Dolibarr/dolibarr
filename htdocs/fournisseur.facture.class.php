@@ -106,7 +106,8 @@ class FactureFournisseur
     $total = $totalht + $tva;
     
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author) ";
-    $sql .= " VALUES ('".$this->number."','".$this->libelle."',". $this->socid.", now(),".$this->date.",'".$this->note."', ".$user->id.");";
+    $sql .= " VALUES ('".$this->number."','".$this->libelle."',";
+    $sql .= $this->socid.", now(),".$this->db->idate($this->date).",'".$this->note."', ".$user->id.");";
 
     if ( $this->db->query($sql) )
       {
@@ -139,16 +140,17 @@ class FactureFournisseur
     }
     else
     {
-        if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS) {
-            print "Erreur : Une facture possédant cet id existe déjà";
+      if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
+	{
+	  print "Erreur : Une facture possédant cet id existe déjà";
         }
-        else {
-    	  dolibarr_print_error($this->db);
-        }
-    
-        return 0;
+      else
+	{
+	  dolibarr_print_error($this->db);
+	}      
+      return 0;
     }
-   }
+  }
 
   /**
    *    \brief      Recupére l'objet facture et ses lignes de factures
