@@ -36,7 +36,7 @@ $user->getrights('fournisseur');
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php";
 
-function llxHeader($head = "", $title = "")
+function llxHeader($head = "", $title = "", $help_url='', $addons='')
 {
   global $user, $langs;
   $langs->load("orders");
@@ -48,6 +48,11 @@ function llxHeader($head = "", $title = "")
 
   $menu = new Menu();
 
+  if (is_array($addons))
+    {
+      $menu->add($addons[0][0], $addons[0][1]);
+    }
+
   $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
   $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
 
@@ -57,7 +62,7 @@ function llxHeader($head = "", $title = "")
   $menu->add(DOL_URL_ROOT."/fourn/commande/", $langs->trans("Orders"));
   $menu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php", $langs->trans("List"));
 
-  left_menu($menu->liste);
+  left_menu($menu->liste,$help_url);
 }
 
 ?>
