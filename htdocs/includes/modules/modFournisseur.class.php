@@ -146,6 +146,29 @@ class modFournisseur extends DolibarrModules
     $this->rights[9][4] = 'commande';
     $this->rights[9][5] = 'annuler';
 
+
+    $this->rights[10][0] = 231;
+    $this->rights[10][1] = 'Lire les factures fournisseur';
+    $this->rights[10][2] = 'r';
+    $this->rights[10][3] = 0;
+    $this->rights[10][4] = 'facture';
+    $this->rights[10][5] = 'lire';
+
+    $this->rights[11][0] = 232;
+    $this->rights[11][1] = 'Créer une facture fournisseur';
+    $this->rights[11][2] = 'w';
+    $this->rights[11][3] = 0;
+    $this->rights[11][4] = 'facture';
+    $this->rights[11][5] = 'creer';
+
+    $this->rights[12][0] = 233;
+    $this->rights[12][1] = 'Valider une facture fournisseur';
+    $this->rights[12][2] = 'w';
+    $this->rights[12][3] = 0;
+    $this->rights[12][4] = 'facture';
+    $this->rights[12][5] = 'valider';
+
+
     $sql = array();
 
     $this->load_datas();
