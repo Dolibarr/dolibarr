@@ -49,14 +49,16 @@ $html = new Form($db);
 $mesg='';
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
-
-if ($_GET["action"] == 'valid') 
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->fournisseur->facture->valider)
 {
   $facturefourn=new FactureFournisseur($db);
   $facturefourn->fetch($_GET["facid"]);
   
   $facturefourn->set_valid($user->id);
+
+  Header("Location: fiche.php?facid=".$_GET["facid"]);
 }
+
 
 if ($_GET["action"] == 'payed')
 {
@@ -410,6 +412,17 @@ else
 	  
 	  dolibarr_fiche_head($head, $hselected);
 
+
+	  /*
+	   * Confirmation de la validation
+	   *
+	   */
+	  if ($_GET["action"] == 'valid')
+	    {
+	      $html->form_confirm("fiche.php?facid=$fac->id","Valider la facture","Etes-vous sûr de vouloir valider cette facture ?","confirm_valid");
+	      print '<br />';
+	    }
+	  
 	  print "<table border=\"0\" width=\"100%\">";
 	  print '<tr><td width="50%" valign="top">';
 	  /*
@@ -578,17 +591,16 @@ else
 	  print "<a class=\"butAction\" href=\"fiche.php?facid=$fac->id&amp;action=payed\">".$langs->trans('ClassifyPayed')."</a>";
 	}
       
-      if ($user->societe_id == 0)
+      if ($fac->statut == 0 && $user->rights->fournisseur->facture->valider)
 	{
-	  if ($fac->statut == 0)
-	    {
-	      if ($_GET["action"] <> "edit")
-		print "<a class=\"butAction\" href=\"fiche.php?facid=$fac->id&amp;action=valid\">".$langs->trans('Valid')."</a>";
-	    }
-	  else
-	    {
-	      print "<a class=\"butAction\" href=\"fiche.php?facid=$fac->id&amp;action=copy&amp;socid=$fac->socidp\">".$langs->trans('Copy')."</a>";
-	    }
+	  if ($_GET["action"] <> "edit")
+	    print "<a class=\"butAction\" href=\"fiche.php?facid=$fac->id&amp;action=valid\">".$langs->trans('Valid')."</a>";
+	}
+      else
+
+      if ($user->rights->fournisseur->facture->creer)
+	{
+	  print "<a class=\"butAction\" href=\"fiche.php?facid=$fac->id&amp;action=copy&amp;socid=$fac->socidp\">".$langs->trans('Copy')."</a>";
 	}
       
       if ($fac->statut == 0 && $user->societe_id == 0)
