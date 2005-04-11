@@ -98,17 +98,17 @@ if ($_POST["action"] == 'update')
   $sql .= " WHERE rowid = ".$_GET['facid']." ;";
   $result = $db->query( $sql);
 }
-
-if ($_POST["action"] == 'add')
+/*
+ * Création
+ */
+if ($_POST["action"] == 'add' && $user->rights->fournisseur->facture->creer)
 {
   if ($_POST["facnumber"])
     {
-      $datefacture = $db->idate(mktime(12, 
-				       0, 
-				       0, 
-				       $_POST["remonth"], 
-				       $_POST["reday"],
-				       $_POST["reyear"])); 
+      $datefacture = mktime(12,0,0, 
+			    $_POST["remonth"], 
+			    $_POST["reday"],
+			    $_POST["reyear"]); 
       $tva = 0;
       $tva = ($_POST["tva_taux"] * $_POST["amount"]) / 100 ;
       $remise = 0;
@@ -442,11 +442,11 @@ else
 	   *   Facture
 	   */
 	  print '<table class="border" width="100%">';
-	  print "<tr><td>".$langs->trans("Company")."</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$fac->socidp\">$fac->socnom</a></b></td>";
+	  print "<tr><td>".$langs->trans("Company")."</td><td colspan=\"2\"><b><a href=\"../fiche.php?socid=$fac->socidp\">$fac->socnom</a></b></td>";
 	  print "<td align=\"right\"><a href=\"index.php?socid=$fac->socidp\">".$langs->trans("OtherBills")."</a></td>\n";
 	  print "</tr>";
-	  print '<tr><td>'.$langs->trans("Date")."</td><td colspan=\"4\">".dolibarr_print_date($fac->datep,"%A %d %B %Y")."</td></tr>\n";
-	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="4">';
+	  print '<tr><td>'.$langs->trans("Date")."</td><td colspan=\"3\">".dolibarr_print_date($fac->datep,"%A %e %B %Y")."</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">';
 	  print $fac->libelle;
 	  print "</td>";
 
@@ -457,15 +457,15 @@ else
 	      $author->fetch('');
 	      $authorfullname=$author->fullname;
 	    }
-	  print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"4\">$authorfullname</td>";
-	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="4">'.$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
+	  print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">$authorfullname</td>";
+	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 	  
-	  print "<tr>".'<td>&nbsp</td><td>'.$langs->trans("TotalHT").'</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
-	  print '<td align="right">'.$langs->trans("VAT").'</td><td align="right">'.price($fac->total_tva)."</td></tr>";
-	  print "<tr>".'<td>&nbsp</td><td>'.$langs->trans("TotalTTC").'</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
+	  print "<tr>".'<td>'.$langs->trans("TotalHT").'</td><td align="center"><b>'.price($fac->total_ht)."</b></td>";
+	  print '<td align="right">'.$langs->trans("VAT").'</td><td align="center">'.price($fac->total_tva)."</td></tr>";
+	  print "<tr>".'<td>'.$langs->trans("TotalTTC").'</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
 	  if (strlen($fac->note))
 	    {
-	      print '<tr><td>'.$langs->trans("Comments").'</td><td colspan="4">';
+	      print '<tr><td>'.$langs->trans("Comments").'</td><td colspan="3">';
 	      print nl2br(stripslashes($fac->note));
 	      print '</td></tr>';
 	    }
@@ -506,7 +506,7 @@ else
 		  $objp = $db->fetch_object();
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
-		  print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";
+		  print "<td>".strftime("%e %B %Y",$objp->dp)."</td>\n";
 		  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
 		  print "<td align=\"right\">".price($objp->amount)."</td><td>".$conf->monnaie."</td>\n";
 
