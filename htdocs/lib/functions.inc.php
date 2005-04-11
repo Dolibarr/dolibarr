@@ -161,61 +161,57 @@ function dolibarr_fiche_head($links, $active=0, $title='')
 
 /**
 		\brief      Insertion d'une constante dans la base de données.
+		\see        dolibarr_del_const
 		\param	    db          handler d'accès base
 		\param	    name		nom de la constante
 		\param	    value		valeur de la constante
 		\param	    type		type de constante (chaine par défaut)
 		\param	    visible	    la constante est t'elle visible (0 par défaut)
 		\param	    note		explication de la constante
-		\return     0 pour raté, 1 pour réussi
-    \see        dolibarr_del_const
+		\return     int         0 si KO, 1 si OK
 */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {
- 		 
-		 $sql = "DELETE FROM llx_const WHERE name = '$name';"; 		
-		 
-		 $db->query($sql);	
+        $db->begin();
+        
+        $sql = "DELETE FROM llx_const WHERE name = '$name';"; 		
+        $resql=$db->query($sql);	
+        
+        $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
+        $sql.= " VALUES ('$name','$value','$type',$visible,'$note');";
+        $resql=$db->query($sql);	
 
-		 $sqql = "INSERT INTO llx_const(name,value,type,visible,note) VALUES 
-		 ('$name','$value','$type',$visible,'$note');";
-		 
-		 $db->query($sql);	
-		
-		//$sql = "DELETE FROM llx_const WHERE name = '$name' and value = '$value' ;";
-		//$db->query($sql);
-		
-		//$sql2 = "INSERT INTO llx_const VALUES('$name','$value','$type',$visible,'$note');";
-		//$db->query($sql);
-
-  if ($db->query($sqql))
-    {
-      return 1;
-    }
-  else
-    {
-      return 0;
-    }
+        if ($resql)
+        {
+            $db->commit();
+            return 1;
+        }
+        else
+        {
+            $db->rollback();
+            return 0;
+        }
 }
 
 /**
 		\brief      Effacement d'une constante dans la base de données
+        \see        dolibarr_set_const
 		\param	    db          handler d'accès base
 		\param	    name		nom ou rowid de la constante
-		\return     0 pour raté, 1 pour réussi
-        \see        dolibarr_set_const
+		\return     int         0 si KO, 1 si OK
 */
 function dolibarr_del_const($db, $name)
 {
-  $sql = "DELETE FROM llx_const WHERE name='$name' or rowid='$name'";
+    $sql = "DELETE FROM llx_const WHERE name='$name' or rowid='$name'";
+    $resql=$db->query($sql);
 
-  if ($db->query($sql))
+    if ($resql)
     {
-      return 1;
+        return 1;
     }
-  else
+    else
     {
-      return 0;
+        return 0;
     }
 }
 
