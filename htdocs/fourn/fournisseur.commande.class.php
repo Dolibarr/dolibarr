@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,15 +21,17 @@
  *
  */
 
-/**	    \file       htdocs/fournisseur.commande.class.php
-		\ingroup    fournisseur,commande
-		\brief      Fichier des classes des commandes fournisseurs
-		\version    $Revision$
+/**	   
+	  \file       htdocs/fournisseur.commande.class.php
+	  \ingroup    fournisseur,commande
+	  \brief      Fichier des classes des commandes fournisseurs
+	  \version    $Revision$
 */
 
 
-/**	    \class      CommandeFournisseur
-		\brief      Classe de gestion de commande fournisseur
+/**	  
+	 \class      CommandeFournisseur
+	 \brief      Classe de gestion de commande fournisseur
 */
 
 class CommandeFournisseur
