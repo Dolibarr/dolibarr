@@ -89,6 +89,7 @@ class DoliDb
         {
             $this->connected = 0;
             $this->ok = 0;
+            dolibarr_syslog("DoliDB::DoliDB : Erreur Connect");
         }
     
         // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
@@ -103,6 +104,7 @@ class DoliDb
             {
                 $this->database_selected = 0;
                 $this->ok = 0;
+                dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
             }
         }
         else
@@ -136,7 +138,7 @@ class DoliDb
         \param		host		addresse de la base de données
         \param		login		nom de l'utilisateur autoris
         \param		passwd		mot de passe
-        \param		name		nom de la database
+        \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
         \return		resource	handler d'accès à la base
     */
     
@@ -473,7 +475,7 @@ class DoliDb
                 return $code;
             }
         }
-        return DB_ERROR;
+        return 'DB_ERROR';
     }
     
     /**
@@ -488,7 +490,7 @@ class DoliDb
     
     /**
         \brief      Récupère l'id genéré par le dernier INSERT.
-        \param      tab     Nom de la table concernée par l'insert
+        \param     tab     Nom de la table concernée par l'insert. Ne sert pas sous MySql mais requis pour compatibilité avec Postgresql
         \return     int     id
     */
     

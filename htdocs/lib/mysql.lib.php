@@ -79,13 +79,22 @@ class DoliDb
             \param	    name		nom de la database
             \return     int			1 en cas de succès, 0 sinon
     */
-    function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)
+    function DoliDb($type='mysql', $host, $user, $pass, $name='')
     {
         global $conf;
         $this->transaction_opened=0;
 
+        //print "Name DB: $host,$user,$pass,$name<br>";
+        if (! $host)
+        {
+        	$this->connected = 0;
+        	$this->ok = 0;
+        	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
+            return $this->ok;
+        }
+
         // Essai connexion serveur
-        $this->db = $this->connect($host, $user, $pass, $newlink);
+        $this->db = $this->connect($host, $user, $pass, $name);
 
         if ($this->db)
         {
@@ -139,12 +148,13 @@ class DoliDb
             \param	    host		addresse de la base de données
             \param	    login		nom de l'utilisateur autoris
             \param	    passwd		mot de passe
+            \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
             \return		resource	handler d'accès à la base
     */
 
-    function connect($host, $login, $passwd, $newlink=0)
+    function connect($host, $login, $passwd, $name)
     {
-        $this->db  = @mysql_connect($host, $login, $passwd, $newlink);
+        $this->db  = @mysql_connect($host, $login, $passwd);
         //print "Resultat fonction connect: ".$this->db;
         return $this->db;
     }
@@ -153,7 +163,7 @@ class DoliDb
             \brief          Création d'une nouvelle base de donnée
             \param	        database		nom de la database à créer
             \return	        resource		resource définie si ok, null si ko
-            \remarks        Ne pas utiliser la fonction mysql_create_db qui est deprecated
+            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
     */
 
     function create_db($database)
@@ -176,11 +186,12 @@ class DoliDb
     }
 
     /**
-        \brief      Ouverture d'une connection vers une database.
-        \param	    host		Adresse de la base de données
-        \param	    login		Nom de l'utilisateur autoris
-        \param	    passwd		Mot de passe
-        \return		resource	handler d'accès à la base
+        	\brief      Ouverture d'une connection vers une database.
+        	\param	    host		Adresse de la base de données
+            \param		login		Nom de l'utilisateur autorisé
+        	\param	    passwd		Mot de passe
+            \param		name		Nom de la database
+        	\return		resource	handler d'accès à la base
     */
 
     function pconnect($host, $login, $passwd)
