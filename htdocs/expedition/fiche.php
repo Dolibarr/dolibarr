@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,8 @@
  *
  */
 
-/*! \file htdocs/expedition/fiche.php
+/** 
+        \file       htdocs/expedition/fiche.php
         \ingroup    expedition
 		\brief      Fiche descriptive d'une expedition
 		\version    $Revision$
@@ -82,14 +84,14 @@ if ($_POST["action"] == 'add')
  */
 
 
-if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->expedition->valider)
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->expedition->valider)
 {
   $expedition = new Expedition($db);
   $expedition->fetch($_GET["id"]);
   $result = $expedition->valid($user);
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
   if ($user->rights->expedition->supprimer ) 
     {
@@ -291,7 +293,7 @@ else
 	  $soc = new Societe($db);
 	  $soc->fetch($commande->soc_id);
 
-	  print_titre("Expedition : ".$expedition->ref);
+	  print_titre($langs->trans("Sending").": ".$expedition->ref);
 
 	  /*
 	   * Confirmation de la suppression
@@ -354,7 +356,7 @@ else
 	   * Lignes 
 	   *
 	   */
-	  echo '<br><table border="0" width="100%" cellspacing="0" cellpadding="3">';	  
+	  echo '<br><table class="noborder" width="100%">';
 
 	  $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande, ed.qty as qty_livre";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed";
@@ -386,7 +388,7 @@ else
 		    }
 		  else
 		    {
-		      print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
+		      print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
 		    }
 		  print '<td align="center">'.$objp->qty_commande.'</td>';
 		  print '<td align="center">'.$objp->qty_livre.'</td>';
@@ -400,8 +402,7 @@ else
 	    } 
 	else
 	  {
-	    print "$sql";
-	    print $db->error();
+	    dolibarr_print_error($db);
 	  }
 	
 
@@ -411,25 +412,21 @@ else
 	 */
 	if ($user->societe_id == 0)
 	  {
-	    print '<p><div class="tabsAction">';	
-
-	    if ($expedition->brouillon && $user->rights->expedition->supprimer)
-	      {
-		print '<a class="tabAction" href="fiche.php?id='.$expedition->id.'&amp;action=delete">Supprimer</a>';
-	      } 
-	    
-	    
-	    if ($expedition->statut == 0) 
-	      {
-		if ($user->rights->expedition->valider)
-		  {
-		    print '<a class="tabAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">Valider</a>';
-		  }
-
-	      }
-	    print "</div>";
+        print '<div class="tabsAction">';	
+        
+        if ($expedition->statut == 0 && $user->rights->expedition->valider)
+        {
+            print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+        }
+        
+        if ($expedition->brouillon && $user->rights->expedition->supprimer)
+        {
+            print '<a class="butActionDelete" href="fiche.php?id='.$expedition->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+        } 
+        
+        
+        print "</div>";
 	  }
-	print "<p>\n";
 
 	/*
 	 * Déjà livré

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,8 @@
  *
  */
 
-/*! \file htdocs/expedition/commande.php
+/**
+        \file       htdocs/expedition/commande.php
 		\ingroup    expedition
 		\version    $Revision$
 */
@@ -85,7 +87,7 @@ if ($_GET["id"] > 0)
        */
       if ($_GET["action"] == 'cloture')
 	{
-	  $html->form_confirm("commande.php?id=$id","Cloturer la commande","Etes-vous sûr de cloturer cette commande ?","confirm_cloture");
+	  $html->form_confirm("commande.php?id=".$_GET["id"],"Cloturer la commande","Etes-vous sûr de cloturer cette commande ?","confirm_cloture");
 	}
       /*
        *
@@ -94,8 +96,8 @@ if ($_GET["id"] > 0)
       print '<form method="post" action="fiche.php">';
       print '<input type="hidden" name="action" value="create">';
       print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
-      print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-      print '<tr><td width="20%">Client</td>';
+      print '<table class="border" width="100%">';
+      print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
       print "<td colspan=\"2\">";
       print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
       
@@ -103,7 +105,7 @@ if ($_GET["id"] > 0)
       print $commande->statuts[$commande->statut];
       print "</td></tr>";
       
-      print "<tr><td>Date</td>";
+      print '<tr><td>'.$langs->trans("Date").'</td>';
       print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
 
       print '<td width="50%">Source : ' . $commande->sources[$commande->source] ;
@@ -207,7 +209,7 @@ if ($_GET["id"] > 0)
 	} 
       else
 	{
-	  print $db->error();
+	  dolibarr_print_error($db);
 	}
 
       /*
@@ -217,8 +219,9 @@ if ($_GET["id"] > 0)
       if ($reste_a_livrer_total > 0)
 	{
 	  $entrepot = new Entrepot($db);
+      $langs->load("stocks");
 
-	  print '<tr><td width="20%">Entrepôt</td>';
+	  print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
 	  print '<td colspan="3">';
 	  $html->select_array("entrepot_id",$entrepot->list_array());
 	  print '</td></tr>';
