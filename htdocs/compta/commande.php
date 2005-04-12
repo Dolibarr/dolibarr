@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,24 @@
  * $Source$
  *
  */
+ 
+/**
+       \file       htdocs/compta/commande.php
+       \ingroup    commande
+       \brief      Fiche commande
+       \version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("orders");
+$langs->load("companies");
+$langs->load("bills");
 
 $user->getrights('commande');
 $user->getrights('facture');
 
-if (!$user->rights->commande->lire) accessforbidden();
+if (! $user->rights->commande->lire) accessforbidden();
 
 require_once DOL_DOCUMENT_ROOT."/project.class.php";
 require_once DOL_DOCUMENT_ROOT."/propal.class.php";
@@ -50,7 +62,10 @@ if ($_GET["action"] == 'facturee')
   $commande->classer_facturee();
 }
 
-llxHeader();
+
+llxHeader('',$langs->trans("OrderCard"),"Commande");
+
+
 
 $html = new Form($db);
 
@@ -72,28 +87,28 @@ if ($_GET["id"] > 0)
       $author->fetch();
 
       $head[0][0] = DOL_URL_ROOT.'/compta/commande.php?id='.$commande->id;
-      $head[0][1] = "Commande : $commande->ref";
+      $head[0][1] = $langs->trans("Order").": ".$commande->ref;
       $h = 1;
       $a = 0;
 
-      dolibarr_fiche_head($head, $a);	 
+      dolibarr_fiche_head($head, $a, $soc->nom);	 
       
       /*
        *   Commande
        */
-      print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-      print "<tr><td>Client</td>";
-      print "<td colspan=\"2\">";
+      print '<table class="border" width="100%">';
+	  print "<tr><td>".$langs->trans("Customer")."</td>";
+	  print '<td colspan="2">';
       print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
       
       print '<td width="50%">';
       print $commande->statuts[$commande->statut];
       print "</td></tr>";
       
-      print "<tr><td>Date</td>";
+	  print '<tr><td>'.$langs->trans("Date").'</td>';
       print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
       
-      print '<td width="50%">Source : ' . $commande->sources[$commande->source] ;
+	  print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
       if ($commande->source == 0)
 	{
 	  /* Propale */
@@ -103,29 +118,32 @@ if ($_GET["id"] > 0)
 	}
       print "</td></tr>";
       
-      print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"2\">$author->fullname</td>";
+	  print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';
       
-      print '<td>Projet : ';
+      print '<td>';
+      if ($conf->projet->enabled) {
+    	  print $langs->trans("Project").' : ';
       if ($commande->projet_id > 0)
 	{
 	  $projet = New Project($db);
 	  $projet->fetch($commande->projet_id);
 	  print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$commande->projet_id.'">'.$projet->title.'</a>';
 	}
+    	  else
+    	    {
+    	      print '<a href="fiche.php?id='.$id.'&amp;action=classer">Classer la commande</a>';
+    	    }
+      }
       print "&nbsp;</td></tr>";
       
-      print '<tr><td>'.$langs->trans("Amount").'</td>';
+      // Ligne de 3 colonnes
+	  print '<tr><td>'.$langs->trans("AmountHT").'</td>';
       print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-      print '<td>'.$conf->monnaie.' HT</td>';
-      
-      print '<td>'.$langs->trans("Note").'</td></tr>';
+	  print '<td>'.$conf->monnaie.'</td>';
+	  print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :<br>'.nl2br($commande->note).'</td></tr>';
       
       print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
-      
       print $commande->remise_percent.' %</td><td>&nbsp;';
-      
-      print '</td><td rowspan="3">';
-      print nl2br($commande->note)."&nbsp;\n";
       print '</td></tr>';
       
       print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
@@ -169,14 +187,14 @@ if ($_GET["id"] > 0)
 	      if ($objp->fk_product > 0)
 		{
 		  print '<td>';
-		  print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+		      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.stripslashes(nl2br($objp->description)).'</a></td>';
 		}
 	      else
 		{
-		  print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
+		  print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
 		}
-	      print '<td align="center">'.$objp->tva_tx.' %</TD>';
-	      print '<td align="center">'.$objp->qty.'</TD>';
+	      print '<td align="center">'.$objp->tva_tx.' %</td>';
+	      print '<td align="center">'.$objp->qty.'</td>';
 	      if ($objp->remise_percent > 0)
 		{
 		  print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -232,13 +250,14 @@ if ($_GET["id"] > 0)
 	   */
 	  print "</td></tr></table>";
 	}
+
       /*
        * Factures associees
        */
       $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
       $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."co_fa as fp WHERE fp.fk_facture = f.rowid AND fp.fk_commande = ".$commande->id;
       
-      if ($db->query($sql) )
+      if ($db->query($sql))
 	{
 	  $num_fac_asso = $db->num_rows();
 	  $i = 0; $total = 0;
@@ -294,31 +313,31 @@ if ($_GET["id"] > 0)
 	}
       else
 	{
-	  print $db->error();
+	  dolibarr_print_error($db);
 	}
       /*
        *
        *
        */
-      print '</div>';
+      print '<br></div>';
+
       /*
        * Barre d'actions
        */
       
-      if ($user->societe_id == 0 && !$commande->facturee)
+      if (! $user->societe_id && ! $commande->facturee)
 	{
-	  print "<br><div class=\"tabsAction\">\n";
+	  print "<div class=\"tabsAction\">\n";
 
 	  if ($user->rights->facture->creer)
 	    {
-	      print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">Facturer</a>';
+	      print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">'.$langs->trans("GenerateBill").'</a>';
 	    }
 
-	  if (!$commande->facturee && $num_fac_asso)
+	  if ($num_fac_asso)
 	    {
 	      if ($user->rights->commande->creer)
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/commande.php?action=facturee&amp;id='.$commande->id.'">Classer comme facturée</a>';
-
+    		print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/commande.php?action=facturee&amp;id='.$commande->id.'">'.$langs->trans("ClassifyBilled").'</a>';
 	    }
 	  print '</div>';
 	}
