@@ -96,6 +96,7 @@ if ($_GET["id"])
 	  $sql .= " AND c.fk_soc = ss.idp ";
 	  $sql .= " AND l.fk_contrat = c.rowid";
 	  $sql .= " GROUP BY c.rowid";
+	  $sql .= " ORDER BY ss.idp ASC";
 	  
 	  $resql = $db->query($sql);
 
