@@ -22,24 +22,26 @@
  */
 
 /**
-   \file       htdocs/commande/fiche.php
-   \ingroup    commande
-   \brief      Fiche commande
-   \version    $Revision$
+       \file       htdocs/commande/fiche.php
+       \ingroup    commande
+       \brief      Fiche commande
+       \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 $langs->load("orders");
 $langs->load("companies");
+$langs->load("bills");
 
 $user->getrights('commande');
 $user->getrights('expedition');
 
 if (!$user->rights->commande->lire) accessforbidden();
 
-require("../project.class.php");
-require("../propal.class.php");
+require_once DOL_DOCUMENT_ROOT."/project.class.php";
+require_once DOL_DOCUMENT_ROOT."/propal.class.php";
+require_once DOL_DOCUMENT_ROOT."/commande/commande.class.php";
 
 /*
  * Sécurité accés client
@@ -149,6 +151,13 @@ if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer)
   Header("Location: fiche.php?id=".$_GET["id"]);
 }
 
+if ($_GET["action"] == 'facturee') 
+{
+  $commande = new Commande($db);
+  $commande->fetch($_GET["id"]);
+  $commande->classer_facturee();
+}
+
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->commande->valider)
 {
   $commande = new Commande($db);
@@ -200,7 +209,7 @@ $html = new Form($db);
  ************************************************************************/
 if ($_GET["action"] == 'create' && $user->rights->commande->creer) 
 {
-  print_titre("Créer une commande");
+  print_titre($langs->trans("CreateOrder"));
 
   $new_commande = new Commande($db);
 
@@ -406,7 +415,7 @@ else
   if ($id > 0)
     {
       $commande = new Commande($db);
-      if ( $commande->fetch($id) > 0)
+      if ( $commande->fetch($_GET["id"]) > 0)
 	{	  
 	  $soc = new Societe($db);
 	  $soc->fetch($commande->soc_id);
@@ -416,7 +425,7 @@ else
 
 
 	  $head[0][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
-	  $head[0][1] = $langs->trans("Order")." : $commande->ref";
+	  $head[0][1] = $langs->trans("Order").": ".$commande->ref;
 	  $h = 1;
 	  $a = 0;
 	  
@@ -428,7 +437,7 @@ else
 	   */
 	  if ($_GET["action"] == 'delete')
 	    {
-	      $html->form_confirm("fiche.php?id=$id","Supprimer la commande","Etes-vous sûr de vouloir supprimer cette commande ?","confirm_delete");
+	      $html->form_confirm("fiche.php?id=$id",$langs->trans("DeleteOrder"),$langs->trans("ConfirmDeleteOrder"),"confirm_delete");
 	      print "<br />\n";
 	    }
 	  
@@ -439,7 +448,7 @@ else
 	  if ($_GET["action"] == 'valid')
 	    {
 	      //$numfa = commande_get_num($soc);
-	      $html->form_confirm("fiche.php?id=$id","Valider la commande","Etes-vous sûr de vouloir valider cette commande ?","confirm_valid");
+	      $html->form_confirm("fiche.php?id=$id",$langs->trans("ValidateOrder"),$langs->trans("ConfirmValidateOrder"),"confirm_valid");
 	      print "<br />\n";
 	    }
 	  /*
@@ -448,7 +457,7 @@ else
 	   */
 	  if ($_GET["action"] == 'annuler')
 	    {
-	      $html->form_confirm("fiche.php?id=$id",$langs->trans("Cancel"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
+	      $html->form_confirm("fiche.php?id=$id",$langs->trans("Cancel"),$langs->trans("ConfirmCancel"),"confirm_cancel");
 	      print "<br />\n";
 	    }
 
@@ -543,7 +552,7 @@ else
 	  echo '<br><table class="noborder" width="100%">';	  
 
 	  $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l WHERE l.fk_commande = $id ORDER BY l.rowid";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l WHERE l.fk_commande = ".$commande->id." ORDER BY l.rowid";
 	  
 	  $result = $db->query($sql);
 	  if ($result)
@@ -731,6 +740,7 @@ else
 
 
 	print '<table width="100%"><tr><td width="50%" valign="top">';
+
 	/*
 	 * Liste des expéditions
 	 */
@@ -744,10 +754,10 @@ else
 	    $num = $db->num_rows();
 	    if ($num)
 	      {
-		print_titre("Expéditions");
+		print_titre($langs->trans("Sendings"));
 		$i = 0; $total = 0;
 		print '<table class="border" width="100%">';
-		print "<tr $bc[$var]><td>Expédition</td><td>".$langs->trans("Date")."</td></tr>\n";
+		print "<tr $bc[$var]><td>".$langs->trans("Sendings")."</td><td>".$langs->trans("Date")."</td></tr>\n";
 		
 		$var=True;
 		while ($i < $num)

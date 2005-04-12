@@ -53,8 +53,8 @@ $begin=$_GET["begin"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 
-if ($sortfield == "") $sortfield="c.rowid";
-if ($sortorder == "") $sortorder="DESC";
+if (! $sortfield) $sortfield="c.rowid";
+if (! $sortorder) $sortorder="DESC";
 
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
@@ -74,6 +74,10 @@ if ($_GET["month"] > 0)
 if ($_GET["year"] > 0)
 {
   $sql .= " AND date_format(c.date_commande, '%Y') = $year";
+}
+if (isset($_GET["status"]))
+{
+  $sql .= " AND fk_statut = ".$_GET["status"];
 }
 
 if (strlen($_POST["sf_ref"]) > 0)
@@ -99,7 +103,8 @@ if ($resql)
     {
       $title = $langs->trans("ListOfOrders");
     }
-
+  if ($_GET["status"] == 3) $title.=" - ".$langs->trans("StatusOrderToBill");
+  
   $num = $db->num_rows($resql);
   print_barre_liste($title, $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
     
