@@ -570,7 +570,7 @@ foreach ($groupes as $keygroupe => $groupe)
 	      
 	      if ($tlg_duree > 0)
 		{
-		  $page2->write($xx, 18,  ($tlg_cout/$tlg_duree), $fmoy);
+		  $page2->write($xx, 18,  round(($tlg_cout/$tlg_duree),4), $fmoy);
 		}
 	      else
 		{
@@ -844,7 +844,7 @@ foreach ($groupes as $keygroupe => $groupe)
 
 	  if ($tl_duree > 0)
 	    {
-	      $page2->write($xx, 18,  ($tl_cout/$tl_duree), $fmoy);
+	      $page2->write($xx, 18,  round(($tl_cout/$tl_duree),4), $fmoy);
 	    }
 	  else
 	    {
@@ -962,7 +962,7 @@ foreach ($groupes as $keygroupe => $groupe)
       
       if ($tlg_duree > 0)
 	{
-	  $page2->write($xx, 18,  ($tlg_cout/$tlg_duree), $fmoy);
+	  $page2->write($xx, 18,  round(($tlg_cout/$tlg_duree),4), $fmoy);
 	}
       else
 	{
