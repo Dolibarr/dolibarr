@@ -148,7 +148,7 @@ if ( $societe->fetch($socid) )
       print '<table class="border" width="100%">';
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("ProductsAndServices").'</td><td align="center">';
+      print '<td><a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("ProductsAndServices").'</td><td align="center">';
       print $societe->NbProduct();
       print '</td></tr></table><br>';
     }
