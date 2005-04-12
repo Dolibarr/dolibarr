@@ -197,12 +197,12 @@ function top_menu($head, $title="", $target="")
   $menutop->showmenu();
   
   // Lien sur fiche du login
-  print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->login.'</a>' ;
+  print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'" target="'.$menutop->atarget.'">'.$user->login.'</a>' ;
 
   // Lien logout
   if (! isset($_SERVER["REMOTE_USER"]) || ! $_SERVER["REMOTE_USER"])
     {
-      print '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
+      print '<a href="'.DOL_URL_ROOT.'/user/logout.php" target="'.$menutop->atarget.'">';
       print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" alt="'.$langs->trans("Logout").'" title="'.$langs->trans("Logout").'"></a>';      
     }
 
