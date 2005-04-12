@@ -67,19 +67,20 @@ $tarif_vente = new TelephonieTarif($db, 1, "vente");
 
 $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_groupeligne";
   
-if ( $db->query($sql) )
+$resql = $db->query($sql);
+
+if ($resql)
 {
-  $nums = $db->num_rows();
+  $nums = $db->num_rows($resql);
   $i = 0;
   while($i < $nums)
     {
-      $row = $db->fetch_row();
+      $row = $db->fetch_row($resql);
       $groupes[$row[0]] = $row[1];
-      //print "Lecture $row[1]\n";
       print "Mem : ".memory_get_usage() ."\n";
       $i++;
     }
-  $db->free();
+  $db->free($resql);
 }
 
 
@@ -270,12 +271,48 @@ foreach ($groupes as $keygroupe => $groupe)
   $ftotal->set_pattern(0x1);
 
   /*
+   * Chargement des numéros de datas
+   *
+   */
+  
+  $sql = "SELECT n.numero ";
+  $sql .=" FROM ".MAIN_DB_PREFIX."telephonie_numdata as n";  
+  $sql .= " WHERE n.fk_groupe = ".$keygroupe;
+  
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      $nums = $db->num_rows($resql);
+      $si = 0;
+      while($si < $nums)
+	{
+	  $row = $db->fetch_row($resql);
+	  $numdatas[$row[0]] = $row[0];
+	  $si++;
+	}
+      $db->free($resql);
+    }
+  else
+    {
+      print $db->error();
+    }
+  
+  /*
    * Boucle sur les mois
    */
-  for ($month = 1 ; $month <= 2 ; $month++)
+  for ($imonth = 1 ; $imonth <= ($month + 1) ; $imonth++)
     {
-      $page2 = &$workbook->addworksheet($year."-.".substr("00".$month,-2));
-      
+
+      if ($imonth > $month)
+	{
+	  $page2 = &$workbook->addworksheet("Année $year");
+	}
+      else
+	{
+	  $page2 = &$workbook->addworksheet($year."-.".substr("00".$imonth,-2));
+	}
+
       for ($a = 0 ; $a < 200 ; $a++)
 	{
 	  $page2->set_row($a,25); // A
@@ -289,7 +326,6 @@ foreach ($groupes as $keygroupe => $groupe)
       $page2->set_column(6,6,7); // G
       $page2->set_column(9,9,7); // J
       $page2->set_column(12,12,7); // M
-
 
       $page2->set_column(4,5,10); // E-F
       $page2->set_column(7,8,10);  // H-I
@@ -352,40 +388,6 @@ foreach ($groupes as $keygroupe => $groupe)
 
       unset ($lignes);
 
-
-      /*
-       * Chargement des numéros de datas
-       *
-       */
-
-      $sql = "SELECT n.numero ";
-      $sql .=" FROM ".MAIN_DB_PREFIX."telephonie_numdata as n";
-
-      $sql .= " WHERE n.fk_groupe = ".$keygroupe;
-
-      if ( $db->query($sql) )
-	{
-	  $nums = $db->num_rows();
-	  $si = 0;
-	  while($si < $nums)
-	    {
-	      $row = $db->fetch_row();
-
-	      $numdatas[$row[0]] = $row[0];
-
-	      //print "Lecture $row[0]\n";
-	      $si++;
-	    }
-	  $db->free();
-	}
-      else
-	{
-	  print $db->error();
-	}
-      /*
-       *
-       *
-       */
       /*
        *
        *
@@ -430,7 +432,6 @@ foreach ($groupes as $keygroupe => $groupe)
       $oldana = '';
       $oldfk_soc = '';
       $lines = array();
-
 
       $fksoc = 0;
       $tg = 0; // permet de gérer l'affichage du total groupe.
@@ -478,7 +479,6 @@ foreach ($groupes as $keygroupe => $groupe)
       $total_groupe_duree = 0;
       $total_groupe_nb = 0;
       $total_groupe_cout = 0;
-
 
       foreach ($lignes as $keyligne => $ligne)
 	{
@@ -632,8 +632,16 @@ foreach ($groupes as $keygroupe => $groupe)
 
 	  $sql = "SELECT ligne, numero, date, fourn_cout, fourn_montant, duree, tarif_achat_temp, tarif_achat_fixe, tarif_vente_temp, tarif_vente_fixe, cout_achat, cout_vente, remise";      
 	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as l";
-	  $sql .= " WHERE ligne = '".$lignetel->numero."'";	                   
-	  $sql .= " AND date_format(date,'%Y%m') = ".$year.substr("00".$month, -2);
+	  $sql .= " WHERE ligne = '".$lignetel->numero."'";	              
+
+	  if ($imonth > $month)
+	    {
+	      $sql .= " AND date_format(date,'%Y') = ".$year;
+	    }
+	  else
+	    {
+	      $sql .= " AND date_format(date,'%Y%m') = ".$year.substr("00".$imonth, -2);
+	    }
 	  $sql .= " ORDER BY date ASC ";
 
 	  $result = $db->query($sql);
