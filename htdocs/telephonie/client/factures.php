@@ -47,7 +47,7 @@ if ($_GET["id"])
 	  $head[$h][1] = $langs->trans("Contrats");
 	  $h++;
 
-	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/fiche.php?id=".$soc->id;
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/lignes.php?id=".$soc->id;
 	  $head[$h][1] = $langs->trans("Lignes");
 	  $h++;
 
@@ -104,10 +104,10 @@ if ($_GET["id"])
 	  $sql .= " AND s.idp = ".$soc->id;	  
 	  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 	  
-	  $result = $db->query($sql);
-	  if ($result)
+	  $resql = $db->query($sql);
+	  if ($resql)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($resql);
 	      $i = 0;
 	      	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -121,7 +121,7 @@ if ($_GET["id"])
 	      	      
 	      while ($i < min($num,$conf->liste_limit))
 		{
-		  $obj = $db->fetch_object();
+		  $obj = $db->fetch_object($resql);
 		  $var=!$var;
 		  
 		  print "<tr $bc[$var]>";
@@ -148,14 +148,12 @@ if ($_GET["id"])
 		  $i++;
 		}
 	      print "</table>";
-	      $db->free();
+	      $db->free($resql);
 	    }
 	  else 
 	    {
 	      print $db->error() . ' ' . $sql;
-	    }
-	  
-
+	    }	  
 	}
     }
 }
@@ -163,7 +161,6 @@ else
 {
   print "Error";
 }
-
 
 print '</div>';
 
