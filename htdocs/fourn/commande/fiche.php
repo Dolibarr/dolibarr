@@ -361,8 +361,8 @@ if ($_GET["id"] > 0)
       $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l ";
       $sql .= " WHERE l.fk_commande = $commande->id ORDER BY l.rowid";
 	  
-      $result = $db->query($sql);
-      if ($result)
+      $resql = $db->query($sql);
+      if ($resql)
 	{
 	  $num_lignes = $db->num_rows();
 	  $i = 0; $total = 0;
@@ -388,7 +388,7 @@ if ($_GET["id"] > 0)
 	      if ($objp->fk_product > 0)
 		{
 		  print '<td>';
-		  print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+		  print '<a href="'.DOL_URL_ROOT.'/fourn/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
 		}
 	      else
 		{
@@ -454,20 +454,22 @@ if ($_GET["id"] > 0)
 	  $sql .= " WHERE p.rowid = pf.fk_product AND pf.fk_soc = ".$commande->fourn_id;
 	  $sql .= " AND quantity = 1";
 	  $sql .= " ORDER BY p.ref ";
-	  if ( $db->query($sql) )
+	  $resql = $db->query($sql);
+	  if ($resql)
 	    {
 	      $opt = "<option value=\"0\" SELECTED></option>";
-	      if ($result)
+	      if ($resql)
 		{
-		  $num = $db->num_rows();	$i = 0;	
+		  $num = $db->num_rows($resql);
+		  $i = 0;	
 		  while ($i < $num)
 		    {
-		      $objp = $db->fetch_object();
+		      $objp = $db->fetch_object($resql);
 		      $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
 		      $i++;
 		    }
 		}
-	      $db->free();
+	      $db->free($resql);
 	    }
 	  else
 	    {
