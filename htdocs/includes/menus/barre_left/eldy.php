@@ -184,6 +184,7 @@ class MenuLeft {
                   if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"), 1, $user->rights->propale->lire);
                 }
                 
+                // Contrat
                 if ($conf->contrat->enabled)
                 {
                   $langs->load("contracts");
@@ -193,6 +194,7 @@ class MenuLeft {
                   if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/enservice.php", $langs->trans("ContractStatusRunning"), 1 ,$user->rights->contrat->lire);
                 }
                 
+                // Commandes
                 if ($conf->commande->enabled ) 
                 {
                   $langs->load("orders");
@@ -282,6 +284,14 @@ class MenuLeft {
                     if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"),2,$user->rights->facture->lire);
                 }
                 
+                // Commandes
+                if ($conf->commande->enabled ) 
+                {
+                  $langs->load("orders");
+                  $newmenu->add(DOL_URL_ROOT."/commande/index.php?leftmenu=orders", $langs->trans("Orders"), 0 ,$user->rights->commande->lire);
+                  if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/liste.php?leftmenu=orders&status=3", $langs->trans("StatusOrderToBill"), 1 ,$user->rights->commande->lire);
+                }
+
                 // Dons
                 if ($conf->don->enabled)
                 {
