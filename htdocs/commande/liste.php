@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,6 +39,8 @@ if (!$user->rights->commande->lire)
 /*
  * Sécurité accés client
  */
+$socidp = $_GET["socidp"];
+
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -51,19 +53,11 @@ $begin=$_GET["begin"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 
-if ($sortfield == "")
-{
-  $sortfield="c.rowid";
-}
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
+if ($sortfield == "") $sortfield="c.rowid";
+if ($sortorder == "") $sortorder="DESC";
 
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
-$pageprev = $_GET["page"] - 1;
-$pagenext = $_GET["page"] + 1;
 
 $sql = "SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande, c.fk_statut" ;
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c WHERE c.fk_soc = s.idp";
@@ -90,10 +84,24 @@ if (strlen($_POST["sf_ref"]) > 0)
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1,$offset);
 
-if ( $db->query($sql) )
+$resql = $db->query($sql);
+
+if ($resql)
 {
-  $num = $db->num_rows();
-  print_barre_liste($langs->trans("ListOfOrders"), $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+
+  if ($socidp)
+    {
+      $soc = new Societe($db);
+      $soc->fetch($socidp);
+      $title = $langs->trans("ListOfOrders") . " - ".$soc->nom;
+    }
+  else
+    {
+      $title = $langs->trans("ListOfOrders");
+    }
+
+  $num = $db->num_rows($resql);
+  print_barre_liste($title, $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
     
   $i = 0;
   print '<table class="noborder" width="100%">';
@@ -109,50 +117,50 @@ if ( $db->query($sql) )
 
   while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object();
+      $objp = $db->fetch_object($resql);
       
-	  $var=!$var;
-	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objp->ref."</a></td>\n";
-	  print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a></td>\n";
-	  
-	  $now = time();
-	  $lim = 3600 * 24 * 15 ;
-	  
-	  if ( ($now - $objp->date_commande) > $lim && $objp->statutid == 1 )
-	    {
-	      print "<td><b> &gt; 15 jours</b></td>";
-	    }
-	  else
-	    {
-	      print "<td>&nbsp;</td>";
-	    }
-	  
-	  print "<td align=\"right\">";
-	  $y = strftime("%Y",$objp->date_commande);
-	  $m = strftime("%m",$objp->date_commande);
-	  
-	  print strftime("%d",$objp->date_commande)."\n";
-	  print " <a href=\"liste.php?year=$y&amp;month=$m\">";
-	  print strftime("%B",$objp->date_commande)."</a>\n";
-	  print " <a href=\"liste.php?year=$y\">";
-	  print strftime("%Y",$objp->date_commande)."</a></td>\n";      
-
-	  print '<td align="center">'.$generic_commande->statuts[$objp->fk_statut].'</td>';
-	  print "</tr>\n";
-	  
-	  $total = $total + $objp->price;
-	  $subtotal = $subtotal + $objp->price;
-	  
-	  $i++;
+      $var=!$var;
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objp->ref."</a></td>\n";
+      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a></td>\n";
+      
+      $now = time();
+      $lim = 3600 * 24 * 15 ;
+      
+      if ( ($now - $objp->date_commande) > $lim && $objp->statutid == 1 )
+	{
+	  print "<td><b> &gt; 15 jours</b></td>";
 	}
-            
-      print "</table>";
-      $db->free();
+      else
+	{
+	  print "<td>&nbsp;</td>";
+	}
+      
+      print "<td align=\"right\">";
+      $y = strftime("%Y",$objp->date_commande);
+      $m = strftime("%m",$objp->date_commande);
+      
+      print strftime("%d",$objp->date_commande)."\n";
+      print " <a href=\"liste.php?year=$y&amp;month=$m\">";
+      print strftime("%B",$objp->date_commande)."</a>\n";
+      print " <a href=\"liste.php?year=$y\">";
+      print strftime("%Y",$objp->date_commande)."</a></td>\n";      
+      
+      print '<td align="center">'.$generic_commande->statuts[$objp->fk_statut].'</td>';
+      print "</tr>\n";
+      
+      $total = $total + $objp->price;
+      $subtotal = $subtotal + $objp->price;
+      
+      $i++;
+    }
+  
+  print "</table>";
+  $db->free($resql);
 }
 else
 {
-    print dolibarr_print_error($db);
+  print dolibarr_print_error($db);
 }
 
 $db->close();
