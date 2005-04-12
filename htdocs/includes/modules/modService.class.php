@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@
  *
  */
 
-/**     \defgroup   service     Module service
+/**
+        \defgroup   service     Module service
         \brief      Module pour gérer le suivi de services prédéfinis
 */
 
@@ -75,7 +76,7 @@ class modService extends DolibarrModules
 
     // Permissions
     $this->rights = array();
-    $this->rights_class = 'produit';
+    $this->rights_class = 'service';
 
   }
 
@@ -88,29 +89,31 @@ class modService extends DolibarrModules
     // Permissions et valeurs par défaut
     $this->remove();
 
-    $this->rights[1][0] = 31; // id de la permission
-    $this->rights[1][1] = 'Lire les produits/services'; // libelle de la permission
+/* Pour l'instant droits sur services non gérés
+    $this->rights[1][0] = 331; // id de la permission
+    $this->rights[1][1] = 'Lire les services'; // libelle de la permission
     $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
     $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
     $this->rights[1][4] = 'lire';
 
-    $this->rights[2][0] = 32; // id de la permission
-    $this->rights[2][1] = 'Créer modifier les produits/services'; // libelle de la permission
+    $this->rights[2][0] = 332; // id de la permission
+    $this->rights[2][1] = 'Créer/modifier les services'; // libelle de la permission
     $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[2][4] = 'creer';
 
-    $this->rights[3][0] = 33; // id de la permission
-    $this->rights[3][1] = 'Commander les produits/services'; // libelle de la permission
+    $this->rights[3][0] = 333; // id de la permission
+    $this->rights[3][1] = 'Commander un service'; // libelle de la permission
     $this->rights[3][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[3][4] = 'commander';
 
-    $this->rights[4][0] = 34; // id de la permission
-    $this->rights[4][1] = 'Supprimer les produits/services'; // libelle de la permission
+    $this->rights[4][0] = 334; // id de la permission
+    $this->rights[4][1] = 'Supprimer les services'; // libelle de la permission
     $this->rights[4][2] = 'd'; // type de la permission (déprécié à ce jour)
     $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[4][4] = 'supprimer';
+*/
 
     $sql = array();
 
@@ -123,11 +126,7 @@ class modService extends DolibarrModules
    */
   function remove()
   {
-    $sql = array(
-		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'produit';",
-		 "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = 'box_services_vendus.php';",
-		 "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = 'box_produits.php';"
-		 );
+    $sql = array();
 
     return $this->_remove($sql);
   }

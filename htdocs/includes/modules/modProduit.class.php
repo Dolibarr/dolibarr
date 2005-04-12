@@ -23,7 +23,8 @@
  *
  */
 
-/**     \defgroup   produit     Module produit
+/**
+        \defgroup   produit     Module produit
         \brief      Module pour gérer le suivi de produits prédéfinis
 */
 
@@ -35,7 +36,8 @@
 
 include_once "DolibarrModules.class.php";
 
-/** \class modProduit
+/**
+        \class      modProduit
 		\brief      Classe de description et activation du module Produit
 */
 
