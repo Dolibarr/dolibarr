@@ -87,7 +87,8 @@ if ($_GET["id"])
 	  
 	  /* Lignes */
 	     
-	  $sql = "SELECT count(l.rowid) as cc, c.rowid, c.ref, ss.nom as agence";
+	  $sql = "SELECT count(l.rowid) as cc, c.rowid, c.ref";
+	  $sql .= ", ss.nom as agence, ss.code_client, ss.ville";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 	  $sql .= " , ".MAIN_DB_PREFIX."societe as ss";
@@ -106,7 +107,7 @@ if ($_GET["id"])
 		  $ligne = new LigneTel($db);
 
 		  print '<tr class="liste_titre"><td width="15%" valign="center">Contrat';
-		  print '</td><td>Agence/Filiale</td><td align="center">Nb Lignes</td>';
+		  print '</td><td colspan="3">Agence/Filiale</td><td align="center">Nb Lignes</td>';
 		  print "</tr>\n";
 
 		  while ($i < $num)
@@ -123,7 +124,9 @@ if ($_GET["id"])
 
 		      print '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
+		      print '<td>'.$obj->code_client."</td>\n";
 		      print '<td>'.$obj->agence."</td>\n";
+		      print '<td>'.$obj->ville."</td>\n";
 
 		      print '<td align="center">'.$obj->cc."</td>\n";
 

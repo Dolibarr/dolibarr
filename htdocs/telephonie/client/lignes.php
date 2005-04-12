@@ -92,17 +92,22 @@ if ($_GET["id"])
 	  
 	  /* Lignes */
 	     
-	  $sql = "SELECT s.idp as socidp, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise, ss.nom as agence";
+	  $sql = "SELECT s.idp as socidp, f.nom as fournisseur, s.nom";
+	  $sql .= ", ss.nom as agence, ss.ville, ss.code_client";
+	  $sql .= " , l.ligne,  l.statut, l.rowid, l.remise";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	  $sql .= " , ".MAIN_DB_PREFIX."societe as ss";
 	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 	  $sql .= " WHERE l.fk_client_comm = s.idp AND l.fk_fournisseur = f.rowid";
 	  $sql .= " AND l.fk_soc = ss.idp ";
 	  $sql .= " AND s.idp = ".$soc->id;
+	  $sql .= " ORDER BY ss.idp ASC";
+
+	  $resql =  $db->query($sql);
 	  
-	  if ( $db->query( $sql) )
+	  if ($resql)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($resql);
 	      if ( $num > 0 )
 		{
 		  $i = 0;
@@ -110,14 +115,15 @@ if ($_GET["id"])
 		  $ligne = new LigneTel($db);
 
 		  print '<tr class="liste_titre"><td width="15%" valign="center">Ligne';
-		  print '</td><td>Agence/Filiale</td><td align="center">Statut</td><td align="center">Remise LMN';
-		  print '</td><td>Fournisseur</td>';
+		  print '</td><td colspan="3">Agence/Filiale</td>';
+		  print '<td align="center">Remise LMN</td>';
+		  print '<td>Fournisseur</td>';
 
 		  print "</tr>\n";
 
 		  while ($i < $num)
 		    {
-		      $obj = $db->fetch_object($i);	
+		      $obj = $db->fetch_object($resql);
 		      $var=!$var;
 
 		      print "<tr $bc[$var]><td>";
@@ -131,8 +137,9 @@ if ($_GET["id"])
 
 		      print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
 
+		      print '<td>'.$obj->code_client."</td>\n";
 		      print '<td>'.$obj->agence."</td>\n";
-		      print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
+		      print '<td>'.$obj->ville."</td>\n";
 
 		      print '<td align="center">'.$obj->remise." %</td>\n";
 		      print "<td>".$obj->fournisseur."</td>\n";
@@ -140,7 +147,7 @@ if ($_GET["id"])
 		      $i++;
 		    }
 		}
-	      $db->free();     
+	      $db->free($resql);
 	      
 	    }
 	  else
