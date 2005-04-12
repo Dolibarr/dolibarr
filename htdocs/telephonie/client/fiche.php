@@ -97,9 +97,11 @@ if ($_GET["id"])
 	  $sql .= " AND l.fk_contrat = c.rowid";
 	  $sql .= " GROUP BY c.rowid";
 	  
-	  if ( $db->query( $sql) )
+	  $resql = $db->query($sql);
+
+	  if ($resql)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($resql);
 	      if ( $num > 0 )
 		{
 		  $i = 0;
@@ -112,7 +114,7 @@ if ($_GET["id"])
 
 		  while ($i < $num)
 		    {
-		      $obj = $db->fetch_object($i);	
+		      $obj = $db->fetch_object($resql);
 		      $var=!$var;
 
 		      print "<tr $bc[$var]><td>";
@@ -127,14 +129,12 @@ if ($_GET["id"])
 		      print '<td>'.$obj->code_client."</td>\n";
 		      print '<td>'.$obj->agence."</td>\n";
 		      print '<td>'.$obj->ville."</td>\n";
-
 		      print '<td align="center">'.$obj->cc."</td>\n";
-
 		      print "</tr>\n";
 		      $i++;
 		    }
 		}
-	      $db->free();     
+	      $db->free($resql);
 	      
 	    }
 	  else
