@@ -58,6 +58,17 @@ if ($_POST["action"] == 'add')
     }  
 }
 
+if ($_GET["action"] == 'transfer')
+{
+  $ligne = new LigneTel($db);
+  $ligne->fetch_by_id($_GET["id"]);
+
+  if ( $ligne->transfer($user,$_POST["fournisseur"]) == 0)
+    {
+      Header("Location: fiche.php?id=".$ligne->id);
+    }
+}
+
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
   $ligne = new LigneTel($db);
@@ -998,6 +1009,51 @@ else
   else
     {
       print "Error";
+    }
+}
+
+if ( $user->rights->telephonie->ligne_commander && $ligne->statut == 3 )
+{
+  $ff = array();
+  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
+  if ( $db->query( $sql) )
+    {
+      $num = $db->num_rows();
+      if ( $num > 0 )
+	{
+	  $i = 0;
+	  while ($i < $num)
+	    {
+	      $row = $db->fetch_row();
+	      if ($row[0] <> $ligne->fournisseur_id)
+		{
+		  $ff[$row[0]] = $row[1];
+		}
+	      $i++;
+	    }
+	}
+      $db->free();      
+    }
+
+  if (sizeof($ff) > 0)
+    {
+      /**
+       * Transférer chez un autre fournisseur
+       */
+      $form = new Form($db);      
+      print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';      
+      print '<form action="fiche.php?id='.$ligne->id.'&amp;action=transfer" method="post">';
+      print '<table class="noborder" cellpadding="2" cellspacing="0">';
+      print '<tr class="liste_titre">';
+      print '<td colspan="2">Commander la ligne chez un autre fournisseur</td></tr>';
+      print '<tr><td width="20%">Fournisseur</td><td >';
+      $form->select_array("fournisseur",$ff,$ligne->fournisseur);
+      print '</td></tr>';
+      
+      print '<tr><td colspan="2"align="center"><input type="submit" name="Activer"></td></tr>';
+      print '</table>';
+      print '</form></td><td>';
+      print '&nbsp;</td></tr></table>';
     }
 }
 
