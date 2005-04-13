@@ -317,6 +317,9 @@ class Societe {
 	if ($this->effectif_id)  
 	  { $sql .= ",fk_effectif = '" . $this->effectif_id ."'"; }
 	
+	if ($this->typent_id)  
+	  { $sql .= ",fk_typent = '" . $this->typent_id ."'"; }
+
 	if ($this->forme_juridique_code)
 	  { 
 	    $sql .= ",fk_forme_juridique = '".$this->forme_juridique_code."'";
@@ -389,6 +392,7 @@ class Societe {
     $sql .= ",". $this->db->pdate("s.tms")." as date_update";
     $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
     $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
+    $sql .= ", s.fk_typent";
     $sql .= ", e.libelle as effectif, e.id as effectif_id";
     $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique";
     $sql .= ", s.code_client, s.code_compta, s.parent";
@@ -427,8 +431,8 @@ class Societe {
 	    $this->pays_code = $obj->fk_pays?$obj->pays_code:'';
 	    $this->pays = $obj->fk_pays?$obj->pays:'';
 
-        $transcode=$langs->trans("StatusProspect".$obj->fk_stcomm);
-        $libelle=($transcode!="StatusProspect".$obj->fk_stcomm?$transcode:$obj->stcomm);
+	    $transcode=$langs->trans("StatusProspect".$obj->fk_stcomm);
+	    $libelle=($transcode!="StatusProspect".$obj->fk_stcomm?$transcode:$obj->stcomm);
 	    $this->stcomm_id = $obj->fk_stcomm;     // id statut commercial
 	    $this->statut_commercial = $libelle;    // libelle statut commercial
 
@@ -457,7 +461,7 @@ class Societe {
 	    $this->tva_intra      = $obj->tva_intra;
 	    $this->tva_intra_code = substr($obj->tva_intra,0,2);
 	    $this->tva_intra_num  = substr($obj->tva_intra,2);
-
+	    $this->typent_id      = $obj->fk_typent;
 	    $this->effectif_id    = $obj->effectif_id;
 	    $this->effectif       = $obj->effectif_id?$obj->effectif:'';
 
@@ -484,8 +488,7 @@ class Societe {
 		$this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
 	      }
 
-	    $this->rubrique = $obj->rubrique;
-	      
+	    $this->rubrique = $obj->rubrique;	      
 	    $this->note = $obj->note;
 
 	    $result = 1;	      
