@@ -259,31 +259,38 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	  print '<table class="noborder" width="100%">';
 	  print "<tr class=\"liste_titre\">";
 	  print '<td colspan="2">'.$langs->trans("OrdersToBill").' ('.$num.')</td>';
-	  print '<td align="right">'.$langs->trans("AmountHT").'</td><td align="right">'.$langs->trans("AmountTTC").'</td></tr>';
+	  print '<td align="right">'.$langs->trans("AmountHT").'</td>';
+	  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+	  print '<td align="right">'.$langs->trans("ToBill").'</td>';
+	  print '</tr>';
 	  $var = True;
 	  $tot_ht=0;
 	  $tot_ttc=0;
 	  while ($i < $num)
 	    {
-	      $var=!$var;
-	      $obj = $db->fetch_object($resql);
-	      if ($obj->total_ht-$obj->tot_fht)
-		{
-		  print "<tr $bc[$var]>";
-		  print "<td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
-		  print "<a href=\"commande.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
-		  
-		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
-		  print '<a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-		  print '<td align="right">'.price($obj->total_ht-$obj->tot_fht).'</td>';
-		  print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td></tr>';
-		  $tot_ht += $obj->total_ht-$obj->tot_fht;
-		  $tot_ttc += $obj->total_ttc-$obj->tot_fttc;
-		}
-	      $i++;
+            $var=!$var;
+            $obj = $db->fetch_object($resql);
+            print "<tr $bc[$var]>";
+            print "<td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
+            print "<a href=\"commande.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
+            
+            print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
+            print '<a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+            print '<td align="right">'.price($obj->total_ht).'</td>';
+            print '<td align="right">'.price($obj->total_ttc).'</td>';
+            print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td></tr>';
+            $tot_ht += $obj->total_ht;
+            $tot_ttc += $obj->total_ttc;
+            $tot_tobill += ($obj->total_ttc-$obj->tot_fttc);
+            $i++;
 	    }
-	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; (Reste à facturer : '.price($tot_ttc).')</i></td><td align="right"><i>'.price($tot_ht)."</i></td><td align=\"right\"><i>".price($tot_ttc)."</i></td></tr>";
-	  print "</table><br>";
+      $var=!$var;
+	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; ('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</i></td>';
+	  print '<td align="right"><i>'.price($tot_ht).'</i></td>';
+	  print '<td align="right"><i>'.price($tot_ttc).'</i></td>';
+	  print '<td align="right"><i>'.price($tot_tobill).'</i></td>';
+	  print '</tr>';
+	  print '</table><br>';
 	}
       $db->free($resql);
     }
@@ -329,7 +336,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	    {
 	      $obj = $db->fetch_object($resql);
 
-	      if ($i < 10)
+	      if ($i < $conf->liste_limit)
 		{
 		  $var=!$var;
 		  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
