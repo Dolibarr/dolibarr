@@ -40,71 +40,71 @@ $cat->label       = $_REQUEST["nom"];
 $cat->description = $_REQUEST["description"];
 
 $new_cats_meres = isset ($_REQUEST['cats_meres']) ? $_REQUEST['cats_meres'] : array ();
-	// tableau d'id de catégories
+// tableau d'id de catégories
 
 $old_objs_meres = $cat->get_meres ();
-	// tableau d'objets catégorie
+// tableau d'objets catégorie
 
 $old_cats_meres = array ();
 foreach ($old_objs_meres as $old_obj_mere)
-	{	// transformation en tableau d'id
-	$old_cats_meres[] = $old_obj_mere->id;
-	}
+{	// transformation en tableau d'id
+  $old_cats_meres[] = $old_obj_mere->id;
+}
 
 $asupprimer = array ();	// tableaux des catégories mères
 $aajouter   = array ();	// à ajouter ou à supprimer
 
 foreach ($old_cats_meres as $old_cat)
-	{
-	if (!in_array ($old_cat, $new_cats_meres))
-		{
-		$asupprimer[] = new Categorie ($db, $old_cat);
-		}
-	}
+{
+  if (!in_array ($old_cat, $new_cats_meres))
+    {
+      $asupprimer[] = new Categorie ($db, $old_cat);
+    }
+}
 
 foreach ($new_cats_meres as $new_cat)
-	{
-	if (!in_array ($new_cat, $old_cats_meres))
-		{
-		$aajouter[] = new Categorie ($db, $new_cat);
-		}
-	}
+{
+  if (!in_array ($new_cat, $old_cats_meres))
+    {
+      $aajouter[] = new Categorie ($db, $new_cat);
+    }
+}
 
 $res = $cat->update ();
 if ($res < 0)
-	{
-	print "<p>Impossible de modifier la catégorie ".$cat->label.".</p>";
-	}
+{
+  print "<p>Impossible de modifier la catégorie ".$cat->label.".</p>";
+}
 else
+{
+  print "<p>La catégorie ".$cat->label." a été modifiée avec succès.</p>";
+
+  foreach ($asupprimer as $old_mere)
+    {
+      $res = $old_mere->del_fille ($cat);
+      if ($res < 0)
 	{
-	print "<p>La catégorie ".$cat->label." a été modifiée avec succès.</p>";
-
-	foreach ($asupprimer as $old_mere)
-		{
-		$res = $old_mere->del_fille ($cat);
-		if ($res < 0)
-			{
-			print "<p>Impossible d'enlever la catégorie de \"".$old_mere->label."\" ($res).</p>\n";
-			}
-		else
-			{
-			print "<p>La catégorie ne fait plus partie de ".$old_mere->label.".</p>\n";
-			}
-		}
-
-	foreach ($aajouter as $new_mere)
-		{
-		$res = $new_mere->add_fille ($cat);
-		if ($res < 0)
-			{
-			print "<p>Impossible d'ajouter la catégorie à \"".$new_mere->label."\" ($res).</p>";
-			}
-		else
-			{
-			print "<p>La catégorie fait maintenant partie de ".$new_mere->label.".</p>\n";
-			}
-		}
+	  print "<p>Impossible d'enlever la catégorie de \"".$old_mere->label."\" ($res).</p>\n";
 	}
+      else
+	{
+	  print "<p>La catégorie ne fait plus partie de ".$old_mere->label.".</p>\n";
+	}
+    }
+
+  foreach ($aajouter as $new_mere)
+    {
+      $res = $new_mere->add_fille ($cat);
+      if ($res < 0)
+	{
+	  print "<p>Impossible d'ajouter la catégorie à \"".$new_mere->label."\" ($res).</p>";
+	}
+      else
+	{
+	  print "<p>La catégorie fait maintenant partie de ".$new_mere->label.".</p>\n";
+	}
+    }
+}
 
 print '</td></tr></table>';
 
