@@ -527,7 +527,7 @@ class Categorie
    * Retourne les chemin de la catégorie, avec les noms des catégories
    * séparés par $sep (" >> " par défaut)
    */
-  function print_all_ways ($sep = " &gt;&gt; ")
+  function print_all_ways ($sep = " &gt;&gt; ", $url='')
   {
     $ways = array ();
 		
@@ -536,7 +536,14 @@ class Categorie
 	$w = array ();
 	foreach ($way as $cat)
 	  {
-	    $w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."'>".$cat->label."</a>";
+	    if ($url == '')
+	      {
+		$w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."'>".$cat->label."</a>";
+	      }
+	    else
+	      {
+		$w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
+	      }
 	  }
 	$ways[] = implode ($sep, $w);
       }
@@ -544,6 +551,7 @@ class Categorie
     return $ways;
   }
 	
+
   /**
    * get_primary_way() affiche le chemin le plus court pour se rendre à un produit
    */
