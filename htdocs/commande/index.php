@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,31 +154,33 @@ if ( $db->query($sql) )
 /*
  * Commandes à traiter
  */
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut > 2 ";
-if ($socidp)
+$max=5;
+
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp";
+$sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE c.fk_soc = s.idp AND c.fk_statut > 2";
+if ($socidp) $sql .= " AND c.fk_soc = $socidp";
+$sql.= " ORDER BY c.rowid DESC";
+$sql.= $db->plimit($max, 0);
+
+$resql=$db->query($sql);
+if ($resql) 
 {
-  $sql .= " AND c.fk_soc = $socidp";
-}
-$sql .= " ORDER BY c.rowid DESC";
-$sql .= $db->plimit(5, 0);
-if ( $db->query($sql) ) 
-{
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   if ($num)
     {
       $i = 0;
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="2">5 dernières commandes</td></tr>';
+      print '<td colspan="2">'.$langs->trans("LastOrders",$max).'</td></tr>';
       $var = True;
       while ($i < $num)
 	{
 	  $var=!$var;
-	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
-	  print "<a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  $obj = $db->fetch_object($resql);
+	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrders"),"order").' ';
+	  print $obj->ref.'</a></td>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
       print "</table><br>";
@@ -192,5 +194,6 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
+
 ?>
