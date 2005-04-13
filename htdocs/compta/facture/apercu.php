@@ -22,7 +22,8 @@
  *
  */
 
-/**	    \file       htdocs/compta/facture/apercu.php
+/**
+	    \file       htdocs/compta/facture/apercu.php
 		\ingroup    facture
 		\brief      Page de l'onglet aperçu d'une facture
 		\version    $Revision$
@@ -36,9 +37,9 @@ if (!$user->rights->facture->lire)
 
 $langs->load("bills");
 
-require_once("../../facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 if ($conf->projet->enabled) {
-    require_once("../../projet/project.class.php");
+    require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 }
 
 
