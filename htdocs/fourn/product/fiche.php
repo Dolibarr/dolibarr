@@ -252,20 +252,8 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     }
   print '</td></tr>';
   print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
-  print '<tr><td>'.$langs->trans("SellingPrice").'</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
  
-  $langs->load("bills");
-  print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-  print $html->select_tva("tva_tx",$conf->defaulttx);
-  print '</td></tr>';
- 
-  print '<tr><td>'.$langs->trans("Status").'</td><td>';
-  print '<select name="statut">';
-  print '<option value="1">'.$langs->trans("OnSell").'</option>';
-  print '<option value="0" selected>'.$langs->trans("NotOnSell").'</option>';
-  print '</td></tr>';
-  
-  if ($_GET["type"] == 0 && $conf->stick->enabled)
+  if ($_GET["type"] == 0 && $conf->stock->enabled)
     {
       print "<tr>".'<td>Seuil stock</td><td colspan="2">';
       print '<input name="seuil_stock_alerte" size="4" value="0">';
@@ -344,12 +332,40 @@ else
 	      $head[$h][1] = $langs->trans('Statistics');
 	      $h++;
 
+	      //Affichage onglet Catégories
+	      if ($conf->categorie->enabled){
+		$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
+		$head[$h][1] = $langs->trans('Categories');
+		$h++;
+	      }
+
 
 	      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
 
 	      print($mesg);
 	      print '<table class="border" width="100%">';
+
+	      if ($conf->categorie->enabled)
+	      	{
+		  
+		  print '<tr id="ways">';
+		  print '<td colspan="3">';
+		  $cat = new Categorie ($db);
+		  $way = $cat->print_primary_way($product->id," &gt; ",'fourn/product/liste.php');
+		  if ($way == "")
+		    {
+		      print "Ce produit n'appartient à aucune catégorie";
+		    }
+		  else
+		    {
+		      print $langs->trans("Categorie")." : ";
+		      print $way;	
+		    }
+		  print '</td>';
+		  print '</tr>';
+		}
+	      
 	      print "<tr>";
 	      print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%">'.$product->ref.'</td>';
 	      print '<td width="40%">';
