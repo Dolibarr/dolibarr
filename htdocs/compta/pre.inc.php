@@ -76,6 +76,12 @@ function llxHeader($head = "", $title="", $help_url='')
       $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"));
     }
   
+
+    if ($conf->commande->enabled && $conf->facture->enabled) 
+    {
+      $langs->load("orders");
+      $menu->add(DOL_URL_ROOT."/compta/listecommande.php?leftmenu=orders&status=3", $langs->trans("MenuOrdersToBill"));
+    }
     
   // Les dépenses
   if ($conf->fournisseur->enabled)

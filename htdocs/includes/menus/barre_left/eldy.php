@@ -288,8 +288,8 @@ class MenuLeft {
                 if ($conf->commande->enabled ) 
                 {
                   $langs->load("orders");
-                  $newmenu->add(DOL_URL_ROOT."/commande/index.php?leftmenu=orders", $langs->trans("Orders"), 0 ,$user->rights->commande->lire);
-                  if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/liste.php?leftmenu=orders&status=3", $langs->trans("StatusOrderToBill"), 1 ,$user->rights->commande->lire);
+                  $newmenu->add(DOL_URL_ROOT."/compta/listecommande.php?leftmenu=orders&status=3", $langs->trans("MenuOrdersToBill"), 0 ,$user->rights->commande->lire);
+//                  if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/", $langs->trans("StatusOrderToBill"), 1 ,$user->rights->commande->lire);
                 }
 
                 // Dons
