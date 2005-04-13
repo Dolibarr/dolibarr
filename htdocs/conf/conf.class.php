@@ -66,7 +66,7 @@ class Conf
     var $postnuke;
     var $webcal;
     var $propal;
-    
+    var $categorie;    
 }
 
 ?>
