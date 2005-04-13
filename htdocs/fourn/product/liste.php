@@ -58,6 +58,12 @@ if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
     $snom="";
 }
 
+if (strlen($_REQUEST['catid']) == 0)
+{
+  $_REQUEST['catid'] = 1;
+}
+$catid = $_REQUEST['catid'];
+
 /*
  * Mode Liste
  *
@@ -72,6 +78,11 @@ if ($_GET["fourn_id"] > 0)
 {
   $fourn_id = $_GET["fourn_id"];
   $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
+}
+
+if ($catid)
+{
+  $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 }
 
 if ($_POST["mode"] == 'search')
@@ -93,6 +104,11 @@ else
   if ($snom)
     {
       $sql .= " AND p.label like '%".$snom."%'";
+    }
+  if($catid)
+    {
+      $sql .= " AND cp.fk_product = p.rowid";
+      $sql .= " AND cp.fk_categorie = ".$catid;
     }
 
 }
@@ -136,12 +152,8 @@ if ($result)
  *
  *
  */
-  if (strlen($_REQUEST['catid']) == 0)
-    {
-      $_REQUEST['catid'] = 1;
-    }
 
-  $c = new Categorie ($db, $_REQUEST['catid']);
+  $c = new Categorie ($db, $catid);
 
   $ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
   print "<div id='ways'>";
