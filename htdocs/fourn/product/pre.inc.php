@@ -30,6 +30,8 @@
 
 require("../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
+require_once DOL_DOCUMENT_ROOT."/categories/categorie.class.php";
+
 $langs->load("suppliers");
 $langs->load("products");
 
@@ -70,6 +72,11 @@ function llxHeader($head = "", $title="", $help_url='',$addons='')
   {
     $menu->add(DOL_URL_ROOT."/fourn/product/", $langs->trans("Products"));
     $menu->add_submenu(DOL_URL_ROOT."/fourn/product/liste.php?type=0", $langs->trans("List"));
+  }
+
+  if ($conf->categorie->enabled)
+  {
+    $menu->add(DOL_URL_ROOT."/categories/", $langs->trans("Categories"));
   }
 
   left_menu($menu->liste, $help_url);
