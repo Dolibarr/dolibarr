@@ -353,6 +353,8 @@ class LigneTel {
     $sql .= " SET fk_fournisseur = ".$fourn_id ;
 
     $resql = $this->db->query($sql);
+
+    $this->fournisseur_id = $fourn_id;
   }
 
 
@@ -390,8 +392,8 @@ class LigneTel {
     if ($datea)
       {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_societe_ligne_statut";
-	$sql .= " (tms,fk_ligne, fk_user, statut, comment) ";
-	$sql .= " VALUES ($datea,$this->id, $user->id, $statut, '$commentaire' )";
+	$sql .= " (tms,fk_ligne, fk_user, statut, comment,fk_fournisseur) ";
+	$sql .= " VALUES ($datea,$this->id, $user->id, $statut, '$commentaire',$this->fournisseur_id)";
 
 	$this->db->query($sql);
 	/* 
@@ -416,8 +418,8 @@ class LigneTel {
     else
       {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_societe_ligne_statut";
-	$sql .= " (tms, fk_ligne, fk_user, statut, comment) ";
-	$sql .= " VALUES (now(), $this->id, $user->id, $statut, '$commentaire' )";
+	$sql .= " (tms, fk_ligne, fk_user, statut, comment,fk_fournisseur) ";
+	$sql .= " VALUES (now(), $this->id, $user->id, $statut, '$commentaire',$this->fournisseur_id)";
 
 	$this->db->query($sql);
       }
