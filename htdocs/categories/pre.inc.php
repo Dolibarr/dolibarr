@@ -48,7 +48,11 @@ function llxHeader ($head = "", $urlp = "", $title="")
     {
       $menu->add(DOL_URL_ROOT."/categories/index.php", $langs->trans("Categories"));
       $menu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"));
-      $menu->add_submenu(DOL_URL_ROOT."/categories/create.php", $langs->trans("NewCat"));
+
+      if ($user->rights->categorie->creer)
+	{
+	  $menu->add_submenu(DOL_URL_ROOT."/categories/create.php", $langs->trans("NewCat"));
+	}
     }
   
   $menu->add(DOL_URL_ROOT."/categories/stats/", $langs->trans("CatStatistics"));
