@@ -34,7 +34,8 @@ create table llx_telephonie_societe_ligne_statut (
   fk_ligne         integer NOT NULL,
   statut           smallint NOT NULL,
   fk_user          integer,
-  comment          varchar(255)
+  comment          varchar(255),
+  fk_fournisseur   integer
 
 )type=innodb;
 
