@@ -74,6 +74,7 @@ if (($_POST["action"] == 'add' && (! defined(COMPANY_CREATE_TWO_STEPS) || $step 
   $soc->tva_intra             = stripslashes($_POST["tva_intra_code"] . $_POST["tva_intra_num"]);
   $soc->forme_juridique_code  = stripslashes($_POST["forme_juridique_code"]);
   $soc->effectif_id           = stripslashes($_POST["effectif_id"]);
+  $soc->typent_id             = stripslashes($_POST["typent_id"]);
   $soc->client                = stripslashes($_POST["client"]);
   $soc->fournisseur           = stripslashes($_POST["fournisseur"]);
 
