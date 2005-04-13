@@ -87,7 +87,7 @@ if ($cancel == $langs->trans("Cancel"))
       
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-	      print '<tr><td width="20%">Numéro</td><td colspan="2">'.dolibarr_print_phone($ligne->numero).'</td></tr>';
+	      print '<tr><td width="20%">Numéro</td><td colspan="3">'.dolibarr_print_phone($ligne->numero).'</td></tr>';
 	      	     
 	      $client = new Societe($db, $ligne->client_id);
 	      $client->fetch($ligne->client_id);
@@ -95,18 +95,18 @@ if ($cancel == $langs->trans("Cancel"))
 	      $client_comm = new Societe($db, $ligne->client_comm_id);
 	      $client_comm->fetch($ligne->client_comm_id);
 
-	      print '<tr><td width="20%">Client</td><td colspan="2">';
+	      print '<tr><td width="20%">Client</td><td colspan="3">';
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
 	      print $client_comm->nom.'</a></td></tr>';
 
-	      print '<tr><td width="20%">Statut actuel</td><td colspan="2">';
+	      print '<tr><td width="20%">Statut actuel</td><td colspan="3">';
 	      print '<img src="./graph'.$ligne->statut.'.png">&nbsp;';
 	      print $ligne->statuts[$ligne->statut];
 	      print '</td></tr>';
 
 	      if ($ligne->user_creat)
 		{
-		  print '<tr><td width="20%">Créé par</td><td colspan="2">';
+		  print '<tr><td width="20%">Créé par</td><td colspan="3">';
 
 		  $cuser = new User($db, $ligne->user_creat);
 		  $cuser->fetch();
@@ -116,7 +116,7 @@ if ($cancel == $langs->trans("Cancel"))
 		}
 	      if ($ligne->user_commande)
 		{
-		  print '<tr><td width="20%">Commandé par</td><td colspan="2">';
+		  print '<tr><td width="20%">Commandé par</td><td colspan="3">';
 
 		  $couser = new User($db, $ligne->user_commande);
 		  $couser->fetch();
@@ -128,12 +128,34 @@ if ($cancel == $langs->trans("Cancel"))
 	      print '<tr class="liste_titre">';
 	      print '<td>Date</td>';
 	      print '<td>Statut</td>';
+	      print '<td>Fournisseur</td>';
 	      print '<td>Rapporteur</td>';
 	      print '</tr>';
 
 	      /* historique */
-	     
-	      $sql = "SELECT ".$db->pdate("l.tms").", l.statut, l.fk_user, u.name, u.firstname, l.comment";
+	      $ff = array();     
+	      $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur";
+	      $sql .= "  WHERE commande_active = 1 ORDER BY nom ";
+
+	      $resql = $db->query($sql);
+	      if ($resql)
+		{
+		  $num = $db->num_rows($resql);
+		  if ( $num > 0 )
+		    {
+		      $i = 0;
+		      while ($i < $num)
+			{
+			  $row = $db->fetch_row($resql);
+			  $ff[$row[0]] = $row[1];
+			  $i++;
+			}
+		    }
+		  $db->free($resql);
+		}
+
+	      $sql = "SELECT ".$db->pdate("l.tms").", l.statut, l.fk_user";
+	      $sql .= ", u.name, u.firstname, l.comment, l.fk_fournisseur";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne_statut as l";
 	      $sql .= ",".MAIN_DB_PREFIX."user as u";
 	      $sql .= " WHERE u.rowid = l.fk_user AND l.fk_ligne = ".$ligne->id;
@@ -149,13 +171,16 @@ if ($cancel == $langs->trans("Cancel"))
 			  $row = $db->fetch_row($i);
 
 			  print '<tr><td valign="top" width="20%">'.strftime("%a %d %B %Y %H:%M:%S",$row[0]).'</td>';
-
 			  print '<td><img src="./graph'.$row[1].'.png">&nbsp;';
 			  print $ligne->statuts[$row[1]];
 			  if ($row[5])
 			    {
 			      print '<br />'.$row[5];
 			    }
+
+			  print '</td><td>';
+
+			  print $ff[$row[6]];
 
 			  print '</td><td>'.$row[4] . " " . $row[3] . "</td></tr>";
 			  $i++;
