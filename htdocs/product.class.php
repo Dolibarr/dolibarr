@@ -109,14 +109,14 @@ class Product
 	  $row = $this->db->fetch_array();
 	  if ($row[0] == 0)
 	    {
+	      if (strlen($this->tva_tx)==0) $this->tva_tx = 0;
+	      if (strlen($this->price)==0) $this->price = 0;
+	      if (strlen($this->envente)==0) $this->envente = 0;
 
-	      if (strlen($this->price)==0)
-		{
-		  $this->price = 0;
-		}
-	      
+	      $this->price = ereg_replace(",",".",$this->price);
+
 	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product (datec, fk_user_author, fk_product_type, price)";
-	      $sql .= " VALUES (now(),".$user->id.",$this->type, '" . ereg_replace(",",".",$this->price) . "')";
+	      $sql .= " VALUES (now(),".$user->id.",$this->type, '" . $this->price . "')";
 	      $result = $this->db->query($sql);
 	      if ( $result )
 		{
