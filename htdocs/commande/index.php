@@ -48,7 +48,7 @@ print '<form method="post" action="liste.php">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchOrder").'</td></tr>';
 print "<tr $bc[1]><td>";
-print $langs->trans("Ref").' : <input type="text" name="sf_ref"> <input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print $langs->trans("Ref").' : <input type="text" class="flat" name="sf_ref" size=18> <input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></form><br>\n";
 
 
