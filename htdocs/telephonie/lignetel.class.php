@@ -39,6 +39,7 @@ class LigneTel {
     $this->statuts[5] = "Résiliation demandée";
     $this->statuts[6] = "Résiliée";
     $this->statuts[7] = "Rejetée";
+    $this->statuts[8] = "En transfert";
 
     return 1;
   }
@@ -332,6 +333,29 @@ class LigneTel {
 	$this->set_statut( $user, 1, $datea, $commentaire);
       }
   }
+
+  /**
+   * Transfer la ligne
+   *
+   */
+  function transfer($user, $fourn_id)
+  {
+    if ($this->statut == 3)
+      {
+	$this->change_fournisseur($user,$fourn_id);
+	$this->set_statut($user, 8);
+      }
+  }
+
+  function change_fournisseur($user, $fourn_id)
+  {
+    $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+    $sql .= " SET fk_fournisseur = ".$fourn_id ;
+
+    $resql = $this->db->query($sql);
+  }
+
+
   /**
    * Change le statut de la ligne en En attente
    *
