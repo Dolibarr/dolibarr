@@ -577,16 +577,23 @@ class Categorie
   /**
    * print_primary_way() affiche le chemin le plus court pour se rendre à un produit
    */
-  function print_primary_way($id, $sep= " &gt;&gt; ")
+  function print_primary_way($id, $sep= " &gt;&gt; ",$url)
   {
     $primary_way = Array();
     $way = $this->get_primary_way($id);
     foreach ($way as $cat)
       {
-	$primary_way[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."'>".$cat->label."</a>";
+	if ($url == '')
+	  {
+	    $w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."'>".$cat->label."</a>";
+	  }
+	else
+	  {
+	    $w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
+	  }
       }
 				
-    return implode($sep, $primary_way);
+    return implode($sep, $w);
 
   }
   /**
