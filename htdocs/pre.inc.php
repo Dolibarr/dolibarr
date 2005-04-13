@@ -25,13 +25,12 @@
  */
 
 require ("./main.inc.php");
+$user->getrights('societe');
+$user->getrights('propale');
+$user->getrights('facture');
 
 function llxHeader($head = "") {
   global $user, $conf, $langs;
-  $user->getrights('societe');
-  $user->getrights('propale');
-  $user->getrights('facture');
-  $user->getrights('commande');
 
   top_menu($head);
 
@@ -46,8 +45,11 @@ function llxHeader($head = "") {
 	{
 	  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewCompany"));
 	}
+      
       if(is_dir("societe/groupe"))
-	    $menu->add_submenu(DOL_URL_ROOT."/societe/groupe/index.php", $langs->trans("MenuSocGroup"));
+	{
+	  $menu->add_submenu(DOL_URL_ROOT."/societe/groupe/index.php", $langs->trans("MenuSocGroup"));
+	}
       $menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
     }
 
@@ -59,10 +61,11 @@ function llxHeader($head = "") {
       $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php",$langs->trans("Customers"));
       $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php",$langs->trans("Prospects"));
 			
-      if ($user->rights->propale->lire) {
-	    $langs->load("propal");
-	    $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
-      }
+      if ($user->rights->propale->lire)
+	{
+	  $langs->load("propal");
+	  $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
+	}
     }
 
   if ($conf->compta->enabled ) 
@@ -127,7 +130,7 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/comm/mailing/index.php",$langs->trans("EMailing"));
     }
 
-  if ($conf->telephonie->enabled) // EXPERIMENTAL -> RODO
+  if ($conf->telephonie->enabled)
     {
       $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Téléphonie");
     }
@@ -145,9 +148,7 @@ function llxHeader($head = "") {
 
   if ($conf->voyage && $user->societe_id == 0) 
     {
-
       $menu->add(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
-
       $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
       $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/reduc.php","Reduc");
     }
@@ -164,22 +165,21 @@ function llxHeader($head = "") {
 
   if ($conf->rapport->enabled)
     {
-	  $menu->add(DOL_URL_ROOT."/rapport/", "Rapports");
-	}
-	
+      $menu->add(DOL_URL_ROOT."/rapport/", "Rapports");
+    }
+  
   $langs->load("users");
   $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
-
+  
   if ($user->admin)
     {      
       $menu->add(DOL_URL_ROOT."/admin/index.php", $langs->trans("Setup"));
     }
-
+  
   /*
    *
    */
-
-  left_menu($menu->liste);
-
+  
+  left_menu($menu->liste);  
 }
 ?>
