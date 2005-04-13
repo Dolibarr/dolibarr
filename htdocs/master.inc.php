@@ -263,6 +263,11 @@ if (defined("MAIN_MODULE_PRODUIT"))
 $conf->produit->dir_output=DOL_DATA_ROOT."/produit";
 $conf->produit->dir_images=DOL_DATA_ROOT."/produit/images";
 
+if (defined("MAIN_MODULE_CATEGORIE"))
+{
+  $conf->categorie->enabled=MAIN_MODULE_CATEGORIE;
+}
+
 if (defined("MAIN_MODULE_SERVICE"))
 {
   $conf->service->enabled=MAIN_MODULE_SERVICE;
