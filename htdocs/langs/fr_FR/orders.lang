@@ -17,6 +17,7 @@ StatusOrderOnProcess=Traitement en cours
 StatusOrderProcessed=Traitée
 StatusOrderToBill=A facturer
 SearchOrder=Rechercher une commande
+MenuOrdersToBill=Commandes à facturer
 Sending=Expédition
 Sendings=Expéditions
 VAT=TVA

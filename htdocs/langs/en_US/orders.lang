@@ -15,6 +15,7 @@ StatusOrderValidated=Validated
 StatusOrderOnProcess=On process
 StatusOrderProcessed=Processed
 StatusOrderToBill=To bill
+MenuOrdersToBill=Orders to bill
 SearchOrder=Search order
 Sending=Sending
 Sendings=Sendings
