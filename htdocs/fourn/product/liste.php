@@ -118,6 +118,7 @@ if ($result)
         Header("Location: fiche.php?id=$objp->rowid");
     }
     
+    $texte = $langs->trans("List");
 
   llxHeader("","",$texte);
 
@@ -130,6 +131,47 @@ if ($result)
       print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
     }
 
+
+/*
+ *
+ *
+ */
+  if (strlen($_REQUEST['catid']) == 0)
+    {
+      $_REQUEST['catid'] = 1;
+    }
+
+  $c = new Categorie ($db, $_REQUEST['catid']);
+
+  $ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
+  print "<div id='ways'>";
+
+  print $ways[0]."<br />\n";
+
+  print "</div>";
+  
+  $cats = $c->get_filles();
+  
+  print '<br><table class="noborder" width="100%">';
+  print '<tr><td valign="top" width="10%">';
+  if ($cats < 0)
+    {
+      print "-";
+    }
+  elseif (sizeof ($cats) > 0)
+    {
+      print "<table class='noborder' width='100%'>\n";
+      foreach ($cats as $cat)
+	{
+	  $i++;
+	  print "<tr ".$bc[$i%2].">\n";
+	  print "<td><a href='liste.php?catid=".$cat->id."'>".$cat->label."</a></td>\n";
+	  print "</tr>\n";
+	}
+      print "</table>\n";
+    }
+  
+  print '</td><td valign="top" width="90%">';
   print '<table class="noborder" width="100%">';
 
   // Lignes des titres
@@ -178,6 +220,7 @@ if ($result)
   $db->free();
 
   print "</table>";
+  print '</td></tr></table>';
 
 }
 else
