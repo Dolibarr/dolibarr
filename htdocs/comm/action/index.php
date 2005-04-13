@@ -22,7 +22,8 @@
  *
  */
 
-/**	    \file       htdocs/comm/action/index.php
+/**
+	    \file       htdocs/comm/action/index.php
         \ingroup    commercial
 		\brief      Page accueil des actions commerciales
 		\version    $Revision$
@@ -53,26 +54,19 @@ $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
-if ($sortfield == "")
-{
-  $sortfield="a.datea";
-}
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="a.datea";
 
 
 llxHeader();
 
 
 /*
- *
  *  Affichage liste des actions
  *
  */
 
-$sql = "SELECT s.nom as societe, s.idp as socidp, s.client, a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact, a.note, a.percent as percent";
+$sql = "SELECT s.nom as societe, s.idp as socidp, s.client, a.id,".$db->pdate("a.datea")." as da, a.datea, c.code as acode, c.libelle, u.code, a.fk_contact, a.note, a.percent as percent";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
 
@@ -80,24 +74,21 @@ if ($_GET["type"])
 {
   $sql .= " AND c.id = ".$_GET["type"];
 }
-
 if ($_GET["time"] == "today")
 {
   $sql .= " AND date_format(a.datea, '%d%m%Y') = ".strftime("%d%m%Y",time());
 }
-
 if ($socid) 
 {
   $sql .= " AND s.idp = $socid";
 }
-
 $sql .= " ORDER BY a.datea DESC";
 $sql .= $db->plimit( $limit + 1, $offset);
   
-  
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   if ($socid) 
     {
       $societe = new Societe($db);
@@ -123,7 +114,7 @@ if ( $db->query($sql) )
   $var=true;
   while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object();
+      $obj = $db->fetch_object($resql);
       
       $var=!$var;
     
@@ -157,7 +148,11 @@ if ( $db->query($sql) )
 	else {
 		print "<td align=\"center\">".$langs->trans("Done")."</td>";
 	}
-	print '<td><a href="fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
+	print '<td><a href="fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' ';
+    $transcode=$langs->trans("Action".$obj->acode);
+    $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+    print $libelle;
+    print '</a></td>';
 	
 	print '<td>';
 
@@ -192,19 +187,20 @@ if ( $db->query($sql) )
 	/*
 	 *
 	 */
-	print '<td>'.substr($obj->note, 0, 20).' ...</td>';
+	print '<td>'.dolibarr_trunc($obj->note, 20).'</td>';
 	print "<td>$obj->code</td>\n";
 	
 	print "</tr>\n";
 	$i++;
       }
-      print "</table>";
-      $db->free();
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
+    print "</table>";
+    $db->free($resql);
+
+}
+else
+{
+    dolibarr_print_error($db);
+}
 
 
 $db->close();
