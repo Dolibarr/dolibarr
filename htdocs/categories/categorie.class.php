@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
  * Copyright (C) 2005 Davoleau Brice    <brice.davoleau@gmail.com>
- *
+ * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,17 +54,17 @@ class Categorie
     $sql  = "SELECT rowid,label,description ";
     $sql .= "FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".$id;
 
-    $res  = $this->db->query ($sql);
+    $resql  = $this->db->query ($sql);
 
-    if ($res)
+    if ($resql)
       {
-	$res = $this->db->fetch_array ();
+	$res = $this->db->fetch_array($resql);
 
 	$this->id		= $res['rowid'];
 	$this->label		= $res['label'];
-	$this->description	= $res['description'];
+	$this->description	= stripslashes($res['description']);
 
-	$this->db->free ();
+	$this->db->free($resql);
       }
     else
       {
