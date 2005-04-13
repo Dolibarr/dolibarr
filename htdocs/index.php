@@ -39,7 +39,7 @@ if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 
 llxHeader();
 
-$userstring=$user->prenom . ' ' . $user->login .' ('.$user->nom.')';
+$userstring=$user->prenom . ' ' . $user->nom .' ('.$user->login.')';
 print_fiche_titre($langs->trans("WelcomeString",dolibarr_print_date(mktime(),"%A %d %B %Y"),$userstring), '<a href="about.php">'.$langs->trans("About").'</a>');
 
 if (defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
