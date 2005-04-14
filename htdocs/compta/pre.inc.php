@@ -80,7 +80,7 @@ function llxHeader($head = "", $title="", $help_url='')
     if ($conf->commande->enabled && $conf->facture->enabled) 
     {
       $langs->load("orders");
-      $menu->add(DOL_URL_ROOT."/compta/listecommande.php?leftmenu=orders&status=3", $langs->trans("MenuOrdersToBill"));
+      $menu->add(DOL_URL_ROOT."/compta/commande/liste.php?leftmenu=orders&status=3", $langs->trans("MenuOrdersToBill"));
     }
     
   // Les dépenses
