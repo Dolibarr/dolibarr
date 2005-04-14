@@ -296,6 +296,11 @@ td.barre_select {
 	color: #000000 
 }
 
+td.photo { 
+	background: #FFFFFF; 
+	color: #000000 
+}
+
 form {
     padding: 0.1em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
