@@ -513,7 +513,7 @@ else
 	  print "</td></tr>";
 	  
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
-	  print "<td colspan=\"2\">".strftime("%A %e %B %Y",$commande->date)."</td>\n";
+	  print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"%A %d %B %Y")."</td>\n";
 
 	  print '<td width="50%">';
 	  print $langs->trans("Author").' : '.$author->fullname.'</td></tr>';
@@ -560,12 +560,14 @@ else
 	  echo '<br><table class="noborder" width="100%">';	  
 
 	  $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l WHERE l.fk_commande = ".$commande->id." ORDER BY l.rowid";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l";
+	  $sql .= " WHERE l.fk_commande = ".$commande->id;
+	  $sql .= " ORDER BY l.rowid";
 	  
 	  $result = $db->query($sql);
 	  if ($result)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($result);
 	      $i = 0; $total = 0;
 	      
 	      if ($num)
@@ -582,7 +584,7 @@ else
 	      $var=True;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object();
+		  $objp = $db->fetch_object($result);
 		  print "<tr $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
@@ -651,7 +653,8 @@ else
 	  {
 	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
 	      $sql .= " WHERE envente = 1";
-	      $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
+	      $sql .= " ORDER BY p.nbvente DESC";
+	      $sql .= " LIMIT 20";
 	      if ( $db->query($sql) )
 		{
 		  $opt = "<option value=\"0\" selected></option>";
@@ -759,7 +762,7 @@ else
 	$result = $db->query($sql);
 	if ($result)
 	  {
-	    $num = $db->num_rows();
+	    $num = $db->num_rows($result);
 	    if ($num)
 	      {
 		print_titre($langs->trans("Sendings"));
@@ -770,11 +773,11 @@ else
 		$var=True;
 		while ($i < $num)
 		  {
-		    $objp = $db->fetch_object();
+		    $objp = $db->fetch_object($result);
 		    $var=!$var;
 		    print "<tr $bc[$var]>";
-		    print '<td><a href="../expedition/fiche.php?id='.$objp->rowid.'">'.stripslashes($objp->ref).'</a></td>';
-		    print "<td>".strftime("%d %B %Y",$objp->de)."</td></tr>\n";
+		    print '<td><a href="../expedition/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' '.$objp->ref.'</a></td>';
+		    print "<td>".dolibarr_print_date($objp->de)."</td></tr>\n";
 		    $i++;
 		  }
 		print "</table>";
@@ -796,7 +799,7 @@ else
 	$result = $db->query($sql);
 	if ($result)
 	  {
-	    $num = $db->num_rows();
+	    $num = $db->num_rows($result);
 	    if ($num)
 	      {
 		print_titre($langs->trans("Bills"));
@@ -807,11 +810,11 @@ else
 		$var=True;
 		while ($i < $num)
 		  {
-		    $objp = $db->fetch_object();
+		    $objp = $db->fetch_object($result);
 		    $var=!$var;
 		    print "<tr $bc[$var]>";
-		    print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.stripslashes($objp->facnumber).'</a></td>';
-		    print "<td>".strftime("%d %B %Y",$objp->df)."</td></tr>\n";
+		    print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
+		    print "<td>".dolibarr_print_date($objp->df)."</td></tr>\n";
 		    $i++;
 		  }
 		print "</table>";

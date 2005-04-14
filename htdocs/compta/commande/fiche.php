@@ -133,7 +133,7 @@ if ($_GET["id"] > 0)
       print "</td></tr>";
       
       print '<tr><td>'.$langs->trans("Date").'</td>';
-      print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
+      print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"%A %d %B %Y")."</td>\n";
       
       print '<td width="50%">';
       
@@ -167,7 +167,7 @@ if ($_GET["id"] > 0)
       $result = $db->query($sql);
       if ($result)
 	{
-	  $num = $db->num_rows();
+	  $num = $db->num_rows($result);
 	  $i = 0; $total = 0;
 	  
 	  if ($num)
@@ -184,7 +184,7 @@ if ($_GET["id"] > 0)
 	  $var=True;
 	  while ($i < $num)
 	    {
-	      $objp = $db->fetch_object();
+	      $objp = $db->fetch_object($result);
 	      print "<tr $bc[$var]>";
 	      if ($objp->fk_product > 0)
 		{
@@ -212,7 +212,7 @@ if ($_GET["id"] > 0)
 	      $i++;
 	      $var=!$var;
 	    }	      
-	  $db->free();
+	  $db->free($result);
 	} 
       else
 	{
@@ -220,6 +220,35 @@ if ($_GET["id"] > 0)
 	}
       print '</table>';
       
+      /*
+       *
+       *
+       */
+      print '<br></div>';
+
+      /*
+       * Barre d'actions
+       */
+      
+      if (! $user->societe_id && ! $commande->facturee)
+	{
+	  print "<div class=\"tabsAction\">\n";
+
+	  if ($commande->statut > 0 && $user->rights->facture->creer)
+	    {
+	      print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">'.$langs->trans("GenerateBill").'</a>';
+	    }
+
+	  if ($num_fac_asso)
+	    {
+	      if ($user->rights->commande->creer)
+    		print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/commande/fiche.php?action=facturee&amp;id='.$commande->id.'">'.$langs->trans("ClassifyBilled").'</a>';
+	    }
+	  print '</div>';
+	}
+
+
+
       /*
        * Documents générés
        *
@@ -232,7 +261,7 @@ if ($_GET["id"] > 0)
       if (file_exists($file))
 	{
 	  print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
-	  print_titre("Documents");
+	  print_titre($langs->trans("Documents"));
 	  print '<table width="100%" class="border">';
 	  
 	  print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
@@ -261,19 +290,15 @@ if ($_GET["id"] > 0)
 	  $num_fac_asso = $db->num_rows();
 	  $i = 0; $total = 0;
 
-	  if ($num_fac_asso > 0)
+	  if ($num_fac_asso)
 	    {
+	      $var=false;
 	      print "<br>";
-	      if ($num_fac_asso > 1)
-		{
-		  print_titre("Factures associées");
-		}
-	      else
-		{
-		  print_titre("Facture associée");
-		}
+
+		  print_titre($langs->trans("Bills"));
+
 	      print '<table class="border" width="100%">';
-	      print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Author").'</td>';
+	      print "<tr $bc[$var]><td>".$langs->trans("Ref").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Author").'</td>';
 	      print '<td align="right">'.$langs->trans("Price").'</td>';
 	      print "</tr>\n";
 	      
@@ -282,14 +307,14 @@ if ($_GET["id"] > 0)
 		{
 		  $objp = $db->fetch_object();
 		  $var=!$var;
-		  print "<tr bgcolor=\"#E0E0E0\">";
-		  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>';
+		  print "<tr $bc[$var]>";
+		  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a>';
 		  if ($objp->paye)
 		    { 
 		      print " (<b>pay&eacute;e</b>)";
 		    } 
 		  print "</td>\n";
-		  print "<td>".strftime("%d %B %Y",$objp->df)."</td>\n";
+		  print "<td>".dolibarr_print_date($objp->df)."</td>\n";
 		  if ($objp->fk_user_author <> $user->id)
 		    {
 		      $fuser = new User($db, $objp->fk_user_author);
@@ -305,7 +330,7 @@ if ($_GET["id"] > 0)
 		  $total = $total + $objp->total;
 		  $i++;
 		}
-	      print "<tr><td align=\"right\" colspan=\"4\">".$langs->trans("TotalHT").": <b>$total</b> ".$conf->monnaie."</td></tr>\n";
+	      print "<tr $bc[$var]><td align=\"right\" colspan=\"4\">".$langs->trans("TotalHT").": <b>$total</b> ".$conf->monnaie."</td></tr>\n";
 	      print "</table>";
 	    }
 	  $db->free();
@@ -314,38 +339,12 @@ if ($_GET["id"] > 0)
 	{
 	  dolibarr_print_error($db);
 	}
-      /*
-       *
-       *
-       */
-      print '<br></div>';
-
-      /*
-       * Barre d'actions
-       */
-      
-      if (! $user->societe_id && ! $commande->facturee)
-	{
-	  print "<div class=\"tabsAction\">\n";
-
-	  if ($commande->statut > 0 && $user->rights->facture->creer)
-	    {
-	      print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">'.$langs->trans("GenerateBill").'</a>';
-	    }
-
-	  if ($num_fac_asso)
-	    {
-	      if ($user->rights->commande->creer)
-    		print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/commande/fiche.php?action=facturee&amp;id='.$commande->id.'">'.$langs->trans("ClassifyBilled").'</a>';
-	    }
-	  print '</div>';
-	}
 
 	  
     }
   else
     {
-      /* Commande non trouvée */
+      // Commande non trouvée
       print "Commande inexistante ou accés refusé";
     }
 }
