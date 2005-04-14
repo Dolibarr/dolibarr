@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,9 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
+$mode='recettes';
+if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
+
 print_titre("Chiffre d'affaire cumulé (".$conf->monnaie." HT)");
 
 print '<table width="100%"><tr><td valign="top">';
@@ -43,8 +46,9 @@ print '<table width="100%"><tr><td valign="top">';
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE f.fk_statut = 1";
-if ($conf->compta->mode != 'CREANCES-DETTES') { 
-	$sql .= " AND f.paye = 1";
+if ($conf->compta->mode != 'CREANCES-DETTES')
+{ 
+  $sql .= " AND f.paye = 1";
 }
 if ($socidp)
 {
@@ -54,7 +58,7 @@ $sql .= " GROUP BY dm";
 
 pt($db, $sql,"Suivi cumul par mois");
 
-print "</td><td valign=\"top\">";
+print '</td><td valign="top">';
 
 $sql = "SELECT sum(f.total) as amount, year(f.datef) as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
