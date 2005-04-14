@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/product/index.php
+/**
+	    \file       htdocs/product/index.php
         \ingroup    product
 		\brief      Page accueil des produits et services
 		\version    $Revision$
@@ -67,9 +68,9 @@ print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Ref").' :</td><td><input class="flat" type="text" size="20" name="sf_ref"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print $langs->trans("Ref").' :</td><td><input class="flat" type="text" size="18" name="sf_ref"></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Label").':</td><td><input class="flat" type="text" size="20" name="snom"></td><td><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
+print $langs->trans("Label").':</td><td><input class="flat" type="text" size="18" name="snom"></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form><br>";
 
 

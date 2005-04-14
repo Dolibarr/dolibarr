@@ -95,7 +95,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAProposal").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").' : <input type="text" class="flat" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print $langs->trans("Ref").' : <input type="text" class="flat" name="sf_ref" size="18">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print "</table></form><br>\n";
 }
 
@@ -108,7 +108,7 @@ if ($conf->contrat->enabled) {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAContract").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").' : <input type="text" class="flat" name="search_contract">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print $langs->trans("Ref").' : <input type="text" class="flat" name="search_contract" size="18">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print "</table></form><br>\n";
 }
 
