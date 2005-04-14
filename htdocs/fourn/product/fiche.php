@@ -432,7 +432,7 @@ else
 	      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 	      $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON s.idp = pfp.fk_soc AND pfp.fk_product =".$product->id; 
 	      $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product = ".$product->id;
-	      $sql .= " ORDER BY lower(s.nom)";
+	      $sql .= " ORDER BY pfp.price ASC, lower(s.nom)";
 	      
 	      if ( $db->query($sql) )
 		{
