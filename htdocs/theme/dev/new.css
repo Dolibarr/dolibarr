@@ -95,27 +95,26 @@ a.tmenu:hover
 a.login
 {
   position: absolute;
+  margin-right: 3px;
   right: 27px;
   top: 1px;
-  padding:2px;
-  text-decoration:none;
-  color:white;
-  background:gray;
-  border-bottom:4px solid gray;
+  padding:3px;
+  text-decoration: none;
+  color:gray;
   font-weight:bold;
+  font-size:11px;
   }
 
 img.login
 {
   position: absolute;
   right: 9px;
-  top: 9px;
-  padding:2px;
+  top: 1px;
+  padding:3px;
   text-decoration:none;
-  color:white;
-  background:gray;
-  border-bottom:4px solid gray;
+  color:gray;
   font-weight:bold;
+  font-size:11px;
   }
 
 a.login:hover
