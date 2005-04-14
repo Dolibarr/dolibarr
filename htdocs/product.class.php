@@ -22,16 +22,16 @@
  */
 
 /**
-    	\file       htdocs/product.class.php
-		\ingroup    produit
-		\brief      Fichier de la classe des produits prédéfinis
-		\version    $Revision$
+   \file       htdocs/product.class.php
+   \ingroup    produit
+   \brief      Fichier de la classe des produits prédéfinis
+   \version    $Revision$
 */
 
 
 /**
-        \class      Product
-		\brief      Classe permettant la gestion des produits prédéfinis
+   \class      Product
+   \brief      Classe permettant la gestion des produits prédéfinis
 */
 
 class Product
@@ -99,9 +99,10 @@ class Product
       $this->ref = ereg_replace("'","",stripslashes($this->ref));
       $this->ref = ereg_replace("\"","",stripslashes($this->ref));
 
+      dolibarr_syslog("Product::Create Categorie : ".$this->catid);
+
       $sql = "SELECT count(*)";
       $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .trim($this->ref)."'";
-
       $result = $this->db->query($sql) ;
 
       if ( $result )
@@ -115,7 +116,8 @@ class Product
 
 	      $this->price = ereg_replace(",",".",$this->price);
 
-	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product (datec, fk_user_author, fk_product_type, price)";
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
+	      $sql .= " (datec, fk_user_author, fk_product_type, price)";
 	      $sql .= " VALUES (now(),".$user->id.",$this->type, '" . $this->price . "')";
 	      $result = $this->db->query($sql);
 	      if ( $result )
@@ -128,6 +130,11 @@ class Product
 		      $this->_log_price($user);
 		      if ( $this->update($id, $user) )
 			{
+			  if ($this->catid > 0)
+			    {
+			      $cat = new Categorie ($this->db, $this->catid);
+			      $cat->add_product($this);
+			    }
 			  return $id;
 			}
 		    }
@@ -267,42 +274,55 @@ class Product
    *
    */
   function update_buyprice($id_fourn, $qty, $buyprice, $user) 
-    {        
+  {        
+    
+    $sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
+    $sql .= " WHERE ";
+    $sql .= " fk_product = ".$this->id;
+    $sql .= " AND fk_soc = ".$id_fourn;
+    $sql .= " AND quantity = ".$qty;
+    
+    if ($this->db->query($sql) )
+      {	
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log ";
+	$sql .= " SET datec = now()";
+	$sql .= " ,fk_product = ".$this->id;
+	$sql .= " ,fk_soc = ".$id_fourn;
+	$sql .= " ,fk_user = ".$user->id;
+	$sql .= " ,price = ".ereg_replace(",",".",$buyprice);
+	$sql .= " ,quantity = ".$qty;
+	
+	if (!$this->db->query($sql) )
+	  {
+	    $error++;
+	  }
 
-        $sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
-        $sql .= " WHERE ";
-        $sql .= " fk_product = ".$this->id;
-        $sql .= " AND fk_soc = ".$id_fourn;
-        $sql .= " AND quantity = ".$qty;
 
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price ";
+	$sql .= " SET datec = now()";
+	$sql .= " ,fk_product = ".$this->id;
+	$sql .= " ,fk_soc = ".$id_fourn;
+	$sql .= " ,fk_user = ".$user->id;
+	$sql .= " ,price = ".ereg_replace(",",".",$buyprice);
+	$sql .= " ,quantity = ".$qty;
+	
 	if ($this->db->query($sql) )
 	  {
-
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price ";
-	    $sql .= " SET datec = now()";
-	    $sql .= " ,fk_product = ".$this->id;
-	    $sql .= " ,fk_soc = ".$id_fourn;
-	    $sql .= " ,fk_user = ".$user->id;
-	    $sql .= " ,price = ".ereg_replace(",",".",$buyprice);
-	    $sql .= " ,quantity = ".$qty;
-	    
-	    if ($this->db->query($sql) )
-	      {
-		return 0;	      
-	      }
-	    else
-	      {
-		dolibarr_print_error($this->db);
-		return 2;
-	      }
+	    return 0;	      
 	  }
 	else
 	  {
 	    dolibarr_print_error($this->db);
 	    return 2;
 	  }
-    }
-
+      }
+    else
+      {
+	dolibarr_print_error($this->db);
+	return 2;
+      }
+  }
+  
   /**
    *    \brief  Modifie le prix d'un produit/service
    *    \param  id          id du produit/service à modifier
