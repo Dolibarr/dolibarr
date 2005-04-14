@@ -116,11 +116,7 @@ if ($_GET["id"])
       print '</td></tr>';
       print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
       print '<td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td></tr>';
-
-      print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($product->description).'</td></tr>';
-
       print "</table><br>\n";
-
 
       /*
        * Ajouter une photo
