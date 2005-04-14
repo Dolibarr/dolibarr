@@ -447,21 +447,24 @@ else
 	      print '<tr class="liste_titre"><td>';
 	      print $langs->trans("Suppliers").'</td>';
 	      print '<td>'.$langs->trans("Ref").'</td>';
+	      print '<td align="right">'.$langs->trans("BuiingPrice").'</td>';
+	      print '<td align="center">'.$langs->trans("Quantity").'</td>';
 	      print '</tr>';
 
-	      $sql = "SELECT s.nom, s.idp, pf.ref_fourn";
+	      $sql = "SELECT s.nom, s.idp, pf.ref_fourn, pfp.price, pfp.quantity";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
+	      $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON s.idp = pfp.fk_soc AND pfp.fk_product =".$product->id; 
 	      $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product = ".$product->id;
 	      $sql .= " ORDER BY lower(s.nom)";
 	      
 	      if ( $db->query($sql) )
 		{
-		  $num_fournisseur = $db->num_rows();
+		  $num_fournisseur = $db->num_rows($resql);
 		  $i = 0;
 		  $var=True;      
 		  while ($i < $num_fournisseur)
 		    {
-		      $objp = $db->fetch_object($i);	  
+		      $objp = $db->fetch_object($resql);
 		      $var=!$var;
 		      print "<tr $bc[$var]>";
 		      print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
@@ -472,8 +475,9 @@ else
 		      print $objp->ref_fourn.'</a></td>';
 
 		      print '<td align="right">';
-		      print '<a href="fiche.php?id='.$product->id.'&amp;action=remove_fourn&amp;id_fourn='.$objp->idp.'">';
-		      print img_disable($langs->trans("Remove")).'</a></td></tr>';
+		      print price($objp->price);
+		      print '</td>';
+		      print '<td align="center">'.$objp->quantity.'</td></tr>';
 		      $i++;
 		    }
 		  $db->free();
