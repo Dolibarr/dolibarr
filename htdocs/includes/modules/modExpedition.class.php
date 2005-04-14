@@ -21,7 +21,8 @@
  *
  */
 
-/**     \defgroup   expedition     Module expedition
+/**
+        \defgroup   expedition     Module expedition
         \brief      Module pour gérer les expeditions de produits
 */
 
@@ -57,6 +58,7 @@ class modExpedition extends DolibarrModules
     $this->const_name = "MAIN_MODULE_EXPEDITION";
     $this->const_config = MAIN_MODULE_EXPEDITION;
     $this->special = 0;
+    $this->picto = "sending";
 
     // Dir
     $this->dirs = array();
