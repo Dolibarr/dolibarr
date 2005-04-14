@@ -91,10 +91,10 @@ function pt ($db, $sql, $date)
   $bc[0]="class=\"pair\"";
   $bc[1]="class=\"impair\"";
 
-  $result = $db->query($sql);
-  if ($result)
+  $resql = $db->query($sql);
+  if ($resql)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $i = 0; $total = 0 ;
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
       print "<tr class=\"liste_titre\">";
@@ -105,7 +105,7 @@ function pt ($db, $sql, $date)
       $var=True;
       while ($i < $num) 
 	{
-	  $obj = $db->fetch_object($result);
+	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
 	  $total = $total + $obj->amount;
 	  print "<tr $bc[$var]>";
@@ -118,7 +118,7 @@ function pt ($db, $sql, $date)
       print "<tr class=\"total\"><td  align=\"right\">Cumul :</td><td align=\"right\">&nbsp;</b></td><td align=\"right\"><b>".price($total)."</b></td></tr>\n";
       
       print "</table>\n";
-      $db->free();
+      $db->free($resql);
     }
 }
 
