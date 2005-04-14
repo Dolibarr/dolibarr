@@ -29,17 +29,19 @@
 
 require("./pre.inc.php");
 
-$langs->load("products");
-$user->getrights('produit');
+require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.product.class.php";
 
 if (!$user->rights->produit->lire) accessforbidden();
 
 if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-  $product = new Product($db);
-  if( $product->fetch($_GET["id"]) )
+
+  $product = new ProductFournisseur($db);
+  $result = $product->fetch($_GET["id"], $_GET["id_fourn"]);
+
+  if( $result == 0 )
     {
-      $product->update_buyprice($_GET["id_fourn"], '1', $_POST["price"], $user);
+      $product->update($_POST["fourn_ref"], '1', $_POST["price"], $user);
     }
 
   Header('Location :fourn.php?id='.$product->id.'&id_fourn='.$_GET["id_fourn"]);
@@ -56,63 +58,61 @@ if ($_GET["id"])
 {
   if ($_GET["action"] <> 're-edit')
     {
-      $product = new Product($db);
-      $result = $product->fetch($_GET["id"]);
+      $product = new ProductFournisseur($db);
+      $result = $product->fetch($_GET["id"], $_GET["id_fourn"]);
 
-      
-      $fourn = new Fournisseur($db);
-      $result = $fourn->fetch($_GET["id_fourn"]);
-
-      $product->get_buyprice($fourn->id, 1);
+      $product->get_buyprice(1);
     }
   
-  if ( $result )
+  if ( $result == 0)
     { 
       
-
-	  /*
-	   *  En mode visu
-	   */
+      
+      /*
+       *  En mode visu
+       */
+      
+      $h=0;
+      
+      $head[$h][0] = DOL_URL_ROOT."/fourn/product/fiche.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("ProductCard");
+      $h++;
+      
+      $head[$h][0] = DOL_URL_ROOT."/fourn/product/fourn.php?id=".$product->id.'&amp;id_fourn='.$_GET["id_fourn"];
+      $head[$h][1] = $langs->trans("SupplierCard");
+      $hselected = $h;
+      $h++;
 	  
-	  $h=0;
-          
-	  $head[$h][0] = DOL_URL_ROOT."/fourn/product/fiche.php?id=".$product->id;
-	  $head[$h][1] = $langs->trans("ProductCard");
-	  $h++;
-	  
-	  $head[$h][0] = DOL_URL_ROOT."/fourn/product/fourn.php?id=".$product->id.'&amp;id_fourn='.$_GET["id_fourn"];
-	  $head[$h][1] = $langs->trans("SupplierCard");
-	  $hselected = $h;
-	  $h++;
-	  
-	  dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
-	  
-	  print '<table class="border" width="100%">';
-
-	  if ($conf->categorie->enabled)
-	    {		  
-	      print '<tr id="ways">';
-	      print '<td colspan="2">';
-	      $cat = new Categorie ($db);
-	      $way = $cat->print_primary_way($product->id," &gt; ",'fourn/product/liste.php');
-	      if ($way == "")
-		{
-		  print "Ce produit n'appartient à aucune catégorie";
-		}
-	      else
-		{
+      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+      
+      print '<table class="border" width="100%">';
+      
+      if ($conf->categorie->enabled)
+	{		  
+	  print '<tr id="ways">';
+	  print '<td colspan="2">';
+	  $cat = new Categorie ($db);
+	  $way = $cat->print_primary_way($product->id," &gt; ",'fourn/product/liste.php');
+	  if ($way == "")
+	    {
+	      print "Ce produit n'appartient à aucune catégorie";
+	    }
+	  else
+	    {
 		  print $langs->trans("Categorie")." : ";
 		  print $way;	
 		}
-	      print '</td></tr>';
-	    }
+	  print '</td></tr>';
+	}
 	  
 	  print "<tr>";
 	  print '<td width="20%">'.$langs->trans("InternalRef").'</td><td width="40%">'.$product->ref.'</td>';
 	  print '</tr>';
 	  print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td></tr>';
 	  print "<tr>";
-	  print '<td width="20%">'.$langs->trans("Supplier").'</td><td width="40%">'.$fourn->nom_url.'</td>';
+	  print '<td width="20%">'.$langs->trans("Supplier").'</td><td width="40%">'.$product->fourn->nom_url.'</td>';
+	  print '</tr><tr>';
+	  print '<td width="20%">'.$langs->trans("SupplierRef").'</td><td width="40%">'.$product->fourn_ref.'</td>';
 	  print '</tr><tr>';
 	  print '<td width="20%">'.$langs->trans("BuiingPrice").'</td><td width="40%">'.price($product->buyprice).'</td>';
 	  print '</tr>';	  
@@ -151,7 +151,7 @@ if ($_GET["id"])
 	  
 	  $sql = "SELECT p.price, p.quantity,".$db->pdate("tms") ." as date_releve";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as p";
-	  $sql .=" WHERE p.fk_soc = ".$fourn->id;
+	  $sql .=" WHERE p.fk_soc = ".$product->fourn->id;
 	  $sql .= " AND p.fk_product = ".$product->id;
 	  $sql .= " ORDER BY p.quantity ASC";
 	  $resql= $db->query($sql) ;
@@ -185,7 +185,7 @@ if ($_GET["id"])
       if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && $user->rights->produit->creer)
 	{
 
-	  $action = 'fourn.php?id='.$product->id.'&amp;id_fourn='.$fourn->id;
+	  $action = 'fourn.php?id='.$product->id.'&amp;id_fourn='.$product->fourn->id;
 
 	  print '<form action="'.$action.'" method="post">';
 	  print '<input type="hidden" name="action" value="update">';
@@ -193,8 +193,8 @@ if ($_GET["id"])
 	  print '<tr><td width="20%">'.$langs->trans("Price").'</td>';
 	  print '<td><input name="price" size="20" value="'.$product->buyprice.'"></td></tr>';
 
-	  print '<tr><td>'.$langs->trans("Ref").'</td>';
-	  print '<td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+	  print '<tr><td>'.$langs->trans("SupplierRef").'</td>';
+	  print '<td><input name="fourn_ref" size="40" value="'.$product->fourn_ref.'"></td></tr>';
 
 	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 	  print '<textarea name="desc" rows="8" cols="50">';
@@ -221,7 +221,7 @@ if ($_GET["id"])
 	  
 	  if ( $user->rights->produit->creer)
 	    {
-	      print '<a class="tabAction" href="fourn.php?action=edit&amp;id='.$product->id.'&amp;id_fourn='.$fourn->id.'">'.$langs->trans("Edit").'</a>';
+	      print '<a class="tabAction" href="fourn.php?action=edit&amp;id='.$product->id.'&amp;id_fourn='.$product->fourn->id.'">'.$langs->trans("Edit").'</a>';
 	    }
 	}
       
