@@ -47,25 +47,6 @@ $types[1] = $langs->trans("Service");
  *
  */
 
-if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
-{
-  if ($_GET["id"])
-    {           
-      $product = new Product($db);
-      $result = $product->fetch($_GET["id"]);
-
-      // if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
-
-      //      var_dump($_FILES);
-
-      $product->add_photo($conf->produit->dir_output, $_FILES['photofile']);
-    }
-}
-/*
- *
- */
-
-
 if ($_GET["action"] == 'fastappro')
 {
   $product = new Product($db);
@@ -344,8 +325,8 @@ else
 
 		}
 	      
-	      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-	      $head[$h][1] = $langs->trans('Statistics');
+	      $head[$h][0] = DOL_URL_ROOT."/fourn/product/photos.php?id=".$product->id;
+	      $head[$h][1] = $langs->trans("Photos");	      
 	      $h++;
 
 	      //Affichage onglet Catégories
@@ -355,6 +336,9 @@ else
 		$h++;
 	      }
 
+	      $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+	      $head[$h][1] = $langs->trans("CommercialCard");
+	      $h++;
 
 	      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
@@ -398,8 +382,8 @@ else
 
 	      $nblignefour=3;
 		
-	      print '<td valign="top" rowspan="'.$nblignefour.'">';
-
+	      print '<td class="photo" valign="top" rowspan="'.$nblignefour.'">';
+	      $product->show_photo($conf->produit->dir_output);
 	      print '</td></tr>';
 
 
@@ -524,32 +508,7 @@ else
 	      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
 	      print '</form>';
-	    }
-
-	  /*
-	   * Ajouter une photo
-	   *
-	   */
-	  if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer  && $product->isproduct)
-	    {
-	      print_titre($langs->trans("AddPhoto"));
-
-	      print '<form name="userfile" action="fiche.php?id='.$product->id.'" enctype="multipart/form-data" METHOD="POST">';      
-	      print '<input type="hidden" name="max_file_size" value="2000000">';
-
-	      print '<table class="border" width="100%"><tr>';
-	      print '<td>'.$langs->trans("File").'</td>';
-	      print '<td><input type="file" name="photofile"></td></tr>';
-	  
-	      print '<tr><td colspan="4" align="center">';
-	      print '<input type="submit" name="sendit" value="'.$langs->trans("Save").'">&nbsp;';
-
-
-	      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-	      print '</table>';
-	      print '</form>';
-	    }
-      
+	    }      
 	}
       
       /*
