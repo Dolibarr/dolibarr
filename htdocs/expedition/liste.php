@@ -24,7 +24,7 @@
 /**
         \file       htdocs/expedition/liste.php
 		\ingroup    expedition
-		\brief      Page de la liste des propositions commerciales
+		\brief      Page de la liste des expéditions/livraisons
 */
 
 require("./pre.inc.php");
@@ -35,7 +35,6 @@ $user->getrights('expedition');
 if (!$user->rights->expedition->lire)
   accessforbidden();
 
-
 /*
  * Sécurité accés client
  */
@@ -45,21 +44,23 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-
-/******************************************************************************/
-/*                   Fin des  Actions                                         */
-/******************************************************************************/
-
-llxHeader('','Liste des expéditions','ch-expedition.html');
-
+$sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:"";
+$sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:"";
 if (! $sortfield) $sortfield="e.rowid";
 if (! $sortorder) $sortorder="DESC";
-
 
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
+
+
+
+/******************************************************************************/
+/*                   Fin des  Actions                                         */
+/******************************************************************************/
+
+llxHeader('',$langs->trans('ListOfSendings'),'ch-expedition.html');
 
 $sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut" ;
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e ";
@@ -85,7 +86,7 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   
-  print_barre_liste($langs->trans("Sendings"), $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+  print_barre_liste($langs->trans('ListOfSendings'), $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
   
   $i = 0;
   print '<table class="noborder" width="100%">';
@@ -103,7 +104,7 @@ if ($resql)
       
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowSending"),"sending").' '.$objp->ref."</a></td>\n";
       
       $now = time();
       $lim = 3600 * 24 * 15 ;
