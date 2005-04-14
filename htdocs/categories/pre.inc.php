@@ -55,7 +55,6 @@ function llxHeader ($head = "", $urlp = "", $title="")
 	}
     }
   
-  $menu->add(DOL_URL_ROOT."/categories/stats/", $langs->trans("CatStatistics"));
   left_menu($menu->liste);
 }
 ?>
