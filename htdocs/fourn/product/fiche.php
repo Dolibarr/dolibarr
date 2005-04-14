@@ -316,13 +316,6 @@ else
 		      $h++;
 		    }
 
-		  if ($conf->fournisseur->enabled)
-		    {
-		      $head[$h][0] = DOL_URL_ROOT."/fourn/product/fournisseurs.php?id=".$product->id;
-		      $head[$h][1] = $langs->trans("Suppliers");
-		      $h++;
-		    }
-
 		}
 	      
 	      $head[$h][0] = DOL_URL_ROOT."/fourn/product/photos.php?id=".$product->id;

@@ -85,17 +85,21 @@ if ($_GET["id"])
 	  $head[$h][1] = $langs->trans("Stock");
 	  $h++;
 	}
-      
-      if ($conf->fournisseur->enabled)
-	{
-	  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-	  $head[$h][1] = $langs->trans("Suppliers");
-	  $h++;
-	}
-      
+     
       $head[$h][0] = DOL_URL_ROOT."/fourn/product/photos.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Photos");
       $hselected = $h;	      
+      $h++;
+
+      //Affichage onglet Catégories
+      if ($conf->categorie->enabled){
+	$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
+	$head[$h][1] = $langs->trans('Categories');
+	$h++;
+      }
+
+      $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("CommercialCard");
       $h++;
       	      
       dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
