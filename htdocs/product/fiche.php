@@ -22,21 +22,16 @@
  */
 
 /**
-	    \file       htdocs/product/fiche.php
-        \ingroup    product
-		\brief      Page de la fiche produit
-		\version    $Revision$
+   \file       htdocs/product/fiche.php
+   \ingroup    product
+   \brief      Page de la fiche produit
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
 require("../propal.class.php");
 require("../facture.class.php");
 
-$langs->load("products");
-
-$user->getrights('produit');
-$user->getrights('propale');
-$user->getrights('facture');
 $mesg = '';
 
 if (!$user->rights->produit->lire) accessforbidden();

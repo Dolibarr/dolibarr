@@ -22,14 +22,18 @@
  */
 
 /*!
-	    \file       htdocs/product/pre.inc.php
-        \ingroup    product,service
-		\brief      Fichier gestionnaire du menu gauche des produits et services
-		\version    $Revision$
+  \file       htdocs/product/pre.inc.php
+  \ingroup    product,service
+  \brief      Fichier gestionnaire du menu gauche des produits et services
+  \version    $Revision$
 */
-
 require("../main.inc.php");
 
+$langs->load("products");
+
+$user->getrights('produit');
+$user->getrights('propale');
+$user->getrights('facture');
 
 function llxHeader($head = "", $urlp = "", $title="")
 {
