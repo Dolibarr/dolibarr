@@ -90,7 +90,7 @@ if ($_GET["id"])
       if ($conf->categorie->enabled)
 	{		  
 	  print '<tr id="ways">';
-	  print '<td colspan="2">';
+	  print '<td colspan="3">';
 	  $cat = new Categorie ($db);
 	  $way = $cat->print_primary_way($product->id," &gt; ",'fourn/product/liste.php');
 	  if ($way == "")
@@ -104,79 +104,65 @@ if ($_GET["id"])
 		}
 	  print '</td></tr>';
 	}
+
+      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
 	  
-	  print "<tr>";
-	  print '<td width="20%">'.$langs->trans("InternalRef").'</td><td width="40%">'.$product->ref.'</td>';
-	  print '</tr>';
-	  print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td></tr>';
-	  print "<tr>";
-	  print '<td width="20%">'.$langs->trans("Supplier").'</td><td width="40%">'.$product->fourn->nom_url.'</td>';
-	  print '</tr><tr>';
-	  print '<td width="20%">'.$langs->trans("SupplierRef").'</td><td width="40%">'.$product->fourn_ref.'</td>';
-	  print '</tr><tr>';
-	  print '<td width="20%">'.$langs->trans("BuiingPrice").'</td><td width="40%">'.price($product->buyprice).'</td>';
-	  print '</tr>';	  
-	  
-	  
-	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
-	  
-	  if ($product->type == 1)
+      print '<tr><td width="20%">'.$langs->trans("InternalRef").'</td><td width="40%">'.$product->ref.'</td>';
+
+      print '<td class="photo" valign="top" rowspan="6">';
+      $product->show_photo($conf->produit->dir_output);
+      print '</td></tr>';
+
+      print "<tr>";
+      print '<td width="20%">'.$langs->trans("Supplier").'</td><td width="40%">'.$product->fourn->nom_url.'</td>';
+      print '</tr><tr>';
+      print '<td width="20%">'.$langs->trans("SupplierRef").'</td><td width="40%">'.$product->fourn_ref.'</td>';
+      print '</tr><tr>';
+      print '<td width="20%">'.$langs->trans("BuiingPrice").'</td><td width="40%">'.price($product->buyprice).'</td>';
+      print '</tr>';	  
+            
+      print '<tr><td colspan="2">'.$langs->trans("Description").'</td></tr>';
+      print '<tr><td valign="top" colspan="2">'.nl2br($product->description).'&nbsp;</td></tr>';
+      
+      print "</table><br>\n";
+      
+      print '<table class="border" width="100%">';
+      print '<tr class="liste_titre"><td>';
+      print $langs->trans("Date").'</td>';
+      print '<td align="right">'.$langs->trans("Price").'</td>';
+      print '<td align="center">'.$langs->trans("Quantity").'</td>';
+      print '</tr>';
+      
+      /*
+       * Prix
+       */
+      
+      $sql = "SELECT p.price, p.quantity,".$db->pdate("tms") ." as date_releve";
+      $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as p";
+      $sql .=" WHERE p.fk_soc = ".$product->fourn->id;
+      $sql .= " AND p.fk_product = ".$product->id;
+      $sql .= " ORDER BY p.quantity ASC";
+      $resql= $db->query($sql) ;
+      if ($resql)
+	{
+	  $num_fournisseur = $db->num_rows($resql);
+	  $i = 0;
+	  $var=True;      
+	  while ($i < $num_fournisseur)
 	    {
-	      print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
+	      $objp = $db->fetch_object($resql);
+	      $var=!$var;
+	      print "<tr $bc[$var]>";
+	      print '<td>'.dolibarr_print_date($objp->date_releve).'</td>';
+	      print '<td align="right">'.price($objp->price).'</td>';
+	      print '<td align="center">'.$objp->quantity.'</td></tr>';
 	      
-	      if ($product->duration_value > 1)
-		{
-		  $dur=array("d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
-		}
-	      else
-		{
-		  $dur=array("d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-		}
-	      print $langs->trans($dur[$product->duration_unit])."&nbsp;";
-	      
-	      print '</td></tr>';
+	      $i++;
 	    }
-	  print "</table><br>\n";
-
-	  print '<table class="border" width="100%">';
-	  print '<tr class="liste_titre"><td>';
-	  print $langs->trans("Date").'</td>';
-	  print '<td align="right">'.$langs->trans("Price").'</td>';
-	  print '<td align="center">'.$langs->trans("Quantity").'</td>';
-	  print '</tr>';
-
-	  /*
-	   * Prix
-	   */
-	  
-	  $sql = "SELECT p.price, p.quantity,".$db->pdate("tms") ." as date_releve";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as p";
-	  $sql .=" WHERE p.fk_soc = ".$product->fourn->id;
-	  $sql .= " AND p.fk_product = ".$product->id;
-	  $sql .= " ORDER BY p.quantity ASC";
-	  $resql= $db->query($sql) ;
-	  if ($resql)
-	    {
-	      $num_fournisseur = $db->num_rows($resql);
-	      $i = 0;
-	      $var=True;      
-	      while ($i < $num_fournisseur)
-		{
-		  $objp = $db->fetch_object($resql);
-		  $var=!$var;
-		  print "<tr $bc[$var]>";
-		  print '<td>'.dolibarr_print_date($objp->date_releve).'</td>';
-		  print '<td align="right">'.price($objp->price).'</td>';
-		  print '<td align="center">'.$objp->quantity.'</td></tr>';
-		  
-		  $i++;
-		}
-	      $db->free($resql);
-	    }
-	  print '</table>';
-
-
-     
+	  $db->free($resql);
+	}
+      print '</table>';
+           
       /*
        *
        * Fiche en mode edition
