@@ -58,11 +58,10 @@ if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
     $snom="";
 }
 
-if (strlen($_REQUEST['catid']) == 0)
+if (isset($_REQUEST['catid']))
 {
-  $_REQUEST['catid'] = 1;
+  $catid = $_REQUEST['catid'];
 }
-$catid = $_REQUEST['catid'];
 
 /*
  * Mode Liste
@@ -152,38 +151,18 @@ if ($result)
  *
  *
  */
-
-  $c = new Categorie ($db, $catid);
-
-  $ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
   print "<div id='ways'>";
+  print '<a href="liste.php">Top</a>';
 
-  print $ways[0]."<br />\n";
+  if (isset($catid))
+    {
+      $c = new Categorie ($db, $catid);
+      $ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
 
-  print "</div>";
-  
-  $cats = $c->get_filles();
-  
-  print '<br><table class="noborder" width="100%">';
-  print '<tr><td valign="top" width="10%">';
-  if ($cats < 0)
-    {
-      print "-";
+      print " &gt; ".$ways[0]."<br />\n";
     }
-  elseif (sizeof ($cats) > 0)
-    {
-      print "<table class='noborder' width='100%'>\n";
-      foreach ($cats as $cat)
-	{
-	  $i++;
-	  print "<tr ".$bc[$i%2].">\n";
-	  print "<td><a href='liste.php?catid=".$cat->id."'>".$cat->label."</a></td>\n";
-	  print "</tr>\n";
-	}
-      print "</table>\n";
-    }
-  
-  print '</td><td valign="top" width="90%">';
+  print "</div><br />";
+
   print '<table class="noborder" width="100%">';
 
   // Lignes des titres
@@ -232,7 +211,7 @@ if ($result)
   $db->free();
 
   print "</table>";
-  print '</td></tr></table>';
+
 
 }
 else

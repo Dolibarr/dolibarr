@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@ $user->getrights("produit");
 
 function llxHeader($head = "", $title="", $help_url='',$addons='')
 {
-  global $user, $conf, $langs;
+  global $db, $user, $conf, $langs;
 
   
   top_menu($head, $title);
@@ -52,22 +52,6 @@ function llxHeader($head = "", $title="", $help_url='',$addons='')
       $menu->add($addons[0][0], $addons[0][1]);
     }
 
-  if ($conf->fournisseur->enabled) 
-    {
-      $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));      
-    }
-  
-  if ($conf->societe->enabled)
-    {
-      $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
-    }
-  
-  $langs->load("bills");
-  $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));   
-     
-  $langs->load("orders");
-  $menu->add(DOL_URL_ROOT."/fourn/commande/",$langs->trans("Orders"));
-  
   if ($conf->produit->enabled)
   {
     $menu->add(DOL_URL_ROOT."/fourn/product/", $langs->trans("Products"));
@@ -83,6 +67,40 @@ function llxHeader($head = "", $title="", $help_url='',$addons='')
   {
     $menu->add(DOL_URL_ROOT."/categories/", $langs->trans("Categories"));
   }
+
+  $menu->add('liste.php','Top');
+
+  if (isset($_REQUEST['catid']))
+    {
+      $catid = $_REQUEST['catid'];
+
+      $c = new Categorie ($db, $catid);
+     
+      $menu->add('liste.php?catid='.$c->id, $c->label);
+
+      $cats = $c->get_filles();
+  
+      if (sizeof ($cats) > 0)
+	{
+ 	  foreach ($cats as $cat)
+	    {
+	      $menu->add_submenu('liste.php?catid='.$cat->id, $cat->label);
+	    }
+	}
+    }
+  else
+    {
+      $c = new Categorie ($db);
+      $cats = $c->get_main_categories();
+
+      if (sizeof ($cats) > 0)
+	{
+ 	  foreach ($cats as $cat)
+	    {
+	      $menu->add_submenu('liste.php?catid='.$cat->id, $cat->label);
+	    }
+	}
+    }
 
   left_menu($menu->liste, $help_url);
 }
