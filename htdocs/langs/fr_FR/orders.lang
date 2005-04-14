@@ -40,3 +40,4 @@ ConfirmValidateOrder=Etes-vous sur de vouloir supprimer cette commande ?
 ConfirmCancelOrder=Etes-vous sur de vouloir annuler cette commande ?
 GenerateBill=Facturer
 ClassifyBilled=Classer "Facturée"
+ComptaCard=Fiche compta
