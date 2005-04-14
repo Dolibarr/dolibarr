@@ -59,7 +59,7 @@ function llxHeader($head = "", $title="", $help_url='',$addons='')
 
     if ($user->societe_id == 0 && $user->rights->produit->creer)
       {
-	$menu->add_submenu(DOL_URL_ROOT."/fourn/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
+	$menu->add_submenu(DOL_URL_ROOT."/fourn/product/fiche.php?action=create&amp;type=0&amp;catid=".$_REQUEST['catid'], $langs->trans("NewProduct"));
       }
   }
 

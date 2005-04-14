@@ -83,6 +83,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
   $product->ref            = $_POST["ref"];
   $product->libelle        = $_POST["libelle"];
   $product->price          = $_POST["price"];
+  $product->catid          = $_POST["catid"];
   $product->tva_tx         = $_POST["tva_tx"];
   $product->type           = $_POST["type"];
   $product->envente        = $_POST["statut"];
@@ -238,14 +239,29 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
+  print '<input type="hidden" name="catid" value="'.$_REQUEST["catid"].'">'."\n";
   print '<div class="titre">';
   if ($_GET["type"]==0) { print $langs->trans("NewProduct"); }
   if ($_GET["type"]==1) { print $langs->trans("NewService"); }
   print '</div><br>'."\n";
       
   print '<table class="border" width="100%">';
-  print '<tr>';
-  print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
+
+  if ($conf->categorie->enabled)
+    {		  
+      print '<tr><td>'.$langs->trans("Categorie");
+      print '</td><td>';
+
+      if (isset($_REQUEST["catid"]))
+	{
+	  $c = new Categorie ($db, $_REQUEST["catid"]);
+	  $ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
+	  print $ways[0]."<br />\n";
+	}
+      print '</td></tr>';
+    }
+
+  print '<tr><td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
   if ($_error == 1)
     {
       print $langs->trans("RefAlreadyExists");
@@ -321,7 +337,7 @@ else
 
 		  if ($conf->fournisseur->enabled)
 		    {
-		      $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+		      $head[$h][0] = DOL_URL_ROOT."/fourn/product/fournisseurs.php?id=".$product->id;
 		      $head[$h][1] = $langs->trans("Suppliers");
 		      $h++;
 		    }
@@ -347,8 +363,7 @@ else
 	      print '<table class="border" width="100%">';
 
 	      if ($conf->categorie->enabled)
-	      	{
-		  
+	      	{		  
 		  print '<tr id="ways">';
 		  print '<td colspan="3">';
 		  $cat = new Categorie ($db);

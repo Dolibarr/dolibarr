@@ -70,7 +70,10 @@ if (isset($_REQUEST['catid']))
 
 $title=$langs->trans("ProductsAndServices");
 
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type";
+$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type";
+$sql .= ", pf.fk_soc";
+$sql .= ", ppf.price";
+$sql .= ", s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 
 if ($_GET["fourn_id"] > 0)
@@ -83,6 +86,11 @@ if ($catid)
 {
   $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 }
+
+
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = pf.fk_soc";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON ppf.fk_soc = pf.fk_soc AND ppf.fk_product = p.rowid AND ppf.quantity = 1";
 
 if ($_POST["mode"] == 'search')
 {
@@ -118,23 +126,25 @@ if ($fourn_id > 0)
 }
 
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit($limit + 1 ,$offset);
-$result = $db->query($sql) ;
 
-if ($result)
+$sql .= $db->plimit($limit + 1 ,$offset);
+
+$resql = $db->query($sql) ;
+
+if ($resql)
 {
-    $num = $db->num_rows();
-    
-    $i = 0;
+  $num = $db->num_rows($resql);
   
-    if ($num == 1 && (isset($_POST["sall"]) or $snom or $sref))
+  $i = 0;
+  
+  if ($num == 1 && (isset($_POST["sall"]) or $snom or $sref))
     {
-        $objp = $db->fetch_object($i);
-        Header("Location: fiche.php?id=$objp->rowid");
+      $objp = $db->fetch_object($resql);
+      Header("Location: fiche.php?id=$objp->rowid");
     }
     
-    $texte = $langs->trans("List");
-
+  $texte = $langs->trans("List");
+  
   llxHeader("","",$texte);
 
   if ($sref || $snom || $_POST["sall"] || $_POST["search"])
@@ -145,7 +155,7 @@ if ($result)
     {
       print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
     }
-
+  
 
 /*
  *
@@ -158,7 +168,6 @@ if ($result)
     {
       $c = new Categorie ($db, $catid);
       $ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
-
       print " &gt; ".$ways[0]."<br />\n";
     }
   print "</div><br />";
@@ -169,7 +178,8 @@ if ($result)
   print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
   print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
-  print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("Supplier"),"liste.php", "p.price","","","",$sortfield);
+  print_liste_field_titre($langs->trans("BuiingPrice"),"liste.php", "p.price","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
   print "</tr>\n";
   
   // Lignes des champs de filtre
@@ -184,31 +194,42 @@ if ($result)
   print '<td valign="right">';
   print '<input class="fat" type="text" name="snom" value="'.$snom.'">';
   print '</td>';
-  print '<td align="center">';
+  print '<td colspan="2" align="center">';
   print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
   print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
   print '</td>';
   print '</tr>';
   print '</form>';
   
-  
+  $oldid = ''; 
   $var=True;
   while ($i < min($num,$limit))
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<tr $bc[$var]><td>";
-      print "<a href=\"../../product/fiche.php?id=$objp->rowid\">";
-      if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
-      else print img_object($langs->trans("ShowProduct"),"product");
-      print "</a> ";
-      print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
-      print "<td>$objp->label</td>\n";
+      print "<tr $bc[$var]>";
+
+      if ($oldid <> $objp->rowid)
+	{
+	  $oldid = $objp->rowid;
+	  print "<td><a href=\"../../product/fiche.php?id=$objp->rowid\">";
+	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
+	  else print img_object($langs->trans("ShowProduct"),"product");
+	  print "</a> ";
+	  print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
+	  print "<td>$objp->label</td>\n";
+	}
+      else
+	{
+	  print '<td colspan="2">&nbsp;</td>';
+	}
+
+      print '<td>'.$objp->nom.'</td>';
       print '<td align="right">'.price($objp->price).'</td>';
       print "</tr>\n";
       $i++;
     }
-  $db->free();
+  $db->free($resql);
 
   print "</table>";
 
