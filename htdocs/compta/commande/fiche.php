@@ -100,8 +100,10 @@ if ($_GET["id"] > 0)
        *   Commande
        */
       print '<table class="border" width="100%">';
-      print "<tr><td>".$langs->trans("Order")."</td><td>".$commande->ref.'</td>';
-      print '<td align="center">'.$commande->statuts[$commande->statut].'</td><td>';
+      print '<tr><td width="20%">'.$langs->trans("Order")."</td>";
+      print '<td width="15%">'.$commande->ref.'</td>';
+      print '<td width="15%" align="center">'.$commande->statuts[$commande->statut].'</td>';
+      print '<td width="50%">';
 
       if ($conf->projet->enabled) 
 	{

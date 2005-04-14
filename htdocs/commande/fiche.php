@@ -423,13 +423,17 @@ else
 	  $author->id = $commande->user_author_id;
 	  $author->fetch();
 
+	  $h=0;
+	  $head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
+	  $head[$h][1] = $langs->trans("OrderCard");
+	  $hselected = $h;
+	  $h++;
+	 
+	  $head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
+	  $head[$h][1] = $langs->trans("ComptaCard");
+	  $h++;
 
-	  $head[0][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
-	  $head[0][1] = $langs->trans("Order").": ".$commande->ref;
-	  $h = 1;
-	  $a = 0;
-	  
-	  dolibarr_fiche_head($head, $a, $soc->nom);	  
+	  dolibarr_fiche_head($head, $hselected, $soc->nom." / ".$langs->trans("Order")." : $commande->ref");
 
 	  /*
 	   * Confirmation de la suppression de la commande
@@ -471,17 +475,33 @@ else
 	    }
 
 	  print '<table class="border" width="100%">';
+	  print '<tr><td width="20%">'.$langs->trans("Order")."</td>";
+	  print '<td width="15%">'.$commande->ref.'</td>';
+	  print '<td width="15%" align="center">'.$commande->statuts[$commande->statut].'</td>';
+	  print '<td width="50%">';
+	  
+	  if ($conf->projet->enabled) 
+	    {
+	      $langs->load("projects");
+	      if ($commande->projet_id > 0)
+		{
+		  print $langs->trans("Project").' : ';
+		  $projet = New Project($db);
+		  $projet->fetch($commande->projet_id);
+		  print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$commande->projet_id.'">'.$projet->title.'</a>';
+		}
+	      else
+		{
+		  print $langs->trans("Project").' : ';
+		  print '<a href="fiche.php?id='.$id.'&amp;action=classer">Classer la commande</a>';
+		}
+	    }
+	  print '&nbsp;</td></tr>';
+
 	  print "<tr><td>".$langs->trans("Customer")."</td>";
 	  print '<td colspan="2">';
 	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
-	  print '<td width="50%">';
-	  print $commande->statuts[$commande->statut];
-	  print "</td></tr>";
-	  
-	  print '<tr><td>'.$langs->trans("Date").'</td>';
-	  print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
-
 	  print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
 	  if ($commande->source == 0)
 	    {
@@ -491,26 +511,14 @@ else
 	      print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
 	    }
 	  print "</td></tr>";
+	  
+	  print '<tr><td>'.$langs->trans("Date").'</td>';
+	  print "<td colspan=\"2\">".strftime("%A %e %B %Y",$commande->date)."</td>\n";
 
-	  print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';
-	
-      print '<td>';
-      if ($conf->projet->enabled) {
-    	  print $langs->trans("Project").' : ';
-    	  if ($commande->projet_id > 0)
-    	    {
-    	      $projet = New Project($db);
-    	      $projet->fetch($commande->projet_id);
-    	      print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$commande->projet_id.'">'.$projet->title.'</a>';
-    	    }
-    	  else
-    	    {
-    	      print '<a href="fiche.php?id='.$id.'&amp;action=classer">Classer la commande</a>';
-    	    }
-      }
-	  print "&nbsp;</td></tr>";
+	  print '<td width="50%">';
+	  print $langs->trans("Author").' : '.$author->fullname.'</td></tr>';
   
-      // Ligne de 3 colonnes
+	  // Ligne de 3 colonnes
 	  print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 	  print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
 	  print '<td>'.$conf->monnaie.'</td>';
@@ -840,14 +848,14 @@ else
 	    print '</td><td valign="top" width="50%">';
 	  }
 	/*
-	 *
-	 *
+	 * Classe la commande dans un projet
+	 * TODO finir le look & feel très moche
 	 */
 	if ($_GET["action"] == 'classer')
 	  {	    
-	    print '<br><form method="post" action="fiche.php?id='.$commande->id.'">';
+	    print '<form method="post" action="fiche.php?id='.$commande->id.'">';
 	    print '<input type="hidden" name="action" value="classin">';
-	    print '<table class="border">';
+	    print '<table class="border" width="100%">';
 	    print '<tr><td>'.$langs->trans("Project").'</td><td>';
 	    
 	    $proj = new Project($db);
