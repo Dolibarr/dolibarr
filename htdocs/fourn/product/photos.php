@@ -29,15 +29,9 @@
 */
 
 require("./pre.inc.php");
-require("../propal.class.php");
-require("../facture.class.php");
+;
 
-$langs->load("products");
 
-$user->getrights('produit');
-$user->getrights('propale');
-$user->getrights('facture');
-$mesg = '';
 
 if (!$user->rights->produit->lire) accessforbidden();
 
@@ -56,10 +50,6 @@ if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
       $product = new Product($db);
       $result = $product->fetch($_GET["id"]);
 
-      // if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
-
-      //      var_dump($_FILES);
-
       $product->add_photo($conf->produit->dir_output, $_FILES['photofile']);
     }
 }
@@ -73,29 +63,21 @@ llxHeader("","",$langs->trans("CardProduct0"));
  */
 if ($_GET["id"])
 {
-  
-
   $product = new Product($db);
   $result = $product->fetch($_GET["id"]);
-  
-  
+
   if ( $result )
     { 
-      
-
       /*
        *  En mode visu
        */
 	  
       $h=0;
           
-      $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+      $head[$h][0] = DOL_URL_ROOT."/fourn/product/fiche.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Card");
       $h++;
 	  
-      $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-      $head[$h][1] = $langs->trans("Price");
-      $h++;
 	  
       if ($conf->stock->enabled)
 	{
@@ -111,15 +93,11 @@ if ($_GET["id"])
 	  $h++;
 	}
       
-      $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
+      $head[$h][0] = DOL_URL_ROOT."/fourn/product/photos.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Photos");
       $hselected = $h;	      
       $h++;
       	      
-      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-      $head[$h][1] = $langs->trans('Statistics');
-      $h++;
-
       dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
       print($mesg);
@@ -143,17 +121,54 @@ if ($_GET["id"])
 
       print "</table><br>\n";
 
+
       /*
-       * Photo
+       * Ajouter une photo
        *
        */
-      if ($_GET["id"] && $_GET["action"]=='')
+      if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer  && $product->isproduct)
 	{
-	  print $product->show_photos($conf->produit->dir_output);
+	  print_titre($langs->trans("AddPhoto"));
+	  
+	  print '<form name="userfile" action="photos.php?id='.$product->id.'" enctype="multipart/form-data" METHOD="POST">';      
+	  print '<input type="hidden" name="max_file_size" value="2000000">';
+	  
+	  print '<table class="border" width="100%"><tr>';
+	  print '<td>'.$langs->trans("File").'</td>';
+	  print '<td><input type="file" name="photofile"></td></tr>';
+	  
+	  print '<tr><td colspan="4" align="center">';
+	  print '<input type="submit" name="sendit" value="'.$langs->trans("Save").'">&nbsp;';
+	  
+	  
+	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+	  print '</table>';
+	  print '</form><br />';
 	}
 
+
+      // Affiche photos
+      $nbphoto=$product->show_photos($conf->produit->dir_output,1);
+      if ($nbphoto < 1) print $langs->trans("NoPhotoYet")."<br><br>";
       print "</div>\n";
-    }      
+
+    }
+
+  print "\n<div class=\"tabsAction\">\n";
+  
+  if ($_GET["action"] == '')
+    {            
+      if ( $user->rights->produit->creer && $product->isproduct)
+	{
+	  print '<a class="tabAction" href="photos.php?action=ajout_photo&amp;id='.$product->id.'">';
+	  print $langs->trans("AddPhoto").'</a>';
+	}      
+}
+
+print "\n</div>\n";
+
+
+
 }
 else
 {
