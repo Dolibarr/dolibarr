@@ -52,7 +52,7 @@ class modCategorie extends DolibarrModules
     $this->const_name = "MAIN_MODULE_CATEGORIE";
     $this->const_config = MAIN_MODULE_CATEGORIE;
     $this->special = 0;
-    $this->picto = 'categorie';
+    $this->picto = '';
 
     // Dir
     $this->dirs = array();
