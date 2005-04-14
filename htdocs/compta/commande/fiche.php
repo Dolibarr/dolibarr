@@ -100,18 +100,27 @@ if ($_GET["id"] > 0)
        *   Commande
        */
       print '<table class="border" width="100%">';
+      print "<tr><td>".$langs->trans("Order")."</td><td>".$commande->ref.'</td>';
+      print '<td align="center">'.$commande->statuts[$commande->statut].'</td><td>';
+
+      if ($conf->projet->enabled) 
+	{
+	  $langs->load("projects");
+	  if ($commande->projet_id > 0)
+	    {
+	      print $langs->trans("Project").' : ';
+	      $projet = New Project($db);
+	      $projet->fetch($commande->projet_id);
+	      print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$commande->projet_id.'">'.$projet->title.'</a>';
+	    }
+	}
+      print '&nbsp;</td></tr>';
+
       print "<tr><td>".$langs->trans("Customer")."</td>";
       print '<td colspan="2">';
       print '<b><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
       
-      print '<td width="50%">';
-      print $commande->statuts[$commande->statut];
-      print "</td></tr>";
-      
-	  print '<tr><td>'.$langs->trans("Date").'</td>';
-      print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
-      
-	  print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
+      print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
       if ($commande->source == 0)
 	{
 	  /* Propale */
@@ -121,29 +130,18 @@ if ($_GET["id"] > 0)
 	}
       print "</td></tr>";
       
-	  print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';
+      print '<tr><td>'.$langs->trans("Date").'</td>';
+      print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
       
-      print '<td>';
-      if ($conf->projet->enabled) {
-    	  print $langs->trans("Project").' : ';
-      if ($commande->projet_id > 0)
-	{
-	  $projet = New Project($db);
-	  $projet->fetch($commande->projet_id);
-	  print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$commande->projet_id.'">'.$projet->title.'</a>';
-	}
-    	  else
-    	    {
-    	      print '<a href="fiche.php?id='.$commande->id.'&amp;action=classer">Classer la commande</a>';
-    	    }
-      }
-      print "&nbsp;</td></tr>";
+      print '<td width="50%">';
       
+      print $langs->trans("Author").' : '.$author->fullname.'</td></tr>';
+            
       // Ligne de 3 colonnes
-	  print '<tr><td>'.$langs->trans("AmountHT").'</td>';
+      print '<tr><td>'.$langs->trans("AmountHT").'</td>';
       print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-	  print '<td>'.$conf->monnaie.'</td>';
-	  print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :<br>'.nl2br($commande->note).'</td></tr>';
+      print '<td>'.$conf->monnaie.'</td>';
+      print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :<br>'.nl2br($commande->note).'</td></tr>';
       
       print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
       print $commande->remise_percent.' %</td><td>&nbsp;';
@@ -152,9 +150,8 @@ if ($_GET["id"] > 0)
       print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
       print '<td>'.$conf->monnaie.'</td></tr>';
       print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
-      print '<td>'.$conf->monnaie.'</td></tr>';
-      
-      print "</table>";
+      print '<td>'.$conf->monnaie.'</td></tr>';      
+      print "</table>\n";
       
       /*
        * Lignes de commandes
@@ -190,7 +187,7 @@ if ($_GET["id"] > 0)
 	      if ($objp->fk_product > 0)
 		{
 		  print '<td>';
-		      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.stripslashes(nl2br($objp->description)).'</a></td>';
+		  print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.stripslashes(nl2br($objp->description)).'</a></td>';
 		}
 	      else
 		{
@@ -206,12 +203,9 @@ if ($_GET["id"] > 0)
 		{
 		  print '<td>&nbsp;</td>';
 		}
-	      print '<td align="right">'.price($objp->subprice)."</td>\n";
-
+	      print '<td align="right">'.price($objp->subprice)."</td>\n";	      
 	      print '<td>&nbsp;</td><td>&nbsp;</td>';
-
-	      print "</tr>";
-	      
+	      print "</tr>";	      
 
 	      $i++;
 	      $var=!$var;
@@ -228,7 +222,7 @@ if ($_GET["id"] > 0)
        * Documents générés
        *
        */
-	  $file = $conf->facture->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
+      $file = $conf->facture->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
       $relativepath = $commande->ref."/".$commande->ref.".pdf";
 
       $var=true;
@@ -287,7 +281,7 @@ if ($_GET["id"] > 0)
 		  $objp = $db->fetch_object();
 		  $var=!$var;
 		  print "<tr bgcolor=\"#E0E0E0\">";
-		  print "<td><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a>";
+		  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>';
 		  if ($objp->paye)
 		    { 
 		      print " (<b>pay&eacute;e</b>)";
@@ -332,7 +326,7 @@ if ($_GET["id"] > 0)
 	{
 	  print "<div class=\"tabsAction\">\n";
 
-	  if ($commande->statut <> 0 && $user->rights->facture->creer)
+	  if ($commande->statut > 0 && $user->rights->facture->creer)
 	    {
 	      print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">'.$langs->trans("GenerateBill").'</a>';
 	    }
