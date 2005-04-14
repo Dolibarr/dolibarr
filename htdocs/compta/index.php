@@ -271,8 +271,8 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
             $var=!$var;
             $obj = $db->fetch_object($resql);
             print "<tr $bc[$var]>";
-            print "<td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
-            print "<a href=\"commande.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
+            print "<td width=\"20%\"><a href=\"commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
+            print "<a href=\"commande/fiche.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
             
             print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
             print '<a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
