@@ -137,14 +137,11 @@ if ($_GET["id"])
       print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
       print '</tr>';
 
-      print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($product->description).'</td></tr>';
-
       print "</table><br>\n";
 
       // Affiche photos
       $nbphoto=$product->show_photos($conf->produit->dir_output,1);
       if ($nbphoto < 1) print $langs->trans("NoPhotoYet")."<br><br>";
-
       print "</div>\n";
     }      
 }
