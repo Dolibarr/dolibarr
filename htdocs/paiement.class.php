@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/paiement.class.php
+/**
+        \file       htdocs/paiement.class.php
         \ingroup    facture
         \brief      Fichier de la classe des paiement de factures clients
         \version    $Revision$
@@ -109,107 +110,85 @@ class Paiement
 
   /**
    *    \brief      Création du paiement en base
-   *    \param      user       object utilisateur qui crée
-   *    \param      no_commit  le begin et le commit sont fait par l'appelant
-   *
+   *    \param      user        object utilisateur qui crée
+   *    \return     int         id du paiement crée, < 0 si erreur
    */
-	 
-  function create($user, $no_commit = 0)
-  {
-    $sql_err = 0;
-    /*
-     *  Insertion dans la base
-     */
-    if ($no_commit == 0)
-      {
-	$result = $this->db->begin();
-      }
-    else
-      {
-	$result = 1;
-      }
-
-    if ($result)
-      {
-	$total = 0;
-	
-	foreach ($this->amounts as $key => $value)
-	  {
-	    $facid = $key;
-	    $value = trim($value);
-	    $amount = ereg_replace(",",".",round($value, 2));
-
-	    if (is_numeric($amount))
-	      {
-		$total += $amount;
-	      }
-	  }
-	
-	$total = ereg_replace(",",".",$total);
-
-	if ($total <> 0) /* On accepte les montants négatifs pour les rejets de prélèvement */
-	  {
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
-	    $sql .= " VALUES (now(), $this->datepaye, '$total', $this->paiementid, '$this->num_paiement', '$this->note', $user->id)";
-
-	    if ( $this->db->query($sql) )
-	      {
-
-		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiement");
-
-		foreach ($this->amounts as $key => $value)
-		  {
-		    $facid = $key;
-		    $value = trim($value);
-		    $amount = ereg_replace(",",".",round($value, 2));
-		    
-		    if (is_numeric($amount) && $amount <> 0)
-		      {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
-			$sql .= " VALUES ('".$facid."','". $this->id."','". $amount."')";
-
-			if (! $this->db->query($sql) )
-			  {
-			    dolibarr_syslog("Paiement::Create Erreur INSERT dans paiement_facture ".$facid);
-		    
-			    $sql_err++;
-			  }
-		      }
-		    else
-		      {
-			dolibarr_syslog("Paiement::Create Montant non numérique");
-		      }
-		  }
-	      
-	      }
-	    else
-	      {
-		dolibarr_syslog("Paiement::Create Erreur INSERT dans paiement");
-		$sql_err++;
-	      }
-	  }
-
-	if ( $total <> 0 && $sql_err == 0 ) // On accepte les montants négatifs
-	  {
-	    if ($no_commit == 0)
-	      {
-		$this->db->commit();
-	      }
-	    dolibarr_syslog("Paiement::Create Ok Total = $total");
-	    return $this->id;
-	  }
-	else
-	  {
-	    if ($no_commit == 0)
-	      {
-		$this->db->rollback();
-	      }
-	    dolibarr_syslog("Paiement::Create Erreur");
-	    return -1;
-	  }
-	
-      }
-  }
+ 
+    function create($user)
+    {
+        $total = 0;
+        $sql_err = 0;
+    
+        $this->db->begin();
+    
+        foreach ($this->amounts as $key => $value)
+        {
+            $facid = $key;
+            $value = trim($value);
+            $amount = ereg_replace(",",".",round($value, 2));
+    
+            if (is_numeric($amount))
+            {
+                $total += $amount;
+            }
+        }
+    
+        $total = ereg_replace(",",".",$total);
+    
+        if ($total <> 0) /* On accepte les montants négatifs pour les rejets de prélèvement */
+        {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
+            $sql .= " VALUES (now(), $this->datepaye, '$total', $this->paiementid, '$this->num_paiement', '$this->note', $user->id)";
+    
+            if ( $this->db->query($sql) )
+            {
+                $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiement");
+    
+                foreach ($this->amounts as $key => $value)
+                {
+                    $facid = $key;
+                    $value = trim($value);
+                    $amount = ereg_replace(",",".",round($value, 2));
+    
+                    if (is_numeric($amount) && $amount <> 0)
+                    {
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
+                        $sql .= " VALUES ('".$facid."','". $this->id."','". $amount."')";
+    
+                        if (! $this->db->query($sql) )
+                        {
+                            dolibarr_syslog("Paiement::Create Erreur INSERT dans paiement_facture ".$facid);
+                            $sql_err++;
+                        }
+                    }
+                    else
+                    {
+                        dolibarr_syslog("Paiement::Create Montant non numérique");
+                    }
+                }
+    
+            }
+            else
+            {
+                dolibarr_syslog("Paiement::Create Erreur INSERT dans paiement");
+                $sql_err++;
+            }
+        }
+    
+        if ( $total <> 0 && $sql_err == 0 ) // On accepte les montants négatifs
+        {
+            $this->db->commit();
+            dolibarr_syslog("Paiement::Create Ok Total = $total");
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            dolibarr_syslog("Paiement::Create Erreur");
+            return -1;
+        }
+    
+    }
 
   /**
    *    \brief      Affiche la liste des modes de paiement possible
