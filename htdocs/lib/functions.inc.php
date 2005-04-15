@@ -603,9 +603,11 @@ function img_tick($alt = "default")
 */
 function loginfunction()
 {
+  global $langs;
+  
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html><head><title>Dolibarr Authentification</title>";
-  print '<link rel="stylesheet" type="text/css" href="lib/login.css">
+  print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'lib/login.css">
   </head>
   <body onload="donnefocus();">
   <div class="main">
@@ -616,14 +618,15 @@ function loginfunction()
   <div class="main-inside">
   ';
 
-  echo '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" name="identification">';
-  print '<table><tr>';
-  print '<td>Login : </td><td><input type="text" name="username"></td></tr>';;
-  print '<tr><td>Password : </td><td><input type="password" name="password"></td></tr>';
-
-  echo '</table>
-  <p align="center"><input value="Login" type="submit">
-  </form>';
+  print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" name="identification">';
+  print '<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">';
+  print '<table width="100%">';
+  print '<tr><td align="left">'.$langs->trans("Login").': </td><td><input type="text" name="username"></td></tr>';;
+  print '<tr><td align="left">'.$langs->trans("Password").': </td><td><input type="password" name="password"></td></tr>';
+  print '</table>';
+  print '</td></tr></table>';
+  print '<br><center><input value="'.$langs->trans("Connexion").'" type="submit" class="button"></center>';
+  print '</form>';
 }
 
 
