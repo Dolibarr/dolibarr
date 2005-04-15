@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +32,11 @@ require("./pre.inc.php");
 $year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
 $year_current = strftime("%Y",time());
 if (! $year_start) {
-    $year_start = $year_current - 2;
+    $year_start = $year_current - 4;
     $year_end = $year_current;
 }
 else {
-    $year_end=$year_start+2;   
+    $year_end=$year_start + 4;
 }
 
 
@@ -58,12 +58,14 @@ if ($modecompta=='CREANCES-DETTES') {
 } else {
 	$title="Chiffre d'affaire (".$conf->monnaie." TTC)";
 }
-$lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."'>".img_next()."</a>":"");
+$lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+
 print_fiche_titre($title,$lien);
 
 
 // Affiche règles de calcul
-print "Ce rapport présente le CA:<br>\n";
+print "<br>";
+print "Cet état présente le CA:<br>\n";
 if ($modecompta=="CREANCES-DETTES")
 {
     print $langs->trans("RulesCADue");
@@ -105,11 +107,16 @@ $result = $db->query($sql);
 if ($result)
 {
     $num = $db->num_rows($result);
-    $i = 0; 
+    $i = 0;
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
         $cum[$obj->dm] = $obj->amount;
+        if ($obj->amount)
+        {
+            $minyearmonth=($minyearmonth?min($minyearmonth,$obj->dm):$obj->dm);
+            $maxyearmonth=max($maxyearmonth,$obj->dm);
+        }
         $i++;
     }
     $db->free($result);
@@ -123,111 +130,141 @@ print '<tr class="liste_titre"><td rowspan="2">'.$langs->trans("Month").'</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="center" width="10%" colspan="2">'.$annee.'</td>';
+    print '<td align="center" width="10%" colspan="2">'.$annee.'</td>';
+    print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';
 
 print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="right">Montant</td>';
-  print '<td align="center">Delta</td>';
+    print '<td align="right">'.$langs->trans("Amount").'</td>';
+    print '<td align="center">'.$langs->trans("Delta").'</td>';
+    print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';
+
+
 $total_CA=0;
+$now_show_delta=0;
+$minyear=substr($minyearmonth,0,4);
+$maxyear=substr($maxyearmonth,0,4);
+$nowyear=strftime("%Y",mktime());
+$nowyearmonth=strftime("%Y-%m",mktime());
+
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-  $var=!$var;
-  print "<tr $bc[$var]>";
+    $var=!$var;
+    print "<tr $bc[$var]>";
 
-  print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
-for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+    print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
+    for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
-      $casenow = strftime("%Y-%m",mktime());
-      $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-      $caseprev = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee-1));
+        $casenow = strftime("%Y-%m",mktime());
+        $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
+        $caseprev = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee-1));
 
-	  if ($annee == $year_current) {
-	  	$total_CA += $cum[$case];
-	  }
-      // Valeur CA
+        if ($annee == $year_current) {
+            $total_CA += $cum[$case];
+        }
 
-      print '<td align="right">';
-      if ($cum[$case])
-	{
-	  print price($cum[$case],1);
-	}
-      else
-	{
-	  if ($case <= $casenow) { print '0'; }
-	  else { print '&nbsp;'; }
-	}
-      print "</td>";
-      // Pourcentage evol
-      if ($cum[$caseprev]) {
-	if ($case <= $casenow) {
-	  if ($cum[$caseprev]) {
-	    $percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100);
-	    print '<td align="right">'.($percent>=0?"+$percent":"$percent").'%</td>';
-	  
-	  }
-	  else
-	    print '<td align="center">+Inf%</td>';
-	}
-	else
-	  {
-	    print '<td>&nbsp;</td>';
-	  }
-      } else {
-	if ($case <= $casenow) {
-	  print '<td align="center">-</td>';
-	}
-	else {
-	  print '<td>&nbsp;</td>';
-	}
-      }
-      
-      $total[$annee]+=$cum[$case];
+        // Valeur CA du mois
+        print '<td align="right">';
+        if ($cum[$case])
+        {
+            $now_show_delta=1;  // On a trouvé le premier mois de la première année générant du chiffre.
+            print price($cum[$case],1);
+        }
+        else
+        {
+            if ($minyearmonth < $case && $case <= max($maxyearmonth,$nowyearmonth)) { print '0'; }
+            else { print '&nbsp;'; }
+        }
+        print "</td>";
+
+        // Pourcentage du mois
+        if ($annee > $minyear && $case <= $casenow) {
+            if ($cum[$caseprev] && $cum[$case])
+            {
+                $percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100);
+                //print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
+                print '<td align="right">'.($percent>=0?"+$percent":"$percent").'%</td>';
+
+            }
+            if ($cum[$caseprev] && ! $cum[$case])
+            {
+                print '<td align="right">-100%</td>';
+            }
+            if (! $cum[$caseprev] && $cum[$case])
+            {
+                print '<td align="right">+Inf%</td>';
+            }
+            if (! $cum[$caseprev] && ! $cum[$case])
+            {
+                print '<td align="right">+0%</td>';
+            }
+        }
+        else
+        {
+            print '<td align="center">';
+            if ($minyearmonth <= $case && $case <= $maxyearmonth) { print '-'; }
+            else { print '&nbsp;'; }
+            print '</td>';
+        }
+
+        $total[$annee]+=$cum[$case];
+        print '<td width="15">&nbsp;</td>';
     }
- 
- print '</tr>';
+
+    print '</tr>';
 }
 
 // Affiche total
-print "<tr><td align=\"right\"><b>".$langs->trans("Total")." :</b></td>";
+print "<tr><td><b>".$langs->trans("Total")." :</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print "<td align=\"right\" nowrap><b>".($total[$annee]?price($total[$annee]):"&nbsp;")."</b></td>";
-  
-  // Pourcentage evol
-  if ($total[$annee-1]) {
-    if ($annee <= $year_current) {
-      if ($total[$annee-1]) {
-	    $percent=(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100);
-	    print '<td align="right" nowrap><b>'.($percent>=0?"+$percent":"$percent").'%</b></td>';
-        }
-      else
-	print '<td align="center" nowrap>+Inf%</td>';
+    // Montant total
+    if ($annee >= $minyear && $annee <= max($nowyear,$maxyear))
+    {
+        print "<td align=\"right\" nowrap><b>".($total[$annee]?price($total[$annee]):"0")."</b></td>";
     }
     else
-      {
-	print '<td>&nbsp;</td>';
-      }
-  }
-  else
     {
-      if ($annee <= $year_current)
-	{
-	  print '<td align="center">-</td>';
-	}
-      else
-	{
-	  print '<td>&nbsp;</td>';
-	}
+        print '<td>&nbsp;</td>';
     }
-  
+
+    // Pourcentage total
+    if ($annee > $minyear && $annee <= max($nowyear,$maxyear)) {
+        if ($total[$annee-1] && $total[$annee]) {
+            $percent=(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100);
+            print '<td align="right" nowrap>'.($percent>=0?"+$percent":"$percent").'%</td>';
+        }
+        if ($total[$annee-1] && ! $total[$annee])
+        {
+            print '<td align="right">-100%</td>';
+        }
+        if (! $total[$annee-1] && $total[$annee])
+        {
+            print '<td align="right">+Inf%</td>';
+        }
+        if (! $total[$annee-1] && ! $total[$annee])
+        {
+            print '<td align="right">+0%</td>';
+        }
+    }
+    else
+    {
+        print '<td align="center">';
+        if ($minyear <= $annee && $annee <= max($nowyear,$maxyear)) { print '-'; }
+        else { print '&nbsp;'; }
+        print '</td>';
+    }
+
+    print '<td width="15">&nbsp;</td>';
 }
 print "</tr>\n";
+print "</table>";
+
 
 /*
  * En mode recettes/dépenses, on complète avec les montants facturés non réglés
@@ -235,10 +272,18 @@ print "</tr>\n";
  * on comptabilise lorsque le montant est sur le compte donc il est intéressant
  * d'avoir une vision de ce qui va arriver.
  */
-if ($modecompta != 'CREANCES-DETTES') { 
+
+/*
+Je commente toute cette partie car les chiffres affichées sont faux - Eldy.
+En attendant correction.
+
+if ($modecompta != 'CREANCES-DETTES')
+{
   
+  print '<br><table width="100%" class="noborder">';
+
   // Factures non réglées
-  // \todo Ya bug ici. Il faut prendre le reste à payer et non le total des factures non réglèes !
+  // \todo Y a bug ici. Il faut prendre le reste à payer et non le total des factures non réglèes !
 
   $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
@@ -266,7 +311,7 @@ if ($modecompta != 'CREANCES-DETTES') {
 	      $i++;
 	    }
 	  $var=!$var;
-	  print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Facturé à encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"3\">&nbsp;</td></tr>";
+	  print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Facturé à encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja réglé des factures partiellement réglées</td></tr>";
 	  $total_CA +=$total_ttc_Rac;
 	}
       $db->free();
@@ -275,12 +320,18 @@ if ($modecompta != 'CREANCES-DETTES') {
     {
       dolibarr_print_error($db);
     }  
+*/
 
 /*
 * 
 * Propales signées, et non facturées
 * 
 */
+
+/*
+Je commente toute cette partie car les chiffres affichées sont faux - Eldy.
+En attendant correction.
+
   $sql = "SELECT sum(f.total) as tot_fht,sum(f.total_ttc) as tot_fttc, p.rowid, p.ref, s.nom, s.idp, p.total_ht, p.total_ttc
 			FROM ".MAIN_DB_PREFIX."commande AS p, llx_societe AS s
 			LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid
@@ -310,7 +361,7 @@ if ($modecompta != 'CREANCES-DETTES') {
 	      $i++;
 	    }
 	  $var=!$var;
-	  print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Signé : </i></td><td align=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"3\">&nbsp;</td></tr>";
+	  print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Signé et non facturé:</i></td><td align=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le déjà facturé</td></tr>";
 	  $total_CA += $total_pr;
 	}
       $db->free();
@@ -319,9 +370,12 @@ if ($modecompta != 'CREANCES-DETTES') {
     {
       dolibarr_print_error($db);
     }  
-  print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Total CA prévisionnel : </i></td><td align=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\">&nbsp;</td></tr>";
+  print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Total CA prévisionnel : </i></td><td align=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug ici car bug sur les 2 précédents</td></tr>";
 }
 print "</table>";
+
+*/
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
