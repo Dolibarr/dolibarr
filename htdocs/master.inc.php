@@ -175,6 +175,19 @@ $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
 $conf->users->dir_output=DOL_DATA_ROOT."/users";
 
 /*
+ * Utilisé dans tous les upload de fichier
+ * nécessaire pour désactiver dans la démo
+ */
+if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
+{
+  $conf->upload = 1;
+}
+else
+{
+  $conf->upload = 0;
+}
+
+/*
  * Activation des modules
  * et inclusion de librairies dépendantes
  */
