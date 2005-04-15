@@ -101,7 +101,7 @@ class modPropale extends DolibarrModules
     */
   function init()
   {       
-
+    global $conf;
     // Permissions et valeurs par défaut
     $this->remove();
 
@@ -143,6 +143,7 @@ class modPropale extends DolibarrModules
 
     // Répertoires
     $this->dirs[0] = $conf->propal->dir_output;
+    $this->dirs[1] = $conf->propal->dir_images;
 
     $sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom = '".$this->const[0][2]."'",
