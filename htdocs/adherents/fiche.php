@@ -311,9 +311,7 @@ if ($_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == 'yes')
         if (!$adh->add_to_glasnost()){
             $errmsg.="Echec du rajout de l'utilisateur dans glasnost: ".$adh->errostr."<BR>\n";
         }
-        if(defined('MAIN_DEBUG') && MAIN_DEBUG == 1){
-            XMLRPC_debug_print();
-        }
+        XMLRPC_debug_print();
     }
 }
 
@@ -328,9 +326,7 @@ if ($_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == 'yes')
         if(!$adh->del_to_glasnost()){
             $errmsg.="Echec de la suppression de l'utilisateur dans glasnost: ".$adh->errostr."<BR>\n";
         }
-        if(defined('MAIN_DEBUG') && MAIN_DEBUG == 1){
-            XMLRPC_debug_print();
-        }
+        XMLRPC_debug_print();
     }
 }
 
