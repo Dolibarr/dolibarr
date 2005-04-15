@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/compta/paiement/fiche.php
+/**
+	    \file       htdocs/compta/paiement/fiche.php
 		\ingroup    facture
 		\brief      Onglet paiement d'un paiement
 		\version    $Revision$
@@ -156,10 +157,10 @@ if ($db->query($sql))
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").'</a>';
-	  print ' <a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
+	  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' ';
+	  print $objp->facnumber;
 	  print "</a></td>\n";
-	  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">' . $objp->nom.'</a></td>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom.'</a></td>';
 	  print '<td align="right">'.price($objp->amount).'</td>';
 	  $fac=new Facture($db);
 	  print '<td align="center">'.$fac->LibStatut($objp->paye,$objp->fk_statut).'</td>';

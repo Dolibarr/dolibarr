@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
  *
  */
 
-/*!	\file htdocs/compta/paiement/info.php
+/**
+    	\file       htdocs/compta/paiement/info.php
 		\ingroup    facture
 		\brief      Onglet info d'un paiement
 		\version    $Revision$
@@ -51,10 +52,12 @@ $paiement->fetch($_GET["id"], $user);
 $paiement->info($_GET["id"]);
 
 print '<table width="100%"><tr><td>';
+print '<br>';
 dolibarr_print_object_info($paiement);
+print '<br>';
 print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

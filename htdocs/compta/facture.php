@@ -22,7 +22,8 @@
  *
  */
 
-/**	    \file       htdocs/compta/facture.php
+/**
+	    \file       htdocs/compta/facture.php
 		\ingroup    facture
 		\brief      Page de création d'une facture
 		\version    $Revision$
@@ -36,23 +37,14 @@ $user->getrights('banque');
 if (!$user->rights->facture->lire)
   accessforbidden();
 
-$langs->load("main"); // BUG De chargement de traduction ne pas modifier cette ligne
 $langs->load("bills");
 
 require_once "../facture.class.php";
 require_once "../paiement.class.php";
-if ($conf->projet->enabled) {
-  require_once "../project.class.php";
-}
-if ($conf->propal->enabled) {
-  require_once "../propal.class.php";
-}
-if ($conf->contrat->enabled) {
-  require_once "../contrat/contrat.class.php";
-}
-if ($conf->commande->enabled) {
-  require_once "../commande/commande.class.php";
-}
+if ($conf->projet->enabled) require_once "../project.class.php";
+if ($conf->propal->enabled) require_once "../propal.class.php";
+if ($conf->contrat->enabled) require_once "../contrat/contrat.class.php";
+if ($conf->commande->enabled) require_once "../commande/commande.class.php";
 require_once "../lib/CMailFile.class.php";
 
 
@@ -1710,20 +1702,20 @@ else
 		    {
 		      if ($objp->fk_statut == 0)
 			{
-			  print '<td align="center">brouillon</td>';
+			  print '<td align="center">'.$langs->trans("BillShortStatusDraft").'</td>';
 			}
 		      elseif ($objp->fk_statut == 3)
 			{
-			  print '<td align="center">abandonnée</td>';
+			  print '<td align="center">'.$langs->trans("BillShortStatusCanceled").'</td>';
 			}
 		      else
 			{
-			  print '<td align="center"><a class="'.$class.'" href="facture.php?filtre=paye:0,fk_statut:1">'.($objp->am?"commencé":"impayée").'</a></td>';
+			  print '<td align="center"><a class="'.$class.'" href="facture.php?filtre=paye:0,fk_statut:1">'.($objp->am?$langs->trans("BillShortStatusStarted"):$langs->trans("BillShortStatusNotPayed")).'</a></td>';
 			}
 		    }
 		  else
 		    {
-		      print '<td align="center">payée</td>';
+		      print '<td align="center">'.$langs->trans("BillShortStatusPayed").'</td>';
 		    }
 		
 		  print "</tr>\n";

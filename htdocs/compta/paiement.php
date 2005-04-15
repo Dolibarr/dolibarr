@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,87 +44,97 @@ $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 if ($_POST["action"] == 'add_paiement')
 {
-  if ($_POST["paiementid"] > 0)
+    if ($_POST["paiementid"] > 0)
     {
-      
-      $datepaye = $db->idate(mktime(12, 0 , 0,
-				    $_POST["remonth"], 
-				    $_POST["reday"],
-				    $_POST["reyear"]));
+        $datepaye = $db->idate(mktime(12, 0 , 0,
+        $_POST["remonth"],
+        $_POST["reday"],
+        $_POST["reyear"]));
 
-      $paiement_id = 0;
-      $amounts = array();
-      foreach ($_POST as $key => $value)
-	{
-	  if (substr($key,0,7) == 'amount_')
-	    {
-	      $other_facid = substr($key,7);
-	      
-	      $amounts[$other_facid] = $_POST[$key];
-	    }
-	}
-      
-      // TODO Mettre toute la chaine dans une même transaction
+        $paiement_id = 0;
+        $amounts = array();
+        foreach ($_POST as $key => $value)
+        {
+            if (substr($key,0,7) == 'amount_')
+            {
+                $other_facid = substr($key,7);
 
-      // Creation de la ligne paiement
-      $paiement = new Paiement($db);
-      $paiement->datepaye     = $datepaye;
-      $paiement->amounts      = $amounts;   // Tableau de montant
-      $paiement->paiementid   = $_POST["paiementid"];
-      $paiement->num_paiement = $_POST["num_paiement"];
-      $paiement->note         = $_POST["comment"];
-      $paiement_id = $paiement->create($user);
+                $amounts[$other_facid] = $_POST[$key];
+            }
+        }
 
-      if ($paiement_id > 0)
-	{
-          // On determine le montant total du paiement
-          $total=0;
-          foreach ($paiement->amounts as $key => $value)
-          {
-	    $facid = $key;
-	    $value = trim($value);
-	    $amount = round(ereg_replace(",",".",$value), 2);
-	    if (is_numeric($amount))
-	      {
-                $total += $amount;
-	      }
-          }
-	  
-          // Insertion dans llx_bank
-          $label = "Règlement facture";
-	  $acc = new Account($db, $_POST["accountid"]);
-	  //paiementid contient "CHQ ou VIR par exemple"
-	  $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementid, $label, $total, $paiement->num_paiement, '', $user);
-	  
-	  // Mise a jour fk_bank dans llx_paiement. On connait ainsi le paiement qui a généré l'écriture bancaire
-	  if ($bank_line_id)
-	    {
-	      $paiement->update_fk_bank($bank_line_id);
-	    }
-	  
-          // Mise a jour liens (pour chaque facture concernées par le paiement)
-          foreach ($paiement->amounts as $key => $value)
-	    {
-              $facid = $key;
-      	      $fac = new Facture($db);
-	      $fac->fetch($facid);
-	      $fac->fetch_client();
-	      $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
-	      $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);	  
-	    }
-	  
-	  $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-	  Header("Location: $loc");
-	}
-      else
-	{
-	  // Il y a eu erreur
-	  $fiche_erreur_message = "Echec de la création du paiement";
-	}
+        // TODO Mettre toute la chaine dans une même transaction
+        $db->begin();
+
+        // Creation de la ligne paiement
+        $paiement = new Paiement($db);
+        $paiement->datepaye     = $datepaye;
+        $paiement->amounts      = $amounts;   // Tableau de montant
+        $paiement->paiementid   = $_POST["paiementid"];
+        $paiement->num_paiement = $_POST["num_paiement"];
+        $paiement->note         = $_POST["comment"];
+
+        $paiement_id = $paiement->create($user);
+        if ($paiement_id > 0)
+        {
+            // On determine le montant total du paiement
+            $total=0;
+            foreach ($paiement->amounts as $key => $value)
+            {
+                $facid = $key;
+                $value = trim($value);
+                $amount = round(ereg_replace(",",".",$value), 2);
+                if (is_numeric($amount))
+                {
+                    $total += $amount;
+                }
+            }
+
+            // Insertion dans llx_bank
+            $label = "Règlement facture";
+            $acc = new Account($db, $_POST["accountid"]);
+            //paiementid contient "CHQ ou VIR par exemple"
+            $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementid, $label, $total, $paiement->num_paiement, '', $user);
+
+            // Mise a jour fk_bank dans llx_paiement. On connait ainsi le paiement qui a généré l'écriture bancaire
+            if ($bank_line_id > 0)
+            {
+                $paiement->update_fk_bank($bank_line_id);
+
+                // Mise a jour liens (pour chaque facture concernées par le paiement)
+                foreach ($paiement->amounts as $key => $value)
+                {
+                    $facid = $key;
+                    $fac = new Facture($db);
+                    $fac->fetch($facid);
+                    $fac->fetch_client();
+                    $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
+                    $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
+                }
+
+                $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+
+                $db->commit();
+
+                Header("Location: $loc");
+            }
+            else
+            {
+                // Il y a eu erreur
+                $db->rollback();
+                $fiche_erreur_message = $langs->trans("ErrorUnknown");
+            }
+        }
+        else
+        {
+            // Il y a eu erreur
+            $db->rollback();
+            $fiche_erreur_message = $langs->trans("ErrorUnknown");
+        }
     }
-  else
+    else
     {
-      $fiche_erreur_message = "Vous devez sélectionner un mode de paiement";
+        $fiche_erreur_message = '<div class="error">Vous devez sélectionner un mode de paiement</div>';
     }
 }
 
@@ -145,8 +155,13 @@ llxHeader();
 
 $html=new Form($db);
 
+if ($fiche_erreur_message)
+{
+  print '<tr><td colspan="3" align="center">'.$fiche_erreur_message.'</td></tr>';
+}
 
-if ($_GET["action"] == 'create') 
+
+if ($_GET["action"] == 'create' || $_POST["action"] == 'add_paiement') 
 {
   $facture = new Facture($db);
   $facture->fetch($facid);
@@ -165,18 +180,18 @@ if ($_GET["action"] == 'create')
 
 	  $total = $obj->total;
 
-	  print_titre("Emettre un paiement");
+	  print_titre($langs->trans("DoPayment"));
 
-	  print '<form action="paiement.php?action=create&facid='.$facid.'" method="post">';
+	  print '<form action="paiement.php" method="post">';
 	  print '<input type="hidden" name="action" value="add_paiement">';
-	  print '<table class="border" width="100%">';
-	  
-	  print "<tr><td>".$langs->trans("Company")." :</td><td colspan=\"2\">$obj->nom</td></tr>\n";
-	  
 	  print "<input type=\"hidden\" name=\"facid\" value=\"$facid\">";
 	  print "<input type=\"hidden\" name=\"facnumber\" value=\"$obj->facnumber\">";
 	  print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
 	  print "<input type=\"hidden\" name=\"societe\" value=\"$obj->nom\">";
+
+	  print '<table class="border" width="100%">';
+	  
+	  print "<tr><td>".$langs->trans("Company")." :</td><td colspan=\"2\">$obj->nom</td></tr>\n";
 	  
 	  print "<tr><td>".$langs->trans("Date")." :</td><td>";
 	  $html->select_date();
@@ -254,7 +269,7 @@ if ($_GET["action"] == 'create')
 		  print '<tr><td colspan="3">';
 		  print '<table class="noborder" width="100%">';
 		  print '<tr class="liste_titre">';
-		  print '<td>Facture</td><td align="center">'.$langs->trans("Date").'</td>';
+		  print '<td>'.$langs->trans("Bill").'</td><td align="center">'.$langs->trans("Date").'</td>';
 		  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';	      
 		  print '<td align="right">'.$langs->trans("Received").'</td>';
 		  print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
@@ -272,7 +287,7 @@ if ($_GET["action"] == 'create')
 		      
 		      print "<tr $bc[$var]>";
 		  
-		      print '<td><a href="facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
+		      print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber;
 		      print "</a></td>\n";
 		      
 		      if ($objp->df > 0 )
@@ -323,11 +338,6 @@ if ($_GET["action"] == 'create')
 	   *
 	   */
 
-	  if ($fiche_erreur_message)
-	    {
-	      print '<tr><td colspan="3" align="center">'.$fiche_erreur_message.'</td></tr>';
-	    }
-
 	  print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
 	  print "</table>";
 	  print "</form>\n";	  
@@ -339,20 +349,15 @@ if ($_GET["action"] == 'create')
 /**
  *  \brief      Affichage de la liste des paiement
  */
-if (! $_GET["action"])
+if (! $_GET["action"] && ! $_POST["action"])
 {
   
-  if ($page == -1)
-    $page = 0 ;
-  
+  if ($page == -1) $page = 0 ;
   $limit = $conf->liste_limit;
   $offset = $limit * $page ;
   
-  if ($sortorder == "")
-    $sortorder="DESC";
-  
-  if ($sortfield == "")
-    $sortfield="p.datep";
+  if (! $sortorder) $sortorder="DESC";
+  if (! $sortfield) $sortfield="p.datep";
   
   $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber";
   $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
@@ -374,7 +379,7 @@ if (! $_GET["action"])
       $i = 0; 
       $var=True;
       
-      print_barre_liste("Paiements", $page, "paiement.php","",$sortfield,$sortorder,'',$num);
+      print_barre_liste($langs->trans("Payments"), $page, "paiement.php","",$sortfield,$sortorder,'',$num);
 
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
