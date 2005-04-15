@@ -22,10 +22,10 @@
  */
 
 /**   
-  \file       htdocs/compta/index.php
-  \ingroup    compta
-  \brief      Page accueil zone comptabilité
-  \version    $Revision$
+        \file       htdocs/compta/index.php
+        \ingroup    compta
+        \brief      Page accueil zone comptabilité
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -89,7 +89,7 @@ print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="2">'.$langs->trans("SearchABill").'</td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print $langs->trans("Ref").': <input type="text" name="sf_ref" class="flat" size="18">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></form><br>";
 
 
@@ -366,23 +366,23 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 
 
 // \todo Mettre ici recup des actions en rapport avec la compta
-$result = 0;
-if ( $result )
+$resql = 0;
+if ($resql)
 {
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("TasksToDo").'</td>';
   print "</tr>\n";
   $var = True;
   $i = 0;
-  while ($i < $db->num_rows() )
+  while ($i < $db->num_rows($resql) )
     {
-      $obj = $db->fetch_object();
+      $obj = $db->fetch_object($resql);
       $var=!$var;
       
       print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td><td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
       $i++;
     }
-  $db->free();
+  $db->free($resql);
   print "</table><br>";
 }
 
