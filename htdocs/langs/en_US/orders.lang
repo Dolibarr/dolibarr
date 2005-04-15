@@ -39,3 +39,4 @@ ConfirmValidateOrder=Are you sure you want to validate this order ?
 ConfirmCancelOrder=Are you sure you want to cancel this order ?
 GenerateBill=Generate bill
 ClassifyBilled=Classify "Billed"
+ComptaCard=Accountancy card
