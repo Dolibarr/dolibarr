@@ -29,9 +29,15 @@
 */
 
 require("../main.inc.php");
-require("../commande/commande.class.php");
-require("./expedition.class.php");
+
+require_once DOL_DOCUMENT_ROOT."/commande/commande.class.php";
+require_once DOL_DOCUMENT_ROOT."/expedition/expedition.class.php";
+
 $langs->load("orders");
+$langs->load("sendings");
+
+$user->getrights('commande');
+$user->getrights('expedition');
 
 function llxHeader($head = "", $title="", $help_url='')
 {
