@@ -269,7 +269,8 @@ else
                 {
                     $obj = $db->fetch_object();
     
-                    $uss[$obj->rowid] = ucfirst(stripslashes($obj->name)).' '.ucfirst(stripslashes($obj->firstname).' ('.$obj->login.')');
+                    $uss[$obj->rowid] = ucfirst(stripslashes($obj->name)).' '.ucfirst(stripslashes($obj->firstname));
+                    if ($obj->login) $uss[$obj->rowid].=' ('.$obj->login.')';
                     $i++;
                 }
             }
