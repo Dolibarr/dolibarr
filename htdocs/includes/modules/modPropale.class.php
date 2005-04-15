@@ -54,7 +54,10 @@ class modPropale extends DolibarrModules
     $this->family = "crm";
     $this->name = "Propositions commerciales";
     $this->description = "Gestion des propositions commerciales";
-    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+
+    $this->revision = explode(" ","$Revision$");
+    $this->version = $this->revision[1];
+
     $this->const_name = "MAIN_MODULE_PROPALE";
     $this->const_config = MAIN_MODULE_PROPALE;
     $this->special = 0;
@@ -139,7 +142,7 @@ class modPropale extends DolibarrModules
     $this->rights[6][4] = 'supprimer';
 
     // Répertoires
-    $this->dirs[0] = $conf->propale->dir_output;
+    $this->dirs[0] = $conf->propal->dir_output;
 
     $sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom = '".$this->const[0][2]."'",
