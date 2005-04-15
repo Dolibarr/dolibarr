@@ -566,7 +566,10 @@ else
 		  $contrat = new TelephonieContrat($db);
 		  $contrat->fetch($ligne->contrat);
 
-		  print '<tr><td width="20%">Contrat</td><td colspan="2">'.$contrat->ref_url.'</a></td></tr>';
+		  print '<tr><td width="20%">Contrat</td><td>'.$contrat->ref_url.'</a></td><td>';
+		  print '<img src="./graph'.$ligne->statut.'.png">&nbsp;';
+		  print $ligne->statuts[$ligne->statut];
+		  print '</td></tr>';
 		}
 
 	      $client_comm = new Societe($db, $ligne->client_comm_id);
@@ -654,11 +657,6 @@ else
 
 	      print '<tr><td width="20%">Concurrent précédent</td>';
 	      print '<td colspan="2">'.$ligne->print_concurrent_nom().'</td></tr>';
-
-	      print '<tr><td width="20%">Statut</td><td colspan="2">';	  
-	      print '<img src="./graph'.$ligne->statut.'.png">&nbsp;';
-	      print $ligne->statuts[$ligne->statut];
-	      print '</td></tr>';
 
 	      print '<tr><td width="20%">Communications</td><td colspan="2">';	  
 	      print '<a href="communications.php?ligne='.$ligne->numero.'">liste</a>';	      
