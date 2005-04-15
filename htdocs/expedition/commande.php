@@ -80,14 +80,28 @@ if ($_GET["id"] > 0)
       $author->fetch();
 
       $h=0;          
-      $head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
-      $head[$h][1] = $langs->trans("OrderCard");
-      $h++;
 
-      $head[$h][0] = DOL_URL_ROOT."/expedition/commande.php?id=".$commande->id;
-      $head[$h][1] = $langs->trans("SendingCard");
-      $hselected = $h;
-      $h++;
+	  if ($conf->commande->enabled && $user->rights->commande->lire)
+	    {
+    	  $head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
+    	  $head[$h][1] = $langs->trans("OrderCard");
+    	  $h++;
+        }
+        	 
+	  if ($conf->expedition->enabled && $user->rights->expedition->lire)
+	    {
+	      $head[$h][0] = DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id;
+	      $head[$h][1] = $langs->trans("SendingCard");
+          $hselected = $h;
+	      $h++;
+	    }
+
+	  if ($conf->compta->enabled)
+	    {
+    	  $head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
+    	  $head[$h][1] = $langs->trans("ComptaCard");
+    	  $h++;
+        }
       
       dolibarr_fiche_head($head, $hselected, $soc->nom." / ".$langs->trans("Order")." : $commande->ref");      
       /*
