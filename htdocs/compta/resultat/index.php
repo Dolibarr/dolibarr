@@ -55,12 +55,12 @@ if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 
 $title="Résultat exercice, résumé annuel";
-$lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."'>".img_next()."</a>":"");
+$lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 print_fiche_titre($title,$lien);
 print '<br>';
 
 // Affiche règles de calcul
-print "Ce rapport présente la balance entre les recettes et les dépenses facturées aux clients ou fournisseurs:<br>\n";
+print "Cet état permet de faire un bilan des recettes et dépenses:<br>\n";
 if ($modecompta=="CREANCES-DETTES")
 {
     print $langs->trans("RulesResultDue");
@@ -149,6 +149,90 @@ if ($result)
 }
 else {
 	dolibarr_print_error($db);	
+}
+
+
+/*
+ * Charges sociales non déductibles
+ */
+
+if ($modecompta == 'CREANCES-DETTES') {
+    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
+    $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
+    $sql .= " WHERE s.fk_type = c.id AND c.deductible=0";
+    if ($year) {
+    	$sql .= " AND s.date_ech between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
+    }
+    $sql .= " GROUP BY c.libelle";
+}
+else {
+    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
+    $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s, ".MAIN_DB_PREFIX."paiementcharge as p";
+    $sql .= " WHERE p.fk_charge = s.rowid AND s.fk_type = c.id AND c.deductible=0";
+    if ($year) {
+    	$sql .= " AND p.datep between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
+    }
+    $sql .= " GROUP BY c.libelle";
+}
+$result=$db->query($sql);
+if ($result) {
+    $num = $db->num_rows($result);
+    $var=false;
+    $i = 0;
+    if ($num) {    
+      while ($i < $num) {
+        $obj = $db->fetch_object($result);
+    
+        $decaiss[$row->dm] += $row->amount_ht;
+        $decaiss_ttc[$row->dm] += $row->amount_ttc;
+    
+        $i++;
+      }
+    }
+} else {
+  dolibarr_print_error($db);
+}
+
+
+/*
+ * Charges sociales déductibles
+ */
+
+if ($modecompta == 'CREANCES-DETTES') {
+    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
+    $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
+    $sql .= " WHERE s.fk_type = c.id AND c.deductible=1";
+    if ($year) {
+    	$sql .= " AND s.date_ech between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
+    }
+    $sql .= " GROUP BY c.libelle DESC";
+}
+else {
+    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
+    $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s, ".MAIN_DB_PREFIX."paiementcharge as p";
+    $sql .= " WHERE p.fk_charge = s.rowid AND s.fk_type = c.id AND c.deductible=1";
+    if ($year) {
+    	$sql .= " AND p.datep between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
+    }
+    $sql .= " GROUP BY c.libelle";
+}
+$result=$db->query($sql);
+if ($result) {
+    $num = $db->num_rows($result);
+    $var=false;
+    $i = 0;
+    if ($num) {
+        while ($i < $num) {
+        $obj = $db->fetch_object($result);
+        
+        $decaiss[$row->dm] += $row->amount_ht;
+        $decaiss_ttc[$row->dm] += $row->amount_ttc;
+        
+        $i++;
+        }
+    }
+} else {
+  dolibarr_print_error($db);
 }
 
 

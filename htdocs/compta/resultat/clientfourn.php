@@ -39,7 +39,7 @@ $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 
-print_fiche_titre("Résultat exercice, par client/fournisseur",($year?"&nbsp; <a href='clientfourn.php?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='clientfourn.php?year=".($year+1)."'>".img_next()."</a>":""));
+print_fiche_titre("Résultat exercice, par client/fournisseur",($year?"&nbsp; <a href='clientfourn.php?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> Année $year <a href='clientfourn.php?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>":""));
 print '<br>';
 
 print "Cet état permet de faire un bilan des recettes et dépenses:<br>";
