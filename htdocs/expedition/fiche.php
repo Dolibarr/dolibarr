@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,17 +21,16 @@
  *
  */
 
-/** 
-        \file       htdocs/expedition/fiche.php
-        \ingroup    expedition
-		\brief      Fiche descriptive d'une expedition
-		\version    $Revision$
+/*!
+  \file       htdocs/expedition/fiche.php
+  \ingroup    expedition
+  \brief      Fiche descriptive d'une expedition
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
 
-$user->getrights('commande');
-$user->getrights('expedition');
+
 if (!$user->rights->expedition->lire)
   accessforbidden();
 
@@ -113,7 +112,6 @@ $html = new Form($db);
  * Mode creation
  *
  *
- *
  ************************************************************************/
 if ($_POST["action"] == 'create') 
 {
@@ -175,8 +173,11 @@ if ($_POST["action"] == 'create')
       
       $lignes = $commande->fetch_lignes(1);
       
+      /* Lecture des livraisons déjà effectuées */
+      $commande->livraison_array();
+      
       $num = sizeof($commande->lignes);
-      $i = 0; $total = 0;
+      $i = 0;
       
       if ($num)
 	{
@@ -277,10 +278,9 @@ else
     {
       $expedition = New Expedition($db);
       $result = $expedition->fetch($_GET["id"]);
-
-      if ( $result > 0)
+      
+      if ( $expedition->id > 0)
 	{	  
-
 	  $author = new User($db);
 	  $author->id = $expedition->user_author_id;
 	  $author->fetch();
@@ -293,7 +293,13 @@ else
 	  $soc = new Societe($db);
 	  $soc->fetch($commande->soc_id);
 
-	  print_titre($langs->trans("Sending").": ".$expedition->ref);
+	  $h=0;          
+	  $head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$expedition->id;
+	  $head[$h][1] = $langs->trans("SendingCard");
+	  $hselected = $h;
+	  $h++;
+	  	 	  
+	  dolibarr_fiche_head($head, $hselected, $langs->trans("Sending")." : ".$expedition->ref);
 
 	  /*
 	   * Confirmation de la suppression
@@ -330,7 +336,7 @@ else
 	      print '<input type="hidden" name="action" value="setremise">';
 	    }
 
-	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
+	  print '<br /><table class="border" cellspacing="0" cellpadding="2" width="100%">';
 	  print '<tr><td width="20%">Client</td>';
 	  print '<td width="30%">';
 	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
@@ -340,8 +346,9 @@ else
 	  print "</tr>";
 	  
 	  print "<tr><td>Commande</td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.$commande->ref."</a></td>\n";
+	  print '<td><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id.'">'.$commande->ref."</a></td>\n";
 	  print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
+
 	  print "<tr><td>Date</td>";
 	  print "<td>".strftime("%A %d %B %Y",$expedition->date)."</td>\n";
 
@@ -358,28 +365,29 @@ else
 	   */
 	  echo '<br><table class="noborder" width="100%">';
 
-	  $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande, ed.qty as qty_livre";
+	  $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
+	  $sql .= " , ed.qty as qty_livre";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed";
 	  $sql .= " WHERE ed.fk_expedition = $expedition->id AND cd.rowid = ed.fk_commande_ligne ";
 	  
-	  $result = $db->query($sql);
-	  if ($result)
+	  $resql = $db->query($sql);
+
+	  if ($resql)
 	    {
-	      $num = $db->num_rows();
-	      $i = 0; $total = 0;
+	      $num_prod = $db->num_rows($resql);
+	      $i = 0;
 	      
-	      if ($num)
-		{
-		  print '<tr class="liste_titre">';
-		  print '<td width="54%">'.$langs->trans("Description").'</td>';
-		  print '<td align="center">Quan. commandée</td>';
-		  print '<td align="center">Quan. livrée</td>';
-		  print "</tr>\n";
-		}
+
+	      print '<tr class="liste_titre">';
+	      print '<td width="54%">'.$langs->trans("Description").'</td>';
+	      print '<td align="center">Quan. commandée</td>';
+	      print '<td align="center">Quan. livrée</td>';
+	      print "</tr>\n";
+
 	      $var=True;
-	      while ($i < $num)
+	      while ($i < $num_prod)
 		{
-		  $objp = $db->fetch_object($result);
+		  $objp = $db->fetch_object($resql);
 		  print "<TR $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
@@ -392,194 +400,213 @@ else
 		    }
 		  print '<td align="center">'.$objp->qty_commande.'</td>';
 		  print '<td align="center">'.$objp->qty_livre.'</td>';
-
+		  
 		  print "</tr>";
 		  
 		  $i++;
 		  $var=!$var;
 		}	      
-	      $db->free();
+	      $db->free($resql);
 	    } 
-	else
-	  {
-	    dolibarr_print_error($db);
-	  }
-	
-
-	print "</table>";
-	/*
-	 *
-	 */
-	if ($user->societe_id == 0)
-	  {
-        print '<div class="tabsAction">';	
-        
-        if ($expedition->statut == 0 && $user->rights->expedition->valider)
-        {
-            print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
-        }
-        
-        if ($expedition->brouillon && $user->rights->expedition->supprimer)
-        {
-            print '<a class="butActionDelete" href="fiche.php?id='.$expedition->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-        } 
-        
-        
-        print "</div>";
-	  }
-
-	/*
-	 * Déjà livré
-	 *
-	 *
-	 */
-	$sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande, ed.qty as qty_livre, e.ref";
-	$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
-	$sql .= " WHERE cd.fk_commande = $expedition->commande_id AND e.rowid <> $expedition->id AND cd.rowid = ed.fk_commande_ligne AND ed.fk_expedition = e.rowid";
-	$sql .= " ORDER BY cd.fk_product";
-	$result = $db->query($sql);
-	if ($result)
-	  {
-	    $num = $db->num_rows();
-	    $i = 0; $total = 0;
+	  else
+	    {
+	      dolibarr_print_error($db);
+	    }
+	  
+	  
+	  print "</table>\n</div>\n";
+	  /*
+	   *
+	   */
+	  if ($user->societe_id == 0)
+	    {
+	      print '<div class="tabsAction">';	
 	    
-	    if ($num)
-	      {
-		print '<br><table class="liste" cellpadding="3" width="100%"><tr>';
-		print '<tr class="liste_titre">';
-		print '<td width="54%">'.$langs->trans("Description").'</td>';
-		print '<td align="center">Quan. livrée</td>';
-		print '<td align="center">Expédition</td>';
-		
-		print "</tr>\n";
-		
-		$var=True;
-		while ($i < $num)
-		  {
-		    $objp = $db->fetch_object($result);
-		    print "<TR $bc[$var]>";
-		    if ($objp->fk_product > 0)
-		      {
-			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
-		      }
-		    else
-		      {
-			print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
-		      }
-		    print '<td align="center">'.$objp->qty_livre.'</td>';
-		    print '<td align="center">'.$objp->ref.'</td>';
-		    $i++;
-		  }
-		
-		print '</table>';
-	      }
-	  }
+	      if ($expedition->statut == 0 && $user->rights->expedition->valider && $num_prod > 0)
+		{
+		  print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+		}
+	    
+	      if ($expedition->brouillon && $user->rights->expedition->supprimer)
+		{
+		  print '<a class="butActionDelete" href="fiche.php?id='.$expedition->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+		} 
+	    
+	    
+	      print "</div>";
+	    }
 	
-	
-	/*
-	 * Documents générés
-	 *
-	 */
-	$file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
-	$relativepath = $commande->ref . "/" . $commande->ref . ".pdf";
+	  /*
+	   * Déjà livré
+	   *
+	   *
+	   */
+	  $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
+	  $sql .= " , ed.qty as qty_livre, e.ref";
+	  $sql .= ",".$db->pdate("e.date_expedition")." as date_expedition";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+	  $sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
+	  $sql .= " WHERE cd.fk_commande = $expedition->commande_id";
+	  $sql .= " AND e.rowid <> $expedition->id";
+	  $sql .= " AND cd.rowid = ed.fk_commande_ligne";
+	  $sql .= " AND ed.fk_expedition = e.rowid";
+	  $sql .= " ORDER BY cd.fk_product";
 
-    $var=true;
+	  $resql = $db->query($sql);
+	  if ($resql)
+	    {
+	      $num = $db->num_rows($resql);
+	      $i = 0;
+	    
+	      if ($num)
+		{
+		  print '<br><table class="liste" cellpadding="3" width="100%"><tr>';
+		  print '<tr class="liste_titre">';
+		  print '<td width="54%">'.$langs->trans("Description").'</td>';
+		  print '<td align="center">Quan. livrée</td>';
+		  print '<td align="center">Expédition</td>';
+		  print '<td align="center">'.$langs->trans("Date").'</td>';
+		
+		  print "</tr>\n";
+		
+		  $var=True;
+		  while ($i < $num)
+		    {
+		      $objp = $db->fetch_object($resql);
+		      print "<TR $bc[$var]>";
+		      if ($objp->fk_product > 0)
+			{
+			  print '<td>';
+			  print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+			}
+		      else
+			{
+			  print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
+			}
+		      print '<td align="center">'.$objp->qty_livre.'</td>';
+		      print '<td align="center">'.$objp->ref.'</td>';
+		      print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
+		      $i++;
+		    }
+		
+		  print '</table>';
+		}
+	      $db->free($resql);
+	    }
+	       
+	  /*
+	   * Documents générés
+	   *
+	   */
+	  $file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
+	  $relativepath = $commande->ref . "/" . $commande->ref . ".pdf";
+
+	  $var=true;
     	
-	if (file_exists($file))
-	  {
-	    print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
-	    print_titre("Documents");
-	    print '<table width="100%" class="border">';
+	  if (file_exists($file))
+	    {
+	      print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
+	      print_titre("Documents");
+	      print '<table width="100%" class="border">';
 	    
-	    print "<tr $bc[$true]><td>".$langs->trans("Order")." PDF</td>";
-	    print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
-	    print '<td align="right">'.filesize($file). ' bytes</td>';
-	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-	    print '</tr>';
+	      print "<tr $bc[$true]><td>".$langs->trans("Order")." PDF</td>";
+	      print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
+	      print '<td align="right">'.filesize($file). ' bytes</td>';
+	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+	      print '</tr>';
 	           	
-	    print "</table>\n";
-	    print '</td><td valign="top" width="50%">';
-	    print_titre("Actions");
-	    /*
-	     * Liste des actions
-	     *
-	     */
-	    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = $commande->socidp AND a.fk_action in (9,10) AND a.fk_commande = $expedition->id";
+	      print "</table>\n";
+	      print '</td><td valign="top" width="50%">';
+	      print_titre("Actions");
+	      /*
+	       * Liste des actions
+	       *
+	       */
+	      $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+	      $sql .= " WHERE a.fk_soc = $commande->socidp AND a.fk_action in (9,10)";
+	      $sql .= " AND a.fk_commande = $expedition->id";
 	    
-	    $result = $db->query($sql);
-	    if ($result)
-	      {
-		$num = $db->num_rows();
-		if ($num)
-		  {
-		    $i = 0; $total = 0;
-		    print '<table class="border" width="100%">';
-		    print "<tr $bc[$var]><td>".$langs->trans("Date")."</td><td>".$langs->trans("Action")."</td></tr>\n";
+	      $resql = $db->query($sql);
+	      if ($resql)
+		{
+		  $num = $db->num_rows($resql);
+		  if ($num)
+		    {
+		      $i = 0;
+		      print '<table class="border" width="100%">';
+		      print "<tr $bc[$var]><td>".$langs->trans("Date")."</td><td>".$langs->trans("Action")."</td></tr>\n";
 		    
-		    $var=True;
-		    while ($i < $num)
-		      {
-			$objp = $db->fetch_object($result);
-			$var=!$var;
-			print "<tr $bc[$var]>";
-			print "<td>".strftime("%d %B %Y",$objp->da)."</td>\n";
-			print '<td>'.stripslashes($objp->note).'</td>';
-			print "</tr>";
-			$i++;
-		      }
-		    print "</table>";
-		  }
-	      }
-	    else
-	      {
-		dolibarr_print_error($db);
-	      }
+		      $var=True;
+		      while ($i < $num)
+			{
+			  $objp = $db->fetch_object($resql);
+			  $var=!$var;
+			  print "<tr $bc[$var]>";
+			  print "<td>".strftime("%d %B %Y",$objp->da)."</td>\n";
+			  print '<td>'.stripslashes($objp->note).'</td>';
+			  print "</tr>";
+			  $i++;
+			}
+		      print "</table>";
+		    }
+		  $db->free($resql);
+		}
+	      else
+		{
+		  dolibarr_print_error($db);
+		}
 	    
-	    /*
-	     *
-	     *
-	     */
-	    print "</td></tr></table>";
-	  }
-	/*
-	 *
-	 *
-	 */
+	      /*
+	       *
+	       *
+	       */
+	      print "</td></tr></table>";
+	    }
+	  /*
+	   *
+	   *
+	   */
 
-	if ($action == 'presend')
-	  {
-	    $replytoname = $user->fullname;
-	    $from_name = $replytoname;
+	  if ($action == 'presend')
+	    {
+	      $replytoname = $user->fullname;
+	      $from_name = $replytoname;
 
-	    $replytomail = $user->email;
-	    $from_mail = $replytomail;
+	      $replytomail = $user->email;
+	      $from_mail = $replytomail;
 	    
-	    print "<form method=\"post\" action=\"fiche.php?id=$expedition->id&amp;action=send\">\n";
-	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
-	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
+	      print "<form method=\"post\" action=\"fiche.php?id=$expedition->id&amp;action=send\">\n";
+	      print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
+	      print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
 	    
-	    print "<p><b>Envoyer la commande par mail</b>";
-	    print "<table cellspacing=0 border=1 cellpadding=3>";
-	    print '<tr><td>Destinataire</td><td colspan="5">';
+	      print "<p><b>Envoyer la commande par mail</b>";
+	      print "<table cellspacing=0 border=1 cellpadding=3>";
+	      print '<tr><td>Destinataire</td><td colspan="5">';
 	    
-	    $form = new Form($db);	    
-	    $form->select_array("destinataire",$soc->contact_email_array());
+	      $form = new Form($db);	    
+	      $form->select_array("destinataire",$soc->contact_email_array());
 	    
-	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$commande->email\"></td></tr>";
-	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
-	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-	    print "<td>$replytomail</td></tr></table>";
+	      print "</td><td><input size=\"30\" name=\"sendto\" value=\"$commande->email\"></td></tr>";
+	      print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
+	      print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
+	      print "<td>$replytomail</td></tr></table>";
 	    
-	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
-	  }       
-      }
-    else
-      {
-	/* Commande non trouvée */
-	print "Commande inexistante ou accés refusé";
-      }
+	      print "<input type=\"submit\" value=\"Envoyer\"></form>";
+	    }       
+	}
+      else
+	{
+	  /* Expedition non trouvée */
+	  llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
+	  print "Expedition inexistante ou accés refusé";
+	}
+    }
+  else
+    {
+      /* Expedition non trouvée */
+      llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
+      print "Expedition inexistante ou accés refusé";
     }
 }
 
