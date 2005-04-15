@@ -595,7 +595,7 @@ if ($_GET["action"] == '')
 
   if ($product->type == 0 && $conf->stock->enabled)
     {
-      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/stock/product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
+      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
     }
 }
 
