@@ -199,9 +199,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 }
 
 // Le produit n'est pas encore chargé a ce stade
-//llxHeader("","",$langs->trans("CardProduct".$product->type));
 llxHeader("","",$langs->trans("CardProduct0"));
-
 
 /*
  * Création du produit
@@ -291,7 +289,7 @@ else
 	  $result = $product->fetch($_GET["id"]);
 	}
 
-      if ( $result )
+      if ( $product->id > 0 )
 	{ 
 
 	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
@@ -410,16 +408,16 @@ else
 		    {
 		      $dur=array("d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
 		    }
-		  else {
-		    $dur=array("d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-		  }
+		  else
+		    {
+		      $dur=array("d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+		    }
 		  print $langs->trans($dur[$product->duration_unit])."&nbsp;";
-
+		  
 		  print '</td></tr>';
 		}
 	      print "</table><br>\n";
-
-
+	      	      
 	      print '<table class="border" width="100%">';
 	      print '<tr class="liste_titre"><td>';
 	      print $langs->trans("Suppliers").'</td>';
@@ -430,8 +428,9 @@ else
 
 	      $sql = "SELECT s.nom, s.idp, pf.ref_fourn, pfp.price, pfp.quantity";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
-	      $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON s.idp = pfp.fk_soc AND pfp.fk_product =".$product->id; 
-	      $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product = ".$product->id;
+	      $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON s.idp = pfp.fk_soc";
+	      $sql .= " AND pfp.fk_product =".$product->id; 
+	      $sql .= " WHERE pf.fk_soc = s.idp AND pf.fk_product = ".$product->id;
 	      $sql .= " ORDER BY pfp.price ASC, lower(s.nom)";
 	      
 	      if ( $db->query($sql) )
@@ -460,146 +459,153 @@ else
 		  $db->free();
 		}
 	      print '</table>';
-
 	      print "</div>\n";
-	    }     
+
+
+	      /*
+	       * Ajouter un fournisseur
+	       *
+	       */
+	      if ($_GET["action"] == 'ajout_fourn' && $user->rights->produit->creer)
+		{
+		  $langs->load("suppliers");
+		  
+		  print_titre($langs->trans("AddSupplier"));
+		  print '<form action="fiche.php?id='.$product->id.'" method="post">';
+		  print '<input type="hidden" name="action" value="add_fourn">';
+		  print '<input type="hidden" name="id" value="'.$product->id.'">';
+		  print '<table class="border" width="100%"><tr>';
+		  print '<td>'.$langs->trans("Suppliers").'</td><td><select name="id_fourn">';
+		  
+		  $sql = "SELECT s.idp, s.nom, s.ville";
+		  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur=1";	     
+		  $sql .= " ORDER BY lower(s.nom)";
+		  
+		  $resql = $db->query($sql);
+		  if ($resql)
+		    {
+		      $num = $db->num_rows($resql);
+		      $i = 0;		  		  
+		      while ($i < $num)
+			{
+			  $obj = $db->fetch_object($resql);
+			  print '<option value="'.$obj->idp.'">'.$obj->nom . ($obj->ville?" ($obj->ville)":"");
+			  $i++;
+			}
+		      $db->free($resql);
+		    }
+		  print '</select></td></tr><tr><td>'.$langs->trans("SupplierRef").'</td>';
+		  print '<td><input name="ref_fourn" size="25" value=""></td></tr>';
+		  print '<tr><td colspan="2" align="center">';
+		  print '<input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+		  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+		  print '</table>';
+		  print '</form>';
+		}	      
+	    }
      
 	  /*
-	   * Ajouter un fournisseur
+	   *
+	   * Fiche en mode edition
 	   *
 	   */
-	  if ($_GET["action"] == 'ajout_fourn' && $user->rights->produit->creer)
+	  if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && $user->rights->produit->creer)
 	    {
-	      $langs->load("suppliers");
-	  
-	      print_titre($langs->trans("AddSupplier"));
-	      print '<form action="fiche.php?id='.$product->id.'" method="post">';
-	      print '<input type="hidden" name="action" value="add_fourn">';
-	      print '<input type="hidden" name="id" value="'.$product->id.'">';
-	      print '<table class="border" width="100%"><tr>';
-	      print '<td>'.$langs->trans("Suppliers").'</td><td><select name="id_fourn">';
-	  
-	      $sql = "SELECT s.idp, s.nom, s.ville FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur=1";	     
-	      $sql .= " ORDER BY lower(s.nom)";
-	  
-	      if ($db->query($sql))
-		{
-		  $num = $db->num_rows();
-		  $i = 0;		  		  
-		  while ($i < $num)
-		    {
-		      $obj = $db->fetch_object($i);
-		      print '<option value="'.$obj->idp.'">'.$obj->nom . ($obj->ville?" ($obj->ville)":"");
-		      $i++;
-		    }
 	      
+	      print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, "");
+	      
+	      if ($mesg) {
+		print '<br><div class="error">'.$mesg.'</div><br>';
+	      }
+	      
+	      print "<form action=\"fiche.php\" method=\"post\">\n";
+	      print '<input type="hidden" name="action" value="update">';
+	      print '<input type="hidden" name="id" value="'.$product->id.'">';
+	      print '<table class="border" width="100%">';
+	      print "<tr>".'<td width="20%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
+	      print '<td>'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+	      
+	      
+	      if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
+		{
+		  print "<tr>".'<td>Seuil stock</td><td colspan="2">';
+		  print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
+		  print '</td></tr>';
 		}
-	      print '</select></td><td>'.$langs->trans("Ref").'</td>';
-	      print '<td><input name="ref_fourn" size="25" value=""></td></tr>';
-	      print '<tr><td colspan="4" align="center">';
-	      print '<input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	      else
+		{
+		  print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+		}
+	      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
+	      print '<textarea name="desc" rows="8" cols="50">';
+	      print $product->description;
+	      print "</textarea></td></tr>";
+	      
+	      if ($product->type == 1)
+		{
+		  print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$product->duration_value.'">';
+		  print '&nbsp; ';
+		  print '<input name="duration_unit" type="radio" value="d"'.($product->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
+		  print '&nbsp; ';
+		  print '<input name="duration_unit" type="radio" value="w"'.($product->duration_unit=='w'?' checked':'').'>'.$langs->trans("Week");
+		  print '&nbsp; ';
+		  print '<input name="duration_unit" type="radio" value="m"'.($product->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
+		  print '&nbsp; ';
+		  print '<input name="duration_unit" type="radio" value="y"'.($product->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
+		  
+		  print '</td></tr>';
+		}
+	      
+	      print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
 	      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
 	      print '</form>';
-	    }      
-	}
-      
-      /*
-       *
-       * Fiche en mode edition
-       *
-       */
-      if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && $user->rights->produit->creer)
-	{
-
-	  print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, "");
-
-	  if ($mesg) {
-	    print '<br><div class="error">'.$mesg.'</div><br>';
-	  }
+	    }
 	  
-	  print "<form action=\"fiche.php\" method=\"post\">\n";
-	  print '<input type="hidden" name="action" value="update">';
-	  print '<input type="hidden" name="id" value="'.$product->id.'">';
-	  print '<table class="border" width="100%">';
-	  print "<tr>".'<td width="20%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
-	  print '<td>'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
-
-
-	  if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
+	  
+	  /* ************************************************************************** */
+	  /*                                                                            */ 
+	  /* Barre d'action                                                             */ 
+	  /*                                                                            */ 
+	  /* ************************************************************************** */
+	  
+	  print "\n<div class=\"tabsAction\">\n";
+	  
+	  if ($_GET["action"] == '')
 	    {
-	      print "<tr>".'<td>Seuil stock</td><td colspan="2">';
-	      print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
-	      print '</td></tr>';
+	      
+	      print '<a class="butAction" href="fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("AddSupplier").'</a>';
+	      
+	      if ($product->type == 0 && $user->rights->produit->commander && $num_fournisseur == 1)
+		{
+		  print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
+		  print $langs->trans("Order").'</a>';
+		}
+	      
+	      if ( $user->rights->produit->creer)
+		{
+		  print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+		}
+	      
+	      if ($product->type == 0 && $conf->stock->enabled)
+		{
+		  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
+		}
 	    }
-	  else
-	    {
-	      print '<input name="seuil_stock_alerte" type="hidden" value="0">';
-	    }
-	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
-	  print '<textarea name="desc" rows="8" cols="50">';
-	  print $product->description;
-	  print "</textarea></td></tr>";
-
-	  if ($product->type == 1)
-	    {
-	      print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$product->duration_value.'">';
-	      print '&nbsp; ';
-	      print '<input name="duration_unit" type="radio" value="d"'.($product->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
-	      print '&nbsp; ';
-	      print '<input name="duration_unit" type="radio" value="w"'.($product->duration_unit=='w'?' checked':'').'>'.$langs->trans("Week");
-	      print '&nbsp; ';
-	      print '<input name="duration_unit" type="radio" value="m"'.($product->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
-	      print '&nbsp; ';
-	      print '<input name="duration_unit" type="radio" value="y"'.($product->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
-
-	      print '</td></tr>';
-	    }
-
-	  print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-	  print '</table>';
-	  print '</form>';
+	  
+	  print "\n</div>\n";
+	  	 	  
 	}
+      else
+	{
+	  print $langs->trans("BadId");
+	}                  
     }
   else
     {
-      print $langs->trans("ErrorUnknown");
+      print $langs->trans("BadId");
     }
 }
-
-
-/* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
-/* ************************************************************************** */
-
-print "\n<div class=\"tabsAction\">\n";
-
-if ($_GET["action"] == '')
-{
-
-  print '<a class="butAction" href="fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("AddSupplier").'</a>';
-
-  if ($product->type == 0 && $user->rights->produit->commander && $num_fournisseur == 1)
-    {
-      print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
-      print $langs->trans("Order").'</a>';
-    }
-
-  if ( $user->rights->produit->creer)
-    {
-      print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
-    }
-
-  if ($product->type == 0 && $conf->stock->enabled)
-    {
-      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
-    }
-}
-
-print "\n</div>\n";
 
 $db->close();
 
