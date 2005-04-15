@@ -231,31 +231,29 @@ class MenuLeft {
                 if ($conf->societe->enabled && $conf->fournisseur->enabled) 
                 {
                     $langs->load("suppliers");
-                    $newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"));
+                    $newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"),0,$user->rights->societe->lire);
                 
                     // Sécurité accés client
                     if ($user->societe_id == 0) 
                     {
-                      $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&action=create&type=f",$langs->trans("NewSupplier"),1);
+                      $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&action=create&type=f",$langs->trans("NewSupplier"),1,$user->rights->societe->creer);
                     }
                     if ($conf->societe->enabled)
                     {
-                      $newmenu->add_submenu(DOL_URL_ROOT."/fourn/contact.php?leftmenu=suppliers",$langs->trans("Contacts"));
+                      $newmenu->add_submenu(DOL_URL_ROOT."/fourn/contact.php?leftmenu=suppliers",$langs->trans("Contacts"),1,$user->rights->societe->lire);
                     }
 
-                }
-                
-                if ($conf->facture->enabled)
-                {
-                    $langs->load("bills");
-                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),1,$user->rights->facture->lire);
-                    if ($user->societe_id == 0) 
+                    if ($conf->facture->enabled)
                     {
-                      if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),2,$user->rights->facture->creer);
+                        $langs->load("bills");
+                        $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),1,$user->rights->facture->lire);
+                        if ($user->societe_id == 0) 
+                        {
+                          if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),2,$user->rights->facture->creer);
+                        }
+                        if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),2,$user->rights->facture->lire);
                     }
-                    if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),2,$user->rights->facture->lire);
-                }
-        
+                }        
         
                 // Clients
                 if ($conf->societe->enabled) { 
