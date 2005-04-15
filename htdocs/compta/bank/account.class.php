@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -124,67 +124,63 @@ class Account
 
   /**
    *    \brief      Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
-   *    \return     int     rowid de l'entrée ajoutée
+   *    \return     int     rowid de l'entrée ajoutée, < 0 si erreur
    */
   function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user='')
   {
     if ($this->rowid)
-      {
-	switch ($oper)
-	  {
-	  case 1:
-	    $oper = 'TIP';
-	    break;
-	  case 2:
-	    $oper = 'VIR';
-	    break;
-	  case 3:
-	    $oper = 'PRE';
-	    break;
-	  case 4:
-	    $oper = 'LIQ';
-	    break;
-	  case 5:
-	    $oper = 'VAD';
-	    break;
-	  case 6:
-	    $oper = 'CB';
-	    break;
-	  case 7:
-	    $oper = 'CHQ';
-	    break;
-	  }
-	
-	$datev = $date;
+    {
 
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq,fk_account, fk_type)";
-	$sql .= " VALUES (now(), '$date', '$datev', '$label', '" . ereg_replace(",",".",$amount) . "', '$user->id' ,'$num_chq', '$this->rowid', '$oper')";
-
-
-	if ($this->db->query($sql))
-	  {
-	    $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
-	    if ($categorie)
-	      {
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
-		$result = $this->db->query($sql);
-		if ($result)
-		  {
-		    return $rowid;
-		  }
-		else
-		  {
-		  //return '';	On ne quitte pas avec erreur car insertion dans bank_class peut echouer alors que insertion dans bank ok
-		}
-	      }
-	    return $rowid;
-	  }
-	else
-	  {
-	    dolibarr_print_error($this->db);
-	    return '';
-	  }
-      }
+        switch ($oper)
+        {
+            case 1:
+            $oper = 'TIP';
+            break;
+            case 2:
+            $oper = 'VIR';
+            break;
+            case 3:
+            $oper = 'PRE';
+            break;
+            case 4:
+            $oper = 'LIQ';
+            break;
+            case 5:
+            $oper = 'VAD';
+            break;
+            case 6:
+            $oper = 'CB';
+            break;
+            case 7:
+            $oper = 'CHQ';
+            break;
+        }
+    
+        $datev = $date;
+    
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq,fk_account, fk_type)";
+        $sql.= " VALUES (now(), '".$date."', '$datev', '$label', '" . ereg_replace(',','.',$amount) . "', '".$user->id."' ,'$num_chq', '".$this->rowid."', '$oper')";
+    
+        if ($this->db->query($sql))
+        {
+            $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
+            if ($categorie)
+            {
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
+                $result = $this->db->query($sql);
+                if (! $result)
+                {
+                    return -2;
+                }
+            }
+            return $rowid;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+    }
   }
 
   /*
@@ -201,23 +197,19 @@ class Account
             return 0;
       }
 
-      if (! $pcgnumber) {
-          // TODO
-          // Prendre comme de numero compte comptable pour le compte bancaire, le numero par defaut pour plan de compte actif
-          $pcgnumber="51";
-      }
+      if (! $pcgnumber) $pcgnumber="51";
 
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (datec, label, account_number) values (now(),'$this->label','$pcgnumber');";
-      if ($this->db->query($sql))
+      $resql=$this->db->query($sql);
+      if ($resql)
 	{
-	  if ($this->db->affected_rows()) 
+	  if ($this->db->affected_rows($resql)) 
 	    {
 	      $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_account");
 	      if ( $this->update() )
 		{
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, label, amount, fk_account,datev,dateo,fk_type,rappro) ";
-		  $sql .= " VALUES (now(),'Solde','" . ereg_replace(",",".",$this->solde) . "','$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
-
+		  $sql .= " VALUES (now(),'Solde','" . ereg_replace(',','.',$this->solde) . "','$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
 		  $this->db->query($sql);
 		}
 	      return $this->id;      
