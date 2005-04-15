@@ -72,7 +72,7 @@ $title=$langs->trans("ProductsAndServices");
 
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type";
 $sql .= ", pf.fk_soc";
-$sql .= ", ppf.price";
+$sql .= ", min(ppf.price) as price";
 $sql .= ", s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 
@@ -86,7 +86,6 @@ if ($catid)
 {
   $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 }
-
 
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = pf.fk_soc";
@@ -124,9 +123,8 @@ if ($fourn_id > 0)
 {
   $sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = $fourn_id";
 }
-
+$sql .= " GROUP BY p.rowid";
 $sql .= " ORDER BY $sortfield $sortorder ";
-
 $sql .= $db->plimit($limit + 1 ,$offset);
 
 $resql = $db->query($sql) ;
