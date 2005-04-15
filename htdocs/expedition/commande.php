@@ -78,35 +78,42 @@ if ($_GET["id"] > 0)
       $author = new User($db);
       $author->id = $commande->user_author_id;
       $author->fetch();
+
+      $h=0;          
+      $head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
+      $head[$h][1] = $langs->trans("OrderCard");
+      $h++;
+
+      $head[$h][0] = DOL_URL_ROOT."/expedition/commande.php?id=".$commande->id;
+      $head[$h][1] = $langs->trans("SendingCard");
+      $hselected = $h;
+      $h++;
       
-      print_titre("Commande : ".$commande->ref);
-      
+      dolibarr_fiche_head($head, $hselected, $soc->nom." / ".$langs->trans("Order")." : $commande->ref");      
       /*
        * Confirmation de la validation
        *
        */
       if ($_GET["action"] == 'cloture')
 	{
-	  $html->form_confirm("commande.php?id=".$_GET["id"],"Cloturer la commande","Etes-vous sûr de cloturer cette commande ?","confirm_cloture");
+	  $html->form_confirm("commande.php?id=".$_GET["id"],"Clôturer la commande","Etes-vous sûr de vouloir clôturer cette commande ?","confirm_cloture");
+	  print "<br />";
 	}
       /*
        *
        */
 
-      print '<form method="post" action="fiche.php">';
-      print '<input type="hidden" name="action" value="create">';
-      print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
       print '<table class="border" width="100%">';
       print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-      print "<td colspan=\"2\">";
+      print '<td width="30%">';
       print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
       
       print '<td width="50%">';
       print $commande->statuts[$commande->statut];
       print "</td></tr>";
       
-      print '<tr><td>'.$langs->trans("Date").'</td>';
-      print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
+      print '<tr><td width="20%">'.$langs->trans("Date").'</td>';
+      print '<td width="30%">'.strftime("%A %d %B %Y",$commande->date)."</td>\n";
 
       print '<td width="50%">Source : ' . $commande->sources[$commande->source] ;
       if ($commande->source == 0)
@@ -124,7 +131,7 @@ if ($_GET["id"] > 0)
 	  print '<tr><td colspan="3">Note : '.nl2br($commande->note)."</td></tr>";
 	}
 	  
-      print '<tr><td colspan="4">';
+      print '</table><br />';
 	  
       /*
        * Lignes de commandes
@@ -133,10 +140,12 @@ if ($_GET["id"] > 0)
       echo '<table class="liste" width="100%" cellspacing="0" cellpadding="3">';	  
 
       $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l LEFT JOIN ".MAIN_DB_PREFIX."product as p ON (p.rowid = l.fk_product) WHERE l.fk_commande = ".$commande->id." AND p.fk_product_type <> 1 ORDER BY l.rowid";
+      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l ";
+      $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON (p.rowid = l.fk_product)";
+      $sql .= " WHERE l.fk_commande = ".$commande->id." AND p.fk_product_type <> 1 ORDER BY l.rowid";
 	  
-      $result = $db->query($sql);
-      if ($result)
+      $resql = $db->query($sql);
+      if ($resql)
 	{
 	  $num = $db->num_rows();
 	  $i = 0; $total = 0;
@@ -216,34 +225,45 @@ if ($_GET["id"] > 0)
        *
        *
        */
-      if ($reste_a_livrer_total > 0)
+      if ($reste_a_livrer_total > 0 && $commande->brouillon == 0)
 	{
+	  
+	  print '<form method="post" action="fiche.php">';
+	  print '<input type="hidden" name="action" value="create">';
+	  print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
+	  print '<br /><table class="border" width="100%">';
+	  
 	  $entrepot = new Entrepot($db);
-      $langs->load("stocks");
+	  $langs->load("stocks");
+
+	  print '<tr><td colspan="2">'.$langs->trans("NewSending").'</td></tr>';
 
 	  print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
-	  print '<td colspan="3">';
+	  print '<td>';
 	  $html->select_array("entrepot_id",$entrepot->list_array());
 	  print '</td></tr>';
 	  /*
-	  print '<tr><td width="20%">Mode d\'expédition</td>';
-	  print '<td colspan="3">';
-	  $html->select_array("entrepot_id",$entrepot->list_array());
-	  print '</td></tr>';
+	    print '<tr><td width="20%">Mode d\'expédition</td>';
+	    print '<td>';
+	    $html->select_array("entrepot_id",$entrepot->list_array());
+	    print '</td></tr>';
 	  */
-	  print '<tr><td colspan="4" align="center">';
+	  print '<tr><td colspan="2" align="center">';
 	  if (sizeof($entrepot->list_array()))
 	    {
+	      
 	      print '<input type="submit" value="Créer">';
 	    }
 	  else
 	    {
-	      print 'Aucun entrpôt définit, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">definissez en un</a>';
+	      print 'Aucun entrepôt définit, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">definissez en un</a>';
 	    }
 	  print '</td></tr>';
+
+	  print "</table>";
+	  print "</form>\n";
 	}
-      print "</table>";
-      print "</form>\n";
+
 
       /*
        * Alerte de seuil
@@ -261,22 +281,22 @@ if ($_GET["id"] > 0)
 		  $sql .= " WHERE e.rowid = ps.fk_entrepot AND ps.fk_product = p.rowid AND ps.fk_product = $key";
 		  $sql .= " AND e.statut = 1 AND reel < $value";
 		      
-		  $result = $db->query($sql);
-		  if ($result)
+		  $resql = $db->query($sql);
+		  if ($resql)
 		    {
-		      $num = $db->num_rows();
+		      $num = $db->num_rows($resql);
 		      $i = 0;
 		      
 		      $var=True;
 		      while ($i < $num)
 			{
-			  $obja = $db->fetch_object($result);
+			  $obja = $db->fetch_object($resql);
 			  print "<tr $bc[$var]>";
 			  print '<td width="54%">'.$obja->label.'</td><td>'.$obja->entrepot.'</td><td><b>Stock : '.$obja->reel.'</b></td>';
 			  print "</tr>\n";
 			  $i++;
 			}
-		      $db->free();
+		      $db->free($resql);
 		    }
 		}
 	    }
@@ -305,7 +325,7 @@ if ($_GET["id"] > 0)
       $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande, ed.qty as qty_livre, e.ref, e.rowid as expedition_id";
       $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
       $sql .= " WHERE cd.fk_commande = ".$commande->id." AND cd.rowid = ed.fk_commande_ligne AND ed.fk_expedition = e.rowid";
-      $sql .= " ORDER BY cd.fk_product";
+      $sql .= " ORDER BY e.rowid DESC, cd.fk_product";
       $resql = $db->query($sql);
       if ($resql)
 	{

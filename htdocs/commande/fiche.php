@@ -30,7 +30,7 @@
 
 require("./pre.inc.php");
 
-$langs->load("orders");
+$langs->load("sendings");
 $langs->load("companies");
 $langs->load("bills");
 
@@ -429,6 +429,13 @@ else
 	  $hselected = $h;
 	  $h++;
 	 
+	  if ($conf->expedition->enabled && $user->rights->expedition->lire)
+	    {
+	      $head[$h][0] = DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id;
+	      $head[$h][1] = $langs->trans("SendingCard");
+	      $h++;
+	    }
+
 	  $head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
 	  $head[$h][1] = $langs->trans("ComptaCard");
 	  $h++;
