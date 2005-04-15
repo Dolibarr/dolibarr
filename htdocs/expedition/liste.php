@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,18 +22,14 @@
  */
 
 /**
-        \file       htdocs/expedition/liste.php
-		\ingroup    expedition
-		\brief      Page de la liste des expéditions/livraisons
+   \file       htdocs/expedition/liste.php
+   \ingroup    expedition
+   \brief      Page de la liste des expéditions/livraisons
 */
 
 require("./pre.inc.php");
 
-$langs->load("sendings");
-
-$user->getrights('expedition');
-if (!$user->rights->expedition->lire)
-  accessforbidden();
+if (!$user->rights->expedition->lire) accessforbidden();
 
 /*
  * Sécurité accés client
@@ -51,13 +47,11 @@ if (! $sortorder) $sortorder="DESC";
 
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
-$pageprev = $_GET["page"] - 1;
-$pagenext = $_GET["page"] + 1;
-
-
 
 /******************************************************************************/
+/*                                                                            */
 /*                   Fin des  Actions                                         */
+/*                                                                            */
 /******************************************************************************/
 
 llxHeader('',$langs->trans('ListOfSendings'),'ch-expedition.html');
@@ -104,7 +98,8 @@ if ($resql)
       
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowSending"),"sending").' '.$objp->ref."</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowSending"),"sending").'</a>&nbsp;';
+      print "<a href=\"fiche.php?id=$objp->rowid\">".$objp->ref."</a></td>\n";
       
       $now = time();
       $lim = 3600 * 24 * 15 ;
