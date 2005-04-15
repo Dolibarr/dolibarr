@@ -46,8 +46,6 @@ $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = $_GET["page"];
-if ($page < 0) { 
-  $page = 0 ; }
 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -84,9 +82,9 @@ if ($_POST["mode"] == 'search')
 else
 {
   $sql .= " WHERE 1=1";
-  if (isset($_GET["type"]) || isset($_POST["type"]))
+  if (strlen($_GET["type"]) || strlen($_POST["type"]))
     {
-      $sql .= " AND p.fk_product_type = ".(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
+      $sql .= " AND p.fk_product_type = ".(strlen($_GET["type"])?$_GET["type"]:$_POST["type"]);
     }
   if ($sref)
     {
