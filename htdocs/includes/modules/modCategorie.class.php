@@ -65,8 +65,6 @@ class modCategorie extends DolibarrModules
 
     // Boxes
     $this->boxes = array();
-    $this->boxes[0][0] = "Dernières catégories enregistrées";
-    $this->boxes[0][1] = "box_last_cats.php";
 
     // Permissions
     $this->rights = array();
