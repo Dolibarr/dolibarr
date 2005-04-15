@@ -494,9 +494,9 @@ class MenuLeft {
                   $newmenu->add(DOL_URL_ROOT."/public/adherents/index.php","Espace adherents public");
                 
                   $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&mainmenu=members",$langs->trans("Export"),0,$user->rights->adherent->lire);
-                  if ($leftmenu=="export") $newmenu->add_submenu("htpasswd.php?leftmenu=export","Format htpasswd",1,$user->rights->adherent->lire);
-                  if ($leftmenu=="export") $newmenu->add_submenu("cartes/carte.php?leftmenu=export","Cartes d'adhérents",1,$user->rights->adherent->lire);
-                  if ($leftmenu=="export") $newmenu->add_submenu("cartes/etiquette.php?leftmenu=export","Etiquettes d'adhérents",1,$user->rights->adherent->lire);
+                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherenrs/htpasswd.php?leftmenu=export","Format htpasswd",1,$user->rights->adherent->lire);
+                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export","Cartes d'adhérents",1,$user->rights->adherent->lire);
+                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export","Etiquettes d'adhérents",1,$user->rights->adherent->lire);
                 
                   $langs->load("compta");
                   $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=accountancy&mainmenu=members",$langs->trans("Accountancy"),0,$user->rights->adherent->lire);
@@ -504,9 +504,9 @@ class MenuLeft {
                   $langs->load("banks");
                   $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=accountancy",$langs->trans("Banks"),0,$user->rights->adherent->lire);
                 
-                  $newmenu->add("index.php?leftmenu=setup&mainmenu=members",$langs->trans("Setup"),0,$user->rights->adherent->configurer);
-                  $newmenu->add_submenu("type.php?leftmenu=setup&",$langs->trans("MembersTypes"),1,$user->rights->adherent->configurer);
-                  $newmenu->add_submenu("options.php?leftmenu=setup&",$langs->trans("MembersAttributes"),1,$user->rights->adherent->configurer);
+                  $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=setup&mainmenu=members",$langs->trans("Setup"),0,$user->rights->adherent->configurer);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/type.php?leftmenu=setup&",$langs->trans("MembersTypes"),1,$user->rights->adherent->configurer);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/options.php?leftmenu=setup&",$langs->trans("MembersAttributes"),1,$user->rights->adherent->configurer);
                 }
 
             }
