@@ -138,6 +138,8 @@ class modPropale extends DolibarrModules
     $this->rights[6][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[6][4] = 'supprimer';
 
+    // Répertoires
+    $this->dirs[0] = $conf->propale->dir_output;
 
     $sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom = '".$this->const[0][2]."'",
