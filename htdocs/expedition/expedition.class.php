@@ -223,8 +223,9 @@ class Expedition
       $result = 0;
       if ($user->rights->expedition->valider)
 	{
+	  $this->ref = "EXP".$this->id;
 	  
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='EXP".$this->id."', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='".$this->ref."', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
 	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 		  
 	  if ($this->db->query($sql) )
