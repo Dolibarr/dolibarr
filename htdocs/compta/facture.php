@@ -1168,13 +1168,17 @@ else
 	      print '</tr>';
 	      print "</form>";
 	    }
-	  print "</table><br>\n";
+	  print "</table>\n";
+
+
+	  print "</div>\n";
+
 
 	  /*
-	   * Fin Ajout ligne
+	   * Boutons actions
 	   *
 	   */
-	  print "</div>\n";
+
 	  if ($user->societe_id == 0 && $_GET["action"] <> 'valid' && $_GET["action"] <> 'editline')
 	    {
 	      print "<div class=\"tabsAction\">\n";
