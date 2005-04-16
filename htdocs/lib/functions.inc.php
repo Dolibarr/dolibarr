@@ -607,7 +607,7 @@ function loginfunction()
   
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html><head><title>Dolibarr Authentification</title>";
-  print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'lib/login.css">
+  print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/lib/login.css">
   </head>
   <body onload="donnefocus();">
   <div class="main">
