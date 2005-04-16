@@ -207,3 +207,6 @@ November=Novembre
 December=Decembre
 AttachedFiles=Fichiers et documents joints
 FileTransferComplete=Le fichier a été transféré avec succès
+DateFormatYYYYMM=YYYY-MM
+DateFormatYYYYMMDD=YYYY-MM-DD
+DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS
