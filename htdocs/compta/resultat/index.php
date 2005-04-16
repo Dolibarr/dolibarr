@@ -157,7 +157,7 @@ else {
  */
 
 if ($modecompta == 'CREANCES-DETTES') {
-    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
+    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount_ht, sum(s.amount) as amount_ttc, date_format(s.date_ech,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
     $sql .= " WHERE s.fk_type = c.id AND c.deductible=0";
     if ($year) {
@@ -166,7 +166,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     $sql .= " GROUP BY c.libelle";
 }
 else {
-    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
+    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s, ".MAIN_DB_PREFIX."paiementcharge as p";
     $sql .= " WHERE p.fk_charge = s.rowid AND s.fk_type = c.id AND c.deductible=0";
     if ($year) {
@@ -183,8 +183,8 @@ if ($result) {
       while ($i < $num) {
         $obj = $db->fetch_object($result);
     
-        $decaiss[$row->dm] += $row->amount_ht;
-        $decaiss_ttc[$row->dm] += $row->amount_ttc;
+        $decaiss[$obj->dm] += $obj->amount_ht;
+        $decaiss_ttc[$obj->dm] += $obj->amount_ttc;
     
         $i++;
       }
@@ -199,7 +199,7 @@ if ($result) {
  */
 
 if ($modecompta == 'CREANCES-DETTES') {
-    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
+    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount_ht, sum(s.amount) as amount_ttc, date_format(s.date_ech,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
     $sql .= " WHERE s.fk_type = c.id AND c.deductible=1";
     if ($year) {
@@ -208,7 +208,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     $sql .= " GROUP BY c.libelle DESC";
 }
 else {
-    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
+    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s, ".MAIN_DB_PREFIX."paiementcharge as p";
     $sql .= " WHERE p.fk_charge = s.rowid AND s.fk_type = c.id AND c.deductible=1";
     if ($year) {
@@ -225,8 +225,8 @@ if ($result) {
         while ($i < $num) {
         $obj = $db->fetch_object($result);
         
-        $decaiss[$row->dm] += $row->amount_ht;
-        $decaiss_ttc[$row->dm] += $row->amount_ttc;
+        $decaiss[$obj->dm] += $obj->amount_ht;
+        $decaiss_ttc[$obj->dm] += $obj->amount_ttc;
         
         $i++;
         }
