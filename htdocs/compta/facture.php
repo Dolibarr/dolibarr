@@ -1532,11 +1532,8 @@ else
 	  $limit = $conf->liste_limit;
 	  $offset = $limit * $page ;
 
-	  if ($sortorder == "")
-	    $sortorder="DESC";
-
-	  if ($sortfield == "")
-	    $sortfield="f.datef";
+	  if (! $sortorder) $sortorder="DESC";
+	  if (! $sortfield) $sortfield="f.datef";
 
 	  $sql = "SELECT s.nom,s.idp,f.facnumber,f.increment,f.total,f.total_ttc,".$db->pdate("f.datef")." as df, f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -1677,7 +1674,7 @@ else
 		
 		  if ($objp->df > 0 )
 		    {
-		      print "<td align=\"center\">";
+		      print "<td align=\"center\" nowrap>";
 		      $y = strftime("%Y",$objp->df);
 		      $m = strftime("%m",$objp->df);
 		    
