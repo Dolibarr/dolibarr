@@ -20,10 +20,11 @@
  *
  */
 
-/*! \file htdocs/expedition/expedition.class.php
-        \ingroup    expedition
-		\brief      Fichier de la classe de gestion des expeditions
-		\version    $Revision$
+/*!
+  \file htdocs/expedition/expedition.class.php
+  \ingroup    expedition
+  \brief      Fichier de la classe de gestion des expeditions
+  \version    $Revision$
 */
 
 
@@ -393,6 +394,79 @@ class Expedition
 	  print $this->db->error() . ' in ' . $sql;
 	}
     }
+  /**
+   * Genere le pdf
+   *
+   *
+   */
+  function PdfWrite()
+    {
+      //EXPEDITION_ADDON_PDF
+
+      $module_file_name = DOL_DOCUMENT."/htdocs/expedition/mods/pdf/pdf_expedition_".EXPEDITION_ADDON_PDF.".modules.php";
+      
+      
+      $module_file_name = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition_rouget.modules.php";
+
+      $mod = "pdf_expedition_rouget";
+      require_once $module_file_name;
+
+      $pdf = new $mod($this->db, $this);
+
+
+      $dir = DOL_DATA_ROOT . "/expedition/" . $this->id ;
+      umask(0);
+      if (! file_exists($dir))
+	{
+	  mkdir($dir, 0755);
+	}
+      
+      $file = $dir . "/" . $this->id . ".pdf";
+
+      if (file_exists($dir))
+	{
+	  $pdf->generate($file);
+	}
+
+    }
+
+
+  function fetch_lignes()
+  {
+    $this->lignes = array();
+
+    $sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp";    
+    $sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
+    $sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
+
+    $sql .= " WHERE e.fk_expedition = ".$this->id;
+    $sql .= " AND e.fk_commande_ligne = c.rowid";
+
+
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resql);
+	$i = 0;
+	while ($i < $num)
+	  {
+	    $ligne = new ExpeditionLigne();
+
+	    $obj = $this->db->fetch_object($resql);
+
+	    $ligne->qty_commande   = $obj->qtycom;
+	    $ligne->qty_expedition = $obj->qtyexp;
+	    $ligne->description    = stripslashes($obj->description);	    
+
+	    $this->lignes[$i] = $ligne;	    
+	    $i++;
+	  }	      
+	$this->db->free($resql);
+      }
+
+    return $this->lignes;
+  }
+
 }
 
 
