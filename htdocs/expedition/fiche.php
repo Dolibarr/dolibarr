@@ -21,8 +21,8 @@
  *
  */
 
-/*!
-  \file       htdocs/expedition/fiche.php
+/*! 
+  \file htdocs/expedition/fiche.php
   \ingroup    expedition
   \brief      Fiche descriptive d'une expedition
   \version    $Revision$
@@ -47,7 +47,8 @@ if ($user->societe_id > 0)
 }
 /*
  *
- */	
+ */
+
 if ($_POST["action"] == 'add') 
 {
   $expedition = new Expedition($db);
@@ -88,6 +89,7 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->
   $expedition = new Expedition($db);
   $expedition->fetch($_GET["id"]);
   $result = $expedition->valid($user);
+  $expedition->PdfWrite();
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
@@ -99,6 +101,13 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
       $expedition->delete();
       Header("Location: liste.php");
     }
+}
+
+if ($_GET["action"] == 'pdf')
+{
+  $expedition = new Expedition($db);
+  $expedition->fetch($_GET["id"]);
+  $expedition->PdfWrite();
 }
 
 /*
