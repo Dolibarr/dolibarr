@@ -39,6 +39,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("members");
+$langs->load("users");
 
 $adho = new AdherentOptions($db);
 $errmsg='';
