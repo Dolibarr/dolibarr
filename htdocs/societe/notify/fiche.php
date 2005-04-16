@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,16 +46,11 @@ $socid = $_GET["socid"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="nom";
-}
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="nom";
 
 
 llxHeader();
-
 
 /*
  * Action ajout notification
@@ -106,142 +101,147 @@ if ($_GET["action"] == 'delete')
 $soc = new Societe($db);
 $soc->id = $_GET["socid"];
 
-if ( $soc->fetch($soc->id) ) 
+if ( $soc->fetch($soc->id) )
 {
-  $h=0;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
-  $head[$h][1] = $langs->trans("Company");
-  $h++;
-  
-  if ($soc->client==1)
+    $html = new Form($db);
+    $langs->load("other");
+    
+    $h=0;
+    
+    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("Company");
+    $h++;
+    
+    if ($soc->client==1)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
-      $head[$h][1] = $langs->trans("Customer");
-      $h++;
+        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
+        $head[$h][1] = $langs->trans("Customer");
+        $h++;
     }
-
-  if ($soc->client==2)
+    
+    if ($soc->client==2)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$soc->id;
-      $head[$h][1] = $langs->trans("Prospect");
-      $h++;
+        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$soc->id;
+        $head[$h][1] = $langs->trans("Prospect");
+        $h++;
     }
-  if ($soc->fournisseur)
+    if ($soc->fournisseur)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
-      $head[$h][1] = $langs->trans("Supplier");
-      $h++;
+        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
+        $head[$h][1] = $langs->trans("Supplier");
+        $h++;
     }
-
-  if ($conf->compta->enabled) {
-      $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
-      $head[$h][1] = $langs->trans("Accountancy");
-      $h++;
-  }
-
-  $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
-  $head[$h][1] = $langs->trans("Note");
-  $h++;
-  
-  if ($user->societe_id == 0)
+    
+    if ($conf->compta->enabled) {
+        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
+        $head[$h][1] = $langs->trans("Accountancy");
+        $h++;
+    }
+    
+    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("Note");
+    $h++;
+    
+    if ($user->societe_id == 0)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$soc->id;
-      $head[$h][1] = $langs->trans("Documents");
-      $h++;
+        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$soc->id;
+        $head[$h][1] = $langs->trans("Documents");
+        $h++;
     }
-      
-  $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
-  $head[$h][1] = $langs->trans("Notifications");
-  $hselected=$h;
-  $h++;
-  
-  dolibarr_fiche_head($head, $hselected, $soc->nom);
-
-  /*
-   *
-   *
-   */
-
-  print '<table class="border"width="100%">';
-  
-  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td colspan="3">'.$soc->nom.'</td></tr>';
-  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
-
-  print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
-  print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
-
-  print '</table><br></div>';
-
-  print "\n";
-
-  print '<table width="100%" class="noborder">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name","","&socid=$socid",'',$sortfield);
-  print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre","","&socid=$socid",'',$sortfield);
-  print '<td>&nbsp;</td>';
-  print '</tr>';
-
-  $sql = "SELECT c.name, c.firstname, a.titre,n.rowid FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n";
-  $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action AND n.fk_soc = ".$soc->id;
-
-  if ($db->query($sql))
+    
+    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("Notifications");
+    $hselected=$h;
+    $h++;
+    
+    dolibarr_fiche_head($head, $hselected, $soc->nom);
+    
+    /*
+    *
+    *
+    */
+    
+    print '<table class="border"width="100%">';
+    
+    print '<tr><td width="20%">'.$langs->trans("Name").'</td><td colspan="3">'.$soc->nom.'</td></tr>';
+    print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
+    
+    print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
+    print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
+    
+    print '</table><br></div>';
+    
+    print "\n";
+    
+    print '<table width="100%" class="noborder">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name","","&socid=$socid",'',$sortfield);
+    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre","","&socid=$socid",'',$sortfield);
+    print '<td>&nbsp;</td>';
+    print '</tr>';
+    
+    $sql = "SELECT c.name, c.firstname, a.titre,n.rowid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n";
+    $sql.= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action AND n.fk_soc = ".$soc->id;
+    
+    $resql=$db->query($sql);
+    if ($resql)
     {
-      $num = $db->num_rows();
-      $i = 0;      
-      $var=True;
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object( $i);
-	  
-	  print '<tr '.$bc[$var].'><td>'.$obj->firstname . " ".$obj->name.'</td>';
-	  print '<td>'.$obj->titre.'</td>';
-      print'<td align="center"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a>';
-		
-	  $i++;
-	  $var = !$var;
-	}
-      $db->free();
+        $num = $db->num_rows($resql);
+        $i = 0;
+        $var=True;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+    
+            print '<tr '.$bc[$var].'><td>'.$obj->firstname . " ".$obj->name.'</td>';
+            print '<td>'.$obj->titre.'</td>';
+            print'<td align="center"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a>';
+    
+            $i++;
+            $var = !$var;
+        }
+        $db->free($resql);
     }
-  else
+    else
     {
-      dolibarr_print_error($db);
+        dolibarr_print_error($db);
     }
-
-  /*
-   *
-   */
-
-  $sql = "SELECT a.rowid, a.titre FROM ".MAIN_DB_PREFIX."action_def as a";
-
-  if ($db->query($sql))
+    
+    // Charge tableau $actions
+    $sql = "SELECT a.rowid, a.code, a.titre";
+    $sql.= " FROM ".MAIN_DB_PREFIX."action_def as a";
+    
+    $resql=$db->query($sql);
+    if ($resql)
     {
-      $num = $db->num_rows();
-      $i = 0;      
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object( $i);	  
-	  $actions[$obj->rowid] = $obj->titre;
-	  $i++;
-	}
-      $db->free();
+        $num = $db->num_rows($resql);
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+            $libelle=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
+            $actions[$obj->rowid] = $libelle;
+    
+            $i++;
+        }
+        $db->free($resql);
     }
-  else
+    else
     {
-      dolibarr_print_error($db);
+        dolibarr_print_error($db);
     }
-
-  $html = new Form($db);
-  print '<form action="fiche.php?socid='.$socid.'" method="post">';
-  print '<input type="hidden" name="action" value="add">';
-  print '<tr '.$bc[$var].'><td>';
-  $html->select_array("contactid",$soc->contact_email_array());
-  print '</td>';
-  print '<td>';
-  $html->select_array("actionid",$actions);
-  print '</td>';
-  print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></td>';
-  print '</tr></form></table>';
+    
+    print '<form action="fiche.php?socid='.$socid.'" method="post">';
+    print '<input type="hidden" name="action" value="add">';
+    print '<tr '.$bc[$var].'><td>';
+    $html->select_array("contactid",$soc->contact_email_array());
+    print '</td>';
+    print '<td>';
+    $html->select_array("actionid",$actions);
+    print '</td>';
+    print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></td>';
+    print '</tr></form></table>';
 
 }
 
