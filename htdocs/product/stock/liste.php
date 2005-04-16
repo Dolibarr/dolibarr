@@ -38,10 +38,14 @@ if (!$user->rights->stock->lire)
   accessforbidden();
 
 
+$page = $_GET["page"];
+$sortfield = $_GET["sortfield"];
+$sortorder = $_GET["sortorder"];
+
 if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
-  
+$offset = $limit * $page;
+
 if (! $sortfield) $sortfield="e.label";
 if (! $sortorder) $sortorder="ASC";
 
@@ -65,10 +69,9 @@ if ($result)
   print '<table class="noborder" width="100%">';
 
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Ref"),"liste.php", "e.ref","");
-  print_liste_field_titre($langs->trans("Label"),"liste.php", "e.label","");
-  print_liste_field_titre($langs->trans("Status"),"liste.php", "e.statut","");
-  print_liste_field_titre($langs->trans("LocationSummary"),"liste.php", "e.lieu","");
+  print_liste_field_titre($langs->trans("Ref"),"liste.php", "e.label","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"liste.php", "e.statut","","","",$sortfield);
+  print_liste_field_titre($langs->trans("LocationSummary"),"liste.php", "e.lieu","","","",$sortfield);
   print "</tr>\n";
   
   if ($num) {
@@ -80,8 +83,7 @@ if ($result)
           $objp = $db->fetch_object($result);
           $var=!$var;
           print "<tr $bc[$var]>";
-          print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
-          print '<td>'.$objp->label.'</td>';
+          print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
           print '<td>'.$entrepot->LibStatut($objp->statut).'</td>';
           print '<td>'.$objp->lieu.'</td>';
           print "</tr>\n";

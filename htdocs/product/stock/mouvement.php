@@ -40,11 +40,9 @@ $page = $_GET["page"];
 $sortfield = $_GET["sortfield"];
 $sortorder = $_GET["sortorder"];
 
-if ($page < 0) { 
-  $page = 0 ; }
-
+if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
+$offset = $limit * $page;
   
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
@@ -70,10 +68,10 @@ if ($result)
 
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Ref"),"mouvement.php", "p.ref","");
-  print "<td align=\"center\">Unités</td>";
-  print_liste_field_titre($langs->trans("Date"),"mouvement.php", "m.datem","");
-  print_liste_field_titre($langs->trans("Warehouse"),"mouvement.php", "s.label","");
+  print_liste_field_titre($langs->trans("Date"),"mouvement.php", "m.datem","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Product"),"mouvement.php", "p.ref","","","",$sortfield);
+  print "<td align=\"center\">".$langs->trans("Units")."</td>";
+  print_liste_field_titre($langs->trans("Warehouse"),"mouvement.php", "s.label","","","",$sortfield);
   print "</tr>\n";
     
   $var=True;
@@ -82,10 +80,14 @@ if ($result)
       $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"../fiche.php?id=$objp->rowid\">$objp->produit</a></td>\n";
+      print '<td>'.dolibarr_print_date($objp->datem).'</td>';
+      print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
+      print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
+      print "</a></td>\n";
       print '<td align="center">'.$objp->value.'</td>';
-      print '<td>'.strftime("%d %b %Y",$objp->datem).'</td>';
-      print "<td><a href=\"fiche.php?id=$objp->entrepot_id\">$objp->stock</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$objp->entrepot_id\">";
+      print img_object($langs->trans("ShowWarehous"),"stock").' '.$objp->stock;
+      print "</a></td>\n";
       print "</tr>\n";
       $i++;
     }

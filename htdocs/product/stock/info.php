@@ -58,7 +58,7 @@ $head[$h][1] = $langs->trans("Info");
 $hselected=$h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->id);
+dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
 
 
 print '<table width="100%"><tr><td>';

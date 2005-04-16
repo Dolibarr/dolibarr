@@ -62,7 +62,7 @@ if ($_POST["action"] == 'add')
         $mesg="<div class='error'>".$entrepot->error."</div>";
     }
     else {
-        $mesg="<div class='error'>".$langs->trans("ErrorWarehouseLabelRequired")."</div>";
+        $mesg="<div class='error'>".$langs->trans("ErrorWarehouseRefRequired")."</div>";
         $_GET["action"]="create";   // Force retour sur page création
     }
 }
@@ -134,7 +134,7 @@ if ($_GET["action"] == 'create')
     }
 
     print '<table class="border" width="100%">';
-    print '<tr><td width="20%">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" value=""></td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="40" value=""></td></tr>';
     print '<tr><td width="20%" valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
     print '<textarea name="desc" rows="4" cols="60">';
     print "</textarea></td></tr>";
@@ -198,10 +198,10 @@ else
             $head[$h][1] = $langs->trans("Info");
             $h++;
 
-            dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->id);
+            dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
 
             print '<table class="border" width="100%">';
-            print '<tr><td width="20%">'.$langs->trans("Label").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
+            print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
 
             print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
@@ -241,7 +241,7 @@ else
             print '<input type="hidden" name="id" value="'.$entrepot->id.'">';
 
             print '<table class="border" width="100%">';
-            print '<tr><td width="20%">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" value="'.$entrepot->libelle.'"></td></tr>';
+            print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="40" value="'.$entrepot->libelle.'"></td></tr>';
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
             print '<textarea name="desc" rows="4" cols="60">';
             print $entrepot->description;
