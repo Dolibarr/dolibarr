@@ -86,52 +86,56 @@ if ($_GET["action"] == 'commentaire')
 llxHeader();
 
 
-print_titre($langs->trans("MembersTypeSetup"));
-print '<br>';
 
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                                            */
+/* Liste des types d'adhérents                                                */
 /*                                                                            */
 /* ************************************************************************** */
 
-$sql = "SELECT d.rowid, d.libelle, d.cotisation, d.vote";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
+if ($_GET["action"] != 'create' && $_GET["action"] != 'edit') {
 
-$result = $db->query($sql);
-if ($result) 
-{
-  $num = $db->num_rows();
-  $i = 0;
-  
-  print '<table class="noborder" width="100%">';
-  
-  print '<tr class="liste_titre">';
-  print "<td>Id</td>";
-  print '<td>'.$langs->trans("Label").'</td><td align="center">Cotisation ?</td><td align="center">Vote ?</td><td>&nbsp;</td>';
-  print "</tr>\n";
-  
-  $var=True;
-  while ($i < $num)
+    print_titre($langs->trans("MembersTypeSetup"));
+    print '<br>';
+
+
+    $sql = "SELECT d.rowid, d.libelle, d.cotisation, d.vote";
+    $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
+    
+    $result = $db->query($sql);
+    if ($result) 
     {
-      $objp = $db->fetch_object($result);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td>".$objp->rowid."</td>\n";
-      print '<td>'.$objp->libelle.'</td>';
-      print '<td align="center">'.$langs->trans($objp->cotisation).'</td>';
-      print '<td align="center">'.$langs->trans($objp->vote).'</td>';
-      print '<td><a href="type.php?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</td>';
-      print "</tr>";
-      $i++;
+      $num = $db->num_rows($result);
+      $i = 0;
+      
+      print '<table class="noborder" width="100%">';
+      
+      print '<tr class="liste_titre">';
+      print "<td>Id</td>";
+      print '<td>'.$langs->trans("Label").'</td><td align="center">'.$langs->trans("SubscriptionRequired").'</td>';
+      print '<td align="center">'.$langs->trans("VoteAllowed").'</td><td>&nbsp;</td>';
+      print "</tr>\n";
+      
+      $var=True;
+      while ($i < $num)
+        {
+          $objp = $db->fetch_object($result);
+          $var=!$var;
+          print "<tr $bc[$var]>";
+          print "<td>".$objp->rowid."</td>\n";
+          print '<td>'.$objp->libelle.'</td>';
+          print '<td align="center">'.$langs->trans($objp->cotisation).'</td>';
+          print '<td align="center">'.$langs->trans($objp->vote).'</td>';
+          print '<td><a href="type.php?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</td>';
+          print "</tr>";
+          $i++;
+        }
+      print "</table>";
     }
-  print "</table>";
-}
-else
-{
-  dolibarr_print_error($db);
-}
-
+    else
+    {
+      dolibarr_print_error($db);
+    }
 
 
     /*
@@ -142,6 +146,7 @@ else
     print "<a class=\"tabAction\" href=\"type.php?action=create\">".$langs->trans("NewType")."</a>";
     print "</div>";
 
+}
 
 
 /* ************************************************************************** */
@@ -154,7 +159,7 @@ else
 if ($_GET["action"] == 'create') {
   $htmls = new Form($db);
 
-  print_titre("Nouveau type");
+  print_titre($langs->trans("NewMemberType"));
   print '<br>';
   
   print "<form action=\"type.php\" method=\"post\">";
@@ -164,21 +169,21 @@ if ($_GET["action"] == 'create') {
 
   print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';  
 
-  print '<tr><td>Soumis à cotisation</td><td>';
+  print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
   $htmls->selectyesno("cotisation","");
   print '</tr>';
   
-  print '<tr><td>Droit de vote</td><td>';
+  print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
   $htmls->selectyesno("vote","");
   print '</tr>';
 
-  print '<tr><td valign="top">'.$langs->trans("Comments").' :</td><td>';
+  print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
 
-  print '<tr><td valign="top">Mail d\'accueil :</td><td>';
+  print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
   print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea></td></tr>";
 
-  print '<tr><td colspan="2" align="center"><input type="submit" name="button" value="'.$langs->trans("Save").'"> &nbsp;';
+  print '<tr><td colspan="2" align="center"><input type="submit" name="button" value="'.$langs->trans("Add").'"> &nbsp;';
   print '<input type="submit" name="button" value="'.$langs->trans("Cancel").'"></td></tr>';
 
   print "</form>\n";
@@ -199,7 +204,7 @@ if ($_GET["rowid"] > 0 && $_GET["action"] == 'edit')
   $adht->id = $_GET["rowid"];
   $adht->fetch($_GET["rowid"]);
 
-  print_titre("Edition de la fiche");
+  print_titre($langs->trans("EditType"));
   print '<br>';
   
   print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$_GET["rowid"].'">';
@@ -209,18 +214,18 @@ if ($_GET["rowid"] > 0 && $_GET["action"] == 'edit')
 
   print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.$adht->libelle.'"></td></tr>';  
 
-  print '<tr><td>Soumis à cotisation</td><td>';
+  print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
   $htmls->selectyesno("cotisation",$adht->cotisation);
   print '</tr>';
 
-  print '<tr><td>Droit de vote</td><td>';
+  print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
   $htmls->selectyesno("vote",$adht->vote);
   print '</tr>';
 
-  print '<tr><td valign="top">'.$langs->trans("Comments").' :</td><td>';
+  print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\">".$adht->commentaire."</textarea></td></tr>";
 
-  print '<tr><td valign="top">Mail d\'accueil :</td><td>';
+  print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
   print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\">".$adht->mail_valid."</textarea></td></tr>";
 
   print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"> &nbsp;';

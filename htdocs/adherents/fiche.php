@@ -155,43 +155,45 @@ if ($_POST["action"] == 'add')
 
     // Test validite des paramètres
     if(!isset($type) || $type==''){
-        $error+=1;
-        $errmsg .="Le type d'adhérent n'est pas renseigné. Vous devez configurer les types d'adhérents avant de pouvoir les ajouter.<br>\n";
+        $error++;
+        $errmsg .= $langs->trans("ErrorMemberTypeNotDefined")."<br>\n";
     }
     // Test si le login existe deja
     if(!isset($login) || $login==''){
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Login"))."<br>\n";
     }
-    $sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login';";
-    $result = $db->query($sql);
-    if ($result) {
-        $num = $db->num_rows($result);
+    else {
+        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login';";
+        $result = $db->query($sql);
+        if ($result) {
+            $num = $db->num_rows($result);
+        }
+        if ($num) {
+            $error++;
+            $errmsg .= $langs->trans("ErrorLoginAlreadyExists",$login)."<br>\n";
+        }
     }
     if (!isset($nom) || $nom=='') {
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Lastname"))."<br>\n";
     }
     if (!isset($prenom) || $prenom=='') {
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Firstname"))."<br>\n";
     }
     if (ADHERENT_MAIL_REQUIRED && ADHERENT_MAIL_REQUIRED == 1 && ! ValidEMail($email)) {
-        $error+=1;
-        $errmsg .= "Adresse Email invalide<br>\n";
-    }
-    if ($num !=0) {
-        $error+=1;
-        $errmsg .= "Login deja utilise. Veuillez en changer<br>\n";
+        $error++;
+        $errmsg .= $langs->trans("ErrorBadEMail",$email)."<br>\n";
     }
     if (!isset($pass) || $pass == '' ) {
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Password"))."<br>\n";
     }
     if (isset($naiss) && $naiss !=''){
         if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$naiss)) {
-            $error+=1;
-            $errmsg .="Date de naissance invalide (Format AAAA-MM-JJ)<br>\n";
+            $error++;
+            $errmsg .= $langs->trans("DateSubscription")." (".$langs->trans("DateFormatYYYYMMDD").")<br>\n";
         }
     }
     if (isset($public)) {
@@ -251,8 +253,6 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
     $adh->delete($rowid);
     Header("Location: liste.php");
 }
-
-llxHeader();
 
 
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
@@ -349,6 +349,11 @@ if ($_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
 }
 
 
+
+llxHeader();
+
+
+
 /* ************************************************************************** */
 /*                                                                            */
 /* Création d'une fiche                                                       */
@@ -364,7 +369,9 @@ if ($errmsg != '')
 // fetch optionals attributes and labels
 $adho->fetch_optionals();
 
-if ($action == 'create') {
+
+if ($action == 'create')
+{
 
     print_titre($langs->trans("NewMember"));
     print "<form action=\"fiche.php\" method=\"post\">\n";
@@ -375,8 +382,13 @@ if ($action == 'create') {
     $htmls = new Form($db);
     $adht = new AdherentType($db);
 
-    print '<tr><td width="15%">'.$langs->trans("Type").'</td><td width="35%">';
-    $htmls->select_array("type",  $adht->liste_array());
+    print '<tr><td width="15%">'.$langs->trans("MemberType").'</td><td width="35%">';
+    $listetype=$adht->liste_array();
+    if (sizeof($listetype)) {
+        $htmls->select_array("type", $listetype);
+    } else {
+        print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';   
+    }
     print "</td>\n";
 
     print '<td width="50%" valign="top">'.$langs->trans("Comments").' :</td></tr>';
@@ -384,7 +396,7 @@ if ($action == 'create') {
     $morphys["phy"] = "Physique";
     $morphys["mor"] = "Morale";
 
-    print "<tr><td>Personne</td><td>\n";
+    print "<tr><td>".$langs->trans("Person")."</td><td>\n";
     $htmls->select_array("morphy",  $morphys);
     print "</td>\n";
 
@@ -400,13 +412,13 @@ if ($action == 'create') {
     print '<tr><td>'.$langs->trans("EMail").(ADHERENT_MAIL_REQUIRED&&ADHERENT_MAIL_REQUIRED==1?'*':'').'</td><td><input type="text" name="email" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="login" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="pass" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("Birthday").'<br>(AAAA-MM-JJ)</td><td><input type="text" name="naiss" size="10"></td></tr>';
+    print '<tr><td>'.$langs->trans("Birthday").'<br>('.$langs->trans("DateFormatYYYYMMDD").')</td><td><input type="text" name="naiss" size="10"></td></tr>';
     print '<tr><td>Url photo</td><td><input type="text" name="photo" size="40"></td></tr>';
     foreach($adho->attribute_label as $key=>$value){
         print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
     }
 
-    print "<tr><td>Date de cotisation</td><td>\n";
+    print "<tr><td>".$langs->trans("DateSubscription")."</td><td>\n";
     $htmls->select_date();
     print "</td></tr>\n";
     print '<tr><td>Mode de paiment</td><td>';
@@ -424,22 +436,26 @@ if ($action == 'create') {
     //  $paiement->select("modepaiement","crédit");
 
     print "</td></tr>\n";
+
     if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 &&
     defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
         print "<tr><td>Numero de cheque</td><td>\n";
         print '<input name="num_chq" type="text" size="6">';
         print "</td></tr>\n";
     }
-    print '<tr><td>Cotisation</td><td><input type="text" name="cotisation" size="6"> euros</td></tr>';
+    print '<tr><td>'.$langs->trans("Subscription").'</td><td><input type="text" name="cotisation" size="6"> euros</td></tr>';
+
     if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 && defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
-        print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" type="text" size=20 value="Cotisation " ></td></tr>';
+        print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" type="text" size=20 value="'.$langs->trans("Subscription").' " ></td></tr>';
     }
-    print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+
+    print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("AddMember").'"></td></tr>';
     print "</form>\n";
     print "</table>\n";
 
 
 }
+
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -762,5 +778,5 @@ if ($rowid)
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
