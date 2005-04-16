@@ -50,6 +50,10 @@ create table llx_societe_commerciaux
 )type=innodb;
 
 
+alter table llx_action_def add code varchar(24) NOT NULL after rowid;
+update llx_action_def set code='NOTIFY_VAL_FICHINTER' where titre='Validation fiche intervention';
+update llx_action_def set code='NOTIFY_VAL_FAC' where titre='Validation facture';
+
 
 delete from llx_const where name like '%_OUTPUT_URL';
 delete from llx_const where name like 'MAIN_START_YEAR';
