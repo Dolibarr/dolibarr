@@ -494,7 +494,7 @@ class MenuLeft {
                   $newmenu->add(DOL_URL_ROOT."/public/adherents/index.php","Espace adherents public");
                 
                   $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&mainmenu=members",$langs->trans("Export"),0,$user->rights->adherent->lire);
-                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherenrs/htpasswd.php?leftmenu=export","Format htpasswd",1,$user->rights->adherent->lire);
+                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php?leftmenu=export","Format htpasswd",1,$user->rights->adherent->lire);
                   if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export","Cartes d'adhérents",1,$user->rights->adherent->lire);
                   if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export","Etiquettes d'adhérents",1,$user->rights->adherent->lire);
                 
