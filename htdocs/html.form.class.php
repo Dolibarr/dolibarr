@@ -847,27 +847,27 @@ class Form
   function selectyesno($name,$value='',$option=0)
   {
     global $langs;
-
+    
     $yes="yes"; $no="no";
     
-    if ($option) 
-      { 
-	$yes="1"; 
-	$no="0"; 
-      }
-
+    if ($option)
+    {
+        $yes="1";
+        $no="0";
+    }
+    
     print '<select class="flat" name="'.$name.'">'."\n";
-
-    if ($value == 'no' || $value == 0) 
-      {
-	print '<option value="'.$yes.'">'.$langs->trans("yes").'</option>'."\n";
-	print '<option value="'.$no.'" selected>'.$langs->trans("no").'</option>'."\n";
-      }
+    
+    if ($value == 'yes' || $value == 1)
+    {
+        print '<option value="'.$yes.'" selected>'.$langs->trans("yes").'</option>'."\n";
+        print '<option value="'.$no.'">'.$langs->trans("no").'</option>'."\n";
+    }
     else
-      {
-	print '<option value="'.$yes.'" selected>'.$langs->trans("yes").'</option>'."\n";
-	print '<option value="'.$no.'">'.$langs->trans("no").'</option>'."\n";
-      }
+    {
+        print '<option value="'.$yes.'">'.$langs->trans("yes").'</option>'."\n";
+        print '<option value="'.$no.'" selected>'.$langs->trans("no").'</option>'."\n";
+    }
     print '</select>'."\n";
   }
 	

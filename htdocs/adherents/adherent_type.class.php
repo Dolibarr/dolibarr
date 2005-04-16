@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +21,16 @@
  *
  */
 
-/**	\file htdocs/adherents/adherent_type.class.php
+/**
+    	\file       htdocs/adherents/adherent_type.class.php
         \ingroup    adherent
 		\brief      Fichier de la classe gérant les types d'adhérents
 		\author     Rodolphe Quiedeville
 		\version    $Revision$
 */
 
-/** \class AdherentType
+/**
+        \class      AdherentType
 		\brief      Classe gérant les types d'adhérents
 */
 
@@ -41,7 +44,8 @@ class AdherentType
   var $errorstr;
   var $mail_valid;	/**< mail envoye lors de la validation */
   var $commentaire; /**< commentaire */
-  var $vote;				/** droit de vote ? */
+  var $vote;		/** droit de vote ? */
+
 
 /**
 		\brief AdherentType
@@ -53,6 +57,7 @@ class AdherentType
       $this->db = $DB ;
       $this->statut = 1;
     }
+
 
 /**
 		\brief print_error_list
@@ -67,16 +72,16 @@ class AdherentType
       }
   }
 
+
 /**
-		\brief fonction qui permet de créer le status de l'adhérent
-		\param userid			userid de l'adhérent
+		\brief      Fonction qui permet de créer le status de l'adhérent
+		\param      userid			userid de l'adhérent
+		\return     > 0 si ok, < 0 si ko
 */
 
 	function create($userid)
     {
-      /*
-       *  Insertion dans la base
-       */
+      $this->statut=trim($this->statut);
 
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (statut)";
       $sql .= " VALUES ($this->statut)";
@@ -90,12 +95,18 @@ class AdherentType
 	}
       else
 	{
-	  return 0;
+	  return -1;
 	}
     }
 
+
+/**
+		\brief      Met a jour en base données du type
+		\return     > 0 si ok, < 0 si ko
+*/
   function update()
     {
+      $this->libelle=trim($this->libelle);
 
       $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type SET ";
       $sql .= "libelle = '".$this->libelle ."'";
@@ -115,15 +126,14 @@ class AdherentType
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
-	  return 0;
+	  $error=$this->db->error();
+	  return -1;
 	}
     }
 
 /**
-		\brief fonction qui permet de supprimer le status de l'adhérent
-		\param rowid
+		\brief      Fonction qui permet de supprimer le status de l'adhérent
+		\param      rowid
 */
 
 	function delete($rowid)
@@ -156,30 +166,29 @@ class AdherentType
 
 	function fetch($rowid)
   {
-    $sql = "SELECT *";
+    $sql = "SELECT d.rowid, d.libelle, d.statut, d.cotisation, d.mail_valid, d.note, d.vote";
     $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
     $sql .= " WHERE d.rowid = $rowid";
-
+    
     if ( $this->db->query( $sql) )
-      {
-	if ($this->db->num_rows())
-	  {
-
-	    $obj = $this->db->fetch_object();
-
-	    $this->id             = $obj->rowid;
-	    $this->libelle        = $obj->libelle;
-	    $this->statut         = $obj->statut;
-	    $this->cotisation     = $obj->cotisation;
-	    $this->mail_valid     = $obj->mail_valid;
-	    $this->commentaire    = $obj->note;
-	    $this->vote    = $obj->vote;
-	  }
-      }
+    {
+        if ($this->db->num_rows())
+        {
+            $obj = $this->db->fetch_object();
+    
+            $this->id             = $obj->rowid;
+            $this->libelle        = $obj->libelle;
+            $this->statut         = $obj->statut;
+            $this->cotisation     = $obj->cotisation;
+            $this->mail_valid     = $obj->mail_valid;
+            $this->commentaire    = $obj->note;
+            $this->vote           = $obj->vote;
+        }
+    }
     else
-      {
-	print $this->db->error();
-      }
+    {
+        print $this->db->error();
+    }
 
   }
 

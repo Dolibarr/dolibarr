@@ -41,15 +41,21 @@ if ($_POST["action"] == 'add' && $user->admin)
     if ($_POST["button"] != $langs->trans("Cancel")) {
         $adht = new AdherentType($db);
           
-        $adht->libelle     = $_POST["libelle"];
+        $adht->libelle     = trim($_POST["libelle"]);
         $adht->cotisation  = $yesno[$_POST["cotisation"]];
-        $adht->commentaire = $_POST["comment"];
-        $adht->mail_valid  = $_POST["mail_valid"];
+        $adht->commentaire = trim($_POST["comment"]);
+        $adht->mail_valid  = trim($_POST["mail_valid"]);
         $adht->vote        = $yesno[$_POST["vote"]];
 
-        if ($_POST["libelle"]) { $adht->create($user->id); }
+        if ($adht->libelle)
+        {
+            $id=$adht->create($user->id);
+            if ($id > 0)
+            {
+                Header("Location: type.php");
+            }
+        }
     }
-    Header("Location: type.php");
 }
 
 if ($_POST["action"] == 'update' && $user->admin) 
@@ -170,11 +176,11 @@ if ($_GET["action"] == 'create') {
   print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';  
 
   print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-  $htmls->selectyesno("cotisation","");
+  $htmls->selectyesnonum("cotisation","");
   print '</tr>';
   
   print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-  $htmls->selectyesno("vote","");
+  $htmls->selectyesnonum("vote","");
   print '</tr>';
 
   print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
@@ -215,11 +221,11 @@ if ($_GET["rowid"] > 0 && $_GET["action"] == 'edit')
   print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.$adht->libelle.'"></td></tr>';  
 
   print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-  $htmls->selectyesno("cotisation",$adht->cotisation);
+  $htmls->selectyesnonum("cotisation",$adht->cotisation);
   print '</tr>';
 
   print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-  $htmls->selectyesno("vote",$adht->vote);
+  $htmls->selectyesnonum("vote",$adht->vote);
   print '</tr>';
 
   print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
