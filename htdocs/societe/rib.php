@@ -87,7 +87,7 @@ $head[0][0] = DOL_URL_ROOT .'/soc.php?socid='.$soc->id;
 $head[0][1] = $langs->trans("Company");
 $h = 1;
 
-$head[$h][0] = "fiche.php?id=$account->id";
+$head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$soc->id;
 $head[$h][1] = $langs->trans("BankAccount")." $account->number";
 $h++;
 
@@ -172,9 +172,6 @@ $account->fetch();
     {
 
       $form = new Form($db);
-      
-      print_titre("Edition compte bancaire");
-      print "<br>";
       
       if ($message) { print "$message<br><br>\n"; }
       
