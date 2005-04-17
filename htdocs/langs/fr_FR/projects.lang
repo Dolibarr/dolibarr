@@ -5,6 +5,6 @@ ProjectsArea=Espace projet
 NewProject=Nouveau projet
 AddProject=Créer projet
 DeleteAProject=Supprimer un projet
-ConfirmDeleteAProject=Etes-vous sur de vouloir supprimer ce projet ?
+ConfirmDeleteAProject=Êtes-vous sûr de vouloir supprimer ce projet ?
 LastProjects=Les %s derniers projets
 AllProjects=Tous les projets
