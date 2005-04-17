@@ -107,7 +107,7 @@ $langs->load("main");
  */
 if (defined("MAIN_NOT_INSTALLED"))
 {
-  Header("Location: ".$dolibarr_main_url_root."/install/index.php");
+  Header("Location: ".DOL_URL_ROOT."/install/index.php");
 }
 
 
