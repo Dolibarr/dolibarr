@@ -66,11 +66,11 @@ print '<a target="blank" href="http://freshmeat.net/projects/dolibarr/">Page sur
 
 
 print '<li>';
-print 'Les tâches en cours de réalisation sur Dolibarr sont consultable dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projet</a> sur Savannah.';
+print 'Les tâches en cours de réalisation sur Dolibarr sont consultables dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projet</a> sur Savannah.';
 print '</li>';
 
 print '<li>';
-print 'Si vous trouvez un bug sur Dolibarr vous pouvez en informer les développeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">système de gestion des bug</a> de Savannah.';
+print 'Si vous trouvez un bogue dans Dolibarr, vous pouvez en informer les développeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">système de gestion des bogues</a> de Savannah.';
 
 print '</li>';
 
