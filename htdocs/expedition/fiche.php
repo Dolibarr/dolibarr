@@ -421,9 +421,25 @@ else
 	    {
 	      dolibarr_print_error($db);
 	    }
-	  
-	  
-	  print "</table>\n</div>\n";
+	  	  
+	  print "</table>\n";
+	  /*
+	   *
+	   */
+	  $file = $expedition->pdf_filename;
+	  if (file_exists($file))
+	    {
+	      print '<br /><table class="border" width="50%">';
+	      print "<tr $bc[$var]><td>".$langs->trans("Sending")." PDF</td>";
+
+	      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=expedition&file='.urlencode(basename($file)).'">'.basename($file).'</a></td>';
+	      print '<td align="right">'.filesize($file). ' bytes</td>';
+	      print '<td align="right">'.strftime("%e %B %Y %H:%M:%S",filemtime($file)).'</td></tr>';
+	      print "</table>";
+	    }  
+
+	  print "\n</div>\n";
+
 	  /*
 	   *
 	   */
