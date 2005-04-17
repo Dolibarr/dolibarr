@@ -109,6 +109,17 @@ if ($modulepart)
       $original_file=$conf->societe->dir_output.'/'.$original_file;
     }
   
+  // Wrapping pour les expedition
+  if ($modulepart == 'expedition')
+    {
+      $user->getrights('expedition');
+      if ($user->rights->expedition->lire)
+        {
+	  $accessallowed=1;
+        }
+      $original_file=$conf->expedition->dir_output.'/'.$original_file;
+    }
+
   // Wrapping pour la telephonie
   if ($modulepart == 'telephonie')
     {
