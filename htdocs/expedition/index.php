@@ -105,7 +105,7 @@ if ( $db->query($sql) )
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"30%\">";
+	  print "<tr $bc[$var]><td width=\"33%\">";
 	  print "<a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
@@ -159,11 +159,13 @@ if ( $resql )
 $sql = "SELECT e.rowid, e.ref, s.nom, s.idp, c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 $sql.= " WHERE e.fk_commande = c.rowid AND c.fk_soc = s.idp AND e.fk_statut = 1";
+$sql .= " ORDER BY e.date_expedition DESC";
 $sql .= $db->plimit(5, 0);
 
-if ( $db->query($sql) ) 
+$resql = $db->query($sql);
+if ($resql) 
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   if ($num)
     {
       $i = 0;
@@ -174,7 +176,7 @@ if ( $db->query($sql) )
       while ($i < $num)
 	{
 	  $var=!$var;
-	  $obj = $db->fetch_object();
+	  $obj = $db->fetch_object($resql);
 	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowSending"),"sending").' ';
 	  print $obj->ref.'</a></td>';
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
@@ -183,6 +185,7 @@ if ( $db->query($sql) )
 	}
       print "</table><br>";
     }
+  $db->free($resql);
 }
 
 print '</td></tr></table>';
