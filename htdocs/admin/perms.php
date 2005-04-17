@@ -96,56 +96,63 @@ $sql.=" WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.=" ORDER BY r.id, r.module";
 
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  $var=True;
-  $old = "";
-  while ($i < $num)
+    $num = $db->num_rows();
+    $i = 0;
+    $var=True;
+    $old = "";
+    while ($i < $num)
     {
-      $obj = $db->fetch_object($result);
-      $var=!$var;
+        $obj = $db->fetch_object($result);
 
-      if ($old <> $obj->module)
-	{
-       // Rupture détectée, on récupère objMod
-        $objMod=$modules[$obj->module];
-        $picto=($objMod->picto?$objMod->picto:'generic');
+        // Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
+        if (! $modules[$obj->module])
+        {
+            $i++;
+            continue;
+        }
 
-	  print '<tr class="liste_titre">';
-	  print '<td>'.$langs->trans("Module").'</td>';
-	  print '<td>'.$langs->trans("Permission").'</td>';
-	  print '<td align="center">'.$langs->trans("Default").'</td>';
-	  print '<td align="center">&nbsp;</td>';
-	  print "</tr>\n";
-	  $old = $obj->module;
-	}
+        if ($old <> $obj->module)
+        {
+            // Rupture détectée, on récupère objMod
+            $objMod=$modules[$obj->module];
+            $picto=($objMod->picto?$objMod->picto:'generic');
 
-      print '<tr '. $bc[$var].'>';
+            print '<tr class="liste_titre">';
+            print '<td>'.$langs->trans("Module").'</td>';
+            print '<td>'.$langs->trans("Permission").'</td>';
+            print '<td align="center">'.$langs->trans("Default").'</td>';
+            print '<td align="center">&nbsp;</td>';
+            print "</tr>\n";
+            $old = $obj->module;
+        }
 
-      print '<td>'.img_object('',$picto).' '.$objMod->getName();
+        $var=!$var;
+        print '<tr '. $bc[$var].'>';
 
-      $perm_libelle=(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle);
-      print '<td>'.$perm_libelle. '</td>';
-     
-      print '<td align="center">';
-      if ($obj->bydefault == 1)
-	{
+        print '<td>'.img_object('',$picto).' '.$objMod->getName();
 
-	  print img_tick();
-	  print '</td><td>';
-	  print '<a href="perms.php?pid='.$obj->id.'&amp;action=remove">'.img_edit_remove().'</a>';
-	}
-      else
-	{
-	  print '&nbsp;';
-	  print '</td><td>';
-	  print '<a href="perms.php?pid='.$obj->id.'&amp;action=add">'.img_edit_add().'</a>';
-	}
+        $perm_libelle=(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle);
+        print '<td>'.$perm_libelle. '</td>';
 
-      print '</td></tr>';
-      $i++;
+        print '<td align="center">';
+        if ($obj->bydefault == 1)
+        {
+
+            print img_tick();
+            print '</td><td>';
+            print '<a href="perms.php?pid='.$obj->id.'&amp;action=remove">'.img_edit_remove().'</a>';
+        }
+        else
+        {
+            print '&nbsp;';
+            print '</td><td>';
+            print '<a href="perms.php?pid='.$obj->id.'&amp;action=add">'.img_edit_add().'</a>';
+        }
+
+        print '</td></tr>';
+        $i++;
     }
 }
 
