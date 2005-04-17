@@ -128,20 +128,11 @@ function top_menu($head, $title="", $target="")
   print $langs->lang_header();
   print $head;
 
-  print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">';
-  print '<link rel="help" title="'.$langs->trans("Help").'" href="http://www.dolibarr.com/aide.fr.html">';
+  // Affiche meta
+  print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
+  print '<meta name="author" content="'.$langs->trans("DevelopmentTeam").'">'."\n";
 
-  print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-  print '<link rel="author" title="'.$langs->trans("DevelopmentTeam").'" href="http://www.dolibarr.com/dev.fr.html">'."\n";
-
-  print '<link rel="stylesheet" type="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
-  print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
-
-  // Definition en l'aternate style sheet des feuilles de styles les plus maintenues
-  print '<link rel="alternate stylesheet" type="text/css" title="Freelug" href="'.DOL_URL_ROOT.'/theme/freelug/freelug.css">'."\n";
-  print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
-  print '<link rel="alternate stylesheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css">'."\n";
-
+  // Affiche title
   if (strlen($title) > 0)
     {
       print '<title>Dolibarr - '.$title.'</title>';
@@ -158,6 +149,20 @@ function top_menu($head, $title="", $target="")
 	}
     }
   print "\n";
+
+  // Affiche style sheets et link
+  print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+  print '<link rel="stylesheet" type="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
+
+  // Definition en alternate style sheet des feuilles de styles les plus maintenues
+  print '<link rel="alternate stylesheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css">'."\n";
+  print '<link rel="alternate stylesheet" type="text/css" title="Freelug" href="'.DOL_URL_ROOT.'/theme/freelug/freelug.css">'."\n";
+  print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
+
+  print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">'."\n";
+  print '<link rel="help" title="'.$langs->trans("Help").'" href="http://www.dolibarr.com/aide.fr.html">'."\n";
+  print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+  print '<link rel="author" title="'.$langs->trans("DevelopmentTeam").'" href="http://www.dolibarr.com/dev.fr.html">'."\n";
 
   print "</head>\n";
   print '<body>';
