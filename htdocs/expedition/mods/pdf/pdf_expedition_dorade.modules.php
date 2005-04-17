@@ -21,7 +21,7 @@
  *
  * L'entete du pdf est définit dans pdf_expedition.class.php
  */
-require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition.class.php";
+require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/modele.dorade.php";
 
 Class pdf_expedition_dorade
 {
@@ -37,6 +37,8 @@ Class pdf_expedition_dorade
     {
       $this->expe = $objExpe;
 
+      $this->expe->fetch_commande();
+
       $this->pdf = new pdf_expedition();
       $this->pdf->expe = &$this->expe;
 
@@ -51,18 +53,19 @@ Class pdf_expedition_dorade
       
       /*
        *
-       */  
-      
+       */        
       $this->pdf->SetTextColor(0,0,0);
-      $this->pdf->SetFont('Arial','', 14);
+      $this->pdf->SetFont('Arial','', 16);
       
       $this->expe->fetch_lignes();
       
       for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
 	{
-	  $a = $this->pdf->tableau_top + 14 + ($i * 7);
+	  $a = $this->pdf->tableau_top + 14 + ($i * 16);
 	  
-	  $this->pdf->Text(8, $a, $this->expe->lignes[$i]->description);
+	  $this->pdf->i25(8, ($a - 2), "000000".$this->expe->lignes[$i]->product_id, 1, 8);
+
+	  $this->pdf->Text(40, $a, $this->expe->lignes[$i]->description);
 	  
 	  $this->pdf->Text(170, $a, $this->expe->lignes[$i]->qty_commande);
 	  

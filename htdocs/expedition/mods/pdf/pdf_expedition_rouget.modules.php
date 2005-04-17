@@ -26,16 +26,16 @@ require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition.class.php";
 Class pdf_expedition_rouget
 {
 
-  Function pdf_expedition_rouget($db=0, &$objExpe)
+  Function pdf_expedition_rouget($db=0)
     { 
       $this->db = $db;
       $this->name = "rouget";
       $this->description = "Modèle simple.";
-      $this->expe = $objExpe;
     }
 
-  Function generate($filename)
+  Function generate(&$objExpe, $filename)
     {
+      $this->expe = $objExpe;
 
       $this->pdf = new pdf_expedition();
       $this->pdf->expe = &$this->expe;
