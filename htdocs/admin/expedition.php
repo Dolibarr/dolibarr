@@ -24,10 +24,10 @@
  */
 
 /**
-        \file       htdocs/admin/expedition.php
-        \ingroup    expedition
-        \brief      Page d'administration/configuration du module Expedition
-        \version    $Revision$
+   \file       htdocs/admin/expedition.php
+   \ingroup    expedition
+   \brief      Page d'administration/configuration du module Expedition
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -106,25 +106,6 @@ if ($_GET["action"] == 'setdef')
  *
  */
 
-$def = array();
-
-$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."propal_model_pdf";
-$resql = $db->query($sql);
-if ($resql)
-{
-  $i = 0;
-  while ($i < $db->num_rows($resql))
-    {
-      $array = $db->fetch_array($resql);
-      array_push($def, $array[0]);
-      $i++;
-    }
-}
-else
-{
-  print $db->error();
-}
-
 $dir = DOL_DOCUMENT_ROOT."/expedition/mods/";
 
 /*
@@ -166,18 +147,11 @@ if(is_dir($dir)) {
 	  
 	  print '</td><td align="center">';
 	  
-	  if (in_array($name, $def))
-	    {
-	      print img_tick();
-	      print "</td><td>\n";
-	      print '<a href="expedition.php?action=set&amp;statut=0&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
-	    }
-	  else
-	    {
+
 	      print "&nbsp;";
 	      print "</td><td>\n";
 	      print '<a href="expedition.php?action=set&amp;statut=1&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-	    }
+
 	  
 	  print '</td><td align="center">';
 	  
@@ -209,6 +183,8 @@ print '<br>';
 
 /*
  *
+ * PDF
+ *
  */
 
 print_titre($langs->trans("SendingsReceiptModel"));
@@ -217,7 +193,6 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td>';
 print '<td align="center" colspan="2">'.$langs->trans("Active").'</td>';
-print '<td align="center" colspan="2">'.$langs->trans("Default").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -243,21 +218,7 @@ if(is_dir($dir))
 	  
 	  print $obj->description;
 	  
-	  print '</td><td align="center">';
-	  
-	  if (in_array($name, $def))
-	    {
-	      print img_tick();
-	      print "</td><td>\n";
-	      print '<a href="expedition.php?action=del&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
-	    }
-	  else
-	    {
-	      print "&nbsp;";
-	      print "</td><td>\n";
-	      print '<a href="expedition.php?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-	    }
-	  
+
 	  print '</td><td align="center">';
 	  
 	  if ($expedition_addon_var_pdf == "$name")
