@@ -201,6 +201,9 @@ class Expedition
 	  
 	  if ($this->statut == 0)
 	    $this->brouillon = 1;
+
+	  $file = $this->_dir() . $this->id.".pdf";
+	  $this->pdf_filename = $file;
 	  
 	  return 1;
 	}
@@ -395,6 +398,15 @@ class Expedition
 	  print $this->db->error() . ' in ' . $sql;
 	}
     }
+  /*
+   *
+   */
+  function _dir()
+  {
+    $dir = DOL_DATA_ROOT . "/expedition/" . get_exdir($this->id) ;
+    return $dir;
+  }
+
   /**
    * Genere le pdf
    *
@@ -404,32 +416,38 @@ class Expedition
     {
       //EXPEDITION_ADDON_PDF
 
-      $module_file_name = DOL_DOCUMENT."/htdocs/expedition/mods/pdf/pdf_expedition_".EXPEDITION_ADDON_PDF.".modules.php";
-      
-      
-      $module_file_name = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition_rouget.modules.php";
-
-      $mod = "pdf_expedition_rouget";
-      require_once $module_file_name;
-
-      $pdf = new $mod($this->db);
-
-
-      $dir = DOL_DATA_ROOT . "/expedition/" . $this->id ;
-      umask(0);
-      if (! file_exists($dir))
+      if (defined("EXPEDITION_ADDON_PDF") && strlen(EXPEDITION_ADDON_PDF) > 0)
 	{
-	  mkdir($dir, 0755);
-	}
-      
-      $file = $dir . "/" . $this->id . ".pdf";
+	  $module_file_name = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition_".EXPEDITION_ADDON_PDF.".modules.php";
+            
+	  $mod = "pdf_expedition_".EXPEDITION_ADDON_PDF;
 
-      if (file_exists($dir))
-	{
-	  $pdf->generate($this, $file);
-	}
+	  require_once $module_file_name;
+	  
+	  $pdf = new $mod($this->db);
+	  
+	  $dir = $this->_dir();
 
+	  if (! file_exists($dir))
+	    {
+	      create_exdir($dir);
+	    }
+	  
+	  $file = $dir . $this->id . ".pdf";
+	  
+	  if (file_exists($dir))
+	    {
+	      $pdf->generate($this, $file);
+	    }
+	}
     }
+
+
+  function fetch_commande()
+  {
+    $this->commande =& new Commande($this->db);
+    $this->commande->fetch($this->commande_id);
+  }
 
 
   function fetch_lignes()
@@ -437,6 +455,7 @@ class Expedition
     $this->lignes = array();
 
     $sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp";    
+    $sql .= ", c.fk_product";
     $sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
     $sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
 
@@ -455,6 +474,7 @@ class Expedition
 
 	    $obj = $this->db->fetch_object($resql);
 
+	    $ligne->product_id     = $obj->fk_product;
 	    $ligne->qty_commande   = $obj->qtycom;
 	    $ligne->qty_expedition = $obj->qtyexp;
 	    $ligne->description    = stripslashes($obj->description);	    
