@@ -412,7 +412,7 @@ class Expedition
       $mod = "pdf_expedition_rouget";
       require_once $module_file_name;
 
-      $pdf = new $mod($this->db, $this);
+      $pdf = new $mod($this->db);
 
 
       $dir = DOL_DATA_ROOT . "/expedition/" . $this->id ;
@@ -426,7 +426,7 @@ class Expedition
 
       if (file_exists($dir))
 	{
-	  $pdf->generate($file);
+	  $pdf->generate($this, $file);
 	}
 
     }
