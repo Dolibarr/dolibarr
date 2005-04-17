@@ -380,7 +380,7 @@ class Expedition
       }
   }
   /**
-   * Class la commande
+   * Classe la commande
    *
    *
    */
@@ -399,7 +399,7 @@ class Expedition
 	}
     }
   /*
-   *
+   * Renvoie le répertoire ou est/sera stocké le document
    */
   function _dir()
   {
@@ -441,8 +441,10 @@ class Expedition
 	    }
 	}
     }
-
-
+  /*
+   * Lit la commande associée
+   *
+   */
   function fetch_commande()
   {
     $this->commande =& new Commande($this->db);
