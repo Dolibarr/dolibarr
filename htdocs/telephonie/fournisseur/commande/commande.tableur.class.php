@@ -23,10 +23,11 @@
 require_once DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_workbook.inc.php";
 require_once DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_worksheet.inc.php";
 require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
+require_once DOL_DOCUMENT_ROOT."/telephonie/fournisseur/commande/methode.commande.class.php";
 
 define ('COMMANDETABLEUR_NOEMAIL', -3);
 
-class CommandeMethodeTableur
+class CommandeMethodeTableur extends CommandeMethode
 {
 
   function CommandeMethodeTableur ($DB, $USER=0, $fourn=0)
@@ -54,7 +55,9 @@ class CommandeMethodeTableur
 
     $this->datef = "commande-".strftime("%d%b%y-%HH%M", $this->date);
 
-    $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->datef.".xls";
+    $this->filename = $this->datef.".xls";
+
+    $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->filename;
 
     if (strlen(trim($this->fourn->email_commande)) == 0)
       {
@@ -96,7 +99,7 @@ class CommandeMethodeTableur
 	$num = $this->db->num_rows();
       }
 
-    $subject = "Commande de Lignes";
+    $subject = "Commande de Lignes N° ".$this->commande_id;
 
     $sendto = $this->fourn->email_commande;
 
@@ -135,22 +138,10 @@ class CommandeMethodeTableur
 
   }
 
-  function LogSql()
-  {
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commande";
-    $sql .= " (datec, fk_user_creat, fk_fournisseur, filename)";
-    $sql .= " VALUES (now(),".$this->user->id.",".$this->fourn->id.",'".$this->datef.".xls')";
-
-    $result = $this->db->query($sql);
-
-    if ($result)
-      {
-	return 0;
-      }    
-    
-  }
-
+  /*
+   * Création du fichier
+   *
+   */
 
   function CreateFile($fname)
   {
@@ -194,7 +185,7 @@ class CommandeMethodeTableur
 
     $i = 0;
 
-    $ligneids = array();
+    $this->ligneids = array();
     
     $sqlall = "SELECT s.nom, s.idp as socid, f.nom as fournisseur";
     $sqlall .= ", l.ligne, l.statut, l.rowid, l.remise";
@@ -270,7 +261,7 @@ class CommandeMethodeTableur
 		  }
 		
 	    
-		array_push($ligneids, $obj->rowid);
+		array_push($this->ligneids, $obj->rowid);
 	      }
 	    $i++;
 	  }
@@ -339,7 +330,7 @@ class CommandeMethodeTableur
      *
      */
 
-    foreach ($ligneids as $lid)
+    foreach ($this->ligneids as $lid)
       {
 	$lint = new LigneTel($this->db);
 	$lint->fetch_by_id($lid);
@@ -353,8 +344,6 @@ class CommandeMethodeTableur
 	    $lint->set_statut($this->user, 5);
 	  }
       }
-
-
 
     return 0;
 

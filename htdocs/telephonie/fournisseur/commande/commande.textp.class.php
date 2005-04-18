@@ -23,10 +23,11 @@
  *
  */
 require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
+require_once DOL_DOCUMENT_ROOT."/telephonie/fournisseur/commande/methode.commande.class.php";
 
 define ('COMMANDETEXT_NOEMAIL', -3);
 
-class CommandeMethodeTextP
+class CommandeMethodeTextP extends CommandeMethode
 {
 
   function CommandeMethodeTextP ($DB, $USER=0, $fourn=0)
@@ -34,7 +35,7 @@ class CommandeMethodeTextP
     $this->nom = "Méthode texte, variante sur le nom de fichier";
     $this->db = $DB;
     $this->user = $USER;
-    $this->fournisseur = $fourn;
+    $this->fourn = $fourn;
   }
 
   function info()
@@ -48,9 +49,11 @@ class CommandeMethodeTextP
 
     $this->datef = "ndi-premium-".strftime("%d%b%y-%HH%M", $this->date);
 
-    $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->datef.".txt";
+    $this->filename = $this->datef.".txt";
 
-    if (strlen(trim($this->fournisseur->email_commande)) == 0)
+    $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->filename;
+
+    if (strlen(trim($this->fourn->email_commande)) == 0)
       {
 	return -3;
       }
@@ -78,25 +81,13 @@ class CommandeMethodeTextP
    */
   function MailFile($filename)
   {
-    $sql = "SELECT l.ligne";
-    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-    $sql .= " WHERE l.statut = 2";
-    $sql .= " AND l.fk_fournisseur =".$this->fournisseur->id;
-    
-    $result = $this->db->query($sql);
+    $subject = "Commande de Lignes N° ".$this->commande_id;
 
-    if ($result)
-      {
-	$num = $this->db->num_rows();
-      }
-
-    $subject = "Commande de Lignes";
-
-    $sendto = $this->fournisseur->email_commande;
+    $sendto = $this->fourn->email_commande;
 
     $from = TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC;
 
-    $message = "Bonjour,\n\nVeuillez trouver ci-joint notre dernière commande.\n\n";
+    $message = "Bonjour,\n\nVeuillez trouver ci-joint notre commande numéro : ".$this->commande_id.".\n\n";
     $message .= "\n\nCordialement,\n\n";
 
     $message .= "-- \n";
@@ -120,25 +111,7 @@ class CommandeMethodeTextP
       }
 
   }
-  /**
-   *
-   *
-   *
-   */
-  function LogSql()
-  {
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commande";
-    $sql .= " (datec, fk_user_creat, fk_fournisseur, filename)";
-    $sql .= " VALUES (now(),".$this->user->id.",".$this->fournisseur->id.",'".$this->datef.".txt')";
-
-    $result = $this->db->query($sql);
-
-    if ($result)
-      {
-	return 0;
-      }    
-  }
   /**
    * Creation du fichier
    *
@@ -154,7 +127,7 @@ class CommandeMethodeTextP
 	fwrite ($fp, "nomclient;");
 	fwrite ($fp, "NDI\n");
 
-	$ligneids = array();
+	$this->ligneids = array();
 	
 	$sqlall = "SELECT s.nom, s.idp as socid, l.ligne, l.statut, l.rowid";
 	$sqlall .= " , comm.name, comm.firstname";
@@ -167,7 +140,7 @@ class CommandeMethodeTextP
 	$sqlall .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
 
 	$sqlall .= " AND l.fk_commercial = comm.rowid ";
-	$sqlall .= " AND f.rowid =".$this->fournisseur->id;
+	$sqlall .= " AND f.rowid =".$this->fourn->id;
 	/*
 	 *
 	 */
@@ -176,35 +149,35 @@ class CommandeMethodeTextP
 	$sql .= " AND l.statut in (1,4)";
 	$sql .= " ORDER BY l.statut ASC";
 	
-	$result = $this->db->query($sql);
+	$resql = $this->db->query($sql);
 
-	if ($result)
+	if ($resql)
 	  {
 	    $i = 0;
-	    $num = $this->db->num_rows();
+	    $num = $this->db->num_rows($resql);
 	    
 	    while ($i < $num)
 	      {
-		$obj = $this->db->fetch_object();	
+		$obj = $this->db->fetch_object($resql);	
 		
 		if (strlen($obj->ligne)== 10)
 		  {		    
 		    $soc = new Societe($this->db);
 		    $soc->fetch($obj->socid);
 		    
-		    fwrite ($fp, $this->fournisseur->num_client);
+		    fwrite ($fp, $this->fourn->num_client);
 		    fwrite ($fp, ";");
 		    fwrite ($fp, $obj->nom);
 		    fwrite ($fp, ";");
 		    fwrite ($fp, $obj->ligne);
 		    fwrite ($fp, "\n");
 		    
-		    array_push($ligneids, $obj->rowid);
+		    array_push($this->ligneids, $obj->rowid);
 		  }
 		$i++;
 	      }
 	    
-	    $this->db->free();
+	    $this->db->free($resql);
 	  }
 	else 
 	  {
@@ -218,7 +191,7 @@ class CommandeMethodeTextP
 	 *
 	 */
 	
-	foreach ($ligneids as $lid)
+	foreach ($this->ligneids as $lid)
 	  {
 	    
 	    $lint = new LigneTel($this->db);
