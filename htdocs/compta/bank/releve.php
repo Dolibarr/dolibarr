@@ -94,7 +94,7 @@ if (! isset($_GET["num"]))
 	{
 	  $objp = $db->fetch_object($result);
 	  $var=!$var;
-	  if (! $objp->numr)
+	  if (! isset($objp->numr))
 	    { 
 	      //
 	    }
