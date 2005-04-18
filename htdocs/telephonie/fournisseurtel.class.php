@@ -22,9 +22,13 @@
 
 class FournisseurTelephonie {
   var $db;
-
   var $id;
 
+  /**
+   * Créateur
+   *
+   *
+   */
   function FournisseurTelephonie($DB, $id=0)
   {
     $this->db = $DB;
@@ -187,7 +191,7 @@ class FournisseurTelephonie {
     return $arr;
   }
   /**
-   *
+   * Crée une commande pour ce fournisseur
    *
    *
    *
