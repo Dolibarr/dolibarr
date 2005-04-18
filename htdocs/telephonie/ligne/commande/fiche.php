@@ -31,7 +31,6 @@ if ($user->rights->telephonie->ligne_commander)
 {
   if ($_GET["action"] == "create" && $_GET["fournid"] > 0)
     {
-
       $fourn = new FournisseurTelephonie($db);
 
       $result = $fourn->fetch($_GET["fournid"]);
@@ -39,26 +38,7 @@ if ($user->rights->telephonie->ligne_commander)
       if ($result == 0)
 	{
 	  $result = $fourn->CreateCommande($user);
-	}
-      
-      /*
-	$fourntel = new FournisseurTelephonie($db,1);
-	if ( $fourntel->fetch(1) == 0)
-	{
-	$ct = new CommandeTableur($db, $user, $fourntel);
-	
-	$result = $ct->create();
-	
-	if ($result == 0)
-	{
-	Header("Location: archives.php");
-	}
-	elseif ($result == -3)
-	{
-	$mesg_erreur = "Email fournisseur non définit"; 
-	}
-	}
-      */
+	}      
     }
 }
 
@@ -102,7 +82,7 @@ if ($result)
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>Fournisseur</td>';
-  print '<td align="center">Nb Lignes</td><td>&nbsp;</td>';
+  print '<td align="center">Nb Lignes</td><td>&nbsp;</td><td>Email envoyé à</td>';
   print "</tr>\n";
 
   $var=True;
@@ -113,6 +93,9 @@ if ($result)
     {
       $row = $db->fetch_row();
       $var=!$var;
+
+      $fournisseur = new FournisseurTelephonie($db);  
+      $fournisseur->fetch($row[1]);
 
       print "<tr $bc[$var]>";
       print '<td>'.$row[2].'</td>';
@@ -126,8 +109,9 @@ if ($result)
 	{
 	  print '<a class="tabAction" href="fiche.php?action=create&amp;fournid='.$row[1].'">Créer la commande</a>';
 	}
-      print "</td>\n";
-      print "</tr>\n";
+      print "</td><td>\n";
+      print $fournisseur->email_commande;
+      print "</td></tr>\n";
       $i++;
     }
   print "</table><br />";
