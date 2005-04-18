@@ -29,7 +29,7 @@ class CommandeMethode
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commande";
     $sql .= " (datec, fk_user_creat, fk_fournisseur, filename)";
-    $sql .= " VALUES (now(),".$this->user->id.",".$this->fourn->id.",'".$this->datef.".xls')";
+    $sql .= " VALUES (now(),".$this->user->id.",".$this->fourn->id.",'".$this->filename."')";
 
     $resql = $this->db->query($sql);
 
@@ -50,12 +50,14 @@ class CommandeMethode
 	    if (! $this->db->query($sql) )
 	      {
 		$error++;
+		dolibarr_syslog($sql);
 	      }
 	  }
       }
     else
       {
 	$error++;
+	dolibarr_syslog($sql);
       }
 
     return $error;
