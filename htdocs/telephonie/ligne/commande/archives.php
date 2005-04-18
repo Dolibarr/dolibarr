@@ -87,7 +87,14 @@ if ($result)
       $dir = $conf->telephonie->dir_output . "/ligne/commande/";
       $relativepath = urlencode("ligne/commande/".$obj->filename);
       
-      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=telephonie&amp;file='.urlencode($relativepath).'&amp;type=application/msexcel">'.$obj->filename.'</a></td>';
+      if (substr($obj->filename, -3) == 'txt')
+	{
+	  print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=telephonie&amp;file='.urlencode($relativepath).'&amp;type=plain/text">'.$obj->filename.'</a></td>';
+	}
+      else
+	{
+	  print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=telephonie&amp;file='.urlencode($relativepath).'&amp;type=application/msexcel">'.$obj->filename.'</a></td>';
+	}
 
       print "</tr>\n";
       $i++;
