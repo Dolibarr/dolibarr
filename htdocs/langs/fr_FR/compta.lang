@@ -21,6 +21,7 @@ VATPayed=TVA payée
 SocialContributions=Charges sociales
 AccountancyTreasuryArea=Espace Compta/Tréso
 NewPayment=Nouveau paiement
+Payments=Paiements
 ListPayment=Liste des paiements
 ListOfPayments=Liste des paiements
 RulesResultDue=- Il inclut les factures et charges dues, qu'elles soient payées ou non.<br>- Il se base sur la date de validation pour les factures, et sur les dates d'échéances pour les charges.<br>
