@@ -20,8 +20,9 @@
  *
  */
 
-
 require("../main.inc.php");
+
+$langs->load("interventions");
 
 function llxHeader($head = "", $urlp = "")
 {
