@@ -5,3 +5,4 @@ NewIntervention=Nouvelle intervention
 AddIntervention=Ajouter intervention
 ListOfInterventions=Liste des interventions
 EditIntervention=Editer
+TemplatePDFInterventions=Modèle PDF des fiches d'interventions

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 require("./pre.inc.php");
 
 $langs->load("admin");
+$langs->load("interventions");
 
 llxHeader();
 
@@ -64,12 +65,12 @@ print_titre($langs->trans("InterventionsSetup"));
 
 print "<br>";
 
-print_titre("Modèles de fiche d'intervention pdf");
+print_titre($langs->trans("TemplatePDFInterventions"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Desc").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center">'.$langs->trans("Activated").'</td>';
 print '<td>&nbsp;</td>';
 print "</tr>\n";
