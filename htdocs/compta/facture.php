@@ -626,7 +626,7 @@ if ($_GET["action"] == 'create')
 		{
 		  print '<tr><td><select class="flat" name="idprod'.$i.'">'.$opt.'</select></td>';
 		  print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
-		  print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0">%</td>';
+		  print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0"> %</td>';
 		  print '<td>&nbsp;</td>';
 		  // Si le module service est actif, on propose des dates de début et fin à la ligne
 		  if ($conf->service->enabled) {
@@ -1155,7 +1155,7 @@ else
 	      print '</td>';
 	      print '<td align="right"><input type="text" name="pu" size="8"></td>';
 	      print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
-	      print '<td align="right"><input type="text" name="remise_percent" size="3" value="0">%</td>';
+	      print '<td align="right"><input type="text" name="remise_percent" size="3" value="0"> %</td>';
 	      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	      if ($conf->service->enabled) {
             print '<tr '.$bc[$var].'>';

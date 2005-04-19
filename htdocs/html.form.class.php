@@ -549,7 +549,7 @@ class Form
 
     $taille = sizeof($txtva);
 
-    print '<select name="'.$name.'">';
+    print '<select class="flat" name="'.$name.'">';
 
     for ($i = 0 ; $i < $taille ; $i++)
       {
