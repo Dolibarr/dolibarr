@@ -1054,7 +1054,7 @@ else
 		      print "</td>\n";
 		    }
 
-		  print '<td align="right">'.$objp->tva_taux.' %</td>';
+		  print '<td align="right">'.$objp->tva_taux.'%</td>';
 		  print '<td align="right">'.price($objp->subprice)."</td>\n";
 		  print '<td align="right">'.$objp->qty.'</td>';
 		  if ($objp->remise_percent > 0)
@@ -1091,7 +1091,7 @@ else
 		      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 		      print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
 		      print "<tr $bc[$var]>";
-		      print '<td><textarea name="desc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
+		      print '<td><textarea name="desc" cols="50" rows="2">'.stripslashes($objp->description).'</textarea></td>';
 		      print '<td align="right">';
 		      //print $html->select_tva("tva_tx",$objp->tva_taux);
 		      print "$objp->tva_taux %";    // Taux tva dépend du produit, donc on ne doit pas pouvoir le changer ici
@@ -1149,13 +1149,13 @@ else
 	      $var=!$var;
 
 	      print '<tr '.$bc[$var].'>';
-	      print '<td><textarea name="desc" cols="60" rows="2"></textarea></td>';
+	      print '<td><textarea name="desc" cols="50" rows="2"></textarea></td>';
 	      print '<td align="right">';
 	      print $html->select_tva("tva_tx",$conf->defaulttx);
 	      print '</td>';
 	      print '<td align="right"><input type="text" name="pu" size="8"></td>';
 	      print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
-	      print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
+	      print '<td align="right"><input type="text" name="remise_percent" size="3" value="0">%</td>';
 	      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	      if ($conf->service->enabled) {
             print '<tr '.$bc[$var].'>';
