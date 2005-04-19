@@ -22,16 +22,18 @@
  *
  */
 
-/** 	\file       htdocs/includes/modules/facture/pdf_bernique.modules.php
-		\ingroup    facture
-		\brief      Fichier de la classe permettant de générer les factures au modèle Bernique
-		\author	    Laurent Destailleur
-		\version    $Revision$
+/**
+   \file       htdocs/includes/modules/facture/pdf_bernique.modules.php
+   \ingroup    facture
+   \brief      Fichier de la classe permettant de générer les factures au modèle Bernique
+   \author	    Laurent Destailleur
+   \version    $Revision$
 */
 
 
-/** 	\class      pdf_bernique
-		\brief      Classe permettant de générer les factures au modèle Bernique
+/** 	
+    \class      pdf_bernique
+    \brief      Classe permettant de générer les factures au modèle Bernique
 */
 
 class pdf_bernique extends ModelePDFFactures  {
@@ -231,7 +233,7 @@ class pdf_bernique extends ModelePDFFactures  {
   {
     global $langs;
     $langs->load("main");
-    $langs->loads("bills"); 
+    $langs->load("bills"); 
     
     
     $tab2_top = $top + $height;
