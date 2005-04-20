@@ -70,7 +70,10 @@ class mailing_pomme extends MailingTargets
         $this->db=$DB;
 
         // Liste des tableaux des stats espace mailing
-        $this->statssql[0]="SELECT '".$langs->trans("DolibarrUsers")."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."user";
+        $sql = "SELECT '".$langs->trans("DolibarrUsers")."' as label, count(distinct(email)) as nb FROM ".MAIN_DB_PREFIX."user as u";
+        $sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+        $this->statssql[0]=$sql;
+        
     }
     
     function getNbOfRecipients()
@@ -78,7 +81,7 @@ class mailing_pomme extends MailingTargets
         // La requete doit retourner: nb
         $sql  = "SELECT count(distinct(u.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-        $sql .= " WHERE u.email IS NOT NULL";
+        $sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
 
         return parent::getNbOfRecipients($sql); 
     }
@@ -88,7 +91,7 @@ class mailing_pomme extends MailingTargets
         // La requete doit retourner: email, fk_contact, name, firstname
         $sql = "SELECT u.email as email, null as fk_contact, u.name as name, u.firstname as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-        $sql .= " WHERE u.email IS NOT NULL";
+        $sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
         $sql .= " ORDER BY u.email";
 
         return parent::add_to_target($mailing_id, $sql);
