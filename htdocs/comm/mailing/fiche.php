@@ -73,6 +73,7 @@ if ($_POST["action"] == 'send')
         $headers .= "X-Priority: 3\r\n";
         $headers .= "X-Mailer: Dolibarr ".DOL_VERSION."\r\n";
         
+        $errorlevel=error_reporting(0);
         $m=mail($mil->sendto, $mil->sujet, $mil->body, $headers);
         
         if($m)
@@ -83,6 +84,7 @@ if ($_POST["action"] == 'send')
         {
             $message='<div class="error">'.$langs->trans("ResultKo").'</div>';
         }					
+        error_reporting($errorlevel);
         
         $_GET["action"]='';
         $_GET["id"]=$mil->id;

@@ -220,14 +220,16 @@ class FormMail
         print "<tr>";
         print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
         print "<td>";
-        if (! $this->withbodyreadonly) {
-            print '<textarea cols="72" rows="8" name="message">';
-        }
-        print $defaultmessage;
-        if (! $this->withbodyreadonly) {
-            print '</textarea>';
-        } else {
+        if ($this->withbodyreadonly)
+        {
+            print nl2br($defaultmessage);
             print '<input type="hidden" name="message" value="'.$defaultmessage.'">';
+        }
+        else
+        {
+            print '<textarea cols="72" rows="8" name="message">';
+            print $defaultmessage;
+            print '</textarea>';
         }
         print "</td></tr>\n";
     }
