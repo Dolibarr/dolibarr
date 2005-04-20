@@ -38,6 +38,7 @@
 
  */
 
+
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -56,6 +57,8 @@ require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
 
 $error = 0;
 
+
+// On récupère données du mail
 $sql = "SELECT m.rowid, m.titre, m.sujet, m.body";
 $sql .= " , m.email_from, m.email_replyto, m.email_errorsto";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
@@ -63,14 +66,15 @@ $sql .= " WHERE m.statut >= 1";
 $sql .= " AND m.rowid= ".$id;
 $sql .= " LIMIT 1";
 
-if ( $db->query($sql) ) 
+$resql=$db->query($sql);
+if ($resql) 
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   
   if ($num == 1)
     {
-      $obj = $db->fetch_object();
+      $obj = $db->fetch_object($resql);
 
       dolibarr_syslog("mailing-send: mailing ".$id);
 
@@ -81,46 +85,89 @@ if ( $db->query($sql) )
       $errorsto = $obj->email_errorsto;
 
       $i++;
-      
     }
 }
 
-$sql = "SELECT mc.nom, mc.prenom, mc.email";
+
+$nbok=0; $nbko=0;
+
+// On choisit les mails non déjà envoyés pour ce mailing (statut=0)
+// ou envoyés en erreur (statut=-1)
+$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-$sql .= " WHERE mc.fk_mailing = ".$id;
+$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
 
-if ( $db->query($sql) ) 
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  
-  dolibarr_syslog("mailing-send: mailing $num cibles");
+    $num = $db->num_rows($resql);
 
-  while ($i < $num )
+    if ($num) 
     {
-      $obj = $db->fetch_object();
+        dolibarr_syslog("mailing-send: mailing $num cibles");
 
-      $sendto = stripslashes($obj->prenom). " ".stripslashes($obj->nom) ."<".$obj->email.">";
+        // Positionne date debut envoi
+        $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE WHERE rowid=".$id;
+        $resql2=$db->query($sql);
+        if (! $resql2)
+        {
+            dolibarr_print_error($db);
+        }
+    
+        // Boucle sur chaque adresse et envoie le mail
+        $i = 0;
+        while ($i < $num )
+        {
+            $obj = $db->fetch_object($resql);
 
-      $mail = new DolibarrMail($subject,
-			       $sendto,
-			       $from,
-			       $message);
-      
-      $mail->errors_to = $errorsto;                 
-      
-      if ( $mail->sendfile() )
-	{
+            $sendto = stripslashes($obj->prenom). " ".stripslashes($obj->nom) ."<".$obj->email.">";
+            $mail = new DolibarrMail($subject, $sendto, $from, $message);
+    
+            $mail->errors_to = $errorsto;
+    
+            if ( $mail->sendfile() )
+            {
+                // Mail envoye avec succes
+                $nbok++;
+    
+                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=1, date_envoi=SYSDATE WHERE rowid=".$obj->rowid;
+                $resql2=$db->query($sql);
+                if (! $resql2)
+                {
+                    dolibarr_print_error($db);   
+                }
+            }
+            else
+            {
+                // Mail en echec
+                $nbko++;
+    
+                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=1, date_envoi=SYSDATE WHERE rowid=".$obj->rowid;
+                $resql2=$db->query($sql);
+                if (! $resql2)
+                {
+                    dolibarr_print_error($db);   
+                }
+            }
+    
+            $i++;
+        }
 
-	}
-
-      $i++;
-      
+        // Met a jour statut global du mail et date envoi
+        $statut=2;
+        $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
+        $resql2=$db->query($sql);
+        if (! $resql2)
+        {
+            dolibarr_print_error($db);
+        }
+    
     }
 }
 else
 {
-  dolibarr_syslog($db->error());
+    dolibarr_syslog($db->error());
+    dolibarr_print_error($db);
 }
 
 ?>
