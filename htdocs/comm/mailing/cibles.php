@@ -77,7 +77,6 @@ if ($_GET["action"] == 'add')
     }
     if ($result == 0)
     {
-print $obj->aaa;
         $mesg='<div class="warning">'.$langs->trans("WarningNoEMailsAdded").'</div>';
     }   
     if ($result < 0)
@@ -100,6 +99,25 @@ if ($_GET["action"] == 'clear')
     Header("Location: cibles.php?id=".$_GET["rowid"]);
 }
 
+if ($_GET["action"] == 'delete')
+{
+    // Ici, rowid indique le destinataire et id le mailing
+    $sql="DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles where rowid=".$_GET["rowid"];
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $file = $dir."/modules_mailings.php";
+        $classname = "MailingTargets";
+        require_once($file);
+        
+        $obj = new $classname($db);
+        $obj->update_nb($_GET["id"]);
+    }
+    else
+    {
+        dolibarr_print_error($db);
+    }
+}
 
 
 /*
@@ -232,15 +250,16 @@ if ($mil->fetch($_GET["id"]) == 0)
     
 
     // Liste des destinataires sélectionnés
-    $sql  = "SELECT mc.nom, mc.prenom, mc.email";
+    $sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email";
     $sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
     $sql .= " WHERE mc.fk_mailing=".$mil->id;
     if ($sortfield) { $sql .= " ORDER BY $sortfield $sortorder"; }
     $sql .= $db->plimit($conf->liste_limit+1, $offset);
     
-    if ( $db->query($sql) )
+    $resql=$db->query($sql);
+    if ($resql)
     {
-        $num = $db->num_rows();
+        $num = $db->num_rows($resql);
     
         $addu = "&amp;id=".$mil->id."&amp;page=$page";;
         print_barre_liste($langs->trans("MailSelectedRecipients"), $page, "cibles.php","&amp;id=".$mil->id,$sortfield,$sortorder,"",$num);
@@ -249,26 +268,27 @@ if ($mil->fetch($_GET["id"]) == 0)
         print_liste_field_titre($langs->trans("Lastname"),"cibles.php","mc.nom",$addu,"","",$sortfield);
         print_liste_field_titre($langs->trans("Firstname"),"cibles.php","mc.prenom",$addu,"","",$sortfield);
         print_liste_field_titre($langs->trans("EMail"),"cibles.php","mc.email",$addu,"","",$sortfield);
+        print '<td>&nbsp;</td>';
         print '</tr>';
         $var = true;
         $i = 0;
     
         while ($i < $num )
         {
-            $obj = $db->fetch_object();
+            $obj = $db->fetch_object($resql);
             $var=!$var;
     
             print "<tr $bc[$var]>";
             print '<td>'.stripslashes($obj->nom).'</a></td>';
             print '<td>'.stripslashes($obj->prenom).'</a></td>';
             print '<td>'.$obj->email.'</td>';
-    
+            print '<td><a href="cibles.php?action=delete&id='.$mil->id.'&rowid='.$obj->rowid.'">'.img_delete().'</td>';
             $i++;
         }
     
         print "</table><br>";
     
-        $db->free();
+        $db->free($resql);
     }
     else
     {
