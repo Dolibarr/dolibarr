@@ -224,13 +224,13 @@ if ($_GET["action"] == 'create')
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans("MailFrom").'</td><td><input name="from" size="30" value="'.MAIN_MAIL_FROM.'"></td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.MAIN_MAIL_FROM.'"></td></tr>';
 
-    print '<tr><td width="20%">'.$langs->trans("MailTitle").'</td><td><input name="titre" size="30" value=""></td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value=""></td></tr>';
 
-    print '<tr><td width="20%">'.$langs->trans("MailTopic").'</td><td><input name="sujet" size="40" value=""></td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value=""></td></tr>';
 
-    print '<tr><td width="20%" valign="top">'.$langs->trans("MailMessage").'</td><td><textarea cols="50" rows="10" name="body"></textarea></td></tr>';
+    print '<tr><td width="20%" valign="top">'.$langs->trans("MailMessage").'</td><td><textarea cols="70" rows="10" name="body"></textarea></td></tr>';
 
     print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("CreateMailing").'"></td></tr>';
     print '</table>';
@@ -373,7 +373,7 @@ else
             	      $formmail->fromname = $mil->email_from;
             	      $formmail->frommail = $mil->email_from;
                       $formmail->withfrom=1;
-                      $formmail->withto=$user->email;
+                      $formmail->withto=$user->email?$user->email:1;
                       $formmail->withcc=0;
                       $formmail->withtopic=$mil->sujet;
                       $formmail->withtopicreadonly=1;
@@ -402,11 +402,11 @@ else
             print '<input type="hidden" name="id" value="'.$mil->id.'">';
             print '<table class="border" width="100%">';
 
-            print '<tr><td width="20%">'.$langs->trans("MailTitle").'</td><td colspan="3"><input type="text" size=50 name="titre" value="'.$mil->titre.'"></td></tr>';
-            print '<tr><td width="20%">'.$langs->trans("MailFrom").'</td><td colspan="3"><input type="text" size=50 name="from" value="'.htmlentities($mil->email_from).'"></td></tr>';
-            print '<tr><td width="20%">'.$langs->trans("MailTopic").'</td><td colspan="3"><input type="text" size=50 name="sujet" value="'.$mil->sujet.'"></td></tr>';
-            print '<tr><td width="20%" valign="top">'.$langs->trans("MailMessage").'</td><td colspan="3"><textarea name="body" cols=50 rows=10>';
-            print nl2br($mil->body).'</textarea></td></tr>';
+            print '<tr><td width="20%">'.$langs->trans("MailTitle").'</td><td colspan="3"><input class="flat" type="text" size=40 name="titre" value="'.htmlentities($mil->titre).'"></td></tr>';
+            print '<tr><td width="20%">'.$langs->trans("MailFrom").'</td><td colspan="3"><input class="flat" type="text" size=40 name="from" value="'.htmlentities($mil->email_from).'"></td></tr>';
+            print '<tr><td width="20%">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.htmlentities($mil->sujet).'"></td></tr>';
+            print '<tr><td width="20%" valign="top">'.$langs->trans("MailMessage").'</td><td colspan="3"><textarea name="body" cols=70 rows=10>';
+            print $mil->body.'</textarea></td></tr>';
 
             print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
             print '</table><br>';
