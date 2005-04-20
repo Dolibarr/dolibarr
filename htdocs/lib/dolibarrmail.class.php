@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,20 +24,20 @@
  * Lots of code inspired from Dan Potter's CMailFile class
  */
 
-/*!
-  \file       htdocs/lib/dolibarrmail.class.php
-  \brief      Classe permettant d'envoyer des mail avec attachements, recriture de CMailFile
-  \author     Dan Potter.
-  \author     Eric Seigne
-  \author     Rodolphe Quiedeville
-  \author     Laurent Destailleur.
-  \version    $Revision$
+/**
+        \file       htdocs/lib/dolibarrmail.class.php
+        \brief      Classe permettant d'envoyer des mail avec attachements, reecriture de CMailFile
+        \author     Dan Potter.
+        \author     Eric Seigne
+        \author     Rodolphe Quiedeville
+        \author     Laurent Destailleur.
+        \version    $Revision$
 */
 
-/*! 
+/** 
   \class      DolibarrMail
   \brief      Classe permettant d'envoyer des attachements par mail
-  \todo       Classe en double avec CMAilFile.class.php
+  \todo       Classe en double avec CMailFile.class.php
 */
 
 class DolibarrMail
@@ -139,8 +139,8 @@ class DolibarrMail
   }
   
   /**
-     \brief permet d'encoder un fichier
-     \param sourcefile
+     \brief     Permet d'encoder un fichier
+     \param     sourcefile
   */
   
   function encode_file($sourcefile)
@@ -160,7 +160,8 @@ class DolibarrMail
   }
   
   /**
-     \brief envoi le mail
+     \brief     Envoi le mail
+     \return    boolean     vrai si mail envoyé, faux sinon
   */
   
   function sendfile()
@@ -186,9 +187,10 @@ class DolibarrMail
 
     return $res; 
   }
+
   /**
-   * Ecrit le mail dans un fichier
-   * Utilisation pour le debuggage 
+   *    \brief  Ecrit le mail dans un fichier
+   *            Utilisation pour le debuggage
    */
   function write_to_file()
   {
@@ -206,7 +208,7 @@ class DolibarrMail
   }
 
   /**
-     \brief permet d'ecrire le corps du message
+        \brief  Permet d'ecrire le corps du message
   */
   
   function write_body()
