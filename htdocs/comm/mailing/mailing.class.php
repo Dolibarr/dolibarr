@@ -68,8 +68,7 @@ class Mailing
         
         $this->statuts[0] = $langs->trans("MailingStatusDraft");
         $this->statuts[1] = $langs->trans("MailingStatusValidated");
-        $this->statuts[2] = $langs->trans("MailingStatusApproved");
-        $this->statuts[3] = $langs->trans("MailingStatusSent");
+        $this->statuts[2] = $langs->trans("MailingStatusSent");
   }
   
   /**

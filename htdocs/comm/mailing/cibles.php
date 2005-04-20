@@ -141,7 +141,7 @@ if ($mil->fetch($_GET["id"]) == 0)
     $head[$h][1] = $langs->trans("MailRecipients");
     $hselected = $h;
     $h++;
-    
+
     /*
     $head[$h][0] = DOL_URL_ROOT."/comm/mailing/history.php?id=".$mil->id;
     $head[$h][1] = $langs->trans("MailHistory");
@@ -250,7 +250,7 @@ if ($mil->fetch($_GET["id"]) == 0)
     
 
     // Liste des destinataires sélectionnés
-    $sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email";
+    $sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.statut, mc.date_envoi";
     $sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
     $sql .= " WHERE mc.fk_mailing=".$mil->id;
     if ($sortfield) { $sql .= " ORDER BY $sortfield $sortorder"; }
@@ -268,7 +268,15 @@ if ($mil->fetch($_GET["id"]) == 0)
         print_liste_field_titre($langs->trans("Lastname"),"cibles.php","mc.nom",$addu,"","",$sortfield);
         print_liste_field_titre($langs->trans("Firstname"),"cibles.php","mc.prenom",$addu,"","",$sortfield);
         print_liste_field_titre($langs->trans("EMail"),"cibles.php","mc.email",$addu,"","",$sortfield);
-        print '<td>&nbsp;</td>';
+        print '<td>'.$langs->trans("Status").'</td>';
+        if ($mil->statut == 0)
+        {
+            print '<td>&nbsp;</td>';
+        }
+        if ($mil->statut != 0)
+        {
+            print '<td>'.$langs->trans("Date").'</td>';
+        }        
         print '</tr>';
         $var = true;
         $i = 0;
@@ -282,7 +290,21 @@ if ($mil->fetch($_GET["id"]) == 0)
             print '<td>'.stripslashes($obj->nom).'</a></td>';
             print '<td>'.stripslashes($obj->prenom).'</a></td>';
             print '<td>'.$obj->email.'</td>';
-            print '<td><a href="cibles.php?action=delete&id='.$mil->id.'&rowid='.$obj->rowid.'">'.img_delete().'</td>';
+            if ($mil->statut == 0)
+            {
+                print '<td>'.$langs->trans("MailingStatusNotSent").'</td>';
+                print '<td><a href="cibles.php?action=delete&id='.$mil->id.'&rowid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
+            }
+            if ($mil->statut != 0)
+            {
+                print '<td>';
+                if ($obj->statut==-1) print $langs->trans("MailingStatusError");
+                if ($obj->statut==1) print $langs->trans("MailingStatusSent");
+                print '</td>';
+                print '<td>'.$obj->date_envoi.'</td>';
+            }        
+            print '</tr>';
+
             $i++;
         }
     

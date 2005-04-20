@@ -298,7 +298,7 @@ else
             $uc = new User($db, $mil->user_creat);
             $uc->fetch();
             print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>'.$uc->fullname.'</td>';
-            print '<td>'.$langs->trans("DateCreation").'</td>';
+            print '<td>'.$langs->trans("Date").'</td>';
             print '<td>'.strftime("%d %b %Y %H:%M", $mil->date_creat).'</td></tr>';
 
             if ($mil->statut > 0)
@@ -314,7 +314,7 @@ else
             {
                 $ua = new User($db, $mil->user_appro);
                 $ua->fetch();
-                print '<tr><td>'.$langs->trans("ApprovedBy").'</td><td>'.$ua->fullname.'</td>';
+                print '<tr><td>'.$langs->trans("SentBy").'</td><td>'.$ua->fullname.'</td>';
                 print '<td>'.$langs->trans("Date").'</td>';
                 print '<td>'.strftime("%d %b %Y %H:%M", $mil->date_appro).'</td></tr>';
             }

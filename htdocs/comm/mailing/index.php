@@ -190,7 +190,7 @@ if (! is_readable($htmlfile)) {
     $htmlfile="../../langs/fr_FR/html/spam.html";
 }
 if (is_readable($htmlfile)) {
-    print "<br>".$langs->trans("Note").":<br><hr>";
+    print "<br><br><br><br><br>".$langs->trans("Note").":<br><hr>";
     include($htmlfile);
 }
  
