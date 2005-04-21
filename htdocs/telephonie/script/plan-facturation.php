@@ -128,7 +128,7 @@ if ($resql)
 
   $num = $db->num_rows($resql);
   $i = 0;
-
+  $b = 0;
   $oc = '';
 
   while($i < $num)
@@ -137,10 +137,16 @@ if ($resql)
 
       if ($oc <> $obj->ref)
 	{
-	  $page2->write_string($i, 0,  "Contrat : ".$obj->ref, $fb);
-	  $page2->write_string($i, 1,  $obj->nom . "(".$obj->code_client.")", $formatcc);
-	  $page2->write_string($i+1, 1,  $obj->address , $formatcc);
-	  $page2->write_string($i+2, 1,  $obj->cp . " ".$obj->ville , $formatcc);
+	  $b++;
+
+	  $z = $obj->nom . "(".$obj->code_client.")". "\n";
+	  $z.= $obj->address."\n";
+	  $z.= $obj->cp . " ".$obj->ville;
+	  
+	  $page2->write_string($i, 0,  $b, $formatcc);
+	  $page2->write_string($i, 1,  "Contrat : ".$obj->ref, $fb);
+	  $page2->write_string($i, 2,  $z, $formatcc);
+
 	  $oc = $obj->ref;
 	  $a = 0;
 	}
@@ -150,9 +156,6 @@ if ($resql)
       $page2->write_string($i, 7,  $obj->nom, $formatcc);
 
       //$page2->write_blank(1, 0,  $format_titre_agence2);
-
-
-
 
       $i++;
       $a++;
