@@ -188,7 +188,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
         $resql=$db->query($sql);	
         
         $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
-        $sql.= " VALUES ('$name','$value','$type',$visible,'$note');";
+        $sql.= " VALUES ('$name','".addslashes($value)."','$type',$visible,'$note');";
         $resql=$db->query($sql);	
 
         if ($resql)
