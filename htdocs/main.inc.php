@@ -76,7 +76,7 @@ else
       if ($result)
 	{ 
         // Authentification Auth OK, on va chercher les infos du user
-        dolibarr_syslog ("auth demarre va chercher les infos du user");
+        dolibarr_syslog ("Authentification ok pour $dolibarr_main_db_user");
         $user->fetch($aDol->getUsername());
 	}
       else
