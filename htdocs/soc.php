@@ -22,7 +22,8 @@
  *
  */
 
-/**	    \file       htdocs/soc.php
+/**
+	    \file       htdocs/soc.php
 		\ingroup    societe
 		\brief      Onglet societe d'une societe
 		\version    $Revision$
@@ -55,60 +56,62 @@ if (! $step) $step++;
  */
 if (($_POST["action"] == 'add' && (! defined(COMPANY_CREATE_TWO_STEPS) || $step == 2)) or $_POST["action"] == 'update')
 {
-  $soc->nom                   = stripslashes($_POST["nom"]);
-  $soc->adresse               = stripslashes($_POST["adresse"]);
-  $soc->cp                    = stripslashes($_POST["cp"]);
-  $soc->ville                 = stripslashes($_POST["ville"]);
-  $soc->pays_id               = stripslashes($_POST["pays_id"]);
-  $soc->departement_id        = stripslashes($_POST["departement_id"]);
-  $soc->tel                   = stripslashes($_POST["tel"]);
-  $soc->fax                   = stripslashes($_POST["fax"]);
-  $soc->url                   = ereg_replace( "http://", "", $_POST["url"] );
-  $soc->siren                 = stripslashes($_POST["siren"]);
-  $soc->siret                 = stripslashes($_POST["siret"]);
-  $soc->ape                   = stripslashes($_POST["ape"]);
-  $soc->prefix_comm           = stripslashes($_POST["prefix_comm"]);
-  $soc->code_client           = stripslashes($_POST["code_client"]);
-  $soc->codeclient_modifiable = stripslashes($_POST["codeclient_modifiable"]);
-  $soc->capital               = stripslashes($_POST["capital"]);
-  $soc->tva_intra             = stripslashes($_POST["tva_intra_code"] . $_POST["tva_intra_num"]);
-  $soc->forme_juridique_code  = stripslashes($_POST["forme_juridique_code"]);
-  $soc->effectif_id           = stripslashes($_POST["effectif_id"]);
-  $soc->typent_id             = stripslashes($_POST["typent_id"]);
-  $soc->client                = stripslashes($_POST["client"]);
-  $soc->fournisseur           = stripslashes($_POST["fournisseur"]);
-
-  if ($_POST["action"] == 'update')
+    $soc->nom                   = stripslashes($_POST["nom"]);
+    $soc->adresse               = stripslashes($_POST["adresse"]);
+    $soc->cp                    = stripslashes($_POST["cp"]);
+    $soc->ville                 = stripslashes($_POST["ville"]);
+    $soc->pays_id               = stripslashes($_POST["pays_id"]);
+    $soc->departement_id        = stripslashes($_POST["departement_id"]);
+    $soc->tel                   = stripslashes($_POST["tel"]);
+    $soc->fax                   = stripslashes($_POST["fax"]);
+    $soc->url                   = ereg_replace( "http://", "", $_POST["url"] );
+    $soc->siren                 = stripslashes($_POST["siren"]);
+    $soc->siret                 = stripslashes($_POST["siret"]);
+    $soc->ape                   = stripslashes($_POST["ape"]);
+    $soc->prefix_comm           = stripslashes($_POST["prefix_comm"]);
+    $soc->code_client           = stripslashes($_POST["code_client"]);
+    $soc->codeclient_modifiable = stripslashes($_POST["codeclient_modifiable"]);
+    $soc->capital               = stripslashes($_POST["capital"]);
+    $soc->tva_intra             = stripslashes($_POST["tva_intra_code"] . $_POST["tva_intra_num"]);
+    $soc->forme_juridique_code  = stripslashes($_POST["forme_juridique_code"]);
+    $soc->effectif_id           = stripslashes($_POST["effectif_id"]);
+    $soc->typent_id             = stripslashes($_POST["typent_id"]);
+    $soc->client                = stripslashes($_POST["client"]);
+    $soc->fournisseur           = stripslashes($_POST["fournisseur"]);
+    
+    if ($_POST["action"] == 'update')
     {
-      $result = $soc->update($_GET["socid"],$user);
-      if ($result <> 0)
-	{
-	  $soc->id = $_GET["socid"];
-	  // doublon sur le prefix comm
-	  $no_reload = 1;
-	  $mesg = $soc->error;      //"Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
-	  $_GET["action"]= "edit";
-	}
-      else
-	{
-	  Header("Location: soc.php?socid=".$_GET["socid"]);
-	}
-	
+        $result = $soc->update($_GET["socid"],$user);
+        if ($result <> 0)
+        {
+            $soc->id = $_GET["socid"];
+            // doublon sur le prefix comm
+            $no_reload = 1;
+            $mesg = $soc->error;      //"Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
+            $_GET["action"]= "edit";
+        }
+        else
+        {
+            Header("Location: soc.php?socid=".$_GET["socid"]);
+            exit;
+        }
+    
     }
-
-  if ($_POST["action"] == 'add')
+    
+    if ($_POST["action"] == 'add')
     {
-      $result = $soc->create($user);
-
-      if ($result == 0)
-	{
-	  Header("Location: soc.php?socid=".$soc->id);
-	}
-      else
-	{
-	  $_GET["action"]='create';
-	  //dolibarr_print_error($db); 
-	}
+        $result = $soc->create($user);
+    
+        if ($result == 0)
+        {
+            Header("Location: soc.php?socid=".$soc->id);
+            exit;
+        }
+        else
+        {
+            $_GET["action"]='create';
+            //dolibarr_print_error($db);
+        }
     }
 }
 
