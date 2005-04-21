@@ -20,18 +20,21 @@
  *
  */
 
-/**     \defgroup   deplacement     Module deplacement
+/**
+        \defgroup   deplacement     Module deplacement
         \brief      Module pour gérer les déplacements
 */
 
-/**     \file       htdocs/includes/modules/modDeplacement.class.php
+/**
+        \file       htdocs/includes/modules/modDeplacement.class.php
         \ingroup    deplacement
         \brief      Fichier de description et activation du module Deplacement
 */
 
 include_once "DolibarrModules.class.php";
 
-/** \class modDeplacement
+/**
+        \class      modDeplacement
 		\brief      Classe de description et activation du module Deplacement
 */
 
@@ -54,7 +57,8 @@ class modDeplacement extends DolibarrModules
     $this->const_name = "MAIN_MODULE_DEPLACEMENT";
     $this->const_config = MAIN_MODULE_DEPLACEMENT;
     $this->special = 0;
-
+    $this->picto = "trip";
+    
     // Dir
     $this->dirs = array();
 

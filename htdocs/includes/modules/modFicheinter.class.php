@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier			 <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@
  *
  */
 
-/**     \defgroup   ficheinter     Module fiche interventions
+/**
+        \defgroup   ficheinter     Module fiche interventions
         \brief      Module pour gérer la tenue de fiches d'interventions
 */
 
@@ -35,7 +36,8 @@
 
 include_once "DolibarrModules.class.php";
 
-/** \class modFicheinter
+/**
+        \class      modFicheinter
 		\brief      Classe de description et activation du module Ficheinter
 */
 
@@ -58,7 +60,8 @@ class modFicheinter  extends DolibarrModules
     $this->const_name = "MAIN_MODULE_FICHEINTER";
     $this->const_config = MAIN_MODULE_FICHEINTER;
     $this->special = 0;
-
+    $this->picto = "intervention";
+    
     // Dir
     $this->dirs = array();
 
