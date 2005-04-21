@@ -106,67 +106,74 @@ class Societe {
    *    \return     0 si ok, < 0 si erreur
    */
 	 
-  function create($user='')
-  {
-    global $langs;
+    function create($user='')
+    {
+        global $langs,$conf;
     
-    $this->nom=trim($this->nom);
+        $this->nom=trim($this->nom);
     
-    $this->db->begin();
-
-    $result = $this->verify();
+        $this->db->begin();
     
-    if ($result >= 0)
-      {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat) ";
-        $sql .= " VALUES ('".addslashes($this->nom)."', now(), now(), '".$user->id."')";
-        
-        $result=$this->db->query($sql);
-        if ($result)
-	  {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
-            
-            $this->creation_bit = 1;
-            
-            $ret = $this->update($this->id);
-            
-            if ($ret == 0)
-	      {
-		$this->db->commit();
-	      }
-	    else 
-	      {
-		dolibarr_syslog("Societe::create echec update");
-                $this->db->rollback();
-                return -3;
-	      }
-            
-            return $ret;
-	  }
-        else
-
-	  {
-	    if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
-	      {
-		
-                $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
-	      }
+        $result = $this->verify();
+    
+        if ($result >= 0)
+        {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat) ";
+            $sql .= " VALUES ('".addslashes($this->nom)."', now(), now(), '".$user->id."')";
+    
+            $result=$this->db->query($sql);
+            if ($result)
+            {
+                $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
+    
+                $this->creation_bit = 1;
+    
+                $ret = $this->update($this->id);
+    
+                if ($ret == 0)
+                {
+                    // Appel des triggers
+                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                    $interface=new Interfaces($this->db);
+                    $interface->run_triggers('COMPANY_CREATE',$this,$user,$lang,$conf);
+                    // Fin appel triggers
+                                        
+                    dolibarr_syslog("Societe::Create success id=".$this->id);
+                    $this->db->commit();
+                }
+                else
+                {
+                    dolibarr_syslog("Societe::Create echec update");
+                    $this->db->rollback();
+                    return -3;
+                }
+    
+                return $ret;
+            }
             else
-	      {
-		dolibarr_syslog("Societe::create echec insert sql=$sql");
-	      }
+    
+            {
+                if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
+                {
+    
+                    $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
+                }
+                else
+                {
+                    dolibarr_syslog("Societe::Create echec insert sql=$sql");
+                }
+                $this->db->rollback();
+                return -2;
+            }
+    
+        }
+        else
+        {
             $this->db->rollback();
-            return -2;
-	  }      
-	
-      }
-    else
-      {
-        $this->db->rollback();
-	dolibarr_syslog("Societe::Create echec verify sql=$sql");
-        return -1;
-      }    
-  }
+            dolibarr_syslog("Societe::Create echec verify sql=$sql");
+            return -1;
+        }
+    }
 
   /**
    *    \brief      Verification lors de la modification
@@ -230,6 +237,7 @@ class Societe {
     
     dolibarr_syslog("Societe::Update");
 
+    $this->id=$id;
     $this->capital=trim($this->capital);
     $this->nom=trim($this->nom);
     $this->adresse=trim($this->adresse);
@@ -354,6 +362,12 @@ class Societe {
 	
 	if ($this->db->query($sql)) 
 	  {
+        // Appel des triggers
+        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+        $interface=new Interfaces($this->db);
+        $interface->run_triggers('COMPANY_MODIFY',$this,$user,$lang,$conf);
+        // Fin appel triggers
+
 	    $result = 0;
 	  }
 	else
@@ -564,6 +578,12 @@ class Societe {
 
 	if ($sqr == 3)
 	  {
+        // Appel des triggers
+        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+        $interface=new Interfaces($this->db);
+        $interface->run_triggers('COMPANY_DELETE',$this,$user,$lang,$conf);
+        // Fin appel triggers
+
 	    $this->db->commit();
 
 	    // Suppression du répertoire document
