@@ -80,41 +80,51 @@ function check_mail ($mail)
 
 
 /**
-   \brief      Envoi des messages dolibarr dans syslog.
-   \param	    message		message a envoyer a syslog
-   \param      level       Niveau de l'erreur
-   \remarks    Cette fonction ne marchera qui si le module est activé
-   Le message est envoyé dans syslog dans la catégorie LOG_USER.
+   \brief       Envoi des messages dolibarr dans syslog ou dans un fichier
+                Pour syslog:    facility défini par MAIN_SYSLOG_FACILITY
+                Pour fichier:   fichier défini par MAIN_SYSLOG_FILE
+   \param       message		message a envoyer a syslog
+   \param       level       Niveau de l'erreur
+   \remarks     Cette fonction a un effet que si le module syslog est activé
 */
 function dolibarr_syslog($message, $level=LOG_ERR)
 {
-  if (defined("MAIN_MODULE_SYSLOG") && MAIN_MODULE_SYSLOG)
+    if (defined("MAIN_MODULE_SYSLOG") && MAIN_MODULE_SYSLOG)
     {
-      // Warning, les fonctions syslog sont buggués sous Windows et génèrent des
-      // fautes de protection mémoire. Pour résoudre, désactiver MAIN_DEBUG sous Windows.
-      define_syslog_variables();
-
-      if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
-	{
-	  $facility = MAIN_SYSLOG_FACILITY;
-	}
-      else
-	{
-	  $facility = LOG_USER;
-	}
-
-      openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
-
-      if (! $level) 
-	{
-	  syslog(LOG_ERR, $message);
-	}
-      else
-	{
-	  syslog($level, $message);
-	}
-
-      closelog();
+        if (defined("MAIN_SYSLOG_FILE") && MAIN_SYSLOG_FILE)
+        {
+            $file=fopen(MAIN_SYSLOG_FILE,"a+");
+            fwrite($file,time()." ".$level." ".$message."\n");
+            fclose($file);
+        }
+        else
+        {
+            // Warning, les fonctions syslog sont buggués sous Windows et génèrent des
+            // fautes de protection mémoire. Pour résoudre, désactiver MAIN_DEBUG sous Windows.
+            define_syslog_variables();
+        
+            if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
+            {
+                $facility = MAIN_SYSLOG_FACILITY;
+            }
+            else
+            {
+                $facility = LOG_USER;
+            }
+        
+            openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
+        
+            if (! $level)
+            {
+                syslog(LOG_ERR, $message);
+            }
+            else
+            {
+                syslog($level, $message);
+            }
+        
+            closelog();
+        }
     }
 }
 

@@ -52,7 +52,7 @@ class modSyslog extends DolibarrModules
     
     $this->family = "technic";
     $this->name = "Syslog";
-    $this->description = "Utilisation de syslog";
+    $this->description = "Activation des traces debug (syslog)";
     $this->version = '2.0.0';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_SYSLOG";
     $this->const_config = MAIN_MODULE_SYSLOG;
@@ -84,6 +84,7 @@ class modSyslog extends DolibarrModules
   function init()
   {
     $sql = array();
+    
     return $this->_init($sql);
 
   }
