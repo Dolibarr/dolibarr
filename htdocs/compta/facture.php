@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -327,6 +327,21 @@ if ($_POST["action"] == 'confirm_canceled' && $_POST["confirm"] == yes)
     }
 }
 
+/* 
+ * Ordonnancement des lignes
+ */
+
+if ($_GET["action"] == 'up' && $user->rights->facture->creer) 
+{
+  $fac = new Facture($db,"",$_GET["facid"]);
+  $fac->line_up($_GET["rowid"]);
+}
+
+if ($_GET["action"] == 'down' && $user->rights->facture->creer) 
+{
+  $fac = new Facture($db,"",$_GET["facid"]);
+  $fac->line_down($_GET["rowid"]);
+}
 
 /*
  * Action envoi de mail
@@ -852,6 +867,7 @@ else
 	  if ($_GET["action"] == 'delete')
 	    {
 	      $html->form_confirm($_SERVER["PHP_SELF"]."?facid=$fac->id",$langs->trans("DeleteBill"),$langs->trans("ConfirmDeleteBill"),"confirm_delete");
+	      print '<br />';
 	    }
 
 	  /*
@@ -861,6 +877,7 @@ else
 	  if ($_GET["action"] == 'canceled')
 	    {
 	      $html->form_confirm($_SERVER["PHP_SELF"]."?facid=$fac->id","Classer la facture à l'état 'Abandonnée'","La totalité du paiement de cette facture n'a pas été réalisée. Etes-vous sûr de vouloir abandonner définitivement cette facture ?","confirm_canceled");
+	      print '<br />';
 	    }
 	  
 	  /*
@@ -871,6 +888,7 @@ else
 	    {
 	      $numfa = facture_get_num($soc);
 	      $html->form_confirm("facture.php?facid=$fac->id","Valider la facture sous la référence no ".$numfa,"Etes-vous sûr de vouloir valider cette facture avec la référence no $numfa ?","confirm_valid");
+	      print '<br />';
 	    }
 
 	  /*
@@ -1002,17 +1020,20 @@ else
 	   * Lignes de factures
 	   *
 	   */
-	  $sql  = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice,";
-	  $sql .= $db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end, ";
-      $sql .= " p.fk_product_type";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l LEFT JOIN ".MAIN_DB_PREFIX."product p ON l.fk_product=p.rowid";
+	  $sql  = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux";
+	  $sql .= " , l.remise_percent, l.subprice,";
+	  $sql .= $db->pdate("l.date_start")." as date_start";
+	  $sql .= " , ".$db->pdate("l.date_end")." as date_end, ";
+	  $sql .= " p.fk_product_type";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l ";
+	  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON l.fk_product=p.rowid";
 	  $sql .= " WHERE l.fk_facture = ".$fac->id;
-	  $sql .= " ORDER BY l.rowid";
+	  $sql .= " ORDER BY l.rang ASC, l.rowid";
 
-	  $result = $db->query($sql);
-	  if ($result)
+	  $resql = $db->query($sql);
+	  if ($resql)
 	    {
-	      $num_lignes = $db->num_rows($result);
+	      $num_lignes = $db->num_rows($resql);
 	      $i = 0; $total = 0;
 	    
 	      print '<table class="noborder" width="100%">';
@@ -1025,13 +1046,13 @@ else
 		  print '<td width="8%" align="right">'.$langs->trans("Qty").'</td>';
 		  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
 		  print '<td width="10%" align="right">'.$langs->trans("AmountHT").'</td>';
-		  print '<td>&nbsp;</td><td>&nbsp;</td>';
+		  print '<td colspan="3">&nbsp;</td>';
 		  print "</tr>\n";
 		}
 	      $var=True;
 	      while ($i < $num_lignes)
 		{
-		  $objp = $db->fetch_object($result);
+		  $objp = $db->fetch_object($resql);
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
 		  if ($objp->fk_product > 0)
@@ -1076,10 +1097,18 @@ else
 		      print '<td align="right"><a href="facture.php?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
 		      print img_delete();
 		      print '</a></td>';
+
+		      print '<td align="right">';
+		      print '<a href="facture.php?facid='.$fac->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
+		      print img_up();
+		      print '</a><a href="facture.php?facid='.$fac->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
+		      print img_down();
+		      print '</a></td>';
+
 		    }
 		  else
 		    {
-		      print '<td>&nbsp;</td><td>&nbsp;</td>';
+		      print '<td colspan="3">&nbsp;</td>';
 		    }
 		  print "</tr>";
 	  
@@ -1099,12 +1128,12 @@ else
 		      print '<td align="right"><input size="8" type="text" name="price" value="'.price($objp->subprice).'"></td>';
 		      print '<td align="right"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></td>';
 		      print '<td align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
-		      print '<td align="center" colspan="3"><input type="submit" name="save" value="'.$langs->trans("Save").'"><br /><input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
+		      print '<td align="center" colspan="4"><input type="submit" name="save" value="'.$langs->trans("Save").'"><br /><input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 		      print '</tr>' . "\n";
 		      if ($conf->service->enabled)
 			{
 			  print "<tr $bc[$var]>";
-			  print '<td colspan="8">Si produit de type service à durée limitée: Du ';
+			  print '<td colspan="9">Si produit de type service à durée limitée: Du ';
 			  print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
 			  print ' au ';
 			  print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
@@ -1142,6 +1171,7 @@ else
 	      print '<td>&nbsp;</td>';
 	      print '<td>&nbsp;</td>';
 	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
 	      print "</tr>\n";
 	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	      print '<input type="hidden" name="action" value="addligne">';
@@ -1156,10 +1186,10 @@ else
 	      print '<td align="right"><input type="text" name="pu" size="8"></td>';
 	      print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
 	      print '<td align="right"><input type="text" name="remise_percent" size="3" value="0"> %</td>';
-	      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+	      print '<td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	      if ($conf->service->enabled) {
             print '<tr '.$bc[$var].'>';
-            print '<td colspan="8">Si produit de type service à durée limitée: Du ';
+            print '<td colspan="9">Si produit de type service à durée limitée: Du ';
             print $html->select_date('',"date_start",0,0,1);
             print ' au ';
             print $html->select_date('',"date_end",0,0,1);
@@ -1322,10 +1352,10 @@ else
 	  $sql .= " AND a.fk_soc = ".$fac->socidp ;
 	  $sql .= " AND a.fk_facture = ".$fac->id;
     
-	  $result = $db->query($sql);
-	  if ($result)
+	  $resql = $db->query($sql);
+	  if ($resql)
 	    {
-	      $num = $db->num_rows($result);
+	      $num = $db->num_rows($resql);
 	      if ($num)
 		{
 		  print_titre($langs->trans("ActionsOnBill"));
@@ -1338,7 +1368,7 @@ else
 		  $var=True;
 		  while ($i < $num)
 		    {
-		      $objp = $db->fetch_object($result);
+		      $objp = $db->fetch_object($resql);
 		      $var=!$var;
 		      print "<tr $bc[$var]>";
 		      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$objp->id.'</a></td>';
@@ -1460,8 +1490,8 @@ else
 	  $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.price, p.ref, p.rowid as propalid";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
   
-	  $result = $db->query($sql);
-	  if ($result)
+	  $resql = $db->query($sql);
+	  if ($resql)
 	    {
 	      $num = $db->num_rows();
 	      if ($num)
@@ -1600,9 +1630,9 @@ else
 	
 	  $sql .= $db->plimit($limit+1,$offset);
 
-	  $result = $db->query($sql);
+	  $resql = $db->query($sql);
 
-      if ($result)
+      if ($resql)
 	{
 	  $num = $db->num_rows();
 
@@ -1653,7 +1683,7 @@ else
 
 	      while ($i < min($num,$limit))
 		{
-		  $objp = $db->fetch_object($result);
+		  $objp = $db->fetch_object($resql);
 		  $var=!$var;
 
 		  print "<tr $bc[$var]>";
@@ -1739,7 +1769,7 @@ else
 	    }
 	
 	  print "</table>";
-	  $db->free($result);
+	  $db->free($resql);
 	}
       else
 	{
