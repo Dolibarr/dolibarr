@@ -1,5 +1,5 @@
 -- ===========================================================================
--- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -44,6 +44,8 @@ create table llx_facture
   fk_mode_reglement   integer,   -- mode de reglement (Virement, Prélèvement)
   date_lim_reglement  date,      -- date limite de reglement
   note                text,
+  rang                integer DEFAULT 0,
+
 
   UNIQUE INDEX (facnumber),
   INDEX fksoc (fk_soc)
