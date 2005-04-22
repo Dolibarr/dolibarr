@@ -295,12 +295,6 @@ class Contrat
     $qty = ereg_replace(",",".",$qty);
     $pu = ereg_replace(",",".",$pu);
     
-    if (! trim($desc))
-    {
-        $this->error=$langs->trans("ErrorDescRequired");
-        return -1;
-    }
-    
     if (strlen(trim($qty))==0)
     {
         $qty=1;
@@ -316,7 +310,6 @@ class Contrat
             $txtva = $prod->tva_tx;
         }
     }
-
 
     $remise = 0;
     $price = round(ereg_replace(",",".",$pu), 2);
