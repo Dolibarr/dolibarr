@@ -1759,10 +1759,10 @@ else
 	      if ($num <= $limit) {
 		    // Print total
 	    	print "<tr ".$bc[!$var].">";
-	    	print "<td colspan=3 align=\"left\">".$langs->trans("Total").": </td>";
-		    print "<td align=\"right\"><b>".price($total)."</b></td>";		
-	    	print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
-	    	print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
+	    	print "<td colspan=3 align=\"left\"><i>".$langs->trans("Total").":</i></td>";
+		    print "<td align=\"right\"><i><b>".price($total)."</b></i></td>";		
+	    	print "<td align=\"right\"><i><b>".price($total_ttc)."</b></i></td>";
+	    	print "<td align=\"right\"><i><b>".price($totalrecu)."</b></i></td>";
 	    	print '<td align="center">&nbsp;</td>';
 	    	print "</tr>\n";
 	      }

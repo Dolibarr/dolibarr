@@ -211,20 +211,31 @@ if ($user->rights->facture->lire)
 		    {
 		      print "<td align=\"center\"><b>!!!</b></td>\n";
 		    }
-		  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom.'</a></td>';
 		
 		  print "<td align=\"right\">".price($objp->total)."</td>";
 		  print "<td align=\"right\">".price($objp->total_ttc)."</td>";
 		  print "<td align=\"right\">".price($objp->am)."</td>";	
-		  // Affiche statut de la facture
 
-		  if ($objp->fk_statut == 3)
+		  // Affiche statut de la facture
+		  if (! $objp->paye)
 		    {
-		      print '<td align="center">abandonnée</td>';
+		      if ($objp->fk_statut == 0)
+			{
+			  print '<td align="center">'.$langs->trans("BillShortStatusDraft").'</td>';
+			}
+		      elseif ($objp->fk_statut == 3)
+			{
+			  print '<td align="center">'.$langs->trans("BillShortStatusCanceled").'</td>';
+			}
+		      else
+			{
+			  print '<td align="center"><a class="'.$class.'" href="'.$_SERVER["PHP_SELF"].'?filtre=paye:0,fk_statut:1">'.($objp->am?$langs->trans("BillShortStatusStarted"):$langs->trans("BillShortStatusNotPayed")).'</a></td>';
+			}
 		    }
 		  else
 		    {
-		      print '<td align="center"><a class="'.$class.'" href="impayees.php?filtre=paye:0,fk_statut:1">'.($objp->am?"commencé":"impayée").'</a></td>';
+		      print '<td align="center">'.$langs->trans("BillShortStatusPayed").'</td>';
 		    }
 
 		  print "</tr>\n";
