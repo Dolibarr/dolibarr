@@ -863,6 +863,21 @@ class Facture
     {
       if ($this->brouillon)
 	{
+
+	  /* Lecture du rang max de la facture */
+    
+	  $sql = "SELECT max(rang) FROM ".MAIN_DB_PREFIX."facturedet";
+	  $sql .= " WHERE fk_facture =".$facid;
+	  $resql = $this->db->query($sql);
+	  
+	  if ($resql)
+	    {
+	      $row = $this->db->fetch_row($resql);
+	      $rangmax = $row[0];
+	    }
+	  
+	  /* -- */
+
 	  if (strlen(trim($qty))==0)
 	    {
 	      $qty=1;
@@ -884,25 +899,26 @@ class Facture
 		}
 	    }
 
-
 	  if ($remise_percent > 0)
 	    {
 	      $remise = ($pu * $remise_percent / 100);
 	      $_price = ($pu - $remise);
 	    }
-
+	  
 	  /* Formatage des prix */
 	  $_price    = ereg_replace(",",".",$_price);
 	  $subprice  = ereg_replace(",",".",$subprice);
 	  
-	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end)";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet ";
+	  $sql .= " (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, rang)";
 	  $sql .= " VALUES ($facid, '".addslashes($desc)."','$_price','$qty','$txtva',$fk_product,'$remise_percent','$subprice','$remise', ";
 
 	  if ($datestart) { $sql.= "'$datestart', "; }
 	  else { $sql.=" null, "; }
 	  if ($dateend) { $sql.= "'$dateend' "; }
 	  else { $sql.=" null "; }
-      $sql.=")";
+
+	  $sql.=",".($rangmax + 1).")";
      
 	  if ( $this->db->query( $sql) )
 	    {
@@ -911,7 +927,7 @@ class Facture
 	    }
 	  else
 	    {
-    	  dolibarr_print_error($this->db);
+	      dolibarr_print_error($this->db);
 	    }
 	}
     }
