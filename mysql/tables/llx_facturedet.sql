@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,6 @@ create table llx_facturedet
   date_start      datetime,          -- date debut si service
   date_end        datetime,          -- date fin si service
   fk_code_ventilation integer DEFAULT 0 NOT NULL,
-  fk_export_compta    integer DEFAULT 0 NOT NULL
-
+  fk_export_compta    integer DEFAULT 0 NOT NULL,
+  rang                integer DEFAULT 0
 )type=innodb;
