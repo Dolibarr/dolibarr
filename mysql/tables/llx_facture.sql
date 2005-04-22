@@ -44,8 +44,6 @@ create table llx_facture
   fk_mode_reglement   integer,   -- mode de reglement (Virement, Prélèvement)
   date_lim_reglement  date,      -- date limite de reglement
   note                text,
-  rang                integer DEFAULT 0,
-
 
   UNIQUE INDEX (facnumber),
   INDEX fksoc (fk_soc)
