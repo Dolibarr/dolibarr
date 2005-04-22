@@ -428,7 +428,8 @@ if ($conf->facture->enabled) {
     	      $i++;
             }
           $var=!$var;
-          print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; ('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</td><td align="right">'.price($total).'</td><td align="right">'.price($total_ttc).'</td></tr>';
+          print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; ('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</td>';
+          print '<td align="right"><i>'.price($total).'</i></td><td align="right"><i>'.price($total_ttc).'</i></td></tr>';
     	  print '</table><br>';
     	}
         }
