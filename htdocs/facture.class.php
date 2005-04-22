@@ -388,7 +388,9 @@ class Facture
 	       */
 
 	      $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise, l.remise_percent, l.subprice, ".$this->db->pdate("l.date_start")." as date_start,".$this->db->pdate("l.date_end")." as date_end";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = ".$this->id;
+	      $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as l";
+	      $sql.= " WHERE l.fk_facture = ".$this->id;
+	      $sql.= " ORDER BY l.rang";
 	
 	      $result2 = $this->db->query($sql);
 	      if ($result2)
