@@ -123,29 +123,7 @@ class Facture
 	  $fins=array(31,28,31,30,31,30,31,31,30,31,30,31);
 	  $datelim=mktime(0,0,0,$mois,$fins[$mois-1],$annee);
 	}
-      
-      /*
-       * Lecture de la remise exceptionnelle
-       *
-       */
-      $sql  = "SELECT rowid, rc.amount_ht, fk_soc, fk_user";
-      $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-      $sql .= " WHERE rc.fk_soc =". $this->socidp;
-      $sql .= " AND fk_facture IS NULL";
-      
-      $resql = $this->db->query($sql) ;
-
-      if ( $resql)
-	{
-	  $nurmx = $this->db->num_rows($resql);
-	  
-	  if ($nurmx > 0)
-	    {
-	      $row = $this->db->fetch_row($resql);
-	      $this->remise_exceptionnelle = $row;
-	    }
-	  $this->db->free($resql);
-	}      
+            
       /*
        *  Insertion dans la base
        */
@@ -261,13 +239,6 @@ class Facture
 
 	  $this->updateprice($this->id);
 
-	  /*
-	   * Affectation de la remise exceptionnelle
-	   */
-	  $this->_affect_remise_exceptionnelle();
-
-	  $this->updateprice($this->id);
-
 	  return $this->id;
 	}
       else
@@ -283,6 +254,8 @@ class Facture
 
   function _affect_remise_exceptionnelle()
   {
+    $error = 0;
+
     if ($this->remise_exceptionnelle[1] > 0)
       {
 	if ($this->remise_exceptionnelle[1] > ($this->total_ht * 0.9))
@@ -303,7 +276,11 @@ class Facture
 	    $sql .= " ,amount_ht = '".ereg_replace(",",".",$remise)."'";
 	    $sql .= " WHERE rowid =".$this->remise_exceptionnelle[0];
 	    $sql .= " AND fk_soc =". $this->socidp;
-	    $this->db->query( $sql) ; 
+	    
+	    if (! $this->db->query( $sql))
+	      {
+		$error++;
+	      }
 
 
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
@@ -315,7 +292,10 @@ class Facture
 	    $sql .= " ,".$this->remise_exceptionnelle[3];
 	    $sql .= ")";
 
-	    $this->db->query( $sql) ; 
+	    if (! $this->db->query( $sql) )
+	      {
+		$error++;
+	      }
 
 	  }
 	else
@@ -332,11 +312,16 @@ class Facture
 	    $sql .= " SET fk_facture = ".$this->id;
 	    $sql .= " WHERE rowid =".$this->remise_exceptionnelle[0];
 	    $sql .= " AND fk_soc =". $this->socidp;
-	    $this->db->query( $sql) ; 
 
-
+	    if (! $this->db->query( $sql) )
+	      {
+		$error++;
+	      }
 	  }
-      }    
+      }
+
+    return $error;
+
   }
 
   /**
@@ -472,17 +457,81 @@ class Facture
    */
   function valid($userid)
     {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
+      $error = 0;
 
-      $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-
-      if ($this->db->query($sql) )
+      if ($this->db->begin())
 	{
-	  return 1;
+	  /*
+	   * Lecture de la remise exceptionnelle
+	   *
+	   */
+	  $sql  = "SELECT rowid, rc.amount_ht, fk_soc, fk_user";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+	  $sql .= " WHERE rc.fk_soc =". $this->socidp;
+	  $sql .= " AND fk_facture IS NULL";
+	  
+	  $resql = $this->db->query($sql) ;
+	  
+	  if ( $resql)
+	    {
+	      $nurmx = $this->db->num_rows($resql);
+	      
+	      if ($nurmx > 0)
+		{
+		  $row = $this->db->fetch_row($resql);
+		  $this->remise_exceptionnelle = $row;
+		}
+	      $this->db->free($resql);
+	    }
+	  else
+	    {
+	      dolibarr_syslog("Facture::Valide Erreur lecture Remise");
+	      $error++;
+	    }
+	  
+	  /*
+	   * Affectation de la remise exceptionnelle
+	   */
+	  if ( $this->_affect_remise_exceptionnelle() <> 0)
+	    {
+	      $error++;
+	    }
+	  else
+	    {
+	      $this->updateprice($this->id);
+	      
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
+	      
+	      $sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0 ;";
+	      
+	      if (! $this->db->query($sql) )
+		{
+		  $error++;
+		  dolibarr_syslog("Facture::Valide Erreur ");
+		}
+	    }
+
+	  if ($error == 0)
+	    {
+	      $this->db->commit();
+	    }
+	  else
+	    {
+	      $this->db->rollback();
+	    }
 	}
       else
 	{
-	  dolibarr_print_error($this->db);
+	  $error++;
+	}
+
+      if ($error > 0)
+	{
+	  return 0;
+	}
+      else
+	{
+	  return 1;
 	}
     }
 
@@ -620,6 +669,7 @@ class Facture
   function set_valid($rowid, $user, $soc, $force_number='')
     {
       global $conf;
+      $error = 0;
       
       if ($this->brouillon)
 	{
@@ -634,78 +684,141 @@ class Facture
 	      $numfa = facture_get_num($soc, $this->prefixe_facture); // définit dans includes/modules/facture
 	    }
 
-
-
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture set facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id";
-
-	  /* Si l'option est activée on force la date de facture */
-
-	  if (defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION == "1")
+	  if ($this->db->begin())
 	    {
-	      $sql .= ", datef=now()";
-	    }
-	  $sql .= " WHERE rowid = $rowid ;";
-
-	  $result = $this->db->query( $sql);
-
-	  if (! $result)
-	    {
-	      dolibarr_syslog("Facture::set_valid()  - 10");
-	      dolibarr_print_error($this->db);
-	    }
-     
-	  /*
-	   * On crée les contrats de services automatiquement si
-	   * l'option CONTRACT_AUTOCREATE_FROM_BILL est active
-	   * (Cas ou les contrats sont implicites comme lors de ventes de services en lignes)
-	   */      
-	  if ($conf->contrat->enabled)
-	    {
-	      if (defined("CONTRACT_AUTOCREATE_FROM_BILL") && CONTRACT_AUTOCREATE_FROM_BILL == "1")
+	      /*
+	       * Lecture de la remise exceptionnelle
+	       *
+	       */
+	      $sql  = "SELECT rowid, rc.amount_ht, fk_soc, fk_user";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+	      $sql .= " WHERE rc.fk_soc =". $this->socidp;
+	      $sql .= " AND fk_facture IS NULL";
+	      
+	      $resql = $this->db->query($sql) ;
+	      
+	      if ( $resql)
 		{
-		  $contrat = new Contrat($this->db);
-		  $contrat->create_from_facture($rowid, $user, $soc->id);
-		}
-	    }
-        
-	  /*
-	   * Notify
-	   *
-	   */
-		$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-		$facref = str_replace($forbidden_chars,"_",$this->ref);
-		$filepdf = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
-	  
-	  $mesg = "La facture ".$this->ref." a été validée.\n";
-	  
-	  $notify = New Notify($this->db);
-	  $notify->send($action_notify, $this->socidp, $mesg, "facture", $rowid, $filepdf);
-	  /*
-	   * Update Stats
-	   *
-	   */
-	  $sql = "SELECT fk_product FROM ".MAIN_DB_PREFIX."facturedet WHERE fk_facture = ".$this->id;
-	  $sql .= " AND fk_product > 0";
-	  
-	  $result = $this->db->query($sql);
-	  
-	  if ($result)
-	    {
-	      $num = $this->db->num_rows();
-	      $i = 0;
-	      while ($i < $num)	  
-		{
-		  $obj = $this->db->fetch_object($result);
+		  $nurmx = $this->db->num_rows($resql);
 		  
-		  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
-		  $db2 = $this->db->dbclone();
-		  $result = $db2->query($sql);
-
-		  $i++;
+		  if ($nurmx > 0)
+		    {
+		      $row = $this->db->fetch_row($resql);
+		      $this->remise_exceptionnelle = $row;
+		    }
+		  $this->db->free($resql);
 		}
+	      else
+		{
+		  dolibarr_syslog("Facture::Valide Erreur lecture Remise");
+		  $error++;
+		}
+	      
+	      /* Affectation de la remise exceptionnelle */
+	      if ( $this->_affect_remise_exceptionnelle() <> 0)
+		{
+		  $error++;
+		}
+	      else
+		{
+		  $this->updateprice($this->id);
+		}
+
+	      /* Validation de la facture */	      
+
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."facture ";
+	      $sql .= " SET facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id";
+	      
+	      /* Si l'option est activée on force la date de facture */
+	      
+	      if (defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION == "1")
+		{
+		  $sql .= ", datef=now()";
+		}
+	      $sql .= " WHERE rowid = $rowid ;";
+	      
+	      $result = $this->db->query( $sql);
+	      
+	      if (! $result)
+		{
+		  dolibarr_syslog("Facture::set_valid()  - 10");
+		  dolibarr_print_error($this->db);
+		  $error++;
+		}
+	      
+	      /*
+	       * On crée les contrats de services automatiquement si
+	       * l'option CONTRACT_AUTOCREATE_FROM_BILL est active
+	       * (Cas ou les contrats sont implicites comme lors de ventes de services en lignes)
+	       */      
+	      if ($conf->contrat->enabled)
+		{
+		  if (defined("CONTRACT_AUTOCREATE_FROM_BILL") && CONTRACT_AUTOCREATE_FROM_BILL == "1")
+		    {
+		      $contrat = new Contrat($this->db);
+		      $contrat->create_from_facture($rowid, $user, $soc->id);
+		    }
+		}
+	      
+	      /*
+	       * Notify
+	       *
+	       */
+	      $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+	      $facref = str_replace($forbidden_chars,"_",$this->ref);
+	      $filepdf = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
+	      
+	      $mesg = "La facture ".$this->ref." a été validée.\n";
+	      
+	      $notify = New Notify($this->db);
+	      $notify->send($action_notify, $this->socidp, $mesg, "facture", $rowid, $filepdf);
+	      /*
+	       * Update Stats
+	       *
+	       */
+	      $sql = "SELECT fk_product FROM ".MAIN_DB_PREFIX."facturedet WHERE fk_facture = ".$this->id;
+	      $sql .= " AND fk_product > 0";
+	      
+	      $result = $this->db->query($sql);
+	      
+	      if ($result)
+		{
+		  $num = $this->db->num_rows();
+		  $i = 0;
+		  while ($i < $num)	  
+		    {
+		      $obj = $this->db->fetch_object($result);
+		      
+		      $sql = "UPDATE ".MAIN_DB_PREFIX."product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
+		      $db2 = $this->db->dbclone();
+		      $result = $db2->query($sql);
+		      
+		      $i++;
+		    }
+		}
+	      else
+		{
+		  $error++;
+		}
+	     
+	      if ($error == 0)
+		{
+		  $this->db->commit();
+		}
+	      else
+		{
+		  $this->db->rollback();
+		}	      
 	    }
-      
-	  return $result;
+
+	  if ($error == 0)
+	    {
+	      return 1;
+	    }
+	  else
+	    {
+	      return 0;
+	    }
 	}
     }
 
@@ -1354,6 +1467,151 @@ class Facture
   /*
    *
    */
+
+  /**
+   * \brief     Classe la facture
+   * \param     cat_id      id de la catégorie dans laquelle classer la facture
+   *
+   */
+  function line_order()
+    {
+      $sql = "SELECT count(rowid) FROM ".MAIN_DB_PREFIX."facturedet";
+      $sql .= " WHERE fk_facture=".$this->id;
+      $sql .= " AND rang = 0";
+      
+      $resql = $this->db->query($sql);
+
+      if ($resql)
+	{
+	  $row = $this->db->fetch_row($resql);
+	  $nl = $row[0];
+	}
+
+      if ($nl > 0)
+	{
+	  $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet";
+	  $sql .= " WHERE fk_facture=".$this->id;
+	  $sql .= " ORDER BY rang ASC, rowid ASC";
+	  
+	  $resql = $this->db->query($sql);
+	  
+	  if ($resql)
+	    {
+	      $num = $this->db->num_rows($resql);
+	      $i = 0;
+	      
+	      while ($i < $num)
+		{
+		  $row = $this->db->fetch_row($resql);
+		  $li[$i] = $row[0];
+		  $i++;
+		}
+	    }
+
+	  for ($i = 0 ; $i < sizeof($li) ; $i++)
+	    {
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET rang = ".($i+1);
+	      $sql .= " WHERE rowid = ".$li[$i];
+
+	      if (!$this->db->query($sql) )
+		{
+		  dolibarr_syslog($this->db->error());
+		}
+	    }
+	}
+    }
+  
+  function line_up($rowid)
+  {
+    $this->line_order();
+
+    /* Lecture du rang de la ligne */
+    
+    $sql = "SELECT rang FROM ".MAIN_DB_PREFIX."facturedet";
+    $sql .= " WHERE rowid =".$rowid;
+    $resql = $this->db->query($sql);
+    
+    if ($resql)
+      {
+	$row = $this->db->fetch_row($resql);
+	$rang = $row[0];
+      }
+    
+    if ($rang > 1 ) 
+      {
+	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET rang = ".$rang ;
+	$sql .= " WHERE fk_facture  = ".$this->id;
+	$sql .= " AND rang = ".($rang - 1);
+	
+	if ($this->db->query($sql) )
+	  {
+	    
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET rang  = ".($rang - 1);
+	    $sql .= " WHERE rowid = ".$rowid;
+	    
+	    if (! $this->db->query($sql) )
+	      {
+		dolibarr_print_error($this->db);
+	      }	    
+	  }
+	else
+	  {
+	    dolibarr_print_error($this->db);
+	  }
+      }
+  }
+
+  function line_down($rowid)
+  {
+    $this->line_order();
+
+    /* Lecture du rang de la ligne */
+    
+    $sql = "SELECT rang FROM ".MAIN_DB_PREFIX."facturedet";
+    $sql .= " WHERE rowid =".$rowid;
+    $resql = $this->db->query($sql);
+    
+    if ($resql)
+      {
+	$row = $this->db->fetch_row($resql);
+	$rang = $row[0];
+      }
+    
+    /* Lecture du rang max de la facture */
+    
+    $sql = "SELECT max(rang) FROM ".MAIN_DB_PREFIX."facturedet";
+    $sql .= " WHERE fk_facture =".$this->id;
+    $resql = $this->db->query($sql);
+    
+    if ($resql)
+      {
+	$row = $this->db->fetch_row($resql);
+	$max = $row[0];
+      }
+
+    if ($rang < $max ) 
+      {	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET rang = ".$rang;
+	$sql .= " WHERE fk_facture  = ".$this->id;
+	$sql .= " AND rang = ".($rang+1);
+	
+	if ($this->db->query($sql) )
+	  {	    
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET rang = ".($rang+1);
+	    $sql .= " WHERE rowid = ".$rowid;
+	    
+	    if (! $this->db->query($sql) )
+	      {
+		dolibarr_print_error($this->db);
+	      }	    
+	  }
+	else
+	  {
+	    dolibarr_print_error($this->db);
+	  }
+      }
+  }
 }
 
 
