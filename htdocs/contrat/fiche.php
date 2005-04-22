@@ -617,9 +617,10 @@ else
 	 */
 	if ($user->rights->contrat->creer) 
 	  {
-	    $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
-	    $sql .= " WHERE p.envente = 1";
-	    $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
+	    $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
+	    $sql.= " WHERE p.envente = 1";
+	    $sql.= " ORDER BY p.nbvente DESC LIMIT 20";
 
 	    if ( $db->query($sql) )
 	      {
@@ -630,7 +631,9 @@ else
 		while ($i < $num)
 		  {
 		    $objp = $db->fetch_object();
-		    $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
+		    $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price ".MAIN_MONNAIE;
+		    if ($objp->duration) $opt .= " - ".$objp->duration;
+		    print "</option>\n";
 		    $i++;
 		  }
 		
