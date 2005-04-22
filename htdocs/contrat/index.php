@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
  *
  */
 
-/*!
-	    \file       htdocs/contrat/contrat.class.php
+/**
+	    \file       htdocs/contrat/index.php
         \ingroup    contrat
 		\brief      Page liste des contrats
 		\version    $Revision$
@@ -53,11 +53,16 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-print_barre_liste("Contrats", $page, "index.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+print_barre_liste($langs->trans("ContractsArea"), $page, "index.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr><td width="30%" valign="top">Légende<br />';
+print '<table class="noborder" width="100%">';
+
+
+print '<tr><td width="30%" valign="top">';
+
+// Légende
+print 'Légende<br />';
 print '<img src="./statut0.png" border="0" alt="statut">&nbsp;Statut initial<br />';
 print '<img src="./statut1.png" border="0" alt="statut">&nbsp;A commander<br />';
 print '<img src="./statut2.png" border="0" alt="statut">&nbsp;Commandé chez le fournisseur<br />';
@@ -66,6 +71,7 @@ print '<img src="./statut4.png" border="0" alt="statut">&nbsp;Activé chez le cli
 
 print '</td><td width="70%" valign="top">';
 
+// Not activated services
 $sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.fk_contrat ";
 $sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 $sql .= " WHERE cd.statut IN (0,3)";
@@ -73,38 +79,80 @@ $sql .= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )
 {
-  $num = $db->num_rows();
-  $i = 0;
+    $num = $db->num_rows();
+    $i = 0;
 
-  print '<table class="noborder" width="100%">';
+    print '<table class="noborder" width="100%">';
 
-  print '<tr class="liste_titre"><td>Service</td>';
-  print "</tr>\n";
-    
-  $var=True;
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object();
-      $var=!$var;
-      print "<tr $bc[$var]>";
-
-      print "<td>";
-      print '<img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a>&nbsp;';
-      print "</a>&nbsp;<a href=\"fiche.php?id=$obj->fk_contrat\">$obj->label</a></td>\n";
-
-
-
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("NotActivatedServices").'</td>';
     print "</tr>\n";
-    $i++;
-    }
-  $db->free();
 
-  print "</table>";
+    $var=True;
+    while ($i < $num)
+    {
+        $obj = $db->fetch_object();
+        $var=!$var;
+        print "<tr $bc[$var]>";
+
+        print "<td>";
+        print '<img src="./statut'.$obj->statut.'.png" border="0" alt="statut">';
+        print '&nbsp;<a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">'.$obj->label.'</a></td>';
+        print '<td><a href="fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</td>';
+        print "</tr>\n";
+        $i++;
+    }
+    $db->free();
+
+    print "</table>";
 
 }
 else
 {
-  dolibarr_print_error($db);
+    dolibarr_print_error($db);
+}
+
+print '<br>';
+
+// Last activated services
+$max=10;
+
+$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.fk_contrat ";
+$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+$sql .= " WHERE cd.statut = 4";
+$sql .= " ORDER BY cd.tms DESC";
+
+if ( $db->query($sql) )
+{
+    $num = $db->num_rows();
+    $i = 0;
+
+    print '<table class="noborder" width="100%">';
+
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastActivatedServices",min($num,$max)).'</td>';
+    print "</tr>\n";
+
+    $var=True;
+    while ($i < min($num,$max))
+    {
+        $obj = $db->fetch_object();
+        $var=!$var;
+        print "<tr $bc[$var]>";
+
+        print "<td>";
+        print '<img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a>&nbsp;';
+        print "</a>&nbsp;<a href=\"fiche.php?id=$obj->fk_contrat\">$obj->label</a></td>\n";
+        print '<td><a href="fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</td>';
+        print "</tr>\n";
+        $i++;
+    }
+    $db->free();
+
+    print "</table>";
+
+}
+else
+{
+    dolibarr_print_error($db);
 }
 
 print '</td></tr></table>';

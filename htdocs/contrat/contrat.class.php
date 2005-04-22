@@ -29,7 +29,8 @@
 */
 
 
-/**     \class      Contrat
+/**
+        \class      Contrat
 		\brief      Classe permettant la gestion des contrats
 */
 
@@ -158,47 +159,50 @@ class Contrat
   /**
    *    \brief      Charge de la base les données du contrat
    *    \param      id      id du contrat à charger
+   *    \return     int     <0 si KO, >0 si OK
    */ 
   function fetch ($id)
   {    
-      $sql = "SELECT rowid, statut, fk_soc, ".$this->db->pdate("mise_en_service")." as datemise";
-      $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_contrat")." as datecontrat";
-      $sql .= " , fk_user_author";
-      $sql .= ", fk_commercial_signature, fk_commercial_suivi ";
-      $sql .= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
+    $sql = "SELECT rowid, statut, fk_soc, ".$this->db->pdate("mise_en_service")." as datemise";
+    $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_contrat")." as datecontrat";
+    $sql .= " , fk_user_author";
+    $sql .= ", fk_commercial_signature, fk_commercial_suivi ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
+    
+    $resql = $this->db->query($sql) ;
+    
+    if ($resql)
+    {
+        $result = $this->db->fetch_array($resql);
+    
+        $this->id                = $result["rowid"];
+        $this->statut            = $result["statut"];
+        $this->factureid         = $result["fk_facture"];
+        $this->facturedetid      = $result["fk_facturedet"];
+        $this->mise_en_service   = $result["datemise"];
+        $this->date_fin_validite = $result["datefin"];
+        $this->date_contrat      = $result["datecontrat"];
+    
+        $this->user_author_id    = $result["fk_user_author"];
+    
+        $this->commercial_signature_id = $result["fk_commercial_signature"];
+        $this->commercial_suivi_id = $result["fk_commercial_suivi"];
+    
+        $this->user_service->id = $result["fk_user_mise_en_service"];
+        $this->user_cloture->id = $result["fk_user_cloture"];
+    
+        $this->societe->fetch($result["fk_soc"]);
+    
+        $this->db->free($resql);
+    
+        return 1;
+    }
+    else
+    {
+        $this->error=$this->db->error();
+        return -1;
+    }
 
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
-	{
-	  $result = $this->db->fetch_array();
-
-	  $this->id                = $result["rowid"];
-	  $this->statut         = $result["statut"];
-	  $this->factureid         = $result["fk_facture"];
-	  $this->facturedetid      = $result["fk_facturedet"];
-	  $this->mise_en_service   = $result["datemise"];
-	  $this->date_fin_validite = $result["datefin"];
-	  $this->date_contrat      = $result["datecontrat"];
-
-	  $this->user_author_id = $result["fk_user_author"];
-
-	  $this->commercial_signature_id = $result["fk_commercial_signature"];
-	  $this->commercial_suivi_id = $result["fk_commercial_suivi"];
-
-	  $this->user_service->id = $result["fk_user_mise_en_service"];
-	  $this->user_cloture->id = $result["fk_user_cloture"];
-
-	  $this->societe->fetch($result["fk_soc"]);
-
-	  $this->db->free();
-	}
-      else
-	{
-      dolibarr_print_error($this->db);
-	}
-
-      return $result;
   }
 
   /**
@@ -282,58 +286,63 @@ class Contrat
 
   /**
    *    \brief      Ajoute une ligne de commande
-   *
+   *    \return     int     <0 si KO, =0 si OK
    */
   function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
   {
+    global $langs;
+    
     $qty = ereg_replace(",",".",$qty);
     $pu = ereg_replace(",",".",$pu);
     
-    if (strlen(trim($desc)))
-      {
-	if (strlen(trim($qty))==0)
-	  {
-	    $qty=1;
-	  }
-	
-	if ($fk_product > 0)
-	  {
-	    $prod = new Product($this->db, $fk_product);
-	    if ($prod->fetch($fk_product) > 0)
-	      {
-		$label = $prod->libelle;
-		$pu    = $prod->price;
-		$txtva = $prod->tva_tx;
-	      }
-	  }
-	
-	
-	$remise = 0;
-	$price = round(ereg_replace(",",".",$pu), 2);
-	$subprice = $price;
-	if (trim(strlen($remise_percent)) > 0)
-	  {
-	    $remise = round(($pu * $remise_percent / 100), 2);
-	    $price = $pu - $remise;
-	  }
-	
-	// Insertion dans la base
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet ";
-	$sql .= "(fk_contrat,label,description,fk_product, price_ht,qty,tva_tx, remise_percent, subprice, remise)";
-	$sql .= " VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."') ;";
-	
-	// Retour
-	if ( $this->db->query( $sql) )
-	  {
-	    //$this->update_price();
-	    return 0;
-	  }
-	else
-	  {
-	    dolibarr_print_error($this->db);
-	    return -1;
-	  }
-      }
+    if (! trim($desc))
+    {
+        $this->error=$langs->trans("ErrorDescRequired");
+        return -1;
+    }
+    
+    if (strlen(trim($qty))==0)
+    {
+        $qty=1;
+    }
+
+    if ($fk_product > 0)
+    {
+        $prod = new Product($this->db, $fk_product);
+        if ($prod->fetch($fk_product) > 0)
+        {
+            $label = $prod->libelle;
+            $pu    = $prod->price;
+            $txtva = $prod->tva_tx;
+        }
+    }
+
+
+    $remise = 0;
+    $price = round(ereg_replace(",",".",$pu), 2);
+    $subprice = $price;
+    if (trim(strlen($remise_percent)) > 0)
+    {
+        $remise = round(($pu * $remise_percent / 100), 2);
+        $price = $pu - $remise;
+    }
+
+    // Insertion dans la base
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet ";
+    $sql .= "(fk_contrat,label,description,fk_product, price_ht,qty,tva_tx, remise_percent, subprice, remise)";
+    $sql .= " VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."') ;";
+
+    // Retour
+    if ( $this->db->query( $sql) )
+    {
+        //$this->update_price();
+        return 0;
+    }
+    else
+    {
+        dolibarr_print_error($this->db);
+        return -1;
+    }
   }
 
   /** 

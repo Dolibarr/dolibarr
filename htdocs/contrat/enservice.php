@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/contrat/enservice.php
         \ingroup    contrat
 		\brief      Page liste des contrats en service
@@ -57,18 +57,12 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-if ($sortfield == "")
-{
-  $sortfield="cd.date_ouverture";
-}
+if (! $sortfield) $sortfield="cd.date_ouverture";
+if (! $sortorder) $sortorder="DESC";
 
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
 
-$sql = "SELECT s.nom, c.rowid as cid, p.rowid as pid, s.idp as sidp, cd.label, cd.statut";
-$sql .= " ,".$db->pdate("cd.date_ouverture")." as date_ouverture";
+$sql = "SELECT s.nom, c.rowid as cid, s.idp as sidp, cd.rowid, cd.label, cd.statut, p.rowid as pid,";
+$sql .= " ".$db->pdate("cd.date_ouverture")." as date_ouverture";
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
 $sql .= " , ".MAIN_DB_PREFIX."contratdet as cd";
@@ -81,40 +75,41 @@ if ($socid > 0)
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
 
-  print_barre_liste("Liste des contrats en service", $page, "enservice.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+  print_barre_liste($langs->trans("ListOfRunningContractsLines"), $page, "enservice.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
   print '<table class="noborder" width="100%">';
 
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Ref"),"enservice.php", "c.rowid","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Label"),"enservice.php", "p.label","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"enservice.php", "cd.statut","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Service"),"enservice.php", "p.label","","","",$sortfield);
   print_liste_field_titre($langs->trans("Company"),"enservice.php", "s.nom","","","",$sortfield);
-  print '<td align="center">Date mise en service</td>';
+  print_liste_field_titre($langs->trans("Date"),"enservice.php", "cd.date_ouverture",'','',' align="center"',$sortfield);
   print "</tr>\n";
 
   $now=mktime();
   $var=True;
   while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object();
+      $obj = $db->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$obj->cid\">";
-      print '<img src="./statut'.$obj->statut.'.png" border="0" alt="statut">';
-      print "</a>&nbsp;<a href=\"fiche.php?id=$obj->cid\">$obj->cid</a></td>\n";
-      print "<td><a href=\"../product/fiche.php?id=$obj->pid\">$obj->label</a></td>\n";
-      print "<td><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></td>\n";
-      print '<td align="center">'.strftime("%d/%m/%y",$obj->date_ouverture)."</td>\n";
+      print '<td><a href="fiche.php?id='.$obj->cid.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
+      print '<td><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></td>';
+      print '<td><a href="../product/fiche.php?id='.$obj->pid.'">'.img_object($langs->trans("ShowService"),"service").' '.$obj->label.'</a></td>';
+      print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+      print '<td align="center">'.dolibarr_print_date($obj->date_ouverture).'</td>';
 
       print "</tr>\n";
       $i++;
     }
-  $db->free();
+  $db->free($resql);
 
   print "</table>";
 
@@ -127,5 +122,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

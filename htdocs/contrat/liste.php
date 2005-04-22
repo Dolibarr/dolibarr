@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/contrat/contrat.class.php
+/**
+	    \file       htdocs/contrat/liste.php
         \ingroup    contrat
 		\brief      Page liste des contrats
 		\version    $Revision$
@@ -29,6 +30,7 @@
 
 require("./pre.inc.php");
 
+$langs->load("contracts");
 $langs->load("products");
 $langs->load("companies");
 
@@ -38,9 +40,15 @@ llxHeader();
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+if ($page == -1) { $page = 0 ; }
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 $socid=$_GET["socid"];
+
+if (! $sortfield) $sortfield="c.rowid";
+if (! $sortorder) $sortorder="DESC";
 
 
 /*
@@ -52,21 +60,6 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-
-if ($page == -1) { $page = 0 ; }
-
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-
-if ($sortfield == "")
-{
-  $sortfield="c.rowid";
-}
-
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
 
 
 $sql = "SELECT c.rowid as cid, c.statut, ".$db->pdate("c.fin_validite")." as fin_validite, c.fin_validite-sysdate() as delairestant,  s.nom, s.idp as sidp";
@@ -88,7 +81,7 @@ if ( $db->query($sql) )
   $i = 0;
 
 
-  print_barre_liste("Liste des contrats", $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+  print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
   print '<table class="noborder" width="100%">';
 
@@ -105,9 +98,8 @@ if ( $db->query($sql) )
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$obj->cid\">";
-      print img_file();
-      print "</a>&nbsp;<a href=\"fiche.php?id=$obj->cid\">$obj->cid</a></td>\n";
-      print "<td><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></td>\n";
+      print img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
+      print '<td><a href="../comm/fiche.php?socid="'.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
 
       print "</tr>\n";
       $i++;

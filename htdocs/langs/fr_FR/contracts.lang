@@ -1,5 +1,8 @@
 # Dolibarr language file - fr_FR - contracts
+ContractsArea=Espace contrats
+ListOfContracts=Liste des contrats
 LastContracts=Les %s derniers contrats modifiés
+ContractCard=Fiche contrat
 ContractStatus=État du contrat
 ContractStatusNotRunning=Hors service
 ContractStatusRunning=En service
@@ -9,3 +12,12 @@ Contract=Contrat
 NewContract=Nouveau contrat
 AddContract=Créer contrat
 SearchAContract=Rechercher un contrat
+ActivateService=Activer le service
+DateServiceActivate=Date activation du service
+DateServiceStart=Date début du service
+DateServiceEnd=Date fin du service
+ShowContract=Afficher contrat
+ListOfRunningContractsLines=Liste des lignes de contrats en service
+NotActivatedServices=Services non activés
+LastActivatedServices=Les %s derniers services activés
+EditServiceLine=Edition ligne du service

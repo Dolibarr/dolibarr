@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,10 @@
  *
  */
 
-/*!	\file htdocs/commande/fiche.php
-		\ingroup    commande
-		\brief      Fiche commande
+/**
+    	\file       htdocs/contrat/fiche.php
+		\ingroup    contrat
+		\brief      Fiche contrat
 		\version    $Revision$
 */
 
@@ -134,11 +135,11 @@ $html = new Form($db);
 	  $head[$h][1] = $langs->trans("Contract");
 	  $h++;
 
-	  $head[$h][0] = DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id;
-	  $head[$h][1] = $langs->trans("Edition de la ligne");
+	  $head[$h][0] = DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id."&ligne=".$_GET["ligne"];
+	  $head[$h][1] = $langs->trans($langs->trans("EditServiceLine"));
 	  $hselected = $h;
 	  
-	  dolibarr_fiche_head($head, $hselected, $contrat->societe->nom);	  
+	  dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").': '.$contrat->id);	  
 
 
 
@@ -146,37 +147,38 @@ $html = new Form($db);
 	   *   Contrat
 	   */
 
-
-	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
+	  print '<table class="border" width="100%">';
 	  print "<tr><td>".$langs->trans("Customer")."</td>";
-	  print '<td colspan="2">';
-	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$contrat->societe->id.'">'.$contrat->societe->nom.'</a></b></td>';
+	  print '<td colspan="3">';
+	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$contrat->societe->id.'">'.$contrat->societe->nom.'</a></b></td></tr>';
 	  
-	  print '<td width="50%" colspan="2">';
+	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 	  print $contrat->statuts[$contrat->statut];
 	  print "</td></tr>";
 	  
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
-	  print "<td colspan=\"2\">".strftime("%A %d %B %Y",$contrat->date_contrat)."</td>\n";
+	  print '<td colspan="3">'.strftime("%A %d %B %Y",$contrat->date_contrat)."</td></tr>\n";
 
-	  print '<td>Projet</td><td>';
-	  if ($contrat->projet_id > 0)
-	    {
-	      $projet = New Project($db);
-	      $projet->fetch($contrat->projet_id);
-	      print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$contrat->projet_id.'">'.$projet->title.'</a>';
-	    }
-	  else
-	    {
-	      print '<a href="fiche.php?id='.$id.'&amp;action=classer">Classer le contrat</a>';
-	    }
-	  print "&nbsp;</td></tr>";
+	  if ($conf->projet->enabled) 
+      {
+    	  print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
+    	  if ($contrat->projet_id > 0)
+    	    {
+    	      $projet = New Project($db);
+    	      $projet->fetch($contrat->projet_id);
+    	      print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$contrat->projet_id.'">'.$projet->title.'</a>';
+    	    }
+    	  else
+    	    {
+    	      print '<a href="fiche.php?id='.$id.'&amp;action=classer">Classer le contrat</a>';
+    	    }
+    	  print "</td></tr>";
+      }
 
-	  print '<tr><td>'.$langs->trans("Commercial suivi").'</td><td colspan="2">'.$commercial_suivi->fullname.'</td>';
-	  print '<td>'.$langs->trans("Commercial signature").'</td><td colspan="2">'.$commercial_signature->fullname.'</td></tr>';
+	  print '<tr><td width="25%">'.$langs->trans("Commercial suivi").'</td><td>'.$commercial_suivi->fullname.'</td>';
+	  print '<td width="25%">'.$langs->trans("Commercial signature").'</td><td>'.$commercial_signature->fullname.'</td></tr>';
 	  print "</table>";
 	  
-
 	  
 	  /*
 	   * Confirmation de la validation
@@ -189,13 +191,12 @@ $html = new Form($db);
 	      $html->form_confirm("ligne.php?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateact,"Activer le service","Etes-vous sûr de vouloir activer ce service en date du ".strftime("%A %d %B %Y", $dateact)." ?","confirm_active");
 	    }
 
-
 	  
 	  /*
 	   * Lignes de contrats
 	   *
 	   */
-	  echo '<br><table border="0" width="100%" cellspacing="0" cellpadding="3">';	  
+	  print '<br><table class="noborder" width="100%">';	  
 
 	  $sql = "SELECT l.statut, l.label, l.fk_product, l.description, l.price_ht, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."contratdet as l";
@@ -213,24 +214,26 @@ $html = new Form($db);
 	      if ($num)
 		{
 		  print '<tr class="liste_titre">';
-		  print '<td width="54%">'.$langs->trans("Description").'</td>';
-		  print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
-		  print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
-		  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
-		  print '<td width="12%" align="right">P.U.</td>';
-		  print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
+		  print '<td width="20">'.$langs->trans("Status").'</td>';
+		  print '<td>'.$langs->trans("Service").'</td>';
+		  print '<td align="center">'.$langs->trans("VAT").'</td>';
+		  print '<td align="center">'.$langs->trans("Qty").'</td>';
+		  print '<td align="right">'.$langs->trans("Discount").'</td>';
+		  print '<td align="right">'.$langs->trans("PriceU").'</td>';
+		  print '<td>&nbsp;</td><td width="10%">&nbsp;</td>';
 		  print "</tr>\n";
 		}
 	      $var=True;
 	      while ($i < $num)
 		{
 		  $objp = $db->fetch_object();
+
+		  $var=!$var;
 		  print "<tr $bc[$var]>\n";
 		  if ($objp->fk_product > 0)
 		    {
-		      print '<td>';
-		      print '<img src="./statut'.$objp->statut.'.png" border="0" alt="statut">&nbsp;';
-		      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->label)).'</a>';
+		      print '<td><img src="./statut'.$objp->statut.'.png" border="0" alt="statut"></td>';
+		      print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a>';
 
 		      if ($objp->description)
 			{			  
@@ -241,10 +244,10 @@ $html = new Form($db);
 		    }
 		  else
 		    {
-		      print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
+		      print '<td>&nbsp;</td><td>'.stripslashes(nl2br($objp->description))."</td>\n";
 		    }
-		  print '<td align="center">'.$objp->tva_tx.' %</TD>';
-		  print '<td align="center">'.$objp->qty.'</TD>';
+		  print '<td align="center">'.$objp->tva_tx.' %</td>';
+		  print '<td align="center">'.$objp->qty.'</td>';
 		  if ($objp->remise_percent > 0)
 		    {
 		      print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -261,22 +264,16 @@ $html = new Form($db);
 		  
 
 		  $i++;
-		  $var=!$var;
 		}	      
 	      $db->free();
 	    } 
 	  else
 	    {
-	      print $db->error();
+	      dolibarr_print_error($db);
 	    }
 	
-
+	print '</table><br>';
 	print '</div>';
-
-
-	print "<p>\n";
-
-
 
 	if ( $user->rights->contrat->activer && $contrat->statut == 0 && $objp->statut <> 4)
 	  {
@@ -285,12 +282,12 @@ $html = new Form($db);
 	     */
 	    $form = new Form($db);
 	    
-	    print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
+	    print '<table class="noborder"><tr><td>';
 	    
 	    print '<form action="ligne.php?id='.$contrat->id.'&amp;ligne='.$_GET["ligne"].'&amp;action=active" method="post">';
-	    print '<table class="noborder" cellpadding="2" cellspacing="0">';
-	    print '<tr class="liste_titre"><td colspan="2">Activer le service</td><td>';
-	    print '<tr><td>Date d\'activation</td><td>';
+	    print '<table class="noborder" width="100%">';
+	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ActivateService").'</td><td>';
+	    print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
 
 	    if ($_POST["remonth"])
 	      {
@@ -304,16 +301,14 @@ $html = new Form($db);
 	    print $form->select_date($dateact);
 	    print '</td>';
 
-	    print '<tr><td>Intervenant</td><td>'.$user->fullname.'</td></tr>';
+	    print '<tr '.$bc[$var].'><td>'.$langs->trans("User").'</td><td>'.$user->fullname.'</td></tr>';
 
-	    print '<tr><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
+	    print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td><input size="50" type="text" name="commentaire"></td></tr>';
 
-	    print '<tr><td colspan="2" align="center"><input type="submit" name="Activer"></td></tr>';
+	    print '<tr '.$bc[$var].'><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Activate").'"></td></tr>';
 	    print '</table>';
 	    
-	    print '</form></td><td>';
-	    
-	    print '&nbsp;</td></tr></table>';
+	    print '</form><br></td></tr></table>';
 	  }
       }
     else
@@ -325,5 +320,5 @@ $html = new Form($db);
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
