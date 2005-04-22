@@ -68,8 +68,6 @@ alter table llx_user_rights add rowid integer AUTO_INCREMENT PRIMARY KEY;
 alter table llx_facture add fk_cond_reglement integer DEFAULT 1 NOT NULL;
 alter table llx_facture add fk_mode_reglement integer after fk_cond_reglement ;
 
-alter table llx_facture add rang integer DEFAULT 0 NOT NULL;
-
 alter table llx_cond_reglement add code varchar(16) after rowid;
  
 alter table llx_socpeople add cp varchar(25) after address;
@@ -78,6 +76,8 @@ alter table llx_socpeople add ville varchar(255) after cp;
 alter table llx_paiement add statut smallint DEFAULT 0 NOT NULL ;
 alter table llx_facturedet add fk_export_compta integer DEFAULT 0 NOT NULL ;
 alter table llx_paiement add fk_export_compta integer DEFAULT 0 NOT NULL ;
+
+alter table llx_facturedet add rang integer DEFAULT 0 NOT NULL;
 
 alter table llx_rights_def add perms varchar(255) after module;
 alter table llx_rights_def add subperms varchar(255) after perms;
