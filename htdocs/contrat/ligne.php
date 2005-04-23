@@ -285,8 +285,9 @@ $html = new Form($db);
 	    print '<table class="noborder"><tr><td>';
 	    
 	    print '<form action="ligne.php?id='.$contrat->id.'&amp;ligne='.$_GET["ligne"].'&amp;action=active" method="post">';
+
 	    print '<table class="noborder" width="100%">';
-	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ActivateService").'</td><td>';
+	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ActivateService").'</td></tr>';
 	    print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
 
 	    if ($_POST["remonth"])
@@ -299,7 +300,7 @@ $html = new Form($db);
 	      }
 
 	    print $form->select_date($dateact);
-	    print '</td>';
+	    print '</td></tr>';
 
 	    print '<tr '.$bc[$var].'><td>'.$langs->trans("User").'</td><td>'.$user->fullname.'</td></tr>';
 
