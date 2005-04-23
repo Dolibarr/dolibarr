@@ -132,7 +132,7 @@ $html = new Form($db);
 
 	  $h = 0;
 	  $head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$contrat->id;
-	  $head[$h][1] = $langs->trans("Contract");
+	  $head[$h][1] = $langs->trans("ContractCard");
 	  $h++;
 
 	  $head[$h][0] = DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id."&ligne=".$_GET["ligne"];
