@@ -545,7 +545,7 @@ else
 		      print '<a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id.'&amp;ligne='.$objp->rowid.'">';;
 		      print '<img src="./statut'.$objp->statut.'.png" border="0" alt="statut"></a></td><td>';
 		      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-		      print img_object($langs->trans("ShowProduct"),"product").' '.$objp->label.'</a>';
+		      print img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a>';
 
 		      if ($objp->description)
 			{
@@ -569,13 +569,15 @@ else
 		    {
 		      print '<td>&nbsp;</td>';
 		    }
+
+          // Icon delete
 		  print '<td align="right">'.price($objp->subprice)."</td>\n";
 		  if ($contrat->statut == 0  && $objp->statut == 0 && $user->rights->contrat->creer) 
 		    {
 		      //		      print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 		      //		      print img_edit();
 		      //		      print '</a></td>';
-		      print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+		      print '<td align="right" colspan="2"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
 		      print img_delete();
 		      print '</a></td>';
 		    }
