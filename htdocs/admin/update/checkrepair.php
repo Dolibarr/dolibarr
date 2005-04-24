@@ -143,7 +143,7 @@ if ($resql)
             $sql.= $obj->cref.",".($obj->fk_product?$obj->fk_product:0).", 0, '".addslashes($obj->label)."', null,";
             $sql.= ($obj->mise_en_service?"'".$obj->mise_en_service."'":($obj->date_contrat?"'".$obj->date_contrat."'":"null")).",";
             $sql.= ($obj->mise_en_service?"'".$obj->mise_en_service."'":"null").",";
-            $sql.= ($obj->fin_validite?$obj->fin_validite:"null").",";
+            $sql.= ($obj->fin_validite?"'".$obj->fin_validite."'":"null").",";
             $sql.= "'".$obj->tva_tx."', 1,";
             $sql.= "'".$obj->price."', '".$obj->price."',".$obj->fk_user_author.",";
             $sql.= ($obj->mise_en_service?$obj->fk_user_author:"null");
@@ -183,7 +183,7 @@ else
     dolibarr_print_error($db);   
 }    
 
-
+print "<br>";
 
 $db->close();
 
