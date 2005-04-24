@@ -39,6 +39,7 @@ if ($conf->webcal->enabled) {
 $langs->load("companies");
 $langs->load("commercial");
 $langs->load("other");
+$langs->load("bills");
 
 
 /*
