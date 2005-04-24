@@ -18,18 +18,23 @@
  * $Id$
  * $Source$
  */
+
+
 require("./pre.inc.php");
 
 if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
+    access_forbidden();
+
 
 llxHeader();
 
-print_titre("Migration paiement multiple facture");
+
+print_titre("Vérifications et réparation des données de la base");
+
+
+// Mise a jour des paiements (lien n-n paiements factures)
+print '<br>';
+print "<b>Mise a jour des paiments (lien n-n paiements-factures)</b><br>\n";
 
 $sql = "SELECT p.rowid, p.fk_facture, p.amount";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
@@ -52,37 +57,47 @@ if ($result)
     }
 }
 
-print "$num paiement à mettre à jour<br>";
-
-if ($db->begin())
+if ($num)
 {
-  $res = 0;
-  for ($i = 0 ; $i < sizeof($row) ; $i++)
+    print "$num paiement(s) à mettre à jour<br>\n";
+    if ($db->begin())
     {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
-      $sql .= " VALUES (".$row[$i][1].",".$row[$i][0].",".$row[$i][2].")";
-      
-      $res += $db->query($sql);
-      
-      $sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET fk_facture = 0 WHERE rowid = ".$row[$i][0];
-      
-      $res += $db->query($sql);
-
-      print "<br>";
-    } 
-}
-
-if ($res == (2 * sizeof($row)))
-{
-  $db->commit();
-  print "Mise à jour réussie";
+      $res = 0;
+      for ($i = 0 ; $i < sizeof($row) ; $i++)
+        {
+          $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
+          $sql .= " VALUES (".$row[$i][1].",".$row[$i][0].",".$row[$i][2].")";
+          
+          $res += $db->query($sql);
+          
+          $sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET fk_facture = 0 WHERE rowid = ".$row[$i][0];
+          
+          $res += $db->query($sql);
+    
+          print "Mise a jour paiement(s) ".$row[$i]."<br>\n";
+        } 
+    }
+    
+    if ($res == (2 * sizeof($row)))
+    {
+      $db->commit();
+      print "Mise à jour réussie";
+    }
+    else
+    {
+      $db->rollback();
+      print "La mise à jour à échouée";
+    }
 }
 else
 {
-  $db->rollback();
-  print "La mise à jour à échouée";
-}
+    print "Pas de paiements orhpelins à mettre à jour.<br>\n";
+}    
+
+
+
 
 $db->close();
+
 llxFooter();
 ?>
