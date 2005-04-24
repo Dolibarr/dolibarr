@@ -61,7 +61,9 @@ class InterfaceDemo
   {
         // Mettre ici le code à exécuter en réaction de l'action
         // Les données de l'action sont stockées dans $object
-        if ($action == 'COMPANY_CREATE')
+
+        // Companies
+        if     ($action == 'COMPANY_CREATE')
         {
             dolibarr_syslog("Trigger for action '$action' launched. id=".$object->id);
         }
@@ -73,6 +75,32 @@ class InterfaceDemo
         {        
             dolibarr_syslog("Trigger for action '$action' launched. id=".$object->id);
         }
+        // Contracts
+        elseif ($action == 'CONTRACT_CREATE')
+        {        
+            dolibarr_syslog("Trigger for action '$action' launched");
+        }
+        elseif ($action == 'CONTRACT_MODIFY')
+        {        
+            dolibarr_syslog("Trigger for action '$action' launched");
+        }
+        elseif ($action == 'CONTRACT_ACTIVATE')
+        {        
+            dolibarr_syslog("Trigger for action '$action' launched");
+        }
+        elseif ($action == 'CONTRACT_CANCEL')
+        {        
+            dolibarr_syslog("Trigger for action '$action' launched");
+        }
+        elseif ($action == 'CONTRACT_CLOSE')
+        {        
+            dolibarr_syslog("Trigger for action '$action' launched");
+        }
+        elseif ($action == 'CONTRACT_DELETE')
+        {        
+            dolibarr_syslog("Trigger for action '$action' launched");
+        }
+        // Bills
         elseif ($action == 'BILL_CREATE')
         {        
             dolibarr_syslog("Trigger for action '$action' launched");
@@ -81,10 +109,19 @@ class InterfaceDemo
         {        
             dolibarr_syslog("Trigger for action '$action' launched");
         }
+        elseif ($action == 'BILL_VALIDATE')
+        {        
+            dolibarr_syslog("Trigger for action '$action' launched");
+        }
+        elseif ($action == 'BILL_CANCEL')
+        {        
+            dolibarr_syslog("Trigger for action '$action' launched");
+        }
         elseif ($action == 'BILL_DELETE')
         {        
             dolibarr_syslog("Trigger for action '$action' launched");
         }
+        // Products
         elseif ($action == 'PRODUCT_CREATE')
         {        
             dolibarr_syslog("Trigger for action '$action' launched");
