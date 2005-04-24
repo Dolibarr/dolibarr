@@ -75,11 +75,11 @@ if ($socid > 0)
 $sql .= " ORDER BY $sortfield $sortorder, delairestant";
 $sql .= $db->plimit($limit + 1 ,$offset);
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
-
 
   print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
@@ -94,17 +94,17 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object();
+      $obj = $db->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$obj->cid\">";
       print img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
-      print '<td><a href="../comm/fiche.php?socid="'.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+      print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
 
       print "</tr>\n";
       $i++;
     }
-  $db->free();
+  $db->free($resql);
 
   print "</table>";
 
