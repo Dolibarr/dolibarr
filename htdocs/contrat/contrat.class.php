@@ -92,17 +92,22 @@ class Contrat
     $sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
 
     $result = $this->db->query($sql) ;
-    if (!$result)
-      {
-      dolibarr_print_error($this->db);
-      }
+    if ($result) 
+    {
+	    return 1;
+    }
+    else
+    {
+	    $this->error=$this->db->error();
+	    return -1;
+    }
   }
   
   /**
-   *    \brief      Active une ligne detail d'un contat
-   *    \param      user        objet User qui avtice le contrat
-   *    \param      line_id     id de la ligne de detail à activer
-   *    \param      date        date d'ouverture
+   *    \brief      Active une ligne detail d'un contrat
+   *    \param      user        Objet User qui avtice le contrat
+   *    \param      line_id     Id de la ligne de detail à activer
+   *    \param      date        Date d'ouverture
    */
   function active_line($user, $line_id, $date)
   {
@@ -116,45 +121,68 @@ class Contrat
 
     if ($result)
       {
-	return 0;
+        // Appel des triggers
+        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+        $interface=new Interfaces($this->db);
+        $interface->run_triggers('CONTRACT_SERVICE_ACTIVATE',$this,$user,$lang,$conf);
+        // Fin appel triggers
+
+	    return 0;
       }
     else
       {
-
-	print $sql;
-	return -1;
+	    $this->error=$this->db->error();
+	    return -1;
       }
   }
 
 
 
-  /**
-   *    \brief      Cloture un contrat
-   *    \param      user    objet User qui cloture
-   *
-   */
-  function cloture($user)
-  {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 2";
-    $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
-    $sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
+    /**
+     *    \brief      Cloture un contrat
+     *    \param      user      Objet User qui cloture
+     *    \param      lang      Environnement langue de l'utilisateur
+     *    \param      conf      Environnement de configuration lors de l'opération
+     *
+     */
+    function cloture($user,$lang='',$conf='')
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 2";
+        $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
+        $sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
+    
+        $result = $this->db->query($sql) ;
+    
+        // Appel des triggers
+        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+        $interface=new Interfaces($this->db);
+        $interface->run_triggers('CONTRACT_CLOSE',$this,$user,$lang,$conf);
+        // Fin appel triggers
 
-    $result = $this->db->query($sql) ;
-  }
-
-  /**
-   *    \brief      Annule un contrat
-   *    \param      user    objet User qui annule
-   *
-   */
-  function annule($user)
-  {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 0";
-    $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
-    $sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
-
-    $result = $this->db->query($sql) ;
-  }
+        return 1;
+    }
+    
+    /**
+     *    \brief      Annule un contrat
+     *    \param      user      Objet User qui annule
+     *    \param      lang      Environnement langue de l'utilisateur
+     *    \param      conf      Environnement de configuration lors de l'opération
+     *
+     */
+    function annule($user,$lang='',$conf='')
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 0";
+        $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
+        $sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
+    
+        $result = $this->db->query($sql) ;
+    
+        // Appel des triggers
+        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+        $interface=new Interfaces($this->db);
+        $interface->run_triggers('CONTRACT_CANCEL',$this,$user,$lang,$conf);
+        // Fin appel triggers
+    }
 
   /**
    *    \brief      Charge de la base les données du contrat
@@ -207,27 +235,35 @@ class Contrat
 
   /**
    *    \brief      Crée un contrat vierge
-   *    \param      user            utilisateur qui crée
+   *    \param      user        Utilisateur qui crée
+   *    \param      lang        Environnement langue de l'utilisateur
+   *    \param      conf        Environnement de configuration lors de l'opération
    */
-  function create($user)
+    function create($user,$lang='',$conf='')
     {
-      
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec,fk_soc, fk_user_author, fk_commercial_signature, fk_commercial_suivi, date_contrat)";
-      $sql .= " VALUES (now(),".$this->soc_id.",".$user->id.",".$this->commercial_id.",".$this->commercial_id;
-      $sql .= ",".$this->db->idate($this->date_contrat) .")";
-      if ($this->db->query($sql))
-	{
-	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
-	  $result = 0 ;
-	}
-      else
-	{
-	  $result = 1;
-	  dolibarr_syslog("Contrat::create - 10");
-	  dolibarr_print_error($this->db,"Contrat::create - 10");
-	}
- 
-      return $result;
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, fk_commercial_signature, fk_commercial_suivi, date_contrat)";
+        $sql .= " VALUES (now(),".$this->soc_id.",".$user->id.",".$this->commercial_id.",".$this->commercial_id;
+        $sql .= ",".$this->db->idate($this->date_contrat) .")";
+        if ($this->db->query($sql))
+        {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
+    
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $interface->run_triggers('CONTRACT_CREATE',$this,$user,$lang,$conf);
+            // Fin appel triggers
+    
+            $result = 0 ;
+        }
+        else
+        {
+            $result = 1;
+            dolibarr_syslog("Contrat::create - 10");
+            dolibarr_print_error($this->db,"Contrat::create - 10");
+        }
+    
+        return $result;
     }
 
 
@@ -358,6 +394,7 @@ class Contrat
 	  return 1;
 	}
     }
+
 
   /**
    *    \brief      Retourne le libellé du statut du contrat
