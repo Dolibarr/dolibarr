@@ -184,16 +184,6 @@ class MenuLeft {
                   if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"), 1, $user->rights->propale->lire);
                 }
                 
-                // Contrat
-                if ($conf->contrat->enabled)
-                {
-                  $langs->load("contracts");
-                  $newmenu->add(DOL_URL_ROOT."/contrat/index.php?leftmenu=contracts", $langs->trans("Contracts"), 0 ,$user->rights->contrat->lire);
-                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=contracts", $langs->trans("NewContract"), 1, $user->rights->contrat->creer);
-                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/liste.php", $langs->trans("List"), 1 ,$user->rights->contrat->lire);
-                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/enservice.php", $langs->trans("ContractStatusRunning"), 1 ,$user->rights->contrat->lire);
-                }
-                
                 // Commandes
                 if ($conf->commande->enabled ) 
                 {
@@ -204,18 +194,30 @@ class MenuLeft {
                   if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1 ,$user->rights->commande->lire);
                 }
 
+                // Expeditions
                 if ($conf->expedition->enabled) {
                   $newmenu->add(DOL_URL_ROOT."/expedition/index.php?leftmenu=sendings", $langs->trans("Sendings"), 0, $user->rights->expedition->lire);
                   if ($leftmenu=="sendings") $newmenu->add_submenu(DOL_URL_ROOT."/expedition/liste.php?leftmenu=sendings", $langs->trans("List"), 1 ,$user->rights->expedition->lire);
                   if ($leftmenu=="sendings") $newmenu->add_submenu(DOL_URL_ROOT."/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1 ,$user->rights->expedition->lire);
                 }
                 
+                // Interventions
                 if ($conf->fichinter->enabled ) 
                 {
                   $langs->load("interventions");
                   $newmenu->add(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->rights->ficheinter->lire);
                   if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer);
                   if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("List"), 1 ,$user->rights->ficheinter->lire);
+                }
+                
+                // Contrat
+                if ($conf->contrat->enabled)
+                {
+                  $langs->load("contracts");
+                  $newmenu->add(DOL_URL_ROOT."/contrat/index.php?leftmenu=contracts", $langs->trans("Contracts"), 0 ,$user->rights->contrat->lire);
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=contracts", $langs->trans("NewContract"), 1, $user->rights->contrat->creer);
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/liste.php", $langs->trans("List"), 1 ,$user->rights->contrat->lire);
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/enservice.php", $langs->trans("ContractStatusRunning"), 1 ,$user->rights->contrat->lire);
                 }
                 
             }
