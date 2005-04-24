@@ -137,7 +137,7 @@ if ( $db->query($sql) )
         $var=!$var;
         print "<tr $bc[$var]>";
 
-        print '<td><a href="fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
+        print '<td><a href="fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->fk_contrat.'</a></td>';
         print '<td><a href="fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service").' '.$obj->label.'</a></td>';
         print '<td width="30"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
         print "</tr>\n";
@@ -157,5 +157,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
