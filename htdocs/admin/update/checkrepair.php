@@ -97,10 +97,24 @@ if ($num)
 }
 else
 {
-    print "Pas de paiements orhpelins à mettre à jour.<br>\n";
+    print "Pas ou plus de paiements orhpelins à corriger.<br>\n";
 }  
 
 
+/*
+ * Mise a jour des date de contrats non renseignées
+ */
+print '<br>';
+print "<b>Mise a jour des dates de contrats non renseignées</b><br>\n";
+
+$sql="update llx_contrat set date_contrat=tms where date_contrat is null";
+$resql = $db->query($sql);
+if (! $resql) dolibarr_print_error($db);
+
+$sql="update llx_contrat set datec=tms where datec is null";
+$resql = $db->query($sql);
+if (! $resql) dolibarr_print_error($db);
+print "Ok<br>\n";
 
 /*
  * Mise a jour des contrats (gestion du contrat + detail de contrat)
@@ -140,7 +154,9 @@ if ($resql)
             $sql.= "date_ouverture_prevue, date_ouverture, date_fin_validite, tva_tx, qty,";
             $sql.= "subprice, price_ht, fk_user_author, fk_user_ouverture)";
             $sql.= " VALUES (";
-            $sql.= $obj->cref.",".($obj->fk_product?$obj->fk_product:0).", 0, '".addslashes($obj->label)."', null,";
+            $sql.= $obj->cref.",".($obj->fk_product?$obj->fk_product:0).",";
+            $sql.= ($obj->mise_en_service?"4":"0").",";
+            $sql.= "'".addslashes($obj->label)."', null,";
             $sql.= ($obj->mise_en_service?"'".$obj->mise_en_service."'":($obj->date_contrat?"'".$obj->date_contrat."'":"null")).",";
             $sql.= ($obj->mise_en_service?"'".$obj->mise_en_service."'":"null").",";
             $sql.= ($obj->fin_validite?"'".$obj->fin_validite."'":"null").",";
@@ -175,7 +191,7 @@ if ($resql)
         }
     }
     else {
-        print "Pas de contrats (liés à un produit) sans lignes de details.<br>\n";
+        print "Pas ou plus de contrats (liés à un produit) sans lignes de details à corriger.<br>\n";
     }
 }
 else
