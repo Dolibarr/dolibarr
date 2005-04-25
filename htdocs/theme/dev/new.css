@@ -31,9 +31,10 @@ div.body
 
 div.tmenu
 {
+  float: top;
+  display:block;
   background: #dcdad5; 
   white-space: nowrap;
-  display:block;
   margin:0;
   padding: 3px;
   padding-bottom: 6px;
