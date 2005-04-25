@@ -242,13 +242,14 @@ function show_theme($edit=0)
     print '<tr class="liste_titre"><td colspan="'.$nbofthumbs.'">'.$langs->trans("Skin").'</td></tr>';
 
     $handle=opendir($dirtheme);
+    $var=false;
     $i=0;
     while (($subdir = readdir($handle))!==false)
     {
         if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.' && substr($subdir, 0, 3) <> 'CVS')
         {
             if ($i % $nbofthumbs == 0) {
-                print '<tr '.$bc[false].'>';
+                print '<tr '.$bc[$var].'>';
             }
             
             print '<td align="center">';
@@ -257,11 +258,11 @@ function show_theme($edit=0)
             print '<table><tr><td><img src="'.$file.'" width="80" height="60"></td></tr><tr><td align="center">';
             if ($subdir == MAIN_THEME)
             {
-                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[false].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
+                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
             }
             else
             {
-                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[false].' style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
+                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
             }
             print '</td></tr></table></td>';
 
