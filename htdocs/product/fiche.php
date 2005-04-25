@@ -318,7 +318,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
       print '</td></tr>';
     }
   
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
+  print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
   print '</table>';
   print '</form>';      
 }
@@ -499,8 +499,8 @@ else
 	      print '<input type="hidden" name="id" value="'.$product->id.'">';
 	      print '<table class="border" width="100%">';
 	      print '<tr><td width="20%">'.$langs->trans('SellingPrice').'</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
-	      print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-	      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+	      print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+	      print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
 	      print '</form>';
 	    }
@@ -540,8 +540,8 @@ else
 	      print '</select></td><td>'.$langs->trans("Ref").'</td>';
 	      print '<td><input name="ref_fourn" size="25" value=""></td></tr>';
 	      print '<tr><td colspan="4" align="center">';
-	      print '<input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-	      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+	      print '<input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+	      print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
 	      print '</form>';
 	    }
@@ -560,12 +560,12 @@ else
 
 	      print '<table class="border" width="100%"><tr>';
 	      print '<td>'.$langs->trans("File").' ('.$langs->trans("Size").' <= '.$conf->maxfilesize.')</td>';
-	      print '<td><input type="file" name="photofile"></td></tr>';
+	      print '<td><input type="file" class="flat" name="photofile"></td></tr>';
 	  
 	      print '<tr><td colspan="4" align="center">';
-	      print '<input type="submit" name="sendit" value="'.$langs->trans("Upload").'"> &nbsp; ';
+	      print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"> &nbsp; ';
 
-	      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+	      print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
 	      print '</form>';
 	    }
@@ -641,8 +641,8 @@ else
 	      print '</td></tr>';
 	    }
 
-	  print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+	  print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+	  print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	  print '</table>';
 	  print '</form>';
 	}
@@ -745,11 +745,11 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
                     print "<td>". strftime("%d %b",$objp->dp)."</td>\n";
                     print '<input type="hidden" name="action" value="addinpropal">';
                     print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
-                    print '<input type="text" name="qty" size="2" value="1"></td><td nowrap>'.$langs->trans("Discount");
-                    print '<input type="text" name="remise_percent" size="1" value="0">%';
+                    print '<input type="text" class="flat" name="qty" size="2" value="1"></td><td nowrap>'.$langs->trans("Discount");
+                    print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
                     print " ".$product->stock_proposition;
                     print '</td><td align="right">';
-                    print '<input type="submit" value="'.$langs->trans("Add").'">';
+                    print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
                     print '</tr>';
                     print '</form>';
@@ -779,10 +779,10 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
             $htmls->select_array("propalid", $otherprop);
             print '</td></tr>';
             print '<tr '.$bc[$var].'><td>'. strftime("%d %b",$objp->dp)."</td><td nowrap>\n";
-            print '<input type="text" name="qty" size="2" value="1"></td><td nowrap>'.$langs->trans("Discount");
-            print '<input type="text" name="remise_percent" size="1" value="0">%';
+            print '<input type="text" class="flat" name="qty" size="2" value="1"></td><td nowrap>'.$langs->trans("Discount");
+            print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
             print '</td><td align="right">';
-            print '<input type="submit" value="'.$langs->trans("Add").'">';
+            print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
             print '</td></tr>';
             print '</table>';
             print '</form>';
@@ -833,10 +833,10 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
                     print "<td>". strftime("%d %b",$objp->df)."</td>\n";
                     print '<input type="hidden" name="action" value="addinfacture">';
                     print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
-                    print '<input type="text" name="qty" size="2" value="1"></td><td nowrap>'.$langs->trans("Discount");
-                    print '<input type="text" name="remise_percent" size="2" value="0">%';
+                    print '<input type="text" class="flat" name="qty" size="2" value="1"></td><td nowrap>'.$langs->trans("Discount");
+                    print '<input type="text" class="flat" name="remise_percent" size="2" value="0">%';
                     print '</td><td align="right">';
-                    print '<input type="submit" value="'.$langs->trans("Add").'">';
+                    print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
                     print '</tr>';
                     print '</form>';
@@ -884,10 +884,10 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
                     print "<td>". strftime("%d %b",$objp->df)."</td>\n";
                     print '<input type="hidden" name="action" value="addinfacture">';
                     print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
-                    print '<input type="text" name="qty" size="2" value="1"></td><td nowrap>'.$langs->trans("Discount");
-                    print '<input type="text" name="remise_percent" size="2" value="0">%';
+                    print '<input type="text" class="flat" name="qty" size="2" value="1"></td><td nowrap>'.$langs->trans("Discount");
+                    print '<input type="text" class="flat" name="remise_percent" size="2" value="0">%';
                     print '</td><td align="right">';
-                    print '<input type="submit" value="'.$langs->trans("Add").'">';
+                    print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
                     print '</tr>';
                     print '</form>';
