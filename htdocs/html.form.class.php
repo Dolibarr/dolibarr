@@ -244,7 +244,7 @@ class Form
     
     $langs_available=$langs->get_available_languages();
     
-    print '<select name="'.$htmlname.'">';
+    print '<select class="flat" name="'.$htmlname.'">';
     $num = count($langs_available);
     $i = 0;
     if ($num)
