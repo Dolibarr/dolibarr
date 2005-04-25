@@ -53,7 +53,7 @@ $sql .= " AND c.fk_client_comm = 52";
 $sql .= " AND sl.statut <> 7";
 $sql .= " AND c.fk_soc_facture = s.idp";
 
-$sql .= " ORDER BY c.rowid ASC";
+$sql .= " ORDER BY c.rowid ASC, sl.code_analytique ASC";
 
 
 print $sql."\n";
