@@ -95,9 +95,9 @@ if ($result)
   print '<form method="get" action="liste_factures.php">';
   print '<tr class="liste_titre"><td>&nbsp;</td>';
   print '<td>';
-  print '<input size="8" class="fat" type="text" name="search_fac" value="'.$_GET["search_fac"].'">';
+  print '<input size="8" class="flat" type="text" name="search_fac" value="'.$_GET["search_fac"].'">';
   print '</td><td>';
-  print '<input size="20" class="fat" type="text" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
+  print '<input size="20" class="flat" type="text" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
 
   print '</td><td colspan="2" align="center">';
   print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';

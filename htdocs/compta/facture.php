@@ -587,7 +587,7 @@ if ($_GET["action"] == 'create')
 	      print '<input type="hidden" name="tva"      value="'.$obj->tva.'">'."\n";
 	      print '<input type="hidden" name="propalid" value="'.$_GET["propalid"].'">';
 	      
-	      print '<tr><td>Proposition</td><td colspan="2">'.$obj->ref.'</td></tr>';
+	      print '<tr><td>'.$langs->trans("Proposal").'</td><td colspan="2">'.$obj->ref.'</td></tr>';
 	      print '<tr><td>'.$langs->trans("TotalHT").'</td><td colspan="2">'.price($amount).'</td></tr>';
 	      print '<tr><td>'.$langs->trans("VAT").'</td><td colspan="2">'.price($obj->tva)."</td></tr>";
 	      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($obj->total)."</td></tr>";
@@ -1674,14 +1674,14 @@ else
 	  print '<form method="get" action="facture.php">';
 	  print '<tr class="liste_titre">';
 	  print '<td valign="right">';
-	  print '<input class="fat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
+	  print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
 	  print '</td><td>&nbsp;</td>';
 	  print '<td align="left">';
-	  print '<input class="fat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
+	  print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
 	  print '</td><td align="right">';
-	  print '<input class="fat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
+	  print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
 	  print '</td><td align="right">';
-	  print '<input class="fat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
+	  print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
 	  print '</td><td colspan="2" align="center">';
 	  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
 	  print '</td>';

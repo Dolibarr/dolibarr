@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,11 +175,11 @@ if ($result)
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
   print '<tr class="liste_titre">';
   print '<td valign="right">';
-  print '<input class="fat" type="text" name="search_nom" value="'.stripslashes($search_nom).'">';
+  print '<input class="flat" type="text" name="search_nom" value="'.stripslashes($search_nom).'">';
   print '</td><td valign="right">';
-  print '<input class="fat" type="text" name="search_ville" value="'.stripslashes($search_ville).'">';
+  print '<input class="flat" type="text" name="search_ville" value="'.stripslashes($search_ville).'">';
   print '</td><td valign="right">';
-  print '<input class="fat" size="10" type="text" name="search_siren" value="'.$_POST["search_siren"].'">';
+  print '<input class="flat" size="10" type="text" name="search_siren" value="'.$_POST["search_siren"].'">';
 
   print '</td><td colspan="2" align="center">';
   print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';

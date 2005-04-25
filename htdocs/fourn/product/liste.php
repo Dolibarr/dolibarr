@@ -187,10 +187,10 @@ if ($resql)
   print '<input type="hidden" name="type" value="'.$type.'">';
   print '<tr class="liste_titre">';
   print '<td>';
-  print '<input class="fat" type="text" name="sref" value="'.$sref.'">';
+  print '<input class="flat" type="text" name="sref" value="'.$sref.'">';
   print '</td>';
   print '<td valign="right">';
-  print '<input class="fat" type="text" name="snom" value="'.$snom.'">';
+  print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
   print '</td>';
   print '<td colspan="2" align="center">';
   print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';

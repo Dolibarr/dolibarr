@@ -261,15 +261,15 @@ if ($result)
   print '<tr class="liste_titre">';
 
   print '<td align="left">';
-  print '<input class="fat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+  print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
   print '<td>&nbsp;</td>';
 
   print '<td align="left">';
-  print '<input class="fat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
+  print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
   print '</td>';
 
   print '<td align="left">';
-  print '<input class="fat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
+  print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
   print '</td>';
 
   print '<td align="left">';

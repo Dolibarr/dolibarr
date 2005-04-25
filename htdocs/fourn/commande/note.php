@@ -26,7 +26,6 @@
    \ingroup    commande
    \brief      Fiche commande
    \version    $Revision$
-
 */
 
 require("./pre.inc.php");
@@ -144,15 +143,15 @@ if ($_GET["id"] > 0)
 
       if ($user->rights->fournisseur->commande->creer)
 	{
-	  print '<tr><td>Note</td><td colspan="3"><textarea cols="60" rows="10" name="note">'.nl2br($commande->note)."</textarea></td></tr>";
-	  print '<tr><td colspan="4" align="center"><input type="submit"></td></tr>';
+	  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3"><textarea cols="60" rows="10" name="note">'.nl2br($commande->note)."</textarea></td></tr>";
+	  print '<tr><td colspan="4" align="center"><input type="submit" class="button"></td></tr>';
 	}
       else
 	{
-	  print '<tr><td>Note</td><td colspan="3">'.nl2br($commande->note)."</td></tr>";
+	  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">'.nl2br($commande->note)."</td></tr>";
 	}
 	  
-      print "</table></form>";
+      print "</table><br></form>";
     }
   else
     {

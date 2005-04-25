@@ -26,7 +26,6 @@
    \ingroup    commande
    \brief      Fiche commande
    \version    $Revision$
-
 */
 
 require("./pre.inc.php");
@@ -492,7 +491,7 @@ if ($_GET["id"] > 0)
 	  print '<td align="center"><input type="text" size="2" name="pqty" value="1"></td>';
 	  print '<td align="right"><input type="text" size="4" name="premise" value="0"> %</td>';
 	  print '<td>&nbsp;</td>';
-	  print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+	  print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 	  print "</tr>\n";
 
 	  print "</form>";

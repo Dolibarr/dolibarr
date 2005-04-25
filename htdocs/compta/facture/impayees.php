@@ -168,14 +168,14 @@ if ($user->rights->facture->lire)
       print '<form method="get" action="impayees.php">';
       print '<tr class="liste_titre">';
       print '<td valign="right">';
-      print '<input class="fat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
+      print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
       print '</td><td>&nbsp;</td>';
       print '<td align="left">';
-      print '<input class="fat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
+      print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
       print '</td><td align="right">';
-      print '<input class="fat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
+      print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
       print '</td><td align="right">';
-      print '<input class="fat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
+      print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
       print '</td><td colspan="2" align="center">';
       print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
       print '</td>';
