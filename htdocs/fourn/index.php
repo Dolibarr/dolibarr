@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/fourn/index.php
+/**
+	    \file       htdocs/fourn/index.php
         \ingroup    fournisseur
 		\brief      Page accueil de la zone fournisseurs
 		\version    $Revision$
@@ -114,8 +115,8 @@ if ($result)
 
   print '<tr class="liste_titre">';
   print '<form action="index.php" method="GET">';
-  print '<td><input type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
-  print '<td><input type="text" name="search_ville" value="'.$_GET["search_ville"].'"></td>';
+  print '<td><input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+  print '<td><input type="text" class="flat" name="search_ville" value="'.$_GET["search_ville"].'"></td>';
   print '<td><input class="button" type="submit" value="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
