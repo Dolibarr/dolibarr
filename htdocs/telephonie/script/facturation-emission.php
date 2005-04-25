@@ -185,7 +185,7 @@ if (!$error)
       $sql .= " AND f.fk_facture IS NULL";
       $sql .= " AND f.isfacturable = 'oui'";  
 
-      $sql .= " ORDER BY l.rowid DESC";
+      $sql .= " ORDER BY l.code_analytique ASC, l.rowid DESC";
       
       $numlignes = array();
       
