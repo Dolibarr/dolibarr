@@ -579,14 +579,14 @@ font-size: 1.0em;
 }
 
 tr.pair { 
+            background: #eeeecc; 
+            font-size: 1.0em; 
+            }
+tr.impair { 
           background: #dcdcb3;           
           font-size: 1.0em; 
           }
 
-tr.impair { 
-            background: #eeeecc; 
-            font-size: 1.0em; 
-            }
 /*
  *
  */

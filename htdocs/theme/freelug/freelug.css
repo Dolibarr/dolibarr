@@ -23,6 +23,7 @@
 /***** Style du fond *****/
 body {
   margin: 0px;
+  background-color: #F8F8F8;
   background-image: url("/theme/freelug/img/background.png");
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none ;
@@ -609,14 +610,14 @@ font-size: 1.0em;
 
 
 tr.pair { 
-          background: #dcdcd0;           
-          font-size: 1.0em; 
-          }
-
+    background: #eeeedd; 
+    font-size: 1.0em; 
+    }
 tr.impair { 
-            background: #eeeedd; 
-            font-size: 1.0em; 
-            }
+    background: #dcdcd0;           
+    font-size: 1.0em; 
+    }
+
 /*
  *
  */
