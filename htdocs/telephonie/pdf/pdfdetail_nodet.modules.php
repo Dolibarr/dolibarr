@@ -147,8 +147,6 @@ class pdfdetail_nodet {
 	      $this->pdf->SetFont('Arial','', 9);
 
 	      $Y = $this->pdf->GetY();
-	      $this->pdf->SetXY(10, $Y);
-	      $this->pdf->MultiCell(150, 4, "10 Destinations les plus coûteuses", 0,'L',0);
 
 	      $this->pdf->SetXY(140, $Y);
 	      $this->pdf->MultiCell(20, 4, "Durée", 0,'R',0);
@@ -167,6 +165,10 @@ class pdfdetail_nodet {
 	      $sql .= " LIMIT 10";
 
 	      $resql = $this->db->query($sql);
+
+	      $total_duree = 0;
+	      $total_nb = 0;
+	      $total_cout = 0;
 
 	      if ( $resql )
 		{
@@ -228,6 +230,10 @@ class pdfdetail_nodet {
 		      array_push($graph_values_duree, $obj->duree);
 		      array_push($graph_labels, $obj->dest);
 
+		      $total_duree = $total_duree + $obj->duree;
+		      $total_nb = $total_nb + $obj->cc;
+		      $total_cout = $total_cout + $obj->cout_vente;
+
 		      $i++;
 		    }
 		}
@@ -236,6 +242,42 @@ class pdfdetail_nodet {
 		  dolibarr_syslog("Erreur SQl");
 		  dolibarr_syslog($this->db->error());
 		}
+
+	      $h = floor($total_duree / 3600);
+	      $m = floor(($total_duree - ($h * 3600)) / 60);
+	      $s = ($total_duree - ( ($h * 3600 ) + ($m * 60) ) );
+	      
+	      if ($h > 0)
+		{
+		  $dt = $h . " h " . $m ." min " . $s ." sec" ; 
+		}
+	      else
+		{
+		  if ($m > 0)
+		    {
+		      $dt = $m ." min " . $s ." sec" ; 
+		    }
+		  else
+		    {
+		      $dt =  $s ." sec" ; 
+		    }
+		}
+	      
+	      $var=!$var;
+
+	      $this->pdf->SetXY(10, $Y + $line_height);
+	      $this->pdf->MultiCell(100, $line_height,"Total : ", 0,'R',$var);
+
+	      $this->pdf->SetXY(110, $Y + $line_height);
+	      $this->pdf->MultiCell(50, $line_height,$dt, 0,'R',$var);
+
+	      $this->pdf->SetXY(160, $Y + $line_height);
+	      $this->pdf->MultiCell(20, $line_height,$total_nb, 0,'R',$var);
+	      
+	      $this->pdf->SetXY(180, $Y + $line_height);
+	      $this->pdf->MultiCell(20, $line_height,sprintf("%01.3f",$total_cout), 0,'R',$var);
+
+
 	      /*
 	       * Appels les plus important
 	       *
