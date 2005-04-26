@@ -237,7 +237,7 @@ function show_theme($edit=0)
 {
     global $langs,$dirtheme,$bc;
     
-    $nbofthumbs=4;
+    $nbofthumbs=5;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="'.$nbofthumbs.'">'.$langs->trans("Skin").'</td></tr>';
 
