@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (c) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -80,7 +80,7 @@ class Form
     $result=$this->db->query($sql);
     if ($result)
     {
-        print '<select name="'.$htmlname.'">';
+        print '<select class="flat" name="'.$htmlname.'">';
         if ($pays_code) print '<option value="0">&nbsp;</option>';
         $num = $this->db->num_rows($result);
         $i = 0;
@@ -124,6 +124,7 @@ class Form
     }
   }
   
+  
   /**
    *    \brief      Retourne la liste déroulante des regions actives dont le pays est actif
    *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
@@ -142,7 +143,7 @@ class Form
 
     if ($this->db->query($sql))
       {
-	print '<select name="'.$htmlname.'">';
+	print '<select class="flat" name="'.$htmlname.'">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
@@ -198,7 +199,7 @@ class Form
     
     if ($this->db->query($sql))
       {
-        print '<select name="'.$htmlname.'">';
+        print '<select class="flat" name="'.$htmlname.'">';
         $num = $this->db->num_rows();
         $i = 0;
         if ($num)
@@ -279,7 +280,7 @@ class Form
 
     if ($this->db->query($sql))
       {
-	print '<select name="'.$htmlname.'">';
+	print '<select class="flat" name="'.$htmlname.'">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
@@ -320,7 +321,7 @@ class Form
 
     if ($this->db->query($sql))
       {
-	print '<select name="'.$htmlname.'">';
+	print '<select class="flat" name="'.$htmlname.'">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
@@ -366,7 +367,7 @@ class Form
     $result=$this->db->query($sql);
     if ($result)
     {
-    	print '<select name="'.$htmlname.'">';
+    	print '<select class="flat" name="'.$htmlname.'">';
         print "<option value=\"0\" selected>&nbsp;</option>";
     
         $num = $this->db->num_rows($result);
@@ -433,7 +434,7 @@ class Form
     
     if ($this->db->query($sql))
       {
-        print '<select name="civilite_id">';
+        print '<select class="flat" name="civilite_id">';
         print '<option value="">&nbsp;</option>';
         $num = $this->db->num_rows();
         $i = 0;
@@ -487,7 +488,7 @@ class Form
     $result=$this->db->query($sql);
     if ($result)
     {
-        print '<select name="forme_juridique_code">';
+        print '<select class="flat" name="forme_juridique_code">';
         if ($pays_code) print '<option value="0">&nbsp;</option>';
         $num = $this->db->num_rows($result);
         $i = 0;
