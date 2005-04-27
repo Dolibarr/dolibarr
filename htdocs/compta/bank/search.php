@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,13 @@
  * $Id$
  * $Source$
  */
+
+/**
+	    \file       htdocs/compta/bank/search.php
+		\ingroup    banque
+		\brief      Page de recherche de transactions bancaires
+		\version    $Revision$
+*/
 
 require("./pre.inc.php");
 require("./bank.lib.php");
@@ -40,13 +47,13 @@ if ($vline) {
 print_titre("Recherche écriture bancaire");
 print '<br>';
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td>Date</td><td>'.$langs->trans("Description").'</td>';
-print "<td align=\"right\">Debit</td>";
-print "<td align=\"right\">Credit</td>";
+print '<td align="right">'.$langs->trans("Debit").'</td>';
+print '<td align="right">'.$langs->trans("Credit").'</td>';
 print "<td align=\"center\">".$langs->trans("Type")."</td>";
-print "<td align=\"left\">Compte</td>";
+print '<td align="left">'.$langs->trans("Account").'</td>';
 print "</tr>\n";
 ?>
 
@@ -54,13 +61,13 @@ print "</tr>\n";
 <tr class="liste_titre">
 <td>&nbsp;</td>
 <td>
-<input type="text" name="description" size="40" value=<?php echo $description ?>>
+<input type="text" class="flat" name="description" size="40" value=<?php echo $description ?>>
 </td>
 <td align="right">
-<input type="text" name="debit" size="6" value=<?php echo $debit ?>>
+<input type="text" class="flat" name="debit" size="6" value=<?php echo $debit ?>>
 </td>
 <td align="right">
-<input type="text" name="credit" size="6" value=<?php echo $credit ?>>
+<input type="text" class="flat" name="credit" size="6" value=<?php echo $credit ?>>
 </td>
 <td align="center">
 <select name="type">
@@ -72,7 +79,7 @@ print "</tr>\n";
 </select>
 </td>
 <td align="left">
-<input type="submit" name="submit" value="<?php echo $langs->trans("Search") ?>">
+<input type="submit" class="button" name="submit" value="<?php echo $langs->trans("Search") ?>">
 </td>
 </tr>
 
@@ -145,31 +152,33 @@ if ($result)
     $var=!$var;
 
     print "<tr $bc[$var]>";
-    print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
+    print "<td>".strftime("%d %b %y",$objp->do)."</td>\n";
       
     print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">$objp->label</a>&nbsp;";
     
     if ($objp->amount < 0)
       {
-	print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
+	print "<td align=\"right\">".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
       }
     else
       {
-	print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
+	print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</td>\n";
       }
     
-    print "<td align=\"center\">".$objp->fk_type."</TD>\n";
+    print "<td align=\"center\">".$objp->fk_type."</td>\n";
 
       
-    print "<td align=\"left\"><small>".$objp->labelaccount."</small></TD>\n";
+    print "<td align=\"left\"><small>".$objp->labelaccount."</small></td>\n";
     print "</tr>";
     
     $i++;
   }
 
   $db->free();
-} else {
-  print $db->error() .' <div class="div.titre">' . $sql .'</div>';
+}
+else
+{
+  dolibarr_print_error($db);
 }
 
 print "</table>";
@@ -182,5 +191,5 @@ if ($_POST["submit"] && ! $num) {
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

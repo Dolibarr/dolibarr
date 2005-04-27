@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,8 @@
  *
  */
 
-/**	    \file       htdocs/compta/bank/account.php
+/**
+	    \file       htdocs/compta/bank/account.php
 		\ingroup    banque
 		\brief      Page de détail des transactions bancaires
 		\version    $Revision$
@@ -202,7 +203,7 @@ if ($account > 0)
    */
 
   print '<tr class="liste_titre">';
-  print '<td>'.$langs->trans("Date").'</td><td>Valeur</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
+  print '<td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Value").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
   print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td><td align="right">Solde</td>';
   print '<td align="center">'.$langs->trans("AccountStatement").'</td></tr>';
 
@@ -211,7 +212,7 @@ if ($account > 0)
   print '<input type="hidden" name="account" value="' . $acct->id . '">';
   print '<tr class="liste_titre">';
   print '<td colspan="3">&nbsp;</td>';
-  print '<td><input type="text" name="req_desc" value="'.$_POST["req_desc"].'" size="40"></td>';
+  print '<td><input type="text" class="flat" name="req_desc" value="'.$_POST["req_desc"].'" size="40"></td>';
   print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$_POST["req_debit"].'" size="6"></td>';
   print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$_POST["req_credit"].'" size="6"></td>';
   print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
