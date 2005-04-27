@@ -604,33 +604,6 @@ if ($_GET["action"] == 'create')
 	    {
 	      print '<tr><td colspan="3">&nbsp;</td></tr>';
 	      print '<tr><td colspan="3">';
-	      /*
-	       *
-	       * Liste des elements
-	       *
-	       */
-	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
-	      $sql .= " WHERE envente = 1";
-	      $sql .= " ORDER BY p.nbvente DESC LIMIT ".$conf->liste_limit;
-	      if ( $db->query($sql) )
-		{
-		  $opt = "<option value=\"0\" selected></option>";
-		  if ($result)
-		    {
-		      $num = $db->num_rows();	$i = 0;	
-		      while ($i < $num)
-			{
-			  $objp = $db->fetch_object();
-			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
-			  $i++;
-			}
-		    }
-		  $db->free();
-		}
-	      else
-		{
-		  dolibarr_print_error($db);
-		}
 	      	      
 	      print '<table class="noborder">';
 	      print '<tr><td>Services/Produits prédéfinis</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td><td> &nbsp; &nbsp; </td>';
@@ -639,7 +612,9 @@ if ($_GET["action"] == 'create')
 	      }
 	      for ($i = 1 ; $i <= $NBLINES ; $i++)
 		{
-		  print '<tr><td><select class="flat" name="idprod'.$i.'">'.$opt.'</select></td>';
+		  print '<tr><td>';
+		  $html->select_produits('',"idprod$i");
+		  print '</td>';
 		  print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
 		  print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0">%</td>';
 		  print '<td>&nbsp;</td>';
@@ -648,7 +623,7 @@ if ($_GET["action"] == 'create')
 		    print '<td>';
 		    print 'Du ';
 		    print $html->select_date('',"date_start$i",0,0,1);
-		    print ' au ';
+		    print '<br>au ';
 		    print $html->select_date('',"date_end$i",0,0,1);
 		    print '</td>';
 		  }
@@ -1551,7 +1526,7 @@ else
       else
 	{
 	  /* Facture non trouvée */
-	  print "Facture inexistante";
+	  print "Facture ".$_GET["facid"]." inexistante";
 	}
     }
   else

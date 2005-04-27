@@ -619,33 +619,6 @@ else
 	 */
 	if ($user->rights->contrat->creer) 
 	  {
-	    $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration";
-	    $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
-	    $sql.= " WHERE p.envente = 1";
-	    $sql.= " ORDER BY p.nbvente DESC LIMIT 20";
-
-	    if ( $db->query($sql) )
-	      {
-		$opt = "<option value=\"0\" selected></option>";
-
-		$num = $db->num_rows();	
-		$i = 0;	
-		while ($i < $num)
-		  {
-		    $objp = $db->fetch_object();
-		    $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price ".MAIN_MONNAIE;
-		    if ($objp->duration) $opt .= " - ".$objp->duration;
-		    print "</option>\n";
-		    $i++;
-		  }
-		
-		$db->free();
-	      }
-	    else
-	      {
-		dolibarr_print_error($db);
-	      }
-	    
 	    print '<form action="fiche.php?id='.$id.'" method="post">';
 	    print '<input type="hidden" name="action" value="addligne">';
 	    print '<input type="hidden" name="id" value="'.$id.'">';
@@ -674,7 +647,9 @@ else
 	    $var=!$var;
 	    print "<tr $bc[$var]>";
         print '<td>&nbsp;</td>';
-	    print '<td colspan="2"><select name="p_idprod">'.$opt.'</select></td>';
+	    print '<td colspan="2">';
+        $html->select_produits('','p_idprod');
+	    print '</td>';
 	    print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
 	    print '<td align="right"><input type="text" class="flat" size="2" name="premise" value="0">%</td>';
 	    print '<td>&nbsp;</td>';

@@ -270,7 +270,6 @@ class Form
    *    \brief   Retourne la liste déroulante des sociétés
    *    \param
    */
-	 
   function select_societes($selected='',$htmlname='soc_id')
   {
     // On recherche les societes
@@ -306,11 +305,11 @@ class Form
     }
   }
   
+  
   /**
    *    \brief  Retourne la liste déroulante des contacts d'une société donnée
    *
    */
-	 
   function select_contacts($socid,$selected='',$htmlname='contactid')
   {
     // On recherche les societes
@@ -351,10 +350,51 @@ class Form
   
   
   /**
+   *    \brief      Retourne la liste des produits
+   *    \param      selected        Produit présélectionné
+   *    \param      filtretype      Pour filtre sur type de produit
+   */
+  function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20)
+  {
+    $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration";
+    $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
+    $sql.= " WHERE p.envente = 1";
+    if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
+    $sql.= " ORDER BY p.nbvente DESC";
+    $sql.= " LIMIT $limit";
+    
+    $result=$this->db->query($sql);
+    if ($result)
+    {
+    	print '<select name="'.$htmlname.'">';
+        print "<option value=\"0\" selected>&nbsp;</option>";
+    
+        $num = $this->db->num_rows($result);
+        $i = 0;
+        while ($i < $num)
+        {
+            $objp = $this->db->fetch_object($result);
+            $opt = "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price ".MAIN_MONNAIE;
+            if ($objp->duration) $opt .= " - ".$objp->duration;
+            $opt .= "</option>\n";
+            print $opt;
+            $i++;
+        }
+        print '</select>';
+        
+        $this->db->free($result);
+    }
+    else
+    {
+        dolibarr_print_error($db);
+    }
+  }
+  
+  
+  /**
    *    \brief      Retourne le nom d'un pays
    *    \param      id      id du pays
    */
-	 
   function pays_name($id)
   {
     $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."c_pays";
