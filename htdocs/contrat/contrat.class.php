@@ -268,59 +268,6 @@ class Contrat
 
 
   /**
-   *    \brief      Crée autant de contrats que de lignes de facture, pour une facture donnée
-   *    \param      factureid       id de la facture
-   *    \param      user            utilisateur qui crée
-   *    \param      socid           id société
-   */
-    function create_from_facture($factureid, $user, $socid)
-    {
-        $sql = "SELECT p.rowid as rowid, fd.rowid as fdrowid FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."facturedet as fd";
-        $sql .= " WHERE p.rowid = fd.fk_product AND p.fk_product_type = 1 AND fd.fk_facture = ".$factureid;
-    
-        if ($this->db->query($sql))
-        {
-            $num = $this->db->num_rows();
-    
-            if ($num > 0)
-            {
-                $i = 0;
-    
-                while ($i < $num)
-                {
-                    $objp = $this->db->fetch_object();
-                    $prowid[$i] = $objp->rowid;
-                    $fdrowid[$i] = $objp->fdrowid;
-                    $i++;
-                }
-    
-                $this->db->free();
-                while (list($i, $value) = each ($prowid))
-                {
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (fk_product, fk_facture, fk_facturedet, fk_soc, fk_user_author)";
-                    $sql .= " VALUES (".$prowid[$i].", $factureid, ".$fdrowid[$i].", $socid, $user->id)";
-                    if (! $this->db->query($sql))
-                    {
-                        dolibarr_syslog("Contrat::create_from_facture - 10");
-                        dolibarr_print_error($this->db,"Contrat::create_from_facture - 10");
-                    }
-                }
-            }
-            else
-            {
-                $this->db->free();
-            }
-        }
-        else
-        {
-            dolibarr_syslog("Contrat::create_from_facture - 20");
-            dolibarr_print_error($this->db,"Contrat::create_from_facture - 20");
-        }
-    
-        return $result;
-    }
-
-  /**
    *    \brief      Ajoute une ligne de commande
    *    \return     int     <0 si KO, =0 si OK
    */

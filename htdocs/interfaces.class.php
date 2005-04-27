@@ -72,7 +72,7 @@ class Interfaces
                 if ($modName)
                 {
                     include_once($this->dir."/".$file);
-                    $objMod = new $modName($db);
+                    $objMod = new $modName($this->db);
                     if ($objMod)
                     {
                         if ($objMod->run_trigger($action,$object,$user,$lang,$conf) > 0)
