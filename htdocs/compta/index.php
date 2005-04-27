@@ -33,6 +33,7 @@ require("./pre.inc.php");
 $user->getrights(); // On a besoin des permissions sur plusieurs modules
 
 $langs->load("compta");
+$langs->load("bills");
 
 /*
  * Sécurité accés client
@@ -84,19 +85,20 @@ print '<tr><td valign="top" width="30%">';
 /*
  * Zone recherche facture
  */
-print '<form method="post" action="facture.php">';
-print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\">";
-print '<td colspan="2">'.$langs->trans("SearchABill").'</td></tr>';
-print "<tr $bc[0]><td>";
-print $langs->trans("Ref").': <input type="text" name="sf_ref" class="flat" size="18">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</table></form><br>";
-
+if ($conf->facture->anabled) {
+    print '<form method="post" action="facture.php">';
+    print '<table class="noborder" width="100%">';
+    print "<tr class=\"liste_titre\">";
+    print '<td colspan="2">'.$langs->trans("SearchABill").'</td></tr>';
+    print "<tr $bc[0]><td>";
+    print $langs->trans("Ref").': <input type="text" name="sf_ref" class="flat" size="18">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print "</table></form><br>";
+}
 
 
 /*
-* Factures brouillons
-*/
+ * Factures brouillons
+ */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
   
