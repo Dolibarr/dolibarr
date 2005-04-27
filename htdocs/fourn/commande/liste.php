@@ -21,11 +21,11 @@
  *
  */
 
-/*! 
-  \file       htdocs/fourn/commande/liste.php
-  \ingroup    fournisseur
-  \brief      Liste des commandes fournisseurs
-  \version    $Revision$
+/** 
+        \file       htdocs/fourn/commande/liste.php
+        \ingroup    fournisseur
+        \brief      Liste des commandes fournisseurs
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -108,8 +108,8 @@ if ($resql)
 
   print '<tr class="liste_titre">';
   print '<form action="liste.php" method="GET">';
-  print '<td><input type="text" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
-  print '<td><input type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+  print '<td><input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
+  print '<td><input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
   print '<td><input class="button" type="submit" value="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
