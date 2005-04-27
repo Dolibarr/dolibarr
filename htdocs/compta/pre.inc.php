@@ -22,12 +22,13 @@
  */
 
 /**   
-      \file   	htdocs/compta/pre.inc.php
-      \ingroup    compta
-      \brief  	Fichier gestionnaire du menu compta
+      \file   	    htdocs/compta/pre.inc.php
+      \ingroup      compta
+      \brief  	    Fichier gestionnaire du menu compta
 */
 
 require("../main.inc.php");
+
 
 function llxHeader($head = "", $title="", $help_url='')
 {
@@ -92,7 +93,8 @@ function llxHeader($head = "", $title="", $help_url='')
 
   if ($conf->deplacement->enabled && $user->societe_id == 0)
     {
-      $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
+      $langs->load("trips");
+      $menu->add(DOL_URL_ROOT."/compta/deplacement/", $langs->trans("Trips"));
     }
 
   if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)

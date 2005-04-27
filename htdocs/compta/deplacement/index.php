@@ -32,6 +32,7 @@ require("../../tva.class.php");
 
 $langs->load("companies");
 $langs->load("users");
+$langs->load("trips");
 
 
 llxHeader();

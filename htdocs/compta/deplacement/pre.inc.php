@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/**   
+      \file   	    htdocs/compta/deplacement/pre.inc.php
+      \ingroup      deplacement
+      \brief  	    Fichier gestionnaire du menu deplacement
+*/
+
 require("../../main.inc.php");
 require("./deplacement.class.php");
 
@@ -30,17 +37,12 @@ $deplacement_type[0] = "voiture";
 function llxHeader($head = "") {
   global $user, $conf, $langs;
 
-
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add("index.php","Déplacements");
-  $menu->add_submenu("fiche.php?action=create","Nouveau déplacement");
+  $menu->add("index.php",$langs->trans("Trips"));
+  $menu->add_submenu("fiche.php?action=create",$langs->trans("NewTrip"));
 
   left_menu($menu->liste);
 }
