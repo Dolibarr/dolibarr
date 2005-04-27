@@ -554,7 +554,7 @@ class Form
     $this->selectyesno("confirm","no");
     
     print "</td>\n";
-    print '<td class="valid" align="center"><input type="submit" value="'.$langs->trans("Confirm").'"</td></tr>';
+    print '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Confirm").'"</td></tr>';
     print '</table>';
     print "</form>\n";  
   }
