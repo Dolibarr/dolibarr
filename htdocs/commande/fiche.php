@@ -96,10 +96,17 @@ if ($_POST["action"] == 'add' && $user->rights->commande->creer)
 if ($_POST["action"] == 'setremise' && $user->rights->commande->creer) 
 {
   $commande = new Commande($db);
-  $commande->fetch($id);
+  $commande->fetch($_GET["id"]);
 
   $commande->set_remise($user, $_POST["remise"]);
 } 
+
+if ($_POST["action"] == 'setnote' && $user->rights->commande->creer)
+{
+  $commande = new Commande($db);
+  $commande->fetch($_GET['id']);
+  $commande->set_note($user, $_POST['note']);
+}
 
 if ($_POST["action"] == 'addligne' && $user->rights->commande->creer) 
 {
@@ -482,11 +489,6 @@ else
 	  /*
 	   *   Commande
 	   */
-	  if ($commande->brouillon == 1 && $user->rights->commande->creer) 
-	    {
-	      print '<form action="fiche.php?id='.$id.'" method="post">';
-	      print '<input type="hidden" name="action" value="setremise">';
-	    }
 
 	  print '<table class="border" width="100%">';
 	  print '<tr><td width="20%">'.$langs->trans("Order")."</td>";
@@ -532,33 +534,44 @@ else
 	  print '<td width="50%">';
 	  print $langs->trans("Author").' : '.$author->fullname.'</td></tr>';
   
-	  // Ligne de 3 colonnes
-	  print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-	  print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-	  print '<td>'.$conf->monnaie.'</td>';
-	  print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :</td></tr>';
+		// Ligne de 3 colonnes
+		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
+		print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
+		print '<td>'.$conf->monnaie.'</td>';
+		print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :<br>';
+		if ($commande->brouillon == 1 && $user->rights->commande->creer) 
+		{
+			print '<form action="fiche.php?id='.$id.'" method="post">';
+			print '<input type="hidden" name="action" value="setnote">';
+			print '<textarea name="note" style="width:95%;height:"80%">'.$commande->note.'</textarea><br><input type="submit" value="'.$langs->trans("Save").'">';
+			print '</form>';
+		}
+		else
+		{
+			print nl2br($commande->note);
+		}
+		print '</td></tr>';
 
-	  print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
+		print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
 
-	  if ($commande->brouillon == 1 && $user->rights->commande->creer) 
+		if ($commande->brouillon == 1 && $user->rights->commande->creer)
 	    {
+	      print '<form action="fiche.php?id='.$id.'" method="post">';
+	      print '<input type="hidden" name="action" value="setremise">';
 	      print '<input type="text" name="remise" size="3" value="'.$commande->remise_percent.'">%';
 	      print '</td><td><input type="submit" value="'.$langs->trans("Save").'">';
+		  print '</form>';
 	    }
-	  else
+		else
 	    {
 	      print $commande->remise_percent.' %</td><td>&nbsp;';
 	    }
-	  print '</td></tr>';
+		print '</td></tr>';
 
 	  print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
 	  print '<td>'.$conf->monnaie.'</td></tr>';
 	  print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
 	  print '<td>'.$conf->monnaie.'</td></tr>';
-	  if ($commande->note)
-	    {
-	      print '<tr><td colspan="5">'.$langs->trans("Note").' : '.nl2br($commande->note)."</td></tr>";
-	    }
 	  
 	  print "</table>";
 	  

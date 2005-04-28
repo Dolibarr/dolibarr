@@ -422,7 +422,7 @@ class Commande
   function fetch ($id)
     {
       $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva";
-      $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture";
+      $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture, c.note";
       $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
       $sql .= " WHERE c.rowid = ".$id;
 
@@ -445,6 +445,7 @@ class Commande
 
 	  $this->source          = $obj->source;
 	  $this->facturee        = $obj->facture;
+	  $this->note            = $obj->note;
 	  $this->projet_id       = $obj->fk_projet;
 
 	  $this->db->free();
@@ -622,6 +623,33 @@ class Commande
 	    }
 	}
     }
+
+	/**
+	 *
+	 *
+	 */
+	function set_note($user, $note)
+	{
+		if ($user->rights->commande->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET note = '".addslashes($note)."'";
+			$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+			if ($this->db->query($sql))
+			{
+				$this->note = $note;
+				return 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				return 0;
+			}
+		}
+		else
+		{
+			return 0;
+		}
+	}
   /**
    * Classe la facture comme facturée
    *
