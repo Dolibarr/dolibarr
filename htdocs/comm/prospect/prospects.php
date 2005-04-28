@@ -132,8 +132,8 @@ if ($result)
   print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","","","valign=\"center\"",$sortfield);
   print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","","","",$sortfield);
   print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","","","align=\"center\"",$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","","","align=\"center\"",$sortfield);
   print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","","","align=\"center\"",$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","","","align=\"center\"",$sortfield);
   print '<td colspan="4">&nbsp;</td>';
   print "</tr>\n";
 
@@ -164,12 +164,14 @@ if ($result)
       print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print "<td>".$obj->ville."&nbsp;</td>";
       print "<td align=\"center\">$obj->departement</td>";
+      // Date création
+      print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
+      // Statut
       print "<td align=\"center\">";
       $transcode=$langs->trans("StatusProspect".$obj->fk_stcomm);
       $libelle=($transcode!="StatusProspect".$obj->fk_stcomm?$transcode:$obj->stcomm);
       print $libelle;
       print "</td>";
-      print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
 
       $sts = array(-1,0,1,2,3);
       print '<td>';
