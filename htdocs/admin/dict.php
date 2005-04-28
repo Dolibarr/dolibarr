@@ -251,12 +251,13 @@ if ($_GET["action"] == $acts[1])       // disable
 llxHeader();
 
 
+
 /*
  * Affichage d'un dictionnaire particulier
  */
 if ($_GET["id"])
 {
-    print_titre($langs->trans("DictionnarySetup"));
+    print_titre($langs->trans("DictionnarySetup").' - '.$tablib[$_GET["id"]]);
     print '<br>';
 
     if ($msg) {
@@ -282,7 +283,6 @@ if ($_GET["id"])
 
     // Ligne d'ajout
     if ($tabname[$_GET["id"]]) {
-        print_titre($tablib[$_GET["id"]]);
         $var=False;
         $fieldlist=split(',',$tabfield[$_GET["id"]]);
         print '<table class="noborder" width="100%">';
@@ -334,10 +334,10 @@ if ($_GET["id"])
                 print '</td>';
             }
             else {
-                print '<td><input type="text" value="" name="'.$fieldlist[$field].'"></td>';
+                print '<td><input type="text" class="flat" value="" name="'.$fieldlist[$field].'"></td>';
             }
         }
-        print '<td colspan=3><input type="submit" name="actionadd" value="'.$langs->trans("Add").'"></td>';
+        print '<td colspan=3><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
         print "</tr>";
 
         print '<tr><td colspan="'.(count($fieldlist)+2).'">* Label used by default if no translation can be found for code.</td></tr>';
@@ -422,18 +422,21 @@ else
     /*
      * Affichage de la liste des dictionnaires
      */
-
     print_titre($langs->trans("DictionnarySetup"));
-    print '<br>';
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Dictionnary").'</td><td>'.$langs->trans("Table").'</td></tr>';
 
     foreach ($taborder as $i) {
+        $var=!$var;
         if ($i) {
             $value=$tabname[$i];
-            print '<a href="dict.php?id='.$i.'">'.$tablib[$i].'</a> (Table '.$tabname[$i].')<br>';
+            print '<tr '.$bc[$var].'><td width="30%"><a href="dict.php?id='.$i.'">'.$tablib[$i].'</a></td><td>'.$tabname[$i].'</td></tr>';
+
         }
         else
         {
-            print '<br>';
+            print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td></tr>';
         }
     }
 }

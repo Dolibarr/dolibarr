@@ -64,7 +64,7 @@ if ($_GET["action"] == 'delete')
 
 
 
-print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -82,19 +82,19 @@ $var=!$var;
 print '<form action="const.php" method="POST">';
 print '<input type="hidden" name="action" value="add">';
 
-print "<tr $bc[$var] class=value><td><input type=\"text\" size=\"15\" name=\"constname\" value=\"\"></td>\n";
+print "<tr $bc[$var] class=value><td><input type=\"text\" class=\"flat\" size=\"15\" name=\"constname\" value=\"\"></td>\n";
 
 print '<td>';
-print '<input type="text" size="30" name="constvalue" value="">';
+print '<input type="text" class="flat" size="30" name="constvalue" value="">';
 print '</td><td>';
 
 $form->select_array('consttype',array('yesno','texte','chaine'),2);
 print '</td><td>';
 
-print '<input type="text" size="15" name="constnote" value="">';
+print '<input type="text" class="flat" size="15" name="constnote" value="">';
 print '</td><td>';
 
-print '<input type="Submit" value="'.$langs->trans("Add").'" name="Button"><BR>';
+print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="Button"><br>';
 print "</td>\n";
 	
 print '</tr>';
@@ -136,7 +136,7 @@ if ($result)
 	}
       elseif ($obj->type == 'texte')
 	{
-	  print '<textarea name="constvalue" cols="35" rows="4" wrap="soft">';
+	  print '<textarea name="constvalue" cols="32" rows="3" wrap="soft">';
 	  print $obj->value;
 	  print "</textarea>\n";
 	  print '</td><td>';
@@ -144,16 +144,16 @@ if ($result)
 	}
       else
 	{
-	  print '<input type="text" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
+	  print '<input type="text" class="flat" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
 	  print '</td><td>';
 	  $form->select_array('consttype',array('yesno','texte','chaine'),2);
 	}
       print '</td><td>';
 
       // Note
-      print '<input type="text" size="30" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
+      print '<input type="text" class="flat" size="30" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
       print '</td><td>';
-      print '<input type="Submit" value="'.$langs->trans("Modify").'" name="Button"> &nbsp; ';
+      print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
       print '<a href="const.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
       print "</td></tr>\n";
 
