@@ -78,7 +78,7 @@ $form = new Form($db);
 
 
 # Affiche ligne d'ajout
-$var=!$var;
+$var=false;
 print '<form action="const.php" method="POST">';
 print '<input type="hidden" name="action" value="add">';
 
@@ -112,7 +112,7 @@ if ($result)
 {
   $num = $db->num_rows($result);
   $i = 0;
-  $var=True;
+  $var=false;
 
   while ($i < $num)
     {

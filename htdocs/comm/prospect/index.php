@@ -69,12 +69,13 @@ print '<tr><td valign="top" width="30%">';
 
 if ($conf->propal->enabled) 
 {
-  print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
+  $var=false;
   print '<table class="noborder" width="100%">';
+  print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
   print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAProposal").'</td></tr>';
-  print "<tr $bc[1]><td>";
+  print '<tr '.$bc[$var].'><td>';
   print $langs->trans("Ref").' : <input type="text" class="flat" name="sf_ref" size="16">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-  print "</table></form><br>\n";
+  print "</form></table><br>\n";
 }
 
 /*
@@ -95,6 +96,8 @@ if ($resql)
   $i = 0;
   if ($num > 0 )
     {
+      $var=true;
+
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">'.$langs->trans("ProspectsByStatus").'</td></tr>';
@@ -115,7 +118,6 @@ if ($resql)
 
 if ($conf->propal->enabled) 
 {
-  
   $sql = "SELECT p.rowid, p.ref";
   $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
   $sql .= " WHERE p.fk_statut = 0";
@@ -123,6 +125,8 @@ if ($conf->propal->enabled)
   $resql=$db->query($sql);
   if ($resql)
     {
+      $var=true;
+
       $num = $db->num_rows($resql);
       $i = 0;
       if ($num > 0 )
@@ -163,6 +167,8 @@ if ($resql)
   $num = $db->num_rows($resql);
   if ($num > 0)
     {
+      $var=true;
+
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="4">'.$langs->trans("ActionsToDo").'</td>';
@@ -209,6 +215,8 @@ if ( $db->query($sql) )
   $i = 0;
   if ($num > 0 )
     {
+      $var=true;
+
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
       
@@ -245,6 +253,8 @@ if ( $db->query($sql) )
   $i = 0;
   if ($num > 0 )
     {
+      $var=true;
+
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProspectToContact").'</td></tr>';
       
@@ -268,5 +278,5 @@ print '</table>';
 $db->close();
  
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

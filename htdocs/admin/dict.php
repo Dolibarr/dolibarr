@@ -283,7 +283,7 @@ if ($_GET["id"])
 
     // Ligne d'ajout
     if ($tabname[$_GET["id"]]) {
-        $var=False;
+        $var=false;
         $fieldlist=split(',',$tabfield[$_GET["id"]]);
         print '<table class="noborder" width="100%">';
 
@@ -351,7 +351,7 @@ if ($_GET["id"])
     {
         $num = $db->num_rows();
         $i = 0;
-        $var=False;
+        $var=true;
         if ($num)
         {
             // Ligne de titre
@@ -424,6 +424,7 @@ else
      */
     print_titre($langs->trans("DictionnarySetup"));
 
+    $var=true;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Dictionnary").'</td><td>'.$langs->trans("Table").'</td></tr>';
 

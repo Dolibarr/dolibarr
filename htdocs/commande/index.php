@@ -44,12 +44,13 @@ print '<tr><td valign="top" width="30%">';
 /*
  * Zone recherche
  */
-print '<form method="post" action="liste.php">';
+$var=false;
 print '<table class="noborder" width="100%">';
+print '<form method="post" action="liste.php">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchOrder").'</td></tr>';
-print "<tr $bc[1]><td>";
+print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("Ref").' : <input type="text" class="flat" name="sf_ref" size=18> <input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</table></form><br>\n";
+print "</form></table><br>\n";
 
 
 /*
