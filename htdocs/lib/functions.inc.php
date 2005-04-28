@@ -85,7 +85,10 @@ function check_mail ($mail)
                 Pour fichier:   fichier défini par MAIN_SYSLOG_FILE
    \param       message		message a envoyer a syslog
    \param       level       Niveau de l'erreur
-   \remarks     Cette fonction a un effet que si le module syslog est activé
+   \remarks     Cette fonction a un effet que si le module syslog est activé.
+                Warning, les fonctions syslog sont buggués sous Windows et génèrent des
+                fautes de protection mémoire. Pour résoudre, utiliser le loggage fichier,
+                au lieu du loggage syslog, en positionnant la constante MAIN_SYSLOG_FILE.
 */
 function dolibarr_syslog($message, $level=LOG_ERR)
 {
@@ -99,8 +102,6 @@ function dolibarr_syslog($message, $level=LOG_ERR)
         }
         else
         {
-            // Warning, les fonctions syslog sont buggués sous Windows et génèrent des
-            // fautes de protection mémoire. Pour résoudre, désactiver MAIN_DEBUG sous Windows.
             define_syslog_variables();
         
             if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
