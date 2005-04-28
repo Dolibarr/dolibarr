@@ -193,7 +193,7 @@ if ($result)
         print $html->select_array("pos",$pos_name);
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
-        print ' <input type="submit" name="button" value="'.$langs->trans("Activate").'">';
+        print ' <input type="submit" class="button" name="button" value="'.$langs->trans("Activate").'">';
         print '</td>';
 
         print '<td>&nbsp;</td>';
