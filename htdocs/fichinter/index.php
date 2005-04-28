@@ -91,7 +91,7 @@ if ($result)
       print "<td><a href=\"fiche.php?id=$objp->fichid\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
 
       print '<td><a href="index.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom."</a></td>\n";
-      print "<td>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+      print "<td>".dolibarr_print_date($objp->dp)."</td>\n";
       print '<td align="center">'.sprintf("%.1f",$objp->duree).'</td>';
       print '<td align="center">'.$objp->fk_statut.'</td>';
 
@@ -110,5 +110,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
