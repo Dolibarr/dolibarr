@@ -72,10 +72,11 @@ print '<img src="./statut4.png" border="0" alt="statut">&nbsp;Activé chez le cli
 print '</td><td width="70%" valign="top">';
 
 // Not activated services
-$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.fk_contrat ";
-$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
-$sql .= " WHERE cd.statut IN (0,3)";
-$sql .= " ORDER BY cd.tms DESC";
+$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.fk_contrat, c.fk_soc, s.nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE cd.statut IN (0,3)";
+$sql.= " AND cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
+$sql.= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )
 {
@@ -84,7 +85,7 @@ if ( $db->query($sql) )
 
     print '<table class="noborder" width="100%">';
 
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("NotActivatedServices").'</td>';
+    print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("NotActivatedServices").'</td>';
     print "</tr>\n";
 
     $var=True;
@@ -94,9 +95,10 @@ if ( $db->query($sql) )
         $var=!$var;
         print "<tr $bc[$var]>";
 
-        print '<td><a href="fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->fk_contrat.'</a></td>';
-        print '<td><a href="fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service").' '.$obj->label.'</a></td>';
-        print '<td width="30"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
+        print '<td width="50"><a href="'.DOL_URL_ROOT.'/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->fk_contrat.'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service").' '.$obj->label.'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_soc.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+        print '<td width="16"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
         print "</tr>\n";
         $i++;
     }
@@ -115,10 +117,11 @@ print '<br>';
 // Last activated services
 $max=10;
 
-$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.fk_contrat ";
-$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
-$sql .= " WHERE cd.statut = 4";
-$sql .= " ORDER BY cd.tms DESC";
+$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.fk_contrat, c.fk_soc, s.nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE cd.statut = 4";
+$sql.= " AND cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
+$sql.= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )
 {
@@ -127,7 +130,7 @@ if ( $db->query($sql) )
 
     print '<table class="noborder" width="100%">';
 
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastActivatedServices",min($num,$max)).'</td>';
+    print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastActivatedServices",min($num,$max)).'</td>';
     print "</tr>\n";
 
     $var=True;
@@ -137,9 +140,10 @@ if ( $db->query($sql) )
         $var=!$var;
         print "<tr $bc[$var]>";
 
-        print '<td><a href="fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->fk_contrat.'</a></td>';
-        print '<td><a href="fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service").' '.$obj->label.'</a></td>';
-        print '<td width="30"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
+        print '<td width="50"><a href="fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->fk_contrat.'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service").' '.$obj->label.'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_soc.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+        print '<td width="16"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
         print "</tr>\n";
         $i++;
     }
