@@ -22,10 +22,10 @@
  */
 
 /**
-   \file       htdocs/fourn/product/liste.php
-   \ingroup    produit
-   \brief      Page liste des produits ou services
-   \version    $Revision$
+        \file       htdocs/fourn/product/liste.php
+        \ingroup    produit
+        \brief      Page liste des produits ou services
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -58,9 +58,14 @@ if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
     $snom="";
 }
 
+if ($_GET["fourn_id"] > 0)
+{
+    $fourn_id = $_GET["fourn_id"];
+}
+
 if (isset($_REQUEST['catid']))
 {
-  $catid = $_REQUEST['catid'];
+    $catid = $_REQUEST['catid'];
 }
 
 /*
@@ -75,12 +80,6 @@ $sql .= ", pf.fk_soc";
 $sql .= ", min(ppf.price) as price";
 $sql .= ", s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-
-if ($_GET["fourn_id"] > 0)
-{
-  $fourn_id = $_GET["fourn_id"];
-  $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
-}
 
 if ($catid)
 {
