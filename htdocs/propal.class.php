@@ -740,6 +740,41 @@ class Propal
 	}      
     }
 		
+  /**
+   * \brief Renvoie un tableau contenant les commandes associées
+   *
+   */
+	 
+  function associated_orders ()
+    {
+      $ga = array();
+
+      $sql = "SELECT fk_commande FROM ".MAIN_DB_PREFIX."co_pr";      
+      $sql .= " WHERE fk_propale = " . $this->id;
+      if ($this->db->query($sql) )
+	{
+	  $nump = $this->db->num_rows();
+	  
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object();
+		  $order=new Commande($this->db);
+			$order->fetch($obj->fk_commande);
+		  $ga[$i] = $order;
+		  $i++;
+		}
+	    }
+	  return $ga;
+	}
+      else
+	{
+	  print $this->db->error();
+	}      
+    }
+		
   /*
    *
    *

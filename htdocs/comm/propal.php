@@ -41,6 +41,9 @@ if (!$user->rights->propale->lire)
 if ($conf->projet->enabled) {
   require_once "../project.class.php";
 }
+if($conf->commande->enabled) {
+  require_once "../commande/commande.class.php";
+}
 require("./propal_model_pdf.class.php");
 require("../propal.class.php");
 require("../actioncomm.class.php");
@@ -740,14 +743,14 @@ if ($_GET["propalid"])
 	    $nb_commande = sizeof($propal->commande_liste_array());
 	    if ($nb_commande > 0)
 	      {
-		$coms = $propal->commande_liste_array();
-		print '<br><table class="border" width="100%">';
+		    $coms = $propal->associated_orders();
+		    print '<br><table class="border" width="100%">';
 		
 		    print "<tr><td>Commande(s) rattachée(s)</td></tr>\n";
 		    
 		    for ($i = 0 ; $i < $nb_commande ; $i++)
 		      {
-			print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
+			print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.$coms[$i]->ref."</a></td>\n";
 			print "</tr>\n";
 		      }
 
