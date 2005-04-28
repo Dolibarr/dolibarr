@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/comm/clients.php
+/**
+	    \file       htdocs/comm/clients.php
         \ingroup    commercial, societe
 		\brief      Liste des clients
 		\version    $Revision$
@@ -80,14 +81,8 @@ if ($socname)
   $sortorder = "ASC";
 }
 
-if ($sortorder == "")
-{
-  $sortorder="ASC";
-}
-if ($sortfield == "")
-{
-  $sortfield="s.nom";
-}
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="s.nom";
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
 
@@ -95,7 +90,7 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, 
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
 
   llxHeader();
 
@@ -107,14 +102,16 @@ if ($result)
   print '<table class="liste">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom",$addu,"","",$sortfield);
-  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$addu,"","",$sortfield);
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$addu,"","",$sortfield);
+  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$addu,"","",$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$addu,"","",$sortfield);
   print "<td>&nbsp;</td></tr>\n";
 
   print '<form method="get" action="clients.php">';
   print '<tr class="liste_titre">';
   print '<td valign="right">';
   print '<input type="text" class="flat" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
+  print '</td><td valign="right">&nbsp;';
   print '</td><td valign="right">';
   print '<input type="text" class="flat" name="search_code" value="'.$_GET["search_code"].'">';
   print '</td><td>&nbsp;</td><td align="center"><input class="button" type="submit" value="'.$langs->trans("Search").'">';
@@ -133,8 +130,9 @@ if ($result)
       print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">';
       print img_object($langs->trans("ShowCustomer"),"company");
       print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom).'</a></td>';
-      print "<td>".$obj->code_client."&nbsp;</td>\n";
-      print "<td>".$obj->ville."&nbsp;</td>\n";
+      print '<td>'.$obj->ville.'</td>';
+      print '<td>'.$obj->code_client.'</td>';
+      print '<td>'.dolibarr_print_date($obj->datec).'</td>';
       print '<td align="center">';
       if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
 	{
@@ -150,7 +148,7 @@ if ($result)
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($result);
 }
 else
 {
