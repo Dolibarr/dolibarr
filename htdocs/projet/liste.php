@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005 Marc Bariley / Ocebo      <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,6 @@
 
 require("./pre.inc.php");
 
-$page  = ( is_numeric($_GET["page"]) ?  $_GET["page"] : 0 );
 $socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
 
 $title = $langs->trans("Projects");
@@ -40,31 +40,28 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 
 if ($socid > 0)
 {
-  $soc = new Societe($db);
-  $soc->fetch($socid);
-  $title .= ' (<a href="liste.php">'.$soc->nom.'</a>)';
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	$title .= ' (<a href="liste.php">'.$soc->nom.'</a>)';
 }
 
-
-llxHeader("",$title,"Projet");
-
-print_titre($title);
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+$page = isset($_GET["page"])? $_GET["page"]:$_POST["page"];
+$page = is_numeric($page) ? $page : 0;
+$page = $page == -1 ? 0 : $page;
+
 if ($sortfield == "")
 {
-  $sortfield="p.ref";
+	$sortfield="p.ref";
 }
 if ($sortorder == "")
 {
-  $sortorder="ASC";
+	$sortorder="ASC";
 }
 
-if ($page == -1) { $page = 0 ; }
-$limit = 26;
-$offset = $limit * $page ;
+$offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -74,14 +71,6 @@ $pagenext = $page + 1;
  * Affichage de la liste des projets
  * 
  */
-print '<br>';
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Ref"),"index.php","p.ref","","","",$sortfield);
-print_liste_field_titre($langs->trans("Label"),"index.php","p.title","","","",$sortfield);
-print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield);
-print "</tr>\n";
-
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." as do";
 $sql .= " , s.nom, s.idp, s.client";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
@@ -92,35 +81,80 @@ if ($socid)
   $sql .= " AND s.idp = $socid"; 
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+if ($_GET["search_ref"])
+{
+  $sql .= " AND p.ref LIKE '%".$_GET["search_ref"]."%'";
+}
+if ($_GET["search_label"])
+{
+  $sql .= " AND p.title LIKE '%".$_GET["search_label"]."%'";
+}
+if ($_GET["search_societe"])
+{
+  $sql .= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";
+}
+
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $var=true;
-if ( $db->query($sql) )
+$result = $db->query($sql);
+if ($result)
 {
-  $num = $db->num_rows();
-  $i = 0;
+	$num = $db->num_rows();
+	$i = 0;
 
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object( $i);    
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->title</a></td>\n";
-      print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->ref</a></td>\n";
-      print '<td>';
-      print img_object($langs->trans("ShowCompanie"),"company");
+	//llxHeader("",$title,"Projet");
+	llxHeader();
 
-      print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
-      print "</tr>\n";
+	print_barre_liste($langs->trans("Projects"), $page, "liste.php", "", $sortfield, $sortorder, "", $num);
+
+	print '<br>';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),"liste.php","p.ref","","","",$sortfield);
+	print_liste_field_titre($langs->trans("Label"),"liste.php","p.title","","","",$sortfield);
+	print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","","",$sortfield);
+	print '<td>&nbsp;</td>';
+	print "</tr>\n";
+
+	print '<form method="get" action="liste.php">';
+	print '<tr class="liste_titre">';
+	print '<td valign="right">';
+	print '<input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'">';
+	print '</td>';
+	print '<td valign="right">';
+	print '<input type="text" class="flat" name="search_label" value="'.stripslashes($_GET["search_label"]).'">';
+	print '</td>';
+	print '<td valign="right">';
+	print '<input type="text" class="flat" name="search_societe" value="'.$_GET["search_societe"].'">';
+	print '</td>';
+	print '<td align="center">';
+	print '<input class="button" type="submit" value="'.$langs->trans("Search").'">';
+	print "</td>";
+	print "</tr>\n";
+
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object( $i);    
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->title</a></td>\n";
+		print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->ref</a></td>\n";
+		print '<td>';
+		print img_object($langs->trans("ShowCompanie"),"company");
+
+		print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		print '<td>&nbsp;</td>';
+		print "</tr>\n";
     
-      $i++;
-    }
+		$i++;
+	}
   
-  $db->free();
+	$db->free();
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 print "</table>";
