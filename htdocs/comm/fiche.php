@@ -281,7 +281,7 @@ if ($_socid > 0)
             $num = $db->num_rows();
             if ($num >0 )
             {
-                print "<tr $bc[$var]>";
+                print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socidp='.$objsoc->id.'">'.$langs->trans("AllPropals").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
                 $var=!$var;
@@ -329,7 +329,7 @@ if ($_socid > 0)
             $num = $db->num_rows();
             if ($num >0 )
             {
-                print "<tr $bc[$var]>";
+                print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
             }
@@ -372,7 +372,7 @@ if ($_socid > 0)
             $i = 0 ;
             $num = $db->num_rows($result);
             if ($num > 0) {
-                print "<tr $bc[$var]>";
+                print '<tr class="liste_titre">';
                 print '<td colspan="2"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastProjects",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllProjects").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
             }

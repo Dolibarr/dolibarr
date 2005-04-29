@@ -63,12 +63,12 @@ if ($action=='add_action')
   $actioncomm->date = $date;
   $actioncomm->type = $actionid;
   $actioncomm->contact = $contactid;
-  
+
   $actioncomm->societe = $socid;
   $actioncomm->note = $note;
-  
+
   $actioncomm->add($user);
-  
+
   $societe = new Societe($db);
   $societe->fetch($socid);
 }
@@ -89,7 +89,7 @@ if ($action == 'stcomm')
       $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
       $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $user->login . "')";
       $result = @$db->query($sql);
-      
+
       if ($result)
         {
 	  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
@@ -100,12 +100,12 @@ if ($action == 'stcomm')
 	  $errmesg = "ERREUR DE DATE !";
         }
     }
-  
+
   if ($actioncommid)
     {
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
       $result = @$db->query($sql);
-      
+
       if (!$result)
         {
 	  $errmesg = "ERREUR DE DATE !";
@@ -221,15 +221,15 @@ if ($socid > 0)
      *
      */
     print "<table width=\"100%\">\n";
-    print '<tr><td valign="top" width="50%">'; 
+    print '<tr><td valign="top" width="50%">';
 
     print '<table class="border" width="100%">';
     print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse)."</td></tr>";
-    
+
     print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td colspan="3">'.$societe->cp." ".$societe->ville.'</td></tr>';
     print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$societe->pays.'</td></tr>';
-    
+
     print '<tr><td>'.$langs->trans("Phone").'</td><td>'.$societe->tel.'&nbsp;</td><td>Fax</td><td>'.$societe->fax.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
@@ -239,7 +239,7 @@ if ($socid > 0)
       {
     	print $societe->prefix_comm;
       }
-    
+
     print "</td></tr>";
 
     print '<tr><td>Code compta</td><td>'.$societe->code_compta.'</td>';
@@ -265,23 +265,23 @@ if ($socid > 0)
     if ($conf->facture->enabled && $user->rights->facture->lire)
     {
         print '<table class="border" width="100%">';
-    
+
         $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df, f.paye as paye, f.fk_statut as statut, f.rowid as facid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
         $sql .= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
         $sql .= " ORDER BY f.datef DESC";
-    
+
         if ( $db->query($sql) )
         {
             $var=true;
             $num = $db->num_rows(); $i = 0;
             if ($num > 0)
             {
-                print "<tr $bc[$var]>";
+                print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?socidp='.$societe->id.'">'.$langs->trans("AllBills").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
             }
-    
+
             while ($i < $num && $i < $MAXLIST)
             {
                 $objp = $db->fetch_object();
@@ -297,7 +297,7 @@ if ($socid > 0)
                     print "<td align=\"right\"><b>!!!</b></td>\n";
                 }
                 print "<td align=\"right\">".number_format($objp->amount, 2, ',', ' ')."</td>\n";
-    
+
                 $fac = new Facture($db);
                 print "<td align=\"center\">".($fac->LibStatut($objp->paye,$objp->statut))."</td>\n";
                 print "</tr>\n";
@@ -311,19 +311,19 @@ if ($socid > 0)
         }
         print "</table>";
     }
-    
+
     /*
      * Derniers projets associés
      */
     if ($conf->projet->enabled)
     {
         print '<table class="border" width="100%">';
-    
+
         $sql  = "SELECT p.rowid,p.title,p.ref,".$db->pdate("p.dateo")." as do";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
         $sql .= " WHERE p.fk_soc = $societe->id";
         $sql .= " ORDER by p.dateo";
-    
+
         if ( $db->query($sql) )
         {
             $var=true;
@@ -331,7 +331,7 @@ if ($socid > 0)
             $num = $db->num_rows();
             if ($num > 0)
             {
-                print "<tr $bc[$var]>";
+                print '<tr class="liste_titre">';
                 print '<td colspan="2"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastProjects",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/projet/index.php?socidp='.$societe->id.'">'.$langs->trans("AllProjects").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
             }
@@ -341,7 +341,7 @@ if ($socid > 0)
                 $var = !$var;
                 print "<tr $bc[$var]>";
                 print '<td><a href="../projet/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
-    
+
                 print "<td align=\"right\">".strftime("%d %b %Y", $obj->do) ."</td></tr>";
                 $i++;
             }
@@ -353,7 +353,7 @@ if ($socid > 0)
         }
         print "</table>";
     }
-    
+
     print "</td></tr>";
     print "</table></div>\n";
 
@@ -377,7 +377,7 @@ if ($socid > 0)
             print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
         }
       }
-    
+
     print '</div>';
     print "<br>\n";
 
@@ -420,7 +420,7 @@ if ($socid > 0)
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
         $sql.= " WHERE p.fk_soc = ".$societe->id;
         $sql.= " ORDER by p.datec";
-        
+
         $result = $db->query($sql);
         $i = 0 ; $num = $db->num_rows($result);
         $var=1;
@@ -448,7 +448,7 @@ if ($socid > 0)
         	print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
         	print img_edit();
         	print '</a></td>';
-        	
+
             print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$societe->id.'">';
             print img_object($langs->trans("Rendez-Vous"),"action");
             print '</a></td>';
@@ -516,7 +516,7 @@ if ($socid > 0)
           print $libelle;
 		    print '</a></td>';
 		  }
-		
+
                 /*
                  * Contact pour cette action
                  *
