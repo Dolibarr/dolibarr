@@ -38,7 +38,7 @@ $langs->load("bills");
 /*
  * Sécurité accés client
  */
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socidp = $user->societe_id;
@@ -85,7 +85,7 @@ print '<tr><td valign="top" width="30%">';
 /*
  * Zone recherche facture
  */
-if ($conf->facture->anabled) {
+if ($conf->facture->enabled) {
     print '<form method="post" action="facture.php">';
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
@@ -101,23 +101,23 @@ if ($conf->facture->anabled) {
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
-  
+
   $sql  = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
   $sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
-  
+
   if ($socidp)
     {
       $sql .= " AND f.fk_soc = $socidp";
     }
-  
+
   $resql = $db->query($sql);
 
   if ( $resql )
     {
       $num = $db->num_rows($resql);
       $i = 0;
-      
+
       if ($num)
 	{
 	  print '<table class="noborder" width="100%">';
@@ -128,11 +128,11 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	    {
 	      $obj = $db->fetch_object($resql);
 	      $var=!$var;
-	      print '<tr '.$bc[$var].'><td width="92"><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+	      print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("Showcompany"),"company").' '.$obj->nom.'</a></td></tr>';
 	      $i++;
 	    }
-	  
+
 	  print "</table><br>";
 	}
       $db->free($resql);
@@ -140,7 +140,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
   else
     {
       dolibarr_print_error($db);
-    }  
+    }
 }
 
 if ($conf->compta->enabled) {
@@ -150,14 +150,14 @@ if ($conf->compta->enabled) {
  */
 if ($user->societe_id == 0)
 {
- 
+
   $sql = "SELECT c.amount, cc.libelle";
   $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc";
   $sql .= " WHERE c.fk_type = cc.id AND c.paye=0";
-  
+
   $resql = $db->query($sql);
 
-  if ( $resql ) 
+  if ( $resql )
     {
       $num = $db->num_rows($resql);
       if ($num)
@@ -236,7 +236,7 @@ print '</td><td valign="top" width="70%">';
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
   $langs->load("orders");
-  
+
   $sql = "SELECT sum(f.total) as tot_fht,sum(f.total_ttc) as tot_fttc";
   $sql .= " ,s.nom, s.idp, p.rowid, p.ref, p.total_ht, p.total_ttc";
   $sql .= " FROM ".MAIN_DB_PREFIX."commande AS p, llx_societe AS s";
@@ -252,7 +252,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 
   $resql = $db->query($sql);
 
-  if ( $resql ) 
+  if ( $resql )
     {
       $num = $db->num_rows($resql);
       if ($num)
@@ -299,18 +299,18 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
   else
     {
       dolibarr_print_error($db);
-    }    
+    }
 }
 
 
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
-  
+
   /*
    * Factures impayées
    *
    */
-  
+
   $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc, sum(pf.amount) as am";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
   $sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
@@ -318,15 +318,16 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
     {
       $sql .= " AND f.fk_soc = $socidp";
     }
-  $sql .= " GROUP BY f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc";   
-  
+  $sql .= " GROUP BY f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc";
+  $sql .= " ORDER BY f.datef ASC ";
+
   $resql = $db->query($sql);
 
   if ( $resql )
     {
       $num = $db->num_rows($resql);
       $i = 0;
-      
+
       if ($num)
 	{
 	  print '<table class="noborder" width="100%">';
@@ -341,14 +342,14 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	      if ($i < $conf->liste_limit)
 		{
 		  $var=!$var;
-		  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+		  print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
 		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->nom.'</a></td>';
 		  print '<td align="right">'.price($obj->total).'</td>';
 		  print '<td align="right">'.price($obj->total_ttc).'</td>';
 		  print '<td align="right">'.price($obj->am).'</td></tr>';
 		}
 	      $total_ttc +=  $obj->total_ttc;
-	      $total += $obj->total;
+		  $total += $obj->total;
 	      $totalam +=  $obj->am;
 	      $i++;
 	    }
@@ -363,7 +364,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
   else
     {
       dolibarr_print_error($db);
-    }  
+    }
 }
 
 
@@ -380,7 +381,7 @@ if ($resql)
     {
       $obj = $db->fetch_object($resql);
       $var=!$var;
-      
+
       print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td><td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
       $i++;
     }
@@ -400,9 +401,9 @@ if ($conf->facture->enabled) {
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
       $sql .= " WHERE s.idp = ff.fk_soc";
       $sql .= " AND ff.paye=0";
-      
+
       $result=$db->query($sql);
-      if ($result) 
+      if ($result)
         {
           $num = $db->num_rows();
           if ($num)
@@ -419,7 +420,7 @@ if ($conf->facture->enabled) {
     	    {
     	      $obj = $db->fetch_object($result);
     	      $var = !$var;
-        	  print '<tr '.$bc[$var].'><td width="20%"><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+        	  print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
     		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a></td>';
 		      print '<td align="right">'.price($obj->total_ht).'</td>';
               print '<td align="right">'.price($obj->total_ttc).'</td>';
