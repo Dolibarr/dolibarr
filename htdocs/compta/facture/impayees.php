@@ -127,14 +127,14 @@ if ($user->rights->facture->lire)
   $sql .= " GROUP BY f.facnumber";   
 
   $sql .= " ORDER BY ";
-  /*  
+
 
   $listfield=split(',',$sortfield);
   foreach ($listfield as $key => $value)
     {
-      $sql.="$listfield[$key] $sortorder,";
+      $sql.=$listfield[$key]." ".$sortorder.",";
     }
-  */
+
   $sql .= " f.fk_soc DESC "; // Grouper les lignes pas sociétés
   
   //$sql .= $db->plimit($limit+1,$offset);
