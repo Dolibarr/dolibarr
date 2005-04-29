@@ -41,6 +41,7 @@ llxHeader();
 
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 
+$html = new Form($db);
 
 /*
  * Actions
@@ -85,34 +86,34 @@ if ($_POST["action"] == 'class')
 
 if ($_POST["action"] == "update")
 {
-  // Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
-  if (!empty($_POST['amount']))
-  {
-    $sql = "SELECT b.rappro FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=".$rowid;
-    $result = $db->query($sql);
-    if ($result)
-    {
-      $var=True;  
-      $amount = str_replace(' ','',$_POST['amount']);
-      $num = $db->num_rows();
-      $objp = $db->fetch_object($result);
-      if ($objp->rappro)
-        die ("Vous ne pouvez pas modifier une écriture déjà rapprochée");
-      $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."', dateo = '".$_POST["date"]."', amount='$amount' WHERE rowid = $rowid;";
-    }
-  }
-  else 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."', dateo = '".$_POST["date"]."' WHERE rowid = $rowid;";
+	// Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
+	$sql = "SELECT b.rappro FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=".$rowid;
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$objp = $db->fetch_object($result);
+		if ($objp->rappro)
+			die ("Vous ne pouvez pas modifier une écriture déjà rapprochée");
+	}
+	if (!empty($_POST['amount']))
+	{
+		$amount = str_replace(' ','',$_POST['amount']);
+		$dateop = $_POST["reyear"].'-'.$_POST["remonth"].'-'.$_POST["reday"]; 
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."', dateo = '".$dateop."', amount='$amount' WHERE rowid = $rowid;";
+	}
+	else
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."', dateo = '".$dateop."' WHERE rowid = $rowid;";
 
-    $result = $db->query($sql);
-    if (! $result) {
-        dolibarr_print_error($db);
-    }
+	$result = $db->query($sql);
+	if (! $result)
+	{
+		dolibarr_print_error($db);
+	}
 }
 
 if ($_POST["action"] == 'type')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."bank set fk_type='".$_POST["value"]."' WHERE rowid = $rowid;";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."bank set fk_type='".$_POST["value"]."', num_chq='".$_POST["num_chq"]."' WHERE rowid = $rowid;";
   $result = $db->query($sql);
 }
 
@@ -181,7 +182,8 @@ if ($result)
       if (! $objp->rappro)
       {
         print "<tr><td>".$langs->trans("Date")."</td><td colspan=\"3\">";
-        print '<input name="date" value="'.strftime("%Y%m%d",$objp->do).'">';
+        $html->select_date($objp->do);
+        //print '<input name="date" value="'.strftime("%Y%m%d",$objp->do).'">';
         print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
         print "</tr>";
       }
@@ -222,7 +224,7 @@ if ($result)
       print '<option value="CB"'.($objp->fk_type == 'CB'?' selected':'').'>CB</option>';
       print '<option value="DEP"'.($objp->fk_type == 'DEP'?' selected':'').'>Dépôt</option>';
       print "</select>";
-      print $objp->num_chq?" - $objp->num_chq":'';
+	  print '<input type="text" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
       print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\">";
       print "</form>";
       print "</td></tr>";
