@@ -511,7 +511,12 @@ if ($_GET["action"] == 'create')
 	  print '<tr><td>'.$langs->trans("Author").' :</td><td>'.$user->fullname.'</td>';
 	  
 	  print '<td rowspan="6" valign="top">';
-	  print '<textarea name="note" wrap="soft" cols="60" rows="5"></textarea></td></tr>';	
+	  print '<textarea name="note" wrap="soft" cols="60" rows="5">';
+		if (is_object($commande) && !empty($commande->projet_id))
+		{
+			print $commande->note;
+		}
+	  print '</textarea></td></tr>';	
 	  
 	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
 	  $html->select_date();
@@ -569,7 +574,11 @@ if ($_GET["action"] == 'create')
 	      $langs->load("projects");
 	      print '<tr><td>'.$langs->trans("Project").' :</td><td>';
 	      $proj = new Project($db);
-	      $html->select_array("projetid",$proj->liste_array($socidp));
+	      $html->select_array(
+			"projetid",
+			$proj->liste_array($socidp),
+			(is_object($commande) && !empty($commande->projet_id)) ? $commande->projet_id : ''
+			);
 	      print "</td></tr>";
 	    }
 	  else
