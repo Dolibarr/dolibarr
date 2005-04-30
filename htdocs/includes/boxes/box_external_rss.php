@@ -64,9 +64,17 @@ class box_external_rss extends ModeleBoxes {
         $langs->load("boxes");
 
         for($site = 0; $site < 1; $site++) {
-            $this->info_box_head = array('text' => $langs->trans("BoxTitleLastRssInfos",$max, @constant("EXTERNAL_RSS_TITLE_". $site)));
-    
             $rss = fetch_rss( @constant("EXTERNAL_RSS_URLRSS_" . $site) );
+            
+            $title=$langs->trans("BoxTitleLastRssInfos",$max, @constant("EXTERNAL_RSS_TITLE_". $site));
+            if ($rss->ERROR) {
+                // Affiche warning car il y a eu une erreur
+                $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate",(isset($rss->date)?dolibarr_print_date($rss->date,"%d %b %Y %H:%M"):'unknown date')));
+                $this->info_box_head = array('text' => $title);
+            }
+            
+            $this->info_box_head = array('text' => $title);
+
             for($i = 0; $i < $max ; $i++){
                 $item = $rss->items[$i];
                 $href = $item['link'];
