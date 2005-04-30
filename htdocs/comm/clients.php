@@ -113,7 +113,7 @@ if ($result)
   print '<input type="text" class="flat" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
   print '</td><td valign="right">&nbsp;';
   print '</td><td valign="right">';
-  print '<input type="text" class="flat" name="search_code" value="'.$_GET["search_code"].'">';
+  print '<input type="text" class="flat" name="search_code" value="'.$_GET["search_code"].'" size="8">';
   print '</td><td>&nbsp;</td><td align="center"><input class="button" type="submit" value="'.$langs->trans("Search").'">';
   print "</td>";
   print "</tr>\n";
