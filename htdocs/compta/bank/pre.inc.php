@@ -23,13 +23,14 @@
  */
 
 /**
-	    \file   	htdocs/compta/bank/pre.inc.php
-  	    \ingroup    compta
-  	    \brief  	Fichier gestionnaire du menu compta banque
+        \file   	htdocs/compta/bank/pre.inc.php
+        \ingroup    compta
+        \brief  	Fichier gestionnaire du menu compta banque
 */
 
 require_once("../../main.inc.php");
-require_once("./account.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+
 
 $langs->load("banks");
 
@@ -38,54 +39,53 @@ $user->getrights('banque');
 
 function llxHeader($head = "")
 {
-  global $db, $user, $conf, $langs;
+    global $db, $user, $conf, $langs;
 
-  top_menu($head);
+    top_menu($head);
 
-  $menu = new Menu();
+    $menu = new Menu();
 
 
-  $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0 AND courant = 1";
-  $result = $db->query($sql);
-  if ($result)
+    $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0 AND courant = 1";
+    $resql = $db->query($sql);
+    if ($resql)
     {
+        $numr = $db->num_rows($resql);
+        $i = 0;
 
-      $numr = $db->num_rows();
-      $i = 0; 
-
-      while ($i < $numr) 
-	{
-	  $objp = $db->fetch_object($result);
-	  $menu->add(DOL_URL_ROOT."/compta/bank/account.php?account=" . $objp->rowid,  $objp->label);
-	  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=" . $objp->rowid ,$langs->trans("AccountStatements"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=" . $objp->rowid ,$langs->trans("IOMonthlyReporting"));
-	  $i++;
-	}
+        while ($i < $numr)
+        {
+            $objp = $db->fetch_object($resql);
+            $menu->add(DOL_URL_ROOT."/compta/bank/account.php?account=" . $objp->rowid,  $objp->label);
+            $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=" . $objp->rowid ,$langs->trans("AccountStatements"));
+            $menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=" . $objp->rowid ,$langs->trans("IOMonthlyReporting"));
+            $i++;
+        }
     }
-  $db->close;
+    $db->free($resql);
 
-  $menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("Bank"));
+    $menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("Bank"));
 
-  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php","Recherche écriture");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php","Budgets");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilan.php","Bilan");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php","Recherche écriture");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php","Budgets");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilan.php","Bilan");
 
-  if ($user->rights->banque->modifier)
+    if ($user->rights->banque->modifier)
     {
-      $menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("Virements"));
-    }
-
-  if ($user->rights->banque->configurer)
-    {
-      $menu->add_submenu(DOL_URL_ROOT."/compta/bank/config.php",$langs->trans("Setup"));
+        $menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("Virements"));
     }
 
-  if (defined("COMPTA_ONLINE_PAYMENT_BPLC") && COMPTA_ONLINE_PAYMENT_BPLC)
+    if ($user->rights->banque->configurer)
     {
-      $menu->add(DOL_URL_ROOT."/compta/bank/bplc.php","Transactions BPLC");
+        $menu->add_submenu(DOL_URL_ROOT."/compta/bank/config.php",$langs->trans("Setup"));
     }
 
-  left_menu($menu->liste);
+    if (defined("COMPTA_ONLINE_PAYMENT_BPLC") && COMPTA_ONLINE_PAYMENT_BPLC)
+    {
+        $menu->add(DOL_URL_ROOT."/compta/bank/bplc.php","Transactions BPLC");
+    }
+
+    left_menu($menu->liste);
 
 }
 
