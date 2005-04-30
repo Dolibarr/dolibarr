@@ -21,8 +21,8 @@
 -- ============================================================================
 --
 --
-ALTER TABLE llx_contratdet ADD INDEX (fk_contrat);
-ALTER TABLE llx_contratdet ADD INDEX (fk_product);
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_fk_contrat (fk_contrat);
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_fk_product (fk_product);
 --
 --
 ALTER TABLE llx_contratdet ADD FOREIGN KEY (fk_contrat) REFERENCES llx_contrat (rowid);
