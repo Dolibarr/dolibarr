@@ -278,7 +278,7 @@ if ($_GET["facid"] > 0)
   else
     {
       /* Facture non trouvée */
-      print $langs->trans("ErrorBillNotFound");
+      print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
     }
 }  
 
@@ -286,5 +286,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
