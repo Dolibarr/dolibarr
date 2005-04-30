@@ -193,177 +193,80 @@ else
 }
 
 /*
- * Activation des modules
- * et inclusion de librairies dépendantes
+ * Définition des paramètres d'activation de module et dépendants des modules
+ * Chargement d'include selon etat activation des modules
  */
 define('MAIN_MODULE_BOOKMARK4U',1);
-if (defined('MAIN_MODULE_BOOKMARK4U'))
-{
-  $conf->bookmark4u->enabled=MAIN_MODULE_BOOKMARK4U;
-}
-if (defined("MAIN_MODULE_DEPLACEMENT"))
-{
-  $conf->deplacement->enabled=MAIN_MODULE_DEPLACEMENT;
-}
-if (defined("MAIN_MODULE_MAILING"))
-{
-  $conf->mailing->enabled=MAIN_MODULE_MAILING;
-}
-if (defined("MAIN_MODULE_EXTERNALRSS"))
-{
-  $conf->externalrss->enabled=MAIN_MODULE_EXTERNALRSS;
-}
-if (defined("MAIN_MODULE_COMMANDE"))
-{
-  $conf->commande->enabled=MAIN_MODULE_COMMANDE;
-}
+$conf->bookmark4u->enabled=defined('MAIN_MODULE_BOOKMARK4U')?MAIN_MODULE_BOOKMARK4U:0;
+$conf->deplacement->enabled=defined("MAIN_MODULE_DEPLACEMENT")?MAIN_MODULE_DEPLACEMENT:0;
+$conf->mailing->enabled=defined("MAIN_MODULE_MAILING")?MAIN_MODULE_MAILING:0;
+$conf->externalrss->enabled=defined("MAIN_MODULE_EXTERNALRSS")?MAIN_MODULE_EXTERNALRSS:0;
+$conf->commande->enabled=defined("MAIN_MODULE_COMMANDE")?MAIN_MODULE_COMMANDE:0;
 $conf->commande->dir_output=DOL_DATA_ROOT."/commande";
 $conf->commande->dir_images=DOL_DATA_ROOT."/commande/images";
-if (defined("MAIN_MODULE_EXPEDITION"))
-{
-  $conf->expedition->enabled=MAIN_MODULE_EXPEDITION;
-}
+$conf->expedition->enabled=defined("MAIN_MODULE_EXPEDITION")?MAIN_MODULE_EXPEDITION:0;
 $conf->expedition->dir_output=DOL_DATA_ROOT."/expedition";
 $conf->expedition->dir_images=DOL_DATA_ROOT."/expedition/images";
-if (defined("MAIN_MODULE_SOCIETE"))
-{
-  $conf->societe->enabled=MAIN_MODULE_SOCIETE; 
-  require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
-}
+$conf->societe->enabled=defined("MAIN_MODULE_SOCIETE")?MAIN_MODULE_SOCIETE:0;
+if ($conf->societe->enabled) require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
 $conf->societe->dir_output=DOL_DATA_ROOT."/societe";
 $conf->societe->dir_images=DOL_DATA_ROOT."/societe/images";
 if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
-if (defined("MAIN_MODULE_COMMERCIAL"))
-{
-  $conf->commercial->enabled=MAIN_MODULE_COMMERCIAL;
-}
+$conf->commercial->enabled=defined("MAIN_MODULE_COMMERCIAL")?MAIN_MODULE_COMMERCIAL:0;
 $conf->commercial->dir_output=DOL_DATA_ROOT."/rapport";
-if (defined("MAIN_MODULE_COMPTABILITE"))
-{
-  $conf->compta->enabled=MAIN_MODULE_COMPTABILITE;
-}
+$conf->compta->enabled=defined("MAIN_MODULE_COMPTABILITE")?MAIN_MODULE_COMPTABILITE:0;
 $conf->compta->dir_output=DOL_DATA_ROOT."/compta";
 $conf->compta->dir_images=DOL_DATA_ROOT."/compta/images";
-if (defined("MAIN_MODULE_BANQUE"))
-{
-  $conf->banque->enabled=MAIN_MODULE_BANQUE;
-}
-if (defined("MAIN_MODULE_CAISSE"))
-{
-  $conf->caisse->enabled=MAIN_MODULE_CAISSE;
-}
-if (defined("MAIN_MODULE_DON"))
-{
-  $conf->don->enabled=MAIN_MODULE_DON;
-}
-if (defined("MAIN_MODULE_FOURNISSEUR"))
-{
-  $conf->fournisseur->enabled=MAIN_MODULE_FOURNISSEUR;
-}
-if (defined("MAIN_MODULE_FICHEINTER"))
-{
-  $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
-  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
-}
+$conf->banque->enabled=defined("MAIN_MODULE_BANQUE")?MAIN_MODULE_BANQUE:0;
+$conf->caisse->enabled=defined("MAIN_MODULE_CAISSE")?MAIN_MODULE_CAISSE:0;
+$conf->don->enabled=defined("MAIN_MODULE_DON")?MAIN_MODULE_DON:0;
+$conf->syslog->enabled=defined("MAIN_MODULE_SYSLOG")?MAIN_MODULE_SYSLOG:0;
+$conf->fournisseur->enabled=defined("MAIN_MODULE_FOURNISSEUR")?MAIN_MODULE_FOURNISSEUR:0;
+$conf->fichinter->enabled=defined("MAIN_MODULE_FICHEINTER")?MAIN_MODULE_FICHEINTER:0;
+if ($conf->fichinter->enabled) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 $conf->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
 $conf->fichinter->dir_images=DOL_DATA_ROOT."/ficheinter/images";
 if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $conf->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par défaut
-if (defined("MAIN_MODULE_ADHERENT"))
-{
-  $conf->adherent->enabled=MAIN_MODULE_ADHERENT;
-}
+$conf->adherent->enabled=defined("MAIN_MODULE_ADHERENT")?MAIN_MODULE_ADHERENT:0;
 $conf->adherent->dir_output=DOL_DATA_ROOT."/adherent";
-if (defined("MAIN_MODULE_PRODUIT"))
-{
-  $conf->produit->enabled=MAIN_MODULE_PRODUIT;
-  require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
-}
+$conf->produit->enabled=defined("MAIN_MODULE_PRODUIT")?MAIN_MODULE_PRODUIT:0;
+if ($conf->produit->enabled) require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 $conf->produit->dir_output=DOL_DATA_ROOT."/produit";
 $conf->produit->dir_images=DOL_DATA_ROOT."/produit/images";
-
-if (defined("MAIN_MODULE_CATEGORIE"))
-{
-  $conf->categorie->enabled=MAIN_MODULE_CATEGORIE;
-}
-
-if (defined("MAIN_MODULE_SERVICE"))
-{
-  $conf->service->enabled=MAIN_MODULE_SERVICE;
-  require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
-}
+$conf->categorie->enabled=defined("MAIN_MODULE_CATEGORIE")?MAIN_MODULE_CATEGORIE:0;
+$conf->service->enabled=defined("MAIN_MODULE_SERVICE")?MAIN_MODULE_SERVICE:0;
+if ($conf->service->enabled) require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 $conf->service->dir_output=DOL_DATA_ROOT."/produit";
 $conf->service->dir_images=DOL_DATA_ROOT."/produit/images";
-if (defined("MAIN_MODULE_STOCK"))
-{
-  $conf->stock->enabled=MAIN_MODULE_STOCK;
-}
-if (defined("MAIN_MODULE_CONTRAT"))
-{
-  $conf->contrat->enabled=MAIN_MODULE_CONTRAT;
-}
-if (defined("MAIN_MODULE_BOUTIQUE"))
-{
-  $conf->boutique->enabled=MAIN_MODULE_BOUTIQUE;
-}
-if (defined("MAIN_MODULE_PROJET"))
-{
-  $conf->projet->enabled=MAIN_MODULE_PROJET;
-}
-if (defined("BOUTIQUE_LIVRE"))
-{
-  $conf->boutique->livre->enabled=BOUTIQUE_LIVRE;
-}
-if (defined("BOUTIQUE_ALBUM"))
-{
-  $conf->boutique->album->enabled=BOUTIQUE_ALBUM;
-}
-if (defined("MAIN_MODULE_POSTNUKE"))
-{
-  $conf->postnuke->enabled=MAIN_MODULE_POSTNUKE;
-}
-if (defined("MAIN_MODULE_CLICKTODIAL"))
-{
-  $conf->clicktodial->enabled=MAIN_MODULE_CLICKTODIAL;
-}
-if (defined("MAIN_MODULE_TELEPHONIE"))
-{
-  $conf->telephonie->enabled=MAIN_MODULE_TELEPHONIE;
-}
+$conf->stock->enabled=defined("MAIN_MODULE_STOCK")?MAIN_MODULE_STOCK:0;
+$conf->contrat->enabled=defined("MAIN_MODULE_CONTRAT")?MAIN_MODULE_CONTRAT:0;
+$conf->boutique->enabled=defined("MAIN_MODULE_BOUTIQUE")?MAIN_MODULE_BOUTIQUE:0;
+$conf->projet->enabled=defined("MAIN_MODULE_PROJET")?MAIN_MODULE_PROJET:0;
+$conf->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
+$conf->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
+$conf->postnuke->enabled=defined("MAIN_MODULE_POSTNUKE")?MAIN_MODULE_POSTNUKE:0;
+$conf->clicktodial->enabled=defined("MAIN_MODULE_CLICKTODIAL")?MAIN_MODULE_CLICKTODIAL:0;
+$conf->telephonie->enabled=defined("MAIN_MODULE_TELEPHONIE")?MAIN_MODULE_TELEPHONIE:0;
 $conf->telephonie->dir_output=DOL_DATA_ROOT."/telephonie";
 $conf->telephonie->dir_images=DOL_DATA_ROOT."/telephonie/images";
-if (defined("MAIN_MODULE_PRELEVEMENT"))
-{
-  $conf->prelevement->enabled=MAIN_MODULE_PRELEVEMENT;
-}
+$conf->prelevement->enabled=defined("MAIN_MODULE_PRELEVEMENT")?MAIN_MODULE_PRELEVEMENT:0;
 $conf->prelevement->dir_output=DOL_DATA_ROOT."/prelevement";
 $conf->prelevement->dir_images=DOL_DATA_ROOT."/prelevement/images";
-if (defined('MAIN_MODULE_WEBCALENDAR'))
-{
-  $conf->webcal->enabled=MAIN_MODULE_WEBCALENDAR;
-  $conf->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'mysql';
-  $conf->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';
-  $conf->webcal->db->user=defined('PHPWEBCALENDAR_USER')?PHPWEBCALENDAR_USER:'';
-  $conf->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
-  $conf->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
-  $conf->webcal->syncro=defined('PHPWEBCALENDAR_SYNCRO')?PHPWEBCALENDAR_SYNCRO:'';
-}
-if (defined("MAIN_MODULE_FACTURE"))
-{
-  $conf->facture->enabled=MAIN_MODULE_FACTURE;
-  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
-}
+$conf->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
+$conf->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'mysql';
+$conf->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';
+$conf->webcal->db->user=defined('PHPWEBCALENDAR_USER')?PHPWEBCALENDAR_USER:'';
+$conf->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
+$conf->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
+$conf->webcal->syncro=defined('PHPWEBCALENDAR_SYNCRO')?PHPWEBCALENDAR_SYNCRO:'';
+$conf->facture->enabled=defined("MAIN_MODULE_FACTURE")?MAIN_MODULE_FACTURE:0;
+if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 $conf->facture->dir_output=DOL_DATA_ROOT."/facture";
 $conf->facture->dir_images=DOL_DATA_ROOT."/facture/images";
 if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $conf->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par défaut
-if (defined("MAIN_MODULE_PROPALE"))
-{
-  $conf->propal->enabled=MAIN_MODULE_PROPALE;
-  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
-  if (!defined("PROPALE_NEW_FORM_NB_PRODUCT"))
-    {
-      define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
-    }
-}
+$conf->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
+if (!defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
 $conf->propal->dir_output=DOL_DATA_ROOT."/propale";
 $conf->propal->dir_images=DOL_DATA_ROOT."/propale/images";
 if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par défaut

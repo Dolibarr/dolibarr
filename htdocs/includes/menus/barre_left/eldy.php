@@ -93,7 +93,7 @@ class MenuLeft {
             }
         } else {
             // On va le chercher en session si non défini par le lien    
-            $leftmenu=$_SESSION["leftmenu"];
+            $leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
         }
         
         
@@ -489,6 +489,8 @@ class MenuLeft {
 
                 if ($conf->adherent->enabled)
                 {
+                  $user->getrights("adherent");
+                  
                   $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&mainmenu=members",$langs->trans("Members"),0,$user->rights->adherent->lire);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?action=create",$langs->trans("NewMember"),1,$user->rights->adherent->creer);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1",$langs->trans("MenuMembersToValidate"),1,$user->rights->adherent->lire);
