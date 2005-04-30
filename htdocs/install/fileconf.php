@@ -116,9 +116,9 @@ print $langs->trans("Examples").":<br>";
 <?php echo $langs->trans("URLRoot"); ?>
 </td><td valign="top" class="label"><input type="text" size="60" name="main_url" value="
 <?php 
-if(strlen($main_url) > 0)
+if (isset($main_url) && $main_url)
   $dolibarr_main_url_root=$main_url;
-if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
+if (! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
 	if (isset($_SERVER["SCRIPT_URI"])) {	# Si défini
 		$dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
@@ -133,7 +133,7 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 	$dolibarr_main_url_root = ereg_replace('\/install$','',$dolibarr_main_url_root);	# Supprime le /install
 }
 
-print $dolibarr_main_url_root ;
+print $dolibarr_main_url_root;
 ?>">
 </td><td class="comment">
 <?php
