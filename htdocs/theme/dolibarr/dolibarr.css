@@ -17,13 +17,172 @@
  * $Id$
  * $Source$
  */
+
+
+/***** Style du fond *****/
 body {
   background: #e0ebeb; 
   margin: 0px;
   font-family: sans-serif; font-size: 0.95em; 
+/***** Styles par défaut *****/
 }
+
+
+div.body
+{
+    margin-top: 1px;
+    margin-bottom: 0;
+    margin-right: 3px;
+    margin-left: 3px;
+    display:block;
+    padding:0px;
+    font-size:13px;
+}
+
+div.tmenu
+{
+    float: top;
+    display:block;
+    white-space: nowrap;
+    border:0;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    padding: 3px 1em 0em;
+    margin: 0em 0em 0.2em 0em;
+    font-weight:bold;
+    font-size:12px;
+    height: 18px;
+    color: #000000; 
+    text-decoration: none;
+}
+
+div.vmenuplusfiche
+{
+    float: left;
+    margin-right: 6px;
+}
+
+div.vmenu
+{
+    display:block;
+    float: left;
+    margin-right: 2px;
+    padding: 0px;
+    padding-bottom: 0px;
+    width: 160px;
+}
+
+div.fiche
+{
+    position: absolute;
+    display: block;
+    top: 28px;
+    margin-right: 6px;
+    margin-top: 0px;
+}
+
+
 /*
- * Onglets
+ *   Menu superieur et 1ere ligne tableau
+ */
+
+table.topbarre
+{ 
+	cell-spacing: 0;
+}
+
+
+a.tmenu:link
+{
+  padding: 0em 1em;
+  margin: 0em 0em 1em 0em;
+  font-weight:bold;
+  font-size:12px;
+}
+a.tmenu:visited
+{
+  padding: 0em 1em;
+  margin: 0em 0em 1em 0em;
+  font-weight:bold;
+  font-size:12px;
+}
+a.tmenu#sel
+{ 
+  padding: 0em 1em;
+  margin: 0em 0em 1em 0em;
+}
+a.tmenu:hover
+{
+  padding: 0em 1em;
+  margin: 0em 0em 1em 0em;
+  text-decoration: underline;
+}
+
+/* Login */
+
+a.login
+{ 
+  position: absolute;
+  right: 24px;
+  top: 3px;
+  padding: 0em 1em;
+  margin: 0em 0em 1em 0em;
+  font-weight:bold;
+  font-size:12px;
+}
+a.login:hover
+{
+  color:black;
+  text-decoration: underline;
+}
+
+/*
+ *   Barre de gauche
+ */
+
+a.vmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+
+a.vsmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+font.vsmenudisabled { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; margin: 1em 1em 1em 1em; }
+
+a.help:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+
+div.blockvmenupair
+{ 
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	font: helvetica, verdana, arial, sans-serif;
+	color: #202020; 
+	text-align:left;
+	text-decoration: none;
+    padding: 3px;
+    margin: 1px 0px 0px 0px;
+}
+
+div.blockvmenuimpair
+{
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	font: helvetica, verdana, arial, sans-serif;
+	color: #202020; 
+	text-align:left;
+	text-decoration: none;
+    padding: 3px;
+    margin: 1px 0px 0px 0px;
+}
+
+
+/*
+ *   Barre onglets
  */
 div.tabBar {
   color: #436976;
@@ -35,12 +194,12 @@ div.tabBar {
 
 div.tabs {
   margin: 0em;
-  padding: 0em 3em;
+  padding: 0em 2em;
   text-align: left;
 }
 
 div.tabsAction {
-  margin: 0em;
+  margin: 24px 0em 1px 0em;
   padding: 0em 0em;
   text-align: right;
 }
