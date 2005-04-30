@@ -108,8 +108,13 @@ require_once(DOL_DOCUMENT_ROOT ."/address.class.php");
 
 
 $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
-$user = new User($db);
+if (! $db->connected) {
+    dolibarr_print_error($db,"host=".$conf->db->host.", user=".$conf->db->user.", databasename=".$conf->db->name);
+    exit;   
+}
 
+
+$user = new User($db);
 
 // Pour utiliser une autre version de fpdf, définir la constante FPDF_PATH
 if (! defined('FPDF_PATH')) { define('FPDF_PATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/'); }
