@@ -465,10 +465,17 @@ class DoliDb
 
     function errno()
     {
-        if (isset($this->errorcode_map[mysql_errno($this->db)])) {
-            return $this->errorcode_map[mysql_errno($this->db)];
+        if (! $this->connected) {
+            // Si il y a eu echec de connection, $this->db n'est pas valide.
+            return 'DB_ERROR_FAILED_TO_CONNECT';
         }
-        return 'DB_ERROR_'.mysql_errno($this->db);
+        else {
+            // Si il y a eu echec de connection, $this->db n'est pas valide.
+            if (isset($this->errorcode_map[mysql_errno($this->db)])) {
+                return $this->errorcode_map[mysql_errno($this->db)];
+            }
+            return 'DB_ERROR_'.mysql_errno($this->db);
+        }
     }
 
     /**
@@ -478,7 +485,13 @@ class DoliDb
 
     function error()
     {
-        return mysql_error($this->db);
+        if (! $this->connected) {
+            // Si il y a eu echec de connection, $this->db n'est pas valide pour mysql_error.
+            return 'Not connected. Check setup parameters in conf/conf.php file';
+        }
+        else {
+            return mysql_error($this->db);
+        }
     }
 
     /**
