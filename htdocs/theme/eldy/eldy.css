@@ -47,6 +47,8 @@ textarea  { font: helvetica, verdana, arial, sans-serif; }
 	border: 1px solid #ccd7e0;
 	background-image : url(/theme/eldy/img/button_bg.png);
 	background-position : bottom;
+    padding: 0em 0em;
+    margin: 0em 0em; 
 }
 
 
@@ -670,29 +672,23 @@ div.FicheSubmit {
 input.flat
 { 
   background: #FDFDFD;
-  padding: 0em 1em;
-  margin: 0em 0em 2em 0em;
   border: 1px solid #8C9C9B;
-  margin: 0em;
   padding: 0em 0em;
+  margin: 0em 0em 0em 0em;
 }
 input
 { 
   background: #FDFDFD;
-  padding: 0em 1em;
-  margin: 0em 0em 2em 0em;
   border: 1px solid #8C9C9B;
-  margin: 0em;
   padding: 0em 0em;
+  margin: 0em 0em 0em 0em;
 }
 textarea
 { 
   background: #FDFDFD;
-  padding: 0em 1em;
-  margin: 0em 0em 2em 0em;
   border: 1px solid #8C9C9B;
-  margin: 0em;
   padding: 0em 0em;
+  margin: 0em 0em 0em 0em;
 }
 
 td.valeur

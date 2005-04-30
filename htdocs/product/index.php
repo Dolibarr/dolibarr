@@ -49,12 +49,12 @@ print '<tr><td valign="top" width="30%">';
 /*
  * Zone recherche produit/service
  */
-print '<form method="post" action="liste.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/product/liste.php">';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Ref").' :</td><td><input class="flat" type="text" size="18" name="sref"></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="18" name="sref"></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "<tr $bc[0]><td>";
 print $langs->trans("Label").':</td><td><input class="flat" type="text" size="18" name="snom"></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form><br>";

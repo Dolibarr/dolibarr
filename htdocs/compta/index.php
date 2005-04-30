@@ -44,7 +44,9 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-llxHeader("","Accueil Compta");
+
+llxHeader("",$langs->trans("AccountancyTreasuryArea"));
+
 
 /*
  * Actions
@@ -89,9 +91,9 @@ if ($conf->facture->enabled) {
     print '<form method="post" action="facture.php">';
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
-    print '<td colspan="2">'.$langs->trans("SearchABill").'</td></tr>';
+    print '<td colspan="3">'.$langs->trans("SearchABill").'</td></tr>';
     print "<tr $bc[0]><td>";
-    print $langs->trans("Ref").': <input type="text" name="sf_ref" class="flat" size="18">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print $langs->trans("Ref").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
     print "</table></form><br>";
 }
 
@@ -342,7 +344,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	      if ($i < $conf->liste_limit)
 		{
 		  $var=!$var;
-		  print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+		  print '<tr '.$bc[$var].'><td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
 		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->nom.'</a></td>';
 		  print '<td align="right">'.price($obj->total).'</td>';
 		  print '<td align="right">'.price($obj->total_ttc).'</td>';
