@@ -82,7 +82,7 @@ function check_mail ($mail)
 /**
    \brief       Envoi des messages dolibarr dans syslog ou dans un fichier
                 Pour syslog:    facility défini par MAIN_SYSLOG_FACILITY
-                Pour fichier:   fichier défini par MAIN_SYSLOG_FILE
+                Pour fichier:   fichier défini par SYSLOG_FILE
    \param       message		message a envoyer a syslog
    \param       level       Niveau de l'erreur
    \remarks     Cette fonction a un effet que si le module syslog est activé.
@@ -94,11 +94,16 @@ function dolibarr_syslog($message, $level=LOG_ERR)
 {
     if (defined("MAIN_MODULE_SYSLOG") && MAIN_MODULE_SYSLOG)
     {
-        if (defined("MAIN_SYSLOG_FILE") && MAIN_SYSLOG_FILE)
+        if (defined("SYSLOG_FILE") && SYSLOG_FILE)
         {
-            $file=fopen(MAIN_SYSLOG_FILE,"a+");
-            fwrite($file,time()." ".$level." ".$message."\n");
-            fclose($file);
+            $file=fopen(SYSLOG_FILE,"a+");
+            if ($file) {
+                fwrite($file,time()." ".$level." ".$message."\n");
+                fclose($file);
+            }
+            else {
+                print "Error: Failed to open file ".SYSLOG_FILE;   
+            }
         }
         else
         {
