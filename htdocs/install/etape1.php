@@ -469,7 +469,7 @@ if ($_POST["action"] == "set")
 	      print "</td></tr>";
     
 	      // Affiche aide diagnostique
-	      print '<tr><td colspan="2"><br>Le serveur ('.$conf->db->host.'), nom de base ('.$conf->db->name.'), login ('.$conf->db->user.'), ou mot de passe ('.$conf->db->pass.') de la base de donnée est peut-être incorrect.<br>';
+	      print '<tr><td colspan="2"><br>Le serveur ('.$conf->db->host.'), nom de base ('.$conf->db->name.'), login ('.$conf->db->user.'), ou mot de passe ('.$conf->db->pass.') de la base de donnée est peut-être incorrect ou la version du client PHP trop ancienne par rapport à la version de la base de donnée.<br>';
 	      print 'Si le login n\'existe pas encore, vous devez cocher l\'option "Créer l\'utilisateur".<br>';
 	      print 'Revenez en arrière pour corriger les paramètres.<br>';
 	      print '</td></tr>';

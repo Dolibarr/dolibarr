@@ -487,7 +487,7 @@ class DoliDb
     {
         if (! $this->connected) {
             // Si il y a eu echec de connection, $this->db n'est pas valide pour mysql_error.
-            return 'Not connected. Check setup parameters in conf/conf.php file';
+            return 'Not connected. Check setup parameters in conf/conf.php file and your mysql client and server versions';
         }
         else {
             return mysql_error($this->db);
