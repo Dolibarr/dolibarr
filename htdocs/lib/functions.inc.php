@@ -518,8 +518,19 @@ function img_info($alt = "default")
 function img_warning($alt = "default")
 {
   global $conf,$langs;
-  if ($alt=="default") $alt=$langs->trans("Show");
+  if ($alt=="default") $alt=$langs->trans("Warning");
   return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/warning.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/**
+        \brief  Affiche logo warning
+        \param  alt     Texte sur le alt de l'image
+*/
+function img_error($alt = "default")
+{
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Error");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/error.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
