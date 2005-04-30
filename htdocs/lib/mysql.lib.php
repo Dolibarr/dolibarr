@@ -470,7 +470,6 @@ class DoliDb
             return 'DB_ERROR_FAILED_TO_CONNECT';
         }
         else {
-            // Si il y a eu echec de connection, $this->db n'est pas valide.
             if (isset($this->errorcode_map[mysql_errno($this->db)])) {
                 return $this->errorcode_map[mysql_errno($this->db)];
             }
