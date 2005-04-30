@@ -26,3 +26,4 @@ BoxTitleLastProspects=Les %s derniers prospects enregistrés
 BoxTitleLastProductsInContract=Les %s derniers produits/services contractés
 BoxTitleOldestUnpayedCustomerBills=Les %s plus anciennes factures clients impayées
 BoxTitleOldestUnpayedSupplierBills=Les %s plus anciennes factures fournisseurs impayées
+FailedToRefreshDataInfoNotUpToDate=Echec du rafraichissement du flux RSS. Les informations datent du %s.
