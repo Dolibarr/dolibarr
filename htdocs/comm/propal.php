@@ -22,7 +22,8 @@
  *
  */
 
-/**     \file       htdocs/comm/propal.php
+/**
+        \file       htdocs/comm/propal.php
         \ingroup    propale
         \brief      Page liste des propales
 */
@@ -68,15 +69,15 @@ $NBLINES=4;
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
-  if ($user->rights->propale->supprimer) 
+    if ($user->rights->propale->supprimer)
     {
-      $propal = new Propal($db, 0, $_GET["propalid"]);
-      $propal->delete($user);
-      $propalid = 0;
-      $brouillon = 1;
+        $propal = new Propal($db, 0, $_GET["propalid"]);
+        $propal->delete($user);
+        $propalid = 0;
+        $brouillon = 1;
     }
-
-  Header("Location: propal.php");
+    
+    Header("Location: propal.php");
 }
 
 
@@ -578,7 +579,7 @@ if ($_GET["propalid"])
 	   */
 	  if ($propal->statut < 2)
 	    {
-	      print '<p><div class="tabsAction">';
+	      print '<div class="tabsAction">';
 	  
           // Valid
 	      if ($propal->statut == 0)
@@ -638,7 +639,7 @@ if ($_GET["propalid"])
 		    }
 		} 
 
-	      print "</div>";
+	      print "</div><br>";
 
 	    }
 
@@ -988,6 +989,6 @@ else
 }
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 
 ?>

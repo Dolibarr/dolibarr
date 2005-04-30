@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Eric Seigne          <eric.seigne@ryxeo.com>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@
  *
  */
 
-/*! \file htdocs/comm/propal/note.php
+/**
+        \file       htdocs/comm/propal/note.php
         \ingroup    propale
         \brief      Fiche d'information sur une proposition commerciale
 		\version    $Revision$
@@ -131,12 +132,13 @@ if ($_GET["propalid"])
 
 	  print "</table>";
       print '<br>';
+	  print '</div>';
 
 	  /*
 	   * Actions
 	   */
-	  print '</div>';
-	  print '<br><div class="tabsAction">';
+
+	  print '<div class="tabsAction">';
 	  
 	  if ($user->rights->propale->creer && $_GET["action"] <> 'edit')
 	    {
@@ -150,5 +152,5 @@ if ($_GET["propalid"])
 
 }
 $db->close();
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision: 1.15 ');
 ?>
