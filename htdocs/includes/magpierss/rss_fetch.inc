@@ -94,7 +94,7 @@ function fetch_rss ($url) {
 		error("fetch_rss called without a url");
 		return false;
 	}
-	
+
 	// if cache is disabled
 	if ( !MAGPIE_CACHE_ON ) {
 		// fetch file, and parse it
@@ -158,7 +158,7 @@ function fetch_rss ($url) {
 		}
 		
 		$resp = _fetch_remote_file( $url, $request_headers );
-		
+
 		if (isset($resp) and $resp) {
 			if ($resp->status == '304' ) {
 				// we have the most current copy
@@ -185,12 +185,18 @@ function fetch_rss ($url) {
 				if ( $resp->error ) {
 					# compensate for Snoopy's annoying habbit to tacking
 					# on '\n'
-					$http_error = substr($resp->error, 0, -2); 
+					
+					// LDR FIX BUG
+					$http_error = eregi_replace("\n","",$resp->error); 
+
 					$errormsg .= "(HTTP Error: $http_error)";
 				}
 				else {
 					$errormsg .=  "(HTTP Response: " . $resp->response_code .')';
 				}
+				
+				// LDR FIX BUG Si echec recup http mais cache bien lu, on stock erreur dans object rss
+				if ($rss) $rss->ERROR=$errormsg;
 			}
 		}
 		else {
@@ -206,7 +212,7 @@ function fetch_rss ($url) {
 			}
 			return $rss;
 		}
-		
+
 		// else we totally failed
 		error( $errormsg );	
 		
@@ -268,7 +274,7 @@ function _fetch_remote_file ($url, $headers = "" ) {
 	if (is_array($headers) ) {
 		$client->rawheaders = $headers;
 	}
-	
+
 	@$client->fetch($url);
 	return $client;
 
