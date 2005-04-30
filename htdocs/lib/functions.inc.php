@@ -682,63 +682,69 @@ function accessforbidden()
 */
 function dolibarr_print_error($db='',$msg='')
 {
-  global $langs;
-  $syslog = '';
-  
-  if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
-  {
-        print "Dolibarr a détecté une erreur technique.<br>\n";
-        print "Voici les informations qui pourront aider au diagnostique:<br><br>\n";
-        
+    global $langs;
+    $syslog = '';
+    
+    // Si erreur intervenu avant chargement langue
+    if (! $langs) {
+        require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
+        $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", "en_US");
+        $langs->load("main");
+    }
+    
+    if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
+    {
+        print $langs->trans("DolibarrHasDetectedError").".<br>\n";
+        print $langs->trans("InformationToHelpDiagnose").":<br><br>\n";
+    
         print "<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
-        print "<b>URL sollicitée:</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
+        print "<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
         print "<b>QUERY_STRING:</b> ".$_SERVER["QUERY_STRING"]."<br>\n";;
-        print "<b>Referer:</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
+        print "<b>".$langs->trans("Referer").":</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
         $syslog.="url=".$_SERVER["REQUEST_URI"];
         $syslog.=", query_string=".$_SERVER["QUERY_STRING"];
-  }
-  else                              // Mode CLI   
-  {
-  
-        print "Erreur interne détectée...\n";
+    }
+    else                              // Mode CLI
+    {
+    
+        print $langs->trans("ErrorInternalErrorDetected")."...\n";
         $syslog.="pid=".getmypid();
-  }    
-  
-  if ($db) {
-    if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
-    {
-        print "<br>\n";
-        print "<b>Type gestionnaire de base de donnée:</b> ".$db->type."<br>\n";
-        print "<b>Requete dernier acces en base:</b> ".$db->lastquery()."<br>\n";
-        print "<b>Code retour dernier acces en base:</b> ".$db->errno()."<br>\n";
-        print "<b>Information sur le dernier accès en base:</b> ".$db->error()."<br>\n";
     }
-    else                            // Mode CLI   
-    {
-        print "Type gestionnaire de base de donnée:\n".$db->type."\n";
-        print "Requete dernier acces en base:\n".$db->lastquery()."\n";
-        print "Code retour dernier acces en base:\n".$db->errno()."\n";
-        print "Information sur le dernier accès en base:\n".$db->error()."\n";
-
+    
+    if ($db) {
+        if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
+        {
+            print "<br>\n";
+            print "<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
+            print "<b>".$langs->trans("RequestLastAccess").":</b> ".($db->lastquery()?$db->lastquery():$langs->trans("ErrorNoRequestRan"))."<br>\n";
+            print "<b>".$langs->trans("ReturnCodeLastAccess").":</b> ".$db->errno()."<br>\n";
+            print "<b>".$langs->trans("InformationLastAccess").":</b> ".$db->error()."<br>\n";
+        }
+        else                            // Mode CLI
+        {
+            print $langs->trans("DatabaseTypeManager").":\n".$db->type."\n";
+            print $langs->trans("RequestLastAccess").":\n".($db->lastquery()?$db->lastquery():$langs->trans("ErrorNoRequestRan"))."\n";
+            print $langs->trans("ReturnCodeLastAccess").":\n".$db->errno()."\n";
+            print $langs->trans("InformationLastAccess").":\n".$db->error()."\n";
+    
+        }
+        $syslog.=", sql=".$db->lastquery();
+        $syslog.=", db_error=".$db->error();
     }
-    $syslog.=", sql=".$db->lastquery();
-    $syslog.=", db_error=".$db->error();
-  }
-
-  if ($msg) {
-    if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
-    {
-        print "<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
+    
+    if ($msg) {
+        if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
+        {
+            print "<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
+        }
+        else                            // Mode CLI
+        {
+            print $langs->trans("Message").":\n".$msg."\n" ;
+        }
+        $syslog.=", msg=".$msg;
     }
-    else                            // Mode CLI
-    {                               
-        print $langs->trans("Message").":\n".$msg."\n" ;
-    }
-    $syslog.=", msg=".$msg;
-  }
-
-  dolibarr_syslog("Error $syslog");
-
+    
+    dolibarr_syslog("Error $syslog");
 }
 
 

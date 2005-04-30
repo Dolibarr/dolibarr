@@ -14,6 +14,15 @@ ErrorGoToModuleSetup=Go to Module setup to fix this
 ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=%s)
 ErrorAttachedFilesDisabled=Attaching files feature is disabled on this serveur
 ErrorFileNotUploaded=File was not uploaded
+ErrorInternalErrorDetected=Internal error detected
+ErrorNoRequestRan=No request ran
+RequestedUrl=Requested Url
+DatabaseTypeManager=Database type manager
+RequestLastAccess=Request for last database access
+ReturnCodeLastAccess=Return code for last database access
+InformationLastAccess=Information for last database access
+DolibarrHasDetectedError=Dolibarr has detected a technical error
+InformationToHelpDiagnose=This is informations that can help to diagnose
 yes=yes
 Yes=Yes
 no=no
