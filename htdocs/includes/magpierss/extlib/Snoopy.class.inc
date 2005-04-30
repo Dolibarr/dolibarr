@@ -138,6 +138,10 @@ class Snoopy
 				$this->host = $URI_PARTS["host"];
 				if(!empty($URI_PARTS["port"]))
 					$this->port = $URI_PARTS["port"];
+				
+				// LDR FIX BUG syncronized connect timeout to read timeout, otherwise, read timeout is useless
+				if ($this->read_timeout) $this->_fp_timeout=$this->read_timeout;
+				
 				if($this->_connect($fp))
 				{
 					if($this->_isproxy)
