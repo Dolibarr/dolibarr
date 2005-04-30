@@ -401,14 +401,14 @@ class DoliDb
     /**
         \brief      Libère le dernier resultset utilisé sur cette connexion.
         \param      resultset   Curseur de la requete voulue
-        \return	    resource
     */
 
     function free($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
-        return mysql_free_result($resultset);
+        // Si resultset en est un, on libere la mémoire
+        if (is_resource($resultset)) mysql_free_result($resultset);
     }
 
     /**
