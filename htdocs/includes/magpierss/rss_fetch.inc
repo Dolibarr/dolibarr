@@ -196,7 +196,10 @@ function fetch_rss ($url) {
 				}
 				
 				// LDR FIX BUG Si echec recup http mais cache bien lu, on stock erreur dans object rss
-				if ($rss) $rss->ERROR=$errormsg;
+				if ($rss) {
+				    $rss->ERROR=$errormsg;
+				    if ($cache && $url) $rss->date=filemtime($cache->file_name($url));
+				}
 			}
 		}
 		else {
