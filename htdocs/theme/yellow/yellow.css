@@ -385,8 +385,8 @@ a.tab:visited {
 }
 a.tab#active {
   background: #dcdcd3;
-  border-bottom: #dee7ec 1px solid;
-    text-decoration: none;
+  border-bottom: #dcdcd3 1px solid;
+  text-decoration: none;
 }
 
 a.tab:hover {
