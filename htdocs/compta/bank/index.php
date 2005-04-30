@@ -28,7 +28,9 @@
 		\version    $Revision$
 */
 
+
 require("./pre.inc.php");
+
 require("./bank.lib.php");
 require("../../tva.class.php");
 require("../../chargesociales.class.php");
@@ -41,7 +43,10 @@ $user->getrights('banque');
 if (!$user->rights->banque->lire)
   accessforbidden();
 
+
+
 llxHeader();
+
 
 print_titre($langs->trans("BankAccounts"));
 print '<br>';
@@ -175,5 +180,5 @@ print "</div>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
