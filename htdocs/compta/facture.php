@@ -1416,15 +1416,15 @@ else
 	  if ($_GET["action"] == 'presend')
 	    {
 	      print '<br>';
-	      print_titre("Envoyer la facture par mail");
+	      print_titre($langs->trans("SendBillByMail"));
 
 	      $liste[0]="&nbsp;";
 	      foreach ($soc->contact_email_array() as $key=>$value) {
 	        $liste[$key]=$value; 
 	      }
-	      
+
 	      // Créé l'objet formulaire mail
-	      include_once("../html.formmail.class.php");
+	      include_once(DOL_DOCUMENT_ROOT."/html.formmail.class.php");
 	      $formmail = new FormMail($db);	    
 	      $formmail->fromname = $user->fullname;
 	      $formmail->frommail = $user->email;
@@ -1450,7 +1450,7 @@ else
 	  if ($_GET["action"] == 'prerelance')
 	    {
 	      print '<br>';
-	      print_titre("Envoyer une relance par mail");
+	      print_titre($langs->trans("SendReminderBillByMail"));
 
 	      $liste[0]="&nbsp;";
 	      foreach ($soc->contact_email_array() as $key=>$value) {
@@ -1496,14 +1496,7 @@ else
 		{
 		  $i = 0; $total = 0;
 		  print "<br>";
-		  if ($num >1)
-		    {
-		      print_titre("Propositions commerciales associées");
-		    }
-		  else
-		    {
-		      print_titre("Proposition commerciale associée");
-		    }
+	      print_titre($langs->trans("RelatedCommercialProposals"));
 
 		  print '<table class="noborder" width="100%">';
 		  print '<tr class="liste_titre">';
@@ -1535,7 +1528,7 @@ else
       else
 	{
 	  /* Facture non trouvée */
-	  print "Facture ".$_GET["facid"]." inexistante";
+	  print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
 	}
     }
   else
@@ -1782,5 +1775,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
