@@ -148,14 +148,23 @@ $html = new Form($db);
 	   */
 
 	  print '<table class="border" width="100%">';
+
+	  // Reference du contrat
+	  print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
+	  print $contrat->ref;
+	  print "</td></tr>";
+
+      // Customer
 	  print "<tr><td>".$langs->trans("Customer")."</td>";
 	  print '<td colspan="3">';
 	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$contrat->societe->id.'">'.$contrat->societe->nom.'</a></b></td></tr>';
 	  
+	  // Status
 	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 	  print $contrat->statuts[$contrat->statut];
 	  print "</td></tr>";
 	  
+	  // Date
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
 	  print '<td colspan="3">'.strftime("%A %d %B %Y",$contrat->date_contrat)."</td></tr>\n";
 

@@ -36,107 +36,122 @@
 
 class Contrat
 {
-  var $id;
-  var $db;
-
-  /**
-   *    \brief      Constructeur de la classe
-   *    \param      DB          handler accès base de données
-   */
-  function Contrat($DB)
-  {
-    $this->db = $DB ;
-    $this->product = new Product($DB);
-    $this->societe = new Societe($DB);
-    $this->user_service = new User($DB);
-    $this->user_cloture = new User($DB);
-  }
-
-  /**
-   *    \brief      Modifie date de mise en service d'un contrat
-   *                Si la duree est renseignée, date_start=date_start et date_end=date_start+duree
-   *                sinon date_start=date_start et date_end=date_end
-   */
-  function mise_en_service($user, $date_start, $duree=0, $date_end)
-  {
-    if ($duree) {
-        // Si duree renseignee
-        $duree_value = substr($duree,0,strlen($duree)-1);
-        $duree_unit = substr($duree,-1);
-
-        $month = date("m",$date_start);
-        $day = date("d",$date_start);
-        $year = date("Y",$date_start);
-
-        switch($duree_unit) 
-          {
-          case "d":
-    	$day = $day + $duree_value;
-    	break;
-          case "w":
-    	$day = $day + ($duree_value * 7);
-    	break;
-          case "m":
-    	$month = $month + $duree_value;
-    	break;
-          case "y":
-    	$year = $year + $duree_value;
-    	break;
-          }
-        $date_end = mktime(date("H",$date_start), date("i",$date_start), 0, $month, $day, $year);
-    }
-
-    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
-    $sql .= " , mise_en_service = ".$this->db->idate($date_start).", fk_user_mise_en_service = ".$user->id;
-    $sql .= " , fin_validite = ". $this->db->idate($date_end);
-    $sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
-
-    $result = $this->db->query($sql) ;
-    if ($result) 
+    var $db;
+    
+    var $id;
+    var $ref;
+    var $product;
+    var $societe;
+    var $user_service;
+    var $user_cloture;
+    
+    var $statuts=array();
+    
+        
+    /**
+     *    \brief      Constructeur de la classe
+     *    \param      DB          handler accès base de données
+     */
+    function Contrat($DB)
     {
-	    return 1;
+        global $langs;
+        
+        $this->db = $DB ;
+        $this->product = new Product($DB);
+        $this->societe = new Societe($DB);
+        $this->user_service = new User($DB);
+        $this->user_cloture = new User($DB);
+        
+        // Statut 0=ouvert, 1=actif, 2=cloturé
+        $this->statuts=array($langs->trans("Opened"),$langs->trans("Running"),$langs->trans("Closed"));
     }
-    else
+    
+    
+    /**
+     *    \brief      Modifie date de mise en service d'un contrat
+     *                Si la duree est renseignée, date_start=date_start et date_end=date_start+duree
+     *                sinon date_start=date_start et date_end=date_end
+     */
+    function mise_en_service($user, $date_start, $duree=0, $date_end)
     {
-	    $this->error=$this->db->error();
-	    return -1;
+        if ($duree) {
+            // Si duree renseignee
+            $duree_value = substr($duree,0,strlen($duree)-1);
+            $duree_unit = substr($duree,-1);
+    
+            $month = date("m",$date_start);
+            $day = date("d",$date_start);
+            $year = date("Y",$date_start);
+    
+            switch($duree_unit)
+            {
+                case "d":
+                $day = $day + $duree_value;
+                break;
+                case "w":
+                $day = $day + ($duree_value * 7);
+                break;
+                case "m":
+                $month = $month + $duree_value;
+                break;
+                case "y":
+                $year = $year + $duree_value;
+                break;
+            }
+            $date_end = mktime(date("H",$date_start), date("i",$date_start), 0, $month, $day, $year);
+        }
+    
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
+        $sql .= " , mise_en_service = ".$this->db->idate($date_start).", fk_user_mise_en_service = ".$user->id;
+        $sql .= " , fin_validite = ". $this->db->idate($date_end);
+        $sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
+    
+        $result = $this->db->query($sql) ;
+        if ($result)
+        {
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
     }
-  }
-  
-  /**
-   *    \brief      Active une ligne detail d'un contrat
-   *    \param      user        Objet User qui avtice le contrat
-   *    \param      line_id     Id de la ligne de detail à activer
-   *    \param      date        Date d'ouverture
-   */
-  function active_line($user, $line_id, $date)
-  {
-    // statut actif : 4
-
-    $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4";
-    $sql .= " , date_ouverture = '".$this->db->idate($date)."', fk_user_ouverture = ".$user->id;
-    $sql .= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3) ";
-
-    $result = $this->db->query($sql) ;
-
-    if ($result)
-      {
-        // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $interface->run_triggers('CONTRACT_SERVICE_ACTIVATE',$this,$user,$lang,$conf);
-        // Fin appel triggers
-
-	    return 0;
-      }
-    else
-      {
-	    $this->error=$this->db->error();
-	    return -1;
-      }
-  }
-
-
+    
+    
+    /**
+    *    \brief      Active une ligne detail d'un contrat
+    *    \param      user        Objet User qui avtice le contrat
+    *    \param      line_id     Id de la ligne de detail à activer
+    *    \param      date        Date d'ouverture
+    */
+    function active_line($user, $line_id, $date)
+    {
+        // statut actif : 4
+    
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4";
+        $sql .= " , date_ouverture = '".$this->db->idate($date)."', fk_user_ouverture = ".$user->id;
+        $sql .= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3) ";
+    
+        $result = $this->db->query($sql) ;
+    
+        if ($result)
+        {
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $interface->run_triggers('CONTRACT_SERVICE_ACTIVATE',$this,$user,$lang,$conf);
+            // Fin appel triggers
+    
+            return 0;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+    
 
     /**
      *    \brief      Cloture un contrat
@@ -184,61 +199,63 @@ class Contrat
         // Fin appel triggers
     }
 
-  /**
-   *    \brief      Charge de la base les données du contrat
-   *    \param      id      id du contrat à charger
-   *    \return     int     <0 si KO, >0 si OK
-   */ 
-  function fetch ($id)
-  {    
-    $sql = "SELECT rowid, statut, fk_soc, ".$this->db->pdate("mise_en_service")." as datemise";
-    $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_contrat")." as datecontrat";
-    $sql .= " , fk_user_author";
-    $sql .= ", fk_commercial_signature, fk_commercial_suivi ";
-    $sql .= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
     
-    $resql = $this->db->query($sql) ;
-    
-    if ($resql)
+    /**
+     *    \brief      Charge de la base les données du contrat
+     *    \param      id      id du contrat à charger
+     *    \return     int     <0 si KO, >0 si OK
+     */
+    function fetch($id)
     {
-        $result = $this->db->fetch_array($resql);
+        $sql = "SELECT rowid, statut, fk_soc, ".$this->db->pdate("mise_en_service")." as datemise";
+        $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_contrat")." as datecontrat";
+        $sql .= " , fk_user_author";
+        $sql .= ", fk_commercial_signature, fk_commercial_suivi ";
+        $sql .= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
     
-        $this->id                = $result["rowid"];
-        $this->statut            = $result["statut"];
-        $this->factureid         = $result["fk_facture"];
-        $this->facturedetid      = $result["fk_facturedet"];
-        $this->mise_en_service   = $result["datemise"];
-        $this->date_fin_validite = $result["datefin"];
-        $this->date_contrat      = $result["datecontrat"];
+        $resql = $this->db->query($sql) ;
     
-        $this->user_author_id    = $result["fk_user_author"];
+        if ($resql)
+        {
+            $result = $this->db->fetch_array($resql);
     
-        $this->commercial_signature_id = $result["fk_commercial_signature"];
-        $this->commercial_suivi_id = $result["fk_commercial_suivi"];
+            $this->id                = $result["rowid"];
+            $this->ref               = $result["rowid"];
+            $this->statut            = $result["statut"];
+            $this->factureid         = $result["fk_facture"];
+            $this->facturedetid      = $result["fk_facturedet"];
+            $this->mise_en_service   = $result["datemise"];
+            $this->date_fin_validite = $result["datefin"];
+            $this->date_contrat      = $result["datecontrat"];
     
-        $this->user_service->id = $result["fk_user_mise_en_service"];
-        $this->user_cloture->id = $result["fk_user_cloture"];
+            $this->user_author_id    = $result["fk_user_author"];
     
-        $this->societe->fetch($result["fk_soc"]);
+            $this->commercial_signature_id = $result["fk_commercial_signature"];
+            $this->commercial_suivi_id = $result["fk_commercial_suivi"];
     
-        $this->db->free($resql);
+            $this->user_service->id = $result["fk_user_mise_en_service"];
+            $this->user_cloture->id = $result["fk_user_cloture"];
     
-        return 1;
+            $this->societe->fetch($result["fk_soc"]);
+    
+            $this->db->free($resql);
+    
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    
     }
-    else
-    {
-        $this->error=$this->db->error();
-        return -1;
-    }
-
-  }
-
-  /**
-   *    \brief      Crée un contrat vierge
-   *    \param      user        Utilisateur qui crée
-   *    \param      lang        Environnement langue de l'utilisateur
-   *    \param      conf        Environnement de configuration lors de l'opération
-   */
+    
+    /**
+     *    \brief      Crée un contrat vierge
+     *    \param      user        Utilisateur qui crée
+     *    \param      lang        Environnement langue de l'utilisateur
+     *    \param      conf        Environnement de configuration lors de l'opération
+     */
     function create($user,$lang='',$conf='')
     {
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, fk_commercial_signature, fk_commercial_suivi, date_contrat)";
@@ -265,7 +282,7 @@ class Contrat
     
         return $result;
     }
-
+    
 
   /**
    *    \brief      Ajoute une ligne de commande
