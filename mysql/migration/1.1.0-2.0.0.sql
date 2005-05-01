@@ -168,7 +168,6 @@ delete from llx_rights_def where id=73;
 alter table llx_facturedet add fk_code_ventilation integer NOT NULL DEFAULT 0;
 
 
-alter table llx_contrat add fk_facturedet integer NOT NULL default 0 after fk_facture;
 alter table llx_contrat change fk_user_cloture fk_user_cloture integer;
 alter table llx_contrat change fk_user_mise_en_service fk_user_mise_en_service integer;
 alter table llx_contrat add   datec    datetime after tms;
