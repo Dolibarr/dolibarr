@@ -129,6 +129,7 @@ Price=Prix
 UnitPrice=Prix unitaire
 PriceU=P.U.
 PriceUHT=P.U. HT
+PriceUTTC=P.U. TTC
 Amount=Montant
 AmountHT=Montant&nbsp;HT
 AmountTTC=Montant&nbsp;TTC

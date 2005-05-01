@@ -134,14 +134,21 @@ if ($_POST["action"] == 'add' && $user->rights->fournisseur->facture->creer)
             {
               $label = "label$i";
               $amount = "amount$i"; 
+              $amountttc = "amountttc$i"; 
               $tauxtva = "tauxtva$i";
               $qty = "qty$i";
               
-              if (strlen($_POST["$label"]) > 0 && $_POST["$amount"] > 0)
+              if (strlen($_POST[$label]) > 0 && !empty($_POST[$amount]))
         	{
         	  $atleastoneline=1;
         	  $facfou->addline($_POST["$label"], $_POST["$amount"], $_POST["$tauxtva"], $_POST["$qty"], 1);
         	}
+          else if (strlen($_POST[$label]) > 0 && empty($_POST[$amount]))
+          {
+            $ht = $_POST[$amountttc] / (1 + ($_POST[$tauxtva] / 100));
+        	  $atleastoneline=1;
+        	  $facfou->addline($_POST[$label], $ht, $_POST[$tauxtva], $_POST[$qty], 1);
+          }
             }
 
           $db->commit();
@@ -173,8 +180,13 @@ if ($_GET["action"] == 'add_ligne')
 {
   $facfou = new FactureFournisseur($db,"", $_GET["facid"]);
 
-  $facfou->addline($_POST["label"], $_POST["amount"], $_POST["tauxtva"], $_POST["qty"]);
-  
+  if (strlen($_POST["label"]) > 0 && $_POST["amount"] > 0)
+    $facfou->addline($_POST["label"], $_POST["amount"], $_POST["tauxtva"], $_POST["qty"]);
+  else
+  {
+    $ht = $_POST['amountttc'] / (1 + ($_POST['tauxtva'] / 100));
+    $facfou->addline($_POST["label"], $ht, $_POST["tauxtva"], $_POST["qty"]);
+  }
   $_GET["action"] = "edit";
 }
 
@@ -264,7 +276,13 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
   print "</table><br>";
 
   print '<table class="border" width="100%">';
-  print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Label").'</td><td align="center">'.$langs->trans("PriceUHT").'</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">'.$langs->trans("VATRate").'</td></tr>';
+  print '<tr class="liste_titre">';
+  print '<td>&nbsp;</td><td>'.$langs->trans("Label").'</td>';
+  print '<td align="center">'.$langs->trans("PriceUHT").'</td>';
+  print '<td align="center">'.$langs->trans("Qty").'</td>';
+  print '<td align="center">'.$langs->trans("VATRate").'</td>';
+  print '<td align="center">'.$langs->trans("PriceUTTC").'</td>';
+  print '</tr>';
 
   for ($i = 1 ; $i < 9 ; $i++)
     {
@@ -281,9 +299,11 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
       print '<tr><td>'.$i.'</td>';
       print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
       print '<td align="center"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
-      print '<td align="center"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td><td align="center">';
+      print '<td align="center"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
+      print '<td align="center">';
       $html->select_tva("tauxtva".$i);
-      print '</td></tr>';
+      print '</td>';
+      print '<td align="center"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
     }
 
   print "</table>";
@@ -372,6 +392,7 @@ else
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td>';
 	  print '<td align="center">'.$langs->trans("PriceUHT").'</td>';
+	  print '<td align="center">'.$langs->trans("PriceUTTC").'</td>';
 	  print '<td align="center">'.$langs->trans("Qty").'</td>';
 	  print '<td align="center">'.$langs->trans("TotalHT").'</td>';
 	  print '<td align="center">'.$langs->trans("VATRate").'</td>';
@@ -381,6 +402,7 @@ else
 	    {
 	      print "<tr $bc[1]>".'<td>'.$fac->lignes[$i][0]."</td>";
 	      print '<td align="center">'.price($fac->lignes[$i][1])."</td>";
+	      print '<td align="center">'.price($fac->lignes[$i][1] * (1+($fac->lignes[$i][2]/100)))."</td>";
 	      print '<td align="center">'.$fac->lignes[$i][3]."</td>";
 	      print '<td align="center">'.price($fac->lignes[$i][4])."</td>";
 	      print '<td align="center">'.$fac->lignes[$i][2]."</td>";  
@@ -398,6 +420,9 @@ else
 	  print '</td>';
 	  print '<td align="center">';
 	  print '<input size="8" name="amount" type="text">';
+	  print '</td>';
+	  print '<td align="center">';
+	  print '<input size="8" name="amountttc" type="text">';
 	  print '</td>';
 	  print '<td align="center">';
 	  print '<input size="2" name="qty" type="text" value="1">';

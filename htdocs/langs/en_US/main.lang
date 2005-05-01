@@ -129,6 +129,7 @@ Price=Price
 UnitPrice=Unit price
 PriceU=U.P.
 PriceUHT=U.P. HT
+PriceUTTC=U.P. w/ tax
 Amount=Amount
 AmountHT=Amount&nbsp;HT
 AmountTTC=Amount&nbsp;TTC
