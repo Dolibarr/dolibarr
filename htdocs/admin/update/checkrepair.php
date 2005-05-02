@@ -124,7 +124,7 @@ $nberr=0;
 print '<br>';
 print "<b>Mise a jour des contrats sans details (gestion du contrat + detail de contrat)</b><br>\n";
 
-$sql = "SELECT c.rowid as cref, c.date_contrat, c.statut, c.mise_en_service, c.fin_validite, c.date_cloture, c.fk_product, c.fk_facture, c.fk_facturedet, c.fk_user_author,";
+$sql = "SELECT c.rowid as cref, c.date_contrat, c.statut, c.mise_en_service, c.fin_validite, c.date_cloture, c.fk_product, c.fk_facture, c.fk_user_author,";
 $sql.= " p.ref, p.label, p.description, p.price, p.tva_tx, p.duration, cd.rowid";
 $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p";
