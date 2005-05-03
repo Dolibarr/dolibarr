@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
         \file       htdocs/compta/charges/index.php
         \ingroup    compta
 		\brief      Page liste des charges
@@ -74,7 +74,8 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-
+  $var=true;
+  
   while ($i < $num) {
     $obj = $db->fetch_object();
     $var = !$var;
@@ -90,7 +91,7 @@ if ( $db->query($sql) )
   dolibarr_print_error($db);
 }
 
-/*
+/**
  * Factures fournisseurs
  */
 $sql = "SELECT count(f.rowid) as nb, sum(total_ttc) as total, sum(IF(paye=1,total_ttc,0)) as totalpaye";

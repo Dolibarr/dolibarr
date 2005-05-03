@@ -44,19 +44,13 @@ llxHeader();
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = $_GET["page"];
-if ($page < 0) { 
-  $page = 0 ; }
+if ($page < 0) $page = 0;
 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
   
-if ($sortfield == "") {
-  $sortfield="c.id"; }
-     
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
+if (! $sortfield) $sortfield="c.id";
+if (! $sortorder) $sortorder="DESC";
 
 
 /*
@@ -121,7 +115,7 @@ print "<table class=\"noborder\" width=\"100%\">";
  *
  */
 if ($user->rights->compta->charges->creer) {
-    $var = !$var;
+    $var=false;
 
     print "<tr class=\"liste_titre\">";
     print '<td>';
@@ -225,6 +219,7 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
+  $var=true;
 
   while ($i < $num)
     {
