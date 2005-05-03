@@ -39,9 +39,6 @@ else {
     $year_end=$year_start + 4;
 }
 
-
-llxHeader();
-
 /*
  * Sécurité accés client
  */
@@ -53,32 +50,32 @@ if ($user->societe_id > 0)
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
-if ($modecompta=='CREANCES-DETTES') {
-	$title="Chiffre d'affaire (".$conf->monnaie." HT)";
-} else {
-	$title="Chiffre d'affaire (".$conf->monnaie." TTC)";
-}
-$lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
-
-print_fiche_titre($title,$lien);
 
 
-// Affiche règles de calcul
-print "<br>";
-print "Cet état présente le CA:<br>\n";
+llxHeader();
+
+
+$html=new Form($db);
+
+// Affiche en-tête du rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-    print $langs->trans("RulesCADue");
-    print '(Voir le rapport <a href="index.php?year_start='.($year_start).'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées).<br>';
-    print '<br>';
+    $nom="Chiffre d'affaire (".$conf->monnaie." HT)";
+    $nom.=' (Voir le rapport <a href="index.php?year_start='.($year_start).'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
+    $period=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $description=$langs->trans("RulesCADue");
+    $builddate=time();
+    $exportlink=$langs->trans("NotYetAvailable");
 }
 else {
-    print $langs->trans("RulesCAIn");
-    print '(Voir le rapport en <a href="index.php?year_start='.($year_start).'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée).<br>';
-    print '<br>';
+    $nom="Chiffre d'affaire (".$conf->monnaie." TTC)";
+    $nom.=' (Voir le rapport en <a href="index.php?year_start='.($year_start).'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
+    $period=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $description=$langs->trans("RulesCAIn");
+    $builddate=time();
+    $exportlink=$langs->trans("NotYetAvailable");
 }
-
-print '<br>';
+$html->report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
 
 if ($modecompta == 'CREANCES-DETTES') { 
@@ -220,13 +217,13 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 }
 
 // Affiche total
-print "<tr><td><b>".$langs->trans("Total")." :</b></td>";
+print '<tr class="liste_total"><td>'.$langs->trans("Total").':</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
     // Montant total
     if ($annee >= $minyear && $annee <= max($nowyear,$maxyear))
     {
-        print "<td align=\"right\" nowrap><b>".($total[$annee]?price($total[$annee]):"0")."</b></td>";
+        print "<td align=\"right\" nowrap>".($total[$annee]?price($total[$annee]):"0")."</td>";
     }
     else
     {

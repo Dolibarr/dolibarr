@@ -220,3 +220,7 @@ FileTransferComplete=File was updloaded successfuly
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS
+ReportName=Report name
+ReportPeriod=Report period
+ReportDescription=Description
+Report=Report

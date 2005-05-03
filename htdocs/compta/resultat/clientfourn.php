@@ -20,9 +20,16 @@
  * $Source$
  *
  */
+
+/**
+        \file        htdocs/compta/resultat/clientfourn.php
+        \brief       Page reporting resultat
+        \version     $Revision$
+*/
+
 require("./pre.inc.php");
-require("../../tva.class.php");
-require("../../chargesociales.class.php");
+require_once("../../tva.class.php");
+require_once("../../chargesociales.class.php");
 
 $langs->load("bills");
 
@@ -30,39 +37,45 @@ $user->getrights('compta');
 if (!$user->rights->compta->resultat->lire)
   accessforbidden();
 
-
-llxHeader();
-
 $year=$_GET["year"];
 if (! $year) { $year = strftime("%Y", time()); }
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 
-print_fiche_titre("Résultat exercice, par client/fournisseur",($year?"&nbsp; <a href='clientfourn.php?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> Année $year <a href='clientfourn.php?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>":""));
-print '<br>';
 
-print "Cet état permet de faire un bilan des recettes et dépenses:<br>";
+llxHeader();
+
+$html=new Form($db);
+
+// Affiche en-tête de rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-    print $langs->trans("RulesResultDue");
-    print '(Voir le rapport en <a href="clientfourn.php?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées).<br>';
-    print '<br>';
+    $nom="Bilan des recettes et dépenses, détail";
+    $nom.=' (Voir le rapport en <a href="clientfourn.php?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
+    $period="<a href='clientfourn.php?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='clientfourn.php?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
+    $description=$langs->trans("RulesResultDue");
+    $builddate=time();
+    $exportlink=$langs->trans("NotYetAvailable");
 }
 else {
-    print $langs->trans("RulesResultInOut");
-    print '(Voir le rapport en <a href="clientfourn.php?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée).<br>';
-    print '<br>';
+    $nom="Bilan des recettes et dépenses, détail";
+    $nom.=' (Voir le rapport en <a href="clientfourn.php?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
+    $period="<a href='clientfourn.php?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='clientfourn.php?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
+    $description=$langs->trans("RulesResultInOut");
+    $builddate=time();
+    $exportlink=$langs->trans("NotYetAvailable");
 }
+$html->report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
-
+// Affiche rapport
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="10%">&nbsp;</td><td>'.$langs->trans("Element").'</td>';
 if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".$langs->trans("AmountHT")."</td>";
 print "<td align=\"right\">".$langs->trans("AmountTTC")."</td>";
 print "</tr>\n";
-
+print '<tr><td colspan="4">&nbsp;</td></tr>';
 
 /*
  * Factures clients
@@ -133,28 +146,36 @@ if ($modecompta != 'CREANCES-DETTES') {
         $num = $db->num_rows($result);
         $i = 0;
         $var=true;
-        while ($i < $num)
-        {
-            $objp = $db->fetch_object($result);
-            $var=!$var;
+        if ($num) {
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
+                $var=!$var;
+                    
+                print "<tr $bc[$var]><td>&nbsp</td>";
+                print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")."\n";
                 
+                if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
+                print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
+                
+                $total_ht = $total_ht + $objp->amount_ht;
+                $total_ttc = $total_ttc + $objp->amount_ttc;
+                print "</tr>\n";
+                $i++;
+            }
+        }
+        else {
+            $var=!$var;
             print "<tr $bc[$var]><td>&nbsp</td>";
-            print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")."\n";
-            
-            if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
-            print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
-            
-            $total_ht = $total_ht + $objp->amount_ht;
-            $total_ttc = $total_ttc + $objp->amount_ttc;
-            print "</tr>\n";
-            $i++;
+            print '<td colspan="3">'.$langs->trans("None").'</td>';
+            print '</tr>';
         }
         $db->free($result);
     } else {
         dolibarr_print_error($db);
     }
 }
-print '<tr>';
+print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price($total_ht).'</td>';
 print '<td colspan="3" align="right">'.price($total_ttc).'</td>';
 print '</tr>';
@@ -191,8 +212,8 @@ $result = $db->query($sql);
 if ($result) {
   $num = $db->num_rows($result);
   $i = 0;
+  $var=true;
   if ($num > 0) {
-    $var=True;
     while ($i < $num) {
       $objp = $db->fetch_object($result);
       $var=!$var;
@@ -211,6 +232,13 @@ if ($result) {
       $i++;
     }
   }
+  else {
+    $var=!$var;
+    print "<tr $bc[$var]><td>&nbsp</td>";
+    print '<td colspan="3">'.$langs->trans("None").'</td>';
+    print '</tr>';
+  }
+
   $db->free($result);
 } else {
   dolibarr_print_error($db);

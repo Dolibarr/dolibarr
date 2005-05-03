@@ -39,9 +39,6 @@ else {
     $year_end=$year_start+2;   
 }
 
-
-llxHeader();
-
 /*
  * Sécurité accés client
  */
@@ -54,24 +51,30 @@ $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 
-$title="Résultat exercice, résumé annuel";
-$lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
-print_fiche_titre($title,$lien);
-print '<br>';
+llxHeader();
 
-// Affiche règles de calcul
-print "Cet état permet de faire un bilan des recettes et dépenses:<br>\n";
+$html=new Form($db);
+
+// Affiche en-tête du rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-    print $langs->trans("RulesResultDue");
-    print '(Voir le rapport <a href="index.php?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées).<br>';
-    print '<br>';
+    $nom="Bilan des recettes et dépenses, résumé annuel";
+    $nom.=' (Voir le rapport <a href="index.php?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
+    $period=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $description=$langs->trans("RulesResultDue");
+    $builddate=time();
+    $exportlink=$langs->trans("NotYetAvailable");
 }
 else {
-    print $langs->trans("RulesResultInOut");
-    print '(Voir le rapport en <a href="index.php?year_start='.$year_start.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée).<br>';
-    print '<br>';
+    $nom="Bilan des recettes et dépenses, résumé annuel";
+    $nom.=' (Voir le rapport en <a href="index.php?year_start='.$year_start.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
+    $period=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $description=$langs->trans("RulesResultInOut");
+    $builddate=time();
+    $exportlink=$langs->trans("NotYetAvailable");
 }
+$html->report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+
 
 /*
  * Factures clients
@@ -287,7 +290,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 }
 
 $var=!$var;
-print "<tr $bc[$var]><td><b>".$langs->trans("TotalTTC")."</b></td>";
+print '<tr class="liste_total"><td>'.$langs->trans("TotalTTC").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
   print '<td align="right">'.price($totentrees[$annee]).'</td><td align="right">'.price($totsorties[$annee]).'</td>';
@@ -298,6 +301,6 @@ print "</table>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 
 ?>

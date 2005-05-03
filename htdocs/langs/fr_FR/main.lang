@@ -220,3 +220,7 @@ FileTransferComplete=Le fichier a été correctement transféré
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS
+ReportName=Nom du rapport
+ReportPeriod=Période d'analyse
+ReportDescription=Description
+Report=Rapport
