@@ -129,6 +129,7 @@ if ($result) {
 } else {
     dolibarr_print_error($db);
 }
+
 // Ajoute paiements anciennes version non liés par paiement_facture
 if ($modecompta != 'CREANCES-DETTES') { 
     $sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
@@ -145,7 +146,6 @@ if ($modecompta != 'CREANCES-DETTES') {
     if ($result) {
         $num = $db->num_rows($result);
         $i = 0;
-        $var=true;
         if ($num) {
             while ($i < $num)
             {

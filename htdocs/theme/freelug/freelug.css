@@ -587,37 +587,46 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  ???
  */
 div.titre { 
-	font: helvetica, verdana, arial, sans-serif;
-  font-weight: bold;
-            color: #777799; 
-            text-decoration: none }
+    font: helvetica, verdana, arial, sans-serif;
+    font-weight: bold;
+    color: #777799; 
+    text-decoration: none
+}
+
 /*
  *
  */
 tr.liste_titre { 
-color: #FFFFFF;
-background: #777799; 
-font: helvetica, verdana, arial, sans-serif;
-font-weight: bold;
-border-left: 1px solid #FFFFFF;
-border-right: 1px solid #FFFFFF;
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
-white-space: nowrap;
-font-size: 1.0em;
+    color: #FFFFFF;
+    background: #777799; 
+    font: helvetica, verdana, arial, sans-serif;
+    font-weight: bold;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #FFFFFF;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    white-space: nowrap;
+    font-size: 1.0em;
+}
+
+tr.liste_total {
+    background: #F0F0F0;
+    font-weight: bold;
+    white-space: nowrap;
+    border-top: 1px solid #888888;
 }
 
 th { 
-color: #FFFFFF;
-background: #777799; 
-font: helvetica, verdana, arial, sans-serif;
-font-weight: bold;
-border-left: 1px solid #FFFFFF;
-border-right: 1px solid #FFFFFF;
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
-white-space: nowrap;
-font-size: 1.0em;
+    color: #FFFFFF;
+    background: #777799; 
+    font: helvetica, verdana, arial, sans-serif;
+    font-weight: bold;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #FFFFFF;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    white-space: nowrap;
+    font-size: 1.0em;
 }
 
 

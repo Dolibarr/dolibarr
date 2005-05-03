@@ -572,38 +572,45 @@ div.titre {
  *
  */
 tr.liste_titre { 
-background: #BBBB88;
+    background: #BBBB88;
+    
+    font: helvetica, verdana, arial, sans-serif;
+    font-weight: bold;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #FFFFFF;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    white-space: nowrap;
+    font-size: 1.0em;
+}
 
-font: helvetica, verdana, arial, sans-serif;
-font-weight: bold;
-border-left: 1px solid #FFFFFF;
-border-right: 1px solid #FFFFFF;
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
-white-space: nowrap;
-font-size: 1.0em;
+tr.liste_total { 
+    background: #F0F0F0;
+    font-weight: bold;
+    white-space: nowrap;
+    border-top: 1px solid #888888;
 }
 
 th { 
-background: #BBBB88;
-font: helvetica, verdana, arial, sans-serif;
-font-weight: bold;
-border-left: 1px solid #FFFFFF;
-border-right: 1px solid #FFFFFF;
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
-white-space: nowrap;
-font-size: 1.0em;
+    background: #BBBB88;
+    font: helvetica, verdana, arial, sans-serif;
+    font-weight: bold;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #FFFFFF;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    white-space: nowrap;
+    font-size: 1.0em;
 }
 
 tr.pair { 
-            background: #eeeecc; 
-            font-size: 1.0em; 
-            }
+    background: #eeeecc; 
+    font-size: 1.0em; 
+}
 tr.impair { 
-          background: #dcdcb3;           
-          font-size: 1.0em; 
-          }
+    background: #dcdcb3;           
+    font-size: 1.0em; 
+}
 
 /*
  *

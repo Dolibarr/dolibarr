@@ -537,6 +537,13 @@ border-bottom: 1px solid #FFFFFF;
 white-space: nowrap;
 }
 
+tr.liste_total { 
+background: #F0F0F0;
+font-weight: bold;
+white-space: nowrap;
+border-top: 1px solid #888888;
+}
+
 th { 
 background: #7699A9;
 color: #334444;
