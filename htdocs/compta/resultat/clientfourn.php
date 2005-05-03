@@ -243,7 +243,7 @@ if ($result) {
 } else {
   dolibarr_print_error($db);
 }
-print '<tr>';
+print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
 print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
 print '</tr>';
@@ -306,7 +306,7 @@ if ($result) {
 } else {
   dolibarr_print_error($db);
 }
-print '<tr>';
+print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
 print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
 print '</tr>';
@@ -369,7 +369,7 @@ if ($result) {
 } else {
   dolibarr_print_error($db);
 }
-print '<tr>';
+print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
 print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
 print '</tr>';
@@ -377,11 +377,11 @@ print '</tr>';
 
 // Total
 
-print "<tr>";
+print '<tr>';
 print '<td colspan="4">&nbsp;</td>';
 print '</tr>';
 
-print '<tr><td align="right" colspan="2">Résultat</td>';
+print '<tr class="liste_total"><td align="right" colspan="2">Résultat</td>';
 if ($modecompta == 'CREANCES-DETTES') print '<td class="border" align="right">'.price($total_ht).'</td>';
 print '<td class="border" align="right">'.price($total_ttc).'</td>';
 print '</tr>';
@@ -393,5 +393,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
