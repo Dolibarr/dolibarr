@@ -935,6 +935,69 @@ class Form
     }
   }
 
+
+  /**
+   *    \brief      Affiche la cartouche générique d'un rapport
+   *    \param      nom             valeur pour nom du rapport
+   *    \param      variante        lien optionnel du variante du rapport
+   *    \param      period          periode du reporting
+   *    \param      description     description
+   *    \param      builddate       date génération 
+   *    \param      exportlink      lien pour export
+   */
+  function report_header($nom,$variante='',$period,$periodlink,$description,$builddate,$exportlink)
+  {
+    global $langs;
+    
+    print "\n\n<!-- debut cartouche rapport -->\n";
+
+    $h=0;
+   	$head[$h][0] = $_SERVER["PHP_SELF"];
+   	$head[$h][1] = $langs->trans("Report");
+    dolibarr_fiche_head($head, $hselected, $societe->nom);
+    
+    print '<table width="100%" class="border">';
+
+    // Ligne de titre
+    print '<tr>';
+    print '<td valign="top" width="110px">'.$langs->trans("ReportName").'</td>';
+    if (! $variante) print '<td colspan="3">';
+    else print '<td>';
+    print $nom;
+    if ($variante) print '</td><td colspan="2">'.$variante;
+    print '</td>';
+    print '</tr>';
+    
+    // Ligne de la periode d'analyse du rapport
+    print '<tr>';
+    print '<td>'.$langs->trans("ReportPeriod").'</td>';
+    if (! $periodlink) print '<td colspan="3">';
+    else print '<td>';
+    print $period;
+    if ($periodlink) print '</td><td colspan="2">'.$periodlink;
+    print '</td>';
+    print '</tr>';
+
+    // Ligne de description
+    print '<tr>';
+    print '<td valign="top">'.$langs->trans("ReportDescription").'</td>';
+    print '<td colspan="3">'.$description.'</td>';
+    print '</tr>';
+
+    // Ligne d'export
+    print '<tr>';
+    print '<td>'.$langs->trans("GeneratedOn").'</td>';
+    if (! $exportlink) print '<td colspan="3">';
+    else print '<td>';
+    print dolibarr_print_date($builddate);
+    if ($exportlink) print '</td><td>'.$langs->trans("Export").'</td><td>'.$exportlink;
+    print '</td></tr>';
+    
+    print '</table><br>';
+    print '</div>';
+    print "\n<!-- fin cartouche rapport -->\n\n";
+  }
+
 }
 
 ?>
