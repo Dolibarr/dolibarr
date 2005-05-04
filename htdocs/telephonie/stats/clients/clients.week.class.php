@@ -20,7 +20,8 @@
  *
  */
 
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/barmoy.class.php");
+require_once DOL_DOCUMENT_ROOT."/telephonie/stats/graph/barmoy.class.php";
+require_once DOL_DOCUMENT_ROOT.'/telephonie/distributeurtel.class.php';
 
 class GraphClientsWeek extends GraphBarMoy {
 
@@ -34,22 +35,41 @@ class GraphClientsWeek extends GraphBarMoy {
 
     $this->barcolor = "yellow";
     $this->showframe = true;
+
+    $this->commercial = 0;
+    $this->distributeur = 0;
   }
 
   Function GraphMakeGraph($commercial=0)
   {
     $num = 0;
 
-    $sql = "SELECT fk_client_comm, date_format(date_commande,'%x%v')";
-    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-    $sql .= " WHERE date_commande IS NOT NULL ";
+    $sql = "SELECT l.fk_client_comm, date_format(l.date_commande,'%x%v')";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 
-    if ($commercial > 0)
+    if ($this->commercial > 0)
       {
-	$sql .= " AND fk_commercial = ".$commercial;
+	$sql .= " WHERE l.date_commande IS NOT NULL ";
+	$sql .= " AND l.fk_commercial_sign = ".$this->commercial;
       }
 
-    $sql .= " ORDER BY date_format(date_commande,'%x%v') ASC";
+
+    if ($this->distributeur > 0)
+      {
+	$distri = new DistributeurTelephonie($this->db);
+	$distri->fetch($this->distributeur);
+
+	$this->titre = $distri->nom . " Nouveaux clients par semaine";
+
+	$sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
+
+	$sql .= " WHERE l.date_commande IS NOT NULL ";
+	$sql .= " AND l.fk_commercial_sign = dc.fk_user";
+	$sql .= " AND dc.fk_distributeur = ".$this->distributeur;
+      }
+
+
+    $sql .= " ORDER BY date_format(l.date_commande,'%x%v') ASC";
 
     $result = $this->db->query($sql);
 
