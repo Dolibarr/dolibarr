@@ -35,6 +35,9 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/commercial.ca.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/commercial.gain.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.gain.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.ca.class.php");
 
 $error = 0;
 
@@ -72,26 +75,29 @@ if (is_array($dirs))
 $sql = "SELECT distinct fk_commercial_sign";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   
   while ($i < $num)
     {
-      $row = $db->fetch_row();	
+      $row = $db->fetch_row($resql);	
       
-      /***********************************************************************
-       *
-       * Chiffre d'affaire mensuel
-       *
-       ***********************************************************************/
-      
-      
+      /* Chiffre d'affaire mensuel */
+            
       $file = $img_root . "commercials/".$row[0]."/ca.mensuel.png";
       if ($verbose) print "Graph : Lignes commandes$file\n";
       $graph = new GraphCommercialChiffreAffaire($db, $file);
+      $graph->width = 400;
+      $graph->GraphMakeGraph($row[0]);
+
+      /* Gain */
+            
+      $file = $img_root . "commercials/".$row[0]."/gain.mensuel.png";
+      if ($verbose) print "Graph : Lignes commandes$file\n";
+      $graph = new GraphCommercialGain($db, $file);
       $graph->width = 400;
       $graph->GraphMakeGraph($row[0]);
 
@@ -109,6 +115,45 @@ if ($result)
       $i++;
     }
 }
+/*
+ * Groupes
+ *
+ */
+$sql = "SELECT rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as u";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);	
+      
+      /* Gain */
+            
+      $file = $img_root . "commerciaux/groupes/".$row[0]."/gain.mensuel.png";
+      if ($verbose) print "Graph : Lignes commandes$file\n";
+      $graph = new GraphGroupeGain($db, $file);
+      $graph->width = 400;
+      $graph->GraphMakeGraph($row[0]);
+
+      /* Chiffre d'affaire */
+            
+      $file = $img_root . "commerciaux/groupes/".$row[0]."/ca.mensuel.png";
+      if ($verbose) print "Graph : Lignes commandes$file\n";
+      $graph = new GraphGroupeChiffreAffaire($db, $file);
+      $graph->width = 400;
+      $graph->GraphMakeGraph($row[0]);
+
+
+      $i++;
+    }
+}
+
+
 
 /*
  * Contrats
