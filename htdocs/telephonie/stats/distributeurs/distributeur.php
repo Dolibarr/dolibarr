@@ -62,7 +62,7 @@ if ($_GET["id"])
  
  print '</td><td valign="top" width="50%">';
 
- print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/clients.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n";
+ print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/clients.hebdomadaire.png" alt="Nouveaux clients" title="Nouveaux clients"><br /><br />'."\n";
 
 
  print '</td></tr>';
