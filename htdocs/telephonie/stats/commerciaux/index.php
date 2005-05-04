@@ -52,39 +52,7 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td width="30%" valign="top">';
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td valign="top">Nom</td></tr>';
 
-$sql = "SELECT rowid, nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."usergroup";
-$sql .= " ORDER BY nom ASC";
-
-$resql = $db->query($sql);
-if ($resql)
-{
-  $num = $db->num_rows();
-  $i = 0;
-  while ($i < $num)
-    {
-      $row = $db->fetch_row($resql);
-
-      $var=!$var;
-
-      print "<tr $bc[$var]>";
-
-      print '<td width="50%" valign="top">';
-      print '<a href="groupes/groupe.php?id='.$row[0];
-      print '">'.$row[2]." ". $row[1].'</a></td></tr>';
-
-      $i++;
-    }
-  $db->free();
-}
-else 
-{
-  print $db->error() . ' ' . $sql;
-}
-print '</table><br />';
 
 /*                */
 
