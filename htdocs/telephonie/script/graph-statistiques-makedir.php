@@ -39,6 +39,9 @@ $dirs[5] = DOL_DATA_ROOT."/graph/telephonie/communications/";
 $dirs[6] = DOL_DATA_ROOT."/graph/telephonie/contrats/";
 $dirs[7] = DOL_DATA_ROOT."/graph/telephonie/factures/";
 $dirs[8] = DOL_DATA_ROOT."/graph/telephonie/lignes/";
+$dirs[9] = DOL_DATA_ROOT."/graph/telephonie/commerciaux/";
+$dirs[10] = DOL_DATA_ROOT."/graph/telephonie/commerciaux/groupes/";
+$dirs[11] = DOL_DATA_ROOT."/graph/telephonie/distributeurs/";
 
 $numdir = (sizeof($dirs) + 2);
 $i = $numdir ;
@@ -61,6 +64,31 @@ if ($db->query($sql))
       $j++;
     }
 }
+
+/* Groupes de commerciaux */
+
+$sql = "SELECT rowid ";
+$sql .= " FROM ".MAIN_DB_PREFIX."usergroup";
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $j = 0;
+  
+  while ($j < $num)
+    {
+      $row = $db->fetch_row();	
+      
+      $dirs[$i] = DOL_DATA_ROOT."/graph/telephonie/commerciaux/groupes/".$row[0];
+      
+      $i++;
+      $j++;
+    }
+}
+
+
+
+/* Clients */
 
 for ($j = 0 ; $j < 10 ; $j++)
 {
