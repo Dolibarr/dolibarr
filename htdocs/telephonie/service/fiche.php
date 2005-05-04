@@ -140,6 +140,10 @@ else
 	      $hselected = $h;
 	      $h++;
 	      
+	      $head[$h][0] = DOL_URL_ROOT."/telephonie/service/contrats.php?id=".$service->id;
+	      $head[$h][1] = "Contrats";
+	      $h++;
+
 	      dolibarr_fiche_head($head, $hselected, 'Service : '.$service->id);
 
 	      print_fiche_titre('Fiche Service', $mesg);
