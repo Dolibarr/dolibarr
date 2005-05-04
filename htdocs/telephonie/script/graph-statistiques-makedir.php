@@ -86,6 +86,26 @@ if ($db->query($sql))
     }
 }
 
+/* Distributeurs */
+
+$sql = "SELECT rowid ";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur";
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $j = 0;
+  
+  while ($j < $num)
+    {
+      $row = $db->fetch_row();	
+      
+      $dirs[$i] = DOL_DATA_ROOT."/graph/telephonie/distributeurs/".$row[0];
+      
+      $i++;
+      $j++;
+    }
+}
 
 
 /* Clients */
