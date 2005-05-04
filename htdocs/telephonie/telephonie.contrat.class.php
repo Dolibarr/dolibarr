@@ -274,13 +274,36 @@ class TelephonieContrat {
    */
   function add_service($user, $sid)
   {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_contrat_service";
-    $sql .= " (fk_contrat, fk_service, fk_user_creat, date_creat) ";
-    $sql .= " VALUES ($this->id, $sid, $user->id, now() )";
-    
-    if ($this->db->query($sql) )
+    $result = 0;
+
+    $sql = "SELECT montant FROM ".MAIN_DB_PREFIX."telephonie_service";
+    $sql .= " WHERE rowid=".$sid;
+
+    $resql = $this->db->query( $sql);
+
+    if ($resql)
       {
-	return 0 ;
+	$row = $this->db->fetch_row($resql);
+	$montant = $row[0];
+      }
+    else
+      {
+	$result = -1;
+      }
+
+
+    if ($result == 0)
+      {
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_contrat_service";
+	$sql .= " (fk_contrat, fk_service, fk_user_creat, date_creat, montant) ";
+	$sql .= " VALUES ($this->id, $sid, $user->id, now(),".$montant.")";
+	
+	$resql = $this->db->query( $sql);
+	
+	if ($resql)
+	  {
+	    return 0 ;
+	  }
       }
   }
   /*
@@ -290,8 +313,8 @@ class TelephonieContrat {
   function remove_service($user, $sid)
   {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_contrat_service";
-    $sql .= " (fk_contrat, fk_service, fk_user_creat, date_creat) ";
-    $sql .= " VALUES ($this->id, $sid, $user->id, now() )";
+    $sql .= " WHERE fk_contrat = ".$this->id;
+    $sql .= " AND rowid = ".$sid;
     
     if ($this->db->query($sql) )
       {

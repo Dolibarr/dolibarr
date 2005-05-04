@@ -35,12 +35,12 @@ if ($_POST["action"] == 'addservice')
     }
 }
 
-if ($_POST["action"] == 'rmservice')
+if ($_GET["action"] == 'rmservice')
 {
   $contrat = new TelephonieContrat($db);
   $contrat->id= $_GET["id"];
 
-  if ( $contrat->remove_service($user, $_POST["service_id"]) == 0)
+  if ( $contrat->remove_service($user, $_GET["service_id"]) == 0)
     {
       Header("Location: services.php?id=".$contrat->id);
     }
@@ -189,7 +189,7 @@ if ($cancel == $langs->trans("Cancel"))
 	     
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      
-	      $sql = "SELECT s.libelle, s.statut, s.rowid as serid, s.montant";
+	      $sql = "SELECT s.libelle, s.statut, cs.rowid as serid, s.montant, cs.montant as montant_fac";
 	      $sql .= ", cs.rowid";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_service as cs";
 	      $sql .= " , ".MAIN_DB_PREFIX."telephonie_service as s";
@@ -208,8 +208,9 @@ if ($cancel == $langs->trans("Cancel"))
 		      $ligne = new LigneTel($db);
 		      
 		      print '<tr class="liste_titre"><td>Service</td>';
-		      print '</td><td align="right">Montant</td><td>&nbsp;</td>';
-		      print "</tr>\n";
+		      print '<td align="right">Montant Facturé</td>';
+		      print '<td align="right">Montant du service</td>';
+		      print "<td>&nbsp;</td></tr>\n";
 		      
 		      while ($i < $numlignes)
 			{
@@ -223,6 +224,7 @@ if ($cancel == $langs->trans("Cancel"))
 			  
 			  print '<a href="'.DOL_URL_ROOT.'/telephonie/service/fiche.php?id='.$obj->serid.'">'.$obj->libelle."</a></td>\n";
 			  
+			  print '<td align="right">'.price($obj->montant_fac)." euros HT</td>\n";
 			  print '<td align="right">'.price($obj->montant)." euros HT</td>\n";
 
 			  print '<td align="center"><a href="services.php?id='.$contrat->id.'&amp;action=rmservice&amp;service_id='.$obj->serid.'">';
