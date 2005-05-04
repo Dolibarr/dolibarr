@@ -65,8 +65,8 @@ if ($resql)
       print "<tr $bc[$var]>";
 
       print '<td width="50%" valign="top">';
-      print '<a href="groupes/groupe.php?id='.$row[0];
-      print '">'.$row[2]." ". $row[1].'</a></td></tr>';
+      print '<a href="distributeur.php?id='.$row[0];
+      print '">'.$row[1].'</a></td></tr>';
 
       $i++;
     }
