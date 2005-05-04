@@ -139,17 +139,46 @@ if ($db->query($sql))
       if ($verbose) print "Graph : Lignes commandes$file\n";
       $graph = new GraphClientsWeek($db, $file);
       $graph->width = 400;
-      $graph->GraphMakeGraph($row[0]);
+      $graph->commercial = $row[0];
+       $graph->GraphMakeGraph();
 
-      $file = $img_root . "commercials/".$row[0]."/clientsmoyenne.hebdomadaire.png";
-      if ($verbose) print "Graph : Moyenne nouveaux clients $file\n";
-      $graph = new GraphClientsMoyenneWeek($db, $file);
+       $file = $img_root . "commercials/".$row[0]."/clientsmoyenne.hebdomadaire.png";
+       if ($verbose) print "Graph : Moyenne nouveaux clients $file\n";
+       $graph = new GraphClientsMoyenneWeek($db, $file);
+       $graph->width = 400;
+       $graph->GraphMakeGraph($row[0]);
+
+       $i++;
+     }
+ }
+ /*
+  *
+  */
+
+$sql = "SELECT rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur";
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);	
+
+
+      $file = $img_root . "distributeurs/".$row[0]."/clients.hebdomadaire.png";
+      if ($verbose) print "Graph : Lignes commandes$file\n";
+      $graph = new GraphClientsWeek($db, $file);
       $graph->width = 400;
-      $graph->GraphMakeGraph($row[0]);
-
+      $graph->distributeur = $row[0];
+      $graph->GraphMakeGraph();
       $i++;
     }
 }
+
+
 /*****
  *
  *
