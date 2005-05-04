@@ -53,6 +53,42 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td width="30%" valign="top">';
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td valign="top">Nom</td></tr>';
+
+$sql = "SELECT rowid, nom";
+$sql .= " FROM ".MAIN_DB_PREFIX."usergroup";
+$sql .= " ORDER BY nom ASC";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows();
+  $i = 0;
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);
+
+      $var=!$var;
+
+      print "<tr $bc[$var]>";
+
+      print '<td width="50%" valign="top">';
+      print '<a href="groupes/groupe.php?id='.$row[0];
+      print '">'.$row[2]." ". $row[1].'</a></td></tr>';
+
+      $i++;
+    }
+  $db->free();
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
+print '</table><br />';
+
+/*                */
+
+print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td colspan="3">Lignes suivies</td></tr>';
 print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td><td>&nbsp;</td></tr>';
 
@@ -63,8 +99,8 @@ $sql .= " WHERE c.rowid = l.fk_commercial_suiv";
 $sql .= " AND l.statut <> 7";
 $sql .= " GROUP BY c.name ORDER BY cc DESC";
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
   $num = $db->num_rows();
   $i = 0;
@@ -104,8 +140,8 @@ $sql .= " WHERE c.rowid = l.fk_commercial_sign";
 $sql .= " AND l.statut <> 7";
 $sql .= " GROUP BY c.name ORDER BY cc DESC";
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
   $num = $db->num_rows();
   $i = 0;
@@ -138,9 +174,9 @@ print '</td>';
 
 print '</td><td valign="top" width="70%">';
 
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/commandes.hebdomadaire.png" alt="Commandes de ligne par semaines" title="Lignes Actives"><br /><br />'."\n";
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/commandes.hebdomadaire.png" alt="Commandes de ligne par semaines" title="Commandes de ligne par semaines"><br /><br />'."\n";
 
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/commandes.mensuels.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/commandes.mensuels.png" alt="Commandes de ligne par mois" title="Commandes de ligne par mois"><br /><br />'."\n";
 
 print '</td></tr>';
 
