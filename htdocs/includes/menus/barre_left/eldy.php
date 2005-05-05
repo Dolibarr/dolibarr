@@ -273,11 +273,11 @@ class MenuLeft {
                 {
                     $langs->load("customers_bills");
                     $newmenu->add(DOL_URL_ROOT."/compta/facture.php?leftmenu=customers_bills",$langs->trans("BillsCustomers"),1,$user->rights->facture->lire);
-                    if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"),2,$user->rights->facture->lire);
                     if ($user->societe_id == 0) 
                     {
                         if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/clients.php?action=facturer",$langs->trans("NewBill"),2,$user->rights->facture->creer);
                     }
+                    if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"),2,$user->rights->facture->lire);
                     if (! defined("FACTURE_DISABLE_RECUR") || ! FACTURE_DISABLE_RECUR)
                     {
                         if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes",2,$user->rights->facture->lire);
