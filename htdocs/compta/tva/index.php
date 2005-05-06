@@ -71,10 +71,10 @@ function pt ($db, $sql, $date) {
 
   $result = $db->query($sql);
   if ($result) {
-    $num = $db->num_rows();
+    $num = $db->num_rows($result);
     $i = 0; 
     $total = 0 ;
-    print "<table class=\"border\" width=\"100%\">";
+    print "<table class=\"noborder\" width=\"100%\">";
     print "<tr class=\"liste_titre\">";
     print "<td nowrap width=\"60%\">$date</td>";
     print "<td align=\"right\">".$langs->trans("Amount")."</td>";
@@ -93,14 +93,15 @@ function pt ($db, $sql, $date) {
             
       $i++;
     }
-    print "<tr class=\"total\"><td align=\"right\">".$langs->trans("TotalHT")." :</td><td nowrap align=\"right\"><b>".price($total)."</b></td><td>euros</td></tr>";
+    print "<tr class=\"liste_total\"><td align=\"right\">".$langs->trans("TotalHT")." :</td><td nowrap align=\"right\"><b>".price($total)."</b></td><td>euros</td></tr>";
     
     print "</table>";
-    $db->free();
+    $db->free($result);
   } else {
     dolibar_print_error($db);
   }
 }
+
 
 /*
  *
@@ -122,7 +123,7 @@ if ($year == 0 ) {
 $textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous()."</a>";
 $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
 
-print_fiche_titre($langs->trans("VAT")." : ".price($tva->solde($year_start)),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
+print_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
 
 
 echo '<table width="100%">';
@@ -136,7 +137,7 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
 
   echo '<tr><td width="50%" valign="top">';
 
-  print "<table class=\"border\" width=\"100%\">";
+  print "<table class=\"noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
   print "<td width=\"30%\">".$langs->trans("Year")." $y</td>";
   print "<td align=\"right\">".$langs->trans("VATToCollect")."</td>";
@@ -168,12 +169,12 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
     
     $i++;
     if ($i > 2) {
-      print '<tr class="total"><td align="right" colspan="3">'.$langs->trans("SubTotal").':</td><td nowrap align="right">'.price($subtotal).'</td><td nowrap align="right"><small>'.price($subtotal * 0.8).'</small></td>';
+      print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("SubTotal").':</td><td nowrap align="right">'.price($subtotal).'</td><td nowrap align="right"><small>'.price($subtotal * 0.8).'</small></td>';
       $i = 0;
       $subtotal = 0;
     }
   }
-  print '<tr class="total"><td align="right" colspan="3">'.$langs->trans("Total").':</td><td nowrap align="right"><b>'.price($total).'</b></td>';
+  print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td><td nowrap align="right"><b>'.price($total).'</b></td>';
   print "<td>&nbsp;</td>\n";
   print "</table>";
 
@@ -184,8 +185,6 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
   /*
    * Réglée
    */
-//  print "<table class=\"border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-//  print "<tr><td valign=\"top\">";
 
   $sql = "SELECT amount, date_format(f.datev,'%Y-%m') as dm";
   $sql .= " FROM ".MAIN_DB_PREFIX."tva as f WHERE f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
@@ -200,14 +199,11 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
 }
 
 
-
-
-
 echo '</table>';
 
 
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
