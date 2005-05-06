@@ -59,7 +59,7 @@ $offset = $limit * $page ;
  *
  */
 
-$sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
+$sql = "SELECT s.idp, s.nom, st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as p, ".MAIN_DB_PREFIX."c_stcomm as st";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.fournisseur = 1 AND s.idp = p.fk_soc";
 
@@ -106,11 +106,10 @@ if ($result) {
 
       print "<tr $bc[$var]>";
 
-      print '<td width="13%">'.$obj->name.'</td>';
-      print '<td width="13%">'.$obj->firstname.'</td>';
-      
+      print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->name.'</a></td>';
+      print '<td>'.$obj->firstname.'</td>';
       print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-      print "<td>$obj->email&nbsp;</td>\n";
+      print '<td>'.$obj->email.'</td>';
       print '<td>'.$obj->phone.'</td>';
       
       print "</tr>\n";
