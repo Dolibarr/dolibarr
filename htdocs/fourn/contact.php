@@ -21,6 +21,13 @@
  *
  */
  
+/**
+	    \file       htdocs/fourn/contact.php
+        \ingroup    fournisseur
+		\brief      Liste des contacts fournisseurs
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $langs->load("companies");
@@ -40,15 +47,8 @@ $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 
-if ($sortorder == "")
-{
-  $sortorder="ASC";
-}
-if ($sortfield == "")
- {
-  $sortfield="p.name";
-}
-
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="p.name";
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -85,22 +85,22 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
 $result = $db->query($sql);
 if ($result) {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   
   print_barre_liste($langs->trans("ListOfContacts")." (".$langs->trans("Suppliers").")",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
     
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin);
-  print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin);
-  print_liste_field_titre($langs->trans("Company"),"contact.php","lower(s.nom)", $begin);
+  print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin, "", "", $sortfield);
+  print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin, "", "", $sortfield);
+  print_liste_field_titre($langs->trans("Company"),"contact.php","lower(s.nom)", $begin, "", "", $sortfield);
   print '<td>'.$langs->trans("Email").'</td><td>'.$langs->trans("Phone").'</td>';
   print "</tr>\n";
   $var=True;
   $i = 0;
   while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object($result);
     
       $var=!$var;
 
@@ -117,7 +117,7 @@ if ($result) {
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($result);
 
 }
 else
@@ -127,5 +127,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
