@@ -331,35 +331,6 @@ class MenuLeft {
                     //}
                 }
                         
-                if ($conf->compta->enabled) {
-                    // Bilan, résultats
-                    $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca&mainmenu=accountancy","Résultats / CA",0,$user->rights->compta->resultat->lire);
-            
-                	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca","Résultat / Exercice",1,$user->rights->compta->resultat->lire);
-                    if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca","Détail client/fourn.",2,$user->rights->compta->resultat->lire);
-                    /* On verra ca avec module compabilité
-                    if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php?leftmenu=ca","Compte de résultat",2,$user->rights->compta->resultat->lire);
-                    if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php?leftmenu=ca","Bilan",2,$user->rights->compta->resultat->lire);
-                	*/
-                	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca","Chiffre d'affaire",1,$user->rights->compta->resultat->lire);
-                	
-                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php?leftmenu=ca","Cumulé",2,$user->rights->compta->resultat->lire);
-                	if ($conf->propal->enabled) {
-                		if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/prev.php?leftmenu=ca","Prévisionnel",2,$user->rights->compta->resultat->lire);
-                		if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php?leftmenu=ca","Transformé",2,$user->rights->compta->resultat->lire);
-                	}
-                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php?leftmenu=ca",$langs->trans("Evolution"),2,$user->rights->compta->resultat->lire);
-                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire);
-                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire);
-                }
-
-                // Bank-Caisse
-                if ($conf->banque->enabled)
-                { 
-                  $langs->load("banks");
-                  $newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&mainmenu=bank",$langs->trans("Bank"),0,$user->rights->banque->lire);
-                }
-                
                 // Prélèvements
                 if ($conf->prelevement->enabled)
                 {
@@ -370,7 +341,38 @@ class MenuLeft {
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrderToProcess"));
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandestraitees.php",$langs->trans("StandingOrderProcessed"));
                 }
-               
+
+                // Bank-Caisse
+                if ($conf->banque->enabled)
+                { 
+                  $langs->load("banks");
+                  $newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&mainmenu=bank",$langs->trans("Bank"),0,$user->rights->banque->lire);
+                }
+                
+                if ($conf->compta->enabled) {
+                    // Bilan, résultats
+                    $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca&mainmenu=accountancy","Rapports",0,$user->rights->compta->resultat->lire);
+            
+                	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca","Résultat / Exercice",1,$user->rights->compta->resultat->lire);
+                    if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca","Détail client/fourn.",2,$user->rights->compta->resultat->lire);
+                    /* On verra ca avec module compabilité
+                    if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php?leftmenu=ca","Compte de résultat",2,$user->rights->compta->resultat->lire);
+                    if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php?leftmenu=ca","Bilan",2,$user->rights->compta->resultat->lire);
+                	*/
+                	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca","Chiffre d'affaire",1,$user->rights->compta->resultat->lire);
+                	
+                	/*
+                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php?leftmenu=ca","Cumulé",2,$user->rights->compta->resultat->lire);
+                	if ($conf->propal->enabled) {
+                		if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/prev.php?leftmenu=ca","Prévisionnel",2,$user->rights->compta->resultat->lire);
+                		if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php?leftmenu=ca","Transformé",2,$user->rights->compta->resultat->lire);
+                	}
+                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php?leftmenu=ca",$langs->trans("Evolution"),2,$user->rights->compta->resultat->lire);
+                	*/
+                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire);
+                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire);
+                }
+
             }
         
         
