@@ -185,13 +185,13 @@ if ($result)
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
   print '<tr class="liste_titre">';
   print '<td>';
-  print '<input class="flat" type="text" name="search_nom" value="'.$search_nom.'">';
+  print '<input class="flat" type="text" name="search_nom" size="12" value="'.$search_nom.'">';
   print '</td>';
   print '<td>';
-  print '<input class="flat" type="text" name="search_prenom" value="'.$search_prenom.'">';
+  print '<input class="flat" type="text" name="search_prenom" size="10" value="'.$search_prenom.'">';
   print '</td>';
   print '<td>';
-  print '<input class="flat" type="text" name="search_societe" value="'.$search_societe.'">';
+  print '<input class="flat" type="text" name="search_societe" size="14" value="'.$search_societe.'">';
   print '</td>';
   print '<td>';
   print '&nbsp;';
@@ -209,7 +209,7 @@ if ($result)
   else
     {
       print '<td>';
-      print '<input class="flat" type="text" name="search_email" value="'.$search_email.'">';
+      print '<input class="flat" type="text" name="search_email" size="12" value="'.$search_email.'">';
       print '</td>';
     }
 
@@ -272,10 +272,12 @@ else
   dolibarr_print_error($db);
 }
 
+print '<br>';
+
 
 /*
+ * TODO A virer ?
  * PhProjekt
- *
  */
 
 if (2==1 && (strlen($_GET["search_nom"]) OR strlen($_GET["search_prenom"])))
