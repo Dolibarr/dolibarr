@@ -80,29 +80,25 @@ print '<tr><td colspan="4">&nbsp;</td></tr>';
 /*
  * Factures clients
  */
+print '<tr><td colspan="4">Facturation clients</td></tr>';
+
 if ($modecompta == 'CREANCES-DETTES') { 
     $sql = "SELECT s.nom, s.idp, sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
     $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
-   if ($year) {
-    	$sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    }
+    if ($year) $sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 } else {
     /*
-     * Liste des paiements par société (les anciens paiements ne sont pas inclus
-     * car n'était pas liés sur les vieilles versions)
+     * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
+     * vieilles versions, ils n'étaient pas liés via paiement_facture. On les ajoute plus loin)
      */
-	$sql = "SELECT s.nom as nom, s.idp as idp, sum(pf.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+	$sql = "SELECT s.nom as nom, s.idp as idp, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-    $sql .= " WHERE f.fk_soc = s.idp AND f.rowid = pf.fk_facture AND pf.fk_paiement = p.rowid";
-    if ($year) {
-    	$sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    }
+    $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid AND f.fk_soc = s.idp";
+    if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }    
 $sql .= " GROUP BY nom";
 $sql .= " ORDER BY nom";
-
-print '<tr><td colspan="4">Facturation clients</td></tr>';
 
 $result = $db->query($sql);
 if ($result) {
@@ -130,15 +126,13 @@ if ($result) {
     dolibarr_print_error($db);
 }
 
-// Ajoute paiements anciennes version non liés par paiement_facture
+// On ajoute les paiements anciennes version, non liés par paiement_facture
 if ($modecompta != 'CREANCES-DETTES') { 
-    $sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+    $sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql .= " WHERE pf.rowid IS NULL";
-    if ($year) {
-    	$sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    }
+    if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     $sql .= " GROUP BY nom";
     $sql .= " ORDER BY nom";
 

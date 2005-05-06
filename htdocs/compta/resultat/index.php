@@ -84,18 +84,17 @@ if ($modecompta == 'CREANCES-DETTES') {
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
     $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
 } else {
-	$sql  = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
-	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f";
-	$sql .= " ON f.rowid = p.fk_facture";
-	$sql .= " WHERE 1=1";
+    /*
+     * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
+     * vieilles versions, ils n'étaient pas liés via paiement_facture. On les ajoute plus loin)
+     */
+	$sql  = "SELECT sum(pf.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
+    $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid";
 }
-if ($socidp)
-{
-  $sql .= " AND f.fk_soc = $socidp";
-}
+if ($socidp) $sql .= " AND f.fk_soc = $socidp";
 $sql .= " GROUP BY dm";
-
+$sql .= " ORDER BY dm";
 
 $result=$db->query($sql);
 if ($result)
@@ -113,6 +112,32 @@ if ($result)
 }
 else {
 	dolibarr_print_error($db);	
+}
+
+// On ajoute les paiements anciennes version, non liés par paiement_facture
+if ($modecompta != 'CREANCES-DETTES') { 
+    $sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+    $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql .= " WHERE pf.rowid IS NULL";
+    $sql .= " GROUP BY dm";
+    $sql .= " ORDER BY dm";
+
+    $result = $db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $i = 0;
+        while ($i < $num)
+        {
+            $row = $db->fetch_object($result);
+            $encaiss[$row->dm] += $row->amount_ht;
+            $encaiss_ttc[$row->dm] += $row->amount_ttc;
+            $i++;
+        }
+    }
+    else {
+        dolibarr_print_error($db);
+    }
 }
 
 
