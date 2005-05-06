@@ -52,16 +52,16 @@ $html=new Form($db);
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom="Bilan des recettes et dépenses, détail";
-    $nom.=' (Voir le rapport en <a href="clientfourn.php?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
-    $period="<a href='clientfourn.php?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='clientfourn.php?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
+    $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
+    $period='<a href='.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous()."</a> ".$langs->trans("Year")." ".$year.' <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesResultDue");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
 }
 else {
     $nom="Bilan des recettes et dépenses, détail";
-    $nom.=' (Voir le rapport en <a href="clientfourn.php?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
-    $period="<a href='clientfourn.php?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='clientfourn.php?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
+    $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
+    $period='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous()."</a> ".$langs->trans("Year")." ".$year.' <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesResultInOut");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
