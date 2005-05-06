@@ -34,14 +34,16 @@ include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
-
-
 $socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
+
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 
+/*
+ * Actions
+ */
 if ($_POST["action"] == 'add_paiement')
 {
     if ($_POST["paiementid"] > 0)
@@ -63,7 +65,6 @@ if ($_POST["action"] == 'add_paiement')
             }
         }
 
-        // TODO Mettre toute la chaine dans une même transaction
         $db->begin();
 
         // Creation de la ligne paiement
