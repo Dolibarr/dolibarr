@@ -60,7 +60,7 @@ $html=new Form($db);
 // Affiche en-tête du rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-    $nom="Chiffre d'affaire (".$conf->monnaie." HT)";
+    $nom="Chiffre d'affaire";
     $nom.=' (Voir le rapport <a href="index.php?year_start='.($year_start).'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
     $period=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesCADue");
@@ -68,7 +68,7 @@ if ($modecompta=="CREANCES-DETTES")
     $exportlink=$langs->trans("NotYetAvailable");
 }
 else {
-    $nom="Chiffre d'affaire (".$conf->monnaie." TTC)";
+    $nom="Chiffre d'affaire";
     $nom.=' (Voir le rapport en <a href="index.php?year_start='.($year_start).'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
     $period=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesCAIn");
@@ -87,7 +87,7 @@ if ($modecompta == 'CREANCES-DETTES') {
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
      * vieilles versions, ils n'étaient pas liés via paiement_facture. On les ajoute plus loin)
      */
-	$sql  = "SELECT sum(pf.amount) as amount, date_format(p.datep,'%Y-%m') as dm";
+	$sql  = "SELECT sum(pf.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
     $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid";
 }
@@ -102,8 +102,8 @@ if ($result)
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
-        $cum[$obj->dm] = $obj->amount;
-        if ($obj->amount)
+        $cum[$obj->dm] = $obj->amount_ttc;
+        if ($obj->amount_ttc)
         {
             $minyearmonth=($minyearmonth?min($minyearmonth,$obj->dm):$obj->dm);
             $maxyearmonth=max($maxyearmonth,$obj->dm);
@@ -118,7 +118,7 @@ else {
 
 // On ajoute les paiements anciennes version, non liés par paiement_facture
 if ($modecompta != 'CREANCES-DETTES') { 
-    $sql = "SELECT sum(p.amount) as amount, date_format(p.datep,'%Y-%m') as dm";
+    $sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql .= " WHERE pf.rowid IS NULL";
@@ -132,8 +132,8 @@ if ($modecompta != 'CREANCES-DETTES') {
         while ($i < $num)
         {
             $obj = $db->fetch_object($result);
-            $cum[$obj->dm] += $obj->amount;
-            if ($obj->amount)
+            $cum[$obj->dm] += $obj->amount_ttc;
+            if ($obj->amount_ttc)
             {
                 $minyearmonth=($minyearmonth?min($minyearmonth,$obj->dm):$obj->dm);
                 $maxyearmonth=max($maxyearmonth,$obj->dm);
@@ -163,7 +163,7 @@ print '</tr>';
 print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-    print '<td align="right">'.$langs->trans("Amount").'</td>';
+    print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
     print '<td align="center">'.$langs->trans("Delta").'</td>';
     print '<td width="15">&nbsp;</td>';
 }
@@ -403,6 +403,6 @@ print "</table>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 
 ?>
