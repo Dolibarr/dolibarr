@@ -39,6 +39,8 @@ ALTER TABLE llx_usergroup_rights ADD FOREIGN KEY (fk_usergroup)    REFERENCES ll
 
 
 alter table llx_facture add  increment           varchar(10);
+alter table llx_facture drop column author;
+alter table llx_facture drop column fk_user;
 
 create table llx_societe_commerciaux
 (
