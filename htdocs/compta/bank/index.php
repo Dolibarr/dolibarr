@@ -110,6 +110,7 @@ print '<tr class="liste_titre"><td colspan="5">Dettes</td></tr>';
  */
 if ($conf->compta->tva)
 {
+    $var=true;
     $var = !$var;
     $tva = new Tva($db);
     
