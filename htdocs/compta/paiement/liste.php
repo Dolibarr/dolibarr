@@ -22,22 +22,21 @@
  */
  
 /**
-   \file       htdocs/compta/paiement/liste.php
-   \ingroup    compta
-   \brief      Page liste des paiements des factures clients
-   \version    $Revision$
+        \file       htdocs/compta/paiement/liste.php
+        \ingroup    compta
+        \brief      Page liste des paiements des factures clients
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
 
 /*
  * Affichage
@@ -51,19 +50,29 @@ $sortfield=$_GET["sortfield"];
  
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
   
-$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount";
-$sql .=", p.statut, p.num_paiement";
-$sql .=", c.libelle as paiement_type";
-$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
-$sql .= " , ".MAIN_DB_PREFIX."c_paiement as c";
-$sql .= " WHERE p.fk_paiement = c.id";
-
+$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
+$sql.= " p.statut, p.num_paiement,";
+$sql.= " c.libelle as paiement_type";
+$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p,";
+$sql.= " ".MAIN_DB_PREFIX."c_paiement as c";
+$sql.= " WHERE p.fk_paiement = c.id";
+if ($_GET["orphelins"]) { // Options qui ne sert qu'au debuggage
+    // Paiements liés à aucune facture (pour aide au diagnostique)
+    $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
+    $sql.= " p.statut, p.num_paiement,";
+    $sql.= " c.libelle as paiement_type";
+    $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p,";
+    $sql.= " ".MAIN_DB_PREFIX."c_paiement as c";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf";
+    $sql.= " ON p.rowid = pf.fk_paiement";
+    $sql.= " WHERE p.fk_paiement = c.id AND pf.rowid IS NULL";
+}
 $sql .= " ORDER BY $sortfield $sortorder";
-$sql .= $db->plimit( $limit +1 ,$offset);
+$sql .= $db->plimit( $limit+1 ,$offset);
+//print "$sql";
 
 $resql = $db->query($sql);
 
@@ -73,15 +82,16 @@ if ($resql)
   $i = 0; 
   $var=True;
   
-  print_barre_liste("Paiements reçus", $page, "liste.php","",$sortfield,$sortorder,'',$num);
+  $paramlist=($_GET["orphelins"]?"&orphelins=1":"");
+  print_barre_liste($langs->trans("ReceivedPayments"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"liste.php","dp","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","","","",$sortfield);
-  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-  print "<td>&nbsp;</td>";
+  print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield);
+  print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,"",$sortfield);
+  print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield);
+  print_liste_field_titre($langs->trans("AmountTTC"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="center"',$sortfield);
   print "</tr>\n";
   
   while ($i < min($num,$limit))
@@ -108,6 +118,9 @@ if ($resql)
       $i++;
     }
   print "</table>";
+}
+else {
+    dolibarr_print_error($db);
 }
 
 $db->close();
