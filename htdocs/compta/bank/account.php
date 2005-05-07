@@ -289,7 +289,7 @@ if ($account > 0)
       print '<tr>';
       print '<td nowrap><input name="dateoy" class="flat" type="text" size="2" value="'.strftime("%Y",time()).'" maxlength="4">';
       print '<input name="dateo" class="flat" type="text" size="2" maxlength="4"></td>';
-      print '<td colspan="2"><select name="operation">';
+      print '<td colspan="2" nowrap><select class="flat" name="operation">';
       print '<option value="CB">CB';
       print '<option value="CHQ">CHQ';
       print '<option value="DEP">DEP';
@@ -303,7 +303,7 @@ if ($account > 0)
       print '<td align=right><input name="debit" class="flat" type="text" size="6"></td>';
       print '<td align=right><input name="credit" class="flat" type="text" size="6"></td>';
       print "<td colspan=\"2\" align=\"center\">";
-      print "<select name=\"cat1\">$options</select>";
+      print '<select class="flat" name="cat1">'.$options.'</select>';
       print '</td></tr>';
       print "</form>";
     }
@@ -318,7 +318,7 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 
 
 /*
@@ -344,7 +344,7 @@ function _print_lines($db,$result,$sql,$acct)
             {
                 $sep = 1 ;
                 print "<tr><td align=\"right\" colspan=\"6\">&nbsp;</td>";
-                print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
+                print "<td align=\"right\" nowrap><b>".price($total - $objp->amount)."</b></td>";
                 print "<td>&nbsp;</td>";
                 print '</tr>';
             }
@@ -369,22 +369,22 @@ function _print_lines($db,$result,$sql,$acct)
     
             if ($objp->amount < 0)
             {
-                print "<td align=\"right\">".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+                print "<td align=\"right\" nowrap>".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
             }
             else
             {
-                print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</td>\n";
+                print "<td>&nbsp;</td><td align=\"right\" nowrap>".price($objp->amount)."</td>\n";
             }
     
             if ($action !='search')
             {
                 if ($total > 0)
                 {
-                    print '<td align="right">'.price($total)."</td>\n";
+                    print '<td align="right" nowrap>'.price($total)."</td>\n";
                 }
                 else
                 {
-                    print "<td align=\"right\"><b>".price($total)."</b></td>\n";
+                    print "<td align=\"right\" nowrap><b>".price($total)."</b></td>\n";
                 }
             }
             else
