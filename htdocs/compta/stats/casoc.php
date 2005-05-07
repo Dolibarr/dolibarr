@@ -39,14 +39,8 @@ $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 if (! $sortorder) $sortorder="desc";
 if (! $sortfield) $sortfield="amount_ttc";
 
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-   $socidp = $user->societe_id;
-}
-
+// Sécurité accés client
+if ($user->societe_id > 0) $socidp = $user->societe_id;
 
 
 llxHeader();

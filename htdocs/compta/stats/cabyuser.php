@@ -29,19 +29,19 @@
 
 require("./pre.inc.php");
 
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0)
-{
-    $socidp = $user->societe_id;
-}
 
 $year=$_GET["year"];
 if (! $year) { $year = strftime("%Y", time()); }
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
+$sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+if (! $sortorder) $sortorder="desc";
+if (! $sortfield) $sortfield="amount_ttc";
+
+// Sécurité accés client
+if ($user->societe_id > 0) $socidp = $user->societe_id;
 
 
 llxHeader();
@@ -146,13 +146,34 @@ if ($modecompta != 'CREANCES-DETTES')
 $i = 0;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
-print "<td>".$langs->trans("User")."</td>";
-print '<td align="right">'.$langs->trans("AmountTTC").'</td><td align="right">'.$langs->trans("Percentage").'</td>';
+print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"name","",'&amp;year='.($year).'&modecompta='.$modecompta,"",$sortfield);
+print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield);
+print_liste_field_titre($langs->trans("Percentage"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield);
 print "</tr>\n";
 $var=true;
 
 if (sizeof($amount))
 {
+    $arrayforsort=$name;
+    
+    // On définit tableau arrayforsort
+    if ($sortfield == 'nom' && $sortorder == 'asc') {
+        asort($name);
+        $arrayforsort=$name;
+    }
+    if ($sortfield == 'nom' && $sortorder == 'desc') {
+        arsort($name);
+        $arrayforsort=$name;
+    }
+    if ($sortfield == 'amount_ttc' && $sortorder == 'asc') {
+        asort($amount);
+        $arrayforsort=$amount;
+    }
+    if ($sortfield == 'amount_ttc' && $sortorder == 'desc') {
+        arsort($amount);
+        $arrayforsort=$amount;
+    }
+
     foreach($amount as $key=>$value)
     {
         $var=!$var;
@@ -166,8 +187,8 @@ if (sizeof($amount))
             $linkname=$langs->trans("Paiements liés à aucune facture");
         }
         print "<td>".$linkname."</td>\n";
-        print '<td align="right">'.price($value).'</td>';
-        print '<td align="right">'.($catotal > 0 ? price(100 / $catotal * $value).'%' : '&nbsp;').'</td>';
+        print '<td align="right">'.price($amount[$key]).'</td>';
+        print '<td align="right">'.($catotal > 0 ? price(100 / $catotal * $amount[$key]).'%' : '&nbsp;').'</td>';
         print "</tr>\n";
         $i++;
     }
