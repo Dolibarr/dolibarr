@@ -223,7 +223,7 @@ if ($_GET["facid"] > 0)
       
       print "<tr><td height=\"10\">".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td>";
       
-      print '<tr><td height=\"10\">'.$langs->trans("GlobalDiscount").'</td>';
+      print '<tr><td height=\"10\" nowrap>'.$langs->trans("GlobalDiscount").'</td>';
       print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
       print '<td>%</td></tr>';
       
