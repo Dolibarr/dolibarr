@@ -31,12 +31,13 @@ require("./pre.inc.php");
 
 $year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
 $year_current = strftime("%Y",time());
+$nbofyear=4;
 if (! $year_start) {
-    $year_start = $year_current - 2;
+    $year_start = $year_current - ($nbofyear-1);
     $year_end = $year_current;
 }
 else {
-    $year_end=$year_start+2;   
+    $year_end=$year_start + ($nbofyear-1);
 }
 
 /*
@@ -274,13 +275,13 @@ print '<tr class="liste_titre"><td rowspan=2>'.$langs->trans("Month").'</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="center" width="20%" colspan="2"><a href="clientfourn.php?year='.$annee.'">'.$annee.'</a></td>';
+  print '<td align="center" colspan="2"><a href="clientfourn.php?year='.$annee.'">'.$annee.'</a></td>';
 }
 print '</tr>';
 print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="right">Recettes</td><td align="right">Dépenses</td>';
+  print '<td align="right">'.$langs->trans("Income").'</td><td align="right">'.$langs->trans("Outcome").'</td>';
 }
 print '</tr>';
 
@@ -292,7 +293,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
   print "<td>".strftime("%B",mktime(1,1,1,$mois,1,$annee))."</td>";
   for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
-      print '<td align="right" width="10%">&nbsp;';
+      print '<td align="right">&nbsp;';
       $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
       if ($encaiss_ttc[$case]>0)
 	{
@@ -301,7 +302,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 	}
       print "</td>";
 
-      print '<td align="right" width="10%">&nbsp;';
+      print '<td align="right">&nbsp;';
       $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
       if ($decaiss_ttc[$case]>0)
 	{
@@ -314,11 +315,26 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
   print '</tr>';
 }
 
+// Total
 $var=!$var;
 print '<tr class="liste_total"><td>'.$langs->trans("TotalTTC").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="right">'.price($totentrees[$annee]).'</td><td align="right">'.price($totsorties[$annee]).'</td>';
+  print '<td align="right">'.(isset($totentrees[$annee])?price($totentrees[$annee]):'&nbsp;').'</td>';
+  print '<td align="right">'.(isset($totsorties[$annee])?price($totsorties[$annee]):'&nbsp;').'</td>';
+}
+print "</tr>\n";
+
+// Balance
+$var=!$var;
+print '<tr class="liste_total"><td>'.$langs->trans("Profit").'</td>';
+for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+{
+    print '<td align="center" colspan="2"> ';
+    if (isset($totentrees[$annee]) || isset($totsorties[$annee])) {
+        print price($totentrees[$annee]-$totsorties[$annee]).'</td>';
+//  print '<td>&nbsp;</td>';
+    }
 }
 print "</tr>\n";
 
