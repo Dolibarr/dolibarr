@@ -268,6 +268,40 @@ class Form
 
 
   /**
+   *    \brief     Retourne la liste des types de comptes financiers
+   *    \param     
+   */
+	 
+  function select_type_comptes_financiers($selected=1,$htmlname='type')
+  {
+    global $langs;
+    $langs->load("banks");
+    
+    $type_available=array(0,1,2);
+    
+    print '<select class="flat" name="'.$htmlname.'">';
+    $num = count($type_available);
+    $i = 0;
+    if ($num)
+      {
+	while ($i < $num)
+	  {
+	    if ($selected == $type_available[$i])
+	      {
+		print '<option value="'.$type_available[$i].'" selected>'.$langs->trans("BankType".$type_available[$i]).'</option>';
+	      }
+	    else
+	      {
+		print '<option value="'.$type_available[$i].'">'.$langs->trans("BankType".$type_available[$i]).'</option>';
+	      }
+	    $i++;
+	  }
+      }
+    print '</select>';
+  }
+  
+  
+  /**
    *    \brief   Retourne la liste déroulante des sociétés
    *    \param
    */
