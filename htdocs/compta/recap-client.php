@@ -181,7 +181,7 @@ if ($socid > 0)
                 print '<td colspan="2">&nbsp;</td>';
                 print '<td align="right">'.$langs->trans("Debit").'</td>';
                 print '<td align="right">'.$langs->trans("Credit").'</td>';
-                print '<td align="right">'.$langs->trans("Solde").'</td>';
+                print '<td align="right">'.$langs->trans("Balance").'</td>';
                 print '</tr>';
             }
             else
@@ -218,11 +218,11 @@ if ($socid > 0)
                 print "<td align=\"right\">".dolibarr_print_date($fac->date)."</td>\n";
                 print "<td><a href=\"../compta/facture.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
     
-                print '<td align="right">'.number_format($fac->total_ttc, 2, ',', ' ')."</td>\n";
+                print '<td align="right">'.price($fac->total_ttc)."</td>\n";
                 $solde = $solde + $fac->total_ttc;
     
                 print '<td align="right">&nbsp;</td>';
-                print '<td align="right">'.number_format($solde, 2, ',', ' ')."</td>\n";
+                print '<td align="right">'.price($solde)."</td>\n";
                 print "</tr>\n";
     
                 // Paiements
@@ -249,7 +249,7 @@ if ($socid > 0)
                         print "<td>&nbsp;</td>\n";
                         print '<td align="right">'.price($objp->amount).'</td>';
                         $solde = $solde - $objp->amount;
-                        print '<td align="right">'.number_format($solde, 2, ',', ' ')."</td>\n";
+                        print '<td align="right">'.price($solde)."</td>\n";
                         print '</tr>';
     
                         $j++;
