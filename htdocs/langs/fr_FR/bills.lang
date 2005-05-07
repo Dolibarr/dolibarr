@@ -10,6 +10,7 @@ BillsStatistics=Statistiques factures
 CardBill=Fiche facture
 Payment=Paiement
 Payments=Paiements
+ReceivedPayments=Paiements reçus
 PaymentMode=Mode de paiement
 ClassifyPayed=Classer 'Payée'
 ClassifyCanceled=Classer 'Abandonnée'

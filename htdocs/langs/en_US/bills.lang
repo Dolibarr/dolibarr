@@ -10,6 +10,7 @@ BillsStatistics=Bills statistics
 CardBill=Bill card
 Payment=Payment
 Payments=Payments
+ReceibedPayments=Received payments
 PaymentMode=Payment mode
 ClassifyPayed=Classify 'Payed'
 ClassifyCanceled=Classify 'Abandonned'
