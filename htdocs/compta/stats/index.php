@@ -155,7 +155,7 @@ print '<tr class="liste_titre"><td rowspan="2">'.$langs->trans("Month").'</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-    print '<td align="center" width="10%" colspan="2">'.$annee.'</td>';
+    print '<td align="center" width="10%" colspan="2"><a href="casoc.php?year='.$annee.'">'.$annee.'</a></td>';
     print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';

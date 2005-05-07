@@ -198,7 +198,7 @@ if (sizeof($amount))
 }
 
 print "</table>";
-
+print '<br>';
 
 $db->close();
 
