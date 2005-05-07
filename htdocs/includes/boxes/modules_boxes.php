@@ -76,7 +76,7 @@ class ModeleBoxes
         for ($i=0, $n=sizeof($contents); $i < $n; $i++)
         {
             $var=!$var;
-            print '<tr valign="top" '.$bcx[$var].'>';
+            if (sizeof($contents[$i])) print '<tr valign="top" '.$bcx[$var].'>';
     
             // Affiche chaque cellule
             for ($j=0, $m=sizeof($contents[$i]); $j < $m; $j++)
@@ -107,7 +107,8 @@ class ModeleBoxes
                     print "</td>";
                 }
             }
-            print '</tr>';
+
+            if (sizeof($contents[$i])) print '</tr>';
         }
     
         print "</table>";
