@@ -36,29 +36,29 @@ if ($conf->webcal->enabled) {
   require("../lib/webcal.class.php");
 }
 
+$langs->load("companies");
+
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 
-$langs->load("companies");
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="nom";
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 
 llxHeader();
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
 
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="nom";
-}
 
 // \todo code encore utilisé ?
 if ($action=='add_action') {
@@ -151,7 +151,6 @@ if ($action == 'stcomm')
 /*
  * Recherche
  *
- *
  */
 if ($mode == 'search') {
   if ($mode-search == 'soc') {
@@ -168,18 +167,10 @@ if ($mode == 'search') {
   }
 }
 
-if ($page == -1) { $page = 0 ; }
-
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
 
 
 /*
  * Mode Liste
- *
- *
  *
  */
 
@@ -238,14 +229,6 @@ if ($result)
   	print_barre_liste($langs->trans("ListOfCustomers"), $page, "clients.php","",$sortfield,$sortorder,'',$num);
   }
   
-  if ($sortorder == "DESC")
-    {
-      $sortorder="ASC";
-    }
-  else
-    {
-      $sortorder="DESC";
-    }
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
 
@@ -253,28 +236,28 @@ if ($result)
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","","",'valign="center"',$sortfield);
   print_liste_field_titre($langs->trans("AccountancyCode"),"clients.php","s.code_compta","","",'align="left"',$sortfield);
   print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client","","",'align="left"',$sortfield);
-
-  print "<td>&nbsp;</td></tr>\n";
+  print '<td class="liste_titre">&nbsp;</td>';
+  print "</tr>\n";
 
   // Lignes des champs de filtre
   print '<form method="GET" action="clients.php">';
   print '<tr class="liste_titre">';
 
-  print '<td align="left">';
+  print '<td align="left" class="liste_titre">';
   print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
-  print '<td>&nbsp;</td>';
 
-  print '<td align="left">';
+  print '<td class="liste_titre">&nbsp;</td>';
+
+  print '<td align="left" class="liste_titre">';
   print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
   print '</td>';
 
-  print '<td align="left">';
+  print '<td align="left" class="liste_titre">';
   print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
   print '</td>';
 
-  print '<td align="left">';
-  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
-  print '&nbsp;';
+  print '<td align="right" class="liste_titre">';
+  print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
   print '</td>';
   print "</tr>\n";
   print '</form>';
