@@ -124,14 +124,6 @@ table.topbarre
     color: #000000; 
     text-decoration: none;
 }
-.menusel
-{ 
-    background: #BBBB88;
-    font-weight: bold; 
-    font-size: 12px;
-    color: #fcfffc;
-    text-decoration: none;
-}
 
 
 a.tmenu:link
@@ -568,12 +560,17 @@ div.titre {
             font-weight: bold; 
             color: #666633; 
             text-decoration: none }
+
 /*
- *
- */
+ *  Tableaux
+ */ 
+
+input.liste_titre { 
+    background: #BBBB88;
+}
+
 tr.liste_titre { 
     background: #BBBB88;
-    
     font: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     border-left: 1px solid #FFFFFF;
@@ -581,7 +578,26 @@ tr.liste_titre {
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
-    font-size: 1.0em;
+}
+
+td.liste_titre { 
+    background: #BBBB88;
+    font: helvetica, verdana, arial, sans-serif;
+    font-weight: bold;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    white-space: nowrap;
+}
+
+.liste_titre_sel
+{ 
+    color: #fcfffc;
+    background: #BBBB88;
+    font: helvetica, verdana, arial, sans-serif;
+    font-weight: bold; 
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    white-space: nowrap;
 }
 
 tr.liste_total { 

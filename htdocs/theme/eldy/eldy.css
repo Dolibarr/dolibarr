@@ -124,14 +124,6 @@ table.topbarre
     color: #000000; 
     text-decoration: none;
 }
-.menusel
-{ 
-    background: #7699A9;
-    font-weight: bold; 
-    font-size: 12px;
-    color: #f0f0ff; 
-    text-decoration: none;
-}
 
 a.tmenu:link
 {
@@ -525,7 +517,47 @@ border-collapse: collapse;
 border: 1px ridge
 }
 
+
+/*
+ *  Tableaux
+ */ 
+
+input.liste_titre { 
+background: #7699A9;
+}
+
 tr.liste_titre { 
+background: #7699A9;
+color: #334444;
+font: helvetica, verdana, arial, sans-serif;
+font-weight: bold;
+border-top: 1px solid #FFFFFF;
+border-bottom: 1px solid #FFFFFF;
+white-space: nowrap;
+}
+
+td.liste_titre { 
+background: #7699A9;
+color: #334444;
+font: helvetica, verdana, arial, sans-serif;
+font-weight: bold;
+border-top: 1px solid #FFFFFF;
+border-bottom: 1px solid #FFFFFF;
+white-space: nowrap;
+}
+
+.liste_titre_sel
+{ 
+background: #7699A9;
+color: #f0f0ff; 
+font: helvetica, verdana, arial, sans-serif;
+font-weight: bold; 
+border-top: 1px solid #FFFFFF;
+border-bottom: 1px solid #FFFFFF;
+white-space: nowrap;
+}
+
+th { 
 background: #7699A9;
 color: #334444;
 font: helvetica, verdana, arial, sans-serif;
@@ -542,18 +574,6 @@ background: #F0F0F0;
 font-weight: bold;
 white-space: nowrap;
 border-top: 1px solid #888888;
-}
-
-th { 
-background: #7699A9;
-color: #334444;
-font: helvetica, verdana, arial, sans-serif;
-font-weight: bold;
-border-left: 1px solid #FFFFFF;
-border-right: 1px solid #FFFFFF;
-border-top: 1px solid #FFFFFF;
-border-bottom: 1px solid #FFFFFF;
-white-space: nowrap;
 }
 
 td.border { 

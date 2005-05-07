@@ -1069,11 +1069,11 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
     // Exemple si (sortfield,field)=("nom","xxx.nom") ou (sortfield,field)=("nom","nom")
     if ($sortfield == $field || $sortfield == ereg_replace("^[^\.]+\.","",$field))
     {
-        print '<td class="menusel" '. $td.'>';
+        print '<td class="liste_titre_sel" '. $td.'>';
     }
     else
     {
-        print '<td '. $td.'>';
+        print '<td class="liste_titre" '. $td.'>';
     }
     print $name."&nbsp;";
     print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z").'</a>';

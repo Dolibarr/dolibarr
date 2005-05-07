@@ -300,10 +300,6 @@ td.menu {
           border-bottom: 1px solid #000000;
           }
 
-td.menusel { 
-             border: 1px solid #000000;
-             }
-
 td.border { 
             border: 1px solid #000000;
             }
@@ -339,12 +335,6 @@ div.leftmenu {
   color: #000000; 
   text-decoration: none }
 
-.menusel
-{ 
-  font-weight: bold; 
-  color: #000000; 
-  text-decoration: none }
-
 .submenu 
 { 
   color: #000000; 
@@ -372,14 +362,38 @@ div.titre {
             font-weight: bold; 
             color: #663366; 
             text-decoration: none }
+
+
 /*
- *
- */
+ *  Tableaux
+ */ 
+
+input.liste_titre { 
+    background: #cacaca;
+}
+
 tr.liste_titre { 
     background: #cacaca; 
-    border: 1px solid #000000;
     font-weight: bold;
     text-decoration: none;
+    border-top: 1px solid #888888;
+    white-space: nowrap
+}
+
+td.liste_titre { 
+    background: #cacaca; 
+    font-weight: bold;
+    text-decoration: none;
+    border-top: 1px solid #888888;
+    white-space: nowrap
+}
+
+.liste_titre_sel
+{ 
+    color: #220000;
+    font-weight: bold; 
+    text-decoration: none;
+    border-top: 1px solid #888888;
     white-space: nowrap
 }
 
@@ -387,7 +401,6 @@ tr.liste_total {
     background: #F0F0F0;
     font-weight: bold;
     white-space: nowrap;
-    border-top: 1px solid #888888;
 }
 
 tr.pair	{ 
@@ -406,18 +419,18 @@ tr.impair {
  *
  */
 tr.box_titre { 
-               font-weight: bold; }
-
+    font-weight: bold; }
+    
 tr.box_pair { 
-              background: #dfdfdf; 
-              border-bottom: 1px solid #000000;
-              font-size: 0.6em;
-              }
-
+    background: #dfdfdf; 
+    border-bottom: 1px solid #000000;
+    font-size: 10px;
+    }
+    
 tr.box_impair {
-                border-bottom: 1px solid #000000;
-                font-size: 0.6em;
-                }
+    border-bottom: 1px solid #000000;
+    font-size: 10px;
+    }
 
 tr.fiche { 
            font-family: Helvetica, Verdana;

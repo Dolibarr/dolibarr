@@ -24,10 +24,9 @@ body {
   background: #e0ebeb; 
   margin: 0px;
   font-family: sans-serif; font-size: 0.95em; 
-/***** Styles par défaut *****/
 }
 
-
+/***** Styles par défaut *****/
 div.body
 {
     margin-top: 1px;
@@ -135,6 +134,19 @@ a.login:hover
   color:black;
   text-decoration: underline;
 }
+
+img.login
+{
+  position: absolute;
+  right: 9px;
+  top: 1px;
+
+  padding:2px;
+  text-decoration:none;
+  color:white;
+  font-weight:bold;
+}
+
 
 /*
  *   Barre de gauche
@@ -307,10 +319,6 @@ td.menu {
           border: 1px solid #000000;
           }
 
-td.menusel { 
-             border: 1px solid #000000;
-             }
-
 td.border { 
             border: 1px solid #000000;
             }
@@ -330,12 +338,6 @@ div.menus {
         font-size: 0.9em; font-weight: bold; 
         color: #000000; 
         text-decoration: none }
-
-.menusel { 
-           background: #cceeee; 
-           font-size: 0.9em; font-weight: bold; 
-           color: #000000; 
-           text-decoration: none }
 
 .submenu { 
            background: #b3cccc; 
@@ -378,14 +380,39 @@ div.titre {
             text-decoration: none }
 
 /*
- *
- */
+ *  Tableaux
+ */ 
+
+input.liste_titre { 
+    background: #b3cccc;
+}
+
 tr.liste_titre {
     background: #b3cccc;
     font-family: Helvetica, Verdana;
-    font-size: 0.9em;
     font-weight: bold;
-    border: 1px solid #8CACBB;
+    border-top: 1px solid #8CACBB;
+    white-space: nowrap;
+}
+
+td.liste_titre {
+    background: #b3cccc;
+    font-family: Helvetica, Verdana;
+    font-weight: bold;
+    border-top: 1px solid #8CACBB;
+    border-right: 0px;
+    border-right: 0px;
+    white-space: nowrap;
+}
+
+.liste_titre_sel { 
+    color: #000000; 
+    background: #cceeee; 
+    font-family: Helvetica, Verdana;
+    font-weight: bold; 
+    border-top: 1px solid #8CACBB;
+    border-right: 0px;
+    border-right: 0px;
     white-space: nowrap;
 }
 

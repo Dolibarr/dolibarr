@@ -119,15 +119,6 @@ table.topbarre
   text-decoration: none;
 }
 
-.menusel
-{ 
-  background: #777799; 
-  font-weight: bold;
-  font-size: 12px;
-  color: #DCCCBB;
-  text-decoration: none;
-}
-
 
 a.tmenu:link
 {
@@ -593,9 +584,15 @@ div.titre {
     text-decoration: none
 }
 
+
 /*
- *
- */
+ *  Tableaux
+ */ 
+
+input.liste_titre { 
+    background: #777799;
+}
+
 tr.liste_titre { 
     color: #FFFFFF;
     background: #777799; 
@@ -606,7 +603,27 @@ tr.liste_titre {
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
-    font-size: 1.0em;
+}
+
+td.liste_titre { 
+    color: #FFFFFF;
+    background: #777799; 
+    font: helvetica, verdana, arial, sans-serif;
+    font-weight: bold;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    white-space: nowrap;
+}
+
+.liste_titre_sel
+{ 
+    color: #DCCCBB;
+    background: #777799; 
+    font: helvetica, verdana, arial, sans-serif;
+    font-weight: bold;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    white-space: nowrap;
 }
 
 tr.liste_total {
