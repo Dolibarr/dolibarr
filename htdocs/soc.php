@@ -54,7 +54,7 @@ if (! $step) $step++;
 /*
  * Actions
  */
-if (($_POST["action"] == 'add' && (! defined(COMPANY_CREATE_TWO_STEPS) || $step == 2)) or $_POST["action"] == 'update')
+if (($_POST["action"] == 'add' && (! defined("COMPANY_CREATE_TWO_STEPS") || $step == 2)) or $_POST["action"] == 'update')
 {
     $soc->nom                   = stripslashes($_POST["nom"]);
     $soc->adresse               = stripslashes($_POST["adresse"]);
@@ -190,7 +190,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           $soc->pays=$obj->libelle;
       }
             
-      if ($step==1 && defined(COMPANY_CREATE_TWO_STEPS)) {
+      if ($step==1 && defined("COMPANY_CREATE_TWO_STEPS")) {
           print '<tr><td width="140">'.$langs->trans('Country').'</td><td colspan="3">';
           $form->select_pays($soc->pays_id);
           print '</td></tr>';
@@ -200,11 +200,11 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           print '<tr><td colspan="4" align="center"><input type="submit" name="createnextstep" value="'.$langs->trans('NextStep').'"></td></tr>'."\n";
 
       }
-      if ($step==2 || ! defined(COMPANY_CREATE_TWO_STEPS)) {
+      if ($step==2 || ! defined("COMPANY_CREATE_TWO_STEPS")) {
 
           print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
 
-            if (defined(COMPANY_CREATE_TWO_STEPS)) {
+            if (defined("COMPANY_CREATE_TWO_STEPS")) {
               print '<tr><td width="140">'.$langs->trans('Country').'</td><td colspan="3">';
               print $soc->pays;
               print '<input type="hidden" name="pays_id" value="'.$soc->pays_id.'">';
@@ -226,7 +226,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
     
           print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-          $form->select_departement($soc->departement_id,(defined(COMPANY_CREATE_TWO_STEPS)?$soc->pays_code:0));
+          $form->select_departement($soc->departement_id,(defined("COMPANY_CREATE_TWO_STEPS")?$soc->pays_code:0));
           print '</td></tr>';
     
           print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel"></td>';
@@ -241,7 +241,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
       
           print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
-          $form->select_forme_juridique($soc->forme_juridique_code,(defined(COMPANY_CREATE_TWO_STEPS)?$soc->pays_code:0));
+          $form->select_forme_juridique($soc->forme_juridique_code,(defined("COMPANY_CREATE_TWO_STEPS")?$soc->pays_code:0));
           print '</td></tr>';
       
           print '<tr><td>'.$langs->trans("Type").'</td><td>';
@@ -269,7 +269,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           print '</td></tr>'."\n";
     
           print '<tr><td colspan="4" align="center">';
-          if (defined(COMPANY_CREATE_TWO_STEPS)) {
+          if (defined("COMPANY_CREATE_TWO_STEPS")) {
             print '<input type="submit" name="createpreviousstep" value="'.$langs->trans('PreviousStep').'"> &nbsp; &nbsp; ';
           }
           print '<input type="submit" value="'.$langs->trans('AddCompany').'"></td></tr>'."\n";
