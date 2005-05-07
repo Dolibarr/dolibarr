@@ -533,10 +533,12 @@ llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</e
 
 /**
         \brief      Ajoute une ligne de tableau a 2 colonnes pour avoir l'option webcalendar
+        \return     int     Retourne le nombre de lignes ajoutées
 */
 function add_row_for_webcal_link()
 {
     global $conf,$langs,$user;
+    $nbtr=0;
     
     // Lien avec calendrier si module activé
     if ($conf->webcal->enabled) {
@@ -547,9 +549,10 @@ function add_row_for_webcal_link()
             {
                 print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
                 print '<td><input type="checkbox" disabled name="todo_webcal">';
-                print ' '.$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+                print ' '.$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
                 print '</td>';
                 print '</tr>';
+                $nbtr++;
             }
             else
             {
@@ -562,10 +565,13 @@ function add_row_for_webcal_link()
                     print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
                     print '<td><input type="checkbox" name="todo_webcal"'.(($conf->webcal->syncro=='always' || $conf->webcal->syncro=='yesbydefault')?' checked':'').'></td>';
                     print '</tr>';
+                    $nbtr++;
                 }
             }
         }
     }
+
+    return $nbtr;
 }
 
 
