@@ -69,12 +69,12 @@ print "<tr $bc[$var]><td>Somme des debits</td><td align=\"right\">".price($debit
 $var=!$var;
 $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank ";
 $solde = valeur($sql);
-print "<tr $bc[$var]><td>Solde compte</td><td align=\"right\">".price($solde)."</td></tr>";
+print "<tr $bc[$var]><td>".$langs->trans("BankBalance")."</td><td align=\"right\">".price($solde)."</td></tr>";
 
 
 print "</table>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

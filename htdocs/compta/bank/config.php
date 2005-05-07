@@ -20,7 +20,8 @@
  * $Source$
  */
 
-/**     \file       htdocs/compta/bank/config.php
+/**
+        \file       htdocs/compta/bank/config.php
         \ingroup    banque
 		\brief      Page de configuration des comptes bancaires
 		\version    $Revision$
@@ -35,6 +36,7 @@ $user->getrights('banque');
 if (!$user->admin && !$user->rights->compta->bank)
   accessforbidden();
 
+
 llxHeader();
 
 print_titre($langs->trans("AccountSetup"));
@@ -42,19 +44,23 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print "<td>".$langs->trans("Ref")."</td><td>".$langs->trans("Label")."</td><td>".$langs->trans("Description")."</td>";
+print "<td>".$langs->trans("Ref")."</td><td>".$langs->trans("Label")."</td><td>".$langs->trans("Type")."</td><td>".$langs->trans("Bank")."</td>";
 print "<td align=\"left\">".$langs->trans("Numero")."</a></td>";
 print "<td align=\"center\">".$langs->trans("Closed")."</a></td>";
 print "</tr>\n";
 
-$sql = "SELECT rowid, label,number,bank,clos from ".MAIN_DB_PREFIX."bank_account";
+$sql = "SELECT rowid, label, number, bank, courant as type, clos";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+$sql.= " ORDER BY label";
 
 $result = $db->query($sql);
 $var=false;
 if ($result)
 {
+  $account=new Account($db);
+  
   $var=True;  
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0; $total = 0;
 
   $sep = 0;
@@ -64,11 +70,12 @@ if ($result)
 
     $var=!$var;
     print "<tr $bc[$var]><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td>";
+    print '<td>'.$account->type_lib[$objp->type].'</td>';
     print "<td>$objp->bank&nbsp;</td><td>$objp->number&nbsp;</td><td align=\"center\">".yn($objp->clos)."</td></tr>";
 
     $i++;
   }
-  $db->free();
+  $db->free($result);
 }
 print "</table>";
 
@@ -78,7 +85,7 @@ print "</table>";
  */
 print "<br><div class=\"tabsAction\">\n";
 if ($user->rights->banque->configurer) {
-	print '<a class="tabAction" href="fiche.php?action=create">'.$langs->trans("NewAccount").'</a>';
+	print '<a class="tabAction" href="fiche.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
 	print '<a class="tabAction" href="categ.php">'.$langs->trans("Categories").'</a>';
 }
 print "</div>";
@@ -86,5 +93,5 @@ print "</div>";
 
 $db->close();
 
-llxFooter(strftime("%H:%M",time()). " - <em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

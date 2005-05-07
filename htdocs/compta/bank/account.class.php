@@ -38,9 +38,9 @@ class Account
 {
   var $rowid;
 
-  var $bank;
   var $label;
-  var $courant;
+  var $type;
+  var $bank;
   var $clos;
   var $code_banque;
   var $code_guichet;
@@ -50,14 +50,21 @@ class Account
   var $iban_prefix;
   var $proprio;
   var $adresse_proprio;
-
+  var $type_lib=array();
+  
   function Account($DB, $rowid=0)
   {
+    global $langs;
+    
     $this->db = $DB;
     $this->rowid = $rowid;
 
     $this->clos = 0;
     $this->solde = 0;    
+
+    $this->type_lib[0]=$langs->trans("BankType0");
+    $this->type_lib[1]=$langs->trans("BankType1");
+    $this->type_lib[2]=$langs->trans("BankType2");
 
     return 1;
   }
@@ -189,6 +196,8 @@ class Account
    */
   function create()
     {
+      global $langs;
+      
       // Chargement librairie pour acces fonction controle RIB
 	  require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
 
@@ -209,7 +218,7 @@ class Account
 	      if ( $this->update() )
 		{
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, label, amount, fk_account,datev,dateo,fk_type,rappro) ";
-		  $sql .= " VALUES (now(),'Solde','" . ereg_replace(',','.',$this->solde) . "','$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
+		  $sql .= " VALUES (now(),'".$langs->trans("Balance")."','" . ereg_replace(',','.',$this->solde) . "','$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
 		  $this->db->query($sql);
 		}
 	      return $this->id;      
@@ -288,9 +297,10 @@ class Account
 	  {
 	    $obj = $this->db->fetch_object($result);
 	    
-	    $this->bank          = $obj->bank;
 	    $this->label         = $obj->label;
+	    $this->type          = $obj->courant;
 	    $this->courant       = $obj->courant;
+	    $this->bank          = $obj->bank;
 	    $this->clos          = $obj->clos;
 	    $this->code_banque   = $obj->code_banque;
 	    $this->code_guichet  = $obj->code_guichet;

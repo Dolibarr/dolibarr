@@ -48,66 +48,143 @@ if (!$user->rights->banque->lire)
 llxHeader();
 
 
-print_titre($langs->trans("BankAccounts"));
+print_titre($langs->trans("AccountsArea"));
 print '<br>';
 
-$sql = "SELECT rowid, label,number,bank FROM ".MAIN_DB_PREFIX."bank_account";
+
+// On charge tableau des comptes financiers
+$accounts = array();
+
+$sql = "SELECT rowid, courant";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+$sql.= " ORDER BY label";
 
 $result = $db->query($sql);
 if ($result)
 {
-  $accounts = array();
-
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0; 
   while ($i < $num) {
     $objp = $db->fetch_object($result);
-    $accounts[$i] = $objp->rowid;
-    
+    $accounts[$objp->rowid] = $objp->courant;
     $i++;
   }
-  $db->free();
+  $db->free($result);
 }
 
+
 /*
- * Comptes
+ * Comptes courants
  */
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>Comptes courants</td><td>'.$langs->trans("Bank").'</td>';
-print '<td align="left">'.$langs->trans("Numero").'</td><td align="right">Solde</td><td align="center">'.$langs->trans("Closed").'</td>';
+print '<tr class="liste_titre"><td>'.$langs->trans("CurrentAccounts").'</td><td>'.$langs->trans("Bank").'</td>';
+print '<td align="left">'.$langs->trans("Numero").'</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="80">'.$langs->trans("Closed").'</td>';
 print "</tr>\n";
+
 $total = 0;
-$var=True;
-for ($i = 0 ; $i < sizeof($accounts) ; $i++)
+$var=true;
+foreach ($accounts as $key=>$type)
 {
-  $var = !$var;
-  $acc = new Account($db);
-  $acc->fetch($accounts[$i]);
-  if ($acc->courant)
+  if ($type == 1)
     {
+      $acc = new Account($db);
+      $acc->fetch($key);
+      
+      $var = !$var;
       $solde = $acc->solde();
   
       print "<tr ".$bc[$var]."><td>";
       print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
-    
       print "</td><td>$acc->bank</td><td>$acc->number</td>";
-    
       print '<td align="right">'.price($solde).'</td><td align="center">'.$yn[$acc->clos].'</td></tr>';
   
       $total += $solde;
     }
 }
 
-$var = !$var;
-print "<tr>".'<td colspan="3" align="right"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
+// Total
+print '<tr class="liste_total"><td colspan="3" align="right"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
 
 
-print '<tr class="liste_titre"><td colspan="5">Dettes</td></tr>';
+print '<tr><td colspan="5">&nbsp;</td></tr>';
 
 
 /*
- * TVA
+ * Comptes placements
  */
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td>'.$langs->trans("SavingAccounts").'</td><td>'.$langs->trans("Bank").'</td>';
+print '<td align="left">'.$langs->trans("Numero").'</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="80">'.$langs->trans("Closed").'</td>';
+print "</tr>\n";
+
+$total = 0;
+$var=true;
+foreach ($accounts as $key=>$type)
+{
+  if ($type == 0)
+    {
+      $acc = new Account($db);
+      $acc->fetch($key);
+      
+      $var = !$var;
+      $solde = $acc->solde();
+  
+      print "<tr ".$bc[$var]."><td>";
+      print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
+      print "</td><td>$acc->bank</td><td>$acc->number</td>";
+      print '<td align="right">'.price($solde).'</td><td align="center">'.$yn[$acc->clos].'</td></tr>';
+  
+      $total += $solde;
+    }
+}
+
+// Total
+print '<tr class="liste_total"><td colspan="3" align="right"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
+
+
+print '<tr><td colspan="5">&nbsp;</td></tr>';
+
+
+/*
+ * Comptes caisse/liquide
+ */
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td>'.$langs->trans("CashAccounts").'</td><td>&nbsp;</td>';
+print '<td align="left">&nbsp;</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="80">'.$langs->trans("Closed").'</td>';
+print "</tr>\n";
+
+$total = 0;
+$var=true;
+foreach ($accounts as $key=>$type)
+{
+    if ($type == 2)
+    {
+        $acc = new Account($db);
+        $acc->fetch($key);
+
+        $var = !$var;
+        $solde = $acc->solde();
+
+        print "<tr ".$bc[$var]."><td>";
+        print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
+        print "</td><td>$acc->bank</td><td>&nbsp;</td>";
+        print '<td align="right">'.price($solde).'</td><td align="center">'.$yn[$acc->clos].'</td></tr>';
+
+        $total += $solde;
+    }
+}
+
+// Total
+print '<tr class="liste_total"><td colspan="3" align="right"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
+
+
+/*
+ * Dettes
+ */
+print '<tr><td colspan="5">&nbsp;</td></tr>';
+print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("Debts").'</td></tr>';
+
+// TVA
 if ($conf->compta->tva)
 {
     $var=true;
@@ -121,9 +198,8 @@ if ($conf->compta->tva)
     print "<tr ".$bc[$var].">".'<td colspan="3">'.$langs->trans("VAT").'</td><td align="right">'.price($tva_solde).'</td><td>&nbsp;</td></tr>';
 }
 
-/*
- * Charges sociales
- */
+
+// Charges sociales
 $var = !$var;
 $chs = new ChargeSociales($db);
 
@@ -131,39 +207,11 @@ $chs_a_payer = $chs->solde();
 
 $total = $total - $chs_a_payer;
 
-print "<tr ".$bc[$var].">".'<td colspan="3">URSSAF</td><td align="right">'.price($chs_a_payer).'</td><td>&nbsp;</td></tr>';
+print "<tr ".$bc[$var].">".'<td colspan="3">'.$langs->trans("SocialContributions").'</td><td align="right">'.price($chs_a_payer).'</td><td>&nbsp;</td></tr>';
 
+// Total
+print '<tr class="liste_total"><td colspan="3" align="right"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
 
-/*
- * Total
- */
-print "<tr>".'<td colspan="3" align="right"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
-
-
-/*
- * Comptes placements
- */
-print '<tr class="liste_titre"><td colspan="5">Comptes placements</td></tr>';
-
-for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
-  $var = !$var;
-  $acc = new Account($db);
-  $acc->fetch($accounts[$i]);
-
-  if (!$acc->courant) {
-
-    $solde = $acc->solde();
-  
-    print "<tr ".$bc[$var]."><td>";
-    print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
-    
-    print "</td><td>$acc->bank</td><td>$acc->number</td>";
-    
-    print '<td align="right">'.price($solde).'</td><td>&nbsp;</td></tr>';
-    
-    $total += $solde;
-  }
-}
 
 print "</table>";
 

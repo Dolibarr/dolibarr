@@ -204,7 +204,7 @@ if ($account > 0)
 
   print '<tr class="liste_titre">';
   print '<td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Value").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
-  print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td><td align="right">Solde</td>';
+  print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td><td align="right">'.$langs->trans("BankBalance").'</td>';
   print '<td align="center">'.$langs->trans("AccountStatement").'</td></tr>';
 
   print '<form method="post" action="account.php">';
