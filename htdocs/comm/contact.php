@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,10 @@
  */
 
 /**
-   \file       htdocs/comm/contact.php
-   \ingroup    commercial
-   \brief      Liste des contacts
-   \version    $Revision$
+        \file       htdocs/comm/contact.php
+        \ingroup    commercial
+        \brief      Liste des contacts
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -83,9 +83,7 @@ if ($type == "f")
 }
 
 /*
- *
  * Mode liste
- *
  *
  */
 
@@ -146,22 +144,22 @@ if ($result)
   
   print_barre_liste($langs->trans("ListOfContacts").($label?" (".$label.")":""),$page, "contact.php", "&amp;type=$type",$sortfield,$sortorder,"",$num);
   
-  print '<table class="noborder" width="100%">';
+  print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Lastname"),"contact.php","p.name", $begin,"&amp;type=$type","",$sortfield);
   print_liste_field_titre($langs->trans("Firstname"),"contact.php","p.firstname", $begin,"&amp;type=$type","",$sortfield);
   print_liste_field_titre($langs->trans("Company"),"contact.php","s.nom", $begin,"&amp;type=$type","",$sortfield);
-  print '<td>'.$langs->trans("Email").'</td>';
-  print '<td>'.$langs->trans("Phone").'</td>';
+  print '<td class="liste_titre">'.$langs->trans("Email").'</td>';
+  print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
   print "</tr>\n";
 
   print '<form action="contact.php?type='.$_GET["type"].'" method="GET">';
   print '<tr class="liste_titre">';
-  print '<td><input class="flat" name="search_nom" size="12" value="'.$_GET["search_nom"].'"></td>';
-  print '<td><input class="flat" name="search_prenom" size="12"  value="'.$_GET["search_prenom"].'"></td>';
-  print '<td><input class="flat" name="search_societe" size="12"  value="'.$_GET["search_societe"].'"></td>';
-  print '<td>&nbsp;</td>';
-  print '<td><input type="submit" class="button" value='.$langs->trans("Search").'></td>';
+  print '<td class="liste_titre"><input class="flat" name="search_nom" size="12" value="'.$_GET["search_nom"].'"></td>';
+  print '<td class="liste_titre"><input class="flat" name="search_prenom" size="12"  value="'.$_GET["search_prenom"].'"></td>';
+  print '<td class="liste_titre"><input class="flat" name="search_societe" size="12"  value="'.$_GET["search_societe"].'"></td>';
+  print '<td class="liste_titre">&nbsp;</td>';
+  print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt='.$langs->trans("Search").'></td>';
   print "</tr>\n";
   print '</form>';
 

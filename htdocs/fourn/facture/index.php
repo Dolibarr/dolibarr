@@ -152,7 +152,7 @@ if ($result)
   
   print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,"index.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
-  print '<table class="noborder" width="100%">';
+  print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield);
   print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef","&amp;socid=$socid","","",$sortfield);
@@ -166,20 +166,20 @@ if ($result)
   // Lignes des champs de filtre
   print '<form method="get" action="index.php">';
   print '<tr class="liste_titre">';
-  print '<td valign="right">';
+  print '<td class="liste_titre" valign="right">';
   print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
-  print '</td><td>&nbsp;</td>';
-  print '<td align="left">';
+  print '</td><td class="liste_titre">&nbsp;</td>';
+  print '<td class="liste_titre" align="left">';
   print '<input class="flat" type="text" name="search_libelle" value="'.$_GET["search_libelle"].'">';
   print '</td>';
-  print '<td align="left">';
+  print '<td class="liste_titre" align="left">';
   print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
-  print '</td><td align="right">';
+  print '</td><td class="liste_titre" align="right">';
   print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
-  print '</td><td align="right">';
+  print '</td><td class="liste_titre" align="right">';
   print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
-  print '</td><td colspan="2" align="center">';
-  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
+  print '</td><td class="liste_titre" colspan="2" align="center">';
+  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
   print '</td>';
   print "</tr>\n";
   print '</form>';

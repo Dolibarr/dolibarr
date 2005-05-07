@@ -57,15 +57,8 @@ if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
-if ($sortorder == "")
-{
-  $sortorder="ASC";
-}
-if ($sortfield == "")
-{
-  $sortfield="nom";
-}
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="nom";
 
 
 /*
@@ -105,19 +98,19 @@ if ($result)
   
   print_barre_liste($langs->trans("ListOfSuppliers"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
 
-  print '<table class="noborder" width="100%">';
+  print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"',$sortfield);
-  print '<td>'.$langs->trans("Town").'</td>';
-  print '<td>&nbsp;</td>';
+  print '<td class="liste_titre">'.$langs->trans("Town").'</td>';
+  print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
 
 
   print '<tr class="liste_titre">';
   print '<form action="index.php" method="GET">';
-  print '<td><input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
-  print '<td><input type="text" class="flat" name="search_ville" value="'.$_GET["search_ville"].'"></td>';
-  print '<td><input class="button" type="submit" value="'.$langs->trans("Search").'"></td>';
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$_GET["search_ville"].'"></td>';
+  print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
 

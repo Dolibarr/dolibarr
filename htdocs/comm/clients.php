@@ -105,16 +105,18 @@ if ($result)
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$addu,"","",$sortfield);
   print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$addu,"","",$sortfield);
   print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$addu,"","",$sortfield);
-  print "<td>&nbsp;</td></tr>\n";
+  print '<td class="liste_titre">&nbsp;</td>';
+  print "</tr>\n";
 
   print '<form method="get" action="clients.php">';
   print '<tr class="liste_titre">';
-  print '<td valign="right">';
+  print '<td class="liste_titre" valign="right">';
   print '<input type="text" class="flat" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
-  print '</td><td valign="right">&nbsp;';
-  print '</td><td valign="right">';
+  print '</td><td class="liste_titre" valign="right">&nbsp;';
+  print '</td><td class="liste_titre" valign="right">';
   print '<input type="text" class="flat" name="search_code" value="'.$_GET["search_code"].'" size="8">';
-  print '</td><td>&nbsp;</td><td align="center"><input class="button" type="submit" value="'.$langs->trans("Search").'">';
+  print '</td><td class="liste_titre">&nbsp;</td>';
+  print '<td class="liste_titre" align="center"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
   print "</td>";
   print "</tr>\n";
 

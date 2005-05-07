@@ -152,7 +152,7 @@ if ($result)
   print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$_GET["begin"].'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
 
 
-  print '<table class="noborder" width="100%">';
+  print '<table class="liste" width="100%">';
 
   if ($contactname)
     {
@@ -164,18 +164,18 @@ if ($result)
   print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
   print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
-  print '<td>'.$langs->trans("Phone").'</td>';
+  print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
 
   if ($_GET["view"] == 'phone')
     {
-      print '<td>'.$langs->trans("Mobile").'</td>';
-      print '<td>'.$langs->trans("Fax").'</td>';
+      print '<td class="liste_titre">'.$langs->trans("Mobile").'</td>';
+      print '<td class="liste_titre">'.$langs->trans("Fax").'</td>';
     }
   else
     {
       print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
     }
-  print '<td>&nbsp;</td>';
+  print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
 
   // Ligne des champs de filtres
@@ -184,38 +184,38 @@ if ($result)
   print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
   print '<tr class="liste_titre">';
-  print '<td>';
+  print '<td class="liste_titre">';
   print '<input class="flat" type="text" name="search_nom" size="12" value="'.$search_nom.'">';
   print '</td>';
-  print '<td>';
+  print '<td class="liste_titre">';
   print '<input class="flat" type="text" name="search_prenom" size="10" value="'.$search_prenom.'">';
   print '</td>';
-  print '<td>';
+  print '<td class="liste_titre">';
   print '<input class="flat" type="text" name="search_societe" size="14" value="'.$search_societe.'">';
   print '</td>';
-  print '<td>';
+  print '<td class="liste_titre">';
   print '&nbsp;';
   print '</td>';
 
   if ($_GET["view"] == 'phone')
     {
-      print '<td>';
+      print '<td class="liste_titre">';
       print '&nbsp;';
       print '</td>';
-      print '<td>';
+      print '<td class="liste_titre">';
       print '&nbsp;';
       print '</td>';
     }
   else
     {
-      print '<td>';
+      print '<td class="liste_titre">';
       print '<input class="flat" type="text" name="search_email" size="12" value="'.$search_email.'">';
       print '</td>';
     }
 
-  print '<td>';
-  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
-  print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
+  print '<td class="liste_titre" align="right">';
+  print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
+  print '&nbsp; <input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
   print '</td>';
   print '</tr>';
   print '</form>';

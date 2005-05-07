@@ -215,7 +215,7 @@ if ($account > 0)
   print '<td><input type="text" class="flat" name="req_desc" value="'.$_POST["req_desc"].'" size="40"></td>';
   print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$_POST["req_debit"].'" size="6"></td>';
   print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$_POST["req_credit"].'" size="6"></td>';
-  print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
+  print '<td align="center"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
   print '<td align="center">';
   if ($user->rights->banque->modifier)
     {

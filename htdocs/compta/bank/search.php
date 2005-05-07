@@ -35,42 +35,47 @@ $user->getrights('banque');
 if (!$user->rights->banque->lire)
   accessforbidden();
 
+$description=$_POST["description"];
+$debit=$_POST["debit"];
+$credit=$_POST["credit"];
+$type=$_POST["type"];
+$account=$_POST["account"];
+
 
 llxHeader();
 
-if ($vline) {
-  $viewline = $vline;
-} else {
-  $viewline = 50;
-}
+if ($vline) $viewline = $vline;
+else $viewline = 50;
 
-print_titre("Recherche écriture bancaire");
+
+print_titre($langs->trans("SearchBankMovement"));
 print '<br>';
 
-print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\">";
-print '<td>Date</td><td>'.$langs->trans("Description").'</td>';
-print '<td align="right">'.$langs->trans("Debit").'</td>';
-print '<td align="right">'.$langs->trans("Credit").'</td>';
-print "<td align=\"center\">".$langs->trans("Type")."</td>";
-print '<td align="left">'.$langs->trans("Account").'</td>';
+print '<table class="liste" width="100%">';
+print '<tr class="liste_titre">';
+print '<td class="liste_titre">'.$langs->trans("Date").'</td>';
+print '<td class="liste_titre">'.$langs->trans("Description").'</td>';
+print '<td class="liste_titre" align="right">'.$langs->trans("Debit").'</td>';
+print '<td class="liste_titre" align="right">'.$langs->trans("Credit").'</td>';
+print '<td class="liste_titre" align="center">'.$langs->trans("Type").'</td>';
+print '<td class="liste_titre" align="left">'.$langs->trans("Account").'</td>';
 print "</tr>\n";
 ?>
 
 <form method="post" action="search.php">
 <tr class="liste_titre">
-<td>&nbsp;</td>
-<td>
+<td class="liste_titre">&nbsp;</td>
+<td class="liste_titre">
 <input type="text" class="flat" name="description" size="40" value=<?php echo $description ?>>
 </td>
-<td align="right">
+<td class="liste_titre" align="right">
 <input type="text" class="flat" name="debit" size="6" value=<?php echo $debit ?>>
 </td>
-<td align="right">
+<td class="liste_titre" align="right">
 <input type="text" class="flat" name="credit" size="6" value=<?php echo $credit ?>>
 </td>
-<td align="center">
-<select name="type">
+<td class="liste_titre" align="center">
+<select class="flat" name="type">
 <option value="%">Toutes</option>
 <option value="CHQ">CHQ</option>
 <option value="CB">CB</option>
@@ -78,41 +83,49 @@ print "</tr>\n";
 <option value="PRE">PRE</option>
 </select>
 </td>
-<td align="left">
-<input type="submit" class="button" name="submit" value="<?php echo $langs->trans("Search") ?>">
-</td>
-</tr>
-
 <?php
+print '<td class="liste_titre" align="right">';
+print '<input type="hidden" name="action" value="search">';
+print '<input type="image" class="liste_titre" name="submit" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+print '</td>';
+print '</tr>';
+
 
 // Compte le nombre total d'écritures
 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."bank";
 if ($account) { $sql .= " WHERE b.fk_account=$account"; }
-if ( $db->query($sql) )
+
+$resql=$db->query($sql);
+if ($resql)
 {
-  $nbline = $db->result (0, 0);
-  $db->free();    
+    $nbline = $db->result (0, 0);
+    $db->free($resql);
 }
-  
+else {
+    dolibarr_print_error($db);    
+}
+
 // Defini la liste des catégories dans $options
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
 $result = $db->query($sql);
 if ($result) {
-  $var=True;  
-  $num = $db->num_rows();
-  $i = 0;
+    $var=True;  
+    $num = $db->num_rows($result);
+    $i = 0;
     $options = "<option value=\"0\" selected></option>";
     while ($i < $num) {
-      $obj = $db->fetch_object($result);
-      $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
+        $obj = $db->fetch_object($result);
+        $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
     }
-    $db->free();
+    $db->free($result);
+}
+else {
+    dolibarr_print_error($db);    
 }
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account, b.fk_type, ba.label as labelaccount";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= " WHERE b.fk_account=ba.rowid";
-
 $sql .= " AND fk_type like '" . $type . "'";
 
 $si=0;
@@ -139,11 +152,10 @@ for ($i = 1 ; $i <= $si; $i++) {
 $sql .= " ORDER BY b.dateo ASC";
 
 $result = $db->query($sql);
-
 if ($result)
 {
   $var=True;  
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;   
   
   while ($i < $num) {
@@ -174,7 +186,7 @@ if ($result)
     $i++;
   }
 
-  $db->free();
+  $db->free($result);
 }
 else
 {
@@ -184,7 +196,7 @@ else
 print "</table>";
 
 // Si accès issu d'une recherche et rien de trouvé
-if ($_POST["submit"] && ! $num) {
+if ($_POST["action"] == "search" && ! $num) {
 	print "Aucune écriture bancaire répondant aux critères n'a été trouvée.";
 }
 

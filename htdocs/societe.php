@@ -102,7 +102,10 @@ if ($mode == 'search')
       $socid = $user->societe_id;
     }  
 }
-if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
+
+// As-t-on cliqué sur purge des criètres de recherche
+if (isset($_POST["button_removefilter_x"]))
+{
     $socname="";
     $search_nom="";
     $search_ville="";
@@ -161,29 +164,29 @@ if ($result)
   print_barre_liste($title, $page, "societe.php",$params,$sortfield,$sortorder,'',$num);
     
   // Lignes des titres
-  print '<table class="noborder" width="100%">';
+  print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom", $params,"&search_nom=$search_nom&search_ville=$search_ville","",$sortfield);
   print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield);
   print_liste_field_titre($langs->trans("SIREN"),"societe.php","s.siren",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield);
-  print '<td colspan="2" align="center">&nbsp;</td>';
+  print '<td class="liste_titre" colspan="2" align="center">&nbsp;</td>';
   print "</tr>\n";
 
   // Lignes des champs de filtre
-  print '<form method="post" action="societe.php">';
+  print '<form method="post" action="societe.php" name="formfilter">';
   print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
   print '<tr class="liste_titre">';
-  print '<td valign="right">';
+  print '<td class="liste_titre" valign="right">';
   print '<input class="flat" type="text" name="search_nom" value="'.stripslashes($search_nom).'">';
-  print '</td><td valign="right">';
+  print '</td><td class="liste_titre" valign="right">';
   print '<input class="flat" type="text" name="search_ville" value="'.stripslashes($search_ville).'">';
-  print '</td><td valign="right">';
+  print '</td><td class="liste_titre" valign="right">';
   print '<input class="flat" size="10" type="text" name="search_siren" value="'.$_POST["search_siren"].'">';
-
-  print '</td><td colspan="2" align="center">';
-  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
-  print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
+  print '</td><td class="liste_titre" colspan="2" align="right">';
+  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+  print '&nbsp; ';
+  print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
   print '</td>';
   print "</tr>\n";
   print '</form>';

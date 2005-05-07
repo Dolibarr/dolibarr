@@ -89,12 +89,13 @@ if ($result) {
   
   print_barre_liste($langs->trans("ListOfContacts")." (".$langs->trans("Suppliers").")",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
     
-  print '<table class="noborder" width="100%">';
-  print "<tr class=\"liste_titre\">";
+  print '<table class="liste" width="100%">';
+  print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin, "", "", $sortfield);
   print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin, "", "", $sortfield);
   print_liste_field_titre($langs->trans("Company"),"contact.php","lower(s.nom)", $begin, "", "", $sortfield);
-  print '<td>'.$langs->trans("Email").'</td><td>'.$langs->trans("Phone").'</td>';
+  print '<td class="liste_titre">'.$langs->trans("Email").'</td>';
+  print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
   print "</tr>\n";
   $var=True;
   $i = 0;

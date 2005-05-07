@@ -147,7 +147,7 @@ if ($modecompta != 'CREANCES-DETTES') {
                 $var=!$var;
                     
                 print "<tr $bc[$var]><td>&nbsp</td>";
-                print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")."\n";
+                print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (anciens paiements liés à aucune facture)\n";
                 
                 if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
                 print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
@@ -158,17 +158,20 @@ if ($modecompta != 'CREANCES-DETTES') {
                 $i++;
             }
         }
-        else {
-            $var=!$var;
-            print "<tr $bc[$var]><td>&nbsp</td>";
-            print '<td colspan="3">'.$langs->trans("None").'</td>';
-            print '</tr>';
-        }
         $db->free($result);
     } else {
         dolibarr_print_error($db);
     }
 }
+
+if ($total_ttc == 0)
+{
+    $var=!$var;
+    print "<tr $bc[$var]><td>&nbsp</td>";
+    print '<td colspan="3">'.$langs->trans("None").'</td>';
+    print '</tr>';
+}
+
 print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price($total_ht).'</td>';
 print '<td colspan="3" align="right">'.price($total_ttc).'</td>';

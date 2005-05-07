@@ -127,26 +127,26 @@ if ($result)
 
   $i = 0;
   
-  print '<table class="noborder" width="100%">';
+  print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","","","valign=\"center\"",$sortfield);
   print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","","","",$sortfield);
   print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","","","align=\"center\"",$sortfield);
   print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","","","align=\"center\"",$sortfield);
   print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","","","align=\"center\"",$sortfield);
-  print '<td colspan="4">&nbsp;</td>';
+  print '<td class="liste_titre" colspan="4">&nbsp;</td>';
   print "</tr>\n";
 
   print '<form method="get" action="prospects.php">';
   print '<tr class="liste_titre">';
-  print '<td valign="right">';
+  print '<td class="liste_titre" valign="right">';
   print '<input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'">';
-  print '</td><td>';
-
+  print '</td><td class="liste_titre">';
   print '<input type="text" class="flat" name="search_ville" value="'.$_GET["search_ville"].'">';
-  print "</td>";
-  print "<td>";
-  print '<input type="submit" class="button" value="'.$langs->trans("Search").'"></td><td colspan="3">&nbsp;</td>';
+  print '</td>';
+  print '<td class="liste_titre" colspan="7" align="right">';
+  print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+  print '</td>';
 
   print "</tr>\n";
 
@@ -159,7 +159,7 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td width="35%"><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">';
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">';
       print img_object($langs->trans("ShowProspect"),"company");
       print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print "<td>".$obj->ville."&nbsp;</td>";
@@ -174,7 +174,7 @@ if ($result)
       print "</td>";
 
       $sts = array(-1,0,1,2,3);
-      print '<td>';
+      print '<td align="right">';
       foreach ($sts as $key => $value)
 	{
 	  if ($value <> $obj->fk_stcomm)
