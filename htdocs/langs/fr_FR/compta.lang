@@ -35,3 +35,4 @@ DatePayment=Date paiement
 NewVATPayment=Nouveau paiment de TVA
 VATPayment=Réglement TVA
 VATPayments=Réglements TVA
+TotalToPay=Total à payer

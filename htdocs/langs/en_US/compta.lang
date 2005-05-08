@@ -34,3 +34,4 @@ DatePayment=Payment date
 NewVATPayment=New VAT payment
 VATPayment=VAT Payment
 VATPayments=VATPayments
+TotalToPay=Total to pay
