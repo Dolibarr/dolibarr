@@ -113,7 +113,7 @@ if ($chid > 0)
     	$result = $db->query($sql);
     	if ($result)
     	  {
-    	    $num = $db->num_rows();
+    	    $num = $db->num_rows($result);
     	    $i = 0; $total = 0;
     	    echo '<table class="noborder" width="100%">';
     	    print '<tr class="liste_titre">';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/compta/paiement_charge.php
 		\ingroup    compta
 		\brief      Page de création d'un paiement d'une charge
@@ -33,7 +33,9 @@ include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 $chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 
-
+/*
+ * Actions ajoute paiement
+ */
 if ($_POST["action"] == 'add_paiement')
 {
   if ($_POST["paiementtype"] > 0)
@@ -190,52 +192,17 @@ if ($_GET["action"] == 'create')
 	  print "</td>";
 	  print '<td>'.$langs->trans("Comments").'</td></tr>';
 	  
-	  print '<tr><td>'.$langs->trans("Type")." :</td><td><select name=\"paiementtype\">\n";
-	  
-	  $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY id";
-	  
-	  $result = $db->query($sql);
-	  if ($result)
-	    {
-	      $num = $db->num_rows($result);
-	      $i = 0; 
-	      while ($i < $num)
-		{
-		  $objopt = $db->fetch_object($result);
-		  print "<option value=\"$objopt->id\">$objopt->libelle</option>\n";
-		  $i++;
-		}
-	    }
-	  print "</select>";
+	  print '<tr><td>'.$langs->trans("Type").'</td><td>';
+      $html->select_types_paiements($charge->paiementtype, "paiementtype");
 	  print "</td>\n";
 
 	  print '<td rowspan="4" valign="top"><textarea name="comment" wrap="soft" cols="40" rows="6"></textarea></td></tr>';	  
 
 	  print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Numéro du chèque / virement</em></td></tr>\n";
 
-	  print "<tr><td>Compte à créditer :</td><td><select name=\"accountid\">\n";
-	  
-	  $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account ORDER BY rowid";
-
-	  $result = $db->query($sql);
-	  if ($result)
-	    {
-	      $num = $db->num_rows($result);
-	      $i = 0; 
-	      while ($i < $num)
-		{
-		  $objopt = $db->fetch_object($result);
-		  print '<option value="'.$objopt->rowid.'"';
-		  if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
-		    {
-		      print ' selected';
-		    }
-		  print '>'.$objopt->label.'</option>';
-		  $i++;
-		}
-	    }
-	  print "</select>";
-	  print "</td></tr>\n";
+	  print '<tr><td>Compte à créditer :</td><td>';
+      $html->select_comptes($charge->accountid, "accountid", 0, "courant=1");  // Affiche liste des comptes courant
+	  print '</td></tr>';
 
       print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay").":</td><td><b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
 //      print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\"></td></tr>\n";
