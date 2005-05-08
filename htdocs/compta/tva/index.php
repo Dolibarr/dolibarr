@@ -142,7 +142,7 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
   print "<td width=\"30%\">".$langs->trans("Year")." $y</td>";
   print "<td align=\"right\">".$langs->trans("VATToPay")."</td>";
   print "<td align=\"right\">".$langs->trans("VATToCollect")."</td>";
-  print "<td align=\"right\">".$langs->trans("VATToCollect")."</td>";
+  print "<td align=\"right\">".$langs->trans("TotalToPay")."</td>";
   print "</tr>\n";
   $var=True;
   $total = 0;  $subtotal = 0;
