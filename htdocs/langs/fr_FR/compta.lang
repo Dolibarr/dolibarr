@@ -31,3 +31,7 @@ RulesResultDue=- Il inclut les factures et charges dues, qu'elles soient payées 
 RulesResultInOut=- Il inclut les paiements effectivement réalisés des factures et des charges.<br>- Il se base sur la date de paiement de ces factures et de ces charges.<br>
 RulesCADue=- Il inclut les factures clients dues, qu'elles soient payées ou non.<br>- Il se base sur la date de validation de ces factures.<br>
 RulesCAIn=- Il inclut les paiements effectivement reçus des factures clients.<br>- Il se base sur la date des paiements de ces factures<br>
+DatePayment=Date paiement
+NewVATPayment=Nouveau paiment de TVA
+VATPayment=Réglement TVA
+VATPayments=Réglements TVA

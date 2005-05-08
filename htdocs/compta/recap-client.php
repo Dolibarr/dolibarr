@@ -128,7 +128,8 @@ if ($socid > 0)
     print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse)."</td></tr>";
     
-    print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td colspan="3">'.$societe->cp." ".$societe->ville.'</td></tr>';
+    print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$societe->cp.'</td>';
+    print '<td>'.$langs->trans('Town').'</td><td>'.$societe->ville.'</td></tr>';
     
     print '<tr><td>'.$langs->trans("Phone").'</td><td>'.$societe->tel.'&nbsp;</td><td>Fax</td><td>'.$societe->fax.'&nbsp;</td></tr>';
 
@@ -177,8 +178,8 @@ if ($socid > 0)
             $num = $db->num_rows($resql);
             if ($num > 0)
             {
-                print "<tr $bc[$var]>";
-                print '<td colspan="2">&nbsp;</td>';
+                print '<tr class="liste_titre">';
+                print '<td width="100" align="center">'.$langs->trans("Date").'</td><td>&nbsp;</td>';
                 print '<td align="right">'.$langs->trans("Debit").'</td>';
                 print '<td align="right">'.$langs->trans("Credit").'</td>';
                 print '<td align="right">'.$langs->trans("Balance").'</td>';
@@ -204,8 +205,6 @@ if ($socid > 0)
             // Boucle sur chaque facture
             for ($i = 0 ; $i < $num ; $i++)
             {
-                $var=!$var;
-    
                 $fac = new Facture($db);
                 $ret=$fac->fetch($facs[$i]);
                 if ($ret < 0) 
@@ -213,9 +212,11 @@ if ($socid > 0)
                     print $fac->error."<br>";
                     continue;
                 }
+
+                $var=!$var;
                 print "<tr $bc[$var]>";
     
-                print "<td align=\"right\">".dolibarr_print_date($fac->date)."</td>\n";
+                print "<td align=\"center\">".dolibarr_print_date($fac->date)."</td>\n";
                 print "<td><a href=\"../compta/facture.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
     
                 print '<td align="right">'.price($fac->total_ttc)."</td>\n";
@@ -244,8 +245,10 @@ if ($socid > 0)
                         $objp = $db->fetch_object($resql);
                         //$var=!$var;
                         print "<tr $bc[$var]>";
-                        print '<td align="right">'.dolibarr_print_date($objp->dp)."</td>\n";
-                        print '<td><a href="paiement/fiche.php?id='.$objp->rowid.'">'.img_file().' Paiement '.$objp->rowid.'</td>';
+                        print '<td align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
+                        print '<td>';
+                        print '&nbsp; &nbsp; &nbsp; '; // Décalage
+                        print '<a href="paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
                         print "<td>&nbsp;</td>\n";
                         print '<td align="right">'.price($objp->amount).'</td>';
                         $solde = $solde - $objp->amount;
