@@ -96,7 +96,7 @@ if ($chid > 0)
 
 	  print '<table class="border" width="100%">';
 
-	  print "<tr><td>".$langs->trans("Type")."</td><td>$cha->type_libelle</td><td>".$langs->trans("Paiements")."</td></tr>";
+	  print "<tr><td>".$langs->trans("Type")."</td><td>$cha->type_libelle</td><td>".$langs->trans("Payments")."</td></tr>";
 
 	  print "<tr><td>".$langs->trans("Period")."</td><td>".dolibarr_print_date($cha->periode,"%Y")."</td>";
       print '<td rowspan="5" valign="top">';
@@ -115,8 +115,9 @@ if ($chid > 0)
     	  {
     	    $num = $db->num_rows();
     	    $i = 0; $total = 0;
-    	    echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-    	    print '<tr class="liste_titre"><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Type").'</td>';
+    	    echo '<table class="noborder" width="100%">';
+    	    print '<tr class="liste_titre">';
+    	    print '<td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Type").'</td>';
     	    print '<td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
         
     	    $var=True;
@@ -125,6 +126,7 @@ if ($chid > 0)
     		$objp = $db->fetch_object($result);
     		$var=!$var;
     		print "<tr $bc[$var]><td>";
+       	    print img_object($langs->trans("Payment"),"payment").' ';
     		print dolibarr_print_date($objp->dp)."</td>\n";
     		print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
     		print '<td align="right">'.price($objp->amount)."</td><td>".$conf->monnaie."</td>\n";
