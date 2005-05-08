@@ -387,6 +387,7 @@ class Form
   /**
    *    \brief      Retourne la liste des produits
    *    \param      selected        Produit présélectionné
+   *    \param      htmlname        Nom de la zone select
    *    \param      filtretype      Pour filtre sur type de produit
    */
   function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20)
@@ -427,31 +428,92 @@ class Form
   
   
   /**
-   *    \brief      Retourne le nom d'un pays
-   *    \param      id      id du pays
+   *    \brief      Retourne la liste des types de paiements possibles
+   *    \param      selected        Type de praiement présélectionné
+   *    \param      htmlname        Nom de la zone select
+   *    \param      filtretype      Pour filtre
    */
-  function pays_name($id)
-  {
-    $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."c_pays";
-    $sql .= " WHERE rowid=$id;";
-		
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-  
-	if ($num)
-	  {
-	    $obj = $this->db->fetch_object();
-	    return $obj->libelle;
-	  }
-	else
-	  {
-	    return "Non défini";
-	  }
+    function select_types_paiements($selected='',$htmlname='paiementtype',$filtretype='')
+    {
+        global $langs;
+        
+        $sql = "SELECT id, code, libelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
+        $sql.= " WHERE active > 0";
+        $sql.= " ORDER BY id";
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            print '<select class="flat" name="'.$htmlname.'">';
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                if ($selected == $obj->code)
+                {
+                    print '<option value="'.$obj->id.'" selected>';
+                }
+                else
+                {
+                    print '<option value="'.$obj->id.'">';
+                }
+                // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                print ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                print '</option>';
+                $i++;
+            }
+            print "</select>";
+        }
+        else {
+            dolibarr_print_error($this->db);
+        }
+    }
 
-      }
-	
-  }
+
+  /**
+   *    \brief      Retourne la liste des comptes
+   *    \param      selected        Type de praiement présélectionné
+   *    \param      htmlname        Nom de la zone select
+   *    \param      filtretype      Pour filtre
+   */
+    function select_comptes($selected='',$htmlname='paiementtype',$statut=0,$filtre='')
+    {
+        global $langs;
+    
+        $sql = "SELECT rowid, label, bank";
+        $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+        $sql.= " WHERE clos = '".$satut."'";
+        if ($filtre) $sql.=" AND ".$filtre;
+        $sql.= " ORDER BY rowid";
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            print '<select class="flat" name="'.$htmlname.'">';
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                if ($selected == $obj->rowid)
+                {
+                    print '<option value="'.$obj->rowid.'" selected>';
+                }
+                else
+                {
+                    print '<option value="'.$obj->rowid.'">';
+                }
+                print $obj->label;
+                print '</option>';
+                $i++;
+            }
+            print "</select>";
+        }
+        else {
+            dolibarr_print_error($this->db);
+        }
+    }
+
 
   /**
    *    \brief      Retourne la liste déroulante des civilite actives
@@ -499,8 +561,9 @@ class Form
     
   }
 
+
   /**
-   *    \brief      Retourne la liste déroulante des formes juridiques tous pays confondu ou pour un pays donné.
+   *    \brief      Retourne la liste déroulante des formes juridiques tous pays confondus ou pour un pays donné.
    *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
    *    \param      selected        code forme juridique a présélectionné
    *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
@@ -566,6 +629,35 @@ class Form
     }
   }
   
+
+  /**
+   *    \brief      Retourne le nom d'un pays
+   *    \param      id      id du pays
+   */
+  function pays_name($id)
+  {
+    $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."c_pays";
+    $sql .= " WHERE rowid=$id;";
+		
+    if ($this->db->query($sql))
+      {
+	$num = $this->db->num_rows();
+  
+	if ($num)
+	  {
+	    $obj = $this->db->fetch_object();
+	    return $obj->libelle;
+	  }
+	else
+	  {
+	    return "Non défini";
+	  }
+
+      }
+	
+  }
+
+
   /**
    *    \brief  Affiche formulaire de demande de confirmation
    *    \param  page        page
@@ -592,7 +684,8 @@ class Form
     print '</table>';
     print "</form>\n";  
   }
-	
+
+
   /**
    *    \brief  Selection du taux de tva
    *
@@ -640,6 +733,7 @@ class Form
       }
     print '</select>';
   }
+
 
   /**
    *    \brief  Affiche zone de selection de date
