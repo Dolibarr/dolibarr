@@ -109,7 +109,7 @@ if ($account > 0)
       $var=True;  
       $num = $db->num_rows($result);
       $i = 0;
-      $options = "<option value=\"0\" SELECTED></option>";
+      $options = "<option value=\"0\" selected></option>";
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object($result);
@@ -350,9 +350,9 @@ function _print_lines($db,$result,$sql,$acct)
             }
     
             print "<tr $bc[$var]>";
-            print "<td>".dolibarr_print_date($objp->do,"%d/%m/%y")."</td>\n";
-            print "<td>".dolibarr_print_date($objp->dv,"%d/%m/%y")."</td>\n";
-            print "<td>".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
+            print "<td nowrap>".dolibarr_print_date($objp->do,"%d/%m/%y")."</td>\n";
+            print "<td nowrap>".dolibarr_print_date($objp->dv,"%d/%m/%y")."</td>\n";
+            print "<td nowrap>".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
             print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a>";
             /*
              * Ajout les liens
