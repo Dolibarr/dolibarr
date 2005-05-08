@@ -34,7 +34,7 @@ function llxHeader($head = "", $title="") {
 
   $menu->add("liste.php",$langs->trans("List"));
 
-  $menu->add("rapport.php",$langs->trans("Reportins"));
+  $menu->add("rapport.php",$langs->trans("Reportings"));
 
   $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
 
