@@ -26,19 +26,20 @@ $langs->load("compta");
 
 function llxHeader($head = "", $title="") {
   global $user, $langs;
-
+  $langs->load("bills");
+  
   top_menu($head, $title);
 
   $menu = new Menu();
 
   $menu->add("liste.php",$langs->trans("List"));
 
-  $menu->add("rapport.php","Rapports");
+  $menu->add("rapport.php",$langs->trans("Reportins"));
 
   $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
 
   $menu->add_submenu("liste.php",$langs->trans("Payments"));
-  $menu->add_submenu("avalider.php",$langs->trans("A valider"));
+  $menu->add_submenu("avalider.php",$langs->trans("MenuToValid"));
 
   left_menu($menu->liste);
 }

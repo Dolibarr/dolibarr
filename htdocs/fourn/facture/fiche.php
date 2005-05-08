@@ -314,7 +314,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
 else
 {
   /*
-   * Fiche facture en mode edition
+   * Fiche facture en mode visu ou edition
    *
    */
   if ($_GET["facid"] > 0)
@@ -457,24 +457,28 @@ else
 	   */
 	  if ($_GET["action"] == 'valid')
 	    {
-	      $html->form_confirm("fiche.php?facid=$fac->id","Valider la facture","Etes-vous sûr de vouloir valider cette facture ?","confirm_valid");
+	      $html->form_confirm("fiche.php?facid=$fac->id",$langs->trans("ValidateBill"),"Etes-vous sûr de vouloir valider cette facture ?","confirm_valid");
 	      print '<br />';
 	    }
 	  
 	  print "<table border=\"0\" width=\"100%\">";
 	  print '<tr><td width="50%" valign="top">';
+
 	  /*
 	   *   Facture
 	   */
 	  print '<table class="border" width="100%">';
 	  print "<tr><td>".$langs->trans("Company")."</td><td colspan=\"2\"><b><a href=\"../fiche.php?socid=$fac->socidp\">$fac->socnom</a></b></td>";
-	  print "<td align=\"right\"><a href=\"index.php?socid=$fac->socidp\">".$langs->trans("OtherBills")."</a></td>\n";
+  	  print "<td align=\"right\"><a href=\"index.php?socid=$fac->socidp\">".$langs->trans("OtherBills")."</a></td>\n";
 	  print "</tr>";
-	  print '<tr><td>'.$langs->trans("Date")."</td><td colspan=\"3\">".dolibarr_print_date($fac->datep,"%A %e %B %Y")."</td></tr>\n";
+
+	  print '<tr><td>'.$langs->trans("Date")."</td><td colspan=\"3\">";
+	  print dolibarr_print_date($fac->datep,"%A %e %B %Y")."</td></tr>\n";
 	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">';
 	  print $fac->libelle;
-	  print "</td>";
-
+	  print '</td>';
+      print '</tr>';
+    
 	  $authorfullname="&nbsp;";
 	  if ($fac->author)
 	    {
@@ -485,9 +489,9 @@ else
 	  print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">$authorfullname</td>";
 	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 	  
-	  print "<tr>".'<td>'.$langs->trans("TotalHT").'</td><td align="center"><b>'.price($fac->total_ht)."</b></td>";
+	  print '<tr><td>'.$langs->trans("TotalHT").'</td><td align="center"><b>'.price($fac->total_ht)."</b></td>";
 	  print '<td align="right">'.$langs->trans("VAT").'</td><td align="center">'.price($fac->total_tva)."</td></tr>";
-	  print "<tr>".'<td>'.$langs->trans("TotalTTC").'</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
+	  print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
 	  if (strlen($fac->note))
 	    {
 	      print '<tr><td>'.$langs->trans("Comments").'</td><td colspan="3">';
@@ -498,22 +502,26 @@ else
 	      
 	  print "</td><td valign=\"top\">";
 	  	  
+
 	  /*
 	   * Paiements
 	   */
+
+      print '<table class="border" width="100%">';
+      print '<tr><td>';
+
 	  $sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."c_paiement as c ";
 	  $sql .= " WHERE p.fk_facture_fourn = ".$fac->id." AND p.fk_paiement = c.id";
 
 	  $result = $db->query($sql);
-
 	  if ($result)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($result);
 	      $i = 0; $total = 0;
 
-	      echo '<table class="noborder" width="100%">';
-	      print '<tr><td colspan="2">'.$langs->trans("Payments").'</td></tr>';
+          print '<table class="noborder" width="100%">';
+	      print '<tr><td colspan="2">'.$langs->trans("Payments").' :</td></tr>';
 	      print "<tr class=\"liste_titre\">";
 	      print '<td>'.$langs->trans("Date").'</td>';
 	      print '<td>'.$langs->trans("Type").'</td>';
@@ -528,10 +536,10 @@ else
 	      $var=True;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object();
+		  $objp = $db->fetch_object($result);
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
-		  print "<td>".strftime("%e %B %Y",$objp->dp)."</td>\n";
+		  print "<td>".img_object($langs->trans("Payment"),"payment").' '.dolibarr_print_date($objp->dp)."</td>\n";
 		  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
 		  print "<td align=\"right\">".price($objp->amount)."</td><td>".$conf->monnaie."</td>\n";
 
@@ -563,11 +571,17 @@ else
 	    } 
 	  else
 	    {
-	      print $db->error();
+	      dolibarr_print_error($db);
 	    }
-	  
 	  print "</td></tr>";	  
 	  print "</table>";
+	  
+
+
+	  print "</td></tr>";	  
+	  print "</table>";
+
+
 	  /*
 	   * Lignes
 	   *
@@ -599,10 +613,9 @@ else
       print "</div>\n";
 	}
 
+
       /*
-       * Barre de commande
-       *
-       *
+       * Boutons actions
        */
 
       print "<div class=\"tabsAction\">\n";
@@ -653,5 +666,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

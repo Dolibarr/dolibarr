@@ -99,7 +99,7 @@ if ($resql)
       $objp = $db->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_file().' '.$objp->rowid.'</td>';
+      print '<td>'.'<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
       print '<td>'.dolibarr_print_date($objp->dp)."</td>\n";
       print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
       print '<td align="right">'.price($objp->amount).'</td>';
@@ -125,5 +125,5 @@ else {
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

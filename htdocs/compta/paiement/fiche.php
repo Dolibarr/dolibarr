@@ -106,21 +106,20 @@ if ($_GET["action"] == 'valide')
 
 print '<br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="border" width="100%">';
 
-print '<tr><td valign="top">';
 
 if ($paiement->bank_account) {
     // Si compte renseigné, on affiche libelle
+    print '<tr><td valign="top" width="140">';
     $bank=new Account($db);
     $bank->fetch($paiement->bank_account);
-    print $langs->trans("BankAccount").' : '.$bank->label.'<br>';
+    print $langs->trans("BankAccount").'</td><td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$bank->id.'">'.$bank->label.'</a></td></tr>';
 }
-print $langs->trans("Date").' : '.dolibarr_print_date($paiement->date)."<br>";
-print $langs->trans("Type").' : '.$paiement->type_libelle."<br>";
-if ($paiement->numero) { print $langs->trans("Numero").' : '.$paiement->numero."<br>"; }
-print $langs->trans("Amount").' : '.$paiement->montant."&nbsp;".$conf->monnaie."<br>";
-print '</td></tr>';
+print '<tr><td valign="top" width="140">'.$langs->trans("Date").'</td><td>'.dolibarr_print_date($paiement->date).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans("Type").'</td><td>'.$paiement->type_libelle.'</td></tr>';
+if ($paiement->numero) { print '<tr><td valign="top">'.$langs->trans("Numero").'</td><td>'.$paiement->numero.'</td></tr>'; }
+print '<tr><td valign="top">'.$langs->trans("Amount").'</td><td>'.$paiement->montant."&nbsp;".$conf->monnaie.'</td></tr>';
 print "</table>";
 
 print nl2br($paiement->note);

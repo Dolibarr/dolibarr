@@ -23,7 +23,8 @@
  *
  */
 
-/**     \file       htdocs/fourn/facture/paiement.php
+/**
+        \file       htdocs/fourn/facture/paiement.php
         \ingroup    fournisseur,facture
         \brief      Paiements des factures fournisseurs
 		\version    $Revision$
@@ -197,6 +198,9 @@ if ($action == 'create')
   }
 } 
 
+/*
+ * Affichage liste
+ */
 if ($action == '') {
 
   if ($page == -1)
@@ -206,7 +210,7 @@ if ($action == '') {
   $limit = $conf->liste_limit;
   $offset = $limit * $page ;
 
-  $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber, s.nom";
+  $sql = "SELECT p.rowid, ".$db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber, s.nom";
   $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
   $sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."societe as s";
   $sql .= " WHERE p.fk_facture_fourn = f.rowid AND p.fk_paiement = c.id AND s.idp = f.fk_soc";
@@ -230,6 +234,7 @@ if ($action == '') {
 
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
+      print '<td>'.$langs->trans("Ref").'</td>';
       print '<td>'.$langs->trans("Bill").'</td>';
       print '<td>'.$langs->trans("Company").'</td>';
       print '<td>'.$langs->trans("Date").'</td>';
@@ -242,8 +247,8 @@ if ($action == '') {
 	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"fiche.php?facid=$objp->facid\">".img_object($langs->trans("ShowBill"),"bill")."</a> ";
-	  print "<a href=\"fiche.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
+	  print "<td><a href=\"".DOL_URL_ROOT."/fourn/facture/paiement/fiche.php?facid=$objp->facid\">".img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
+	  print "<td><a href=\"".DOL_URL_ROOT."/fourn/facture/fiche.php?facid=$objp->facid\">".img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
 	  print '<td>'.$objp->nom.'</td>';
 	  print "<td>".dolibarr_print_date($objp->dp)."</td>\n";
 	  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
@@ -262,5 +267,5 @@ if ($action == '') {
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

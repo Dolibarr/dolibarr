@@ -79,7 +79,7 @@ if ($_POST["action"] == 'classin')
 /*
  *
  */	
-if ($_POST["action"] == 'add') 
+if ($_POST["action"] == 'add')
 {
   $datefacture = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]); 
 
@@ -915,16 +915,16 @@ else
 	   */
 	  print $langs->trans("Payments").' :<br>';
 	  $sql = "SELECT ".$db->pdate("datep")." as dp, pf.amount,";
-	  $sql .= "c.libelle as paiement_type, p.num_paiement, p.rowid";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
-	  $sql .= " WHERE pf.fk_facture = ".$fac->id." AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid";
-	  $sql .= " ORDER BY dp DESC";
+	  $sql.= " c.libelle as paiement_type, p.num_paiement, p.rowid";
+	  $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
+	  $sql.= " WHERE pf.fk_facture = ".$fac->id." AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid";
+	  $sql.= " ORDER BY dp DESC";
 	
 	  $result = $db->query($sql);
 
 	  if ($result)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($result);
 	      $i = 0; $total = 0;
 	      print '<table class="noborder" width="100%">';
 	      print '<tr class="liste_titre"><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Type").'</td>';
@@ -933,10 +933,10 @@ else
 	      $var=True;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object();
+		  $objp = $db->fetch_object($result);
 		  $var=!$var;
 		  print "<tr $bc[$var]><td>";
-		  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_file().'</a>';
+		  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").'</a>';
 		  print "&nbsp;".strftime("%d %B %Y",$objp->dp)."</td>\n";
 		  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
 		  print '<td align="right">'.price($objp->amount)."</td><td>".$conf->monnaie."</td>\n";

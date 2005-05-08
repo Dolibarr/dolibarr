@@ -173,7 +173,7 @@ class MenuLeft {
                 // Actions
                 $newmenu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions", $langs->trans("Actions"), 0);
                 if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?time=today", $langs->trans("Today"), 1);
-                if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php", $langs->trans("Reporting"), 1);
+                if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php", $langs->trans("Reportings"), 1);
         
                 // Propal
                 if ($conf->propal->enabled)
@@ -271,19 +271,24 @@ class MenuLeft {
                                 
                 if ($conf->facture->enabled)
                 {
-                    $langs->load("customers_bills");
+                    $langs->load("bills");
                     $newmenu->add(DOL_URL_ROOT."/compta/facture.php?leftmenu=customers_bills",$langs->trans("BillsCustomers"),1,$user->rights->facture->lire);
                     if ($user->societe_id == 0) 
                     {
-                        if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/clients.php?action=facturer",$langs->trans("NewBill"),2,$user->rights->facture->creer);
+                        if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/clients.php?action=facturer",$langs->trans("NewBill"),2,$user->rights->facture->creer);
                     }
-                    if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"),2,$user->rights->facture->lire);
+                    if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"),2,$user->rights->facture->lire);
                     if (! defined("FACTURE_DISABLE_RECUR") || ! FACTURE_DISABLE_RECUR)
                     {
-                        if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes",2,$user->rights->facture->lire);
+                        if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes",2,$user->rights->facture->lire);
                     }
-                    if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"),2,$user->rights->facture->lire);
-                    if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"),2,$user->rights->facture->lire);
+                    if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php?leftmenu=customers_bills_payments",$langs->trans("Payments"),2,$user->rights->facture->lire);
+                    
+                    if (eregi("customers_bills_payments",$leftmenu))  $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/avalider.php",$langs->trans("MenuToValid"),3,$user->rights->facture->lire);
+                    if (eregi("customers_bills_payments",$leftmenu))  $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/rapport.php",$langs->trans("Reportings"),3,$user->rights->facture->lire);
+
+
+                    if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"),2,$user->rights->facture->lire);
                 }
                 
                 // Commandes
@@ -352,7 +357,7 @@ class MenuLeft {
                 // Rapports
                 if ($conf->compta->enabled) {
                     // Bilan, résultats
-                    $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca&mainmenu=accountancy",$langs->trans("Reporting"),0,$user->rights->compta->resultat->lire);
+                    $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca&mainmenu=accountancy",$langs->trans("Reportings"),0,$user->rights->compta->resultat->lire);
             
                 	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca","Résultat / Exercice",1,$user->rights->compta->resultat->lire);
                     if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire);
@@ -570,6 +575,12 @@ class MenuLeft {
                     print '&nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
                 else 
                     print '&nbsp; &nbsp; <font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+            }
+            if ($this->menu_array[$i]['level']==3) {
+                if ($this->menu_array[$i]['enabled'])
+                    print '&nbsp; &nbsp; &nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
+                else 
+                    print '&nbsp; &nbsp; &nbsp; &nbsp; <font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
             }
             
             if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)  {
