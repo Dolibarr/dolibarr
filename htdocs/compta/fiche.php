@@ -242,7 +242,7 @@ if ($socid > 0)
 
     print "</td></tr>";
 
-    print '<tr><td>Code compta</td><td>'.$societe->code_compta.'</td>';
+    print '<tr><td>'.$langs->trans("AccountancyCode").'</td><td>'.$societe->code_compta.'</td>';
     print '<td>'.$langs->trans("CustomerCode").'</td><td>';
     print $societe->code_client;
     print "</td></tr>";
@@ -266,15 +266,17 @@ if ($socid > 0)
     {
         print '<table class="border" width="100%">';
 
-        $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df, f.paye as paye, f.fk_statut as statut, f.rowid as facid ";
+        $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, f.total, f.total_ttc, ".$db->pdate("f.datef")." as df, f.paye as paye, f.fk_statut as statut, f.rowid as facid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
         $sql .= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
         $sql .= " ORDER BY f.datef DESC";
 
-        if ( $db->query($sql) )
+        $resql=$db->query($sql);
+        if ($resql)
         {
             $var=true;
-            $num = $db->num_rows(); $i = 0;
+            $num = $db->num_rows($resql);
+            $i = 0;
             if ($num > 0)
             {
                 print '<tr class="liste_titre">';
@@ -284,7 +286,7 @@ if ($socid > 0)
 
             while ($i < $num && $i < $MAXLIST)
             {
-                $objp = $db->fetch_object();
+                $objp = $db->fetch_object($resql);
                 $var=!$var;
                 print "<tr $bc[$var]>";
                 print "<td><a href=\"../compta/facture.php?facid=$objp->facid\">".img_object($langs->trans("ShowBill"),"bill")." ".$objp->facnumber."</a></td>\n";
@@ -296,7 +298,7 @@ if ($socid > 0)
                 {
                     print "<td align=\"right\"><b>!!!</b></td>\n";
                 }
-                print "<td align=\"right\">".number_format($objp->amount, 2, ',', ' ')."</td>\n";
+                print "<td align=\"right\">".price($objp->total_ttc)."</td>\n";
 
                 $fac = new Facture($db);
                 print "<td align=\"center\">".($fac->LibStatut($objp->paye,$objp->statut))."</td>\n";
