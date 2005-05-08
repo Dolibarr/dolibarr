@@ -192,17 +192,48 @@ class Tva
      *      \brief      Ajoute un paiement de TVA
      */
 
-    function add_payement($datep, $datev, $amount)
+    function add_payement($user)
     {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep, datev, amount) ";
-        $sql .= " VALUES ('".$this->db->idate($datep)."',";
-        $sql .= "'".$this->db->idate($datev)."'," . ereg_replace(",",".",$amount) .")";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep, datev, amount";
+        if ($this->note)  $sql.=", note";
+        if ($this->label) $sql.=", label";
+        $sql.= ") ";
+        $sql.= " VALUES ('".$this->db->idate($this->datep)."',";
+        $sql.= "'".$this->db->idate($this->datev)."'," . ereg_replace(",",".",$this->amount);
+        if ($this->note)  $sql.=", '".addslashes($this->note)."'";
+        if ($this->label) $sql.=", '".addslashes($this->label)."'";
+        $sql.= ")";
 
         $result = $this->db->query($sql);
-
         if ($result)
         {
-            return 1;
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");
+            if ($this->id > 0)
+            {
+
+                // Insertion dans llx_bank
+                $acc = new Account($this->db, $this->accountid);
+                $bank_line_id = $acc->addline($this->db->idate($this->datep), $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
+        	  
+                // Mise a jour fk_bank dans llx_paiementcharge. On connait ainsi la ligne de tva qui a généré l'écriture bancaire
+                if ($bank_line_id) {
+                    // $tva->update_fk_bank($bank_line_id);
+                }
+        	  
+                // Mise a jour liens (pour chaque charge concernée par le paiement)
+                //foreach ($paiement->amounts as $key => $value)
+        	    //{
+                //    $chid = $key;
+                //    $fac = new Facture($db);
+                //    $fac->fetch($chid);
+                //    $fac->fetch_client();
+                //    $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
+                //    $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
+        	    //}
+	  
+           }
+
+           return $this->id;
         }
         else
         {

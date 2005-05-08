@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/compta/tva/fiche.php
+/**
+	    \file       htdocs/compta/tva/fiche.php
 		\brief      Page des règlements de TVA
 		\version    $Revision$
 */
@@ -29,55 +30,82 @@
 require("./pre.inc.php");
 require("../../tva.class.php");
 
+$langs->load("compta");
+
 
 $mesg = '';
 
+
+/**
+ * Action ajout paiement tva
+ */
 if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-  $tva = new Tva($db);
+    $tva = new Tva($db);
+    
+    $db->begin();
+    
+    $tva->label = $langs->trans("VATPayment");
+    $tva->accountid=$_POST["accountid"];
+    $tva->paymenttype=$_POST["paiementtype"];
+    $tva->datev=mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
+    $tva->datep=mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+    $tva->amount=$_POST["amount"];
 
-  $tva->add_payement(mktime(12,0,0,
-			    $_POST["datevmonth"],
-			    $_POST["datevday"],
-			    $_POST["datevyear"]
-			    ),
-		     mktime(12,0,0,
-			    $_POST["datepmonth"],
-			    $_POST["datepday"],
-			    $_POST["datepyear"]
-			    ),
-		     $_POST["amount"]
-		     );
-  Header ( "Location: reglement.php");
+    $ret=$tva->add_payement($user);
+    if ($ret > 0)
+    {
+        $db->commit();
+        Header ("Location: reglement.php");
+    }
+    else
+    {
+        $db->rollback();
+        $message=$langs->trans("Error");
+        $_GET["action"]="create";
+    }
 }
+
+
 
 llxHeader();
 
-/*
- *
- *
- */
 $html = new Form($db);
+
+// Formulaire saisie tva
 if ($_GET["action"] == 'create')
 {
-  print "<form action=\"fiche.php\" method=\"post\">\n";
-  print '<input type="hidden" name="action" value="add">';
-
-  print '<div class="titre">Nouveau réglement TVA</div><br>';
+    print "<form action=\"fiche.php\" method=\"post\">\n";
+    print '<input type="hidden" name="action" value="add">';
+    
+    print '<div class="titre">'.$langs->trans("NewVATPayment").'</div><br>';
       
-  print '<table class="border" width="100%">';
-  print "<tr>";
-  print '<td>'.$langs->trans("DatePayment").'</td><td>';
-  print $html->select_date("","datev");
-  print '</td></tr>';
-  print '<td>'.$langs->trans("DateValue").'</td><td>';
-  print $html->select_date("","datep");
-  print '</td></tr>';
-  print '<tr><td>'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value=""></td></tr>';    
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-  print '</table>';
-  print '</form>';      
+    if ($message) print '<br>'.$message.'</br>';
+    
+    print '<table class="border" width="100%">';
+    
+    print "<tr>";
+    print '<td>'.$langs->trans("DatePayment").'</td><td>';
+    print $html->select_date("","datev");
+    print '</td></tr>';
+
+    print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
+    print $html->select_date("","datep");
+    print '</td></tr>';
+
+    print '<tr><td>'.$langs->trans("Type").'</td><td>';
+    $html->select_types_paiements($charge->paiementtype, "paiementtype");
+    print "</td>\n";
+   
+    print '<tr><td>Compte à créditer :</td><td>';
+    $html->select_comptes($charge->accountid, "accountid", 0, "courant=1");  // Affiche liste des comptes courant
+    print '</td></tr>';
+    
+    print '<tr><td>'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value=""></td></tr>';    
+    print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+    print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+    print '</table>';
+    print '</form>';      
 }
 
 
@@ -89,9 +117,8 @@ if ($_GET["action"] == 'create')
 
 // Aucune action
 
-
-
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
+
 ?>
