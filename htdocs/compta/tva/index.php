@@ -67,40 +67,40 @@ function tva_paye($db, $y,$m)
 }
 
 function pt ($db, $sql, $date) {
-  global $bc,$langs; 
+    global $bc,$langs;
 
-  $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows($result);
-    $i = 0; 
-    $total = 0 ;
-    print "<table class=\"noborder\" width=\"100%\">";
-    print "<tr class=\"liste_titre\">";
-    print "<td nowrap width=\"60%\">$date</td>";
-    print "<td align=\"right\">".$langs->trans("Amount")."</td>";
-    print "<td>&nbsp;</td>\n";
-    print "</tr>\n";
-    $var=True;
-    while ($i < $num) {
-      $obj = $db->fetch_object($result);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td nowrap>$obj->dm</td>\n";
-      $total = $total + $obj->amount;
+    $result = $db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $i = 0;
+        $total = 0;
+        print "<table class=\"noborder\" width=\"100%\">";
+        print "<tr class=\"liste_titre\">";
+        print "<td nowrap width=\"60%\">$date</td>";
+        print "<td align=\"right\">".$langs->trans("Amount")."</td>";
+        print "<td>&nbsp;</td>\n";
+        print "</tr>\n";
+        $var=True;
+        while ($i < $num) {
+            $obj = $db->fetch_object($result);
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            print "<td nowrap>$obj->dm</td>\n";
+            $total = $total + $obj->amount;
 
-      print "<td nowrap align=\"right\">".price($obj->amount)."</td><td nowrap align=\"right\">".$total."</td>\n";
-      print "</tr>\n";
-            
-      $i++;
+            print "<td nowrap align=\"right\">".price($obj->amount)."</td><td nowrap align=\"right\">".$total."</td>\n";
+            print "</tr>\n";
+
+            $i++;
+        }
+        print "<tr class=\"liste_total\"><td align=\"right\">".$langs->trans("Total")." :</td><td nowrap align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>";
+
+        print "</table>";
+        $db->free($result);
+        } else {
+            dolibar_print_error($db);
+        }
     }
-    print "<tr class=\"liste_total\"><td align=\"right\">".$langs->trans("TotalHT")." :</td><td nowrap align=\"right\"><b>".price($total)."</b></td><td>euros</td></tr>";
-    
-    print "</table>";
-    $db->free($result);
-  } else {
-    dolibar_print_error($db);
-  }
-}
 
 
 /*
