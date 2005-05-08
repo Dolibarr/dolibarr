@@ -140,10 +140,9 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
   print "<table class=\"noborder\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
   print "<td width=\"30%\">".$langs->trans("Year")." $y</td>";
-  print "<td align=\"right\">".$langs->trans("VATToCollect")."</td>";
   print "<td align=\"right\">".$langs->trans("VATToPay")."</td>";
-  print "<td>&nbsp;</td>\n";
-  print "<td>&nbsp;</td>\n";
+  print "<td align=\"right\">".$langs->trans("VATToCollect")."</td>";
+  print "<td align=\"right\">".$langs->trans("VATToCollect")."</td>";
   print "</tr>\n";
   $var=True;
   $total = 0;  $subtotal = 0;
@@ -164,17 +163,16 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
     $subtotal = $subtotal + $diff;
     
     print "<td nowrap align=\"right\">".price($diff)."</td>\n";
-    print "<td>&nbsp;</td>\n";
     print "</tr>\n";
     
     $i++;
     if ($i > 2) {
-      print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("SubTotal").':</td><td nowrap align="right">'.price($subtotal).'</td><td nowrap align="right"><small>'.price($subtotal * 0.8).'</small></td>';
+      print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("SubTotal").':</td><td nowrap align="right">'.price($subtotal).'</td></tr>';
       $i = 0;
       $subtotal = 0;
     }
   }
-  print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td><td nowrap align="right"><b>'.price($total).'</b></td>';
+  print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td nowrap align="right"><b>'.price($total).'</b></td>';
   print "<td>&nbsp;</td>\n";
   print "</table>";
 
