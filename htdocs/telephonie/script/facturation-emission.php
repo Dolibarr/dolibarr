@@ -37,15 +37,14 @@ if (strlen($limit) == 0 && strlen($optcontrat) == 0)
   exit;
 }
 
-
-require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie.contrat.class.php");
 require_once (DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once (DOL_DOCUMENT_ROOT."/paiement.class.php");
-require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie.contrat.class.php");
+
 
 $error = 0;
 
@@ -84,7 +83,7 @@ if ( $resql )
 
   $batch_id = $row[0];
 
-  dolibarr_syslog("Traitement bu batch ".$batch_id);
+  dolibarr_syslog("Traitement du batch ".$batch_id);
   $db->free($resql);
 }
 else
@@ -388,11 +387,58 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 					  0);
 		  
 		}		      		  
-	    }		
+	    }
 	   	  	  
-	} /* Fin de la boucle */
+	} /* Fin de la boucle des lignes */
     }
-  
+
+  /*********************************/
+  /*                               */	  
+  /* Ajout des services            */
+  /*                               */
+  /*********************************/
+
+  if (!$error)
+    {
+
+      $sql = "SELECT s.libelle_facture, sc.montant";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_service as sc";
+      $sql .= " , ".MAIN_DB_PREFIX."telephonie_service as s";
+            
+      $sql .= " WHERE sc.fk_contrat = ".$contrat_id;
+      $sql .= " AND s.rowid = sc.fk_service";  
+	
+
+      $resql = $db->query($sql) ;
+
+      if ( $resql )
+	{
+	  $num = $db->num_rows($resql);      
+	  $is = 0;
+	  
+	  while ($is < $num)
+	    {
+	      $row = $db->fetch_row($resql);
+
+	      $result = $fac->addline($facid,
+				      $row[0],
+				      $row[1],
+				      1,
+				      '19.6',
+				      0,
+				      0);
+
+	      $is++;
+	    }            
+	  $db->free();
+	}
+      else
+	{
+	  $error = 2;
+	  dolibarr_syslog("Erreur $error");
+	}
+    }
+     
   /*********************************/
   /*                               */	  
   /* Validation de la facture      */
