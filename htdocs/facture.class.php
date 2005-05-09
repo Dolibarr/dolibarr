@@ -839,8 +839,9 @@ class Facture
     * \param     remise_percent  pourcentage de remise de la ligne
     * \param     datestart       date de debut de validité du service
     * \param     dateend         date de fin de validité du service
+    * \param     ventil          code de ventilation comptable
     */
-    function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='')
+    function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
     {
         if ($this->brouillon)
         {
@@ -853,15 +854,15 @@ class Facture
 
             if ($resql)
             {
-                $row = $this->db->fetch_row($resql);
-                $rangmax = $row[0];
+	      $row = $this->db->fetch_row($resql);
+	      $rangmax = $row[0];
             }
 
             /* -- */
 
             if (strlen(trim($qty))==0)
             {
-                $qty=1;
+	      $qty=1;
             }
             $remise = 0;
             $_price = $pu;
@@ -891,7 +892,7 @@ class Facture
             $subprice  = ereg_replace(",",".",$subprice);
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet ";
-            $sql .= " (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, rang)";
+            $sql .= " (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang)";
             $sql .= " VALUES ($facid, '".addslashes($desc)."','$_price','$qty','$txtva',$fk_product,'$remise_percent','$subprice','$remise', ";
 
             if ($datestart) { $sql.= "'$datestart', "; }
@@ -899,7 +900,8 @@ class Facture
             if ($dateend) { $sql.= "'$dateend' "; }
             else { $sql.=" null "; }
 
-            $sql.=",".($rangmax + 1).")";
+	    $sql .= ",".$ventil;
+            $sql .=",".($rangmax + 1).")";
 
             if ( $this->db->query( $sql) )
             {
