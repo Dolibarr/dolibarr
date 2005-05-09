@@ -745,9 +745,9 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 	      if ( $mailfile->sendfile() )
 		{
 		
-		  for ($kj = 0 ; $kj < sizeof($ligne->contact_facture_id) ; $kj++)
+		  for ($kj = 0 ; $kj < sizeof($contrat->contact_facture_id) ; $kj++)
 		  {
-		    $sendtoid = $ligne->contact_facture_id[$kj];
+		    $sendtoid = $contrat->contact_facture_id[$kj];
 		      
 		    $sendtox = $emails[$kj];
 			  
