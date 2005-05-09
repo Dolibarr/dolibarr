@@ -418,27 +418,31 @@ class BonPrelevement
        * Renvoie toutes les factures présente
        * dans un bon de prélèvement
        */
-      
-      $sql = "SELECT fk_facture";
-      $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture";
-      $sql .= " WHERE fk_prelevement = ".$this->id;
 
-      $result=$this->db->query($sql);
-      if ($result)
+      $sql = "SELECT fk_facture";
+      $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+      $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+      $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";      
+      $sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
+      $sql .= " AND pl.fk_prelevement_bons = p.rowid";
+      $sql .= " AND p.rowid=".$this->id;
+      
+      $resql=$this->db->query($sql);
+      if ($resql)
 	{
-	  $num = $this->db->num_rows();
+	  $num = $this->db->num_rows($resql);
 
 	  if ($num)
 	    {
 	      $i = 0;
 	      while ($i < $num)
 		{
-		  $row = $this->db->fetch_row();
+		  $row = $this->db->fetch_row($resql);
 		  $arr[$i] = $row[0];
 		  $i++;
 		}
 	    }
-	  $this->db->free();
+	  $this->db->free($resql);
 	}
       else
 	{
