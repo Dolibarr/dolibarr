@@ -24,6 +24,14 @@
  *
  */
 
+/**
+   \file       htdocs/telephonie/script/facturation-emission.php
+   \ingroup    telephonie
+   \brief      Emission des factures
+   \version    $Revision$
+*/
+
+
 require ("../../master.inc.php");
 
 $opt = getopt("l:c:");
