@@ -385,15 +385,24 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	      
 	      if (!$error)
 		{
-		  
+		  $ventil = 0 ;
+		  if (defined("TELEPHONIE_COMPTE_VENTILATION"))
+		    {
+
+		      if (is_numeric(TELEPHONIE_COMPTE_VENTILATION))
+			{			  
+			  $ventil = TELEPHONIE_COMPTE_VENTILATION;
+			}
+		    }
+
+
 		  $result = $fac->addline($facid,
 					  $libelle,
 					  $factel->cout_vente_remise,
 					  1,
 					  '19.6',
 					  0,
-					  0);
-		  
+					  0,'','',$ventil);		  
 		}		      		  
 	    }
 	   	  	  
@@ -434,6 +443,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 				      1,
 				      '19.6',
 				      0,
+				      0,
 				      0);
 
 	      $is++;
@@ -469,34 +479,6 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  $valid_ok = 0;
 	  $error = 5;
 	}      
-    }
-
-  /**************************************/
-  /*                                    */
-  /* Ventilation des lignes de factures */
-  /* TELEPHONIE_COMPTE_VENTILATION      */
-  /*                                    */
-  /**************************************/
-
-  if (!$error && !$cancel_facture)
-    {
-      if (defined("TELEPHONIE_COMPTE_VENTILATION"))
-	{
-
-	  if (is_numeric(TELEPHONIE_COMPTE_VENTILATION))
-	    {
-
-	      $sql = " UPDATE ".MAIN_DB_PREFIX."facturedet";
-	      $sql .= " SET fk_code_ventilation = ".TELEPHONIE_COMPTE_VENTILATION;
-	      $sql .= " WHERE fk_facture = ".$facid;
-	      
-	      if (! $db->query($sql) )
-		{
-		  dolibarr_syslog("Erreur de ventilation");
-		  $error++;
-		}
-	    }
-	}
     }
 
   /**************************************/
