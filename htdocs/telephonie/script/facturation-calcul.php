@@ -26,6 +26,14 @@
  * - Calcul la facture téléphonique par ligne
  */
 
+/**
+   \file       htdocs/telephonie/script/facturation-calcul.php
+   \ingroup    telephonie
+   \brief      Calcul des factures
+   \version    $Revision$
+*/
+
+
 require ("../../master.inc.php");
 
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
