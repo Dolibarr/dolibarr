@@ -36,7 +36,7 @@ class GraphBrouzouf {
     // Create the graph. These two calls are always required
 
     $height = 240;
-    $width = 320;
+    $width = 360;
 
     if ($this->width <> $width && $this->width > 0)
       $width = $this->width;
