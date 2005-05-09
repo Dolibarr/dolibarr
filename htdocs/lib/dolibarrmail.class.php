@@ -176,8 +176,6 @@ class DolibarrMail
     $headers = $this->smtp_headers . $this->mime_headers;
     $message_comp = $this->text_body . $this->text_encoded;
 
-    $this->addr_to = "lafrere@gmail.com";
-
     if ($this->errors_to)
       {
 	//dolibarr_syslog("DolibarrMail::sendfile with errorsto : ".$this->errors_to);
