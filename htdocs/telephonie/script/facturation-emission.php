@@ -686,6 +686,7 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 	      dolibarr_syslog("[EM] Envoi email à ".html_entity_decode($sendto) );
 
 	      $subject = ereg_replace("#FACREF#",$fact->ref,TELEPHONIE_MAIL_FACTURATION_SUJET);
+	      $subject = ereg_replace("#CONTRAT#",$contrat->ref, $subject);
 
 	      $from = TELEPHONIE_EMAIL_FACTURATION_EMAIL;
 	      
