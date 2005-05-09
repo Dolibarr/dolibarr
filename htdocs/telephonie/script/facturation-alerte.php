@@ -108,8 +108,7 @@ $fn->set_align('vcenter');
 
 $page->set_column(0,0,36); // A
 $page->set_column(1,1,16); // A
-$page->set_column(1,1,20); // A
-
+$page->set_column(2,2,20); // A
 
 $page->write(1, 0,  "Client", $fns);
 $page->write(1, 1,  "Contrat", $fnc);
@@ -188,6 +187,131 @@ if (!$error)
       dolibarr_syslog("Erreur $error ".$db->error());
     }
 }
+/*
+ *
+ *
+ */
+
+if (!$error)
+{
+  $sql = "SELECT distinct(s.idp), s.nom";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
+  $sql .= " ,    ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+  $sql .= " ,    ".MAIN_DB_PREFIX."telephonie_contrat as c";
+  $sql .= " ,    ".MAIN_DB_PREFIX."societe as s";
+
+  $sql .= " WHERE f.fk_facture IS NOT NULL";
+  $sql .= " AND f.fk_batch = ".$batch_id;
+  $sql .= " AND f.isfacturable = 'oui'"; 
+  $sql .= " AND f.fk_ligne = l.rowid ";
+  $sql .= " AND l.fk_contrat = c.rowid";  
+  $sql .= " AND c.fk_client_comm = s.idp";
+  $sql .= " AND f.fourn_montant > f.cout_vente";
+  $sql .= " GROUP BY s.nom ASC";
+
+  $resql = $db->query($sql) ;
+
+  if ( $resql )
+    {
+      $num = $db->num_rows($resql);      
+      $i = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($resql);
+
+	  $page = &$workbook->addworksheet($row[1]);
+  
+	  $fnb =& $workbook->addformat();
+	  $fnb->set_align('vcenter');
+	  $fnb->set_align('right');
+	  
+	  $fns =& $workbook->addformat();
+	  $fns->set_align('vcenter');
+	  $fns->set_align('left');
+	  
+	  $fnc =& $workbook->addformat();
+	  $fnc->set_align('vcenter');
+	  $fnc->set_align('center');
+	  
+	  $fn =& $workbook->addformat();
+	  $fn->set_align('vcenter');
+	  
+	  $page->set_column(0,0,10); // A
+	  $page->set_column(1,1,16); // A
+	  $page->set_column(2,2,22); // A
+	  
+	  $clients = array();
+	  
+	  $page->write(1, 0,  "Date", $fnc);
+	  $page->write(1, 1,  "Contrat", $fnc);
+	  $page->write(1, 2,  "Ligne", $fnc);
+	  $page->write(1, 3,  "Perte", $fn);
+	  $page->write(1, 4,  "Fournisseur", $fn);
+	  $page->write(1, 5,  "iBreizh", $fn);
+
+
+	  $sql = "SELECT f.fourn_montant, f.cout_vente, f.date";
+	  $sql .= " , c.ref, s.nom, l.ligne as numero";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
+	  $sql .= " ,    ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+	  $sql .= " ,    ".MAIN_DB_PREFIX."telephonie_contrat as c";
+	  $sql .= " ,    ".MAIN_DB_PREFIX."societe as s";
+	  
+	  $sql .= " WHERE f.fk_facture IS NOT NULL";
+	  $sql .= " AND s.idp = ".$row[0];
+	  $sql .= " AND f.isfacturable = 'oui'"; 
+	  $sql .= " AND f.fk_ligne = l.rowid ";
+	  $sql .= " AND l.fk_contrat = c.rowid";  
+	  $sql .= " AND c.fk_client_comm = s.idp";
+	  $sql .= " ORDER BY f.date DESC";
+	  
+	  $re2sql = $db->query($sql) ;
+	  
+	  if ( $re2sql )
+	    {
+	      $nu2m = $db->num_rows($re2sql);      
+	      $j = 0;
+	      $k=2;
+	      while ($j < $nu2m)
+		{
+		  $obj = $db->fetch_object($re2sql);
+		  
+		  $page->write_string($k, 0,  $obj->date, $fns);
+		  $page->write_string($k, 1,  $obj->ref, $fnc);
+		  $page->write_string($k, 2,  $obj->numero, $fnc);
+		  
+		  $perte = ($obj->cout_vente - $obj->fourn_montant );
+		  $total += $perte;
+		  
+		  $ki = $k+1;
+
+		  $page->write($k, 3,  "=E$ki-F$ki", $fn);
+		  $page->write($k, 4,  $obj->fourn_montant, $fn);
+		  $page->write($k, 5,  $obj->cout_vente, $fn);
+		  
+		  $k++;
+		  $j++;
+		}
+	    }
+
+	  
+	  $i++;
+
+	  print $obj->nom . " " . $perte ."\n";
+
+	}            
+
+    }
+  else
+    {
+      $error = 2;
+      dolibarr_syslog("Erreur $error ".$db->error());
+    }
+}
+
+
+
 
 /*
  *
