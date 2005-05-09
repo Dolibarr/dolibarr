@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/**   
+      \file   	    htdocs/compta/resultat/pre.inc.php
+      \ingroup      compta
+      \brief  	    Fichier gestionnaire du menu compta/stats
+*/
+
 require("../../main.inc.php");
 
 function llxHeader($head = "") {
@@ -34,9 +41,7 @@ function llxHeader($head = "") {
   $menu = new Menu();
 
 	$menu->add(DOL_URL_ROOT."/compta/resultat/","Résultat / Exercice");
-    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php","Détail client/fourn.");
-    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php","Compte de résultat");
-    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php","Bilan");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php",$langs->trans("ByCompanies"));
 	
 	$menu->add(DOL_URL_ROOT."/compta/stats/index.php","Chiffre d'affaire");
 	
