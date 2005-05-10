@@ -87,7 +87,7 @@ print "\nGraph ca moyen\n";
 $file = $img_root . "ca/gain_moyen_par_client.png";
 $graphgain = new GraphCaMoyen ($db, $file);
 
-$graphgain->show_console = 1 ;
+$graphgain->show_console = 0 ;
 $graphgain->GraphDraw();
 
 /*************************************************************************/
