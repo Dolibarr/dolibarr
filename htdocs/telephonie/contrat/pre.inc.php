@@ -50,8 +50,6 @@ function llxHeader($head = "", $title="") {
 
   if ($user->rights->telephonie->ligne->creer)
     $menu->add_submenu(DOL_URL_ROOT."/telephonie/contrat/fiche.php?action=create", "Nouveau contrat");
-
-
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
