@@ -26,9 +26,16 @@
 require ("../../master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/ProcessGraphClients.class.php");
 
-$childrenTotal = 10;
+$childrenTotal = 5;
 $childrenNow = 0;
 $clientPerChild = 0;
+
+$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_client_stats";
+
+if ($db->query($sql))
+{
+
+}
 
 $sql = "SELECT max(s.idp)";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";

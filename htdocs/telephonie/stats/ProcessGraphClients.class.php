@@ -79,18 +79,20 @@ class ProcessGraphClients
     $sql .= " AND s.idp >= ".$min;
     $sql .= " AND s.idp < ".$max;
     $sql .= " GROUP BY s.idp";
+
+    $resql = $this->db->query($sql);
     
-    if ($this->db->query($sql))
+    if ($resql)
       {
 	$clients = array();
 	
-	$num = $this->db->num_rows();
+	$num = $this->db->num_rows($resql);
 	print "$this->ident : $num client a traiter ($min - $max)\n";
 	$i = 0;
 	
 	while ($i < $num)
 	  {
-	    $obj = $this->db->fetch_object();	
+	    $obj = $this->db->fetch_object($resql);
 	    
 	    $clients[$i] = $obj->socidp;
 	    
@@ -102,8 +104,6 @@ class ProcessGraphClients
       {
 	foreach ($clients as $client)
 	  {
-	    //print ".";	
-	    
 	    $img_root = DOL_DATA_ROOT."/graph/".substr($client,-1)."/telephonie/client/";
 
 	    $file = $img_root . $client."/graphca.png";
@@ -117,6 +117,8 @@ class ProcessGraphClients
 	    $graphgain->client = $client;
 	    $graphgain->show_console = 0 ;
 	    $graphgain->GraphDraw();
+
+	    $marge = 0;
 
 	    if ($graphgain->total_cout > 0)
 	      {
@@ -133,10 +135,10 @@ class ProcessGraphClients
 
 	    $file = $img_root . $client."/graphappelsdureemoyenne.png";
 	    
-	    $graphgain = new GraphAppelsDureeMoyenne ($this->db, $file);
-	    $graphgain->client = $client;
-	    $graphgain->show_console = 0 ;
-	    $graphgain->Graph();
+	    $graphduree = new GraphAppelsDureeMoyenne ($this->db, $file);
+	    $graphduree->client = $client;
+	    $graphduree->show_console = 0 ;
+	    $graphduree->Graph();
 	    
 	    $file = $img_root . $client."/nb-comm-mensuel.png";
 	    

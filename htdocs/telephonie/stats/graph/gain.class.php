@@ -43,7 +43,7 @@ class GraphGain extends GraphBrouzouf{
   {
     $num = 0;
 
-    $sql = "SELECT tf.date, sum(tf.gain)";
+    $sql = "SELECT tf.date, sum(tf.gain), sum(tf.cout_vente), sum(tf.fourn_montant)";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
     
     if ($this->client == 0 && $this->contrat == 0 && $this->ligne == 0)
@@ -76,30 +76,33 @@ class GraphGain extends GraphBrouzouf{
 	$sql .= " GROUP BY tf.date ASC";
       }
     
-    $result = $this->db->query($sql);
+    $resql = $this->db->query($sql);
 
-    if ($result)
+    if ($resql)
       {
-	$num = $this->db->num_rows();
+	$num = $this->db->num_rows($resql);
 	$i = 0;
 	$labels = array();
 
 	$this->total_gain = 0;
+	$this->total_ca = 0;
 
 	while ($i < $num)
 	  {
-	    $row = $this->db->fetch_row();
+	    $row = $this->db->fetch_row($resql);
 	    
 	    $g[$i] = $row[1];
 
 	    $labels[$i] = substr($row[0],5,2)."/".substr($row[0],2,2);
 	    
 	    $this->total_gain += $row[1];
+	    $this->total_ca += $row[2];
+	    $this->total_cout += $row[3];
 
 	    $i++;
 	  }
 	
-	$this->db->free();
+	$this->db->free($resql);
       }
     else 
       {
@@ -123,14 +126,16 @@ class GraphGain extends GraphBrouzouf{
 	$sql .= " AND s.fk_client_comm = ".$this->client;
 	$sql .= " GROUP BY tf.fk_facture";
 	
-	if ($this->db->query($sql))
+	$resql = $this->db->query($sql);
+
+	if ($resql)
 	  {
-	    $numr = $this->db->num_rows();
+	    $numr = $this->db->num_rows($resql);
 	    $i = 0;
 	    
 	    while ($i < $numr)
 	      {
-		$row = $this->db->fetch_row($i);	
+		$row = $this->db->fetch_row($resql);
 		if ( $row[0] > 0)
 		  {
 		    $this->total_gain = ($this->total_gain - $row[0]);
