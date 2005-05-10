@@ -70,18 +70,12 @@ if ($_GET["id"])
 	  dolibarr_fiche_head($head, $hselected, 'Client : '.$soc->nom);
 
 	  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-	  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
+	  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td>';
+	  print '<td>'.$soc->code_client.'</td></tr>';
 	  
-	  print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
+	  print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"2\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
 	  
-	  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
-	  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
-	  	  
-	  print '<tr><td><a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit() ."</a>&nbsp;";
-	  print $langs->trans('RIB').'</td><td colspan="3">';
-	  print $soc->display_rib();
-	  print '</td></tr>';
-	  
+
 	  print '</table><br />';
 
 
@@ -122,7 +116,7 @@ if ($_GET["id"])
 
 
 	  print '<tr><td width="50%" align="center">Appels</td>';
-	  print '<td width="50%" align="center">-</td></tr>';
+	  print '<td width="50%" align="center">Communications</td></tr>';
 
 	  print '<tr><td width="50%" valign="top" align="center">';
 
