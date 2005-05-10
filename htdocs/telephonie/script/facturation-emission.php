@@ -424,7 +424,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
             
       $sql .= " WHERE sc.fk_contrat = ".$contrat_id;
       $sql .= " AND s.rowid = sc.fk_service";  
-	
+      $sql .= " AND sc.montant > 0";
 
       $resql = $db->query($sql) ;
 
