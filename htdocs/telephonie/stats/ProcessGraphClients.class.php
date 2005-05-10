@@ -130,7 +130,11 @@ class ProcessGraphClients
 	    $sql .= ",'".ereg_replace(",",".",$graphgain->total_ca)."'";
 	    $sql .= ",'".ereg_replace(",",".",$graphgain->total_cout)."'";
 	    $sql .= ",'".ereg_replace(",",".",$marge)."')";
-	    $this->db->query($sql);
+
+	    if (($graphgain->total_ca * $graphgain->total_gain * $graphgain->total_cout) > 0)
+	      {
+		$this->db->query($sql);
+	      }
 
 
 	    $file = $img_root . $client."/graphappelsdureemoyenne.png";
