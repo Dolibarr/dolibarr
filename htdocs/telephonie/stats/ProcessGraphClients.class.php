@@ -131,7 +131,7 @@ class ProcessGraphClients
 	    $sql .= ",'".ereg_replace(",",".",$graphgain->total_cout)."'";
 	    $sql .= ",'".ereg_replace(",",".",$marge)."')";
 
-	    if (($graphgain->total_ca * $graphgain->total_gain * $graphgain->total_cout) > 0)
+	    if (($graphgain->total_ca * $graphgain->total_gain * $graphgain->total_cout) <> 0)
 	      {
 		$this->db->query($sql);
 	      }
