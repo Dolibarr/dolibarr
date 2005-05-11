@@ -40,6 +40,8 @@ create table llx_telephonie_contrat (
   isfacturable       enum('oui','non') DEFAULT 'oui',
   mode_paiement      enum('vir','pre') DEFAULT 'pre',
 
+  grille_tarif       integer DEFAULT 1,
+
   note               text,
 
   UNIQUE (ref)
