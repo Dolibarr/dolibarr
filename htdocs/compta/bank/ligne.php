@@ -130,7 +130,7 @@ $result = $db->query($sql);
 if ($result)
 {
   $var=True;  
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   $options = "<option value=\"0\" selected></option>";
   while ($i < $num)
@@ -139,8 +139,9 @@ if ($result)
       $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n";
       $i++;
     }
-  $db->free();
+  $db->free($result);
 }
+
 
 
 print_titre("Edition de l'écriture bancaire");
@@ -148,7 +149,6 @@ print_titre("Edition de l'écriture bancaire");
 
 if ($_GET["action"] == 'delete_categ')
 {
-  $html = new Form($db);
   $html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"],"Supprimer dans la catégorie","Etes-vous sûr de vouloir supprimer le classement dans la catégorie ?","confirm_delete_categ");
 }
 
@@ -156,14 +156,15 @@ $var=False;
 
 print '<table class="border" width="100%">';
 
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, fk_account";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=$rowid";
-$sql .= " ORDER BY dateo ASC";
+$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro,";
+$sql.= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, fk_account";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=$rowid";
+$sql.= " ORDER BY dateo ASC";
 $result = $db->query($sql);
 if ($result)
 {
   $i = 0; $total = 0;
-  if ($db->num_rows())
+  if ($db->num_rows($result))
     {
       $objp = $db->fetch_object($result);
       $total = $total + $objp->amount;
@@ -199,7 +200,7 @@ if ($result)
 
       // Description
       print "<tr><td>".$langs->trans("Label")."</td><td colspan=\"3\">";
-      print '<input name="label" value="'.$objp->label.'">';
+      print '<input name="label" value="'.$objp->label.'" size="50">';
       print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
       print "</tr>";
 
@@ -217,13 +218,7 @@ if ($result)
       print "<tr><td>".$langs->trans("Type")."</td><td colspan=\"3\">";
       print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
       print '<input type="hidden" name="action" value="type">';
-      print '<select name="value">';
-      print '<option value="CHQ"'.($objp->fk_type == 'CHQ'?' selected':'').'>CHQ</option>';
-      print '<option value="PRE"'.($objp->fk_type == 'PRE'?' selected':'').'>PRE</option>';
-      print '<option value="VIR"'.($objp->fk_type == 'VIR'?' selected':'').'>VIR</option>';
-      print '<option value="CB"'.($objp->fk_type == 'CB'?' selected':'').'>CB</option>';
-      print '<option value="DEP"'.($objp->fk_type == 'DEP'?' selected':'').'>Dépôt</option>';
-      print "</select>";
+      print $html->select_types_paiements($objp->fk_type,"value");
 	  print '<input type="text" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
       print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\">";
       print "</form>";
@@ -246,7 +241,7 @@ if ($result)
 
       $i++;
     }
-  $db->free();
+  $db->free($result);
 }
 print "</table>";
 
@@ -260,7 +255,7 @@ print '<table class="noborder" width="100%">';
 print "<form method=\"post\" action=\"ligne.php?rowid=$rowid&amp;account=$account\">";
 print "<input type=\"hidden\" name=\"action\" value=\"class\">";
 print "<tr class=\"liste_titre\"><td>".$langs->trans("Categories")."</td><td colspan=\"2\">";
-print "<select name=\"cat1\">$options";
+print "<select class=\"flat\" name=\"cat1\">$options";
 print "</select>&nbsp;";
 print '<input type="submit" value="'.$langs->trans("Add").'"></td>';
 print "</tr>";
@@ -273,7 +268,7 @@ $result = $db->query($sql);
 if ($result)
 {
   $var=True;  
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0; $total = 0;
   while ($i < $num)
     {
@@ -289,12 +284,12 @@ if ($result)
 
       $i++;
     }
-  $db->free();
+  $db->free($result);
 }
 print "</table>";
 
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
