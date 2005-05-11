@@ -44,9 +44,8 @@ if ($_GET["bid"] == 0)
 {
   /*
    *    Liste mouvements par catégories d'écritures financières
-   *    \todo Le terme "budget" du rapport n'est pas approprié. Il s'agit d'un rapport sur l'existant et non d'un prévisionnel.
    */
-  print_titre("Budgets");
+  print_titre("Ecritures bancaires par catégories");
   print '<br>';
   
   print '<table class="noborder" width="100%">';
@@ -61,7 +60,7 @@ if ($_GET["bid"] == 0)
   $result = $db->query($sql);
   if ($result)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($result);
       $i = 0; $total = 0;
       
       $var=true;
@@ -93,7 +92,7 @@ if ($_GET["bid"] == 0)
 else
 {
   /*
-   *  Vue
+   *  Rapport mouvements pour une catégorie donnée
    */
   $sql = "SELECT label FROM ".MAIN_DB_PREFIX."bank_categ WHERE rowid=".$_GET["bid"];
   if ( $db->query($sql) )
@@ -105,16 +104,21 @@ else
       $db->free();
     }
   
-  print_titre("Budget : $budget_name");
-
+  print_titre("Ecriture bancaire pour la catégorie: $budget_name");
+  print '<br>';
+  
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print '<td align="right">Date</td><td width="60%">'.$langs->trans("Description").'</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td>';
+  print '<td align="center">'.$langs->trans("Date").'</td>';
+  print '<td align="left">'.$langs->trans("Bank").'</td>';
+  print '<td width="60%">'.$langs->trans("Description").'</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td>';
   print "</tr>\n";
 
-  $sql = "SELECT d.amount, d.label, ".$db->pdate("d.dateo")." as do, d.rowid";
-  $sql .= " FROM ".MAIN_DB_PREFIX."bank_class as l, ".MAIN_DB_PREFIX."bank as d";
-  $sql .= " WHERE d.rowid=l.lineid AND l.fk_categ=".$_GET["bid"]." ORDER by d.dateo DESC";
+  $sql = "SELECT b.amount, b.label, ".$db->pdate("b.dateo")." as do, b.rowid, ba.label as labelcompte, ba.rowid as bankid";
+  $sql.= " FROM ".MAIN_DB_PREFIX."bank_class as l, ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
+  $sql.= " WHERE b.rowid=l.lineid AND l.fk_categ=".$_GET["bid"];
+  $sql.= " AND b.fk_account = ba.rowid";
+  $sql.= " ORDER BY b.dateo DESC";
   
   $result = $db->query($sql);
   if ($result)
@@ -128,16 +132,17 @@ else
 	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td align=\"right\">".strftime("%d %B %Y",$objp->do)."</td>\n";
+	  print "<td align=\"center\">".dolibarr_print_date($objp->do)."</td>\n";
 	  
-	  print "<td><a href=\"ligne.php?rowid=$objp->rowid\">$objp->label</a></td>";
+	  print "<td><a href=\"account.php?account=$objp->bankid\">$objp->labelcompte</a></td>";
+	  print "<td><a href=\"ligne.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowPayment"),"payment").' '.$objp->label.'</a></td>';
 	  print "<td align=\"right\">".price(0 - $objp->amount)."</td><td>&nbsp;</td>";
 	  print "</tr>";
 	  $i++;
 	  $total = $total + (0 - $objp->amount);
 	}
       $db->free();
-      print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total")."</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>".$conf->monnaie."</td></tr>";
+      print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>".$conf->monnaie."</td></tr>";
     }
   else
     {
