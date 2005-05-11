@@ -68,6 +68,40 @@ class TelephonieContrat {
 	$sql .= " WHERE rowid=".$this->id;
 	$this->db->query($sql);
 
+	/*
+	 * On applique la grille de tarif du distributeur
+	 *
+	 */
+	$grille_tarif = 0;
+
+	$sql = "SELECT d.grille_tarif ";
+	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
+	$sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
+	$sql .= " WHERE dc.fk_distributeur = d.rowid";
+	$sql .= " AND dc.fk_user = ".$this->commercial_sign;
+		
+	$resql = $this->db->query($sql);
+	
+	if ($resql)
+	  {
+	    if ($this->db->num_rows($resql))
+	      {
+		$row = $this->db->fetch_row($resql);
+		
+		$grille_tarif = $row[0];
+	      }
+	    $this->db->free($resql);
+	  }
+
+
+	if ($grille_tarif > 0)
+	  {
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_contrat";
+	    $sql .= " SET grille_tarif =".$grille_tarif;
+	    $sql .= " WHERE rowid=".$this->id;
+	    $this->db->query($sql);	    
+	  }
+
 	return 0;
       }   
     else
@@ -152,6 +186,7 @@ class TelephonieContrat {
       $sql .= ", c.fk_commercial_sign, c.fk_commercial_suiv";
       $sql .= ", c.isfacturable, c.mode_paiement";
       $sql .= ", c.fk_user_creat, c.date_creat";
+      $sql .= ", c.grille_tarif";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as c";
       $sql .= " WHERE c.rowid = ".$id;
 
@@ -179,6 +214,8 @@ class TelephonieContrat {
 	      $this->code_analytique    = $obj->code_analytique;
 
 	      $this->user_creat         = $obj->fk_user_creat;
+
+	      $this->grille_tarif_id    = $obj->grille_tarif;
 
 	      if ($obj->isfacturable == 'oui')
 		{
@@ -209,6 +246,24 @@ class TelephonieContrat {
 	  $result = -1;
 	  dolibarr_syslog("TelephonieContrat::Fecth Erreur -1");
 	}
+
+      $sql = "SELECT libelle";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille";
+      $sql .= " WHERE rowid = ".$this->grille_tarif_id;
+
+      $resql = $this->db->query($sql);
+
+      if ($resql)
+	{
+	  if ($this->db->num_rows($resql))
+	    {
+	      $obj = $this->db->fetch_object($resql);
+	      
+	      $this->grille_tarif_nom = $obj->libelle;
+	    }
+	  $this->db->free($resql);
+	}
+
 
       return $result;
   }
