@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,26 +19,9 @@
  * $Source$
  *
  */
-
-/**	        \file       htdocs/telephonie/tarifs/index.php
-	        \ingroup    telephonie
-	        \brief      Page accueil tarif telephonie
-	        \version    $Revision$
-*/
-
 require("./pre.inc.php");
 
-
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
-
 llxHeader();
-
-if ($_GET["type"] == '')
-{
- $_GET["type"] = 'achat'; 
-}
 
 /*
  * Sécurité accés client
@@ -49,14 +32,7 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($sortorder == "")
-{
-  $sortorder="ASC";
-}
-if ($sortfield == "")
-{
-  $sortfield="libelle";
-}
+
 
 /*
  * Recherche
@@ -78,11 +54,14 @@ if ($mode == 'search') {
   }
 }
 
-if ($page == -1) { $page = 0 ; }
+$page = $_GET["page"];
+$sortorder = $_GET["sortorder"];
+$sortfield = $_GET["sortfield"];
+
+if ($sortorder == "") $sortorder="ASC";
+if ($sortfield == "") $sortfield="t.libelle ASC, d.rowid ";
 
 $offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 /*
  * Mode Liste
@@ -91,17 +70,33 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT distinct(t.libelle) as libelle,  temporel ,t.fixe";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_vente as t";
-$sql .= " WHERE 1=1";
+$sql = "SELECT d.libelle as tarif_desc, d.type_tarif";
+$sql .= " , t.libelle as tarif, t.rowid as tarif_id";
+$sql .= " , m.temporel, m.fixe";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
+$sql .= "," . MAIN_DB_PREFIX."telephonie_tarif_montant as m";
+$sql .= "," . MAIN_DB_PREFIX."telephonie_tarif as t";
+
+$sqlc .= " WHERE d.rowid = m.fk_tarif_desc";
+$sqlc .= " AND m.fk_tarif = t.rowid";
 
 if ($_GET["search_libelle"])
 {
   $sqlc .=" AND t.libelle LIKE '%".$_GET["search_libelle"]."%'";
 }
 
-$sql = $sql . $sqlc . " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+if ($_GET["search_prefix"])
+{
+  $sqlc .=" AND tf.prefix LIKE '%".$_GET["search_prefix"]."%'";
+}
 
+if ($_GET["type"])
+{
+  $sqlc .= " AND d.type_tarif = '".$_GET["type"]."'";
+}
+
+
+$sql = $sql . $sqlc . " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 
 $result = $db->query($sql);
@@ -110,22 +105,27 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Tarifs à la vente", $page, "index.php", "&type=".$_GET["type"], $sortfield, $sortorder, '', $num);
+  print_barre_liste("Tarifs", $page, "index.php", "&type=".$_GET["type"], $sortfield, $sortorder, '', $num);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
 
-  print_liste_field_titre("Destination","index.php","libelle", "&type=".$_GET["type"]);
+  print_liste_field_titre("Tarif","index.php","d.libelle");
 
-  print_liste_field_titre("Coût / min","index.php","temporel", "&type=".$_GET["type"]);
+  print_liste_field_titre("Destination","index.php","t.libelle", "&type=".$_GET["type"]);
 
-  print "<td>Coût fixe</td>";
+  print_liste_field_titre("Cout / min","index.php","temporel", "&type=".$_GET["type"]);
+  print "</td>";
+  print "<td>Cout fixe</td>";
+  print "<td>Type</td>";
   print "</tr>\n";
 
   print '<tr class="liste_titre">';
   print '<form action="index.php" method="GET">';
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">';
+  print '<td>&nbsp;</td>';
   print '<td><input type="text" name="search_libelle" size="20" value="'.$_GET["search_libelle"].'"></td>';
+  print '<td>&nbsp;</td>';
   print '<td>&nbsp;</td>';
   print '<td><input type="submit"></td>';
   print '</form>';
@@ -140,9 +140,12 @@ if ($result)
 
       print "<tr $bc[$var]>";
 
-      print "<td>".$obj->libelle."</td>\n";
+      print "<td>".$obj->tarif_desc."</td>\n";
+      print '<td><a href="tarif.php?id='.$obj->tarif_id.'">';
+      print $obj->tarif."</a></td>\n";
       print "<td>".sprintf("%01.4f",$obj->temporel)."</td>\n";
       print "<td>".sprintf("%01.4f",$obj->fixe)."</td>\n";
+      print "<td>".$obj->type_tarif."</td>\n";
       print "</tr>\n";
       $i++;
     }
