@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/**
+	    \file       htdocs/compta/bank/budget.php
+        \ingroup    banque
+		\brief      Page de budget
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 if (!$user->rights->banque->lire)
@@ -35,14 +43,15 @@ llxHeader();
 if ($_GET["bid"] == 0)
 {
   /*
-   *   Liste
+   *    Liste mouvements par catégories d'écritures financières
+   *    \todo Le terme "budget" du rapport n'est pas approprié. Il s'agit d'un rapport sur l'existant et non d'un prévisionnel.
    */
   print_titre("Budgets");
   print '<br>';
   
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+  print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print '<td>'.$langs->trans("Description").'</td><td align="center">Nb</td><td align="right">'.$langs->trans("Total").'</td><td align="right">Moyenne</td>';
+  print '<td>'.$langs->trans("Description").'</td><td align="center">'.$langs->trans("Nb").'</td><td align="right">'.$langs->trans("Total").'</td><td align="right">'.$langs->trans("Average").'</td>';
   print "</tr>\n";
 
   $sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
@@ -55,12 +64,12 @@ if ($_GET["bid"] == 0)
       $num = $db->num_rows();
       $i = 0; $total = 0;
       
-      $var=True;
+      $var=true;
       while ($i < $num)
 	{
 	  $objp = $db->fetch_object($result);
 	  $var=!$var;
-	  print "<tr $bc[$var]>";
+	  print "<tr ".$bc[$var].">";
 	  print "<td><a href=\"budget.php?bid=$objp->rowid\">$objp->label</a></td>";
 	  print '<td align="center">'.$objp->nombre.'</td>';
 	  print "<td align=\"right\">".price(abs($objp->somme))."</td>";
@@ -69,14 +78,14 @@ if ($_GET["bid"] == 0)
 	  $i++;
 	  $total = $total + abs($objp->somme);
 	}
-      $db->free();
+      $db->free($result);
 
-      print "<tr $bc[1]>".'<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
+      print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total").'</td>';
       print '<td align="right"><b>'.price($total).'</b></td><td colspan="2">&nbsp;</td></tr>';
     }
   else
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
   print "</table>";
 
@@ -98,9 +107,9 @@ else
   
   print_titre("Budget : $budget_name");
 
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+  print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print '<td align="right">Date</td><td width="60%">'.$langs->trans("Description").'</td><td align="right">Montant</td><td>&nbsp;</td>';
+  print '<td align="right">Date</td><td width="60%">'.$langs->trans("Description").'</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td>';
   print "</tr>\n";
 
   $sql = "SELECT d.amount, d.label, ".$db->pdate("d.dateo")." as do, d.rowid";
@@ -110,7 +119,7 @@ else
   $result = $db->query($sql);
   if ($result)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($result);
       $i = 0; $total = 0;
       
       $var=True;
@@ -128,7 +137,7 @@ else
 	  $total = $total + (0 - $objp->amount);
 	}
       $db->free();
-      print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("Total")."</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>".$conf->monnaie."</td></tr>";
+      print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total")."</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>".$conf->monnaie."</td></tr>";
     }
   else
     {
@@ -140,5 +149,6 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
+
 ?>
