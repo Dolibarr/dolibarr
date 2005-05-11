@@ -234,9 +234,13 @@ if ($result)
 
       // Author
       print "<tr><td>".$langs->trans("Author")."</td>";
-      $author=new User($db,$objp->fk_user_author);
-      $author->fetch();
-      print "<td colspan=\"3\">".$author->fullname."</td>";      
+      if ($objp->fk_user_author) {
+          $author=new User($db,$objp->fk_user_author);
+          $author->fetch();
+          print "<td colspan=\"3\">".$author->fullname."</td>";      
+      } else {
+          print "<td colspan=\"3\">&nbsp;</td>";      
+      }
       print "</tr>";
 
       $i++;
