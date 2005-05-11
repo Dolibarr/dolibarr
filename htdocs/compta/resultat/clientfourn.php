@@ -177,6 +177,7 @@ if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.pri
 print '<td colspan="3" align="right">'.price($total_ttc).'</td>';
 print '</tr>';
 
+
 /*
  * Frais, factures fournisseurs.
  */
@@ -218,8 +219,8 @@ if ($result) {
       print "<tr $bc[$var]><td>&nbsp</td>";
       print "<td>".$langs->trans("Bills")." <a href=\"../../fourn/facture/index.php?socid=".$objp->idp."\">$objp->nom</a></td>\n";
       
-      if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
-      print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
+      if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price(-$objp->amount_ht)."</td>\n";
+      print "<td align=\"right\">".price(-$objp->amount_ttc)."</td>\n";
       
       $total_ht = $total_ht - $objp->amount_ht;
       $total_ttc = $total_ttc - $objp->amount_ttc;
@@ -239,6 +240,159 @@ if ($result) {
   $db->free($result);
 } else {
   dolibarr_print_error($db);
+}
+print '<tr class="liste_total">';
+if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
+print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+print '</tr>';
+
+
+/*
+ * TVA
+ */
+print '<tr><td colspan="4">'.$langs->trans("VAT").'</td></tr>';
+$subtotal_ht = 0;
+$subtotal_ttc = 0;
+
+if ($modecompta == 'CREANCES-DETTES') {
+    // TVA à payer
+    $obj->amount=0;
+    $sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
+    $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+    $sql .= " WHERE f.fk_statut = 1";
+    if ($year) {
+    	$sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+    }
+    $sql .= " GROUP BY dm DESC";
+    $result=$db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $var=false;
+        $i = 0;
+        if ($num) {    
+          while ($i < $num) {
+            $obj = $db->fetch_object($result);
+        
+            $total_ht = $total_ht - $obj->amount;
+            $total_ttc = $total_ttc - $obj->amount;
+            $subtotal_ht = $subtotal_ht - $obj->amount;
+            $subtotal_ttc = $subtotal_ttc - $obj->amount;
+        
+            $i++;
+          }
+        }
+    } else {
+        dolibarr_print_error($db);
+    }
+    print "<tr $bc[$var]><td>&nbsp</td>";
+    print "<td>".$langs->trans("VATToPay")."</td>\n";
+    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price(-$obj->amount)."</td>\n";
+    print "<td align=\"right\">".price(-$obj->amount)."</td>\n";
+    print "</tr>\n";
+    // TVA à récupérer
+    $obj->amount=0;
+    $sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
+    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+    $sql .= " WHERE f.fk_statut = 1";
+    if ($year) {
+    	$sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+    }
+    $sql .= " GROUP BY dm DESC";
+    $result=$db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $var=true;
+        $i = 0;
+        if ($num) {    
+          while ($i < $num) {
+            $obj = $db->fetch_object($result);
+        
+            $total_ht = $total_ht + $obj->amount;
+            $total_ttc = $total_ttc + $obj->amount;
+            $subtotal_ht = $subtotal_ht + $obj->amount;
+            $subtotal_ttc = $subtotal_ttc + $obj->amount;
+        
+            $i++;
+          }
+        }
+    } else {
+        dolibarr_print_error($db);
+    }
+    print "<tr $bc[$var]><td>&nbsp</td>";
+    print "<td>".$langs->trans("VATToCollect")."</td>\n";
+    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($obj->amount)."</td>\n";
+    print "<td align=\"right\">".price($obj->amount)."</td>\n";
+    print "</tr>\n";
+}
+else {
+    // TVA payée
+    $obj->amount=0;
+    $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
+    $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
+    $sql .= " WHERE amount > 0";
+    if ($year) {
+    	$sql .= " AND t.datev between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+    }
+    $sql .= " GROUP BY dm DESC";
+    $result=$db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $var=false;
+        $i = 0;
+        if ($num) {    
+          while ($i < $num) {
+            $obj = $db->fetch_object($result);
+        
+            $total_ht = $total_ht - $obj->amount;
+            $total_ttc = $total_ttc - $obj->amount;
+            $subtotal_ht = $subtotal_ht - $obj->amount;
+            $subtotal_ttc = $subtotal_ttc - $obj->amount;
+        
+            $i++;
+          }
+        }
+    } else {
+        dolibarr_print_error($db);
+    }
+    print "<tr $bc[$var]><td>&nbsp</td>";
+    print "<td>".$langs->trans("VATToPay")."</td>\n";
+    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price(-$obj->amount)."</td>\n";
+    print "<td align=\"right\">".price(-$obj->amount)."</td>\n";
+    print "</tr>\n";
+    // TVA récupérée
+    $obj->amount=0;
+    $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
+    $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
+    $sql .= " WHERE amount < 0";
+    if ($year) {
+    	$sql .= " AND t.datev between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+    }
+    $sql .= " GROUP BY dm DESC";
+    $result=$db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $var=true;
+        $i = 0;
+        if ($num) {    
+          while ($i < $num) {
+            $obj = $db->fetch_object($result);
+        
+            $total_ht = $total_ht + $obj->amount;
+            $total_ttc = $total_ttc + $obj->amount;
+            $subtotal_ht = $subtotal_ht + $obj->amount;
+            $subtotal_ttc = $subtotal_ttc + $obj->amount;
+        
+            $i++;
+          }
+        }
+    } else {
+        dolibarr_print_error($db);
+    }
+    print "<tr $bc[$var]><td>&nbsp</td>";
+    print "<td>".$langs->trans("VATToCollect")."</td>\n";
+    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($obj->amount)."</td>\n";
+    print "<td align=\"right\">".price($obj->amount)."</td>\n";
+    print "</tr>\n";
 }
 print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
@@ -289,8 +443,8 @@ if ($result) {
         $var = !$var;
         print "<tr $bc[$var]><td>&nbsp</td>";
         print '<td>'.$obj->nom.'</td>';
-        if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price($obj->amount).'</td>';
-        print '<td align="right">'.price($obj->amount).'</td>';
+        if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
+        print '<td align="right">'.price(-$obj->amount).'</td>';
         print '</tr>';
         $i++;
       }
@@ -304,8 +458,8 @@ if ($result) {
   dolibarr_print_error($db);
 }
 print '<tr class="liste_total">';
-if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
-print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
+if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
+print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
 print '</tr>';
 
 
@@ -352,8 +506,8 @@ if ($result) {
         $var = !$var;
         print "<tr $bc[$var]><td>&nbsp</td>";
         print '<td>'.$obj->nom.'</td>';
-        if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price($obj->amount).'</td>';
-        print '<td align="right">'.price($obj->amount).'</td>';
+        if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
+        print '<td align="right">'.price(-$obj->amount).'</td>';
         print '</tr>';
         $i++;
         }
@@ -367,8 +521,8 @@ if ($result) {
   dolibarr_print_error($db);
 }
 print '<tr class="liste_total">';
-if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
-print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
+if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
+print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
 print '</tr>';
 
 

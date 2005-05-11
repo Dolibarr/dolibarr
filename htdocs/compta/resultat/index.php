@@ -182,6 +182,108 @@ else {
 
 
 /*
+ * TVA
+ */
+
+if ($modecompta == 'CREANCES-DETTES') {
+    // TVA à payer
+    $sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
+    $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+    $sql .= " WHERE f.fk_statut = 1";
+    $sql .= " GROUP BY dm DESC";
+    $result=$db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $var=false;
+        $i = 0;
+        if ($num) {    
+          while ($i < $num) {
+            $obj = $db->fetch_object($result);
+        
+            $decaiss[$obj->dm] += $obj->amount;
+            $decaiss_ttc[$obj->dm] += $obj->amount;
+        
+            $i++;
+          }
+        }
+    } else {
+        dolibarr_print_error($db);
+    }
+    // TVA à récupérer
+    $sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
+    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+    $sql .= " WHERE f.fk_statut = 1";
+    $sql .= " GROUP BY dm DESC";
+    $result=$db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $var=false;
+        $i = 0;
+        if ($num) {    
+          while ($i < $num) {
+            $obj = $db->fetch_object($result);
+        
+            $encaiss[$obj->dm] += $obj->amount;
+            $encaiss_ttc[$obj->dm] += $obj->amount;
+        
+            $i++;
+          }
+        }
+    } else {
+        dolibarr_print_error($db);
+    }
+}
+else {
+    // TVA payée
+    $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
+    $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
+    $sql .= " WHERE amount > 0";
+    $sql .= " GROUP BY dm DESC";
+    $result=$db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $var=false;
+        $i = 0;
+        if ($num) {    
+          while ($i < $num) {
+            $obj = $db->fetch_object($result);
+        
+            $decaiss[$obj->dm] += $obj->amount;
+            $decaiss_ttc[$obj->dm] += $obj->amount;
+        
+            $i++;
+          }
+        }
+    } else {
+        dolibarr_print_error($db);
+    }
+    // TVA récupérée
+    $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
+    $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
+    $sql .= " WHERE amount < 0";
+    $sql .= " GROUP BY dm DESC";
+    $result=$db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $var=false;
+        $i = 0;
+        if ($num) {    
+          while ($i < $num) {
+            $obj = $db->fetch_object($result);
+        
+            $encaiss[$obj->dm] += $obj->amount;
+            $encaiss_ttc[$obj->dm] += $obj->amount;
+        
+            $i++;
+          }
+        }
+    } else {
+        dolibarr_print_error($db);
+    }
+}
+
+
+/*
  * Charges sociales non déductibles
  */
 
