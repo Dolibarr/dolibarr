@@ -2,6 +2,7 @@
 Donation=Don
 Donations=Dons
 AddDonation=Ajouter don
+NewDonation=Nouveau don
 DonationPromise=Promesse de don
 PromisesNotValid=Promesses non validées
 PromisesValid=Promesses validées
@@ -9,3 +10,4 @@ DonationsPayed=Dons payés
 DonationsReceived=Dons encaissés
 PublicDonation=Don public
 DonationsNumber=Nombre de dons
+DonationsArea=Espace Dons

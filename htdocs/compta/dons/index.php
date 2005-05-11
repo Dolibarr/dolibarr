@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
  *
  */
 
-/*!	    \file       htdocs/compta/dons/index.php
+/**
+	    \file       htdocs/compta/dons/index.php
 		\ingroup    don
 		\brief      Page accueil espace don
 		\version    $Revision$
@@ -31,9 +32,13 @@ require("./pre.inc.php");
 
 $langs->load("donations");
 
+
 llxHeader();
 
-$sql = "SELECT count(d.rowid) as nb, sum(d.amount) as somme , d.fk_statut FROM ".MAIN_DB_PREFIX."don as d GROUP BY d.fk_statut order by d.fk_statut";
+$sql = "SELECT count(d.rowid) as nb, sum(d.amount) as somme , d.fk_statut";
+$sql.= " FROM ".MAIN_DB_PREFIX."don as d";
+$sql.= " GROUP BY d.fk_statut";
+$sql.= " ORDER BY d.fk_statut";
 
 $result = $db->query($sql);
 
@@ -49,12 +54,13 @@ if ($result)
       $nb[$objp->fk_statut] = $objp->nb;
       $i++;
     }
-  $db->free();
+  $db->free($result);
 } else {
     dolibarr_print_error($db);   
 }
 
-print_titre($langs->trans("Donations"));
+print_titre($langs->trans("DonationsArea"));
+print '<br>';
 
 print '<table class="noborder" width="50%">';
 print '<tr class="liste_titre">';
@@ -89,5 +95,5 @@ print "</table>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

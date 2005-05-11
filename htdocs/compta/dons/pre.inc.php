@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
  *
  */
 
-/*!	    \file       htdocs/compta/dons/pre.inc.php
+/**
+	    \file       htdocs/compta/dons/pre.inc.php
         \ingroup    don
 		\brief      Fichier gestionnaire du menu de gauche de l'espace dons
 		\version    $Revision$
@@ -48,7 +49,7 @@ function llxHeader($head = "") {
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/compta/dons/",$langs->trans("Donations"));
-  $menu->add_submenu(DOL_URL_ROOT."/compta/dons/fiche.php?action=create",$langs->trans("AddDonation"));
+  $menu->add_submenu(DOL_URL_ROOT."/compta/dons/fiche.php?action=create",$langs->trans("NewDonation"));
   $menu->add_submenu(DOL_URL_ROOT."/compta/dons/liste.php",$langs->trans("List"));
   $menu->add_submenu(DOL_URL_ROOT."/compta/dons/stats.php",$langs->trans("Statistics"));
 
