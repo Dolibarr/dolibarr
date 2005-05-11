@@ -30,7 +30,6 @@
 require_once("./pre.inc.php");
 require_once("../../don.class.php");
 require_once("../../paiement.class.php");
-require_once("../../html.form.class.php");
 
 $langs->load("donations");
 $langs->load("bills");
