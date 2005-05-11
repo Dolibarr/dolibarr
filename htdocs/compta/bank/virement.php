@@ -100,7 +100,9 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("From").'</td><td>'.$langs->trans("To").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("Amount").'</td>';
 print '</tr>';
-print "<tr $bc[1]><td>";
+
+$var=false;
+print '<tr '.$bc[$var].'><td>';
 print "<select class=\"flat\" name=\"account_from\">";
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
 $result = $db->query($sql);
