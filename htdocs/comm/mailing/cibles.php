@@ -241,8 +241,9 @@ if ($mil->fetch($_GET["id"]) == 0)
         }
         closedir($handle);
 
-        print '<tr>';
-        print '<td>&nbsp;</td><td>&nbsp;</td><td align="center"><form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST"><input type="submit" class="button" value="'.$langs->trans("Clear").'"></form></td>';
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td>&nbsp;</td><td>&nbsp;</td><td align="center"><form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST"><input type="submit" class="button" value="'.$langs->trans("TargetsReset").'"></form></td>';
         print '</tr>';
 
         print '</table><br>';

@@ -24,7 +24,7 @@
         \version    $Revision$
 */
 
-include_once ("html.form.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
 
 
 /**     \class      FormMail
