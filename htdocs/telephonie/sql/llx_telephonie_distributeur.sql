@@ -22,6 +22,7 @@
 --
 create table llx_telephonie_distributeur (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  nom            varchar(50) NOT NULL
+  nom            varchar(50) NOT NULL,
+  grille_tarif   integer DEFAULT 1
 
 )type=innodb;
