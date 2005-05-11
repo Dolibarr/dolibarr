@@ -486,7 +486,9 @@ else
 	      $commercial->fetch();
 
 	      print '<tr><td width="20%">Commercial Signature</td>';
-	      print '<td colspan="3">'.$commercial->fullname.'</td></tr>';
+	      print '<td>'.$commercial->fullname.'</td>';
+
+	      print '<td>Grille tarif</td><td>'.$contrat->grille_tarif_nom.'</td></tr>';
 
 	      $commercial_suiv = new User($db, $contrat->commercial_suiv_id);
 	      $commercial_suiv->fetch();
