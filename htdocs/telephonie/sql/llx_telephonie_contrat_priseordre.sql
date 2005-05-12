@@ -26,8 +26,10 @@ create table llx_telephonie_contrat_priseordre (
   fk_contrat         integer NOT NULL,
   datepo             datetime,
   montant            real NOT NULL,
-  fk_user            integer,
-  fk_distributeur    integer
+  fk_commercial      integer,
+  fk_distributeur    integer,
+
+  fk_user            integer
 
 )type=innodb;
 
