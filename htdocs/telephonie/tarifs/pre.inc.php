@@ -58,14 +58,11 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/achat.php", "Achat");
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/index.php?type=vente", "Vente");
+
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/index.php?type=achat", "Achat");
+
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/prefix.php", "Prefix");
-
-  /*
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/liste.php?type=achat", "Achat");
-
-
-*/
 
   $menu->add(DOL_URL_ROOT."/telephonie/fournisseurs.php", "Fournisseurs");
 
