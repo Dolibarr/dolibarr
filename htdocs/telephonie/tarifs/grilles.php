@@ -80,6 +80,9 @@ else
 
 print '</td></tr></table>';
 
+
+print '<br>Tableur des <a href="grille-export-achat.php">tarifs d\'achats comparés</a>';
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
