@@ -415,5 +415,34 @@ class TelephonieContrat {
     $this->contact_facture_id = $resid;
     return $res;
   }
+
+  /*
+   *
+   *
+   */
+  function priseordre_totale()
+  {
+    $po = 0;
+    $sql = "SELECT sum(montant) ";
+    $sql .= "FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
+    $sql .= " WHERE fk_contrat = ".$this->id;
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resql);
+	if ( $num > 0 )
+	  {
+	    $row = $this->db->fetch_row($resql);
+	    $po = $row[0];
+	  }
+	$this->db->free();     
+	
+      }
+    else
+      {
+	dolibarr_syslog($sql);
+      }
+    return $po;
+  }
 }
 ?>
