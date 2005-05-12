@@ -54,7 +54,7 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
 
 
 $sql .= " WHERE p.fk_distributeur = d.rowid";
-$sql .= " GROUP BY p.rowid";
+$sql .= " GROUP BY d.rowid";
 
 $resql = $db->query($sql);
 
