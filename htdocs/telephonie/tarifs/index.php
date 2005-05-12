@@ -70,24 +70,27 @@ $offset = $conf->liste_limit * $page ;
  *
  */
 
-$sql = "SELECT d.libelle as tarif_desc, d.type_tarif";
+$sql = "SELECT d.rowid as grille, d.libelle as tarif_desc, d.type_tarif";
 $sql .= " , t.libelle as tarif, t.rowid as tarif_id";
 $sql .= " , m.temporel, m.fixe";
+$sql .= " , u.code";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
 $sql .= "," . MAIN_DB_PREFIX."telephonie_tarif_montant as m";
 $sql .= "," . MAIN_DB_PREFIX."telephonie_tarif as t";
+$sql .= "," . MAIN_DB_PREFIX."user as u";
 
 $sqlc .= " WHERE d.rowid = m.fk_tarif_desc";
 $sqlc .= " AND m.fk_tarif = t.rowid";
+$sqlc .= " AND m.fk_user = u.rowid";
 
 if ($_GET["search_libelle"])
 {
   $sqlc .=" AND t.libelle LIKE '%".$_GET["search_libelle"]."%'";
 }
 
-if ($_GET["search_prefix"])
+if ($_GET["search_grille"])
 {
-  $sqlc .=" AND tf.prefix LIKE '%".$_GET["search_prefix"]."%'";
+  $sqlc .=" AND d.libelle LIKE '%".$_GET["search_grille"]."%'";
 }
 
 if ($_GET["type"])
@@ -117,14 +120,15 @@ if ($result)
   print_liste_field_titre("Cout / min","index.php","temporel", "&type=".$_GET["type"]);
   print "</td>";
   print "<td>Cout fixe</td>";
-  print "<td>Type</td>";
+  print '<td align="center">Type</td><td align="center">User</td>';
   print "</tr>\n";
 
   print '<tr class="liste_titre">';
   print '<form action="index.php" method="GET">';
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">';
-  print '<td>&nbsp;</td>';
+  print '<td><input type="text" name="search_grille" size="10" value="'.$_GET["search_grille"].'"></td>';
   print '<td><input type="text" name="search_libelle" size="20" value="'.$_GET["search_libelle"].'"></td>';
+  print '<td>&nbsp;</td>';
   print '<td>&nbsp;</td>';
   print '<td>&nbsp;</td>';
   print '<td><input type="submit"></td>';
@@ -140,12 +144,14 @@ if ($result)
 
       print "<tr $bc[$var]>";
 
-      print "<td>".$obj->tarif_desc."</td>\n";
+      print '<td><a href="grille.php?id='.$obj->grille.'">';
+      print $obj->tarif_desc."</td>\n";
       print '<td><a href="tarif.php?id='.$obj->tarif_id.'">';
       print $obj->tarif."</a></td>\n";
       print "<td>".sprintf("%01.4f",$obj->temporel)."</td>\n";
       print "<td>".sprintf("%01.4f",$obj->fixe)."</td>\n";
-      print "<td>".$obj->type_tarif."</td>\n";
+      print '<td align="center">'.$obj->type_tarif."</td>\n";
+      print '<td align="center">'.$obj->code."</td>\n";
       print "</tr>\n";
       $i++;
     }
