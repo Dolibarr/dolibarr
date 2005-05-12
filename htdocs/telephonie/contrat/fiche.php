@@ -90,7 +90,7 @@ if ($_POST["action"] == 'addpo' && $user->rights->telephonie->ligne->creer)
   $contrat = new TelephonieContrat($db);
   $contrat->fetch($_GET["id"]);
 
-  $contrat->addpo($_POST["montant"]) ;    
+  $contrat->addpo($_POST["montant"], $user);
   Header("Location: fiche.php?id=".$contrat->id);
 }
 
