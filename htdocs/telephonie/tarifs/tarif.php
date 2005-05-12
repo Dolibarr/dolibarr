@@ -54,15 +54,6 @@ if ($mode == 'search') {
   }
 }
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
-
-if ($sortorder == "") $sortorder="ASC";
-if ($sortfield == "") $sortfield="t.libelle ASC, d.rowid ";
-
-$offset = $conf->liste_limit * $page ;
-
 /*
  * Mode Liste
  *
@@ -71,67 +62,46 @@ $offset = $conf->liste_limit * $page ;
  */
 print '<table width="100%" class="noborder"><tr><td valign="top" width="70%">';
 
-$sql = "SELECT d.libelle as tarif_desc, d.type_tarif";
+$sql = "SELECT d.libelle as tarif_desc, d.type_tarif, d.rowid";
 $sql .= " , t.libelle as tarif";
 $sql .= " , m.temporel, m.fixe";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
 $sql .= "," . MAIN_DB_PREFIX."telephonie_tarif_montant as m";
 $sql .= "," . MAIN_DB_PREFIX."telephonie_tarif as t";
 
-$sqlc .= " WHERE d.rowid = m.fk_tarif_desc";
-$sqlc .= " AND m.fk_tarif = t.rowid";
+$sql .= " WHERE d.rowid = m.fk_tarif_desc";
+$sql .= " AND m.fk_tarif = t.rowid";
+$sql .= " AND t.rowid = '".$_GET["id"]."'";
+$sql .= " AND d.type_tarif = 'vente'";
+$sql .= " ORDER BY t.libelle asc";
 
-
-$sqlc .= " AND t.rowid = '".$_GET["id"]."'";
-
-
-if ($_GET["search_libelle"])
-{
-  $sqlc .=" AND t.libelle LIKE '%".$_GET["search_libelle"]."%'";
-}
-
-if ($_GET["search_prefix"])
-{
-  $sqlc .=" AND tf.prefix LIKE '%".$_GET["search_prefix"]."%'";
-}
-
-if ($_GET["type"])
-{
-  $sqlc .= " AND d.type_tarif = '".$_GET["type"]."'";
-}
-
-
-$sql = $sql . $sqlc . " ORDER BY $sortfield $sortorder";
-
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
   $num = $db->num_rows();
   $i = 0;
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-
-  print_liste_field_titre("Tarif","index.php","d.libelle");
-
-  print_liste_field_titre("Destination","index.php","t.libelle", "&type=".$_GET["type"]);
-
-  print_liste_field_titre("Cout / min","index.php","temporel", "&type=".$_GET["type"]);
-  print "</td>";
-  print "<td>Cout fixe</td>";
-  print "<td>Type</td>";
+  print '<td width="25%">Tarif</td>';
+  print '<td width="30%">Destination</td>';
+  print '<td width="15%">Cout / min</td>';
+  print '<td width="15%">Cout fixe</td>';
+  print '<td width="15%">Type</td>';
   print "</tr>\n";
 
   $var=True;
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($resql);
       $var=!$var;
 
       print "<tr $bc[$var]>";
 
-      print "<td>".$obj->tarif_desc."</td>\n";
+      print '<td><a href="grille.php?id='.$obj->rowid.'">';
+      print $obj->tarif_desc."</a></td>\n";
+
       print "<td>".$obj->tarif."</td>\n";
       print "<td>".sprintf("%01.4f",$obj->temporel)."</td>\n";
       print "<td>".sprintf("%01.4f",$obj->fixe)."</td>\n";
@@ -140,7 +110,7 @@ if ($result)
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
@@ -148,19 +118,75 @@ else
 }
 
 
+$sql = "SELECT d.libelle as tarif_desc, d.type_tarif, d.rowid";
+$sql .= " , t.libelle as tarif";
+$sql .= " , m.temporel, m.fixe";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
+$sql .= "," . MAIN_DB_PREFIX."telephonie_tarif_montant as m";
+$sql .= "," . MAIN_DB_PREFIX."telephonie_tarif as t";
+
+$sql .= " WHERE d.rowid = m.fk_tarif_desc";
+$sql .= " AND m.fk_tarif = t.rowid";
+$sql .= " AND t.rowid = '".$_GET["id"]."'";
+$sql .= " AND d.type_tarif = 'achat'";
+
+$sql .= " ORDER BY t.libelle ASC";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+  print '<br><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre">';
+
+  print '<td width="25%">Tarif</td>';
+  print '<td width="30%">Destination</td>';
+  print '<td width="15%">Cout / min</td>';
+  print '<td width="15%">Cout fixe</td>';
+  print '<td width="15%">Type</td>';
+  print "</tr>\n";
+
+  $var=True;
+
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object($resql);
+      $var=!$var;
+
+      print "<tr $bc[$var]>";
+
+      print '<td><a href="grille.php?id='.$obj->rowid.'">';
+      print $obj->tarif_desc."</a></td>\n";
+
+      print "<td>".$obj->tarif."</td>\n";
+      print "<td>".sprintf("%01.4f",$obj->temporel)."</td>\n";
+      print "<td>".sprintf("%01.4f",$obj->fixe)."</td>\n";
+      print "<td>".$obj->type_tarif."</td>\n";
+      print "</tr>\n";
+      $i++;
+    }
+  print "</table>";
+  $db->free($resql);
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
+
 
 print '</td><td valign="top" width="30%">';
 
 $sql = "SELECT prefix";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_prefix";
-
 $sql .= " WHERE fk_tarif = ".$_GET["id"];
 $sql .= " ORDER BY prefix ASC";
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -172,18 +198,16 @@ if ($result)
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($resql);
       $var=!$var;
 
       print "<tr $bc[$var]>";
-
       print "<td>".$obj->prefix."</td>\n";
-
       print "</tr>\n";
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
