@@ -34,7 +34,7 @@ llxHeader('','Telephonie - Statistiques - Distributeurs');
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/index.php';
-$head[$h][1] = "Global";
+$head[$h][1] = "Prise d'ordre";
 $hselected = $h;
 $h++;
 
@@ -42,32 +42,39 @@ dolibarr_fiche_head($head, $hselected, "Distributeurs");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-print '<tr><td width="30%" valign="top">';
+print '<tr><td width="50%" valign="top">';
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td valign="top">Nom</td></tr>';
+print '<tr class="liste_titre">';
+print '<td>Distributeur</td><td align="right">Prise d\'ordre</td></tr>';
 
-$sql = "SELECT rowid, nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur";
-$sql .= " ORDER BY nom ASC";
+$sql = "SELECT sum(p.montant), d.nom";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
+$sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
+
+
+$sql .= " WHERE p.fk_distributeur = d.rowid";
+$sql .= " GROUP BY p.rowid";
 
 $resql = $db->query($sql);
+
 if ($resql)
 {
   $num = $db->num_rows();
   $i = 0;
+  $total = 0;
+
   while ($i < $num)
     {
-      $row = $db->fetch_row($resql);
+      $row = $db->fetch_row($i);	
 
       $var=!$var;
 
       print "<tr $bc[$var]>";
 
-      print '<td width="50%" valign="top">';
-      print '<a href="distributeur.php?id='.$row[0];
-      print '">'.$row[1].'</a></td></tr>';
+      print '<td>'.$row[1].'</a></td>';
 
+      print '<td align="right">'.price($row[0]).'</td></tr>';
       $i++;
     }
   $db->free();
@@ -78,28 +85,34 @@ else
 }
 print '</table><br />';
 
-/*                */
+
+/*
+ * Commerciaux
+ *
+ */
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td colspan="3">Lignes suivies</td></tr>';
-print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td><td>&nbsp;</td></tr>';
+print '<tr class="liste_titre">';
+print '<td>Distributeur</td><td>Commercial</td><td align="right">Prise d\'ordre</td></tr>';
 
-$sql = "SELECT count(*) as cc , c.name, c.firstname, c.rowid";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= " , ".MAIN_DB_PREFIX."user as c";
+$sql = "SELECT sum(p.montant), d.nom, u.firstname, u.name";
+$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+$sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur as d";
+$sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
-$sql .= " WHERE c.rowid = l.fk_commercial_suiv";
-$sql .= " AND c.rowid = dc.fk_user";
-$sql .= " AND l.statut <> 7";
-$sql .= " GROUP BY c.name ORDER BY cc DESC";
+
+$sql .= " WHERE p.fk_commercial = u.rowid";
+$sql .= " AND dc.fk_user = u.rowid";
+$sql .= " AND p.fk_distributeur = d.rowid";
+$sql .= " GROUP BY u.rowid";
 
 $resql = $db->query($sql);
+
 if ($resql)
 {
   $num = $db->num_rows();
   $i = 0;
-  $datas = array();
-  $legends = array();
+  $total = 0;
 
   while ($i < $num)
     {
@@ -109,10 +122,10 @@ if ($resql)
 
       print "<tr $bc[$var]>";
 
-      print '<td width="50%" valign="top">';
-      print '<a href="commercial.php?commid='.$row[3];
-      print '">'.$row[2]." ". $row[1].'</a></td><td align="center">'.$row[0].'</td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?commercial_suiv='.$row[3].'">Voir</a></td></tr>';
+      print '<td>'.$row[1].'</a></td>';
+
+      print '<td>'.$row[2]." ".$row[3].'</td>';
+      print '<td align="right">'.price($row[0]).'</td></tr>';
       $i++;
     }
   $db->free();
@@ -121,58 +134,14 @@ else
 {
   print $db->error() . ' ' . $sql;
 }
+
+
+
 print '</table><br />';
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td colspan="3">Lignes signées</td></tr>';
-print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td><td>&nbsp;</td></tr>';
 
-$sql = "SELECT count(*) as cc , c.name, c.firstname, c.rowid";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= " , ".MAIN_DB_PREFIX."user as c";
-$sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
-$sql .= " WHERE c.rowid = l.fk_commercial_sign";
-$sql .= " AND c.rowid = dc.fk_user";
-$sql .= " AND l.statut <> 7";
-$sql .= " GROUP BY c.name ORDER BY cc DESC";
-
-$resql = $db->query($sql);
-if ($resql)
-{
-  $num = $db->num_rows();
-  $i = 0;
-  $datas = array();
-  $legends = array();
-
-  while ($i < $num)
-    {
-      $row = $db->fetch_row($i);	
-
-      $var=!$var;
-
-      print "<tr $bc[$var]>";
-
-      print '<td width="50%" valign="top">';
-      print '<a href="commercial.php?commid='.$row[3];
-      print '">'.$row[2]." ". $row[1].'</a></td><td align="center">'.$row[0].'</td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?commercial_sign='.$row[3].'">Voir</a></td></tr>';
-      $i++;
-    }
-  $db->free();
-}
-else 
-{
-  print $db->error() . ' ' . $sql;
-}
-print '</table>';
-
-print '</td>';
-
-print '</td><td valign="top" width="70%">';
-
-
-print '</td></tr>';
-print '</table>';
+print '</td><td width="50%" valign="top">&nbsp;</td></tr>';
+print '</table><br />';
 
 $db->close();
 
