@@ -444,5 +444,53 @@ class TelephonieContrat {
       }
     return $po;
   }
+
+  /*
+   *
+   *
+   */
+  function addpo($montant)
+  {
+    $po = 0;
+
+    $montant = ereg_replace(",",".",$montant);
+
+    if ($montant > 0)
+      {
+	$did = 0;
+
+	$sql = "SELECT dc.fk_distributeur ";
+	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
+	$sql .= " WHERE dc.fk_user = ".$this->commercial_sign_id;
+		
+	$resql = $this->db->query($sql);
+	
+	if ($resql)
+	  {
+	    if ($this->db->num_rows($resql))
+	      {
+		$row = $this->db->fetch_row($resql);		
+		$did = $row[0];
+	      }
+	    $this->db->free($resql);
+	  }
+
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
+	$sql .= " (fk_contrat, datepo, montant, fk_user, fk_distributeur)";
+	$sql .= " VALUES (".$this->id.",now(), ".$montant;
+	$sql .= ",".$this->commercial_sign_id.",".$did.")";
+	
+	$resql = $this->db->query($sql);
+	if ($resql)
+	  {
+	    
+	  }
+	else
+	  {
+	    dolibarr_syslog($sql);
+	  }
+      }
+  }
+
 }
 ?>

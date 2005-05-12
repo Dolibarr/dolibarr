@@ -85,6 +85,16 @@ if ($_POST["action"] == 'addcontact')
     }
 }
 
+if ($_POST["action"] == 'addpo' && $user->rights->telephonie->ligne->creer)
+{
+  $contrat = new TelephonieContrat($db);
+  $contrat->fetch($_GET["id"]);
+
+  $contrat->addpo($_POST["montant"]) ;    
+  Header("Location: fiche.php?id=".$contrat->id);
+}
+
+
 if ($_GET["action"] == 'delcontact')
 {
   $contrat = new TelephonieContrat($db);
@@ -96,7 +106,7 @@ if ($_GET["action"] == 'delcontact')
     }
 }
 
-if ($_GET["action"] == 'delete')
+if ($_GET["action"] == 'delete' && $user->rights->telephonie->ligne->creer)
 {
   $contrat = new TelephonieContrat($db);
   $contrat->id = $_GET["id"];
@@ -104,6 +114,8 @@ if ($_GET["action"] == 'delete')
   $contrat->delete() ;    
   Header("Location: index.php");
 }
+
+
 
 llxHeader("","","Fiche Contrat");
 
@@ -893,7 +905,31 @@ else
 		{
 		  print '<input type="submit" value="Ajouter">';
 		}
-	      print '<a href="fiche.php?id='.$ligne->id.'">Annuler</a></td></tr>';
+	      print '<a href="fiche.php?id='.$contrat->id.'">Annuler</a></td></tr>';
+	      print '</table>';
+	      print '</form>';
+	  
+	    }
+
+	  /*
+	   * Contact
+	   *
+	   *
+	   */
+	  if ($_GET["action"] == 'po')
+	    {
+	      print_fiche_titre('Ajouter une prise d\'ordre');
+
+	      print '<form action="fiche.php?id='.$contrat->id.'" method="post">';
+	      print '<input type="hidden" name="action" value="addpo">';
+	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<tr><td valign="top" width="20%">Montant</td><td valign="top" colspan="2">';
+	      print '<input name="montant" size="8"> euros HT</td></tr>';	  
+	      print '</td></tr>';	  	  
+	      print '<tr><td colspan="3" align="center">';
+	      print '<input type="submit" value="Ajouter">';
+
+	      print '<a href="fiche.php?id='.$contrat->id.'">Annuler</a></td></tr>';
 	      print '</table>';
 	      print '</form>';
 	  
@@ -932,6 +968,11 @@ if ($_GET["action"] == '')
     }
   
   print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$contrat->id\">".$langs->trans("Contact")."</a>";
+
+  if ($user->rights->telephonie->ligne->creer)
+    {
+      print "<a class=\"tabAction\" href=\"fiche.php?action=po&amp;id=$contrat->id\">Ajouter une prise d'ordre</a>";
+    }
 
   print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$contrat->id\">".$langs->trans("Edit")."</a>";
 
