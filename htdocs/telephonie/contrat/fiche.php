@@ -497,6 +497,13 @@ else
 	      print '<td colspan="3">'.$commercial_suiv->fullname.'</td></tr>';
 
 
+	      /* Prise d'ordre */
+	      print '<tr><td width="20%">Prise d\'ordre</td>';
+
+	      $po = $contrat->priseordre_totale();
+
+	      print '<td colspan="3">'.$po.' euros HT</td></tr>';
+
 	      /*
 	      print '<tr><td width="20%">Statut</td><td colspan="2">';	  
 	      print '<img src="./graph'.$contrat->statut.'.png">&nbsp;';
