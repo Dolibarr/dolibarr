@@ -449,7 +449,7 @@ class TelephonieContrat {
    *
    *
    */
-  function addpo($montant)
+  function addpo($montant, $user)
   {
     $po = 0;
 
@@ -476,9 +476,9 @@ class TelephonieContrat {
 	  }
 
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
-	$sql .= " (fk_contrat, datepo, montant, fk_user, fk_distributeur)";
+	$sql .= " (fk_contrat, datepo, montant, fk_commercial, fk_distributeur, fk_user)";
 	$sql .= " VALUES (".$this->id.",now(), ".$montant;
-	$sql .= ",".$this->commercial_sign_id.",".$did.")";
+	$sql .= ",".$this->commercial_sign_id.",".$did.",".$user->id.")";
 	
 	$resql = $this->db->query($sql);
 	if ($resql)
