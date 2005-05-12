@@ -20,14 +20,15 @@
 --
 -- ========================================================================
 --
+--
+-- tlink lien vers un tarif, permets la mise à jour par exemple de tous les tarifs
+-- découpés par pays.
 
 create table llx_telephonie_tarif (
-  rowid               integer AUTO_INCREMENT PRIMARY KEY,
-  libelle             varchar(255),
-  libelle_facture     varchar(255),
-  libelle_fournisseur varchar(255),
-  mobile              tinyint,
-  international       tinyint
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  libelle     varchar(255),
+  type        enum ('INT','NAT','MOB'),
+  tlink        integer DEFAULT 0
 
   UNIQUE INDEX(libelle)
 )type=innodb;
