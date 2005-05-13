@@ -1,0 +1,9 @@
+# Dolibarr language file - pt_PT - projectos
+Project=Projecto
+Projects=Projectos
+NewProject=Novo projecto
+AddProject=Adicionar projecto
+DeleteAProject=Apagar projecto
+ConfirmDeleteAProject=Têm a certeza que quer apagar este projecto ?
+LastProjects=Últimos %s projectos
+AllProjects=Todos os projectos

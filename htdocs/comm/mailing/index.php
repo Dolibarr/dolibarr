@@ -184,16 +184,16 @@ print '</table>';
 $db->close();
 
 
-// Affiche note legislation dans la langue
-$htmlfile="../../langs/".$langs->defaultlang."/html/spam.html";
-if (! is_readable($htmlfile)) {
-    $htmlfile="../../langs/fr_FR/html/spam.html";
-}
-if (is_readable($htmlfile)) {
-    print "<br><br><br><br><br>".$langs->trans("Note").":<br><hr>";
-    include($htmlfile);
-}
- 
+if ($langs->file_exists("html/spam.html",0)) {
+    print "<br><br><br><br>".img_warning().' '.$langs->trans("Note")."<br>";
+    print '<div style="padding: 4px; background: #FAFAFA; border: 1px solid #444444;" >';
+    $langs->print_file("html/spam.html",0);
+    print '</div>';
+    
+    print '<br>';
+ }
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
+
 ?>

@@ -1,0 +1,24 @@
+# Dolibarr language file - pt_PT - vendas
+OrdersArea=Área de vendas
+Order=Venda
+Orders=Vendas
+SupplierOrder=Compra a um fornecedor
+SuppliersOrders=Compras aos fornecedores
+OrdersToValid=Vendas a validar
+OrdersToBill=Vendas a enviar conta
+OrdersInProcess=Vendas em processamento
+OrdersToProcess=Vendas a processar
+SearchOrder=Ordem de procura
+Sendings=Envios
+VAT=IVA
+Discount=Desconto
+CreateOrder=Criar venda
+RefuseOrder=Recusar venda
+ApproveOrder=Aceitar venda
+AddOrder=Adicionar venda
+LastOrders=Últimas %s vendas
+AllOrders=Todas as vendas
+NbOfOrders=Número de vendas
+OrdersStatistics=Estatísticas de vendas
+NumberOfOrdersByMonth=Número de vendas por mês
+ListOfOrders=Lista de vendas

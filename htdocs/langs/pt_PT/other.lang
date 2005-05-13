@@ -1,0 +1,14 @@
+# Dolibarr language file - pt_PT - outros
+Calendar=Calendário
+LoginWebcal=Login do Webcalendar
+AddCalendarEntry=Adicionar entrada no calendário
+ErrorWebcalLoginNotDefined=O login do Webcalendar associado ao seu Dolibarr <b>%s</b> não está definido.
+ErrorPasswordDiffers=As passwords diferem, é favor introduzi-las novamente.
+ErrorForbidden=Acesso proibido.<br>Tentou aceder a uma página, área ou funcionalidade não permitida ao seu utilizador.
+ErrorForbidden2=Permissão para este login pode ser definida pelo Administrador do seu Dolibarr através do menu %s->%s.
+ErrorForbidden3=Aparentemente a sua sessão ao Dolibarr não está autenticada. É favor consultar a documentação de forma a saber como activar esta funcionalidade (htaccess, mod_auth ou outros...).
+ErrorNoImagickReadimage=A função imagick_readimage não está presente neste PHP. Não será possível gerar previews.
+AddTrip=Adicionar viagens
+Tools=Ferramentas
+Birthday=Aniversário
+BirthdayDate=Data de aniversário

@@ -1,0 +1,10 @@
+# Dolibarr language file - pt_PT - contractos
+LastContracts=Últimos contractos modificados %s
+ContractStatus=Estado dos contractos
+ContractStatusNotRunning=Parado
+ContractStatusRunning=Em curso
+ContractStatusClosed=Fechado
+Contracts=Contractos
+Contract=Contracto
+AddContract=Adicionar contracto
+SearchAContract=Procurar contracto

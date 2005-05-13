@@ -1,0 +1,30 @@
+# Dolibarr language file - pt_PT - membros
+Members=Membros
+Attributs=Atributos
+Person=Indivíduo
+MembersList=Lista de membros
+MembersListToValid=Lista de membros para serem validados
+MembersListValid=Lista de membros válidos
+MembersListResiliated=Lista de membros resiliados
+DateAbonment=Data de abono
+NewMember=Novo membro
+NewType=Novo tipo de membro
+MembersTypes=Tipos de membros
+MembersAttributes=Atributos dos membros
+SearchAMember=Procurar membro
+MemberStatusDraft=Esboço (necessita de validação)
+MemberStatusActive=Validado
+MemberStatusResiliated=Resiliado
+MembersStatusToValid=Membros a validar
+MembersStatusValidated=Membros validados
+MembersStatusPayed=Subscrição efectuada
+MembersStatusResiliated=Membros resiliados
+NewCotisation=Nova cotação
+EditMember=Editar membro
+SubscriptionEndDate=Data do final da subscrição
+MembersArea=Área dos membros
+NewAttribute=Novo atributo
+AttributeCode=Código do atributo
+OptionalFieldsSetup=Configuração de campos opcionais
+MembersTypeSetup=Configuração do tipo de membros
+

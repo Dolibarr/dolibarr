@@ -1,0 +1,23 @@
+# Dolibarr language file - pt_PT - conta
+Accountancy=Contabilidade
+Treasury=Tesouraria
+OptionMode=Opção para contabilidade
+OptionModeTrue=Opção Receitas-Despesas
+OptionModeVirtual=Opção Créditos-Dívidas
+OptionModeTrueDesc=Neste modo, a CA é calculada com base nas facturas pagas.\nA validade destes números  é apenas assegurado se a contabilidade passar rigorosamente pelas entradas/saídas das compras facturadas.\nNote que, nesta versão, o programa utiliza a data de passagem da factura ao estado 'Válido' e não a data de passagem ao estado 'Pago'.
+OptionModeVirtualDesc=Neste modo, o CA é calculado com base nas facturas válidas. Quer sejam pagas ou não, desde que estejam pagas, apareçem no resultado.
+Param=Configuração
+BillsForSuppliers=Contas para os fornecedores
+Balance=Balanço
+Debit=Débito
+Credit=Crédito
+Withdrawal=Levantamento
+Withdrawals=Levantamentos
+VAT=IVA
+VATToPay=IVA a pagar
+VATToCollect=IVA a receber
+VATSummary=Sumário do IVA
+VATPayed=IVA pago
+SocialContributions=Contribuição para a Segurança Social
+AccountancyTreasuryArea=Área Contabilidade/Tesouraria
+NewPayment=Novo pagamento

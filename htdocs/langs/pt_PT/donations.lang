@@ -1,0 +1,11 @@
+# Dolibarr language file - pt_PT - donativos
+Donation=Donativo
+Donationss=Donativos
+AddDonation=Adicionar um donativo
+DonationPromise=Promessa de presente
+PromisesNotValid=Sem promessas válidas
+PromisesValid=Promessas válidas
+DonationsPayed=Donativos pagos
+DonationsReceived=Donativos recebidos
+PublicDonation=Donativos públicos
+DonationsNumber=Nr. do donativo

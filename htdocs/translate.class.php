@@ -193,6 +193,60 @@ class Translate {
         return $texte;
     }
 
+
+   /**
+     *  \brief      Renvoi si le fichier $filename existe dans la version de la langue courante ou alternative
+     *  \param      filename        nom du fichier à rechercher
+     *  \param      searchalt       cherche aussi dans langue alternative
+     *  \return     boolean         true si existe, false sinon
+     */
+		 
+    function file_exists($filename,$searchalt=0) {
+
+        // Test si fichier dans répertoire de la langue
+        $htmlfile=$this->dir."/".$this->defaultlang."/".$filename;
+        if (is_readable($htmlfile)) return true;
+
+        if ($searchalt) {
+            // Test si fichier dans répertoire de la langue alternative
+            if ($this->defaultlang != "en_US") $htmlfilealt = $this->dir."/en_US/".$filename;   
+            else $htmlfilealt = $this->dir."/fr_FR/".$filename;
+            if (is_readable($htmlfilealt)) return true;
+        }
+        
+        return false;
+    }
+
+
+   /**
+     *  \brief      Renvoi le fichier $filename dans la version de la langue courante, sinon alternative
+     *  \param      filename        nom du fichier à rechercher
+     *  \param      searchalt       cherche aussi dans langue alternative
+     */
+		 
+    function print_file($filename,$searchalt=0) {
+
+        // Test si fichier dans répertoire de la langue
+        $htmlfile=$this->dir."/".$this->defaultlang."/".$filename;
+        if (is_readable($htmlfile)) {
+            include $htmlfile;
+            return true;
+        }
+
+        if ($searchalt) {
+            // Test si fichier dans répertoire de la langue alternative
+            if ($this->defaultlang != "en_US") $htmlfilealt = $this->dir."/en_US/".$filename;   
+            else $htmlfilealt = $this->dir."/fr_FR/".$filename;
+            if (is_readable($htmlfilealt)) {
+                include $htmlfilealt;
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+
 }
 
 ?>
