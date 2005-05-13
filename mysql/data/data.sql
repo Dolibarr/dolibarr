@@ -539,6 +539,7 @@ insert into llx_c_pays (rowid,code,libelle) values (21, 'CI', 'Côte d\'Ivoire' )
 insert into llx_c_pays (rowid,code,libelle) values (23, 'SN', 'Sénégal'        );
 insert into llx_c_pays (rowid,code,libelle) values (24, 'AR', 'Argentine'      );
 insert into llx_c_pays (rowid,code,libelle) values (25, 'CM', 'Cameroun'       );
+insert into llx_c_pays (rowid,code,libelle) values (26, 'PT', 'Portugal'       );
 
 --
 -- Types etat propales
