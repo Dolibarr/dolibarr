@@ -51,6 +51,7 @@ class Account
   var $proprio;
   var $adresse_proprio;
   var $type_lib=array();
+
   
   function Account($DB, $rowid=0)
   {
@@ -72,7 +73,6 @@ class Account
   /*
    * Efface une entree dans la table ".MAIN_DB_PREFIX."bank
    */
-
   function deleteline($rowid)
   {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=$rowid";
@@ -84,8 +84,8 @@ class Account
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=$rowid";
     $result = $this->db->query($sql);
   }
+
   /*
-   *
    *
    */
   function add_url_line($line_id, $url_id, $url, $label)
@@ -104,6 +104,7 @@ class Account
 	return '';
       }
   }
+
   /*
    *
    */
@@ -232,8 +233,8 @@ class Account
     }
 
   /*
-   *
-   *
+   *    \brief      Mise a jour compte
+   *    \param      user        Object utilisateur qui modifie
    */
   function update($user='')
     {      
@@ -280,7 +281,7 @@ class Account
     }
 
   /*
-   *
+   *    \brief      Charge en memoire depuis la base le compte
    *
    */
   function fetch($id)
@@ -319,6 +320,30 @@ class Account
 	    dolibarr_print_error($this->db);
       }
   }
+
+
+  /*
+   *    \brief      Renvoi si un compte peut etre supprimer ou non (sans mouvements)
+   *    \return     boolean     vrai si peut etre supprimé, faux sinon
+   */
+  function can_be_deleted()
+  {
+    $can_be_deleted=false;
+    
+    $sql = "SELECT COUNT(rowid) as nb";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank";
+    $sql.= " WHERE fk_account=".$this->id;
+    $resql = $this->db->query($sql);
+    if ($resql) {
+        $obj=$this->db->fetch_object($resql);
+        if ($obj->nb <= 1) $can_be_deleted=true;    // Juste le solde
+    }
+    else {
+        dolibarr_print_error($this->db);
+    }
+    return $can_be_deleted;
+  }
+
 
   /*
    *
