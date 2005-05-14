@@ -439,50 +439,62 @@ class DolibarrModules
         $err=0;
 
         //print $this->rights_class." ".sizeof($this->rights)."<br>";
-        foreach ($this->rights as $key => $value)
-        {
-            $r_id       = $this->rights[$key][0];
-            $r_desc     = $this->rights[$key][1];
-            $r_type     = $this->rights[$key][2];
-            $r_def      = $this->rights[$key][3];
-            $r_perms    = $this->rights[$key][4];
-            $r_subperms = $this->rights[$key][5];
-            $r_modul    = $this->rights_class;
 
-            if (strlen($r_perms) )
-            {
-                if (strlen($r_subperms) )
+        // Test si module actif
+        $sql_del = "SELECT value FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."';";
+        $resql=$this->db->query($sql_del);
+        if ($resql) {
+            
+            $obj=$this->db->fetch_object($resql);
+            if ($obj->value) {
+                
+                // Si module actif
+                foreach ($this->rights as $key => $value)
                 {
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-                    $sql .= " (id, libelle, module, type, bydefault, perms, subperms)";
-                    $sql .= " VALUES ";
-                    $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."');";
-                }
-                else
-                {
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-                    $sql .= " (id, libelle, module, type, bydefault, perms)";
-                    $sql .= " VALUES ";
-                    $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."');";
-                }
-            }
-            else
-            {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-                $sql .= " (id, libelle, module, type, bydefault)";
-                $sql .= " VALUES ";
-                $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.");";
-            }
-
-            $resql=$this->db->query($sql);
-            if (! $resql)
-            {
-                if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
-                    $err++;
+                    $r_id       = $this->rights[$key][0];
+                    $r_desc     = $this->rights[$key][1];
+                    $r_type     = $this->rights[$key][2];
+                    $r_def      = $this->rights[$key][3];
+                    $r_perms    = $this->rights[$key][4];
+                    $r_subperms = $this->rights[$key][5];
+                    $r_modul    = $this->rights_class;
+        
+                    if (strlen($r_perms) )
+                    {
+                        if (strlen($r_subperms) )
+                        {
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+                            $sql .= " (id, libelle, module, type, bydefault, perms, subperms)";
+                            $sql .= " VALUES ";
+                            $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."');";
+                        }
+                        else
+                        {
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+                            $sql .= " (id, libelle, module, type, bydefault, perms)";
+                            $sql .= " VALUES ";
+                            $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."');";
+                        }
+                    }
+                    else
+                    {
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+                        $sql .= " (id, libelle, module, type, bydefault)";
+                        $sql .= " VALUES ";
+                        $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.");";
+                    }
+        
+                    $resql=$this->db->query($sql);
+                    if (! $resql)
+                    {
+                        if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
+                            $err++;
+                        }
+                    }
                 }
             }
         }
-
+        
         return $err;
     }
 
