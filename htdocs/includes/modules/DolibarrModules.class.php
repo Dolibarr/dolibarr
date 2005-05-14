@@ -438,6 +438,7 @@ class DolibarrModules
     {
         $err=0;
 
+        //print $this->rights_class." ".sizeof($this->rights)."<br>";
         foreach ($this->rights as $key => $value)
         {
             $r_id       = $this->rights[$key][0];
@@ -473,7 +474,12 @@ class DolibarrModules
                 $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.");";
             }
 
-            $this->db->query($sql);
+            $resql=$this->db->query($sql);
+            if (! $resql)
+            {
+                $err++;
+                dolibarr_print_error($this->db);
+            }
         }
 
         return $err;
