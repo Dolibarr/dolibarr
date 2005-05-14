@@ -1,8 +1,8 @@
 # Dolibarr language file - fr_FR - banks
 Bank=Banque
 Banks=Banques
-FinancialAccount=Compte financier
-FinancialAccounts=Comptes financiers
+FinancialAccount=Compte
+FinancialAccounts=Comptes
 BankAccount=Compte bancaire
 BankAccounts=Comptes bancaires
 CashAccount=Compte caisse/liquide
@@ -38,6 +38,7 @@ NewFinancialAccount=Nouveau compte financier
 NewCurrentAccount=Nouveau compte courant
 NewSavingAccount=Nouveau compte épargne
 NewCashAccount=Nouveau compte caisse
+EditFinancialAccount=Edition compte
 AccountSetup=Configuration des comptes
 SearchBankMovement=Recherche écriture bancaire
 Debts=Dettes
@@ -48,3 +49,4 @@ BankType1=Compte bancaire courant
 BankType2=Compte caisse/liquide
 IfBankAccount=Si compte bancaire
 AccountsArea=Espace comptes
+AccountCard=Fiche compte

@@ -169,10 +169,10 @@ if ($_GET["action"] == 'create')
   print '<td><input size="3" type="text" name="cle_rib" value="'.$_POST["cle_rib"].'"></td></tr>';
   
   print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-  print '<td colspan="3"><input size="5" type="text" name="iban_prefix" value="'.$_POST["iban_prefix"].'"></td></tr>';
+  print '<td colspan="3"><input size="24" type="text" name="iban_prefix" value="'.$_POST["iban_prefix"].'"></td></tr>';
 
   print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-  print '<td colspan="3"><input size="12" type="text" name="bic" value="'.$_POST["bic"].'"></td></tr>';
+  print '<td colspan="3"><input size="24" type="text" name="bic" value="'.$_POST["bic"].'"></td></tr>';
 
   print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
   print "<textarea name=\"domiciliation\" rows=\"3\" cols=\"40\">".$_POST["domiciliation"];
@@ -207,10 +207,10 @@ else
     $h = 0;
     
     $head[$h][0] = "fiche.php?id=$account->id";
-    $head[$h][1] = $langs->trans("FinancialAccount")." ".$account->number;
+    $head[$h][1] = $langs->trans("AccountCard");
     $h++;
 
-    dolibarr_fiche_head($head, $hselected);
+    dolibarr_fiche_head($head, $hselected, $langs->trans("FinancialAccount")." ".$account->number);
 
     print '<table class="border" width="100%">';
       
@@ -286,7 +286,7 @@ else
       
       $form = new Form($db);
       
-      print_titre("Edition compte bancaire");
+      print_titre($langs->trans("EditFinancialAccount"));
       print "<br>";
       
       if ($message) { print "$message<br><br>\n"; }
@@ -321,10 +321,10 @@ else
     	  print '<td><input size="3" type="text" name="cle_rib" value="'.$account->cle_rib.'"></td></tr>';
     	  
     	  print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-    	  print '<td colspan="3"><input size="5" type="text" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
+    	  print '<td colspan="3"><input size="24" type="text" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
     	  
     	  print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-    	  print '<td colspan="3"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
+    	  print '<td colspan="3"><input size="24" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
     
     	  print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
     	  print "<textarea name=\"domiciliation\" rows=\"3\" cols=\"40\">";
@@ -354,5 +354,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

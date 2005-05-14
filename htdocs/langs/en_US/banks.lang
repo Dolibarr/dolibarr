@@ -1,8 +1,8 @@
 # Dolibarr language file - en_US - banks
 Bank=Bank
 Banks=Banks
-FinancialAccount=Financial account
-FinancialAccounts=Financial accounts
+FinancialAccount=Account
+FinancialAccounts=Accounts
 BankAccount=Bank account
 BankAccounts=Bank accounts
 CashAccount=Cash account
@@ -38,6 +38,7 @@ NewFinancialAccount=New financial account
 NewCurrentAccount=New current account
 NewSavingAccount=New saving account
 NewCashAccount=New cash account
+EditFinancialAccount=Edit account
 AccountSetup=Account setup
 SearchBankMovement=search bank movement
 Debts=Debts
@@ -48,3 +49,4 @@ BankType1=Current account
 BankType2=Cash account
 IfBankAccount=If bank account
 AccountsArea=Accounts area
+AccountCard=Account card
