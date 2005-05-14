@@ -477,8 +477,9 @@ class DolibarrModules
             $resql=$this->db->query($sql);
             if (! $resql)
             {
-                $err++;
-                dolibarr_print_error($this->db);
+                if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
+                    $err++;
+                }
             }
         }
 

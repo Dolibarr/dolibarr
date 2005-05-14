@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,20 +22,21 @@
  */
 
 /**
-   \defgroup   don     Module don
-   \brief      Module pour gérer le suivi des dons
+        \defgroup   don     Module don
+        \brief      Module pour gérer le suivi des dons
 */
 
 /**
-   \file       htdocs/includes/modules/modDon.class.php
-   \ingroup    don
-   \brief      Fichier de description et activation du module Don
+        \file       htdocs/includes/modules/modDon.class.php
+        \ingroup    don
+        \brief      Fichier de description et activation du module Don
 */
 
 include_once "DolibarrModules.class.php";
 
-/** \class modDon
-    \brief      Classe de description et activation du module Don
+/**
+        \class      modDon
+        \brief      Classe de description et activation du module Don
 */
 
 class modDon  extends DolibarrModules
@@ -79,7 +80,26 @@ class modDon  extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'don';
+
+    $this->rights[1][0] = 700;
+    $this->rights[1][1] = 'Lire les dons';
+    $this->rights[1][2] = 'r';
+    $this->rights[1][3] = 1;
+    $this->rights[1][4] = 'lire';
+
+    $this->rights[2][0] = 701;
+    $this->rights[2][1] = 'Créer/modifier les dons';
+    $this->rights[2][2] = 'w';
+    $this->rights[2][3] = 0;
+    $this->rights[2][4] = 'creer';
+
+    $this->rights[3][0] = 702;
+    $this->rights[3][1] = 'Supprimer les dons';
+    $this->rights[3][2] = 'd';
+    $this->rights[3][3] = 0;
+    $this->rights[3][4] = 'supprimer';
   }
+
 
    /**
     *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
@@ -88,7 +108,7 @@ class modDon  extends DolibarrModules
   function init()
   {
     $sql = array();
-    
+
     return $this->_init($sql);
   }
 
