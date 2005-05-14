@@ -295,7 +295,7 @@ class MenuLeft {
                 if ($conf->commande->enabled ) 
                 {
                   $langs->load("orders");
-                  $newmenu->add(DOL_URL_ROOT."/compta/commande/liste.php?leftmenu=orders&status=3", $langs->trans("MenuOrdersToBill"), 0 ,$user->rights->commande->lire);
+                  $newmenu->add(DOL_URL_ROOT."/compta/commande/liste.php?leftmenu=orders&status=3", $langs->trans("MenuOrdersToBill"), 0, $user->rights->commande->lire);
 //                  if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/", $langs->trans("StatusOrderToBill"), 1 ,$user->rights->commande->lire);
                 }
 
@@ -303,14 +303,14 @@ class MenuLeft {
                 if ($conf->don->enabled)
                 {
                   $langs->load("donations");
-                  $newmenu->add(DOL_URL_ROOT."/compta/dons/index.php?leftmenu=donations&mainmenu=",$langs->trans("Donations"));
+                  $newmenu->add(DOL_URL_ROOT."/compta/dons/index.php?leftmenu=donations&mainmenu=",$langs->trans("Donations"), 0, $user->rights->don->lire);
                 }
                 
                 // Déplacements
                 if ($conf->deplacement->enabled)
                 {
                   $langs->load("trips");
-                  $newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=deplacement&mainmenu=accountancy", $langs->trans("Trips"));
+                  $newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=deplacement&mainmenu=accountancy", $langs->trans("Trips"), 0, $user->rights->deplacement->lire);
                 }
                 
                 // Charges
