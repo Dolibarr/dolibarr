@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,19 +139,7 @@ class modFacture extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'facture';
-  }
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    global $conf;
     
-    // Permissions
-    $this->remove();
-
     $this->rights[1][0] = 11;
     $this->rights[1][1] = 'Lire les factures';
     $this->rights[1][2] = 'a';
@@ -187,6 +175,20 @@ class modFacture extends DolibarrModules
     $this->rights[6][2] = 'a';
     $this->rights[6][3] = 0;
     $this->rights[6][4] = 'supprimer';
+
+  }
+
+
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    global $conf;
+    
+    // Permissions
+    $this->remove();
 
     // Dir
     $this->dirs[0] = $conf->facture->dir_output;

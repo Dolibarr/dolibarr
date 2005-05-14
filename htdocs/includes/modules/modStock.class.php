@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,14 +79,7 @@ class modStock extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'stock';
-  }
 
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
     $this->rights[0][0] = 1001;
     $this->rights[0][1] = 'Lire les stocks';
     $this->rights[0][2] = 'r';
@@ -122,6 +115,14 @@ class modStock extends DolibarrModules
     $this->rights[4][4] = 'mouvement';
     $this->rights[4][5] = 'creer';
 
+  }
+
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
     $sql = array();
     
     return $this->_init($sql);

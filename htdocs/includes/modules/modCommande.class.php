@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004 Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,18 +83,6 @@ class modCommande extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'commande';
-  }
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    global $conf;
-    
-    // Permissions
-    $this->remove();
 
     $this->rights[1][0] = 81;
     $this->rights[1][1] = 'Lire les commandes';
@@ -119,6 +107,20 @@ class modCommande extends DolibarrModules
     $this->rights[4][2] = 'd';
     $this->rights[4][3] = 0;
     $this->rights[4][4] = 'supprimer';
+
+  }
+
+
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    global $conf;
+    
+    // Permissions
+    $this->remove();
 
     // Dir
     $this->dirs[0] = $conf->commande->dir_output;

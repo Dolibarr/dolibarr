@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,16 +71,6 @@ class modProjet extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'projet';
-  }
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    // Permissions
-    $this->remove();
 
     $this->rights[1][0] = 41; // id de la permission
     $this->rights[1][1] = 'Lire les projets'; // libelle de la permission
@@ -100,6 +90,18 @@ class modProjet extends DolibarrModules
     $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[3][4] = 'supprimer';
     
+  }
+
+
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    // Permissions
+    $this->remove();
+
     return $this->_init($sql);
   }
 

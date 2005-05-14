@@ -116,18 +116,6 @@ class modAdherent extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'adherent';
-  }
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    global $conf;
-    
-    // Permissions
-    $this->remove();
 
     $this->rights[1][0] = 71; // id de la permission
     $this->rights[1][1] = 'Lire les fiche adherents'; // libelle de la permission
@@ -152,6 +140,20 @@ class modAdherent extends DolibarrModules
     $this->rights[4][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[4][4] = 'configurer';
+
+  }
+
+
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    global $conf;
+    
+    // Permissions
+    $this->remove();
 
     // Dir
     $this->dirs[0] = $conf->adherent->dir_output;

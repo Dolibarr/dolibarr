@@ -78,7 +78,27 @@ class modDeplacement extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'deplacement';
+
+    $this->rights[1][0] = 170;
+    $this->rights[1][1] = 'Lire les déplacements';
+    $this->rights[1][2] = 'r';
+    $this->rights[1][3] = 1;
+    $this->rights[1][4] = 'lire';
+
+    $this->rights[2][0] = 171;
+    $this->rights[2][1] = 'Créer/modifier les déplacements';
+    $this->rights[2][2] = 'w';
+    $this->rights[2][3] = 0;
+    $this->rights[2][4] = 'creer';
+
+    $this->rights[3][0] = 172;
+    $this->rights[3][1] = 'Supprimer les déplacements';
+    $this->rights[3][2] = 'd';
+    $this->rights[3][3] = 0;
+    $this->rights[3][4] = 'supprimer';
+  
   }
+
 
    /**
     *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.

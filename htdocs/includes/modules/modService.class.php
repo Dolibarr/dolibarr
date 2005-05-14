@@ -78,17 +78,6 @@ class modService extends DolibarrModules
     $this->rights = array();
     $this->rights_class = 'service';
 
-  }
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    // Permissions et valeurs par défaut
-    $this->remove();
-
 /* Pour l'instant droits sur services non gérés
     $this->rights[1][0] = 331; // id de la permission
     $this->rights[1][1] = 'Lire les services'; // libelle de la permission
@@ -114,6 +103,18 @@ class modService extends DolibarrModules
     $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[4][4] = 'supprimer';
 */
+
+  }
+
+
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    // Permissions et valeurs par défaut
+    $this->remove();
 
     $sql = array();
 

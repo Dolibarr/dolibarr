@@ -93,17 +93,6 @@ class modPropale extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'propale';
-  }
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {       
-    global $conf;
-    // Permissions et valeurs par défaut
-    $this->remove();
 
     $this->rights[1][0] = 21; // id de la permission
     $this->rights[1][1] = 'Lire les propositions commerciales'; // libelle de la permission
@@ -140,6 +129,19 @@ class modPropale extends DolibarrModules
     $this->rights[6][2] = 'd'; // type de la permission (déprécié à ce jour)
     $this->rights[6][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[6][4] = 'supprimer';
+
+  }
+
+
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {       
+    global $conf;
+    // Permissions et valeurs par défaut
+    $this->remove();
 
     // Répertoires
     $this->dirs[0] = $conf->propal->dir_output;

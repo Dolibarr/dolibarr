@@ -76,16 +76,6 @@ class modMailing extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'mailing';
-  }
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    // Permissions
-    $this->remove();
 
     $this->rights[1][0] = 221; // id de la permission
     $this->rights[1][1] = 'Consulter les mailings'; // libelle de la permission
@@ -110,6 +100,18 @@ class modMailing extends DolibarrModules
     $this->rights[4][2] = 'd';
     $this->rights[4][3] = 0;
     $this->rights[4][4] = 'supprimer';
+    
+  }
+
+
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    // Permissions
+    $this->remove();
    
     return $this->_init($sql);
   }

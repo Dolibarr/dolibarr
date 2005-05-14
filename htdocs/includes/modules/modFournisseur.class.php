@@ -80,16 +80,7 @@ class modFournisseur extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'fournisseur';
-  }
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    $this->remove();
-
+    
     $this->rights[2][0] = 181;
     $this->rights[2][1] = 'Lire les commandes fournisseur';
     $this->rights[2][2] = 'r';
@@ -168,6 +159,16 @@ class modFournisseur extends DolibarrModules
     $this->rights[12][4] = 'facture';
     $this->rights[12][5] = 'valider';
 
+  }
+
+
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    $this->remove();
 
     $sql = array();
 

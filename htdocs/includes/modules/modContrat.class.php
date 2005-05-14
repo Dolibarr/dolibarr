@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,17 +74,6 @@ class modContrat extends DolibarrModules
     $this->rights = array();
     $this->rights_class = 'contrat';
 
-  }
-
-   /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    // Permissions
-    $this->remove();
-
     $this->rights[1][0] = 161;
     $this->rights[1][1] = 'Lire les contrats';
     $this->rights[1][2] = 'r';
@@ -108,6 +97,18 @@ class modContrat extends DolibarrModules
     $this->rights[4][2] = 'r';
     $this->rights[4][3] = 0;
     $this->rights[4][4] = 'desactiver';
+
+  }
+
+
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    // Permissions
+    $this->remove();
 
     $sql = array();
 

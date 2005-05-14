@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
+/* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,16 +70,6 @@ class modCategorie extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'categorie';
-  }
-
-  /**
-   *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-   *               Définit également les répertoires de données à créer pour ce module.
-   */
-  function init()
-  {
-    // Permissions
-    $this->remove();
 
     $this->rights[0][0] = 241; // id de la permission
     $this->rights[0][1] = 'Lire les catégories'; // libelle de la permission
@@ -97,6 +88,18 @@ class modCategorie extends DolibarrModules
     $this->rights[2][2] = 'd'; // type de la permission (déprécié à ce jour)
     $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[2][4] = 'supprimer';
+
+  }
+
+
+  /**
+   *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+   *               Définit également les répertoires de données à créer pour ce module.
+   */
+  function init()
+  {
+    // Permissions
+    $this->remove();
 
     $sql = array();
 

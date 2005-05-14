@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,18 +81,6 @@ class modPrelevement extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'prelevement';
-  }
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    global $conf;
-    
-    // Permissions
-    $this->remove();
 
     $this->rights[1][0] = 151;
     $this->rights[1][1] = 'Consulter les prélèvements';
@@ -111,6 +100,20 @@ class modPrelevement extends DolibarrModules
     $this->rights[3][3] = 1;
     $this->rights[3][4] = 'bons';
     $this->rights[3][5] = 'lire';
+
+  }
+
+
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    global $conf;
+    
+    // Permissions
+    $this->remove();
 
     // Dir
     $this->dirs[0] = $conf->prelevement->dir_output;
