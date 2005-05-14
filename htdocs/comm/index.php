@@ -115,38 +115,42 @@ if ($conf->contrat->enabled) {
 /*
  * Liste des propal brouillons
  */
-if ($conf->propal->enabled && $user->rights->propale->lire) {
-	$sql = "SELECT p.rowid, p.ref, p.price, s.nom";
-	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE p.fk_statut = 0 and p.fk_soc = s.idp";
-	
-	if ( $db->query($sql) )
-	{
-	  $total = 0;
-	  $num = $db->num_rows();
-	  $i = 0;
-	  $var=true;
-	  if ($num > 0 )
-	    {
-	      print '<table class="noborder" width="100%">';
-	      print "<tr class=\"liste_titre\">";
-	      print "<td colspan=\"3\">".$langs->trans("ProposalsDraft")."</td></tr>";
-	      
-	      while ($i < $num)
-		{
-		  $obj = $db->fetch_object();
-		  $var=!$var;
-		  print '<tr '.$bc[$var].'><td width="25%" nowrap>'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
-		  $i++;
-		  $total += $obj->price;
-		}
-		if ($total>0) {
-		  $var=!$var;
-		  print '<tr '.$bc[$var]."><td colspan=\"2\"><i>".$langs->trans("Total")."</i></td><td align=\"right\"><i>".price($total)."</i></td></tr>";
-		}
-	      print "</table><br>";
-	    }
-	}
+if ($conf->propal->enabled && $user->rights->propale->lire)
+{
+    $sql = "SELECT p.rowid, p.ref, p.price, s.nom";
+    $sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
+    $sql .= " WHERE p.fk_statut = 0 and p.fk_soc = s.idp";
+
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $var=true;
+
+        $total = 0;
+        $num = $db->num_rows($resql);
+        $i = 0;
+        if ($num > 0)
+        {
+            print '<table class="noborder" width="100%">';
+            print "<tr class=\"liste_titre\">";
+            print "<td colspan=\"3\">".$langs->trans("ProposalsDraft")."</td></tr>";
+
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                $var=!$var;
+                print '<tr '.$bc[$var].'><td width="25%" nowrap>'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
+                $i++;
+                $total += $obj->price;
+            }
+            if ($total>0) {
+                $var=!$var;
+                print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
+            }
+            print "</table><br>";
+        }
+        $db->free($resql);
+    }
 }
 
 /*
@@ -393,48 +397,48 @@ if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
  * Dernières propales ouvertes
  *
  */
-if ($conf->propal->enabled && $user->rights->propale->lire) {
-
+if ($conf->propal->enabled && $user->rights->propale->lire)
+{
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
     $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut = 1";
-    if ($socidp) $sql .= " AND s.idp = $socidp"; 
+    if ($socidp) $sql .= " AND s.idp = $socidp";
     $sql .= " ORDER BY p.rowid DESC";
     
     $result=$db->query($sql);
     if ($result)
     {
-	  $total = 0;
-      $num = $db->num_rows($result);
-      $i = 0;
-      if ($num > 0)
-	{
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
-	  $var=false;
-	  while ($i < $num)
-	    {
-	      $obj = $db->fetch_object($result);
-	      print "<tr $bc[$var]><td width=\"15%\" nowrap><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td>";
-	      print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$obj->nom."</a></td>\n";      
-	      print "<td align=\"right\">";
-	      print strftime("%d %b %Y",$obj->dp)."</td>\n";	  
-	      print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
-	      $var=!$var;
-	      $i++;
-		  $total += $obj->price;
-	    }
-		if ($total>0) {
-		  print "<tr $bc[$var]><td colspan=\"3\" align=\"right\"><i>".$langs->trans("Total")."</i></td><td align=\"right\"><i>".price($total)."</i></td></tr>";
-		}
-	  print "</table><br>";
-	}
+        $total = 0;
+        $num = $db->num_rows($result);
+        $i = 0;
+        if ($num > 0)
+        {
+            $var=true;
+
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($result);
+                $var=!$var;
+                print "<tr $bc[$var]><td width=\"15%\" nowrap><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td>";
+                print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$obj->nom."</a></td>\n";
+                print "<td align=\"right\">";
+                print dolibarr_print_date($obj->dp)."</td>\n";
+                print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
+                $i++;
+                $total += $obj->price;
+            }
+            if ($total>0) {
+                print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
+            }
+            print "</table><br>";
+        }
     }
-    else 
+    else
     {
         dolibarr_print_error($db);
     }
-    
 }
 
 /*
