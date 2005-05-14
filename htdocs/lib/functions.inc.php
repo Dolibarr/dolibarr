@@ -368,7 +368,7 @@ function dolibarr_print_phone($phone,$country="FR")
 */
 function dolibarr_trunc($string,$size=40)
 {
-    if (sizeof($string) > $size) return substr($string,0,$size).'...';
+    if (strlen($string) > $size) return substr($string,0,$size).'...';
     else return $string;  
 }
 
