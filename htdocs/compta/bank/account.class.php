@@ -323,6 +323,25 @@ class Account
 
 
   /*
+   *    \brief      Efface le compte
+   *
+   */
+  function delete()
+  {
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
+    $sql .= " WHERE rowid  = ".$this->rowid;
+    $result = $this->db->query($sql);
+    if ($result) {
+        return 1;
+    }
+    else {
+        dolibarr_print_error($this->db);
+        return -1;
+    }
+  }
+ 
+ 
+   /*
    *    \brief      Renvoi si un compte peut etre supprimer ou non (sans mouvements)
    *    \return     boolean     vrai si peut etre supprimé, faux sinon
    */

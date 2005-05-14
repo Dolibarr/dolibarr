@@ -131,7 +131,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	      $obj = $db->fetch_object($resql);
 	      $var=!$var;
 	      print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("Showcompany"),"company").' '.$obj->nom.'</a></td></tr>';
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("Showcompany"),"company").' '.dolibarr_trunc($obj->nom,50).'</a></td></tr>';
 	      $i++;
 	    }
 
@@ -279,7 +279,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
             print "<a href=\"commande/fiche.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
             
             print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
-            print '<a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+            print '<a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,50).'</a></td>';
             print '<td align="right">'.price($obj->total_ht).'</td>';
             print '<td align="right">'.price($obj->total_ttc).'</td>';
             print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td></tr>';
@@ -289,10 +289,11 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
             $i++;
 	    }
       $var=!$var;
-	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; ('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</i></td>';
-	  print '<td align="right"><i>'.price($tot_ht).'</i></td>';
-	  print '<td align="right"><i>'.price($tot_ttc).'</i></td>';
-	  print '<td align="right"><i>'.price($tot_tobill).'</i></td>';
+
+	  print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
+	  print '<td align="right">'.price($tot_ht).'</td>';
+	  print '<td align="right">'.price($tot_ttc).'</td>';
+	  print '<td align="right">'.price($tot_tobill).'</td>';
 	  print '</tr>';
 	  print '</table><br>';
 	}
@@ -345,7 +346,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 		{
 		  $var=!$var;
 		  print '<tr '.$bc[$var].'><td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
-		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->nom.'</a></td>';
+		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,50).'</a></td>';
 		  print '<td align="right">'.price($obj->total).'</td>';
 		  print '<td align="right">'.price($obj->total_ttc).'</td>';
 		  print '<td align="right">'.price($obj->am).'</td></tr>';
@@ -357,9 +358,12 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	    }
 	  $var=!$var;
 
-	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; ('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</i></td><td align="right"><i>'.price($total)."</i></td><td align=\"right\"><i>".price($total_ttc)."</i></td><td align=\"right\"><i>".price($totalam)."</i></td></tr>";
-
-	  print "</table><br>";
+	  print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</font> </td>';
+	  print '<td align="right">'.price($total).'</td>';
+	  print '<td align="right">'.price($total_ttc).'</td>';
+	  print '<td align="right">'.price($totalam).'</td>';
+	  print '</tr>';
+	  print '</table><br>';
 	}
       $db->free($resql);
     }
@@ -423,7 +427,7 @@ if ($conf->facture->enabled) {
     	      $obj = $db->fetch_object($result);
     	      $var = !$var;
         	  print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
-    		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a></td>';
+    		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dolibarr_trunc($obj->nom,50).'</a></td>';
 		      print '<td align="right">'.price($obj->total_ht).'</td>';
               print '<td align="right">'.price($obj->total_ttc).'</td>';
     	      print '</tr>';
@@ -433,8 +437,11 @@ if ($conf->facture->enabled) {
     	      $i++;
             }
           $var=!$var;
-          print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; ('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</td>';
-          print '<td align="right"><i>'.price($total).'</i></td><td align="right"><i>'.price($total_ttc).'</i></td></tr>';
+          
+          print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</font> </td>';
+          print '<td align="right">'.price($total).'</td>';
+          print '<td align="right">'.price($total_ttc).'</td>';
+    	  print '</tr>';
     	  print '</table><br>';
     	}
         }
@@ -452,6 +459,7 @@ print '</td></tr>';
 print '</table>';
 
 $db->close();
+
  
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

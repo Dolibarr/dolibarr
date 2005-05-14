@@ -38,9 +38,9 @@ if (!$user->admin && !$user->rights->banque)
   accessforbidden();
 
 
-llxHeader();
-
-
+/*
+ * Actions
+ */
 if ($_POST["action"] == 'add')
 {
     // Creation compte
@@ -101,27 +101,42 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->proprio 	    = $_POST["proprio"];
     $account->adresse_proprio = $_POST["adresse_proprio"];
 
-    if ($account->label) {
+    if ($account->label)
+    {
         $result = $account->update($user);
-        if (! $result) {
+        if (! $result)
+        {
             $message=$account->error();
             $_GET["action"]='edit';     // Force chargement page edition
         }
-        else {
+        else
+        {
             $_GET["id"]=$_POST["id"];   // Force chargement page en mode visu
         }
-        } else {
-            $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("LabelBankCashAccount")).'</div>';
-            $_GET["action"]='create';       // Force chargement page en mode creation
-        }
-
+    } else {
+        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("LabelBankCashAccount")).'</div>';
+        $_GET["action"]='create';       // Force chargement page en mode creation
     }
+}
+
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->banque->configurer)
+{
+    // Modification
+    $account = new Account($db, $_GET["id"]);
+    $account->delete($_GET["id"]);
+
+    header("Location: ".DOL_URL_ROOT."/compta/bank/index.php");
+    exit;
+}
 
 
+llxHeader();
+
+$form = new Form($db);
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Nouvel compte                                                              */
+/* Affichage page en mode création                                            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,6 +227,15 @@ else
 
     dolibarr_fiche_head($head, $hselected, $langs->trans("FinancialAccount")." ".$account->number);
 
+    /*
+     * Confirmation de la suppression
+     */
+    if ($_GET["action"] == 'delete')
+    {
+        $form->form_confirm($_SERVER["PHP_SELF"]."?id=$account->id",$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
+        print '<br />';
+    }
+
     print '<table class="border" width="100%">';
       
     print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
@@ -256,16 +280,23 @@ else
     print '<br>';
     
     print '</div>';
-     
+
+
     /*
      * Barre d'actions
      *
      */
     print '<div class="tabsAction">';
 
-      if ($user->rights->banque->configurer) 
+    if ($user->rights->banque->configurer) 
 	{
-	  print '<a class="tabAction" href="fiche.php?action=edit&id='.$account->id.'">'.$langs->trans("Edit").'</a>';
+	  print '<a class="butAction" href="fiche.php?action=edit&id='.$account->id.'">'.$langs->trans("Edit").'</a>';
+	}
+
+    $canbedeleted=$account->can_be_deleted();   // Renvoi vrai si compte sans mouvements
+    if ($user->rights->banque->configurer && $canbedeleted) 
+	{
+	  print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$account->id.'">'.$langs->trans("Delete").'</a>';
 	}
 
     print '</div>';
@@ -283,8 +314,6 @@ else
 	  
       $account = new Account($db, $_GET["id"]);
       $account->fetch($_GET["id"]);
-      
-      $form = new Form($db);
       
       print_titre($langs->trans("EditFinancialAccount"));
       print "<br>";
