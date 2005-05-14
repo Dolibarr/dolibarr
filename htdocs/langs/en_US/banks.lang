@@ -50,3 +50,5 @@ BankType2=Cash account
 IfBankAccount=If bank account
 AccountsArea=Accounts area
 AccountCard=Account card
+DeleteAccount=Delete account
+ConfirmDeleteAccount=Are you sure you want to delete this account ?

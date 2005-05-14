@@ -50,3 +50,5 @@ BankType2=Compte caisse/liquide
 IfBankAccount=Si compte bancaire
 AccountsArea=Espace comptes
 AccountCard=Fiche compte
+DeleteAccount=Suppression de compte
+ConfirmDeleteAccount=Etes-vous sur de vouloir supprimer ce compte ?
