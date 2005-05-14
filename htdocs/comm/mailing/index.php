@@ -23,7 +23,7 @@
 
 /**
         \file       htdocs/comm/mailing/index.php
-        \ingroup    commercial
+        \ingroup    mailing
         \brief      Page accueil de la zone mailing
         \version    $Revision$
 */
@@ -52,6 +52,17 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
+
+
+// Recherche emails
+$var=false;
+print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/liste.php">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAMailing").'</td></tr>';
+print '<tr '.$bc[$var].'><td nowrap>';
+print $langs->trans("Keyword").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print "</table></form><br>\n";
+
 
 // Affiche stats de tous les modules de destinataires mailings
 print '<table class="noborder" width="100%">';
@@ -141,7 +152,9 @@ $result=$db->query($sql);
 if ($result) 
 {
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastMailings",10).'</td><td align="center">'.$langs->trans("Status").'</td></tr>';
+  print '<tr class="liste_titre"><td>'.$langs->trans("LastMailings",10).'</td>';
+  print '<td align="right">'.$langs->trans("NbOfEMails").'</td>';
+  print '<td align="center">'.$langs->trans("Status").'</td></tr>';
 
   $num = $db->num_rows($result);
   if ($num > 0)
@@ -156,7 +169,7 @@ if ($result)
 	  
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->titre.'</a></td>';
-	  print '<td align="right">'.($obj->nbemail?$obj->nbemail:"0")." ".$langs->trans("EMails").'</td>';
+	  print '<td align="right">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
 	  $mail=new Mailing($db);
 	  print '<td align="center">'.$mail->statuts[$obj->statut].'</td>';
       print '</tr>';
@@ -186,7 +199,7 @@ $db->close();
 
 if ($langs->file_exists("html/spam.html",0)) {
     print "<br><br><br><br>".img_warning().' '.$langs->trans("Note")."<br>";
-    print '<div style="padding: 4px; background: #FAFAFA; border: 1px solid #444444;" >';
+    print '<div style="padding: 4px; background: #FAFAFA; border: 1px solid #BBBBBB;" >';
     $langs->print_file("html/spam.html",0);
     print '</div>';
     

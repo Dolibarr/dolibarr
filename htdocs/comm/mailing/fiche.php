@@ -23,6 +23,7 @@
 
 /**
         \file       htdocs/comm/mailing/fiche.php
+        \ingroup    mailing
         \brief      Fiche mailing, onglet général
         \version    $Revision$
 */

@@ -23,6 +23,7 @@
 
 /**
         \file       htdocs/comm/mailing/cibles.php
+        \ingroup    mailing
         \brief      Page des cibles de mailing
         \version    $Revision$
 */

@@ -23,6 +23,7 @@
 
 /**
         \file       htdocs/comm/mailing/pre.inc.php
+        \ingroup    mailing
         \brief      Fichier de gestion du menu gauche de l'espace mailing
         \version    $Revision$
 */

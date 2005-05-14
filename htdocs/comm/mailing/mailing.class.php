@@ -21,13 +21,16 @@
  *
  */
 
-/**     \file       htdocs/comm/mailing/mailing.class.php
+/**
+        \file       htdocs/comm/mailing/mailing.class.php
+        \ingroup    mailing
         \brief      Fichier de la classe de gestion des mailings
         \version    $Revision$
 */
 
 
-/**     \class      Mailing
+/**
+        \class      Mailing
 	    \brief      Classe permettant la gestion des mailings
 */
 class Mailing
