@@ -72,7 +72,7 @@ if ($db->query($sql))
 
       print "<tr $bc[$var]>";
       print '<td>'.$row[0].'</td>'."\n";
-      print '<td align="right">'.round($row[2],2)."</td>\n";
+      print '<td align="right">'.round($row[2],0)."</td>\n";
       print '<td align="right">'.$row[1]."</td>\n";
 
 
