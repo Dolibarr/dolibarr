@@ -62,7 +62,7 @@ if ($db->query($sql))
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>Destination</td><td align="right">CA</td>';
   print '<td align="right">Nb Appels</td>';
-  print '<td>Duree</td><td align="right">Duree_moyenne</td></tr>';
+  print '<td align="right">Durée (sec)</td><td align="right">Durée moyenne (sec)</td></tr>';
   $var=True;
 
   while ($i < $num)
@@ -73,10 +73,10 @@ if ($db->query($sql))
 
       print "<tr $bc[$var]>";
       print '<td>'.$row[0].'</td>'."\n";
-      print '<td align="right">'.round($row[2],0)."</td>\n";
+      print '<td align="right">'.sprintf("%01.2f",$row[2])."</td>\n";
       print '<td align="right">'.$row[1]."</td>\n";
       print '<td align="right">'.$row[3]."</td>\n";
-      print '<td align="right">'.round($row[4],2)."</td>\n";
+      print '<td align="right">'.sprintf("%01.2f",$row[4])."</td>\n";
 
 
       print "</tr>\n";
