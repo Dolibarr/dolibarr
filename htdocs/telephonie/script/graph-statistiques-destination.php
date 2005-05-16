@@ -33,7 +33,7 @@ if ($db->query($sql))
 
 }
 
-$sql = "SELECT dest, count(cout_vente), sum(cout_vente)";
+$sql = "SELECT dest, count(cout_vente), sum(cout_vente), sum(duree)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
 $sql .= " GROUP BY dest";
 
@@ -62,11 +62,16 @@ else
 
 for ($i = 0 ; $i < $num ; $i++)
 {
+  $dm = ($dest[$i][3]/$dest[$i][1]);
+
+
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats_destination";
-  $sql .= " ( destination, nbappels, ca)";
+  $sql .= " ( destination, nbappels, ca, duree, duree_moy)";
   $sql .= " VALUES ('".$dest[$i][0]."'";
   $sql .= ",".$dest[$i][1];
-  $sql .= ",".$dest[$i][2].")";
+  $sql .= ",".$dest[$i][2];
+  $sql .= ",".$dest[$i][3];
+  $sql .= ",".ereg_replace(",",".",$dm).")";
 
   $resql = $db->query($sql);
 }
