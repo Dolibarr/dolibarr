@@ -50,7 +50,7 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top">';
 
-$sql = "SELECT destination, nbappels, ca";
+$sql = "SELECT destination, nbappels, ca, duree, duree_moy";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats_destination";
 $sql .= " ORDER BY ca DESC";
 
@@ -61,7 +61,8 @@ if ($db->query($sql))
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>Destination</td><td align="right">CA</td>';
-  print '<td align="right">Nb Appels</td></tr>';
+  print '<td align="right">Nb Appels</td>';
+  print '<td>Duree</td><td align="right">Duree_moyenne</td></tr>';
   $var=True;
 
   while ($i < $num)
@@ -74,6 +75,8 @@ if ($db->query($sql))
       print '<td>'.$row[0].'</td>'."\n";
       print '<td align="right">'.round($row[2],0)."</td>\n";
       print '<td align="right">'.$row[1]."</td>\n";
+      print '<td align="right">'.$row[2]."</td>\n";
+      print '<td align="right">'.round($row[3],2)."</td>\n";
 
 
       print "</tr>\n";
