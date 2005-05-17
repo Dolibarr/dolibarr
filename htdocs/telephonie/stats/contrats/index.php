@@ -49,7 +49,7 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 
 $sql .= " WHERE f.fk_ligne = l.rowid";
 $sql .= " AND l.fk_contrat = c.rowid";
-
+$sql .= " AND c.isfacturable = 'oui'";
 $sql .= " GROUP BY date_format(f.date, '%Y%m'), c.mode_paiement";
 $sql .= " ORDER BY date_format(f.date, '%Y%m') DESC";
 $sql .= " LIMIT 10";
