@@ -351,6 +351,7 @@ class LigneTel {
   {
     $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
     $sql .= " SET fk_fournisseur = ".$fourn_id ;
+    $sql .= " WHERE rowid = ".$this->id;
 
     $resql = $this->db->query($sql);
 
