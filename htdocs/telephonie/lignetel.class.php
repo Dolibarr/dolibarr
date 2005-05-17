@@ -704,5 +704,17 @@ class LigneTel {
 	  return -2;
 	}
     }
+
+  function ChangeContrat($user, $contrat_id)
+  {
+    $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+    $sql .= " SET fk_contrat = ".$contrat_id ;
+    $sql .= " WHERE rowid = ".$this->id;
+
+    $resql = $this->db->query($sql);
+
+    return 0;
+  }
+
 }
 ?>

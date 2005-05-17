@@ -80,7 +80,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
     }
 }
 
-if ($_POST["action"] == 'updateremise')
+if ($_POST["action"] == 'updateremise' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->id = $_GET["id"];
@@ -93,6 +93,17 @@ if ($_POST["action"] == 'updateremise')
     {
       $_GET["action"] = 'editremise';
     }  
+}
+
+if ($_POST["action"] == 'changecontrat' && $user->rights->telephonie->ligne->creer)
+{
+  $ligne = new LigneTel($db);
+  $ligne->id = $_GET["id"];
+
+  if ( $ligne->ChangeContrat($user, $_POST["contrat"]) == 0)
+    {
+      Header("Location: fiche.php?id=".$ligne->id);
+    } 
 }
 
 if ($_POST["action"] == 'addcontact')
@@ -687,7 +698,7 @@ else
 			  $i++;
 			}
 		    }
-		  $db->free();     
+		  $db->free();
 
 		}
 	      else
@@ -705,7 +716,7 @@ else
 
 	      print "</table><br />";
 
-	      if ($_GET["action"] == "editremise" &&  $ligne->statut <> 6)
+	      if ($_GET["action"] == "editremise" &&  $ligne->statut <> 6 && $user->rights->telephonie->ligne->creer)
 		{
 		  /**
 		   * Edition de la remise
@@ -722,6 +733,53 @@ else
 		  print '<tr><td width="20%">Commentaire</td><td><input size="40" type="text" name="comment"></td></tr>';
 
 		  print '<tr><td align="center" colspan="2"><input type="submit" name="Activer"></td></tr>';
+
+		  print '</table><br />';
+		  
+		  print '</form>';
+		}
+
+	      if ($_GET["action"] == "chgcontrat" && $user->rights->telephonie->ligne->creer)
+		{
+		  /**
+		   * Edition de la remise
+		   */
+
+		  print '<form action="fiche.php?id='.$ligne->id.'" method="POST">';
+		  print '<input type="hidden" name="action" value="changecontrat">';
+		  print '<table class="border" width="100%" cellpadding="4" cellspacing="0">';
+		  print '<tr class="liste_titre"><td colspan="2">Migrer vers un autre contrat</td></tr>';
+		  print '<tr><td width="20%">Nouveau contrat</td><td>';
+		  print '<select name="contrat">';
+
+		  $sql = "SELECT c.rowid, c.ref ";
+		  $sql .= "FROM ".MAIN_DB_PREFIX."telephonie_contrat as c";
+		  $sql .= " WHERE c.rowid <> ".$ligne->contrat;
+		  $sql .= " AND c.fk_client_comm = ".$ligne->client_comm_id;
+
+		  $resql =  $db->query($sql);
+		  if ($resql)
+		    {
+		      $num = $db->num_rows($resql);
+		      $i = 0;
+		      while ($i < $num)
+			{
+			  $row = $db->fetch_row($resql);
+			  
+			  print '<option value="'.$row[0].'">'.$row[1];
+			  $i++;
+			}
+		      
+		      $db->free();
+		    }
+		  else
+		    {
+		      print $sql;
+		    }
+
+		  print '</select></td></tr>';
+
+		  print '<tr><td align="center" colspan="2"><input type="submit" value="Migrer"></td></tr>';
 
 		  print '</table><br />';
 		  
@@ -1161,6 +1219,11 @@ if ($_GET["action"] == '')
   if ( $user->rights->telephonie->ligne_activer && $ligne->statut <> 6)
     {
   print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$ligne->id\">".$langs->trans("Contact")."</a>";
+    }
+
+  if ( $user->rights->telephonie->ligne->creer && $ligne->statut < 4)
+    {
+      print "<a class=\"tabAction\" href=\"fiche.php?action=chgcontrat&amp;id=$ligne->id\">".$langs->trans("Changer de contrat")."</a>";
     }
 
   if ( $user->rights->telephonie->ligne->creer && $ligne->statut < 4)
