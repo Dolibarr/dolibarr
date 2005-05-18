@@ -52,6 +52,8 @@ if ($_POST["action"] == 'confirm_rejet')
 	    }
 	  else
 	    {
+	      dolibarr_syslog("Motif : ".$_POST["motif"]);
+	      dolibarr_syslog("$daterej $time ");
 	      Header("Location: ligne.php?id=".$_GET["id"]."&action=rejet");
 	    }
 	}
