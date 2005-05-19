@@ -29,6 +29,8 @@ require ("../../master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/distributeurs/distributeur.po.month.class.php");
+
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.week.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/resiliation.week.class.php");
@@ -52,7 +54,6 @@ $file = $img_root . "contrats/modereglement.png";
 if ($verbose) print "Graph : Contrats Reglement $file\n";
 $graph = new GraphContratModeReglement($db, $file);
 $graph->GraphMakeGraph();
-
 
 /***********************************************************************/
 /*
@@ -151,6 +152,43 @@ if ($db->query($sql))
        $i++;
      }
  }
+
+/***********************************************************************/
+/*
+/* Prise ordre des distributeur
+/*
+/***********************************************************************/
+
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/contrats/modereglement.class.php");
+
+
+$sql = "SELECT distinct p.fk_distributeur, d.nom";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
+$sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur as d";
+$sql .= " WHERE d.rowid = p.fk_distributeur";
+
+$resql = $db->query($sql);
+
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);
+
+      $file = $img_root . "distributeurs/".$row[0]."/po.month.png";
+
+      $graph = new GraphDistributeurPoMensuel($db, $file);
+      $graph->width = 500;
+      $graph->GraphMakeGraph($row[0], $row[1]);
+      $i++;
+    }
+}
+
+
+
  /*
   *
   */
@@ -171,7 +209,7 @@ if ($resql)
       $file = $img_root . "distributeurs/".$row[0]."/clients.hebdomadaire.png";
       if ($verbose) print "Graph : Lignes commandes$file\n";
       $graph = new GraphClientsWeek($db, $file);
-      $graph->width = 400;
+      $graph->width = 500;
       $graph->distributeur = $row[0];
       $graph->GraphMakeGraph();
       $i++;
