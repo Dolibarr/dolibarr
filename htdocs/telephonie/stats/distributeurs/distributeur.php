@@ -52,21 +52,57 @@ if ($_GET["id"])
 
   dolibarr_fiche_head($head, $hselected, "Distributeur");
 
-  print "Lignes commandées<br />";
-
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-  print '<tr><td width="50%" valign="top">';
+  print '<tr><td width="30%" valign="top">';
   
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre">';
+  print '<td>Mois</td><td align="right">Prise d\'ordre</td></tr>';
+  
+  $sql = "SELECT sum(p.montant), date_format(datepo, '%m-%Y')";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
+  
+  $sql .= " WHERE p.fk_distributeur = ".$_GET["id"];
+  $sql .= " GROUP BY date_format(p.datepo, '%Y%m') DESC";
+  
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      $total = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($i);	
+	  
+	  $var=!$var;
+	  
+	  print "<tr $bc[$var]>";
+	  
+	  print '<td>'.$row[1].'</td>';
+	  
+	  print '<td align="right">'.price($row[0]).'</td></tr>';
+	  $i++;
+	}
+      $db->free();
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+  print '</table><br />';
 
  
- print '</td><td valign="top" width="50%">';
+  print '</td><td valign="top" width="70%">';
 
- print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/clients.hebdomadaire.png" alt="Nouveaux clients" title="Nouveaux clients"><br /><br />'."\n";
-
-
- print '</td></tr>';
- print '</table>';
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/clients.hebdomadaire.png" alt="Nouveaux clients" title="Nouveaux clients"><br /><br />'."\n";
+  
+  
+  print '</td></tr>';
+  print '</table>';
  
  $db->close();
 }
