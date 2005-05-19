@@ -45,7 +45,7 @@ if ($_GET["id"])
   $distri = new DistributeurTelephonie($db);
   $distri->fetch($_GET["id"]);
 
-  $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/distributeur.php?commid='.$distri->id;
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/distributeur.php?id='.$distri->id;
   $head[$h][1] = $distri->nom;
   $hselected = $h;
   $h++;
@@ -97,6 +97,8 @@ if ($_GET["id"])
 
  
   print '</td><td valign="top" width="70%">';
+
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/po.month.png" alt="Prise d\'ordre" title="Prise d\'ordre"><br /><br />'."\n";
 
   print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=distributeurs/'.$_GET["id"].'/clients.hebdomadaire.png" alt="Nouveaux clients" title="Nouveaux clients"><br /><br />'."\n";
   
