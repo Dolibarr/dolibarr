@@ -48,10 +48,9 @@ print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre">';
 print '<td>Distributeur</td><td align="right">Prise d\'ordre</td></tr>';
 
-$sql = "SELECT sum(p.montant), d.nom";
+$sql = "SELECT sum(p.montant), d.nom, d.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
-
 
 $sql .= " WHERE p.fk_distributeur = d.rowid";
 $sql .= " GROUP BY d.rowid";
@@ -72,7 +71,7 @@ if ($resql)
 
       print "<tr $bc[$var]>";
 
-      print '<td>'.$row[1].'</a></td>';
+      print '<td><a href="distributeur.php?id='.$row[2].'">'.$row[1].'</a></td>';
 
       print '<td align="right">'.price($row[0]).'</td></tr>';
       $i++;
