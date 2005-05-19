@@ -379,17 +379,23 @@ class LigneTel {
   {
     $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
     $sql .= " SET statut = ".$statut ;
-
-    if ($statut == 2)
-      {
-	$sql .= ", date_commande = now()";
-	$sql .= ",fk_user_commande=".$user->id; 
-      }
-
     $sql .= " WHERE rowid =".$this->id;
     
     $this->db->query($sql);
     
+
+    if ($statut == 2)
+      {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+	$sql .= " SET statut = ".$statut ;
+	$sql .= ", date_commande = now()";
+	$sql .= ", fk_user_commande=".$user->id; 
+	$sql .= " WHERE rowid =".$this->id;
+	$sql .= " AND date_commande IS NULL";    
+
+	$this->db->query($sql);
+      }
+
     if ($datea)
       {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_societe_ligne_statut";
