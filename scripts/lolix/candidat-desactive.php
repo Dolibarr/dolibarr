@@ -39,7 +39,7 @@ require(DOL_DOCUMENT_ROOT."/lolix/cv/cv.class.php");
 $error = 0;
 
 $now = time();
-$tlimit = $now - (86400 * 35); // 35 jours
+$tlimit = $now - (86400 * 3 * 31); // 3 mois approximatifs
 
 $sql = "SELECT c.idp";
 $sql .= " FROM lolixfr.candidat as c";
