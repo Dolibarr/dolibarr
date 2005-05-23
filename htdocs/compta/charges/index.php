@@ -50,7 +50,7 @@ print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Group")."</td>";
 print "<td align=\"right\">".$langs->trans("Nb")."</td>";
 print "<td align=\"right\">".$langs->trans("AmountTTC")."</td>";
-print "<td align=\"right\">".$langs->trans("Payed")."</td>";
+print "<td align=\"right\">".$langs->trans("AlreadyPayed")."</td>";
 print "</tr>\n";
 
 /*
