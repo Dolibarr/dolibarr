@@ -342,9 +342,9 @@ class MenuLeft {
                     $newmenu->add(DOL_URL_ROOT."/compta/prelevement/index.php?leftmenu=withdraw",$langs->trans("StandingOrders"));
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php",$langs->trans("Receipts"));
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"));
+                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=0",$langs->trans("StandingOrderToProcess"));
+                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=1",$langs->trans("StandingOrderProcessed"));
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"));
-                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrderToProcess"));
-                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandestraitees.php",$langs->trans("StandingOrderProcessed"));
                 }
 
                 // Bank-Caisse
