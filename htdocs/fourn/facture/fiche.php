@@ -57,6 +57,7 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->ri
   $facturefourn->set_valid($user->id);
 
   Header("Location: fiche.php?facid=".$_GET["facid"]);
+  exit;
 }
 
 
@@ -99,71 +100,73 @@ if ($_POST["action"] == 'update')
   $result = $db->query( $sql);
 }
 /*
- * Création
+ * Action création
  */
 if ($_POST["action"] == 'add' && $user->rights->fournisseur->facture->creer)
 {
-  if ($_POST["facnumber"])
+    if ($_POST["facnumber"])
     {
-      $datefacture = mktime(12,0,0, 
-			    $_POST["remonth"], 
-			    $_POST["reday"],
-			    $_POST["reyear"]); 
-      $tva = 0;
-      $tva = ($_POST["tva_taux"] * $_POST["amount"]) / 100 ;
-      $remise = 0;
-      $total = $tva + $_POST["amount"] ;
-      
-      $db->begin();
-      
-      // Creation facture
-      $facfou = new FactureFournisseur($db);
-    
-      $facfou->number  = $_POST["facnumber"];
-      $facfou->socid   = $_POST["socidp"];
-      $facfou->libelle = $_POST["libelle"];
-      $facfou->date    = $datefacture;
-      $facfou->note    = $_POST["note"];
+        $datefacture = mktime(12,0,0,
+        $_POST["remonth"],
+        $_POST["reday"],
+        $_POST["reyear"]);
+        $tva = 0;
+        $tva = ($_POST["tva_taux"] * $_POST["amount"]) / 100 ;
+        $remise = 0;
+        $total = $tva + $_POST["amount"] ;
 
-      $facid = $facfou->create($user);
+        $db->begin();
 
-      // Ajout des lignes de factures
-      if ($facid > 0) 
-	{
-          for ($i = 1 ; $i < 9 ; $i++)
+        // Creation facture
+        $facfou = new FactureFournisseur($db);
+
+        $facfou->number  = $_POST["facnumber"];
+        $facfou->socid   = $_POST["socidp"];
+        $facfou->libelle = $_POST["libelle"];
+        $facfou->date    = $datefacture;
+        $facfou->note    = $_POST["note"];
+
+        $facid = $facfou->create($user);
+
+        // Ajout des lignes de factures
+        if ($facid > 0)
+        {
+            for ($i = 1 ; $i < 9 ; $i++)
             {
-              $label = "label$i";
-              $amount = "amount$i"; 
-              $amountttc = "amountttc$i"; 
-              $tauxtva = "tauxtva$i";
-              $qty = "qty$i";
-              
-              if (strlen($_POST[$label]) > 0 && !empty($_POST[$amount]))
-        	{
-        	  $atleastoneline=1;
-        	  $facfou->addline($_POST["$label"], $_POST["$amount"], $_POST["$tauxtva"], $_POST["$qty"], 1);
-        	}
-          else if (strlen($_POST[$label]) > 0 && empty($_POST[$amount]))
-          {
-            $ht = $_POST[$amountttc] / (1 + ($_POST[$tauxtva] / 100));
-        	  $atleastoneline=1;
-        	  $facfou->addline($_POST[$label], $ht, $_POST[$tauxtva], $_POST[$qty], 1);
-          }
+                $label = "label$i";
+                $amount = "amount$i";
+                $amountttc = "amountttc$i";
+                $tauxtva = "tauxtva$i";
+                $qty = "qty$i";
+
+                if (strlen($_POST[$label]) > 0 && !empty($_POST[$amount]))
+                {
+                    $atleastoneline=1;
+                    $facfou->addline($_POST["$label"], $_POST["$amount"], $_POST["$tauxtva"], $_POST["$qty"], 1);
+                }
+                else if (strlen($_POST[$label]) > 0 && empty($_POST[$amount]))
+                {
+                    $ht = $_POST[$amountttc] / (1 + ($_POST[$tauxtva] / 100));
+                    $atleastoneline=1;
+                    $facfou->addline($_POST[$label], $ht, $_POST[$tauxtva], $_POST[$qty], 1);
+                }
             }
 
-          $db->commit();
-	}
-      else
-	{
-          $db->rollback();
-	}
-
-      header("Location: fiche.php?facid=$facid");
-  
+            $db->commit();
+            header("Location: fiche.php?facid=$facid");
+            exit;
+        }
+        else
+        {
+            $db->rollback();
+            $mesg='<div class="error">'.$facfou->error.'</div>';
+            $_GET["action"]='create';
+        }
     }
-  else 
+    else
     {
-      $mesg="<div class=\"error\">Erreur: Un numéro de facture fournisseur est obligatoire.</div>";
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Ref")).'</div>';
+        $_GET["action"]='create';
     }
 }
 
@@ -207,14 +210,16 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
 {
 
   llxHeader();
-  if ($mesg) { print "<br>$mesg<br>"; }
+  
+  print_titre($langs->trans("NewBill"));
+
+  if ($mesg) { print "$mesg<br>"; }
 
   if ($_GET["action"] == 'copy')
     {
       $fac_ori = new FactureFournisseur($db);
       $fac_ori->fetch($_GET["facid"]);
     }
-  print_titre($langs->trans("NewBill"));
       
   print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';

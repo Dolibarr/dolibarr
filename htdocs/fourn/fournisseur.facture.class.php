@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,16 +23,16 @@
  */
 
 /**	
-   \file       htdocs/fournisseur.facture.class.php
-   \ingroup    fournisseur
-   \brief      Fichier de la classe des factures fournisseurs
-   \version    $Revision$
+        \file       htdocs/fournisseur.facture.class.php
+        \ingroup    fournisseur
+        \brief      Fichier de la classe des factures fournisseurs
+        \version    $Revision$
 */
 
 
 /**
-   \class      FactureFournisseur
-   \brief      Classe permettant la gestion des factures fournisseurs
+        \class      FactureFournisseur
+        \brief      Classe permettant la gestion des factures fournisseurs
 */
 
 class FactureFournisseur
@@ -82,75 +82,74 @@ class FactureFournisseur
 
   /**
    *    \brief      Création de la facture en base
-   *    \param      user       object utilisateur qui crée
-   *
+   *    \param      user        object utilisateur qui crée
+   *    \return     int         id facture si ok, < 0 si erreur
    */
   function create($user)
   {
-
-    /*
-     *  Insertion dans la base
-     */
+    global $langs;
+    
     $socid = $this->socidp;
     $number = $this->number;
     $amount = $this->amount;
     $remise = $this->remise;
 
     if (! $remise)
-      {
-	$remise = 0 ;
-      }
+    {
+        $remise = 0 ;
+    }
 
     $totalht = ($amount - $remise);
     $tva = tva($totalht);
     $total = $totalht + $tva;
-    
+
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author) ";
     $sql .= " VALUES ('".$this->number."','".$this->libelle."',";
     $sql .= $this->socid.", now(),".$this->db->idate($this->date).",'".$this->note."', ".$user->id.");";
 
     if ( $this->db->query($sql) )
-      {
-	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn");
+    {
+        $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn");
 
-	for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-	  {	 
+        for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+        {
 
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
-	    $sql .= " VALUES ($this->id);";
-	    if ($this->db->query($sql) ) 
-	      {
-		$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
+            $sql .= " VALUES ($this->id);";
+            if ($this->db->query($sql) )
+            {
+                $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
 
-		$this->updateline($idligne,
-				    $this->lignes[$i][0],
-				    $this->lignes[$i][1],
-				    $this->lignes[$i][2],
-				    $this->lignes[$i][3]);
-	      }
-	  }
-	  
+                $this->updateline($idligne,
+                $this->lignes[$i][0],
+                $this->lignes[$i][1],
+                $this->lignes[$i][2],
+                $this->lignes[$i][3]);
+            }
+        }
+
         /*
-         * Mise à jour prix
-         */
-        
+        * Mise à jour prix
+        */
+
         $this->updateprice($this->id);
-        
+
         return $this->id;
     }
     else
     {
-      if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
-	{
-	  print "Erreur : Une facture possédant cet id existe déjà";
+        if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
+        {
+            $this->error=$langs->trans("ErrorBillRefAlreadyExists");
+            return -1;
         }
-      else
-	{
-	  dolibarr_print_error($this->db);
-	}      
-      return 0;
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -2;
+        }
     }
-  }
+}
 
   /**
    *    \brief      Recupére l'objet facture et ses lignes de factures
