@@ -21,23 +21,25 @@
  */
 
 /**
-  \file       htdocs/compta/prelevement/index.php
-  \brief      Prelevement
-  \version    $Revision$
+        \file       htdocs/compta/prelevement/index.php
+        \brief      Prelevement
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
-
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
+
+$langs->load("withdrawals");
 
 if ($user->societe_id > 0)
 {
   $socidp = $user->societe_id;
 }
 
+
 llxHeader();
 
-print_titre($langs->trans("StandingOrders"));
+print_titre($langs->trans("StandingOrdersArea"));
 
 print '<br>';
 
@@ -62,7 +64,7 @@ if ($result)
 
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>Bon</td><td>Date</td>';
+  print '<tr class="liste_titre"><td>'.$langs->trans("Receipt").'</td><td>'.$langs->trans("Date").'</td>';
   print '<td align="right">'.$langs->trans("Amount").'</td>';
   print '</tr>';
 
@@ -143,4 +145,5 @@ else
 print '</td></tr></table>';
 
 llxFooter();
+
 ?>

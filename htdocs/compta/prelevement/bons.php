@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +18,25 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+        \file       htdocs/compta/prelevement/bons.php
+        \brief      Page liste des bons de prelevements
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("withdrawals");
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 
+
 llxHeader('','Prélèvements - Bons');
+
 /*
  * Sécurité accés client
  */
@@ -35,25 +46,17 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($sortorder == "") $sortorder="DESC";
-if ($sortfield == "") $sortfield="p.datec";
-
-/*
- * Recherche
- *
- *
- */
 
 if ($page == -1) { $page = 0 ; }
-
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="p.datec";
+
 
 /*
  * Mode Liste
- *
- *
  *
  */
 $sql = "SELECT p.rowid, p.ref, p.amount,".$db->pdate("p.datec")." as datec";
@@ -70,22 +73,23 @@ if ($result)
   
   $urladd= "&amp;statut=".$_GET["statut"];
 
-  print_barre_liste("Bons de prélèvements", $page, "bons.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, "bons.php", $urladd, $sortfield, $sortorder, '', $num);
+
   print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
 
   print_liste_field_titre("Bon","bons.php","p.ref");
-  print_liste_field_titre("Date","bons.php","p.datec","","",'align="center"');
+  print_liste_field_titre($langs->trans("Date"),"bons.php","p.datec","","",'align="center"');
 
-  print '<td align="right">Montant</td>';
+  print '<td align="right">'.$langs->trans("Amount").'</td>';
 
   print '</tr><tr class="liste_titre">';
 
   print '<form action="bons.php" method="GET">';
-  print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
-  print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
+  print '<td><input type="text" class="flat" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
   print '<td>&nbsp;</td>';
+  print '<td align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
 
@@ -113,10 +117,11 @@ if ($result)
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
+
 ?>

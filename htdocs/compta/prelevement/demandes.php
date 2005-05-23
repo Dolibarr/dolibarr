@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +20,16 @@
  * $Source$
  */
 
-/*!
-  \file       htdocs/compta/prelevement/index.php
-  \brief      Prelevement
-  \version    $Revision$
+/**
+        \file       htdocs/compta/prelevement/demandes.php
+        \brief      Page de la liste des demandes de prélèvements
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
-
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
+
+$langs->load("widthdrawals");
 
 if ($user->societe_id > 0)
 {
@@ -45,13 +47,12 @@ $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 
 if ($page == -1) $page = 0 ;
-
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="f.facnumber";
 
-if ($sortorder == "") $sortorder="DESC";
-if ($sortfield == "") $sortfield="f.facnumber";
 
 /*
  * Demandes en attente
@@ -91,10 +92,14 @@ if ( $db->query($sql) )
   print '<td>Emetteur</td></tr>';
   
   print '<form action="demandes.php" method="GET">';
-  print '<tr class="liste_titre"><td>-</td><td>';
-  print '<input type="text" name="search_societe" size="12" value="'.$GET["search_societe"].'">&nbsp;';
-  print '<input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
-  print '<td colspan="2">&nbsp;</td></tr>';
+
+  print '<tr class="liste_titre"><td>-</td>';
+  print '<td>';
+  print '<input type="text" class="flat" name="search_societe" size="12" value="'.$GET["search_societe"].'">';
+  print '</td>';
+
+  print '<td colspan="2" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td></tr>';
+
   print '</form>';
 
   $var = True;
@@ -128,5 +133,6 @@ else
   dolibarr_print_error($db);
 }  
 
-llxFooter();
+
+llxFooter('$Date$ - $Revision$');
 ?>
