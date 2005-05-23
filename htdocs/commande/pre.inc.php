@@ -22,15 +22,17 @@
  */
 
 /**
-   \file       htdocs/commande/pre.inc.php
-   \ingroup    commandes
-   \brief      Gestionnaire du menu commandes
-   \version    $Revision$
+        \file       htdocs/commande/pre.inc.php
+        \ingroup    commandes
+        \brief      Gestionnaire du menu commandes
+        \version    $Revision$
 */
 
 require("../main.inc.php");
-require("./commande.class.php");
+require_once DOL_DOCUMENT_ROOT."/commande/commande.class.php";
+
 $langs->load("orders");
+
 
 function llxHeader($head = "", $title="", $help_url='')
 {
