@@ -1,5 +1,6 @@
-<?PHP
+<?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +19,65 @@
  *
  * $Id$
  * $Source$
- *
- * L'entete du pdf est définit dans pdf_expedition.class.php
  */
-require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/modele.dorade.php";
 
-Class pdf_expedition_dorade
+require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition.class.php";
+
+
+Class pdf_expedition_dorade extends ModelePdfExpedition
 {
 
-  Function pdf_expedition_dorade($db=0)
+  function pdf_expedition_dorade($db=0)
     { 
       $this->db = $db;
       $this->name = "dorade";
       $this->description = "Modèle identique au rouget utilisé pour debug uniquement.";
     }
 
-  Function generate(&$objExpe, $filename)
+
+  function Header()
+    {
+      $this->rect(5, 5, 200, 30);
+
+      $this->Code39(8, 8, $this->expe->ref);
+
+      $this->SetFont('Arial','', 14);
+      $this->Text(105, 12, "Bordereau d'expédition : ".$this->expe->ref);
+      $this->Text(105, 18, "Date : " . strftime("%a %e %b %Y", $this->expe->date));
+      $this->Text(105, 26, "Page : ". $this->PageNo() ."/{nb}", 0);
+
+
+      //
+
+      $this->rect(5, 40, 200, 30);
+
+      $this->Code39(8, 44, $this->expe->commande->ref);
+
+      $this->SetFont('Arial','', 14);
+      $this->Text(105, 48, "Numéro de Commande : ".$this->expe->commande->ref);
+      $this->Text(105, 54, "Date de la commande : " . strftime("%e %b %Y", $this->expe->commande->date));
+
+      //
+
+      $this->rect(5, 80, 200, 210);
+
+      $this->tableau_top = 80;
+
+      $this->SetFont('Arial','', 12);
+      $a = $this->tableau_top + 5;
+      $this->Text(8, $a, "Référence");
+
+      $this->Text(40, $a, "Description");
+
+      $this->Text(174, $a, "Quantitée");
+
+      $this->SetFont('Arial','', 8);
+      $this->Text(166, $a+4, "Commandée");
+      $this->Text(190, $a+4, "Livrée");
+
+    }
+    
+  function generate(&$objExpe, $filename)
     {
       $this->expe = $objExpe;
 

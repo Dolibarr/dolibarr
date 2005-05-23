@@ -1,5 +1,6 @@
-<?PHP
+<?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,34 +24,10 @@
 
 require_once DOL_DOCUMENT_ROOT.'/includes/fpdf/DolibarrPdfBarCode.class.php';
 
-Class pdf_expedition extends DolibarrPdfBarCode
+Class ModelePdfExpedition extends DolibarrPdfBarCode
 {
 
-  function Header()
-    {
-      $this->rect(5, 5, 200, 30);
-
-      $this->Code39(8, 8, $this->expe->ref);
-
-      $this->SetFont('Arial','', 14);
-      $this->Text(105, 12, "Bordereau d'expédition : ".$this->expe->ref);
-      $this->Text(105, 18, "Date : " . strftime("%d %b %Y", $this->expe->date));
-      $this->Text(105, 24, "Page : ". $this->PageNo() ."/{nb}", 0);
-
-
-      $this->rect(5, 40, 200, 250);
-
-      $this->tableau_top = 40;
-
-      $this->SetFont('Arial','', 10);
-      $a = $this->tableau_top + 5;
-      $this->Text(10, $a, "Produit");
-      $this->Text(166, $a, "Quantitée");
-      $this->Text(166, $a+4, "Commandée");
-      $this->Text(190, $a, "Livrée");
-
-    }
-
+ 
 }
 
 ?>
