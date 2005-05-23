@@ -36,7 +36,7 @@ define_syslog_variables();
 clearstatcache();
 
 // Forcage du paramétrage PHP
-ini_set('mbstring.func_overload','0');
+//ini_set('mbstring.func_overload','0');
 error_reporting(E_ALL ^ E_NOTICE);     // Dolibarr n'est pas utilisable en mode full E_ERROR
 
 // Test si install ok
