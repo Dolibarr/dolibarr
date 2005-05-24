@@ -80,8 +80,8 @@ function check_mail ($mail)
 
 function unaccent($str)
 {
-  $acc = array("à","ä","é","è","ë","ï","î","ö","ô","ù","ü");
-  $uac = array("a","a","e","e","e","i","i","o","o","u","u");
+  $acc = array("à","ä","é","è","ë","ï","î","ö","ô","ù","ü","'");
+  $uac = array("a","a","e","e","e","i","i","o","o","u","u","");
 
   return str_replace($acc, $uac, $str);
 }
