@@ -272,20 +272,22 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	  $tot_ttc=0;
 	  while ($i < $num)
 	    {
-            $var=!$var;
             $obj = $db->fetch_object($resql);
-            print "<tr $bc[$var]>";
-            print "<td width=\"20%\"><a href=\"commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
-            print "<a href=\"commande/fiche.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
-            
-            print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
-            print '<a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,50).'</a></td>';
-            print '<td align="right">'.price($obj->total_ht).'</td>';
-            print '<td align="right">'.price($obj->total_ttc).'</td>';
-            print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td></tr>';
-            $tot_ht += $obj->total_ht;
-            $tot_ttc += $obj->total_ttc;
-            $tot_tobill += ($obj->total_ttc-$obj->tot_fttc);
+			if ($obj->total_ttc-$obj->tot_fttc >0) {
+	            $var=!$var;
+				print "<tr $bc[$var]>";
+				print "<td width=\"20%\"><a href=\"commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
+				print "<a href=\"commande/fiche.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
+				
+				print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
+				print '<a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,50).'</a></td>';
+				print '<td align="right">'.price($obj->total_ht).'</td>';
+				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td></tr>';
+				$tot_ht += $obj->total_ht;
+				$tot_ttc += $obj->total_ttc;
+				$tot_tobill += ($obj->total_ttc-$obj->tot_fttc);
+			}
             $i++;
 	    }
       $var=!$var;
