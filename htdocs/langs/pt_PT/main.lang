@@ -75,7 +75,7 @@ Description=Descrição
 Designation=Designação
 Action=Acção
 About=Acerca de
-WelcomeString=<font class="body">nós somos </font>%s<font class="body">, e você está ligado com o nome</font> %s
+WelcomeString=<font class="body">Hoje é </font>%s<font class="body">, e está ligado como </font> %s
 Number=Número
 Numero=Número
 DevelopmentTeam=Equipa de Desenvolvimento
