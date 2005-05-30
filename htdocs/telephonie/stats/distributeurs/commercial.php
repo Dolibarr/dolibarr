@@ -57,62 +57,67 @@ if ($_GET["id"])
 
   print '<tr><td width="30%" valign="top">';
   
+ 
+  /*
+   *
+   *
+   */
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre">';
+  print '<td>Date</td><td align="right">Prise d\'ordre</td></tr>';
   
-  print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td></tr>';
+  $sql = "SELECT sum(p.montant), date_format(p.datepo, '%m/%Y')";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
   
-  $sql = "SELECT count(*) as cc,date_format(date_commande,'%m %Y')";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-  $sql .= " WHERE l.fk_commercial = ".$comm->id;
-  $sql .= " AND date_commande IS NOT NULL";
-  $sql .= " AND l.statut <> 7";
-  $sql .= " GROUP BY date_format(date_commande,'%Y/%m') DESC";
- 
- $result = $db->query($sql);
- if ($result)
-   {
-     $num = $db->num_rows();
-     $i = 0;
-     $datas = array();
-     $legends = array();
-     
-     while ($i < $num)
-       {
-	 $row = $db->fetch_row($i);		 
-	 $var=!$var;
-	 
-	 print "<tr $bc[$var]>";	 
-	 print '<td width="50%" valign="top">';
-	 print $row[2]." ". $row[1].'</td><td align="center">'.$row[0].'</td></tr>';	 
-	 $i++;
-       }
-     $db->free();
-   }
- else 
-   {
-     print $db->error() . ' ' . $sql;
-   }
- 
- print '</table>';
- 
- print '</td><td valign="top" width="70%">';
-
- print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/clients.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n";
-
- print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/clientsmoyenne.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n";
-
- print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/lignes.commandes.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n"; 
-
- print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/lignes.commandes.mensuels.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
-
-
-
- print '</td></tr>';
- 
- print '</table>';
- 
- $db->close();
- 
+  $sql .= " WHERE p.fk_commercial = ".$_GET["id"];
+  $sql .= " GROUP BY date_format(p.datepo, '%y%m') DESC";
+  
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      $total = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($i);	
+	  $var=!$var;
+	  print "<tr $bc[$var]>";
+	  print '<td>'.$row[1].'</a></td>';
+	  print '<td align="right">'.price($row[0]).'</td></tr>';
+	  $i++;
+	}
+      $db->free();
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+  
+  
+  
+  print '</table><br />';
+  
+  
+  /*
+   *
+   */
+  print '</td><td valign="top" width="70%">';
+  
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/clients.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n";
+  
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/clientsmoyenne.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n";
+  
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/lignes.commandes.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n"; 
+  
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/lignes.commandes.mensuels.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
+      
+  print '</td></tr>';
+  print '</table>';
+  
+  $db->close();  
 }
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
