@@ -175,6 +175,11 @@ if ($_socid > 0)
         $head[$h][1] = $langs->trans("Accountancy");
         $h++;
     }
+    if ($conf->compta->enabled) {
+        $head[$h][0] = DOL_URL_ROOT.'/fichinter/index.php?socid='.$objsoc->id;
+        $head[$h][1] = $langs->trans("Interventions");
+        $h++;
+    }
 
     $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
     $head[$h][1] = $langs->trans("Note");
