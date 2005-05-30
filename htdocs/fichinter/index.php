@@ -55,7 +55,7 @@ $pagenext = $page + 1;
 
 
 
-$sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
+$sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.note, f.duree";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f ";
 $sql .= " WHERE f.fk_soc = s.idp ";
 
@@ -78,11 +78,13 @@ if ($result)
   print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&amp;socid=$socid",'',$sortfield);
+  print '<td align="center">'.$langs->trans("Description").'</td>';
   print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","","&amp;socid=$socid",'',$sortfield);
   print '<td align="center">'.$langs->trans("Duration").'</td>';
   print '<td align="center">'.$langs->trans("Status").'</td>';
   print "</tr>\n";
   $var=True;
+  $total = 0;
   while ($i < $num)
     {
       $objp = $db->fetch_object($result);
@@ -91,15 +93,19 @@ if ($result)
       print "<td><a href=\"fiche.php?id=$objp->fichid\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
 
       print '<td><a href="index.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom."</a></td>\n";
+      print '<td>'.nl2br($objp->note).'</td>';
       print "<td>".dolibarr_print_date($objp->dp)."</td>\n";
       print '<td align="center">'.sprintf("%.1f",$objp->duree).'</td>';
       print '<td align="center">'.$objp->fk_statut.'</td>';
 
       print "</tr>\n";
-      
+      $total += $objp->duree;
       $i++;
     }
-  
+  print '<tr class="liste_total"><td colspan="3"></td><td>'.$langs->trans("Total").':</td>';
+  print "<td align=\"right\" nowrap>".($total?price($total):"0")."</td><td></td>";
+  print "</tr>";
+
   print "</table>";
   $db->free($result);
 }
