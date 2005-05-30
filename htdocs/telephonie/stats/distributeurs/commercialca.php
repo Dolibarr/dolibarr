@@ -38,22 +38,18 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/index.php';
 $head[$h][1] = "Global";
 $h++;
 
-if ($_GET["commid"])
+if ($_GET["id"])
 {
-  $comm = new User($db, $_GET["commid"]);
+  $comm = new User($db, $_GET["id"]);
   $comm->fetch();
 
-  $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/commercial.php?commid='.$comm->id;
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/commercial.php?id='.$comm->id;
   $head[$h][1] = $comm->fullname;
   $h++;
 
-  $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/commercialca.php?commid='.$comm->id;
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/commercialca.php?id='.$comm->id;
   $head[$h][1] = "CA";
   $hselected = $h;
-  $h++;
-
-  $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/lignes.php?commid='.$comm->id;
-  $head[$h][1] = "Lignes";
   $h++;
 
   dolibarr_fiche_head($head, $hselected, "Distributeurs");
