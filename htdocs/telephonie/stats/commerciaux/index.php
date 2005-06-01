@@ -49,23 +49,23 @@ $h++;
 dolibarr_fiche_head($head, $hselected, "Commerciaux");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-
 print '<tr><td width="30%" valign="top">';
 
-
-
 /*                */
-
-print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td colspan="3">Lignes suivies</td></tr>';
-print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td><td>&nbsp;</td></tr>';
 
 $sql = "SELECT count(*) as cc , c.name, c.firstname, c.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."user as c";
+$sql .= " LEFT JOIN llx_telephonie_distributeur_commerciaux as dc ON dc.fk_user = c.rowid";
+
 $sql .= " WHERE c.rowid = l.fk_commercial_suiv";
 $sql .= " AND l.statut <> 7";
+$sql .= " AND dc.fk_distributeur IS NULL";
 $sql .= " GROUP BY c.name ORDER BY cc DESC";
+
+print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td colspan="3">Lignes suivies</td></tr>';
+print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td><td>&nbsp;</td></tr>';
 
 $resql = $db->query($sql);
 if ($resql)
@@ -74,7 +74,7 @@ if ($resql)
   $i = 0;
   $datas = array();
   $legends = array();
-
+  $total = 0;
   while ($i < $num)
     {
       $row = $db->fetch_row($i);	
@@ -87,6 +87,7 @@ if ($resql)
       print '<a href="commercial.php?commid='.$row[3];
       print '">'.$row[2]." ". $row[1].'</a></td><td align="center">'.$row[0].'</td>';
       print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?commercial_suiv='.$row[3].'">Voir</a></td></tr>';
+      $total += $row[0];
       $i++;
     }
   $db->free();
@@ -95,6 +96,10 @@ else
 {
   print $db->error() . ' ' . $sql;
 }
+$var=!$var;
+print "<tr $bc[$var]>";
+print '<td width="50%" valign="top">Total</td><td align="center">'.$total.'</td>';
+print '<td>&nbsp;</td></tr>';
 print '</table><br />';
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -104,8 +109,10 @@ print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="c
 $sql = "SELECT count(*) as cc , c.name, c.firstname, c.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."user as c";
+$sql .= " LEFT JOIN llx_telephonie_distributeur_commerciaux as dc ON dc.fk_user = c.rowid";
 $sql .= " WHERE c.rowid = l.fk_commercial_sign";
 $sql .= " AND l.statut <> 7";
+$sql .= " AND dc.fk_distributeur IS NULL";
 $sql .= " GROUP BY c.name ORDER BY cc DESC";
 
 $resql = $db->query($sql);
@@ -115,7 +122,7 @@ if ($resql)
   $i = 0;
   $datas = array();
   $legends = array();
-
+  $total= 0 ;
   while ($i < $num)
     {
       $row = $db->fetch_row($i);	
@@ -128,6 +135,7 @@ if ($resql)
       print '<a href="commercial.php?commid='.$row[3];
       print '">'.$row[2]." ". $row[1].'</a></td><td align="center">'.$row[0].'</td>';
       print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?commercial_sign='.$row[3].'">Voir</a></td></tr>';
+      $total += $row[0];
       $i++;
     }
   $db->free();
@@ -136,6 +144,10 @@ else
 {
   print $db->error() . ' ' . $sql;
 }
+$var=!$var;
+print "<tr $bc[$var]>";
+print '<td width="50%" valign="top">Total</td><td align="center">'.$total.'</td>';
+print '<td>&nbsp;</td></tr>';
 print '</table>';
 
 print '</td>';
