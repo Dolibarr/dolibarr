@@ -83,6 +83,12 @@ if ($resql)
 
   $page2 = &$workbook->addworksheet("Plan");
 
+  $page2->set_column(0,0,8);
+  $page2->set_column(1,1,20);
+  $page2->set_column(2,2,48);
+  $page2->set_column(4,4,20);
+  $page2->set_column(5,5,50);
+
   $formatcc =& $workbook->addformat();
   $formatcc->set_align('center');
   $formatcc->set_align('vcenter');  
@@ -90,7 +96,6 @@ if ($resql)
   $fclient =& $workbook->addformat();
   $fclient->set_align('left');
   $fclient->set_align('vcenter');  
-  $fclient->set_border(1);
 
   $fcode =& $workbook->addformat();
   $fcode->set_align('center');
@@ -125,6 +130,21 @@ if ($resql)
   $fb =& $workbook->addformat();
   $fb->set_align('vcenter');  
   $fb->set_bold();
+  $fb->set_top(2);
+
+  $fc =& $workbook->addformat();
+  $fc->set_align('vcenter');  
+  $fc->set_top(2);
+
+  $fa =& $workbook->addformat();
+  $fa->set_align('left');
+  $fa->set_align('vcenter');  
+  $fa->set_top(2);
+
+  $fd =& $workbook->addformat();
+  $fd->set_align('center');
+  $fd->set_align('vcenter');  
+  $fd->set_top(2);
 
   $num = $db->num_rows($resql);
   $i = 0;
@@ -143,19 +163,25 @@ if ($resql)
 	  $z.= $obj->address."\n";
 	  $z.= $obj->cp . " ".$obj->ville;
 	  
-	  $page2->write_string($i, 0,  $b, $formatcc);
+	  $page2->write_string($i, 0,  $b, $fc);
 	  $page2->write_string($i, 1,  "Contrat : ".$obj->ref, $fb);
-	  $page2->write_string($i, 2,  $z, $formatcc);
+	  $page2->write_string($i, 2,  $z, $fa);
 
 	  $oc = $obj->ref;
 	  $a = 0;
+
+	  $page2->write_string($i, 3,  $obj->code_analytique, $fd);
+	  $page2->write_string($i, 4,  $obj->ligne, $fd);
+	  $page2->write_string($i, 5,  $obj->nom, $fa);
+
 	}
 
-      $page2->write_string($i, 5,  $obj->code_analytique, $formatcc);
-      $page2->write_string($i, 6,  $obj->ligne, $formatcc);
-      $page2->write_string($i, 7,  $obj->nom, $formatcc);
-
-      //$page2->write_blank(1, 0,  $format_titre_agence2);
+      else
+	{
+	  $page2->write_string($i, 3,  $obj->code_analytique, $formatcc);
+	  $page2->write_string($i, 4,  $obj->ligne, $formatcc);
+	  $page2->write_string($i, 5,  $obj->nom, $fclient);
+	}
 
       $i++;
       $a++;
