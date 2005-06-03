@@ -61,6 +61,8 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
+  $menu->add(DOL_URL_ROOT."/telephonie/distributeurs/", "Distributeurs");
+
   $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/index.php", "Fournisseurs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/service/", "Services");
