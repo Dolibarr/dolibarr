@@ -29,5 +29,7 @@ create table llx_telephonie_fournisseur (
   commande_active tinyint default 0, 
   commande_bloque tinyint default 0, 
 
-  class_commande  varchar(25)        -- nom de la classe utilisée pour la commande
+  class_commande  varchar(25),        -- nom de la classe utilisée pour la commande
+  fk_tarif_grille integer
+
 )type=innodb;
