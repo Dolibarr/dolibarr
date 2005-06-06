@@ -77,6 +77,17 @@ class TelephonieTarif {
 	$sql = "SELECT prefix, temporel, fixe";
 	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_achat ";
 	$sql .= " WHERE fk_fournisseur = " . $fournisseur_id;
+
+	$sql = "SELECT p.prefix, m.temporel, m.fixe";
+	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_montant as m ";
+	$sql .= " , ".MAIN_DB_PREFIX."telephonie_prefix as p ";
+	$sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f ";
+
+	$sql .= " WHERE p.fk_tarif = m.fk_tarif ";
+
+	$sql .= " AND f.fk_tarif_grille = m.fk_tarif_desc";
+
+	$sql .= " AND f.rowid =  " . $fournisseur_id;
 	
       }
     elseif ($type == 'vente')
