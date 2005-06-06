@@ -382,7 +382,11 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 
 	      $libelle .= "Communications téléphoniques de la ligne $ligne->numero";
 	      $libelle .= " mois de ".strftime("%B %Y",$dm);
-	      
+	      if (trim($soca->ville))
+		{
+		  $libelle .= " (".$soca->ville.")";
+		}
+
 	      if (!$error)
 		{
 		  $ventil = 0 ;
