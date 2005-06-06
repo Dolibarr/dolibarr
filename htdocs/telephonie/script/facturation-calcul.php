@@ -39,8 +39,11 @@ require ("../../master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
+
+//require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.class.php");
+
 
 $error = 0;
 $nbcommit = 0;
@@ -453,8 +456,37 @@ function calcul($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente
 
   $fournisseur_id = 1;
 
+  $tarif_spec = 1 ;
+
+  $sql = "SELECT d.grille_tarif";
+
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
+  $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
+  $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+
+  $sql .= " WHERE l.rowid = ".$ligne->id;
+  $sql .= " AND d.rowid = dc.fk_distributeur";
+  $sql .= " AND l.fk_commercial_sign = dc.fk_user";
+    
+  $resql = $db->query($sql);
+
+  if ( $resql )
+    {
+      $num_sql = $db->num_rows($resql);
+
+      if ($num_sql > 0)
+	{
+	  $row = $db->fetch_row($resql);
+	  $tarif_spec = $row[0];
+	}
+      $db->free($resql);
+    }
+  
+  dolibarr_syslog("Utilisation du tarif ".$tarif_spec." pour la ligne ".$ligne->id);
+
+
   $tarif_achat = new TelephonieTarif($db, $fournisseur_id, "achat");
-  $tarif_vente = new TelephonieTarif($db, $fournisseur_id, "vente", $ligne->client_comm_id);
+  $tarif_vente = new TelephonieTarif($db, $fournisseur_id, "vente", $tarif_spec, $ligne->client_comm_id);
 
   $comms = array();
 
