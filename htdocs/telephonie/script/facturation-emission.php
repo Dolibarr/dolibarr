@@ -697,7 +697,7 @@ function _emails($db, $user, $contrat_id, $factures_a_mailer)
 	      $message = "Bonjour,\n\n";
 	      $message .= "Veuillez trouver ci-joint notre facture numéro $fact->ref du ".strftime("%d/%m/%Y",$fact->date).".";
 
-	      $message .= "\nEgalement joint à ce mail le détails de vos communications.";
+	      $message .= "\nEgalement joint à ce mail le détails de vos communications.\n\n";
 
 	      $message .= TELEPHONIE_MAIL_FACTURATION_SIGNATURE;
 	      
