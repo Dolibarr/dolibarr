@@ -77,7 +77,9 @@ $sql = "SELECT date_format(date,'%Y%m'), sum(cout_vente), sum(cout_achat), sum(g
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";
 $sql .= " GROUP BY date_format(date,'%Y%m') ASC ";
 
-if ($db->query($sql))
+$resql = $db->query($sql);
+
+if ($resql)
 {
   $cout_vente = array();
   $cout_vente_moyen = array();
@@ -87,13 +89,13 @@ if ($db->query($sql))
   $gain = array();
   $gain_moyen = array();
 
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   print "$num lignes de comm a traiter\n";
   $i = 0;
 
   while ($i < $num)
     {
-      $row = $db->fetch_row();	
+      $row = $db->fetch_row($resql);	
 
       $cout_vente[$i] = $row[1];
 
