@@ -19,7 +19,7 @@
  * $Source$
  *
  *
- * Script de vérification avant facture
+ * Script de vérification avant facturation
  */
 
 require ("../../master.inc.php");
@@ -105,7 +105,7 @@ if ( $resql )
 print "\n";
 
 /*
- * Verfication des contrats
+ * Verification des contrats
  */
 $contrats = array();
 
