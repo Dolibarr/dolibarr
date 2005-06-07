@@ -111,7 +111,6 @@ $sql .= " cli,mode,situation,date_mise_service,date_resiliation,motif_resiliatio
 
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande_retour";
 $sql .= " WHERE traite = 0 AND mode = 'PRESELECTION'";
-$sql .= " LIMIT 10";
 
 if ($db->query($sql))
 {
