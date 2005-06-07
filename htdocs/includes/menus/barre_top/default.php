@@ -162,8 +162,7 @@ class MenuTop {
             $chaine="";
             if ($conf->produit->enabled) { $chaine.=$langs->trans("Products"); }
             if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
-            if ($conf->service->enabled) { $chaine.=$langs->("Services"); }
-        
+	    if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
         
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products"'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a>';
         
