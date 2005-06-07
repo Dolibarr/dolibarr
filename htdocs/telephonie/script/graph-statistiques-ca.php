@@ -108,16 +108,17 @@ if ($db->query($sql))
 $file = $img_root . "/factures/ca_mensuel.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Chiffre d'affaire par mois en euros HT";
-$graph->width = 400;
+$graph->width = 440;
 print $graph->titre."\n";
 $graph->GraphDraw($file, $cout_vente, $labels);
 
-/*
+
 $file = $img_root . "/factures/facture_moyenne.png";
 $graph = new GraphBar ($db, $file, $labels);
 $graph->titre = "Facture moyenne";
 print $graph->titre."\n";
 $graph->barcolor = "blue";
+$graph->width = 440;
 $graph->GraphDraw($file, $cout_vente_moyen, $labels);
 
 $file = $img_root . "/factures/gain_mensuel.png";
@@ -137,9 +138,10 @@ $file = $img_root . "/factures/nb_facture.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Nb de facture mois";
 print $graph->titre."\n";
+$graph->width = 440;
 $graph->barcolor = "yellow";
 $graph->GraphDraw($file, $nb_factures, $labels);
 
-*/
+
 
 ?>
