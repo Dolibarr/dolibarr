@@ -131,7 +131,9 @@ if ($_GET["id"])
 	  $cuser_suiv->fetch();
 	  
 	  print '<tr><td width="20%">Créé par</td>';
-	  print '<td colspan="2">'.$cuser_suiv->fullname.'</td></tr>';
+	  print '<td colspan="2">'.$cuser_suiv->fullname;
+	  print " le : ".strftime("%e %B %Y",$contrat->date_creat);
+	  print '</td></tr>';
 
 	  print "</table><br />";
 	}
