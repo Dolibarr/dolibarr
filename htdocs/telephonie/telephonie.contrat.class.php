@@ -33,12 +33,12 @@ class TelephonieContrat {
     $this->error_message = '';
     $this->statuts[-1] = "En attente";
     $this->statuts[1] = "A commander";
-    $this->statuts[2] = "Commandée chez le fournisseur";
-    $this->statuts[3] = "Activée";
+    $this->statuts[2] = "En commande";
+    $this->statuts[3] = "Actif";
     $this->statuts[4] = "A résilier";
     $this->statuts[5] = "Résiliation demandée";
-    $this->statuts[6] = "Résiliée";
-    $this->statuts[7] = "Rejetée";
+    $this->statuts[6] = "Résilié";
+    $this->statuts[7] = "Rejeté";
 
     return 1;
   }
