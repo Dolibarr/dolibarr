@@ -483,11 +483,11 @@ class LigneTel {
 
     if ($this->contrat > 0)
       {
+	require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie.contrat.class.php");
 	$contrat = new TelephonieContrat($this->db);
 	$contrat->id = $this->contrat;
 	$contrat->update_statut();
       }
-
 
     return 0;
   }
