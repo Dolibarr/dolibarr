@@ -383,7 +383,6 @@ class LigneTel {
     
     $this->db->query($sql);
     
-
     if ($statut == 2)
       {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
@@ -478,6 +477,17 @@ class LigneTel {
       }
 
     $this->log_clients();
+
+
+    /* Mise à jour du contrat associé */
+
+    if ($this->contrat > 0)
+      {
+	$contrat = new TelephonieContrat($this->db);
+	$contrat->id = $this->contrat;
+	$contrat->update_statut();
+      }
+
 
     return 0;
   }
