@@ -68,12 +68,13 @@ if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
-  $ligne = new LigneTel($db);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Contrats</td><td valign="center">Nb</td>';
+  print '<tr class="liste_titre"><td>Contrats</td><td align="center">Nb</td><td>&nbsp;</td>';
   print "</tr>\n";
   $var=True;
+
+  $contrat = new TelephonieContrat($db);
 
   while ($i < $num)
     {
@@ -81,8 +82,9 @@ if ($db->query($sql))
 
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td>Contrats ".$statut."</td>\n";
-      print "<td>".$obj->cc."</td>\n";
+      print "<td>".$contrat->statuts[$obj->statut]."</td>\n";
+      print '<td align="center">'.$obj->cc."</td>\n";
+      print '<td><img src="statut'.$obj->statut.'.png"></td>';
       print "</tr>\n";
 
       $values[$obj->statut] = $obj->cc;
@@ -130,8 +132,6 @@ if ($result)
   print "</tr>\n";
 
   $var=True;
-
-  $ligne = new LigneTel($db);
 
   while ($i < min($num,$conf->liste_limit))
     {
