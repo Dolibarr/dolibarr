@@ -185,8 +185,9 @@ class TelephonieContrat {
       $sql = "SELECT c.rowid, c.ref, c.fk_client_comm, c.fk_soc, c.fk_soc_facture, c.note";
       $sql .= ", c.fk_commercial_sign, c.fk_commercial_suiv";
       $sql .= ", c.isfacturable, c.mode_paiement";
-      $sql .= ", c.fk_user_creat, c.date_creat";
+      $sql .= ", c.fk_user_creat, ".$this->db->pdate("c.date_creat") ." as dc";
       $sql .= ", c.grille_tarif";
+
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as c";
       $sql .= " WHERE c.rowid = ".$id;
 
@@ -214,6 +215,7 @@ class TelephonieContrat {
 	      $this->code_analytique    = $obj->code_analytique;
 
 	      $this->user_creat         = $obj->fk_user_creat;
+	      $this->date_creat         = $obj->dc;
 
 	      $this->grille_tarif_id    = $obj->grille_tarif;
 
@@ -489,6 +491,63 @@ class TelephonieContrat {
 	  {
 	    dolibarr_syslog($sql);
 	  }
+      }
+  }
+  /*
+   *
+   *
+   */
+  function update_statut()
+  {
+    $sql = "SELECT statut, count(*) ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+    $sql .= " WHERE fk_contrat = ".$this->id;
+    $sql .= " GROUP BY statut";    
+
+    $resql = $this->db->query($sql);
+	
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resql);
+	if ($num)
+	  {
+	    $i = 0;
+	    while ($i < $num)
+	      {
+		$row = $this->db->fetch_row($resql);		
+		$lignes[$row[0]] = $row[1];
+		$i++;
+	      }
+	  }
+	$this->db->free($resql);
+      }
+
+    $statut = 0;
+
+    if ($num > 0) $statut = 1;
+
+    if ($lignes[2] > 0)	$statut = 2;
+
+    if ($lignes[7] == $num) $statut = 7;
+
+    if ($lignes[6] > 0)	$statut = 6;
+
+    if ($lignes[6] > 0 && $lignes[2] > 0) $statut = 2;
+
+    if ($lignes[3] > 0)	$statut = 3;
+
+    $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_contrat";
+    $sql .= " SET statut = ".$statut;
+    $sql .= " WHERE rowid = ".$this->id;
+    
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {
+	
+      }
+    else
+      {
+	dolibarr_syslog("Telephonie::Contrat Error". $sql);
       }
   }
 
