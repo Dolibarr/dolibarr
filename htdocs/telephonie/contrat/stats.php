@@ -22,18 +22,10 @@
 
 require("./pre.inc.php");
 
-$mesg = '';
-
 llxHeader("","Téléphonie - Contrat");
 
-if ($cancel == $langs->trans("Cancel"))
-{
-  $action = '';
-}
-/*
- * Affichage
- *
- */
+
+/* Affichage */
 
 if ($_GET["id"])
 {
@@ -145,7 +137,7 @@ if ($_GET["id"])
 
 	  if (file_exists($file)) 
 	    {
-	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
+	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'">';
 	    }
 	  else
 	    {
@@ -189,22 +181,15 @@ if ($_GET["id"])
 
 	  print '</td></tr></table>';
 
-
 	}
     }
 }
 else
 {
-  print "Error";
+  print "Erreur";
 }
 
 print '</div>';
-
-/* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
-/* ************************************************************************** */
 
 $db->close();
 
