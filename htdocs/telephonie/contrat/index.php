@@ -104,14 +104,15 @@ print '</td>';
 
 print '</td><td valign="top" width="70%" rowspan="3">';
 
-$sql = "SELECT c.ref, c.rowid, s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom";
+$sql = "SELECT c.ref, c.rowid, c.statut";
+$sql .= " ,s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
 
 $sql .= " WHERE c.fk_client_comm = s.idp";
 $sql .= " AND c.fk_soc = sf.idp";
-$sql .= " ORDER BY date_creat DESC LIMIT 10";
+$sql .= " ORDER BY date_creat DESC LIMIT 10;";
 
 $result = $db->query($sql);
 if ($result)
@@ -138,7 +139,7 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
-     
+      print '<img src="statut'.$obj->statut.'.png">&nbsp;';     
       print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">';
       print img_file();      
       print '</a>&nbsp;';
