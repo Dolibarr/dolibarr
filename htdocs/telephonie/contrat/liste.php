@@ -91,7 +91,7 @@ if ($_GET["search_client_facture"])
 
 if (strlen($_GET["statut"]))
 {
-  $sql .= " AND l.statut = ".$_GET["statut"];
+  $sql .= " AND c.statut = ".$_GET["statut"];
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
