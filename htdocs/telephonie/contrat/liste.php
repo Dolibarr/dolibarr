@@ -54,7 +54,7 @@ $pagenext = $page + 1;
  *
  *
  */
-$sql = "SELECT c.rowid, c.ref, s.idp as socidp, s.nom ";
+$sql = "SELECT c.rowid, c.ref, s.idp as socidp, c.statut, s.nom ";
 $sql .= ", sf.idp as sfidp, sf.nom as sfnom";
 $sql .= ", sa.idp as saidp, sa.nom as sanom";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -137,7 +137,7 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
-     
+      print '<img src="statut'.$obj->statut.'.png">&nbsp;';
       print '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->rowid.'">';
       print img_file();      
       print '</a>&nbsp;';
