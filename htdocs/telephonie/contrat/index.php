@@ -84,7 +84,8 @@ if ($db->query($sql))
       print "<tr $bc[$var]>";
       print "<td>".$contrat->statuts[$obj->statut]."</td>\n";
       print '<td align="center">'.$obj->cc."</td>\n";
-      print '<td><img src="statut'.$obj->statut.'.png"></td>';
+      print '<td><a href="liste.php?statut='.$obj->statut.'">';
+      print '<img border="0" src="statut'.$obj->statut.'.png"></a></td>';
       print "</tr>\n";
 
       $values[$obj->statut] = $obj->cc;
