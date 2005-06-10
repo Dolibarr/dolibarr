@@ -185,7 +185,7 @@ else
 {
   print '&nbsp;';
   print '</td><td align="center">';
-  print '<a href="facture.php?action=dateforce&amp;value=1">'.$langs->trans("Enable").'</a>';
+  print '<a href="facture.php?action=dateforce&amp;value=1">'.$langs->trans("Activate").'</a>';
 }
 print "</td></tr>\n";
 
