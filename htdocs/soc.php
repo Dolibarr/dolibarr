@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005 Eric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,7 +203,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
       }
       if ($step==2 || ! defined("COMPANY_CREATE_TWO_STEPS")) {
 
-          print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
+          print '<tr><td>'.$langs->trans('CustomerCode').'/' . $langs->trans('SupplierCode') .'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
 
             if (defined("COMPANY_CREATE_TWO_STEPS")) {
               print '<tr><td width="140">'.$langs->trans('Country').'</td><td colspan="3">';
