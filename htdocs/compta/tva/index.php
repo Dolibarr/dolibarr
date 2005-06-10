@@ -33,12 +33,18 @@ require("./pre.inc.php");
 require("../../tva.class.php");
 
 /*
- *
+ * On récupère la tva collectée
  */
 function tva_coll($db, $y,$m) {
   $sql = "SELECT sum(f.tva) as amount"; 
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
-  $sql .= " AND date_format(f.datef,'%Y') = $y";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE ";
+  //Si on paye la tva sur la facturation
+  if(FACTURE_TVAOPTION == "facturation")
+    $sql .= "";
+  //Sinon, on paye la tva sur les encaissements
+  else
+    $sql .= "f.paye = 1 AND";
+  $sql .= " date_format(f.datef,'%Y') = $y";
   $sql .= " AND date_format(f.datef,'%m') = $m";
 
   $result = $db->query($sql);
