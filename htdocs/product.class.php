@@ -22,16 +22,16 @@
  */
 
 /**
-   \file       htdocs/product.class.php
-   \ingroup    produit
-   \brief      Fichier de la classe des produits prédéfinis
-   \version    $Revision$
+        \file       htdocs/product.class.php
+        \ingroup    produit
+        \brief      Fichier de la classe des produits prédéfinis
+        \version    $Revision$
 */
 
 
 /**
-   \class      Product
-   \brief      Classe permettant la gestion des produits prédéfinis
+        \class      Product
+        \brief      Classe permettant la gestion des produits prédéfinis
 */
 
 class Product
@@ -49,6 +49,7 @@ class Product
   var $duration_value;
   var $duration_unit;
 
+
   /**
    *    \brief  Constructeur de la classe
    *    \param  DB          handler accès base de données
@@ -61,6 +62,7 @@ class Product
       $this->id   = $id ;
       $this->envente = 0;
     }  
+
 
   /**
    *    \brief  Vérifie que la référence et libellé du produit est non null
@@ -88,6 +90,7 @@ class Product
 	  return 1;
 	}      
     }
+
 
   /**
    *    \brief  Insère le produit en base
@@ -156,6 +159,7 @@ class Product
 	}
     }
 
+
   /**
    *    \brief      Mise à jour du produit en base
    *    \param      id          id du produit
@@ -204,6 +208,7 @@ class Product
     }
   }
 
+
   /**
    *    \brief  Ajoute un changement de prix en base dans l'historique des prix
    *    \param  user        utilisateur qui modifie le prix
@@ -237,6 +242,7 @@ class Product
         }
     }
 
+
   /**
    *    \brief  Lit le prix d'achat pour un fournisseur
    *    \param  id_fourn        Id du fournisseur
@@ -265,63 +271,79 @@ class Product
 	}
       return $result;
     }
+
+
   /**
    *    \brief  Modifie le prix d'achat pour un fournisseur
    *    \param  id_fourn        Id du fournisseur
    *    \param  qty             Quantite pour lequel le prix est valide
-   *    \param  buyprice        Prix d'achat
+   *    \param  buyprice        Prix d'achat pour la quantité
    *    \param  user            Objet user de l'utilisateur qui modifie
-   *
    */
   function update_buyprice($id_fourn, $qty, $buyprice, $user) 
-  {        
+    {
+        $error=0;
+        $this->db->begin();
+        
+        // Supprime prix courant du fournisseur pour cette quantité
+        $sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
+        $sql .= " WHERE ";
+        $sql .= " fk_product = ".$this->id;
+        $sql .= " AND fk_soc = ".$id_fourn;
+        $sql .= " AND quantity = ".$qty;
     
-    $sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
-    $sql .= " WHERE ";
-    $sql .= " fk_product = ".$this->id;
-    $sql .= " AND fk_soc = ".$id_fourn;
-    $sql .= " AND quantity = ".$qty;
+        if ($this->db->query($sql))
+        {
+            // Ajoute prix courant du fournisseur pour cette quantité
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price ";
+            $sql .= " SET datec = now()";
+            $sql .= " ,fk_product = ".$this->id;
+            $sql .= " ,fk_soc = ".$id_fourn;
+            $sql .= " ,fk_user = ".$user->id;
+            $sql .= " ,price = ".ereg_replace(",",".",$buyprice);
+            $sql .= " ,quantity = ".$qty;
     
-    if ($this->db->query($sql) )
-      {	
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log ";
-	$sql .= " SET datec = now()";
-	$sql .= " ,fk_product = ".$this->id;
-	$sql .= " ,fk_soc = ".$id_fourn;
-	$sql .= " ,fk_user = ".$user->id;
-	$sql .= " ,price = ".ereg_replace(",",".",$buyprice);
-	$sql .= " ,quantity = ".$qty;
-	
-	if (!$this->db->query($sql) )
-	  {
-	    $error++;
-	  }
+            if (! $this->db->query($sql))
+            {
+                $error++;
+            }
+    
+            if (! $error) {
+                // Ajoute modif dans table log
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log ";
+                $sql .= " SET datec = now()";
+                $sql .= " ,fk_product = ".$this->id;
+                $sql .= " ,fk_soc = ".$id_fourn;
+                $sql .= " ,fk_user = ".$user->id;
+                $sql .= " ,price = ".ereg_replace(",",".",$buyprice);
+                $sql .= " ,quantity = ".$qty;
 
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                }
+            }
 
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price ";
-	$sql .= " SET datec = now()";
-	$sql .= " ,fk_product = ".$this->id;
-	$sql .= " ,fk_soc = ".$id_fourn;
-	$sql .= " ,fk_user = ".$user->id;
-	$sql .= " ,price = ".ereg_replace(",",".",$buyprice);
-	$sql .= " ,quantity = ".$qty;
-	
-	if ($this->db->query($sql) )
-	  {
-	    return 0;	      
-	  }
-	else
-	  {
-	    dolibarr_print_error($this->db);
-	    return 2;
-	  }
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-	return 2;
-      }
-  }
+            if (! $error)
+            {
+                $this->db->commit();
+                return 0;
+            }
+            else
+            {
+                $this->error=$this->db->error()." ($sql)";
+                $this->db->rollback();
+                return -2;
+            }
+        }
+        else
+        {
+            $this->error=$this->db->error()." ($sql)";
+            $this->db->rollback();
+            return -1;
+        }
+    }
+
   
   /**
    *    \brief  Modifie le prix d'un produit/service
@@ -355,6 +377,7 @@ class Product
 	return -2;
       }
   }
+
 
   /**
    *    \brief  Charge le produit/service en mémoire
@@ -436,6 +459,7 @@ class Product
 	}
   }
 
+
   /**
    *    \brief  Renvoie le nombre de propale incluant le produit/service
    *    \param  socid       id societe
@@ -464,6 +488,7 @@ class Product
 	  return 0;
 	}
     }
+
 
   /**
    *    \brief  Renvoie le nombre de client avec propale incluant le produit/service
@@ -494,6 +519,7 @@ class Product
 	}
     }
 
+
   /**
    *    \brief  Renvoie le nombre de facture incluant le produit/service
    *    \param  socid       id societe
@@ -523,6 +549,7 @@ class Product
 	  return 0;
 	}
     }
+
 
   /**
    *    \brief  Renvoie des stats
@@ -577,6 +604,7 @@ class Product
 
     }
 
+
   /**
    *    \brief  Renvoie le nombre de ventes du produit/service par mois
    *    \param  socid       id societe
@@ -596,6 +624,7 @@ class Product
 
       return $this->_get_stats($sql);
     }
+
 
   /**
    *    \brief  Renvoie le nombre de factures dans lesquelles figure le produit par mois
@@ -617,6 +646,7 @@ class Product
       return $this->_get_stats($sql);
     }
 
+
   /**
    *    \brief  Renvoie le nombre de propales dans lesquelles figure le produit par mois
    *    \param  socid       id societe
@@ -637,49 +667,51 @@ class Product
       return $this->_get_stats($sql);
     }
 
+
   /**
-   *    \brief  Lie un fournisseur au produit/service
-   *    \param  user        utilisateur qui fait le lien
-   *    \param  id_fourn    id du fournisseur
-   *    \param  ref_fourn   reference chez le fournisseur
+   *    \brief      Lie un fournisseur au produit/service
+   *    \param      user        Utilisateur qui fait le lien
+   *    \param      id_fourn    Id du fournisseur
+   *    \param      ref_fourn   Reference chez le fournisseur
+   *    \return     int         < 0 si erreur, > 0 si ok
    */
 	 
   function add_fournisseur($user, $id_fourn, $ref_fourn) 
     {
-      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product_fournisseur WHERE fk_product = $this->id AND fk_soc = $id_fourn";
-
-      if ($this->db->query($sql) )
-	{
-	  $row = $this->db->fetch_row(0);
-	  $this->db->free();
-	  if ($row[0] == 0)
-	    {
-
-	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
-	      $sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
-	      $sql .= " VALUES (now(), $this->id, $id_fourn, '$ref_fourn', $user->id)";
-	      
-	      if ($this->db->query($sql) )
-		{
-		  return 1;	      
-		}
-	      else
-		{
-		  
-		  return -1;
-		}
-	    }
-	  else
-	    {
-	      return -2;
-	    }
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	  return -3;
-	}
+        $sql = "SELECT count(*) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
+        $sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
+        $sql.= " AND ref_fourn = '".$ref_fourn."'";
+    
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+            if ($obj->nb == 0)
+            {
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
+                $sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
+                $sql .= " VALUES (now(), $this->id, $id_fourn, '$ref_fourn', $user->id)";
+    
+                if ($this->db->query($sql))
+                {
+                    return 1;
+                }
+                else
+                {
+                    $this->error=$this->db->error();
+                    return -1;
+                }
+            }
+            $this->db->free($resql);
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -2;
+        }
     }
+
 
   /**
    *    \brief  Renvoie le nombre de fournisseurs
@@ -715,6 +747,7 @@ class Product
 	}
     }
 
+
   /**
    *
    *
@@ -734,6 +767,7 @@ class Product
       }
 
   }
+
 
   /**
    *    \brief  Délie un fournisseur au produit/service
@@ -756,6 +790,7 @@ class Product
 	  return -1;
 	}
     }
+
 
   /**
    *    \brief  Entre un nombre de piece du produit en stock dans un entrepôt
@@ -780,6 +815,7 @@ class Product
 	return -1;
       }    
   }
+
 
   /**
    *    \brief  Ajuste le stock d'un entrepôt pour le produit à une valeure donnée
@@ -814,6 +850,7 @@ class Product
 	  return -1;
       }        
   }
+
 
   /**
    *    \brief  Augment ou réduit la valeur de stock pour le produit
@@ -873,11 +910,12 @@ class Product
 	  }    
       }
   }
+
+
   /**
    *    \brief  Charge les informations relatives à un fournisseur
    *    \param  id          id du fournisseur
    */
-	 
   function fetch_fourn_data ($id)
     {    
       $sql = "SELECT rowid, ref_fourn";
@@ -893,6 +931,7 @@ class Product
 	  $this->ref_fourn          = $result["ref_fourn"];
 	}
     }
+
 
   /**
    *    \brief      Déplace fichier uploadé sous le nom $files dans le répertoire sdir
@@ -920,6 +959,7 @@ class Product
     }
   }
 
+
   /**
    *    \brief      Affiche la première photo du produit
    *    \param      sdir    Répertoire à scanner
@@ -930,6 +970,7 @@ class Product
   {
     return $this->show_photos($sdir,$size,1);
   }
+
 
   /**
    *    \brief      Affiche toutes les photos du produit (nbmax maximum)
@@ -949,7 +990,7 @@ class Product
     {
         $handle=opendir($dir);
     
-        while (($file = readdir($handle))!==false)
+        while (($file = readdir($handle)) != false)
         {
             $photo='';
             if (is_file($dir.$file)) $photo = $file;
@@ -985,6 +1026,8 @@ class Product
                 else print '&nbsp;';
             }
         }
+        
+        closedir($handle);
     }
     
     return $nbphoto;
