@@ -37,7 +37,7 @@ insert into llx_cond_reglement(rowid, code, sortorder, actif, libelle, libelle_f
 insert into llx_sqltables (name, loaded) values ('llx_album',0);
 
 --
--- Définition des actions de workflow
+-- Définition des actions de workflow notifications
 --
 delete from llx_action_def;
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (1,'NOTIFY_VAL_FICHINTER','Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention','ficheinter');
@@ -52,7 +52,7 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DO
 insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation',1);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr',1);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages',0);
 
 insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine',0);
 
@@ -135,6 +135,16 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_
 insert into llx_const (name, value, type) values ('DB_NAME_OSC','catalog','chaine');
 insert into llx_const (name, value, type) values ('OSC_LANGUAGE_ID','1','chaine');
 insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
+
+--
+--
+--
+insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON',       'jupiter','chaine',0);
+insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON_PDF',   'crabe','chaine',0);
+insert into llx_const (name, value, type, visible) values ('COMMANDE_ADDON',      'mod_commande_ivoire','chaine',0);
+insert into llx_const (name, value, type, visible) values ('EXPEDITION_ADDON_PDF','rouget','chaine',0);
+insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON',       'mod_propale_ivoire','chaine',0);
+insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON_PDF',    'azur','chaine',0);
 
 
 -- Dictionnaires llx_c
