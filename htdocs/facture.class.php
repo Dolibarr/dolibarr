@@ -916,22 +916,24 @@ class Facture
     }
 
     /**
-    * \brief     Mets à jour une ligne de facture
-    * \param     rowid           id de la ligne de facture
-    * \param     desc            description de la ligne
-    * \param     pu              prix unitaire
-    * \param     qty             quantit
-    * \param     remise_percent  pourcentage de remise de la ligne
-    * \param     datestart       date de debut de validité du service
-    * \param     dateend         date de fin de validité du service
-    * \return    int     0 si erreur
-    */
+     *      \brief     Mets à jour une ligne de facture
+     *      \param     rowid            Id de la ligne de facture
+     *      \param     desc             Description de la ligne
+     *      \param     pu               Prix unitaire
+     *      \param     qty              Quantité
+     *      \param     remise_percent   Pourcentage de remise de la ligne
+     *      \param     datestart        Date de debut de validité du service
+     *      \param     dateend          Date de fin de validité du service
+     *      \return    int              < 0 si erreur, > 0 si ok
+     */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='')
     {
         //dolibarr_syslog("Facture::UpdateLine");
-
+    
         if ($this->brouillon)
         {
+            $this->db->begin();
+    
             if (strlen(trim($qty))==0)
             {
                 $qty=1;
@@ -948,32 +950,41 @@ class Facture
             {
                 $remise_percent=0;
             }
-
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc'";
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='".addslashes($desc)."'";
             $sql .= ",price='"    .     ereg_replace(",",".",$price)."'";
             $sql .= ",subprice='" .     ereg_replace(",",".",$subprice)."'";
             $sql .= ",remise='".        ereg_replace(",",".",$remise)."'";
             $sql .= ",remise_percent='".ereg_replace(",",".",$remise_percent)."'";
             $sql .= ",qty='$qty'";
-
+    
             if ($datestart) { $sql.= ",date_start='$datestart'"; }
             else { $sql.=",date_start=null"; }
             if ($dateend) { $sql.= ",date_end='$dateend'"; }
             else { $sql.=",date_end=null"; }
-
+    
             $sql .= " WHERE rowid = $rowid ;";
-
+    
             $result = $this->db->query( $sql);
             if ($result)
             {
                 $this->updateprice($this->id);
+    
+                $this->db->commit();
+    
+                return $result;
             }
             else
             {
+                $this->db->rollback();
+    
                 dolibarr_print_error($this->db);
+                return -1;
             }
-            return $result;
-
+    
+        }
+        else {
+            return -2;
         }
     }
 
@@ -1123,64 +1134,6 @@ class Facture
         }
     }
 
-    /**
-    * \brief     Envoie une relance
-    */
-    function send_relance($destinataire, $replytoname, $replytomail, $user)
-    {
-        $soc = new Societe($this->db, $this->socidp);
-
-        $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-        $facref = str_replace($forbidden_chars,"_",$this->ref);
-        $file = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
-
-        if (file_exists($file))
-        {
-
-            $sendto = $soc->contact_get_email($destinataire);
-            $sendtoid = $destinataire;
-
-            if (strlen($sendto))
-            {
-
-                $subject = "Relance facture $this->ref";
-                $message = "Nous apportons à votre connaissance que la facture $this->ref n'a toujours pas été réglée.\n\nCordialement\n\n";
-                $filename = "$this->ref.pdf";
-
-                $replyto = $replytoname . " <".$replytomail .">";
-
-                $mailfile = new CMailFile($subject,
-                $sendto,
-                $replyto,
-                $message,
-                array($file),
-                array("application/pdf"),
-                array($filename)
-                );
-
-                if ( $mailfile->sendfile() )
-                {
-
-                    $sendto = htmlentities($sendto);
-
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), 10 ,$this->socidp ,'Relance envoyée à $sendto',$this->id, $sendtoid, $user->id, 'Relance Facture par mail',100);";
-
-                    if (! $this->db->query($sql) )
-                    {
-                        dolibarr_print_error($this->db);
-                    }
-                }
-                else
-                {
-                    print "<b>!! erreur d'envoi<br>$sendto<br>$replyto<br>$filename";
-                }
-            }
-            else
-            {
-                print "Can't get email $sendto";
-            }
-        }
-    }
 
     /**
     * \brief     Renvoie la liste des sommes de tva
