@@ -1,31 +1,31 @@
 # Dolibarr language file - nl_BE - admin
-GlobalSetup=Globale Opstelling
-GUISetup=GUI Opstelling
-DictionnarySetup=Dictionnary opstelling
-OtherSetup=De andere opstelling
+GlobalSetup=Globale Instellingen
+GUISetup=Grafische Instellingen
+DictionnarySetup=Taalkundige Instellingen
+OtherSetup=Andere Instellingen
 Modules=Modules
-Boxes=Dozen
-System=Het systeem
+Boxes=Overzichten
+System=Systeem
 Rights=Rechten
-BoxesDesc=Boxes are screen area that show some informations on some pages. You can choose between showing or not a such box by selecting target page en clicking 'Activate', or by clicking the dustbin to disable it. Only boxes about enabled <a href="modules.php">modules</a> are shown.
-ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module.
-BoxesAvailable=Dozen verkrijgbaar
-BoxesActivated=Dozen activeerden
+BoxesDesc=Overzichten zijn velden die informatie geven over bepaalde pagina's. Je kan kiezen om al dan niet een overzicht te zien door de betreffende pagina te 'Activeren' of je kan op het vuilbakje klikken om het overzicht te verwijderen. Enkel geactiveerde overzichten <a href="modules.php">modules</a> zijn zichtbaar
+ModulesDesc=Dolibarr modules welke funktionaliteiten geactiveerd zijn in de software. Sommige modules vereisen specifieke rechten, die je gebruikers kan toekennen na de module geactiveerd te hebben.
+BoxesAvailable=Overzichten beschikbaar
+BoxesActivated=Overzichten geactiveerd
 ActivateOn=Activeer op
-ActiveOn=Geactiveerde op
+ActiveOn=Geactiveerd op
 SourceFile=Source file
-ModuleFamilyCrm=Klant Ressource Management (CRM)
-ModuleFamilyProducts=Producten Management
-ModuleFamilyHr=Mens Ressource Management
+ModuleFamilyCrm=Klantenbeheer
+ModuleFamilyProducts=Produktbeheer
+ModuleFamilyHr=Personeelsbeheer
 ModuleFamilyProjects=Projecten/Het gezamelijke werk
-ModuleFamilyOther=Ander
-ModuleFamilyTechnic=Technische Module
+ModuleFamilyOther=Andere
+ModuleFamilyTechnic=Technische Modules
 ModuleFamilyFinancial=Financiële Modules (De boekhouding)
-DictionnaryCompanyType=Juridische soorten van bedrijf
+DictionnaryCompanyType=Juridische bedrijfstypes
 DictionnaryCanton=Kantons
-DictionnaryRegion=Gebieden
+DictionnaryRegion=Regio's
 DictionnaryCountry=Land
-DictionnaryCivility=Civility title
-DictionnaryActions=Acties lijst
-AlwaysActive=Altijd actiefAltijd actief
+DictionnaryCivility=Civiele Status
+DictionnaryActions=Actielijst
+AlwaysActive=Altijd Actief
 
