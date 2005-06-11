@@ -4,7 +4,7 @@
 
 -- =============================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 -- $Source$
 --
 --
--- courant : indique si c'est un compte courant
+-- courant : type de compte: 0 epargne, 1 courant, 2 caisse
 -- clos : le compte est-il clos ou encore ouvert
 --
 -- =============================================================================
@@ -34,7 +34,7 @@ create table llx_bank_account
   rowid SERIAL PRIMARY KEY,
   "datec"          timestamp,
   "tms"            timestamp,
-  "label"          varchar(30),
+  "label"          varchar(30) UNIQUE,
   "bank"           varchar(60),
   "code_banque"    varchar(7),
   "code_guichet"   varchar(6),

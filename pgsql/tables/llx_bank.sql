@@ -4,6 +4,7 @@
 
 -- ===================================================================
 -- Copyright (C) 2000-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- $Id$
 -- $Source$
