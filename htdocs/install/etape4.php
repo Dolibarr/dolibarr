@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004 Sebastien DiCintio   <sdicintio@ressource-toi.org>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 
 /**
         \file       htdocs/install/etape4.php
-        \brief      Demande le login et mode de passe de l'administrateur Dolibarr
+        \brief      Demande le login et mot de passe de l'administrateur Dolibarr
         \version    $Revision$
 */
 
@@ -52,7 +53,7 @@ else
 
 require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
-print '<table cellspacing="0" cellpadding="4" border="1" width="100%">';
+print '<table cellspacing="0" cellpadding="2" width="100%">';
 
 $err=0;
 
@@ -78,11 +79,13 @@ if ($db->ok == 1)
 
   if (isset($_GET["error"]) && $_GET["error"] == 1)
     {
+        print '<br>';
       print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
     }
 
   if (isset($_GET["error"]) && $_GET["error"] == 2)
     {
+        print '<br>';
       print '<div class="error">';
       print $langs->trans("PleaseTypePassword");
       print '</div>';
@@ -90,6 +93,7 @@ if ($db->ok == 1)
 
   if (isset($_GET["error"]) && $_GET["error"] == 3)
     {
+        print '<br>';
       print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
     }
 

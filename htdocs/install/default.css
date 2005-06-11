@@ -70,15 +70,12 @@ div.main-inside {
                   margin-top: 10px;
                   }
 
-
 div.error {
-            font-size: 1.3em;
-            padding: 10px;
-            margin-top: 10px;
-            border:  1px solid red;
-            }
-
-
+            color: #550000; font-weight: bold; 
+            padding: 0.2em 0.2em 0.2em 0.2em;
+            margin: 0.5em 0em 0.5em 0em;
+            border: 1px solid #6C7C8B;
+}
 
 div.barrebottom {
                   text-align: right;

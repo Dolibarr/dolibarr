@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
@@ -20,10 +20,10 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/**     \file       htdocs/install/etape5.php
+/**
+        \file       htdocs/install/etape5.php
         \brief      Page de fin d'installation
         \version    $Revision$
 */
@@ -39,76 +39,89 @@ $success=0;
 
 if (file_exists($conffile))
 {
-  include($conffile);
+    include($conffile);
 }
 
 
 if($dolibarr_main_db_type == "mysql")
-	require ($dolibarr_main_document_root . "/lib/mysql.lib.php");		
+    require ($dolibarr_main_document_root . "/lib/mysql.lib.php");
 else
-	require ($dolibarr_main_document_root . "/lib/pgsql.lib.php");
-			
+    require ($dolibarr_main_document_root . "/lib/pgsql.lib.php");
+
 require ($dolibarr_main_document_root . "/conf/conf.class.php");
+
 
 if ($_POST["action"] == "set")
 {
-  if ($_POST["pass"] <> $_POST["pass_verif"])
+    if ($_POST["pass"] <> $_POST["pass_verif"])
     {
-      Header("Location: etape4.php?error=1&selectlang=$setuplang");
+        Header("Location: etape4.php?error=1&selectlang=$setuplang");
     }
 
-  if (strlen(trim($_POST["pass"])) == 0)
+    if (strlen(trim($_POST["pass"])) == 0)
     {
-      Header("Location: etape4.php?error=2&selectlang=$setuplang");
+        Header("Location: etape4.php?error=2&selectlang=$setuplang");
     }
 
-  if (strlen(trim($_POST["login"])) == 0)
+    if (strlen(trim($_POST["login"])) == 0)
     {
-      Header("Location: etape4.php?error=3&selectlang=$setuplang");
+        Header("Location: etape4.php?error=3&selectlang=$setuplang");
     }
 
 
-  pHeader($langs->trans("SetupEnd"),"etape5");
+    pHeader($langs->trans("SetupEnd"),"etape5");
 
-  print '<table cellspacing="0" cellpadding="4" border="1" width="100%">';
-  $error=0;
+    print '<table cellspacing="0" cellpadding="2" width="100%">';
+    $error=0;
 
-  $conf = new Conf();
-  $conf->db->type = $dolibarr_main_db_type;
-  $conf->db->host = $dolibarr_main_db_host;
-  $conf->db->name = $dolibarr_main_db_name;
-  $conf->db->user = $dolibarr_main_db_user;
-  $conf->db->pass = $dolibarr_main_db_pass;
+    $conf = new Conf();
+    $conf->db->type = $dolibarr_main_db_type;
+    $conf->db->host = $dolibarr_main_db_host;
+    $conf->db->name = $dolibarr_main_db_name;
+    $conf->db->user = $dolibarr_main_db_user;
+    $conf->db->pass = $dolibarr_main_db_pass;
 
-  $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
-  $ok = 0;
-  if ($db->connected == 1)
+    $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
+    $ok = 0;
+    if ($db->connected == 1)
     {
-      $sql = "INSERT INTO llx_user(datec,login,pass,admin,name,code) VALUES (now()";
-      $sql .= ",'".$_POST["login"]."'";
-      $sql .= ",'".$_POST["pass"]."'"; 
-      $sql .= ",1,'Administrateur','ADM')";
+        $sql = "INSERT INTO llx_user(datec,login,pass,admin,name,code) VALUES (now()";
+        $sql .= ",'".$_POST["login"]."'";
+        $sql .= ",'".$_POST["pass"]."'";
+        $sql .= ",1,'Administrateur','ADM')";
     }
-  
-  if ($db->query($sql) || $db->errno() == 1062)
-    {
-      $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
-      print $langs->trans("AdminLoginCreatedSuccessfuly")."<br>";
-      $success = 1;
-    }
-  else
-    {
-      print "Echec de la création du compte administrateur<br>";
-    }
-  print '</table>';
 
-  $db->close();
+    $resql=$db->query($sql);
+
+    if ($resql)
+    {
+        $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
+        print $langs->trans("AdminLoginCreatedSuccessfuly")."<br>";
+        $success = 1;
+    }
+    else
+    {
+        if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+        {
+            print $langs->trans("AdminLoginAlreadyExists",$_POST["login"])."<br>";
+        }
+        else {
+            print $langs->trans("FailedToCreateAdminLogin")."<br>";
+        }
+    }
+
+    // Si install non Français, on configure pour fonctionner en mode internationnal
+    if ($langs->defaultlang != "fr_FR") {
+        $db->query("INSERT INTO llx_const(name,value,type,visible) values ('COMPANY_CREATE_TWO_STEPS','1','yesno',0)");
+    }
+
+    print '</table>';
+
+    $db->close();
 }
 
-?>
-<br>
+print "<br>";
 
-<?php
 print $langs->trans("SystemIsInstalled")."<br>";
 print $langs->trans("YouNeedToPersonalizeSetup")."<br>";
 
