@@ -127,7 +127,6 @@ $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
 
 $resql = $db->query($sql) ;
-
 if ($resql)
 {
   $num = $db->num_rows($resql);
@@ -142,6 +141,8 @@ if ($resql)
     
   $texte = $langs->trans("List");
   
+
+
   llxHeader("","",$texte);
 
   if ($sref || $snom || $_POST["sall"] || $_POST["search"])
@@ -154,20 +155,15 @@ if ($resql)
     }
   
 
-/*
- *
- *
- */
-  print "<div id='ways'>";
-  print '<a href="liste.php">Top</a>';
-
-  if (isset($catid))
+    if (isset($catid))
     {
-      $c = new Categorie ($db, $catid);
-      $ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
-      print " &gt; ".$ways[0]."<br />\n";
+        print "<div id='ways'>";
+        $c = new Categorie ($db, $catid);
+        $ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
+        print " &gt; ".$ways[0]."<br />\n";
+        print "</div><br />";
     }
-  print "</div><br />";
+
 
   print '<table class="noborder" width="100%">';
 
@@ -176,7 +172,7 @@ if ($resql)
   print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
   print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
   print_liste_field_titre($langs->trans("Supplier"),"liste.php", "pf.fk_soc","","","",$sortfield);
-  print_liste_field_titre($langs->trans("BuiingPrice"),"liste.php", "ppf.price","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
   print "</tr>\n";
   
   // Lignes des champs de filtre
@@ -191,9 +187,9 @@ if ($resql)
   print '<td valign="right">';
   print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
   print '</td>';
-  print '<td colspan="2" align="center">';
-  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
-  print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
+  print '<td colspan="2" align="right">';
+  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+  print '&nbsp; <input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
   print '</td>';
   print '</tr>';
   print '</form>';

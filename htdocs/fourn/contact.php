@@ -68,12 +68,12 @@ if (strlen($stcomm)) {
 }
 
 if (strlen($begin)) {
-  $sql .= " AND upper(p.name) like '$begin%'";
+  $sql .= " AND p.name like '$begin%'";
 }
 
 if ($contactname) {
-  $sql .= " AND lower(p.name) like '%".strtolower($contactname)."%'";
-  $sortfield = "lower(p.name)";
+  $sql .= " AND p.name like '%".strtolower($contactname)."%'";
+  $sortfield = "p.name";
   $sortorder = "ASC";
 }
 
@@ -91,9 +91,9 @@ if ($result) {
     
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin, "", "", $sortfield);
-  print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin, "", "", $sortfield);
-  print_liste_field_titre($langs->trans("Company"),"contact.php","lower(s.nom)", $begin, "", "", $sortfield);
+  print_liste_field_titre($langs->trans("Lastname"),"contact.php","p.name", $begin, "", "", $sortfield);
+  print_liste_field_titre($langs->trans("Firstname"),"contact.php","p.firstname", $begin, "", "", $sortfield);
+  print_liste_field_titre($langs->trans("Company"),"contact.php","s.nom", $begin, "", "", $sortfield);
   print '<td class="liste_titre">'.$langs->trans("Email").'</td>';
   print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
   print "</tr>\n";

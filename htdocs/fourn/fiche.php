@@ -46,11 +46,10 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
+
+
 /*
- *
  * Mode fiche
- *
- *
  */  
 $societe = new Fournisseur($db);
 
@@ -125,7 +124,11 @@ if ( $societe->fetch($socid) )
    */
   print '<table class="border" width="100%">';
   print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
-  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'<br>'.$societe->cp.' '.$societe->ville.'</td></tr>';
+  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'</td></tr>';
+  
+  print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
+  print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';
+  print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">'.$societe->pays.'</td></tr>';
   print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
   print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
@@ -135,7 +138,7 @@ if ( $societe->fetch($socid) )
    */
   print '</td><td valign="top" width="50%">';
 
-  $var=false;
+  $var=true;
 
   /*
    *
@@ -145,12 +148,11 @@ if ( $societe->fetch($socid) )
   if ($conf->produit->enabled || $conf->service->enabled)
     {
       $langs->load("products");
-      print '<table class="border" width="100%">';
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("ProductsAndServices").'</td><td align="center">';
-      print $societe->NbProduct();
-      print '</td></tr></table><br>';
+      print '<table class="noborder" width="100%">';
+      print '<tr class="liste_titre">';
+      print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
+      print '<a href="'.DOL_URL_ROOT.'/fourn/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("All").' ('.$societe->NbProduct().')';
+      print '</a></td></tr></table><br>';
     }
 
   /*
@@ -164,13 +166,12 @@ if ( $societe->fetch($socid) )
   $sql .= " ORDER BY p.rowid DESC LIMIT 4";
   if ( $db->query($sql) )
     {
-      $var=!$var;
       $i = 0 ; 
       $num = $db->num_rows();
       if ($num > 0)
 	{
-	  print '<table class="border" width="100%">';
-	  print "<tr $bc[$var]>";
+	  print '<table class="noborder" width="100%">';
+	  print '<tr class="liste_titre">';
 	  print "<td colspan=\"2\"><a href=\"commande/liste.php?socid=$societe->id\">".$langs->trans("LastOrders",$num)."</td></tr>";
 	}
       while ($i < $num && $i < 5)
@@ -207,9 +208,7 @@ if ( $societe->fetch($socid) )
 
 
   /*
-   *
    * Liste des factures associées
-   *
    */
   $langs->load("bills");
   
@@ -218,15 +217,15 @@ if ( $societe->fetch($socid) )
   $sql  = "SELECT p.rowid,p.libelle,p.facnumber,".$db->pdate("p.datef")." as df, total_ttc as amount, paye";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as p WHERE p.fk_soc = $societe->id";
   $sql .= " ORDER BY p.datef";
-  if ( $db->query($sql) )
+  $resql=$db->query($sql);
+  if ($resql)
     {
-      $var=!$var;
       $i = 0 ; 
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       if ($num > 0)
 	{
-	  print '<table class="border" width="100%">';
-	  print "<tr $bc[$var]>";
+	  print '<table class="noborder" width="100%">';
+	  print '<tr class="liste_titre">';
 	  print "<td colspan=\"4\">";
 	  print "<table class=\"noborder\" width=\"100%\"><tr><td>".$langs->trans("LastSuppliersBills",min($num,$max))."</td><td align=\"right\"><a href=\"facture/index.php?socid=$societe->id\">".$langs->trans("AllBills")." (".$num.")</td></tr></table>";
 	  print "</td></tr>";
@@ -234,13 +233,13 @@ if ( $societe->fetch($socid) )
       
       while ($i < $num && $i < $max)
 	{
-	  $obj = $db->fetch_object();
+	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
       
 	  print "<tr $bc[$var]>";
 	  print '<td>';
 	  print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
-	  print img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber.'</a> '.dolibarr_trunc($obj->libelle,40).'</td>';
+	  print img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber.'</a> '.dolibarr_trunc($obj->libelle,14).'</td>';
 	  print "<td align=\"right\" width=\"80\">".dolibarr_print_date($obj->df)."</td>";
 	  print '<td align="right">'.$obj->amount.'</td>';
 	  $fac = new FactureFournisseur($db);
@@ -248,7 +247,7 @@ if ( $societe->fetch($socid) )
 	  print "</tr>";
 	  $i++;
 	}
-      $db->free();
+      $db->free($resql);
       if ($num > 0) {
         print "</table><br>";
       }
@@ -304,11 +303,14 @@ if ( $societe->fetch($socid) )
   $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
   $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $societe->id  ORDER by p.datec";
   $result = $db->query($sql);
-  $i = 0 ; $num = $db->num_rows();
 
+  $i = 0 ;
+  $num = $db->num_rows($result);
+  $var=true;
+  
   while ($i < $num)
     {
-      $obj = $db->fetch_object();
+      $obj = $db->fetch_object($result);
       $var = !$var;
 
       print "<tr $bc[$var]>";

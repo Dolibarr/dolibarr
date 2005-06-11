@@ -30,6 +30,9 @@
 
 require("./pre.inc.php");
 
+$langs->load("orders");
+
+
 $page  = ( is_numeric($_GET["page"]) ?  $_GET["page"] : 0 );
 $socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
 $sortorder = $_GET["sortorder"];
@@ -62,10 +65,10 @@ $offset = $conf->liste_limit * $page ;
  * Mode Liste
  */
 
-$sql = "SELECT s.idp, s.nom, ".$db->pdate("cf.date_commande")." as dc";
-$sql .= " ,cf.rowid,cf.ref, cf.fk_statut";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s ";
-$sql .= " , ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+$sql = "SELECT s.idp, s.nom, ".$db->pdate("cf.date_commande")." as dc,";
+$sql .= " cf.rowid,cf.ref, cf.fk_statut";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
+$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 $sql .= " WHERE cf.fk_soc = s.idp ";
 
 if ($socid)
@@ -114,7 +117,7 @@ if ($resql)
   print '</form>';
   print '</tr>';
 
-  $var=True;
+  $var=true;
 
   while ($i < min($num,$conf->liste_limit))
     {
@@ -150,5 +153,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

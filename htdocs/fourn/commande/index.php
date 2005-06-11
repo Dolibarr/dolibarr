@@ -21,7 +21,8 @@
  *
  */
 
-/**	        \file       htdocs/fourn/commande/index.php
+/**
+	        \file       htdocs/fourn/commande/index.php
 	        \ingroup    commande
 	        \brief      Page accueil commandes fournisseurs
 	        \version    $Revision$
@@ -43,17 +44,20 @@ if ($user->societe_id > 0)
 
 $commande = new CommandeFournisseur($db);
 
+
+
 print_barre_liste($langs->trans("SuppliersOrders"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
 
-print '<table class="noborder" width="100%">';
-print '<tr><td width="30%">';
 
-$sql = "SELECT count(cf.rowid), fk_statut";
-$sql .= " ,cf.rowid,cf.ref";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s ";
-$sql .= " , ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-$sql .= " WHERE cf.fk_soc = s.idp ";
-$sql .= " GROUP BY cf.fk_statut";
+print '<table class="noborder" width="100%">';
+print '<tr valign="top"><td width="30%">';
+
+$sql = "SELECT count(cf.rowid), fk_statut,";
+$sql.= " cf.rowid,cf.ref";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
+$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+$sql.= " WHERE cf.fk_soc = s.idp ";
+$sql.= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -127,7 +131,8 @@ else
 
 print '</td></tr></table>';
 
+
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

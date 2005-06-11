@@ -142,118 +142,134 @@ $result = $db->query($sql);
 
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
-  
-  if ($socid) {
-      $soc = new Societe($db);
-      $soc->fetch($socid);
-  }
-  
-  print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,"index.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+    $num = $db->num_rows($result);
+    $i = 0;
 
-  print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef","&amp;socid=$socid","","",$sortfield);
-  print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","&amp;socid=$socid","","",$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","&amp;socid=$socid","","",$sortfield);
-  print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","&amp;socid=$socid","",'align="right"',$sortfield);
-  print_liste_field_titre($langs->trans("AmountTTC"),"index.php","fac.total_ttc","&amp;socid=$socid","",'align="right"',$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye","&amp;socid=$socid","",'align="center"',$sortfield);
-  print "</tr>\n";
-
-  // Lignes des champs de filtre
-  print '<form method="get" action="index.php">';
-  print '<tr class="liste_titre">';
-  print '<td class="liste_titre" valign="right">';
-  print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
-  print '</td><td class="liste_titre">&nbsp;</td>';
-  print '<td class="liste_titre" align="left">';
-  print '<input class="flat" type="text" name="search_libelle" value="'.$_GET["search_libelle"].'">';
-  print '</td>';
-  print '<td class="liste_titre" align="left">';
-  print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
-  print '</td><td class="liste_titre" align="right">';
-  print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
-  print '</td><td class="liste_titre" align="right">';
-  print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
-  print '</td><td class="liste_titre" colspan="2" align="center">';
-  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-  print '</td>';
-  print "</tr>\n";
-  print '</form>';
-
-  $fac = new FactureFournisseur($db);
-
-  $var=true;
-  while ($i < min($num,$limit))
-    {
-      $obj = $db->fetch_object();      
-      $var=!$var;
-      
-      print "<tr $bc[$var]>";
-      print "<td nowrap><a href=\"fiche.php?facid=$obj->facid\">".img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber."</a></td>\n";
-      print "<td nowrap>".strftime("%d %b %Y",$obj->datef)."</td>\n";
-      print '<td>'.stripslashes("$obj->libelle").'</td>';
-      print '<td>';
-      print '<a href="../fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
-      print '<td align="right">'.price($obj->total_ht).'</td>';
-      print '<td align="right">'.price($obj->total_ttc).'</td>';
-
-      // Affiche statut de la facture
-      if ($obj->paye)
-	{
-	  $class = "normal";
-	}
-      else
-	{
-	  if ($obj->fk_statut == 0)
-	    {
-	      $class = "normal";
-	    }
-	  else
-	    {
-	      $class = "impayee";
-	    }
-	}
-	
-	print '<td align="center">';
-    if (! $obj->paye)
-    {
-      if ($obj->fk_statut == 0)
-        {
-      print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
-        }
-      elseif ($obj->fk_statut == 3)
-        {
-      print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
-        }
-      else
-        {
-      // \todo  le montant deja payé obj->am n'est pas définie
-      print '<a class="'.$class.'" href=""index.php?filtre=paye:0,fk_statut:1">'.($fac->PayedLibStatut($obj->paye,$obj->fk_statut,$obj->am)).'</a>';
-        }
+    if ($socid) {
+        $soc = new Societe($db);
+        $soc->fetch($socid);
     }
-    else
-    {
-      print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
-    }
-    print '</td>';
-      
+
+    print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,"index.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+
+    print '<table class="liste" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield);
+    print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef","&amp;socid=$socid","","",$sortfield);
+    print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","&amp;socid=$socid","","",$sortfield);
+    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","&amp;socid=$socid","","",$sortfield);
+    print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","&amp;socid=$socid","",'align="right"',$sortfield);
+    print_liste_field_titre($langs->trans("AmountTTC"),"index.php","fac.total_ttc","&amp;socid=$socid","",'align="right"',$sortfield);
+    print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye","&amp;socid=$socid","",'align="center"',$sortfield);
     print "</tr>\n";
-    $i++;
 
+    // Lignes des champs de filtre
+    print '<form method="get" action="index.php">';
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre" valign="right">';
+    print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
+    print '</td><td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" type="text" name="search_libelle" value="'.$_GET["search_libelle"].'">';
+    print '</td>';
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
+    print '</td><td class="liste_titre" align="right">';
+    print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
+    print '</td><td class="liste_titre" align="right">';
+    print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
+    print '</td><td class="liste_titre" colspan="2" align="center">';
+    print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+    print '</td>';
+    print "</tr>\n";
+    print '</form>';
+
+    $fac = new FactureFournisseur($db);
+
+    $var=true;
+    $total=0;
+    $total_ttc=0;
+    while ($i < min($num,$limit))
+    {
+        $obj = $db->fetch_object();
+        $var=!$var;
+
+        print "<tr $bc[$var]>";
+        print "<td nowrap><a href=\"fiche.php?facid=$obj->facid\">".img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber."</a></td>\n";
+        print "<td nowrap>".strftime("%d %b %Y",$obj->datef)."</td>\n";
+        print '<td>'.stripslashes("$obj->libelle").'</td>';
+        print '<td>';
+        print '<a href="../fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
+        print '<td align="right">'.price($obj->total_ht).'</td>';
+        print '<td align="right">'.price($obj->total_ttc).'</td>';
+        $total+=$obj->total_ht;
+        $total_ttc+=$obj->total_ttc;
+
+        // Affiche statut de la facture
+        if ($obj->paye)
+        {
+            $class = "normal";
+        }
+        else
+        {
+            if ($obj->fk_statut == 0)
+            {
+                $class = "normal";
+            }
+            else
+            {
+                $class = "impayee";
+            }
+        }
+
+        print '<td align="center">';
+        if (! $obj->paye)
+        {
+            if ($obj->fk_statut == 0)
+            {
+                print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
+            }
+            elseif ($obj->fk_statut == 3)
+            {
+                print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
+            }
+            else
+            {
+                // \todo  le montant deja payé obj->am n'est pas définie
+                print '<a class="'.$class.'" href=""index.php?filtre=paye:0,fk_statut:1">'.($fac->PayedLibStatut($obj->paye,$obj->fk_statut,$obj->am)).'</a>';
+            }
+        }
+        else
+        {
+            print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
+        }
+        print '</td>';
+
+        print "</tr>\n";
+        $i++;
+
+        if ($i == min($num,$limit)) {
+            // Print total
+            print '<tr class="liste_total">';
+            print '<td class="liste_total" colspan="4" align="left">'.$langs->trans("Total").'</td>';
+            print '<td class="liste_total" align="right">'.price($total).'</td>';
+            print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
+            print '<td class="liste_total" align="center">&nbsp;</td>';
+            print "</tr>\n";
+        }
     }
+
     print "</table>";
     $db->free();
 }
 else
 {
-  dolibarr_print_error($db);
+    dolibarr_print_error($db);
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
+
 ?>
