@@ -45,8 +45,10 @@ function llxHeader($head = "")
 
     $menu = new Menu();
 
-
-    $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0 AND courant = 1";
+    $sql = "SELECT rowid, label, courant";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+    $sql.= " WHERE clos = 0";
+    $sql.= " AND courant in (1,2)";
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -57,7 +59,7 @@ function llxHeader($head = "")
         {
             $objp = $db->fetch_object($resql);
             $menu->add(DOL_URL_ROOT."/compta/bank/account.php?account=" . $objp->rowid,  $objp->label);
-            $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=" . $objp->rowid ,$langs->trans("AccountStatements"));
+            if ($objp->courant != 2) $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=" . $objp->rowid ,$langs->trans("AccountStatements"));
             $menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=" . $objp->rowid ,$langs->trans("IOMonthlyReporting"));
             $i++;
         }

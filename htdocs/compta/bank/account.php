@@ -205,7 +205,10 @@ if ($account > 0)
   print '<tr class="liste_titre">';
   print '<td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Value").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
   print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td><td align="right">'.$langs->trans("BankBalance").'</td>';
-  print '<td align="center">'.$langs->trans("AccountStatement").'</td></tr>';
+  print '<td align="center">';
+  if ($acct->type != 2) print $langs->trans("AccountStatement");
+  else print '&nbsp;';
+  print '</td></tr>';
 
   print '<form method="post" action="account.php">';
   print '<input type="hidden" name="action" value="search">';
@@ -217,7 +220,7 @@ if ($account > 0)
   print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$_POST["req_credit"].'" size="6"></td>';
   print '<td align="center"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
   print '<td align="center">';
-  if ($user->rights->banque->modifier)
+  if ($user->rights->banque->modifier && $acct->type != 2)  // Si non compte cash
     {
         print '<a class="tabAction" href="rappro.php?account='.$acct->id.'">'.$langs->trans("Rappro").'</a>';
     }
@@ -392,7 +395,7 @@ function _print_lines($db,$result,$sql,$acct)
                 print '<td align="right">-</td>';
             }
     
-            if ($objp->rappro)
+            if ($objp->rappro && $acct->type != 2)  // Si non compte cash)
             {
                 print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
             }

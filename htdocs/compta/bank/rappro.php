@@ -210,11 +210,11 @@ if ($result)
 
         if ($objp->amount < 0)
         {
-            print "<td align=\"right\">".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+            print "<td align=\"right\" nowrap>".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
         }
         else
         {
-            print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</td>\n";
+            print "<td>&nbsp;</td><td align=\"right\" nowrap>".price($objp->amount)."</td>\n";
         }
 
         if ($objp->rappro)

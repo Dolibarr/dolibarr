@@ -67,12 +67,12 @@ if ($_POST["action"] == 'add')
     
     if ($account->label) {
         $id = $account->create($user->id);
-        if (! $id) {
-            $message=$account->error();
-            $_GET["action"]='create';   // Force chargement page en mode creation
+        if ($id > 0) {
+            $_GET["id"]=$id;            // Force chargement page en mode visu
         }
         else {
-            $_GET["id"]=$id;            // Force chargement page en mode visu
+            $message='<div class="error">'.$account->error().'</div>';
+            $_GET["action"]='create';   // Force chargement page en mode creation
         }
     } else {
         $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("LabelBankCashAccount")).'</div>';
@@ -162,7 +162,7 @@ if ($_GET["action"] == 'create')
   print $form->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]:1,"type");
   print '</td></tr>';
 
-  print '<tr><td valign="top">'.$langs->trans("BankBalance").'</td>';
+  print '<tr><td valign="top">'.$langs->trans("InitialBankBalance").'</td>';
   print '<td colspan="3"><input size="12" type="text" name="solde" value="0.00"></td></tr>';
 
   print '<tr><td valign="top">'.$langs->trans("Date").'</td>';
@@ -225,7 +225,7 @@ else
     $head[$h][1] = $langs->trans("AccountCard");
     $h++;
 
-    dolibarr_fiche_head($head, $hselected, $langs->trans("FinancialAccount")." ".$account->number);
+    dolibarr_fiche_head($head, $hselected, $langs->trans("FinancialAccount")." ".($account->number?$account->number:$account->label));
 
     /*
      * Confirmation de la suppression

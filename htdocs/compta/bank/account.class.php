@@ -23,432 +23,433 @@
  */
 
 /**
-	    \file       htdocs/compta/bank/account.class.php
+        \file       htdocs/compta/bank/account.class.php
         \ingroup    banque
-		\brief      Fichier de la classe des comptes bancaires
-		\version    $Revision$
+        \brief      Fichier de la classe des comptes bancaires
+        \version    $Revision$
 */
 
 
-/**     \class      Account
-		\brief      Classe permettant la gestion des comptes bancaires
+/**
+        \class      Account
+        \brief      Classe permettant la gestion des comptes bancaires
 */
 
 class Account
 {
-  var $rowid;
+    var $rowid;
 
-  var $label;
-  var $type;
-  var $bank;
-  var $clos;
-  var $code_banque;
-  var $code_guichet;
-  var $number;
-  var $cle_rib;
-  var $bic;
-  var $iban_prefix;
-  var $proprio;
-  var $adresse_proprio;
-  var $type_lib=array();
+    var $label;
+    var $type;
+    var $bank;
+    var $clos;
+    var $code_banque;
+    var $code_guichet;
+    var $number;
+    var $cle_rib;
+    var $bic;
+    var $iban_prefix;
+    var $proprio;
+    var $adresse_proprio;
+    var $type_lib=array();
 
-  
-  function Account($DB, $rowid=0)
-  {
-    global $langs;
-    
-    $this->db = $DB;
-    $this->rowid = $rowid;
 
-    $this->clos = 0;
-    $this->solde = 0;    
-
-    $this->type_lib[0]=$langs->trans("BankType0");
-    $this->type_lib[1]=$langs->trans("BankType1");
-    $this->type_lib[2]=$langs->trans("BankType2");
-
-    return 1;
-  }
-
-  /*
-   * Efface une entree dans la table ".MAIN_DB_PREFIX."bank
-   */
-  function deleteline($rowid)
-  {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=$rowid";
-    $result = $this->db->query($sql);
-
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=$rowid";
-    $result = $this->db->query($sql);
-
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=$rowid";
-    $result = $this->db->query($sql);
-  }
-
-  /*
-   *
-   */
-  function add_url_line($line_id, $url_id, $url, $label)
-  {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (fk_bank, url_id, url, label)";
-    $sql .= " VALUES ('$line_id', '$url_id', '$url', '$label')";
-
-    if ($this->db->query($sql))
-      {
-	$rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_url");
-	
-	return $rowid;
-      }
-    else
-      {
-	return '';
-      }
-  }
-
-  /*
-   *
-   */
-  function get_url($line_id)
-  {
-    $lines = array();
-    $sql = "SELECT fk_bank, url_id, url, label FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank = $line_id";
-    $result = $this->db->query($sql);
-
-    if ($result)
-      {
-	$i = 0;
-	$num = $this->db->num_rows();
-	while ($i < $num)
-	  {
-	    $obj = $this->db->fetch_object($result);
-	    $lines[$i][0] = $obj->url;
-	    $lines[$i][1] = $obj->url_id;
-	    $lines[$i][2] = $obj->label;
-	    $i++;
-	  }
-	return $lines;
-      }
-  }
-
-  /**
-   *    \brief      Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
-   *    \return     int     rowid de l'entrée ajoutée, < 0 si erreur
-   */
-  function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user='')
-  {
-    if ($this->rowid)
+    function Account($DB, $rowid=0)
     {
+        global $langs;
 
-        switch ($oper)
-        {
-            case 1:
-            $oper = 'TIP';
-            break;
-            case 2:
-            $oper = 'VIR';
-            break;
-            case 3:
-            $oper = 'PRE';
-            break;
-            case 4:
-            $oper = 'LIQ';
-            break;
-            case 5:
-            $oper = 'VAD';
-            break;
-            case 6:
-            $oper = 'CB';
-            break;
-            case 7:
-            $oper = 'CHQ';
-            break;
-        }
-    
-        $datev = $date;
-    
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq,fk_account, fk_type)";
-        $sql.= " VALUES (now(), '".$date."', '$datev', '$label', '" . ereg_replace(',','.',$amount) . "', '".$user->id."' ,'$num_chq', '".$this->rowid."', '$oper')";
-    
+        $this->db = $DB;
+        $this->rowid = $rowid;
+
+        $this->clos = 0;
+        $this->solde = 0;
+
+        $this->type_lib[0]=$langs->trans("BankType0");
+        $this->type_lib[1]=$langs->trans("BankType1");
+        $this->type_lib[2]=$langs->trans("BankType2");
+
+        return 1;
+    }
+
+    /*
+     * Efface une entree dans la table ".MAIN_DB_PREFIX."bank
+     */
+    function deleteline($rowid)
+    {
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=$rowid";
+        $result = $this->db->query($sql);
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=$rowid";
+        $result = $this->db->query($sql);
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=$rowid";
+        $result = $this->db->query($sql);
+    }
+
+    /*
+     *
+     */
+    function add_url_line($line_id, $url_id, $url, $label)
+    {
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (fk_bank, url_id, url, label)";
+        $sql .= " VALUES ('$line_id', '$url_id', '$url', '$label')";
+
         if ($this->db->query($sql))
         {
-            $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
-            if ($categorie)
-            {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
-                $result = $this->db->query($sql);
-                if (! $result)
-                {
-                    return -2;
-                }
-            }
+            $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_url");
+
             return $rowid;
         }
         else
         {
+            return '';
+        }
+    }
+
+    /*
+     *
+     */
+    function get_url($line_id)
+    {
+        $lines = array();
+        $sql = "SELECT fk_bank, url_id, url, label FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank = $line_id";
+        $result = $this->db->query($sql);
+
+        if ($result)
+        {
+            $i = 0;
+            $num = $this->db->num_rows();
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                $lines[$i][0] = $obj->url;
+                $lines[$i][1] = $obj->url_id;
+                $lines[$i][2] = $obj->label;
+                $i++;
+            }
+            return $lines;
+        }
+    }
+
+    /**
+     *    \brief      Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
+     *    \return     int     rowid de l'entrée ajoutée, < 0 si erreur
+     */
+    function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user='')
+    {
+        if ($this->rowid)
+        {
+
+            switch ($oper)
+            {
+                case 1:
+                $oper = 'TIP';
+                break;
+                case 2:
+                $oper = 'VIR';
+                break;
+                case 3:
+                $oper = 'PRE';
+                break;
+                case 4:
+                $oper = 'LIQ';
+                break;
+                case 5:
+                $oper = 'VAD';
+                break;
+                case 6:
+                $oper = 'CB';
+                break;
+                case 7:
+                $oper = 'CHQ';
+                break;
+            }
+
+            $datev = $date;
+
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq,fk_account, fk_type)";
+            $sql.= " VALUES (now(), '".$date."', '$datev', '$label', '" . ereg_replace(',','.',$amount) . "', '".$user->id."' ,'$num_chq', '".$this->rowid."', '$oper')";
+
+            if ($this->db->query($sql))
+            {
+                $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
+                if ($categorie)
+                {
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
+                    $result = $this->db->query($sql);
+                    if (! $result)
+                    {
+                        return -2;
+                    }
+                }
+                return $rowid;
+            }
+            else
+            {
+                dolibarr_print_error($this->db);
+                return -1;
+            }
+        }
+    }
+
+    /*
+     *      \brief          Creation du compte bancaire en base
+     *      \return         int     < 0 si erreur, > 0 si ok
+     */
+    function create()
+    {
+        global $langs;
+
+        // Chargement librairie pour acces fonction controle RIB
+        require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
+
+        if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
+            $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
+            return 0;
+        }
+
+        if (! $pcgnumber) $pcgnumber="51";
+
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (datec, label, account_number) values (now(),'$this->label','$pcgnumber');";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->affected_rows($resql))
+            {
+                $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_account");
+                if ( $this->update() )
+                {
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, label, amount, fk_account,datev,dateo,fk_type,rappro) ";
+                    $sql .= " VALUES (now(),'".$langs->trans("Balance")."','" . ereg_replace(',','.',$this->solde) . "','$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
+                    $this->db->query($sql);
+                }
+                return $this->id;
+            }
+        }
+        else
+        {
+            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+                $this->error=$langs->trans("ErrorBankLabelAlreadyExists");
+                return -1;
+            }
+            else {
+                $this->error=$this->db->error();
+                return -2;
+            }
+        }
+    }
+
+    /*
+     *    \brief      Mise a jour compte
+     *    \param      user        Object utilisateur qui modifie
+     */
+    function update($user='')
+    {
+        // Chargement librairie pour acces fonction controle RIB
+        require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
+
+        if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
+            $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
+            return 0;
+        }
+
+        if (! $this->label) $this->label = "???";
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
+
+        $sql .= " bank = '" .$this->bank ."'";
+        $sql .= ",label = '".$this->label ."'";
+
+        $sql .= ",code_banque='".$this->code_banque."'";
+        $sql .= ",code_guichet='".$this->code_guichet."'";
+        $sql .= ",number='".$this->number."'";
+        $sql .= ",cle_rib='".$this->cle_rib."'";
+        $sql .= ",bic='".$this->bic."'";
+        $sql .= ",iban_prefix = '".$this->iban_prefix."'";
+        $sql .= ",domiciliation='".$this->domiciliation."'";
+        $sql .= ",proprio = '".$this->proprio."'";
+        $sql .= ",adresse_proprio = '".$this->adresse_proprio."'";
+        $sql .= ",courant = ".$this->courant;
+        $sql .= ",clos = ".$this->clos;
+
+        $sql .= " WHERE rowid = ".$this->id;
+
+        $result = $this->db->query($sql);
+
+        if ($result)
+        {
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return 0;
+        }
+    }
+
+    /*
+     *    \brief      Charge en memoire depuis la base le compte
+     */
+    function fetch($id)
+    {
+        $this->id = $id;
+        $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque, code_guichet, cle_rib, bic, iban_prefix, domiciliation, proprio, adresse_proprio FROM ".MAIN_DB_PREFIX."bank_account";
+        $sql .= " WHERE rowid  = ".$id;
+
+        $result = $this->db->query($sql);
+
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+
+                $this->label         = $obj->label;
+                $this->type          = $obj->courant;
+                $this->courant       = $obj->courant;
+                $this->bank          = $obj->bank;
+                $this->clos          = $obj->clos;
+                $this->code_banque   = $obj->code_banque;
+                $this->code_guichet  = $obj->code_guichet;
+                $this->number        = $obj->number;
+                $this->cle_rib       = $obj->cle_rib;
+                $this->bic           = $obj->bic;
+                $this->iban_prefix   = $obj->iban_prefix;
+                $this->domiciliation = $obj->domiciliation;
+                $this->proprio       = $obj->proprio;
+                $this->adresse_proprio = $obj->adresse_proprio;
+            }
+            $this->db->free($result);
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
+
+
+    /*
+     *    \brief      Efface le compte
+     */
+    function delete()
+    {
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
+        $sql .= " WHERE rowid  = ".$this->rowid;
+        $result = $this->db->query($sql);
+        if ($result) {
+            return 1;
+        }
+        else {
             dolibarr_print_error($this->db);
             return -1;
         }
     }
-  }
 
-  /*
-   * Creation du compte bancaire
-   *
-   */
-  function create()
+
+    /*
+     *    \brief      Renvoi si un compte peut etre supprimer ou non (sans mouvements)
+     *    \return     boolean     vrai si peut etre supprimé, faux sinon
+     */
+    function can_be_deleted()
     {
-      global $langs;
-      
-      // Chargement librairie pour acces fonction controle RIB
-	  require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
+        $can_be_deleted=false;
 
-      if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
-            $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
-            return 0;
-      }
-
-      if (! $pcgnumber) $pcgnumber="51";
-
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (datec, label, account_number) values (now(),'$this->label','$pcgnumber');";
-      $resql=$this->db->query($sql);
-      if ($resql)
-	{
-	  if ($this->db->affected_rows($resql)) 
-	    {
-	      $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_account");
-	      if ( $this->update() )
-		{
-		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, label, amount, fk_account,datev,dateo,fk_type,rappro) ";
-		  $sql .= " VALUES (now(),'".$langs->trans("Balance")."','" . ereg_replace(',','.',$this->solde) . "','$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
-		  $this->db->query($sql);
-		}
-	      return $this->id;      
-	    }
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	  return 0;
-	}
+        $sql = "SELECT COUNT(rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."bank";
+        $sql.= " WHERE fk_account=".$this->id;
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $obj=$this->db->fetch_object($resql);
+            if ($obj->nb <= 1) $can_be_deleted=true;    // Juste le solde
+        }
+        else {
+            dolibarr_print_error($this->db);
+        }
+        return $can_be_deleted;
     }
 
-  /*
-   *    \brief      Mise a jour compte
-   *    \param      user        Object utilisateur qui modifie
-   */
-  function update($user='')
-    {      
-      // Chargement librairie pour acces fonction controle RIB
-	  require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
 
-      if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
-            $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
-            return 0;
-      }
-
-      if (! $this->label) $this->label = "???";
-
-      $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
-
-      $sql .= " bank = '" .$this->bank ."'";
-      $sql .= ",label = '".$this->label ."'";
-
-      $sql .= ",code_banque='".$this->code_banque."'";
-      $sql .= ",code_guichet='".$this->code_guichet."'";
-      $sql .= ",number='".$this->number."'";
-      $sql .= ",cle_rib='".$this->cle_rib."'";
-      $sql .= ",bic='".$this->bic."'";
-      $sql .= ",iban_prefix = '".$this->iban_prefix."'";
-      $sql .= ",domiciliation='".$this->domiciliation."'";
-      $sql .= ",proprio = '".$this->proprio."'";
-      $sql .= ",adresse_proprio = '".$this->adresse_proprio."'";
-      $sql .= ",courant = ".$this->courant;
-      $sql .= ",clos = ".$this->clos;
-
-      $sql .= " WHERE rowid = ".$this->id;
-      
-      $result = $this->db->query($sql);
-	      
-      if ($result) 
-	{
-      return 1;		      
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	  return 0;
-	}
-    }
-
-  /*
-   *    \brief      Charge en memoire depuis la base le compte
-   *
-   */
-  function fetch($id)
-  {
-    $this->id = $id; 
-    $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque, code_guichet, cle_rib, bic, iban_prefix, domiciliation, proprio, adresse_proprio FROM ".MAIN_DB_PREFIX."bank_account";
-    $sql .= " WHERE rowid  = ".$id;
-
-    $result = $this->db->query($sql);
-
-    if ($result)
-      {
-	if ($this->db->num_rows($result))
-	  {
-	    $obj = $this->db->fetch_object($result);
-	    
-	    $this->label         = $obj->label;
-	    $this->type          = $obj->courant;
-	    $this->courant       = $obj->courant;
-	    $this->bank          = $obj->bank;
-	    $this->clos          = $obj->clos;
-	    $this->code_banque   = $obj->code_banque;
-	    $this->code_guichet  = $obj->code_guichet;
-	    $this->number        = $obj->number;
-	    $this->cle_rib       = $obj->cle_rib;
-	    $this->bic           = $obj->bic;
-	    $this->iban_prefix   = $obj->iban_prefix;
-	    $this->domiciliation = $obj->domiciliation;
-	    $this->proprio       = $obj->proprio;
-	    $this->adresse_proprio = $obj->adresse_proprio;
-	  }
-	$this->db->free($result);
-      }
-    else
-      {
-	    dolibarr_print_error($this->db);
-      }
-  }
-
-
-  /*
-   *    \brief      Efface le compte
-   *
-   */
-  function delete()
-  {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
-    $sql .= " WHERE rowid  = ".$this->rowid;
-    $result = $this->db->query($sql);
-    if ($result) {
-        return 1;
-    }
-    else {
-        dolibarr_print_error($this->db);
-        return -1;
-    }
-  }
- 
- 
-   /*
-   *    \brief      Renvoi si un compte peut etre supprimer ou non (sans mouvements)
-   *    \return     boolean     vrai si peut etre supprimé, faux sinon
-   */
-  function can_be_deleted()
-  {
-    $can_be_deleted=false;
-    
-    $sql = "SELECT COUNT(rowid) as nb";
-    $sql.= " FROM ".MAIN_DB_PREFIX."bank";
-    $sql.= " WHERE fk_account=".$this->id;
-    $resql = $this->db->query($sql);
-    if ($resql) {
-        $obj=$this->db->fetch_object($resql);
-        if ($obj->nb <= 1) $can_be_deleted=true;    // Juste le solde
-    }
-    else {
-        dolibarr_print_error($this->db);
-    }
-    return $can_be_deleted;
-  }
-
-
-  /*
-   *
-   *
-   */
-  function error()
-    {      
+    /*
+     *
+     */
+    function error()
+    {
         return $this->error;
     }
-    
-  /*
-   *
-   *
-   */
-  function solde()
-  {
-    $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE fk_account=$this->id AND dateo <=" . $this->db->idate(time() );
 
-    $result = $this->db->query($sql);
+    /*
+     *
+     */
+    function solde()
+    {
+        $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE fk_account=$this->id AND dateo <=" . $this->db->idate(time() );
 
-    if ($result)
-      {
-	if ($this->db->num_rows())
-	  {
-	    $solde = $this->db->result(0,0);
+        $result = $this->db->query($sql);
 
-	    return $solde;
-	  }
-	$this->db->free();
-      }
-  }
-  /*
-   *
-   *
-   */
-  function datev_next($rowid)
-    {      
-      $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
+        if ($result)
+        {
+            if ($this->db->num_rows())
+            {
+                $solde = $this->db->result(0,0);
 
-      $sql .= " datev = adddate(datev, interval 1 day)";
-
-      $sql .= " WHERE rowid = $rowid";
-      
-      $result = $this->db->query($sql);
-	      
-      if ($result) 
-	{
-	  if ($this->db->affected_rows()) 
-	    {
-	      return 1;		      
-	    }		  
-	}
-      else
-	{
-	  print $this->db->error();
-	  print "<p>$sql</p>";
-	  return 0;
-	}
+                return $solde;
+            }
+            $this->db->free();
+        }
     }
-  /*
-   *
-   *
-   */
-  function datev_previous($rowid)
-    {      
-      $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
 
-      $sql .= " datev = adddate(datev, interval -1 day)";
+    /*
+     *
+     */
+    function datev_next($rowid)
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
 
-      $sql .= " WHERE rowid = $rowid";
-      
-      $result = $this->db->query($sql);
-	      
-      if ($result) 
-	{
-	  if ($this->db->affected_rows()) 
-	    {
-	      return 1;		      
-	    }		  
-	}
-      else
-	{
-	  print $this->db->error();
-	  print "<p>$sql</p>";
-	  return 0;
-	}
+        $sql .= " datev = adddate(datev, interval 1 day)";
+
+        $sql .= " WHERE rowid = $rowid";
+
+        $result = $this->db->query($sql);
+
+        if ($result)
+        {
+            if ($this->db->affected_rows())
+            {
+                return 1;
+            }
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return 0;
+        }
+    }
+ 
+    /*
+     *
+     */
+    function datev_previous($rowid)
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
+
+        $sql .= " datev = adddate(datev, interval -1 day)";
+
+        $sql .= " WHERE rowid = $rowid";
+
+        $result = $this->db->query($sql);
+
+        if ($result)
+        {
+            if ($this->db->affected_rows())
+            {
+                return 1;
+            }
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return 0;
+        }
     }
 
 

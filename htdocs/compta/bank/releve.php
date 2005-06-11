@@ -76,11 +76,10 @@ if (! isset($_GET["num"]))
   $sql .= $db->plimit($limit,$offset);
 
   $result = $db->query($sql);
-
   if ($result)
     {
       $var=True;  
-      $numrows = $db->num_rows();
+      $numrows = $db->num_rows($result);
       $i = 0; 
       
       print_barre_liste($langs->trans("AccountStatements").", ".$langs->trans("BankAccount")." : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>", $page, "releve.php","&amp;account=".$_GET["account"],$sortfield,$sortorder,'',$numrows);
@@ -111,41 +110,47 @@ if (! isset($_GET["num"]))
 }
 else
 {
-  /*
+  /**
    * Vue d'un releve
    *
    */
   if ($_GET["rel"] == 'prev')
     {
       // Recherche valeur pour num = numéro relevé précédent
-      $sql = "SELECT distinct(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve < ".$_GET["num"]." AND fk_account = ".$_GET["account"]." ORDER BY num_releve DESC";
+      $sql = "SELECT distinct(num_releve) as num";
+      $sql.= " FROM ".MAIN_DB_PREFIX."bank";
+      $sql.= " WHERE num_releve < ".$_GET["num"]." AND fk_account = ".$_GET["account"];
+      $sql.= " ORDER BY num_releve DESC";
       $result = $db->query($sql);
       if ($result)
 	{
 	  $var=True;  
-	  $numrows = $db->num_rows();
+	  $numrows = $db->num_rows($result);
 	  $i = 0; 
 	  if ($numrows > 0)
 	    {
-	      $row = $db->fetch_row(0);
-	      $num = $row[0];
+	      $obj = $db->fetch_object($result);
+	      $num = $obj->num;
 	    }
 	}
     }
   elseif ($_GET["rel"] == 'next')
     {
       // Recherche valeur pour num = numéro relevé précédent
-      $sql = "SELECT distinct(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve > ".$_GET["num"]." AND fk_account = ".$_GET["account"]." ORDER BY num_releve ASC";
+      $sql = "SELECT distinct(num_releve) as num";
+      $sql.= " FROM ".MAIN_DB_PREFIX."bank";
+      $sql.= " WHERE num_releve > ".$_GET["num"]." AND fk_account = ".$_GET["account"];
+      $sql.= " ORDER BY num_releve ASC";
       $result = $db->query($sql);
       if ($result)
 	{
 	  $var=True;  
-	  $numrows = $db->num_rows();
+	  $numrows = $db->num_rows($result);
 	  $i = 0; 
 	  if ($numrows > 0)
 	    {
-	      $row = $db->fetch_row(0);
-	      $num = $row[0];
+	      $obj = $db->fetch_object($result);
+	      $num = $obj->num;
 	    }
 	}
     }
@@ -168,18 +173,18 @@ else
   print '<td>'.$langs->trans("Date").'</td><td>'.$langs->trans("DateValue").'</td><td>'.$langs->trans("Type").'</td><td width="30%">'.$langs->trans("Description").'</td>';
   print '<td align="right">'.$langs->trans("Debit").'</td>';
   print '<td align="right">'.$langs->trans("Credit").'</td>';
-  print '<td align="right">'.$langs->trans("Solde").'</td>';
+  print '<td align="right">'.$langs->trans("Balance").'</td>';
   print '<td>&nbsp;</td>';
   print "</tr>\n";
  
 
   $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve < $num AND fk_account = ".$acct->id;
-  if ( $db->query($sql) )
-    {
-      $total = $db->result (0, 0);
-      $db->free();
-    }
-
+  $resql=$db->query($sql);
+  if ($resql)
+  {
+      $total = $db->result(0, 0);
+      $db->free($resql);
+  }
 
   $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
   $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -193,7 +198,7 @@ else
   if ($result)
     {
       $var=True;  
-      $numrows = $db->num_rows();
+      $numrows = $db->num_rows($result);
       $i = 0; 
 
       // Ligne Solde début releve
@@ -228,7 +233,7 @@ else
 	      $resc = $db->query($sql);
 	      if ($resc)
 		{
-		  $numc = $db->num_rows();
+		  $numc = $db->num_rows($resc);
 		  $ii = 0; 
 		  while ($ii < $numc)
 		    {
@@ -271,7 +276,7 @@ else
 	  print "</tr>";
 	  $i++;
 	}
-      $db->free();
+      $db->free($result);
     }
   // Ligne Total
   print "<tr><td align=\"right\" colspan=\"4\">".$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
@@ -282,5 +287,5 @@ else
 }
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

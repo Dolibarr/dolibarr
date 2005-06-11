@@ -53,7 +53,7 @@ if ($user->societe_id > 0)
 {
   $socidp = $user->societe_id;
 }
-$title=$langs->trans("IOMonthlyReporting").", ".$langs->trans("BankAccount")." : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>";
+$title=$langs->trans("IOMonthlyReporting").", ".$langs->trans("FinancialAccount")." : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>";
 $lien=($year_start?"<a href='annuel.php?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> <a href='annuel.php?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
 print_fiche_titre($title,$lien);
 print '<br>';
@@ -67,13 +67,14 @@ $sql .= " WHERE f.amount >= 0";
 if ($_GET["account"]) { $sql .= " AND fk_account = ".$_GET["account"]; }
 $sql .= " GROUP BY dm";
 
-if ($db->query($sql))
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0; 
   while ($i < $num)
     {
-      $row = $db->fetch_row($i);
+      $row = $db->fetch_row($resql);
       $encaiss[$row[1]] = $row[0];
       $i++;
     }
@@ -86,14 +87,14 @@ $sql .= " FROM llx_bank as f";
 $sql .= " WHERE f.amount <= 0";
 if ($_GET["account"]) { $sql .= " AND fk_account = ".$_GET["account"]; }
 $sql .= " GROUP BY dm";
-
-if ($db->query($sql))
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   while ($i < $num)
     {
-      $row = $db->fetch_row($i);
+      $row = $db->fetch_row($resql);
       $decaiss[$row[1]] = -$row[0];
       $i++;
     }
@@ -102,9 +103,9 @@ if ($db->query($sql))
 }
 
 
+// Affiche tableau
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td rowspan=2>'.$langs->trans("Month").'</td>';
-
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
@@ -118,48 +119,76 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print '</tr>';
 
-$var=True;
+$var=true;
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-  $var=!$var;
-  print '<tr '.$bc[$var].'>';
-  print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
-  for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
+    for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
-      print '<td align="right" width="10%">&nbsp;';
-      $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-      if ($decaiss[$case]>0)
-	{
-	  print price($decaiss[$case]);
-	  $totsorties[$annee]+=$decaiss[$case];
-	}
-      print "</td>";
+        print '<td align="right" width="10%">&nbsp;';
+        $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
+        if ($decaiss[$case]>0)
+        {
+            print price($decaiss[$case]);
+            $totsorties[$annee]+=$decaiss[$case];
+        }
+        print "</td>";
 
-      print '<td align="right" width="10%">&nbsp;';
-      $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-      if ($encaiss[$case]>0)
-	{
-	  print price($encaiss[$case]);
-	  $totentrees[$annee]+=$encaiss[$case];
-	}
-      print "</td>";
+        print '<td align="right" width="10%">&nbsp;';
+        $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
+        if ($encaiss[$case]>0)
+        {
+            print price($encaiss[$case]);
+            $totentrees[$annee]+=$encaiss[$case];
+        }
+        print "</td>";
     }
-
-  print '</tr>';
+    print '</tr>';
 }
 
-$var=!$var;
-print "<tr ".$bc[$var]."><td><b>".$langs->trans("Total")."</b></td>";
+// Total debit-credit
+print '<tr class="liste_total"><td><b>'.$langs->trans("Total")."</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
   print '<td align="right"><b>'.price($totsorties[$annee]).'</b></td><td align="right"><b>'.price($totentrees[$annee]).'</b></td>';
 }
 print "</tr>\n";
 
+// Ligne vierge
+print '<tr><td>&nbsp;</td>';
+$nbcol=0;
+for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+{
+    $nbcol+=2;
+}
+print "</tr>\n";
+print '<td colspan="'.$nbcol.'">&nbsp;</td>';
+
+// Solde actuel
+$balance=0;
+$sql = "SELECT sum(f.amount) as total";
+$sql .= " FROM llx_bank as f";
+if ($_GET["account"]) { $sql .= " WHERE fk_account = ".$_GET["account"]; }
+$resql=$db->query($sql);
+if ($resql)
+{
+    $obj = $db->fetch_object($resql);
+    if ($obj) $balance=$obj->total;
+}
+else {
+    dolibarr_print_error($db);
+}
+print '<tr class="liste_total"><td><b>'.$langs->trans("CurrentBalance")."</b></td>";
+print '<td colspan="'.($nbcol).'" align="right">'.price($balance).'</td>';
+print "</tr>\n";
+
 print "</table>";
+
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 
 ?>
