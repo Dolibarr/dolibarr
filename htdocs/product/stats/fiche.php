@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
  *
  */
 
-/*!
-  \file       htdocs/product/stats/fiche.php
-  \ingroup    product
-  \brief      Page des stats produits
-  \version    $Revision$
+/**
+        \file       htdocs/product/stats/fiche.php
+        \ingroup    product
+        \brief      Page des stats produits
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -48,12 +48,12 @@ else
 }
 
 
-llxHeader('','Statistiques produits');
+llxHeader('',$langs->trans("Statistics"));
 
 $mesg = '';
 
+
 /*
- *
  *
  */
 
@@ -62,11 +62,11 @@ if ($_GET["id"])
   $product = new Product($db);
   $result = $product->fetch($_GET["id"]);
   
-  if ( $result )
+  if ($result)
     { 
       // Efface rep obsolete
       if(is_dir(DOL_DOCUMENT_ROOT."/document/produits"))
-	rmdir(DOL_DOCUMENT_ROOT."/document/produits");
+	    rmdir(DOL_DOCUMENT_ROOT."/document/produits");
 
       // Création répertoire pour images générées
       // $conf->produit->dir_images définit dans master.inc.php
@@ -119,6 +119,10 @@ if ($_GET["id"])
       $head[$h][1] = $langs->trans("Price");
       $h++;
       
+      $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Photos");
+      $h++;
+      
       if($product->type == 0)
 	{
 	  if ($conf->stock->enabled)
@@ -136,10 +140,6 @@ if ($_GET["id"])
 	    $h++;
         }
       
-      $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
-      $head[$h][1] = $langs->trans("Photos");
-      $h++;
-      
       $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Statistics");
       $hselected=$h;
@@ -149,11 +149,13 @@ if ($_GET["id"])
       dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
       
       
-      print '<table class="border" width="100%"><tr>';
-      print '<td width="20%">'.$langs->trans("Ref").'</td>';
-      print '<td width="40%">'.$product->ref.'</td>';
-      print '<td>'.$langs->trans("Statistics").'</td></tr>';
-      print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+      print '<table class="border" width="100%">';
+        print '<tr>';
+        print '<td width="10%">'.$langs->trans("Ref").'</td><td colspan="2" width="40%">'.$product->ref.'</td>';
+        print '</tr>';
+      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
+
+      print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
       print '<td valign="top" rowspan="2">';
       // Propals
       if ($conf->propal->enabled)
@@ -175,7 +177,13 @@ if ($_GET["id"])
 	  print '<a href="facture.php?id='.$product->id.'">'.$langs->trans("Bills").'</a> : '.$product->count_facture($socid);
 	}
       print '</td></tr>';
-      print '<tr><td>'.$langs->trans("CurrentPrice").'</td><td>'.price($product->price).'</td></tr>';
+
+        // Statut
+        print '<tr><td>'.$langs->trans("Status").'</td><td>';
+        if ($product->envente) print $langs->trans("OnSell");
+        else print $langs->trans("NotOnSell");
+        print '</td></tr>';
+
       print "</table>";
 
       print '<br><table class="border" width="100%">';
@@ -249,7 +257,9 @@ else
   dolibarr_print_error();
 }
 
+
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
+
 ?>

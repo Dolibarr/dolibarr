@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -41,118 +40,164 @@ $mesg = '';
 
 if (!$user->rights->produit->lire) accessforbidden();
 
-
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
+
 /*
- *
+ * Actions
  */
 
 if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 {
-  if ($_GET["id"])
-    {           
-      $product = new Product($db);
-      $result = $product->fetch($_GET["id"]);
+    if ($_GET["id"])
+    {
+        $product = new Product($db);
+        $result = $product->fetch($_GET["id"]);
 
-      // if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
+        // if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
 
-      //      var_dump($_FILES);
+        //      var_dump($_FILES);
 
-      $product->add_photo($conf->produit->dir_output, $_FILES['photofile']);
+        $product->add_photo($conf->produit->dir_output, $_FILES['photofile']);
     }
 }
+
+
 /*
  *
  */
 llxHeader("","",$langs->trans("CardProduct0"));
 
-/*
- * Fiche produit
- */
+
 if ($_GET["id"])
 {
-  
 
-  $product = new Product($db);
-  $result = $product->fetch($_GET["id"]);
-  
-  if ( $result )
-    { 
+    $product = new Product($db);
+    $result = $product->fetch($_GET["id"]);
 
-      /*
-       *  En mode visu
-       */
-	  
-      $h=0;
-          
-      $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
-      $head[$h][1] = $langs->trans("Card");
-      $h++;
-	  
-      $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-      $head[$h][1] = $langs->trans("Price");
-      $h++;
-	  
-      if ($conf->stock->enabled)
-	{
-	  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-	  $head[$h][1] = $langs->trans("Stock");
-	  $h++;
-	}
-      
-      if ($conf->fournisseur->enabled)
-	{
-	  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-	  $head[$h][1] = $langs->trans("Suppliers");
-	  $h++;
-	}
-      
-      $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
-      $head[$h][1] = $langs->trans("Photos");
-      $hselected = $h;	      
-      $h++;
-      	      
-      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-      $head[$h][1] = $langs->trans('Statistics');
-      $h++;
+    if ($result)
+    {
+        /*
+         *  En mode visu
+         */
 
-      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+        $h=0;
 
-      print($mesg);
-      print '<table class="border" width="100%">';
-      print "<tr>";
-      print '<td>'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
-      print '<td colspan="2">';
-      if ($product->envente)
-	{
-	  print $langs->trans("OnSell");
-	}
-      else
-	{
-	  print $langs->trans("NotOnSell");
-	}
-      print '</td></tr>';
-      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
-      print '</tr>';
+        $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+        $head[$h][1] = $langs->trans("Card");
+        $h++;
 
-      print "</table><br>\n";
+        $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
+        $head[$h][1] = $langs->trans("Price");
+        $h++;
 
-      // Affiche photos
-      $nbphoto=$product->show_photos($conf->produit->dir_output,1);
-      if ($nbphoto < 1) print $langs->trans("NoPhotoYet")."<br><br>";
-      print "</div>\n";
-    }      
+        $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
+        $head[$h][1] = $langs->trans("Photos");
+        $hselected = $h;
+        $h++;
+
+        if ($conf->stock->enabled)
+        {
+            $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+            $head[$h][1] = $langs->trans("Stock");
+            $h++;
+        }
+
+        if ($conf->fournisseur->enabled)
+        {
+            $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+            $head[$h][1] = $langs->trans("Suppliers");
+            $h++;
+        }
+
+        $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+        $head[$h][1] = $langs->trans('Statistics');
+        $h++;
+
+        dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+
+        print($mesg);
+
+        print '<table class="border" width="100%">';
+        print '<tr>';
+        print '<td width="10%">'.$langs->trans("Ref").'</td><td colspan="2" width="40%">'.$product->ref.'</td>';
+        print '</tr>';
+        print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
+        print '</tr>';
+
+        // Prix
+        print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
+
+        // Statut
+        print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+        if ($product->envente) print $langs->trans("OnSell");
+        else print $langs->trans("NotOnSell");
+        print '</td></tr>';
+
+        print "</table><br>\n";
+
+        print "</div>\n";
+
+
+
+        /* ************************************************************************** */
+        /*                                                                            */
+        /* Barre d'action                                                             */
+        /*                                                                            */
+        /* ************************************************************************** */
+
+        print "\n<div class=\"tabsAction\">\n";
+
+        if ($_GET["action"] != 'ajout_photo' && $user->rights->produit->creer && $conf->upload)
+        {
+            print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/photos.php?action=ajout_photo&amp;id='.$product->id.'">';
+            print $langs->trans("AddPhoto").'</a>';
+        }
+
+        print "\n</div>\n";
+
+        /*
+         * Ajouter une photo
+         */
+        if ($_GET["action"] == 'ajout_photo' && $conf->upload && $user->rights->produit->creer)
+        {
+            print_titre($langs->trans("AddPhoto"));
+
+            print '<form name="userfile" action="'.DOL_URL_ROOT.'/product/photos.php?id='.$product->id.'" enctype="multipart/form-data" METHOD="POST">';
+            print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
+            print '<input type="hidden" name="id" value="'.$product->id.'">';
+
+            print '<table class="border" width="100%"><tr>';
+            print '<td>'.$langs->trans("File").' ('.$langs->trans("Size").' <= '.$conf->maxfilesize.')</td>';
+            print '<td><input type="file" class="flat" name="photofile"></td></tr>';
+
+            print '<tr><td colspan="2" align="center">';
+            print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"> &nbsp; ';
+
+            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+            print '</table>';
+            print '</form>';
+        }
+
+
+        // Affiche photos
+        if ($_GET["action"] != 'ajout_photo') {
+            print '<div class="photo">';
+            $nbphoto=$product->show_photos($conf->produit->dir_output,1);
+            if ($nbphoto < 1) print $langs->trans("NoPhotoYet")."<br><br>";
+            print '</div>';
+        }
+    }
 }
 else
 {
-  print $langs->trans("ErrorUnknown");
+    print $langs->trans("ErrorUnknown");
 }
 
 
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
