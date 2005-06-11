@@ -20,7 +20,8 @@
  * $Source$
  */
 
-/**	    \file       htdocs/admin/system/index.php
+/**
+	    \file       htdocs/admin/system/index.php
 		\brief      Page accueil infos système
 		\version    $Revision$
 */
@@ -43,7 +44,7 @@ print "<br>\n";
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibarr</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>" . DOL_VERSION . "</td></tr>\n";
+print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>" . DOL_VERSION . "</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
@@ -56,24 +57,24 @@ phpinfo();
 $chaine = ob_get_contents(); 
 ob_end_clean(); 
 eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
-print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$reg[1]."</td></tr>\n";
+print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".$reg[1]."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("WebServer")."</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("DocumentRootServer")."</td><td>" . DOL_DOCUMENT_ROOT . "</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("DataRootServer")."</td><td>" . DOL_DATA_ROOT . "</td></tr>\n";
+print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("DocumentRootServer")."</td><td>" . DOL_DOCUMENT_ROOT . "</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("DataRootServer")."</td><td>" . DOL_DATA_ROOT . "</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Php")."</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".phpversion()."</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("PhpWebLink")."</td><td>".php_sapi_name()."</td></tr>\n";
+print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".phpversion()."</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("PhpWebLink")."</td><td>".php_sapi_name()."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
@@ -101,5 +102,5 @@ print "<tr $bc[1]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->n
 
 print '</table>';
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

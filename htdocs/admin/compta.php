@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/*!
+/**
 	    \file       htdocs/admin/compta.php
         \ingroup    comptabilite
         \brief      Page de configuration du module comptabilité
@@ -70,12 +70,12 @@ if ($_GET["action"] == 'delete')
 }
 
 
-
 print_titre($langs->trans("ComptaSetup"));
+
 
 print "<br>";
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<table class="noborder" width=\"100%\">';
 
 // Cas du paramètre COMPTA_MODE
 print '<form action="compta.php" method="post">';
@@ -84,9 +84,9 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("OptionMode").'</td><td>'.$langs->trans("Description").'</td>';
 print '<td><input type="submit" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
-print "<tr ".$bc[True]."><td width=\"200\"><input type=\"radio\" name=\"compta_mode\" value=\"RECETTES-DEPENSES\"".($compta_mode != "CREANCES-DETTES"?" checked":"")."> ".$langs->trans("OptionModeTrue")."</td>";
+print "<tr ".$bc[false]."><td width=\"200\"><input type=\"radio\" name=\"compta_mode\" value=\"RECETTES-DEPENSES\"".($compta_mode != "CREANCES-DETTES"?" checked":"")."> ".$langs->trans("OptionModeTrue")."</td>";
 print "<td colspan=\"2\">".nl2br($langs->trans("OptionModeTrueDesc"))."</td></tr>\n";
-print "<tr ".$bc[False]."><td width=\"200\"><input type=\"radio\" name=\"compta_mode\" value=\"CREANCES-DETTES\"".($compta_mode == "CREANCES-DETTES"?" checked":"")."> ".$langs->trans("OptionModeVirtual")."</td>";
+print "<tr ".$bc[true]."><td width=\"200\"><input type=\"radio\" name=\"compta_mode\" value=\"CREANCES-DETTES\"".($compta_mode == "CREANCES-DETTES"?" checked":"")."> ".$langs->trans("OptionModeVirtual")."</td>";
 print "<td colspan=\"2\">".$langs->trans("OptionModeVirtualDesc")."</td></tr>\n";
 print "</form>";
 
@@ -95,16 +95,18 @@ print "</table>\n";
 print "<br>\n";
 
 // Cas des autres paramètres COMPTA_*
-$sql = "SELECT rowid, name, value, type, note FROM llx_const WHERE name like 'COMPTA_%' and name not in ('COMPTA_MODE')";
+$sql ="SELECT rowid, name, value, type, note";
+$sql.=" FROM llx_const";
+$sql.=" WHERE name like 'COMPTA_%' and name not in ('COMPTA_MODE')";
 $result = $db->query($sql);
 if ($result) 
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
-  $var=True;
+  $var=true;
 
   if ($num) { 
-  	print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
+  	print '<table class="noborder" width=\"100%\">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("OtherOptions").'</td><td>&nbsp;</td><td>&nbsp;</td><td>'.$langs->trans("Description").'</td>';
 		print '<td>&nbsp;</td>';
@@ -163,20 +165,9 @@ if ($result)
 
 }
 
-	
+$db->close();
 
 
+llxFooter('$Date$ - $Revision$');
 
-
-
-
-
-
-
-
-
-
-
-
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

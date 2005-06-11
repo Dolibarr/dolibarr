@@ -19,7 +19,8 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/os.php
+/**
+        \file       htdocs/admin/system/os.php
 		\brief      Page des infos système de l'OS
 		\version    $Revision$
 */
@@ -41,6 +42,10 @@ print "<br>\n";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 print "\n";
+
+// Récupère l'OS au sens PHP
+print "<tr $bc[0]><td width=\"140\"><b>".$langs->trans("PHP_OS")."</b></td><td>".PHP_OS."</td></tr>\n";
+
 // Récupère la version de l'OS
 ob_start(); 
 phpinfo();
@@ -51,5 +56,5 @@ print "<tr $bc[1]><td width=\"140\"><b>".$langs->trans("Version")."</b></td><td>
 print '</table>';
 
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>

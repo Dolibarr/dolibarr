@@ -234,7 +234,7 @@ if ($_GET["action"] == 'create')
       print '<input type="hidden" name="actionid" value="5">';
 
       // Societe, contact
-      print '<tr><td width="10%">'.$langs->trans("ActionOnCompany").'</td><td width="40%">';
+      print '<tr><td>'.$langs->trans("ActionOnCompany").'</td><td>';
       if ($_GET["socid"])
 	{
           $societe = new Societe($db);
@@ -251,18 +251,18 @@ if ($_GET["action"] == 'create')
       // Si la societe est imposée, on propose ces contacts
       if ($_GET["socid"])
 	{
-	  print '<tr><td width="10%">'.$langs->trans("ActionOnContact").'</td><td width="40%">';
+	  print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td width="40%">';
           print $html->select_contacts($_GET["socid"],'','contactid',1,1);
     	  print '</td></tr>';
 	}
 
-      print '<tr><td width="10%">'.$langs->trans("Date").'</td><td width="40%">';
+      print '<tr><td>'.$langs->trans("Date").'</td><td>';
       $html->select_date('','ac');
       print '</td></tr>';
-      print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+      print '<tr><td>'.$langs->trans("Hour").'</td><td>';
       print_heure_select("heure",8,20);
       print '</td></tr>';
-      print '<tr><td width="10%">'.$langs->trans("Duration").'</td><td width="40%">';
+      print '<tr><td>'.$langs->trans("Duration").'</td><td>';
       print_duree_select("duree");
       print '</td></tr>';
 
@@ -311,7 +311,7 @@ if ($_GET["action"] == 'create')
       print '<table class="border" width="100%">';
 
       // Type d'action actifs
-      print '<tr><td width="10%">'.$langs->trans("Action").'</td><td>';
+      print '<tr><td>'.$langs->trans("Action").'</td><td>';
       if ($_GET["actionid"])
 	{
 	  print '<input type="hidden" name="actionid" value="'.$_GET["actionid"].'">'."\n";      
@@ -323,10 +323,10 @@ if ($_GET["action"] == 'create')
 	}
       print '</td></tr>';
       
-      print '<tr><td width="10%">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="30"></td></tr>';
+      print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="label" size="30"></td></tr>';
       
       // Societe, contact
-      print '<tr><td width="10%">'.$langs->trans("ActionOnCompany").'</td><td width="40%">';
+      print '<tr><td>'.$langs->trans("ActionOnCompany").'</td><td>';
       if ($_GET["socid"])
 	{
           $societe = new Societe($db);
@@ -343,7 +343,7 @@ if ($_GET["action"] == 'create')
       // Si la societe est imposée, on propose ces contacts
       if ($_GET["socid"])
 	{
-	  print '<tr><td width="10%">'.$langs->trans("ActionOnContact").'</td><td width="40%">';
+	  print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
           print $html->select_contacts($_GET["socid"],'','contactid',1,1);
     	  print '</td></tr>';
 	}
@@ -358,32 +358,32 @@ if ($_GET["action"] == 'create')
       elseif ($_GET["afaire"] == 2)
 	{
 	  print '<input type="hidden" name="percentage" value="100">';
-	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionDone").' / 100%</td></tr>';
+	  print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionDone").' / 100%</td></tr>';
 	} else 
 	  {
-	    print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0%"></td></tr>';
+	    print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0%"></td></tr>';
 	  }
       
       // Date
-      print '<tr><td width="10%">'.$langs->trans("Date").'</td><td width="40%">';
+      print '<tr><td>'.$langs->trans("Date").'</td><td>';
       if ($_GET["afaire"] == 1)
 	{
 	  $html->select_date('','ac');
-	  print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+	  print '<tr><td>'.$langs->trans("Hour").'</td><td>';
 	  print_heure_select("heure",8,20);
 	  print '</td></tr>';
 	} 
       else if ($_GET["afaire"] == 2) 
 	{
 	  $html->select_date('','ac',1,1);
-	  print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+	  print '<tr><td>'.$langs->trans("Hour").'</td><td>';
 	  print_heure_select("heure",8,20);
 	  print '</td></tr>';
 	} 
       else 
 	{
 	  $html->select_date('','ac',1,1);
-	  print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+	  print '<tr><td>'.$langs->trans("Hour").'</td><td>';
 	  print_heure_select("heure",8,20);
 	  print '</td></tr>';
 	}
@@ -448,12 +448,12 @@ if ($_GET["id"])
       print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
 
       print '<table class="border" width="100%">';
-      print '<tr><td width="20%">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-      print '<tr><td width="20%">'.$langs->trans("Label").'</td><td colspan="3">'.$act->libelle.'</td></tr>';
-      print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
-      print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
+      print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$act->libelle.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Company").'</td>';
+      print '<td><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
       
-      print '<td width="20%">'.$langs->trans("Contact").'</td><td width="30%">';
+      print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
       $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
       print '</td></tr>';
       print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
@@ -461,7 +461,7 @@ if ($_GET["id"])
       print '<tr><td>'.$langs->trans("PercentDone").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'">%</td></tr>';
       if ($act->objet_url)
 	{
-	  print '<tr><td>Objet lié</td>';
+	  print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
 	  print '<td colspan="3">'.$act->objet_url.'</td></tr>';
 	}
       
@@ -477,19 +477,19 @@ if ($_GET["id"])
     {      
       // Affichage fiche action en mode visu
       print '<table class="border" width="100%"';
-      print '<tr><td width="20%">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-      print '<tr><td width="20%">'.$langs->trans("Label").'</td><td colspan="3">'.$act->libelle.'</td></tr>';
-      print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
-      print '<td width="30%">'.$act->societe->nom_url.'</td>';
+      print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$act->libelle.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Company").'</td>';
+      print '<td>'.$act->societe->nom_url.'</td>';
       
-      print '<td width="10%">'.$langs->trans("Contact").'</td>';
-      print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.$act->contact->fullname.'</a></td></tr>';
+      print '<td>'.$langs->trans("Contact").'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.$act->contact->fullname.'</a></td></tr>';
       print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
       print '<td>'.$langs->trans("Author").'</td><td>'.$act->author->fullname.'</td></tr>';
       print '<tr><td>'.$langs->trans("PercentDone").'</td><td colspan="3">'.$act->percent.' %</td></tr>';
       if ($act->objet_url)
 	{
-	  print '<tr><td>Objet lié</td>';
+	  print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
 	  print '<td colspan="3">'.$act->objet_url.'</td></tr>';
 	}
       
@@ -514,21 +514,20 @@ if ($_GET["id"])
     
     if ($_GET["action"] == 'edit')
     {
-      print '<a class="tabAction" href="fiche.php?id='.$act->id.'">'.$langs->trans("Cancel").'</a>';
+      print '<a class="butAction" href="fiche.php?id='.$act->id.'">'.$langs->trans("Cancel").'</a>';
     }
     else
     {
-      print '<a class="tabAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Edit").'</a>';
+      print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Edit").'</a>';
     }
     
-    print '<a class="butDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
+    print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
     print '</div>';
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
-
+llxFooter('$Date$ - $Revision$');
 
 
 /**
