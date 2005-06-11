@@ -54,3 +54,5 @@ Examples=Examples
 WithNoSlashAtTheEnd=Without the slash "/" at the end
 LoginAlreadyExists=Already exists
 DolibarrAdminLogin=Dolibarr admin login
+FailedToCreateAdminLogin=Failed to create Dolibarr administator account.
+AdminLoginAlreadyExists=Dolibarr administrator account '%s' already exists.

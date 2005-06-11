@@ -5,6 +5,7 @@ GlobalSetup=Global setup
 GUISetup=GUI setup
 DictionnarySetup=Dictionnary setup
 ComptaSetup=Accounting module setup
+UserSetup=Users' management setup
 OtherOptions=Other options
 OtherSetup=Other setup
 Modules=Modules
@@ -139,8 +140,9 @@ Permission152=Setup standing orders
 Permission153=Read standing orders receipts
 Permission161=Read contracts
 Permission162=Create/modify contracts
-Permission163=Activate contracts
-Permission164=Disable contracts
+Permission163=Activate a service of a contract
+Permission164=Disable a service of a contract
+Permission165=Delete contracts
 Permission181=Read supplier orders
 Permission182=Create/modify supplier orders
 Permission183=Validate supplier orders
@@ -230,6 +232,14 @@ WebCalTestKo1=Connection to server '%s' succeed but database '%s' could not be r
 WebCalTestKo2=Connection to server '%s' with user '%s' failed.
 ##### Bills #####
 BillsSetup=Bills module setup
+BillsDate=Bills date
+BillsNumberingModule=Bills numbering module
+##### Proposals #####
+CreateForm=Create forms
+NumberOfProductLines=Number of product lines
+PathToDocuments=Path to documents
+ProposalsNumberingModules=Commercial proposal numbering modules
+ProposalsPDFModules=Commercial proposal PDF modules
 ##### Clicktodial setup #####
 ClickToDialSetup=Click To Dial module setup
 ##### Interventions #####
@@ -242,3 +252,13 @@ PropalSetup=Commercial proposals module setup
 ##### Sendings #####
 SendingsSetup=Sending module setup
 SendingsReceiptModel=Sending receipt model
+##### Syslog #####
+SyslogSetup=Syslog module setup
+SyslogOutput=Log output
+SyslogSyslog=Syslog
+SyslogFacility=Facility
+SyslogSimpleFile=File
+SyslogFilename=File name and path
+ErrorUnknownSyslogConstant=Constant %s is not a known syslog constant
+##### Donations #####
+DonationsSetup=Donation module setup

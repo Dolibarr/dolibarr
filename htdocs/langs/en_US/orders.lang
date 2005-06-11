@@ -2,6 +2,7 @@
 OrdersArea=Orders area
 Order=Order
 Orders=Orders
+OrderDate=Date commande
 NewOrder=New order
 SupplierOrder=Supplier order
 SuppliersOrders=Suppliers' orders

@@ -8,3 +8,6 @@ History=History
 OrderCard=Order card
 ListOfSuppliers=List of suppliers
 ShowSupplier=Show supplier
+BuyingPrice=Buying price
+AddSupplierPrice=Add supplier price
+ChangeSupplierPrice=Change supplier price

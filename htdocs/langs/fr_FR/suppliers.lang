@@ -9,3 +9,6 @@ OrderCard=Fiche commande
 ListOfSuppliers=Liste des fournisseurs
 ShowSupplier=Afficher fournisseur
 OrderDate=Date commande
+BuyingPrice=Prix d'achat
+AddSupplierPrice=Ajouter prix fournisseur
+ChangeSupplierPrice=Modifier prix fournisseur

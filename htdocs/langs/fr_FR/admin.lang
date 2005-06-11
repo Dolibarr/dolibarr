@@ -5,6 +5,7 @@ GlobalSetup=Général
 GUISetup=Interface
 DictionnarySetup=Dictionnaires
 ComptaSetup=Configuration du module Comptabilité
+UserSetup=Configuration gestion des utilisateurs
 OtherOptions=Autres options
 OtherSetup=Divers
 Modules=Modules
@@ -139,8 +140,9 @@ Permission152=Configurer les prélèvements
 Permission153=Consulter les bons de prélèvements
 Permission161=Lire les contrats de services
 Permission162=Créer/modifier les contrats de services
-Permission163=Activer les contrats de services
-Permission164=Désactiver les contrats de services
+Permission163=Activer un service d'un contrat
+Permission164=Désactiver un service d'un contrat
+Permission165=Supprimer un contrat
 Permission181=Lire les commandes fournisseurs
 Permission182=Créer/modifier une commande fournisseur
 Permission183=Valider une commande fournisseur
@@ -230,6 +232,14 @@ WebCalTestKo1=La connexion au serveur '%s' a réussi mais la base '%s' n'a pu êtr
 WebCalTestKo2=La connexion au serveur '%s' par l'utilisateur '%s' à échoué.
 ##### Bills #####
 BillsSetup=Configuration du module Factures
+BillsDate=Date des factures
+BillsNumberingModule=Module de numérotation des factures
+##### Proposals #####
+CreateForm=Création formulaire
+NumberOfProductLines=Nombre de lignes produits
+PathToDocuments=Chemins d'accès aux documents
+ProposalsNumberingModules=Modules de numérotation des propositions commerciales
+ProposalsPDFModules=Modules de propositions commerciales PDF
 ##### Clicktodial setup #####
 ClickToDialSetup=Configuration du module Click To Dial
 ##### Interventions #####
@@ -242,3 +252,13 @@ PropalSetup=Configuration du module Propositions Commerciales
 ##### Sendings #####
 SendingsSetup=Configuration du module Expéditions/Livraisons
 SendingsReceiptModel=Modèle du bordereau de livraison
+##### Syslog #####
+SyslogSetup=Configuration du module Syslog
+SyslogOutput=Sortie des log
+SyslogSyslog=Syslog
+SyslogFacility=Facility
+SyslogSimpleFile=Fichier
+SyslogFilename=Nom et chemin du fichier
+ErrorUnknownSyslogConstant=La constante %s n'est pas une constante syslog connue
+##### Donations #####
+DonationsSetup=Configuration du module Dons
