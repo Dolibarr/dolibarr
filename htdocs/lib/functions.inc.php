@@ -88,14 +88,14 @@ function unaccent($str)
 
 /**
    \brief       Envoi des messages dolibarr dans syslog ou dans un fichier
-                Pour syslog:    facility défini par MAIN_SYSLOG_FACILITY
+                Pour syslog:    facility défini par SYSLOG_FACILITY
                 Pour fichier:   fichier défini par SYSLOG_FILE
-   \param       message		message a envoyer a syslog
-   \param       level       Niveau de l'erreur
+   \param       message		    Message a envoyer a syslog
+   \param       level           Niveau de l'erreur
    \remarks     Cette fonction a un effet que si le module syslog est activé.
                 Warning, les fonctions syslog sont buggués sous Windows et génèrent des
                 fautes de protection mémoire. Pour résoudre, utiliser le loggage fichier,
-                au lieu du loggage syslog, en positionnant la constante MAIN_SYSLOG_FILE.
+                au lieu du loggage syslog, en positionnant la constante SYSLOG_FILE.
 */
 function dolibarr_syslog($message, $level=LOG_ERR)
 {
@@ -109,7 +109,7 @@ function dolibarr_syslog($message, $level=LOG_ERR)
                 fclose($file);
             }
             else {
-                print "Error: Failed to open file ".SYSLOG_FILE;   
+                print $langs->trans("ErrorFailedToOpenFile",SYSLOG_FILE);
             }
         }
         else
@@ -119,6 +119,11 @@ function dolibarr_syslog($message, $level=LOG_ERR)
             if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
             {
                 $facility = MAIN_SYSLOG_FACILITY;
+            }
+            elseif (defined("SYSLOG_FACILITY") && SYSLOG_FACILITY && defined(SYSLOG_FACILITY))
+            {
+                // Exemple: SYSLOG_FACILITY vaut LOG_USER qui vaut 8. On a besoin de 8 dans $facility.
+                $facility = constant(SYSLOG_FACILITY);
             }
             else
             {
@@ -183,8 +188,31 @@ function dolibarr_fiche_head($links, $active=0, $title='')
 }
 
 /**
+		\brief      Récupère une constante depuis la base de données.
+		\see        dolibarr_del_const, dolibarr_sel_const
+		\param	    db          Handler d'accès base
+		\param	    name		Nom de la constante
+		\return     string      Valeur de la constante
+*/
+function dolibarr_get_const($db, $name)
+{
+        $value='';
+        
+        $sql ="SELECT value";
+        $sql.=" FROM llx_const";
+        $sql.=" WHERE name = '$name';"; 		
+        $resql=$db->query($sql);	
+        if ($resql)
+        {
+            $obj=$db->fetch_object($resql);
+            $value=$obj->value;
+        }
+        return $value;
+}
+
+/**
 		\brief      Insertion d'une constante dans la base de données.
-		\see        dolibarr_del_const
+		\see        dolibarr_del_const, dolibarr_gel_const
 		\param	    db          handler d'accès base
 		\param	    name		nom de la constante
 		\param	    value		valeur de la constante
@@ -218,7 +246,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
 /**
 		\brief      Effacement d'une constante dans la base de données
-        \see        dolibarr_set_const
+		\see        dolibarr_get_const, dolibarr_sel_const
 		\param	    db          handler d'accès base
 		\param	    name		nom ou rowid de la constante
 		\return     int         0 si KO, 1 si OK
@@ -264,6 +292,24 @@ function dolibarr_print_ca($ca)
 
     return $cat;
 }
+
+
+/**
+		\brief      Effectue un décalage de date par rapport à une durée
+		\param	    time                Date timestamp ou au format YYYY-MM-DD
+		\param	    duration_value      Valeur de la durée à ajouter
+		\param	    duration_unit       Unité de la durée à ajouter (d, m, y)
+		\return     int                 Nouveau timestamp
+*/
+function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
+{
+    $deltastring="+$duration_value";
+    if ($duration_unit == 'd') { $deltastring.=" day"; }
+    if ($duration_unit == 'm') { $deltastring.=" month"; }
+    if ($duration_unit == 'y') { $deltastring.=" year"; }
+    return strtotime($deltastring,$time);
+}
+
 
 /**
 		\brief  Formattage de la date
@@ -599,24 +645,28 @@ function img_previous($alt = "default")
 
 /**
         \brief  Affiche logo bas
-        \param  alt     Texte sur le alt de l'image
+        \param  alt         Texte sur le alt de l'image
+        \param  selected    Affiche version "selected" du logo
 */
-function img_down($alt = "default")
+function img_down($alt = "default", $selected=1)
 {
-  global $conf,$langs;
-  if ($alt=="default") $alt=$langs->trans("Down");
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    global $conf,$langs;
+    if ($alt=="default") $alt=$langs->trans("Down");
+    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow_notselected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
         \brief  Affiche logo haut
-        \param  alt     Texte sur le alt de l'image
+        \param  alt         Texte sur le alt de l'image
+        \param  selected    Affiche version "selected" du logo
 */
-function img_up($alt = "default")
+function img_up($alt = "default", $selected=1)
 {
-  global $conf,$langs;
-  if ($alt=="default") $alt=$langs->trans("Up");
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    global $conf,$langs;
+    if ($alt=="default") $alt=$langs->trans("Up");
+    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow_notselected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
@@ -1061,15 +1111,16 @@ function transcoS2L($zonein,$devise)
 
 /**
 		\brief      Affichage de la ligne de titre d'un tabelau
-		\param	    name
-		\param	    file
-		\param	    field
+		\param	    name        libelle champ
+		\param	    file        url pour clic sur tri
+		\param	    field       champ de tri
 		\param	    begin       ("" par defaut)
 		\param	    options     ("" par defaut)
-		\param      td          paramètres de l'attribut td ("" par defaut)
+		\param      td          options de l'attribut td ("" par defaut)
 		\param      sortfield   nom du champ sur lequel est effectué le tri du tableau
+		\param      sortorder   ordre du tri
 */
-function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="")
+function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="", $sortorder="")
 {
     global $conf;
     // Le champ de tri est mis en évidence.
@@ -1083,8 +1134,28 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
         print '<td class="liste_titre" '. $td.'>';
     }
     print $name."&nbsp;";
-    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z").'</a>';
-    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A").'</a>';
+    if (! $sortorder)
+    {
+        print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+        print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+    }
+    else
+    {
+        if ($field != $sortfield) {
+            print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+            print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+        }
+        else {
+            if ($sortorder == 'DESC' ) {
+                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+            }
+            if ($sortorder == 'ASC' ) {
+                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+            }
+        }
+    }
     print "</td>";
 }
 
@@ -1128,59 +1199,51 @@ function dol_delete_file($file)
 		\param	titre			titre de la page
 		\param	page			numéro de la page
 		\param	file			lien
-		\param	options
-		\param	sortfield
-		\param	sortorder
+		\param	options         options cellule td
+		\param	sortfield       champ de tri
+		\param	sortorder       ordre de tri
 		\param	form
 		\param	num             nombre d'élément total
 */
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $form='', $num=-1)
- {
-  global $conf;
+{
+    global $conf;
 
-  if ($num > $conf->liste_limit or $num == -1)
+    if ($num > $conf->liste_limit or $num == -1)
     {
-      $nextpage = 1;
+        $nextpage = 1;
     }
-  else
+    else
     {
-      $nextpage = 0;
-    }
-
-  print '<table width="100%" class="noborder">';
-
- if ($page > 0 || $num > $conf->liste_limit)
-   {
-     print '<tr><td><div class="titre">'.$titre.' - page '.($page+1);
-     print '</div></td>';
-   }
- else
-   {
-     print '<tr><td><div class="titre">'.$titre.'</div></td>';
-   }
-
- if ($form)
-   {
-     print '<td align="left">'.$form.'</td>';
-   }
-
-  print '<td align="right">';
-
-  if (strlen($sortfield))
-    {
-      $options .= "&amp;sortfield=$sortfield";
+        $nextpage = 0;
     }
 
-  if (strlen($sortorder))
+    print '<table width="100%" class="noborder">';
+
+    if ($page > 0 || $num > $conf->liste_limit)
     {
-      $options .= "&amp;sortorder=$sortorder";
+        print '<tr><td><div class="titre">'.$titre.' - page '.($page+1);
+        print '</div></td>';
+    }
+    else
+    {
+        print '<tr><td><div class="titre">'.$titre.'</div></td>';
     }
 
-  // Affichage des fleches de navigation
+    if ($form)
+    {
+        print '<td align="left">'.$form.'</td>';
+    }
 
-  print_fleche_navigation($page,$file,$options,$nextpage);
+    print '<td align="right">';
 
-  print '</td></tr></table><br>';
+    if ($sortfield) $options .= "&amp;sortfield=$sortfield";
+    if ($sortorder) $options .= "&amp;sortorder=$sortorder";
+
+    // Affichage des fleches de navigation
+    print_fleche_navigation($page,$file,$options,$nextpage);
+
+    print '</td></tr></table><br>';
 }
 
 /**
