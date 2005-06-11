@@ -20,10 +20,10 @@
  * $Source$
  */
 
-/*!
-	    \file       htdocs/admin/compta.php
-        \ingroup    comptabilite
-        \brief      Page de configuration du module comptabilité
+/**
+	    \file       htdocs/user/admin/index.php
+        \ingroup    setup
+        \brief      Page de configuration du module sécurité
 		\version    $Revision$
 */
 
@@ -34,20 +34,25 @@ $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
 
+
+
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
   if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''))
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
   else
     {
       Header("Location: index.php");
+      exit;
     }
 }
 
 
 llxHeader();
+
+$var=false;
 
 $form = new Form($db);
 $typeconst=array('yesno','texte','chaine');
@@ -56,9 +61,9 @@ print_titre($langs->trans("UserSetup"));
 
 print "<br>";
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<table class="noborder" width=\"100%\">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("OtherOptions").'</td><td>&nbsp;</td><td>&nbsp;</td><td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td><td>'.$langs->trans("Description").'</td>';
 print '<td>&nbsp;</td>';
 print "</tr>\n";
 
@@ -67,7 +72,7 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
 
-print "<tr $bc[$var] class=value><td>USER_PASSWORD_GENERATED</td><td>".USER_PASSWORD_GENERATED."</td>\n";
+print '<tr '.$bc[$var]."><td>USER_PASSWORD_GENERATED</td>\n";
 
 print '<td>';
 $form->selectyesnonum('constvalue',USER_PASSWORD_GENERATED);
@@ -86,20 +91,6 @@ print "</table>\n";
 
 
 
-	
+llxFooter('$Date$ - $Revision$');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

@@ -45,9 +45,8 @@ $socid = $_GET["socid"];
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
-
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="nom";
+if (! $sortfield) $sortfield="c.name";
 
 
 llxHeader();
@@ -162,51 +161,21 @@ if ( $soc->fetch($soc->id) )
     */
     
     print '<table class="border"width="100%">';
-    
     print '<tr><td width="20%">'.$langs->trans("Name").'</td><td colspan="3">'.$soc->nom.'</td></tr>';
-    print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
+    print '<tr><td width="30%">'.$langs->trans("NbOfActiveNotifications").'</td><td colspan="3">0 (TODO Nombre non mis a jour)</td></tr>';
+    print '</table><br>';
     
-    print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
-    print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
-    
-    print '</table><br></div>';
+    print '</div>';
     
     print "\n";
     
+    // Ligne de titres
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name","","&socid=$socid",'',$sortfield);
     print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre","","&socid=$socid",'',$sortfield);
     print '<td>&nbsp;</td>';
     print '</tr>';
-    
-    $sql = "SELECT c.name, c.firstname, a.titre,n.rowid";
-    $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n";
-    $sql.= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action AND n.fk_soc = ".$soc->id;
-    
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $i = 0;
-        $var=True;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
-    
-            print '<tr '.$bc[$var].'><td>'.$obj->firstname . " ".$obj->name.'</td>';
-            print '<td>'.$obj->titre.'</td>';
-            print'<td align="center"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a>';
-    
-            $i++;
-            $var = !$var;
-        }
-        $db->free($resql);
-    }
-    else
-    {
-        dolibarr_print_error($db);
-    }
     
     // Charge tableau $actions
     $sql = "SELECT a.rowid, a.code, a.titre";
@@ -232,6 +201,7 @@ if ( $soc->fetch($soc->id) )
         dolibarr_print_error($db);
     }
     
+    $var=false;
     print '<form action="fiche.php?socid='.$socid.'" method="post">';
     print '<input type="hidden" name="action" value="add">';
     print '<tr '.$bc[$var].'><td>';
@@ -241,14 +211,45 @@ if ( $soc->fetch($soc->id) )
     $html->select_array("actionid",$actions);
     print '</td>';
     print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></td>';
-    print '</tr></form></table>';
+    print '</tr>';
+    print '</form>';
+    
+    
+    // Liste
+    $sql = "SELECT c.name, c.firstname, a.titre,n.rowid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n";
+    $sql.= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action AND n.fk_soc = ".$soc->id;
+    
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $i = 0;
+        while ($i < $num)
+        {
+            $var = !$var;
+
+            $obj = $db->fetch_object($resql);
+    
+            print '<tr '.$bc[$var].'><td>'.$obj->firstname . " ".$obj->name.'</td>';
+            print '<td>'.$obj->titre.'</td>';
+            print'<td align="center"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a>';
+            print '</tr>';
+            $i++;
+        }
+        $db->free($resql);
+    }
+    else
+    {
+        dolibarr_print_error($db);
+    }
+    
+    print '</table>';
 
 }
 
-/*
- *
- */
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
+
 ?>

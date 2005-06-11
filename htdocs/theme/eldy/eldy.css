@@ -290,7 +290,7 @@ td.barre_select {
 	color: #000000 
 }
 
-td.photo { 
+td.photo {
 	background: #FFFFFF; 
 	color: #000000 
 }
@@ -728,9 +728,12 @@ td.delete {
             font-weight: bold;
             }
 
+td.validtitle { 
+           font-weight: bold;
+           background: #EECC55;
+           }
 td.valid { 
            background: #EECC55;
-           font-weight: bold;
            }
 
 td.small { 

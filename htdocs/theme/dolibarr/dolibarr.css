@@ -155,12 +155,12 @@ img.login
 a.vmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; text-decoration: underline; }
 
 a.vsmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
 a.vsmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
 a.vsmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; text-decoration: underline; }
 font.vsmenudisabled { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; margin: 1em 1em 1em 1em; }
 
 a.help:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
@@ -313,7 +313,6 @@ a {
     color: #000000;
     }
 
-a:hover {     text-decoration: underline;  }
 
 td.menu { 
           border: 1px solid #000000;
