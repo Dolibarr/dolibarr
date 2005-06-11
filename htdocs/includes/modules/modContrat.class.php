@@ -20,7 +20,8 @@
  *
  */
 
-/**     \defgroup   contrat     Module contrat
+/**
+        \defgroup   contrat     Module contrat
         \brief      Module pour gérer la tenue de contrat de services
 */
 
@@ -82,21 +83,27 @@ class modContrat extends DolibarrModules
 
     $this->rights[2][0] = 162;
     $this->rights[2][1] = 'Créer / modifier les contrats';
-    $this->rights[2][2] = 'r';
+    $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
     $this->rights[2][4] = 'creer';
 
     $this->rights[3][0] = 163;
-    $this->rights[3][1] = 'Activer les contrats de services';
-    $this->rights[3][2] = 'r';
+    $this->rights[3][1] = 'Activer un service d\'un contrat';
+    $this->rights[3][2] = 'w';
     $this->rights[3][3] = 0;    
     $this->rights[3][4] = 'activer';
 
     $this->rights[4][0] = 164;
-    $this->rights[4][1] = 'Désactiver les contrats de services';
-    $this->rights[4][2] = 'r';
+    $this->rights[4][1] = 'Désactiver un service d\'un contrat';
+    $this->rights[4][2] = 'w';
     $this->rights[4][3] = 0;
     $this->rights[4][4] = 'desactiver';
+
+    $this->rights[5][0] = 165;
+    $this->rights[5][1] = 'Supprimer un contrat';
+    $this->rights[5][2] = 'd';
+    $this->rights[5][3] = 0;
+    $this->rights[5][4] = 'supprimer';
 
   }
 

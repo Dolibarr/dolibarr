@@ -66,13 +66,16 @@ class modDon  extends DolibarrModules
     $this->depends = array();
     $this->requiredby = array();
 
+    // Config pages
+    $this->config_page_url = "dons.php";
+
     // Constantes
     $this->const = array();
     $this->const[0][0] = "DONS_FORM";
     $this->const[0][1] = "chaine";
     $this->const[0][2] = "fsfe.fr.php";
     $this->const[0][3] = 'Nom du gestionnaire de formulaire de dons';
-    $this->const[0][4] = 1;
+    $this->const[0][4] = 0;
 
     // Boxes
     $this->boxes = array();

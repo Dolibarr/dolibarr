@@ -22,14 +22,14 @@
  */
 
 /**
-   \defgroup   syslog  Module syslog
-   \brief      Module pour gérer les messages d'erreur dans syslog
+        \defgroup   syslog  Module syslog
+        \brief      Module pour gérer les messages d'erreur dans syslog
 */
 
 /**
-   \file       htdocs/includes/modules/modSyslog.class.php
-   \ingroup    syslog
-   \brief      Fichier de description et activation du module de syslog
+        \file       htdocs/includes/modules/modSyslog.class.php
+        \ingroup    syslog
+        \brief      Fichier de description et activation du module de syslog
 */
 
 include_once "DolibarrModules.class.php";
@@ -62,6 +62,9 @@ class modSyslog extends DolibarrModules
 
     // Dir
     $this->dirs = array();
+
+    // Config pages
+    $this->config_page_url = "syslog.php";
 
     // Dépendances
     $this->depends = array();

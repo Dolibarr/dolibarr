@@ -44,6 +44,8 @@ class pdf_propale_azur extends ModelePDFPropales
     */
     function pdf_propale_azur($db=0)
     {
+      	global $langs;
+
         $this->db = $db;
         $this->name = "azur";
         $this->description = "Modèle de propositions commerciales complet (logo...)";
@@ -554,23 +556,24 @@ class pdf_propale_azur extends ModelePDFPropales
         {
             $pdf->MultiCell(80, 4, FAC_PDF_ADRESSE);
         }
-        if (defined("FAC_PDF_TEL"))
+        if (defined("FAC_PDF_TEL") && FAC_PDF_TEL)
         {
             $pdf->MultiCell(80, 4, $langs->trans("Phone").": ".FAC_PDF_TEL);
         }
-        if (defined("FAC_PDF_FAX"))
+        if (defined("FAC_PDF_FAX") && FAC_PDF_FAX)
         {
             $pdf->MultiCell(80, 4, $langs->trans("Fax").": ".FAC_PDF_FAX);
         }
-		if (defined("FAC_PDF_MEL"))
+		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL)
 		{
 			$pdf->MultiCell(80, 4, $langs->trans("Email").": ".FAC_PDF_MEL);
 		}
-		if (defined("FAC_PDF_WWW"))
+		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW)
 		{
 			$pdf->MultiCell(80, 4, $langs->trans("Web").": ".FAC_PDF_WWW);
         }
 
+        $pdf->SetFont('Arial','',7);
         if (defined("MAIN_INFO_SIREN") && MAIN_INFO_SIREN)
         {
             $pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN);
