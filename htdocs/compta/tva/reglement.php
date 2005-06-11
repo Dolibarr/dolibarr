@@ -31,6 +31,7 @@ require("./pre.inc.php");
 require("../../tva.class.php");
 
 $langs->load("compta");
+$langs->load("compta");
 
 
 llxHeader();
