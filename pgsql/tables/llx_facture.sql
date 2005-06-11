@@ -3,7 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ===========================================================================
--- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -40,10 +40,8 @@ create table llx_facture
   "total"               real     DEFAULT 0,
   "total_ttc"           real     DEFAULT 0,
   "fk_statut"           smallint DEFAULT 0 NOT NULL,
-  "author"              varchar(50),
-  "fk_user"             integer,   -- createur de la facture
-  "fk_user_author"      integer,   -- createur de la propale
-  "fk_user_valid"       integer,   -- valideur de la propale
+  "fk_user_author"      integer,   -- createur de la facture
+  "fk_user_valid"       integer,   -- valideur de la facture
   "fk_projet"           integer,   -- projet auquel est associé la facture
   "fk_cond_reglement"   integer  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)
   "fk_mode_reglement"   integer,   -- mode de reglement (Virement, Prélèvement)
