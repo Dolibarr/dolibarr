@@ -302,43 +302,47 @@ class Form
   
   
   /**
-   *    \brief   Retourne la liste déroulante des sociétés
-   *    \param
+   *    \brief      Retourne la liste déroulante des sociétés
+   *    \param      selected        societe présélectionnée
+   *    \param      htmlname        nom champ formulaire
+   *    \param      filter          criteres optionnels de filtre
    */
-  function select_societes($selected='',$htmlname='soc_id')
-  {
-    // On recherche les societes
-    $sql = "SELECT s.idp, s.nom FROM ";
-    $sql .= MAIN_DB_PREFIX ."societe as s ";
-    $sql .= "ORDER BY nom ASC";
-
-    if ($this->db->query($sql))
-      {
-	print '<select class="flat" name="'.$htmlname.'">';
-	$num = $this->db->num_rows();
-	$i = 0;
-	if ($num)
-	  {
-	    while ($i < $num)
-	      {
-		$obj = $this->db->fetch_object();
-		if ($selected > 0 && $selected == $obj->idp)
-		  {
-		    print '<option value="'.$obj->idp.'" selected>'.$obj->nom.'</option>';
-		  }
-		else
-		  {
-		    print '<option value="'.$obj->idp.'">'.$obj->nom.'</option>';
-		  }
-		$i++;
-	      }
-	  }
-	print '</select>';
-      }
-    else {
-      dolibarr_print_error($this->db);
+  function select_societes($selected='',$htmlname='soc_id',$filter)
+    {
+        // On recherche les societes
+        $sql = "SELECT s.idp, s.nom FROM";
+        $sql.= " ".MAIN_DB_PREFIX ."societe as s";
+        if ($filter) $sql.= " WHERE $filter";
+        $sql.= " ORDER BY nom ASC";
+    
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            print '<select class="flat" name="'.$htmlname.'">';
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            if ($num)
+            {
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    if ($selected > 0 && $selected == $obj->idp)
+                    {
+                        print '<option value="'.$obj->idp.'" selected>'.$obj->nom.'</option>';
+                    }
+                    else
+                    {
+                        print '<option value="'.$obj->idp.'">'.$obj->nom.'</option>';
+                    }
+                    $i++;
+                }
+            }
+            print '</select>';
+        }
+        else {
+            dolibarr_print_error($this->db);
+        }
     }
-  }
   
   
   /**
@@ -410,7 +414,7 @@ class Form
         while ($i < $num)
         {
             $objp = $this->db->fetch_object($result);
-            $opt = "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price ".MAIN_MONNAIE;
+            $opt = "<option value=\"$objp->rowid\">[$objp->ref] $objp->label - $objp->price ".MAIN_MONNAIE;
             if ($objp->duration) $opt .= " - ".$objp->duration;
             $opt .= "</option>\n";
             print $opt;
@@ -673,14 +677,14 @@ class Form
     print '<form method="post" action="'.$page.'">';
     print '<input type="hidden" name="action" value="'.$action.'">';
     print '<table class="border" width="100%">';
-    print '<tr><td colspan="3">'.$title.'</td></tr>';
-    
+    // Ligne titre
+    print '<tr><td class="validtitle" colspan="3">'.$title.'</td></tr>';
+    // Ligne message
     print '<tr><td class="valid">'.$question.'</td><td class="valid">';
-    
     $this->selectyesno("confirm","no");
-    
     print "</td>\n";
     print '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Confirm").'"</td></tr>';
+
     print '</table>';
     print "</form>\n";  
   }
