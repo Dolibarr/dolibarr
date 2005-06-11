@@ -175,11 +175,6 @@ if ($_socid > 0)
         $head[$h][1] = $langs->trans("Accountancy");
         $h++;
     }
-    if ($conf->compta->enabled) {
-        $head[$h][0] = DOL_URL_ROOT.'/fichinter/index.php?socid='.$objsoc->id;
-        $head[$h][1] = $langs->trans("Interventions");
-        $h++;
-    }
 
     $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
     $head[$h][1] = $langs->trans("Note");
@@ -205,6 +200,7 @@ if ($_socid > 0)
     }
 
     dolibarr_fiche_head($head, $hselected, $objsoc->nom);
+
 
     /*
      *
@@ -267,23 +263,25 @@ if ($_socid > 0)
     // Nbre max d'éléments des petites listes
     $MAXLIST=4;
 
+
     /*
      * Dernieres propales
      */
     if ($conf->propal->enabled)
     {
-        print '<table class="border" width="100%">';
+        print '<table class="noborder" width="100%">';
 
         $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
         $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
         $sql .= " AND s.idp = ".$objsoc->id;
         $sql .= " ORDER BY p.datep DESC";
-
-        if ( $db->query($sql) )
+        
+        $resql=$db->query($sql);
+        if ($resql)
         {
             $var=true;
-            $num = $db->num_rows();
+            $num = $db->num_rows($resql);
             if ($num >0 )
             {
                 print '<tr class="liste_titre">';
@@ -294,7 +292,7 @@ if ($_socid > 0)
             $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
             while ($i < $num && $i < $MAXLIST)
             {
-                $objp = $db->fetch_object();
+                $objp = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
                 print "<td nowrap><a href=\"propal.php?propalid=$objp->propalid\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a>\n";
                 if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
@@ -307,7 +305,7 @@ if ($_socid > 0)
                 $var=!$var;
                 $i++;
             }
-            $db->free();
+            $db->free($resql);
         }
         else {
             dolibarr_print_error($db);
@@ -320,7 +318,7 @@ if ($_socid > 0)
      */
     if($conf->commande->enabled)
     {
-        print '<table class="border" width="100%">';
+        print '<table class="noborder" width="100%">';
 
         $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.total_ht, p.ref, ".$db->pdate("p.date_commande")." as dp";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p";
@@ -328,10 +326,11 @@ if ($_socid > 0)
         $sql .= " AND s.idp = $objsoc->id";
         $sql .= " ORDER BY p.date_commande DESC";
 
-        if ( $db->query($sql) )
+        $resql=$db->query($sql);
+        if ($resql)
         {
             $var=true;
-            $num = $db->num_rows();
+            $num = $db->num_rows($resql);
             if ($num >0 )
             {
                 print '<tr class="liste_titre">';
@@ -341,7 +340,7 @@ if ($_socid > 0)
             $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
             while ($i < $num && $i < $MAXLIST)
             {
-                $objp = $db->fetch_object();
+                $objp = $db->fetch_object($resql);
                 $var=!$var;
                 print "<tr $bc[$var]>";
                 print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
@@ -354,17 +353,61 @@ if ($_socid > 0)
                 print '<td align="center" width="100">'.$objp->statut.'</td></tr>';
                 $i++;
             }
-            $db->free();
+            $db->free($resql);
         }
         print "</table>";
     }
 
     /*
+     * Dernieres interventions
+     */
+    if ($conf->fichinter->enabled)
+    {
+        print '<table class="noborder" width="100%">';
+
+        $sql = "SELECT s.nom, s.idp, f.rowid as id, f.ref, ".$db->pdate("f.datei")." as di";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
+        $sql .= " WHERE f.fk_soc = s.idp";
+        $sql .= " AND s.idp = ".$objsoc->id;
+        $sql .= " ORDER BY f.datei DESC";
+        
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $var=true;
+            $num = $db->num_rows($resql);
+            if ($num >0 )
+            {
+                print '<tr class="liste_titre">';
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fichinter/index.php?socidp='.$objsoc->id.'">'.$langs->trans("AllInterventions").' ('.$num.')</td></tr></table></td>';
+                print '</tr>';
+                $var=!$var;
+            }
+            $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
+            while ($i < $num && $i < $MAXLIST)
+            {
+                $objp = $db->fetch_object($resql);
+                print "<tr $bc[$var]>";
+                print '<td nowrap><a href="'.DOL_URL_ROOT."/fichinter/fiche.php?id=".$objp->id."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a>\n";
+                print "</td><td align=\"right\">".dolibarr_print_date($objp->di)."</td>\n";
+                print '</tr>';
+                $var=!$var;
+                $i++;
+            }
+            $db->free($resql);
+        }
+        else {
+            dolibarr_print_error($db);
+        }
+        print "</table>";
+    }
+    
+    /*
      * Derniers projets associés
      */
     if ($conf->projet->enabled)
     {
-        print '<table class="border" width=100%>';
+        print '<table class="noborder" width=100%>';
 
         $sql  = "SELECT p.rowid,p.title,p.ref,".$db->pdate("p.dateo")." as do";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -543,9 +586,7 @@ if ($_socid > 0)
          *
          */
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$objsoc->id.'&afaire=1">'.$langs->trans("AddActionToDo").'</a></td></tr>';
-        print '<tr>';
-        print '<td colspan="2" valign="top">';
+        print '<tr class="liste_titre"><td colspan="7"><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$objsoc->id.'&afaire=1">'.$langs->trans("AddActionToDo").'</a></td></tr>';
 
         $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
@@ -555,11 +596,13 @@ if ($_socid > 0)
         $sql .= " ORDER BY a.datea DESC, a.id DESC";
 
         $result=$db->query($sql);
-        if ($result) {
-            print "<table width=\"100%\" class=\"noborder\">\n";
-
-            $i = 0 ; $num = $db->num_rows($result);
-            while ($i < $num) {
+        if ($result)
+        {
+            $i = 0 ;
+            $num = $db->num_rows($result);
+            
+            while ($i < $num)
+            {
                 $var = !$var;
 
                 $obj = $db->fetch_object($result);
@@ -590,11 +633,11 @@ if ($_socid > 0)
                 print "<td>" .strftime("%d",$obj->da)."</td>\n";
                 print "<td>" .strftime("%H:%M",$obj->da)."</td>\n";
 
-                print '<td width="10%">&nbsp;</td>';
+                print '<td>&nbsp;</td>';
 
                 if ($obj->propalrowid)
                 {
-                    print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task");
+                    print '<td><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task");
                       $transcode=$langs->trans("Action".$obj->acode);
                       $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
                       print $libelle;
@@ -602,27 +645,23 @@ if ($_socid > 0)
                 }
                 else
                 {
-                    print '<td width="40%"><a href="action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
+                    print '<td><a href="action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
                       $transcode=$langs->trans("Action".$obj->acode);
                       $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
                       print $libelle;
                     print '</a></td>';
                 }
-                /*
-                 * Contact pour cette action
-                 *
-                 */
+                
+                // Contact pour cette action
                 if ($obj->fk_contact) {
                     $contact = new Contact($db);
                     $contact->fetch($obj->fk_contact);
-                    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
                 } else {
-                    print '<td width="40%">&nbsp;</td>';
+                    print '<td>&nbsp;</td>';
                 }
 
-                /*
-                */
-                print '<td width="20%"><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
+                print '<td><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
                 print "</tr>\n";
                 $i++;
             }
@@ -632,15 +671,13 @@ if ($_socid > 0)
         } else {
             dolibarr_print_error($db);
         }
-        print "</td></tr></table>";
+        print "</table><br>";
 
         /*
          *      Listes des actions effectuees
          */
         print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
-        print '<tr>';
-        print '<td valign="top">';
+        print '<tr class="liste_titre"><td colspan="8"><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
 
         $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
@@ -652,12 +689,12 @@ if ($_socid > 0)
         $result=$db->query($sql);
         if ($result)
         {
-            print '<table width="100%" class="noborder">';
-
             $i = 0 ;
             $num = $db->num_rows($result);
             $oldyear='';
             $oldmonth='';
+            $var=true;
+            
             while ($i < $num)
             {
                 $var = !$var;
@@ -665,34 +702,34 @@ if ($_socid > 0)
                 $obj = $db->fetch_object($result);
                 print "<tr $bc[$var]>";
 
+                // Champ date
                 if ($oldyear == strftime("%Y",$obj->da) )
                 {
-                    print '<td align="center">|</td>';
+                    print '<td width="30" align="center">|</td>';
                 }
                 else
                 {
-                    print "<td align=\"center\">" .strftime("%Y",$obj->da)."</td>\n";
+                    print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
                     $oldyear = strftime("%Y",$obj->da);
                 }
 
                 if ($oldmonth == strftime("%Y%b",$obj->da) )
                 {
-                    print '<td align="center">|</td>';
+                    print '<td width="30" align="center">|</td>';
                 }
                 else
                 {
-                    print "<td align=\"center\">" .strftime("%b",$obj->da)."</td>\n";
+                    print '<td width="30" align="center">'.strftime("%b",$obj->da)."</td>\n";
                     $oldmonth = strftime("%Y%b",$obj->da);
                 }
+                print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
+                print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
 
-                print "<td>" .strftime("%d",$obj->da)."</td>\n";
-                print "<td>" .strftime("%H:%M",$obj->da)."</td>\n";
-
-                print '<td width="10%">&nbsp;</td>';
+                print '<td>&nbsp;</td>';
 
                 if ($obj->propalrowid)
                 {
-                    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task");
+                    print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task");
                       $transcode=$langs->trans("Action".$obj->acode);
                       $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
                       print $libelle;
@@ -700,33 +737,29 @@ if ($_socid > 0)
                 }
                 else
                 {
-                    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
+                    print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
                       $transcode=$langs->trans("Action".$obj->acode);
                       $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
                       print $libelle;
                     print '</a></td>';
                 }
-                /*
-                * Contact pour cette action
-                *
-                */
+
+                // Contact pour cette action
                 if ($obj->fk_contact)
                 {
                     $contact = new Contact($db);
                     $contact->fetch($obj->fk_contact);
-                    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("Showcontact"),"contact").' '.$contact->fullname.'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("Showcontact"),"contact").' '.$contact->fullname.'</a></td>';
                 }
                 else
                 {
-                    print '<td width="40%">&nbsp;</td>';
+                    print '<td>&nbsp;</td>';
                 }
-                /*
-                */
-                print '<td width="20%"><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
+
+                print '<td><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
                 print "</tr>\n";
                 $i++;
             }
-            print "</table>";
 
             $db->free($result);
         }
@@ -734,20 +767,17 @@ if ($_socid > 0)
         {
             dolibarr_print_error($db);
         }
-        print "</td></tr></table>";
+        print "</table>";
 
+        // Notes sur la societe
         /*
-         *
-         * Notes sur la societe
-         *
-         */
         if ($objsoc->note)
         {
             print '<table class="border" width="100%" bgcolor="#e0e0e0">';
             print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
             print "</table>";
         }
-
+        */
     }
 } else {
     dolibarr_print_error($db);
@@ -755,5 +785,6 @@ if ($_socid > 0)
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
 ?>
