@@ -62,7 +62,8 @@ if ($modecompta=="CREANCES-DETTES")
 {
     $nom="Chiffre d'affaire";
     $nom.=' (Voir le rapport <a href="index.php?year_start='.($year_start).'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
-    $period=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $period="$year_start - $year_end";
+    $periodlink=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesCADue");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -70,7 +71,8 @@ if ($modecompta=="CREANCES-DETTES")
 else {
     $nom="Chiffre d'affaire";
     $nom.=' (Voir le rapport en <a href="index.php?year_start='.($year_start).'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
-    $period=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $period="$year_start - $year_end";
+    $periodlink=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesCAIn");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -156,7 +158,7 @@ print '<tr class="liste_titre"><td rowspan="2">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
     print '<td align="center" width="10%" colspan="2"><a href="casoc.php?year='.$annee.'">'.$annee.'</a></td>';
-    print '<td width="15">&nbsp;</td>';
+    if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';
 
@@ -164,8 +166,8 @@ print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
     print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-    print '<td align="center">'.$langs->trans("Delta").'</td>';
-    print '<td width="15">&nbsp;</td>';
+    print '<td align="right">'.$langs->trans("Delta").'</td>';
+    if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';
 
@@ -231,21 +233,21 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
         }
         else
         {
-            print '<td align="center">';
+            print '<td align="right">';
             if ($minyearmonth <= $case && $case <= $maxyearmonth) { print '-'; }
             else { print '&nbsp;'; }
             print '</td>';
         }
 
         $total[$annee]+=$cum[$case];
-        print '<td width="15">&nbsp;</td>';
+        if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
     }
 
     print '</tr>';
 }
 
 // Affiche total
-print '<tr class="liste_total"><td>'.$langs->trans("Total").':</td>';
+print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
     // Montant total
@@ -279,13 +281,13 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     }
     else
     {
-        print '<td align="center">';
+        print '<td align="right">';
         if ($minyear <= $annee && $annee <= max($nowyear,$maxyear)) { print '-'; }
         else { print '&nbsp;'; }
         print '</td>';
     }
 
-    print '<td width="15">&nbsp;</td>';
+    if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
 }
 print "</tr>\n";
 print "</table>";

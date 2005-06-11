@@ -37,8 +37,8 @@ if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 $sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-if (! $sortorder) $sortorder="desc";
-if (! $sortfield) $sortfield="amount_ttc";
+if (! $sortorder) $sortorder="asc";
+if (! $sortfield) $sortfield="name";
 
 // Sécurité accés client
 if ($user->societe_id > 0) $socidp = $user->societe_id;
@@ -54,7 +54,8 @@ if ($modecompta=="CREANCES-DETTES")
 {
     $nom="Chiffre d'affaire par utilisateur, auteur de la facture";
     $nom.=' (Voir le rapport <a href="'.$_SERVER["PHP_SELF"].'?year='.($year).'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
-    $period="<a href='".$_SERVER["PHP_SELF"]."?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='".$_SERVER["PHP_SELF"]."?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
+    $period=$langs->trans("Year")." $year";
+    $periodlink="<a href='".$_SERVER["PHP_SELF"]."?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
     $description=$langs->trans("RulesCADue");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -62,7 +63,8 @@ if ($modecompta=="CREANCES-DETTES")
 else {
     $nom="Chiffre d'affaire par utilisateur, auteur de la facture";
     $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.($year).'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
-    $period="<a href='".$_SERVER["PHP_SELF"]."?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='".$_SERVER["PHP_SELF"]."?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
+    $period=$langs->trans("Year")." $year";
+    $periodlink="<a href='".$_SERVER["PHP_SELF"]."?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
     $description=$langs->trans("RulesCAIn");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -157,11 +159,11 @@ if (sizeof($amount))
     $arrayforsort=$name;
     
     // On définit tableau arrayforsort
-    if ($sortfield == 'nom' && $sortorder == 'asc') {
+    if ($sortfield == 'name' && $sortorder == 'asc') {
         asort($name);
         $arrayforsort=$name;
     }
-    if ($sortfield == 'nom' && $sortorder == 'desc') {
+    if ($sortfield == 'name' && $sortorder == 'desc') {
         arsort($name);
         $arrayforsort=$name;
     }
@@ -174,7 +176,7 @@ if (sizeof($amount))
         $arrayforsort=$amount;
     }
 
-    foreach($amount as $key=>$value)
+    foreach($arrayforsort as $key=>$value)
     {
         $var=!$var;
         print "<tr $bc[$var]>";

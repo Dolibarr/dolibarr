@@ -173,11 +173,6 @@ if ($db->query($sql))
 	}		        
     }
   $var=!$var;
-  print "<tr $bc[$var]>";
-  print '<td>&nbsp;</td>';
-  print '<td align="right">'.$langs->trans("Total").'</td>';
-  print '<td align="right">'.price($total).'</td><td>&nbsp;</td>';
-  print "</tr>\n";
 
   print "</table>\n";
   $db->free();	

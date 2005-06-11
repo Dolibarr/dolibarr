@@ -61,7 +61,8 @@ if ($modecompta=="CREANCES-DETTES")
 {
     $nom="Bilan des recettes et dépenses, résumé annuel";
     $nom.=' (Voir le rapport <a href="index.php?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
-    $period=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $period="$year_start - $year_end";
+    $periodlink=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesResultDue");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -69,7 +70,8 @@ if ($modecompta=="CREANCES-DETTES")
 else {
     $nom="Bilan des recettes et dépenses, résumé annuel";
     $nom.=' (Voir le rapport en <a href="index.php?year_start='.$year_start.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
-    $period=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $period="$year_start - $year_end";
+    $periodlink=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesResultInOut");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -383,7 +385,8 @@ print '</tr>';
 print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="right">'.$langs->trans("Income").'</td><td align="right">'.$langs->trans("Outcome").'</td>';
+  print '<td align="right">'.$langs->trans("Outcome").'</td>';
+  print '<td align="right">'.$langs->trans("Income").'</td>';
 }
 print '</tr>';
 
@@ -397,6 +400,15 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
     {
       print '<td align="right">&nbsp;';
       $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
+      if ($decaiss_ttc[$case]>0)
+	{
+	  print price($decaiss_ttc[$case]);
+	  $totsorties[$annee]+=$decaiss_ttc[$case];
+	}
+      print "</td>";
+
+      print '<td align="right">&nbsp;';
+      $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
       if ($encaiss_ttc[$case]>0)
 	{
 	  print price($encaiss_ttc[$case]);
@@ -404,14 +416,6 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 	}
       print "</td>";
 
-      print '<td align="right">&nbsp;';
-      $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-      if ($decaiss_ttc[$case]>0)
-	{
-	  print price($decaiss_ttc[$case]);
-	  $totsorties[$annee]+=$decaiss_ttc[$case];
-	}
-      print "</td>";
     }
 
   print '</tr>';
@@ -419,12 +423,19 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 
 // Total
 $var=!$var;
+$nbcols=0;
 print '<tr class="liste_total"><td>'.$langs->trans("TotalTTC").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="right">'.(isset($totentrees[$annee])?price($totentrees[$annee]):'&nbsp;').'</td>';
-  print '<td align="right">'.(isset($totsorties[$annee])?price($totsorties[$annee]):'&nbsp;').'</td>';
+    $nbcols+=2;
+    print '<td align="right">'.(isset($totsorties[$annee])?price($totsorties[$annee]):'&nbsp;').'</td>';
+    print '<td align="right">'.(isset($totentrees[$annee])?price($totentrees[$annee]):'&nbsp;').'</td>';
 }
+print "</tr>\n";
+
+// Ligne vierge
+print '<tr><td>&nbsp;</td>';
+print '<td colspan="'.$nbcols.'">&nbsp;</td>';
 print "</tr>\n";
 
 // Balance
@@ -432,7 +443,7 @@ $var=!$var;
 print '<tr class="liste_total"><td>'.$langs->trans("Profit").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-    print '<td align="center" colspan="2"> ';
+    print '<td align="right" colspan="2"> ';
     if (isset($totentrees[$annee]) || isset($totsorties[$annee])) {
         print price($totentrees[$annee]-$totsorties[$annee]).'</td>';
 //  print '<td>&nbsp;</td>';

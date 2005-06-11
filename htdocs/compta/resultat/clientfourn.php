@@ -53,7 +53,8 @@ if ($modecompta=="CREANCES-DETTES")
 {
     $nom="Bilan des recettes et dépenses, détail";
     $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
-    $period='<a href='.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous()."</a> ".$langs->trans("Year")." ".$year.' <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+    $period=$langs->trans("Year")." ".$year;
+    $periodlink='<a href='.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesResultDue");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -61,7 +62,8 @@ if ($modecompta=="CREANCES-DETTES")
 else {
     $nom="Bilan des recettes et dépenses, détail";
     $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
-    $period='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous()."</a> ".$langs->trans("Year")." ".$year.' <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+    $period=$langs->trans("Year")." ".$year;
+    $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesResultInOut");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -429,7 +431,7 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($result) {
     $num = $db->num_rows($result);
-    $var=false;
+    $var=true;
     $i = 0;
     if ($num) {    
       while ($i < $num) {
@@ -532,7 +534,7 @@ print '<tr>';
 print '<td colspan="4">&nbsp;</td>';
 print '</tr>';
 
-print '<tr class="liste_total"><td align="right" colspan="2">Résultat</td>';
+print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Profit").'</td>';
 if ($modecompta == 'CREANCES-DETTES') print '<td class="border" align="right">'.price($total_ht).'</td>';
 print '<td class="border" align="right">'.price($total_ttc).'</td>';
 print '</tr>';
