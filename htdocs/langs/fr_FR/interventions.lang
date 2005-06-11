@@ -6,3 +6,5 @@ AddIntervention=Ajouter intervention
 ListOfInterventions=Liste des interventions
 EditIntervention=Editer
 TemplatePDFInterventions=Modèle PDF des fiches d'interventions
+LastInterventions=Les %s dernières interventions
+AllInterventions=Toutes les interventions
