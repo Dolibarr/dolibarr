@@ -66,7 +66,8 @@ print '<table class="noborder" width="50%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Status").'</td>';
 print '<td align="right">'.$langs->trans("Number").'</td>';
-print '<td align="right">'.$langs->trans("Amount").'</td>';
+print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="right">'.$langs->trans("Average").'</td>';
 print "</tr>\n";
 
 $var=True;
@@ -77,20 +78,20 @@ for ($i = 0 ; $i < 3 ; $i++)
   print "<tr $bc[$var]>";
   print '<td><a href="liste.php?statut='.$i.'">'.$libelle[$i].'</a></td>';
   print '<td align="right">'.$nb[$i].'</td>';
-  print '<td align="right">'.price($somme[$i]).'</td>';
+  print '<td align="right">'.($nb[$i]?price($somme[$i]):'&nbsp;').'</td>';
+  print '<td align="right">'.($nb[$i]?(price($somme[$i])/$nb[$i]):'&nbsp;').'</td>';
   $totalnb += $nb[$i];
   $total += $somme[$i];
   print "</tr>";
 }
 
-$var=!$var;
-print "<tr $bc[$var]>";
+print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
 print '<td align="right">'.$totalnb.'</td>';
 print '<td align="right">'.price($total).'</td>';
+print '<td align="right">'.($totalnb?(price($total)/$totalnb):'&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
-
 
 
 $db->close();

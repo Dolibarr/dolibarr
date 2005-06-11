@@ -266,7 +266,7 @@ if ($socid > 0)
      */
     if ($conf->facture->enabled && $user->rights->facture->lire)
     {
-        print '<table class="border" width="100%">';
+        print '<table class="noborder" width="100%">';
 
         $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, f.total, f.total_ttc, ".$db->pdate("f.datef")." as df, f.paye as paye, f.fk_statut as statut, f.rowid as facid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -476,65 +476,67 @@ if ($socid > 0)
         $sql .= " AND c.id=a.fk_action ";
         $sql .= " ORDER BY a.datea DESC, a.id DESC";
 
-        if ( $db->query($sql) ) {
-
-            $i = 0 ; $num = $db->num_rows();
-            while ($i < $num) {
+        $result=$db->query($sql);
+        if ($result)
+        {
+            $i = 0 ;
+            $num = $db->num_rows($result);
+            $var=true;
+            
+            while ($i < $num)
+            {
                 $var = !$var;
 
-                $obj = $db->fetch_object();
+                $obj = $db->fetch_object($result);
                 print "<tr $bc[$var]>";
 
                 if ($oldyear == strftime("%Y",$obj->da) ) {
-                    print '<td align="center">|</td>';
+                    print '<td width="30" align="center">|</td>';
                 } else {
-                    print "<td align=\"center\">" .strftime("%Y",$obj->da)."</td>\n";
+                    print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
                     $oldyear = strftime("%Y",$obj->da);
                 }
 
                 if ($oldmonth == strftime("%Y%b",$obj->da) ) {
-                    print '<td align="center">|</td>';
+                    print '<td width="30" align="center">|</td>';
                 } else {
-                    print "<td align=\"center\">" .strftime("%b",$obj->da)."</td>\n";
+                    print '<td width="30" align="center">'.strftime("%b",$obj->da)."</td>\n";
                     $oldmonth = strftime("%Y%b",$obj->da);
                 }
 
-                print "<td>" .strftime("%d",$obj->da)."</td>\n";
-                print "<td>" .strftime("%H:%M",$obj->da)."</td>\n";
+                print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
+                print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
 
-                print '<td width="10%">&nbsp;</td>';
-		print '<td width="40%">';
-		if ($obj->propalrowid)
-		  {
-		    print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task");
-          $transcode=$langs->trans("Action".$obj->acode);
-          $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-          print $libelle;
-		    print '</a></td>';
-		  }
-		else
-		  {
-		    print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
-          $transcode=$langs->trans("Action".$obj->acode);
-          $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-          print $libelle;
-		    print '</a></td>';
-		  }
+                print '<td>&nbsp;</td>';
 
-                /*
-                 * Contact pour cette action
-                 *
-                 */
+        		print '<td>';
+        		if ($obj->propalrowid)
+        		  {
+        		    print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task");
+                  $transcode=$langs->trans("Action".$obj->acode);
+                  $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                  print $libelle;
+        		    print '</a></td>';
+        		  }
+        		else
+        		  {
+        		    print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
+                  $transcode=$langs->trans("Action".$obj->acode);
+                  $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                  print $libelle;
+        		    print '</a></td>';
+        		  }
+
+                // Contact pour cette action
                 if ($obj->fk_contact) {
                     $contact = new Contact($db);
                     $contact->fetch($obj->fk_contact);
-                    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
                 } else {
-                    print '<td width="40%">&nbsp;</td>';
+                    print '<td>&nbsp;</td>';
                 }
-                /*
-                 */
-                print '<td width="20%"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.$obj->code.'</a></td>';
+
+                print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.$obj->code.'</a></td>';
                 print "</tr>\n";
                 $i++;
             }
@@ -545,21 +547,14 @@ if ($socid > 0)
         }
         print "</table>";
 
+        // Notes sur la societe
         /*
-         *
-         * Notes sur la societe
-         *
-         */
         if ($societe->note) {
             print '<table class="border" width="100%" bgcolor="#e0e0e0">';
             print "<tr><td>".nl2br($societe->note)."</td></tr>";
             print "</table>";
         }
-        /*
-         *
-         *
-         *
-         */
+        */
 
     }
 
@@ -568,5 +563,7 @@ if ($socid > 0)
 }
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
+
 ?>

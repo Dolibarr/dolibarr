@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Destailleur Laurent  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2005      Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004           Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +34,10 @@ if (!$user->rights->propale->lire)
   accessforbidden();
 
 
-require("../lib/CMailFile.class.php");
-/*
- *  Modules optionnels
- */
-require("../project.class.php");
-require("../propal.class.php");
-require("../actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+require_once("../project.class.php");
+require_once("../propal.class.php");
+require_once("../actioncomm.class.php");
 
 /*
  * Sécurité accés client

@@ -142,7 +142,7 @@ if ($socid > 0)
     
     print "</td></tr>";
 
-    print '<tr><td>Code compta</td><td>'.$societe->code_compta.'</td>';
+    print '<tr><td>'.$langs->trans("AccountancyCode").'</td><td>'.$societe->code_compta.'</td>';
     print '<td>'.$langs->trans("CustomerCode").'</td><td>';
     print $societe->code_client;
     print "</td></tr>";
