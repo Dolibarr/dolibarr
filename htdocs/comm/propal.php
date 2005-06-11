@@ -48,7 +48,7 @@ if($conf->commande->enabled) {
 require("./propal_model_pdf.class.php");
 require("../propal.class.php");
 require("../actioncomm.class.php");
-require("../lib/CMailFile.class.php");
+require(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
 /*
  *  Sécurité accés client
@@ -491,7 +491,7 @@ if ($_GET["propalid"])
 		  $i++;
 		}
 
-	      $db->free();
+	      $db->free($result);
 	    } 
 	  else
 	    {
@@ -518,9 +518,8 @@ if ($_GET["propalid"])
 	      print '<input type="hidden" name="propid" value="'.$propal->id.'">';
 	      print '<input type="hidden" name="action" value="addligne">';
 
-          // Ajout produit produits/services personalisé
-	      $var=!$var;
-
+          // Ajout produit produits/services personalisés
+	      $var=true;
 	      print "<tr ".$bc[$var].">\n";
 	      print "  <td><textarea cols=\"50\" name=\"np_desc\"></textarea></td>\n";
 	      print "  <td align=\"center\">";
@@ -532,28 +531,11 @@ if ($_GET["propalid"])
 	      print "</tr>";
 
 	      // Ajout de produits/services prédéfinis
-	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p WHERE p.envente=1 ORDER BY p.nbvente DESC LIMIT 20";
-	      $result = $db->query($sql);
-		  if ($result)
-		    {
-    		  $opt = "<option value=\"0\" selected></option>";
-		      $num = $db->num_rows();	$i = 0;	
-		      while ($i < $num)
-			    {
-			  $objp = $db->fetch_object($result);
-			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] ".substr($objp->label,0,40)."</option>\n";
-			  $i++;
-			    }
-		      $db->free();
-    		}
-   	      else
-    		{
-    		  dolibarr_print_error($db);
-    		}
-
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
-	      print "<td colspan=\"2\"><select name=\"idprod\">".$opt."</select></td>";
+	      print "<td colspan=\"2\">";
+	      $html->select_produits('','idprod','',20);
+	      print "</td>";
 	      print '<td>&nbsp;</td>';
 	      print '<td align="right"><input type="text" size="3" name="qty" value="1"></td>';
 	      print '<td align="right"><input type="text" size="3" name="remise" value="'.$societe->remise_client.'"> %</td>';

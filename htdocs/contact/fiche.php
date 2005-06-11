@@ -450,7 +450,9 @@ else
     
   if ( $db->query($sql) ) 
     {
-      $i = 0 ; $num = $db->num_rows(); $tag = True;
+      $i = 0 ;
+      $num = $db->num_rows();
+      $var=true;
       while ($i < $num) 
         {
           $obj = $db->fetch_object();
@@ -470,7 +472,6 @@ else
           print "<td>$obj->code&nbsp;</td>";
           print "</tr>\n";
           $i++;
-          $tag = !$tag;
         }
     }
   else 
@@ -483,5 +484,6 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
+
 ?>
