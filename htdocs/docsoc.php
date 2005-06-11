@@ -21,10 +21,10 @@
  */
 
 /**
-     	\file       htdocs/docsoc.php
-		\brief      Fichier onglet documents liés à la société
-		\ingroup    societe
-		\version    $Revision$
+        \file       htdocs/docsoc.php
+        \brief      Fichier onglet documents liés à la sociét
+        \ingroup    societe
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -45,10 +45,10 @@ if (! is_dir($conf->societe->dir_output)) { mkdir($conf->societe->dir_output); }
 $upload_dir = $conf->societe->dir_output . "/" . $socid ;
 if (! is_dir($upload_dir))
 {
-  umask(0);
-  if (! mkdir($upload_dir, 0755))
+    umask(0);
+    if (! mkdir($upload_dir, 0755))
     {
-      print $langs->trans("ErrorCanNotCreateDir",$upload_dir);
+        print $langs->trans("ErrorCanNotCreateDir",$upload_dir);
     }
 }
 
@@ -78,159 +78,169 @@ if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 /*
  * Action suppression fichier
  */
-
 if ($_GET["action"]=='delete')
 {
-  $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
-  dol_delete_file($file);
-  $mesg = '<div class="ok">Le fichier a été supprimé</div>';
+    $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
+    dol_delete_file($file);
+    $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
 }
 
 
 /*
- * Mode fiche
- *
+ * Affichage liste
  */
 
 if ($socid > 0)
 {
-  $societe = new Societe($db);
-  if ($societe->fetch($socid))
+    $societe = new Societe($db);
+    if ($societe->fetch($socid))
     {
-      $h = 0;
-      
-      $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
-      $head[$h][1] = $langs->trans("Company");
-      $h++;
-      
-      if ($societe->client==1)
-	{
-	  $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
-	  $head[$h][1] = $langs->trans("Customer");
-	  $h++;
-	}
-      
-      if ($societe->client==2)
-	{
-	  $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
-	  $head[$h][1] = $langs->trans("Prospect");
-	  $h++;
-	}
-      if ($societe->fournisseur)
-	{
-	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
-	  $head[$h][1] = $langs->trans("Supplier");
-	  $h++;
-	}
+        $h = 0;
 
-      if ($conf->compta->enabled) {
-          $langs->load("compta");
-          $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
-          $head[$h][1] = $langs->trans("Accountancy");
-          $h++;
-      }
+        $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
+        $head[$h][1] = $langs->trans("Company");
+        $h++;
 
-      $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-      $head[$h][1] = $langs->trans("Note");
-      $h++;
+        if ($societe->client==1)
+        {
+            $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
+            $head[$h][1] = $langs->trans("Customer");
+            $h++;
+        }
 
-      if ($user->societe_id == 0)
-	{
-	  $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
-	  $head[$h][1] = $langs->trans("Documents");
-      $hselected = $h;
-	  $h++;
-	}
-      
-      $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
-      $head[$h][1] = $langs->trans("Notifications");
-      
-      dolibarr_fiche_head($head, $hselected, $societe->nom);
+        if ($societe->client==2)
+        {
+            $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
+            $head[$h][1] = $langs->trans("Prospect");
+            $h++;
+        }
+        if ($societe->fournisseur)
+        {
+            $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
+            $head[$h][1] = $langs->trans("Supplier");
+            $h++;
+        }
 
+        if ($conf->compta->enabled) {
+            $langs->load("compta");
+            $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
+            $head[$h][1] = $langs->trans("Accountancy");
+            $h++;
+        }
 
-      /*
-       * 
-       */
+        $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
+        $head[$h][1] = $langs->trans("Note");
+        $h++;
 
+        if ($user->societe_id == 0)
+        {
+            $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
+            $head[$h][1] = $langs->trans("Documents");
+            $hselected = $h;
+            $h++;
+        }
 
-      if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
-	{
-	  echo '<form name="userfile" action="docsoc.php?socid='.$socid.'" enctype="multipart/form-data" METHOD="POST">';      
+        $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
+        $head[$h][1] = $langs->trans("Notifications");
 
-      print '<table class="noborder" width="100%">';
-      print '<tr><td width="50%" valign="top">';
+        dolibarr_fiche_head($head, $hselected, $societe->nom);
 
-	  print '<input type="hidden" name="max_file_size" value="2000000">';
-	  print '<input type="file"   name="userfile" size="40" maxlength="80">';
-	  print '<br>';
-	  print '<input type="submit" value="'.$langs->trans("Upload").'" name="sendit"> &nbsp; ';
-	  print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><br>';
+        // Construit liste des fichiers
+        clearstatcache();
 
-      print "</td></tr>";
-      print "</table>";
+        $totalsize=0;
+        $filearray=array();
+        $handle=opendir($upload_dir);
+        if ($handle)
+        {
+            $i=0;
+            while (($file = readdir($handle))!==false)
+            {
+                if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+                {
+                    $filearray[$i]=$file;
+                    $totalsize+=filesize($upload_dir."/".$file);
+                    $i++;
+                }
+            }
+            closedir($handle);
+        }
+        else
+        {
+            print $langs->trans("ErrorCanNotReadDir",$upload_dir);
+        }
+        
+        print '<table class="border"width="100%">';
+        print '<tr><td width="30%">'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
+        print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
+        print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+        print '</table>';
 
-	  print '</form>';
-	}
-      else
-	{
-	  print $langs->trans("ErrorAttachedFilesDisabled").".<br>";
-	}
-      print '<br></div>';
+        print '<br></div>';
 
+        if ($mesg) { print "$mesg<br>"; }
 
-      if ($mesg) { print "$mesg<br>"; }
+        // Affiche forumlaire upload
+        if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
+        {
+            print_titre($langs->trans("AttachANewFile"));
+            echo '<form name="userfile" action="docsoc.php?socid='.$socid.'" enctype="multipart/form-data" METHOD="POST">';
 
+            print '<table class="noborder" width="100%">';
+            print '<tr><td width="50%" valign="top">';
 
-      // Affiche liste des documents existant
-      print_titre($langs->trans("AttachedFiles"));
+            print '<input type="hidden" name="max_file_size" value="2000000">';
+            print '<input class="flat" type="file" name="userfile" size="40" maxlength="80">';
+            print ' &nbsp; ';
+            print '<input type="submit" value="'.$langs->trans("Add").'" name="sendit">';
 
-      clearstatcache();
+            print "</td></tr>";
+            print "</table>";
 
-      $handle=opendir($upload_dir);
-      if ($handle)
-	{
-	  print '<table width="100%" class="noborder">';
-      print '<tr class="liste_titre"><td>'.$langs->trans("Document").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td><td>&nbsp;</td></tr>';
+            print '</form>';
+            print '<br>';
+        }
 
-      $var=true;
-	  while (($file = readdir($handle))!==false)
-	    {
-	      if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-		{
-		  $var=!$var;
-		  print "<tr $bc[$var]><td>";
-		  echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($socid.'/'.$file).'">'.$file.'</a>';
-		  print "</td>\n";
-		  
-		  print '<td align="right">'.filesize($upload_dir."/".$file). ' bytes</td>';
-		  print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
-		  
-		  print '<td align="center">';
-		  echo '<a href="docsoc.php?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">'.img_delete().'</a>';
-		  print "</td></tr>\n";
-		}
-	    }
+        // Affiche liste des documents existant
+        print_titre($langs->trans("AttachedFiles"));
 
-	  print "</table>";
+        print '<table width="100%" class="noborder">';
+        print '<tr class="liste_titre"><td>'.$langs->trans("Document").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td><td>&nbsp;</td></tr>';
 
-	  closedir($handle);
-	}
-      else
-	{
-	  print $langs->trans("ErrorCanNotReadDir",$upload_dir);
-	}
+        $var=true;
+        foreach($filearray as $key => $file)
+        {
+            if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+            {
+                $var=!$var;
+                print "<tr $bc[$var]><td>";
+                echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($socid.'/'.$file).'">'.$file.'</a>';
+                print "</td>\n";
+
+                print '<td align="right">'.filesize($upload_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
+                print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
+
+                print '<td align="center">';
+                echo '<a href="docsoc.php?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">'.img_delete().'</a>';
+                print "</td></tr>\n";
+            }
+        }
+
+        print "</table>";
     }
-  else
+    else
     {
-      dolibarr_print_error($db);
+        dolibarr_print_error($db);
     }
 }
 else
 {
-      dolibarr_print_error();
+    dolibarr_print_error();
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
+
 ?>
