@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Destailleur Laurent  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Destailleur Laurent  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,18 +120,22 @@ class Contrat
     
     
     /**
-    *    \brief      Active une ligne detail d'un contrat
-    *    \param      user        Objet User qui avtice le contrat
-    *    \param      line_id     Id de la ligne de detail à activer
-    *    \param      date        Date d'ouverture
-    */
-    function active_line($user, $line_id, $date)
+     *      \brief      Active une ligne detail d'un contrat
+     *      \param      user        Objet User qui avtice le contrat
+     *      \param      line_id     Id de la ligne de detail à activer
+     *      \param      date        Date d'ouverture
+     *      \param      date        Date fin prévue
+     *      \return     int         < 0 si erreur, > 0 si ok
+     */
+    function active_line($user, $line_id, $date, $dateend='')
     {
         // statut actif : 4
     
-        $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4";
-        $sql .= " , date_ouverture = '".$this->db->idate($date)."', fk_user_ouverture = ".$user->id;
-        $sql .= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3) ";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4,";
+        $sql.= " date_ouverture = '".$this->db->idate($date)."',";
+        if ($dateend) $sql.= " date_fin_validite = '".$this->db->idate($dateend)."',";
+        $sql.= " fk_user_ouverture = ".$user->id;
+        $sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3) ";
     
         $result = $this->db->query($sql) ;
     
@@ -143,7 +147,7 @@ class Contrat
             $interface->run_triggers('CONTRACT_SERVICE_ACTIVATE',$this,$user,$lang,$conf);
             // Fin appel triggers
     
-            return 0;
+            return 1;
         }
         else
         {
@@ -251,10 +255,11 @@ class Contrat
     }
     
     /**
-     *    \brief      Crée un contrat vierge
-     *    \param      user        Utilisateur qui crée
-     *    \param      lang        Environnement langue de l'utilisateur
-     *    \param      conf        Environnement de configuration lors de l'opération
+     *      \brief      Crée un contrat vierge en base
+     *      \param      user        Utilisateur qui crée
+     *      \param      lang        Environnement langue de l'utilisateur
+     *      \param      conf        Environnement de configuration lors de l'opération
+     *      \return     int         < 0 si erreur, id contrat créé sinon
      */
     function create($user,$lang='',$conf='')
     {
@@ -271,19 +276,48 @@ class Contrat
             $interface->run_triggers('CONTRACT_CREATE',$this,$user,$lang,$conf);
             // Fin appel triggers
     
-            $result = 0 ;
+            $result = $this->id;
         }
         else
         {
-            $result = 1;
             dolibarr_syslog("Contrat::create - 10");
-            dolibarr_print_error($this->db,"Contrat::create - 10");
+            $result = -1;
         }
     
         return $result;
     }
     
 
+    /**
+     *      \brief      Supprime un contrat de la base
+     *      \param      user        Utilisateur qui supprime
+     *      \param      lang        Environnement langue de l'utilisateur
+     *      \param      conf        Environnement de configuration lors de l'opération
+     *      \return     int         < 0 si erreur, > 0 si ok
+     */
+    function delete($user,$lang='',$conf='')
+    {
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
+        $sql.= " WHERE rowid=".$this->id;
+        if ($this->db->query($sql))
+        {
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $interface->run_triggers('CONTRACT_DELETE',$this,$user,$lang,$conf);
+            // Fin appel triggers
+    
+            $result = 1;
+        }
+        else
+        {
+            $result = -1;
+        }
+    
+        return $result;
+    }
+
+    
   /**
    *    \brief      Ajoute une ligne de commande
    *    \return     int     <0 si KO, =0 si OK

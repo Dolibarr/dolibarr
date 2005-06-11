@@ -22,7 +22,7 @@
  */
 
 /**
-    	\file       htdocs/contrat/fiche.php
+    	\file       htdocs/contrat/ligne.php
 		\ingroup    contrat
 		\brief      Fiche contrat
 		\version    $Revision$
@@ -51,53 +51,23 @@ if ($user->societe_id > 0)
   $action = '';
   $socidp = $user->societe_id;
 }
+
+
 /*
- *
- */	
-if ($_POST["action"] == 'add') 
-{
-  $datecontrat = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]); 
-
-  $contrat = new Contrat($db);
-
-  $contrat->soc_id         = $_POST["soc_id"];
-  $contrat->date_contrat   = $datecontrat;  
-  $contrat->commercial_id  = $_POST["commercial"];
-  $contrat->note           = $_POST["note"];
-  $contrat->projetid       = $_POST["projetid"];
-  $contrat->remise_percent = $_POST["remise_percent"];
-  
-  /*
-  $contrat->add_product($_POST["idprod1"],$_POST["qty1"],$_POST["remise_percent1"]);
-  $contrat->add_product($_POST["idprod2"],$_POST["qty2"],$_POST["remise_percent2"]);
-  $contrat->add_product($_POST["idprod3"],$_POST["qty3"],$_POST["remise_percent3"]);
-  $contrat->add_product($_POST["idprod4"],$_POST["qty4"],$_POST["remise_percent4"]);
-  */
-  $result = $contrat->create($user);
-  if ($result == 0)
-    {      
-      Header("Location: fiche.php?id=".$contrat->id);
-    }
-  
-  $_GET["id"] = $contrat->id;
-
-  $action = '';  
-}
-/*
- *
+ * Actions
  */	
 if ($_POST["action"] == 'confirm_active' && $_POST["confirm"] == 'yes' && $user->rights->contrat->activer)
 {
-  $contrat = new Contrat($db);
-  $contrat->fetch($_GET["id"]);
+    $contrat = new Contrat($db);
+    $contrat->fetch($_GET["id"]);
 
-  $result = $contrat->active_line($user, $_GET["ligne"], $_GET["date"]);
+    $result = $contrat->active_line($user, $_GET["ligne"], $_GET["date"], $_GET["dateend"]);
 
-  if ($result == 0)
+    if ($result > 0)
     {
-      Header("Location: fiche.php?id=".$contrat->id);
+        Header("Location: fiche.php?id=".$contrat->id);
+        exit;
     }
-      
 }
 
 
@@ -196,8 +166,9 @@ $html = new Form($db);
 	  if ($_GET["action"] == 'active' && $user->rights->contrat->activer)
 	    {
 	      print '<br />';
-	      $dateact = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]); 
-	      $html->form_confirm("ligne.php?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateact,"Activer le service","Etes-vous sûr de vouloir activer ce service en date du ".strftime("%A %d %B %Y", $dateact)." ?","confirm_active");
+	      $dateactstart = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]); 
+	      $dateactend   = mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]); 
+	      $html->form_confirm("ligne.php?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",strftime("%A %d %B %Y", $dateactstart)),"confirm_active");
 	    }
 
 	  
@@ -207,17 +178,18 @@ $html = new Form($db);
 	   */
 	  print '<br><table class="noborder" width="100%">';	  
 
-	  $sql = "SELECT l.statut, l.label, l.fk_product, l.description, l.price_ht, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."contratdet as l";
-	  $sql .= "  WHERE l.fk_contrat = ".$id;
-	  $sql .= " AND rowid = ".$_GET["ligne"];
-	  $sql .= " ORDER BY l.rowid";
+	  $sql = "SELECT cd.statut, cd.label, cd.fk_product, cd.description, cd.price_ht, cd.qty, cd.rowid, cd.tva_tx, cd.remise_percent, cd.subprice,";
+      $sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_debut, ".$db->pdate("cd.date_ouverture")." as date_debut_reelle,";
+      $sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin, ".$db->pdate("cd.date_cloture")." as date_fin_reelle";
+	  $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+	  $sql.= " WHERE cd.fk_contrat = ".$id;
+	  $sql.= " AND rowid = ".$_GET["ligne"];
+	  $sql.= " ORDER BY cd.rowid";
 	  
 	  $result = $db->query($sql);
-
 	  if ($result)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($result);
 	      $i = 0; $total = 0;
 	      
 	      if ($num)
@@ -232,10 +204,10 @@ $html = new Form($db);
 		  print '<td>&nbsp;</td><td width="10%">&nbsp;</td>';
 		  print "</tr>\n";
 		}
-	      $var=True;
+	      $var=true;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object();
+		  $objp = $db->fetch_object($result);
 
 		  $var=!$var;
 		  print "<tr $bc[$var]>\n";
@@ -270,11 +242,57 @@ $html = new Form($db);
 		  print '<td>&nbsp;</td><td>&nbsp;</td>';
 
 		  print "</tr>\n";
+
+          if ($objp->date_debut) $dateactstart=$objp->date_debut;
+          if ($objp->date_fin) $dateactend=$objp->date_fin;
+            
+                    // Dates mise en service
+                    print '<tr '.$bc[$var].'>';
+                    print '<td>&nbsp;</td>';
+                    print '<td colspan="7">';
+                    // Si pas encore activé
+                    if (! $objp->date_debut_reelle) {
+                        print $langs->trans("DateStartPlanned").': ';
+                        if ($objp->date_debut) print dolibarr_print_date($objp->date_debut);
+                        else print $langs->trans("Unknown");
+                    }
+                    // Si activé
+                    if ($objp->date_debut_reelle) {
+                        print $langs->trans("DateStartReal").': ';
+                        if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
+                        else print $langs->trans("ContractStatusNotRunning");
+                    }
+
+                    print ' &nbsp;-&nbsp; ';
+
+                    // Si pas encore activé
+                    if (! $objp->date_debut_reelle) {
+                        print $langs->trans("DateEndPlanned").': ';
+                        if ($objp->date_fin) {
+                            print dolibarr_print_date($objp->date_fin);
+                        }
+                        else print $langs->trans("Unknown");
+                    }
+                    // Si activé
+                    if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
+                        print $langs->trans("DateEndPlanned").': ';
+                        if ($objp->date_fin) {
+                            print dolibarr_print_date($objp->date_fin);
+                            if ($objp->date_fin < time()) { print " ".img_warning($langs->trans("Late")); }
+                        }
+                        else print $langs->trans("Unknown");
+                    }
+                    if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
+                        print $langs->trans("DateEndReal").': ';
+                        dolibarr_print_date($objp->date_fin_reelle);
+                    }
+                    print '</td>';
+                    print '</tr>';                     
 		  
 
 		  $i++;
 		}	      
-	      $db->free();
+	      $db->free($result);
 	    } 
 	  else
 	    {
@@ -297,21 +315,29 @@ $html = new Form($db);
 
 	    print '<table class="noborder" width="100%">';
 	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ActivateService").'</td></tr>';
-	    print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
-
-	    if ($_POST["remonth"])
-	      {
-		$dateact = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]); 
-	      }
-	    else
-	      {
-		$dateact = time();
-	      }
-
-	    print $form->select_date($dateact);
-	    print '</td></tr>';
 
 	    print '<tr '.$bc[$var].'><td>'.$langs->trans("User").'</td><td>'.$user->fullname.'</td></tr>';
+
+	    // Definie date debut et fin par defaut
+   	    if ($_POST["remonth"]) $dateactstart = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]); 
+   	    elseif (! $dateactstart) $dateactstart = time();
+
+	    if ($_POST["endmonth"]) $dateactend = mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]); 
+	    elseif (! $dateactend) {
+	        if ($objp->fk_product > 0) {
+	            $product=new Product($db);
+	            $product->fetch($objp->fk_product);
+	            $dateactend = dolibarr_time_plus_duree (time(), $product->duration_value, $product->duration_unit);
+	        }
+	    }
+
+	    print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
+	    print $form->select_date($dateactstart);
+	    print '</td></tr>';
+
+	    print '<tr '.$bc[$var].'><td>'.$langs->trans("DateEndPlanned").'</td><td>';
+	    print $form->select_date($dateactend,"end");
+	    print '</td></tr>';
 
 	    print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td><input size="50" type="text" name="commentaire"></td></tr>';
 
@@ -324,7 +350,7 @@ $html = new Form($db);
     else
       {
 	/* Contrat non trouvée */
-	print "Contrat inexistante ou accés refusé";
+	print "Contrat inexistant ou accés refusé";
       }
   }  
 

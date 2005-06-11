@@ -86,7 +86,7 @@ if ($resql)
   print '<table class="noborder" width="100%">';
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"enservice.php", "c.rowid","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Contract"),"enservice.php", "c.rowid","","","",$sortfield);
   print_liste_field_titre($langs->trans("Status"),"enservice.php", "cd.statut","","","",$sortfield);
   print_liste_field_titre($langs->trans("Service"),"enservice.php", "p.label","","","",$sortfield);
   print_liste_field_titre($langs->trans("Company"),"enservice.php", "s.nom","","","",$sortfield);

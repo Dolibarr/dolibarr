@@ -62,12 +62,33 @@ print '<table class="noborder" width="100%">';
 print '<tr><td width="30%" valign="top">';
 
 // Légende
-print 'Légende<br />';
+$var=false;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Legend").'</td></tr>';
+print '<tr '.$bc[$var].'><td nowrap>';
 print '<img src="./statut0.png" border="0" alt="statut">&nbsp;Statut initial<br />';
 print '<img src="./statut1.png" border="0" alt="statut">&nbsp;A commander<br />';
 print '<img src="./statut2.png" border="0" alt="statut">&nbsp;Commandé chez le fournisseur<br />';
 print '<img src="./statut3.png" border="0" alt="statut">&nbsp;Activé chez le fournisseur<br />';
 print '<img src="./statut4.png" border="0" alt="statut">&nbsp;Activé chez le client<br />';
+print '</td></tr>';
+print '</table>';
+
+print '<br>';
+    
+/*
+ * Recherche Contrat
+ */
+if ($conf->contrat->enabled) {
+    $var=false;
+	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
+	print '<tr '.$bc[$var].'><td nowrap>';
+	print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_contract" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print "</table></form><br>\n";
+}
+
 
 print '</td><td width="70%" valign="top">';
 

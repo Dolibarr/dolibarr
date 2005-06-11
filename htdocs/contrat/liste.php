@@ -62,9 +62,10 @@ if ($user->societe_id > 0)
 
 
 
-$sql = "SELECT c.rowid as cid, c.statut, ".$db->pdate("c.fin_validite")." as fin_validite, c.fin_validite-sysdate() as delairestant,  s.nom, s.idp as sidp";
-$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE c.fk_soc = s.idp ";
+$sql = "SELECT count(cd.rowid) as nb, c.rowid as cid, c.datec, c.statut, s.nom, s.idp as sidp";
+$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
+$sql.= " WHERE c.fk_soc = s.idp ";
 if ($_POST["search_contract"]) {
     $sql .= " AND c.rowid = ".$_POST["search_contract"];
 }
@@ -72,8 +73,9 @@ if ($socid > 0)
 {
   $sql .= " AND s.idp = $socid";
 }
-$sql .= " ORDER BY $sortfield $sortorder, delairestant";
-$sql .= $db->plimit($limit + 1 ,$offset);
+$sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.idp";
+$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->plimit($limit + 1 ,$offset);
 
 $resql=$db->query($sql);
 if ($resql)
@@ -87,7 +89,9 @@ if ($resql)
 
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","","",$sortfield);
+  print_liste_field_titre($langs->trans("NbOfServices"), $_SERVER["PHP_SELF"], "nb","","","",$sortfield);
   print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","","",$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","","",$sortfield);
   print "</tr>\n";
     
   $now=mktime();
@@ -99,7 +103,9 @@ if ($resql)
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$obj->cid\">";
       print img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
+      print '<td>'.$obj->nb.'</td>';
       print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+      print '<td>'.dolibarr_print_date($obj->datec).'</td>';
 
       print "</tr>\n";
       $i++;
@@ -117,5 +123,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
