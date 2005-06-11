@@ -339,6 +339,7 @@ class MenuLeft {
                 // Prélèvements
                 if ($conf->prelevement->enabled)
                 {
+                    $langs->load("withdrawals");
                     $newmenu->add(DOL_URL_ROOT."/compta/prelevement/index.php?leftmenu=withdraw",$langs->trans("StandingOrders"));
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php",$langs->trans("Receipts"));
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"));
