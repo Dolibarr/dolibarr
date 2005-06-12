@@ -269,7 +269,7 @@ if ($_GET["action"] == 'create')
 
   print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
 
-  print '<tr><td>'.$langs->trans("Billingcontact").'</td><td colspan="5">';
+  print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="5">';
   print $form->selectyesno("facturation",$contact->facturation);
   print '</td></tr>';
 
