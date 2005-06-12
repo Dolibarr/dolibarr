@@ -355,9 +355,55 @@ if ($_socid > 0)
             }
             $db->free($resql);
         }
+        else {
+            dolibarr_print_error($db);
+        }
         print "</table>";
     }
 
+    /*
+     * Derniers contrats
+     */
+    if($conf->contrat->enabled)
+    {
+        print '<table class="noborder" width="100%">';
+
+        $sql = "SELECT s.nom, s.idp, c.rowid as id, c.rowid as ref, ".$db->pdate("c.datec")." as dc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+        $sql .= " WHERE c.fk_soc = s.idp ";
+        $sql .= " AND s.idp = $objsoc->id";
+        $sql .= " ORDER BY c.datec DESC";
+
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $var=true;
+            $num = $db->num_rows($resql);
+            if ($num >0 )
+            {
+                print '<tr class="liste_titre">';
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/contrat/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllContracts").' ('.$num.')</td></tr></table></td>';
+                print '</tr>';
+            }
+            $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
+            while ($i < $num && $i < $MAXLIST)
+            {
+                $objp = $db->fetch_object($resql);
+                $var=!$var;
+                print "<tr $bc[$var]>";
+                print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$objp->ref."</a>\n";
+                print "</td><td align=\"right\">".dolibarr_print_date($objp->dc)."</td>\n";
+                print '</tr>';
+                $i++;
+            }
+            $db->free($resql);
+        }
+        else {
+            dolibarr_print_error($db);
+        }
+        print "</table>";
+    }
+    
     /*
      * Dernieres interventions
      */
@@ -458,21 +504,16 @@ if ($_socid > 0)
         print '<a class="tabAction" href="addpropal.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
     }
 
-    if ($user->rights->contrat->creer)
-    {
-        $langs->load("contracts");
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContract").'</a>';
-    }
-
     if ($conf->commande->enabled && $user->rights->commande->creer)
     {
         $langs->load("orders");
         print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a>';
     }
 
-    if ($conf->projet->enabled && $user->rights->projet->creer)
+    if ($user->rights->contrat->creer)
     {
-        print '<a class="tabAction" href="../projet/fiche.php?socidp='.$objsoc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+        $langs->load("contracts");
+        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContract").'</a>';
     }
 
     if ($conf->fichinter->enabled)
@@ -480,6 +521,12 @@ if ($_socid > 0)
         $langs->load("fichinter");
         print '<a class="tabAction" href="../fichinter/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';
     }
+
+    if ($conf->projet->enabled && $user->rights->projet->creer)
+    {
+        print '<a class="tabAction" href="../projet/fiche.php?socidp='.$objsoc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+    }
+
 
     print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 
