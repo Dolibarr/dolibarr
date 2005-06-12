@@ -2,6 +2,7 @@
 ContractsArea=Espace contrats
 ListOfContracts=Liste des contrats
 LastContracts=Les %s derniers contrats modifiés
+AllContracts=Tous les contrats
 ContractCard=Fiche contrat
 ContractStatus=État du contrat
 ContractStatusNotRunning=Hors service
