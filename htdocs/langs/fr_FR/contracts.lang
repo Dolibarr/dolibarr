@@ -1,7 +1,7 @@
 # Dolibarr language file - fr_FR - contracts
 ContractsArea=Espace contrats
 ListOfContracts=Liste des contrats
-LastContracts=Les %s derniers contrats modifiés
+LastContracts=Les %s derniers contrats
 AllContracts=Tous les contrats
 ContractCard=Fiche contrat
 ContractStatus=État du contrat
