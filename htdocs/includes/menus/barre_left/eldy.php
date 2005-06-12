@@ -203,15 +203,6 @@ class MenuLeft {
                   if ($leftmenu=="sendings") $newmenu->add_submenu(DOL_URL_ROOT."/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1 ,$user->rights->expedition->lire);
                 }
                 
-                // Interventions
-                if ($conf->fichinter->enabled ) 
-                {
-                  $langs->load("interventions");
-                  $newmenu->add(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->rights->ficheinter->lire);
-                  if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer);
-                  if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("List"), 1 ,$user->rights->ficheinter->lire);
-                }
-                
                 // Contrat
                 if ($conf->contrat->enabled)
                 {
@@ -220,6 +211,15 @@ class MenuLeft {
                   if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=contracts", $langs->trans("NewContract"), 1, $user->rights->contrat->creer);
                   if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/liste.php", $langs->trans("List"), 1 ,$user->rights->contrat->lire);
                   if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/enservice.php", $langs->trans("ContractStatusRunning"), 1 ,$user->rights->contrat->lire);
+                }
+                
+                // Interventions
+                if ($conf->fichinter->enabled ) 
+                {
+                  $langs->load("interventions");
+                  $newmenu->add(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->rights->ficheinter->lire);
+                  if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer);
+                  if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("List"), 1 ,$user->rights->ficheinter->lire);
                 }
                 
             }
