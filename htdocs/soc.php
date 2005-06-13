@@ -236,7 +236,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           print $soc->adresse;
           print '</textarea></td></tr>';
           
-          print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"><input type="button" name="searchpostalcode" value="'.$langs->trans('Search').'" onclick="PopupPostalCode(cp.value,ville)"></td>';
+          print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'" onblur="PopupPostalCode(cp.value,ville)"><input type="button" name="searchpostalcode" value="'.$langs->trans('Search').'" onclick="PopupPostalCode(cp.value,ville)"></td>';
           print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
     
           print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
