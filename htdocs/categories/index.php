@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
+ * Copyright (C) 2005 Éric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,13 +37,13 @@ $c = new Categorie ($db);
 /*
  * Zone recherche produit/service
  */
-print '<form method="post" action="search.php">';
+print '<form method="post" action="index.php">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
 print '<tr '.$bc[0].'><td>';
-print $langs->trans("Name").'&nbsp;:</td><td><input class="flat" type="text" size="20" name="catname" /></td><td><input type="submit" value="'.$langs->trans ("Search").'"></td></tr>';
+print $langs->trans("Name").'&nbsp;:</td><td><input class="flat" type="text" size="20" name="catname" value="' . $_POST['catname'] . '"/></td><td><input type="submit" value="'.$langs->trans ("Search").'"></td></tr>';
 print '<tr '.$bc[0].'><td>';
 print $langs->trans("SubCatOf").'&nbsp;:</td><td><select class="flat" name="subcatof" />';
 print '<option value="-1">'.$langs->trans("Choose").'</option>';
@@ -58,6 +59,28 @@ print '</select></td><td><input type="submit" value="'.$langs->trans ("Search").
 print '</table></form>';
 
 print '</td><td valign="top" width="70%">';
+
+
+/*
+ * Catégories trouvées
+ */
+
+if($_POST['catname']) {
+  $cats = $c->rechercher_par_nom ($_POST['catname']);
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
+  
+  foreach ($cats as $cat)
+    {
+      $i = !$i;
+      print "\t<tr ".$bc[$i].">\n";
+      print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
+      print "\t\t<td>".$cat->description."</td>\n";
+      print "\t</tr>\n";
+    }
+  print "</table>";
+  
+}
 
 /*
  * Catégories principales
@@ -83,6 +106,7 @@ else
 {
   dolibarr_print_error();
 }
+
 
 print '</td></tr></table>';
 
