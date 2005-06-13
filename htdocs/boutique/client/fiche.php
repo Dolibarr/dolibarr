@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
+ * Copyright (C) 2003-2005 Éric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +24,9 @@ require("./pre.inc.php");
 
 llxHeader();
 
-if ($action == 'addga') {
-  $client = new Client($db);
-
-  $client->linkga($id, $ga);
-}
-
-
 if ($action == 'update' && !$cancel) {
   $client = new Client($db);
-
   $client->nom = $nom;
-
   $client->update($id, $user);
 }
 
@@ -43,72 +34,72 @@ if ($action == 'update' && !$cancel) {
  *
  *
  */
+if ($_GET['id'])
+{
+  
+  $client = new Client($db);
+  $result = $client->fetch($_GET['id']);
+  if ( $result )
+    { 
+      print '<div class="titre">Fiche Client : '.$client->name.'</div><br>';
 
-  if ($id)
-    {
-
-      $client = new Client($db);
-      $result = $client->fetch($id);
-
-      if ( $result )
-	{ 
-
-	  print '<div class="titre">Fiche Client : '.$client->name.'</div><br>';
-
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-	  print "<tr>";
-	  print '<td width="20%">Nom</td><td width="80%">'.$client->name.'</td></tr>';
+      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+      print "<tr>";
+      print '<td width="20%">Nom</td><td width="80%">'.$client->name.'</td></tr>';
+      print "</table>";
+      
+      
+      /*
+       * Commandes
+       *
+       */
+      $sql = "SELECT o.orders_id, o.customers_id,".$db->pdate("date_purchased")." as date_purchased, t.value as total";
+      $sql .= " FROM ".DB_NAME_OSC.".orders as o, ".DB_NAME_OSC.".orders_total as t";;
+      $sql .= " WHERE o.customers_id = " . $client->id;
+      $sql .= " AND o.orders_id = t.orders_id AND t.class = 'ot_total'";
+      if ( $db->query($sql) )
+	{
+	  $num = $db->num_rows();
+	  $i = 0;
+	  print '<table class="noborder" width="50%">';
+	  print "<tr class=\"liste_titre\"><td>Commandes</td>";
+	  print "</tr>\n";
+	  $var=True;
+	  while ($i < $num) {
+	    $objp = $db->fetch_object();
+	    $var=!$var;
+	    print "<tr $bc[$var]>";
+	    
+	    print '<td><a href="'.DOL_URL_ROOT.'/boutique/commande/fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche">&nbsp;';
+	    
+	    print strftime("%d %B %Y",$objp->date_purchased)."</a>\n";
+	    print $objp->total . "</a></TD>\n";
+	    print "</tr>\n";
+	    $i++;
+	  }
 	  print "</table>";
-
-
-	  /*
-	   * Commandes
-	   *
-	   */
-	  $sql = "SELECT orders_id, customers_id,".$db->pdate("date_purchased")." as date_purchased";
-	  $sql .= " FROM ".DB_NAME_OSC.".orders";
-	  $sql .= " WHERE customers_id = " . $client->id;
-	  
-	  if ( $db->query($sql) )
-	    {
-	      $num = $db->num_rows();
-	      $i = 0;
-	      print '<table class="noborder" width="50%">';
-	      print "<tr class=\"liste_titre\"><td>Commandes</td>";
-	      print "</tr>\n";
-	      $var=True;
-	      while ($i < $num) {
-		$objp = $db->fetch_object();
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		
-		print '<td><a href="'.DOL_URL_ROOT.'/boutique/commande/fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche"></a>&nbsp;';
-		
-		print "<a href=\"".DOL_URL_ROOT."/boutique/commande/fiche.php?id=$objp->orders_id\">".strftime("%d %B %Y",$objp->date_purchased)."</a></TD>\n";
-		
-		print "</tr>\n";
-		$i++;
-	      }
-	      print "</table>";
-	      $db->free();
-	    }
-	  else
-	    {
-	      dolibarr_print_error($db);
-	    }
-	  
+	  $db->free();
 	}
       else
 	{
-	      dolibarr_print_error($db);
+	  print "<p>ERROR 1</p>\n";
+	  dolibarr_print_error($db);
 	}
-    
-
+      
     }
   else
     {
-      print "Error";
+      print "<p>ERROR 1</p>\n";
+      dolibarr_print_error($db);
     }
+  
+  
+}
+else
+{
+  print "<p>ERROR 1</p>\n";
+  print "Error";
+}
 
 
 /* ************************************************************************** */

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
+ * Copyright (C) 2003-2005 Éric Seigne <eric.seigne@ryxeo.com>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,15 +33,14 @@ llxHeader();
  *
  */
 
-if ($id)
+if ($_GET['id'])
 {
-
   $commande = new Commande($db);
-  $result = $commande->fetch($id);
+  $result = $commande->fetch($_GET['id']);
   
   if ( $result )
     { 
-	  
+      
       print '<div class="titre">Fiche Commande : '.$commande->id.'</div><br>';
 
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
@@ -83,9 +82,9 @@ if ($id)
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
 	      print '<td align="left" width="40%">';
-	      print '<a href="fiche.php?id='.$objp->rowid.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" width="16" height="16" alt="Fiche livre"></a>';
+	      print '<a href="fiche.php?id='.$objp->products_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" width="16" height="16" alt="Fiche livre"></a>';
 	    
-	      print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->products_name.'</a>';
+	      print '<a href="fiche.php?id='.$objp->products_id.'">'.$objp->products_name.'</a>';
 	      print "</td>";
 
 	      print '<td align="center"><a href="fiche.php?id='.$objp->rowid."\">$objp->products_quantity</a></TD>\n";
