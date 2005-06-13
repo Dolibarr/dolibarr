@@ -63,7 +63,7 @@ $sql .= " , ".MAIN_DB_PREFIX."user as c";
 
 $sql .= " WHERE l.rowid = f.fk_ligne";
 $sql .= " AND l.fk_commercial_sign = c.rowid";
-$sql .= " GROUP BY date_format(f.date,'%Y%m'), c.rowid ASC";
+$sql .= " GROUP BY date_format(f.date,'%Y%m'), c.rowid DESC";
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
