@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Éric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +25,20 @@ require("./pre.inc.php");
 
 llxHeader();
 
-if ($sortfield == "") {
+if ($_GET['sortfield'] == "") {
   $sortfield="lower(p.label),p.price";
 }
-if ($sortorder == "") {
+if ($_GET['sortorder'] == "") {
   $sortorder="ASC";
 }
 
 
-if ($page == -1) { $page = 0 ; }
+if ($_GET['page'] == -1) {
+  $page = 0 ;
+}
+else {
+  $page = $_GET['page'];
+}
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
@@ -43,7 +49,7 @@ $sql = "SELECT p.products_id, p.products_model, p.products_quantity, p.products_
 $sql .= " FROM ".DB_NAME_OSC.".products as p, ".DB_NAME_OSC.".products_description as d, ".DB_NAME_OSC.".manufacturers as m";
 $sql .= " WHERE p.products_id = d.products_id AND d.language_id =" . OSC_LANGUAGE_ID;
 $sql .= " AND p.manufacturers_id=m.manufacturers_id";
-if ($reqstock=='epuise')
+if ($_GET['reqstock']=='epuise')
 {
   $sql .= " AND p.products_quantity <= 0";
 }  
