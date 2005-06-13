@@ -21,10 +21,11 @@
 -- ========================================================================
 --
 create table llx_telephonie_distributeur (
-  rowid             integer AUTO_INCREMENT PRIMARY KEY,
-  nom               varchar(50) NOT NULL,
-  grille_tarif      integer DEFAULT 1,
-  remun_pourcentage real,
-  remun_avance      real
+  rowid               integer AUTO_INCREMENT PRIMARY KEY,
+  nom                 varchar(50) NOT NULL,
+  grille_tarif        integer DEFAULT 1,
+  remun_avance        real,
+  remun_pourcent_prev real,
+  remun_pourcent_autr real
 
 )type=innodb;
