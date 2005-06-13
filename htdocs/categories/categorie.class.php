@@ -581,6 +581,7 @@ class Categorie
   {
     $primary_way = Array();
     $way = $this->get_primary_way($id);
+    $w = array();
     foreach ($way as $cat)
       {
 	if ($url == '')
@@ -592,9 +593,8 @@ class Categorie
 	    $w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
 	  }
       }
-				
+    
     return implode($sep, $w);
-
   }
   /**
    * Retourne un tableau contenant la liste des catégories mères
