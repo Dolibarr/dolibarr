@@ -69,9 +69,8 @@ class mod_facture_janus extends ModeleNumRefFactures
       $mois = strftime("%m", $fac->date);
       $num=0;
       
-      $sql = "SELECT max(0+substring(facnumber,8)) FROM ".MAIN_DB_PREFIX."facture";
+      $sql = "SELECT max(0+substring(facnumber,5)) FROM ".MAIN_DB_PREFIX."facture";
       $sql .= " WHERE facnumber like '$prefix".$annee.$mois."%'";
-    
       if ( $db->query($sql) ) 
         {
           $row = $db->fetch_row(0);
