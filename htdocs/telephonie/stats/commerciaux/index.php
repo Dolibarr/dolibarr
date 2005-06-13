@@ -38,6 +38,10 @@ $head[$h][1] = "Global";
 $hselected = $h;
 $h++;
 
+$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/ca.php';
+$head[$h][1] = "CA";
+$h++;
+
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/mensuel.php';
 $head[$h][1] = "Mensuel";
 $h++;
@@ -159,11 +163,7 @@ print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/commandes.mensuels.png" alt="Commandes de ligne par mois" title="Commandes de ligne par mois"><br /><br />'."\n";
 
 print '</td></tr>';
-
-
 print '</table>';
-
-
 
 $db->close();
 
