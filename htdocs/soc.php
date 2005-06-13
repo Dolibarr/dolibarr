@@ -168,7 +168,19 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 	  print '</div>';
 	}
 
-      print '<form action="soc.php" method="post">';
+      $js_OpenPopupWindow = "function PopupPostalCode (postalcode,objectville)
+{
+  var url = 'searchpostalcode.php?cp=' + postalcode + '&targetobject=window.opener.document.formsoc.' + objectville.name;
+  //  alert(url);
+  var hWnd = window.open(url, \"SearchPostalCodeWindow\", \"width=\" + 300 + \",height=\" + 150 + \",resizable=yes,scrollbars=yes\");
+  if((document.window != null) && (!hWnd.opener))
+     hWnd.opener = document.window;
+}
+";
+
+
+      print "<script language=\"javascript\">\n$js_OpenPopupWindow\n</script>\n";
+      print '<form action="soc.php" method="post" name="formsoc">';
       print '<input type="hidden" name="codeclient_modifiable" value="1">';
       
       print '<table class="border" width="100%">';
@@ -202,8 +214,9 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 
       }
       if ($step==2 || ! defined("COMPANY_CREATE_TWO_STEPS")) {
-
-          print '<tr><td>'.$langs->trans('CustomerCode').'/' . $langs->trans('SupplierCode') .'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
+	
+	print '<tr><td>'.$langs->trans('CustomerCode').'/' . $langs->trans('SupplierCode') .'</td><td><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td>';
+	print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
 
             if (defined("COMPANY_CREATE_TWO_STEPS")) {
               print '<tr><td width="140">'.$langs->trans('Country').'</td><td colspan="3">';
@@ -223,7 +236,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           print $soc->adresse;
           print '</textarea></td></tr>';
           
-          print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"></td>';
+          print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"><input type="button" name="searchpostalcode" value="'.$langs->trans('Search').'" onclick="PopupPostalCode(cp.value,ville)"></td>';
           print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
     
           print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
