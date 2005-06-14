@@ -20,7 +20,7 @@
  *
  */
 require("./pre.inc.php");
-require DOL_DOCUMENT_ROOT.'/telephonie/distributeurtel.class.php';
+
 
 if (!$user->rights->telephonie->lire) accessforbidden();
 
@@ -31,13 +31,8 @@ llxHeader('','Telephonie - Statistiques - Distributeur');
  */
 $h = 0;
 
-$head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/index.php';
-$head[$h][1] = "Liste";
-$h++;
-
 if ($_GET["id"])
 {
-
   $distri = new DistributeurTelephonie($db);
   $distri->fetch($_GET["id"]);
 
@@ -46,36 +41,19 @@ if ($_GET["id"])
   $hselected = $h;
   $h++;
 
-  $sql = "SELECT d.nom, d.rowid";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
-  $sql .= " WHERE d.rowid <> ".$distri->id;
-  $sql .= " ORDER BY d.nom ASC";
-  
-  $resql = $db->query($sql);
-  
-  if ($resql)
-    {
-      $num = $db->num_rows();
-      $i = 0;
-      $total = 0;
-      
-      while ($i < $num)
-	{
-	  $row = $db->fetch_row($resql);
-	  
-	  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/distributeur.php?id='.$row[1];
-	  $head[$h][1] = $row[0];	    
-	  $h++;
-	  $i++;
-	}
-    }
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/commissions.php?id='.$distri->id;
+  $head[$h][1] = "Commissions";
+  $h++;
 
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/po.php?id='.$distri->id;
+  $head[$h][1] = "Prises d'ordre";
+  $h++;
 
   dolibarr_fiche_head($head, $hselected, "Distributeur");
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-  print '<tr><td width="30%" valign="top">';
+  print '<tr><td width="50%" valign="top">';
   
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
@@ -119,8 +97,50 @@ if ($_GET["id"])
   print '</table><br />';
 
  
-  print '</td><td valign="top" width="70%">';
+  print '</td><td valign="top" width="50%">';
   
+  /* Commissions */
+
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre">';
+  print '<td>Date</td><td>Montant</td></tr>';
+
+  $sql = "SELECT c.date, c.montant";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";
+  
+  $sql .= " WHERE c.fk_distributeur = ".$_GET["id"];
+
+  $sql .= " ORDER BY c.date DESC";
+    
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      $total = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($i);	
+	  
+	  $var=!$var;
+	  
+	  print "<tr $bc[$var]>";
+	  
+	  print '<td>'.$row[0].'</td><td>'.price($row[1]).'</td>';
+	  
+	  $i++;
+	}
+      $db->free();
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+  print '</table><br />';
+
+
   print '</td></tr>';
   print '</table>';
  

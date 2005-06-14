@@ -60,6 +60,10 @@ if ($_GET["id"])
   $head[$h][1] = $distri->nom;
   $h++;
 
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/commissions.php?id='.$distri->id;
+  $head[$h][1] = "Commissions";
+  $h++;
+
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/po.php?id='.$distri->id;
   $head[$h][1] = "Prises d'ordre";
   $hselected = $h;
