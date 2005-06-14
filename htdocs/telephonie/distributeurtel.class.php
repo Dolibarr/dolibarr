@@ -45,8 +45,8 @@ class DistributeurTelephonie {
       $this->id = $id;
 
       $sql = "SELECT d.rowid, d.nom";
-      $sql .= " , d.remun_avance";
-      $sql .= " , d.remun_pourcent_prev, d.remun_pourcent_autr";
+      $sql .= " , d.avance_pourcent";
+      $sql .= " , d.rem_pour_prev, d.rem_pour_autr";
 
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
       $sql .= " WHERE d.rowid = ".$this->id;
