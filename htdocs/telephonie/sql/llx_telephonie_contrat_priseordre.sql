@@ -22,14 +22,18 @@
 --
 --
 create table llx_telephonie_contrat_priseordre (
-  rowid              integer AUTO_INCREMENT PRIMARY KEY,
-  fk_contrat         integer NOT NULL,
-  datepo             datetime,
-  montant            real NOT NULL,
-  fk_commercial      integer,
-  fk_distributeur    integer,
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  fk_contrat       integer NOT NULL,
+  datepo           datetime,
+  montant          real NOT NULL,
+  fk_commercial    integer,
+  fk_distributeur  integer,
+  fk_user          integer,
 
-  fk_user            integer
+  avance_pourcent  real,
+  avance_duree     smallint,
+  rem_pour_prev    real,
+  rem_pour_autr    real
 
 )type=innodb;
 
