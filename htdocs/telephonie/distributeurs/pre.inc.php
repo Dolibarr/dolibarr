@@ -22,9 +22,10 @@
 require("../../main.inc.php");
 
 $user->getrights('telephonie');
+require DOL_DOCUMENT_ROOT.'/telephonie/distributeurtel.class.php';
 
 function llxHeader($head = "", $title="") {
-  global $user, $conf;
+  global $user, $conf, $db;
 
   /*
    *
@@ -62,6 +63,31 @@ function llxHeader($head = "", $title="") {
   $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/distributeurs/", "Distributeurs");
+
+
+
+  $sql = "SELECT d.nom, d.rowid";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
+  $sql .= " ORDER BY d.nom ASC";
+  
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      $total = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($resql);
+	  
+	  $menu->add_submenu(DOL_URL_ROOT.'/telephonie/distributeurs/distributeur.php?id='.$row[1], $row[0]);
+
+	  $i++;
+	}
+    }
+
 
   $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/index.php", "Fournisseurs");
 
