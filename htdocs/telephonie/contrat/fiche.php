@@ -912,11 +912,11 @@ else
 	    }
 
 	  /*
-	   * Contact
+	   * Prise d'ordre
 	   *
 	   *
 	   */
-	  if ($_GET["action"] == 'po')
+	  if ($_GET["action"] == 'po' && $po == 0)
 	    {
 	      print_fiche_titre('Ajouter une prise d\'ordre');
 
@@ -969,7 +969,7 @@ if ($_GET["action"] == '')
   
   print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$contrat->id\">".$langs->trans("Contact")."</a>";
 
-  if ($user->rights->telephonie->ligne->creer)
+  if ($user->rights->telephonie->ligne->creer && $po == 0)
     {
       print "<a class=\"tabAction\" href=\"fiche.php?action=po&amp;id=$contrat->id\">Ajouter une prise d'ordre</a>";
     }
