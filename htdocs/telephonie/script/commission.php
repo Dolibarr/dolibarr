@@ -101,6 +101,7 @@ $sql .= " , avance_pourcent, rem_pour_prev";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
 
 $sql .= " WHERE date_format(datepo, '%Y%m') = '".$year_prev.$month_prev."';";
+$sql .= " AND fk_distributeur > 0";
 
 $resql = $db->query($sql);
 
@@ -168,6 +169,8 @@ $sql .= " AND l.fk_contrat = c.rowid";
 $sql .= " AND f.fk_ligne = l.rowid";
 
 //$sql .= " AND date_format(f.date, '%Y%m') = '".$year_prev.$month_prev."'";
+
+$sql .= " AND fk_distributeur > 0";
 
 $resql = $db->query($sql);
 
