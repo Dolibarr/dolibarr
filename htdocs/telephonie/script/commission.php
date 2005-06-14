@@ -51,6 +51,9 @@ else
 $month_prev = substr("00".$month_prev, -2) ;
 
 
+if (! $db->begin()) die ;
+
+
 /********************************************************
  *
  * Verification des données
@@ -86,6 +89,125 @@ else
   dolibarr_syslog("Erreur ".$error);
 }
 
+/********************************************************
+ *
+ * Calcul des avances
+ *
+ *
+ *********************************************************/
+
+$sql = "SELECT fk_distributeur, fk_contrat, datepo, montant";
+$sql .= " , avance_pourcent, rem_pour_prev";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
+
+$sql .= " WHERE date_format(datepo, '%Y%m') = '".$year_prev.$month_prev."';";
+
+$resql = $db->query($sql);
+
+if ( $resql )
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object($resql);
+      
+      $pourcent = $obj->rem_pour_prev;
+      $avance_pourcent = $obj->avance_pourcent;
+      
+      $avance = $obj->montant * 12 * $avance_pourcent * $pourcent;
+      
+      $avance = round($avance  * 0.0001, 2);
+
+      $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_avance";
+      $sqli .= " (date, fk_distributeur, fk_contrat, montant, pourcentage, avance)";
+      $sqli .= " VALUES ('".$year.$month."'";
+      $sqli .= ",".$obj->fk_distributeur.",".$obj->fk_contrat;
+      $sqli .= ",".ereg_replace(",",".",$avance);
+      $sqli .= ",".ereg_replace(",",".",$pourcent);
+      $sqli .= ",1)";
+      
+      if (! $db->query($sqli))
+	{
+	  $error++;
+	  dolibarr_syslog("Erreur ".$db->error());
+	}
+      
+      $i++;
+    }
+  $db->free($resql);
+}
+else
+{
+  $error++;
+  dolibarr_syslog("Erreur ".$db->error());
+}
+ 
+
+/********************************************************
+ *
+ * Somme des commissions de conso
+ *
+ *
+ *********************************************************/
+
+dolibarr_syslog("Conso");
+
+$sql = "SELECT f.cout_vente, p.fk_contrat, l.rowid as ligne, p.fk_distributeur";
+$sql .= " , p.avance_pourcent, p.rem_pour_prev, p.rem_pour_autr";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
+$sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
+$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= " , ".MAIN_DB_PREFIX."telephonie_facture as f";
+
+$sql .= " WHERE p.fk_contrat = c.rowid";
+
+$sql .= " AND l.fk_contrat = c.rowid";
+
+$sql .= " AND f.fk_ligne = l.rowid";
+
+//$sql .= " AND date_format(f.date, '%Y%m') = '".$year_prev.$month_prev."'";
+
+$resql = $db->query($sql);
+
+if ( $resql )
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+  dolibarr_syslog("Conso : ".$num);
+  
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object($resql);
+      
+      $pourcent = $obj->rem_pour_prev;
+      
+      $comm = round($obj->cout_vente * $pourcent * 0.01, 2) ;
+      
+      $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_conso";
+      $sqli .= " (date, fk_distributeur, fk_contrat, fk_ligne, montant, pourcentage)";
+      $sqli .= " VALUES ('".$year.$month."'";
+      $sqli .= ",".$obj->fk_distributeur.",".$obj->fk_contrat.",".$obj->ligne;
+      $sqli .= ",".ereg_replace(",",".",$comm);
+      $sqli .= ",".ereg_replace(",",".",$pourcent);
+      $sqli .= ")";
+      
+      if (! $db->query($sqli))
+	{
+	  dolibarr_syslog("Erreur ".$db->error());
+	}
+      
+      $i++;
+    }
+  $db->free($resql);
+}
+else
+{
+  $error = 9;
+  dolibarr_syslog("Erreur ".$db->error());
+}
 
 
 
@@ -97,56 +219,6 @@ foreach ($distributeurs as $distributeur_id)
   dolibarr_syslog($distributeur->nom);
   dolibarr_syslog($month_prev."-".$year_prev);
 
-  /********************************************************
-   *
-   * Calcul des avances
-   *
-   *
-   *********************************************************/
-  
-  $sql = "SELECT fk_distributeur, fk_contrat, datepo, montant";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
-  $sql .= " WHERE fk_distributeur = ".$distributeur->id; 
-  $sql .= " AND date_format(datepo, '%Y%m') = '".$year_prev.$month_prev."';";
-  
-  $resql = $db->query($sql);
-  
-  if ( $resql )
-    {
-      $num = $db->num_rows($resql);
-      $i = 0;
-      
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object($resql);
-	  
-	  $pourcent = $distributeur->remun_pourcent_prev;
-
-	  $avance = $obj->montant * $pourcent * 0.01;
-
-	  $avance = round($avance * $distributeur->remun_avance * 0.01, 2);
-
-	  
-	  $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_detail";
-	  $sqli .= " (date, fk_distributeur, fk_contrat, montant, pourcentage, avance)";
-	  $sqli .= " VALUES ('".$year.$month."'";
-	  $sqli .= ",".$distributeur->id.",".$obj->fk_contrat;
-	  $sqli .= ",".ereg_replace(",",".",$avance);
-	  $sqli .= ",".ereg_replace(",",".",$pourcent);
-	  $sqli .= ",1)";
-
-	  $resqli = $db->query($sqli);
-
-	  $i++;
-	}
-      $db->free($resql);
-    }
-  else
-    {
-      $error = 1;
-      dolibarr_syslog("Erreur ".$error);
-    }
-  
 
   /********************************************************
    *
@@ -156,7 +228,7 @@ foreach ($distributeurs as $distributeur_id)
    *********************************************************/
   
   $sql = "SELECT sum(montant)";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_detail";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_avance";
   $sql .= " WHERE fk_distributeur = ".$distributeur->id; 
   $sql .= " AND date = '".$year.$month."';";
 
@@ -177,7 +249,10 @@ foreach ($distributeurs as $distributeur_id)
 	  $sqli .= ",".$distributeur->id;
 	  $sqli .= ",".ereg_replace(",",".",$row[0]).")";
 
-	  $resqli = $db->query($sqli);
+	  if (! $db->query($sqli))
+	    {
+	      $error++;
+	    }
 
 	  dolibarr_syslog($row[0]);
 
@@ -190,7 +265,17 @@ foreach ($distributeurs as $distributeur_id)
       $error = 10;
       dolibarr_syslog("Erreur ".$error);
     }
+}
 
+if ($error == 0)
+{
+  $db->commit();
+  dolibarr_syslog("Commit");
+}
+else
+{
+  $db->rollback();
+  dolibarr_syslog("Rollback");
 }
 
 ?>
