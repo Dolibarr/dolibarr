@@ -46,12 +46,13 @@ print '<tr><td width="50%" valign="top">';
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre">';
-print '<td>Distributeur</td></tr>';
+print '<td>Distributeur</td><td>% Avance</td><td>% Prélèv</td><td>% Autre</td></tr>';
 
-$sql = "SELECT d.nom, d.rowid";
+$sql = "SELECT d.nom, d.rowid, d.avance_pourcent, d.rem_pour_prev, d.rem_pour_autr";
+
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
 
-$sql .= " ORDER BY d.nom ASC";
+$sql .= " ORDER BY d.rowid ASC";
 
 $resql = $db->query($sql);
 
@@ -70,7 +71,9 @@ if ($resql)
       print "<tr $bc[$var]>";
 
       print '<td><a href="distributeur.php?id='.$row[1].'">'.$row[0].'</a></td>';
-
+      print '<td>'.$row[2].'</td>';
+      print '<td>'.$row[3].'</td>';
+      print '<td>'.$row[4].'</td>';
       print '</tr>';
       $i++;
     }
