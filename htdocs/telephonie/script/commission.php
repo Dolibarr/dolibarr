@@ -148,7 +148,7 @@ else
 
 /********************************************************
  *
- * Somme des commissions de conso
+ * Calculs des commissions basées sur les consommations
  *
  *
  *********************************************************/
@@ -168,7 +168,7 @@ $sql .= " AND l.fk_contrat = c.rowid";
 
 $sql .= " AND f.fk_ligne = l.rowid";
 
-//$sql .= " AND date_format(f.date, '%Y%m') = '".$year_prev.$month_prev."'";
+$sql .= " AND date_format(f.date, '%Y%m') = '".$year_prev.$month_prev."'";
 
 $sql .= " AND fk_distributeur > 0";
 
