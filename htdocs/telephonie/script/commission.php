@@ -100,7 +100,7 @@ $sql = "SELECT fk_distributeur, fk_contrat, datepo, montant";
 $sql .= " , avance_pourcent, rem_pour_prev";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
 
-$sql .= " WHERE date_format(datepo, '%Y%m') = '".$year_prev.$month_prev."';";
+$sql .= " WHERE date_format(datepo, '%Y%m') = '".$year_prev.$month_prev."'";
 $sql .= " AND fk_distributeur > 0";
 
 $resql = $db->query($sql);
