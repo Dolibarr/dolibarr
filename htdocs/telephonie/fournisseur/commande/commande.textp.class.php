@@ -81,13 +81,13 @@ class CommandeMethodeTextP extends CommandeMethode
    */
   function MailFile($filename)
   {
-    $subject = "Commande de Lignes N° ".$this->commande_id;
+    $subject = "Commande de Lignes Numero : ".$this->commande_id;
 
     $sendto = $this->fourn->email_commande;
 
     $from = TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC;
 
-    $message = "Bonjour,\n\nVeuillez trouver ci-joint notre commande numéro : ".$this->commande_id.".\n\n";
+    $message = "Bonjour,\n\nVeuillez trouver ci-joint notre commande num : ".$this->commande_id.".\n\n";
     $message .= "\n\nCordialement,\n\n";
 
     $message .= "-- \n";
@@ -146,7 +146,7 @@ class CommandeMethodeTextP extends CommandeMethode
 	 */
 	$sql = $sqlall;
 	
-	$sql .= " AND l.statut in (1,4)";
+	$sql .= " AND l.statut in (1,4,8)";
 	$sql .= " ORDER BY l.statut ASC";
 	
 	$resql = $this->db->query($sql);
@@ -203,6 +203,10 @@ class CommandeMethodeTextP extends CommandeMethode
 	    if ($lint->statut == 4)
 	      {
 		$lint->set_statut($this->user, 5);
+	      }
+	    if ($lint->statut == 8)
+	      {
+		$lint->set_statut($this->user, 2);
 	      }
 	  }
 	
