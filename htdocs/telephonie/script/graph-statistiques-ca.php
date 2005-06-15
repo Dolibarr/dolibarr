@@ -32,6 +32,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/baraccumul.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/ca.class.php");
@@ -74,19 +75,23 @@ $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 /**********************************************************************/
 
 $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
-$sql .= " WHERE graph IN ('factures.ca_mensuel','factures.nb_mensuel')";
+$sql .= " WHERE graph IN ('factures.facture_moyenne','factures.ca_mensuel','factures.nb_mensuel')";
 $resql = $db->query($sql);
 
 
-$sql = "SELECT date_format(date,'%m'), sum(cout_vente), sum(cout_achat), sum(gain), count(cout_vente)";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";
-$sql .= " GROUP BY date_format(date,'%Y%m') ASC ";
+$sql = "SELECT date_format(tf.date,'%m'), sum(tf.cout_vente), sum(tf.cout_achat), sum(tf.gain), count(tf.cout_vente)";
+
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
+$sql .= " GROUP BY date_format(tf.date,'%Y%m') ASC ";
 
 $resql = $db->query($sql);
 
 if ($resql)
 {
+  $cout_vente_type = array();
   $cout_vente = array();
+  $cout_vente_prev = array();
+  $cout_vente_autr = array();
   $cout_vente_moyen = array();
   $nb_factures = array();
   $jour_semaine_nb = array();
@@ -103,6 +108,15 @@ if ($resql)
       $row = $db->fetch_row($resql);	
 
       $cout_vente[$i] = $row[1];
+
+      if ($row[5] == 3)
+	{
+	  $cout_vente_prev[$i] = $row[1];
+	}
+      else
+	{
+	  $cout_vente_autr[$i] = $row[1];
+	}
 
       $gain[$i] = $row[3];
       $gain_moyen[$i] = ($row[3]/$row[4]);
@@ -128,6 +142,10 @@ if ($resql)
       $i++;
     }
 }
+else
+{
+  print $db->error();
+}
 $file = $img_root . "/factures/ca_mensuel.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Chiffre d'affaire par mois en euros HT";
@@ -146,12 +164,14 @@ $graph->GraphDraw($file, $cout_vente_moyen, $labels);
 $file = $img_root . "/factures/gain_mensuel.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Gain par mois en euros HT";
+$graph->width = 440;
 print $graph->titre."\n";
 $graph->GraphDraw($file, $gain, $labels);
 
 $file = $img_root . "/factures/gain_moyen.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Gain moyen par facture par mois";
+$graph->width = 440;
 print $graph->titre."\n";
 $graph->barcolor = "blue";
 $graph->GraphDraw($file, $gain_moyen, $labels);
@@ -164,6 +184,105 @@ $graph->width = 440;
 $graph->barcolor = "yellow";
 $graph->GraphDraw($file, $nb_factures, $labels);
 
+
+
+
+
+$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
+$sql .= " WHERE graph IN ('factures.ca_mensuel_preleve','factures.ca_mensuel_autre')";
+$resql = $db->query($sql);
+
+
+
+$sql = "SELECT date_format(tf.date,'%m'), sum(tf.cout_vente)";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
+$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+$sql .= " WHERE tf.fk_facture = f.rowid";
+$sql .= " AND f.fk_mode_reglement = 3";
+$sql .= " GROUP BY date_format(tf.date,'%Y%m') ASC ";
+
+$resql = $db->query($sql);
+
+if ($resql)
+{
+  $cvp = array();
+  $num = $db->num_rows($resql);
+  $i = 0;
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);	
+
+      $cvp[$row[0]] = $row[1];
+
+      $sqli = " INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+      $sqli .= " (graph, ord, legend, valeur) VALUES (";
+      $sqli .= "'factures.ca_mensuel_preleve','".$i."','".$row[0]."','".$row[1]."')";     
+      if (!$resqli = $db->query($sqli)) print $db->error();
+
+      $i++;
+    }
+}
+else
+{
+  print $db->error();
+}
+
+$sql = "SELECT date_format(tf.date,'%m'), sum(tf.cout_vente)";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
+$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+$sql .= " WHERE tf.fk_facture = f.rowid";
+$sql .= " AND f.fk_mode_reglement <> 3";
+$sql .= " GROUP BY date_format(tf.date,'%Y%m') ASC ";
+
+$resql = $db->query($sql);
+
+if ($resql)
+{
+  $cva = array();
+  $num = $db->num_rows($resql);
+  $i = 0;
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);	
+
+      $cva[$row[0]] = $row[1];
+
+      $sqli = " INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+      $sqli .= " (graph, ord, legend, valeur) VALUES (";
+      $sqli .= "'factures.ca_mensuel_autre','".$i."','".$row[0]."','".$row[1]."')";     
+      if (!$resqli = $db->query($sqli)) print $db->error();
+
+      $i++;
+    }
+}
+else
+{
+  print $db->error();
+}
+
+$i = 0;
+foreach ($labels as $labl)
+{
+  $cout_vente_prelev[$i] = $cvp[$labl];
+  $cout_vente_autre[$i] = $cva[$labl];
+  $i++;
+}
+
+
+$file = $img_root . "/factures/ca_mensuel_preleve.png";
+$graph = new GraphBarAccumul ($db, $file);
+$graph->titre = "Chiffre d'affaire par méthode de réglement";
+print $graph->titre."\n";
+$graph->width = 440;
+$graph->height = 360;
+$graph->barcolor = "yellow";
+
+$graph->add_datas($cout_vente_prelev);
+$graph->add_datas($cout_vente_autre);
+
+$graph->GraphDraw($file, $labels, $cout_vente);
 
 
 ?>
