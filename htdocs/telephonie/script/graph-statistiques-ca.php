@@ -73,7 +73,12 @@ $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 /*
 /**********************************************************************/
 
-$sql = "SELECT date_format(date,'%Y%m'), sum(cout_vente), sum(cout_achat), sum(gain), count(cout_vente)";
+$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_stats";
+$sql .= " WHERE graph IN ('factures.ca_mensuel','factures.nb_mensuel')";
+$resql = $db->query($sql);
+
+
+$sql = "SELECT date_format(date,'%m'), sum(cout_vente), sum(cout_achat), sum(gain), count(cout_vente)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";
 $sql .= " GROUP BY date_format(date,'%Y%m') ASC ";
 
@@ -103,7 +108,23 @@ if ($resql)
       $gain_moyen[$i] = ($row[3]/$row[4]);
       $cout_vente_moyen[$i] = ($row[1]/$row[4]);
       $nb_factures[$i] = $row[4];
-      $labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
+      $labels[$i] = $row[0];
+
+      $sqli = " INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+      $sqli .= " (graph, ord, legend, valeur) VALUES (";
+      $sqli .= "'factures.ca_mensuel','".$i."','".$labels[$i]."','".$cout_vente[$i]."')";     
+      if (!$resqli = $db->query($sqli)) print $db->error();
+      
+      $sqli = " INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+      $sqli .= " (graph, ord, legend, valeur) VALUES (";
+      $sqli .= "'factures.nb_mensuel','".$i."','".$labels[$i]."','".$nb_factures[$i]."')";      
+      if (!$resqli = $db->query($sqli)) print $db->error();
+
+      $sqli = " INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+      $sqli .= " (graph, ord, legend, valeur) VALUES (";
+      $sqli .= "'factures.facture_moyenne','".$i."','".$labels[$i]."','".$cout_vente_moyen[$i]."')";
+      if (!$resqli = $db->query($sqli)) print $db->error();
+
       $i++;
     }
 }
@@ -113,7 +134,6 @@ $graph->titre = "Chiffre d'affaire par mois en euros HT";
 $graph->width = 440;
 print $graph->titre."\n";
 $graph->GraphDraw($file, $cout_vente, $labels);
-
 
 $file = $img_root . "/factures/facture_moyenne.png";
 $graph = new GraphBar ($db, $file, $labels);
