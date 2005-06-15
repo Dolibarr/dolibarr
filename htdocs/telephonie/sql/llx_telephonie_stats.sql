@@ -22,10 +22,12 @@
 --
 --
 create table llx_telephonie_stats (
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
   graph            varchar(255),
   ord              varchar(255),
-  valeur           varchar(255)
+  legend           varchar(255),
+  valeur           varchar(255),
+
+  index(graph)
 
 )type=innodb;
 
