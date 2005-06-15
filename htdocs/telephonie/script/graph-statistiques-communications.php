@@ -44,8 +44,48 @@ $sql .= " GROUP BY date_format(date, '%Y%m') ASC";
 $resql = $db->query($sql);
 
 
-_deal($db, $resql, "communications.duree", $kilomindurees, $labels);
+_deal($resql, $db, "communications.duree", $kilomindurees, $labels);
 
+/*
+if ($resql)
+{
+  $durees = array();
+  $kilomindurees = array();
+  $durees_moyenne = array();
+  $nombres = array();
+  $labels = array();
+
+  $num = $db->num_rows($resql);
+  $lim = ($num - $nbval);
+  $i = 0;
+  $j = 0;
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);
+
+      if ($i >= $lim )
+	{
+	  $labels[$j] = $row[0];
+	  $durees[$j] = $row[1];
+	  $kilomindurees[$j] = ($row[1]/60000);
+	  $durees_moyenne[$j] = ($row[1] / $row[2]);
+	  $nombres[$j] = $row[2];
+	  
+	  $sqli = " INSERT INTO ".MAIN_DB_PREFIX."telephonie_stats";
+	  $sqli .= " (graph, ord, legend, valeur) VALUES (";
+	  $sqli .= "'communications.duree','".$j."','".$row[0]."','".($row[1]/60)."')";
+	  
+	  if (!$resqli = $db->query($sqli))
+	    {
+	      print $db->error();
+	    }
+	  $j++;
+	}
+      $i++;
+    }
+}
+*/
 
 $file = $img_root . "communications/duree.png";
 $graphgain = new GraphBar ($db, $file);
