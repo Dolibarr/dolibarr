@@ -63,25 +63,73 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">'."\
 
 print '<tr><td width="50%" valign="top">'."\n";
 
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree.png" alt="Duree Moyenne"><br /><br />'."\n";
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree.png" alt="Nb Minutes"><br /><br />'."\n";
 
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree_loc.png" alt="Duree Moyenne vers Mobiles"><br /><br />'."\n";
+print '</td><td valign="top" width="50%">'."\n";
 
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree_mob.png" alt="Duree Moyenne vers Mobiles"><br /><br />'."\n";
+_legend($db, "communications.duree");
+
+print '</td></tr>';
+print '<tr><td width="50%" valign="top">'."\n";
+
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree_loc.png" alt="Communications locales"><br /><br />'."\n";
+
+print '</td><td valign="top" width="50%">'."\n";
+
+print '</td></tr><tr><td width="50%" valign="top">'."\n";
+
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree_mob.png" alt="Communications Mobiles"><br /><br />'."\n";
+
+print '</td><td valign="top" width="50%">'."\n";
+
+_legend($db, "communications.duree_mobiles");
+print '</td></tr>';
+
+print '<tr><td width="50%" valign="top">'."\n";
 
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree_inter.png" alt="Duree Moyenne vers Mobiles"><br /><br />'."\n";
 
 print '</td><td valign="top" width="50%">'."\n";
 
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/dureemoyenne.png" alt="Duree Moyenne"><br /><br />'."\n";
-
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/nbappelsparligne.png" alt="Duree Moyenne"><br /><br />';
-
 print '</td></tr>';
+
+
 
 print '</table>';
 
 $db->close();
+
+
+function _legend($db, $graph)
+{
+  print '<table>';
+  print '<table class="noborder" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre">';
+  print '<td colspan="2">Légende</td></tr>';
+  $sql = "SELECT legend, valeur";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats";
+  $sql .= " WHERE graph = '".$graph."'";
+  $sql .= " ORDER BY ord DESC";
+  
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($resql);
+	  $var = !$var;
+	  print "<tr $bc[$var]>";
+	  print '<td>'.$row[0].'</td><td align="right">'.ceil($row[1]).'</td></tr>';
+	  
+	  $i++;
+	}
+    }
+  print '</table>';
+}
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
