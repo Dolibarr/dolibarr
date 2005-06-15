@@ -249,6 +249,11 @@ class CommandeMethodeTableur extends CommandeMethode
 		    $worksheet->write($j, 5,  "Ajouter", $formatccb);
 		    $worksheet->write($j, 6,  strftime("%d/%m/%y",$this->date), $formatcc);
 		  }
+		elseif ($obj->statut == 8)
+		  {
+		    $worksheet->write($j, 5,  "Ajouter", $formatccb);
+		    $worksheet->write($j, 6,  strftime("%d/%m/%y",$this->date), $formatcc);
+		  }
 		elseif($obj->statut == 4)
 		  {
 		    $worksheet->write($j, 5,  "A Résilier", $formatccbr);
