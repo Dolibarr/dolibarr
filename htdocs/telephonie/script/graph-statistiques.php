@@ -340,11 +340,7 @@ if ($db->query($sql))
       $i++;
     }
 }
-$file = $img_root . "/factures/ca_mensuel.png";
-$graph = new GraphBar ($db, $file);
-$graph->titre = "Chiffre d'affaire par mois en euros HT";
-if ($verbose) print $graph->titre."\n";
-$graph->GraphDraw($file, $cout_vente, $labels);
+
 
 $file = $img_root . "/factures/facture_moyenne.png";
 $graph = new GraphBar ($db, $file, $labels);

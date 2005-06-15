@@ -364,13 +364,7 @@ if ($resql)
     }
 }
 
-$file = $img_root . "communications/duree.png";
-$graphgain = new GraphBar ($db, $file);
-$graphgain->show_console = 0 ;
-$graphgain->width = 480 ;
-$graphgain->titre = "Nb minutes (milliers)";
-print $graphgain->titre."\n";
-$graphgain->GraphDraw($file, $kilomindurees, $labels);
+
 
 $file = $img_root . "communications/nbappelsparligne.png";
 $graphgain = new GraphBar ($db, $file);
@@ -425,12 +419,7 @@ if ($db->query($sql))
     }
 }
 
-$file = $img_root . "communications/duree_mob.png";
-$graphgain = new GraphBar ($db, $file);
-$graphgain->show_console = 0 ;
-$graphgain->titre = "Nb minutes -> portables (milliers)";
-print $graphgain->titre."\n";
-$graphgain->GraphDraw($file, $kilomindurees_mob, $labels);
+
 
 /* ---------------------------------------------- */
 
@@ -541,11 +530,7 @@ if ($db->query($sql))
       $i++;
     }
 }
-$file = $img_root . "/factures/ca_mensuel.png";
-$graph = new GraphBar ($db, $file);
-$graph->titre = "Chiffre d'affaire par mois en euros HT";
-print $graph->titre."\n";
-$graph->GraphDraw($file, $cout_vente, $labels);
+
 
 $file = $img_root . "/factures/facture_moyenne.png";
 $graph = new GraphBar ($db, $file, $labels);
