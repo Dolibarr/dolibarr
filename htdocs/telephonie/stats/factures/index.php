@@ -54,21 +54,72 @@ dolibarr_fiche_head($head, $hselected, "Satistiques Factures");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-print '<tr><td valign="top">';
+print '<tr><td valign="top" width="50%">';
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/ca_mensuel.png" alt="ca_mensuel"><br /><br />';
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/ca_mensuel.png" alt="ca_mensuel">';
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/facture_moyenne.png" alt="facture_moyenne"><br /><br />';
+print '</td><td align="left" valign="top">';
+_legend($db, "factures.ca_mensuel");
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/nb_facture.png" alt="nb_facture"><br /><br />';
+print '</td></tr>';
 
-print '</td><td valign="top">';
+print '<tr><td valign="top" width="50%">';
+
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/facture_moyenne.png" alt="facture_moyenne">';
+
+print '</td><td align="left" valign="top">';
+_legend($db, "factures.facture_moyenne");
+
+print '</td></tr>';
+print '<tr><td valign="top" width="50%">';
+
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/nb_facture.png" alt="nb_facture">';
+
+print '</td><td align="left" valign="top">';
+_legend($db, "factures.nb_mensuel");
 
 print '</td></tr>';
 
 print '</table>';
 
 $db->close();
+
+
+function _legend($db, $graph)
+{
+
+  print '<table class="noborder" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre">';
+  print '<td colspan="2">Légende</td></tr>';
+  $sql = "SELECT legend, valeur";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats";
+  $sql .= " WHERE graph = '".$graph."'";
+  $sql .= " ORDER BY ord DESC";
+  
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($resql);
+	  $var = !$var;
+	  print "<tr $bc[$var]>";
+	  print '<td>'.$row[0].'</td><td align="right">'.ceil($row[1]).'</td></tr>';
+	  
+	  $i++;
+	}
+    }
+  print '</table>';
+}
+
+
+
+
+
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
