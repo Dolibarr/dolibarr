@@ -206,7 +206,7 @@ class CommandeMethodeTableur extends CommandeMethode
 
     $sql = $sqlall;
 
-    $sql .= " AND l.statut in (1,4)";
+    $sql .= " AND l.statut in (1,4,8)";
     $sql .= " ORDER BY l.statut ASC";
     
     $result = $this->db->query($sql);
@@ -342,6 +342,11 @@ class CommandeMethodeTableur extends CommandeMethode
 	if ($lint->statut == 4)
 	  {
 	    $lint->set_statut($this->user, 5);
+	  }
+
+	if ($lint->statut == 8)
+	  {
+	    $lint->set_statut($this->user, 2);
 	  }
       }
 

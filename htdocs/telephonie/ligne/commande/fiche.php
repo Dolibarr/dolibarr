@@ -68,7 +68,8 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= ",".MAIN_DB_PREFIX."societe as sf";
-$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid AND l.statut IN (1,4) ";
+$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid ";
+$sql .= " AND l.statut IN (1,4,8) ";
 $sql .= " AND l.fk_soc_facture = sf.idp";
 $sql .= " GROUP BY f.rowid, f.nom ASC";
 
@@ -133,7 +134,7 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
-$sql .= " AND l.statut IN (1,4) ";
+$sql .= " AND l.statut IN (1,4,8) ";
 $sql .= " AND l.fk_soc_facture = sf.idp";
 $sql .= " ORDER BY s.nom ASC ";
 

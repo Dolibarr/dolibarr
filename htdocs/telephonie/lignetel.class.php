@@ -387,12 +387,18 @@ class LigneTel {
       {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
 	$sql .= " SET statut = ".$statut ;
-	$sql .= ", date_commande = now()";
+	$sql .= " WHERE rowid =".$this->id;
+
+	$this->db->query($sql);
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+	$sql .= " SET date_commande = now()";
 	$sql .= ", fk_user_commande=".$user->id; 
 	$sql .= " WHERE rowid =".$this->id;
 	$sql .= " AND date_commande IS NULL";    
 
 	$this->db->query($sql);
+
       }
 
     if ($datea)
