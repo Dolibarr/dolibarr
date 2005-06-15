@@ -44,12 +44,19 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/index.php';
 $head[$h][1] = "Global";
 $hselected = $h;
 $h++;
+
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/gain.php';
 $head[$h][1] = "Gain";
 $h++;
-$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/lastmonth.php';
-$head[$h][1] = "3 derniers mois";
+
+$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/type.php';
+$head[$h][1] = "Méthode de paiement";
 $h++;
+
+//$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/factures/lastmonth.php';
+//$head[$h][1] = "3 derniers mois";
+//$h++;
+
 dolibarr_fiche_head($head, $hselected, "Satistiques Factures");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
