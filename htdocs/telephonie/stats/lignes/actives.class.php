@@ -32,7 +32,7 @@ class GraphLignesActives extends GraphLine {
     $this->file = $file;
 
     $this->client = 0;
-    $this->titre = "Lignes Actives";
+    $this->titre = "Lignes en présélections";
 
     $this->barcolor = "green";
     $this->showframe = true;
@@ -48,10 +48,10 @@ class GraphLignesActives extends GraphLine {
     $sql .= " WHERE statut = 3";
     $sql .= " ORDER BY dates ASC";
     
-    $result = $this->db->query($sql);
-    if ($result)
+    $resql = $this->db->query($sql);
+    if ($resql)
       {
-	$num = $this->db->num_rows();
+	$num = $this->db->num_rows($resql);
 	$i = 0;
 	$j = -1;
 	$attente = array();
@@ -62,18 +62,15 @@ class GraphLignesActives extends GraphLine {
 	
 	while ($i < $num)
 	  {
-	    $row = $this->db->fetch_row($i);	
-	    
-	    if ($last <> $row[0])
-	      {
-		$j++;
-		$labels[$j] = substr($row[0],5,2)."/".substr($row[0],2,2);
-		$attente[$j]    = 0;
-		$acommander[$j] = 0;
-		$commandee[$j]  = 0;
-		$active[$j]     = 0;
-		$last = $row[0];
-	      }
+	    $row = $this->db->fetch_row($resql);	
+
+	    $j++;
+	    $labels[$j] = substr($row[0],5,2)."/".substr($row[0],2,2);
+	    $attente[$j]    = 0;
+	    $acommander[$j] = 0;
+	    $commandee[$j]  = 0;
+	    $active[$j]     = 0;
+	    $last = substr($row[0],5,2)."/".substr($row[0],2,2);
 	    
 	    if ($row[1] == 3)
 	      {
@@ -100,9 +97,6 @@ class GraphLignesActives extends GraphLine {
       }
 
     $this->GraphDraw($this->file, $active, $labels);
-
   }
-
-}   
-
+}
 ?>
