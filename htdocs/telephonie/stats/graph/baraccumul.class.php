@@ -34,17 +34,25 @@ class GraphBarAccumul extends DolibarrGraph {
     $this->showframe = true;
     $this->datas = array();
 
-    $this->datas_color[0] = "green";
-    $this->datas_color[1] = "yellow";
-    $this->datas_color[2] = "blue";
-    $this->datas_color[3] = "pink";
+    $this->datas_color[0][0] = "green";
+    $this->datas_color[0][1] = "yellow";
+    $this->datas_color[0][2] = "blue";
+    $this->datas_color[0][3] = "pink";
+
+    $this->datas_color[1][0] = "blue";
+    $this->datas_color[1][1] = "red";
+    $this->datas_color[1][2] = "white";
+    $this->datas_color[1][3] = "pink";
   }
 
   Function add_datas($p_datas)
   {
+    /*
     $num = sizeof($this->datas);
 
     $this->datas[$num] = $p_datas;
+    */
+    $this->datas = $p_datas;
   }
   
   Function GraphDraw($file, $labels, $datas)
@@ -94,20 +102,29 @@ class GraphBarAccumul extends DolibarrGraph {
 	$graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
 
 	//
-	$accs = array();
 
-	for ($i = 0 ; $i < sizeof($this->datas) ; $i++)
+	$gbspl = array();
+
+	for ($j = 0 ; $j < sizeof($this->datas) ; $j++)
 	  {
-	    $b1plot = new BarPlot($this->datas[$i]);
-	    $b1plot->SetFillColor($this->datas_color[$i]);
+	    $accs = array();
+	    for ($i = 0 ; $i < sizeof($this->datas[$j]) ; $i++)
+	      {
+		$b1plot = new BarPlot($this->datas[$j][$i]);
+		$b1plot->SetFillColor($this->datas_color[$j][$i]);
+		
+		array_push($accs, $b1plot);
+	      }
 
-	    array_push($accs, $b1plot);
+	    // Create the accumulated bar plots
+	    $ab1plot = new AccBarPlot($accs);
+
+	    array_push($gbspl, $ab1plot);
 	  }
 
-	// Create the accumulated bar plots
-	$ab1plot = new AccBarPlot($accs);
-	// ...and add it to the graph
-	$graph->Add($ab1plot);
+	$gbplot =  new GroupBarPlot ($gbspl); 
+
+	$graph->Add($gbplot);
 
 	// Display the graph
     
