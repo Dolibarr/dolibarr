@@ -311,6 +311,10 @@ $graph->barcolor = "yellow";
 $xdatas[0] = array($cout_vente_prelev, $cout_vente_autre);
 $xdatas[1] = array($cout_achat);
 
+$graph->legend[0][0] = "Factures prélevées";
+$graph->legend[0][1] = "Factures non-prélevées";
+$graph->legend[1][0] = "Coût fournisseur";
+
 $graph->add_datas($xdatas);
 
 $graph->GraphDraw($file, $labels, $cout_vente);

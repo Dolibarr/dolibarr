@@ -34,6 +34,8 @@ class GraphBarAccumul extends DolibarrGraph {
     $this->showframe = true;
     $this->datas = array();
 
+    $this->legend = array();
+
     $this->datas_color[0][0] = "green";
     $this->datas_color[0][1] = "yellow";
     $this->datas_color[0][2] = "blue";
@@ -112,6 +114,10 @@ class GraphBarAccumul extends DolibarrGraph {
 	      {
 		$b1plot = new BarPlot($this->datas[$j][$i]);
 		$b1plot->SetFillColor($this->datas_color[$j][$i]);
+
+		
+		$b1plot->SetLegend($this->legend[$j][$i]);
+		
 		
 		array_push($accs, $b1plot);
 	      }
@@ -123,6 +129,11 @@ class GraphBarAccumul extends DolibarrGraph {
 	  }
 
 	$gbplot =  new GroupBarPlot ($gbspl); 
+
+
+
+	// Adjust the legend position
+	$graph->legend->Pos(0.14,0.14,"left","center");
 
 	$graph->Add($gbplot);
 
