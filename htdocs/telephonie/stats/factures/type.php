@@ -66,9 +66,10 @@ print '<tr><td valign="top" width="50%">';
 print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/factures/ca_mensuel_preleve.png" alt="ca_mensuel">';
 
 print '</td><td align="left" valign="top">';
-_legend($db, "factures.ca_mensuel_preleve");
+
+_legend($db, "Prélèvement","factures.ca_mensuel_preleve");
 print '</td><td align="left" valign="top">';
-_legend($db, "factures.ca_mensuel_autre");
+_legend($db, "Autres","factures.ca_mensuel_autre");
 
 print '</td></tr>';
 
@@ -79,12 +80,12 @@ print '</table>';
 $db->close();
 
 
-function _legend($db, $graph)
+function _legend($db, $legend, $graph)
 {
-
+  global $bc;
   print '<table class="noborder" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td colspan="2">Légende</td></tr>';
+  print '<td colspan="2">'.$legend.'</td></tr>';
   $sql = "SELECT legend, valeur";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_stats";
   $sql .= " WHERE graph = '".$graph."'";
@@ -96,13 +97,12 @@ function _legend($db, $graph)
     {
       $num = $db->num_rows($resql);
       $i = 0;
-      
       while ($i < $num)
 	{
 	  $row = $db->fetch_row($resql);
 	  $var = !$var;
 	  print "<tr $bc[$var]>";
-	  print '<td>'.$row[0].'</td><td align="right">'.ceil($row[1]).'</td></tr>';
+	  print '<td>mois '.$row[0].'</td><td align="right">'.ceil($row[1]).' euros HT</td></tr>';
 	  
 	  $i++;
 	}
