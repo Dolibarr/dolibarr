@@ -128,7 +128,7 @@ if ($_GET["id"])
 	  
 	  print "<tr $bc[$var]>";
 	  
-	  print '<td>'.$row[0].'</td><td>'.price($row[1]).'</td>';
+	  print '<td>'.$row[0].'</td><td>'.price($row[1]).' HT</td>';
 	  
 	  $i++;
 	}

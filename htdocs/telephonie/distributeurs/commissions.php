@@ -118,9 +118,10 @@ if ($_GET["id"])
 	  
 	  print "<tr $bc[$var]>";
 	  
-	  print '<td>'.$row[0].'</td><td>'.price($row[1]).'</td>';
-	  print '<td>'.price($consos[$row[0]]).'</td>';
-	  print '<td>'.price($consos[$row[0]] - $row[1]).'</td>';
+	  print '<td>'.substr($row[0], -2).'/'.substr($row[0],0,4).'</td>';
+	  print '<td>'.price($row[1]).' HT</td>';
+	  print '<td>'.price($consos[$row[0]]).' HT</td>';
+	  print '<td>'.price($consos[$row[0]] - $row[1]).' HT</td>';
 	  
 	  $i++;
 	}
