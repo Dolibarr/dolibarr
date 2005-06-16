@@ -178,23 +178,12 @@ else
 }
 
 
-print '</td>';
-
-
-
 print '</td><td valign="top" width="70%" rowspan="3">';
 
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/lignes.actives.png" alt="Lignes Actives" title="Lignes Actives"><br /><br />'."\n";
-
-print '<img src="./graphstat.php"><br /><br />';
-print '<img src="./graphconcurrent.php">';
-
 print '</td></tr>';
 
-
 print '</table>';
-
-
 
 $db->close();
 
