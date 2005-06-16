@@ -37,13 +37,34 @@
 /**
    \file       htdocs/searchpostalcode.php
    \ingroup    societe
-   \brief      Recherche de la ville correspondant au code postal saisi
+   \brief      Recherche de la ville correspondant au code postal saisi. 1er tour on cherche dans la table societé, si on a deux clients dans la même ville c'est direct. Si jamais ça ne donne rien alors on lance la recherche dans la table des codes postaux.
    \version    $Revision$
 */
 
 require("pre.inc.php");
 $user->getrights('societe');
 $langs->load("companies");
+
+function run_request($table) {
+  global $db;
+  $sql = "SELECT ville,cp from ".MAIN_DB_PREFIX.$table;
+  if(isset($_GET['cp']) && trim($_GET['cp']) != "") {
+    $sql .= " where cp ";
+    if(strstr($_GET['cp'],'%'))
+      $sql .="LIKE";
+    else
+      $sql .="=";
+    $sql .= " '" . $_GET['cp'] . "'";
+  }
+  else {
+    $sql .= " LIMIT 30";
+  }
+  $result=$db->query($sql);
+  if (!$result) {
+    dolibarr_print_error($db);
+  }
+  print $sql;
+}
 
 
 /*
@@ -89,30 +110,20 @@ print "<form method=\"post\" action=\"javascript:MAJ(" . $_GET['targetobject'] .
   </td>
 </tr>\n";
 
-$sql = "SELECT ville,postalcode from ".MAIN_DB_PREFIX."postalcode";
-if(isset($_GET['cp']) && trim($_GET['cp']) != "") {
-  $sql .= " where postalcode ";
-  if(strstr($_GET['cp'],'%'))
-    $sql .="LIKE";
-  else
-    $sql .="=";
-  $sql .= " '" . $_GET['cp'] . "'";
-}
-else {
-  $sql .= " LIMIT 30";
-}
-$result=$db->query($sql);
-if (!$result) {
-  dolibarr_print_error($db);
-}
+run_request("societe");
 
 $num=$db->num_rows();
+if($num == 0) {
+  run_request("postalcode");
+  $num=$db->num_rows();
+}
+
 //Si on n'a qu'un seul résultat on switche direct et on remplit le formulaire
 if($num <= 1) {
   $obj = $db->fetch_object($result);
   $ville = $obj->ville;
   $ville_code = urlencode("$ville");  
-  print "<input type=\"radio\" name=\"choix\" value=\"$ville_code\" checked>
+  print "<input type=\"radio\" name=\"choix\" value=\"$ville\" checked>
 <script language=\"javascript\">
 document.villes.submit();
 </script>\n";
