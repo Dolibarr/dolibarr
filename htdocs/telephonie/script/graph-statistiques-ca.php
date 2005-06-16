@@ -262,11 +262,40 @@ else
   print $db->error();
 }
 
+$sql = "SELECT date_format(tf.date,'%m'), sum(tf.fourn_montant)";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as tf";
+$sql .= " GROUP BY date_format(tf.date,'%Y%m') ASC ";
+
+$resql = $db->query($sql);
+
+if ($resql)
+{
+  $cvc = array();
+  $num = $db->num_rows($resql);
+  $i = 0;
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);	
+
+      $cvc[$row[0]] = $row[1];
+
+      $i++;
+    }
+}
+else
+{
+  print $db->error();
+}
+
+
+
 $i = 0;
 foreach ($labels as $labl)
 {
   $cout_vente_prelev[$i] = $cvp[$labl];
   $cout_vente_autre[$i] = $cva[$labl];
+  $cout_achat[$i] = $cvc[$labl];
   $i++;
 }
 
@@ -279,8 +308,10 @@ $graph->width = 440;
 $graph->height = 360;
 $graph->barcolor = "yellow";
 
-$graph->add_datas($cout_vente_prelev);
-$graph->add_datas($cout_vente_autre);
+$xdatas[0] = array($cout_vente_prelev, $cout_vente_autre);
+$xdatas[1] = array($cout_achat);
+
+$graph->add_datas($xdatas);
 
 $graph->GraphDraw($file, $labels, $cout_vente);
 
