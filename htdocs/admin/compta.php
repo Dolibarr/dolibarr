@@ -27,10 +27,10 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require('./pre.inc.php');
 
-$langs->load("admin");
-$langs->load("compta");
+$langs->load('admin');
+$langs->load('compta');
 
 if (!$user->admin)
   accessforbidden();
@@ -39,12 +39,12 @@ if (!$user->admin)
 llxHeader();
 
 
-$compta_mode = defined("COMPTA_MODE")?COMPTA_MODE:"RECETTES-DEPENSES";
+$compta_mode = defined('COMPTA_MODE')?COMPTA_MODE:'RECETTES-DEPENSES';
 
-if ($_POST["action"] == 'setcomptamode')
+if ($_POST['action'] == 'setcomptamode')
 {
-  $compta_mode = $_POST["compta_mode"];
-  if (! dolibarr_set_const($db, "COMPTA_MODE",$compta_mode)) { print $db->error(); }
+  $compta_mode = $_POST['compta_mode'];
+  if (! dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode)) { print $db->error(); }
 }
 
 
@@ -52,43 +52,43 @@ $form = new Form($db);
 $typeconst=array('yesno','texte','chaine');
 
 
-if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
+if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
 {
-	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''));
+	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : ''));
 	{
 	  	print $db->error();
 	}
 }
 
 
-if ($_GET["action"] == 'delete')
+if ($_GET['action'] == 'delete')
 {
-	if (! dolibarr_del_const($db, $_GET["constname"]));
+	if (! dolibarr_del_const($db, $_GET['constname']));
 	{
 	  	print $db->error();
 	}
 }
 
 
-print_titre($langs->trans("ComptaSetup"));
+print_titre($langs->trans('ComptaSetup'));
 
 
-print "<br>";
+print '<br>';
 
-print '<table class="noborder" width=\"100%\">';
+print '<table class="noborder" width="100%">';
 
 // Cas du paramètre COMPTA_MODE
 print '<form action="compta.php" method="post">';
 print '<input type="hidden" name="action" value="setcomptamode">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("OptionMode").'</td><td>'.$langs->trans("Description").'</td>';
-print '<td><input type="submit" value="'.$langs->trans("Modify").'"></td>';
+print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description').'</td>';
+print '<td><input type="submit" value="'.$langs->trans('Modify').'"></td>';
 print "</tr>\n";
-print "<tr ".$bc[false]."><td width=\"200\"><input type=\"radio\" name=\"compta_mode\" value=\"RECETTES-DEPENSES\"".($compta_mode != "CREANCES-DETTES"?" checked":"")."> ".$langs->trans("OptionModeTrue")."</td>";
-print "<td colspan=\"2\">".nl2br($langs->trans("OptionModeTrueDesc"))."</td></tr>\n";
-print "<tr ".$bc[true]."><td width=\"200\"><input type=\"radio\" name=\"compta_mode\" value=\"CREANCES-DETTES\"".($compta_mode == "CREANCES-DETTES"?" checked":"")."> ".$langs->trans("OptionModeVirtual")."</td>";
-print "<td colspan=\"2\">".$langs->trans("OptionModeVirtualDesc")."</td></tr>\n";
-print "</form>";
+print '<tr '.$bc[false].'><td width="200"><input type="radio" name="compta_mode" value="RECETTES-DEPENSES"'.($compta_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
+print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'))."</td></tr>\n";
+print '<tr '.$bc[true].'><td width="200"><input type="radio" name="compta_mode" value="CREANCES-DETTES"'.($compta_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
+print '<td colspan="2">'.$langs->trans('OptionModeVirtualDesc')."</td></tr>\n";
+print '</form>';
 
 print "</table>\n";
 
@@ -101,67 +101,59 @@ $sql.=" WHERE name like 'COMPTA_%' and name not in ('COMPTA_MODE')";
 $result = $db->query($sql);
 if ($result) 
 {
-  $num = $db->num_rows($result);
-  $i = 0;
-  $var=true;
+	$num = $db->num_rows($result);
+	$i = 0;
+	$var=true;
 
-  if ($num) { 
-  	print '<table class="noborder" width=\"100%\">';
+	if ($num)
+	{
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("OtherOptions").'</td><td>&nbsp;</td><td>&nbsp;</td><td>'.$langs->trans("Description").'</td>';
-		print '<td>&nbsp;</td>';
+		print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
 		print "</tr>\n";
-  }
-
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object($result);
-      $var=!$var;
-
-      print '<form action="compta.php" method="POST">';
-      print '<input type="hidden" name="action" value="update">';
-      print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-      print '<input type="hidden" name="constname" value="'.$obj->name.'">';
-
-      print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
-
-      print '<td>';
-      if ($obj->type == 'yesno')
-	{
-	  $form->selectyesnonum('constvalue',$obj->value);
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),0);
 	}
-      elseif ($obj->type == 'texte')
+
+	while ($i < $num)
 	{
-	  print '<textarea name="constvalue" cols="35" rows="5" wrap="soft">';
-	  print $obj->value;
-	  print "</textarea>\n";
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),1);
+		$obj = $db->fetch_object($result);
+		$var=!$var;
+
+		print '<form action="compta.php" method="POST">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+		print '<input type="hidden" name="constname" value="'.$obj->name.'">';
+
+		print '<tr '.$bc[$var].' class="value">';
+		print '<td>'.stripslashes(nl2br($obj->note))."</td>\n";
+
+		print '<td>';
+		if ($obj->type == 'yesno')
+		{
+			$form->selectyesnonum('constvalue',$obj->value);
+		}
+		elseif ($obj->type == 'texte')
+		{
+			print '<textarea name="constvalue" cols="35" rows="5" wrap="soft">';
+			print $obj->value;
+			print "</textarea>\n";
+		}
+		else
+		{
+			print '<input type="text" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
+		}
+		print '</td><td>';
+		print '<input type="submit" value="'.$langs->trans('Modify').'" name="button"> &nbsp; ';
+		print "</td></tr>\n";
+
+		print '</form>';
+
+		$i++;
 	}
-      else
-	{
-	  print '<input type="text" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),2);
-	}
-      print '</td><td>';
-
-      print '<input type="text" size="40" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
-      print '</td><td>';
-      print '<input type="submit" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
-      print '<a href="compta.php?constname='.$obj->name.'&action=delete">'.img_delete().'</a>';
-      print "</td></tr>\n";
-
-      print '</form>';
-
-      $i++;
-    }
     
-  if ($num) {
-	 print "</table>\n";
-  }
+	if ($num)
+	{
+		print "</table>\n";
+	}
 
 }
 
