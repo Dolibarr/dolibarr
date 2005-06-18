@@ -61,11 +61,13 @@ class box_factures_imp extends ModeleBoxes {
         global $user, $langs, $db;
         $langs->load("boxes");
 
+        $warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiement facture > delai)
+
         $this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedCustomerBills",$max));
 
         if ($user->rights->facture->lire)
         {
-            $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
+            $sql = "SELECT s.nom,s.idp,f.facnumber,".$db->pdate("f.date_lim_reglement")." as datelimite, f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.paye=0 AND fk_statut = 1";
             if($user->societe_id)
             {
@@ -78,7 +80,7 @@ class box_factures_imp extends ModeleBoxes {
             $result = $db->query($sql);
             if ($result)
             {
-                $num = $db->num_rows();
+                $num = $db->num_rows($result);
 
                 $i = 0;
 
@@ -86,11 +88,17 @@ class box_factures_imp extends ModeleBoxes {
                 {
                     $objp = $db->fetch_object($result);
 
+                    $late="";
+                    if ($obj->datelimite < (time() - $warning_delay))
+                    {
+                        $late=img_warning($langs->trans("Late"));    
+                    }
+
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $this->boximg,
-                    'text' => $objp->facnumber,
+                    'text' => $objp->facnumber.$late,
                     'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
-
+                   
                     $this->info_box_contents[$i][1] = array('align' => 'left',
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
