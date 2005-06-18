@@ -36,7 +36,7 @@
 
 class ModeleBoxes
 {
-    var $MAXLENGTHBOX=20;   // Mettre 0 pour pas de limite
+    var $MAXLENGTHBOX=70;   // Mettre 0 pour pas de limite
   
     var $error='';
 
@@ -86,20 +86,21 @@ class ModeleBoxes
                 if (isset($contents[$i][$j]['width'])) $tdparam.=' width="'. $contents[$i][$j]['width'].'"';
     
                 if ($contents[$i][$j]['text']) {
+                    $texte=$contents[$i][$j]['text'];
+                    $textewithnotags=eregi_replace('<[^>]+>','',$texte);
+                    //print "xxx $textewithnotags y";
+
                     if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo']) print '<td width="16">';
                     else print '<td '.$tdparam.'>';
     
-                    if (isset($contents[$i][$j]['url'])) print '<a href="'.$contents[$i][$j]['url'].'" title="'.$contents[$i][$j]['text'].'">';
+                    if (isset($contents[$i][$j]['url'])) print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'">';
                     if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo'])
                     {
                         $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
                         print img_object($langs->trans("Show"),$logo);
-                        print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'" title="'.$contents[$i][$j]['text'].'">';
+                        print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'">';
                     }
-                    $texte=$contents[$i][$j]['text'];
-                    $textewithnotag=eregi_replace('<[^>]+>','',$texte);
-                    //print "x $textewithnotag y";
-                    if ($this->MAXLENGTHBOX && strlen($textewithnotag) > $this->MAXLENGTHBOX)
+                    if ($this->MAXLENGTHBOX && strlen($textewithnotags) > $this->MAXLENGTHBOX)
                     {
                         $texte=substr($texte,0,$this->MAXLENGTHBOX)."...";
                     }
