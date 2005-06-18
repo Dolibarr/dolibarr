@@ -349,7 +349,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 		  print '<td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a>';
 		  if ($obj->datelimite < (time() - $warning_delay)) print img_warning($langs->trans("Late"));
 		  print '</td>';
-		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,50).'</a></td>';
+		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
 		  print '<td align="right">'.price($obj->total).'</td>';
 		  print '<td align="right">'.price($obj->total_ttc).'</td>';
 		  print '<td align="right">'.price($obj->am).'</td></tr>';
