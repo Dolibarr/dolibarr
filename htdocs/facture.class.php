@@ -115,8 +115,9 @@ class Facture
             }
             $this->db->free();
         }
-        $datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
 
+        // Definition de la date limite
+        $datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
         if ($cdr_fdm)
         {
             $mois=date('m', $datelim);
@@ -126,8 +127,8 @@ class Facture
         }
 
         /*
-        *  Insertion dans la base
-        */
+         *  Insertion dans la base
+         */
         $socid = $this->socidp;
         $number = $this->number;
         $amount = $this->amount;
