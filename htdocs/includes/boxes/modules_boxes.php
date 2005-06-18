@@ -36,7 +36,7 @@
 
 class ModeleBoxes
 {
-    var $MAXLENGTHBOX=20;   // Mettre 0 pour pas de limite
+    var $MAXLENGTHBOX=70;   // Mettre 0 pour pas de limite
   
     var $error='';
 
