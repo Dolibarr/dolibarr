@@ -268,7 +268,7 @@ if ($_GET["action"] == 'create')
 
       add_row_for_webcal_link();
         
-      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+      print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
       print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
       print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';  
       print '</table>';
@@ -391,8 +391,8 @@ if ($_GET["action"] == 'create')
       
       add_row_for_webcal_link();
       
-      // Description
-      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+      // Note
+      print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
       print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
 
       print '</table>';  
@@ -467,7 +467,7 @@ if ($_GET["id"])
       
       if ($act->note)
 	{
-	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
 	  print nl2br($act->note).'</td></tr>';
 	}
       print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"</td></tr>';
@@ -495,7 +495,7 @@ if ($_GET["id"])
       
       if ($act->note)
 	{
-	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
 	  print nl2br($act->note).'</td></tr>';
 	}
       print '</table>';
