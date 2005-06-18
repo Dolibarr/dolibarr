@@ -36,7 +36,7 @@
 
 class ModeleBoxes
 {
-    var $MAXLENGTHBOX=70;   // Mettre 0 pour pas de limite
+    var $MAXLENGTHBOX=20;   // Mettre 0 pour pas de limite
   
     var $error='';
 
@@ -97,7 +97,9 @@ class ModeleBoxes
                         print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'" title="'.$contents[$i][$j]['text'].'">';
                     }
                     $texte=$contents[$i][$j]['text'];
-                    if ($this->MAXLENGTHBOX && strlen($texte) > $this->MAXLENGTHBOX)
+                    $textewithnotag=eregi_replace('<[^>]+>','',$texte);
+                    //print "x $textewithnotag y";
+                    if ($this->MAXLENGTHBOX && strlen($textewithnotag) > $this->MAXLENGTHBOX)
                     {
                         $texte=substr($texte,0,$this->MAXLENGTHBOX)."...";
                     }
