@@ -35,6 +35,8 @@ $user->getrights(); // On a besoin des permissions sur plusieurs modules
 $langs->load("compta");
 $langs->load("bills");
 
+$warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiement facture > delai)
+
 /*
  * Sécurité accés client
  */
@@ -316,19 +318,15 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
    *
    */
 
-  $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc, sum(pf.amount) as am";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
-  $sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
-  if ($socidp)
-    {
-      $sql .= " AND f.fk_soc = $socidp";
-    }
-  $sql .= " GROUP BY f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc";
-  $sql .= " ORDER BY f.datef ASC ";
+  $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc, ".$db->pdate("f.date_lim_reglement")." as datelimite, sum(pf.amount) as am";
+  $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
+  $sql.= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
+  if ($socidp) $sql .= " AND f.fk_soc = $socidp";
+  $sql.= " GROUP BY f.facnumber, f.rowid, s.nom, s.idp, f.total, f.total_ttc";
+  $sql.= " ORDER BY f.datef ASC ";
 
   $resql = $db->query($sql);
-
-  if ( $resql )
+  if ($resql)
     {
       $num = $db->num_rows($resql);
       $i = 0;
@@ -347,7 +345,10 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	      if ($i < $conf->liste_limit)
 		{
 		  $var=!$var;
-		  print '<tr '.$bc[$var].'><td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+		  print '<tr '.$bc[$var].'>';
+		  print '<td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a>';
+		  if ($obj->datelimite < (time() - $warning_delay)) print img_warning($langs->trans("Late"));
+		  print '</td>';
 		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,50).'</a></td>';
 		  print '<td align="right">'.price($obj->total).'</td>';
 		  print '<td align="right">'.price($obj->total_ttc).'</td>';

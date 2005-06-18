@@ -38,6 +38,10 @@ accessforbidden();
 
 $langs->load("bills");
 
+
+$warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiement facture > delai)
+
+
 require_once "../facture.class.php";
 require_once "../paiement.class.php";
 if ($conf->projet->enabled) require_once "../project.class.php";
@@ -512,7 +516,7 @@ if ($_GET["action"] == 'create')
             print '<tr><td>'.$langs->trans("Author").' :</td><td>'.$user->fullname.'</td>';
 
             print '<td rowspan="6" valign="top">';
-            print '<textarea name="note" wrap="soft" cols="60" rows="5">';
+            print '<textarea name="note" wrap="soft" cols="50" rows="5">';
             if (is_object($commande) && !empty($commande->projet_id))
             {
                 print $commande->note;
@@ -526,21 +530,21 @@ if ($_GET["action"] == 'create')
             print '<tr><td>'.$langs->trans("Ref").' :</td><td>Provisoire</td></tr>';
             print '<input name="facnumber" type="hidden" value="provisoire">';
 
-            print "<tr><td>Conditions de réglement :</td><td>";
+            print "<tr><td nowrap>Conditions de réglement :</td><td>";
             $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."cond_reglement ORDER BY sortorder";
             $result = $db->query($sql);
             $conds=array();
             if ($result)
             {
-                $num = $db->num_rows();
+                $num = $db->num_rows($result);
                 $i = 0;
                 while ($i < $num)
                 {
-                    $objp = $db->fetch_object();
+                    $objp = $db->fetch_object($result);
                     $conds[$objp->rowid]=$objp->libelle;
                     $i++;
                 }
-                $db->free();
+                $db->free($result);
             }
 
             $html->select_array("condid",$conds);
@@ -886,7 +890,9 @@ else
 
             print '<tr><td>'.$langs->trans("Date").'</td>';
             print "<td colspan=\"3\">".strftime("%A %d %B %Y",$fac->date)."</td>\n";
-            print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement) ."</td></tr>";
+            print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement);
+            if ($fac->date_lim_reglement < (time() - $warning_delay)) print img_warning($langs->trans("Late"));
+            print "</td></tr>";
 
             print '<tr>';
             if ($conf->projet->enabled)

@@ -89,14 +89,12 @@ class box_factures_imp extends ModeleBoxes {
                     $objp = $db->fetch_object($result);
 
                     $late="";
-                    if ($obj->datelimite < (time() - $warning_delay))
-                    {
-                        $late=img_warning($langs->trans("Late"));    
-                    }
+                    if ($obj->datelimite < (time() - $warning_delay)) $late=img_warning($langs->trans("Late"));
 
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $this->boximg,
-                    'text' => $objp->facnumber.$late,
+                    'text' => $objp->facnumber,
+                    'text2'=> $late,
                     'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
                    
                     $this->info_box_contents[$i][1] = array('align' => 'left',

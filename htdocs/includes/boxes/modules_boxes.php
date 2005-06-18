@@ -36,7 +36,7 @@
 
 class ModeleBoxes
 {
-    var $MAXLENGTHBOX=70;   // Mettre 0 pour pas de limite
+    var $MAXLENGTHBOX=20;   // Mettre 0 pour pas de limite
   
     var $error='';
 
@@ -88,6 +88,8 @@ class ModeleBoxes
                 if ($contents[$i][$j]['text']) {
                     $texte=$contents[$i][$j]['text'];
                     $textewithnotags=eregi_replace('<[^>]+>','',$texte);
+                    $texte2=$contents[$i][$j]['text2'];
+                    $texte2withnotags=eregi_replace('<[^>]+>','',$texte2);
                     //print "xxx $textewithnotags y";
 
                     if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo']) print '<td width="16">';
@@ -104,8 +106,13 @@ class ModeleBoxes
                     {
                         $texte=substr($texte,0,$this->MAXLENGTHBOX)."...";
                     }
+                    if ($this->MAXLENGTHBOX && strlen($texte2withnotags) > $this->MAXLENGTHBOX)
+                    {
+                        $texte2=substr($texte2,0,$this->MAXLENGTHBOX)."...";
+                    }
                     print $texte;
                     if ($contents[$i][$j]['url']) print '</a>';
+                    print $texte2;
     
                     print "</td>";
                 }
