@@ -109,7 +109,8 @@ if ($_POST["action"] == 'add')
         {
             for ($i = 1 ; $i <= $NBLINES ; $i++)
             {
-                if ($_POST["idprod${i}"]) {
+                if ($_POST["idprod${i}"])
+                {
                     $startday='';
                     $endday='';
                     if ($_POST["date_start${i}year"] && $_POST["date_start${i}month"] && $_POST["date_start${i}day"]) {

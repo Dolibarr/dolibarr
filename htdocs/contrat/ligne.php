@@ -154,8 +154,8 @@ $html = new Form($db);
     	  print "</td></tr>";
       }
 
-	  print '<tr><td width="25%">'.$langs->trans("Commercial suivi").'</td><td>'.$commercial_suivi->fullname.'</td>';
-	  print '<td width="25%">'.$langs->trans("Commercial signature").'</td><td>'.$commercial_signature->fullname.'</td></tr>';
+	  print '<tr><td width="25%">'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>'.$commercial_suivi->fullname.'</td>';
+	  print '<td width="25%">'.$langs->trans("SalesRepresentativeSignature").'</td><td>'.$commercial_signature->fullname.'</td></tr>';
 	  print "</table>";
 	  
 	  
@@ -194,15 +194,16 @@ $html = new Form($db);
 	      
 	      if ($num)
 		{
-		  print '<tr class="liste_titre">';
-		  print '<td width="20">'.$langs->trans("Status").'</td>';
-		  print '<td>'.$langs->trans("Service").'</td>';
-		  print '<td align="center">'.$langs->trans("VAT").'</td>';
-		  print '<td align="center">'.$langs->trans("Qty").'</td>';
-		  print '<td align="right">'.$langs->trans("Discount").'</td>';
-		  print '<td align="right">'.$langs->trans("PriceU").'</td>';
-		  print '<td>&nbsp;</td><td width="10%">&nbsp;</td>';
-		  print "</tr>\n";
+                    print '<tr class="liste_titre">';
+                    print '<td>'.$langs->trans("Service").'</td>';
+                    print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
+                    print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
+                    print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
+                    print '<td width="50" align="right">'.$langs->trans("Discount").'</td>';
+                    print '<td width="16">&nbsp;</td>';
+                    print '<td width="16">&nbsp;</td>';
+                    print '<td width="30" align="center">'.$langs->trans("Status").'</td>';
+                    print "</tr>\n";
 		}
 	      $var=true;
 	      while ($i < $num)
@@ -210,10 +211,11 @@ $html = new Form($db);
 		  $objp = $db->fetch_object($result);
 
 		  $var=!$var;
-		  print "<tr $bc[$var]>\n";
-		  if ($objp->fk_product > 0)
+		  print "<tr $bc[$var] valign=\"top\">\n";
+
+          // Libellé
+    	  if ($objp->fk_product > 0)
 		    {
-		      print '<td><img src="./statut'.$objp->statut.'.png" border="0" alt="statut"></td>';
 		      print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a>';
 
 		      if ($objp->description)
@@ -227,19 +229,28 @@ $html = new Form($db);
 		    {
 		      print '<td>&nbsp;</td><td>'.stripslashes(nl2br($objp->description))."</td>\n";
 		    }
-		  print '<td align="center">'.$objp->tva_tx.' %</td>';
+		  print '<td align="center">'.$objp->tva_tx.'%</td>';
+
+		  print '<td align="right">'.price($objp->subprice)."</td>\n";
+
 		  print '<td align="center">'.$objp->qty.'</td>';
+
 		  if ($objp->remise_percent > 0)
 		    {
-		      print '<td align="right">'.$objp->remise_percent." %</td>\n";
+		      print '<td align="right">'.$objp->remise_percent."%</td>\n";
 		    }
 		  else
 		    {
 		      print '<td>&nbsp;</td>';
 		    }
-		  print '<td align="right">'.price($objp->subprice)."</td>\n";
 
 		  print '<td>&nbsp;</td><td>&nbsp;</td>';
+
+		  if ($objp->fk_product > 0) {
+		      print '<td align="center"><img src="./statut'.$objp->statut.'.png" border="0" alt="statut"></td>';
+          } else {
+		      print '<td>&nbsp;</td>';
+          }
 
 		  print "</tr>\n";
 
@@ -248,7 +259,6 @@ $html = new Form($db);
             
                     // Dates mise en service
                     print '<tr '.$bc[$var].'>';
-                    print '<td>&nbsp;</td>';
                     print '<td colspan="7">';
                     // Si pas encore activé
                     if (! $objp->date_debut_reelle) {
@@ -287,6 +297,7 @@ $html = new Form($db);
                         dolibarr_print_date($objp->date_fin_reelle);
                     }
                     print '</td>';
+                    print '<td>&nbsp;</td>';
                     print '</tr>';                     
 		  
 
@@ -315,8 +326,6 @@ $html = new Form($db);
 
 	    print '<table class="noborder" width="100%">';
 	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ActivateService").'</td></tr>';
-
-	    print '<tr '.$bc[$var].'><td>'.$langs->trans("User").'</td><td>'.$user->fullname.'</td></tr>';
 
 	    // Definie date debut et fin par defaut
    	    if ($_POST["remonth"]) $dateactstart = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]); 

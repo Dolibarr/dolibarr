@@ -318,60 +318,136 @@ class Contrat
     }
 
     
-  /**
-   *    \brief      Ajoute une ligne de commande
-   *    \return     int     <0 si KO, =0 si OK
-   */
-  function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
-  {
-    global $langs;
-    
-    $qty = ereg_replace(",",".",$qty);
-    $pu = ereg_replace(",",".",$pu);
-    
-    if (strlen(trim($qty))==0)
+    /**
+     *      \brief      Ajoute une ligne de contrat en base
+     *      \param      rowid            Id de la ligne de facture
+     *      \param      desc             Description de la ligne
+     *      \param      pu               Prix unitaire
+     *      \param      qty              Quantité
+     *      \param      remise_percent   Pourcentage de remise de la ligne
+     *      \param      datestart        Date de debut prévue
+     *      \param      dateend          Date de fin prévue
+     *      \return     int              < 0 si erreur, > 0 si ok
+     */
+    function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart, $dateend)
     {
-        $qty=1;
-    }
-
-    if ($fk_product > 0)
-    {
-        $prod = new Product($this->db, $fk_product);
-        if ($prod->fetch($fk_product) > 0)
+        global $langs;
+        
+        $qty = ereg_replace(",",".",$qty);
+        $pu = ereg_replace(",",".",$pu);
+        
+        if (strlen(trim($qty))==0)
         {
-            $label = $prod->libelle;
-            $pu    = $prod->price;
-            $txtva = $prod->tva_tx;
+            $qty=1;
+        }
+        
+        if ($fk_product > 0)
+        {
+            $prod = new Product($this->db, $fk_product);
+            if ($prod->fetch($fk_product) > 0)
+            {
+                $label = $prod->libelle;
+                $pu    = $prod->price;
+                $txtva = $prod->tva_tx;
+            }
+        }
+        
+        $remise = 0;
+        $price = round(ereg_replace(",",".",$pu), 2);
+        $subprice = $price;
+        if (trim(strlen($remise_percent)) > 0)
+        {
+            $remise = round(($pu * $remise_percent / 100), 2);
+            $price = $pu - $remise;
+        }
+        
+        // Insertion dans la base
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet ";
+        $sql.= "(fk_contrat,label,description,fk_product, price_ht,qty,tva_tx, remise_percent, subprice, remise";
+        if ($datestart > 0) { $sql.= ",date_ouverture_prevue"; }
+        if ($dateend > 0)  { $sql.= ",date_fin_validite"; }
+        $sql.= ") VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."'";
+        if ($datestart > 0) { $sql.= ",".$this->db->idate($datestart); }
+        if ($dateend > 0) { $sql.= ",".$this->db->idate($dateend); }
+        $sql.= ");";
+        
+        // Retour
+        if ( $this->db->query($sql) )
+        {
+            //$this->update_price();
+            return 0;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
         }
     }
 
-    $remise = 0;
-    $price = round(ereg_replace(",",".",$pu), 2);
-    $subprice = $price;
-    if (trim(strlen($remise_percent)) > 0)
+    /**
+     *      \brief     Mets à jour une ligne de contrat
+     *      \param     rowid            Id de la ligne de facture
+     *      \param     desc             Description de la ligne
+     *      \param     pu               Prix unitaire
+     *      \param     qty              Quantité
+     *      \param     remise_percent   Pourcentage de remise de la ligne
+     *      \param     datestart        Date de debut prévue
+     *      \param     dateend          Date de fin prévue
+     *      \return    int              < 0 si erreur, > 0 si ok
+     */
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='')
     {
-        $remise = round(($pu * $remise_percent / 100), 2);
-        $price = $pu - $remise;
-    }
+        dolibarr_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $datestart, $dateend");
+    
+        $this->db->begin();
 
-    // Insertion dans la base
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet ";
-    $sql .= "(fk_contrat,label,description,fk_product, price_ht,qty,tva_tx, remise_percent, subprice, remise)";
-    $sql .= " VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."') ;";
+        if (strlen(trim($qty))==0)
+        {
+            $qty=1;
+        }
+        $remise = 0;
+        $price = ereg_replace(",",".",$pu);
+        $subprice = $price;
+        if (trim(strlen($remise_percent)) > 0)
+        {
+            $remise = round(($pu * $remise_percent / 100), 2);
+            $price = $pu - $remise;
+        }
+        else
+        {
+            $remise_percent=0;
+        }
 
-    // Retour
-    if ( $this->db->query( $sql) )
-    {
-        //$this->update_price();
-        return 0;
-    }
-    else
-    {
-        dolibarr_print_error($this->db);
-        return -1;
-    }
-  }
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".addslashes($desc)."'";
+        $sql .= ",price_ht='"    .     ereg_replace(",",".",$price)."'";
+        $sql .= ",subprice='" .     ereg_replace(",",".",$subprice)."'";
+        $sql .= ",remise='".        ereg_replace(",",".",$remise)."'";
+        $sql .= ",remise_percent='".ereg_replace(",",".",$remise_percent)."'";
+        $sql .= ",qty='$qty'";
 
+        if ($datestart > 0) { $sql.= ",date_ouverture_prevue=".$this->db->idate($datestart); }
+        else { $sql.=",date_ouverture_prevue=null"; }
+        if ($dateend > 0) { $sql.= ",date_fin_validite=".$this->db->idate($dateend); }
+        else { $sql.=",date_fin_validite=null"; }
+
+        $sql .= " WHERE rowid = $rowid ;";
+
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $this->db->commit();
+
+            return $result;
+        }
+        else
+        {
+            $this->db->rollback();
+
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+    }
+    
   /** 
    *    \brief      Supprime une ligne de detail du contrat
    *    \param      idligne     id de la ligne detail de contrat à supprimer
