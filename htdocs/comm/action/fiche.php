@@ -458,7 +458,7 @@ if ($_GET["id"])
       print '</td></tr>';
       print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
       print '<td>'.$langs->trans("Author").'</td><td>'.$act->author->fullname.'</td></tr>';
-      print '<tr><td>'.$langs->trans("PercentDone").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'">%</td></tr>';
+      print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'">%</td></tr>';
       if ($act->objet_url)
 	{
 	  print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
@@ -486,7 +486,7 @@ if ($_GET["id"])
       print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.$act->contact->fullname.'</a></td></tr>';
       print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
       print '<td>'.$langs->trans("Author").'</td><td>'.$act->author->fullname.'</td></tr>';
-      print '<tr><td>'.$langs->trans("PercentDone").'</td><td colspan="3">'.$act->percent.' %</td></tr>';
+      print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3">'.$act->percent.' %</td></tr>';
       if ($act->objet_url)
 	{
 	  print '<tr><td>'.$langs->trans("LinkedObject").'</td>';

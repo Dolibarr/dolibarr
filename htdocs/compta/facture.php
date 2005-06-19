@@ -379,21 +379,29 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 
             if (strlen($sendto))
             {
+                $from = $_POST["fromname"] . " <" . $_POST["frommail"] .">";
+                $replyto = $_POST["replytoname"]. " <" . $_POST["replytomail"].">";
+                $message = $_POST["message"];
                 if ($_POST["action"] == 'send') {
                     $subject = $langs->trans("Bill")." $fac->ref";
                     $actioncode=9;
-                    $actionmsg="Envoyée à $sendto";
+                    $actionmsg ="Mail envoyé par $from à $sendto.<br>";
+                    if ($message) {
+                        $actionmsg.="Texte utilisé dans le corps du message:<br>";
+                        $actionmsg.="$message";
+                    }
                     $actionmsg2="Envoi Facture par mail";
                 }
                 if ($_POST["action"] == 'relance') 	{
                     $subject = "Relance facture $fac->ref";
                     $actioncode=10;
-                    $actionmsg="Relance envoyée à $sendto";
+                    $actionmsg="Mail envoyé par $from à $sendto.<br>";
+                    if ($message) {
+                        $actionmsg.="Texte utilisé dans le corps du message:<br>";
+                        $actionmsg.="$message";
+                    }
                     $actionmsg2="Relance Facture par mail";
                 }
-                $message = $_POST["message"];
-                $from = $_POST["fromname"] . " <" . $_POST["frommail"] .">";
-                $replyto = $_POST["replytoname"]. " <" . $_POST["replytomail"].">";
 
                 $filepath[0] = $file;
                 $filename[0] = $fac->ref.".pdf";
@@ -405,13 +413,15 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
                 // Envoi de la facture
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath, $mimetype,$filename,$sendtocc);
 
-                if ( $mailfile->sendfile() )
+                if (! $mailfile->sendfile())
                 {
                     $msg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$from,$sendto).'.</div>';
 
                     $sendto = htmlentities($sendto);
 
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '$actioncode' ,'$fac->socidp' ,'$actionmsg','$fac->id','$sendtoid','$user->id', '$actionmsg2',100);";
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
+                    $sql.= "(datea,fk_action,fk_soc,note,fk_facture,fk_contact,fk_user_author,label,percent)";
+                    $sql.= " VALUES (now(), '$actioncode' ,'$fac->socidp' ,'".addslashes($actionmsg)."','$fac->id','$sendtoid','$user->id', '$actionmsg2',100);";
 
                     if (! $db->query($sql) )
                     {
@@ -1349,7 +1359,7 @@ else
             * Liste des actions propres à la facture
             *
             */
-            $sql = "SELECT id, ".$db->pdate("a.datea")." as da, a.note, code";
+            $sql = "SELECT id, ".$db->pdate("a.datea")." as da, a.label, a.note, code";
             $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."user as u ";
             $sql .= " WHERE a.fk_user_author = u.rowid ";
             $sql .= " AND a.fk_action in (9,10) ";
@@ -1377,7 +1387,7 @@ else
                         print "<tr $bc[$var]>";
                         print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$objp->id.'</a></td>';
                         print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
-                        print '<td>'.stripslashes($objp->note).'</td>';
+                        print '<td>'.stripslashes($objp->label).'</td>';
                         print '<td>'.$objp->code.'</td>';
                         print "</tr>\n";
                         $i++;
