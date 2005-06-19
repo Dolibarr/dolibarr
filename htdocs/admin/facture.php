@@ -52,12 +52,6 @@ if ($_GET["action"] == 'set')
     $facture_addon_var = $_GET["value"];
 }
 
-if ($_GET["action"] == 'dateforce')
-{
-  dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$_GET["value"]);
-  Header("Location: facture.php");    
-}
-
 if ($_POST["action"] == 'setribchq')
 {
   if (dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$_POST["rib"])) $facture_rib_number_var = $_POST["rib"];
@@ -67,6 +61,13 @@ if ($_POST["action"] == 'setribchq')
 if ($_GET["action"] == 'setpdf')
 {
   if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$_GET["value"])) $facture_addon_var_pdf = $_GET["value"];
+}
+
+if ($_POST["action"] == 'setforcedate')
+{
+    dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$_POST["forcedate"]);
+    Header("Location: facture.php");    
+    exit;
 }
 
 if ($_POST["action"] == 'settvaoption')
@@ -104,13 +105,12 @@ print_titre($langs->trans("BillsSetup"));
 print "<br>";
 print_titre($langs->trans("BillsNumberingModule"));
 
-print '<table class="noborder" width=\"100%\">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td width="80">&nbsp;</td>';
+print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -123,7 +123,7 @@ while (($file = readdir($handle))!==false)
   if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
     {
       $var = !$var;
-      print '<tr '.$bc[$var].'><td width=\"100\">';
+      print '<tr '.$bc[$var].'><td width="100">';
       echo "$file";
       print "</td><td>\n";
 
@@ -145,14 +145,10 @@ while (($file = readdir($handle))!==false)
       if ($facture_addon_var == "$file")
 	{
 	  print img_tick();
-      print '</td><td align="center">';
-      print '&nbsp;';
 	}
       else
 	{
-	  print '&nbsp;';
-      print '</td><td align="center">';
-      print '<a href="facture.php?action=set&value='.$file.'">'.$langs->trans("Activate").'</a>';
+      print '<a href="facture.php?action=set&amp;value='.$file.'">'.$langs->trans("Default").'</a>';
 	}
 	print "</td></tr>\n";
     }
@@ -161,39 +157,6 @@ closedir($handle);
 
 print '</table>';
 
-print "<br>";
-print_titre($langs->trans("BillsDate"));
-
-print '<table class="noborder" width=\"100%\">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td width="80">&nbsp;</td>';
-print "</tr>\n";
-
-$var=false;
-print '<tr '.$bc[$var].'><td>';
-echo "Forcer la définition de la date des factures lors de la validation";
-
-print '</td><td width="60" align="center">';
-
-if (defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION == "1")
-{
-  print img_tick();
-  print '</td><td align="center">';
-  print '<a href="facture.php?action=dateforce&amp;value=0">'.$langs->trans("Disable").'</a>';
-}
-else
-{
-  print '&nbsp;';
-  print '</td><td align="center">';
-  print '<a href="facture.php?action=dateforce&amp;value=1">'.$langs->trans("Activate").'</a>';
-}
-print "</td></tr>\n";
-
-print '</table>';
-
-
 
 /*
  *  PDF
@@ -201,12 +164,12 @@ print '</table>';
 print '<br>';
 print_titre("Modèles de facture pdf");
 
-print '<table class="noborder" width=\"100%\">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td width="80">&nbsp;</td>';
+print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -222,7 +185,7 @@ while (($file = readdir($handle))!==false)
       $name = substr($file, 4, strlen($file) -16);
       $classname = substr($file, 0, strlen($file) -12);
 
-      print '<tr '.$bc[$var].'><td width=\"100\">';
+      print '<tr '.$bc[$var].'><td width="100">';
       echo "$name";
       print "</td><td>\n";
       require_once($dir.$file);
@@ -234,15 +197,15 @@ while (($file = readdir($handle))!==false)
 
       if ($facture_addon_var_pdf == "$name")
 	{
-	  print img_tick();
-      print '</td><td align="center">';
       print '&nbsp;';
+      print '</td><td align="center">';
+	  print img_tick();
 	}
       else
 	{
 	  print '&nbsp;';
       print '</td><td align="center">';
-      print '<a href="facture.php?action=setpdf&value='.$name.'">'.$langs->trans("Activate").'</a>';
+      print '<a href="facture.php?action=setpdf&amp;value='.$name.'">'.$langs->trans("Default").'</a>';
 	}
 	print "</td></tr>\n";
 
@@ -260,7 +223,7 @@ print '</table>';
 print '<br>';
 print_titre( "Mode de règlement à afficher sur les factures");
 
-print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
+print '<table class="noborder" width="100%">';
 $var=True;
 
 print '<form action="facture.php" method="post">';
@@ -347,7 +310,7 @@ print "</table>";
 print '<br>';
 print_titre("Options fiscales de facturation de la TVA");
 
-print '<table class="noborder" width=\"100%\">';
+print '<table class="noborder" width="100%">';
 print '<form action="facture.php" method="post">';
 print '<input type="hidden" name="action" value="settvaoption">';
 print '<tr class="liste_titre">';
@@ -369,8 +332,35 @@ $var=!$var;
 print "</form>";
 print "</table>";
 
-print "<br>";
 
+print "<br>";
+print_titre($langs->trans("OtherOptions"));
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
+
+$var=false;
+print '<form action="facture.php" method="post">';
+print '<input type="hidden" name="action" value="setforcedate">';
+print '<tr '.$bc[$var].'><td>';
+echo "Forcer la définition de la date des factures lors de la validation";
+print '</td><td width="60" align="center">';
+$forcedate=(defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION)?1:0;
+$html=new Form($db);
+print $html->selectyesno("forcedate",$forcedate,1);
+print '</td><td align="center">';
+print '<input type="submit" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+print '</table>';
+
+
+print "<br>";
 
 $db->close();
 
