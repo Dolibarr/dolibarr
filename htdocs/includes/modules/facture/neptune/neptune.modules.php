@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,46 +22,55 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/facture/neptune/neptune.modules.php
+/**
+	\file       htdocs/includes/modules/facture/neptune/neptune.modules.php
 	\ingroup    facture
 	\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Neptune
 	\version    $Revision$
 */
 
 
-/*!	\class mod_facture_neptune
+/**
+	\class      mod_facture_neptune
 	\brief      Classe du modèle de numérotation de référence de facture Neptune
 */
 class mod_facture_neptune extends ModeleNumRefFactures
 {
 
-    /*!     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
     function info()
     {
-      $texte = '
-    Identique à pluton, avec un correcteur au moyen de la constante FACTURE_NEPTUNE_DELTA.';
+      $texte = "Renvoie le numéro de facture sous une forme du préfix FA suivi de l'année sur 2 chiffres et d'un compteur simple sur 4 chiffres.<br>\n";
+      $texte.= "Si la constante FACTURE_NEPTUNE_DELTA est définie, un offset est appliqué sur le compteur";
       if (defined("FACTURE_NEPTUNE_DELTA"))
         {
-          $texte .= "Défini et vaut : ".FACTURE_NEPTUNE_DELTA;
+          $texte .= " (Définie et vaut : ".FACTURE_NEPTUNE_DELTA.")";
         }
       else
         {
-          $texte .= "N'est pas défini";
+          $texte .= " (N'est pas définie)";
         }
       return $texte;
     }
 
-    /*!     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Example
      */
     function getExample()
     {
-        return "FA040010";
+        if (defined("FACTURE_NEPTUNE_DELTA"))
+        {
+            return "FA0400".sprintf("%02d",FACTURE_NEPTUNE_DELTA);
+        }
+        else 
+        {
+            return "FA040010";
+        }            
     }
 
-    /*!     \brief      Renvoie la référence de facture suivante non utilisée
+    /**     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */
