@@ -413,7 +413,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
                 // Envoi de la facture
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath, $mimetype,$filename,$sendtocc);
 
-                if (! $mailfile->sendfile())
+                if ($mailfile->sendfile())
                 {
                     $msg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$from,$sendto).'.</div>';
 
