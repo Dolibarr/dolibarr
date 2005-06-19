@@ -1028,10 +1028,9 @@ class Form
         $yes="1";
         $no="0";
     }
-    
+
     print '<select class="flat" name="'.$name.'">'."\n";
-    
-    if ($value == 'yes' || $value == 1)
+    if (("$value" == 'yes') || ($value == 1))
     {
         print '<option value="'.$yes.'" selected>'.$langs->trans("yes").'</option>'."\n";
         print '<option value="'.$no.'">'.$langs->trans("no").'</option>'."\n";
