@@ -229,3 +229,4 @@ ReportDescription=Description
 Report=Report
 Keyword=Mot clé
 Legend=Legend
+FillTownFromZip=Fill town from zip
