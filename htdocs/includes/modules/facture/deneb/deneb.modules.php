@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,41 +22,42 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/facture/deneb/deneb.modules.php
+/**
+        \file       htdocs/includes/modules/facture/deneb/deneb.modules.php
 		\ingroup    facture
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Deneb
 		\version    $Revision$
 */
 
 
-/*!	\class mod_facture_deneb
+/**	
+        \class      mod_facture_deneb
 		\brief      Classe du modèle de numérotation de référence de facture Deneb
 */
 class mod_facture_deneb extends ModeleNumRefFactures
 {
     
-    /*!     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
     function info()
     {
     
-      $texte = '
-    Renvoie le numéro de facture sous la forme, PREF-03-06-2004-15, où PREF est le préfixe commercial de la société, et est suivi de la date (ici le 14 juin 2004) et d\'un compteur général. La constante FACTURE_DENEB_DELTA sert à la correction de plage. FACTURE_DENEB_DELTA ';
-    
-      if (defined("FACTURE_DENEB_DELTA"))
+      $texte = "Renvoie le numéro de facture sous la forme, PREF-03-06-2004-01, où PREF est le préfixe commercial de la société, et est suivi de la date (ici le 03 juin 2004) et d'un compteur.<br>";
+      $texte.= "Si la constante FACTURE_DENEB_DELTA est définie, un offset est appliqué sur le compteur";
+      if (defined("FACTURE_NEPTUNE_DELTA"))
         {
-          $texte .= "est défini et vaut : ".FACTURE_DENEB_DELTA;
+          $texte .= " (Définie et vaut : ".FACTURE_DENEB_DELTA.")";
         }
       else
         {
-          $texte .= "n'est pas défini";
+          $texte .= " (N'est pas définie)";
         }
       return $texte;
     
     }
 
-    /*!     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Example
      */
     function getExample()
@@ -64,7 +65,7 @@ class mod_facture_deneb extends ModeleNumRefFactures
         return "PREF-31-12-04-10";
     }
 
-    /*!     \brief      Renvoie la référence de facture suivante non utilisée
+    /**     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */

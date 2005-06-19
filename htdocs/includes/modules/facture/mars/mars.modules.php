@@ -1,7 +1,7 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Christophe Combelles  <ccomb@free.fr>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,41 +23,42 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/facture/mars/mars.modules.php
+/**
+        \file       htdocs/includes/modules/facture/mars/mars.modules.php
 		\ingroup    facture
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Mars
 		\version    $Revision$
 */
 
 
-/*!	\class mod_facture_mars
+/**	\class mod_facture_mars
 		\brief      Classe du modèle de numérotation de référence de facture Mars
 */
 class mod_facture_mars extends ModeleNumRefFactures
 {
     
-    /*!     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
     function info()
     {
     
-      $texte = '
-    Numéro de facture sous la forme, PREF-10-2004-005, qui correspond à la 5ème facture d\'octobre 2004 pour la société dont le préfixe commercial est PREF. Le nombre final est formatté sur 3 chiffres ou plus.';
-    
+      $texte = "Numéro de facture sous la forme, PREF-10-2004-005, qui correspond à la 5ème facture d'octobre 2004 et où PREF est le préfix de la société.";
+      $texte.= "Le nombre final est formaté sur 3 chiffres ou plus.<br>";
+      $texte.= "Si la constante FACTURE_MARS_DELTA est définie, un offset est appliqué sur le compteur";
       if (defined("FACTURE_MARS_DELTA"))
         {
-          $texte .= "est défini et vaut : ".FACTURE_MARS_DELTA;
+          $texte .= " (Définie et vaut : ".FACTURE_MARS_DELTA.")";
         }
       else
         {
-          $texte .= "n'est pas défini";
+          $texte .= " (N'est pas définie)";
         }
       return $texte;
     
     }
 
-    /*!     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Example
      */
     function getExample()
@@ -65,7 +66,7 @@ class mod_facture_mars extends ModeleNumRefFactures
         return "PREF-10-2004-005";
     }
 
-    /*!     \brief      Renvoie la référence de facture suivante non utilisée
+    /**     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descriptif
      */

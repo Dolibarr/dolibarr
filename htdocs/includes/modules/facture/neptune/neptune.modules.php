@@ -46,7 +46,7 @@ class mod_facture_neptune extends ModeleNumRefFactures
       $texte.= "Si la constante FACTURE_NEPTUNE_DELTA est définie, un offset est appliqué sur le compteur";
       if (defined("FACTURE_NEPTUNE_DELTA"))
         {
-          $texte .= " (Définie et vaut : ".FACTURE_NEPTUNE_DELTA.")";
+          $texte .= " (Définie et vaut: ".FACTURE_NEPTUNE_DELTA.")";
         }
       else
         {
@@ -66,7 +66,7 @@ class mod_facture_neptune extends ModeleNumRefFactures
         }
         else 
         {
-            return "FA040010";
+            return "FA040001";
         }            
     }
 
