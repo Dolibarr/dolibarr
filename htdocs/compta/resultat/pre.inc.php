@@ -50,7 +50,6 @@ function llxHeader($head = "") {
 		$menu->add_submenu(DOL_URL_ROOT."/compta/stats/prev.php","Prévisionnel");
 		$menu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php","Transformé");
 	}
-	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php","Evolution");
 	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php",$langs->trans("ByCompanies"));
 	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php",$langs->trans("ByUsers"));
 
