@@ -23,6 +23,7 @@ require("../../main.inc.php");
 
 $user->getrights('telephonie');
 require DOL_DOCUMENT_ROOT.'/telephonie/distributeurtel.class.php';
+require DOL_DOCUMENT_ROOT.'/telephonie/telephonie.commercial.class.php';
 
 function llxHeader($head = "", $title="") {
   global $user, $conf, $db;
