@@ -40,6 +40,116 @@ class DistributeurTelephonie {
    *
    *
    */
+  function create()
+    {
+      $error = 0;
+
+      if (strlen(trim($this->nom)) == 0)
+	{
+	  $this->error_string["nom"] = "Valeur manquante";
+	  $error++;
+	}
+      if (strlen(trim($this->avance)) == 0)
+	{
+	  $this->error_string["avance"] = "Valeur manquante";
+	  $error++;
+	}
+      if ($this->avance > 100 or $this->avance < 0)
+	{
+	  $this->error_string["avance"] = "Valeur incohérente";
+	  $error++;
+	}
+
+
+
+      if (!is_numeric($this->duree))
+	{
+	  $this->error_string["duree"] = "Mauvais format";
+	  $error++;
+	}
+      if ($this->duree > 12 or $this->duree < 0)
+	{
+	  $this->error_string["duree"] = "Valeur incohérente";
+	  $error++;
+	}
+      if (strlen(trim($this->duree)) == 0)
+	{
+	  $this->error_string["duree"] = "Valeur manquante";
+	  $error++;
+	}
+
+
+      if ($this->prelev > 100 or $this->prelev < 0)
+	{
+	  $this->error_string["prelev"] = "Valeur incohérente";
+	  $error++;
+	}
+      if (!is_numeric($this->prelev))
+	{
+	  $this->error_string["prelev"] = "Mauvais format";
+	  $error++;
+	}
+      if (strlen(trim($this->prelev)) == 0)
+	{
+	  $this->error_string["prelev"] = "Valeur manquante";
+	  $error++;
+	}
+
+
+      if ($this->autre > 100 or $this->autre < 0)
+	{
+	  $this->error_string["autre"] = "Valeur incohérente";
+	  $error++;
+	}
+      if (!is_numeric($this->autre))
+	{
+	  $this->error_string["autre"] = "Mauvais format";
+	  $error++;
+	}
+      if (strlen(trim($this->autre)) == 0)
+	{
+	  $this->error_string["autre"] = "Valeur manquante";
+	  $error++;
+	}
+
+   
+      if ($error == 0)
+	{
+
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_distributeur ";
+	  $sql .= " (grille_tarif, nom, avance_pourcent, avance_duree, rem_pour_prev, rem_pour_autr)";
+	  
+	  $sql .= " VALUES (2,'".trim($this->nom)."'";
+	  $sql .= " ,".$this->avance;
+	  $sql .= " ,".$this->duree;
+	  $sql .= " ,".$this->prelev;
+	  $sql .= " ,".$this->autre.")";
+	  
+	  if ($this->db->query($sql))
+	    {
+	      
+	    }
+	  else
+	    {
+	      dolibarr_syslog("DistributeurTelephonie::Create");
+	      $this->error_string["prelev"] = "Erreur SQL : $sql";
+	      $this->error_string["autre"] = $this->db->error();
+	      $error++;
+	    }
+	}
+      else
+	{
+	  
+	}
+      
+      return $error;
+      
+    }
+
+  /**
+   *
+   *
+   */
   function fetch($id)
     {
       $this->id = $id;
