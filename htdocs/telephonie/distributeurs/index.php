@@ -90,7 +90,25 @@ print '</table><br />';
 
 
 print '</td><td width="50%" valign="top">&nbsp;</td></tr>';
-print '</table><br />';
+print '</table></div>';
+
+
+
+/* ************************************************************************** */
+/*                                                                            */ 
+/* Barre d'action                                                             */ 
+/*                                                                            */ 
+/* ************************************************************************** */
+
+print "\n<div class=\"tabsAction\">\n";
+
+if ($_GET["action"] == '')
+{
+  print "<a class=\"tabAction\" href=\"fiche.php?action=create\">".$langs->trans("Nouveau")."</a>";
+}
+
+print "</div><br>";
+
 
 $db->close();
 
