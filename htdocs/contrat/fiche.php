@@ -90,7 +90,7 @@ if ($_POST["action"] == 'add')
     else {
         $mesg='<div class="error">'.$contrat->error.'</div>';
     }
-print $mesg;
+
     $_GET["id"] = $contrat->id;
 
     $action = '';
