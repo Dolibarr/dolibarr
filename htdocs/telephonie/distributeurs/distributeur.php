@@ -143,9 +143,27 @@ if ($_GET["id"])
 
 
   print '</td></tr>';
-  print '</table>';
+  print '</table></div>';
+
+
+  /* ************************************************************************** */
+  /*                                                                            */ 
+  /* Barre d'action                                                             */ 
+  /*                                                                            */ 
+  /* ************************************************************************** */
+  print "\n<div class=\"tabsAction\">\n";
+  
+  if ($_GET["action"] == '')
+    {
+      print "<a class=\"tabAction\" href=\"fiche.php?action=create_commercial&amp;distri=".$distri->id."\">".$langs->trans("Nouveau commercial")."</a>";
+    }
+  
+  print "</div><br>";
+
+
+
  
- $db->close();
+  $db->close();
 }
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
