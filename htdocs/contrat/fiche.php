@@ -69,7 +69,8 @@ if ($_POST["action"] == 'add')
 
     $contrat->soc_id         = $_POST["soc_id"];
     $contrat->date_contrat   = $datecontrat;
-    $contrat->commercial_id  = $_POST["commercial"];
+    $contrat->commercial_suivi_id      = $_POST["commercial_suivi_id"];
+    $contrat->commercial_signature_id  = $_POST["commercial_signature_id"];
     $contrat->note           = $_POST["note"];
     $contrat->projetid       = $_POST["projetid"];
     $contrat->remise_percent = $_POST["remise_percent"];
@@ -80,12 +81,16 @@ if ($_POST["action"] == 'add')
     $contrat->add_product($_POST["idprod3"],$_POST["qty3"],$_POST["remise_percent3"]);
     $contrat->add_product($_POST["idprod4"],$_POST["qty4"],$_POST["remise_percent4"]);
     */
-    $result = $contrat->create($user,$lang,$conf);
-    if ($result == 0)
+    $result = $contrat->create($user,$langs,$conf);
+    if ($result >= 0)
     {
         Header("Location: fiche.php?id=".$contrat->id);
+        exit;
     }
-
+    else {
+        $mesg='<div class="error">'.$contrat->error.'</div>';
+    }
+print $mesg;
     $_GET["id"] = $contrat->id;
 
     $action = '';
@@ -120,6 +125,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
     if ($result >= 0)
     {
         Header("Location: fiche.php?id=".$contrat->id);
+        exit;
     }
     else
     {
@@ -252,9 +258,10 @@ if ($_GET["action"] == 'create')
 
             print '<tr><td>'.$langs->trans("Customer").':</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$obj->nom.'</a></td></tr>';
 
-            print '<tr><td width="20%">'.$langs->trans("Commercial").'</td><td>';
-
-            print '<select name="commercial">';
+            // Commercial suivi
+            print '<tr><td width="20%" nowrap>'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>';
+            print '<select name="commercial_suivi_id">';
+            print '<option value="-1">&nbsp;</option>';
             $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
             $resql=$db->query( $sql);
             if ($resql)
@@ -266,7 +273,31 @@ if ($_GET["action"] == 'create')
                     while ($i < $num)
                     {
                         $row = $db->fetch_row($resql);
-                        print '<option value="'.$row[0].'">'.$row[1] . " " . $row[2];
+                        print '<option value="'.$row[0].'">'.$row[1] . " " . $row[2].'</option>';
+                        $i++;
+                    }
+                }
+                $db->free($resql);
+
+            }
+            print '</select></td></tr>';
+
+            // Commercial signature
+            print '<tr><td width="20%" nowrap>'.$langs->trans("SalesRepresentativeSignature").'</td><td>';
+            print '<select name="commercial_signature_id">';
+            print '<option value="-1">&nbsp;</option>';
+            $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
+            $resql=$db->query( $sql);
+            if ($resql)
+            {
+                $num = $db->num_rows($resql);
+                if ( $num > 0 )
+                {
+                    $i = 0;
+                    while ($i < $num)
+                    {
+                        $row = $db->fetch_row($resql);
+                        print '<option value="'.$row[0].'">'.$row[1] . " " . $row[2].'</option>';
                         $i++;
                     }
                 }

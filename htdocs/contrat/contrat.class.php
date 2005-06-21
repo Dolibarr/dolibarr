@@ -44,6 +44,8 @@ class Contrat
     var $societe;
     var $user_service;
     var $user_cloture;
+    var $commercial_signature_id;
+    var $commercial_suivi_id;
     
     var $statuts=array();
     
@@ -63,7 +65,9 @@ class Contrat
         $this->user_cloture = new User($DB);
         
         // Statut 0=ouvert, 1=actif, 2=cloturé
-        $this->statuts=array($langs->trans("Opened"),$langs->trans("Running"),$langs->trans("Closed"));
+        $this->statuts[0]=$langs->trans("Opened");
+        $this->statuts[1]=$langs->trans("Running");
+        $this->statuts[2]=$langs->trans("Closed");
     }
     
     
@@ -213,7 +217,7 @@ class Contrat
     {
         $sql = "SELECT rowid, statut, fk_soc, ".$this->db->pdate("mise_en_service")." as datemise";
         $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_contrat")." as datecontrat";
-        $sql .= " , fk_user_author";
+        $sql .= ", fk_user_author";
         $sql .= ", fk_commercial_signature, fk_commercial_suivi ";
         $sql .= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
     
@@ -264,9 +268,12 @@ class Contrat
     function create($user,$lang='',$conf='')
     {
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, fk_commercial_signature, fk_commercial_suivi, date_contrat)";
-        $sql .= " VALUES (now(),".$this->soc_id.",".$user->id.",".$this->commercial_id.",".$this->commercial_id;
-        $sql .= ",".$this->db->idate($this->date_contrat) .")";
-        if ($this->db->query($sql))
+        $sql.= " VALUES (now(),".$this->soc_id.",".$user->id;
+        $sql.= ",".($this->commercial_signature_id>=0?$this->commercial_signature_id:"null");
+        $sql.= ",".($this->commercial_suivi_id>=0?$this->commercial_suivi_id:"null");
+        $sql.= ",".$this->db->idate($this->date_contrat) .")";
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
     
@@ -280,6 +287,7 @@ class Contrat
         }
         else
         {
+            $this->error=$lang->trans("UnknownError: ".$this->db->error()." - sql=".$sql);
             dolibarr_syslog("Contrat::create - 10");
             $result = -1;
         }
