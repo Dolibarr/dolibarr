@@ -24,6 +24,7 @@ require("./pre.inc.php");
 if (!$user->rights->telephonie->lire) accessforbidden();
 
 $distri = new DistributeurTelephonie($db);
+$commercial = new CommercialTelephonie($db);
 
 if($_POST["action"] == 'add')
 {
@@ -41,9 +42,23 @@ if($_POST["action"] == 'add')
     {
       Header("Location: index.php");
     }
-
 }
 
+if($_POST["action"] == 'add_commercial')
+{
+  $commercial->nom = $_POST["nom"];
+  $commercial->prenom = $_POST["prenom"];
+  $commercial->distri = $_GET["distri"];
+  
+  if ($commercial->create() <> 0)
+    {
+      $_GET["action"] = "create_commercial";
+    }
+  else
+    {
+      Header("Location: distributeur.php?id=".$_GET["distri"]);
+    }
+}
 
 llxHeader('','Telephonie - Statistiques - Distributeurs');
 
@@ -55,6 +70,43 @@ llxHeader('','Telephonie - Statistiques - Distributeurs');
 
 $h = 0;
 
+
+if ($_GET["action"] == 'create_commercial')
+{
+  $distri = new DistributeurTelephonie($db);
+  $distri->fetch($_GET["distri"]);
+
+
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/fiche.php?action=create';
+  $head[$h][1] = "Nouveau commercial";
+  $hselected = $h;
+  $h++;
+  
+  dolibarr_fiche_head($head, $hselected, $distri->nom);
+
+  print '<form method="POST" action="fiche.php?distri='.$_GET["distri"].'">';
+  print '<input type="hidden" name="action" value="add_commercial"></td></tr>';
+
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+
+  print '<tr><td width="20%">Prénom</td>';
+  print '<td><input type="text" size="30" name="prenom" value="'.$commercial->prenom.'"></td>';
+  print '<td>'.$commercial->error_string["prenom"].'</td></tr>';
+  print '<tr><td width="20%">Nom</td>';
+  print '<td><input type="text" size="30" name="nom" value="'.$commercial->nom.'"></td>';
+  print '<td>'.$commercial->error_string["nom"].'</td></tr>';
+ 
+  print '<tr><td colspan="2"><input type="submit"></td></tr>';
+
+  print '</table><br />';
+
+  print "</form>";
+
+}
+
+if ($_GET["action"] == 'create')
+{
+
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/fiche.php?action=create';
 $head[$h][1] = "Nouveau distributeur";
 $hselected = $h;
@@ -62,10 +114,6 @@ $h++;
 
 dolibarr_fiche_head($head, $hselected, "Distributeurs");
 
-
-
-if ($_GET["action"] == 'create')
-{
   print '<form method="POST" action="fiche.php">';
   print '<input type="hidden" name="action" value="add"></td></tr>';
 
