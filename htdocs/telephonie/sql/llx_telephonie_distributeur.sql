@@ -28,6 +28,8 @@ create table llx_telephonie_distributeur (
   avance_pourcent     real,
   avance_duree        smallint,
   rem_pour_prev       real,
-  rem_pour_autr       real
+  rem_pour_autr       real,
 
+  fk_user_create      integer,
+  date_create         datetime
 )type=innodb;
