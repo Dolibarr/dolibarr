@@ -268,7 +268,7 @@ if ($resql)
         {
             $objp = $db->fetch_object($resql);
             print "<tr $bc[$var]>";
-            print "<td nowrap><a href=\"fiche.php?id=".$objp->idp."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
+            print "<td nowrap><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
             print '<td align="right" nowrap>'.dolibarr_print_date($objp->datec)."</td>";
             print '</tr>';
             $i++;
