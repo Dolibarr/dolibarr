@@ -56,3 +56,4 @@ LoginAlreadyExists=Existe déjà
 DolibarrAdminLogin=Login de l'administrateur Dolibarr
 FailedToCreateAdminLogin=Echec de la création du compte administrateur Dolibarr.
 AdminLoginAlreadyExists=Compte administrateur Dolibarr '%s' déjà existant.
+WarningRemoveInstallDir=Attention, pour des raisons de sécurité, une fois l'installation terminé, il est nécessaire de supprimer le répertoire install.

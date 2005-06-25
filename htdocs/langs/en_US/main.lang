@@ -106,6 +106,7 @@ DateValidation=Validation date
 DateClosing=Closing date
 DateDue=Due date
 DateValue=Value date
+DateLimit=Limit date
 Year=Year
 Month=Month
 Day=Day

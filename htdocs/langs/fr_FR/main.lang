@@ -106,6 +106,7 @@ DateValidation=Date validation
 DateClosing=Date clôture
 DateDue=Date échéance
 DateValue=Date valeur
+DateLimit=Date limite
 Year=Année
 Month=Mois
 Day=Jour
