@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,15 @@
  * $Source$
  *
  */
+
+/**
+	    \file       htdocs/compta/stats/cumul.php
+		\brief      Page reporting compta chiffre affaire cumulé
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
-/*
- *
- */
 
 llxHeader();
 
@@ -88,6 +92,8 @@ llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</e
 
 function pt ($db, $sql, $date)
 {
+    global $langs;
+    
   $bc[0]="class=\"pair\"";
   $bc[1]="class=\"impair\"";
 
@@ -96,11 +102,11 @@ function pt ($db, $sql, $date)
     {
       $num = $db->num_rows($resql);
       $i = 0; $total = 0 ;
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+      print '<table class="noborder" width="100%">';
       print "<tr class=\"liste_titre\">";
       print "<td width=\"60%\">$date</td>";
-      print "<td align=\"right\">Montant</td>";
-      print "<td align=\"right\">Cumul</td>\n";
+      print "<td align=\"right\">".$langs->trans("Amount")."</td>";
+      print "<td align=\"right\">".$langs->trans("Total")."</td>\n";
       print "</tr>\n";
       $var=True;
       while ($i < $num) 
@@ -115,7 +121,7 @@ function pt ($db, $sql, $date)
 	  
 	  $i++;
 	}
-      print "<tr class=\"total\"><td  align=\"right\">Cumul :</td><td align=\"right\">&nbsp;</b></td><td align=\"right\"><b>".price($total)."</b></td></tr>\n";
+      print "<tr class=\"liste_total\"><td  align=\"right\">".$langs->trans("Total")."</td><td align=\"right\">&nbsp;</b></td><td align=\"right\"><b>".price($total)."</b></td></tr>\n";
       
       print "</table>\n";
       $db->free($resql);
@@ -123,4 +129,5 @@ function pt ($db, $sql, $date)
 }
 
 
+llxFooter('$Date$ - $Revision$');
 ?>
