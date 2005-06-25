@@ -23,16 +23,17 @@
  */
 
 /**
-   \file       htdocs/fourn/facture/fiche.php
-   \ingroup    facture
-   \brief      Page des la fiche facture fournisseur
-   \version    $Revision$
+        \file       htdocs/fourn/facture/fiche.php
+        \ingroup    facture
+        \brief      Page des la fiche facture fournisseur
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
 require("./paiementfourn.class.php");
 
 $langs->load("bills");
+$langs->load("suppliers");
 $langs->load("companies");
 
 /*
@@ -192,11 +193,6 @@ if ($_GET["action"] == 'add_ligne')
   }
   $_GET["action"] = "edit";
 }
-
-
-/*
- *
- */
 
 
 
@@ -449,7 +445,7 @@ else
 	  $h=0;
 	  
 	  $head[$h][0] = "fiche.php?facid=".$fac->id;
-	  $head[$h][1] = $langs->trans("Bill").': '.$fac->ref;
+	  $head[$h][1] = $langs->trans("SupplierBill").': '.$fac->ref;
 	  $hselected = $h;
 	  $h++;
 	  
@@ -462,7 +458,7 @@ else
 	   */
 	  if ($_GET["action"] == 'valid')
 	    {
-	      $html->form_confirm("fiche.php?facid=$fac->id",$langs->trans("ValidateBill"),"Etes-vous sûr de vouloir valider cette facture ?","confirm_valid");
+	      $html->form_confirm("fiche.php?facid=$fac->id",$langs->trans("ValidateBill"),$langs->trans("ConfirmValidateBill"),"confirm_valid");
 	      print '<br />';
 	    }
 	  
