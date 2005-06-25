@@ -877,7 +877,7 @@ if ($_GET["propalid"])
 	  if ($_GET["action"] == 'presend')
 	    {
             print '<br>';
-            print_titre("SendPropalByMail");
+            print_titre($langs->trans("SendPropalByMail"));
 
             $liste[0]="&nbsp;";
             foreach ($soc->contact_email_array() as $key=>$value) {
