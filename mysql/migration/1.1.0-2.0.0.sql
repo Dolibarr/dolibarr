@@ -191,6 +191,11 @@ alter table llx_societe add capital real after tva_intra;
 alter table llx_societe add rubrique varchar(255);
 alter table llx_societe add remise_client real default 0;
 
+update llx_societe set prefix_comm = null where prefix_comm = '';
+update llx_societe set code_client = null where code_client = '';
+ALTER TABLE llx_societe ADD UNIQUE uk_societe_prefix_comm(prefix_comm);
+ALTER TABLE llx_societe ADD UNIQUE uk_societe_code_client(code_client);
+
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_REQUIRED','1','yesno','Le mail est obligatoire pour créer un adhérent',0);
 
 alter table llx_societe add fk_forme_juridique integer default 0 after fk_typent;
