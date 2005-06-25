@@ -202,57 +202,57 @@ class Fichinter
    */
   function valid($userid, $outputdir)
     {
-      $action_notify = 1; // ne pas modifier cette valeur
-
-      $this->fetch($this->id);
-
-      $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
-      $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-    
-      if ($this->db->query($sql) )
-	{
-	  /*
-	   * Set generates files readonly
-	   *
-	   */
-	  umask(0);
-	  $file = $outputdir . "/$this->ref/$this->ref.tex";
-	  if (is_writeable($file))
-	    {
-	      chmod($file, 0444);
-	    }
-	  $file = $outputdir . "/$this->ref/$this->ref.ps";
-	  if (is_writeable($file))
-	    {
-	      chmod($file, 0444);
-	    }
-	  $filepdf = $conf->fichinter->dir_output . "/$this->ref/$this->ref.pdf";
-	  if (is_writeable($filepdf)) 
-	    {
-	      chmod($filepdf, 0444);
-	    }
-
-	  /*
-	   * Notify
-	   *
-	   */
-	  $mesg = "La fiche d'intervention ".$this->ref." a été validée.\n";
-
-	  $notify = New Notify($this->db);
-	  $notify->send($action_notify, $this->societe_id, $mesg, "ficheinter", $this->id, $filepdf);
-
-	  return 1;
-	}
-      else
-	{
-	  print $this->db->error() . ' in ' . $sql;
-	}
-      
+        $action_notify = 1; // ne pas modifier cette valeur
+        
+        $this->fetch($this->id);
+        
+        $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
+        $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+        
+        if ($this->db->query($sql) )
+        {
+            /*
+            * Set generates files readonly
+            *
+            */
+            umask(0);
+            $file = $outputdir . "/$this->ref/$this->ref.tex";
+            if (is_writeable($file))
+            {
+                chmod($file, 0444);
+            }
+            $file = $outputdir . "/$this->ref/$this->ref.ps";
+            if (is_writeable($file))
+            {
+                chmod($file, 0444);
+            }
+            $filepdf = $conf->fichinter->dir_output . "/$this->ref/$this->ref.pdf";
+            if (is_writeable($filepdf))
+            {
+                chmod($filepdf, 0444);
+            }
+        
+            /*
+            * Notify
+            */
+            $mesg = "La fiche d'intervention ".$this->ref." a été validée.\n";
+        
+            require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+            $notify = New Notify($this->db);
+            $notify->send($action_notify, $this->societe_id, $mesg, "ficheinter", $this->id, $filepdf);
+        
+            return 1;
+        }
+        else
+        {
+            print $this->db->error() . ' in ' . $sql;
+            return -1;
+        }
+ 
     }
 
   /*
    *    \brief      Charge la liste des clients depuis la base
-   *
    */
   function fetch_client()
     {

@@ -1572,10 +1572,7 @@ else
 
         $fac=new Facture($db);
 
-        if ($page == -1)
-        {
-            $page = 0 ;
-        }
+        if ($page == -1) $page = 0 ;
 
         if ($user->rights->facture->lire)
         {
@@ -1585,11 +1582,13 @@ else
             if (! $sortorder) $sortorder="DESC";
             if (! $sortfield) $sortfield="f.datef";
 
-            $sql = "SELECT s.nom,s.idp,f.facnumber,f.increment,f.total,f.total_ttc,".$db->pdate("f.datef")." as df, f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-            $sql .= ",".MAIN_DB_PREFIX."facture as f";
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
-            $sql .= " WHERE f.fk_soc = s.idp";
+            $sql = "SELECT s.nom,s.idp,f.facnumber,f.increment,f.total,f.total_ttc,";
+            $sql.= $db->pdate("f.datef")." as df, ".$db->pdate("f.date_lim_reglement")." as datelimite, ";
+            $sql.= " f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+            $sql.= ",".MAIN_DB_PREFIX."facture as f";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
+            $sql.= " WHERE f.fk_soc = s.idp";
 
             if ($socidp) $sql .= " AND s.idp = $socidp";
             if ($month > 0) $sql .= " AND date_format(f.datef, '%m') = $month";
@@ -1715,7 +1714,9 @@ else
                         }
 
                         print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").'</a> ';
-                        print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment."</td>\n";
+                        print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment;
+                        if ($objp->datelimite < (time() - $warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans("Late"));
+                        print "</td>\n";
 
                         if ($objp->df > 0 )
                         {

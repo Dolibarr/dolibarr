@@ -106,7 +106,6 @@ require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
 require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/address.class.php");
 
 
