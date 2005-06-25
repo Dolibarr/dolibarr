@@ -354,140 +354,142 @@ class Propal
    *    \brief      Recupère de la base les caractéristiques d'une propale
    *    \param      rowid       id de la propal à récupérer
    */
-	 
-  function fetch($rowid)
+    function fetch($rowid)
     {
-
-      $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact,".$this->db->pdate("datep")."as dp,".$this->db->pdate("fin_validite")."as dfv, model_pdf, note, fk_projet, fk_statut, remise_percent, fk_user_author";
-      $sql .= ", c.label as statut_label";
-      $sql .= " FROM ".MAIN_DB_PREFIX."propal";
-      $sql .= "," . MAIN_DB_PREFIX."c_propalst as c";
-      $sql .= " WHERE rowid=$rowid AND fk_statut = c.id";
-
-      if ($this->db->query($sql) )
-	{
-	  if ($this->db->num_rows())
-	    {
-	      $obj = $this->db->fetch_object();
-	  
-	      $this->id             = $rowid;
-	      $this->datep          = $obj->dp;
-	      $this->fin_validite   = $obj->dfv;
-	      $this->date           = $obj->dp;
-	      $this->ref            = $obj->ref;
-	      $this->price          = $obj->price;
-	      $this->remise         = $obj->remise;
-	      $this->remise_percent = $obj->remise_percent;
-	      $this->total          = $obj->total;
-	      $this->total_ht       = $obj->price;
-	      $this->total_tva      = $obj->tva;
-	      $this->total_ttc      = $obj->total;
-	      $this->socidp         = $obj->fk_soc;
-	      $this->soc_id         = $obj->fk_soc;
-	      $this->projetidp      = $obj->fk_projet;
-	      $this->contactid      = $obj->fk_soc_contact;
-	      $this->modelpdf       = $obj->model_pdf;
-	      $this->note           = $obj->note;
-	      $this->statut         = $obj->fk_statut;
-	      $this->statut_libelle = $obj->statut_label;
-
-	      $this->user_author_id = $obj->fk_user_author;
-
-	      if ($obj->fk_statut == 0)
-		{
-		  $this->brouillon = 1;
-		}
-
-	      $this->lignes = array();
-	      $this->db->free();
-
-	      $this->ref_url = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$this->id.'">'.$this->ref.'</a>';
-
-	      /*
-	       * Lignes produits
-	       */
-
-	      $sql = "SELECT p.rowid, p.label, p.description, p.ref, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."product as p";
-	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid ORDER by d.rowid ASC";
-	
-	      $result = $this->db->query($sql);
-	      if ($result)
-		{
-		  $num = $this->db->num_rows();
-		  $i = 0; 
-		  
-		  while ($i < $num)
-		    {
-		      $objp                  = $this->db->fetch_object();
-
-		      $ligne                 = new PropaleLigne();
-		      $ligne->libelle        = stripslashes($objp->label);
-		      $ligne->desc           = stripslashes($objp->description);
-		      $ligne->qty            = $objp->qty;
-		      $ligne->ref            = $objp->ref;
-		      $ligne->tva_tx         = $objp->tva_tx;
-		      $ligne->subprice       = $objp->subprice;
-		      $ligne->remise_percent = $objp->remise_percent;
-		      $ligne->price          = $objp->price;
-		      $ligne->product_id     = $objp->rowid;
-
-		      $this->lignes[$i]      = $ligne;
-		      $i++;
-		    }
-		  $this->db->free();
-		} 
-	      else
-		{
-    	  dolibarr_print_error($this->db);
-		}
-
-	      /*
-	       * Lignes génériques
-	       */
-	      $sql = "SELECT d.qty, d.description, d.price, d.subprice, d.tva_tx, d.rowid, d.remise_percent";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d";
-	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = 0";
-	
-	      $result = $this->db->query($sql);
-	      if ($result)
-		{
-		  $num = $this->db->num_rows();
-		  $j = 0; 
-		  
-		  while ($j < $num)
-		    {
-		      $objp                  = $this->db->fetch_object();
-		      $ligne                 = new PropaleLigne();
-		      $ligne->libelle        = stripslashes($objp->description);
-		      $ligne->desc           = stripslashes($objp->description);
-		      $ligne->qty            = $objp->qty;
-		      $ligne->ref            = $objp->ref;
-		      $ligne->tva_tx         = $objp->tva_tx;
-		      $ligne->subprice       = $objp->subprice;
-		      $ligne->remise_percent = $objp->remise_percent;
-		      $ligne->price          = $objp->price;
-		      $ligne->product_id     = 0;
-
-		      $this->lignes[$i]      = $ligne;
-		      $i++;
-		      $j++;
-		    }
-	    
-		  $this->db->free();
-		} 
-	      else
-		{
-    	  dolibarr_print_error($this->db);
-		}
-	    }
-	  return 1;
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	  return 0;
-	}    
+        $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact,".$this->db->pdate("datep")."as dp,".$this->db->pdate("fin_validite")."as dfv, model_pdf, note, fk_projet, fk_statut, remise_percent, fk_user_author";
+        $sql .= ", c.label as statut_label";
+        $sql .= " FROM ".MAIN_DB_PREFIX."propal";
+        $sql .= "," . MAIN_DB_PREFIX."c_propalst as c";
+        $sql .= " WHERE rowid=$rowid AND fk_statut = c.id";
+    
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
+    
+                $this->id             = $rowid;
+                
+                $this->datep          = $obj->dp;
+                $this->fin_validite   = $obj->dfv;
+                $this->date           = $obj->dp;
+                $this->ref            = $obj->ref;
+                $this->price          = $obj->price;
+                $this->remise         = $obj->remise;
+                $this->remise_percent = $obj->remise_percent;
+                $this->total          = $obj->total;
+                $this->total_ht       = $obj->price;
+                $this->total_tva      = $obj->tva;
+                $this->total_ttc      = $obj->total;
+                $this->socidp         = $obj->fk_soc;
+                $this->soc_id         = $obj->fk_soc;
+                $this->projetidp      = $obj->fk_projet;
+                $this->contactid      = $obj->fk_soc_contact;
+                $this->modelpdf       = $obj->model_pdf;
+                $this->note           = $obj->note;
+                $this->statut         = $obj->fk_statut;
+                $this->statut_libelle = $obj->statut_label;
+    
+                $this->user_author_id = $obj->fk_user_author;
+    
+                if ($obj->fk_statut == 0)
+                {
+                    $this->brouillon = 1;
+                }
+    
+                $this->lignes = array();
+                $this->db->free();
+    
+                $this->ref_url = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$this->id.'">'.$this->ref.'</a>';
+    
+                /*
+                 * Lignes produits
+                 */
+    
+                $sql = "SELECT p.rowid, p.label, p.description, p.ref, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice";
+                $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."product as p";
+                $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid ORDER by d.rowid ASC";
+    
+                $result = $this->db->query($sql);
+                if ($result)
+                {
+                    $num = $this->db->num_rows($result);
+                    $i = 0;
+    
+                    while ($i < $num)
+                    {
+                        $objp                  = $this->db->fetch_object($result);
+    
+                        $ligne                 = new PropaleLigne();
+                        $ligne->libelle        = stripslashes($objp->label);
+                        $ligne->desc           = stripslashes($objp->description);
+                        $ligne->qty            = $objp->qty;
+                        $ligne->ref            = $objp->ref;
+                        $ligne->tva_tx         = $objp->tva_tx;
+                        $ligne->subprice       = $objp->subprice;
+                        $ligne->remise_percent = $objp->remise_percent;
+                        $ligne->price          = $objp->price;
+                        $ligne->product_id     = $objp->rowid;
+    
+                        $this->lignes[$i]      = $ligne;
+                        $i++;
+                    }
+                    $this->db->free($result);
+                }
+                else
+                {
+                    dolibarr_print_error($this->db);
+                    return -1;
+                }
+    
+                /*
+                 * Lignes propales
+                 */
+                $sql = "SELECT d.qty, d.description, d.price, d.subprice, d.tva_tx, d.rowid, d.remise_percent";
+                $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d";
+                $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = 0";
+    
+                $result = $this->db->query($sql);
+                if ($result)
+                {
+                    $num = $this->db->num_rows($result);
+                    $j = 0;
+    
+                    while ($j < $num)
+                    {
+                        $objp                  = $this->db->fetch_object($result);
+                        $ligne                 = new PropaleLigne();
+                        $ligne->libelle        = stripslashes($objp->description);
+                        $ligne->desc           = stripslashes($objp->description);
+                        $ligne->qty            = $objp->qty;
+                        $ligne->ref            = $objp->ref;
+                        $ligne->tva_tx         = $objp->tva_tx;
+                        $ligne->subprice       = $objp->subprice;
+                        $ligne->remise_percent = $objp->remise_percent;
+                        $ligne->price          = $objp->price;
+                        $ligne->product_id     = 0;
+    
+                        $this->lignes[$i]      = $ligne;
+                        $i++;
+                        $j++;
+                    }
+    
+                    $this->db->free($result);
+                }
+                else
+                {
+                    dolibarr_print_error($this->db);
+                    return -1;
+                }
+            }
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
     }
 		
   /*
