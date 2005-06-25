@@ -38,6 +38,7 @@ class ActionComm
   var $id;
   var $db;
 
+  var $label;
   var $date;
   var $type_code;
   var $type;
@@ -69,61 +70,53 @@ class ActionComm
    *    \brief      Ajout d'une action en base (et eventuellement dans webcalendar)
    *    \param      author      auteur de la creation de l'action
    *    \param      webcal      ressource webcalendar: 0=on oublie webcal, 1=on ajoute une entrée générique dans webcal, objet=ajout de l'objet dans webcal
-   *    \return     int         id de l'action créée
+   *    \return     int         id de l'action créée, < 0 si erreur
    */
-  function add($author, $webcal=0)
+    function add($author, $webcal=0)
     {
-      global $conf;
-      
-      if (! $this->contact)
-	{
-	  $this->contact = 0;
-	}
-      if (! $this->propalrowid)
-	{
-	  $this->propalrowid = 0;
-	}
-      if (! $this->percent)
-	{
-	  $this->percent = 0;
-	}
-      if (! $this->priority)
-	{
-	  $this->priority = 0;
-	}
-
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, label, fk_action, fk_soc, fk_user_author, fk_user_action, fk_contact, percent, note,priority,propalrowid) ";
-      $sql .= " VALUES ('$this->date', '$this->libelle', $this->type, $this->societe, $author->id,";
-      $sql .= $this->user->id . ", $this->contact, '$this->percent', '$this->note', $this->priority, $this->propalrowid);";
-      
-      if ($this->db->query($sql) )
-	{
-        $idaction = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm");
-        
-        if ($conf->webcal->enabled) {
-            if (is_object($webcal))
-            {
-                // Ajoute entrée dans webcal
-                $result=$webcal->add($author,$webcal->date,$webcal->texte,$webcal->desc);
-                if ($result < 0) {
-                    $this->error="Echec insertion dans webcal: ".$webcal->error;   
+        global $conf;
+    
+        if (! $this->percent)  $this->percent = 0;
+        if (! $this->priority) $this->priority = 0;
+    
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
+        $sql.= "(datea,fk_action,fk_soc,note,fk_contact,fk_user_author,fk_user_action,label,percent,priority,";
+        $sql.= "fk_facture,propalrowid)";
+        $sql.= " VALUES (now(), '".$this->type_code."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
+        $sql.= ($this->contact->id?$this->contact->id:"null").",";
+        $sql.= "'$author->id', '".$this->user->id ."', '".$this->label."',100,'".$this->priority."',";
+        $sql.= ($this->facid?$this->facid:"null").",";
+        $sql.= ($this->propalrowid?$this->propalrowid:"null");
+        $sql.= ");";
+    
+        if ($this->db->query($sql) )
+        {
+            $idaction = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm");
+    
+            if ($conf->webcal->enabled) {
+                if (is_object($webcal))
+                {
+                    // Ajoute entrée dans webcal
+                    $result=$webcal->add($author,$webcal->date,$webcal->texte,$webcal->desc);
+                    if ($result < 0) {
+                        $this->error="Echec insertion dans webcal: ".$webcal->error;
+                    }
+                }
+                else if ($webcal == 1)
+                {
+                    // \todo On ajoute une entrée générique, pour l'instant pas utilis
+    
                 }
             }
-            else if ($webcal == 1)
-            {
-                // \todo On ajoute une entrée générique, pour l'instant pas utilisé
-                   
-            }
+    
+            return $idaction;
         }
-
-	    return $idaction;
-	}
-      else
-	{
-	    dolibarr_print_error($this->db);
-        return -1;
-	}
-
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+    
     }
 
   /**
