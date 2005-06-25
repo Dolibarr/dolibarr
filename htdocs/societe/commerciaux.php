@@ -85,174 +85,165 @@ llxHeader();
 
 if($_GET["socid"])
 {
-
-  $soc = new Societe($db);
-  $soc->id = $_GET["socid"];
-  $soc->fetch($_GET["socid"]);
-  
-
-  $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
-  $head[0][1] = $langs->trans("Company");
-  $h = 1;
-
-  $head[$h][0] = 'lien.php?socid='.$soc->id;
-  $head[$h][1] = $langs->trans("Links");
-  $h++;
-
-  $head[$h][0] = 'commerciaux.php?socid='.$soc->id;
-  $head[$h][1] = $langs->trans("SalesRepresentative");
-  $h++;
-
-  $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
-  $head[$h][1] = $langs->trans("Note");
-  $h++;
-  
-  dolibarr_fiche_head($head, 2, $soc->nom);
-
-  /*
-   * Fiche société en mode visu
-   */
-
-  print '<table class="border" width="100%">';
-  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
-
-  print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
-
-  print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
-  print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
-
-  print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';
-
-  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
-  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
-
+    $soc = new Societe($db);
+    $soc->id = $_GET["socid"];
+    $soc->fetch($_GET["socid"]);
+    
+    $h=0;
+    
+    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("Company");
+    $h++;
+    
+    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("BankAccount")." $account->number";
+    $h++;
+    
+    $head[$h][0] = 'lien.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("Links");
+    $h++;
+    
+    $head[$h][0] = 'commerciaux.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("SalesRepresentative");
+    $hselected=$h;
+    $h++;
+    
+    dolibarr_fiche_head($head, $hselected, $soc->nom);
+    
+    /*
+    * Fiche société en mode visu
+    */
+    
+    print '<table class="border" width="100%">';
+    print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$soc->nom.'</td></tr>';
+    
   print '<tr><td>';
-  print $langs->trans('CustomerCode').'</td><td colspan="3">';
+  print $langs->trans('CustomerCode').'</td><td width="20%">';
   print $soc->code_client;
-  if ($soc->check_codeclient() <> 0)
+  if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+  print '</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
+
+    print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
+    
+    print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
+    print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
+    
+    print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';
+    
+    print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
+    print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
+    
+    print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
+    if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
+    print '</td></tr>';
+    
+    // Liste les commerciaux
+    print '<tr><td valign="top">'.$langs->trans("SalesRepresentatives").'</td>';
+    print '<td colspan="3">';
+
+    $sql = "SELECT u.rowid, u.name, u.firstname";
+    $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+    $sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql .= " WHERE sc.fk_soc =".$soc->id;
+    $sql .= " AND sc.fk_user = u.rowid";
+    $sql .= " ORDER BY u.name ASC ";
+    
+    $resql = $db->query($sql);
+    if ($resql)
     {
-      print $langs->trans("WrongCode");
+        $num = $db->num_rows($resql);
+        $i = 0;
+    
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+            print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+            print img_object($langs->trans("ShowUser"),"user").' ';
+            print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
+            print '</a>&nbsp;';
+            print '<a href="commerciaux.php?socid='.$_GET["socid"].'&amp;delcommid='.$obj->rowid.'">';
+            print img_delete();
+            print '</a><br>';
+            $i++;
+        }
+    
+        $db->free($resql);
     }
-  print '</td></tr>';
-
-  print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
-  if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
-  print '</td></tr>';
-  
-  if ($soc->parent > 0)
+    else
     {
-      $socm = new Societe($db);
-      $socm->fetch($soc->parent);
-      
-      print '<tr><td>'.$langs->trans("ParentCompany").'</td><td>'.$socm->nom_url.' ('.$socm->code_client.')<br />'.$socm->ville.'</td></tr>';
+        dolibarr_print_error($db);
+    }
+    if($i == 0) { print $langs->trans("NoSalesRepresentativeAffected"); }
+
+    print "</td></tr>";
+    
+    
+    print '</table>';
+    print "<br></div>\n";
+    
+    
+    
+    if ($user->rights->societe->creer)
+    {
+        /*
+        * Liste
+        *
+        */
+    
+        $langs->load("users");
+        $title=$langs->trans("ListOfUsers");
+    
+        $sql = "SELECT u.rowid, u.name, u.firstname, u.code";
+        $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+        $sql .= " ORDER BY u.name ASC ";
+    
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            $i = 0;
+    
+            print_titre($title);
+    
+            // Lignes des titres
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre">';
+            print '<td>'.$langs->trans("Name").'</td>';
+            print '<td>'.$langs->trans("Code").'</td>';
+            print '<td>&nbsp;</td>';
+            print "</tr>\n";
+    
+            $var=True;
+    
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                $var=!$var;
+                print "<tr $bc[$var]><td>";
+                print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
+                print img_object($langs->trans("ShowUser"),"user").' ';
+                print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
+                print '</a>';
+                print '</td><td>'.$obj->code.'</td>';
+                print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
+    
+                print '</tr>'."\n";
+                $i++;
+            }
+    
+            print "</table>";
+            $db->free($resql);
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
     }
 
-  // Liste les commerciaux
-  $sql = "SELECT u.rowid, u.name, u.firstname";
-  $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-  $sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-  $sql .= " WHERE sc.fk_soc =".$soc->id;
-  $sql .= " AND sc.fk_user = u.rowid";
-  $sql .= " ORDER BY u.name ASC ";
-  
-  print '<tr><td valign="top">'.$langs->trans("SalesRepresentatives").'</td>';
-  print '<td colspan="3">';
-
-  $resql = $db->query($sql);
-  if ($resql)
-    {
-      $num = $db->num_rows($resql);
-      $i = 0;
-      
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object($resql);
-	  print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
-      print img_object($langs->trans("ShowUser"),"user").' ';
-	  print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
-	  print '</a>&nbsp;';
-	  print '<a href="commerciaux.php?socid='.$_GET["socid"].'&amp;delcommid='.$obj->rowid.'">';
-	  print img_delete();
-	  print '</a><br>';
-	  $i++;
-	}
-      
-      $db->free($resql);
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
-  if($i == 0) { print $langs->trans("NoSalesRepresentativeAffected"); }
-  print "</td></tr>";
-  
-
-  print '</table>';
-  print "<br></div>\n";
-
-
-
-  if ($user->rights->societe->creer)
-    {
-      /*
-       * Liste
-       *
-       */
-      
-      $langs->load("users");
-      $title=$langs->trans("ListOfUsers");
-      
-      $sql = "SELECT u.rowid, u.name, u.firstname, u.code";
-      $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-      $sql .= " ORDER BY u.name ASC ";
-      
-      $resql = $db->query($sql);
-      if ($resql)
-	{
-	  $num = $db->num_rows($resql);
-	  $i = 0;
-	  
-	  print_titre($title);
-	  
-	  // Lignes des titres
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre">';
-	  print '<td>'.$langs->trans("Name").'</td>';
-	  print '<td>'.$langs->trans("Code").'</td>';
-	  print '<td>&nbsp;</td>';
-	  print "</tr>\n";
-	  
-	  $var=True;
-	  
-	  while ($i < $num)
-	    {
-	      $obj = $db->fetch_object($resql);    
-	      $var=!$var;    
-	      print "<tr $bc[$var]><td>";
-    	  print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
-	      print img_object($langs->trans("ShowUser"),"user").' ';
-	      print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
-          print '</a>';
-          print '</td><td>'.$obj->code.'</td>';
-	      print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
-	      
-	      print '</tr>'."\n";
-	      $i++;
-	    }
-	  
-	  print "</table>";
-	  $db->free($resql);
-	}
-      else
-	{
-	  dolibarr_print_error($db);
-	}
-    }            
-  
 }
 
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

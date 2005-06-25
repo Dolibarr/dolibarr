@@ -405,175 +405,224 @@ elseif ($_GET["action"] == 'edit')
 }
 else
 {
-  if ($no_reload <> 1)
-    {      
-      $soc = new Societe($db);
-      $soc->id = $_GET["socid"];
-      $soc->fetch($_GET["socid"]);
-    }
-
-  $head[0][0] = 'soc.php?socid='.$soc->id;
-  $head[0][1] = $langs->trans("Company");
-  $h = 1;
-
-  if ($soc->client==1)
+    if ($no_reload <> 1)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
-      $head[$h][1] = $langs->trans("Customer");
-      $h++;
+        $soc = new Societe($db);
+        $soc->id = $_GET["socid"];
+        $soc->fetch($_GET["socid"]);
     }
-  if ($soc->client==2)
+
+    $h=0;
+    
+    $head[$h][0] = 'soc.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("Company");
+    $h++;
+
+    if ($soc->client==1)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$soc->id;
-      $head[$h][1] = $langs->trans("Prospect");
-      $h++;
+        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
+        $head[$h][1] = $langs->trans("Customer");
+        $h++;
     }
-  if ($soc->fournisseur)
+    if ($soc->client==2)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
-      $head[$h][1] = $langs->trans("Supplier");;
-      $h++;
+        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$soc->id;
+        $head[$h][1] = $langs->trans("Prospect");
+        $h++;
     }
-
-  if ($conf->compta->enabled) {
-      $langs->load("compta");
-      $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
-      $head[$h][1] = $langs->trans("Accountancy");
-      $h++;
-  }
-
-  $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
-  $head[$h][1] = $langs->trans("Note");
-  $h++;
-  
-  if ($user->societe_id == 0)
+    if ($soc->fournisseur)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$soc->id;
-      $head[$h][1] = $langs->trans("Documents");
-      $h++;
+        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
+        $head[$h][1] = $langs->trans("Supplier");;
+        $h++;
     }
 
-  $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
-  $head[$h][1] = $langs->trans("Notifications");
+    if ($conf->compta->enabled) {
+        $langs->load("compta");
+        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
+        $head[$h][1] = $langs->trans("Accountancy");
+        $h++;
+    }
 
-  dolibarr_fiche_head($head, 0, $soc->nom);
+    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("Note");
+    $h++;
 
-  /*
-   * Fiche société en mode visu
-   */
-
-  // Confirmation de la suppression de la facture
-  if ($_GET["action"] == 'delete')
+    if ($user->societe_id == 0)
     {
-      $html = new Form($db);
-      $html->form_confirm("soc.php?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete");
-      print "<br />\n";
+        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$soc->id;
+        $head[$h][1] = $langs->trans("Documents");
+        $h++;
     }
-  
 
-  if ($soc->error)
+    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
+    $head[$h][1] = $langs->trans("Notifications");
+
+    dolibarr_fiche_head($head, 0, $soc->nom);
+
+    /*
+    * Fiche société en mode visu
+    */
+
+    // Confirmation de la suppression de la facture
+    if ($_GET["action"] == 'delete')
     {
-      print '<div class="error">';
-      print $soc->error;
-      print '</div>';
+        $html = new Form($db);
+        $html->form_confirm("soc.php?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete");
+        print "<br />\n";
     }
 
-  print '<table class="border" width="100%">';
 
-  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$soc->nom.'</td></tr>';
+    if ($soc->error)
+    {
+        print '<div class="error">';
+        print $soc->error;
+        print '</div>';
+    }
 
-  print '<tr><td>';
-  print $langs->trans('CustomerCode').'</td><td width="20%">';
-  print $soc->code_client;
-  if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
-  print '</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
+    print '<table class="border" width="100%">';
 
-  print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
+    print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$soc->nom.'</td></tr>';
 
-  print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
-  print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
+    print '<tr><td>';
+    print $langs->trans('CustomerCode').'</td><td width="20%">';
+    print $soc->code_client;
+    if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+    print '</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
 
-  print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';
+    print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
 
-  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
-  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
+    print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
+    print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
 
-  print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
-  if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
-  print '</td></tr>';
-  
-  print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td>';
-  // Si société FR et siren fourni, on le vérifie
-  if ($soc->pays_code == "FR" && $soc->siren) {
-      if ($soc->check_siren() == 0)
+    print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';
+
+    print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
+    print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
+
+    print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
+    if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
+    print '</td></tr>';
+
+    print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td>';
+    // Si société FR et siren fourni, on le vérifie
+    if ($soc->pays_code == "FR" && $soc->siren) {
+        if ($soc->check_siren() == 0)
         {
-          print '<a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;';
+            print '<a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;';
         }
-      else
+        else
         {
-          print '<a class="error">'.$soc->siren;
-          // Siren invalide
-          print "&nbsp;Code Siren Invalide !</a>";
+            print '<a class="error">'.$soc->siren;
+            // Siren invalide
+            print "&nbsp;Code Siren Invalide !</a>";
         }
-  }
-  else {
+    }
+    else {
         print $soc->siren;
-  }
-  print '</td>';
-  print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td>'.$soc->siret.'</td></tr>';
+    }
+    print '</td>';
+    print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td>'.$soc->siret.'</td></tr>';
 
-  print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td>'.$soc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td>'.$soc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
 
-  print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
-  print $soc->tva_intra;
-  print '</td></tr>';
+    print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
+    print $soc->tva_intra;
+    print '</td></tr>';
 
-  print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$soc->capital.' '.$conf->monnaie.'</td></tr>';
+    print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$soc->capital.' '.$conf->monnaie.'</td></tr>';
 
-  print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
+    print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
 
-  $arr = $soc->typent_array($soc->typent_id);
-  $soc->typent= $arr[$soc->typent_id];
+    $arr = $soc->typent_array($soc->typent_id);
+    $soc->typent= $arr[$soc->typent_id];
 
-  print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
 
-  print '<tr><td><a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit() ."</a>&nbsp;";
-  print $langs->trans('RIB').'</td><td colspan="3">';
-  print $soc->display_rib();
-  print '</td></tr>';
+    // RIB
+    print '<tr><td>';
+    print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0" border="0"><tr><td>';
+    print $langs->trans('RIB');
+    print '<td><td align="right">';
+    print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit().'</a>';
+    print '</td></tr></table>';
+    print '</td>';
+    print '<td colspan="3">';
+    print $soc->display_rib();
+    print '</td></tr>';
 
-  print '</table>';
-  print "<br></div>\n";
-  /*
-   *
-   */  
-  if ($_GET["action"] == '')
+    // Maison mère
+    print '<tr><td>';
+    print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0" border="0"><tr><td>';
+    print $langs->trans('ParentCompany');
+    print '<td><td align="right">';
+    print '<a href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">'.img_edit() .'</a>';
+    print '</td></tr></table>';
+    print '</td>';
+    print '<td colspan="3">';
+    if ($soc->parent)
+    {
+        $socm = new Societe($db);
+        $socm->fetch($soc->parent);
+        print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$socm->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$socm->nom.'</a>'.($socm->code_client?"(".$socm->code_client.")":"").' - '.$socm->ville;
+    }
+    print '</td></tr>';
+
+    // Commerciaux
+    print '<tr><td>';
+    print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0" border="0"><tr><td>';
+    print $langs->trans('SalesRepresentative');
+    print '<td><td align="right">';
+    print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.img_edit().'</a>';
+    print '</td></tr></table>';
+    print '</td>';
+    print '<td colspan="3">';
+
+    $sql = "SELECT count(sc.rowid) as nb";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE sc.fk_soc =".$soc->id;
+
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $obj = $db->fetch_object($resql);
+        print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.$obj->nb.'</a>';
+    }
+    else {
+        dolibarr_print_error($db);
+    }
+    print '</td></tr>';
+
+
+    print '</table>';
+    print "<br></div>\n";
+    /*
+    *
+    */
+    if ($_GET["action"] == '')
     {
 
-      print '<div class="tabsAction">';
-      
-      print '<a class="butAction" href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.$langs->trans("SalesRepresentative").'</a>';
+        print '<div class="tabsAction">';
 
-      print '<a class="butAction" href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">'.$langs->trans("ParentCompany").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
 
-      print '<a class="butAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
-      
-      print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 
-      if ($user->rights->societe->supprimer)
-	{	  
-	  print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+        if ($user->rights->societe->supprimer)
+        {
+            print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 
-	}
-      print '</div>';
+        }
+        print '</div>';
     }
-/*
- *
- */
+
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
+
 ?>
 
