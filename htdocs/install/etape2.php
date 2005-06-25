@@ -219,7 +219,9 @@ if ($_POST["action"] == "set")
                         }
                         else
                         {
-                            if ($db->errno() == 'DB_ERROR_CANNOT_CREATE' || eregi('duplicate key name',$db->error()))
+                            if ($db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS' ||
+                                $db->errno() == 'DB_ERROR_CANNOT_CREATE' ||
+                                eregi('duplicate key name',$db->error()))
                             {
                                 //print "<td>Déjà existante</td></tr>";
                                 $key_exists = 1;

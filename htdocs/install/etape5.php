@@ -122,12 +122,18 @@ if ($_POST["action"] == "set")
 
 print "<br>";
 
+// Fin install
 print $langs->trans("SystemIsInstalled")."<br>";
-print $langs->trans("YouNeedToPersonalizeSetup")."<br>";
+print $langs->trans("WarningRemoveInstallDir")."<br>";
 
-print '<br><a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup">';
+print "<br>";
+
+// Lien vers setup
+print $langs->trans("YouNeedToPersonalizeSetup")."<br>";
+print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup">';
 print $langs->trans("GoToSetupArea");
 print '</a>';
+
 
 pFooter(1);
 ?>
