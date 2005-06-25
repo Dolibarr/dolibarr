@@ -30,6 +30,9 @@
 
 require("./pre.inc.php");
 
+$langs->load("bills");
+
+
 // Sécurité accés client
 if ($user->societe_id > 0) 
 {

@@ -102,11 +102,10 @@ define('MAIN_DB_PREFIX','llx_');                        // A terme cette constan
  * Chargement des includes principaux
  */
 require_once(DOL_DOCUMENT_ROOT ."/lib/".$conf->db->type.".lib.php");
-require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
-require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/address.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
 
 
 $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);

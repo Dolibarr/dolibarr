@@ -20,6 +20,9 @@
  *
  */
 
+require_once(DOL_DOCUMENT_ROOT ."/address.class.php");
+
+
 class Commande {
   var $db ;
 

@@ -27,11 +27,12 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+
 
 /**	    \class      Ficheinter
 		\brief      Classe des gestion des fiches interventions
 */
-
 class Fichinter
 {
   var $id;
@@ -237,7 +238,6 @@ class Fichinter
             */
             $mesg = "La fiche d'intervention ".$this->ref." a été validée.\n";
         
-            require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
             $notify = New Notify($this->db);
             $notify->send($action_notify, $this->societe_id, $mesg, "ficheinter", $this->id, $filepdf);
         

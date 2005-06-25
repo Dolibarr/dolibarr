@@ -30,6 +30,8 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+
 
 /**
         \class      Facture
