@@ -34,6 +34,7 @@ $user->getrights();
 $langs->load("companies");
 $langs->load("customers");
 $langs->load("suppliers");
+$langs->load("banks");
 
 /*
  * Sécurité accés client
