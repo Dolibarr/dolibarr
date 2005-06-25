@@ -1768,7 +1768,7 @@ else
                         $i++;
                     }
 
-                    if ($num <= $limit) {
+                    if (($offset + $num) <= $limit) {
                         // Print total
                         print '<tr class="liste_total">';
                         print '<td class="liste_total" colspan="3" align="left">'.$langs->trans("Total").'</td>';
