@@ -51,8 +51,6 @@ if ($conf->commande->enabled) require_once "../commande/commande.class.php";
 require_once DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php";
 
 
-
-
 if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
 
@@ -411,25 +409,34 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
                 $mimetype[1] = $_FILES['addedfile']['type'];
 
                 // Envoi de la facture
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath, $mimetype,$filename,$sendtocc);
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc);
 
                 if ($mailfile->sendfile())
                 {
                     $msg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$from,$sendto).'.</div>';
 
-                    $sendto = htmlentities($sendto);
+                    // Insertion action
+                    include_once("../contact.class.php");
+                    $actioncomm = new ActionComm($db);
+                    $actioncomm->type_code   = $actioncode;
+                    $actioncomm->label       = $actionmsg2;
+                    $actioncomm->note        = $actionmsg;
+                    $actioncomm->date        = $db->idate(time());
+                    $actioncomm->percent     = 100;
+                    $actioncomm->contact     = new Contact($db,$sendtoid);
+                    $actioncomm->societe     = new Societe($db,$fac->socidp);
+                    $actioncomm->user        = $user;   // User qui a fait l'action
+                    $actioncomm->facid       = $fac->id;
 
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
-                    $sql.= "(datea,fk_action,fk_soc,note,fk_facture,fk_contact,fk_user_author,label,percent)";
-                    $sql.= " VALUES (now(), '$actioncode' ,'$fac->socidp' ,'".addslashes($actionmsg)."','$fac->id','$sendtoid','$user->id', '$actionmsg2',100);";
+                    $ret=$actioncomm->add($user);       // User qui saisi l'action
 
-                    if (! $db->query($sql) )
+                    if ($ret < 0)
                     {
                         dolibarr_print_error($db);
                     }
                     else
                     {
-                        // Renvoie sur la page de la facture
+                        // Renvoie sur la fiche
                         Header("Location: facture.php?facid=".$fac->id."&msg=".urlencode($msg));
                         exit;
                     }
