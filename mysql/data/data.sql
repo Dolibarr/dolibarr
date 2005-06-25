@@ -69,11 +69,6 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFOR
 insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_PRODUITSERVICE','1','yesno','Affichage formulaire de recherche des Produits et Services dans la barre de gauche',0);
 
 --
--- Dons
---
-insert into llx_const (name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
-
---
 -- Mail Adherent
 --
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_REQUIRED','1','yesno','Le mail est obligatoire pour créer un adhérent',0);
