@@ -196,7 +196,7 @@ if ($user->rights->facture->lire)
                 print "<td nowrap align=\"center\">".dolibarr_print_date($objp->df)."</td>\n";
                 print "<td nowrap align=\"center\">".dolibarr_print_date($objp->datelimite)."</td>\n";
 
-                print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom.'</a></td>';
+                print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
 
                 print "<td align=\"right\">".price($objp->total)."</td>";
                 print "<td align=\"right\">".price($objp->total_ttc)."</td>";
@@ -230,8 +230,9 @@ if ($user->rights->facture->lire)
 
                 $i++;
             }
+
             print '<tr class="liste_total">';
-            print "<td colspan=3 align=\"left\">".$langs->trans("Total").": </td>";
+            print "<td colspan=\"4\" align=\"left\">".$langs->trans("Total").": </td>";
             print "<td align=\"right\"><b>".price($total)."</b></td>";
             print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
             print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
