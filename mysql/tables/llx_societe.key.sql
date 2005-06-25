@@ -23,4 +23,3 @@
 
 ALTER TABLE llx_societe ADD UNIQUE uk_societe_prefix_comm(prefix_comm);
 ALTER TABLE llx_societe ADD UNIQUE uk_societe_code_client(code_client);
-ALTER TABLE llx_societe ADD UNIQUE uk_societe_code_compta(code_compta);
