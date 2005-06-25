@@ -95,7 +95,6 @@ if ($_POST["action"] == "set")
 
     if ($resql)
     {
-        $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
         print $langs->trans("AdminLoginCreatedSuccessfuly")."<br>";
         $success = 1;
     }
@@ -104,17 +103,27 @@ if ($_POST["action"] == "set")
         if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
         {
             print $langs->trans("AdminLoginAlreadyExists",$_POST["login"])."<br>";
+            $success = 1;
         }
         else {
             print $langs->trans("FailedToCreateAdminLogin")."<br>";
         }
     }
 
-    // Si install non Français, on configure pour fonctionner en mode internationnal
-    if ($langs->defaultlang != "fr_FR") {
-        $db->query("INSERT INTO llx_const(name,value,type,visible) values ('COMPANY_CREATE_TWO_STEPS','1','yesno',0)");
-    }
+    if ($success)
+    {
+        $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
+    
+        // Si install non Français, on configure pour fonctionner en mode internationnal
+        if ($langs->defaultlang != "fr_FR") {
 
+            $db->query("INSERT INTO llx_const(name,value,type,visible) values ('COMPANY_CREATE_TWO_STEPS','1','yesno',0)");
+
+            $db->query("UPDATE llx_const set value='eldy.php' WHERE name='MAIN_MENU_BARRETOP';");
+            $db->query("UPDATE llx_const set value='eldy.php' WHERE name='MAIN_MENU_BARRELEFT';");
+        }
+    }
+        
     print '</table>';
 
     $db->close();
