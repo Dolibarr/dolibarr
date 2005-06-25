@@ -187,11 +187,6 @@ if ($socid > 0)
         $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
         $head[$h][1] = $langs->trans("Accountancy");
         $h++;
-
-        $head[$h][0] = DOL_URL_ROOT.'/compta/recap-client.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Recap");
-        $h++;
-
     }
 
     $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
@@ -215,6 +210,7 @@ if ($socid > 0)
     	$head[$h][1] = '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
     	$head[$h][2] = 'image';
     }
+
     dolibarr_fiche_head($head, $hselected, $societe->nom);
 
     /*
@@ -244,7 +240,7 @@ if ($socid > 0)
 
     print "</td></tr>";
 
-    print '<tr><td>'.$langs->trans("AccountancyCode").'</td><td>'.$societe->code_compta.'</td>';
+    print '<tr><td nowrap>'.$langs->trans("AccountancyCode").'</td><td>'.$societe->code_compta.'</td>';
     print '<td>'.$langs->trans("CustomerCode").'/' . $langs->trans("SupplierCode") . '</td><td>';
     print $societe->code_client;
     print "</td></tr>";
@@ -358,6 +354,14 @@ if ($socid > 0)
         print "</table>";
     }
 
+    // Lien recap
+    print '<br>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-client.php?socid='.$societe->id.'">'.$langs->trans("ShowLog").'</td></tr></table></td>';
+    print '</tr>';
+    print '</table>';
+
     print "</td></tr>";
     print "</table></div>\n";
 
@@ -381,6 +385,8 @@ if ($socid > 0)
             print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
         }
       }
+
+    print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
 
     print '</div>';
     print "<br>\n";
@@ -416,7 +422,7 @@ if ($socid > 0)
       print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
       print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
       print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
-      print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td>";
+      print "<td align=\"center\">&nbsp;</td>";
       print '<td>&nbsp;</td>';
       print "</tr>";
 

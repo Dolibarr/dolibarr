@@ -48,6 +48,7 @@ $user->getrights('facture');
 
 llxHeader();
 
+
 /*
  *
  * Mode fiche
@@ -58,6 +59,9 @@ if ($socid > 0)
     $societe = new Societe($db);
     $societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
 
+    /*
+     * Affichage onglets
+     */
     /*
      * Affichage onglets
      */
@@ -86,16 +90,11 @@ if ($socid > 0)
         $h++;
     }
 
-    if ($conf->compta->enabled)
-      {
+    if ($conf->compta->enabled) {
         $langs->load("compta");
+        $hselected=$h;
         $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
         $head[$h][1] = $langs->trans("Accountancy");
-        $h++;
-
-        $head[$h][0] = DOL_URL_ROOT.'/compta/recap-client.php?socid='.$societe->id;
-        $head[$h][1] = $langs->trans("Recap");
-        $hselected=$h;
         $h++;
     }
 
@@ -110,12 +109,17 @@ if ($socid > 0)
         $h++;
     }
 
+    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
+    $head[$h][1] = $langs->trans("Notifications");
+    $h++;
+
     if ($user->societe_id == 0)
     {
     	$head[$h][0] = DOL_URL_ROOT."/index.php?socidp=$societe->id&action=add_bookmark";
     	$head[$h][1] = '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
     	$head[$h][2] = 'image';
     }
+
     dolibarr_fiche_head($head, $hselected, $societe->nom);
 
     /*
@@ -131,6 +135,8 @@ if ($socid > 0)
     print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$societe->cp.'</td>';
     print '<td>'.$langs->trans('Town').'</td><td>'.$societe->ville.'</td></tr>';
     
+    print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';
+
     print '<tr><td>'.$langs->trans("Phone").'</td><td>'.$societe->tel.'&nbsp;</td><td>Fax</td><td>'.$societe->fax.'&nbsp;</td></tr>';
 
     print '<tr><td nowrap>'.$langs->transcountry("ProfId1",$societe->pays_code).'</td><td><a href="http://www.societe.com/cgi-bin/recherche?rncs='.$societe->siren.'">'.$societe->siren.'</a>&nbsp;</td>';
