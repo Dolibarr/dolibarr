@@ -88,8 +88,8 @@ if ($resql)
   print '<table class="noborder" width="100%">';
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","","",$sortfield);
-  print_liste_field_titre($langs->trans("NbOfServices"), $_SERVER["PHP_SELF"], "nb","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","",'width="50"',$sortfield);
+  print_liste_field_titre($langs->trans("NbOfServices"), $_SERVER["PHP_SELF"], "nb",'','','width="80"',$sortfield);
   print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","","",$sortfield);
   print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","","",$sortfield);
   print "</tr>\n";
@@ -103,7 +103,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$obj->cid\">";
       print img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
-      print '<td>'.$obj->nb.'</td>';
+      print '<td align="center">'.$obj->nb.'</td>';
       print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
       print '<td>'.dolibarr_print_date($obj->datec).'</td>';
 

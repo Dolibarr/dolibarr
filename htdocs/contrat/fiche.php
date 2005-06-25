@@ -650,7 +650,11 @@ else
                         if ($objp->fk_product > 0) {
                             print '<td align="center">';
                             print '<a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id.'&amp;ligne='.$objp->rowid.'">';;
-                            print '<img src="./statut'.$objp->statut.'.png" border="0" alt="statut"></a></td>';
+                            print '<img src="./statut'.$objp->statut.'.png" border="0" alt="statut"></a>';
+                            print '</td>';
+                        } else {
+                            // Si non ligne de service (Ne devrait pas arriver)
+                            print '<td>&nbsp;</td>';
                         }
                         print "</tr>\n";
     

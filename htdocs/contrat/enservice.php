@@ -62,7 +62,8 @@ if (! $sortorder) $sortorder="DESC";
 
 
 $sql = "SELECT s.nom, c.rowid as cid, s.idp as sidp, cd.rowid, cd.label, cd.statut, p.rowid as pid,";
-$sql .= " ".$db->pdate("cd.date_ouverture")." as date_ouverture";
+$sql .= " ".$db->pdate("cd.date_ouverture")." as date_ouverture,";
+$sql .= " ".$db->pdate("cd.date_fin_validite")." as date_fin_validite";
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
 $sql .= " , ".MAIN_DB_PREFIX."contratdet as cd";
@@ -81,16 +82,17 @@ if ($resql)
   $num = $db->num_rows($resql);
   $i = 0;
 
-  print_barre_liste($langs->trans("ListOfRunningContractsLines"), $page, "enservice.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+  print_barre_liste($langs->trans("ListOfRunningServices"), $page, "enservice.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
   print '<table class="noborder" width="100%">';
 
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Contract"),"enservice.php", "c.rowid","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"enservice.php", "cd.statut","","","",$sortfield);
   print_liste_field_titre($langs->trans("Service"),"enservice.php", "p.label","","","",$sortfield);
   print_liste_field_titre($langs->trans("Company"),"enservice.php", "s.nom","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"enservice.php", "cd.date_ouverture",'','',' align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("DateStartReal"),"enservice.php", "cd.date_ouverture",'','',' align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("DateEndPlanned"),"enservice.php", "cd.date_fin_validite",'','',' align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"enservice.php", "cd.statut","","","",$sortfield);
   print "</tr>\n";
 
   $now=mktime();
@@ -101,11 +103,11 @@ if ($resql)
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$obj->cid.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
-      print '<td><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></td>';
-      print '<td><a href="../product/fiche.php?id='.$obj->pid.'">'.img_object($langs->trans("ShowService"),"service").' '.$obj->label.'</a></td>';
-      print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+      print '<td><a href="../product/fiche.php?id='.$obj->pid.'">'.img_object($langs->trans("ShowService"),"service").' '.dolibarr_trunc($obj->label,20).'</a></td>';
+      print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
       print '<td align="center">'.dolibarr_print_date($obj->date_ouverture).'</td>';
-
+      print '<td align="center">'.($obj->date_fin_validite?dolibarr_print_date($obj->date_fin_validite):'&nbsp;').'</td>';
+      print '<td align="center"><a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$obj->cid.'&ligne='.$obj->rowid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
       print "</tr>\n";
       $i++;
     }
