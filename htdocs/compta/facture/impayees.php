@@ -65,7 +65,7 @@ llxHeader('',$langs->trans("UnpayedBills"));
 $page = $_GET["page"];
 $sortfield=$_GET["sortfield"];
 $sortorder=$_GET["sortorder"];
-if (! $sortfield) $sortfield="f.datef";
+if (! $sortfield) $sortfield="f.date_lim_reglement";
 if (! $sortorder) $sortorder="ASC";
 if ($page == -1) $page = 0;
 
