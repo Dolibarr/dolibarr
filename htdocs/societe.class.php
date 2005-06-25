@@ -310,36 +310,27 @@ class Societe {
 	if ($this->pays_id)
 	  { $sql .= ",fk_pays = '" . $this->pays_id ."'"; }
 	      
-	$sql .= ",tel = '" . $this->tel ."'"; 	
-	$sql .= ",fax = '" . $this->fax ."'"; 	
-	$sql .= ",url = '" . $this->url ."'"; 	
-	$sql .= ",siren = '" . $this->siren ."'"; 	
-	$sql .= ",siret = '" . $this->siret ."'"; 	
-	$sql .= ",ape = '" . $this->ape ."'"; 
+	$sql .= ",tel = ".($this->tel?"'".$this->tel."'":"null"); 	
+	$sql .= ",fax = ".($this->fax?"'".$this->fax."'":"null"); 	
+	$sql .= ",url = ".($this->url?"'".$this->url."'":"null"); 	
+
+	$sql .= ",siren = '". $this->siren ."'";
+	$sql .= ",siret = '". $this->siret ."'";
+	$sql .= ",ape   = '". $this->ape   ."'";
+
 	$sql .= ",tva_intra = '" . $this->tva_intra ."'"; 
 	$sql .= ",capital = '" . $this->capital ."'";
 
-	if ($this->prefix_comm) 
-	  { $sql .= ",prefix_comm = '" . $this->prefix_comm ."'"; }
+	if ($this->prefix_comm) $sql .= ",prefix_comm = '" . $this->prefix_comm ."'";
 
-	if ($this->effectif_id)  
-	  { $sql .= ",fk_effectif = '" . $this->effectif_id ."'"; }
+	if ($this->effectif_id) $sql .= ",fk_effectif = '" . $this->effectif_id ."'";
 	
-	if ($this->typent_id)  
-	  { $sql .= ",fk_typent = '" . $this->typent_id ."'"; }
+	if ($this->typent_id)   $sql .= ",fk_typent = '" . $this->typent_id ."'";
 
-	if ($this->forme_juridique_code)
-	  { 
-	    $sql .= ",fk_forme_juridique = '".$this->forme_juridique_code."'";
-	  }
+	if ($this->forme_juridique_code) $sql .= ",fk_forme_juridique = '".$this->forme_juridique_code."'";
 	
 	$sql .= ",client = " . $this->client;
 	$sql .= ",fournisseur = " . $this->fournisseur;
-	
-	if ($user)           
-	  {
-	    $sql .= ",fk_user_modif = '".$user->id."'";
-	  }
 	
 	if ($this->creation_bit || $this->codeclient_modifiable)
 	  {   
@@ -348,15 +339,17 @@ class Societe {
 	    
 	    $this->check_codeclient();
 	    
-	    $sql .= ", code_client = '". $this->code_client ."'";
+	    $sql .= ", code_client = ".($this->code_client?"'".$this->code_client."'":"null");
 	    
 	    // Attention check_codecompta peut modifier le code 
 	    // suivant le module utilisé
 	    
 	    $this->check_codecompta();
 	    
-	    $sql .= ", code_compta = '". $this->code_compta ."'";
+	    $sql .= ", code_compta = ".($this->code_compta?"'".$this->code_compta."'":"null");
 	  }
+	
+	if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
 	
 	$sql .= " WHERE idp = '" . $id ."'";
 	
