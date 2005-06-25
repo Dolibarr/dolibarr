@@ -39,12 +39,8 @@ $user->getrights('propale');
 if (!$user->rights->propale->lire)
   accessforbidden();
 
-if ($conf->projet->enabled) {
-  require_once "../project.class.php";
-}
-if($conf->commande->enabled) {
-  require_once "../commande/commande.class.php";
-}
+if ($conf->projet->enabled)  require_once "../project.class.php";
+if($conf->commande->enabled) require_once "../commande/commande.class.php";
 require("./propal_model_pdf.class.php");
 require("../propal.class.php");
 require("../actioncomm.class.php");
@@ -58,6 +54,10 @@ if ($user->societe_id > 0)
   $action = '';
   $socidp = $user->societe_id;
 }
+
+if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
+if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
+
 
 // Nombre de ligne pour choix de produit/service prédéfinis
 $NBLINES=4;
@@ -137,6 +137,126 @@ if ($_POST["action"] == 'setstatut' && $user->rights->propale->cloturer)
   $propal->fetch($_GET["propalid"]);
   $propal->cloture($user, $_POST["statut"], $_POST["note"]);
 } 
+
+/*
+* Envoi de la propale par mail
+*
+*/
+if ($_POST["action"] == 'send')
+{
+    $langs->load("mails");
+
+    $propal= new Propal($db);
+    if ( $propal->fetch($_POST["propalid"]) )
+    {
+        $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+        $propalref = str_replace($forbidden_chars,"_",$propal->ref);
+        $file = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
+
+        if (is_readable($file))
+        {
+            $soc = new Societe($db, $propal->socidp);
+
+            if ($_POST["sendto"]) {
+                // Le destinataire a été fourni via le champ libre
+                $sendto = $_POST["sendto"];
+                $sendtoid = 0;
+            }
+            elseif ($_POST["receiver"]) {
+                // Le destinataire a été fourni via la liste déroulante
+                $sendto = $soc->contact_get_email($_POST["receiver"]);
+                $sendtoid = $_POST["receiver"];
+            }
+
+            if (strlen($sendto))
+            {
+                $from = $_POST["fromname"] . " <" . $_POST["frommail"] .">";
+                $replyto = $_POST["replytoname"]. " <" . $_POST["replytomail"].">";
+                $message = $_POST["message"];
+                if ($_POST["action"] == 'send') {
+                    $subject = $langs->trans("Propal")." $propal->ref";
+                    $actioncode=3;
+                    $actionmsg ="Mail envoyé par $from à $sendto.<br>";
+                    if ($message) {
+                        $actionmsg.="Texte utilisé dans le corps du message:<br>";
+                        $actionmsg.="$message";
+                    }
+                    $actionmsg2="Envoi Propal par mail";
+                }
+                /*
+                if ($_POST["action"] == 'relance') 	{
+                    $subject = "Relance facture $propal->ref";
+                    $actioncode=10;
+                    $actionmsg="Mail envoyé par $from à $sendto.<br>";
+                    if ($message) {
+                        $actionmsg.="Texte utilisé dans le corps du message:<br>";
+                        $actionmsg.="$message";
+                    }
+                    $actionmsg2="Relance Facture par mail";
+                }
+                */
+                $filepath[0] = $file;
+                $filename[0] = $propal->ref.".pdf";
+                $mimetype[0] = "application/pdf";
+                $filepath[1] = $_FILES['addedfile']['tmp_name'];
+                $filename[1] = $_FILES['addedfile']['name'];
+                $mimetype[1] = $_FILES['addedfile']['type'];
+
+                // Envoi de la facture
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc);
+
+                if (! $mailfile->sendfile())
+                {
+                    $msg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$from,$sendto).'.</div>';
+
+                    // Insertion action
+                    include_once("../contact.class.php");
+                    $actioncomm = new ActionComm($db);
+                    $actioncomm->type_code   = $actioncode;
+                    $actioncomm->label       = $actionmsg2;
+                    $actioncomm->note        = $actionmsg;
+                    $actioncomm->date        = $db->idate(time());
+                    $actioncomm->percent     = 100;
+                    $actioncomm->contact     = new Contact($db,$sendtoid);
+                    $actioncomm->societe     = new Societe($db,$propal->socidp);
+                    $actioncomm->user        = $user;   // User qui a fait l'action
+                    $actioncomm->propalrowid = $propal->id;
+
+                    $ret=$actioncomm->add($user);       // User qui saisi l'action
+
+                    if ($ret < 0)
+                    {
+                        dolibarr_print_error($db);
+                    }
+                    else
+                    {
+                        // Renvoie sur la fiche
+                        Header("Location: propal.php?propalid=".$propal->id."&msg=".urlencode($msg));
+                        exit;
+                    }
+                }
+                else
+                {
+                    $msg='<div class="error">'.$langs->trans("ErrorFailedToSendMail",$from,$sendto).' !</div>';
+                }
+            }
+            else
+            {
+                $msg='<div class="error">'.$langs->trans("ErrorMailRecipientIsEmpty").' !</div>';
+                dolibarr_syslog("Le mail du destinataire est vide");
+            }
+
+        }
+        else
+        {
+            dolibarr_syslog("Impossible de lire :".$file);
+        }
+    }
+    else
+    {
+        dolibarr_syslog("Impossible de lire les données de la propale. Le fichier propal n'a peut-être pas été généré.");
+    }
+}
 
 if ($_GET["action"] == 'commande')
 {
@@ -240,6 +360,8 @@ llxHeader();
  */
 if ($_GET["propalid"])
 {
+  if ($msg) print "$msg<br>";
+
   $html = new Form($db);
 
   $propal = new Propal($db);
@@ -296,7 +418,9 @@ if ($_GET["propalid"])
 	{
 
       $obj = $db->fetch_object($result);
-	  $color1 = "#e0e0e0";
+
+        $soc = new Societe($db);
+        $soc->fetch($obj->idp);
 
 	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
 	    {
@@ -354,7 +478,7 @@ if ($_GET["propalid"])
   	  print '<tr><td height=\"10\">'.$langs->trans("GlobalDiscount").'</td>';
 	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
 	    {
-	      print '<form action="propal.php?propid='.$fac->id.'" method="post">';
+	      print '<form action="propal.php?propid='.$propal->id.'" method="post">';
 	      print '<td colspan="3"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
 	      print '<input type="submit" value="'.$langs->trans("Modify").'">';
 	      print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
@@ -626,54 +750,6 @@ if ($_GET["propalid"])
 	    }
 
 
-
-	  /*
-	   * Envoi de la propale par mail
-	   *
-	   */
-	  if ($_GET["action"] == 'send')
-	    {
-              $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-              $propref = str_replace($forbidden_chars,"_",$propal->ref);
-	      $file = $conf->propal->dir_output . "/$propref/$propref.pdf";
-	      if (file_exists($file))
-		{
-	      
-		  $subject = "Notre proposition commerciale $propal->ref";
-		  $filepath[0] = $file ;
-		  $filename[0] = "$propal->ref.pdf";
-		  $mimetype[0] = "application/pdf";
-		  $filepath[1] = $_FILES['addedfile']['tmp_name'];
-		  $filename[1] = $_FILES['addedfile']['name'];
-		  $mimetype[1] = $_FILES['addedfile']['type'];
-	      $from = $_POST["fromname"] . " <".$_POST["frommail"] .">";
-	      $replyto = $_POST["replytoname"]. " <".$_POST["replytomail"].">";
-	      
-		  $mailfile = new CMailFile($subject,$_POST["sendto"],$from,$_POST["message"],$filepath,$mimetype,$filename,$sendtocc);
-	      
-		  if (! $mailfile->sendfile() )
-		    {	       
-		      print "<b>!! erreur d'envoi";
-		    }
-		}
-	      /*
-	       * Enregistre l'action
-	       *
-	       */
-	      
-	      $actioncomm = new ActionComm($db);
-	      $actioncomm->priority    = 2;
-	      $actioncomm->type        = 3;		  
-	      $actioncomm->date        = $db->idate(time());
-	      $actioncomm->percent     = 100;
-	      $actioncomm->contact     = $propal->contactid;      
-	      $actioncomm->user        = $user;	      
-	      $actioncomm->societe     = $propal->socidp;
-	      $actioncomm->propalrowid = $propal->id;
-	      $actioncomm->note        = "Envoyée à ".$_POST["sendto"];
-	      $actioncomm->add($user);
-	    }
-
 	  /*
 	   *
 	   */
@@ -746,7 +822,7 @@ if ($_GET["propalid"])
 	  /*
 	   * Liste des actions propres à la propal
 	   */
-	  $sql = "SELECT id, ".$db->pdate("a.datea"). " as da, note, fk_user_author" ;
+	  $sql = "SELECT id, ".$db->pdate("a.datea"). " as da, label, note, fk_user_author" ;
 	  $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 	  $sql .= " WHERE a.fk_soc = $obj->idp AND a.propalrowid = $propal->id ";
 	  
@@ -771,7 +847,7 @@ if ($_GET["propalid"])
 		      print "<tr $bc[$var]>";
 		      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$objp->id.'</a></td>';
 		      print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
-		      print '<td>'.stripslashes($objp->note).'</td>';
+		      print '<td>'.stripslashes($objp->label).'</td>';
 		      $authoract = new User($db);
 		      $authoract->id = $objp->fk_user_author;
 		      $authoract->fetch('');
@@ -800,42 +876,34 @@ if ($_GET["propalid"])
 	   */
 	  if ($_GET["action"] == 'presend')
 	    {
-	      $replytoname = $user->fullname;
-	      $replytomail = $user->email;
-	      
-	      $from_name = $user->fullname ; //$conf->propal->fromtoname;
-	      $from_mail = $user->email; //conf->propal->fromtomail;
-	      
-	      $message = "Veuillez trouver ci-joint notre proposition commerciale $propal->ref\n\nCordialement\n\n";
+            print '<br>';
+            print_titre("SendPropalByMail");
 
+            $liste[0]="&nbsp;";
+            foreach ($soc->contact_email_array() as $key=>$value) {
+                $liste[$key]=$value;
+            }
 
-	      print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"propal.php?propalid=$propal->id&amp;action=send\">\n";
-	      print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
-	      print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
-	      print '<input type="hidden" name="max_file_size" value="2000000">';
-
-	      print_titre("Envoyer la propale par mail");
-
-	      // Créé l'objet formulaire mail
-	      include_once("../html.formmail.class.php");
-	      $formmail = new FormMail($db);	    
-	      $formmail->fromname = $user->fullname;
-	      $formmail->frommail = $user->email;
-          $formmail->withfrom=1;
-          $formmail->withto=ucfirst(strtolower($obj->firstname)) . " " .  ucfirst(strtolower($obj->name)) . " <$obj->email>";
-          $formmail->withcc=1;
-          $formmail->withtopic=$langs->trans("SendPropalRef","__PROPREF__");
-          $formmail->withfile=1;
-	      $formmail->withbody=1;
-          // Tableau des substitutions
-          $formmail->substit["__PROPREF__"]=$propal->ref;
-          // Tableau des paramètres complémentaires
-          $formmail->param["action"]="send";
-          $formmail->param["models"]="propal_send";
-          $formmail->param["propalid"]=$propal->id;
-          $formmail->param["returnurl"]=DOL_URL_ROOT."/comm/propal.php?propalid=$propal->id";
-
-          $formmail->show_form();
+            // Créé l'objet formulaire mail
+            include_once("../html.formmail.class.php");
+            $formmail = new FormMail($db);	    
+            $formmail->fromname = $user->fullname;
+            $formmail->frommail = $user->email;
+            $formmail->withfrom=1;
+            $formmail->withto=$liste;
+            $formmail->withcc=1;
+            $formmail->withtopic=$langs->trans("SendPropalRef","__PROPREF__");
+            $formmail->withfile=1;
+            $formmail->withbody=1;
+            // Tableau des substitutions
+            $formmail->substit["__PROPREF__"]=$propal->ref;
+            // Tableau des paramètres complémentaires
+            $formmail->param["action"]="send";
+            $formmail->param["models"]="propal_send";
+            $formmail->param["propalid"]=$propal->id;
+            $formmail->param["returnurl"]=DOL_URL_ROOT."/comm/propal.php?propalid=$propal->id";
+            
+            $formmail->show_form();
 	    }
 	  
 	}
