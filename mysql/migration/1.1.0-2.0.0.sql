@@ -5,6 +5,18 @@
 -- sans AUCUNE erreur ni warning
 -- ;
 
+create table llx_product_fournisseur_price_log
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  datec           datetime,
+  fk_product      integer,
+  fk_soc          integer,
+  price           real,
+  quantity        real,
+  fk_user         integer
+
+)type=innodb;
+
 create table llx_usergroup
 (
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
@@ -191,6 +203,7 @@ alter table llx_societe add capital real after tva_intra;
 alter table llx_societe add rubrique varchar(255);
 alter table llx_societe add remise_client real default 0;
 
+update llx_societe set prefix_comm = null where prefix_comm = '';
 update llx_societe set code_client = null where code_client = '';
 ALTER TABLE llx_societe ADD UNIQUE uk_societe_prefix_comm(prefix_comm);
 ALTER TABLE llx_societe ADD UNIQUE uk_societe_code_client(code_client);
