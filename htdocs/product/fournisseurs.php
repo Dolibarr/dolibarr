@@ -34,6 +34,7 @@ require("../facture.class.php");
 
 $langs->load("products");
 $langs->load("suppliers");
+$langs->load("bills");
 
 $user->getrights('produit');
 $user->getrights('propale');
@@ -50,6 +51,36 @@ $types[1] = $langs->trans("Service");
  * Actions
  */
  
+if ($_GET["action"] == 'remove_fourn')
+{
+    $product = new Product($db);
+    if( $product->fetch($_GET["id"]) )
+    {
+        if ($_GET["qty"]) { // On supprime une quantité
+            if ($product->remove_price($user, $_GET["id_fourn"], $_GET["qty"]) > 0)
+            {
+                $_GET["action"] = '';
+                $mesg = '<div class="ok">'.$langs->trans("PriceRemoved").'.</div>';
+            }
+            else
+            {
+                $_GET["action"] = '';
+            }
+        }
+        else {              // On supprime un fournisseur
+            if ($product->remove_fournisseur($user, $_GET["id_fourn"]) > 0)
+            {
+                $_GET["action"] = '';
+                $mesg = '<div class="ok">'.$langs->trans("SupplierRemoved").'.</div>';
+            }
+            else
+            {
+                $_GET["action"] = '';
+            }
+        }
+    }
+}
+
 if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
 
@@ -67,8 +98,12 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
                 $mesg='<div class="error">'.$product->error.'</div>';
             }
         }
-
-        if ($_POST["qty"]) {
+        else {
+            $error++;
+            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Ref")).'</div>';
+        }
+        
+        if ($_POST["qty"] && $_POST["price"] > 0) {
             $ret=$product->update_buyprice($_POST["id_fourn"], $_POST["qty"], $_POST["price"], $user);
             if ($ret < 0) {
                 $error++;
@@ -164,10 +199,11 @@ if ($_GET["id"])
 	  $head[$h][1] = $langs->trans('Statistics');
 	  $h++;
 
+        $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
+        $head[$h][1] = $langs->trans('Bills');
+        $h++;
 
 	  dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
-
-	  print($mesg);
 
 	  print '<table class="border" width="100%">';
 	  print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="2">'.$product->ref.'</td></tr>';
@@ -179,10 +215,12 @@ if ($_GET["id"])
         if ($product->envente) print $langs->trans("OnSell");
         else print $langs->trans("NotOnSell");
         print '</td></tr>';
-        
+
 	  print '</table><br />';
 	  
 	  print "</div>\n";
+
+        if ($mesg) print($mesg);
 
 
         // Formulaire ajout prix
@@ -190,14 +228,19 @@ if ($_GET["id"])
 		    {
 		      $langs->load("suppliers");
 			  
-              print '<div class="titre">'.$langs->trans("ChangeSupplierPrice").'</div>';
-			  
+              if ($_GET["id_fourn"]) {
+                  print '<div class="titre">'.$langs->trans("ChangeSupplierPrice").'</div>';
+	          } else {
+                  print '<div class="titre">'.$langs->trans("AddSupplierPrice").'</div>';
+	          }		  
 		      print '<table class="border" width="100%">';
 		      print '<form action="fournisseurs.php?id='.$product->id.'" method="post">';
 		      print '<input type="hidden" name="action" value="updateprice">';
 
               if ($_GET["id_fourn"]) {
 		        print '<input type="hidden" name="id_fourn" value="'.$_GET["id_fourn"].'">';
+                $product->fetch_fourn_data($_GET["id_fourn"]);
+                print '<input type="hidden" name="ref_fourn" value="'.$product->ref_fourn.'">';
 		      } else {
       	        print '<tr><td>'.$langs->trans("Supplier").'</td><td colspan="3">';
       	        $html=new Form($db);
@@ -210,7 +253,8 @@ if ($_GET["id"])
             			  
 		      print '<tr><td>'.$langs->trans("Qty").'</td>';
  		      print '<td><input name="qty" size="5" value="'.$_GET["qty"].'"></td>';
-		      print '<td>'.$langs->trans("Price").'</td><td><input name="price" size="8" value="'.price($objp->price).'"></td></tr>';
+		      print '<td>'.$langs->trans("Price").'</td>';
+		      print '<td><input name="price" size="8" value="'.price($_GET["price"]).'"></td></tr>';
 
 		      print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
 		      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
@@ -229,7 +273,7 @@ if ($_GET["id"])
         if ($_GET["action"] != 'add_price') {
 
             print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$product->id.'&amp;action=add_price">';
-            print $langs->trans("AddSupplierPrice").'</a>';
+            print $langs->trans("AddSupplier").'</a>';
 
         }
         
@@ -271,7 +315,7 @@ if ($_GET["id"])
 		  $var=!$var;
 		  
 		  print "<tr $bc[$var]>";
-		  print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		  print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$objp->nom.'</a></td>';
 
           // Fournisseur
 		  print '<td align="left">'.$objp->ref_fourn.'</td>';
@@ -291,10 +335,13 @@ if ($_GET["id"])
 		  print $objp->quantity?price($objp->price / $objp->quantity):"&nbsp;";
 		  print '</td>';
 		  
-          print '<td>';
-          if ($user->rights->produit->modifier) {
-		    print '<a href="fournisseurs.php?id='.$product->id.'&amp;action=add_price&amp;id_fourn='.$objp->idp.'&amp;qty='.$objp->quantity.'">'.img_edit()."</a>";
+          // Modifier-Supprimer
+          print '<td align="center">';
+          if ($user->rights->produit->creer) {
+	            print '<a href="fournisseurs.php?id='.$product->id.'&amp;action=add_price&amp;id_fourn='.$objp->idp.'&amp;qty='.$objp->quantity.'&amp;price='.$objp->price.'">'.img_edit()."</a>";
+                print '<a href="fournisseurs.php?id='.$product->id.'&amp;action=remove_fourn&amp;id_fourn='.$objp->idp.'&amp;qty='.$objp->quantity.'">';
           }
+          print img_disable($langs->trans("Remove")).'</a>';
           print '</td>';
           
 		  print '</tr>';

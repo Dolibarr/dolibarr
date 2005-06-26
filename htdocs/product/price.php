@@ -31,6 +31,7 @@
 require("./pre.inc.php");
 
 $langs->load("products");
+$langs->load("bills");
 
 $user->getrights('produit');
 
@@ -115,6 +116,9 @@ $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
 $head[$h][1] = $langs->trans("Statistics");
 $h++;
 
+$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
+$head[$h][1] = $langs->trans('Bills');
+$h++;
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 

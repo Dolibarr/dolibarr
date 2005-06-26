@@ -32,6 +32,7 @@ require("../propal.class.php");
 require("../facture.class.php");
 
 $langs->load("products");
+$langs->load("bills");
 
 $user->getrights('produit');
 $user->getrights('propale');
@@ -115,6 +116,11 @@ if ($_GET["id"])
         $head[$h][1] = $langs->trans('Statistics');
         $h++;
 
+        $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
+        $head[$h][1] = $langs->trans('Bills');
+        $h++;
+
+
         dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
         print($mesg);
@@ -183,10 +189,13 @@ if ($_GET["id"])
 
         // Affiche photos
         if ($_GET["action"] != 'ajout_photo') {
-            print '<div class="photo">';
-            $nbphoto=$product->show_photos($conf->produit->dir_output,1);
+            //print '<br>';
+            //print '<div class="photo">';
+            $nbphoto=$product->show_photos($conf->produit->dir_output,1,0,5);
+
+
             if ($nbphoto < 1) print $langs->trans("NoPhotoYet")."<br><br>";
-            print '</div>';
+            //print '</div>';
         }
     }
 }

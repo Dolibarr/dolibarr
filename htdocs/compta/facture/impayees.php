@@ -144,6 +144,7 @@ if ($user->rights->facture->lire)
         $i = 0;
         print '<table class="liste" width="100%">';
         print '<tr class="liste_titre">';
+
         print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp","",$sortfield);
         print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socidp=$socidp",'align="center"',$sortfield);
         print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","","&amp;socidp=$socidp",'align="center"',$sortfield);

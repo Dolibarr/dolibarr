@@ -32,6 +32,9 @@ require("./pre.inc.php");
 require("../propal.class.php");
 require("../facture.class.php");
 
+$langs->load("bills");
+
+
 $mesg = '';
 
 if (!$user->rights->produit->lire) accessforbidden();
@@ -199,22 +202,6 @@ if ($_POST["action"] == 'add_fourn' && $_POST["cancel"] <> $langs->trans("Cancel
 	}
     }
 }
-if ($_GET["action"] == 'remove_fourn')
-{
-  $product = new Product($db);
-  if( $product->fetch($_GET["id"]) )
-    {
-      if ($product->remove_fournisseur($user, $_GET["id_fourn"]) > 0)
-	{
-	  $_GET["action"] = '';
-	  $mesg = $langs->trans("SupplierRemoved");
-	}
-      else
-	{
-	  $_GET["action"] = '';
-	}
-    }
-}
 
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
@@ -233,7 +220,6 @@ llxHeader("","",$langs->trans("CardProduct0"));
 if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 {
   $html = new Form($db);
-  $nbligne=0;
   $product = new Product($db);
   if ($_error == 1)
     {
@@ -356,52 +342,37 @@ if ($_GET["id"])
             $head[$h][1] = $langs->trans('Statistics');
             $h++;
 
+            $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
+            $head[$h][1] = $langs->trans('Bills');
+            $h++;
 
             dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
-
             print($mesg);
+            
             print '<table class="border" width="100%">';
+
             print "<tr>";
-            print '<td width="10%">'.$langs->trans("Ref").'</td><td colspan="2" width="40%">'.$product->ref.'</td>';
+
+            $nblignes=6;
+            if ($product->type == 0 && $conf->stock->enabled) $nblignes++;
+            if ($product->type == 1) $nblignes++;
+
+            // Reference
+            print '<td width="10%">'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
+            print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
+            // Photo
+            $nbphoto=$product->show_photo($conf->produit->dir_output,1);
+            print '</td>';
             print '</tr>';
-            print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
+
+            // Libellé
+            print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
             print '</tr>';
 
             // Prix
             print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
-            if ($product->type == 0) $nbligne=5;
-            else $nbligne=5;
-            print '<td valign="top" rowspan="'.$nbligne.'">';
-
-            $sql = "SELECT s.nom, s.idp";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
-            $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product = ".$product->id;
-            $sql .= " ORDER BY lower(s.nom)";
-
-            $result=$db->query($sql);
-            if ($result)
-            {
-                $num_fournisseur = $db->num_rows($result);
-                $i = 0;
-                print '<table class="noborder" width="100%">';
-                print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Suppliers").'</td></tr>';
-                $var=True;
-                while ($i < $num_fournisseur)
-                {
-                    $objp = $db->fetch_object($result);
-                    $var=!$var;
-                    print "<tr $bc[$var]>";
-                    print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
-                    print '<td align="right">';
-                    print '<a href="fiche.php?id='.$product->id.'&amp;action=remove_fourn&amp;id_fourn='.$objp->idp.'">';
-                    print img_disable($langs->trans("Remove")).'</a></td></tr>';
-                    $i++;
-                }
-                print '</table>';
-                $db->free($result);
-            }
-            print '</td></tr>';
+            print '</tr>';
 
             // Statut
             print '<tr><td>'.$langs->trans("Status").'</td><td>';
@@ -409,9 +380,12 @@ if ($_GET["id"])
             else print $langs->trans("NotOnSell");
             print '</td></tr>';
             
+            // TVA
             $langs->load("bills");
             print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.' %</td></tr>';
-            if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
+
+            // Stock
+            if ($product->type == 0 && $conf->stock->enabled)
             {
                 print '<tr><td><a href="stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
                 if ($product->no_stock)
@@ -431,8 +405,11 @@ if ($_GET["id"])
                 }
                 print '</td></tr>';
             }
+
+            // Description
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
 
+            // Durée
             if ($product->type == 1)
             {
                 print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
@@ -448,35 +425,10 @@ if ($_GET["id"])
 
                 print '</td></tr>';
             }
+
             print "</table><br>\n";
 
             print "</div>\n";
-        }
-
-        /*
-        * Ajouter un fournisseur
-        */
-        if ($_GET["action"] == 'ajout_fourn' && $user->rights->produit->creer)
-        {
-            $langs->load("suppliers");
-
-            print_titre($langs->trans("AddSupplier"));
-            print '<form action="fiche.php?id='.$product->id.'" method="post">';
-            print '<input type="hidden" name="action" value="add_fourn">';
-            print '<input type="hidden" name="id" value="'.$product->id.'">';
-            print '<table class="border" width="100%"><tr>';
-            print '<td>'.$langs->trans("Suppliers").'</td><td>';
-
-  	        $html=new Form($db);
-  	        $html->select_societes('','id_fourn','fournisseur=1');
-
-            print '</td><td>'.$langs->trans("Ref").'</td>';
-            print '<td><input name="ref_fourn" size="25" value=""></td></tr>';
-            print '<tr><td colspan="4" align="center">';
-            print '<input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-            print '</table>';
-            print '</form>';
         }
     }
 
@@ -587,23 +539,10 @@ if ($_GET["action"] == '')
         print $langs->trans("AddPhoto").'</a>';
     }
 
-    if ($user->rights->produit->modifier || $user->rights->produit->creer)
-    {
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$product->id.'&amp;action=ajout_fourn">';
-        print $langs->trans("AddSupplier").'</a>';
-    }
 }
 
 print "\n</div><br>\n";
 
-
-/*
- * Photo
- */
-if ($_GET["id"] && $_GET["action"]=='')
-{
-    $nbphoto=$product->show_photo($conf->produit->dir_output,1);
-}
 
 if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 {
