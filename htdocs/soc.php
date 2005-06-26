@@ -571,7 +571,7 @@ else
     // Commerciaux
     print '<tr><td>';
     print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0" border="0"><tr><td>';
-    print $langs->trans('SalesRepresentative');
+    print $langs->trans('SalesRepresentatives');
     print '<td><td align="right">';
     print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.img_edit().'</a>';
     print '</td></tr></table>';
@@ -587,7 +587,7 @@ else
     {
         $num = $db->num_rows($resql);
         $obj = $db->fetch_object($resql);
-        print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.$obj->nb.'</a>';
+        print $obj->nb?($obj->nb):$langs->trans("NoSalesRepresentativeAffected");
     }
     else {
         dolibarr_print_error($db);
