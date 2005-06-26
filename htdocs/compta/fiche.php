@@ -241,7 +241,7 @@ if ($socid > 0)
     print "</td></tr>";
 
     print '<tr><td nowrap>'.$langs->trans("AccountancyCode").'</td><td>'.$societe->code_compta.'</td>';
-    print '<td>'.$langs->trans("CustomerCode").'/' . $langs->trans("SupplierCode") . '</td><td>';
+    print '<td>'.$langs->trans("CustomerCode").' / ' . $langs->trans("SupplierCode") . '</td><td>';
     print $societe->code_client;
     print "</td></tr>";
 

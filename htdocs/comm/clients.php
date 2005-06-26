@@ -104,7 +104,7 @@ if ($result)
   print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom",$addu,"","",$sortfield);
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$addu,"","",$sortfield);
   print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$addu,"","",$sortfield);
-  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$addu,"","",$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$addu,"",'align="center"',$sortfield);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
 
@@ -134,7 +134,7 @@ if ($result)
       print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom).'</a></td>';
       print '<td>'.$obj->ville.'</td>';
       print '<td>'.$obj->code_client.'</td>';
-      print '<td>'.dolibarr_print_date($obj->datec).'</td>';
+      print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
       print '<td align="center">';
       if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
 	{
