@@ -256,6 +256,7 @@ if ($socid > 0)
 
     // Nbre max d'éléments des petites listes
     $MAXLIST=5;
+    $tableaushown=0;
 
     /*
      *   Dernieres factures
@@ -277,6 +278,7 @@ if ($socid > 0)
             $i = 0;
             if ($num > 0)
             {
+                $tableaushown=1;
                 print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture.php?socidp='.$societe->id.'">'.$langs->trans("AllBills").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
@@ -331,6 +333,7 @@ if ($socid > 0)
             $num = $db->num_rows();
             if ($num > 0)
             {
+                $tableaushown=1;
                 print '<tr class="liste_titre">';
                 print '<td colspan="2"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastProjects",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/projet/index.php?socidp='.$societe->id.'">'.$langs->trans("AllProjects").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
@@ -355,7 +358,7 @@ if ($socid > 0)
     }
 
     // Lien recap
-    print '<br>';
+    if ($tableaushown) print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td><td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-client.php?socid='.$societe->id.'">'.$langs->trans("ShowLog").'</td></tr></table></td>';

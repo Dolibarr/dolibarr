@@ -22,10 +22,10 @@
  */
 
 /**
-   \file       htdocs/compta/clients.php
-   \ingroup    compta
-   \brief      Page accueil des clients
-   \version    $Revision$
+        \file       htdocs/compta/clients.php
+        \ingroup    compta
+        \brief      Page accueil des clients
+        \version    $Revision$
 */
  
 require("./pre.inc.php");
@@ -236,6 +236,7 @@ if ($result)
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","","",'valign="center"',$sortfield);
   print_liste_field_titre($langs->trans("AccountancyCode"),"clients.php","s.code_compta","","",'align="left"',$sortfield);
   print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client","","",'align="left"',$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$addu,"",'align="center"',$sortfield);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
 
@@ -256,7 +257,7 @@ if ($result)
   print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
   print '</td>';
 
-  print '<td align="right" class="liste_titre">';
+  print '<td align="right" colspan="2" class="liste_titre">';
   print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
   print '</td>';
   print "</tr>\n";
@@ -277,6 +278,7 @@ if ($result)
       print '<td>'.$obj->ville.'&nbsp;</td>';
       print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
       print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
+      print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
       print '<td align="center">';
       if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
 	{
