@@ -90,8 +90,8 @@ if ($resql)
   print_liste_field_titre($langs->trans("Contract"),"enservice.php", "c.rowid","","","",$sortfield);
   print_liste_field_titre($langs->trans("Service"),"enservice.php", "p.label","","","",$sortfield);
   print_liste_field_titre($langs->trans("Company"),"enservice.php", "s.nom","","","",$sortfield);
-  print_liste_field_titre($langs->trans("DateStartReal"),"enservice.php", "cd.date_ouverture",'','',' align="center"',$sortfield);
-  print_liste_field_titre($langs->trans("DateEndPlanned"),"enservice.php", "cd.date_fin_validite",'','',' align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("DateStartRealShort"),"enservice.php", "cd.date_ouverture",'','',' align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("DateEndPlannedShort"),"enservice.php", "cd.date_fin_validite",'','',' align="center"',$sortfield);
   print_liste_field_titre($langs->trans("Status"),"enservice.php", "cd.statut","","","",$sortfield);
   print "</tr>\n";
 

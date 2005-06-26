@@ -93,7 +93,7 @@ if ($conf->contrat->enabled) {
 print '</td><td width="70%" valign="top">';
 
 // Not activated services
-$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.fk_contrat, c.fk_soc, s.nom";
+$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE cd.statut IN (0,3)";
 $sql.= " AND cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
@@ -117,7 +117,9 @@ if ( $db->query($sql) )
         print "<tr $bc[$var]>";
 
         print '<td width="50"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->fk_contrat.'</a></td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service").' '.dolibarr_trunc($obj->label,20).'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
+        if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
+        else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_soc.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
         print '<td width="16"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
         print "</tr>\n";
@@ -138,11 +140,11 @@ print '<br>';
 // Last activated services
 $max=10;
 
-$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.fk_contrat, c.fk_soc, s.nom";
+$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE cd.statut = 4";
 $sql.= " AND cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
-$sql.= " ORDER BY cd.tms DESC";
+$sql.= " ORDER BY cd.date_ouverture DESC";
 
 if ( $db->query($sql) )
 {
@@ -162,7 +164,9 @@ if ( $db->query($sql) )
         print "<tr $bc[$var]>";
 
         print '<td width="50"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->fk_contrat.'</a></td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service").' '.dolibarr_trunc($obj->label,20).'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
+        if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
+        else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_soc.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
         print '<td width="16"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
         print "</tr>\n";
@@ -179,6 +183,8 @@ else
 }
 
 print '</td></tr></table>';
+
+print '<br>';
 
 $db->close();
 
