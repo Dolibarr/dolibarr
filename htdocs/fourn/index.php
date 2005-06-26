@@ -66,34 +66,29 @@ if (! $sortfield) $sortfield="nom";
  *
  */
 
-$sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
-
-if ($socidp) {
-  $sql .= " AND s.idp=$socidp";
-}
-
+$sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
+if ($socidp) $sql .= " AND s.idp=$socidp";
 if ($socname) {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
   $sortfield = "lower(s.nom)";
   $sortorder = "ASC";
 }
-
 if (strlen($_GET["search_nom"]))
 {
   $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
 }
-
 if (strlen($_GET["search_ville"]))
 {
   $sql .= " AND s.ville LIKE '%".$_GET["search_ville"]."%'";
 }
-
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   
   print_barre_liste($langs->trans("ListOfSuppliers"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
@@ -101,7 +96,8 @@ if ($result)
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"',$sortfield);
-  print '<td class="liste_titre">'.$langs->trans("Town").'</td>';
+  print_liste_field_titre($langs->trans("Town"),"index.php","s.ville","","",'valign="center"',$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"),"index.php","datec","","",'align="center"',$sortfield);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
 
@@ -110,7 +106,7 @@ if ($result)
   print '<form action="index.php" method="GET">';
   print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
   print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$_GET["search_ville"].'"></td>';
-  print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
+  print '<td class="liste_titre" colspan="2" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
 
@@ -118,13 +114,14 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object();	
+      $obj = $db->fetch_object($result);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
       print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
       print "<td>".$obj->ville."</td>\n";       
+      print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
       print "<td>&nbsp;</td>\n";       
       print "</tr>\n";
       $i++;
