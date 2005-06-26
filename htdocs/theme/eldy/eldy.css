@@ -291,8 +291,9 @@ td.barre_select {
 }
 
 td.photo {
-	background: #FFFFFF; 
-	color: #000000 
+	background: #FCFCFC; 
+	color: #000000;
+    border: 1px solid #b3c5cc;
 }
 
 form {
