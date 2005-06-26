@@ -247,29 +247,26 @@ class Product
    *    \brief  Lit le prix d'achat pour un fournisseur
    *    \param  id_fourn        Id du fournisseur
    *    \param  qty             Quantite pour lequel le prix est valide
-   *
+   *    \return int             Renvoi prix
    */
   function get_buyprice($fourn_id, $qty) 
     {
-      $result = 0;
-      $sql = "SELECT pf.price";
-      $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf ";
-      $sql .= " WHERE pf.fk_soc = ".$fourn_id;
-      $sql .= " AND pf.fk_product =" .$this->id;
-
-      // TODO Finir ce point
-
-      $sql .= " AND quantity = 1";
-
-      $resql = $this->db->query($sql);
-
-      if ( $resql )
-	{
-	  $row = $this->db->fetch_row($resql);
-	  $this->buyprice = $row[0];
-
-	}
-      return $result;
+        $result = 0;
+        $sql = "SELECT pf.price";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf ";
+        $sql.= " WHERE pf.fk_soc = ".$fourn_id;
+        $sql.= " AND pf.fk_product =" .$this->id;
+        $sql.= " AND quantity <= ".$qty;
+        $sql.= " ORDER BY quantity DESC";
+        $sql.= " LIMIT 1";
+        
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $row = $this->db->fetch_row($resql);
+            $this->buyprice = $row[0];
+        }
+        return $result;
     }
 
 
@@ -770,15 +767,40 @@ class Product
 
 
   /**
+   *    \brief  Supprime un tarif fournisseur
+   *    \param  user        utilisateur qui défait le lien
+   *    \param  id_fourn    id du fournisseur
+   *    \param  qty         quantité
+   *    \return int         < 0 si erreur, > 0 si ok
+   */
+	 
+  function remove_price($user, $id_fourn, $qty) 
+    {
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+      $sql.= " WHERE fk_product = $this->id AND fk_soc = $id_fourn and quantity = '".$qty."';";	
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;	      
+	}
+      else
+	{
+	  dolibarr_print_error($this->db);
+	  return -1;
+	}
+    }
+    
+  /**
    *    \brief  Délie un fournisseur au produit/service
    *    \param  user        utilisateur qui défait le lien
    *    \param  id_fourn    id du fournisseur
+   *    \return int         < 0 si erreur, > 0 si ok
    */
 	 
   function remove_fournisseur($user, $id_fourn) 
     {
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur ";
-      $sql .= " WHERE fk_product = $this->id AND fk_soc = $id_fourn;";	
+      $sql.= " WHERE fk_product = $this->id AND fk_soc = $id_fourn;";	
       
       if ($this->db->query($sql) )
 	{
@@ -913,23 +935,27 @@ class Product
 
 
   /**
-   *    \brief  Charge les informations relatives à un fournisseur
-   *    \param  id          id du fournisseur
+   *    \brief      Charge les informations relatives à un fournisseur
+   *    \param      fournid         id du fournisseur
+   *    \return     int             < 0 si erreur, > 0 si ok
    */
-  function fetch_fourn_data ($id)
+  function fetch_fourn_data($fournid)
     {    
-      $sql = "SELECT rowid, ref_fourn";
-      $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur ";
-      $sqL .= " WHERE fk_product = ".$this->id;
-
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
-	{
-	  $result = $this->db->fetch_array();
-
-	  $this->ref_fourn          = $result["ref_fourn"];
-	}
+        $sql = "SELECT rowid, ref_fourn";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur ";
+        $sql.= " WHERE fk_product = ".$this->id;
+        $sql.= " AND fk_soc = ".$fournid;
+        $result = $this->db->query($sql) ;
+        
+        if ($result)
+        {
+            $result = $this->db->fetch_array();
+            $this->ref_fourn = $result["ref_fourn"];
+            return 1;
+        }
+        else {
+            return -1;
+        }
     }
 
 
@@ -968,7 +994,7 @@ class Product
    */
   function show_photo($sdir,$size=0)
   {
-    return $this->show_photos($sdir,$size,1);
+    return $this->show_photos($sdir,$size,1,0);
   }
 
 
@@ -976,16 +1002,16 @@ class Product
    *    \brief      Affiche toutes les photos du produit (nbmax maximum)
    *    \param      sdir        Répertoire à scanner
    *    \param      size        0=taille origine, 1 taille vignette
-   *    \param      nbmax       Nombre maximum de photos
+   *    \param      nbmax       Nombre maximum de photos (0=pas de max)
+   *    \param      nbbyrow     Nombre vignettes par ligne (si mode vignette)
    *    \return     int         Nombre de photos affichées
    */
-  function show_photos($sdir,$size=0,$nbmax=0)
+  function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5)
   {
-    $nbphoto=0;
-    
     $pdir = get_exdir($this->id) . $this->id ."/photos/";
     $dir = $sdir . '/'. $pdir;
     
+    $nbphoto=0;
     if (file_exists($dir))
     {
         $handle=opendir($dir);
@@ -999,12 +1025,19 @@ class Product
             {
                 $nbphoto++;
 
-                if ($size == 1) {
+                if ($size == 1) {   // Format vignette
+                    
                     // On determine nom du fichier vignette
                     $photo_vignette='';
                     if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs)) {
                         $photo_vignette=eregi_replace($regs[0],'',$photo)."_small".$regs[0];
                     }
+
+                    if ($nbbyrow && $nbphoto == 1) print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+
+                    if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
+                    if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+                    
                     print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" alt="Taille origine" target="_blank">';
 
                     // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
@@ -1016,15 +1049,28 @@ class Product
                     }
 
                     print '</a>';
+
+                    if ($nbbyrow) print '</td>';
+                    if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
                 }
     
-                if ($size == 0)
+                if ($size == 0)     // Format origine
                     print '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
     
                 // On continue ou on arrete de boucler ?
                 if ($nbmax && $nbphoto >= $nbmax) break;
-                else print '&nbsp;';
             }
+        }
+        
+        if ($nbbyrow && $size==1)
+        {
+            // Ferme tableau
+            while ($nbphoto % $nbbyrow) {
+                print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+                $nbphoto++;
+            }
+            
+            if ($nbphoto) print '</table>';
         }
         
         closedir($handle);
