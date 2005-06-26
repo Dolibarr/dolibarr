@@ -136,22 +136,24 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
         if ($num > 0)
         {
             print '<table class="noborder"" width="100%">';
-            print "<tr class=\"liste_titre\">";
-            print "<td colspan=\"2\">".$langs->trans("ProposalsDraft")."</td></tr>";
+            print '<tr class="liste_titre">';
+            print '<td colspan="2">'.$langs->trans("ProposalsDraft").'</td></tr>';
 
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
-                print "<tr $bc[$var]><td>";
+                print '<tr '.$bc[$var].'><td>';
                 print "<a href=\"propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref."</a>";
+                print '</td><td align="right">';
+                print price($obj->price);
                 print "</td></tr>";
                 $i++;
                 $total += $obj->price;
             }
             if ($total>0) {
                 $var=!$var;
-                print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
+                print '<tr class="liste_total"><td>'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
             }
             print "</table><br>";
         }
