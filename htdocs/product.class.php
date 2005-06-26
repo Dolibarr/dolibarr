@@ -988,6 +988,30 @@ class Product
 
   /**
    *    \brief      Affiche la première photo du produit
+   *    \param      sdir        Répertoire à scanner
+   *    \return     boolean     true si photo dispo, flase sinon
+   */
+  function is_photo_available($sdir)
+  {
+    $pdir = get_exdir($this->id) . $this->id ."/photos/";
+    $dir = $sdir . '/'. $pdir;
+    
+    $nbphoto=0;
+    if (file_exists($dir))
+    {
+        $handle=opendir($dir);
+    
+        while (($file = readdir($handle)) != false)
+        {
+            if (is_file($dir.$file)) return true;
+        }
+     }
+     return false;
+  }
+  
+
+  /**
+   *    \brief      Affiche la première photo du produit
    *    \param      sdir    Répertoire à scanner
    *    \param      size    0=taille origine, 1 taille vignette
    *    \return     int     Nombre de photos affichées

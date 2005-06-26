@@ -44,22 +44,6 @@ $types[1] = $langs->trans("Service");
 
 
 /*
- * Upload photo
- */
-if ( $_POST["sendit"] && $conf->upload)
-{
-  if ($_POST["id"])
-    {           
-      $product = new Product($db);
-      $result = $product->fetch($_POST["id"]);
-
-      $product->add_photo($conf->produit->dir_output, $_FILES['photofile']);
-    }
-    
-    $_GET["id"]=$_POST["id"];
-}
-
-/*
  *
  */
 if ($_GET["action"] == 'fastappro')
@@ -161,6 +145,7 @@ if ($_POST["action"] == 'addinpropal')
 
   Header("Location: ../comm/propal.php?propalid=".$propal->id);
 }
+
 /*
  * Ajout du produit dans une facture
  */
@@ -360,10 +345,15 @@ if ($_GET["id"])
 
             // Reference
             print '<td width="10%">'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
-            print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
-            // Photo
-            $nbphoto=$product->show_photo($conf->produit->dir_output,1);
-            print '</td>';
+
+            if ($product->is_photo_available($conf->produit->dir_output))
+            {
+                // Photo
+                print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
+                $nbphoto=$product->show_photo($conf->produit->dir_output,1);
+                print '</td>';
+            }
+            
             print '</tr>';
 
             // Libellé
