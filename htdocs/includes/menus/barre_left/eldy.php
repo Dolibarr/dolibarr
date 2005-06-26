@@ -164,7 +164,7 @@ class MenuLeft {
                 $newmenu->add_submenu(DOL_URL_ROOT."/comm/contact.php?leftmenu=prospects&type=p", $langs->trans("Contacts"), 1, $user->rights->societe->lire);
 
                 // Clients
-                $newmenu->add(DOL_URL_ROOT."/comm/index.php?leftmenu=customers", $langs->trans("Customer"), 0, $user->rights->societe->creer);
+                $newmenu->add(DOL_URL_ROOT."/comm/index.php?leftmenu=customers", $langs->trans("Customers"), 0, $user->rights->societe->creer);
 
                 $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=customers&action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 1, $user->rights->societe->creer);
                 $newmenu->add_submenu(DOL_URL_ROOT."/comm/clients.php?leftmenu=customers", $langs->trans("List"), 1, $user->rights->societe->lire);
@@ -235,13 +235,14 @@ class MenuLeft {
                 if ($conf->societe->enabled && $conf->fournisseur->enabled) 
                 {
                     $langs->load("suppliers");
-                    $newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"),0,$user->rights->societe->lire);
+                    $newmenu->add_submenu(DOL_URL_ROOT."/compta/index.php?leftmenu=suppliers", $langs->trans("Suppliers"),0,$user->rights->societe->lire);
                 
                     // Sécurité accés client
                     if ($user->societe_id == 0) 
                     {
                       $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&action=create&type=f",$langs->trans("NewSupplier"),1,$user->rights->societe->creer);
                     }
+                    $newmenu->add_submenu(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("List"),1,$user->rights->societe->lire);
                     if ($conf->societe->enabled)
                     {
                       $newmenu->add_submenu(DOL_URL_ROOT."/fourn/contact.php?leftmenu=suppliers",$langs->trans("Contacts"),1,$user->rights->societe->lire);
@@ -261,11 +262,12 @@ class MenuLeft {
         
                 // Clients
                 if ($conf->societe->enabled) { 
-                    $newmenu->add(DOL_URL_ROOT."/compta/clients.php?leftmenu=customers", $langs->trans("Customers"),0,$user->rights->societe->lire);
+                    $newmenu->add(DOL_URL_ROOT."/compta/index.php?leftmenu=customers", $langs->trans("Customers"),0,$user->rights->societe->lire);
                     if ($user->societe_id == 0) 
                     {
                         $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=customers&action=create&amp;type=c", $langs->trans("MenuNewCustomer"),1,$user->rights->societe->creer);
                     }
+                    $newmenu->add(DOL_URL_ROOT."/compta/clients.php?leftmenu=customers", $langs->trans("List"),1,$user->rights->societe->lire);
                     $newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&type=c", $langs->trans("Contacts"),1,$user->rights->societe->lire);
                 }
                                 
