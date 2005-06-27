@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +45,9 @@ $main_dir=isset($_POST["main_dir"])?$_POST["main_dir"]:'';
 
 // Répertoire des documents générés (factures, etc...)
 $main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
-
-// En attendant que le main_data_dir soit géré de manière autonome,
-// on le force à sa valeur fixe des anciennes versions.
-// Eric Seigne 2004
-$main_data_dir=ereg_replace("htdocs","documents",$main_dir);
-
-// Quand ça sera géré !
 if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
+
+
 
 if ($_POST["action"] == "set")
 {
