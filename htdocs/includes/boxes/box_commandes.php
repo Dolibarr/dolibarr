@@ -58,12 +58,12 @@ class box_commandes extends ModeleBoxes {
     function loadBox($max=5)
     {
         global $user, $langs, $db;
+        $langs->load("boxes");
+            
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerOrders",$max));
 
         if ($user->rights->commande->lire)
         {
-            $langs->load("boxes");
-            
-            $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerOrders",$max));
 
             $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.date_commande")." as dp,p.rowid";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp";
@@ -97,6 +97,13 @@ class box_commandes extends ModeleBoxes {
                     $i++;
                 }
             }
+            else {
+                dolibarr_print_error($db);
+            }
+        }
+        else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
     }
 

@@ -93,6 +93,10 @@ class box_produits extends ModeleBoxes {
                 dolibarr_print_error($db);
             }
         }
+        else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
+        }
     }
     
     function showBox()

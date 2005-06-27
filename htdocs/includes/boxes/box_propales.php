@@ -59,11 +59,12 @@ class box_propales extends ModeleBoxes {
     {
         global $user, $langs, $db;
 
+        $langs->load("boxes");
+
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastPropals",$max));
+
         if ($user->rights->propale->lire)
         {
-            $langs->load("boxes");
-
-            $this->info_box_head = array('text' => $langs->trans("BoxTitleLastPropals",$max));
 
             $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.datep")." as dp,p.rowid";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p WHERE p.fk_soc = s.idp";
@@ -97,7 +98,13 @@ class box_propales extends ModeleBoxes {
                     $i++;
                 }
             }
-
+            else {
+                dolibarr_print_error($db);
+            }
+        }
+        else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
     }
 

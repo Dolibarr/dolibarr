@@ -62,41 +62,51 @@ class box_services_vendus extends ModeleBoxes {
 
         $this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract",$max));
 
-        $sql  = "SELECT s.nom, s.idp, p.label, p.fk_product_type, c.rowid";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p";
-        $sql .= " WHERE s.idp = c.fk_soc AND c.fk_product = p.rowid";
-        if($user->societe_id)
+        if ($user->rights->produit->lire)
         {
-            $sql .= " AND s.idp = $user->societe_id";
-        }
-        $sql .= " ORDER BY c.tms DESC ";
-        $sql .= $db->plimit($max, 0);
-
-        $result = $db->query($sql);
-
-        if ($result)
-        {
-            $num = $db->num_rows();
-
-            $i = 0;
-
-            while ($i < $num)
+            $sql  = "SELECT s.nom, s.idp, p.label, p.fk_product_type, c.rowid";
+            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p";
+            $sql .= " WHERE s.idp = c.fk_soc AND c.fk_product = p.rowid";
+            if($user->societe_id)
             {
-                $objp = $db->fetch_object($result);
-
-                $this->info_box_contents[$i][0] = array('align' => 'left',
-                'logo' => ($objp->fk_product_type?'object_service':'object_product'),
-                'text' => $objp->label,
-                'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
-
-                $this->info_box_contents[$i][1] = array('align' => 'left',
-                'text' => $objp->nom,
-                'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
-
-                $i++;
+                $sql .= " AND s.idp = $user->societe_id";
+            }
+            $sql .= " ORDER BY c.tms DESC ";
+            $sql .= $db->plimit($max, 0);
+    
+            $result = $db->query($sql);
+    
+            if ($result)
+            {
+                $num = $db->num_rows($result);
+    
+                $i = 0;
+    
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object($result);
+    
+                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    'logo' => ($objp->fk_product_type?'object_service':'object_product'),
+                    'text' => $objp->label,
+                    'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+    
+                    $this->info_box_contents[$i][1] = array('align' => 'left',
+                    'text' => $objp->nom,
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+    
+                    $i++;
+                }
+            }
+            else {
+                dolibarr_print_error($db);
             }
         }
-
+        else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
+        }
+        
     }
 
     function showBox()

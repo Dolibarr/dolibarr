@@ -61,34 +61,44 @@ class box_fournisseurs extends ModeleBoxes {
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastSuppliers",$max));
 
-        $sql = "SELECT s.nom,s.idp";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur = 1";
-        if ($user->societe_id > 0)
+        if ($user->rights->societe->lire)
         {
-            $sql .= " AND s.idp = $user->societe_id";
-        }
-        $sql .= " ORDER BY s.datec DESC ";
-        $sql .= $db->plimit($max, 0);
-
-        $result = $db->query($sql);
-
-        if ($result)
-        {
-            $num = $db->num_rows();
-
-            $i = 0;
-
-            while ($i < $num)
+            $sql = "SELECT s.nom,s.idp";
+            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur = 1";
+            if ($user->societe_id > 0)
             {
-                $objp = $db->fetch_object($result);
-
-                $this->info_box_contents[$i][0] = array('align' => 'left',
-                'logo' => $this->boximg,
-                'text' => $objp->nom,
-                'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
-
-                $i++;
+                $sql .= " AND s.idp = $user->societe_id";
             }
+            $sql .= " ORDER BY s.datec DESC ";
+            $sql .= $db->plimit($max, 0);
+    
+            $result = $db->query($sql);
+    
+            if ($result)
+            {
+                $num = $db->num_rows();
+    
+                $i = 0;
+    
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object($result);
+    
+                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    'logo' => $this->boximg,
+                    'text' => $objp->nom,
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+    
+                    $i++;
+                }
+            }
+            else {
+                dolibarr_print_error($db);
+            }
+        }
+        else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
 
     }

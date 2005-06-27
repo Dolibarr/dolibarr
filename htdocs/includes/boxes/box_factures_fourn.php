@@ -97,6 +97,13 @@ class box_factures_fourn extends ModeleBoxes {
                     $i++;
                 }
             }
+            else {
+                dolibarr_print_error($db);
+            }
+        }
+        else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
     }
 

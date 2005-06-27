@@ -63,30 +63,40 @@ class box_boutique_livre extends ModeleBoxes {
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastBooks",$max));
     
-        $sql = "SELECT l.ref, l.title, l.rowid";
-        $sql .= " FROM ".MAIN_DB_PREFIX."livre as l ";
-        $sql .= " ORDER BY l.date_ajout DESC ";
-        $sql .= $db->plimit($max, 0);
-
-        $result = $db->query($sql);
-
-        if ($result)
+        if ($user->rights->boutique->lire)
         {
-            $num = $db->num_rows();
-
-            $i = 0;
-
-            while ($i < $num)
+            $sql = "SELECT l.ref, l.title, l.rowid";
+            $sql .= " FROM ".MAIN_DB_PREFIX."livre as l ";
+            $sql .= " ORDER BY l.date_ajout DESC ";
+            $sql .= $db->plimit($max, 0);
+    
+            $result = $db->query($sql);
+    
+            if ($result)
             {
-                $objp = $db->fetch_object($result);
-
-                $this->info_box_contents[$i][0] = array('align' => 'left',
-                'logo' => $this->boximg,
-                'text' => $objp->title,
-                'url' => DOL_URL_ROOT."/boutique/livre/fiche.php?id=".$objp->rowid);
-
-                $i++;
+                $num = $db->num_rows($result);
+    
+                $i = 0;
+    
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object($result);
+    
+                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    'logo' => $this->boximg,
+                    'text' => $objp->title,
+                    'url' => DOL_URL_ROOT."/boutique/livre/fiche.php?id=".$objp->rowid);
+    
+                    $i++;
+                }
             }
+            else {
+                dolibarr_print_error($db);
+            }
+        }
+        else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
 
     }

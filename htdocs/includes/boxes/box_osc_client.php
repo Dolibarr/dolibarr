@@ -62,27 +62,37 @@ class box_osc_clients extends ModeleBoxes {
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleNbOfCustomers",$max));
 
-        $sql = "SELECT count(*) as cus FROM ".DB_NAME_OSC.".customers";
-
-        $result = $db->query($sql);
-        if ($result)
+        if ($user->rights->boutique->lire)
         {
-            $num = $db->num_rows();
-
-            $i = 0;
-
-            while ($i < $num)
+            $sql = "SELECT count(*) as cus FROM ".DB_NAME_OSC.".customers";
+    
+            $result = $db->query($sql);
+            if ($result)
             {
-                $objp = $db->fetch_object($result);
-
-                $this->info_box_contents[$i][0] = array('align' => 'center',
-                'logo' => $this->boximg,
-                'text' => $objp->cus,
-                'url' => DOL_URL_ROOT."/boutique/client/index.php");
-                $i++;
+                $num = $db->num_rows();
+    
+                $i = 0;
+    
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object($result);
+    
+                    $this->info_box_contents[$i][0] = array('align' => 'center',
+                    'logo' => $this->boximg,
+                    'text' => $objp->cus,
+                    'url' => DOL_URL_ROOT."/boutique/client/index.php");
+                    $i++;
+                }
+            }
+            else {
+                dolibarr_print_error($db);
             }
         }
-
+        else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
+        }
+        
     }
 
     function showBox()

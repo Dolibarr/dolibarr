@@ -105,6 +105,10 @@ class box_factures_imp extends ModeleBoxes {
                 }
             }
         }
+        else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
+        }
     }
 
     function showBox()

@@ -58,12 +58,12 @@ class box_factures_fourn_imp extends ModeleBoxes {
     function loadBox($max=5)
     {
         global $user, $langs, $db;
+        $langs->load("boxes");
+            
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedSupplierBills",$max));
 
         if ($user->rights->facture->lire)
         {
-            $langs->load("boxes");
-            
-            $this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedSupplierBills",$max));
 
             $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp AND f.paye=0 AND fk_statut = 1";
@@ -97,8 +97,15 @@ class box_factures_fourn_imp extends ModeleBoxes {
                     $i++;
                 }
             }
-
+            else {
+                dolibarr_print_error($db);
+            }
         }
+        else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
+        }
+
     }
 
     function showBox()

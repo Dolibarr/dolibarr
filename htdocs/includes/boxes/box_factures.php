@@ -58,13 +58,13 @@ class box_factures extends ModeleBoxes {
     function loadBox($max=5)
     {
         global $user, $langs, $db;
-
+        
+        $langs->load("boxes");
+        
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerBills",$max));
+        
         if ($user->rights->facture->lire)
         {
-            $langs->load("boxes");
-            
-            $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerBills",$max));
-
             $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
             if($user->societe_id)
@@ -73,31 +73,35 @@ class box_factures extends ModeleBoxes {
             }
             $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
             $sql .= $db->plimit($max, 0);
-
+        
             $result = $db->query($sql);
-
+        
             if ($result)
             {
                 $num = $db->num_rows();
-
+        
                 $i = 0;
-
+        
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
-
+        
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $this->boximg,
                     'text' => $objp->facnumber,
                     'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
-
+        
                     $this->info_box_contents[$i][1] = array('align' => 'left',
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
                     $i++;
                 }
             }
-
+        
+        }
+        else {
+            $this->info_box_contents[0][0] = array('align' => 'left',
+            'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
     }
 
