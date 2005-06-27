@@ -1,6 +1,7 @@
 -- ============================================================================
--- Copyright (C) 2005 Brice Davoleau <e1davole@iu-vannes.fr>
--- Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>		
+-- Copyright (C) 2005 Brice Davoleau       <e1davole@iu-vannes.fr>
+-- Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>		
+-- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,8 +19,9 @@
 --
 -- ============================================================================
 
-ALTER TABLE llx_categorie_association ADD INDEX (fk_categorie_mere);
-ALTER TABLE llx_categorie_association ADD INDEX (fk_categorie_fille);
+
+ALTER TABLE llx_categorie_association ADD INDEX idx_categorie_association_fk_categorie_mere (fk_categorie_mere);
+ALTER TABLE llx_categorie_association ADD INDEX idx_categorie_association_fk_categorie_fille (fk_categorie_fille);
 
 ALTER TABLE llx_categorie_association ADD FOREIGN KEY (fk_categorie_mere) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_association ADD FOREIGN KEY (fk_categorie_fille) REFERENCES llx_categorie (rowid);
