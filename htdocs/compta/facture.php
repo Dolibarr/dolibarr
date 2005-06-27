@@ -417,6 +417,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 
                     // Insertion action
                     include_once("../contact.class.php");
+                    include_once("../actioncomm.class.php");
                     $actioncomm = new ActionComm($db);
                     $actioncomm->type_code   = $actioncode;
                     $actioncomm->label       = $actionmsg2;
