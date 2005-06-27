@@ -233,3 +233,4 @@ Legend=Légende
 FillTownFromZip=Renseigner ville
 ShowLog=Afficher historique
 File=Fichier
+ReadPermissionNotAllowed=Permission de lecture non accordée
