@@ -20,11 +20,11 @@
  * $Source$
  */
 
-/*!
-   \file       htdocs/fichinter/fiche.php
-   \brief      Fichier fiche intervention
-   \ingroup    ficheinter
-   \version    $Revision$
+/**
+        \file       htdocs/fichinter/fiche.php
+        \brief      Fichier fiche intervention
+        \ingroup    ficheinter
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -169,19 +169,20 @@ if ($_GET["action"] == 'create')
       print '<tr><td valign="top">'.$langs->trans("Project").'</td><td><select name="projetidp">';
       print '<option value="0"></option>';
       
-      $sql = "SELECT p.rowid, p.title FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $socidp";
+      $sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc = '.$_GET["socidp"];
       
-      if ( $db->query($sql) )
+      $resql=$db->query($sql);
+      if ($resql)
 	{
 	  $i = 0 ;
-	  $numprojet = $db->num_rows();
+	  $numprojet = $db->num_rows($resql);
 	  while ($i < $numprojet)
 	    {
-	      $projet = $db->fetch_object();
+	      $projet = $db->fetch_object($resql);
 	      print "<option value=\"$projet->rowid\">$projet->title</option>";
 	      $i++;
 	    }
-	  $db->free();
+	  $db->free($resql);
 	}
       print '</select>';
       
