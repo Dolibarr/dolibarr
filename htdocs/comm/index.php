@@ -238,46 +238,49 @@ print '</td><td valign="top" width="70%">';
 
 
 /*
- * Derniers clients enregsitrés
+ * Derniers clients enregistrés
  */
-$sql = "SELECT s.idp,s.nom,".$db->pdate("datec")." as datec";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE s.client = 1";
-if ($user->societe_id > 0)
+if ($user->rights->societe->lire)
 {
-    $sql .= " AND s.idp = $user->societe_id";
-}
-$sql .= " ORDER BY s.datec DESC ";
-$sql .= $db->plimit($max, 0);
-
-$resql = $db->query($sql);
-if ($resql)
-{
-    $num = $db->num_rows($resql);
-    if ($num)
+    $sql = "SELECT s.idp,s.nom,".$db->pdate("datec")." as datec";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+    $sql.= " WHERE s.client = 1";
+    if ($user->societe_id > 0)
     {
-        $langs->load("boxes");
-        
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre">';
-        print '<td colspan="2">'.$langs->trans("BoxTitleLastCustomers",$max).'</td></tr>';
-        
-        $i = 0;
-        $var=false;
-        while ($i < $num)
-        {
-            $objp = $db->fetch_object($resql);
-            print "<tr $bc[$var]>";
-            print "<td nowrap><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
-            print '<td align="right" nowrap>'.dolibarr_print_date($objp->datec)."</td>";
-            print '</tr>';
-            $i++;
-            $var=!$var;
-        
-        }
-      print "</table><br>";
+        $sql .= " AND s.idp = $user->societe_id";
+    }
+    $sql .= " ORDER BY s.datec DESC ";
+    $sql .= $db->plimit($max, 0);
     
-      $db->free($resql);
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        if ($num)
+        {
+            $langs->load("boxes");
+            
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre">';
+            print '<td colspan="2">'.$langs->trans("BoxTitleLastCustomers",$max).'</td></tr>';
+            
+            $i = 0;
+            $var=false;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($resql);
+                print "<tr $bc[$var]>";
+                print "<td nowrap><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
+                print '<td align="right" nowrap>'.dolibarr_print_date($objp->datec)."</td>";
+                print '</tr>';
+                $i++;
+                $var=!$var;
+            
+            }
+          print "</table><br>";
+        
+          $db->free($resql);
+        }
     }
 }
 
