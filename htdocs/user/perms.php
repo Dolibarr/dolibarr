@@ -200,7 +200,7 @@ if ($_GET["id"])
     $sql ="SELECT r.id, r.libelle, r.module";
     $sql.=" FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.=" WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-    $sql.=" ORDER BY r.id, r.module";
+    $sql.=" ORDER BY r.module, r.id";
 
     $result=$db->query($sql);
     if ($result)
@@ -289,5 +289,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

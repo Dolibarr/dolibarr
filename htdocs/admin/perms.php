@@ -21,7 +21,7 @@
  */
 
 /**
-    	\file htdocs/admin/perms.php
+    	\file       htdocs/admin/perms.php
 		\brief      Page d'administration/configuration des permissions par defaut
 		\version    $Revision$
 */
@@ -93,7 +93,7 @@ $db->commit();
 $sql ="SELECT r.id, r.libelle, r.module, r.bydefault";
 $sql.=" FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.=" WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql.=" ORDER BY r.id, r.module";
+$sql.=" ORDER BY r.module, r.id";
 
 $result = $db->query($sql);
 if ($result)
