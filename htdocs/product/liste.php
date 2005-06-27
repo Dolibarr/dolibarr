@@ -53,7 +53,7 @@ $offset = $limit * $page ;
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
-if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
+if (isset($_POST["button_removefilter_x"])) {
     $sref="";
     $snom="";
 }
@@ -178,7 +178,7 @@ if ($resql)
   print "</tr>\n";
   
   // Lignes des champs de filtre
-  print '<form action="liste.php" method="post">';
+  print '<form action="liste.php" method="post" name="formulaire">';
   print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
   print '<input type="hidden" name="type" value="'.$type.'">';
@@ -189,9 +189,9 @@ if ($resql)
   print '<td valign="right">';
   print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
   print '</td>';
-  print '<td align="center">';
-  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
-  print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
+  print '<td align="right">';
+  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+  print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
   print '</td>';
   print '</tr>';
   print '</form>';
