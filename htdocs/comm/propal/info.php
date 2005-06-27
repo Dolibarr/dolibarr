@@ -27,55 +27,59 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require('./pre.inc.php');
 
-$langs->load("propal");
+$langs->load('propal');
 
 $user->getrights('propale');
 if (!$user->rights->propale->lire)
-  accessforbidden();
+	accessforbidden();
 
-require("../../propal.class.php");
+require('../../propal.class.php');
 /*
  *
  *
  */
 llxHeader();
 
-if ($_GET["propalid"])
+if ($_GET['propalid'])
 {
-  $propal = new Propal($db);
-  $propal->fetch($_GET["propalid"]);
-  
-  $societe = new Societe($db);
-  $societe->fetch($propal->soc_id);
-  $h=0;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-  $head[$h][1] = $langs->trans("Card");
-  $h++;
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
 
-  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
-  $head[$h][1] = $langs->trans("Note");
-  $h++;
+	$societe = new Societe($db);
+	$societe->fetch($propal->soc_id);
+	$h=0;
 
-  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
-  $head[$h][1] = $langs->trans("Info");
-  $hselected=$h;
-  $h++;
-  
-  dolibarr_fiche_head($head, $hselected, $langs->trans("Proposal").": $propal->ref");
-  
-  $propal->info($propal->id);
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans('Card');
+	$h++;
 
-  print '<table width="100%"><tr><td>';
-  dolibarr_print_object_info($propal);
-  print '</td></tr></table>';
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans('Note');
+	$h++;
 
-  print "<br></div>";
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans('Info');
+	$hselected=$h;
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans('Documents');
+	$h++;
+
+	dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal').': '.$propal->ref);
+
+	$propal->info($propal->id);
+
+	print '<table width="100%"><tr><td>';
+	dolibarr_print_object_info($propal);
+	print '</td></tr></table>';
+
+	print '<br></div>';
  
-  $db->close();
+	$db->close();
 }
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>');
 ?>

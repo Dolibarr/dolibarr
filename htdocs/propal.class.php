@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -545,7 +546,69 @@ class Propal
 	    }
 	}
     }
-		
+
+  /*
+   *
+   *
+   *
+   */
+
+	function set_project($user, $project_id)
+	{
+		if ($user->rights->propale->creer)
+		{
+			//verif que le projet et la société concordent
+			$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc ='.$this->socidp.' AND p.rowid='.$project_id;
+			$sqlres = $this->db->query($sql);
+			if ($sqlres)
+			{
+				$numprojet = $this->db->num_rows($sqlres);
+				if ($numprojet > 0)
+				{
+					$this->projetidp=$project_id;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_projet = '.$project_id;
+					$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+					$this->db->query($sql);
+				}
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+			}
+		}
+	}
+
+  /*
+   *
+   *
+   *
+   */
+
+	function set_contact($user, $contact_id)
+	{
+		if ($user->rights->propale->creer)
+		{
+			//verif que le contact et la société concordent
+			$sql = 'SELECT p.idp FROM '.MAIN_DB_PREFIX.'socpeople as p WHERE p.fk_soc = '.$this->socidp.' AND p.idp='.$contact_id;
+			$sqlres = $this->db->query($sql);
+			if ($sqlres)
+			{
+				$numprojet = $this->db->num_rows($sqlres);
+				if ($numprojet > 0)
+				{
+					$this->projetidp=$project_id;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_soc_contact = '.$contact_id;
+					$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+					$this->db->query($sql);
+				}
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+			}
+		}
+	}
+
   /*
    *
    *

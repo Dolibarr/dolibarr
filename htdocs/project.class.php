@@ -104,6 +104,32 @@ class Project {
   }
 	
   /*
+   *    \brief      Met à jour objet projet dans la base
+   */
+
+  function update()
+  {
+    $this->ref = ereg_replace("\"","",stripslashes($this->ref));
+    $this->ref = ereg_replace("'","",stripslashes($this->ref));
+    $this->ref = trim($this->ref);
+
+    $this->title = ereg_replace("\"","",stripslashes($this->title));
+    $this->title = ereg_replace("'","",stripslashes($this->title));
+    $this->title = trim($this->title);
+
+    $sql = "UPDATE ".MAIN_DB_PREFIX."projet SET";
+    $sql .= " ref='".$this->ref."', ";
+    $sql .= " title='".$this->title."' ";
+    $sql .= " WHERE rowid=".$this->id;
+
+    $resql = $this->db->query($sql);
+    if (!$resql)
+      {
+	print $this->db->error();
+      }
+  }
+	
+  /*
    *
    *
    *

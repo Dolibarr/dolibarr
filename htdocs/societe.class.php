@@ -927,7 +927,7 @@ class Societe {
    *    \brief      Renvoie la liste des contacts de cette société
    *    \return     array      tableau des contacts
    */
-	 
+
   function contact_array()
   {
     $contacts = array();
@@ -1253,6 +1253,30 @@ class Societe {
 	return -2;
       }
   }
+
+	/**
+	 *    \brief      Indique si la société a des projets
+	 *    \return     bool	   true si la société a des projets, false sinon
+	 */
+	function has_projects()
+	{
+		$sql = 'SELECT COUNT(*) as numproj FROM '.MAIN_DB_PREFIX.'projet WHERE fk_soc = ' . $this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$nump = $this->db->num_rows($resql);
+			$obj = $this->db->fetch_object();
+			$count = $obj->numproj;
+		}
+		else
+		{
+			$count = 0;
+			print $this->db->error();
+		}
+		$this->db->free($resql);
+		return ($count > 0);
+    }
+
 }
 
 ?>

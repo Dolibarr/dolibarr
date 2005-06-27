@@ -388,6 +388,51 @@ class Form
   }
   
   
+	/**
+	 *    \brief  Affiche la liste déroulante des projets d'une société donnée
+	 *
+	 */
+	function select_projects($socid='', $selected='', $htmlname='projectid')
+	{
+		$socid=intVal($socid);
+		if (empty($socid))
+			return;
+		// On recherche les societes
+		$sql = 'SELECT p.rowid, p.title FROM ';
+		$sql .= MAIN_DB_PREFIX .'projet as p';
+		$sql .= ' WHERE fk_soc='.$socid;
+		$sql .= ' ORDER BY p.title ASC';
+
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			print '<select class="flat" name="'.$htmlname.'">';
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object();
+					if (!empty($selected) && $selected == $obj->rowid)
+					{
+						print '<option value="'.$obj->rowid.'" selected>'.$obj->title.'</option>';
+					}
+					else
+					{
+						print '<option value="'.$obj->rowid.'">'.$obj->title.'</option>';
+					}
+					$i++;
+				}
+			}
+			print '</select>';
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
+
   /**
    *    \brief      Retourne la liste des produits
    *    \param      selected        Produit présélectionné

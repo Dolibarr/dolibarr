@@ -53,6 +53,8 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 {
   if (! $_POST["cancel"]) {
+    if (!(empty($_POST["id"]) || empty($_POST["ref"]) || empty($_POST["title"])))
+    {
       $projet = new Project($db);
       $projet->id = $_POST["id"];
       $projet->ref = $_POST["ref"];
@@ -60,9 +62,14 @@ if ($_POST["action"] == 'update' && $user->rights->projet->creer)
       $projet->update();
     
       $_GET["id"]=$projet->id;  // On retourne sur la fiche projet
-    } else {
+    }
+    else
+    {
       $_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
     }
+  } else {
+      $_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+  }
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")

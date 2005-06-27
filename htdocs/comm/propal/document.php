@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,140 +21,167 @@
  * $Source$
  */
 
-/**     \file       htdocs/comm/propal/document.php
-        \ingroup    propale
-		\brief      Page de gestion des documents attachées à une proposition commerciale
-		\version    $Revision$
+/**     
+	\file       htdocs/comm/propal/document.php
+	\ingroup    propale
+	\brief      Page de gestion des documents attachées à une proposition commerciale
+	\version    $Revision$
 */
 
-require("./pre.inc.php");
-require_once("../../propal.class.php");
+require('./pre.inc.php');
+require_once('../../propal.class.php');
 
 $user->getrights('propale');
 
 if (!$user->rights->propale->lire)
-  accessforbidden();
+	accessforbidden();
 
 
 
 llxHeader();
 
+$propalid=empty($_GET['propalid']) ? 0 : intVal($_GET['propalid']);
+$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
 function do_upload ($upload_dir)
 {
-  global $local_file, $error_msg;
+	global $local_file, $error_msg, $langs;
 
-  if (! is_dir($upload_dir))
-    {
-      umask(0);
-      mkdir($upload_dir, 0755);
-    }
+	if (! is_dir($upload_dir))
+	{
+		umask(0);
+		mkdir($upload_dir, 0755);
+	}
 
-  if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
-    {
-      print "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s.\n";
-      //print_r($_FILES);
-    }
-  else
-    {
-      echo "Le fichier n'a pas été téléchargé";
-      // print_r($_FILES);
-    }
-
+	if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . '/' . $_FILES['userfile']['name']))
+	{
+		echo $langs->trans('FileUploaded');
+	}
+	else
+	{
+		echo $langs->trans('FileNotUploaded');
+	}
 }
 
+/******************************************************************************/
+/*                     Actions                                                */
+/******************************************************************************/
 
-
-if ($_GET["id"] > 0)
+if ($propalid > 0)
 {
-  $propal = new Propal($db);
-  
-  if ($propal->fetch($_GET["id"]))
+	$propal = new Propal($db);
+
+	if ($propal->fetch($propalid))
     {
-
-      $upload_dir = $conf->propal->dir_output . "/" . $propal->ref ;
-
-      if ( $error_msg )
-	{ 
-	  echo "<B>$error_msg</B><BR><BR>";
-	}
-
-      if ($action=='delete')
-	{
-	  $file = $upload_dir . "/" . urldecode($urlfile);
-	  dol_delete_file($file);
-	}
-      
-      if ( $_POST["sendit"] )
-	{
-	  do_upload ($upload_dir);
-	}
-            
-     
-      print '<table width="100%" class="noborder">';
-      
-      print "<tr><td><div class=\"titre\">Documents associés à la proposition : ".$propal->ref_url."</div></td>";
-      print "</tr></table>";
-
-      print '<form name="userfile" action="document.php?id='.$propal->id.'" enctype="multipart/form-data" method="POST">';
-      print '<input type="hidden" name="max_file_size" value="2000000">';
-      print '<input type="file"   name="userfile" size="40" maxlength="80"><br>';
-      print '<input type="submit" value="'.$langs->trans("Upload").'" name="sendit">';
-      print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><br>';
-      print '</form><br>';
-
-      clearstatcache();
-
-      $handle=opendir($upload_dir);
-
-      if ($handle)
-	{
-	  print '<table width="100%" class="border">';
-
-	  while (($file = readdir($handle))!==false)
-	    {
-	      if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-		{
-		  print '<tr><td>';
-		  echo '<a target="_blank" href="'.DOL_URL_ROOT.'/document.php?modulepart=propal&file='.urlencode($propal->ref.'/'.$file).'">'.$file.'</a>';
-		  print "</td>\n";
-		  
-		  print '<td align="right">'.filesize($upload_dir."/".$file). ' bytes</td>';
-		  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($upload_dir."/".$file)).'</td>';
-		  
-		  print '<td align="center">';
-		  if ($file == $propal->ref . '.pdf')
-		    {
-		      echo '-';
-		    }
-		  else
-		    {
-		      echo '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$propal->id.'&action=delete&urlfile='.urlencode($file).'">'.$langs->trans("Delete").'</a>';
-		    }
-		  print "</td></tr>\n";
+		$forbidden_chars=array('/','\\',':','*','?','"','<','>','|','[',']',',',';','=');
+		$propref = str_replace($forbidden_chars, '_', $propal->ref);
+		$upload_dir = $conf->propal->dir_output.'/'.$propref;
+		if ( $error_msg )
+		{ 
+			echo '<B>'.$error_msg.'</B><BR><BR>';
 		}
-	    }
 
-	  print "</table>";
+/******************************************************************************/
+/*                     Actions                                                */
+/******************************************************************************/
+		if ($action=='delete')
+		{
+			$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
+			dol_delete_file($file);
+		}
 
-	  closedir($handle);
+		if ( $_POST['sendit'] )
+		{
+			do_upload ($upload_dir);
+		}
+
+		$h=0;
+
+		$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+		$head[$h][1] = $langs->trans('Card');
+		$h++;
+
+		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
+		$head[$h][1] = $langs->trans('Note');
+		$h++;
+
+		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
+		$head[$h][1] = $langs->trans('Info');
+		$h++;
+
+		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
+		$head[$h][1] = $langs->trans('Documents');
+		$hselected=$h;
+		$h++;
+
+		dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal').': '.$propal->ref);
+
+		print_titre($langs->trans('AssociatedDocuments').' '.$propal->ref_url);
+
+		print '<form name="userfile" action="document.php?propalid='.$propal->id.'" enctype="multipart/form-data" method="POST">';
+		print '<input type="hidden" name="max_file_size" value="2000000">';
+		print '<input type="file"   name="userfile" size="40" maxlength="80"><br>';
+		print '<input type="submit" value="'.$langs->trans('Upload').'" name="sendit">';
+		print '<input type="submit" value="'.$langs->trans('Cancel').'" name="cancelit"><br>';
+		print '</form><br>';
+
+		clearstatcache();
+
+		$handle=opendir($upload_dir);
+
+		if ($handle)
+		{
+			print '<table width="100%" class="border">';
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans('Document').'</td>';
+			print '<td>'.$langs->trans('Size').'</td>';
+			print '<td>'.$langs->trans('Date').'</td>';
+			print '<td>&nbsp;</td>';
+			print '</tr>';
+			$var=true;
+			while (($file = readdir($handle))!==false)
+			{
+				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+				{
+					$var=!$var;
+					print '<tr '.$bc[$var].'>';
+					print '<td>';
+					echo '<a target="_blank" href="'.DOL_URL_ROOT.'/document.php?modulepart=propal&file='.$propref.'/'.urlencode($file).'">'.$file.'</a>';
+					print "</td>\n";
+					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
+					print '<td align="right">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
+					print '<td align="center">';
+					if ($file == $propref . '.pdf')
+					{
+						echo '-';
+					}
+					else
+					{
+						echo '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id.'&action=delete&urlfile='.urlencode($file).'">'.$langs->trans('Delete').'</a>';
+					}
+					print "</td></tr>\n";
+				}
+			}
+			print '</table>';
+			print '<br>';
+			closedir($handle);
+		}
+		else
+		{
+			print '<p>'.$langs->trans('ErrorCantOpenDir').'<b> '.$upload_dir.'</b>';
+		}
 	}
-      else
+	else
 	{
-	  print "<p>Impossible d'ouvrir : <b>".$upload_dir."</b>";
+		dolibarr_print_error($db);
 	}
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
 }
 else
 {
-  print "Erreur";
+	print 'Erreur';
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>');
 ?>
