@@ -5,6 +5,28 @@
 -- sans AUCUNE erreur ni warning
 -- ;
 
+
+create table llx_categorie
+(
+	rowid 		integer AUTO_INCREMENT PRIMARY KEY,
+	label 		VARCHAR(255),
+	description 	text	
+)type=innodb;
+
+
+create table llx_product_fournisseur_price
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  datec           datetime,
+  tms             timestamp,
+  fk_product      integer,
+  fk_soc          integer,
+  price           real,
+  quantity        real,
+  fk_user         integer
+
+)type=innodb;
+
 create table llx_product_fournisseur_price_log
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -16,6 +38,7 @@ create table llx_product_fournisseur_price_log
   fk_user         integer
 
 )type=innodb;
+
 
 create table llx_usergroup
 (
