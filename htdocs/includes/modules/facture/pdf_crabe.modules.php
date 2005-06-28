@@ -112,8 +112,7 @@ class pdf_crabe extends ModelePDFFactures
 
             if (! file_exists($dir))
             {
-                umask(0);
-                if (! mkdir($dir, 0755))
+                if (create_exdir($dir) < 0)
                 {
                     $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;
@@ -579,7 +578,7 @@ class pdf_crabe extends ModelePDFFactures
         if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
         {
             if (file_exists(FAC_PDF_LOGO)) {
-                $pdf->Image(FAC_PDF_LOGO, 10, 5, 0, 24, 'PNG');
+                $pdf->Image(FAC_PDF_LOGO, 10, 5, 0, 24);
             }
             else {
                 $pdf->SetTextColor(200,0,0);

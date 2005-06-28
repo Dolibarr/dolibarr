@@ -75,7 +75,7 @@ if ($_GET["id"])
 
         if (! file_exists($dir))
         {
-            if (! create_exdir($dir))
+            if (create_exdir($dir) < 0)
             {
                 $mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
             }

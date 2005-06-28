@@ -61,14 +61,13 @@ class pdf_bigorneau extends ModelePDFFactures {
 			$file = $dir . $facref . ".pdf";
 	  
 	  if (! file_exists($dir))
-	    {
-	      umask(0);
-	      if (! mkdir($dir, 0755))
-		{
-                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                    return 0;
-		}
-	    }
+        {
+            if (create_exdir($dir) < 0)
+            {
+                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                return 0;
+            }
+        }
 	  
 	  if (file_exists($dir))
 	    {
