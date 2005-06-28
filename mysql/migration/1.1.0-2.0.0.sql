@@ -6,6 +6,126 @@
 -- ;
 
 
+create table llx_user_clicktodial
+(
+  fk_user       integer PRIMARY KEY,
+  login         varchar(32),
+  pass          varchar(64),
+  poste         varchar(20)
+
+)type=innodb;
+
+create table llx_export_compta
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  ref              varchar(12) NOT NULL,
+  date_export      datetime NOT NULL,        -- date de creation
+  fk_user          integer NOT NULL,
+  note             text
+
+)type=innodb;
+
+create table llx_expeditiondet
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  fk_expedition     integer NOT NULL,
+  fk_commande_ligne integer NOT NULL,
+  qty               real,              -- quantité
+
+  key(fk_expedition),
+  key(fk_commande_ligne)
+)type=innodb;
+
+create table llx_expedition_methode
+(
+  rowid            integer PRIMARY KEY,
+  tms              timestamp,
+  code             varchar(30) NOT NULL,
+  libelle          varchar(50) NOT NULL,
+  description      text,
+  statut           tinyint DEFAULT 0
+)type=innodb;
+
+create table llx_expedition
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  ref                   varchar(30) NOT NULL,
+  fk_commande           integer,
+  date_creation         datetime,              -- date de creation 
+  date_valid            datetime,              -- date de validation
+  date_expedition       date,                  -- date de l'expedition
+  fk_user_author        integer,               -- createur
+  fk_user_valid         integer,               -- valideur
+  fk_entrepot           integer,
+  fk_expedition_methode integer,
+  fk_statut             smallint  DEFAULT 0,
+  note                  text,
+  model_pdf             varchar(50),
+
+  UNIQUE INDEX (ref),
+  key(fk_expedition_methode),
+  key(fk_commande)
+)type=innodb;
+
+create table llx_contratdet_log
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  fk_contratdet         integer NOT NULL,
+  date                  datetime NOT NULL,
+  statut                smallint NOT NULL,
+  fk_user_author        integer NOT NULL,
+  commentaire           text
+
+)type=innodb;
+
+create table llx_compta_compte_generaux
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  date_creation   datetime,
+  numero          varchar(50),
+  intitule        varchar(255),
+  fk_user_author  integer,
+  note            text,
+
+  UNIQUE(numero)
+)type=innodb;
+
+create table llx_categorie_association
+(
+  fk_categorie_mere   integer NOT NULL,
+  fk_categorie_fille  integer NOT NULL
+)type=innodb;
+
+
+create table llx_categorie_product
+(
+  fk_categorie  integer NOT NULL,
+  fk_product    integer NOT NULL
+)type=innodb;
+
+create table llx_c_methode_commande_fournisseur
+(
+  rowid    integer AUTO_INCREMENT PRIMARY KEY,
+  code     varchar(30),
+  libelle  varchar(60),
+  active   tinyint default 1  NOT NULL,
+
+  UNIQUE INDEX(code)
+)type=innodb;
+
+
+create table llx_bookmark4u_login
+(
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  fk_user       integer,
+  bk4u_uid      integer,
+
+  UNIQUE INDEX(fk_user)
+)type=innodb;
+
+
 create table llx_categorie
 (
 	rowid 		integer AUTO_INCREMENT PRIMARY KEY,
