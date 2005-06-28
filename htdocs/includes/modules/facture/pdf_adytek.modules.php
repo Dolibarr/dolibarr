@@ -431,7 +431,7 @@ class pdf_adytek extends ModelePDFFactures {
         {
             if (file_exists(FAC_PDF_LOGO)) {
                 $pdf->SetXY(10,5);
-                $pdf->Image(FAC_PDF_LOGO, 10, 5,45.0, 25.0, 'PNG');
+                $pdf->Image(FAC_PDF_LOGO, 10, 5,45.0, 25.0);
             }
             else {
                 $pdf->SetTextColor(200,0,0);

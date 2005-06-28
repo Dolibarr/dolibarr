@@ -579,7 +579,7 @@ class pdf_oursin extends ModelePDFFactures
 	  {
 	    $taille=getimagesize(FAC_PDF_LOGO);
 	    $longueur=$taille[0]/2.835;
-	    $pdf->Image(FAC_PDF_LOGO, $this->marges['g'], $this->marges['h'], 0, 24, 'PNG');
+	    $pdf->Image(FAC_PDF_LOGO, $this->marges['g'], $this->marges['h'], 0, 24);
 	  }
 	else {
 	  $pdf->SetTextColor(200,0,0);
