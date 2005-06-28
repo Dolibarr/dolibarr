@@ -122,8 +122,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
             if (! file_exists($dir))
             {
-                umask(0);
-                if (! mkdir($dir, 0755))
+                if (create_exdir($dir) < 0)
                 {
                     $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;

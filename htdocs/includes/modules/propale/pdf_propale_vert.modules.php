@@ -75,15 +75,14 @@ class pdf_propale_vert extends ModelePDFPropales
               $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
               $propref = str_replace($forbidden_chars,"_",$propale->ref);
               $dir = $conf->propal->dir_output . "/" . $propref ;
-          if (! file_exists($dir))
-	    {
-	      umask(0);
-                if (! mkdir($dir, 0755))
-		{
+            if (! file_exists($dir))
+            {
+                if (create_exdir($dir) < 0)
+                {
                     $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;
                 }
-		}
+            }
 	    }
 	  else
 	    {
