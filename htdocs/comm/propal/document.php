@@ -43,14 +43,14 @@ llxHeader();
 $propalid=empty($_GET['propalid']) ? 0 : intVal($_GET['propalid']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
+
 function do_upload ($upload_dir)
 {
 	global $local_file, $error_msg, $langs;
 
 	if (! is_dir($upload_dir))
 	{
-		umask(0);
-		mkdir($upload_dir, 0755);
+		create_exdir($upload_dir);
 	}
 
 	if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . '/' . $_FILES['userfile']['name']))
@@ -120,9 +120,9 @@ if ($propalid > 0)
 
 		print '<form name="userfile" action="document.php?propalid='.$propal->id.'" enctype="multipart/form-data" method="POST">';
 		print '<input type="hidden" name="max_file_size" value="2000000">';
-		print '<input type="file"   name="userfile" size="40" maxlength="80"><br>';
-		print '<input type="submit" value="'.$langs->trans('Upload').'" name="sendit">';
-		print '<input type="submit" value="'.$langs->trans('Cancel').'" name="cancelit"><br>';
+		print '<input type="file"   name="userfile" size="40" maxlength="80" class="flat"><br>';
+		print '<input type="submit" value="'.$langs->trans('Upload').'" name="sendit" class="button">';
+		print '<input type="submit" value="'.$langs->trans('Cancel').'" name="cancelit" class="button"><br>';
 		print '</form><br>';
 
 		clearstatcache();
@@ -131,11 +131,11 @@ if ($propalid > 0)
 
 		if ($handle)
 		{
-			print '<table width="100%" class="border">';
+			print '<table width="100%" class="noborder">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('Document').'</td>';
-			print '<td>'.$langs->trans('Size').'</td>';
-			print '<td>'.$langs->trans('Date').'</td>';
+			print '<td align="right">'.$langs->trans('Size').'</td>';
+			print '<td align="center">'.$langs->trans('Date').'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 			$var=true;
@@ -149,7 +149,7 @@ if ($propalid > 0)
 					echo '<a target="_blank" href="'.DOL_URL_ROOT.'/document.php?modulepart=propal&file='.$propref.'/'.urlencode($file).'">'.$file.'</a>';
 					print "</td>\n";
 					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
-					print '<td align="right">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
+					print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
 					print '<td align="center">';
 					if ($file == $propref . '.pdf')
 					{
