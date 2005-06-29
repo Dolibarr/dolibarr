@@ -994,7 +994,7 @@ else
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
 
-	$sql = 'SELECT s.nom, s.idp, s.client, p.rowid as propalid, p.price, p.ref,'.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv, c.label as statut, c.id as statutid';
+	$sql = 'SELECT s.nom, s.idp, s.client, p.rowid as propalid, p.price, p.ref,'.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv, c.id as statutid';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c';
 	$sql .= ' WHERE p.fk_soc = s.idp AND p.fk_statut = c.id';
 
@@ -1064,8 +1064,7 @@ else
 		print '<td align="right">';
 		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
 		print '</td>';
-		print '<td align="center">';
-		print '<input type="submit" class="button" name="button_search" value="'.$langs->trans('Search').'">';
+        print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 		print '</td>';
 		print "</tr>\n";
 		print '</form>';
@@ -1092,7 +1091,7 @@ else
 
 			if ( $now > $objp->dfv && $objp->dfv > 0 )
 			{
-				print '<td>'.strftime('%d %b %Y',$objp->dfv).'</td>';
+				print '<td>'.dolibarr_print_date($objp->dfv).'</td>';
 			}
 			else
 			{
@@ -1110,7 +1109,8 @@ else
 			print strftime('%Y',$objp->dp)."</a></td>\n";      
 
 			print '<td align="right">'.price($objp->price)."</td>\n";
-			print '<td align="center">'.$objp->statut."</td>\n";
+			$propal=New Propal($db);
+			print '<td align="center">'.$propal->LibStatut($objp->statutid,0)."</td>\n";
 			print "</tr>\n";
 
 			$total = $total + $objp->price;

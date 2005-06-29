@@ -63,11 +63,19 @@ class Propal
 		
   function Propal($DB, $soc_idp="", $propalid=0)
     {
+      global $langs;
+      
       $this->db = $DB ;
       $this->socidp = $soc_idp;
       $this->id = $propalid;
       $this->products = array();
       $this->remise = 0;
+      
+      $langs->load("propals");
+      $this->statut[0]=$langs->trans("PropalStatusDraft");
+      $this->statut[1]=$langs->trans("PropalStatusValidated");
+      $this->statut_short[0]=$langs->trans("PropalStatusDraft");
+      $this->statut_short[1]=$langs->trans("Opened");
     }
 
 
@@ -955,12 +963,10 @@ class Propal
    *    \param      statut      id statut
    *    \return     string      Libellé
    */
-    function LibStatut($statut)
+    function LibStatut($statut,$size=1)
     {
-        global $langs;
-        $langs->load("propals");
-        if ($statut == 0) return $langs->trans("PropalStatusDraft");
-        return $langs->trans("PropalStatusValidated");
+        if ($size) return $this->statut[$statut];
+        else return $this->statut_short[$statut];
     }
 
 }  
