@@ -58,6 +58,8 @@ if ($user->societe_id > 0)
 
 if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
+$year=isset($_GET["year"])?$_GET["year"]:"";
+$month=isset($_GET["month"])?$_GET["month"]:"";
 
 
 // Nombre de ligne pour choix de produit/service prédéfinis
@@ -1045,11 +1047,12 @@ else
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans('Ref'),'propal.php','p.ref','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'width="15%"',$sortfield);
-		print_liste_field_titre($langs->trans('Company'),'propal.php','s.nom','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'width="30%"',$sortfield);
-		print_liste_field_titre($langs->trans('Date'),'propal.php','p.datep','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'width="25%" align="right" colspan="2"',$sortfield);
-		print_liste_field_titre($langs->trans('Price'),'propal.php','p.price','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, ' width="20%" align="right"',$sortfield);
-		print_liste_field_titre($langs->trans('Status'),'propal.php','p.fk_statut','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'width="10%" align="center"',$sortfield);
+		print_liste_field_titre($langs->trans('Ref'),'propal.php','p.ref','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'',$sortfield);
+		print_liste_field_titre($langs->trans('Company'),'propal.php','s.nom','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'',$sortfield);
+		print_liste_field_titre($langs->trans('Date'),'propal.php','p.datep','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
+		print_liste_field_titre($langs->trans('DateEndPropalShort'),'propal.php','dfv','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
+		print_liste_field_titre($langs->trans('Price'),'propal.php','p.price','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield);
+		print_liste_field_titre($langs->trans('Status'),'propal.php','p.fk_statut','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'align="center"',$sortfield);
 		print "</tr>\n";
 		// Lignes des champs de filtre
 		print '<form method="get" action="propal.php">';
@@ -1078,6 +1081,7 @@ else
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref."</a></td>\n";
+
 			if ($objp->client == 1)
 			{
 				$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp;
@@ -1086,27 +1090,28 @@ else
 			{
 				$url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->idp;
 			}
-
 			print '<td><a href="'.$url.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 
-			if ( $now > $objp->dfv && $objp->dfv > 0 )
-			{
-				print '<td>'.dolibarr_print_date($objp->dfv).'</td>';
-			}
-			else
-			{
-				print '<td>&nbsp;</td>';
-			}
-
-			print '<td align="right">';
+			// Date propale
+			print '<td align="center">';
 			$y = strftime('%Y',$objp->dp);
 			$m = strftime('%m',$objp->dp);
 
 			print strftime('%d',$objp->dp)."\n";
 			print ' <a href="propal.php?year='.$y.'&amp;month='.$m.'">';
-			print strftime('%B',$objp->dp)."</a>\n";
+			print dolibarr_print_date($objp->dp,'%b')."</a>\n";
 			print ' <a href="propal.php?year='.$y.'">';
 			print strftime('%Y',$objp->dp)."</a></td>\n";      
+
+            // Date fin validite
+			if ( $now > $objp->dfv && $objp->dfv > 0 )
+			{
+				print '<td align="center">'.dolibarr_print_date($objp->dfv).'</td>';
+			}
+			else
+			{
+				print '<td>&nbsp;</td>';
+			}
 
 			print '<td align="right">'.price($objp->price)."</td>\n";
 			$propal=New Propal($db);
