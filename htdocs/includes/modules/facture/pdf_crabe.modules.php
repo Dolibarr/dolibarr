@@ -712,19 +712,22 @@ class pdf_crabe extends ModelePDFFactures
         $footy=13;
         $pdf->SetFont('Arial','',8);
 
-        if (defined(MAIN_INFO_CAPITAL)) {
-            $pdf->SetY(-$footy);
+        $ligne="";
+        if (defined('MAIN_INFO_CAPITAL') && MAIN_INFO_CAPITAL) {
             $ligne="SARL au Capital de " . MAIN_INFO_CAPITAL." ".$conf->monnaie;
-            if (defined(MAIN_INFO_SIREN) && MAIN_INFO_SIREN) {
-                $ligne.=" - ".$langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIREN;
-            }
-            if (defined(MAIN_INFO_RCS) && MAIN_INFO_RCS) {
-                $ligne.=" - ".$langs->transcountry("ProfId3",$this->code_pays).": ".MAIN_INFO_RCS;
-            }
+        }
+        if (defined('MAIN_INFO_SIREN') && MAIN_INFO_SIREN) {
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIREN;
+        }
+        if (defined('MAIN_INFO_RCS') && MAIN_INFO_RCS) {
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->code_pays).": ".MAIN_INFO_RCS;
+        }
+        if ($ligne) {
+            $pdf->SetY(-$footy);
             $pdf->MultiCell(190, 3, $ligne, 0, 'C');
             $footy-=3;
         }
-
+        
         // Affiche le numéro de TVA intracommunautaire
         if (MAIN_INFO_TVAINTRA == 'MAIN_INFO_TVAINTRA') {
             $pdf->SetY(-$footy);
