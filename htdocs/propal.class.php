@@ -55,12 +55,17 @@ class Propal
   var $products_qty;
   var $note;
   var $price;
+  var $status;
+  
+  var $labelstatut=array();
+  var $labelstatut_short=array();
 
+  var $product=array();
 
+  
     /** 
-		 * \brief  Constructeur
+     *      \brief      Constructeur
      */
-		
   function Propal($DB, $soc_idp="", $propalid=0)
     {
       global $langs;
@@ -72,10 +77,10 @@ class Propal
       $this->remise = 0;
       
       $langs->load("propals");
-      $this->statut[0]=$langs->trans("PropalStatusDraft");
-      $this->statut[1]=$langs->trans("PropalStatusValidated");
-      $this->statut_short[0]=$langs->trans("PropalStatusDraft");
-      $this->statut_short[1]=$langs->trans("Opened");
+      $this->labelstatut[0]=$langs->trans("PropalStatusDraft");
+      $this->labelstatut[1]=$langs->trans("PropalStatusValidated");
+      $this->labelstatut_short[0]=$langs->trans("PropalStatusDraft");
+      $this->labelstatut_short[1]=$langs->trans("Opened");
     }
 
 
@@ -965,8 +970,8 @@ class Propal
    */
     function LibStatut($statut,$size=1)
     {
-        if ($size) return $this->statut[$statut];
-        else return $this->statut_short[$statut];
+        if ($size) return $this->labelstatut[$statut];
+        else return $this->labelstatut_short[$statut];
     }
 
 }  

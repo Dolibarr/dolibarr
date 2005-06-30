@@ -430,7 +430,7 @@ if ($_GET['propalid'])
 			// \todo faire en sorte que la form respecte à nouveau la norme
 			// problème : sans javascript, ça va être chaud...
 			print '<table class="border" width="100%">';
-			$rowspan=7;
+			$rowspan=8;
 			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">';
 			if ($societe->client == 1)
 			{
@@ -444,12 +444,18 @@ if ($_GET['propalid'])
 			print '<td align="left" colspan="2">Conditions de réglement : </td></tr>';
 			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
 			print dolibarr_print_date($propal->date);
+			print '</td>';
+
+			print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
 			if ($propal->fin_validite)
 			{
-				print ' ('.dolibarr_print_date($propal->fin_validite).')';
+				print dolibarr_print_date($propal->fin_validite);
+			}
+			else {
+			    print $langs->trans("Unknown");   
 			}
 			print '</td>';
-			print '<td colspan="2">&nbsp;</td></tr>';
+			print '</tr>';
 			$langs->load('mails');
 			print '<tr>';
 			print '<td>'.$langs->trans('MailTo').'</td>';
@@ -535,7 +541,7 @@ if ($_GET['propalid'])
 			$author->fetch('');
 			print '<tr><td height="10">'.$langs->trans('Author').'</td><td colspan="3">'.$author->fullname.'</td></tr>';
 
-			print '<tr><td height="10">'.$langs->trans('GlobalDiscount').'</td>';
+			print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
 			if ($propal->brouillon == 1 && $user->rights->propale->creer)
 			{
 				print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
