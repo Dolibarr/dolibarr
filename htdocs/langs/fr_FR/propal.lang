@@ -37,3 +37,5 @@ FileNotUploaded=Le fichier n'a pas été téléchargé
 FileUploaded=Le fichier a été téléchargé avec succés
 AssociatedDocuments=Documents associés à la proposition :
 ErrorCantOpenDir=Impossible d'ouvrir le répertoire
+DateEndPropal=Date fin validité
+DateEndPropalShort=Date fin
