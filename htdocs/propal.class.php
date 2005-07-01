@@ -79,8 +79,10 @@ class Propal
       $langs->load("propals");
       $this->labelstatut[0]=$langs->trans("PropalStatusDraft");
       $this->labelstatut[1]=$langs->trans("PropalStatusValidated");
+      $this->labelstatut[2]=$langs->trans("PropalStatusClosed");
       $this->labelstatut_short[0]=$langs->trans("PropalStatusDraft");
       $this->labelstatut_short[1]=$langs->trans("Opened");
+      $this->labelstatut_short[2]=$langs->trans("PropalStatusClosed");
     }
 
 

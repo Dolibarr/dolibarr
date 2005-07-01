@@ -781,14 +781,14 @@ if ($_GET['propalid'])
 			{
 				if ($user->rights->propale->creer)
 				{
-					print '<a class="tabAction" href="propal.php?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+					print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
 				}
 			}
 
 			// Build PDF
 			if ($propal->statut < 2 && $user->rights->propale->creer)
 			{
-				print '<a class="tabAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">'.$langs->trans('BuildPDF').'</a>';
+				print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">'.$langs->trans('BuildPDF').'</a>';
 			}	   
 
 			// Send
@@ -801,7 +801,7 @@ if ($_GET['propalid'])
 					$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
 					if (file_exists($file))
 					{
-						print '<a class="tabAction" href="propal.php?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
+						print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
 					}
 				}
 			}
@@ -811,7 +811,7 @@ if ($_GET['propalid'])
 			{
 				if ($user->rights->propale->supprimer)
 				{
-					print '<a class="butDelete" href="propal.php?propalid='.$propal->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+					print '<a class="butActionDelete" href="propal.php?propalid='.$propal->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 				}
 			}
 
@@ -820,7 +820,7 @@ if ($_GET['propalid'])
 			{
 				if ($propal->statut == 1 && $user->rights->propale->cloturer)
 				{
-					print '<a class="tabAction" href="propal.php?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
+					print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
 				}
 			}
 			print '</div><br>';

@@ -26,6 +26,7 @@ PropalsDraft=Drafts
 PropalsOpened=Opened
 PropalStatusDraft=Draft (need to be validated)
 PropalStatusValidated=Validated (proposal is opened)
+PropalStatusClosed=Closed
 ListOfProposals=List of commercial proposals
 ActionsOnPropal=Tasks on proposal
 NoOpenedPropals=No opened commercial proposals
