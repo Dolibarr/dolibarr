@@ -837,7 +837,7 @@ if ($_GET['propalid'])
 			print '<input type="hidden" name="action" value="setpdfmodel">';
 		}
 		print '<table width="100%"><tr><td width="50%" valign="top">';
-		print_titre('<a href="propal/document.php?id='.$propal->id.'">'.$langs->trans('Document').'</a>');
+		print_titre($langs->trans('Documents'));
 
 
 		/*
