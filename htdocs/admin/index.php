@@ -42,8 +42,8 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
   dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"]);
   dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
 
-  dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
   dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
+  dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
   dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
   dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
 
@@ -108,13 +108,13 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
   if ($langs->transcountry("ProfId1",$code_pays) != '-')
   {
       print '<tr class="impair"><td width="50%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
-      print '<input name="siret" size="20" value="' . MAIN_INFO_SIRET . '"></td></tr>';
+      print '<input name="siren" size="20" value="' . MAIN_INFO_SIREN . '"></td></tr>';
   }
   
   if ($langs->transcountry("ProfId2",$code_pays) != '-')
   {
       print '<tr class="pair"><td width="50%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
-      print '<input name="siren" size="20" value="' . MAIN_INFO_SIREN . '"></td></tr>';
+      print '<input name="siret" size="20" value="' . MAIN_INFO_SIRET . '"></td></tr>';
   }
 
   if ($langs->transcountry("ProfId3",$code_pays) != '-')
@@ -175,13 +175,13 @@ else
   if ($langs->transcountry("ProfId1",$code_pays) != '-')
   {
     print '<tr class="impair"><td width="50%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
-    print MAIN_INFO_SIRET . '</td></tr>';
+    print MAIN_INFO_SIREN . '</td></tr>';
   }
   
   if ($langs->transcountry("ProfId2",$code_pays) != '-')
   {
     print '<tr class="pair"><td width="50%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
-    print MAIN_INFO_SIREN . '</td></tr>';
+    print MAIN_INFO_SIRET . '</td></tr>';
   }
   
   if ($langs->transcountry("ProfId3",$code_pays) != '-')
