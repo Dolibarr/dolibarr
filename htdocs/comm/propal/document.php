@@ -127,12 +127,16 @@ if ($propalid > 0)
 
 		clearstatcache();
 
+        $errorlevel=error_reporting();
+		error_reporting(0);
 		$handle=opendir($upload_dir);
+		error_reporting($errorlevel);
+
+		print '<table width="100%" class="noborder">';
 
 		if ($handle)
 		{
-			print '<table width="100%" class="noborder">';
-			print '<tr class="liste_titre">';
+    		print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('Document').'</td>';
 			print '<td align="right">'.$langs->trans('Size').'</td>';
 			print '<td align="center">'.$langs->trans('Date').'</td>';
@@ -162,14 +166,14 @@ if ($propalid > 0)
 					print "</td></tr>\n";
 				}
 			}
-			print '</table>';
-			print '<br>';
 			closedir($handle);
 		}
 		else
 		{
-			print '<p>'.$langs->trans('ErrorCantOpenDir').'<b> '.$upload_dir.'</b>';
+			print '<div class="error">'.$langs->trans('ErrorCantOpenDir').'<b> '.$upload_dir.'</b></div>';
 		}
+		print '<tr><td>&nbsp;</td></tr>';
+		print '</table>';
 	}
 	else
 	{
@@ -178,10 +182,10 @@ if ($propalid > 0)
 }
 else
 {
-	print 'Erreur';
+	print $langs->trans("UnkownError");
 }
 
 $db->close();
 
-llxFooter('<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>');
+llxFooter('$Date$ - $Revision$');
 ?>
