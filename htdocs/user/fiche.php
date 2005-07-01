@@ -91,7 +91,8 @@ if ($_POST["action"] == 'add' && $user->admin)
         $action="create";       // Go back to create page
     }
 
-    if (! $message) {
+    if (! $message)
+    {
         $edituser = new User($db,0);
 
         $edituser->nom           = trim($_POST["nom"]);
@@ -184,7 +185,7 @@ if ($_POST["action"] == 'update' && $user->admin)
         // Si une photo est fournie avec le formulaire
         if (! is_dir($conf->users->dir_output))
         {
-            mkdir($conf->users->dir_output);
+            create_exdir($conf->users->dir_output);
         }
         if (is_dir($conf->users->dir_output)) {
             $newfile=$conf->users->dir_output . "/" . $edituser->id . ".jpg";
@@ -204,14 +205,30 @@ if ($_POST["action"] == 'update' && $user->admin)
 
 }
 
-if ($_GET["action"] == 'password' && $user->admin)
+if (($_GET["action"] == 'password' || $_GET["action"] == 'passwordsend') && $user->admin)
 {
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
 
-    if ($edituser->password($user,'',$conf->password_encrypted))
+    $newpassword=$edituser->password($user,'',$conf->password_encrypted);
+    if ($newpassword < 0)
     {
-        $message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
+        // Echec
+        $message = '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+    }
+    else 
+    {
+        // Succes
+        if ($_GET["action"] == 'passwordsend')
+        {
+            $edituser->send_password($user,$newpassword);
+            $message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
+            //$message.=$newpassword;
+        }
+        else
+        {
+            $message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
+        }
     }
 }
 
@@ -428,22 +445,27 @@ else
 
             if ($user->admin)
             {
-                print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
 
             if ($user->id == $_GET["id"] or $user->admin)
             {
-                print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("SendNewPassword").'</a>';
+                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
+            }
+
+            if ($user->id == $_GET["id"] or $user->admin && $fuser->email)
+            {
+                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
             }
 
             if ($user->id <> $_GET["id"] && $user->admin)
             {
-                print '<a class="butDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
+                print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
             }
 
             if ($user->id <> $_GET["id"] && $user->admin)
             {
-                print '<a class="butDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
+                print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
             }
 
             print "</div>\n";
