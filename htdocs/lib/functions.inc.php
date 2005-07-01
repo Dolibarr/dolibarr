@@ -1175,8 +1175,8 @@ function print_titre($titre)
 */
 function print_fiche_titre($titre, $mesg='')
 {
-  print "\n".'<table width="100%" border="0" cellpadding="3" cellspacing="0">';
-  print '<tr><td><div class="titre" valign="middle">'.$titre.'</div></td>';
+  print "\n".'<table width="100%" border="0">';
+  print '<tr><td><div class="titre">'.$titre.'</div></td>';
   if (strlen($mesg))
     {
       print '<td align="right" valign="middle"><b>'.$mesg.'</b></td>';

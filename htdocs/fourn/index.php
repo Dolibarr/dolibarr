@@ -95,8 +95,8 @@ if ($result)
 
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"',$sortfield);
-  print_liste_field_titre($langs->trans("Town"),"index.php","s.ville","","",'valign="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="middle"',$sortfield);
+  print_liste_field_titre($langs->trans("Town"),"index.php","s.ville","","",'valign="middle"',$sortfield);
   print_liste_field_titre($langs->trans("DateCreation"),"index.php","datec","","",'align="center"',$sortfield);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
