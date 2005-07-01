@@ -675,72 +675,89 @@ class User
    }
 
   /**
-   *    \brief     Change le mot de passe d'un utilisateur et l'envoie par mail
-   *    \param     user            Object user de l'utilisateur qui fait la modification
-   *    \param     password        Nouveau mot de passe (généré par defaut si non communiqué)
-   *    \param     isencrypted     0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
-   *    \return    int             <0 si erreur, 0 si changement ok mais envoi mail ko, 1 si ok
+   *    \brief     Change le mot de passe d'un utilisateur
+   *    \param     user             Object user de l'utilisateur qui fait la modification
+   *    \param     password         Nouveau mot de passe (généré par defaut si non communiqué)
+   *    \param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
+   *    \return    string           mot de passe, < 0 si erreur
    */
-	 
-  function password($user, $password='', $isencrypted = 0)
+    function password($user, $password='', $isencrypted = 0)
     {
         global $langs;
-       
-      if (! $password)
-	{
-	  $password =  strtolower(substr(md5(uniqid(rand())),0,6));
-	}
-
-      if ($isencrypted)
-	{
-	  $sqlpass = crypt($password, "CRYPT_STD_DES");
-	}
-      else
-	{
-	  $sqlpass = $password;
-	}
-      $this->pass=$password;
-      $sql = "UPDATE ".MAIN_DB_PREFIX."user SET pass = '".$sqlpass."'";
-      $sql .= " WHERE rowid = $this->id";
-      
-      $result = $this->db->query($sql);
-
-      if ($result) 
-	{
-	  if ($this->db->affected_rows()) 
-	    {
-
-	    $mesg .= "Bonjour,\n\n";
-	    $mesg .= "Votre mot de passe pour accéder à Dolibarr a été changé :\n\n";
-	    $mesg .= $langs->trans("Login")." : $this->login\n";
-	    $mesg .= $langs->trans("Password")." : $password\n\n";
-
-	    $mesg .= "Adresse      : http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT;
-	    $mesg .= "\n\n";
-	    $mesg .= "--\n";
-	    $mesg.= $user->fullname;
-
-	    if (mail($this->email, $langs->trans("SubjectNewPassword"), $mesg))
-	      {
-		return 1;
-	      }
-	    else
-	      {
-		$this->error=$langs->trans("ErrorFailtedToSendPassword");
-		return 0;
-	      }
-	    }
-	  else {
-	    return -2;
-	  }
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	  return -1;
-	}
+        $longueurmotdepasse=8;
+        
+        if (! $password)
+        {
+            $password =  strtolower(substr(md5(uniqid(rand())),0,$longueurmotdepasse));
+        }
+    
+        if ($isencrypted)
+        {
+            $sqlpass = crypt($password, "CRYPT_STD_DES");
+        }
+        else
+        {
+            $sqlpass = $password;
+        }
+        $this->pass=$password;
+        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET pass = '".$sqlpass."'";
+        $sql.= " WHERE rowid = $this->id";
+    
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->affected_rows())
+            {
+                return $this->pass;
+            }
+            else {
+                return -2;
+            }
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
     }
 
+
+  /**
+   *    \brief     Envoie mot de passe par mail
+   *    \param     user             Object user de l'utilisateur qui fait l'envoi
+   *    \param     password         Nouveau mot de passe
+   *    \return    int              < 0 si erreur, > 0 si ok
+   */
+    function send_password($user, $password='')
+    {
+        global $langs;
+        
+        require_once DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php";
+
+        $subject = $langs->trans("SubjectNewPassword");
+        
+        $mesg .= "Bonjour,\n\n";
+        $mesg .= "Votre mot de passe pour accéder à Dolibarr a été changé :\n\n";
+        $mesg .= $langs->trans("Login")." : $this->login\n";
+        $mesg .= $langs->trans("Password")." : $password\n\n";
+
+        $mesg .= "Adresse : http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT;
+        $mesg .= "\n\n";
+        $mesg .= "--\n";
+        $mesg.= $user->fullname;
+
+        $mailfile = new CMailFile($subject,$this->email,$conf->email_from,$mesg,array(),array(),array());
+
+        if ($mailfile->sendfile())
+        {
+            return 1;
+        }
+        else
+        {
+            $this->error=$langs->trans("ErrorFailtedToSendPassword");
+            return -1;
+        }
+    }
 
   /**
    * \brief     Renvoie la dernière erreur fonctionnelle de manipulation de l'objet

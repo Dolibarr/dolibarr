@@ -334,11 +334,17 @@ if ($user->liste_limit > 0)
   $conf->liste_limit = $user->liste_limit;
 }
 
+if (defined('MAIN_MAIL_FROM'))
+{
+    $conf->email_from=MAIN_MAIL_FROM;
+}
+
 if (defined('MAIN_THEME'))
 {
   $conf->theme=MAIN_THEME;
   $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 }
+
 if (defined("MAIN_MAIL_RESIL"))
 {
   $conf->adherent->email_resil=MAIN_MAIL_RESIL;
