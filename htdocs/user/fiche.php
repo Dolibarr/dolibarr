@@ -221,9 +221,16 @@ if (($_GET["action"] == 'password' || $_GET["action"] == 'passwordsend') && $use
         // Succes
         if ($_GET["action"] == 'passwordsend')
         {
-            $edituser->send_password($user,$newpassword);
-            $message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
-            //$message.=$newpassword;
+            if ($edituser->send_password($user,$newpassword) > 0)
+            {
+                $message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
+                //$message.=$newpassword;
+            }
+            else
+            {
+                $message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
+                $message.= '<div class="error">'.$edituser->error.'</div>';
+            }
         }
         else
         {

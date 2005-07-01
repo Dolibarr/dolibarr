@@ -754,7 +754,7 @@ class User
         }
         else
         {
-            $this->error=$langs->trans("ErrorFailtedToSendPassword");
+            $this->error=$langs->trans("ErrorFailedToSendPassword");
             return -1;
         }
     }
