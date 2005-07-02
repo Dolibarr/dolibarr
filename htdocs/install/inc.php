@@ -60,9 +60,7 @@ function pHeader($soutitre,$next)
     print '</head>';
     print '<body>';
 
-    print '<div class="titre">';
     print '<span class="titre"><a class="titre" href="index.php">'.$langs->trans("DolibarrSetup").'</a></span>';
-    print '</div>';
 
     print '<form action="'.$next.'.php" method="POST"><input type="hidden" name="action" value="set">';
     print '<div class="main">';

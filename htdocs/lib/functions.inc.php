@@ -682,34 +682,82 @@ function img_tick($alt = "default")
 }
 
 /**
-		\brief      fonction de login
-		\remarks    il faut changer le code html dans la fonction pour changer le design
+		\brief      Affiche formulaire de login
+		\remarks    il faut changer le code html dans cette fonction pour changer le design
 */
 function loginfunction()
 {
-  global $langs;
+  global $langs,$conf;
   
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-  print "\n<html><head><title>Dolibarr Authentification</title>";
-  print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/lib/login.css">
-  </head>
-  <body onload="donnefocus();">
-  <div class="main">
-  <div class="header">';
-  print 'Dolibarr '.DOL_VERSION;
-  print '
-  </div>
-  <div class="main-inside">
-  ';
+  print "\n<html><head><title>Dolibarr Authentification</title>\n";
+  print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/'.$conf->theme.'.css">';
+  print '</head>';
+  print '<body onload="donnefocus();">';
+//  print '<div class="main">';
+//  print '<div class="header">';
+//  print '</div>';
+//  print '<div class="main-inside">';
 
-  print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" name="identification">';
-  print '<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">';
-  print '<table width="100%">';
-  print '<tr><td align="left">'.$langs->trans("Login").': </td><td><input type="text" name="username"></td></tr>';;
-  print '<tr><td align="left">'.$langs->trans("Password").': </td><td><input type="password" name="password"></td></tr>';
-  print '</table>';
-  print '</td></tr></table>';
-  print '<br><center><input value="'.$langs->trans("Connexion").'" type="submit" class="button"></center>';
+
+print '
+<style type="text/css">
+<!--
+#login {
+  margin-top: 70px;
+  margin-bottom: 50px;
+  text-align: center;
+  font: 12px arial,helvetica;
+}
+#login table {
+  border: 1px solid #C0C0C0;
+  background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png) repeat-x;
+  font-size: 12px;
+}
+-->
+</style>
+';
+
+  print '<form id="login" method="post" action="' . $_SERVER['PHP_SELF'] . '" name="identification">';
+
+print '
+<table cellpadding="0" cellspacing="0" border="0" align="center" width="350">
+<tr class="vmenu"><td>Dolibarr '.DOL_VERSION.'</td></tr>
+</table>
+
+<br>
+
+<table cellpadding="2" align="center" width="350">
+
+<tr><td colspan="3">&nbsp;</td></tr>
+
+<tr><td align="left"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>
+<td><input name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>
+';
+
+if (file_exists(DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
+{
+    print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png"></td>';
+}
+else 
+{
+    print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/login_logo.png"></td>';
+}
+
+print '
+</tr>
+
+<tr><td align="left"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </a></td>
+<td><input name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2" />
+</td></tr>
+
+<tr><td colspan="3" style="text-align:center;"><br>
+<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connexion").' &nbsp;" tabindex="4" />
+</td></tr>
+
+</table>
+';
+
   print '</form>';
 }
 

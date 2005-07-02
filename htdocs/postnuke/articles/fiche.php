@@ -90,10 +90,9 @@ if ($id)
 	  /*
 	   * Affichage
 	   */
+      print_fiche_titre('Fiche Article : '.$article->titre);
 
-	  print '<div class="titre">Fiche Article : '.$article->titre.'</div><br>';
-
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%">';
 	  
 	  print "<tr><td>Titre</td><td>$article->titre</td></tr>\n";
 	  print "<tr><td>Titre</td><td>$article->body</td></tr>\n";

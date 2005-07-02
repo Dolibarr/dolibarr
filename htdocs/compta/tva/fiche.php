@@ -78,7 +78,7 @@ if ($_GET["action"] == 'create')
     print "<form action=\"fiche.php\" method=\"post\">\n";
     print '<input type="hidden" name="action" value="add">';
     
-    print '<div class="titre">'.$langs->trans("NewVATPayment").'</div><br>';
+    print_fiche_titre($langs->trans("NewVATPayment"));
       
     if ($message) print '<br>'.$message.'</br>';
     

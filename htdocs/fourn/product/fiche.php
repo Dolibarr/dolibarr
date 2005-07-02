@@ -219,10 +219,10 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
   print '<input type="hidden" name="catid" value="'.$_REQUEST["catid"].'">'."\n";
-  print '<div class="titre">';
-  if ($_GET["type"]==0) { print $langs->trans("NewProduct"); }
-  if ($_GET["type"]==1) { print $langs->trans("NewService"); }
-  print '</div><br>'."\n";
+
+  if ($_GET["type"]==0) { $title=$langs->trans("NewProduct"); }
+  if ($_GET["type"]==1) { $title=$langs->trans("NewService"); }
+  print_fiche_titre($title);
       
   print '<table class="border" width="100%">';
 

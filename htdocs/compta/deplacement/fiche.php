@@ -108,7 +108,7 @@ if ($_GET["action"] == 'create')
   print "<form action=\"fiche.php\" method=\"post\">\n";
   print '<input type="hidden" name="action" value="add">';
 
-  print '<div class="titre">'.$langs->trans("NewTrip").'</div><br>';
+  print_fiche_titre($langs->trans("NewTrip"));
       
   print '<table class="border" width="100%">';
   print '<tr><td width="20%">'.$langs->trans("Person").'</td><td>'.$user->fullname.'</td></tr>';    

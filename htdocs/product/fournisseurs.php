@@ -229,9 +229,9 @@ if ($_GET["id"])
 		      $langs->load("suppliers");
 			  
               if ($_GET["id_fourn"]) {
-                  print '<div class="titre">'.$langs->trans("ChangeSupplierPrice").'</div>';
+                  print_fiche_titre($langs->trans("ChangeSupplierPrice"));
 	          } else {
-                  print '<div class="titre">'.$langs->trans("AddSupplierPrice").'</div>';
+                  print_fiche_titre($langs->trans("AddSupplierPrice"));
 	          }		  
 		      print '<table class="border" width="100%">';
 		      print '<form action="fournisseurs.php?id='.$product->id.'" method="post">';

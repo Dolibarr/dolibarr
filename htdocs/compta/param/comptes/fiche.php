@@ -77,12 +77,11 @@ if ($_GET["action"] == 'create' && $user->rights->compta->ventilation->parametre
   $html = new Form($db);
   $nbligne=0;
 
+  print_fiche_titre('Comptes Généraux');
+
   print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
-  print '<div class="titre">';
-  print 'Comptes Généraux';
-  print '</div><br>'."\n";
       
   print '<table class="border" width="100%">';
   print '<tr>';

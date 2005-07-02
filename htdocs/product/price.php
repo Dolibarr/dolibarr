@@ -168,7 +168,8 @@ print "\n</div>\n";
  */
 if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 {
-  print '<div class="titre">'.$langs->trans("NewPrice").'</div>';
+  print_fiche_titre($langs->trans("NewPrice"));
+
   print '<form action="price.php?id='.$product->id.'" method="post">';
   print '<input type="hidden" name="action" value="update_price">';
   print '<input type="hidden" name="id" value="'.$product->id.'">';

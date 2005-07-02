@@ -470,7 +470,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 $obj = $db->fetch_object($result);
                 $var=!$var;
                 print "<tr $bc[$var]><td width=\"15%\" nowrap><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td>";
-                print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$obj->nom."</a></td>\n";
+                print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,40)."</a></td>\n";
                 print "<td align=\"right\">";
                 print dolibarr_print_date($obj->dp)."</td>\n";
                 print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
@@ -519,14 +519,13 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 	      {
 		$objp = $db->fetch_object();		  
 		print "<tr $bc[$var]>";
-		print '<td width="15%" nowrap>';
+		print '<td nowrap>';
 		print '<a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
 		print $objp->ref.'</a></td>';
-		print '<td width="30%"><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom.'</a></td>';
+		print '<td><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,40).'</a></td>';
 		
 		$now = time();
 		$lim = 3600 * 24 * 15 ;
-		
 		if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
 		  {
 		    print "<td><b> &gt; 15 jours</b></td>";

@@ -70,9 +70,9 @@ if ($action == 'create')
   print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
-  print '<div class="titre">Nouvel album</div><br>';
+  print_fiche_titre($langs->trans("NewAlbum"));
       
-  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" width="100%">';
   print "<tr>";
   print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Titre</td><td><input name="titre" size="40" value=""></td></tr>';
@@ -100,9 +100,9 @@ else
 	  $gas = $album->liste_groupart();
 
 
-	  print '<div class="titre">Fiche Album : '.$album->titre.'</div><br>';
+      print_fiche_titre('Fiche Album : '.$album->titre);
       
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%">';
 	  print "<tr>";
 	  print '<td width="20%">'.$langs->trans("Ref").'</td><td width="30%">'.$album->ref.'</td>';
 	  print '<td width="50%" valign="top">'.$langs->trans("Description").'</td></tr>';
@@ -125,7 +125,7 @@ else
 
 	  if ($action == 'edit')
 	    {
-	      print '<hr><div class="titre">Edition de la fiche Album : '.$album->titre.'</div><br>';
+          print_fiche_titre('Edition de la fiche Album : '.$album->titre);
 	      
 	      print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
 	      print "<input type=\"hidden\" name=\"action\" value=\"update\">";
