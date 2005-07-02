@@ -694,30 +694,30 @@ function loginfunction()
   print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/'.$conf->theme.'.css">';
   print '</head>';
   print '<body onload="donnefocus();">';
-//  print '<div class="main">';
-//  print '<div class="header">';
-//  print '</div>';
-//  print '<div class="main-inside">';
 
-
-print '
-<style type="text/css">
-<!--
-#login {
-  margin-top: 70px;
-  margin-bottom: 50px;
-  text-align: center;
-  font: 12px arial,helvetica;
-}
-#login table {
-  border: 1px solid #C0C0C0;
-  background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png) repeat-x;
-  font-size: 12px;
-}
--->
-</style>
-';
-
+  print '<style type="text/css">';
+  print '<!--';
+  print '#login {';
+  print '  margin-top: 70px;';
+  print '  margin-bottom: 50px;';
+  print '  text-align: center;';
+  print '  font: 12px arial,helvetica;';
+  print '}';
+  print '#login table {';
+  print '  border: 1px solid #C0C0C0;';
+  if (file_exists(DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
+  {
+      print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png) repeat-x;';
+  }
+  else
+  {
+      print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/login_background.png) repeat-x;';
+  }
+  print 'font-size: 12px;';
+  print '}';
+  print '-->';
+  print '</style>';
+  
   print '<form id="login" method="post" action="' . $_SERVER['PHP_SELF'] . '" name="identification">';
 
 print '
