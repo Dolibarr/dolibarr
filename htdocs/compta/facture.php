@@ -908,9 +908,9 @@ else
             print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
 
             print '<tr><td>'.$langs->trans("Date").'</td>';
-            print "<td colspan=\"3\">".strftime("%A %d %B %Y",$fac->date)."</td>\n";
-            print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement);
-            if ($fac->date_lim_reglement < (time() - $warning_delay)) print img_warning($langs->trans("Late"));
+            print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
+            print "<td>Date limite de réglement : " . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
+            if ($fac->paye == 0 && $fac->date_lim_reglement < (time() - $warning_delay)) print img_warning($langs->trans("Late"));
             print "</td></tr>";
 
             print '<tr>';
