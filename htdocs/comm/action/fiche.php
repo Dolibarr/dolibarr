@@ -545,7 +545,7 @@ function add_row_for_webcal_link()
             $langs->load("other");
             if (! $user->webcal_login)
             {
-                print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
+                print '<tr><td nowrap>'.$langs->trans("AddCalendarEntry").'</td>';
                 print '<td><input type="checkbox" disabled name="todo_webcal">';
                 print ' '.$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
                 print '</td>';
