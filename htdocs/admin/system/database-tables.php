@@ -22,7 +22,8 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/database-tables.php
+/**	
+        \file       htdocs/admin/system/database-tables.php
 		\brief      Page d'infos des tables de la base
 		\version    $Revision$
 */
@@ -43,7 +44,8 @@ if ($_GET["action"] == 'convert')
 }
 
 llxHeader();
-	
+
+
 print_titre($langs->trans("Tables")." ".ucfirst($conf->db->type));
 
 if($conf->db->type == 'mysql')
@@ -97,6 +99,7 @@ if($conf->db->type == 'mysql')
           $i++;
         }
     }
+    print '</table>';
 }
 
 if($conf->db->type == 'pgsql')
