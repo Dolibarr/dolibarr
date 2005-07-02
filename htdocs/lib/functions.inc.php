@@ -312,36 +312,36 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 
 
 /**
-		\brief  Formattage de la date
-		\param	time        date timestamp ou au format YYYY-MM-DD
-		\param	format      format de la date "%d %b %Y"
-		\return string      date formatée
+		\brief      Formattage de la date en fonction de la langue $conf->langage
+		\param	    time        date 'timestamp' ou format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+		\param	    format      format d'affichage de la date "%d %b %Y"
+		\return     string      date formatée
 */
 function dolibarr_print_date($time,$format="%d %b %Y")
 {
-  // Analyse de la date
-  if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$time,$reg)) {
-    // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
-    $syear = $reg[1];
-    $smonth = $reg[2];
-    $sday = $reg[3];
-    $shour = $reg[4];
-    $smin = $reg[5];
-    if ($syear < 1970 && $_SERVER["WINDIR"])
-      {
-	// Le formatage ne peut etre appliqué car windows ne supporte pas la fonction
-	// mktime si l'année est inférieur à 1970. On retourne un format fixe
-	return "$syear-$smonth-$sday";
-      }
-    else
-      {
-	return strftime($format,mktime($shour,$smin,0,$smonth,$sday,$syear));
-      }
-  }
-  else {
-    // Date est un timestamps
-    return strftime($format,$time);
-  }
+    // Analyse de la date
+    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$time,$reg)) {
+        // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+        $syear = $reg[1];
+        $smonth = $reg[2];
+        $sday = $reg[3];
+        $shour = $reg[4];
+        $smin = $reg[5];
+        if ($syear < 1970 && $_SERVER["WINDIR"])
+        {
+            // Le formatage ne peut etre appliqué car windows ne supporte pas la fonction
+            // mktime si l'année est inférieur à 1970. On retourne un format fixe
+            return "$syear-$smonth-$sday";
+        }
+        else
+        {
+            return strftime($format,mktime($shour,$smin,0,$smonth,$sday,$syear));
+        }
+    }
+    else {
+        // Date est un timestamps
+        return strftime($format,$time);
+    }
 }
 
 

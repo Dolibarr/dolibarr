@@ -167,10 +167,13 @@ if (! defined('MAIN_LANG_DEFAULT'))
 }
 $conf->langage=MAIN_LANG_DEFAULT;
 
-// On corrige $conf->language si il ne vaut pas le code long: fr_FR par exemple
+// On corrige $conf->langage si il ne vaut pas le code long: fr -> fr_FR par exemple
 if (strlen($conf->langage) <= 3) {
     $conf->langage = strtolower($conf->langage)."_".strtoupper($conf->langage);
 }
+$conf->langage_tiret=ereg_replace('_','-',$conf->langage);
+
+setlocale(LC_ALL, $conf->langage_tiret);    // Compenser pb de locale avec windows
 setlocale(LC_ALL, $conf->langage);
 
 require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");

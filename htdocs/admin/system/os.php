@@ -44,7 +44,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$lan
 print "\n";
 
 // Récupère l'OS au sens PHP
-print "<tr $bc[0]><td width=\"140\"><b>".$langs->trans("PHP_OS")."</b></td><td>".PHP_OS."</td></tr>\n";
+print "<tr $bc[0]><td width=\"240\">".$langs->trans("PHP_OS")."</td><td>".PHP_OS."</td></tr>\n";
 
 // Récupère la version de l'OS
 ob_start(); 
@@ -52,7 +52,7 @@ phpinfo();
 $chaine = ob_get_contents(); 
 ob_end_clean(); 
 eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
-print "<tr $bc[1]><td width=\"140\"><b>".$langs->trans("Version")."</b></td><td>".$reg[1]."</td></tr>\n";
+print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$reg[1]."</td></tr>\n";
 print '</table>';
 
 
