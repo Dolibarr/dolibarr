@@ -447,9 +447,9 @@ if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-    $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut = 1";
+    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
+    $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 1";
     if ($socidp) $sql .= " AND s.idp = $socidp";
     $sql .= " ORDER BY p.rowid DESC";
     
@@ -470,7 +470,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 $obj = $db->fetch_object($result);
                 $var=!$var;
                 print "<tr $bc[$var]><td width=\"15%\" nowrap><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td>";
-                print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,40)."</a></td>\n";
+                print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,44)."</a></td>\n";
                 print "<td align=\"right\">";
                 print dolibarr_print_date($obj->dp)."</td>\n";
                 print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
@@ -497,15 +497,18 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 if ($conf->propal->enabled && $user->rights->propale->lire) {
     $NBMAX=5;
     
-	$sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-	$sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut > 1";
+	$sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
+	$sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut > 1";
 	if ($socidp)
 	{ 
 	  $sql .= " AND s.idp = $socidp"; 
 	}
 	$sql .= " ORDER BY p.rowid DESC";
 	$sql .= $db->plimit($NBMAX, 0);
+	
+	include_once("../propal.class.php");
+	$propalstatic=new Propal($db);
 	
 	if ( $db->query($sql) )
 	    {
@@ -522,7 +525,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 		print '<td nowrap>';
 		print '<a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
 		print $objp->ref.'</a></td>';
-		print '<td><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,40).'</a></td>';
+		print '<td><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
 		
 		$now = time();
 		$lim = 3600 * 24 * 15 ;
@@ -538,7 +541,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 		print "<td align=\"right\">";
 		print dolibarr_print_date($objp->dp)."</td>\n";	  
 		print "<td align=\"right\">".price($objp->price)."</td>\n";
-		print "<td align=\"center\">$objp->statut</td>\n";
+		print "<td align=\"center\">".$propalstatic->LibStatut($objp->fk_statut)."</td>\n";
 		print "</tr>\n";
 		$i++;
 		$var=!$var;
