@@ -341,12 +341,6 @@ a.tabTitle {
     white-space: nowrap;
 }
 
-div.FicheSubmit {
-  margin: 1.0em;
-  padding: 0em 0em;
-  text-align: center;
-}
-
 a.tab:link {
   background: white;
   border: 1px solid #9999BB;
@@ -687,11 +681,6 @@ input.flat
 { 
   border: 0
  }
-
-td.valeur
-{ 
-  font-weight: bold;
-  }
 
 td.delete { 
   background: red;
