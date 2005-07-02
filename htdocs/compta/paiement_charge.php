@@ -38,86 +38,92 @@ $chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
  */
 if ($_POST["action"] == 'add_paiement')
 {
-  if ($_POST["paiementtype"] > 0)
+    if ($_POST["paiementtype"] > 0)
     {
 
-      $datepaye = $db->idate(mktime(12, 0 , 0,
-				    $_POST["remonth"], 
-				    $_POST["reday"],
-				    $_POST["reyear"]));
+        $datepaye = $db->idate(mktime(12, 0 , 0,
+        $_POST["remonth"],
+        $_POST["reday"],
+        $_POST["reyear"]));
 
-      $paiement_id = 0;
-      $amounts = array();
-      foreach ($_POST as $key => $value)
-	{
-	  if (substr($key,0,7) == 'amount_')
-	    {
-	      $other_chid = substr($key,7);
-	  
-	      $amounts[$other_chid] = $_POST[$key];
-	    }
-	}
-
-      // TODO Mettre toute la chaine dans une même transaction
-
-      // Creation de la ligne paiement
-      $paiement = new PaiementCharge($db);
-      $paiement->chid         = $chid;
-      $paiement->datepaye     = $datepaye;
-      $paiement->amounts      = $amounts;   // Tableau de montant
-      $paiement->paiementtype = $_POST["paiementtype"];
-      $paiement->num_paiement = $_POST["num_paiement"];
-      $paiement->note         = $_POST["note"];
-      $paiement_id = $paiement->create($user);
-
-      if ($paiement_id > 0)
-	{
-        // On determine le montant total du paiement
-        $total=0;
-        foreach ($paiement->amounts as $key => $value)
+        $paiement_id = 0;
+        $amounts = array();
+        foreach ($_POST as $key => $value)
         {
-            $chid = $key;
-            $value = trim($value);
-            $amount = round(ereg_replace(",",".",$value), 2);
-            if (is_numeric($amount))
-              {
-            $total += $amount;
-              }
+            if (substr($key,0,7) == 'amount_')
+            {
+                $other_chid = substr($key,7);
+
+                $amounts[$other_chid] = $_POST[$key];
+            }
         }
-        
-        // Insertion dans llx_bank
-        $label = "Règlement charge";
-        $acc = new Account($db, $_POST["accountid"]);
-        $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementtype, $label, -abs($total), $paiement->num_paiement, '', $user);
-	  
-        // Mise a jour fk_bank dans llx_paiementcharge. On connait ainsi le paiement qui a généré l'écriture bancaire
-        if ($bank_line_id) {
-            $paiement->update_fk_bank($bank_line_id);
+
+        $db->begin();
+
+        // Creation de la ligne paiement
+        $paiement = new PaiementCharge($db);
+        $paiement->chid         = $chid;
+        $paiement->datepaye     = $datepaye;
+        $paiement->amounts      = $amounts;   // Tableau de montant
+        $paiement->paiementtype = $_POST["paiementtype"];
+        $paiement->num_paiement = $_POST["num_paiement"];
+        $paiement->note         = $_POST["note"];
+        $paiement_id = $paiement->create($user);
+
+        if ($paiement_id > 0)
+        {
+            // On determine le montant total du paiement
+            $total=0;
+            foreach ($paiement->amounts as $key => $value)
+            {
+                $chid = $key;
+                $value = trim($value);
+                $amount = round(ereg_replace(",",".",$value), 2);   // Un round est ok si nb avec '.'
+                if (is_numeric($amount)) $total += $amount;
+            }
+            $total = ereg_replace(",",".",$total);
+
+            // Insertion dans llx_bank
+            $label = "Règlement charge";
+            $acc = new Account($db, $_POST["accountid"]);
+            $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementtype, $label, -abs($total), $paiement->num_paiement, '', $user);
+
+            // Mise a jour fk_bank dans llx_paiementcharge. On connait ainsi le paiement qui a généré l'écriture bancaire
+            if ($bank_line_id > 0)
+            {
+                $paiement->update_fk_bank($bank_line_id);
+                
+                // Mise a jour liens (pour chaque charge concernée par le paiement)
+                //foreach ($paiement->amounts as $key => $value)
+                //{
+                //    $chid = $key;
+                //    $fac = new Facture($db);
+                //    $fac->fetch($chid);
+                //    $fac->fetch_client();
+                //    $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
+                //    $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
+                //}
+
+                $db->commit();
+
+                $loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
+                Header("Location: $loc");
+                exit;
+            }
+            else {
+                $db->rollback();
+                $fiche_erreur_message = "Echec de la création entrée compte: ".$db->error();
+            }
         }
-	  
-        // Mise a jour liens (pour chaque charge concernée par le paiement)
-        //foreach ($paiement->amounts as $key => $value)
-	    //{
-        //    $chid = $key;
-        //    $fac = new Facture($db);
-        //    $fac->fetch($chid);
-        //    $fac->fetch_client();
-        //    $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
-        //    $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
-	    //}
-	  
-        $loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
-        Header("Location: $loc");
-	}
-      else
-	{
-        // Il y a eu erreur
-        $fiche_erreur_message = "Echec de la création du paiement: ".$db->error();
-	}
+        else
+        {
+            $db->rollback();
+            $fiche_erreur_message = "Echec de la création du paiement: paiement_id=$paiement_id ".$db->error();
+        }
     }
-  else
+    else
     {
-      $fiche_erreur_message = "Vous devez sélectionner un mode de paiement";
+        $fiche_erreur_message = "Vous devez sélectionner un mode de paiement";
     }
 }
 

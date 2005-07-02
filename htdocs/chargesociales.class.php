@@ -48,8 +48,9 @@ class PaiementCharge {
     }
 
     /**
-     *  \brief      Creation d'un paiement de charge sociale
-     *
+     *      \brief      Creation d'un paiement de charge sociale
+     *      \user       user    Utilisateur qui crée le paiement
+     *      \return     int     <0 si erreur, >0 si ok
      */
     function create($user) {
         $sql_err = 0;
@@ -63,14 +64,11 @@ class PaiementCharge {
             {
                 $facid = $key;
                 $value = trim($value);
-                $amount = round(ereg_replace(",",".",$value), 2);
-
-                if (is_numeric($amount))
-                {
-                    $total += $amount;
-                }
+                $amount = round(ereg_replace(",",".",$value), 2);   // Un round est ok si nb avec '.'
+                if (is_numeric($amount)) $total += $amount;
             }
-            $total = round(ereg_replace(",",".",$total), 2);
+            $total = ereg_replace(",",".",$total);
+
             if ($total > 0)
             {
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount, fk_typepaiement, num_paiement, note, fk_user_creat)";
@@ -78,9 +76,7 @@ class PaiementCharge {
 
                 if ( $this->db->query($sql) )
                 {
-
                     $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiementcharge");
-
                 }
                 else
                 {
@@ -90,7 +86,7 @@ class PaiementCharge {
 
             }
 
-            if ( $total > 0 && $sql_err == 0 )
+            if ($total > 0 && $sql_err == 0)
             {
                 $this->db->commit();
                 return $this->id;
