@@ -45,7 +45,7 @@ echo '
 require("../../../projetdon.class.php");
 require("../../../don.class.php");
 
-setlocale(LC_TIME,"fr_FR");
+setlocale(LC_ALL,$conf->langage);
 
 $don = new Don($db);
 $don->id = $_GET["rowid"];
