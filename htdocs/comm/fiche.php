@@ -235,7 +235,7 @@ if ($_socid > 0)
     print "<tr><td nowrap>".$langs->transcountry("ProfId1",$objsoc->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$objsoc->siren."\">".$objsoc->siren."</a>&nbsp;</td>";
     print '<td>'.$langs->transcountry('ProfId2',$objsoc->pays_code).'</td><td>'.$objsoc->siret.'</td></tr>';
 
-    print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$objsoc->forme_juridique.'</td></tr>';
+    print '<tr><td nowrap>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$objsoc->forme_juridique.'</td></tr>';
     print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Effectif").'</td><td>'.$objsoc->effectif.'</td></tr>';
 
     print '<tr><td nowrap>';
