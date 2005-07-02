@@ -117,7 +117,7 @@ else {
 	dolibarr_print_error($db);	
 }
 
-// On ajoute les paiements anciennes version, non liés par paiement_facture
+// On ajoute les paiements clients anciennes version, non liés par paiement_facture
 if ($modecompta != 'CREANCES-DETTES') { 
     $sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
@@ -133,8 +133,10 @@ if ($modecompta != 'CREANCES-DETTES') {
         while ($i < $num)
         {
             $row = $db->fetch_object($result);
+
             $encaiss[$row->dm] += $row->amount_ht;
             $encaiss_ttc[$row->dm] += $row->amount_ttc;
+
             $i++;
         }
     }
@@ -162,7 +164,7 @@ if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
 }
-$sql .= " GROUP BY dm DESC";
+$sql .= " GROUP BY dm";
 
 $result=$db->query($sql);
 if ($result)
@@ -172,6 +174,7 @@ if ($result)
     while ($i < $num)
     {
         $row = $db->fetch_object($result);
+
         $decaiss[$row->dm] = $row->amount_ht;
         $decaiss_ttc[$row->dm] = $row->amount_ttc;
         $i++;
@@ -215,7 +218,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     $sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
     $sql .= " WHERE f.fk_statut = 1";
-    $sql .= " GROUP BY dm DESC";
+    $sql .= " GROUP BY dm";
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -240,7 +243,7 @@ else {
     $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
     $sql .= " WHERE amount > 0";
-    $sql .= " GROUP BY dm DESC";
+    $sql .= " GROUP BY dm";
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -263,7 +266,7 @@ else {
     $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
     $sql .= " WHERE amount < 0";
-    $sql .= " GROUP BY dm DESC";
+    $sql .= " GROUP BY dm";
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -290,24 +293,25 @@ else {
  */
 
 if ($modecompta == 'CREANCES-DETTES') {
-    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount_ht, sum(s.amount) as amount_ttc, date_format(s.date_ech,'%Y-%m') as dm";
+    $sql = "SELECT c.libelle as nom, date_format(s.date_ech,'%Y-%m') as dm, sum(s.amount) as amount_ht, sum(s.amount) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
     $sql .= " WHERE s.fk_type = c.id AND c.deductible=0";
     if ($year) {
     	$sql .= " AND s.date_ech between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
     }
-    $sql .= " GROUP BY c.libelle";
+    $sql .= " GROUP BY c.libelle, dm";
 }
 else {
-    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+    $sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s, ".MAIN_DB_PREFIX."paiementcharge as p";
     $sql .= " WHERE p.fk_charge = s.rowid AND s.fk_type = c.id AND c.deductible=0";
     if ($year) {
     	$sql .= " AND p.datep between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
     }
-    $sql .= " GROUP BY c.libelle";
+    $sql .= " GROUP BY c.libelle, dm";
 }
 $result=$db->query($sql);
+
 if ($result) {
     $num = $db->num_rows($result);
     $var=false;
@@ -318,7 +322,13 @@ if ($result) {
     
         $decaiss[$obj->dm] += $obj->amount_ht;
         $decaiss_ttc[$obj->dm] += $obj->amount_ttc;
-    
+
+            if (ereg('^2004',$obj->dm)) {
+                $total_ht = $total_ht + $obj->amount_ht;
+                $total_ttc = $total_ttc + $obj->amount_ttc;
+            }
+
+   
         $i++;
       }
     }
@@ -332,22 +342,22 @@ if ($result) {
  */
 
 if ($modecompta == 'CREANCES-DETTES') {
-    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount_ht, sum(s.amount) as amount_ttc, date_format(s.date_ech,'%Y-%m') as dm";
+    $sql = "SELECT c.libelle as nom, date_format(s.date_ech,'%Y-%m') as dm, sum(s.amount) as amount_ht, sum(s.amount) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
     $sql .= " WHERE s.fk_type = c.id AND c.deductible=1";
     if ($year) {
     	$sql .= " AND s.date_ech between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
     }
-    $sql .= " GROUP BY c.libelle DESC";
+    $sql .= " GROUP BY c.libelle, dm";
 }
 else {
-    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+    $sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s, ".MAIN_DB_PREFIX."paiementcharge as p";
     $sql .= " WHERE p.fk_charge = s.rowid AND s.fk_type = c.id AND c.deductible=1";
     if ($year) {
     	$sql .= " AND p.datep between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
     }
-    $sql .= " GROUP BY c.libelle";
+    $sql .= " GROUP BY c.libelle, dm";
 }
 $result=$db->query($sql);
 if ($result) {
