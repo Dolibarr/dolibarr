@@ -230,11 +230,10 @@ if ($_GET["action"] == 'create')
       print '<table class="border" width="100%">';
 
       // Type d'action
-      print '<tr><td colspan="2"><div class="titre">'.$langs->trans("Rendez-Vous").'</div></td></tr>';
       print '<input type="hidden" name="actionid" value="5">';
 
       // Societe, contact
-      print '<tr><td>'.$langs->trans("ActionOnCompany").'</td><td>';
+      print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
       if ($_GET["socid"])
 	{
           $societe = new Societe($db);
@@ -326,7 +325,7 @@ if ($_GET["action"] == 'create')
       print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="label" size="30"></td></tr>';
       
       // Societe, contact
-      print '<tr><td>'.$langs->trans("ActionOnCompany").'</td><td>';
+      print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
       if ($_GET["socid"])
 	{
           $societe = new Societe($db);
@@ -343,7 +342,7 @@ if ($_GET["action"] == 'create')
       // Si la societe est imposée, on propose ces contacts
       if ($_GET["socid"])
 	{
-	  print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
+	  print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
           print $html->select_contacts($_GET["socid"],'','contactid',1,1);
     	  print '</td></tr>';
 	}
