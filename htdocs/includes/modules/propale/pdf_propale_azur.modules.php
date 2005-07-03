@@ -186,7 +186,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
                     // TVA
                     $pdf->SetXY (121, $curY);
-                    $pdf->MultiCell(10, 5, $prop->lignes[$i]->tva_taux, 0, 'C');
+                    $pdf->MultiCell(10, 5, $prop->lignes[$i]->tva_tx, 0, 'C');
 
                     // Prix unitaire HT avant remise
                     $pdf->SetXY (133, $curY);
