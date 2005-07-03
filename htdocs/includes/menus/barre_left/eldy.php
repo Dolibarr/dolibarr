@@ -491,6 +491,7 @@ class MenuLeft {
                   $newmenu->add_submenu(DOL_URL_ROOT."/comm/clients.php?leftmenu=projects", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
                 }
 
+                $newmenu->add_submenu(DOL_URL_ROOT."/comm/bookmark.php?leftmenu=bookmarks", $langs->trans("Bookmarks"), 0, 1);
             }
         
             /*
