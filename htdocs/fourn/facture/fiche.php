@@ -143,19 +143,29 @@ if ($_POST["action"] == 'add' && $user->rights->fournisseur->facture->creer)
                 if (strlen($_POST[$label]) > 0 && !empty($_POST[$amount]))
                 {
                     $atleastoneline=1;
-                    $facfou->addline($_POST["$label"], $_POST["$amount"], $_POST["$tauxtva"], $_POST["$qty"], 1);
+                    $ret=$facfou->addline($_POST["$label"], $_POST["$amount"], $_POST["$tauxtva"], $_POST["$qty"], 1);
+                    if ($ret < 0) $nberror++;
                 }
                 else if (strlen($_POST[$label]) > 0 && empty($_POST[$amount]))
                 {
                     $ht = $_POST[$amountttc] / (1 + ($_POST[$tauxtva] / 100));
                     $atleastoneline=1;
-                    $facfou->addline($_POST[$label], $ht, $_POST[$tauxtva], $_POST[$qty], 1);
+                    $ret=$facfou->addline($_POST[$label], $ht, $_POST[$tauxtva], $_POST[$qty], 1);
+                    if ($ret < 0) $nberror++;
                 }
             }
-
-            $db->commit();
-            header("Location: fiche.php?facid=$facid");
-            exit;
+            if ($nberror)
+            {
+                $db->rollback();
+                $mesg='<div class="error">'.$facfou->error.'</div>';
+                $_GET["action"]='create';
+            }
+            else 
+            {
+                $db->commit();
+                header("Location: fiche.php?facid=$facid");
+                exit;
+            }
         }
         else
         {

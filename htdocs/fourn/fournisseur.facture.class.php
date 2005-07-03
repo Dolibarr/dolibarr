@@ -85,71 +85,78 @@ class FactureFournisseur
    *    \param      user        object utilisateur qui crée
    *    \return     int         id facture si ok, < 0 si erreur
    */
-  function create($user)
-  {
-    global $langs;
+    function create($user)
+    {
+        global $langs;
     
-    $socid = $this->socidp;
-    $number = $this->number;
-    $amount = $this->amount;
-    $remise = $this->remise;
-
-    if (! $remise)
-    {
-        $remise = 0 ;
-    }
-
-    $totalht = ($amount - $remise);
-    $tva = tva($totalht);
-    $total = $totalht + $tva;
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author) ";
-    $sql .= " VALUES ('".$this->number."','".$this->libelle."',";
-    $sql .= $this->socid.", now(),".$this->db->idate($this->date).",'".$this->note."', ".$user->id.");";
-
-    if ( $this->db->query($sql) )
-    {
-        $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn");
-
-        for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+        $socid = $this->socidp;
+        $number = sanitize_string(strtoupper($this->number));
+        $amount = $this->amount;
+        $remise = $this->remise;
+    
+    
+        $this->db->begin();
+    
+    
+        if (! $remise) $remise = 0 ;
+        $totalht = ($amount - $remise);
+        $tva = tva($totalht);
+        $total = $totalht + $tva;
+    
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author) ";
+        $sql .= " VALUES ('".$number."','".addslashes($this->libelle)."',";
+        $sql .= $this->socid.", now(),".$this->db->idate($this->date).",'".addslashes($this->note)."', ".$user->id.");";
+    
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
-
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
-            $sql .= " VALUES ($this->id);";
-            if ($this->db->query($sql) )
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn");
+    
+            for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
             {
-                $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
-
-                $this->updateline($idligne,
-                $this->lignes[$i][0],
-                $this->lignes[$i][1],
-                $this->lignes[$i][2],
-                $this->lignes[$i][3]);
+    
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
+                $sql .= " VALUES ($this->id);";
+                if ($this->db->query($sql))
+                {
+                    $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
+    
+                    $this->updateline($idligne,
+                    $this->lignes[$i][0],
+                    $this->lignes[$i][1],
+                    $this->lignes[$i][2],
+                    $this->lignes[$i][3]);
+                }
             }
-        }
-
-        /*
-        * Mise à jour prix
-        */
-
-        $this->updateprice($this->id);
-
-        return $this->id;
-    }
-    else
-    {
-        if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
-        {
-            $this->error=$langs->trans("ErrorBillRefAlreadyExists");
-            return -1;
+    
+            // Mise à jour prix
+            if ($this->updateprice($this->id) > 0)
+            {
+                $this->db->commit();
+                return $this->id;
+            }
+            else {
+                $this->error=$langs->trans("FailedToUpdatePrice");
+                $this->db->rollback();
+                return -3;
+            }        
         }
         else
         {
-            dolibarr_print_error($this->db);
-            return -2;
+            if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
+            {
+                $this->error=$langs->trans("ErrorBillRefAlreadyExists");
+                $this->db->rollback();
+                return -1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                $this->db->rollback();
+                return -2;
+            }
         }
     }
-}
 
   /**
    *    \brief      Recupére l'objet facture et ses lignes de factures
@@ -323,38 +330,41 @@ class FactureFournisseur
    * \param     puht            prix unitaire
    * \param     tauxtva         taux tva
    * \param     qty             quantité
-   * \return    int     0 si erreur
+   * \return    int             <0 si ko, >0 si ok
    */
   function updateline($id, $label, $puht, $tauxtva, $qty=1)
   {
     $puht = ereg_replace(",",".",$puht);
     $qty  = ereg_replace(",",".",$qty);
-
+    
     if (is_numeric($puht) && is_numeric($qty))
-      {
-	$totalht  = ($puht * $qty);
-	$tva      = ($totalht * $tauxtva /  100);
-	$totalttc = $totalht + $tva;
-		
-	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det ";
-	$sql .= "SET description ='".$label."'";
-	$sql .= ", pu_ht = "  .ereg_replace(",",".",$puht);
-	$sql .= ", qty ="     .ereg_replace(",",".",$qty);
-	$sql .= ", total_ht=" .ereg_replace(",",".",$totalht);
-	$sql .= ", tva="      .ereg_replace(",",".",$tva);
-	$sql .= ", tva_taux=" .ereg_replace(",",".",$tauxtva);
-	$sql .= ", total_ttc=".ereg_replace(",",".",$totalttc);
-	
-	$sql .= " WHERE rowid = ".$id;
-	
-	if (! $this->db->query($sql) )
-	  {
-	    dolibarr_print_error($this->db);
-	  }
-
-	// Mise a jour prix facture
-	$this->updateprice($this->id);
-      }
+    {
+        $totalht  = ($puht * $qty);
+        $tva      = ($totalht * $tauxtva /  100);
+        $totalttc = $totalht + $tva;
+    
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det ";
+        $sql .= "SET description ='".addslashes($label)."'";
+        $sql .= ", pu_ht = "  .ereg_replace(",",".",$puht);
+        $sql .= ", qty ="     .ereg_replace(",",".",$qty);
+        $sql .= ", total_ht=" .ereg_replace(",",".",$totalht);
+        $sql .= ", tva="      .ereg_replace(",",".",$tva);
+        $sql .= ", tva_taux=" .ereg_replace(",",".",$tauxtva);
+        $sql .= ", total_ttc=".ereg_replace(",",".",$totalttc);
+        $sql .= " WHERE rowid = ".$id;
+    
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            // Mise a jour prix facture
+            return $this->updateprice($this->id);
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
   }
 
   /**
@@ -378,54 +388,65 @@ class FactureFournisseur
     return 1;
   }
 
-  /**
-   * \brief     Mise à jour des sommes de la facture
-   * \param     facid      id de la facture a modifier
-   */
-  function updateprice($facid)
-  {    
-    $total_ht  = 0;
-    $total_tva = 0;
-    $total_ttc = 0;
-
-    $sql = "SELECT sum(total_ht), sum(tva), sum(total_ttc) FROM ".MAIN_DB_PREFIX."facture_fourn_det";
-    $sql .= " WHERE fk_facture_fourn = $facid;";
+   /**
+    *    \brief      Mise à jour des sommes de la facture
+    *    \param      facid       id de la facture a modifier
+    *    \return     int         <0 si ko, >0 si ok
+    */
+    function updateprice($facid)
+    {
+        $total_ht  = 0;
+        $total_tva = 0;
+        $total_ttc = 0;
     
-    $result = $this->db->query($sql);
+        $sql = "SELECT sum(total_ht), sum(tva), sum(total_ttc) FROM ".MAIN_DB_PREFIX."facture_fourn_det";
+        $sql .= " WHERE fk_facture_fourn = $facid;";
     
-    if ($result)
-      {
-	if ($this->db->num_rows() )
-	  {
-	    $row = $this->db->fetch_row();
-	    $total_ht  = $row[0];
-	    $total_tva = $row[1];
-	    $total_ttc = $row[2];
-
-	    if ($total_ht == '')
-	      $total_ht = 0;
-
-	    if ($total_tva == '')
-	      $total_tva = 0;
-
-	    if ($total_ttc == '')
-	      $total_ttc = 0;
-
-	  }
-	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
-	$sql .= " total_ht = ". ereg_replace(",",".",$total_ht);
-	$sql .= ",total_tva = ".ereg_replace(",",".",$total_tva);
-	$sql .= ",total_ttc = ".ereg_replace(",",".",$total_ttc);
-	$sql .= " WHERE rowid = $facid ;";
-
-	$result = $this->db->query($sql);	
-      }
-    else 
-      {
-    	  dolibarr_print_error($this->db);
-      }
-  }
+        $result = $this->db->query($sql);
+    
+        if ($result)
+        {
+            if ($this->db->num_rows() )
+            {
+                $row = $this->db->fetch_row();
+                $total_ht  = $row[0];
+                $total_tva = $row[1];
+                $total_ttc = $row[2];
+    
+                if ($total_ht == '')
+                $total_ht = 0;
+    
+                if ($total_tva == '')
+                $total_tva = 0;
+    
+                if ($total_ttc == '')
+                $total_ttc = 0;
+    
+            }
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
+            $sql .= " total_ht = ". ereg_replace(",",".",$total_ht);
+            $sql .= ",total_tva = ".ereg_replace(",",".",$total_tva);
+            $sql .= ",total_ttc = ".ereg_replace(",",".",$total_ttc);
+            $sql .= " WHERE rowid = $facid ;";
+    
+            $result = $this->db->query($sql);
+            if ($result) 
+            {
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                return -2;
+            }
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+    }
   
   
   /**

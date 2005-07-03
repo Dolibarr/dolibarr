@@ -78,6 +78,11 @@ function check_mail ($mail)
     }
 }
 
+/**
+        \brief          Nettoie chaine de caractère des accents
+        \param          str             Chaine a nettoyer
+        \return         string          Chaine nettoyé
+*/
 function unaccent($str)
 {
   $acc = array("à","ä","é","è","ë","ï","î","ö","ô","ù","ü","'");
@@ -85,6 +90,18 @@ function unaccent($str)
 
   return str_replace($acc, $uac, $str);
 }
+
+/**
+        \brief          Nettoie chaine de caractère de caractères spéciaux
+        \param          str             Chaine a nettoyer
+        \return         string          Chaine nettoyé
+*/
+function sanitize_string($str)
+{
+    $forbidden_chars=array("'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","="); 
+    return str_replace($forbidden_chars,"_",$str);
+}
+
 
 /**
    \brief       Envoi des messages dolibarr dans syslog ou dans un fichier
