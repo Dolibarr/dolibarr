@@ -302,16 +302,15 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
  
-  print '<p><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>';
-  print_liste_field_titre("Nom","projekt.php","lower(p.name)", $begin);
+  print_liste_field_titre($langs->trans("Name"),"projekt.php","lower(p.name)", $begin);
   print "</td><td>";
-  print_liste_field_titre("Prénom","projekt.php","lower(p.firstname)", $begin);
+  print_liste_field_titre($langs->trans("Fristname"),"projekt.php","lower(p.firstname)", $begin);
   print "</td><td>";
-  print_liste_field_titre("Société","projekt.php","lower(s.nom)", $begin);
+  print_liste_field_titre($langs->trans("Company"),"projekt.php","lower(s.nom)", $begin);
   print '</td>';
-
-  print '<td>Téléphone</td>';
+  print '<td>'.$langs->trans("Phone").'</td>';
 
   if ($_GET["view"] == 'phone')
     {
@@ -369,8 +368,7 @@ if ($result)
 }
 else
 {
-  print $db->error();
-  print "<br>".$sql;
+  dolibarr_print_error($db);
 }
 
 }
@@ -379,5 +377,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
