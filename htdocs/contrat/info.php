@@ -1,0 +1,73 @@
+<?php
+/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *
+ */
+
+/**
+        \file       htdocs/contrat/info.php
+        \ingroup    contrat
+		\brief      Page des informations d'un contrat
+		\version    $Revision$
+*/
+
+require("./pre.inc.php");
+require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+
+$langs->load("contracts");
+
+llxHeader();
+
+
+/*
+ * Visualisation de la fiche
+ *
+ */
+
+$contrat = new Contrat($db);
+$contrat->fetch($_GET["id"]);
+$contrat->info($_GET["id"]);
+$soc = new Societe($db, $contrat->socidp);
+$soc->fetch($contrat->socidp);
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$contrat->id;
+$head[$h][1] = $langs->trans("ContractCard");
+$hselected = $h;
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$contrat->id;
+$head[$h][1] = $langs->trans("Info");
+$hselected = $h;
+$h++;      
+
+dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").": $contrat->ref");
+
+
+print '<table width="100%"><tr><td>';
+dolibarr_print_object_info($contrat);
+print '</td></tr></table>';
+
+print "<br></div>";
+
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
+?>
