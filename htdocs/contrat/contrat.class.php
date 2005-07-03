@@ -65,8 +65,8 @@ class Contrat
         $this->user_cloture = new User($DB);
         
         // Statut 0=ouvert, 1=actif, 2=cloturé
-        $this->statuts[0]=$langs->trans("Opened");
-        $this->statuts[1]=$langs->trans("Running");
+        $this->statuts[0]=$langs->trans("Draft");
+        $this->statuts[1]=$langs->trans("Validated");
         $this->statuts[2]=$langs->trans("Closed");
     }
     
@@ -160,6 +160,42 @@ class Contrat
         }
     }
     
+    
+    /**
+     *      \brief      Active une ligne detail d'un contrat
+     *      \param      user        Objet User qui avtice le contrat
+     *      \param      line_id     Id de la ligne de detail à activer
+     *      \param      date        Date fin
+     *      \return     int         < 0 si erreur, > 0 si ok
+     */
+    function close_line($user, $line_id, $dateend)
+    {
+        // statut actif : 4
+    
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 5,";
+        $sql.= " date_cloture = '".$this->db->idate($dateend)."',";
+        $sql.= " fk_user_cloture = ".$user->id;
+        $sql.= " WHERE rowid = ".$line_id . " AND statut = 4";
+    
+        $result = $this->db->query($sql) ;
+    
+        if ($result)
+        {
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $interface->run_triggers('CONTRACT_SERVICE_CLOSE',$this,$user,$lang,$conf);
+            // Fin appel triggers
+    
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+    
 
     /**
      *    \brief      Cloture un contrat
@@ -186,11 +222,30 @@ class Contrat
     }
     
     /**
+     *    \brief      Valide un contrat
+     *    \param      user      Objet User qui valide
+     *    \param      lang      Environnement langue de l'utilisateur
+     *    \param      conf      Environnement de configuration lors de l'opération
+     */
+    function validate($user,$lang='',$conf='')
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
+        $sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
+    
+        $result = $this->db->query($sql) ;
+    
+        // Appel des triggers
+        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+        $interface=new Interfaces($this->db);
+        $interface->run_triggers('CONTRACT_VALIDATE',$this,$user,$lang,$conf);
+        // Fin appel triggers
+    }
+
+    /**
      *    \brief      Annule un contrat
      *    \param      user      Objet User qui annule
      *    \param      lang      Environnement langue de l'utilisateur
      *    \param      conf      Environnement de configuration lors de l'opération
-     *
      */
     function annule($user,$lang='',$conf='')
     {
@@ -206,7 +261,6 @@ class Contrat
         $interface->run_triggers('CONTRACT_CANCEL',$this,$user,$lang,$conf);
         // Fin appel triggers
     }
-
     
     /**
      *    \brief      Charge de la base les données du contrat
@@ -361,7 +415,7 @@ class Contrat
         }
         
         $remise = 0;
-        $price = round(ereg_replace(",",".",$pu), 2);
+        $price = ereg_replace(",",".",round($pu, 2));
         $subprice = $price;
         if (trim(strlen($remise_percent)) > 0)
         {
@@ -370,11 +424,14 @@ class Contrat
         }
         
         // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet ";
-        $sql.= "(fk_contrat,label,description,fk_product, price_ht,qty,tva_tx, remise_percent, subprice, remise";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
+        $sql.= " (fk_contrat, label, description, fk_product, price_ht, qty, tva_tx,";
+        $sql.= " remise_percent, subprice, remise";
         if ($datestart > 0) { $sql.= ",date_ouverture_prevue"; }
         if ($dateend > 0)  { $sql.= ",date_fin_validite"; }
-        $sql.= ") VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."'";
+        $sql.= ") VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',";
+        $sql.= ($fk_product>0 ? $fk_product : "null");
+        $sql.= ",".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."'";
         if ($datestart > 0) { $sql.= ",".$this->db->idate($datestart); }
         if ($dateend > 0) { $sql.= ",".$this->db->idate($dateend); }
         $sql.= ");";
@@ -497,8 +554,8 @@ class Contrat
         global $langs;
         $langs->load("contracts");
 
-        if ($statut == 0) { return $langs->trans("ContractStatusNotRunning"); }
-        if ($statut == 1) { return $langs->trans("ContractStatusRunning"); }
+        if ($statut == 0) { return $langs->trans("ContractStatusDraft"); }
+        if ($statut == 1) { return $langs->trans("ContractStatusValidated"); }
         if ($statut == 2) { return $langs->trans("ContractStatusClosed"); }
     }
 

@@ -29,6 +29,9 @@
 */
 
 require("./pre.inc.php");
+require("../project.class.php");
+require("../propal.class.php");
+require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("contracts");
 $langs->load("orders");
@@ -36,12 +39,8 @@ $langs->load("companies");
 
 $user->getrights('contrat');
 
-if (!$user->rights->contrat->lire)
+if (! $user->rights->contrat->lire)
 accessforbidden();
-
-require("../project.class.php");
-require("../propal.class.php");
-require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $date_start_update=mktime(12, 0 , 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $_POST["date_start_updateyear"]);
 $date_end_update=mktime(12, 0 , 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $_POST["date_end_updateyear"]);
@@ -108,18 +107,19 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
     $result = 0;
     $contrat = new Contrat($db);
     $result=$contrat->fetch($_GET["id"]);
-    if ($_POST["p_idprod"] > 0)
+    if (($_POST["p_idprod"] > 0 && $_POST["mode"]=='predefined') || ($_POST["mode"]=='libre'))
     {
         //print $_POST["desc"]." - ".$_POST["pu"]." - ".$_POST["pqty"]." - ".$_POST["tva_tx"]." - ".$_POST["p_idprod"]." - ".$_POST["premise"]; exit;
-        $result = $contrat->addline($_POST["desc"],
-        $_POST["pu"],
-        $_POST["pqty"],
-        $_POST["tva_tx"],
-        $_POST["p_idprod"],
-        $_POST["premise"],
-        $date_start,
-        $date_end
-        );
+        $result = $contrat->addline(
+            $_POST["desc"],
+            $_POST["pu"],
+            $_POST["pqty"],
+            $_POST["tva_tx"],
+            $_POST["p_idprod"],
+            $_POST["premise"],
+            $date_start,
+            $date_end
+            );
     }
 
     if ($result >= 0)
@@ -174,23 +174,23 @@ if ($_GET["action"] == 'deleteline' && $user->rights->contrat->creer)
     }
 }
 
-if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->contrat->valider)
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
     $soc = new Societe($db);
     $soc->fetch($contrat->soc_id);
-    $result = $contrat->valid($user);
+    $result = $contrat->validate($user);
 }
 
-if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == yes && $user->rights->contrat->valider)
+if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
     $result = $contrat->cancel($user);
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
     if ($user->rights->contrat->supprimer )
     {
@@ -202,21 +202,10 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
     }
 }
 
-/*
-*
-*/
-if ($action == 'pdf')
-{
-    /*
-    * Generation de la commande
-    * définit dans /includes/modules/commande/modules_commande.php
-    */
-    commande_pdf_create($db, $_GET["id"]);
-}
+
+
 
 llxHeader('',$langs->trans("ContractCard"),"Contrat");
-
-
 
 $html = new Form($db);
 
@@ -251,7 +240,7 @@ if ($_GET["action"] == 'create')
 
             print '<form action="fiche.php" method="post">';
             print '<input type="hidden" name="action" value="add">';
-            print '<input type="hidden" name="soc_id" value="'.$soc->id.'">' ."\n";
+            print '<input type="hidden" name="soc_id" value="'.$soc->id.'">'."\n";
             print '<input type="hidden" name="remise_percent" value="0">';
 
             print '<table class="border" width="100%">';
@@ -262,7 +251,9 @@ if ($_GET["action"] == 'create')
             print '<tr><td width="20%" nowrap>'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>';
             print '<select name="commercial_suivi_id">';
             print '<option value="-1">&nbsp;</option>';
-            $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
+
+            $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user";
+            $sql.= " ORDER BY name ";
             $resql=$db->query( $sql);
             if ($resql)
             {
@@ -286,7 +277,8 @@ if ($_GET["action"] == 'create')
             print '<tr><td width="20%" nowrap>'.$langs->trans("SalesRepresentativeSignature").'</td><td>';
             print '<select name="commercial_signature_id">';
             print '<option value="-1">&nbsp;</option>';
-            $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
+            $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user";
+            $sql.= " ORDER BY name";
             $resql=$db->query( $sql);
             if ($resql)
             {
@@ -362,11 +354,8 @@ if ($_GET["action"] == 'create')
             print '</td></tr>';
             */
             print '<tr><td>'.$langs->trans("Comment").'</td><td valign="top">';
-            print '<textarea name="note" wrap="soft" cols="60" rows="4"></textarea></td></tr>';
+            print '<textarea name="note" wrap="soft" cols="60" rows="3"></textarea></td></tr>';
 
-            /*
-            *
-            */
             print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
             print "</form>\n";
             print "</table><br>\n";
@@ -374,8 +363,8 @@ if ($_GET["action"] == 'create')
             if ($propalid)
             {
                 /*
-                * Produits
-                */
+                 * Produits
+                 */
                 print_titre($langs->trans("Products"));
 
                 print '<table class="noborder" width="100%">';
@@ -403,9 +392,10 @@ if ($_GET["action"] == 'create')
                         $i++;
                     }
                 }
-                $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
-                $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt  WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
-                $sql .= " ORDER BY pt.rowid ASC";
+                $sql = "SELECT pt.rowid, pt.description as product, pt.price, pt.qty, pt.remise_percent";
+                $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pt";
+                $sql.= " WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
+                $sql.= " ORDER BY pt.rowid ASC";
                 $result=$db->query($sql);
                 if ($result)
                 {
@@ -490,7 +480,7 @@ else
             if ($_GET["action"] == 'valid')
             {
                 //$numfa = contrat_get_num($soc);
-                $html->form_confirm("fiche.php?id=$id",$langs->trans("ValidateAContract"),"Etes-vous sûr de vouloir valider cette contrat ?","confirm_valid");
+                $html->form_confirm("fiche.php?id=$id",$langs->trans("ValidateAContract"),$langs->trans("ConfirmValidateContract"),"confirm_valid");
                 print '<br>';
             }
 
@@ -647,15 +637,13 @@ else
                             print '<td colspan="2">&nbsp;</td>';
                         }
             
-                        if ($objp->fk_product > 0) {
-                            print '<td align="center">';
-                            print '<a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id.'&amp;ligne='.$objp->rowid.'">';;
-                            print '<img src="./statut'.$objp->statut.'.png" border="0" alt="statut"></a>';
-                            print '</td>';
-                        } else {
-                            // Si non ligne de service (Ne devrait pas arriver)
-                            print '<td>&nbsp;</td>';
-                        }
+                        // Statut
+                        print '<td align="center">';
+                        if ($contrat->statut == 1) print '<a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id.'&amp;ligne='.$objp->rowid.'">';;
+                        print '<img src="./statut'.$objp->statut.'.png" border="0" alt="statut">';
+                        if ($contrat->statut == 1) print '</a>';
+                        print '</td>';
+
                         print "</tr>\n";
     
                         // Dates mise en service
@@ -693,9 +681,10 @@ else
                             }
                             else print $langs->trans("Unknown");
                         }
+                        // Si désactivé
                         if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
                             print $langs->trans("DateEndReal").': ';
-                            dolibarr_print_date($objp->date_fin_reelle);
+                            print dolibarr_print_date($objp->date_fin_reelle);
                         }
                         print '</td>';
                         print '<td>&nbsp;</td>';
@@ -708,7 +697,10 @@ else
                         print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
                         // Ligne carac
                         print "<tr $bc[$var]>";
-                        print '<td colspan="2"><textarea name="eldesc" cols="60" rows="2">'.$objp->description.'</textarea></td>';
+                        print '<td colspan="2">';
+                        print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                        print img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a><br>';
+                        print '<textarea name="eldesc" cols="60" rows="1">'.$objp->description.'</textarea></td>';
                         print '<td align="right"><input size="6" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                         print '<td align="center"><input size="3" type="text" name="elqty" value="'.$objp->qty.'"></td>';
                         print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
@@ -739,12 +731,8 @@ else
             /*
              * Ajouter une ligne produit/service
              */
-            if ($user->rights->contrat->creer)
+            if ($user->rights->contrat->creer && $contrat->statut == 0)
             {
-                print '<form action="fiche.php?id='.$id.'" method="post">';
-                print '<input type="hidden" name="action" value="addligne">';
-                print '<input type="hidden" name="id" value="'.$id.'">';
-
                 print "<tr class=\"liste_titre\">";
                 print '<td>'.$langs->trans("Service").'</td>';
                 print '<td align="center">'.$langs->trans("VAT").'</td>';
@@ -755,30 +743,55 @@ else
                 print '<td>&nbsp;</td>';
                 print "</tr>\n";
 
-                /*
-                print "<tr $bc[$var]>".'<td><textarea name="desc" cols="60" rows="1"></textarea></td>';
-                print '<td align="center">';
-                print $html->select_tva("tva_tx",$conf->defaulttx);
-                print '</td>';
-                print '<td align="center"><input type="text" name="qty" value="1" size="2"></td>';
-                print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
-                print '<td align="right"><input type="text" name="pu" size="8"></td>';
-
-                print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
-                */
-
                 $var=false;
+
+                print '<form action="fiche.php?id='.$id.'" method="post">';
+                print '<input type="hidden" name="action" value="addligne">';
+                print '<input type="hidden" name="mode" value="predefined">';
+                print '<input type="hidden" name="id" value="'.$id.'">';
+
                 print "<tr $bc[$var]>";
-                print '<td colspan="2">';
-                $html->select_produits('','p_idprod');
+                print '<td colspan="3">';
+                $html->select_produits('','p_idprod','',0);
                 print '</td>';
-                print '<td>&nbsp;</td>';
+
                 print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
                 print '<td align="right" nowrap><input type="text" class="flat" size="2" name="premise" value="0">%</td>';
                 print '<td align="center" colspan="3" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-                print "</tr>\n";
+
                 print "<tr $bc[$var]>";
-                print '<td colspan="7"><textarea name="desc" cols="60" rows="1"></textarea></td>';
+                print '<td colspan="8">';
+                print 'Date prévue mise en service ';
+                $html->select_date('',"date_start",0,0,1);
+                print ' &nbsp; Date prévue fin de service ';
+                $html->select_date('',"date_end",0,0,1);
+                print '</td>';
+                print '</tr>';
+                
+                print '</tr>';
+                
+                print "</form>";
+
+                $var=!$var;
+                
+                print '<form action="fiche.php?id='.$id.'" method="post">';
+                print '<input type="hidden" name="action" value="addligne">';
+                print '<input type="hidden" name="mode" value="libre">';
+                print '<input type="hidden" name="id" value="'.$id.'">';
+
+                print "<tr $bc[$var]>";
+                print '<td><textarea name="desc" cols="50" rows="1"></textarea></td>';
+
+                print '<td>';
+                $html->select_tva("tva_tx",$conf->defaulttx);
+                print '</td>';
+                print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
+                print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
+                print '<td align="right" nowrap><input type="text" class="flat" size="2" name="premise" value="0">%</td>';
+                print '<td align="center" colspan="3" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+
+                print "</tr>\n";
+
                 print '</tr>';
 
                 print "<tr $bc[$var]>";
@@ -803,35 +816,18 @@ else
              * Boutons Actions
              *************************************************************/
 
-            if ($user->societe_id == 0 && $contrat->statut < 3)
+            if ($user->societe_id == 0)
             {
                 print '<div class="tabsAction">';
 
-                if ($contrat->statut == 0 && $user->rights->contrat->supprimer)
+                if ($contrat->statut == 0 && $num)
+                {
+                    print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
+                }
+
+                if ($user->rights->contrat->supprimer)
                 {
                     print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-                }
-
-                if ($contrat->statut > 0 && $contrat->statut < 3 && $user->rights->expedition->creer)
-                {
-                    print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/contrat.php?id='.$_GET["id"].'">'.$langs->trans("Send").'</a>';
-                }
-
-                if ($contrat->statut == 0)
-                {
-                    if ($user->rights->contrat->valider)
-                    {
-                        print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
-                    }
-                }
-
-                if ($contrat->statut == 1)
-                {
-                    $nb_expedition = $contrat->nb_expedition();
-                    if ($user->rights->contrat->valider && $nb_expedition == 0)
-                    {
-                        print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans("Cancel").'</a>';
-                    }
                 }
 
                 print "</div>";

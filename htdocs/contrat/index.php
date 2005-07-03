@@ -29,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("products");
 $langs->load("companies");
@@ -67,10 +68,8 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Legend").'</td></tr>';
 print '<tr '.$bc[$var].'><td nowrap>';
 print '<img src="./statut0.png" border="0" alt="statut">&nbsp;Statut initial<br />';
-print '<img src="./statut1.png" border="0" alt="statut">&nbsp;A commander<br />';
-print '<img src="./statut2.png" border="0" alt="statut">&nbsp;Commandé chez le fournisseur<br />';
-print '<img src="./statut3.png" border="0" alt="statut">&nbsp;Activé chez le fournisseur<br />';
-print '<img src="./statut4.png" border="0" alt="statut">&nbsp;Activé chez le client<br />';
+print '<img src="./statut4.png" border="0" alt="statut">&nbsp;'.$langs->trans("ContractStatusRunning").'<br />';
+print '<img src="./statut5.png" border="0" alt="statut">&nbsp;'.$langs->trans("Closed").'<br />';
 print '</td></tr>';
 print '</table>';
 
@@ -92,10 +91,64 @@ if ($conf->contrat->enabled) {
 
 print '</td><td width="70%" valign="top">';
 
+
+// Last contracts
+$max=5;
+$sql = "SELECT count(cd.rowid) as nb, c.rowid as cid, c.datec, c.statut, s.nom, s.idp as sidp";
+$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
+$sql.= " WHERE c.fk_soc = s.idp ";
+if ($socid > 0) $sql .= " AND s.idp = $socid";
+$sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.idp";
+$sql.= " ORDER BY c.date_contrat DESC";
+$sql.= " LIMIT $max";
+
+$result=$db->query($sql);
+if ($result)
+{
+    $num = $db->num_rows($result);
+    $i = 0;
+    
+    print '<table class="noborder" width="100%">';
+    
+    print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("LastContracts",5).'</td>';
+    print "</tr>\n";
+    
+    $contratstatic=new Contrat($db);
+
+    $var=True;
+    while ($i < $num)
+    {
+        $obj = $db->fetch_object($result);
+        $var=!$var;
+    
+        print "<tr $bc[$var]>";
+        print "<td><a href=\"fiche.php?id=$obj->cid\">";
+        print img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
+        print '<td align="center">'.$langs->trans("ServicesNomberShort",$obj->nb).'</td>';
+        print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+        print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
+        print '<td align="center">'.$contratstatic->LibStatut($obj->statut).'</td>';
+        print "</tr>\n";
+        $i++;
+    }
+    $db->free($result);
+    
+    print "</table>";
+    
+}
+else
+{
+    dolibarr_print_error($db);
+}
+
+print '<br>';
+
+
 // Not activated services
 $sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE cd.statut IN (0,3)";
+$sql.= " WHERE c.statut=1 AND cd.statut = 0";
 $sql.= " AND cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
 $sql.= " ORDER BY cd.tms DESC";
 

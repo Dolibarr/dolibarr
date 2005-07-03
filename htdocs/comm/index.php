@@ -46,7 +46,7 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-$max=4;
+$max=5;
 
 llxHeader();
 
@@ -249,7 +249,7 @@ if ($user->rights->societe->lire)
     {
         $sql .= " AND s.idp = $user->societe_id";
     }
-    $sql .= " ORDER BY s.datec DESC ";
+    $sql .= " ORDER BY s.datec DESC";
     $sql .= $db->plimit($max, 0);
     
     $resql = $db->query($sql);
@@ -295,7 +295,8 @@ if ($socidp)
 { 
   $sql .= " AND s.idp = $socidp"; 
 }
-$sql .= " ORDER BY a.datea DESC limit 5";
+$sql .= " ORDER BY a.datea DESC";
+$sql .= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
 if ($resql)
@@ -303,7 +304,7 @@ if ($resql)
   $num = $db->num_rows($resql);
 
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastDoneTasks").'</td></tr>';
+  print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastDoneTasks",$max).'</td></tr>';
   $var = true;
   $i = 0;
 

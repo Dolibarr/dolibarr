@@ -29,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("contracts");
 $langs->load("products");
@@ -91,9 +92,12 @@ if ($resql)
   print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","",'width="50"',$sortfield);
   print_liste_field_titre($langs->trans("NbOfServices"), $_SERVER["PHP_SELF"], "nb",'','','width="80"',$sortfield);
   print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","","",$sortfield);
-  print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","","",$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.statut","","",'align="center"',$sortfield);
   print "</tr>\n";
     
+  $contratstatic=new Contrat($db);
+  
   $now=mktime();
   $var=True;
   while ($i < min($num,$limit))
@@ -105,7 +109,8 @@ if ($resql)
       print img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
       print '<td align="center">'.$obj->nb.'</td>';
       print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-      print '<td>'.dolibarr_print_date($obj->datec).'</td>';
+      print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
+      print '<td align="center">'.$contratstatic->LibStatut($obj->statut).'</td>';
 
       print "</tr>\n";
       $i++;
