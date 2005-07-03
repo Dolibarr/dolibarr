@@ -453,15 +453,14 @@ class DoliDb
 
     /**
         \brief      Formatage d'un if SQL
-        \param		operande1       operande 1
-        \param		operande2       operande 2
+        \param		test            chaine test
         \param		resok           resultat si test egal
         \param		resko           resultat si test non egal
         \return		string          chaine formaté SQL
     */
-    function ifsql($operande1,$operande2,$resok,$resko)
+    function ifsql($test,$resok,$resko)
     {
-        return 'IF('.$operande1.'='.$operande2.','.$resok.','.$resko.')';
+        return 'IF('.$test.','.$resok.','.$resko.')';
     }
     
 
