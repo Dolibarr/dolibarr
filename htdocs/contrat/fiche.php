@@ -183,11 +183,11 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->
     $result = $contrat->validate($user);
 }
 
-if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == 'yes' && $user->rights->contrat->creer)
+if ($_POST["action"] == 'confirm_close' && $_POST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
-    $result = $contrat->cancel($user);
+    $result = $contrat->cloture($user);
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
@@ -488,11 +488,12 @@ else
             }
 
             /*
-             * Confirmation de l'annulation
+             * Confirmation de la fermeture
              */
-            if ($_GET["action"] == 'annuler')
+            if ($_GET["action"] == 'close')
             {
-                $html->form_confirm("fiche.php?id=$id",$langs->trans("Cancel"),"Etes-vous sûr de vouloir annuler cette contrat ?","confirm_cancel");
+                $html->form_confirm("fiche.php?id=$id",$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close");
+                print '<br>';
             }
 
             /*
@@ -633,7 +634,7 @@ else
                             print '</a></td>';
                         }
                         else {
-                            print '<td colspan="2">&nbsp;</td>';
+                            print '<td>&nbsp;</td>';
                         }
                         if ($contrat->statut == 0  && $user->rights->contrat->creer)
                         {
@@ -834,7 +835,14 @@ else
                     print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
                 }
 
-                if ($user->rights->contrat->supprimer)
+                // \todo Mettre bouton cloturer que si tous les services sont clos
+                $numclos=$num;
+                if ($contrat->statut == 1 && $num == $numclos)
+                {
+                    print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=close">'.$langs->trans("Close").'</a>';
+                }
+
+                if ($contrat->statut == 0 && $user->rights->contrat->supprimer)
                 {
                     print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
                 }
