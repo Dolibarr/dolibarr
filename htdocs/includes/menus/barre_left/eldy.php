@@ -209,8 +209,12 @@ class MenuLeft {
                   $langs->load("contracts");
                   $newmenu->add(DOL_URL_ROOT."/contrat/index.php?leftmenu=contracts", $langs->trans("Contracts"), 0 ,$user->rights->contrat->lire);
                   if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=contracts", $langs->trans("NewContract"), 1, $user->rights->contrat->creer);
-                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/liste.php", $langs->trans("List"), 1 ,$user->rights->contrat->lire);
-                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/enservice.php", $langs->trans("MenuRunningServices"), 1 ,$user->rights->contrat->lire);
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/liste.php?leftmenu=contracts", $langs->trans("List"), 1 ,$user->rights->contrat->lire);
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts", $langs->trans("MenuServices"), 1 ,$user->rights->contrat->lire);
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=0", $langs->trans("MenuInactiveServices"), 2 ,$user->rights->contrat->lire);
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=4", $langs->trans("MenuRunningServices"), 2 ,$user->rights->contrat->lire);
+                  //if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=4", $langs->trans("MenuExpiredServices"), 2 ,$user->rights->contrat->lire);
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=5", $langs->trans("MenuClosedServices"), 2 ,$user->rights->contrat->lire);
                 }
                 
                 // Interventions

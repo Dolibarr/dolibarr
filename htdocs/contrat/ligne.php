@@ -422,6 +422,8 @@ if ($id > 0)
             print '</td>';
 
             print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Close").'"></td></tr>';
+
+            print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="3"><input size="70" type="text" name="commentaire" value="'.$_POST["commentaire"].'"></td></tr>';
             print '</table>';
 
             print '</form>';

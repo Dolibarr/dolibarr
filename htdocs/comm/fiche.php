@@ -576,7 +576,7 @@ if ($_socid > 0)
         $result = $db->query($sql);
         $i = 0;
         $num = $db->num_rows($result);
-        $tag = true;
+        $var=true;
 
         while ($i < $num)
         {
@@ -622,7 +622,6 @@ if ($_socid > 0)
 
             print "</tr>\n";
             $i++;
-            $tag = !$tag;
         }
         print "</table>";
 

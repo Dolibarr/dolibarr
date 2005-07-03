@@ -625,25 +625,31 @@ else
                         {
                             print '<td>&nbsp;</td>';
                         }
-                        // Icon update et delete
-                        if ($contrat->statut == 0  && $objp->statut == 0 && $user->rights->contrat->creer)
+                        // Icon update et delete (statut contrat 0=brouillon,1=validé,2=fermé)
+                        if ($contrat->statut != 2  && $user->rights->contrat->creer)
                         {
                             print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
                             print img_edit();
                             print '</a></td>';
+                        }
+                        else {
+                            print '<td colspan="2">&nbsp;</td>';
+                        }
+                        if ($contrat->statut == 0  && $user->rights->contrat->creer)
+                        {
                             print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
                             print img_delete();
                             print '</a></td>';
                         }
                         else
                         {
-                            print '<td colspan="2">&nbsp;</td>';
+                            print '<td>&nbsp;</td>';
                         }
             
                         // Statut
                         print '<td align="center">';
                         if ($contrat->statut == 1) print '<a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id.'&amp;ligne='.$objp->rowid.'">';;
-                        print '<img src="./statut'.$objp->statut.'.png" border="0" alt="statut">';
+                        print img_statut($objp->statut);
                         if ($contrat->statut == 1) print '</a>';
                         print '</td>';
 
