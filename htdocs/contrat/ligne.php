@@ -261,7 +261,7 @@ if ($id > 0)
                 }
                 else
                 {
-                    print '<td>&nbsp;</td><td>'.stripslashes(nl2br($objp->description))."</td>\n";
+                    print '<td>'.stripslashes(nl2br($objp->description))."</td>\n";
                 }
                 print '<td align="center">'.$objp->tva_tx.'%</td>';
 
@@ -280,14 +280,8 @@ if ($id > 0)
 
                 print '<td>&nbsp;</td><td>&nbsp;</td>';
 
-                if ($objp->fk_product > 0)
-                {
-                    print '<td align="center"><img src="./statut'.$objp->statut.'.png" border="0" alt="statut"></td>';
-                }
-                else
-                {
-                    print '<td>&nbsp;</td>';
-                }
+                // Statut
+                print '<td align="center">'.img_statut($objp->statut,$langs->trans("ServiceStatusInitial")).'</td>';
 
                 print "</tr>\n";
 
