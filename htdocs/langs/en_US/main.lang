@@ -102,6 +102,7 @@ Card=Card
 Date=Date
 DateCreation=Creation date
 DateModification=Modification date
+DateLastModification=Last modification date
 DateValidation=Validation date
 DateClosing=Closing date
 DateDue=Due date

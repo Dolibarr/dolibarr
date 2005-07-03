@@ -102,6 +102,7 @@ Card=Fiche
 Date=Date
 DateCreation=Date création
 DateModification=Date modification
+DateLastModification=Date dernière modification
 DateValidation=Date validation
 DateClosing=Date clôture
 DateDue=Date échéance
