@@ -42,8 +42,13 @@ class Contrat
     var $ref;
     var $product;
     var $societe;
+
+    var $user_author;
     var $user_service;
     var $user_cloture;
+    var $date_creation;
+    var $date_cloture;
+
     var $commercial_signature_id;
     var $commercial_suivi_id;
     
@@ -559,5 +564,53 @@ class Contrat
         if ($statut == 2) { return $langs->trans("ContractStatusClosed"); }
     }
 
+
+   /*
+    *       \brief     Charge les informations d'ordre info dans l'objet contrat
+    *       \param     id     id du contrat a charger
+    */
+    function info($id)
+    {
+        $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("date_cloture")." as date_cloture,";
+        $sql.= $this->db->pdate("c.tms")." as date_modification,";
+        $sql.= " fk_user_author, fk_user_cloture";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
+        $sql.= " WHERE c.rowid = ".$id;
+
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+
+                $this->id = $obj->rowid;
+
+                if ($obj->fk_user_author) {
+                    $cuser = new User($this->db, $obj->fk_user_author);
+                    $cuser->fetch();
+                    $this->user_creation     = $cuser;
+                }
+
+                if ($obj->fk_user_cloture) {
+                    $cuser = new User($this->db, $obj->fk_user_cloture);
+                    $cuser->fetch();
+                    $this->user_cloture = $cuser;
+                }
+
+                $this->date_creation     = $obj->datec;
+                $this->date_modification = $obj->date_modification;
+                $this->date_cloture      = $obj->date_cloture;
+            }
+
+            $this->db->free($result);
+
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
+    
 }
 ?>

@@ -125,6 +125,11 @@ if ($id > 0)
         $head[$h][1] = $langs->trans("ContractCard");
         $h++;
 
+        $head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$contrat->id;
+        $head[$h][1] = $langs->trans("Info");
+        $hselected = $h;
+        $h++;      
+        
         $head[$h][0] = DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id."&ligne=".$_GET["ligne"];
         $head[$h][1] = $langs->trans($langs->trans("EditServiceLine"));
         $hselected = $h;
@@ -352,12 +357,10 @@ if ($id > 0)
              */
             $form = new Form($db);
 
-            print '<table class="noborder"><tr><td>';
-
             print '<form action="ligne.php?id='.$contrat->id.'&amp;ligne='.$_GET["ligne"].'&amp;action=active" method="post">';
 
             print '<table class="noborder" width="100%">';
-            print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ActivateService").'</td></tr>';
+            print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ActivateService").'</td></tr>';
 
             // Definie date debut et fin par defaut
             if ($_POST["remonth"]) $dateactstart = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
@@ -376,18 +379,21 @@ if ($id > 0)
 
             print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
             print $form->select_date($dateactstart);
-            print '</td></tr>';
+            print '</td>';
 
-            print '<tr '.$bc[$var].'><td>'.$langs->trans("DateEndPlanned").'</td><td>';
+            print '<td>'.$langs->trans("DateEndPlanned").'</td><td>';
             print $form->select_date($dateactend,"end");
-            print '</td></tr>';
+            print '</td>';
+            
+            print '<td align="center" rowspan="2" valign="middle"><input type="submit" class="button" value="'.$langs->trans("Activate").'"></td>';
 
-            print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td><input size="50" type="text" name="commentaire"></td></tr>';
+            print '</tr>';
 
-            print '<tr '.$bc[$var].'><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Activate").'"></td></tr>';
+            print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="3"><input size="70" type="text" name="commentaire" value="'.$_POST["commentaire"].'"></td></tr>';
+
             print '</table>';
 
-            print '</form><br></td></tr></table>';
+            print '</form>';
         }
 
         if ($user->rights->contrat->activer && $contrat->statut == 1 && $objp->statut == 4)
@@ -424,7 +430,7 @@ if ($id > 0)
             print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Close").'"></td></tr>';
             print '</table>';
 
-            print '</form><br></td></tr></table>';
+            print '</form>';
         }
         
     }

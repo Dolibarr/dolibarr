@@ -62,19 +62,6 @@ print '<table class="noborder" width="100%">';
 
 print '<tr><td width="30%" valign="top">';
 
-// Légende
-$var=false;
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Legend").'</td></tr>';
-print '<tr '.$bc[$var].'><td nowrap>';
-print '<img src="./statut0.png" border="0" alt="statut">&nbsp;Statut initial<br />';
-print '<img src="./statut4.png" border="0" alt="statut">&nbsp;'.$langs->trans("ContractStatusRunning").'<br />';
-print '<img src="./statut5.png" border="0" alt="statut">&nbsp;'.$langs->trans("Closed").'<br />';
-print '</td></tr>';
-print '</table>';
-
-print '<br>';
-    
 /*
  * Recherche Contrat
  */
@@ -85,8 +72,21 @@ if ($conf->contrat->enabled) {
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
 	print '<tr '.$bc[$var].'><td nowrap>';
 	print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_contract" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "</table></form><br>\n";
+	print "</table></form>\n";
 }
+
+print '<br>';
+    
+// Légende
+$var=false;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ServicesLegend").'</td></tr>';
+print '<tr '.$bc[$var].'><td nowrap>';
+print img_statut(0,$langs->trans("ServiceStatusInitial")).'&nbsp;'.$langs->trans("ServiceStatusInitial").'<br />';
+print img_statut(4,$langs->trans("ServiceStatusRunning")).'&nbsp;'.$langs->trans("ServiceStatusRunning").'<br />';
+print img_statut(5,$langs->trans("ServiceStatusClosed")).'&nbsp;'.$langs->trans("ServiceStatusClosed").'<br />';
+print '</td></tr>';
+print '</table>';
 
 
 print '</td><td width="70%" valign="top">';
@@ -94,13 +94,18 @@ print '</td><td width="70%" valign="top">';
 
 // Last contracts
 $max=5;
-$sql = "SELECT count(cd.rowid) as nb, c.rowid as cid, c.datec, c.statut, s.nom, s.idp as sidp";
+$sql = 'SELECT ';
+$sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > sysdate()",1,0).') as nb_running,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= sysdate())",1,0).') as nb_late,';
+$sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
+$sql.= " c.rowid as cid, c.datec, c.statut, s.nom, s.idp as sidp";
 $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 $sql.= " WHERE c.fk_soc = s.idp ";
 if ($socid > 0) $sql .= " AND s.idp = $socid";
 $sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.idp";
-$sql.= " ORDER BY c.date_contrat DESC";
+$sql.= " ORDER BY c.datec DESC";
 $sql.= " LIMIT $max";
 
 $result=$db->query($sql);
@@ -111,7 +116,12 @@ if ($result)
     
     print '<table class="noborder" width="100%">';
     
-    print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("LastContracts",5).'</td>';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastContracts",5).'</td>';
+    print '<td align="center">'.$langs->trans("DateCreation").'</td>';
+    print '<td align="center">'.$langs->trans("Status").'</td>';
+    print '<td width="16">'.img_statut(0,$langs->trans("ServiceStatusInitial")).'</td>';
+    print '<td width="16">'.img_statut(4,$langs->trans("ServiceStatusRunning")).'</td>';
+    print '<td width="16">'.img_statut(5,$langs->trans("ServiceStatusClosed")).'</td>';
     print "</tr>\n";
     
     $contratstatic=new Contrat($db);
@@ -124,11 +134,15 @@ if ($result)
     
         print "<tr $bc[$var]>";
         print "<td><a href=\"fiche.php?id=$obj->cid\">";
-        print img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
-        print '<td align="center">'.$langs->trans("ServicesNomberShort",$obj->nb).'</td>';
+        print img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a>';
+        if ($obj->nb_late) print img_warning($langs->trans("Late"));
+        print '</td>';
         print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
         print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
         print '<td align="center">'.$contratstatic->LibStatut($obj->statut).'</td>';
+        print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
+        print '<td align="center">'.($obj->nb_running+$obj->nb_late>0?$obj->nb_running+$obj->nb_late:'').'</td>';
+        print '<td align="center">'.($obj->nb_closed>0?$obj->nb_closed:'').'</td>';
         print "</tr>\n";
         $i++;
     }
@@ -191,13 +205,12 @@ else
 print '<br>';
 
 // Last activated services
-$max=10;
+$max=5;
 
 $sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE cd.statut = 4";
-$sql.= " AND cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
-$sql.= " ORDER BY cd.date_ouverture DESC";
+$sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
+$sql.= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )
 {
@@ -206,7 +219,7 @@ if ( $db->query($sql) )
 
     print '<table class="noborder" width="100%">';
 
-    print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastActivatedServices",min($num,$max)).'</td>';
+    print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastModifiedServices",min($num,$max)).'</td>';
     print "</tr>\n";
 
     $var=True;
@@ -216,7 +229,9 @@ if ( $db->query($sql) )
         $var=!$var;
         print "<tr $bc[$var]>";
 
-        print '<td width="50"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->fk_contrat.'</a></td>';
+        print '<td width="50" nowrap><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->fk_contrat.'</a>';
+        if ($obj->nb_late) print img_warning($langs->trans("Late"));
+        print '</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
         if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
         else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';

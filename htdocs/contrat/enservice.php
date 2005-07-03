@@ -106,7 +106,10 @@ if ($resql)
       print '<td><a href="../product/fiche.php?id='.$obj->pid.'">'.img_object($langs->trans("ShowService"),"service").' '.dolibarr_trunc($obj->label,20).'</a></td>';
       print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
       print '<td align="center">'.dolibarr_print_date($obj->date_ouverture).'</td>';
-      print '<td align="center">'.($obj->date_fin_validite?dolibarr_print_date($obj->date_fin_validite):'&nbsp;').'</td>';
+      print '<td align="center">'.($obj->date_fin_validite?dolibarr_print_date($obj->date_fin_validite):'&nbsp;');
+      if ($obj->date_fin_validite < mktime()) print img_warning($langs->trans("Late"));
+      else print '&nbsp;&nbsp;&nbsp;&nbsp;';
+      print '</td>';
       print '<td align="center"><a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$obj->cid.'&ligne='.$obj->rowid.'"><img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a></td>';
       print "</tr>\n";
       $i++;
