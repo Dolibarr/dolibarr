@@ -446,14 +446,14 @@ class Form
     $sql.= " WHERE p.envente = 1";
     if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
     $sql.= " ORDER BY p.nbvente DESC";
-    $sql.= " LIMIT $limit";
+    if ($limit) $sql.= " LIMIT $limit";
     
     $result=$this->db->query($sql);
     if ($result)
     {
     	print '<select class="flat" name="'.$htmlname.'">';
         print "<option value=\"0\" selected>&nbsp;</option>";
-    
+
         $num = $this->db->num_rows($result);
         $i = 0;
         while ($i < $num)
@@ -735,53 +735,52 @@ class Form
   }
 
 
-  /**
-   *    \brief  Selection du taux de tva
-   *
-   */
-	 
-  function select_tva($name='', $defaulttx = '')
-  {
-    if (! strlen(trim($name)))
-      {
-	$name = "tauxtva";
-      }
-
-    $file = DOL_DOCUMENT_ROOT . "/conf/tva.local.php";
-    if (is_readable($file))
-      {
-	include $file;
-      }
-    else
-      {
-	$txtva[0] = '19.6';
-	$txtva[1] = '5.5';
-	$txtva[2] = '0';
-      }
-
-    if ($defaulttx == '')
-      {
-	$defaulttx = $txtva[0];
-      }
-
-    $taille = sizeof($txtva);
-
-    print '<select class="flat" name="'.$name.'">';
-
-    for ($i = 0 ; $i < $taille ; $i++)
-      {
-	print '<option value="'.$txtva[$i].'"';
-	if ($txtva[$i] == $defaulttx)
-	  {
-	    print ' selected>'.$txtva[$i].' %</option>';
-	  }
-	else
-	  {
-	    print '>'.$txtva[$i].' %</option>';
-	  }
-      }
-    print '</select>';
-  }
+    /**
+     *      \brief      Selection du taux de tva
+     *      \param      name            Nom champ html
+     *      \param      defaulttx       Taux tva présélectionné
+     *      \param      empy            Proposer ligne "Defaut"
+     */
+    function select_tva($name='tauxtva', $defaulttx='', $default=0)
+    {
+        global $langs;
+        
+        $file = DOL_DOCUMENT_ROOT . "/conf/tva.local.php";
+        if (is_readable($file))
+        {
+            include $file;
+        }
+        else
+        {
+            $txtva[0] = '19.6';
+            $txtva[1] = '5.5';
+            $txtva[2] = '0';
+        }
+    
+        if ($defaulttx == '')
+        {
+            $defaulttx = $txtva[0];
+        }
+    
+        $taille = sizeof($txtva);
+    
+        print '<select class="flat" name="'.$name.'">';
+        if ($default) print '<option value="0">'.$langs->trans("Default").'</option>';
+        
+        for ($i = 0 ; $i < $taille ; $i++)
+        {
+            print '<option value="'.$txtva[$i].'"';
+            if ($txtva[$i] == $defaulttx)
+            {
+                print ' selected>'.$txtva[$i].' %</option>';
+            }
+            else
+            {
+                print '>'.$txtva[$i].' %</option>';
+            }
+        }
+        print '</select>';
+    }
 
 
   /**
