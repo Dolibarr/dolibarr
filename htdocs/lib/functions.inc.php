@@ -353,29 +353,29 @@ function dolibarr_print_object_info($object)
 {
     global $langs;
         
-    if (isset($object->user_creation))
+    if (isset($object->user_creation) && $object->user_creation->fullname)
         print $langs->trans("CreatedBy")." : " . $object->user_creation->fullname . '<br>';
 
     if (isset($object->date_creation))
         print $langs->trans("DateCreation")." : " . dolibarr_print_date($object->date_creation,"%A %d %B %Y %H:%M:%S") . '<br>';
     
-    if (isset($object->user_modification))
+    if (isset($object->user_modification) && $object->user_modification->fullname)
         print $langs->trans("ModifiedBy")." : " . $object->user_modification->fullname . '<br>';
         
     if (isset($object->date_modification))
-        print $langs->trans("DateModification")." : " . dolibarr_print_date($object->date_modification,"%A %d %B %Y %H:%M:%S") . '<br>';
+        print $langs->trans("DateLastModification")." : " . dolibarr_print_date($object->date_modification,"%A %d %B %Y %H:%M:%S") . '<br>';
     
-    if (isset($object->user_validation))
+    if (isset($object->user_validation) && $object->user_validation->fullname)
         print $langs->trans("ValidatedBy")." : " . $object->user_validation->fullname . '<br>';
     
     if (isset($object->date_validation))
         print $langs->trans("DateValidation")." : " . dolibarr_print_date($object->date_modification,"%A %d %B %Y %H:%M:%S") . '<br>';
 
-    if (isset($object->user_cloture))
+    if (isset($object->user_cloture) && $object->user_cloture->fullname )
         print $langs->trans("ClosedBy")." : " . $object->user_cloture->fullname . '<br>';
 
     if (isset($object->date_cloture))
-        print $langs->trans("DateClosing")." : " . dolibarr_print_date($object->date_modification,"%A %d %B %Y %H:%M:%S") . '<br>';
+        print $langs->trans("DateClosing")." : " . dolibarr_print_date($object->date_cloture,"%A %d %B %Y %H:%M:%S") . '<br>';
 }
 
 /**
@@ -415,9 +415,9 @@ function dolibarr_print_phone($phone,$country="FR")
 
 /**
         \brief      Tronque une chaine à une taille donnée en ajoutant les points de suspension si cela dépasse
-        \param      string			Chaine à tronquer
-        \param      size			Longueur max de la chaine
-        \return     string			Chaine tronquée
+        \param      string		Chaine à tronquer
+        \param      size		Longueur max de la chaine
+        \return     string		Chaine tronquée
 */
 function dolibarr_trunc($string,$size=40)
 {
@@ -426,9 +426,10 @@ function dolibarr_trunc($string,$size=40)
 }
 
 /**
-        \brief  Affiche logo propre à une notion (fonction générique)
-        \param  alt     Texte sur le alt de l'image
-        \param  object  Objet pour lequel il faut afficher le logo (exemple: user, group, action, bill, contract, propal, product, ...)
+        \brief      Affiche logo propre à une notion (fonction générique)
+        \param      alt         Texte sur le alt de l'image
+        \param      object      Objet pour lequel il faut afficher le logo (exemple: user, group, action, bill, contract, propal, product, ...)
+        \return     string      Retourne tags <img>
 */
 function img_object($alt, $object)
 {
@@ -437,9 +438,10 @@ function img_object($alt, $object)
 }
 
 /**
-        \brief  Affiche logo action
-        \param  alt         Texte sur le alt de l'image
-        \param  numaction   Determine image action
+        \brief      Affiche logo action
+        \param      alt         Texte sur le alt de l'image
+        \param      numaction   Determine image action
+        \return     string      Retourne tags <img>
 */
 function img_action($alt = "default", $numaction)
 {
@@ -455,8 +457,27 @@ function img_action($alt = "default", $numaction)
 }
 
 /**
-        \brief  Affiche logo fichier
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo statut
+        \param      num         Numéro statut
+        \param      text        Texte a afficher sur alt
+        \return     string      Retourne tags <img>
+*/
+function img_statut($num,$alt = "default")
+{
+    global $conf,$langs;
+    if ($alt=="default") {
+        if ($num == 0) $alt=$langs->trans("Draft");
+        if ($num == 1) $alt=$langs->trans("Late");
+        if ($num == 4) $alt=$langs->trans("Running");
+        if ($num == 5) $alt=$langs->trans("Closed");
+    } 
+    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/statut'.$num.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/**
+        \brief      Affiche logo fichier
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_file($alt = "default")
 {
@@ -466,8 +487,9 @@ function img_file($alt = "default")
 }
 
 /**
-        \brief  Affiche logo dossier
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo dossier
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_folder($alt = "default")
 {
@@ -477,8 +499,9 @@ function img_folder($alt = "default")
 }
 
 /**
-        \brief  Affiche logo nouveau fichier
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo nouveau fichier
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_file_new($alt = "default")
 {
@@ -488,8 +511,9 @@ function img_file_new($alt = "default")
 }
 
 /**
-        \brief  Affiche logo pdf
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo pdf
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_pdf($alt = "default")
 {
@@ -499,8 +523,9 @@ function img_pdf($alt = "default")
 }
 
 /**
-        \brief  Affiche logo +
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo +
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_edit_add($alt = "default")
 {
@@ -509,8 +534,9 @@ function img_edit_add($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit_add.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 /**
-        \brief  Affiche logo -
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo -
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_edit_remove($alt = "default")
 {
@@ -520,8 +546,9 @@ function img_edit_remove($alt = "default")
 }
 
 /**
-        \brief  Affiche logo editer/modifier fiche
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo editer/modifier fiche
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_edit($alt = "default")
 {
@@ -531,8 +558,9 @@ function img_edit($alt = "default")
 }
 
 /**
-        \brief  Affiche logo effacer
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo effacer
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_delete($alt = "default")
 {
@@ -542,8 +570,9 @@ function img_delete($alt = "default")
 }
 
 /**
-        \brief  Affiche logo désactiver
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo désactiver
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_disable($alt = "default")
 {
@@ -554,8 +583,9 @@ function img_disable($alt = "default")
 
 
 /**
-        \brief  Affiche logo info
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo info
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_info($alt = "default")
 {
@@ -565,8 +595,9 @@ function img_info($alt = "default")
 }
 
 /**
-        \brief  Affiche logo warning
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo warning
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_warning($alt = "default")
 {
@@ -576,8 +607,9 @@ function img_warning($alt = "default")
 }
 
 /**
-        \brief  Affiche logo warning
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo warning
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_error($alt = "default")
 {
@@ -587,8 +619,9 @@ function img_error($alt = "default")
 }
 
 /**
-        \brief  Affiche logo alerte
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo alerte
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_alerte($alt = "default")
 {
@@ -598,8 +631,9 @@ function img_alerte($alt = "default")
 }
 
 /**
-        \brief  Affiche logo téléphone in
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo téléphone in
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_phone_in($alt = "default")
 {
@@ -609,8 +643,9 @@ function img_phone_in($alt = "default")
 }
 
 /**
-        \brief  Affiche logo téléphone out
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo téléphone out
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_phone_out($alt = "default")
 {
@@ -620,8 +655,9 @@ function img_phone_out($alt = "default")
 }
 
 /**
-        \brief  Affiche logo suivant
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo suivant
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_next($alt = "default")
 {
@@ -633,8 +669,9 @@ function img_next($alt = "default")
 }
 
 /**
-        \brief  Affiche logo précédent
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo précédent
+        \param      alt     Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_previous($alt = "default")
 {
@@ -644,9 +681,10 @@ function img_previous($alt = "default")
 }
 
 /**
-        \brief  Affiche logo bas
-        \param  alt         Texte sur le alt de l'image
-        \param  selected    Affiche version "selected" du logo
+        \brief      Affiche logo bas
+        \param      alt         Texte sur le alt de l'image
+        \param      selected    Affiche version "selected" du logo
+        \return     string      Retourne tags <img>
 */
 function img_down($alt = "default", $selected=1)
 {
@@ -657,9 +695,10 @@ function img_down($alt = "default", $selected=1)
 }
 
 /**
-        \brief  Affiche logo haut
-        \param  alt         Texte sur le alt de l'image
-        \param  selected    Affiche version "selected" du logo
+        \brief      Affiche logo haut
+        \param      alt         Texte sur le alt de l'image
+        \param      selected    Affiche version "selected" du logo
+        \return     string      Retourne tags <img>
 */
 function img_up($alt = "default", $selected=1)
 {
@@ -671,8 +710,9 @@ function img_up($alt = "default", $selected=1)
 
 
 /**
-        \brief  Affiche logo tick
-        \param  alt     Texte sur le alt de l'image
+        \brief      Affiche logo tick
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tags <img>
 */
 function img_tick($alt = "default")
 {
@@ -680,6 +720,7 @@ function img_tick($alt = "default")
   if ($alt=="default") $alt=$langs->trans("Active");
   return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
+
 
 /**
 		\brief      Affiche formulaire de login
