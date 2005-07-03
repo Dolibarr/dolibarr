@@ -438,8 +438,23 @@ class DoliDb
     {
         return strftime("%Y%m%d%H%M%S",$fname);
     }
+
+
+    /**
+        \brief      Formatage d'un if SQL
+        \param		operande1       operande 1
+        \param		operande2       operande 2
+        \param		resok           resultat si test egal
+        \param		resko           resultat si test non egal
+        \return		string          chaine formaté SQL
+    */
+    function ifsql($operande1,$operande2,$resok,$resko)
+    {
+        return 'IF('.$operande1.'='.$operande2.','.$resok.','.$resko.')';
+    }
     
-    
+
+
     /**
         \brief 		Renvoie la derniere requete soumise par la methode query()
         \return	    lastquery
