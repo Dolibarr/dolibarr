@@ -176,7 +176,9 @@ $conf->langage_tiret=ereg_replace('_','-',$conf->langage);
 setlocale(LC_ALL, $conf->langage_tiret);    // Compenser pb de locale avec windows
 setlocale(LC_ALL, $conf->langage);
 if (defined("MAIN_FORCE_SETLOCALE_LC_ALL")) setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL);
-if (defined("MAIN_FORCE_SETLOCALE_LC_TIME")) setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_TIME);
+if (defined("MAIN_FORCE_SETLOCALE_LC_TIME")) setlocale(LC_TIME, MAIN_FORCE_SETLOCALE_LC_TIME);
+if (defined("MAIN_FORCE_SETLOCALE_LC_NUMERIC")) setlocale(LC_NUMERIC, MAIN_FORCE_SETLOCALE_LC_NUMERIC);
+if (defined("MAIN_FORCE_SETLOCALE_LC_MONETARY")) setlocale(LC_MONETARY, MAIN_FORCE_SETLOCALE_LC_MONETARY);
 
 require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
 $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
