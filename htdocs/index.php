@@ -39,6 +39,7 @@ if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 
 llxHeader();
 
+
 $userstring=$user->prenom . ' ' . $user->nom .' ('.$user->login.')';
 print_fiche_titre($langs->trans("WelcomeString",dolibarr_print_date(mktime(),"%A %d %B %Y"),$userstring), '<a href="about.php">'.$langs->trans("About").'</a>');
 
@@ -47,6 +48,16 @@ if (defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
   print '<br>'.nl2br(MAIN_MOTD).'<br>';
 }
 
+// Affiche warning répertoire install existe (si utilisateur admin)
+if ($user->admin)
+{
+    if (is_dir(DOL_DOCUMENT_ROOT."/install")) 
+    {
+        $langs->load("other");
+        print '<div class="warning">'.$langs->trans("WarningInstallDirExists",DOL_DOCUMENT_ROOT."/install").' ';
+        print $langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install").'</div>';   
+    }
+}
 print "<br>\n";
 
 
