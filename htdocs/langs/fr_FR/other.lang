@@ -19,5 +19,5 @@ TotalSizeOfAttachedFiles=Taille total des fichiers/documents liés
 AttachANewFile=Ajouter un nouveau fichier/document
 LinkedObject=Objet lié
 NbOfActiveNotifications=Nombre de notifications
-WarningInstallDirExists=Attention, le répertoire install (%s) existe toujours. Il s'agit d'une faille sérieuse de sécurité. Vous devriez l'effacer dès que possible.
-WarningUntilDirRemoved=Cette alerte restera active tant que le répertoire existera (bien que visible aux utilisateurs admin uniquement).
+WarningInstallDirExists=Attention, le répertoire install (%s) existe toujours. Une fois l'install terminée, sa présence n'est plus nécessaire et représente une faille sérieuse de sécurité. Vous devriez l'effacer dès que possible.
+WarningUntilDirRemoved=Cette alerte restera active tant que le répertoire existera (alerte visible pour les utilisateurs admin uniquement).
