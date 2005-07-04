@@ -159,6 +159,7 @@ $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
 
 $handle=opendir($dir);
 $modules = array();
+$orders = array();
 $i = 0;
 $j = 0;
 while (($file = readdir($handle))!==false)
@@ -169,7 +170,7 @@ while (($file = readdir($handle))!==false)
 
         if ($modName)
         {
-            include_once("../includes/modules/$file");
+            include_once($dir.$file);
             $objMod = new $modName($db);
 
             if ($objMod->numero > 0)
@@ -309,5 +310,5 @@ foreach ($orders as $key => $value)
 }
 print "</table></div>\n";
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>

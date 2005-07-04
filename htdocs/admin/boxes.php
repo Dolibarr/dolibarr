@@ -284,5 +284,5 @@ print '</table><br>';
 
 $db->close();
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>

@@ -38,119 +38,158 @@
 
 class InterfaceDemo
 {
+    var $db;
+    
+    /**
+     *   \brief      Constructeur.
+     *   \param      DB      handler d'accès base
+     */
+    function InterfaceDemo($DB)
+    {
+        $this->db = $DB ;
+    
+        $this->name = "Demo";
+        $this->family = "demo";
+        $this->description = "Les triggers de ce composant sont des fonctions vierges. Elles n'ont aucun effet. Ce composant est fourni à des fins de tutorial.";
+        $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+    }
+    
+    /**
+     *   \brief      Renvoi nom du lot de triggers
+     *   \return     string      Nom du lot de triggers
+     */
+    function getName()
+    {
+        return $this->name;
+    }
+    
+    /**
+     *   \brief      Renvoi descriptif du lot de triggers
+     *   \return     string      Descriptif du lot de triggers
+     */
+    function getDesc()
+    {
+        return $this->description;
+    }
 
-   /**
-    *   \brief      Constructeur.
-    *   \param      DB      handler d'accès base
-    */
-  function InterfaceDemo($DB)
-  {
-    $this->db = $DB ;
-  }
+    /**
+     *   \brief      Renvoi version du lot de triggers
+     *   \return     string      Version du lot de triggers
+     */
+    function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-   /**
-    *   \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
-    *               D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
-    *   \param      action      Code de l'evenement
-    *   \param      object      Objet concerné
-    *   \param      user        Objet user
-    *   \param      lang        Objet lang
-    *   \param      conf        Objet conf
-    */
-  function run_trigger($action,$object,$user,$lang,$conf)
-  {
+        if ($this->version == 'experimental') return $langs->trans("Experimental");
+        elseif ($this->version == 'dolibarr') return DOL_VERSION;
+        elseif ($this->version) return $this->version;
+        else return $langs->trans("Unknown");
+    }
+    
+    /**
+     *   \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
+     *               D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
+     *   \param      action      Code de l'evenement
+     *   \param      object      Objet concern
+     *   \param      user        Objet user
+     *   \param      lang        Objet lang
+     *   \param      conf        Objet conf
+     */
+    function run_trigger($action,$object,$user,$lang,$conf)
+    {
         // Mettre ici le code à exécuter en réaction de l'action
         // Les données de l'action sont stockées dans $object
-
+    
         // Companies
         if     ($action == 'COMPANY_CREATE')
         {
             dolibarr_syslog("Trigger for action '$action' launched. id=".$object->id);
         }
         elseif ($action == 'COMPANY_MODIFY')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched. id=".$object->id);
         }
         elseif ($action == 'COMPANY_DELETE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched. id=".$object->id);
         }
         // Contracts
         elseif ($action == 'CONTRACT_CREATE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'CONTRACT_MODIFY')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'CONTRACT_ACTIVATE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'CONTRACT_CANCEL')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'CONTRACT_CLOSE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'CONTRACT_DELETE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         // Bills
         elseif ($action == 'BILL_CREATE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'BILL_MODIFY')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'BILL_VALIDATE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'BILL_CANCEL')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'BILL_DELETE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         // Products
         elseif ($action == 'PRODUCT_CREATE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'PRODUCT_MODIFY')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'PRODUCT_DELETE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'ORDER_CREATE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'ORDER_MODIFY')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         elseif ($action == 'ORDER_DELETE')
-        {        
+        {
             dolibarr_syslog("Trigger for action '$action' launched");
         }
         else
         {
             dolibarr_syslog("A trigger for action '$action' was ran but no handler found.");
         }
-  }
+    }
 
 }
 ?>
