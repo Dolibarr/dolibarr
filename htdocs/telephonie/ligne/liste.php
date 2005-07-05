@@ -105,6 +105,12 @@ if (strlen($_GET["statut"]))
   $sql .= " AND l.statut = ".$_GET["statut"];
 }
 
+if ($_GET["fournisseur"])
+{
+  $sql .= " AND l.fk_fournisseur ='".$_GET["fournisseur"]."'";
+}
+
+
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
