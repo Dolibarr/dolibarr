@@ -46,7 +46,8 @@ $GLOBALS['_DOLIPEAR_destructor_object_list'] = array();
 $GLOBALS['_DOLIPEAR_shutdown_funcs']         = array();
 $GLOBALS['_DOLIPEAR_error_handler_stack']    = array();
 
-ini_set('track_errors', true);
+// Fix LDR Pour compatibilité tout PHP
+//ini_set('track_errors', true);
 
 /**
  * Base class for other DOLIPEAR classes.  Provides rudimentary
