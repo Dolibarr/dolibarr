@@ -1049,12 +1049,12 @@ else
                 if ($num_lignes)
                 {
                     print "<tr class=\"liste_titre\">";
-                    print '<td width="54%">'.$langs->trans("Description").'</td>';
-                    print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
-                    print '<td width="12%" align="right">'.$langs->trans("PriceUHT").'</td>';
-                    print '<td width="8%" align="right">'.$langs->trans("Qty").'</td>';
-                    print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
-                    print '<td width="10%" align="right">'.$langs->trans("AmountHT").'</td>';
+                    print '<td>'.$langs->trans("Description").'</td>';
+                    print '<td width="50" align="right">'.$langs->trans("VAT").'</td>';
+                    print '<td width="80" align="right">'.$langs->trans("PriceUHT").'</td>';
+                    print '<td width="50" align="right">'.$langs->trans("Qty").'</td>';
+                    print '<td width="50" align="right">'.$langs->trans("Discount").'</td>';
+                    print '<td width="80" align="right">'.$langs->trans("AmountHT").'</td>';
                     print '<td colspan="3">&nbsp;</td>';
                     print "</tr>\n";
                 }
@@ -1112,7 +1112,7 @@ else
                             print img_delete();
                             print '</a></td>';
 
-                            print '<td align="right" height="28">';
+                            print '<td align="right">';
                             if ($i > 0)
                             {
                                 print '<a href="facture.php?facid='.$fac->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
@@ -1308,7 +1308,6 @@ else
                 print "</div>\n";
 
             }
-            print "<p>\n";
 
             /*
              * Documents générés
@@ -1364,9 +1363,8 @@ else
             print '</td><td valign="top" width="50%">';
 
             /*
-            * Liste des actions propres à la facture
-            *
-            */
+             * Liste des actions propres à la facture
+             */
             $sql = "SELECT id, ".$db->pdate("a.datea")." as da, a.label, a.note, code";
             $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."user as u ";
             $sql .= " WHERE a.fk_user_author = u.rowid ";
@@ -1412,9 +1410,8 @@ else
 
 
             /*
-            * Choix d'un projet
-            *
-            */
+             * Choix d'un projet
+             */
             if ($_GET["action"] == 'classer')
             {
                 print "<p><form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id\">\n";
@@ -1434,9 +1431,8 @@ else
 
 
             /*
-            * Affiche formulaire mail
-            *
-            */
+             * Affiche formulaire mail
+             */
             if ($_GET["action"] == 'presend')
             {
                 print '<br>';
@@ -1543,7 +1539,7 @@ else
                         $total = $total + $objp->price;
                         $i++;
                     }
-                    print "<tr><td align=\"right\" colspan=\"3\">".$langs->trans("TotalHT").": <b>".price($total)."</b> ".$conf->monnaie."</td></tr>\n";
+                    print "<tr class=\"liste_total\"><td>&nbsp;</td><td align=\"left\">".$langs->trans("TotalHT")."</td><td align=\"right\">".price($total)."</td></tr>\n";
                     print "</table>";
                 }
             }
