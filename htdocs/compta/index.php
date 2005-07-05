@@ -132,8 +132,8 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	    {
 	      $obj = $db->fetch_object($resql);
 	      $var=!$var;
-	      print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("Showcompany"),"company").' '.dolibarr_trunc($obj->nom,50).'</a></td></tr>';
+	      print '<tr '.$bc[$var].'><td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("Showcompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td></tr>';
 	      $i++;
 	    }
 

@@ -26,7 +26,7 @@
 /**
         \file       htdocs/comm/propal.php
         \ingroup    propale
-        \brief      Page liste des propales
+        \brief      Page liste des propales (vision commercial)
 */
 
 require('./pre.inc.php');
@@ -42,10 +42,10 @@ if (!$user->rights->propale->lire)
 
 if ($conf->projet->enabled) require_once '../project.class.php';
 if($conf->commande->enabled) require_once '../commande/commande.class.php';
-require('./propal_model_pdf.class.php');
-require('../propal.class.php');
-require('../actioncomm.class.php');
-require(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+require_once('./propal_model_pdf.class.php');
+require_once('../propal.class.php');
+require_once('../actioncomm.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 
 /*
  *  Sécurité accés client

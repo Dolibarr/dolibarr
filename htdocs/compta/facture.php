@@ -710,26 +710,28 @@ if ($_GET["action"] == 'create')
                 /*
                 * Produits
                 */
+                print '<br>';
                 print_titre($langs->trans("Products"));
 
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
                 print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
 
+                // Lignes de propal produits prédéfinis
                 $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
                 $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = ".$_GET["propalid"];
                 $sql .= " ORDER BY pt.rowid ASC";
                 $result = $db->query($sql);
                 if ($result)
                 {
-                    $num = $db->num_rows();
+                    $num = $db->num_rows($result);
                     $i = 0;
                     $var=True;
                     while ($i < $num)
                     {
-                        $objp = $db->fetch_object();
+                        $objp = $db->fetch_object($result);
                         $var=!$var;
-                        print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
+                        print "<tr $bc[$var]><td>".img_object($langs->trans(""),"product")." ".$objp->ref."</td>\n";
                         print '<td>'.$objp->product.'</td>';
                         print "<td align=\"right\">".price($objp->price)."</td>";
                         print '<td align="center">'.$objp->remise_percent.'%</td>';
@@ -737,18 +739,20 @@ if ($_GET["action"] == 'create')
                         $i++;
                     }
                 }
+                // Lignes de propal non produits prédéfinis
                 $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
                 $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt ";
                 $sql .= " WHERE  pt.fk_propal = ".$_GET["propalid"];
                 $sql .= " AND pt.fk_product = 0";
                 $sql .= " ORDER BY pt.rowid ASC";
-                if ($db->query($sql))
+                $result=$db->query($sql);
+                if ($result)
                 {
-                    $num = $db->num_rows();
+                    $num = $db->num_rows($result);
                     $i = 0;
                     while ($i < $num)
                     {
-                        $objp = $db->fetch_object();
+                        $objp = $db->fetch_object($result);
                         $var=!$var;
                         print "<tr $bc[$var]><td>&nbsp;</td>\n";
                         print '<td>'.$objp->product.'</td>';
