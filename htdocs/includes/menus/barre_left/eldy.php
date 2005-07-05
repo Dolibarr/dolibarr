@@ -252,7 +252,6 @@ class MenuLeft {
                     {
                       $newmenu->add_submenu(DOL_URL_ROOT."/fourn/contact.php?leftmenu=suppliers",$langs->trans("Contacts"),1,$user->rights->societe->lire);
                     }
-
                     if ($conf->facture->enabled)
                     {
                         $langs->load("bills");
@@ -274,6 +273,10 @@ class MenuLeft {
                     }
                     $newmenu->add(DOL_URL_ROOT."/compta/clients.php?leftmenu=customers", $langs->trans("List"),1,$user->rights->societe->lire);
                     $newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&type=c", $langs->trans("Contacts"),1,$user->rights->societe->lire);
+                }
+                if ($conf->propal->enabled)
+                {
+                    $newmenu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"),1,$user->rights->propale->lire);
                 }
                                 
                 if ($conf->facture->enabled)
