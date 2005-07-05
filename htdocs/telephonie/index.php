@@ -96,13 +96,14 @@ else
 print '<br />';
 
 /*
- *
+ * Fournisseurs
  *
  */
 
-$sql = "SELECT distinct f.nom as fournisseur, count(*) as cc";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
+$sql = "SELECT distinct f.nom as fournisseur, f.rowid, count(*) as cc";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " ,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= " ,".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
 $sql .= " GROUP BY f.nom";
 
@@ -124,7 +125,8 @@ if ($resql)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print "<td>".$obj->fournisseur."</td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?fournisseur='.$obj->rowid.'">';
+      print $obj->fournisseur.'</a></td>';
       print '<td align="center">'.$obj->cc."</td>\n";
       print "</tr>\n";
       $i++;
