@@ -215,7 +215,7 @@ if ($cancel == $langs->trans("Cancel"))
 	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr class="liste_titre"><td>Mode</td><td>Resultat</td>';
-	  print '<td align="center">Date</td><td>Commentaire</td><td>Fichier</td>';
+	  print '<td align="center">Date MeS</td><td>Résil</td></td><td>Commentaire</td><td>Fichier</td>';
 	  print "</tr>\n";
 	  $var=True;
 	  
@@ -228,6 +228,7 @@ if ($cancel == $langs->trans("Cancel"))
 	      print '<td>'.$obj->mode."</td>\n";
 	      print '<td>'.$obj->situation."</td>\n";
 	      print '<td align="center">'.$obj->date_mise_service."</td>\n";
+	      print '<td align="center">'.$obj->date_resiliation."</td>\n";
 	      print '<td>'.$obj->commentaire."</td>\n";
 	      print '<td>'.$obj->fichier."</td>\n";
 	      print "</tr>\n";
