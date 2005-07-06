@@ -1171,7 +1171,7 @@ if ( $user->rights->telephonie->ligne_activer && ( $ligne->statut == 5 || $ligne
 }
 
 
-if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 6)
+if ( $user->rights->telephonie->ligne->creer && $ligne->statut == 6)
 {
   /**
    * A commander
@@ -1182,11 +1182,11 @@ if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 6)
 
   print '<form action="fiche.php?id='.$ligne->id.'&amp;action=acommander" method="post">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
-  print '<tr class="liste_titre"><td colspan="2">Commander la ligne</td><td>';
+  print '<tr class="liste_titre"><td colspan="2">Recommander la ligne</td><td>';
   print '<tr><td>Date</td><td>';
-  print $form->select_date();
+  print strftime("%e %B %Y", time());
   print '</td>';
-  print '<td colspan="2"><input type="submit" name="Commander"></td></tr>';
+  print '<td colspan="2"><input type="submit" value="Commander"></td></tr>';
   print '<tr><td colspan="3">Commentaire <input size="30" type="text" name="commentaire"></td></tr>';
   print '</table>';
 
