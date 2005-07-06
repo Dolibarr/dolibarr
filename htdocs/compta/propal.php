@@ -172,7 +172,7 @@ if ($_GET["propalid"])
             $relativepath = "$obj->ref/$obj->ref.pdf";
 
             if (file_exists($file)) {
-                print '<td colspan="2"><a href="'.DOL_URL_ROOT.'/document.php?type=propal&file='.urlencode($relativepath).'">'.$obj->ref.'.pdf</a></td></tr>';
+                print '<td colspan="2"><a href="'.DOL_URL_ROOT.'/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$obj->ref.'.pdf</a></td></tr>';
             }
             print '</tr>';
             /*
