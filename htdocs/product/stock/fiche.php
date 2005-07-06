@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005 Simon Tosser  <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,114 +165,151 @@ if ($_GET["action"] == 'create')
 }
 else
 {
-    if ($_GET["id"])
+  if ($_GET["id"])
     {
-
-        if ($mesg) {
-            print $mesg;
-        }
-
-        $entrepot = new Entrepot($db);
-        $result = $entrepot->fetch($_GET["id"]);
-        if (! $result)
+      
+      if ($mesg) print $mesg;
+      
+      $entrepot = new Entrepot($db);
+      $result = $entrepot->fetch($_GET["id"]);
+      if (! $result)
         {
-            dolibarr_print_error($db);
+	  dolibarr_print_error($db);
         }
-
-        /*
-         * Affichage fiche
-         */
-        if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
+      
+      /*
+       * Affichage fiche
+       */
+      if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
         {
+	  
+	  /*
+	   * Affichage onglets
+	   */
+	  $h = 0;
+	  
+	  $head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
+	  $head[$h][1] = $langs->trans("WarehouseCard");
+	  $hselected=$h;
+	  $h++;
+	  
+	  $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
+	  $head[$h][1] = $langs->trans("Info");
+	  $h++;
+	  
+	  dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
+	  
+	  print '<table class="border" width="100%">';
+	  print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
+	  
+	  print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
+	  
+	  print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
+	  print $entrepot->address;
+	  print '</td></tr>';
+	  
+	  print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$entrepot->cp.'</td>';
+	  print '<td>'.$langs->trans('Town').'</td><td>'.$entrepot->ville.'</td></tr>';
+	  
+	  print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+	  $entrepot->pays;
+	  print '</td></tr>';
+	  
+	  print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->statuts[$entrepot->statut].'</td></tr>';
+	  
+	  print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
+	  print $entrepot->nb_products();
+	  print "</td></tr>";
+	  print "</table>";
+	  
+	  //affichage de la liste des produits de l\'entrepot
+	  print '<table class="noborder" width="100%">';
+	  print "<tr class=\"liste_titre\">";
 
-            /*
-             * Affichage onglets
-             */
-            $h = 0;
+	  print_liste_field_titre($langs->trans("Product"),"", "p.ref","","","",$sortfield);
 
-            $head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
-            $head[$h][1] = $langs->trans("WarehouseCard");
-            $hselected=$h;
-            $h++;
+	  print "<td align=\"center\">".$langs->trans("Units")."</td>";
+	  print "</tr>\n";
+	  $sql = "SELECT p.rowid as rowid, p.label as produit, ps.reel as value ";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p ";
+	  $sql .= " WHERE ps.fk_product = p.rowid ";
+	  $sql .= " AND ps.reel >0 AND ps.fk_entrepot = $id";
 
-            $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
-            $head[$h][1] = $langs->trans("Info");
-            $h++;
+	  //$sql .= $db->plimit($limit + 1 ,$offset);
 
-            dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
-
-            print '<table class="border" width="100%">';
-            print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
-            print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
-
-            print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
-
-            print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
-            print $entrepot->address;
-            print '</td></tr>';
-            
-            print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$entrepot->cp.'</td>';
-            print '<td>'.$langs->trans('Town').'</td><td>'.$entrepot->ville.'</td></tr>';
-            
-            print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-            $entrepot->pays;
-            print '</td></tr>';
-
-            print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->statuts[$entrepot->statut].'</td></tr>';
-
-            print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
-            print $entrepot->nb_products();
-            print "</td></tr>";
-            print "</table>";
-
-            print "<br></div>\n";
-
+	  $resql = $db->query($sql) ;
+	  if ($resql)
+	    {$num = $db->num_rows($resql);
+	    $i = 0;
+	    $var=True;
+	    while ($i < $num)
+	      {
+		$objp = $db->fetch_object($resql);
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		//print '<td>'.dolibarr_print_date($objp->datem).'</td>';
+		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
+		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
+		print "</a></td>\n";
+		print '<td align="center">'.$objp->value.'</td>';
+		//print "<td><a href=\"fiche.php?id=$objp->entrepot_id\">";
+		//print img_object($langs->trans("ShowWarehous"),"stock").' '.$objp->stock;
+		//print "</a></td>\n";
+		print "</tr>\n";
+		$i++;
+	      }
+	    $db->free($resql);
+	    }
+	  print "</table>\n";
+	  print "<br></div>\n";
+	  
         }
-
-
-        /*
-         * Edition fiche
-         */
-        if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && 1)
+      
+      
+      /*
+       * Edition fiche
+       */
+      if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && 1)
         {
-            print_fiche_titre('Edition de la fiche entrepot', $mesg);
-
-            print '<form action="fiche.php" method="POST">';
-            print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="id" value="'.$entrepot->id.'">';
-
-            print '<table class="border" width="100%">';
-            print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="40" value="'.$entrepot->libelle.'"></td></tr>';
-            print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
-            print '<textarea name="desc" rows="4" cols="60">';
-            print $entrepot->description;
-            print "</textarea></td></tr>";
-
-            print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
-
-            print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
-            print $entrepot->address;
-            print '</textarea></td></tr>';
-            
-            print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$entrepot->cp.'"></td>';
-            print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$entrepot->ville.'"></td></tr>';
-            
-            print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-            $form->select_pays($entrepot->pays_id,$entrepot->pays_code);
-            print '</td></tr>';
-
-            print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
-            print '<select name="statut">';
-            print '<option value="0" '.($entrepot->statut == 0?"selected":"").'>'.$langs->trans("WarehouseClosed").'</option>';
-            print '<option value="1" '.($entrepot->statut == 0?"":"selected").'>'.$langs->trans("WarehouseOpened").'</option>';
-            print '</select>';
-            print '</td></tr>';
-
-            print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-            print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-            print '</table>';
-            print '</form>';
-
+	  print_fiche_titre('Edition de la fiche entrepot', $mesg);
+	  
+	  print '<form action="fiche.php" method="POST">';
+	  print '<input type="hidden" name="action" value="update">';
+	  print '<input type="hidden" name="id" value="'.$entrepot->id.'">';
+	  
+	  print '<table class="border" width="100%">';
+	  print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="40" value="'.$entrepot->libelle.'"></td></tr>';
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+	  print '<textarea name="desc" rows="4" cols="60">';
+	  print $entrepot->description;
+	  print "</textarea></td></tr>";
+	  
+	  print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
+	  
+	  print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
+	  print $entrepot->address;
+	  print '</textarea></td></tr>';
+	  
+	  print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$entrepot->cp.'"></td>';
+	  print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$entrepot->ville.'"></td></tr>';
+	  
+	  print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+	  $form->select_pays($entrepot->pays_id,$entrepot->pays_code);
+	  print '</td></tr>';
+	  
+	  print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
+	  print '<select name="statut">';
+	  print '<option value="0" '.($entrepot->statut == 0?"selected":"").'>'.$langs->trans("WarehouseClosed").'</option>';
+	  print '<option value="1" '.($entrepot->statut == 0?"":"selected").'>'.$langs->trans("WarehouseOpened").'</option>';
+	  print '</select>';
+	  print '</td></tr>';
+	  
+	  print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+	  print '</table>';
+	  print '</form>';
+	  
         }
     }
 }
@@ -291,7 +329,6 @@ if ($_GET["action"] == '')
 }
 
 print "</div>";
-
 
 
 $db->close();
