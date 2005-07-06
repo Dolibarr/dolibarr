@@ -388,7 +388,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
                         $actionmsg.="Texte utilisé dans le corps du message:<br>";
                         $actionmsg.="$message";
                     }
-                    $actionmsg2="Envoi Facture par mail";
+                    $actionmsg2="Envoi facture par mail";
                 }
                 if ($_POST["action"] == 'relance') 	{
                     $subject = "Relance facture $fac->ref";
@@ -398,7 +398,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
                         $actionmsg.="Texte utilisé dans le corps du message:<br>";
                         $actionmsg.="$message";
                     }
-                    $actionmsg2="Relance Facture par mail";
+                    $actionmsg2="Relance facture par mail";
                 }
 
                 $filepath[0] = $file;
