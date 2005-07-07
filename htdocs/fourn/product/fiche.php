@@ -371,14 +371,19 @@ else
 	      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
 	      print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
 
-	      $nblignefour=3;
+	      $nblignefour=2;
+	      if ($product->type == 0 && $conf->stock->enabled) $nblignefour++;
+	      if ($product->type == 1) $nblignefour++;
 		
-	      print '<td class="photo" valign="top" rowspan="'.$nblignefour.'">';
-	      $product->show_photo($conf->produit->dir_output);
+	      print '<td valign="middle" align="center" rowspan="'.$nblignefour.'">';
+	      $product->show_photo($conf->produit->dir_output,1);
 	      print '</td></tr>';
 
+          // Description
+	      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
 
-	      if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
+          // Stock
+	      if ($product->type == 0 && $conf->stock->enabled)
 		{
 		  print '<tr><td><a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
 		  if ($product->no_stock)
@@ -398,8 +403,8 @@ else
 		    }
 		  print '</td></tr>';
 		}
-	      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
 
+	      // Duration
 	      if ($product->type == 1)
 		{
 		  print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
@@ -418,7 +423,9 @@ else
 		}
 	      print "</table><br>\n";
 	      	      
-	      print '<table class="border" width="100%">';
+
+          // Liste des fournisseurs
+	      print '<table class="noborder" width="100%">';
 	      print '<tr class="liste_titre"><td>';
 	      print $langs->trans("Suppliers").'</td>';
 	      print '<td>'.$langs->trans("Ref").'</td>';
@@ -459,7 +466,7 @@ else
 		  $db->free();
 		}
 	      print '</table>';
-	      print "</div>\n";
+	      print "<br></div>\n";
 
 
 	      /*
