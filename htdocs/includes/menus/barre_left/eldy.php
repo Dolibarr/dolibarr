@@ -274,10 +274,6 @@ class MenuLeft {
                     $newmenu->add(DOL_URL_ROOT."/compta/clients.php?leftmenu=customers", $langs->trans("List"),1,$user->rights->societe->lire);
                     $newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&type=c", $langs->trans("Contacts"),1,$user->rights->societe->lire);
                 }
-                if ($conf->propal->enabled)
-                {
-                    $newmenu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"),1,$user->rights->propale->lire);
-                }
                                 
                 if ($conf->facture->enabled)
                 {
@@ -301,6 +297,12 @@ class MenuLeft {
                     if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"),2,$user->rights->facture->lire);
                 }
                 
+                // Propal
+                if ($conf->propal->enabled)
+                {
+                    $newmenu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"),0,$user->rights->propale->lire);
+                }
+
                 // Commandes
                 if ($conf->commande->enabled ) 
                 {
