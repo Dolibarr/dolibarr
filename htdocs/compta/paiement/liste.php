@@ -125,8 +125,11 @@ if ($resql)
       $objp = $db->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td>'.'<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
-      print '<td>'.dolibarr_print_date($objp->dp)."</td>\n";
+      print '<td width="10%"><a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").'</a>';
+
+      print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
+
+      print '<td width="20%">'.dolibarr_print_date($objp->dp)."</td>\n";
       print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
       print '<td align="right">'.price($objp->amount).'</td>';
       print '<td align="center">';
