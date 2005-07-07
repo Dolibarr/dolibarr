@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - commercial
 Commercial=Commercial
 CommercialArea=Espace commercial
+CommercialCard=Fiche commerciale
 Customer=Client
 Customers=Clients
 Prospect=Prospect
@@ -16,7 +17,8 @@ ActionOnCompany=Action concernant la société
 ActionOnContact=Action concernant le contact
 TaskRDV=Rendez-vous
 TaskRDVWith=Rendez-vous avec %s
-ShowTask=Afficher action
+ShowTask=Afficher tache
+ShowAction=Afficher action
 SalesRepresentative=Commercial
 SalesRepresentatives=Commerciaux
 SalesRepresentativeFollowUp=Commercial (suivi)
