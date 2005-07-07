@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005      Regis Houssin				<regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,10 +176,10 @@ $conf->langage_tiret=ereg_replace('_','-',$conf->langage);
 
 setlocale(LC_ALL, $conf->langage_tiret);    // Compenser pb de locale avec windows
 setlocale(LC_ALL, $conf->langage);
-if (defined("MAIN_FORCE_SETLOCALE_LC_ALL")) setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL);
-if (defined("MAIN_FORCE_SETLOCALE_LC_TIME")) setlocale(LC_TIME, MAIN_FORCE_SETLOCALE_LC_TIME);
-if (defined("MAIN_FORCE_SETLOCALE_LC_NUMERIC")) setlocale(LC_NUMERIC, MAIN_FORCE_SETLOCALE_LC_NUMERIC);
-if (defined("MAIN_FORCE_SETLOCALE_LC_MONETARY")) setlocale(LC_MONETARY, MAIN_FORCE_SETLOCALE_LC_MONETARY);
+if (defined("MAIN_FORCE_SETLOCALE_LC_ALL") && MAIN_FORCE_SETLOCALE_LC_ALL) setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL);
+if (defined("MAIN_FORCE_SETLOCALE_LC_TIME") && MAIN_FORCE_SETLOCALE_LC_TIME) setlocale(LC_TIME, MAIN_FORCE_SETLOCALE_LC_TIME);
+if (defined("MAIN_FORCE_SETLOCALE_LC_NUMERIC") && MAIN_FORCE_SETLOCALE_LC_NUMERIC) setlocale(LC_NUMERIC, MAIN_FORCE_SETLOCALE_LC_NUMERIC);
+if (defined("MAIN_FORCE_SETLOCALE_LC_MONETARY") && MAIN_FORCE_SETLOCALE_LC_MONETARY) setlocale(LC_MONETARY, MAIN_FORCE_SETLOCALE_LC_MONETARY);
 
 require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
 $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);

@@ -1540,7 +1540,7 @@ create table llx_dolibarr_modules
 
 )type=innodb;
 
-INSERT INTO `llx_const` VALUES (150, 'MAIN_FORCE_SETLOCALE_LC_ALL', '', 'chaine', 1, '');
-INSERT INTO `llx_const` VALUES (152, 'MAIN_FORCE_SETLOCALE_LC_TIME', '', 'chaine', 1, '');
-INSERT INTO `llx_const` VALUES (156, 'MAIN_FORCE_SETLOCALE_LC_MONETARY', '', 'chaine', 1, '');
-INSERT INTO `llx_const` VALUES (158, 'MAIN_FORCE_SETLOCALE_LC_NUMERIC', '', 'chaine', 1, '');
+insert into `llx_const` values ('', 'MAIN_FORCE_SETLOCALE_LC_ALL', 'MAIN_FORCE_SETLOCALE_LC_ALL', 'chaine', 1, '');
+insert into `llx_const` values ('', 'MAIN_FORCE_SETLOCALE_LC_TIME', 'MAIN_FORCE_SETLOCALE_LC_TIME', 'chaine', 1, '');
+insert into `llx_const` values ('', 'MAIN_FORCE_SETLOCALE_LC_MONETARY', 'MAIN_FORCE_SETLOCALE_LC_MONETARY', 'chaine', 1, '');
+insert into `llx_const` values ('', 'MAIN_FORCE_SETLOCALE_LC_NUMERIC', 'MAIN_FORCE_SETLOCALE_LC_NUMERIC', 'chaine', 1, 'mettre la valeur C si problème de centimes');
