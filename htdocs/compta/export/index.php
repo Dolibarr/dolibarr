@@ -65,9 +65,6 @@ llxHeader('','Compta - Export');
 
 print_titre("Export Comptable");
 
-print '<br><a href="index.php?action=export">Nouvel Export</a><br>';
-
-
 print '<table border="0" width="100%" cellspacing="4">';
 print '<tr><td valign="top" width="30%">';
 
@@ -95,9 +92,9 @@ if ($resql)
 }
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>Type</td><td>Nb</td></tr>';
-print '<tr><td>Factures</td><td align="right">'.$nbfac.'</td></tr>';
-print '<tr><td>Paiements</td><td align="right">'.$nbp.'</td></tr>';
+print '<tr class="liste_titre"><td>Type</td><td align="center">Nb</td></tr>';
+print '<tr><td>Factures à exporter</td><td align="center">'.$nbfac.'</td></tr>';
+print '<tr><td>Paiements à exporter</td><td align="center">'.$nbp.'</td></tr>';
 print "</table>\n";
 
 print '</td><td valign="top" width="70%">';
@@ -107,7 +104,6 @@ $dir = DOL_DATA_ROOT."/compta/export/";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Date").'</td>';
 print '<td>&nbsp;</td>';
 print "</tr>\n";
 
