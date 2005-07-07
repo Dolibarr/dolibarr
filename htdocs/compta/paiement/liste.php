@@ -22,10 +22,10 @@
  */
  
 /**
-        \file       htdocs/compta/paiement/liste.php
-        \ingroup    compta
-        \brief      Page liste des paiements des factures clients
-        \version    $Revision$
+   \file       htdocs/compta/paiement/liste.php
+   \ingroup    compta
+   \brief      Page liste des paiements des factures clients
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -62,6 +62,13 @@ $sql.= " c.libelle as paiement_type";
 $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p,";
 $sql.= " ".MAIN_DB_PREFIX."c_paiement as c";
 $sql.= " WHERE p.fk_paiement = c.id";
+
+if ($_GET["search_montant"])
+{
+  $sql .=" AND p.amount=".ereg_replace(",",".",$_GET["search_montant"]);
+}
+
+
 if ($_GET["orphelins"]) { // Options qui ne sert qu'au debuggage
     // Paiements liés à aucune facture (pour aide au diagnostique)
     $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
@@ -97,6 +104,22 @@ if ($resql)
   print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="center"',$sortfield);
   print "</tr>\n";
   
+
+  // Lignes des champs de filtre
+  print '<form method="get" action="liste.php">';
+  print '<tr class="liste_titre">';
+  print '<td colspan="3">&nbsp;</td>';
+
+  print '<td align="right">';
+  print '<input class="fat" type="text" size="10" name="search_montant" value="'.$_GET["search_montant"].'">';
+
+  print '</td><td align="center">';
+  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
+  print '</td>';
+  print "</tr>\n";
+  print '</form>';
+
+
   while ($i < min($num,$limit))
     {
       $objp = $db->fetch_object($resql);
@@ -122,8 +145,9 @@ if ($resql)
     }
   print "</table>";
 }
-else {
-    dolibarr_print_error($db);
+else
+{
+  dolibarr_print_error($db);
 }
 
 $db->close();
