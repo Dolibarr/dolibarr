@@ -3,6 +3,7 @@
 -- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
+-- Copyright (C) 2005      Regis Houssin  			<regis.houssin@cap-networks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -141,6 +142,13 @@ insert into llx_const (name, value, type, visible) values ('EXPEDITION_ADDON_PDF
 insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON',       'mod_propale_ivoire','chaine',0);
 insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON_PDF',    'azur','chaine',0);
 
+--
+-- Forcer les locales
+--
+INSERT INTO `llx_const` VALUES (150, 'MAIN_FORCE_SETLOCALE_LC_ALL', '', 'chaine', 1, '');
+INSERT INTO `llx_const` VALUES (152, 'MAIN_FORCE_SETLOCALE_LC_TIME', '', 'chaine', 1, '');
+INSERT INTO `llx_const` VALUES (156, 'MAIN_FORCE_SETLOCALE_LC_MONETARY', '', 'chaine', 1, '');
+INSERT INTO `llx_const` VALUES (158, 'MAIN_FORCE_SETLOCALE_LC_NUMERIC', '', 'chaine', 1, '');
 
 -- Dictionnaires llx_c
 
