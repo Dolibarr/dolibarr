@@ -651,6 +651,7 @@ if ($_socid > 0)
         {
             $i = 0 ;
             $num = $db->num_rows($result);
+            $var=true;
             
             while ($i < $num)
             {
@@ -661,28 +662,26 @@ if ($_socid > 0)
 
                 if ($oldyear == strftime("%Y",$obj->da) )
                 {
-                    //print '<td align="center">|</td>';
-                    print "<td align=\"center\">" .strftime("%Y",$obj->da)."</td>\n";
+                    print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
                 }
                 else
                 {
-                    print "<td align=\"center\">" .strftime("%Y",$obj->da)."</td>\n";
+                    print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
                     $oldyear = strftime("%Y",$obj->da);
                 }
 
                 if ($oldmonth == strftime("%Y%b",$obj->da) )
                 {
-                    //print '<td align="center">|</td>';
-                    print "<td align=\"center\">" .strftime("%b",$obj->da)."</td>\n";
+                    print '<td width="30" align="center">' .strftime("%b",$obj->da)."</td>\n";
                 }
                 else
                 {
-                    print "<td align=\"center\">" .strftime("%b",$obj->da)."</td>\n";
+                    print '<td width="30" align="center">' .strftime("%b",$obj->da)."</td>\n";
                     $oldmonth = strftime("%Y%b",$obj->da);
                 }
 
-                print "<td>" .strftime("%d",$obj->da)."</td>\n";
-                print "<td>" .strftime("%H:%M",$obj->da)."</td>\n";
+                print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
+                print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
 
                 print '<td>&nbsp;</td>';
 
