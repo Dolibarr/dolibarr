@@ -133,12 +133,12 @@ print "<br>";
 
 // Fin install
 print $langs->trans("SystemIsInstalled")."<br>";
-print $langs->trans("WarningRemoveInstallDir")."<br>";
+print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 
 print "<br>";
 
 // Lien vers setup
-print $langs->trans("YouNeedToPersonalizeSetup")."<br>";
+print $langs->trans("YouNeedToPersonalizeSetup")."<br><br>";
 print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup">';
 print $langs->trans("GoToSetupArea");
 print '</a>';

@@ -70,11 +70,19 @@ div.main-inside {
                   margin-top: 10px;
                   }
 
+div.ok {
+  color: #114466;
+}
+
+div.warning {
+  color: #777711;
+}
+
 div.error {
-            color: #550000; font-weight: bold; 
-            padding: 0.2em 0.2em 0.2em 0.2em;
-            margin: 0.5em 0em 0.5em 0em;
-            border: 1px solid #6C7C8B;
+  color: #550000; font-weight: bold; 
+  padding: 0.2em 0.2em 0.2em 0.2em;
+  margin: 0.5em 0em 0.5em 0em;
+  border: 1px solid #6C7C8B;
 }
 
 div.barrebottom {
