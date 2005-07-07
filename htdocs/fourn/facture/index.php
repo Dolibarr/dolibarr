@@ -31,6 +31,9 @@
 require("./pre.inc.php");
 require("../../contact.class.php");
 
+if (!$user->rights->fournisseur->facture->lire)
+  accessforbidden();
+
 llxHeader();
 
 $socid = $_GET["socid"];
