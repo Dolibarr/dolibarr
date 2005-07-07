@@ -506,34 +506,35 @@ if ($_socid > 0)
     if ($conf->propal->enabled && $user->rights->propale->creer)
     {
         $langs->load("propal");
-        print '<a class="tabAction" href="addpropal.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
+        print '<a class="butAction" href="addpropal.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
     }
 
     if ($conf->commande->enabled && $user->rights->commande->creer)
     {
         $langs->load("orders");
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a>';
     }
 
     if ($user->rights->contrat->creer)
     {
         $langs->load("contracts");
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContract").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContract").'</a>';
     }
 
     if ($conf->fichinter->enabled)
     {
         $langs->load("fichinter");
-        print '<a class="tabAction" href="../fichinter/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';
+        print '<a class="butAction" href="../fichinter/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';
     }
 
     if ($conf->projet->enabled && $user->rights->projet->creer)
     {
-        print '<a class="tabAction" href="../projet/fiche.php?socidp='.$objsoc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+        print '<a class="butAction" href="../projet/fiche.php?socidp='.$objsoc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
     }
 
+    print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 
-    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+    print '<a class="butAction" href="action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
 
     print '</div>';
     print '<br>';
@@ -637,7 +638,7 @@ if ($_socid > 0)
          *
          */
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td colspan="7"><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$objsoc->id.'&afaire=1">'.$langs->trans("AddActionToDo").'</a></td></tr>';
+        print '<tr class="liste_titre"><td colspan="7"><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right">&nbsp;</td></tr>';
 
         $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
@@ -687,7 +688,7 @@ if ($_socid > 0)
 
                 if ($obj->propalrowid)
                 {
-                    print '<td><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task");
+                    print '<td><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
                       $transcode=$langs->trans("Action".$obj->acode);
                       $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
                       print $libelle;
@@ -695,7 +696,7 @@ if ($_socid > 0)
                 }
                 else
                 {
-                    print '<td><a href="action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
+                    print '<td><a href="action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowAction"),"task");
                       $transcode=$langs->trans("Action".$obj->acode);
                       $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
                       print $libelle;
@@ -780,7 +781,7 @@ if ($_socid > 0)
 
                 if ($obj->propalrowid)
                 {
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task");
+                    print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
                       $transcode=$langs->trans("Action".$obj->acode);
                       $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
                       print $libelle;
@@ -788,7 +789,7 @@ if ($_socid > 0)
                 }
                 else
                 {
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
+                    print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowAction"),"task");
                       $transcode=$langs->trans("Action".$obj->acode);
                       $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
                       print $libelle;

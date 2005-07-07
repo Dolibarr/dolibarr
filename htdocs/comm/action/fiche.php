@@ -41,15 +41,14 @@ $langs->load("commercial");
 $langs->load("other");
 $langs->load("bills");
 
-
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+if (isset($_GET["error"])) $error=$_GET["error"];
+
 
 /*
  * Action création de l'action
@@ -109,13 +108,15 @@ if ($_POST["action"] == 'add_action')
         $webcal=0;
         if ($conf->webcal->enabled && $_POST["todo_webcal"] == 'on')
         {
+            // Crée objet webcal et connexion avec params $conf->webcal->db->xxx
             $webcal = new Webcal();
 
             if (! $webcal->localdb->ok)
             {
                 // Si la creation de l'objet n'as pu se connecter
-                $error="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user."). L'option de mise a jour Webcalendar a été ignorée.";
-                $webcal=-1;
+                $error ="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user.").";
+                $error.=" L'option de mise a jour Webcalendar a été ignorée.";
+                $webcal->error=$error;
             }
             else
             {
@@ -144,15 +145,26 @@ if ($_POST["action"] == 'add_action')
         }
 
         // On crée l'action (avec ajout eventuel dans webcal si défini)
-        $idaction=$actioncomm->add($user, $webcal);
+        $idaction=$actioncomm->add($user, ($webcal->localdb->ok?$webcal:0) );
 
         if ($idaction > 0)
         {
             if (! $actioncomm->error)
             {
-                // Si pas d'erreur
-                $db->commit();
-                Header("Location: ".$_POST["from"]);
+                // Si pas d'erreur creation action
+                if (! $webcal->error)
+                {
+                    // Pas d'erreur webcal
+                    $db->commit();
+                    Header("Location: ".$_POST["from"]);
+                    return;
+                }
+                else
+                {
+                    // Pas d'erreur action mais erreur webcal
+                    $db->commit();
+                    $_GET["id"]=$idaction;
+                }
             }
             else
             {
@@ -165,7 +177,6 @@ if ($_POST["action"] == 'add_action')
         else
         {
             $db->rollback();
-            $_GET["id"]=$idaction;
             dolibarr_print_error($db);
         }
     }
@@ -419,7 +430,7 @@ if ($_GET["action"] == 'create')
 if ($_GET["id"])
 {
     if ($error) { 
-        print '<font class="error">'.$error.'</font><br><br>';
+        print '<div class="error">'.$error.'</div><br>';
     }
 
     $act = new ActionComm($db);
@@ -447,6 +458,7 @@ if ($_GET["id"])
   if ($_GET["action"] == 'delete')
     {
       $html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete");
+      print '<br>';
     }
   
   if ($_GET["action"] == 'edit')

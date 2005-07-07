@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
         \file       htdocs/lib/webcal.class.php
         \ingroup    webcal
 		\brief      Ensemble des fonctions permettant d'acceder a la database webcalendar.
@@ -31,12 +31,13 @@
 
 require_once (DOL_DOCUMENT_ROOT ."/lib/".$conf->webcal->db->type.".lib.php");
 
-/*!
+/**
         \class      Webcal
 		\brief      Classe permettant d'acceder a la database webcalendar
 */
 
 class Webcal {
+    
   var $localdb;
   var $heure = -1;
   var $duree = 0;
@@ -45,7 +46,7 @@ class Webcal {
   var $desc;
   var $error;
   
-/*!
+/**
 		\brief      Constructeur de la classe d'interface à Webcalendar
 */
 
@@ -63,7 +64,7 @@ class Webcal {
     }
 
 
-/*!
+/**
 		\brief      Ajoute une entree dans le calendrier de l'utilisateur
 		\param[in]  user		le login de l'utilisateur
 		\param[in]  date		la date de l'evenement dans le calendrier
@@ -135,7 +136,7 @@ class Webcal {
     }
 
 
-/*!
+/**
 		\brief      Obtient l'id suivant dans le webcalendar
 		\return     int     retourne l'id suivant dans le webcalendar ou -1 si erreur
 */
@@ -155,5 +156,6 @@ class Webcal {
             return -1;
         }
     }
+    
 }
 ?>
