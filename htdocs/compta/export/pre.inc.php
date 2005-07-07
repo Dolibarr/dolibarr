@@ -52,8 +52,10 @@ function llxHeader($head = "", $title="", $help_url='')
   $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
 
   $menu->add(DOL_URL_ROOT."/compta/export/",$langs->trans("Export"));
-  $menu->add_submenu(DOL_URL_ROOT."/compta/export/liste.php",$langs->trans("List"));
 
+  $menu->add_submenu(DOL_URL_ROOT."/compta/export/index.php?action=export","Nouvel Export");
+
+  $menu->add_submenu(DOL_URL_ROOT."/compta/export/liste.php",$langs->trans("List"));
 
   left_menu($menu->liste, $help_url);
 }
