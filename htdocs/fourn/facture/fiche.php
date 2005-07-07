@@ -32,6 +32,9 @@
 require("./pre.inc.php");
 require("./paiementfourn.class.php");
 
+if (!$user->rights->fournisseur->facture->lire)
+  accessforbidden();
+
 $langs->load("bills");
 $langs->load("suppliers");
 $langs->load("companies");
