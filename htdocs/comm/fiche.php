@@ -29,9 +29,10 @@
         \version    $Revision$
 */
 
-require("./pre.inc.php");
-require("../contact.class.php");
-require("../actioncomm.class.php");
+require_once("./pre.inc.php");
+require_once("../contact.class.php");
+require_once("../actioncomm.class.php");
+require_once("../contrat/contrat.class.php");
 
 $langs->load("companies");
 $langs->load("orders");
@@ -366,9 +367,11 @@ if ($_socid > 0)
      */
     if($conf->contrat->enabled)
     {
+        $contratstatic=new Contrat($db);
+        
         print '<table class="noborder" width="100%">';
 
-        $sql = "SELECT s.nom, s.idp, c.rowid as id, c.rowid as ref, ".$db->pdate("c.datec")." as dc";
+        $sql = "SELECT s.nom, s.idp, c.rowid as id, c.rowid as ref, c.statut, ".$db->pdate("c.datec")." as dc";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
         $sql .= " WHERE c.fk_soc = s.idp ";
         $sql .= " AND s.idp = $objsoc->id";
@@ -382,7 +385,8 @@ if ($_socid > 0)
             if ($num >0 )
             {
                 print '<tr class="liste_titre">';
-                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/contrat/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllContracts").' ('.$num.')</td></tr></table></td>';
+                print '<td colspan="3"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
+                print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllContracts").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
             }
             $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
@@ -391,8 +395,9 @@ if ($_socid > 0)
                 $objp = $db->fetch_object($resql);
                 $var=!$var;
                 print "<tr $bc[$var]>";
-                print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$objp->ref."</a>\n";
-                print "</td><td align=\"right\">".dolibarr_print_date($objp->dc)."</td>\n";
+                print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$objp->ref."</a></td>\n";
+                print "<td align=\"right\">".dolibarr_print_date($objp->dc)."</td>\n";
+                print "<td align=\"right\">".$contratstatic->LibStatut($objp->statut)."</td>\n";
                 print '</tr>';
                 $i++;
             }
@@ -718,6 +723,7 @@ if ($_socid > 0)
             dolibarr_print_error($db);
         }
         print "</table><br>";
+
 
         /*
          *      Listes des actions effectuees
