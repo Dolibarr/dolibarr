@@ -70,7 +70,8 @@ function llxHeader($head = "", $title = "", $addons='') {
   $langs->load("bills");
   $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
   
-  if ($user->societe_id == 0) 
+
+  if ($user->rights->fournisseur->facture->creer)
     {
       $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"));
     }
