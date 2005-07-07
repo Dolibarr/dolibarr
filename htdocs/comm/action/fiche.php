@@ -55,114 +55,125 @@ if ($user->societe_id > 0)
  * Action création de l'action
  *
  */
-if ($_POST["action"] == 'add_action') 
+if ($_POST["action"] == 'add_action')
 {
-  if ($_POST["contactid"])
+    if ($_POST["contactid"])
     {
-      $contact = new Contact($db);
-      $contact->fetch($_POST["contactid"]);
+        $contact = new Contact($db);
+        $contact->fetch($_POST["contactid"]);
     }
-  if ($_POST["socid"])
+    if ($_POST["socid"])
     {
-      $societe = new Societe($db);
-      $societe->fetch($_POST["socid"]);
+        $societe = new Societe($db);
+        $societe->fetch($_POST["socid"]);
     }
 
-  if ($_POST["actionid"])
+    if ($_POST["actionid"])
     {
-      
-      $actioncomm = new ActionComm($db);
-      
-      $actioncomm->type = $_POST["actionid"];
-      $actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
-      if ($_POST["actionid"] == 5)
-      {
-          if ($contact->fullname) { $actioncomm->libelle = $langs->trans("TaskRDVWith",$contact->fullname); }
-          else { $actioncomm->libelle = $langs->trans("TaskRDV"); }
-      } else {
-          $actioncomm->libelle = $_POST["label"];
-      }
-      $actioncomm->date = $db->idate(mktime($_POST["heurehour"],
-					    $_POST["heuremin"],
-					    0,
-					    $_POST["acmonth"],
-					    $_POST["acday"],
-					    $_POST["acyear"])
-				     );
-      
-      $actioncomm->percent = isset($_POST["percentage"])?$_POST["percentage"]:0;
-      
-      $actioncomm->user = $user;
-      
-      $actioncomm->societe = isset($_POST["socid"])?$_POST["socid"]:0;
-      $actioncomm->contact = isset($_POST["contactid"])?$_POST["contactid"]:0;
-      $actioncomm->note = $_POST["note"];
-      
-      // On definit la ressource webcal si le module webcal est actif
-      $webcal=0;
-      if ($conf->webcal->enabled && $_POST["todo_webcal"] == 'on')
-	{
-	  $webcal = new Webcal();
-	  
-	  if (! $webcal->localdb->ok)
-	    {
-	      // Si la creation de l'objet n'as pu se connecter
-	      $error="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user."). L'option de mise a jour Webcalendar a été ignorée.";
-	      $webcal=-1;
-	    }
-	  else
-	    {
-	      $webcal->heure = $_POST["heurehour"] . $_POST["heuremin"] . '00';
-	      $webcal->duree = ($_POST["dureehour"] * 60) + $_POST["dureemin"];
-	      
-	      if ($_POST["actionid"] == 5)
-		{
-		  $libellecal = $langs->trans("TaskRDVWith",$contact->fullname);
-		  $libellecal .= "\n" . $actioncomm->libelle;
-		}
-	      else
-		{
-		  $libellecal = $actioncomm->libelle;
-		}
-	      
-	      $webcal->date=mktime($_POST["heurehour"],
-				   $_POST["heuremin"],
-				   0,
-				   $_POST["acmonth"],
-				   $_POST["acday"],
-				   $_POST["acyear"]);
-	      $webcal->texte=$societe->nom;
-	      $webcal->desc=$libellecal;
-	    }
-	}
-      
-      // On crée l'action (avec ajout eventuel dans webcal si défini)
-      $idaction=$actioncomm->add($user, $webcal);
-      
-      if ($idaction > 0)
-	{
-	  if (! $actioncomm->error)
-	    {
-	      // Si pas d'erreur
-	      Header("Location: ".$_POST["from"]);
-	    }
-	  else
-	    {
-	      // Si erreur
-	      $_GET["id"]=$idaction;
-	      $error=$actioncomm->error;
-	    }
-	}
-      else
-	{
-	  dolibarr_print_error($db);        
-	}
+        $db->begin();
+
+        $actioncomm = new ActionComm($db);
+
+        $actioncomm->type_code = $_POST["actionid"];
+        $actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
+        if ($_POST["actionid"] == 5)
+        {
+            if ($contact->fullname) { $actioncomm->label = $langs->trans("TaskRDVWith",$contact->fullname); }
+            else { $actioncomm->label = $langs->trans("TaskRDV"); }
+        } else {
+            $actioncomm->label = $_POST["label"];
+        }
+        $actioncomm->date = $db->idate(mktime($_POST["heurehour"],
+        $_POST["heuremin"],
+        0,
+        $_POST["acmonth"],
+        $_POST["acday"],
+        $_POST["acyear"])
+        );
+
+        $actioncomm->percent = isset($_POST["percentage"])?$_POST["percentage"]:0;
+
+        $actioncomm->user = $user;
+
+        if (isset($_POST["contactid"]))
+        {
+            $actioncomm->contact = $contact;
+        }
+        if (isset($_POST["socid"]))
+        {
+            $actioncomm->societe = $societe;
+        }
+        $actioncomm->note = $_POST["note"];
+
+        // On definit la ressource webcal si le module webcal est actif
+        $webcal=0;
+        if ($conf->webcal->enabled && $_POST["todo_webcal"] == 'on')
+        {
+            $webcal = new Webcal();
+
+            if (! $webcal->localdb->ok)
+            {
+                // Si la creation de l'objet n'as pu se connecter
+                $error="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user."). L'option de mise a jour Webcalendar a été ignorée.";
+                $webcal=-1;
+            }
+            else
+            {
+                $webcal->heure = $_POST["heurehour"] . $_POST["heuremin"] . '00';
+                $webcal->duree = ($_POST["dureehour"] * 60) + $_POST["dureemin"];
+
+                if ($_POST["actionid"] == 5)
+                {
+                    $libellecal = $langs->trans("TaskRDVWith",$contact->fullname);
+                    $libellecal .= "\n" . $actioncomm->libelle;
+                }
+                else
+                {
+                    $libellecal = $actioncomm->libelle;
+                }
+
+                $webcal->date=mktime($_POST["heurehour"],
+                $_POST["heuremin"],
+                0,
+                $_POST["acmonth"],
+                $_POST["acday"],
+                $_POST["acyear"]);
+                $webcal->texte=$societe->nom;
+                $webcal->desc=$libellecal;
+            }
+        }
+
+        // On crée l'action (avec ajout eventuel dans webcal si défini)
+        $idaction=$actioncomm->add($user, $webcal);
+
+        if ($idaction > 0)
+        {
+            if (! $actioncomm->error)
+            {
+                // Si pas d'erreur
+                $db->commit();
+                Header("Location: ".$_POST["from"]);
+            }
+            else
+            {
+                // Si erreur
+                $db->rollback();
+                $_GET["id"]=$idaction;
+                $error=$actioncomm->error;
+            }
+        }
+        else
+        {
+            $db->rollback();
+            $_GET["id"]=$idaction;
+            dolibarr_print_error($db);
+        }
     }
-  else
+    else
     {
-      print "Le type d'action n'a pas été choisi";
+        print "Le type d'action n'a pas été choisi";
     }
-  
+
 }
 
 /*

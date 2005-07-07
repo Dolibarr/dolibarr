@@ -84,7 +84,7 @@ class ActionComm
         $sql.= "fk_facture,propalrowid)";
         $sql.= " VALUES (now(), '".$this->type_code."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id?$this->contact->id:"null").",";
-        $sql.= "'$author->id', '".$this->user->id ."', '".$this->label."',100,'".$this->priority."',";
+        $sql.= "'$author->id', '".$this->user->id ."', '".addslashes($this->label)."','".$this->percent."','".$this->priority."',";
         $sql.= ($this->facid?$this->facid:"null").",";
         $sql.= ($this->propalrowid?$this->propalrowid:"null");
         $sql.= ");";
