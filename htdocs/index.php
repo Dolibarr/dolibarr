@@ -54,8 +54,10 @@ if ($user->admin)
     if (is_dir(DOL_DOCUMENT_ROOT."/install")) 
     {
         $langs->load("other");
+        print '<table width="100%"><tr><td>';
         print '<div class="warning">'.$langs->trans("WarningInstallDirExists",DOL_DOCUMENT_ROOT."/install").' ';
         print $langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install").'</div>';   
+        print '</td></tr></table>';
     }
 }
 print "<br>\n";
