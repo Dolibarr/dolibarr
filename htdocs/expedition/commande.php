@@ -285,7 +285,7 @@ if ($_GET["id"] > 0)
        */
       if ($reste_a_livrer_total > 0 && defined("MAIN_MODULE_STOCK"))
 	{
-	  print '<br><table class="liste" cellpadding="3" width="100%"><tr>';
+	  print '<br><table class="liste" width="100%"><tr>';
 	  foreach ($reste_a_livrer as $key => $value)
 	    {
 	      if ($value > 0)
@@ -316,21 +316,26 @@ if ($_GET["id"] > 0)
 	    }
 	  print "</table>";
 	}
-      /*
-       *
-       *
-       */
-      if ($user->societe_id == 0)
-	{
-	  print '<p><div class="tabsAction">';		    
-	  if ($user->rights->expedition->valider && $reste_a_livrer_total == 0 && $commande->statut < 3)
-	    {
-	      print '<a class="tabAction" href="commande.php?id='.$commande->id.'&amp;action=cloture">Clôturer</a>';
-	    }
 
-	  print "</div>";
+    print '</div>';
 
-	}
+        /*
+         *
+         *
+         */
+        if ($user->societe_id == 0)
+        {
+            print '<div class="tabsAction">';
+            if ($user->rights->expedition->valider && $reste_a_livrer_total == 0 && $commande->statut < 3)
+            {
+                print '<a class="tabAction" href="commande.php?id='.$commande->id.'&amp;action=cloture">'.$langs->trans("Close").'</a>';
+            }
+        
+            print "</div>";
+        
+        }
+
+
       /*
        * Déjà livré
        *
