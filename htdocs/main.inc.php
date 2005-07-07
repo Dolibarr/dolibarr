@@ -71,6 +71,7 @@ else
 		      );
 			
       $aDol = new DOLIAuth("DB", $params, "loginfunction");
+      $aDol->setSessionName($dolibarr_main_db_name);
       $aDol->start();
       $result = $aDol->getAuth();
       if ($result)
