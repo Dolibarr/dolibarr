@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,10 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/database-tables-contraintes.php
-  \brief      Page d'info des contraintes de la base
-  \version    $Revision$
+/**
+        \file       htdocs/admin/system/database-tables-contraintes.php
+        \brief      Page d'info des contraintes de la base
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -34,7 +35,7 @@ $langs->load("admin");
 
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 llxHeader();
@@ -44,14 +45,14 @@ print_titre($langs->trans("Constraints"));
 
 if ($conf->db->type == 'mysql')
 {
-  $sql = "SHOW TABLE STATUS";
-  $base=1;
+    $sql = "SHOW TABLE STATUS";
+    $base=1;
 }
 
 if ($conf->db->type == 'pgsql')
 {
-  $sql = "SELECT conname,contype FROM pg_constraint;";
-  $base=2;
+    $sql = "SELECT conname, contype FROM pg_constraint;";
+    $base=2;
 }
 
 print '<br>';
@@ -60,52 +61,48 @@ print '<tr class="liste_titre">';
 
 if($base==1)
 {
-  print '<td>'.$langs->trans("Tables").'</td>';
-  print '<td>'.$langs->trans("Type").'</td>';
-  print '<td>'.$langs->trans("Constraints").'</td>';
+    print '<td>'.$langs->trans("Tables").'</td>';
+    print '<td>'.$langs->trans("Type").'</td>';
+    print '<td>'.$langs->trans("Constraints").'</td>';
 }
 else
 {
- print '<td>'.$langs->trans("Constraints").'</td>';
- print '<td>'.$langs->trans("ConstraintsType").'</td>';
+    print '<td>'.$langs->trans("Constraints").'</td>';
+    print '<td>'.$langs->trans("ConstraintsType").'</td>';
 }
 
 print "</tr>\n";
 
 
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
-  $num = $db->num_rows();
-  $var=True;
-  $i=0;
-  while ($i < $num)
+    $num = $db->num_rows($result);
+    $var=True;
+    $i=0;
+    while ($i < $num)
     {
-      $row = $db->fetch_row($i);
-      $var=!$var;
-      print "<tr $bc[$var]>";
+        $obj = $db->fetch_object($rsult);
+        $var=!$var;
+        print "<tr $bc[$var]>";
 
-      if ($base==1)
-	{
-	  print '<td><a href="dbtable.php?table='.$row[0].'">'.$row[0].'</a></td>';
-	}
-      else
-	{
-	  print '<td>'.$row[0].'</td>';
-	}
+        if ($base==1)
+        {
+            print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
+            print '<td>'.$obj->Engine.'</td>';
+            print '<td>'.$obj->Comment.'</td>';
+        }
+        else
+        {
+            print '<td>'.$obj->conname.'</td>';
+            print '<td>'.$obj->contype.'</td>';
+        }
 
-      print '<td>'.$row[1].'</td>';
-
-      if ($base==1)
-	{
-	  print '<td align="left">'.$row[14].'</td>';
-	}
-
-      print '</tr>';
-      $i++;
+        print '</tr>';
+        $i++;
     }
 }
 print '</table>';
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>

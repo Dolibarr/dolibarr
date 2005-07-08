@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,12 +55,13 @@ if($conf->db->type == 'mysql')
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("TableName").'</td>';
     print '<td colspan="2">'.$langs->trans("Type").'</td>';
-    print '<td>'.$langs->trans("TableLineFormat").'</td>';
+    print '<td>'.$langs->trans("Format").'</td>';
     print '<td>'.$langs->trans("NbOfRecord").'</td>';
     print '<td>Avg_row_length</td>';
     print '<td>Data_length</td>';
     print '<td>Max_Data_length</td>';
     print '<td>Index_length</td>';
+    print '<td>Increment</td>';
     print '<td>Last check</td>';
     print "</tr>\n";
     
@@ -69,32 +70,33 @@ if($conf->db->type == 'mysql')
     $result = $db->query($sql);
     if ($result) 
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($result);
       $var=True;
       $i=0;
       while ($i < $num)
         {
-          $row = $db->fetch_row($i);
+          $obj = $db->fetch_object($result);
           $var=!$var;
           print "<tr $bc[$var]>";
     
-          print '<td>'.$row[0].'</td>';
-          print '<td>'.$row[1].'</td>';
+          print '<td>'.$obj->Name.'</td>';
+          print '<td>'.$obj->Engine.'</td>';
           if ($row[1] == "MyISAM")
     	{
-    	  print '<td><a href="database-tables.php?action=convert&amp;table='.$row[0].'">Convertir</a></td>';
+    	  print '<td><a href="database-tables.php?action=convert&amp;table='.$row[0].'">'.$langs->trans("Convert").'</a></td>';
     	}
           else
     	{
-    	  print '<td>-</td>';
+    	  print '<td>&nbsp;</td>';
     	}
-          print '<td>'.$row[2].'</td>';
-          print '<td align="right">'.$row[3].'</td>';
-          print '<td align="right">'.$row[4].'</td>';
-          print '<td align="right">'.$row[5].'</td>';
-          print '<td align="right">'.$row[6].'</td>';
-          print '<td align="right">'.$row[7].'</td>';
-          print '<td align="right">'.$row[12].'</td>';
+          print '<td>'.$obj->Row_format.'</td>';
+          print '<td align="right">'.$obj->Rows.'</td>';
+          print '<td align="right">'.$obj->Avg_row_length.'</td>';
+          print '<td align="right">'.$obj->Data_length.'</td>';
+          print '<td align="right">'.$obj->Max_data_length.'</td>';
+          print '<td align="right">'.$obj->Index_length.'</td>';
+          print '<td align="right">'.$obj->Auto_increment.'</td>';
+          print '<td align="right">'.$obj->Check_time.'</td>';
           print '</tr>';
           $i++;
         }
@@ -140,5 +142,7 @@ if($conf->db->type == 'pgsql')
     print '</table>';
 }
 
-llxFooter();
+
+llxFooter('$Date$ - $Revision$');
+
 ?>

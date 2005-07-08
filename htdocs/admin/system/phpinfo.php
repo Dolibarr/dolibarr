@@ -91,5 +91,5 @@ if ($title)
 print "$chaine\n";	// Ne pas centrer la réponse php car certains tableau du bas très large rendent ceux du haut complètement à droite
 print "<br>\n";
 
-llxfooter();
+llxfooter('$Date$ - $Revision$');
 ?>
