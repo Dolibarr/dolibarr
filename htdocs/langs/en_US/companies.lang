@@ -89,3 +89,7 @@ ChangeContactInProcess=Change status to 'Contact in process'
 ChangeContactDone=Change status to 'Contact done'
 ProspectsByStatus=Prospects by status
 BillingContact=Billing contact
+TotalSizeOfAttachedFiles=Total size of attached files
+NbOfAttachedFiles=Number of attached files
+AttachANewFile=Attached a new file
+FileWasRemoved=Files was removed

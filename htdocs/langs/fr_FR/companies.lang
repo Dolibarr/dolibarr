@@ -89,3 +89,7 @@ ChangeContactInProcess=Changer l'état à 'Contact en cours'
 ChangeContactDone=Changer l'état à 'Contact réalisé'
 ProspectsByStatus=Prospects par état
 BillingContact=Contact facturation
+TotalSizeOfAttachedFiles=Taille totale des fichiers joints
+NbOfAttachedFiles=Nombre de fichiers joints
+AttachANewFile=Joindre un nouveau fichier
+FileWasRemoved=Le fichier a été supprimé
