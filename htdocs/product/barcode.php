@@ -32,6 +32,7 @@
 require("./pre.inc.php");
 
 $langs->load("products");
+$langs->load("bills");
 
 $user->getrights('barcode');
 
