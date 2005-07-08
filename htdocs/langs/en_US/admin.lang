@@ -11,6 +11,7 @@ OtherSetup=Other setup
 Modules=Modules
 ModulesCommon=Common modules
 ModulesSpecial=Special modules
+OSEnv=OS Environment
 Box=Box
 Boxes=Boxes
 System=System
