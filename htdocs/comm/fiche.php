@@ -532,9 +532,9 @@ if ($_socid > 0)
         print '<a class="butAction" href="../projet/fiche.php?socidp='.$objsoc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
     }
 
-    print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
-
     print '<a class="butAction" href="action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
+
+    print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 
     print '</div>';
     print '<br>';
