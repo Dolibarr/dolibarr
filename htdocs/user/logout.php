@@ -36,7 +36,7 @@ define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
 require_once "../includes/pear/Auth/Auth.php";
 
 $a = new DOLIAuth("DB");
-$a->setSessionName($dolibarr_main_db_name);
+$a->setSessionName("DOLSESSID_".$dolibarr_main_db_name);
 $a->setShowLogin (false);
 $a->start();
 if ($a->getAuth()) 
