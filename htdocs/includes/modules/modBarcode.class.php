@@ -63,7 +63,7 @@ class modBarcode extends DolibarrModules
     $this->const_name = "MAIN_MODULE_BARCODE";
     $this->const_config = MAIN_MODULE_BARCODE;
     $this->special = 0;
-    $this->picto='product';
+    $this->picto='barcode';
 
     // Dir
     $this->dirs = array();
