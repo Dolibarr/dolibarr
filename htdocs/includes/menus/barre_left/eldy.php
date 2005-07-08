@@ -130,8 +130,9 @@ class MenuLeft {
                   if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
                   
                   $newmenu->add(DOL_URL_ROOT."/admin/system/index.php?leftmenu=system", $langs->trans("System"));
-                  if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/about.php", "Dolibarr");
+                  if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/dolibarr.php", $langs->trans("Dolibarr"),1);
                   if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/constall.php", $langs->trans("AllParameters"),2);
+                  if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/about.php", $langs->trans("About"),2);
                   if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/os.php", $langs->trans("OS"));
                   if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/web.php", $langs->trans("WebServer"));
                   if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/phpinfo.php", $langs->trans("Php"));

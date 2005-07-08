@@ -42,29 +42,27 @@ function llxHeader($head = "", $urlp = "") {
     
     $menu = new Menu();
     
-    $menu->add("index.php", $langs->trans("Summary"));
+    $menu->add(DOL_URL_ROOT."/admin/system/index.php", $langs->trans("Summary"));
     
-    $menu->add(DOL_URL_ROOT."/about.php", "Dolibarr");
-    $menu->add_submenu("constall.php", $langs->trans("AllParameters"));
+    $menu->add(DOL_URL_ROOT."/admin/system/dolibarr.php", "Dolibarr");
+    $menu->add_submenu(DOL_URL_ROOT."/admin/system/constall.php", $langs->trans("AllParameters"));
+    $menu->add_submenu(DOL_URL_ROOT."/about.php", $langs->trans("About"));
     
-    $menu->add("os.php", $langs->trans("OS"));
+    $menu->add(DOL_URL_ROOT."/admin/system/os.php", $langs->trans("OS"));
     
-    $menu->add("web.php", $langs->trans("WebServer"));
+    $menu->add(DOL_URL_ROOT."/admin/system/web.php", $langs->trans("WebServer"));
     
-    $menu->add("phpinfo.php", $langs->trans("Php"));
+    $menu->add(DOL_URL_ROOT."/admin/system/phpinfo.php", $langs->trans("Php"));
     
-    $menu->add_submenu("phpinfo.php?what=conf", $langs->trans("PhpConf"));
+    $menu->add_submenu(DOL_URL_ROOT."/admin/system/phpinfo.php?what=conf", $langs->trans("PhpConf"));
     
-    $menu->add_submenu("phpinfo.php?what=env", $langs->trans("PhpEnv"));
+    $menu->add_submenu(DOL_URL_ROOT."/admin/system/phpinfo.php?what=env", $langs->trans("PhpEnv"));
     
-    $menu->add_submenu("phpinfo.php?what=modules", $langs->trans("PhpModules"));
+    $menu->add_submenu(DOL_URL_ROOT."/admin/system/phpinfo.php?what=modules", $langs->trans("PhpModules"));
     
-    //    $menu->add("pear.php", $langs->trans("Pear"));
-    //    $menu->add_submenu("pear_packages.php", $langs->trans("PearPackages"));
-    
-    $menu->add("database.php", $langs->trans("Database"));
-    $menu->add_submenu("database-tables.php", $langs->trans("Tables"));
-    $menu->add_submenu("database-tables-contraintes.php", $langs->trans("Constraints"));
+    $menu->add(DOL_URL_ROOT."/admin/system/database.php", $langs->trans("Database"));
+    $menu->add_submenu(DOL_URL_ROOT."/admin/system/database-tables.php", $langs->trans("Tables"));
+    $menu->add_submenu(DOL_URL_ROOT."/admin/system/database-tables-contraintes.php", $langs->trans("Constraints"));
     
     left_menu($menu->liste);
 }

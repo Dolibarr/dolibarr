@@ -45,7 +45,6 @@ print "<br>\n";
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibarr</td></tr>\n";
 print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>" . DOL_VERSION . "</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">".$langs->trans("Language")." (LC_ALL)</td><td>".setlocale(LC_ALL,0)."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
