@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,20 @@ if ($_GET["id"])
             $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
             $head[$h][1] = $langs->trans("Price");
             $h++;
+
+            if($product->type == 0)
+            {
+                if ($user->rights->barcode->lire)
+                {
+                    if ($conf->barcode->enabled)
+                    {
+                        $head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
+                        $head[$h][1] = $langs->trans("BarCode");
+                        $h++;
+                    }
+                }
+            }
+
 
             $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
             $head[$h][1] = $langs->trans("Photos");

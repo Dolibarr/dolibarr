@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005      Regis Houssin				<regis.houssin@cap-networks.com>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,6 +251,7 @@ $conf->produit->enabled=defined("MAIN_MODULE_PRODUIT")?MAIN_MODULE_PRODUIT:0;
 if ($conf->produit->enabled) require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 $conf->produit->dir_output=DOL_DATA_ROOT."/produit";
 $conf->produit->dir_images=DOL_DATA_ROOT."/produit/images";
+$conf->barcode->enabled=defined("MAIN_MODULE_BARCODE")?MAIN_MODULE_BARCODE:0;
 $conf->categorie->enabled=defined("MAIN_MODULE_CATEGORIE")?MAIN_MODULE_CATEGORIE:0;
 $conf->service->enabled=defined("MAIN_MODULE_SERVICE")?MAIN_MODULE_SERVICE:0;
 if ($conf->service->enabled) require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
