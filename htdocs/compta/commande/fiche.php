@@ -200,6 +200,7 @@ if ($_GET["id"] > 0)
 	  while ($i < $num)
 	    {
 	      $objp = $db->fetch_object($result);
+	      $var=!$var;
 	      print "<tr $bc[$var]>";
 	      if ($objp->fk_product > 0)
 		{
@@ -360,11 +361,11 @@ if ($_GET["id"] > 0)
   else
     {
       // Commande non trouvée
-      print "Commande inexistante ou accés refusé";
+      print "Commande inexistante";
     }
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

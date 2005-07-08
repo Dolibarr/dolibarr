@@ -356,18 +356,19 @@ if ($_GET["action"] == 'create' && $user->rights->commande->creer)
 	      print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
 	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
 	      
+		  $var=false;	
+
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
 	      $sql .= " ORDER BY pt.rowid ASC";
 	      $result = $db->query($sql);
 	      if ($result) 
 		{
-		  $num = $db->num_rows();
+		  $num = $db->num_rows($result);
 		  $i = 0;	
-		  $var=True;	
 		  while ($i < $num) 
 		    {
-		      $objp = $db->fetch_object();
+		      $objp = $db->fetch_object($result);
 		      $var=!$var;
 		      print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
 		      print '<td>'.img_object($langs->trans("ShowProduct"),"product").' '.$objp->product.'</td>';
@@ -608,10 +609,13 @@ else
 		  print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
 		  print "</tr>\n";
 		}
-	      $var=True;
+
+	      $var=true;
 	      while ($i < $num)
 		{
 		  $objp = $db->fetch_object($result);
+
+          $var=!$var;
 		  print "<tr $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
@@ -910,5 +914,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
