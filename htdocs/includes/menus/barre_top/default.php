@@ -60,8 +60,23 @@ class MenuTop {
     function showmenu()
     {
 
-        global $conf,$langs;
+        global $user,$conf,$langs;
         
+        if (! session_id()) session_start();    // En mode authentification PEAR, la session a déjà été ouverte
+
+        $user->getrights("");
+
+        // On récupère mainmenu
+        if (isset($_GET["mainmenu"])) {
+            // On sauve en session le menu principal choisi
+            $mainmenu=$_GET["mainmenu"];
+            $_SESSION["mainmenu"]=$mainmenu;
+            $_SESSION["leftmenuopened"]="";
+        } else {
+            // On va le chercher en session si non défini par le lien    
+            $mainmenu=$_SESSION["mainmenu"];
+        }
+
         // Entrée home
         $id="";
         if ($_GET["mainmenu"] == "home" || ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home"))

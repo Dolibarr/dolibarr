@@ -67,9 +67,6 @@ class MenuLeft {
         
         $user->getrights("");
         
-        $newmenu = new Menu();
-        $overwritemenufor=array('home','members','products','suppliers','commercial','accountancy','tools');
-        
         // On récupère mainmenu et leftmenu qui définissent le menu à afficher
         if (isset($_GET["mainmenu"])) {
             // On sauve en session le menu principal choisi
@@ -80,6 +77,7 @@ class MenuLeft {
             // On va le chercher en session si non défini par le lien    
             $mainmenu=$_SESSION["mainmenu"];
         }
+
         if (isset($_GET["leftmenu"])) {
             // On sauve en session le menu principal choisi
             $leftmenu=$_GET["leftmenu"];
@@ -96,6 +94,9 @@ class MenuLeft {
             $leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
         }
         
+        
+        $newmenu = new Menu();
+        $overwritemenufor=array('home','members','products','suppliers','commercial','accountancy','tools');
         
         /**
          * On definit newmenu en fonction de mainmenu et leftmenu
