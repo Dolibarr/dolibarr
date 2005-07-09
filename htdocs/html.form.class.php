@@ -680,31 +680,69 @@ class Form
   
 
   /**
-   *    \brief      Retourne le nom d'un pays
-   *    \param      id      id du pays
+   *    \brief      Retourne le nom traduit ou code+nom d'un pays
+   *    \param      id          id du pays
+   *    \param      withcode    1=affiche code + nom
+   *    \return     string      Nom traduit du pays
    */
-  function pays_name($id)
-  {
-    $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."c_pays";
-    $sql .= " WHERE rowid=$id;";
-		
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-  
-	if ($num)
-	  {
-	    $obj = $this->db->fetch_object();
-	    return $obj->libelle;
-	  }
-	else
-	  {
-	    return "Non défini";
-	  }
+    function pays_name($id,$withcode=0)
+    {
+        global $langs;
+    
+        $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
+        $sql.= " WHERE rowid=$id;";
+    
+        if ($this->db->query($sql))
+        {
+            $num = $this->db->num_rows();
+    
+            if ($num)
+            {
+                $obj = $this->db->fetch_object();
+                $label=$obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'');
+                if ($withcode) return $label==$obj->code?"$obj->code":"$obj->code - $label";
+                else return $label;
+            }
+            else
+            {
+                return $langs->trans("NotDefined");
+            }
+    
+        }
+    }
 
-      }
-	
-  }
+
+  /**
+   *    \brief      Retourne le nom traduit ou code+nom d'une devise
+   *    \param      code_iso    Code iso de la devise
+   *    \param      withcode    1=affiche code + nom
+   *    \return     string      Nom traduit de la devise
+   */
+    function currency_name($code_iso,$withcode=0)
+    {
+        global $langs;
+
+        $sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
+        $sql.= " WHERE code_iso='$code_iso';";
+    
+        if ($this->db->query($sql))
+        {
+            $num = $this->db->num_rows();
+    
+            if ($num)
+            {
+                $obj = $this->db->fetch_object();
+                $label=$langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:'');
+                if ($withcode) return $label==$code_iso?"$code_iso":"$code_iso - $label";
+                else return $label;
+            }
+            else
+            {
+                return $code_iso;
+            }
+    
+        }
+    }
 
 
   /**
@@ -733,6 +771,60 @@ class Form
     print '</table>';
     print "</form>\n";  
   }
+
+
+  /**
+   *    \brief     Retourne la liste des devies, dans la langue de l'utilisateur
+   *    \param     selected    code devise pré-sélectionnée
+   *    \param     htmlname    nom de la liste deroulante
+   *    \todo      trier liste sur noms après traduction plutot que avant
+   */
+    function select_currency($selected='',$htmlname='currency_id')
+    {
+        global $conf,$langs;
+        $langs->load("dict");
+    
+        if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilité
+    
+        $sql = "SELECT code_iso, label, active FROM ".MAIN_DB_PREFIX."c_currencies";
+        $sql .= " WHERE active = 1";
+        $sql .= " ORDER BY code_iso ASC;";
+    
+        if ($this->db->query($sql))
+        {
+            print '<select class="flat" name="'.$htmlname.'">';
+            $num = $this->db->num_rows();
+            $i = 0;
+            if ($num)
+            {
+                $foundselected=false;
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object();
+                    if ($selected && $selected == $obj->code_iso)
+                    {
+                        $foundselected=true;
+                        print '<option value="'.$obj->code_iso.'" selected>';
+                    }
+                    else
+                    {
+                        print '<option value="'.$obj->code_iso.'">';
+                    }
+                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                    if ($obj->code_iso) { print $obj->code_iso . ' - '; }
+                    print ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
+                    print '</option>';
+                    $i++;
+                }
+            }
+            print '</select>';
+            return 0;
+        }
+        else {
+            dolibarr_print_error($this->db);
+            return 1;
+        }
+    }
 
 
     /**

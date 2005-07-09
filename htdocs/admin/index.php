@@ -52,6 +52,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 
 llxHeader();
+
 $form = new Form($db);
 
 print_titre($langs->trans("GlobalSetup"));
@@ -78,7 +79,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
   print '</td></tr>';
 
   print '<tr class="impair"><td>'.$langs->trans("CompanyCurrency").'</td><td>';
-  print '<input name="currency" value="'. MAIN_MONNAIE . '"></td></tr>';
+  $form->select_currency(MAIN_MONNAIE,"currency");
+  print '</td></tr>';
 
   print '<tr class="pair"><td width="50%">'.$langs->trans("Capital").'</td><td>';
   print '<input name="capital" size="20" value="' . MAIN_INFO_CAPITAL . '"></td></tr>';
@@ -144,10 +146,12 @@ else
   print '<tr class="impair"><td width="50%">'.$langs->trans("CompanyName").'</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
 
   print '<tr class="pair"><td>'.$langs->trans("Country").'</td><td>';
-  print $form->pays_name(MAIN_INFO_SOCIETE_PAYS);
+  print $form->pays_name(MAIN_INFO_SOCIETE_PAYS,1);
   print '</td></tr>';
 
-  print '<tr class="impair"><td width="50%">'.$langs->trans("CompanyCurrency").'</td><td>' . MAIN_MONNAIE . '</td></tr>';
+  print '<tr class="impair"><td width="50%">'.$langs->trans("CompanyCurrency").'</td><td>';
+  print $form->currency_name(MAIN_MONNAIE,1);
+  print '</td></tr>';
 
   print '<tr class="pair"><td width="50%">'.$langs->trans("Capital").'</td><td>';
   print MAIN_INFO_CAPITAL . '</td></tr>';
