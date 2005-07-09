@@ -1092,13 +1092,21 @@ class Societe {
   
   function display_rib()
   {
+    global $langs;
+    
     require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
     
     $bac = new CompanyBankAccount($this->db, $this->id);
     $bac->fetch();
 
-    $rib = $bac->code_banque." ".$bac->code_guichet." ".$bac->number." ".$bac->cle_rib;
-
+    if ($bac->code_banque || $bac->code_guichet || $bac->number || $bac->cle_rib)
+    {
+        $rib = $bac->code_banque." ".$bac->code_guichet." ".$bac->number." (".$bac->cle_rib.")";
+    }
+    else
+    {
+        $rib=$langs->trans("NoRIB");
+    }
     return $rib;
   }
 
@@ -1195,24 +1203,52 @@ class Societe {
   }
 
   /**
-   *  \brief     Définit la société mère pour les filiales
-   *
+   *    \brief      Défini la société mère pour les filiales
+   *    \param      id      id compagnie mère à positionner
+   *    \return     int     <0 si ko, >0 si ok
    */
-	 
-  function set_parent($id)
-  {
-    if ($this->id)
-      {
-	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-	$sql .= " SET parent = ".$id;
-	$sql .= " WHERE idp = " . $this->id .";";
-	  
-	if ( $this->db->query($sql) )
-	  {
-	    return 0;
-	  }
-      }
-  }
+    function set_parent($id)
+    {
+        if ($this->id)
+        {
+            $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+            $sql .= " SET parent = ".$id;
+            $sql .= " WHERE idp = " . $this->id .";";
+            
+            if ( $this->db->query($sql) )
+            {
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+    }
+
+  /**
+   *    \brief      Supprime la société mère
+   *    \param      id      id compagnie mère à effacer
+   *    \return     int     <0 si ko, >0 si ok
+   */
+    function remove_parent($id)
+    {
+        if ($this->id)
+        {
+            $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+            $sql .= " SET parent = null";
+            $sql .= " WHERE idp = " . $this->id .";";
+            
+            if ( $this->db->query($sql) )
+            {
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+    }
 
   /**
    *    \brief  Verifie la validite du siren

@@ -21,10 +21,10 @@
  */
 
 /**
-    \file       htdocs/societe/lien.php
-    \ingroup    societe
-    \brief      Page des societes
-    \version    $Revision$
+        \file       htdocs/societe/lien.php
+        \ingroup    societe
+        \brief      Page des societes
+        \version    $Revision$
 */
  
 require("./pre.inc.php");
@@ -36,16 +36,19 @@ $langs->load("customers");
 $langs->load("suppliers");
 $langs->load("banks");
 
-/*
- * Sécurité accés client
- */
- 
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socid = $user->societe_id;
 }
 
+
+/*
+ * Actions
+ */
+
+// Positionne companie parente
 if($_GET["socid"] && $_GET["select"])
 {
   if ($user->rights->societe->creer)
@@ -56,12 +59,36 @@ if($_GET["socid"] && $_GET["select"])
       $soc->set_parent($_GET["select"]);
 
       Header("Location: lien.php?socid=".$soc->id);
+      exit;
     }
   else
     {
       Header("Location: lien.php?socid=".$_GET["socid"]);
+      exit;
     }
 }
+
+// Supprime companie parente
+if($_GET["socid"] && $_GET["delsocid"])
+{
+  if ($user->rights->societe->creer)
+    {
+      $soc = new Societe($db);
+      $soc->id = $_GET["socid"];
+      $soc->fetch($_GET["socid"]);
+      $soc->remove_parent($_GET["delsocid"]);
+
+      Header("Location: lien.php?socid=".$soc->id);
+      exit;
+    }
+  else
+    {
+      Header("Location: lien.php?socid=".$_GET["socid"]);
+      exit;
+    }
+}
+
+
 
 
 llxHeader();
@@ -129,12 +156,21 @@ if($_GET["socid"])
     print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td>'.$soc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3">'.$soc->capital.' '.$conf->monnaie.'</td></tr>';
     
+    // Société mère
     print '<tr><td>'.$langs->trans("ParentCompany").'</td><td colspan="3">';
     if ($soc->parent)
     {
         $socm = new Societe($db);
         $socm->fetch($soc->parent);
-        print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$socm->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$socm->nom.'</a>'.($socm->code_client?"(".$socm->code_client.")":"").' - '.$socm->ville;
+        print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$socm->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$socm->nom.'</a>'.($socm->code_client?"(".$socm->code_client.")":"");
+        print ($socm->ville?' - '.$socm->ville:'');
+        print '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?socid='.$_GET["socid"].'&amp;delsocid='.$socm->id.'">';
+        print img_delete();
+        print '</a><br>';
+    }
+    else
+    {
+        print $langs->trans("NoParentCompany");
     }
     print '</td></tr>';
         
@@ -204,9 +240,9 @@ if($_GET["socid"])
                 print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
                 print '<tr class="liste_titre">';
                 print '<td valign="right">';
-                print '<input type="text" name="search_nom" value="'.stripslashes($search_nom).'">';
-                print '</td><td colspan="5" align="center">';
-                print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
+                print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
+                print '</td><td colspan="5" align="right">';
+                print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
                 print '</td>';
                 print "</tr>\n";
                 print '</form>';
@@ -244,13 +280,17 @@ if($_GET["socid"])
                         print "&nbsp;";
                     }
     
-                    print '</td><td><a href="lien.php?socid='.$_GET["socid"].'&amp;select='.$obj->idp.'">'.$langs->trans("Select").'</a></td>';
+                    print '</td>';
+                    // Lien Sélectionner
+                    print '<td align="center"><a href="lien.php?socid='.$_GET["socid"].'&amp;select='.$obj->idp.'">'.$langs->trans("Select").'</a>';
+                    print '</td>';
     
                     print '</tr>'."\n";
                     $i++;
                 }
     
                 print "</table>";
+                print '<br>';
                 $db->free();
             }
             else
