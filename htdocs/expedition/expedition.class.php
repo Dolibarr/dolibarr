@@ -430,6 +430,7 @@ class Expedition
 	  $module_file_name = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition_".EXPEDITION_ADDON_PDF.".modules.php";
             
 	  $mod = "pdf_expedition_".EXPEDITION_ADDON_PDF;
+	  $this->fetch_commande();
 
 	  require_once $module_file_name;
 	  

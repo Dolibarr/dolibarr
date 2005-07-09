@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Simon TOSSER  <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,6 +109,10 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
       Header("Location: liste.php");
     }
 }
+
+/*
+ * Générer ou regénérer le PDF
+ */
 
 if ($_GET["action"] == 'pdf')
 {
@@ -537,6 +542,11 @@ else
 		}
 	      $db->free($resql);
 	    }
+	    //Barre d'action
+	    print '<div class="tabsAction">';
+	    //Build PDF
+	    print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=pdf">'.$langs->trans('BuildPDF').'</a>';
+	    print '</div><br>';
 	       
 	  /*
 	   * Documents générés
