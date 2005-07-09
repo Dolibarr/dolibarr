@@ -48,7 +48,7 @@ class Client {
 
   function fetch ($id) {
     
-    $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".DB_NAME_OSC.".customers WHERE customers_id = $id";
+    $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".OSC_DB_NAME.".customers WHERE customers_id = $id";
 
     $result = $this->db->query($sql) ;
 

@@ -64,7 +64,7 @@ class box_osc_clients extends ModeleBoxes {
 
         if ($user->rights->boutique->lire)
         {
-            $sql = "SELECT count(*) as cus FROM ".DB_NAME_OSC.".customers";
+            $sql = "SELECT count(*) as cus FROM ".OSC_DB_NAME.".customers";
     
             $result = $db->query($sql);
             if ($result)

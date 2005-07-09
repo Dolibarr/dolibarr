@@ -138,11 +138,11 @@ class Editeur {
    */
   function delete($user) {
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products WHERE products_id = $idosc ";
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories WHERE products_id = $idosc";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products_to_categories WHERE products_id = $idosc";
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products_description WHERE products_id = $idosc";
 	      
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."livre WHERE rowid = $id";
 	    

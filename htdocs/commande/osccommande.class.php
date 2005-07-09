@@ -39,7 +39,7 @@ class OscCommande {
   function fetch ($id)
     {
     
-      $sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".DB_NAME_OSC.".orders as o";
+      $sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".OSC_DB_NAME.".orders as o";
       $sql .= " WHERE o.orders_id = $id";
 
       $result = $this->db->query($sql) ;

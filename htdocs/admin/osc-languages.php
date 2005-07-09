@@ -37,7 +37,7 @@ if (!$user->admin)
 llxHeader();
 
 
-if (! strlen(DB_NAME_OSC))
+if (! strlen(OSC_DB_NAME))
 {
   print "Non dispo";
   llxFooter();
@@ -57,7 +57,7 @@ $offset = $limit * $page ;
 
 print_barre_liste("Liste des langues oscommerce", $page, "osc-languages.php");
 
-$sql = "SELECT l.languages_id, l.name, l.code FROM ".DB_NAME_OSC.".languages as l";
+$sql = "SELECT l.languages_id, l.name, l.code FROM ".OSC_DB_NAME.".languages as l";
 
 $sql .= $db->plimit( $limit ,$offset);
 

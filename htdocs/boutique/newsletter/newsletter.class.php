@@ -196,7 +196,7 @@ class Newsletter {
       {
 
 	$sql = "SELECT c.customers_lastname as name, c.customers_firstname as firstname, c.customers_email_address as email";
-	$sql .= " FROM ".DB_NAME_OSC.".customers as c";
+	$sql .= " FROM ".OSC_DB_NAME.".customers as c";
 	$sql .= " WHERE c.customers_newsletter=1";
 
       }

@@ -85,7 +85,7 @@ class Categorie {
     $cl = array();
 
     $sql = "SELECT c.categories_id, cd.categories_name ";
-    $sql .= " FROM ".DB_NAME_OSC.".categories as c,".DB_NAME_OSC.".categories_description as cd";
+    $sql .= " FROM ".OSC_DB_NAME.".categories as c,".OSC_DB_NAME.".categories_description as cd";
     $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
     $sql .= " AND c.parent_id = 0 ORDER BY cd.categories_name";
     
@@ -155,7 +155,7 @@ class Categorie {
     $ga = array();
 
     $sql = "SELECT c.categories_id, cd.categories_name";
-    $sql .= " FROM ".DB_NAME_OSC.".categories as c,".DB_NAME_OSC.".categories_description as cd";
+    $sql .= " FROM ".OSC_DB_NAME.".categories as c,".OSC_DB_NAME.".categories_description as cd";
     $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
     $sql .= " AND c.parent_id = " . $this->id;
     $sql .= " ORDER BY cd.categories_name";
@@ -214,7 +214,7 @@ class Categorie {
   function fetch ($id) {
     
     $sql = "SELECT c.categories_id, cd.categories_name, c.parent_id";
-    $sql .= " FROM ".DB_NAME_OSC.".categories as c,".DB_NAME_OSC.".categories_description as cd";
+    $sql .= " FROM ".OSC_DB_NAME.".categories as c,".OSC_DB_NAME.".categories_description as cd";
     $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
     $sql .= " AND c.categories_id = $id";
     $result = $this->db->query($sql) ;
@@ -241,11 +241,11 @@ class Categorie {
    */
   function delete($user) {
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products WHERE products_id = $idosc ";
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories WHERE products_id = $idosc";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products_to_categories WHERE products_id = $idosc";
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products_description WHERE products_id = $idosc";
 	      
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."album WHERE rowid = $id";
 	    

@@ -39,7 +39,7 @@ $offset = $limit * $page ;
 
 print_barre_liste("Liste des produits oscommerce", $page, "osc-reviews.php");
 
-$sql = "SELECT r.reviews_rating FROM ".DB_NAME_OSC.".reviews as r";
+$sql = "SELECT r.reviews_rating FROM ".OSC_DB_NAME.".reviews as r";
   
 //$sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);

@@ -64,7 +64,7 @@ if ($_GET['id'])
        *
        */
       $sql = "SELECT orders_id, products_id, products_model, products_name, products_price, final_price, products_quantity";
-      $sql .= " FROM ".DB_NAME_OSC.".orders_products";
+      $sql .= " FROM ".OSC_DB_NAME.".orders_products";
       $sql .= " WHERE orders_id = " . $commande->id;
 
       if ( $db->query($sql) )

@@ -48,19 +48,19 @@ class Album {
 	$this->annee = 0;
       }
 
-    $sql = "INSERT INTO ".DB_NAME_OSC.".products (products_quantity, products_model, products_image, products_price, products_date_available, products_weight, products_status, products_tax_class_id, manufacturers_id, products_date_added) ";
+    $sql = "INSERT INTO ".OSC_DB_NAME.".products (products_quantity, products_model, products_image, products_price, products_date_available, products_weight, products_status, products_tax_class_id, manufacturers_id, products_date_added) ";
     $sql .= "VALUES ('', '', 'Array', '', null, '', '0', '0', '8', now())";
 
     if ($this->db->query($sql) )
       {
-	$idosc = $this->db->last_insert_id(DB_NAME_OSC.".products");
+	$idosc = $this->db->last_insert_id(OSC_DB_NAME.".products");
 
-	$sql = "INSERT INTO ".DB_NAME_OSC.".products_to_categories (products_id, categories_id) VALUES ($idosc, 0)";
+	$sql = "INSERT INTO ".OSC_DB_NAME.".products_to_categories (products_id, categories_id) VALUES ($idosc, 0)";
 
 	if ($this->db->query($sql) )
 	  {
 
-	    $sql = "INSERT INTO ".DB_NAME_OSC.".products_description (products_name, products_description, products_url, products_id, language_id) VALUES ('".trim($this->titre)."', '".trim($this->description)."', '', $idosc, '1')";
+	    $sql = "INSERT INTO ".OSC_DB_NAME.".products_description (products_name, products_description, products_url, products_id, language_id) VALUES ('".trim($this->titre)."', '".trim($this->description)."', '', $idosc, '1')";
 	    
 	    if ($this->db->query($sql) )	    
 	      {
@@ -162,7 +162,7 @@ class Album {
   function updateosc()
   {
 
-    $sql = "UPDATE ".DB_NAME_OSC.".products_description ";
+    $sql = "UPDATE ".OSC_DB_NAME.".products_description ";
 
     $sql .= " SET products_name = '".$this->titre."'";
 
@@ -275,7 +275,7 @@ class Album {
 
 
 	$sql = "SELECT products_quantity, products_model, products_image, products_price, products_date_available, products_weight, products_status, products_tax_class_id, manufacturers_id, products_date_added";
-	$sql .= " FROM  ".DB_NAME_OSC.".products WHERE products_id = " . $this->oscid;
+	$sql .= " FROM  ".OSC_DB_NAME.".products WHERE products_id = " . $this->oscid;
 	
 	$result = $this->db->query($sql) ;
 	
@@ -308,11 +308,11 @@ class Album {
    */
   function delete($user) {
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products WHERE products_id = $idosc ";
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories WHERE products_id = $idosc";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products_to_categories WHERE products_id = $idosc";
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products_description WHERE products_id = $idosc";
 	      
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."album WHERE rowid = $id";
 	    

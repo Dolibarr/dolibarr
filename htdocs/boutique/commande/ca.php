@@ -45,7 +45,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td>';
 print '<td align="right">'.$langs->trans("Lastname").'</td></tr>';
 
 $sql = "SELECT sum(t.value) as value";
-$sql .= " FROM ".DB_NAME_OSC.".orders_total as t";
+$sql .= " FROM ".OSC_DB_NAME.".orders_total as t";
 $sql .= " WHERE t.class = 'ot_subtotal'";
  
 if ( $db->query($sql) )
@@ -73,7 +73,7 @@ else
 }
 
 $sql = "SELECT sum(t.value) as value";
-$sql .= " FROM ".DB_NAME_OSC.".orders_total as t";
+$sql .= " FROM ".OSC_DB_NAME.".orders_total as t";
 $sql .= " WHERE t.class = 'ot_shipping'";
  
 if ( $db->query($sql) )

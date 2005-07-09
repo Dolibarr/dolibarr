@@ -55,7 +55,7 @@ $urladd = "&sortorder=$sortorder&sortfield=$sortfield";
 
 $sql = "SELECT pd.products_name, s.specials_new_products_price, p.products_price, p.products_model, s.status, p.products_id";
 $sql .= ",".$db->pdate("expires_date")." as fin";
-$sql .= " FROM ".DB_NAME_OSC.".specials as s,".DB_NAME_OSC.".products_description as pd,".DB_NAME_OSC.".products as p";
+$sql .= " FROM ".OSC_DB_NAME.".specials as s,".OSC_DB_NAME.".products_description as pd,".OSC_DB_NAME.".products as p";
 $sql .= " WHERE s.products_id = pd.products_id AND pd.products_id = p.products_id AND pd.language_id = ".OSC_LANGUAGE_ID;
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);

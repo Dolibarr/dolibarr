@@ -42,7 +42,7 @@ $offset = $limit * $page ;
 print_barre_liste("Liste des clients", $page, "index.php");
 
 $sql = "SELECT c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, c.customers_newsletter";
-$sql .= " FROM ".DB_NAME_OSC.".customers as c";
+$sql .= " FROM ".OSC_DB_NAME.".customers as c";
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
  

@@ -52,19 +52,19 @@ class Livre {
 	$this->annee = 0;
       }
 
-    $sql = "INSERT INTO ".DB_NAME_OSC.".products (products_quantity, products_model, products_image, products_price, products_date_available, products_weight, products_status, products_tax_class_id, manufacturers_id, products_date_added) ";
+    $sql = "INSERT INTO ".OSC_DB_NAME.".products (products_quantity, products_model, products_image, products_price, products_date_available, products_weight, products_status, products_tax_class_id, manufacturers_id, products_date_added) ";
     $sql .= "VALUES ('', '', 'Array', '', null, '', '0', '0', '8', now())";
 
     if ($this->db->query($sql) )
       {
-	$idosc = $this->db->last_insert_id(DB_NAME_OSC.".products");
+	$idosc = $this->db->last_insert_id(OSC_DB_NAME.".products");
 
-	$sql = "INSERT INTO ".DB_NAME_OSC.".products_to_categories (products_id, categories_id) VALUES ($idosc, 0)";
+	$sql = "INSERT INTO ".OSC_DB_NAME.".products_to_categories (products_id, categories_id) VALUES ($idosc, 0)";
 
 	if ($this->db->query($sql) )
 	  {
 
-	    $sql = "INSERT INTO ".DB_NAME_OSC.".products_description (products_name, products_description, products_url, products_id, language_id) VALUES ('".trim($this->titre)."', '".trim($this->description)."', '', $idosc, '".OSC_LANGUAGE_ID."')";
+	    $sql = "INSERT INTO ".OSC_DB_NAME.".products_description (products_name, products_description, products_url, products_id, language_id) VALUES ('".trim($this->titre)."', '".trim($this->description)."', '', $idosc, '".OSC_LANGUAGE_ID."')";
 	    
 	    if ($this->db->query($sql) )	    
 	      {
@@ -186,7 +186,7 @@ class Livre {
   function unlinkcategorie($categories_id)
   {
 
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories ";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products_to_categories ";
 
     $sql .= " WHERE products_id=".$this->oscid;
     $sql .= " AND categories_id=".$categories_id;
@@ -207,7 +207,7 @@ class Livre {
   function linkcategorie($categories_id)
   {
 
-    $sql = "INSERT INTO ".DB_NAME_OSC.".products_to_categories ";
+    $sql = "INSERT INTO ".OSC_DB_NAME.".products_to_categories ";
 
     $sql .= " (products_id, categories_id)";
     $sql .= " VALUES (".$this->oscid.",".$categories_id.")";
@@ -235,7 +235,7 @@ class Livre {
     $pcat = array();
 
     $sql = "SELECT products_id, categories_id";
-    $sql .= " FROM ".DB_NAME_OSC.".products_to_categories ";
+    $sql .= " FROM ".OSC_DB_NAME.".products_to_categories ";
     $sql .= " WHERE products_id = " . $this->oscid;
 
     if ($this->db->query($sql) )
@@ -283,7 +283,7 @@ class Livre {
    */
   function update_status($status)
   {
-    $sql = "UPDATE ".DB_NAME_OSC.".products ";
+    $sql = "UPDATE ".OSC_DB_NAME.".products ";
     $sql .= " SET products_status = ".$status;
     $sql .= " WHERE products_id = " . $this->oscid;
 
@@ -379,7 +379,7 @@ class Livre {
       }
 
 
-    $sql = "UPDATE ".DB_NAME_OSC.".products_description ";
+    $sql = "UPDATE ".OSC_DB_NAME.".products_description ";
 
     $sql .= " SET products_name = '".addslashes($this->titre)."'";
 
@@ -396,7 +396,7 @@ class Livre {
 
     if ( $this->db->query($sql) )
       {
-	$sql = "UPDATE ".DB_NAME_OSC.".products ";
+	$sql = "UPDATE ".OSC_DB_NAME.".products ";
 	$sql .= "SET products_model = '".$this->ref."'";
 	$sql .= ", products_image = '".$this->image."'";
 	$sql .= ", products_price = ".ereg_replace(",",".",$this->price)."";
@@ -499,7 +499,7 @@ class Livre {
 
 
 	$sql = "SELECT products_quantity, products_model, products_image, products_price, products_date_available, products_weight, products_status, products_tax_class_id, manufacturers_id, products_date_added";
-	$sql .= " FROM  ".DB_NAME_OSC.".products WHERE products_id = " . $this->oscid;
+	$sql .= " FROM  ".OSC_DB_NAME.".products WHERE products_id = " . $this->oscid;
 	
 	$result = $this->db->query($sql) ;
 	
@@ -539,7 +539,7 @@ class Livre {
    */
   function update_image($file_name)
   {
-    $sql = "UPDATE ".DB_NAME_OSC.".products SET products_image='".$file_name."'";
+    $sql = "UPDATE ".OSC_DB_NAME.".products SET products_image='".$file_name."'";
     $sql .= " WHERE products_id = " . $this->oscid;
 	
     $result = $this->db->query($sql) ;
@@ -555,11 +555,11 @@ class Livre {
    */
   function delete()
   {    
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = ".$this->oscid;
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products WHERE products_id = ".$this->oscid;
     $result = $this->db->query($sql) ;
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories WHERE products_id = ".$this->oscid;
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products_to_categories WHERE products_id = ".$this->oscid;
     $result = $this->db->query($sql) ;
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = ".$this->oscid;
+    $sql = "DELETE FROM ".OSC_DB_NAME.".products_description WHERE products_id = ".$this->oscid;
     $result = $this->db->query($sql) ;
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."livre WHERE rowid = ".$this->id;
     $result = $this->db->query($sql) ;

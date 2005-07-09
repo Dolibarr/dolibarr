@@ -54,7 +54,7 @@ if ($_GET['id'])
        *
        */
       $sql = "SELECT o.orders_id, o.customers_id,".$db->pdate("date_purchased")." as date_purchased, t.value as total";
-      $sql .= " FROM ".DB_NAME_OSC.".orders as o, ".DB_NAME_OSC.".orders_total as t";;
+      $sql .= " FROM ".OSC_DB_NAME.".orders as o, ".OSC_DB_NAME.".orders_total as t";;
       $sql .= " WHERE o.customers_id = " . $client->id;
       $sql .= " AND o.orders_id = t.orders_id AND t.class = 'ot_total'";
       if ( $db->query($sql) )

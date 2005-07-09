@@ -32,7 +32,7 @@ if ($id)
 
   print_barre_liste($title, $page, "index.php");
 
-  $sql = "SELECT products_id FROM ".DB_NAME_OSC.".products_to_categories WHERE categories_id = $id";
+  $sql = "SELECT products_id FROM ".OSC_DB_NAME.".products_to_categories WHERE categories_id = $id";
   
   if ( $db->query($sql) )
     {
@@ -121,7 +121,7 @@ else
   print_barre_liste("Liste des catégories", $page, "index.php");
 
   $sql = "SELECT c.categories_id, cd.categories_name ";
-  $sql .= " FROM ".DB_NAME_OSC.".categories as c,".DB_NAME_OSC.".categories_description as cd";
+  $sql .= " FROM ".OSC_DB_NAME.".categories as c,".OSC_DB_NAME.".categories_description as cd";
   $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
   $sql .= " AND c.parent_id = 0";
   $sql .= " ORDER BY cd.categories_name ASC ";
