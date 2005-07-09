@@ -239,6 +239,7 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   $i = 0;
+  $var=true;
   
   $box_order=1;
   $foundrupture=1;
