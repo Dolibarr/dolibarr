@@ -76,9 +76,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
     }
 }
 
-/**
- *  Action ajout user
- */
+// Action ajout user
 if ($_POST["action"] == 'add' && $user->admin)
 {
     $message="";
@@ -129,6 +127,7 @@ if ($_POST["action"] == 'add' && $user->admin)
     }
 }
 
+// Action ajout groupe utilisateur
 if ($_POST["action"] == 'addgroup' && $user->admin)
 {
     if ($_POST["group"])
@@ -205,7 +204,9 @@ if ($_POST["action"] == 'update' && $user->admin)
 
 }
 
-if (($_GET["action"] == 'password' || $_GET["action"] == 'passwordsend') && $user->admin)
+// Action modif mot de passe
+if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
+      || $_GET["action"] == 'passwordsend') && $user->admin)
 {
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
@@ -238,6 +239,7 @@ if (($_GET["action"] == 'password' || $_GET["action"] == 'passwordsend') && $use
         }
     }
 }
+
 
 
 llxHeader('',$langs->trans("UserCard"));
@@ -342,12 +344,23 @@ else
 
 
         /*
+         * Confirmation modification mot depasse
+         */
+        if ($action == 'password')
+        {
+            $html = new Form($db);
+            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$fuser->login),"confirm_password");
+            print '<br>';
+        }
+
+        /*
          * Confirmation désactivation
          */
         if ($action == 'disable')
         {
             $html = new Form($db);
             $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_disable");
+            print '<br>';
         }
 
         /*
@@ -357,6 +370,7 @@ else
         {
             $html = new Form($db);
             $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete");
+            print '<br>';
         }
 
 
@@ -392,7 +406,9 @@ else
             print "</tr>\n";
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
-            print '<td class="valeur">'.yn($fuser->admin).'</td>';
+            print '<td class="valeur">'.yn($fuser->admin);
+            if ($fuser->admin) print ' '.img_picto($langs->trans("Administrator"),"star");
+            print '</td>';
             print "</tr>\n";
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("DateCreation").'</td>';
@@ -476,6 +492,7 @@ else
             }
 
             print "</div>\n";
+            print "<br>\n";
             print "<br>\n";
 
 
@@ -662,5 +679,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
