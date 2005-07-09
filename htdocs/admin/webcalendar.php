@@ -52,13 +52,13 @@ $phpwebcalendar_user=trim($_POST["phpwebcalendar_user"]);
 $phpwebcalendar_pass=trim($_POST["phpwebcalendar_pass"]);
 $phpwebcalendar_pass2=trim($_POST["phpwebcalendar_pass2"]);
 $phpwebcalendar_syncro=trim($_POST["phpwebcalendar_syncro"]);
-$actionsave=$_POST["save"];
 $actiontest=$_POST["test"];
+$actionsave=$_POST["save"];
 
 // Test saisie mot de passe
 if ($phpwebcalendar_pass != $phpwebcalendar_pass2)
 {
-    $ok="<font class=\"error\">".$langs->trans("ErrorPasswordDiffers")."</font>";
+    $ok="<div class=\"error\">".$langs->trans("ErrorPasswordDiffers")."</div>";
 }
 // Positionne la variable pour le test d'affichage de l'icone
 elseif ($actionsave)
@@ -105,13 +105,16 @@ elseif ($actionsave)
     }
 }
 
-if (! $phpwebcalendar_url)      { $phpwebcalendar_url=PHPWEBCALENDAR_URL; }
-if (! $phpwebcalendar_host)     { $phpwebcalendar_host=PHPWEBCALENDAR_HOST; }
-if (! $phpwebcalendar_dbname)   { $phpwebcalendar_dbname=PHPWEBCALENDAR_DBNAME; }
-if (! $phpwebcalendar_user)     { $phpwebcalendar_user=PHPWEBCALENDAR_USER; }
-if (! $phpwebcalendar_pass)     { $phpwebcalendar_pass=PHPWEBCALENDAR_PASS; }
-if (! $phpwebcalendar_pass2)    { $phpwebcalendar_pass2=PHPWEBCALENDAR_PASS; }
-if (! $phpwebcalendar_syncro)   { $phpwebcalendar_syncro=PHPWEBCALENDAR_SYNCRO; }
+if (! $actiontest && ! $actionsave) 
+{
+    if (! $phpwebcalendar_url)      { $phpwebcalendar_url=PHPWEBCALENDAR_URL; }
+    if (! $phpwebcalendar_host)     { $phpwebcalendar_host=PHPWEBCALENDAR_HOST; }
+    if (! $phpwebcalendar_dbname)   { $phpwebcalendar_dbname=PHPWEBCALENDAR_DBNAME; }
+    if (! $phpwebcalendar_user)     { $phpwebcalendar_user=PHPWEBCALENDAR_USER; }
+    if (! $phpwebcalendar_pass)     { $phpwebcalendar_pass=PHPWEBCALENDAR_PASS; }
+    if (! $phpwebcalendar_pass2)    { $phpwebcalendar_pass2=PHPWEBCALENDAR_PASS; }
+    if (! $phpwebcalendar_syncro)   { $phpwebcalendar_syncro=PHPWEBCALENDAR_SYNCRO; }
+}
 
 
 /**
@@ -167,27 +170,46 @@ print "</form>\n";
 clearstatcache();
 
 if ($ok) print "<br>$ok<br>";
-
+print "<br>";
 
 // Test de la connection a la database webcalendar
 if ($actiontest && ($phpwebcalendar_pass == $phpwebcalendar_pass2))
 {
+    // Test connexion
     $webcal = new DoliDb('',$phpwebcalendar_host,$phpwebcalendar_user,$phpwebcalendar_pass,$phpwebcalendar_dbname);
 
     if ($webcal->connected == 1 && $webcal->database_selected == 1)
     {
-        print "<br><font class=\"ok\">".$langs->trans("WebCalTestOk",$phpwebcalendar_host,$phpwebcalendar_dbname,$phpwebcalendar_user)."</font><br>";
+        // Vérifie si bonne base
+        $sql="SELECT cal_value FROM webcal_config WHERE cal_setting='application_name'";
+        $resql=$webcal->query($sql);
+        if ($resql) {
+            $mesg ="<div class=\"ok\">".$langs->trans("WebCalTestOk",$phpwebcalendar_host,$phpwebcalendar_dbname,$phpwebcalendar_user);
+            $mesg.="</div>";
+        }
+        else {
+            $mesg ="<div class=\"error\">".$langs->trans("ErrorConnectOkButWrongDatabase");
+            $mesg.=$webcal->error;
+            $mesg.="</div>";
+        }
+
         $webcal->close();
     }
-    elseif ($webcal->connected == 1)
+    elseif ($webcal->connected == 1 && $webcal->database_selected != 1)
     {
-        print "<br><font class=\"error\">".$langs->trans("WebCalTestKo1",$phpwebcalendar_host,$phpwebcalendar_dbname)."</font><br>";
+        $mesg ="<div class=\"error\">".$langs->trans("WebCalTestKo1",$phpwebcalendar_host,$phpwebcalendar_dbname);
+        $mesg.="<br>".$webcal->error;
+        $mesg.="</div>";
         $webcal->close();
     }
     else
     {
-        print "<br><font class=\"error\">".$langs->trans("WebCalTestKo2",$phpwebcalendar_host,$phpwebcalendar_user)."</font><br>";
+        $mesg ="<div class=\"error\">".$langs->trans("WebCalTestKo2",$phpwebcalendar_host,$phpwebcalendar_user);
+        $mesg.="<br>".$webcal->error;
+        $mesg.="</div>";
     }
+
+    print $mesg;
 }
 
 
