@@ -151,7 +151,7 @@ if ($result)
       print '</td><td>';
 
       // Note
-      print '<input type="text" class="flat" size="30" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
+      print '<input type="text" class="flat" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
       print '</td><td>';
       print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
       print '<a href="const.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
