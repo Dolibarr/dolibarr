@@ -38,6 +38,8 @@ $user->getrights('facture');
 if (!$user->rights->facture->lire)
   accessforbidden();
 
+$facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
+$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 
 llxHeader('','Facture récurrente','ch-facture.html#s-fac-facture-rec');
@@ -57,7 +59,7 @@ if ($user->societe_id > 0)
 // Ajout
 if ($_POST["action"] == 'add')
 {
-    $facturerec = new FactureRec($db, $_POST["facid"]);
+    $facturerec = new FactureRec($db, $facid);
     $facturerec->titre = $_POST["titre"];
 
     if ($facturerec->create($user) > 0)
@@ -75,7 +77,7 @@ if ($_POST["action"] == 'add')
 if ($_POST["action"] == 'delete' && $user->rights->facture->supprimer) 
 {
     $fac = new FactureRec($db);
-    $fac->delete($_POST["facid"]);
+    $fac->delete($facid);
     $facid = 0 ;
 }
 
