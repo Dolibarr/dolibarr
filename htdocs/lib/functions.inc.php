@@ -116,13 +116,15 @@ function sanitize_string($str)
 */
 function dolibarr_syslog($message, $level=LOG_ERR)
 {
-    if (defined("MAIN_MODULE_SYSLOG") && MAIN_MODULE_SYSLOG)
+    global $conf;
+    
+    if ($conf->syslog->enabled)
     {
         if (defined("SYSLOG_FILE") && SYSLOG_FILE)
         {
             $file=fopen(SYSLOG_FILE,"a+");
             if ($file) {
-                fwrite($file,time()." ".$level." ".$message."\n");
+                fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".$level." ".$message."\n");
                 fclose($file);
             }
             else {
