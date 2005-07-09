@@ -141,6 +141,13 @@ insert into llx_const (name, value, type, visible) values ('EXPEDITION_ADDON_PDF
 insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON',       'mod_propale_ivoire','chaine',0);
 insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON_PDF',    'azur','chaine',0);
 
+--
+-- Forcer les locales
+--
+insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_ALL',      'MAIN_FORCE_SETLOCALE_LC_ALL', 'chaine', 1, 'Pour forcer LC_ALL si pb de locale');
+insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_TIME',     'MAIN_FORCE_SETLOCALE_LC_TIME', 'chaine', 1, 'Pour forcer LC_TIME si pb de locale');
+insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_MONETARY', 'MAIN_FORCE_SETLOCALE_LC_MONETARY', 'chaine', 1, 'Pour forcer LC_MONETARY si pb de locale');
+insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_NUMERIC',  'MAIN_FORCE_SETLOCALE_LC_NUMERIC', 'chaine', 1, 'Mettre la valeur C si problème de centimes');
 
 -- Dictionnaires llx_c
 
