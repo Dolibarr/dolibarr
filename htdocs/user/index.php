@@ -48,7 +48,7 @@ llxHeader();
 
 print_titre($langs->trans("ListOfUsers"));
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login, ".$db->pdate("u.datec")." as datec";
+$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.code, u.login, ".$db->pdate("u.datec")." as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE 1=1";
 if ($_POST["search_user"]) {
@@ -81,11 +81,21 @@ if ($result)
         print "<tr $bc[$var]>";
         if ($obj->login)
         {
-            print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
+            print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
+            if ($obj->admin) 
+            {
+            	print img_picto($langs->trans("Administrator"),'star');
+            }
+            print '</td>';
         }
         else
         {
             print '<td><a class="impayee" href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' Inactif</a></td>';
+            if ($obj->admin) 
+            {
+            	print img_picto($langs->trans("Administrator"),'star');
+            }
+            print '</td>';
         }
         print '<td>'.ucfirst($obj->name).'</td>';
         print '<td>'.ucfirst($obj->firstname).'</td>';
