@@ -3,6 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -399,7 +400,13 @@ else
             print "</tr>\n";
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
-            print '<td width="50%" class="valeur">'.$fuser->login.'</td></tr>';
+            if ($fuser->login)
+            {
+            	print '<td width="50%" class="valeur">'.$fuser->login.'</td></tr>';
+            }
+            else
+            {
+            	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisable").'</td></tr>';
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
             print '<td width="50%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
@@ -471,17 +478,17 @@ else
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
 
-            if ($user->id == $_GET["id"] or $user->admin)
+            if ($user->id == $_GET["id"] or $user->admin && $fuser->login)
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
             }
 
-            if (($user->id == $_GET["id"] or $user->admin) && $fuser->email)
+            if (($user->id == $_GET["id"] or $user->admin) && $fuser->email && $fuser->login)
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
             }
 
-            if ($user->id <> $_GET["id"] && $user->admin)
+            if ($user->id <> $_GET["id"] && $user->admin && $fuser->login)
             {
                 print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
             }
