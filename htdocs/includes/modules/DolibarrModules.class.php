@@ -200,7 +200,7 @@ class DolibarrModules
                         Pour les modules à l'état 'experimental', retourne la traduction de 'experimental'
                         Pour les modules 'dolibarr', retourne la version de Dolibarr
                         Pour les autres modules, retourne la version du module
-            \return     string      Nom du module traduit
+            \return     string      Version du module
     */
     function getVersion()
     {
@@ -216,10 +216,13 @@ class DolibarrModules
 
     /**
             \brief      Retourne la version en base du module.
-            \return     string      Nom du module traduit
+            \return     string      Version du module
      */
     function getDbVersion()
     {
+        global $langs;
+        $langs->load("admin");
+
         $sql ="SELECT active_version FROM ".MAIN_DB_PREFIX."dolibarr_modules";
         $sql .= " WHERE numero=".$this->numero." AND active = 1";
 
@@ -238,7 +241,13 @@ class DolibarrModules
 
             $this->db->free($resql);
         }
-        return $this->dbversion;
+        
+        
+        if ($this->dbversion == 'experimental') return $langs->trans("Experimental");
+        elseif ($this->dbversion == 'dolibarr') return DOL_VERSION;
+        elseif ($this->dbversion) return $this->dbversion;
+        else return $langs->trans("Unknown");
+
     }
 
 
