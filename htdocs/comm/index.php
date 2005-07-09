@@ -217,6 +217,7 @@ if ( $db->query($sql) )
       print "<tr class=\"liste_titre\">";
       print "<td colspan=\"2\">".$langs->trans("Bookmarks")."</td>";
       print "</tr>\n";
+      $var=true;
       
       while ($i < $num)
 	{
