@@ -76,6 +76,9 @@ class modExternalRss extends DolibarrModules
     $this->boxes[0][0] = "Informations externes RSS";
     $this->boxes[0][1] = "box_external_rss.php";
 
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'externalrss';
   }
 
    /**
