@@ -235,3 +235,14 @@ FillTownFromZip=Fill town from zip
 ShowLog=Show log
 File=File
 ReadPermissionNotAllowed=Read permission not allowed
+# Countries
+CountryFR=France
+CountryBE=Belgium
+CountryES=Spain
+CountryDE=Germany
+CountryCH=Switzerland
+# Currencies
+CurrencyCHF=Swiss Francs
+CurrencyEUR=Euros
+CurrencyGBP=GB Pounds
+CurrencyUSD=Dollar US

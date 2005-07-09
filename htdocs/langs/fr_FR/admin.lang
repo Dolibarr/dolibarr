@@ -176,6 +176,7 @@ DictionnaryCompanyJuridicalType=Formes juridiques
 DictionnaryCanton=Départements/Provinces/Cantons
 DictionnaryRegion=Régions
 DictionnaryCountry=Pays
+DictionnaryCurrency=Monnaies
 DictionnaryCivility=Titres de civilité
 DictionnaryActions=Liste des actions
 DictionnarySocialContributions=Types de charges sociales

@@ -235,3 +235,14 @@ FillTownFromZip=Renseigner ville
 ShowLog=Afficher historique
 File=Fichier
 ReadPermissionNotAllowed=Permission de lecture non accordée
+# Countries
+CountryFR=France
+CountryBE=Belgique
+CountryES=Espagne
+CountryDE=Allemagne
+CountryCH=Suisse
+# Currencies
+CurrencyCHF=Francs suisses
+CurrencyEUR=Euros
+CurrencyGBP=Livre sterling
+CurrencyUSD=Dollar US

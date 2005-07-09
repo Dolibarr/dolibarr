@@ -176,6 +176,7 @@ DictionnaryCompanyJuridicalType=Juridical kinds of company
 DictionnaryCanton=Cantons
 DictionnaryRegion=Regions
 DictionnaryCountry=Countries
+DictionnaryCurrency=Currencies
 DictionnaryCivility=Civility title
 DictionnaryActions=Actions list
 DictionnarySocialContributions=Social contributions types
