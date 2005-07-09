@@ -165,7 +165,7 @@ if ($_GET["action"] == 'facturee')
   $commande->classer_facturee();
 }
 
-if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->commande->valider)
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->commande->valider)
 {
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);
@@ -174,14 +174,14 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->ri
   $result = $commande->valid($user);
 }
 
-if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == yes && $user->rights->commande->valider)
+if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == 'yes' && $user->rights->commande->valider)
 {
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);
   $result = $commande->cancel($user);
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
   if ($user->rights->commande->supprimer ) 
     {
@@ -744,40 +744,44 @@ else
 
 	print '</div>';
 
-	if ($user->societe_id == 0 && $commande->statut < 3 && $_GET["action"] == '')
-	  {
-	    print '<div class="tabsAction">';
-	
-	    if ($conf->expedition->enabled && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
-	      {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET["id"].'">'.$langs->trans("Send").'</a>';
-	      }
-	  
-	    
-	    if ($commande->statut == 0) 
-	      {
-		if ($user->rights->commande->valider)
-		  {
-		    print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
-		  }
-	      }
-	    
-	    if ($commande->statut == 0 && $user->rights->commande->supprimer)
-	      {
-		print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-	      } 
-	    
-	    if ($commande->statut == 1)
-	      {
-    		$nb_expedition = $commande->nb_expedition();
-    		if ($user->rights->commande->valider && $nb_expedition == 0)
-    		  {
-    		    print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans("Cancel").'</a>';
-    		  }
-	      }
 
-	    print "</div>";
-	  }
+    /*
+     * Boutons actions
+     */
+    if ($user->societe_id == 0 && $commande->statut < 3 && $_GET["action"] == '')
+    {
+        print '<div class="tabsAction">';
+    
+        if ($conf->expedition->enabled && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
+        {
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET["id"].'">'.$langs->trans("Send").'</a>';
+        }
+    
+    
+        if ($commande->statut == 0)
+        {
+            if ($user->rights->commande->valider)
+            {
+                print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
+            }
+        }
+    
+        if ($commande->statut == 0 && $user->rights->commande->supprimer)
+        {
+            print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+        }
+    
+        if ($commande->statut == 1)
+        {
+            $nb_expedition = $commande->nb_expedition();
+            if ($user->rights->commande->valider && $nb_expedition == 0)
+            {
+                print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans("Cancel").'</a>';
+            }
+        }
+    
+        print "</div>";
+    }
 	print "<br>\n";
 
 
@@ -790,34 +794,34 @@ else
 	$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 	$sql .= " WHERE e.fk_commande = ". $commande->id;
 	    
-	$result = $db->query($sql);
-	if ($result)
-	  {
-	    $num = $db->num_rows($result);
-	    if ($num)
-	      {
-		print_titre($langs->trans("Sendings"));
-		$i = 0; $total = 0;
-		print '<table class="border" width="100%">';
-		print "<tr $bc[$var]><td>".$langs->trans("Sendings")."</td><td>".$langs->trans("Date")."</td></tr>\n";
-		
-		$var=True;
-		while ($i < $num)
-		  {
-		    $objp = $db->fetch_object($result);
-		    $var=!$var;
-		    print "<tr $bc[$var]>";
-		    print '<td><a href="../expedition/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' '.$objp->ref.'</a></td>';
-		    print "<td>".dolibarr_print_date($objp->de)."</td></tr>\n";
-		    $i++;
-		  }
-		print "</table>";
-	      }
-	  }
-	else
-	  {
-	    dolibarr_print_error($db);
-	  }
+    $result = $db->query($sql);
+    if ($result)
+    {
+        $num = $db->num_rows($result);
+        if ($num)
+        {
+            print_titre($langs->trans("Sendings"));
+            $i = 0; $total = 0;
+            print '<table class="border" width="100%">';
+            print "<tr $bc[$var]><td>".$langs->trans("Sendings")."</td><td>".$langs->trans("Date")."</td></tr>\n";
+    
+            $var=True;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
+                $var=!$var;
+                print "<tr $bc[$var]>";
+                print '<td><a href="../expedition/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' '.$objp->ref.'</a></td>';
+                print "<td>".dolibarr_print_date($objp->de)."</td></tr>\n";
+                $i++;
+            }
+            print "</table>";
+        }
+    }
+    else
+    {
+        dolibarr_print_error($db);
+    }
 	print "&nbsp;</td><td>";
 	
 	/*
@@ -881,6 +885,7 @@ else
 	    print "</table>\n";
 	    print '</td><td valign="top" width="50%">';
 	  }
+
 	/*
 	 * Classe la commande dans un projet
 	 * TODO finir le look & feel très moche
@@ -899,10 +904,6 @@ else
 	    print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr></table></form>';
 	  }
 
-	/*
-	 *
-	 *
-	 */
       }
     else
       {

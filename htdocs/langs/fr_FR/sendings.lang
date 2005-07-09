@@ -10,3 +10,5 @@ StatisticsOfSendings=Statistiques des expéditions
 NbOfSendings=Nombre d'expéditions
 SendingCard=Fiche Expédition
 NewSending=Nouvelle expédition
+CreateASending=Créer une expedition
+CreateSending=Créer expedition

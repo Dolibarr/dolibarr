@@ -20,15 +20,15 @@
  *
  */
 
-/*!
-  \file htdocs/expedition/expedition.class.php
-  \ingroup    expedition
-  \brief      Fichier de la classe de gestion des expeditions
-  \version    $Revision$
+/**
+        \file       htdocs/expedition/expedition.class.php
+        \ingroup    expedition
+        \brief      Fichier de la classe de gestion des expeditions
+        \version    $Revision$
 */
 
 
-/*! \class Expedition
+/** \class Expedition
 		\brief      Classe de gestion des expeditions
 */
 class Expedition 
@@ -58,88 +58,94 @@ class Expedition
 
       $this->products = array();
     }
+
   /**
-   * Créé
-   *
-   *
+   *    \brief      Créé expédition en base
+   *    \param      user        Objet du user qui cré
+   *    \return     int         <0 si erreur, id expédition créée si ok
    */
   function create($user)
     {
-      require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
-      $error = 0;
-      /* On positionne en mode brouillon la commande */
-      $this->brouillon = 1;
-      
+        require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
+        $error = 0;
+        /* On positionne en mode brouillon la commande */
+        $this->brouillon = 1;
+    
+        $this->user = $user;
+    
+        $this->db->begin();
+    
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (date_creation, fk_user_author, date_expedition, fk_commande";
+        if ($this->entrepot_id) $sql.= ", fk_entrepot";
+        $sql.= ")";
+        $sql.= " VALUES (now(), $user->id, ".$this->db->idate($this->date_expedition).",$this->commande_id";
+        if ($this->entrepot_id) $sql.= ", $this->entrepot_id";
+        $sql.= ")";
+    
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expedition");
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+            if ($this->db->query($sql))
+            {
+    
+                $this->commande = new Commande($this->db);
+                $this->commande->id = $this->commande_id;
+                $this->commande->fetch_lignes();
+    
+                /*
+                *  Insertion des produits dans la base
+                */
+                for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+                {
+                    //TODO
+                    if (! $this->create_line(0, $this->lignes[$i]->commande_ligne_id, $this->lignes[$i]->qty))
+                    {
+                        $error++;
+                    }
+                }
 
-      $this->user = $user;
-      $this->db->begin();
-
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (date_creation, fk_user_author, date_expedition, fk_commande, fk_entrepot) ";
-      $sql .= " VALUES (now(), $user->id, ".$this->db->idate($this->date_expedition).",$this->commande_id, $this->entrepot_id)";
-      
-      if ( $this->db->query($sql) )
-	{
-	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expedition");
-
-	  /*
-	   *
-	   *
-	   */
-
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
-	  if ($this->db->query($sql))
-	    {
-
-	      $this->commande = new Commande($this->db);
-	      $this->commande->id = $this->commande_id;
-	      $this->commande->fetch_lignes();
-
-	      /*
-	       *  Insertion des produits dans la base
-	       */
-	      for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-		{
-		  //TODO
-		  if (! $this->create_line(0, $this->lignes[$i]->commande_ligne_id, $this->lignes[$i]->qty))
-		    {
-		      $error++;
-		    }
-		}
-	      /*
-	       *
-	       *
-	       */
-	      $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->commande_id;
-	      if (! $this->db->query($sql))
-		{
-		  $error++;
-		}
-
-
-	      if ($error ==0)
-		{
-		  $this->db->commit();
-		}
-	      else
-		{
-		  $this->db->rollback();
-		}
-
-	      return $this->id;
-	    }
-	  else
-	    {
-	      $error++;
-	      return -1;
-	    }
-	}
-      else
-	{
-	  $error++;
-	  print $this->db->error() . '<b><br>'.$sql;
-	  return 0;
-	}
+                /*
+                 *
+                 */
+                $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->commande_id;
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                }
+        
+                if ($error==0)
+                {
+                    $this->db->commit();
+                    return $this->id;
+                }
+                else
+                {
+                    $error++;
+                    $this->error=$this->db->error()." - sql=$sql";
+                    $this->db->rollback();
+                    return -3;
+                }
+            }
+            else
+            {
+                $error++;
+                $this->error=$this->db->error()." - sql=$sql";
+                $this->db->rollback();
+                return -2;
+            }
+        }
+        else
+        {
+            $error++;
+            $this->error=$this->db->error()." - sql=$sql";
+            $this->db->rollback();
+            return -1;
+        }
     }
+
   /**
    *
    *
@@ -215,57 +221,60 @@ class Expedition
     }
 
   /**
-   * Valide l'expedition
-   *
-   *
+   *        \brief      Valide l'expedition
+   *        \param      user        Objet de l'utilisateur qui valide
+   *        \return     int
    */
-  function valid($user)
+    function valid($user)
     {
-      require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
-
-      $result = 0;
-      if ($user->rights->expedition->valider)
-	{
-	  $this->ref = "EXP".$this->id;
-	  
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='".$this->ref."', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
-	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-		  
-	  if ($this->db->query($sql) )
-	    {
-	      $result = 1;
-
-	      /*
-	       * Enregistrement d'un mouvement de stock
-	       * pour chaque ligne produit de l'expedition
-	       */
-
-	      $sql = "SELECT cd.fk_product,  ed.qty ";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed";
-	      $sql .= " WHERE ed.fk_expedition = $this->id AND cd.rowid = ed.fk_commande_ligne ";
-	  
-	      if ($this->db->query($sql))
-		{
-		  $num = $this->db->num_rows();
-		  $i=0;
-		  while($i < $num)
-		    {
-		      $mouvS = new MouvementStock($this->db);
-		      $obj = $this->db->fetch_object();
-		      $mouvS->livraison($user, $obj->fk_product, $this->entrepot_id, $obj->qty, 0);
-		      $i++;
-		    }
-		}
-
-	    }
-	  else
-	    {
-	      $result = -1;
-	      print $this->db->error() . ' in ' . $sql;
-	    }
-	}
-      return $result ;
+        require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
+    
+        $result = 0;
+        if ($user->rights->expedition->valider)
+        {
+            $this->ref = "EXP".$this->id;
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='".$this->ref."', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+            $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+    
+            if ($this->db->query($sql) )
+            {
+                $result = 1;
+    
+                // Si module stock géré et que expedition faite depuis un entrepot
+                if ($conf->stock->enabled && $this->entrepot_id)
+                {
+                    /*
+                     * Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
+                     */
+        
+                    $sql = "SELECT cd.fk_product,  ed.qty ";
+                    $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed";
+                    $sql .= " WHERE ed.fk_expedition = $this->id AND cd.rowid = ed.fk_commande_ligne ";
+        
+                    if ($this->db->query($sql))
+                    {
+                        $num = $this->db->num_rows();
+                        $i=0;
+                        while($i < $num)
+                        {
+                            $mouvS = new MouvementStock($this->db);
+                            $obj = $this->db->fetch_object();
+                            $mouvS->livraison($user, $obj->fk_product, $this->entrepot_id, $obj->qty, 0);
+                            $i++;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                $result = -1;
+                $this->error=$this->db->error()." - sql=".$sql;
+            }
+        }
+        return $result ;
     }
+
 
   /**
    * Ajoute un produit

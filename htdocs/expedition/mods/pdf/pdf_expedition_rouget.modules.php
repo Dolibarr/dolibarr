@@ -24,7 +24,7 @@
 require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition.class.php";
 
 
-Class pdf_expedition_rouget extends ModelePdfExpedition
+Class pdf_expedition_rouget extends pdf_expedition
 {
 
   function pdf_expedition_rouget($db=0)

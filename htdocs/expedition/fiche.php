@@ -21,11 +21,11 @@
  *
  */
 
-/*! 
-  \file htdocs/expedition/fiche.php
-  \ingroup    expedition
-  \brief      Fiche descriptive d'une expedition
-  \version    $Revision$
+/**
+        \file       htdocs/expedition/fiche.php
+        \ingroup    expedition
+        \brief      Fiche descriptive d'une expedition
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -37,52 +37,58 @@ if (!$user->rights->expedition->lire)
 require("../propal.class.php");
 require("../product/stock/entrepot.class.php");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
+
 /*
- *
+ * Actions
  */
 
 if ($_POST["action"] == 'add') 
 {
-  $expedition = new Expedition($db);
-
-  $expedition->date_expedition  = time();
-  $expedition->note             = $_POST["note"];
-  $expedition->commande_id      = $_POST["commande_id"];
-  $expedition->entrepot_id      = $_POST["entrepot_id"];
-
-  $commande = new Commande($db);
-  $commande->fetch($expedition->commande_id);
-  $commande->fetch_lignes();
-  
-  for ($i = 0 ; $i < sizeof($commande->lignes) ; $i++)
+    $expedition = new Expedition($db);
+    
+    $expedition->date_expedition  = time();
+    $expedition->note             = $_POST["note"];
+    $expedition->commande_id      = $_POST["commande_id"];
+    $expedition->entrepot_id      = $_POST["entrepot_id"];
+    
+    $commande = new Commande($db);
+    $commande->fetch($expedition->commande_id);
+    $commande->fetch_lignes();
+    
+    $db->begin();
+    
+    for ($i = 0 ; $i < sizeof($commande->lignes) ; $i++)
     {
-      $qty = "qtyl".$i;
-      $idl = "idl".$i;
-      if ($_POST[$qty] > 0)
-	{
-	  $expedition->addline($_POST[$idl],$_POST[$qty]);
-	}
+        $qty = "qtyl".$i;
+        $idl = "idl".$i;
+        if ($_POST[$qty] > 0)
+        {
+            $expedition->addline($_POST[$idl],$_POST[$qty]);
+        }
     }
-
-  $expedition->create($user);
-  
-  $id = $expedition->id;
-
-  Header("Location:fiche.php?id=$id");
+    
+    $ret=$expedition->create($user);
+    if ($ret > 0)
+    {
+        $db->commit();
+        Header("Location: fiche.php?id=".$expedition->id);
+        exit;
+    }
+    else
+    {
+        $db->rollback();
+        $mesg='<div class="error">'.$expedition->error.'</div>';
+        $_GET["commande_id"]=$_POST["commande_id"];
+        $_GET["action"]='create';
+    }
 }
-
-/*
- *
- */
-
 
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->expedition->valider)
 {
@@ -110,6 +116,7 @@ if ($_GET["action"] == 'pdf')
   $expedition->PdfWrite();
 }
 
+
 /*
  *
  */
@@ -120,18 +127,22 @@ $html = new Form($db);
  *
  * Mode creation
  *
- *
- ************************************************************************/
-if ($_POST["action"] == 'create') 
+ *********************************************************************/
+if ($_GET["action"] == 'create') 
 {
   llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
 
-  print_titre("Créer une expédition");
+  print_titre($langs->trans("CreateASending"));
 
+  if ($mesg)
+  {
+        print $mesg.'<br>';
+  }
+  
   $commande = new Commande($db);
   $commande->livraison_array();
   
-  if ( $commande->fetch($_POST["commande_id"]))
+  if ( $commande->fetch($_GET["commande_id"]))
     {
       $soc = new Societe($db);
       $soc->fetch($commande->soc_id);
@@ -146,25 +157,25 @@ if ($_POST["action"] == 'create')
       print '<form action="fiche.php" method="post">';
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
-      print '<input type="hidden" name="entrepot_id" value="'.$_POST["entrepot_id"].'">';
-      print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-      print '<tr><td width="20%">Client</td>';
+      print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
+      print '<table class="border" width="100%">';
+      print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
       print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
       
       print '<td width="50%" colspan="2">';
 
       print "</td></tr>";
       
-      print "<tr><td>Date</td>";
+      print "<tr><td>".$langs->trans("Date")."</td>";
       print "<td>".strftime("%A %d %B %Y",$commande->date)."</td>\n";
       
-      print '<td colspan="2" width="50%">Commande : ' . $commande->ref ;
+      print '<td colspan="2" width="50%">'.$langs->trans("Order").': ' . $commande->ref;
       print "</td></tr>\n";
       
-      print '<tr><td>Entrepôt</td>';
+      print '<tr><td>'.$langs->trans("Warehouse").'</td>';
       print '<td>';
       $ents = $entrepot->list_array();
-      print $ents[$_POST["entrepot_id"]];
+      print $ents[$_GET["entrepot_id"]];
       print '</td>';
       print "<td>".$langs->trans("Author")."</td><td>$author->fullname</td>\n";
       
@@ -178,7 +189,7 @@ if ($_POST["action"] == 'create')
        * Lignes de commandes
        *
        */
-      echo '<br><table border="0" width="100%" cellspacing="0" cellpadding="3">';	  
+      echo '<br><table class="noborder" width="100%">';
       
       $lignes = $commande->fetch_lignes(1);
       
@@ -195,16 +206,17 @@ if ($_POST["action"] == 'create')
 	  print '<td align="center">Quan. commandée</td>';
 	  print '<td align="center">Quan. livrée</td>';
 	  print '<td align="center">Quan. à livrer</td>';
-	  if (defined("MAIN_MODULE_STOCK"))
+	  if ($conf->stock->enabled)
 	    {
-	      print '<td width="12%" align="center">Stock</td>';
+	      print '<td width="12%" align="center">'.$langs->trans("Stock").'</td>';
 	    }
 	  print "</tr>\n";
 	}
-      $var=True;
+      $var=true;
       while ($i < $num)
 	{
 	  $ligne = $commande->lignes[$i];
+	  $var=!$var;
 	  print "<tr $bc[$var]>\n";
 	  if ($ligne->product_id > 0)
 	    {      
@@ -216,7 +228,7 @@ if ($_POST["action"] == 'create')
 	    }
 	  else
 	    {
-	      print "<td>".nl2br($ligne->description)."</TD>\n";
+	      print "<td>".nl2br($ligne->description)."</td>\n";
 	    }
 	  
 	  print '<td align="center">'.$ligne->qty.'</td>';
@@ -236,7 +248,7 @@ if ($_POST["action"] == 'create')
 	  $quantite_commandee = $ligne->qty;
 	  $quantite_a_livrer = $quantite_commandee - $quantite_livree;
 	      
-	  if (defined("MAIN_MODULE_STOCK"))
+	  if ($conf->stock->enabled)
 	    {
 	      $stock = $product->stock_entrepot[$_POST["entrepot_id"]];
 
@@ -267,13 +279,13 @@ if ($_POST["action"] == 'create')
        *
        */
 
-      print '<tr><td align="center" colspan="3"><input type="submit" value="Créer"></td></tr>';
+      print '<tr><td align="center" colspan="4"><br><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
       print "</table>";
       print '</form>';
     } 
   else 
     {
-      print $db->error() . "<br>$sql";;
+      dolibarr_print_error($db);
     }
 } 
 else 
@@ -283,6 +295,7 @@ else
 /*                                                                             */
 /* *************************************************************************** */
 {  
+
   if ($_GET["id"] > 0)
     {
       $expedition = New Expedition($db);
@@ -345,8 +358,8 @@ else
 	      print '<input type="hidden" name="action" value="setremise">';
 	    }
 
-	  print '<br /><table class="border" cellspacing="0" cellpadding="2" width="100%">';
-	  print '<tr><td width="20%">Client</td>';
+	  print '<table class="border" width="100%">';
+	  print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
 	  print '<td width="30%">';
 	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
@@ -354,17 +367,17 @@ else
 
 	  print "</tr>";
 	  
-	  print "<tr><td>Commande</td>";
+	  print '<tr><td>'.$langs->trans("Order").'</td>';
 	  print '<td><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id.'">'.$commande->ref."</a></td>\n";
 	  print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
-	  print "<tr><td>Date</td>";
+	  print '<tr><td>'.$langs->trans("Date").'</td>';
 	  print "<td>".strftime("%A %d %B %Y",$expedition->date)."</td>\n";
 
 	  $entrepot = new Entrepot($db);
 	  $entrepot->fetch($expedition->entrepot_id);
 
-	  print '<td width="20%">Entrepôt</td><td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td></tr>';
+	  print '<td width="20%">'.$langs->trans("Warehouse").'</td><td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td></tr>';
 
 	  print "</table>\n";
 	  	  
@@ -385,19 +398,20 @@ else
 	    {
 	      $num_prod = $db->num_rows($resql);
 	      $i = 0;
-	      
 
 	      print '<tr class="liste_titre">';
-	      print '<td width="54%">'.$langs->trans("Description").'</td>';
+	      print '<td width="54%">'.$langs->trans("Products").'</td>';
 	      print '<td align="center">Quan. commandée</td>';
 	      print '<td align="center">Quan. livrée</td>';
 	      print "</tr>\n";
 
-	      $var=True;
+	      $var=true;
 	      while ($i < $num_prod)
 		{
 		  $objp = $db->fetch_object($resql);
-		  print "<TR $bc[$var]>";
+		  
+		  $var=!$var;
+		  print "<tr $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
 		      print '<td>';
@@ -422,25 +436,28 @@ else
 	      dolibarr_print_error($db);
 	    }
 	  	  
-	  print "</table>\n";
+	  print "</table><br>\n";
+
+	  print "\n</div>\n";
+
 	  /*
 	   *
 	   */
 	  $file = $expedition->pdf_filename;
 	  if (file_exists($file))
 	    {
-	      print '<br /><table class="border" width="50%">';
+	      print_titre($langs->trans("Documents"));
+	      print '<table class="border" width="50%">';
 	      print "<tr $bc[$var]><td>".$langs->trans("Sending")." PDF</td>";
 
 	      $b = ereg_replace($conf->expedition->dir_output."/","",$file);
 
 	      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=expedition&file='.urlencode($b).'">'.basename($file).'</a></td>';
 	      print '<td align="right">'.filesize($file). ' bytes</td>';
-	      print '<td align="right">'.strftime("%e %B %Y %H:%M:%S",filemtime($file)).'</td></tr>';
+	      print '<td align="right">'.dolibarr_print_date(filemtime($file),"%d %B %Y %H:%M:%S").'</td></tr>';
 	      print "</table>";
 	    }  
 
-	  print "\n</div>\n";
 
 	  /*
 	   *
@@ -639,5 +656,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
