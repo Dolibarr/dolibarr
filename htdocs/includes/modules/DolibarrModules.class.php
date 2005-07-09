@@ -246,7 +246,7 @@ class DolibarrModules
         if ($this->dbversion == 'experimental') return $langs->trans("Experimental");
         elseif ($this->dbversion == 'dolibarr') return DOL_VERSION;
         elseif ($this->dbversion) return $this->dbversion;
-        else return $langs->trans("Unknown");
+        else return "";
 
     }
 
