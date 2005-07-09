@@ -33,21 +33,17 @@ $user->getrights('users');
 
 llxHeader();
 
-print_titre($langs->trans("MenuUsersAndGroups"));
+
+$lien="";
+if ($user->admin) $lien='<a href="'.DOL_URL_ROOT.'/user/admin/index.php">'.img_picto($langs->trans("Setup"),"setup").' '.$langs->trans("Setup").'</a>';
+
+print_fiche_titre($langs->trans("MenuUsersAndGroups"),$lien);
+
 
 print '<table border="0" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
 
-if ($user->admin)
-{
-    print '<table class="noborder" width="100%">';
-
-    $var=false;
-    print '<tr '.$bc[$var].'><td>';
-    print '<a href="admin">'.$langs->trans("Setup").'</a>';
-    print "</td></tr></table><br>\n";
-}
 
 
 /*
