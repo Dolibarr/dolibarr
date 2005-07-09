@@ -151,7 +151,7 @@ print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("DbVersion")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Action")."</td>\n";
-print "  <td>&nbsp;</td>\n";
+print "  <td>".$langs->trans("SetupShort")."</td>\n";
 print "</tr>\n";
 
 
@@ -264,45 +264,47 @@ foreach ($orders as $key => $value)
 	
 
         if ($const_value == 1)
-	  {
+    	{
             // Module actif
             print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Disable") . "</a></td>\n";
-
-
+        
+        
             if ($objMod->config_page_url)
             {
                 if (is_array($objMod->config_page_url)) {
-                    print "  <td>";
+                    print '  <td align="center">';
                     $i=0;
-                    foreach ($objMod->config_page_url as $page) 
-		      {
+                    foreach ($objMod->config_page_url as $page)
+                    {
                         if ($i++)
-			  {
-			    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;'; 
-			  }
+                        {
+                            print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
+                        }
                         else
-			  {
-			    print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;'; 
-			  }
-		      }
+                        {
+                            //print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;';
+                            print '<a href="'.$page.'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+                        }
+                    }
                     print "</td>\n";
                 }
-		else
-		  {
-                    print '  <td><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
-		  }
+                else
+                {
+                    //print '  <td align="center"><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
+                    print '  <td align="center"><a href="'.$objMod->config_page_url.'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+                }
             }
             else
-	      {
+            {
                 print "  <td>&nbsp;</td>";
-	      }
-	    
+            }
+    
         }
         else
-	  {
+	    {
             // Module non actif
             print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=set&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Activate") . "</a></td>\n  <td>&nbsp;</td>\n";
-	  }
+	    }
 	
         print "</tr>\n";
     }
