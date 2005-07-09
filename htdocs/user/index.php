@@ -90,7 +90,7 @@ if ($result)
         }
         else
         {
-            print '<td><a class="impayee" href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' Inactif</a></td>';
+            print '<td><a class="impayee" href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' Inactif</a>';
             if ($obj->admin) 
             {
             	print img_picto($langs->trans("Administrator"),'star');
