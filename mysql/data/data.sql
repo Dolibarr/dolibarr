@@ -128,7 +128,7 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_
 --
 -- OsCommerce
 --
-insert into llx_const (name, value, type) values ('DB_NAME_OSC','catalog','chaine');
+insert into llx_const (name, value, type) values ('OSC_DB_NAME','catalog','chaine');
 insert into llx_const (name, value, type) values ('OSC_LANGUAGE_ID','1','chaine');
 insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
 
@@ -644,9 +644,9 @@ insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DH', 'H
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DS', 'SGD', 1, 'Dollars singapour'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DU', 'USD', 1, 'Dollars us'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'EC', 'XEU', 1, 'Ecus'); 
-insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'ES', 'PTE', 1, 'Escudos'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'ES', 'PTE', 0, 'Escudos'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FB', 'BEF', 0, 'Francs belges'); 
-insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FF', 'FRF', 1, 'Francs francais'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FF', 'FRF', 0, 'Francs francais'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FL', 'LUF', 0, 'Francs luxembourgeois'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FO', 'NLG', 1, 'Florins'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FS', 'CHF', 1, 'Francs suisses'); 
