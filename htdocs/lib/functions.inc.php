@@ -443,7 +443,7 @@ function dolibarr_trunc($string,$size=40)
 }
 
 /**
-        \brief      Affiche logo propre à une notion (fonction générique)
+        \brief      Affiche picto propre à une notion/module (fonction générique)
         \param      alt         Texte sur le alt de l'image
         \param      object      Objet pour lequel il faut afficher le logo (exemple: user, group, action, bill, contract, propal, product, ...)
         \return     string      Retourne tags <img>
@@ -452,6 +452,18 @@ function img_object($alt, $object)
 {
   global $conf,$langs;
   return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/object_'.$object.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/**
+        \brief      Affiche picto (fonction générique)
+        \param      alt         Texte sur le alt de l'image
+        \param      picto       Nom de l'image a afficher
+        \return     string      Retourne tags <img>
+*/
+function img_picto($alt, $picto)
+{
+  global $conf,$langs;
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**

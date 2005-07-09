@@ -17,17 +17,16 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-	    \file       htdocs/user/home.php
-		\brief      Page acceuil de la zone utilisateurs et groupes
-		\version    $Revision$
+        \file       htdocs/user/home.php
+        \brief      Page acceuil de la zone utilisateurs et groupes
+        \version    $Revision$
 */
- 
+
 require("./pre.inc.php");
-	  
+
 $langs->load("users");
 
 $user->getrights('users');
@@ -42,36 +41,36 @@ print '<tr><td valign="top" width="30%">';
 
 if ($user->admin)
 {
-  print '<table class="noborder" width="100%">';
+    print '<table class="noborder" width="100%">';
 
-  $var=false;
-  print '<tr '.$bc[$var].'><td>';
-  print '<a href="admin">'.$langs->trans("Setup").'</a>';
-  print "</td></tr></table><br>\n";
+    $var=false;
+    print '<tr '.$bc[$var].'><td>';
+    print '<a href="admin">'.$langs->trans("Setup").'</a>';
+    print "</td></tr></table><br>\n";
 }
 
 
 /*
  * Recherche Group
  */
-    $var=false;
-	print '<table class="noborder" width="100%">';
-	print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAGroup").'</td></tr>';
-	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").' : <input class="flat" type="text" name="search_group">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "</form></table><br>\n";
+$var=false;
+print '<table class="noborder" width="100%">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAGroup").'</td></tr>';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("Ref").' : <input class="flat" type="text" name="search_group">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print "</form></table><br>\n";
 
 /*
  * Recherche User
  */
-    $var=false;
-	print '<table class="noborder" width="100%">';
-	print '<form method="post" action="'.DOL_URL_ROOT.'/user/index.php">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAUser").'</td></tr>';
-	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").' : <input class="flat" type="text" name="search_user">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "</form></table><br>\n";
+$var=false;
+print '<table class="noborder" width="100%">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/user/index.php">';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAUser").'</td></tr>';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("Ref").' : <input class="flat" type="text" name="search_user">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print "</form></table><br>\n";
 
 
 print '</td><td valign="top" width="70%">';
@@ -79,80 +78,92 @@ print '</td><td valign="top" width="70%">';
 
 /*
  * Derniers groupes créés
- *
  */
-$max=0;
+$max=5;
 
 $sql = "SELECT g.rowid, g.nom, g.note, ".$db->pdate("g.datec")." as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql .= " ORDER BY g.datec DESC";
 if ($max) $sql .= " LIMIT $max";
 
-if ( $db->query($sql) ) 
+if ( $db->query($sql) )
 {
-  $num = $db->num_rows();
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated").'</td></tr>';
-  $var = true;
-  $i = 0;
+    $num = $db->num_rows();
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",$max).'</td></tr>';
+    $var = true;
+    $i = 0;
 
-  while ($i < $num && (! $max || $i < $max)) 
-	{
-	  $obj = $db->fetch_object();
-	  $var=!$var;
-	  
-	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"".DOL_URL_ROOT."/user/group/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowGroup"),"group")." ".$obj->nom."</a></td>";
-	  print "<td width=\"120\" align=\"center\">".dolibarr_print_date($obj->datec,"%d %b %Y")."</td>";
-      print '</tr>';
-	  $i++;
-	}
-  print "</table><br>";
+    while ($i < $num && (! $max || $i < $max))
+    {
+        $obj = $db->fetch_object();
+        $var=!$var;
 
-  $db->free();
-} 
+        print "<tr $bc[$var]>";
+        print "<td><a href=\"".DOL_URL_ROOT."/user/group/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowGroup"),"group")." ".$obj->nom."</a></td>";
+        print "<td width=\"80\" align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
+        print '</tr>';
+        $i++;
+    }
+    print "</table><br>";
+
+    $db->free();
+}
 else
 {
-  dolibarr_print_error($db);
+    dolibarr_print_error($db);
 }
 
 
 /*
  * Derniers utilisateurs créés
- *
  */
-$max=5;
+$max=10;
 
-$sql = "SELECT u.rowid, u.login, u.name, u.firstname, ".$db->pdate("u.datec")." as datec";
-$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql .= " ORDER BY u.datec DESC limit $max";
+$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.code, u.fk_societe, ".$db->pdate("u.datec")." as datec,";
+$sql.= " s.nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe=s.idp";
+$sql.= " ORDER BY u.datec";
+$sql.= " DESC limit $max";
 
-if ( $db->query($sql) ) 
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
-  $var = true;
-  $i = 0;
+    $num = $db->num_rows($resql);
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
+    $var = true;
+    $i = 0;
 
-  while ($i < $num && $i < $max) 
-	{
-	  $obj = $db->fetch_object();
-	  $var=!$var;
-	  
-	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowUser"),"user")." ".$obj->firstname." ".$obj->name."</a></td>";
-	  print "<td width=\"120\" align=\"center\">".strftime("%d %b %Y",$obj->datec)."</td>";
-      print '</tr>';
-	  $i++;
-	}
-  print "</table><br>";
+    while ($i < $num && $i < $max)
+    {
+        $obj = $db->fetch_object($resql);
+        $var=!$var;
 
-  $db->free();
-} 
+        print "<tr $bc[$var]>";
+        print "<td><a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowUser"),"user")." ".$obj->firstname." ".$obj->name."</a>";
+        if ($obj->admin) print img_picto($langs->trans("Administrator"),'star');
+        print "</td>";
+        print "<td align=\"left\">".$obj->login.' ('.$obj->code.')</td>';
+        print "<td>";
+        if ($obj->fk_societe)
+        {
+            print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_societe.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
+        }
+        else print '&nbsp;';
+        print '</td>';
+        print "<td width=\"80\" align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
+        print '</tr>';
+        $i++;
+    }
+    print "</table><br>";
+
+    $db->free($resql);
+}
 else
 {
-  dolibarr_print_error($db);
+    dolibarr_print_error($db);
 }
 
 
@@ -161,7 +172,7 @@ print '</td></tr>';
 print '</table>';
 
 $db->close();
- 
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
 ?>
