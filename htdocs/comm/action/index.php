@@ -154,29 +154,20 @@ if ($resql)
     print $libelle;
     print '</a></td>';
 	
+    // Société
 	print '<td>';
+	if ($obj->client == 1) $url=DOL_URL_ROOT.'/comm/fiche.php?socid=';
+	elseif ($obj->client == 2) $url=DOL_URL_ROOT.'/comm/prospect/fiche.php?id=';
+    else $url=DOL_URL_ROOT.'/soc.php?socid=';
+	print '&nbsp;<a href="'.$url.$obj->socidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->societe,32).'</a></td>';
 
-	if ($obj->client == 1)
-	  {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->societe.'</a></td>';
-	  }
-	elseif ($obj->client == 2)
-	  {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->socidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->societe.'</a></td>';
-	  }
-	else
-	  {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->societe.'</a></td>';
-	  }
-	/*
-	 * Contact
-	 */
+	// Contact
 	print '<td>';
 	if ($obj->fk_contact)
 	  {
 	    $cont = new Contact($db);
 	    $cont->fetch($obj->fk_contact);
-	    print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$cont->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$cont->fullname.'</a>';
+	    print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$cont->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.dolibarr_trunc($cont->fullname,32).'</a>';
 	  }
 	else
 	  {
@@ -184,11 +175,11 @@ if ($resql)
 	  }
 	print '</td>';
 
-	/*
-	 *
-	 */
-	print '<td>'.dolibarr_trunc($obj->note, 20).'</td>';
-	print "<td>$obj->code</td>\n";
+	// Note
+	print '<td>'.dolibarr_trunc($obj->note, 16).'</td>';
+
+    // Auteur
+	print '<td align="center">'.$obj->code.'</td>';
 	
 	print "</tr>\n";
 	$i++;
