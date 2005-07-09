@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
  *
  */
 
-/*!     \file       htdocs/compta/facture/fiche-rec.php
+/**
+        \file       htdocs/compta/facture/fiche-rec.php
         \ingroup    facture
 		\brief      Page d'affichage d'une facture récurrent
 		\version    $Revision$
@@ -30,52 +31,54 @@
 
 require("./pre.inc.php");
 require("./facture-rec.class.php");
+require("../../project.class.php");
 
 $user->getrights('facture');
+
 if (!$user->rights->facture->lire)
   accessforbidden();
 
-require("../../project.class.php");
+
 
 llxHeader('','Facture récurrente','ch-facture.html#s-fac-facture-rec');
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
+
 /*
- *
+ * Actions
  */	
-if ($_POST["action"] == 'add') 
-{
-  $facturerec = new FactureRec($db, $facid);
 
-  $facturerec->titre = $_POST["titre"];
-  
-  if ($facturerec->create($user) > 0)
+// Ajout
+if ($_POST["action"] == 'add')
+{
+    $facturerec = new FactureRec($db, $_POST["facid"]);
+    $facturerec->titre = $_POST["titre"];
+
+    if ($facturerec->create($user) > 0)
     {
-      $facid = $facturerec->id;
-      $action = '';
+        $facid = $facturerec->id;
+        $action = '';
     }
-  else
+    else
     {
-      $action = "create";
+        $action = "create";
     }
 }
-/*
- *
- */
 
-if ($action == 'delete' && $user->rights->facture->supprimer) 
+// Suppression
+if ($_POST["action"] == 'delete' && $user->rights->facture->supprimer) 
 {
-  $fac = new FactureRec($db);
-  $fac->delete($facid);
-  $facid = 0 ;
+    $fac = new FactureRec($db);
+    $fac->delete($_POST["facid"]);
+    $facid = 0 ;
 }
+
 
 /*
  *
@@ -86,8 +89,6 @@ $html = new Form($db);
 /*********************************************************************
  *
  * Mode creation
- *
- *
  *
  ************************************************************************/
 if ($_GET["action"] == 'create') 
