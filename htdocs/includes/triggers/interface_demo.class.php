@@ -23,17 +23,17 @@
 /**
         \file       htdocs/includes/triggers/interface_demo.class.php
         \ingroup    core
-        \brief      Fichier des actions de demo de workflow
-        \remarks    Son propre fichier d'actions peut etre créés par recopie de celui-ci:
+        \brief      Fichier de demo de personalisation des actions du workflow
+        \remarks    Son propre fichier d'actions peut etre créé par recopie de celui-ci:
                     - Le nom du fichier doit etre interface_xxx.class.php
-                    - Le fichier doit rester stocké dans includes/modules/triggers
+                    - Le fichier doit rester stocké dans includes/triggers
                     - Le nom de la classe doit etre InterfaceXxx
 */
 
 
 /**
         \class      interface_demo
-        \brief      Classe de la fonction trigger des actions de workflow
+        \brief      Classe des fonctions triggers des actions personalisées du workflow
 */
 
 class InterfaceDemo
@@ -91,7 +91,7 @@ class InterfaceDemo
      *   \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
      *               D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
      *   \param      action      Code de l'evenement
-     *   \param      object      Objet concern
+     *   \param      object      Objet concerné
      *   \param      user        Objet user
      *   \param      lang        Objet lang
      *   \param      conf        Objet conf
@@ -104,90 +104,90 @@ class InterfaceDemo
         // Companies
         if     ($action == 'COMPANY_CREATE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
         }
         elseif ($action == 'COMPANY_MODIFY')
         {
-            dolibarr_syslog("Trigger for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
         }
         elseif ($action == 'COMPANY_DELETE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
         }
         // Contracts
         elseif ($action == 'CONTRACT_CREATE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'CONTRACT_MODIFY')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'CONTRACT_ACTIVATE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'CONTRACT_CANCEL')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'CONTRACT_CLOSE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'CONTRACT_DELETE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         // Bills
         elseif ($action == 'BILL_CREATE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'BILL_MODIFY')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'BILL_VALIDATE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'BILL_CANCEL')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'BILL_DELETE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         // Products
         elseif ($action == 'PRODUCT_CREATE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'PRODUCT_MODIFY')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'PRODUCT_DELETE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'ORDER_CREATE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'ORDER_MODIFY')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         elseif ($action == 'ORDER_DELETE')
         {
-            dolibarr_syslog("Trigger for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
         else
         {
-            dolibarr_syslog("A trigger for action '$action' was ran but no handler found.");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran but no handler found for this action.");
         }
     }
 
