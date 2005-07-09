@@ -407,7 +407,7 @@ else
             else
             {
             	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisable").'</td></tr>';
-
+            }
             print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
             print '<td width="50%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
             print "</tr>\n";
