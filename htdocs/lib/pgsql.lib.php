@@ -26,7 +26,7 @@
 
 /**
 	    \file       htdocs/lib/pgsql.lib.php
-		\brief      Fichier de la classe permettant de gérér la database de dolibarr.
+		\brief      Fichier de la classe permettant de gérér une base pgsql
 		\author     Fabien Seisen
 		\author     Rodolphe Quiedeville.
 		\author	    Laurent Destailleur.
@@ -49,9 +49,11 @@ class DoliDb
     
     var $connected;               // 1 si connecté, 0 sinon
     var $database_selected;       // 1 si base sélectionné, 0 sinon
+    var $database_name;			  // Nom base sélectionnée
     var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
     
     var $ok;
+    var $error;
     
     
     /**
@@ -65,7 +67,7 @@ class DoliDb
     */
     function DoliDb($type='pgsql', $host, $user, $pass, $name='')
     {
-        global $conf;
+        global $conf,$langs;
         $this->transaction_opened=0;
     
         //print "Name DB: $host,$user,$pass,$name<br>";
@@ -73,6 +75,7 @@ class DoliDb
         {
         	$this->connected = 0;
         	$this->ok = 0;
+            $this->error=$langs->trans("ErrorWrongHostParameter");
         	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
             return $this->ok;
         }
@@ -87,6 +90,7 @@ class DoliDb
         }
         else
         {
+            // host, login ou password incorrect
             $this->connected = 0;
             $this->ok = 0;
             dolibarr_syslog("DoliDB::DoliDB : Erreur Connect");
@@ -98,12 +102,14 @@ class DoliDb
             if ($this->select_db($name) == 1)
             {
                 $this->database_selected = 1;
+                $this->database_name = $name;
                 $this->ok = 1;
             }
             else
             {
                 $this->database_selected = 0;
                 $this->ok = 0;
+                $this->error=$this->error();
                 dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
             }
         }
@@ -124,13 +130,12 @@ class DoliDb
         \remarks 	comparaison manuel si la database est bien celle choisie par l'utilisateur
         \remarks 	en cas de succes renverra 1 ou 0
     */
-    
     function select_db($database)
     {
-        if($database == "dolibarr")
-        return 1;
+        if ($database == $this->database_name)
+        	return 1;
         else
-        return 0;
+        	return 0;
     }
     
     /**
@@ -141,7 +146,6 @@ class DoliDb
         \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
         \return		resource	handler d'accès à la base
     */
-    
     function connect($host, $login, $passwd, $name)
     {
         $con_string = "host=$host dbname=$name user=$login password=$passwd ";
@@ -155,7 +159,6 @@ class DoliDb
             \return	        resource		resource définie si ok, null si ko
             \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
     */
-
     function create_db($database)
     {
         $ret=$this->query('CREATE DATABASE '.$database.';');
@@ -503,7 +506,7 @@ class DoliDb
     
     /**
         \brief      Récupère l'id genéré par le dernier INSERT.
-        \param     tab     Nom de la table concernée par l'insert. Ne sert pas sous MySql mais requis pour compatibilité avec Postgresql
+        \param     	tab     Nom de la table concernée par l'insert. Ne sert pas sous MySql mais requis pour compatibilité avec Postgresql
         \return     int     id
     */
     

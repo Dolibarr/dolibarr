@@ -46,10 +46,12 @@ class DoliDb
 
     var $connected;               // 1 si connecté, 0 sinon
     var $database_selected;       // 1 si base sélectionné, 0 sinon
+    var $database_name;			  // Nom base sélectionnée
     var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
 
     var $ok;
-
+    var $error;
+    
     // Constantes pour conversion code erreur MySql en code erreur générique
     var $errorcode_map = array(
     1004 => 'DB_ERROR_CANNOT_CREATE',
@@ -76,14 +78,14 @@ class DoliDb
             \brief      Ouverture d'une connection vers le serveur et éventuellement une database.
             \param      type		type de base de données (mysql ou pgsql)
             \param	    host		addresse de la base de données
-            \param	    user		nom de l'utilisateur autoris
+    	\param	    user		nom de l'utilisateur autorisé
             \param	    pass		mot de passe
             \param	    name		nom de la database
             \return     int			1 en cas de succès, 0 sinon
     */
     function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)
     {
-        global $conf;
+        global $conf,$langs;
         $this->transaction_opened=0;
 
         //print "Name DB: $host,$user,$pass,$name<br>";
@@ -91,6 +93,7 @@ class DoliDb
         {
         	$this->connected = 0;
         	$this->ok = 0;
+            $this->error=$langs->trans("ErrorWrongHostParameter");
         	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
             return $this->ok;
         }
@@ -105,6 +108,7 @@ class DoliDb
         }
         else
         {
+            // host, login ou password incorrect
             $this->connected = 0;
             $this->ok = 0;
             dolibarr_syslog("DoliDB::DoliDB : Erreur Connect");
@@ -116,12 +120,14 @@ class DoliDb
             if ($this->select_db($name) == 1)
             {
                 $this->database_selected = 1;
+                $this->database_name = $name;
                 $this->ok = 1;
             }
             else
             {
                 $this->database_selected = 0;
                 $this->ok = 0;
+                $this->error=$this->error();
                 dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
             }
         }
@@ -139,7 +145,6 @@ class DoliDb
             \param	    database		nom de la database
             \return	    resource
     */
-
     function select_db($database)
     {
         return mysql_select_db($database, $this->db);
@@ -153,7 +158,6 @@ class DoliDb
             \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
             \return		resource	handler d'accès à la base
     */
-
     function connect($host, $login, $passwd, $name)
     {
         $this->db  = @mysql_connect($host, $login, $passwd);
@@ -167,7 +171,6 @@ class DoliDb
             \return	        resource		resource définie si ok, null si ko
             \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
     */
-
     function create_db($database)
     {
         $ret=$this->query('CREATE DATABASE '.$database);
