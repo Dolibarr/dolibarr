@@ -76,9 +76,11 @@ class ActionComm
     {
         global $conf;
     
+        dolibarr_syslog("ActionComm::add");
+
         if (! $this->percent)  $this->percent = 0;
         if (! $this->priority) $this->priority = 0;
-    
+
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datea,fk_action,fk_soc,note,fk_contact,fk_user_author,fk_user_action,label,percent,priority,";
         $sql.= "fk_facture,propalrowid)";
@@ -96,6 +98,8 @@ class ActionComm
             if ($conf->webcal->enabled) {
                 if (is_object($webcal))
                 {
+                    dolibarr_syslog("ActionComm::ajout entree dans webcal");
+
                     // Ajoute entrée dans webcal
                     $result=$webcal->add($author,$webcal->date,$webcal->texte,$webcal->desc);
                     if ($result < 0) {
@@ -104,7 +108,7 @@ class ActionComm
                 }
                 else if ($webcal == 1)
                 {
-                    // \todo On ajoute une entrée générique, pour l'instant pas utilis
+                    // \todo On ajoute une entrée générique, pour l'instant pas utilisé
     
                 }
             }
