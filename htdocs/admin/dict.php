@@ -50,7 +50,7 @@ $active = 1;
 // Mettre ici tous les caractéristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
-$taborder=array(4,3,2,0,1,8,0,5,0,6,0,7);
+$taborder=array(4,3,2,0,9,0,1,8,0,5,0,6,0,7);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -61,6 +61,7 @@ $tabname[5] = MAIN_DB_PREFIX."c_civilite";
 $tabname[6] = MAIN_DB_PREFIX."c_actioncomm";
 $tabname[7] = MAIN_DB_PREFIX."c_chargesociales";
 $tabname[8] = MAIN_DB_PREFIX."c_typent";
+$tabname[9] = MAIN_DB_PREFIX."c_currencies";
 
 // Libellé des dictionnaires
 $tablib[1] = $langs->trans("DictionnaryCompanyJuridicalType");
@@ -71,6 +72,7 @@ $tablib[5] = $langs->trans("DictionnaryCivility");
 $tablib[6] = $langs->trans("DictionnaryActions");
 $tablib[7] = $langs->trans("DictionnarySocialContributions");
 $tablib[8] = $langs->trans("DictionnaryCompanyType");
+$tablib[9] = $langs->trans("DictionnaryCurrency");
 
 // Requete pour extraction des données des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM llx_c_forme_juridique as f, llx_c_pays as p WHERE f.fk_pays=p.rowid";
@@ -81,6 +83,7 @@ $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active FROM llx_c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.id as code, a.libelle AS libelle, a.deductible, a.active FROM llx_c_chargesociales AS a";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM llx_c_typent";
+$tabsql[9] = "SELECT code    as rowid, code, code_iso, label as libelle, active FROM llx_c_currencies";
 
 // Tri par defaut
 $tabsqlsort[1]="pays, code ASC";
@@ -91,6 +94,7 @@ $tabsqlsort[5]="libelle ASC";
 $tabsqlsort[6]="a.type ASC, a.code ASC";
 $tabsqlsort[7]="a.libelle ASC";
 $tabsqlsort[8]="libelle ASC";
+$tabsqlsort[9]="code ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -101,6 +105,7 @@ $tabfield[5] = "code,libelle";
 $tabfield[6] = "code,libelle,type";
 $tabfield[7] = "libelle,deductible";
 $tabfield[8] = "code,libelle";
+$tabfield[9] = "code,code_iso,libelle";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -111,6 +116,7 @@ $tabfieldinsert[5] = "code,civilite";
 $tabfieldinsert[6] = "code,libelle,type";
 $tabfieldinsert[7] = "libelle,deductible";
 $tabfieldinsert[8] = "code,libelle";
+$tabfieldinsert[9] = "code,code_iso,libelle";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
 $tabrowid[1] = "";
@@ -119,7 +125,9 @@ $tabrowid[3] = "";
 $tabrowid[4] = "rowid";
 $tabrowid[5] = "rowid";
 $tabrowid[6] = "id";
+$tabrowid[7] = "id";
 $tabrowid[8] = "id";
+$tabrowid[9] = "code";
 
 
 $msg='';
@@ -205,7 +213,7 @@ if ($_GET["action"] == 'delete')       // delete
     if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
     else { $rowidcol="rowid"; }
 
-    $sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE $rowidcol=".$_GET["rowid"];
+    $sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE $rowidcol='".$_GET["rowid"]."'";
 
     $result = $db->query($sql);
     if (!$result)
@@ -219,11 +227,11 @@ if ($_GET["action"] == $acts[0])       // activate
     if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
     else { $rowidcol="rowid"; }
 
-    if ($_GET["rowid"] >0) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE $rowidcol=".$_GET["rowid"];
+    if ($_GET["rowid"]) {
+        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE $rowidcol='".$_GET["rowid"]."'";
     }
-    elseif ($_GET["code"] >0) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE code=".$_GET["code"];
+    elseif ($_GET["code"]) {
+        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE code='".$_GET["code"]."'";
     }
 
     $result = $db->query($sql);
@@ -238,11 +246,11 @@ if ($_GET["action"] == $acts[1])       // disable
     if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
     else { $rowidcol="rowid"; }
 
-    if ($_GET["rowid"] >0) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE $rowidcol=".$_GET["rowid"];
+    if ($_GET["rowid"]) {
+        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE $rowidcol='".$_GET["rowid"]."'";
     }
-    elseif ($_GET["code"] >0) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE code=".$_GET["code"];
+    elseif ($_GET["code"]) {
+        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE code='".$_GET["code"]."'";
     }
 
     $result = $db->query($sql);
