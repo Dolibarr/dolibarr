@@ -299,7 +299,7 @@ if (defined("MAIN_MONNAIE")) {
 	$conf->monnaie=MAIN_MONNAIE;
 }
 else {
-	$conf->monnaie='euros';	
+	$conf->monnaie='EUR';	
 }
 
 /*
