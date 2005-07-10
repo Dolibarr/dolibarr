@@ -450,7 +450,7 @@ function dolibarr_trunc($string,$size=40)
         \brief      Affiche picto propre à une notion/module (fonction générique)
         \param      alt         Texte sur le alt de l'image
         \param      object      Objet pour lequel il faut afficher le logo (exemple: user, group, action, bill, contract, propal, product, ...)
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_object($alt, $object)
 {
@@ -462,7 +462,7 @@ function img_object($alt, $object)
         \brief      Affiche picto (fonction générique)
         \param      alt         Texte sur le alt de l'image
         \param      picto       Nom de l'image a afficher
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_picto($alt, $picto)
 {
@@ -474,7 +474,7 @@ function img_picto($alt, $picto)
         \brief      Affiche logo action
         \param      alt         Texte sur le alt de l'image
         \param      numaction   Determine image action
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_action($alt = "default", $numaction)
 {
@@ -493,7 +493,7 @@ function img_action($alt = "default", $numaction)
         \brief      Affiche logo statut
         \param      num         Numéro statut
         \param      text        Texte a afficher sur alt
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_statut($num,$alt = "default")
 {
@@ -510,7 +510,7 @@ function img_statut($num,$alt = "default")
 /**
         \brief      Affiche logo fichier
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_file($alt = "default")
 {
@@ -522,7 +522,7 @@ function img_file($alt = "default")
 /**
         \brief      Affiche logo dossier
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_folder($alt = "default")
 {
@@ -534,7 +534,7 @@ function img_folder($alt = "default")
 /**
         \brief      Affiche logo nouveau fichier
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_file_new($alt = "default")
 {
@@ -546,7 +546,7 @@ function img_file_new($alt = "default")
 /**
         \brief      Affiche logo pdf
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_pdf($alt = "default")
 {
@@ -558,7 +558,7 @@ function img_pdf($alt = "default")
 /**
         \brief      Affiche logo +
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_edit_add($alt = "default")
 {
@@ -569,7 +569,7 @@ function img_edit_add($alt = "default")
 /**
         \brief      Affiche logo -
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_edit_remove($alt = "default")
 {
@@ -581,7 +581,7 @@ function img_edit_remove($alt = "default")
 /**
         \brief      Affiche logo editer/modifier fiche
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_edit($alt = "default")
 {
@@ -593,7 +593,7 @@ function img_edit($alt = "default")
 /**
         \brief      Affiche logo effacer
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_delete($alt = "default")
 {
@@ -605,7 +605,7 @@ function img_delete($alt = "default")
 /**
         \brief      Affiche logo désactiver
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_disable($alt = "default")
 {
@@ -618,7 +618,7 @@ function img_disable($alt = "default")
 /**
         \brief      Affiche logo info
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_info($alt = "default")
 {
@@ -630,7 +630,7 @@ function img_info($alt = "default")
 /**
         \brief      Affiche logo warning
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_warning($alt = "default")
 {
@@ -642,7 +642,7 @@ function img_warning($alt = "default")
 /**
         \brief      Affiche logo warning
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_error($alt = "default")
 {
@@ -654,7 +654,7 @@ function img_error($alt = "default")
 /**
         \brief      Affiche logo alerte
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_alerte($alt = "default")
 {
@@ -666,7 +666,7 @@ function img_alerte($alt = "default")
 /**
         \brief      Affiche logo téléphone in
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_phone_in($alt = "default")
 {
@@ -678,7 +678,7 @@ function img_phone_in($alt = "default")
 /**
         \brief      Affiche logo téléphone out
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_phone_out($alt = "default")
 {
@@ -690,7 +690,7 @@ function img_phone_out($alt = "default")
 /**
         \brief      Affiche logo suivant
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_next($alt = "default")
 {
@@ -704,7 +704,7 @@ function img_next($alt = "default")
 /**
         \brief      Affiche logo précédent
         \param      alt     Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_previous($alt = "default")
 {
@@ -717,7 +717,7 @@ function img_previous($alt = "default")
         \brief      Affiche logo bas
         \param      alt         Texte sur le alt de l'image
         \param      selected    Affiche version "selected" du logo
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_down($alt = "default", $selected=1)
 {
@@ -731,7 +731,7 @@ function img_down($alt = "default", $selected=1)
         \brief      Affiche logo haut
         \param      alt         Texte sur le alt de l'image
         \param      selected    Affiche version "selected" du logo
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_up($alt = "default", $selected=1)
 {
@@ -745,7 +745,7 @@ function img_up($alt = "default", $selected=1)
 /**
         \brief      Affiche logo tick
         \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tags <img>
+        \return     string      Retourne tag img
 */
 function img_tick($alt = "default")
 {

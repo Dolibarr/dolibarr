@@ -22,7 +22,7 @@
  */
 
 /**
-        \file        htdocs/compta/stats/cassoc.php
+        \file        htdocs/compta/stats/casoc.php
         \brief       Page reporting CA par société
         \version     $Revision$
 */

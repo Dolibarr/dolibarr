@@ -133,7 +133,7 @@ class Contrat
      *      \param      user        Objet User qui avtice le contrat
      *      \param      line_id     Id de la ligne de detail à activer
      *      \param      date        Date d'ouverture
-     *      \param      date        Date fin prévue
+     *      \param      dateend     Date fin prévue
      *      \return     int         < 0 si erreur, > 0 si ok
      */
     function active_line($user, $line_id, $date, $dateend='')
@@ -170,8 +170,8 @@ class Contrat
      *      \brief      Active une ligne detail d'un contrat
      *      \param      user        Objet User qui avtice le contrat
      *      \param      line_id     Id de la ligne de detail à activer
-     *      \param      date        Date fin
-     *      \return     int         < 0 si erreur, > 0 si ok
+     *      \param      dateend     Date fin
+     *      \return     int         <0 si erreur, >0 si ok
      */
     function close_line($user, $line_id, $dateend)
     {
@@ -387,14 +387,15 @@ class Contrat
     
     /**
      *      \brief      Ajoute une ligne de contrat en base
-     *      \param      rowid            Id de la ligne de facture
-     *      \param      desc             Description de la ligne
-     *      \param      pu               Prix unitaire
-     *      \param      qty              Quantité
-     *      \param      remise_percent   Pourcentage de remise de la ligne
-     *      \param      datestart        Date de debut prévue
-     *      \param      dateend          Date de fin prévue
-     *      \return     int              < 0 si erreur, > 0 si ok
+     *      \param      desc            Description de la ligne
+     *      \param      pu              Prix unitaire
+     *      \param      qty             Quantité
+     *      \param      txtva           Taux tva
+     *      \param      fk_product      Id produit
+     *      \param      remise_percent  Pourcentage de remise de la ligne
+     *      \param      datestart       Date de debut prévue
+     *      \param      dateend         Date de fin prévue
+     *      \return     int             <0 si erreur, >0 si ok
      */
     function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart, $dateend)
     {

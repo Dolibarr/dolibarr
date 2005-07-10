@@ -1240,7 +1240,6 @@ class Adherent
 
   /**
    *    \brief      Retourne le libellé du statut d'un adhérent (brouillon, validé, résilié)
-   *    \param      adh         Objet adhérent
    *    \return     string      Libellé
    */
     function getLibStatut()

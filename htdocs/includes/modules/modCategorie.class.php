@@ -18,14 +18,15 @@
  *
  */
 
-/**     \defgroup   produit     Module produit
-        \brief      Module pour gérer le suivi de produits prédéfinis
+/**
+        \defgroup   categorie       Module categorie
+        \brief      Module pour gérer les catégories
 */
 
 /**
-   \file       htdocs/includes/modules/modProduit.class.php
-   \ingroup    produit
-   \brief      Fichier de description et activation du module Produit
+        \file       htdocs/includes/modules/modCategorie.class.php
+        \ingroup    categorie
+        \brief      Fichier de description et activation du module Categorie
 */
 
 include_once "DolibarrModules.class.php";
