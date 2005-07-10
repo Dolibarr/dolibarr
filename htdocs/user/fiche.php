@@ -263,7 +263,7 @@ if ($action == 'create')
     print_titre($langs->trans("NewUser"));
 
     print "<br>";
-    if ($message) { print $message."<br>"; }
+    if ($message) { print $message.'<br>'; }
 
     print '<form action="fiche.php" method="post" name="createuser">';
     print '<input type="hidden" name="action" value="add">';
