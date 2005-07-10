@@ -256,7 +256,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
           print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td><td colspan="2">&nbsp;</td></tr>';
 
-          print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
+          print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
       
           print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
           $form->select_forme_juridique($soc->forme_juridique_code,(defined("COMPANY_CREATE_TWO_STEPS")?$soc->pays_code:0));
@@ -374,7 +374,7 @@ elseif ($_GET["action"] == 'edit')
       print '  '.$langs->trans("VATIntraCheckableOnEUSite");
       print '</td></tr>';
 
-      print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
       print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
       $form->select_forme_juridique($soc->forme_juridique_code,0);
@@ -530,7 +530,7 @@ else
     print $soc->tva_intra;
     print '</td></tr>';
 
-    print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$soc->capital.' '.$conf->monnaie.'</td></tr>';
+    print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$soc->capital.' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
     print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
 

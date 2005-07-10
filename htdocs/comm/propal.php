@@ -565,12 +565,12 @@ if ($_GET['propalid'])
 
 			print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 			print '<td align="right" colspan="2"><b>'.price($obj->price).'</b></td>';
-			print '<td>'.$conf->monnaie.'</td></tr>';
+			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 			print '<tr><td height="10">'.$langs->trans('VAT').'</td><td align="right" colspan="2">'.price($propal->total_tva).'</td>';
-			print '<td>'.$conf->monnaie.'</td></tr>';
+			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 			print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
-			print '<td>'.$conf->monnaie.'</td></tr>';
+			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 			print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut().'</td></tr>';
 			print '</table><br>';
 			if ($propal->brouillon == 1 && $user->rights->propale->creer)

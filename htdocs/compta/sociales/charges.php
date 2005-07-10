@@ -129,7 +129,7 @@ if ($chid > 0)
        	    print img_object($langs->trans("Payment"),"payment").' ';
     		print dolibarr_print_date($objp->dp)."</td>\n";
     		print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
-    		print '<td align="right">'.price($objp->amount)."</td><td>".$conf->monnaie."</td>\n";
+    		print '<td align="right">'.price($objp->amount)."</td><td>".$langs->trans("Currency".$conf->monnaie)."</td>\n";
     		print "</tr>";
     		$totalpaye += $objp->amount;
     		$i++;

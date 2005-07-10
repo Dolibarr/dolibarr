@@ -538,7 +538,7 @@ else
 		// Ligne de 3 colonnes
 		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-		print '<td>'.$conf->monnaie.'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td>';
 		print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :<br>';
 		if ($commande->brouillon == 1 && $user->rights->commande->creer) 
 		{
@@ -570,9 +570,9 @@ else
 		print '</td></tr>';
 
 	  print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
-	  print '<td>'.$conf->monnaie.'</td></tr>';
+	  print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	  print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
-	  print '<td>'.$conf->monnaie.'</td></tr>';
+	  print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	  
 	  print "</table>";
 	  

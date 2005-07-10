@@ -907,11 +907,11 @@ else
             print '<td colspan="3">';
             print '<b><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 
-            print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
+            print "<td>Conditions de réglement</td><td>" . $fac->cond_reglement ."</td></tr>";
 
             print '<tr><td>'.$langs->trans("Date").'</td>';
             print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
-            print "<td>Date limite de réglement : " . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
+            print '<td>'.$langs->trans("DateClosing").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
             if ($fac->paye == 0 && $fac->date_lim_reglement < (time() - $warning_delay)) print img_warning($langs->trans("Late"));
             print "</td></tr>";
 
@@ -928,18 +928,18 @@ else
                 }
                 else
                 {
-                    print '<a href="facture.php?facid='.$fac->id.'&amp;action=classer">Classer la facture</a>';
+                    print '<a href="facture.php?facid='.$fac->id.'&amp;action=classer">'.$langs->trans("ClassifyBill").'</a>';
                 }
                 print "&nbsp;</td>";
             } else {
                 print '<td height=\"10\">&nbsp;</td><td colspan="3">';
                 print "&nbsp;</td>";
             }
-            print '<td rowspan="8" valign="top">';
+            print '<td rowspan="8" colspan="2" valign="top">';
 
             /*
-            * Paiements
-            */
+             * Paiements
+             */
             print $langs->trans("Payments").' :<br>';
             $sql = "SELECT ".$db->pdate("datep")." as dp, pf.amount,";
             $sql.= " c.libelle as paiement_type, p.num_paiement, p.rowid";
@@ -1332,6 +1332,7 @@ else
 
             if (file_exists($file))
             {
+                print "<br>\n";
                 print_titre("Documents");
                 print '<table class="border" width="100%">';
 

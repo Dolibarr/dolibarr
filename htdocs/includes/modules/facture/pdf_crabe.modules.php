@@ -713,7 +713,7 @@ class pdf_crabe extends ModelePDFFactures
 
         $ligne="";
         if (defined('MAIN_INFO_CAPITAL') && MAIN_INFO_CAPITAL) {
-            $ligne="SARL au Capital de " . MAIN_INFO_CAPITAL." ".$conf->monnaie;
+            $ligne="SARL au Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
         }
         if (defined('MAIN_INFO_SIREN') && MAIN_INFO_SIREN) {
             $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN;

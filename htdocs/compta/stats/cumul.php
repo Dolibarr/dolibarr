@@ -43,7 +43,7 @@ if ($user->societe_id > 0)
 $mode='recettes';
 if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
 
-print_titre("Chiffre d'affaire cumulé (".$conf->monnaie." HT)");
+print_titre("Chiffre d'affaire cumulé (".$langs->trans("Currency".$conf->monnaie)." HT)");
 
 print '<table width="100%"><tr><td valign="top">';
 
@@ -83,7 +83,9 @@ print "</td></tr></table>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
+
+
 
 /*
  * Fonctions

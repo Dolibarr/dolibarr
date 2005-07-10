@@ -119,7 +119,7 @@ if ($paiement->bank_account) {
 print '<tr><td valign="top" width="140">'.$langs->trans("Date").'</td><td>'.dolibarr_print_date($paiement->date).'</td></tr>';
 print '<tr><td valign="top">'.$langs->trans("Type").'</td><td>'.$paiement->type_libelle.'</td></tr>';
 if ($paiement->numero) { print '<tr><td valign="top">'.$langs->trans("Numero").'</td><td>'.$paiement->numero.'</td></tr>'; }
-print '<tr><td valign="top">'.$langs->trans("Amount").'</td><td>'.$paiement->montant."&nbsp;".$conf->monnaie.'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans("Amount").'</td><td>'.$paiement->montant."&nbsp;".$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 print "</table>";
 
 print nl2br($paiement->note);

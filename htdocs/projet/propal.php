@@ -101,7 +101,7 @@ if (sizeof($propales)>0 && is_array($propales))
       print "<tr $bc[$var]>";
       print "<td><a href=\"../comm/propal.php?propalid=$propale->id\">$propale->ref</a></td>\n";
       
-      print '<td>'.strftime("%d %B %Y",$propale->datep).'</td>';
+      print '<td>'.dolibarr_print_date($propale->datep).'</td>';
       
       print '<td align="right">'.price($propale->price).'</td><td>&nbsp;</td></tr>';
       $total = $total + $propale->price;
@@ -109,10 +109,10 @@ if (sizeof($propales)>0 && is_array($propales))
   
   print '<tr><td colspan="2">'.$i.' '.$langs->trans("Proposal").'</td>';
   print '<td align="right">'.$langs->trans("TotalHT").': '.price($total).'</td>';
-  print '<td align="left">'.$conf->monnaie.'</td></tr></table>';
+  print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr></table>';
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

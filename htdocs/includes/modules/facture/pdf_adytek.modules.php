@@ -537,11 +537,24 @@ class pdf_adytek extends ModelePDFFactures {
         $langs->load("companies");
 
         $footy=13;
-    $pdf->SetFont('Arial','',8);
+        $pdf->SetFont('Arial','',8);
 
-        if (MAIN_INFO_CAPITAL) {
+        $ligne="";
+        if (defined('MAIN_INFO_CAPITAL') && MAIN_INFO_CAPITAL) {
+            $ligne="SARL au Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
+        }
+        if (defined('MAIN_INFO_SIREN') && MAIN_INFO_SIREN) {
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN;
+        }
+        if (defined('MAIN_INFO_SIRET') && MAIN_INFO_SIRET) {
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIRET;
+        }
+        if (defined('MAIN_INFO_RCS') && MAIN_INFO_RCS) {
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->code_pays).": ".MAIN_INFO_RCS;
+        }
+        if ($ligne) {
             $pdf->SetY(-$footy);
-            $pdf->MultiCell(190, 3,"SARL au Capital de " . MAIN_INFO_CAPITAL." ".$conf->monnaie." - " . MAIN_INFO_RCS." - Identifiant professionnel: " . MAIN_INFO_SIREN , 0, 'C');
+            $pdf->MultiCell(190, 3, $ligne, 0, 'C');
             $footy-=3;
         }
 

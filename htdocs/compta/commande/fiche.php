@@ -157,7 +157,7 @@ if ($_GET["id"] > 0)
       // Ligne de 3 colonnes
       print '<tr><td>'.$langs->trans("AmountHT").'</td>';
       print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-      print '<td>'.$conf->monnaie.'</td>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td>';
       print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :<br>'.nl2br($commande->note).'</td></tr>';
       
       print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
@@ -165,9 +165,9 @@ if ($_GET["id"] > 0)
       print '</td></tr>';
       
       print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
-      print '<td>'.$conf->monnaie.'</td></tr>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
       print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
-      print '<td>'.$conf->monnaie.'</td></tr>';      
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';      
       print "</table>\n";
       
       /*
@@ -346,7 +346,7 @@ if ($_GET["id"] > 0)
 		  $total = $total + $objp->total;
 		  $i++;
 		}
-	      print "<tr $bc[$var]><td align=\"right\" colspan=\"4\">".$langs->trans("TotalHT").": <b>$total</b> ".$conf->monnaie."</td></tr>\n";
+	      print "<tr $bc[$var]><td align=\"right\" colspan=\"4\">".$langs->trans("TotalHT").": <b>$total</b> ".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 	      print "</table>";
 	    }
 	  $db->free();

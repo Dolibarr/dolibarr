@@ -81,7 +81,7 @@ if ($_GET["action"] == 'edit')
       print '<td>'.$langs->transcountry("ProfId2",$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
 
       print '<tr><td>'.$langs->transcountry("ProfId3",$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
-      print '<td>'.$langs->trans("Capital").'</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
+      print '<td>'.$langs->trans("Capital").'</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 
       print '<tr><td>Forme juridique</td><td colspan="3">';

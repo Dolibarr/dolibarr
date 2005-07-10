@@ -336,12 +336,12 @@ if ($_GET["id"] > 0)
       // Ligne de 3 colonnes
       print '<tr><td>'.$langs->trans("AmountHT").'</td>';
       print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-      print '<td>'.$conf->monnaie.'</td>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td>';
       print '<td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
-      print '<td>'.$conf->monnaie.'</td></tr>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
       print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
-      print '<td>'.$conf->monnaie.'</td><td colspan="3">&nbsp;</td></tr>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td colspan="3">&nbsp;</td></tr>';
 
       if ($commande->note)
 	{

@@ -555,7 +555,7 @@ else
 		  print "<tr $bc[$var]>";
 		  print "<td>".img_object($langs->trans("Payment"),"payment").' '.dolibarr_print_date($objp->dp)."</td>\n";
 		  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
-		  print "<td align=\"right\">".price($objp->amount)."</td><td>".$conf->monnaie."</td>\n";
+		  print "<td align=\"right\">".price($objp->amount)."</td><td>".$langs->trans("Currency".$conf->monnaie)."</td>\n";
 
 		  if ($fac->statut == 1 && $fac->paye == 0 && $user->societe_id == 0)
 		    {
@@ -569,13 +569,13 @@ else
 		  $total = $total + $objp->amount;
 		  $i++;
 		}
-	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">".$langs->trans("Total")." :</td><td align=\"right\"><b>".price($total)."</b></td><td$tdsup>".$conf->monnaie."</td></tr>\n";
+	      print "<tr class=\"liste_total\"><td colspan=\"2\" align=\"right\">".$langs->trans("Total")." :</td><td align=\"right\"><b>".price($total)."</b></td><td$tdsup>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 	      
 
 	      if ($fac->statut > 0)
 		{
 		  $resteapayer = abs($fac->total_ttc - $total);	      
-		  print "<tr $bc[1]><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+		  print "<tr class=\liste_total\"><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
 		  print '<td align="right"><b>'.price($resteapayer)."</b></td><td$tdsup>".$conf->monnaie."</td>";
 		  print "</tr>\n";
 		}

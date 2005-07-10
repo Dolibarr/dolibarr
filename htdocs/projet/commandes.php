@@ -110,11 +110,11 @@ if (sizeof($commandes)>0 && is_array($commandes))
   
   print '<tr><td colspan="2">'.$i.' '.$langs->trans("Orders").'</td>';
   print '<td align="right">'.$langs->trans("TotalHT").': '.price($total).'</td>';
-  print '<td align="left">'.$conf->monnaie.'</td></tr>';
+  print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
   print "</table>";
 }    
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

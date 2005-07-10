@@ -41,7 +41,7 @@ $mode='recettes';
 if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
 
 
-print_titre("Comparatif CA année en cours avec année précédente (".$conf->monnaie." HT, ".$mode.")");
+print_titre("Comparatif CA année en cours avec année précédente (".$langs->trans("Currency".$conf->monnaie)." HT, ".$mode.")");
 print "<br>\n";
 
 
@@ -77,7 +77,7 @@ function factures ($db, $year, $month, $paye)
 	print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
 	print "<TD><a href=\"facture.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
 	if ($objp->df > 0 ) {
-	  print "<TD align=\"right\">".strftime("%d %B %Y",$objp->df)."</TD>\n";
+	  print "<TD align=\"right\">".dolibarr_print_date($objp->df)."</TD>\n";
 	} else {
 	  print "<TD align=\"right\"><b>!!!</b></TD>\n";
 	}
@@ -95,7 +95,7 @@ function factures ($db, $year, $month, $paye)
 	
 	$i++;
       }
-      print "<tr><td  align=\"right\"><b>Total : ".price($total)."</b></td><td></td></tr>";
+      print "<tr><td  align=\"right\"><b>".$langs->trans("Total")." : ".price($total)."</b></td><td></td></tr>";
       print "</TABLE>";
       $db->free();
     }
@@ -110,7 +110,7 @@ function pt ($db, $sql, $year) {
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
-    print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+    print '<table class="border" width="100%">';
     print "<tr class=\"liste_titre\">";
     print '<td>'.$langs->trans("Month").'</td>';
     print '<td align="right">'.$langs->trans("Amount").'</td></tr>';

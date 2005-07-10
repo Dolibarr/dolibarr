@@ -73,7 +73,7 @@ if ($_POST["action"] == 'add')
             $accountto=new Account($db);
             $accountto->fetch($_POST["account_to"]);
 
-            $mesg.="<div class=\"ok\"><b>Votre virement entre <a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a> et <a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a> de ".$amount." ".$conf->monnaie." a été crée.</b></div>";
+            $mesg.="<div class=\"ok\"><b>Votre virement entre <a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a> et <a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a> de ".$amount." ".$langs->trans("Currency".$conf->monnaie)." a été crée.</b></div>";
         }
       else {
           dolibarr_print_error($db);

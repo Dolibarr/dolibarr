@@ -608,7 +608,7 @@ class pdf_propale_azur extends ModelePDFPropales
         */
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',10);
-        $titre = $langs->trans("AmountInCurrency")." ".$conf->monnaie;
+        $titre = $langs->trans("AmountInCurrency")." ".$langs->trans("Currency".$conf->monnaie);
         $pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
         /*
         */
