@@ -21,7 +21,8 @@
  *
  */
 
-/**    \file       htdocs/comm/propal/pre.inc.php
+/**
+        \file       htdocs/comm/propal/pre.inc.php
         \ingroup    propale
 		\brief      Fichier de gestion du menu gauche du module propale
 		\version    $Revision$
@@ -32,16 +33,26 @@ require("../../main.inc.php");
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf, $langs;
 
+  $langs->load("companies");
+
   top_menu($head);
 
   $menu = new Menu();
 
+  // Clients
   $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
-
+  if ($user->rights->societe->creer)
+    {
+      $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=c", $langs->trans("MenuNewCustomer"));
+    }
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
 
+  // Prospects
   $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("Prospects"));
-
+  if ($user->rights->societe->creer)
+    {
+      $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=p", $langs->trans("MenuNewProspect"));
+    }
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
 
 
@@ -54,6 +65,7 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
       $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=0", $langs->trans("PropalsDraft"));
       $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=1", $langs->trans("PropalsOpened"));
+      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=2,3,4", $langs->trans("PropalStatusClosedShort"));
       $menu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"));
     }
 
@@ -71,7 +83,8 @@ function llxHeader($head = "", $urlp = "") {
 
   if ($conf->fichinter->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
+      $langs->load("interventions");
+      $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
     }
 
   if ($conf->produit->enabled || $conf->service->enabled)
