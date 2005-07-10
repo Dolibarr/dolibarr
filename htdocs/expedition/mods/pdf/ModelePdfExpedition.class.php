@@ -24,7 +24,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/includes/fpdf/DolibarrPdfBarCode.class.php';
 
-Class pdf_expedition extends DolibarrPdfBarCode
+Class ModelePdfExpedition extends DolibarrPdfBarCode
 {
 
  
