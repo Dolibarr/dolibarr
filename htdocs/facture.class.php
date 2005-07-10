@@ -1419,15 +1419,11 @@ class Facture
             return -1;
         }
     }
-    /*
-    *
-    */
 
     /**
-    * \brief     Classe la facture
-    * \param     cat_id      id de la catégorie dans laquelle classer la facture
-    *
-    */
+     *      \brief      Stocke un numéro de rand pour toutes les lignes de
+     *                  detail d'une facture qui n'en ont pas.
+     */
     function line_order()
     {
         $sql = "SELECT count(rowid) FROM ".MAIN_DB_PREFIX."facturedet";

@@ -195,11 +195,11 @@ class DoliDb
         	\param	    host		Adresse de la base de données
             \param		login		Nom de l'utilisateur autorisé
         	\param	    passwd		Mot de passe
-            \param		name		Nom de la database
-        	\return		resource	handler d'accès à la base
+            \param		name		Nom de la database (ne sert pas sous mysql, sert sous pgsql)
+        	\return		resource	Handler d'accès à la base
     */
 
-    function pconnect($host, $login, $passwd)
+    function pconnect($host, $login, $passwd, $name)
     {
         $this->db  = mysql_pconnect($host, $login, $passwd);
         return $this->db;

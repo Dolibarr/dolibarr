@@ -244,10 +244,10 @@ class Product
 
 
   /**
-   *    \brief  Lit le prix d'achat pour un fournisseur
-   *    \param  id_fourn        Id du fournisseur
-   *    \param  qty             Quantite pour lequel le prix est valide
-   *    \return int             Renvoi prix
+   *    \brief      Lit le prix d'achat pour un fournisseur
+   *    \param      fourn_id        Id du fournisseur
+   *    \param      qty             Quantite pour lequel le prix est valide
+   *    \return     int             Renvoi prix
    */
   function get_buyprice($fourn_id, $qty) 
     {
