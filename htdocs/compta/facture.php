@@ -1536,8 +1536,8 @@ else
                         $objp = $db->fetch_object($resql);
                         $var=!$var;
                         print "<tr $bc[$var]>";
-                        print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
-                        print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";
+                        print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>';
+                        print "<td>".dolibarr_print_date($objp->dp)."</td>\n";
                         print '<td align="right">'.price($objp->price).'</td>';
                         print "</tr>";
                         $total = $total + $objp->price;
