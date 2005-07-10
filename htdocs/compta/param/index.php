@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
         \file       htdocs/compta/index.php
         \ingroup    compta
 		\brief      Page acceuil zone comptabilité
@@ -33,6 +33,8 @@ require("./pre.inc.php");
 $user->getrights('banque');
 
 $langs->load("compta");
+$langs->load("admin");
+$langs->load("bills");
 
 /*
  * Sécurité accés client
@@ -43,13 +45,13 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-llxHeader("","Accueil Compta");
+llxHeader("",$langs->trans("AccountancySetup"));
 
 /*
  * Affichage page
  *
  */
-print_titre("Paramétrage comptabilité");
+print_titre($langs->trans("AccountancySetup"));
 
 print '<table border="0" width="100%">';
 

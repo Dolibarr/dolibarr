@@ -1005,6 +1005,7 @@ class Propal
   /**
    *    \brief      Renvoi le libellé d'un statut donné
    *    \param      statut      id statut
+   *    \param      size        Libellé court si 0, long si non défini
    *    \return     string      Libellé
    */
     function LibStatut($statut,$size=1)

@@ -24,6 +24,7 @@ VATSummary=Résumé TVA
 VATPayed=TVA payée
 SocialContributions=Charges sociales
 AccountancyTreasuryArea=Espace Compta/Tréso
+AccountancySetup=Configuration compta
 NewPayment=Nouveau paiement
 Payments=Paiements
 ListPayment=Liste des paiements
