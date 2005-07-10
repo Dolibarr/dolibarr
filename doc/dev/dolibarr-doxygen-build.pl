@@ -20,6 +20,7 @@ print "Running dir for doxygen must be: $DIR/../..\n";
 
 if (! -s "doc/dev/dolibarr-doxygen.conf") {
     print "Error: current directory for building Dolibarr doxygen documentation is not correct.\n";
+    sleep 4;
     exit 1;   
 }
 
