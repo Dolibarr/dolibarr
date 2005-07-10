@@ -79,10 +79,14 @@ class Propal
       $langs->load("propals");
       $this->labelstatut[0]=$langs->trans("PropalStatusDraft");
       $this->labelstatut[1]=$langs->trans("PropalStatusValidated");
-      $this->labelstatut[2]=$langs->trans("PropalStatusClosed");
-      $this->labelstatut_short[0]=$langs->trans("PropalStatusDraft");
+      $this->labelstatut[2]=$langs->trans("PropalStatusSigned");
+      $this->labelstatut[3]=$langs->trans("PropalStatusNotSigned");
+      $this->labelstatut[4]=$langs->trans("PropalStatusBilled");
+      $this->labelstatut_short[0]=$langs->trans("PropalStatusDraftShort");
       $this->labelstatut_short[1]=$langs->trans("Opened");
-      $this->labelstatut_short[2]=$langs->trans("PropalStatusClosed");
+      $this->labelstatut_short[2]=$langs->trans("PropalStatusSignedShort");
+      $this->labelstatut_short[3]=$langs->trans("PropalStatusNotSignedShort");
+      $this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
     }
 
 
@@ -786,45 +790,45 @@ class Propal
         }
     }
 		
-  /**
-   * \brief Renvoie un tableau contenant les numéros de commandes associées
-   *
-   */
-	 
-  function commande_liste_array ()
+    /**
+     *    \brief      Renvoie un tableau contenant les numéros de commandes associées
+     *    \remarks    Fonction plus light que associated_orders
+     *    \seealso    associated_orders
+     */
+    function commande_liste_array ()
     {
-      $ga = array();
-
-      $sql = "SELECT fk_commande FROM ".MAIN_DB_PREFIX."co_pr";      
-      $sql .= " WHERE fk_propale = " . $this->id;
-      if ($this->db->query($sql) )
-	{
-	  $nump = $this->db->num_rows();
-	  
-	  if ($nump)
-	    {
-	      $i = 0;
-	      while ($i < $nump)
-		{
-		  $obj = $this->db->fetch_object();
-		  
-		  $ga[$i] = $obj->fk_commande;
-		  $i++;
-		}
-	    }
-	  return $ga;
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	}      
+        $ga = array();
+        
+        $sql = "SELECT fk_commande FROM ".MAIN_DB_PREFIX."co_pr";
+        $sql .= " WHERE fk_propale = " . $this->id;
+        if ($this->db->query($sql) )
+        {
+            $nump = $this->db->num_rows();
+            
+            if ($nump)
+            {
+                $i = 0;
+                while ($i < $nump)
+                {
+                    $obj = $this->db->fetch_object();
+                    
+                    $ga[$i] = $obj->fk_commande;
+                    $i++;
+                }
+            }
+            return $ga;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
     }
 		
   /**
-   * \brief Renvoie un tableau contenant les commandes associées
-   *
+   *    \brief      Renvoie un tableau contenant les commandes associées
+   *    \remarks    Fonction plus lourde que commande_liste_array
+   *    \seealso    commande_liste_array
    */
-	 
   function associated_orders ()
     {
       $ga = array();
@@ -855,11 +859,42 @@ class Propal
 	}      
     }
 		
-  /*
-   *
-   *
+    /**
+     *    \brief      Renvoie un tableau contenant les numéros de factures associées
+     */
+    function facture_liste_array ()
+    {
+        $ga = array();
+        
+        $sql = "SELECT fk_facture FROM ".MAIN_DB_PREFIX."fa_pr as fp";
+        $sql .= " WHERE fk_propal = " . $this->id;
+        if ($this->db->query($sql) )
+        {
+            $nump = $this->db->num_rows();
+            
+            if ($nump)
+            {
+                $i = 0;
+                while ($i < $nump)
+                {
+                    $obj = $this->db->fetch_object();
+                    
+                    $ga[$i] = $obj->fk_facture;
+                    $i++;
+                }
+            }
+            return $ga;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
+
+  /**
+   *    \brief      Efface propal
+   *    \param      user        Objet du user qui efface
    */
-	 
   function delete($user)
   {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $this->id ;";
@@ -904,55 +939,57 @@ class Propal
     }
 
 
-  /*
-   * \brief Information sur l'objet
-   *
-   */
-	 
-  function info($id) 
+    /**
+     *      \brief      Information sur l'objet propal
+     *      \param      id      id de la propale
+     */
+    function info($id)
     {
-      $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec";
-      $sql .= ", fk_user_valid, fk_user_cloture, fk_user_author";
-      $sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
-      $sql .= " WHERE c.rowid = $id";
-      
-      if ($this->db->query($sql)) 
-	{
-	  if ($this->db->num_rows()) 
-	    {
-	      $obj = $this->db->fetch_object();
+        $sql = "SELECT c.rowid, ";
+        $sql.= $this->db->pdate("datec")." as datec, ".$this->db->pdate("date_valid")." as datev, ".$this->db->pdate("date_cloture")." as dateo";
+        $sql.= ", fk_user_author, fk_user_valid, fk_user_cloture";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
+        $sql.= " WHERE c.rowid = $id";
+    
+        if ($this->db->query($sql))
+        {
+            if ($this->db->num_rows())
+            {
+                $obj = $this->db->fetch_object();
+    
+                $this->id                = $obj->rowid;
+    
+                $this->date_creation     = $obj->datec;
+                $this->date_validation   = $obj->datev;
+                $this->date_cloture      = $obj->dateo;
 
-	      $this->id                = $obj->rowid;
-
-	      $this->date_creation     = $obj->datec;
-
-	      $cuser = new User($this->db, $obj->fk_user_author);
-	      $cuser->fetch();
-	      $this->user_creation     = $cuser;
-
-	      if ($obj->fk_user_valid)
-		{
-		  $vuser = new User($this->db, $obj->fk_user_valid);
-		  $vuser->fetch();
-		  $this->user_validation     = $vuser;
-		}
-
-	      if ($obj->fk_user_cloture)
-		{
-		  $cluser = new User($this->db, $obj->fk_user_cloture);
-		  $cluser->fetch();
-		  $this->user_cloture     = $cluser;
-		}
-
-
-	    }
-	  $this->db->free();
-
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	}
+                $cuser = new User($this->db, $obj->fk_user_author);
+                $cuser->fetch();
+                $this->user_creation     = $cuser;
+    
+                if ($obj->fk_user_valid)
+                {
+                    $vuser = new User($this->db, $obj->fk_user_valid);
+                    $vuser->fetch();
+                    $this->user_validation     = $vuser;
+                }
+    
+                if ($obj->fk_user_cloture)
+                {
+                    $cluser = new User($this->db, $obj->fk_user_cloture);
+                    $cluser->fetch();
+                    $this->user_cloture     = $cluser;
+                }
+    
+    
+            }
+            $this->db->free();
+    
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
     }
 
 

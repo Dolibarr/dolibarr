@@ -1,5 +1,6 @@
 # Dolibarr language file - fr_FR - compta
 Accountancy=Compta
+AccountancyCard=Fiche Compta
 Treasury=Tréso
 OptionMode=Option de tenue de comptabilité
 OptionModeTrue=Option Recettes-Dépenses

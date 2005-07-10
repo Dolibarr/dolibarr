@@ -1,5 +1,6 @@
 # Dolibarr language file - en_US - compta
 Accountancy=Accountancy
+AccountancyCard=Accountancy card
 Treasury=Treasury
 OptionMode=Option for accountancy
 OptionModeTrue=Option Recettes-Dépenses
