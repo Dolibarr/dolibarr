@@ -441,6 +441,8 @@ class Form
    */
   function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20)
   {
+    global $langs,$conf;
+    
     $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration";
     $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
     $sql.= " WHERE p.envente = 1";
@@ -459,7 +461,7 @@ class Form
         while ($i < $num)
         {
             $objp = $this->db->fetch_object($result);
-            $opt = "<option value=\"$objp->rowid\">[$objp->ref] $objp->label - $objp->price ".MAIN_MONNAIE;
+            $opt = "<option value=\"$objp->rowid\">[$objp->ref] $objp->label - $objp->price ".$langs->trans("Currency".$conf->monnaie);
             if ($objp->duration) $opt .= " - ".$objp->duration;
             $opt .= "</option>\n";
             print $opt;

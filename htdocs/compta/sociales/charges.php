@@ -137,13 +137,13 @@ if ($chid > 0)
     
     	    if ($fac->paye == 0)
     	      {
-    		print "<tr><td colspan=\"2\" align=\"right\">Total payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$conf->monnaie."</td></tr>\n";
-    		print "<tr><td colspan=\"2\" align=\"right\">Réclamé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($cha->amount)."</td><td bgcolor=\"#d0d0d0\">".MAIN_MONNAIE."</td></tr>\n";
+    		print "<tr><td colspan=\"2\" align=\"right\">Total payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
+    		print "<tr><td colspan=\"2\" align=\"right\">Réclamé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($cha->amount)."</td><td bgcolor=\"#d0d0d0\">".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
     		
     		$resteapayer = $cha->amount - $totalpaye;
     
     		print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-    		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">".$conf->monnaie."</td></tr>\n";
+    		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
     	      }
     	    print "</table>";
     	    $db->free();

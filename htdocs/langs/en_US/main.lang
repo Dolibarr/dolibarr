@@ -245,6 +245,7 @@ CountryES=Spain
 CountryDE=Germany
 CountryCH=Switzerland
 # Currencies
+Currencyeuros=Euros
 CurrencyCHF=Swiss Francs
 CurrencyEUR=Euros
 CurrencyGBP=GB Pounds
