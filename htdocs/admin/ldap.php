@@ -114,21 +114,63 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td><td colspan="2">&nbsp;</td>';
 print "</tr>\n";
-if (!defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST)
-{
-	print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.$langs->trans("LDAPServer").'</td></tr>';
-}
-else
-{
-	print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
-}	
-print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
-print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.LDAP_SUFFIX_DN.'</td></tr>';
-print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>'.LDAP_ADMIN_DN.'</td></tr>';
-print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>'.LDAP_ADMIN_PASS.'</td></tr>';
-print '<tr><td>'.$langs->trans("DNUser").'</td><td>'.LDAP_USER_DN.'</td></tr>';
-print '<tr><td>'.$langs->trans("DNGroup").'</td><td>'.LDAP_GROUP_DN.'</td></tr>';
-print '<tr><td>'.$langs->trans("Type").'</td><td>'.LDAP_SERVER_TYPE.'</td></tr>';
+    
+    if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST)
+    {
+		    print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
+    }
+    else
+    {
+        print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
+    }
+    if (defined("LDAP_SUFFIX_DN") && LDAP_SUFFIX_DN)
+    {
+        print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.LDAP_SUFFIX_DN.'</td></tr>';
+    }
+    else
+    {
+    	  print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.$langs->trans("LDAPSuffixExample").'</td></tr>';
+    }
+    if (defined("LDAP_ADMIN_DN") && LDAP_ADMIN_DN)
+    {
+		    print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>'.LDAP_ADMIN_DN.'</td></tr>';
+    }
+    else
+    {
+        print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>'.$langs->trans("DNAdminExample").'</td></tr>';
+    }
+    if (defined("LDAP_ADMIN_PASS") && LDAP_ADMIN_PASS)
+    {
+		    print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>'.LDAP_ADMIN_PASS.'</td></tr>';
+    }
+    else
+    {
+        print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>'.$langs->trans("LDAPPasswordExample").'</td></tr>';
+    }
+    if (defined("LDAP_USER_DN") && LDAP_USER_DN)
+    {
+		    print '<tr><td>'.$langs->trans("DNUser").'</td><td>'.LDAP_USER_DN.'</td></tr>';
+    }
+    else
+    {
+        print '<tr><td>'.$langs->trans("DNUser").'</td><td>'.$langs->trans("DNUserExample").'</td></tr>';
+    }
+    if (defined("LDAP_GROUP_DN") && LDAP_GROUP_DN)
+    {
+		    print '<tr><td>'.$langs->trans("DNGroup").'</td><td>'.LDAP_GROUP_DN.'</td></tr>';
+    }
+    else
+    {
+        print '<tr><td>'.$langs->trans("DNGroup").'</td><td>'.$langs->trans("DNGroupExample").'</td></tr>';
+    }
+    if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE)
+    {
+		    print '<tr><td>'.$langs->trans("Type").'</td><td>'.LDAP_GROUP_DN.'</td></tr>';
+    }
+    else
+    {
+        print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("TypeExample").'</td></tr>';
+    }
 
 print '</table>';
 

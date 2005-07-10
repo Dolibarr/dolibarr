@@ -269,6 +269,13 @@ DNAdmin=LDAP Administrator
 LDAPPassword=Password
 DNUser=Users' DN
 DNGroup=Groups' DN
+LDAPServerExample=LDAP server adress
+LDAPSuffixExample=ex: dc=company,dc=com
+DNAdminExample=ex: cn=adminldap
+LDAPPasswordExample=Admin password
+DNUserExample=ex: ou=users
+DNGroupExample=ex: ou=groups
+TypeExample=OpenLdap or Egroupware
 ##### Propal #####
 PropalSetup=Commercial proposals module setup
 ##### Sendings #####
