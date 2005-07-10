@@ -791,9 +791,9 @@ class Propal
     }
 		
     /**
-     *    \brief      Renvoie un tableau contenant les numéros de commandes associées
-     *    \remarks    Fonction plus light que associated_orders
-     *    \seealso    associated_orders
+     *    \brief        Renvoie un tableau contenant les numéros de commandes associées
+     *    \remarks      Fonction plus light que associated_orders
+     *    \sa           associated_orders
      */
     function commande_liste_array ()
     {
@@ -827,7 +827,7 @@ class Propal
   /**
    *    \brief      Renvoie un tableau contenant les commandes associées
    *    \remarks    Fonction plus lourde que commande_liste_array
-   *    \seealso    commande_liste_array
+   *    \sa         commande_liste_array
    */
   function associated_orders ()
     {

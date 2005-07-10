@@ -183,8 +183,8 @@ class Form
 
   /**
    *    \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
-   *    \param     selected    code pays pré-sélectionné
-   *    \param     htmlname    nom de la liste deroulante
+   *    \param     selected         Code pays pré-sélectionné
+   *    \param     htmlname         Nom de la liste deroulante
    *    \todo      trier liste sur noms après traduction plutot que avant
    */
 	 
@@ -268,8 +268,9 @@ class Form
 
 
   /**
-   *    \brief     Retourne la liste des types de comptes financiers
-   *    \param     
+   *    \brief      Retourne la liste des types de comptes financiers
+   *    \param      selected        Type pré-sélectionné
+   *    \param      htmlname        Nom champ formulaire
    */
 	 
   function select_type_comptes_financiers($selected=1,$htmlname='type')
@@ -303,9 +304,9 @@ class Form
   
   /**
    *    \brief      Retourne la liste déroulante des sociétés
-   *    \param      selected        societe présélectionnée
-   *    \param      htmlname        nom champ formulaire
-   *    \param      filter          criteres optionnels de filtre
+   *    \param      selected        Societe présélectionnée
+   *    \param      htmlname        Nom champ formulaire
+   *    \param      filter          Criteres optionnels de filtre
    */
   function select_societes($selected='',$htmlname='soc_id',$filter)
     {
@@ -346,8 +347,10 @@ class Form
   
   
   /**
-   *    \brief  Retourne la liste déroulante des contacts d'une société donnée
-   *
+   *    \brief      Retourne la liste déroulante des contacts d'une société donnée
+   *    \param      socid           Id de la société
+   *    \param      selected        Id contact pré-sélectionné
+   *    \param      htmlname        Nom champ formulaire
    */
   function select_contacts($socid,$selected='',$htmlname='contactid')
   {
@@ -616,7 +619,7 @@ class Form
   /**
    *    \brief      Retourne la liste déroulante des formes juridiques tous pays confondus ou pour un pays donné.
    *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
-   *    \param      selected        code forme juridique a présélectionné
+   *    \param      selected        Code forme juridique a présélectionné
    *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
    */
 	 
@@ -1151,9 +1154,9 @@ class Form
 
   /**
    *    \brief      Selection de oui/non en chaine (renvoie yes/no)
-   *    \param      name        nom du select
-   *    \param      value       valeur présélectionnée
-   *    \param      option      0 retourne yes/no, 1 retourne 1/0
+   *    \param      name            Nom du select
+   *    \param      value           Valeur présélectionnée
+   *    \param      option          0 retourne yes/no, 1 retourne 1/0
    */
   function selectyesno($name,$value='',$option=0)
   {
@@ -1183,8 +1186,8 @@ class Form
 	
   /**
    *    \brief      Selection de oui/non en chiffre (renvoie 1/0)
-   *    \param      name        nom du select
-   *    \param      value       valeur présélectionnée
+   *    \param      name            Nom du select
+   *    \param      value           Valeur présélectionnée
    */
   function selectyesnonum($name,$value='')
   {

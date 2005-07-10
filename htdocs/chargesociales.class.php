@@ -49,7 +49,7 @@ class PaiementCharge {
 
     /**
      *      \brief      Creation d'un paiement de charge sociale
-     *      \user       user    Utilisateur qui crée le paiement
+     *      \param      user    Utilisateur qui crée le paiement
      *      \return     int     <0 si erreur, >0 si ok
      */
     function create($user) {
@@ -101,8 +101,9 @@ class PaiementCharge {
     }
 
     /**
-     *  \brief      Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank générée
-     *
+     *      \brief      Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank générée
+     *      \param      id_bank         Id de la banque
+     *      \return     int             1 ou 0
      */
     function update_fk_bank($id_bank) {
         $sql = "UPDATE llx_paiementcharge set fk_bank = ".$id_bank." where rowid = ".$this->id;

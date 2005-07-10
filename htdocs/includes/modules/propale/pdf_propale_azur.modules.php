@@ -39,8 +39,8 @@ class pdf_propale_azur extends ModelePDFPropales
 {
     
     /**
-			\brief  Constructeur
-    		\param	db		handler accès base de donnée
+			\brief      Constructeur
+    		\param	    db		Handler accès base de donnée
     */
     function pdf_propale_azur($db=0)
     {
@@ -74,8 +74,9 @@ class pdf_propale_azur extends ModelePDFPropales
     }
 
 
-    /**	\brief      Renvoi dernière erreur
-        \return     string      Dernière erreur
+    /**
+    	    \brief      Renvoi dernière erreur
+            \return     string      Dernière erreur
     */
     function pdferror() 
     {
@@ -84,8 +85,8 @@ class pdf_propale_azur extends ModelePDFPropales
 
     /**
     		\brief      Fonction générant la propale sur le disque
-    		\param	    facid	id de la propale à générer
-    		\return	    int     1=ok, 0=ko
+    		\param	    id	        Id de la propale à générer
+    		\return	    int         1=ok, 0=ko
             \remarks    Variables utilisées
     		\remarks    MAIN_INFO_SOCIETE_NOM
     		\remarks    MAIN_INFO_SIRET
