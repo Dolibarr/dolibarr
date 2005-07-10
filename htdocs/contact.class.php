@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Regis Houssin  <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -477,7 +478,7 @@ class Contact
     
 
   /*
-   *    \brief      Efface le contacte de la base et éventuellement de l'annuaire LDAP
+   *    \brief      Efface le contact de la base et éventuellement de l'annuaire LDAP
    *    \param      id      id du contact a effacer
    */
   function delete($id)
@@ -488,39 +489,49 @@ class Contact
       $result = $this->db->query($sql);
 
       if (!$result) 
-	{
-	  print $this->db->error() . '<br>' . $sql;
-	}
+	    {
+	      print $this->db->error() . '<br>' . $sql;
+	    }
 
-      if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
-	{
-	  $ds = dolibarr_ldap_connect();
+         if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
+	        {
+		         $this->delete_ldap($user);
+		      }
+		      return $result;
+		    }
+		    
+		    function delete_ldap($user)
+		    {
+		    	$this->fetch($this->id);
+		    	
+	        $ds = dolibarr_ldap_connect();
       
 	  if ($ds)
 	    {
-	      ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-	      
+	      //ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+	      //ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version);
+	      dolibarr_ldap_setversion($ds, $version);
 	      $ldapbind = dolibarr_ldap_bind($ds);
 	      
 	      if ($ldapbind)
-		{	      
+		    {	      
 		  // delete from ldap directory
-		  $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name.", ".LDAP_SERVER_DN) ;
+		      $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name.", ".LDAP_SUFFIX_DN);
 		  
-		  $r = @ldap_delete($ds, $dn);
-		}
+		      $r = @ldap_delete($ds, $dn);
+		    }
 	      else
-		{
-		  echo "LDAP bind failed...";
-		}	      	      
-	      ldap_close($ds);
+		    {
+		       echo "LDAP bind failed...";
+		    }	      	      
+	        ldap_close($ds);
 	    
-	    }
+	     }
 	  else
-	    {
+	  {
 	      echo "Unable to connect to LDAP server";
-	    }
-	}
+	  }
+	
       
       return $result;
     }
