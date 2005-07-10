@@ -80,6 +80,20 @@ if ($_POST["action"] == 'add_action')
         $actioncomm->type_code = $cactioncomm->code;
         $actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
         $actioncomm->label = $_POST["label"];
+        if (! $_POST["label"])
+        {
+            if ($_POST["actionid"] == 5 && $contact->fullname)
+            {
+                $actioncomm->label = $langs->trans("TaskRDVWith",$contact->fullname);
+            }
+            else
+            {
+                if ($langs->trans("Action".$actioncomm->type_code) != "Action".$actioncomm->type_code)
+                {
+                    $actioncomm->label = $langs->trans("Action".$actioncomm->type_code)."\n";
+                }
+            }
+        }
         $actioncomm->date = mktime($_POST["heurehour"],
                                     $_POST["heuremin"],
                                     0,
@@ -119,7 +133,7 @@ if ($_POST["action"] == 'add_action')
                 if ($_POST["actionid"] == 5 && $contact->fullname)
                 {
                     $libellecal =$langs->trans("TaskRDVWith",$contact->fullname)."\n";
-                    $libellecal.=$actioncomm->label;
+                    $libellecal.=$_POST["label"];
                 }
                 else
                 {
@@ -128,7 +142,7 @@ if ($_POST["action"] == 'add_action')
                     {
                         $libellecal.=$langs->trans("Action".$actioncomm->type_code)."\n";
                     }
-                    $libellecal.=$actioncomm->label;
+                    $libellecal.=$_POST["label"];
                 }
 
                 $webcal->date=$actioncomm->date;
