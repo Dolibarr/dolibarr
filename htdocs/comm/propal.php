@@ -413,9 +413,10 @@ if ($_GET['propalid'])
 	 * Fiche propal
 	 *
 	 */
-	$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,'.$db->pdate('p.datep').' as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c, '.MAIN_DB_PREFIX.'socpeople as x';
-	$sql .= ' WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = '.$propal->id;
+	$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp, p.note,';
+	$sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'socpeople as x';
+	$sql.= ' WHERE p.fk_soc = s.idp AND p.fk_soc_contact = x.idp AND p.rowid = '.$propal->id;
 	if ($socidp) $sql .= ' AND s.idp = '.$socidp;
 
 	$result = $db->query($sql);
@@ -1012,9 +1013,9 @@ else
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
 
-	$sql = 'SELECT s.nom, s.idp, s.client, p.rowid as propalid, p.price, p.ref,'.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv, c.id as statutid';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c';
-	$sql .= ' WHERE p.fk_soc = s.idp AND p.fk_statut = c.id';
+	$sql = 'SELECT s.nom, s.idp, s.client, p.rowid as propalid, p.price, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
+	$sql.= ' WHERE p.fk_soc = s.idp';
 
 	if (!empty($_GET['search_ref']))
 	{
@@ -1032,12 +1033,10 @@ else
 	{ 
 		$sql .= ' AND s.idp = '.$_GET['socidp']; 
 	}
-  
 	if ($_GET['viewstatut'] <> '')
 	{
-		$sql .= ' AND c.id = '.$_GET['viewstatut']; 
+		$sql .= ' AND p.fk_statut in ('.$_GET['viewstatut'].')'; 
 	}
-
 	if ($month > 0)
 	{
 		$sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
@@ -1046,12 +1045,10 @@ else
 	{
 		$sql .= " AND date_format(p.datep, '%Y') = $year";
 	}
-
 	if (strlen($_POST['sf_ref']) > 0)
 	{
 		$sql .= " AND p.ref like '%".$_POST["sf_ref"] . "%'";
 	}
-
 	$sql .= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
 	$sql .= $db->plimit($limit + 1,$offset);
 	$result=$db->query($sql);
@@ -1131,7 +1128,7 @@ else
 
 			print '<td align="right">'.price($objp->price)."</td>\n";
 			$propal=New Propal($db);
-			print '<td align="center">'.$propal->LibStatut($objp->statutid,0)."</td>\n";
+			print '<td align="center">'.$propal->LibStatut($objp->fk_statut,0)."</td>\n";
 			print "</tr>\n";
 
 			$total = $total + $objp->price;

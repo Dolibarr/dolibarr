@@ -67,7 +67,7 @@ if ( $action == 'delete' )
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $propalid ;";
         if ( $db->query($sql) )
         {
-            print "<b><font color=\"red\">Propal supprimée</font></b>";
+            print '<div class="ok">'.$langs->trans("Deleted").'</div>';
         }
         else
         {
@@ -124,7 +124,8 @@ if ($_GET["propalid"])
 	 * Fiche propal
 	 *
 	 */
-	$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,'.$db->pdate('p.datep').' as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
+	$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref,'.$db->pdate('p.datep').' as dp, c.id as statut, c.label as lst, p.note,";
+	$sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c, '.MAIN_DB_PREFIX.'socpeople as x';
 	$sql.= ' WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = '.$propal->id;
 	if ($socidp) $sql .= ' AND s.idp = '.$socidp;
@@ -603,30 +604,13 @@ if ($_GET["propalid"])
     $limit = $conf->liste_limit;
     $offset = $limit * $page ;
 
-    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c ";
-    $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut in(2,4)";
-
-    if ($socidp)
-    {
-        $sql .= " AND s.idp = $socidp";
-    }
-
-    if ($viewstatut <> '')
-    {
-        $sql .= " AND c.id = $viewstatut";
-    }
-
-    if ($month > 0)
-    {
-        $sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
-    }
-
-    if ($year > 0)
-    {
-        $sql .= " AND date_format(p.datep, '%Y') = $year";
-    }
-
+    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p ";
+    $sql.= " WHERE p.fk_soc = s.idp";
+    if ($socidp)           $sql .= " AND s.idp = $socidp";
+    if ($viewstatut <> '') $sql .= " AND p.fk_statut in ($viewstatut)"; // viewstatut peut etre combinaisons séparé par virgules
+    if ($month > 0)        $sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
+    if ($year > 0)         $sql .= " AND date_format(p.datep, '%Y') = $year";
     $sql .= " ORDER BY $sortfield $sortorder, p.rowid DESC ";
     $sql .= $db->plimit($limit + 1,$offset);
 
@@ -634,7 +618,9 @@ if ($_GET["propalid"])
     {
         $num = $db->num_rows();
 
-        print_barre_liste("Propositions commerciales", $page, "propal.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
+    	$propalstatic=new Propal($db);
+
+        print_barre_liste($langs->trans("Proposals"), $page, "propal.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
         $i = 0;
         print "<table class=\"noborder\" width=\"100%\">";
@@ -681,7 +667,7 @@ if ($_GET["propalid"])
             print strftime("%Y",$objp->dp)."</a></td>\n";
 
             print "<td align=\"right\">".price($objp->price)."</td>\n";
-            print "<td align=\"center\">$objp->statut</td>\n";
+            print "<td align=\"center\">".$propalstatic->LibStatut($objp->fk_statut,0)."</td>\n";
             print "</tr>\n";
 
             $i++;
