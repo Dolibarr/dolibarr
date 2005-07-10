@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+ * Copyright (C) 2005 Regis Houssin  <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,9 +54,9 @@ function dolibarr_ldap_connect()
 
 function dolibarr_ldap_bind($ds)
 {
-  if (defined("LDAP_SERVER_PASS") && LDAP_SERVER_DN && LDAP_SERVER_PASS)
+  if (defined("LDAP_SERVER_PASS") && LDAP_ADMIN_DN && LDAP_ADMIN_PASS)
     {
-      $ldapbind = ldap_bind($ds, LDAP_SERVER_DN, LDAP_SERVER_PASS);
+      $ldapbind = ldap_bind($ds, LDAP_ADMIN_DN, LDAP_ADMIN_PASS);
     }
 
   return $ldapbind;

@@ -2,6 +2,7 @@
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,23 +47,41 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
 	('LDAP_SERVER_HOST','".$_POST["host"]."',0);";
-	
+	$db->query($sql);
+
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SUFFIX_DN';";
   $db->query($sql);
 
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_DN';";
-  $db->query($sql);
-
-  
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-	('LDAP_SERVER_DN','".$_POST["dn"]."',0);";
-  $db->query($sql);
-
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_PASS';";
+	('LDAP_SUFFIX_DN','".$_POST["dn"]."',0);";
   $db->query($sql);
   
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_ADMIN_DN';";
+  $db->query($sql);
+  
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-	('LDAP_SERVER_PASS','".$_POST["pass"]."',0);";
+	('LDAP_ADMIN_DN','".$_POST["pass"]."',0);";
+  $db->query($sql);
 
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_ADMIN_PASS';";
+  $db->query($sql);
+  
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('LDAP_ADMIN_PASS','".$_POST["pass"]."',0);";
+  $db->query($sql);
+  
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_USER_DN';";
+  $db->query($sql);
+
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('LDAP_USER_DN','".$_POST["dn"]."',0);";
+  $db->query($sql);
+  
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_GROUP_DN';";
+  $db->query($sql);
+
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('LDAP_GROUP_DN','".$_POST["dn"]."',0);";
   $db->query($sql);
 
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_TYPE';";
@@ -94,9 +113,11 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td><td colspan="2">&nbsp;</td>';
 print "</tr>\n";
 print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
-
-print '<tr><td>'.$langs->trans("DN").'</td><td>'.LDAP_SERVER_DN.'</td></tr>';
-print '<tr><td>'.$langs->trans("Password").'</td><td>'.LDAP_SERVER_PASS.'</td></tr>';
+print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.LDAP_SUFFIX_DN.'</td></tr>';
+print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>'.LDAP_ADMIN_DN.'</td></tr>';
+print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>'.LDAP_ADMIN_PASS.'</td></tr>';
+print '<tr><td>'.$langs->trans("DNUser").'</td><td>'.LDAP_USER_DN.'</td></tr>';
+print '<tr><td>'.$langs->trans("DNGroup").'</td><td>'.LDAP_GROUP_DN.'</td></tr>';
 print '<tr><td>'.$langs->trans("Type").'</td><td>'.LDAP_SERVER_TYPE.'</td></tr>';
 
 print '</table>';
@@ -114,11 +135,20 @@ print '<tr><td>';
 print $langs->trans("LDAPServer").'</td><td>';
 print '<input size="25" type="text" name="host" value="'.LDAP_SERVER_HOST.'">';
 print '</td></tr>';
-print '<tr><td>'.$langs->trans("DN").'</td><td>';
-print '<input size="25" type="text" name="dn" value="'.LDAP_SERVER_DN.'">';
+print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>';
+print '<input size="25" type="text" name="suffix" value="'.LDAP_SUFFIX_DN.'">';
 print '</td></tr>';
-print '<tr><td>'.$langs->trans("Password").'</td><td>';
-print '<input size="25" type="text" name="pass" value="'.LDAP_SERVER_PASS.'">';
+print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>';
+print '<input size="25" type="text" name="admin" value="'.LDAP_ADMIN_DN.'">';
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>';
+print '<input size="25" type="text" name="pass" value="'.LDAP_ADMIN_PASS.'">';
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("DNUser").'</td><td>';
+print '<input size="25" type="text" name="user" value="'.LDAP_USER_DN.'">';
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("DNGroup").'</td><td>';
+print '<input size="25" type="text" name="group" value="'.LDAP_GROUP_DN.'">';
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("Type").'</td><td><select name="type">';
@@ -136,8 +166,9 @@ print '</td></tr></table>';
   *
   */
 
-if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test') {
-    print '<a class="tabAction" href="ldap.php?action=test">'.$langs->trans("TestConnection").'</a><br>';
+//if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test') {
+if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST) {
+    print '<a class="tabAction" href="ldap.php?action=test">'.$langs->trans("TestConnectLdap").'</a><br>';
 }
 
 

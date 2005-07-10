@@ -263,6 +263,7 @@ InterventionsSetup=Interventions module setup
 ##### LDAP setup ####
 LDAPSetup=LDAP Setup
 LDAPServer=LDAP Server
+TestConnectLdap=Test connection
 ##### Propal #####
 PropalSetup=Commercial proposals module setup
 ##### Sendings #####
