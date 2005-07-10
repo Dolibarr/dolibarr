@@ -120,17 +120,14 @@ if ($_POST["action"] == 'add_action')
             }
             else
             {
-                $webcal->heure = $_POST["heurehour"] . $_POST["heuremin"] . '00';
-                $webcal->duree = ($_POST["dureehour"] * 60) + $_POST["dureemin"];
-
                 if ($_POST["actionid"] == 5)
                 {
                     $libellecal = $langs->trans("TaskRDVWith",$contact->fullname);
-                    $libellecal .= "\n" . $actioncomm->libelle;
+                    $libellecal .= "\n" . $actioncomm->label;
                 }
                 else
                 {
-                    $libellecal = $actioncomm->libelle;
+                    $libellecal = $actioncomm->label;
                 }
 
                 $webcal->date=mktime($_POST["heurehour"],
@@ -139,6 +136,8 @@ if ($_POST["action"] == 'add_action')
                 $_POST["acmonth"],
                 $_POST["acday"],
                 $_POST["acyear"]);
+                $webcal->heure = $_POST["heurehour"] . $_POST["heuremin"] . '00';
+                $webcal->duree = ($_POST["dureehour"] * 60) + $_POST["dureemin"];
                 $webcal->texte=$societe->nom;
                 $webcal->desc=$libellecal;
             }
