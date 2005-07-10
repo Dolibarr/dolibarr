@@ -21,7 +21,8 @@
  *
  */
 
-/*! \file htdocs/comm/propal/info.php
+/**
+        \file       htdocs/comm/propal/info.php
         \ingroup    propale
 		\brief      Page d'affichage des infos d'une proposition commerciale
 		\version    $Revision$
@@ -36,10 +37,13 @@ if (!$user->rights->propale->lire)
 	accessforbidden();
 
 require('../../propal.class.php');
+
+
 /*
  *
  *
  */
+
 llxHeader();
 
 if ($_GET['propalid'])
@@ -52,7 +56,11 @@ if ($_GET['propalid'])
 	$h=0;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-	$head[$h][1] = $langs->trans('Card');
+	$head[$h][1] = $langs->trans('CommercialCard');
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans('AccountancyCard');
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
@@ -81,5 +89,5 @@ if ($_GET['propalid'])
 	$db->close();
 }
 
-llxFooter('<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>');
+llxFooter('$Date$ - $Revision$');
 ?>

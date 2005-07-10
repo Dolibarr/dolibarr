@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -33,6 +32,7 @@ require('./pre.inc.php');
 
 $langs->load('companies');
 $langs->load('propal');
+$langs->load('compta');
 $langs->load('bills');
 
 $user->getrights('propale');
@@ -376,8 +376,12 @@ if ($_GET['propalid'])
 	$h=0;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-	$head[$h][1] = $langs->trans('Card');
+	$head[$h][1] = $langs->trans('CommercialCard');
 	$hselected=$h;
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans('AccountancyCard');
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
@@ -412,14 +416,10 @@ if ($_GET['propalid'])
 	$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,'.$db->pdate('p.datep').' as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c, '.MAIN_DB_PREFIX.'socpeople as x';
 	$sql .= ' WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = '.$propal->id;
-
-	if ($socidp)
-	{
-		$sql .= ' AND s.idp = '.$socidp;
-	}
+	if ($socidp) $sql .= ' AND s.idp = '.$socidp;
 
 	$result = $db->query($sql);
-	if ( $result )
+	if ($result)
 	{
 		if ($db->num_rows($result)) 
 		{
@@ -427,10 +427,9 @@ if ($_GET['propalid'])
 
 			$societe = new Societe($db);
 			$societe->fetch($obj->idp);
-			// \todo faire en sorte que la form respecte à nouveau la norme
-			// problème : sans javascript, ça va être chaud...
+
 			print '<table class="border" width="100%">';
-			$rowspan=8;
+			$rowspan=7;
 			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">';
 			if ($societe->client == 1)
 			{
@@ -441,7 +440,10 @@ if ($_GET['propalid'])
 				$url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
 			}
 			print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-			print '<td align="left" colspan="2">Conditions de réglement : </td></tr>';
+			print '<td align="left">Conditions de réglement</td>';
+			print '<td>'.'&nbsp;'.'</td>';
+			print '</tr>';
+
 			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
 			print dolibarr_print_date($propal->date);
 			print '</td>';
@@ -456,6 +458,8 @@ if ($_GET['propalid'])
 			}
 			print '</td>';
 			print '</tr>';
+
+            // Receiver
 			$langs->load('mails');
 			print '<tr>';
 			print '<td>'.$langs->trans('MailTo').'</td>';
@@ -488,10 +492,6 @@ if ($_GET['propalid'])
 						print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$propal->contactid.'" title="'.$langs->trans('ShowContact').'">';
 						print $contact->firstname.' '.$contact->name;
 						print '</a>';
-						if ($contact->email)
-						{
-							print ' &lt;<a href="mailto:'.$contact->email.'" title="'.$langs->trans('MailMessage').'">'.$contact->email.'</a>&gt;';
-						}
 					}
 				}
 			}
@@ -502,44 +502,49 @@ if ($_GET['propalid'])
 
 			print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Projects').'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans('Project').'</td>';
 			if ($conf->projet->enabled)
 			{
 				$langs->load('projects');
 				$numprojet = $societe->has_projects();
-				if (!$numprojet)
+				print '<td colspan="2">';
+				if (! $numprojet)
 				{
-					print 'Cette société n\'a pas de projet.<br>';
-					print '<a href=../projet/fiche.php?socidp='.$soc->id.'&action=create>'.$langs->trans('AddProject').'</a>';
+					print $langs->trans("NoProject").'</td><td>';
+					print '<a href=../projet/fiche.php?socidp='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
+					print '</td>';
 				}
 				else
 				{
 					if ($propal->statut == 0 && $user->rights->propale->creer)
 					{
+    				    print '<td colspan="3">';
 						print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 						print '<input type="hidden" name="action" value="set_project">';
 						$form->select_projects($societe->id, $propal->projetidp, 'projetidp');
 						print '<input type="submit" value="'.$langs->trans('Modify').'">';
 						print '</form>';
+						print '</td>';
 					}
 					else
 					{
 						if (!empty($propal->projetidp))
 						{
+        				    print '<td colspan="3">';
 							$proj = new Project($db);
 							$proj->fetch($propal->projetidp);
 							print '<a href="../projet/fiche.php?id='.$propal->projetidp.'" title="'.$langs->trans('ShowProject').'">';
 							print $proj->title;
 							print '</a>';
+							print '</td>';
 						}
+						else {
+        				    print '<td colspan="3">&nbsp;</td>';
+                        }
 					}
 				}
 			}
-			print '</td></tr>';
-
-			$author = new User($db, $obj->fk_user_author);
-			$author->fetch('');
-			print '<tr><td height="10">'.$langs->trans('Author').'</td><td colspan="3">'.$author->fullname.'</td></tr>';
+			print '</tr>';
 
 			print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
 			if ($propal->brouillon == 1 && $user->rights->propale->creer)
@@ -571,21 +576,6 @@ if ($_GET['propalid'])
 			if ($propal->brouillon == 1 && $user->rights->propale->creer)
 			{
 				print '</form>';
-			}
-
-			if ($_GET['action'] == 'statut') 
-			{
-				print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-				print '<br><table class="border">';
-				print '<tr><td>Clôturer comme : <input type="hidden" name="action" value="setstatut">';
-				print '<select name="statut">';
-				print '<option value="2">Signée';
-				print '<option value="3">Non Signée';
-				print '</select>';
-				print '</td></tr><tr><td>'.$langs->trans('Comments').' : <br><textarea cols="60" rows="6" wrap="soft" name="note">';
-				print $obj->note;
-				print '</textarea></td></tr><tr><td align="center"><input type="submit" value="'.$langs->trans('Valid').'"></td>';
-				print '</tr></table></form>';
 			}
 
 			/*
@@ -751,236 +741,256 @@ if ($_GET['propalid'])
 				print "</tr>\n";
 				print '</form>';
 			}
+
 			print '</table><br>';
-		}
-		/*
-		 * Fin Ajout ligne
-		 *
-		 */
-		print '</div>';
 
-
-		/*
-		 * Barre d'actions
-		 */
-		if ($propal->statut < 2)
-		{
-			print '<div class="tabsAction">';
-
-			// Valid
-			if ($propal->statut == 0)
-			{
-				if ($user->rights->propale->valider)
-				{
-					print '<a class="tabAction" href="propal.php?propalid='.$propal->id.'&amp;valid=1">'.$langs->trans('Valid').'</a>';
-				}
-			}
-
-			// Save
-			if ($propal->statut == 1)
-			{
-				if ($user->rights->propale->creer)
-				{
-					print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
-				}
-			}
-
-			// Build PDF
-			if ($propal->statut < 2 && $user->rights->propale->creer)
-			{
-				print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">'.$langs->trans('BuildPDF').'</a>';
-			}	   
-
-			// Send
-			if ($propal->statut == 1)
-			{
-				if ($user->rights->propale->envoyer)
-				{
-					$forbidden_chars=array('/','\\',':','*','?','"','<','>','|','[',']',',',';','=');
-					$propref = str_replace($forbidden_chars,'_',$obj->ref);
-					$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
-					if (file_exists($file))
-					{
-						print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
-					}
-				}
-			}
-
-			// Delete
-			if ($propal->statut == 0)
-			{
-				if ($user->rights->propale->supprimer)
-				{
-					print '<a class="butActionDelete" href="propal.php?propalid='.$propal->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-				}
-			}
-
-			// Close
-			if ($propal->statut != 0)
-			{
-				if ($propal->statut == 1 && $user->rights->propale->cloturer)
-				{
-					print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
-				}
-			}
-			print '</div><br>';
-		}
-
-
-
-		/*
-		 *
-		 */
-		if ($propal->brouillon == 1)
-		{
-			print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-			print '<input type="hidden" name="action" value="setpdfmodel">';
-		}
-		print '<table width="100%"><tr><td width="50%" valign="top">';
-		print_titre($langs->trans('Documents'));
-
-
-		/*
-		 *
-		 */
-		print '<table class="border" width="100%">';
-		$forbidden_chars=array('/','\\',':','*','?','"','<','>','|','[',']',',',';','=');
-		$propref = str_replace($forbidden_chars,'_',$propal->ref);
-		$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
-		$relativepath = $propref.'/'.$propref.'.pdf';
-
-		$var=true;
-
-		if (file_exists($file))
-		{
-			print '<tr '.$bc[$var].'><td>'.$langs->trans('Propal').' PDF</td>';
-			print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
-			print '<td align="right">'.filesize($file). ' bytes</td>';
-			print '<td align="right">'.strftime('%d %B %Y %H:%M:%S',filemtime($file)).'</td></tr>';
-		}
-
-		if ($propal->brouillon == 1 && $user->rights->propale->creer)
-		{
-			print '<tr '.$bc[$var].'><td>Modèle</td><td align="right">';
-			$html = new Form($db);
-			$modelpdf = new Propal_Model_pdf($db);
-			$html->select_array('modelpdf',$modelpdf->liste_array(),$propal->modelpdf);
-			print '</td><td colspan="2"><input type="submit" value="'.$langs->trans('Save').'">';
-			print '</td></tr>';
-		}
-		print "</table>\n";
-
-		/*
-		 * Si le module commandes est activé ...
-		 */
-		if($conf->commande->enabled)
-		{
-			$nb_commande = sizeof($propal->commande_liste_array());
-			if ($nb_commande > 0)
-			{
-				$coms = $propal->associated_orders();
-				print '<br><table class="border" width="100%">';
-			    print '<tr><td>Commande(s) rattachée(s)</td></tr>';
-		        for ($i = 0 ; $i < $nb_commande ; $i++)
-				{
-					print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.$coms[$i]->ref."</a></td>\n";
-					print "</tr>\n";
-				}
-				print '</table>';
-			}
-		}
-		print '</td><td valign="top" width="50%">';
-
-		/*
-		 * Liste des actions propres à la propal
-		 */
-		$sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-		$sql .= ' WHERE a.fk_soc = '.$obj->idp.' AND a.propalrowid = '.$propal->id ;
-		$result = $db->query($sql);
-		if ($result)
-		{
-			$num = $db->num_rows($result);
-			if ($num)
-			{
-				print_titre($langs->trans('ActionsOnPropal'));
-				$i = 0;
-				$total = 0;
-				print '<table class="border" width="100%">';
-				print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
-				print "\n";
-
-				$var=true;
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($result);
-					$var=!$var;
-					print '<tr '.$bc[$var].'>';
-					print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-					print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
-					print '<td>'.stripslashes($objp->label).'</td>';
-					$authoract = new User($db);
-					$authoract->id = $objp->fk_user_author;
-					$authoract->fetch('');
-					print '<td>'.$authoract->code.'</td>';
-					print "</tr>\n";
-					$i++;
-				}
-				print '</table>';
-			}
-		}
-		else
-		{
-			dolibarr_print_error($db);
-		}
-
-		print '</td></tr></table>';
-
-		if ($propal->brouillon == 1)
-		{
-			print '</form>';
-		}
-
-		/*
-		 *
-		 *
-		 */
-		if ($_GET['action'] == 'presend')
-		{
-            print '<br>';
-            print_titre($langs->trans('SendPropalByMail'));
-
-            $liste[0]="&nbsp;";
-            foreach ($societe->contact_email_array() as $key=>$value) {
-                $liste[$key]=$value;
-            }
-
-			// Créé l'objet formulaire mail
-			include_once('../html.formmail.class.php');
-			$formmail = new FormMail($db);
-			$formmail->fromname = $user->fullname;
-			$formmail->frommail = $user->email;
-			$formmail->withfrom=1;
-            $formmail->withto=$liste;
-			$formmail->withcc=1;
-			$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
-			$formmail->withfile=1;
-			$formmail->withbody=1;
-			// Tableau des substitutions
-			$formmail->substit['__PROPREF__']=$propal->ref;
-			// Tableau des paramètres complémentaires
-			$formmail->param['action']='send';
-			$formmail->param['models']='propal_send';
-			$formmail->param['propalid']=$propal->id;
-			$formmail->param['returnurl']=DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-
-			$formmail->show_form();
 		}
 	}
 	else
 	{
 		dolibarr_print_error($db);
 	}
+
+	print '</div>';
+
+    /*
+     * Formulaire cloture (signé ou non)
+     */
+	if ($_GET['action'] == 'statut') 
+	{
+		print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+		print '<table class="border" width="100%">';
+		print '<tr><td>'.$langs->trans("CloseAs").': ';
+		print '<input type="hidden" name="action" value="setstatut">';
+		print '<select name="statut">';
+		print '<option value="2">'.$propal->labelstatut[2].'</option>';
+		print '<option value="3">'.$propal->labelstatut[3].'</option>';
+		print '</select>';
+		print '</td></tr><tr><td>'.$langs->trans('Note').': <br><textarea cols="60" rows="4" wrap="soft" name="note">';
+		print $obj->note;
+		print '</textarea></td></tr><tr><td align="center"><input type="submit" value="'.$langs->trans('Valid').'"></td>';
+		print '</tr></table></form>';
+	}
+
+
+	/*
+	 * Barre d'actions
+	 */
+	if ($propal->statut < 2)
+	{
+		print '<div class="tabsAction">';
+
+		// Valid
+		if ($propal->statut == 0)
+		{
+			if ($user->rights->propale->valider)
+			{
+				print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;valid=1">'.$langs->trans('Valid').'</a>';
+			}
+		}
+
+		// Save
+		if ($propal->statut == 1)
+		{
+			if ($user->rights->propale->creer)
+			{
+				print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+			}
+		}
+
+		// Build PDF
+		if ($propal->statut < 2 && $user->rights->propale->creer)
+		{
+			print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">'.$langs->trans('BuildPDF').'</a>';
+		}	   
+
+		// Send
+		if ($propal->statut == 1)
+		{
+			if ($user->rights->propale->envoyer)
+			{
+				$forbidden_chars=array('/','\\',':','*','?','"','<','>','|','[',']',',',';','=');
+				$propref = str_replace($forbidden_chars,'_',$obj->ref);
+				$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
+				if (file_exists($file))
+				{
+					print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
+				}
+			}
+		}
+
+		// Close
+		if ($propal->statut != 0)
+		{
+			if ($propal->statut == 1 && $user->rights->propale->cloturer)
+			{
+				print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
+			}
+		}
+
+		// Delete
+		if ($propal->statut == 0)
+		{
+			if ($user->rights->propale->supprimer)
+			{
+				print '<a class="butActionDelete" href="propal.php?propalid='.$propal->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			}
+		}
+
+		print '</div>';
+	}
+
+
+	print '<table width="100%"><tr><td width="50%" valign="top">';
+
+	/*
+	 * Documents
+	 */
+	if ($propal->brouillon == 1)
+	{
+		print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+		print '<input type="hidden" name="action" value="setpdfmodel">';
+	}
+	print_titre($langs->trans('Documents'));
+
+	print '<table class="border" width="100%">';
+	$forbidden_chars=array('/','\\',':','*','?','"','<','>','|','[',']',',',';','=');
+	$propref = str_replace($forbidden_chars,'_',$propal->ref);
+	$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
+	$relativepath = $propref.'/'.$propref.'.pdf';
+
+	$var=true;
+
+	if (file_exists($file))
+	{
+		print '<tr '.$bc[$var].'><td>'.$langs->trans('Propal').' PDF</td>';
+		print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
+		print '<td align="right">'.filesize($file). ' bytes</td>';
+		print '<td align="right">'.strftime('%d %B %Y %H:%M:%S',filemtime($file)).'</td></tr>';
+	}
+
+	if ($propal->brouillon == 1 && $user->rights->propale->creer)
+	{
+		print '<tr '.$bc[$var].'><td>Modèle</td><td align="right">';
+		$html = new Form($db);
+		$modelpdf = new Propal_Model_pdf($db);
+		$html->select_array('modelpdf',$modelpdf->liste_array(),$propal->modelpdf);
+		print '</td><td colspan="2"><input type="submit" value="'.$langs->trans('Save').'">';
+		print '</td></tr>';
+	}
+	print "</table>\n";
+
+	if ($propal->brouillon == 1)
+	{
+		print '</form>';
+	}
+
+
+	/*
+	 * Si le module commandes est activé ...
+	 */
+	if($conf->commande->enabled)
+	{
+		$nb_commande = sizeof($propal->commande_liste_array());
+		if ($nb_commande > 0)
+		{
+			$coms = $propal->associated_orders();
+			print '<br><table class="border" width="100%">';
+		    print '<tr><td>Commande(s) rattachée(s)</td></tr>';
+	        for ($i = 0 ; $i < $nb_commande ; $i++)
+			{
+				print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.$coms[$i]->ref."</a></td>\n";
+				print "</tr>\n";
+			}
+			print '</table>';
+		}
+	}
+
+	print '</td><td valign="top" width="50%">';
+
+	/*
+	 * Liste des actions propres à la propal
+	 */
+	$sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
+	$sql .= ' WHERE a.fk_soc = '.$obj->idp.' AND a.propalrowid = '.$propal->id ;
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		if ($num)
+		{
+			print_titre($langs->trans('ActionsOnPropal'));
+			$i = 0;
+			$total = 0;
+			print '<table class="border" width="100%">';
+			print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
+			print "\n";
+
+			$var=true;
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($result);
+				$var=!$var;
+				print '<tr '.$bc[$var].'>';
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
+				print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
+				print '<td>'.stripslashes($objp->label).'</td>';
+				$authoract = new User($db);
+				$authoract->id = $objp->fk_user_author;
+				$authoract->fetch('');
+				print '<td>'.$authoract->code.'</td>';
+				print "</tr>\n";
+				$i++;
+			}
+			print '</table>';
+		}
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
+
+	print '</td></tr></table>';
+
+
+
+	/*
+	 * Action presend
+	 *
+	 */
+	if ($_GET['action'] == 'presend')
+	{
+        print '<br>';
+        print_titre($langs->trans('SendPropalByMail'));
+
+        $liste[0]="&nbsp;";
+        foreach ($societe->contact_email_array() as $key=>$value) {
+            $liste[$key]=$value;
+        }
+
+		// Créé l'objet formulaire mail
+		include_once('../html.formmail.class.php');
+		$formmail = new FormMail($db);
+		$formmail->fromname = $user->fullname;
+		$formmail->frommail = $user->email;
+		$formmail->withfrom=1;
+        $formmail->withto=$liste;
+		$formmail->withcc=1;
+		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
+		$formmail->withfile=1;
+		$formmail->withbody=1;
+		// Tableau des substitutions
+		$formmail->substit['__PROPREF__']=$propal->ref;
+		// Tableau des paramètres complémentaires
+		$formmail->param['action']='send';
+		$formmail->param['models']='propal_send';
+		$formmail->param['propalid']=$propal->id;
+		$formmail->param['returnurl']=DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+
+		$formmail->show_form();
+	}
+
 }
 else
 {

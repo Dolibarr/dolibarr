@@ -22,10 +22,10 @@
  */
 
 /**     
-	\file       htdocs/comm/propal/document.php
-	\ingroup    propale
-	\brief      Page de gestion des documents attachées à une proposition commerciale
-	\version    $Revision$
+        \file       htdocs/comm/propal/document.php
+        \ingroup    propale
+        \brief      Page de gestion des documents attachées à une proposition commerciale
+        \version    $Revision$
 */
 
 require('./pre.inc.php');
@@ -97,10 +97,14 @@ if ($propalid > 0)
 
 		$h=0;
 
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-		$head[$h][1] = $langs->trans('Card');
-		$h++;
-
+    	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+    	$head[$h][1] = $langs->trans('CommercialCard');
+    	$h++;
+    
+    	$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
+    	$head[$h][1] = $langs->trans('AccountancyCard');
+    	$h++;
+    
 		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
 		$head[$h][1] = $langs->trans('Note');
 		$h++;

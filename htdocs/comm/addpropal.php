@@ -101,7 +101,7 @@ if ($_GET["action"] == 'create')
   print "</td></tr>";
   
   print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
-  print '<tr><td>Durée de validité</td><td><input name="duree_validite" size="5" value="15"> '.$langs->trans("days").'</td></tr>';
+  print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td><input name="duree_validite" size="5" value="15"> '.$langs->trans("days").'</td></tr>';
 
   /*
    * Destinataire de la propale
@@ -167,7 +167,7 @@ if ($_GET["action"] == 'create')
     
           if ($numprojet==0)
     	{
-    	  print 'Cette société n\'a pas de projet.<br>';
+    	  print $langs->trans("NoProject").' - ';
     	  print '<a href=../projet/fiche.php?socidp='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
     	}
           else

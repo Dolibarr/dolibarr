@@ -94,340 +94,498 @@ if ($_GET["propalid"])
 {
     $propal = new Propal($db);
     $propal->fetch($_GET["propalid"]);
+    $h=0;
 
-    if ($valid == 1)
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans('CommercialCard');
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/propal.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans('AccountancyCard');
+	$hselected=$h;
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans('Note');
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans('Info');
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
+	$head[$h][1] = $langs->trans('Documents');
+	$h++;
+
+	dolibarr_fiche_head($head, $hselected, $langs->trans('Proposal').': '.$propal->ref);
+
+
+	/*
+	 * Fiche propal
+	 *
+	 */
+	$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,'.$db->pdate('p.datep').' as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c, '.MAIN_DB_PREFIX.'socpeople as x';
+	$sql .= ' WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = '.$propal->id;
+	if ($socidp) $sql .= ' AND s.idp = '.$socidp;
+
+	$result = $db->query($sql);
+	if ($result)
+	{
+		if ($db->num_rows($result)) 
+		{
+			$obj = $db->fetch_object($result);
+
+			$societe = new Societe($db);
+			$societe->fetch($obj->idp);
+
+			print '<table class="border" width="100%">';
+			$rowspan=7;
+			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">';
+			if ($societe->client == 1)
+			{
+				$url ='fiche.php?socid='.$societe->id;
+			}
+			else
+			{
+				$url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
+			}
+			print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
+			print '<td align="left">Conditions de réglement</td>';
+			print '<td>'.'&nbsp;'.'</td>';
+			print '</tr>';
+
+			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
+			print dolibarr_print_date($propal->date);
+			print '</td>';
+
+			print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
+			if ($propal->fin_validite)
+			{
+				print dolibarr_print_date($propal->fin_validite);
+			}
+			else {
+			    print $langs->trans("Unknown");   
+			}
+			print '</td>';
+			print '</tr>';
+
+            // Receiver
+			$langs->load('mails');
+			print '<tr>';
+			print '<td>'.$langs->trans('MailTo').'</td>';
+			print '<td colspan="3">';
+
+			$dests=$societe->contact_array($societe->id);
+			$numdest = count($dests);
+			if ($numdest==0)
+			{
+				print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
+				print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans('AddContact').'</a>';
+			}
+			else
+			{
+				if ($propal->statut == 0 && $user->rights->propale->creer)
+				{
+					print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+					print '<input type="hidden" name="action" value="set_contact">';
+					$form->select_contacts($societe->id, $propal->contactid, 'contactidp');
+					print '<input type="submit" value="'.$langs->trans('Modify').'">';
+					print '</form>';
+				}
+				else
+				{
+					if (!empty($propal->contactid))
+					{
+						require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
+						$contact=new Contact($db);
+						$contact->fetch($propal->contactid);
+						print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$propal->contactid.'" title="'.$langs->trans('ShowContact').'">';
+						print $contact->firstname.' '.$contact->name;
+						print '</a>';
+					}
+				}
+			}
+			print '</td>';
+
+			if ($conf->projet->enabled && $propal->projetidp) 
+				$rowspan++;
+
+			print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td></tr>';
+
+			print '<tr><td>'.$langs->trans('Project').'</td>';
+			if ($conf->projet->enabled)
+			{
+				$langs->load('projects');
+				$numprojet = $societe->has_projects();
+				print '<td colspan="2">';
+				if (! $numprojet)
+				{
+					print $langs->trans("NoProject").'</td><td>';
+					print '<a href=../projet/fiche.php?socidp='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
+					print '</td>';
+				}
+				else
+				{
+					if ($propal->statut == 0 && $user->rights->propale->creer)
+					{
+    				    print '<td colspan="3">';
+						print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+						print '<input type="hidden" name="action" value="set_project">';
+						$form->select_projects($societe->id, $propal->projetidp, 'projetidp');
+						print '<input type="submit" value="'.$langs->trans('Modify').'">';
+						print '</form>';
+						print '</td>';
+					}
+					else
+					{
+						if (!empty($propal->projetidp))
+						{
+        				    print '<td colspan="3">';
+							$proj = new Project($db);
+							$proj->fetch($propal->projetidp);
+							print '<a href="../projet/fiche.php?id='.$propal->projetidp.'" title="'.$langs->trans('ShowProject').'">';
+							print $proj->title;
+							print '</a>';
+							print '</td>';
+						}
+						else {
+        				    print '<td colspan="3">&nbsp;</td>';
+                        }
+					}
+				}
+			}
+			print '</tr>';
+
+			print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
+			if ($propal->brouillon == 1 && $user->rights->propale->creer)
+			{
+				print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+				print '<input type="hidden" name="action" value="setremise">';
+				print '<td colspan="3"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
+				print '<input type="submit" value="'.$langs->trans('Modify').'">';
+				print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
+				print '</td>';
+				print '</form>';
+			}
+			else
+			{
+				print '<td colspan="3">'.$propal->remise_percent.' %</td>';
+			}
+			print '</tr>';
+
+			print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
+			print '<td align="right" colspan="2"><b>'.price($obj->price).'</b></td>';
+			print '<td>'.$conf->monnaie.'</td></tr>';
+
+			print '<tr><td height="10">'.$langs->trans('VAT').'</td><td align="right" colspan="2">'.price($propal->total_tva).'</td>';
+			print '<td>'.$conf->monnaie.'</td></tr>';
+			print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
+			print '<td>'.$conf->monnaie.'</td></tr>';
+			print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut().'</td></tr>';
+			print '</table><br>';
+			if ($propal->brouillon == 1 && $user->rights->propale->creer)
+			{
+				print '</form>';
+			}
+
+			/*
+			 * Lignes de propale
+			 *
+			 */
+			$sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
+			$sql .= ' WHERE pt.fk_propal = '.$propal->id;
+			$sql .= ' ORDER BY pt.rowid ASC';
+			$result = $db->query($sql);
+			if ($result) 
+			{
+				$num_lignes = $db->num_rows($result);
+				$i = 0;
+				$total = 0;
+
+				print '<table class="noborder" width="100%">';
+				if ($num_lignes)
+				{
+					print '<tr class="liste_titre">';
+					print '<td width="54%">'.$langs->trans('Description').'</td>';
+					print '<td width="8%" align="right">'.$langs->trans('VAT').'</td>';
+					print '<td width="12%" align="right">'.$langs->trans('PriceUHT').'</td>';
+					print '<td width="8%" align="right">'.$langs->trans('Qty').'</td>';
+					print '<td width="8%" align="right">'.$langs->trans('Discount').'</td>';
+					print '<td width="10%" align="right">'.$langs->trans('AmountHT').'</td>';
+					print '<td>&nbsp;</td><td>&nbsp;</td>';
+					print "</tr>\n";
+				}
+				$var=True;
+				while ($i < $num_lignes)
+				{
+					$objp = $db->fetch_object($result);
+					$var=!$var;
+					if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
+					{
+						print '<tr '.$bc[$var].'>';
+						if ($objp->fk_product > 0)
+						{
+							print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+							if ($objp->fk_product_type) 
+								print img_object($langs->trans('ShowService'),'service');
+							else 
+								print img_object($langs->trans('ShowProduct'),'product');
+							print ' '.stripslashes(nl2br($objp->description?$objp->description:$objp->product)).'</a>';
+							if ($objp->date_start && $objp->date_end) 
+							{
+								print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
+							}
+							if ($objp->date_start && ! $objp->date_end) 
+							{
+								print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
+							}
+							if (! $objp->date_start && $objp->date_end) 
+							{
+								print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')'; 
+							}
+							print '</td>';
+						}
+						else
+						{
+							print '<td>'.stripslashes(nl2br($objp->description));
+							if ($objp->date_start && $objp->date_end) 
+							{ 
+								print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')'; 
+							}
+							if ($objp->date_start && ! $objp->date_end)
+							{
+								print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
+							}
+							if (! $objp->date_start && $objp->date_end)
+							{
+								print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
+							}
+							print "</td>\n";
+						}
+						print '<td align="right">'.$objp->tva_tx.' %</td>';
+						print '<td align="right">'.price($objp->subprice)."</td>\n";
+						print '<td align="right">'.$objp->qty.'</td>';
+						if ($objp->remise_percent > 0)
+						{
+							print '<td align="right">'.$objp->remise_percent." %</td>\n";
+						}
+						else
+						{
+							print '<td>&nbsp;</td>';
+						}
+						print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+
+						// Icone d'edition et suppression
+						if ($propal->statut == 0  && $user->rights->propale->creer) 
+						{
+							print '<td align="right"><a href="propal.php?propalid='.$propal->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'">';
+							print img_edit();
+							print '</a></td>';
+							print '<td align="right"><a href="propal.php?propalid='.$propal->id.'&amp;action=del_ligne&amp;ligne='.$objp->rowid.'">';
+							print img_delete();
+							print '</a></td>';
+						}
+						else
+						{
+							print '<td>&nbsp;</td><td>&nbsp;</td>';
+						}
+						print '</tr>';
+					}
+					// Update ligne de facture
+					// \todo
+
+
+					$total = $total + ($objp->qty * $objp->price);
+					$i++;
+				}
+				$db->free($result);
+			}
+			else
+			{
+				dolibarr_print_error($db);
+			}
+
+			print '</table><br>';
+
+		}
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
+
+    print '</div>';
+
+            
+    /*
+     * Boutons Actions
+     */
+    if ($obj->statut <> 4 && $user->societe_id == 0)
     {
-        $propal->valid($user->id);
+		print '<div class="tabsAction">';
+
+        if ($obj->statut == 2 && $user->rights->facture->creer)
+        {
+            print '<a class="butAction" href="facture.php?propalid='.$propal->id."&action=create\">".$langs->trans("BuildBill")."</a>";
+        }
+
+        if ($obj->statut == 2 && $num_fac_asso)
+        {
+            print '<a class="butAction" href="propal.php?propalid='.$propal->id."&action=setstatut&statut=4\">".$langs->trans("ClassifyBilled")."</a>";
+        }
+
+        print "</div>";
     }
+
+
+
+	print '<table width="100%"><tr><td width="50%" valign="top">';
+
+	/*
+	 * Documents
+	 */
+	if ($propal->brouillon == 1)
+	{
+		print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+		print '<input type="hidden" name="action" value="setpdfmodel">';
+	}
+	print_titre($langs->trans('Documents'));
+
+	print '<table class="border" width="100%">';
+	$forbidden_chars=array('/','\\',':','*','?','"','<','>','|','[',']',',',';','=');
+	$propref = str_replace($forbidden_chars,'_',$propal->ref);
+	$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
+	$relativepath = $propref.'/'.$propref.'.pdf';
+
+	$var=true;
+
+	if (file_exists($file))
+	{
+		print '<tr '.$bc[$var].'><td>'.$langs->trans('Propal').' PDF</td>';
+		print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
+		print '<td align="right">'.filesize($file). ' bytes</td>';
+		print '<td align="right">'.strftime('%d %B %Y %H:%M:%S',filemtime($file)).'</td></tr>';
+	}
+
+	if ($propal->brouillon == 1 && $user->rights->propale->creer)
+	{
+		print '<tr '.$bc[$var].'><td>Modèle</td><td align="right">';
+		$html = new Form($db);
+		$modelpdf = new Propal_Model_pdf($db);
+		$html->select_array('modelpdf',$modelpdf->liste_array(),$propal->modelpdf);
+		print '</td><td colspan="2"><input type="submit" value="'.$langs->trans('Save').'">';
+		print '</td></tr>';
+	}
+	print "</table>\n";
+
+	if ($propal->brouillon == 1)
+	{
+		print '</form>';
+	}
+	
+
     /*
-    *
-    */
-    print "<table width=\"100%\">";
-    print "<tr><td><div class=\"titre\">Proposition commerciale : $propal->ref</div></td>";
-    print "</table>";
-    /*
-    *
-    */
-    $sql = "SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."socpeople as x";
-    $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = ".$propal->id;
+     * Factures associees
+     */
+    $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
+    $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
 
     $result = $db->query($sql);
-
-    if ( $result )
+    if ($result)
     {
-        $obj = $db->fetch_object($result);
-
-        if ($db->num_rows())
-        {
-            $color1 = "#e0e0e0";
-
-            print '<table class="border" width="100%">';
-
-            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-            print "<td valign=\"top\" width=\"50%\" rowspan=\"9\">Note :<br>". nl2br($obj->note)."</td></tr>";
-            //
-
-            print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">'.dolibarr_print_date($obj->dp).'</td></tr>';
-
-            if ($obj->fk_projet)
-            {
-                $projet = new Project($db);
-                $projet->fetch($obj->fk_projet);
-                print '<tr><td>'.$langs->trans("Project").'</td><td colspan="1">';
-                print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id.'">';
-                print $projet->title.'</a></td></tr>';
-            }
-            print "<tr><td>Destinataire</td><td colspan=\"2\">$obj->firstname $obj->name &lt;$obj->email&gt;</td></tr>";
-            /*
-            *
-            */
-
-            print "<tr><td bgcolor=\"$color1\">".$langs->trans("AmountHT")."</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->price + $obj->remise)." euros</td></tr>";
-            /*
-            *
-            */
-
-            print "<tr><td bgcolor=\"$color1\">".$langs->trans("Discount")."</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->remise)." euros</td></tr>";
-
-            /*
-            *
-            */
-
-            $totalht = $propal->price ;
-
-            print "<tr><td bgcolor=\"$color1\">".$langs->trans("TotalHT")."</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\"><b>".price($totalht)."</b> euros</td></tr>";
-            /*
-            *
-            */
-            print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">';
-            $author = new User($db, $obj->fk_user_author);
-            $author->fetch('');
-            print $author->fullname.'</td></tr>';
-            /*
-            *
-            */
-            print "<tr><td>".$langs->trans("Propal")." PDF</a></td>";
-            $file = $conf->propal->dir_output. "/$obj->ref/$obj->ref.pdf";
-            $relativepath = "$obj->ref/$obj->ref.pdf";
-
-            if (file_exists($file)) {
-                print '<td colspan="2"><a href="'.DOL_URL_ROOT.'/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$obj->ref.'.pdf</a></td></tr>';
-            }
-            print '</tr>';
-            /*
-            *
-            */
-            print '<tr bgcolor="#f0f0f0"><td>'.$langs->trans("Status").' :</td><td colspan=2 align=center><b>'.$obj->lst.'</b></td>';
-
-            print '</tr>';
-
-
-            print "</table>";
-
-            if ($action == 'statut')
-            {
-                print "<form action=\"propal.php?propalid=".$propal->id."\" method=\"post\">";
-                print "<input type=\"hidden\" name=\"action\" value=\"setstatut\">";
-                print "<select name=\"statut\">";
-                print "<option value=\"2\">Signée";
-                print "<option value=\"3\">Non Signée";
-                print '</select>';
-                print '<br><textarea cols="60" rows="6" wrap="soft" name="note">';
-                print $obj->note . "\n----------\n";
-                print '</textarea><br><input type="submit" value="Valider">';
-                print "</form>";
-            }
-
-
-            print "<table width=\"100%\" cellspacing=2>";
-
-            print "<td valign=\"top\" width=\"50%\">";
-
-            /*
-            * Factures associees
-            */
-            $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
-            $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
-
-            $result = $db->query($sql);
-            if ($result)
-            {
-                $num_fac_asso = $db->num_rows($result);
-                $i = 0; $total = 0;
-                print "<br>";
-                if ($num_fac_asso > 1)
-                {
-                    print_titre("Factures associées");
-                }
-                else
-                {
-                    print_titre("Facture associée");
-                }
-                print '<table class="noborder" width="100%">';
-                print "<tr class=\"liste_titre\">";
-                print '<td>'.$langs->trans("Ref").'</td>';
-                print '<td>'.$langs->trans("Date").'</td>';
-                print '<td>'.$langs->trans("Author").'</td>';
-                print '<td align="right">'.$langs->trans("Price").'</td>';
-                print "</tr>\n";
-
-                $var=True;
-                while ($i < $num_fac_asso)
-                {
-                    $objp = $db->fetch_object();
-                    $var=!$var;
-                    print "<tr $bc[$var]>";
-                    print "<td><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a>";
-                    if ($objp->paye)
-                    {
-                        print " (<b>pay&eacute;e</b>)";
-                    }
-                    print "</td>\n";
-                    print "<td>".dolibarr_print_date($objp->df)."</td>\n";
-                    if ($objp->fk_user_author <> $user->id)
-                    {
-                        $fuser = new User($db, $objp->fk_user_author);
-                        $fuser->fetch();
-                        print "<td>".$fuser->fullname."</td>\n";
-                    }
-                    else
-                    {
-                        print "<td>".$user->fullname."</td>\n";
-                    }
-                    print '<td align="right">'.price($objp->total).'</td>';
-                    print "</tr>";
-                    $total = $total + $objp->total;
-                    $i++;
-                }
-                print "<tr class=\"liste_total\"><td align=\"right\" colspan=\"3\">".$langs->trans("TotalHT")."</td><td align=\"right\">".price($total)."</td></tr>\n";
-                print "</table>";
-                $db->free();
-            }
-            print "</table>";
-
-            /*
-             * Que si le module commande est actif !
-             */
-            if($conf->commande->enabled)
-            {
-                $nb_commande = sizeof($propal->commande_liste_array());
-                if ($nb_commande > 0)
-                {
-                    $coms = $propal->commande_liste_array();
-                    print '<br><table class="border" width="100%">';
-
-                    if ($nb_commande == 1)
-                    {
-                        print "<tr><td>Commande rattachée : ";
-                        print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">';
-                        print img_file();
-                        print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a>";
-                        print "</td></tr>\n";
-                    }
-                    else
-                    {
-                        print "<tr><td>Commandes rattachées</td></tr>\n";
-
-                        for ($i = 0 ; $i < $nb_commande ; $i++)
-                        {
-                            print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
-                            print "</tr>\n";
-                        }
-                    }
-                    print "</table>";
-                }
-            }
-
-            /*
-            *
-            * Actions
-            *
-            */
-            if ($obj->statut <> 4 && $user->societe_id == 0)
-            {
-                print '<br><table id="actions" width="100%"><tr>';
-
-                if ($obj->statut == 2 && $user->rights->facture->creer)
-                {
-                    print '<td width="20%">';
-                    print "<a href=\"facture.php?propalid=".$propal->id."&action=create\">Emettre une facture</td>";
-                }
-                else
-                {
-                    print '<td width="20%">-</td>';
-                }
-
-                print '<td width="20%">-</td>';
-                print '<td width="20%">-</td>';
-                print '<td width="20%">-</td>';
-
-                if ($obj->statut == 2 && $num_fac_asso)
-                {
-                    print "<td width=\"20%\">[<a href=\"propal.php?propalid=".$propal->id."&action=setstatut&statut=4\">Facturée</a>]</td>";
-                }
-                else
-                {
-                    print '<td width="20%">-</td>';
-                }
-                print "</tr></table>";
-            }
-
-        } else {
-            print "Num rows = " . $db->num_rows();
-            print "<p><b>$sql";
-        }
-
-        /*
-        * Produits
-        */
-        print_titre("Produits");
-
+        $num_fac_asso = $db->num_rows($result);
+        $i = 0; $total = 0;
+        print "<br>";
+        if ($num_fac_asso > 1) print_titre($langs->trans("RelatedBills"));
+        else print_titre($langs->trans("RelatedBill"));
         print '<table class="noborder" width="100%">';
         print "<tr class=\"liste_titre\">";
-        print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
-        print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
+        print '<td>'.$langs->trans("Ref").'</td>';
+        print '<td>'.$langs->trans("Date").'</td>';
+        print '<td>'.$langs->trans("Author").'</td>';
+        print '<td align="right">'.$langs->trans("Price").'</td>';
+        print "</tr>\n";
 
-        $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
-        $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal =".$propal->id;
-        $sql .= " ORDER BY pt.rowid ASC";
-        if ($db->query($sql))
+        $var=True;
+        while ($i < $num_fac_asso)
         {
-            $num = $db->num_rows();
-            $i = 0;
-            $var=True;
-            while ($i < $num)
+            $objp = $db->fetch_object();
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            print '<td><a href="../compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a>';
+            if ($objp->paye)
             {
-                $objp = $db->fetch_object();
-                $var=!$var;
-                print "<tr $bc[$var]><td>[$objp->ref]</TD>\n";
-                print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</td>';
-                print "<td align=\"right\">".price($objp->price)."</TD>";
-                print '<td align="center">'.$objp->remise_percent.' %</td>';
-                print "<td align=\"center\">".$objp->qty."</td></tr>\n";
-                $i++;
+                print " (<b>pay&eacute;e</b>)";
             }
-        }
-
-        $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
-        $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt  WHERE  pt.fk_propal = ".$propal->id." AND pt.fk_product = 0";
-        $sql .= " ORDER BY pt.rowid ASC";
-        if ($db->query($sql))
-        {
-            $num = $db->num_rows();
-            $i = 0;
-            while ($i < $num)
+            print "</td>\n";
+            print "<td>".dolibarr_print_date($objp->df)."</td>\n";
+            if ($objp->fk_user_author <> $user->id)
             {
-                $objp = $db->fetch_object();
-                $var=!$var;
-                print "<tr $bc[$var]><td>&nbsp;</td>\n";
-                print '<td>'.$objp->product.'</td>';
-                print '<td align="right">'.price($objp->price).'</td>';
-                print '<td align="center">'.$objp->remise_percent.' %</td>';
-                print "<td align=\"center\">".$objp->qty."</td></tr>\n";
-                $i++;
+                $fuser = new User($db, $objp->fk_user_author);
+                $fuser->fetch();
+                print "<td>".$fuser->fullname."</td>\n";
             }
+            else
+            {
+                print "<td>".$user->fullname."</td>\n";
+            }
+            print '<td align="right">'.price($objp->total).'</td>';
+            print "</tr>";
+            $total = $total + $objp->total;
+            $i++;
         }
-        else
-        {
-            print $sql;
-        }
-
-        print '</table>';
-
-
-        /*
-         * Voir le suivi des actions
-         */
-        if ($suivi)
-        {
-            $validor = new User($db, $obj->fk_user_valid);
-            $validor->fetch('');
-            $cloturor = new User($db, $obj->fk_user_cloture);
-            $cloturor->fetch('');
-
-            print '<p><a href="propal.php?propalid='.$propal->id.'">Cacher le suivi des actions </a>';
-            print '<table cellspacing=0 border=1 cellpadding=3>';
-            print '<tr><td>&nbsp;</td><td>Nom</td><td>Date</td></tr>';
-            print '<tr><td>Création</td><td>'.$author->fullname.'</td>';
-            print '<td>'.$obj->datec.'</td></tr>';
-
-            print '<tr><td>Validation</td><td>'.$validor->fullname.'&nbsp;</td>';
-            print '<td>'.$obj->date_valid.'&nbsp;</td></tr>';
-
-            print '<tr><td>Cloture</td><td>'.$cloturor->fullname.'&nbsp;</td>';
-            print '<td>'.$obj->date_cloture.'&nbsp;</td></tr>';
-            print '</table>';
-        }
-        else
-        {
-            print '<p><a href="propal.php?propalid='.$propal->id.'&suivi=1">Voir le suivi des actions </a>';
-        }
-
-    } else {
-        dolibarr_print_error($db);
+        print "<tr class=\"liste_total\"><td align=\"right\" colspan=\"3\">".$langs->trans("TotalHT")."</td><td align=\"right\">".price($total)."</td></tr>\n";
+        print "</table>";
+        $db->free();
     }
 
+    /*
+     * Commandes associées
+     */
+    if($conf->commande->enabled)
+    {
+        $nb_commande = sizeof($propal->commande_liste_array());
+        if ($nb_commande > 0)
+        {
+            $coms = $propal->commande_liste_array();
+            print '<br><table class="border" width="100%">';
+
+            if ($nb_commande == 1)
+            {
+                print "<tr><td>Commande rattachée : ";
+                print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">';
+                print img_file();
+                print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a>";
+                print "</td></tr>\n";
+            }
+            else
+            {
+                print "<tr><td>Commandes rattachées</td></tr>\n";
+
+                for ($i = 0 ; $i < $nb_commande ; $i++)
+                {
+                    print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
+                    print "</tr>\n";
+                }
+            }
+            print "</table>";
+        }
+    }
+
+
+	print '</td><td valign="top" width="50%">';
+
+    // \todo Mettre ici les traces des envois par mail
+    
+    
+    
+    
+
+    print '</td></tr></table>';
+    
+    
 } else {
 
     /**
