@@ -264,6 +264,11 @@ InterventionsSetup=Configuration du module Interventions
 LDAPSetup=Configuration du module LDAP
 LDAPServer=Serveur LDAP
 TestConnectLdap=Tester la connexion
+LDAPSuffix=LDAP suffix
+DNAdmin=Administrateur LDAP
+LDAPPassword=Mot de passe
+DNUser=DN des utilisateurs
+DNGroup=DN des groupes
 ##### Propal #####
 PropalSetup=Configuration du module Propositions Commerciales
 ##### Sendings #####

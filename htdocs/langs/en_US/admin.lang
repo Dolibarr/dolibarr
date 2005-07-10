@@ -264,6 +264,11 @@ InterventionsSetup=Interventions module setup
 LDAPSetup=LDAP Setup
 LDAPServer=LDAP Server
 TestConnectLdap=Test connection
+LDAPSuffix=LDAP suffix
+DNAdmin=LDAP Administrator
+LDAPPassword=Password
+DNUser=Users' DN
+DNGroup=Groups' DN
 ##### Propal #####
 PropalSetup=Commercial proposals module setup
 ##### Sendings #####
