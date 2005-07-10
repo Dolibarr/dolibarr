@@ -281,7 +281,9 @@ class pdf_propale_adytek extends ModelePDFPropales
 
    function _pagehead(&$pdf, $propale)
     {
-        global $langs;
+        global $langs,$conf;
+        $langs->load("main");
+        $langs->load("bills");
 
       $tab4_top = 60;
       $tab4_hl = 6;
@@ -369,15 +371,15 @@ class pdf_propale_adytek extends ModelePDFPropales
       $pdf->SetFont('Arial','B',14);
       //$pdf->Text(11, 88, "Date       : " . strftime("%d %b %Y", $propale->date));
       //$pdf->Text(11, 94, "Numéro : ".$propale->ref);
-      $pdf->Text(11, 88, "Date");
+      $pdf->Text(11, 88, $langs->trans("Date"));
       $pdf->Text(35, 88, ": " . strftime("%d %b %Y", $propale->date));
-      $pdf->Text(11, 94, "Numéro");
+      $pdf->Text(11, 94, $langs->trans("Ref"));
       $pdf->Text(35, 94, ": ".$propale->ref);
       /*
        */
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = "Montants exprimés en euros";
+      $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
       $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
       /*
        */

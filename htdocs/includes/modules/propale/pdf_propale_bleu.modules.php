@@ -218,7 +218,7 @@ class pdf_propale_bleu extends ModelePDFPropales
 
   function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
-        global $langs;
+        global $langs,$conf;
         $langs->load("main");
         $langs->load("bills");
 
@@ -244,7 +244,7 @@ class pdf_propale_bleu extends ModelePDFPropales
 
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = "Montants exprimés en euros";
+      $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
       $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 
     }
@@ -268,7 +268,7 @@ class pdf_propale_bleu extends ModelePDFPropales
       if (defined("FAC_PDF_TEL"))
 	{
 	  $pdf->SetFont('Times','',10);
-	  $pdf->MultiCell(76, 5, "Tél : ".FAC_PDF_TEL);
+	  $pdf->MultiCell(76, 5, $langs->trans("Phone")." : ".FAC_PDF_TEL);
 	}  
       if (defined("MAIN_INFO_SIREN"))
 	{

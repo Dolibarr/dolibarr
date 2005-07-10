@@ -61,7 +61,7 @@ if ( $db->query( $sql) )
 	  print "<td>".stripslashes($objp->nom)."</TD>\n";
 	  	  
 	  print "<TD>".strftime("%d %B %Y",$objp->datef)."</td>\n";
-	  print '<TD align="right">'.number_format($objp->total,2,'.','').'<br>euros';
+	  print '<TD align="right">'.number_format($objp->total,2,'.','').' '.$langs->trans("Currency".$conf->monnaie);
 
 	  if ($objp->paye == 1)
 	    {
@@ -88,15 +88,15 @@ if ( $db->query( $sql) )
 
       $var=!$var;
       print "<TR $bc[$var]>";
-      print '<TD colspan="3" align="right">Payé : '.number_format($total_paye,2,'.',' ').' euros</TD></tr>';
+      print '<TD colspan="3" align="right">Payé : '.number_format($total_paye,2,'.',' ').' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
       $var=!$var;
       print "<TR $bc[$var]>";
-      print '<TD colspan="3" align="right">A payer : '.number_format($total_apayer,2,'.',' ').' euros</TD></tr>';
+      print '<TD colspan="3" align="right">A payer : '.number_format($total_apayer,2,'.',' ').' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
       $var=!$var;
       print "<TR $bc[$var]>";
-      print '<TD colspan="3" align="right">'.$langs->trans("Total").': '.number_format($total,2,'.',' ').' euros</TD></tr>';
+      print '<TD colspan="3" align="right">'.$langs->trans("Total").': '.number_format($total,2,'.',' ').' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
       print "</table>";
 

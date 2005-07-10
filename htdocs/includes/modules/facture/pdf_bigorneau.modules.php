@@ -267,6 +267,9 @@ class pdf_bigorneau extends ModelePDFFactures {
    */
   function _pagehead(&$pdf, $fac)
     {
+        global $langs,$conf;
+        $langs->load("main");
+        $langs->load("bills");
       
       $pdf->SetXY(10,5);
       if (defined("FAC_PDF_INTITULE"))
@@ -323,7 +326,7 @@ class pdf_bigorneau extends ModelePDFFactures {
        */
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = "Montants exprimés en euros";
+      $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
       $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
       /*
        */

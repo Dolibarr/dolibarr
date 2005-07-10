@@ -151,7 +151,7 @@ function ppt ($db) {
     $xdate = mktime(0, 0, 0, date("m", $xdate + (33 * 24 * 3600)), 1 , date("Y", $xdate + (33 * 24 * 3600))) ;
     $i++;
   }
-  print "<tr><td colspan=\"2\" align=\"right\">Totaux en euros :</td><td align=\"right\">$totalca</td>";
+  print "<tr><td colspan=\"2\" align=\"right\">Totaux:</td><td align=\"right\">$totalca</td>";
   print "<td align=\"right\">$totalpm</td><td align=\"right\" bgcolor=\"#f0f0f0\">$pmt</td>";
   print "<td colspan=\"4\">&nbsp;</td></tr>";
   print "</table>";

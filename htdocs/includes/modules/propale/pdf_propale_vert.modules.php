@@ -272,7 +272,7 @@ class pdf_propale_vert extends ModelePDFPropales
 
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = "Montants exprimés en euros";
+      $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
       $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 
       $pdf->SetXY(10, ($tab_top + $tab_height + 6));

@@ -444,7 +444,7 @@ if ($action == 'create')
         print '<input name="num_chq" type="text" size="6">';
         print "</td></tr>\n";
     }
-    print '<tr><td>'.$langs->trans("Subscription").'</td><td><input type="text" name="cotisation" size="6"> euros</td></tr>';
+    print '<tr><td>'.$langs->trans("Subscription").'</td><td><input type="text" name="cotisation" size="6">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
     if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 && defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
         print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" type="text" size=20 value="'.$langs->trans("Subscription").' " ></td></tr>';
@@ -760,7 +760,7 @@ if ($rowid)
             print '<input name="num_chq" type="text" size="6">';
             print "</td></tr>\n";
         }
-        print '<tr><td>Cotisation</td><td><input type="text" name="cotisation" size="6"> euros</td></tr>';
+        print '<tr><td>'.$langs->trans("Subscription").'</td><td><input type="text" name="cotisation" size="6"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
         if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 &&
         defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
             print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2"><input name="label" type="text" size=20 value="Cotisation '.stripslashes($adh->prenom).' '.stripslashes($adh->nom).' '.strftime("%Y",$adh->datefin).'" ></td></tr>';

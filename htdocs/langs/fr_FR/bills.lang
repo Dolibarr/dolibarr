@@ -48,7 +48,6 @@ ErrorCreateBankAccount=Créer un compte bancaire puis aller dans la configuration
 ErrorBillNotFound=Facture %s inexistante
 BillFrom=Émetteur
 BillTo=Adressé à
-AmountInCurrency=Montants exprimés en
 ActionsOnBill=Actions sur la facture
 NewBill=Nouvelle facture
 Prélèvements=Prélèvement

@@ -130,7 +130,7 @@ if ($result) {
 
   print "</select></td>";
 
-  print "<td><input name=\"reduc\" type=\"text\" size=6 value=0.00>euros</td><td>&nbsp;</td>";
+  print '<td><input name="reduc" type="text" size="6" value="0.00">'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td>';
 
   print '</tr>';
   print "</table></form>";

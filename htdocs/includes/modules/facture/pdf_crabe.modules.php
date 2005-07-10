@@ -562,8 +562,7 @@ class pdf_crabe extends ModelePDFFactures
     */
     function _pagehead(&$pdf, $fac)
     {
-        global $conf;
-        global $langs;
+        global $langs,$conf;
         $langs->load("main");
         $langs->load("bills");
         $langs->load("propal");
@@ -690,7 +689,7 @@ class pdf_crabe extends ModelePDFFactures
         */
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',10);
-        $titre = $langs->trans("AmountInCurrency")." ".$conf->monnaie;
+        $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
         $pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
         /*
         */

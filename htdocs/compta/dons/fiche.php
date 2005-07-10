@@ -220,7 +220,7 @@ if ($_GET["action"] == 'create') {
   print "<tr $bc[1]>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40"></td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40"></td></tr>';
-  print "<tr $bc[1]>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10"> euros</td></tr>';
+  print "<tr $bc[1]>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
   print "<tr $bc[1]>".'<td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print "</table>\n";
   print "</form>\n";
@@ -297,7 +297,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
   print "<tr $bc[1]>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.$don->cp.'"> <input type="text" name="ville" size="40" value="'.$don->ville.'"></td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$don->pays.'"></td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.$don->email.'"></td></tr>';
-  print "<tr $bc[1]>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> euros</td></tr>';
+  print "<tr $bc[1]>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
   print "<tr $bc[1]><td>".$langs->trans("PaymentMode")."</td><td>\n";
   $paiement = new Paiement($db);
@@ -362,7 +362,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
   print "<tr $bc[1]>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>'.$don->cp.' '.$don->ville.'</td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Country").'</td><td>'.$don->pays.'</td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("EMail").'</td><td>'.$don->email.'</td></tr>';
-  print "<tr $bc[1]>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount).' euros</td></tr>';
+  print "<tr $bc[1]>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount).' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
   if ($don->statut == 1)
     {
       print "<tr $bc[1]><td>".$langs->trans("PaymentMode")."</td><td>";

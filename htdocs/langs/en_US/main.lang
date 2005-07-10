@@ -237,6 +237,7 @@ FillTownFromZip=Fill town from zip
 ShowLog=Show log
 File=File
 ReadPermissionNotAllowed=Read permission not allowed
+AmountInCurrency=Amount in %s currency
 # Countries
 CountryFR=France
 CountryBE=Belgium

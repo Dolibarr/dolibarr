@@ -193,7 +193,7 @@ $don->fetch($_GET["rowid"]);
 		  </td>
 		</tr>
 	      </table>
-	      Somme en toutes lettres (<b>en euros</b>): <?php print transcoS2L(number_format($don->amount, 2, ',', ' '), "euros"); ?><br>
+	      Somme en toutes lettres (<b><?php print $langs->trans("Currency".$conf->monnaie); ?></b>): <?php print transcoS2L(number_format($don->amount, 2, ',', ' '), "euros"); ?><br>
 	      Date du paiement : <?php print strftime("%d %B %Y", $don->date); ?> <br>
 	      Mode de versement :
 	      <table width="100%">

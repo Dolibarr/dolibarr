@@ -215,7 +215,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
   function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
-        global $langs;
+        global $langs,$conf;
         $langs->load("main");
         $langs->load("bills");
 
@@ -247,7 +247,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = "Montants en euros";
+      $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
       $pdf->Text(10,280, $titre);
     }
 

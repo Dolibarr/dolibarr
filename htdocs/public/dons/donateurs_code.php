@@ -59,14 +59,14 @@ if ( $db->query( $sql) )
 	  print "<TR $bc[$var]>";
 	  if ($objp->public)
 	    {
-	      print "<td>".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".stripslashes($objp->societe)."</TD>\n";
+	      print "<td>".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".stripslashes($objp->societe)."</td>\n";
 	    }
 	  else
 	    {
-	      print "<td>Anonyme Anonyme</TD>\n";
+	      print "<td>Anonyme Anonyme</td>\n";
 	    }
-	  print "<TD>".strftime("%d %B %Y",$objp->datedon)."</td>\n";
-	  print '<TD align="right">'.number_format($objp->amount,2,'.',' ').' euros</TD>';
+	  print "<td>".dolibarr_print_date($objp->datedon)."</td>\n";
+	  print '<td align="right">'.number_format($objp->amount,2,'.',' ').' '.$langs->trans("Currency".$conf->monnaie).'</td>';
 	  print "</tr>";
 	  $i++;
 	}

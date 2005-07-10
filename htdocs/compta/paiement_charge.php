@@ -179,7 +179,7 @@ if ($_GET["action"] == 'create')
 	  print '<tr><td>'.$langs->trans("Label").' :</td><td colspan="2">'.$charge->lib."</td></tr>\n";
 	  print "<tr><td>Date échéance :</td><td colspan=\"2\">".dolibarr_print_date($charge->date_ech)."</td></tr>\n";
 
-      print '<tr><td>'.$langs->trans("AmountTTC").":</td><td colspan=\"2\">".price($charge->amount)." euros</td></tr>";
+      print '<tr><td>'.$langs->trans("AmountTTC").":</td><td colspan=\"2\">".price($charge->amount).' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
       $sql = "SELECT sum(p.amount) FROM ".MAIN_DB_PREFIX."paiementcharge as p WHERE p.fk_charge = $chid;";
       $result = $db->query($sql);
@@ -187,7 +187,7 @@ if ($_GET["action"] == 'create')
 	    $sumpayed = $db->result(0,0);
 	    $db->free();
       }
-      print '<tr><td>'.$langs->trans("AlreadyPayed").'</td><td colspan="2"><b>'.price($sumpayed).'</b> euros</td></tr>';
+      print '<tr><td>'.$langs->trans("AlreadyPayed").'</td><td colspan="2"><b>'.price($sumpayed).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
       print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Payment").'</td>';
 
@@ -210,7 +210,7 @@ if ($_GET["action"] == 'create')
       $html->select_comptes($charge->accountid, "accountid", 0, "courant=1");  // Affiche liste des comptes courant
 	  print '</td></tr>';
 
-      print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay").":</td><td><b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
+      print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay").":</td><td><b>".price($total - $sumpayed).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 //      print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\"></td></tr>\n";
 	  	  
 	  /*

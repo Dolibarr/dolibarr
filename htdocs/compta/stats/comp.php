@@ -50,8 +50,8 @@ function propals ($db, $year, $month) {
       $oldstatut = $objp->statut;
       
       if ($i > 0) {
-	print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($subtotal)."</b></td>\n";
-	print "<td align=\"left\">Euros HT</td></tr>\n";
+	print "<tr><td align=\"right\" colspan=\"4\">".$langs->trans("Total").": <b>".price($subtotal)."</b></td>\n";
+	print "<td align=\"left\">".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
       }
       $subtotal = 0;
 
@@ -83,11 +83,11 @@ function propals ($db, $year, $month) {
     
     $i++;
   }
-  print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($subtotal)."</b></td>\n";
-  print "<td align=\"left\">Euros HT</td></tr>\n";
+  print "<tr><td align=\"right\" colspan=\"4\">".$langs->trans("Total").": <b>".price($subtotal)."</b></td>\n";
+  print "<td align=\"left\">".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
   print "<tr>";
-  print "<td colspan=\"3\" align=\"right\"><b>Total : ".price($total)."</b></td>";
-  print "<td align=\"left\"><b>Euros HT</b></td></tr>";
+  print "<td colspan=\"3\" align=\"right\"><b>".$langs->trans("Total").": ".price($total)."</b></td>";
+  print "<td align=\"left\"><b>".$langs->trans("Currency".$conf->monnaie)."</b></td></tr>";
   print "</table>";
   $db->free();
 

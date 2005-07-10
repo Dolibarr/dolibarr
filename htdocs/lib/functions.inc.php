@@ -292,21 +292,23 @@ function dolibarr_del_const($db, $name)
 */
 function dolibarr_print_ca($ca)
 {
+    global $langs,$conf;
+    
     if ($ca > 1000)
     {
       $cat = round(($ca / 1000),2);
-      $cat = "$cat Keuros";
+      $cat = "$cat K".$langs->trans("Currency".$conf->monnaie);
     }
     else
     {
       $cat = round($ca,2);
-      $cat = "$cat euros";
+      $cat = "$cat ".$langs->trans("Currency".$conf->monnaie);
     }
 
     if ($ca > 1000000)
     {
       $cat = round(($ca / 1000000),2);
-      $cat = "$cat Meuros";
+      $cat = "$cat M".$langs->trans("Currency".$conf->monnaie);
     }
 
     return $cat;

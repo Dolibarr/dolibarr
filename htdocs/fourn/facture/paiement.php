@@ -116,7 +116,7 @@ if ($action == 'create')
       print '<a href="fiche.php?facid='.$facid.'">'.$obj->facnumber.'</a></td></tr>';
       print "<tr><td>".$langs->trans("Company")." :</td><td colspan=\"2\">$obj->nom</td></tr>";
 
-      print "<tr><td>".$langs->trans("AmountTTC")." :</td><td colspan=\"2\">".price($obj->total_ttc)." euros</td></tr>";
+      print "<tr><td>".$langs->trans("AmountTTC")." :</td><td colspan=\"2\">".price($obj->total_ttc).' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
       $sql = "SELECT sum(p.amount) FROM ".MAIN_DB_PREFIX."paiementfourn as p WHERE p.fk_facture_fourn = $facid;";
       $result = $db->query($sql);
@@ -124,7 +124,7 @@ if ($action == 'create')
     	$sumpayed = $db->result(0,0);
 	    $db->free();
       }
-      print '<tr><td>'.$langs->trans("AlreadyPayed").' :</td><td colspan="2"><b>'.price($sumpayed).'</b> euros</td></tr>';
+      print '<tr><td>'.$langs->trans("AlreadyPayed").' :</td><td colspan="2"><b>'.price($sumpayed).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
       print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Payment")."</td>";
 
@@ -188,7 +188,7 @@ if ($action == 'create')
       print "</select>";
       print "</td></tr>\n";
 
-      print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay")." :</td><td><b>".price($total - $sumpayed)."</b> euros</td></tr>\n";
+      print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay")." :</td><td><b>".price($total - $sumpayed).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
       print "<tr><td valign=\"top\">".$langs->trans("AmountTTC")." :</td><td><input name=\"amount\" type=\"text\" value=\"".($total - $sumpayed)."\"></td></tr>\n";
       print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
       print "</form>\n";

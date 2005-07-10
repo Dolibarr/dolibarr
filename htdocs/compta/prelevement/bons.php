@@ -107,7 +107,7 @@ if ($result)
 
       print '<td align="center">'.strftime("%d/%m/%Y",$obj->datec)."</td>\n";
 
-      print '<td align="right">'.price($obj->amount)." euros</td>\n";
+      print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie).'</td>\n";
 
       print "</tr>\n";
       $i++;

@@ -237,6 +237,7 @@ FillTownFromZip=Renseigner ville
 ShowLog=Afficher historique
 File=Fichier
 ReadPermissionNotAllowed=Permission de lecture non accordée
+AmountInCurrency=Montant exprimés en %s
 # Countries
 CountryFR=France
 CountryBE=Belgique
