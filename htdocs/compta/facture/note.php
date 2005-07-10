@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/compta/facture/note.php
+/**
+        \file       htdocs/compta/facture/note.php
         \ingroup    facture
         \brief      Fiche de notes sur une facture
 		\version    $Revision$
@@ -110,8 +111,8 @@ if ($_GET["facid"])
       print "<td>Conditions de réglement</td><td>" . $facture->cond_reglement ."</td></tr>";
       
       print '<tr><td>'.$langs->trans("Date").'</td>';
-      print "<td>".strftime("%A %d %B %Y",$facture->date)."</td>\n";
-      print "<td>Date limite de réglement</td><td>" . strftime("%d %B %Y",$facture->date_lim_reglement) ."</td></tr>";
+      print '<td>'.dolibarr_print_date($facture->date,"%A %d %B %Y")."</td>\n";
+      print '<td>'.$langs->trans("DateClosing").'</td><td>'.dolibarr_print_date($facture->date_lim_reglement,"%A %d %B %Y") ."</td></tr>";
       
       print '<tr><td valign="top" colspan="4">'.$langs->trans("Note").' :</td></tr>';
 

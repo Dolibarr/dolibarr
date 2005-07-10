@@ -108,12 +108,13 @@ if ($_GET["facid"] > 0)
       print '<td colspan="3">';
       print '<b><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
       
-      print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
+      print "<td>Conditions de réglement</td><td>" . $fac->cond_reglement ."</td></tr>";
       
       print '<tr><td>'.$langs->trans("Date").'</td>';
-      print "<td colspan=\"3\">".strftime("%A %d %B %Y",$fac->date)."</td>\n";
-      print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement) ."</td></tr>";
-      
+      print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
+      print '<td>'.$langs->trans("DateClosing").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
+      if ($fac->paye == 0 && $fac->date_lim_reglement < (time() - $warning_delay)) print img_warning($langs->trans("Late"));
+      print "</td></tr>";
       print '<tr>';
       if ($conf->projet->enabled)
 	{
@@ -136,7 +137,7 @@ if ($_GET["facid"] > 0)
     	  print '<td height=\"10\">&nbsp;</td><td colspan="3">';
     	  print "&nbsp;</td>";
 	}
-      print '<td rowspan="4" valign="top">';
+      print '<td colspan="2" rowspan="4" valign="top" width="50%">';
       
       /*
        * Documents
@@ -229,7 +230,7 @@ if ($_GET["facid"] > 0)
       
       print '<tr><td height=\"10\">'.$langs->trans("AmountHT").'</td>';
       print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-      print '<td>'.$conf->monnaie.'</td></tr>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
                 
       print "</table><br>";
       

@@ -127,18 +127,18 @@ if ($_GET["facid"] > 0)
       print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
       
       print '<tr><td>'.$langs->trans("Date").'</td>';
-      print "<td colspan=\"3\">".strftime("%A %d %B %Y",$fac->date)."</td>\n";
-      print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement) ."</td></tr>";
+      print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
+      print '<td>'.$langs->trans("DateClosing").dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y").'</td></tr>';
       
       print '<tr><td height="10">'.$langs->trans("Author").'</td><td colspan="4">'.$author->fullname.'</td></tr>';
       
       print '<tr><td height="10">'.$langs->trans("AmountHT").'</td>';
       print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-      print '<td>'.$conf->monnaie.'</td><td>&nbsp;</td></tr>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
                 
       print '<tr><td height="10">'.$langs->trans("AmountTTC").'</td>';
       print '<td align="right" colspan="2"><b>'.price($fac->total_ttc).'</b></td>';
-      print '<td>'.$conf->monnaie.'</td><td>&nbsp;</td></tr>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
 
       print '<tr><td>RIB</td><td colspan="4">';
       print $soc->display_rib();
@@ -176,7 +176,7 @@ if ($_GET["facid"] > 0)
 	{
 	  if ($user->rights->facture->creer)
 	    {
-	      print '<a class="tabAction" href="prelevement.php?facid='.$fac->id.'&amp;action=new">Faire une demande de prélèvement</a>';
+	      print '<a class="butAction" href="prelevement.php?facid='.$fac->id.'&amp;action=new">Faire une demande de prélèvement</a>';
 	    }
 	}
       print "</div><br/>";
@@ -189,7 +189,7 @@ if ($_GET["facid"] > 0)
       print '<tr class="liste_titre">';      
       print '<td align="center">Date demande</td>';
       print '<td align="center">Date traitement</td>';
-      print '<td align="center">Montant</td>';
+      print '<td align="center">'.$langs->trans("Amount").'</td>';
       print '<td align="center">Bon prélèvement</td>';
       print '<td align="center">'.$langs->trans("User").'</td><td>&nbsp;</td><td>&nbsp;</td>';
       print '</tr>';      
