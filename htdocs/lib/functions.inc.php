@@ -371,7 +371,7 @@ function dolibarr_print_date($time,$format="%d %b %Y")
 function dolibarr_print_object_info($object)
 {
     global $langs;
-        
+
     if (isset($object->user_creation) && $object->user_creation->fullname)
         print $langs->trans("CreatedBy")." : " . $object->user_creation->fullname . '<br>';
 
@@ -388,7 +388,7 @@ function dolibarr_print_object_info($object)
         print $langs->trans("ValidatedBy")." : " . $object->user_validation->fullname . '<br>';
     
     if (isset($object->date_validation))
-        print $langs->trans("DateValidation")." : " . dolibarr_print_date($object->date_modification,"%A %d %B %Y %H:%M:%S") . '<br>';
+        print $langs->trans("DateValidation")." : " . dolibarr_print_date($object->date_validation,"%A %d %B %Y %H:%M:%S") . '<br>';
 
     if (isset($object->user_cloture) && $object->user_cloture->fullname )
         print $langs->trans("ClosedBy")." : " . $object->user_cloture->fullname . '<br>';
