@@ -117,38 +117,42 @@ if ($_POST["action"] == 'add_action')
         $webcal=0;
         if ($conf->webcal->enabled && $_POST["todo_webcal"] == 'on')
         {
-            // Crée objet webcal et connexion avec params $conf->webcal->db->xxx
-            $webcal = new Webcal();
-
-            if (! $webcal->localdb->ok)
+            // Si action complete ou si action de type rendez-vous
+            if ($actioncomm->percent == 100 || $actioncomm->type_code == 'AC_RDV')
             {
-                // Si la creation de l'objet n'as pu se connecter
-                $error ="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user.").";
-                $error.=" L'option de mise a jour Webcalendar a été ignorée.";
-                $webcal->error=$error;
-            }
-            else
-            {
-                // Initialisation donnees webcal
-                if ($_POST["actionid"] == 5 && $contact->fullname)
+                // Crée objet webcal et connexion avec params $conf->webcal->db->xxx
+                $webcal = new Webcal();
+    
+                if (! $webcal->localdb->ok)
                 {
-                    $libellecal =$langs->trans("TaskRDVWith",$contact->fullname)."\n";
-                    $libellecal.=$_POST["label"];
+                    // Si la creation de l'objet n'as pu se connecter
+                    $error ="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user.").";
+                    $error.=" L'option de mise a jour Webcalendar a été ignorée.";
+                    $webcal->error=$error;
                 }
                 else
                 {
-                    $libellecal="";
-                    if ($langs->trans("Action".$actioncomm->type_code) != "Action".$actioncomm->type_code)
+                    // Initialisation donnees webcal
+                    if ($_POST["actionid"] == 5 && $contact->fullname)
                     {
-                        $libellecal.=$langs->trans("Action".$actioncomm->type_code)."\n";
+                        $libellecal =$langs->trans("TaskRDVWith",$contact->fullname)."\n";
+                        $libellecal.=$_POST["label"];
                     }
-                    $libellecal.=$_POST["label"];
+                    else
+                    {
+                        $libellecal="";
+                        if ($langs->trans("Action".$actioncomm->type_code) != "Action".$actioncomm->type_code)
+                        {
+                            $libellecal.=$langs->trans("Action".$actioncomm->type_code)."\n";
+                        }
+                        $libellecal.=$_POST["label"];
+                    }
+    
+                    $webcal->date=$actioncomm->date;
+                    $webcal->duree=($_POST["dureehour"] * 60) + $_POST["dureemin"];
+                    $webcal->texte=$societe->nom;
+                    $webcal->desc=$libellecal;
                 }
-
-                $webcal->date=$actioncomm->date;
-                $webcal->duree=($_POST["dureehour"] * 60) + $_POST["dureemin"];
-                $webcal->texte=$societe->nom;
-                $webcal->desc=$libellecal;
             }
         }
 
