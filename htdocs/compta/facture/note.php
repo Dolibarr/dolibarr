@@ -112,7 +112,7 @@ if ($_GET["facid"])
       
       print '<tr><td>'.$langs->trans("Date").'</td>';
       print '<td>'.dolibarr_print_date($facture->date,"%A %d %B %Y")."</td>\n";
-      print '<td>'.$langs->trans("DateClosing").'</td><td>'.dolibarr_print_date($facture->date_lim_reglement,"%A %d %B %Y") ."</td></tr>";
+      print '<td width="25%">'.$langs->trans("DateClosing").'</td><td width="25%">'.dolibarr_print_date($facture->date_lim_reglement,"%A %d %B %Y") ."</td></tr>";
       
       print '<tr><td valign="top" colspan="4">'.$langs->trans("Note").' :</td></tr>';
 
