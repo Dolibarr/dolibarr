@@ -63,7 +63,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
     {
       $this->expe = $objExpe;
 
-      $this->pdf = new pdf_expedition();
+      $this->pdf = new ModelePdfExpedition();
       $this->pdf->expe = &$this->expe;
 
       $this->pdf->Open();

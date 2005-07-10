@@ -84,7 +84,7 @@ Class pdf_expedition_dorade extends ModelePdfExpedition
 
       $this->expe->fetch_commande();
 
-      $this->pdf = new pdf_expedition();
+      $this->pdf = new ModelePdfExpedition();
       $this->pdf->expe = &$this->expe;
 
       $this->pdf->Open();
