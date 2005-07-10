@@ -22,7 +22,7 @@
  */
  
 /**
-       \file       htdocs/compta/commande.php
+       \file       htdocs/compta/fiche.php
        \ingroup    commande
        \brief      Fiche commande
        \version    $Revision$
