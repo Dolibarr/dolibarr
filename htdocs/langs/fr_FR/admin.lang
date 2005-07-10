@@ -264,15 +264,15 @@ InterventionsSetup=Configuration du module Interventions
 LDAPSetup=Configuration du module LDAP
 LDAPServer=Serveur LDAP
 TestConnectLdap=Tester la connexion
-LDAPSuffix=LDAP suffix
-DNAdmin=Administrateur
+LDAPSuffix=Suffix LDAP
+DNAdmin=Administrateur LDAP
 LDAPPassword=Mot de passe
 DNUser=DN des utilisateurs
 DNGroup=DN des groupes
 LDAPServerExample=Adresse du serveur
 LDAPSuffixExample=ex: dc=societe,dc=com
 DNAdminExample=ex: cn=adminldap
-LDAPPasswordExample=Mot de passe de l'administrateur LDAP
+LDAPPasswordExample=Mot de passe de l'administrateur
 DNUserExample=ex: ou=users
 DNGroupExample=ex: ou=groups
 TypeExample=OpenLdap ou Egroupware
