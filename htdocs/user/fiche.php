@@ -171,7 +171,14 @@ if ($_POST["action"] == 'update' && $user->admin)
     $ret=$edituser->update();
     if ($ret < 0)
     {
-        $message.='<div class="error">'.$edituser->error.'</div>';
+        if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+        {
+            $message.='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+        }
+        else
+        {
+            $message.='<div class="error">'.$edituser->error.'</div>';
+        }
     }
     if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='' )
     {
@@ -499,7 +506,6 @@ else
             }
 
             print "</div>\n";
-            print "<br>\n";
             print "<br>\n";
 
 
