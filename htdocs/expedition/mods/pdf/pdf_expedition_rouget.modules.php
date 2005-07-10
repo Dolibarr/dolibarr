@@ -21,10 +21,10 @@
  * $Source$
  */
 
-require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition.class.php";
+require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/ModelePdfExpedition.class.php";
 
 
-Class pdf_expedition_rouget extends pdf_expedition
+Class pdf_expedition_rouget extends ModelePdfExpedition
 {
 
   function pdf_expedition_rouget($db=0)
