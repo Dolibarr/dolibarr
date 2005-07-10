@@ -22,8 +22,8 @@
  */
 
 /**
-     	\file       htdocs/ficheinter.php
-		\brief      Fichier fiche intervention
+     	\file       htdocs/fichinter/index.php
+		\brief      Page accueil espace fiches interventions
 		\ingroup    ficheinter
 		\version    $Revision$
 */

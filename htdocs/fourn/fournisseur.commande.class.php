@@ -22,16 +22,16 @@
  */
 
 /**	   
-	  \file       htdocs/fournisseur.commande.class.php
-	  \ingroup    fournisseur,commande
-	  \brief      Fichier des classes des commandes fournisseurs
-	  \version    $Revision$
+        \file       htdocs/fourn/fournisseur.commande.class.php
+        \ingroup    fournisseur,commande
+        \brief      Fichier des classes des commandes fournisseurs
+        \version    $Revision$
 */
 
 
 /**	  
-	 \class      CommandeFournisseur
-	 \brief      Classe de gestion de commande fournisseur
+        \class      CommandeFournisseur
+        \brief      Classe de gestion de commande fournisseur
 */
 
 class CommandeFournisseur

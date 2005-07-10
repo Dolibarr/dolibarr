@@ -22,7 +22,7 @@
  */
 
 /**
-    	\file       htdocs/compta/fiche.php
+    	\file       htdocs/compta/recap-client.php
 		\ingroup    compta
 		\brief      Page de fiche compta
 		\version    $Revision$

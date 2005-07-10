@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +20,8 @@
  */
  
 /**
-        \file       htdocs/admin/modules.php
-        \brief      Page de configuration et activation des modules
+        \file       htdocs/admin/triggers.php
+        \brief      Page de configuration et activation des triggers
         \version    $Revision$
 */
 
