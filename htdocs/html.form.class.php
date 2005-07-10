@@ -235,8 +235,9 @@ class Form
 
 
   /**
-   *    \brief     Retourne la liste déroulante des langues disponibles
-   *    \param     
+   *    \brief      Retourne la liste déroulante des langues disponibles
+   *    \param      selected        Langue présélectionnée
+   *    \param      htmlname        Nom de la zone select
    */
 	 
   function select_lang($selected='',$htmlname='lang_id')
@@ -441,6 +442,7 @@ class Form
    *    \param      selected        Produit présélectionné
    *    \param      htmlname        Nom de la zone select
    *    \param      filtretype      Pour filtre sur type de produit
+   *    \param      limit           Limite sur le nombre de lignes retourné
    */
   function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20)
   {
@@ -529,6 +531,7 @@ class Form
    *    \brief      Retourne la liste des comptes
    *    \param      selected        Type de praiement présélectionné
    *    \param      htmlname        Nom de la zone select
+   *    \param      statut          Statut des comptes recherchés
    *    \param      filtretype      Pour filtre
    */
     function select_comptes($selected='',$htmlname='paiementtype',$statut=0,$filtre='')
@@ -836,7 +839,7 @@ class Form
      *      \brief      Selection du taux de tva
      *      \param      name            Nom champ html
      *      \param      defaulttx       Taux tva présélectionné
-     *      \param      empy            Proposer ligne "Defaut"
+     *      \param      default         Proposer ligne "Defaut"
      */
     function select_tva($name='tauxtva', $defaulttx='', $default=0)
     {
@@ -1210,12 +1213,13 @@ class Form
 
   /**
    *    \brief      Affiche la cartouche générique d'un rapport
-   *    \param      nom             valeur pour nom du rapport
-   *    \param      variante        lien optionnel du variante du rapport
-   *    \param      period          periode du reporting
-   *    \param      description     description
-   *    \param      builddate       date génération 
-   *    \param      exportlink      lien pour export
+   *    \param      nom             Valeur pour nom du rapport
+   *    \param      variante        Lien optionnel de variante du rapport
+   *    \param      period          Periode du reporting
+   *    \param      periodlink      Lien pour changer de période
+   *    \param      description     Description
+   *    \param      builddate       Date génération 
+   *    \param      exportlink      Lien pour export
    */
   function report_header($nom,$variante='',$period,$periodlink,$description,$builddate,$exportlink)
   {
