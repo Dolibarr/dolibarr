@@ -114,7 +114,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td><td colspan="2">&nbsp;</td>';
 print "</tr>\n";
-if (!defined("LDAP_SERVER_HOST"))
+if (!defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST)
 {
 	print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.$langs->trans("LDAPServer").'</td></tr>';
 }
