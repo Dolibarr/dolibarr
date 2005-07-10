@@ -165,7 +165,7 @@ print "</tr>\n";
     }
     if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE)
     {
-		    print '<tr><td>'.$langs->trans("Type").'</td><td>'.LDAP_GROUP_DN.'</td></tr>';
+		    print '<tr><td>'.$langs->trans("Type").'</td><td>'.LDAP_SERVER_TYPE.'</td></tr>';
     }
     else
     {
