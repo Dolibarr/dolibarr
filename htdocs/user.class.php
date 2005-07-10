@@ -641,8 +641,7 @@ class User
     {
         global $langs;
         
-        if (!strlen($this->code))
-        $this->code = $this->login;
+        if (!strlen($this->code)) $this->code = $this->login;
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."user SET ";
         $sql .= " name = '$this->nom'";
@@ -655,9 +654,7 @@ class User
         $sql .= ", note = '$this->note'";
         $sql .= " WHERE rowid = ".$this->id;
 
-
         $result = $this->db->query($sql);
-
         if ($result)
         {
             if ($this->db->affected_rows())
@@ -668,8 +665,8 @@ class User
         }
         else
         {
-            dolibarr_print_error($this->db);
-            return -2;
+            $this->error=$this->db->error();
+            return -1;
         }
 
    }
