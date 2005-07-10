@@ -96,7 +96,9 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
     }
 }
 
-
+/*
+ * Visu
+ */
 
 llxHeader();
 
@@ -112,6 +114,14 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td><td colspan="2">&nbsp;</td>';
 print "</tr>\n";
+if (!defined("LDAP_SERVER_HOST")
+{
+	print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.$langs->trans("LDAPServer").'</td></tr>';
+}
+else
+{
+	print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
+}	
 print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
 print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.LDAP_SUFFIX_DN.'</td></tr>';
 print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>'.LDAP_ADMIN_DN.'</td></tr>';
@@ -123,6 +133,10 @@ print '<tr><td>'.$langs->trans("Type").'</td><td>'.LDAP_SERVER_TYPE.'</td></tr>'
 print '</table>';
 
 print '</td><td width="50%">';
+
+/*
+ * Modification
+ */
 
 print '<form method="post" action="ldap.php?action=setvalue">';
 
@@ -162,11 +176,11 @@ print '</table></form>';
 
 print '</td></tr></table>';
 
-/**
-  *
-  */
-
-//if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test') {
+/*
+ * test de la connexion
+ */
+ 
+ 
 if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST) {
     print '<a class="tabAction" href="ldap.php?action=test">'.$langs->trans("TestConnectLdap").'</a><br>';
 }
