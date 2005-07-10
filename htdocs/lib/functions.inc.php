@@ -492,7 +492,7 @@ function img_action($alt = "default", $numaction)
 /**
         \brief      Affiche logo statut
         \param      num         Numéro statut
-        \param      text        Texte a afficher sur alt
+        \param      alt         Texte a afficher sur alt
         \return     string      Retourne tag img
 */
 function img_statut($num,$alt = "default")

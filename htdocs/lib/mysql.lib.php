@@ -76,11 +76,12 @@ class DoliDb
 
     /**
             \brief      Ouverture d'une connection vers le serveur et éventuellement une database.
-            \param      type		type de base de données (mysql ou pgsql)
-            \param	    host		addresse de la base de données
-    	\param	    user		nom de l'utilisateur autorisé
-            \param	    pass		mot de passe
-            \param	    name		nom de la database
+            \param      type		Type de base de données (mysql ou pgsql)
+            \param	    host		Addresse de la base de données
+    	    \param	    user		Nom de l'utilisateur autorisé
+            \param	    pass		Mot de passe
+            \param	    name		Nom de la database
+            \param	    newlink     ???
             \return     int			1 en cas de succès, 0 sinon
     */
     function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)

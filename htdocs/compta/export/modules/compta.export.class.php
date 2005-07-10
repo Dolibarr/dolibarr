@@ -19,29 +19,28 @@
  * $Source$
  */
 
-/*!
-  \file       htdocs/compta/export/modules/compta.export.class.php
-  \ingroup    compta
-  \brief      Fichier de la classe d'export compta
-  \version    $Revision$
+/**
+        \file       htdocs/compta/export/modules/compta.export.class.php
+        \ingroup    compta
+        \brief      Fichier de la classe d'export compta
+        \version    $Revision$
 */
 
 
-/*!
-  \class      ComptaExport
-  \brief      Classe permettant les exports comptables
+/**
+        \class      ComptaExport
+        \brief      Classe permettant les exports comptables
 */
 
 class ComptaExport
 {
 
-  /*!
-    \brief      Createur Classe
-    \param      DB       object de base de données
-    \param      USER     object utilisateur    
-    \param      class    nom de la classe utilisée pour formater les rapports
+  /**
+        \brief      Constructeur de la class
+        \param      DB          Object de base de données
+        \param      USER        Object utilisateur    
+        \param      classe      Nom de la classe utilisée pour formater les rapports
   */
-
   function ComptaExport ($DB, $USER, $classe)
   {
     $this->db = $DB;
@@ -50,10 +49,11 @@ class ComptaExport
     $this->error_message = '';
   }
 
-  /*!
-    \brief      Lecture des factures dans la base
-  */
 
+  /**
+        \brief      Lecture des factures dans la base
+        \param      id      Id ligne
+  */
   function ReadLines($id=0)
   {
     dolibarr_syslog("ComptaExport::ReadLines id=".$id);
@@ -123,8 +123,9 @@ class ComptaExport
     return $error;
   }
 
-  /*!
-    \brief      Lecture des paiements dans la base
+  /**
+        \brief      Lecture des paiements dans la base
+        \param      id      Id ligne
   */
 
   function ReadLinesPayment($id=0)
@@ -196,7 +197,7 @@ class ComptaExport
     return $error;
   }
 
-  /*!
+  /**
     \brief      Créé le fichier d'export
   */
 

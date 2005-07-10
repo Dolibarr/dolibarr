@@ -532,7 +532,7 @@ class Form
    *    \param      selected        Type de praiement présélectionné
    *    \param      htmlname        Nom de la zone select
    *    \param      statut          Statut des comptes recherchés
-   *    \param      filtretype      Pour filtre
+   *    \param      filtre          Pour filtre sur la liste
    */
     function select_comptes($selected='',$htmlname='paiementtype',$statut=0,$filtre='')
     {
