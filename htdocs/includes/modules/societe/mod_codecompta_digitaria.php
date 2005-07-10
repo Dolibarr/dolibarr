@@ -35,10 +35,10 @@ class mod_codecompta_digitaria
   }
 
   /**
-   * \param societe objet societe
-   *
+   *    \brief      Renvoi code
+   *    \param      DB              Handler d'accès base
+   *    \param      societe         Objet societe
    */
-
   function get_code($DB, $societe)
   {    
     $i = 0;

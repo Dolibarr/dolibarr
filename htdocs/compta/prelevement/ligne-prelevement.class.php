@@ -21,16 +21,16 @@
  */
 
 /*
-  \file       htdocs/compta/prelevement/ligne-prelevement.class.php
-  \ingroup    prelevement
-  \brief      Fichier de la classe des lignes de prelevements
-  \version    $Revision$
+        \file       htdocs/compta/prelevement/ligne-prelevement.class.php
+        \ingroup    prelevement
+        \brief      Fichier de la classe des lignes de prelevements
+        \version    $Revision$
 */
 
 
-/*!
-  \class Prelevement
-  \brief      Classe permettant la gestion des prelevements
+/**
+        \class      LignePrelevement
+        \brief      Classe permettant la gestion des prelevements
 */
 
 class LignePrelevement
@@ -40,8 +40,9 @@ class LignePrelevement
 
 
   /**
-   *    \brief  Constructeur de la classe
-   *    \param  DB          handler accès base de données
+   *    \brief      Constructeur de la classe
+   *    \param      DB          Handler accès base de données
+   *    \param      user        Objet user
    */
   function LignePrelevement($DB, $user)
   {
@@ -57,7 +58,6 @@ class LignePrelevement
   /**
    *    \brief      Recupére l'objet prelevement
    *    \param      rowid       id de la facture a récupérer
-   *    \param      societe_id  id de societe
    */
   function fetch($rowid)
   {

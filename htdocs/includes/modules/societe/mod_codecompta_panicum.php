@@ -34,7 +34,12 @@ class mod_codecompta_panicum
     return "Renvoie un code compta identique à celui saisi. Module dédié aux tests";
   }
   
-  function get_code($db, $societe)
+  /**
+   *    \brief      Renvoi code
+   *    \param      DB              Handler d'accès base
+   *    \param      societe         Objet societe
+   */
+  function get_code($DB, $societe)
   {
     // Renvoie toujours ok
     $this->code = $societe->code_compta;

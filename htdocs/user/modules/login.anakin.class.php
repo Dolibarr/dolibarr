@@ -24,33 +24,28 @@
  */
 
 /**
-	    \file       htdocs/user.class.php
-  	    \brief      Fichier de la classe utilisateur
+	    \file       htdocs/user/modules/login.anakin.class.php
+  	    \brief      Fichier de la classe de génération de login anakin
   	    \author     Rodolphe Qiedeville
-  	    \author     Jean-Louis Bergamo
-  	    \author     Laurent Destailleur
-  	    \author     Sebastien Di Cintio
-  	    \author     Benoit Mortier
   	    \version    $Revision$
 */
 
 
-
 /**
-        \class      User
-		\brief      Classe permettant la gestion d'un utilisateur
+        \class      LoginAnakin
+		\brief      Classe permettant la génération de login anakin
 */
 
 class LoginAnakin
 {
   var $db;
+  var $user;
 
   /**
-   *    \brief Constructeur de la classe
-   *    \param  $DB         handler accès base de données
-   *    \param  $id         id de l'utilisateur (0 par défaut)
+   *    \brief      Constructeur de la classe
+   *    \param      $DB         Handler accès base de données
+   *    \param      $user       Objet de l'utilisateur
    */
-	 
   function LoginAnakin($DB, $user)
     {
       $this->db = $DB;
@@ -58,6 +53,7 @@ class LoginAnakin
 
       return 0;
   }
+
 
   function generate_login()
   {
@@ -91,7 +87,6 @@ class LoginAnakin
    *    \brief      Vérifie la disponibilité du login
    *    \return     1 si le login n'existe pas dans la base, 1 sinon
    */
-
   function dispo()
   {
     $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='".$this->login."';";
@@ -114,9 +109,9 @@ class LoginAnakin
 
   }
 
+
   // Règle primaire
   // 8 premières lettre désaccentuées du nom en minuscule
-
   function generate_login_1()
   {
     $nom = unaccent(strtolower($this->user->nom));
@@ -124,8 +119,8 @@ class LoginAnakin
     $this->login = substr($nom, 0, 8);
   }
 
-  // Règle de défaut
 
+  // Règle de défaut
   function generate_login_else()
   {
     $login = unaccent(strtolower($this->user->nom));
@@ -135,9 +130,9 @@ class LoginAnakin
     $this->login = substr($login, 0, (8-$le)) . $this->else_step;
   }
 
+
   // Règles annexes
   // première lettre du prénom + 7 premières lettres du nom, désaccentuées en minuscule
-
   function generate_login_2()
   {
     $nom = unaccent(strtolower($this->user->nom));
@@ -146,8 +141,8 @@ class LoginAnakin
     $this->login = substr($prenom, 0, 1) . substr($nom, 0, 7);
   }
 
-  // 2 premières lettres du prénom + 6 premières lettres du nom, désaccentuées en minuscule
 
+  // 2 premières lettres du prénom + 6 premières lettres du nom, désaccentuées en minuscule
   function generate_login_3()
   {
     $nom = unaccent(strtolower($this->user->nom));
@@ -155,7 +150,6 @@ class LoginAnakin
     
     $this->login = substr($prenom, 0, 2) . substr($nom, 0, 6);
   }
-
 
 }
 ?>
