@@ -22,11 +22,11 @@
  *
  */
 
-/*! 
-  \file       htdocs/projet/index.php
-  \ingroup    projet
-  \brief      Page d'accueil du module projet
-  \version    $Revision$
+/** 
+        \file       htdocs/projet/liste.php
+        \ingroup    projet
+        \brief      Page liste des projets
+        \version    $Revision$
 */
 
 require("./pre.inc.php");

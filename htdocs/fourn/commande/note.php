@@ -22,10 +22,10 @@
  */
 
 /**
-   \file       htdocs/fourn/commande/fiche.php
-   \ingroup    commande
-   \brief      Fiche commande
-   \version    $Revision$
+        \file       htdocs/fourn/commande/note.php
+        \ingroup    commande
+        \brief      Fiche commande
+        \version    $Revision$
 */
 
 require("./pre.inc.php");

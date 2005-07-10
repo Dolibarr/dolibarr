@@ -23,7 +23,7 @@
  */
 
 /**
-        \file       htdocs/product/fiche.php
+        \file       htdocs/product/fournisseurs.php
         \ingroup    product
         \brief      Page de la fiche produit
         \version    $Revision$

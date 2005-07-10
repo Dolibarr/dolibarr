@@ -23,13 +23,13 @@
  */
 
 /**
-        \defgroup   produit     Module code barre
+        \defgroup   barcode         Module code barre
         \brief      Module pour gérer les codes barres des produits
 */
 
 /**
         \file       htdocs/includes/modules/modBarcode.class.php
-        \ingroup    produit
+        \ingroup    barcode,produit
         \brief      Fichier de description et activation du module Barcode
 */
 
@@ -57,8 +57,8 @@ class modBarcode extends DolibarrModules
     $this->description = "Gestion des codes barres des produits";
 
     //$this->revision = explode(" ","$Revision$");
-    $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
     //$this->version = $this->revision[1];
+    $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
 
     $this->const_name = "MAIN_MODULE_BARCODE";
     $this->const_config = MAIN_MODULE_BARCODE;

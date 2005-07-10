@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
  *
  */
 
-/*!
-  \file       htdocs/product/fiche.php
-  \ingroup    product
-  \brief      Page de la fiche produit
-  \version    $Revision$
+/**
+        \file       htdocs/fourn/product/fiche.php
+        \ingroup    product
+        \brief      Page de la fiche produit
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
