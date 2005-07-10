@@ -118,8 +118,8 @@ if ($_POST["action"] == 'add_action')
         if ($conf->webcal->enabled && $_POST["todo_webcal"] == 'on')
         {
             // Si action complete ou si action de type rendez-vous
-            if ($actioncomm->percent == 100 || $actioncomm->type_code == 'AC_RDV')
-            {
+//            if ($actioncomm->percent == 100 || $actioncomm->type_code == 'AC_RDV')
+//            {
                 // Crée objet webcal et connexion avec params $conf->webcal->db->xxx
                 $webcal = new Webcal();
     
@@ -153,7 +153,7 @@ if ($_POST["action"] == 'add_action')
                     $webcal->texte=$societe->nom;
                     $webcal->desc=$libellecal;
                 }
-            }
+//            }
         }
 
         // On crée l'action (avec ajout eventuel dans webcal si défini)
