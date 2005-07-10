@@ -269,7 +269,7 @@ DNAdmin=LDAP Administrator
 LDAPPassword=Password
 DNUser=Users' DN
 DNGroup=Groups' DN
-LDAPServerExample=LDAP server adress
+LDAPServerExample=Server adress
 LDAPSuffixExample=ex: dc=company,dc=com
 DNAdminExample=ex: cn=adminldap
 LDAPPasswordExample=Admin password

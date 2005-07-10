@@ -265,11 +265,11 @@ LDAPSetup=Configuration du module LDAP
 LDAPServer=Serveur LDAP
 TestConnectLdap=Tester la connexion
 LDAPSuffix=LDAP suffix
-DNAdmin=Administrateur LDAP
+DNAdmin=Administrateur
 LDAPPassword=Mot de passe
 DNUser=DN des utilisateurs
 DNGroup=DN des groupes
-LDAPServerExample=Adresse du serveur LDAP
+LDAPServerExample=Adresse du serveur
 LDAPSuffixExample=ex: dc=societe,dc=com
 DNAdminExample=ex: cn=adminldap
 LDAPPasswordExample=Mot de passe de l'administrateur LDAP
