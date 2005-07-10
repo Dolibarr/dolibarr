@@ -28,10 +28,9 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
-
-require("../../../contact.class.php");
-require("../../../actioncomm.class.php");
+require_once("./pre.inc.php");
+require_once("../../../contact.class.php");
+require_once("../../../actioncomm.class.php");
 
 /*
  * Sécurité accés client
@@ -49,81 +48,21 @@ if ($_GET["action"] == 'pdf')
 }
 
 
-llxHeader();
-
 /*
- *
- *
- *
+ * Actions
  */
 if ($action=='delete_action')
 {
   $actioncomm = new ActionComm($db);
   $actioncomm->delete($actionid);
 }
-/*
- *
- */
-if ($action=='add_action')
-{
-  $contact = new Contact($db);
-  $contact->fetch($contactid);
-
-  $actioncomm = new ActionComm($db);
-
-  if ($actionid == 5)
-    {
-      $actioncomm->date = $db->idate(mktime($heurehour,$heuremin,0,$remonth,$reday,$reyear));
-    }
-  else
-    {
-    $actioncomm->date = $date;
-    }
-  $actioncomm->type = $actionid;
-  $actioncomm->contact = $contactid;
-  
-  $actioncomm->societe = $socid;
-  $actioncomm->note = $note;
-
-  $actioncomm->add($user);
-
-  $societe = new Societe($db);
-  $societe->fetch($socid);
 
 
-  $todo = new TodoComm($db);
-  $todo->date = mktime(12,0,0,$remonth, $reday, $reyear);
 
-  $todo->libelle = $todo_label;
-
-  $todo->societe = $societe->id;
-  $todo->contact = $contactid;
-
-  $todo->note = $todo_note;
-
-  $todo->add($user);
-
-  $webcal = new Webcal();
-
-  $webcal->heure = $heurehour . $heuremin . '00';
-  $webcal->duree = ($dureehour * 60) + $dureemin;
-
-  if ($actionid == 5) {
-    $libelle = "Rendez-vous avec ".$contact->fullname;
-    $libelle .= "\n" . $todo->libelle;
-  } else {
-    $libelle = $todo->libelle;
-  }
-
-
-  $webcal->add($user, $todo->date, $societe->nom, $libelle);
-  
-}
+llxHeader();
 
 /*
- *
  *  Liste
- *
  */
 
 if ($page == -1) { $page = 0 ; }
@@ -155,7 +94,7 @@ if ( $db->query($sql) )
   $i = 0;
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td>Date</td>';
+  print '<td>'.$langs->trans("Date").'</td>';
   print '<td align="center">'.$langs->trans("Nb").'</td>';
   print '<td>'.$langs->trans("Action").'</td>';
   print '<td align="center">'.$langs->trans("PDF").'</td>';
@@ -206,5 +145,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

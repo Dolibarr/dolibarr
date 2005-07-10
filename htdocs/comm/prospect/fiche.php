@@ -28,9 +28,9 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
-require("../../contact.class.php");
-require("../../actioncomm.class.php");
+require_once("./pre.inc.php");
+require_once("../../contact.class.php");
+require_once("../../actioncomm.class.php");
 
 $langs->load('companies');
 $langs->load('projects');

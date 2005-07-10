@@ -38,7 +38,7 @@ accessforbidden();
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 require_once("../project.class.php");
 require_once("../propal.class.php");
-require_once("../actioncomm.class.php");
+//require_once("../actioncomm.class.php");
 
 // Sécurité accés client
 if ($user->societe_id > 0)

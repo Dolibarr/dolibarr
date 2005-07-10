@@ -40,9 +40,9 @@ require_once (DOL_DOCUMENT_ROOT ."/lib/".$conf->webcal->db->type.".lib.php");
 class Webcal {
     
     var $localdb;
-    var $heure = -1;
-    var $duree = 0;
+
     var $date;
+    var $duree = 0;
     var $texte;
     var $desc;
     var $error;
@@ -68,7 +68,7 @@ class Webcal {
     /**
     		\brief      Ajoute une entree dans le calendrier de l'utilisateur
     		\param[in]  user		le login de l'utilisateur
-    		\param[in]  date		la date de l'evenement dans le calendrier
+    		\param[in]  date		la date et l'heure de l'evenement dans le calendrier
     		\param[in]  texte		le titre a indiquer dans l'evenement
     		\param[in]  desc		la description a indiquer dans l'evenement
             \return     int         1 en cas de succès, -1,-2,-3 en cas d'erreur, -4 si login webcal non défini
@@ -93,9 +93,9 @@ class Webcal {
             $cal_id = $id;
             $cal_create_by = $user->webcal_login;
             $cal_date = strftime('%Y%m%d', $date);
-            $cal_time  = $this->heure;
+            $cal_time = strftime('%H%M%S', $date);
             $cal_mod_date = strftime('%Y%m%d', time());
-            $cal_mod_time = strftime('%H%M', time());
+            $cal_mod_time = strftime('%H%M%S', time());
             $cal_duration = $this->duree;
             $cal_priority = 2;
             $cal_type = "E";
@@ -106,7 +106,7 @@ class Webcal {
             $sql = "INSERT INTO webcal_entry (cal_id, cal_create_by,cal_date,cal_time,cal_mod_date,
             	cal_mod_time,cal_duration,cal_priority,cal_type, cal_access, cal_name,cal_description)";
             
-            $sql .= " VALUES ($cal_id, '$cal_create_by', $cal_date, $cal_time,$cal_mod_date, $cal_mod_time,
+            $sql .= " VALUES ($cal_id, '$cal_create_by', '$cal_date', '$cal_time', '$cal_mod_date', '$cal_mod_time',
             	$cal_duration,$cal_priority,'$cal_type', '$cal_access', '$cal_name','$cal_description')";
             
             if ($this->localdb->query($sql))

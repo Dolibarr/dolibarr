@@ -28,9 +28,9 @@
         \version    $Revision$
 */
  
-require("./pre.inc.php");
-require("../contact.class.php");
-require("../actioncomm.class.php");
+require_once("./pre.inc.php");
+require_once("../contact.class.php");
+require_once("../actioncomm.class.php");
 
 if ($conf->webcal->enabled) {
   require("../lib/webcal.class.php");
@@ -58,45 +58,6 @@ if ($user->societe_id > 0)
   $action = '';
   $socidp = $user->societe_id;
 }
-
-
-// \todo code encore utilisé ?
-if ($action=='add_action') {
-  /*
-   * Vient de actioncomm.php
-   *
-   */
-  $actioncomm = new ActionComm($db);
-  $actioncomm->date = $date;
-  $actioncomm->type = $actionid;
-  $actioncomm->contact = $contactid;
-
-  $actioncomm->societe = $socid;
-  $actioncomm->note = $note;
-
-  $actioncomm->add($user);
-
-
-  $societe = new Societe($db);
-  $societe->fetch($socid);
-
-
-  $todo = new TodoComm($db);
-  $todo->date = mktime(12,0,0,$remonth, $reday, $reyear);
-
-  $todo->libelle = $todo_label;
-
-  $todo->societe = $societe->id;
-  $todo->contact = $contactid;
-
-  $todo->note = $todo_note;
-
-  $todo->add($user);
-
-  $webcal = new Webcal();
-  $webcal->add($user, $todo->date, $societe->nom, $todo->libelle);
-}
-
 
 if ($action == 'attribute_prefix')
 {

@@ -245,6 +245,7 @@ WebCalSetupSaved=Les identifiants Webcalendar ont été correctement sauvegardés.
 WebCalTestOk=La connexion au serveur '%s' sur la base '%s' par l'utilisateur '%s' a réussi.
 WebCalTestKo1=La connexion au serveur '%s' a réussi mais la base '%s' n'a pu être atteinte.
 WebCalTestKo2=La connexion au serveur '%s' par l'utilisateur '%s' à échoué.
+ErrorConnectOkButWrongDatabase=La connexion a réussie mais la base ne semble pas etre une base webcalendar.
 ##### Bills #####
 BillsSetup=Configuration du module Factures
 BillsDate=Date des factures

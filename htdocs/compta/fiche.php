@@ -53,26 +53,6 @@ $user->getrights('facture');
 
 llxHeader();
 
-if ($action=='add_action')
-{
-  /*
-   * Vient de actioncomm.php
-   *
-   */
-  $actioncomm = new ActionComm($db);
-  $actioncomm->date = $date;
-  $actioncomm->type = $actionid;
-  $actioncomm->contact = $contactid;
-
-  $actioncomm->societe = $socid;
-  $actioncomm->note = $note;
-
-  $actioncomm->add($user);
-
-  $societe = new Societe($db);
-  $societe->fetch($socid);
-}
-
 
 if ($action == 'recontact')
 {

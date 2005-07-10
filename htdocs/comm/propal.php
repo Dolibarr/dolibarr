@@ -173,7 +173,7 @@ if ($_POST['action'] == 'send')
 				if ($_POST['action'] == 'send')
 				{
 					$subject = $langs->trans('Propal').' '.$propal->ref;
-					$actioncode=3;
+					$actiontypeid=3;
 					$actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
 					if ($message)
 					{
@@ -186,7 +186,7 @@ if ($_POST['action'] == 'send')
 				if ($_POST["action"] == 'relance')
 				{
 					$subject = "Relance facture $propal->ref";
-					$actioncode=10;
+					$actiontypeid=10;
 					$actionmsg="Mail envoyé par $from à $sendto.<br>";
 					if ($message)
 					{
@@ -210,10 +210,10 @@ if ($_POST['action'] == 'send')
 					// Insertion action
 					include_once('../contact.class.php');
 					$actioncomm = new ActionComm($db);
-					$actioncomm->type_code   = $actioncode;
+					$actioncomm->type_id     = $actiontypeid;
 					$actioncomm->label       = $actionmsg2;
 					$actioncomm->note        = $actionmsg;
-					$actioncomm->date        = $db->idate(time());
+					$actioncomm->date        = time();  // L'action est faite maintenant
 					$actioncomm->percent     = 100;
 					$actioncomm->contact     = new Contact($db,$sendtoid);
 					$actioncomm->societe     = new Societe($db,$propal->socidp);

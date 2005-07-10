@@ -18,12 +18,19 @@
  *
  * $Id$
  * $Source$
- *
  */
-require("./pre.inc.php");
-require("../contact.class.php");
-require("../cactioncomm.class.php");
-require("../actioncomm.class.php");
+
+/**
+	    \file       htdocs/comm/remx.php
+        \ingroup    commercial
+		\brief      Onglet ???
+		\version    $Revision$
+*/
+
+require_once("./pre.inc.php");
+require_once("../contact.class.php");
+//require_once("../cactioncomm.class.php");
+//require_once("../actioncomm.class.php");
 
 $user->getrights('propale');
 $user->getrights('commande');

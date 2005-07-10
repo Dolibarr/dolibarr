@@ -37,7 +37,12 @@ class CActioncomm {
   var $db;
 
   var $id;
+
+  var $code;
+  var $type;
   var $libelle;
+  var $active;
+
   var $error;
   
   var $type_actions=array();
@@ -60,7 +65,9 @@ class CActioncomm {
   function fetch($id)
     {
         
-        $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_actioncomm WHERE id=$id;";
+        $sql = "SELECT code, type, libelle, active";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
+        $sql.= " WHERE id=$id";
         
         $resql=$this->db->query($sql);
         if ($resql)
@@ -70,7 +77,10 @@ class CActioncomm {
                 $obj = $this->db->fetch_object($resql);
         
                 $this->id = $id;
+                $this->code    = $obj->code;
+                $this->type    = $obj->type;
                 $this->libelle = $obj->libelle;
+                $this->active  = $obj->active;
         
                 return 1;
             }

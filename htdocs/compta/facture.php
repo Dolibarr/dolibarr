@@ -382,7 +382,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
                 $message = $_POST["message"];
                 if ($_POST["action"] == 'send') {
                     $subject = $langs->trans("Bill")." $fac->ref";
-                    $actioncode=9;
+                    $actiontypeid=9;
                     $actionmsg ="Mail envoyé par $from à $sendto.<br>";
                     if ($message) {
                         $actionmsg.="Texte utilisé dans le corps du message:<br>";
@@ -392,7 +392,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
                 }
                 if ($_POST["action"] == 'relance') 	{
                     $subject = "Relance facture $fac->ref";
-                    $actioncode=10;
+                    $actiontypeid=10;
                     $actionmsg="Mail envoyé par $from à $sendto.<br>";
                     if ($message) {
                         $actionmsg.="Texte utilisé dans le corps du message:<br>";
@@ -419,10 +419,10 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
                     include_once("../contact.class.php");
                     include_once("../actioncomm.class.php");
                     $actioncomm = new ActionComm($db);
-                    $actioncomm->type_code   = $actioncode;
+                    $actioncomm->type_id     = $actiontypeid;
                     $actioncomm->label       = $actionmsg2;
                     $actioncomm->note        = $actionmsg;
-                    $actioncomm->date        = $db->idate(time());
+                    $actioncomm->date        = time();
                     $actioncomm->percent     = 100;
                     $actioncomm->contact     = new Contact($db,$sendtoid);
                     $actioncomm->societe     = new Societe($db,$fac->socidp);

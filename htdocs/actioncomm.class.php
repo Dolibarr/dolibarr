@@ -38,10 +38,11 @@ class ActionComm
   var $id;
   var $db;
 
-  var $label;
-  var $date;
+  var $type_id;
   var $type_code;
   var $type;
+  var $label;
+  var $date;
   var $priority;
   var $user;
   var $author;
@@ -84,7 +85,9 @@ class ActionComm
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datea,fk_action,fk_soc,note,fk_contact,fk_user_author,fk_user_action,label,percent,priority,";
         $sql.= "fk_facture,propalrowid)";
-        $sql.= " VALUES (now(), '".$this->type_code."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
+        $sql.= " VALUES (";
+        $sql.= "'".$this->db->idate($this->date)."',";
+        $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id?$this->contact->id:"null").",";
         $sql.= "'$author->id', '".$this->user->id ."', '".addslashes($this->label)."','".$this->percent."','".$this->priority."',";
         $sql.= ($this->facid?$this->facid:"null").",";
@@ -93,27 +96,32 @@ class ActionComm
     
         if ($this->db->query($sql) )
         {
-            $idaction = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm");
     
             if ($conf->webcal->enabled) {
-                if (is_object($webcal))
-                {
-                    dolibarr_syslog("ActionComm::ajout entree dans webcal");
 
-                    // Ajoute entrée dans webcal
-                    $result=$webcal->add($author,$webcal->date,$webcal->texte,$webcal->desc);
-                    if ($result < 0) {
-                        $this->error="Echec insertion dans webcal: ".$webcal->error;
-                    }
-                }
-                else if ($webcal == 1)
+                // Appel a webcal
+                dolibarr_syslog("ActionComm::ajout entree dans webcal");
+
+                // Si webcal demandé et non défini en tant qu'objet, on le construit
+                if (! is_object($webcal) && $webcal == 1)
                 {
-                    // \todo On ajoute une entrée générique, pour l'instant pas utilisé
-    
+                    $webcal=new ActionComm($this->db);
+                    $webcal->date=$this->date;
+                    $webcal->duree=0;
+                    $webcal->texte=$this->societe;
+                    $webcal->desc="Action ".$this->type_code."\n".$this->note;
                 }
+
+                // Ajoute entrée dans webcal
+                $result=$webcal->add($author,$webcal->date,$webcal->texte,$webcal->desc);
+                if ($result < 0) {
+                    $this->error="Echec insertion dans webcal: ".$webcal->error;
+                }
+
             }
     
-            return $idaction;
+            return $this->id;
         }
         else
         {
@@ -128,46 +136,47 @@ class ActionComm
    *    \param      id      id de l'action a récupérer
    */
   function fetch($id)
-    {      
-        global $langs;
-        
-      $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, a.label, c.code, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent";
-      $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
-      $sql.= " WHERE a.id=$id AND a.fk_action=c.id;";
-
-      $resql=$this->db->query($sql);
-      if ($resql)
-	{
-	  if ($this->db->num_rows($resql))
-	    {
-	      $obj = $this->db->fetch_object($resql);
-	      
-	      $this->id = $id;
-	      $this->type_code = $obj->code;
-          $transcode=$langs->trans("Action".$obj->code);
-          $type_libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-	      $this->type = $type_libelle;
-	      $this->libelle = $obj->label;
-	      $this->date = $obj->da;
-	      $this->note =$obj->note;
-	      $this->percent =$obj->percent;
-	      $this->societe->id = $obj->fk_soc;
-	      $this->author->id = $obj->fk_user_author;
-	      $this->contact->id = $obj->fk_contact;
-	      $this->fk_facture = $obj->fk_facture;
-	      if ($this->fk_facture)
-		{
-		  $this->objet_url = '<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">'.$langs->trans("Bill").'</a>';
-		}
-	      
-	    }
-      $this->db->free($resql);
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	}    
+  {
+    global $langs;
+    
+    $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, a.label, a.fk_action as type_id, c.code, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent";
+    $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
+    $sql.= " WHERE a.id=$id AND a.fk_action=c.id;";
+    
+    $resql=$this->db->query($sql);
+    if ($resql)
+    {
+        if ($this->db->num_rows($resql))
+        {
+            $obj = $this->db->fetch_object($resql);
+    
+            $this->id = $id;
+            $this->type_id = $type_id;
+            $this->type_code = $obj->code;
+            $transcode=$langs->trans("Action".$obj->code);
+            $type_libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+            $this->type = $type_libelle;
+            $this->label = $obj->label;
+            $this->date = $obj->da;
+            $this->note =$obj->note;
+            $this->percent =$obj->percent;
+            $this->societe->id = $obj->fk_soc;
+            $this->author->id = $obj->fk_user_author;
+            $this->contact->id = $obj->fk_contact;
+            $this->fk_facture = $obj->fk_facture;
+            if ($this->fk_facture)
+            {
+                $this->objet_url = '<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">'.$langs->trans("Bill").'</a>';
+            }
+    
+        }
+        $this->db->free($resql);
     }
+    else
+    {
+        dolibarr_print_error($this->db);
+    }   
+  }
 
   /**
    *    \brief      Supprime l'action de la base
@@ -186,31 +195,23 @@ class ActionComm
 
   /**
    *    \brief      Met a jour l'action en base
-   *    \return     int     1 en cas de succès
+   *    \return     int     <0 si ko, >0 si ok
    */
-  function update()
+    function update()
     {
-      if ($this->percent > 100)
-	{
-	  $this->percent = 100;
-	}
-      
-      $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
-      $sql .= " SET percent=$this->percent";
-
-      if ($this->percent == 100)
-	{
-	  $sql .= ", datea = now()";
-	}
-
-      $sql .= ", fk_contact =". $this->contact->id;
-
-      $sql .= " WHERE id=$this->id;";
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;
-	}
+        if ($this->percent > 100) $this->percent = 100;
+    
+        $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
+        $sql.= " SET percent='".$this->percent."'";
+        if ($this->percent == 100) $sql .= ", datea = now()";
+        if ($this->note) $sql .= ", note = '".addslashes($this->note)."'";
+        $sql.= ", fk_contact =". $this->contact->id;
+        $sql.= " WHERE id=$this->id;";
+    
+        if ($this->db->query($sql) )
+        {
+            return 1;
+        }
     }
     
 }    

@@ -27,13 +27,12 @@
         \version    $Revision$
 */
  
-require("./pre.inc.php");
-
-require("../../contact.class.php");
-require("../../cactioncomm.class.php");
-require("../../actioncomm.class.php");
+require_once("./pre.inc.php");
+require_once("../../contact.class.php");
+require_once("../../cactioncomm.class.php");
+require_once("../../actioncomm.class.php");
 if ($conf->webcal->enabled) {
-    require("../../lib/webcal.class.php");
+    require_once("../../lib/webcal.class.php");
 }
 
 $langs->load("companies");
@@ -71,29 +70,24 @@ if ($_POST["action"] == 'add_action')
     {
         $db->begin();
 
+        $cactioncomm = new CActionComm($db);
+        $cactioncomm->fetch($_POST["actionid"]);
+        
+        // Initialisation objet actioncomm
         $actioncomm = new ActionComm($db);
 
-        $actioncomm->type_code = $_POST["actionid"];
+        $actioncomm->type_id = $_POST["actionid"];
+        $actioncomm->type_code = $cactioncomm->code;
         $actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
-        if ($_POST["actionid"] == 5)
-        {
-            if ($contact->fullname) { $actioncomm->label = $langs->trans("TaskRDVWith",$contact->fullname); }
-            else { $actioncomm->label = $langs->trans("TaskRDV"); }
-        } else {
-            $actioncomm->label = $_POST["label"];
-        }
-        $actioncomm->date = $db->idate(mktime($_POST["heurehour"],
-        $_POST["heuremin"],
-        0,
-        $_POST["acmonth"],
-        $_POST["acday"],
-        $_POST["acyear"])
-        );
-
+        $actioncomm->label = $_POST["label"];
+        $actioncomm->date = mktime($_POST["heurehour"],
+                                    $_POST["heuremin"],
+                                    0,
+                                    $_POST["acmonth"],
+                                    $_POST["acday"],
+                                    $_POST["acyear"]);
         $actioncomm->percent = isset($_POST["percentage"])?$_POST["percentage"]:0;
-
         $actioncomm->user = $user;
-
         if (isset($_POST["contactid"]))
         {
             $actioncomm->contact = $contact;
@@ -103,6 +97,7 @@ if ($_POST["action"] == 'add_action')
             $actioncomm->societe = $societe;
         }
         $actioncomm->note = $_POST["note"];
+
 
         // On definit la ressource webcal si le module webcal est actif
         $webcal=0;
@@ -120,24 +115,24 @@ if ($_POST["action"] == 'add_action')
             }
             else
             {
-                if ($_POST["actionid"] == 5)
+                // Initialisation donnees webcal
+                if ($_POST["actionid"] == 5 && $contact->fullname)
                 {
-                    $libellecal = $langs->trans("TaskRDVWith",$contact->fullname);
-                    $libellecal .= "\n" . $actioncomm->label;
+                    $libellecal =$langs->trans("TaskRDVWith",$contact->fullname)."\n";
+                    $libellecal.=$actioncomm->label;
                 }
                 else
                 {
-                    $libellecal = $actioncomm->label;
+                    $libellecal="";
+                    if ($langs->trans("Action".$actioncomm->type_code) != "Action".$actioncomm->type_code)
+                    {
+                        $libellecal.=$langs->trans("Action".$actioncomm->type_code)."\n";
+                    }
+                    $libellecal.=$actioncomm->label;
                 }
 
-                $webcal->date=mktime($_POST["heurehour"],
-                $_POST["heuremin"],
-                0,
-                $_POST["acmonth"],
-                $_POST["acday"],
-                $_POST["acyear"]);
-                $webcal->heure = $_POST["heurehour"] . $_POST["heuremin"] . '00';
-                $webcal->duree = ($_POST["dureehour"] * 60) + $_POST["dureemin"];
+                $webcal->date=$actioncomm->date;
+                $webcal->duree=($_POST["dureehour"] * 60) + $_POST["dureemin"];
                 $webcal->texte=$societe->nom;
                 $webcal->desc=$libellecal;
             }
@@ -208,10 +203,13 @@ if ($_POST["action"] == 'update')
   $action->fetch($_POST["id"]);
   $action->percent     = $_POST["percent"];
   $action->contact->id = $_POST["contactid"];
+  $action->note        = $_POST["note"];
   $action->update();
 
   Header("Location: ".$_POST["from"]);
 }
+
+
 
 llxHeader();
 
@@ -343,7 +341,7 @@ if ($_GET["action"] == 'create')
 	}
       print '</td></tr>';
       
-      print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="label" size="30"></td></tr>';
+      print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="30"></td></tr>';
       
       // Societe, contact
       print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
@@ -470,7 +468,7 @@ if ($_GET["id"])
 
       print '<table class="border" width="100%">';
       print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$act->libelle.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
       print '<tr><td>'.$langs->trans("Company").'</td>';
       print '<td><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
       
@@ -486,11 +484,10 @@ if ($_GET["id"])
 	  print '<td colspan="3">'.$act->objet_url.'</td></tr>';
 	}
       
-      if ($act->note)
-	{
+      // Note
 	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-	  print nl2br($act->note).'</td></tr>';
-	}
+      print '<textarea cols="60" rows="6" name="note">'.nl2br($act->note).'</textarea></td></tr>';
+
       print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"</td></tr>';
       print '</table></form>';
     }
@@ -499,7 +496,7 @@ if ($_GET["id"])
       // Affichage fiche action en mode visu
       print '<table class="border" width="100%"';
       print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$act->libelle.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
       print '<tr><td>'.$langs->trans("Company").'</td>';
       print '<td>'.$act->societe->nom_url.'</td>';
       
@@ -514,11 +511,10 @@ if ($_GET["id"])
 	  print '<td colspan="3">'.$act->objet_url.'</td></tr>';
 	}
       
-      if ($act->note)
-	{
+      // Note
 	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
 	  print nl2br($act->note).'</td></tr>';
-	}
+
       print '</table>';
     }
     print '<br>';

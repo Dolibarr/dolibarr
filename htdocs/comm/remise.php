@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -28,10 +27,10 @@
 		\version    $Revision$
 */
  
-require("./pre.inc.php");
-require("../contact.class.php");
-require("../cactioncomm.class.php");
-require("../actioncomm.class.php");
+require_once("./pre.inc.php");
+require_once("../contact.class.php");
+//require_once("../cactioncomm.class.php");
+//require_once("../actioncomm.class.php");
 
 $user->getrights('propale');
 $user->getrights('commande');
@@ -210,7 +209,8 @@ if ($_socid > 0)
     $sql .= " AND u.rowid = rc.fk_user_author";
     $sql .= " ORDER BY rc.datec DESC";
 
-    if ( $db->query($sql) )
+    $resql=$db->query($sql);
+    if ($resql)
       {
 	print '<table class="noborder" width="100%">';
 	$tag = !$tag;
@@ -220,11 +220,11 @@ if ($_socid > 0)
     print '<td>'.$langs->trans("User").'</td>';
 	print '</tr>';
 	$i = 0 ; 
-	$num = $db->num_rows();
+	$num = $db->num_rows($resql);
 
 	while ($i < $num )
 	  {
-	    $obj = $db->fetch_object( $i);
+	    $obj = $db->fetch_object($resql);
 	    $tag = !$tag;
 	    print '<tr '.$bc[$tag].'>';
 	    print '<td>'.dolibarr_print_date($obj->dc,"%d %B %Y %H:%M").'</td>';
@@ -233,7 +233,7 @@ if ($_socid > 0)
 	    print '</tr>';
 	    $i++;
 	  }
-	$db->free();
+	$db->free($resql);
 	print "</table>";
       }
     else
@@ -245,5 +245,5 @@ if ($_socid > 0)
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

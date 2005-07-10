@@ -245,6 +245,7 @@ WebCalSetupSaved=Webcalendar setup saved successfully.
 WebCalTestOk=Connection to server '%s' on database '%s' with user '%s' successfull.
 WebCalTestKo1=Connection to server '%s' succeed but database '%s' could not be reached.
 WebCalTestKo2=Connection to server '%s' with user '%s' failed.
+ErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be a Webcalendar database.
 ##### Bills #####
 BillsSetup=Bills module setup
 BillsDate=Bills date
