@@ -254,7 +254,7 @@ class Contact
 		  $info["mail"] = $this->email;
 	      }
 	    
-	    $dnshort = explode(",", LDAP_SERVER_DN,2);
+	    $dnshort = explode(",", LDAP_ADMIN_DN.','.LDAP_SUFFIX_DN,2);
 	    
 	    // TODO comprendre pourquoi cela ne marche plus
 	    //$dn = "cn=".$info["cn"].","."ou=".$info["ou"].",".$dnshort[1];
