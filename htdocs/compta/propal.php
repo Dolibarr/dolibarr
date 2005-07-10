@@ -124,7 +124,7 @@ if ($_GET["propalid"])
 	 * Fiche propal
 	 *
 	 */
-	$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref,'.$db->pdate('p.datep').' as dp, c.id as statut, c.label as lst, p.note,";
+	$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref,'.$db->pdate('p.datep').' as dp, c.id as statut, c.label as lst, p.note,';
 	$sql.= ' x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c, '.MAIN_DB_PREFIX.'socpeople as x';
 	$sql.= ' WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = '.$propal->id;
