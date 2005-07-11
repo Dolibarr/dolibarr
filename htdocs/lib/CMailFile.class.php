@@ -71,6 +71,8 @@ class CMailFile
     */
     function CMailFile($subject,$to,$from,$msg,$filename_list,$mimetype_list,$mimefilename_list,$addr_cc="",$addr_bcc="")
     {
+        dolibarr_syslog("CMailFile::CMailfile: filename_list[0]=$filename_list[0], mimetype_list[0]=$mimetype_list[0] mimefilename_list[0]=$mimefilename_list[0]");
+
         $this->mime_boundary = md5( uniqid("dolibarr") );
 
         $this->subject = $subject;
@@ -98,14 +100,18 @@ class CMailFile
     {
         for ($i = 0; $i < count($filename_list); $i++)
         {
+            dolibarr_syslog("CMailFile::attach_file: i=$i");
             $encoded = $this->encode_file($filename_list[$i]);
-            if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
-            $out = $out . "--" . $this->mime_boundary . "\n";
-            if (! $mimetype_list[$i]) { $mimetype_list[$i] = "application/octet-stream"; }
-            $out .= "Content-type: " . $mimetype_list[$i] . "; name=\"$filename_list[$i]\";\n";
-            $out .= "Content-Transfer-Encoding: base64\n";
-            $out .= "Content-disposition: attachment; filename=\"$filename_list[$i]\"\n\n";
-            $out .= $encoded . "\n";
+            if ($encoded != -1)
+            {
+                if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
+                $out = $out . "--" . $this->mime_boundary . "\n";
+                if (! $mimetype_list[$i]) { $mimetype_list[$i] = "application/octet-stream"; }
+                $out .= "Content-type: " . $mimetype_list[$i] . "; name=\"$filename_list[$i]\";\n";
+                $out .= "Content-Transfer-Encoding: base64\n";
+                $out .= "Content-disposition: attachment; filename=\"$filename_list[$i]\"\n\n";
+                $out .= $encoded . "\n";
+            }
         }
         $out = $out . "--" . $this->mime_boundary . "--" . "\n";
         return $out;
@@ -116,7 +122,7 @@ class CMailFile
     /**
             \brief      Permet d'encoder un fichier
             \param      sourcefile
-            \return     < 0 si erreur, fichier encodé si ok
+            \return     <0 si erreur, fichier encodé si ok
     */
     function encode_file($sourcefile)
     {
@@ -127,12 +133,13 @@ class CMailFile
             $encoded = chunk_split(base64_encode($contents));
             //$encoded = my_chunk_split(base64_encode($contents));
             fclose($fd);
+            return $encoded;
         }
         else
         {
-            dolibarr_syslog("CMailFile::encode_file: Can't read file $sourcefile");
+            dolibarr_syslog("CMailFile::encode_file: Can't read file '$sourcefile'");
+            return -1;
         }
-        return $encoded;
     }
 
     /**
@@ -142,10 +149,22 @@ class CMailFile
     function sendfile()
     {
         $headers = $this->smtp_headers . $this->mime_headers;
-        $message = $this->text_body . $this->text_encoded;
+        $message=$this->text_body . $this->text_encoded;
+
+        // Fix si windows, la fonction mail ne traduit pas les \n, il faut donc y mettre
+        // des champs \r\n (imposés par SMTP).
+        if (eregi('^win',PHP_OS))
+        {
+            $message = eregi_replace("\r","", $this->text_body . $this->text_encoded);
+            $message = eregi_replace("\n","\r\n", $message);
+        }
+        
+        dolibarr_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject);
+        //dolibarr_syslog("CMailFile::sendfile message=\n".$message);
+        //dolibarr_syslog("CMailFile::sendfile header=\n".$headers);
 
         $errorlevel=error_reporting();
-        error_reporting($errorlevel ^ E_WARNING);   // Désactive warnings
+        //error_reporting($errorlevel ^ E_WARNING);   // Désactive warnings
         if ($this->errors_to)
         {
             dolibarr_syslog("CMailFile::sendfile with errorsto : ".$this->errors_to);
@@ -156,6 +175,7 @@ class CMailFile
             dolibarr_syslog("CMailFile::sendfile");
             $res = mail($this->addr_to,$this->subject,stripslashes($message),$headers);
         }
+        //if (! $res) $this->error= 
         error_reporting($errorlevel);              // Réactive niveau erreur origine
 
         //$this->write_to_file();
