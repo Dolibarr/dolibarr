@@ -64,5 +64,5 @@ GroupsToAdd=Groups to add to this user
 NoLogin=No login
 CreateDolibarrLogin=Create Dolibarr account
 TasksHistoryForThisContact=Tasks history for this contact
-LoginAccountDisable=Account disable, put a new login to activate it.
+LoginAccountDisable=Account disabled, put a new login to activate it.
 ErrorFailedToSaveFile=Error - Failed to save file
