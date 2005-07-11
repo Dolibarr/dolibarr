@@ -292,7 +292,7 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test'
       	else
 				{
 	  			print "connection au dn $dn raté";
-	  			print "img_picto('alerte')<br>";
+	  			print img_picto('alerte')"<br>";
 				}
 
 				$unbind = dolibarr_ldap_unbind($ds);
@@ -304,7 +304,7 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test'
       	else
 				{
 	  			print "déconnection du dn $dn raté";
-	  			print "img_picto('alerte')<br>";
+	  			print img_picto('alerte')"<br>";
 				}
     }
   	else
