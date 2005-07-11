@@ -114,11 +114,13 @@ class ActionComm
                 }
 
                 // Ajoute entrée dans webcal
-                $result=$webcal->add($author,$webcal->date,$webcal->texte,$webcal->desc);
-                if ($result < 0) {
-                    $this->error="Echec insertion dans webcal: ".$webcal->error;
+                if (is_object($webcal))
+                {
+                    $result=$webcal->add($author,$webcal->date,$webcal->texte,$webcal->desc);
+                    if ($result < 0) {
+                        $this->error="Echec insertion dans webcal: ".$webcal->error;
+                    }
                 }
-
             }
     
             return $this->id;
