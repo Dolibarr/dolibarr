@@ -448,7 +448,9 @@ class User
     function disable()
     {
         // Désactive utilisateur
-        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET login = '' WHERE rowid = $this->id";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."user";
+        $sql.= " SET login = NULL";
+        $sql.= " WHERE rowid = ".$this->id;
         $result = $this->db->query($sql);
     }
   
