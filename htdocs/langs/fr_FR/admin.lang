@@ -277,7 +277,7 @@ DNAdminExample=ex: cn=adminldap
 LDAPPasswordExample=Mot de passe de l'administrateur
 DNUserExample=ex: ou=users
 DNGroupExample=ex: ou=groups
-DNContactActive=Activer la synchronisation des contacts ?
+DNContactActive=Synchronisation des contacts ?
 DNContact=Synchronisation des contacts
 DNContactActiveExample=Active la synchronisation des contacts commerciaux
 DNContactExample=ex: cn=contacts
