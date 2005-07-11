@@ -278,7 +278,7 @@ LDAPPasswordExample=Mot de passe de l'administrateur
 DNUserExample=ex: ou=users
 DNGroupExample=ex: ou=groups
 DNContactActive=Synchronisation des contacts ?
-DNContact=Synchronisation des contacts
+DNContact=DN des contacts
 DNContactActiveExample=Active la synchronisation des contacts commerciaux
 DNContactExample=ex: cn=contacts
 TypeExample=OpenLdap ou Egroupware
