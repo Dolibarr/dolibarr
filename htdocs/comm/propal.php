@@ -199,9 +199,12 @@ if ($_POST['action'] == 'send')
 				$filepath[0] = $file;
 				$filename[0] = $propal->ref.'.pdf';
 				$mimetype[0] = 'application/pdf';
-				$filepath[1] = $_FILES['addedfile']['tmp_name'];
-				$filename[1] = $_FILES['addedfile']['name'];
-				$mimetype[1] = $_FILES['addedfile']['type'];
+				if ($_FILES['addedfile']['tmp_name']) 
+				{
+    				$filepath[1] = $_FILES['addedfile']['tmp_name'];
+    				$filename[1] = $_FILES['addedfile']['name'];
+    				$mimetype[1] = $_FILES['addedfile']['type'];
+                }
 				// Envoi de la facture
 				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc);
 				if ($mailfile->sendfile())
@@ -233,7 +236,7 @@ if ($_POST['action'] == 'send')
 				}
 				else
 				{
-					$msg='<div class="error">'.$langs->trans('ErrorFailedToSendMail',$from,$sendto).' !</div>';
+					$msg='<div class="error">'.$langs->trans('ErrorFailedToSendMail',$from,$sendto).' - '.$actioncomm->error.'</div>';
 				}
 			}
 			else

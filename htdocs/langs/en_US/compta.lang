@@ -37,3 +37,5 @@ NewVATPayment=New VAT payment
 VATPayment=VAT Payment
 VATPayments=VAT Payments
 TotalToPay=Total to pay
+CustomerAccountancyCode=Customer accountancy code
+SupplierAccountancyCode=Supplier accountacy code

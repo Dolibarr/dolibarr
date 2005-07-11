@@ -71,7 +71,9 @@ if (($_POST["action"] == 'add' && (! defined("COMPANY_CREATE_TWO_STEPS") || $ste
     $soc->ape                   = stripslashes($_POST["ape"]);
     $soc->prefix_comm           = stripslashes($_POST["prefix_comm"]);
     $soc->code_client           = stripslashes($_POST["code_client"]);
+    $soc->code_fournisseur      = stripslashes($_POST["code_fournisseur"]);
     $soc->codeclient_modifiable = stripslashes($_POST["codeclient_modifiable"]);
+    $soc->codefournisseur_modifiable = stripslashes($_POST["codefournisseur_modifiable"]);
     $soc->capital               = stripslashes($_POST["capital"]);
     $soc->tva_intra             = stripslashes($_POST["tva_intra_code"] . $_POST["tva_intra_num"]);
     $soc->forme_juridique_code  = stripslashes($_POST["forme_juridique_code"]);
@@ -178,14 +180,15 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 }
 ";
 
-
       print "<script language=\"javascript\">\n$js_OpenPopupWindow\n</script>\n";
       print '<form action="soc.php" method="post" name="formsoc">';
       print '<input type="hidden" name="codeclient_modifiable" value="1">';
+      print '<input type="hidden" name="codefournisseur_modifiable" value="1">';
       
       print '<table class="border" width="100%">';
       
-      print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td></tr>';
+      print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td>';
+      print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
 
       // On positionne pays_id, pays_code et libelle du pays choisi
       $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:(defined(MAIN_INFO_SOCIETE_PAYS)?MAIN_INFO_SOCIETE_PAYS:'');
@@ -215,8 +218,8 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
       }
       if ($step==2 || ! defined("COMPANY_CREATE_TWO_STEPS")) {
 	
-	print '<tr><td>'.$langs->trans('CustomerCode').'/' . $langs->trans('SupplierCode') .'</td><td><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td>';
-	print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
+	print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td>';
+	print '<tr><td>'.$langs->trans('SupplierCode').'</td><td colspan="3"><input size="16" type="text" name="code_fournisseur" maxlength="15" value="'.$soc->code_fournisseur.'"></td>';
 
             if (defined("COMPANY_CREATE_TWO_STEPS")) {
               print '<tr><td width="140">'.$langs->trans('Country').'</td><td colspan="3">';
@@ -326,12 +329,17 @@ elseif ($_GET["action"] == 'edit')
       print '<form action="soc.php?socid='.$soc->id.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
       print '<input type="hidden" name="codeclient_modifiable" value="'.$soc->codeclient_modifiable.'">';
+      print '<input type="hidden" name="codefournisseur_modifiable" value="'.$soc->codefournisseur_modifiable.'">';
 
       print '<table class="border" width="100%">';
 
       print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
 
-      print '<tr><td>'.$langs->trans('CustomerCode').'</td><td>';
+        print '<td>'.$langs->trans("Prefix").'</td><td colspan="3">';
+        print '<input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'">';
+        print '</td>';
+
+      print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3">';
       if ($soc->codeclient_modifiable == 1)
       {
         print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
@@ -340,7 +348,17 @@ elseif ($_GET["action"] == 'edit')
       {
         print $soc->code_client;
       }
-      print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td>';
+      print '</tr>';
+
+      print '<tr><td>'.$langs->trans('SupplierCode').'</td><td colspan="3">';
+      if ($soc->codefournisseur_modifiable == 1)
+      {
+        print '<input type="text" name="code_client" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
+      }
+      else
+      {
+        print $soc->code_fournisseur;
+      }
       print '</tr>';
     
       print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
@@ -484,12 +502,24 @@ else
 
     print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$soc->nom.'</td></tr>';
 
-    print '<tr><td>';
-    print $langs->trans('CustomerCode').'</td><td width="20%">';
-    print $soc->code_client;
-    if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
-    print '</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
+    print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
 
+    if ($soc->client) {
+        print '<tr><td>';
+        print $langs->trans('CustomerCode').'</td><td colspan="3">';
+        print $soc->code_client;
+        if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+        print '</td></tr>';
+    }
+
+    if ($soc->fournisseur) {
+        print '<tr><td>';
+        print $langs->trans('SupplierCode').'</td><td colspan="3">';
+        print $soc->code_fournisseur;
+        if ($soc->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
+        print '</td></tr>';
+    }
+    
     print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
 
     print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
@@ -532,11 +562,12 @@ else
 
     print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$soc->capital.' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
+    // Statut juridique
     print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
 
+    // Type + Staff
     $arr = $soc->typent_array($soc->typent_id);
     $soc->typent= $arr[$soc->typent_id];
-
     print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
 
     // RIB

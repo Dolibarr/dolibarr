@@ -38,3 +38,5 @@ NewVATPayment=Nouveau paiment de TVA
 VATPayment=Réglement TVA
 VATPayments=Réglements TVA
 TotalToPay=Total à payer
+CustomerAccountancyCode=Code compta client
+SupplierAccountancyCode=Code compta founisseur

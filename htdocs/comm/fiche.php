@@ -215,11 +215,28 @@ if ($_socid > 0)
     print $objsoc->nom;
     print '</td></tr>';
 
-    print '<tr><td>';
-    print $langs->trans('CustomerCode').'</td><td>';
-    print $objsoc->code_client;
-    if ($objsoc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
-    print '</td><td>'.$langs->trans('Prefix').'</td><td>'.$objsoc->prefix_comm.'</td></tr>';
+    print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$objsoc->prefix_comm.'</td></tr>';
+
+    if ($objsoc->client) {
+        print '<tr><td>';
+        print $langs->trans('CustomerCode').'</td><td colspan="3">';
+        print $objsoc->code_client;
+        if ($objsoc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+        print '</td></tr>';
+        print '<tr>';
+        print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$societe->code_compta.'</td>';
+        print '</tr>';
+    }
+
+    /*
+    if ($objsoc->fournisseur) {
+        print '<tr><td>';
+        print $langs->trans('SupplierCode').'</td><td colspan="3">';
+        print $objsoc->code_fournisseur;
+        if ($objsoc->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
+        print '</td></tr>';
+    }
+    */
     
     print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($objsoc->adresse)."</td></tr>";
 
@@ -236,8 +253,15 @@ if ($_socid > 0)
     print "<tr><td nowrap>".$langs->transcountry("ProfId1",$objsoc->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$objsoc->siren."\">".$objsoc->siren."</a>&nbsp;</td>";
     print '<td>'.$langs->transcountry('ProfId2',$objsoc->pays_code).'</td><td>'.$objsoc->siret.'</td></tr>';
 
-    print '<tr><td nowrap>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$objsoc->forme_juridique.'</td></tr>';
-    print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Effectif").'</td><td>'.$objsoc->effectif.'</td></tr>';
+    print '<tr><td>'.$langs->transcountry('ProfId3',$objsoc->pays_code).'</td><td>'.$objsoc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
+
+    // Statut juridique
+    print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$objsoc->forme_juridique.'</td></tr>';
+
+    // Type + Staff
+    $arr = $objsoc->typent_array($objsoc->typent_id);
+    $objsoc->typent= $arr[$objsoc->typent_id];
+    print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$objsoc->effectif.'</td></tr>';
 
     print '<tr><td nowrap>';
     print $langs->trans("CustomerDiscount").'</td><td>'.$objsoc->remise_client."&nbsp;%</td>";

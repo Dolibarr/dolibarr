@@ -200,7 +200,31 @@ if ($socid > 0)
     print '<tr><td valign="top" width="50%">';
 
     print '<table class="border" width="100%">';
-    print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
+    
+    print '<tr><td>'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
+    
+    print '<td>'.$langs->trans("Prefix").'</td><td colspan="3">';
+    print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
+    print '</td>';
+    
+    if ($societe->client) {
+    print '<tr>';
+    print '<td nowrap width="100">'.$langs->trans("CustomerCode"). '</td><td colspan="3">'. $societe->code_client . '</td>';
+    print '</tr>';
+    print '<tr>';
+    print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$societe->code_compta.'</td>';
+    print '</tr>';
+    }
+    
+    if ($societe->fournisseur) {
+    print '<tr>';
+    print '<td nowrap>'.$langs->trans("SupplierCode"). '</td><td colspan="3">'. $societe->code_fournisseur . '</td>';
+    print '</tr>';
+    print '<tr>';
+    print '<td nowrap>'.$langs->trans("SupplierAccountancyCode").'</td><td colspan="3">'.$societe->code_compta_fournisseur.'</td>';
+    print '</tr>';
+    }
+    
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse)."</td></tr>";
 
     print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$societe->cp.'</td>';
@@ -208,22 +232,23 @@ if ($socid > 0)
     
     print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$societe->pays.'</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.$societe->tel.'&nbsp;</td><td>Fax</td><td>'.$societe->fax.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.$societe->tel.'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.$societe->fax.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
-    print '<tr><td nowrap>'.$langs->transcountry("ProfId1",$societe->pays_code).'</td><td><a href="http://www.societe.com/cgi-bin/recherche?rncs='.$societe->siren.'">'.$societe->siren.'</a>&nbsp;</td>';
-    print '<td>'.$langs->trans("Prefix").'</td><td>';
-    if ($societe->prefix_comm)
-      {
-    	print $societe->prefix_comm;
-      }
+    print "<tr><td nowrap>".$langs->transcountry("ProfId1",$societe->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$societe->siren."\">".$societe->siren."</a>&nbsp;</td>";
+    print '<td>'.$langs->transcountry('ProfId2',$societe->pays_code).'</td><td>'.$societe->siret.'</td></tr>';
 
-    print "</td></tr>";
+    print '<tr><td>'.$langs->transcountry('ProfId3',$societe->pays_code).'</td><td>'.$societe->ape.'</td><td colspan="2">&nbsp;</td></tr>';
 
-    print '<tr><td nowrap>'.$langs->trans("AccountancyCode").'</td><td>'.$societe->code_compta.'</td>';
-    print '<td>'.$langs->trans("CustomerCode").' / ' . $langs->trans("SupplierCode") . '</td><td>';
-    print $societe->code_client;
-    print "</td></tr>";
+    // Statut juridique
+    print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>';
+
+    // Type + Staff
+    $arr = $societe->typent_array($societe->typent_id);
+    $societe->typent= $arr[$societe->typent_id];
+    print '<tr><td>'.$langs->trans("Type").'</td><td>'.$societe->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$societe->effectif.'</td></tr>';
+
+    print '</tr>';
 
     print "</table>";
 
