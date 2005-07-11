@@ -649,9 +649,9 @@ else
             
                         // Statut
                         print '<td align="center">';
-                        if ($contrat->statut == 1) print '<a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id.'&amp;ligne='.$objp->rowid.'">';;
+                        if ($contrat->statut > 0) print '<a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id.'&amp;ligne='.$objp->rowid.'">';;
                         print img_statut($objp->statut);
-                        if ($contrat->statut == 1) print '</a>';
+                        if ($contrat->statut > 0) print '</a>';
                         print '</td>';
 
                         print "</tr>\n";

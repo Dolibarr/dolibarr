@@ -306,7 +306,7 @@ if ($id > 0)
 
                 print ' &nbsp;-&nbsp; ';
 
-                // Si pas encore activ
+                // Si pas encore activé
                 if (! $objp->date_debut_reelle) {
                     print $langs->trans("DateEndPlanned").': ';
                     if ($objp->date_fin) {
@@ -314,7 +314,7 @@ if ($id > 0)
                     }
                     else print $langs->trans("Unknown");
                 }
-                // Si activ
+                // Si activé
                 if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
                     print $langs->trans("DateEndPlanned").': ';
                     if ($objp->date_fin) {
@@ -323,9 +323,10 @@ if ($id > 0)
                     }
                     else print $langs->trans("Unknown");
                 }
+                // Si désactivé
                 if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
                     print $langs->trans("DateEndReal").': ';
-                    dolibarr_print_date($objp->date_fin_reelle);
+                    print dolibarr_print_date($objp->date_fin_reelle);
                 }
                 print '</td>';
                 print '<td>&nbsp;</td>';
