@@ -166,7 +166,9 @@ if ($socid > 0)
     print img_action(0,3);
     print '</a>';
     print '</td></tr>';
-    print "</table><br></div>";
+    print '</table>';
+    
+    print '</div>';
 
     /*
      *
@@ -487,14 +489,13 @@ if ($socid > 0)
 		  print '<td width="40%">';      
 		  if ($obj->propalrowid)
 		    {
-		      print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_file().'</a> ';
-		      print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+		      print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_file().' '.$obj->libelle.'</a>';
 		    }
 		  else
 		    {
-		      print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_file().'</a> ';
-		      print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+		      print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a>';
 		    }
+		  print '</td>';
 		  /*
 		   * Contact pour cette action
 		   *
@@ -545,12 +546,6 @@ if ($socid > 0)
 	  print "<tr><td>".nl2br($societe->note)."</td></tr>";
 	  print "</table>";
 	}
-      /*
-       *
-       *
-       *
-       */
-
 
     } 
   else
@@ -558,11 +553,8 @@ if ($socid > 0)
 	  dolibarr_print_error($db);
     }
 }
-else
-{
-  print "Erreur";
-}
+
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

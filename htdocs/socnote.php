@@ -110,11 +110,13 @@ if ($_GET["socid"] > 0) {
   print '<tr><td width="50%" valign="top">';
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print "<input type=\"hidden\" name=\"socid\" value=\"".$societe->id."\">";
-  print "<textarea name=\"note\" cols=\"60\" rows=\"10\">".$societe->note."</textarea><br>";
+  print "<textarea name=\"note\" cols=\"48\" rows=\"10\">".$societe->note."</textarea><br>";
   print '</td><td width="50%" valign="top">'.nl2br($societe->note).'</td>';
   print "</td></tr>";
-  print "</table><br>";
-  print '<center><input type="submit" value="'.$langs->trans("Modify").'"></center></form>';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Modify").'"></td></tr>';
+  print "</table>";
+
+  print '</form>';
 }
 
 print '</div><br>';
