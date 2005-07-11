@@ -252,7 +252,7 @@ if ($_GET["id"])
             print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
         }
         print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td>';
-        if (file_exists($filenbpiece) && filemtime($filenbpiece33))
+        if (file_exists($filenbpiece) && filemtime($filenbpiece))
         {
             print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($filenbpiece),"%d %b %Y %H:%M:%S")).'</td>';
         }
