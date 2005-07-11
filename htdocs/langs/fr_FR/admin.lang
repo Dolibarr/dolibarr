@@ -278,9 +278,10 @@ LDAPPasswordExample=Mot de passe de l'administrateur
 DNUserExample=ex: ou=users
 DNGroupExample=ex: ou=groups
 DNContactActive=Synchronisation des contacts ?
+DNContactActiveYes=Synchronisation activée
 DNContact=DN des contacts
 DNContactActiveExample=Active la synchronisation des contacts commerciaux
-DNContactExample=ex: cn=contacts
+DNContactExample=ex: ou=contacts
 TypeExample=OpenLdap ou Egroupware
 ##### Propal #####
 PropalSetup=Configuration du module Propositions Commerciales

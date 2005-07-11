@@ -187,7 +187,7 @@ print "</tr>\n";
     }
     if (defined("LDAP_CONTACT_DN") && LDAP_CONTACT_DN)
     {
-		    print '<tr><td>'.$langs->trans("DNContact").'</td><td>'.LDAP_CONTACT_DN.'</td></tr>';
+		    print '<tr><td>'.$langs->trans("DNContact").'</td><td>'.$langs->trans("DNContactActiveYes").'</td></tr>';
     }
     else
     {
