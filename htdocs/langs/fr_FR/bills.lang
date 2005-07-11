@@ -86,3 +86,4 @@ SendReminderBillByMail=Envoyer une relance par mail
 RelatedCommercialProposals=Propositions commerciales associées
 MenuToValid=A valider
 DateClosing=Date limite réglement
+ClassifyBill=Classer la facture
