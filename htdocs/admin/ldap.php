@@ -262,7 +262,7 @@ print '</td></tr></table>';
  
  
 if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST) {
-    print '<a class="tabAction" href="ldap.php?action=test">'.$langs->trans("TestConnectLdap").'</a><br>';
+    print '<a class="tabAction" href="ldap.php?action=test">'.$langs->trans("TestConnectLdap").'</a><br><br>';
 }
 
 
@@ -291,7 +291,8 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test'
 				}
       	else
 				{
-	  			print "connection au dn $dn raté<br>";
+	  			print "connection au dn $dn raté";
+	  			print "img_picto('alerte')<br>";
 				}
 
 				$unbind = dolibarr_ldap_unbind($ds);
@@ -302,7 +303,8 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test'
 				}
       	else
 				{
-	  			print "déconnection du dn $dn raté<br>";
+	  			print "déconnection du dn $dn raté";
+	  			print "img_picto('alerte')<br>";
 				}
     }
   	else
