@@ -279,7 +279,7 @@ DNUserExample=ex: ou=users
 DNGroupExample=ex: ou=groups
 DNContactActive=Contacts' synchronization?
 DNContactActiveYes=Activated synchronization
-DNContactActiveExample=Activate contacts' synchronization
+DNContactActiveExample=Desactivated synchronization
 DNContact=Contacts' DN
 DNContactExample=ex: ou=contacts
 TypeExample=OpenLdap or Egroupware

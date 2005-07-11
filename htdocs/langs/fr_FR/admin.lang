@@ -280,7 +280,7 @@ DNGroupExample=ex: ou=groups
 DNContactActive=Synchronisation des contacts ?
 DNContactActiveYes=Synchronisation activée
 DNContact=DN des contacts
-DNContactActiveExample=Active la synchronisation des contacts commerciaux
+DNContactActiveExample=Synchronisation désactivée
 DNContactExample=ex: ou=contacts
 TypeExample=OpenLdap ou Egroupware
 ##### Propal #####
