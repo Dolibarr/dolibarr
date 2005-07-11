@@ -404,7 +404,7 @@ else
   print $langs->trans($yesno[$contact->facturation]);
   print '</td></tr>';
 
-  print "</table><br>";
+  print "</table>";
   
   print "</div>";
 

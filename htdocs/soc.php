@@ -599,7 +599,7 @@ else
 
 
     print '</table>';
-    print "<br></div>\n";
+    print "</div>\n";
     /*
     *
     */

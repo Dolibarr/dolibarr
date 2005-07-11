@@ -408,7 +408,7 @@ if ($_GET["propalid"])
 				dolibarr_print_error($db);
 			}
 
-			print '</table><br>';
+			print '</table>';
 
 		}
 	}

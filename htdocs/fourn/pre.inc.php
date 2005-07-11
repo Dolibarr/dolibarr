@@ -37,6 +37,7 @@ function llxHeader($head = "", $title="", $addons='') {
   global $user, $conf, $langs;
 
   $langs->load("suppliers");
+  $langs->load("propal");
 
   top_menu($head, $title);
 

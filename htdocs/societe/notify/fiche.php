@@ -163,7 +163,7 @@ if ( $soc->fetch($soc->id) )
     print '<table class="border"width="100%">';
     print '<tr><td width="20%">'.$langs->trans("Name").'</td><td colspan="3">'.$soc->nom.'</td></tr>';
     print '<tr><td width="30%">'.$langs->trans("NbOfActiveNotifications").'</td><td colspan="3">0 (TODO Nombre non mis a jour)</td></tr>';
-    print '</table><br>';
+    print '</table>';
     
     print '</div>';
     

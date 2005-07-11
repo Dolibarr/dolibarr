@@ -622,7 +622,7 @@ else
 
 	      print '</tr>';
 	    }
-	  print "</table><br>";
+	  print "</table>";
 	  
       print "</div>\n";
 	}

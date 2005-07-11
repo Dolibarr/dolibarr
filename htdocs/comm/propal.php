@@ -743,7 +743,7 @@ if ($_GET['propalid'])
 				print '</form>';
 			}
 
-			print '</table><br>';
+			print '</table>';
 
 		}
 	}

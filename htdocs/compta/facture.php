@@ -447,7 +447,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
             }
             else
             {
-                $msg='<div class="error">'.$langs->trans("ErrorMailRecipientIsEmpty").' !</div>';
+                $msg='<div class="error">'.$langs->trans("ErrorMailRecipientIsEmpty").'</div>';
                 dolibarr_syslog("Le mail du destinataire est vide");
             }
 
@@ -1381,6 +1381,7 @@ else
                 $num = $db->num_rows($resql);
                 if ($num)
                 {
+                    print "<br>\n";
                     print_titre($langs->trans("ActionsOnBill"));
 
                     $i = 0; $total = 0;

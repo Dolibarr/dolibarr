@@ -21,9 +21,9 @@
  */
 
 /**
-    \file       htdocs/user/group/fiche.php
-    \brief      Onglet groupes utilisateurs
-    \version    $Revision$
+        \file       htdocs/user/group/fiche.php
+        \brief      Onglet groupes utilisateurs
+        \version    $Revision$
 */
 
 
@@ -217,7 +217,6 @@ else
             print '<td class="valeur">'.nl2br($group->note).'&nbsp;</td>';
             print "</tr>\n";
             print "</table>\n";
-            print "<br>\n";
     
             print '</div>';
     

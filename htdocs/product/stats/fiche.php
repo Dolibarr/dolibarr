@@ -262,8 +262,9 @@ if ($_GET["id"])
         }
         print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td></tr>';
 
-        print '</table><br>';
-
+        print '</table>';
+        
+        print '</div>';
     }
 }
 else

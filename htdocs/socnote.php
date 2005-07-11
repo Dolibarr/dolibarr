@@ -117,7 +117,7 @@ if ($_GET["socid"] > 0) {
   print '<center><input type="submit" value="'.$langs->trans("Modify").'"></center></form>';
 }
 
-print '<br>';
+print '</div><br>';
 
 $db->close();
 

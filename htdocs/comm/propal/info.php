@@ -84,7 +84,7 @@ if ($_GET['propalid'])
 	dolibarr_print_object_info($propal);
 	print '</td></tr></table>';
 
-	print '<br></div>';
+	print '</div>';
  
 	$db->close();
 }

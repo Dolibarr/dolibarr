@@ -255,9 +255,8 @@ if ($_socid > 0)
 
     print "</table>";
 
-    print "<br>";
-
     print "</td>\n";
+
 
     print '<td valign="top" width="50%">';
 

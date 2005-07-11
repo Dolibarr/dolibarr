@@ -65,7 +65,7 @@ print '<table width="100%"><tr><td>';
 dolibarr_print_object_info($contrat);
 print '</td></tr></table>';
 
-print "<br></div>";
+print '</div>';
 
 $db->close();
 

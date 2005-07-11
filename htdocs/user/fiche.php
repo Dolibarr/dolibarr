@@ -469,7 +469,7 @@ else
             }
 
             print "</table>\n";
-            print "<br>\n";
+//            print "<br>\n";
 
             print "</div>\n";
 

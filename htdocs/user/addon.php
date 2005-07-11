@@ -136,7 +136,6 @@ if ($_GET["id"])
 
 
   print "</table>\n";
-  print "<br>\n";
   
   print "</div>\n";
   

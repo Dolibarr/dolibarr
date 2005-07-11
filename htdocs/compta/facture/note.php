@@ -129,8 +129,6 @@ if ($_GET["facid"])
       
       print "</table>";
       
-      print "<br>";
-      
 
       /*
        * Actions
@@ -150,5 +148,5 @@ if ($_GET["facid"])
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

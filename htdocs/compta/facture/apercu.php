@@ -232,7 +232,7 @@ if ($_GET["facid"] > 0)
       print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
                 
-      print "</table><br>";
+      print '</table>';
       
     }
   else

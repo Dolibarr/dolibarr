@@ -19,15 +19,14 @@
  * $Source$
  *
  */
+
 require("../main.inc.php");
 
 function llxHeader($head = "", $urlp = "") {
-  global $user, $conf;
+  global $langs, $user, $conf;
 
-  /*
-   *
-   *
-   */
+  $langs->load("propal");
+
   top_menu($head);
 
   $menu = new Menu();

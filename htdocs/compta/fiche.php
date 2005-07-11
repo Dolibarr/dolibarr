@@ -226,12 +226,10 @@ if ($socid > 0)
     print "</td></tr>";
 
     print "</table>";
-    print "<br>";
 
-    /*
-     *
-     */
     print "</td>\n";
+
+
     print '<td valign="top" width="50%">';
 
     // Nbre max d'éléments des petites listes

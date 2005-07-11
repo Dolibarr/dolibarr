@@ -135,7 +135,7 @@ if ($_GET['propalid'])
 			}
 
 			print '</table>';
-			print '<br>';
+
 			print '</div>';
 
 			/*

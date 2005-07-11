@@ -79,7 +79,7 @@ if ($contact->socid > 0)
 
 dolibarr_print_object_info($contact);
 
-print "<br></div>";
+print "</div>";
 
 $db->close();
 

@@ -40,7 +40,6 @@ print '<div class="tabs">';
 print '<a class="tab" href="fiche.php?id='.$_GET["id"].'">'.$langs->trans("Payment").'</a>';
 print '<a class="tab" href="info.php?id='.$_GET["id"].'" id="active">'.$langs->trans("Info").'</a>';
 print '</div>';
-print '<div class="tabBar">';
 
 /*
  * Visualisation de la fiche
@@ -51,11 +50,15 @@ $paiement = new Paiement($db);
 $paiement->fetch($_GET["id"], $user);
 $paiement->info($_GET["id"]);
 
+print '<div class="tabBar">';
+
 print '<table width="100%"><tr><td>';
 print '<br>';
 dolibarr_print_object_info($paiement);
-print '<br>';
 print '</td></tr></table>';
+
+print '</div>';
+
 
 $db->close();
 

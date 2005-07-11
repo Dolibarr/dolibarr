@@ -430,7 +430,7 @@ if ($_GET["id"])
                 print '</td></tr>';
             }
 
-            print "</table><br>\n";
+            print "</table>\n";
 
             print "</div>\n";
         }

@@ -264,7 +264,7 @@ else
         print '<td colspan="3">'.$account->bic.'</td></tr>';
         
         print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
-        print $account->domiciliation;
+        print nl2br($account->domiciliation);
         print "</td></tr>\n";
         
         print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td><td colspan="3">';
@@ -272,12 +272,11 @@ else
         print "</td></tr>\n";
         
         print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
-        print $account->adresse_proprio;
+        print nl2br($account->adresse_proprio);
         print "</td></tr>\n";
     }
         
     print '</table>';
-    print '<br>';
     
     print '</div>';
 

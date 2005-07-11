@@ -20,9 +20,12 @@
  * $Source$
  *
  */
+
 require("../../main.inc.php");
+
 $langs->load("bills");
 $langs->load("compta");
+$langs->load("propal");
 
 function llxHeader($head = "", $title="") {
   global $user, $langs;

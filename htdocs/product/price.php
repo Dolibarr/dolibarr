@@ -153,7 +153,7 @@ if ($product->envente) print $langs->trans("OnSell");
 else print $langs->trans("NotOnSell");
 print '</td></tr>';
 
-print "</table><br>\n";
+print "</table>\n";
       
 print "</div>\n";
 

@@ -341,7 +341,7 @@ if ($id > 0)
             dolibarr_print_error($db);
         }
 
-        print '</table><br>';
+        print '</table>';
         print '</div>';
 
         if ($user->rights->contrat->activer && $contrat->statut == 1 && $objp->statut <> 4)

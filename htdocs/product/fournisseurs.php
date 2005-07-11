@@ -231,7 +231,7 @@ if ($_GET["id"])
         else print $langs->trans("NotOnSell");
         print '</td></tr>';
 
-	  print '</table><br />';
+	  print '</table>';
 	  
 	  print "</div>\n";
 

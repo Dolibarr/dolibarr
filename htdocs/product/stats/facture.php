@@ -148,7 +148,6 @@ if ($_GET["id"])
 
         print "</table>";
 
-        print "<br>";
         print '</div>';
         
         print_barre_liste($langs->trans("Bills"),$page,"facture.php","&amp;id=$product->id",$sortfield,$sortorder);

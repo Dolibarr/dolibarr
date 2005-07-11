@@ -181,12 +181,13 @@ else {
     dolibarr_print_error($db);   
 }
 
+print "</div>";
+
 
 /*
- *
- *
+ * Boutons Actions
  */
-print "<br></div>";
+
 print '<div class="tabsAction">';
 
 if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET["action"] == '')
@@ -194,14 +195,14 @@ if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET["action"] == '')
   print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=valide">'.$langs->trans("Valid").'</a>';
 }
 
-
 if ($user->societe_id == 0 && $allow_delete && $paiement->statut == 0 && $_GET["action"] == '')
 {
   print '<a class="butDelete" href="fiche.php?id='.$_GET["id"].'&amp;action=delete">'.$langs->trans("Delete").'</a>';
   
 }
 print "</div>";      
+
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

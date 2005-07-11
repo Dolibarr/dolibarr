@@ -176,7 +176,7 @@ if ($socid > 0)
         print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
         print '</table>';
 
-        print '<br></div>';
+        print '</div>';
 
         if ($mesg) { print "$mesg<br>"; }
 

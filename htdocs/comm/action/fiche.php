@@ -535,7 +535,6 @@ if ($_GET["id"])
 
       print '</table>';
     }
-    print '<br>';
     
     print "</div>\n";
 

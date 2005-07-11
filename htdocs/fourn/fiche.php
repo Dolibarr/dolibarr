@@ -117,11 +117,10 @@ if ( $societe->fetch($socid) )
    *
    *
    */
+
   print '<table width="100%">';
   print '<tr><td valign="top" width="50%">';
-  /*
-   *
-   */
+
   print '<table class="border" width="100%">';
   print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
   print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'</td></tr>';
@@ -132,18 +131,20 @@ if ( $societe->fetch($socid) )
   print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
   print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
-  print '</table><br>';
+  print '</table>';
+
+
   /*
    *
    */
+
   print '</td><td valign="top" width="50%">';
+
 
   $var=true;
 
   /*
-   *
    * Liste des produits
-   *
    */
   if ($conf->produit->enabled || $conf->service->enabled)
     {

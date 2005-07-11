@@ -176,8 +176,9 @@ if ($propalid > 0)
 		{
 			print '<div class="error">'.$langs->trans('ErrorCantOpenDir').'<b> '.$upload_dir.'</b></div>';
 		}
-		print '<tr><td>&nbsp;</td></tr>';
 		print '</table>';
+
+        print '</div>';
 	}
 	else
 	{

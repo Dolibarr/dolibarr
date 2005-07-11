@@ -815,7 +815,7 @@ else
                 
                 print "</form>";
             }
-            print "</table><br>";
+            print "</table>";
             /*
              * Fin Ajout ligne
              */

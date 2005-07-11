@@ -21,7 +21,8 @@
  *
  */
 
-/*!     \file       htdocs/compta/facture/info.php
+/**
+        \file       htdocs/compta/facture/info.php
         \ingroup    facture
 		\brief      Page des informations d'une facture
 		\version    $Revision$
@@ -68,9 +69,9 @@ print '<table width="100%"><tr><td>';
 dolibarr_print_object_info($facture);
 print '</td></tr></table>';
 
-print "<br></div>";
+print '</div>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
