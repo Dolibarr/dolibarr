@@ -179,7 +179,7 @@ print "</tr>\n";
     }
     if (defined("LDAP_CONTACT_ACTIVE") && LDAP_CONTACT_ACTIVE)
     {
-		    print '<tr><td>'.$langs->trans("DNContactActive").'</td><td>'.LDAP_CONTACT_ACTIVE.'</td></tr>';
+		    print '<tr><td>'.$langs->trans("DNContactActive").'</td><td>'.$langs->trans("DNContactActiveYes").'</td></tr>';
     }
     else
     {
@@ -187,7 +187,7 @@ print "</tr>\n";
     }
     if (defined("LDAP_CONTACT_DN") && LDAP_CONTACT_DN)
     {
-		    print '<tr><td>'.$langs->trans("DNContact").'</td><td>'.$langs->trans("DNContactActiveYes").'</td></tr>';
+		    print '<tr><td>'.$langs->trans("DNContact").'</td><td>'.LDAP_CONTACT_DN.'</td></tr>';
     }
     else
     {
