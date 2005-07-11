@@ -17,6 +17,8 @@ OSEnv=OS Environment
 Box=Box
 Boxes=Boxes
 System=System
+Yes=Yes
+No=No
 Rights=Permissions
 BoxesDesc=Boxes are screen area that show some informations on some pages. You can choose between showing or not a such box by selecting target page en clicking 'Activate', or by clicking the dustbin to disable it. Only boxes about enabled <a href="modules.php">modules</a> are shown.
 ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module.
@@ -275,6 +277,10 @@ DNAdminExample=ex: cn=adminldap
 LDAPPasswordExample=Admin password
 DNUserExample=ex: ou=users
 DNGroupExample=ex: ou=groups
+DNContactActive=Activate contacts' synchronization?
+DNContactActiveExample=Activate contacts' synchronization
+DNContact=Contacts'synchronization
+DNContactExample=ex: cn=contacts
 TypeExample=OpenLdap or Egroupware
 ##### Propal #####
 PropalSetup=Commercial proposals module setup

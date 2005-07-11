@@ -145,7 +145,10 @@ class Contact
     
     if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
       {
-	$this->update_ldap($user);
+	      if ((defined('LDAP_CONTACT_ACTIVE')  && (LDAP_CONTACT_ACTIVE == 1))
+	      {
+	      	$this->update_ldap($user);
+	      }
       }
     return $result;
   }
@@ -493,12 +496,15 @@ class Contact
 	      print $this->db->error() . '<br>' . $sql;
 	    }
 
-         if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
-	        {
-		         $this->delete_ldap($user);
-		      }
-		      return $result;
-		    }
+       if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
+       {
+	            if ((defined('LDAP_CONTACT_ACTIVE')  && (LDAP_CONTACT_ACTIVE == 1))
+	       {
+	       $this->update_ldap($user);
+	       }
+       }
+    return $result;
+		  }
 		    
 		    function delete_ldap($user)
 		    {

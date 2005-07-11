@@ -83,6 +83,20 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
 	('LDAP_GROUP_DN','".$_POST["group"]."',0);";
   $db->query($sql);
+  
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_CONTACT_ACTIVE';";
+  $db->query($sql);
+
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('LDAP_CONTACT_ACTIVE','".$_POST["activecontact"]."',0);";
+  $db->query($sql);
+  
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_CONTACT_DN';";
+  $db->query($sql);
+
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('LDAP_CONTACT_DN','".$_POST["contact"]."',0);";
+  $db->query($sql);
 
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_TYPE';";
   $db->query($sql);
@@ -163,6 +177,22 @@ print "</tr>\n";
     {
         print '<tr><td>'.$langs->trans("DNGroup").'</td><td>'.$langs->trans("DNGroupExample").'</td></tr>';
     }
+    if (defined("LDAP_CONTACT_ACTIVE") && LDAP_CONTACT_ACTIVE)
+    {
+		    print '<tr><td>'.$langs->trans("DNContactActive").'</td><td>'.LDAP_CONTACT_ACTIVE.'</td></tr>';
+    }
+    else
+    {
+        print '<tr><td>'.$langs->trans("DNContactActive").'</td><td>'.$langs->trans("DNContactActiveExample").'</td></tr>';
+    }
+    if (defined("LDAP_CONTACT_DN") && LDAP_CONTACT_DN)
+    {
+		    print '<tr><td>'.$langs->trans("DNContact").'</td><td>'.LDAP_CONTACT_DN.'</td></tr>';
+    }
+    else
+    {
+        print '<tr><td>'.$langs->trans("DNContact").'</td><td>'.$langs->trans("DNContactExample").'</td></tr>';
+    }
     if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE)
     {
 		    print '<tr><td>'.$langs->trans("Type").'</td><td>'.LDAP_SERVER_TYPE.'</td></tr>';
@@ -205,6 +235,14 @@ print '<input size="25" type="text" name="user" value="'.LDAP_USER_DN.'">';
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("DNGroup").'</td><td>';
 print '<input size="25" type="text" name="group" value="'.LDAP_GROUP_DN.'">';
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("DNContactActive").'</td><td><select name="activecontact">';
+print '<option value="0" selected>'.$langs->trans("No");
+print '<option value="1">'.$langs->trans("Yes");
+print '</select>';
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("DNContact").'</td><td>';
+print '<input size="25" type="text" name="contact" value="'.LDAP_CONTACT_DN.'">';
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("Type").'</td><td><select name="type">';
