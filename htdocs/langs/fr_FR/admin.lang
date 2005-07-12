@@ -282,7 +282,7 @@ DNContactActiveYes=Synchronisation activée
 DNContact=DN des contacts
 DNContactActiveExample=Synchronisation désactivée
 DNContactExample=ex: ou=contacts
-TypeExample=OpenLdap ou Egroupware
+TypeExample=OpenLdap, Egroupware ou Active Directory
 ##### Propal #####
 PropalSetup=Configuration du module Propositions Commerciales
 ##### Sendings #####

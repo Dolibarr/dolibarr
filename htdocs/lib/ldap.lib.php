@@ -54,12 +54,19 @@ function dolibarr_ldap_connect()
 
 function dolibarr_ldap_bind($ds)
 {
-  if (defined("LDAP_ADMIN_PASS") && LDAP_SUFFIX_DN && LDAP_ADMIN_DN && LDAP_ADMIN_PASS)
+	if (defined("LDAP_ADMIN_PASS") && LDAP_SUFFIX_DN && LDAP_ADMIN_DN && LDAP_ADMIN_PASS)
     {
-      $ldapbind = ldap_bind($ds, LDAP_ADMIN_DN.",".LDAP_SUFFIX_DN, LDAP_ADMIN_PASS);
-    }
+    	if (defined("LDAP_SERVER_TYPE") && LDAP_USER_DN && LDAP_SERVER_TYPE == activedirectory)
+    	{
+    		$ldapbind = ldap_bind($ds, LDAP_ADMIN_DN.",".LDAP_USER_DN.",".LDAP_SUFFIX_DN, LDAP_ADMIN_PASS);
+    	}
+    	else
+    	{
+    		$ldapbind = ldap_bind($ds, LDAP_ADMIN_DN.",".LDAP_SUFFIX_DN, LDAP_ADMIN_PASS);
+      }
 
-  return $ldapbind;
+      return $ldapbind;
+    }
 }
 
 /*!

@@ -178,8 +178,7 @@ class Contact
  	    $info["objectclass"][1] = "person";
 	    $info["objectclass"][2] = "organizationalPerson";
 	    $info["objectclass"][3] = "inetOrgPerson";
-	    
-	    $info["ou"] = 'People';
+
 	    $info["cn"] = utf8_encode($this->firstname." ".$this->name);
 	    $info["sn"] = utf8_encode($this->name);
 	    $info["givenName"] = utf8_encode($this->firstname);
@@ -259,13 +258,8 @@ class Contact
 		  $info["mail"] = $this->email;
 	      }
 	    
-	    $dnshort = explode(",", LDAP_ADMIN_DN.','.LDAP_SUFFIX_DN,2);
-	    
-	    // TODO comprendre pourquoi cela ne marche plus
-	    //$dn = "cn=".$info["cn"].","."ou=".$info["ou"].",".$dnshort[1];
+	    $dn = "cn=".$info["cn"].",".LDAP_CONTACT_DN.",".LDAP_SUFFIX_DN;
 
-	    $dn = "cn=".$info["cn"].",".$dnshort[1];
-	    
 	    $r = @ldap_delete($ds, $dn);	   
 
 	    if (! @ldap_add($ds, $dn, $info))
@@ -275,7 +269,7 @@ class Contact
 	  }
 	else
 	  {
-	    echo "Connection au dn $dn échoué !";
+	    echo "Connexion au dn $dn échoué !";
 	  }
 	
 	dolibarr_ldap_unbind($ds);
@@ -487,6 +481,20 @@ class Contact
    */
   function delete($id)
     {
+    	$sql = "SELECT c.name, c.firstname FROM ".MAIN_DB_PREFIX."socpeople as c";
+      $sql .= " WHERE c.idp = ". $id;
+      $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
+    
+                $this->old_name           = $obj->name;
+                $this->old_firstname      = $obj->firstname;
+            }
+         }    
+                
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
       $sql .= " WHERE idp=$id";
 
@@ -500,32 +508,23 @@ class Contact
        if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
        {
 	            if (defined('LDAP_CONTACT_ACTIVE')  && LDAP_CONTACT_ACTIVE == 1)
+	            {
 	       
-	       $this->update_ldap($user);
-	       
-       }
-    return $result;
-		  }
-		    
-		    function delete_ldap($user)
-		    {
-		    	$this->fetch($this->id);
-		    	
 	        $ds = dolibarr_ldap_connect();
       
 	  if ($ds)
 	    {
-	      //ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-	      //ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version);
 	      dolibarr_ldap_setversion($ds, $version);
 	      $ldapbind = dolibarr_ldap_bind($ds);
 	      
 	      if ($ldapbind)
 		    {	      
 		  // delete from ldap directory
-		      $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name.", ".LDAP_SUFFIX_DN);
+		      $userdn = utf8_encode($this->old_firstname." ".$this->old_name);
+		      $dn = "cn=".$userdn.",".LDAP_CONTACT_DN.",".LDAP_SUFFIX_DN;
 		  
 		      $r = @ldap_delete($ds, $dn);
+		      
 		    }
 	      else
 		    {
@@ -542,6 +541,8 @@ class Contact
       
       return $result;
     }
+   }
+}
 
   /*
    *    \brief      Charge les informations sur le contact, depuis la base

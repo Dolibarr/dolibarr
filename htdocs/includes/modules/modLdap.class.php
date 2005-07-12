@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,7 @@ class modLdap extends DolibarrModules
     $this->name = "Ldap";
     $this->family = "technic";
     $this->description = "Synchronisation Ldap";
-    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+    $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_LDAP";
     $this->const_config = MAIN_MODULE_LDAP;
     $this->special = 1;

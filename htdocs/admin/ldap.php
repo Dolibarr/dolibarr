@@ -237,7 +237,16 @@ print '<tr><td>'.$langs->trans("DNGroup").'</td><td>';
 print '<input size="25" type="text" name="group" value="'.LDAP_GROUP_DN.'">';
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("DNContactActive").'</td><td><select name="activecontact">';
-print '<option value="0" selected>'.$langs->trans("No");
+if (defined("LDAP_CONTACT_ACTIVE") && LDAP_CONTACT_ACTIVE == 1)
+{
+	print '<option value="1" selected>'.$langs->trans("Yes");
+}
+else
+{
+	print '<option value="0" selected>'.$langs->trans("No");
+}
+print '<option value="LDAP_CONTACT_ACTIVE">--------';
+print '<option value="0">'.$langs->trans("No");
 print '<option value="1">'.$langs->trans("Yes");
 print '</select>';
 print '</td></tr>';
@@ -246,8 +255,25 @@ print '<input size="25" type="text" name="contact" value="'.LDAP_CONTACT_DN.'">'
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("Type").'</td><td><select name="type">';
-print '<option value="openldap" selected>OpenLdap';
+if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE == activedirectory)
+{
+	print '<option value="activedirectoty" selected>Active Directory';
+}
+else
+{
+	if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE == egroupware)
+	{
+		print '<option value="egroupware" selected>Egroupware';
+	}
+	else
+	{
+		print '<option value="openldap" selected>OpenLdap';
+	}
+}
+print '<option value="LDAP_SERVER_TYPE">------------------------';
+print '<option value="openldap">OpenLdap';
 print '<option value="egroupware">Egroupware';
+print '<option value="activedirectory">Active Directory';
 print '</select>';
 print '</td></tr>';
 
@@ -266,7 +292,7 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST) {
 }
 
 
-if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test')
+if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && LDAP_ADMIN_DN && LDAP_ADMIN_PASS && $_GET["action"] == 'test')
 {
   $ds = dolibarr_ldap_connect();
 
