@@ -1191,24 +1191,29 @@ class Facture
     }
 
     /**
-    *    \brief      Renvoi le libellé long d'un statut donn
-    *    \param      paye        etat paye
-    *    \param      statut      id statut
-    *    \return     string      Libellé long du statut
-    */
-    function LibStatut($paye,$statut)
+     *    \brief      Renvoi le libellé d'un statut donn
+     *    \param      paye          Etat paye
+     *    \param      statut        Id statut
+     *    \param      mode          0=libellé long, 1=libellé court
+     *    \return     string        Libellé du statut
+     */
+    function LibStatut($paye,$statut,$mode=0)
     {
         global $langs;
         $langs->load("bills");
+        
+        $prefix="";
+        if ($mode == 1) $prefix="Short";
+        
         if (! $paye)
         {
-            if ($statut == 0) return $langs->trans("BillStatusDraft");
-            if ($statut == 3) return $langs->trans("BillStatusCanceled");
-            return $langs->trans("BillStatusValidated");
+            if ($statut == 0) return $langs->trans("Bill${prefix}StatusDraft");
+            if ($statut == 3) return $langs->trans("Bill${prefix}StatusCanceled");
+            return $langs->trans("Bill${prefix}StatusValidated");
         }
         else
         {
-            return $langs->trans("BillStatusPayed");
+            return $langs->trans("Bill${prefix}StatusPayed");
         }
     }
 
