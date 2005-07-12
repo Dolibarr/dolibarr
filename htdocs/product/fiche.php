@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Régis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -340,6 +341,11 @@ if ($_GET["id"])
             $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
             $head[$h][1] = $langs->trans('Statistics');
             $h++;
+
+	    //erics: pour créer des produits composés de x 'sous' produits
+	    $head[$h][0] = DOL_URL_ROOT."/product/pack.php?id=".$product->id;
+	    $head[$h][1] = $langs->trans('Packs');
+	    $h++;
 
             $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
             $head[$h][1] = $langs->trans('Bills');

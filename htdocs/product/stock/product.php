@@ -33,6 +33,7 @@
 require("./pre.inc.php");
 
 $langs->load("products");
+$langs->load("bills");
 
 $user->getrights('produit');
 $mesg = '';
@@ -114,6 +115,11 @@ if ($_GET["id"])
       $head[$h][1] = $langs->trans("Price");
       $h++;
       
+      
+      $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Photos");
+      $h++;
+      
       if ($product->type == 0)
       {
          if ($conf->stock->enabled)
@@ -124,21 +130,25 @@ if ($_GET["id"])
               $h++;
          }
       }
-      
       if ($conf->fournisseur->enabled) {
           $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
           $head[$h][1] = $langs->trans("Suppliers");
           $h++;
       }
 
-      $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
-      $head[$h][1] = $langs->trans("Photos");
-      $h++;
-      
       $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Statistics");
       $h++;
-          
+
+      //erics: pour créer des produits composés de x 'sous' produits
+      $head[$h][0] = DOL_URL_ROOT."/product/pack.php?id=".$product->id;
+      $head[$h][1] = $langs->trans('Packs');
+      $h++;
+      
+      $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
+      $head[$h][1] = $langs->trans('Bills');
+      $h++;
+      
       dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
       
       print($mesg);    	      
