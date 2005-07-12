@@ -37,6 +37,7 @@ function llxHeader($head = "", $title="", $help_url='') {
   $langs->load("companies");
   $langs->load("bills");
   $langs->load("banks");
+  $langs->load("propal");
   
   /*
    *
@@ -55,5 +56,6 @@ function llxHeader($head = "", $title="", $help_url='') {
   $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
 
   left_menu($menu->liste, $help_url);
+  
 }
 ?>

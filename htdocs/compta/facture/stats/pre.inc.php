@@ -19,13 +19,23 @@
  * $Source$
  *
  */
+
+/**
+        \file         htdocs/compta/facture/stats/pre.inc.php
+        \ingroup      facture
+        \brief        Fichier de gestion du menu gauche des stats facture
+        \version      $Revision$
+*/
+
 require("../../../main.inc.php");
 require(DOL_DOCUMENT_ROOT."/bargraph.class.php");
 require("./facturestats.class.php");
 
-function llxHeader($head = "", $urlp = "") {
+function llxHeader($head = "", $urlp = "")
+{
   global $langs;
   $langs->load("bills");
+  $langs->load("propal");
   
   /*
    *
@@ -40,5 +50,6 @@ function llxHeader($head = "", $urlp = "") {
   $menu->add("index.php", $langs->trans("Statistics"));
 
   left_menu($menu->liste);
+  
 }
 ?>
