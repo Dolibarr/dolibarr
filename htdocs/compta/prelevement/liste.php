@@ -131,7 +131,7 @@ if ($result)
       print '<td><a href="fiche.php?id='.$obj->rowid.'">'.stripslashes($obj->nom)."</a></td>\n";
       print '<td align="center">'.strftime("%d/%m/%Y",$obj->datec)."</td>\n";
 
-      print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie).'</td>\n";
+      print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie)."</td>\n";
       print '<td align="center"><a href="fiche.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
       print "</tr>\n";
       $i++;
