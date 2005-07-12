@@ -257,7 +257,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("Type").'</td><td><select name="type">';
 if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE == activedirectory)
 {
-	print '<option value="activedirectoty" selected>Active Directory';
+	print '<option value="activedirectory" selected>Active Directory';
 }
 else
 {
