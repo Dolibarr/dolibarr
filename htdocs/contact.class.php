@@ -173,7 +173,71 @@ class Contact
 	
 	if ($ldapbind)
 	  {
-	   
+	   if (LDAP_SERVER_TYPE == 'activedirectory') //enlever utf8 pour etre compatible Windows
+	     {
+	     	$info["objectclass"][0] = "top";
+ 	      $info["objectclass"][1] = "person";
+	      $info["objectclass"][2] = "organizationalPerson";
+	      $info["objectclass"][3] = "inetOrgPerson";
+
+	      $info["cn"] = $this->firstname." ".$this->name;
+	      $info["sn"] = $this->name;
+	      $info["givenName"] = $this->firstname;
+	    
+	      if ($this->poste)
+	        $info["title"] = $this->poste;
+	    
+	      if ($this->socid > 0)
+	      {
+		      $soc = new Societe($this->db);
+		      $soc->fetch($this->socid);
+		      $info["o"] = $soc->nom;
+		
+		    if ($soc->client == 1)
+		      $info["businessCategory"] = "Clients";
+		        elseif ($soc->client == 2)
+		            $info["businessCategory"] = "Prospects";
+		
+		    if ($soc->fournisseur == 1)
+		      $info["businessCategory"] = "Fournisseurs";
+		
+		    if ($soc->ville)
+		    {
+		       if ($soc->address)
+		           $info["street"] = $soc->address;
+		    
+		       if ($soc->cp)
+		           $info["postalCode"] = $soc->cp;
+		    
+		           $info["l"] = $soc->ville;
+		    }
+	     }
+	    
+	    if ($this->phone_pro)
+	      $info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
+	    
+	    if ($this->phone_perso)
+	      $info["homePhone"] = dolibarr_print_phone($this->phone_perso);
+	    
+	    if ($this->phone_mobile)
+	      $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
+	    
+	    if ($this->note)
+	      $info["description"] = ($this->note);
+	    if ($this->email)
+		  $info["mail"] = $this->email;
+	    
+	    $dn = "cn=".$info["cn"].",".LDAP_CONTACT_DN.",".LDAP_SUFFIX_DN;
+
+	    $r = @ldap_delete($ds, $dn);	   
+
+	    if (! @ldap_add($ds, $dn, $info))
+	      {
+		$this->error[0] = ldap_err2str(ldap_errno($ds));
+	      }  
+	   }
+	   else
+	   {
 	    $info["objectclass"][0] = "top";
  	    $info["objectclass"][1] = "person";
 	    $info["objectclass"][2] = "organizationalPerson";
@@ -267,6 +331,7 @@ class Contact
 		$this->error[0] = ldap_err2str(ldap_errno($ds));
 	      }
 	  }
+	}
 	else
 	  {
 	    echo "Connexion au dn $dn échoué !";
@@ -520,7 +585,14 @@ class Contact
 	      if ($ldapbind)
 		    {	      
 		  // delete from ldap directory
-		      $userdn = utf8_encode($this->old_firstname." ".$this->old_name);
+		      if (LDAP_SERVER_TYPE == 'activedirectory')
+		      {
+		      	$userdn = $this->old_firstname." ".$this->old_name; //enlever utf8 pour etre compatible Windows
+		      }
+		      else
+		      {
+		      	$userdn = utf8_encode($this->old_firstname." ".$this->old_name);
+		      }		      
 		      $dn = "cn=".$userdn.",".LDAP_CONTACT_DN.",".LDAP_SUFFIX_DN;
 		  
 		      $r = @ldap_delete($ds, $dn);
