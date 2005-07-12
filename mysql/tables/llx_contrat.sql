@@ -37,7 +37,8 @@ create table llx_contrat
   fk_commercial_suivi     integer NOT NULL,
   fk_user_author          integer NOT NULL default 0,
   fk_user_mise_en_service integer,
-  fk_user_cloture integer
+  fk_user_cloture integer,
+  fk_product integer
 
 )type=innodb;
 
