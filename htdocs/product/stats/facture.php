@@ -202,7 +202,7 @@ if ($_GET["id"])
                     print dolibarr_print_date($objp->df)."</td>";
                     print "<td align=\"right\">".price($objp->amount)."</td>\n";
                     $fac=new Facture($db);
-                    print '<td align="center">'.$fac->LibStatut($objp->paye,$objp->statut).'</td>';
+                    print '<td align="center">'.$fac->LibStatut($objp->paye,$objp->statut,1).'</td>';
                     print "</tr>\n";
                     $i++;
                 }
