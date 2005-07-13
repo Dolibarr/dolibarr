@@ -22,10 +22,21 @@
  * $Source$
  */
  
-/*!	\file htdocs/admin/ldap.php
+/**
+    	\file       htdocs/admin/ldap.php
 		\ingroup    ldap
 		\brief      Page d'administration/configuration du module Ldap
 		\version    $Revision$
+        \remarks    Exemple configuration :
+                    LDAP_SERVER_HOST    Serveur LDAP		192.168.1.50
+                    LDAP_SERVER_PORT    Port LDAP           123
+                    LDAP_SUFFIX_DN      Suffix LDAP			dc=societe,dc=com
+                    LDAP_ADMIN_DN       Administrateur LDAP	cn=adminldap	
+                    LDAP_ADMIN_PASS     Mot de passe		xxxxxxxx
+                    LDAP_USER_DN        DN des utilisateurs	ou=users
+                    LDAP_GROUP_DN       DN des groupes		ou=groups	
+                    LDAP_CONTACT_DN     DN des contacts		ou=contacts
+                    LDAP_SERVER_TYPE    Type				Openldap
 */
 
 require("./pre.inc.php");
