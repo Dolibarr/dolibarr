@@ -31,6 +31,3 @@ ALTER TABLE llx_contrat ADD INDEX idx_contrat_fk_user_author (fk_user_author);
 
 ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
 ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
-
-ALTER TABLE llx_contrat ADD INDEX idx_contrat_fk_product (fk_product);
-ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
