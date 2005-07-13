@@ -40,8 +40,8 @@
 
 function dolibarr_ldap_connect()
 {
-  $ldapconnect = ldap_connect(LDAP_SERVER_HOST);
-
+  $ldapconnect = ldap_connect(LDAP_SERVER_HOST,LDAP_SERVER_PORT);
+  
   return $ldapconnect;
 }
 

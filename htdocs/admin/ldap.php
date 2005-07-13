@@ -48,6 +48,13 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
 	('LDAP_SERVER_HOST','".$_POST["host"]."',0);";
 	$db->query($sql);
+	
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_PORT';";
+  $db->query($sql);
+
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('LDAP_SERVER_PORT','".$_POST["port"]."',0);";
+	$db->query($sql);
 
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SUFFIX_DN';";
   $db->query($sql);
@@ -137,6 +144,14 @@ print "</tr>\n";
     {
         print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
     }
+    if (defined("LDAP_SERVER_PORT") && LDAP_SERVER_PORT)
+    {
+		    print '<tr><td>'.$langs->trans("LDAPServerPort").'</td><td>'.LDAP_SERVER_PORT.'</td></tr>';
+    }
+    else
+    {
+        print '<tr><td>'.$langs->trans("LDAPServerPort").'</td><td>'.$langs->trans("LDAPServerPortExample").'</td></tr>';
+    }
     if (defined("LDAP_SUFFIX_DN") && LDAP_SUFFIX_DN)
     {
         print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.LDAP_SUFFIX_DN.'</td></tr>';
@@ -221,6 +236,16 @@ print '<tr><td>';
 print $langs->trans("LDAPServer").'</td><td>';
 print '<input size="25" type="text" name="host" value="'.LDAP_SERVER_HOST.'">';
 print '</td></tr>';
+print '<tr><td>'.$langs->trans("LDAPServerPort").'</td><td>';
+if (defined("LDAP_SERVER_PORT") && LDAP_SERVER_PORT)
+{
+	print '<input size="25" type="text" name="port" value="'.LDAP_SERVER_PORT.'">';
+}
+else
+{
+	print '<input size="25" type="text" name="port" value="389">';
+}
+print '</td></tr>';
 print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>';
 print '<input size="25" type="text" name="suffix" value="'.LDAP_SUFFIX_DN.'">';
 print '</td></tr>';
@@ -295,11 +320,17 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST) {
 if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && LDAP_ADMIN_DN && LDAP_ADMIN_PASS && $_GET["action"] == 'test')
 {
   $ds = dolibarr_ldap_connect();
-
+/*
   if ($ds)
     {
-      print "connection au serveur ldap réussie<br>";
-
+	     print "connexion au serveur ldap réussie<br>";
+    }
+    else
+    {
+	     print "connexion au serveur ldap échouée";
+	     print img_picto('','alerte');
+	  	 print "<br>";
+    }
       if ((dolibarr_ldap_getversion($ds) == 3))
 				{
 					print "Serveur ldap configuré en version 3<br>";
@@ -308,21 +339,21 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && LDAP_ADMIN_DN && LDAP_ADM
 				{
 					print "Serveur ldap configuré en version 2<br>";
 				}
-
-      $bind = dolibarr_ldap_bind($ds);
+*/
+      $bind = @dolibarr_ldap_bind($ds);
 
       if ($bind)
 				{
-	  			print "connection au dn $dn réussi<br>";
+	  			print "connexion au dn $dn réussi<br>";
 				}
       	else
 				{
-	  			print "connection au dn $dn raté";
+	  			print "connexion au dn $dn raté";
 	  			print img_picto('','alerte');
 	  			print "<br>";
 				}
 
-				$unbind = dolibarr_ldap_unbind($ds);
+				$unbind = @dolibarr_ldap_unbind($ds);
 
 			if ($bind)
 				{
@@ -334,11 +365,6 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && LDAP_ADMIN_DN && LDAP_ADM
 	  			print img_picto('','alerte');
 	  			print "<br>";
 				}
-    }
-  	else
-    {
-      print "connection au serveur ldap échouée<br>";
-    }
 }
 
 $db->close();

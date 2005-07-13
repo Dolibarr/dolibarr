@@ -265,6 +265,8 @@ InterventionsSetup=Configuration du module Interventions
 ##### LDAP setup #####
 LDAPSetup=Configuration du module LDAP
 LDAPServer=Serveur LDAP
+LDAPServerPort=Port du serveur LDAP
+LDAPServerPortExample=Port par défaut : 389
 TestConnectLdap=Tester la connexion
 LDAPSuffix=Suffix LDAP
 DNAdmin=Administrateur LDAP
