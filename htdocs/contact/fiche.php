@@ -76,7 +76,7 @@ if ($_POST["action"] == 'add')
       $contact->firstname    = $_POST["firstname"];
       $contact->civilite_id	 = $_POST["civilite_id"];
       $contact->poste        = $_POST["poste"];
-      $contact->address      = $_POST["adresse"];
+      $contact->address      = $_POST["address"];
       $contact->cp           = $_POST["cp"];
       $contact->ville        = $_POST["ville"];
       $contact->email        = $_POST["email"];
@@ -118,7 +118,7 @@ if ($_POST["action"] == 'update')
   $contact->civilite_id	  = $_POST["civilite_id"];
   $contact->poste         = $_POST["poste"];
 
-  $contact->address       = $_POST["adresse"];
+  $contact->address       = $_POST["address"];
   $contact->cp            = $_POST["cp"];
   $contact->ville         = $_POST["ville"];
 
@@ -254,7 +254,7 @@ if ($_GET["action"] == 'create')
 
   print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
-  print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="adresse" type="text" size="50" maxlength="80"></td>';
+  print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="address" type="text" size="50" maxlength="80"></td>';
 
   print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
@@ -314,7 +314,7 @@ elseif ($_GET["action"] == 'edit')
 
   print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
-  print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="adresse" type="text" size="50" maxlength="80" value="'.$contact->address.'"></td>';
+  print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="address" type="text" size="50" maxlength="80" value="'.$contact->address.'"></td>';
 
   print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 

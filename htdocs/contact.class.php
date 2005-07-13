@@ -178,7 +178,8 @@ class Contact
 	     	$info["objectclass"][0] = "top";
  	      $info["objectclass"][1] = "person";
 	      $info["objectclass"][2] = "organizationalPerson";
-	      $info["objectclass"][3] = "inetOrgPerson";
+	      //$info["objectclass"][3] = "inetOrgPerson";
+	      $info["objectclass"][3] = "user";
 
 	      $info["cn"] = $this->firstname." ".$this->name;
 	      $info["sn"] = $this->name;
@@ -192,6 +193,7 @@ class Contact
 		      $soc = new Societe($this->db);
 		      $soc->fetch($this->socid);
 		      $info["o"] = $soc->nom;
+		      $info["company"] = $soc->nom;
 		
 		    if ($soc->client == 1)
 		      $info["businessCategory"] = "Clients";
@@ -203,8 +205,8 @@ class Contact
 		
 		    if ($soc->ville)
 		    {
-		       if ($soc->address)
-		           $info["street"] = $soc->address;
+		       if ($soc->adresse)
+		           $info["streetAddress"] = $soc->adresse;
 		    
 		       if ($soc->cp)
 		           $info["postalCode"] = $soc->cp;
@@ -221,6 +223,9 @@ class Contact
 	    
 	    if ($this->phone_mobile)
 	      $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
+	      
+	    if ($this->fax)
+	      $info["facsimileTelephoneNumber"] = dolibarr_print_phone($this->fax);
 	    
 	    if ($this->note)
 	      $info["description"] = ($this->note);
@@ -266,8 +271,8 @@ class Contact
 		
 		if ($soc->ville)
 		  {
-		    if ($soc->address)
-		      $info["street"] = utf8_encode($soc->address);
+		    if ($soc->adresse)
+		      $info["street"] = utf8_encode($soc->adresse);
 		    
 		    if ($soc->cp)
 		      $info["postalCode"] = utf8_encode($soc->cp);
@@ -284,6 +289,9 @@ class Contact
 	    
 	    if ($this->phone_mobile)
 	      $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
+	      
+	    if ($this->fax)
+	      $info["facsimileTelephoneNumber"] = dolibarr_print_phone($this->fax);
 	    
 	    if ($this->note)
 	      $info["description"] = ($this->note);
