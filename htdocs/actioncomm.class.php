@@ -216,5 +216,35 @@ class ActionComm
         }
     }
     
+    
+    /**
+     *    \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *    \return     int     <0 si ko, >0 si ok
+     */
+    function load_board()
+    {
+        global $conf;
+        
+        $this->nbtodo=$this->nbtodolate=0;
+        $sql = "SELECT a.id,".$this->db->pdate("a.datea")." as da";
+        $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+        $sql.= " WHERE a.percent < 100";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nbtodo++;
+                if ($obj->da < (time() - $conf->actions->warning_delay)) $this->nbtodolate++;
+            }
+            return 1;
+        }
+        else 
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
 }    
 ?>

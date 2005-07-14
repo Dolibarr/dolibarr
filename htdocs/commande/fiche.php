@@ -160,13 +160,6 @@ if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer)
   Header("Location: fiche.php?id=".$_GET["id"]);
 }
 
-if ($_GET["action"] == 'facturee') 
-{
-  $commande = new Commande($db);
-  $commande->fetch($_GET["id"]);
-  $commande->classer_facturee();
-}
-
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->commande->valider)
 {
   $commande = new Commande($db);
@@ -174,6 +167,13 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->
   $soc = new Societe($db);
   $soc->fetch($commande->soc_id);
   $result = $commande->valid($user);
+}
+
+if ($_POST["action"] == 'confirm_close' && $_POST["confirm"] == 'yes' && $user->rights->commande->creer)
+{
+  $commande = new Commande($db);
+  $commande->fetch($_GET["id"]);
+  $result = $commande->cloture($user);
 }
 
 if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == 'yes' && $user->rights->commande->valider)
@@ -461,7 +461,6 @@ else
 
 	  /*
 	   * Confirmation de la suppression de la commande
-	   *
 	   */
 	  if ($_GET["action"] == 'delete')
 	    {
@@ -471,7 +470,6 @@ else
 	  
 	  /*
 	   * Confirmation de la validation
-	   *
 	   */
 	  if ($_GET["action"] == 'valid')
 	    {
@@ -479,9 +477,19 @@ else
 	      $html->form_confirm("fiche.php?id=$id",$langs->trans("ValidateOrder"),$langs->trans("ConfirmValidateOrder"),"confirm_valid");
 	      print "<br />\n";
 	    }
+
+	  /*
+	   * Confirmation de la cloture
+	   */
+	  if ($_GET["action"] == 'cloture')
+	    {
+	      //$numfa = commande_get_num($soc);
+	      $html->form_confirm("fiche.php?id=$id",$langs->trans("CloseOrder"),$langs->trans("ConfirmCloseOrder"),"confirm_close");
+	      print "<br />\n";
+	    }
+
 	  /*
 	   * Confirmation de l'annulation
-	   *
 	   */
 	  if ($_GET["action"] == 'annuler')
 	    {
@@ -512,7 +520,7 @@ else
 	      else
 		{
 		  print $langs->trans("Project").' : ';
-		  print '<a href="fiche.php?id='.$id.'&amp;action=classer">Classer la commande</a>';
+		  print '<a href="fiche.php?id='.$id.'&amp;action=classer">'.$langs->trans("ClassifyOrder").'</a>';
 		}
 	    }
 	  print '&nbsp;</td></tr>';
@@ -765,6 +773,14 @@ else
             if ($user->rights->commande->valider)
             {
                 print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
+            }
+        }
+
+        if ($commande->statut == 1 || $commande->statut == 2)
+        {
+            if ($user->rights->commande->creer)
+            {
+                print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=cloture">'.$langs->trans("Close").'</a>';
             }
         }
     

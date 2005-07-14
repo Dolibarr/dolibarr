@@ -160,6 +160,7 @@ class Commande
 	}
       return $result ;
     }
+
   /**
    * Cloture la commande
    *
@@ -576,27 +577,29 @@ class Commande
   }
 
   /** 
-   * Supprime une ligne de la commande
-   *
+   *    \brief      Supprime une ligne de la commande
+   *    \param      idligne     Id de la ligne à supprimer
+   *    \return     int         >0 si ok, <0 si ko
    */
-  function delete_line($idligne)
+    function delete_line($idligne)
     {
-      if ($this->statut == 0)
-	{
-	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet WHERE rowid = $idligne";
-	  
-	  if ($this->db->query($sql) )
-	    {
-	      $this->update_price();
-	      
-	      return 1;
-	    }
-	  else
-	    {
-	      return 0;
-	    }
-	}
+        if ($this->statut == 0)
+        {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet WHERE rowid = $idligne";
+    
+            if ($this->db->query($sql) )
+            {
+                $this->update_price();
+    
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
+        }
     }
+
   /**
    *
    *
@@ -651,24 +654,24 @@ class Commande
 		}
 	}
   /**
-   * Classe la facture comme facturée
-   *
+   *        \brief      Classe la facture comme facturée
+   *        \return     int     <0 si ko, >0 si ok
    */
-  function classer_facturee()
+    function classer_facturee()
     {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET facture = 1";
-      $sql .= " WHERE rowid = ".$this->id." AND fk_statut > 0 ;";
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;
-	}
-      else
-	{
-      dolibarr_print_error($this->db);
-	}
-
+        $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET facture = 1";
+        $sql .= " WHERE rowid = ".$this->id." AND fk_statut > 0 ;";
+    
+        if ($this->db->query($sql) )
+        {
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
     }
+    
   /**
    * Mettre à jour le prix
    *
@@ -804,27 +807,62 @@ class Commande
       }
   }
   /**
-   * Classe la commande
-   *
+   *        \brief      Classer la commande dans un projet
+   *        \param      cat_id      Id du projet
    */
   function classin($cat_id)
     {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_projet = $cat_id";
-      $sql .= " WHERE rowid = $this->id;";
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;
-	}
-      else
-	{
-      dolibarr_print_error($this->db);
-	}
+        $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_projet = $cat_id";
+        $sql .= " WHERE rowid = $this->id;";
+    
+        if ($this->db->query($sql) )
+        {
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
+    
+    /**
+     *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \return     int     <0 si ko, >0 si ok
+     */
+    function load_board()
+    {
+        global $conf;
+        
+        $this->nbtodo=$this->nbtodolate=0;
+        $sql = "SELECT c.rowid,".$this->db->pdate("c.date_creation")." as datec";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+        $sql.= " WHERE c.fk_statut BETWEEN 1 AND 2";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nbtodo++;
+                if ($obj->da < (time() - $conf->commande->traitement->warning_delay)) $this->nbtodolate++;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
     }
 
 }
 
-/**	\class CommandeLigne
+
+
+/**
+    	\class      CommandeLigne
 		\brief      Classe de gestion des lignes de commande
 */
 
