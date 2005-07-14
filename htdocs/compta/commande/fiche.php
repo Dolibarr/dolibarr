@@ -30,9 +30,11 @@
 
 require("./pre.inc.php");
 
+$langs->load("orders");
 $langs->load("sendings");
 $langs->load("companies");
 $langs->load("bills");
+$langs->load("propal");
 
 $user->getrights('facture');
 
@@ -238,27 +240,26 @@ if ($_GET["id"] > 0)
       print '</div>';
 
 
-      /*
-       * Barre d'actions
-       */
-      
-      if (! $user->societe_id && ! $commande->facturee)
-	{
-	  print "<div class=\"tabsAction\">\n";
-
-	  if ($commande->statut > 0 && $user->rights->facture->creer)
-	    {
-	      print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">'.$langs->trans("GenerateBill").'</a>';
-	    }
-
-	  if ($num_fac_asso)
-	    {
-	      if ($user->rights->commande->creer)
-    		print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/commande/fiche.php?action=facturee&amp;id='.$commande->id.'">'.$langs->trans("ClassifyBilled").'</a>';
-	    }
-	  print '</div>';
-	}
-
+        /*
+         * Barre d'actions
+         */
+        
+        if (! $user->societe_id && ! $commande->facturee)
+        {
+            print "<div class=\"tabsAction\">\n";
+        
+            if ($commande->statut > 0 && $user->rights->facture->creer)
+            {
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">'.$langs->trans("GenerateBill").'</a>';
+            }
+        
+            if ($user->rights->commande->creer)
+            {
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/commande/fiche.php?action=facturee&amp;id='.$commande->id.'">'.$langs->trans("ClassifyBilled").'</a>';
+            }
+            print '</div>';
+        }
+        
 
     print "<table width=\"100%\"><tr><td width=\"50%\" valign=\"top\">";
 
