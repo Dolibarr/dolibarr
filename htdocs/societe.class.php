@@ -25,16 +25,16 @@
  */
 
 /**
-   \file       htdocs/societe.class.php
-   \ingroup    societe
-   \brief      Fichier de la classe des societes
-   \version    $Revision$
+        \file       htdocs/societe.class.php
+        \ingroup    societe
+        \brief      Fichier de la classe des societes
+        \version    $Revision$
 */
 
 
 /**
-   \class 		Societe
-   \brief 		Classe permettant la gestion des societes
+        \class 		Societe
+        \brief 		Classe permettant la gestion des societes
 */
 
 class Societe {
@@ -47,18 +47,25 @@ class Societe {
   var $ville;
   var $departement_id;
   var $pays_id;
+  var $pays_code;
   var $tel;
   var $fax;
   var $url;
   var $siren;
+
+  var $typent_id;
+  var $effectif_id;
   var $forme_juridique_code;
   var $forme_juridique;
+
   var $client;
   var $fournisseur;
+
   var $code_client;
   var $code_fournisseur;
   var $code_compta;
   var $code_compta_fournisseur;
+
   var $note;
   
   var $stcomm_id;
@@ -79,6 +86,7 @@ class Societe {
     $this->id = $id;
     $this->client = 0;
     $this->fournisseur = 0;
+    $this->typent_id  = 0;
     $this->effectif_id  = 0;
     $this->forme_juridique_code  = 0;
 
@@ -418,9 +426,9 @@ class Societe {
     $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
     $sql .= ",". $this->db->pdate("s.tms")." as date_update";
     $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
-    $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
-    $sql .= ", s.fk_typent";
-    $sql .= ", e.libelle as effectif, e.id as effectif_id";
+    $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique";
+    $sql .= ", s.fk_typent as typent_id";
+    $sql .= ", s.fk_effectif as effectif_id, e.libelle as effectif";
     $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique";
     $sql .= ", s.code_client, s.code_compta, s.parent";
     $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client";
@@ -493,7 +501,10 @@ class Societe {
 	    $this->tva_intra      = $obj->tva_intra;
 	    $this->tva_intra_code = substr($obj->tva_intra,0,2);
 	    $this->tva_intra_num  = substr($obj->tva_intra,2);
-	    $this->typent_id      = $obj->fk_typent;
+
+	    $this->typent_id      = $obj->typent_id;
+	    //$this->typent         = $obj->fk_typent?$obj->typeent:'';
+
 	    $this->effectif_id    = $obj->effectif_id;
 	    $this->effectif       = $obj->effectif_id?$obj->effectif:'';
 
@@ -1016,7 +1027,7 @@ class Societe {
   }
 
     /**
-     *    \brief      Renvoie la liste des types actifs de sociétés
+     *    \brief      Renvoie la liste des libellés traduits types actifs de sociétés
      *    \return     array      tableau des types
      */
     function typent_array()
@@ -1041,7 +1052,7 @@ class Societe {
                 if ($langs->trans($objp->code) != $objp->code)
                     $effs[$objp->id] = $langs->trans($objp->code);
                 else
-                    $effs[$objp->id] = $objp->libelle;
+                    $effs[$objp->id] = $objp->libelle!='-'?$objp->libelle:'';
                 $i++;
             }
             $this->db->free($result);
@@ -1050,67 +1061,61 @@ class Societe {
         return $effs;
     }
 
+    
+    /**
+     *    \brief      Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
+     *    \return     array      tableau des types d'effectifs
+     */
+    function effectif_array()
+    {
+        $effs = array();
+    
+        $sql = "SELECT id, libelle";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
+        $sql .= " ORDER BY id ASC";
+        if ($this->db->query($sql))
+        {
+            $num = $this->db->num_rows();
+            $i = 0;
+    
+            while ($i < $num)
+            {
+                $objp = $this->db->fetch_object();
+                $effs[$objp->id] = $objp->libelle!='-'?$objp->libelle:'';
+                $i++;
+            }
+            $this->db->free();
+        }
+        return $effs;
+    }
+    
+    /**
+     *    \brief      Renvoie la liste des formes juridiques existantes (pas de traduction car unique au pays)
+     *    \return     array      tableau des formes juridiques
+     */
+    function forme_juridique_array()
+    {
+        $fj = array();
+    
+        $sql = "SELECT code, libelle";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+        $sql .= " ORDER BY code ASC";
+        if ($this->db->query($sql))
+        {
+            $num = $this->db->num_rows();
+            $i = 0;
+    
+            while ($i < $num)
+            {
+                $objp = $this->db->fetch_object();
+                $fj[$objp->code] = $objp->libelle!='-'?$objp->libelle:'';
+                $i++;
+            }
+            $this->db->free();
+        }
+        return $fj;
+    }
 
-  /**
-   *    \brief      Renvoie la liste des types d'effectifs possibles
-   *    \return     array      tableau des types d'effectifs
-   */
-	 
-  function effectif_array()
-  {
-    $effs = array();
-    /*
-     * Lignes
-     */      
-    $sql = "SELECT id, libelle";
-    $sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
-    $sql .= " ORDER BY id ASC";
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	  
-	while ($i < $num)
-	  {
-	    $objp = $this->db->fetch_object();
-	    $effs[$objp->id] = $objp->libelle;
-	    $i++;
-	  }
-	$this->db->free();
-      } 
-    return $effs;
-  }
-
-  /**
-   *    \brief      Renvoie la liste des formes juridiques existantes
-   *    \return     array      tableau des formes juridiques
-   */
-	 
-  function forme_juridique_array()
-  {
-    $fj = array();
-    /*
-     * Lignes
-     */      
-    $sql = "SELECT code, libelle";
-    $sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique";
-    $sql .= " ORDER BY code ASC";
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	
-	while ($i < $num)
-	  {
-	    $objp = $this->db->fetch_object();
-	    $fj[$objp->code] = $objp->libelle;
-	    $i++;	  
-	  }
-	$this->db->free();
-      } 
-    return $fj;
-  }
-	
   /**
    *    \brief      Affiche le rib
    */  
