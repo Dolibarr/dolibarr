@@ -87,7 +87,7 @@ Label=Libellé
 Info=Info
 Family=Famille
 Description=Description
-Designation=Designation
+Designation=Désignation
 Action=Action
 About=À propos
 WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et vous êtes connecté(e) en tant que </font> %s
@@ -237,8 +237,8 @@ Legend=Légende
 FillTownFromZip=Renseigner ville
 ShowLog=Afficher historique
 File=Fichier
-ReadPermissionNotAllowed=Permission de lecture non accordée
-AmountInCurrency=Montant exprimés en %s
+ReadPermissionNotAllowed=Lecture non autorisée
+AmountInCurrency=Montants exprimés en %s
 # Countries
 CountryFR=France
 CountryBE=Belgique
