@@ -1054,6 +1054,10 @@ insert into llx_c_actioncomm (id, code, type, libelle) values (10, 'AC_REL',  's
 insert into llx_c_actioncomm (id, code, type, libelle) values (11, 'AC_CLO',  'system', 'Clôture');
 
 alter table llx_actioncomm change percent percent smallint NOT NULL default 0;
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datea (datea);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_soc (fk_soc);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_contact (fk_contact);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_facture (fk_facture);
 
 
 drop table if exists llx_c_ape;
