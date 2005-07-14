@@ -28,15 +28,14 @@
 		\brief      Page d'administration/configuration du module Ldap
 		\version    $Revision$
         \remarks    Exemple configuration :
-                    LDAP_SERVER_HOST    Serveur LDAP		192.168.1.50
-                    LDAP_SERVER_PORT    Port LDAP           123
-                    LDAP_SUFFIX_DN      Suffix LDAP			dc=societe,dc=com
-                    LDAP_ADMIN_DN       Administrateur LDAP	cn=adminldap	
-                    LDAP_ADMIN_PASS     Mot de passe		xxxxxxxx
-                    LDAP_USER_DN        DN des utilisateurs	ou=users
-                    LDAP_GROUP_DN       DN des groupes		ou=groups	
-                    LDAP_CONTACT_DN     DN des contacts		ou=contacts
-                    LDAP_SERVER_TYPE    Type				Openldap
+                    LDAP_SERVER_HOST    Serveur LDAP		      192.168.1.50
+                    LDAP_SERVER_PORT    Port LDAP             389
+                    LDAP_ADMIN_DN       Administrateur LDAP	  cn=adminldap,dc=societe,dc=com	
+                    LDAP_ADMIN_PASS     Mot de passe		      xxxxxxxx
+                    LDAP_USER_DN        DN des utilisateurs	  ou=users,dc=societe,dc=com
+                    LDAP_GROUP_DN       DN des groupes		    ou=groups,dc=societe,dc=com	
+                    LDAP_CONTACT_DN     DN des contacts		    ou=contacts,dc=societe,dc=com
+                    LDAP_SERVER_TYPE    Type				          Openldap
 */
 
 require("./pre.inc.php");
@@ -66,13 +65,15 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
 	('LDAP_SERVER_PORT','".$_POST["port"]."',0);";
 	$db->query($sql);
+  
+  //suppression pour compatibilité divers config ldap
+  //
+  //$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SUFFIX_DN';";
+  //$db->query($sql);
 
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SUFFIX_DN';";
-  $db->query($sql);
-
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-	('LDAP_SUFFIX_DN','".$_POST["suffix"]."',0);";
-  $db->query($sql);
+  //$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	//('LDAP_SUFFIX_DN','".$_POST["suffix"]."',0);";
+  //$db->query($sql);
   
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_ADMIN_DN';";
   $db->query($sql);
@@ -163,14 +164,18 @@ print "</tr>\n";
     {
         print '<tr><td>'.$langs->trans("LDAPServerPort").'</td><td>'.$langs->trans("LDAPServerPortExample").'</td></tr>';
     }
-    if (defined("LDAP_SUFFIX_DN") && LDAP_SUFFIX_DN)
-    {
-        print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.LDAP_SUFFIX_DN.'</td></tr>';
-    }
-    else
-    {
-    	  print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.$langs->trans("LDAPSuffixExample").'</td></tr>';
-    }
+    
+    //suppression pour compatibilité divers config ldap
+    //
+    //if (defined("LDAP_SUFFIX_DN") && LDAP_SUFFIX_DN)
+    //{
+    //    print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.LDAP_SUFFIX_DN.'</td></tr>';
+    //}
+    //else
+    //{
+    //	  print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.$langs->trans("LDAPSuffixExample").'</td></tr>';
+    //}
+    
     if (defined("LDAP_ADMIN_DN") && LDAP_ADMIN_DN)
     {
 		    print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>'.LDAP_ADMIN_DN.'</td></tr>';
@@ -257,9 +262,13 @@ else
 	print '<input size="25" type="text" name="port" value="389">';
 }
 print '</td></tr>';
-print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>';
-print '<input size="25" type="text" name="suffix" value="'.LDAP_SUFFIX_DN.'">';
-print '</td></tr>';
+
+//suppression pour compatibilité divers config ldap
+//
+//print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>';
+//print '<input size="25" type="text" name="suffix" value="'.LDAP_SUFFIX_DN.'">';
+//print '</td></tr>';
+
 print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>';
 print '<input size="25" type="text" name="admin" value="'.LDAP_ADMIN_DN.'">';
 print '</td></tr>';

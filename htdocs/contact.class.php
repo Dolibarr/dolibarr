@@ -232,7 +232,7 @@ class Contact
 	    if ($this->email)
 		  $info["mail"] = $this->email;
 	    
-	    $dn = "cn=".$info["cn"].",".LDAP_CONTACT_DN.",".LDAP_SUFFIX_DN;
+	    $dn = "cn=".$info["cn"].",".LDAP_CONTACT_DN;
 
 	    $r = @ldap_delete($ds, $dn);	   
 
@@ -330,7 +330,7 @@ class Contact
 		  $info["mail"] = $this->email;
 	      }
 	    
-	    $dn = "cn=".$info["cn"].",".LDAP_CONTACT_DN.",".LDAP_SUFFIX_DN;
+	    $dn = "cn=".$info["cn"].",".LDAP_CONTACT_DN;
 
 	    $r = @ldap_delete($ds, $dn);	   
 
@@ -601,7 +601,7 @@ class Contact
 		      {
 		      	$userdn = utf8_encode($this->old_firstname." ".$this->old_name);
 		      }		      
-		      $dn = "cn=".$userdn.",".LDAP_CONTACT_DN.",".LDAP_SUFFIX_DN;
+		      $dn = "cn=".$userdn.",".LDAP_CONTACT_DN;
 		  
 		      $r = @ldap_delete($ds, $dn);
 		      

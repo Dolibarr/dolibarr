@@ -268,22 +268,22 @@ LDAPServer=LDAP Server
 LDAPServerPort=LDAP server port
 LDAPServerPortExample=Default port : 389
 TestConnectLdap=Test connection
-LDAPSuffix=LDAP suffix
-DNAdmin=LDAP Administrator
+#LDAPSuffix=LDAP suffix
+DNAdmin=Administrator' DN
 LDAPPassword=Password
 DNUser=Users' DN
 DNGroup=Groups' DN
 LDAPServerExample=Server adress
-LDAPSuffixExample=ex: dc=company,dc=com
-DNAdminExample=ex: cn=adminldap
+#LDAPSuffixExample=ex: dc=company,dc=com
+DNAdminExample=Complete DN (ex: cn=adminldap,dc=society,dc=com)
 LDAPPasswordExample=Admin password
-DNUserExample=ex: ou=users
-DNGroupExample=ex: ou=groups
+DNUserExample=Complete DN (ex: ou=users,dc=society,dc=com)
+DNGroupExample=Complete DN (ex: ou=groups,dc=society,dc=com)
 DNContactActive=Contacts' synchronization?
 DNContactActiveYes=Activated synchronization
 DNContactActiveExample=Desactivated synchronization
 DNContact=Contacts' DN
-DNContactExample=ex: ou=contacts
+DNContactExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
 TypeExample=OpenLdap, Egroupware or Active Directory
 ##### Propal #####
 PropalSetup=Commercial proposals module setup
@@ -300,3 +300,7 @@ SyslogFilename=File name and path
 ErrorUnknownSyslogConstant=Constant %s is not a known syslog constant
 ##### Donations #####
 DonationsSetup=Donation module setup
+##### Barcode #####
+BarcodeSetup=Barcode setup
+PaperFormatModule=Print' format module
+BarcodeEncodeModule=Barcode' encodage module
