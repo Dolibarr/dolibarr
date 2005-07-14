@@ -63,26 +63,26 @@ if ($socidp)
   $sql .= " AND c.fk_soc = $socidp";
 }
 
-if ( $db->query($sql) ) 
+if ( $db->query($sql) )
 {
-  $langs->load("orders");
-  $num = $db->num_rows();
-  if ($num)
+    $langs->load("orders");
+    $num = $db->num_rows();
+    if ($num)
     {
-      $i = 0;
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="2">'.$langs->trans("OrdersToValid").'</td></tr>';
-      $var = True;
-      while ($i < $num)
-	{
-	  $var=!$var;
-	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td></tr>';
-	  $i++;
-	}
-      print "</table><br>";
+        $i = 0;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
+        $var = True;
+        while ($i < $num)
+        {
+            $var=!$var;
+            $obj = $db->fetch_object();
+            print "<tr $bc[$var]><td nowrap><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a></td></tr>';
+            $i++;
+        }
+        print "</table><br>";
     }
 }
 

@@ -41,7 +41,7 @@ if (!$user->rights->propale->lire)
 	accessforbidden();
 
 if ($conf->projet->enabled) require_once '../project.class.php';
-if($conf->commande->enabled) require_once '../commande/commande.class.php';
+if ($conf->commande->enabled) require_once '../commande/commande.class.php';
 require_once('./propal_model_pdf.class.php');
 require_once('../propal.class.php');
 require_once('../actioncomm.class.php');
@@ -891,19 +891,29 @@ if ($_GET['propalid'])
 
 
 	/*
-	 * Si le module commandes est activé ...
+	 * Commandes rattachées
 	 */
 	if($conf->commande->enabled)
 	{
-		$nb_commande = sizeof($propal->commande_liste_array());
-		if ($nb_commande > 0)
+    	$coms = $propal->associated_orders();
+		if (sizeof($coms) > 0)
 		{
-			$coms = $propal->associated_orders();
-			print '<br><table class="border" width="100%">';
-		    print '<tr><td>Commande(s) rattachée(s)</td></tr>';
-	        for ($i = 0 ; $i < $nb_commande ; $i++)
+        	print '<br>';
+        	print_titre($langs->trans('RelatedOrders'));
+			print '<table class="noborder" width="100%">';
+		    print '<tr class="liste_titre">';
+		    print '<td>'.$langs->trans("Ref").'</td>';
+		    print '<td align="center">'.$langs->trans("Date").'</td>';
+		    print '<td align="right">'.$langs->trans("Price").'</td>';
+		    print '</tr>';
+	        $var=true;
+	        for ($i = 0 ; $i < sizeof($coms) ; $i++)
 			{
-				print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.$coms[$i]->ref."</a></td>\n";
+			    $var=!$var;
+				print '<tr '.$bc[$var].'><td>';
+				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
+				print '<td align="center">'.dolibarr_print_date($coms[$i]->date).'</td>';
+				print '<td align="right">'.$coms[$i]->total_ttc.'</td>';
 				print "</tr>\n";
 			}
 			print '</table>';
@@ -927,11 +937,12 @@ if ($_GET['propalid'])
 			print_titre($langs->trans('ActionsOnPropal'));
 			$i = 0;
 			$total = 0;
+			$var=true;
+
 			print '<table class="border" width="100%">';
 			print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
 			print "\n";
 
-			$var=true;
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($result);

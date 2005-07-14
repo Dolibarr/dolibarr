@@ -612,63 +612,62 @@ else
 
 	      $var=true;
 	      while ($i < $num)
-		{
-		  $objp = $db->fetch_object($result);
-
-          $var=!$var;
-		  print "<tr $bc[$var]>";
-		  if ($objp->fk_product > 0)
-		    {
-		      print '<td>';
-		      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.stripslashes(nl2br($objp->description)).'</a></td>';
-		    }
-		  else
-		    {
-		      print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
-		    }
-		  print '<td align="center">'.$objp->tva_tx.' %</td>';
-		  print '<td align="center">'.$objp->qty.'</td>';
-		  if ($objp->remise_percent > 0)
-		    {
-		      print '<td align="right">'.$objp->remise_percent."%</td>\n";
-		    }
-		  else
-		    {
-		      print '<td>&nbsp;</td>';
-		    }
-		  print '<td align="right">'.price($objp->subprice)."</td>\n";
-		  if ($commande->statut == 0  && $user->rights->commande->creer && $_GET["action"] == '') 
-		    {
-		      print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
-		      print img_edit();
-		      print '</a></td>';
-		      print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
-		      print img_delete();
-		      print '</a></td>';
-		    }
-		  else
-		    {
-		      print '<td>&nbsp;</td><td>&nbsp;</td>';
-		    }
-		  print "</tr>";
-		  
-		  if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
-		    {
-		      print "<form action=\"fiche.php?id=$id\" method=\"post\">";
-		      print '<input type="hidden" name="action" value="updateligne">';
-		      print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
-		      print "<tr $bc[$var]>";
-		      print '<td colspan="2"><textarea name="eldesc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
-		      print '<td align="center"><input size="4" type="text" name="elqty" value="'.$objp->qty.'"></td>';
-		      print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
-		      print '<td align="right"><input size="7" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
-		      print '<td align="right" colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td>';
-		      print '</tr>' . "\n";
-		      print "</form>\n";
-		    }
-		  $i++;
-		  $var=!$var;
-		}	      
+        {
+            $objp = $db->fetch_object($result);
+        
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            if ($objp->fk_product > 0)
+            {
+                print '<td>';
+                print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.stripslashes(nl2br($objp->description)).'</a></td>';
+            }
+            else
+            {
+                print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
+            }
+            print '<td align="center">'.$objp->tva_tx.'%</td>';
+            print '<td align="center">'.$objp->qty.'</td>';
+            if ($objp->remise_percent > 0)
+            {
+                print '<td align="right">'.$objp->remise_percent."%</td>\n";
+            }
+            else
+            {
+                print '<td>&nbsp;</td>';
+            }
+            print '<td align="right">'.price($objp->subprice)."</td>\n";
+            if ($commande->statut == 0  && $user->rights->commande->creer && $_GET["action"] == '')
+            {
+                print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+                print img_edit();
+                print '</a></td>';
+                print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+                print img_delete();
+                print '</a></td>';
+            }
+            else
+            {
+                print '<td>&nbsp;</td><td>&nbsp;</td>';
+            }
+            print "</tr>";
+        
+            if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
+            {
+                print "<form action=\"fiche.php?id=$id\" method=\"post\">";
+                print '<input type="hidden" name="action" value="updateligne">';
+                print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
+                print "<tr $bc[$var]>";
+                print '<td colspan="2"><textarea name="eldesc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
+                print '<td align="center"><input size="4" type="text" name="elqty" value="'.$objp->qty.'"></td>';
+                print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+                print '<td align="right"><input size="7" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
+                print '<td align="right" colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td>';
+                print '</tr>' . "\n";
+                print "</form>\n";
+            }
+            $i++;
+        }      
 	      $db->free();
 	    } 
 	else
@@ -736,7 +735,8 @@ else
 
 	    print "</form>";
 	  }
-	print "</table><br>";
+	print "</table>";
+
 	/*
 	 * Fin Ajout ligne
 	 *
@@ -776,7 +776,7 @@ else
             $nb_expedition = $commande->nb_expedition();
             if ($user->rights->commande->valider && $nb_expedition == 0)
             {
-                print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans("Cancel").'</a>';
+                print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans("CancelOrder").'</a>';
             }
         }
     
@@ -786,6 +786,75 @@ else
 
 
 	print '<table width="100%"><tr><td width="50%" valign="top">';
+
+	/*
+	 * Documents générés
+	 *
+	 */
+	$file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
+	$relativepath = $commande->ref."/".$commande->ref.".pdf";
+    
+	$var=true;
+	
+	if (file_exists($file))
+	  {
+
+	    print_titre($langs->trans("Documents"));
+	    print '<table width="100%" class="border">';
+	    
+	    print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
+        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
+	    print '<td align="right">'.filesize($file). ' bytes</td>';
+	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+	    print '</tr>';
+	           	
+	    print "</table>\n";
+
+        print '<br>';
+	  }
+
+	/*
+	 * Liste des factures
+	 */
+	$sql = "SELECT f.rowid,f.facnumber, f.total_ttc, ".$db->pdate("f.datef")." as df";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."co_fa as cf";
+	$sql .= " WHERE f.rowid = cf.fk_facture AND cf.fk_commande = ". $commande->id;
+	    
+	$result = $db->query($sql);
+	if ($result)
+	  {
+	    $num = $db->num_rows($result);
+	    if ($num)
+	      {
+		print_titre($langs->trans("RelatedBills"));
+		$i = 0; $total = 0;
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td>'.$langs->trans("Ref")."</td>";
+		print '<td align="center">'.$langs->trans("Date").'</td>';
+		print '<td align="right">'.$langs->trans("Price").'</td>';
+		print "</tr>\n";
+		
+		$var=True;
+		while ($i < $num)
+		  {
+		    $objp = $db->fetch_object($result);
+		    $var=!$var;
+		    print "<tr $bc[$var]>";
+		    print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
+		    print '<td align="center">'.dolibarr_print_date($objp->df).'</td>';
+		    print '<td align="right">'.$objp->total_ttc.'</td></tr>';
+		    $i++;
+		  }
+		print "</table>";
+	      }
+	  }
+	else
+	  {
+	    dolibarr_print_error($db);
+	  }
+
+
+    print '</td><td valign="top" width="50%">';
 
 	/*
 	 * Liste des expéditions
@@ -822,69 +891,9 @@ else
     {
         dolibarr_print_error($db);
     }
-	print "&nbsp;</td><td>";
-	
-	/*
-	 * Liste des factures
-	 */
-	$sql = "SELECT f.rowid,f.facnumber,".$db->pdate("f.datef")." as df";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."co_fa as cf";
-	$sql .= " WHERE f.rowid = cf.fk_facture AND cf.fk_commande = ". $commande->id;
-	    
-	$result = $db->query($sql);
-	if ($result)
-	  {
-	    $num = $db->num_rows($result);
-	    if ($num)
-	      {
-		print_titre($langs->trans("Bills"));
-		$i = 0; $total = 0;
-		print '<table class="border" width="100%">';
-		print "<tr $bc[$var]><td>".$langs->trans("Bill")."</td><td>".$langs->trans("Date")."</td></tr>\n";
-		
-		$var=True;
-		while ($i < $num)
-		  {
-		    $objp = $db->fetch_object($result);
-		    $var=!$var;
-		    print "<tr $bc[$var]>";
-		    print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
-		    print "<td>".dolibarr_print_date($objp->df)."</td></tr>\n";
-		    $i++;
-		  }
-		print "</table>";
-	      }
-	  }
-	else
-	  {
-	    dolibarr_print_error($db);
-	  }
-	print "&nbsp;</td></tr></table>";
 
-	/*
-	 * Documents générés
-	 *
-	 */
-	$file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
-	$relativepath = $commande->ref."/".$commande->ref.".pdf";
-    
-	$var=true;
-	
-	if (file_exists($file))
-	  {
+	print "</td></tr></table>";
 
-	    print_titre($langs->trans("Documents"));
-	    print '<table width="100%" class="border">';
-	    
-	    print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
-        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
-	    print '<td align="right">'.filesize($file). ' bytes</td>';
-	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-	    print '</tr>';
-	           	
-	    print "</table>\n";
-	    print '</td><td valign="top" width="50%">';
-	  }
 
 	/*
 	 * Classe la commande dans un projet

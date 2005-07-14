@@ -211,11 +211,11 @@ if ($_GET["id"] > 0)
 		{
 		  print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
 		}
-	      print '<td align="center">'.$objp->tva_tx.' %</td>';
+	      print '<td align="center">'.$objp->tva_tx.'%</td>';
 	      print '<td align="center">'.$objp->qty.'</td>';
 	      if ($objp->remise_percent > 0)
 		{
-		  print '<td align="right">'.$objp->remise_percent." %</td>\n";
+		  print '<td align="right">'.$objp->remise_percent."%</td>\n";
 		}
 	      else
 		{
@@ -226,7 +226,6 @@ if ($_GET["id"] > 0)
 	      print "</tr>";	      
 
 	      $i++;
-	      $var=!$var;
 	    }	      
 	  $db->free($result);
 	} 
@@ -236,11 +235,8 @@ if ($_GET["id"] > 0)
 	}
       print '</table>';
       
-      /*
-       *
-       *
-       */
-      print '<br></div>';
+      print '</div>';
+
 
       /*
        * Barre d'actions
@@ -264,6 +260,8 @@ if ($_GET["id"] > 0)
 	}
 
 
+    print "<table width=\"100%\"><tr><td width=\"50%\" valign=\"top\">";
+
 
       /*
        * Documents générés
@@ -276,7 +274,6 @@ if ($_GET["id"] > 0)
       	
       if (file_exists($file))
 	{
-	  print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
 	  print_titre($langs->trans("Documents"));
 	  print '<table width="100%" class="border">';
 	  
@@ -287,75 +284,89 @@ if ($_GET["id"] > 0)
 	  print '</tr>';
 	  
 	  print "</table>\n";
-	  print '</td><td valign="top" width="50%">';
-	  /*
-	   *
-	   *
-	   */
-	  print "</td></tr></table>";
+
 	}
 
-      /*
-       * Factures associees
-       */
-      $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."co_fa as fp WHERE fp.fk_facture = f.rowid AND fp.fk_commande = ".$commande->id;
-      
-      if ($db->query($sql))
-	{
-	  $num_fac_asso = $db->num_rows();
-	  $i = 0; $total = 0;
+	/*
+	 * Liste des factures
+	 */
+	$sql = "SELECT f.rowid,f.facnumber, f.total_ttc, ".$db->pdate("f.datef")." as df";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."co_fa as cf";
+	$sql .= " WHERE f.rowid = cf.fk_facture AND cf.fk_commande = ". $commande->id;
+	    
+	$result = $db->query($sql);
+	if ($result)
+	  {
+	    $num = $db->num_rows($result);
+	    if ($num)
+	      {
+        print '<br>';
+		print_titre($langs->trans("RelatedBills"));
+		$i = 0; $total = 0;
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td>'.$langs->trans("Ref")."</td>";
+		print '<td align="center">'.$langs->trans("Date").'</td>';
+		print '<td align="right">'.$langs->trans("Price").'</td>';
+		print "</tr>\n";
+		
+		$var=True;
+		while ($i < $num)
+		  {
+		    $objp = $db->fetch_object($result);
+		    $var=!$var;
+		    print "<tr $bc[$var]>";
+		    print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
+		    print '<td align="center">'.dolibarr_print_date($objp->df).'</td>';
+		    print '<td align="right">'.$objp->total_ttc.'</td></tr>';
+		    $i++;
+		  }
+		print "</table>";
+	      }
+	  }
+	else
+	  {
+	    dolibarr_print_error($db);
+	  }
 
-	  if ($num_fac_asso)
-	    {
-	      $var=false;
-	      print "<br>";
+    print '</td><td valign="top" width="50%">';
 
-		  print_titre($langs->trans("Bills"));
+	/*
+	 * Liste des expéditions
+	 */
+	$sql = "SELECT e.rowid,e.ref,".$db->pdate("e.date_expedition")." as de";
+	$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
+	$sql .= " WHERE e.fk_commande = ". $commande->id;
+	    
+    $result = $db->query($sql);
+    if ($result)
+    {
+        $num = $db->num_rows($result);
+        if ($num)
+        {
+            print_titre($langs->trans("Sendings"));
+            $i = 0; $total = 0;
+            print '<table class="border" width="100%">';
+            print "<tr $bc[$var]><td>".$langs->trans("Sendings")."</td><td>".$langs->trans("Date")."</td></tr>\n";
+    
+            $var=True;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
+                $var=!$var;
+                print "<tr $bc[$var]>";
+                print '<td><a href="../expedition/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' '.$objp->ref.'</a></td>';
+                print "<td>".dolibarr_print_date($objp->de)."</td></tr>\n";
+                $i++;
+            }
+            print "</table>";
+        }
+    }
+    else
+    {
+        dolibarr_print_error($db);
+    }
 
-	      print '<table class="border" width="100%">';
-	      print "<tr $bc[$var]><td>".$langs->trans("Ref").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Author").'</td>';
-	      print '<td align="right">'.$langs->trans("Price").'</td>';
-	      print "</tr>\n";
-	      
-	      $var=True;
-	      while ($i < $num_fac_asso)
-		{
-		  $objp = $db->fetch_object();
-		  $var=!$var;
-		  print "<tr $bc[$var]>";
-		  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a>';
-		  if ($objp->paye)
-		    { 
-		      print " (<b>pay&eacute;e</b>)";
-		    } 
-		  print "</td>\n";
-		  print "<td>".dolibarr_print_date($objp->df)."</td>\n";
-		  if ($objp->fk_user_author <> $user->id)
-		    {
-		      $fuser = new User($db, $objp->fk_user_author);
-		      $fuser->fetch();
-		      print "<td>".$fuser->fullname."</td>\n";
-		    }
-		  else
-		    {
-		      print "<td>".$user->fullname."</td>\n";
-		    }
-		  print '<td align="right">'.price($objp->total).'</td>';
-		  print "</tr>";
-		  $total = $total + $objp->total;
-		  $i++;
-		}
-	      print "<tr $bc[$var]><td align=\"right\" colspan=\"4\">".$langs->trans("TotalHT").": <b>$total</b> ".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
-	      print "</table>";
-	    }
-	  $db->free();
-	}
-      else
-	{
-	  dolibarr_print_error($db);
-	}
-
+	print "</td></tr></table>";   
 	  
     }
   else

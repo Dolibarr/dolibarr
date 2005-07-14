@@ -1311,24 +1311,20 @@ else
 
             }
 
+            print '<table width="100%"><tr><td width="50%" valign="top">';
+
             /*
              * Documents générés
-             *
              * Le fichier de facture détaillée est de la forme
-             *
              * REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
-             *
              */
 
             $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
             $facref = str_replace($forbidden_chars,"_",$fac->ref);
             $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
-
             $relativepath = "${facref}/${facref}.pdf";
 
             $var=true;
-
-            print '<table width="100%"><tr><td width="50%" valign="top">';
 
             if (file_exists($file))
             {
@@ -1362,6 +1358,53 @@ else
                 }
                 print "</table>\n";
             }
+
+
+            /*
+             *   Propales
+             */
+            $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.price, p.ref, p.rowid as propalid";
+            $sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
+
+            $resql = $db->query($sql);
+            if ($resql)
+            {
+                $num = $db->num_rows($resql);
+                if ($num)
+                {
+                    $i = 0; $total = 0;
+                    print "<br>";
+                    print_titre($langs->trans("RelatedCommercialProposals"));
+
+                    print '<table class="noborder" width="100%">';
+                    print '<tr class="liste_titre">';
+                    print '<td>'.$langs->trans("Ref").'</td>';
+                    print '<td>'.$langs->trans("Date").'</td>';
+                    print '<td align="right">'.$langs->trans("Price").'</td>';
+                    print "</tr>\n";
+
+                    $var=True;
+                    while ($i < $num)
+                    {
+                        $objp = $db->fetch_object($resql);
+                        $var=!$var;
+                        print "<tr $bc[$var]>";
+                        print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>';
+                        print "<td>".dolibarr_print_date($objp->dp)."</td>\n";
+                        print '<td align="right">'.price($objp->price).'</td>';
+                        print "</tr>";
+                        $total = $total + $objp->price;
+                        $i++;
+                    }
+                    print "<tr class=\"liste_total\"><td>&nbsp;</td><td align=\"left\">".$langs->trans("TotalHT")."</td><td align=\"right\">".price($total)."</td></tr>\n";
+                    print "</table>";
+                }
+            }
+            else
+            {
+                dolibarr_print_error($db);
+            }
+
 
             print '</td><td valign="top" width="50%">';
 
@@ -1506,51 +1549,6 @@ else
                 print '<br>';
             }
 
-            /*
-             *   Propales
-             */
-
-            $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.price, p.ref, p.rowid as propalid";
-            $sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
-
-            $resql = $db->query($sql);
-            if ($resql)
-            {
-                $num = $db->num_rows($resql);
-                if ($num)
-                {
-                    $i = 0; $total = 0;
-                    print "<br>";
-                    print_titre($langs->trans("RelatedCommercialProposals"));
-
-                    print '<table class="noborder" width="100%">';
-                    print '<tr class="liste_titre">';
-                    print '<td>'.$langs->trans("Ref").'</td>';
-                    print '<td>'.$langs->trans("Date").'</td>';
-                    print '<td align="right">'.$langs->trans("Price").'</td>';
-                    print "</tr>\n";
-
-                    $var=True;
-                    while ($i < $num)
-                    {
-                        $objp = $db->fetch_object($resql);
-                        $var=!$var;
-                        print "<tr $bc[$var]>";
-                        print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>';
-                        print "<td>".dolibarr_print_date($objp->dp)."</td>\n";
-                        print '<td align="right">'.price($objp->price).'</td>';
-                        print "</tr>";
-                        $total = $total + $objp->price;
-                        $i++;
-                    }
-                    print "<tr class=\"liste_total\"><td>&nbsp;</td><td align=\"left\">".$langs->trans("TotalHT")."</td><td align=\"right\">".price($total)."</td></tr>\n";
-                    print "</table>";
-                }
-            }
-            else
-            {
-                dolibarr_print_error($db);
-            }
         }
         else
         {

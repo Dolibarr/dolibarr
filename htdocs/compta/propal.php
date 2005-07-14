@@ -32,9 +32,9 @@ require("./pre.inc.php");
 $user->getrights('facture');
 $user->getrights('propale');
 if (!$user->rights->propale->lire)
-accessforbidden();
+    accessforbidden();
 
-
+if ($conf->commande->enabled) require_once '../commande/commande.class.php';
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 require_once("../project.class.php");
 require_once("../propal.class.php");
@@ -486,6 +486,37 @@ if ($_GET["propalid"])
 		print '</form>';
 	}
 	
+	
+	/*
+	 * Commandes rattachées
+	 */
+	if($conf->commande->enabled)
+	{
+    	$coms = $propal->associated_orders();
+		if (sizeof($coms) > 0)
+		{
+        	print '<br>';
+        	print_titre($langs->trans('RelatedOrders'));
+			print '<table class="noborder" width="100%">';
+		    print '<tr class="liste_titre">';
+		    print '<td>'.$langs->trans("Ref").'</td>';
+		    print '<td align="center">'.$langs->trans("Date").'</td>';
+		    print '<td align="right">'.$langs->trans("Price").'</td>';
+		    print '</tr>';
+	        $var=true;
+	        for ($i = 0 ; $i < sizeof($coms) ; $i++)
+			{
+			    $var=!$var;
+				print '<tr '.$bc[$var].'><td>';
+				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
+				print '<td align="center">'.dolibarr_print_date($coms[$i]->date).'</td>';
+				print '<td align="right">'.$coms[$i]->total_ttc.'</td>';
+				print "</tr>\n";
+			}
+			print '</table>';
+		}
+	}
+
 
     /*
      * Factures associees
@@ -504,8 +535,7 @@ if ($_GET["propalid"])
         print '<table class="noborder" width="100%">';
         print "<tr class=\"liste_titre\">";
         print '<td>'.$langs->trans("Ref").'</td>';
-        print '<td>'.$langs->trans("Date").'</td>';
-        print '<td>'.$langs->trans("Author").'</td>';
+        print '<td align="center">'.$langs->trans("Date").'</td>';
         print '<td align="right">'.$langs->trans("Price").'</td>';
         print "</tr>\n";
 
@@ -521,68 +551,65 @@ if ($_GET["propalid"])
                 print " (<b>pay&eacute;e</b>)";
             }
             print "</td>\n";
-            print "<td>".dolibarr_print_date($objp->df)."</td>\n";
-            if ($objp->fk_user_author <> $user->id)
-            {
-                $fuser = new User($db, $objp->fk_user_author);
-                $fuser->fetch();
-                print "<td>".$fuser->fullname."</td>\n";
-            }
-            else
-            {
-                print "<td>".$user->fullname."</td>\n";
-            }
+            print '<td align="center">'.dolibarr_print_date($objp->df).'</td>';
             print '<td align="right">'.price($objp->total).'</td>';
             print "</tr>";
             $total = $total + $objp->total;
             $i++;
         }
-        print "<tr class=\"liste_total\"><td align=\"right\" colspan=\"3\">".$langs->trans("TotalHT")."</td><td align=\"right\">".price($total)."</td></tr>\n";
+        print "<tr class=\"liste_total\"><td align=\"right\" colspan=\"2\">".$langs->trans("TotalHT")."</td><td align=\"right\">".price($total)."</td></tr>\n";
         print "</table>";
         $db->free();
-    }
-
-    /*
-     * Commandes associées
-     */
-    if($conf->commande->enabled)
-    {
-        $nb_commande = sizeof($propal->commande_liste_array());
-        if ($nb_commande > 0)
-        {
-            $coms = $propal->commande_liste_array();
-            print '<br><table class="border" width="100%">';
-
-            if ($nb_commande == 1)
-            {
-                print "<tr><td>Commande rattachée : ";
-                print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">';
-                print img_file();
-                print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a>";
-                print "</td></tr>\n";
-            }
-            else
-            {
-                print "<tr><td>Commandes rattachées</td></tr>\n";
-
-                for ($i = 0 ; $i < $nb_commande ; $i++)
-                {
-                    print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
-                    print "</tr>\n";
-                }
-            }
-            print "</table>";
-        }
     }
 
 
 	print '</td><td valign="top" width="50%">';
 
-    // \todo Mettre ici les traces des envois par mail
-    
-    
-    
-    
+
+	/*
+	 * Liste des actions propres à la propal
+	 */
+	$sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
+	$sql .= ' WHERE a.fk_soc = '.$obj->idp.' AND a.propalrowid = '.$propal->id ;
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		if ($num)
+		{
+			print_titre($langs->trans('ActionsOnPropal'));
+			$i = 0;
+			$total = 0;
+			$var=true;
+
+			print '<table class="border" width="100%">';
+			print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
+			print "\n";
+
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($result);
+				$var=!$var;
+				print '<tr '.$bc[$var].'>';
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
+				print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
+				print '<td>'.stripslashes($objp->label).'</td>';
+				$authoract = new User($db);
+				$authoract->id = $objp->fk_user_author;
+				$authoract->fetch('');
+				print '<td>'.$authoract->code.'</td>';
+				print "</tr>\n";
+				$i++;
+			}
+			print '</table>';
+		}
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
+
 
     print '</td></tr></table>';
     
