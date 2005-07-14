@@ -22,22 +22,23 @@
 
 create table llx_user
 (
-  rowid         integer AUTO_INCREMENT PRIMARY KEY,
-  datec         datetime,
-  tms           timestamp,
-  login         varchar(8),
-  pass          varchar(32),
-  name          varchar(50),
-  firstname     varchar(50),
-  code          varchar(4),
-  email         varchar(255),
-  admin         smallint DEFAULT 0,
-  webcal_login  varchar(25),
-  module_comm   smallint DEFAULT 1,
-  module_compta smallint DEFAULT 1,
-  fk_societe    integer DEFAULT 0,
-  fk_socpeople  integer DEFAULT 0,
-  note          text,
-
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  datec             datetime,
+  tms               timestamp,
+  login             varchar(8),
+  pass              varchar(32),
+  name              varchar(50),
+  firstname         varchar(50),
+  code              varchar(4),
+  email             varchar(255),
+  admin             smallint DEFAULT 0,
+  webcal_login      varchar(25),
+  module_comm       smallint DEFAULT 1,
+  module_compta     smallint DEFAULT 1,
+  fk_societe        integer DEFAULT 0,
+  fk_socpeople      integer DEFAULT 0,
+  note              text,
+  datelastaccess    datetime,
+  
   UNIQUE INDEX(login)
 )type=innodb;

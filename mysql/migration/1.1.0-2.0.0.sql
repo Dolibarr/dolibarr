@@ -219,6 +219,7 @@ alter table llx_boxes add box_order smallint default 0 NOT NULL;
 
 alter table llx_user drop column module_comm;
 alter table llx_user drop column module_compta;
+alter table llx_user add datelastaccess datetime;
 
 alter table llx_user_rights add rowid integer AUTO_INCREMENT PRIMARY KEY;
 

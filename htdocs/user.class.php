@@ -60,7 +60,8 @@ class User
   var $datem;
   var $societe_id;
   var $webcal_login;
- 
+  var $datelastaccess;
+  
   var $error;
   var $userpref_limite_liste;
   var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
@@ -95,79 +96,82 @@ class User
 	 
   function fetch($login='')
     {
-      $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note, u.fk_societe, u.fk_socpeople";
-      $sql .= ", ".$this->db->pdate("u.datec")." as datec, ".$this->db->pdate("u.tms")." as datem";
-      $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-      if ($this->id)
-	{
-	  $sql .= " WHERE u.rowid = $this->id";
-	}
-      else
-	{
-	  $sql .= " WHERE u.login = '$login'";
-	}
-      
-      $result = $this->db->query($sql);
-
-      if ($result) 
-	{
-	  if ($this->db->num_rows($result)) 
-	    {
-	      $obj = $this->db->fetch_object($result);
-	      $this->id = $obj->rowid;
-	      $this->nom = stripslashes($obj->name);
-	      $this->prenom = stripslashes($obj->firstname);
-	      
-	      $this->fullname = $this->prenom . ' ' . $this->nom;
-	      $this->code = $obj->code;
-	      $this->login = $obj->login;
-	      $this->pass  = $obj->pass;
-	      $this->email = $obj->email;
-	      $this->admin = $obj->admin;
-	      $this->contact_id = $obj->fk_socpeople;
-	      $this->note = stripslashes($obj->note);
-	      $this->lang = 'fr_FR';    // \todo Gérer la langue par défaut d'un utilisateur Dolibarr
-	      	      
-	      $this->datec  = $obj->datec;
-	      $this->datem  = $obj->datem;
-
-	      $this->webcal_login = $obj->webcal_login;
-	      
-	      $this->societe_id = $obj->fk_societe;
-	    }
-	  $this->db->free($result);
-	  
-	}
-      else
-	{
-    	  dolibarr_print_error($this->db);
-	}
-
-    if (isset($_SERVER['SCRIPT_URL'])) {
-          // \todo  $_SERVER['SCRIPT_URL'] n'existe pas sous tout os/server web
-          $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
-          $sql .= " WHERE fk_user = ".$this->id;
-          $sql .= " AND page = '".$_SERVER['SCRIPT_URL']."'";
-    
-          $result=$this->db->query($sql);
-          if ($result);
-    	{
-    	  $num = $this->db->num_rows($result);
-    	  $i = 0;
-    	  $page_param_url = '';
-    	  $this->page_param = array();
-    	  while ($i < $num)
-    	    {
-    	      $obj = $this->db->fetch_object($result);
-    	      $this->page_param[$obj->param] = $obj->value;
-    	      $page_param_url .= $obj->param . "=".$obj->value."&amp;";
-    	      $i++;
-    	    }
-    	  $this->page_param_url = $page_param_url;
-    	  $this->db->free($result);
-    	}
-    } 
-  }
+        $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
+        $sql.= " u.fk_societe, u.fk_socpeople,";
+        $sql.= " ".$this->db->pdate("u.datec")." as datec, ".$this->db->pdate("u.tms")." as datem,";
+        $sql.= " ".$this->db->pdate("u.datelastaccess")." as datel";
+        $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+        if ($this->id)
+        {
+            $sql .= " WHERE u.rowid = $this->id";
+        }
+        else
+        {
+            $sql .= " WHERE u.login = '$login'";
+        }
+        
+        $result = $this->db->query($sql);
+        
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+                $this->id = $obj->rowid;
+                $this->nom = stripslashes($obj->name);
+                $this->prenom = stripslashes($obj->firstname);
+        
+                $this->fullname = $this->prenom . ' ' . $this->nom;
+                $this->code = $obj->code;
+                $this->login = $obj->login;
+                $this->pass  = $obj->pass;
+                $this->email = $obj->email;
+                $this->admin = $obj->admin;
+                $this->contact_id = $obj->fk_socpeople;
+                $this->note = stripslashes($obj->note);
+                $this->lang = 'fr_FR';    // \todo Gérer la langue par défaut d'un utilisateur Dolibarr
+        
+                $this->datec  = $obj->datec;
+                $this->datem  = $obj->datem;
+                $this->datelastaccess = $obj->datel;
+        
+                $this->webcal_login = $obj->webcal_login;
+        
+                $this->societe_id = $obj->fk_societe;
+            }
+            $this->db->free($result);
+        
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+        
+        if (isset($_SERVER['SCRIPT_URL'])) {
+            // \todo  $_SERVER['SCRIPT_URL'] n'existe pas sous tout os/server web
+            $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
+            $sql .= " WHERE fk_user = ".$this->id;
+            $sql .= " AND page = '".$_SERVER['SCRIPT_URL']."'";
+        
+            $result=$this->db->query($sql);
+            if ($result);
+            {
+                $num = $this->db->num_rows($result);
+                $i = 0;
+                $page_param_url = '';
+                $this->page_param = array();
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($result);
+                    $this->page_param[$obj->param] = $obj->value;
+                    $page_param_url .= $obj->param . "=".$obj->value."&amp;";
+                    $i++;
+                }
+                $this->page_param_url = $page_param_url;
+                $this->db->free($result);
+            }
+        }
+    }
   
   /**
    *    \brief      Ajoute un droit a l'utilisateur
