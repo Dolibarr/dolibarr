@@ -82,7 +82,7 @@ $var=false;
 print '<form action="const.php" method="POST">';
 print '<input type="hidden" name="action" value="add">';
 
-print "<tr $bc[$var] class=value><td><input type=\"text\" class=\"flat\" size=\"15\" name=\"constname\" value=\"\"></td>\n";
+print "<tr $bc[$var] class=value><td><input type=\"text\" class=\"flat\" size=\"24\" name=\"constname\" value=\"\"></td>\n";
 
 print '<td>';
 print '<input type="text" class="flat" size="30" name="constvalue" value="">';
