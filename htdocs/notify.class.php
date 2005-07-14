@@ -18,111 +18,115 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/notify.class.php
-   \brief      Fichier de la classe de gestion des notifications
-   \version    $Revision$
+        \file       htdocs/notify.class.php
+        \brief      Fichier de la classe de gestion des notifications
+        \version    $Revision$
 */
 
 
-/**	
-   \class      Notify
-   \brief      Classe de gestion des notifications
+/**
+        \class      Notify
+        \brief      Classe de gestion des notifications
 */
 
 class Notify
 {
-  var $id;
-  var $db;
-  var $socidp;
-  var $author;
-  var $ref;
-  var $date;
-  var $duree;
-  var $note;
-  var $projet_id;
+    var $id;
+    var $db;
+    var $error;
 
-  function Notify($DB)
+    var $socidp;
+    var $author;
+    var $ref;
+    var $date;
+    var $duree;
+    var $note;
+    var $projet_id;
+
+
+
+    /**
+     *    \brief      Constructeur
+     *    \param      DB      Handler accès base
+     */
+    function Notify($DB)
     {
-      $this->db = $DB ;
-      include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+        $this->db = $DB ;
+        include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
     }
 
-  /*
-   *
-   *
-   *
-   */
-	 
-  function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
+
+    /**
+     *    \brief      Envoi mail et sauve trace
+     *
+     */
+    function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
     {
-      $sql = "SELECT s.nom, c.email, c.idp, c.name, c.firstname, a.titre,n.rowid";
-      $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
-      $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
-      $sql .= " AND n.fk_soc = s.idp AND n.fk_action = ".$action;
-      $sql .= " AND s.idp = ".$socid;
+        global $conf,$langs;
 
-      $result = $this->db->query($sql);
-      if ($result)
-	{
-	  $num = $this->db->num_rows();
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $obj = $this->db->fetch_object($result);
+        $sql = "SELECT s.nom, c.email, c.idp, c.name, c.firstname, a.titre,n.rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
+        $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
+        $sql .= " AND n.fk_soc = s.idp AND n.fk_action = ".$action;
+        $sql .= " AND s.idp = ".$socid;
 
-	      $sendto = $obj->firstname . " " . $obj->name . " <".$obj->email.">";
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
 
-	      if (strlen($sendto))
-		{	  
-		  $subject = "Notification Dolibarr";
-		  $message = $texte;
-		  $filename = split("/",$file);
-		  $replyto = MAIN_MAIL_FROM;
-	  
-		  $mailfile = new CMailFile($subject,
-					    $sendto,
-					    $replyto,
-					    $message,
-					    array($file),
-					    array("application/pdf"),
-					    array($filename[sizeof($filename)-1])
-					    );
-	  
-		  if ( $mailfile->sendfile() )
-		    {
-		      $sendto = htmlentities($sendto);
-	      
-		      $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id)";
-		      $sql .= " VALUES (now(), $action ,$obj->idp , '$objet_type', $objet_id);";
-		      $db2 = $this->db->dbclone();
-		      if (! $db2->query($sql) )
-			{
-			  print $db2->error();
-			  print "<p>$sql</p>";
-			}
+                $sendto = $obj->firstname . " " . $obj->name . " <".$obj->email.">";
 
-		    }
-		  else
-		    {
-		      print "envoi failed";
-		    }
-		}
-	      $i++;
-	    }
-	}
-      else
-	{
-	  print $this->db->error();
-	}
-      /*
-       *  Insertion dans la base de la trace
-       */
+                if (strlen($sendto))
+                {
+                    $subject = $langs->trans("DolibarrNotififcation");
+                    $message = $texte;
+                    $filename = split("/",$file);
+                    $replyto = $conf->email_from;
+
+                    $mailfile = new CMailFile($subject,
+                    $sendto,
+                    $replyto,
+                    $message,
+                    array($file),
+                    array("application/pdf"),
+                    array($filename[sizeof($filename)-1])
+                    );
+
+                    if ( $mailfile->sendfile() )
+                    {
+                        $sendto = htmlentities($sendto);
+
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id)";
+                        $sql .= " VALUES (now(), $action ,$obj->idp , '$objet_type', $objet_id);";
+                        if (! $db->query($sql) )
+                        {
+                            dolibarr_print_error($db);
+                        }
+
+                    }
+                    else
+                    {
+                        $this->error=$mailfile->error;
+                    }
+                }
+                $i++;
+            }
+        }
+        else
+        {
+            $this->error=$this->db->error();
+        }
 
     }
 
-}    
+}
+
 ?>
