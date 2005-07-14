@@ -22,16 +22,17 @@
  */
 
 /**
-   \file       htdocs/product/index.php
-   \ingroup    product
-   \brief      Page accueil des produits et services
-   \version    $Revision$
+        \file       htdocs/product/index.php
+        \ingroup    product
+        \brief      Page accueil des produits et services
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 if (!$user->rights->produit->lire)
   accessforbidden();
+
 
 /*
  * Affichage page accueil
@@ -106,9 +107,11 @@ print '</td><td valign="top" width="70%">';
 /*
  * Derniers produits/services en vente
  */
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type FROM ".MAIN_DB_PREFIX."product as p WHERE envente=1";
-$sql .= " ORDER BY p.datec DESC ";
-$sql .= $db->plimit(15 ,0);
+$max=15;
+$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.envente";
+$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+$sql.= " ORDER BY p.datec DESC ";
+$sql.= $db->plimit($max,0);
 $result = $db->query($sql) ;
 
 if ($result)
@@ -124,7 +127,7 @@ if ($result)
     {
       print '<table class="noborder" width="100%">';
 
-      print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastRecorded").'</td></tr>';
+      print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastRecordedProducts",$max).'</td></tr>';
     
       $var=True;
       while ($i < $num)
@@ -138,6 +141,7 @@ if ($result)
 	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
 	  print "<td>$objp->label</td>";
 	  print "<td>".$typeprodser[$objp->fk_product_type]."</td>";
+	  print '<td align="center">'.($objp->envente?$langs->trans("OnSell"):$langs->trans("NotOnSell"))."</td>";
 	  print "</tr>\n";
 	  $i++;
 	}
