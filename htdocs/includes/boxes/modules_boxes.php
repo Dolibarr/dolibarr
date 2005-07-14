@@ -36,7 +36,7 @@
 
 class ModeleBoxes
 {
-    var $MAXLENGTHBOX=70;   // Mettre 0 pour pas de limite
+    var $MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
   
     var $error='';
 
@@ -102,13 +102,16 @@ class ModeleBoxes
                         print img_object($langs->trans("Show"),$logo);
                         print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'">';
                     }
-                    if ($this->MAXLENGTHBOX && strlen($textewithnotags) > $this->MAXLENGTHBOX)
+                    $maxlength=$this->MAXLENGTHBOX;
+                    if (isset($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
+                                        
+                    if ($maxlength && strlen($textewithnotags) > $maxlength)
                     {
-                        $texte=substr($texte,0,$this->MAXLENGTHBOX)."...";
+                        $texte=substr($texte,0,$maxlength)."...";
                     }
-                    if ($this->MAXLENGTHBOX && strlen($texte2withnotags) > $this->MAXLENGTHBOX)
+                    if ($maxlength && strlen($texte2withnotags) > $maxlength)
                     {
-                        $texte2=substr($texte2,0,$this->MAXLENGTHBOX)."...";
+                        $texte2=substr($texte2,0,$maxlength)."...";
                     }
                     print $texte;
                     if ($contents[$i][$j]['url']) print '</a>';

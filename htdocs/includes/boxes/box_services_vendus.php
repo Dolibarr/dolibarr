@@ -22,9 +22,9 @@
  */
 
 /**
-    \file       htdocs/includes/boxes/box_services_vendus.php
-    \ingroup    produits,services
-    \brief      Module de génération de l'affichage de la box services_vendus
+        \file       htdocs/includes/boxes/box_services_vendus.php
+        \ingroup    produits,services
+        \brief      Module de génération de l'affichage de la box services_vendus
 */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -89,10 +89,12 @@ class box_services_vendus extends ModeleBoxes {
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => ($objp->fk_product_type?'object_service':'object_product'),
                     'text' => $objp->label,
+                    'maxlength' => 16,
                     'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
     
                     $this->info_box_contents[$i][1] = array('align' => 'left',
                     'text' => $objp->nom,
+                    'maxlength' => 48,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
     
                     $i++;
