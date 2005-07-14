@@ -64,7 +64,7 @@ llxHeader();
  *
  */
 
-$sql = "SELECT s.nom as societe, s.idp as socidp, s.client, a.id,".$db->pdate("a.datea")." as da, a.datea, c.code as acode, c.libelle, u.code, a.fk_contact, a.note, a.percent as percent";
+$sql = "SELECT s.nom as societe, s.idp as socidp, s.client, a.id,".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, u.code, a.fk_contact, a.note, a.percent as percent";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
 if ($_GET["type"])
