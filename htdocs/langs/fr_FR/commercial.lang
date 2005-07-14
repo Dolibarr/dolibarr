@@ -33,6 +33,7 @@ LastDoneTasks=Les %s dernières actions effectuées
 LastRecordedTasks=Dernières actions enregistrées
 DoneActions=Liste des actions commerciales réalisées
 DoneActionsFor=Liste des actions commerciales réalisées pour
+MenuToDoActions=Actions incomplètes
 ToDoActions=Liste des actions commerciales incomplètes
 ToDoActionsFor=Liste des actions commerciales incomplètes pour
 DoneAndToDoActionsFor=Liste des actions commerciales réalisées ou à faire pour

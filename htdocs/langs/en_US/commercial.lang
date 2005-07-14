@@ -35,6 +35,7 @@ DoneAndToDoActionsFor=Done and To do tasks for
 DoneAndToDoActions=Done and To do tasks
 DoneActions=Done actions
 DoneActionsFor=Done actions for
+MenuToDoActions=Uncomplete actions
 ToDoActions=Uncomplete actions
 ToDoActionsFor=Uncomplete actions for
 SendPropalRef=Send commercial proposal %s
