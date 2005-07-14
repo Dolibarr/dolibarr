@@ -241,7 +241,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 {
   $langs->load("orders");
 
-  $sql = "SELECT sum(f.total) as tot_fht,sum(f.total_ttc) as tot_fttc";
+  $sql = "SELECT sum(f.total) as tot_fht, sum(f.total_ttc) as tot_fttc";
   $sql .= " ,s.nom, s.idp, p.rowid, p.ref, p.total_ht, p.total_ttc";
   $sql .= " FROM ".MAIN_DB_PREFIX."commande AS p, llx_societe AS s";
   $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid";
@@ -251,7 +251,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
     {
       $sql .= " AND p.fk_soc = $socidp";
     }
-  $sql .= " AND p.fk_statut >=1	AND p.facture =0";
+  $sql .= " AND p.fk_statut >=1	AND p.facture=0";
   $sql .= " GROUP BY p.rowid";
 
   $resql = $db->query($sql);
@@ -275,7 +275,8 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	  while ($i < $num)
 	    {
             $obj = $db->fetch_object($resql);
-			if ($obj->total_ttc-$obj->tot_fttc >0) {
+//			if ($obj->total_ttc-$obj->tot_fttc >0)
+//			{
 	            $var=!$var;
 				print "<tr $bc[$var]>";
 				print "<td width=\"20%\"><a href=\"commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
@@ -289,7 +290,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 				$tot_ht += $obj->total_ht;
 				$tot_ttc += $obj->total_ttc;
 				$tot_tobill += ($obj->total_ttc-$obj->tot_fttc);
-			}
+//			}
             $i++;
 	    }
       $var=!$var;
