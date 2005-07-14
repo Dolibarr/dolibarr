@@ -1,6 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,12 +21,12 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_facture ADD INDEX idx_facture_fk_soc (fk_soc);
-ALTER TABLE llx_facture ADD INDEX idx_facture_fk_user_author (fk_user_author);
-ALTER TABLE llx_facture ADD INDEX idx_facture_fk_user_valid (fk_user_valid);
-ALTER TABLE llx_facture ADD INDEX idx_facture_fk_projet (fk_projet);
+ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_fk_soc (fk_soc);
+ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_fk_user_author (fk_user_author);
+ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_fk_projet (fk_projet);
 
-ALTER TABLE llx_facture ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
-ALTER TABLE llx_facture ADD FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
-ALTER TABLE llx_facture ADD FOREIGN KEY (fk_user_valid) REFERENCES llx_user (rowid);
-ALTER TABLE llx_facture ADD FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
+ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_user_valid) REFERENCES llx_user (rowid);
+ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);

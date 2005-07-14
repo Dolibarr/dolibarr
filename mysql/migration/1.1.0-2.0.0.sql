@@ -394,6 +394,25 @@ alter table llx_socpeople add tms timestamp after datec ;
 alter table llx_facture_fourn drop index facnumber ;
 alter table llx_facture_fourn add unique index (facnumber, fk_soc) ;
 
+alter table llx_facture_fourn add fk_projet integer ;
+alter table llx_facture_fourn add fk_cond_reglement integer DEFAULT 1 NOT NULL ;
+alter table llx_facture_fourn add date_lim_reglement  date;
+
+ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_fk_soc (fk_soc);
+ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_fk_user_author (fk_user_author);
+ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_fk_projet (fk_projet);
+
+ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
+ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_user_valid) REFERENCES llx_user (rowid);
+ALTER TABLE llx_facture_fourn ADD FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_projet (fk_projet);
+
+ALTER TABLE llx_facture ADD FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+
+
 alter table llx_bank_account modify bank varchar(60);
 alter table llx_bank_account modify domiciliation varchar(255);
 alter table llx_bank_account add proprio varchar(60) after domiciliation ;
@@ -1575,3 +1594,4 @@ insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SET
 
 
 update llx_const set name='OSC_DB_NAME' where name'DB_NAME_OSC';
+
