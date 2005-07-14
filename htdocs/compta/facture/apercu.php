@@ -37,6 +37,10 @@ if (!$user->rights->facture->lire)
 
 $langs->load("bills");
 
+
+$warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiement facture > delai)
+
+
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 if ($conf->projet->enabled) {
     require_once(DOL_DOCUMENT_ROOT."/project.class.php");
