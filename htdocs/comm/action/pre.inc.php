@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/comm/action/pre.inc.php
 		\brief      Fichier gestionnaire du menu de gauche de la zone actions
 		\version    $Revision$
@@ -29,43 +30,44 @@
 require("../../main.inc.php");
 
 
-function llxHeader($head = "", $urlp = "") {
-  global $conf,$user,$langs;
-
-  top_menu($head);
-
-  $menu = new Menu();
-
-
-  $menu->add(DOL_URL_ROOT."/comm/action/", $langs->trans("Actions"));
-
-  $menu->add_submenu(DOL_URL_ROOT."/comm/action/?time=today", $langs->trans("Today"));
-  $menu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/", $langs->trans("Reporting"));
-
-  if ($conf->societe->enabled) {
-    $langs->load("companies");
-    $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
-    $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
-  }
-  
-  if ($conf->commercial->enabled) {
-    $langs->load("commercial");
-    $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("Prospects"));
-    $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
-  }
-  
-  if ($conf->propal->enabled) {
-    $langs->load("propal");
-    $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Propales"));
-  }
-  
-  if ($conf->projet->enabled) {
-    $langs->load("projects");
-    $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
-  }
-
-  left_menu($menu->liste);
-
+function llxHeader($head = "", $urlp = "")
+{
+    global $conf,$user,$langs;
+    
+    top_menu($head);
+    
+    $menu = new Menu();
+    
+    
+    $menu->add(DOL_URL_ROOT."/comm/action/", $langs->trans("Actions"));
+    
+    $menu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?time=today", $langs->trans("Today"));
+    $menu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?status=todo", $langs->trans("ToDoActions"), 1);
+    $menu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php", $langs->trans("Reporting"));
+    
+    if ($conf->societe->enabled) {
+        $langs->load("companies");
+        $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
+        $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
+    }
+    
+    if ($conf->commercial->enabled) {
+        $langs->load("commercial");
+        $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("Prospects"));
+        $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
+    }
+    
+    if ($conf->propal->enabled) {
+        $langs->load("propal");
+        $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Propales"));
+    }
+    
+    if ($conf->projet->enabled) {
+        $langs->load("projects");
+        $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
+    }
+    
+    left_menu($menu->liste);
 }
 
 ?>
