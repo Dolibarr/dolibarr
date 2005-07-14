@@ -168,7 +168,7 @@ if ($user->societe_id == 0)
 	{
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
-	  print '<td colspan="2">Charges à payer ('.$num.')</td></tr>';
+	  print '<td colspan="2">'.$langs->trans("ContributionsToPay").' ('.$num.')</td></tr>';
 	  $i = 0;
 	  $var = True;
 	  while ($i < $num)
