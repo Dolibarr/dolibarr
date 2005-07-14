@@ -34,9 +34,9 @@ $user->getrights('propale');
 if (!$user->rights->propale->lire)
     accessforbidden();
 
+if ($conf->projet->enabled) require_once '../project.class.php';
 if ($conf->commande->enabled) require_once '../commande/commande.class.php';
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-require_once("../project.class.php");
 require_once("../propal.class.php");
 //require_once("../actioncomm.class.php");
 
@@ -141,7 +141,7 @@ if ($_GET["propalid"])
 			$societe->fetch($obj->idp);
 
 			print '<table class="border" width="100%">';
-			$rowspan=7;
+			$rowspan=6;
 			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">';
 			if ($societe->client == 1)
 			{
@@ -209,14 +209,14 @@ if ($_GET["propalid"])
 			}
 			print '</td>';
 
-			if ($conf->projet->enabled && $propal->projetidp) 
+			if ($conf->projet->enabled) 
 				$rowspan++;
 
 			print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Project').'</td>';
 			if ($conf->projet->enabled)
 			{
+    			print '<tr><td>'.$langs->trans('Project').'</td>';
 				$langs->load('projects');
 				$numprojet = $societe->has_projects();
 				print '<td colspan="2">';
@@ -255,8 +255,8 @@ if ($_GET["propalid"])
                         }
 					}
 				}
-			}
 			print '</tr>';
+			}
 
 			print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
 			if ($propal->brouillon == 1 && $user->rights->propale->creer)

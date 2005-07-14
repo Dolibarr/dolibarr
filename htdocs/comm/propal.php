@@ -28,7 +28,7 @@
         \brief      Page liste des propales (vision commercial)
 */
 
-require('./pre.inc.php');
+require("./pre.inc.php");
 
 $langs->load('companies');
 $langs->load('propal');
@@ -47,9 +47,7 @@ require_once('../propal.class.php');
 require_once('../actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 
-/*
- *  Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
 	$action = '';
@@ -433,7 +431,7 @@ if ($_GET['propalid'])
 			$societe->fetch($obj->idp);
 
 			print '<table class="border" width="100%">';
-			$rowspan=7;
+			$rowspan=6;
 			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">';
 			if ($societe->client == 1)
 			{
@@ -501,14 +499,14 @@ if ($_GET['propalid'])
 			}
 			print '</td>';
 
-			if ($conf->projet->enabled && $propal->projetidp) 
+			if ($conf->projet->enabled) 
 				$rowspan++;
 
 			print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($propal->note).'</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Project').'</td>';
 			if ($conf->projet->enabled)
 			{
+    			print '<tr><td>'.$langs->trans('Project').'</td>';
 				$langs->load('projects');
 				$numprojet = $societe->has_projects();
 				print '<td colspan="2">';
@@ -547,8 +545,8 @@ if ($_GET['propalid'])
                         }
 					}
 				}
+    			print '</tr>';
 			}
-			print '</tr>';
 
 			print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
 			if ($propal->brouillon == 1 && $user->rights->propale->creer)
@@ -563,7 +561,7 @@ if ($_GET['propalid'])
 			}
 			else
 			{
-				print '<td colspan="3">'.$propal->remise_percent.' %</td>';
+				print '<td colspan="3">'.$propal->remise_percent.'%</td>';
 			}
 			print '</tr>';
 
