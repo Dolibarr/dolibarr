@@ -110,11 +110,14 @@ print "<b>Mise a jour des dates de contrats non renseignées</b><br>\n";
 $sql="update llx_contrat set date_contrat=tms where date_contrat is null";
 $resql = $db->query($sql);
 if (! $resql) dolibarr_print_error($db);
+if ($db->affected_rows() > 0) print "Ok pour date de contrat<br>\n";
+else print "Pas ou plus de date de contrats à renseigner.<br>\n";
 
 $sql="update llx_contrat set datec=tms where datec is null";
 $resql = $db->query($sql);
 if (! $resql) dolibarr_print_error($db);
-print "Ok<br>\n";
+if ($db->affected_rows() > 0) print "Ok pour date création<br>\n";
+else print "Pas ou plus de date de création à renseigner.<br>\n";
 
 /*
  * Mise a jour des contrats (gestion du contrat + detail de contrat)
@@ -196,11 +199,80 @@ if ($resql)
 }
 else
 {
-    dolibarr_print_error($db);   
+    print "Le champ fk_facture n'existe plus. Pas d'opération à faire.<br>\n";
+//    dolibarr_print_error($db);   
 }    
 
-print "<br>";
 
+/*
+ * Mise a jour date contrat avec date min effective mise en service si inférieur
+ */
+$nberr=0;
+
+print '<br>';
+print "<b>Mise a jour dates contrat incorrectes (pour contrats avec detail en service)</b><br>\n";
+
+$sql = "SELECT c.rowid as cref, c.datec, c.date_contrat, MIN(cd.date_ouverture) as datemin";
+$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c,";
+$sql.= " ".MAIN_DB_PREFIX."contratdet as cd";
+$sql.= " WHERE c.rowid=cd.fk_contrat AND cd.date_ouverture IS NOT NULL";
+$sql.= " GROUP BY c.rowid, c.date_contrat";
+$resql = $db->query($sql);
+
+if ($resql) 
+{
+    $i = 0;
+    $row = array();
+    $num = $db->num_rows($resql);
+
+    if ($num)
+    {
+        $nbcontratsmodifie=0;
+        $db->begin();
+        
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+            if ($obj->date_contrat > $obj->datemin) 
+            {
+                print "Correction contrat ".$obj->cref." (Date contrat=".$obj->date_contrat.", Date mise service min=".$obj->datemin.")<br>\n";
+                $sql ="UPDATE ".MAIN_DB_PREFIX."contrat";
+                $sql.=" SET date_contrat='".$obj->datemin."'";
+                $sql.=" WHERE rowid=".$obj->cref;
+                $resql2=$db->query($sql);
+                if (! $resql2) dolibarr_print_error($db);
+                
+                $nbcontratsmodifie++;
+            }
+            $i++;
+        }
+
+        $db->commit();
+
+        if ($nbcontratsmodifie) print "$nbcontratsmodifie contrats modifiés<br>\n";
+        else print "Pas ou plus de contrats à corriger.<br>\n";
+    }
+}
+else
+{
+    dolibarr_print_error($db);
+}
+
+
+/*
+ * Mise a jour des date de création de contrat
+ */
+print '<br>';
+print "<b>Mise a jour des dates de création de contrat qui ont une valeur incohérentes</b><br>\n";
+
+$sql="update llx_contrat set datec=date_contrat where datec is null or datec > date_contrat";
+$resql = $db->query($sql);
+if (! $resql) dolibarr_print_error($db);
+if ($db->affected_rows() > 0) print "Ok<br>\n";
+else print "Pas ou plus de date de contrats à corriger.<br>\n";
+
+
+print "<br>";
 $db->close();
 
 llxFooter();
