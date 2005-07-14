@@ -56,5 +56,5 @@ LoginAlreadyExists=Already exists
 DolibarrAdminLogin=Dolibarr admin login
 FailedToCreateAdminLogin=Failed to create Dolibarr administator account.
 AdminLoginAlreadyExists=Dolibarr administrator account '%s' already exists.
-WarningRemoveInstallDir=Warning, for security reasons, once install is finished, you have to removed the install directory.
+WarningRemoveInstallDir=Warning, for security reasons, once install is finished, you have to remove the install directory.
 ThisPHPDoesNotSupportTypeBase=This PHP system does not support interfaces to access database type %s
