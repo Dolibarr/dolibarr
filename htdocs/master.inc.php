@@ -343,10 +343,18 @@ if ($user->liste_limit > 0)
   $conf->liste_limit = $user->liste_limit;
 }
 
-if (defined('MAIN_MAIL_FROM'))
+// $conf->email_from          = email pour envoi par Dolibarr des mails auto (notifications, ...)
+// $conf->mailing->email_from = email pour envoi par Dolibarr des mailings
+$conf->email_from="dolibarr-robot@domain.com";
+if (defined('MAIN_EMAIL_FROM'))
 {
-    $conf->email_from=MAIN_MAIL_FROM;
+    $conf->email_from=MAIN_EMAIL_FROM;
 }
+if (defined('MAILING_EMAIL_FROM'))
+{
+    $conf->mailing->email_from=MAILING_EMAIL_FROM;
+}
+else $conf->mailing->email_from=$conf->email_from;
 
 if (defined('MAIN_THEME'))
 {

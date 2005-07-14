@@ -227,7 +227,7 @@ if ($_GET["action"] == 'create')
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.MAIN_MAIL_FROM.'"></td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->mailing->email_from.'"></td></tr>';
 
     print '<tr><td width="20%">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value=""></td></tr>';
 

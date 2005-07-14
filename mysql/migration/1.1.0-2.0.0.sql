@@ -628,9 +628,11 @@ create table llx_paiement_facture
 )type=innodb;
 
 
-insert into llx_const(name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document',1);
+insert into llx_const(name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document',0);
 insert into llx_const(name, value, type, note, visible) values ('MAIN_SEARCHFORM_PRODUITSERVICE','1','yesno','Affichage formulaire de recherche des Produits et Services dans la barre de gauche',0);
 delete from llx_const where name = 'COMPTA_BANK_FACTURES';
+update llx_const set visible='0' where name='MAIN_UPLOAD_DOC';
+update llx_const set visible='0' where name='MAIN_TITLE';
 
 update llx_bank set fk_type = 'VAD' where fk_type = 'WWW';
 
@@ -1593,5 +1595,6 @@ insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SET
 insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_NUMERIC',  'MAIN_FORCE_SETLOCALE_LC_NUMERIC', 'chaine', 1, 'Mettre la valeur C si problème de centimes');
 
 
-update llx_const set name='OSC_DB_NAME' where name'DB_NAME_OSC';
+update llx_const set name='OSC_DB_NAME' where name='DB_NAME_OSC';
+update llx_const set name='MAIN_EMAIL_FROM' where name='MAIN_MAIL_FROM';
 

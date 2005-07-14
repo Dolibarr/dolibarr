@@ -56,7 +56,7 @@ if (! is_dir($upload_dir))
 /*
  * Action envoie fichier
  */
-if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
+if ( $_POST["sendit"] && $conf->upload)
 {
     if (is_dir($upload_dir))
     {
@@ -181,7 +181,7 @@ if ($socid > 0)
         if ($mesg) { print "$mesg<br>"; }
 
         // Affiche forumlaire upload
-        if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
+        if (defined('MAIN_UPLOAD_DOC') && $conf->upload)
         {
             print_titre($langs->trans("AttachANewFile"));
             echo '<form name="userfile" action="docsoc.php?socid='.$socid.'" enctype="multipart/form-data" METHOD="POST">';

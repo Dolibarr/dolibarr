@@ -47,13 +47,11 @@ insert into llx_action_def (rowid,code,titre,description,objet_type) values (2,'
 --
 -- Constantes de configuration
 --
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE','EUR','chaine','Monnaie',0);
-
-insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','1','chaine','Autorise l\'upload de document',1);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation',1);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','1','chaine','Autorise l\'upload de documents',0);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE','EUR','chaine','Monnaie',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_EMAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les envois automatiques Dolibarr (Notifications, ...)',1);
 
 insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine',0);
 
@@ -88,7 +86,7 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_
 --
 -- Mail Mailing
 --
-insert into llx_const (name, value, type, note) values ('MAILING_EMAIL_FROM','mailing@societe.com','chaine','Champ From du mail pour mailing clients/prospects');
+insert into llx_const (name, value, type, note) values ('MAILING_EMAIL_FROM','mailing@domain.com','chaine','EMail emmetteur pour les envois de mailings');
 
 --
 -- Mailman
