@@ -252,8 +252,8 @@ else
             // On sélectionne les users qui ne sont pas déjà dans le groupe
             $uss = array();
     
-            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.code ";
-            $sql .= " FROM ".MAIN_DB_PREFIX."user as u ";
+            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.code, u.admin";
+            $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
             #      $sql .= " LEFT JOIN llx_usergroup_user ug ON u.rowid = ug.fk_user";
             #      $sql .= " WHERE ug.fk_usergroup IS NULL";
             $sql .= " ORDER BY u.name";
@@ -261,12 +261,12 @@ else
             $result = $db->query($sql);
             if ($result)
             {
-                $num = $db->num_rows();
+                $num = $db->num_rows($result);
                 $i = 0;
     
                 while ($i < $num)
                 {
-                    $obj = $db->fetch_object();
+                    $obj = $db->fetch_object($result);
     
                     $uss[$obj->rowid] = ucfirst(stripslashes($obj->name)).' '.ucfirst(stripslashes($obj->firstname));
                     if ($obj->login) $uss[$obj->rowid].=' ('.$obj->login.')';
@@ -296,12 +296,12 @@ else
             /*
              * Membres du groupe
              */
-            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.code ";
-            $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-            $sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-            $sql .= " WHERE ug.fk_user = u.rowid";
-            $sql .= " AND ug.fk_usergroup = ".$group->id;
-            $sql .= " ORDER BY u.name";
+            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.code, u.admin";
+            $sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
+            $sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
+            $sql.= " WHERE ug.fk_user = u.rowid";
+            $sql.= " AND ug.fk_usergroup = ".$group->id;
+            $sql.= " ORDER BY u.name";
     
             $result = $db->query($sql);
             if ($result)
@@ -328,6 +328,7 @@ else
                         print "<tr $bc[$var]>";
                         print '<td>';
                         print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
+                        if ($obj->admin) print img_picto($langs->trans("Administrator"),'star');
                         print '</td>';
                         print '<td>'.ucfirst(stripslashes($obj->name)).'</td>';
                         print '<td>'.ucfirst(stripslashes($obj->firstname)).'</td>';
