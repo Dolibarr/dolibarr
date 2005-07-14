@@ -1,4 +1,6 @@
+#
 # Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+# Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,11 +22,11 @@
 # General Makefile for Mysql database
 #
 
-MYSQL=mysql 
+SQL=mysql 
 BASE=dolibarr
 OPTIONS=
 
 dev:
-	$(MYSQL) $(OPTIONS) $(BASE) < data_dev.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < propal_dev.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < facture_dev.sql
+	$(SQL) $(OPTIONS) $(BASE) < data_dev.sql
+	$(SQL) $(OPTIONS) $(BASE) < propal_dev.sql
+	$(SQL) $(OPTIONS) $(BASE) < facture_dev.sql
