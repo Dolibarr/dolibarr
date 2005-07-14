@@ -23,6 +23,7 @@ VATToCollect=TVA à récupérer
 VATSummary=Résumé TVA
 VATPayed=TVA payée
 SocialContributions=Charges sociales
+ContributionsToPay=Charges à payer
 AccountancyTreasuryArea=Espace Compta/Tréso
 AccountancySetup=Configuration compta
 NewPayment=Nouveau paiement

@@ -17,6 +17,7 @@ OSEnv=Environnement OS
 Box=Boîte
 Boxes=Boîtes
 System=Système
+SystemInfo=Infos Système
 Yes=Oui
 No=Non
 Rights=Permissions
@@ -253,11 +254,15 @@ BillsSetup=Configuration du module Factures
 BillsDate=Date des factures
 BillsNumberingModule=Module de numérotation des factures
 ##### Proposals #####
+PropalSetup=Configuration du module Propositions Commerciales
 CreateForm=Création formulaire
 NumberOfProductLines=Nombre de lignes produits
 PathToDocuments=Chemins d'accès aux documents
 ProposalsNumberingModules=Modules de numérotation des propositions commerciales
 ProposalsPDFModules=Modules de propositions commerciales PDF
+##### Orders #####
+OrdersSetup=Configuration du module Commandes
+OrdersNumberingModules=Modules de numérotation des commandes
 ##### Clicktodial setup #####
 ClickToDialSetup=Configuration du module Click To Dial
 ##### Interventions #####
@@ -285,8 +290,6 @@ DNContact=DN des contacts
 DNContactActiveExample=Synchronisation désactivée
 DNContactExample=DN complet (ex: ou=contacts,dc=societe,dc=com)
 TypeExample=OpenLdap, Egroupware ou Active Directory
-##### Propal #####
-PropalSetup=Configuration du module Propositions Commerciales
 ##### Sendings #####
 SendingsSetup=Configuration du module Expéditions/Livraisons
 SendingsReceiptModel=Modèle du bordereau de livraison

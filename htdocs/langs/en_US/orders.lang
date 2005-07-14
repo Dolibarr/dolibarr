@@ -41,3 +41,5 @@ ConfirmCancelOrder=Are you sure you want to cancel this order ?
 GenerateBill=Generate bill
 ClassifyBilled=Classify "Billed"
 ComptaCard=Accountancy card
+DraftOrders=Draft orders
+RelatedOrders=Related orders

@@ -20,6 +20,7 @@ ServicesOnSell=Services en vente
 ServicesNotOnSell=Services hors vente
 InternalRef=Référence interne
 LastRecorded=Derniers produits/services en vente enregistrés
+LastRecordedProducts=Les %s derniers produits/services enregistrés
 LastProducts=Derniers produits
 CardProduct0=Fiche produit
 CardProduct1=Fiche service
