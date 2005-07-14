@@ -232,7 +232,7 @@ if ($socid > 0)
     
     print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$societe->pays.'</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.$societe->tel.'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.$societe->fax.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel,$societe->pays_code).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.$societe->fax.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
     print "<tr><td nowrap>".$langs->transcountry("ProfId1",$societe->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$societe->siren."\">".$societe->siren."</a>&nbsp;</td>";
