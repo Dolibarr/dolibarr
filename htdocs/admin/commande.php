@@ -22,7 +22,8 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/commande.php
+/**
+    	\file       htdocs/admin/commande.php
 		\ingroup    commande
 		\brief      Page d'administration-configuration du module Commande
 		\version    $Revision$
@@ -47,6 +48,11 @@ $commande_rib_number_var = COMMANDE_RIB_NUMBER;
 
 $commande_addon_var = COMMANDE_ADDON;
 
+
+/*
+ * Actions
+ */
+
 if ($_GET["action"] == 'setmod')
 {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'COMMANDE_ADDON' ;";
@@ -66,17 +72,18 @@ if ($_GET["action"] == 'setmod')
 
 $dir = "../includes/modules/commande/";
 
-print_titre("Configuration du module Commandes");
+print_titre($langs->trans("OrdersSetup"));
 
 print "<br>";
 
-print_titre("Module de numérotation des commandes");
+print_titre($langs->trans("OrdersNumberingModules"));
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print '<TR class="liste_titre">';
-print '<td>Nom</td><td>Info</td>';
-print '<td align="center">Activé</td><td>&nbsp;</td>';
-print "</TR>\n";
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
+print '<td align="center">'.$langs->trans("Activated").'</td>';
+print "</tr>\n";
 
 clearstatcache();
 
@@ -84,43 +91,46 @@ $dir = "../includes/modules/commande/";
 $handle = opendir($dir);
 if ($handle)
 {
-  while (($file = readdir($handle))!==false)
+    $var=true;
+    
+    while (($file = readdir($handle))!==false)
     {
-      if (substr($file, 0, 13) == 'mod_commande_' && substr($file, strlen($file)-3, 3) == 'php')
-	{
-	  $file = substr($file, 0, strlen($file)-4);
+        if (substr($file, 0, 13) == 'mod_commande_' && substr($file, strlen($file)-3, 3) == 'php')
+        {
+            $file = substr($file, 0, strlen($file)-4);
 
-	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/".$file.".php");
+            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/".$file.".php");
 
-	  $modCommande = new $file;
+            $modCommande = new $file;
 
-	  print '<tr class="pair"><td>'.$modCommande->nom."</td><td>\n";
-	  print $modCommande->info();
-	  print '</td>';
-	  
-	  if ($commande_addon_var == "$file")
-	    {
-	      print '<td align="center">';
-	      print img_tick();
-		  print '</td><td>&nbsp;</td>';
-	    }
-	  else
-	    {
-		  print '<td>&nbsp;</td>';
-		  print '<td align="center"><a href="commande.php?action=setmod&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
-	    }
+            $var=!$var;
+            print '<tr '.$bc[$var].'><td>'.$modCommande->nom."</td><td>\n";
+            print $modCommande->info();
+            print '</td>';
 
-	  print '</tr>';
-	}
+            print '<td align="center" nowrap>';
+            print $modCommande->getExample();
+            print '</td>';
+
+            if ($commande_addon_var == "$file")
+            {
+                print '<td align="center">';
+                print img_tick();
+                print '</td>';
+            }
+            else
+            {
+                print '<td align="center"><a href="commande.php?action=setmod&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
+            }
+
+            print '</tr>';
+        }
     }
-  closedir($handle);
-}
-else
-{
-  print "Erreur";
+    closedir($handle);
 }
 
 print '</table>';
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
 ?>
