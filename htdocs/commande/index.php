@@ -137,14 +137,14 @@ if ( $db->query($sql) )
       $i = 0;
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="2">Commandes en traitement ('.$num.')</td></tr>';
+      print '<td colspan="2">'.$langs->trans("OnProcessOrders").' ('.$num.')</td></tr>';
       $var = True;
       while ($i < $num)
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
-	  print "<a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").' ';
+	  print $obj->ref.'</a></td>';
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}

@@ -30,9 +30,11 @@
 
 require("./pre.inc.php");
 
+$langs->load("orders");
 $langs->load("sendings");
 $langs->load("companies");
 $langs->load("bills");
+$langs->load("propal");
 
 $user->getrights('commande');
 $user->getrights('expedition');
