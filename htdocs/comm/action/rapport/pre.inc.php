@@ -42,8 +42,8 @@ function llxHeader($head = "", $urlp = "")
     $menu->add(DOL_URL_ROOT."/comm/action/", $langs->trans("Actions"));
     
     $menu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?time=today", $langs->trans("Today"));
-    $menu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?status=todo", $langs->trans("ToDoActions"), 1);
-    $menu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php", $langs->trans("Reporting"));
+    $menu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?status=todo", $langs->trans("MenuToDoActions"), 1);
+    $menu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php", $langs->trans("Reportings"));
     
     if ($conf->societe->enabled) {
         $langs->load("companies");
