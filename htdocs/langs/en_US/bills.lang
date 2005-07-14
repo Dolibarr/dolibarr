@@ -85,3 +85,5 @@ MenuToValid=To valid
 DateClosing=Closing date
 ClassifyBill=Classify bill
 NoSupplierBillsUnpayed=No suppliers bills unpayed
+SupplierBillsToPay=Suppliers bills to pay
+CustomerBillsUnpayed=Unpayed customers bills

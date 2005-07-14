@@ -43,3 +43,4 @@ ClassifyBilled=Classer "Facturée"
 ComptaCard=Fiche compta
 DraftOrders=Commandes brouillons
 RelatedOrders=Commandes rattachées
+OnProcessOrders=Commandes en cours de traitement

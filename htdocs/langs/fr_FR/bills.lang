@@ -88,3 +88,5 @@ MenuToValid=A valider
 DateClosing=Date limite réglement
 ClassifyBill=Classer la facture
 NoSupplierBillsUnpayed=Aucune facture fournisseur impayée
+SupplierBillsToPay=Factures fournisseurs à payer
+CustomerBillsUnpayed=Factures clients impayées

@@ -59,3 +59,4 @@ DateEndReal=Real end date
 NbOfServices=Nb of services
 CloseService=Close service
 ServicesNomberShort=%s service(s)
+RunningServices=Running services
