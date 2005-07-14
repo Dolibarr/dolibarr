@@ -395,6 +395,12 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
   $conf->adherent->email_new_subject=MAIN_MAIL_NEW_SUBJECT;
 }
 
+// Delai de tolerance des alertes
+$conf->actions->warning_delay=7*24*60*60;   // 1 semaine
+$conf->commande->traitement->warning_delay=2*24*60*60;
+$conf->propal->facturation->warning_delay=31*24*60*60;
+$conf->facture->warning_delay=31*24*60*60;   // 1 moi
+
 
 /*
  */
