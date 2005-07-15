@@ -72,7 +72,7 @@ if ($type == "c") { $text.=$langs->trans("Customers"); }
 if ($view == 'phone')  { $text="(Vue Téléphones)"; }
 if ($view == 'mail')   { $text="(Vue EMail)"; }
 if ($view == 'recent') { $text="(Récents)"; }
-$titre = $langs->trans("ListOfContacts")." ($text)";
+$titre = $langs->trans("ListOfContacts")." $text";
 
 if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
     $search_nom="";
