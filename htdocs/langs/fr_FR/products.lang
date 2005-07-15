@@ -73,3 +73,5 @@ PrimaryWay=Chemin Primaire:
 DeleteFromCat=Supprimer de la catégorie
 PriceRemoved=Prix supprimé
 BarCode=Code barre
+Pack=Lot
+Packs=Lots
