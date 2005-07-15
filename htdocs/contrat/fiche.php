@@ -583,8 +583,7 @@ else
                     print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
                     print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
                     print '<td width="50" align="right">'.$langs->trans("Discount").'</td>';
-                    print '<td width="16">&nbsp;</td>';
-                    print '<td width="16">&nbsp;</td>';
+                    print '<td width="30">&nbsp;</td>';
                     print '<td width="30" align="center">'.$langs->trans("Status").'</td>';
                     print "</tr>\n";
                 }
@@ -627,25 +626,23 @@ else
                             print '<td>&nbsp;</td>';
                         }
                         // Icon update et delete (statut contrat 0=brouillon,1=validé,2=fermé)
+                        print '<td align="center" nowrap>';
                         if ($contrat->statut != 2  && $user->rights->contrat->creer)
                         {
-                            print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+                            print '<a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
                             print img_edit();
-                            print '</a></td>';
+                            print '</a>';
                         }
                         else {
-                            print '<td>&nbsp;</td>';
+                            print '&nbsp;';
                         }
                         if ($contrat->statut == 0  && $user->rights->contrat->creer)
                         {
-                            print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+                            print '<a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
                             print img_delete();
-                            print '</a></td>';
+                            print '</a>';
                         }
-                        else
-                        {
-                            print '<td>&nbsp;</td>';
-                        }
+                        print '</td>';
             
                         // Statut
                         print '<td align="center">';
@@ -697,7 +694,6 @@ else
                             print dolibarr_print_date($objp->date_fin_reelle);
                         }
                         print '</td>';
-                        print '<td>&nbsp;</td>';
                         print '</tr>';                    
                     }
                     else
@@ -713,7 +709,7 @@ else
                         print '<textarea name="eldesc" cols="60" rows="1">'.$objp->description.'</textarea></td>';
                         print '<td align="right"><input size="6" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                         print '<td align="center"><input size="3" type="text" name="elqty" value="'.$objp->qty.'"></td>';
-                        print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+                        print '<td align="right"><input size="2" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
                         print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
                         // Ligne dates prévues
                         print "<tr $bc[$var]>";
