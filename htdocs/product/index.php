@@ -84,19 +84,19 @@ print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</
 if ($conf->produit->enabled)
 {
     print "<tr $bc[0]>";
-    print '<td><a href="liste.php?type=0&amp;envente=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td>'.round($prodser[0][0]).'</td>';
+    print '<td><a href="liste.php?type=0&amp;envente=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
     print "</tr>";
     print "<tr $bc[1]>";
-    print '<td><a href="liste.php?type=0&amp;envente=1">'.$langs->trans("ProductsOnSell").'</a></td><td>'.round($prodser[0][1]).'</td>';
+    print '<td><a href="liste.php?type=0&amp;envente=1">'.$langs->trans("ProductsOnSell").'</a></td><td align="right">'.round($prodser[0][1]).'</td>';
     print "</tr>";
 }
 if ($conf->service->enabled)
 {
     print "<tr $bc[0]>";
-    print '<td><a href="liste.php?type=1&amp;envente=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td>'.round($prodser[1][0]).'</td>';
+    print '<td><a href="liste.php?type=1&amp;envente=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
     print "</tr>";
     print "<tr $bc[1]>";
-    print '<td><a href="liste.php?type=1&amp;envente=1">'.$langs->trans("ServicesOnSell").'</a></td><td>'.round($prodser[1][1]).'</td>';
+    print '<td><a href="liste.php?type=1&amp;envente=1">'.$langs->trans("ServicesOnSell").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
     print "</tr>";
 }
 print '</table>';
