@@ -326,14 +326,16 @@ delete from llx_rights_def where id=73;
 alter table llx_facturedet add fk_code_ventilation integer NOT NULL DEFAULT 0;
 
 
-alter table llx_contrat change fk_user_cloture fk_user_cloture integer;
+alter table llx_contrat change fk_user_cloture  fk_user_cloture integer;
 alter table llx_contrat change fk_user_mise_en_service fk_user_mise_en_service integer;
-alter table llx_contrat add   datec    datetime after tms;
-alter table llx_contrat add   date_contrat    datetime after datec;
-alter table llx_contrat change enservice statut SMALLINT(6) DEFAULT 0;
-alter table llx_contrat add   fk_commercial_signature integer NOT NULL after fk_soc;
+alter table llx_contrat change enservice statut smallint(6) default 0;
+alter table llx_contrat add   datec             datetime after tms;
+alter table llx_contrat add   date_contrat      datetime after datec;
+alter table llx_contrat add   fk_projet         integer after fk_soc;
+alter table llx_contrat add   fk_commercial_signature integer NOT NULL after fk_projet;
 alter table llx_contrat add   fk_commercial_suivi     integer NOT NULL after fk_commercial_signature;
-
+alter table llx_contrat add   facture           smallint(6) default 0;
+  
 alter table llx_facturedet add date_start date;
 alter table llx_facturedet add date_end   date;
 

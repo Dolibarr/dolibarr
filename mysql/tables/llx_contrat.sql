@@ -33,11 +33,11 @@ create table llx_contrat
   fin_validite    datetime,
   date_cloture    datetime,
   fk_soc          integer NOT NULL,
+  fk_projet       integer,
   fk_commercial_signature integer NOT NULL,
   fk_commercial_suivi     integer NOT NULL,
   fk_user_author          integer NOT NULL default 0,
   fk_user_mise_en_service integer,
   fk_user_cloture integer
-
 )type=innodb;
 
