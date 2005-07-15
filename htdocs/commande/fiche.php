@@ -333,7 +333,7 @@ if ($_GET["action"] == 'create' && $user->rights->commande->creer)
 		{
 		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
 		  print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
-		  print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0"> %</td></tr>';
+		  print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="0">%</td></tr>';
 		}	      	      
 
 	      print '</table>';
@@ -375,7 +375,7 @@ if ($_GET["action"] == 'create' && $user->rights->commande->creer)
 		      print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
 		      print '<td>'.img_object($langs->trans("ShowProduct"),"product").' '.$objp->product.'</td>';
 		      print "<td align=\"right\">".price($objp->price)."</td>";
-		      print '<td align="center">'.$objp->remise_percent.' %</td>';
+		      print '<td align="center">'.$objp->remise_percent.'%</td>';
 		      print "<td align=\"center\">".$objp->qty."</td></tr>\n";
 		      $i++;
 		    }
@@ -395,14 +395,14 @@ if ($_GET["action"] == 'create' && $user->rights->commande->creer)
 		      print "<tr $bc[$var]><td>&nbsp;</td>\n";
 		      print '<td>'.img_object($langs->trans("ShowProduct"),"product").' '.$objp->product.'</td>';
 		      print '<td align="right">'.price($objp->price).'</td>';
-		      print '<td align="center">'.$objp->remise_percent.' %</td>';
+		      print '<td align="center">'.$objp->remise_percent.'%</td>';
 		      print "<td align=\"center\">".$objp->qty."</td></tr>\n";
 		      $i++;
 		    }
 		}
 	      else
 		{
-		  print $sql;
+		  dolibarr_print_error($db);
 		}
 
 	      print '</table>';
@@ -730,15 +730,15 @@ else
 	    print $html->select_tva("tva_tx",$conf->defaulttx);
 	    print '</td>';
 	    print '<td align="center"><input type="text" name="qty" value="1" size="2"></td>';
-	    print '<td align="right"><input type="text" name="remise_percent" size="3" value="0">%</td>';
-	    print '<td align="right"><input type="text" name="pu" size="7"></td>';
+	    print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
+	    print '<td align="right"><input type="text" name="pu" size="6"></td>';
 
 	    print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 
 	    $var=!$var;
 	    print "<tr $bc[$var]><td colspan=\"2\"><select name=\"p_idprod\">$opt</select></td>";
 	    print '<td align="center"><input type="text" size="2" name="pqty" value="1"></td>';
-	    print '<td align="right"><input type="text" size="3" name="premise" value="0">%</td>';
+	    print '<td align="right" nowrap><input type="text" size="2" name="premise" value="0">%</td>';
 	    print '<td>&nbsp;</td>';
 	    print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	    print "</tr>\n";

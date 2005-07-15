@@ -156,7 +156,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
 
 /*
- * Commandes à valider
+ * Commandes brouillons
  */
 if ($conf->commande->enabled)
 {
@@ -165,28 +165,28 @@ if ($conf->commande->enabled)
     $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
     if ($socidp)
     {
-      $sql .= " AND c.fk_soc = $socidp";
+        $sql .= " AND c.fk_soc = $socidp";
     }
-    
-    if ( $db->query($sql) ) 
+
+    if ( $db->query($sql) )
     {
-      $num = $db->num_rows();
-      if ($num)
+        $num = $db->num_rows();
+        if ($num)
         {
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre">';
-	  print '<td colspan="2">'.$langs->trans("OrdersToValid").'</td></tr>';
-          $i = 0;
-          $var = False;
-          while ($i < $num)
-	    {
-	      $obj = $db->fetch_object();
-	      print "<tr $bc[$var]><td width=\"25%\" nowrap><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
-	      $i++;
-	      $var=!$var;
-	    }
-	  print "</table><br>";     
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre">';
+            print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
+            $i = 0;
+            $var = true;
+            while ($i < $num)
+            {
+                $var=!$var;
+                $obj = $db->fetch_object();
+                print "<tr $bc[$var]><td nowrap><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
+                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,24).'</a></td></tr>';
+                $i++;
+            }
+            print "</table><br>";
         }
     }
 }
