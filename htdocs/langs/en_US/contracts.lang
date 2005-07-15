@@ -56,6 +56,7 @@ DateEndPlannedShort=Planed end date
 DateStartReal=Real start date
 DateStartRealShort=Real start date
 DateEndReal=Real end date
+DateEndRealShort=Real end date
 NbOfServices=Nb of services
 CloseService=Close service
 ServicesNomberShort=%s service(s)

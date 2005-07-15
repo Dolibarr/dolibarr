@@ -114,6 +114,7 @@ DateValue=Value date
 DateLimit=Limit date
 Year=Year
 Month=Month
+Week=Week
 Day=Day
 Hour=Hour
 Minute=Minute

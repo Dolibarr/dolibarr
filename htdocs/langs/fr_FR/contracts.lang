@@ -56,6 +56,7 @@ DateEndPlannedShort=Date fin prévue
 DateStartReal=Date effective mise en service
 DateStartRealShort=Date début
 DateEndReal=Date effective fin de service
+DateEndRealShort=Date effective fin
 NbOfServices=Nb de services
 CloseService=Fermer service
 ServicesNomberShort=%s service(s)
