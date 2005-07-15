@@ -57,8 +57,8 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-if (! $sortfield) $sortfield="cd.date_ouverture";
-if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="c.rowid";
+if (! $sortorder) $sortorder="ASC";
 
 
 $sql = "SELECT s.nom, c.rowid as cid, s.idp as sidp, cd.rowid, cd.label, cd.statut, p.rowid as pid,";
