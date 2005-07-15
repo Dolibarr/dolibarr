@@ -297,7 +297,7 @@ td.photo {
 }
 
 form {
-    padding: 0.1em 0em 0em 0em;
+    padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
 
@@ -493,7 +493,6 @@ font: helvetica, verdana, arial, sans-serif;
 border-collapse: collapse;
 border: 1px white ridge;
 }
-
 table.border td {
 border: 1px solid #6C7C8B;
 padding: 1px 2px;
@@ -503,27 +502,25 @@ table.noborder {
 border-collapse: collapse;
 border: 0px;
 }
+table.noborder td {
+border: 0px;
+padding: 1px 2px;
+}
+
+table.nobordernopadding {
+border-collapse: collapse;
+border: 0px;
+padding: 0px 0px;
+}
+table.nobordernopadding td {
+border: 0px;
+padding: 0px 0px;
+}
 
 table.liste {
 border-collapse: collapse;
 border: 0px;
 width: 100%;
-}
-
-table.noborder td {
-border-collapse: collapse;
-border: 0px;
-padding: 1px 2px;
-}
-
-table#actions {
-border-collapse: collapse;
-border: 1px ridge
-}
-
-table#actions td {
-border-collapse: collapse;
-border: 1px ridge
 }
 
 

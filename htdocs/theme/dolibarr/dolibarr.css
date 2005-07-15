@@ -283,32 +283,37 @@ a.tabAction:hover {
 /*
  * Tables
  */
-table.border {
-               border-collapse: collapse;
-               border: 1px white ridge; }
 
+table.border {
+border-collapse: collapse;
+border: 1px white ridge;
+}
 table.border td {
-                  border: 1px white ridge; }
+border: 1px white ridge;
+}
 
 table.noborder {
-                 border-collapse: collapse;
-                 border: 0px  }
-
+border-collapse: collapse;
+border: 0px;
+}
 table.noborder td {
-                    border-collapse: collapse;
-                    border: 0px  }
+border: 0px;
+}
 
-table#actions {
-                 border-collapse: collapse;
-                 border: 1px ridge }
+table.nobordernopadding {
+border-collapse: collapse;
+border: 0px;
+padding: 0px 0px;
+}
+table.nobordernopadding td {
+border: 0px;
+padding: 0px 0px;
+}
 
-table#actions td {
-                    border-collapse: collapse;
-                    border: 1px ridge }
 
 /*
- *
- */
+ *  Tableaux
+ */ 
 
 a { 
     text-decoration: none;

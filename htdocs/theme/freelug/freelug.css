@@ -450,16 +450,34 @@ font: helvetica, verdana, arial, sans-serif;
 border-collapse: collapse;
 border: 1px white ridge;
 }
-
 table.border td {
 border: 1px solid #6C7C8B;
-padding: 2px 3px;
+padding: 1px 2px;
 }
 
-table.noborder {
+table.noborder td {
 border-collapse: collapse;
 border: 0px;
+padding: 1px 2px;
 }
+table.noborder {
+border: 0px;
+}
+
+table.nobordernopadding {
+border-collapse: collapse;
+border: 0px;
+padding: 0px 0px;
+}
+table.nobordernopadding td {
+border: 0px;
+padding: 0px 0px;
+}
+
+
+/*
+ *  Tableaux
+ */ 
 
 table.liste {
 border-collapse: collapse;
@@ -468,21 +486,6 @@ width: 100%;
 background: #bbbbcc;
 }
 
-table.noborder td {
-border-collapse: collapse;
-border: 0px;
-padding: 1px 3px;
-}
-
-table#actions {
-border-collapse: collapse;
-border: 1px ridge
-}
-
-table#actions td {
-border-collapse: collapse;
-border: 1px ridge
-}
 
 
 td.border { 

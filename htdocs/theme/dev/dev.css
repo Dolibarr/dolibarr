@@ -259,32 +259,37 @@ a.butDelete:hover   { background: #FFe7ec; border: 1px outset #997777; color: #4
 /*
  * Tables
  */
-table.border {
-               border-collapse: collapse;
-               border: 2px white ridge; }
 
+table.border {
+border-collapse: collapse;
+border: 2px white ridge;
+}
 table.border td {
-                  border: 2px white ridge; }
+border: 2px white ridge;
+}
 
 table.noborder {
-                 border-collapse: collapse;
-                 border: 0px  }
-
+border-collapse: collapse;
+border: 0px;
+}
 table.noborder td {
-                    border-collapse: collapse;
-                    border: 0px  }
+border: 0px;
+}
 
-table#actions {
-                 border-collapse: collapse;
-                 border: 1px ridge }
+table.nobordernopadding {
+border-collapse: collapse;
+border: 0px;
+padding: 0px 0px;
+}
+table.nobordernopadding td {
+border: 0px;
+padding: 0px 0px;
+}
 
-table#actions td {
-                    border-collapse: collapse;
-                    border: 1px ridge }
 
 /*
- *
- */
+ *  Tableaux
+ */ 
 
 a { 
     text-decoration: none;
