@@ -398,14 +398,11 @@ class Form
 	 */
 	function select_projects($socid='', $selected='', $htmlname='projectid')
 	{
-		$socid=intVal($socid);
-		if (empty($socid))
-			return;
-		// On recherche les societes
+		// On recherche les projets
 		$sql = 'SELECT p.rowid, p.title FROM ';
-		$sql .= MAIN_DB_PREFIX .'projet as p';
-		$sql .= ' WHERE fk_soc='.$socid;
-		$sql .= ' ORDER BY p.title ASC';
+		$sql.= MAIN_DB_PREFIX .'projet as p';
+		$sql.= " WHERE fk_soc='".$socid."'";
+		$sql.= " ORDER BY p.title ASC";
 
 		$result=$this->db->query($sql);
 		if ($result)
@@ -780,6 +777,40 @@ class Form
     print "</form>\n";  
   }
 
+
+  /**
+   *    \brief      Affiche formulaire de selection de projet
+   *    \param      page        Page
+   *    \param      socid       Id societe
+   *    \param      selected    Id projet présélectionné
+   *    \param      htmlname    Nom du formulaire select
+   */
+    function form_project($page, $socid, $selected='', $htmlname='projectid')
+    {
+        global $langs;
+        $langs->load("project");
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="classin">';
+            print '<table class="noborder" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_projects($soc_id,$selected,$htmlname);
+            print '</td>';
+            print '<td align="left"><input type="submit" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected) {
+                $projet = New Project($this->db);
+                $projet->fetch($selected);
+                print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$selected.'">'.$projet->title.'</a>';
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
 
   /**
    *    \brief     Retourne la liste des devies, dans la langue de l'utilisateur

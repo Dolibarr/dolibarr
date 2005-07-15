@@ -530,22 +530,24 @@ class Facture
     }
 
     /**
-    * \brief     Classe la facture
-    * \param     cat_id      id de la catégorie dans laquelle classer la facture
-    *
-    */
-    function classin($cat_id)
+     *      \brief     Classe la facture dans un projet
+     *      \param     projid       Id du projet dans lequel classer la facture
+     */
+    function classin($projid)
     {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_projet = $cat_id";
-        $sql .= " WHERE rowid = $this->id;";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+        if ($projid) $sql.= " SET fk_projet = $projid";
+        else $sql.= " SET fk_projet = NULL";
+        $sql.= " WHERE rowid = ".$this->id;
 
-        if ($this->db->query($sql) )
+        if ($this->db->query($sql))
         {
             return 1;
         }
         else
         {
             dolibarr_print_error($this->db);
+            return -1;
         }
     }
 

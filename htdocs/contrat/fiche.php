@@ -534,16 +534,21 @@ else
             // Projet
             if ($conf->projet->enabled)
             {
-                print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-                if ($contrat->projet_id > 0)
+                $langs->load("projects");
+                print '<tr><td>';
+                print '<table width="100%" class="nobordernopadding"><tr><td>';
+                print $langs->trans("Project");
+                print '</td>';
+                if ($_GET["action"] != "classer") print '<td align="right"><a href="fiche.php?action=classer&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+                print '</tr></table>';
+                print '</td><td colspan="3">';
+                if ($_GET["action"] == "classer")
                 {
-                    $projet = New Project($db);
-                    $projet->fetch($contrat->projet_id);
-                    print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$contrat->projet_id.'">'.$projet->title.'</a>';
+                    $html->form_project("fiche.php?id=$id",$contrat->fk_soc,$contrat->fk_projet,"projetid");
                 }
                 else
                 {
-                    print '<a href="fiche.php?id='.$id.'&amp;action=classer">Classer le contrat</a>';
+                    $html->form_project("fiche.php?id=$id",$contrat->fk_soc,$contrat->fk_projet,"none");
                 }
                 print "</td></tr>";
             }
@@ -831,9 +836,8 @@ else
                     print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
                 }
 
-                // \todo Mettre bouton cloturer que si tous les services sont clos
-                $numclos=$num;
-                if ($contrat->statut == 1 && $num == $numclos)
+                $numclos=$contrat->array_detail(5); // Tableau des lignes au statut clos
+                if ($contrat->statut == 1 && $num == sizeof($numclos))
                 {
                     print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=close">'.$langs->trans("Close").'</a>';
                 }
@@ -846,29 +850,10 @@ else
                 print "</div>";
             }
 
-            /*
-            *
-            *
-            */
-            if ($_GET["action"] == 'classer')
-            {
-                $langs->load("project");
-                print '<p><form method="post" action="fiche.php?id='.$contrat->id.'">';
-                print '<input type="hidden" name="action" value="classin">';
-                print '<table class="border">';
-                print '<tr><td>'.$langs->trans("Project").'</td><td>';
-
-                $proj = new Project($db);
-                $html->select_array("projetid",$proj->liste_array($contrat->soc_id));
-
-                print "</td></tr>";
-                print '<tr><td colspan="2" align="center"><input type="submit" value="Envoyer"></td></tr></table></form>';
-            }
-
         }
         else
         {
-            /* Contrat non trouvée */
+            // Contrat non trouvé
             print "Contrat inexistant ou accés refusé";
         }
     }

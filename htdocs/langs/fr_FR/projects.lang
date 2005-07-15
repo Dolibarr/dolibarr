@@ -9,4 +9,5 @@ ConfirmDeleteAProject=Êtes-vous sûr de vouloir supprimer ce projet ?
 LastProjects=Les %s derniers projets
 AllProjects=Tous les projets
 ShowProject=Afficher projet
+SetProject=Définir projet
 NoProject=Aucun projet défini

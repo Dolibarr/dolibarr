@@ -51,7 +51,9 @@ class Contrat
 
     var $commercial_signature_id;
     var $commercial_suivi_id;
-    
+
+    var $fk_projet;
+        
     var $statuts=array();
     
         
@@ -274,11 +276,12 @@ class Contrat
      */
     function fetch($id)
     {
-        $sql = "SELECT rowid, statut, fk_soc, ".$this->db->pdate("mise_en_service")." as datemise";
-        $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_contrat")." as datecontrat";
-        $sql .= ", fk_user_author";
-        $sql .= ", fk_commercial_signature, fk_commercial_suivi ";
-        $sql .= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
+        $sql = "SELECT rowid, statut, fk_soc, ".$this->db->pdate("mise_en_service")." as datemise,";
+        $sql.= " fk_user_mise_en_service, ".$this->db->pdate("date_contrat")." as datecontrat,";
+        $sql.= " fk_user_author,";
+        $sql.= " fk_projet,";
+        $sql.= " fk_commercial_signature, fk_commercial_suivi ";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
     
         $resql = $this->db->query($sql) ;
     
@@ -302,6 +305,8 @@ class Contrat
     
             $this->user_service->id = $result["fk_user_mise_en_service"];
             $this->user_cloture->id = $result["fk_user_cloture"];
+
+            $this->fk_projet        = $result["fk_projet"];
     
             $this->societe->fetch($result["fk_soc"]);
     
@@ -541,6 +546,29 @@ class Contrat
     }
 
 
+    /**
+     *      \brief     Classe le contrat dans un projet
+     *      \param     projid       Id du projet dans lequel classer le contrat
+     */
+    function classin($projid)
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contrat";
+        if ($projid) $sql.= " SET fk_projet = $projid";
+        else $sql.= " SET fk_projet = NULL";
+        $sql.= " WHERE rowid = ".$this->id;
+
+        if ($this->db->query($sql))
+        {
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+    }
+
+
   /**
    *    \brief      Retourne le libellé du statut du contrat
    *    \return     string      Libellé
@@ -612,6 +640,41 @@ class Contrat
             dolibarr_print_error($this->db);
         }
     }
-    
+ 
+ 
+  /** 
+   *    \brief      Récupère les lignes de detail du contrat
+   *    \param      statut      Statut des lignes detail à récupérer
+   *    \return     array       Tableau des lignes de details
+   */
+    function array_detail($statut=-1)
+    {
+        $tab=array();
+        
+        $sql = "SELECT cd.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+        $sql.= " WHERE fk_contrat =".$this->id;
+        if ($statut >= 0) $sql.= " AND statut = '$statut'";
+   
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num=$this->db->num_rows($result);
+            $i=0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                $tab[$i]=$obj->rowid;
+                $i++;
+            }
+            return $tab;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
 }
 ?>

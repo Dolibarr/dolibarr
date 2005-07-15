@@ -572,7 +572,7 @@ else
 
     // RIB
     print '<tr><td>';
-    print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0" border="0"><tr><td>';
+    print '<table width="100%" class="nobordernopadding"><tr><td>';
     print $langs->trans('RIB');
     print '<td><td align="right">';
     print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit().'</a>';
@@ -584,7 +584,7 @@ else
 
     // Maison mère
     print '<tr><td>';
-    print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0" border="0"><tr><td>';
+    print '<table width="100%" class="nobordernopadding"><tr><td>';
     print $langs->trans('ParentCompany');
     print '<td><td align="right">';
     print '<a href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">'.img_edit() .'</a>';
@@ -604,7 +604,7 @@ else
 
     // Commerciaux
     print '<tr><td>';
-    print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0" border="0"><tr><td>';
+    print '<table width="100%" class="nobordernopadding"><tr><td>';
     print $langs->trans('SalesRepresentatives');
     print '<td><td align="right">';
     print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.img_edit().'</a>';

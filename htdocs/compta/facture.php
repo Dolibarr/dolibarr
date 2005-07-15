@@ -71,7 +71,7 @@ $NBLINES=4;
 if ($_POST["action"] == 'classin')
 {
     $facture = new Facture($db);
-    $facture->fetch($_POST["facid"]);
+    $facture->fetch($_GET["facid"]);
     $facture->classin($_POST["projetid"]);
 }
 
@@ -884,7 +884,7 @@ else
             */
             if ($_GET["action"] == 'canceled')
             {
-                $html->form_confirm($_SERVER["PHP_SELF"]."?facid=$fac->id","Classer la facture à l'état 'Abandonnée'","La totalité du paiement de cette facture n'a pas été réalisée. Etes-vous sûr de vouloir abandonner définitivement cette facture ?","confirm_canceled");
+                $html->form_confirm($_SERVER["PHP_SELF"]."?facid=$fac->id",$langs->trans("CancelBill"),$langs->trans("ConfirmCancelBill"),"confirm_canceled");
                 print '<br />';
             }
 
@@ -916,25 +916,31 @@ else
             print "</td></tr>";
 
             print '<tr>';
+
+            // Projet
             if ($conf->projet->enabled)
             {
                 $langs->load("projects");
-                print '<td height=\"10\">'.$langs->trans("Project").'</td><td colspan="3">';
-                if ($fac->projetid > 0)
+                print '<td>';
+                print '<table width="100%" class="nobordernopadding"><tr><td>';
+                print $langs->trans("Project");
+                print '</td>';
+                if ($_GET["action"] != "classer") print '<td align="right"><a href="facture.php?action=classer&amp;facid='.$fac->id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+                print '</tr></table>';
+                print '</td><td colspan="3">';
+                if ($_GET["action"] == "classer")
                 {
-                    $projet = New Project($db);
-                    $projet->fetch($fac->projetid);
-                    print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$fac->projetid.'">'.$projet->title.'</a>';
+                    $html->form_project("facture.php?facid=$fac->id",$fac->fk_soc,$fac->projetid,"projetid");
                 }
                 else
                 {
-                    print '<a href="facture.php?facid='.$fac->id.'&amp;action=classer">'.$langs->trans("ClassifyBill").'</a>';
+                    $html->form_project("facture.php?facid=$fac->id",$fac->fk_soc,$fac->projetid,"none");
                 }
-                print "&nbsp;</td>";
+                print "</td>";
             } else {
-                print '<td height=\"10\">&nbsp;</td><td colspan="3">';
-                print "&nbsp;</td>";
+                print '<td height=\"10\">&nbsp;</td><td colspan="3">&nbsp;</td>';
             }
+
             print '<td rowspan="8" colspan="2" valign="top">';
 
             /*
@@ -1454,27 +1460,6 @@ else
             }
 
             print "</td></tr></table>";
-
-
-            /*
-             * Choix d'un projet
-             */
-            if ($_GET["action"] == 'classer')
-            {
-                print "<p><form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id\">\n";
-                print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-                print '<input type="hidden" name="action" value="classin">';
-                print '<table class="border">';
-
-                print '<tr><td>'.$langs->trans("Project").'</td><td>';
-
-                $proj = new Project($db);
-                $html->select_array("projetid",$proj->liste_array($soc->id));
-
-                print "</td></tr>";
-
-                print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr></table></form></p>';
-            }
 
 
             /*
