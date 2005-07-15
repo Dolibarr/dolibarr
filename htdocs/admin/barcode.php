@@ -36,11 +36,17 @@ $langs->load("bills");
 if (!$user->admin)
   accessforbidden();
 
+$barcode_encode_type_set = BARCODE_ENCODE_TYPE;
 
 $typeconst=array('yesno','texte','chaine');
 
 if ($_GET["action"] == 'settype' && $user->admin)
 {
+	if (dolibarr_set_const($db, "BARCODE_ENCODE_TYPE",$_GET["value"]))
+	$barcode_encode_type_set = $_GET["value"];
+}
+
+/*
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'BARCODE_ENCODE_TYPE';";
   $db->query($sql);
 
@@ -48,7 +54,7 @@ if ($_GET["action"] == 'settype' && $user->admin)
 	('BARCODE_ENCODE_TYPE','".$_POST["host"]."',0);";
 	$db->query($sql);
 }
-
+*/
 
 llxHeader('',$langs->trans("BarcodeSetup"),'BarcodeConfiguration');
 
@@ -63,20 +69,162 @@ print_titre($langs->trans("BarcodeEncodeModule"));
 
 print '<table class="noborder" width="100%">';
 
-print '<form action="barcode.php" method="post">';
-print '<input type="hidden" name="action" value="settype">';
+//print '<form action="barcode.php" method="post">';
+//print '<input type="hidden" name="action" value="settype">';
+
 print '<tr class="liste_titre">';
+
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+$var=True;
+
+//EAN13
+      print '<tr '.$bc[$var].'><td width="100">';
+      print "EAN13";
+      print "</td><td>\n";
+      
+      print "information";
+      print '</td>';
+
+      // Affiche example
+      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=123456789012&encoding=EAN&scale=1"></td>';
+      
+      print '<td align="center">';
+      if ($barcode_encode_type_set == "EAN13")
+	    {
+	        print img_tick();
+	    }
+      else
+	    {
+          print '<a href="barcode.php?action=settype&amp;value=EAN13">'.$langs->trans("Default").'</a>';
+	    }
+	    print "</td></tr>\n";
+
+//UPC
+      print '<tr><td width="100">';
+      print "UPC";
+      print "</td><td>\n";
+      print "information";
+      print '</td>';
+
+      // Affiche example
+      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=123456789012&encoding=UPC&scale=1"></td>';
+      
+      print '<td align="center">';
+      if ($barcode_encode_type_set == "UPC")
+	    {
+	        print img_tick();
+	    }
+      else
+	    {
+          print '<a href="barcode.php?action=settype&amp;value=UPC">'.$langs->trans("Default").'</a>';
+	    }
+	    print "</td></tr>\n";
+	    
+//ISBN
+      print '<tr '.$bc[$var].'><td width="100">';
+      print "ISBN";
+      print "</td><td>\n";
+      print "information";
+      print '</td>';
+
+      // Affiche example
+      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=123456789&encoding=ISBN&scale=1"></td>';
+      
+      print '<td align="center">';
+      if ($barcode_encode_type_set == "ISBN")
+	    {
+	        print img_tick();
+	    }
+      else
+	    {
+          print '<a href="barcode.php?action=settype&amp;value=ISBN">'.$langs->trans("Default").'</a>';
+	    }
+	    print "</td></tr>\n";
+	    
+//code 39
+      print '<tr><td width="100">';
+      print "code 39";
+      print "</td><td>\n";
+      print "information";
+      print '</td>';
+
+      // Affiche example
+      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=1234567890&encoding=39&scale=1"></td>';
+      
+      print '<td align="center">';
+      if ($barcode_encode_type_set == "code39")
+	    {
+	        print img_tick();
+	    }
+      else
+	    {
+          print '<a href="barcode.php?action=settype&amp;value=code39">'.$langs->trans("Default").'</a>';
+	    }
+	    print "</td></tr>\n";
+	    
+	    
+//code 128
+      print '<tr '.$bc[$var].'><td width="100">';
+      print "Code 128";
+      print "</td><td>\n";
+      print "information";
+      print '</td>';
+
+      // Affiche example
+      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=ABCD1234567890&encoding=128&scale=1"></td>';
+      
+      print '<td align="center">';
+      if ($barcode_encode_type_set == "code128")
+	    {
+	        print img_tick();
+	    }
+      else
+	    {
+          print '<a href="barcode.php?action=settype&amp;value=code128">'.$langs->trans("Default").'</a>';
+	    }
+	    print "</td></tr>\n";
+	    
+//I25
+      print '<tr><td width="100">';
+      print "I25";
+      print "</td><td>\n";
+      print "information";
+      print '</td>';
+
+      // Affiche example
+      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=1234567890&encoding=I25&scale=1"></td>';
+      
+      print '<td align="center">';
+      if ($barcode_encode_type_set == "I25")
+	    {
+	        print img_tick();
+	    }
+      else
+	    {
+          print '<a href="barcode.php?action=settype&amp;value=I25">'.$langs->trans("Default").'</a>';
+	    }
+	    print "</td></tr>\n";
+
+
+
+
+/*
 print '<td>'.$langs->trans('Name').'</td><td>'.$langs->trans('Description').'</td>';
 print '<td><input type="submit" value="'.$langs->trans('Modify').'"></td>';
 print "</tr>\n";
-
-/*
 print '<tr '.$bc[false].'><td width="200"><input type="radio" name="compta_mode" value="RECETTES-DEPENSES"'.($compta_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'))."</td></tr>\n";
 print '<tr '.$bc[true].'><td width="200"><input type="radio" name="compta_mode" value="CREANCES-DETTES"'.($compta_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
 print '<td colspan="2">'.$langs->trans('OptionModeVirtualDesc')."</td></tr>\n";
-*/
 print '</form>';
+*/
+
 print "</table>\n";
 
 
