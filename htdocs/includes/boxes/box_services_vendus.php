@@ -94,7 +94,7 @@ class box_services_vendus extends ModeleBoxes {
     
                     $this->info_box_contents[$i][1] = array('align' => 'left',
                     'text' => $objp->nom,
-                    'maxlength' => 48,
+                    'maxlength' => 40,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
     
                     $i++;
