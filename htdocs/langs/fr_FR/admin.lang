@@ -306,4 +306,5 @@ DonationsSetup=Configuration du module Dons
 ##### Barcode #####
 BarcodeSetup=Configuration des codes barres
 PaperFormatModule=Modules de format d'impression
+BarcodeEncodeModule=Types d'encodages des codes barres
 BarcodeEncodeModule=Modules d'encodage des codes barres

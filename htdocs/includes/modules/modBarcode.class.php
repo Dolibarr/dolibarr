@@ -72,8 +72,15 @@ class modBarcode extends DolibarrModules
     $this->depends = array("modProduit");
 	$this->requiredby = array();
 	
+	  // Config pages
+    $this->config_page_url = "barcode.php";
+	
     // Constantes
     $this->const = array();
+    
+    $this->const[0][0] = "BARCODE_ENCODE_TYPE";
+    $this->const[0][1] = "chaine";
+    $this->const[0][2] = "EAN13";
 
     // Boxes
     $this->boxes = array();

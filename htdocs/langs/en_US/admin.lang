@@ -306,4 +306,4 @@ DonationsSetup=Donation module setup
 ##### Barcode #####
 BarcodeSetup=Barcode setup
 PaperFormatModule=Print' format module
-BarcodeEncodeModule=Barcode' encodage module
+BarcodeEncodeModule=Barcode' encodage type
