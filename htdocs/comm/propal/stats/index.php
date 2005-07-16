@@ -31,6 +31,10 @@
 require("./pre.inc.php");
 require("./propalestats.class.php");
 
+$WIDTH=500;
+$HEIGHT=250;
+
+
 llxHeader();
 
 print_fiche_titre($langs->trans("ProposalsStatistics"), $mesg);
@@ -50,8 +54,8 @@ if (! $mesg) {
     $px->SetData($data);
     $px->SetLegend(array($year - 1, $year));
     $px->SetMaxValue($px->GetMaxValue());
-    $px->SetWidth(450);
-    $px->SetHeight(280);
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
     $px->draw($filename);
 }
 
@@ -82,11 +86,11 @@ if ($db->query($sql))
 }
 else
 {
-  print "Erreur : $sql";
+  dolibarr_print_error($db);
 }
 
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

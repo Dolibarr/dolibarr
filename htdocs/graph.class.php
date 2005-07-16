@@ -135,14 +135,14 @@ class Graph
         // Défini position du graphe (et legende) au sein de l'image
         if (isset($this->Legend))
         {
-            $this->graph->SetMarginsPixels(60,100,10,30);
+            $this->graph->SetMarginsPixels(100,100,10,30);
 
             $this->graph->SetLegend($this->Legend);
             $this->graph->SetLegendWorld(13,$this->MaxValue);
         }
         else
         {
-            $this->graph->SetMarginsPixels(60,10,10,30);
+            $this->graph->SetMarginsPixels(100,10,10,30);
         }
             
         if (substr($this->MaxValue,0,1) == 1)

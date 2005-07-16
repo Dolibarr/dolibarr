@@ -76,7 +76,7 @@ $data = array();
 
 for ($i = 1 ; $i < 13 ; $i++)
 {
-  $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
+  $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
 $filename_amount = $conf->facture->dir_images."/factureamount".$year.".png";
@@ -98,7 +98,7 @@ $data = array();
 
 for ($i = 1 ; $i < 13 ; $i++)
 {
-  $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
+  $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
 $filename_avg = $conf->facture->dir_images."/factureaverage".$year.".png";
@@ -107,6 +107,7 @@ $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureave
 $px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
+    $px->SetData($data);
     $px->SetYLabel($langs->trans("AmountAverage"));
     $px->SetMaxValue($px->GetAmountMaxValue());
     $px->SetWidth($GRAPHWIDTH);
@@ -133,5 +134,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

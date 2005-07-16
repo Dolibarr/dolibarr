@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +18,24 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/**     \file       htdocs/commande/stats/commandestats.class.php
+/**
+        \file       htdocs/commande/stats/commandestats.class.php
         \ingroup    commandes
         \brief      Fichier de la classe de gestion des stats des commandes
         \version    $Revision$
 */
 
+include_once DOL_DOCUMENT_ROOT . "/stats.class.php";
 
-/**     \class      CommandeStats
+
+/**
+        \class      CommandeStats
         \brief      Classe permettant la gestion des stats des commandes
 */
 
-class CommandeStats 
+class CommandeStats extends Stats
 {
   var $db ;
 
@@ -41,29 +45,12 @@ class CommandeStats
       $this->socidp = $socidp;
     }
 
-  function getNbCommandeByMonthWithPrevYear($year)
-  {
-    $data1 = $this->getNbCommandeByMonth($year - 1);
-    $data2 = $this->getNbCommandeByMonth($year);
-
-    $data = array();
-
-    for ($i = 0 ; $i < 12 ; $i++)
-      {
-	$data[$i] = array($data1[$i][0], 
-			  $data1[$i][1],
-			  $data2[$i][1]);
-      }
-    return $data;
-  }
-
   /**
    *    \brief      Renvoie le nombre de commande par mois pour une année donnée
    *
    */
-    function getNbCommandeByMonth($year)
+    function getNbByMonth($year)
     {
-        $tabresult = array();
         $sql = "SELECT date_format(date_commande,'%m') as dm, count(*) nb FROM ".MAIN_DB_PREFIX."commande";
         $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
         if ($this->socidp)
@@ -72,29 +59,8 @@ class CommandeStats
         }
         $sql .= " GROUP BY dm";
         $sql .= " ORDER BY dm DESC";
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            $num = $this->db->num_rows($result);
-            $i = 0;
-            while ($i < $num)
-            {
-                $row = $this->db->fetch_object($result);
-                $j = $row->dm;
-                $tabresult[$j+0] = $row->nb;
-                $i++;
-            }
-            $this->db->free($result);
-        }
-    
-        $data = array();
-    
-        for ($i = 1 ; $i < 13 ; $i++)
-        {
-            $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $tabresult[$i] );
-        }
-    
-        return $data;
+
+        return $this->_getNbByMonth($year, $sql);
     }
 
   /**
@@ -103,35 +69,22 @@ class CommandeStats
    */
   function getNbByYear()
   {
-    $result = array();
     $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*), sum(total_ht)  FROM ".MAIN_DB_PREFIX."commande WHERE fk_statut > 0";
     if ($this->socidp)
       {
 	$sql .= " AND fk_soc = ".$this->socidp;
       }
     $sql .= " GROUP BY dm DESC";
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $result[$row[0]] = array($row[1], $row[2]);
 
-	    $i++;
-	  }
-	$this->db->free();
-      }
-    return $result;
+    return $this->_getNbByYear($sql);
   }
+  
   /**
    * Renvoie le nombre de commande par mois pour une année donnée
    *
    */
-  function getCommandeAmountByMonth($year)
+  function getAmountByMonth($year)
   {
-    $result = array();
     $sql = "SELECT date_format(date_commande,'%m') as dm, sum(total_ht)  FROM ".MAIN_DB_PREFIX."commande";
     $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
     if ($this->socidp)
@@ -140,34 +93,15 @@ class CommandeStats
       }
     $sql .= " GROUP BY dm DESC";
 
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $j = $row[0] * 1;
-	    $result[$j] = $row[1];
-	    $i++;
-	  }
-	$this->db->free();
-      }
-    
-    for ($i = 1 ; $i < 13 ; $i++)
-      {
-	$res[$i] = $result[$i] + 0;
-      }
-
-    return $res;
+    return $this->_getAmountByMonth($year, $sql);
   }
+  
   /**
    * Renvoie le nombre de commande par mois pour une année donnée
    *
    */
-  function getCommandeAverageByMonth($year)
+  function getAverageByMonth($year)
   {
-    $result = array();
     $sql = "SELECT date_format(date_commande,'%m') as dm, avg(total_ht)  FROM ".MAIN_DB_PREFIX."commande";
     $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
     if ($this->socidp)
@@ -176,26 +110,7 @@ class CommandeStats
       }
     $sql .= " GROUP BY dm DESC";
 
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $j = $row[0] * 1;
-	    $result[$j] = $row[1];
-	    $i++;
-	  }
-	$this->db->free();
-      }
-    
-    for ($i = 1 ; $i < 13 ; $i++)
-      {
-	$res[$i] = $result[$i] + 0;
-      }
-
-    return $res;
+    return $this->_getAverageByMonth($year, $sql);
   }
 }
 

@@ -28,31 +28,29 @@
 		\version    $Revision$
 */
 
-
 require("./pre.inc.php");
 require("../commande.class.php");
 require("./commandestats.class.php");
-/*
- * Sécurité accés client
- */
+
+$WIDTH=500;
+$HEIGHT=250;
+
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
 
+
 llxHeader();
-/*
- *
- *
- */
 
 print_fiche_titre($langs->trans("OrdersStatistics"), $mesg);
 
 $stats = new CommandeStats($db, $socidp);
 
 $year = strftime("%Y", time());
-$data = $stats->getNbCommandeByMonthWithPrevYear($year);
+$data = $stats->getNbByMonthWithPrevYear($year);
 
 if (! is_dir($conf->commande->dir_images))
 { 
@@ -68,8 +66,9 @@ $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetData($data);
     $px->SetMaxValue($px->GetMaxValue());
-    $px->SetWidth(450);
-    $px->SetHeight(280);
+    $px->SetLegend(array($year - 1, $year));
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
     $px->SetYLabel("Nombre de commande");
     $px->draw($filename);
 }      
@@ -85,9 +84,9 @@ print '</td></tr>';
 $i = 0;
 while (list($key, $value) = each ($rows))
 {
-  $nbproduct = $value[0];
-  $price = $value[1];
-  $year = $key;
+  $year = $value[0];
+  $nbproduct = $value[1];
+  $price = $value[2];
   print "<tr>";
   print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td><td align="center">'.price($price).'</td></tr>';
   $i++;

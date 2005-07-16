@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,20 @@
  *
  */
 
+/**
+        \file       htdocs/facture/stats/facturestats.class.php
+        \ingroup    factures
+        \brief      Fichier de la classe de gestion des stats des factures
+        \version    $Revision$
+*/
+
 include_once DOL_DOCUMENT_ROOT . "/stats.class.php";
+
+
+/**
+        \class      FactureStats
+        \brief      Classe permettant la gestion des stats des factures
+*/
 
 class FactureStats extends Stats
 {
@@ -61,6 +75,7 @@ class FactureStats extends Stats
 
     return $this->_getNbByYear($sql);
   }
+  
   /**
    * Renvoie le nombre de facture par mois pour une année donnée
    *
@@ -90,8 +105,8 @@ class FactureStats extends Stats
 	$sql .= " AND fk_soc = ".$this->socidp;
       }
     $sql .= " GROUP BY dm DESC";
-    return $this->_getAverageByMonth($year, $sql);
 
+    return $this->_getAverageByMonth($year, $sql);
   }
 }
 

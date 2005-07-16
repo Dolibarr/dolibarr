@@ -60,7 +60,7 @@ $HEIGHT=250;
 print_fiche_titre($langs->trans("OrdersStatistics"), $mesg);
 
 $stats = new CommandeStats($db, $socidp);
-$data = $stats->getNbCommandeByMonth($year);
+$data = $stats->getNbByMonth($year);
 
 if (! is_dir($conf->commande->dir_images)) { mkdir($conf->commande->dir_images); }
 
@@ -78,13 +78,13 @@ if (! $mesg) {
     $px->draw($filename);
 }
 
-$res = $stats->getCommandeAmountByMonth($year);
+$res = $stats->getAmountByMonth($year);
 
 $data = array();
 
 for ($i = 1 ; $i < 13 ; $i++)
 {
-  $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
+  $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
 $filename_amount = $conf->commande->dir_images."/commandeamount".$year.".png";
@@ -100,13 +100,13 @@ if (! $mesg) {
     $px->SetYLabel($langs->trans("AmountTotal"));
     $px->draw($filename_amount);
 }
-$res = $stats->getCommandeAverageByMonth($year);
+$res = $stats->getAverageByMonth($year);
 
 $data = array();
 
 for ($i = 1 ; $i < 13 ; $i++)
 {
-  $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
+  $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
 $filename_avg = $conf->commande->dir_images."/commandeaverage".$year.".png";
@@ -142,5 +142,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
