@@ -1300,7 +1300,7 @@ class Form
     if ($exportlink) print '</td><td>'.$langs->trans("Export").'</td><td>'.$exportlink;
     print '</td></tr>';
     
-    print '</table><br>';
+    print '</table>';
     print '</div>';
     print "\n<!-- fin cartouche rapport -->\n\n";
   }
