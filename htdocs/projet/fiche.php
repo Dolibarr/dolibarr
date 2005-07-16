@@ -21,11 +21,11 @@
  *
  */
 
-/*!
-  \file htdocs/projet/fiche.php
-  \ingroup    projet
-  \brief      Fiche projet
-  \version    $Revision$
+/**
+        \file       htdocs/projet/fiche.php
+        \ingroup    projet
+        \brief      Fiche projet
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -171,7 +171,6 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
       print '<tr><td>'.$langs->trans("Label").'</td><td><input name="title" value="'.$projet->title.'"></td></tr>';      
       print '<tr><td align="center" colspan="2"><input name="update" type="submit" Value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
       print '</table>';
-      print '<br>';
       print '</form>';
     }
   else
@@ -183,7 +182,6 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
       print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
       print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
       print '</table>';
-      print '<br>';
     }
 
   print '</div>';
@@ -208,5 +206,5 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

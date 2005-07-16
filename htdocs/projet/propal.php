@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/projet/propal.php
+/**
+        \file       htdocs/projet/propal.php
         \ingroup    projet propale
 		\brief      Page des propositions commerciales par projet
 		\version    $Revision$
@@ -80,37 +81,41 @@ print '<table class="border" width="100%">';
 print '<tr><td>'.$langs->trans("Company").'</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
 print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
-print '</table><br>';
+print '</table>';
 
 $propales = $projet->get_propal_list();
 
 if (sizeof($propales)>0 && is_array($propales))
 {
-  print_titre('Listes des propositions commerciales associées au projet');
-  print '<table class="noborder" width="100%">';
-  
-  print '<tr class="liste_titre">';
-  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="25%">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
-  
-  for ($i = 0; $i<sizeof($propales);$i++)
+    print '<br>';
+    
+    print_titre('Listes des propositions commerciales associées au projet');
+    print '<table class="noborder" width="100%">';
+    
+    print '<tr class="liste_titre">';
+    print '<td width="15%">'.$langs->trans("Ref").'</td><td width="25%">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
+    
+    for ($i = 0; $i<sizeof($propales);$i++)
     {
-      $propale = new Propal($db);
-      $propale->fetch($propales[$i]);
-      
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"../comm/propal.php?propalid=$propale->id\">$propale->ref</a></td>\n";
-      
-      print '<td>'.dolibarr_print_date($propale->datep).'</td>';
-      
-      print '<td align="right">'.price($propale->price).'</td><td>&nbsp;</td></tr>';
-      $total = $total + $propale->price;
+        $propale = new Propal($db);
+        $propale->fetch($propales[$i]);
+    
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print "<td><a href=\"../comm/propal.php?propalid=$propale->id\">$propale->ref</a></td>\n";
+    
+        print '<td>'.dolibarr_print_date($propale->datep).'</td>';
+    
+        print '<td align="right">'.price($propale->price).'</td><td>&nbsp;</td></tr>';
+        $total = $total + $propale->price;
     }
-  
-  print '<tr><td colspan="2">'.$i.' '.$langs->trans("Proposal").'</td>';
-  print '<td align="right">'.$langs->trans("TotalHT").': '.price($total).'</td>';
-  print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr></table>';
+    
+    print '<tr><td colspan="2">'.$i.' '.$langs->trans("Proposal").'</td>';
+    print '<td align="right">'.$langs->trans("TotalHT").': '.price($total).'</td>';
+    print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr></table>';
 }
+
+print '</div>';
 
 $db->close();
 

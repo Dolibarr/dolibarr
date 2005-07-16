@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/projet/commandes.php
+/**
+        \file       htdocs/projet/commandes.php
         \ingroup    projet commande
 		\brief      Page des commandes par projet
 		\version    $Revision$
@@ -78,7 +79,7 @@ print '<table class="border" width="100%">';
 print '<tr><td>'.$langs->trans("Company").'</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
 print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
-print '</table><br>';
+print '</table>';
 
 /*
  * Commandes
@@ -88,31 +89,35 @@ $commandes = $projet->get_commande_list();
 $total = 0 ;
 if (sizeof($commandes)>0 && is_array($commandes))
 {
-  print_titre('Listes des commandes associées au projet');
-  print '<table class="noborder" width="100%">';
-  
-  print '<tr class="liste_titre">';
-  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="25%">Date</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
-  
-  for ($i = 0; $i<sizeof($commandes);$i++)
+    print '<br>';
+    
+    print_titre('Listes des commandes associées au projet');
+    print '<table class="noborder" width="100%">';
+    
+    print '<tr class="liste_titre">';
+    print '<td width="15%">'.$langs->trans("Ref").'</td><td width="25%">Date</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
+    
+    for ($i = 0; $i<sizeof($commandes);$i++)
     {
-      $commande = new Commande($db);
-      $commande->fetch($commandes[$i]);
-      
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"../commande/fiche.php?id=$commande->id\">$commande->ref</a></td>\n";	      
-      print '<td>'.strftime("%d %B %Y",$commande->date).'</td>';	      
-      print '<td align="right">'.price($commande->total_ht).'</td><td>&nbsp;</td></tr>';
-      
-      $total = $total + $commande->total_ht;
+        $commande = new Commande($db);
+        $commande->fetch($commandes[$i]);
+    
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print "<td><a href=\"../commande/fiche.php?id=$commande->id\">$commande->ref</a></td>\n";
+        print '<td>'.strftime("%d %B %Y",$commande->date).'</td>';
+        print '<td align="right">'.price($commande->total_ht).'</td><td>&nbsp;</td></tr>';
+    
+        $total = $total + $commande->total_ht;
     }
-  
-  print '<tr><td colspan="2">'.$i.' '.$langs->trans("Orders").'</td>';
-  print '<td align="right">'.$langs->trans("TotalHT").': '.price($total).'</td>';
-  print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-  print "</table>";
+    
+    print '<tr><td colspan="2">'.$i.' '.$langs->trans("Orders").'</td>';
+    print '<td align="right">'.$langs->trans("TotalHT").': '.price($total).'</td>';
+    print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print "</table>";
 }    
+
+print '</div>';
 
 $db->close();
 

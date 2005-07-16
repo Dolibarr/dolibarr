@@ -267,18 +267,21 @@ else
         if ($_GET["action"] == 'valide')
         {
             $html->form_confirm("fiche.php?id=".$mil->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valide");
+            print '<br>';
         }
 
         // Confirmation de l'approbation du mailing
         if ($_GET["action"] == 'approve')
         {
             $html->form_confirm("fiche.php?id=".$mil->id,"Approuver le mailing","Confirmez-vous l'approbation du mailing ?","confirm_approve");
+            print '<br>';
         }
 
         // Confirmation de la suppression
         if ($_GET["action"] == 'delete')
         {
             $html->form_confirm("fiche.php?id=".$mil->id,$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete");
+            print '<br>';
         }
 
 
@@ -325,7 +328,7 @@ else
             print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td><td colspan="3">';
             print nl2br($mil->body).'</td></tr>';
 
-            print '</table><br>';
+            print '</table>';
 
             print "</div>";
 
@@ -412,7 +415,7 @@ else
             print $mil->body.'</textarea></td></tr>';
 
             print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
-            print '</table><br>';
+            print '</table>';
             print '</form>';
 
             print "</div>";

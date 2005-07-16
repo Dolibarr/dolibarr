@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/projet/facture.php
+/**
+        \file       htdocs/projet/facture.php
         \ingroup    projet facture
 		\brief      Page des factures par projet
 		\version    $Revision$
@@ -83,42 +84,45 @@ print '<table class="border" width="100%">';
 print '<tr><td>'.$langs->trans("Company").'</td><td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
 print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
-print '</table><br>';
+print '</table>';
 
 
-      /*
-       * Factures
-       *
-       */
-      $factures = $projet->get_facture_list();
-      $total = 0;
-      if (sizeof($factures)>0 && is_array($factures))
-	{
-	  print_titre('Listes des factures associées au projet');
-	  print '<table class="noborder" width="100%">';
-	  
-	  print '<tr class="liste_titre">';
-	  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="25%">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
-	  
-	  for ($i = 0; $i<sizeof($factures);$i++)
-	    {
-	      $facture = new Facture($db);
-	      $facture->fetch($factures[$i]);
-	      
-	      $var=!$var;
-	      print "<tr $bc[$var]>";
-	      print "<td><a href=\"../compta/facture.php?facid=$facture->id\">$facture->ref</a></td>\n";	      
-	      print '<td>'.strftime("%d %B %Y",$facture->date).'</td>';	      
-	      print '<td align="right">'.price($facture->total_ht).'</td><td>&nbsp;</td></tr>';
-	      
-	      $total = $total + $facture->total_ht;
-	    }
-	  
-	  print '<tr><td colspan="2">'.$i.' '.$langs->trans("Bills").'</td>';
-	  print '<td align="right">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
-	  print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-	  print "</table>";
-	}
+/*
+ * Factures
+ */
+$factures = $projet->get_facture_list();
+$total = 0;
+if (sizeof($factures)>0 && is_array($factures))
+{
+    print '<br>';
+
+    print_titre('Listes des factures associées au projet');
+    print '<table class="noborder" width="100%">';
+
+    print '<tr class="liste_titre">';
+    print '<td width="15%">'.$langs->trans("Ref").'</td><td width="25%">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
+
+    for ($i = 0; $i<sizeof($factures);$i++)
+    {
+        $facture = new Facture($db);
+        $facture->fetch($factures[$i]);
+
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print "<td><a href=\"../compta/facture.php?facid=$facture->id\">$facture->ref</a></td>\n";
+        print '<td>'.strftime("%d %B %Y",$facture->date).'</td>';
+        print '<td align="right">'.price($facture->total_ht).'</td><td>&nbsp;</td></tr>';
+
+        $total = $total + $facture->total_ht;
+    }
+
+    print '<tr><td colspan="2">'.$i.' '.$langs->trans("Bills").'</td>';
+    print '<td align="right">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
+    print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print "</table>";
+}
+
+print '</div>';
 
 $db->close();
 
