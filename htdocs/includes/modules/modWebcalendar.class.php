@@ -57,6 +57,7 @@ class modWebcalendar extends DolibarrModules
     $this->const_name = "MAIN_MODULE_WEBCALENDAR";
     $this->const_config = MAIN_MODULE_WEBCALENDAR;
     $this->special = 0;
+    $this->picto='calendar';
 
     // Dir
     $this->dirs = array();
