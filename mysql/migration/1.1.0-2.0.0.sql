@@ -1605,3 +1605,5 @@ insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SET
 update llx_const set name='OSC_DB_NAME' where name='DB_NAME_OSC';
 update llx_const set name='MAIN_EMAIL_FROM' where name='MAIN_MAIL_FROM';
 
+alter table llx_bookmark add url         varchar(128);
+alter table llx_bookmark add target      varchar(16);

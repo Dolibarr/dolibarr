@@ -23,5 +23,7 @@ create table llx_bookmark
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc      integer,
   fk_user     integer,
-  dateb       datetime
+  dateb       datetime,
+  url         varchar(128),
+  target      varchar(16)
 )type=innodb;

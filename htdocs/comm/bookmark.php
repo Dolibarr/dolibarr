@@ -32,8 +32,11 @@ require("./pre.inc.php");
 
 llxHeader();
 
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="idp";
+if (! $sortfield) $sortfield="bid";
 
 if ($page == -1) { $page = 0 ; }
 $limit = 26;
@@ -41,14 +44,11 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$yn["t"] = "oui";
-$yn["f"] = "non";
-$ynn["1"] = "oui";
-$ynn["0"] = "non";
-
-
-
-if ($action == 'add')
+/*
+ * Actions
+ */
+ 
+if ($_GET["action"] == 'add')
 {
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),'". $user->login ."');";
   if (! $db->query($sql) )
@@ -57,9 +57,9 @@ if ($action == 'add')
     }
 }
 
-if ($action == 'delete')
+if ($_GET["action"] == 'delete')
 {
-  $sql = "DELETE FROM  ".MAIN_DB_PREFIX."bookmark WHERE rowid=$bid AND fk_user = '". $user->login ."'";
+  $sql = "DELETE FROM  ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"]." AND fk_user = '". $user->login ."'";
   $result = $db->query($sql);
 }
 
@@ -67,48 +67,54 @@ if ($action == 'delete')
 
 print_fiche_titre($langs->trans("Bookmarks"));
  
-$sql = "SELECT s.idp, s.nom, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
-$sql.= " WHERE b.fk_soc = s.idp AND s.datea is not null";
+$sql = "SELECT s.idp, s.nom, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user, b.url, b.target, u.name, u.firstname, u.code";
+$sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
+$sql.= " WHERE b.fk_soc = s.idp AND b.fk_user=u.rowid";
+if (! $user->admin) $sql.= " AND b.fk_user = ".$user->id;
 $sql.= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
 
   if ($sortorder == "DESC") $sortorder="ASC";
   else $sortorder="DESC";
 
   print "<table class=\"noborder\" width=\"100%\">";
+
   print "<tr class=\"liste_titre\">";
-  print "<td>&nbsp;</td>";
-  print "<td align=\"center\"><a href=\"index.php?sortfield=idp&sortorder=$sortorder&begin=$begin\">Id</a></td>";
-  print "<td><a href=\"index.php?sortfield=lower(s.nom)&sortorder=$sortorder&begin=$begin\">Societe</a></td>";
-
-  print "<td>".$langs->trans("Author")."</td>";
-  print "<td>".$langs->trans("Date")."</td>";
-
+  //print "<td>&nbsp;</td>";
+  print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"],"bid","","",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.name","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","","",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Url"),$_SERVER["PHP_SELF"],"b.url","","",'',$sortfield);
+  print "<td>".$langs->trans("Target")."</td>";
   print "<td>&nbsp;</td>";
   print "</tr>\n";
+
   $var=True;
   while ($i < $num)
     {
-      $obj = $db->fetch_object();
+      $obj = $db->fetch_object($resql);
       
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td>" . ($i + 1 + ($limit * $page)) . "</td>";
-      print "<td align=\"center\"><b>$obj->idp</b></td>";
-      print "<td><a href=\"index.php?socid=$obj->idp\">$obj->nom</a></td>\n";
-      print "<td>$obj->fk_user</td>\n";
-      print "<td>".dolibarr_print_date($obj->dateb) ."</td>";
+      //print "<td>" . ($i + 1 + ($limit * $page)) . "</td>";
+      print "<td align=\"center\"><b>".$obj->bid."</b></td>";
+      print "<td><a href='".DOL_URL_ROOT."/user/fiche.php?id=".$obj->fk_user."'>".img_object($langs->trans("ShowUser"),"user").' '.$obj->name." ".$obj->firstname."</a></td>\n";
+      print '<td align="center">'.dolibarr_print_date($obj->dateb) ."</td>";
+      print "<td><a href=\"index.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
+      print '<td align="center">'.$obj->url."</td>";
+      print '<td align="center">'.$obj->target."</td>";
       print "<td><a href=\"bookmark.php?action=delete&bid=$obj->bid\">".img_delete()."</a></td>\n";
       print "</tr>\n";
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else
 {
