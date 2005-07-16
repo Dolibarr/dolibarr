@@ -227,7 +227,7 @@ if ($_GET["id"])
 	  dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
 	  print '<table class="border" width="100%">';
-	  print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="2">'.$product->ref.'</td></tr>';
+	  print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">'.$product->ref.'</td></tr>';
 	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
 	  print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
 

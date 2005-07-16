@@ -364,7 +364,7 @@ if ($_GET["id"])
             if ($product->type == 1) $nblignes++;
 
             // Reference
-            print '<td width="10%">'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
+            print '<td width="15%">'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
 
             if ($product->is_photo_available($conf->produit->dir_output))
             {
@@ -458,7 +458,7 @@ if ($_GET["id"])
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="id" value="'.$product->id.'">';
         print '<table class="border" width="100%">';
-        print "<tr>".'<td width="20%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
+        print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
         print '<td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
         $langs->load("bills");
@@ -536,17 +536,6 @@ if ($_GET["action"] == '')
     if ( $user->rights->produit->creer)
     {
         print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
-    }
-
-    if ($user->rights->produit->modifier || $user->rights->produit->creer)
-    {
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/price.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
-    }
-
-    if ( $user->rights->produit->creer && $conf->upload)
-    {
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/photos.php?action=ajout_photo&amp;id='.$product->id.'">';
-        print $langs->trans("AddPhoto").'</a>';
     }
 
 }

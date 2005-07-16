@@ -153,7 +153,7 @@ if ($_GET["id"])
 
         print '<table class="border" width="100%">';
         print '<tr>';
-        print '<td width="10%">'.$langs->trans("Ref").'</td><td colspan="2" width="40%">'.$product->ref.'</td>';
+        print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">'.$product->ref.'</td>';
         print '</tr>';
         print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
         print '</tr>';

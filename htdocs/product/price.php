@@ -145,7 +145,7 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->typ
 
 print '<table class="border" width="100%">';
 print '<tr>';
-print '<td width="10%">'.$langs->trans("Ref").'</td><td colspan="2" width="40%">'.$product->ref.'</td>';
+print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">'.$product->ref.'</td>';
 print '</tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
 print '</tr>';
@@ -195,7 +195,7 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
   print '<input type="hidden" name="action" value="update_price">';
   print '<input type="hidden" name="id" value="'.$product->id.'">';
   print '<table class="border" width="100%">';
-  print '<tr><td width="20%">'.$langs->trans('SellingPrice').'</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
+  print '<tr><td width="15%">'.$langs->trans('SellingPrice').'</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
   print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
   print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
   print '</table>';
