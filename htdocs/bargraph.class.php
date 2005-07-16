@@ -31,17 +31,16 @@ include_once(DOL_DOCUMENT_ROOT."/graph.class.php");
 
 /**
         \class      BarGraph
-	    \brief      Classe permettant la gestion des graphs phplot
-	    \remarks    Utilisation: 
-	                $px = new BarGraph();
+	    \brief      Classe permettant la gestion des graphs Bar a travers de PHPlot
+	    \remarks    Usage: 
                     $graph_data = array("1"=>10,"2"=>20);
+	                $px = new BarGraph();
                     $px->SetData($graph_data);
                     $px->SetTitle("title");
                     $px->SetLegend(array("Val1","Val2"));
-                    $px->width = 380;
-                    $px->height = 200;
-                    $px->draw("fichier.png");
-	                
+                    $px->SetWidth(width);
+                    $px->SetHeight(height);
+                    $px->draw("file.png");
 */
 
 class BarGraph extends Graph
