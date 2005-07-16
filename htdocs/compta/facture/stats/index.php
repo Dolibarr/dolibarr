@@ -56,14 +56,15 @@ if (! is_dir($conf->facture->dir_images)) { mkdir($conf->facture->dir_images); }
 $filename = $conf->facture->dir_images."/nbfacture2year-".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=nbfacture2year-'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
+    $px->SetData($data);
     $px->SetMaxValue($px->GetMaxValue());
     $px->SetLegend(array($year - 1, $year));
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
-    $px->draw($filename, $data, $year);
+    $px->draw($filename);
 }
       
 $sql = "SELECT count(*), date_format(datef,'%Y') as dm, sum(total) FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0 ";

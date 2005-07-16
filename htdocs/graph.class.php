@@ -1,5 +1,6 @@
 <?php
-/* Copyright (c) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (c) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,101 +36,137 @@ include_once(DOL_DOCUMENT_ROOT."/includes/phplot/phplot.php");
 
 class Graph
 {
-  var $db;
-  var $errorstr;
+    var $db;
+    var $errorstr;
 
-  /**
-   *    \brief      Prépare le graphique
-   *    \param      file    Nom du fichier image
-   *    \param      data    Tableau des données
-   *    \param      title   Titre de l'image
-   */
-  function prepare($file, $data, $title='')
-  {
-    //Define the object
-    $this->graph = new PHPlot($this->width, $this->height);
-    $this->graph->SetIsInline(1);
+    var $graph;     // Objet PHPlot
+    
+    
+    /**
+     *    \brief      Génère le fichier graphique sur le disque
+     *    \param      file    Nom du fichier image
+     *    \param      data    Tableau des données
+     *    \param      title   Titre de l'image
+     */
+    function draw($file)
+    {
+        // Prepare parametres
+        $this->prepare($file);
 
-    $this->graph->SetPlotType( $this->PlotType );
+        // Génère le fichier $file
+        $this->graph->DrawGraph();
+    }
+    
+    /**
+     *    \brief      Prépare l'objet PHPlot
+     *    \param      file    Nom du fichier image à générer
+     *    \param      data    Tableau des données
+     *    \param      title   Titre de l'image
+     */
+    function prepare($file)
+    {
+        // Define the object
+        $this->graph = new PHPlot($this->width, $this->height);
+        $this->graph->SetIsInline(1);
+    
+        $this->graph->SetPlotType( $this->PlotType );
+    
+        //Set some data
+        $this->graph->SetDataValues($this->data);
 
-    if (isset($this->MaxValue))
-      {
-	$nts = array();
-	$this->MaxValue = $this->MaxValue + 1;
-	$max = $this->MaxValue;
-	if (($max % 2) <> 0)
-	  {
-	    $this->MaxValue = $this->MaxValue + 1;
-	    $max++;
-	  }
+        if (isset($this->MaxValue))
+        {
+            $nts = array();
+            $this->MaxValue = $this->MaxValue + 1;
+            $max = $this->MaxValue;
+            if (($max % 2) <> 0)
+            {
+                $this->MaxValue = $this->MaxValue + 1;
+                $max++;
+            }
+    
+            $this->graph->SetPlotAreaWorld(0,0,12,$this->MaxValue);
+    
+            $j = 0;
+            for ($i = 1 ; $i < 11 ; $i++)
+            {
+                $res = $max % $i;
+                $cal = $max / $i;
+    
+                if ($res == 0 && $cal <= 11)
+                {
+                    $nts[$j] = $cal;
+                    $j++;
+                }
+    
+            }
+            rsort($nts);
+    
+            $this->graph->SetNumVertTicks($nts[0]);
+        }
+        else
+        {
+            $this->graph->SetPlotAreaPixels(60, 10, $this->width-10, $this->height - 30) ;
+        }
+    
+        $this->graph->SetBackgroundColor($this->bgcolor);
+        $this->graph->SetDataColors($this->datacolor, $this->bordercolor);
+    
+        // Define title
+        if (strlen($this->title)) $this->graph->SetTitle($this->title);
+    
+        // TODO
+        //$this->graph->SetPrecisionY($this->precision_Y);
+        //    $this->graph->SetVertTickIncrement(0);
+        //    $this->graph->SetSkipBottomTick(1);
 
-	$this->graph->SetPlotAreaWorld(0,0,12,$this->MaxValue);
+        $this->graph->SetVertTickPosition('plotleft');
+   
+        $this->graph->SetYGridLabelType("data");
+    
+        $this->graph->SetDrawYGrid(1);
+    
+        // Affiche les valeurs
+        //$this->graph->SetDrawDataLabels('1');
+        //$this->graph->SetLabelScalePosition('1');
 
-	$j = 0;
-	for ($i = 1 ; $i < 11 ; $i++)
-	  {
-	    $res = $max % $i;
-	    $cal = $max / $i;
-	    
-	    if ($res == 0 && $cal <= 11)
-	      {
-		$nts[$j] = $cal;
-		$j++;
-	      }
+        $this->graph->SetOutputFile($file);
+    
+        // Défini position du graphe (et legende) au sein de l'image
+        if (isset($this->Legend))
+        {
+            $this->graph->SetMarginsPixels(60,100,10,30);
 
-	  }
-	rsort($nts);
-
-	$this->graph->SetNumVertTicks($nts[0]);
-      }
-    else
-      {
-	$this->graph->SetPlotAreaPixels(60, 10, $this->width-10, $this->height - 30) ;
-      }
-
-    $this->graph->SetBackgroundColor($this->bgcolor);
-
-    // TODO
-    //$this->graph->SetPrecisionY($this->precision_Y);
-
-    $this->graph->SetDataColors($this->datacolor, $this->bordercolor);
-
-    $this->graph->SetYGridLabelType("data");
-
-    $this->graph->SetOutputFile($file);
-
-    //Set some data
-    $this->graph->SetDataValues($data);
-
-    //    $this->graph->SetVertTickIncrement(0);
-
-    $this->graph->SetDrawYGrid(1); 
-
-    //
-    if (strlen($title))
-      {
-	$this->graph->SetTitle = $title;
-      }
-
-    //    $this->graph->SetSkipBottomTick(1);
-
-    // Affiche les valeurs
-    //$this->graph->SetDrawDataLabels('1');
-    //$this->graph->SetLabelScalePosition('1');
-
-    $this->graph->SetVertTickPosition('plotleft');
-
-    $this->graph->SetMarginsPixels(100,50,10,30);
-
-    if (isset($this->Legend))
-      {
-	$this->graph->SetLegend($this->Legend);
-	$this->graph->SetLegendWorld(12,$this->MaxValue);
-      }
-
-    //Draw it
-    //    $this->graph->DrawGraph();
-  }
+            $this->graph->SetLegend($this->Legend);
+            $this->graph->SetLegendWorld(13,$this->MaxValue);
+        }
+        else
+        {
+            $this->graph->SetMarginsPixels(60,10,10,30);
+        }
+            
+        if (substr($this->MaxValue,0,1) == 1)
+        {
+            $this->graph->SetNumVertTicks(10);
+        }
+        elseif (substr($this->MaxValue,0,1) == 2)
+        {
+            $this->graph->SetNumVertTicks(4);
+        }
+        elseif (substr($this->MaxValue,0,1) == 3)
+        {
+            $this->graph->SetNumVertTicks(6);
+        }
+        elseif (substr($this->MaxValue,0,1) == 4)
+        {
+            $this->graph->SetNumVertTicks(8);
+        }
+        else
+        {
+            $this->graph->SetNumVertTicks(substr($this->MaxValue,0,1));
+        }
+    
+    }
 
   function SetPrecisionY($which_prec)
   {
@@ -145,6 +182,16 @@ class Graph
   function SetWidth($w)
   {
     $this->width = $w;
+  }
+
+  function SetTitle($title)
+  {
+    $this->title = $title;
+  }
+
+  function SetData($data)
+  {
+    $this->data = $data;
   }
 
   function SetLegend($legend)

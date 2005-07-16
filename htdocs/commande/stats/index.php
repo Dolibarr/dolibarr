@@ -63,14 +63,15 @@ if (! is_dir($conf->commande->dir_images))
 $filename = $conf->commande->dir_images."/nbcommande2year-".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
+    $px->SetData($data);
     $px->SetMaxValue($px->GetMaxValue());
     $px->SetWidth(450);
     $px->SetHeight(280);
     $px->SetYLabel("Nombre de commande");
-    $px->draw($filename, $data, $year);
+    $px->draw($filename);
 }      
 $rows = $stats->getNbByYear();
 $num = sizeof($rows);

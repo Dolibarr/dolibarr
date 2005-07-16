@@ -57,13 +57,14 @@ if (! is_dir($conf->propal->dir_images)) { mkdir($conf->propal->dir_images); }
 $filename = $conf->propal->dir_images."/propale".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propale'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
+    $px->SetData($data);
     $px->SetMaxValue($px->GetMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
-    $px->draw($filename, $data, $year);
+    $px->draw($filename);
 }
 
 $res = $stats->getAmountByMonth($year);
@@ -78,9 +79,10 @@ for ($i = 1 ; $i < 13 ; $i++)
 $filename_amount = $conf->propal->dir_images."/propaleamount".$year.".png";
 $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleamount'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
+    $px->SetData($data);
     $px->SetYLabel($langs->trans("AmountTotal"));
     $px->SetMaxValue($px->GetAmountMaxValue());
     $px->SetWidth($WIDTH);
@@ -98,14 +100,15 @@ for ($i = 1 ; $i < 13 ; $i++)
 $filename_avg = $conf->propal->dir_images."/propaleaverage".$year.".png";
 $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleaverage'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
+    $px->SetData($data);
     $px->SetYLabel($langs->trans("AmountAverage"));
     $px->SetMaxValue($px->GetAmountMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
-    $px->draw($filename_avg, $data, $year);
+    $px->draw($filename_avg);
 }
 
 print '<table class="border" width="100%">';

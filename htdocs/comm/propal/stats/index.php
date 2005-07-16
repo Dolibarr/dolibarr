@@ -44,14 +44,15 @@ if (! is_dir($conf->propal->dir_images)) { mkdir($conf->propal->dir_images); }
 $filename = $conf->propal->dir_images."/nbpropale2year-$year.png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year-'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
-    $px->SetMaxValue($px->GetMaxValue());
+    $px->SetData($data);
     $px->SetLegend(array($year - 1, $year));
+    $px->SetMaxValue($px->GetMaxValue());
     $px->SetWidth(450);
     $px->SetHeight(280);
-    $px->draw($filename, $data, $year);
+    $px->draw($filename);
 }
 
 $sql = "SELECT count(*), date_format(datep,'%Y') as dm, sum(price)  FROM ".MAIN_DB_PREFIX."propal WHERE fk_statut > 0 GROUP BY dm DESC ";

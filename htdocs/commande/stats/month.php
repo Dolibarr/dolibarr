@@ -67,14 +67,15 @@ if (! is_dir($conf->commande->dir_images)) { mkdir($conf->commande->dir_images);
 $filename = $conf->commande->dir_images."/commande".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commande'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
+    $px->SetData($data);
     $px->SetMaxValue($px->GetMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetYLabel("Nombre de commande");
-    $px->draw($filename, $data, $year);
+    $px->draw($filename);
 }
 
 $res = $stats->getCommandeAmountByMonth($year);
@@ -89,14 +90,15 @@ for ($i = 1 ; $i < 13 ; $i++)
 $filename_amount = $conf->commande->dir_images."/commandeamount".$year.".png";
 $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeamount'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
+    $px->SetData($data);
     $px->SetMaxValue($px->GetAmountMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetYLabel($langs->trans("AmountTotal"));
-    $px->draw($filename_amount, $data, $year);
+    $px->draw($filename_amount);
 }
 $res = $stats->getCommandeAverageByMonth($year);
 
@@ -110,14 +112,15 @@ for ($i = 1 ; $i < 13 ; $i++)
 $filename_avg = $conf->commande->dir_images."/commandeaverage".$year.".png";
 $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeaverage'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
+    $px->SetData($data);
     $px->SetMaxValue($px->GetAmountMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetYLabel($langs->trans("AmountAverage"));
-    $px->draw($filename_avg, $data, $year);
+    $px->draw($filename_avg);
 }
 
 print '<table class="border" width="100%">';

@@ -60,13 +60,14 @@ if (! is_dir($conf->facture->dir_images)) { mkdir($conf->facture->dir_images); }
 $filename = $conf->facture->dir_images."/facture".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=facture'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
+    $px->SetData($data);
     $px->SetMaxValue($px->GetMaxValue());
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
-    $px->draw($filename, $data, $year);
+    $px->draw($filename);
 }
 
 $res = $stats->getAmountByMonth($year);
@@ -81,14 +82,15 @@ for ($i = 1 ; $i < 13 ; $i++)
 $filename_amount = $conf->facture->dir_images."/factureamount".$year.".png";
 $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureamount'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
+    $px->SetData($data);
     $px->SetYLabel($langs->trans("AmountTotal"));
     $px->SetMaxValue($px->GetAmountMaxValue());
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
-    $px->draw($filename_amount, $data, $year);
+    $px->draw($filename_amount);
 }
 $res = $stats->getAverageByMonth($year);
 
@@ -102,14 +104,14 @@ for ($i = 1 ; $i < 13 ; $i++)
 $filename_avg = $conf->facture->dir_images."/factureaverage".$year.".png";
 $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureaverage'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetYLabel($langs->trans("AmountAverage"));
     $px->SetMaxValue($px->GetAmountMaxValue());
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
-    $px->draw($filename_avg, $data, $year);
+    $px->draw($filename_avg);
 }
 
 print '<table class="border" width="100%">';

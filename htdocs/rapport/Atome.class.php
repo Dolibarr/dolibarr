@@ -100,10 +100,11 @@ class Atome
 
 
     $bgraph = new BarGraph();
+    $bgraph->SetData($this->graph_values);
     $bgraph->bgcolor = array(255,255,255);
-    $bgraph->width = 600;
-    $bgraph->height = 400;
-    $bgraph->draw($filename, $this->graph_values);
+    $bgraph->SetWidth(600);
+    $bgraph->SetHeight(400);
+    $bgraph->draw($filename);
 
     return $filename;
   }

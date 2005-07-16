@@ -46,11 +46,12 @@ if (! is_dir($conf->expedition->dir_images)) { mkdir($conf->expedition->dir_imag
 $filename = $conf->expedition->dir_images."/expedition".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=expeditionstats&file=expedition'.$year.'.png';
 
-$px = new BarGraph($data);
+$px = new BarGraph();
+$px->SetData($data);
 $px->SetMaxValue($px->GetMaxValue());
 $px->SetWidth(600);
 $px->SetHeight(280);
-$px->draw($filename, $data, $_GET["year"]);
+$px->draw($filename);
 
 print '<table class="border" width="100%">';
 print '<tr><td align="center">Nombre d\'expédition par mois</td>';

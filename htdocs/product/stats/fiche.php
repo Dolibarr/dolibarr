@@ -88,20 +88,35 @@ if ($_GET["id"])
         $filenbvente  = $dir . "/vente12mois.png";
         $filenbpiece  = $dir . "/vendu12mois.png";
 
+        $WIDTH=380;
+        $HEIGHT=200;
+        
         $px = new BarGraph();
         $mesg = $px->isGraphKo();
         if (! $mesg)
         {
             $graph_data = $product->get_num_vente($socid);
-            $px->draw($filenbvente, $graph_data);
+            $px->SetData($graph_data);
+            $px->SetMaxValue($px->GetMaxValue());
+            $px->SetWidth($WIDTH);
+            $px->SetHeight($HEIGHT);
+            $px->draw($filenbvente);
 
             $px = new BarGraph();
             $graph_data = $product->get_nb_vente($socid);
-            $px->draw($filenbpiece, $graph_data);
+            $px->SetData($graph_data);
+            $px->SetMaxValue($px->GetMaxValue());
+            $px->SetWidth($WIDTH);
+            $px->SetHeight($HEIGHT);
+            $px->draw($filenbpiece);
 
             $px = new BarGraph();
             $graph_data = $product->get_num_propal($socid);
-            $px->draw($filenbpropal, $graph_data);
+            $px->SetData($graph_data);
+            $px->SetMaxValue($px->GetMaxValue());
+            $px->SetWidth($WIDTH);
+            $px->SetHeight($HEIGHT);
+            $px->draw($filenbpropal);
 
             $mesg = $langs->trans("ChartGenerated");
         }
@@ -246,7 +261,9 @@ if ($_GET["id"])
         $file=$product->id.'/'.$img_propal_name;
         print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&file='.urlencode($file).'" alt="Nombre de propales sur les 12 derniers mois">';
 
-        print '</td><td align="center" colspan="2">TODO AUTRE GRAPHIQUE';
+        print '</td><td align="center" colspan="2">&nbsp;';
+
+        // Place pour autre graphique
 
         print '</td></tr><tr>';
         if (file_exists($filenbpropal) && filemtime($filenbpropal))

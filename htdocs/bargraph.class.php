@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,95 +32,72 @@ include_once(DOL_DOCUMENT_ROOT."/graph.class.php");
 /**
         \class      BarGraph
 	    \brief      Classe permettant la gestion des graphs phplot
+	    \remarks    Utilisation: 
+	                $px = new BarGraph();
+                    $graph_data = array("1"=>10,"2"=>20);
+                    $px->SetData($graph_data);
+                    $px->SetTitle("title");
+                    $px->SetLegend(array("Val1","Val2"));
+                    $px->width = 380;
+                    $px->height = 200;
+                    $px->draw("fichier.png");
+	                
 */
 
 class BarGraph extends Graph
 {
-  var $db;
-  var $errorstr;
+    var $db;
+    var $error;
   
 
-  /**
-   *    \brief      Initialisation
-   *    \return     int     Retour: 0 si ko, 1 si ok
-   */
-  function BarGraph($data=array()) {
+    /**
+     *    \brief      Initialisation graphe
+     *    \return     int     <0 si ko, >0 si ok
+     */
+    function BarGraph()
+    {
+        // Test si module GD présent
+        $modules_list = get_loaded_extensions();
+        $isgdinstalled=0;
+        foreach ($modules_list as $module)
+        {
+            if ($module == 'gd') { $isgdinstalled=1; }
+        }
+        if (! $isgdinstalled) {
+            $this->error="Erreur: Le module GD pour php ne semble pas disponible. Il est requis pour générer les graphiques.";
+            return -1;
+        }
     
-	$modules_list = get_loaded_extensions();
-	$isgdinstalled=0;
-	foreach ($modules_list as $module) 
-	{
-    	if ($module == 'gd') { $isgdinstalled=1; }
-	}
-	if (! $isgdinstalled) {
-    	$this->errorstr="Erreur: Le module GD pour php ne semble pas disponible. Il est requis pour générer les graphiques.";
-    	return;
-	}
-
-    $this->data = $data;
+        // Défini propriétés de l'objet graphe
+        $this->data = $data;    // En general data non defini qd on crée objet
     
-    $this->bgcolor = array(235,235,224);
-    //$this->bgcolor = array(235,235,200);
-    $this->bordercolor = array(235,235,224);
-    $this->datacolor = array(array(204,204,179),
-			     array(187,187,136),
-			     array(235,235,224));
+        $this->bordercolor = array(235,235,224);
+        $this->datacolor = array(array(204,204,179), array(187,187,136), array(235,235,224));
+        $this->bgcolor = array(235,235,224);
 
+        $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
+        if (is_readable($color_file))
+        {
+            include($color_file);
+            $this->bgcolor = $theme_bgcolor;
+        }
     
-    $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
-    if (is_readable($color_file))
-      {
-	include($color_file);
-	$this->bgcolor = $theme_bgcolor;
-      }
+        $this->precision_y = 0;
     
-    $this->precision_y = 0;
-
-    $this->width = 400;
-    $this->height = 200;
-
-    $this->PlotType = 'bars';
-
-    return;
-  }
-
-  function isGraphKo() {
-    return $this->errorstr;
-  }
-
-  /**
-   *    \brief      Génère le fichier graphique sur le disque
-   *    \param      file    Nom du fichier image
-   *    \param      data    Tableau des données
-   *    \param      title   Titre de l'image
-   */
-  function draw($file, $data, $title='') {
-    $this->prepare($file, $data, $title);
+        $this->width = 400;
+        $this->height = 200;
     
-    if (substr($this->MaxValue,0,1) == 1)
-      {
-	$this->graph->SetNumVertTicks(10);
-      }
-    elseif (substr($this->MaxValue,0,1) == 2)
-      {
-	$this->graph->SetNumVertTicks(4);
-      }
-    elseif (substr($this->MaxValue,0,1) == 3)
-      {
-	$this->graph->SetNumVertTicks(6);
-      }
-    elseif (substr($this->MaxValue,0,1) == 4)
-      {
-	$this->graph->SetNumVertTicks(8);
-      }
-    else
-      {
-	$this->graph->SetNumVertTicks(substr($this->MaxValue,0,1));
-      }
+        $this->PlotType = 'bars';
     
-    // Génère le fichier $file
-    $this->graph->DrawGraph();
-  }
+        return 1;
+    }
+
+
+    function isGraphKo()
+    {
+        return $this->error;
+    }
+
 }
 
 ?>
