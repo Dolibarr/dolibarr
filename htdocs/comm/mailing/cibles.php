@@ -289,8 +289,8 @@ if ($mil->fetch($_GET["id"]) == 0)
             $var=!$var;
     
             print "<tr $bc[$var]>";
-            print '<td>'.stripslashes($obj->nom).'</a></td>';
-            print '<td>'.stripslashes($obj->prenom).'</a></td>';
+            print '<td>'.stripslashes($obj->nom).'</td>';
+            print '<td>'.stripslashes($obj->prenom).'</td>';
             print '<td>'.$obj->email.'</td>';
             if ($mil->statut == 0)
             {
