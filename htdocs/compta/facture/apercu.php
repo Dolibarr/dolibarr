@@ -132,7 +132,7 @@ if ($_GET["facid"] > 0)
     	    }
     	  else
     	    {
-    	      print '-';
+    	      print '&nbsp;';
     	    }
     	  print "&nbsp;</td>";
 	}
