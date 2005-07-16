@@ -186,8 +186,8 @@ if ($_GET["id"] > 0)
   $head[$h][1] = $langs->trans("PersonalInformations");
   $h++;
   
-  $head[$h][0] = DOL_URL_ROOT.'/contact/vcard.php?id='.$_GET["id"];
-  $head[$h][1] = $langs->trans("VCard");
+  $head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
+  $head[$h][1] = $langs->trans("ExportImport");
   $h++;
   
   $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
@@ -236,44 +236,44 @@ if ($_GET["action"] == 'create')
       print '</td></tr>';
     }
   else {
-    print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">';
-    print $form->select_societes('','socid');
+    print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+    print $form->select_societes('','socid','');
     print '</td></tr>';
   }
 
-  print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="5">';
+  print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
   print $form->select_civilite($obj->civilite);
   print '</td></tr>';
 
-  print '<tr><td>'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80"></td>';
-  print '<td>'.$langs->trans("Firstname").'</td><td><input name="firstname" type="text" size="15" maxlength="80"></td>';
+  print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%"><input name="name" type="text" size="20" maxlength="80" value="'.$contact->nom.'"></td>';
+  print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->prenom.'"></td></tr>';
 
-  print '<td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td></tr>';
 
   print '<tr><td>Poste/Fonction</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td>';
 
-  print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
-
   print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="address" type="text" size="50" maxlength="80"></td>';
-
-  print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
   print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.$contact->cp.'">&nbsp;';
 
   print '<input name="ville" type="text" size="20" value="'.$contact->ville.'" maxlength="80"></td>';
 
-  print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80"></td></tr>';
-  print '<tr><td>'.$langs->trans("Email").'</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
+  print '<tr><td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
+  print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
-  print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80"></td>';
+  print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
-  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
+  print '<tr><td>'.$langs->trans("Email").'</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
 
-  print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="5">';
+  print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
+
+  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
+
+  print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="3">';
   print $form->selectyesno("facturation",$contact->facturation);
   print '</td></tr>';
 
-  print '<tr><td align="center" colspan="6"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+  print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
   print "</table><br>";
 
   print "</form>";
@@ -298,46 +298,45 @@ elseif ($_GET["action"] == 'edit')
       $objsoc = new Societe($db);
       $objsoc->fetch($contact->socid);
 
-      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">'.$objsoc->nom_url.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
     }
 
-  print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="5">';
+  print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
   print $form->select_civilite($contact->civilite_id);
   print '</td></tr>';
 
-  print '<tr><td>'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
-  print '<td>'.$langs->trans("Firstname").'</td><td><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td>';
+  print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%"><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
+  print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
 
-  print '<td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td></tr>';
 
-  print '<tr><td>Poste/Fonction</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td>';
-
-  print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
+  print '<tr><td>Poste/Fonction</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td></tr>';
 
   print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="address" type="text" size="50" maxlength="80" value="'.$contact->address.'"></td>';
-
-  print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
   print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.$contact->cp.'">&nbsp;';
 
   print '<input name="ville" type="text" size="20" value="'.$contact->ville.'" maxlength="80"></td>';
 
+  print '<tr><td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
+  print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
+  print '<tr><td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
   print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
-  print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
 
-  print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
 
-  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5">';
+  print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
+
+  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">';
   print '<textarea name="note" cols="60" rows="3">';
   print $contact->note;
   print '</textarea></td></tr>';
 
-  print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="5">';
+  print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="3">';
   print $form->selectyesno("facturation",$contact->facturation);
   print '</td></tr>';
 
-  print '<tr><td colspan="6" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+  print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print "</table><br>";
 
   print "</form>";
@@ -356,34 +355,32 @@ else
       $objsoc = new Societe($db);
       $objsoc->fetch($contact->socid);
 
-      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">'.$objsoc->nom_url.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
     }
 
-  print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="5">';
+  print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
   //TODO Aller chercher le libellé de la civilite a partir de l'id $contact->civilite_id
   //print '<tr><td valign="top">Titre : '.$contact->civilite."<br>";
   print $contact->civilite_id;
   print '</td></tr>';
 
-  print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
-  print '<td>'.$langs->trans("Firstname").'</td><td>'.$contact->firstname.'</td>';
-
-  print '<td width="15%">Tel Pro</td><td width="15%">'.$contact->phone_pro.'</td></tr>';
+  print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%">'.$contact->name.'</td>';
+  print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%">'.$contact->firstname.'</td></tr>';
 
   print '<tr><td>Poste/Fonction</td><td colspan="3">'.$contact->poste.'</td>';
 
-  print '<td>Tel Perso</td><td>'.$contact->phone_perso.'</td></tr>';
-
-  print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.$contact->address.'</td>';
-
-  print '<td>Portable</td><td>'.$contact->phone_mobile.'</td></tr>';
+  print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.$contact->address.'</td></tr>';
 
   print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$contact->cp.'&nbsp;';
-  print $contact->ville.'</td>';
+  print $contact->ville.'</td></tr>';
 
+  print '<tr><td>Tel Pro</td><td>'.$contact->phone_pro.'</td>';
+  print '<td>Tel Perso</td><td>'.$contact->phone_perso.'</td></tr>';
+
+  print '<td>Portable</td><td>'.$contact->phone_mobile.'</td>';
   print '<td>'.$langs->trans("Fax").'</td><td>'.$contact->fax.'</td></tr>';
 
-  print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="5">';
+    print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="3">';
       if ($contact->email && ! ValidEmail($contact->email))
 	{
 	  print '<div class="error">'.$langs->trans("ErrorBadEMail",$contact->email)."</div>";
@@ -394,13 +391,13 @@ else
     }
   print '</td></tr>';
 
-  print '<tr><td>Jabberid</td><td colspan="5">'.$contact->jabberid.'</td></tr>';
+  print '<tr><td>Jabberid</td><td colspan="3">'.$contact->jabberid.'</td></tr>';
 
-  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5">';
+  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">';
   print nl2br($contact->note);
   print '</td></tr>';
 
-  print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="5">';
+  print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="3">';
   print $langs->trans($yesno[$contact->facturation]);
   print '</td></tr>';
 

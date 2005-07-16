@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +17,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-	    \file       htdocs/contact/info.php
+        \file       htdocs/contact/exportimport.php
         \ingroup    societe
-		\brief      Onglet info d'un contact
-		\version    $Revision$
+        \brief      Onglet exports-imports d'un contact
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -33,14 +31,22 @@ require("../contact.class.php");
 
 $langs->load("companies");
 
+
+/*
+ *
+ *
+ */
+
 llxHeader();
 
+$form = new Form($db);
 
 $contact = new Contact($db);
 $contact->fetch($_GET["id"], $user);
 
 
 $h=0;
+
 $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("General");
 $h++;
@@ -51,37 +57,52 @@ $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("ExportImport");
+$hselected=$h;
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Info");
-$hselected=$h;
 $h++;
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
 
-/*
- * Visualisation de la fiche
- *
- */
 
-print '<table width="100%"><tr><td>';
-$contact->info($_GET["id"]);
-print '</td></tr></table>';
-  
+/*
+ * Fiche en mode visu
+ */
+print '<table class="border" width="100%">';
+
 if ($contact->socid > 0)
 {
-  $objsoc = new Societe($db);
-  $objsoc->fetch($contact->socid);
-  
-  print $langs->trans("Company").' : '.$objsoc->nom_url.'<br>';
+    $objsoc = new Societe($db);
+    $objsoc->fetch($contact->socid);
+
+    print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
 }
 
-dolibarr_print_object_info($contact);
+print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
+print $contact->civilite_id;
+print '</td></tr>';
 
-print "</div>";
+print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%">'.$contact->name.'</td>';
+print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%">'.$contact->firstname.'</td></tr>';
+
+print '</table>';
+
+print '</div>';
+
+print '<br>';
+
+print $langs->trans("ExportCardToFormat").': ';
+print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$_GET["id"].'">';
+print img_file($langs->trans("VCard")).' ';
+print $langs->trans("VCard");
+print '</a>';
+
+
+
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

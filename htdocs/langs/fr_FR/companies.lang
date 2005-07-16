@@ -95,3 +95,5 @@ AttachANewFile=Joindre un nouveau fichier
 FileWasRemoved=Le fichier a été supprimé
 NoRIB=Aucun RIB défini
 NoParentCompany=Aucune
+ExportImport=Import-Export
+ExportCardToFormat=Exporter fiche au format

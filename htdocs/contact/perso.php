@@ -56,12 +56,15 @@ if ($_POST["action"] == 'update')
     $result = $contact->update_perso($_POST["contactid"], $user);
 }
 
+
 /*
  *
  *
  */
 
 llxHeader();
+
+$form = new Form($db);
 
 $contact = new Contact($db);
 $contact->fetch($_GET["id"], $user);
@@ -78,8 +81,8 @@ $head[$h][1] = $langs->trans("PersonalInformations");
 $hselected=$h;
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/contact/vcard.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("VCard");
+$head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("ExportImport");
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
@@ -106,10 +109,16 @@ if ($_GET["action"] == 'edit')
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
 
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$objsoc->nom_url.'</td>';
+        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td>';
     }
 
-    print '<tr><td>'.$langs->trans("Name").'</td><td colspan="2">'.$contact->name.' '.$contact->firstname .'</td>';
+  print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
+  print $contact->civilite_id;
+  print '</td></tr>';
+
+  print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%">'.$contact->nom.'</td>';
+  print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%">'.$contact->prenom.'</td>';
+
 
     print '<tr><td>'.$langs->trans("Birthday").'</td><td>';
     $html=new Form($db);
@@ -121,7 +130,7 @@ if ($_GET["action"] == 'edit')
     }
     print '</td>';
 
-    print '<td>'.$langs->trans("Alert").': ';
+    print '<td colspan="2">'.$langs->trans("Alert").': ';
     if ($contact->birthday_alert)
     {
         print '<input type="checkbox" name="birthday_alert" checked></td>';
@@ -132,8 +141,8 @@ if ($_GET["action"] == 'edit')
     }
     print '</tr>';
 
-    print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
-    print "</table><br>";
+    print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+    print "</table>";
 
     print "</form>";
 }
@@ -149,13 +158,18 @@ else
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
 
-        print '<tr><td>'.$langs->trans("Company").'</td><td>'.$objsoc->nom_url.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
     }
 
-    print '<tr><td>'.$langs->trans("Name").'</td><td>'.$contact->name.' '.$contact->firstname .'</td></tr>';
+  print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
+  print $contact->civilite_id;
+  print '</td></tr>';
+
+  print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%">'.$contact->name.'</td>';
+  print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%">'.$contact->firstname.'</td></tr>';
 
     if ($contact->birthday && $contact->birthday > 0) {
-        print '<tr><td>'.$langs->trans("Birthdate").'</td><td>'.dolibarr_print_date($contact->birthday);
+        print '<tr><td>'.$langs->trans("Birthdate").'</td><td colspan="3">'.dolibarr_print_date($contact->birthday);
 
         if ($contact->birthday_alert)
         print ' (alerte anniversaire active)</td>';
@@ -163,7 +177,7 @@ else
         print ' (alerte anniversaire inactive)</td>';
     }
     else {
-        print '<tr><td>'.$langs->trans("Birthday").'</td><td>'.$langs->trans("Unknown")."</td>";
+        print '<tr><td>'.$langs->trans("Birthday").'</td><td colspan="3">'.$langs->trans("Unknown")."</td>";
     }
     print "</tr>";
 
@@ -171,15 +185,17 @@ else
 
     print "</div>";
 
+
     // Barre d'actions
     if ($user->societe_id == 0)
     {
         print '<div class="tabsAction">';
 
-        print '<a class="tabAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">'.$langs->trans('Edit').'</a>';
+        print '<a class="butAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">'.$langs->trans('Edit').'</a>';
 
         print "</div>";
     }
+
 }
 
 $db->close();
