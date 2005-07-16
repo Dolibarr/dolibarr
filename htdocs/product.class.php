@@ -548,57 +548,51 @@ class Product
     }
 
 
-  /**
-   *    \brief  Renvoie des stats
-   *    \param  sql         requete a exécuter
-   *    \return array       tableau ?
-   */
-	 
-  function _get_stats($sql)
+    /**
+     *    \brief    Renvoie tableau des stats pour une requete donnée
+     *    \param    sql         Requete a exécuter
+     *    \return   array       Tableau de stats
+     */
+    function _get_stats($sql)
     {
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
-	{
-	  $num = $this->db->num_rows();
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $arr = $this->db->fetch_array($i);
-	      $ventes[$arr[1]] = $arr[0];
-	      $i++;
-	    }
-	}
-
-      $year = strftime('%Y',time());
-      $month = strftime('%m',time());
-      $result = array();
-
-      for ($j = 0 ; $j < 12 ; $j++)
-	{
-	  $idx=ucfirst(strftime("%b",mktime(12,0,0,$month,1,$year)));
-	  if (isset($ventes[$year . $month]))
-	    {
-	      $result[$j] = array($idx, $ventes[$year . $month]);
-	    }
-	  else
-	    {
-	      $result[$j] = array($idx,0);
-	    }
-
-	  $month = "0".($month - 1);
-	  if (strlen($month) == 3)
-	    {
-	      $month = substr($month,1);
-	    }
-	  if ($month == 0)
-	    {
-	      $month = 12;
-	      $year = $year - 1;
-	    }
-	}
-      return array_reverse($result);
-
+        $result = $this->db->query($sql) ;
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $arr = $this->db->fetch_array($result);
+                $tab[$arr[1]] = $arr[0];
+                $i++;
+            }
+        }
+    
+        $year = strftime('%Y',time());
+        $month = strftime('%m',time());
+        $result = array();
+    
+        for ($j = 0 ; $j < 12 ; $j++)
+        {
+            $idx=ucfirst(substr( strftime("%b",mktime(12,0,0,$month,1,$year)) ,0,3) );
+            $monthnum=sprintf("%02s",$month);
+            
+            $result[$j] = array($idx,isset($tab[$year.$month])?$tab[$year.$month]:0);
+//            $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
+    
+            $month = "0".($month - 1);
+            if (strlen($month) == 3)
+            {
+                $month = substr($month,1);
+            }
+            if ($month == 0)
+            {
+                $month = 12;
+                $year = $year - 1;
+            }
+        }
+        return array_reverse($result);
+    
     }
 
 
