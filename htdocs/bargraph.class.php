@@ -55,6 +55,8 @@ class BarGraph extends Graph
      */
     function BarGraph()
     {
+        global $conf;
+        
         // Test si module GD présent
         $modules_list = get_loaded_extensions();
         $isgdinstalled=0;
@@ -78,7 +80,9 @@ class BarGraph extends Graph
         if (is_readable($color_file))
         {
             include($color_file);
-            $this->bgcolor = $theme_bgcolor;
+            if (isset($theme_bordercolor)) $this->bordercolor = $theme_bordercolor;
+            if (isset($theme_datacolor))   $this->datacolor   = $theme_datacolor;
+            if (isset($theme_bgcolor))     $this->bgcolor     = $theme_bgcolor;
         }
     
         $this->precision_y = 0;
