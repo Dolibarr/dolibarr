@@ -49,65 +49,67 @@ class Stats
    * \brief  Renvoie le nombre de proposition par mois pour une année donnée
    *
    */
-	 
-  function _getNbByMonth($year, $sql)
-  {
-    $result = array();
-
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $j = $row[0] * 1;
-	    $result[$j] = $row[1];
-	    $i++;
-	  }
-	$this->db->free();
-      }
+    function _getNbByMonth($year, $sql)
+    {
+        $result = array();
     
-    for ($i = 1 ; $i < 13 ; $i++)
-      {
-	$res[$i] = $result[$i] + 0;
-      }
-
-    $data = array();
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $row = $this->db->fetch_row($resql);
+                $j = $row[0] * 1;
+                $result[$j] = $row[1];
+                $i++;
+            }
+            $this->db->free($resql);
+        }
     
-    for ($i = 1 ; $i < 13 ; $i++)
-      {
-	$data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
-      }
+        for ($i = 1 ; $i < 13 ; $i++)
+        {
+            $res[$i] = $result[$i] + 0;
+        }
     
-    return $data;
-  }
+        $data = array();
+    
+        for ($i = 1 ; $i < 13 ; $i++)
+        {
+            $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
+        }
+    
+        return $data;
+    }
 
 
   /**
    * \brief  Renvoie le nombre d'element par année
    *
    */
-	 
-  function _getNbByYear($sql)
-  {
-    $result = array();
+    function _getNbByYear($sql)
+    {
+        $result = array();
+    
+        if ($this->db->query($sql))
+        {
+            $num = $this->db->num_rows();
+            $i = 0;
+            while ($i < $num)
+            {
+                $row = $this->db->fetch_row($i);
+                $result[$i] = $row;
+                $i++;
+            }
+            $this->db->free();
+        }
+        else {
+            dolibarr_print_error($this->db);
+        }
+        return $result;
+    }
 
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $result[$i] = $row;
-
-	    $i++;
-	  }
-	$this->db->free();
-      }
-    return $result;
-  }
   /**
    * \brief  Renvoie le nombre d'element par mois pour une année donnée
    *
