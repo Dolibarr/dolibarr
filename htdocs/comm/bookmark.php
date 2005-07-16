@@ -59,7 +59,8 @@ if ($_GET["action"] == 'add')
 
 if ($_GET["action"] == 'delete')
 {
-  $sql = "DELETE FROM  ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"]." AND fk_user = '". $user->login ."'";
+  $sql = "DELETE FROM  ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
+  if (! $user->admin) $sql .= " AND fk_user = ". $user->id;
   $result = $db->query($sql);
 }
 
