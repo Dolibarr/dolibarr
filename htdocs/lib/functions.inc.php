@@ -98,7 +98,7 @@ function unaccent($str)
 */
 function sanitize_string($str)
 {
-    $forbidden_chars=array("'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","="); 
+    $forbidden_chars=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","="); 
     return str_replace($forbidden_chars,"_",$str);
 }
 
