@@ -72,8 +72,7 @@ class pdf_propale_vert extends ModelePDFPropales
 
 	  if ($conf->propal->dir_output)
 	    {
-              $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-              $propref = str_replace($forbidden_chars,"_",$propale->ref);
+              $propref = sanitize_string($propale->ref);
               $dir = $conf->propal->dir_output . "/" . $propref ;
             if (! file_exists($dir))
             {
@@ -90,8 +89,7 @@ class pdf_propale_vert extends ModelePDFPropales
             return 0;
 	    }
 	  
-          $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-          $propref = str_replace($forbidden_chars,"_",$propale->ref);
+          $propref = sanitize_string($propale->ref);
           $file = $dir . "/" . $propref . ".pdf";
 	  
 	  if (file_exists($dir))

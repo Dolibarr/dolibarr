@@ -116,8 +116,7 @@ class pdf_propale_azur extends ModelePDFPropales
             $prop = new Propal($this->db,"",$id);
             $prop->fetch($id);
 
-			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-			$propref = str_replace($forbidden_chars,"_",$prop->ref);
+			$propref = sanitize_string($prop->ref);
 			$dir = $conf->propal->dir_output . "/" . $propref;
 			$file = $dir . "/" . $propref . ".pdf";
 

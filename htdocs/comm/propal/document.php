@@ -73,8 +73,7 @@ if ($propalid > 0)
 
 	if ($propal->fetch($propalid))
     {
-		$forbidden_chars=array('/','\\',':','*','?','"','<','>','|','[',']',',',';','=');
-		$propref = str_replace($forbidden_chars, '_', $propal->ref);
+		$propref = sanitize_string($propal->ref);
 		$upload_dir = $conf->propal->dir_output.'/'.$propref;
 		if ( $error_msg )
 		{ 

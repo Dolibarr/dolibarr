@@ -147,8 +147,7 @@ if ($_GET["facid"] > 0)
        * Documents
        *
        */      
-      $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-	  $facref = str_replace($forbidden_chars,"_",$fac->ref);
+	  $facref = sanitize_string($fac->ref);
 	  $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
       $filedetail = $conf->facture->dir_output . "/" . $facref . "/" . $facref . "-detail.pdf";
       $relativepath = "${facref}/${facref}.pdf";

@@ -300,8 +300,7 @@ class FactureRec
             /*
             * Notify
             */
-            $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-            $facref = str_replace($forbidden_chars,"_",$this->ref);
+            $facref = sanitize_string($this->ref);
             $filepdf = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
 
 

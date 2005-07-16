@@ -144,8 +144,7 @@ if ($_POST['action'] == 'send')
 	$propal= new Propal($db);
 	if ( $propal->fetch($_POST['propalid']) )
 	{
-		$forbidden_chars=array('/','\\',':','*','?','"','<','>','|','[',']',',',';','=');
-		$propalref = str_replace($forbidden_chars,'_',$propal->ref);
+		$propalref = sanitize_string($propal->ref);
 		$file = $conf->propal->dir_output . '/' . $propalref . '/' . $propalref . '.pdf';
 		if (is_readable($file))
 		{
@@ -811,8 +810,7 @@ if ($_GET['propalid'])
 		{
 			if ($user->rights->propale->envoyer)
 			{
-				$forbidden_chars=array('/','\\',':','*','?','"','<','>','|','[',']',',',';','=');
-				$propref = str_replace($forbidden_chars,'_',$obj->ref);
+				$propref = sanitize_string($obj->ref);
 				$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
 				if (file_exists($file))
 				{
@@ -856,8 +854,7 @@ if ($_GET['propalid'])
 	print_titre($langs->trans('Documents'));
 
 	print '<table class="border" width="100%">';
-	$forbidden_chars=array('/','\\',':','*','?','"','<','>','|','[',']',',',';','=');
-	$propref = str_replace($forbidden_chars,'_',$propal->ref);
+	$propref = sanitize_string($propal->ref);
 	$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
 	$relativepath = $propref.'/'.$propref.'.pdf';
 

@@ -55,8 +55,7 @@ class pdf_bigorneau extends ModelePDFFactures {
         if ($conf->facture->dir_output)
 	{
 
-			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-			$facref = str_replace($forbidden_chars,"_",$fac->ref);
+			$facref = sanitize_string($fac->ref);
 			$dir = $conf->facture->dir_output . "/" . $facref . "/" ;
 			$file = $dir . $facref . ".pdf";
 	  

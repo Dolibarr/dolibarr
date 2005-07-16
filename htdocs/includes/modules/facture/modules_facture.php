@@ -155,8 +155,7 @@ function facture_meta_create($db, $facid, $message="")
   
   if ($conf->facture->dir_output)
     {
-      $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","="); 
-      $facref = str_replace($forbidden_chars,"_",$fac->ref); 
+      $facref = sanitize_string($forbidden_chars,"_",$fac->ref); 
       $dir = $conf->facture->dir_output . "/" . $facref ; 
       $file = $dir . "/" . $facref . ".meta";
       

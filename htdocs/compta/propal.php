@@ -455,8 +455,7 @@ if ($_GET["propalid"])
 	print_titre($langs->trans('Documents'));
 
 	print '<table class="border" width="100%">';
-	$forbidden_chars=array('/','\\',':','*','?','"','<','>','|','[',']',',',';','=');
-	$propref = str_replace($forbidden_chars,'_',$propal->ref);
+	$propref = sanitize_string($propal->ref);
 	$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
 	$relativepath = $propref.'/'.$propref.'.pdf';
 

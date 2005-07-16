@@ -106,8 +106,7 @@ class pdf_oursin extends ModelePDFFactures
 	$fac = new Facture($this->db,"",$facid);
 	$fac->fetch($facid);
 
-	$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-	$facref = str_replace($forbidden_chars,"_",$fac->ref);
+	$facref = sanitize_string($fac->ref);
 	$dir = $conf->facture->dir_output . "/" . $facref;
 	$file = $dir . "/" . $facref . ".pdf";
 

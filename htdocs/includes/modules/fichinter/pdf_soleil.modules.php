@@ -60,8 +60,7 @@ class pdf_soleil extends ModelePDFFicheinter
         $fich = new Fichinter($this->db,"",$id);
         if ($fich->fetch($id))
         {
-            $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-            $fichref = str_replace($forbidden_chars,"_",$fich->ref);
+            $fichref = sanitize_string($fich->ref);
 
             $dir = $conf->fichinter->dir_output . "/" . $fichref;
             $file = $dir . "/" . $fichref . ".pdf";

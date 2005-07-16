@@ -782,8 +782,7 @@ class Facture
                     /*
                      * Notify
                      */
-                    $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-                    $facref = str_replace($forbidden_chars,"_",$this->ref);
+                    $facref = sanitize_string($this->ref);
                     $filepdf = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
     
                     $mesg = "La facture ".$this->ref." a été validée.\n";
