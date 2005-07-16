@@ -70,7 +70,7 @@ class modProduit extends DolibarrModules
 
     // Dépendances
     $this->depends = array();
-	$this->requiredby = array("modStock","modService");
+	$this->requiredby = array("modStock","modService","modBarCode");
 	
     // Constantes
     $this->const = array();
