@@ -216,8 +216,8 @@ if ($_GET["propalid"])
 
 			if ($conf->projet->enabled)
 			{
+    			$langs->load("projects");
     			print '<tr><td>'.$langs->trans('Project').'</td>';
-				$langs->load('projects');
 				$numprojet = $societe->has_projects();
 				print '<td colspan="2">';
 				if (! $numprojet)
