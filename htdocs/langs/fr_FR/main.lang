@@ -247,6 +247,7 @@ ShowLog=Afficher historique
 File=Fichier
 ReadPermissionNotAllowed=Lecture non autorisée
 AmountInCurrency=Montants exprimés en %s
+Example=Exemple
 NoExample=Pas d'exemple
 # Countries
 CountryFR=France

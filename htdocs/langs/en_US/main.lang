@@ -247,6 +247,7 @@ ShowLog=Show log
 File=File
 ReadPermissionNotAllowed=Read permission not allowed
 AmountInCurrency=Amount in %s currency
+Example=Example
 NoExample=No example
 # Countries
 CountryFR=France
