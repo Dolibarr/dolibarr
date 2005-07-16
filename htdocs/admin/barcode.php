@@ -81,9 +81,10 @@ print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print "</tr>\n";
 
 clearstatcache();
-$var=True;
+$var=true;
 
 //EAN13
+      $var=!$var;
       print '<tr '.$bc[$var].'><td width="100">';
       print "EAN13";
       print "</td><td>\n";
@@ -106,7 +107,8 @@ $var=True;
 	    print "</td></tr>\n";
 
 //UPC
-      print '<tr><td width="100">';
+      $var=!$var;
+      print '<tr '.$bc[$var].'><td width="100">';
       print "UPC";
       print "</td><td>\n";
       print "information";
@@ -127,6 +129,7 @@ $var=True;
 	    print "</td></tr>\n";
 	    
 //ISBN
+      $var=!$var;
       print '<tr '.$bc[$var].'><td width="100">';
       print "ISBN";
       print "</td><td>\n";
@@ -148,8 +151,9 @@ $var=True;
 	    print "</td></tr>\n";
 	    
 //code 39
-      print '<tr><td width="100">';
-      print "code 39";
+      $var=!$var;
+      print '<tr '.$bc[$var].'><td width="100">';
+      print "Code 39";
       print "</td><td>\n";
       print "information";
       print '</td>';
@@ -170,6 +174,7 @@ $var=True;
 	    
 	    
 //code 128
+      $var=!$var;
       print '<tr '.$bc[$var].'><td width="100">';
       print "Code 128";
       print "</td><td>\n";
@@ -191,7 +196,8 @@ $var=True;
 	    print "</td></tr>\n";
 	    
 //I25
-      print '<tr><td width="100">';
+      $var=!$var;
+      print '<tr '.$bc[$var].'><td width="100">';
       print "I25";
       print "</td><td>\n";
       print "information";
