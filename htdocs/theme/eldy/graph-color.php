@@ -27,6 +27,7 @@
     \version    $Revision$
 */
 
-$theme_bgcolor = array(224,221,224);
+//$theme_bgcolor = array(224,221,224);
+$theme_bgcolor = array(241,241,241);
 
 ?>
