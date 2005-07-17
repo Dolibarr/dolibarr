@@ -920,7 +920,7 @@ else
             if ($conf->projet->enabled)
             {
                 $langs->load("projects");
-                print '<td>';
+                print '<td height="10">';
                 print '<table width="100%" class="nobordernopadding"><tr><td>';
                 print $langs->trans("Project");
                 print '</td>';
@@ -937,7 +937,7 @@ else
                 }
                 print "</td>";
             } else {
-                print '<td height=\"10\">&nbsp;</td><td colspan="3">&nbsp;</td>';
+                print '<td height="10">&nbsp;</td><td colspan="3">&nbsp;</td>';
             }
 
             print '<td rowspan="8" colspan="2" valign="top">';
@@ -1024,7 +1024,7 @@ else
 
             if ($fac->note)
             {
-                print '<tr><td colspan="4">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";
+                print '<tr><td colspan="4" valign="top">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";
             }
             else {
                 print '<tr><td colspan="4">&nbsp;</td></tr>';
