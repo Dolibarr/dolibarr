@@ -181,7 +181,7 @@ if ($socid > 0)
     if ($conf->facture->enabled && $user->rights->facture->lire)
     {
         // Factures
-        print_fiche_titre("Bills");
+        print_fiche_titre($langs->trans("Bills"));
     
         print '<table class="border" width="100%">';
     
