@@ -69,7 +69,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 $sql.= " WHERE c.fk_soc = s.idp ";
 if ($_POST["search_contract"]) {
-    $sql .= " AND c.rowid = ".$_POST["search_contract"];
+    $sql .= " AND c.rowid = '".$_POST["search_contract"]."'";
 }
 if ($socid > 0)
 {
