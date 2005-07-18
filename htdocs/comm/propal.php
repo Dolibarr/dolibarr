@@ -460,40 +460,49 @@ if ($_GET['propalid'])
 			print '</td>';
 			print '</tr>';
 
-            // Receiver
+            // Destinataire
 			$langs->load('mails');
 			print '<tr>';
 			print '<td>'.$langs->trans('MailTo').'</td>';
-			print '<td colspan="3">';
 
 			$dests=$societe->contact_array($societe->id);
 			$numdest = count($dests);
 			if ($numdest==0)
 			{
+    			print '<td colspan="3">';
 				print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
 				print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans('AddContact').'</a>';
+                print '</td>';
 			}
 			else
 			{
 				if ($propal->statut == 0 && $user->rights->propale->creer)
 				{
+        			print '<td colspan="2">';
 					print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 					print '<input type="hidden" name="action" value="set_contact">';
 					$form->select_contacts($societe->id, $propal->contactid, 'contactidp');
+                    print '</td><td>';
 					print '<input type="submit" value="'.$langs->trans('Modify').'">';
 					print '</form>';
+                    print '</td>';
 				}
 				else
 				{
 					if (!empty($propal->contactid))
 					{
+            			print '<td colspan="3">';
 						require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
 						$contact=new Contact($db);
 						$contact->fetch($propal->contactid);
 						print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$propal->contactid.'" title="'.$langs->trans('ShowContact').'">';
 						print $contact->firstname.' '.$contact->name;
 						print '</a>';
+                        print '</td>';
 					}
+					else {
+    				    print '<td colspan="3">&nbsp;</td>';
+                    }
 				}
 			}
 			print '</td>';
@@ -508,9 +517,9 @@ if ($_GET['propalid'])
     			print '<tr><td>'.$langs->trans('Project').'</td>';
 				$langs->load('projects');
 				$numprojet = $societe->has_projects();
-				print '<td colspan="2">';
 				if (! $numprojet)
 				{
+    				print '<td colspan="2">';
 					print $langs->trans("NoProject").'</td><td>';
 					print '<a href=../projet/fiche.php?socidp='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
 					print '</td>';
@@ -519,10 +528,11 @@ if ($_GET['propalid'])
 				{
 					if ($propal->statut == 0 && $user->rights->propale->creer)
 					{
-    				    print '<td colspan="3">';
+    				    print '<td colspan="2">';
 						print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 						print '<input type="hidden" name="action" value="set_project">';
 						$form->select_projects($societe->id, $propal->projetidp, 'projetidp');
+						print '</td><td>';
 						print '<input type="submit" value="'.$langs->trans('Modify').'">';
 						print '</form>';
 						print '</td>';
@@ -683,7 +693,7 @@ if ($_GET['propalid'])
 						}
 						print '</tr>';
 					}
-					// Update ligne de facture
+					// Update ligne de propal
 					// \todo
 
 
