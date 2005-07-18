@@ -445,21 +445,22 @@ else
     }
   $sql .= " ORDER BY a.datea DESC, a.id DESC";
     
-  if ( $db->query($sql) ) 
+  $resql=$db->query($sql);
+  if ($resql) 
     {
       $i = 0 ;
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $var=true;
       while ($i < $num) 
         {
-          $obj = $db->fetch_object();
+          $obj = $db->fetch_object($resql);
           $var=!$var;
           print "<tr $bc[$var]>";
           
-          print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
+          print "<td>". strftime("%d %b %Y %H:%M", $obj->da) ."</td>";
           if ($obj->propalrowid) 
             {
-              print "<td><a href=\"propal.php?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
+              print "<td><a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->propalrowid."\">".$obj->libelle."</a></td>"; 
             } 
           else 
             {
