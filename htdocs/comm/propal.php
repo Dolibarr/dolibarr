@@ -562,7 +562,8 @@ if ($_GET['propalid'])
 			{
 				print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 				print '<input type="hidden" name="action" value="setremise">';
-				print '<td colspan="3"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
+				print '<td colspan="2"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
+				print '</td><td>';
 				print '<input type="submit" value="'.$langs->trans('Modify').'">';
 				print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
 				print '</td>';
