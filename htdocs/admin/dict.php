@@ -98,7 +98,7 @@ $tabsqlsort[9]="code ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
-$tabfield[2] = "code,libelle,region,pays";   // "code,libelle,region,pays"
+$tabfield[2] = "code,libelle,region";   // "code,libelle,region"
 $tabfield[3] = "code,libelle,pays";
 $tabfield[4] = "code,libelle";
 $tabfield[5] = "code,libelle";
