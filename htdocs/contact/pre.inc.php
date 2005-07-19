@@ -22,26 +22,29 @@
 
 require("../main.inc.php");
 
-function llxHeader($head = "", $urlp = "") {
+function llxHeader($head = "", $urlp = "")
+{
   global $langs, $user, $conf;
 
-  $langs->load("propal");
+  $langs->load("companies");
+  $langs->load("commercial");
 
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/contact/index.php", "Contacts");
-  $menu->add_submenu(DOL_URL_ROOT."/contact/fiche.php?action=create", "Nouveau Contact");
+  $menu->add(DOL_URL_ROOT."/contact/index.php", $langs->trans("Contacts"));
+  $menu->add_submenu(DOL_URL_ROOT."/contact/fiche.php?action=create", $langs->trans("NewContact"));
 
-  $menu->add(DOL_URL_ROOT."/contact/index.php?userid=$user->id", "Mes contacts");
+  $menu->add(DOL_URL_ROOT."/contact/index.php?userid=$user->id", $langs->trans("MyContacts"));
 
-  $menu->add(DOL_URL_ROOT."/contact/index.php?view=recent", "Contacts récents");
+  $menu->add(DOL_URL_ROOT."/contact/index.php?view=recent", $langs->trans("LastContacts"));
 
-  $menu->add(DOL_URL_ROOT."/contact/index.php?view=phone", "Téléphones");
+  $menu->add(DOL_URL_ROOT."/contact/index.php?view=phone", $langs->trans("Phones"));
 
-  $menu->add(DOL_URL_ROOT."/contact/index.php?view=mail", "Emails");
+  $menu->add(DOL_URL_ROOT."/contact/index.php?view=mail", $langs->trans("EMails"));
 
   left_menu($menu->liste);
 }
+
 ?>
