@@ -354,10 +354,10 @@ if ($_GET["id"])
         print '<td colspan=3><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
         print "</tr>";
 
-        print '<tr><td colspan="'.(count($fieldlist)+2).'">* Label used by default if no translation can be found for code.</td></tr>';
+        print '<tr><td colspan="'.(count($fieldlist)+2).'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
+        print '<tr><td colspan="'.(count($fieldlist)+2).'">&nbsp;</td></tr>';
 
         print '</form>';
-
     }
 
     // Affiche table des valeurs
