@@ -214,8 +214,7 @@ $html = new Form($db);
  *
  * Mode creation
  *
- *
- ************************************************************************/
+ *********************************************************************/
 if ($_GET["action"] == 'create' && $user->rights->commande->creer) 
 {
   print_titre($langs->trans("CreateOrder"));
@@ -327,9 +326,11 @@ if ($_GET["action"] == 'create' && $user->rights->commande->creer)
 		  dolibarr_print_error($db);
 		}
 	      	      
+	      $NBLINES=8;
+	      
 	      print '<table class="noborder">';
-	      print '<tr><td>20 Produits les plus vendus</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td></tr>';
-	      for ($i = 1 ; $i < 5 ; $i++)
+	      print '<tr><td>'.$langs->trans("ProductsAndServices").'</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td></tr>';
+	      for ($i = 1 ; $i <= $NBLINES ; $i++)
 		{
 		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
 		  print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
