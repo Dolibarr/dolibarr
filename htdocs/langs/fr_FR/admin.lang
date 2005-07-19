@@ -185,6 +185,7 @@ DictionnaryCurrency=Monnaies
 DictionnaryCivility=Titres de civilité
 DictionnaryActions=Liste des actions
 DictionnarySocialContributions=Types de charges sociales
+LabelUsedByDefault=Libellé qui sera utilisé si aucune traduction n'est trouvé pour ce code
 AlwaysActive=Toujours actif
 UpdateRequired=Votre système nécessite une mise à jour. Pour cela cliquez sur <a href="%s">Mettre à jour</a>.
 WebServer=Serveur Web
