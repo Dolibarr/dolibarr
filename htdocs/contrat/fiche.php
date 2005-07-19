@@ -358,13 +358,14 @@ if ($_GET["action"] == 'create')
 
             print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
             print "</form>\n";
-            print "</table><br>\n";
+            print "</table>\n";
 
             if ($propalid)
             {
                 /*
                  * Produits
                  */
+                print '<br>';
                 print_titre($langs->trans("Products"));
 
                 print '<table class="noborder" width="100%">';
@@ -426,6 +427,8 @@ if ($_GET["action"] == 'create')
     {
         dolibarr_print_error($db);
     }
+    
+    print '</div>';
 }
 else
 /* *************************************************************************** */
