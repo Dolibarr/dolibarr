@@ -93,97 +93,98 @@ class FactureFournisseur
         $number = sanitize_string(strtoupper($this->number));
         $amount = $this->amount;
         $remise = $this->remise;
-    
-    
+        
         $this->db->begin();
-    
-    
+        
         if (! $remise) $remise = 0 ;
         $totalht = ($amount - $remise);
         $tva = tva($totalht);
         $total = $totalht + $tva;
     
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author) ";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author, date_lim_reglement) ";
         $sql .= " VALUES ('".$number."','".addslashes($this->libelle)."',";
-        $sql .= $this->socid.", now(),".$this->db->idate($this->date).",'".addslashes($this->note)."', ".$user->id.");";
+        $sql .= $this->socid.", now(),'".$this->db->idate($this->date)."','".addslashes($this->note)."', ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
     
         $resql=$this->db->query($sql);
+
         if ($resql)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn");
-    
-            for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn");
+	  
+	  for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
             {
-    
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
-                $sql .= " VALUES ($this->id);";
-                if ($this->db->query($sql))
+	      
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
+	      $sql .= " VALUES ($this->id);";
+	      if ($this->db->query($sql))
                 {
-                    $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
-    
-                    $this->updateline($idligne,
-                    $this->lignes[$i][0],
-                    $this->lignes[$i][1],
-                    $this->lignes[$i][2],
-                    $this->lignes[$i][3]);
+		  $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
+		  
+		  $this->updateline($idligne,
+				    $this->lignes[$i][0],
+				    $this->lignes[$i][1],
+				    $this->lignes[$i][2],
+				    $this->lignes[$i][3]);
                 }
             }
-    
-            // Mise à jour prix
-            if ($this->updateprice($this->id) > 0)
+	  
+	  // Mise à jour prix
+	  if ($this->updateprice($this->id) > 0)
             {
-                $this->db->commit();
-                return $this->id;
+	      $this->db->commit();
+	      return $this->id;
             }
-            else {
-                $this->error=$langs->trans("FailedToUpdatePrice");
-                $this->db->rollback();
-                return -3;
-            }        
+	  else
+	    {
+	      $this->error=$langs->trans("FailedToUpdatePrice");
+	      $this->db->rollback();
+	      return -3;
+	    }        
         }
         else
-        {
+	  {
             if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
-            {
+	      {
                 $this->error=$langs->trans("ErrorBillRefAlreadyExists");
                 $this->db->rollback();
                 return -1;
-            }
+	      }
             else
-            {
+	      {
                 $this->error=$this->db->error();
                 $this->db->rollback();
                 return -2;
-            }
-        }
+	      }
+	  }
     }
-
+  
   /**
    *    \brief      Recupére l'objet facture et ses lignes de factures
    *    \param      rowid       id de la facture a récupérer
    */
   function fetch($rowid)
-    {
-      $sql = "SELECT fk_soc,libelle,facnumber,amount,remise,".$this->db->pdate(datef)."as df";
-      $sql .= ", total_ht, total_tva, total_ttc, fk_user_author";
-      $sql .= ", fk_statut, paye, f.note";
-      $sql .= ", s.nom as socnom, s.idp as socidp";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."societe as s";
-      $sql .= " WHERE f.rowid=$rowid AND f.fk_soc = s.idp ;";
-      
-      if ($this->db->query($sql) )
+  {
+    $sql = "SELECT fk_soc,libelle,facnumber,amount,remise,".$this->db->pdate(datef)."as df";
+    $sql .= ", total_ht, total_tva, total_ttc, fk_user_author";
+    $sql .= ", fk_statut, paye, f.note,".$this->db->pdate(date_lim_reglement)."as de";
+    $sql .= ", s.nom as socnom, s.idp as socidp";
+    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."societe as s";
+    $sql .= " WHERE f.rowid=$rowid AND f.fk_soc = s.idp ;";
+    
+    if ($this->db->query($sql) )
 	{
 	  if ($this->db->num_rows())
 	    {
 	      $obj = $this->db->fetch_object();
 	      
-	      $this->id      = $rowid;
-	      $this->datep   = $obj->df;
-	      $this->ref     = $obj->facnumber;
-	      $this->libelle = $obj->libelle;
+	      $this->id            = $rowid;
+	      $this->datep         = $obj->df;
+	      $this->date_echeance = $obj->de;
+	      $this->ref           = $obj->facnumber;
+	      $this->libelle       = $obj->libelle;
 
-	      $this->remise = $obj->remise;
-	      $this->socidp = $obj->fk_soc;
+	      $this->remise        = $obj->remise;
+	      $this->socidp        = $obj->fk_soc;
 
 	      $this->total_ht  = $obj->total_ht;
 	      $this->total_tva = $obj->total_tva;
