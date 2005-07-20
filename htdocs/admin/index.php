@@ -38,6 +38,7 @@ if (!$user->admin)
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
   dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
+  dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",$_POST["address"]);
   dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
   dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"]);
   dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
@@ -71,8 +72,11 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("CompanyInfo").'</td></tr>';
 
-  print '<tr class="impair"><td>'.$langs->trans("CompanyName").'</td><td>';
+  print '<tr class="pair"><td>'.$langs->trans("CompanyName").'</td><td>';
   print '<input name="nom" value="'. MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
+
+  print '<tr class="impair"><td>'.$langs->trans("CompanyAddress").'</td><td>';
+  print '<textarea name="address" cols="30" rows="4">'. MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
 
   print '<tr class="pair"><td>'.$langs->trans("Country").'</td><td>';
   $form->select_pays(MAIN_INFO_SOCIETE_PAYS);
@@ -143,7 +147,9 @@ else
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-  print '<tr class="impair"><td width="50%">'.$langs->trans("CompanyName").'</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
+  print '<tr class="pair"><td width="50%">'.$langs->trans("CompanyName").'</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
+
+  print '<tr class="impair"><td width="50%">'.$langs->trans("CompanyAddress").'</td><td>' . nl2br(MAIN_INFO_SOCIETE_ADRESSE) . '</td></tr>';
 
   print '<tr class="pair"><td>'.$langs->trans("Country").'</td><td>';
   print $form->pays_name(MAIN_INFO_SOCIETE_PAYS,1);
