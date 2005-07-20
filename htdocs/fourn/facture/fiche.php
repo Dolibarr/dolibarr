@@ -23,10 +23,10 @@
  */
 
 /**
-        \file       htdocs/fourn/facture/fiche.php
-        \ingroup    facture
-        \brief      Page des la fiche facture fournisseur
-        \version    $Revision$
+   \file       htdocs/fourn/facture/fiche.php
+   \ingroup    facture
+   \brief      Page des la fiche facture fournisseur
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -94,12 +94,14 @@ if ($_POST["action"] == 'modif_libelle')
 if ($_POST["action"] == 'update')
 {
   $datefacture = $db->idate(mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"])); 
+  $date_echeance = $db->idate(mktime(12,0,0,$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]));
 
   $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set ";
   $sql .= " facnumber='".trim($_POST["facnumber"])."'";
   $sql .= ", libelle='".trim($_POST["libelle"])."'";
   $sql .= ", note='".$_POST["note"]."'";
   $sql .= ", datef = '$datefacture'";
+  $sql .= ", date_lim_reglement = '$date_echeance'";
   $sql .= " WHERE rowid = ".$_GET['facid']." ;";
   $result = $db->query( $sql);
 }
@@ -111,9 +113,10 @@ if ($_POST["action"] == 'add' && $user->rights->fournisseur->facture->creer)
     if ($_POST["facnumber"])
     {
         $datefacture = mktime(12,0,0,
-        $_POST["remonth"],
-        $_POST["reday"],
-        $_POST["reyear"]);
+			      $_POST["remonth"],
+			      $_POST["reday"],
+			      $_POST["reyear"]);
+
         $tva = 0;
         $tva = ($_POST["tva_taux"] * $_POST["amount"]) / 100 ;
         $remise = 0;
@@ -124,11 +127,12 @@ if ($_POST["action"] == 'add' && $user->rights->fournisseur->facture->creer)
         // Creation facture
         $facfou = new FactureFournisseur($db);
 
-        $facfou->number  = $_POST["facnumber"];
-        $facfou->socid   = $_POST["socidp"];
-        $facfou->libelle = $_POST["libelle"];
-        $facfou->date    = $datefacture;
-        $facfou->note    = $_POST["note"];
+        $facfou->number        = $_POST["facnumber"];
+        $facfou->socid         = $_POST["socidp"];
+        $facfou->libelle       = $_POST["libelle"];
+        $facfou->date          = $datefacture;
+        $facfou->date_echeance = mktime(12,0,0,$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
+        $facfou->note          = $_POST["note"];
 
         $facid = $facfou->create($user);
 
@@ -286,7 +290,10 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
   $html->select_date();
   print '</td></tr>';
   
-  print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
+  print '<tr><td>'.$langs->trans("DateEcheance").'</td><td>';
+  $html->select_date('','ech');
+  print '</td></tr>';
+
   print "</table><br>";
 
   print '<table class="border" width="100%">';
@@ -373,16 +380,17 @@ else
 	  print '<tr><td valign="top">'.$langs->trans("Label").'</td><td>';
 	  print '<input size="30" name="libelle" type="text" value="'.stripslashes($fac->libelle).'"></td></tr>';      
 
-	  print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-	  print '<td valign="top">'.price($fac->total_ht).'</td></tr>';      
-
-	  print '<tr><td>'.$langs->trans("AmountTTC").'</td>';
-	  print '<td valign="top">'.price($fac->total_ttc).'</td></tr>';      
+	  print '<tr><td>'.$langs->trans("AmountHT").' / '.$langs->trans("AmountTTC").'</td>';
+	  print '<td>'.price($fac->total_ht).' / '.price($fac->total_ttc).'</td></tr>';      
 
 	  print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	  $html->select_date($fac->datep);
 	  print "</td></tr>";
 	  
+	  print '<tr><td>'.$langs->trans("Date").'</td><td>';
+	  $html->select_date($fac->date_echeance,'ech');
+	  print "</td></tr>";
+
 	  $authorfullname="&nbsp;";
 	  if ($fac->author)
 	    {
@@ -521,8 +529,8 @@ else
 	   * Paiements
 	   */
 
-      print '<table class="border" width="100%">';
-      print '<tr><td>';
+	  print '<table class="border" width="100%">';
+	  print '<tr><td>';
 
 	  $sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."c_paiement as c ";
@@ -534,12 +542,14 @@ else
 	      $num = $db->num_rows($result);
 	      $i = 0; $total = 0;
 
-          print '<table class="noborder" width="100%">';
-	      print '<tr><td colspan="2">'.$langs->trans("Payments").' :</td></tr>';
+	      print '<table class="noborder" width="100%">';
+	      print '<tr><td>'.$langs->trans("Payments").' :</td>';
+	      print '<td>'.$langs->trans("DateEcheance")." : ";
+	      print dolibarr_print_date($fac->date_echeance,"%A %e %B %Y")."</td></tr>\n";
 	      print "<tr class=\"liste_titre\">";
 	      print '<td>'.$langs->trans("Date").'</td>';
 	      print '<td>'.$langs->trans("Type").'</td>';
-
+	      
 	      if ($fac->statut == 1 && $fac->paye == 0 && $user->societe_id == 0)
 		{
 		  $tdsup=' colspan="2"';
