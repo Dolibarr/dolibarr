@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,14 +22,13 @@
  */
 
 /**
-        \file       htdocs/fourn/facture/index.php
-        \ingroup    fournisseur,facture
-		\brief      Lsite des factures fournisseurs
-		\version    $Revision$
+   \file       htdocs/fourn/facture/index.php
+   \ingroup    fournisseur,facture
+   \brief      Lsite des factures fournisseurs
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
-require("../../contact.class.php");
 
 if (!$user->rights->fournisseur->facture->lire)
   accessforbidden();
@@ -96,7 +95,7 @@ if ($_POST["mode"] == 'search')
  *
  */
  
-$sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea, s.prefix_comm, fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid, fac.facnumber";
+$sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("fac.date_lim_reglement")." as date_echeance, fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle, fac.rowid as facid, fac.facnumber";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac ";
 $sql .= " WHERE fac.fk_soc = s.idp";
 
@@ -141,11 +140,11 @@ if ($_GET["search_montant_ttc"])
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit+1, $offset);
 
-$result = $db->query($sql);
+$resql = $db->query($sql);
 
-if ($result)
+if ($resql)
 {
-    $num = $db->num_rows($result);
+    $num = $db->num_rows($resql);
     $i = 0;
 
     if ($socid) {
@@ -158,7 +157,7 @@ if ($result)
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield);
-    print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef","&amp;socid=$socid","","",$sortfield);
+    print_liste_field_titre($langs->trans("DateEcheance"),"index.php","fac.datef","&amp;socid=$socid","","",$sortfield);
     print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","&amp;socid=$socid","","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","&amp;socid=$socid","","",$sortfield);
     print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","&amp;socid=$socid","",'align="right"',$sortfield);
@@ -193,13 +192,13 @@ if ($result)
     $total=0;
     $total_ttc=0;
     while ($i < min($num,$limit))
-    {
-        $obj = $db->fetch_object();
+      {
+        $obj = $db->fetch_object($resql);
         $var=!$var;
 
         print "<tr $bc[$var]>";
         print "<td nowrap><a href=\"fiche.php?facid=$obj->facid\">".img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber."</a></td>\n";
-        print "<td nowrap>".strftime("%d %b %Y",$obj->datef)."</td>\n";
+        print "<td nowrap>".strftime("%e %b %Y",$obj->date_echeance)."</td>\n";
         print '<td>'.stripslashes("$obj->libelle").'</td>';
         print '<td>';
         print '<a href="../fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
@@ -211,68 +210,67 @@ if ($result)
         // Affiche statut de la facture
         if ($obj->paye)
         {
-            $class = "normal";
+	  $class = "normal";
         }
         else
-        {
+	  {
             if ($obj->fk_statut == 0)
-            {
+	      {
                 $class = "normal";
-            }
+	      }
             else
-            {
+	      {
                 $class = "impayee";
-            }
-        }
-
+	      }
+	  }
+	
         print '<td align="center">';
         if (! $obj->paye)
         {
-            if ($obj->fk_statut == 0)
+	  if ($obj->fk_statut == 0)
             {
-                print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
+	      print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
             }
-            elseif ($obj->fk_statut == 3)
+	  elseif ($obj->fk_statut == 3)
             {
-                print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
+	      print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
             }
-            else
+	  else
             {
-                // \todo  le montant deja payé obj->am n'est pas définie
-                print '<a class="'.$class.'" href=""index.php?filtre=paye:0,fk_statut:1">'.($fac->PayedLibStatut($obj->paye,$obj->fk_statut,$obj->am)).'</a>';
+	      // \todo  le montant deja payé obj->am n'est pas définie
+	      print '<a class="'.$class.'" href=""index.php?filtre=paye:0,fk_statut:1">'.($fac->PayedLibStatut($obj->paye,$obj->fk_statut,$obj->am)).'</a>';
             }
         }
         else
-        {
+	  {
             print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
-        }
+	  }
         print '</td>';
-
+	
         print "</tr>\n";
         $i++;
-
+	
         if ($i == min($num,$limit)) {
-            // Print total
-            print '<tr class="liste_total">';
-            print '<td class="liste_total" colspan="4" align="left">'.$langs->trans("Total").'</td>';
-            print '<td class="liste_total" align="right">'.price($total).'</td>';
-            print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
-            print '<td class="liste_total" align="center">&nbsp;</td>';
-            print "</tr>\n";
+	  // Print total
+	  print '<tr class="liste_total">';
+	  print '<td class="liste_total" colspan="4" align="left">'.$langs->trans("Total").'</td>';
+	  print '<td class="liste_total" align="right">'.price($total).'</td>';
+	  print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
+	  print '<td class="liste_total" align="center">&nbsp;</td>';
+	  print "</tr>\n";
         }
-    }
-
+      }
+    
     print "</table>";
-    $db->free();
+    $db->free($resql);
 }
 else
 {
-    dolibarr_print_error($db);
+  dolibarr_print_error($db);
 }
 
 $db->close();
 
 
 llxFooter('$Date$ - $Revision$');
-
 ?>
