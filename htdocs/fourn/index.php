@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,16 +22,13 @@
  */
 
 /**
-	    \file       htdocs/fourn/index.php
-        \ingroup    fournisseur
-		\brief      Page accueil de la zone fournisseurs
-		\version    $Revision$
+   \file       htdocs/fourn/index.php
+   \ingroup    fournisseur
+   \brief      Page accueil de la zone fournisseurs
+   \version    $Revision$
 */
 
-
 require("./pre.inc.php");
-require("../contact.class.php");
-
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
@@ -55,8 +52,6 @@ if ($user->societe_id > 0)
 if ($page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
 
@@ -85,10 +80,10 @@ if (strlen($_GET["search_ville"]))
 }
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows($result);
+  $num = $db->num_rows($resql);
   $i = 0;
   
   print_barre_liste($langs->trans("ListOfSuppliers"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
@@ -100,7 +95,6 @@ if ($result)
   print_liste_field_titre($langs->trans("DateCreation"),"index.php","datec","","",'align="center"',$sortfield);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
-
 
   print '<tr class="liste_titre">';
   print '<form action="index.php" method="GET">';
@@ -114,7 +108,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($result);	
+      $obj = $db->fetch_object($resql);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -127,7 +121,7 @@ if ($result)
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
