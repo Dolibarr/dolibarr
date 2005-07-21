@@ -186,7 +186,7 @@ print "</tr>\n";
     }
     if (defined("LDAP_ADMIN_PASS") && LDAP_ADMIN_PASS)
     {
-		    print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>'.LDAP_ADMIN_PASS.'</td></tr>';
+		    print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>********</td></tr>';
     }
     else
     {
@@ -273,7 +273,14 @@ print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>';
 print '<input size="25" type="text" name="admin" value="'.LDAP_ADMIN_DN.'">';
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>';
-print '<input size="25" type="text" name="pass" value="'.LDAP_ADMIN_PASS.'">';
+if (defined("LDAP_ADMIN_PASS") && LDAP_ADMIN_PASS)
+{
+  print '<input size="25" type="password" name="pass" value="'.LDAP_ADMIN_PASS.'">';
+}
+else
+{
+	print '<input size="25" type="text" name="pass" value="'.LDAP_ADMIN_PASS.'">';
+}
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("DNUser").'</td><td>';
 print '<input size="25" type="text" name="user" value="'.LDAP_USER_DN.'">';
