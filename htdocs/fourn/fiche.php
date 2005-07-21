@@ -23,14 +23,13 @@
  */
 
 /**
-        \file       htdocs/fourn/fiche.php
-        \ingroup    fournisseur, facture
-        \brief      Page de fiche fournisseur
-        \version    $Revision$
+   \file       htdocs/fourn/fiche.php
+   \ingroup    fournisseur, facture
+   \brief      Page de fiche fournisseur
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
-require("../contact.class.php");
 
 $langs->load("suppliers");
 $langs->load("bills");
