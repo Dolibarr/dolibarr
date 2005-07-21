@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,10 +22,10 @@
  */
 
 /**
-	    \file       htdocs/compta/paiement.php
-		\ingroup    compta
-		\brief      Page de création d'un paiement
-		\version    $Revision$
+   \file       htdocs/compta/paiement.php
+   \ingroup    compta
+   \brief      Page de création d'un paiement
+   \version    $Revision$
 */
 
 include_once("./pre.inc.php");
@@ -46,96 +46,127 @@ $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
  */
 if ($_POST["action"] == 'add_paiement')
 {
-    if ($_POST["paiementid"] > 0)
+  $error = 0;
+
+  if ($_POST["paiementid"] > 0)
     {
-        $datepaye = $db->idate(mktime(12, 0 , 0,
-        $_POST["remonth"],
-        $_POST["reday"],
-        $_POST["reyear"]));
-
-        $paiement_id = 0;
-        $amounts = array();
-        foreach ($_POST as $key => $value)
+      $datepaye = $db->idate(mktime(12, 0 , 0,
+				    $_POST["remonth"],
+				    $_POST["reday"],
+				    $_POST["reyear"]));
+      
+      $paiement_id = 0;
+      $amounts = array();
+      foreach ($_POST as $key => $value)
         {
-            if (substr($key,0,7) == 'amount_')
+	  if (substr($key,0,7) == 'amount_')
             {
-                $other_facid = substr($key,7);
-
-                $amounts[$other_facid] = $_POST[$key];
+	      $other_facid = substr($key,7);
+	      
+	      $amounts[$other_facid] = $_POST[$key];
             }
         }
+      
+      $db->begin();
+      
+      // Creation de la ligne paiement
+      $paiement = new Paiement($db);
+      $paiement->datepaye     = $datepaye;
+      $paiement->amounts      = $amounts;   // Tableau de montant
+      $paiement->paiementid   = $_POST["paiementid"];
+      $paiement->num_paiement = $_POST["num_paiement"];
+      $paiement->note         = $_POST["comment"];
+      
+      $paiement_id = $paiement->create($user);
 
-        $db->begin();
-
-        // Creation de la ligne paiement
-        $paiement = new Paiement($db);
-        $paiement->datepaye     = $datepaye;
-        $paiement->amounts      = $amounts;   // Tableau de montant
-        $paiement->paiementid   = $_POST["paiementid"];
-        $paiement->num_paiement = $_POST["num_paiement"];
-        $paiement->note         = $_POST["comment"];
-
-        $paiement_id = $paiement->create($user);
-        if ($paiement_id > 0)
+      if ($paiement_id > 0)
         {
-            // On determine le montant total du paiement
-            $total=0;
-            foreach ($paiement->amounts as $key => $value)
+	  // On determine le montant total du paiement
+	  $total=0;
+	  foreach ($paiement->amounts as $key => $value)
             {
-                $facid = $key;
-                $value = trim($value);
-                $amount = round(ereg_replace(",",".",$value), 2);
-                if (is_numeric($amount))
+	      $facid = $key;
+	      $value = trim($value);
+	      $amount = round(ereg_replace(",",".",$value), 2);
+	      if (is_numeric($amount))
                 {
-                    $total += $amount;
+		  $total += $amount;
                 }
             }
+	  
+	  if ($conf->banque->enabled && $_POST["accountid"])
+	    {
+	      // Insertion dans llx_bank
+	      $label = "Règlement facture";
+	      $acc = new Account($db, $_POST["accountid"]);
+	      //paiementid contient "CHQ ou VIR par exemple"
+	      $bank_line_id = $acc->addline($paiement->datepaye, 
+					    $paiement->paiementid, 
+					    $label, 
+					    $total, 
+					    $paiement->num_paiement, 
+					    '', 
+					    $user);
+	    
 
-            // Insertion dans llx_bank
-            $label = "Règlement facture";
-            $acc = new Account($db, $_POST["accountid"]);
-            //paiementid contient "CHQ ou VIR par exemple"
-            $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementid, $label, $total, $paiement->num_paiement, '', $user);
-
-            // Mise a jour fk_bank dans llx_paiement. On connait ainsi le paiement qui a généré l'écriture bancaire
-            if ($bank_line_id > 0)
-            {
-                $paiement->update_fk_bank($bank_line_id);
-
-                // Mise a jour liens (pour chaque facture concernées par le paiement)
-                foreach ($paiement->amounts as $key => $value)
-                {
-                    $facid = $key;
-                    $fac = new Facture($db);
-                    $fac->fetch($facid);
-                    $fac->fetch_client();
-                    $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
-                    $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
-                }
-
-                $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-
-                $db->commit();
-
-                Header("Location: $loc");
-            }
-            else
-            {
-                // Il y a eu erreur
-                $db->rollback();
-                $fiche_erreur_message = $langs->trans("ErrorUnknown");
-            }
+	      // Mise a jour fk_bank dans llx_paiement. 
+	      // On connait ainsi le paiement qui a généré l'écriture bancaire
+	      if ($bank_line_id > 0)
+		{
+		  $paiement->update_fk_bank($bank_line_id);
+		  
+		  // Mise a jour liens (pour chaque facture concernées par le paiement)
+		  foreach ($paiement->amounts as $key => $value)
+		    {
+		      $facid = $key;
+		      $fac = new Facture($db);
+		      $fac->fetch($facid);
+		      $fac->fetch_client();
+		      $acc->add_url_line($bank_line_id, 
+					 $paiement_id, 
+					 DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', 
+					 "(paiement)");
+		      $acc->add_url_line($bank_line_id, 
+					 $fac->client->id, 
+					 DOL_URL_ROOT.'/compta/fiche.php?socid=', 
+					 $fac->client->nom);
+		    }
+		  		  
+		}
+	      else
+		{
+		  $error++;
+		}	      
+	    }
+	  
         }
-        else
+      else
         {
-            // Il y a eu erreur
-            $db->rollback();
-            $fiche_erreur_message = $langs->trans("ErrorUnknown");
+	  $error++;
         }
+
+
+      if ($error == 0)
+	{
+
+	  $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+	  
+	  $db->commit();
+	  
+	  Header("Location: $loc");
+
+	}
+      else
+	{
+	  // Il y a eu erreur
+	  $db->rollback();
+	  $fiche_erreur_message = $langs->trans("ErrorUnknown");
+	}
+
     }
-    else
+  else
     {
-        $fiche_erreur_message = '<div class="error">Vous devez sélectionner un mode de paiement</div>';
+      $fiche_erreur_message = '<div class="error">Vous devez sélectionner un mode de paiement</div>';
     }
 }
 
@@ -171,13 +202,13 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'add_paiement')
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
   $sql .= " AND f.rowid = $facid";
 
-  $result = $db->query($sql);
-  if ($result)
+  $resql = $db->query($sql);
+  if ($resql)
     {
-      $num = $db->num_rows($result);
+      $num = $db->num_rows($resql);
       if ($num)
 	{
-	  $obj = $db->fetch_object($result);
+	  $obj = $db->fetch_object($resql);
 
 	  $total = $obj->total;
 
@@ -203,14 +234,14 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'add_paiement')
 	  
 	  $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY id";
 	  
-	  $result = $db->query($sql);
-	  if ($result)
+	  $resql = $db->query($sql);
+	  if ($resql)
 	    {
-	      $num = $db->num_rows($result);
+	      $num = $db->num_rows($resql);
 	      $i = 0; 
 	      while ($i < $num)
 		{
-		  $objopt = $db->fetch_object($result);
+		  $objopt = $db->fetch_object($resql);
 		  print "<option value=\"$objopt->id\">$objopt->libelle</option>\n";
 		  $i++;
 		}
@@ -219,34 +250,45 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'add_paiement')
 	  print "</td>\n";
 
 	  print '<td rowspan="3" valign="top">';
-	  print '<textarea name="comment" wrap="soft" cols="40" rows="6"></textarea></td></tr>';	  
+	  print '<textarea name="comment" wrap="soft" cols="40" rows="4"></textarea></td></tr>';	  
 
 	  print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Numéro du chèque / virement</em></td></tr>\n";
 
-	  print "<tr><td>Compte à créditer :</td><td><select name=\"accountid\">\n";
-	  
-	  $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account ORDER BY rowid";
-	  
-	  $result = $db->query($sql);
-	  if ($result)
+
+	  if ($conf->banque->enabled)
 	    {
-	      $num = $db->num_rows();
-	      $i = 0; 
-	      while ($i < $num)
+	      
+	      print "<tr><td>Compte à créditer :</td><td><select name=\"accountid\">\n";
+	      
+	      $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account ORDER BY rowid";
+	      
+	      $resql = $db->query($sql);
+	      if ($resql)
 		{
-		  $objopt = $db->fetch_object($result);
-		  print '<option value="'.$objopt->rowid.'"';
-		  if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
+		  $num = $db->num_rows();
+		  $i = 0; 
+		  while ($i < $num)
 		    {
-		      print ' selected';
+		      $objopt = $db->fetch_object($resql);
+		      print '<option value="'.$objopt->rowid.'"';
+		      if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
+			{
+			  print ' selected';
+			}
+		      print '>'.$objopt->label.'</option>';
+		      $i++;
 		    }
-		  print '>'.$objopt->label.'</option>';
-		  $i++;
+		  $db->free($resql);
 		}
+	      print "</select>";
+	      print "</td></tr>\n";
+	      
 	    }
-	  print "</select>";
-	  print "</td></tr>\n";
-	  	  
+	  else
+	    {
+	      print '<tr><td colspan="2">&nbsp;</td></tr>';
+	    }
+	  
 	  /*
 	   * Autres factures impayées
 	   */
@@ -260,9 +302,11 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'add_paiement')
 	  $sql .= " AND f.fk_statut = 1";  // Statut=0 => non validée, Statut=2 => annulée
 	  $sql .= " GROUP BY f.facnumber";  
 
-	  if ($db->query($sql))
+	  $resql = $db->query($sql);
+
+	  if ($resql)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($resql);
 	      
 	      if ($num > 0)
 		{
@@ -283,7 +327,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'add_paiement')
 		  
 		  while ($i < $num)
 		    {
-		      $objp = $db->fetch_object();
+		      $objp = $db->fetch_object($resql);
 		      $var=!$var;
 		      
 		      print "<tr $bc[$var]>";
@@ -329,7 +373,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'add_paiement')
 		    }
 		  print "</table></td></tr>\n";
 		}
-	      $db->free();	
+	      $db->free($resql);	
 	    }
 	  else
 	    {
@@ -372,11 +416,11 @@ if (! $_GET["action"] && ! $_POST["action"])
   
   $sql .= " ORDER BY $sortfield $sortorder";
   $sql .= $db->plimit( $limit +1 ,$offset);
-  $result = $db->query($sql);
+  $resql = $db->query($sql);
   
-  if ($result)
+  if ($resql)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $i = 0; 
       $var=True;
       
@@ -393,7 +437,7 @@ if (! $_GET["action"] && ! $_POST["action"])
       
       while ($i < min($num,$limit))
 	{
-	  $objp = $db->fetch_object();
+	  $objp = $db->fetch_object($resql);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  print "<td><a href=\"facture.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
