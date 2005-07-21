@@ -179,7 +179,7 @@ class pdf_crabe extends ModelePDFFactures
 
                     // Prix unitaire HT avant remise
                     $pdf->SetXY (133, $curY);
-                    $pdf->MultiCell(16, 5, price($fac->lignes[$i]->subprice), 0, 'R', 0);
+                    $pdf->MultiCell(17, 5, price($fac->lignes[$i]->subprice), 0, 'R', 0);
 
                     // Quantité
                     $pdf->SetXY (151, $curY);
