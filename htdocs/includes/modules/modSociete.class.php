@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
@@ -23,20 +23,22 @@
  *
  */
 
-/**     \defgroup   societe     Module societe
-        \brief      Module pour gérer les societes et contacts clients
+/** 
+    \defgroup   societe     Module societe
+    \brief      Module pour gérer les societes et contacts clients
 */
 
 /**
-        \file       htdocs/includes/modules/modSociete.class.php
-        \ingroup    societe
-        \brief      Fichier de description et activation du module Societe
+   \file       htdocs/includes/modules/modSociete.class.php
+   \ingroup    societe
+   \brief      Fichier de description et activation du module Societe
 */
 
 include_once "DolibarrModules.class.php";
 
-/**     \class      modSociete
-		\brief      Classe de description et activation du module Societe
+/** 
+    \class      modSociete
+    \brief      Classe de description et activation du module Societe
 */
 
 class modSociete extends DolibarrModules
@@ -54,7 +56,10 @@ class modSociete extends DolibarrModules
     $this->family = "crm";
     $this->name = "Module societe";
     $this->description = "Gestion des sociétés et contacts";
-    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+
+    $this->revision = explode(" ","$Revision$");
+    $this->version = $this->revision[1];
+
     $this->const_name = "MAIN_MODULE_SOCIETE";
     $this->const_config = MAIN_MODULE_SOCIETE;
     $this->special = 0;
@@ -98,18 +103,18 @@ class modSociete extends DolibarrModules
 
 }
 
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
+  
+  /**
+   *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+   *               Définit également les répertoires de données à créer pour ce module.
+   */
   function init()
   {
     global $conf;
     
     // Permissions
     $this->remove();
-
+    
     // Dir
     $this->dirs[0] = $conf->societe->dir_output;
     
@@ -117,7 +122,7 @@ class modSociete extends DolibarrModules
     
     return $this->_init($sql);
   }
-
+  
   /**
    *    \brief      Fonction appelée lors de la désactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
@@ -125,7 +130,7 @@ class modSociete extends DolibarrModules
   function remove()
   {
     $sql = array();
-
+    
     return $this->_remove($sql);
   }
 }
