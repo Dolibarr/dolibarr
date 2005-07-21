@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005 Eric Seigne <eric.seigne@ryxeo.com>
@@ -24,10 +24,10 @@
  */
 
 /**
-	    \file       htdocs/soc.php
-		\ingroup    societe
-		\brief      Onglet societe d'une societe
-		\version    $Revision$
+   \file       htdocs/soc.php
+   \ingroup    societe
+   \brief      Onglet societe d'une societe
+   \version    $Revision$
 */
 
 require("pre.inc.php");
@@ -194,10 +194,10 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
       $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:(defined(MAIN_INFO_SOCIETE_PAYS)?MAIN_INFO_SOCIETE_PAYS:'');
       if ($soc->pays_id) {
           $sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$soc->pays_id;
-          $result=$db->query($sql);
-          if ($result)
+          $resql=$db->query($sql);
+          if ($resql)
           {
-    	    $obj = $db->fetch_object($result);
+    	    $obj = $db->fetch_object($resql);
           }
           else {
             dolibarr_print_error($db);
@@ -636,27 +636,29 @@ else
     */
     if ($_GET["action"] == '')
     {
+      print '<div class="tabsAction">';
 
-        print '<div class="tabsAction">';
-
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
-
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
-
-        if ($user->rights->societe->supprimer)
+      if ($user->rights->societe->creer)
         {
-            print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-
+	  print '<a class="butAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+	  
+	  print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+	  
+	}
+      
+      if ($user->rights->societe->supprimer)
+        {
+	  print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+	  
         }
-        print '</div>';
+      print '</div>';
     }
-
+    
 }
 
 $db->close();
 
 
 llxFooter('$Date$ - $Revision$');
-
 ?>
 
