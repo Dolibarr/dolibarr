@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -154,6 +154,13 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=DOL_DATA_ROOT.'/graph/telephonie/'.$original_file;
+    }
+
+    // Wrapping pour les graph energie
+    if ($modulepart == 'energie')
+    {
+      $accessallowed=1;
+      $original_file=DOL_DATA_ROOT.'/energie/graph/'.$original_file;
     }
 
 }
