@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,13 +37,6 @@ $pos_array = array(0);                          // Positions possibles pour une 
 $pos_name = array($langs->trans("Home"));       // Nom des positions 0=Homepage, 1=...
 $boxes = array();
 
-llxHeader();
-
-print_titre($langs->trans("Boxes"));
-
-print "<br>".$langs->trans("BoxesDesc")."<br>\n";
-
-
 /*
  * Actions
  */
@@ -60,7 +53,18 @@ if ($_POST["action"] == 'add')
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$_POST["boxid"].",".$_POST["pos"].");";
       $result = $db->query($sql);
     }
+
+  Header("Location: boxes.php");
 }
+
+
+llxHeader();
+
+print_titre($langs->trans("Boxes"));
+
+print "<br>".$langs->trans("BoxesDesc")."<br>\n";
+
+
 
 if ($_GET["action"] == 'delete')
 {
@@ -121,24 +125,29 @@ if ($_GET["action"] == 'switch')
  * On stocke les boites actives par $boxes[position][id_boite]=1
  */
 
-$sql  = "SELECT b.rowid, b.box_id, b.position, b.box_order, d.name";
+$sql  = "SELECT b.rowid, b.box_id, b.position, b.box_order, d.name, d.rowid as boxid";
 $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
 $sql .= " where b.box_id = d.rowid";
 $sql .= " ORDER by position, box_order";
-$result = $db->query($sql);
 
-if ($result)
+$resql = $db->query($sql);
+
+$actives = array();
+
+if ($resql)
 {
-  $num = $db->num_rows($result);
+  $num = $db->num_rows($resql);
   $i = 0;
   $decalage=0;
   while ($i < $num)
     {
       $var = ! $var;
-      $obj = $db->fetch_object($result);
+      $obj = $db->fetch_object($resql);
       $boxes[$obj->position][$obj->box_id]=1;
       $i++;
       
+      array_push($actives,$obj->boxid);
+
       // On renumérote l'ordre des boites si l'une d'elle est à 0 (Ne doit arriver que sur des anciennes versions)
       if ($obj->box_order==0) $decalage++;
       if ($decalage)
@@ -148,7 +157,7 @@ if ($result)
 	}
     }
   
-  $db->free($result);
+  $db->free($resql);
 }
 
 
@@ -167,46 +176,56 @@ print '<td align="center" width="80">&nbsp;</td>';
 print "</tr>\n";
 
 $sql = "SELECT rowid, name, file FROM ".MAIN_DB_PREFIX."boxes_def";
-$result = $db->query($sql);
+$resql = $db->query($sql);
 $var=True;
 
-if ($result)
+if ($resql)
 {
   $html=new Form($db);
   
-  $num = $db->num_rows($result);
+  $num = $db->num_rows($resql);
   $i = 0;
   
   // Boucle sur toutes les boites
   while ($i < $num)
     {
-      $var = ! $var;
-      $obj = $db->fetch_object($result);
-      
-      $module=eregi_replace('.php$','',$obj->file);
-      include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
-      $box=new $module();
-      
-      print '<form action="boxes.php" method="POST">';
-      $logo=eregi_replace("^object_","",$box->boximg);
-      print '<tr '.$bc[$var].'><td>'.img_object("",$logo).' '.$box->boxlabel.'</td><td>' . $obj->file . '</td>';
-      
-      // Pour chaque position possible, on affiche un lien
-      // d'activation si boite non deja active pour cette position
-      print '<td align="center">';
-      print $html->select_array("pos",$pos_name);
-      print '<input type="hidden" name="action" value="add">';
-      print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
-      print ' <input type="submit" class="button" name="button" value="'.$langs->trans("Activate").'">';
-      print '</td>';
-      
-      print '<td>&nbsp;</td>';      
-      print '</tr></form>';
-      
+      $obj = $db->fetch_object($resql);
+
+      if (in_array($obj->rowid, $actives))
+	{
+	  // La boite est déjà activée
+	  // \todo
+	  // L'idéal serait de supprimer la valeur du tableau
+	}
+      else
+	{
+	  $var = ! $var;
+	  
+	  $module=eregi_replace('.php$','',$obj->file);
+	  include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
+	  
+	  $box=new $module();
+	  
+	  print '<form action="boxes.php" method="POST">';
+	  $logo=eregi_replace("^object_","",$box->boximg);
+	  print '<tr '.$bc[$var].'><td>'.img_object("",$logo).' '.$box->boxlabel.'</td><td>' . $obj->file . '</td>';
+	  
+	  // Pour chaque position possible, on affiche un lien
+	  // d'activation si boite non deja active pour cette position
+	  print '<td align="center">';
+	  print $html->select_array("pos",$pos_name);
+	  print '<input type="hidden" name="action" value="add">';
+	  print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
+	  print ' <input type="submit" class="button" name="button" value="'.$langs->trans("Activate").'">';
+	  print '</td>';
+	  
+	  print '<td>&nbsp;</td>';      
+	  print '</tr></form>';
+	}      
       $i++;
     }
   
-  $db->free($result);
+  $db->free($resql);
 }
 
 print '</table>';
@@ -285,7 +304,6 @@ if ($resql)
   
   $db->free($resql);
 }
-
 
 print '</table><br>';
 
