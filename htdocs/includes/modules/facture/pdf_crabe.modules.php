@@ -353,7 +353,7 @@ class pdf_crabe extends ModelePDFFactures
         $langs->load("bills");
         
         $tab3_posx = 120;
-        $tab3_top = 240;
+        $tab3_top = 250;
         $tab3_width = 80;
         $tab3_height = 4;
 
