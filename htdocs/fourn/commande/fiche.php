@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Eric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -359,7 +360,7 @@ if ($_GET["id"] > 0)
       $sql = "SELECT l.ref, l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
       $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l ";
       $sql .= " WHERE l.fk_commande = $commande->id ORDER BY l.rowid";
-	  
+
       $resql = $db->query($sql);
       if ($resql)
 	{
@@ -447,11 +448,10 @@ if ($_GET["id"] > 0)
       if ($_GET["action"] <> 'valid' && $commande->statut == 0 && $user->rights->fournisseur->commande->creer) 
 	{
 	  $sql = "SELECT p.rowid,p.label,p.ref ";
-	  $sql .=" , pf.price";
+	  $sql .=" , (pf.price / pf.quantity) as priceunit";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."product as p ";
 	  $sql .= " , ".MAIN_DB_PREFIX."product_fournisseur_price as pf ";
 	  $sql .= " WHERE p.rowid = pf.fk_product AND pf.fk_soc = ".$commande->fourn_id;
-	  $sql .= " AND quantity = 1";
 	  $sql .= " ORDER BY p.ref ";
 	  $resql = $db->query($sql);
 	  if ($resql)
@@ -464,7 +464,7 @@ if ($_GET["id"] > 0)
 		  while ($i < $num)
 		    {
 		      $objp = $db->fetch_object($resql);
-		      $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
+		      $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->priceunit</option>\n";
 		      $i++;
 		    }
 		}
