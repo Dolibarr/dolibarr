@@ -77,7 +77,6 @@ class CommandeFournisseur
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
 
       $sql .= " WHERE c.rowid = ".$id;
-
       $resql = $this->db->query($sql) ;
       
       if ( $resql )
@@ -464,7 +463,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 
 		  $prod->get_buyprice($this->fourn_id,$qty);
 
-		  $pu    = $prod->buyprice;
+		  $pu    = $prod->buyprice/$qty;
 		}
 	    }
 
