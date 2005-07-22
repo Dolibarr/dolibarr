@@ -95,6 +95,9 @@ class modEnergie extends DolibarrModules
     $this->remove();
 
     $sql = array();
+
+    $this->dirs[0] = DOL_DATA_ROOT."/energie";
+    $this->dirs[1] = DOL_DATA_ROOT."/energie/graph";
     
     return $this->_init($sql);
   }
