@@ -75,6 +75,9 @@ class modEnergie extends DolibarrModules
     // Boxes
     $this->boxes = array();
 
+    $this->boxes[0][0] = '<a href="energie">Energie</a>';
+    $this->boxes[0][1] = "box_energie_releve.php";
+
     // Permissions
     $this->rights = array();
 
