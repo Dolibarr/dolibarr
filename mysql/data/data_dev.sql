@@ -23,19 +23,117 @@
 -- de données, mieux on peut tester l'appli.
 -- ===========================================================================
 -- ;
+DELETE FROM llx_bank_account;
+delete from llx_chargesociales;
+delete from llx_fichinter;
+delete from llx_actioncomm;
+delete from llx_propal;
+delete from llx_propaldet;
+delete from llx_paiement_facture;
+delete from llx_paiement;
+delete from llx_facturedet;
+delete from llx_facture_tva_sum;
+delete from llx_facture;
+delete from llx_compta_account;
+delete from llx_product_fournisseur_price;
+delete from llx_product;
+delete from llx_facture_fourn;
+delete from llx_socpeople;
+delete from llx_societe;
+delete FROM llx_boxes;
+DELETE FROM llx_user_rights;
+delete from llx_user;
+delete from llx_tva;
+delete from llx_energie_compteur;
+delete from llx_energie_compteur_releve;
+delete from llx_energie_compteur_groupe;
+delete from llx_energie_groupe;
+
 
 DELETE FROM llx_const WHERE name = 'MAIN_NOT_INSTALLED';
 
-delete from llx_tva;
 insert into llx_tva (datep, datev, amount) values ('2001-11-11','2001-10-01', 1960.00);
 insert into llx_tva (datep, datev, amount) values ('2001-04-11','2001-01-01', 2000.00);
 
-delete from llx_facture_fourn;
+
+--
+-- Societe les fournisseurs sont sur les numéros pairs
+--
+
+
+insert into llx_societe (idp,nom,address,datec,cp,ville,tel,fax, client, prefix_comm)
+values (1,'Cumulo','3 place de la République',now(),'56610','Arradon','01 40 15 03 18','01 40 15 06 18',1,'CU');
+
+insert into llx_societe (idp,nom,address,datec,cp,ville,tel,fax, client, prefix_comm, fournisseur, url, fk_forme_juridique)
+values (2,'Bolix SA','13 rue Pierre Mendès France',now(),'56350','Allaire','01 40 15 03 18','01 40 15 06 18',1,'LO',1,'www.dolibarr.com',54);
+
+insert into llx_societe (idp,nom,address,cp,ville,tel,fax,client, prefix_comm)
+values (10,'Doli INC.','Rue du Port','29300','Arzano','01 55 55 03 18','01 55 55 55 55',1,'DO');
+
+insert into llx_societe (idp,nom,address,cp,ville,tel,fax,client, prefix_comm,url, fournisseur)
+values (3,'Foo SARL','3bis Avenue de la Liberté','22300','Ploubezre','01 55 55 03 18','01 55 55 55 55',1,'FOO','www.gnu.org', 1);
+
+insert into llx_societe (idp,nom,address,datec,cp,ville,tel,fax, client, prefix_comm)
+values (4,'Talphinfo','Place Dolores Ibarruri',now(),'29400','Bodilis','01 40 15 03 18','01 40 15 06 18',1,'AP');
+
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+values (20,'Bouleau','22800','Le Foeil','01 55 55 03 18','01 55 55 55 55',1,'BTP');
+
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
+values ('Valphanix',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',2,'AL');
+
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+values (101,'Cerisier','22290','Goudelin','01 55 55 03 18','01 55 55 55 55',1,'CER');
+
+insert into llx_societe (nom,cp,ville,tel,fax,client,url)
+values ('Turin','29890','Brignogan-Plage','01 55 55 03 18','01 55 55 55 55',1,'http://www.ot-brignogan-plage.fr/');
+
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+values (100,'Chêne','22330','Le Gouray','01 55 55 03 18','01 55 55 55 55',1,'DEL');
+
+insert into llx_societe (idp,nom,cp,ville,tel,fax,client)
+values (5,'Yratin SA','29660','Carantec','01 55 55 03 18','01 55 55 55 55',1);
+
+insert into llx_societe (idp,nom,cp,ville,tel,fax,client)
+values (6,'Raggos SARL','29233','Cléder','01 55 55 03 18','01 55 55 55 55',1);
+
+insert into llx_societe (idp,nom,cp,ville,tel,fax,client)
+values (7,'Pruitosa','29870','Coat-Méal','01 55 55 03 18','01 55 55 55 55',2);
+
+insert into llx_societe (idp,nom,cp,ville,tel,fax,client)
+values (8,'Stratus','29120','Combrit','01 55 55 03 18','01 55 55 55 55',2);
+
+insert into llx_societe (idp,nom,cp,ville,tel,fax,client,address)
+values (9,'Nimbus','29490','Guipavas','01 55 55 03 18','01 55 55 55 55',2,'15 rue des petites écuries');
+
+insert into llx_societe (nom,cp,ville,tel,fax,client)
+values ('Iono','22110','Rostrenen','01 55 55 03 18','01 55 55 55 55',2);
+
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm,address)
+values ('Bolan',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',2,'CAL','104 Avenue de la Marne');
+
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm,address)
+values ('Travail Temporaire Boharssais',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',2,'TTBOH','125 Rue des moineaux');
+--
+-- Utilisateurs
+--
+insert into llx_user (rowid,name,firstname,code,login,pass,webcal_login,admin)
+values (1,'demo','demo','DEMO','demo','demo','demo',1);
+
+insert into llx_user (rowid,name,firstname,code,login,pass,webcal_login)
+values (2,'demo1','demo1','DM1','demo1','demo','demo1');
+
+insert into llx_user (rowid,name,firstname,code,login,pass,webcal_login)
+values (3,'demo2','demo2','DM2','demo2','demo','demo2');
+
+--
+-- Facture fournisseurs
+--
 
 insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
-values ('LOL-509',1,'2001-05-09','2001-05-09',1,1000,0,196,1196,1,NULL,NULL,'');
+values ('LOL-509',1,'2001-05-09','2001-05-09',1,1000,0,196,1196,1,1,1,'');
 insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
-values ('LOL-510',1,'2001-09-09','2001-09-09',1,100,0,19.6,119.6,1,NULL,NULL,'');
+values ('LOL-510',1,'2001-09-09','2001-09-09',1,100,0,19.6,119.6,1,1,1,'');
 
 insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
 values ('02-1-YHGT',2,now(),'2002-01-01',1,100,0,19.6,119.6,1,NULL,NULL,'');
@@ -60,18 +158,10 @@ REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_SIRET','1
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_INFO_APE','721Z','chaine',0);
 
 
-delete from llx_user;
 
-insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login,admin)
-values ('demo','demo','DEMO','demo','demo',1,1,'demo',1);
 
-insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
-values ('demo1','demo1','DM1','demo1','demo',1,1,'demo1');
 
-insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
-values ('demo2','demo2','DM2','demo2','demo',1,1,'demo2');
 
-DELETE FROM llx_user_rights;
 
 INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,11);
 INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,12);
@@ -203,7 +293,7 @@ INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,229);
 --
 -- Boites
 --
-DELETE FROM llx_boxes;
+
 insert into llx_boxes (box_id, position, box_order) VALUES (1,0,1);
 insert into llx_boxes (box_id, position, box_order) VALUES (2,0,2);
 insert into llx_boxes (box_id, position, box_order) VALUES (3,0,3);
@@ -211,70 +301,11 @@ insert into llx_boxes (box_id, position, box_order) VALUES (4,0,4);
 insert into llx_boxes (box_id, position, box_order) VALUES (5,0,5);
 insert into llx_boxes (box_id, position, box_order) VALUES (6,0,6);
 insert into llx_boxes (box_id, position, box_order) VALUES (7,0,7);
---
--- Societe les fournisseurs sont sur les numéros pairs
---
-delete from llx_societe;
-
-insert into llx_societe (nom,address,datec,cp,ville,tel,fax, client, prefix_comm)
-values ('Cumulo','3 place de la République',now(),'56610','Arradon','01 40 15 03 18','01 40 15 06 18',1,'CU');
-
-insert into llx_societe (nom,address,datec,cp,ville,tel,fax, client, prefix_comm, fournisseur, url, fk_forme_juridique)
-values ('Bolix SA','13 rue Pierre Mendès France',now(),'56350','Allaire','01 40 15 03 18','01 40 15 06 18',1,'LO',1,'www.dolibarr.com',54);
-
-insert into llx_societe (nom,address,cp,ville,tel,fax,client, prefix_comm)
-values ('Doli INC.','Rue du Port','29300','Arzano','01 55 55 03 18','01 55 55 55 55',1,'DO');
-
-insert into llx_societe (nom,address,cp,ville,tel,fax,client, prefix_comm,url, client, fournisseur)
-values ('Foo SARL','3bis Avenue de la Liberté','22300','Ploubezre','01 55 55 03 18','01 55 55 55 55',1,'FOO','www.gnu.org', 2, 1);
-
-insert into llx_societe (nom,address,datec,cp,ville,tel,fax, client, prefix_comm)
-values ('Talphinfo','Place Dolores Ibarruri',now(),'29400','Bodilis','01 40 15 03 18','01 40 15 06 18',1,'AP');
-
-insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
-values (20,'Bouleau','22800','Le Foeil','01 55 55 03 18','01 55 55 55 55',1,'BTP');
-
-insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
-values ('Valphanix',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',2,'AL');
-
-insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
-values (101,'Cerisier','22290','Goudelin','01 55 55 03 18','01 55 55 55 55',1,'CER');
-
-insert into llx_societe (nom,cp,ville,tel,fax,client,url)
-values ('Turin','29890','Brignogan-Plage','01 55 55 03 18','01 55 55 55 55',1,'http://www.ot-brignogan-plage.fr/');
-
-insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
-values (100,'Chêne','22330','Le Gouray','01 55 55 03 18','01 55 55 55 55',1,'DEL');
-
-insert into llx_societe (nom,cp,ville,tel,fax,client)
-values ('Yratin SA','29660','Carantec','01 55 55 03 18','01 55 55 55 55',1);
-
-insert into llx_societe (nom,cp,ville,tel,fax,client)
-values ('Raggos SARL','29233','Cléder','01 55 55 03 18','01 55 55 55 55',1);
-
-insert into llx_societe (nom,cp,ville,tel,fax,client)
-values ('Pruitosa','29870','Coat-Méal','01 55 55 03 18','01 55 55 55 55',2);
-
-insert into llx_societe (nom,cp,ville,tel,fax,client)
-values ('Stratus','29120','Combrit','01 55 55 03 18','01 55 55 55 55',2);
-
-insert into llx_societe (nom,cp,ville,tel,fax,client,address)
-values ('Nimbus','29490','Guipavas','01 55 55 03 18','01 55 55 55 55',2,'15 rue des petites écuries');
-
-insert into llx_societe (nom,cp,ville,tel,fax,client)
-values ('Iono','22110','Rostrenen','01 55 55 03 18','01 55 55 55 55',2);
-
-insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm,address)
-values ('Bolan',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',2,'CAL','104 Avenue de la Marne');
-
-insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm,address)
-values ('Travail Temporaire Boharssais',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',2,'TTBOH','125 Rue des moineaux');
-
 
 --
 -- Contact
 --
-delete from llx_socpeople;
+
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email,poste)
 values (10,1,'Maréchal','Ferdinand','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net','Administrateur système');
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
@@ -304,9 +335,9 @@ values (17,9,'Rembrandt','Stéphanie','01 40 15 03 18','01 40 15 06 18','dev@lafr
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (18,10,'Picasso','Myriam','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (19,11,'Beethoven','John','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+values (19,1,'Beethoven','John','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (22,11,'Dumas','Elisabeth','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+values (22,6,'Dumas','Elisabeth','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (21,10,'','Joséphine','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 --
@@ -314,8 +345,6 @@ values (21,10,'','Joséphine','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net'
 -- Produits
 --
 --
-delete from llx_product;
-
 insert into llx_product (ref, label, description, price, tva_tx)
 values ('RJ451MR','Câble Réseaux RJ45 1m rouge','Câble Réseaux RJ45 1m rouge',10,19.6);
 
@@ -373,13 +402,13 @@ values (now(),3,4,'2313784',1);
 -- Fichinter
 --
 --
-delete from llx_fichinter;
+
 insert into llx_fichinter (fk_soc, ref, datec, date_valid, datei, fk_user_author, fk_user_valid, fk_statut, duree, note)
 values (1, 'FI-LP-1','2001-12-05','2001-12-05','2001-12-05',1,1,1,4,'Mise à jour de la doc');
 --
 -- Actions commerciales
 --
-delete from llx_actioncomm;
+
 insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_user_action,fk_contact) 
 values ('2002-04-06',1,1,1,1,1);
 insert into llx_actioncomm (datea, fk_action,fk_soc,fk_user_author,fk_user_action,fk_contact) 
@@ -432,20 +461,14 @@ values ('Tek','22300','Rospez','01 55 55 03 18','01 55 55 55 55',1,'LMT');
 --
 --
 
-delete from llx_propal;
-delete from llx_propaldet;
-delete from llx_facture;
-delete from llx_paiement;
 
-
-delete from llx_compta_account;
 insert into llx_compta_account (datec, number, label, fk_user_author) values (now(),'431000','URSSAF',1);
 insert into llx_compta_account (datec, number, label, fk_user_author) values (now(),'654000','Clients',1);
 
 --
 -- Charges sociales
 --
-delete from llx_chargesociales;
+
 insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
 ('2002-05-15',NULL,'Acompte 1er Trimestre 2002',1,120,0,'2002-1-1');
 
@@ -526,8 +549,63 @@ VALUES (now(),'2002-03-13','2002-03-13',-10,'Liquide',1,1,NULL,'CB',NULL,NULL,0,
 --
 -- Dumping data for table `llx_bank_account`
 --
-
-DELETE FROM llx_bank_account;
-
 INSERT INTO llx_bank_account (rowid, datec, tms, label, bank, code_banque, code_guichet, number, cle_rib, bic, iban_prefix, domiciliation, courant, clos) VALUES (1,'2001-01-01 13:06:11',20031014173428,'CCP','La PosteToto','','','','','','','',1,0);
+
+--
+-- Energie
+--
+INSERT INTO llx_energie_compteur VALUES (1,'EDF Vitré',1,now(),1,'');
+INSERT INTO llx_energie_compteur VALUES (2,'Eau Vitré',2,now(),1,'');
+INSERT INTO llx_energie_compteur VALUES (3,'Gaz Vitré',3,now(),1,'');
+
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-07-26',1139);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-07-21',1129);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-07-16',1128);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-07-11',1128);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-07-06',1128);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-07-01',1127);
+
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-06-26',1127);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-06-21',1126);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-06-16',1116);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-06-11',1107);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-06-06',1097);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-06-01',1087);
+
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-05-26',1078);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-05-21',1068);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-05-16',1059);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-05-11',1049);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-05-06',1038);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-05-01',1028);
+
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-04-26',1013);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-04-21',1003);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-04-16',984);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-04-11',965);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-04-06',945);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-04-01',926);
+
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-03-26',906);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-03-21',884);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-03-16',862);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-03-11',841);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-03-06',828);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-03-01',807);
+
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-02-26',785);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-02-21',760);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-02-16',737);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-02-11',713);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-02-06',688);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-02-01',662);
+
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-01-26',637);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-01-21',605);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-01-16',575);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-01-11',545);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-01-06',510);
+INSERT INTO llx_energie_compteur_releve (fk_compteur, date_releve,valeur) VALUES (1,'2005-01-01',480);
+
+
 
