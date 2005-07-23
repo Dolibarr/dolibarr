@@ -52,7 +52,10 @@ class modContrat extends DolibarrModules
     $this->family = "crm";
     $this->name = "Contrats";
     $this->description = "Gestion des contrats de services";
-    $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+
+    $this->revision = explode(" ","$Revision$");
+    $this->version = $this->revision[1];
+
     $this->const_name = "MAIN_MODULE_CONTRAT";
     $this->const_config = MAIN_MODULE_CONTRAT;
     $this->special = 0;
