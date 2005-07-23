@@ -28,7 +28,7 @@ create table llx_telephonie_tarif (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   libelle     varchar(255),
   type        enum ('INT','NAT','MOB'),
-  tlink        integer DEFAULT 0
+  tlink        integer DEFAULT 0,
 
   UNIQUE INDEX(libelle)
 )type=innodb;
