@@ -29,6 +29,7 @@
 
 require("../main.inc.php");
 require("./EnergieCompteur.class.php");
+require("./EnergieGroupe.class.php");
 
 $langs->load("energy");
 
@@ -42,6 +43,7 @@ function llxHeader($langs, $head = "", $title="", $help_url='')
   $menu->add(DOL_URL_ROOT."/energie/", $langs->trans("Energy"));
 
   $menu->add_submenu(DOL_URL_ROOT."/energie/compteur.php?action=create", $langs->trans("CreateCompteur"));
+  $menu->add_submenu(DOL_URL_ROOT."/energie/groupe.php?action=create", $langs->trans("CreateGroupe"));
 
   $menu->add_submenu(DOL_URL_ROOT."/energie/graph.php", $langs->trans("Statistics"));
 
