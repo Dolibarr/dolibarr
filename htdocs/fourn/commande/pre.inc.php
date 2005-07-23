@@ -52,15 +52,22 @@ function llxHeader($head = "", $title = "", $help_url='', $addons='')
     {
       $menu->add($addons[0][0], $addons[0][1]);
     }
-
+if ($user->societe_id == 0 && $user->rights->societe->lire)
+{
   $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
   $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
+}
 
   $langs->load("bills");
+if ($user->rights->fournisseur->facture->lire)
+{
   $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
-
+}
+if ($user->rights->fournisseur->commande->lire)
+{
   $menu->add(DOL_URL_ROOT."/fourn/commande/", $langs->trans("Orders"));
   $menu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php", $langs->trans("List"));
+}
 
   left_menu($menu->liste,$help_url);
 }

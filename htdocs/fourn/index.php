@@ -30,6 +30,10 @@
 
 require("./pre.inc.php");
 
+if (!$user->rights->societe->lire)
+  accessforbidden();
+
+
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
