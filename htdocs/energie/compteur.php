@@ -135,6 +135,10 @@ else
 	  $head[$h][1] = "Graph";
 	  $h++;
 
+	  $head[$h][0] = DOL_URL_ROOT.'/energie/releve.php?id='.$compteur->id;
+	  $head[$h][1] = "Relevés";
+	  $h++;
+
 	  $head[$h][0] = DOL_URL_ROOT.'/energie/compteur_groupe.php?id='.$compteur->id;
 	  $head[$h][1] = "Groupe";
 	  $h++;

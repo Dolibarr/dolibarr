@@ -81,8 +81,17 @@ else
 
 	  $head[$h][0] = DOL_URL_ROOT.'/energie/compteur_graph.php?id='.$compteur->id;
 	  $head[$h][1] = "Graph";
-	  $a = 1;
+	  $a = $h;
+	  $h++;
+
+	  $head[$h][0] = DOL_URL_ROOT.'/energie/releve.php?id='.$compteur->id;
+	  $head[$h][1] = "Relevés";
+	  $h++;
 	  
+	  $head[$h][0] = DOL_URL_ROOT.'/energie/compteur_groupe.php?id='.$compteur->id;
+	  $head[$h][1] = "Groupe";
+	  $h++;
+
 	  dolibarr_fiche_head($head, $a, $soc->nom);	  
 	  
 	  print '<table class="border" width="100%">';
@@ -97,10 +106,12 @@ else
 
 	  print '<table class="noborder" width="100%">';
 
-	  print '<tr><td align="center">';
+	  print '<tr><td align="center" colspan="2">';
 	  $file = "day.".$compteur->id.".png";
 	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
-	  print '</td><td align="center">';
+	  print '</td></tr>';
+
+	  print '<tr><td align="center" colspan="2">';
 	  $file = "week.".$compteur->id.".png";
 	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
 	  print '</td></tr>';
