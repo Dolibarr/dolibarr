@@ -146,6 +146,28 @@ class EnergieCompteur
       }
   }
   /** 
+   * Suppression d'une valeur relevée
+   *
+   */
+  function DeleteReleve ($rowid)
+  {
+    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."energie_compteur_releve";
+    $sql .= " WHERE rowid = '".$rowid."';";
+   
+    $resql = $this->db->query($sql) ;
+
+    if ( $resql )
+      {
+	return 0;
+      }
+    else
+      {
+	dolibarr_syslog("EnergieCompteur::AjoutReleve Erreur 1");
+	dolibarr_syslog($this->db->error());
+	return -1;
+      }
+  }
+  /** 
    * Ajout d'une valeur relevée
    *
    */
