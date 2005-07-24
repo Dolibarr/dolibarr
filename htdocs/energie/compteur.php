@@ -177,13 +177,10 @@ else
 
 
 	  print '<table class="noborder" width="100%">';
-	  print '<tr><td align="center">';
+	  print '<tr><td><a href="compteur_graph.php?id='.$compteur->id.'">';
 	  $file = "week.".$compteur->id.".png";
-	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
-	  print '</td><td align="center">';
-	  $file = "month.".$compteur->id.".png";
-	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
-	  print '</td></tr></table><br>';
+	  print '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
+	  print '</a></td></tr></table><br>';
 
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>'.$langs->trans("Date").'</td>';
