@@ -53,7 +53,10 @@ class modDeplacement extends DolibarrModules
     $this->family = "crm";
     $this->name = "Déplacement";                        // Si traduction Module75Name non trouvée
     $this->description = "Gestion des déplacements";    // Si traduction Module75Desc non trouvée
-    $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+
+    $this->revision = explode(" ","$Revision$");
+    $this->version = $this->revision[1];
+
     $this->const_name = "MAIN_MODULE_DEPLACEMENT";
     $this->const_config = MAIN_MODULE_DEPLACEMENT;
     $this->special = 0;
