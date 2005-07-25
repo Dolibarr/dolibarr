@@ -69,7 +69,7 @@ if ($modulepart)
   if ($modulepart == 'prelevement')
     {
       $user->getrights('prelevement');
-      if ($user->rights->prelevement->lire)
+      if ($user->rights->prelevement->bons->lire)
         {
 	  $accessallowed=1;
         }
