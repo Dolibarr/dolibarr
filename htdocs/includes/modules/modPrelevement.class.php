@@ -97,9 +97,16 @@ class modPrelevement extends DolibarrModules
     $this->rights[3][0] = 153;
     $this->rights[3][1] = 'Consulter les bons de prélèvements';
     $this->rights[3][2] = 'r';
-    $this->rights[3][3] = 1;
+    $this->rights[3][3] = 0;
     $this->rights[3][4] = 'bons';
     $this->rights[3][5] = 'lire';
+
+    $this->rights[3][0] = 154;
+    $this->rights[3][1] = 'Créer un bon de prélèvement';
+    $this->rights[3][2] = 'w';
+    $this->rights[3][3] = 0;
+    $this->rights[3][4] = 'bons';
+    $this->rights[3][5] = 'creer';
 
   }
 
