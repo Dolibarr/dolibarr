@@ -27,6 +27,7 @@ $message_erreur = '';
 
 if ($_POST["action"] == 'addtarif')
 {
+  $error = 0;
   $saisieok = 1;
 
   if (strlen(trim($_POST["temporel"])) == 0 OR strlen(trim($_POST["fixe"])) == 0)
@@ -57,16 +58,34 @@ if ($_POST["action"] == 'addtarif')
   if ($saisieok)
     {
       
+      $db->begin();
+
       $sql = "REPLACE INTO ".MAIN_DB_PREFIX."telephonie_tarif_client";
       $sql .= " (fk_tarif, fk_client, temporel, fixe, fk_user) VALUES ";
       $sql .= " (".$_POST["tarifid"].",".$_GET["id"].",'".$temporel."','".$fixe."',".$user->id.")";
       
-      if ( $db->query($sql) )
+      if (! $db->query($sql) )
 	{
+	  $error++;
+	}
+
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_client_log";
+      $sql .= " (fk_tarif, fk_client, temporel, fixe, fk_user, datec) VALUES ";
+      $sql .= " (".$_POST["tarifid"].",".$_GET["id"].",'".$temporel."','".$fixe."',".$user->id.",now())";
+
+      if (! $db->query($sql) )
+	{
+	  $error++;
+	}
+
+      if ( $error == 0 )
+	{
+	  $db->commit();
 	  Header("Location: tarifs.php?id=".$_GET["id"]);
 	}
       else
 	{
+	  $db->rollback();
 	  print $db->error();
 	}
     }
