@@ -2,6 +2,7 @@
 StandingOrdersArea=Espace prélèvements
 StandingOrders=Prélèvements
 StandingOrder=Prélèvement
+NewStandingOrder=Nouveau prélèvement
 Withdrawals=Retraits
 Withdrawal=Retrait
 WithdrawalsReceipts=Bons de prélèvements
