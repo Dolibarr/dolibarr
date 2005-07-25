@@ -101,6 +101,7 @@ if ($_POST["action"] == 'add' && $user->admin)
         $edituser->email         = trim($_POST["email"]);
         $edituser->admin         = trim($_POST["admin"]);
         $edituser->webcal_login  = trim($_POST["webcal_login"]);
+        $edituser->gui_lang      = trim($_POST["gui_lang"]);
 
         $db->begin();
 
@@ -167,6 +168,7 @@ if ($_POST["action"] == 'update' && $user->admin)
     $edituser->email         = $_POST["email"];
     $edituser->admin         = $_POST["admin"];
     $edituser->webcal_login  = $_POST["webcal_login"];
+    $edituser->gui_lang      = $_POST["gui_lang"];
 
     $ret=$edituser->update();
     if ($ret < 0)
@@ -300,6 +302,11 @@ if ($action == 'create')
         print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
         print '<td class="valeur"><input size="30" type="text" name="webcal_login" value=""></td></tr>';
     }
+    // Langue par defaut
+    print '<tr><td width="30%">'.$langs->trans("GuiLanguage").'</td><td>';
+    $html=new Form($db);
+    $html->select_lang(MAIN_LANG_DEFAULT,'gui_lang');
+    print '</td></tr>';
 
     print "<tr>".'<td align="center" colspan="2"><input value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
     print "</form>";
@@ -467,6 +474,10 @@ else
                 print '<td colspan="2">'.$fuser->webcal_login.'&nbsp;</td>';
                 print "</tr>\n";
             }
+            // Langue par defaut
+            print '<tr><td width="25%" valign="top">'.$langs->trans("GuiLanguage").'</td>';
+            print '<td colspan="2">'.$fuser->gui_lang.'&nbsp;</td>';
+            print "</tr>\n";
 
             print "</table>\n";
 //            print "<br>\n";
@@ -680,6 +691,12 @@ else
             $langs->load("other");
             print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
             print '<td class="valeur" colspan="2"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
+            
+            // Langue par defaut
+            print '<tr><td width="30%">'.$langs->trans("GuiLanguage").'</td><td>';
+            $html=new Form($db);
+            $html->select_lang(MAIN_LANG_DEFAULT,'gui_lang');
+            print '</td></tr>';
 
             print '<tr><td align="center" colspan="3"><input value="'.$langs->trans("Save").'" type="submit"></td></tr>';
 

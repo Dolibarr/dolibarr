@@ -39,6 +39,8 @@ create table llx_user
   fk_socpeople      integer DEFAULT 0,
   note              text,
   datelastaccess    datetime,
+  egroupware_id     integer,
+  gui_lang          varchar(5),
   
   UNIQUE INDEX(login)
 )type=innodb;

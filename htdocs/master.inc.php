@@ -166,6 +166,7 @@ if (! defined('MAIN_LANG_DEFAULT'))
 {
   define('MAIN_LANG_DEFAULT',"fr_FR");
 }
+
 $conf->langage=MAIN_LANG_DEFAULT;
 
 // On corrige $conf->langage si il ne vaut pas le code long: fr -> fr_FR par exemple

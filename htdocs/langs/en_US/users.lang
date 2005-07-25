@@ -66,3 +66,4 @@ CreateDolibarrLogin=Create Dolibarr account
 TasksHistoryForThisContact=Tasks history for this contact
 LoginAccountDisable=Account disabled, put a new login to activate it.
 ErrorFailedToSaveFile=Error - Failed to save file
+GuiLanguage=Interface language

@@ -66,3 +66,4 @@ CreateDolibarrLogin=Créer un compte Dolibarr
 TasksHistoryForThisContact=Historique des actions pour ce contact
 LoginAccountDisable=Le compte est désactivé, mettre un nouveau login pour l'activer.
 ErrorFailedToSaveFile=Erreur - l'enregistrement du fichier a échoué
+GuiLanguage=Langage de l'interface

@@ -4,6 +4,7 @@
  * Copyright (c) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,7 @@
   	    \author     Laurent Destailleur
   	    \author     Sebastien Di Cintio
   	    \author     Benoit Mortier
+  	    \author     Regis Houssin
   	    \version    $Revision$
 */
 
@@ -60,6 +62,7 @@ class User
   var $datem;
   var $societe_id;
   var $webcal_login;
+  var $gui_lang;
   var $datelastaccess;
   
   var $error;
@@ -97,7 +100,7 @@ class User
   function fetch($login='')
     {
         $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
-        $sql.= " u.fk_societe, u.fk_socpeople,";
+        $sql.= " u.fk_societe, u.fk_socpeople, u.gui_lang,";
         $sql.= " ".$this->db->pdate("u.datec")." as datec, ".$this->db->pdate("u.tms")." as datem,";
         $sql.= " ".$this->db->pdate("u.datelastaccess")." as datel";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -130,13 +133,13 @@ class User
                 $this->contact_id = $obj->fk_socpeople;
                 $this->note = stripslashes($obj->note);
                 $this->lang = 'fr_FR';    // \todo Gérer la langue par défaut d'un utilisateur Dolibarr
-        
+
                 $this->datec  = $obj->datec;
                 $this->datem  = $obj->datem;
                 $this->datelastaccess = $obj->datel;
         
                 $this->webcal_login = $obj->webcal_login;
-        
+                $this->gui_lang = $obj->gui_lang;
                 $this->societe_id = $obj->fk_societe;
             }
             $this->db->free($result);
@@ -658,6 +661,7 @@ class User
         $sql .= ", webcal_login = '$this->webcal_login'";
         $sql .= ", code = '$this->code'";
         $sql .= ", note = '$this->note'";
+        $sql .= ", gui_lang = '$this->gui_lang'";
         $sql .= " WHERE rowid = ".$this->id;
 
         $result = $this->db->query($sql);

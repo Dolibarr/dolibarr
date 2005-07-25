@@ -340,6 +340,7 @@ alter table llx_facturedet add date_start date;
 alter table llx_facturedet add date_end   date;
 
 alter table llx_user add egroupware_id integer;
+alter table llx_user add gui_lang varchar(5);
 alter table llx_societe add code_client              varchar(15) after nom;
 alter table llx_societe add code_fournisseur         varchar(15) after code_client;
 alter table llx_societe add code_compta              varchar(15) after code_fournisseur;
