@@ -31,11 +31,8 @@ require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
 
 $langs->load("withdrawals");
 
-if ($user->societe_id > 0)
-{
-  $socidp = $user->societe_id;
-}
-
+if (!$user->rights->prelevement->lire)
+  accessforbidden();
 
 llxHeader();
 
@@ -44,8 +41,24 @@ print_titre($langs->trans("StandingOrdersArea"));
 print '<br>';
 
 print '<table border="0" width="100%">';
-
 print '<tr><td valign="top" width="30%">';
+/*
+ *
+ *
+ */
+$bprev = new BonPrelevement($db);
+
+print '<table class="noborder" width="100%">';
+print "<tr $bc[0]><td>Nb de facture à prélever</td>";
+print '<td align="right">';
+print $bprev->NbFactureAPrelever();
+print '</td></tr>';
+print "<tr $bc[0]><td>Somme à prélever</td>";
+print '<td align="right">';
+print price($bprev->SommeAPrelever());
+print '</td></tr></table><br>';
+
+
 /*
  * Bon de prélèvement
  *
