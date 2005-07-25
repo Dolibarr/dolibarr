@@ -107,7 +107,7 @@ if ($resql)
         dolibarr_syslog("mailing-send: mailing $num cibles");
 
         // Positionne date debut envoi
-        $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE WHERE rowid=".$id;
+        $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE() WHERE rowid=".$id;
         $resql2=$db->query($sql);
         if (! $resql2)
         {
@@ -130,7 +130,7 @@ if ($resql)
                 // Mail envoye avec succes
                 $nbok++;
     
-                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=1, date_envoi=SYSDATE WHERE rowid=".$obj->rowid;
+                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
                 $resql2=$db->query($sql);
                 if (! $resql2)
                 {
@@ -142,7 +142,7 @@ if ($resql)
                 // Mail en echec
                 $nbko++;
     
-                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=1, date_envoi=SYSDATE WHERE rowid=".$obj->rowid;
+                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
                 $resql2=$db->query($sql);
                 if (! $resql2)
                 {
