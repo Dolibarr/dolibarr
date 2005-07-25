@@ -30,6 +30,9 @@
 require("../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT."/bon-prelevement.class.php";
 
+$langs->load("banks");
+
+
 $user->getrights("prelevement");
 
 function llxHeader($head = "", $title="", $help_url='')
@@ -42,24 +45,34 @@ function llxHeader($head = "", $title="", $help_url='')
 
   if ($conf->prelevement->enabled)
     {
-      $langs->load("banks");
 
-      $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php",$langs->trans("Receipts"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste.php",$langs->trans("List"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste_factures.php",$langs->trans("Bills"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"));
 
-      if ($user->admin)
+
+      if ($user->rights->prelevement->lire)
 	{
-	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Config"));
-	}
 
+	  $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
 
-      $menu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("Demandes"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrderToProcess"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandestraitees.php",$langs->trans("StandingOrderProcessed"));
+	  if ($user->rights->prelevement->bons->creer)
+	    $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/create.php",$langs->trans("NewStandingOrder"));
+	  
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php",$langs->trans("Receipts"));
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste.php",$langs->trans("List"));
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste_factures.php",$langs->trans("Bills"));
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"));
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"));
+	  
+	  if ($user->admin)
+	    {
+	      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Config"));
+	    }
+	  
+	  
+	  $menu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("Demandes"));
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrderToProcess"));
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandestraitees.php",$langs->trans("StandingOrderProcessed"));
+	  
+	}      
     }
 
   $langs->load("bills");
