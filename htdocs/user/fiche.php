@@ -33,6 +33,7 @@
 require("./pre.inc.php");
 
 $langs->load("users");
+$langs->load("companies");
 
 
 $form = new Form($db);
