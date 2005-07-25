@@ -46,9 +46,7 @@ function llxHeader($head = "", $title="", $help_url='')
   if ($conf->prelevement->enabled)
     {
 
-
-
-      if ($user->rights->prelevement->lire)
+      if ($user->rights->prelevement->bons->lire)
 	{
 
 	  $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));

@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
 
 $langs->load("withdrawals");
 
-if (!$user->rights->prelevement->lire)
+if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
 
 llxHeader();
