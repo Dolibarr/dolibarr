@@ -185,7 +185,6 @@ class BonPrelevement
   {
     $sql = "SELECT p.rowid, p.ref, p.amount, p.note, p.credite";
     $sql .= ",".$this->db->pdate("p.datec")." as dc";
-
     $sql .= ",".$this->db->pdate("p.date_trans")." as date_trans";
     $sql .= " , method_trans, fk_user_trans";
     $sql .= ",".$this->db->pdate("p.date_credit")." as date_credit";
@@ -382,7 +381,15 @@ class BonPrelevement
 	$sql .= " WHERE rowid=".$this->id;
       	$sql .= " AND statut = 0";
       
-	if (! $this->db->query($sql))
+	if ($this->db->query($sql))
+	  {
+	    // Appel des triggers
+	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	    $interface = new Interfaces($this->db);
+	    $ret=$interface->run_triggers('STANDINGORDER_TRANS',$this,$user,$lang,$conf);
+	    // Fin appel triggers
+	  }
+	else
 	  {
 	    dolibarr_syslog("bon-prelevement::set_infotrans Erreur 1");
 	    dolibarr_syslog($this->db->error());
@@ -459,6 +466,458 @@ class BonPrelevement
 
       return $arr;
     }
+
+  /**
+   *
+   *
+   */
+  function SommeAPrelever()
+  {  
+    $sql = "SELECT sum(f.total_ttc)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+    $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+    
+    $sql .= " WHERE f.fk_statut = 1";
+    $sql .= " AND f.rowid = pfd.fk_facture";
+    $sql .= " AND f.paye = 0";
+    $sql .= " AND pfd.traite = 0";
+    $sql .= " AND f.total_ttc > 0";
+    $sql .= " AND f.fk_mode_reglement = 3";
+    
+    $resql = $this->db->query($sql);
+    
+    if ( $resql )
+      {
+	$row = $this->db->fetch_row($resql);
+	    
+	return $row[0];
+	    
+	$this->db->free($resql);
+      }
+    else
+      {
+	$error = 1;
+	dolibarr_syslog("BonPrelevement::SommeAPrelever Erreur -1");
+	dolibarr_syslog($this->db->error());
+      }
+  }
+  /*
+   *
+   *
+   */
+  function NbFactureAPrelever($banque=0,$agence=0)
+  {  
+    $sql = "SELECT count(f.total_ttc)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+    $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+    $sql .= " , ".MAIN_DB_PREFIX."societe_rib as sr";
+
+    $sql .= " WHERE f.fk_statut = 1";
+    $sql .= " AND f.rowid = pfd.fk_facture";
+    $sql .= " AND f.fk_soc = sr.fk_soc";
+    $sql .= " AND f.paye = 0";
+    $sql .= " AND pfd.traite = 0";
+    $sql .= " AND f.total_ttc > 0";
+    $sql .= " AND f.fk_mode_reglement = 3";
+    
+    if ($banque == 1)
+      {
+	$sql .= " AND sr.code_banque = '".PRELEVEMENT_CODE_BANQUE."'";
+      }
+
+    if ($agence == 1)
+      {
+	$sql .= " AND sr.code_guichet = '".PRELEVEMENT_CODE_GUICHET."'";
+      }
+
+    $resql = $this->db->query($sql);
+    
+    if ( $resql )
+      {
+	$row = $this->db->fetch_row($resql);
+	    
+	return $row[0];
+	    
+	$this->db->free($resql);
+      }
+    else
+      {
+	$error = 1;
+	dolibarr_syslog("BonPrelevement::SommeAPrelever Erreur -1");
+	dolibarr_syslog($this->db->error());
+      }
+  }
+  /*
+   *
+   *
+   */
+  function Create($banque=0, $guichet=0)
+  {
+    dolibarr_syslog("BonPrelevement::Create");
+
+    require_once (DOL_DOCUMENT_ROOT."/bon-prelevement.class.php");
+    require_once (DOL_DOCUMENT_ROOT."/facture.class.php");
+    require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
+    require_once (DOL_DOCUMENT_ROOT."/paiement.class.php");
+    require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+    
+    $error = 0;
+
+    $datetimeprev = time();
+
+    $month = strftime("%m", $datetimeprev);
+    $year = strftime("%Y", $datetimeprev);
+    
+    $user = new user($this->db, PRELEVEMENT_USER);
+    
+    /*
+     *
+     * Lectures des factures
+     *
+     */
+    
+    $factures = array();
+    $factures_prev = array();
+    
+    if (!$error)
+      {
+	
+	$sql = "SELECT f.rowid, pfd.rowid as pfdrowid, f.fk_soc";
+	$sql .= ", pfd.code_banque, pfd.code_guichet, pfd.number, pfd.cle_rib";
+	$sql .= ", pfd.amount";
+	$sql .= ", s.nom";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " , ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+	$sql .= " , ".MAIN_DB_PREFIX."societe_rib as sr";
+	
+	$sql .= " WHERE f.rowid = pfd.fk_facture";
+	$sql .= " AND s.idp = f.fk_soc";
+	$sql .= " AND s.idp = sr.fk_soc";
+	$sql .= " AND f.fk_statut = 1";
+	$sql .= " AND f.paye = 0";
+	$sql .= " AND pfd.traite = 0";
+	$sql .= " AND f.total_ttc > 0";
+	$sql .= " AND f.fk_mode_reglement = 3";
+
+	if ($banque == 1)
+	  {
+	    $sql .= " AND sr.code_banque = '".PRELEVEMENT_CODE_BANQUE."'";
+	  }
+	
+	if ($agence == 1)
+	  {
+	    $sql .= " AND sr.code_guichet = '".PRELEVEMENT_CODE_GUICHET."'";
+	  }
+	
+	$resql = $this->db->query($sql);
+
+	if ( $resql)
+	  {
+	    $num = $this->db->num_rows($resql);
+	    $i = 0;
+	    
+	    while ($i < $num)
+	      {
+		$row = $this->db->fetch_row($resql);		
+		$factures[$i] = $row;		
+		$i++;
+	      }            
+	    $this->db->free($resql);
+	    dolibarr_syslog("$i factures à prélever");
+	  }
+	else
+	  {
+	    $error = 1;
+	    dolibarr_syslog("Erreur -1");
+	    dolibarr_syslog($this->db->error());
+	  }
+      }
+    
+    /*
+     *
+     * Verif des clients
+     *
+     */
+    
+    if (!$error)
+      {
+	/*
+	 * Vérification des RIB
+	 *
+	 */
+	$i = 0;
+	dolibarr_syslog("Début vérification des RIB");
+	
+	if (sizeof($factures) > 0)
+	  {      
+	    foreach ($factures as $fac)
+	      {
+		$fact = new Facture($this->db);
+		
+		if ($fact->fetch($fac[0]) == 1)
+		  {
+		    $soc = new Societe($this->db);
+		    if ($soc->fetch($fact->socidp) == 1)
+		      {
+			if ($soc->verif_rib() == 1)
+			  {
+			    $factures_prev[$i] = $fac;
+			    /* second tableau necessaire pour bon-prelevement */
+			    $factures_prev_id[$i] = $fac[0];
+			    $i++;
+			  }
+			else
+			  {
+			    dolibarr_syslog("Erreur de RIB societe $fact->socidp $soc->nom");
+			  }
+		      }
+		    else
+		      {
+			dolibarr_syslog("Impossible de lire la société");
+		      }
+		  }
+		else
+		  {
+		    dolibarr_syslog("Impossible de lire la facture");
+		  }
+	      }
+	  }
+	else
+	  {
+	    dolibarr_syslog("Aucune factures a traiter");
+	  }
+      }
+    
+    /*
+     *
+     *
+     *
+     */
+    
+    dolibarr_syslog(sizeof($factures_prev)." factures seront prélevées");
+    
+    if (sizeof($factures_prev) > 0)
+      {
+	/*
+	 * Ouverture de la transaction
+	 *
+	 */
+	
+	if (!$this->db->query("BEGIN"))
+	  {
+	    $error++;
+	  } 
+	
+	/*
+	 * Traitements
+	 *
+	 */
+	
+	if (!$error)
+	  {
+	    $ref = "T".substr($year,-2).$month;
+	    
+	    /*
+	     *
+	     *
+	     */
+	    $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."prelevement_bons";
+	    $sql .= " WHERE ref LIKE '$ref%'";
+	    
+	    $resql = $this->db->query($sql);
+
+	    if ($resql)
+	      {      
+		$row = $this->db->fetch_row($resql);
+	      }
+	    else
+	      {
+		$error++;
+		dolibarr_syslog("Erreur recherche reference");
+	      }
+	    
+	    $ref = $ref . substr("00".($row[0]+1), -2);
+	    
+	    $filebonprev = $ref;
+	    
+	    /*
+	     * Creation du bon de prelevement
+	     *
+	     */
+	    
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (ref,datec)";
+	    $sql .= " VALUES ('".$ref."',now())";
+	    
+	    $resql = $this->db->query($sql);
+
+	    if ($resql)
+	      {      
+		$prev_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
+		
+		$bonprev = new BonPrelevement($this->db, DOL_DATA_ROOT."/prelevement/bon/".$filebonprev);
+		$bonprev->id = $prev_id;
+	      }
+	    else
+	      {
+		$error++;
+		dolibarr_syslog("Erreur création du bon de prelevement");
+	      }
+	    
+	  }
+	
+	/*
+	 *
+	 *
+	 *
+	 */
+	if (!$error)
+	  {      
+	    dolibarr_syslog("Début génération des paiements");
+	    dolibarr_syslog("Nombre de factures ".sizeof($factures_prev));
+	    
+	    if (sizeof($factures_prev) > 0)
+	      {
+		foreach ($factures_prev as $fac)
+		  {
+		    $fact = new Facture($this->db);
+		    $fact->fetch($fac[0]);
+		    
+		    $pai = new Paiement($this->db);
+		    
+		    $pai->amounts = array();
+		    $pai->amounts[$fac[0]] = $fact->total_ttc;
+		    $pai->datepaye = $this->db->idate($datetimeprev);
+		    $pai->paiementid = 3; // prélèvement
+		    $pai->num_paiement = $ref;
+		    
+		    if ($pai->create($user, 1) == -1)  // on appelle en no_commit
+		      {
+			$error++;
+			dolibarr_syslog("Erreur creation paiement facture ".$fac[0]);
+		      }
+		    else
+		      {
+			/* 
+			 * Validation du paiement 
+			 */
+			$pai->valide();
+			
+			/*
+			 * Ajout d'une ligne de prélèvement
+			 *
+			 *
+			 * $fac[3] : banque 
+			 * $fac[4] : guichet
+			 * $fac[5] : number
+			 * $fac[6] : cle rib
+			 * $fac[7] : amount
+			 * $fac[8] : client nom
+			 * $fac[2] : client id
+			 */
+			
+			$ri = $bonprev->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], 
+						   $fac[3], $fac[4], $fac[5], $fac[6]); 
+			if ($ri <> 0)
+			  {
+			    $error++;
+			  }
+			
+			/*
+			 * Mise à jour des demandes
+			 *
+			 */
+			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
+			$sql .= " SET traite = 1";
+			$sql .= ", date_traite=now()";
+			$sql .= ", fk_prelevement_bons = ".$prev_id;
+			$sql .= " WHERE rowid=".$fac[1];
+			
+			if ($this->db->query($sql))
+			  {      
+			    
+			  }
+			else
+			  {
+			    $error++;
+			    dolibarr_syslog("Erreur mise a jour des demandes");
+			    dolibarr_syslog($this->db->error());
+			  }
+			
+		      }
+		  }
+	      }
+	    
+	    dolibarr_syslog("Fin des paiements");
+	  }
+	
+	if (!$error)
+	  {
+	    /*
+	     * Bon de Prelevement
+	     *
+	     *
+	     */
+	    
+	    dolibarr_syslog("Debut prelevement");
+	    dolibarr_syslog("Nombre de factures ".sizeof($factures_prev));
+	    
+	    if (sizeof($factures_prev) > 0)
+	      {
+		$bonprev->date_echeance = $datetimeprev;      
+		$bonprev->reference_remise = $ref;
+		
+		
+		$bonprev->numero_national_emetteur = PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR;
+		$bonprev->raison_sociale = PRELEVEMENT_RAISON_SOCIALE; 
+		
+		$bonprev->emetteur_code_etablissement = PRELEVEMENT_CODE_BANQUE;
+		$bonprev->emetteur_code_guichet       = PRELEVEMENT_CODE_GUICHET;
+		$bonprev->emetteur_numero_compte      = PRELEVEMENT_NUMERO_COMPTE;
+		
+		
+		$bonprev->factures = $factures_prev_id;
+		
+		$bonprev->generate();  
+	      }
+	    dolibarr_syslog( $filebonprev ) ;
+	    dolibarr_syslog("Fin prelevement");
+	  }
+	
+	/*
+	 * Mise à jour du total
+	 *
+	 */
+	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
+	$sql .= " SET amount = ".ereg_replace(",",".",$bonprev->total);
+	$sql .= " WHERE rowid = ".$prev_id;
+	
+	if (!$this->db->query($sql))
+	  {
+	    $error++;
+	    dolibarr_syslog("Erreur mise à jour du total");
+	    dolibarr_syslog($sql);
+	  }
+	
+	/*
+	 * Rollback ou Commit
+	 *
+	 */
+	if (!$error)
+	  {
+	    $this->db->query("COMMIT");
+	    dolibarr_syslog("COMMIT");
+	  }
+	else
+	  {
+	    $this->db->query("ROLLBAK");
+	    dolibarr_syslog("ROLLBACK");
+	  }
+      }   
+  }
+  
+  
 
   /** 
    * Génération d'un bon de prélèvement
