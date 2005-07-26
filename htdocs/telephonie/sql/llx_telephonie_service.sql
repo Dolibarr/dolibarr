@@ -33,7 +33,8 @@ create table llx_telephonie_service (
   fk_user_creat    integer NOT NULL,
   date_creat       datetime NOT NULL,
   fk_user_modif    integer,
-  date_modif       datetime
+  date_modif       datetime,
+  module           varchar(50)
 )type=innodb;
 
 
