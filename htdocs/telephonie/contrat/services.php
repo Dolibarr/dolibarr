@@ -185,17 +185,20 @@ if ($cancel == $langs->trans("Cancel"))
 	      print "</table><br />";
 
 
-	      /* Lignes */
+	      /* Services */
 	     
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      
-	      $sql = "SELECT s.libelle, s.statut, cs.rowid as serid, s.montant, cs.montant as montant_fac";
-	      $sql .= ", cs.rowid";
+	      $sql = "SELECT s.libelle, s.statut";
+	      $sql .= " , cs.rowid as serid, s.montant, cs.montant as montant_fac";
+	      $sql .= " , ".$db->pdate("cs.date_creat") . " as date_creat";
+	      $sql .= " , u.name, u.firstname";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_service as cs";
 	      $sql .= " , ".MAIN_DB_PREFIX."telephonie_service as s";
+	      $sql .= " , ".MAIN_DB_PREFIX."user as u";
 
 	      $sql .= " WHERE cs.fk_service = s.rowid";
-
+	      $sql .= " AND cs.fk_user_creat = u.rowid";
 	      $sql .= " AND cs.fk_contrat = ".$contrat->id;
 	      
 	      if ( $db->query( $sql) )
@@ -203,14 +206,15 @@ if ($cancel == $langs->trans("Cancel"))
 		  $numlignes = $db->num_rows();
 		  if ( $numlignes > 0 )
 		    {
-		      $i = 0;
-		      
+		      $i = 0;		      
 		      $ligne = new LigneTel($db);
 		      
 		      print '<tr class="liste_titre"><td>Service</td>';
 		      print '<td align="right">Montant Facturé</td>';
 		      print '<td align="right">Montant du service</td>';
-		      print "<td>&nbsp;</td></tr>\n";
+		      print "<td>&nbsp;</td>\n";
+		      print '<td align="center">Ajouté par</td>';
+		      print '<td align="center">Ajouté le</td></tr>';
 		      
 		      while ($i < $numlignes)
 			{
@@ -230,6 +234,8 @@ if ($cancel == $langs->trans("Cancel"))
 			  print '<td align="center"><a href="services.php?id='.$contrat->id.'&amp;action=rmservice&amp;service_id='.$obj->serid.'">';
 			  print img_delete();
 			  print "</a></td>";
+			  print '<td align="center">'.$obj->firstname.' '.$obj->name.'</td>';
+			  print '<td align="center">'.strftime("%d/%m/%y",$obj->date_creat).'</td>';
 			  print "</tr>\n";
 			  $i++;
 			}
@@ -248,7 +254,6 @@ if ($cancel == $langs->trans("Cancel"))
 
 	    }
 	  	  
-
 
 	  /*
 	   * Service
