@@ -124,7 +124,7 @@ if ($resql)
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td><a href=\"".$link."?id=$objp->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objp->ref."</a></td>\n";
-      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a></td>\n";
+      print "<td><a href=\"../../comm/fiche.php?socid=$objp->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a></td>\n";
       
       $now = time();
       $lim = 3600 * 24 * 15 ;
