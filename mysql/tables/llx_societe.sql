@@ -33,7 +33,7 @@ create table llx_societe
   code_client        varchar(15),                         -- code client
   code_fournisseur   varchar(15),                         -- code founisseur
   code_compta        varchar(15),                         -- code compta client
-  code_compta_fourn  varchar(15),                         -- code compta founisseur
+  code_compta_fournisseur  varchar(15),                         -- code compta founisseur
   address            varchar(255),                        -- company adresse
   cp                 varchar(10),                         -- zipcode
   ville              varchar(50),                         -- town
