@@ -316,7 +316,7 @@ if ($_GET["id"] > 0)
 		    $objp = $db->fetch_object($result);
 		    $var=!$var;
 		    print "<tr $bc[$var]>";
-		    print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
+		    print '<td><a href="../facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
 		    print '<td align="center">'.dolibarr_print_date($objp->df).'</td>';
 		    print '<td align="right">'.$objp->total_ttc.'</td></tr>';
 		    $i++;
@@ -355,7 +355,7 @@ if ($_GET["id"] > 0)
                 $objp = $db->fetch_object($result);
                 $var=!$var;
                 print "<tr $bc[$var]>";
-                print '<td><a href="../expedition/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' '.$objp->ref.'</a></td>';
+                print '<td><a href="../../expedition/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' '.$objp->ref.'</a></td>';
                 print "<td>".dolibarr_print_date($objp->de)."</td></tr>\n";
                 $i++;
             }
