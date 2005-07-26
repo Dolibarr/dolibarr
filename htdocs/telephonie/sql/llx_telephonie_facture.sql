@@ -25,6 +25,7 @@
 
 create table llx_telephonie_facture (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  fk_contrat        integer NOT NULL,
   fk_ligne          integer NOT NULL,
   ligne             varchar(255) NOT NULL,
   date              varchar(255) NOT NULL,
