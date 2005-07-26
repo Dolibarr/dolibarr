@@ -253,10 +253,11 @@ if (!$error)
 		}
 	      
 	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_facture";
-	      $sql .= " (fk_ligne, ligne, date, isfacturable, fk_batch)";
+	      $sql .= " (fk_ligne, ligne, date, isfacturable, fk_batch, fk_contrat)";
 	      $sql .= " VALUES (".$ligne->id.",";
 	      $sql .= " '$ligne->numero','".$year."-".$month."-01'";
-	      $sql .= ", '$facturable',".$batch_id.")";
+	      $sql .= ", '$facturable',".$batch_id;
+	      $sql .= ", ".$ligne->contrat.")";
 	      
 	      if ($db->query($sql))
 		{
