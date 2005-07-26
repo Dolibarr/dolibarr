@@ -157,6 +157,8 @@ if ($_GET["id"] or $_GET["numero"])
 	  
 	  print '<tr><td width="20%">Code analytique</td><td colspan="2">'.$ligne->code_analytique.'&nbsp;</td></tr>';
 
+	  print '<tr><td width="20%">Modèle de facture utilisé</td><td colspan="2">'.$ligne->pdfdetail.'</td></tr>';
+
 	  
 	  
 	  
