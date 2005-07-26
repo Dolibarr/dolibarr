@@ -75,6 +75,8 @@ if (($_POST["action"] == 'add' && (! defined("COMPANY_CREATE_TWO_STEPS") || $ste
     $soc->codeclient_modifiable = stripslashes($_POST["codeclient_modifiable"]);
     $soc->codefournisseur_modifiable = stripslashes($_POST["codefournisseur_modifiable"]);
     $soc->capital               = stripslashes($_POST["capital"]);
+    $soc->tva_intra_code        = stripslashes($_POST["tva_intra_code"]);
+    $soc->tva_intra_num         = stripslashes($_POST["tva_intra_num"]);
     $soc->tva_intra             = stripslashes($_POST["tva_intra_code"] . $_POST["tva_intra_num"]);
     $soc->forme_juridique_code  = stripslashes($_POST["forme_juridique_code"]);
     $soc->effectif_id           = stripslashes($_POST["effectif_id"]);
@@ -158,7 +160,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
       if ($_GET["type"]=='f') { $soc->fournisseur=1; }
       if ($_GET["type"]=='c') { $soc->client=1; }
       if ($_GET["type"]=='p') { $soc->client=2; }
-      if ($_POST["nom"]) { $soc->nom=$_POST["nom"]; }
+      if ($_POST["nom"]) { $soc->nom=$_POST["nom"]; } 
       
       print_titre($langs->trans("NewCompany"));
       print "<br>\n";
@@ -170,7 +172,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 	  print '</div>';
 	}
 
-      $js_OpenPopupWindow = "function PopupPostalCode (postalcode,objectville)
+      $js_OpenPopupWindow = "function PopupPostalCode(postalcode,objectville)
 {
   var url = 'searchpostalcode.php?cp=' + postalcode + '&targetobject=window.opener.document.formsoc.' + objectville.name;
   //  alert(url);
@@ -250,8 +252,8 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           $form->select_departement($soc->departement_id,(defined("COMPANY_CREATE_TWO_STEPS")?$soc->pays_code:0));
           print '</td></tr>';
     
-          print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel"></td>';
-          print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax"></td></tr>';
+          print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
+          print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
           
           print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
     
@@ -383,7 +385,6 @@ elseif ($_GET["action"] == 'edit')
       
       print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
       print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
-
       print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td><td colspan="2">&nbsp;</td></tr>';
 
       print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
