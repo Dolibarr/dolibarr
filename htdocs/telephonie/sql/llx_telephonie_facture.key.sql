@@ -21,6 +21,7 @@
 -- ========================================================================
 --
 --
+ALTER TABLE llx_telephonie_facture ADD INDEX (fk_contrat);
 ALTER TABLE llx_telephonie_facture ADD INDEX (fk_facture);
 ALTER TABLE llx_telephonie_facture ADD INDEX (fk_ligne);
 --
