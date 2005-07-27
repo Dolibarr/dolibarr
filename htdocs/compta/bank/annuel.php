@@ -29,6 +29,9 @@
 
 require("./pre.inc.php");
 
+if (!$user->admin && !$user->rights->banque->lire)
+  accessforbidden();
+
 $year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
 $year_current = strftime("%Y",time());
 if (! $year_start) {
