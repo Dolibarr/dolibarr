@@ -30,10 +30,7 @@
 require("./pre.inc.php");
 require("./bank.lib.php");
 
-$user->getrights('compta');
-$user->getrights('banque');
-
-if (!$user->rights->compta->banque->configurer)
+if (!$user->rights->banque->configurer)
   accessforbidden();
 
 llxHeader();
