@@ -32,7 +32,7 @@ require("./pre.inc.php");
 
 $user->getrights('compta');
 
-if (!$user->admin && !$user->rights->compta->bank)
+if (!$user->admin && !$user->rights->banque->configurer)
   accessforbidden();
 
 llxHeader();
