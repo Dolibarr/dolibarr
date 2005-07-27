@@ -87,6 +87,9 @@ foreach ($tarifs as $tarif)
 	  if ($num == 0)
 	    {
 	      array_push($corrections[$tarif], $client);
+
+	      correct_tarif($db, $client, $tarif);
+
 	    }
 
 	  $db->free($resql);
@@ -102,9 +105,64 @@ foreach ($tarifs as $tarif)
 foreach ($tarifs as $tarif)
 {
   print "Tarif $tarif : ".sizeof($corrections[$tarif])."\n";
-
-  var_dump($corrections[$tarif]);
 }
+
+function correct_tarif($db, $client, $tarif)
+{
+  $error = 0;
+
+  $sql = "SELECT temporel, fixe FROM ".MAIN_DB_PREFIX."telephonie_tarif_client";
+  $sql .= " WHERE fk_tarif = 1289";
+  $sql .= " AND fk_client = $client";
+  
+  $resql = $db->query($sql);
+
+  if ($resql)
+    {
+      $row = $db->fetch_row($resql);
+
+      $temporel = $row[0];
+      $fixe = $row[1];
+    }
+  else
+    {
+      print $db->error();
+      $error++;
+    }
+
+  $db->begin();
+  
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."telephonie_tarif_client";
+  $sql .= " (fk_tarif, fk_client, temporel, fixe, fk_user) VALUES ";
+  $sql .= " (".$tarif.",".$client.",'".$temporel."','".$fixe."',1)";
+  
+  if (! $db->query($sql) )
+    {
+      $error++;
+      print $db->error();
+    }
+  
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_client_log";
+  $sql .= " (fk_tarif, fk_client, temporel, fixe, fk_user, datec) VALUES ";
+  $sql .= " (".$tarif.",".$client.",'".$temporel."','".$fixe."',1,now())";
+  
+  if (! $db->query($sql) )
+    {
+      $error++;
+      print $db->error();
+    }
+  
+  if ( $error == 0 )
+    {
+      $db->commit();
+    }
+  else
+    {
+      $db->rollback();
+      print $db->error();
+    }     
+}
+
 
 $db->close();
 ?>
