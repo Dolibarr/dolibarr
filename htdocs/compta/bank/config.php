@@ -33,7 +33,7 @@ require("./bank.lib.php");
 $user->getrights('compta');
 $user->getrights('banque');
 
-if (!$user->admin && !$user->rights->compta->bank)
+if (!$user->admin && !$user->rights->banque->modifier)
   accessforbidden();
 
 
