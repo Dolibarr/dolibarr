@@ -60,7 +60,7 @@ else
 }
 
 
-$sql = "SELECT sum(cd.fourn_montant) as fourn_montant, sum(cd.cout_vente) as cout_vente";
+$sql = "SELECT cd.fk_fournisseur, sum(cd.fourn_montant), sum(cd.cout_vente)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
 $sql .= " ,    ".MAIN_DB_PREFIX."telephonie_communications_details as cd";
 
@@ -78,7 +78,16 @@ if ( $re2sql )
     {
       $row = $db->fetch_row($re2sql);
 
-      print $row[0].' '.$row[1]."\n";
+      $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_analyse_fournisseur";
+      $sqli.= " (fk_fournisseur,mois,achat,vente)";
+      $sqli .= " VALUES (".$row[0].",'".$year.$month."',".$row[1].",".$row[2].")";
+
+      $resqli = $db->query($sqli) ;
+
+      if (! $resqli )
+	{
+	  print $db->error($resqli);
+	}
 
       $j++;
     }
@@ -89,19 +98,10 @@ else
 }
 
 
-
-
-
-
-
-
-
 /*
  * Partie 2
  *
  */
-
-
 
 require_once (DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_workbook.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_worksheet.inc.php");
