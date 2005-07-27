@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  */
 
 /**
-        \file       htdocs/compta/bank/config.php
-        \ingroup    banque
-		\brief      Page de configuration des comptes bancaires
-		\version    $Revision$
+   \file       htdocs/compta/bank/config.php
+   \ingroup    banque
+   \brief      Page de configuration des comptes bancaires
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -33,15 +33,13 @@ require("./bank.lib.php");
 $user->getrights('compta');
 $user->getrights('banque');
 
-if (!$user->admin && !$user->rights->banque->modifier)
+if (!$user->rights->compta->banque->configurer)
   accessforbidden();
-
 
 llxHeader();
 
 print_titre($langs->trans("AccountSetup"));
 print '<br>';
-
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Ref")."</td><td>".$langs->trans("Label")."</td><td>".$langs->trans("Type")."</td><td>".$langs->trans("Bank")."</td>";
@@ -84,12 +82,12 @@ print "</table>";
  * Boutons d'actions
  */
 print "<br><div class=\"tabsAction\">\n";
-if ($user->rights->banque->configurer) {
-	print '<a class="tabAction" href="fiche.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
-	print '<a class="tabAction" href="categ.php">'.$langs->trans("Categories").'</a>';
+if ($user->rights->banque->configurer)
+{
+  print '<a class="tabAction" href="fiche.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
+  print '<a class="tabAction" href="categ.php">'.$langs->trans("Categories").'</a>';
 }
 print "</div>";
-
 
 $db->close();
 
