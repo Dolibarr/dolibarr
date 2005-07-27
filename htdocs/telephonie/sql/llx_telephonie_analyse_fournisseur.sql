@@ -27,8 +27,6 @@ create table llx_telephonie_analyse_fournisseur (
   achat           real,
   vente           real,
   
-  fk_tarif_grille integer,
-
   UNIQUE(fk_fournisseur, mois)
 
 )type=innodb;
