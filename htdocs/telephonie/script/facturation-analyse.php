@@ -25,9 +25,9 @@
  */
 
 /**
-   \file       htdocs/telephonie/script/facturation-emission.php
+   \file       htdocs/telephonie/script/facturation-analyse.php
    \ingroup    telephonie
-   \brief      Emission des factures
+   \brief      Analyse de la facturation
    \version    $Revision$
 */
 
@@ -38,6 +38,70 @@ $opt = getopt("l:c:");
 
 $limit = $opt['l'];
 $optcontrat = $opt['c'];
+
+/*
+ * analyse ratio cout fournisseur
+ *
+ */
+
+$datetime = time();
+$date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
+$month = strftime("%m", $datetime);
+$year = strftime("%Y", $datetime);
+
+if ($month == 1)
+{
+  $month = "12";
+  $year = $year - 1;
+}
+else
+{
+  $month = substr("00".($month - 1), -2) ;
+}
+
+
+$sql = "SELECT sum(cd.fourn_montant) as fourn_montant, sum(cd.cout_vente) as cout_vente";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
+$sql .= " ,    ".MAIN_DB_PREFIX."telephonie_communications_details as cd";
+
+$sql .= " WHERE tf.date = '".$year."-".$month."-01'";
+$sql .= " AND tf.rowid = cd.fk_telephonie_facture";
+$sql .= " GROUP BY cd.fk_fournisseur";
+
+$re2sql = $db->query($sql) ;
+
+if ( $re2sql )
+{
+  $nu2m = $db->num_rows($re2sql);      
+  $j = 0;
+  while ($j < $nu2m)
+    {
+      $row = $db->fetch_row($re2sql);
+
+      print $row[0].' '.$row[1]."\n";
+
+      $j++;
+    }
+}
+else
+{
+  print $db->error();
+}
+
+
+
+
+
+
+
+
+
+/*
+ * Partie 2
+ *
+ */
+
+
 
 require_once (DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_workbook.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_worksheet.inc.php");
