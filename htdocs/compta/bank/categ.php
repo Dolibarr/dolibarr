@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,17 +22,15 @@
  */
 
 /*!
-        \file       htdocs/compta/bank/categ.php
-        \ingroup    compta
-		\brief      Page ajout de catégories banaires
-		\version    $Revision$
+  \file       htdocs/compta/bank/categ.php
+  \ingroup    compta
+  \brief      Page ajout de catégories bancaires
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
 
-$user->getrights('compta');
-
-if (!$user->admin && !$user->rights->banque->configurer)
+if (!$user->rights->banque->configurer)
   accessforbidden();
 
 llxHeader();
@@ -43,17 +41,17 @@ llxHeader();
  */
 if ($_POST["action"] == 'add')
 {
-    if ($_POST["label"]) {
+  if ($_POST["label"])
+    {
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (label) VALUES ('".$_POST["label"]."')";
       $result = $db->query($sql);
-    
+      
       if (!$result)
-        {
-          dolibarr_print_error($db);
-        }
+	{
+	  dolibarr_print_error($db);
+	}
     }
 }
-
 
 /*
  * Affichage liste des catégories
