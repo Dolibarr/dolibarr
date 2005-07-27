@@ -61,6 +61,7 @@ function llxHeader($head = "", $title="") {
   $menu->add(DOL_URL_ROOT."/telephonie/fournisseurs.php", "Fournisseurs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ca/ratiofourn.php", "Ratio fournisseur");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ca/gain.php", "Gain par client");
 
   left_menu($menu->liste);
