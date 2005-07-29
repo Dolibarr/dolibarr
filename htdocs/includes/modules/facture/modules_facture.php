@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,6 +124,10 @@ function facture_pdf_create($db, $facid, $message="")
 	{
 	  // Succès de la création de la facture. On génère le fichier meta
 	  facture_meta_create($db, $facid);
+	  
+	  // et on supprime l'image correspondant au preview
+    facture_delete_preview($db, $facid);
+    
 	  return 1;
 	}
       else
@@ -225,21 +230,51 @@ function facture_get_num($soc, $prefixe_additionnel='')
       $numref = $obj->getNumRef($soc, $prefixe_additionnel);
 
       if ( $numref != "")
-	{
-	  return $numref;
-	}
+	    {
+	       return $numref;
+	    }
       else
-	{
-	  dolibarr_syslog("Erreur dans facture_get_num");
-	  dolibarr_print_error($db,$obj->numreferror());
-	  return "";
-	}
+	    {
+	       dolibarr_syslog("Erreur dans facture_get_num");
+	       dolibarr_print_error($db,$obj->numreferror());
+	       return "";
+	    }
     }
   else
     {
       print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_NotDefined");
       return "";
     }
+}
+
+/**
+   \brief      Supprime l'image de prévisualitation, pour le cas de régénération de facture
+   \param	    db  		objet base de donnée
+   \param	    facid		id de la facture à créer
+*/
+function facture_delete_preview($db, $facid)
+{
+	global $langs,$conf;
+
+	$fac = new Facture($db,"",$facid);
+	$fac->fetch($facid);  
+	$fac->fetch_client();
+
+	if ($conf->facture->dir_output)
+		{
+		$facref = sanitize_string($fac->ref); 
+		$dir = $conf->facture->dir_output . "/" . $facref ; 
+		$file = $dir . "/" . $facref . ".pdf.png";
+
+		if ( file_exists( $file ) && is_writable( $file ) )
+			{
+			if ( ! unlink($file) )
+				{
+				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+				return 0;
+				}
+			}
+		}
 }
 
 ?>
