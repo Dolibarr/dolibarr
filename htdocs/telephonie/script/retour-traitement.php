@@ -36,10 +36,9 @@ $user = new User($db, 1);
 
 $error = 0;
 
-
 $sql = "SELECT cli,mode,situation";
 $sql .= " , ".$db->pdate(date_mise_service);
-$sql .= " , date_resiliation,motif_resiliation,commentaire,rowid ";
+$sql .= " , ".$db->pdate(date_resiliation).",motif_resiliation,commentaire,rowid ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande_retour ";
 $sql .= " WHERE traite = 0";
 
@@ -132,9 +131,60 @@ for ($i = 0 ; $i < $n ; $i++)
 	    }
 	}
       /*
-       * Ligne Rejetée
+       * Ligne Résiliée
        */
-      
+      if ($mode == 'PRESELECTION' && 
+	  $situation == 'CONFIRME' && 
+	  $commentaire == 'CPS DESACTIVE PAR FT' &&
+	  $date_resiliation > 0)
+	{
+	  
+	  if ($ligne->statut == 3)
+	    {
+	      $statut = 6;
+	      $datea = $db->idate($date_resiliation);
+	      
+	      if ($db->query("BEGIN"))
+		{
+		  $error = 0;
+		  
+		  if ($ligne->set_statut($user, $statut, $datea) <> 0)
+		    {
+		      $error++;
+		    }
+		  
+		  if (!$error)
+		    {
+		      /* Tag la ligne comme traitée */
+		      
+		      $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_commande_retour ";
+		      $sql .= " SET traite = 1, date_traitement=now() ";
+		      $sql .= " WHERE rowid =".$rowid;
+		      
+		      if (! $db->query($sql))
+			{
+			  dolibarr_syslog("Erreur de traitement de ligne $numero");
+			  $error++;
+			}
+		    }
+		  
+		  if ($error == 0)
+		    {
+		      $db->query("COMMIT");
+		      dolibarr_syslog("COMMIT");
+		    }
+		  else
+		    {
+		      $db->query("ROLLBACK");
+		      dolibarr_syslog("ROLLBACK");
+		    }		  
+		}
+	    }
+	  else
+	    {
+	      dolibarr_syslog("Ligne $numero déjà active");
+	    }
+	}
       
       /*
        *
