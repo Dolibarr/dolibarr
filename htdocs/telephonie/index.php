@@ -32,7 +32,6 @@ llxHeader('','Telephonie');
  */
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-
 print '<tr><td width="30%" valign="top">';
 
 print '<form method="GET" action="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php">';
@@ -41,9 +40,15 @@ print '<tr class="liste_titre"><td>Recherche ligne</td>';
 print "</tr>\n";
 print "<tr $bc[1]>";
 print '<td>Numéro <input name="search_ligne" size="12"><input type="submit"></td></tr>';
-print '</table></form>';
+print '</table></form><br />';
 
-print '<br />';
+print '<form method="GET" action="'.DOL_URL_ROOT.'/telephonie/contrat/liste.php">';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td>Recherche contrat</td>';
+print "</tr>\n";
+print "<tr $bc[1]>";
+print '<td>Numéro <input name="search_contrat" size="12"></td></tr>';
+print '</table></form><br />';
 
 print '<form method="GET" action="'.DOL_URL_ROOT.'/telephonie/client/liste.php">';
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -140,52 +145,6 @@ else
 }
 
 print '</td><td width="70%" valign="top">';
-
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f ";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
-$sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
-$sql .= " GROUP BY f.facnumber,f.rowid,s.nom, s.idp, f.total_ttc";   
-  
-$resql = $db->query($sql);
-
-if ($resql)
-{
-  $num = $db->num_rows($resql);
-  $i = 0;
-  
-  if ($num)
-    {
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<tr class="liste_titre"><td colspan="2">Factures clients impayées ('.$num.')</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
-      $var = True;
-      $total = $totalam = 0;
-      while ($i < $num )
-	{
-	  $obj = $db->fetch_object($resql);
-	  if ($obj->total_ttc <> $obj->am)
-	    {
-	      $var=!$var;
-	      print '<tr '.$bc[$var].'><td width="20%"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->rowid.'">'.img_file().'</a>';
-	      print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-	      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-	      print '<td align="right">'.price($obj->total_ttc).'</td>';
-	      print '<td align="right">'.price($obj->am).'</td></tr>';
-	      $total +=  $obj->total_ttc;
-	      $totalam +=  $obj->am;
-	    }
-	  $i++;
-	}
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td colspan="2" align="left">'.$langs->trans("RemainderToTake").' : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td><td align="right">'.price($totalam).'</td></tr>';
-      print "</table><br>";
-    }
-  $db->free($resql);
-}
-else
-{
-  print $sql;
-}  
 
 print '</td></tr>';
 print '</table>';
