@@ -122,11 +122,20 @@ for ($j = 0 ; $j < 10 ; $j++)
 
 for ($j = 0 ; $j < 10 ; $j++)
 {
+  $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie";
+  $i++;
+}
+
+
+for ($j = 0 ; $j < 10 ; $j++)
+{
   $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/client/";
   $i++;
   $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/ligne/";
   $i++;
   $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/commercial/";
+  $i++;
+  $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/contrat/";
   $i++;
 }
 
