@@ -96,6 +96,41 @@ class LigneTel {
    *
    *
    */
+  function send_mail($user)
+  {
+  /* 
+   * Envoi mail au commercial responsable
+   *
+   */
+
+    $comm = new User($this->db,$this->commercial_id);
+    $comm->fetch();
+
+    $soc = new Societe($this->db);
+    $soc->fetch($this->socid);
+
+    $subject = "Résiliation de la ligne ".$this->numero;
+    $sendto = $comm->prenom . " " .$comm->nom . "<".$comm->email.">";
+    $from = $user->prenom . " " .$user->nom . "<".$user->email.">";
+    
+    $message = "La ligne numéro ".$this->numero;
+    $message .= " de la société : ".$soc->nom;
+    $message .= ", a été désactivée";
+    $message .= " pour la raison suivante : ".$_POST["commentaire"];
+    $message .= ".";
+    $message .= "\n\n--\n";
+    $message .= "Ceci est un message automatique envoyé par Dolibarr";
+    
+    $mailfile = new DolibarrMail($subject,
+				 $sendto,
+				 $from,
+				 $message);
+    $mailfile->sendfile();
+  }
+  /*
+   *
+   *
+   */
   function SetRemise($user, $remise, $comment)
   {
     $remise = ereg_replace(",",".", $remise);
@@ -377,6 +412,13 @@ class LigneTel {
    */
   function set_statut($user, $statut, $datea='', $commentaire='')
   {
+
+    if ($statut == 6)
+      {
+	$this->send_mail($user);
+      }
+
+
     $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
     $sql .= " SET statut = ".$statut ;
     $sql .= " WHERE rowid =".$this->id;
