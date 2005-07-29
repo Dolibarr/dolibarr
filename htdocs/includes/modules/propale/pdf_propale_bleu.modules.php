@@ -249,6 +249,7 @@ class pdf_propale_bleu extends ModelePDFPropales
 
   function _pagehead(&$pdf, $propale)
     {
+    	global $langs;
       $pdf->SetXY(10,5);
       if (defined("FAC_PDF_INTITULE"))
 	{
