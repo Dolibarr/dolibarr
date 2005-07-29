@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2005      Regis Houssin         <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +154,7 @@ if ($propalid > 0)
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
 					print '<td>';
-					echo '<a target="_blank" href="'.DOL_URL_ROOT.'/document.php?modulepart=propal&file='.$propref.'/'.urlencode($file).'">'.$file.'</a>';
+					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=propal&file='.$propref.'/'.urlencode($file).'">'.$file.'</a>';
 					print "</td>\n";
 					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
 					print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
