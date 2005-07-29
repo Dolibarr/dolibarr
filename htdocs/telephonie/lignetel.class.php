@@ -96,7 +96,7 @@ class LigneTel {
    *
    *
    */
-  function send_mail($user)
+  function send_mail($user, $commentaire)
   {
   /* 
    * Envoi mail au commercial responsable
@@ -116,7 +116,7 @@ class LigneTel {
     $message = "La ligne numéro ".$this->numero;
     $message .= " de la société : ".$soc->nom;
     $message .= ", a été désactivée";
-    $message .= " pour la raison suivante : ".$_POST["commentaire"];
+    $message .= " pour la raison suivante : ".$commentaire;
     $message .= ".";
     $message .= "\n\n--\n";
     $message .= "Ceci est un message automatique envoyé par Dolibarr";
@@ -415,7 +415,7 @@ class LigneTel {
 
     if ($statut == 6)
       {
-	$this->send_mail($user);
+	$this->send_mail($user, $commentaire);
       }
 
 
