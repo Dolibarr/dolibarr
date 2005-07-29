@@ -120,6 +120,7 @@ class ProcessGraphLignes
 	    
 	    $graphduree = new GraphAppelsDureeMoyenne ($this->db, $file);
 	    $graphduree->ligne = $ligne;
+	    $graphduree->width = 360;
 	    $graphduree->show_console = 0 ;
 	    $graphduree->Graph();
 	    
@@ -129,6 +130,7 @@ class ProcessGraphLignes
 	    
 	    $graphx = new GraphCommNbMensuel ($this->db, $file);
 	    $graphx->ligne = $ligne;
+	    $graphx->width = 360;
 	    $graphx->show_console = 0 ;
 	    $graphx->Graph();
 
@@ -138,6 +140,7 @@ class ProcessGraphLignes
 	    
 	    $graphx = new GraphCommNbMinutes ($this->db, $file);
 	    $graphx->ligne = $ligne;
+	    $graphx->width = 360;
 	    $graphx->show_console = 0 ;
 	    $graphx->Graph();
 	  }       
