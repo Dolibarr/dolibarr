@@ -496,19 +496,21 @@ function calcul($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr as t";
   $sql .= " WHERE t.fk_ligne = ".$ligne->id;
     
-  if ( $db->query($sql) )
+  $resql = $db->query($sql);
+
+  if ($resql)
     {
-      $num_sql = $db->num_rows();
+      $num_sql = $db->num_rows($resql);
       $i = 0;
       
       while ($i < $num_sql && $error == 0)
 	{
-	  $objp = $db->fetch_object($i);
+	  $objp = $db->fetch_object($resql);
 
 	  $comm = new CommunicationTelephonique();
 
 	  $comm->index       = $objp->idx;
-	  $comm->fk_ligne    = $facture_id;
+	  $comm->fk_ligne    = $objp->fk_ligne;
 	  $comm->ligne       = $objp->ligne;
 	  $comm->date        = $objp->date;
 	  $comm->heure       = $objp->heure;
@@ -525,7 +527,7 @@ function calcul($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente
 	  $i++;
 	}
 
-      $db->free();
+      $db->free($resql);
     }
   else
     {
