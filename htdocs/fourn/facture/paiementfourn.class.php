@@ -64,6 +64,7 @@ class PaiementFourn
      */
 
     $this->amount = ereg_replace(",",".",$this->amount);
+    $this->amount = ereg_replace(" ","",$this->amount);
     
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementfourn (fk_facture_fourn, datec, datep, amount, fk_user_author, fk_paiement, num_paiement, note)";
     $sql .= " VALUES ('$this->facid', now(), '$this->datepaye', '$this->amount', '$user->id', '$this->paiementid', '$this->num_paiement', '$this->note')";
