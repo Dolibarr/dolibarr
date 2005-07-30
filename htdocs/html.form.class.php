@@ -309,7 +309,7 @@ class Form
    *    \param      htmlname        Nom champ formulaire
    *    \param      filter          Criteres optionnels de filtre
    */
-  function select_societes($selected='',$htmlname='soc_id',$filter)
+  function select_societes($selected='',$htmlname='soc_id',$filter='')
     {
         // On recherche les societes
         $sql = "SELECT s.idp, s.nom FROM";
