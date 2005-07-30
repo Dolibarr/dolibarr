@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
@@ -24,10 +24,10 @@
  */
 
 /**
-        \file       htdocs/fourn/facture/paiement.php
-        \ingroup    fournisseur,facture
-        \brief      Paiements des factures fournisseurs
-		\version    $Revision$
+   \file       htdocs/fourn/facture/paiement.php
+   \ingroup    fournisseur,facture
+   \brief      Paiements des factures fournisseurs
+   \version    $Revision$
 */
 
 
@@ -35,6 +35,7 @@ require("./pre.inc.php");
 require("./paiementfourn.class.php");
 
 $langs->load("bills");
+$langs->load("banks");
 
 
 $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
@@ -68,7 +69,6 @@ if ($action == 'add') {
   $paiementfourn->amount       = $_POST['amount'];
   $paiementfourn->accountid    = $_POST['accountid'];
   $paiementfourn->societe      = $_POST['societe'];
-  $paiementfourn->author       = $_POST['author'];
   $paiementfourn->paiementid   = $_POST['paiementid'];
   $paiementfourn->num_paiement = $_POST['num_paiement'];
   $paiementfourn->note         = $_POST['note'];
@@ -141,9 +141,8 @@ if ($action == 'create')
 
       print '<td>'.$langs->trans("Comments").' :</td></tr>';
 
-      print "<input type=\"hidden\" name=\"author\" value=\"$author\">\n";
-
-      print "<tr><td>".$langs->trans("Type")." :</td><td><select name=\"paiementid\">\n";
+      print '<tr><td>'.$langs->trans("Type").' :</td>';
+      print '<td><select name="paiementid">';
 
       $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY id";
   
@@ -162,7 +161,7 @@ if ($action == 'create')
       print "</td>\n";
 
       print "<td rowspan=\"4\">";
-      print '<textarea name="comment" wrap="soft" cols="40" rows="10"></textarea></td></tr>';
+      print '<textarea name="comment" wrap="soft" cols="40" rows="4"></textarea></td></tr>';
 
       print "<tr><td>".$langs->trans("Number").":</td><td><input name=\"num_paiement\" type=\"text\"><br><em>N° du chèque ou du virement</em></td></tr>\n";
 
@@ -189,7 +188,8 @@ if ($action == 'create')
       print "</td></tr>\n";
 
       print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay")." :</td><td><b>".price($total - $sumpayed).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-      print "<tr><td valign=\"top\">".$langs->trans("AmountTTC")." :</td><td><input name=\"amount\" type=\"text\" value=\"".($total - $sumpayed)."\"></td></tr>\n";
+      print '<tr><td>'.$langs->trans("AmountTTC").' :</td>';
+      print '<td><input name="amount" type="text" value="'.price($total - $sumpayed).'"></td></tr>';
       print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
       print "</form>\n";
       print "</table>\n";
