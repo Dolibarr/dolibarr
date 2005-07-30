@@ -359,177 +359,195 @@ class FactureRec
         }
     }
  
-    /**
-     * Ajoute une ligne de facture
-     */
-    function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL', $remise_percent=0)
-    {
-        if ($this->brouillon)
-        {
-            if (strlen(trim($qty))==0)
-            {
-                $qty=1;
-            }
-            $remise = 0;
-            $price = round(ereg_replace(",",".",$pu), 2);
-            $subprice = $price;
-            if (trim(strlen($remise_percent)) > 0)
-            {
-                $remise = round(($pu * $remise_percent / 100), 2);
-                $price = $pu - $remise;
-            }
-
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
-            $sql .= " VALUES ('$facid', '$desc', '$price', '$qty', '$txtva', '$fk_product', '$remise_percent', '$subprice', '$remise') ;";
-
-            if ( $this->db->query( $sql) )
-            {
-                $this->updateprice($facid);
-                return 1;
-            }
-            else
-            {
-                print "$sql";
-                return -1;
-            }
-        }
+  /**
+   * Ajoute une ligne de facture
+   */
+  function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL', $remise_percent=0)
+  {
+    if ($this->brouillon)
+      {
+	if (strlen(trim($qty))==0)
+	  {
+	    $qty=1;
+	  }
+	$remise = 0;
+	$price = round(ereg_replace(",",".",$pu), 2);
+	$subprice = $price;
+	if (trim(strlen($remise_percent)) > 0)
+	  {
+	    $remise = round(($pu * $remise_percent / 100), 2);
+	    $price = $pu - $remise;
+	  }
+	
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
+	$sql .= " VALUES ('$facid', '$desc'";
+	$sql .= ",".ereg_replace(",",".",$price);
+	$sql .= ",".ereg_replace(",",".",$qty);
+	$sql .= ",".ereg_replace(",",".",$txtva);
+	$sql .= ",'$fk_product'";
+	$sql .= ",'".ereg_replace(",",".",$remise_percent)."'";
+	$sql .= ",'".ereg_replace(",",".",$subprice)."'";
+	$sql .= ",'".ereg_replace(",",".",$remise)."') ;";
+	
+	if ( $this->db->query( $sql) )
+	  {
+	    $this->updateprice($facid);
+	    return 1;
+	  }
+	else
+	  {
+	    print "$sql";
+	    return -1;
+	  }
+      }
     }
+  
+  /**
+   * Mets à jour une ligne de facture
+   */
+  function updateline($rowid, $desc, $pu, $qty, $remise_percent=0)
+  {
+    if ($this->brouillon)
+      {
+	if (strlen(trim($qty))==0)
+	  {
+	    $qty=1;
+	  }
+	$remise = 0;
+	$price = round(ereg_replace(",",".",$pu), 2);
+	$subprice = $price;
+	if (trim(strlen($remise_percent)) > 0)
+	  {
+	    $remise = round(($pu * $remise_percent / 100), 2);
+	    $price = $pu - $remise;
+	  }
+	else
+	  {
+	    $remise_percent=0;
+	  }
+	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc'";
+	$sql .= ",price=".ereg_replace(",",".",$price);
+	$sql .= ",subprice=".ereg_replace(",",".",$subprice);
+	$sql .= ",remise=".ereg_replace(",",".",$remise);
+	$sql .= ",remise_percent=".ereg_replace(",",".",$remise_percent);
+	$sql .= ",qty=".ereg_replace(",",".",$qty);
+	$sql .= " WHERE rowid = $rowid ;";
+	
+	$result = $this->db->query( $sql);
+	
+	$this->updateprice($this->id);
+      }
+  }
+  
+  /**
+   * Supprime une ligne
+   */
+  function deleteline($rowid)
+  {
+    if ($this->brouillon)
+      {
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = $rowid;";
+	$result = $this->db->query( $sql);
+	
+	$this->updateprice($this->id);
+      }
+  }
+  
+  /**
+   * Mise à jour des sommes de la facture
+   */
+  function updateprice($facid)
+  {
+    include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
+    $err=0;
+    $sql = "SELECT price, qty, tva_taux FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = $facid;";
+    
+    $result = $this->db->query($sql);
+    
+    if ($result)
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
+	while ($i < $num)
+	  {
+	    $obj = $this->db->fetch_object($result);
+	    
+	    $products[$i][0] = $obj->price;
+	    $products[$i][1] = $obj->qty;
+	    $products[$i][2] = $obj->tva_taux;
+	    
+	    $i++;
+	  }
+	
+	$this->db->free();
+	
+	$calculs = calcul_price($products, $this->remise_percent);
+	
+	$this->total_remise   = $calculs[3];
+	$this->amount_ht      = $calculs[4];
+	$this->total_ht       = $calculs[0];
+	$this->total_tva      = $calculs[1];
+	$this->total_ttc      = $calculs[2];
+	$tvas                 = $calculs[5];
+	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET ";
+	$sql .= " amount = ".ereg_replace(",",".",$this->amount_ht);
+	$sql .= ", remise=".ereg_replace(",",".",$this->total_remise);
+	$sql .= ", total=".ereg_replace(",",".",$this->total_ht);
+	$sql .= ", tva=".ereg_replace(",",".",$this->total_tva);
+	$sql .= ", total_ttc=".ereg_replace(",",".",$this->total_ttc);
 
-    /**
-     * Mets à jour une ligne de facture
-     */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0)
-    {
-        if ($this->brouillon)
-        {
-            if (strlen(trim($qty))==0)
-            {
-                $qty=1;
-            }
-            $remise = 0;
-            $price = round(ereg_replace(",",".",$pu), 2);
-            $subprice = $price;
-            if (trim(strlen($remise_percent)) > 0)
-            {
-                $remise = round(($pu * $remise_percent / 100), 2);
-                $price = $pu - $remise;
-            }
-            else
-            {
-                $remise_percent=0;
-            }
-
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc',price=$price,subprice=$subprice,remise=$remise,remise_percent=$remise_percent,qty=$qty WHERE rowid = $rowid ;";
-            $result = $this->db->query( $sql);
-
-            $this->updateprice($this->id);
-        }
-    }
-
-    /**
-     * Supprime une ligne
-     */
-    function deleteline($rowid)
-    {
-        if ($this->brouillon)
-        {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = $rowid;";
-            $result = $this->db->query( $sql);
-
-            $this->updateprice($this->id);
-        }
-    }
-
-    /**
-     * Mise à jour des sommes de la facture
-     */
-    function updateprice($facid)
-    {
-        include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
-        $err=0;
-        $sql = "SELECT price, qty, tva_taux FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = $facid;";
-
-        $result = $this->db->query($sql);
-
-        if ($result)
-        {
-            $num = $this->db->num_rows();
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($result);
-
-                $products[$i][0] = $obj->price;
-                $products[$i][1] = $obj->qty;
-                $products[$i][2] = $obj->tva_taux;
-
-                $i++;
-            }
-
-            $this->db->free();
-
-            $calculs = calcul_price($products, $this->remise_percent);
-
-            $this->total_remise   = $calculs[3];
-            $this->amount_ht      = $calculs[4];
-            $this->total_ht       = $calculs[0];
-            $this->total_tva      = $calculs[1];
-            $this->total_ttc      = $calculs[2];
-            $tvas                 = $calculs[5];
-
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET amount = $this->amount_ht, remise=$this->total_remise,  total=$this->total_ht, tva=$this->total_tva, total_ttc=$this->total_ttc";
-            $sql .= " WHERE rowid = $facid ;";
-
-            if ( $this->db->query($sql) )
-            {
-                if ($err == 0)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return -3;
-                }
-            }
-            else
-            {
-                print "$sql<br>";
-                return -2;
-            }
-        }
-        else
-        {
-            print "Error";
+	$sql .= " WHERE rowid = $facid ;";
+	
+	if ( $this->db->query($sql) )
+	  {
+	    if ($err == 0)
+	      {
+		return 1;
+	      }
+	    else
+	      {
+		return -3;
+	      }
+	  }
+	else
+	  {
+	    print "$sql<br>";
+	    return -2;
+	  }
+      }
+    else
+      {
+	print "Error";
             return -1;
-        }
-    }
-
-    /**
-     * Applique une remise
-     */
-    function set_remise($user, $remise)
-    {
-        if ($user->rights->facture->creer)
-        {
-
-            $this->remise_percent = $remise ;
-
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET remise_percent = ".ereg_replace(",",".",$remise);
-            $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-
-            if ($this->db->query($sql) )
-            {
-                $this->updateprice($this->id);
-                return 1;
-            }
-            else
-            {
-                print $this->db->error() . ' in ' . $sql;
-                return -1;
-            }
-        }
-    }
-
+      }
+  }
+  
+  /**
+   * Applique une remise
+   */
+  function set_remise($user, $remise)
+  {
+    if ($user->rights->facture->creer)
+      {
+	
+	$this->remise_percent = $remise ;
+	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET remise_percent = ".ereg_replace(",",".",$remise);
+	$sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+	
+	if ($this->db->query($sql) )
+	  {
+	    $this->updateprice($this->id);
+	    return 1;
+	  }
+	else
+	  {
+	    print $this->db->error() . ' in ' . $sql;
+	    return -1;
+	  }
+      }
+  } 
 }
-
 ?>
