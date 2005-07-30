@@ -42,11 +42,11 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
   $pro->socidp = $_GET["socidp"];
   $pro->ref = $_POST["ref"];
   $pro->title = $_POST["title"];
-  $pro_id = $pro->create($user);
+  $result = $pro->create($user);
 
-  if ($pro_id)
+  if ($result == 0)
     {
-      Header("Location:fiche.php?id=$pro_id");
+      Header("Location:fiche.php?id=".$pro->id);
     }
 }
 
@@ -72,12 +72,18 @@ if ($_POST["action"] == 'update' && $user->rights->projet->creer)
   }
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->supprimer)
 {
   $projet = new Project($db);
   $projet->id = $_GET["id"];
-  $projet->delete();
-  Header("Location: index.php");
+  if ($projet->delete($user) == 0)
+    {
+      Header("Location: index.php");
+    }
+  else
+    {
+      Header("Location: fiche.php?id=".$projet->id);
+    }
 }
 
 llxHeader("",$langs->trans("Project"),"Projet");
