@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +22,14 @@
  */
 
 /**
-        \defgroup   contrat     Module contrat
-        \brief      Module pour gérer la tenue de contrat de services
+   \defgroup   contrat     Module contrat
+   \brief      Module pour gérer la tenue de contrat de services
 */
 
 /**
-        \file       htdocs/includes/modules/modContrat.class.php
-        \ingroup    contrat
-        \brief      Fichier de description et activation du module Contrat
+   \file       htdocs/includes/modules/modContrat.class.php
+   \ingroup    contrat
+   \brief      Fichier de description et activation du module Contrat
 */
 
 include_once "DolibarrModules.class.php";
@@ -77,6 +78,18 @@ class modContrat extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'contrat';
+  }
+
+
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    // Permissions
+    $this->remove();
+
 
     $this->rights[1][0] = 161;
     $this->rights[1][1] = 'Lire les contrats';
@@ -107,20 +120,6 @@ class modContrat extends DolibarrModules
     $this->rights[5][2] = 'd';
     $this->rights[5][3] = 0;
     $this->rights[5][4] = 'supprimer';
-
-  }
-
-
-   /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    // Permissions
-    $this->remove();
-
-    $sql = array();
 
     return $this->_init($sql);
   }
