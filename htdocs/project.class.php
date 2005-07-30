@@ -57,19 +57,60 @@ class Project {
 
   function create($user)
   {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, dateo) ";
-    $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, ".$user->id.",now()) ;";
-    
-    if ($this->db->query($sql) ) 
+    if (strlen(trim($this->ref)) > 0)
       {
-	return $this->db->last_insert_id(MAIN_DB_PREFIX."projet");
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, dateo) ";
+	$sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, ".$user->id.",now()) ;";
+	
+	if ($this->db->query($sql) ) 
+	  {
+	    $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet");
+	    $result = 0;
+	  }
+	else
+	  {
+	    dolibarr_syslog($this->db->error());
+	    $result = -2;
+	  }    
       }
     else
       {
-	print '<b>'.$sql.'</b><br>'.$this->db->error();	  
+	dolibarr_syslog("Project::Create ref null");
+	$result = -1;
       }    
-  }
   
+    return $result;
+  }  
+
+  function update($user)
+  {
+    if (strlen(trim($this->ref)) > 0)
+      {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
+	$sql .= " SET ref='$this->ref'";
+	$sql .= " , title = '$this->title'";
+	$sql .= " WHERE rowid = ".$this->id;
+	
+	if ($this->db->query($sql) ) 
+	  {
+	    $result = 0;
+	  }
+	else
+	  {
+	    dolibarr_syslog($this->db->error());
+	    $result = -2;
+	  }    
+      }
+    else
+      {
+	dolibarr_syslog("Project::Update ref null");
+	$result = -1;
+      }    
+  
+    return $result;
+  }  
+
+
   /*
    *    \brief      Charge objet projet depuis la base
    *    \param      rowid       id du projet à charger
@@ -282,5 +323,26 @@ class Project {
 	}
     }
 
+  /*
+   *    \brief    Supprime l'projet dans la base
+   *    \param    Utilisateur
+   */
+
+  function delete($user)
+  {
+    
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
+    $sql .= " WHERE rowid=".$this->id;
+
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {
+	return 0;
+      }
+    else
+      {
+	return -1;
+      }
+  }
 }
 ?>
