@@ -56,6 +56,7 @@ if ($_POST["action"] == 'add_paiement')
 				    $_POST["reyear"]));
       
       $paiement_id = 0;
+      $total = 0;
       $amounts = array();
       foreach ($_POST as $key => $value)
         {
@@ -64,105 +65,109 @@ if ($_POST["action"] == 'add_paiement')
 	      $other_facid = substr($key,7);
 	      
 	      $amounts[$other_facid] = $_POST[$key];
+	      $total = $total + $amounts[$other_facid];
             }
         }
       
-      $db->begin();
-      
-      // Creation de la ligne paiement
-      $paiement = new Paiement($db);
-      $paiement->datepaye     = $datepaye;
-      $paiement->amounts      = $amounts;   // Tableau de montant
-      $paiement->paiementid   = $_POST["paiementid"];
-      $paiement->num_paiement = $_POST["num_paiement"];
-      $paiement->note         = $_POST["comment"];
-      
-      $paiement_id = $paiement->create($user);
+      if ($total > 0)
+	{
 
-      if ($paiement_id > 0)
-        {
-	  // On determine le montant total du paiement
-	  $total=0;
-	  foreach ($paiement->amounts as $key => $value)
-            {
-	      $facid = $key;
-	      $value = trim($value);
-	      $amount = round(ereg_replace(",",".",$value), 2);
-	      if (is_numeric($amount))
-                {
-		  $total += $amount;
-                }
-            }
+	  $db->begin();
+      
+	  // Creation de la ligne paiement
+	  $paiement = new Paiement($db);
+	  $paiement->datepaye     = $datepaye;
+	  $paiement->amounts      = $amounts;   // Tableau de montant
+	  $paiement->paiementid   = $_POST["paiementid"];
+	  $paiement->num_paiement = $_POST["num_paiement"];
+	  $paiement->note         = $_POST["comment"];
 	  
-	  if ($conf->banque->enabled && $_POST["accountid"])
+	  $paiement_id = $paiement->create($user);
+
+	  if ($paiement_id > 0)
 	    {
-	      // Insertion dans llx_bank
-	      $label = "Règlement facture";
-	      $acc = new Account($db, $_POST["accountid"]);
-	      //paiementid contient "CHQ ou VIR par exemple"
-	      $bank_line_id = $acc->addline($paiement->datepaye, 
-					    $paiement->paiementid, 
-					    $label, 
-					    $total, 
-					    $paiement->num_paiement, 
-					    '', 
-					    $user);
+	      // On determine le montant total du paiement
+	      $total=0;
+	      foreach ($paiement->amounts as $key => $value)
+		{
+		  $facid = $key;
+		  $value = trim($value);
+		  $amount = round(ereg_replace(",",".",$value), 2);
+		  if (is_numeric($amount))
+		    {
+		      $total += $amount;
+		    }
+		}
+	      
+	      if ($conf->banque->enabled && $_POST["accountid"])
+		{
+		  // Insertion dans llx_bank
+		  $label = "Règlement facture";
+		  $acc = new Account($db, $_POST["accountid"]);
+		  //paiementid contient "CHQ ou VIR par exemple"
+		  $bank_line_id = $acc->addline($paiement->datepaye, 
+						$paiement->paiementid, 
+						$label, 
+						$total, 
+						$paiement->num_paiement, 
+						'', 
+						$user);
 	    
 
-	      // Mise a jour fk_bank dans llx_paiement. 
-	      // On connait ainsi le paiement qui a généré l'écriture bancaire
-	      if ($bank_line_id > 0)
-		{
-		  $paiement->update_fk_bank($bank_line_id);
-		  
-		  // Mise a jour liens (pour chaque facture concernées par le paiement)
-		  foreach ($paiement->amounts as $key => $value)
+		  // Mise a jour fk_bank dans llx_paiement. 
+		  // On connait ainsi le paiement qui a généré l'écriture bancaire
+		  if ($bank_line_id > 0)
 		    {
-		      $facid = $key;
-		      $fac = new Facture($db);
-		      $fac->fetch($facid);
-		      $fac->fetch_client();
-		      $acc->add_url_line($bank_line_id, 
-					 $paiement_id, 
-					 DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', 
-					 "(paiement)");
-		      $acc->add_url_line($bank_line_id, 
-					 $fac->client->id, 
-					 DOL_URL_ROOT.'/compta/fiche.php?socid=', 
-					 $fac->client->nom);
+		      $paiement->update_fk_bank($bank_line_id);
+		      
+		      // Mise a jour liens (pour chaque facture concernées par le paiement)
+		      foreach ($paiement->amounts as $key => $value)
+			{
+			  $facid = $key;
+			  $fac = new Facture($db);
+			  $fac->fetch($facid);
+			  $fac->fetch_client();
+			  $acc->add_url_line($bank_line_id, 
+					     $paiement_id, 
+					     DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', 
+					     "(paiement)");
+			  $acc->add_url_line($bank_line_id, 
+					     $fac->client->id, 
+					     DOL_URL_ROOT.'/compta/fiche.php?socid=', 
+					     $fac->client->nom);
+			}
+		      
 		    }
-		  		  
+		  else
+		    {
+		      $error++;
+		    }	      
 		}
-	      else
-		{
-		  $error++;
-		}	      
+	      
 	    }
+	  else
+	    {
+	      $error++;
+	    }
+
 	  
-        }
-      else
-        {
-	  $error++;
-        }
-
-
-      if ($error == 0)
-	{
-
-	  $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-	  
-	  $db->commit();
-	  
-	  Header("Location: $loc");
-
+	  if ($error == 0)
+	    {
+	      $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+	      $db->commit();
+	      Header("Location: $loc");
+	    }
+	  else
+	    {
+	      // Il y a eu erreur
+	      $db->rollback();
+	      $fiche_erreur_message = $langs->trans("ErrorUnknown");
+	    }
 	}
       else
 	{
-	  // Il y a eu erreur
-	  $db->rollback();
-	  $fiche_erreur_message = $langs->trans("ErrorUnknown");
+	  $fiche_erreur_message = '<div class="error">Aucun montants indiqués</div>';
 	}
-
     }
   else
     {
