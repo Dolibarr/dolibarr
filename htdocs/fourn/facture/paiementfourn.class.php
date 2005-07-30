@@ -39,7 +39,6 @@ class PaiementFourn
   var $datepaye;
   var $amount;
   var $accountid;
-  var $author;
   var $paiementid;		// Cette variable contient le type de paiement, 7 pour CHQ, etc... (nom pas tres bien choisi)
   var $num_paiement;
   var $note;
