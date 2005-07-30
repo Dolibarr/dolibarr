@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
@@ -23,20 +23,19 @@
  *
  */
 
-/**     \defgroup   projet     Module projet
-        \brief      Module pour inclure le detail par projets dans les autres modules
+/**  \defgroup   projet     Module projet
+     \brief      Module pour inclure le detail par projets dans les autres modules
 */
 
-/**
-        \file       htdocs/includes/modules/modProjet.class.php
-        \ingroup    projet
-        \brief      Fichier de description et activation du module Projet
+/** \file       htdocs/includes/modules/modProjet.class.php
+    \ingroup    projet
+    \brief      Fichier de description et activation du module Projet
 */
 
 include_once "DolibarrModules.class.php";
 
 /**     \class      modProjet
-		\brief      Classe de description et activation du module Projet
+	\brief      Classe de description et activation du module Projet
 */
 
 class modProjet extends DolibarrModules
@@ -54,7 +53,10 @@ class modProjet extends DolibarrModules
     $this->family = "projects";
     $this->name = "Projets";
     $this->description = "Gestion des projets";
-    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+  
+    $this->revision = explode(" ","$Revision$");
+    $this->version = $this->revision[1];
+
     $this->const_name = "MAIN_MODULE_PROJET";
     $this->const_config = MAIN_MODULE_PROJET;
 
@@ -88,8 +90,7 @@ class modProjet extends DolibarrModules
     $this->rights[3][1] = 'Supprimer les projets'; // libelle de la permission
     $this->rights[3][2] = 'd'; // type de la permission (déprécié à ce jour)
     $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[3][4] = 'supprimer';
-    
+    $this->rights[3][4] = 'supprimer';    
   }
 
 

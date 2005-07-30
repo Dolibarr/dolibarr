@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
@@ -54,7 +54,10 @@ class modBanque extends DolibarrModules
     $this->family = "financial";
     $this->name = "Banque";
     $this->description = "Gestion des comptes financiers de type Comptes bancaires ou postaux";
-    $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+
+    $this->revision = explode(" ","$Revision$");
+    $this->version = $this->revision[1];
+
     $this->const_name = "MAIN_MODULE_BANQUE";
     $this->const_config = MAIN_MODULE_BANQUE;
 
