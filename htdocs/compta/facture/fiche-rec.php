@@ -74,13 +74,12 @@ if ($_POST["action"] == 'add')
 }
 
 // Suppression
-if ($_POST["action"] == 'delete' && $user->rights->facture->supprimer) 
+if ($_REQUEST["action"] == 'delete' && $user->rights->facture->supprimer) 
 {
-    $fac = new FactureRec($db);
-    $fac->delete($facid);
-    $facid = 0 ;
+  $fac = new FactureRec($db);
+  $fac->delete($_REQUEST["facid"]);
+  $facid = 0 ;
 }
-
 
 /*
  *
