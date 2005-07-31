@@ -31,6 +31,40 @@ Class methode_expedition
       $this->description = "ERREUR DANS LA DEFINITION DU MODULE.";
     }
 
+  Function Active()
+    {
+      // Mise a jour du statut
+      $sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode set statut= 1 ";
+      $sql.= " WHERE rowid = ".$this->id;
+      
+      $resql = $this->db->query($sql);
+      
+      if ($resql)
+	{
+	  $af = $this->db->affected_rows($resql);
+	  
+	  if ($af == 0)
+	    {
+	      // On créé la méthode dans la base
+	      
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition_methode";
+	      $sql .= " (rowid, statut, code, libelle, description)";
+	      $sql .= " VALUES (".$this->id.",1,'$this->code','$this->name','$this->description')";
+
+	      $resql = $this->db->query($sql);
+
+	      if (! $resql)
+		{
+		  dolibarr_syslog("methode_expedition::Active Erreur 2");
+		}
+	    }
+	}      
+      else
+	{
+	  dolibarr_syslog("methode_expedition::Active Erreur 1");
+	}
+    }
+
   Function write_pdf_file($id)
     {
       global $user;
