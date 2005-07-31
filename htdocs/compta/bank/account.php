@@ -215,8 +215,7 @@ if ($account > 0)
   print '<input type="hidden" name="account" value="' . $acct->id . '">';
   print '<tr class="liste_titre">';
 
-  print '<td colspan="3"></td>';
-  print '<td><input type="text" name="req_desc" value="'.$_POST["req_desc"].'" size="40"></td>';
+
 
   print '<td colspan="3"><a href="graph.php?id='.$acct->id.'">Graph</a></td>';
   print '<td><input type="text" class="flat" name="req_desc" value="'.$_POST["req_desc"].'" size="40"></td>';
