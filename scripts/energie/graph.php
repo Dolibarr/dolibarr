@@ -25,12 +25,12 @@ require ("../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieCompteur.class.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieGroupe.class.php");
 
-include_once ("/usr/share/jpgraph/jpgraph.php");
-include_once ("/usr/share/jpgraph/jpgraph_line.php");
-include_once ("/usr/share/jpgraph/jpgraph_bar.php");
-include_once ("/usr/share/jpgraph/jpgraph_pie.php");
-include_once ("/usr/share/jpgraph/jpgraph_error.php");
-include_once ("/usr/share/jpgraph/jpgraph_canvas.php");
+include_once (JPGRAPH_DIR."jpgraph.php");
+include_once (JPGRAPH_DIR."jpgraph_line.php");
+include_once (JPGRAPH_DIR."jpgraph_bar.php");
+include_once (JPGRAPH_DIR."jpgraph_pie.php");
+include_once (JPGRAPH_DIR."jpgraph_error.php");
+include_once (JPGRAPH_DIR."jpgraph_canvas.php");
 
 $error = 0;
 
@@ -128,7 +128,7 @@ if ($resql_c)
 		  $maxa = max($maxa, $xa);
 		  
 		  $gdatas[$i-1] = $xa;
-		  $glabels[$i-1] = strftime("%d%m",$datas[$i][1]);
+		  $glabels[$i-1] = '';//strftime("%d%m",$datas[$i][1]);
 		  
 		  $month = strftime("%m%y",$datas[$i][1]);
 		  
@@ -143,7 +143,7 @@ if ($resql_c)
 		  $ydatas[$compteur_id][$year] = $ydatas[$compteur_id][$year] + $xa;
 		}
 	      
-	      $width = 450;
+	      $width = 750;
 	      $height = 300;
 	      
 	      $graph = new Graph($width, $height,"auto");    
@@ -160,21 +160,18 @@ if ($resql_c)
 
 	      $graph->title->Set("Consommation par jour");
 	      
-	      //$graph->title->SetFont(FF_VERDANA,FS_NORMAL);
-	      
 	      $graph->xaxis->SetTickLabels($glabels);   
 	      $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
 	      
 	      $graph->Add($b2plot);
-	      
-	      // Display the graph
-	      
 	      $graph->img->SetImgFormat("png");
 	      
 	      $file= DOL_DATA_ROOT."/energie/graph/day.".$obj_c->rowid.".png";
 	      
 	      $graph->Stroke($file);
 	      
+	      $width = 450;
+	      $height = 300;
 	      
 	      // Mensuel
 	      $i=0;
@@ -210,11 +207,13 @@ if ($resql_c)
 	      $graph->Stroke($file);
 	      
 	      // Hebdomadaire
+	      $width = 750;
+	      $height = 300;
 	      $i=0;
 	      foreach ($wdatas[$compteur_id] as $key => $value)
 		{
 		  $gwdatas[$i] = $value;
-		  $gwlabels[$i] = $key;
+		  $gwlabels[$i] = substr($key,0,2);
 		  $i++;
 		}
 	      
@@ -242,6 +241,8 @@ if ($resql_c)
 	      $graph->Stroke($file);
 
 	      // Annuel
+	      $width = 450;
+	      $height = 300;
 	      $i=0;
 	      foreach ($ydatas[$compteur_id] as $key => $value)
 		{
