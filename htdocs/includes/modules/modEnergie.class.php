@@ -72,6 +72,9 @@ class modEnergie extends DolibarrModules
     // Constantes
     $this->const = array();
 
+    // Config pages
+    $this->config_page_url = "energie.php";
+
     // Boxes
     $this->boxes = array();
 
