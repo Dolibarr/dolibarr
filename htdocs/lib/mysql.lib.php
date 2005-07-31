@@ -549,6 +549,36 @@ class DoliDb
         return  $this->results;
     }
 
+
+    /**
+        \brief      Renvoie toutes les données comme un tableau.
+        \param      sql requete sql
+        \return	    array
+    */
+
+    function fetch_all_rows($sql, &$datas)
+    {
+      $datas = array();
+
+      $resql = $this->query($sql);
+      if ($resql)
+	{
+	  $i = 0;
+	  $num = $this->num_rows($resql);
+
+	  while ($i < $num)
+	    {
+	      $row = $this->fetch_row($resql);
+	      array_push($datas, $row[0]);
+	      $i++;
+	    }
+	}
+      else
+	{
+	  print $this->error();
+	}
+      return $result;
+    }
 }
 
 ?>
