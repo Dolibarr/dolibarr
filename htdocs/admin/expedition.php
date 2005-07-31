@@ -46,21 +46,16 @@ $expedition_default = EXPEDITION_ADDON;
  */
 if ($_GET["action"] == 'set')
 {
-    $file = DOL_DOCUMENT_ROOT . '/expedition/mods/methode_expedition_'.$_GET["value"].'.modules.php';
+  $file = DOL_DOCUMENT_ROOT . '/expedition/mods/methode_expedition_'.$_GET["value"].'.modules.php';
 
-    $classname = 'methode_expedition_'.$_GET["value"];
-    require_once($file);
-
-    $obj = new $classname();
-
-    // Mise a jour statut
-    $sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode set status='".$_GET["statut"]."'";
-    $sql.= " WHERE rowid = ".$obj->id;
-    print "$sql";
-    exit;
-
-    Header("Location: expedition.php");
-
+  $classname = 'methode_expedition_'.$_GET["value"];
+  require_once($file);
+  
+  $obj = new $classname($db);
+  
+  $obj->Active($_GET["statut"]);
+  
+  Header("Location: expedition.php");
 }
 
 if ($_GET["action"] == 'setpdf')
@@ -71,75 +66,75 @@ if ($_GET["action"] == 'setpdf')
     $resql=$db->query($sql);
     if ($resql)
     {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON_PDF','".$_GET["value"]."',0)";
-        $resql=$db->query($sql);
-        if ($resql)
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON_PDF','".$_GET["value"]."',0)";
+      $resql=$db->query($sql);
+      if ($resql)
         {
-            // la constante qui a été lue en avant du nouveau set
-            // on passe donc par une variable pour avoir un affichage cohérent
-            $expedition_addon_var_pdf = $value;
-
-            $db->commit();
+	  // la constante qui a été lue en avant du nouveau set
+	  // on passe donc par une variable pour avoir un affichage cohérent
+	  $expedition_addon_var_pdf = $value;
+	  
+	  $db->commit();
         
-            Header("Location: ".$_SERVER["PHP_SELF"]);
-            exit;
+	  Header("Location: ".$_SERVER["PHP_SELF"]);
+	  exit;
         }
-        else 
+      else 
         {
-            $db->rollback();
-            dolibarr_print_error($db);
+	  $db->rollback();
+	  dolibarr_print_error($db);
         }
     }
     else 
-    {
+      {
         $db->rollback();
         dolibarr_print_error($db);
-    }
+      }
 }
 
 if ($_GET["action"] == 'setdef')
 {
-    $db->begin();
-
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXPEDITION_ADDON';";
-    $resql=$db->query($sql);
-    if ($resql)
+  $db->begin();
+  
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXPEDITION_ADDON';";
+  $resql=$db->query($sql);
+  if ($resql)
     {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON','".$_GET["value"]."',0)";
-        $resql=$db->query($sql);
-        if ($resql)
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON','".$_GET["value"]."',0)";
+      $resql=$db->query($sql);
+      if ($resql)
         {
-            // la constante qui a été lue en avant du nouveau set
-            // on passe donc par une variable pour avoir un affichage cohérent
-            $expedition_default = $_GET["value"];
-            $db->commit();
-
-            Header("Location: ".$_SERVER["PHP_SELF"]);
-            exit;
+	  // la constante qui a été lue en avant du nouveau set
+	  // on passe donc par une variable pour avoir un affichage cohérent
+	  $expedition_default = $_GET["value"];
+	  $db->commit();
+	  
+	  Header("Location: ".$_SERVER["PHP_SELF"]);
+	  exit;
         }
-        else 
+      else 
         {
-            $db->rollback();
-            dolibarr_print_error($db);
+	  $db->rollback();
+	  dolibarr_print_error($db);
         }
     }
-    else 
+  else 
     {
-        $db->rollback();
-        dolibarr_print_error($db);
+      $db->rollback();
+      dolibarr_print_error($db);
     }
 }
-
 
 /*
  *
  */
 
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode WHERE statut = 1";
+$db->fetch_all_rows($sql, $mods);
+
 llxHeader();
 
-
 $dir = DOL_DOCUMENT_ROOT."/expedition/mods/";
-
 
 // Méthode de livraison
 
@@ -152,55 +147,62 @@ print_titre($langs->trans("SendingMethod"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td>';
-print '<td align="center" colspan="2">'.$langs->trans("Active").'</td>';
+print '<td align="center">&nbsp;</td>';
+print '<td align="center">'.$langs->trans("Active").'</td>';
 print '<td align="center">'.$langs->trans("Default").'</td>';
 print "</tr>\n";
 
 if(is_dir($dir)) {
-    $handle=opendir($dir);
-    $var=true;
-    
-    while (($file = readdir($handle))!==false)
+  $handle=opendir($dir);
+  $var=true;
+  
+  while (($file = readdir($handle))!==false)
     {
-        if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,19) == 'methode_expedition_')
+      if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,19) == 'methode_expedition_')
         {
-            $name = substr($file, 19, strlen($file) - 31);
-            $classname = substr($file, 0, strlen($file) - 12);
+	  $name = substr($file, 19, strlen($file) - 31);
+	  $classname = substr($file, 0, strlen($file) - 12);
+	  
+	  require_once($dir.$file);
+	  
+	  $obj = new $classname();
+	  
+	  $var=!$var;
+	  print "<tr $bc[$var]><td>";
+	  echo $obj->name;
+	  print "</td><td>\n";
+	  
+	  print $obj->description;
+	  
+	  print '</td><td align="center">';
 
-            require_once($dir.$file);
+	  if (in_array($obj->id, $mods))
+	    {
+	      print img_tick();
+	      print '</td><td align="center">';
+	      print '<a href="expedition.php?action=set&amp;statut=0&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
 
-            $obj = new $classname();
-
-            $var=!$var;
-            print "<tr $bc[$var]><td>";
-            echo $obj->name;
-            print "</td><td>\n";
-
-            print $obj->description;
-
-            print '</td><td align="center">';
-
-
-            print "&nbsp;";
-            print "</td><td>\n";
-            print '<a href="expedition.php?action=set&amp;statut=1&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-
-
-            print '</td>';
+	    }
+	  else
+	    {
+	      print '&nbsp;</td><td align="center">';
+	      print '<a href="expedition.php?action=set&amp;statut=1&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+	    }
+	  	  
+	  print '</td>';
             
-            // Default
-            print '<td align="center">';
-            if ($expedition_default == "$name")
+	  // Default
+	  print '<td align="center">';
+	  if ($expedition_default == "$name")
             {
-                print img_tick();
+	      print img_tick();
             }
-            else
+	  else
             {
-                print '<a href="expedition.php?action=setdef&amp;value='.$name.'">'.$langs->trans("Default").'</a>';
+	      print '<a href="expedition.php?action=setdef&amp;value='.$name.'">'.$langs->trans("Default").'</a>';
             }
-            print '</td>';
-
-            print '</tr>';
+	  print '</td>';	  
+	  print '</tr>';
         }
     }
     closedir($handle);
@@ -229,16 +231,16 @@ $dir = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/";
 
 if(is_dir($dir))
 {
-    $handle=opendir($dir);
-    $var=true;
-
+  $handle=opendir($dir);
+  $var=true;
+  
     while (($file = readdir($handle))!==false)
-    {
+      {
         if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,15) == 'pdf_expedition_')
-        {
+	  {
             $name = substr($file, 15, strlen($file) - 27);
             $classname = substr($file, 0, strlen($file) - 12);
-
+	    
             $var=!$var;
             print "<tr $bc[$var]><td>";
             print $name;
