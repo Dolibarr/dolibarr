@@ -163,6 +163,12 @@ if ($modulepart)
       $original_file=DOL_DATA_ROOT.'/energie/graph/'.$original_file;
     }
 
+    // Wrapping pour les graph bank
+    if ($modulepart == 'bank')
+    {
+      $accessallowed=1;
+      $original_file=DOL_DATA_ROOT.'/graph/banque/'.$original_file;
+    }
 }
 
 // Limite accès si droits non corrects
