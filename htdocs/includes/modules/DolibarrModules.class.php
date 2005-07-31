@@ -93,7 +93,7 @@ class DolibarrModules
                     {
                         $this->error = $langs->trans("ErrorCanNotCreateDir",$dir);
                         dolibarr_syslog("DolibarrModules::_init error");
-
+                        dolibarr_syslog("ErrorCanNotCreateDir $dir");
                     }
                 }
             }
