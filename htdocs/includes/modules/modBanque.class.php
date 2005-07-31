@@ -68,6 +68,8 @@ class modBanque extends DolibarrModules
     // Constantes
     $this->const = array();
 
+    $this->dirs = array();
+
     // Boites
     $this->boxes = array();
 
@@ -107,6 +109,10 @@ class modBanque extends DolibarrModules
 
     $sql = array();
     
+    $this->dirs[0] = DOL_DATA_ROOT.'/graph/';
+    $this->dirs[1] = DOL_DATA_ROOT.'/graph/banque/';
+
+
     return $this->_init($sql);
   }
 
