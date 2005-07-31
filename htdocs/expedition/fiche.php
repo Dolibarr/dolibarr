@@ -335,6 +335,7 @@ else
 	  if ($_GET["action"] == 'delete')
 	    {
 	      $html->form_confirm("fiche.php?id=$expedition->id","Supprimer l'expedition","Etes-vous sûr de vouloir supprimer cette expedition ?","confirm_delete");
+	      print '<br>';
 	    }
 	  
 	  /*
@@ -344,6 +345,7 @@ else
 	  if ($_GET["action"] == 'valid')
 	    {
 	      $html->form_confirm("fiche.php?id=$expedition->id","Valider l'expédition","Etes-vous sûr de vouloir valider cette expédition ?","confirm_valid");
+	      print '<br>';
 	    }
 	  /*
 	   * Confirmation de l'annulation
@@ -352,6 +354,7 @@ else
 	  if ($_GET["action"] == 'annuler')
 	    {
 	      $html->form_confirm("fiche.php?id=$expedition->id",$langs->trans("Cancel"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
+	      print '<br>';
 	    }
 
 	  /*
@@ -475,14 +478,15 @@ else
 		{
 		  print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 		}
+
+	      print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=pdf">'.$langs->trans('BuildPDF').'</a>';
 	    
 	      if ($expedition->brouillon && $user->rights->expedition->supprimer)
 		{
 		  print '<a class="butActionDelete" href="fiche.php?id='.$expedition->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 		} 
-	    
-	    
-	      print "</div>";
+
+	      print '</div>';	      	   
 	    }
 	
 	  /*
@@ -542,11 +546,7 @@ else
 		}
 	      $db->free($resql);
 	    }
-	    //Barre d'action
-	    print '<div class="tabsAction">';
-	    //Build PDF
-	    print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=pdf">'.$langs->trans('BuildPDF').'</a>';
-	    print '</div><br>';
+
 	       
 	  /*
 	   * Documents générés
