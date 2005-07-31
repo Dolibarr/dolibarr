@@ -31,10 +31,10 @@ Class methode_expedition
       $this->description = "ERREUR DANS LA DEFINITION DU MODULE.";
     }
 
-  Function Active()
+  Function Active($statut)
     {
       // Mise a jour du statut
-      $sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode set statut= 1 ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode set statut = $statut ";
       $sql.= " WHERE rowid = ".$this->id;
       
       $resql = $this->db->query($sql);
@@ -43,7 +43,7 @@ Class methode_expedition
 	{
 	  $af = $this->db->affected_rows($resql);
 	  
-	  if ($af == 0)
+	  if ($af == 0 && $statut == 1)
 	    {
 	      // On créé la méthode dans la base
 	      
