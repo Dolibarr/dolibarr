@@ -38,8 +38,6 @@ $datetime = time();
 $month = strftime("%m", $datetime);
 $year = strftime("%Y", $datetime);
 
-$account = 1; 
-
 if ($month == 1)
 {
   $monthprev = "12";
@@ -60,22 +58,51 @@ else
   $monthnext = substr("00".($month + 1), -2) ;
 }
 
-
-$sql = "SELECT sum(amount)";
+$sql = "SELECT distinct(fk_account)";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank";
-$sql .= " WHERE fk_account = ".$account;
-$sql .= " AND datev < '".$year."-".$month."-01';";
+$sql .= " WHERE date_format(datev,'%Y%m') = '".$year.$month."'";
 
 $resql = $db->query($sql);
+
+$amounts = array();
+
 if ($resql)
 {
-  $row = $db->fetch_row($resql);
-  $solde = $row[0];
+  $num = $db->num_rows($resql);
+  $i = 0;
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);
+      array_push($accounts, $row[0]);
+      $i++;
+    }
+
 }
-else
+  
+$account = 1; 
+
+foreach ($accounts as $account)
 {
-  print $sql ;
-}
+
+
+
+
+  $sql = "SELECT sum(amount)";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank";
+  $sql .= " WHERE fk_account = ".$account;
+  $sql .= " AND datev < '".$year."-".$month."-01';";
+  
+  $resql = $db->query($sql);
+  if ($resql)
+  {
+    $row = $db->fetch_row($resql);
+    $solde = $row[0];
+  }
+  else
+    {
+      print $sql ;
+    }
 
 
 $sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
@@ -154,6 +181,6 @@ $graph->img->SetImgFormat("png");
 $file= DOL_DATA_ROOT."/graph/banque/solde.$account.png";
 
 $graph->Stroke($file);
-
+}
 
 ?>
