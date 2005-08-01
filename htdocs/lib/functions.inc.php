@@ -766,8 +766,8 @@ function loginfunction()
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html><head><title>Dolibarr Authentification</title>\n";
   print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/'.$conf->theme.'.css">';
-  print '</head>';
-  print '<body onload="donnefocus();">';
+
+
 
   print '<style type="text/css">';
   print '<!--';
@@ -791,6 +791,13 @@ function loginfunction()
   print '}';
   print '-->';
   print '</style>';
+  print '<script type="text/javascript">';
+  print "function donnefocus() {\n";
+  print "document.getElementsByTagName('INPUT')[0].focus();";
+  print "}\n";
+  print '</script>';
+  print '</head>';
+  print '<body onload="donnefocus();">';
   
   print '<form id="login" method="post" action="' . $_SERVER['PHP_SELF'] . '" name="identification">';
 
