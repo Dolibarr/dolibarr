@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2004      Christophe Combelles <ccomb@free.fr>
@@ -291,11 +291,13 @@ if ($account > 0)
       print "<td align=\"left\" colspan=\"8\"><b>Saisie d'une transaction hors facture</b></td></tr>";
       print '<tr>';
       print '<td><small>YYYY MMDD</small></td><td colspan="2">&nbsp;</td><td>'.$langs->trans("Description").'</td><td align=right>0000.00</td><td align=right>0000.00</td>';
-      print '<td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-      print '</tr>';
+      print '<td colspan="2" align="center">';
+      print '<select class="flat" name="cat1">'.$options.'</select>';
+      print '</td></tr>';
       print '<tr>';
-      print '<td nowrap><input name="dateoy" class="flat" type="text" size="2" value="'.strftime("%Y",time()).'" maxlength="4">';
-      print '<input name="dateo" class="flat" type="text" size="2" maxlength="4"></td>';
+      print '<td nowrap>';
+      print '<input name="dateoy" class="flat" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
+      print '<input name="dateo" class="flat" type="text" size="4" maxlength="4"></td>';
       print '<td colspan="2" nowrap><select class="flat" name="operation">';
       print '<option value="CB">CB';
       print '<option value="CHQ">CHQ';
@@ -309,8 +311,8 @@ if ($account > 0)
 
       print '<td align=right><input name="debit" class="flat" type="text" size="6"></td>';
       print '<td align=right><input name="credit" class="flat" type="text" size="6"></td>';
-      print "<td colspan=\"2\" align=\"center\">";
-      print '<select class="flat" name="cat1">'.$options.'</select>';
+      print '<td colspan="2" align="center">';
+      print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
       print '</td></tr>';
       print "</form>";
     }
