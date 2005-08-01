@@ -76,6 +76,7 @@ class PaiementFourn
 	  {
 	    $obj = $this->db->fetch_object($resql);
 
+	    $this->facture_id = $obj->fk_facture_fourn;
 	    $this->date = $obj->datep;
 	    $this->montant = $obj->amount;
 
