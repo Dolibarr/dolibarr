@@ -247,7 +247,11 @@ if ($action == '') {
 	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"".DOL_URL_ROOT."/fourn/facture/paiement/fiche.php?facid=$objp->facid\">".img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
+	  print "<td><a href=\"".DOL_URL_ROOT."/fourn/paiement/fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowPayment"),"payment").'</a>';
+
+	  print "&nbsp;<a href=\"".DOL_URL_ROOT."/fourn/paiement/fiche.php?id=$objp->rowid\">".$objp->rowid.'</a></td>';
+
+
 	  print "<td><a href=\"".DOL_URL_ROOT."/fourn/facture/fiche.php?facid=$objp->facid\">".img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
 	  print '<td>'.$objp->nom.'</td>';
 	  print "<td>".dolibarr_print_date($objp->dp)."</td>\n";
