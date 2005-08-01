@@ -68,7 +68,7 @@ else
 
 $sql = "SELECT distinct(fk_account)";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank";
-//$sql .= " WHERE date_format(datev,'%Y%m') = '".$year.$month."'";
+$sql .= " WHERE fk_account IS NOT NULL";
 
 $resql = $db->query($sql);
 
