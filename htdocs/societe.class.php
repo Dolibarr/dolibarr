@@ -430,7 +430,7 @@ class Societe {
     $sql .= ", s.fk_typent as typent_id";
     $sql .= ", s.fk_effectif as effectif_id, e.libelle as effectif";
     $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique";
-    $sql .= ", s.code_client, s.code_compta, s.parent";
+    $sql .= ", s.code_client, s.code_compta, s.code_fournisseur, s.parent";
     $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client";
     $sql .= ", p.code as pays_code, p.libelle as pays";
     $sql .= ", st.libelle as stcomm";
@@ -445,12 +445,13 @@ class Societe {
     $sql .= " AND s.fk_pays = p.rowid";
     $sql .= " AND s.fk_forme_juridique = fj.code";
 
-    $result=$this->db->query($sql);
-    if ($result)
+    $resql=$this->db->query($sql);
+
+    if ($resql)
       {
-	if ($this->db->num_rows($result))
+	if ($this->db->num_rows($resql))
 	  {
-	    $obj = $this->db->fetch_object($result);
+	    $obj = $this->db->fetch_object($resql);
 
 	    $this->date_update = $obj->date_update;
 
@@ -472,7 +473,6 @@ class Societe {
 	    $this->statut_commercial = $libelle;    // libelle statut commercial
 
 	    $this->url = $obj->url;
-
 	    $this->tel = $obj->tel;
 	    $this->fax = $obj->fax;
 	      
@@ -484,6 +484,7 @@ class Societe {
 	    $this->capital   = $obj->capital;
 
 	    $this->code_client = $obj->code_client;
+	    $this->code_fournisseur = $obj->code_fournisseur;
 
 	    if (! $this->code_client && $this->mod_codeclient->code_modifiable_null == 1)
 	      {
@@ -515,7 +516,7 @@ class Societe {
 
 	    $this->remise_client = $obj->remise_client;
 	      
-	    $this->client = $obj->client;
+	    $this->client      = $obj->client;
 	    $this->fournisseur = $obj->fournisseur;
 
 	    if ($this->client == 1)
@@ -542,7 +543,7 @@ class Societe {
 	    $result = -2;
 	  }
 
-	$this->db->free($result);
+	$this->db->free($resql);
       }
     else
       {
