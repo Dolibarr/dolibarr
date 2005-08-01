@@ -41,3 +41,4 @@ VATPayments=Réglements TVA
 TotalToPay=Total à payer
 CustomerAccountancyCode=Code compta client
 SupplierAccountancyCode=Code compta founisseur
+AlreadyPayed=Déjà réglé
