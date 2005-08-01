@@ -55,6 +55,93 @@ class PaiementFourn
   /*
    *
    *
+   */
+  function Fetch($id,$user) 
+  {
+    /*
+     */
+    $error = 0;
+
+    
+    $sql = "SELECT fk_facture_fourn, datec, datep, amount, fk_user_author, fk_paiement, num_paiement, note";
+    $sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn";
+    $sql .= " WHERE rowid = ".$id.";";
+    
+    $resql = $this->db->query($sql);
+
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resl);
+	if ($num > 0)
+	  {
+	    $obj = $this->db->fetch_object($resql);
+
+	    $this->date = $obj->datep;
+	    $this->montant = $obj->amount;
+
+	    
+	  }
+	else
+	  {
+	    $error = 2;
+	  }
+      }
+    else
+      {
+	print "$sql";
+	$error = 1;
+      }  
+    
+    return $error;
+
+  }
+  /*
+   *
+   */
+  /*
+   *    \brief      Information sur l'objet
+   *    \param      id      id du paiement dont il faut afficher les infos
+   */
+	 
+  function info($id) 
+    {
+      $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec, fk_user_author";
+      $sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as c";
+      $sql .= " WHERE c.rowid = $id";
+      
+      if ($this->db->query($sql)) 
+	{
+	  if ($this->db->num_rows()) 
+	    {
+	      $obj = $this->db->fetch_object();
+
+	      $this->id                = $obj->idp;
+
+	      if ($obj->fk_user_creat) {
+	      	$cuser = new User($this->db, $obj->fk_user_creat);
+	      	$cuser->fetch();
+	      	$this->user_creation     = $cuser;
+	      }
+
+		  if ($obj->fk_user_modif) {
+	        $muser = new User($this->db, $obj->fk_user_modif);
+	        $muser->fetch();
+  	        $this->user_modification = $muser;
+	      }
+
+	      $this->date_creation     = $obj->datec;
+	      $this->date_modification = $obj->tms;
+
+	    }
+	  $this->db->free();
+
+	}
+      else
+	{
+	  dolibarr_print_error($this->db);
+	}
+    }
+  /*
    *
    */
   function create($user) 
