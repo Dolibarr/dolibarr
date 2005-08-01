@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copytight (C) 2004      Christophe Combelles <ccomb@free.fr>
+/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +38,10 @@ $account = $_GET["id"];
 
 if ($account > 0)
 {
-
+  $datetime = time();
+  $month = strftime("%m", $datetime);
+  $year = strftime("%Y", $datetime);
+  
   $acct = new Account($db);
   $acct->fetch($account);
 
@@ -51,7 +51,25 @@ if ($account > 0)
 
   print '<tr><td>';
 
-  $file = "solde.$account.png";
+  $file = "solde.$account.$year.$month.png";
+
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+
+  print '</td></tr><tr><td>';
+
+  if ($month == 1)
+    {
+      $monthprev = "12";
+      $yearprev = $year - 1;
+    }
+  else
+    {
+      $monthprev = substr("00".($month - 1), -2) ;
+      $yearprev = $year ;
+    }
+
+
+  $file = "solde.$account.$yearprev.$monthprev.png";
 
   print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
 
