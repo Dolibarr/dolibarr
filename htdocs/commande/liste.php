@@ -21,10 +21,10 @@
  *
  */
 
-/**	        \file       htdocs/commande/liste.php
-	        \ingroup    commande
-	        \brief      Page liste des commandes
-	        \version    $Revision$
+/**	\file       htdocs/commande/liste.php
+	\ingroup    commande
+	\brief      Page liste des commandes
+	\version    $Revision$
 */
 
 
@@ -78,6 +78,11 @@ if ($_GET["year"] > 0)
 if (isset($_GET["status"]))
 {
   $sql .= " AND fk_statut = ".$_GET["status"];
+}
+
+if (isset($_GET["afacturer"]))
+{
+  $sql .= " AND c.facture = 0";
 }
 
 if (strlen($_POST["sf_ref"]) > 0)
