@@ -31,10 +31,18 @@ include_once (JPGRAPH_DIR."jpgraph_canvas.php");
 
 $error = 0;
 
-
+$opt = getopt("m:y:");
 
 $datetime = time();
-$month = strftime("%m", $datetime);
+
+if ($opt['m'] > 0)
+{
+  $month = $opt['m'];
+}
+else
+{
+  $month = strftime("%m", $datetime);
+}
 $year = strftime("%Y", $datetime);
 
 if ($month == 1)
@@ -45,6 +53,7 @@ if ($month == 1)
 else
 {
   $monthprev = substr("00".($month - 1), -2) ;
+  $yearprev = $year ;
 }
 
 if ($month == 12)
@@ -59,7 +68,7 @@ else
 
 $sql = "SELECT distinct(fk_account)";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank";
-$sql .= " WHERE date_format(datev,'%Y%m') = '".$year.$month."'";
+//$sql .= " WHERE date_format(datev,'%Y%m') = '".$year.$month."'";
 
 $resql = $db->query($sql);
 
@@ -83,12 +92,10 @@ $account = 1;
 
 foreach ($accounts as $account)
 {
-
   $labels = array();
   $datas = array();
   $amounts = array();
   
-
   $sql = "SELECT sum(amount)";
   $sql .= " FROM ".MAIN_DB_PREFIX."bank";
   $sql .= " WHERE fk_account = ".$account;
@@ -96,10 +103,10 @@ foreach ($accounts as $account)
   
   $resql = $db->query($sql);
   if ($resql)
-  {
-    $row = $db->fetch_row($resql);
-    $solde = $row[0];
-  }
+    {
+      $row = $db->fetch_row($resql);
+      $solde = $row[0];
+    }
   else
     {
       print $sql ;
@@ -126,8 +133,7 @@ foreach ($accounts as $account)
 	  $row = $db->fetch_row($resql);
 	  $amounts[$row[0]] = $row[1];
 	  $i++;
-	}
-      
+	}      
     }
   else
     {
@@ -135,7 +141,6 @@ foreach ($accounts as $account)
     }
   
   $subtotal = 0;
-  
   
   $day = mktime(1,1,1,$month,1,$year);
   
@@ -146,16 +151,23 @@ foreach ($accounts as $account)
       //print strftime ("%e %d %m %y",$day)."\n";
       
       $subtotal = $subtotal + $amounts[strftime("%Y%m%d",$day)];
-      
-      $datas[$i] = $solde + $subtotal;
+
+      if ($day > time())
+	{      
+	  $datas[$i] = 0;
+	}
+      else
+	{
+	  $datas[$i] = $solde + $subtotal;
+	}
+
       $labels[$i] = strftime("%d",$day);
       
       $day += 86400;
       $xmonth = substr("00".strftime("%m",$day), -2);
       $i++;
     }
-  
-  
+    
   $width = 750;
   $height = 350;
   
@@ -171,7 +183,7 @@ foreach ($accounts as $account)
   $b2plot->SetColor("blue");
   //$b2plot->SetWeight(2);
   
-  $graph->title->Set("Solde");
+  $graph->title->Set("Solde $month $year");
   
   $graph->xaxis->SetTickLabels($labels);   
   //$graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
@@ -179,7 +191,7 @@ foreach ($accounts as $account)
   $graph->Add($b2plot);
   $graph->img->SetImgFormat("png");
   
-  $file= DOL_DATA_ROOT."/graph/banque/solde.$account.png";
+  $file= DOL_DATA_ROOT."/graph/banque/solde.$account.$year.$month.png";
   
   $graph->Stroke($file);
 }
