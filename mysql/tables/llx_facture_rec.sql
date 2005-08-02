@@ -39,5 +39,8 @@ create table llx_facture_rec
 
   note               text,
 
+  frequency          char(2) DEFAULT NULL,
+  last_gen           varchar(7) DEFAULT NULL,
+
   INDEX idx_facture_rec_fksoc (fk_soc)
 )type=innodb;
