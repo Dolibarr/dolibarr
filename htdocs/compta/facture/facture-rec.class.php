@@ -549,5 +549,37 @@ class FactureRec
 	  }
       }
   } 
+  /**
+   * Rend la facture automatique
+   *
+   */
+  function set_auto($user, $freq, $courant)
+  {
+    if ($user->rights->facture->creer)
+      {
+	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec ";
+	$sql .= " SET frequency = '".$freq."', last_gen='".$courant."'";
+	$sql .= " WHERE rowid = ".$this->facid.";";
+	
+	$resql = $this->db->query($sql);
+
+	if ($resql)
+	  {
+	    $this->frequency 	= $freq;
+	    $this->last_gen 	= $courant;
+	    return 0;
+	  }
+	else
+	  {
+	    print $this->db->error() . ' in ' . $sql;
+	    return -1;
+	  }
+      }
+    else
+      {
+	return -2;
+      }
+  }
 }
 ?>
