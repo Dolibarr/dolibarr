@@ -221,6 +221,20 @@ else
 	  print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
 	  print $entrepot->nb_products();
 	  print "</td></tr>";
+	  
+	  $sql = "SELECT max( ".$db->pdate("m.datem").") as datem";
+	  $sql .= " FROM llx_stock_mouvement as m";
+	  $sql .= " WHERE m.fk_entrepot = '".$entrepot->id."';";	 
+
+	  $resql = $db->query($sql);
+	  if ($resql)
+	    {
+	      $row = $db->fetch_row($resql);
+	    }
+
+	  print '<tr><td valign="top"><a href="mouvement.php">'.$langs->trans("DernierMouvement").'</a></td><td colspan="3">';
+	  print strftime("%e %B %Y",$row[0]);
+	  print "</td></tr>";
 	  print "</table>";
 	  
 	  //affichage de la liste des produits de l\'entrepot
