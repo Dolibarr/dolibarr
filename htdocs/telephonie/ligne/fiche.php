@@ -625,7 +625,7 @@ else
 
 	      print '</td></tr>';
 
-	      print '<tr><td width="20%">Fournisseur</td><td colspan="2">';
+	      print '<tr><td width="20%">Fournisseur</td><td>';
 
 	      $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur";
 	      $sql .= " WHERE commande_active = 1 AND rowid = ".$ligne->fournisseur_id;
@@ -639,8 +639,12 @@ else
 		      print $row[1];
 		    }
 		  $db->free();	      
-		}	      	      
+		}
+	      print '</td><td>PDF détail : '.$ligne->pdfdetail;
+
 	      print '</td></tr>';
+
+
 
 	      print '<tr><td width="20%">Remise LMN</td><td>'.$ligne->remise.'&nbsp;%</td>';
 	      print '<td><a href="remises.php?id='.$ligne->id.'">historique</a></td></tr>';
@@ -676,6 +680,8 @@ else
 	      print '<tr><td width="20%">Factures</td><td colspan="2">';	  
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/facture/liste.php?search_ligne='.$ligne->numero.'">liste</a>';
 	      print '</td></tr>';
+
+
 
 	      /* Contacts */
 	     
