@@ -215,6 +215,8 @@ class LigneTel {
 
 	    $this->SetRemise($user, $this->remise, 'Remise initiale');
 
+	    $this->DefineClientOption();
+
 	    return 0;
 	  }
 	else
@@ -241,6 +243,50 @@ class LigneTel {
 	$this->error_message = "Echec de la création de la ligne, le numéro de la ligne est incorrect !";
 	dolibarr_syslog("LigneTel::Create Error -2");
 	return -2;
+      }
+  }
+  /*
+   *
+   *
+   */
+  function DefineClientOption()
+  {
+
+    $sql = "SELECT propriete, valeur";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_options";
+    $sql .= " WHERE type= 'ligne'";
+    $sql .= " AND fk_client_comm = '".$this->client_comm."'";
+
+    $resql = $this->db->query($sql);
+    
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resql);
+	$i = 0;
+
+	while ($i < $num)
+	  {
+	    $obj = $this->db->fetch_object($resql);
+
+	    $sqlu = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+	    $sqlu .= " SET ".$obj->propriete." = '".$obj->valeur."'";
+	    $sqlu .= " WHERE rowid = '".$this->id."'";
+
+	    $resqlu = $this->db->query($sqlu);
+	    
+	    if (!$resqlu)
+	      {
+		dolibarr_syslog("LigneTel::DefineClientOption Error");
+		dolibarr_syslog("LigneTel::DefineClientOption $sqlu");
+	      }
+	
+
+	    $i++;
+	  }
+      }
+    else
+      {
+	dolibarr_syslog("LigneTel::DefineClientOption Error");
       }
   }
   /*
