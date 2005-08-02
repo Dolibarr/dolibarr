@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,10 +22,10 @@
  */
 
 /**
-	    \file       htdocs/compta/bank/index.php
-        \ingroup    banque
-		\brief      Page accueil banque
-		\version    $Revision$
+   \file       htdocs/compta/bank/index.php
+   \ingroup    banque
+   \brief      Page accueil banque
+   \version    $Revision$
 */
 
 
@@ -43,33 +43,33 @@ $user->getrights('banque');
 if (!$user->rights->banque->lire)
   accessforbidden();
 
-
-
 llxHeader();
-
 
 print_titre($langs->trans("AccountsArea"));
 print '<br>';
 
 
-// On charge tableau des comptes financiers
+// On charge tableau des comptes financiers ouverts
+// On n'affiche pas les comptes clos
 $accounts = array();
 
-$sql = "SELECT rowid, courant";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-$sql.= " ORDER BY label";
+$sql  = "SELECT rowid, courant";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
+$sql .= " WHERE clos = 0";
+$sql .= " ORDER BY label";
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows($result);
+  $num = $db->num_rows($resql);
   $i = 0; 
-  while ($i < $num) {
-    $objp = $db->fetch_object($result);
-    $accounts[$objp->rowid] = $objp->courant;
-    $i++;
-  }
-  $db->free($result);
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object($resql);
+      $accounts[$objp->rowid] = $objp->courant;
+      $i++;
+    }
+  $db->free($resql);
 }
 
 
@@ -92,12 +92,12 @@ foreach ($accounts as $key=>$type)
       
       $var = !$var;
       $solde = $acc->solde();
-  
+      
       print "<tr ".$bc[$var]."><td>";
       print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
       print "</td><td>$acc->bank</td><td>$acc->number</td>";
       print '<td align="right">'.price($solde).'</td><td align="center">'.$yn[$acc->clos].'</td></tr>';
-  
+      
       $total += $solde;
     }
 }
