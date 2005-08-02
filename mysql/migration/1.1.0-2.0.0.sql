@@ -197,6 +197,9 @@ alter table llx_facture add  increment           varchar(10);
 alter table llx_facture drop column author;
 alter table llx_facture drop column fk_user;
 
+alter table llx_facture_rec add frequency char(2) DEFAULT NULL;
+alter table llx_facture_rec add last_gen varchar(7) DEFAULT NULL;
+
 create table llx_societe_commerciaux
 (
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
