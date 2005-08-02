@@ -77,7 +77,7 @@ if (isset($_GET["status"]))
 
 if (isset($_GET["afacturer"]))
 {
-  $sql .= " AND p.fk_statut >=1	AND c.facture = 0";
+  $sql .= " AND fk_statut >=1	AND c.facture = 0";
 }
 
 if (strlen($_POST["sf_ref"]) > 0)
