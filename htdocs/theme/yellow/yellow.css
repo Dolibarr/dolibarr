@@ -570,10 +570,7 @@ tr.liste_titre {
     background: #BBBB88;
     font: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
-    border-left: 1px solid #FFFFFF;
-    border-right: 1px solid #FFFFFF;
-    border-top: 1px solid #FFFFFF;
-    border-bottom: 1px solid #FFFFFF;
+    border-bottom: 1px solid #000000;
     white-space: nowrap;
 }
 
