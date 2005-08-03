@@ -28,6 +28,9 @@
 
 require("./pre.inc.php");
 
+if (!$user->rights->prelevement->bons->lire)
+  accessforbidden();
+
 $langs->load("admin");
 
 if ($_GET["action"] == "set" && $user->rights->prelevement->bons->configurer)

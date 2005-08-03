@@ -30,6 +30,9 @@
 
 require("./pre.inc.php");
 
+if (!$user->rights->prelevement->bons->lire)
+  accessforbidden();
+
 $langs->load("bills");
 
 /*

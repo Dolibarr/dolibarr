@@ -21,6 +21,9 @@
  */
 require("./pre.inc.php");
 
+if (!$user->rights->prelevement->bons->lire)
+  accessforbidden();
+
 require_once DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php";
 require_once DOL_DOCUMENT_ROOT."/paiement.class.php";
 require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";

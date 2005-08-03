@@ -21,6 +21,9 @@
  */
 require("./pre.inc.php");
 
+if (!$user->rights->prelevement->bons->lire)
+  accessforbidden();
+
 llxHeader('','Lignes de Prélèvements');
 /*
  * Sécurité accés client
