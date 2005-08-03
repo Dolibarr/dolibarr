@@ -89,7 +89,7 @@ class box_factures_imp extends ModeleBoxes {
                     $objp = $db->fetch_object($result);
 
                     $late="";
-                    if ($obj->datelimite < (time() - $warning_delay)) $late=img_warning($langs->trans("Late"));
+                    if ($objp->datelimite < (time() - $warning_delay)) $late=img_warning($langs->trans("Late"));
 
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $this->boximg,
