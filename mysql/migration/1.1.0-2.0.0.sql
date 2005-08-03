@@ -531,6 +531,15 @@ ALTER TABLE llx_prelevement_lignes ADD INDEX (fk_prelevement_bons);
 ALTER TABLE llx_prelevement_lignes ADD FOREIGN KEY (fk_prelevement_bons) REFERENCES llx_prelevement_bons (rowid);
 
 
+create table llx_prelevement_notifications
+(
+  rowid     integer AUTO_INCREMENT PRIMARY KEY,
+  fk_user   integer NOT NULL,
+  action    varchar(2) 
+
+)type=innodb;
+
+
 
 create table llx_mailing
 (
