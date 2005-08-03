@@ -28,8 +28,6 @@
 
 require("./pre.inc.php");
 
-$langs->load("withdrawals");
-
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
