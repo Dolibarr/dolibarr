@@ -78,6 +78,55 @@ print '<a class="tabAction" href="create.php?action=create">'.$langs->trans("Cre
 print "</div><br>\n";
 
 /*
+ * Mode Liste
+ *
+ */
+$sql = "SELECT p.rowid, p.ref, p.amount,".$db->pdate("p.datec")." as datec";
+$sql .= ", p.statut";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+
+$sql .= " ORDER BY datec DESC LIMIT 2";
+
+$result = $db->query($sql);
+if ($result)
+{
+  $num = $db->num_rows($result);
+  $i = 0;
+
+  print"\n<!-- debut table -->\n";
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td>Derniers Bons</td>';
+  print '<td><Date</td><td align="right">'.$langs->trans("Amount").'</td>';
+  print '</tr>';
+
+  $var=True;
+
+  while ($i < min($num,$conf->liste_limit))
+    {
+      $obj = $db->fetch_object($result);
+      $var=!$var;
+
+      print "<tr $bc[$var]><td>";
+      print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
+      print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
+      print '<td align="center">'.strftime("%d/%m/%Y",$obj->datec)."</td>\n";
+
+      print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie)."</td>\n";
+
+      print "</tr>\n";
+      $i++;
+    }
+  print "</table><br>";
+  $db->free($result);
+}
+else 
+{
+  dolibarr_print_error($db);
+}
+
+
+
+/*
  * Factures
  *
  */
