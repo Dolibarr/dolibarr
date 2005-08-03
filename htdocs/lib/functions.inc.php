@@ -133,7 +133,8 @@ function dolibarr_syslog($message, $level=LOG_ERR)
         }
         else
         {
-            define_syslog_variables();
+	  //define_syslog_variables(); déjà définit dans master.inc.php
+	  
         
             if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
             {
