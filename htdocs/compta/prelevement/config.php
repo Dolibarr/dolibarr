@@ -42,6 +42,22 @@ if ($_GET["action"] == "set" && $user->admin)
   Header("Location: config.php");
 }
 
+if ($_GET["action"] == "addnotif")
+{
+  $bon = new BonPrelevement($db);
+  $bon->AddNotification($_POST["user"],$_POST["action"]);
+  
+  Header("Location: config.php");
+}
+
+if ($_GET["action"] == "deletenotif")
+{
+  $bon = new BonPrelevement($db);
+  $bon->DeleteNotificationById($_GET["notif"]);
+  
+  Header("Location: config.php");
+}
+
 /*
  *
  *
@@ -134,6 +150,87 @@ print '<tr><td align="center" colspan="2"><input type="submit"></td></tr>';
 
 print '</table>';
 print '</form>';
+
+print '<br>';
+
+/*
+ * Notifications
+ *
+ */
+
+print '<form method="post" action="config.php?action=addnotif">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="30%">Nom</td>';
+print '<td width="40%">Valeur</td>';
+print '<td width="30%">Action</td>';
+print "</tr>\n";
+
+print '<tr class="impair"><td align="left">';
+print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
+print '<select name="user">';
+$sql = "SELECT rowid, name, firstname";
+$sql .= " FROM ".MAIN_DB_PREFIX."user";
+$sql .= " ORDER BY name ASC";
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0;
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object();
+      print '<option value="'.$obj->rowid.'">'.stripslashes($obj->firstname)." ".stripslashes($obj->name);
+      $i++;
+    }
+  $db->free();
+}
+
+print '</select></td>';
+
+print '<td align="left">';
+print '<select name="action">';
+
+print '<option value="tr">Transmission du bon</option>';
+print '<option value="em">Emission du bon</option>';
+print '<option value="cr">Crédit du bon</option>';
+
+print '</select></td>';
+
+print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+
+
+$sql = "SELECT u.name, u.firstname, pn.action, pn.rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_notifications as pn";
+$sql .= " WHERE u.rowid = pn.fk_user";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  $var = True;
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object($resql);
+
+      $var=!$var;
+      print "<tr $bc[$var]>";
+
+      print '<td>'.stripslashes($obj->firstname)." ".stripslashes($obj->name).'</td>';
+      print '<td>'.$obj->action.'</td>';
+      print '<td><a href="config.php?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td></tr>';
+      $i++;
+    }
+  $db->free($resql);
+}
+
+
+
+print '</table>';
+print '</form>';
+
 
 $db->close();
 
