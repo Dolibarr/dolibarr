@@ -31,7 +31,7 @@ require("../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT."/bon-prelevement.class.php";
 
 $langs->load("banks");
-
+$langs->load("withdrawals");
 
 $user->getrights("prelevement");
 
