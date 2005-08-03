@@ -62,6 +62,10 @@ if ($_POST["action"] == 'infotrans')
 	  $bon->set_infotrans($user, $dt, $_POST["methode"]);
 	}
     }
+  else
+    {
+      dolibarr_syslog("Fichier invalide",LOG_WARN);
+    }
 
   Header("Location: fiche.php?id=".$_GET["id"]);
 }
@@ -69,12 +73,19 @@ if ($_POST["action"] == 'infotrans')
 if ($_POST["action"] == 'infocredit')
 {
   $bon = new BonPrelevement($db,"");
-  $bon->id = $_GET["id"];
+  $bon->Fetch($_GET["id"]);
   $dt = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 
-  $bon->set_infocredit($user, $dt);
+  $error = $bon->set_infocredit($user, $dt);
 
-  Header("Location: fiche.php?id=".$_GET["id"]);
+  if ($error == 0)
+    {
+      Header("Location: fiche.php?id=".$_GET["id"]);
+    }
+  else
+    {
+      Header("Location: fiche.php?id=".$_GET["id"]."&error=$error");
+    }
 }
 
 llxHeader('','Bon de prélèvement');
@@ -117,6 +128,13 @@ if ($_GET["id"])
     {
       dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
 
+      if (isset($_GET["error"]))
+	{
+	  print '<div class="error">'.$bon->ReadError($_GET["error"]).'</div>';
+	}
+
+
+
       if ($_GET["action"] == 'credite')
 	{
 	  $html->form_confirm("fiche.php?id=".$bon->id,"Classer comme crédité","Etes-vous sûr de vouloir classer ce bon de prélèvement comme crédité sur votre compte bancaire ?","confirm_credite");
@@ -126,7 +144,7 @@ if ($_GET["id"])
       print '<table class="border" width="100%">';
 
       print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->ref.'</td></tr>';
-      print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.strftime("%d %b %Y",$bon->datec).'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.strftime("%e %B %Y",$bon->datec).'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 
@@ -146,7 +164,7 @@ if ($_GET["id"])
 	  $muser->fetch();
 
 	  print '<tr><td width="20%">Date Transmission / Par</td><td>';
-	  print strftime("%d %b %Y",$bon->date_trans);
+	  print strftime("%e %B %Y",$bon->date_trans);
 	  print ' par '.$muser->fullname.'</td></tr>';
 	  print '<tr><td width="20%">Méthode Transmission</td><td>';
 	  print $bon->methodes_trans[$bon->method_trans];
@@ -155,7 +173,7 @@ if ($_GET["id"])
       if($bon->date_credit <> 0)
 	{
 	  print '<tr><td width="20%">Crédité le</td><td>';
-	  print strftime("%d %b %Y",$bon->date_credit);
+	  print strftime("%e %B %Y",$bon->date_credit);
 	  print '</td></tr>';
 	}
 
