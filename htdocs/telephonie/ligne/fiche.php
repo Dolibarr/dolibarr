@@ -612,16 +612,83 @@ else
 	      print $client_facture->nom.'</a><br />';
 	      print $client_facture->cp . " " .$client_facture->ville;
 
-	      print '</td><td>';
+	      print '</td><td valign="top" rowspan="9">';
 
-	      if ($ligne->mode_paiement == 'pre')
+	      /* Historique */
+
+	      print '<table width="100%" class="border">';
+	      print '<tr class="liste_titre">';
+	      print '<td>Date</td>';
+	      print '<td>Statut</td>';
+	      print '<td>Fournisseur</td>';
+	      print '<td>Rapporteur</td>';
+	      print '</tr>';
+	      $ff = array();     
+	      $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur";
+	      $sql .= " ORDER BY nom ";
+
+	      $resql = $db->query($sql);
+	      if ($resql)
 		{
-		  print 'RIB : '.$client_facture->display_rib();
+		  $num = $db->num_rows($resql);
+		  if ( $num > 0 )
+		    {
+		      $i = 0;
+		      while ($i < $num)
+			{
+			  $row = $db->fetch_row($resql);
+			  $ff[$row[0]] = $row[1];
+			  $i++;
+			}
+		    }
+		  $db->free($resql);
+		}
+
+	      $sql = "SELECT ".$db->pdate("l.tms").", l.statut, l.fk_user";
+	      $sql .= ", u.code, u.code, l.comment, l.fk_fournisseur";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne_statut as l";
+	      $sql .= ",".MAIN_DB_PREFIX."user as u";
+	      $sql .= " WHERE u.rowid = l.fk_user AND l.fk_ligne = ".$ligne->id;
+	      $sql .= " ORDER BY l.tms DESC ";
+	      if ( $db->query( $sql) )
+		{
+		  $num = $db->num_rows();
+		  if ( $num > 0 )
+		    {
+		      $i = 0;
+		      while ($i < $num)
+			{
+			  $row = $db->fetch_row($i);
+
+			  print '<tr><td valign="top" width="20%">'.strftime("%d/%m/%y",$row[0]).'</td>';
+			  print '<td><img src="./graph'.$row[1].'.png">&nbsp;';
+			  print $ligne->statuts[$row[1]];
+			  if ($row[5])
+			    {
+			      print '<br />'.$row[5];
+			    }
+
+			  print '</td><td>';
+
+			  print $ff[$row[6]];
+
+			  print '</td><td>'. $row[3] . "</td></tr>";
+			  $i++;
+			}
+		    }
+		  $db->free();
 		}
 	      else
 		{
-		  print 'Paiement par virement';
+		  print $sql;
 		}
+	  
+	      print "</table>";
+
+
+	      /* Fin historique */
+
+
 
 	      print '</td></tr>';
 
@@ -640,21 +707,21 @@ else
 		    }
 		  $db->free();	      
 		}
-	      print '</td><td>PDF détail : '.$ligne->pdfdetail;
-
 	      print '</td></tr>';
 
+	      print '<tr><td>PDF détail</td><td>'.$ligne->pdfdetail.'</td></tr>';
 
 
-	      print '<tr><td width="20%">Remise LMN</td><td>'.$ligne->remise.'&nbsp;%</td>';
-	      print '<td><a href="remises.php?id='.$ligne->id.'">historique</a></td></tr>';
+
+	      print '<tr><td width="20%">Remise LMN</td><td>'.$ligne->remise.'&nbsp;%&nbsp;';
+	      print '(<a href="remises.php?id='.$ligne->id.'">historique</a>)</td></tr>';
 
 	      $commercial_suiv = new User($db, $ligne->commercial_suiv_id);
 	      $commercial_suiv->fetch();
 
 	      print '<tr><td width="20%">Commercial</td>';
-	      print '<td>'.$commercial_suiv->fullname.'</td>';
-	      print '<td>Signé par : ';
+	      print '<td>'.$commercial_suiv->fullname.'</td></tr>';
+	      print '<tr><td>Signé par</td><td>';
 
 
 	      if ($ligne->commercial_suiv_id <> $ligne->commercial_sign_id)
@@ -671,13 +738,13 @@ else
 
 
 	      print '<tr><td width="20%">Concurrent précédent</td>';
-	      print '<td colspan="2">'.$ligne->print_concurrent_nom().'</td></tr>';
+	      print '<td>'.$ligne->print_concurrent_nom().'</td></tr>';
 
-	      print '<tr><td width="20%">Communications</td><td colspan="2">';	  
+	      print '<tr><td width="20%">Communications</td><td>';
 	      print '<a href="communications.php?ligne='.$ligne->numero.'">liste</a>';	      
 	      print '</td></tr>';
 
-	      print '<tr><td width="20%">Factures</td><td colspan="2">';	  
+	      print '<tr><td width="20%">Factures</td><td>';	  
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/facture/liste.php?search_ligne='.$ligne->numero.'">liste</a>';
 	      print '</td></tr>';
 
