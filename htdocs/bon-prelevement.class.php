@@ -42,6 +42,7 @@ class BonPrelevement
   var $emetteur_numero_compte;
   var $emetteur_code_etablissement;
   var $total;
+  var $_fetched;
 
   function BonPrelevement($DB, $filename='') 
     {
@@ -68,6 +69,8 @@ class BonPrelevement
       $this->methodes_trans = array();
 
       $this->methodes_trans[0] = "Internet";
+
+      $this->_fetched = 0;
 
       return 1;
     }
@@ -181,6 +184,18 @@ class BonPrelevement
    *
    *
    */
+  function ReadError($error)
+  {
+    $errors = array();
+
+    $errors[1027] = "Date invalide";
+
+    return $errors[abs($error)];
+  }
+  /*
+   *
+   *
+   */
   function Fetch($rowid)
   {
     $sql = "SELECT p.rowid, p.ref, p.amount, p.note, p.credite";
@@ -216,6 +231,8 @@ class BonPrelevement
 	    $this->user_credit        = $obj->fk_user_credit;
 
 	    $this->statut             = $obj->statut;
+
+	    $this->_fetched = 1;
 
 	    return 0;
 	  }
@@ -322,44 +339,65 @@ class BonPrelevement
   {
     $error == 0;
 
-    if ($this->db->begin())
+    if ($this->_fetched == 1)
       {
-	$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
-	$sql .= " SET fk_user_credit = ".$user->id;
-	$sql .= " , statut = 2";
-	$sql .= " , date_credit='".$this->db->idate($date)."'";
-	$sql .= " WHERE rowid=".$this->id;
-      	$sql .= " AND statut = 1";
-
-	if (! $this->db->query($sql))
+	if ($date >= $this->date_trans)
 	  {
-	    dolibarr_syslog("BonPrelevement::set_infocredit Erreur 1");
-	    $error++;
-	  }
-
-	/*
-	 * Fin de la procédure
-	 *
-	 */
-	if ($error == 0)
-	  {
-	    $this->db->commit();
-	    return 0;
+	    if ($this->db->begin())
+	      {
+		$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
+		$sql .= " SET fk_user_credit = ".$user->id;
+		$sql .= " , statut = 2";
+		$sql .= " , date_credit='".$this->db->idate($date)."'";
+		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " AND statut = 1";
+		
+		if ($this->db->query($sql))
+		  {
+		    $subject = "Crédit prélévement ".$this->ref." à la banque";
+		    $message = "Le bon de prélèvement ".$this->ref;
+		    $message .= " a été crédité par la banque ";
+		    $message .="le ".strftime("%A %e %B %Y", $date);
+		    
+		    $this->Notify($user,"cr", $subject, $message);
+		  }
+		else
+		  {
+		    dolibarr_syslog("BonPrelevement::set_infocredit Erreur 1");
+		    $error++;
+		  }
+		
+		/*
+		 * Fin de la procédure
+		 *
+		 */
+		if ($error == 0)
+		  {
+		    $this->db->commit();
+		    return 0;
+		  }
+		else
+		  {
+		    $this->db->rollback();
+		    dolibarr_syslog("bon-prelevment::set_infocredit ROLLBACK ");		    
+		    return -1;
+		  }
+	      }
+	    else
+	      {
+		dolibarr_syslog("bon-prelevement::set_infocredit Ouverture transaction SQL impossible ");
+		return -1025;
+	      }
 	  }
 	else
 	  {
-
-	    $this->db->rollback();
-	    dolibarr_syslog("bon-prelevment::set_infotrans ROLLBACK ");
-
-	    return -1;
+	    dolibarr_syslog("bon-prelevment::set_infocredit 1027 Date de credit < Date de trans ");	    
+	    return -1027;
 	  }		
       }
     else
-      {
-	
-	dolibarr_syslog("bon-prelevement::set_infocredit Ouverture transaction SQL impossible ");
-	return -2;
+      {	
+	return -1026;
       }
   }
   /**
@@ -369,11 +407,10 @@ class BonPrelevement
   function set_infotrans($user, $date, $method)
   {
     $error == 0;
-
+    dolibarr_syslog("bon-prelevement::set_infotrans Start",LOG_INFO);
     if ($this->db->begin())
       {
-
-	$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
 	$sql .= " SET fk_user_trans = ".$user->id;
 	$sql .= " , date_trans='".$this->db->idate($date)."'";
 	$sql .= " , method_trans=".$method;
@@ -383,15 +420,21 @@ class BonPrelevement
       
 	if ($this->db->query($sql))
 	  {
-	    // Appel des triggers
-	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	    $interface = new Interfaces($this->db);
-	    $ret=$interface->run_triggers('STANDINGORDER_TRANS',$this,$user,$lang,$conf);
-	    // Fin appel triggers
+	    $this->method_trans = $method;
+
+	    $subject = "Transmission du prélévement ".$this->ref." à la banque";
+	    $message = "Le bon de prélèvement ".$this->ref;
+	    $message .= " a été transmis à la banque par ".$user->prenom. " ".$user->nom;
+	    $message .= "\n\n";
+	    $message .= "Méthode : ".$this->methodes_trans[$this->method_trans];
+	    $message .="\nLe :".strftime("%a %e %B %Y", $date);
+
+
+	    $this->Notify($user,"tr", $subject, $message);
 	  }
 	else
 	  {
-	    dolibarr_syslog("bon-prelevement::set_infotrans Erreur 1");
+	    dolibarr_syslog("bon-prelevement::set_infotrans Erreur 1", LOG_ERR);
 	    dolibarr_syslog($this->db->error());
 	    $error++;
 	  }
@@ -408,7 +451,7 @@ class BonPrelevement
 	else
 	  {
 	    $this->db->rollback();
-	    dolibarr_syslog("BonPrelevement::set_infotrans ROLLBACK ");
+	    dolibarr_syslog("BonPrelevement::set_infotrans ROLLBACK", LOG_ERR);
 
 	    return -1;
 	  }		
@@ -416,8 +459,52 @@ class BonPrelevement
     else
       {
 	
-	dolibarr_syslog("BonPrelevement::set_infotrans Ouverture transaction SQL impossible ");
+	dolibarr_syslog("BonPrelevement::set_infotrans Ouverture transaction SQL impossible", LOG_CRIT);
 	return -2;
+      }
+  }
+  /*
+   *
+   *
+   */
+  function Notify($user, $action, $subject, $message)
+  {
+    $message .= "\n\n--\n";
+    $message .= "Ceci est un message automatique envoyé par Dolibarr";
+
+
+    $sql = "SELECT u.name, u.firstname, u.email";
+    $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+    $sql .= " , ".MAIN_DB_PREFIX."prelevement_notifications as pn";
+    $sql .= " WHERE pn.action ='".$action."'";
+    $sql .= " AND u.rowid = pn.fk_user;";
+
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resql);
+	$i = 0;
+	while ($i < $num)
+	  {
+	    $obj = $this->db->fetch_object($resql);
+	    
+	    require_once(DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+
+
+	    $sendto = $obj->firstname . " " .$obj->name . "<".$obj->email.">";
+	    $from = $user->prenom . " " .$user->nom . "<".$user->email.">";
+	    
+	    $mailfile = new DolibarrMail($subject,
+					 $sendto,
+					 $from,
+					 $message);
+	    $mailfile->sendfile();
+	    
+	    
+
+	    $i++;
+	  }
+	$this->db->free($resql);
       }
   }
 
@@ -916,9 +1003,73 @@ class BonPrelevement
 	  }
       }   
   }
-  
-  
+  /*
+   *
+   *
+   */  
+  function DeleteNotificationById($rowid)
+  {
+    $result = 0;
 
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_notifications ";
+    $sql .= " WHERE rowid = '".$rowid."';";
+
+    if ($this->db->query($sql))
+      {
+	return 0;
+      }
+    else
+      {
+	return -1;
+      }
+  }
+  /*
+   *
+   */
+  function DeleteNotification($user, $action)
+  {
+    $result = 0;
+
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_notifications ";
+    $sql .= " WHERE fk_user = '".$user."' AND action = '".$action."';";
+
+    if ($this->db->query($sql))
+      {
+	return 0;
+      }
+    else
+      {
+	return -1;
+      }
+  }
+  /*
+   *
+   *
+   */
+  function AddNotification($user, $action)
+  {
+    $result = 0;
+
+    if ($this->DeleteNotification($user, $action) == 0)
+      {
+
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_notifications ";
+	$sql .= " (fk_user, action )";
+	$sql .= " VALUES ('".$user."','".$action."');";
+	
+	if ($this->db->query($sql))
+	  {      
+	    $result = 0;	
+	  }
+	else
+	  {
+	    $result = -1;
+	    dolibarr_syslog("BonPrelevement::AddNotification Erreur $result");
+	  }
+      }
+    
+    return $result;
+  }
   /** 
    * Génération d'un bon de prélèvement
    *
