@@ -46,6 +46,7 @@ class FactureFournisseur
   var $author;
   var $libelle;
   var $date;
+  var $date_echeance;
   var $ref;
   var $amount;
   var $remise;
