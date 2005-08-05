@@ -576,7 +576,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	  $message .= $fac->client->bank_account->number;
 	}
       
-      $message . = "\nToute l'équipe ibreizh vous souhaite d'excellentes vacances. Nos bureaux et l'ensemble de notre équipe est de retour le lundi 22 Août.\nA bientôt,"; 
+      $message .= "\nToute l'équipe ibreizh vous souhaite d'excellentes vacances. Nos bureaux et l'ensemble de notre équipe est de retour le lundi 22 Août.\nA bientôt,"; 
       
       if ($verbose) dolibarr_syslog("Création du pdf facture : $facid");
       
