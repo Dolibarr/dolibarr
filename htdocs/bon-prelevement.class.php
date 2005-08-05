@@ -354,10 +354,10 @@ class BonPrelevement
 		
 		if ($this->db->query($sql))
 		  {
-		    $subject = "Crédit prélévement ".$this->ref." à la banque";
+		    $subject = "Crédit prélèvement ".$this->ref." à la banque";
 		    $message = "Le bon de prélèvement ".$this->ref;
-		    $message .= " a été crédité par la banque ";
-		    $message .="le ".strftime("%A %e %B %Y", $date);
+		    $message .= " a été crédité par la banque.\n";
+		    $message .= "Date crédit : ".strftime("%A %e %B %Y", $date);
 		    
 		    $this->Notify($user,"cr", $subject, $message);
 		  }
@@ -422,15 +422,15 @@ class BonPrelevement
 	  {
 	    $this->method_trans = $method;
 
-	    $subject = "Transmission du prélévement ".$this->ref." à la banque";
+	    $subject = "Transmission du prélèvement ".$this->ref." à la banque";
 	    $message = "Le bon de prélèvement ".$this->ref;
 	    $message .= " a été transmis à la banque par ".$user->prenom. " ".$user->nom;
 	    $message .= "\n\n";
-	    $message .= "Méthode : ".$this->methodes_trans[$this->method_trans];
-	    $message .="\nLe :".strftime("%a %e %B %Y", $date);
+	    $message .= "\nMontant : ".price($this->amount);
+	    $message .= "\nMéthode : ".$this->methodes_trans[$this->method_trans];
+	    $message .= "\nDate  : ".strftime("%A %e %B %Y", $date);
 
-
-	    $this->Notify($user,"tr", $subject, $message);
+	    $this->Notify($user,"tr", $subject, $message, 1);
 	  }
 	else
 	  {
@@ -467,7 +467,7 @@ class BonPrelevement
    *
    *
    */
-  function Notify($user, $action, $subject, $message)
+  function Notify($user, $action, $subject, $message, $joinfile=0)
   {
     $message .= "\n\n--\n";
     $message .= "Ceci est un message automatique envoyé par Dolibarr";
@@ -498,6 +498,18 @@ class BonPrelevement
 					 $sendto,
 					 $from,
 					 $message);
+
+	    if ($joinfile == 1)
+	      {
+
+		$arr_file = array(DOL_DATA_ROOT.'/prelevement/bon/'.$this->ref.'.ps');
+		$arr_mime = array("application/ps");
+		$arr_name = array($this->ref.".ps");
+
+		$mailfile->PrepareFile($arr_file, $arr_mime, $arr_name);
+	      }
+
+
 	    $mailfile->sendfile();
 	    
 	    
