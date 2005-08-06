@@ -77,8 +77,9 @@ if ($resql)
  * Comptes courants
  */
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("CurrentAccounts").'</td><td>'.$langs->trans("Bank").'</td>';
-print '<td align="left">'.$langs->trans("Numero").'</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="80">'.$langs->trans("Closed").'</td>';
+print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CurrentAccounts").'</td>';
+print '<td width="30%">'.$langs->trans("Bank").'</td>';
+print '<td width="20%" align="left">'.$langs->trans("Numero").'</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="80">'.$langs->trans("Closed").'</td>';
 print "</tr>\n";
 
 $total = 0;
@@ -93,9 +94,9 @@ foreach ($accounts as $key=>$type)
       $var = !$var;
       $solde = $acc->solde();
       
-      print "<tr ".$bc[$var]."><td>";
+      print '<tr '.$bc[$var].'><td width="30%">';
       print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
-      print "</td><td>$acc->bank</td><td>$acc->number</td>";
+      print '</td><td width="30%">'.$acc->bank."</td><td>$acc->number</td>";
       print '<td align="right">'.price($solde).'</td><td align="center">'.$yn[$acc->clos].'</td></tr>';
       
       $total += $solde;
@@ -113,8 +114,8 @@ print '<tr><td colspan="5">&nbsp;</td></tr>';
  * Comptes placements
  */
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("SavingAccounts").'</td><td>'.$langs->trans("Bank").'</td>';
-print '<td align="left">'.$langs->trans("Numero").'</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="80">'.$langs->trans("Closed").'</td>';
+print '<tr class="liste_titre"><td width="30%">'.$langs->trans("SavingAccounts").'</td><td width="30%">'.$langs->trans("Bank").'</td>';
+print '<td width="20%" align="left">'.$langs->trans("Numero").'</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="80">'.$langs->trans("Closed").'</td>';
 print "</tr>\n";
 
 $total = 0;
