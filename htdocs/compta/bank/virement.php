@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,10 +22,10 @@
  */
 
 /**
-	    \file       htdocs/compta/bank/virement.php
-        \ingroup    banque
-		\brief      Page de saisie d'un virement
-		\version    $Revision$
+   \file       htdocs/compta/bank/virement.php
+   \ingroup    banque
+   \brief      Page de saisie d'un virement
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -105,37 +105,41 @@ $var=false;
 print '<tr '.$bc[$var].'><td>';
 print "<select class=\"flat\" name=\"account_from\">";
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
-$result = $db->query($sql);
-if ($result)
+$sql .= " WHERE clos = 0";
+$resql = $db->query($sql);
+if ($resql)
 {
   $var=True;  
-  $num = $db->num_rows($result);
-    $i = 0; $total = 0;
-    
-    while ($i < $num)
-      {
-	$objp = $db->fetch_object($result);
-	print "<option value=\"$objp->rowid\">$objp->label</option>";
-	$i++;
-      }
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object($resql);
+      print "<option value=\"$objp->rowid\">$objp->label</option>";
+      $i++;
+    }
+  $db->free($resql);
 }
 print "</select></td><td>\n";
 
-print "<select class=\"flat\" name=\"account_to\">";
+print '<select class="flat" name="account_to">';
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
-$result = $db->query($sql);
-if ($result)
+$sql .= " WHERE clos = 0";
+$resql = $db->query($sql);
+if ($resql)
 {
   $var=True;  
   $num = $db->num_rows();
-    $i = 0; $total = 0;
-    
-    while ($i < $num)
-      {
-	$objp = $db->fetch_object($result);
-	print "<option value=\"$objp->rowid\">$objp->label</option>";
-	$i++;
-      }
+  $i = 0;
+  
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object($resql);
+      print "<option value=\"$objp->rowid\">$objp->label</option>";
+      $i++;
+    }
+  $db->free($resql);
 }
 print "</select></td>\n";
 
