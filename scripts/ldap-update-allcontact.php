@@ -39,9 +39,11 @@ if ( $resql )
   $num = $db->num_rows($resql);
   $i = 0;
   
-  if ($num == 1)
+  while ($i < $num)
     {
       $row = $db->fetch_row($resql);
+
+      print "Mise à jour $row[0]\n";
 
       $contact = new Contact($db);
       $contact->id = $row[0];
