@@ -117,6 +117,14 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	('LDAP_CONTACT_DN','".$_POST["contact"]."',0);";
   $db->query($sql);
 
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_PROTOCOLVERSION';";
+  $db->query($sql);
+
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	('LDAP_SERVER_PROTOCOLVERSION','".$_POST["version"]."',0);";
+  $db->query($sql);
+
+
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_TYPE';";
   $db->query($sql);
 
@@ -148,90 +156,92 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td><td colspan="2">&nbsp;</td>';
 print "</tr>\n";
     
-    if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST)
-    {
-		    print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
-    }
+if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST)
+{
+  print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
+}
+else
+{
+  print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
+}
+if (defined("LDAP_SERVER_PORT") && LDAP_SERVER_PORT)
+{
+  print '<tr><td>'.$langs->trans("LDAPServerPort").'</td><td>'.LDAP_SERVER_PORT.'</td></tr>';
+}
+else
+{
+  print '<tr><td>'.$langs->trans("LDAPServerPort").'</td><td>'.$langs->trans("LDAPServerPortExample").'</td></tr>';
+}
+
+//suppression pour compatibilité divers config ldap
+//
+//if (defined("LDAP_SUFFIX_DN") && LDAP_SUFFIX_DN)
+//{
+//    print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.LDAP_SUFFIX_DN.'</td></tr>';
+//}
+//else
+//{
+//	  print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.$langs->trans("LDAPSuffixExample").'</td></tr>';
+//}
+
+if (defined("LDAP_ADMIN_DN") && LDAP_ADMIN_DN)
+{
+  print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>'.LDAP_ADMIN_DN.'</td></tr>';
+}
+else
+{
+  print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>'.$langs->trans("DNAdminExample").'</td></tr>';
+}
+if (defined("LDAP_ADMIN_PASS") && LDAP_ADMIN_PASS)
+{
+  print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>********</td></tr>';
+}
+else
+{
+  print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>'.$langs->trans("LDAPPasswordExample").'</td></tr>';
+}
+if (defined("LDAP_USER_DN") && LDAP_USER_DN)
+{
+  print '<tr><td>'.$langs->trans("DNUser").'</td><td>'.LDAP_USER_DN.'</td></tr>';
+}
+else
+{
+  print '<tr><td>'.$langs->trans("DNUser").'</td><td>'.$langs->trans("DNUserExample").'</td></tr>';
+}
+if (defined("LDAP_GROUP_DN") && LDAP_GROUP_DN)
+{
+  print '<tr><td>'.$langs->trans("DNGroup").'</td><td>'.LDAP_GROUP_DN.'</td></tr>';
+}
+else
+{
+  print '<tr><td>'.$langs->trans("DNGroup").'</td><td>'.$langs->trans("DNGroupExample").'</td></tr>';
+}
+if (defined("LDAP_CONTACT_ACTIVE") && LDAP_CONTACT_ACTIVE)
+{
+  print '<tr><td>'.$langs->trans("DNContactActive").'</td><td>'.$langs->trans("DNContactActiveYes").'</td></tr>';
+}
+else
+{
+  print '<tr><td>'.$langs->trans("DNContactActive").'</td><td>'.$langs->trans("DNContactActiveExample").'</td></tr>';
+}
+if (defined("LDAP_CONTACT_DN") && LDAP_CONTACT_DN)
+{
+  print '<tr><td>'.$langs->trans("DNContact").'</td><td>'.LDAP_CONTACT_DN.'</td></tr>';
+}
+else
+{
+  print '<tr><td>'.$langs->trans("DNContact").'</td><td>'.$langs->trans("DNContactExample").'</td></tr>';
+}
+if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE)
+{
+  print '<tr><td>'.$langs->trans("Type").'</td><td>'.LDAP_SERVER_TYPE.'</td></tr>';
+}
     else
-    {
-        print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
-    }
-    if (defined("LDAP_SERVER_PORT") && LDAP_SERVER_PORT)
-    {
-		    print '<tr><td>'.$langs->trans("LDAPServerPort").'</td><td>'.LDAP_SERVER_PORT.'</td></tr>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("LDAPServerPort").'</td><td>'.$langs->trans("LDAPServerPortExample").'</td></tr>';
-    }
-    
-    //suppression pour compatibilité divers config ldap
-    //
-    //if (defined("LDAP_SUFFIX_DN") && LDAP_SUFFIX_DN)
-    //{
-    //    print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.LDAP_SUFFIX_DN.'</td></tr>';
-    //}
-    //else
-    //{
-    //	  print '<tr><td>'.$langs->trans("LDAPSuffix").'</td><td>'.$langs->trans("LDAPSuffixExample").'</td></tr>';
-    //}
-    
-    if (defined("LDAP_ADMIN_DN") && LDAP_ADMIN_DN)
-    {
-		    print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>'.LDAP_ADMIN_DN.'</td></tr>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("DNAdmin").'</td><td>'.$langs->trans("DNAdminExample").'</td></tr>';
-    }
-    if (defined("LDAP_ADMIN_PASS") && LDAP_ADMIN_PASS)
-    {
-		    print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>********</td></tr>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("LDAPPassword").'</td><td>'.$langs->trans("LDAPPasswordExample").'</td></tr>';
-    }
-    if (defined("LDAP_USER_DN") && LDAP_USER_DN)
-    {
-		    print '<tr><td>'.$langs->trans("DNUser").'</td><td>'.LDAP_USER_DN.'</td></tr>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("DNUser").'</td><td>'.$langs->trans("DNUserExample").'</td></tr>';
-    }
-    if (defined("LDAP_GROUP_DN") && LDAP_GROUP_DN)
-    {
-		    print '<tr><td>'.$langs->trans("DNGroup").'</td><td>'.LDAP_GROUP_DN.'</td></tr>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("DNGroup").'</td><td>'.$langs->trans("DNGroupExample").'</td></tr>';
-    }
-    if (defined("LDAP_CONTACT_ACTIVE") && LDAP_CONTACT_ACTIVE)
-    {
-		    print '<tr><td>'.$langs->trans("DNContactActive").'</td><td>'.$langs->trans("DNContactActiveYes").'</td></tr>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("DNContactActive").'</td><td>'.$langs->trans("DNContactActiveExample").'</td></tr>';
-    }
-    if (defined("LDAP_CONTACT_DN") && LDAP_CONTACT_DN)
-    {
-		    print '<tr><td>'.$langs->trans("DNContact").'</td><td>'.LDAP_CONTACT_DN.'</td></tr>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("DNContact").'</td><td>'.$langs->trans("DNContactExample").'</td></tr>';
-    }
-    if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE)
-    {
-		    print '<tr><td>'.$langs->trans("Type").'</td><td>'.LDAP_SERVER_TYPE.'</td></tr>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("TypeExample").'</td></tr>';
-    }
+{
+  print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("TypeExample").'</td></tr>';
+}
+
+print '<tr><td>'.$langs->trans("Version").'</td><td>'.LDAP_SERVER_PROTOCOLVERSION.'</td></tr>';
 
 print '</table>';
 
@@ -255,11 +265,11 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("LDAPServerPort").'</td><td>';
 if (defined("LDAP_SERVER_PORT") && LDAP_SERVER_PORT)
 {
-	print '<input size="25" type="text" name="port" value="'.LDAP_SERVER_PORT.'">';
+  print '<input size="25" type="text" name="port" value="'.LDAP_SERVER_PORT.'">';
 }
 else
 {
-	print '<input size="25" type="text" name="port" value="389">';
+  print '<input size="25" type="text" name="port" value="389">';
 }
 print '</td></tr>';
 
@@ -279,7 +289,7 @@ if (defined("LDAP_ADMIN_PASS") && LDAP_ADMIN_PASS)
 }
 else
 {
-	print '<input size="25" type="text" name="pass" value="'.LDAP_ADMIN_PASS.'">';
+  print '<input size="25" type="text" name="pass" value="'.LDAP_ADMIN_PASS.'">';
 }
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("DNUser").'</td><td>';
@@ -291,7 +301,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("DNContactActive").'</td><td><select name="activecontact">';
 if (defined("LDAP_CONTACT_ACTIVE") && LDAP_CONTACT_ACTIVE == 1)
 {
-	print '<option value="1" selected>'.$langs->trans("Yes");
+  print '<option value="1" selected>'.$langs->trans("Yes");
 }
 else
 {
@@ -309,23 +319,39 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("Type").'</td><td><select name="type">';
 if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE == activedirectory)
 {
-	print '<option value="activedirectory" selected>Active Directory';
+  print '<option value="activedirectory" selected>Active Directory';
 }
 else
 {
-	if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE == egroupware)
-	{
-		print '<option value="egroupware" selected>Egroupware';
-	}
-	else
-	{
-		print '<option value="openldap" selected>OpenLdap';
-	}
+  if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE == egroupware)
+    {
+      print '<option value="egroupware" selected>Egroupware';
+    }
+  else
+    {
+      print '<option value="openldap" selected>OpenLdap';
+    }
 }
 print '<option value="LDAP_SERVER_TYPE">------------------------';
 print '<option value="openldap">OpenLdap';
 print '<option value="egroupware">Egroupware';
 print '<option value="activedirectory">Active Directory';
+print '</select>';
+print '</td></tr>';
+
+print '<tr><td>'.$langs->trans("Version").'</td><td><select name="version">';
+
+if (defined("LDAP_SERVER_PROTOCOLVERSION") && LDAP_SERVER_PROTOCOLVERSION == 3)
+{
+  print '<option value="3" selected>Version 3';
+}
+else
+{
+  print '<option value="2" selected>Version 2';
+}
+print '<option value="LDAP_SERVER_PROTOCOLVERSION">------------------------';
+print '<option value="3">Version 3';
+print '<option value="2">Version 2';
 print '</select>';
 print '</td></tr>';
 
@@ -347,51 +373,62 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST) {
 if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && LDAP_ADMIN_DN && LDAP_ADMIN_PASS && $_GET["action"] == 'test')
 {
   $ds = dolibarr_ldap_connect();
-/*
+  
   if ($ds)
     {
-	     print "connexion au serveur ldap réussie<br>";
+      print img_picto('','info');
+      print "connexion au serveur ldap réussie<br>";
     }
-    else
+  else
     {
-	     print "connexion au serveur ldap échouée";
-	     print img_picto('','alerte');
-	  	 print "<br>";
+      print img_picto('','alerte');
+  
+      print "connexion au serveur ldap échouée";
+      print "<br>";
+      print ldap_error($ds);
+      print "<br>";
     }
-      if ((dolibarr_ldap_getversion($ds) == 3))
-				{
-					print "Serveur ldap configuré en version 3<br>";
-				}
-				else
-				{
-					print "Serveur ldap configuré en version 2<br>";
-				}
-*/
-      $bind = @dolibarr_ldap_bind($ds);
+  if ((dolibarr_ldap_getversion($ds) == 3))
+    {
+      print img_picto('','info');
+      print "Serveur ldap configuré en version 3<br>";
+    }
+  else
+    {
+      print img_picto('','info');
+      print "Serveur ldap configuré en version 2<br>";
+    }
+  
+  $bind = @dolibarr_ldap_bind($ds);
+  
+  if ($bind)
+    {
+      print img_picto('','info');
+      print "connexion au dn $dn réussi<br>";
+    }
+  else
+    {
+      print img_picto('','alerte');
 
-      if ($bind)
-				{
-	  			print "connexion au dn $dn réussi<br>";
-				}
-      	else
-				{
-	  			print "connexion au dn $dn raté";
-	  			print img_picto('','alerte');
-	  			print "<br>";
-				}
+      print "connexion au dn $dn raté : ";
+      print ldap_error($ds);
+      print "<br>";
+    }
+  
+  $unbind = @dolibarr_ldap_unbind($ds);
+  
+  if ($bind)
+    {
+      print img_picto('','info');
+      print "déconnection du dn $dn réussi<br>";
+    }
+  else
+    {
+      print img_picto('','alerte');
 
-				$unbind = @dolibarr_ldap_unbind($ds);
-
-			if ($bind)
-				{
-	  			print "déconnection du dn $dn réussi<br>";
-				}
-      	else
-				{
-	  			print "déconnection du dn $dn raté";
-	  			print img_picto('','alerte');
-	  			print "<br>";
-				}
+      print "déconnection du dn $dn raté";
+      print "<br>";
+    }
 }
 
 $db->close();
