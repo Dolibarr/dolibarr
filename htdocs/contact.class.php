@@ -98,6 +98,7 @@ class Contact
    */
   function update($id, $user=0)
   {
+    dolibarr_syslog("Contact::Update id=".$id,LOG_DEBUG);
     $this->id = $id;
     $this->error = array();
     
@@ -116,8 +117,8 @@ class Contact
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
     $sql .= "  civilite='$this->civilite_id'";
-    $sql .= ", name='$this->name'";
-    $sql .= ", firstname='$this->firstname'";
+    $sql .= ", name='".trim($this->name)."'";
+    $sql .= ", firstname='".trim($this->firstname)."'";
     $sql .= ", address='$this->address'";
     $sql .= ", cp='$this->cp'";
     $sql .= ", ville='$this->ville'";
@@ -140,16 +141,16 @@ class Contact
     
     if (!$result)
       {
-   	    $this->error='Echec sql='.$sql;
+	$this->error='Echec sql='.$sql;
       }
     
-    if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
+    if (defined('MAIN_MODULE_LDAP') && MAIN_MODULE_LDAP)
       {
-	      if (defined('LDAP_CONTACT_ACTIVE')  && LDAP_CONTACT_ACTIVE == 1)
-	      
-	      	$this->update_ldap($user);
-	      	
-	      
+	if (defined('LDAP_CONTACT_ACTIVE')  && LDAP_CONTACT_ACTIVE == 1)
+	  {
+	    $this->update_ldap($user);
+	  }
+	
       }
     return $result;
   }
@@ -161,188 +162,192 @@ class Contact
    */
   function update_ldap($user)
   {
+    $info = array();
+    dolibarr_syslog("Contact::update_ldap",LOG_DEBUG);
+    
     $this->fetch($this->id);
     
     $ds = dolibarr_ldap_connect();
     
     if ($ds)
       {
-	dolibarr_ldap_setversion($ds,$version);
-	
 	$ldapbind = dolibarr_ldap_bind($ds);
 	
 	if ($ldapbind)
 	  {
-	   if (LDAP_SERVER_TYPE == 'activedirectory') //enlever utf8 pour etre compatible Windows
+	    if (LDAP_SERVER_TYPE == 'activedirectory') //enlever utf8 pour etre compatible Windows
 	     {
-	     	$info["objectclass"][0] = "top";
- 	      $info["objectclass"][1] = "person";
-	      $info["objectclass"][2] = "organizationalPerson";
-	      //$info["objectclass"][3] = "inetOrgPerson";
-	      $info["objectclass"][3] = "user";
-
-	      $info["cn"] = $this->firstname." ".$this->name;
-	      $info["sn"] = $this->name;
-	      $info["givenName"] = $this->firstname;
-	    
-	      if ($this->poste)
-	        $info["title"] = $this->poste;
-	    
-	      if ($this->socid > 0)
-	      {
-		      $soc = new Societe($this->db);
-		      $soc->fetch($this->socid);
-		      $info["o"] = $soc->nom;
-		      $info["company"] = $soc->nom;
-		
-		    if ($soc->client == 1)
-		      $info["businessCategory"] = "Clients";
-		        elseif ($soc->client == 2)
-		            $info["businessCategory"] = "Prospects";
-		
-		    if ($soc->fournisseur == 1)
-		      $info["businessCategory"] = "Fournisseurs";
-		
-		    if ($soc->ville)
-		    {
+	       $info["objectclass"][0] = "top";
+	       $info["objectclass"][1] = "person";
+	       $info["objectclass"][2] = "organizationalPerson";
+	       //$info["objectclass"][3] = "inetOrgPerson";
+	       $info["objectclass"][3] = "user";
+	       
+	       $info["cn"] = $this->firstname." ".$this->name;
+	       $info["sn"] = $this->name;
+	       $info["givenName"] = $this->firstname;
+	       
+	       if ($this->poste)
+		 $info["title"] = $this->poste;
+	       
+	       if ($this->socid > 0)
+		 {
+		   $soc = new Societe($this->db);
+		   $soc->fetch($this->socid);
+		   $info["o"] = $soc->nom;
+		   $info["company"] = $soc->nom;
+		   
+		   if ($soc->client == 1)
+		     $info["businessCategory"] = "Clients";
+		   elseif ($soc->client == 2)
+		     $info["businessCategory"] = "Prospects";
+		   
+		   if ($soc->fournisseur == 1)
+		     $info["businessCategory"] = "Fournisseurs";
+		   
+		   if ($soc->ville)
+		     {
 		       if ($soc->adresse)
-		           $info["streetAddress"] = $soc->adresse;
-		    
+			 $info["streetAddress"] = $soc->adresse;
+		       
 		       if ($soc->cp)
-		           $info["postalCode"] = $soc->cp;
-		    
-		           $info["l"] = $soc->ville;
-		    }
+			 $info["postalCode"] = $soc->cp;
+		       
+		       $info["l"] = $soc->ville;
+		     }
+		 }
+	       
+	       if ($this->phone_pro)
+		 $info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
+	       
+	       if ($this->phone_perso)
+		 $info["homePhone"] = dolibarr_print_phone($this->phone_perso);
+	       
+	       if ($this->phone_mobile)
+		 $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
+	       
+	       if ($this->fax)
+		 $info["facsimileTelephoneNumber"] = dolibarr_print_phone($this->fax);
+	       
+	       if ($this->note)
+		 $info["description"] = ($this->note);
+	       if ($this->email)
+		 $info["mail"] = $this->email;
+	       
+	       $dn = "cn=".$info["cn"].",".LDAP_CONTACT_DN;
+	       
+	       $r = @ldap_delete($ds, $dn);	   
+	       
+	       if (! @ldap_add($ds, $dn, $info))
+		 {
+		   $this->error[0] = ldap_err2str(ldap_errno($ds));
+		 }  
 	     }
-	    
-	    if ($this->phone_pro)
-	      $info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
-	    
-	    if ($this->phone_perso)
-	      $info["homePhone"] = dolibarr_print_phone($this->phone_perso);
-	    
-	    if ($this->phone_mobile)
-	      $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
-	      
-	    if ($this->fax)
-	      $info["facsimileTelephoneNumber"] = dolibarr_print_phone($this->fax);
-	    
-	    if ($this->note)
-	      $info["description"] = ($this->note);
-	    if ($this->email)
-		  $info["mail"] = $this->email;
-	    
-	    $dn = "cn=".$info["cn"].",".LDAP_CONTACT_DN;
-
-	    $r = @ldap_delete($ds, $dn);	   
-
-	    if (! @ldap_add($ds, $dn, $info))
-	      {
-		$this->error[0] = ldap_err2str(ldap_errno($ds));
-	      }  
-	   }
-	   else
-	   {
-	    $info["objectclass"][0] = "top";
- 	    $info["objectclass"][1] = "person";
-	    $info["objectclass"][2] = "organizationalPerson";
-	    $info["objectclass"][3] = "inetOrgPerson";
-
-	    $info["cn"] = utf8_encode($this->firstname." ".$this->name);
-	    $info["sn"] = utf8_encode($this->name);
-	    $info["givenName"] = utf8_encode($this->firstname);
-	    
-	    if ($this->poste)
-	      $info["title"] = utf8_encode($this->poste);
-	    
-	    if ($this->socid > 0)
-	      {
-		$soc = new Societe($this->db);
-		$soc->fetch($this->socid);
-		$info["o"] = utf8_encode($soc->nom);
-		
-		if ($soc->client == 1)
-		  $info["businessCategory"] = utf8_encode("Clients");
-		elseif ($soc->client == 2)
-		  $info["businessCategory"] = utf8_encode("Prospects");
-		
-		if ($soc->fournisseur == 1)
-		  $info["businessCategory"] = utf8_encode("Fournisseurs");
-		
-		if ($soc->ville)
-		  {
-		    if ($soc->adresse)
-		      $info["street"] = utf8_encode($soc->adresse);
-		    
-		    if ($soc->cp)
-		      $info["postalCode"] = utf8_encode($soc->cp);
-		    
-		    $info["l"] = utf8_encode($soc->ville);
-		  }
-	      }
-	    
-	    if ($this->phone_pro)
-	      $info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
-	    
-	    if ($this->phone_perso)
-	      $info["homePhone"] = dolibarr_print_phone($this->phone_perso);
-	    
-	    if ($this->phone_mobile)
-	      $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
-	      
-	    if ($this->fax)
-	      $info["facsimileTelephoneNumber"] = dolibarr_print_phone($this->fax);
-	    
-	    if ($this->note)
-	      $info["description"] = ($this->note);
-	    
-	    if(LDAP_SERVER_TYPE == 'egroupware')
-	      {		
-		$info["objectclass"][4] = "phpgwContact"; // compatibilite egroupware
-		
-		if ($this->email)
-		  $info["rfc822Mailbox"] = $this->email;
-		
-		$info['uidnumber'] = $this->id;
-		
-		$info['phpgwTz']      = 0;
-		$info['phpgwMailType'] = 'INTERNET';
-		$info['phpgwMailHomeType'] = 'INTERNET';
-		
-		$info["uid"] = $this->id. ":".$info["sn"];
-		$info["phpgwContactTypeId"] = 'n';
-		$info["phpgwContactCatId"] = 0;
-		$info["phpgwContactAccess"] = "public";
-
-		if (strlen($user->egroupware_id) == 0)
-		  {
-		    $user->egroupware_id = 1;
-		  }
-
-		$info["phpgwContactOwner"] = $user->egroupware_id;
-		
-		if ($this->phone_mobile)
-		  $info["phpgwCellTelephoneNumber"] = dolibarr_print_phone($this->phone_mobile);
-	      }
 	    else
 	      {
-		if ($this->email)
-		  $info["mail"] = $this->email;
-	      }
-	    
-	    $dn = "cn=".$info["cn"].",".LDAP_CONTACT_DN;
+		$info["objectclass"][0] = "top";
+		$info["objectclass"][1] = "person";
+		$info["objectclass"][2] = "organizationalPerson";
+		$info["objectclass"][3] = "inetOrgPerson";
+	       
+		$info["cn"] = utf8_encode($this->firstname." ".$this->name);
+		$info["sn"] = utf8_encode($this->name);
+		$info["givenName"] = utf8_encode($this->firstname);
+		
+		if ($this->poste)
+		  $info["title"] = utf8_encode($this->poste);
+		
+		if ($this->socid > 0)
+		  {
+		    $soc = new Societe($this->db);
+		    $soc->fetch($this->socid);
+		    $info["o"] = utf8_encode($soc->nom);
+		    
+		    if ($soc->client == 1)
+		      $info["businessCategory"] = utf8_encode("Clients");
+		    elseif ($soc->client == 2)
+		      $info["businessCategory"] = utf8_encode("Prospects");
+		    
+		    if ($soc->fournisseur == 1)
+		      $info["businessCategory"] = utf8_encode("Fournisseurs");
+		    
+		    if ($soc->ville)
+		      {
+			if ($soc->adresse)
+			  $info["street"] = utf8_encode($soc->adresse);
+			
+			if ($soc->cp)
+			  $info["postalCode"] = utf8_encode($soc->cp);
+			
+			$info["l"] = utf8_encode($soc->ville);
+		      }
+		  }
+		
+		if ($this->phone_pro)
+		  $info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
+		
+		if ($this->phone_perso)
+		  $info["homePhone"] = dolibarr_print_phone($this->phone_perso);
+		
+		if ($this->phone_mobile)
+		  $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
+		
+		if ($this->fax)
+		  $info["facsimileTelephoneNumber"] = dolibarr_print_phone($this->fax);
+		
+		if ($this->note)
+		  $info["description"] = ($this->note);
+		
+		if(LDAP_SERVER_TYPE == 'egroupware')
+		  {		
+		    $info["objectclass"][4] = "phpgwContact"; // compatibilite egroupware
+		    
+		    if ($this->email)
+		      $info["rfc822Mailbox"] = $this->email;
+		    
+		    $info['uidnumber'] = $this->id;
+		    
+		    $info['phpgwTz']      = 0;
+		    $info['phpgwMailType'] = 'INTERNET';
+		    $info['phpgwMailHomeType'] = 'INTERNET';
+		    
+		    $info["uid"] = $this->id. ":".$info["sn"];
+		    $info["phpgwContactTypeId"] = 'n';
+		    $info["phpgwContactCatId"] = 0;
+		    $info["phpgwContactAccess"] = "public";
+		    
+		    if (strlen($user->egroupware_id) == 0)
+		      {
+			$user->egroupware_id = 1;
+		      }
+		    
+		    $info["phpgwContactOwner"] = $user->egroupware_id;
+		    
+		    if ($this->phone_mobile)
+		      $info["phpgwCellTelephoneNumber"] = dolibarr_print_phone($this->phone_mobile);
+		  }
+		else
+		  {
+		    if ($this->email)
+		      $info["mail"] = $this->email;
+		  }
 
-	    $r = @ldap_delete($ds, $dn);	   
-
-	    if (! @ldap_add($ds, $dn, $info))
-	      {
-		$this->error[0] = ldap_err2str(ldap_errno($ds));
+		$dn = "cn=".$info["cn"].",".LDAP_CONTACT_DN;
+		
+		dolibarr_syslog("Contact::update_ldap dn : ".$dn,LOG_DEBUG);
+		
+		$r = @ldap_delete($ds, $dn);	   
+		
+		if (! @ldap_add($ds, $dn, $info))
+		  {
+		    $this->error[0] = ldap_err2str(ldap_errno($ds));
+		    dolibarr_syslog("Contact::update_ldap error : ".$this->error[0],LOG_ERR);
+		  }
 	      }
 	  }
-	}
 	else
 	  {
-	    echo "Connexion au dn $dn échoué !";
+	    dolibarr_syslog("Contact::update_ldap bind failed",LOG_DEBUG);
 	  }
 	
 	dolibarr_ldap_unbind($ds);
@@ -350,6 +355,7 @@ class Contact
       }
     else
       {
+	dolibarr_syslog("Contact::update_ldap Connexion failed",LOG_DEBUG);
 	echo "Impossible de se connecter au serveur LDAP !";
       }
   }
@@ -574,56 +580,55 @@ class Contact
       $result = $this->db->query($sql);
 
       if (!$result) 
-	    {
-	      print $this->db->error() . '<br>' . $sql;
-	    }
-
-       if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
-       {
-	            if (defined('LDAP_CONTACT_ACTIVE')  && LDAP_CONTACT_ACTIVE == 1)
-	            {
-	       
-	        $ds = dolibarr_ldap_connect();
+	{
+	  print $this->db->error() . '<br>' . $sql;
+	}
       
-	  if ($ds)
+      if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
+	{
+	  if (defined('LDAP_CONTACT_ACTIVE')  && LDAP_CONTACT_ACTIVE == 1)
 	    {
-	      dolibarr_ldap_setversion($ds, $version);
-	      $ldapbind = dolibarr_ldap_bind($ds);
 	      
-	      if ($ldapbind)
-		    {	      
-		  // delete from ldap directory
-		      if (LDAP_SERVER_TYPE == 'activedirectory')
-		      {
-		      	$userdn = $this->old_firstname." ".$this->old_name; //enlever utf8 pour etre compatible Windows
-		      }
-		      else
-		      {
-		      	$userdn = utf8_encode($this->old_firstname." ".$this->old_name);
-		      }		      
-		      $dn = "cn=".$userdn.",".LDAP_CONTACT_DN;
+	      $ds = dolibarr_ldap_connect();
+	      
+	      if ($ds)
+		{
+		  $ldapbind = dolibarr_ldap_bind($ds);
 		  
+		  if ($ldapbind)
+		    {	      
+		      // delete from ldap directory
+		      if (LDAP_SERVER_TYPE == 'activedirectory')
+			{
+			  $userdn = $this->old_firstname." ".$this->old_name; //enlever utf8 pour etre compatible Windows
+			}
+		      else
+			{
+			  $userdn = utf8_encode($this->old_firstname." ".$this->old_name);
+			}		      
+		      $dn = "cn=".$userdn.",".LDAP_CONTACT_DN;
+		      
 		      $r = @ldap_delete($ds, $dn);
 		      
 		    }
-	      else
+		  else
 		    {
-		       echo "LDAP bind failed...";
+		      echo "LDAP bind failed...";
 		    }	      	      
-	        ldap_close($ds);
-	    
-	     }
-	  else
-	  {
-	      echo "Unable to connect to LDAP server";
-	  }
-	
-      
-      return $result;
+		  ldap_close($ds);
+		  
+		}
+	      else
+		{
+		  echo "Unable to connect to LDAP server";
+		}
+	      
+	      
+	      return $result;
+	    }
+	}
     }
-   }
-}
-
+  
   /*
    *    \brief      Charge les informations sur le contact, depuis la base
    *    \param      id      id du contact à charger
