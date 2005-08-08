@@ -145,32 +145,32 @@ if ($resql_c)
 	      
 	      $width = 750;
 	      $height = 300;
-	      
-	      $graph = new Graph($width, $height,"auto");    
-	      $graph->SetScale("textlin",0,$maxa);
-	      
-	      $graph->yaxis->scale->SetGrace(2);
-	      $graph->SetFrame(1);
-	      $graph->img->SetMargin(40,20,20,35);
-	      
-	      $b2plot = new LinePlot($gdatas);	      
-
-	      $b2plot->SetColor("blue");
-	      $b2plot->SetWeight(2);
-
-	      $graph->title->Set("Consommation par jour");
-	      
-	      $graph->xaxis->SetTickLabels($glabels);   
-	      $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-	      
-	      $graph->Add($b2plot);
-	      $graph->img->SetImgFormat("png");
-	      
-	      $file= DOL_DATA_ROOT."/energie/graph/day.".$obj_c->rowid.".png";
-	      
 	      if (sizeof($gdatas) > 2)
-		$graph->Stroke($file);
+		{
+		  $graph = new Graph($width, $height,"auto");    
+		  $graph->SetScale("textlin",0,$maxa);
 	      
+		  $graph->yaxis->scale->SetGrace(2);
+		  $graph->SetFrame(1);
+		  $graph->img->SetMargin(40,20,20,35);
+	      
+		  $b2plot = new LinePlot($gdatas);	      
+
+		  $b2plot->SetColor("blue");
+		  $b2plot->SetWeight(2);
+
+		  $graph->title->Set("Consommation par jour");
+	      
+		  $graph->xaxis->SetTickLabels($glabels);   
+		  $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
+	      
+		  $graph->Add($b2plot);
+		  $graph->img->SetImgFormat("png");
+	      
+		  $file= DOL_DATA_ROOT."/energie/graph/day.".$obj_c->rowid.".png";
+		  
+		  $graph->Stroke($file);
+		}
 	      $width = 450;
 	      $height = 300;
 	      
@@ -182,32 +182,30 @@ if ($resql_c)
 		  $gmlabels[$i] = $key;
 		  $i++;
 		}
-	      
-	      $graph = new Graph($width, $height,"auto");    
-	      $graph->SetScale("textlin");
-	      
-	      $graph->yaxis->scale->SetGrace(2);
-	      $graph->SetFrame(1);
-	      $graph->img->SetMargin(40,20,20,35);
-	      
-	      $b2plot = new BarPlot($gmdatas);
-	      
-	      $b2plot->SetFillColor("blue");
-	      
-	      $graph->title->Set("Consommation par mois");
-	      
-	      $graph->xaxis->SetTickLabels($gmlabels);   
-	      $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-	      
-	      $graph->Add($b2plot);
-	      
-	      $graph->img->SetImgFormat("png");
-	      
-	      $file= DOL_DATA_ROOT."/energie/graph/month.".$obj_c->rowid.".png";
-	      
 	      if (sizeof($gmdatas))
-		$graph->Stroke($file);
+		{
+		  $graph = new Graph($width, $height,"auto");    
+		  $graph->SetScale("textlin");
 	      
+		  $graph->yaxis->scale->SetGrace(2);
+		  $graph->SetFrame(1);
+		  $graph->img->SetMargin(40,20,20,35);
+	      
+		  $b2plot = new BarPlot($gmdatas);	      
+		  $b2plot->SetFillColor("blue");
+	      
+		  $graph->title->Set("Consommation par mois");
+		  
+		  $graph->xaxis->SetTickLabels($gmlabels);   
+		  $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
+		  
+		  $graph->Add($b2plot);		  
+		  $graph->img->SetImgFormat("png");
+		  
+		  $file= DOL_DATA_ROOT."/energie/graph/month.".$obj_c->rowid.".png";
+		  		  
+		  $graph->Stroke($file);
+		}
 	      // Hebdomadaire
 	      $width = 750;
 	      $height = 300;
@@ -218,30 +216,31 @@ if ($resql_c)
 		  $gwlabels[$i] = substr($key,0,2);
 		  $i++;
 		}
-	      
-	      $graph = new Graph($width, $height,"auto");    
-	      $graph->SetScale("textlin");
-	      
-	      $graph->yaxis->scale->SetGrace(2);
-	      $graph->SetFrame(1);
-	      $graph->img->SetMargin(40,20,20,35);
-	      
-	      $b2plot = new BarPlot($gwdatas);
-	      $graph->xaxis->SetTickLabels($gwlabels);
-	      
-	      $b2plot->SetFillColor("blue");
-	      $graph->title->Set("Consommation par semaine");
-	      
-	      $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-	      
-	      $graph->Add($b2plot);
-	      
-	      $graph->img->SetImgFormat("png");
-	      
-	      $file= DOL_DATA_ROOT."/energie/graph/week.".$obj_c->rowid.".png";
-	      
 	      if (sizeof($gwdatas))
-		$graph->Stroke($file);
+		{
+		  $graph = new Graph($width, $height,"auto");    
+		  $graph->SetScale("textlin");
+		  
+		  $graph->yaxis->scale->SetGrace(2);
+		  $graph->SetFrame(1);
+		  $graph->img->SetMargin(40,20,20,35);
+		  
+		  $b2plot = new BarPlot($gwdatas);
+		  $graph->xaxis->SetTickLabels($gwlabels);
+		  
+		  $b2plot->SetFillColor("blue");
+		  $graph->title->Set("Consommation par semaine");
+		  
+		  $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
+		  
+		  $graph->Add($b2plot);
+		  
+		  $graph->img->SetImgFormat("png");
+		  
+		  $file= DOL_DATA_ROOT."/energie/graph/week.".$obj_c->rowid.".png";
+		  	      		  
+		  $graph->Stroke($file);
+		}
 
 	      // Annuel
 	      $width = 450;
@@ -253,30 +252,32 @@ if ($resql_c)
 		  $gylabels[$i] = $key;
 		  $i++;
 		}
-	      
-	      $graph = new Graph($width, $height,"auto");    
-	      $graph->SetScale("textlin");
-	      
-	      $graph->yaxis->scale->SetGrace(2);
-	      $graph->SetFrame(1);
-	      $graph->img->SetMargin(40,20,20,35);
-	      
-	      $b2plot = new BarPlot($gydatas);
-	      $graph->xaxis->SetTickLabels($gylabels);
-	      
-	      $b2plot->SetFillColor("blue");
-	      $graph->title->Set("Consommation annuelle");
-	      
-	      $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-	      
-	      $graph->Add($b2plot);
-	      
-	      $graph->img->SetImgFormat("png");
-	      
-	      $file= DOL_DATA_ROOT."/energie/graph/year.".$obj_c->rowid.".png";
-	      
+	     
 	      if (sizeof($gydatas))
-		$graph->Stroke($file);
+		{
+		  $graph = new Graph($width, $height,"auto");    
+		  $graph->SetScale("textlin");
+	      
+		  $graph->yaxis->scale->SetGrace(2);
+		  $graph->SetFrame(1);
+		  $graph->img->SetMargin(40,20,20,35);
+		  
+		  $b2plot = new BarPlot($gydatas);
+		  $graph->xaxis->SetTickLabels($gylabels);
+		  
+		  $b2plot->SetFillColor("blue");
+		  $graph->title->Set("Consommation annuelle");
+		  
+		  $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
+		  
+		  $graph->Add($b2plot);
+		  
+		  $graph->img->SetImgFormat("png");
+		  
+		  $file= DOL_DATA_ROOT."/energie/graph/year.".$obj_c->rowid.".png";
+		  		  
+		  $graph->Stroke($file);
+		}	      
 	    }
 	  else
 	    {
@@ -367,8 +368,9 @@ if ($resql_g)
 	  $graph->xaxis->SetTickLabels($gylabels);	  
 	  $graph->Add($gbplot);
 	  	  	  	  
-	  $file= DOL_DATA_ROOT."/energie/graph/groupe.week.".$row_g[0].".png";	  
-	  $graph->Stroke($file);
+	  $file= DOL_DATA_ROOT."/energie/graph/groupe.week.".$row_g[0].".png";
+	  if (sizeof($gbspl))
+	    $graph->Stroke($file);
 	  //
 	  //
 	  //
@@ -409,7 +411,8 @@ if ($resql_g)
 	  $graph->Add($gbplot);
 	  	  	  	  
 	  $file= DOL_DATA_ROOT."/energie/graph/groupe.month.".$row_g[0].".png";	  
-	  $graph->Stroke($file);
+	  if (sizeof($gbspl))
+	    $graph->Stroke($file);
 	  //
 	  //
 	  //
@@ -450,7 +453,8 @@ if ($resql_g)
 	  $graph->Add($gbplot);
 	  	  	  	  
 	  $file= DOL_DATA_ROOT."/energie/graph/groupe.year.".$row_g[0].".png";	  
-	  $graph->Stroke($file);
+	  if (sizeof($gbspl))
+	    $graph->Stroke($file);
 	  //
 	}
       else
