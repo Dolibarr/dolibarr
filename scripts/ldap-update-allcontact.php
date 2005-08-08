@@ -29,7 +29,7 @@ $error = 0;
 
 $user = new User($db);
 
-$sql = "SELECT m.rowid";
+$sql = "SELECT idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
 
 $resql = $db->query($sql);
