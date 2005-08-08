@@ -168,7 +168,8 @@ if ($resql_c)
 	      
 	      $file= DOL_DATA_ROOT."/energie/graph/day.".$obj_c->rowid.".png";
 	      
-	      $graph->Stroke($file);
+	      if (sizeof($gdatas) > 2)
+		$graph->Stroke($file);
 	      
 	      $width = 450;
 	      $height = 300;
@@ -204,7 +205,8 @@ if ($resql_c)
 	      
 	      $file= DOL_DATA_ROOT."/energie/graph/month.".$obj_c->rowid.".png";
 	      
-	      $graph->Stroke($file);
+	      if (sizeof($gmdatas))
+		$graph->Stroke($file);
 	      
 	      // Hebdomadaire
 	      $width = 750;
@@ -238,7 +240,8 @@ if ($resql_c)
 	      
 	      $file= DOL_DATA_ROOT."/energie/graph/week.".$obj_c->rowid.".png";
 	      
-	      $graph->Stroke($file);
+	      if (sizeof($gwdatas))
+		$graph->Stroke($file);
 
 	      // Annuel
 	      $width = 450;
@@ -272,11 +275,13 @@ if ($resql_c)
 	      
 	      $file= DOL_DATA_ROOT."/energie/graph/year.".$obj_c->rowid.".png";
 	      
-	      $graph->Stroke($file);
+	      if (sizeof($gydatas))
+		$graph->Stroke($file);
 	    }
 	  else
 	    {
 	      dolibarr_syslog("Erreur SQL");
+	      dolibarr_syslog("$sql");
 	    }
 	  $i_c++;
 	}
@@ -285,6 +290,7 @@ if ($resql_c)
 else
 {
   dolibarr_syslog("Erreur SQL");
+  dolibarr_syslog($db->error($resql_c));
 }
 
 
