@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  * $Source$
  *
  *
- * Generation des graphiques
+ * Generation de graphiques
  *
  *
  *
@@ -65,8 +65,6 @@ else
 
 $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
-
-
 /**********************************************************************/
 /*
 /* Stats sur les factures
@@ -100,7 +98,7 @@ if ($resql)
   $gain_moyen = array();
 
   $num = $db->num_rows($resql);
-  print "$num lignes de comm a traiter\n";
+
   $i = 0;
 
   while ($i < $num)
@@ -150,13 +148,11 @@ $file = $img_root . "/factures/ca_mensuel.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Chiffre d'affaire par mois en euros HT";
 $graph->width = 440;
-print $graph->titre."\n";
 $graph->GraphDraw($file, $cout_vente, $labels);
 
 $file = $img_root . "/factures/facture_moyenne.png";
 $graph = new GraphBar ($db, $file, $labels);
 $graph->titre = "Facture moyenne";
-print $graph->titre."\n";
 $graph->barcolor = "blue";
 $graph->width = 440;
 $graph->GraphDraw($file, $cout_vente_moyen, $labels);
@@ -165,21 +161,18 @@ $file = $img_root . "/factures/gain_mensuel.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Gain par mois en euros HT";
 $graph->width = 440;
-print $graph->titre."\n";
 $graph->GraphDraw($file, $gain, $labels);
 
 $file = $img_root . "/factures/gain_moyen.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Gain moyen par facture par mois";
 $graph->width = 440;
-print $graph->titre."\n";
 $graph->barcolor = "blue";
 $graph->GraphDraw($file, $gain_moyen, $labels);
 
 $file = $img_root . "/factures/nb_facture.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Nb de facture mois";
-print $graph->titre."\n";
 $graph->width = 440;
 $graph->barcolor = "yellow";
 $graph->GraphDraw($file, $nb_factures, $labels);
@@ -289,7 +282,6 @@ else
 }
 
 
-
 $i = 0;
 foreach ($labels as $labl)
 {
@@ -303,7 +295,6 @@ foreach ($labels as $labl)
 $file = $img_root . "/factures/ca_mensuel_preleve.png";
 $graph = new GraphBarAccumul ($db, $file);
 $graph->titre = "Chiffre d'affaire par méthode de réglement";
-print $graph->titre."\n";
 $graph->width = 440;
 $graph->height = 360;
 $graph->barcolor = "yellow";
@@ -318,6 +309,5 @@ $graph->legend[1][0] = "Coût fournisseur";
 $graph->add_datas($xdatas);
 
 $graph->GraphDraw($file, $labels, $cout_vente);
-
 
 ?>
