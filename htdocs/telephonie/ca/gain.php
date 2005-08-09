@@ -84,7 +84,7 @@ if ($db->query($sql))
       print '<td align="right">'.number_format(round($marge), 2, '.', ' ')." %</td>\n";
       if ($marge < 0)
 	{
-	  print '<td align="center">'.img_picto('','alerte').'</td>';
+	  print '<td align="center">!!</td>';
 	}
       else
 	{
