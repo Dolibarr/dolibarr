@@ -46,6 +46,8 @@ class GraphCommNbMensuel extends GraphBar{
   {    
     $this->GetDatas();
 
+    $this->width = 360;
+
     if (sizeof($this->datas))
       {
 	$this->GraphDraw($this->file, $this->datas, $this->labels);
@@ -100,7 +102,7 @@ class GraphCommNbMensuel extends GraphBar{
 	  {
 	    $row = $this->db->fetch_row();	
 	    
-	    $this->labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
+	    $this->labels[$i] = substr($row[0],4,2);
 	    $this->datas[$i] = $row[1];
 	    
 	    $i++;
