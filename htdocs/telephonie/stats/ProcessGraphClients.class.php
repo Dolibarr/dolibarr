@@ -122,7 +122,7 @@ class ProcessGraphClients
 
 	    if ($graphgain->total_cout > 0)
 	      {
-		$marge = ( $graphgain->total_gain / $graphgain->total_cout * 100);
+		$marge = ( $graphgain->total_gain / $graphgain->total_ca * 100);
 	      }
 	    
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_client_stats (fk_client_comm, gain, ca, cout, marge)";
