@@ -49,7 +49,7 @@ $pagenext = $page + 1;
 if ($sortorder == "") $sortorder="DESC";
 if ($sortfield == "") $sortfield="ca";
 
-$sql = "SELECT nom, ca, gain, cout, marge";
+$sql = "SELECT nom, ca, gain, cout, marge, fk_client_comm";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_stats";
 $sql .= " , " .MAIN_DB_PREFIX."societe";
 $sql .= " WHERE idp = fk_client_comm";
@@ -78,7 +78,7 @@ if ($db->query($sql))
       $marge = $row[4];
 
       print "<tr $bc[$var]>";
-      print "<td>".$row[0]."</td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/ca.php?id='.$row[5].'">'.$row[0]."</a></td>\n";
       print '<td align="right">'.price($row[1])." HT</td>\n";
       print '<td align="right">'.price($row[2])." HT</td>\n";
       print '<td align="right">'.number_format(round($marge), 2, '.', ' ')." %</td>\n";
