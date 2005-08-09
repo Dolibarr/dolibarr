@@ -34,7 +34,7 @@ class GraphCommNbMensuel extends GraphBar{
     $this->client = 0;
     $this->contrat = 0;
     $this->ligne = 0;
-    $this->titre = "Nombre de communications";
+    $this->titre = "Nombre de communications par mois";
 
     $this->barcolor = "bisque3";
 
