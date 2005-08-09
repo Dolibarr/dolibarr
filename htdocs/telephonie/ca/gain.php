@@ -67,7 +67,7 @@ if ($db->query($sql))
   print '<td align="right">Gain</td>';
 
   print_liste_field_titre("Marge","gain.php","marge",'','','align="right"');
-  print "</tr>\n";
+  print "<td>&nbsp;</td></tr>\n";
   $var=True;
 
   while ($i < min($num,$conf->liste_limit))
@@ -75,11 +75,21 @@ if ($db->query($sql))
       $row = $db->fetch_row($i);	
       $var=!$var;
 
+      $marge = $row[4];
+
       print "<tr $bc[$var]>";
       print "<td>".$row[0]."</td>\n";
       print '<td align="right">'.price($row[1])." HT</td>\n";
       print '<td align="right">'.price($row[2])." HT</td>\n";
-      print '<td align="right">'.round($row[4])." %</td>\n";
+      print '<td align="right">'.number_format(round($marge), 2, '.', ' ')." %</td>\n";
+      if ($marge < 0)
+	{
+	  print '<td align="center">'.img_picto('','alerte').'</td>';
+	}
+      else
+	{
+	  print '<td>&nbsp;</td>';
+	}
       print "</tr>\n";
       $i++;
     }
