@@ -74,7 +74,7 @@ if ($db->query($sql))
       print "<td>".substr($row[0],5,2)." ".substr($row[0],0,4)."</td>\n";
       print '<td align="right">'.price($row[1])." HT</td>\n";
       print '<td align="right">'.price($row[2])." HT</td>\n";
-      print '<td align="right">'.round(($row[2]/$row[1])*100,2)." %</td>\n";
+      print '<td align="right">'.number_format(round(($row[2]/$row[1])*100,2),2)." %</td>\n";
       print "</tr>\n";
       $i++;
     }
