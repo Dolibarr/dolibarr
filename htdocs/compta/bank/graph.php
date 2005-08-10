@@ -55,23 +55,6 @@ if ($account > 0)
 
   print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
 
-  print '</td></tr><tr><td>';
-
-  if ($month == 1)
-    {
-      $monthprev = "12";
-      $yearprev = $year - 1;
-    }
-  else
-    {
-      $monthprev = substr("00".($month - 1), -2) ;
-      $yearprev = $year ;
-    }
-
-  $file = "solde.$account.$yearprev.png";
-
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
-
   print '</td></tr></table>';
 }
 ?>
