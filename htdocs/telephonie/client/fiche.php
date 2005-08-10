@@ -85,9 +85,9 @@ if ($_GET["id"])
 
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  
-	  /* Lignes */
+	  /* Contrats */
 	     
-	  $sql = "SELECT count(l.rowid) as cc, c.rowid, c.ref";
+	  $sql = "SELECT count(l.rowid) as cc, c.rowid, c.ref, c.statut";
 	  $sql .= ", ss.nom as agence, ss.code_client, ss.ville";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
@@ -119,6 +119,8 @@ if ($_GET["id"])
 		      $var=!$var;
 
 		      print "<tr $bc[$var]><td>";
+
+		      print '<img src="../contrat/statut'.$obj->statut.'.png">&nbsp;';
 
 		      print '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->rowid.'">';
 		      print img_file();
