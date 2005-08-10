@@ -21,9 +21,9 @@
  */
 
 /**	  \file       htdocs/compta/bank/account.php
-	    \ingroup    banque
-	    \brief      Page de détail des transactions bancaires
-	    \version    $Revision$
+	  \ingroup    banque
+	  \brief      Page de détail des transactions bancaires
+	  \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -51,7 +51,7 @@ if ($account > 0)
 
   print '<tr><td>';
 
-  $file = "solde.$account.$year.$month.png";
+  $file = "solde.$account.$year.png";
 
   print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
 
@@ -68,34 +68,10 @@ if ($account > 0)
       $yearprev = $year ;
     }
 
-
-  $file = "solde.$account.$yearprev.$monthprev.png";
-
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
-
-  print '</td></tr><tr><td>';
-
-  $month = $monthprev;
-  $year = $yearprev;
-
-  if ($month == 1)
-    {
-      $monthprev = "12";
-      $yearprev = $year - 1;
-    }
-  else
-    {
-      $monthprev = substr("00".($month - 1), -2) ;
-      $yearprev = $year ;
-    }
-
-
-  $file = "solde.$account.$yearprev.$monthprev.png";
+  $file = "solde.$account.$yearprev.png";
 
   print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
 
   print '</td></tr></table>';
-
-
 }
 ?>
