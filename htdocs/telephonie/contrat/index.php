@@ -55,10 +55,9 @@ print '<tr class="liste_titre"><td>Recherche contrat</td>';
 print "</tr>\n";
 print "<tr $bc[1]>";
 print '<td>Numéro <input name="search_contrat" size="12"></td></tr>';
-print '</table>';
+print '</table></form>';
 
 print '<br />';
-
 
 $sql = "SELECT distinct statut, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as l";
@@ -101,11 +100,47 @@ else
 
 print '<br />';
 
+$sql = "SELECT distinct statut, count(*) as cc";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as l";
+$sql .= " GROUP BY statut";
 
-print '</td>';
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0;
+
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Contrats</td><td align="center">Nb</td><td>&nbsp;</td>';
+  print "</tr>\n";
+  $var=True;
+
+  $contrat = new TelephonieContrat($db);
+
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object();	
+
+      $var=!$var;
+      print "<tr $bc[$var]>";
+      print "<td>".$contrat->statuts[$obj->statut]."</td>\n";
+      print '<td align="center">'.$obj->cc."</td>\n";
+      print '<td><a href="liste.php?statut='.$obj->statut.'">';
+      print '<img border="0" src="statut'.$obj->statut.'.png"></a></td>';
+      print "</tr>\n";
+
+      $values[$obj->statut] = $obj->cc;
+      $i++;
+    }
+  print "</table>";
+  $db->free();
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
 
 
-print '</td><td valign="top" width="70%" rowspan="3">';
+print '</td><td valign="top" width="70%">';
 
 $sql = "SELECT c.ref, c.rowid, c.statut";
 $sql .= " ,s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom";
