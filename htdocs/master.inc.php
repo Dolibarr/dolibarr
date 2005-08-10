@@ -272,6 +272,9 @@ $conf->telephonie->dir_images=DOL_DATA_ROOT."/telephonie/images";
 $conf->prelevement->enabled=defined("MAIN_MODULE_PRELEVEMENT")?MAIN_MODULE_PRELEVEMENT:0;
 $conf->prelevement->dir_output=DOL_DATA_ROOT."/prelevement";
 $conf->prelevement->dir_images=DOL_DATA_ROOT."/prelevement/images";
+
+$conf->energie->enabled=defined("MAIN_MODULE_ENERGIE")?MAIN_MODULE_ENERGIE:0;
+
 $conf->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
 $conf->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'mysql';
 $conf->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';
