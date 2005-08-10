@@ -176,7 +176,7 @@ foreach ($accounts as $account)
   
   $graph->yaxis->scale->SetGrace(2);
   $graph->SetFrame(1);
-  $graph->img->SetMargin(40,20,20,35);
+  $graph->img->SetMargin(60,20,20,35);
   
   $b2plot = new BarPlot($datas);
   
@@ -195,7 +195,10 @@ foreach ($accounts as $account)
   
   $graph->Stroke($file);
 }
-
+/*
+ * Graph annuels
+ *
+ */
 foreach ($accounts as $account)
 {
   $labels = array();
@@ -259,7 +262,7 @@ foreach ($accounts as $account)
 
       if ($day > time())
 	{      
-	  $datas[$i] = 'x';
+	  $datas[$i] = 'x'; // Valeur spéciale permettant de ne pas tracer le graph
 	}
       else
 	{
@@ -288,7 +291,7 @@ foreach ($accounts as $account)
   
   $graph->yaxis->scale->SetGrace(2);
   $graph->SetFrame(1);
-  $graph->img->SetMargin(40,20,20,35);
+  $graph->img->SetMargin(60,20,20,35);
   
   $b2plot = new LinePlot($datas);
   
@@ -313,5 +316,108 @@ foreach ($accounts as $account)
   $graph->Stroke($file);
 }
 
+/*
+ * Graph annuels
+ *
+ */
+foreach ($accounts as $account)
+{
+  $labels = array();
+  $datas = array();
+  $amounts = array();
+  
+  $sql = "SELECT min(".$db->pdate("datev")."),max(".$db->pdate("datev").")";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank";
+  $sql .= " WHERE fk_account = ".$account;
 
+  $resql = $db->query($sql);
+
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $row = $db->fetch_row($resql);
+      $min = $row[0];
+      $max = $row[1];
+    }
+  else
+    {
+      dolibarr_syslog("graph-solde.php Error");
+    }
+
+
+  $sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank";
+  $sql .= " WHERE fk_account = ".$account;
+  $sql .= " GROUP BY date_format(datev,'%Y%m%d');";
+
+  $resql = $db->query($sql);
+  
+  $amounts = array();
+  
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($resql);
+	  $amounts[$row[0]] = $row[1];
+	  $i++;
+	}      
+    }
+  else
+    {
+      dolibarr_syslog("graph-solde.php Error");
+    }
+  
+  $subtotal = 0;
+  
+  $day = $min;
+  
+  $i = 0;
+  while ($day <= $max)
+    {
+      //print strftime ("%e %d %m %y",$day)."\n";
+      
+      $subtotal = $subtotal + $amounts[strftime("%Y%m%d",$day)];
+
+      $datas[$i] = $solde + $subtotal;
+
+      $labels[$i] = strftime("%d",$day);
+
+      $day += 86400;
+      $i++;
+    }
+
+  if (sizeof($amounts) > 3)
+    {    
+      $width = 750;
+      $height = 350;
+
+      $graph = new Graph($width, $height,"auto");    
+      $graph->SetScale("textlin");
+  
+      $graph->yaxis->scale->SetGrace(2);
+      $graph->SetFrame(1);
+      $graph->img->SetMargin(60,20,20,35);
+      
+      $b2plot = new LinePlot($datas);
+      
+      $b2plot->SetColor("blue");
+      
+      $graph->title->Set("Solde");
+      
+      $graph->xaxis->SetTickLabels($labels);
+      
+      $graph->xaxis->Hide();
+      
+      $graph->Add($b2plot);
+      $graph->img->SetImgFormat("png");
+      
+      $file= DOL_DATA_ROOT."/graph/banque/solde.$account.png";
+      
+      $graph->Stroke($file);
+    }
+}
 ?>

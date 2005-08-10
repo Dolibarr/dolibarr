@@ -55,6 +55,12 @@ if ($account > 0)
 
   print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
 
+  print '</td></tr><tr><td>';
+
+  $file = "solde.$account.png";
+
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+
   print '</td></tr></table>';
 }
 ?>
