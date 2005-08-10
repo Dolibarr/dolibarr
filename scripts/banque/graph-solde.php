@@ -259,7 +259,7 @@ foreach ($accounts as $account)
 
       if ($day > time())
 	{      
-	  $datas[$i] = 0;
+	  $datas[$i] = 'x';
 	}
       else
 	{
