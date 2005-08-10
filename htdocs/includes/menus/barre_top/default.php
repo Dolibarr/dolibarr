@@ -204,6 +204,27 @@ class MenuTop {
         
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a>';
         }
+
+        // Entrée telephonie
+        if ($conf->telephonie->enabled)
+        {
+	  $class="";
+	  if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "suppliers")
+            {
+	      $class='class="tmenu" id="sel"';
+            }
+	  elseif (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
+            {
+	      $class='class="tmenu" id="sel"';
+            }
+	  else
+            {
+	      $class = 'class="tmenu"';
+            }
+	  
+	  print '<a '.$class.' href="'.DOL_URL_ROOT.'/telephonie/"'.($this->atarget?" target=$this->atarget":"").'>Telephonie</a>';
+        }
+
         
         // Entrée webcal
         if ($conf->webcal->enabled)
