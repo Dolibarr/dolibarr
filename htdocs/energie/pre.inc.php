@@ -42,8 +42,8 @@ function llxHeader($langs, $head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/energie/", $langs->trans("Energy"));
 
-  $menu->add_submenu(DOL_URL_ROOT."/energie/compteur.php?action=create", $langs->trans("CreateCompteur"));
-  $menu->add_submenu(DOL_URL_ROOT."/energie/groupe.php?action=create", $langs->trans("CreateGroupe"));
+  $menu->add_submenu(DOL_URL_ROOT."/energie/compteur.php?action=create", $langs->trans("NewCounter"));
+  $menu->add_submenu(DOL_URL_ROOT."/energie/groupe.php?action=create", $langs->trans("NewGroup"));
 
   $menu->add_submenu(DOL_URL_ROOT."/energie/graph.php", $langs->trans("Statistics"));
 
