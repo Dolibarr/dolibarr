@@ -196,4 +196,122 @@ foreach ($accounts as $account)
   $graph->Stroke($file);
 }
 
+foreach ($accounts as $account)
+{
+  $labels = array();
+  $datas = array();
+  $amounts = array();
+  
+  $sql = "SELECT sum(amount)";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank";
+  $sql .= " WHERE fk_account = ".$account;
+  $sql .= " AND datev < '".$year."-01-01';";
+  
+  $resql = $db->query($sql);
+  if ($resql)
+    {
+      $row = $db->fetch_row($resql);
+      $solde = $row[0];
+    }
+  else
+    {
+      print $sql ;
+    }
+
+  $sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank";
+  $sql .= " WHERE fk_account = ".$account;
+  $sql .= " AND date_format(datev,'%Y') = '".$year."'";
+  $sql .= " GROUP BY date_format(datev,'%Y%m%d');";
+
+  $resql = $db->query($sql);
+  
+  $amounts = array();
+  
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($resql);
+	  $amounts[$row[0]] = $row[1];
+	  $i++;
+	}      
+    }
+  else
+    {
+      dolibarr_syslog("graph-solde.php Error");
+    }
+  
+  $subtotal = 0;
+  
+  $day = mktime(1,1,1,1,1,$year);
+  
+  $xyear = strftime("%Y",$day);
+  $i = 0;
+  while ($xyear == $year)
+    {
+      //print strftime ("%e %d %m %y",$day)."\n";
+      
+      $subtotal = $subtotal + $amounts[strftime("%Y%m%d",$day)];
+
+      if ($day > time())
+	{      
+	  $datas[$i] = 0;
+	}
+      else
+	{
+	  $datas[$i] = $solde + $subtotal;
+	}
+
+      if (strftime("%d",$day) == 1)
+	{
+	  $labels[$i] = strftime("%d",$day);
+	}
+      else
+	{
+
+	}
+      
+      $day += 86400;
+      $xyear = strftime("%Y",$day);
+      $i++;
+    }
+    
+  $width = 750;
+  $height = 350;
+  
+  $graph = new Graph($width, $height,"auto");    
+  $graph->SetScale("textlin");
+  
+  $graph->yaxis->scale->SetGrace(2);
+  $graph->SetFrame(1);
+  $graph->img->SetMargin(40,20,20,35);
+  
+  $b2plot = new LinePlot($datas);
+  
+  $b2plot->SetColor("blue");
+  //$b2plot->SetWeight(2);
+  
+  $graph->title->Set("Solde $year");
+  
+  $graph->xaxis->SetTickLabels($labels);
+
+  $graph->xaxis->Hide();
+  //$graph->xaxis->HideTicks(); 
+
+
+  //$graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
+  
+  $graph->Add($b2plot);
+  $graph->img->SetImgFormat("png");
+  
+  $file= DOL_DATA_ROOT."/graph/banque/solde.$account.$year.png";
+  
+  $graph->Stroke($file);
+}
+
+
 ?>
