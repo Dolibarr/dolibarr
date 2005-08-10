@@ -178,7 +178,7 @@ else
 
 	  print '<table class="noborder" width="100%">';
 	  print '<tr><td><a href="compteur_graph.php?id='.$compteur->id.'">';
-	  $file = "week.".$compteur->id.".png";
+	  $file = "all.".$compteur->id.".png";
 	  print '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
 	  print '</a></td></tr></table><br>';
 
