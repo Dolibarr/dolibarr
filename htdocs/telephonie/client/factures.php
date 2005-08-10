@@ -135,12 +135,12 @@ if ($_GET["id"])
 		  if ($obj->gain < 0 && $obj->cout_vente_remise)
 		    {
 		      print '<font color="red"><b>';
-		      print sprintf("%01.4f",$obj->gain);
+		      print sprintf("%01.2f",$obj->gain);
 		      print "</b></font>";
 		    }
 		  else
 		    {
-		      print sprintf("%01.4f",$obj->gain);
+		      print sprintf("%01.2f",$obj->gain);
 		    }
 		  print "</td>\n";
 		  print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.$obj->fk_facture."</a></td>\n";
