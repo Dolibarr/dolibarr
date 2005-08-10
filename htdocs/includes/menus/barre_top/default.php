@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,15 +22,15 @@
  */
 
 /**
-	    \file       htdocs/includes/menus/barre_top/default.php
-		\brief      Gestionnaire par défaut du menu du haut
-		\version    $Revision$
-
-        \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entrées de menu à faire apparaitre dans la barre du haut
-        \remarks    doivent être affichées par <a class="tmenu" href="...?mainmenu=...">...</a>
-        \remarks    On peut éventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entrée du menu qui est sélectionnée.
+   \file       htdocs/includes/menus/barre_top/default.php
+   \brief      Gestionnaire par défaut du menu du haut
+   \version    $Revision$
+   
+   \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
+   \remarks    Toutes les entrées de menu à faire apparaitre dans la barre du haut
+   \remarks    doivent être affichées par <a class="tmenu" href="...?mainmenu=...">...</a>
+   \remarks    On peut éventuellement ajouter l'attribut id="sel" dans la balise <a>
+   \remarks    quand il s'agit de l'entrée du menu qui est sélectionnée.
 */
 
 
@@ -209,11 +209,7 @@ class MenuTop {
         if ($conf->telephonie->enabled)
         {
 	  $class="";
-	  if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "suppliers")
-            {
-	      $class='class="tmenu" id="sel"';
-            }
-	  elseif (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
+	  if (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
             {
 	      $class='class="tmenu" id="sel"';
             }
@@ -223,6 +219,23 @@ class MenuTop {
             }
 	  
 	  print '<a '.$class.' href="'.DOL_URL_ROOT.'/telephonie/"'.($this->atarget?" target=$this->atarget":"").'>Telephonie</a>';
+        }
+
+        // Entrée energie
+        if ($conf->energie->enabled)
+        {
+	  $langs->load("energy");
+	  $class="";
+	  if (ereg("^".DOL_URL_ROOT."\/energie\/",$_SERVER["PHP_SELF"]))
+            {
+	      $class='class="tmenu" id="sel"';
+            }
+	  else
+            {
+	      $class = 'class="tmenu"';
+            }
+	  
+	  print '<a '.$class.' href="'.DOL_URL_ROOT.'/energie/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a>';
         }
 
         
