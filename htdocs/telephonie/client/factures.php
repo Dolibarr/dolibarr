@@ -114,7 +114,7 @@ if ($_GET["id"])
 	      print '<tr class="liste_titre"><td>Ligne</td>';	      
 	      print '<td align="center">Date</td><td align="right">Montant HT</td>';
 	      print '<td align="right">Coût fournisseur HT';
-	      print '</td><td align="right">Gain</td><td align="center">Facture</td>';
+	      print '</td><td align="right">Gain</td><td align="right">Marge</td><td align="center">Facture</td>';
 	      print "</tr>\n";
 	      	      
 	      $var=True;
@@ -143,6 +143,14 @@ if ($_GET["id"])
 		      print sprintf("%01.2f",$obj->gain);
 		    }
 		  print "</td>\n";
+
+		  print '<td align="right">';
+
+		  print sprintf("%01.2f %%",($obj->gain / $obj->cout_vente_remise * 100));
+		      
+		  print "</td>\n";
+
+
 		  print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.$obj->fk_facture."</a></td>\n";
 		  print "</tr>\n";
 		  $i++;
