@@ -21,15 +21,17 @@
  *
  */
 
-/*!	\file       htdocs/don.class.php
+/**
+    	\file       htdocs/don.class.php
 		\ingroup    don
 		\brief      Fichier de la classe des dons
 		\version    $Revision$
 */
 
 
-/*! \class Don
-		\brief Classe permettant la gestion des dons
+/**
+        \class      Don
+		\brief      Classe permettant la gestion des dons
 */
 
 class Don
@@ -173,80 +175,79 @@ class Don
 
     }
 
-  /*
-   *    \brief  Création du don en base
-   *    \param  userid      utilisateur qui crée le don
+  /**
+   *    \brief      Création du don en base
+   *    \param      userid      Objet utilisateur qui crée le don
+   *    \return     int         id don crée si ok, <0 si ko
    */
-  function create($userid) 
+    function create($user)
     {
-      $this->date = $this->db->idate($this->date);
-
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public,";
-      if ($this->projetid)
-	{
-	  $sql .= " fk_don_projet,";
-	}
-      $sql .= " note, fk_user_author, datedon, email)";
-      $sql .= " VALUES (now(),".ereg_replace(",",".", $this->amount).", $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, ";
-      if ($this->projetid)
-	{
-	  $sql .= " $this->projetid,";
-	}
-      $sql .= " '$this->commentaire', $userid, '$this->date','$this->email')";
-      
-      $result = $this->db->query($sql);
-      
-      if ($result) 
-	{
-	  return $this->db->last_insert_id(MAIN_DB_PREFIX."don");
-	}
-      else
-	{
-      dolibarr_print_error($this->db);
-	  return 0;
-	}  
+        $this->date = $this->db->idate($this->date);
+    
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public,";
+        if ($this->projetid)
+        {
+            $sql .= " fk_don_projet,";
+        }
+        $sql .= " note, fk_user_author, datedon, email)";
+        $sql .= " VALUES (now(),".ereg_replace(",",".", $this->amount).", $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, ";
+        if ($this->projetid)
+        {
+            $sql .= " $this->projetid,";
+        }
+        $sql .= " '$this->commentaire', ".$user->id.", '$this->date','$this->email')";
+    
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            return $this->db->last_insert_id(MAIN_DB_PREFIX."don");
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
     }
 
-  /*
-   *    \brief  Mise à jour du don
-   *    \param  userid      utilisateur qui crée le don
-   *
+  /**
+   *    \brief      Mise à jour du don
+   *    \param      user        Objet utilisateur qui met à jour le don
+   *    \return     int         >0 si ok, <0 si ko
    */
-  function update($userid) 
+    function update($user)
     {
-      
-      $this->date = $this->db->idate($this->date);
-
-      $sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
-      $sql .= "amount = " . $this->amount;
-      $sql .= ",fk_paiement = ".$this->modepaiementid;
-      $sql .= ",prenom = '".$this->prenom ."'";
-      $sql .= ",nom='".$this->nom."'";
-      $sql .= ",societe='".$this->societe."'";
-      $sql .= ",adresse='".$this->adresse."'";
-      $sql .= ",cp='".$this->cp."'";
-      $sql .= ",ville='".$this->ville."'";
-      $sql .= ",pays='".$this->pays."'";
-      $sql .= ",public=".$this->public;
-      if ($this->projetid) {    $sql .= ",fk_don_projet=".$this->projetid; }
-      $sql .= ",note='".$this->commentaire."'";
-      $sql .= ",datedon='".$this->date."'";
-      $sql .= ",email='".$this->email."'";
-      $sql .= ",fk_statut=".$this->statut;
-
-      $sql .= " WHERE rowid = $this->id";
-      
-      $result = $this->db->query($sql);
-      
-      if ($result) 
-	{
-	  return 1;
-	}
-      else
-	{
-      dolibarr_print_error($this->db);
-	  return 0;
-	}  
+    
+        $this->date = $this->db->idate($this->date);
+    
+        $sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
+        $sql .= "amount = " . $this->amount;
+        $sql .= ",fk_paiement = ".$this->modepaiementid;
+        $sql .= ",prenom = '".$this->prenom ."'";
+        $sql .= ",nom='".$this->nom."'";
+        $sql .= ",societe='".$this->societe."'";
+        $sql .= ",adresse='".$this->adresse."'";
+        $sql .= ",cp='".$this->cp."'";
+        $sql .= ",ville='".$this->ville."'";
+        $sql .= ",pays='".$this->pays."'";
+        $sql .= ",public=".$this->public;
+        if ($this->projetid) {    $sql .= ",fk_don_projet=".$this->projetid; }
+        $sql .= ",note='".$this->commentaire."'";
+        $sql .= ",datedon='".$this->date."'";
+        $sql .= ",email='".$this->email."'";
+        $sql .= ",fk_statut=".$this->statut;
+    
+        $sql .= " WHERE rowid = $this->id";
+    
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
     }
 
   /*
@@ -266,13 +267,13 @@ class Don
 	  }
 	else
 	  {
-	    return 0;
+	    return -1;
 	  }
       }
     else
       {
       dolibarr_print_error($this->db);
-	  return 0;
+	  return -1;
       }    
   }
 
@@ -283,9 +284,11 @@ class Don
    */
   function fetch($rowid)
   {
-    $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
-    $sql .= " FROM ".MAIN_DB_PREFIX."don as d, ".MAIN_DB_PREFIX."c_paiement as cp LEFT JOIN ".MAIN_DB_PREFIX."don_projet as p";
-    $sql .= " ON p.rowid = d.fk_don_projet WHERE cp.id = d.fk_paiement AND d.rowid = $rowid";
+    $sql = "SELECT d.rowid, ".$this->db->pdate("d.datec")." as datec,";
+    $sql.= " ".$this->db->pdate("d.datedon")." as datedon,";
+    $sql.= " d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
+    $sql.= " FROM ".MAIN_DB_PREFIX."don as d, ".MAIN_DB_PREFIX."c_paiement as cp LEFT JOIN ".MAIN_DB_PREFIX."don_projet as p";
+    $sql.= " ON p.rowid = d.fk_don_projet WHERE cp.id = d.fk_paiement AND d.rowid = $rowid";
 
     if ( $this->db->query( $sql) )
       {
@@ -295,6 +298,7 @@ class Don
 	    $obj = $this->db->fetch_object();
 
 	    $this->id             = $obj->rowid;
+	    $this->datec          = $obj->datec;
 	    $this->date           = $obj->datedon;
 	    $this->prenom         = stripslashes($obj->prenom);
 	    $this->nom            = stripslashes($obj->nom);

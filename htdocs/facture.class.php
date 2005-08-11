@@ -1219,7 +1219,7 @@ class Facture
     }
 
     /**
-    *    \brief      Renvoi le libellé court d'un statut donn
+    *    \brief      Renvoi le libellé court d'un statut donné
     *    \param      paye        etat paye
     *    \param      statut      id statut
     *    \param      amount      amount already payed
@@ -1264,10 +1264,10 @@ class Facture
         }
     }
 
-    /*
-    * \brief     Charge les informations d'ordre info dans l'objet facture
-    * \param     id  id de la facture a charger
-    */
+    /**
+     *      \brief     Charge les informations d'ordre info dans l'objet facture
+     *      \param     id       Id de la facture a charger
+     */
     function info($id)
     {
         $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec";
@@ -1569,32 +1569,64 @@ class Facture
             }
         }
     }
+
+    /**
+     *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_board()
+    {
+        global $conf;
+        
+        $this->nbtodo=$this->nbtodolate=0;
+        $sql = "SELECT f.rowid,".$this->db->pdate("f.date_lim_reglement")." as datefin";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+        $sql.= " WHERE f.paye=0 AND f.fk_statut = 1";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nbtodo++;
+                if ($obj->datefin < (time() - $conf->facture->client->warning_delay)) $this->nbtodolate++;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
 }
 
 
 
 /**
-\class FactureLigne
-\brief Classe permettant la gestion des lignes de factures
+        \class      FactureLigne
+        \brief      Classe permettant la gestion des lignes de factures
 */
 
 class FactureLigne
 {
 
     /**
-    * \brief     Constructeur d'objets ligne de facture
-    * \param     DB      handler d'accès base de donnée
-    */
+     *      \brief     Constructeur d'objets ligne de facture
+     *      \param     DB      handler d'accès base de donnée
+     */
     function FactureLigne($DB)
     {
         $this->db= $DB ;
     }
 
+
     /**
-    * \brief     Recupére l'objet ligne de facture
-    * \param     rowid           id de la ligne de facture
-    * \param     societe_id      id de la societe
-    */
+     *      \brief     Recupére l'objet ligne de facture
+     *      \param     rowid           id de la ligne de facture
+     *      \param     societe_id      id de la societe
+     */
     function fetch($rowid, $societe_id=0)
     {
         $sql = "SELECT fk_product, description, price, qty, rowid, tva_taux, remise, remise_percent, subprice, ".$this->db->pdate("date_start")." as date_start,".$this->db->pdate("date_end")." as date_end";

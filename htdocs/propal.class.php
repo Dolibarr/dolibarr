@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,31 +42,35 @@
 
 class Propal
 {
-  var $id;
-  var $db;
-  var $socidp;
-  var $contactid;
-  var $projetidp;
-  var $author;
-  var $ref;
-  var $datep;
-  var $remise;
-  var $products;
-  var $products_qty;
-  var $note;
-  var $price;
-  var $status;
-  
-  var $labelstatut=array();
-  var $labelstatut_short=array();
+    var $id;
+    var $db;
+    var $socidp;
+    var $contactid;
+    var $projetidp;
+    var $author;
+    var $ref;
+    var $datep;
+    var $remise;
+    var $products;
+    var $products_qty;
+    var $note;
+    var $price;
+    var $status;
+    
+    var $labelstatut=array();
+    var $labelstatut_short=array();
+    
+    var $product=array();
 
-  var $product=array();
+    // Pour board
+    var $nbtodo;
+    var $nbtodolate;
 
-  
+
     /** 
      *      \brief      Constructeur
      */
-  function Propal($DB, $soc_idp="", $propalid=0)
+    function Propal($DB, $soc_idp="", $propalid=0)
     {
       global $langs;
       
@@ -99,66 +103,65 @@ class Propal
    * \see       insert_product
    */
 	 
-  function add_product($idproduct, $qty, $remise_percent=0)
+    function add_product($idproduct, $qty, $remise_percent=0)
     {
-      if ($idproduct > 0)
-	{
-	  $i = sizeof($this->products);
-	  $this->products[$i] = $idproduct;
-	  if (!$qty)
-	    {
-	      $qty = 1 ;
-	    }
-	  $this->products_qty[$i] = $qty;
-	  $this->products_remise_percent[$i] = $remise_percent;
-	}
+        if ($idproduct > 0)
+        {
+            $i = sizeof($this->products);
+            $this->products[$i] = $idproduct;
+            if (!$qty)
+            {
+                $qty = 1 ;
+            }
+            $this->products_qty[$i] = $qty;
+            $this->products_remise_percent[$i] = $remise_percent;
+        }
     }
 
   /**
    * \brief     Ajout d'un produit dans la proposition, en base
-   * \param     idproduct       id du produit à ajouter
-   * \param     qty             quantité
-   * \param     remise_percent  remise effectuée sur le produit
-   * \return    int             0 en cas de succès
+   * \param     idproduct           id du produit à ajouter
+   * \param     qty                 quantité
+   * \param     remise_percent      remise effectuée sur le produit
+   * \return    int                 >0 si ok, <0 si ko
    * \see       add_product
    */
-	 
-  function insert_product($idproduct, $qty, $remise_percent=0)
+    function insert_product($idproduct, $qty, $remise_percent=0)
     {
-      if ($this->statut == 0)
-	{
-	  $prod = new Product($this->db, $idproduct);
-	  if ($prod->fetch($idproduct) > 0)
-	    {
-	      $price = $prod->price;
-	      $subprice = $prod->price;
-
-	      if ($remise_percent > 0)
-		{
-		  $remise = round(($prod->price * $remise_percent / 100), 2);
-		  $price = $prod->price - $remise;
-		}
-	  
-	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-	      $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". ereg_replace(",",".",$price)."','".$prod->tva_tx."','".addslashes($prod->label)."','".ereg_replace(",",".",$remise_percent)."','".ereg_replace(",",".",$subprice)."')";
-	  
-	      if ($this->db->query($sql) )
-		{		  
-		  $this->update_price();
-		  
-		  return 1;
-		}
-	      else
-		{
-		  return -1;
-		}
-	    }
-	  else
-	    {
-	      return -2;
-	    }
-	}
+        if ($this->statut == 0)
+        {
+            $prod = new Product($this->db, $idproduct);
+            if ($prod->fetch($idproduct) > 0)
+            {
+                $price = $prod->price;
+                $subprice = $prod->price;
+    
+                if ($remise_percent > 0)
+                {
+                    $remise = round(($prod->price * $remise_percent / 100), 2);
+                    $price = $prod->price - $remise;
+                }
+    
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+                $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". ereg_replace(",",".",$price)."','".$prod->tva_tx."','".addslashes($prod->label)."','".ereg_replace(",",".",$remise_percent)."','".ereg_replace(",",".",$subprice)."')";
+    
+                if ($this->db->query($sql) )
+                {
+                    $this->update_price();
+                    return 1;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                return -2;
+            }
+        }
     }
+
   /**
    * \brief     Mise à jour d'une ligne de produit
    * \param     id              id de la ligne
@@ -167,94 +170,92 @@ class Propal
    * \param     remise_percent  remise effectuée sur le produit
    * \return    int             0 en cas de succès
    */
-	 
-  function UpdateLigne($id, $subprice, $qty, $remise_percent=0)
-  {
-    if ($this->statut == 0)
-      {
-	$price = $subprice;
-	if ($remise_percent > 0)
-	  {
-	    $remise = round(($subprice * $remise_percent / 100), 2);
-	    $price = $subprice - $remise;
-	  }
-	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet ";
-	$sql .= " SET qty='".$qty."'";
-	$sql .= " , price='". ereg_replace(",",".",$price)."'";
-	$sql .= " , remise_percent='".ereg_replace(",",".",$remise_percent)."'";
-	$sql .= " , subprice='".ereg_replace(",",".",$subprice)."'";
-	$sql .= " WHERE rowid = '".$id."';";
-	
-	if ($this->db->query($sql) )
-	  {		  
-	    $this->update_price();
-	    
-	    return 0;
-	  }
-	else
-	  {
-	    dolibarr_syslog("Propal::UpdateLigne Erreur -1");
-	    return -1;
-	  }
-      }
-    else
-      {
-	dolibarr_syslog("Propal::UpdateLigne Erreur -2 Propal en mode incompatible pour cette action");
-	return -2;
-      }
-  }
+    	
+    function UpdateLigne($id, $subprice, $qty, $remise_percent=0)
+    {
+        if ($this->statut == 0)
+        {
+            $price = $subprice;
+            if ($remise_percent > 0)
+            {
+                $remise = round(($subprice * $remise_percent / 100), 2);
+                $price = $subprice - $remise;
+            }
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."propaldet ";
+            $sql .= " SET qty='".$qty."'";
+            $sql .= " , price='". ereg_replace(",",".",$price)."'";
+            $sql .= " , remise_percent='".ereg_replace(",",".",$remise_percent)."'";
+            $sql .= " , subprice='".ereg_replace(",",".",$subprice)."'";
+            $sql .= " WHERE rowid = '".$id."';";
+    
+            if ($this->db->query($sql) )
+            {
+                $this->update_price();
+                return 0;
+            }
+            else
+            {
+                dolibarr_syslog("Propal::UpdateLigne Erreur -1");
+                return -1;
+            }
+        }
+        else
+        {
+            dolibarr_syslog("Propal::UpdateLigne Erreur -2 Propal en mode incompatible pour cette action");
+            return -2;
+        }
+    }
+    
   /**
    *
    *
    */
-  
-  function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $remise_percent=0)
-  {
-    if ($this->statut == 0)
-      {
-	if (strlen(trim($p_qty)) == 0)
-	  {
-	    $p_qty = 1;
-	  }
-	
-	  $p_price = ereg_replace(",",".",$p_price);
-
-	  $price = $p_price;
-	  $subprice = $p_price;
-
-	  if ($remise_percent > 0)
-	    {
-	      $remise = round(($p_price * $remise_percent / 100), 2);
-	      $price = $p_price - $remise;
-	    }
-
-	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-	  $sql .= " (".$this->id.", 0,'". $p_qty."','". ereg_replace(",",".",$price)."','".$p_tva_tx."','".$p_desc."','$remise_percent', '".ereg_replace(",",".",$subprice)."') ; ";
-	  
-
-	  if ($this->db->query($sql) )
-	    {
-	      
-	      if ($this->update_price() > 0)
-		{	      
-		  return 1;
-		}
-	      else
-		{
-		  return -1;
-		}
-	    }
-	  else
-	    {
-	      print $this->db->error();
-	      print "<br>".$sql;
-	      return -2;
-	    }
-	}
+     
+    function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $remise_percent=0)
+    {
+        if ($this->statut == 0)
+        {
+            if (strlen(trim($p_qty)) == 0)
+            {
+                $p_qty = 1;
+            }
+    
+            $p_price = ereg_replace(",",".",$p_price);
+    
+            $price = $p_price;
+            $subprice = $p_price;
+    
+            if ($remise_percent > 0)
+            {
+                $remise = round(($p_price * $remise_percent / 100), 2);
+                $price = $p_price - $remise;
+            }
+    
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+            $sql .= " (".$this->id.", 0,'". $p_qty."','". ereg_replace(",",".",$price)."','".$p_tva_tx."','".$p_desc."','$remise_percent', '".ereg_replace(",",".",$subprice)."') ; ";
+    
+    
+            if ($this->db->query($sql) )
+            {
+    
+                if ($this->update_price() > 0)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                return -2;
+            }
+        }
     }
 		
-  /*
+  /**
    *
    *
    */
@@ -348,12 +349,12 @@ class Propal
 	    }
 	  else
 	    {	      
-	      //dolibarr_print_error($this->db);
+	      return -2;
 	    }
 	}
       else
 	{
-	  //dolibarr_print_error($this->db);
+	  return -1;
 	}
       return $this->id;
     }
@@ -582,7 +583,6 @@ class Propal
 	    }
 	  else
 	    {
-	      //dolibarr_print_error($this->db);
 	      return -1;
 	    }
 	}
@@ -1059,18 +1059,58 @@ class Propal
    *    \param      size        Libellé court si 0, long si non défini
    *    \return     string      Libellé
    */
-  function LibStatut($statut,$size=1)
-  {
-    if ($size) return $this->labelstatut[$statut];
-    else return $this->labelstatut_short[$statut];
-  }
-  
-}  
+    function LibStatut($statut,$size=1)
+    {
+        if ($size) return $this->labelstatut[$statut];
+        else return $this->labelstatut_short[$statut];
+    }
+
+
+    /**
+     *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \param      mode        opened pour propal à fermer, signed pour propale à facturer
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_board($mode)
+    {
+        global $conf;
+        
+        $this->nbtodo=$this->nbtodolate=0;
+        $sql = "SELECT p.rowid,".$this->db->pdate("p.datec")." as datec,".$this->db->pdate("p.fin_validite")." as datefin";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+        if ($mode == 'opened') $sql.= " WHERE p.fk_statut = 1";
+        if ($mode == 'signed') $sql.= " WHERE p.fk_statut = 2";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nbtodo++;
+                if ($obj->datefin < (time() - $conf->propal->cloture->warning_delay)) $this->nbtodolate++;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
+}
+
+
+/**
+        \class      PropalLigne
+		\brief      Classe permettant la gestion des lignes de propales
+*/
 
 class PropaleLigne  
 {
-  function PropaleLigne()
-  {
-  }
+    function PropaleLigne()
+    {
+    }
 }
+
 ?>
