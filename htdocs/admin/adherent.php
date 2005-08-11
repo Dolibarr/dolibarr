@@ -23,7 +23,8 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/adherent.php
+/**
+    	\file       htdocs/admin/adherent.php
 		\ingroup    adherent
 		\brief      Page d'administration/configuration du module Adherent
 		\version    $Revision$
@@ -117,8 +118,50 @@ llxHeader();
  * Interface de configuration de certaines variables de la partie adherent
  */
 
-print_titre("Gestion des adhérents : Configurations de parametres");
+print_titre($langs->trans("MembersSetup"));
 print "<br>";
+
+
+print_fiche_titre($langs->trans("MemberMainOptions"));
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print '<td align="center">'.$langs->trans("Action").'</td>';
+print "</tr>\n";
+$var=true;
+$form = new Form($db);
+
+// Mail obligatoire
+$var=!$var;
+print '<form action="adherent.php" method="POST">';
+print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+print '<input type="hidden" name="constname" value="ADHERENT_MAIL_REQUIRED">';
+print "<tr $bc[$var] class=value><td>".$langs->trans("AdherentMailRequired").'</td><td>';
+$form->selectyesnonum('constvalue',ADHERENT_MAIL_REQUIRED);
+print '</td><td align="center" width="80">';
+print '<input type="Submit" value="'.$langs->trans("Update").'" name="Button">';
+print "</td></tr>\n";
+print '</form>';
+
+// Insertion cotisations dans compte financier
+if ($conf->banque->enabled)
+{
+    $var=!$var;
+    print '<form action="adherent.php" method="POST">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+    print '<input type="hidden" name="constname" value="ADHERENT_BANK_USE">';
+    print "<tr $bc[$var] class=value><td>".$langs->trans("AddSubscriptionIntoAccount").'</td><td>';
+    $form->selectyesnonum('constvalue',ADHERENT_BANK_USE);
+    print '</td><td align="center" width="80">';
+    print '<input type="Submit" value="'.$langs->trans("Update").'" name="Button">';
+    print "</td></tr>\n";
+    print '</form>';
+}
+print '</table>';
+print '<br>';
 
 /*
  * Mailman
@@ -142,29 +185,6 @@ else
 {
   $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
   print_fiche_titre("Mailman - Système de mailing listes",$lien);
-}
-
-print "<hr>\n";
-
-/*
- * Gestion banquaire
- */
-if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE == 1)
-{
-  $lien=img_tick().' ';
-  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_BANK_USE">'.$langs->trans("Disable").'</a>';
-  // Edition des varibales globales rattache au theme Mailman 
-  $constantes=array('ADHERENT_BANK_USE_AUTO',
-		    'ADHERENT_BANK_ACCOUNT',
-		    'ADHERENT_BANK_CATEGORIE'
-		    );
-  print_fiche_titre("Gestion banquaire des adherents",$lien);
-  form_constantes($constantes);
-}
-else
-{
-  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_BANK_USE">'.$langs->trans("Activate").'</a>';
-  print_fiche_titre("Gestion banquaire des adherents",$lien);
 }
 
 print "<hr>\n";
@@ -219,12 +239,11 @@ else
 }
 
 print "<hr>\n";
-$var=!$var;
+
 /*
  * Edition des varibales globales non rattache a un theme specifique 
  */
 $constantes=array(
-          'ADHERENT_MAIL_REQUIRED',
           'ADHERENT_TEXT_NEW_ADH',
 		  'ADHERENT_MAIL_COTIS_SUBJECT',
 		  'ADHERENT_MAIL_COTIS',
@@ -258,14 +277,14 @@ function form_constantes($tableau){
   // Variables globales
   global $db,$bc,$langs;
   $form = new Form($db);
-  print '<table class="noborder">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td>'.$langs->trans("Description").'</td>';
   print '<td>'.$langs->trans("Value").'</td>';
   print '<td>'.$langs->trans("Type").'</td>';
-  print '<td>'.$langs->trans("Action").'</td>';
+  print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
   print "</tr>\n";
-  $var=True;
+  $var=true;
   
   foreach($tableau as $const){
     $sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE name='$const'";
@@ -302,9 +321,9 @@ function form_constantes($tableau){
 	  print '</td><td>';
 	  $form->select_array('consttype',array('yesno','texte','chaine'),2);
 	}
-      print '</td><td>';
+      print '</td><td align="center">';
       
-      print '<input type="Submit" value="Update" name="Button"> &nbsp;';
+      print '<input type="Submit" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
 //      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
       print "</td></tr>\n";
       

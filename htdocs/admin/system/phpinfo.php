@@ -82,7 +82,7 @@ $chaine = eregi_replace('</h2>','</div>',$chaine);
 $chaine = eregi_replace('<td class="e">','<td class="impair">',$chaine);
 $chaine = eregi_replace('<td class="v">','<td class="pair">',$chaine);
  
-if ($title)
+if (isset($title))
 {
     print_titre($title);
     print '<br>';

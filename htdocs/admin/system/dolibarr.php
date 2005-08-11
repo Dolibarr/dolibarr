@@ -69,29 +69,37 @@ while (($file = readdir($handle))!==false)
             include_once("../../includes/modules/$file");
             $objMod = new $modName($db);
 
-            $modules[$objMod->numero]=$objMod->name;
-            $picto[$objMod->numero]=$objMod->picto?$objMod->picto:'generic';
-            $permissions[$objMod->numero]=$objMod->rights;
+            $modules[$objMod->numero]=$objMod;
+            $modules_names[$objMod->numero]=$objMod->name;
+
+            $picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
         }
     }
 }
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Modules").'</td>';
-print '<td>'.$langs->trans("Id").'</td>';
+print '<td>'.$langs->trans("Version").'</td>';
+print '<td align="center">'.$langs->trans("Id Module").'</td>';
 print '<td>'.$langs->trans("Id Permissions").'</td>';
 print '</tr>';
 $var=false;
-$sortorder=$modules;
+$sortorder=$modules_names;
 ksort($sortorder);
 foreach($sortorder as $numero=>$name) 
 {
     $idperms="";
     $var=!$var;
-    print "<tr $bc[$var]><td width=\"240\">".img_object("",$picto[$numero]).' '.$modules[$numero]."</td><td>".$numero."</td>";
-    if ($permissions[$numero])
+    // Module
+    print "<tr $bc[$var]><td width=\"240\">".img_object("",$picto[$numero]).' '.$modules[$numero]->getName()."</td>";
+    // Version
+    print '<td>'.$modules[$numero]->getVersion().'</td>';
+    // Id
+    print '<td align="center">'.$numero.'</td>';
+    // Permissions
+    if ($modules[$numero]->rights)
     {
-        foreach($permissions[$numero] as $rights)
+        foreach($modules[$numero]->rights as $rights)
         {
             $idperms.=($idperms?",":"").$rights[0];
         }

@@ -260,16 +260,61 @@ else
 
 
 /*
- * Mise a jour des date de création de contrat
+ * Mise a jour des dates de création de contrat
  */
 print '<br>';
-print "<b>Mise a jour des dates de création de contrat qui ont une valeur incohérentes</b><br>\n";
+print "<b>Mise a jour des dates de création de contrat qui ont une valeur incohérente</b><br>\n";
 
 $sql="update llx_contrat set datec=date_contrat where datec is null or datec > date_contrat";
 $resql = $db->query($sql);
 if (! $resql) dolibarr_print_error($db);
 if ($db->affected_rows() > 0) print "Ok<br>\n";
 else print "Pas ou plus de date de contrats à corriger.<br>\n";
+
+
+/*
+ * Reouverture des contrats qui ont au moins une ligne non fermée
+ */
+print '<br>';
+print "<b>Reouverture des contrats qui ont au moins un service actif non fermée</b><br>\n";
+
+$sql = "SELECT c.rowid as cref FROM llx_contrat as c, llx_contratdet as cd";
+$sql.= " WHERE cd.statut = 4 AND c.statut=2 AND c.rowid=cd.fk_contrat";
+$resql = $db->query($sql);
+if (! $resql) dolibarr_print_error($db);
+if ($db->affected_rows() > 0) {
+    $i = 0;
+    $row = array();
+    $num = $db->num_rows($resql);
+
+    if ($num)
+    {
+        $nbcontratsmodifie=0;
+        $db->begin();
+        
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+
+            print "Réouverture contrat ".$obj->cref."<br>\n";
+            $sql ="UPDATE ".MAIN_DB_PREFIX."contrat";
+            $sql.=" SET statut=1";
+            $sql.=" WHERE rowid=".$obj->cref;
+            $resql2=$db->query($sql);
+            if (! $resql2) dolibarr_print_error($db);
+            
+            $nbcontratsmodifie++;
+
+            $i++;
+        }
+
+        $db->commit();
+
+        if ($nbcontratsmodifie) print "$nbcontratsmodifie contrats modifiés<br>\n";
+        else print "Pas ou plus de contrats à corriger.<br>\n";
+    }
+}
+else print "Pas ou plus de contrats à réouvrir.<br>\n";
 
 
 print "<br>";

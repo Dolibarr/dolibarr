@@ -37,32 +37,36 @@ if (!$user->admin)
 accessforbidden();
 
 
+if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
+
+
 $dirtop = "../includes/menus/barre_top";
 $dirleft = "../includes/menus/barre_left";
 $dirtheme = "../theme";
 
 // Liste des zone de recherche permanantes supportées
 $searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
-$searchformconst=array(MAIN_SEARCHFORM_SOCIETE,MAIN_SEARCHFORM_CONTACT,MAIN_SEARCHFORM_PRODUITSERVICE);
+$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
 
 
 
-if ($_POST["action"] == 'update')
+if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
     dolibarr_set_const($db, "MAIN_LANG_DEFAULT",      $_POST["main_lang_default"]);
     dolibarr_set_const($db, "MAIN_MENU_BARRETOP",     $_POST["main_menu_barretop"]);
     dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",    $_POST["main_menu_barreleft"]);
-    dolibarr_set_const($db, "MAIN_THEME",             $_POST["main_theme"]);
-
     dolibarr_set_const($db, "SIZE_LISTE_LIMIT",       $_POST["size_liste_limit"]);
-    dolibarr_set_const($db, "MAIN_MOTD",              trim($_POST["main_motd"]));
+
+    dolibarr_set_const($db, "MAIN_THEME",             $_POST["main_theme"]);
 
     dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",$_POST["main_searchform_contact"]);
     dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",$_POST["main_searchform_societe"]);
     dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["main_searchform_produitservice"]);
 
-    $_SESSION["mainmenu"]="";
+    dolibarr_set_const($db, "MAIN_MOTD",              trim($_POST["main_motd"]));
+
+    $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
     Header("Location: ihm.php?mainmenu=home&leftmenu=setup");
 }
@@ -70,10 +74,6 @@ if ($_POST["action"] == 'update')
 
 llxHeader();
 
-if (!defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
-{
-    define("MAIN_MOTD","");
-}
 
 print_titre($langs->trans("GUISetup"));
 
@@ -81,7 +81,7 @@ print "<br>\n";
 
 
 
-if ($_GET["action"] == 'edit')
+if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
     print '<form method="post" action="ihm.php">';
     print '<input type="hidden" name="action" value="update">';
@@ -94,14 +94,14 @@ if ($_GET["action"] == 'edit')
 
     // Langue par defaut
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="30%">'.$langs->trans("DefaultLanguage").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
     $html=new Form($db);
-    $html->select_lang(MAIN_LANG_DEFAULT,'main_lang_default');
+    $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default');
     print '</td></tr>';
 
     // Menu top
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MenuTopManager").'</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td>';
     print '<td><select class="flat" name="main_menu_barretop">';
     $handle=opendir($dirtop);
     while (($file = readdir($handle))!==false)
@@ -109,7 +109,7 @@ if ($_GET["action"] == 'edit')
         if (is_file($dirtop."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
         {
             $filelib=eregi_replace('\.php$','',$file);
-            if ($file == MAIN_MENU_BARRETOP)
+            if ($file == $conf->global->MAIN_MENU_BARRETOP)
             {
                 print '<option value="'.$file.'" selected>'.$filelib.'</option>';
             }
@@ -125,7 +125,7 @@ if ($_GET["action"] == 'edit')
 
     // Menu left
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MenuLeftManager").'</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
     print '<td><select class="flat" name="main_menu_barreleft">';
     $handle=opendir($dirleft);
     while (($file = readdir($handle))!==false)
@@ -133,7 +133,7 @@ if ($_GET["action"] == 'edit')
         if (is_file($dirleft."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
         {
             $filelib=eregi_replace('\.php$','',$file);
-            if ($file == MAIN_MENU_BARRELEFT)
+            if ($file == $conf->global->MAIN_MENU_BARRELEFT)
             {
                 print '<option value="'.$file.'" selected>'.$filelib.'</option>';
             }
@@ -149,11 +149,7 @@ if ($_GET["action"] == 'edit')
 
     // Taille max des listes
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td><td><input class="flat" name="size_liste_limit" size="4" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
-
-    // Message of the day
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MessageOfDay").'</td><td><textarea cols="60" rows="3" name="main_motd" size="20">' .stripslashes(MAIN_MOTD) . '</textarea></td></tr>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="size_liste_limit" size="4" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
 
     print '</table><br>';
 
@@ -169,11 +165,22 @@ if ($_GET["action"] == 'edit')
     $var=True;
     foreach ($searchform as $key => $value) {
         $var=!$var;
-        print '<tr '.$bc[$var].'"><td>'.$searchformtitle[$key].'</td><td>';
+        print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>';
         $html->selectyesnonum($searchform[$key],$searchformconst[$key]);
         print '</td></tr>';
     }
     print '</table>';
+    print '<br>';
+
+
+    // Message of the day
+    $var=true;
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td><textarea cols="60" rows="3" name="main_motd" size="20">' . stripslashes($conf->global->MAIN_MOTD) . '</textarea></td></tr>';
+    print '</table>';
+    print '<br>';
 
     print '<div class="tabsAction">';
     print '<input class="tabAction" type="submit" value="'.$langs->trans("Save").'">';
@@ -189,25 +196,22 @@ else
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="30%">'.$langs->trans("DefaultLanguage").'</td><td>' . MAIN_LANG_DEFAULT . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>' . $conf->global->MAIN_LANG_DEFAULT . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MenuTopManager").'</td><td>';
-    $filelib=eregi_replace('\.php$','',MAIN_MENU_BARRETOP);
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td><td>';
+    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENU_BARRETOP);
     print $filelib;
     print '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MenuLeftManager").'</td><td>';
-    $filelib=eregi_replace('\.php$','',MAIN_MENU_BARRELEFT);
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuLeftManager").'</td><td>';
+    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENU_BARRELEFT);
     print $filelib;
     print '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td><td>' . SIZE_LISTE_LIMIT . '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MessageOfDay").'</td><td>' . stripslashes(nl2br(MAIN_MOTD)) . '</td></tr>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->SIZE_LISTE_LIMIT . '</td></tr>';
 
     print '</table><br>';
 
@@ -219,12 +223,20 @@ else
     // Liste des zone de recherche permanantes supportées
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
-    $var=True;
+    $var=true;
     foreach ($searchform as $key => $value) {
         $var=!$var;
-        print '<tr '.$bc[$var].'"><td>'.$searchformtitle[$key].'</td><td>' . ($searchformconst[$key]?$langs->trans("yes"):$langs->trans("no")) . '</td></tr>';
+        print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>' . ($searchformconst[$key]?$langs->trans("yes"):$langs->trans("no")) . '</td></tr>';
     }
     print '</table>';
+    print '<br>';
+
+    $var=true;
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>' . stripslashes(nl2br($conf->global->MAIN_MOTD)) . '</td></tr>';
+    print '</table><br>';
 
     print '<div class="tabsAction">';
     print '<a class="tabAction" href="ihm.php?action=edit">'.$langs->trans("Edit").'</a>';
@@ -235,11 +247,11 @@ else
 
 function show_theme($edit=0) 
 {
-    global $langs,$dirtheme,$bc;
+    global $conf,$langs,$dirtheme,$bc;
     
     $nbofthumbs=5;
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="'.$nbofthumbs.'">'.$langs->trans("Skin").'</td></tr>';
+    print '<tr class="liste_titre"><td colspan="'.$nbofthumbs.'">'.$langs->trans("DefaultSkin").'</td></tr>';
 
     $handle=opendir($dirtheme);
     $var=false;
@@ -256,7 +268,7 @@ function show_theme($edit=0)
             $file=$dirtheme."/".$subdir."/thumb.png";
             if (! file_exists($file)) $file=$dirtheme."/nophoto.jpg";
             print '<table><tr><td><img src="'.$file.'" width="80" height="60"></td></tr><tr><td align="center">';
-            if ($subdir == MAIN_THEME)
+            if ($subdir == $conf->global->MAIN_THEME)
             {
                 print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
             }
