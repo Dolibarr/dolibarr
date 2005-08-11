@@ -82,8 +82,15 @@ function llxHeader($head = "", $title="") {
       while ($i < $num)
 	{
 	  $row = $db->fetch_row($resql);
+
+	  $texte = $row[0];
+
+	  if (strlen($texte) > 15)
+	    {
+	      $texte = substr($texte,0,12)."...";
+	    }
 	  
-	  $menu->add_submenu(DOL_URL_ROOT.'/telephonie/distributeurs/distributeur.php?id='.$row[1], $row[0]);
+	  $menu->add_submenu(DOL_URL_ROOT.'/telephonie/distributeurs/distributeur.php?id='.$row[1], $texte);
 
 	  $i++;
 	}
