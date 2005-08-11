@@ -190,8 +190,13 @@ if ($resql)
   while ($i < $num)
     {
       $obj = $db->fetch_object($resql);
-
-      if (in_array($obj->rowid, $actives))
+	  
+      $module=eregi_replace('.php$','',$obj->file);
+      include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
+      
+      $box=new $module();
+            
+      if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
 	{
 	  // La boite est déjà activée
 	  // \todo
@@ -200,11 +205,6 @@ if ($resql)
       else
 	{
 	  $var = ! $var;
-	  
-	  $module=eregi_replace('.php$','',$obj->file);
-	  include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
-	  
-	  $box=new $module();
 	  
 	  print '<form action="boxes.php" method="POST">';
 	  $logo=eregi_replace("^object_","",$box->boximg);
