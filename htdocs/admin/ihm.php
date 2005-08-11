@@ -180,13 +180,13 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td><textarea cols="60" rows="3" name="main_motd" size="20">' . stripslashes($conf->global->MAIN_MOTD) . '</textarea></td></tr>';
     print '</table>';
-    print '<br>';
 
     print '<div class="tabsAction">';
     print '<input class="tabAction" type="submit" value="'.$langs->trans("Save").'">';
     print '</div>';
 
     print '</form>';
+    print '<br>';
 }
 else
 {
