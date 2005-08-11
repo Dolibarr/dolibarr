@@ -63,13 +63,13 @@ if ($_GET["id"])
 
   $consos = array();
 
-  $sql = "SELECT c.date, c.montant";
+  $sql = "SELECT c.date, sum(c.montant)";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso as c";
   
   $sql .= " WHERE c.fk_distributeur = ".$_GET["id"];
 
-  $sql .= " ORDER BY c.date DESC";
-    
+  $sql .= " GROUP BY c.date DESC";
+
   $resql = $db->query($sql);
   
   if ($resql)
