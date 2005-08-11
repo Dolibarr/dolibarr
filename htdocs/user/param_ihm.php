@@ -1,0 +1,273 @@
+<?php
+/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ */
+
+/**
+        \file       htdocs/user/param_ihm.php
+        \brief      Onglet parametrage de la fiche utilisateur
+        \version    $Revision$
+*/
+
+
+require("./pre.inc.php");
+
+$langs->load("companies");
+$langs->load("products");
+$langs->load("admin");
+$langs->load("users");
+
+
+if (!$user->admin)
+accessforbidden();
+
+
+$dirtop = "../includes/menus/barre_top";
+$dirleft = "../includes/menus/barre_left";
+$dirtheme = "../theme";
+
+// Liste des zone de recherche permanantes supportées
+$searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
+$searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
+$searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
+
+
+/*
+ * Actions
+ */
+if ($_POST["action"] == 'update')
+{
+    if ($_POST["cancel"])
+    {
+        $_GET["id"]=$_POST["id"];
+    }
+    else 
+    {
+        $tabparam=array();
+        
+        if ($_POST["check_MAIN_LANG_DEFAULT"]=="on") $tabparam["MAIN_LANG_DEFAULT"]=$_POST["main_lang_default"];
+        else $tabparam["MAIN_LANG_DEFAULT"]='';
+        
+        $tabparam["MAIN_MENU_BARRETOP"]=$_POST["main_menu_barretop"];
+        $tabparam["MAIN_MENU_BARRELEFT"]=$_POST["main_menu_barreleft"];
+    
+        if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["SIZE_LISTE_LIMIT"]=$_POST["size_liste_limit"];
+        else $tabparam["SIZE_LISTE_LIMIT"]='';
+    
+        $tabparam["MAIN_THEME"]=$_POST["main_theme"];
+    
+        $tabparam["MAIN_SEARCHFORM_CONTACT"]=$_POST["main_searchform_contact"];
+        $tabparam["MAIN_SEARCHFORM_SOCIETE"]=$_POST["main_searchform_societe"];
+        $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
+    
+        dolibarr_set_user_page_param($db, $user, '', $tabparam);
+        
+        $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
+    
+        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST["id"]);
+        exit;
+    }
+}
+
+
+
+llxHeader();
+
+
+$fuser = new User($db, $_GET["id"]);
+$fuser->fetch();
+$fuser->getrights();
+
+
+/*
+ * Affichage onglets
+ */
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
+$head[$h][1] = $langs->trans("UserCard");
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
+$head[$h][1] = $langs->trans("UserRights");
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$fuser->id;
+$head[$h][1] = $langs->trans("UserGUISetup");
+$hselected=$h;
+$h++;
+
+if ($conf->bookmark4u->enabled)
+{
+    $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
+    $head[$h][1] = $langs->trans("Bookmark4u");
+    $h++;
+}
+
+if ($conf->clicktodial->enabled)
+{
+    $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
+    $head[$h][1] = $langs->trans("ClickToDial");
+    $h++;
+}
+
+dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
+
+
+
+
+if ($_GET["action"] == 'edit')
+{
+    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+
+    clearstatcache();
+    $var=true;
+    
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+
+    // Langue par defaut
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Language").'</td>';
+    print '<td>'.$conf->global->MAIN_LANG_DEFAULT.'</td>';
+    print '<td align="center"><input name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($user->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td>';
+    $html=new Form($db);
+    $html->select_lang($user->conf->MAIN_LANG_DEFAULT,'main_lang_default');
+    print '</td></tr>';
+
+    // Taille max des listes
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
+    print '<td>'.$conf->global->SIZE_LISTE_LIMIT.'</td>';
+    print '<td align="center"><input name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($user->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td><input class="flat" name="size_liste_limit" size="4" value="' . $user->conf->SIZE_LISTE_LIMIT . '"></td></tr>';
+
+    print '</table><br>';
+
+
+    // Theme
+    show_theme(1);
+    print '<br>';
+
+    print '</div>';
+
+    print '<center>';
+    print '<input type="submit" name="save" value="'.$langs->trans("Save").'">';
+    print ' &nbsp; &nbsp; ';
+    print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</center>';
+    print '</form>';
+    
+}
+else
+{
+    $var=true;
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Language").'</td>';
+    print '<td>'.$conf->global->MAIN_LANG_DEFAULT.'</td>';
+    print '<td align="center"><input type="checkbox" disabled '.($user->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td>' . $user->conf->MAIN_LANG_DEFAULT . '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
+    print '<td>'.$conf->global->SIZE_LISTE_LIMIT.'</td>';
+    print '<td align="center"><input type="checkbox" disabled '.($user->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td>' . $user->conf->SIZE_LISTE_LIMIT . '</td></tr>';
+
+    print '</table><br>';
+
+
+    // Skin
+    show_theme(0);
+    print '<br>';
+
+    print '</div>';
+
+    print '<div class="tabsAction">';
+    if ($user->id == $_GET["id"])       // Si fiche de l'utilisateur courant
+    {
+        print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Edit").'</a>';
+    }
+    print '</div>';
+
+}
+
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
+
+
+function show_theme($edit=0) 
+{
+    global $langs,$dirtheme,$bc;
+    
+    $nbofthumbs=5;
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="'.$nbofthumbs.'">'.$langs->trans("Skin").'</td></tr>';
+
+    $handle=opendir($dirtheme);
+    $var=false;
+    $i=0;
+    while (($subdir = readdir($handle))!==false)
+    {
+        if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.' && substr($subdir, 0, 3) <> 'CVS')
+        {
+            if ($i % $nbofthumbs == 0) {
+                print '<tr '.$bc[$var].'>';
+            }
+            
+            print '<td align="center">';
+            $file=$dirtheme."/".$subdir."/thumb.png";
+            if (! file_exists($file)) $file=$dirtheme."/nophoto.jpg";
+            print '<table><tr><td><img src="'.$file.'" width="80" height="60"></td></tr><tr><td align="center">';
+            if ($subdir == MAIN_THEME)
+            {
+                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
+            }
+            else
+            {
+                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
+            }
+            print '</td></tr></table></td>';
+
+            $i++;
+
+            if ($i % $nbofthumbs == 0) print '</tr>';
+        }
+    }
+    if ($i % $nbofthumbs != 0) {
+        while ($i % $nbofthumbs != 0) {
+            print '<td>&nbsp;</td>';
+            $i++;
+        }
+        print '</tr>';
+    }    
+
+    print '</table>';
+}
+
+?>
