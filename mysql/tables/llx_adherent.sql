@@ -50,7 +50,7 @@ create table llx_adherent
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer NOT NULL,
   fk_user_valid    integer NOT NULL,
-  datefin          datetime NOT NULL, -- date de fin de validité de la cotisation
+  datefin          datetime,  -- date de fin de validité de la cotisation
   note             text,
  
   UNIQUE INDEX(login)
