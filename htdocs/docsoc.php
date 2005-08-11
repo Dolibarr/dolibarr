@@ -22,7 +22,7 @@
 
 /**
         \file       htdocs/docsoc.php
-        \brief      Fichier onglet documents liés à la sociét
+        \brief      Fichier onglet documents liés à la société
         \ingroup    societe
         \version    $Revision$
 */
@@ -192,7 +192,7 @@ if ($socid > 0)
             print '<input type="hidden" name="max_file_size" value="2000000">';
             print '<input class="flat" type="file" name="userfile" size="40" maxlength="80">';
             print ' &nbsp; ';
-            print '<input type="submit" value="'.$langs->trans("Add").'" name="sendit">';
+            print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="sendit">';
 
             print "</td></tr>";
             print "</table>";
