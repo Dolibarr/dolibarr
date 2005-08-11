@@ -48,7 +48,8 @@ class DoliDb
     var $database_selected;       // 1 si base sélectionné, 0 sinon
     var $database_name;			  // Nom base sélectionnée
     var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
-
+    var $lastquery;
+    
     var $ok;
     var $error;
     
@@ -546,7 +547,13 @@ class DoliDb
     function list_tables($database)
     {
         $this->results = mysql_list_tables($database, $this->db);
-        return  $this->results;
+        return $this->results;
+    }
+
+
+    function setLastQuery($s)
+    {
+        $this->lastquery=$s;
     }
 
 
