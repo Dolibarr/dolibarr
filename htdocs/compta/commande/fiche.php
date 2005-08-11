@@ -78,7 +78,7 @@ $html = new Form($db);
   
 if ($_GET["id"] > 0)
 {
-  $commande = New Commande($db);
+  $commande = new Commande($db);
   if ( $commande->fetch($_GET["id"]) > 0)
     {	  
       $soc = new Societe($db);
@@ -111,56 +111,84 @@ if ($_GET["id"] > 0)
     	  $h++;
         }
  
-       dolibarr_fiche_head($head, $hselected, $soc->nom." / ".$langs->trans("Order")." : $commande->ref");
-      
-      /*
-       *   Commande
-       */
-      print '<table class="border" width="100%">';
-      print '<tr><td width="20%">'.$langs->trans("Order")."</td>";
-      print '<td width="15%">'.$commande->ref.'</td>';
-      print '<td width="15%" align="center">'.$commande->statuts[$commande->statut].'</td>';
-      print '<td width="50%">';
+      $head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
+      $head[$h][1] = $langs->trans("Info");
+      $h++;
 
-      if ($conf->projet->enabled) 
-	{
-	  $langs->load("projects");
-	  if ($commande->projet_id > 0)
+       dolibarr_fiche_head($head, $hselected, $langs->trans("Order").": $commande->ref");
+      
+	  /*
+	   *   Commande
+	   */
+	  print '<table class="border" width="100%">';
+	  print '<tr><td width="15%">'.$langs->trans("Ref")."</td>";
+	  print '<td colspan="2">'.$commande->ref.'</td>';
+	  print '<td>'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
+	  if ($commande->source == 0)
 	    {
-	      print $langs->trans("Project").' : ';
-	      $projet = New Project($db);
-	      $projet->fetch($commande->projet_id);
-	      print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$commande->projet_id.'">'.$projet->title.'</a>';
+	      /* Propale */
+	      $propal = new Propal($db);
+	      $propal->fetch($commande->propale_id);
+	      print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
 	    }
-	}
-      print '&nbsp;</td></tr>';
+	  print "</td></tr>";
 
-      print "<tr><td>".$langs->trans("Customer")."</td>";
-      print '<td colspan="2">';
-      print '<b><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
-      
-      print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
-      if ($commande->source == 0)
-	{
-	  /* Propale */
-	  $propal = new Propal($db);
-	  $propal->fetch($commande->propale_id);
-	  print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
-	}
-      print "</td></tr>";
-      
-      print '<tr><td>'.$langs->trans("Date").'</td>';
-      print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"%A %d %B %Y")."</td>\n";
-      
-      print '<td width="50%">';
-      
-      print $langs->trans("Author").' : '.$author->fullname.'</td></tr>';
-            
-      // Ligne de 3 colonnes
+	  print "<tr><td>".$langs->trans("Customer")."</td>";
+	  print '<td colspan="3">';
+	  print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+	  print '</tr>';
+	  
+	  print '<tr><td>'.$langs->trans("Status").'</td>';
+	  print "<td colspan=\"2\">".$commande->statuts[$commande->statut]."</td>\n";
+        $nbrow=6;
+        if ($conf->projet->enabled) $nbrow++;
+        print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans("Note").' :<br>';
+        if ($commande->brouillon == 1 && $user->rights->commande->creer) 
+        {
+        	print '<form action="fiche.php?id='.$id.'" method="post">';
+        	print '<input type="hidden" name="action" value="setnote">';
+        	print '<textarea name="note" style="width:95%;height:"80%">'.$commande->note.'</textarea><br>';
+        	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+        	print '</form>';
+        }
+        else
+        {
+        	print nl2br($commande->note);
+        }
+        print '</td></tr>';
+
+	  print '<tr><td>'.$langs->trans("Date").'</td>';
+	  print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"%A %d %B %Y")."</td>\n";
+      print '</tr>';
+
+            // Projet
+            if ($conf->projet->enabled)
+            {
+                $langs->load("projects");
+                print '<td height="10">';
+                print '<table class="nobordernopadding" width="100%"><tr><td>';
+                print $langs->trans("Project");
+                print '</td>';
+                //if ($_GET["action"] != "classer") print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+                print '</tr></table>';
+                print '</td><td colspan="2">';
+                if ($_GET["action"] == "classer")
+                {
+                    $html->form_project($_SERVER["PHP_SELF"]."?id=$commande->id",$commande->fk_soc,$commande->projetid,"projetid");
+                }
+                else
+                {
+                    $html->form_project($_SERVER["PHP_SELF"]."?id=$commande->id",$commande->fk_soc,$commande->projetid,"none");
+                }
+                print "</td>";
+            } else {
+                print '<td height="10">&nbsp;</td><td colspan="2">&nbsp;</td>';
+            }
+          
+		// Lignes de 3 colonnes
       print '<tr><td>'.$langs->trans("AmountHT").'</td>';
       print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td>';
-      print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :<br>'.nl2br($commande->note).'</td></tr>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
       
       print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
       print $commande->remise_percent.' %</td><td>&nbsp;';
@@ -198,10 +226,12 @@ if ($_GET["id"] > 0)
 	      print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
 	      print "</tr>\n";
 	    }
-	  $var=True;
+
+	      $var=true;
 	  while ($i < $num)
 	    {
 	      $objp = $db->fetch_object($result);
+        
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
 	      if ($objp->fk_product > 0)
@@ -241,7 +271,7 @@ if ($_GET["id"] > 0)
 
 
         /*
-         * Barre d'actions
+     	 * Boutons actions
          */
         
         if (! $user->societe_id && ! $commande->facturee)
