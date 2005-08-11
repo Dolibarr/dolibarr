@@ -133,12 +133,14 @@ class Account
 
     /**
      *    \brief      Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
-     *    \return     int     rowid de l'entrée ajoutée, < 0 si erreur
+     *    \return     int     rowid de l'entrée ajoutée, <0 si erreur
      */
     function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user='')
     {
+        dolibarr_syslog("Account::addline: $date, $oper, $label, $amount, $num_chq, $categorie, $user");
         if ($this->rowid)
         {
+            $this->db->begin();
 
             switch ($oper)
             {
@@ -179,16 +181,25 @@ class Account
                     $result = $this->db->query($sql);
                     if (! $result)
                     {
-                        return -2;
+                        $this->db->rollback();
+                        $this->error=$this->db->error();
+                        return -3;
                     }
                 }
+                $this->db->commit();
                 return $rowid;
             }
             else
             {
-                dolibarr_print_error($this->db);
-                return -1;
+                $this->db->rollback();
+                $this->error=$this->db->error();
+                return -2;
             }
+        }
+        else 
+        {
+            $this->error="Account::addline rowid not defined";
+            return -1;
         }
     }
 
