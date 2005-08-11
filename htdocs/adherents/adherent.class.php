@@ -52,6 +52,8 @@ class Adherent
   var $adresse;
   var $cp;
   var $ville;
+  var $pays_id;
+  var $pays_code;
   var $pays;
   var $typeid;
   var $morphy;
@@ -98,6 +100,7 @@ class Adherent
 		\remarks	%INFOS% : l'ensemble des attributs de cet adherent
 		\remarks	%SERVEUR% : URL du serveur web
 		\remarks	etc..
+		\todo       Utiliser classe CMailFile
 */
 
   function send_an_email($recipients,$text,$subject="Vos coordonnees sur %SERVEUR%")
@@ -169,21 +172,22 @@ class Adherent
 
 
 /**
-		\brief  fonction qui renvoie la nature physique ou morale d'un adherent
-		\param	morphy		nature physique ou morale de l'adhérent
+		\brief      Renvoie le libelle traduit de la nature d'un adherent (physique ou morale)
+		\param	    morphy		Nature physique ou morale de l'adhérent
 */
 
   function getmorphylib($morphy='')
   {
+    global $langs;
     if (! $morphy) { $morphy=$this->morphy; }
-    if ($morphy == 'phy') { return "Physique"; }
-    if ($morphy == 'mor') { return "Morale"; }
+    if ($morphy == 'phy') { return $langs->trans("Physical"); }
+    if ($morphy == 'mor') { return $langs->trans("Moral"); }
     return $morphy;
   }
 
 /**
-		\brief  fonction qui vérifie les données entrées
-		\param	minimum
+		\brief      Vérifie les données entrées
+		\param	    minimum
 */
 
   function check($minimum=0)
@@ -318,8 +322,8 @@ class Adherent
   function update() 
     {
 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
-    $sql .= "prenom = '".$this->prenom ."'";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+    $sql .= " prenom = '".$this->prenom ."'";
     $sql .= ",nom='"    .$this->nom."'";
     $sql .= ",societe='".$this->societe."'";
     $sql .= ",adresse='".$this->adresse."'";
@@ -330,7 +334,8 @@ class Adherent
     $sql .= ",email='"  .$this->email."'";
     $sql .= ",login='"  .$this->login."'";
     $sql .= ",pass='"   .$this->pass."'";
-    $sql .= ",naiss='"  .$this->naiss."'";
+    if ($this->naiss) $sql .= ",naiss='"  .$this->naiss."'";
+    else $sql .= ",naiss=null";
     $sql .= ",photo='"  .$this->photo."'";
     $sql .= ",public='" .$this->public."'";
     $sql .= ",statut="  .$this->statut;
@@ -454,55 +459,61 @@ class Adherent
   }
 
 
-/**
-		\brief fonction qui récupére l'adhérent en donnant son rowid
-		\param	rowid
-*/
-	function fetch($rowid)
-  {
-    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy, t.libelle as type";
-    $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
-    $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-    $sql .= " WHERE d.rowid = $rowid AND d.fk_adherent_type = t.rowid";
-
-    $result=$this->db->query( $sql);
-
-    if ($result)
-      {
-	if ($this->db->num_rows())
-	  {
-
-	    $obj = $this->db->fetch_object($result);
-
-	    $this->id             = $obj->rowid;
-	    $this->typeid         = $obj->fk_adherent_type;
-	    $this->type           = $obj->type;
-	    $this->statut         = $obj->statut;
-	    $this->public         = $obj->public;
-	    $this->date           = $obj->datedon;
-	    $this->prenom         = stripslashes($obj->prenom);
-	    $this->nom            = stripslashes($obj->nom);
-	    $this->societe        = stripslashes($obj->societe);
-	    $this->adresse        = stripslashes($obj->adresse);
-	    $this->cp             = stripslashes($obj->cp);
-	    $this->ville          = stripslashes($obj->ville);
-	    $this->email          = stripslashes($obj->email);
-	    $this->login          = stripslashes($obj->login);
-	    $this->pass           = stripslashes($obj->pass);
-	    $this->naiss          = stripslashes($obj->naiss);
-	    $this->photo          = stripslashes($obj->photo);
-	    $this->pays           = stripslashes($obj->pays);
-	    $this->datefin        = $obj->datefin;
-	    $this->commentaire    = stripslashes($obj->note);
-	    $this->morphy         = $obj->morphy;
-	  }
-      }
-    else
-      {
-      dolibarr_print_error($this->db);
-      }
+    /**
+    		\brief fonction qui récupére l'adhérent en donnant son rowid
+    		\param	rowid
+    */
+    function fetch($rowid)
+    {
+        global $langs;
+        
+        $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy, t.libelle as type";
+        $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
+        $sql .= ", d.pays, p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib";
+        $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
+        $sql .= " WHERE d.rowid = $rowid AND d.fk_adherent_type = t.rowid";
     
-  }
+        $result=$this->db->query( $sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+    
+                $this->id             = $obj->rowid;
+                $this->typeid         = $obj->fk_adherent_type;
+                $this->type           = $obj->type;
+                $this->statut         = $obj->statut;
+                $this->public         = $obj->public;
+                $this->date           = $obj->datedon;
+                $this->prenom         = stripslashes($obj->prenom);
+                $this->nom            = stripslashes($obj->nom);
+                $this->societe        = stripslashes($obj->societe);
+                $this->adresse        = stripslashes($obj->adresse);
+                $this->cp             = stripslashes($obj->cp);
+                $this->ville          = stripslashes($obj->ville);
+                $this->pays_id        = $obj->pays_id;
+                $this->pays_code      = $obj->pays_code;
+                if ($langs->trans("Country".$obj->pays_code) != "Country".$obj->pays_code) $this->pays = $langs->trans("Country".$obj->pays_code);
+                elseif ($obj->pays_lib) $this->pays=$obj->pays_lib;
+                else $this->pays=$obj->pays;
+                $this->email          = stripslashes($obj->email);
+                $this->login          = stripslashes($obj->login);
+                $this->pass           = stripslashes($obj->pass);
+                $this->naiss          = stripslashes($obj->naiss);
+                $this->photo          = stripslashes($obj->photo);
+                $this->datefin        = $obj->datefin;
+                $this->commentaire    = stripslashes($obj->note);
+                $this->morphy         = $obj->morphy;
+            }
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    
+    }
 
   
 /**
@@ -580,49 +591,57 @@ class Adherent
     
   }
   
-/**
-		\brief fonction qui insère la cotisation dans la base de données
-		\param	date
-		\param	montant
-*/
-
-  function cotisation($date, $montant)
-
-  {
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, dateadh, cotisation)";
-    $sql .= " VALUES ($this->id, ".$this->db->idate($date).", $montant)";
-
-    $result=$this->db->query( $sql);
-    
-    if ($result)
+    /**
+    		\brief      Fonction qui insère la cotisation dans la base de données
+    		\param	    date        Date cotisation
+    		\param	    montant     Montant cotisation
+            \return     int         rowid de l'entrée ajoutée, <0 si erreur
+    */
+    function cotisation($date, $montant)
     {
-        if ( $this->db->affected_rows() )
+        $this->db->begin();
+            
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, cotisation)";
+        $sql .= " VALUES ($this->id, now(), ".$this->db->idate($date).", $montant)";
+    
+        $result=$this->db->query($sql);
+        if ($result)
         {
-            $rowid=$this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
-            $datefin = mktime(12, 0 , 0,
-            strftime("%m",$date),
-            strftime("%d",$date),
-            strftime("%Y",$date)+1) - (24 * 3600);
-    
-            $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin)." WHERE rowid =". $this->id;
-    
-            if ( $this->db->query( $sql) )
+            if ( $this->db->affected_rows($result) )
             {
-                return $rowid;
+                $rowid=$this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
+                $datefin = mktime(12, 0 , 0,
+                strftime("%m",$date),
+                strftime("%d",$date),
+                strftime("%Y",$date)+1) - (24 * 3600);
+    
+                $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin)." WHERE rowid =". $this->id;
+                if ( $this->db->query( $sql) )
+                {
+                    $this->db->commit();
+                    return $rowid;
+                }
+                else 
+                {
+                    $this->error=$this->db->error();
+                    $this->db->rollback();
+                    return -3;
+                }            
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                $this->db->rollback();
+                return -2;
             }
         }
         else
         {
-            return 0;
+            $this->error=$this->db->error();
+            $this->db->rollback();
+            return -1;
         }
     }
-    else
-    {
-        dolibarr_print_error($this->db);
-        return 0;
-    }
-  }
 
 /**
 		\brief fonction qui vérifie que l'utilisateur est valide

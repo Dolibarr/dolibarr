@@ -67,27 +67,30 @@ if ($_POST["action"] == 'cotisation')
     $adh = new Adherent($db);
     $adh->id = $rowid;
     $adh->fetch($rowid);
-    if ($cotisation >= 0)
+    if ($cotisation > 0)
     {
+        $db->begin();
+        
         // rajout du nouveau cotisant dans les listes qui vont bien
         //      if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == "0000-00-00 00:00:00"){
         if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == 0){
             $adh->add_to_mailman(ADHERENT_MAILMAN_LISTS_COTISANT);
         }
+
         $crowid=$adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
-        if (defined("ADHERENT_MAIL_COTIS") && defined("ADHERENT_MAIL_COTIS_SUBJECT")){
-            $adh->send_an_email($adh->email,ADHERENT_MAIL_COTIS,ADHERENT_MAIL_COTIS_SUBJECT);
-        }
+
         // insertion dans la gestion banquaire si configure pour
-        if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 &&
-        defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
+        if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE)
+        {
+            $acct=new Account($db,$_POST["accountid"]);
+
             $dateop=strftime("%Y%m%d",time());
             $amount=$cotisation;
-            $acct=new Account($db,ADHERENT_BANK_ACCOUNT);
-            $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE,$user);
-            if ($insertid == '')
+            $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"], '', $user);
+            if ($insertid <= 0)
             {
-                dolibarr_print_error($db);
+                $db->rollback();
+                dolibarr_print_error($db,$acct->error);
             }
             else
             {
@@ -96,14 +99,25 @@ if ($_POST["action"] == 'cotisation')
                 $result = $db->query($sql);
                 if ($result)
                 {
+                    $db->commit();
                     //Header("Location: fiche.php");
                 }
                 else
                 {
+                    $db->rollback();
                     dolibarr_print_error($db);
                 }
             }
         }
+        else
+        {
+            $db->commit();
+        }
+
+        if (defined("ADHERENT_MAIL_COTIS") && defined("ADHERENT_MAIL_COTIS_SUBJECT")){
+            $adh->send_an_email($adh->email,ADHERENT_MAIL_COTIS,ADHERENT_MAIL_COTIS_SUBJECT);
+        }
+
     }
     $action = "edit";
 }
@@ -117,13 +131,13 @@ if ($_POST["action"] == 'add')
     $adresse=$_POST["adresse"];
     $cp=$_POST["cp"];
     $ville=$_POST["ville"];
-    $naiss=$_POST["pays"];
+    $pays=$_POST["pays"];
     $email=$_POST["email"];
     $login=$_POST["login"];
     $pass=$_POST["pass"];
     $naiss=$_POST["naiss"];
-    $naiss=$_POST["photo"];
-    $naiss=$_POST["note"];
+    $photo=$_POST["photo"];
+    $note=$_POST["note"];
     $comment=$_POST["comment"];
     $morphy=$_POST["morphy"];
     $reday=$_POST["reday"];
@@ -138,13 +152,13 @@ if ($_POST["action"] == 'add')
     $adh->adresse     = $adresse;
     $adh->cp          = $cp;
     $adh->ville       = $ville;
+    $adh->pays        = $pays;
     $adh->email       = $email;
     $adh->login       = $login;
     $adh->pass        = $pass;
     $adh->naiss       = $naiss;
     $adh->photo       = $photo;
     $adh->note        = $note;
-    $adh->pays        = $pays;
     $adh->typeid      = $type;
     $adh->commentaire = $comment;
     $adh->morphy      = $morphy;
@@ -202,8 +216,9 @@ if ($_POST["action"] == 'add')
     } else {
         $public=0;
     }
-    if (!$error) {
 
+    if (!$error)
+    {
         // Email a peu pres correct et le login n'existe pas
         if ($adh->create($user->id))
         {
@@ -211,12 +226,12 @@ if ($_POST["action"] == 'add')
             {
                 $crowid=$adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
                 // insertion dans la gestion banquaire si configure pour
-                if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 &&
-                defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
+                if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE)
+                {
                     $dateop=strftime("%Y%m%d",time());
                     $amount=$cotisation;
-                    $acct=new Account($db,ADHERENT_BANK_ACCOUNT);
-                    $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE);
+                    $acct=new Account($db,$_POST["accountid"]);
+                    $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"], '', $user);
                     if ($insertid == '')
                     {
                         dolibarr_print_error($db);
@@ -401,59 +416,58 @@ if ($action == 'create')
     $htmls->select_array("morphy",  $morphys);
     print "</td>\n";
 
-    print '<td valign="top" rowspan="13"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
+    print '<td valign="top" rowspan="12"><textarea name="comment" wrap="soft" cols="40" rows="16"></textarea></td></tr>';
 
-    print '<tr><td>'.$langs->trans("Firstname").'*</td><td><input type="text" name="prenom" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("Address").'</td><td>';
-    print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
-    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("EMail").(ADHERENT_MAIL_REQUIRED&&ADHERENT_MAIL_REQUIRED==1?'*':'').'</td><td><input type="text" name="email" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="login" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="pass" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("Birthday").'<br>('.$langs->trans("DateFormatYYYYMMDD").')</td><td><input type="text" name="naiss" size="10"></td></tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'*</td><td><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" value="'.$adh->nom.'" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
+    print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
+    print '<textarea name="adresse" wrap="soft" cols="40" rows="2"></textarea></td></tr>';
+    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40" value="'.$adh->ville.'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Country").'</td><td>';
+    $htmls->select_pays($adh->pays?$adh->pays:MAIN_INFO_SOCIETE_PAYS,'pays');
+    print '</td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").(ADHERENT_MAIL_REQUIRED&&ADHERENT_MAIL_REQUIRED==1?'*':'').'</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="pass" size="40" value="'.$adh->password.'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Birthday").'</td><td><input type="text" name="naiss" size="10"> ('.$langs->trans("DateFormatYYYYMMDD").')</td></tr>';
     print '<tr><td>Url photo</td><td><input type="text" name="photo" size="40"></td></tr>';
     foreach($adho->attribute_label as $key=>$value){
         print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
     }
+    print "</table>\n";
+    print '<br>';
 
+    // Boite cotisations
+    print '<table class="border" width="100%">';
     print "<tr><td>".$langs->trans("DateSubscription")."</td><td>\n";
     $htmls->select_date();
     print "</td></tr>\n";
-    print '<tr><td>Mode de paiment</td><td>';
 
-    print '<select name="operation">';
-    print '<option value="CHQ" selected>Chèque';
-    print '<option value="CB">Carte Bleue';
-    print '<option value="DEP">Espece';
-    print '<option value="TIP">TIP';
-    print '<option value="PRE">PRE';
-    print '<option value="VIR">Virement';
-    print '</select>';
-    //  $paiement = new Paiement($db);
+    if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE)
+    {
+        print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
+        $htmls->select_types_paiements('','operation');
+        print "</td></tr>\n";
 
-    //  $paiement->select("modepaiement","crédit");
+        print '<tr><td>'.$langs->trans("FinancialAccount").'</td><td>';
+        $htmls->select_comptes('','accountid');
+        print "</td></tr>\n";
 
-    print "</td></tr>\n";
-
-    if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 &&
-    defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
-        print "<tr><td>Numero de cheque</td><td>\n";
+        print '<tr><td>'.$langs->trans("Numero").'</td><td>';
         print '<input name="num_chq" type="text" size="6">';
         print "</td></tr>\n";
-    }
-    print '<tr><td>'.$langs->trans("Subscription").'</td><td><input type="text" name="cotisation" size="6">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-    if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 && defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
-        print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" type="text" size=20 value="'.$langs->trans("Subscription").' " ></td></tr>';
+        print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" type="text" size="50" value="'.$langs->trans("Subscription").' " ></td></tr>';
     }
+    print '<tr><td>'.$langs->trans("Subscription").'</td><td><input type="text" name="cotisation" size="6"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-    print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("AddMember").'"></td></tr>';
-    print "</form>\n";
     print "</table>\n";
+    print '<br>';
+    
+    print '<center><input type="submit" value="'.$langs->trans("AddMember").'"></center>';
 
+    print "</form>\n";
 
 }
 
@@ -476,12 +490,12 @@ if ($rowid)
     $html = new Form($db);
 
     /*
-    * Affichage onglets
-    */
+     * Affichage onglets
+     */
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$rowid;
-    $head[$h][1] = $langs->trans("Member");
+    $head[$h][1] = $langs->trans("MemberCard");
     $hselected=$h;
     $h++;
 
@@ -492,7 +506,8 @@ if ($rowid)
     */
     if ($action == 'delete')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid","Supprimer un adhérent","Etes-vous sûr de vouloir supprimer cet adhérent (La suppression d'un adhérent entraine la suppression de toutes ses cotisations !)","confirm_delete");
+        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_delete");
+        print '<br>';
     }
 
     /*
@@ -500,7 +515,8 @@ if ($rowid)
     */
     if ($action == 'valid')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid","Valider un adhérent","Etes-vous sûr de vouloir valider cet adhérent ?","confirm_valid");
+        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid");
+        print '<br>';
     }
 
     /*
@@ -508,7 +524,8 @@ if ($rowid)
     */
     if ($action == 'resign')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid","Résilier une adhésion","Etes-vous sûr de vouloir résilier cet adhérent ?","confirm_resign");
+        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign");
+        print '<br>';
     }
 
     /*
@@ -517,6 +534,7 @@ if ($rowid)
     if ($action == 'add_glasnost')
     {
         $html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans glasnost","Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_add_glasnost");
+        print '<br>';
     }
 
     /*
@@ -525,6 +543,7 @@ if ($rowid)
     if ($action == 'del_glasnost')
     {
         $html->form_confirm("fiche.php?rowid=$rowid","Supprimer dans glasnost","Etes-vous sur de vouloir effacer cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_del_glasnost");
+        print '<br>';
     }
 
     /*
@@ -533,6 +552,7 @@ if ($rowid)
     if ($action == 'add_spip')
     {
         $html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans spip","Etes-vous sur de vouloir ajouter cet adhérent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_add_spip");
+        print '<br>';
     }
 
     /*
@@ -542,6 +562,7 @@ if ($rowid)
     {
         $html->form_confirm("fiche.php?rowid=$rowid","Supprimer dans spip","Etes-vous sur de vouloir effacer cet adhérent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_del_spip");
         $html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans glasnost","Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_del_spip");
+        print '<br>';
     }
 
 
@@ -556,7 +577,7 @@ if ($rowid)
     print '<td rowspan="'.(14+count($adh->array_options)).'" valign="top" width="50%">';
     print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 
-    print '<tr><td>Personne</td><td class="valeur">'.$adh->getmorphylib().'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->getmorphylib().'&nbsp;</td></tr>';
 
     print '<tr><td width="15%">'.$langs->trans("Firstname").'*</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
 
@@ -565,7 +586,7 @@ if ($rowid)
     print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
-    print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$adh->pays.'</td></tr>';
     print '<tr><td>'.$langs->trans("EMail").(ADHERENT_MAIL_REQUIRED&&ADHERENT_MAIL_REQUIRED==1?'*':'').'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Login").'*</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
     //  print '<tr><td>Pass</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
@@ -583,7 +604,6 @@ if ($rowid)
     
     print '</form>';
     print "</table>\n";
-    print "<br>";
     
     print "</div>\n";
 
@@ -595,26 +615,26 @@ if ($rowid)
     print '<div class="tabsAction">';
     
     
-    print "<a class=\"tabAction\" href=\"edit.php?rowid=$rowid\">".$langs->trans("Edit")."</a>";
+    print "<a class=\"butAction\" href=\"edit.php?rowid=$rowid\">".$langs->trans("Edit")."</a>";
     
     // Valider
     if ($adh->statut < 1)
     {
-        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
+        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
     }
     
     // Envoi fiche par mail
-    print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
+    print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
     
     // Résilier
     if ($adh->statut == 1)
     {
-        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
+        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
     }
     
     // Supprimer
     if ($user->admin) {
-        print "<a class=\"butDelete\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
+        print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
     }
         
     // Action Glasnost
@@ -684,7 +704,7 @@ if ($rowid)
         print "<table class=\"noborder\" width=\"100%\">\n";
     
         print '<tr class="liste_titre">';
-        print "<td>Date cotisations</td>\n";
+        print '<td>'.$langs->trans("DateSubscription").'</td>';
         print "<td align=\"right\">".$langs->trans("Amount")."</td>\n";
         print "</tr>\n";
     
@@ -711,10 +731,8 @@ if ($rowid)
     
     /*
      * Ajout d'une nouvelle cotisation
-     *
      */
-    // \todo Ajout du droit adherent cotisation
-    if ($user->rights->adherent->cotisation || 1==1)
+    if ($user->rights->adherent->cotisation->creer)
     {
         print "<table class=\"border\" width=\"100%\">\n";
     
@@ -723,22 +741,28 @@ if ($rowid)
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
     
         print '<tr><td width="15%">'.$langs->trans("SubscriptionEndDate").'</td>';
-        if ($adh->datefin < time())
+        print '<td width="35%">';
+        if ($adh->datefin)
         {
-            print '<td width="35%">';
-            print dolibarr_print_date($adh->datefin)." ".img_warning($langs->trans("Late"));
+            if ($adh->datefin < time())
+            {
+                print dolibarr_print_date($adh->datefin)." ".img_warning($langs->trans("Late"));
+            }
+            else
+            {
+                print dolibarr_print_date($adh->datefin);
+            }
         }
         else
         {
-            print '<td width="35%">';
-            print dolibarr_print_date($adh->datefin);
+            print $langs->trans("SubscriptionNotReceived")." ".img_warning($langs->trans("Late"));
         }
         print '</td>';
         print '</tr>';
     
-        print '<tr><td colspan="2">'.$langs->trans("NewCotisation").'</td></tr>';
+        print '<tr><td colspan="2"><b>'.$langs->trans("NewCotisation").'</b></td></tr>';
     
-        print "<tr><td>Date de cotisation</td><td>\n";
+        print '<tr><td>'.$langs->trans("DateSubscription").'</td><td>';
         if ($adh->datefin > 0)
         {
             $html->select_date($adh->datefin + (3600*24));
@@ -750,21 +774,25 @@ if ($rowid)
         print "</td></tr>";
     
     
-        print "<tr><td>Mode de paiement</td><td>\n";
-        print_type_paiement_select($db,'operation');
-        print "</td></tr>\n";
-    
-        if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 &&
-        defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
-            print "<tr><td>Numero de cheque</td><td>\n";
-            print '<input name="num_chq" type="text" size="6">';
+        print '<tr><td>'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+
+        if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE)
+        {
+            print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
+            $html->select_types_paiements('','operation');
             print "</td></tr>\n";
+
+            print '<tr><td>'.$langs->trans("FinancialAccount").'</td><td>';
+            $html->select_comptes('','accountid');
+            print "</td></tr>\n";
+
+            print '<tr><td>'.$langs->trans("Numero").'</td><td>';
+            print '<input name="num_chq" type="text" size="8">';
+            print "</td></tr>\n";
+
+            print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" type="text" size="50" value="'.$langs->trans("Subscription").' '.stripslashes($adh->prenom).' '.stripslashes($adh->nom).' '.strftime("%Y",$adh->datefin).'" ></td></tr>';
         }
-        print '<tr><td>'.$langs->trans("Subscription").'</td><td><input type="text" name="cotisation" size="6"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-        if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 &&
-        defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
-            print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2"><input name="label" type="text" size=20 value="Cotisation '.stripslashes($adh->prenom).' '.stripslashes($adh->nom).' '.strftime("%Y",$adh->datefin).'" ></td></tr>';
-        }
+
         print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"</td></tr>';
     
         print '</form>';

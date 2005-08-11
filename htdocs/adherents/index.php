@@ -23,9 +23,9 @@
  */
 
 /**
-    \file       htdocs/adherents/index.php
-    \ingroup    adherent
-    \brief      Page accueil module adherents
+        \file       htdocs/adherents/index.php
+        \ingroup    adherent
+        \brief      Page accueil module adherents
 */
 
 
@@ -38,10 +38,15 @@ $langs->load("members");
 llxHeader();
 
 
-print_titre($langs->trans("MembersArea"));
-print '<br>';
+print_fiche_titre($langs->trans("MembersArea"));
 
-print '<table class="noborder">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+
+print '<tr><td valign="top" width="100%" colspan="2" class="notopnoleft">';
+
+
+
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td>';
 print '<td align=right width="80">'.$langs->trans("MembersStatusToValid").'</td>';
@@ -112,19 +117,18 @@ $SommeD=0;
 foreach ($AdherentsAll as $key=>$value){
   $var=!$var;
   print "<tr $bc[$var]>";
-  print '<td><a href="liste.php?type='.$AdherentsAll[$key].'">'.$key.'</a></td>';
-  print '<td align="right">'.$AdherentsAValider[$key].'</td>';
-  print '<td align="right">'.$Adherents[$key].'</td>';
-  print '<td align="right">'.$Cotisants[$key].'</td>';
-  print '<td align="right">'.($AdherentsResilies[$key]?$AdherentsResilies[$key]:0).'</td>';
+  print '<td><a href="type.php?rowid='.$AdherentsAll[$key].'">'.img_object($langs->trans("ShowType"),"group").' '.$key.'</a></td>';
+  print '<td align="right">'.(isset($AdherentsAValider[$key])?$AdherentsAValider[$key]:'').'</td>';
+  print '<td align="right">'.(isset($Adherents[$key])?$Adherents[$key]:'').'</td>';
+  print '<td align="right">'.(isset($Cotisants[$key])?$Cotisants[$key]:'').'</td>';
+  print '<td align="right">'.(isset($AdherentsResilies[$key])?$AdherentsResilies[$key]:'').'</td>';
   print "</tr>\n";
-  $SommeA+=$AdherentsAValider[$key];
-  $SommeB+=$Adherents[$key];
-  $SommeC+=$Cotisants[$key];
-  $SommeD+=$AdherentsResilies[$key];
+  $SommeA+=isset($AdherentsAValider[$key])?$AdherentsAValider[$key]:0;
+  $SommeB+=isset($Adherents[$key])?$Adherents[$key]:0;
+  $SommeC+=isset($Cotisants[$key])?$Cotisants[$key]:0;
+  $SommeD+=isset($AdherentsResilies[$key])?$AdherentsResilies[$key]:0;
 }
-$var=!$var;
-print "<tr $bc[$var]>";
+print '<tr class="liste_total">';
 print '<td> <b>'.$langs->trans("Total").'</b> </td>';
 print '<td align="right"><b>'.$SommeA.'</b></td>';
 print '<td align="right"><b>'.$SommeB.'</b></td>';
@@ -136,23 +140,79 @@ print "</table>";
 
 print '<br>';
 
+
+print '</td></tr>';
+print '<tr><td width="30%" class="notopnoleft" valign="top">';
+
+
 // Formulaire recherche adhérent
 print '<form action="liste.php" method="post">';
 print '<input type="hidden" name="action" value="search">';
-print '<table class="noborder" cellspacing="0" cellpadding="3">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("SearchAMember").'</td>';
+print '<td colspan="2">'.$langs->trans("SearchAMember").'</td>';
 print "</tr>\n";
-
+$var=false;
 print "<tr $bc[$var]>";
 print '<td>';
 
-print $langs->trans("Lastname").'/'.$langs->trans("Firstname").' <input type="text" name="search" class="flat" size="20">';
+print $langs->trans("Name").' <input type="text" name="search" class="flat" size="16">';
 
-print '&nbsp; <input class="button" type="submit" value="'.$langs->trans("Search").'">';
+print '</td><td><input class="button" type="submit" value="'.$langs->trans("Search").'">';
 print '</td></tr>';
 print "</table></form>";
 
+
+print '</td><td class="notopnoleftnoright">';
+
+$sql = "SELECT c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
+$sql.= " WHERE d.rowid = c.fk_adherent";
+if(isset($date_select) && $date_select != ''){
+  $sql .= " AND dateadh LIKE '$date_select%'";
+}
+$result = $db->query($sql);
+$Total=array();
+$Number=array();
+$tot=0;
+$numb=0;
+if ($result) 
+{
+  $num = $db->num_rows($result);
+  $i = 0;
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object($result);
+      $year=strftime("%Y",$objp->dateadh);
+      $Total[$year]+=$objp->cotisation;
+      $Number[$year]+=1;
+      $tot+=$objp->cotisation;
+      $numb+=1;
+      $i++;
+    }
+}
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Year").'</td>';
+print '<td align="right">'.$langs->trans("Subscriptions").'</td>';
+print '<td align="right">'.$langs->trans("Number").'</td>';
+print '<td align="right">'.$langs->trans("Average").'</td>';
+print "</tr>\n";
+
+$var=true;
+foreach ($Total as $key=>$value)
+{
+    $var=!$var;
+    print "<tr $bc[$var]><td><a href=\"cotisations.php?date_select=$key\">$key</a></td><td align=\"right\">".price($value)."</td><td align=\"right\">".$Number[$key]."</td><td align=\"right\">".price($value/$Number[$key])."</td></tr>\n";
+}
+
+// Total
+print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($tot)."</td><td align=\"right\">".$numb."</td><td align=\"right\">".price($tot/$numb)."</td></tr>\n";
+print "</table><br>\n";
+
+print '</td></tr>';
+print '</table>';
 
 $db->close();
 

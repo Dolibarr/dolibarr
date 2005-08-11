@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +128,19 @@ if ($rowid)
 
   $adht = new AdherentType($db);
 
-  print_titre($langs->trans("EditMember"));
+
+    /*
+     * Affichage onglets
+     */
+    $h = 0;
+
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$rowid;
+    $head[$h][1] = $langs->trans("MemberCard");
+    $hselected=$h;
+    $h++;
+
+    dolibarr_fiche_head($head, $hselected, $adh->fullname);
+
 
   print "<form action=\"edit.php\" method=\"post\">";
   print '<table class="border" width="100%">';
@@ -147,10 +159,10 @@ if ($rowid)
 
   print '<td valign="top" width="50%">'.$langs->trans("Comments").'</td></tr>';
 
-  $morphys["phy"] = "Physique";
-  $morphys["mor"] = "Morale";
+  $morphys["phy"] = $langs->trans("Physical");
+  $morphys["mor"] = $langs->trans("Morale");
 
-  print "<tr><td>Personne</td><td>";
+  print "<tr><td>".$langs->trans("Person")."</td><td>";
   $htmls->select_array("morphy",  $morphys, $adh->morphy);
   print "</td>";
 
@@ -164,13 +176,15 @@ if ($rowid)
 
   print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
   print '<tr><td>'.$langs->trans("Address").'</td><td>';
-  print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$adh->adresse.'</textarea></td></tr>';
+  print '<textarea name="adresse" wrap="soft" cols="40" rows="2">'.$adh->adresse.'</textarea></td></tr>';
   print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="6" value="'.$adh->cp.'"> <input type="text" name="ville" size="20" value="'.$adh->ville.'"></td></tr>';
-  print '<tr><td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$adh->pays.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Country").'</td><td>';
+  $htmls->select_pays($adh->pays_id?$adh->pays_id:MAIN_INFO_SOCIETE_PAYS,'pays');
+  print '</td></tr>';
   print '<tr><td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
   print '<tr><td>'.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
   print '<tr><td>'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
-  print '<tr><td>'.$langs->trans("Birthday").'<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$adh->naiss.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Birthday").'</td><td><input type="text" name="naiss" size="10" value="'.$adh->naiss.'"> ('.$langs->trans("DateFormatYYYYMMDD").')</td></tr>';
   print '<tr><td>URL photo</td><td><input type="text" name="photo" size="40" value="'.$adh->photo.'"></td></tr>';
   //  $myattr=$adho->fetch_name_optionals();
   foreach($adho->attribute_label as $key=>$value){
@@ -181,12 +195,13 @@ if ($rowid)
   print '<input type="submit" name="bouton" value="'.$langs->trans("Save").'">&nbsp;';
   print '<input type="submit" value="'.$langs->trans("Cancel").'">';
   print '</td></tr>';
-  print '</form>';
   print '</table>';
-       
+  print '</form>';
+
+  print '</div>';       
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
