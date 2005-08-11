@@ -157,9 +157,9 @@ if ($action == 'create')
     print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
     print "</textarea></td></tr>\n";
 
-    print "<tr>".'<td align="center" colspan="2"><input value="'.$langs->trans("CreateGroup").'" type="submit"></td></tr>';
-    print "</form>";
+    print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></td></tr>';
     print "</table>\n";
+    print "</form>";
 }
 
 
@@ -246,8 +246,7 @@ else
              * Liste des utilisateurs dans le groupe
              */
     
-            print_titre($langs->trans("ListOfUsersInGroup"));
-            print "<br>\n";
+            print_fiche_titre($langs->trans("ListOfUsersInGroup"));
             
             // On sélectionne les users qui ne sont pas déjà dans le groupe
             $uss = array();

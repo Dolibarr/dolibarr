@@ -86,6 +86,10 @@ if ($_GET["id"])
     $hselected=$h;
     $h++;
 
+    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$fuser->id;
+    $head[$h][1] = $langs->trans("UserGUISetup");
+    $h++;
+
     if ($conf->bookmark4u->enabled)
     {
         $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;

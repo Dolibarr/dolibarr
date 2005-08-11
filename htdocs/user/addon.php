@@ -35,14 +35,22 @@ $form = new Form($db);
 
 if ($_GET["action"] == 'create_bk4u_login')
 {
-  $edituser = new User($db, $_GET["id"]);
-  $edituser->fetch($_GET["id"]);
-  
-  $bk4u = new Bookmark4u($db);
-  $bk4u->get_bk4u_uid($fuser);
-  $bk4u->create_account_from_user($edituser);
-  
-  Header("Location: addon.php?id=".$_GET["id"]);
+    $edituser = new User($db, $_GET["id"]);
+    $edituser->fetch($_GET["id"]);
+    
+    $bk4u = new Bookmark4u($db);
+    $bk4u->get_bk4u_uid($fuser);
+    $result=$bk4u->create_account_from_user($edituser);
+    
+    if ($result > 0)
+    {
+        Header("Location: addon.php?id=".$_GET["id"]);
+    }
+    else
+    {
+        dolibarr_print_error($db,$bk4u->error);
+        exit;
+    }
 }
 
 llxHeader("","Addon Utilisateur");
@@ -56,109 +64,108 @@ llxHeader("","Addon Utilisateur");
 
 if ($_GET["id"])
 {
-  $fuser = new User($db, $_GET["id"]);
-  $fuser->fetch();
+    $fuser = new User($db, $_GET["id"]);
+    $fuser->fetch();
 
-  $bk4u = new Bookmark4u($db);
-  $bk4u->get_bk4u_uid($fuser);
+    $bk4u = new Bookmark4u($db);
+    $bk4u->get_bk4u_uid($fuser);
 
 
-  /*
-   * Affichage onglets
-   */
-  
-  $h = 0;
-  
-  $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
-  $head[$h][1] = $langs->trans("UserCard");
-  $h++;
+    /*
+     * Affichage onglets
+     */
 
-  if ($user->admin)
-    {
+    $h = 0;
+
+    $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
+    $head[$h][1] = $langs->trans("UserCard");
+    $h++;
+
     $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
     $head[$h][1] = $langs->trans("UserRights");
     $h++;
-    }
 
-  if ($conf->bookmark4u->enabled)
-    {
-    $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
-    $head[$h][1] = $langs->trans("Bookmark4u");
-    $hselected=$h;
+    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$fuser->id;
+    $head[$h][1] = $langs->trans("UserGUISetup");
     $h++;
-    }
 
-  if ($conf->clicktodial->enabled)
+    if ($conf->bookmark4u->enabled)
     {
-    $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
-    $head[$h][1] = $langs->trans("ClickToDial");
-    $h++;
+        $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
+        $head[$h][1] = $langs->trans("Bookmark4u");
+        $hselected=$h;
+        $h++;
     }
 
-  dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
-  
-  /*
-   * Fiche en mode visu
-   */
-  
-  print '<table class="border" width="100%">';
-  
-  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-  print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
-  print '<td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-  print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
-  print "</tr>\n";
-  
-  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Login").'</td>';
-  print '<td width="25%" class="valeur">'.$fuser->login.'</td>';
-  print '<td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
-  print '<td width="25%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
-  print "</tr>\n";
-  
-
-  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Login Boobkmark4u").'</td>';
-  print '<td width="25%" class="valeur">';
-  
-  if ($bk4u->uid == 0)
+    if ($conf->clicktodial->enabled)
     {
-      print $langs->trans("NoLogin");
+        $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
+        $head[$h][1] = $langs->trans("ClickToDial");
+        $h++;
     }
-  else
+
+    dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
+
+    /*
+    * Fiche en mode visu
+    */
+
+    print '<table class="border" width="100%">';
+
+    print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+    print '<td class="valeur">'.$fuser->nom.'</td></tr>';
+    print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
+    print '<td class="valeur">'.$fuser->prenom.'</td>';
+    print "</tr>\n";
+
+    print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
+    print '<td class="valeur">'.$fuser->login.'</td></tr>';
+    print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
+    print '<td class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
+    print "</tr>\n";
+
+
+    print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Login Boobkmark4u").'</td>';
+    print '<td class="valeur">';
+
+    if ($bk4u->uid == 0)
     {
-      $bk4u->get_bk4u_login();
-      print $bk4u->login;
+        print $langs->trans("NoLogin");
     }
-
-  print '</td>';
-  print '<td width="25%" valign="top">&nbsp;</td>';
-  print '<td width="25%" class="valeur">&nbsp;</td>';
-  print "</tr>\n";
-
-
-  print "</table>\n";
-  
-  print "</div>\n";
-  
-  
-  /*
-   * Barre d'actions
-   *
-   */
-  print '<div class="tabsAction">';
-  
-  if ($user->admin)
+    else
     {
-      print '<a class="tabAction" href="addon.php?id='.$fuser->id.'&amp;action=create_bk4u_login">'.$langs->trans("Créer login Bookmark4u").'</a>';
+        $bk4u->get_bk4u_login();
+        print $bk4u->login;
     }
-    
-  print "</div>\n";
-  print "<br>\n";
-  
+
+    print '</td>';
+    print "</tr>\n";
+
+
+    print "</table>\n";
+
+    print "</div>\n";
+
+
+    /*
+    * Barre d'actions
+    *
+    */
+    print '<div class="tabsAction">';
+
+    if ($user->admin)
+    {
+        print '<a class="tabAction" href="addon.php?id='.$fuser->id.'&amp;action=create_bk4u_login">'.$langs->trans("Créer login Bookmark4u").'</a>';
+    }
+
+    print "</div>\n";
+    print "<br>\n";
+
 }
 
 
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

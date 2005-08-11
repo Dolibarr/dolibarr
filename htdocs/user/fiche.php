@@ -102,7 +102,6 @@ if ($_POST["action"] == 'add' && $user->admin)
         $edituser->email         = trim($_POST["email"]);
         $edituser->admin         = trim($_POST["admin"]);
         $edituser->webcal_login  = trim($_POST["webcal_login"]);
-        $edituser->gui_lang      = trim($_POST["gui_lang"]);
 
         $db->begin();
 
@@ -169,7 +168,6 @@ if ($_POST["action"] == 'update' && $user->admin)
     $edituser->email         = $_POST["email"];
     $edituser->admin         = $_POST["admin"];
     $edituser->webcal_login  = $_POST["webcal_login"];
-    $edituser->gui_lang      = $_POST["gui_lang"];
 
     $ret=$edituser->update();
     if ($ret < 0)
@@ -217,7 +215,7 @@ if ($_POST["action"] == 'update' && $user->admin)
 
 // Action modif mot de passe
 if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
-      || $_GET["action"] == 'passwordsend') && $user->admin)
+      || $_GET["action"] == 'confirm_passwordsend') && $user->admin)
 {
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
@@ -231,7 +229,7 @@ if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
     else 
     {
         // Succes
-        if ($_GET["action"] == 'passwordsend')
+        if ($_GET["action"] == 'confirm_passwordsend')
         {
             if ($edituser->send_password($user,$newpassword) > 0)
             {
@@ -303,15 +301,10 @@ if ($action == 'create')
         print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
         print '<td class="valeur"><input size="30" type="text" name="webcal_login" value=""></td></tr>';
     }
-    // Langue par defaut
-    print '<tr><td width="30%">'.$langs->trans("GuiLanguage").'</td><td>';
-    $html=new Form($db);
-    $html->select_lang(MAIN_LANG_DEFAULT,'gui_lang');
-    print '</td></tr>';
 
-    print "<tr>".'<td align="center" colspan="2"><input value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
-    print "</form>";
+    print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
     print "</table>\n";
+    print "</form>";
 }
 else
 {
@@ -342,6 +335,10 @@ else
         $head[$h][1] = $langs->trans("UserRights");
         $h++;
 
+        $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$fuser->id;
+        $head[$h][1] = $langs->trans("UserGUISetup");
+        $h++;
+
         if ($conf->bookmark4u->enabled)
         {
             $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
@@ -360,12 +357,22 @@ else
 
 
         /*
-         * Confirmation modification mot depasse
+         * Confirmation réinitialisation mot de passe
          */
         if ($action == 'password')
         {
             $html = new Form($db);
             $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$fuser->login),"confirm_password");
+            print '<br>';
+        }
+
+        /*
+         * Confirmation envoi mot de passe
+         */
+        if ($action == 'passwordsend')
+        {
+            $html = new Form($db);
+            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$fuser->login),"confirm_passwordsend");
             print '<br>';
         }
 
@@ -475,13 +482,8 @@ else
                 print '<td colspan="2">'.$fuser->webcal_login.'&nbsp;</td>';
                 print "</tr>\n";
             }
-            // Langue par defaut
-            print '<tr><td width="25%" valign="top">'.$langs->trans("GuiLanguage").'</td>';
-            print '<td colspan="2">'.$fuser->gui_lang.'&nbsp;</td>';
-            print "</tr>\n";
 
             print "</table>\n";
-//            print "<br>\n";
 
             print "</div>\n";
 
@@ -526,8 +528,7 @@ else
              * Liste des groupes dans lequel est l'utilisateur
              */
 
-            print_titre($langs->trans("ListOfGroupsForUser"));
-            print "<br>\n";
+            print_fiche_titre($langs->trans("ListOfGroupsForUser"));
 
             // On sélectionne les groups
             $uss = array();
@@ -693,12 +694,6 @@ else
             print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
             print '<td class="valeur" colspan="2"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
             
-            // Langue par defaut
-            print '<tr><td width="30%">'.$langs->trans("GuiLanguage").'</td><td>';
-            $html=new Form($db);
-            $html->select_lang(MAIN_LANG_DEFAULT,'gui_lang');
-            print '</td></tr>';
-
             print '<tr><td align="center" colspan="3"><input value="'.$langs->trans("Save").'" type="submit"></td></tr>';
 
             print '</table><br>';

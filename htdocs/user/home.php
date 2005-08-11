@@ -40,9 +40,9 @@ if ($user->admin) $lien='<a href="'.DOL_URL_ROOT.'/user/admin/index.php">'.img_p
 print_fiche_titre($langs->trans("MenuUsersAndGroups"),$lien);
 
 
-print '<table border="0" width="100%">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 
 
@@ -69,7 +69,7 @@ print $langs->trans("Ref").' : <input class="flat" type="text" name="search_user
 print "</form></table><br>\n";
 
 
-print '</td><td valign="top" width="70%">';
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
