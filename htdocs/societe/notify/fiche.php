@@ -162,7 +162,28 @@ if ( $soc->fetch($soc->id) )
     
     print '<table class="border"width="100%">';
     print '<tr><td width="20%">'.$langs->trans("Name").'</td><td colspan="3">'.$soc->nom.'</td></tr>';
-    print '<tr><td width="30%">'.$langs->trans("NbOfActiveNotifications").'</td><td colspan="3">0 (TODO Nombre non mis a jour)</td></tr>';
+    print '<tr><td width="30%">'.$langs->trans("NbOfActiveNotifications").'</td>';
+    print '<td colspan="3">';
+    $sql = "SELECT COUNT(n.rowid) as nb";
+    $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n";
+    $sql.= " WHERE fk_soc = ".$soc->id;
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+            $nb=$obj->nb;
+            $i++;
+        }
+    }
+    else {
+        dolibarr_print_error($db);
+    }
+    print $nb;
+    print '</td></tr>';
     print '</table>';
     
     print '</div>';
@@ -210,7 +231,7 @@ if ( $soc->fetch($soc->id) )
     print '<td>';
     $html->select_array("actionid",$actions);
     print '</td>';
-    print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></td>';
+    print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
     print '</tr>';
     print '</form>';
     

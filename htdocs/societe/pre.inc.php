@@ -25,32 +25,27 @@ require ("../main.inc.php");
 
 function llxHeader($head = "")
 {
-  global $user, $conf;
+  global $langs, $user, $conf;
 
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();
 
-  if ($conf->societe->enabled && $conf->commercial->enabled) 
+  if ($conf->societe->enabled) 
     {
-      $menu->add(DOL_URL_ROOT."/societe.php", "Sociétés","company");
+      $menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("Companies"),"company");
 
-      $menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create", "Nouvelle société");
+      if ($conf->rights->societe->creer)
+      {
+        $menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create", $langs->trans("NewCompany"));
+      }
+      
+      $menu->add_submenu(DOL_URL_ROOT."/contact.php", $langs->trans("Contacts"));
 
-      $menu->add_submenu(DOL_URL_ROOT."/contact.php", "Contacts");
-
-      $menu->add_submenu("notify/index.php", "Notifications");
+      $menu->add_submenu("notify/index.php", $langs->trans("Notifications"));
     }
 
-  /*
-   *
-   */
-
   left_menu($menu->liste);
-
 }
+
 ?>
