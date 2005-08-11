@@ -104,7 +104,7 @@ if ($_GET["id"])
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
   print '<tr class="liste_titre">';
-  print "<td>Date</td><td>Commissions</td></tr>";
+  print '<td>Date</td><td align="right">Commissions</td></tr>';
 
 
   $sql = "SELECT c.date, c.montant";
@@ -131,7 +131,7 @@ if ($_GET["id"])
 	  print "<tr $bc[$var]>";
 	  
 	  print '<td>'.substr($row[0], -2).'/'.substr($row[0],0,4).'</td>';
-	  print '<td>'.price($row[1]).' HT</td>';
+	  print '<td align="right">'.price($row[1]).' HT</td>';
 	  
 	  $i++;
 	}
@@ -148,7 +148,7 @@ if ($_GET["id"])
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
   print '<tr class="liste_titre">';
-  print "<td>Date</td><td>Prise d'ordre</td></tr>";
+  print '<td>Date</td><td align="right">'."Prise d'ordre</td></tr>";
 
 
   $sql = "SELECT ".$db->pdate("p.datepo") . " as datepo, sum(p.montant)";
@@ -173,7 +173,7 @@ if ($_GET["id"])
 	  print "<tr $bc[$var]>";
 	  
 	  print '<td>'.strftime("%m/%Y",$row[0]).'</td>';
-	  print '<td>'.price($row[1]).' HT</td>';
+	  print '<td align="right">'.price($row[1]).' HT</td>';
 	  
 	  $i++;
 	}
