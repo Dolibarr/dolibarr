@@ -73,6 +73,8 @@ Module57Name=Standing orders
 Module57Desc=Standing orders and withdrawals' management
 Module58Name=ClickToDial
 Module58Desc=ClickToDial integration
+Module59Name=Bookmark4u
+Module59Desc=Add function to generate Bookmark4u account from a Dolibarr account
 Module70Name=Interventions
 Module70Desc=Interventions' management
 Module75Name=Trips
@@ -81,8 +83,8 @@ Module80Name=Sendings
 Module80Desc=Sendings' management
 Module85Name=Banks and cash
 Module85Desc=Management of bank or cash accounts
-Module86Name=Store
-Module86Desc=Management of a store
+Module86Name=OSCommerce
+Module86Desc=Add interface with OSCommerce
 Module200Name=LDAP
 Module200Desc=LDAP annuary synchronisation
 Module210Name=PostNuke
@@ -125,6 +127,8 @@ Permission71=Read members
 Permission72=Create/modify members
 Permission74=Delete members
 Permission75=Setup types and attributes for members
+Permission78=Read subscriptions
+Permission79=Create/modify subscriptions
 Permission81=Read orders
 Permission82=Create/modify orders
 Permission84=Activate orders
@@ -168,6 +172,9 @@ Permission229=Delete emailings
 Permission231=Read supplier bills
 Permission232=Create/modify supplier bills
 Permission233=Delete supplier bills
+Permission300=Read bar codes
+Permission301=Create/modify bar codes
+Permission302=Delete bar codes
 Permission700=Read donations
 Permission701=Create/modify donations
 Permission702=Delete donations
@@ -220,8 +227,12 @@ SystemSuccessfulyUpdate=Your system has been updated successfuly
 MenuNewUser=New user
 MenuTopManager=Top menu manager
 MenuLeftManager=Left menu manager
+DefaultMenuTopManager=Default top menu manager
+DefaultMenuLeftManager=Default left menu manager
 Skin=Skin theme
+DefaultSkin=Default skin theme
 MaxSizeList=Max length for list
+DefaultMaxSizeList=Default max length for list
 MessageOfDay=Message of day
 PermanentLeftSearchForm=Permanent search form on left menu
 DefaultLanguage=Default language to use (language code)
@@ -230,6 +241,9 @@ CompanyInfo=Company/foundation informations
 CompanyIds=Company/Foundation identities
 CompanyName=Company/foundation name
 CompanyCurrency=Company/foundation currency
+##### Users setup #####
+UserGroupSetup=Users and groups module setup
+GeneratePassword=Générer mot de passe
 ##### Company setup #####
 CompanySetup=Companies module setup
 CustomerCodeChecker=Module for checking customer's code
@@ -264,10 +278,17 @@ ProposalsPDFModules=Commercial proposal PDF modules
 ##### Orders #####
 OrdersSetup=Orders' management setup
 OrdersNumberingModules=Orders numbering modules
-##### Clicktodial setup #####
+##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
+##### Bookmark4u #####
+Bookmark4uSetup=Bookmark4u module setup
 ##### Interventions #####
 InterventionsSetup=Interventions module setup
+##### Members #####
+MembersSetup=Members module setup
+MemberMainOptions=Main options
+AddSubscriptionIntoAccount=Add subscriptions into bank or cash account, of bank module
+AdherentMailRequired=EMail required to create a new member
 ##### LDAP setup ####
 LDAPSetup=LDAP Setup
 LDAPServer=LDAP Server
