@@ -68,8 +68,8 @@ function llxHeader($head = "")
 
     $menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("Bank"));
 
-    $menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php","Recherche écriture");
-    $menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php","Budgets");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("SearchTransaction"));
+    $menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ByCategories"));
     $menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilan.php","Bilan");
 
     if ($user->rights->banque->modifier)
