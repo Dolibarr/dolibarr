@@ -22,10 +22,10 @@
  */
 
 /**
-   \file       htdocs/compta/facture.php
-   \ingroup    facture
-   \brief      Page de création d'une facture
-   \version    $Revision$
+        \file       htdocs/compta/facture.php
+        \ingroup    facture
+        \brief      Page de création d'une facture
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -41,7 +41,6 @@ if (!$user->rights->facture->lire)
 $langs->load("main"); // BUG De chargement de traduction ne pas modifier cette ligne
 $langs->load("bills");
 
-$warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiement facture > delai)
 
 
 if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
@@ -117,19 +116,18 @@ if ($user->rights->facture->lire)
     {
       $sql .= " AND f.facnumber like '%".$_POST["sf_ref"] . "%'";
     }
-  
-  $sql .= " GROUP BY f.facnumber";
-  
-  $sql .= " ORDER BY ";
-  $listfield=split(',',$sortfield);
-  foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
-  $sql .= " f.fk_soc ASC";
-  
-  //$sql .= $db->plimit($limit+1,$offset);
-  
-  $result = $db->query($sql);
-  
-  if ($result)
+    $sql.= " GROUP BY f.facnumber";
+
+    $sql.= " ORDER BY ";
+    $listfield=split(',',$sortfield);
+    foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
+    $sql.= " f.fk_soc ASC";
+
+    //$sql .= $db->plimit($limit+1,$offset);
+
+    $result = $db->query($sql);
+
+    if ($result)
     {
       $num = $db->num_rows($result);
       
@@ -190,13 +188,13 @@ if ($user->rights->facture->lire)
 		
                 print '<td nowrap><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill")."</a> ";
                 print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment;
-                if ($objp->datelimite < (time() - $warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans("Late"));
+                if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
                 print "</td>\n";
 
                 print "<td nowrap align=\"center\">".dolibarr_print_date($objp->df)."</td>\n";
                 print "<td nowrap align=\"center\">".dolibarr_print_date($objp->datelimite)."</td>\n";
 
-                print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+                print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,32).'</a></td>';
 
                 print "<td align=\"right\">".price($objp->total)."</td>";
                 print "<td align=\"right\">".price($objp->total_ttc)."</td>";

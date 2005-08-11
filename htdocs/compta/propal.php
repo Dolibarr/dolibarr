@@ -272,7 +272,7 @@ if ($_GET["propalid"])
 	    }
 	  else
 	    {
-	      print '<td colspan="3">'.$propal->remise_percent.' %</td>';
+	      print '<td colspan="3">'.$propal->remise_percent.'%</td>';
 	    }
 	  print '</tr>';
 
@@ -319,7 +319,7 @@ if ($_GET["propalid"])
 		  print '<td>&nbsp;</td><td>&nbsp;</td>';
 		  print "</tr>\n";
 		}
-	      $var=True;
+	      $var=true;
 	      while ($i < $num_lignes)
 		{
 		  $objp = $db->fetch_object($resql);
@@ -620,6 +620,8 @@ if ($_GET["propalid"])
       print_barre_liste($langs->trans("Proposals"), $page, "propal.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
       $i = 0;
+      $var=true;
+      
       print "<table class=\"noborder\" width=\"100%\">";
       print '<tr class="liste_titre">';
       print_liste_field_titre($langs->trans("Ref"),"propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);

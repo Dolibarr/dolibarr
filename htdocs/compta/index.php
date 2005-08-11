@@ -37,13 +37,12 @@ $langs->load("bills");
 
 $warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiement facture > delai)
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
+$socidp='';
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socidp = $user->societe_id;
+    $action = '';
+    $socidp = $user->societe_id;
 }
 
 
@@ -54,24 +53,24 @@ llxHeader("",$langs->trans("AccountancyTreasuryArea"));
  * Actions
  */
 
-if ($_GET["action"] == 'add_bookmark')
+if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
-  if (! $db->query($sql) )
-    {
-      dolibarr_print_error($db);
-    }
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
-  if (! $db->query($sql) )
-    {
-      dolibarr_print_error($db);
-    }
+$sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
+if (! $db->query($sql) )
+{
+    dolibarr_print_error($db);
+}
+$sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
+if (! $db->query($sql) )
+{
+    dolibarr_print_error($db);
+}
 }
 
-if ($_GET["action"] == 'del_bookmark')
+if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
-  $result = $db->query($sql);
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
+    $result = $db->query($sql);
 }
 
 
@@ -80,11 +79,11 @@ if ($_GET["action"] == 'del_bookmark')
  * Affichage page
  *
  */
-print_titre($langs->trans("AccountancyTreasuryArea"));
+print_fiche_titre($langs->trans("AccountancyTreasuryArea"));
 
-print '<table border="0" width="100%">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 /*
  * Zone recherche facture
@@ -100,101 +99,114 @@ if ($conf->facture->enabled) {
 }
 
 
-/*
+/**
  * Factures brouillons
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
 
-  $sql  = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
-  $sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
+    $sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, s.nom, s.idp";
+    $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+    $sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
 
-  if ($socidp)
+    if ($socidp)
     {
-      $sql .= " AND f.fk_soc = $socidp";
+        $sql .= " AND f.fk_soc = $socidp";
     }
 
-  $resql = $db->query($sql);
+    $resql = $db->query($sql);
 
-  if ( $resql )
+    if ( $resql )
     {
-      $num = $db->num_rows($resql);
-      $i = 0;
+        $num = $db->num_rows($resql);
+        if ($num)
+        {
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre">';
+            print '<td colspan="3">'.$langs->trans("DraftBills").' ('.$num.')</td></tr>';
+            $i = 0;
+            $tot_ttc = 0;
+            $var = True;
+            while ($i < $num && $i < 20)
+            {
+                $obj = $db->fetch_object($resql);
+                $var=!$var;
+                print '<tr '.$bc[$var].'><td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a></td>';
+                print '<td align="right">'.price($obj->total_ttc).'</td>';
+                print '</tr>';
+                $tot_ttc+=$obj->total_ttc;
+                $i++;
+            }
 
-      if ($num)
-	{
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre">';
-	  print '<td colspan="2">'.$langs->trans("DraftBills").' ('.$num.')</td></tr>';
-	  $var = True;
-	  while ($i < $num && $i < 20)
-	    {
-	      $obj = $db->fetch_object($resql);
-	      $var=!$var;
-	      print '<tr '.$bc[$var].'><td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a></td></tr>';
-	      $i++;
-	    }
+            print '<tr class="liste_total"><td colspan="2" align="left">'.$langs->trans("Total").'</td>';
+            print '<td align="right">'.price($tot_ttc).'</td>';
+            print '</tr>';
 
-	  print "</table><br>";
-	}
-      $db->free($resql);
+            print "</table><br>";
+        }
+        $db->free($resql);
     }
-  else
+    else
     {
-      dolibarr_print_error($db);
+        dolibarr_print_error($db);
     }
 }
 
-if ($conf->compta->enabled) {
-
-/*
+/**
  * Charges a payer
  */
-if ($user->societe_id == 0)
+if ($conf->compta->enabled)
 {
-
-  $sql = "SELECT c.amount, cc.libelle";
-  $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc";
-  $sql .= " WHERE c.fk_type = cc.id AND c.paye=0";
-
-  $resql = $db->query($sql);
-
-  if ( $resql )
+    if ($user->societe_id == 0)
     {
-      $num = $db->num_rows($resql);
-      if ($num)
-	{
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre">';
-	  print '<td colspan="2">'.$langs->trans("ContributionsToPay").' ('.$num.')</td></tr>';
-	  $i = 0;
-	  $var = True;
-	  while ($i < $num)
-	    {
-	      $obj = $db->fetch_object($resql);
-	      $var = !$var;
-	      print "<tr $bc[$var]>";
-	      print '<td>'.$obj->libelle.'</td>';
-	      print '<td align="right">'.price($obj->amount).'</td>';
-	      print '</tr>';
-	      $i++;
-	    }
-	  print '</table><br>';
-	}
-      $db->free($resql);
-    }
-  else
-    {
-      dolibarr_print_error($db);
+
+        $sql = "SELECT c.rowid, c.amount, cc.libelle";
+        $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc";
+        $sql .= " WHERE c.fk_type = cc.id AND c.paye=0";
+
+        $resql = $db->query($sql);
+
+        if ( $resql )
+        {
+            $num = $db->num_rows($resql);
+            if ($num)
+            {
+                print '<table class="noborder" width="100%">';
+                print '<tr class="liste_titre">';
+                print '<td colspan="2">'.$langs->trans("ContributionsToPay").' ('.$num.')</td></tr>';
+                $i = 0;
+                $tot_ttc=0;
+                $var = True;
+                while ($i < $num)
+                {
+                    $obj = $db->fetch_object($resql);
+                    $var = !$var;
+                    print "<tr $bc[$var]>";
+                    print '<td><a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->libelle.'</td>';
+                    print '<td align="right">'.price($obj->amount).'</td>';
+                    print '</tr>';
+                    $tot_ttc+=$obj->amount;
+                    $i++;
+                }
+
+                print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
+                print '<td align="right">'.price($tot_ttc).'</td>';
+                print '</tr>';
+
+                print '</table><br>';
+            }
+            $db->free($resql);
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
     }
 }
 
-}
 
-
-/*
+/**
  * Bookmark
  */
 $sql = "SELECT s.idp, s.nom,b.rowid as bid";
@@ -231,7 +243,9 @@ else
 {
   dolibarr_print_error($db);
 }
-print '</td><td valign="top" width="70%">';
+
+
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
@@ -270,8 +284,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	  print '<td align="right">'.$langs->trans("ToBill").'</td>';
 	  print '</tr>';
 	  $var = True;
-	  $tot_ht=0;
-	  $tot_ttc=0;
+	  $tot_ht=$tot_ttc=$tot_tobill=0;
 	  while ($i < $num)
 	    {
             $obj = $db->fetch_object($resql);

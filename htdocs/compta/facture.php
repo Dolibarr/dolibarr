@@ -921,7 +921,7 @@ else
             {
                 $langs->load("projects");
                 print '<td height="10">';
-                print '<table width="100%" class="nobordernopadding"><tr><td>';
+                print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans("Project");
                 print '</td>';
                 if ($_GET["action"] != "classer") print '<td align="right"><a href="facture.php?action=classer&amp;facid='.$fac->id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
@@ -929,11 +929,11 @@ else
                 print '</td><td colspan="3">';
                 if ($_GET["action"] == "classer")
                 {
-                    $html->form_project("facture.php?facid=$fac->id",$fac->fk_soc,$fac->projetid,"projetid");
+                    $html->form_project($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->fk_soc,$fac->projetid,"projetid");
                 }
                 else
                 {
-                    $html->form_project("facture.php?facid=$fac->id",$fac->fk_soc,$fac->projetid,"none");
+                    $html->form_project($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->fk_soc,$fac->projetid,"none");
                 }
                 print "</td>";
             } else {

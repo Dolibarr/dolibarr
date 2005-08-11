@@ -322,7 +322,7 @@ if ($socid > 0)
      */
     if ($conf->projet->enabled)
     {
-        print '<table class="border" width="100%">';
+        print '<table class="noborder" width="100%">';
 
         $sql  = "SELECT p.rowid,p.title,p.ref,".$db->pdate("p.dateo")." as do";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
