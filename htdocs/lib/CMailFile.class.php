@@ -71,7 +71,7 @@ class CMailFile
     */
     function CMailFile($subject,$to,$from,$msg,$filename_list,$mimetype_list,$mimefilename_list,$addr_cc="",$addr_bcc="")
     {
-        dolibarr_syslog("CMailFile::CMailfile: filename_list[0]=$filename_list[0], mimetype_list[0]=$mimetype_list[0] mimefilename_list[0]=$mimefilename_list[0]");
+        dolibarr_syslog("CMailFile::CMailfile: from=$from, filename_list[0]=$filename_list[0], mimetype_list[0]=$mimetype_list[0] mimefilename_list[0]=$mimefilename_list[0]");
 
         $this->mime_boundary = md5( uniqid("dolibarr") );
 
@@ -237,17 +237,21 @@ class CMailFile
     */
     function write_smtpheaders()
     {
-        $out = "From: ".$this->addr_from."\n";
-        if ($this->addr_cc) $out = $out . "Cc: ".$this->addr_cc."\n";
-        if ($this->addr_bcc) $out = $out . "Bcc: ".$this->addr_bcc."\n";
-        if ($this->reply_to) $out = $out . "Reply-To: ".$this->reply_to."\n";
+        $out = "";
 
+        $out .= "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
+        $out .= "X-Sender: <$this->addr_from>\n";
+
+        $out .= "Return-path: <$this->addr_from>\n";
+        $out .= "From: $this->addr_from <".$this->addr_from.">\n";
+
+        if ($this->addr_cc)  $out .= "Cc: ".$this->addr_cc."\n";
+        if ($this->addr_bcc) $out .= "Bcc: ".$this->addr_bcc."\n";
+        if ($this->reply_to) $out .= "Reply-To: ".$this->reply_to."\n";
         //    if($this->errors_to != "")
         //$out = $out . "Errors-to: ".$this->errors_to."\n";
 
-        $out = $out . "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
-        $out = $out . "X-Sender: $this->addr_from\n";
-        $out = $out . "Return-path: $this->addr_from\n";
+        //dolibarr_syslog("CMailFile::write_smtpheaders $out");
         return $out;
     }
 
