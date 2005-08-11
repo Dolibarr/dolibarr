@@ -240,6 +240,7 @@ SystemSuccessfulyUpdated=Votre système a été correctement mis à jour
 CompanyInfo=Informations sur la société/association
 CompanyIds=Identifiants de la société/association
 CompanyName=Nom/Enseigne de la société/association
+CompanyAddress=Adresse de la société/association
 CompanyCurrency=Devise de la société/association
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes

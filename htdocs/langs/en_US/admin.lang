@@ -238,8 +238,9 @@ PermanentLeftSearchForm=Permanent search form on left menu
 DefaultLanguage=Default language to use (language code)
 SystemSuccessfulyUpdated=Your sustem has been updated successfully
 CompanyInfo=Company/foundation informations
-CompanyIds=Company/Foundation identities
+CompanyIds=Company/foundation identities
 CompanyName=Company/foundation name
+CompanyAddress=Company/foundation address
 CompanyCurrency=Company/foundation currency
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
