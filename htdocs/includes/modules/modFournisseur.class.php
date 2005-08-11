@@ -54,7 +54,7 @@ class modFournisseur extends DolibarrModules
     $this->name = "Fournisseur";
     $this->description = "Gestion des fournisseurs";
 
-    $this->revision = explode(" ","$Revision$");
+    $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
     $this->const_name = "MAIN_MODULE_FOURNISSEUR";
@@ -141,7 +141,7 @@ class modFournisseur extends DolibarrModules
     $this->rights[10][0] = 231;
     $this->rights[10][1] = 'Lire les factures fournisseur';
     $this->rights[10][2] = 'r';
-    $this->rights[10][3] = 0;
+    $this->rights[10][3] = 1;
     $this->rights[10][4] = 'facture';
     $this->rights[10][5] = 'lire';
 

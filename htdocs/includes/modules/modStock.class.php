@@ -55,7 +55,7 @@ class modStock extends DolibarrModules
     $this->name = "Stock produits";
     $this->description = "Gestion des stocks";
 
-    $this->revision = explode(" ","$Revision$");
+    $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
     $this->const_name = "MAIN_MODULE_STOCK";

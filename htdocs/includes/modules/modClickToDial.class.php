@@ -22,13 +22,13 @@
  */
 
 /**
-        \defgroup   telephonie  Module Click to Dial
+        \defgroup   clicktodial      Module Click to Dial
         \brief      Module pour gérer l'appel automatique
 */
 
 /**
         \file       htdocs/includes/modules/modClickToDial.class.php
-        \ingroup    telephonie
+        \ingroup    clicktodial
         \brief      Fichier de description et activation du module de click to Dial
 */
 

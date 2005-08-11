@@ -57,7 +57,7 @@ class modPrelevement extends DolibarrModules
     $this->name = "Prelevement";
     $this->description = "Gestion des Prélèvements";
 
-    $this->revision = explode(" ","$Revision$");
+    $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
     $this->const_name = "MAIN_MODULE_PRELEVEMENT";

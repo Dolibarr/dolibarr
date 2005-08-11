@@ -129,17 +129,31 @@ class modAdherent extends DolibarrModules
     $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[2][4] = 'creer';
 
-    $this->rights[3][0] = 74; // id de la permission
-    $this->rights[3][1] = 'Supprimer les adherents'; // libelle de la permission
-    $this->rights[3][2] = 'd'; // type de la permission (déprécié à ce jour)
-    $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[3][4] = 'supprimer';
-
-    $this->rights[4][0] = 75; // id de la permission
-    $this->rights[4][1] = 'Configurer les types et caractéristiques des adherents'; // libelle de la permission
-    $this->rights[4][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[4][0] = 74; // id de la permission
+    $this->rights[4][1] = 'Supprimer les adherents'; // libelle de la permission
+    $this->rights[4][2] = 'd'; // type de la permission (déprécié à ce jour)
     $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[4][4] = 'configurer';
+    $this->rights[4][4] = 'supprimer';
+
+    $this->rights[5][0] = 75; // id de la permission
+    $this->rights[5][1] = 'Configurer les types et caractéristiques des adherents'; // libelle de la permission
+    $this->rights[5][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[5][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[5][4] = 'configurer';
+
+    $this->rights[6][0] = 78; // id de la permission
+    $this->rights[6][1] = 'Lire les cotisations'; // libelle de la permission
+    $this->rights[6][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[6][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[6][4] = 'cotisation';
+    $this->rights[6][5] = 'lire';
+
+    $this->rights[7][0] = 79; // id de la permission
+    $this->rights[7][1] = 'Créer/modifier les cotisations'; // libelle de la permission
+    $this->rights[7][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[7][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[7][4] = 'cotisation';
+    $this->rights[7][5] = 'creer';
 
   }
 
