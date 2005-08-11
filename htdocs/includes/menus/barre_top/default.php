@@ -79,12 +79,17 @@ class MenuTop {
 
         // Entrée home
         $id="";
+
         if ($_GET["mainmenu"] == "home" || ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home"))
         {
             $id="sel";
         }
-        if (! ereg("^".DOL_URL_ROOT."\/(adherents|comm|compta|product|fourn|projet)\/",$_SERVER["PHP_SELF"])) {
+
+        if (! ereg("^".DOL_URL_ROOT."\/(adherents|comm|commande|compta|contrat|product|fourn|projet)\/",$_SERVER["PHP_SELF"])) {
             $id="sel";
+        }
+        else {
+            $id="";
         }
         print '<a class="tmenu" id="'.$id.'" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a>';
 
@@ -120,7 +125,7 @@ class MenuTop {
             {
                 $class='class="tmenu" id="sel"';
             }
-            elseif (ereg("^".DOL_URL_ROOT."\/comm\/",$_SERVER["PHP_SELF"]))
+            elseif (ereg("^".DOL_URL_ROOT."\/(comm|commande|contrat)\/",$_SERVER["PHP_SELF"]))
             {
                 $class='class="tmenu" id="sel"';
             }
