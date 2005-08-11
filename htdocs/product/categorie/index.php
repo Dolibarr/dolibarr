@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 require("./pre.inc.php");
@@ -28,135 +27,135 @@ llxHeader();
 
 if ($id)
 {
-  $title = title_url($id, $db);
+    $title = title_url($id, $db);
 
-  print_barre_liste($title, $page, "index.php");
+    print_barre_liste($title, $page, "index.php");
 
-  $sql = "SELECT products_id FROM ".OSC_DB_NAME.".products_to_categories WHERE categories_id = $id";
-  
-  if ( $db->query($sql) )
+    $sql = "SELECT products_id FROM ".OSC_DB_NAME.".products_to_categories WHERE categories_id = $id";
+
+    if ( $db->query($sql) )
     {
-      $numprod = $db->num_rows();
-      $i = 0;
-      $wc = "(";
-      while ($i < $numprod)
-	{
-	  $objp = $db->fetch_object( $i);
-	  $wc .= $objp->products_id;
-	  if ($i < $numprod -1)
-	    {
-	      $wc .= ",";
-	    }
-	  $i++;
-	}
-      $wc .=")";
-      $db->free();
+        $numprod = $db->num_rows();
+        $i = 0;
+        $wc = "(";
+        while ($i < $numprod)
+        {
+            $objp = $db->fetch_object( $i);
+            $wc .= $objp->products_id;
+            if ($i < $numprod -1)
+            {
+                $wc .= ",";
+            }
+            $i++;
+        }
+        $wc .=")";
+        $db->free();
     }
-  else
+    else
     {
-      print $db->error();
+        dolibarr_print_error($db);
     }
-  //  print $wc ;
+    //  print $wc ;
 
-  if ($numprod)
+    if ($numprod)
     {
 
-      $sql = "SELECT l.rowid, l.title, l.oscid, l.ref, l.status FROM ".MAIN_DB_PREFIX."livre as l";
-      $sql .= " WHERE l.oscid in $wc";
+        $sql = "SELECT l.rowid, l.title, l.oscid, l.ref, l.status FROM ".MAIN_DB_PREFIX."livre as l";
+        $sql .= " WHERE l.oscid in $wc";
 
-      if ( $db->query($sql) )
-	{
-	  $num = $db->num_rows();
-	  $i = 0;
-	  print "<table class=\"noborder\" width=\"100%\">";
-	  print "<tr class=\"liste_titre\"><td>".$langs->trans("Ref")."</td>";
-	  print_liste_field_titre("Titre","index.php", "l.title");
-	  print '<td colspan="3">&nbsp;</td>';
-	  print "</tr>\n";
-	  $var=True;
-	  while ($i < $num)
-	    {
-	      $objp = $db->fetch_object( $i);
-	      $var=!$var;
-	      print "<tr $bc[$var]>";
-	      print '<td><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></TD>';
-	      print '<td width="70%"><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->title.'</a></TD>';
-	      
-	      if ($objp->status == 1)
-		{
-		  print '<td align="center">';
-		  print '<img src="/theme/'.$conf->theme.'/img/icon_status_green.png" border="0"></a></td>';
-		  print '<td align="center">';
-		  print '<img src="/theme/'.$conf->theme.'/img/icon_status_red_light.png" border="0"></a></td>';
-		}
-	      else
-		{
-		  print '<td align="center">';
-		  print '<img src="/theme/'.$conf->theme.'/img/icon_status_green_light.png" border="0"></a></td>';
-		  print '<td align="center">';
-		  print '<img src="/theme/'.$conf->theme.'/img/icon_status_red.png" border="0"></a></td>';
-		}
-	      
-	      print '<td align="right">';
-	      print '<a href="'.OSC_CATALOG_URL.'product_info.php?products_id='.$objp->oscid.'">Fiche en ligne</a></TD>';
-	      print "</tr>\n";
-	      $i++;
-	    }
-	  print "</TABLE>";
-	  $db->free();
-	}
-      else
-	{
-	  print $db->error();
-	}
+        if ( $db->query($sql) )
+        {
+            $num = $db->num_rows();
+            $i = 0;
+            print "<table class=\"noborder\" width=\"100%\">";
+            print "<tr class=\"liste_titre\"><td>".$langs->trans("Ref")."</td>";
+            print_liste_field_titre("Titre","index.php", "l.title");
+            print '<td colspan="3">&nbsp;</td>';
+            print "</tr>\n";
+            $var=True;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object( $i);
+                $var=!$var;
+                print "<tr $bc[$var]>";
+                print '<td><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></TD>';
+                print '<td width="70%"><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->title.'</a></TD>';
+
+                if ($objp->status == 1)
+                {
+                    print '<td align="center">';
+                    print '<img src="/theme/'.$conf->theme.'/img/icon_status_green.png" border="0"></a></td>';
+                    print '<td align="center">';
+                    print '<img src="/theme/'.$conf->theme.'/img/icon_status_red_light.png" border="0"></a></td>';
+                }
+                else
+                {
+                    print '<td align="center">';
+                    print '<img src="/theme/'.$conf->theme.'/img/icon_status_green_light.png" border="0"></a></td>';
+                    print '<td align="center">';
+                    print '<img src="/theme/'.$conf->theme.'/img/icon_status_red.png" border="0"></a></td>';
+                }
+
+                print '<td align="right">';
+                print '<a href="'.OSC_CATALOG_URL.'product_info.php?products_id='.$objp->oscid.'">Fiche en ligne</a></TD>';
+                print "</tr>\n";
+                $i++;
+            }
+            print "</TABLE>";
+            $db->free();
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
     }
-  else
+    else
     {
-      print "Aucun produits dans cette catégorie";
+        print "Aucun produits dans cette catégorie";
     }
 }
 else
 {
 
-  print_barre_liste("Liste des catégories", $page, "index.php");
+    print_barre_liste("Liste des catégories", $page, "index.php");
 
-  $sql = "SELECT c.categories_id, cd.categories_name ";
-  $sql .= " FROM ".OSC_DB_NAME.".categories as c,".OSC_DB_NAME.".categories_description as cd";
-  $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
-  $sql .= " AND c.parent_id = 0";
-  $sql .= " ORDER BY cd.categories_name ASC ";
-  
-  if ( $db->query($sql) )
+    $sql = "SELECT c.categories_id, cd.categories_name ";
+    $sql .= " FROM ".OSC_DB_NAME.".categories as c,".OSC_DB_NAME.".categories_description as cd";
+    $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
+    $sql .= " AND c.parent_id = 0";
+    $sql .= " ORDER BY cd.categories_name ASC ";
+
+    if ( $db->query($sql) )
     {
-      $num = $db->num_rows();
-      $i = 0;
-      print "<table class=\"noborder\" width=\"100%\">";
-      print "<tr class=\"liste_titre\">";
-      print_liste_field_titre("Titre","index.php", "a.title");
-      print "<td>&nbsp;</td>";
-      print "</tr>\n";
+        $num = $db->num_rows();
+        $i = 0;
+        print "<table class=\"noborder\" width=\"100%\">";
+        print "<tr class=\"liste_titre\">";
+        print_liste_field_titre("Titre","index.php", "a.title");
+        print "<td>&nbsp;</td>";
+        print "</tr>\n";
 
-      $var=True;
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object( $i);
-	  $var=!$var;
-	  
-	  printc($objp->categories_id,$db, 0);
-	  
-	  $i++;
-	}
-      print "</TABLE>";
-      $db->free();
+        $var=True;
+        while ($i < $num)
+        {
+            $objp = $db->fetch_object( $i);
+            $var=!$var;
+
+            printc($objp->categories_id,$db, 0);
+
+            $i++;
+        }
+        print "</TABLE>";
+        $db->free();
     }
-  else
+    else
     {
-      print $db->error();
+        dolibarr_print_error($db);
     }
 }
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 
 
 /*
@@ -166,45 +165,45 @@ llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</e
 function printc($id, $db, $level)
 {
 
-  $cat = new Categorie($db);
-  $cat->fetch($id);
+    $cat = new Categorie($db);
+    $cat->fetch($id);
 
-  print "<TR $bc[$var]><td>";
+    print "<tr $bc[$var]><td>";
 
-  for ($i = 0 ; $i < $level ; $i++)
+    for ($i = 0 ; $i < $level ; $i++)
     {
-      print "&nbsp;&nbsp;|--";
+        print "&nbsp;&nbsp;|--";
     }
 
-  print '<a href="index.php?id='.$cat->id.'">'.$cat->name."</a></TD>\n";
-  print "</TR>\n";
+    print '<a href="index.php?id='.$cat->id.'">'.$cat->name."</a></td>\n";
+    print "</tr>\n";
 
-  $childs = array();
-  $childs = $cat->liste_childs_array();
-  if (sizeof($childs))
-  {
-    foreach($childs as $key => $value)
-      {
-	printc($key,$db, $level+1);
-      }
-  }
+    $childs = array();
+    $childs = $cat->liste_childs_array();
+    if (sizeof($childs))
+    {
+        foreach($childs as $key => $value)
+        {
+            printc($key,$db, $level+1);
+        }
+    }
 }
 
 function title_url($id, $db)
 {
 
-  $cat = new Categorie($db);
-  $cat->fetch($id);
+    $cat = new Categorie($db);
+    $cat->fetch($id);
 
-  $title = $title . '<a href="index.php?id='.$cat->id.'">'.  $cat->name ."</a>";
+    $title = $title . '<a href="index.php?id='.$cat->id.'">'.  $cat->name ."</a>";
 
 
-  if (sizeof($cat->parent_id))
-  {
-    $title = title_url($cat->parent_id, $db) . " / ".$title;
-  }
+    if (sizeof($cat->parent_id))
+    {
+        $title = title_url($cat->parent_id, $db) . " / ".$title;
+    }
 
-  return $title;
+    return $title;
 }
 
 ?>

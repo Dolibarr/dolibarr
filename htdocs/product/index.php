@@ -41,11 +41,11 @@ if (!$user->rights->produit->lire)
 
 llxHeader("","",$langs->trans("ProductsAndServices"));
 
-print_titre($langs->trans("ProductsAndServicesArea"));
+print_fiche_titre($langs->trans("ProductsAndServicesArea"));
 
-print '<table border="0" width="100%">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 /*
  * Zone recherche produit/service
@@ -65,6 +65,8 @@ print "</table></form><br>";
  * Nombre de produits et/ou services
  */
 $prodser = array();
+$prodser[0][0]=$prodser[0][1]=$prodser[1][0]=$prodser[1][1]=0;
+
 $sql = "SELECT count(*), fk_product_type, envente FROM ".MAIN_DB_PREFIX."product as p GROUP BY fk_product_type, envente";
 if ($db->query($sql))
 {
@@ -101,7 +103,7 @@ if ($conf->service->enabled)
 }
 print '</table>';
 
-print '</td><td valign="top" width="70%">';
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
