@@ -35,7 +35,6 @@
  * consommation. L'application du principe du consentement préalable en 
  * droit français résulte de la transposition de l'article 13 de la Directive 
  * européenne du 12 juillet 2002 « Vie privée et communications électroniques ». 
-
  */
 
 
@@ -47,13 +46,18 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 if (! $argv[1]) {
-    print "Syntax:  mailing-send.php ID_MAILING\n";   
+    print "Usage:  mailing-send.php ID_MAILING\n";   
     exit;
 }
 $id=$argv[1];
 
-require ("../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+// Recupere root dolibarr
+$path=eregi_replace('mailing-send.php','',$_SERVER["PHP_SELF"]);
+
+
+require_once ($path."../htdocs/master.inc.php");
+require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+
 
 $error = 0;
 
@@ -104,7 +108,7 @@ if ($resql)
 
     if ($num) 
     {
-        dolibarr_syslog("mailing-send: mailing $num cibles");
+        dolibarr_syslog("mailing-send: target number = $num");
 
         // Positionne date debut envoi
         $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE() WHERE rowid=".$id;
@@ -121,8 +125,7 @@ if ($resql)
             $obj = $db->fetch_object($resql);
 
             $sendto = stripslashes($obj->prenom). " ".stripslashes($obj->nom) ."<".$obj->email.">";
-            $mail = new DolibarrMail($subject, $sendto, $from, $message);
-    
+            $mail = new CMailFile($subject, $sendto, $from, $message, array(), array(), array());
             $mail->errors_to = $errorsto;
     
             if ( $mail->sendfile() )
@@ -142,7 +145,7 @@ if ($resql)
                 // Mail en echec
                 $nbko++;
     
-                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
+                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=-1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
                 $resql2=$db->query($sql);
                 if (! $resql2)
                 {
@@ -152,16 +155,17 @@ if ($resql)
     
             $i++;
         }
+    }
 
-        // Met a jour statut global du mail et date envoi
-        $statut=2;
-        $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
-        $resql2=$db->query($sql);
-        if (! $resql2)
-        {
-            dolibarr_print_error($db);
-        }
-    
+    // Met a jour statut global du mail
+    $statut=2;
+    if (! $nbko) $statut=3;
+
+    $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
+    $resql2=$db->query($sql);
+    if (! $resql2)
+    {
+        dolibarr_print_error($db);
     }
 }
 else
