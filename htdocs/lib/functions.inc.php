@@ -23,7 +23,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -109,17 +108,20 @@ function sanitize_string($str)
                 Pour fichier:   fichier défini par SYSLOG_FILE
    \param       message		    Message a envoyer a syslog
    \param       level           Niveau de l'erreur
-   \remarks     Cette fonction a un effet que si le module syslog est activé.
+   \remarks     Cette fonction n'a un effet que si le module syslog est activé.
                 Warning, les fonctions syslog sont buggués sous Windows et génèrent des
                 fautes de protection mémoire. Pour résoudre, utiliser le loggage fichier,
-                au lieu du loggage syslog, en positionnant la constante SYSLOG_FILE.
+                au lieu du loggage syslog (configuration du module).
 */
 function dolibarr_syslog($message, $level=LOG_ERR)
 {
-    global $conf;
+    global $conf,$user;
     
     if ($conf->syslog->enabled)
     {
+        // Ajout user a la log
+        $message=sprintf("%-8s",($user->id?$user->login:'???')).' '.$message;
+
         if (defined("SYSLOG_FILE") && SYSLOG_FILE)
         {
             $file=fopen(SYSLOG_FILE,"a+");
@@ -133,8 +135,7 @@ function dolibarr_syslog($message, $level=LOG_ERR)
         }
         else
         {
-	  //define_syslog_variables(); déjà définit dans master.inc.php
-	  
+			//define_syslog_variables(); déjà définit dans master.inc.php
         
             if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
             {
@@ -237,7 +238,7 @@ function dolibarr_get_const($db, $name)
 		\param	    name		nom de la constante
 		\param	    value		valeur de la constante
 		\param	    type		type de constante (chaine par défaut)
-		\param	    visible	    la constante est t'elle visible (0 par défaut)
+		\param	    visible	    la constante est elle visible (0 par défaut)
 		\param	    note		explication de la constante
 		\return     int         0 si KO, 1 si OK
 */
@@ -763,6 +764,7 @@ function img_tick($alt = "default")
 function loginfunction()
 {
   global $langs,$conf;
+  $langs->load("main");
   
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html><head><title>Dolibarr Authentification</title>\n";
@@ -834,10 +836,12 @@ print '
 </td></tr>
 
 <tr><td colspan="3" style="text-align:center;"><br>
-<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connexion").' &nbsp;" tabindex="4" />
+<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />
 </td></tr>
 
 </table>
+<input type="hidden" name="loginfunction" value="loginfunction" />
+
 ';
 
   print '</form>';
@@ -888,7 +892,7 @@ function dolibarr_print_error($db='',$msg='')
     global $langs;
     $syslog = '';
     
-    // Si erreur intervenu avant chargement langue
+    // Si erreur intervenue avant chargement langue
     if (! $langs) {
         require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
         $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", "en_US");
@@ -910,11 +914,12 @@ function dolibarr_print_error($db='',$msg='')
     else                              // Mode CLI
     {
     
-        print $langs->trans("ErrorInternalErrorDetected")."...\n";
+        print $langs->trans("ErrorInternalErrorDetected")."\n";
         $syslog.="pid=".getmypid();
     }
     
-    if ($db) {
+    if ($db)
+    {
         if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
         {
             print "<br>\n";
@@ -971,69 +976,48 @@ function doliMoveFileUpload($src_file, $dest_file)
 
 
 /**
-		\brief  
-		\param	db      handler d'accès base
-		\param	user    object utilisateur
+		\brief      Sauvegarde parametrage personnel
+		\param	    db          Handler d'accès base
+		\param	    user        Objet utilisateur
+		\param	    url         Si defini, on sauve parametre du tableau tab dont clé = sortfield, sortorder, begin et page
+		                        Si non defini on sauve tous parametres du tableau tab
+		\param	    tab         Tableau (clé=>valeur) des paramètres à sauvegarder
 */
-function dolibarr_user_page_param($db, &$user)
+function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
 {
-  foreach ($GLOBALS["_GET"] as $key=>$value)
+    $db->begin();
+    
+    // On efface paramètres anciens
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
+    $sql.= " WHERE fk_user = ".$user->id;
+    if ($url) $sql.=" AND page='".$url."'";
+    else $sql.=" AND page=''";
+    $sql.=";";
+    $resql=$db->query($sql);
+    if (! $resql)
     {
-      if ($key == "sortfield")
-	{
-	
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE fk_user = $user->id ;"; 
-	  
-		$db->query($sql);
-		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
-		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');";
-
-	  $db->query($sql);
-	  
-		$user->page_param["sortfield"] = $value;
-	}
-
-      if ($key == "sortorder")
-	{    
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE fk_user = $user->id ;"; 
-	  
-		$db->query($sql);
-		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
-		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');";
-		
-	  $db->query($sql);
-		
-	  $user->page_param["sortorder"] = $value;
-	}
-      if ($key == "begin")
-	{
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE fk_user = $user->id ;"; 
-	  
-		$db->query($sql);
-		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
-		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');	";
-	  
-		$db->query($sql);
-		
-	  $user->page_param["begin"] = $value;
-	}
-      if ($key == "page")
-	{
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE fk_user = $user->id ;"; 
-	  
-		$db->query($sql);
-		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
-		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');	";
-	  
-		$db->query($sql);
-		
-	  $user->page_param["page"] = $value;
-	}
+        dolibarr_print_error($db);
     }
+    dolibarr_syslog("functions.inc.php::dolibarr_set_user_page_param $sql");
+
+    foreach ($tab as $key=>$value)
+    {
+        // On positionne nouveaux paramètres
+        if ($value && (! $url || in_array($key,array('sortfield','sortorder','begin','page'))))
+        {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value)";
+            $sql.= " VALUES (".$user->id.",";
+            if ($url) $sql.= " '".urlencode($url)."',";
+            else $sql.= " '',";
+            $sql.= " '".$key."','".addslashes($value)."');";
+            dolibarr_syslog("functions.inc.php::dolibarr_set_user_page_param $sql");
+            $db->query($sql);
+
+            $user->page_param[$key] = $value;
+        }
+    }
+
+    $db->commit();
 }
 
 /**
@@ -1295,7 +1279,7 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
 */
 function print_titre($titre)
 {
-  print '<div class="titre">'.$titre.'</div>';
+    print '<div class="titre">'.$titre.'</div>';
 }
 
 /**
@@ -1305,13 +1289,14 @@ function print_titre($titre)
 */
 function print_fiche_titre($titre, $mesg='')
 {
-  print "\n".'<table width="100%" border="0">';
-  print '<tr><td><div class="titre">'.$titre.'</div></td>';
-  if (strlen($mesg))
+    print "\n";
+    print '<table width="100%" border="0" class="notopnoleftnoright">';
+    print '<tr><td class="notopnoleftnoright"><div class="titre">'.$titre.'</div></td>';
+    if (strlen($mesg))
     {
-      print '<td align="right" valign="middle"><b>'.$mesg.'</b></td>';
+        print '<td align="right" valign="middle"><b>'.$mesg.'</b></td>';
     }
-  print '</tr></table>'."\n";
+    print '</tr></table>'."\n";
 }
 
 /**
@@ -1329,13 +1314,13 @@ function dol_delete_file($file)
 		\param	titre			titre de la page
 		\param	page			numéro de la page
 		\param	file			lien
-		\param	options         options cellule td
-		\param	sortfield       champ de tri
-		\param	sortorder       ordre de tri
-		\param	form
+		\param	options         options cellule td ('' par defaut)
+		\param	sortfield       champ de tri ('' par defaut)
+		\param	sortorder       ordre de tri ('' par defaut)
+		\param	center          chaine du centre ('' par defaut)
 		\param	num             nombre d'élément total
 */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $form='', $num=-1)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1)
 {
     global $conf;
 
@@ -1348,7 +1333,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
         $nextpage = 0;
     }
 
-    print '<table width="100%" class="noborder">';
+    print '<table width="100%" border="0" class="notopnoleftnoright">';
 
     if ($page > 0 || $num > $conf->liste_limit)
     {
@@ -1360,9 +1345,9 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
         print '<tr><td><div class="titre">'.$titre.'</div></td>';
     }
 
-    if ($form)
+    if ($center)
     {
-        print '<td align="left">'.$form.'</td>';
+        print '<td align="left">'.$center.'</td>';
     }
 
     print '<td align="right">';
@@ -1373,7 +1358,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
     // Affichage des fleches de navigation
     print_fleche_navigation($page,$file,$options,$nextpage);
 
-    print '</td></tr></table><br>';
+    print '</td></tr></table>';
 }
 
 /**
@@ -1395,38 +1380,6 @@ function print_fleche_navigation($page,$file,$options='',$nextpage)
     {
       print '<a href="'.$file.'?page='.($page+1).$options.'">'.img_next($langs->trans("Next")).'</a>';
     }
-}
-
-
-/**
-		\brief      Fonction servant a afficher un menu déroulant sur le type de paiement
-		\param	    db          handler d'accès base
-		\param	    nomselect   Nom de la zone select html
-		\param	    value       Critere de filtrage sur les type de paiement
-*/
-function print_type_paiement_select($db,$nomselect,$value=-1)
-{
-  print "<select name=\"$nomselect\">";
-
-  $sql  = "SELECT tp.code, tp.libelle";
-  $sql .= " FROM ".MAIN_DB_PREFIX."c_paiement as tp";
-  if ($value >= 0)
-    {
-    $sql.="WHERE type = $value";
-    }
-  $sql.=" ORDER by tp.libelle";
-  if ( $db->query($sql) ) {
-        $i=0;
-        $num = $db->num_rows();
-        while ($i < $num)
-    	  {
-            $obj = $db->fetch_object();
-            print "<option value=\"$obj->code\">$obj->libelle</option>";
-            $i++;
-        }
-
-    }
-  print "</select>\n";
 }
 
 
