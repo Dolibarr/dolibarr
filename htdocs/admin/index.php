@@ -76,7 +76,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
   print '<input name="nom" value="'. MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
 
   print '<tr class="impair"><td>'.$langs->trans("CompanyAddress").'</td><td>';
-  print '<textarea name="address" cols="30" rows="4">'. MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
+  print '<textarea name="address" cols="50" rows="4">'. MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
 
   print '<tr class="pair"><td>'.$langs->trans("Country").'</td><td>';
   $form->select_pays(MAIN_INFO_SOCIETE_PAYS);
@@ -86,7 +86,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
   $form->select_currency(MAIN_MONNAIE,"currency");
   print '</td></tr>';
 
-  print '<tr class="pair"><td width="50%">'.$langs->trans("Capital").'</td><td>';
+  print '<tr class="pair"><td width="35%">'.$langs->trans("Capital").'</td><td>';
   print '<input name="capital" size="20" value="' . MAIN_INFO_CAPITAL . '"></td></tr>';
 
   print '</table>';
@@ -113,23 +113,23 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
   
   if ($langs->transcountry("ProfId1",$code_pays) != '-')
   {
-      print '<tr class="impair"><td width="50%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
+      print '<tr class="impair"><td width="35%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
       print '<input name="siren" size="20" value="' . MAIN_INFO_SIREN . '"></td></tr>';
   }
   
   if ($langs->transcountry("ProfId2",$code_pays) != '-')
   {
-      print '<tr class="pair"><td width="50%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
+      print '<tr class="pair"><td width="35%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
       print '<input name="siret" size="20" value="' . MAIN_INFO_SIRET . '"></td></tr>';
   }
 
   if ($langs->transcountry("ProfId3",$code_pays) != '-')
   {
-      print '<tr class="impair"><td width="50%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
+      print '<tr class="impair"><td width="35%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
       print '<input name="ape" size="20" value="' . MAIN_INFO_APE . '"></td></tr>';
   }
   
-  print '<tr class="pair"><td width="50%">'.$langs->trans("TVAIntra").'</td><td>';
+  print '<tr class="pair"><td width="35%">'.$langs->trans("TVAIntra").'</td><td>';
   print '<input name="tva" size="20" value="' . MAIN_INFO_TVAINTRA . '"></td></tr>';
 
   print '</table>';
@@ -147,19 +147,19 @@ else
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-  print '<tr class="pair"><td width="50%">'.$langs->trans("CompanyName").'</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
+  print '<tr class="pair"><td width="35%">'.$langs->trans("CompanyName").'</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
 
-  print '<tr class="impair"><td width="50%">'.$langs->trans("CompanyAddress").'</td><td>' . nl2br(MAIN_INFO_SOCIETE_ADRESSE) . '</td></tr>';
+  print '<tr class="impair"><td width="35%">'.$langs->trans("CompanyAddress").'</td><td>' . nl2br(MAIN_INFO_SOCIETE_ADRESSE) . '</td></tr>';
 
   print '<tr class="pair"><td>'.$langs->trans("Country").'</td><td>';
   print $form->pays_name(MAIN_INFO_SOCIETE_PAYS,1);
   print '</td></tr>';
 
-  print '<tr class="impair"><td width="50%">'.$langs->trans("CompanyCurrency").'</td><td>';
+  print '<tr class="impair"><td width="35%">'.$langs->trans("CompanyCurrency").'</td><td>';
   print $form->currency_name(MAIN_MONNAIE,1);
   print '</td></tr>';
 
-  print '<tr class="pair"><td width="50%">'.$langs->trans("Capital").'</td><td>';
+  print '<tr class="pair"><td width="35%">'.$langs->trans("Capital").'</td><td>';
   print MAIN_INFO_CAPITAL . '</td></tr>';
 
   print '</table>';
@@ -184,19 +184,19 @@ else
   
   if ($langs->transcountry("ProfId1",$code_pays) != '-')
   {
-    print '<tr class="impair"><td width="50%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
+    print '<tr class="impair"><td width="35%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
     print MAIN_INFO_SIREN . '</td></tr>';
   }
   
   if ($langs->transcountry("ProfId2",$code_pays) != '-')
   {
-    print '<tr class="pair"><td width="50%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
+    print '<tr class="pair"><td width="35%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
     print MAIN_INFO_SIRET . '</td></tr>';
   }
   
   if ($langs->transcountry("ProfId3",$code_pays) != '-')
   {
-    print '<tr class="impair"><td width="50%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
+    print '<tr class="impair"><td width="35%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
     print MAIN_INFO_APE . '</td></tr>';
   }
   
