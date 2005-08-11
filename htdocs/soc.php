@@ -24,10 +24,10 @@
  */
 
 /**
-   \file       htdocs/soc.php
-   \ingroup    societe
-   \brief      Onglet societe d'une societe
-   \version    $Revision$
+        \file       htdocs/soc.php
+        \ingroup    societe
+        \brief      Onglet societe d'une societe
+        \version    $Revision$
 */
 
 require("pre.inc.php");
@@ -644,22 +644,30 @@ else
     */
     if ($_GET["action"] == '')
     {
-      print '<div class="tabsAction">';
+        print '<div class="tabsAction">';
 
-      if ($user->rights->societe->creer)
+        if ($user->rights->societe->creer)
         {
-	  print '<a class="butAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
-	  
-	  print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
-	  
-	}
-      
-      if ($user->rights->societe->supprimer)
-        {
-	  print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-	  
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
         }
-      print '</div>';
+        
+        if ($conf->projet->enabled && $user->rights->projet->creer)
+        {
+            $langs->load("projects");
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$objsoc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+        }
+
+        if ($user->rights->societe->creer)
+        {
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+        }
+        
+        if ($user->rights->societe->supprimer)
+        {
+	        print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+        }
+
+        print '</div>';
     }
     
 }
