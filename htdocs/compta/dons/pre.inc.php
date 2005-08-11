@@ -32,6 +32,7 @@ require("../../main.inc.php");
 require("../../projetdon.class.php");
 
 $langs->load("donations");
+$langs->load("propal");
 
 $libelle[0] = $langs->trans("PromisesNotValid");
 $libelle[1] = $langs->trans("PromisesValid");

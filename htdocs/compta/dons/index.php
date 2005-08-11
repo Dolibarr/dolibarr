@@ -59,8 +59,13 @@ if ($result)
     dolibarr_print_error($db);   
 }
 
-print_titre($langs->trans("DonationsArea"));
-print '<br>';
+print_fiche_titre($langs->trans("DonationsArea"));
+
+
+print '<table width="100%" class="notopnoleftnoright">';
+
+print '<tr><td class="notopnoleft">';
+
 
 print '<table class="noborder" width="50%">';
 print '<tr class="liste_titre">';
@@ -93,6 +98,8 @@ print '<td align="right">'.($totalnb?(price($total)/$totalnb):'&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
 
+
+print '</td></tr></table>';
 
 $db->close();
 

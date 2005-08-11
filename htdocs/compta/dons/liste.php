@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/compta/dons/liste.php
         \ingroup    don
 		\brief      Page de liste des dons
@@ -61,7 +61,7 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $of
 $result = $db->query($sql);
 if ($result) 
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   
   if ($statut >= 0)
@@ -75,6 +75,7 @@ if ($result)
   print "<table class=\"noborder\" width=\"100%\">";
 
   print '<tr class="liste_titre">';
+  print_liste_field_titre($langs->trans("Ref"),"liste.php","d.rowid","&page=$page&statut=$statut","","",$sortfield);
   print_liste_field_titre($langs->trans("Firstname"),"liste.php","d.prenom","&page=$page&statut=$statut","","",$sortfield);
   print_liste_field_titre($langs->trans("Name"),"liste.php","d.nom","&page=$page&statut=$statut","","",$sortfield);
   print_liste_field_titre($langs->trans("Company"),"liste.php","d.societe","&page=$page&statut=$statut","","",$sortfield);
@@ -90,13 +91,14 @@ if ($result)
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object();
+      $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->prenom)."</a></td>\n";
-      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->nom)."</a></td>\n";
-      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->societe)."</a></td>\n";
-      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".strftime("%d %B %Y",$objp->datedon)."</a></td>\n";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".$objp->rowid."</a></td>\n";
+      print "<td>".stripslashes($objp->prenom)."</td>\n";
+      print "<td>".stripslashes($objp->nom)."</td>\n";
+      print "<td>".stripslashes($objp->societe)."</td>\n";
+      print "<td>".dolibarr_print_date($objp->datedon).'</td>';
       if ($conf->projet->enabled) {
           print "<td>$objp->projet</td>\n";
       }
@@ -115,5 +117,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
