@@ -19,7 +19,8 @@
  * $Source$
  */
 
-/**     \file       htdocs/html.formmail.class.php
+/**
+        \file       htdocs/html.formmail.class.php
         \brief      Fichier de la classe permettant la génération du formulaire html d'envoi de mail unitaire
         \version    $Revision$
 */
