@@ -343,7 +343,6 @@ alter table llx_facturedet add date_start date;
 alter table llx_facturedet add date_end   date;
 
 alter table llx_user add egroupware_id integer;
-alter table llx_user add gui_lang varchar(5);
 alter table llx_societe add code_client              varchar(15) after nom;
 alter table llx_societe add code_fournisseur         varchar(15) after code_client;
 alter table llx_societe add code_compta              varchar(15) after code_fournisseur;
@@ -681,13 +680,18 @@ update llx_const set visible=0 where name like 'PROPALE_ADDON%';
 
 create table llx_user_param
 (
-  fk_user       integer,
-  page          varchar(255),
-  param         varchar(64),
-  value         varchar(255),
+  fk_user       integer      NOT NULL,
+  page          varchar(255) NOT NULL,
+  param         varchar(64)  NOT NULL,
+  value         varchar(255) NOT NULL,
 
   UNIQUE (fk_user,page,param)
 )type=innodb;
+
+alter table llx_user_param modify fk_user       integer      NOT NULL;
+alter table llx_user_param modify page          varchar(255) NOT NULL;
+alter table llx_user_param modify param         varchar(64)  NOT NULL;
+alter table llx_user_param modify value         varchar(255) NOT NULL;
 
 
 update llx_bank set datev=dateo where datev is null;
@@ -804,6 +808,8 @@ create table llx_commande
   facture          tinyint default 0,   
   UNIQUE INDEX (ref)
 )type=innodb;
+
+update llx_commande set date_cloture=tms where date_cloture is null and fk_statut > 2;
 
 create table llx_commandedet
 (
