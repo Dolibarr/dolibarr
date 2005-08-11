@@ -76,7 +76,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
   print '<input name="nom" value="'. MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
 
   print '<tr class="impair"><td>'.$langs->trans("CompanyAddress").'</td><td>';
-  print '<textarea name="address" cols="50" rows="4">'. MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
+  print '<textarea name="address" cols="50" rows="3">'. MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
 
   print '<tr class="pair"><td>'.$langs->trans("Country").'</td><td>';
   $form->select_pays(MAIN_INFO_SOCIETE_PAYS);
