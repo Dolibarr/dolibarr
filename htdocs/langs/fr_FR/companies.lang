@@ -76,7 +76,7 @@ Phones=Téléphones
 Capital=Capital
 EditCompany=Modification société
 ThisUserIsNot=Cet utilisateur n'est ni un prospect, ni un client, ni un fournisseur
-VATIntraCheckableOnEUSite=Numéro TVA intracommunautaire vérifiable sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la Commission Européenne
+VATIntraCheckableOnEUSite=(Vérifiable sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la Commission Européenne)
 NorProspectNorCustomer=Ni client, ni prospect
 JuridicalStatus=Forme juridique
 Staff=Effectif
