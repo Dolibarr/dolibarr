@@ -24,6 +24,12 @@
  *
  */
 
+/**
+        \file       htdocs/pre.inc.php
+		\brief      Fichier gestionnaire du menu de gauche de l'accueil
+		\version    $Revision$
+*/
+
 require ("./main.inc.php");
 $user->getrights('societe');
 $user->getrights('propale');
@@ -146,14 +152,14 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
     }
 
-  if ($conf->voyage && $user->societe_id == 0) 
+  if ($conf->voyage->enabled && $user->societe_id == 0) 
     {
       $menu->add(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
       $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
       $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/reduc.php","Reduc");
     }
 
-  if ($conf->domaine->enabled ) 
+  if ($conf->domaine->enabled)
     {
       $menu->add(DOL_URL_ROOT."/domain/index.php", "Domaines");
     }
@@ -163,10 +169,6 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
     }
 
-  if ($conf->rapport->enabled)
-    {
-      $menu->add(DOL_URL_ROOT."/rapport/", "Rapports");
-    }
   
   $langs->load("users");
   $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
