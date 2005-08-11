@@ -22,13 +22,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-    \file       htdocs/master.inc.php
-    \brief      Fichier de preparation de l'environnement Dolibarr
-    \version    $Revision$
+        \file       htdocs/master.inc.php
+        \brief      Fichier de preparation de l'environnement Dolibarr
+        \version    $Revision$
 */
 
 define('DOL_VERSION','2.0.0-alpha2');
@@ -37,19 +36,21 @@ define_syslog_variables();
 clearstatcache();
 
 // Forcage du paramétrage PHP
-//ini_set('mbstring.func_overload','0');
-error_reporting(E_ALL ^ E_NOTICE);     // Dolibarr n'est pas utilisable en mode full E_ERROR
+//error_reporting(E_ALL);               // Dolibarr n'est pas utilisable en mode error E_ALL
+error_reporting(E_ALL ^ E_NOTICE);      // Dolibarr n'est pas utilisable en mode error E_ALL
 
 // Test si install ok
 if (! @include_once("conf/conf.php"))
 {
-  Header("Location: install/index.php");
+    Header("Location: install/index.php");
+    exit;
 }
 else
 {
-  if (! isset($dolibarr_main_db_host))
+    if (! isset($dolibarr_main_db_host))
     {
-      Header("Location: install/index.php");
+        Header("Location: install/index.php");
+        exit;
     }
 }
 
@@ -118,28 +119,26 @@ if (! $db->connected) {
 
 $user = new User($db);
 
-// Pour utiliser une autre version de fpdf, définir la constante FPDF_PATH
-if (! defined('FPDF_PATH')) { define('FPDF_PATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/'); }
-define('FPDF_FONTPATH', FPDF_PATH . 'font/');
-// \todo mettre cet include uniquement sur les éléments qui manipulent du PDF
-require_once(FPDF_PATH . "fpdf.php");
-
-
 /*
  * Definition de toutes les Constantes globales d'environnement
+ * - En constante php (\todo a virer)
+ * - En $conf->global->key=value
  */
 $sql = "SELECT name, value FROM ".MAIN_DB_PREFIX."const";
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
-  $numr = $db->num_rows($result);
-  $i = 0;
-  
-  while ($i < $numr)
+    $numr = $db->num_rows($result);
+    $i = 0;
+
+    while ($i < $numr)
     {
-      $objp = $db->fetch_object($result);
-      define ("$objp->name", $objp->value);
-      $i++;
+        $objp = $db->fetch_object($result);
+        $key=$objp->name;
+        $value=$objp->value;
+        define ("$key", $value);
+        $conf->global->$key=$value;
+        $i++;
     }
 }
 $db->free($result);
@@ -147,43 +146,30 @@ $db->free($result);
 /*
  * Positionne les gestionnaires de menu
  */
-if (! defined('MAIN_MENU_BARRETOP'))
-{
-  define('MAIN_MENU_BARRETOP',"default.php");
-}
-if (! defined('MAIN_MENU_BARRELEFT'))
-{
-  define('MAIN_MENU_BARRELEFT',"default.php");
-}
-$conf->top_menu=MAIN_MENU_BARRETOP;
-$conf->left_menu=MAIN_MENU_BARRELEFT;
+if (! $conf->global->MAIN_MENU_BARRETOP) $conf->global->MAIN_MENU_BARRETOP="default.php";
+if (! $conf->global->MAIN_MENU_BARRELEFT) $conf->global->MAIN_MENU_BARRELEFT="default.php";
+$conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
+$conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
 
 /*
- * Positionne le langage et localisation dans $conf->langage
+ * Positionne le langage global et localisation dans $conf->langage
  * et charge l'objet de traduction
  */
-if (! defined('MAIN_LANG_DEFAULT'))
-{
-  define('MAIN_LANG_DEFAULT',"fr_FR");
-}
-
-$conf->langage=MAIN_LANG_DEFAULT;
-
-// On corrige $conf->langage si il ne vaut pas le code long: fr -> fr_FR par exemple
-if (strlen($conf->langage) <= 3) {
-    $conf->langage = strtolower($conf->langage)."_".strtoupper($conf->langage);
-}
-$conf->langage_tiret=ereg_replace('_','-',$conf->langage);
-
-setlocale(LC_ALL, $conf->langage_tiret);    // Compenser pb de locale avec windows
-setlocale(LC_ALL, $conf->langage);
-if (defined("MAIN_FORCE_SETLOCALE_LC_ALL") && MAIN_FORCE_SETLOCALE_LC_ALL) setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL);
-if (defined("MAIN_FORCE_SETLOCALE_LC_TIME") && MAIN_FORCE_SETLOCALE_LC_TIME) setlocale(LC_TIME, MAIN_FORCE_SETLOCALE_LC_TIME);
-if (defined("MAIN_FORCE_SETLOCALE_LC_NUMERIC") && MAIN_FORCE_SETLOCALE_LC_NUMERIC) setlocale(LC_NUMERIC, MAIN_FORCE_SETLOCALE_LC_NUMERIC);
-if (defined("MAIN_FORCE_SETLOCALE_LC_MONETARY") && MAIN_FORCE_SETLOCALE_LC_MONETARY) setlocale(LC_MONETARY, MAIN_FORCE_SETLOCALE_LC_MONETARY);
+if (! $conf->global->MAIN_LANG_DEFAULT) $conf->global->MAIN_LANG_DEFAULT="fr_FR";
+$conf->langage=dolibarr_set_php_lang($conf->global->MAIN_LANG_DEFAULT);
 
 require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
 $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
+
+
+/*
+ * Pour utiliser une autre version de fpdf, définir la constante FPDF_PATH
+ */
+if (! defined('FPDF_PATH')) { define('FPDF_PATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/'); }
+define('FPDF_FONTPATH', FPDF_PATH . 'font/');
+// \todo mettre cet include uniquement sur les éléments qui manipulent du PDF
+require_once(FPDF_PATH . "fpdf.php");
+
 
 /*
  * Active fonction remplissage ville depuis cp
@@ -215,7 +201,6 @@ else
  * Définition des paramètres d'activation de module et dépendants des modules
  * Chargement d'include selon etat activation des modules
  */
-define('MAIN_MODULE_BOOKMARK4U',1);
 $conf->bookmark4u->enabled=defined('MAIN_MODULE_BOOKMARK4U')?MAIN_MODULE_BOOKMARK4U:0;
 $conf->deplacement->enabled=defined("MAIN_MODULE_DEPLACEMENT")?MAIN_MODULE_DEPLACEMENT:0;
 $conf->mailing->enabled=defined("MAIN_MODULE_MAILING")?MAIN_MODULE_MAILING:0;
@@ -293,18 +278,15 @@ if (!defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT
 $conf->propal->dir_output=DOL_DATA_ROOT."/propale";
 $conf->propal->dir_images=DOL_DATA_ROOT."/propale/images";
 if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
-
+$conf->domaine->enabled=0;
+$conf->voyage->enabled=0;
 
 
 /*
  * Modification de quelques variable de conf en fonction des Constantes
  */
-if (defined("MAIN_MONNAIE")) {
-	$conf->monnaie=MAIN_MONNAIE;
-}
-else {
-	$conf->monnaie='EUR';	
-}
+if (! $conf->global->MAIN_MONNAIE) $conf->global->MAIN_MONNAIE='EUR';	
+$conf->monnaie=$conf->global->MAIN_MONNAIE;
 
 /*
  * Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
@@ -334,18 +316,15 @@ else {
 /*
  * SIZE_LISTE_LIMIT : constante de taille maximale des listes
  */
-if (defined('SIZE_LISTE_LIMIT'))
-{
-  $conf->liste_limit=SIZE_LISTE_LIMIT;
-}
-else
-{
-  $conf->liste_limit=20;
-}
-if ($user->liste_limit > 0)
-{
-  $conf->liste_limit = $user->liste_limit;
-}
+if (! $conf->global->SIZE_LISTE_LIMIT) $conf->global->SIZE_LISTE_LIMIT=20;
+$conf->liste_limit=$conf->global->SIZE_LISTE_LIMIT;
+
+/*
+ * MAIN_THEME : theme
+ */
+if (! $conf->global->MAIN_THEME) $conf->global->MAIN_THEME="eldy";
+$conf->theme=$conf->global->MAIN_THEME;
+$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 
 // $conf->email_from          = email pour envoi par Dolibarr des mails auto (notifications, ...)
 // $conf->mailing->email_from = email pour envoi par Dolibarr des mailings
@@ -359,12 +338,6 @@ if (defined('MAILING_EMAIL_FROM'))
     $conf->mailing->email_from=MAILING_EMAIL_FROM;
 }
 else $conf->mailing->email_from=$conf->email_from;
-
-if (defined('MAIN_THEME'))
-{
-  $conf->theme=MAIN_THEME;
-  $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
-}
 
 if (defined("MAIN_MAIL_RESIL"))
 {
@@ -402,9 +375,12 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
 // Delai de tolerance des alertes
 $conf->actions->warning_delay=7*24*60*60;   // 1 semaine
 $conf->commande->traitement->warning_delay=2*24*60*60;
-$conf->propal->facturation->warning_delay=31*24*60*60;
-$conf->facture->warning_delay=31*24*60*60;   // 1 moi
-
+$conf->propal->cloture->warning_delay=31*24*60*60;
+$conf->propal->facturation->warning_delay=7*24*60*60;
+$conf->facture->fournisseur->warning_delay=2*24*60*60;
+$conf->facture->client->warning_delay=31*24*60*60;   // 1 mois
+$conf->contrat->services->inactifs->warning_delay=0*24*60*60;
+$conf->contrat->services->expires->warning_delay=0*24*60*60;
 
 /*
  */
