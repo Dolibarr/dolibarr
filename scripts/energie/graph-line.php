@@ -38,6 +38,8 @@ $sql_c .= " FROM ".MAIN_DB_PREFIX."energie_compteur";
 
 $resql_c = $db->query($sql_c);
 
+$user = New User($db);
+
 if ($resql_c)
 {
   $num_c = $db->num_rows($resql_c);
@@ -48,6 +50,9 @@ if ($resql_c)
       while ($i_c < $num_c)
 	{
 	  $obj_c = $db->fetch_object($resql_c);
+
+	  $compteur = New EnergieCompteur($db, $user);
+	  $compteur->fetch($obj_c->rowid);
 
 	  $compteur_id = $obj_c->rowid;
 
@@ -144,10 +149,10 @@ if ($resql_c)
 		  $xyear = strftime("%Y",$day);
 		}
 	      
-	      $width = 750;
-	      $height = 300;
 	      if (sizeof($xydatas) > 2)
 		{
+		  $width = 750;
+		  $height = 300;
 		  $graph = new Graph($width, $height,"auto");    
 		  $graph->SetScale("textlin",0,$maxa);
 	      
@@ -169,6 +174,29 @@ if ($resql_c)
 		  $file= DOL_DATA_ROOT."/energie/graph/all.".$obj_c->rowid.".png";
 		  
 		  $graph->Stroke($file);
+
+		  $width = 300;
+		  $height = 90;
+		  $graph = new Graph($width, $height,"auto");    
+		  $graph->SetScale("textlin",0,$maxa);
+	      
+		  $graph->yaxis->scale->SetGrace(2);
+		  $graph->SetFrame(1);
+		  $graph->img->SetMargin(30,10,10,10);
+	      
+		  $b2plot = new LinePlot($xydatas);	      
+
+		  $b2plot->SetColor("blue");
+
+		  $graph->xaxis->Hide();
+	      
+		  $graph->Add($b2plot);
+		  $graph->img->SetImgFormat("png");
+	      
+		  $file= DOL_DATA_ROOT."/energie/graph/small-all.".$obj_c->rowid.".png";
+		  
+		  $graph->Stroke($file);
+
 		}
 	      else
 		{
