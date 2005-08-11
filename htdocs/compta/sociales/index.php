@@ -227,7 +227,7 @@ if ( $db->query($sql) )
 
       $var = !$var;
       print "<tr $bc[$var]>";
-      print '<td width="80">';
+      print '<td width="60">';
       print '<a href="charges.php?id='.$obj->id.'">'.img_file().' '.$obj->id.'</a>';
       print '</td>';
 
@@ -239,7 +239,7 @@ if ( $db->query($sql) )
       	print '&nbsp;';
       }
       print '</td>';
-      print '<td>'.$obj->type_lib.'</td><td>'.$obj->libelle.'</td>';
+      print '<td>'.$obj->type_lib.'</td><td>'.dolibarr_trunc($obj->libelle,36).'</td>';
       print '<td align="right" width="100">'.price($obj->amount).'</td>';
       
       if ($obj->paye)

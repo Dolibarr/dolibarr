@@ -77,7 +77,7 @@ if ($chid > 0)
 	   */
 
 	  //$head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-	  $head[0][1] = "Charge sociale : No $cha->id";
+	  $head[0][1] = $langs->trans("SocialContribution").": $cha->id";
 	  $h = 1;
 	  $a = 0;
 
@@ -172,7 +172,7 @@ if ($chid > 0)
     
      print "</form>\n";
 
-	print '<br></div>';
+	print '</div>';
 
     if (! $_GET["action"]) {
 
