@@ -24,22 +24,19 @@ require("../../main.inc.php");
 
 function llxHeader($head = "")
 {
-  global $user, $conf, $langs;
-
-
-  /*
-   *
-   *
-   */
-  top_menu($head);
-
-  $menu = new Menu();
-
-  $menu->add("index.php",$langs->trans("Charges"));
-
-  $menu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"));
-
-  left_menu($menu->liste);
+    global $user, $conf, $langs;
+    $langs->load("compta");
+    $langs->load("propal");
+    
+    top_menu($head);
+    
+    $menu = new Menu();
+    
+    $menu->add("index.php",$langs->trans("Contributions"));
+    
+    $menu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"));
+    
+    left_menu($menu->liste);
 }
 
 ?>
