@@ -238,7 +238,8 @@ class MenuLeft {
             /*
              * Menu COMPTA
              */
-            if ($mainmenu == 'accountancy') {
+            if ($mainmenu == 'accountancy')
+            {
                 $langs->load("companies");
         
                 // Fournisseurs
@@ -305,6 +306,7 @@ class MenuLeft {
                 // Propal
                 if ($conf->propal->enabled)
                 {
+                    $langs->load("propal");
                     $newmenu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"),0,$user->rights->propale->lire);
                 }
 
@@ -320,7 +322,10 @@ class MenuLeft {
                 if ($conf->don->enabled)
                 {
                   $langs->load("donations");
-                  $newmenu->add(DOL_URL_ROOT."/compta/dons/index.php?leftmenu=donations&mainmenu=",$langs->trans("Donations"), 0, $user->rights->don->lire);
+                  $newmenu->add(DOL_URL_ROOT."/compta/dons/index.php?leftmenu=donations&mainmenu=accountancy",$langs->trans("Donations"), 0, $user->rights->don->lire);
+                  if ($leftmenu=="donations") $newmenu->add_submenu(DOL_URL_ROOT."/compta/dons/fiche.php?action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
+                  if ($leftmenu=="donations") $newmenu->add_submenu(DOL_URL_ROOT."/compta/dons/liste.php",$langs->trans("List"), 1, $user->rights->don->lire);
+                  if ($leftmenu=="donations") $newmenu->add_submenu(DOL_URL_ROOT."/compta/dons/stats.php",$langs->trans("Statistics"), 1, $user->rights->don->lire);
                 }
                 
                 // Déplacements
@@ -520,22 +525,24 @@ class MenuLeft {
                   
                   $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&mainmenu=members",$langs->trans("Members"),0,$user->rights->adherent->lire);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?action=create",$langs->trans("NewMember"),1,$user->rights->adherent->creer);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php",$langs->trans("List"),1,$user->rights->adherent->lire);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1",$langs->trans("MenuMembersToValidate"),1,$user->rights->adherent->lire);
-                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1",$langs->trans("MenuMembersUpToDate"),1,$user->rights->adherent->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1",$langs->trans("MenuMembersValidated"),1,$user->rights->adherent->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&filter=uptodate",$langs->trans("MenuMembersUpToDate"),1,$user->rights->adherent->lire);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"),1,$user->rights->adherent->lire);
                 
-                  $newmenu->add(DOL_URL_ROOT."/public/adherents/index.php","Espace adherents public");
+                  $langs->load("compta");
+                  $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=accountancy&mainmenu=members",$langs->trans("Subscriptions"),0,$user->rights->adherent->cotisation->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php?leftmenu=accountancy",$langs->trans("List"),1,$user->rights->adherent->cotisation->lire);
+                  $langs->load("banks");
+                  $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=accountancy",$langs->trans("Banks"),0,$user->rights->adherent->lire);
                 
                   $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&mainmenu=members",$langs->trans("Export"),0,$user->rights->adherent->lire);
                   if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php?leftmenu=export","Format htpasswd",1,$user->rights->adherent->lire);
                   if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export","Cartes d'adhérents",1,$user->rights->adherent->lire);
                   if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export","Etiquettes d'adhérents",1,$user->rights->adherent->lire);
                 
-                  $langs->load("compta");
-                  $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=accountancy&mainmenu=members",$langs->trans("Accountancy"),0,$user->rights->adherent->lire);
-                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php?leftmenu=accountancy",$langs->trans("Subscriptions"),1,$user->rights->adherent->lire);
-                  $langs->load("banks");
-                  $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=accountancy",$langs->trans("Banks"),0,$user->rights->adherent->lire);
+                  $newmenu->add(DOL_URL_ROOT."/public/adherents/index.php","Espace adherents public");
                 
                   $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=setup&mainmenu=members",$langs->trans("Setup"),0,$user->rights->adherent->configurer);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/type.php?leftmenu=setup&",$langs->trans("MembersTypes"),1,$user->rights->adherent->configurer);
