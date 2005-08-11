@@ -46,12 +46,11 @@ llxHeader('','Mailing');
  *
  */
 
-print_titre($langs->trans("MailingArea"));
-print '<br>';
+print_fiche_titre($langs->trans("MailingArea"));
 
-print '<table class="noborder" width="100%">';
+print '<table class="notopnoleftnoright" width="100%">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 
 // Recherche emails
@@ -138,7 +137,7 @@ closedir($handle);
 
 print "</table><br>";
 
-print '</td><td valign="top" width="70%">';
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*

@@ -316,11 +316,9 @@ else
 
             if ($mil->statut > 1)
             {
-                $ua = new User($db, $mil->user_appro);
-                $ua->fetch();
-                print '<tr><td>'.$langs->trans("SentBy").'</td><td>'.$ua->fullname.'</td>';
+                print '<tr><td>'.$langs->trans("SentBy").'</td><td>'.$langs->trans("Unknown").'</td>';
                 print '<td>'.$langs->trans("Date").'</td>';
-                print '<td>'.strftime("%d %b %Y %H:%M", $mil->date_appro).'</td></tr>';
+                print '<td>'.strftime("%d %b %Y %H:%M", $mil->date_envoi).'</td></tr>';
             }
 
             // Contenu du mail
@@ -426,5 +424,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

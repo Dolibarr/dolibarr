@@ -71,7 +71,8 @@ class Mailing
         
         $this->statuts[0] = $langs->trans("MailingStatusDraft");
         $this->statuts[1] = $langs->trans("MailingStatusValidated");
-        $this->statuts[2] = $langs->trans("MailingStatusSent");
+        $this->statuts[2] = $langs->trans("MailingStatusSentPartialy");
+        $this->statuts[3] = $langs->trans("MailingStatusSentCompletely");
   }
   
   /**
@@ -174,7 +175,7 @@ class Mailing
       $sql .= ", m.fk_user_creat, m.fk_user_valid, m.fk_user_appro";
       $sql .= ", ".$this->db->pdate("m.date_creat") . " as date_creat";
       $sql .= ", ".$this->db->pdate("m.date_valid") . " as date_valid";
-      $sql .= ", ".$this->db->pdate("m.date_appro") . " as date_appro";
+      $sql .= ", ".$this->db->pdate("m.date_envoi") . " as date_envoi";
       $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
       $sql .= " WHERE m.rowid = ".$rowid;
 
@@ -202,6 +203,7 @@ class Mailing
 	      $this->date_creat         = $obj->date_creat;
 	      $this->date_valid         = $obj->date_valid;
 	      $this->date_appro         = $obj->date_appro;
+	      $this->date_envoi         = $obj->date_envoi;
 
 	      return 0;
 	    }

@@ -265,19 +265,20 @@ if ($mil->fetch($_GET["id"]) == 0)
     
         $addu = "&amp;id=".$mil->id."&amp;page=$page";;
         print_barre_liste($langs->trans("MailSelectedRecipients"), $page, "cibles.php","&amp;id=".$mil->id,$sortfield,$sortorder,"",$num);
+
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
         print_liste_field_titre($langs->trans("Lastname"),"cibles.php","mc.nom",$addu,"","",$sortfield);
         print_liste_field_titre($langs->trans("Firstname"),"cibles.php","mc.prenom",$addu,"","",$sortfield);
         print_liste_field_titre($langs->trans("EMail"),"cibles.php","mc.email",$addu,"","",$sortfield);
-        print '<td>'.$langs->trans("Status").'</td>';
+        print '<td align="center">'.$langs->trans("Status").'</td>';
         if ($mil->statut == 0)
         {
             print '<td>&nbsp;</td>';
         }
         if ($mil->statut != 0)
         {
-            print '<td>'.$langs->trans("Date").'</td>';
+            print '<td align="center">'.$langs->trans("Date").'</td>';
         }        
         print '</tr>';
         $var = true;
@@ -294,16 +295,16 @@ if ($mil->fetch($_GET["id"]) == 0)
             print '<td>'.$obj->email.'</td>';
             if ($mil->statut == 0)
             {
-                print '<td>'.$langs->trans("MailingStatusNotSent").'</td>';
+                print '<td align="center">'.$langs->trans("MailingStatusNotSent").'</td>';
                 print '<td><a href="cibles.php?action=delete&id='.$mil->id.'&rowid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
             }
             if ($mil->statut != 0)
             {
-                print '<td>';
-                if ($obj->statut==-1) print $langs->trans("MailingStatusError");
+                print '<td align="center">';
+                if ($obj->statut==-1) print $langs->trans("MailingStatusError").' '.img_error();
                 if ($obj->statut==1) print $langs->trans("MailingStatusSent");
                 print '</td>';
-                print '<td>'.$obj->date_envoi.'</td>';
+                print '<td align="center">'.$obj->date_envoi.'</td>';
             }        
             print '</tr>';
 
@@ -323,5 +324,5 @@ if ($mil->fetch($_GET["id"]) == 0)
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
