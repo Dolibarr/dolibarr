@@ -96,7 +96,7 @@ class Societe {
 	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$var.'.php';
 
     $this->mod_codeclient = new $var;
-    $this->codeclient_modifiable = $this->mod_codeclient->modifiable;
+    $this->codeclient_modifiable = $this->mod_codeclient->code_modifiable;
 
     // definit module code fournisseur
     if (defined('CODEFOURNISSEUR_ADDON') && strlen(CODEFOURNISSEUR_ADDON) > 0) $var = CODEFOURNISSEUR_ADDON;
@@ -104,7 +104,7 @@ class Societe {
 	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$var.'.php';
 
     $this->mod_codefournisseur = new $var;
-    $this->codeclient_modifiable = $this->mod_codeclient->modifiable;
+    $this->codeclient_modifiable = $this->mod_codeclient->code_modifiable;
 
     return 1;
   }
