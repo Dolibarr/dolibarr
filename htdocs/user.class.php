@@ -62,7 +62,6 @@ class User
   var $datem;
   var $societe_id;
   var $webcal_login;
-  var $gui_lang;
   var $datelastaccess;
   
   var $error;
@@ -94,27 +93,27 @@ class User
 
   /**
    *    \brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
-   *    \param      login   login a charger
+   *    \param      login       Si défini, login a utiliser pour recherche
    */
 	 
   function fetch($login='')
     {
+        // Recupere utilisateur
         $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
-        $sql.= " u.fk_societe, u.fk_socpeople, u.gui_lang,";
+        $sql.= " u.fk_societe, u.fk_socpeople, ";
         $sql.= " ".$this->db->pdate("u.datec")." as datec, ".$this->db->pdate("u.tms")." as datem,";
         $sql.= " ".$this->db->pdate("u.datelastaccess")." as datel";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-        if ($this->id)
-        {
-            $sql .= " WHERE u.rowid = $this->id";
-        }
-        else
+        if ($login)
         {
             $sql .= " WHERE u.login = '$login'";
         }
+        else
+        {
+            $sql .= " WHERE u.rowid = $this->id";
+        }
         
         $result = $this->db->query($sql);
-        
         if ($result)
         {
             if ($this->db->num_rows($result))
@@ -139,7 +138,6 @@ class User
                 $this->datelastaccess = $obj->datel;
         
                 $this->webcal_login = $obj->webcal_login;
-                $this->gui_lang = $obj->gui_lang;
                 $this->societe_id = $obj->fk_societe;
             }
             $this->db->free($result);
@@ -150,14 +148,40 @@ class User
             dolibarr_print_error($this->db);
         }
         
-        if (isset($_SERVER['SCRIPT_URL'])) {
-            // \todo  $_SERVER['SCRIPT_URL'] n'existe pas sous tout os/server web
+        // Recupere parametrage global propre à l'utilisateur
+        // \todo a stocker/recupérer en session pour eviter ce select a chaque page
+        $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
+        $sql.= " WHERE fk_user = ".$this->id;
+        $sql.= " AND page = ''";
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                $p=$obj->param;
+                $this->conf->$p = $obj->value;
+                $i++;
+            }
+            $this->db->free($result);
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+
+        // Recupere parametrage propre à la page et à l'utilisateur
+        // \todo SCRIPT_URL non defini sur tous serveurs 
+        // Paramétrage par page desactivé pour l'instant
+        if (1==2 && isset($_SERVER['SCRIPT_URL']))
+        {
             $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
-            $sql .= " WHERE fk_user = ".$this->id;
-            $sql .= " AND page = '".$_SERVER['SCRIPT_URL']."'";
-        
+            $sql.= " WHERE fk_user = ".$this->id;
+            $sql.= " AND page='".$_SERVER['SCRIPT_URL']."'";
             $result=$this->db->query($sql);
-            if ($result);
+            if ($result)
             {
                 $num = $this->db->num_rows($result);
                 $i = 0;
@@ -167,11 +191,15 @@ class User
                 {
                     $obj = $this->db->fetch_object($result);
                     $this->page_param[$obj->param] = $obj->value;
-                    $page_param_url .= $obj->param . "=".$obj->value."&amp;";
+                    $page_param_url .= $obj->param."=".$obj->value."&amp;";
                     $i++;
                 }
                 $this->page_param_url = $page_param_url;
                 $this->db->free($result);
+            }
+            else
+            {
+                dolibarr_print_error($this->db);
             }
         }
     }
@@ -661,7 +689,6 @@ class User
         $sql .= ", webcal_login = '$this->webcal_login'";
         $sql .= ", code = '$this->code'";
         $sql .= ", note = '$this->note'";
-        $sql .= ", gui_lang = '$this->gui_lang'";
         $sql .= " WHERE rowid = ".$this->id;
 
         $result = $this->db->query($sql);
@@ -681,6 +708,30 @@ class User
 
    }
 
+
+  /**
+   *    \brief      Mise à jour en base de la date de deniere connexion d'un utilisateur
+   *    \return     <0 si echec, >=0 si ok
+   */
+  function update_last_login_date()
+    {
+        dolibarr_syslog ("Mise a jour date derniere connexion pour user->id=".$this->id);
+        $sql = "UPDATE ".MAIN_DB_PREFIX."user";
+        $sql.= " SET datelastaccess = sysdate()";
+        $sql.= " WHERE rowid = ".$this->id;
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+   }
+   
+   
   /**
    *    \brief     Change le mot de passe d'un utilisateur
    *    \param     user             Object user de l'utilisateur qui fait la modification
