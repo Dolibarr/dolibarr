@@ -236,7 +236,7 @@ class FormMail
         print "</td></tr>\n";
     }
     	
-    print "<tr><td align=center colspan=2><center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center></td></tr>\n";
+    print "<tr><td align=center colspan=2><center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("SendMail")."\"></center></td></tr>\n";
     print "</table>\n";
 
     print "</form>\n";	

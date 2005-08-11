@@ -62,6 +62,7 @@ NbOfCustomersContacts=Contacts uniques tous clients
 MailNoChangePossible=Destinataires d'un mailing validé non modifiables
 SearchAMailing=Rechercher un mailing
 SendMailing=Envoi mailing
+SendMail=Envoi mail
 SentBy=Envoyé par
 MailingNeedCommand=Pour des raisons de sécurité, l'envoi d'un mailing de masse ne peut être réalisé qu'en ligne de commande. Demandez à votre administrateur de lancer la commande suivante pour envoyer le mailing à tous les destinataires :
 TargetsReset=Vider liste

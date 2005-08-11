@@ -62,6 +62,7 @@ NbOfCustomersContacts=Unique contacts for all customers
 MailNoChangePossible=Recipients for validated emailing can't be changed
 SearchAMailing=Search mailing
 SendMailing=Send emailing
+SendMail=Send email
 SentBy=Sent by
 MailingNeedCommand=For securities reason, sending an emailing can only be performed from command line. Ask your administrator to launch the following command to send the emailing to all recipients:
 TargetsReset=Clear list
