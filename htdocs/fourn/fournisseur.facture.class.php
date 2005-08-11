@@ -143,9 +143,9 @@ class FactureFournisseur
 	    }        
         }
         else
-	  {
-            if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
-	      {
+        {
+            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+            {
                 $this->error=$langs->trans("ErrorBillRefAlreadyExists");
                 $this->db->rollback();
                 return -1;
@@ -482,13 +482,13 @@ class FactureFournisseur
         }
     }
 
-  /**
-   *    \brief      Renvoi le libellé court d'un statut donné
-   *    \param      paye        etat paye
-   *    \param      statut      id statut
-   *    \param      amount      amount already payed
-   *    \return     string      Libellé court du statut
-   */
+    /**
+     *    \brief      Renvoi le libellé court d'un statut donné
+     *    \param      paye        etat paye
+     *    \param      statut      id statut
+     *    \param      amount      amount already payed
+     *    \return     string      Libellé court du statut
+     */
     function PayedLibStatut($paye,$statut,$amount=0)
     {
         global $langs;
@@ -505,6 +505,37 @@ class FactureFournisseur
             return $langs->trans("BillStatusPayed");
         }
     }
-  
+
+
+    /**
+     *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_board()
+    {
+        global $conf;
+        
+        $this->nbtodo=$this->nbtodolate=0;
+        $sql = "SELECT ff.rowid,".$this->db->pdate("ff.date_lim_reglement")." as datefin";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
+        $sql.= " WHERE ff.paye=0";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nbtodo++;
+                if ($obj->datefin < (time() - $conf->facture->fournisseur->warning_delay)) $this->nbtodolate++;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
 }
 ?>

@@ -22,10 +22,10 @@
  */
 
 /**
-   \file       htdocs/fourn/index.php
-   \ingroup    fournisseur
-   \brief      Page accueil de la zone fournisseurs
-   \version    $Revision$
+        \file       htdocs/fourn/index.php
+        \ingroup    fournisseur
+        \brief      Page accueil de la zone fournisseurs
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -34,9 +34,12 @@ if (!$user->rights->societe->lire)
   accessforbidden();
 
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
+$page = isset($_GET["page"])?$_GET["page"]:'';
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:'';
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:'';
+$socname = isset($_GET["socname"])?$_GET["socname"]:'';
+$search_nom = isset($_GET["search_nom"])?$_GET["search_nom"]:'';
+$search_ville = isset($_GET["search_ville"])?$_GET["search_ville"]:'';
 
 $langs->load("suppliers");
 $langs->load("orders");
@@ -44,9 +47,8 @@ $langs->load("companies");
 
 llxHeader();
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
+$socidp='';
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -74,13 +76,13 @@ if ($socname) {
   $sortfield = "lower(s.nom)";
   $sortorder = "ASC";
 }
-if (strlen($_GET["search_nom"]))
+if ($search_nom)
 {
-  $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
+  $sql .= " AND s.nom LIKE '%".$search_nom."%'";
 }
-if (strlen($_GET["search_ville"]))
+if ($search_ville)
 {
-  $sql .= " AND s.ville LIKE '%".$_GET["search_ville"]."%'";
+  $sql .= " AND s.ville LIKE '%".$search_ville."%'";
 }
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
@@ -102,8 +104,8 @@ if ($resql)
 
   print '<tr class="liste_titre">';
   print '<form action="index.php" method="GET">';
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$_GET["search_ville"].'"></td>';
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$search_ville.'"></td>';
   print '<td class="liste_titre" colspan="2" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
@@ -134,5 +136,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
