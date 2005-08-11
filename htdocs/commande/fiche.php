@@ -255,30 +255,29 @@ if ($_GET["action"] == 'create' && $user->rights->commande->creer)
 
 	  print '<table class="border" width="100%">';
 	  
-	  print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$soc->nom_url.'</td>';
+	  print '<tr><td>'.$langs->trans("Ref").' :</td><td>Provisoire</td>';
 	  print '<td>'.$langs->trans("Comments").' :</td></tr>';
 
-	  print '<tr><td>'.$langs->trans("Author").' :</td><td>'.$user->fullname.'</td>';
-	  
-	  print '<td rowspan="5" valign="top">';
-	  print '<textarea name="note" wrap="soft" cols="60" rows="6"></textarea></td></tr>';	
-	  
+	  $nbrow=3;
+	  if ($conf->projet->enabled) $nbrow++;
+	  print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$soc->nom_url.'</td><td rowspan="'.$nbrow.'">';
+	  print '<textarea name="note" wrap="soft" cols="50" rows="4"></textarea></td></tr>';	
+
 	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
 	  $html->select_date();
 	  print "</td></tr>";
 
-	  print '<tr><td>'.$langs->trans("Ref").' :</td><td>Provisoire</td></tr>';
-
-
+	  if ($conf->projet->enabled)
+	  {
+    	  print '<tr><td>'.$langs->trans("Project").' :</td><td>';
+    	  $html->select_projects($soc->id,'','projetid');
+    	  print "</td></tr>";
+      }
+      
 	  print '<tr><td>'.$langs->trans("Source").' :</td><td>';
 	  $html->select_array("source_id",$new_commande->sources,2);
 	  print "</td></tr>";
 
-	  print '<tr><td>'.$langs->trans("Project").' :</td><td>';
-	  $proj = new Project($db);
-	  $html->select_array("projetid",$proj->liste_array($soc->id),0,1);
-	  print "</td></tr>";
-	  
 	  if ($propalid > 0)
 	    {
 	      $amount = ($obj->price);
@@ -296,43 +295,22 @@ if ($_GET["action"] == 'create' && $user->rights->commande->creer)
 	    }	  
 	  else
 	    {
+	      /*
+	       * Services/produits prédéfinis
+	       */
+	      $NBLINES=8;
+
 	      print '<tr><td colspan="3">'.$langs->trans("Services").'/'.$langs->trans("Products").'</td></tr>';
 	      print '<tr><td colspan="3">';
-	      /*
-	       *
-	       * Liste des elements
-	       *
-	       */
-	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
-	      $sql .= " WHERE envente = 1";
-	      $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
-	      if ( $db->query($sql) )
-		{
-		  $opt = "<option value=\"0\" selected></option>";
-		  if ($result)
-		    {
-		      $num = $db->num_rows();	$i = 0;	
-		      while ($i < $num)
-			{
-			  $objp = $db->fetch_object();
-			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
-			  $i++;
-			}
-		    }
-		  $db->free();
-		}
-	      else
-		{
-		  dolibarr_print_error($db);
-		}
-	      	      
-	      $NBLINES=8;
+
 	      
 	      print '<table class="noborder">';
 	      print '<tr><td>'.$langs->trans("ProductsAndServices").'</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td></tr>';
 	      for ($i = 1 ; $i <= $NBLINES ; $i++)
 		{
-		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
+		  print '<tr><td>';
+          print $html->select_produits('','idprod');
+		  print '</td>';
 		  print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
 		  print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="0">%</td></tr>';
 		}	      	      
@@ -344,7 +322,7 @@ if ($_GET["action"] == 'create' && $user->rights->commande->creer)
 	  /*
 	   *
 	   */	  
-	  print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
+	  print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
 	  print "</form>\n";
 	  print "</table>\n";
 
@@ -458,7 +436,11 @@ else
     	  $h++;
         }
         
-	  dolibarr_fiche_head($head, $hselected, $soc->nom." / ".$langs->trans("Order")." : $commande->ref");
+      $head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
+      $head[$h][1] = $langs->trans("Info");
+      $h++;
+
+	  dolibarr_fiche_head($head, $hselected, $langs->trans("Order").": $commande->ref");
 
 	  /*
 	   * Confirmation de la suppression de la commande
@@ -501,36 +483,10 @@ else
 	  /*
 	   *   Commande
 	   */
-
 	  print '<table class="border" width="100%">';
-	  print '<tr><td width="20%">'.$langs->trans("Order")."</td>";
-	  print '<td width="15%">'.$commande->ref.'</td>';
-	  print '<td width="15%" align="center">'.$commande->statuts[$commande->statut].'</td>';
-	  print '<td width="50%">';
-	  
-	  if ($conf->projet->enabled) 
-	    {
-	      $langs->load("projects");
-	      if ($commande->projet_id > 0)
-		{
-		  print $langs->trans("Project").' : ';
-		  $projet = New Project($db);
-		  $projet->fetch($commande->projet_id);
-		  print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$commande->projet_id.'">'.$projet->title.'</a>';
-		}
-	      else
-		{
-		  print $langs->trans("Project").' : ';
-		  print '<a href="fiche.php?id='.$id.'&amp;action=classer">'.$langs->trans("ClassifyOrder").'</a>';
-		}
-	    }
-	  print '&nbsp;</td></tr>';
-
-	  print "<tr><td>".$langs->trans("Customer")."</td>";
-	  print '<td colspan="2">';
-	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
-	  
-	  print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
+	  print '<tr><td width="15%">'.$langs->trans("Ref")."</td>";
+	  print '<td colspan="2">'.$commande->ref.'</td>';
+	  print '<td>'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
 	  if ($commande->source == 0)
 	    {
 	      /* Propale */
@@ -539,30 +495,64 @@ else
 	      print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
 	    }
 	  print "</td></tr>";
+
+	  print "<tr><td>".$langs->trans("Customer")."</td>";
+	  print '<td colspan="3">';
+	  print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+	  print '</tr>';
 	  
+	  print '<tr><td>'.$langs->trans("Status").'</td>';
+	  print "<td colspan=\"2\">".$commande->statuts[$commande->statut]."</td>\n";
+        $nbrow=6;
+        if ($conf->projet->enabled) $nbrow++;
+        print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans("Note").' :<br>';
+        if ($commande->brouillon == 1 && $user->rights->commande->creer) 
+        {
+        	print '<form action="fiche.php?id='.$id.'" method="post">';
+        	print '<input type="hidden" name="action" value="setnote">';
+        	print '<textarea name="note" style="width:95%;height:"80%">'.$commande->note.'</textarea><br>';
+        	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+        	print '</form>';
+        }
+        else
+        {
+        	print nl2br($commande->note);
+        }
+        print '</td></tr>';
+
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
 	  print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"%A %d %B %Y")."</td>\n";
+      print '</tr>';
 
-	  print '<td width="50%">';
-	  print $langs->trans("Author").' : '.$author->fullname.'</td></tr>';
-  
-		// Ligne de 3 colonnes
+            // Projet
+            if ($conf->projet->enabled)
+            {
+                $langs->load("projects");
+                print '<td height="10">';
+                print '<table class="nobordernopadding" width="100%"><tr><td>';
+                print $langs->trans("Project");
+                print '</td>';
+                if ($_GET["action"] != "classer") print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+                print '</tr></table>';
+                print '</td><td colspan="2">';
+                if ($_GET["action"] == "classer")
+                {
+                    $html->form_project($_SERVER["PHP_SELF"]."?id=$commande->id",$commande->fk_soc,$commande->projetid,"projetid");
+                }
+                else
+                {
+                    $html->form_project($_SERVER["PHP_SELF"]."?id=$commande->id",$commande->fk_soc,$commande->projetid,"none");
+                }
+                print "</td>";
+            } else {
+                print '<td height="10">&nbsp;</td><td colspan="2">&nbsp;</td>';
+            }
+
+		// Lignes de 3 colonnes
 		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td>';
-		print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :<br>';
-		if ($commande->brouillon == 1 && $user->rights->commande->creer) 
-		{
-			print '<form action="fiche.php?id='.$id.'" method="post">';
-			print '<input type="hidden" name="action" value="setnote">';
-			print '<textarea name="note" style="width:95%;height:"80%">'.$commande->note.'</textarea><br><input type="submit" value="'.$langs->trans("Save").'">';
-			print '</form>';
-		}
-		else
-		{
-			print nl2br($commande->note);
-		}
-		print '</td></tr>';
+		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+		
 
 		print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
 
@@ -570,8 +560,8 @@ else
 	    {
 	      print '<form action="fiche.php?id='.$id.'" method="post">';
 	      print '<input type="hidden" name="action" value="setremise">';
-	      print '<input type="text" name="remise" size="3" value="'.$commande->remise_percent.'">%';
-	      print '</td><td><input type="submit" value="'.$langs->trans("Save").'">';
+	      print '<input type="text" class="flat" name="remise" size="3" value="'.$commande->remise_percent.'">%';
+	      print '</td><td><input type="submit" class="button" value="'.$langs->trans("Save").'">';
 		  print '</form>';
 	    }
 		else
@@ -670,16 +660,16 @@ else
                 print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
                 print "<tr $bc[$var]>";
                 print '<td colspan="2"><textarea name="eldesc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
-                print '<td align="center"><input size="4" type="text" name="elqty" value="'.$objp->qty.'"></td>';
-                print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
-                print '<td align="right"><input size="7" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
-                print '<td align="right" colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td>';
+                print '<td align="center"><input size="4" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
+                print '<td align="right"><input size="3" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+                print '<td align="right"><input size="7" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
+                print '<td align="right" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
                 print '</tr>' . "\n";
                 print "</form>\n";
             }
             $i++;
         }      
-	      $db->free();
+	      $db->free($result);
 	    } 
 	else
 	  {
@@ -734,14 +724,14 @@ else
 	    print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
 	    print '<td align="right"><input type="text" name="pu" size="6"></td>';
 
-	    print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+	    print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 
 	    $var=!$var;
 	    print "<tr $bc[$var]><td colspan=\"2\"><select name=\"p_idprod\">$opt</select></td>";
 	    print '<td align="center"><input type="text" size="2" name="pqty" value="1"></td>';
 	    print '<td align="right" nowrap><input type="text" size="2" name="premise" value="0">%</td>';
 	    print '<td>&nbsp;</td>';
-	    print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+	    print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 	    print "</tr>\n";
 
 	    print "</form>";
@@ -912,25 +902,6 @@ else
     }
 
 	print "</td></tr></table>";
-
-
-	/*
-	 * Classe la commande dans un projet
-	 * TODO finir le look & feel très moche
-	 */
-	if ($_GET["action"] == 'classer')
-	  {	    
-	    print '<form method="post" action="fiche.php?id='.$commande->id.'">';
-	    print '<input type="hidden" name="action" value="classin">';
-	    print '<table class="border" width="100%">';
-	    print '<tr><td>'.$langs->trans("Project").'</td><td>';
-	    
-	    $proj = new Project($db);
-	    $html->select_array("projetid",$proj->liste_array($commande->soc_id));
-	    
-	    print "</td></tr>";
-	    print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr></table></form>';
-	  }
 
       }
     else

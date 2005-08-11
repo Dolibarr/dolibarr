@@ -54,13 +54,12 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-print_barre_liste($langs->trans("ContractsArea"), $page, "index.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+print_fiche_titre($langs->trans("ContractsArea"));
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="notopnoleftnoright" width="100%">';
 
-
-print '<tr><td width="30%" valign="top">';
+print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
 /*
  * Recherche Contrat
@@ -89,7 +88,7 @@ print '</td></tr>';
 print '</table>';
 
 
-print '</td><td width="70%" valign="top">';
+print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 
 
 // Last contracts

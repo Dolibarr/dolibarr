@@ -21,10 +21,11 @@
  *
  */
 
-/**	\file       htdocs/commande/liste.php
-	\ingroup    commande
-	\brief      Page liste des commandes
-	\version    $Revision$
+/**
+        \file       htdocs/commande/liste.php
+        \ingroup    commande
+        \brief      Page liste des commandes
+        \version    $Revision$
 */
 
 
@@ -156,7 +157,7 @@ if ($resql)
       print " <a href=\"liste.php?year=$y\">";
       print strftime("%Y",$objp->date_commande)."</a></td>\n";      
       
-      print '<td align="center">'.$generic_commande->statuts[$objp->fk_statut].'</td>';
+      print '<td align="center">'.$generic_commande->status_label_short[$objp->fk_statut].'</td>';
       print "</tr>\n";
       
       $total = $total + $objp->price;
@@ -174,5 +175,6 @@ else
 }
 
 $db->close();
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
 ?>

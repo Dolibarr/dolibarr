@@ -32,6 +32,7 @@
 require_once("./pre.inc.php");
 require_once("../contact.class.php");
 require_once("../actioncomm.class.php");
+require_once("../commande/commande.class.php");
 require_once("../contrat/contrat.class.php");
 
 $langs->load("companies");
@@ -245,8 +246,8 @@ if ($_socid > 0)
     
     print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$objsoc->pays.'</td>';
 
-    print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($objsoc->tel).'</td>';
-    print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($objsoc->fax).'</td></tr>';
+    print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($objsoc->tel,$objsoc->pays_code).'</td>';
+    print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($objsoc->fax,$objsoc->pays_code).'</td></tr>';
 
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">".$objsoc->url."</a>&nbsp;</td></tr>";
 
@@ -264,18 +265,35 @@ if ($_socid > 0)
     print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$objsoc->effectif.'</td></tr>';
 
     print '<tr><td nowrap>';
-    print $langs->trans("CustomerDiscount").'</td><td>'.$objsoc->remise_client."&nbsp;%</td>";
-    print '<td colspan="2"><a href="remise.php?id='.$objsoc->id.'">';
-    print img_edit($langs->trans("Modify"));
-    print "</a>";
-    print '</td>';
+    print '<table width="100%" class="nobordernopadding"><tr><td>';
+    print $langs->trans("CustomerRelativeDiscount");
+    print '<td><td align="right">';
+    print '<a href="remise.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    print '</td></tr></table>';
+    print '</td><td colspan="3">'.$objsoc->remise_client."&nbsp;%</td>";
 
-    print '<tr><td colspan="2">Remise exceptionnelles';
+    print '<tr><td>';
+    
+    print '<table width="100%" class="nobordernopadding"><tr><td>';
+    print $langs->trans("CustomerAbsoluteDiscount");
+    print '<td><td align="right">';
+    print '<a href="remx.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    print '</td></tr></table>';
     print '</td>';
-    print '<td colspan="2"><a href="remx.php?id='.$objsoc->id.'">';
-    print img_edit($langs->trans("Modify"));
-    print "</a>";
-    print '</td></tr>';
+    print '<td colspan="3">';
+    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+    $sql .= " WHERE rc.fk_soc =". $objsoc->id;
+    $sql .= " AND rc.fk_user = ".$user->id." AND fk_facture IS NULL";
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj = $db->fetch_object($resql);
+        if ($obj->amount_ht) print $obj->amount_ht.'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
+        else print $langs->trans("None");
+    }
+    print '</td>';
+    print '</tr>';
 
     print "</table>";
 
@@ -306,7 +324,7 @@ if ($_socid > 0)
         {
             $var=true;
             $num = $db->num_rows($resql);
-            if ($num >0 )
+            if ($num > 0)
             {
                 print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socidp='.$objsoc->id.'">'.$langs->trans("AllPropals").' ('.$num.')</td></tr></table></td>';
@@ -323,9 +341,9 @@ if ($_socid > 0)
                 {
                     print " <b>&gt; 15 jours</b>";
                 }
-                print "</td><td align=\"right\">".dolibarr_print_date($objp->dp)."</td>\n";
-                print '<td align="right">'.price($objp->price).'</td>';
-                print '<td align="center">'.$objp->statut.'</td></tr>';
+                print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dp)."</td>\n";
+                print '<td align="right" width="120">'.price($objp->price).'</td>';
+                print '<td align="center" width="100">'.$objp->statut.'</td></tr>';
                 $var=!$var;
                 $i++;
             }
@@ -342,13 +360,15 @@ if ($_socid > 0)
      */
     if($conf->commande->enabled)
     {
+        $commande_static=new Commande($db);
+        
         print '<table class="noborder" width="100%">';
 
-        $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.total_ht, p.ref, ".$db->pdate("p.date_commande")." as dp";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p";
-        $sql .= " WHERE p.fk_soc = s.idp ";
+        $sql = "SELECT s.nom, s.idp, c.rowid as cid, c.total_ht, c.ref, c.fk_statut, ".$db->pdate("c.date_commande")." as dc";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
+        $sql .= " WHERE c.fk_soc = s.idp ";
         $sql .= " AND s.idp = $objsoc->id";
-        $sql .= " ORDER BY p.date_commande DESC";
+        $sql .= " ORDER BY c.date_commande DESC";
 
         $resql=$db->query($sql);
         if ($resql)
@@ -367,14 +387,10 @@ if ($_socid > 0)
                 $objp = $db->fetch_object($resql);
                 $var=!$var;
                 print "<tr $bc[$var]>";
-                print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
-                if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
-                {
-                    print " <b>&gt; 15 jours</b>";
-                }
-                print "</td><td align=\"right\">".dolibarr_print_date($objp->dp)."</td>\n";
+                print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
+                print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dc)."</td>\n";
                 print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
-                print '<td align="center" width="100">'.$objp->statut.'</td></tr>';
+                print '<td align="center" width="100">'.$commande_static->status_label_short[$objp->fk_statut].'</td></tr>';
                 $i++;
             }
             $db->free($resql);
@@ -408,7 +424,7 @@ if ($_socid > 0)
             if ($num >0 )
             {
                 print '<tr class="liste_titre">';
-                print '<td colspan="3"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
                 print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllContracts").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
             }
@@ -419,8 +435,9 @@ if ($_socid > 0)
                 $var=!$var;
                 print "<tr $bc[$var]>";
                 print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$objp->ref."</a></td>\n";
-                print "<td align=\"right\">".dolibarr_print_date($objp->dc)."</td>\n";
-                print "<td align=\"right\">".$contratstatic->LibStatut($objp->statut)."</td>\n";
+                print '<td align="right" width="80">'.dolibarr_print_date($objp->dc)."</td>\n";
+                print '<td width="120">&nbsp;</td>';
+                print '<td align="center" width="100">'.$contratstatic->LibStatut($objp->statut)."</td>\n";
                 print '</tr>';
                 $i++;
             }
@@ -550,11 +567,6 @@ if ($_socid > 0)
         print '<a class="butAction" href="../fichinter/fiche.php?socidp='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';
     }
 
-    if ($conf->projet->enabled && $user->rights->projet->creer)
-    {
-        print '<a class="butAction" href="../projet/fiche.php?socidp='.$objsoc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
-    }
-
     print '<a class="butAction" href="action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
 
     print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
@@ -626,10 +638,7 @@ if ($_socid > 0)
             print '<td>'.$obj->poste.'&nbsp;</td>';
             print '<td>';
 
-            /*
-             * Lien click to dial
-             */
-
+            // Lien click to dial
             if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
             {
                 print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&amp;socid='.$objsoc->id.'&amp;call='.$obj->phone.'">';

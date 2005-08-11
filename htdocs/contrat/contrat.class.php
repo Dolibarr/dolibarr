@@ -83,6 +83,7 @@ class Contrat
      *                Si la duree est renseignée, date_start=date_start et date_end=date_start+duree
      *                sinon date_start=date_start et date_end=date_end
      */
+/*
     function mise_en_service($user, $date_start, $duree=0, $date_end)
     {
         if ($duree) {
@@ -128,7 +129,7 @@ class Contrat
             return -1;
         }
     }
-    
+*/    
     
     /**
      *      \brief      Active une ligne detail d'un contrat
@@ -642,11 +643,11 @@ class Contrat
     }
  
  
-  /** 
-   *    \brief      Récupère les lignes de detail du contrat
-   *    \param      statut      Statut des lignes detail à récupérer
-   *    \return     array       Tableau des lignes de details
-   */
+    /** 
+     *    \brief      Récupère les lignes de detail du contrat
+     *    \param      statut      Statut des lignes detail à récupérer
+     *    \return     array       Tableau des lignes de details
+     */
     function array_detail($statut=-1)
     {
         $tab=array();
@@ -676,5 +677,52 @@ class Contrat
         }
     }
 
+
+    /**
+     *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \param      mode        "inactive" pour services à activer, "expired" pour services expirés
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_board($mode)
+    {
+        global $conf;
+        
+        $this->nbtodo=$this->nbtodolate=0;
+        if ($mode == 'inactives')
+        {
+            $sql = "SELECT cd.rowid,".$this->db->pdate("cd.date_ouverture_prevue")." as datefin";
+            $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
+            $sql.= " WHERE c.statut = 1 AND c.rowid = cd.fk_contrat";
+            $sql.= " AND cd.statut = 0";
+        }
+        if ($mode == 'expired')
+        {
+            $sql = "SELECT cd.rowid,".$this->db->pdate("cd.date_fin_validite")." as datefin";
+            $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
+            $sql.= " WHERE c.statut = 1 AND c.rowid = cd.fk_contrat";
+            $sql.= " AND cd.statut = 4";
+            $sql.= " AND cd.date_fin_validite < '".$this->db->idate(time())."'";
+        }
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nbtodo++;
+                if ($mode == 'inactives')
+                    if ($obj->datefin && $obj->datefin < (time() - $conf->contrat->services->inactifs->warning_delay)) $this->nbtodolate++;
+                if ($mode == 'expired')
+                    if ($obj->datefin && $obj->datefin < (time() - $conf->contrat->services->expires->warning_delay)) $this->nbtodolate++;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+    
 }
 ?>

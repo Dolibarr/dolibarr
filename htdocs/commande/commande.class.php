@@ -36,33 +36,45 @@
 
 class Commande 
 {
-  var $db ;
-  var $id ;
-  var $brouillon;
-
-  /**  \brief  Constructeur
-   */
-  function Commande($DB)
+    var $db ;
+    var $id ;
+    var $brouillon;
+    
+    // Pour board
+    var $nbtodo;
+    var $nbtodolate;
+  
+    /**
+     *        \brief      Constructeur
+     *        \param      DB      Handler d'accès base
+     */
+    function Commande($DB)
     {
-      global $langs;
-      $langs->load("orders");
-      
-      $this->db = $DB;
-
-      $this->sources[0] = "Proposition commerciale";
-      $this->sources[1] = "Internet";
-      $this->sources[2] = "Courrier";
-      $this->sources[3] = "Téléphone";
-      $this->sources[4] = "Fax";
-      $this->sources[5] = "Commercial";
-
-      $this->statuts[-1] = $langs->trans("StatusOrderCanceled");
-      $this->statuts[0]  = $langs->trans("StatusOrderDraft");  
-      $this->statuts[1]  = $langs->trans("StatusOrderValidated");
-      $this->statuts[2]  = $langs->trans("StatusOrderOnProcess");
-      $this->statuts[3]  = $langs->trans("StatusOrderProcessed");
-
-      $this->products = array();
+        global $langs;
+        $langs->load("orders");
+        
+        $this->db = $DB;
+        
+        $this->statuts[-1] = $langs->trans("StatusOrderCanceled");
+        $this->statuts[0]  = $langs->trans("StatusOrderDraft");  
+        $this->statuts[1]  = $langs->trans("StatusOrderValidated");
+        $this->statuts[2]  = $langs->trans("StatusOrderOnProcess");
+        $this->statuts[3]  = $langs->trans("StatusOrderProcessed");
+        
+        $this->status_label_short[-1] = $langs->trans("StatusOrderCanceled");
+        $this->status_label_short[0]  = $langs->trans("StatusOrderDraft");  
+        $this->status_label_short[1]  = $langs->trans("StatusOrderValidated");
+        $this->status_label_short[2]  = $langs->trans("StatusOrderOnProcessShort");
+        $this->status_label_short[3]  = $langs->trans("StatusOrderProcessed");
+        
+        $this->sources[0] = $langs->trans("OrderSource0");
+        $this->sources[1] = $langs->trans("OrderSource1");
+        $this->sources[2] = $langs->trans("OrderSource2");
+        $this->sources[3] = $langs->trans("OrderSource3");
+        $this->sources[4] = $langs->trans("OrderSource4");
+        $this->sources[5] = $langs->trans("OrderSource5");
+        
+        $this->products = array();
     }
 
   /**   \brief      Créé la facture depuis une propale existante
@@ -162,27 +174,31 @@ class Commande
     }
 
   /**
-   * Cloture la commande
-   *
+   *    \brief      Cloture la commande
+   *    \param      user        Objet utilisateur qui cloture
+   *    \return     int         <0 si ko, >0 si ok
    */
-  function cloture($user)
+    function cloture($user)
     {
-      if ($user->rights->commande->valider)
-	{
-
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 3";
-	  $sql .= " WHERE rowid = $this->id AND fk_statut > 0 ;";
-	  
-	  if ($this->db->query($sql) )
-	    {
-	      return 1;
-	    }
-	  else
-	    {
-		      dolibarr_print_error($this->db);
-	    }
-	}
-  }
+        if ($user->rights->commande->valider)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+            $sql.= " SET fk_statut = 3,";
+            $sql.= " fk_user_cloture = ".$user->id.",";
+            $sql.= " date_cloture = now()";
+            $sql.= " WHERE rowid = $this->id AND fk_statut > 0 ;";
+    
+            if ($this->db->query($sql) )
+            {
+                return 1;
+            }
+            else
+            {
+                dolibarr_print_error($this->db);
+                return -1;
+            }
+        }
+    }
 
   /**
    * Annule la commande
@@ -845,7 +861,7 @@ class Commande
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-                if ($obj->da < (time() - $conf->commande->traitement->warning_delay)) $this->nbtodolate++;
+                if ($obj->datec < (time() - $conf->commande->traitement->warning_delay)) $this->nbtodolate++;
             }
             return 1;
         }
@@ -854,6 +870,60 @@ class Commande
             dolibarr_print_error($this->db);
             $this->error=$this->db->error();
             return -1;
+        }
+    }
+
+    /**
+     *      \brief     Charge les informations d'ordre info dans l'objet commande
+     *      \param     id       Id de la commande a charger
+     */
+    function info($id)
+    {
+        $sql = "SELECT c.rowid, ".$this->db->pdate("date_creation")." as datec,";
+        $sql.= " ".$this->db->pdate("date_valid")." as datev,";
+        $sql.= " ".$this->db->pdate("date_cloture")." as datecloture,";
+        $sql.= " fk_user_author, fk_user_valid, fk_user_cloture";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+        $sql.= " WHERE c.rowid = ".$id;
+
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+
+                $this->id = $obj->rowid;
+
+                if ($obj->fk_user_author) {
+                    $cuser = new User($this->db, $obj->fk_user_author);
+                    $cuser->fetch();
+                    $this->user_creation   = $cuser;
+                }
+
+                if ($obj->fk_user_valid) {
+                    $vuser = new User($this->db, $obj->fk_user_valid);
+                    $vuser->fetch();
+                    $this->user_validation = $vuser;
+                }
+
+                if ($obj->fk_user_cloture) {
+                    $cluser = new User($this->db, $obj->fk_user_cloture);
+                    $cluser->fetch();
+                    $this->user_cloture   = $cluser;
+                }
+
+                $this->date_creation     = $obj->datec;
+                $this->date_validation   = $obj->datev;
+                $this->date_cloture      = $obj->datecloture;
+            }
+
+            $this->db->free($result);
+
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
         }
     }
 
@@ -868,7 +938,7 @@ class Commande
 
 class CommandeLigne
 {
-  var $pu;
+    var $pu;
 }
 
 ?>

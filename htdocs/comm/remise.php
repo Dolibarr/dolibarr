@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,34 +43,30 @@ $langs->load("companies");
 
 if ($_POST["action"] == 'setremise')
 {
-  $soc = New Societe($db);
-  $soc->fetch($_GET["id"]);
-  $soc->set_remise_client($_POST["remise"],$user);
-
-
-  Header("Location: remise.php?id=".$_GET["id"]);
-
+    $soc = New Societe($db);
+    $soc->fetch($_GET["id"]);
+    $soc->set_remise_client($_POST["remise"],$user);
+        
+    Header("Location: remise.php?id=".$_GET["id"]);
+    exit;
 }
 
 
 llxHeader();
 
-
-/*
- *
- */
 $_socid = $_GET["id"];
-/*
- * Sécurité si un client essaye d'accéder à une autre fiche que la sienne
- */
+
+
+// Sécurité si un client essaye d'accéder à une autre fiche que la sienne
 if ($user->societe_id > 0) 
 {
-  $_socid = $user->societe_id;
+    $_socid = $user->societe_id;
 }
+
+
 /*********************************************************************************
  *
  * Mode fiche
- *
  *
  *********************************************************************************/  
 if ($_socid > 0)
@@ -156,52 +152,26 @@ if ($_socid > 0)
     print '<tr><td valign="top">';
     print '<table class="border" width="100%">';
 
-    print '<tr><td colspan="2">';
-    print $langs->trans("CustomerDiscount").'</td><td colspan="2">'.$objsoc->remise_client."&nbsp;%</td></tr>";
+    print '<tr><td colspan="2" width="25%">';
+    print $langs->trans("CustomerRelativeDiscount").'</td><td colspan="2">'.$objsoc->remise_client."%</td></tr>";
 
     print '<tr><td colspan="2">';
-    print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.$objsoc->remise_client.'">&nbsp;%</td></tr>';
+    print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.$objsoc->remise_client.'">%</td></tr>';
     print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
     print "</table>";
     print "</form>";
 
-    print "<br>";
-    
-    /*
-     *
-     */
     print "</td>\n";
     
 
-
-    /*
-     *
-     *
-     */
     print "</td></tr>";
     print "</table></div>\n";    
     print '<br>';        
-    /*
-     *
-     * Notes sur la societe
-     *
-     */
-    if ($objsoc->note)
-      {
-	print '<table border="1" width="100%" cellspacing="0" bgcolor="#e0e0e0">';
-	print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
-	print "</table>";
-      }
-    /*
-     *
-     */    
 
 
     /*
-     *
      * Liste de l'historique des remises
-     *
      */
     $sql  = "SELECT rc.rowid,rc.remise_client,".$db->pdate("rc.datec")." as dc, u.code";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";

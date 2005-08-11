@@ -41,6 +41,8 @@ $user->getrights('fichinter');
 $user->getrights('commande');
 $user->getrights('projet');
 
+// Securité accès client
+$socidp='';
 if ($user->societe_id > 0)
 {
   $socidp = $user->societe_id;
@@ -55,7 +57,7 @@ llxHeader();
  * Actions
  */
 
-if ($_GET["action"] == 'add_bookmark')
+if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$_GET["socidp"]." AND fk_user=".$user->id;
   if (! $db->query($sql) )
@@ -69,7 +71,7 @@ if ($_GET["action"] == 'add_bookmark')
     }
 }
 
-if ($_GET["action"] == 'del_bookmark')
+if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
   $result = $db->query($sql);
@@ -80,11 +82,11 @@ if ($_GET["action"] == 'del_bookmark')
  * Affichage page
  */
 
-print_titre($langs->trans("CommercialArea"));
+print_fiche_titre($langs->trans("CommercialArea"));
 
-print '<table border="0" width="100%">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 
 /*
@@ -118,35 +120,35 @@ if ($conf->contrat->enabled) {
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-    $sql = "SELECT p.rowid, p.ref, p.price, s.nom";
+    $sql = "SELECT p.rowid, p.ref, p.price, s.idp, s.nom";
     $sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
     $sql .= " WHERE p.fk_statut = 0 and p.fk_soc = s.idp";
 
     $resql=$db->query($sql);
     if ($resql)
     {
-        $var=true;
-
         $total = 0;
         $num = $db->num_rows($resql);
-        $i = 0;
         if ($num > 0)
         {
             print '<table class="noborder" width="100%">';
             print "<tr class=\"liste_titre\">";
             print "<td colspan=\"3\">".$langs->trans("ProposalsDraft")."</td></tr>";
 
+            $i = 0;
+            $var=true;
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
-                print '<tr '.$bc[$var].'><td width="25%" nowrap>'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
+                print '<tr '.$bc[$var].'><td nowrap>'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref.'</a></td>';
+                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,18).'</a></td><td align="right">'.price($obj->price).'</td></tr>';
                 $i++;
                 $total += $obj->price;
             }
             if ($total>0) {
                 $var=!$var;
-                print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
+                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
             }
             print "</table><br>";
         }
@@ -161,7 +163,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 if ($conf->commande->enabled)
 {
     $langs->load("orders");
-    $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
+    $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
     $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
     if ($socidp)
     {
@@ -170,12 +172,14 @@ if ($conf->commande->enabled)
 
     if ( $db->query($sql) )
     {
+        $total = 0;
         $num = $db->num_rows();
         if ($num)
         {
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre">';
-            print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
+            print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
+
             $i = 0;
             $var = true;
             while ($i < $num)
@@ -183,8 +187,14 @@ if ($conf->commande->enabled)
                 $var=!$var;
                 $obj = $db->fetch_object();
                 print "<tr $bc[$var]><td nowrap><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
-                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,24).'</a></td></tr>';
+                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
+                print '<td align="right">'.price($obj->total_ttc).'</td></tr>';
                 $i++;
+                $total += $obj->total_ttc;
+            }
+            if ($total>0) {
+                $var=!$var;
+                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
             }
             print "</table><br>";
         }
@@ -235,7 +245,7 @@ if ( $db->query($sql) )
     }
 }
 
-print '</td><td valign="top" width="70%">';
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
@@ -289,7 +299,7 @@ if ($user->rights->societe->lire)
  * Dernières actions commerciales effectuées
  */
 
-$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.id=a.fk_action AND a.percent >= 100 AND s.idp = a.fk_soc";
 if ($socidp)
@@ -528,18 +538,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 		print '<a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
 		print $objp->ref.'</a></td>';
 		print '<td><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
-		
-		$now = time();
-		$lim = 3600 * 24 * 15 ;
-		if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
-		  {
-		    print "<td><b> &gt; 15 jours</b></td>";
-		  }
-		else
-		  {
-		    print "<td>&nbsp;</td>";
-		  }
-		
+        print "<td>&nbsp;</td>";
 		print "<td align=\"right\">";
 		print dolibarr_print_date($objp->dp)."</td>\n";	  
 		print "<td align=\"right\">".price($objp->price)."</td>\n";

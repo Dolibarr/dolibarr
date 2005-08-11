@@ -28,6 +28,9 @@
 */
 
 require("./pre.inc.php");
+if ($conf->projet->enabled) require_once("../project.class.php");
+if ($conf->propal->enabled) require_once("../propal.class.php");
+if ($conf->contrat->enabled) require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("contracts");
 $langs->load("orders");
@@ -38,9 +41,7 @@ $user->getrights('contrat');
 if (!$user->rights->contrat->lire)
 accessforbidden();
 
-require("../project.class.php");
-require("../propal.class.php");
-require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+
 
 /*
  * Sécurité accés client
@@ -91,7 +92,8 @@ if ($_POST["action"] == 'confirm_close' && $_POST["confirm"] == 'yes' && $user->
 
 
 
-llxHeader('',$langs->trans("Contract"),"Contrat");
+
+llxHeader('',$langs->trans("ContractCard"),"Contrat");
 
 $html = new Form($db);
 
@@ -154,27 +156,38 @@ if ($id > 0)
         print '<td colspan="3">';
         print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$contrat->societe->id.'">'.$contrat->societe->nom.'</a></b></td></tr>';
 
-        // Status
+            // Statut contrat
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
         print $contrat->statuts[$contrat->statut];
         print "</td></tr>";
 
         // Date
         print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="3">'.strftime("%A %d %B %Y",$contrat->date_contrat)."</td></tr>\n";
+            print '<td colspan="3">'.dolibarr_print_date($contrat->date_contrat,"%A %d %B %Y")."</td></tr>\n";
 
+            // Factures associées
+            /*
+            TODO
+            */
+
+            // Projet
         if ($conf->projet->enabled)
         {
-            print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-            if ($contrat->projet_id > 0)
+            $langs->load("projects");
+                print '<tr><td>';
+                print '<table width="100%" class="nobordernopadding"><tr><td>';
+                print $langs->trans("Project");
+                print '</td>';
+                if ($_GET["action"] != "classer") print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'&amp;ligne='.$_GET["ligne"].'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+                print '</tr></table>';
+                print '</td><td colspan="3">';
+                if ($_GET["action"] == "classer")
             {
-                $projet = New Project($db);
-                $projet->fetch($contrat->projet_id);
-                print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$contrat->projet_id.'">'.$projet->title.'</a>';
+                    $html->form_project($_SERVER["PHP_SELF"]."?id=$id&amp;ligne=".$_GET["ligne"],$contrat->fk_soc,$contrat->fk_projet,"projetid");
             }
             else
             {
-                print '<a href="fiche.php?id='.$id.'&amp;action=classer">Classer le contrat</a>';
+                    $html->form_project($_SERVER["PHP_SELF"]."?id=$id&amp;ligne=".$_GET["ligne"],$contrat->fk_soc,$contrat->fk_projet,"none");
             }
             print "</td></tr>";
         }
@@ -291,13 +304,13 @@ if ($id > 0)
                 // Dates mise en service
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="7">';
-                // Si pas encore activ
+                        // Si pas encore activé
                 if (! $objp->date_debut_reelle) {
                     print $langs->trans("DateStartPlanned").': ';
                     if ($objp->date_debut) print dolibarr_print_date($objp->date_debut);
                     else print $langs->trans("Unknown");
                 }
-                // Si activ
+                        // Si activé
                 if ($objp->date_debut_reelle) {
                     print $langs->trans("DateStartReal").': ';
                     if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
@@ -433,7 +446,7 @@ if ($id > 0)
     }
     else
     {
-        /* Contrat non trouvée */
+            // Contrat non trouvé
         print "Contrat inexistant ou accés refusé";
     }
 }

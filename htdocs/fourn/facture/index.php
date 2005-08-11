@@ -33,13 +33,10 @@ require("./pre.inc.php");
 if (!$user->rights->fournisseur->facture->lire)
   accessforbidden();
 
-llxHeader();
 
 $socid = $_GET["socid"];
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $_GET["action"] = '';
@@ -90,6 +87,10 @@ if ($_POST["mode"] == 'search')
     }
 }
   
+
+llxHeader();
+
+
 /*
  * Mode Liste
  *
@@ -98,7 +99,6 @@ if ($_POST["mode"] == 'search')
 $sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("fac.date_lim_reglement")." as date_echeance, fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle, fac.rowid as facid, fac.facnumber";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac ";
 $sql .= " WHERE fac.fk_soc = s.idp";
-
 if ($socid)
 {
   $sql .= " AND s.idp = $socid";

@@ -44,6 +44,8 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
+$search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
+$search_contract=isset($_GET["search_contract"])?$_GET["search_contract"]:$_POST["search_contract"];
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 $socid=$_GET["socid"];
 
@@ -68,13 +70,9 @@ $sql.= " c.rowid as cid, c.datec, c.statut, s.nom, s.idp as sidp";
 $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 $sql.= " WHERE c.fk_soc = s.idp ";
-if ($_POST["search_contract"]) {
-    $sql .= " AND c.rowid = '".$_POST["search_contract"]."'";
-}
-if ($socid > 0)
-{
-    $sql .= " AND s.idp = $socid";
-}
+if ($search_nom)      $sql.= " AND s.nom like '%".$search_nom."%'";
+if ($search_contract) $sql.= " AND c.rowid = '".$search_contract."'";
+if ($socid > 0)       $sql.= " AND s.idp = $socid";
 $sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.idp";
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($limit + 1 ,$offset);
@@ -90,15 +88,31 @@ if ($resql)
     print '<table class="noborder" width="100%">';
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","",'width="50"',$sortfield);
-    print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","","",$sortfield);
-    print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","",'align="center"',$sortfield);
-    print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.statut","","",'align="center"',$sortfield);
+    $param='&amp;search_contract='.$search_contract;
+    $param.='&amp;search_nom='.$search_nom;
+    print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","$param",'width="50"',$sortfield);
+    print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","$param","",$sortfield);
+    print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","$param",'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.statut","","$param",'align="center"',$sortfield);
     print '<td width="16">'.img_statut(0,$langs->trans("ServiceStatusInitial")).'</td>';
     print '<td width="16">'.img_statut(4,$langs->trans("ServiceStatusRunning")).'</td>';
     print '<td width="16">'.img_statut(5,$langs->trans("ServiceStatusClosed")).'</td>';
     print "</tr>\n";
 
+    print '<form method="POST" action="liste.php">';
+    print '<tr class="liste_titre">';
+    print '<td>';
+    print '<input type="text" class="flat" size="3" name="search_contract" value="'.stripslashes($search_contract).'">';
+    print '</td>';
+    print '<td class="liste_titre" valign="right">';
+    print '<input type="text" class="flat" size="24" name="search_nom" value="'.stripslashes($search_nom).'">';
+    print '</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td colspan="3" class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+    print "</td>";
+    print "</tr>\n";
+    print '</form>';
     $contratstatic=new Contrat($db);
 
     $now=mktime();

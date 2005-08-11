@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,11 @@
 /**
 	    \file       htdocs/comm/remx.php
         \ingroup    commercial
-		\brief      Onglet ???
+		\brief      Onglet de définition des avoirs
 		\version    $Revision$
 */
 
 require_once("./pre.inc.php");
-require_once("../contact.class.php");
-//require_once("../cactioncomm.class.php");
-//require_once("../actioncomm.class.php");
 
 $user->getrights('propale');
 $user->getrights('commande');
@@ -38,6 +35,7 @@ $user->getrights('projet');
 
 
 $langs->load("orders");
+$langs->load("bills");
 $langs->load("companies");
 
 
@@ -47,25 +45,21 @@ if ($_POST["action"] == 'setremise')
   $soc->fetch($_GET["id"]);
   $soc->set_remise_except($_POST["remise"],$user);
 
-
   Header("Location: remx.php?id=".$_GET["id"]);
 }
 
 
 llxHeader();
 
-
-/*
- *
- */
 $_socid = $_GET["id"];
-/*
- * Sécurité si un client essaye d'accéder à une autre fiche que la sienne
- */
+
+// Sécurité si un client essaye d'accéder à une autre fiche que la sienne
 if ($user->societe_id > 0) 
 {
   $_socid = $user->societe_id;
 }
+
+
 /*********************************************************************************
  *
  * Mode fiche
@@ -96,19 +90,53 @@ if ($_socid > 0)
   
   if ($objsoc->client==1)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
-      $head[$h][1] = 'Client';
-      $h++;
-    }
-
-  if ($objsoc->client==1)
-    {
-      $head[$h][0] = DOL_URL_ROOT.'/comm/remx.php?id='.$objsoc->id;
-      $head[$h][1] = 'Remises exceptionnelles';
       $hselected=$h;
+      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
+      $head[$h][1] = $langs->trans("Customer");
       $h++;
     }
+  if ($objsoc->client==2)
+    {
+      $hselected=$h;
+      $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->socid;
+      $head[$h][1] = $langs->trans("Prospect");
+      $h++;
+    }
+  if ($objsoc->fournisseur)
+    {
+      $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
+      $head[$h][1] = $langs->trans("Supplier");
+      $h++;
+    }
+  
+  if ($conf->compta->enabled) {
+    $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
+    $head[$h][1] = $langs->trans("Accountancy");
+    $h++;
+  }
 
+    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
+    $head[$h][1] = $langs->trans("Note");
+    $h++;
+
+    if ($user->societe_id == 0)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$objsoc->id;
+        $head[$h][1] = $langs->trans("Documents");
+        $h++;
+    }
+
+    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
+    $head[$h][1] = $langs->trans("Notifications");
+    $h++;
+    
+    if ($user->societe_id == 0)
+      {
+	$head[$h][0] = DOL_URL_ROOT."/comm/index.php?socidp=$objsoc->id&action=add_bookmark";
+	$head[$h][1] = '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
+	$head[$h][2] = 'image';
+      }
+      
     dolibarr_fiche_head($head, $hselected, $objsoc->nom);
 
     /*
@@ -118,114 +146,125 @@ if ($_socid > 0)
     print '<form method="POST" action="remx.php?id='.$objsoc->id.'">';
     print '<input type="hidden" name="action" value="setremise">';
 
-    print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+    print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">Remises exceptionnelles';
-    print '</td><td>&nbsp;</td></tr>';
+    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc, rc.fk_user";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+    $sql .= " WHERE rc.fk_soc =". $objsoc->id;
+    $sql .= " AND fk_facture IS NULL";
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj = $db->fetch_object($resql);
+        $remise_all+=$obj->amount_ht;
+        if ($obj->fk_user == $user->id) $remise_user+=$obj->amount_ht;
+    }
 
-    print '<tr><td>Montant HT';
-    print '</td><td><input type="text" size="5" name="remise" value="'.$objsoc->remise_client.'">&nbsp;<input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+    print '<tr><td width="25%">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
+    print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
+    print '<tr><td width="25%">'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
+    print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print '<tr><td>'.$langs->trans("NewValue").'</td>';
+    print '<td><input type="text" size="5" name="remise" value="'.$remise_user.'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    
+    print '<tr><td align="center" colspan="2">&nbsp;<input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+        
     print "</table></form>";
 
-    print "<br>";
-    
-    /*
-     *
-     */
     print "</td>\n";    
     print "</div>\n";    
+
     print '<br>';        
+
     /*
-     *
      * Liste
-     *
      */
-    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc, u.code, fk_facture";
+    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc, u.code";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
     $sql .= " , ".MAIN_DB_PREFIX."user as u";
     $sql .= " WHERE rc.fk_soc =". $objsoc->id;
     $sql .= " AND u.rowid = rc.fk_user AND fk_facture IS NULL";
     $sql .= " ORDER BY rc.datec DESC";
 
-    if ( $db->query($sql) )
-      {
-	print '<table class="border" cellspacing="0" width="100%" cellpadding="1">';
-	print '<tr class="liste_titre"><td>Date</td>';
-	print '<td>Montant HT</td><td>Utilisateur</td></tr>';
-	$tag = !$tag;
-	print "<tr $bc[$tag]>";
-	$i = 0 ; 
-	$num = $db->num_rows();
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        print_titre($langs->trans("Ristournes restant dues"));
+        print '<table width="100%" class="noborder">';
+        print '<tr class="liste_titre"><td width="80">'.$langs->trans("Date").'</td>';
+        print '<td>'.$langs->trans("AmountHT").'</td><td width="100">'.$langs->trans("Accordée par").'</td></tr>';
 
-	while ($i < $num )
-	  {
-	    $obj = $db->fetch_object( $i);
-	    $tag = !$tag;
-	    print "<tr $bc[$tag]>";
-	    print '<td>'.strftime("%d %B %Y",$obj->dc).'</td>';
-	    print '<td>'.price($obj->amount_ht).'</td>';
-	    print '<td>'.$obj->code.'</td></tr>';
-	    
-
-	    $i++;
-	  }
-	$db->free();
-	print "</table>";
-      }
+        $var = true;
+        $i = 0 ;
+        $num = $db->num_rows($resql);
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+            $var = !$var;
+            print "<tr $bc[$var]>";
+            print '<td>'.dolibarr_print_date($obj->dc).'</td>';
+            print '<td>'.price($obj->amount_ht).'</td>';
+            print '<td>'.$obj->code.'</td></tr>';
+    
+            $i++;
+        }
+        $db->free($resql);
+        print "</table>";
+    }
     else
-      {
-	print $db->error();
-      }
+    {
+    	dolibarr_print_error($db);
+    }
 
     print '<br />';
 
     /*
-     *
      * Liste Archives
-     *
      */
-    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc, u.code, fk_facture";
+    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc, u.code, rc.fk_facture, f.facnumber";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
     $sql .= " , ".MAIN_DB_PREFIX."user as u";
+    $sql .= " , ".MAIN_DB_PREFIX."facture as f";
     $sql .= " WHERE rc.fk_soc =". $objsoc->id;
+    $sql .= " AND fk_facture = f.rowid";
     $sql .= " AND u.rowid = rc.fk_user AND fk_facture IS NOT NULL";
     $sql .= " ORDER BY rc.datec DESC";
 
-    if ( $db->query($sql) )
-      {
-	print '<table class="border" cellspacing="0" width="100%" cellpadding="1">';
-	print '<tr class="liste_titre"><td>Date</td>';
-	print '<td>Montant HT</td><td align="center">Facture</td><td>Utilisateur</td></tr>';
-	$tag = !$tag;
-	print "<tr $bc[$tag]>";
-	$i = 0 ; 
-	$num = $db->num_rows();
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        print_titre($langs->trans("Ristournes appliquées"));
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre"><td width="80">'.$langs->trans("Date").'</td>';
+        print '<td>'.$langs->trans("AmountHT").'</td><td align="center">'.$langs->trans("Bill").'</td><td width="100">'.$langs->trans("Author").'</td></tr>';
 
-	while ($i < $num )
-	  {
-	    $obj = $db->fetch_object( $i);
-	    $tag = !$tag;
-	    print "<tr $bc[$tag]>";
-	    print '<td>'.strftime("%d %B %Y",$obj->dc).'</td>';
-	    print '<td>'.price($obj->amount_ht).'</td>';
-	    print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.$obj->fk_facture.'</a></td>';
-	    print '<td>'.$obj->code.'</td></tr>';
-	    
-
-	    $i++;
-	  }
-	$db->free();
-	print "</table>";
-      }
+        $var = true;
+        $i = 0 ;
+        $num = $db->num_rows($resql);
+        while ($i < $num )
+        {
+            $obj = $db->fetch_object($resql);
+            $var = !$var;
+            print "<tr $bc[$var]>";
+            print '<td>'.dolibarr_print_date($obj->dc).'</td>';
+            print '<td>'.price($obj->amount_ht).'</td>';
+            print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
+            print '<td>'.$obj->code.'</td></tr>';
+    
+            $i++;
+        }
+        $db->free($resql);
+        print "</table>";
+    }
     else
-      {
-	print $db->error();
-      }
+    {
+        print dolibarr_print_error($db);
+    }
 
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

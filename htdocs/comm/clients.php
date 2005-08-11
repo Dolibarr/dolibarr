@@ -30,9 +30,7 @@
 
 require("./pre.inc.php");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -44,35 +42,25 @@ $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 
 if ($page == -1) { $page = 0 ; }
-
 $offset = $conf->liste_limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
+
+$search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
+$search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
+$search_code=isset($_GET["search_code"])?$_GET["search_contract"]:$_POST["search_code"];
 
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.code_client ";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
 
-if ($socidp)
-{
-  $sql .= " AND s.idp = $socidp";
-}
+if ($socidp)           $sql .= " AND s.idp = $socidp";
+if ($user->societe_id) $sql .= " AND s.idp = " .$user->societe_id;
 
-if ($_GET["search_nom"])
-{
-  $sql .= " AND s.nom like '%".strtolower($_GET["search_nom"])."%'";
-}
-
-if ($_GET["search_code"])
-{
-  $sql .= " AND s.code_client like '%".strtolower($_GET["search_code"])."%'";
-}
-
-if ($user->societe_id)
-{
-  $sql .= " AND s.idp = " .$user->societe_id;
-}
+if ($search_nom)   $sql .= " AND s.nom like '%".strtolower($search_nom)."%'";
+if ($search_ville) $sql .= " AND s.ville like '%".strtolower($search_ville)."%'";
+if ($search_code)  $sql .= " AND s.code_client like '%".strtolower($search_code)."%'";
 
 if ($socname)
 {
@@ -98,7 +86,7 @@ if ($result)
 
   $i = 0;
   
-  $addu = "&amp;page=$page&amp;begin=$begin&amp;search_nom=".$_GET["search_nom"];
+  $addu = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_ville=".$search_ville;
   print '<table class="liste">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom",$addu,"","",$sortfield);
@@ -111,15 +99,17 @@ if ($result)
   print '<form method="get" action="clients.php">';
   print '<tr class="liste_titre">';
   print '<td class="liste_titre" valign="right">';
-  print '<input type="text" class="flat" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
-  print '</td><td class="liste_titre" valign="right">&nbsp;';
+  print '<input type="text" class="flat" name="search_nom" value="'.stripslashes($search_nom).'">';
   print '</td><td class="liste_titre" valign="right">';
-  print '<input type="text" class="flat" name="search_code" value="'.$_GET["search_code"].'" size="8">';
+  print '<input type="text" class="flat" name="search_ville" value="'.$search_ville.'" size="10">';
+  print '</td><td class="liste_titre" valign="right">';
+  print '<input type="text" class="flat" name="search_code" value="'.$search_code.'" size="10">';
   print '</td><td class="liste_titre">&nbsp;</td>';
   print '<td class="liste_titre" align="center"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
   print "</td>";
   print "</tr>\n";
-
+  print '</form>';
+  
   $var=True;
 
   while ($i < min($num,$conf->liste_limit))
@@ -159,5 +149,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

@@ -35,11 +35,11 @@ $langs->load("orders");
 
 llxHeader("",$langs->trans("Orders"),"Commande");
 
-print_titre($langs->trans("OrdersArea"));
+print_fiche_titre($langs->trans("OrdersArea"));
 
-print '<table class="noborder" width="100%">';
+print '<table width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 /*
  * Zone recherche
@@ -116,7 +116,7 @@ if ( $db->query($sql) )
 }
 
 
-print '</td><td valign="top" width="70%">';
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
@@ -153,15 +153,16 @@ if ( $db->query($sql) )
 }
 
 /*
- * Commandes à traiter
+ * Dernières commandes traitées
  */
 $max=5;
 
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp";
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp,";
+$sql.= " ".$db->pdate("date_cloture")." as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE c.fk_soc = s.idp AND c.fk_statut > 2";
+$sql.= " WHERE c.fk_soc = s.idp and c.fk_statut > 2";
 if ($socidp) $sql .= " AND c.fk_soc = $socidp";
-$sql.= " ORDER BY c.rowid DESC";
+$sql.= " ORDER BY c.tms DESC";
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
@@ -173,7 +174,7 @@ if ($resql)
       $i = 0;
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="2">'.$langs->trans("LastOrders",$max).'</td></tr>';
+      print '<td colspan="3">'.$langs->trans("LastClosedOrders",$max).'</td></tr>';
       $var = True;
       while ($i < $num)
 	{
@@ -181,7 +182,9 @@ if ($resql)
 	  $obj = $db->fetch_object($resql);
 	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrders"),"order").' ';
 	  print $obj->ref.'</a></td>';
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td></tr>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+	  print '<td>'.dolibarr_print_date($obj->datec).'</td>';
+	  print '</tr>';
 	  $i++;
 	}
       print "</table><br>";

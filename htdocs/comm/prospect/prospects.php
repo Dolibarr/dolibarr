@@ -44,11 +44,7 @@ if ($_GET["action"] == 'cstc')
   $db->query($sql);
 }
 
-dolibarr_user_page_param($db, $user, $_GET);
-
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';

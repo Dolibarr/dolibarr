@@ -586,7 +586,7 @@ else
 		{
 		  $resteapayer = abs($fac->total_ttc - $total);	      
 		  print "<tr class=\liste_total\"><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-		  print '<td align="right"><b>'.price($resteapayer)."</b></td><td$tdsup>".$conf->monnaie."</td>";
+		  print '<td align="right"><b>'.price($resteapayer)."</b></td><td$tdsup>".$langs->trans("Currency".$conf->monnaie)."</td>";
 		  print "</tr>\n";
 		}
 	      

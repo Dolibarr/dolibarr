@@ -61,11 +61,11 @@ function valeur($sql)
  *
  */
 
-print_titre($langs->trans("ProspectionArea"));
+print_fiche_titre($langs->trans("ProspectionArea"));
 
-print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 if ($conf->propal->enabled) 
 {
@@ -165,7 +165,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
  * Actions commerciales a faire
  *
  */
-print '</td><td valign="top" width="70%">';
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";

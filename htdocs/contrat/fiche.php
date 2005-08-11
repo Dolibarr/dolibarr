@@ -29,9 +29,9 @@
 */
 
 require("./pre.inc.php");
-require("../project.class.php");
-require("../propal.class.php");
-require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+if ($conf->projet->enabled) require_once("../project.class.php");
+if ($conf->propal->enabled) require_once("../propal.class.php");
+if ($conf->contrat->enabled) require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("contracts");
 $langs->load("orders");
@@ -472,7 +472,7 @@ else
 
 
             /*
-             * Confirmation de la suppression de la contrat
+             * Confirmation de la suppression du contrat
              */
             if ($_GET["action"] == 'delete')
             {
@@ -542,7 +542,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td>';
                 print $langs->trans("Project");
                 print '</td>';
-                if ($_GET["action"] != "classer") print '<td align="right"><a href="fiche.php?action=classer&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+                if ($_GET["action"] != "classer") print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="3">';
                 if ($_GET["action"] == "classer")
@@ -722,9 +722,9 @@ else
                         // Ligne dates prévues
                         print "<tr $bc[$var]>";
                         print '<td colspan="8">';
-                        print 'Date prévue mise en service ';
+                        print $langs->trans("DateStartPlanned").' ';
                         $html->select_date($objp->date_debut,"date_start_update",0,0,($objp->date_debut>0?0:1));
-                        print ' &nbsp; Date prévue fin de service ';
+                        print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
                         $html->select_date($objp->date_fin,"date_end_update",0,0,($objp->date_fin>0?0:1));
                         print '</td>';
                         print '</tr>';
@@ -775,9 +775,9 @@ else
 
                 print "<tr $bc[$var]>";
                 print '<td colspan="8">';
-                print 'Date prévue mise en service ';
+                print $langs->trans("DateStartPlanned").' ';
                 $html->select_date('',"date_start",0,0,1);
-                print ' &nbsp; Date prévue fin de service ';
+                print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
                 $html->select_date('',"date_end",0,0,1);
                 print '</td>';
                 print '</tr>';
@@ -810,9 +810,9 @@ else
 
                 print "<tr $bc[$var]>";
                 print '<td colspan="8">';
-                print 'Date prévue mise en service ';
+                print $langs->trans("DateStartPlanned").' ';
                 $html->select_date('',"date_start",0,0,1);
-                print ' &nbsp; Date prévue fin de service ';
+                print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
                 $html->select_date('',"date_end",0,0,1);
                 print '</td>';
                 print '</tr>';
