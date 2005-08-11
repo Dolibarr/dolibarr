@@ -25,8 +25,13 @@ body {
   margin: 0px;
   background-color: #F8F8F8;
   background-image: url("/theme/freelug/img/background.png");
-  font-family: Helvetica, Verdana; font-size: 12px; 
+  font: 12px helvetica, verdana; 
   text-decoration: none ;
+}
+.body {
+    background-color: #F8F8F8;
+	color: #101010;
+	font: 12px helvetica, verdana, arial, sans-serif;
 }
 
 /***** Styles par défaut *****/
@@ -37,11 +42,13 @@ a:hover   { font: helvetica, verdana, arial, sans-serif; font-weight: bold; colo
 input     { font: helvetica, verdana, arial, sans-serif; }
 textarea  { font: helvetica, verdana, arial, sans-serif; }
 .button  {
-	font-family: 10px arial,verdana,helvetica, sans-serif;
+	font: 10px arial,verdana,helvetica, sans-serif;
 	font-size: 100%;
-	border: 1px solid #ccd7e0;
+	border: 1px solid #dee7ec;
 	background-image : url(/theme/freelug/img/button_bg.png);
 	background-position : bottom;
+    padding: 0em 0em;
+    margin: 0em 0em; 
 }
 
 
@@ -113,7 +120,6 @@ table.topbarre
 .menu 
 { 
   background: #ccccb3; 
-  font-weight: bold; 
   font-size: 12px;
   color: #000000; 
   text-decoration: none;
@@ -264,7 +270,6 @@ div.help
 	font-size: 100%;
 	font-weight: normal;
 	border: 1px solid #ccd7e0;
-	background-image : url(img/button_bg.png);
 	background-position : bottom;
 }
 
@@ -272,7 +277,7 @@ td.barre {
            border-right: 1px solid #000000;
            border-bottom: 1px solid #000000;
            background: #DDDDDD;
-           font-family: Helvetica, Verdana; font-size: 14px; 
+           font: 12px helvetica, verdana; 
            color: #000000; 
            text-align:left;
            text-decoration: none
@@ -283,8 +288,14 @@ td.barre_select {
            color: #000000 
 }
 
+td.photo {
+	background: #FCFCFC; 
+	color: #000000;
+    border: 1px solid #b3c5cc;
+}
+
 form {
-    padding: 0.1em 0em 0em 0em;
+    padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
 
@@ -323,13 +334,13 @@ div.tabs {
     top: 20px;
     margin: 1px 0em 0em 0em;
     padding: 0em 0.5em;
-  text-align: left;
+    text-align: left;
 }
 
 div.tabsAction {
-    margin: 24px 0em 1px 0em;
-  padding: 0em 0em;
-  text-align: right;
+    margin: 20px 0em 1px 0em;
+    padding: 0em 0em;
+    text-align: right;
 }
 
 a.tabTitle {
@@ -363,8 +374,8 @@ a.tab:visited {
 }
 a.tab#active {
   background: #dcdcd0;
-  border-bottom: #dee7ec 1px solid;
-    text-decoration: none;
+  border-bottom: #dcdcd0 1px solid;
+  text-decoration: none;
 }
 
 a.tab:hover {
@@ -381,6 +392,7 @@ a.tabimage {
 
 /*
  *   Boutons actions
+ *   Nouvelle syntaxe à utiliser
  */
 
 a.butAction:link    { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
@@ -445,8 +457,26 @@ a.butDelete:hover    { font: helvetica, verdana, arial, sans-serif; background: 
  * Tables
  */
 
+.notopnoleft {
+border-collapse: collapse;
+border: 0px;
+padding-top: 0px;
+padding-left: 0px;
+padding-right: 4px;
+padding-bottom: 4px;
+margin: 0px 0px;
+}
+.notopnoleftnoright {
+border-collapse: collapse;
+border: 0px;
+padding-top: 0px;
+padding-left: 0px;
+padding-right: 0px;
+padding-bottom: 4px;
+margin: 0px 0px;
+}
+
 table.border {
-font: helvetica, verdana, arial, sans-serif; 
 border-collapse: collapse;
 border: 1px white ridge;
 }
@@ -455,23 +485,29 @@ border: 1px solid #6C7C8B;
 padding: 1px 2px;
 }
 
-table.noborder td {
+table.noborder {
 border-collapse: collapse;
 border: 0px;
-padding: 1px 2px;
 }
-table.noborder {
+
+table.noborder td {
 border: 0px;
+padding: 1px 2px;
 }
 
 table.nobordernopadding {
 border-collapse: collapse;
 border: 0px;
-padding: 0px 0px;
 }
 table.nobordernopadding td {
 border: 0px;
 padding: 0px 0px;
+}
+
+table.liste {
+border-collapse: collapse;
+border: 0px;
+width: 100%;
 }
 
 
@@ -479,12 +515,8 @@ padding: 0px 0px;
  *  Tableaux
  */ 
 
-table.liste {
-border-collapse: collapse;
-border: 0px;
-width: 100%;
-background: #bbbbcc;
-}
+
+
 
 
 
@@ -533,7 +565,7 @@ div.leftmenu {
   text-decoration: none }
 
 /*
- *   Normal, warning, erreurs
+ *   Ok, Warning, Error
  */
 .ok      { color: #114466; }
 .warning { color: #777711; }
@@ -574,7 +606,7 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 
 /*
- *  ???
+ *  Lignes titre espace
  */
 div.titre { 
     font: helvetica, verdana, arial, sans-serif;
@@ -585,9 +617,15 @@ div.titre {
 
 
 /*
- *  Tableaux
+ * Widgets standard
  */ 
-
+input.flat
+{ 
+  background: #FFFFFF;
+  border: 1px solid #8C9C9B;
+  padding: 0em 0em;
+  margin: 0em 0em 0em 0em;
+}
 input.liste_titre { 
     background: #777799;
 }
@@ -678,14 +716,6 @@ tr.box_impair {
 tr.fiche { 
            font-family: Helvetica, Verdana;
            font-size: 0.6em; }
-/*
- * Widgets standard
- */
-
-input.flat
-{ 
-  border: 0
- }
 
 td.delete { 
   background: red;

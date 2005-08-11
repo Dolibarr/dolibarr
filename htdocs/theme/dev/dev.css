@@ -260,6 +260,25 @@ a.butDelete:hover   { background: #FFe7ec; border: 1px outset #997777; color: #4
  * Tables
  */
 
+.notopnoleft {
+border-collapse: collapse;
+border: 0px;
+padding-top: 0px;
+padding-left: 0px;
+padding-right: 4px;
+padding-bottom: 4px;
+margin: 0px 0px;
+}
+.notopnoleftnoright {
+border-collapse: collapse;
+border: 0px;
+padding-top: 0px;
+padding-left: 0px;
+padding-right: 0px;
+padding-bottom: 4px;
+margin: 0px 0px;
+}
+
 table.border {
 border-collapse: collapse;
 border: 2px white ridge;

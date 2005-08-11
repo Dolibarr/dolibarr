@@ -488,8 +488,26 @@ a.butDelete:hover   { font: 12px helvetica, verdana, arial, sans-serif; font-wei
  *   Tables
  */
 
+.notopnoleft {
+border-collapse: collapse;
+border: 0px;
+padding-top: 0px;
+padding-left: 0px;
+padding-right: 4px;
+padding-bottom: 4px;
+margin: 0px 0px;
+}
+.notopnoleftnoright {
+border-collapse: collapse;
+border: 0px;
+padding-top: 0px;
+padding-left: 0px;
+padding-right: 0px;
+padding-bottom: 4px;
+margin: 0px 0px;
+}
+
 table.border {
-font: helvetica, verdana, arial, sans-serif; 
 border-collapse: collapse;
 border: 1px white ridge;
 }
@@ -510,7 +528,6 @@ padding: 1px 2px;
 table.nobordernopadding {
 border-collapse: collapse;
 border: 0px;
-padding: 0px 0px;
 }
 table.nobordernopadding td {
 border: 0px;
@@ -541,7 +558,6 @@ border-top: 1px solid #FFFFFF;
 border-bottom: 1px solid #FFFFFF;
 white-space: nowrap;
 }
-
 td.liste_titre { 
 background: #7699A9;
 color: #334444;
@@ -563,6 +579,13 @@ border-bottom: 1px solid #FFFFFF;
 white-space: nowrap;
 }
 
+tr.liste_total td { 
+border-top: 1px solid #888888;
+background: #F0F0F0;
+font-weight: bold;
+white-space: nowrap;
+}
+
 th { 
 background: #7699A9;
 color: #334444;
@@ -573,13 +596,6 @@ border-right: 1px solid #FFFFFF;
 border-top: 1px solid #FFFFFF;
 border-bottom: 1px solid #FFFFFF;
 white-space: nowrap;
-}
-
-tr.liste_total { 
-background: #F0F0F0;
-font-weight: bold;
-white-space: nowrap;
-border-top: 1px solid #888888;
 }
 
 td.border { 
