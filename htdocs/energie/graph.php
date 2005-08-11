@@ -57,82 +57,68 @@ if ($_POST["action"] == 'addvalue')
 
 llxHeader($langs, '',$langs->trans("Compteur"),"Compteur");
 
-$html = new Form($db);
-
-/*********************************************************************
- *
- * Mode creation
- *
- *
- ************************************************************************/
-if ($_GET["action"] == 'create') 
+if ($_GET["period"] == '')
 {
-  print_titre("Ajouter une compteur");
+  $period = "day";
+}
+else
+{
+  $period = $_GET["period"];
+}
 
-} 
-else 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue                                                                    */
-/*                                                                             */
-/* *************************************************************************** */
-{  
-  if ($_GET["id"] > 0)
+$head[0][0] = DOL_URL_ROOT.'/energie/graph.php?period=day';
+$head[0][1] = $langs->trans("Day");
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/energie/graph.php?period=week';
+$head[$h][1] = $langs->trans("Week");
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/energie/graph.php?period=month';
+$head[$h][1] = $langs->trans("Month");
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/energie/graph.php?period=year';
+$head[$h][1] = $langs->trans("Year");
+$h++;
+
+$as["day"] = 0;
+$as["week"] = 1;
+$as["month"] = 2;
+$as["year"] = 3;
+
+dolibarr_fiche_head($head, $as[$period], $soc->nom);	  
+
+print '<table class="noborder" width="100%">';
+
+$sql = "SELECT c.rowid, c.libelle";
+$sql .= " FROM ".MAIN_DB_PREFIX."energie_compteur as c";
+$sql .= " ORDER BY c.libelle DESC";
+$resql = $db->query($sql);
+if ( $resql) 
+{
+  $num = $db->num_rows($resql);
+  if ($num)
     {
-      $compteur = new EnergieCompteur($db, $user);
-      if ( $compteur->fetch($_GET["id"]) == 0)
-	{	  
-	  $head[0][0] = DOL_URL_ROOT.'/energie/compteur.php?id='.$compteur->id;
-	  $head[0][1] = "Compteur";
-	  $h++;
-
-	  $head[$h][0] = DOL_URL_ROOT.'/energie/graph.php?id='.$compteur->id;
-	  $head[$h][1] = "Graph";
-	  $a = 1;
-	  
-	  dolibarr_fiche_head($head, $a, $soc->nom);	  
-	  
-	  print '<table class="border" width="100%">';
-	  print "<tr><td>".$langs->trans("Compteur")."</td>";
-	  print '<td width="50%">';
-	  print $compteur->libelle;
-	  print "</td></tr>";	  	  
-	  print "</table><br>";
+      $i = 0;
+      
+      $var = True;
+      while ($i < $num)
+	{
+	  $var=!$var;
+	  $obj = $db->fetch_object($resql);
 	  	  
-	  print '</div>';
-	  
-
-	  print '<table class="noborder" width="100%">';
-
 	  print '<tr><td align="center">';
-	  $file = "day.".$compteur->id.".png";
-	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
-	  print '</td><td align="center">';
-	  $file = "week.".$compteur->id.".png";
+	  $file = $period.".".$obj->rowid.".png";
 	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
 	  print '</td></tr>';
-
-	  print '<tr><td align="center">';
-	  $file = "month.".$compteur->id.".png";
-	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
-	  print '</td><td align="center">';
-	  $file = "year.".$compteur->id.".png";
-	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
-	  print '</td></tr></table><br>';
-
-	  print "<br>\n";
+	  
+	  $i++;
 	}
-      else
-	{
-	  /* Commande non trouvée */
-	  print "Compteur inexistant";
-	}
-    }  
-  else
-    {
-      print "Compteur inexistant";
+      
     }
 }
+print '</table><br>';
 
 $db->close();
 
