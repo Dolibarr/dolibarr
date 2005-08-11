@@ -393,8 +393,10 @@ class Form
   
   
 	/**
-	 *    \brief  Affiche la liste déroulante des projets d'une société donnée
-	 *
+	 *      \brief      Affiche la liste déroulante des projets d'une société donnée
+	 *      \param      socid       Id société
+	 *      \param      selected    Id projet présélectionné
+	 *      \param      htmlname    Nom de la zone html
 	 */
 	function select_projects($socid='', $selected='', $htmlname='projectid')
 	{
@@ -408,6 +410,7 @@ class Form
 		if ($result)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
+    		print '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			if ($num)
@@ -486,13 +489,14 @@ class Form
    *    \param      htmlname        Nom de la zone select
    *    \param      filtretype      Pour filtre
    */
-    function select_types_paiements($selected='',$htmlname='paiementtype',$filtretype='')
+    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype=-1)
     {
         global $langs;
         
         $sql = "SELECT id, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         $sql.= " WHERE active > 0";
+        if ($filtertype >= 0) $sql.=" AND type = $filtertype";
         $sql.= " ORDER BY id";
         $result = $this->db->query($sql);
         if ($result)
@@ -526,12 +530,12 @@ class Form
 
   /**
    *    \brief      Retourne la liste des comptes
-   *    \param      selected        Type de praiement présélectionné
+   *    \param      selected        Id compte présélectionné
    *    \param      htmlname        Nom de la zone select
    *    \param      statut          Statut des comptes recherchés
    *    \param      filtre          Pour filtre sur la liste
    */
-    function select_comptes($selected='',$htmlname='paiementtype',$statut=0,$filtre='')
+    function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='')
     {
         global $langs;
     
@@ -737,7 +741,7 @@ class Form
             if ($num)
             {
                 $obj = $this->db->fetch_object();
-                $label=$langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:'');
+                $label=$langs->trans("Currency".$code_iso)!="Currency".$code_iso?$langs->trans("Currency".$code_iso):($obj->label!='-'?$obj->label:'');
                 if ($withcode) return $label==$code_iso?"$code_iso":"$code_iso - $label";
                 else return $label;
             }
@@ -797,7 +801,7 @@ class Form
             print '<tr><td>';
             $this->select_projects($soc_id,$selected,$htmlname);
             print '</td>';
-            print '<td align="left"><input type="submit" value="'.$langs->trans("Modify").'"></td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
         }
         else
