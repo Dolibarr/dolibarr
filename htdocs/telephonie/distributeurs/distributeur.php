@@ -53,11 +53,11 @@ if ($_GET["id"])
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-  print '<tr><td width="50%" valign="top">';
+  print '<tr><td width="40%" valign="top">';
   
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td>Prénom Nom</td></tr>';
+  print '<td>Commerciaux</td></tr>';
 
   $sql = "SELECT u.firstname, u.name";
   $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -97,13 +97,15 @@ if ($_GET["id"])
   print '</table><br />';
 
  
-  print '</td><td valign="top" width="50%">';
+  print '</td><td valign="top" width="30%">';
   
-  /* Commissions */
+  /* PO */
 
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+
   print '<tr class="liste_titre">';
-  print '<td>Date</td><td>Montant</td></tr>';
+  print "<td>Date</td><td>Commissions</td></tr>";
+
 
   $sql = "SELECT c.date, c.montant";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";
@@ -141,6 +143,47 @@ if ($_GET["id"])
     }
   print '</table><br />';
 
+  print '</td><td valign="top" width="30%">';
+
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+
+  print '<tr class="liste_titre">';
+  print "<td>Date</td><td>Prise d'ordre</td></tr>";
+
+
+  $sql = "SELECT ".$db->pdate("p.datepo") . " as datepo, sum(p.montant)";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
+  $sql .= " WHERE p.fk_distributeur =".$distri->id;
+  $sql .= " GROUP BY date_format(datepo,'%Y%m') DESC";  
+
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      $total = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($i);	
+	  
+	  $var=!$var;
+	  
+	  print "<tr $bc[$var]>";
+	  
+	  print '<td>'.strftime("%m/%Y",$row[0]).'</td>';
+	  print '<td>'.price($row[1]).' HT</td>';
+	  
+	  $i++;
+	}
+      $db->free();
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+  print '</table><br />';
 
   print '</td></tr>';
   print '</table></div>';
