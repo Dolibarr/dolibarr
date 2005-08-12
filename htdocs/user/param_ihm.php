@@ -34,10 +34,6 @@ $langs->load("admin");
 $langs->load("users");
 
 
-if (!$user->admin)
-accessforbidden();
-
-
 $dirtop = "../includes/menus/barre_top";
 $dirleft = "../includes/menus/barre_left";
 $dirtheme = "../theme";
@@ -71,7 +67,7 @@ if ($_POST["action"] == 'update')
         else $tabparam["SIZE_LISTE_LIMIT"]='';
     
         $tabparam["MAIN_THEME"]=$_POST["main_theme"];
-    
+
         $tabparam["MAIN_SEARCHFORM_CONTACT"]=$_POST["main_searchform_contact"];
         $tabparam["MAIN_SEARCHFORM_SOCIETE"]=$_POST["main_searchform_societe"];
         $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
