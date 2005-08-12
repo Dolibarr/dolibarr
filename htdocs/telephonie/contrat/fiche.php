@@ -451,8 +451,9 @@ else
 	      $client_comm->fetch($contrat->client_comm_id);
 
 	      print '<tr><td width="20%">Référence</td><td>'.$contrat->ref.'</td>';
-	      print '<td colspan="2">Facturé : '.$contrat->facturable.'</td></tr>';
-
+	      print '<td>Facturé : '.$contrat->facturable.'</td><td align="right">';
+	      print '<img src="statut'.$contrat->statut.'.png">&nbsp;';
+	      print $contrat->statuts[$contrat->statut].'</td></tr>';
 	      print '<tr><td width="20%">Client</td><td>';
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
 
