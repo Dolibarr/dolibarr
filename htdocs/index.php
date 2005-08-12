@@ -219,7 +219,7 @@ if ($conf->produit->enabled)
     foreach($board->nb as $key=>$val)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Producst"),"product").'</td>';
+        print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Products"),"product").'</td>';
         print '<td>';
         if ($key == "products") print $langs->trans("Products");
         print '</td>';
