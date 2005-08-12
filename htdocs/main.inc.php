@@ -128,6 +128,11 @@ if (isset($user->conf->MAIN_LANG_DEFAULT) && $user->conf->MAIN_LANG_DEFAULT)
         $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
     }
 }
+if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
+{
+    $conf->theme=$user->conf->MAIN_THEME;
+    $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+}
 
 
 
