@@ -97,7 +97,7 @@ if ($result)
 
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom","&page=$page&statut=$statut","","",$sortfield);
-    print_liste_field_titre($langs->trans("DateAbonment"),"liste.php","t.cotisation","&page=$page&statut=$statut","","",$sortfield);
+    print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","t.cotisation","&page=$page&statut=$statut","","",$sortfield);
     print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email","&page=$page&statut=$statut","","",$sortfield);
     print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle","&page=$page&statut=$statut","","",$sortfield);
     print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy","&page=$page&statut=$statut","","",$sortfield);

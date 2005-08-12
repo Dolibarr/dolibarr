@@ -1145,5 +1145,37 @@ class Product
     return $tabobj;
   }
 
+
+    /**
+     *      \brief      Charge indicateurs this->nb de tableau de bord
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_state_board()
+    {
+        global $conf;
+        
+        $this->nb=array();
+
+        $sql = "SELECT count(p.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+        $sql.= " WHERE p.fk_product_type = 0";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nb["products"]=$obj->nb;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+
+    }
+    
 }
 ?>

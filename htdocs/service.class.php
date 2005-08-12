@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,21 @@
  * 
  */
 
-class Service {
+/**
+        \file       htdocs/service.class.php
+        \ingroup    service
+        \brief      Fichier de la classe des services prédéfinis
+        \version    $Revision$
+*/
+
+
+/**
+        \class      Service
+        \brief      Classe permettant la gestion des services prédéfinis
+*/
+
+class Service
+{
   var $db;
 
   var $id;
@@ -179,6 +194,36 @@ class Service {
     }
   }
 
+    /**
+     *      \brief      Charge indicateurs this->nb de tableau de bord
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_state_board()
+    {
+        global $conf;
+        
+        $this->nb=array();
 
+        $sql = "SELECT count(p.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+        $sql.= " WHERE p.fk_product_type = 1";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nb["services"]=$obj->nb;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+
+    }
+    
 }
 ?>

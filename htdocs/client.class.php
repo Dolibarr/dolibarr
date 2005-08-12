@@ -20,63 +20,102 @@
  *
  */
 
-/*!	\file       htdocs/client.class.php
+/**
+    	\file       htdocs/client.class.php
 		\ingroup    societe
 		\brief      Fichier de la classe des clients
 		\version    $Revision$
 */
 
 
-/*! \class Client
-		\brief Classe permettant la gestion des clients
+/** 
+        \class      Client
+		\brief      Classe permettant la gestion des clients
 */
 
 include_once DOL_DOCUMENT_ROOT."/societe.class.php";
 
-class Client extends Societe {
-  var $db;
 
-  /**
-   *    \brief  Constructeur de la classe
-   *    \param  DB     handler accès base de données
-   *    \param  id     id societe (0 par defaut)
-   */
-	 
-  function Client($DB, $id=0)
-  {
-    global $config;
+class Client extends Societe
+{
+    var $db;
 
-    $this->db = $DB;
-    $this->id = $id;
-    $this->factures = array();
-
-    return 0;
-  }
-
-  function read_factures()
-  {
-    $sql = "SELECT rowid, facnumber";
-    $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-    $sql .= " WHERE f.fk_soc = ".$this->id;
-    $sql .= " ORDER BY datef DESC";
     
-    $result = $this->db->query($sql) ;
-    $i = 0;
-    if ( $result )
-      {
-	$num = $this->db->num_rows();
-	
-	while ($i < $num )
-	  {
-	    $row = $this->db->fetch_row();
+    /**
+     *    \brief  Constructeur de la classe
+     *    \param  DB     handler accès base de données
+     *    \param  id     id societe (0 par defaut)
+     */
+    function Client($DB, $id=0)
+    {
+        global $config;
+    
+        $this->db = $DB;
+        $this->id = $id;
+        $this->factures = array();
+    
+        return 0;
+    }
+    
+    function read_factures()
+    {
+        $sql = "SELECT rowid, facnumber";
+        $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+        $sql .= " WHERE f.fk_soc = ".$this->id;
+        $sql .= " ORDER BY datef DESC";
+    
+        $result = $this->db->query($sql) ;
+        $i = 0;
+        if ( $result )
+        {
+            $num = $this->db->num_rows();
+    
+            while ($i < $num )
+            {
+                $row = $this->db->fetch_row();
+    
+                $this->factures[$i][0] = $row[0];
+                $this->factures[$i][1] = $row[1];
+    
+                $i++;
+            }
+        }
+        return $result;
+    }
 
-	    $this->factures[$i][0] = $row[0];
-	    $this->factures[$i][1] = $row[1];
+    
+    /**
+     *      \brief      Charge indicateurs this->nb de tableau de bord
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_state_board()
+    {
+        global $conf;
+        
+        $this->nb=array();
 
-	    $i++;
-	  }
-      }
-    return $result;
-  }
+        $sql = "SELECT count(s.idp) as nb, s.client";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE s.client in (1,2)";
+        $sql.= " GROUP BY s.client";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                if ($obj->client == 1) $this->nb["customers"]=$obj->nb;
+                if ($obj->client == 2) $this->nb["prospects"]=$obj->nb;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+
+    }
+    
 }
 ?>

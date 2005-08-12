@@ -1280,5 +1280,67 @@ class Adherent
         if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
     }
 
+
+    /**
+     *      \brief      Charge indicateurs this->nb de tableau de bord
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_state_board()
+    {
+        global $conf;
+        
+        $this->nb=array();
+
+        $sql = "SELECT count(a.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
+        $sql.= " WHERE a.statut > 0";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nb["members"]=$obj->nb;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+
+    }
+    
+    /**
+     *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_board()
+    {
+        global $conf;
+        
+        $this->nbtodo=$this->nbtodolate=0;
+        $sql = "SELECT a.rowid,".$this->db->pdate("a.datefin")." as datefin";
+        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
+        $sql.= " WHERE a.statut=1";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nbtodo++;
+                if ($obj->datefin < (time() - $conf->adherent->cotisation->warning_delay)) $this->nbtodolate++;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
 }
 ?>

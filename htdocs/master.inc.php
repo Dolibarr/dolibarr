@@ -381,6 +381,8 @@ $conf->facture->fournisseur->warning_delay=2*24*60*60;
 $conf->facture->client->warning_delay=31*24*60*60;   // 1 mois
 $conf->contrat->services->inactifs->warning_delay=0*24*60*60;
 $conf->contrat->services->expires->warning_delay=0*24*60*60;
+$conf->adherent->cotisation->warning_delay=31*24*60*60;   // 1 mois
+$conf->bank->rappro->warning_delay=2*31*24*60*60;   // 2 mois
 
 /*
  */

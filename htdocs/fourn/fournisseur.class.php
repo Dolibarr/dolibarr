@@ -159,6 +159,38 @@ class Fournisseur extends Societe {
 	$commf->addline("Toto",120,1,$prod->tva, $prod->id, 0, $prod->ref_fourn);
       }
   }
+  
+    /**
+     *      \brief      Charge indicateurs this->nb de tableau de bord
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_state_board()
+    {
+        global $conf;
+        
+        $this->nb=array();
+
+        $sql = "SELECT count(s.idp) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE s.fournisseur = 1";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nb["suppliers"]=$obj->nb;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+
+    }
+
 }
 
 ?>
