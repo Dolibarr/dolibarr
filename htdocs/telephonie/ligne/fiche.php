@@ -823,43 +823,55 @@ else
 		  print '<table class="border" width="100%" cellpadding="4" cellspacing="0">';
 		  print '<tr class="liste_titre"><td colspan="2">Migrer vers un autre contrat</td></tr>';
 		  print '<tr><td width="20%">Nouveau contrat</td><td>';
-		  print '<select name="contrat">';
+
 
 		  $sql = "SELECT c.rowid, c.ref ";
 		  $sql .= "FROM ".MAIN_DB_PREFIX."telephonie_contrat as c";
 		  $sql .= " WHERE c.rowid <> ".$ligne->contrat;
 		  $sql .= " AND c.fk_client_comm = ".$ligne->client_comm_id;
+		  $sql .= " AND c.statut <> 6"; // contrat non résilié
 
 		  $resql =  $db->query($sql);
 		  if ($resql)
 		    {
 		      $num = $db->num_rows($resql);
-		      $i = 0;
-		      while ($i < $num)
+
+		      if ($num > 0)
 			{
-			  $row = $db->fetch_row($resql);
-			  
-			  print '<option value="'.$row[0].'">'.$row[1];
-			  $i++;
+
+			  print '<select name="contrat">';
+
+			  $i = 0;
+			  while ($i < $num)
+			    {
+			      $row = $db->fetch_row($resql);
+			      
+			      print '<option value="'.$row[0].'">'.$row[1];
+			      $i++;
+			    }
+			  print '</select>';
+			}		      
+		      else
+			{
+			  print "Aucun contrat éligible";
 			}
-		      
+
 		      $db->free();
 		    }
 		  else
 		    {
 		      print $sql;
 		    }
-
-		  print '</select></td></tr>';
-
-		  print '<tr><td align="center" colspan="2"><input type="submit" value="Migrer"></td></tr>';
-
-		  print '</table><br />';
 		  
+		  print '</td></tr>';
+		  if ($num > 0)
+		    {
+		      print '<tr><td align="center" colspan="2"><input type="submit" value="Migrer"></td></tr>';
+		    }
+
+		  print '</table><br />';		  
 		  print '</form>';
 		}
-
-
 	    }
 
 	  /*
