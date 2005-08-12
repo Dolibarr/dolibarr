@@ -184,7 +184,7 @@ class TelephonieContrat {
     {
       $sql = "SELECT c.rowid, c.ref, c.fk_client_comm, c.fk_soc, c.fk_soc_facture, c.note";
       $sql .= ", c.fk_commercial_sign, c.fk_commercial_suiv";
-      $sql .= ", c.isfacturable, c.mode_paiement";
+      $sql .= ", c.isfacturable, c.mode_paiement, c.statut";
       $sql .= ", c.fk_user_creat, ".$this->db->pdate("c.date_creat") ." as dc";
       $sql .= ", c.grille_tarif";
 
