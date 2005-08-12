@@ -24,11 +24,12 @@ create table llx_telephonie_commission_avance (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
   date                varchar(6),
   fk_distributeur     integer NOT NULL,
+  fk_po               integer NOT NULL,
   fk_contrat          integer NOT NULL,
   pourcentage         real,
   montant             real,
   avance              tinyint default 0,
 
-  unique (date, fk_contrat)
+  unique (date, fk_po)
 
 )type=innodb;
