@@ -41,9 +41,9 @@ $user->getrights('expedition');
 
 if (!$user->rights->commande->lire) accessforbidden();
 
-require_once DOL_DOCUMENT_ROOT."/project.class.php";
-require_once DOL_DOCUMENT_ROOT."/propal.class.php";
-require_once DOL_DOCUMENT_ROOT."/commande/commande.class.php";
+require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 /*
  * Sécurité accés client

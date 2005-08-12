@@ -29,7 +29,7 @@
 
 require("./pre.inc.php");
 require("./fichinter.class.php");
-require("../project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 
 /*
  * Sécurité accés client

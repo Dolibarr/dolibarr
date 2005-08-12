@@ -44,10 +44,10 @@ $warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiemen
 
 require_once "../facture.class.php";
 require_once "../paiement.class.php";
-if ($conf->projet->enabled) require_once "../project.class.php";
-if ($conf->propal->enabled) require_once "../propal.class.php";
-if ($conf->contrat->enabled) require_once "../contrat/contrat.class.php";
-if ($conf->commande->enabled) require_once "../commande/commande.class.php";
+if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+if ($conf->propal->enabled)   require_once("../propal.class.php");
+if ($conf->contrat->enabled)  require_once("../contrat/contrat.class.php");
+if ($conf->commande->enabled) require_once("../commande/commande.class.php");
 require_once DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php";
 
 

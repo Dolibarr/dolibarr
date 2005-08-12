@@ -30,8 +30,8 @@
 
 
 require("./pre.inc.php");
-require("./facture-rec.class.php");
-require("../../project.class.php");
+require_once("./facture-rec.class.php");
+require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 
 $user->getrights('facture');
 

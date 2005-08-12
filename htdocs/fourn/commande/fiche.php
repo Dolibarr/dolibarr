@@ -33,8 +33,8 @@ require("./pre.inc.php");
 
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
-require_once DOL_DOCUMENT_ROOT."/project.class.php";
-require_once DOL_DOCUMENT_ROOT."/propal.class.php";
+require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 /*
  * Sécurité accés client

@@ -40,8 +40,8 @@ $user->getrights('propale');
 if (!$user->rights->propale->lire)
 	accessforbidden();
 
-if ($conf->projet->enabled) require_once '../project.class.php';
-if ($conf->commande->enabled) require_once '../commande/commande.class.php';
+if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
+if ($conf->commande->enabled) require_once('../commande/commande.class.php');
 require_once('./propal_model_pdf.class.php');
 require_once('../propal.class.php');
 require_once('../actioncomm.class.php');
