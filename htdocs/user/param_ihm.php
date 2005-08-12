@@ -163,7 +163,6 @@ if ($_GET["action"] == 'edit')
 
     // Theme
     show_theme(1);
-    print '<br>';
 
     print '</div>';
 
@@ -199,7 +198,6 @@ else
 
     // Skin
     show_theme(0);
-    print '<br>';
 
     print '</div>';
 
@@ -219,7 +217,7 @@ llxFooter('$Date$ - $Revision$');
 
 function show_theme($edit=0) 
 {
-    global $langs,$dirtheme,$bc;
+    global $user,$langs,$dirtheme,$bc;
     
     $nbofthumbs=5;
     print '<table class="noborder" width="100%">';
@@ -240,7 +238,7 @@ function show_theme($edit=0)
             $file=$dirtheme."/".$subdir."/thumb.png";
             if (! file_exists($file)) $file=$dirtheme."/nophoto.jpg";
             print '<table><tr><td><img src="'.$file.'" width="80" height="60"></td></tr><tr><td align="center">';
-            if ($subdir == MAIN_THEME)
+            if ($subdir == $user->conf->MAIN_THEME)
             {
                 print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
             }
