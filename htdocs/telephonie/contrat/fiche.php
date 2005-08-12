@@ -511,7 +511,7 @@ else
 
 
 	      /* Prise d'ordre */
-	      print '<tr><td width="20%">Prise d\'ordre</td>';
+	      print '<tr><td width="20%">Prise d\'ordre mensuelle</td>';
 
 	      $po = $contrat->priseordre_totale();
 
@@ -919,12 +919,12 @@ else
 	   */
 	  if ($_GET["action"] == 'po' && $po == 0)
 	    {
-	      print_fiche_titre('Ajouter une prise d\'ordre');
+	      print_fiche_titre('Ajouter une prise d\'ordre mensuelle');
 
 	      print '<form action="fiche.php?id='.$contrat->id.'" method="post">';
 	      print '<input type="hidden" name="action" value="addpo">';
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-	      print '<tr><td valign="top" width="20%">Montant</td><td valign="top" colspan="2">';
+	      print '<tr><td valign="top" width="20%">Montant mensuel</td><td valign="top" colspan="2">';
 	      print '<input name="montant" size="8"> euros HT</td></tr>';	  
 	      print '</td></tr>';	  	  
 	      print '<tr><td colspan="3" align="center">';
