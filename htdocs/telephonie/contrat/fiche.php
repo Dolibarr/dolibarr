@@ -963,26 +963,29 @@ print "\n<br>\n<div class=\"tabsAction\">\n";
 if ($_GET["action"] == '')
 {  
 
-  if ($user->rights->telephonie->ligne->creer)
+  if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
     {
       print '<a class="tabAction" href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?action=create&amp;contratid='.$contrat->id.'">Nouvelle ligne</a>';
     }
   
-  print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$contrat->id\">".$langs->trans("Contact")."</a>";
+  if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
+    {
+      print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$contrat->id\">".$langs->trans("Contact")."</a>";
+    }
 
-  if ($user->rights->telephonie->ligne->creer && $po == 0)
+  if ($user->rights->telephonie->ligne->creer && $po == 0 && $contrat->statut <> 6)
     {
       print "<a class=\"tabAction\" href=\"fiche.php?action=po&amp;id=$contrat->id\">Ajouter une prise d'ordre</a>";
     }
-
-  print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$contrat->id\">".$langs->trans("Edit")."</a>";
-
-  if ($user->rights->telephonie->ligne->creer && $numlignes == 0)
+  if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
     {
-  print "<a class=\"butDelete\" href=\"fiche.php?action=delete&amp;id=$contrat->id\">".$langs->trans("Delete")."</a>";
+      print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$contrat->id\">".$langs->trans("Edit")."</a>";
     }
 
-      
+  if ($user->rights->telephonie->ligne->creer && $numlignes == 0 && $contrat->statut <> 6)
+    {
+  print "<a class=\"butDelete\" href=\"fiche.php?action=delete&amp;id=$contrat->id\">".$langs->trans("Delete")."</a>";
+    }      
 }
 
 print "</div>";
