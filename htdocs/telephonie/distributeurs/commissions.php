@@ -59,6 +59,7 @@ if ($_GET["id"])
   $sql = "SELECT c.date, sum(c.montant)";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso as c";  
   $sql .= " WHERE c.fk_distributeur = ".$_GET["id"];
+  $sql .= " AND c.annul = 0";
   $sql .= " GROUP BY c.date DESC";
 
   $resql = $db->query($sql);
@@ -137,7 +138,7 @@ if ($_GET["id"])
   
   if ($resql)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $i = 0;
       $total = 0;
       

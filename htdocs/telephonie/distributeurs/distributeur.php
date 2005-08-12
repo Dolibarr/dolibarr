@@ -72,13 +72,13 @@ if ($_GET["id"])
   
   if ($resql)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $i = 0;
       $total = 0;
       
       while ($i < $num)
 	{
-	  $row = $db->fetch_row($i);	
+	  $row = $db->fetch_row($resql);
 	  
 	  $var=!$var;
 	  
@@ -88,7 +88,7 @@ if ($_GET["id"])
 	  
 	  $i++;
 	}
-      $db->free();
+      $db->free($resql);
     }
   else 
     {
@@ -96,6 +96,39 @@ if ($_GET["id"])
     }
   print '</table><br />';
 
+
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td colspan="2">Total commission</td></tr>';
+
+  $sql = "SELECT sum(c.montant)";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";  
+  $sql .= " WHERE c.fk_distributeur = ".$_GET["id"];
+    
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      $total = 0;
+      $var = 0;
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($resql);	  
+	  $var=!$var;	  
+	  print "<tr $bc[$var]>";	  
+	  print '<td>Total</td>';
+	  print '<td align="right">'.price($row[0]).' HT</td>';
+	  
+	  $i++;
+	}
+      $db->free($resql);
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+  print '</table><br />';
  
   print '</td><td valign="top" width="30%">';
   
@@ -106,36 +139,31 @@ if ($_GET["id"])
   print '<tr class="liste_titre">';
   print '<td>Date</td><td align="right">Commissions</td></tr>';
 
-
   $sql = "SELECT c.date, c.montant";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";
-  
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";  
   $sql .= " WHERE c.fk_distributeur = ".$_GET["id"];
-
   $sql .= " ORDER BY c.date DESC";
     
   $resql = $db->query($sql);
   
   if ($resql)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $i = 0;
       $total = 0;
       
       while ($i < $num)
 	{
-	  $row = $db->fetch_row($i);	
+	  $row = $db->fetch_row($resql);	
 	  
-	  $var=!$var;
-	  
-	  print "<tr $bc[$var]>";
-	  
+	  $var=!$var;	  
+	  print "<tr $bc[$var]>";	  
 	  print '<td>'.substr($row[0], -2).'/'.substr($row[0],0,4).'</td>';
 	  print '<td align="right">'.price($row[1]).' HT</td>';
 	  
 	  $i++;
 	}
-      $db->free();
+      $db->free($resql);
     }
   else 
     {
@@ -144,12 +172,10 @@ if ($_GET["id"])
   print '</table><br />';
 
   print '</td><td valign="top" width="30%">';
-
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
   print '<tr class="liste_titre">';
-  print '<td>Date</td><td align="right">'."Prise d'ordre</td></tr>";
-
+  print '<td>Date</td><td align="right">'."Prise d'ordre mensuelle</td></tr>";
 
   $sql = "SELECT ".$db->pdate("p.datepo") . " as datepo, sum(p.montant)";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
@@ -160,13 +186,13 @@ if ($_GET["id"])
   
   if ($resql)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $i = 0;
       $total = 0;
       
       while ($i < $num)
 	{
-	  $row = $db->fetch_row($i);	
+	  $row = $db->fetch_row($resql);	
 	  
 	  $var=!$var;
 	  
@@ -177,7 +203,7 @@ if ($_GET["id"])
 	  
 	  $i++;
 	}
-      $db->free();
+      $db->free($resql);
     }
   else 
     {
@@ -187,7 +213,6 @@ if ($_GET["id"])
 
   print '</td></tr>';
   print '</table></div>';
-
 
   /* ************************************************************************** */
   /*                                                                            */ 
@@ -202,9 +227,6 @@ if ($_GET["id"])
     }
   
   print "</div><br>";
-
-
-
  
   $db->close();
 }
