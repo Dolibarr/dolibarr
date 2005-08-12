@@ -240,9 +240,11 @@ function dolibarr_get_const($db, $name)
 function dolibarr_set_php_lang($code_lang)
 {
     $code_lang_tiret=ereg_replace('_','-',$code_lang);
-    
+
+    dolibarr_syslog("dolibarr_set_php_lang: code_lang=$code_lang code_lang_tirer=$code_lang_tiret");
+   
     setlocale(LC_ALL, $code_lang);    // Compenser pb de locale avec windows
-    setlocale(LC_ALL, $code_lang);
+    setlocale(LC_ALL, $code_lang_tiret);
     if (defined("MAIN_FORCE_SETLOCALE_LC_ALL") && MAIN_FORCE_SETLOCALE_LC_ALL) setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL);
     if (defined("MAIN_FORCE_SETLOCALE_LC_TIME") && MAIN_FORCE_SETLOCALE_LC_TIME) setlocale(LC_TIME, MAIN_FORCE_SETLOCALE_LC_TIME);
     if (defined("MAIN_FORCE_SETLOCALE_LC_NUMERIC") && MAIN_FORCE_SETLOCALE_LC_NUMERIC) setlocale(LC_NUMERIC, MAIN_FORCE_SETLOCALE_LC_NUMERIC);
