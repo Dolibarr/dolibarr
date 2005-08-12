@@ -93,6 +93,7 @@ class box_factures extends ModeleBoxes {
         
                     $this->info_box_contents[$i][1] = array('align' => 'left',
                     'text' => $objp->nom,
+                    'maxlength'=>44,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
                     $i++;
                 }
