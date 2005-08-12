@@ -125,7 +125,7 @@ if ($_GET["id"])
   print '<td>Date</td><td align="right">Versé</td><td align="right">Consos</td><td align="right">Solde</td></tr>';
   $var=1;
   print '<tr class="liste_titre">';
-  print '<td>Total</td><td align="right">'.price($comm_total).' HT</td><td align="right">'.price($conso_total).' HT</td><td align="right">'.price($comm_total - $conso_total).' HT</td></tr>';
+  print '<td>Total</td><td align="right">'.price($comm_total).' HT</td><td align="right">'.price($conso_total).' HT</td><td align="right">'.price($conso_total - $comm_total).' HT</td></tr>';
 
   $sql = "SELECT c.date, c.montant";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";
