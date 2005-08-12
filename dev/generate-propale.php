@@ -127,6 +127,8 @@ while ($i < GEN_NUMBER_PROPAL)
   $propal->datep = time();
   $propal->author = $user->id;
 
+  $propal->create($user);
+
   $nbp = rand(1, 9);
   $xnbp = 0;
 
@@ -136,8 +138,6 @@ while ($i < GEN_NUMBER_PROPAL)
       $propal->insert_product($prodids[$prodid], rand(1,5));
       $xnbp++;
     }
-
-  $propal->create($user);
 
 }
 
