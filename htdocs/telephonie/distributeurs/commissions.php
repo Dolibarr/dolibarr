@@ -51,39 +51,31 @@ if ($_GET["id"])
 
   dolibarr_fiche_head($head, $hselected, "Distributeur");
 
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-  print '<tr><td width="50%" valign="top">';
-  
-
- 
-
-  
-  /* Commissions */
-
+  /* Conso */
+  $conso_total = 0;
   $consos = array();
 
   $sql = "SELECT c.date, sum(c.montant)";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso as c";
-  
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso as c";  
   $sql .= " WHERE c.fk_distributeur = ".$_GET["id"];
-
   $sql .= " GROUP BY c.date DESC";
 
   $resql = $db->query($sql);
   
   if ($resql)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       $i = 0;
       
       while ($i < $num)
 	{
-	  $row = $db->fetch_row($i);	
+	  $row = $db->fetch_row($resql);	
 	  $consos[$row[0]] = $row[1];	  
+	  $conso_total += $row[1];
 	  $i++;
 	}
-      $db->free();
+      $db->free($resql);
     }
   else 
     {
@@ -91,13 +83,52 @@ if ($_GET["id"])
     }
 
 
+  /* Commission */
+  $comm_total = 0;
+  $commissions = array();
+
+  $sql = "SELECT c.date, c.montant";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";  
+  $sql .= " WHERE c.fk_distributeur = ".$_GET["id"];
+  $sql .= " ORDER BY c.date DESC";
+
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($resql);	
+	  $commissions[$row[0]] = $row[1];	  
+	  $comm_total += $row[1];
+	  $i++;
+	}
+      $db->free($resql);
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+
+
+
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+
+  print '<tr><td width="50%" valign="top">';
+  
+  
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td>Date</td><td>Versé</td><td>Consos</td><td>Solde</td></tr>';
+  print '<td>Date</td><td align="right">Versé</td><td align="right">Consos</td><td align="right">Solde</td></tr>';
+  $var=1;
+  print '<tr class="liste_titre">';
+  print '<td>Total</td><td align="right">'.price($comm_total).' HT</td><td align="right">'.price($conso_total).' HT</td><td align="right">'.price($comm_total - $conso_total).' HT</td></tr>';
 
   $sql = "SELECT c.date, c.montant";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";
-  
   $sql .= " WHERE c.fk_distributeur = ".$_GET["id"];
 
   $sql .= " ORDER BY c.date DESC";
@@ -112,20 +143,20 @@ if ($_GET["id"])
       
       while ($i < $num)
 	{
-	  $row = $db->fetch_row($i);	
+	  $row = $db->fetch_row($resql);
 	  
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
 	  
 	  print '<td>'.substr($row[0], -2).'/'.substr($row[0],0,4).'</td>';
-	  print '<td>'.price($row[1]).' HT</td>';
-	  print '<td>'.price($consos[$row[0]]).' HT</td>';
-	  print '<td>'.price($consos[$row[0]] - $row[1]).' HT</td>';
+	  print '<td align="right">'.price($row[1]).' HT</td>';
+	  print '<td align="right">'.price($consos[$row[0]]).' HT</td>';
+	  print '<td align="right">'.price($consos[$row[0]] - $row[1]).' HT</td>';
 	  
 	  $i++;
 	}
-      $db->free();
+      $db->free($resql);
     }
   else 
     {
