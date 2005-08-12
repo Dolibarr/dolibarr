@@ -276,7 +276,7 @@ else
 	    $db->free($resql);
 	    }
 	  print "</table>\n";
-	  print "<br></div>\n";
+	  print "</div>\n";
 	  
         }
       
@@ -347,5 +347,5 @@ print "</div>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
