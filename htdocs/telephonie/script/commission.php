@@ -28,6 +28,18 @@ $error = 0;
 $nbcommit = 0;
 $datetime = time();
 
+$user = new User($db, 1);
+$user->login = "Rodo";
+
+$opt = getopt("m:");
+
+if ($opt['m'] > 0)
+{
+  $datetime = mktime(10,10,10,$opt['m'],10,2005);
+}
+
+
+
 $date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
 
 /*
@@ -86,7 +98,7 @@ if ( $resql )
 else
 {
   $error = 1;
-  dolibarr_syslog("Erreur ".$error);
+  dolibarr_syslog("Verification Erreur ".$error);
 }
 
 /********************************************************
@@ -96,7 +108,7 @@ else
  *
  *********************************************************/
 
-$sql = "SELECT fk_distributeur, fk_contrat, datepo, montant";
+$sql = "SELECT rowid, fk_distributeur, fk_contrat, datepo, montant";
 $sql .= " , avance_pourcent, rem_pour_prev";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
 
@@ -122,9 +134,9 @@ if ( $resql )
       $avance = round($avance  * 0.0001, 2);
 
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_avance";
-      $sqli .= " (date, fk_distributeur, fk_contrat, montant, pourcentage, avance)";
+      $sqli .= " (date, fk_distributeur, fk_po,fk_contrat, montant, pourcentage, avance)";
       $sqli .= " VALUES ('".$year.$month."'";
-      $sqli .= ",".$obj->fk_distributeur.",".$obj->fk_contrat;
+      $sqli .= ",".$obj->fk_distributeur.",".$obj->rowid.",".$obj->fk_contrat;
       $sqli .= ",".ereg_replace(",",".",$avance);
       $sqli .= ",".ereg_replace(",",".",$pourcent);
       $sqli .= ",1)";
@@ -132,7 +144,7 @@ if ( $resql )
       if (! $db->query($sqli))
 	{
 	  $error++;
-	  dolibarr_syslog("Erreur ".$db->error());
+	  dolibarr_syslog("Calcul avance Erreur ".$db->error());
 	}
       
       $i++;
@@ -153,9 +165,7 @@ else
  *
  *********************************************************/
 
-dolibarr_syslog("Conso");
-
-$sql = "SELECT f.cout_vente, p.fk_contrat, l.rowid as ligne, p.fk_distributeur";
+$sql = "SELECT p.rowid, f.cout_vente, p.fk_contrat, l.rowid as ligne, p.fk_distributeur";
 $sql .= " , p.avance_pourcent, p.rem_pour_prev, p.rem_pour_autr";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
@@ -163,13 +173,11 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_facture as f";
 
 $sql .= " WHERE p.fk_contrat = c.rowid";
-
 $sql .= " AND l.fk_contrat = c.rowid";
-
 $sql .= " AND f.fk_ligne = l.rowid";
 
 $sql .= " AND date_format(f.date, '%Y%m') = '".$year_prev.$month_prev."'";
-
+$sql .= " AND date_format(p.datepo, '%Y%m') <= '".$year_prev.$month_prev."'";
 $sql .= " AND fk_distributeur > 0";
 
 $resql = $db->query($sql);
@@ -179,19 +187,17 @@ if ( $resql )
   $num = $db->num_rows($resql);
   $i = 0;
   
-  dolibarr_syslog("Conso : ".$num);
-  
   while ($i < $num)
     {
       $obj = $db->fetch_object($resql);
-      
+  
       $pourcent = $obj->rem_pour_prev;
       
       $comm = round($obj->cout_vente * $pourcent * 0.01, 2) ;
       
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_conso";
       $sqli .= " (date, fk_distributeur, fk_contrat, fk_ligne, montant, pourcentage)";
-      $sqli .= " VALUES ('".$year.$month."'";
+      $sqli .= " VALUES ('".$year_prev.$month_prev."'";
       $sqli .= ",".$obj->fk_distributeur.",".$obj->fk_contrat.",".$obj->ligne;
       $sqli .= ",".ereg_replace(",",".",$comm);
       $sqli .= ",".ereg_replace(",",".",$pourcent);
@@ -199,9 +205,12 @@ if ( $resql )
       
       if (! $db->query($sqli))
 	{
-	  dolibarr_syslog("Erreur ".$db->error());
+	  $error++;
+	  dolibarr_syslog("Calcul conso Erreur ".$db->error());
 	}
-      
+
+      dolibarr_syslog("Conso po : ".$obj->rowid . " ".$comm);
+              
       $i++;
     }
   $db->free($resql);
@@ -212,16 +221,294 @@ else
   dolibarr_syslog("Erreur ".$db->error());
 }
 
+/********************************************************
+ *
+ * Régulation sur contrats annulés
+ *
+ *
+ *********************************************************/
 
+
+/********************************************************
+ *
+ * Régulation des avances
+ *
+ *
+ *********************************************************/
+
+$distri_av = array();
+
+$sql = "SELECT distinct fk_distributeur";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_avance";
+$sql .= " WHERE fk_distributeur <> 0";
+  
+$resql = $db->query($sql);
+  
+if ( $resql )
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);
+
+      array_push($distri_av, $row[0]);
+      $i++;
+    }
+  $db->free($resql);
+}
+else
+{
+  $error = 1;
+  dolibarr_syslog("Erreur regul avances ".$error);
+}
+
+$avan_regul = array();
+$comm_regul = array();
+
+foreach ($distri_av as $distributeur_id)
+{
+  $avan_regul[$distributeur_id] = 0;
+  $comm_regul[$distributeur_id] = 0;
+
+  $sqla = "SELECT rowid, ".$db->pdate("datepo").", avance_duree";
+  $sqla .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
+  $sqla .= " WHERE fk_distributeur = ".$distributeur_id;
+  $sqla .= " AND date_format(datepo + INTERVAL avance_duree MONTH, '%Y%m')='".$year_prev.$month_prev."';";
+
+  $resqla = $db->query($sqla);
+  
+  if ( $resqla )
+    {
+      $numa = $db->num_rows($resqla);
+      $ia = 0;
+      
+      while ($ia < $numa)
+	{
+	  $rowa = $db->fetch_row($resqla);
+	  dolibarr_syslog("* Régul des avances de la po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
+	  $ia++;
+
+	  /* Calcul des sommes avancées */
+	  $sql = "SELECT a.montant, a.fk_contrat, c.statut";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_avance as a";
+	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
+	  $sql .= " WHERE a.fk_distributeur = ".$distributeur_id;
+	  $sql .= " AND c.rowid = a.fk_contrat";
+	  $sql .= " AND a.fk_po = ".$rowa[0];
+	  
+	  $resql = $db->query($sql);
+	  
+	  if ( $resql )
+	    {
+	      $num = $db->num_rows($resql);
+	      $i = 0;
+	      
+	      while ($i < $num)
+		{
+		  $row = $db->fetch_row($resql);
+		  
+		  $avan_regul[$distributeur_id] = $avan_regul[$distributeur_id] + $row[0];
+		  
+		  dolibarr_syslog("* Avance ".$row[0] . " statut : ".$row[2]);
+		  
+		  /* Communications relatives */
+		  $datup = $year_prev.$month_prev;
+		  $datdo = strftime("%Y%m",$rowa[1]);
+		  if ($row[2] <> 6)
+		    {
+		      $sqlc = "SELECT sum(montant)";
+		      $sqlc .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso";
+		  
+		      dolibarr_syslog("* Communications <= $datup >= $datdo ");
+
+		      $sqlc .= " WHERE fk_contrat = ". $row[1];
+		      $sqlc .= " AND date <= '".$datup."' AND date >= '".$datdo."'";
+		      
+		      $resqlc = $db->query($sqlc);
+		      
+		      if ( $resqlc )
+			{
+			  $numc = $db->num_rows($resqlc);
+			  $ic = 0;
+		      
+			  while ($ic < $numc)
+			    {
+			      $rowc = $db->fetch_row($resqlc);
+			      
+			      $comm_regul[$distributeur_id] = $comm_regul[$distributeur_id] + $rowc[0];
+			      
+			      dolibarr_syslog("* Conso générée ".$rowc[0]);
+			      $ic++;
+			    }
+			  $db->free($resqlc);
+			}
+		      else
+			{
+			  $error = 1;
+			  dolibarr_syslog("Erreur regul avances conso ".$error);
+			}
+		    }
+		  else
+		    {
+		      $sqlc = "UPDATE ".MAIN_DB_PREFIX."telephonie_commission_conso";
+		      $sqlc .= " SET annul = 1";
+		      $sqlc .= " WHERE fk_contrat = ".$row[1];
+		      $sqlc .= " AND date <= '".$datup."' AND date >= '".$datdo."'";
+
+		      $resqlc = $db->query($sqlc);
+
+		      if (! $resqlc )
+			{
+			  $error = 1;
+			  dolibarr_syslog("Erreur regul avances conso ".$error);
+			}
+		    }
+		  
+		  $i++;
+		}
+	      $db->free($resql);
+	    }
+	  else
+	    {
+	      $error = 1;
+	      dolibarr_syslog("Erreur regul avances ".$db->error());
+	    }	  	  	  	 	  
+	}
+    }
+  else
+    {
+      $error = 10;
+      dolibarr_syslog("Erreur regul avances aaaa".$db->error());
+      dolibarr_syslog($sqla);
+    }
+}
+
+
+/********************************************************
+ *
+ * Calcul des consos
+ *
+ *
+ *********************************************************/
+
+$distri_co = array();
+
+$sql = "SELECT distinct fk_distributeur";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso";
+$sql .= " WHERE fk_distributeur <> 0";
+  
+$resql = $db->query($sql);
+  
+if ( $resql )
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);
+      array_push($distri_co, $row[0]);
+      $i++;
+    }
+  $db->free($resql);
+}
+else
+{
+  $error = 1;
+  dolibarr_syslog("Erreur calcul des commission sur conso ".$error);
+}
+
+$comm_conso = array();
+
+foreach ($distri_co as $distributeur_id)
+{
+  $comm_conso[$distributeur_id] = 0;
+
+  $sqla = "SELECT rowid, ".$db->pdate("datepo").", fk_contrat";
+  $sqla .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
+  $sqla .= " WHERE fk_distributeur = ".$distributeur_id;
+  $sqla .= " AND date_format(datepo + INTERVAL avance_duree MONTH, '%Y%m')<'".$year_prev.$month_prev."';";
+
+  $resqla = $db->query($sqla);
+  
+  if ( $resqla )
+    {
+      $numa = $db->num_rows($resqla);
+      $ia = 0;
+      
+      while ($ia < $numa)
+	{
+	  $rowa = $db->fetch_row($resqla);
+	  dolibarr_syslog("** Calcul des consos la po " .$rowa[0] . " ".strftime("%Y%m",$rowa[1]));
+	  $ia++;
+
+	  /* Communications relatives */
+
+	  $datup = $year_prev.$month_prev;
+	  
+	  dolibarr_syslog("** Communications  $datup");
+		  
+	  $sqlc = "SELECT sum(montant)";
+	  $sqlc .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso";
+	  $sqlc .= " WHERE fk_contrat = ". $rowa[2];
+	  $sqlc .= " AND date = '".$datup."';";
+	  
+	  $resqlc = $db->query($sqlc);
+	  
+	  if ( $resqlc )
+	    {
+	      $numc = $db->num_rows($resqlc);
+	      $ic = 0;
+	      
+	      while ($ic < $numc)
+		{
+		  $rowc = $db->fetch_row($resqlc);
+		  
+		  $comm_conso[$distributeur_id] = $comm_conso[$distributeur_id] + $rowc[0];
+		  
+		  dolibarr_syslog("** Conso générée ".$rowc[0]);
+		  $ic++;
+		}
+	      $db->free($resqlc);
+	    }
+	  else
+	    {
+	      $error = 1;
+	      dolibarr_syslog("Erreur regul conso");
+	    }
+	}	  		      
+    }
+  else
+    {
+      $error = 10;
+      dolibarr_syslog("Erreur regul conso".$db->error());
+      dolibarr_syslog($sqla);
+    }
+}
+
+
+
+
+/********************************************************
+ *
+ *
+ *
+ *********************************************************/
 
 foreach ($distributeurs as $distributeur_id)
 {
   $distributeur = new DistributeurTelephonie($db);
   $distributeur->fetch($distributeur_id);
 
-  dolibarr_syslog($distributeur->nom);
-  dolibarr_syslog($month_prev."-".$year_prev);
+  dolibarr_syslog($distributeur->nom . " : ".$month_prev."-".$year_prev);
 
+  $amount = 0;
+
+  $amount = $amount + $comm_regul[$distributeur_id];
+  $amount = $amount - $avan_regul[$distributeur_id];
+  $amount = $amount + $comm_conso[$distributeur_id];
 
   /********************************************************
    *
@@ -245,19 +532,21 @@ foreach ($distributeurs as $distributeur_id)
       while ($i < $num)
 	{
 	  $row = $db->fetch_row($resql);
+
+	  $amount = $amount + $row[0];
 	  
 	  $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission";
 	  $sqli .= " (date, fk_distributeur, montant)";
 	  $sqli .= " VALUES ('".$year.$month."'";
 	  $sqli .= ",".$distributeur->id;
-	  $sqli .= ",".ereg_replace(",",".",$row[0]).")";
+	  $sqli .= ",".ereg_replace(",",".",$amount).")";
 
 	  if (! $db->query($sqli))
 	    {
 	      $error++;
 	    }
 
-	  dolibarr_syslog($row[0]);
+	  dolibarr_syslog("Commission finale ".$amount);
 
 	  $i++;
 	}
@@ -273,12 +562,11 @@ foreach ($distributeurs as $distributeur_id)
 if ($error == 0)
 {
   $db->commit();
-  dolibarr_syslog("Commit");
 }
 else
 {
   $db->rollback();
-  dolibarr_syslog("Rollback");
+  dolibarr_syslog("Rollback", LOG_ERR);
 }
-
+dolibarr_syslog("----------------");
 ?>
