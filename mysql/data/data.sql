@@ -133,12 +133,12 @@ insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.
 --
 --
 --
-insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON',       'jupiter','chaine',0);
-insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON_PDF',   'crabe','chaine',0);
---insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON_PDF',    'azur','chaine',0);
+insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON',       'mod_propale_ivoire','chaine',0);
+insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON_PDF',   'azur','chaine',0);
 insert into llx_const (name, value, type, visible) values ('COMMANDE_ADDON',      'mod_commande_ivoire','chaine',0);
 insert into llx_const (name, value, type, visible) values ('EXPEDITION_ADDON_PDF','rouget','chaine',0);
-insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON',       'mod_propale_ivoire','chaine',0);
+insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON',       'jupiter','chaine',0);
+insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON_PDF',   'crabe','chaine',0);
 
 
 --
