@@ -454,7 +454,7 @@ if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
 }
 
 /*
- * Dernières propales ouvertes
+ * Propales ouvertes
  *
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
@@ -481,7 +481,9 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
             {
                 $obj = $db->fetch_object($result);
                 $var=!$var;
-                print "<tr $bc[$var]><td width=\"15%\" nowrap><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td>";
+                print "<tr $bc[$var]><td width=\"15%\" nowrap><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a>";
+    		    if ($obj->dp < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+                print "</td>";
                 print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,44)."</a></td>\n";
                 print "<td align=\"right\">";
                 print dolibarr_print_date($obj->dp)."</td>\n";

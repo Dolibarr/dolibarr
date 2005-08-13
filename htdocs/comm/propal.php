@@ -460,13 +460,14 @@ if ($_GET['propalid'])
 	  print '</tr>';
 
 	  print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-	  print dolibarr_print_date($propal->date,'%a %e %B %Y');
+	  print dolibarr_print_date($propal->date,'%a %d %B %Y');
 	  print '</td>';
 
 	  print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
 	  if ($propal->fin_validite)
 	    {
-	      print dolibarr_print_date($propal->fin_validite);
+	      print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
+		  if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 	    }
 	  else {
 	    print $langs->trans("Unknown");   
@@ -1169,7 +1170,9 @@ else
 	  // Date fin validite
 	  if ( $now > $objp->dfv && $objp->dfv > 0 )
 	    {
-	      print '<td align="center">'.dolibarr_print_date($objp->dfv).'</td>';
+	      print '<td align="center">'.dolibarr_print_date($objp->dfv);
+		  if ($objp->fk_statut == 1 && $objp->dfv < (time() - $conf->propal->cloture->warning_delay)) print ' '.img_warning($langs->trans("Late"));
+	      print '</td>';
 	    }
 	  else
 	    {

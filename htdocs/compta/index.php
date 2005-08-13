@@ -35,8 +35,6 @@ $user->getrights(); // On a besoin des permissions sur plusieurs modules
 $langs->load("compta");
 $langs->load("bills");
 
-$warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiement facture > delai)
-
 // Sécurité accés client
 $socidp='';
 if ($user->societe_id > 0)
@@ -361,7 +359,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 		  $var=!$var;
 		  print '<tr '.$bc[$var].'>';
 		  print '<td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a>';
-		  if ($obj->datelimite < (time() - $warning_delay)) print img_warning($langs->trans("Late"));
+		  if ($obj->datelimite < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 		  print '</td>';
 		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
 		  print '<td align="right">'.price($obj->total).'</td>';

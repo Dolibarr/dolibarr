@@ -159,13 +159,14 @@ if ($_GET["propalid"])
 	  print '</tr>';
 	  
 	  print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-	  print dolibarr_print_date($propal->date);
+	  print dolibarr_print_date($propal->date,'%a %d %B %Y');
 	  print '</td>';
 	  
 	  print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
 	  if ($propal->fin_validite)
 	    {
-	      print dolibarr_print_date($propal->fin_validite);
+	      print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
+		  if ($propal->statut == 1 && $propal->$propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 	    }
 	  else
 	    {
@@ -284,6 +285,8 @@ if ($_GET["propalid"])
 	  print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	  print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
 	  print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+
+      // Statut
 	  print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut().'</td></tr>';
 	  print '</table><br>';
 	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
