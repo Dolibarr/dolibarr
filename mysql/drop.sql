@@ -309,6 +309,10 @@ drop table if exists llx_accountingsystem_det;
 
 drop table if exists llx_accountingsystem;
 
+drop table if exists llx_energie_compteur_releve;
+drop table if exists llx_energie_compteur_groupe;
+drop table if exists llx_energie_compteur;
+drop table if exists llx_energie_groupe;
 drop table if exists llx_dolibarr_modules;
 
 drop table if exists llx_energie_compteur_groupe;
