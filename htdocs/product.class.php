@@ -61,6 +61,7 @@ class Product
       $this->db = $DB;
       $this->id   = $id ;
       $this->envente = 0;
+      $this->seuil_stock_alerte = 0;
     }  
 
 
@@ -92,71 +93,83 @@ class Product
     }
 
 
-  /**
-   *    \brief  Insère le produit en base
-   *    \param  user        utilisateur qui effectue l'insertion
-   */
-	 
-  function create($user) 
+    /**
+     *    \brief    Insère le produit en base
+     *    \param    user        Utilisateur qui effectue l'insertion
+     */
+    function create($user)
     {
-      $this->ref = ereg_replace("'","",stripslashes($this->ref));
-      $this->ref = ereg_replace("\"","",stripslashes($this->ref));
+    
+        $this->ref = ereg_replace("'","",stripslashes($this->ref));
+        $this->ref = ereg_replace("\"","",stripslashes($this->ref));
+    
+        dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
+    
+        $this->db->begin();
+    
+        $sql = "SELECT count(*)";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .trim($this->ref)."'";
 
-      dolibarr_syslog("Product::Create Categorie : ".$this->catid);
+        $result = $this->db->query($sql) ;
+        if ($result)
+        {
+            $row = $this->db->fetch_array($result);
+            if ($row[0] == 0)
+            {
+                if (strlen($this->tva_tx)==0) $this->tva_tx = 0;
+                if (strlen($this->price)==0) $this->price = 0;
+                if (strlen($this->envente)==0) $this->envente = 0;
+    
+                $this->price = ereg_replace(",",".",$this->price);
+    
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
+                $sql .= " (datec, fk_user_author, fk_product_type, price)";
+                $sql .= " VALUES (now(),".$user->id.",$this->type, '" . $this->price . "')";
+                $result = $this->db->query($sql);
+                if ( $result )
+                {
+                    $id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
+    
+                    if ($id > 0)
+                    {
+                        $this->id = $id;
+                        $this->_log_price($user);
+                        if ( $this->update($id, $user) > 0)
+                        {
+                            if ($this->catid > 0)
+                            {
+                                $cat = new Categorie ($this->db, $this->catid);
+                                $cat->add_product($this);
+                            }
+                            $this->db->commit();
+                            return $id;
+                        }
+                        else {
+                            $this->db->rollback();
+                            return -5;
+                        }
+                    }
+                    else
+                    {
+                        $this->db->rollback();
+                        return -4;
+                    }
+                }
+                else
+                {
+                    $this->db->rollback();
+                    return -3;
+                }
+            }
+            else
+            {
+                $this->db->rollback();
+                return -2;
+            }
+        }
 
-      $sql = "SELECT count(*)";
-      $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .trim($this->ref)."'";
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
-	{
-	  $row = $this->db->fetch_array();
-	  if ($row[0] == 0)
-	    {
-	      if (strlen($this->tva_tx)==0) $this->tva_tx = 0;
-	      if (strlen($this->price)==0) $this->price = 0;
-	      if (strlen($this->envente)==0) $this->envente = 0;
-
-	      $this->price = ereg_replace(",",".",$this->price);
-
-	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
-	      $sql .= " (datec, fk_user_author, fk_product_type, price)";
-	      $sql .= " VALUES (now(),".$user->id.",$this->type, '" . $this->price . "')";
-	      $result = $this->db->query($sql);
-	      if ( $result )
-		{
-		  $id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
-		  
-		  if ($id > 0)
-		    {
-		      $this->id = $id;
-		      $this->_log_price($user);
-		      if ( $this->update($id, $user) )
-			{
-			  if ($this->catid > 0)
-			    {
-			      $cat = new Categorie ($this->db, $this->catid);
-			      $cat->add_product($this);
-			    }
-			  return $id;
-			}
-		    }
-		  else
-		    {
-		      return -2;
-		    }
-		}
-	      else
-		{
-		  dolibarr_print_error($this->db);
-		  return -1;
-		}
-	    }
-	  else
-	    {
-	      return -3;
-	    }
-	}
+        $this->db->rollback();
+        return -1;
     }
 
 
@@ -197,12 +210,12 @@ class Product
     }
     else
     {
-        if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS) {
-            $this->mesg_error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
+        if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+            $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
             return -1;
         }
         else {
-            $this->mesg_error=$langs->trans("Error")." : ".$this->db->error();
+            $this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
     	    return -2;
         }
     }
@@ -370,7 +383,7 @@ class Product
       }
     else
       {
-	$this->mesg_error = "Prix saisi invalide.";
+	$this->error = "Prix saisi invalide.";
 	return -2;
       }
   }
