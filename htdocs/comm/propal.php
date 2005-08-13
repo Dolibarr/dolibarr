@@ -761,7 +761,7 @@ if ($_GET['propalid'])
 
 	      $var=true;
 	      print '<tr '.$bc[$var].">\n";
-	      print '  <td><textarea cols="50" name="np_desc"></textarea></td>';
+	      print '  <td><textarea cols="50" name="np_desc" rows="1"></textarea></td>';
 	      print '  <td align="center">';
 	      print $html->select_tva('np_tva_tx', $conf->defaulttx) . "</td>\n";
 	      print '  <td align="right"><input type="text" size="5" name="np_price"></td>';
