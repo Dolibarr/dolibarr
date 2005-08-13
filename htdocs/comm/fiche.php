@@ -218,12 +218,16 @@ if ($_socid > 0)
 
     print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$objsoc->prefix_comm.'</td></tr>';
 
-    if ($objsoc->client) {
+    if ($objsoc->client)
+    {
         print '<tr><td>';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
         print $objsoc->code_client;
         if ($objsoc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
         print '</td></tr>';
+    }
+    if ($conf->compta->enabled)
+    {
         print '<tr>';
         print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$societe->code_compta.'</td>';
         print '</tr>';
