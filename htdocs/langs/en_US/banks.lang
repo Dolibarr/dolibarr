@@ -61,3 +61,5 @@ SearchTransaction=Search transaction
 TransactionsToConciliate=Transactions to conciliate
 Rappro=Conciliate
 Conciliate=Conciliate
+IncludeClosedAccount=Include closed accounts
+OnlyOpenedAccount=Only opened accounts

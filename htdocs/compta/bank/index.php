@@ -22,10 +22,10 @@
  */
 
 /**
-   \file       htdocs/compta/bank/index.php
-   \ingroup    banque
-   \brief      Page accueil banque
-   \version    $Revision$
+        \file       htdocs/compta/bank/index.php
+        \ingroup    banque
+        \brief      Page accueil banque
+        \version    $Revision$
 */
 
 
@@ -43,19 +43,27 @@ $user->getrights('banque');
 if (!$user->rights->banque->lire)
   accessforbidden();
 
+$statut=isset($_GET["statut"])?$_GET["statut"]:'';
+
+
 llxHeader();
 
-print_titre($langs->trans("AccountsArea"));
+
+$link='';
+if ($statut == '') $link='<a href="'.$_SERVER["PHP_SELF"].'?statut=all">'.$langs->trans("IncludeClosedAccount").'</a>';
+if ($statut == 'all') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("OnlyOpenedAccount").'</a>';
+print_fiche_titre($langs->trans("AccountsArea"),$link);
 print '<br>';
 
 
-// On charge tableau des comptes financiers ouverts
-// On n'affiche pas les comptes clos
+// On charge tableau des comptes financiers (ouverts par defaut)
 $accounts = array();
 
 $sql  = "SELECT rowid, courant";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
-$sql .= " WHERE clos = 0";
+if ($statut != 'all') {
+    $sql .= " WHERE clos = 0";
+}
 $sql .= " ORDER BY label";
 
 $resql = $db->query($sql);
@@ -78,8 +86,8 @@ if ($resql)
  */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CurrentAccounts").'</td>';
-print '<td width="30%">'.$langs->trans("Bank").'</td>';
-print '<td width="20%" align="left">'.$langs->trans("Numero").'</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="80">'.$langs->trans("Closed").'</td>';
+print '<td width="20%">'.$langs->trans("Bank").'</td>';
+print '<td align="left">'.$langs->trans("Numero").'</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="70">'.$langs->trans("Closed").'</td>';
 print "</tr>\n";
 
 $total = 0;
@@ -96,8 +104,8 @@ foreach ($accounts as $key=>$type)
       
       print '<tr '.$bc[$var].'><td width="30%">';
       print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
-      print '</td><td width="30%">'.$acc->bank."</td><td>$acc->number</td>";
-      print '<td align="right">'.price($solde).'</td><td align="center">'.$yn[$acc->clos].'</td></tr>';
+      print '</td><td>'.$acc->bank."</td><td>$acc->number</td>";
+      print '<td align="right">'.price($solde).'</td><td align="center">'.yn($acc->clos).'</td></tr>';
       
       $total += $solde;
     }
@@ -114,8 +122,8 @@ print '<tr><td colspan="5">&nbsp;</td></tr>';
  * Comptes placements
  */
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="30%">'.$langs->trans("SavingAccounts").'</td><td width="30%">'.$langs->trans("Bank").'</td>';
-print '<td width="20%" align="left">'.$langs->trans("Numero").'</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="80">'.$langs->trans("Closed").'</td>';
+print '<tr class="liste_titre"><td width="30%">'.$langs->trans("SavingAccounts").'</td><td width="20%">'.$langs->trans("Bank").'</td>';
+print '<td align="left">'.$langs->trans("Numero").'</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="70">'.$langs->trans("Closed").'</td>';
 print "</tr>\n";
 
 $total = 0;
@@ -133,7 +141,7 @@ foreach ($accounts as $key=>$type)
       print "<tr ".$bc[$var]."><td>";
       print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
       print "</td><td>$acc->bank</td><td>$acc->number</td>";
-      print '<td align="right">'.price($solde).'</td><td align="center">'.$yn[$acc->clos].'</td></tr>';
+      print '<td align="right">'.price($solde).'</td><td align="center">'.yn($acc->clos).'</td></tr>';
   
       $total += $solde;
     }
@@ -150,8 +158,8 @@ print '<tr><td colspan="5">&nbsp;</td></tr>';
  * Comptes caisse/liquide
  */
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("CashAccounts").'</td><td>&nbsp;</td>';
-print '<td align="left">&nbsp;</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="80">'.$langs->trans("Closed").'</td>';
+print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CashAccounts").'</td><td width="20%">&nbsp;</td>';
+print '<td align="left">&nbsp;</td><td align="right" width="120">'.$langs->trans("BankBalance").'</td><td align="center" width="70">'.$langs->trans("Closed").'</td>';
 print "</tr>\n";
 
 $total = 0;
@@ -169,7 +177,7 @@ foreach ($accounts as $key=>$type)
         print "<tr ".$bc[$var]."><td>";
         print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
         print "</td><td>$acc->bank</td><td>&nbsp;</td>";
-        print '<td align="right">'.price($solde).'</td><td align="center">'.$yn[$acc->clos].'</td></tr>';
+        print '<td align="right">'.price($solde).'</td><td align="center">'.yn($acc->clos).'</td></tr>';
 
         $total += $solde;
     }

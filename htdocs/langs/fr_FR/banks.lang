@@ -61,3 +61,5 @@ SearchTransaction=Recherche écriture
 TransactionsToConciliate=Ecritures à rapprocher
 Rappro=Rapprocher
 Conciliate=Rapprocher
+IncludeClosedAccount=Inclure comptes fermés
+OnlyOpenedAccount=Uniquement comptes ouverts
