@@ -191,11 +191,11 @@ if ($result)
 
       // Value date
       print "<tr>";
-      print '<td>'.$langs->trans("DateValue").'</td><td colspan="2">'.strftime("%d %b %Y",$objp->dv)."</td>\n";
-      print '<td><a href="ligne.php?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
-      print img_previous() . "</a> ";
+      print '<td colspan="2">'.$langs->trans("DateValue").'</td><td colspan="2">'.strftime("%d %b %Y",$objp->dv)." &nbsp; ";
+      print '<a href="ligne.php?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
+      print img_edit_remove() . "</a> ";
       print '<a href="ligne.php?action=dvnext&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
-      print img_next() ."</a></td>";
+      print img_edit_add() ."</a></td>";
       print '</tr>';
 
       // Description
