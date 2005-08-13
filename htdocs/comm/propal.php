@@ -41,7 +41,7 @@ if (!$user->rights->propale->lire)
 	accessforbidden();
 
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
-if ($conf->commande->enabled) require_once('../commande/commande.class.php');
+if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php');
 require_once('./propal_model_pdf.class.php');
 require_once('../propal.class.php');
 require_once('../actioncomm.class.php');
@@ -811,15 +811,17 @@ if ($_GET['propalid'])
     {
       print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
       print '<table class="border" width="100%">';
-      print '<tr><td>'.$langs->trans("CloseAs").': ';
+      print '<tr><td>'.$langs->trans('Note').'</td><td><textarea cols="60" rows="2" wrap="soft" name="note">';
+      print $obj->note;
+      print '</textarea></td></tr>';
+      print '<tr><td>'.$langs->trans("CloseAs").'</td><td>';
       print '<input type="hidden" name="action" value="setstatut">';
       print '<select name="statut">';
       print '<option value="2">'.$propal->labelstatut[2].'</option>';
       print '<option value="3">'.$propal->labelstatut[3].'</option>';
       print '</select>';
-      print '</td></tr><tr><td>'.$langs->trans('Note').': <br><textarea cols="60" rows="4" wrap="soft" name="note">';
-      print $obj->note;
-      print '</textarea></td></tr><tr><td align="center"><input type="submit" value="'.$langs->trans('Valid').'"></td>';
+      print '</td></tr>';
+      print '<tr><td align="center" colspan="2"><input type="submit" value="'.$langs->trans('Valid').'"></td>';
       print '</tr></table></form>';
     }
 
