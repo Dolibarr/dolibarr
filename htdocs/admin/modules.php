@@ -191,9 +191,12 @@ while (($file = readdir($handle))!==false)
             {
                 $j = 1000 + $i;
             }
-            $modules[$i] = $modName;
-            $numero[$i] = $j;
-            $orders[$i] = "$objMod->family"."_".$j;   // Tri par famille puis numero module
+
+            $modules[$i] = $objMod;
+
+            $nom[$i]     = $modName;
+            $numero[$i]  = $j;
+            $orders[$i]  = "$objMod->family"."_".$j;   // Tri par famille puis numero module
             $j++;
             $i++;
         }
@@ -211,21 +214,23 @@ $familylib=array(
 'other'=>$langs->trans("ModuleFamilyOther"),
 'technic'=>$langs->trans("ModuleFamilyTechnic"),
 'financial'=>$langs->trans("ModuleFamilyFinancial"),
-'experimental'=>$langs->trans("ModuleFamilyExperimental")
 );
 foreach ($orders as $key => $value)
 {
     $tab=split('_',$value);
     $family=$tab[0]; $numero=$tab[1];
 
-    $modName = $modules[$key];
-    if ($modName)
-    {
-        $objMod = new $modName($db);
-    }
+    $modName = $nom[$key];
+    $objMod  = $modules[$key];
 
+    // On affiche pas module si en version 'development' et que
+    // constante MAIN_SHOW_DEVELOPMENT_MODULES non définie
+    if ($objMod->version == 'development' && ! $conf->global->MAIN_SHOW_DEVELOPMENT_MODULES)
+    {
+        continue;
+    }
+    
     $const_name = $objMod->const_name;
-    $const_value = $objMod->const_config;
 
     if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
         print "<tr class=\"liste_titre\">\n  <td colspan=\"9\"></td>\n</tr>\n";
@@ -233,22 +238,22 @@ foreach ($orders as $key => $value)
     }
 
     if((!$objMod->special && !$_GET["spe"] ) or ($objMod->special && $_GET["spe"]))
-      {
+    {
         $atleastoneforfamily=1;
         $var=!$var;
-        
+
         print "<tr $bc[$var]>\n";
-	
+
         print "  <td class=\"body\" valign=\"top\">";
         if ($family!=$oldfamily)
-	  { 
-	    print "<div class=\"titre\">".$familylib[$family]."</div>";
-	    $oldfamily=$family;
-	  }
+        {
+            print "<div class=\"titre\">".$familylib[$family]."</div>";
+            $oldfamily=$family;
+        }
         else
-	  { 
-	    print '&nbsp;';
-	  }
+        {
+            print '&nbsp;';
+        }
         print "</td>\n";
         print '  <td valign="top" width="14" align="center">';
         print $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
@@ -261,24 +266,23 @@ foreach ($orders as $key => $value)
         print $objMod->getDbVersion();
         print "</td>\n  <td align=\"center\">";
 
-        if ($const_value == 1)
-	  {
-    	    print img_tick();
-	  }
+        if ($conf->global->$const_name == 1)
+        {
+            print img_tick();
+        }
         else
-	  {
+        {
             print "&nbsp;";
-	  }
-	
-        print "</td>\n  <td align=\"center\">";
-	
+        }
 
-        if ($const_value == 1)
-    	{
+        print "</td>\n  <td align=\"center\">";
+
+        if ($conf->global->$const_name == 1)
+        {
             // Module actif
             print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Disable") . "</a></td>\n";
-        
-        
+
+
             if ($objMod->config_page_url)
             {
                 if (is_array($objMod->config_page_url)) {
@@ -308,17 +312,17 @@ foreach ($orders as $key => $value)
             {
                 print "  <td>&nbsp;</td>";
             }
-    
+
         }
         else
-	    {
+        {
             // Module non actif
             print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=set&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Activate") . "</a></td>\n  <td>&nbsp;</td>\n";
-	    }
-	
+        }
+
         print "</tr>\n";
     }
-    
+
 }
 print "</table></div>\n";
 
