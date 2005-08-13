@@ -641,10 +641,10 @@ if ($_GET["propalid"])
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 
-	  print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal")."</a>&nbsp;\n";
-	  print '<a href="propal.php?propalid='.$objp->propalid.'">'.$objp->ref."</a></td>\n";
+	  print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
+	  print $objp->ref."</a></td>\n";
 
-	  print "<td><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
+	  print "<td><a href=\"fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,44)."</a></td>\n";
 
 	  $now = time();
 	  $lim = 3600 * 24 * 15 ;
