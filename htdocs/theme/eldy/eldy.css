@@ -39,16 +39,36 @@ a:link    { font: verdana, arial, helvetica, sans-serif; font-weight: bold; colo
 a:visited { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:active  { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
-input     { font: helvetica, verdana, arial, sans-serif; }
-textarea  { font: helvetica, verdana, arial, sans-serif; }
+input
+{ 
+    font: helvetica, verdana, arial, sans-serif; 
+    background: #FDFDFD;
+    border: 1px solid #8C9C9B;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+input.flat
+{ 
+    font: helvetica, verdana, arial, sans-serif;
+    background: #FDFDFD;
+    border: 1px solid #8C9C9B;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+textarea  {
+    font: helvetica, verdana, arial, sans-serif;
+    border: 1px solid #8C9C9B;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
 .button  {
     font: 12px helvetica, verdana, arial, sans-serif;
 	font-size: 100%;
 	border: 1px solid #ccd7e0;
 	background-image : url(/theme/eldy/img/button_bg.png);
 	background-position : bottom;
-    padding: 0em 0em;
-    margin: 0em 0em; 
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 
 
@@ -704,32 +724,6 @@ div.titre {
 	font-weight: bold; 
 	color: #336666; 
 	text-decoration: none }
-
-
-/*
- * Widgets standard
- */
-input.flat
-{ 
-  background: #FDFDFD;
-  border: 1px solid #8C9C9B;
-  padding: 0em 0em;
-  margin: 0em 0em 0em 0em;
-}
-input
-{ 
-  background: #FDFDFD;
-  border: 1px solid #8C9C9B;
-  padding: 0em 0em;
-  margin: 0em 0em 0em 0em;
-}
-textarea
-{ 
-  background: #FDFDFD;
-  border: 1px solid #8C9C9B;
-  padding: 0em 0em;
-  margin: 0em 0em 0em 0em;
-}
 
 
 /*
