@@ -21,11 +21,11 @@
  *
  */
 
-/*!
-  \file       htdocs/compta/bank/categ.php
-  \ingroup    compta
-  \brief      Page ajout de catégories bancaires
-  \version    $Revision$
+/**
+        \file       htdocs/compta/bank/categ.php
+        \ingroup    compta
+        \brief      Page ajout de catégories bancaires
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -79,7 +79,7 @@ if ($result)
       $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td>$objp->rowid</td>";
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</td>';
       print "<td colspan=\"2\">$objp->label</td>";
       print "</tr>";
       $i++;
