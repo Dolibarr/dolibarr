@@ -236,14 +236,17 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print "<td>Proposer paiement par RIB sur le compte</td>";
 print "<td>";
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0";
+$sql = "SELECT rowid, label";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+$sql.= " where clos = 0";
+$sql.= " and courant = 1";
 if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
   if ($num > 0) {
     print "<select name=\"rib\">";
-    print '<option value="0">Ne pas afficher</option>';
+    print '<option value="0">'.$langs->trans("DoNotShow").'</option>';
     while ($i < $num)
       {
 	$var=!$var;
@@ -269,7 +272,10 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print "<td>Proposer paiement par chèque à l'ordre et adresse du titulaire du compte</td>";
 print "<td>";
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0";
+$sql = "SELECT rowid, label";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+$sql.= " where clos = 0";
+$sql.= " and courant = 1";
 $var=True;
 if ($db->query($sql))
 {
@@ -278,7 +284,7 @@ if ($db->query($sql))
   if ($num > 0)
     {
       print "<select name=\"chq\">";
-      print '<option value="0">Ne pas afficher</option>';
+      print '<option value="0">'.$langs->trans("DoNotShow").'</option>';
       while ($i < $num)
 	{
 	  $var=!$var;
