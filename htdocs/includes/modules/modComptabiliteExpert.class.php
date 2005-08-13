@@ -23,52 +23,54 @@
  *
  */
 
-/**     \defgroup   comptabilite     Module comptabilite
+/**     \defgroup   comptabilite_expert     Module comptabilite expert
         \brief      Module pour inclure des fonctions de comptabilité (gestion de comptes comptables et rapports)
 */
 
 /**
-        \file       htdocs/includes/modules/modComptabilite.class.php
-        \ingroup    comptabilite
-        \brief      Fichier de description et activation du module Comptabilite
+        \file       htdocs/includes/modules/modComptabiliteExpert.class.php
+        \ingroup    comptabilite_expert
+        \brief      Fichier de description et activation du module Comptabilite Expert
 */
 
 include_once "DolibarrModules.class.php";
 
-/** \class modComptabilite
-        \brief      Classe de description et activation du module Comptabilite
+/**
+        \class      modComptabiliteExpert
+        \brief      Classe de description et activation du module Comptabilite Expert
 */
 
-class modComptabilite extends DolibarrModules
+class modComptabiliteExpert extends DolibarrModules
 {
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
     *   \param      DB      handler d'accès base
     */
-  function modComptabilite($DB)
+  function modComptabiliteExpert($DB)
   {
     $this->db = $DB ;
-    $this->numero = 10 ;
+    $this->numero = 130 ;
     
     $this->family = "financial";
-    $this->name = "Comptabilite";
-    $this->description = "Gestion sommaire de comptabilité";
+    $this->name = "ComptabiliteExpert";
+    $this->description = "Gestion expert de comptabilité (doubles parties)";
 
-    $this->revision = explode(" ","$Revision$");
-    $this->version = $this->revision[1];
+//    $this->revision = explode(" ","$Revision$");
+//    $this->version = $this->revision[1];
+    $this->version = "development";
 
-    $this->const_name = "MAIN_MODULE_COMPTABILITE";
-    $this->const_config = MAIN_MODULE_COMPTABILITE;
+    $this->const_name = "MAIN_MODULE_COMPTABILITE_EXPERT";
+    $this->const_config = MAIN_MODULE_COMPTABILITE_EXPERT;
 
     // Config pages
-    $this->config_page_url = "compta.php";
+    $this->config_page_url = "comptaexpert.php";
 
     // Dépendances
     $this->depends = array();
     $this->requiredby = array("modFacture");
-    $this->conflictwith = array("modComptabiliteExpert");
-
+    $this->conflictwith = array("modComptabilite");
+    
     // Constantes
     $this->const = array();
 
@@ -81,47 +83,54 @@ class modComptabilite extends DolibarrModules
     $this->rights = array();
     $this->rights_class = 'compta';
 
-    $this->rights[1][0] = 91;
-    $this->rights[1][1] = 'Lire les charges';
+    $this->rights[5][0] = 131;
+    $this->rights[5][1] = 'Lire le plan de compte';
+    $this->rights[5][2] = 'r';
+    $this->rights[5][3] = 1;
+    $this->rights[5][4] = 'plancompte';
+    $this->rights[5][5] = 'lire';
+
+    $this->rights[5][0] = 132;
+    $this->rights[5][1] = 'Créer/modifier un plan de compte';
+    $this->rights[5][2] = 'w';
+    $this->rights[5][3] = 0;
+    $this->rights[5][4] = 'plancompte';
+    $this->rights[5][5] = 'creer';
+
+    $this->rights[5][0] = 133;
+    $this->rights[5][1] = 'Cloturer plan de compte';
+    $this->rights[5][2] = 'w';
+    $this->rights[5][3] = 0;
+    $this->rights[5][4] = 'plancompte';
+    $this->rights[5][5] = 'cloturer';
+
+    $this->rights[1][0] = 141;
+    $this->rights[1][1] = 'Lire les mouvements';
     $this->rights[1][2] = 'r';
     $this->rights[1][3] = 1;
-    $this->rights[1][4] = 'charges';
+    $this->rights[1][4] = 'mouvements';
     $this->rights[1][5] = 'lire';
 
-    $this->rights[2][0] = 92;
-    $this->rights[2][1] = 'Créer modifier les charges';
+    $this->rights[2][0] = 142;
+    $this->rights[2][1] = 'Créer/modifier les mouvement';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
-    $this->rights[2][4] = 'charges';
+    $this->rights[2][4] = 'mouvements';
     $this->rights[2][5] = 'creer';
 
-    $this->rights[3][0] = 93;
-    $this->rights[3][1] = 'Supprimer les charges';
+    $this->rights[3][0] = 143;
+    $this->rights[3][1] = 'Supprimer un mouvement';
     $this->rights[3][2] = 'd';
     $this->rights[3][3] = 0;
-    $this->rights[3][4] = 'charges';
+    $this->rights[3][4] = 'mouvements';
     $this->rights[3][5] = 'supprimer';
 
-    $this->rights[4][0] = 95;
-    $this->rights[4][1] = 'Lire CA, bilans, résultats';
+    $this->rights[4][0] = 161;
+    $this->rights[4][1] = 'Lire CA, bilans, résultats, journaux, grands livres';
     $this->rights[4][2] = 'r';
-    $this->rights[4][3] = 1;
+    $this->rights[4][3] = 0;
     $this->rights[4][4] = 'resultat';
     $this->rights[4][5] = 'lire';
-
-    $this->rights[5][0] = 96;
-    $this->rights[5][1] = 'Paramétrer la ventilation';
-    $this->rights[5][2] = 'r';
-    $this->rights[5][3] = 0;
-    $this->rights[5][4] = 'ventilation';
-    $this->rights[5][5] = 'parametrer';
-
-    $this->rights[6][0] = 97;
-    $this->rights[6][1] = 'Ventiler les lignes de facture';
-    $this->rights[6][2] = 'r';
-    $this->rights[6][3] = 0;
-    $this->rights[6][4] = 'ventilation';
-    $this->rights[6][5] = 'creer';
 
   }
 
