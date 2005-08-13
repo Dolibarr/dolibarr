@@ -234,7 +234,6 @@ if ($_GET["id"])
             }
         }
         print '<tr><td align="right">'.$langs->trans("Total").':</td><td>'.$total."</td></tr></table>";
-        print '<br>';
 
     }
     print '</div>';
