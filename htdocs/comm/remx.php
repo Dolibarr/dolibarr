@@ -148,6 +148,7 @@ if ($_socid > 0)
 
     print '<table class="border" width="100%">';
 
+    $remise_all=$remise_user=0;
     $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc, rc.fk_user";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
     $sql .= " WHERE rc.fk_soc =". $objsoc->id;
