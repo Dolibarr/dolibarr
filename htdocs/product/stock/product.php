@@ -166,49 +166,52 @@ if ($_GET["id"])
         print($mesg);
 
         print '<table class="border" width="100%">';
-        print "<tr>";
-        print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%">'.$product->ref.'</td>';
-        print '<td width="40%">';
-        if ($product->envente)
-        {
-            print $langs->trans("OnSell");
-        }
-        else
-        {
-            print $langs->trans("NotOnSell");
-        }
-        print '</td></tr>';
+
+        // Reference
+        print '<tr>';
+        print '<td width="15%">'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
+        print '</tr>';
+
+        // Libellé
         print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$product->id.'">'.$langs->trans("Statistics").'</a></td></tr>';
+        print '</tr>';
+
+        // Prix
         print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
-        print '<td valign="top" rowspan="2">';
-        print $langs->trans("Suppliers").' [<a href="../fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("Add").'</a>]';
+        print '</tr>';
 
-        $sql = "SELECT s.nom, s.idp";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
-        $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product =$product->id";
-        $sql .= " ORDER BY lower(s.nom)";
-
-        if ( $db->query($sql) )
-        {
-            $num = $db->num_rows();
-            $i = 0;
-            print '<table class="noborder" width="100%">';
-            $var=True;
-            while ($i < $num)
-            {
-                $objp = $db->fetch_object( $i);
-                $var=!$var;
-                print "<tr $bc[$var]>";
-                print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td></tr>';
-                $i++;
-            }
-            print '</table>';
-            $db->free();
-        }
-
+        // Statut
+        print '<tr><td>'.$langs->trans("Status").'</td><td>';
+        if ($product->envente) print $langs->trans("OnSell");
+        else print $langs->trans("NotOnSell");
         print '</td></tr>';
-        print '<tr><td>Stock seuil</td><td>'.$product->seuil_stock_alerte.'</td></tr>';
+
+        // TVA
+        $langs->load("bills");
+        print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.' %</td></tr>';
+
+        // Stock
+        if ($product->type == 0 && $conf->stock->enabled)
+        {
+            print '<tr><td><a href="stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
+            if ($product->no_stock)
+            {
+                print "<td>Pas de définition de stock pour ce produit";
+            }
+            else
+            {
+                if ($product->stock_reel <= $product->seuil_stock_alerte)
+                {
+                    print '<td class="alerte">'.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
+                }
+                else
+                {
+                    print "<td>".$product->stock_reel;
+                }
+            }
+            print '</td></tr>';
+        }
+        
         print "</table>";
 
         /*
@@ -221,13 +224,14 @@ if ($_GET["id"])
         $sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = ".$product->id;
         $sql .= " ORDER BY lower(e.label)";
 
-        if ($db->query($sql))
+        $resql=$db->query($sql);
+        if ($resql)
         {
-            $num = $db->num_rows();
+            $num = $db->num_rows($resql);
             $i = 0; $total = 0;
             while ($i < $num)
             {
-                $obj = $db->fetch_object( $i);
+                $obj = $db->fetch_object($resql);
                 print '<tr><td width="40%">'.$obj->label.'</td><td>'.$obj->reel.'</td></tr>'; ;
                 $total = $total + $obj->reel;
                 $i++;
@@ -254,13 +258,14 @@ if ($_GET["id"])
         $sql .= " WHERE statut = 1";
         $sql .= " ORDER BY lower(e.label)";
 
-        if ($db->query($sql))
+        $resql=$db->query($sql);
+        if ($resql)
         {
-            $num = $db->num_rows();
+            $num = $db->num_rows($resql);
             $i = 0;
             while ($i < $num)
             {
-                $obj = $db->fetch_object( $i);
+                $obj = $db->fetch_object($resql);
                 print '<option value="'.$obj->rowid.'">'.$obj->label ;
                 $i++;
             }
@@ -293,13 +298,14 @@ if ($_GET["id"])
         $sql .= " WHERE statut = 1";
         $sql .= " ORDER BY lower(e.label)";
 
-        if ($db->query($sql))
+        $resql=$db->query($sql);
+        if ($resql)
         {
-            $num = $db->num_rows();
+            $num = $db->num_rows($resql);
             $i = 0;
             while ($i < $num)
             {
-                $obj = $db->fetch_object( $i);
+                $obj = $db->fetch_object($resql);
                 print '<option value="'.$obj->rowid.'">'.$obj->label ;
                 $i++;
             }
@@ -312,13 +318,14 @@ if ($_GET["id"])
         $sql .= " WHERE statut = 1";
         $sql .= " ORDER BY lower(e.label)";
 
-        if ($db->query($sql))
+        $resql=$db->query($sql);
+        if ($resql)
         {
-            $num = $db->num_rows();
+            $num = $db->num_rows($resql);
             $i = 0;
             while ($i < $num)
             {
-                $obj = $db->fetch_object( $i);
+                $obj = $db->fetch_object($resql);
                 print '<option value="'.$obj->rowid.'">'.$obj->label ;
                 $i++;
             }
@@ -346,13 +353,14 @@ if ($_GET["id"])
         $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
         $sql .= " ORDER BY lower(e.label)";
 
-        if ($db->query($sql))
+        $resql=$db->query($sql);
+        if ($resql)
         {
-            $num = $db->num_rows();
+            $num = $db->num_rows($resql);
             $i = 0;
             while ($i < $num)
             {
-                $obj = $db->fetch_object( $i);
+                $obj = $db->fetch_object($resql);
                 print '<option value="'.$obj->rowid.'">'.$obj->label ;
                 $i++;
             }
@@ -389,5 +397,5 @@ print '</div>';
 $db->close();
 
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
