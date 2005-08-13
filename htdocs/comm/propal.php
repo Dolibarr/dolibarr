@@ -432,12 +432,12 @@ if ($_GET['propalid'])
   $sql.= ' WHERE p.fk_soc = s.idp AND p.fk_soc_contact = x.idp AND p.rowid = '.$propal->id;
   if ($socidp) $sql .= ' AND s.idp = '.$socidp;
 
-  $result = $db->query($sql);
-  if ($result)
+  $resql = $db->query($sql);
+  if ($resql)
     {
-      if ($db->num_rows($result)) 
+      if ($db->num_rows($resql)) 
 	{
-	  $obj = $db->fetch_object($result);
+	  $obj = $db->fetch_object($resql);
 
 	  $societe = new Societe($db);
 	  $societe->fetch($obj->idp);
@@ -468,7 +468,8 @@ if ($_GET['propalid'])
 	      print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
 		  if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 	    }
-	  else {
+	  else
+	    {
 	    print $langs->trans("Unknown");   
 	  }
 	  print '</td>';
@@ -626,11 +627,11 @@ if ($_GET['propalid'])
 		{
 		  print '<tr class="liste_titre">';
 		  print '<td>'.$langs->trans('Description').'</td>';
-		  print '<td align="right">'.$langs->trans('VAT').'</td>';
-		  print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-		  print '<td align="right">'.$langs->trans('Qty').'</td>';
-		  print '<td align="right">'.$langs->trans('Discount').'</td>';
-		  print '<td align="right">'.$langs->trans('AmountHT').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+		  print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
 		  print '<td>&nbsp;</td><td>&nbsp;</td>';
 		  print "</tr>\n";
 		}
@@ -763,9 +764,9 @@ if ($_GET['propalid'])
 	      print '  <td><textarea cols="50" name="np_desc"></textarea></td>';
 	      print '  <td align="center">';
 	      print $html->select_tva('np_tva_tx', $conf->defaulttx) . "</td>\n";
-	      print '  <td align="right"><input type="text" size="6" name="np_price"></td>';
-	      print '  <td align="right"><input type="text" size="3" value="1" name="np_qty"></td>';
-	      print '  <td align="right"><input type="text" size="3" value="'.$societe->remise_client.'" name="np_remise">%</td>';
+	      print '  <td align="right"><input type="text" size="5" name="np_price"></td>';
+	      print '  <td align="right"><input type="text" size="2" value="1" name="np_qty"></td>';
+	      print '  <td align="right" nowrap><input type="text" size="2" value="'.$societe->remise_client.'" name="np_remise">%</td>';
 	      print '  <td align="center" colspan="3"><input type="submit" value="'.$langs->trans('Add').'" name="addligne"></td>';
 	      print '</tr>';
 	      
@@ -784,8 +785,8 @@ if ($_GET['propalid'])
 	      print '<textarea cols="50" name="np_desc" rows="1"></textarea>';
 	      print '</td>';
 	      print '<td>&nbsp;</td>';
-	      print '<td align="right"><input type="text" size="3" name="qty" value="1"></td>';
-	      print '<td align="right"><input type="text" size="3" name="remise" value="'.$societe->remise_client.'">%</td>';
+	      print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
+	      print '<td align="right" nowrap><input type="text" size="2" name="remise" value="'.$societe->remise_client.'">%</td>';
 	      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'" name="addligne"></td>';
 	      print "</tr>\n";
 

@@ -170,17 +170,19 @@ if ($_GET["propalid"])
 	  if ($propal->fin_validite)
 	    {
 	      print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
-		  if ($propal->statut == 1 && $propal->$propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+		  if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 	    }
 	  else
 	    {
 	      print $langs->trans("Unknown");   
 	    }
-	  print '</td></tr>';
+	  print '</td>';
+	  print '</tr>';
 	  
-	  // Receiver
+	  // Destinataire
 	  $langs->load('mails');
-	  print '<tr><td>'.$langs->trans('MailTo').'</td>';
+	  print '<tr>';
+	  print '<td>'.$langs->trans('MailTo').'</td>';
 	  
 	  $dests=$societe->contact_array($societe->id);
 	  $numdest = count($dests);
@@ -293,7 +295,7 @@ if ($_GET["propalid"])
 	  print '</tr>';
 
 	  print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-	  print '<td align="right" colspan="2"><b>'.price($obj->price).'</b></td>';
+	  print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
 	  print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 	  print '<tr><td height="10">'.$langs->trans('VAT').'</td><td align="right" colspan="2">'.price($propal->total_tva).'</td>';
@@ -329,11 +331,11 @@ if ($_GET["propalid"])
 		{
 		  print '<tr class="liste_titre">';
 		  print '<td>'.$langs->trans('Description').'</td>';
-		  print '<td align="right">'.$langs->trans('VAT').'</td>';
-		  print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-		  print '<td align="right">'.$langs->trans('Qty').'</td>';
-		  print '<td align="right">'.$langs->trans('Discount').'</td>';
-		  print '<td align="right">'.$langs->trans('AmountHT').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+		  print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
 		  print '<td>&nbsp;</td><td>&nbsp;</td>';
 		  print "</tr>\n";
 		}
@@ -385,12 +387,12 @@ if ($_GET["propalid"])
 			    }
 			  print "</td>\n";
 			}
-		      print '<td align="right">'.$objp->tva_tx.' %</td>';
+		      print '<td align="right">'.$objp->tva_tx.'%</td>';
 		      print '<td align="right">'.price($objp->subprice)."</td>\n";
 		      print '<td align="right">'.$objp->qty.'</td>';
 		      if ($objp->remise_percent > 0)
 			{
-			  print '<td align="right">'.$objp->remise_percent." %</td>\n";
+			  print '<td align="right">'.$objp->remise_percent."%</td>\n";
 			}
 		      else
 			{
