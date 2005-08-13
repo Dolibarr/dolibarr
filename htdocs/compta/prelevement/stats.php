@@ -78,8 +78,8 @@ if ($db->query($sql))
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td width="30%">Statut</td><td align="center">Nombre</td><td align="right">% en nombre</td>';
-  print '<td align="right">Montant</td><td align="right">% en montant</td></tr>';
+  print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td align="right">%</td>';
+  print '<td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
   
   $var=True;
 
@@ -113,7 +113,7 @@ if ($db->query($sql))
       $i++;
     }
 
-  print "<tr $bc[$var]>".'<td align="right">Total</td>';
+  print '<tr class="liste_total"><td align="right">'.$langs->trans("Total").'</td>';
   print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td align="right">';	  
   print price($total);	        
   print '</td><td align="right">&nbsp;</td>';
@@ -169,8 +169,8 @@ if ($db->query($sql))
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td width="30%">Statut</td><td align="center">Nombre</td>';
-  print '<td align="right">% en nombre</td><td align="right">Montant</td><td align="right">% en montant</td></tr>';
+  print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td>';
+  print '<td align="right">%</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
   
   $var=True;
 
@@ -202,7 +202,7 @@ if ($db->query($sql))
       $i++;
     }
 
-  print "<tr $bc[$var]>".'<td align="right">Total</td><td align="center">'.$nbtotal.'</td>';
+  print '<tr class="liste_total"><td align="right">'.$langs->trans("Total").'</td><td align="center">'.$nbtotal.'</td>';
   print '<td>&nbsp;</td><td align="right">';	  
   print price($total);	        
   print '</td><td align="right">&nbsp;</td>';
