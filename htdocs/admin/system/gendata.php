@@ -243,7 +243,7 @@ if ($_GET["action"] == 'commande')
 		  mktime(12,0,0,12,13,2003),
 		  );
   
-  require DOL_DOCUMENT_ROOT."/commande/commande.class.php";
+  require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
   
   $com = new Commande($db);
   

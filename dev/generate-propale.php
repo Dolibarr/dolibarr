@@ -28,7 +28,7 @@
 require ("../htdocs/master.inc.php");
 require_once ("../htdocs/facture.class.php");
 require_once ("../htdocs/propal.class.php");
-require_once ("../htdocs/commande/commande.class.php");
+require_once (DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once ("../htdocs/societe.class.php");
 
 /*

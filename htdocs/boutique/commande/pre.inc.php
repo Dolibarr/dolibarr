@@ -20,7 +20,7 @@
  *
  */
 require("../../main.inc.php");
-require("./commande.class.php");
+require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf;

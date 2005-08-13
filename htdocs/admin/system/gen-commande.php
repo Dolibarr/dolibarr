@@ -67,7 +67,7 @@ $dates = array (mktime(12,0,0,1,3,2003),
 		mktime(12,0,0,10,3,2003)
 		);
 
-require DOL_DOCUMENT_ROOT."/commande/commande.class.php";
+require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 $com = new Commande($db);
 

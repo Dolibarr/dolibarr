@@ -28,8 +28,7 @@
 */
 
 require("../../main.inc.php");
-
-require_once DOL_DOCUMENT_ROOT.'/commande/commande.class.php';
+require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 
 $langs->load("orders");
 

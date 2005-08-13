@@ -32,8 +32,8 @@
   \brief Classe permettant la gestion des fournisseur
 */
 
-include_once DOL_DOCUMENT_ROOT."/societe.class.php";
-include_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php";
+include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
 
 class Fournisseur extends Societe {
   var $db;
@@ -127,8 +127,8 @@ class Fournisseur extends Societe {
 
   function ProductCommande($user, $product_id)
   {
-    include_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php";
-    include_once DOL_DOCUMENT_ROOT."/product.class.php";
+    include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
+    include_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
     $commf = new CommandeFournisseur($this->db);
     

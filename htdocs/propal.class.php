@@ -734,7 +734,7 @@ class Propal
 	  if ($statut == 2)
 	    {
 	      /* Propale signée */
-	      include_once DOL_DOCUMENT_ROOT . "/commande/commande.class.php";
+	      include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 	      $this->create_commande($user);
 
@@ -769,7 +769,7 @@ class Propal
       if ($this->statut == 2)
 	{
 	  /* Propale signée */
-	  include_once DOL_DOCUMENT_ROOT . "/commande/commande.class.php";
+	  include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 	  $commande = new Commande($this->db);
 	  $commande->create_from_propale($user, $this->id);
 	  return 1;

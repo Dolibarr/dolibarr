@@ -29,7 +29,7 @@
 */
 
 require("./pre.inc.php");
-require("../commande.class.php");
+require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require("./commandestats.class.php");
 
 $WIDTH=500;

@@ -301,7 +301,7 @@ if ($conf->commercial->enabled || $conf->compta->enabled)
 // Nbre commandes clients à honorer
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
-    include_once("./commande/commande.class.php");
+    include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
     $board=new Commande($db);
     $board->load_board();
 

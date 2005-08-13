@@ -29,9 +29,9 @@
 */
 
 require("./pre.inc.php");
-require("../propal.class.php");
-require("../facture.class.php");
-require("../commande/commande.class.php");
+require_once("../propal.class.php");
+require_once("../facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 $langs->load("projects");
 $langs->load("companies");
