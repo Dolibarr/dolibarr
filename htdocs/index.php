@@ -468,7 +468,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire)
 {
     $langs->load("banks");
 
-    include_once("./compta/bank/account.class.php");
+    include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
     $board=new Account($db);
     $board->load_board();
 
