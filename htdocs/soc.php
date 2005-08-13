@@ -580,9 +580,10 @@ else
     print $langs->trans('RIB');
     print '<td><td align="right">';
     if ($user->rights->societe->creer)
-      print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit().'</a>';
-
-    print '&nbsp;</td></tr></table>';
+        print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit().'</a>';
+    else
+        print '&nbsp;';
+    print '</td></tr></table>';
     print '</td>';
     print '<td colspan="3">';
     print $soc->display_rib();
@@ -594,8 +595,10 @@ else
     print $langs->trans('ParentCompany');
     print '<td><td align="right">';
     if ($user->rights->societe->creer)
-      print '<a href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">'.img_edit() .'</a>';
-    print '&nbsp;</td></tr></table>';
+        print '<a href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">'.img_edit() .'</a>';
+    else
+        print '&nbsp;';
+    print '</td></tr></table>';
     print '</td>';
     print '<td colspan="3">';
     if ($soc->parent)
@@ -615,8 +618,10 @@ else
     print $langs->trans('SalesRepresentatives');
     print '<td><td align="right">';
     if ($user->rights->societe->creer)
-      print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.img_edit().'</a>';
-    print '&nbsp;</td></tr></table>';
+        print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.img_edit().'</a>';
+    else
+        print '&nbsp;';
+    print '</td></tr></table>';
     print '</td>';
     print '<td colspan="3">';
 
