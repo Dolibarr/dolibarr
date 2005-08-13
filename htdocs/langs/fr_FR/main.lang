@@ -258,6 +258,7 @@ ReadPermissionNotAllowed=Lecture non autorisée
 AmountInCurrency=Montants exprimés en %s
 Example=Exemple
 NoExample=Pas d'exemple
+FindBug=Signaler un bug
 # Countries
 CountryFR=France
 CountryBE=Belgique
