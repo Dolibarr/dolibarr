@@ -337,3 +337,6 @@ PaperFormatModule=Print' format module
 BarcodeEncodeModule=Barcode' encodage type
 ##### Prelevements #####
 WithdrawalsSetup=Withdrawal setup
+##### ExternalRSS #####
+ExternalRSSSetup=External RSS imports setup
+NewRSS=New RSS
