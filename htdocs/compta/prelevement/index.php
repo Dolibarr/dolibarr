@@ -34,26 +34,35 @@ $langs->load("withdrawals");
 if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
 
-llxHeader();
 
-print_titre($langs->trans("StandingOrdersArea"));
 
-print '<br>';
-
-print '<table border="0" width="100%">';
-print '<tr><td valign="top" width="30%">';
 /*
- *
+ * Affichage page
  *
  */
+
+llxHeader();
+
+
+print_fiche_titre($langs->trans("StandingOrdersArea"));
+
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
+
+
 $bprev = new BonPrelevement($db);
+$var=true;
 
 print '<table class="noborder" width="100%">';
-print "<tr $bc[0]><td>Nb de facture à prélever</td>";
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
+$var=!$var;
+print '<tr '.$bc[$var].'><td>Nb de facture à prélever</td>';
 print '<td align="right">';
 print $bprev->NbFactureAPrelever();
 print '</td></tr>';
-print "<tr $bc[0]><td>Somme à prélever</td>";
+$var=!$var;
+print '<tr '.$bc[$var].'><td>Somme à prélever</td>';
 print '<td align="right">';
 print price($bprev->SommeAPrelever());
 print '</td></tr></table><br>';
@@ -157,6 +166,6 @@ else
 
 print '</td></tr></table>';
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 
 ?>

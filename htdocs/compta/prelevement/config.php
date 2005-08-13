@@ -20,10 +20,10 @@
  */
 
 /**
-   \file       htdocs/compta/prelevement/config.php
-   \ingroup    prelevement
-   \brief      Page configuration des prelevements
-   \version    $Revision$
+        \file       htdocs/compta/prelevement/config.php
+        \ingroup    prelevement
+        \brief      Page configuration des prelevements
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -64,8 +64,9 @@ if ($_GET["action"] == "deletenotif" && $user->rights->prelevement->bons->config
  *
  *
  */
-llxHeader('','Prélèvements - Configuration');
-print_titre("Configuration des prélèvements");
+llxHeader('',$langs->trans("WithdrawalsSetup"));
+
+print_fiche_titre($langs->trans("WithdrawalsSetup"));
 
 print "<br>";
 
@@ -76,7 +77,7 @@ print "<br>";
 if ($user->rights->prelevement->bons->configurer)
   print '<form method="post" action="config.php?action=set">';
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="30%">Nom</td>';
 if ($user->rights->prelevement->bons->configurer)
@@ -169,7 +170,7 @@ else
 print '</td></tr>';
 
 if ($user->rights->prelevement->bons->configurer)
-  print '<tr><td align="center" colspan="2"><input type="submit"></td></tr>';
+  print '<tr><td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
 
 print '</table>';
 
@@ -178,17 +179,18 @@ if ($user->rights->prelevement->bons->configurer)
 
 print '<br>';
 
+
 /*
  * Notifications
  *
  */
 
-print_titre("Notifications");
+print_titre($langs->trans("Notifications"));
 
 if ($user->rights->prelevement->bons->configurer)
   print '<form method="post" action="config.php?action=addnotif">';
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="30%">Nom</td>';
 print '<td width="40%">Valeur</td>';
@@ -273,5 +275,5 @@ if ($user->rights->prelevement->bons->configurer)
 
 $db->close();
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>
