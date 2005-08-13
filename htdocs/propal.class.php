@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 
@@ -118,16 +117,18 @@ class Propal
         }
     }
 
-  /**
-   * \brief     Ajout d'un produit dans la proposition, en base
-   * \param     idproduct           id du produit à ajouter
-   * \param     qty                 quantité
-   * \param     remise_percent      remise effectuée sur le produit
-   * \return    int                 >0 si ok, <0 si ko
-   * \see       add_product
-   */
-    function insert_product($idproduct, $qty, $remise_percent=0)
+    /**
+     *    \brief     Ajout d'un produit dans la proposition, en base
+     *    \param     idproduct           Id du produit à ajouter
+     *    \param     qty                 Quantité
+     *    \param     remise_percent      Remise effectuée sur le produit
+     *    \param     p_desc              Descriptif optionnel
+     *    \return    int                 >0 si ok, <0 si ko
+     *    \see       add_product
+     */
+    function insert_product($idproduct, $qty, $remise_percent=0, $p_desc='')
     {
+        dolibarr_syslog("propal.class.php::insert_product $idproduct, $qty, $remise_percent, $p_desc");
         if ($this->statut == 0)
         {
             $prod = new Product($this->db, $idproduct);
@@ -143,7 +144,7 @@ class Propal
                 }
     
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-                $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". ereg_replace(",",".",$price)."','".$prod->tva_tx."','".addslashes($prod->label)."','".ereg_replace(",",".",$remise_percent)."','".ereg_replace(",",".",$subprice)."')";
+                $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". ereg_replace(",",".",$price)."','".$prod->tva_tx."','".addslashes($p_desc?$p_desc:$prod->label)."','".ereg_replace(",",".",$remise_percent)."','".ereg_replace(",",".",$subprice)."')";
     
                 if ($this->db->query($sql) )
                 {
@@ -162,6 +163,62 @@ class Propal
         }
     }
 
+
+    /**
+     *    \brief     Ajout d'un produit dans la proposition, en base
+     *    \param     p_desc             Descriptif optionnel
+     *    \param     p_price            Prix
+     *    \param     p_qty              Quantité
+     *    \param     p_tva_tx           Taux tva
+     *    \param     remise_percent     Remise effectuée sur le produit
+     *    \return    int                >0 si ok, <0 si ko
+     *    \see       add_product
+     */
+    function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx, $remise_percent=0)
+    {
+        dolibarr_syslog("propal.class.php::insert_product_generic $p_desc, $p_price, $p_qty, $p_tva_tx, $remise_percent");
+        if ($this->statut == 0)
+        {
+            if (strlen(trim($p_qty)) == 0)
+            {
+                $p_qty = 1;
+            }
+    
+            $p_price = ereg_replace(",",".",$p_price);
+    
+            $price = $p_price;
+            $subprice = $p_price;
+    
+            if ($remise_percent > 0)
+            {
+                $remise = round(($p_price * $remise_percent / 100), 2);
+                $price = $p_price - $remise;
+            }
+    
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+            $sql .= " (".$this->id.", 0,'". $p_qty."','". ereg_replace(",",".",$price)."','".$p_tva_tx."','".addslashes($p_desc)."','$remise_percent', '".ereg_replace(",",".",$subprice)."') ; ";
+    
+    
+            if ($this->db->query($sql) )
+            {
+    
+                if ($this->update_price() > 0)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                return -2;
+            }
+        }
+    }
+    
+    
   /**
    * \brief     Mise à jour d'une ligne de produit
    * \param     id              id de la ligne
@@ -207,53 +264,6 @@ class Propal
         }
     }
     
-  /**
-   *
-   *
-   */
-     
-    function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $remise_percent=0)
-    {
-        if ($this->statut == 0)
-        {
-            if (strlen(trim($p_qty)) == 0)
-            {
-                $p_qty = 1;
-            }
-    
-            $p_price = ereg_replace(",",".",$p_price);
-    
-            $price = $p_price;
-            $subprice = $p_price;
-    
-            if ($remise_percent > 0)
-            {
-                $remise = round(($p_price * $remise_percent / 100), 2);
-                $price = $p_price - $remise;
-            }
-    
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-            $sql .= " (".$this->id.", 0,'". $p_qty."','". ereg_replace(",",".",$price)."','".$p_tva_tx."','".$p_desc."','$remise_percent', '".ereg_replace(",",".",$subprice)."') ; ";
-    
-    
-            if ($this->db->query($sql) )
-            {
-    
-                if ($this->update_price() > 0)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return -1;
-                }
-            }
-            else
-            {
-                return -2;
-            }
-        }
-    }
 		
   /**
    *

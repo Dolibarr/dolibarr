@@ -273,18 +273,32 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
   $propal->reopen($user->id);
 }
 
-if ($_POST['addligne'] == $langs->trans('Add') && $user->rights->propale->creer) 
+if ($_POST['action'] == "addligne" && $user->rights->propale->creer) 
 {
-  /*
-   *  Ajout d'une ligne produit dans la propale
-   */
-  if ($_POST['idprod'])
+    /*
+     *  Ajout d'une ligne produit dans la propale
+     */
+    $propal = new Propal($db);
+    $propal->fetch($_POST['propalid']);
+
+    if (isset($_POST['np_tva_tx']))
     {
-      $propal = new Propal($db);
-      $propal->fetch($_GET['propalid']);
-      $propal->insert_product($_POST['idprod'], $_POST['qty'], $_POST['remise']);
-      propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+        $propal->insert_product_generic(
+				    $_POST['np_desc'], 
+				    $_POST['np_price'], 
+				    $_POST['np_qty'],
+				    $_POST['np_tva_tx'],
+				    $_POST['np_remise']);
     }
+    else 
+    {
+        $propal->insert_product(
+                    $_POST['idprod'],
+                    $_POST['qty'],
+                    $_POST['remise'],
+                    $_POST['np_desc']);
+    }
+    propale_pdf_create($db, $_POST['propalid'], $propal->modelpdf);
 }
 
 if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer) 
@@ -299,25 +313,6 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer)
 
   propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
 }
-
-if ($_POST['addproduct'] == $langs->trans('Add') && $user->rights->propale->creer) 
-{
-  /*
-   *  Ajout d'une ligne produit dans la propale
-   */
-  if (strlen($_POST['np_desc']) && strlen($_POST['np_price']))
-    {
-      $propal = new Propal($db);
-      $propal->fetch($_GET['propalid']);
-      $propal->insert_product_generic(
-				      $_POST['np_desc'], 
-				      $_POST['np_price'], 
-				      $_POST['np_qty'],
-				      $_POST['np_tva_tx'],
-				      $_POST['np_remise']);
-    }
-}
-
 
 if ($_POST['action'] == 'setpdfmodel' && $user->rights->propale->creer) 
 {
@@ -628,12 +623,12 @@ if ($_GET['propalid'])
 	      if ($num_lignes)
 		{
 		  print '<tr class="liste_titre">';
-		  print '<td width="54%">'.$langs->trans('Description').'</td>';
-		  print '<td width="8%" align="right">'.$langs->trans('VAT').'</td>';
-		  print '<td width="12%" align="right">'.$langs->trans('PriceUHT').'</td>';
-		  print '<td width="8%" align="right">'.$langs->trans('Qty').'</td>';
-		  print '<td width="8%" align="right">'.$langs->trans('Discount').'</td>';
-		  print '<td width="10%" align="right">'.$langs->trans('AmountHT').'</td>';
+		  print '<td>'.$langs->trans('Description').'</td>';
+		  print '<td align="right">'.$langs->trans('VAT').'</td>';
+		  print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+		  print '<td align="right">'.$langs->trans('Qty').'</td>';
+		  print '<td align="right">'.$langs->trans('Discount').'</td>';
+		  print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 		  print '<td>&nbsp;</td><td>&nbsp;</td>';
 		  print "</tr>\n";
 		}
@@ -646,27 +641,28 @@ if ($_GET['propalid'])
 		    {
 		      print '<tr '.$bc[$var].'>';
 		      if ($objp->fk_product > 0)
-			{
-			  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-			  if ($objp->fk_product_type) 
-			    print img_object($langs->trans('ShowService'),'service');
-			  else 
-			    print img_object($langs->trans('ShowProduct'),'product');
-			  print ' '.stripslashes(nl2br($objp->description?$objp->description:$objp->product)).'</a>';
-			  if ($objp->date_start && $objp->date_end) 
-			    {
-			      print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
-			    }
-			  if ($objp->date_start && ! $objp->date_end) 
-			    {
-			      print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
-			    }
-			  if (! $objp->date_start && $objp->date_end) 
-			    {
-			      print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')'; 
-			    }
-			  print '</td>';
-			}
+              {
+                print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                if ($objp->fk_product_type)
+                print img_object($langs->trans('ShowService'),'service');
+                else
+                print img_object($langs->trans('ShowProduct'),'product');
+                print ' '.stripslashes(nl2br($objp->product)).'</a>';
+                if ($objp->date_start && $objp->date_end)
+                {
+                    print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
+                }
+                if ($objp->date_start && ! $objp->date_end)
+                {
+                    print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
+                }
+                if (! $objp->date_start && $objp->date_end)
+                {
+                    print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
+                }
+                print $objp->description?'<br>'.$objp->description:'';
+                print '</td>';
+            }
 		      else
 			{
 			  print '<td>'.stripslashes(nl2br($objp->description));
@@ -684,12 +680,12 @@ if ($_GET['propalid'])
 			    }
 			  print "</td>\n";
 			}
-		      print '<td align="right">'.$objp->tva_tx.' %</td>';
+		      print '<td align="right">'.$objp->tva_tx.'%</td>';
 		      print '<td align="right">'.price($objp->subprice)."</td>\n";
 		      print '<td align="right">'.$objp->qty.'</td>';
 		      if ($objp->remise_percent > 0)
 			{
-			  print '<td align="right">'.$objp->remise_percent." %</td>\n";
+			  print '<td align="right">'.$objp->remise_percent."%</td>\n";
 			}
 		      else
 			{
@@ -714,8 +710,6 @@ if ($_GET['propalid'])
 		      print '</tr>';
 		    }
 		  // Update ligne de propal
-		  // \todo
-
 		  if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] == 'editline' && $_GET["ligne"] == $objp->rowid)
 		    {
 		      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
@@ -724,10 +718,9 @@ if ($_GET['propalid'])
 		      print '<tr '.$bc[$var].'>';
 		      print '<td colspan="2">&nbsp;</td>';
 		      print '<td align="right"><input name="subprice" type="text" size="6" value="'.$objp->subprice.'"></td>';
-		      print '<td align="right"><input name="qty" type="text" size="3" value="'.$objp->qty.'"></td>';
-		      print '<td align="right"><input name="remise" type="text" size="4" value="'.$objp->remise_percent.'"> %</td>';
-		      print '<td>&nbsp;</td>';
-		      print '<td align="center" colspan="2"><input type="submit"></td>';
+		      print '<td align="right"><input name="qty" type="text" size="2" value="'.$objp->qty.'"></td>';
+		      print '<td align="right"><input name="remise" type="text" size="2" value="'.$objp->remise_percent.'"> %</td>';
+		      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Save").'"></td>';
 		      print '</tr></form>';
 
 		    }
@@ -749,21 +742,22 @@ if ($_GET['propalid'])
 	   */
 	  if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] <> 'editline')
 	    {
-	      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 	      print '<tr class="liste_titre">';
-	      print '<td width="54%">'.$langs->trans('Description').'</td>';
-	      print '<td width="8%" align="right">'.$langs->trans('VAT').'</td>';
-	      print '<td width="12%" align="right">'.$langs->trans('PriceUHT').'</td>';
-	      print '<td width="8%" align="right">'.$langs->trans('Qty').'</td>';
-	      print '<td width="8%" align="right">'.$langs->trans('Discount').'</td>';
+	      print '<td>'.$langs->trans('Description').'</td>';
+	      print '<td align="right">'.$langs->trans('VAT').'</td>';
+	      print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+	      print '<td align="right">'.$langs->trans('Qty').'</td>';
+	      print '<td align="right">'.$langs->trans('Discount').'</td>';
 	      print '<td>&nbsp;</td>';
 	      print '<td>&nbsp;</td>';
 	      print '<td>&nbsp;</td>';
 	      print "</tr>\n";
-	      print '<input type="hidden" name="propid" value="'.$propal->id.'">';
-	      print '<input type="hidden" name="action" value="addligne">';
 
 	      // Ajout produit produits/services personalisés
+	      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+	      print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
+	      print '<input type="hidden" name="action" value="addligne">';
+
 	      $var=true;
 	      print '<tr '.$bc[$var].">\n";
 	      print '  <td><textarea cols="50" name="np_desc"></textarea></td>';
@@ -771,21 +765,30 @@ if ($_GET['propalid'])
 	      print $html->select_tva('np_tva_tx', $conf->defaulttx) . "</td>\n";
 	      print '  <td align="right"><input type="text" size="6" name="np_price"></td>';
 	      print '  <td align="right"><input type="text" size="3" value="1" name="np_qty"></td>';
-	      print '  <td align="right"><input type="text" size="3" value="'.$societe->remise_client.'" name="np_remise"> %</td>';
-	      print '  <td align="center" colspan="3"><input type="submit" value="'.$langs->trans('Add').'" name="addproduct"></td>';
+	      print '  <td align="right"><input type="text" size="3" value="'.$societe->remise_client.'" name="np_remise">%</td>';
+	      print '  <td align="center" colspan="3"><input type="submit" value="'.$langs->trans('Add').'" name="addligne"></td>';
 	      print '</tr>';
 	      
+	      print '</form>';
+
 	      // Ajout de produits/services prédéfinis
+	      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+	      print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
+	      print '<input type="hidden" name="action" value="addligne">';
+
 	      $var=!$var;
 	      print '<tr '.$bc[$var].'>';
 	      print '<td colspan="2">';
 	      $html->select_produits('','idprod','',20);
+	      print '<br>';
+	      print '<textarea cols="50" name="np_desc" rows="1"></textarea>';
 	      print '</td>';
 	      print '<td>&nbsp;</td>';
 	      print '<td align="right"><input type="text" size="3" name="qty" value="1"></td>';
-	      print '<td align="right"><input type="text" size="3" name="remise" value="'.$societe->remise_client.'"> %</td>';
+	      print '<td align="right"><input type="text" size="3" name="remise" value="'.$societe->remise_client.'">%</td>';
 	      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'" name="addligne"></td>';
 	      print "</tr>\n";
+
 	      print '</form>';
 	    }
 	  

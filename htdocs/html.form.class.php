@@ -907,11 +907,11 @@ class Form
             print '<option value="'.$txtva[$i].'"';
             if ($txtva[$i] == $defaulttx)
             {
-                print ' selected>'.$txtva[$i].' %</option>';
+                print ' selected>'.$txtva[$i].'%</option>';
             }
             else
             {
-                print '>'.$txtva[$i].' %</option>';
+                print '>'.$txtva[$i].'%</option>';
             }
         }
         print '</select>';
