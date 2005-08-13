@@ -4,6 +4,12 @@ README
 IMPORTANT
 ---------
 
+Mise à jour de la version 1.1.0 vers 2.0.0
+
+- un script de migration pour la base de donnée existe dans le 
+répertoire /mysql/migration/, pensez à sauvegarder votre base avant
+toute opération sur celle-ci.
+
 Mise à jour de la version 1.0.0 vers 1.1.0
 
 - avant de mettre votre système à jour, vous devez valider toutes vos
