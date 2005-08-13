@@ -65,8 +65,8 @@ if (isset($_POST["button_removefilter_x"])) {
 
 $title=$langs->trans("ProductsAndServices");
 
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type";
-$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+$sql = 'SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, '.$db->pdate('p.tms').' as datem';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 
 if ($_GET["fourn_id"] > 0)
 {
@@ -174,6 +174,7 @@ if ($resql)
   print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
   print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
+  print_liste_field_titre($langs->trans("DateModification"),"liste.php", "p.tms","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
   print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
   print "</tr>\n";
   
@@ -188,6 +189,9 @@ if ($resql)
   print '</td>';
   print '<td valign="right">';
   print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
+  print '</td>';
+  print '<td>';
+  print '&nbsp;';
   print '</td>';
   print '<td align="right">';
   print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
@@ -206,9 +210,10 @@ if ($resql)
       print "<a href=\"fiche.php?id=$objp->rowid\">";
 	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
 	  else print img_object($langs->trans("ShowProduct"),"product");
-      print "</a> ";
-      print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
-      print "<td>$objp->label</td>\n";
+      print '</a> ';
+      print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></td>';
+      print '<td>'.$objp->label.'</td>';
+      print '<td align="center">'.dolibarr_print_date($objp->datem).'</td>';
       print '<td align="right">'.price($objp->price).'</td>';
       print "</tr>\n";
       $i++;
