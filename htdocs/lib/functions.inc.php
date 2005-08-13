@@ -241,7 +241,7 @@ function dolibarr_set_php_lang($code_lang)
 {
     $code_lang_tiret=ereg_replace('_','-',$code_lang);
 
-    dolibarr_syslog("dolibarr_set_php_lang: code_lang=$code_lang code_lang_tirer=$code_lang_tiret");
+    //dolibarr_syslog("dolibarr_set_php_lang: code_lang=$code_lang code_lang_tirer=$code_lang_tiret");
    
     setlocale(LC_ALL, $code_lang);    // Compenser pb de locale avec windows
     setlocale(LC_ALL, $code_lang_tiret);
