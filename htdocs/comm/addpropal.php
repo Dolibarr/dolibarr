@@ -204,33 +204,8 @@ if ($_GET["action"] == 'create')
   
   print '<br>';
   
-  if ($conf->produit->enabled || $conf->service->enabled) {
-      /*
-       * Liste les produits/services prédéfinis
-       */
-      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
-      $sql .= " WHERE envente = 1";
-      $sql .= " ORDER BY ref DESC";
-      if ( $db->query($sql) )
-        {
-          $opt = "<option value=\"0\" selected></option>";
-          if ($result)
-    	{
-    	  $num = $db->num_rows();	$i = 0;	
-    	  while ($i < $num)
-    	    {
-    	      $objp = $db->fetch_object();
-    	      $opt .= "<option value=\"$objp->rowid\">[$objp->ref] ".substr($objp->label,0,40)."</option>\n";
-    	      $i++;
-    	    }
-    	}
-          $db->free();
-        }
-      else
-        {
-          dolibarr_print_error($db);
-        }
-      
+  if ($conf->produit->enabled || $conf->service->enabled)
+  {
       $titre=$langs->trans("ProductsAndServices");
       $lib=$langs->trans("Product").'/'.$langs->trans("Services");
       
@@ -240,7 +215,9 @@ if ($_GET["action"] == 'create')
       print '<tr><td>'.$lib.'</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td></tr>';
       for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
         {
-          print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
+          print '<tr><td>';
+          $html->select_produits("idprod".$id);
+          print '</td>';
           print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
           print '<td><input type="text" size="3" name="remise'.$i.'" value="'.$soc->remise_client.'"> %</td></tr>';
         }
@@ -262,5 +239,5 @@ if ($_GET["action"] == 'create')
 }
 
 $db->close();
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
