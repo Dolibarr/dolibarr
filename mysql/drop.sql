@@ -270,12 +270,14 @@ drop table if exists llx_compta_compte_generaux;
 drop table if exists llx_contratdet;
 drop table if exists llx_contratdet_log;
 drop table if exists llx_export_compta;
-drop table if exists llx_prelevement;
-drop table if exists llx_prelevement_bons;
-drop table if exists llx_prelevement_lignes;
+
+drop table if exists llx_prelevement_notifications;
 drop table if exists llx_prelevement_facture;
 drop table if exists llx_prelevement_facture_demande;
 drop table if exists llx_prelevement_rejet;
+drop table if exists llx_prelevement_lignes;
+drop table if exists llx_prelevement_bons;
+drop table if exists llx_prelevement;
 drop table if exists llx_product_fournisseur_price;
 drop table if exists llx_societe_commerciaux;
 drop table if exists llx_user_clicktodial;
