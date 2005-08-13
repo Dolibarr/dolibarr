@@ -107,6 +107,10 @@ if ($_GET["propalid"])
   $hselected=$h;
   $h++;
   
+  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
+  $head[$h][1] = $langs->trans("Preview");
+  $h++;
+
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
   $head[$h][1] = $langs->trans('Note');
   $h++;
@@ -221,9 +225,9 @@ if ($_GET["propalid"])
 	      $langs->load("projects");
 	      print '<tr><td>'.$langs->trans('Project').'</td>';
 	      $numprojet = $societe->has_projects();
-	      print '<td colspan="2">';
 	      if (! $numprojet)
 		{
+		  print '<td colspan="2">';
 		  print $langs->trans("NoProject").'</td><td>';
 		  print '<a href=../projet/fiche.php?socidp='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
 		  print '</td>';
@@ -232,10 +236,11 @@ if ($_GET["propalid"])
 		{
 		  if ($propal->statut == 0 && $user->rights->propale->creer)
 		    {
-		      print '<td colspan="3">';
+		      print '<td colspan="2">';
 		      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 		      print '<input type="hidden" name="action" value="set_project">';
 		      $form->select_projects($societe->id, $propal->projetidp, 'projetidp');
+		      print '</td><td>';
 		      print '<input type="submit" value="'.$langs->trans('Modify').'">';
 		      print '</form>';
 		      print '</td>';
@@ -265,7 +270,8 @@ if ($_GET["propalid"])
 	    {
 	      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 	      print '<input type="hidden" name="action" value="setremise">';
-	      print '<td colspan="3"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
+	      print '<td colspan="2"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
+	      print '</td><td>';
 	      print '<input type="submit" value="'.$langs->trans('Modify').'">';
 	      print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
 	      print '</td>';

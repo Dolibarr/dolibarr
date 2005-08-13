@@ -58,3 +58,4 @@ ClassifyBilled=Classer facturée
 BuildBill=Créer facture
 RelatedBill=Facture associée
 RelatedBills=Factures associées
+ErrorPropalNotFound=Propal %s inexistante

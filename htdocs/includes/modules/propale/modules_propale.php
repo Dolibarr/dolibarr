@@ -127,6 +127,8 @@ function propale_pdf_create($db, $facid, $modele='')
 
       if ( $obj->write_pdf_file($facid) > 0)
 	{
+	  // on supprime l'image correspondant au preview
+	    propale_delete_preview($db, $facid);
 	  return 1;
 	}
       else
@@ -141,5 +143,34 @@ function propale_pdf_create($db, $facid, $modele='')
       print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
       return 0;
     }
+}
+/**
+   \brief      Supprime l'image de prévisualitation, pour le cas de régénération de propal
+   \param	    db  		objet base de donnée
+   \param	    propalid	id de la propal à effacer
+*/
+function propale_delete_preview($db, $propalid)
+{
+	global $langs,$conf;
+
+	$propal = new Propal($db,"",$propalid);
+	$propal->fetch($propalid);  
+	$propal->fetch_client();
+
+	if ($conf->propal->dir_output)
+		{
+		$propalref = sanitize_string($propal->ref); 
+		$dir = $conf->propal->dir_output . "/" . $propalref ; 
+		$file = $dir . "/" . $propalref . ".pdf.png";
+
+		if ( file_exists( $file ) && is_writable( $file ) )
+			{
+			if ( ! unlink($file) )
+				{
+				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+				return 0;
+				}
+			}
+		}
 }
 ?>

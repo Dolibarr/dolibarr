@@ -70,6 +70,17 @@ if ($modulepart)
         $original_file=$conf->facture->dir_output.'/'.$original_file;
     }
 
+    // Wrapping pour les apercu propal
+    if ($modulepart == 'apercupropal')
+    {
+        $user->getrights('propale');
+        if ($user->rights->propale->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->propal->dir_output.'/'.$original_file;
+    }
+
     // Wrapping pour les images des stats propales
     if ($modulepart == 'propalstats')
     {
