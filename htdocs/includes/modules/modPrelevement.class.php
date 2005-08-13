@@ -69,7 +69,7 @@ class modPrelevement extends DolibarrModules
     $this->data_directory = $conf->prelevement->dir_output . "/bon";
 
     // Dépendances
-    $this->depends = array("modComptabilite");
+    $this->depends = array("modFacture");
     $this->requiredby = array();
 
     // Constantes
