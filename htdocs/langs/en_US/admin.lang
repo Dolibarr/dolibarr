@@ -1,5 +1,8 @@
 # Dolibarr language file - en_US - admin
 Version=Version
+VersionExperimental=Experimental
+VersionDevelopment=Development
+VersionUnknown=Unknown
 DolibarrSetup=Dolibarr setup
 GlobalSetup=Global setup
 GUISetup=GUI setup

@@ -207,10 +207,11 @@ class DolibarrModules
         global $langs;
         $langs->load("admin");
 
-        if ($this->version == 'experimental') return $langs->trans("Experimental");
+        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
         elseif ($this->version == 'dolibarr') return DOL_VERSION;
         elseif ($this->version) return $this->version;
-        else return $langs->trans("Unknown");
+        else return $langs->trans("VersionUnknown");
     }
 
 
@@ -243,9 +244,10 @@ class DolibarrModules
         }
         
         
-        if ($this->dbversion == 'experimental') return $langs->trans("Experimental");
-        elseif ($this->dbversion == 'dolibarr') return DOL_VERSION;
-        elseif ($this->dbversion) return $this->dbversion;
+        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        elseif ($this->version == 'dolibarr') return DOL_VERSION;
+        elseif ($this->version) return $this->version;
         else return "";
 
     }
