@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +18,22 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+        \file       htdocs/compta/prelevement/stats.php
+        \brief      Page de stats des prélèvements
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
-/*
- * Sécurité accés client
- */
+if (!$user->rights->prelevement->bons->lire)
+  accessforbidden();
+
+// Sécurité accés client
 if ($user->societe_id > 0) accessforbidden();
+
 
 llxHeader('','Statistiques prélèvements');
 
@@ -67,7 +76,7 @@ if ($db->query($sql))
   $i = 0;
   
   print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td width="30%">Statut</td><td align="center">Nombre</td><td align="right">% en nombre</td>';
   print '<td align="right">Montant</td><td align="right">% en montant</td></tr>';
@@ -113,7 +122,7 @@ if ($db->query($sql))
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }  
 /*
  *
@@ -158,7 +167,7 @@ if ($db->query($sql))
   $i = 0;
   
   print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td width="30%">Statut</td><td align="center">Nombre</td>';
   print '<td align="right">% en nombre</td><td align="right">Montant</td><td align="right">% en montant</td></tr>';
@@ -202,11 +211,11 @@ if ($db->query($sql))
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }  
 
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
