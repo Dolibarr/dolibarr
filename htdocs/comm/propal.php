@@ -1171,7 +1171,7 @@ else
 	  if ( $now > $objp->dfv && $objp->dfv > 0 )
 	    {
 	      print '<td align="center">'.dolibarr_print_date($objp->dfv);
-		  if ($objp->fk_statut == 1 && $objp->dfv < (time() - $conf->propal->cloture->warning_delay)) print ' '.img_warning($langs->trans("Late"));
+		  if ($objp->fk_statut == 1 && $objp->dfv < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 	      print '</td>';
 	    }
 	  else
