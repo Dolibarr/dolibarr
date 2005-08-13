@@ -347,6 +347,11 @@ function left_menu($menu_array, $help_url='', $form_search='')
       print '<div class="help"><a class="help" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">'.$langs->trans("Help").'</a></div>';
     }
 
+  // Lien vers le bugtrack
+  $bugtrack = "https://savannah.nongnu.org/bugs/?group=dolibarr";
+  print '<div class="help"><a class="help" target="_blank" href="'.$bugtrack.'">'.$langs->trans("FindBug").'</a></div>';
+
+
   print "\n";
   print "</div>\n";
   print "</div>\n";
