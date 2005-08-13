@@ -1660,3 +1660,14 @@ create table llx_energie_compteur_releve
 
   note            text
 )type=innodb;
+
+
+create table llx_energie_groupe
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  libelle         varchar(100),
+  datec           datetime,
+  fk_user_author  integer NOT NULL,
+
+  note            text
+)type=innodb;
