@@ -486,47 +486,50 @@ class Propal
 	    $this->ref_url = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$this->id.'">'.$this->ref.'</a>';
     
 	    /*
-	     * Lignes produits
+	     * Lignes propales liées à un produit
 	     */
-	      
-	    $sql = "SELECT p.rowid, p.label, p.description, p.ref, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."product as p";
-	    $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid ORDER by d.rowid ASC";
-	      
-	    $result = $this->db->query($sql);
-	    if ($result)
-	      {
-		$num = $this->db->num_rows($result);
-		$i = 0;
-    
-		while ($i < $num)
-		  {
-		    $objp                  = $this->db->fetch_object($result);
-    
-		    $ligne                 = new PropaleLigne();
-		    $ligne->libelle        = stripslashes($objp->label);
-		    $ligne->desc           = stripslashes($objp->description);
-		    $ligne->qty            = $objp->qty;
-		    $ligne->ref            = $objp->ref;
-		    $ligne->tva_tx         = $objp->tva_tx;
-		    $ligne->subprice       = $objp->subprice;
-		    $ligne->remise_percent = $objp->remise_percent;
-		    $ligne->price          = $objp->price;
-		    $ligne->product_id     = $objp->rowid;
-    
-		    $this->lignes[$i]      = $ligne;
-		    $i++;
-		  }
-		$this->db->free($result);
-	      }
-	    else
-	      {
-		dolibarr_syslog("Propal::Fetch Erreur lecture des produits");
-		return -1;
-	      }
+        $sql = "SELECT d.description, p.rowid, p.label, p.description as product_desc, p.ref, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice";
+        $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."product as p";
+        $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid";
+        $sql .= " ORDER by d.rowid ASC";
+        
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+        
+            while ($i < $num)
+            {
+                $objp                  = $this->db->fetch_object($result);
+        
+                $ligne                 = new PropaleLigne();
+                $ligne->desc           = stripslashes($objp->description);  // Description ligne
+                $ligne->libelle        = stripslashes($objp->label);        // Label produit
+                $ligne->product_desc   = stripslashes($objp->product_desc); // Description produit
+                $ligne->qty            = $objp->qty;
+                $ligne->ref            = $objp->ref;
+                $ligne->tva_tx         = $objp->tva_tx;
+                $ligne->subprice       = $objp->subprice;
+                $ligne->remise_percent = $objp->remise_percent;
+                $ligne->price          = $objp->price;
+                $ligne->product_id     = $objp->rowid;
+        
+                $this->lignes[$i]      = $ligne;
+                //dolibarr_syslog("1 ".$ligne->desc);
+                //dolibarr_syslog("2 ".$ligne->product_desc);
+                $i++;
+            }
+            $this->db->free($result);
+        }
+        else
+        {
+            dolibarr_syslog("Propal::Fetch Erreur lecture des produits");
+            return -1;
+        }
     
 	    /*
-	     * Lignes propales
+	     * Lignes propales liées à aucun produit
 	     */
 	    $sql = "SELECT d.qty, d.description, d.price, d.subprice, d.tva_tx, d.rowid, d.remise_percent";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d";
