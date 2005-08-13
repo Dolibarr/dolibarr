@@ -181,35 +181,44 @@ if ($_GET["propalid"])
 	  // Receiver
 	  $langs->load('mails');
 	  print '<tr><td>'.$langs->trans('MailTo').'</td>';
-	  print '<td colspan="3">';
 	  
 	  $dests=$societe->contact_array($societe->id);
 	  $numdest = count($dests);
 	  if ($numdest==0)
 	    {
+	      print '<td colspan="3">';
 	      print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
 	      print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans('AddContact').'</a>';
+	      print '</td>';
 	    }
 	  else
 	    {
 	      if ($propal->statut == 0 && $user->rights->propale->creer)
 		{
+		  print '<td colspan="2">';
 		  print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 		  print '<input type="hidden" name="action" value="set_contact">';
 		  $form->select_contacts($societe->id, $propal->contactid, 'contactidp');
+		  print '</td><td>';
 		  print '<input type="submit" value="'.$langs->trans('Modify').'">';
 		  print '</form>';
+		  print '</td>';
 		}
 	      else
 		{
 		  if (!empty($propal->contactid))
 		    {
+		      print '<td colspan="3">';
 		      require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
 		      $contact=new Contact($db);
 		      $contact->fetch($propal->contactid);
 		      print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$propal->contactid.'" title="'.$langs->trans('ShowContact').'">';
 		      print $contact->firstname.' '.$contact->name;
 		      print '</a>';
+		      print '</td>';
+		    }
+		  else {
+		    print '<td colspan="3">&nbsp;</td>';
 		    }
 		}
 	    }
@@ -319,12 +328,12 @@ if ($_GET["propalid"])
 	      if ($num_lignes)
 		{
 		  print '<tr class="liste_titre">';
-		  print '<td width="54%">'.$langs->trans('Description').'</td>';
-		  print '<td width="8%" align="right">'.$langs->trans('VAT').'</td>';
-		  print '<td width="12%" align="right">'.$langs->trans('PriceUHT').'</td>';
-		  print '<td width="8%" align="right">'.$langs->trans('Qty').'</td>';
-		  print '<td width="8%" align="right">'.$langs->trans('Discount').'</td>';
-		  print '<td width="10%" align="right">'.$langs->trans('AmountHT').'</td>';
+		  print '<td>'.$langs->trans('Description').'</td>';
+		  print '<td align="right">'.$langs->trans('VAT').'</td>';
+		  print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+		  print '<td align="right">'.$langs->trans('Qty').'</td>';
+		  print '<td align="right">'.$langs->trans('Discount').'</td>';
+		  print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 		  print '<td>&nbsp;</td><td>&nbsp;</td>';
 		  print "</tr>\n";
 		}
@@ -343,7 +352,7 @@ if ($_GET["propalid"])
 			    print img_object($langs->trans('ShowService'),'service');
 			  else 
 			    print img_object($langs->trans('ShowProduct'),'product');
-			  print ' '.stripslashes(nl2br($objp->description?$objp->description:$objp->product)).'</a>';
+                print ' '.stripslashes(nl2br($objp->product)).'</a>';
 			  if ($objp->date_start && $objp->date_end) 
 			    {
 			      print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
@@ -356,6 +365,7 @@ if ($_GET["propalid"])
 			    {
 			      print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')'; 
 			    }
+                print $objp->description?'<br>'.$objp->description:'';
 			  print '</td>';
 			}
 		      else
@@ -392,8 +402,7 @@ if ($_GET["propalid"])
 
 		      print '</tr>';
 		    }
-		  // Update ligne de facture
-		  // \todo
+
 
 
 		  $total = $total + ($objp->qty * $objp->price);
@@ -605,10 +614,11 @@ if ($_GET["propalid"])
   if (! $sortorder) $sortorder="DESC";
   if ($page == -1) $page = 0 ;
 
-  $pageprev = $page - 1;
-  $pagenext = $page + 1;
   $limit = $conf->liste_limit;
   $offset = $limit * $page ;
+  $pageprev = $page - 1;
+  $pagenext = $page + 1;
+
 
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
   $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p ";

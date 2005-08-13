@@ -597,6 +597,8 @@ if ($_GET['propalid'])
 	  print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	  print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
 	  print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+
+      // Statut
 	  print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut().'</td></tr>';
 	  print '</table><br>';
 	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
@@ -612,10 +614,10 @@ if ($_GET['propalid'])
 	  $sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
 	  $sql .= ' WHERE pt.fk_propal = '.$propal->id;
 	  $sql .= ' ORDER BY pt.rowid ASC';
-	  $result = $db->query($sql);
-	  if ($result) 
+	  $resql = $db->query($sql);
+	  if ($resql) 
 	    {
-	      $num_lignes = $db->num_rows($result);
+	      $num_lignes = $db->num_rows($resql);
 	      $i = 0;
 	      $total = 0;
 
@@ -632,10 +634,10 @@ if ($_GET['propalid'])
 		  print '<td>&nbsp;</td><td>&nbsp;</td>';
 		  print "</tr>\n";
 		}
-	      $var=True;
+	      $var=true;
 	      while ($i < $num_lignes)
 		{
-		  $objp = $db->fetch_object($result);
+		  $objp = $db->fetch_object($resql);
 		  $var=!$var;
 		  if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
 		    {
@@ -722,14 +724,12 @@ if ($_GET['propalid'])
 		      print '<td align="right"><input name="remise" type="text" size="2" value="'.$objp->remise_percent.'"> %</td>';
 		      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Save").'"></td>';
 		      print '</tr></form>';
-
 		    }
-		  //
 
 		  $total = $total + ($objp->qty * $objp->price);
 		  $i++;
 		}
-	      $db->free($result);
+	      $db->free($resql);
 	    }
 	  else
 	    {
@@ -824,7 +824,7 @@ if ($_GET['propalid'])
 
 
   /*
-   * Barre d'actions
+   * Boutons Actions
    */
   if ($propal->statut < 2)
     {
@@ -972,10 +972,10 @@ if ($_GET['propalid'])
   $sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
   $sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
   $sql .= ' WHERE a.fk_soc = '.$obj->idp.' AND a.propalrowid = '.$propal->id ;
-  $result = $db->query($sql);
-  if ($result)
+  $resql = $db->query($sql);
+  if ($resql)
     {
-      $num = $db->num_rows($result);
+      $num = $db->num_rows($resql);
       if ($num)
 	{
 	  print_titre($langs->trans('ActionsOnPropal'));
@@ -989,7 +989,7 @@ if ($_GET['propalid'])
 
 	  while ($i < $num)
 	    {
-	      $objp = $db->fetch_object($result);
+	      $objp = $db->fetch_object($resql);
 	      $var=!$var;
 	      print '<tr '.$bc[$var].'>';
 	      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
