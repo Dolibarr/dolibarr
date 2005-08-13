@@ -211,6 +211,9 @@ create table llx_societe_commerciaux
 
 
 alter table llx_action_def add code varchar(24) NOT NULL after rowid;
+
+alter table llx_action_def modify objet_type enum('ficheinter','facture','propale','mailing') default NULL;
+
 update llx_action_def set code='NOTIFY_VAL_FICHINTER' where titre='Validation fiche intervention';
 update llx_action_def set code='NOTIFY_VAL_FAC' where titre='Validation facture';
 
