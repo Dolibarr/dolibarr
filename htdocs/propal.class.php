@@ -349,11 +349,13 @@ class Propal
 	    }
 	  else
 	    {	      
+	      dolibarr_syslog("Propal::Create -2");
 	      return -2;
 	    }
 	}
       else
 	{
+	  dolibarr_syslog("Propal::Create -1 $sql");
 	  return -1;
 	}
       return $this->id;
