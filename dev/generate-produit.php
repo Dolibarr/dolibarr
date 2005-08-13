@@ -60,14 +60,15 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
 {
     print "Produit $s\n";
     $produit = new Product($db);
-    $produit->type = 1;
+    $produit->type = rand(0,1);
     $produit->envente = 1;
-    $produit->ref = time() . "$f";
-    $produit->libelle = $langs->trans("Label");
-    $produit->description = $langs->trans("Description");
-    $produit->price = rand(1,10000);
+    $produit->ref = 'P'.time().$s;
+    $produit->libelle = 'Label '.time().$s;
+    $produit->description = 'Description '.time().$s;
+    $produit->price = rand(1,1000);
     $produit->tva_tx = "19.6";
-    $produit->create($user);
+    $ret=$produit->create($user);
+    if ($ret < 0) print "Error $ret - ".$produit->error."\n";
 }
 
 
