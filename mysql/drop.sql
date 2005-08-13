@@ -279,9 +279,9 @@ drop table if exists llx_prelevement_rejet;
 drop table if exists llx_product_fournisseur_price;
 drop table if exists llx_societe_commerciaux;
 drop table if exists llx_user_clicktodial;
-drop table if exists llx_usergroup;
 drop table if exists llx_usergroup_rights;
 drop table if exists llx_usergroup_user;
+drop table if exists llx_usergroup;
 
 
 drop table if exists llx_cash;
@@ -313,3 +313,22 @@ drop table if exists llx_telephonie_societe_ligne_statut;
 drop table if exists llx_telephonie_tarif;
 drop table if exists llx_telephonie_tarif_client;
 drop table if exists llx_telephonie_tarif_fournisseur;
+
+
+
+drop table if exists llx_categorie_association;
+drop table if exists llx_categorie_product;
+drop table if exists llx_product_fournisseur_price_log;
+drop table if exists llx_categorie;
+
+
+-- historique
+
+drop table if exists c_actioncomm;
+drop table if exists c_chargesociales;
+drop table if exists c_effectif;
+drop table if exists c_paiement;
+drop table if exists c_pays;
+drop table if exists c_propalst;
+drop table if exists c_stcomm;
+drop table if exists c_typent;
