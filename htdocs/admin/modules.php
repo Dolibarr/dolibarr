@@ -74,13 +74,20 @@ function Activate($value)
         Activate($objMod->depends[$i]);
     }
 
+    // Desactivation des modules qui entrent en conflit
+    for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
+    {
+        UnActivate($objMod->conflictwith[$i],0);
+    }
+
 }
 
 
 /**     \brief      Désactive un module
-        \param      value   Nom du module a désactiver
+        \param      value               Nom du module a désactiver
+        \param      requiredby          1=Desactive aussi modules dépendants
 */
-function UnActivate($value)
+function UnActivate($value,$requiredby=1)
 {
     global $db, $modules;
 
@@ -96,11 +103,14 @@ function UnActivate($value)
     }
 
     // Desactivation des modules qui dependent de lui
-    for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
+    if ($requiredby)
     {
-        UnActivate($objMod->requiredby[$i]);
+        for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
+        {
+            UnActivate($objMod->requiredby[$i]);
+        }
     }
-
+    
     Header("Location: modules.php");
 }
 
