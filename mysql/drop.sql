@@ -18,7 +18,9 @@
 -- $Id$
 -- $Source$
 --
-
+--
+-- L'ordre des suppressions doit respecter les contraintes d'integrite
+--
 drop table if exists llx_co_fa;
 
 drop table if exists llx_co_pr;
@@ -30,8 +32,6 @@ drop table if exists llx_c_chargesociales;
 drop table if exists llx_c_effectif;
 
 drop table if exists llx_c_paiement ;
-
-drop table if exists llx_c_pays ;
 
 drop table if exists llx_c_prestatype ;
 
@@ -81,8 +81,6 @@ drop table if exists llx_boxes_def;
 
 drop table if exists llx_chargesociales;
 
-drop table if exists llx_contrat;
-
 drop table if exists llx_commande;
 
 drop table if exists llx_commandedet;
@@ -127,8 +125,6 @@ drop table if exists llx_expeditiondet;
 
 drop table if exists llx_fa_pr;
 
-drop table if exists llx_facture;
-
 drop table if exists llx_facture_rec;
 
 drop table if exists llx_facturedet;
@@ -155,23 +151,15 @@ drop table if exists llx_notify ;
 
 drop table if exists llx_notify_def;
 
-drop table if exists llx_paiement;
-
 drop table if exists llx_paiementfourn;
 
 drop table if exists llx_pointmort;
-
-drop table if exists llx_product;
 
 drop table if exists llx_product_fournisseur;
 
 drop table if exists llx_product_price;
 
 drop table if exists llx_product_stock;
-
-drop table if exists llx_projet;
-
-drop table if exists llx_propal;
 
 drop table if exists llx_propal_model_pdf;
 
@@ -180,8 +168,6 @@ drop table if exists llx_propaldet;
 drop table if exists llx_rights_def;
 
 drop table if exists llx_service;
-
-drop table if exists llx_societe;
 
 drop table if exists llx_societe_ca;
 
@@ -218,8 +204,6 @@ drop table if exists llx_todocomm ;
 drop table if exists llx_transaction_bplc ;
 
 drop table if exists llx_tva;
-
-drop table if exists llx_user;
 
 drop table if exists llx_user_rights;
 
@@ -316,13 +300,42 @@ drop table if exists llx_telephonie_tarif;
 drop table if exists llx_telephonie_tarif_client;
 drop table if exists llx_telephonie_tarif_fournisseur;
 
-
-
 drop table if exists llx_categorie_association;
 drop table if exists llx_categorie_product;
 drop table if exists llx_product_fournisseur_price_log;
 drop table if exists llx_categorie;
 
+drop table if exists llx_accountingsystem_det;
+
+drop table if exists llx_accountingsystem;
+
+drop table if exists llx_dolibarr_modules;
+
+drop table if exists llx_energie_compteur_groupe;
+
+drop table if exists llx_energie_compteur_releve;
+
+drop table if exists llx_energie_groupe; 
+
+drop table if exists llx_energie_compteur;
+
+drop table if exists llx_propal;
+
+drop table if exists llx_product;
+
+drop table if exists llx_facture;
+
+drop table if exists llx_contrat;
+
+drop table if exists llx_paiement;
+
+drop table if exists llx_c_pays ;
+
+drop table if exists llx_projet;
+
+drop table if exists llx_societe;
+
+drop table if exists llx_user;
 
 -- historique
 
