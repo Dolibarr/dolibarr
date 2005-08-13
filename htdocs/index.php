@@ -420,6 +420,8 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 // Nbre factures fournisseurs (à payer)
 if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->facture->lire)
 {
+    $langs->load("bills");
+    
     include_once("./fourn/fournisseur.facture.class.php");
     $board=new FactureFournisseur($db);
     $board->load_board();
