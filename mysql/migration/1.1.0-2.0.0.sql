@@ -226,7 +226,9 @@ alter table llx_user add datelastaccess datetime;
 
 alter table llx_user_rights add rowid integer AUTO_INCREMENT PRIMARY KEY;
 
-alter table llx_facture add fk_cond_reglement integer DEFAULT 1 NOT NULL;
+-- Commenté car semble déjà présent dans la base 1.1.0
+-- alter table llx_facture add fk_cond_reglement integer DEFAULT 1 NOT NULL;
+
 alter table llx_facture add fk_mode_reglement integer after fk_cond_reglement ;
 
 alter table llx_cond_reglement add code varchar(16) after rowid;
@@ -584,19 +586,20 @@ create table llx_mailing_cibles
 
 alter table llx_mailing_cibles ADD UNIQUE uk_mailing_cibles (fk_mailing, email);
 
-create table llx_stock_mouvement
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
-  datem           datetime,
-  fk_product      integer NOT NULL,
-  fk_entrepot     integer NOT NULL,
-  value           integer,
-  type_mouvement  smallint,
-  fk_user_author  integer,
-  key(fk_product),
-  key(fk_entrepot)
-)type=innodb;
+--
+--create table llx_stock_mouvement
+--(
+--  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+--  tms             timestamp,
+--  datem           datetime,
+--  fk_product      integer NOT NULL,
+--  fk_entrepot     integer NOT NULL,
+--  value           integer,
+--  type_mouvement  smallint,
+--  fk_user_author  integer,
+--  key(fk_product),
+--  key(fk_entrepot)
+--)type=innodb;
 
 
 create table llx_birthday_alert
@@ -1626,3 +1629,34 @@ update llx_const set name='MAIN_EMAIL_FROM' where name='MAIN_MAIL_FROM';
 
 alter table llx_bookmark add url         varchar(128);
 alter table llx_bookmark add target      varchar(16);
+
+
+
+create table llx_energie_compteur
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  libelle         varchar(50),
+  fk_energie      integer NOT NULL,
+  datec           datetime,
+  fk_user_author  integer NOT NULL,
+
+  note            text
+)type=innodb;
+
+create table llx_energie_compteur_groupe
+(
+  fk_energie_compteur integer NOT NULL,
+  fk_energie_groupe   integer NOT NULL
+)type=innodb;
+
+create table llx_energie_compteur_releve
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_compteur     integer NOT NULL,
+  date_releve     datetime,
+  valeur          real,
+  datec           datetime,
+  fk_user_author  integer NOT NULL,
+
+  note            text
+)type=innodb;
