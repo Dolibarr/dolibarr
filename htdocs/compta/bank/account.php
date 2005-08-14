@@ -296,8 +296,8 @@ if ($account > 0)
       print '</td></tr>';
       print '<tr>';
       print '<td nowrap>';
-      print '<input name="dateoy" class="flat" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
-      print '<input name="dateo" class="flat" type="text" size="4" maxlength="4"></td>';
+      print '<input name="dateoy" class="flat" type="text" size="2" value="'.strftime("%Y",time()).'" maxlength="4">';
+      print '<input name="dateo" class="flat" type="text" size="2" maxlength="4"></td>';
       print '<td colspan="2" nowrap><select class="flat" name="operation">';
       print '<option value="CB">CB';
       print '<option value="CHQ">CHQ';
@@ -403,15 +403,21 @@ function _print_lines($db,$result,$sql,$acct)
     
             if ($objp->rappro && $acct->type != 2)  // Si non compte cash)
             {
-                print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
+                print "<td align=\"center\">";
+                print "<a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a>";
+                print "</td>";
             }
             else
             {
                 if ($user->rights->banque->modifier)
                 {
-                    print "<td align=\"center\"><a href=\"account.php?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id&amp;page=$page\">";
+                    print '<td align="center">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page=$page">';
+                    print img_edit();
+                    print '</a> &nbsp;';
+                    print '<a href="account.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
                     print img_delete();
-                    print "</a></td>";
+                    print '</a></td>';
                 }
                 else
                 {
