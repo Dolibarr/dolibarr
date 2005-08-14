@@ -22,10 +22,10 @@
  */
 
 /**
-   \file       htdocs/fourn/facture/index.php
-   \ingroup    fournisseur,facture
-   \brief      Lsite des factures fournisseurs
-   \version    $Revision$
+        \file       htdocs/fourn/facture/index.php
+        \ingroup    fournisseur,facture
+        \brief      Lsite des factures fournisseurs
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -175,11 +175,11 @@ if ($resql)
     print '<input class="flat" type="text" name="search_libelle" value="'.$_GET["search_libelle"].'">';
     print '</td>';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
+    print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'" size="12">';
     print '</td><td class="liste_titre" align="right">';
-    print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
+    print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
     print '</td><td class="liste_titre" align="right">';
-    print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
+    print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
     print '</td><td class="liste_titre" colspan="2" align="center">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
     print '</td>';
@@ -198,10 +198,10 @@ if ($resql)
 
         print "<tr $bc[$var]>";
         print "<td nowrap><a href=\"fiche.php?facid=$obj->facid\">".img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber."</a></td>\n";
-        print "<td nowrap>".strftime("%e %b %Y",$obj->date_echeance)."</td>\n";
+        print "<td nowrap>".($obj->date_echeance?dolibarr_print_date($obj->date_echeance):'')."</td>\n";
         print '<td>'.stripslashes("$obj->libelle").'</td>';
         print '<td>';
-        print '<a href="../fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
+        print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
         print '<td align="right">'.price($obj->total_ht).'</td>';
         print '<td align="right">'.price($obj->total_ttc).'</td>';
         $total+=$obj->total_ht;
