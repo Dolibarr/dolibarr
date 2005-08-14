@@ -622,68 +622,82 @@ else
                 $objp = $db->fetch_object($resql);
                 $var=!$var;
                 
-			// Update ligne de propale
-			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
-		    {
-		      print '<tr '.$bc[$var].'>';
-                if ($objp->fk_product > 0)
+    			// Affiche ligne de commande en mode non edit
+    			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
                 {
-	                print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-	                if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
-	                else print img_object($langs->trans('ShowProduct'),'product');
-	                print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
-	                print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
-	                print '</td>';
+                    print '<tr '.$bc[$var].'>';
+                    if ($objp->fk_product > 0)
+                    {
+                        print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                        if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+                        else print img_object($langs->trans('ShowProduct'),'product');
+                        print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
+                        print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
+                        print '</td>';
+                    }
+                    else
+                    {
+                        print '<td>'.stripslashes(nl2br($objp->description));
+                        print "</td>\n";
+                    }
+                    print '<td align="right">'.$objp->tva_tx.'%</td>';
+                
+                    print '<td align="right">'.price($objp->subprice)."</td>\n";
+                
+                    print '<td align="right">'.$objp->qty.'</td>';
+                
+                    if ($objp->remise_percent > 0)
+                    {
+                        print '<td align="right">'.$objp->remise_percent."%</td>\n";
+                    }
+                    else
+                    {
+                        print '<td>&nbsp;</td>';
+                    }
+                    print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+                
+                    // Icone d'edition et suppression
+                    if ($commande->statut == 0  && $user->rights->commande->creer && $_GET["action"] == '')
+                    {
+                        print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+                        print img_edit();
+                        print '</a></td>';
+                        print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+                        print img_delete();
+                        print '</a></td>';
+                    }
+                    else
+                    {
+                        print '<td>&nbsp;</td><td>&nbsp;</td>';
+                    }
+                    print '</tr>';
                 }
-                else
-                {
-                    print '<td>'.stripslashes(nl2br($objp->description));
-                    print "</td>\n";
-                }
-                print '<td align="right">'.$objp->tva_tx.'%</td>';
-
-                print '<td align="right">'.price($objp->subprice)."</td>\n";
-
-                print '<td align="right">'.$objp->qty.'</td>';
-
-                if ($objp->remise_percent > 0)
-                {
-                    print '<td align="right">'.$objp->remise_percent."%</td>\n";
-                }
-                else
-                {
-                    print '<td>&nbsp;</td>';
-                }
-		      print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
-
-                // Icone d'edition et suppression
-                if ($commande->statut == 0  && $user->rights->commande->creer && $_GET["action"] == '')
-                {
-                    print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
-                    print img_edit();
-                    print '</a></td>';
-                    print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
-                    print img_delete();
-                    print '</a></td>';
-                }
-                else
-                {
-                    print '<td>&nbsp;</td><td>&nbsp;</td>';
-                }
-		      print '</tr>';
-			   }
         
-                // Update ligne de commande
+    			// Affiche ligne de commande en mode non edit
                 if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
                 {
                     print "<form action=\"fiche.php?id=$id\" method=\"post\">";
                     print '<input type="hidden" name="action" value="updateligne">';
                     print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
-                    print '<tr '.$bc[$var].'>';
-                    print '<td colspan="2"><textarea name="eldesc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
-                    print '<td align="right"><input size="7" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
-                    print '<td align="right"><input size="4" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
-                    print '<td align="right"><input size="3" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+                    print "<tr $bc[$var]>";
+                    print '<td>';
+                    if ($objp->fk_product > 0)
+                    {
+                        print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                        if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+                        else print img_object($langs->trans('ShowProduct'),'product');
+                        print ' '.$objp->ref.'</a>';
+                        print ' - '.stripslashes(nl2br($objp->product));
+                        print '<br>';
+                    }
+                    print '<textarea name="eldesc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
+                    print '<td align="right">';
+                    //print $html->select_tva("tva_tx",$objp->tva_taux);
+                    print $objp->tva_tx."%";    // Taux tva dépend du produit, donc on ne doit pas pouvoir le changer ici
+                    print '</td>';
+                    print '<td align="right"><input size="5" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
+                    print '<td align="right"><input size="2" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
+                    print '<td align="right" nowrap><input size="1" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
                     print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
 				    print '</tr>';
 					print '</form>';

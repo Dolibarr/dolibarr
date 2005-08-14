@@ -600,7 +600,7 @@ if ($_GET['propalid'])
 	   * Lignes de propale
 	   *
 	   */
-	  $sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice,";
+	  $sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice,';
 	  $sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
 	  $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
 	  $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
