@@ -49,6 +49,8 @@ class modComptabiliteExpert extends DolibarrModules
     */
   function modComptabiliteExpert($DB)
   {
+    global $conf;
+    
     $this->db = $DB ;
     $this->numero = 130 ;
     
@@ -74,7 +76,12 @@ class modComptabiliteExpert extends DolibarrModules
     // Constantes
     $this->const = array();
 
+    // Répertoires
     $this->dirs = array();
+    $this->dirs[0] = $conf->comptaexpert->dir_output;
+    $this->dirs[1] = $conf->comptaexpert->dir_output."/rapport";
+    $this->dirs[2] = $conf->comptaexpert->dir_output."/export";
+    $this->dirs[3] = $conf->comptaexpert->dir_images;
 
     // Boites
     $this->boxes = array();
@@ -143,14 +150,9 @@ class modComptabiliteExpert extends DolibarrModules
   {
     global $conf;
     
-    // Permissions
+    // Nettoyage avant activation
     $this->remove();
 
-    // Dir
-    $this->dirs[0] = $conf->compta->dir_output;
-    $this->dirs[1] = $conf->compta->dir_output."/rapport";
-    $this->dirs[2] = $conf->compta->dir_output."/export";
-    
     return $this->_init($sql);
   }
 

@@ -48,6 +48,8 @@ class modComptabilite extends DolibarrModules
     */
   function modComptabilite($DB)
   {
+    global $conf;
+
     $this->db = $DB ;
     $this->numero = 10 ;
     
@@ -72,7 +74,12 @@ class modComptabilite extends DolibarrModules
     // Constantes
     $this->const = array();
 
+    // Répertoires
     $this->dirs = array();
+    $this->dirs[0] = $conf->compta->dir_output;
+    $this->dirs[1] = $conf->compta->dir_output."/rapport";
+    $this->dirs[2] = $conf->compta->dir_output."/export";
+    $this->dirs[3] = $conf->compta->dir_images;
 
     // Boites
     $this->boxes = array();
@@ -134,14 +141,9 @@ class modComptabilite extends DolibarrModules
   {
     global $conf;
     
-    // Permissions
+    // Nettoyage avant activation
     $this->remove();
 
-    // Dir
-    $this->dirs[0] = $conf->compta->dir_output;
-    $this->dirs[1] = $conf->compta->dir_output."/rapport";
-    $this->dirs[2] = $conf->compta->dir_output."/export";
-    
     return $this->_init($sql);
   }
 
