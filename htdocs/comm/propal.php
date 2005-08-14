@@ -65,6 +65,8 @@ $NBLINES=4;
 
 $form=new Form($db);
 
+
+
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
@@ -179,20 +181,7 @@ if ($_POST['action'] == 'send')
 		    }
 		  $actionmsg2='Envoi Propal par mail';
 		}
-	      /*
-		if ($_POST["action"] == 'relance')
-		{
-		$subject = "Relance facture $propal->ref";
-		$actiontypeid=10;
-		$actionmsg="Mail envoyé par $from à $sendto.<br>";
-		if ($message)
-		{
-		$actionmsg.="Texte utilisé dans le corps du message:<br>";
-		$actionmsg.=$message;
-		}
-		$actionmsg2="Relance Facture par mail";
-		}
-	      */
+
 	      $filepath[0] = $file;
 	      $filename[0] = $propal->ref.'.pdf';
 	      $mimetype[0] = 'application/pdf';
@@ -279,7 +268,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
      *  Ajout d'une ligne produit dans la propale
      */
     $propal = new Propal($db);
-    $propal->fetch($_POST['propalid']);
+    $ret=$propal->fetch($_POST['propalid']);
 
     if (isset($_POST['np_tva_tx']))
     {
@@ -611,18 +600,20 @@ if ($_GET['propalid'])
 	   * Lignes de propale
 	   *
 	   */
-	  $sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
-	  $sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
-	  $sql .= ' WHERE pt.fk_propal = '.$propal->id;
-	  $sql .= ' ORDER BY pt.rowid ASC';
+	  $sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice,";
+	  $sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
+	  $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
+	  $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
+	  $sql.= ' WHERE pt.fk_propal = '.$propal->id;
+	  $sql.= ' ORDER BY pt.rowid ASC';
 	  $resql = $db->query($sql);
 	  if ($resql) 
 	    {
-	      $num_lignes = $db->num_rows($resql);
+	      $num = $db->num_rows($resql);
                 $i = 0; $total = 0;
 
 	      print '<table class="noborder" width="100%">';
-	      if ($num_lignes)
+	      if ($num)
 		{
 		  print '<tr class="liste_titre">';
 		  print '<td>'.$langs->trans('Description').'</td>';
@@ -635,7 +626,7 @@ if ($_GET['propalid'])
 		  print "</tr>\n";
 		}
 	      $var=true;
-	      while ($i < $num_lignes)
+	      while ($i < $num)
 		{
 		  $objp = $db->fetch_object($resql);
 		  $var=!$var;
@@ -662,7 +653,7 @@ if ($_GET['propalid'])
                 {
                     print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
                 }
-                print $objp->description?'<br>'.$objp->description:'';
+                print ($objp->description && $objp->description!=$obj->product)?'<br>'.$objp->description:'';
                 print '</td>';
             }
 		      else
@@ -724,7 +715,8 @@ if ($_GET['propalid'])
 		      print '<td align="right"><input name="qty" type="text" size="2" value="'.$objp->qty.'"></td>';
 		      print '<td align="right" nowrap><input name="remise" type="text" size="2" value="'.$objp->remise_percent.'"> %</td>';
 		      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Save").'"></td>';
-		      print '</tr></form>';
+		      print '</tr>';
+			  print '</form>';
 		    }
 
 		  $total = $total + ($objp->qty * $objp->price);

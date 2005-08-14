@@ -335,15 +335,15 @@ if ($_socid > 0)
                 print '</tr>';
                 $var=!$var;
             }
-            $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
+            $i = 0;
             while ($i < $num && $i < $MAXLIST)
             {
                 $objp = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
                 print "<td nowrap><a href=\"propal.php?propalid=$objp->propalid\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a>\n";
-                if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
+                if ( ($objp->dp < time() - $conf->propal->cloture->warning_delay) && $objp->statutid == 1 )
                 {
-                    print " <b>&gt; 15 jours</b>";
+                    print " ".img_warning();
                 }
                 print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dp)."</td>\n";
                 print '<td align="right" width="120">'.price($objp->price).'</td>';
@@ -385,7 +385,7 @@ if ($_socid > 0)
                 print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
             }
-            $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
+            $i = 0;
             while ($i < $num && $i < $MAXLIST)
             {
                 $objp = $db->fetch_object($resql);
@@ -432,7 +432,7 @@ if ($_socid > 0)
                 print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllContracts").' ('.$num.')</td></tr></table></td>';
                 print '</tr>';
             }
-            $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
+            $i = 0;
             while ($i < $num && $i < $MAXLIST)
             {
                 $objp = $db->fetch_object($resql);
@@ -478,7 +478,7 @@ if ($_socid > 0)
                 print '</tr>';
                 $var=!$var;
             }
-            $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
+            $i = 0;
             while ($i < $num && $i < $MAXLIST)
             {
                 $objp = $db->fetch_object($resql);
@@ -857,15 +857,6 @@ if ($_socid > 0)
         }
         print "</table>";
 
-        // Notes sur la societe
-        /*
-        if ($objsoc->note)
-        {
-            print '<table class="border" width="100%" bgcolor="#e0e0e0">';
-            print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
-            print "</table>";
-        }
-        */
     }
 } else {
     dolibarr_print_error($db);

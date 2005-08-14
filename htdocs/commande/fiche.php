@@ -45,16 +45,16 @@ require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
+
 /*
- *
+ * Actions
  */	
 if ($_POST["action"] == 'classin' && $user->rights->commande->creer)
 {
@@ -94,7 +94,6 @@ if ($_POST["action"] == 'add' && $user->rights->commande->creer)
  *
  */
 
-
 if ($_POST["action"] == 'setremise' && $user->rights->commande->creer) 
 {
   $commande = new Commande($db);
@@ -112,27 +111,33 @@ if ($_POST["action"] == 'setnote' && $user->rights->commande->creer)
 
 if ($_POST["action"] == 'addligne' && $user->rights->commande->creer) 
 {
-  $commande = new Commande($db);
-  $commande->fetch($_GET["id"]);
+    /*
+     *  Ajout d'une ligne produit dans la commande
+     */
+    $commande = new Commande($db);
+    $ret=$commande->fetch($_POST["id"]);
+    
+    if (isset($_POST["p_idprod"]))
+    {
+        $result = $commande->addline(
+        $_POST["np_desc"],
+        $_POST["pu"],
+        $_POST["pqty"],
+        $_POST["tva_tx"],
+        $_POST["p_idprod"],
+        $_POST["premise"]);
+    }
+    else
+    {
+        $result = $commande->addline(
+        $_POST["desc"],
+        $_POST["pu"],
+        $_POST["qty"],
+        $_POST["tva_tx"],
+        0,
+        $_POST["remise_percent"]);
+    }
 
-  if ($_POST["p_idprod"] > 0)
-    {
-      $result = $commande->addline("DESC",
-				   $_POST["pu"],
-				   $_POST["pqty"],
-				   $_POST["tva_tx"],
-				   $_POST["p_idprod"],
-				   $_POST["premise"]);
-    }
-  else
-    {
-      $result = $commande->addline($_POST["desc"],
-				   $_POST["pu"],
-				   $_POST["qty"],
-				   $_POST["tva_tx"],
-				   0,
-				   $_POST["remise_percent"]);
-    }
 }
 
 if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer) 
@@ -566,7 +571,7 @@ else
 	    }
 		else
 	    {
-	      print $commande->remise_percent.' %</td><td>&nbsp;';
+	      print $commande->remise_percent.'%</td><td>&nbsp;';
 	    }
 		print '</td></tr>';
 
@@ -575,8 +580,7 @@ else
 	  print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
 	  print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	  
-	  print "</table>";
-	  
+	  print '</table><br>';
 	  if ($commande->brouillon == 1 && $user->rights->commande->creer) 
 	    {
 	      print '</form>';
@@ -586,162 +590,174 @@ else
 	   * Lignes de commandes
 	   *
 	   */
-	  echo '<br><table class="noborder" width="100%">';	  
-
-	  $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l";
-	  $sql .= " WHERE l.fk_commande = ".$commande->id;
-	  $sql .= " ORDER BY l.rowid";
-	  
-	  $result = $db->query($sql);
-	  if ($result)
-	    {
-	      $num = $db->num_rows($result);
-	      $i = 0; $total = 0;
-	      
-	      if ($num)
-		{
-		  print '<tr class="liste_titre">';
-		  print '<td width="54%">'.$langs->trans("Description").'</td>';
-		  print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
-		  print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
-		  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
-		  print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
-		  print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
-		  print "</tr>\n";
-		}
-
-	      $var=true;
-	      while ($i < $num)
+        $sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
+	  	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
+        $sql.= ' FROM '.MAIN_DB_PREFIX."commandedet as l";
+	  	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
+        $sql.= " WHERE l.fk_commande = ".$commande->id;
+        $sql.= " ORDER BY l.rowid";
+        
+        $resql = $db->query($sql);
+        if ($resql)
         {
-            $objp = $db->fetch_object($result);
+            $num = $db->num_rows($resql);
+            $i = 0; $total = 0;
         
-            $var=!$var;
-            print "<tr $bc[$var]>";
-            if ($objp->fk_product > 0)
+	      print '<table class="noborder" width="100%">';
+            if ($num)
             {
-                print '<td>';
-                print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.stripslashes(nl2br($objp->description)).'</a></td>';
-            }
-            else
-            {
-                print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
-            }
-            print '<td align="center">'.$objp->tva_tx.'%</td>';
-            print '<td align="center">'.$objp->qty.'</td>';
-            if ($objp->remise_percent > 0)
-            {
-                print '<td align="right">'.$objp->remise_percent."%</td>\n";
-            }
-            else
-            {
-                print '<td>&nbsp;</td>';
-            }
-            print '<td align="right">'.price($objp->subprice)."</td>\n";
-            if ($commande->statut == 0  && $user->rights->commande->creer && $_GET["action"] == '')
-            {
-                print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
-                print img_edit();
-                print '</a></td>';
-                print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
-                print img_delete();
-                print '</a></td>';
-            }
-            else
-            {
+                print '<tr class="liste_titre">';
+		  print '<td>'.$langs->trans('Description').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+		  print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
                 print '<td>&nbsp;</td><td>&nbsp;</td>';
+                print "</tr>\n";
             }
-            print "</tr>";
-        
-            if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
+            $var=true;
+            while ($i < $num)
             {
-                print "<form action=\"fiche.php?id=$id\" method=\"post\">";
-                print '<input type="hidden" name="action" value="updateligne">';
-                print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
-                print "<tr $bc[$var]>";
-                print '<td colspan="2"><textarea name="eldesc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
-                print '<td align="center"><input size="4" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
-                print '<td align="right"><input size="3" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
-                print '<td align="right"><input size="7" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
-                print '<td align="right" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
-                print '</tr>' . "\n";
-                print "</form>\n";
-            }
-            $i++;
-        }      
-	      $db->free($result);
-	    } 
-	else
-	  {
-	    dolibarr_print_error($db);
-	  }
-	
-	/*
-	 * Ajouter une ligne
-	 *
-	 */
-	if ($commande->statut == 0 && $user->rights->commande->creer && $_GET["action"] == '') 
-	  {
-	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
-	      $sql .= " WHERE envente = 1";
-	      $sql .= " ORDER BY p.nbvente DESC";
-	      $sql .= " LIMIT 20";
-	      if ( $db->query($sql) )
-		{
-		  $opt = "<option value=\"0\" selected></option>";
-		  if ($result)
+                $objp = $db->fetch_object($resql);
+                $var=!$var;
+                
+			// Update ligne de propale
+			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
 		    {
-		      $num = $db->num_rows();
-		      $i = 0;	
-		      while ($i < $num)
-			{
-			  $objp = $db->fetch_object();
-			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
-			  $i++;
-			}
-		    }
-		  $db->free();
-		}
-	      else
-		{
-		  dolibarr_print_error($db);
-		}
+		      print '<tr '.$bc[$var].'>';
+                if ($objp->fk_product > 0)
+                {
+	                print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+	                if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+	                else print img_object($langs->trans('ShowProduct'),'product');
+	                print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
+	                print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
+	                print '</td>';
+                }
+                else
+                {
+                    print '<td>'.stripslashes(nl2br($objp->description));
+                    print "</td>\n";
+                }
+                print '<td align="right">'.$objp->tva_tx.'%</td>';
 
-	    print "<form action=\"fiche.php?id=$id\" method=\"post\">";
-	    print "<tr class=\"liste_titre\">";
-	    print '<td width="54%">'.$langs->trans("Description").'</td>';
-	    print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
-	    print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
-	    print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
-	    print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
-	    print '<td>&nbsp;</td><td>&nbsp;</td>'."</tr>\n";
-	    print '<input type="hidden" name="action" value="addligne">';
-	    print "<tr $bc[$var]>".'<td><textarea name="desc" cols="60" rows="1"></textarea></td>';
-	    print '<td align="center">';
-	    print $html->select_tva("tva_tx",$conf->defaulttx);
-	    print '</td>';
-	    print '<td align="center"><input type="text" name="qty" value="1" size="2"></td>';
-	    print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
-	    print '<td align="right"><input type="text" name="pu" size="6"></td>';
+                print '<td align="right">'.price($objp->subprice)."</td>\n";
 
-	    print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+                print '<td align="right">'.$objp->qty.'</td>';
 
-	    $var=!$var;
-	    print "<tr $bc[$var]><td colspan=\"2\"><select name=\"p_idprod\">$opt</select></td>";
-	    print '<td align="center"><input type="text" size="2" name="pqty" value="1"></td>';
-	    print '<td align="right" nowrap><input type="text" size="2" name="premise" value="0">%</td>';
-	    print '<td>&nbsp;</td>';
-	    print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
-	    print "</tr>\n";
+                if ($objp->remise_percent > 0)
+                {
+                    print '<td align="right">'.$objp->remise_percent."%</td>\n";
+                }
+                else
+                {
+                    print '<td>&nbsp;</td>';
+                }
+		      print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
 
-	    print "</form>";
-	  }
-	print "</table>";
+                // Icone d'edition et suppression
+                if ($commande->statut == 0  && $user->rights->commande->creer && $_GET["action"] == '')
+                {
+                    print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+                    print img_edit();
+                    print '</a></td>';
+                    print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+                    print img_delete();
+                    print '</a></td>';
+                }
+                else
+                {
+                    print '<td>&nbsp;</td><td>&nbsp;</td>';
+                }
+		      print '</tr>';
+			   }
+        
+                // Update ligne de commande
+                if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
+                {
+                    print "<form action=\"fiche.php?id=$id\" method=\"post\">";
+                    print '<input type="hidden" name="action" value="updateligne">';
+                    print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
+                    print '<tr '.$bc[$var].'>';
+                    print '<td colspan="2"><textarea name="eldesc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
+                    print '<td align="right"><input size="7" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
+                    print '<td align="right"><input size="4" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
+                    print '<td align="right"><input size="3" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+                    print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+				    print '</tr>';
+					print '</form>';
+                }
 
-	/*
-	 * Fin Ajout ligne
-	 *
-	 */
+		  $total = $total + ($objp->qty * $objp->price);
+                $i++;
+            }
+            $db->free($resql);
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
+	
+        /*
+         * Ajouter une ligne
+         */
+        if ($commande->statut == 0 && $user->rights->commande->creer && $_GET["action"] == '') 
+          {
+	      print '<tr class="liste_titre">';
+	      print '<td>'.$langs->trans('Description').'</td>';
+            print '<td align="right">'.$langs->trans('VAT').'</td>';
+            print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+            print '<td align="right">'.$langs->trans('Qty').'</td>';
+            print '<td align="right">'.$langs->trans('Discount').'</td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
+	      print "</tr>\n";
+        
+              // Ajout produit produits/services personalisés
+            print "<form action=\"fiche.php?id=$id\" method=\"post\">";
+	      	print '<input type="hidden" name="id" value="'.$id.'">';
+            print '<input type="hidden" name="action" value="addligne">';
+            
+            $var=true;
+	      	print '<tr '.$bc[$var].">\n";
+	      	print '  <td><textarea cols="50" name="desc" rows="1"></textarea></td>';
+            print '<td align="center">';
+            print $html->select_tva("tva_tx",$conf->defaulttx);
+            print '</td>';
+            print '<td align="right"><input type="text" name="pu" size="5"></td>';
+            print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
+            print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
+            print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+        	print '</tr>';
+        	
+	        print '</form>';
+
+            // Ajout de produits/services prédéfinis
+            print "<form action=\"fiche.php?id=$id\" method=\"post\">";
+	      	print '<input type="hidden" name="id" value="'.$id.'">';
+            print '<input type="hidden" name="action" value="addligne">';
+
+            $var=!$var;
+            print '<tr '.$bc[$var].'>';
+            print '<td colspan="2">';
+            $html->select_produits('','p_idprod','',20);
+            print '<br>';
+            print '<textarea cols="50" name="np_desc" rows="1"></textarea>';
+            print '</td>';
+	   		print '<td>&nbsp;</td>';
+            print '<td align="right"><input type="text" size="2" name="pqty" value="1"></td>';
+            print '<td align="right" nowrap><input type="text" size="2" name="premise" value="0">%</td>';
+            print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+            print "</tr>\n";
+        
+	      print '</form>';
+          }
+          
+
+	print '</table>';
+
 
 	print '</div>';
 
