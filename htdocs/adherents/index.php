@@ -208,7 +208,7 @@ foreach ($Total as $key=>$value)
 }
 
 // Total
-print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($tot)."</td><td align=\"right\">".$numb."</td><td align=\"right\">".price($tot/$numb)."</td></tr>\n";
+print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($tot)."</td><td align=\"right\">".$numb."</td><td align=\"right\">".price($numb>0?($tot/$numb):0)."</td></tr>\n";
 print "</table><br>\n";
 
 print '</td></tr>';
