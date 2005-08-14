@@ -541,6 +541,7 @@ class MenuLeft {
                 
                   $langs->load("compta");
                   $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=accountancy&mainmenu=members",$langs->trans("Subscriptions"),0,$user->rights->adherent->cotisation->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1,1&amp;leftmenu=accountancy&mainmenu=members",$langs->trans("NewSubscription"),1,$user->rights->adherent->cotisation->creer);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php?leftmenu=accountancy",$langs->trans("List"),1,$user->rights->adherent->cotisation->lire);
                   $langs->load("banks");
                   $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=accountancy",$langs->trans("Banks"),0,$user->rights->adherent->lire);
