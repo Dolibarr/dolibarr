@@ -361,58 +361,64 @@ class Commande
 	    }
 	}
     }
+  
   /**
    * Ajoute une ligne de commande
    *
    */
-  function addline( $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
+    function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
     {
-      $qty = ereg_replace(",",".",$qty);
-      $pu = ereg_replace(",",".",$pu);
+        // Nettoyage parametres
+        $qty = ereg_replace(",",".",$qty);
+        $pu = ereg_replace(",",".",$pu);
+        $desc=trim($desc);
+        if (strlen(trim($qty))==0)
+        {
+            $qty=1;
+        }
+        
+        // Verifs
+        if (! $this->brouillon) return -1;
+        
+        $this->db->begin();
 
-      if ($this->brouillon && strlen(trim($desc)))
-	{
-	  if (strlen(trim($qty))==0)
-	    {
-	      $qty=1;
-	    }
+        if ($fk_product > 0)
+        {
+            $prod = new Product($this->db, $fk_product);
+            if ($prod->fetch($fk_product) > 0)
+            {
+                $desc  = $desc?$desc:$prod->libelle;
+                $pu    = $prod->price;
+                $txtva = $prod->tva_tx;
+            }
+        }
 
-	  if ($fk_product > 0)
-	    {
-	      $prod = new Product($this->db, $fk_product);
-	      if ($prod->fetch($fk_product) > 0)
-		{
-		  $desc  = $prod->libelle;
-		  $pu    = $prod->price;
-		  $txtva = $prod->tva_tx;
-		}
-	    }
+        $remise = 0;
+        $price = round(ereg_replace(",",".",$pu), 2);
+        $subprice = $price;
+        if (trim(strlen($remise_percent)) > 0)
+        {
+            $remise = round(($pu * $remise_percent / 100), 2);
+            $price = $pu - $remise;
+        }
 
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)";
+        $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."') ;";
 
-	  $remise = 0;
-	  $price = round(ereg_replace(",",".",$pu), 2);
-	  $subprice = $price;
-	  if (trim(strlen($remise_percent)) > 0)
-	    {
-	      $remise = round(($pu * $remise_percent / 100), 2);
-	      $price = $pu - $remise;
-	    }
-
-	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)";
-	  $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."') ;";
-
-	  if ( $this->db->query( $sql) )
-	    {
-	      $this->update_price();
-	      return 1;
-	    }
-	  else
-	    {
-	      dolibarr_print_error($this->db);
-	      return -1;
-	    }
-	}
+        if ( $this->db->query( $sql) )
+        {
+            $this->update_price();
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            $this->db->rollback();
+            return -1;
+        }
     }
+    
   /**
    * Ajoute un produit dans la commande
    *
@@ -638,7 +644,7 @@ class Commande
 	    }
 	  else
 	    {
-	      dolibarr_print_error($this->db);
+	    dolibarr_syslog("Commande::set_remise Erreur SQL");
 	    }
 	}
     }
@@ -867,8 +873,7 @@ class Commande
         }
         else 
         {
-            dolibarr_print_error($this->db);
-            $this->error=$this->db->error();
+             $this->error=$this->db->error();
             return -1;
         }
     }
@@ -938,7 +943,9 @@ class Commande
 
 class CommandeLigne
 {
-    var $pu;
+    function CommandeLigne()
+    {
+    }
 }
 
 ?>
