@@ -81,7 +81,7 @@ class modComptabiliteExpert extends DolibarrModules
 
     // Permissions
     $this->rights = array();
-    $this->rights_class = 'compta';
+    $this->rights_class = 'comptaexpert';
 
     $this->rights[5][0] = 131;
     $this->rights[5][1] = 'Lire le plan de compte';
