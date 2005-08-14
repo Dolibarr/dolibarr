@@ -376,11 +376,13 @@ class Facture
 
 
                 /*
-                * Lignes
-                */
+                 * Lignes
+                 */
 
-                $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise, l.remise_percent, l.subprice, ".$this->db->pdate("l.date_start")." as date_start,".$this->db->pdate("l.date_end")." as date_end";
+                $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise, l.remise_percent, l.subprice, ".$this->db->pdate("l.date_start")." as date_start,".$this->db->pdate("l.date_end")." as date_end,";
+                $sql.= " p.label as label, p.description as product_desc";
                 $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as l";
+                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
                 $sql.= " WHERE l.fk_facture = ".$this->id;
                 $sql.= " ORDER BY l.rang";
 
@@ -394,7 +396,9 @@ class Facture
                     {
                         $objp = $this->db->fetch_object($result2);
                         $faclig = new FactureLigne($this->db);
-                        $faclig->desc           = stripslashes($objp->description);
+                        $faclig->desc           = stripslashes($objp->description);     // Description ligne
+                        $faclig->libelle        = stripslashes($objp->label);           // Label produit
+                        $faclig->product_desc   = stripslashes($objp->product_desc);    // Description produit
                         $faclig->qty            = $objp->qty;
                         $faclig->price          = $objp->price;
                         $faclig->subprice       = $objp->subprice;
@@ -409,12 +413,14 @@ class Facture
                     }
 
                     $this->db->free($result2);
+                    $this->db->free($result);
 
                     return 1;
                 }
                 else
                 {
                     dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid, Erreur dans fetch des lignes");
+                    $this->error=$this->db->error();
                     return -3;
                 }
             }
