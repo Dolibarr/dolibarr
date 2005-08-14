@@ -68,6 +68,7 @@ $NBLINES=4;
 /*
  *  Actions
  */
+
 if ($_POST["action"] == 'classin')
 {
     $facture = new Facture($db);
@@ -76,7 +77,7 @@ if ($_POST["action"] == 'classin')
 }
 
 /*
- *
+ * Insertion facture
  */
 if ($_POST["action"] == 'add')
 {
@@ -132,7 +133,7 @@ if ($_POST["action"] == 'add')
         else
         {
             /*
-             * Propale
+             * Si creation depuis propale
              */
             if ($_POST["propalid"])
             {
@@ -147,9 +148,10 @@ if ($_POST["action"] == 'add')
                     {
                         for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
                         {
-                            //			  print "<pre>DEBUG: la propale précédente en ligne " . $prop->lignes[$i]->libelle . " avait comme prix : " . $prop->lignes[$i]->price . " !</pre>\n";
+                            $liblignefac=($prop->lignes[$i]->desc?$prop->lignes[$i]->desc:$prop->lignes[$i]->libelle);
+                            
                             $result = $facture->addline($facid,
-                            addslashes($prop->lignes[$i]->libelle),
+                            addslashes($liblignefac),
                             $prop->lignes[$i]->subprice,
                             $prop->lignes[$i]->qty,
                             $prop->lignes[$i]->tva_tx,
@@ -566,8 +568,7 @@ if ($_GET["action"] == 'create')
             $html->select_array("condid",$conds);
             print "</td></tr>";
 
-            /* Mode de réglement */
-
+            // Mode de réglement
             print "<tr><td>Mode de réglement :</td><td>";
             $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY libelle";
             $result = $db->query($sql);
@@ -588,6 +589,7 @@ if ($_GET["action"] == 'create')
             $html->select_array("mode_reglement",$modesregl);
             print "</td></tr>";
 
+            // Projet
             if ($conf->projet->enabled)
             {
                 $langs->load("projects");
@@ -702,20 +704,21 @@ if ($_GET["action"] == 'create')
             print "</form>\n";
             print "</table>\n";
 
+            // Si creation depuis un propal
             if ($_GET["propalid"])
             {
-                /*
-                * Produits
-                */
                 print '<br>';
-                print_titre($langs->trans("Products"));
+                print_titre($langs->trans("ProductsAndServices"));
 
                 print '<table class="noborder" width="100%">';
-                print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
-                print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
+                print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Description").'</td>';
+                print '<td align="right">'.$langs->trans("VAT").'</td>';
+                print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
+                print '<td align="right">'.$langs->trans("Qty").'</td>';
+                print '<td align="right">'.$langs->trans("Discount").'</td></tr>';
 
                 // Lignes de propal produits prédéfinis
-                $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
+                $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.tva_tx, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent, pt.description";
                 $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = ".$_GET["propalid"];
                 $sql .= " ORDER BY pt.rowid ASC";
                 $result = $db->query($sql);
@@ -728,16 +731,22 @@ if ($_GET["action"] == 'create')
                     {
                         $objp = $db->fetch_object($result);
                         $var=!$var;
-                        print "<tr $bc[$var]><td>".img_object($langs->trans(""),"product")." ".$objp->ref."</td>\n";
-                        print '<td>'.$objp->product.'</td>';
-                        print "<td align=\"right\">".price($objp->price)."</td>";
-                        print '<td align="center">'.$objp->remise_percent.'%</td>';
-                        print "<td align=\"center\">".$objp->qty."</td></tr>\n";
+                        print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(""),"product")." ".$objp->ref."</a>";
+                        print $objp->product?' - '.$objp->product:'';
+                        print "</td>\n";
+                        print '<td>';
+                        print $objp->description;
+                        print '</td>';
+                        print '<td align="right">'.$objp->tva_tx.'%</td>';
+                        print '<td align="right">'.price($objp->price).'</td>';
+                        print '<td align="right">'.$objp->qty.'</td>';
+                        print '<td align="right">'.$objp->remise_percent.'%</td>';
+                        print '</tr>';
                         $i++;
                     }
                 }
                 // Lignes de propal non produits prédéfinis
-                $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
+                $sql = "SELECT pt.rowid, pt.description as product, pt.tva_tx, pt.price, pt.qty, pt.remise_percent";
                 $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt ";
                 $sql .= " WHERE  pt.fk_propal = ".$_GET["propalid"];
                 $sql .= " AND pt.fk_product = 0";
@@ -753,9 +762,11 @@ if ($_GET["action"] == 'create')
                         $var=!$var;
                         print "<tr $bc[$var]><td>&nbsp;</td>\n";
                         print '<td>'.$objp->product.'</td>';
+                        print '<td align="right">'.$objp->tva_tx.'%</td>';
                         print '<td align="right">'.price($objp->price).'</td>';
-                        print '<td align="center">'.$objp->remise_percent.'%</td>';
-                        print "<td align=\"center\">".$objp->qty."</td></tr>\n";
+                        print '<td align="right">'.$objp->qty.'</td>';
+                        print '<td align="right">'.$objp->remise_percent.'%</td>';
+                        print '</tr>';
                         $i++;
                     }
                 }
@@ -767,13 +778,10 @@ if ($_GET["action"] == 'create')
                 print '</table>';
             }
 
-            /*
-            * Produits dans la commande
-            *
-            */
+            // Si creation depuis une commande
             if ($_GET["commandeid"])
             {
-                print_titre("Produits");
+                print_titre($langs->trans("Products"));
 
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
@@ -1033,14 +1041,13 @@ else
             print "</table><br>";
 
             /*
-            * Lignes de factures
-            *
-            */
-            $sql  = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux";
-            $sql .= " , l.remise_percent, l.subprice,";
-            $sql .= $db->pdate("l.date_start")." as date_start";
-            $sql .= " , ".$db->pdate("l.date_end")." as date_end, ";
-            $sql .= " p.fk_product_type";
+             * Lignes de factures
+             */
+            $sql  = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux,";
+            $sql .= " l.remise_percent, l.subprice,";
+            $sql .= " ".$db->pdate("l.date_start")." as date_start,";
+            $sql .= " ".$db->pdate("l.date_end")." as date_end, ";
+            $sql .= " p.ref, p.fk_product_type, p.label as product";
             $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l ";
             $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON l.fk_product=p.rowid";
             $sql .= " WHERE l.fk_facture = ".$fac->id;
@@ -1051,51 +1058,69 @@ else
             {
                 $num_lignes = $db->num_rows($resql);
                 $i = 0; $total = 0;
-
+            
                 print '<table class="noborder" width="100%">';
                 if ($num_lignes)
                 {
-                    print "<tr class=\"liste_titre\">";
-                    print '<td>'.$langs->trans("Description").'</td>';
-                    print '<td width="50" align="right">'.$langs->trans("VAT").'</td>';
-                    print '<td width="80" align="right">'.$langs->trans("PriceUHT").'</td>';
-                    print '<td width="50" align="right">'.$langs->trans("Qty").'</td>';
-                    print '<td width="50" align="right">'.$langs->trans("Discount").'</td>';
-                    print '<td width="80" align="right">'.$langs->trans("AmountHT").'</td>';
+                    print '<tr class="liste_titre">';
+                    print '<td>'.$langs->trans('Description').'</td>';
+                    print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+                    print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+                    print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+                    print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
+                    print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
                     print '<td colspan="3">&nbsp;</td>';
                     print "</tr>\n";
                 }
-                $var=True;
+                $var=true;
                 while ($i < $num_lignes)
                 {
                     $objp = $db->fetch_object($resql);
                     $var=!$var;
-
+            
                     // Update ligne de facture
                     if ($_GET["action"] != 'editline' || $_GET["rowid"] != $objp->rowid)
                     {
-
-                        print "<tr $bc[$var]>";
+                        print '<tr '.$bc[$var].'>';
                         if ($objp->fk_product > 0)
                         {
                             print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-                            if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
-                            else print img_object($langs->trans("ShowProduct"),"product");
-                            print ' '.stripslashes(nl2br($objp->description)).'</a>';
-                            if ($objp->date_start && $objp->date_end) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
-                            if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dolibarr_print_date($objp->date_start).")"; }
-                            if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dolibarr_print_date($objp->date_end).")"; }
+                            if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+                            else print img_object($langs->trans('ShowProduct'),'product');
+                            print ' '.$objp->ref.'</a>';
+                            print ' - '.nl2br($objp->product);
+                            if ($objp->date_start && $objp->date_end)
+                            {
+                                print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
+                            }
+                            if ($objp->date_start && ! $objp->date_end)
+                            {
+                                print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
+                            }
+                            if (! $objp->date_start && $objp->date_end)
+                            {
+                                print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
+                            }
+                            print ($objp->description&&$objp->description!=$objp->product)?'<br>'.$objp->description:'';
                             print '</td>';
                         }
                         else
                         {
-                            print "<td>".stripslashes(nl2br($objp->description));
-                            if ($objp->date_start && $objp->date_end) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
-                            if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dolibarr_print_date($objp->date_start).")"; }
-                            if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dolibarr_print_date($objp->date_end).")"; }
+                            print '<td>'.stripslashes(nl2br($objp->description));
+                            if ($objp->date_start && $objp->date_end)
+                            {
+                                print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
+                            }
+                            if ($objp->date_start && ! $objp->date_end)
+                            {
+                                print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
+                            }
+                            if (! $objp->date_start && $objp->date_end)
+                            {
+                                print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
+                            }
                             print "</td>\n";
                         }
-
                         print '<td align="right">'.$objp->tva_taux.'%</td>';
                         print '<td align="right">'.price($objp->subprice)."</td>\n";
                         print '<td align="right">'.$objp->qty.'</td>';
@@ -1108,7 +1133,7 @@ else
                             print '<td>&nbsp;</td>';
                         }
                         print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
-
+            
                         // Icone d'edition et suppression
                         if ($fac->statut == 0  && $user->rights->facture->creer)
                         {
@@ -1118,7 +1143,7 @@ else
                             print '<td align="right"><a href="facture.php?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
                             print img_delete();
                             print '</a></td>';
-
+            
                             print '<td align="right">';
                             if ($i > 0)
                             {
@@ -1138,9 +1163,9 @@ else
                             print '<td colspan="3">&nbsp;</td>';
                         }
                         print "</tr>";
-
+            
                     }
-
+            
                     // Update ligne de facture
                     if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
                     {
@@ -1149,14 +1174,24 @@ else
                         print '<input type="hidden" name="facid" value="'.$fac->id.'">';
                         print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
                         print "<tr $bc[$var]>";
-                        print '<td><textarea name="desc" cols="50" rows="2">'.stripslashes($objp->description).'</textarea></td>';
+                        print '<td>';
+                        if ($objp->fk_product > 0)
+                        {
+                            print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                            if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+                            else print img_object($langs->trans('ShowProduct'),'product');
+                            print ' '.$objp->ref.'</a>';
+                            print ' - '.stripslashes(nl2br($objp->product));
+                            print '<br>';
+                        }
+                        print '<textarea name="desc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
                         print '<td align="right">';
                         //print $html->select_tva("tva_tx",$objp->tva_taux);
                         print $objp->tva_taux."%";    // Taux tva dépend du produit, donc on ne doit pas pouvoir le changer ici
                         print '</td>';
-                        print '<td align="right"><input size="8" type="text" name="price" value="'.price($objp->subprice).'"></td>';
-                        print '<td align="right"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></td>';
-                        print '<td align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
+                        print '<td align="right"><input size="6" type="text" name="price" value="'.price($objp->subprice).'"></td>';
+                        print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
+                        print '<td align="right" nowrap><input size="2" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
                         print '<td align="center" rowspan="2" colspan="4" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
                         print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
                         print '</tr>' . "\n";
@@ -1172,11 +1207,11 @@ else
                         }
                         print "</form>\n";
                     }
-
+            
                     $total = $total + ($objp->qty * $objp->price);
                     $i++;
                 }
-
+            
                 $db->free($resql);
             }
             else
@@ -1185,18 +1220,18 @@ else
             }
 
             /*
-            * Ajouter une ligne
-            */
+             * Ajouter une ligne
+             */
             if ($fac->statut == 0 && $user->rights->facture->creer && $_GET["action"] <> 'valid')
             {
 
                 print "<form action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
                 print "<tr class=\"liste_titre\">";
-                print '<td width="54%">'.$langs->trans("Description").'</td>';
-                print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
-                print '<td width="12%" align="right">'.$langs->trans("PriceUHT").'</td>';
-                print '<td width="8%" align="right">'.$langs->trans("Qty").'</td>';
-                print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
+                print '<td>'.$langs->trans("Description").'</td>';
+                print '<td align="right">'.$langs->trans("VAT").'</td>';
+                print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
+                print '<td align="right">'.$langs->trans("Qty").'</td>';
+                print '<td align="right">'.$langs->trans("Discount").'</td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
@@ -1208,7 +1243,7 @@ else
                 $var=!$var;
 
                 print '<tr '.$bc[$var].'>';
-                print '<td><textarea name="desc" cols="50" rows="2"></textarea></td>';
+                print '<td><textarea name="desc" cols="50" rows="1"></textarea></td>';
                 print '<td align="right">';
                 print $html->select_tva("tva_tx",$conf->defaulttx);
                 print '</td>';
@@ -1247,7 +1282,7 @@ else
                 {
                     if ($user->rights->facture->valider)
                     {
-                        print "  <a class=\"tabAction\" href=\"facture.php?facid=".$fac->id."&amp;action=valid\">".$langs->trans("Valid")."</a>\n";
+                        print "  <a class=\"butAction\" href=\"facture.php?facid=".$fac->id."&amp;action=valid\">".$langs->trans("Valid")."</a>\n";
                     }
                 }
                 else
@@ -1257,11 +1292,11 @@ else
                     {
                         if ($fac->paye == 0)
                         {
-                            print "  <a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("BuildPDF")."</a>\n";
+                            print "  <a class=\"butAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("BuildPDF")."</a>\n";
                         }
                         else
                         {
-                            print "  <a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("RebuildPDF")."</a>\n";
+                            print "  <a class=\"butAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("RebuildPDF")."</a>\n";
                         }
                     }
                 }
@@ -1269,38 +1304,38 @@ else
                 // Supprimer
                 if ($fac->statut == 0 && $user->rights->facture->supprimer && $_GET["action"] != 'delete')
                 {
-                    print "<a class=\"butDelete\" href=\"facture.php?facid=$fac->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+                    print "<a class=\"butActionDelete\" href=\"facture.php?facid=$fac->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
                 }
 
                 // Envoyer
                 if ($fac->statut == 1 && $user->rights->facture->envoyer)
                 {
-                    print "  <a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">".$langs->trans("Send")."</a>\n";
+                    print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">".$langs->trans("Send")."</a>\n";
                 }
 
                 // Envoyer une relance
                 if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer)
                 {
-                    print "  <a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">".$langs->trans("SendRemind")."</a>\n";
+                    print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">".$langs->trans("SendRemind")."</a>\n";
                 }
 
                 // Emettre paiement
                 if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
                 {
-                    print "  <a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">".$langs->trans("DoPaiement")."</a>\n";
+                    print "  <a class=\"butAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">".$langs->trans("DoPaiement")."</a>\n";
                 }
 
                 // Classer 'payé'
                 if ($fac->statut == 1 && price($resteapayer) <= 0
                 && $fac->paye == 0 && $user->rights->facture->paiement)
                 {
-                    print "  <a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>\n";
+                    print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>\n";
                 }
 
                 // Classer 'abandonnée' (possible si validée et pas encore classer payée)
                 if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
                 {
-                    print "  <a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=canceled\">".$langs->trans("ClassifyCanceled")."</a>\n";
+                    print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=canceled\">".$langs->trans("ClassifyCanceled")."</a>\n";
                 }
 
                 // Récurrente
@@ -1308,7 +1343,7 @@ else
                 {
                     if ($fac->statut > 0)
                     {
-                        print "  <a class=\"tabAction\" href=\"facture/fiche-rec.php?facid=".$fac->id."&amp;action=create\">Récurrente</a>\n";
+                        print "  <a class=\"butAction\" href=\"facture/fiche-rec.php?facid=".$fac->id."&amp;action=create\">Récurrente</a>\n";
                     }
                 }
 
