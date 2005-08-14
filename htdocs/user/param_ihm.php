@@ -33,15 +33,21 @@ $langs->load("products");
 $langs->load("admin");
 $langs->load("users");
 
-
+$id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 $dirtop = "../includes/menus/barre_top";
 $dirleft = "../includes/menus/barre_left";
 $dirtheme = "../theme";
+
+// Charge utilisateur edité
+$fuser = new User($db, $id);
+$fuser->fetch();
+$fuser->getrights();
 
 // Liste des zone de recherche permanantes supportées
 $searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
 $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
+
 
 
 /*
@@ -72,7 +78,7 @@ if ($_POST["action"] == 'update')
         $tabparam["MAIN_SEARCHFORM_SOCIETE"]=$_POST["main_searchform_societe"];
         $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
     
-        dolibarr_set_user_page_param($db, $user, '', $tabparam);
+        dolibarr_set_user_page_param($db, $fuser, '', $tabparam);
         
         $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
     
@@ -85,10 +91,6 @@ if ($_POST["action"] == 'update')
 
 llxHeader();
 
-
-$fuser = new User($db, $_GET["id"]);
-$fuser->fetch();
-$fuser->getrights();
 
 
 /*
@@ -145,24 +147,24 @@ if ($_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Language").'</td>';
     print '<td>'.$conf->global->MAIN_LANG_DEFAULT.'</td>';
-    print '<td align="center"><input name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($user->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="center"><input name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     $html=new Form($db);
-    $html->select_lang($user->conf->MAIN_LANG_DEFAULT,'main_lang_default');
+    $html->select_lang($fuser->conf->MAIN_LANG_DEFAULT,'main_lang_default');
     print '</td></tr>';
 
     // Taille max des listes
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="center"><input name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($user->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-    print '<td><input class="flat" name="size_liste_limit" size="4" value="' . $user->conf->SIZE_LISTE_LIMIT . '"></td></tr>';
+    print '<td align="center"><input name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td><input class="flat" name="size_liste_limit" size="4" value="' . $fuser->conf->SIZE_LISTE_LIMIT . '"></td></tr>';
 
     print '</table><br>';
 
 
     // Theme
-    show_theme(1);
+    show_theme($fuser,1);
 
     print '</div>';
 
@@ -184,25 +186,25 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Language").'</td>';
     print '<td>'.$conf->global->MAIN_LANG_DEFAULT.'</td>';
-    print '<td align="center"><input type="checkbox" disabled '.($user->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-    print '<td>' . $user->conf->MAIN_LANG_DEFAULT . '</td></tr>';
+    print '<td align="center"><input type="checkbox" disabled '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td>' . $fuser->conf->MAIN_LANG_DEFAULT . '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="center"><input type="checkbox" disabled '.($user->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-    print '<td>' . $user->conf->SIZE_LISTE_LIMIT . '</td></tr>';
+    print '<td align="center"><input type="checkbox" disabled '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td>' . $fuser->conf->SIZE_LISTE_LIMIT . '</td></tr>';
 
     print '</table><br>';
 
 
     // Skin
-    show_theme(0);
+    show_theme($fuser,0);
 
     print '</div>';
 
     print '<div class="tabsAction">';
-    if ($user->id == $_GET["id"])       // Si fiche de l'utilisateur courant
+    if ($fuser->id == $user->id)       // Si utilisateur édité = utilisateur courant
     {
         print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Edit").'</a>';
     }
@@ -215,9 +217,9 @@ $db->close();
 llxFooter('$Date$ - $Revision$');
 
 
-function show_theme($edit=0) 
+function show_theme($fuser,$edit=0) 
 {
-    global $user,$langs,$dirtheme,$bc;
+    global $langs,$dirtheme,$bc;
     
     $nbofthumbs=5;
     print '<table class="noborder" width="100%">';
@@ -238,7 +240,7 @@ function show_theme($edit=0)
             $file=$dirtheme."/".$subdir."/thumb.png";
             if (! file_exists($file)) $file=$dirtheme."/nophoto.jpg";
             print '<table><tr><td><img src="'.$file.'" width="80" height="60"></td></tr><tr><td align="center">';
-            if ($subdir == $user->conf->MAIN_THEME)
+            if ($subdir == $fuser->conf->MAIN_THEME)
             {
                 print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
             }
