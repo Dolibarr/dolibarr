@@ -34,13 +34,6 @@ include_once (JPGRAPH_DIR."jpgraph_canvas.php");
 
 $error = 0;
 
-$labels = array();
-$datas = array();
-
-$ydatas = array();
-$mdatas = array();
-$wdatas = array();
-
 $sql_c = "SELECT rowid";
 $sql_c .= " FROM ".MAIN_DB_PREFIX."energie_compteur";
 
@@ -58,6 +51,14 @@ if ($resql_c)
 	  $obj_c = $db->fetch_object($resql_c);
 
 	  $compteur_id = $obj_c->rowid;
+
+	  $labels = array();
+	  $datas = array();
+	  
+	  $ydatas = array();
+	  $mdatas = array();
+	  $wdatas = array();
+
 
 	  $sql = "SELECT ".$db->pdate("date_releve")." as date_releve, valeur";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."energie_compteur_releve";
@@ -119,7 +120,6 @@ if ($resql_c)
 	      
 	      // Graph
 	      $maxa = 0;
-    
  
 	      for ($i = 1 ; $i < sizeof($datas) ; $i++)
 		{
@@ -148,8 +148,8 @@ if ($resql_c)
 	      if (sizeof($gdatas) > 2)
 		{
 		  $graph = new Graph($width, $height,"auto");    
-		  $graph->SetScale("textlin",0,$maxa);
-	      
+
+		  $graph->SetScale("textlin");
 		  $graph->yaxis->scale->SetGrace(2);
 		  $graph->SetFrame(1);
 		  $graph->img->SetMargin(40,20,20,35);

@@ -154,7 +154,7 @@ if ($resql_c)
 		  $width = 750;
 		  $height = 300;
 		  $graph = new Graph($width, $height,"auto");    
-		  $graph->SetScale("textlin",0,$maxa);
+		  $graph->SetScale("textlin");
 	      
 		  $graph->yaxis->scale->SetGrace(2);
 		  $graph->SetFrame(1);
@@ -178,7 +178,7 @@ if ($resql_c)
 		  $width = 300;
 		  $height = 90;
 		  $graph = new Graph($width, $height,"auto");    
-		  $graph->SetScale("textlin",0,$maxa);
+		  $graph->SetScale("textlin");
 	      
 		  $graph->yaxis->scale->SetGrace(2);
 		  $graph->SetFrame(1);
