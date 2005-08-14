@@ -67,7 +67,8 @@ class Propal
 
 
     /** 
-     *      \brief      Constructeur
+     *		\brief      Constructeur
+     *      \param      DB      Handler d'accès base
      */
     function Propal($DB, $soc_idp="", $propalid=0)
     {
@@ -999,7 +1000,7 @@ class Propal
       }
     else
       {
-	dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
 	return -1;
       }
   }
@@ -1107,7 +1108,6 @@ class Propal
         }
         else 
         {
-            dolibarr_print_error($this->db);
             $this->error=$this->db->error();
             return -1;
         }
