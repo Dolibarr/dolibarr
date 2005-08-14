@@ -40,14 +40,15 @@ class pdf_crabe extends ModelePDFFactures
     
     /**
     		\brief  Constructeur
-    		\param	db		handler accès base de donnée
+    		\param	db		Handler accès base de donnée
     */
     function pdf_crabe($db)
     {
         global $langs;
         
         $this->db = $db;
-        $this->description = "Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)";
+        $this->name = "crabe";
+		$this->description = "Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)";
         $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
         $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
@@ -103,7 +104,7 @@ class pdf_crabe extends ModelePDFFactures
         if ($conf->facture->dir_output)
         {
             $fac = new Facture($this->db,"",$facid);
-            $fac->fetch($facid);
+            $ret=$fac->fetch($facid);
 
 			$facref = sanitize_string($fac->ref);
 			$dir = $conf->facture->dir_output . "/" . $facref;
@@ -147,29 +148,35 @@ class pdf_crabe extends ModelePDFFactures
                 $nexY = $pdf->GetY();
                 $nblignes = sizeof($fac->lignes);
 
-                // Boucle sur les lignes de factures
+                // Boucle sur les lignes
                 for ($i = 0 ; $i < $nblignes ; $i++)
                 {
                     $curY = $nexY;
 
                     // Description produit
-                    $codeproduitservice="";
+                    $libelleproduitservice=$fac->lignes[$i]->libelle;
+                    if ($fac->lignes[$i]->desc&&$fac->lignes[$i]->desc!=$fac->lignes[$i]->libelle)
+                    {
+                        if ($libelleproduitservice) $libelleproduitservice.="\n";
+                        $libelleproduitservice.=$fac->lignes[$i]->desc;
+                    }
                     $pdf->SetXY (11, $curY );
-                    if (defined("FACTURE_CODEPRODUITSERVICE") && FACTURE_CODEPRODUITSERVICE) {
+                    
+                    if ($conf->global->FACTURE_CODEPRODUITSERVICE && $fac->lignes[$i]->produit_id)
+                    {
                         // Affiche code produit si ligne associée à un code produit
-
                         $prodser = new Product($this->db);
 
                         $prodser->fetch($fac->lignes[$i]->produit_id);
                         if ($prodser->ref) {
-                            $codeproduitservice=" - ".$langs->trans("ProductCode")." ".$prodser->ref;
+                            $libelleproduitservice=$langs->trans("ProductCode")." ".$prodser->ref." - ".$libelleproduitservice;
                         }
                     }
                     if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end) {
                         // Affichage durée si il y en a une
-                        $codeproduitservice.=" (".$langs->trans("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
+                        $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
                     }
-                    $pdf->MultiCell(108, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
+                    $pdf->MultiCell(108, 5, $libelleproduitservice, 0, 'J');
 
                     $nexY = $pdf->GetY();
 
