@@ -54,6 +54,23 @@ if ($_POST["action"] == 'add')
 }
 
 /*
+ * Action suppression catégorie
+ */
+if ( $_REQUEST['action'] == 'delete' )
+{
+	if ( $_REQUEST['categid'] )
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ WHERE rowid='".$_REQUEST['categid']."'";
+		$result = $db->query($sql);
+
+		if (!$result)
+		{
+		dolibarr_print_error($db);
+		}
+	}
+}
+
+/*
  * Affichage liste des catégories
  */
 
@@ -80,7 +97,8 @@ if ($result)
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</td>';
-      print "<td colspan=\"2\">$objp->label</td>";
+      print "<td>$objp->label</td>";
+      print '<td style="text-align: center;"><a href="categ.php?categid='.$objp->rowid.'&amp;action=delete"'.img_delete().'</a></td>';
       print "</tr>";
       $i++;
     }
