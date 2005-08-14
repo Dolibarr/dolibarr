@@ -42,7 +42,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			\brief      Constructeur
     		\param	    db		Handler accès base de donnée
     */
-    function pdf_propale_azur($db=0)
+    function pdf_propale_azur($db)
     {
       	global $langs;
 
@@ -158,29 +158,35 @@ class pdf_propale_azur extends ModelePDFPropales
                 $nexY = $pdf->GetY();
                 $nblignes = sizeof($prop->lignes);
 
-                // Boucle sur les lignes de propales
+                // Boucle sur les lignes
                 for ($i = 0 ; $i < $nblignes ; $i++)
                 {
                     $curY = $nexY;
 
                     // Description produit
-                    $codeproduitservice="";
+                    $libelleproduitservice=$prop->lignes[$i]->libelle;
+                    if ($prop->lignes[$i]->desc&&$prop->lignes[$i]->desc!=$prop->lignes[$i]->libelle)
+                    {
+                        if ($libelleproduitservice) $libelleproduitservice.="\n";
+                        $libelleproduitservice.=$prop->lignes[$i]->desc;
+                    }
                     $pdf->SetXY (11, $curY );
-                    if (defined("PROPALE_CODEPRODUITSERVICE") && PROPALE_CODEPRODUITSERVICE) {
-                        // Affiche code produit si ligne associée à un code produit
 
+                    if ($conf->global->PROPALE_CODEPRODUITSERVICE && $fac->lignes[$i]->produit_id)
+                    {
+                        // Affiche code produit si ligne associée à un code produit
                         $prodser = new Product($this->db);
 
                         $prodser->fetch($prop->lignes[$i]->produit_id);
                         if ($prodser->ref) {
-                            $codeproduitservice=" - ".$langs->trans("ProductCode")." ".$prodser->ref;
+                            $libelleproduitservice=$langs->trans("ProductCode")." ".$prodser->ref." - ".$libelleproduitservice;
                         }
                     }
                     if ($prop->lignes[$i]->date_start && $prop->lignes[$i]->date_end) {
                         // Affichage durée si il y en a une
-                        $codeproduitservice.=" (".$langs->trans("From")." ".dolibarr_print_date($prop->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($prop->lignes[$i]->date_end).")";
+                        $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($prop->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($prop->lignes[$i]->date_end).")";
                     }
-                    $pdf->MultiCell(108, 5, $prop->lignes[$i]->desc."$codeproduitservice", 0, 'J');
+                    $pdf->MultiCell(108, 5, $libelleproduitservice, 0, 'J');
 
                     $nexY = $pdf->GetY();
 
