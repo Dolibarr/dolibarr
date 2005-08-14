@@ -258,6 +258,7 @@ ReadPermissionNotAllowed=Read permission not allowed
 AmountInCurrency=Amount in %s currency
 Example=Example
 NoExample=No example
+FindBug=Report a bug
 # Countries
 CountryFR=France
 CountryBE=Belgium
