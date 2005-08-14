@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -34,10 +33,10 @@ $langs->load("sendings");
 
 llxHeader('',$langs->trans("Sendings"),'ch-expedition.html',$form_search);
 
-print_titre($langs->trans("Sendings"));
+print_fiche_titre($langs->trans("Sendings"));
 
-print '<table class="noborder" width="100%">';
-print '<tr><td valign="top" width="30%">';
+print '<table class="notopnoleftnoright" width="100%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 $var=false;
 print '<table class="noborder" width="100%">';
@@ -55,29 +54,30 @@ $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e, ".MAIN_DB_PREFIX."societe as s,
 $sql.= " WHERE e.fk_commande = c.rowid AND c.fk_soc = s.idp AND e.fk_statut = 0";
 if ($socidp)
 {
-  $sql .= " AND c.fk_soc = $socidp";
+    $sql .= " AND c.fk_soc = $socidp";
 }
 
-if ( $db->query($sql) ) 
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  if ($num)
+    $num = $db->num_rows($resql);
+    if ($num)
     {
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="3">Expeditions à valider</td></tr>';
-      $i = 0;
-      $var = True;
-      while ($i < $num)
-	{
-	  $var=!$var;
-	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-	  print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a></td></tr>';
-	  $i++;
-	}
-      print "</table><br>";
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="3">'.$langs->trans("SendingsToValidate").'</td></tr>';
+        $i = 0;
+        $var = True;
+        while ($i < $num)
+        {
+            $var=!$var;
+            $obj = $db->fetch_object($resql);
+            print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a></td></tr>';
+            $i++;
+        }
+        print "</table><br>";
     }
 }
 

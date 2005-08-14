@@ -21,11 +21,11 @@
  *
  */
 
-/*!
-  \file htdocs/expedition/pre.inc.php
-  \ingroup    expedition
-  \brief      Fichier de gestion du menu gauche du module expedition
-  \version    $Revision$
+/**
+        \file       htdocs/expedition/pre.inc.php
+        \ingroup    expedition
+        \brief      Fichier de gestion du menu gauche du module expedition
+        \version    $Revision$
 */
 
 require("../main.inc.php");

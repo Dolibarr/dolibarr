@@ -22,18 +22,16 @@
  */
 
 /**
-   \file       htdocs/expedition/liste.php
-   \ingroup    expedition
-   \brief      Page de la liste des expéditions/livraisons
+        \file       htdocs/expedition/liste.php
+        \ingroup    expedition
+        \brief      Page de la liste des expéditions/livraisons
 */
 
 require("./pre.inc.php");
 
 if (!$user->rights->expedition->lire) accessforbidden();
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -48,11 +46,14 @@ if (! $sortorder) $sortorder="DESC";
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
 
+
+
 /******************************************************************************/
 /*                                                                            */
 /*                   Fin des  Actions                                         */
 /*                                                                            */
 /******************************************************************************/
+
 
 llxHeader('',$langs->trans('ListOfSendings'),'ch-expedition.html');
 
