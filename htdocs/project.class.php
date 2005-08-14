@@ -21,66 +21,68 @@
  *
  */
 
-/*!
-  \file       htdocs/project.class.php
-  \ingroup    projet
-  \brief      Fichier de la classe de gestion des projets
-  \version    $Revision$
+/**
+        \file       htdocs/project.class.php
+        \ingroup    projet
+        \brief      Fichier de la classe de gestion des projets
+        \version    $Revision$
 */
 
-/*!
+/**
   \class      Project
   \brief      Classe permettant la gestion des projets
 */
 
 class Project {
-  var $id;
-  var $db;
-  var $ref;
-  var $title;
-  var $socidp;
-
-  /**
-   *    \brief  Constructeur de la classe
-   *    \param  DB          handler accès base de données
-   */
-  function Project($DB)
-  {
-    $this->db = $DB;
-    $this->societe = new Societe($DB);
-  }
+    var $id;
+    var $db;
+    var $ref;
+    var $title;
+    var $socidp;
+    
+    /**
+     *    \brief  Constructeur de la classe
+     *    \param  DB          handler accès base de données
+     */
+    function Project($DB)
+    {
+        $this->db = $DB;
+        $this->societe = new Societe($DB);
+    }
   
-  /*
-   *    \brief      Crée un projet en base
-   *    \param      user id utilisateur qui crée
-   */
+    /*
+     *    \brief      Crée un projet en base
+     *    \param      user        Id utilisateur qui crée
+     *    \return     int         <0 si ko, id du projet crée si ok
+     */
+    function create($user)
+    {
+        if (trim($this->ref))
+        {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, dateo) ";
+            $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, ".$user->id.",now()) ;";
+    
+            if ($this->db->query($sql) )
+            {
+                $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet");
+                $result = $this->id;
+            }
+            else
+            {
+                dolibarr_syslog("Project::Create error -2");
+                $this->error=$this->db->error();
+                $result = -2;
+            }
+        }
+        else
+        {
+            dolibarr_syslog("Project::Create error -1 ref null");
+            $result = -1;
+        }
+    
+        return $result;
+    }
 
-  function create($user)
-  {
-    if (strlen(trim($this->ref)) > 0)
-      {
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, dateo) ";
-	$sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, ".$user->id.",now()) ;";
-	
-	if ($this->db->query($sql) ) 
-	  {
-	    $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet");
-	    $result = 0;
-	  }
-	else
-	  {
-	    dolibarr_syslog($this->db->error());
-	    $result = -2;
-	  }    
-      }
-    else
-      {
-	dolibarr_syslog("Project::Create ref null");
-	$result = -1;
-      }    
-  
-    return $result;
-  }  
 
   function update($user)
   {

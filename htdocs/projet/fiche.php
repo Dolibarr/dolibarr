@@ -38,15 +38,21 @@ if (!$user->rights->projet->lire) accessforbidden();
 
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
-  $pro = new Project($db);
-  $pro->socidp = $_GET["socidp"];
-  $pro->ref = $_POST["ref"];
-  $pro->title = $_POST["title"];
-  $result = $pro->create($user);
-
-  if ($result == 0)
+    $pro = new Project($db);
+    $pro->socidp = $_GET["socidp"];
+    $pro->ref = $_POST["ref"];
+    $pro->title = $_POST["title"];
+    $result = $pro->create($user);
+    
+    if ($result > 0)
     {
-      Header("Location:fiche.php?id=".$pro->id);
+        Header("Location:fiche.php?id=".$pro->id);
+        exit;
+    }
+    else
+    {
+        $mesg='<div class="error">'.$pro->error.'</div>';
+        $_GET["action"] = 'create';
     }
 }
 
@@ -86,6 +92,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
     }
 }
 
+
 llxHeader("",$langs->trans("Project"),"Projet");
 
 
@@ -93,6 +100,8 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
   print_titre($langs->trans("NewProject"));
 
+  if ($mesg) print $mesg;
+  
   print '<form action="fiche.php?socidp='.$_GET["socidp"].'" method="post">';
 
   print '<table class="border" width="100%">';
