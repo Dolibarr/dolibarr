@@ -172,12 +172,12 @@ class pdf_propale_azur extends ModelePDFPropales
                     }
                     $pdf->SetXY (11, $curY );
 
-                    if ($conf->global->PROPALE_CODEPRODUITSERVICE && $prop->lignes[$i]->produit_id)
+                    if ($conf->global->PROPALE_CODEPRODUITSERVICE && $prop->lignes[$i]->product_id)
                     {
                         // Affiche code produit si ligne associée à un code produit
                         $prodser = new Product($this->db);
 
-                        $prodser->fetch($prop->lignes[$i]->produit_id);
+                        $prodser->fetch($prop->lignes[$i]->product_id);
                         if ($prodser->ref) {
                             $libelleproduitservice=$langs->trans("ProductCode")." ".$prodser->ref." - ".$libelleproduitservice;
                         }
