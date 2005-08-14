@@ -39,9 +39,6 @@ accessforbidden();
 $langs->load("bills");
 
 
-$warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiement facture > delai)
-
-
 require_once "../facture.class.php";
 require_once "../paiement.class.php";
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT."/project.class.php");
@@ -919,7 +916,7 @@ else
             print '<tr><td>'.$langs->trans("Date").'</td>';
             print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
             print '<td>'.$langs->trans("DateClosing").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
-            if ($fac->date_lim_reglement < (time() - $warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans("Late"));
+            if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans("Late"));
             print "</td></tr>";
 
             print '<tr>';
@@ -1732,7 +1729,7 @@ else
 
                         print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").'</a> ';
                         print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment;
-                        if ($objp->datelimite < (time() - $warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans("Late"));
+                        if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans("Late"));
                         print "</td>\n";
 
                         if ($objp->df > 0 )
