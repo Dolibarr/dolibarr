@@ -354,7 +354,7 @@ if ($_GET["propalid"])
 			    print img_object($langs->trans('ShowService'),'service');
 			  else 
 			    print img_object($langs->trans('ShowProduct'),'product');
-                print ' '.stripslashes(nl2br($objp->product)).'</a>';
+                print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
 			  if ($objp->date_start && $objp->date_end) 
 			    {
 			      print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';

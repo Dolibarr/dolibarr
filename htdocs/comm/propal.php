@@ -619,8 +619,7 @@ if ($_GET['propalid'])
 	  if ($resql) 
 	    {
 	      $num_lignes = $db->num_rows($resql);
-	      $i = 0;
-	      $total = 0;
+                $i = 0; $total = 0;
 
 	      print '<table class="noborder" width="100%">';
 	      if ($num_lignes)
@@ -640,17 +639,17 @@ if ($_GET['propalid'])
 		{
 		  $objp = $db->fetch_object($resql);
 		  $var=!$var;
-		  if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
+		  
+			// Update ligne de propale
+			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
 		    {
 		      print '<tr '.$bc[$var].'>';
 		      if ($objp->fk_product > 0)
               {
                 print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-                if ($objp->fk_product_type)
-                print img_object($langs->trans('ShowService'),'service');
-                else
-                print img_object($langs->trans('ShowProduct'),'product');
-                print ' '.stripslashes(nl2br($objp->product)).'</a>';
+                if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+                else print img_object($langs->trans('ShowProduct'),'product');
+                print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
                 if ($objp->date_start && $objp->date_end)
                 {
                     print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
@@ -712,6 +711,7 @@ if ($_GET['propalid'])
 			}
 		      print '</tr>';
 		    }
+
 		  // Update ligne de propal
 		  if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] == 'editline' && $_GET["ligne"] == $objp->rowid)
 		    {
@@ -722,7 +722,7 @@ if ($_GET['propalid'])
 		      print '<td colspan="2">&nbsp;</td>';
 		      print '<td align="right"><input name="subprice" type="text" size="6" value="'.$objp->subprice.'"></td>';
 		      print '<td align="right"><input name="qty" type="text" size="2" value="'.$objp->qty.'"></td>';
-		      print '<td align="right"><input name="remise" type="text" size="2" value="'.$objp->remise_percent.'"> %</td>';
+		      print '<td align="right" nowrap><input name="remise" type="text" size="2" value="'.$objp->remise_percent.'"> %</td>';
 		      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Save").'"></td>';
 		      print '</tr></form>';
 		    }
@@ -739,7 +739,6 @@ if ($_GET['propalid'])
 
 	  /*
 	   * Ajouter une ligne
-	   *
 	   */
 	  if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] <> 'editline')
 	    {
@@ -826,71 +825,76 @@ if ($_GET['propalid'])
     }
 
 
-  /*
-   * Boutons Actions
-   */
-  if ($propal->statut < 2)
+    /*
+     * Boutons Actions
+     */
+    print '<div class="tabsAction">';
+    
+    // Valid
+    if ($propal->statut == 0)
     {
-      print '<div class="tabsAction">';
-
-      // Valid
-      if ($propal->statut == 0)
-	{
-	  if ($user->rights->propale->valider)
-	    {
-	      print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;valid=1">'.$langs->trans('Valid').'</a>';
-	    }
-	}
-
-      // Save
-      if ($propal->statut == 1)
-	{
-	  if ($user->rights->propale->creer)
-	    {
-	      print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
-	    }
-	}
-
-      // Build PDF
-      if ($propal->statut < 2 && $user->rights->propale->creer)
-	{
-	  print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">'.$langs->trans('BuildPDF').'</a>';
-	}	   
-
-      // Send
-      if ($propal->statut == 1)
-	{
-	  if ($user->rights->propale->envoyer)
-	    {
-	      $propref = sanitize_string($obj->ref);
-	      $file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
-	      if (file_exists($file))
-		{
-		  print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
-		}
-	    }
-	}
-
-      // Close
-      if ($propal->statut != 0)
-	{
-	  if ($propal->statut == 1 && $user->rights->propale->cloturer)
-	    {
-	      print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
-	    }
-	}
-
-      // Delete
-      if ($propal->statut == 0)
-	{
-	  if ($user->rights->propale->supprimer)
-	    {
-	      print '<a class="butActionDelete" href="propal.php?propalid='.$propal->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-	    }
-	}
-
-      print '</div>';
+        if ($user->rights->propale->valider)
+        {
+            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;valid=1">'.$langs->trans('Valid').'</a>';
+        }
     }
+    
+    // Save
+    if ($propal->statut == 1)
+    {
+        if ($user->rights->propale->creer)
+        {
+            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+        }
+    }
+    
+    // Build PDF
+    if ($user->rights->propale->creer)
+    {
+        if ($propal->statut < 2)
+        {
+            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">'.$langs->trans("BuildPDF").'</a>';
+        }
+        else
+        {
+            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">'.$langs->trans("RebuildPDF").'</a>';
+        }
+    }
+    
+    // Send
+    if ($propal->statut == 1)
+    {
+        if ($user->rights->propale->envoyer)
+        {
+            $propref = sanitize_string($obj->ref);
+            $file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
+            if (file_exists($file))
+            {
+                print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('Send').'</a>';
+            }
+        }
+    }
+    
+    // Close
+    if ($propal->statut != 0)
+    {
+        if ($propal->statut == 1 && $user->rights->propale->cloturer)
+        {
+            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
+        }
+    }
+    
+    // Delete
+    if ($propal->statut == 0)
+    {
+        if ($user->rights->propale->supprimer)
+        {
+            print '<a class="butActionDelete" href="propal.php?propalid='.$propal->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+        }
+    }
+    
+    print '</div>';
+
 
 
   print '<table width="100%"><tr><td width="50%" valign="top">';
