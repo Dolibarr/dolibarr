@@ -1258,6 +1258,18 @@ class Adherent
   }
 
   /**
+   *    \brief      Retourne le nom complet de l'adhérent
+   *    \return     string      Nom complet
+   */
+    function getFullname()
+    {
+        if ($this->nom && $this->prenom) return $this->nom.' '.$this->prenom;
+        if ($this->nom)    return $this->nom;
+        if ($this->prenom) return $this->prenom;
+        return '';
+    }
+
+  /**
    *    \brief      Retourne le libellé du statut d'un adhérent (brouillon, validé, résilié)
    *    \return     string      Libellé
    */
