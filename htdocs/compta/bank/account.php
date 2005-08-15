@@ -412,7 +412,7 @@ function _print_lines($db,$result,$sql,$acct)
                 if ($user->rights->banque->modifier)
                 {
                     print '<td align="center">';
-                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page=$page">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
                     print img_edit();
                     print '</a> &nbsp;';
                     print '<a href="account.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';

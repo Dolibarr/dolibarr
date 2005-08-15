@@ -86,23 +86,28 @@ class Account
         $result = $this->db->query($sql);
     }
 
-    /*
-     *
+    /**
+     *      \brief      Ajoute lien entre ecriture bancaire et sources
+     *      \param      line_id     Id ecriture bancaire
+     *      \param      url_id      Id parametre url
+     *      \param      url         Url
+     *      \param      type        Type de lien (payment, company, member, ...)
+     *      \return     int         <0 si ko, id line si ok
      */
-    function add_url_line($line_id, $url_id, $url, $label)
+    function add_url_line($line_id, $url_id, $url, $label, $type='')
     {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (fk_bank, url_id, url, label)";
-        $sql .= " VALUES ('$line_id', '$url_id', '$url', '$label')";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (fk_bank, url_id, url, label, type)";
+        $sql .= " VALUES ('$line_id', '$url_id', '$url', '$label', '$type')";
 
         if ($this->db->query($sql))
         {
             $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_url");
-
             return $rowid;
         }
         else
         {
-            return '';
+            $this->error=$this->db->error();
+            return -1;
         }
     }
 

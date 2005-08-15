@@ -130,11 +130,13 @@ if ($_POST["action"] == 'add_paiement')
 			  $acc->add_url_line($bank_line_id, 
 					     $paiement_id, 
 					     DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', 
-					     "(paiement)");
+					     "(paiement)",
+					     'payment');
 			  $acc->add_url_line($bank_line_id, 
 					     $fac->client->id, 
 					     DOL_URL_ROOT.'/compta/fiche.php?socid=', 
-					     $fac->client->nom);
+					     $fac->client->nom,
+					     'company');
 			}
 		      
 		    }

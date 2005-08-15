@@ -705,7 +705,8 @@ update llx_bank set datev=dateo where datev is null;
 update llx_chargesociales set periode=date_ech where periode is null or periode = '0000-00-00';
 
 -- pour virer les doublons de llx_bank_url (dus à un ancien bug)
-ALTER IGNORE TABLE llx_bank_url ADD UNIQUE INDEX(fk_bank,url_id);
+alter ignore table llx_bank_url add unique index(fk_bank,url_id);
+alter table llx_bank_url add type varchar(16);
 
 create table llx_societe_remise
 (
