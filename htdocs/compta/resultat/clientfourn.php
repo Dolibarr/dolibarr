@@ -258,14 +258,15 @@ $subtotal_ttc = 0;
 
 if ($modecompta == 'CREANCES-DETTES') {
     // TVA à payer
-    $obj->amount=0;
+    $amount=0;
     $sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
     $sql .= " WHERE f.fk_statut = 1";
     if ($year) {
     	$sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     }
-    $sql .= " GROUP BY dm DESC";
+    $sql .= " GROUP BY dm";
+    $sql .= " ORDER BY dm DESC";
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -275,11 +276,11 @@ if ($modecompta == 'CREANCES-DETTES') {
           while ($i < $num) {
             $obj = $db->fetch_object($result);
         
+            $amount = $amount - $obj->amount;
             $total_ht = $total_ht - $obj->amount;
             $total_ttc = $total_ttc - $obj->amount;
             $subtotal_ht = $subtotal_ht - $obj->amount;
             $subtotal_ttc = $subtotal_ttc - $obj->amount;
-        
             $i++;
           }
         }
@@ -288,18 +289,19 @@ if ($modecompta == 'CREANCES-DETTES') {
     }
     print "<tr $bc[$var]><td>&nbsp</td>";
     print "<td>".$langs->trans("VATToPay")."</td>\n";
-    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price(-$obj->amount)."</td>\n";
-    print "<td align=\"right\">".price(-$obj->amount)."</td>\n";
+    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
+    print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";
     // TVA à récupérer
-    $obj->amount=0;
+    $amount=0;
     $sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
     $sql .= " WHERE f.fk_statut = 1";
     if ($year) {
     	$sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     }
-    $sql .= " GROUP BY dm DESC";
+    $sql .= " GROUP BY dm";
+    $sql .= " ORDER BY dm DESC";
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -309,6 +311,7 @@ if ($modecompta == 'CREANCES-DETTES') {
           while ($i < $num) {
             $obj = $db->fetch_object($result);
         
+            $amount = $amount + $obj->amount;
             $total_ht = $total_ht + $obj->amount;
             $total_ttc = $total_ttc + $obj->amount;
             $subtotal_ht = $subtotal_ht + $obj->amount;
@@ -322,20 +325,21 @@ if ($modecompta == 'CREANCES-DETTES') {
     }
     print "<tr $bc[$var]><td>&nbsp</td>";
     print "<td>".$langs->trans("VATToCollect")."</td>\n";
-    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($obj->amount)."</td>\n";
-    print "<td align=\"right\">".price($obj->amount)."</td>\n";
+    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
+    print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";
 }
 else {
     // TVA payée
-    $obj->amount=0;
+    $amount=0;
     $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
     $sql .= " WHERE amount > 0";
     if ($year) {
     	$sql .= " AND t.datev between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     }
-    $sql .= " GROUP BY dm DESC";
+    $sql .= " GROUP BY dm";
+    $sql .= " ORDER BY dm DESC";
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -345,6 +349,7 @@ else {
           while ($i < $num) {
             $obj = $db->fetch_object($result);
         
+            $amount = $amount - $obj->amount;
             $total_ht = $total_ht - $obj->amount;
             $total_ttc = $total_ttc - $obj->amount;
             $subtotal_ht = $subtotal_ht - $obj->amount;
@@ -358,18 +363,19 @@ else {
     }
     print "<tr $bc[$var]><td>&nbsp</td>";
     print "<td>".$langs->trans("VATToPay")."</td>\n";
-    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price(-$obj->amount)."</td>\n";
-    print "<td align=\"right\">".price(-$obj->amount)."</td>\n";
+    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
+    print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";
     // TVA récupérée
-    $obj->amount=0;
+    $amount=0;
     $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
     $sql .= " WHERE amount < 0";
     if ($year) {
     	$sql .= " AND t.datev between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     }
-    $sql .= " GROUP BY dm DESC";
+    $sql .= " GROUP BY dm";
+    $sql .= " ORDER BY dm DESC";
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -379,6 +385,7 @@ else {
           while ($i < $num) {
             $obj = $db->fetch_object($result);
         
+            $amount = $amount + $obj->amount;
             $total_ht = $total_ht + $obj->amount;
             $total_ttc = $total_ttc + $obj->amount;
             $subtotal_ht = $subtotal_ht + $obj->amount;
