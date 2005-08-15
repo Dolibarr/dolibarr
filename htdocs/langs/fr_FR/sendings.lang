@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - sendings
 Sending=Expédition
 Sendings=Expéditions
+SendingsArea=Espace expéditions
 ListOfSendings=Liste des expéditions
 SendingMethod=Méthode d'expédition
 SendingReceipt=Bordereau de livraison
