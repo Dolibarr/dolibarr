@@ -134,8 +134,8 @@ function llxHeader($head = "") {
 
   if ($user->rights->mailing->lire)
     {
-      $langs->trans("mails");
-      $menu->add(DOL_URL_ROOT."/comm/mailing/index.php",$langs->trans("EMailing"));
+      $langs->load("mails");
+      $menu->add(DOL_URL_ROOT."/comm/mailing/index.php",$langs->trans("EMailings"));
     }
 
   if ($conf->telephonie->enabled)
