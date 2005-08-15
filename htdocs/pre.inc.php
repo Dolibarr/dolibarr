@@ -124,11 +124,13 @@ function llxHeader($head = "") {
     {
       $langs->load("orders");
       $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
-      if ($conf->expedition->enabled)
-	{
-	  $menu->add_submenu(DOL_URL_ROOT."/expedition/index.php", $langs->trans("Sendings"));
-	}
     }
+
+  if ($conf->expedition->enabled && $user->rights->expedition->lire)
+	{
+      $langs->load("sendings");
+	  $menu->add(DOL_URL_ROOT."/expedition/index.php", $langs->trans("Sendings"));
+	}
 
   if ($user->rights->mailing->lire)
     {
