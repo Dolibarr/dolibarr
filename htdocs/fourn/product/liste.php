@@ -165,7 +165,7 @@ if ($resql)
     }
 
 
-  print '<table class="noborder" width="100%">';
+  print '<table class="liste" width="100%">';
 
   // Lignes des titres
   print "<tr class=\"liste_titre\">";
@@ -181,13 +181,13 @@ if ($resql)
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
   print '<input type="hidden" name="type" value="'.$type.'">';
   print '<tr class="liste_titre">';
-  print '<td>';
+  print '<td class="liste_titre">';
   print '<input class="flat" type="text" name="sref" value="'.$sref.'">';
   print '</td>';
-  print '<td valign="right">';
+  print '<td class="liste_titre" valign="right">';
   print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
   print '</td>';
-  print '<td colspan="2" align="right">';
+  print '<td class="liste_titre" colspan="2" align="right">';
   print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
   print '&nbsp; <input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
   print '</td>';

@@ -1115,7 +1115,7 @@ else
       $num = $db->num_rows($result);
       print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php','&amp;socidp='.$socidp,$sortfield,$sortorder,'',$num);
       $i = 0;
-      print '<table class="noborder" width="100%">';
+      print '<table class="liste" width="100%">';
       print '<tr class="liste_titre">';
       print_liste_field_titre($langs->trans('Ref'),'propal.php','p.ref','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'',$sortfield);
       print_liste_field_titre($langs->trans('Company'),'propal.php','s.nom','','&amp;socidp='.$socidp.'&amp;viewstatut='.$viewstatut,'',$sortfield);
@@ -1127,14 +1127,14 @@ else
       // Lignes des champs de filtre
       print '<form method="get" action="propal.php">';
       print '<tr class="liste_titre">';
-      print '<td valign="right">';
+      print '<td class="liste_titre" valign="right">';
       print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
       print '</td>';
-      print '<td align="left">';
+      print '<td class="liste_titre" align="left">';
       print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
       print '</td>';
-      print '<td colspan="2">&nbsp;</td>';
-      print '<td align="right">';
+      print '<td class="liste_titre" colspan="2">&nbsp;</td>';
+      print '<td class="liste_titre" align="right">';
       print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
       print '</td>';
       print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';

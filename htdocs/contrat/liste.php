@@ -85,7 +85,7 @@ if ($resql)
 
     print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="liste" width="100%">';
 
     print '<tr class="liste_titre">';
     $param='&amp;search_contract='.$search_contract;
@@ -94,14 +94,14 @@ if ($resql)
     print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","$param","",$sortfield);
     print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","$param",'align="center"',$sortfield);
     print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.statut","","$param",'align="center"',$sortfield);
-    print '<td width="16">'.img_statut(0,$langs->trans("ServiceStatusInitial")).'</td>';
-    print '<td width="16">'.img_statut(4,$langs->trans("ServiceStatusRunning")).'</td>';
-    print '<td width="16">'.img_statut(5,$langs->trans("ServiceStatusClosed")).'</td>';
+    print '<td class="liste_titre" width="16">'.img_statut(0,$langs->trans("ServiceStatusInitial")).'</td>';
+    print '<td class="liste_titre" width="16">'.img_statut(4,$langs->trans("ServiceStatusRunning")).'</td>';
+    print '<td class="liste_titre" width="16">'.img_statut(5,$langs->trans("ServiceStatusClosed")).'</td>';
     print "</tr>\n";
 
     print '<form method="POST" action="liste.php">';
     print '<tr class="liste_titre">';
-    print '<td>';
+    print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="3" name="search_contract" value="'.stripslashes($search_contract).'">';
     print '</td>';
     print '<td class="liste_titre" valign="right">';
