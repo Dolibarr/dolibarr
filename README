@@ -16,13 +16,14 @@ To install Dolibarr:
 - Copy directory 'dolibarr' and all its files inside your web server root,
   or set up your web server to use dolibarr/htdocs as root for a new
   web server virtual host (need to be web server administrator).
+- Create an empty mysql database (postgresql support is experimental).
 - Set permissions on directory conf to write for your web server user.
 - From your browser, call the dolibarr install page. Url depends on choice
   made on first step:
   http://localhost/dolibarr/htdocs/install/install.php
   or
   http://yourvirtualhost/install/install.php
-  
+- Follow instructions provided by installer...
 
 
 II - UPGRADE DOLIBARR
