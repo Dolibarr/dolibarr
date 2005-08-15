@@ -251,7 +251,7 @@ if ( $societe->fetch($socid) )
   
   $max=5;
   
-  $sql  = "SELECT p.rowid,p.libelle,p.facnumber,".$db->pdate("p.datef")." as df, total_ttc as amount, paye";
+  $sql  = "SELECT p.rowid,p.libelle,p.facnumber,p.fk_statut,".$db->pdate("p.datef")." as df, total_ttc as amount, paye";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as p WHERE p.fk_soc = $societe->id";
   $sql .= " ORDER BY p.datef";
   $resql=$db->query($sql);
@@ -280,7 +280,7 @@ if ( $societe->fetch($socid) )
 	  print "<td align=\"right\" width=\"80\">".dolibarr_print_date($obj->df)."</td>";
 	  print '<td align="right">'.$obj->amount.'</td>';
 	  $fac = new FactureFournisseur($db);
-	  print '<td align="center">'.$fac->LibStatut($obj->paye,$obj->statut).'</td>';
+	  print '<td align="center">'.$fac->LibStatut($obj->paye,$obj->fk_statut).'</td>';
 	  print "</tr>";
 	  $i++;
 	}
