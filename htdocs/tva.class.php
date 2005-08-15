@@ -120,7 +120,6 @@ class Tva
         {
             $sql .= " WHERE f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
         }
-echo $sql;
         $result = $this->db->query($sql);
 
         if ($result)
