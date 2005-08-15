@@ -56,8 +56,9 @@ $sql .= " WHERE d.fk_adherent_type = t.rowid ";
 if ($_GET["type"]) {
     $sql.=" AND t.rowid=".$_GET["type"];
 }
-if (isset($_GET["statut"])) {
-    $sql.=" AND d.statut = $statut";
+if (isset($_GET["statut"]))
+{   
+    $sql.=" AND d.statut in ($statut)";     // Peut valoir un nombre ou liste de nombre séparés par virgules
 }
 if ( $_POST["action"] == 'search')
 {
@@ -78,12 +79,13 @@ if ($result)
 
     $titre=$langs->trans("MembersList");
     if (isset($_GET["statut"])) {
-        if ($statut == -1) { $titre=$langs->trans("MembersListToValid"); }
-        if ($statut == 1)  { $titre=$langs->trans("MembersListValid"); }
-        if ($statut == 0)  { $titre=$langs->trans("MembersListResiliated"); }
+        if ($statut == '-1,1') { $titre=$langs->trans("MembersListQualified"); }
+        if ($statut == '-1') { $titre=$langs->trans("MembersListToValid"); }
+        if ($statut == '1')  { $titre=$langs->trans("MembersListValid"); }
+        if ($statut == '0')  { $titre=$langs->trans("MembersListResiliated"); }
     }
     elseif ($_POST["action"] == 'search') {
-        $titre="Liste des adhérents répondant aux critères";
+        $titre=$langs->trans("MembersListQualified");
     }
 
     if ($_GET["type"]) {

@@ -64,61 +64,88 @@ if ($_POST["action"] == 'cotisation')
     $reyear=$_POST["reyear"];
     $cotisation=$_POST["cotisation"];
 
-    $adh = new Adherent($db);
-    $adh->id = $rowid;
-    $adh->fetch($rowid);
     if ($cotisation > 0)
     {
         $db->begin();
-        
-        // rajout du nouveau cotisant dans les listes qui vont bien
+
+        $adh = new Adherent($db);
+        $adh->id = $rowid;
+        $adh->fetch($rowid);
+
+        // Rajout du nouveau cotisant dans les listes qui vont bien
         //      if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == "0000-00-00 00:00:00"){
-        if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == 0){
+        if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == 0)
+        {
             $adh->add_to_mailman(ADHERENT_MAILMAN_LISTS_COTISANT);
         }
 
         $crowid=$adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
-
-        // insertion dans la gestion banquaire si configure pour
-        if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE)
+        if ($crowid > 0)
         {
-            $acct=new Account($db,$_POST["accountid"]);
-
-            $dateop=strftime("%Y%m%d",time());
-            $amount=$cotisation;
-            $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"], '', $user);
-            if ($insertid <= 0)
+            // Insertion dans la gestion banquaire si configuré pour
+            if ($conf->global->ADHERENT_BANK_USE)
             {
-                $db->rollback();
-                dolibarr_print_error($db,$acct->error);
-            }
-            else
-            {
-                // met a jour la table cotisation
-                $sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=$insertid WHERE rowid=$crowid ";
-                $result = $db->query($sql);
-                if ($result)
+                $acct=new Account($db,$_POST["accountid"]);
+    
+                $dateop=strftime("%Y%m%d",time());
+                $amount=$cotisation;
+    
+                $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"], '', $user);
+                if ($insertid > 0)
                 {
-                    $db->commit();
-                    //Header("Location: fiche.php");
+        			$inserturlid=$acct->add_url_line($insertid, $adh->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $adh->getFullname(), 'member');
+                    if ($inserturlid > 0)
+                    {
+                        // Met a jour la table cotisation
+                        $sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid." WHERE rowid=".$crowid;
+                        $resql = $db->query($sql);
+                        if ($resql)
+                        {
+                            $db->commit();
+                            //Header("Location: fiche.php");
+                        }
+                        else
+                        {
+                            $db->rollback();
+                            dolibarr_print_error($db);
+                        }
+                    }
+                    else
+                    {
+                        $db->rollback();
+                        dolibarr_print_error($db,$acct->error);
+                    }
                 }
                 else
                 {
                     $db->rollback();
-                    dolibarr_print_error($db);
+                    dolibarr_print_error($db,$acct->error);
                 }
+            }
+            else
+            {
+                $db->commit();
             }
         }
         else
         {
-            $db->commit();
+            $db->rollback();
+            dolibarr_print_error($db);
         }
 
+        // Envoi mail
         if (defined("ADHERENT_MAIL_COTIS") && defined("ADHERENT_MAIL_COTIS_SUBJECT")){
             $adh->send_an_email($adh->email,ADHERENT_MAIL_COTIS,ADHERENT_MAIL_COTIS_SUBJECT);
         }
-
     }
+    else
+    {
+        $adh = new Adherent($db);
+        $adh->id = $rowid;
+        $adh->fetch($rowid);
+    }
+    $mesg='<div class="error">'.$langs->trans("FieldRequired",$langs->trans("Amount")).'</div>';
+    
     $action = "edit";
 }
 
@@ -776,7 +803,7 @@ if ($rowid)
     
         print '<tr><td>'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-        if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE)
+        if ($conf->global->ADHERENT_BANK_USE)
         {
             print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
             $html->select_types_paiements('','operation');
@@ -790,7 +817,9 @@ if ($rowid)
             print '<input name="num_chq" type="text" size="8">';
             print "</td></tr>\n";
 
-            print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" type="text" size="50" value="'.$langs->trans("Subscription").' '.stripslashes($adh->prenom).' '.stripslashes($adh->nom).' '.strftime("%Y",$adh->datefin).'" ></td></tr>';
+            print '<tr><td>'.$langs->trans("Label").'</td>';
+            print '<td><input name="label" type="text" size="50" value="'.$langs->trans("Subscription").' ';
+            print strftime("%Y",($adh->datefin?$adh->datefin:time())).'" ></td></tr>';
         }
 
         print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"</td></tr>';
