@@ -32,45 +32,102 @@
 require("./pre.inc.php");
 require("../../tva.class.php");
 
-/*
- * On récupère la tva collectée
- */
-function tva_coll($db, $y,$m) {
-  $sql = "SELECT sum(f.tva) as amount"; 
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE ";
-  //Si on paye la tva sur la facturation
-  if(FACTURE_TVAOPTION == "facturation")
-    $sql .= "";
-  //Sinon, on paye la tva sur les encaissements
-  else
-    $sql .= "f.paye = 1 AND";
-  $sql .= " date_format(f.datef,'%Y') = $y";
-  $sql .= " AND date_format(f.datef,'%m') = $m";
+$modecompta = $conf->compta->mode;
 
-  $result = $db->query($sql);
-  if ($result) {
-    $obj = $db->fetch_object($result);
-    return $obj->amount;
-  }
+
+/*
+ * On récupère la tva à collecter
+ */
+function tva_coll($db, $y,$m)
+{
+    if ($modecompta=="CREANCES-DETTES")
+    {
+        // Si on paye la tva sur les factures dues (non brouillon)
+        $sql = "SELECT sum(f.tva) as amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+        $sql.= " WHERE ";
+        $sql.= " f.fk_statut = 1";
+        $sql.= " AND date_format(f.datef,'%Y') = $y";
+        $sql.= " AND date_format(f.datef,'%m') = $m";
+    }
+    else
+    {
+        // Si on paye la tva sur les payments
+    
+        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
+        // n'est pas stocké dans la table des payments.
+        // Il faut quand un payment a lieu, stocker en plus du montant du paiement le
+        // detail part tva et part ht.
+        
+        // En attendant, on renvoi tva sur factures payés
+        $sql = "SELECT sum(f.tva) as amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+        $sql.= " WHERE ";
+        $sql.= " f.paye = 1";
+        $sql.= " AND date_format(f.datef,'%Y') = $y";
+        $sql.= " AND date_format(f.datef,'%m') = $m";
+    }
+
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $obj = $db->fetch_object($resql);
+        return $obj->amount;
+    }
+    else
+    {
+        dolibarr_print_error($db);
+    }
 }
 
+
 /*
- *
+ * On récupère la tva à payer
  */
 function tva_paye($db, $y,$m)
 {
-  $sql = "SELECT sum(f.total_tva) as amount"; 
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f WHERE f.paye = 1";
-  $sql .= " AND date_format(f.datef,'%Y') = $y";
-  $sql .= " AND date_format(f.datef,'%m') = $m";
-
-  $result = $db->query($sql);
-  if ($result)
+    if ($modecompta=="CREANCES-DETTES")
     {
-      $obj = $db->fetch_object($result);
-      return $obj->amount;
+        // Si on paye la tva sur les factures dues (non brouillon)
+        $sql = "SELECT sum(f.total_tva) as amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+        $sql.= " WHERE ";
+        $sql.= " f.fk_statut = 1";
+        $sql.= " AND date_format(f.datef,'%Y') = $y";
+        $sql.= " AND date_format(f.datef,'%m') = $m";
+    }
+    else
+    {
+        // Si on paye la tva sur les payments
+    
+        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
+        // n'est pas stocké dans la table des payments.
+        // Il faut quand un payment a lieu, stocker en plus du montant du paiement le
+        // detail part tva et part ht.
+        
+        // En attendant, on renvoi tva sur factures payés
+        $sql = "SELECT sum(f.total_tva) as amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+  //      $sql.= " WHERE ";
+    $sql .= " WHERE f.fk_statut = 1";
+//        $sql.= " f.paye = 1";
+        $sql.= " AND date_format(f.datef,'%Y') = $y";
+        $sql.= " AND date_format(f.datef,'%m') = $m";
+print "xx $sql";
+    }
+
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $obj = $db->fetch_object($resql);
+        return $obj->amount;
+    }
+    else
+    {
+        dolibarr_print_error($db);
     }
 }
+
 
 function pt ($db, $sql, $date) {
     global $bc,$langs;

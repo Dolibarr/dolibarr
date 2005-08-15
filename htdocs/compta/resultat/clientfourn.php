@@ -256,7 +256,8 @@ print '<tr><td colspan="4">'.$langs->trans("VAT").'</td></tr>';
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
 
-if ($modecompta == 'CREANCES-DETTES') {
+if ($modecompta == 'CREANCES-DETTES')
+{
     // TVA à payer
     $amount=0;
     $sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
@@ -302,6 +303,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     }
     $sql .= " GROUP BY dm";
     $sql .= " ORDER BY dm DESC";
+
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -329,8 +331,9 @@ if ($modecompta == 'CREANCES-DETTES') {
     print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";
 }
-else {
-    // TVA payée
+else
+{
+    // TVA réellement déjà payée
     $amount=0;
     $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
@@ -362,7 +365,7 @@ else {
         dolibarr_print_error($db);
     }
     print "<tr $bc[$var]><td>&nbsp</td>";
-    print "<td>".$langs->trans("VATToPay")."</td>\n";
+    print "<td>".$langs->trans("VATPayed")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";
@@ -398,7 +401,7 @@ else {
         dolibarr_print_error($db);
     }
     print "<tr $bc[$var]><td>&nbsp</td>";
-    print "<td>".$langs->trans("VATToCollect")."</td>\n";
+    print "<td>".$langs->trans("VATCollected")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($obj->amount)."</td>\n";
     print "<td align=\"right\">".price($obj->amount)."</td>\n";
     print "</tr>\n";

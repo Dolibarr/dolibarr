@@ -22,6 +22,7 @@ VATToPay=TVA à payer
 VATToCollect=TVA à récupérer
 VATSummary=Résumé TVA
 VATPayed=TVA payée
+VATCollected=TVA récupérée
 SocialContribution=Charge sociale
 SocialContributions=Charges sociales
 ContributionsToPay=Charges à payer
