@@ -132,7 +132,7 @@ function llxHeader($head = "") {
 	  $menu->add(DOL_URL_ROOT."/expedition/index.php", $langs->trans("Sendings"));
 	}
 
-  if ($user->rights->mailing->lire)
+  if ($conf->mailing->enabled && $user->rights->mailing->lire)
     {
       $langs->load("mails");
       $menu->add(DOL_URL_ROOT."/comm/mailing/index.php",$langs->trans("EMailings"));
@@ -171,6 +171,7 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
     }
 
+  $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
   
   $langs->load("users");
   $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));

@@ -508,8 +508,8 @@ class MenuLeft {
                   $langs->load("admin");
                   $langs->load("mails");
 
-                  $newmenu->add(DOL_URL_ROOT."/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"),0,$user->rights->mailing->lire);
-                  $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?leftmenu=mailing&action=create", $langs->trans("NewMailing"),1,$user->rights->mailing->creer);
+                  $newmenu->add(DOL_URL_ROOT."/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"), 0, $user->rights->mailing->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?leftmenu=mailing&action=create", $langs->trans("NewMailing"), 1, $user->rights->mailing->creer);
                 }
 
                 if ($conf->projet->enabled) 
@@ -519,7 +519,10 @@ class MenuLeft {
                   $newmenu->add_submenu(DOL_URL_ROOT."/comm/clients.php?leftmenu=projects", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
                 }
 
-                $newmenu->add_submenu(DOL_URL_ROOT."/comm/bookmark.php?leftmenu=bookmarks", $langs->trans("Bookmarks"), 0, 1);
+                $langs->load("other");
+                $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php?leftmenu=bookmarks", $langs->trans("Bookmarks"), 0, 1);
+                $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/fiche.php?action=create", $langs->trans("NewBookmark"));
+                $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("List"));
             }
         
             /*

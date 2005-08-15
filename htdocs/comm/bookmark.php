@@ -50,18 +50,42 @@ $pagenext = $page + 1;
  
 if ($_GET["action"] == 'add')
 {
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),'". $user->login ."');";
-  if (! $db->query($sql) )
+    $bookmark=new Bookmark($db);
+    $bookmark->fk_user=$user->id;
+    $bookmark->url=$user->id;
+    $bookmark->target=$user->id;
+    $bookmark->title='xxx';
+    $bookmark->favicon='xxx';
+    
+    $res=$bookmark->create();
+    if ($res > 0)
     {
-      print $db->error();
+        header("Location: ".$_SERVER["PHP_SELF"]);
+    }
+    else
+    {
+        $mesg='<div class="error">'.$bookmark->error.'</div>';
     }
 }
 
 if ($_GET["action"] == 'delete')
 {
-  $sql = "DELETE FROM  ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
-  if (! $user->admin) $sql .= " AND fk_user = ". $user->id;
-  $result = $db->query($sql);
+    $bookmark=new Bookmark($db);
+    $bookmark->id=$_GET["bid"];
+    $bookmark->url=$user->id;
+    $bookmark->target=$user->id;
+    $bookmark->title='xxx';
+    $bookmark->favicon='xxx';
+    
+    $res=$bookmark->remove();
+    if ($res > 0)
+    {
+        header("Location: ".$_SERVER["PHP_SELF"]);
+    }
+    else
+    {
+        $mesg='<div class="error">'.$bookmark->error.'</div>';
+    }
 }
 
 

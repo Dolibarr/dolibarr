@@ -1633,6 +1633,8 @@ update llx_const set name='MAIN_EMAIL_FROM' where name='MAIN_MAIL_FROM';
 
 alter table llx_bookmark add url         varchar(128);
 alter table llx_bookmark add target      varchar(16);
+alter table llx_bookmark add title       varchar(64);
+alter table llx_bookmark add favicon     varchar(24);
 
 
 

@@ -22,8 +22,10 @@ create table llx_bookmark
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc      integer,
-  fk_user     integer,
+  fk_user     integer NOT NULL,
   dateb       datetime,
-  url         varchar(128),
-  target      varchar(16)
+  url         varchar(128) NOT NULL,
+  target      varchar(16),
+  title       varchar(64),
+  favicon     varchar(24)
 )type=innodb;
