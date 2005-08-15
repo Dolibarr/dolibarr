@@ -27,5 +27,5 @@ create table llx_bank_url
   url_id          integer,
   url             varchar(255),
   label           varchar(255),
-  type            varchar(16)
+  type            enum("company","payment","member","donation","charge")
 )type=innodb;
