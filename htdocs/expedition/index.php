@@ -33,7 +33,7 @@ $langs->load("sendings");
 
 llxHeader('',$langs->trans("Sendings"),'ch-expedition.html',$form_search);
 
-print_fiche_titre($langs->trans("Sendings"));
+print_fiche_titre($langs->trans("SendingsArea"));
 
 print '<table class="notopnoleftnoright" width="100%">';
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
