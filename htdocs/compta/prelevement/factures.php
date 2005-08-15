@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,14 @@
  * $Source$
  *
  */
+
+/**
+        \file       htdocs/compta/prelevement/factures.php
+        \ingroup    prelevement
+        \brief      Page liste des factures prélevées
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 require_once DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php";
@@ -63,13 +72,10 @@ if ($_GET["id"])
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
-
       dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
 
       print '<table class="border" width="100%">';
-
-      print '<tr><td width="20%">Référence</td><td>'.$bon->ref.'</td></tr>';
-
+      print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->ref.'</td></tr>';
       print '</table><br />';
     }
   else
@@ -86,8 +92,6 @@ $offset = $conf->liste_limit * $page ;
 
 /*
  * Liste des factures
- *
- *
  */
 $sql = "SELECT pf.rowid";
 $sql .= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc";
@@ -122,14 +126,15 @@ if ($result)
   
   $urladd = "&amp;id=".$_GET["id"];
 
-  print_barre_liste("Factures", $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste($langs->trans("Bills"), $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num);
+
   print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre("Facture","factures.php","p.ref",'',$urladd);
-  print_liste_field_titre("Société","factures.php","s.nom",'',$urladd);
-  print_liste_field_titre("Montant","factures.php","f.total_ttc","",$urladd,'align="center"');
-  print '<td colspan="2">&nbsp;</td></tr>';
+  print_liste_field_titre("Facture","factures.php","p.ref",'',$urladd,'class="liste_titre"');
+  print_liste_field_titre("Société","factures.php","s.nom",'',$urladd,'class="liste_titre"');
+  print_liste_field_titre("Montant","factures.php","f.total_ttc","",$urladd,'class="liste_titre" align="center"');
+  print '<td class="liste_titre" colspan="2">&nbsp;</td></tr>';
 
   $var=True;
 

@@ -22,6 +22,7 @@
 
 /**
         \file       htdocs/compta/prelevement/bons.php
+        \ingroup    prelevement
         \brief      Page liste des bons de prelevements
         \version    $Revision$
 */
@@ -77,20 +78,19 @@ if ($result)
   print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, "bons.php", $urladd, $sortfield, $sortorder, '', $num);
 
   print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%">';
+  print '<table class="liste" width="100%">';
+
   print '<tr class="liste_titre">';
-
-  print_liste_field_titre("Bon","bons.php","p.ref");
-  print_liste_field_titre($langs->trans("Date"),"bons.php","p.datec","","",'align="center"');
-
-  print '<td align="right">'.$langs->trans("Amount").'</td>';
-
-  print '</tr><tr class="liste_titre">';
-
+  print_liste_field_titre($langs->trans("Receipt"),"bons.php","p.ref",'','','class="liste_titre"');
+  print_liste_field_titre($langs->trans("Date"),"bons.php","p.datec","","",'class="liste_titre" align="center"');
+  print '<td class="liste_titre" align="right">'.$langs->trans("Amount").'</td>';
+  print '</tr>';
+  
+  print '<tr class="liste_titre">';
   print '<form action="bons.php" method="GET">';
-  print '<td><input type="text" class="flat" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
-  print '<td>&nbsp;</td>';
-  print '<td align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
+  print '<td class="liste_titre">&nbsp;</td>';
+  print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
 

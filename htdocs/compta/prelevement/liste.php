@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +18,15 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+        \file       htdocs/compta/prelevement/liste.php
+        \ingroup    prelevement
+        \brief      Page liste des prelevements
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 if (!$user->rights->prelevement->bons->lire)
@@ -88,30 +96,31 @@ if ($result)
   $urladd .= "&amp;search_bon=".$_GET["search_bon"];
 
   print_barre_liste("Lignes de prélèvements", $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
+
   print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Ligne</td>';
+  print '<table class="liste" width="100%">';
 
-  print_liste_field_titre("Bon","liste.php","p.ref");
-
-  print_liste_field_titre("Société","liste.php","s.nom");
-  print_liste_field_titre("Date","liste.php","p.datec","","",'align="center"');
-
-  print '<td align="right">Montant</td>';
-  print_liste_field_titre("Code client","liste.php","s.code_client",'','','align="center"');
-
-  print '</tr><tr class="liste_titre">';
-  print '<form action="liste.php" method="GET">';
-  print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="6"></td>'; 
-
-  print '<td><input type="text" name="search_bon" value="'. $_GET["search_bon"].'" size="8"></td>'; 
-  print '<td><input type="text" name="search_societe" value="'. $_GET["search_societe"].'" size="12"></td>'; 
-  print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
-  print '<td>&nbsp;</td>';
-  print '<td align="center"><input type="text" name="search_code" value="'. $_GET["search_code"].'" size="8"></td>'; 
-
-  print '</form>';
+  print '<tr class="liste_titre">';
+  print '<td class="liste_titre">'.$langs->trans("Line").'</td>';
+  print_liste_field_titre($langs->trans("Receipt"),"liste.php","p.ref");
+  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom");
+  print_liste_field_titre($langs->trans("Date"),"liste.php","p.datec","","",'align="center"');
+  print_liste_field_titre($langs->trans("Amount"),"liste.php","pl.amount");
+  print_liste_field_titre($langs->trans("CustomerCode"),"liste.php","s.code_client",'','','align="center"');
+  print '<td class="liste_titre">&nbsp;</td>';
   print '</tr>';
+
+  print '<form action="liste.php" method="GET">';
+  print '<tr class="liste_titre">';
+  print '<td class="liste_titre"><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="6"></td>'; 
+  print '<td class="liste_titre"><input type="text" name="search_bon" value="'. $_GET["search_bon"].'" size="8"></td>'; 
+  print '<td class="liste_titre"><input type="text" name="search_societe" value="'. $_GET["search_societe"].'" size="12"></td>'; 
+  print '<td class="liste_titre">&nbsp;</td>';
+  print '<td class="liste_titre">&nbsp;</td>';
+  print '<td class="liste_titre" align="center"><input type="text" name="search_code" value="'. $_GET["search_code"].'" size="8"></td>'; 
+  print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
+  print '</tr>';
+  print '</form>';
 
   $var=True;
 
@@ -132,10 +141,11 @@ if ($result)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
       print '<td><a href="fiche.php?id='.$obj->rowid.'">'.stripslashes($obj->nom)."</a></td>\n";
-      print '<td align="center">'.strftime("%d/%m/%Y",$obj->datec)."</td>\n";
-
+      print '<td align="center">'.dolibarr_print_date($obj->datec)."</td>\n";
       print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie)."</td>\n";
       print '<td align="center"><a href="fiche.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
+      print '<td>&nbsp;</td>';
+      
       print "</tr>\n";
       $i++;
     }
@@ -150,5 +160,5 @@ else
 $db->close();
 
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

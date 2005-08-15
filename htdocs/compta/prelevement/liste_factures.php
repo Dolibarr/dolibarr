@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +18,20 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+        \file       htdocs/compta/prelevement/liste_factures.php
+        \ingroup    prelevement
+        \brief      Page liste des factures prélevées
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
-require_once DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php";
-require_once DOL_DOCUMENT_ROOT."/paiement.class.php";
-require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
 
 /*
  * Sécurité accés client
@@ -83,25 +91,25 @@ if ($result)
   $urladd = "&amp;socid=".$_GET["socid"];
 
   print_barre_liste("Factures prélevées", $page, "liste_factures.php", $urladd, $sortfield, $sortorder, '', $num);
+
   print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Ligne</td>';
-  print_liste_field_titre("Facture","liste_factures.php","f.facnumber",'',$urladd);
-  print_liste_field_titre("Société","liste_factures.php","s.nom",'',$urladd);
-  print_liste_field_titre("Montant","liste_factures.php","f.total_ttc","",$urladd,'align="right"');
-  print_liste_field_titre("Bon","liste_factures.php","p.rowid","",$urladd,'align="center"');
+  print '<table class="liste" width="100%">';
+  print '<tr class="liste_titre">';
+  print '<td class="liste_titre">'.$langs->trans("Line").'</td>';
+  print_liste_field_titre($langs->trans("Bill"),"liste_factures.php","f.facnumber",'',$urladd);
+  print_liste_field_titre($langs->trans("Company"),"liste_factures.php","s.nom",'',$urladd);
+  print_liste_field_titre($langs->trans("Amount"),"liste_factures.php","f.total_ttc","",$urladd,'align="right"');
+  print_liste_field_titre($langs->trans("Receipt"),"liste_factures.php","p.rowid","",$urladd,'align="center"');
   print '</tr>';
 
   print '<form method="get" action="liste_factures.php">';
-  print '<tr class="liste_titre"><td>&nbsp;</td>';
-  print '<td>';
+  print '<tr class="liste_titre"><td class="liste_titre">&nbsp;</td>';
+  print '<td class="liste_titre">';
   print '<input size="8" class="flat" type="text" name="search_fac" value="'.$_GET["search_fac"].'">';
-  print '</td><td>';
+  print '</td><td class="liste_titre">';
   print '<input size="20" class="flat" type="text" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
-
-  print '</td><td colspan="2" align="center">';
-  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
   print '</td>';
+  print '<td class="liste_titre" colspan="2" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
   print "</tr>\n";
   print '</form>';
 
@@ -114,7 +122,6 @@ if ($result)
       $obj = $db->fetch_object($result);	
 
       print "<tr $bc[$var]><td>";
-
 
       print '<img border="0" src="./statut'.$obj->statut_ligne.'.png"></a>&nbsp;';
 
@@ -155,5 +162,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

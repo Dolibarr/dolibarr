@@ -87,22 +87,22 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Demandes de prélèvement à traiter", $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste("Demandes de prélèvements à traiter", $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
   
-  print '<table class="noborder" width="100%">';
+  print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td>'.$langs->trans("Bill").'</td><td>'.$langs->trans("Company").'</td><td>Date demande</td>';
-  print '<td>Emetteur</td></tr>';
+  print '<td class="liste_titre">'.$langs->trans("Bill").'</td><td class="liste_titre">'.$langs->trans("Company").'</td>';
+  print '<td class="liste_titre">'.$langs->trans("Date").'</td>';
+  print '<td class="liste_titre">'.$langs->trans("Author").'</td>';
+  print '</tr>';
   
   print '<form action="demandes.php" method="GET">';
-
-  print '<tr class="liste_titre"><td>-</td>';
-  print '<td>';
+  print '<tr class="liste_titre"><td class="liste_titre">-</td>';
+  print '<td class="liste_titre">';
   print '<input type="text" class="flat" name="search_societe" size="12" value="'.$GET["search_societe"].'">';
   print '</td>';
-
-  print '<td colspan="2" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td></tr>';
-
+  print '<td colspan="2" class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
+  print '</tr>';
   print '</form>';
 
   $var = True;
