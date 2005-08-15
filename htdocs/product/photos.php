@@ -120,13 +120,16 @@ if ($_GET["id"])
         $hselected = $h;
         $h++;
 
-        if ($conf->stock->enabled)
+        if($product->type == 0)
         {
-            $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-            $head[$h][1] = $langs->trans("Stock");
-            $h++;
+            if ($conf->stock->enabled)
+            {
+                $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+                $head[$h][1] = $langs->trans("Stock");
+                $h++;
+            }
         }
-
+        
         if ($conf->fournisseur->enabled)
         {
             $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
