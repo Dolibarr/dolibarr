@@ -371,8 +371,8 @@ a.tabTitle {
     border: 1px solid #8CACBB;
     color: white;
     font-weight: normal;
-    padding: 0em 0.5em;
-    margin: 0em 1em;
+    padding: 0px 6px;
+    margin: 0em 0.5em;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -381,7 +381,7 @@ a.tab:link {
     background: white;
     border: 1px solid #8CACBB;
     color: #436976;
-    padding: 0em 1em;
+    padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -390,7 +390,7 @@ a.tab:visited {
     background: white;
     border: 1px solid #8CACBB;
     color: #436976;
-    padding: 0em 1em;
+    padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
