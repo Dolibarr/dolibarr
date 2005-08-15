@@ -113,14 +113,14 @@ class Tva
     function tva_sum_payee($year = 0)
     {
 
-        $sql = "SELECT sum(f.amount) as amount";
+        $sql = "SELECT sum(f.total_tva) as total_tva";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 
         if ($year)
         {
             $sql .= " WHERE f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
         }
-
+echo $sql;
         $result = $this->db->query($sql);
 
         if ($result)
@@ -128,7 +128,7 @@ class Tva
             if ($this->db->num_rows())
             {
                 $obj = $this->db->fetch_object($result);
-                return $obj->amount;
+                return $obj->total_tva;
             }
             else
             {
