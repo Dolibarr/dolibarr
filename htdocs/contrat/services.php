@@ -91,7 +91,7 @@ if ($resql)
 
     print_barre_liste($langs->trans("ListOfServices"), $page, "services.php", "&sref=$sref&snom=$snom&mode=$mode", $sortfield, $sortorder,'',$num);
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="liste" width="100%">';
 
     print '<tr class="liste_titre">';
     $param='&amp;search_contract='.$search_contract;
@@ -111,7 +111,7 @@ if ($resql)
 
     print '<form method="POST" action="services.php">';
     print '<tr class="liste_titre">';
-    print '<td>';
+    print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="3" name="search_contract" value="'.stripslashes($search_contract).'">';
     print '</td>';
     print '<td class="liste_titre">&nbsp;</td>';
