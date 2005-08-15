@@ -73,13 +73,13 @@ if ($_POST["action"] == 'add')
             $accountto=new Account($db);
             $accountto->fetch($_POST["account_to"]);
 
-            $mesg.="<div class=\"ok\"><b>Votre virement entre <a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a> et <a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a> de ".$amount." ".$langs->trans("Currency".$conf->monnaie)." a été crée.</b></div>";
+            $mesg.="<div class=\"ok\"><b>Le virement depuis «&nbsp;<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>&nbsp;» vers «&nbsp;<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>&nbsp;» de ".$amount." ".$langs->trans("Currency".$conf->monnaie)." a été créé.</b></div>";
         }
       else {
           dolibarr_print_error($db);
         } 
   } else {
-      $mesg.="<div class=\"error\"><b>Un libellé de virement et un montant non nul est obligatoire.</b></div>";
+      $mesg.="<div class=\"error\"><b>Un libellé de virement et un montant non nul sont obligatoires.</b></div>";
   }
 }
 
