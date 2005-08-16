@@ -52,6 +52,7 @@ Cancel=Cancel
 Modify=Modify
 Edit=Edit
 Validate=Validate
+ToValidate=To validate
 Save=Save
 SaveAs=Save As
 TestConnection=Test connection

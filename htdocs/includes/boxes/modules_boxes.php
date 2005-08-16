@@ -79,14 +79,20 @@ class ModeleBoxes
             if (isset($contents[$i]))
             {
                 $var=!$var;
-                if (sizeof($contents[$i])) print '<tr valign="top" '.$bcx[$var].'>';
-        
+                if (sizeof($contents[$i]))
+                {
+                    if (isset($contents[$i][-1]['class'])) print '<tr valign="top" class="'.$contents[$i][-1]['class'].'">';
+                    else print '<tr valign="top" '.$bcx[$var].'>';
+                }
+                
                 // Affiche chaque cellule
                 for ($j=0, $m=sizeof($contents[$i]); $j < $m; $j++)
                 {
                     $tdparam="";
                     if (isset($contents[$i][$j]['align'])) $tdparam.=' align="'. $contents[$i][$j]['align'].'"';
                     if (isset($contents[$i][$j]['width'])) $tdparam.=' width="'. $contents[$i][$j]['width'].'"';
+                    if (isset($contents[$i][$j]['colspan'])) $tdparam.=' colspan="'. $contents[$i][$j]['colspan'].'"';
+                    if (isset($contents[$i][$j]['class'])) $tdparam.=' class="'. $contents[$i][$j]['class'].'"';
         
                     if ($contents[$i][$j]['text']) {
                         $texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
