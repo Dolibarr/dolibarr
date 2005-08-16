@@ -21,155 +21,142 @@
  */
 
 /**
-   \file       htdocs/compta/commande/liste.php
-   \ingroup    commande
-   \brief      Page liste des commandes
-   \version    $Revision$
+        \file       htdocs/compta/commande/liste.php
+        \ingroup    commande
+        \brief      Page liste des commandes
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 if (!$user->rights->commande->lire) accessforbidden();
 
-/*
- * Sécurité accés client
- */
-$socidp = $_GET["socidp"];
-
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
-
-llxHeader();
-
 $begin=$_GET["begin"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
-
 if (! $sortfield) $sortfield="c.rowid";
 if (! $sortorder) $sortorder="DESC";
 
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
 
-$sql = "SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande, c.fk_statut" ;
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c WHERE c.fk_soc = s.idp";
-
-if ($socidp)
-{ 
-  $sql .= " AND s.idp = $socidp"; 
+// Sécurité accés client
+$socidp = $_GET["socidp"];
+if ($user->societe_id > 0)
+{
+    $action = '';
+    $socidp = $user->societe_id;
 }
 
+
+llxHeader();
+
+
+$sql = "SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande, c.fk_statut" ;
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c WHERE c.fk_soc = s.idp";
+if ($socidp)
+{
+    $sql .= " AND s.idp = $socidp";
+}
 if ($_GET["month"] > 0)
 {
-  $sql .= " AND date_format(c.date_commande, '%Y-%m') = '$year-$month'";
+    $sql .= " AND date_format(c.date_commande, '%Y-%m') = '".$_GET["year"]."-".$_GET["month"]."'";
 }
 if ($_GET["year"] > 0)
 {
-  $sql .= " AND date_format(c.date_commande, '%Y') = $year";
+    $sql .= " AND date_format(c.date_commande, '%Y') = '".$_GET["year"]."'";
 }
 if (isset($_GET["status"]))
 {
-  $sql .= " AND fk_statut = ".$_GET["status"];
+    $sql .= " AND fk_statut = ".$_GET["status"];
 }
-
 if (isset($_GET["afacturer"]))
 {
-  $sql .= " AND fk_statut >=1	AND c.facture = 0";
+    $sql .= " AND fk_statut >=1	AND c.facture = 0";
 }
-
 if (strlen($_POST["sf_ref"]) > 0)
 {
-  $sql .= " AND c.ref like '%".$_POST["sf_ref"] . "%'";
+    $sql .= " AND c.ref like '%".$_POST["sf_ref"] . "%'";
 }
-
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1,$offset);
-
 $resql = $db->query($sql);
 
 if ($resql)
 {
+    if ($socidp)
+    {
+        $soc = new Societe($db);
+        $soc->fetch($socidp);
+        $title = $langs->trans("ListOfOrders") . " - ".$soc->nom;
+    }
+    else
+    {
+        $title = $langs->trans("ListOfOrders");
+    }
+    // Si page des commandes à facturer
+    $link=DOL_URL_ROOT."/compta/commande/fiche.php";
+    $title.=" - ".$langs->trans("StatusOrderToBill");
+    $param="&amp;socidp=".$socidp."&amp;year=".$_GET["year"]."&amp;month=".$_GET["month"];
 
-  if ($socidp)
-    {
-      $soc = new Societe($db);
-      $soc->fetch($socidp);
-      $title = $langs->trans("ListOfOrders") . " - ".$soc->nom;
-    }
-  else
-    {
-      $title = $langs->trans("ListOfOrders");
-    }
-  // Si page des commandes à facturer
-  $link=DOL_URL_ROOT."/compta/commande/fiche.php";
-  $title.=" - ".$langs->trans("StatusOrderToBill");
-  
-  $num = $db->num_rows($resql);
-  print_barre_liste($title, $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
-    
-  $i = 0;
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","c.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"liste.php","c.date_commande","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"liste.php","c.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
-  print "</tr>\n";
-  $var=True;
-  
-  $generic_commande = new Commande($db);
+    $num = $db->num_rows($resql);
+    print_barre_liste($title, $_GET["page"], "liste.php",$param,$sortfield,$sortorder,'',$num);
 
-  while ($i < min($num,$limit))
+    $i = 0;
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Ref"),"liste.php","c.ref","",$param,'',$sortfield);
+    print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","",$param,'',$sortfield);
+    print_liste_field_titre($langs->trans("Date"),"liste.php","c.date_commande","",$param, 'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("Status"),"liste.php","c.fk_statut","",$param,'align="center"',$sortfield);
+    print "</tr>\n";
+    $var=True;
+
+    $generic_commande = new Commande($db);
+
+    while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object($resql);
-      
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"".$link."?id=$objp->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objp->ref."</a></td>\n";
-      print "<td><a href=\"../../comm/fiche.php?socid=$objp->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a></td>\n";
-      
-      $now = time();
-      $lim = 3600 * 24 * 15 ;
-      
-      if ( ($now - $objp->date_commande) > $lim && $objp->statutid == 1 )
-	{
-	  print "<td><b> &gt; 15 jours</b></td>";
-	}
-      else
-	{
-	  print "<td>&nbsp;</td>";
-	}
-      
-      print "<td align=\"right\">";
-      $y = strftime("%Y",$objp->date_commande);
-      $m = strftime("%m",$objp->date_commande);
-      
-      print strftime("%d",$objp->date_commande)."\n";
-      print " <a href=\"liste.php?year=$y&amp;month=$m\">";
-      print strftime("%B",$objp->date_commande)."</a>\n";
-      print " <a href=\"liste.php?year=$y\">";
-      print strftime("%Y",$objp->date_commande)."</a></td>\n";      
-      
-      print '<td align="center">'.$generic_commande->statuts[$objp->fk_statut].'</td>';
-      print "</tr>\n";
-      
-      $total = $total + $objp->price;
-      $subtotal = $subtotal + $objp->price;
-      
-      $i++;
+        $objp = $db->fetch_object($resql);
+
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print "<td><a href=\"".$link."?id=$objp->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objp->ref."</a></td>\n";
+        print "<td><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp."\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a>";
+        if (($objp->date_commande < (time() - $conf->commande->traitement->warning_delay)) && $objp->statutid == 1 )
+        {
+            print img_warning();
+        }
+        print "</td>";
+
+        print "<td align=\"center\">";
+        $y = strftime("%Y",$objp->date_commande);
+        $m = strftime("%m",$objp->date_commande);
+
+        print strftime("%d",$objp->date_commande)."\n";
+        print " <a href=\"liste.php?year=$y&amp;month=$m\">";
+        print strftime("%B",$objp->date_commande)."</a>\n";
+        print " <a href=\"liste.php?year=$y\">";
+        print strftime("%Y",$objp->date_commande)."</a></td>\n";
+
+        print '<td align="center">'.$generic_commande->statuts[$objp->fk_statut].'</td>';
+        print "</tr>\n";
+
+        $total = $total + $objp->price;
+        $subtotal = $subtotal + $objp->price;
+
+        $i++;
     }
-  
-  print "</table>";
-  $db->free($resql);
+
+    print "</table>";
+    $db->free($resql);
 }
 else
 {
-  print dolibarr_print_error($db);
+    print dolibarr_print_error($db);
 }
 
+
 $db->close();
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
 ?>
