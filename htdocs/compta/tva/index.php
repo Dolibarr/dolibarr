@@ -113,7 +113,7 @@ function tva_paye($db, $y,$m)
 //        $sql.= " f.paye = 1";
         $sql.= " AND date_format(f.datef,'%Y') = $y";
         $sql.= " AND date_format(f.datef,'%m') = $m";
-print "xx $sql";
+	//print "xx $sql";
     }
 
     $resql = $db->query($sql);
