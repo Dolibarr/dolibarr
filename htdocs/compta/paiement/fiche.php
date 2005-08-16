@@ -108,7 +108,7 @@ print '<br>';
 
 print '<table class="border" width="100%">';
 
-
+print '<tr><td valign="top" width="140">'.$langs->trans("Ref").'</td><td>'.$paiement->id.'</td></tr>';
 if ($paiement->bank_account) {
     // Si compte renseigné, on affiche libelle
     print '<tr><td valign="top" width="140">';
@@ -120,9 +120,9 @@ print '<tr><td valign="top" width="140">'.$langs->trans("Date").'</td><td>'.doli
 print '<tr><td valign="top">'.$langs->trans("Type").'</td><td>'.$paiement->type_libelle.'</td></tr>';
 if ($paiement->numero) { print '<tr><td valign="top">'.$langs->trans("Numero").'</td><td>'.$paiement->numero.'</td></tr>'; }
 print '<tr><td valign="top">'.$langs->trans("Amount").'</td><td>'.$paiement->montant."&nbsp;".$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($paiement->note).'</td></tr>';
 print "</table>";
 
-print nl2br($paiement->note);
 
 /*
  *
