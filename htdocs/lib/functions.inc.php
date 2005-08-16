@@ -912,9 +912,9 @@ function accessforbidden()
 
 
 /**
-		\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostique et la remontée des bugs.
+		\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remontée des bugs.
                     On doit appeler cette fonction quand une erreur technique bloquante est rencontrée.
-                    Toutefois, il faut essayer de ne l'appeler qu'au sein de page php, les classes devant
+                    Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
                     renvoyer leur erreur par l'intermédiaire de leur propriété "error".
         \param      db      Handler de base utilisé
         \param      msg     Message complémentaire à afficher

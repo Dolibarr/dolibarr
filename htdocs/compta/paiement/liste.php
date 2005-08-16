@@ -69,8 +69,8 @@ if ($_GET["search_montant"])
 }
 
 
-if ($_GET["orphelins"]) { // Options qui ne sert qu'au debuggage
-    // Paiements liés à aucune facture (pour aide au diagnostique)
+if ($_GET["orphelins"]) { // Options qui ne sert qu'au debogage
+    // Paiements liés à aucune facture (pour aide au diagnostic)
     $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.libelle as paiement_type";
