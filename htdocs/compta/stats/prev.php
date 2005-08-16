@@ -33,7 +33,7 @@ if ($user->societe_id > 0)
 
 function pt ($db, $sql, $title) {
   global $bc;
-  global $langs;
+  global $langs,$conf;
 
   print '<table class="border" width="100%">';
   print '<tr class="liste_titre">';
