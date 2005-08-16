@@ -18,14 +18,13 @@
  *
  * $Id$
  * $Source$
- *
  */
  
 /**
-   \file       htdocs/compta/paiement/liste.php
-   \ingroup    compta
-   \brief      Page liste des paiements des factures clients
-   \version    $Revision$
+        \file       htdocs/compta/paiement/liste.php
+        \ingroup    compta
+        \brief      Page liste des paiements des factures clients
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -58,9 +57,12 @@ if (! $sortfield) $sortfield="p.rowid";
   
 $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
 $sql.= " p.statut, p.num_paiement,";
-$sql.= " c.libelle as paiement_type";
+$sql.= " c.libelle as paiement_type,";
+$sql.= " ba.rowid as bid, ba.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p,";
 $sql.= " ".MAIN_DB_PREFIX."c_paiement as c";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 $sql.= " WHERE p.fk_paiement = c.id";
 
 if ($_GET["search_montant"])
@@ -68,8 +70,8 @@ if ($_GET["search_montant"])
   $sql .=" AND p.amount=".ereg_replace(",",".",$_GET["search_montant"]);
 }
 
-
-if ($_GET["orphelins"]) { // Options qui ne sert qu'au debogage
+if ($_GET["orphelins"])     // Option qui ne sert qu'au debogage
+{
     // Paiements liés à aucune facture (pour aide au diagnostic)
     $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
@@ -98,9 +100,10 @@ if ($resql)
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,"",$sortfield);
+  print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield);
   print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield);
-  print_liste_field_titre($langs->trans("AmountTTC"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield);
+  print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
   print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="center"',$sortfield);
   print "</tr>\n";
   
@@ -108,13 +111,13 @@ if ($resql)
   // Lignes des champs de filtre
   print '<form method="get" action="liste.php">';
   print '<tr class="liste_titre">';
-  print '<td colspan="3">&nbsp;</td>';
+  print '<td colspan="4">&nbsp;</td>';
 
   print '<td align="right">';
-  print '<input class="fat" type="text" size="10" name="search_montant" value="'.$_GET["search_montant"].'">';
+  print '<input class="fat" type="text" size="6" name="search_montant" value="'.$_GET["search_montant"].'">';
 
   print '</td><td align="center">';
-  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
+  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
   print '</td>';
   print "</tr>\n";
   print '</form>';
@@ -125,18 +128,19 @@ if ($resql)
       $objp = $db->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td width="10%"><a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").'</a>';
+      print '<td width="40"><a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").'</a>';
 
       print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
 
-      print '<td width="20%">'.dolibarr_print_date($objp->dp)."</td>\n";
-      print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
+      print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
+      print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.$objp->label.'</a></td>';
       print '<td align="right">'.price($objp->amount).'</td>';
       print '<td align="center">';
 
       if ($objp->statut == 0)
 	{
-	  print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">A valider</a>';
+	  print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("ToValidate").'</a>';
 	}
       else
 	{
