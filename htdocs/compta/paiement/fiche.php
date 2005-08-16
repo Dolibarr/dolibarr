@@ -69,12 +69,16 @@ if ($_POST["action"] == 'confirm_valide' && $_POST["confirm"] == 'yes' && $user-
 
 llxHeader();
 
+
 print '<div class="tabs">';
 print '<a href="fiche.php?id='.$_GET["id"].'" id="active" class="tab">'.$langs->trans("Payment").'</a>';
 print '<a class="tab" href="info.php?id='.$_GET["id"].'">'.$langs->trans("Info").'</a>';
 print '</div>';
 
 print '<div class="tabBar">';
+print '<br>';
+
+
 /*
  * Visualisation de la fiche
  *
@@ -86,25 +90,21 @@ $html = new Form($db);
 
 /*
  * Confirmation de la suppression du paiement
- *
  */
 if ($_GET["action"] == 'delete')
-   {
-     print '<br>';
-     $html->form_confirm("fiche.php?id=$paiement->id","Supprimer le paiement","Etes-vous sûr de vouloir supprimer ce paiement ?","confirm_delete");
-     print '<br>';
+{
+    $html->form_confirm("fiche.php?id=$paiement->id","Supprimer le paiement","Etes-vous sûr de vouloir supprimer ce paiement ?","confirm_delete");
+    print '<br>';
+}
 
-   }
- 
+/*
+ * Confirmation de la validation du paiement
+ */
 if ($_GET["action"] == 'valide')
-   {
-     print '<br>';
-     $html->form_confirm("fiche.php?id=$paiement->id","Valider le paiement","Etes-vous sûr de vouloir valider ce paiment, auncune modification n'est possible une fois le paiement validé ?","confirm_valide");
-     print '<br>';
-
-   }
-
-print '<br>';
+{
+    $html->form_confirm("fiche.php?id=$paiement->id","Valider le paiement","Etes-vous sûr de vouloir valider ce paiment, auncune modification n'est possible une fois le paiement validé ?","confirm_valide");
+    print '<br>';
+}
 
 print '<table class="border" width="100%">';
 
