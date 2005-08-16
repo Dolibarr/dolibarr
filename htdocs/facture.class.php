@@ -734,6 +734,31 @@ class Facture
                 if (defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION == "1")
                 {
                     $sql .= ", datef=now()";
+                    // du coup, il faut aussi recalculer la date limite de règlement
+                    $sqltemp = "SELECT c.fdm,c.nbjour,c.rowid,f.fk_cond_reglement,f.rowid FROM ".MAIN_DB_PREFIX."cond_reglement as c, ".MAIN_DB_PREFIX."facture as f WHERE c.rowid=f.fk_cond_reglement AND f.rowid=$this->id";
+                    if ($this->db->query($sqltemp))
+                    {
+                        if ($this->db->num_rows())
+                        {
+                            $obj = $this->db->fetch_object();
+			    print_r($obj);
+                            $cdr_nbjour = $obj->nbjour;
+                            $cdr_fdm = $obj->fdm;
+                        }
+                    }
+                    $this->db->free();
+                    // Definition de la date limite
+                    $datelim = time() + ( $cdr_nbjour * 3600 * 24 );
+                    if ($cdr_fdm)
+                    {
+                        $mois=date('m', $datelim);
+                        $annee=date('Y', $datelim);
+                        $fins=array(31,28,31,30,31,30,31,31,30,31,30,31);
+                        $datelim=mktime(0,0,0,$mois,$fins[$mois-1],$annee);
+                    }
+
+                    $sql .= ", date_lim_reglement=".$this->db->idate($datelim);
+
                 }
                 $sql .= " WHERE rowid = $rowid ;";
 
