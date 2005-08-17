@@ -28,8 +28,6 @@
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
 
-$langs->load("withdrawals");
-
 if (!$user->rights->prelevement->bons->creer)
   accessforbidden();
 
