@@ -23,7 +23,8 @@
  * 
  */
 
-/**     \file       htdocs/contact.class.php
+/**
+        \file       htdocs/contact.class.php
         \ingroup    societe
         \brief      Fichier de la classe des contacts
         \version    $Revision$
@@ -33,127 +34,139 @@ require_once (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 
 
-/**     \class      Contact
+/**
+        \class      Contact
         \brief      Classe permettant la gestion des contacts
 */
 
 class Contact 
 {
-  var $db;
-  var $error;
-  
-  var $id;
-  var $fullname;
-  var $nom;
-  var $prenom;
-  var $code;
-  var $email;
-  var $birthday;
+    var $db;
+    var $error;
+    
+    var $id;
+    var $fullname;
+    var $nom;
+    var $prenom;
+    var $name;
+    var $firstname;
+    var $address;
+    var $cp;
+    var $ville;
+    var $fk_pays;
+    
+    var $code;
+    var $email;
+    var $birthday;
 
-  /**
-   *    \brief      Constructeur de l'objet contact
-   *
-   */
-  function Contact($DB, $id=0) 
+    /**
+     *      \brief      Constructeur de l'objet contact
+     *      \param      DB      Habler d'accès base
+     *      \param      id      Id contact
+     */
+    function Contact($DB, $id=0) 
     {
-      $this->db = $DB;
-      $this->id = $id;
-      
-      return 1;
+        $this->db = $DB;
+        $this->id = $id;
+        
+        return 1;
     }
 
-  /**
-   *    \brief      Ajout d'un contact en base
-   *    \param      user        Utilisateur qui effectue l'ajout
-   */
-  function create($user)
-  {
-    if (!$this->socid)
-      {
-				$this->socid = 0;
-      }
+    /**
+     *      \brief      Ajout d'un contact en base
+     *      \param      user        Utilisateur qui effectue l'ajout
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function create($user)
+    {
+        $this->name=trim($this->name);
+        if (! $this->socid)
+        {
+            $this->socid = 0;
+        }
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user) ";
-    $sql .= " VALUES (now(),$this->socid,'$this->name',$user->id)";
-
-    if ($this->db->query($sql) )
-      {
-				$id = $this->db->last_insert_id(MAIN_DB_PREFIX."socpeople");
-
-				$this->update($id, $user);
-
-				return $id;
-      }
-    else
-      {
- 			    $this->error='Echec sql='.$sql;
-      }
-  }
-
-  /*
-   *    \brief      Mise à jour des infos
-   *    \param      id          id du contact à mettre à jour
-   *    \param      user        Utilisateur qui effectue la mise à jour
-   *
-   */
-  function update($id, $user=0)
-  {
-    dolibarr_syslog("Contact::Update id=".$id,LOG_DEBUG);
-    $this->id = $id;
-    $this->error = array();
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user)";
+        $sql.= " VALUES (now(),$this->socid,'$this->name',$user->id)";
     
-    $this->email = trim($this->email);
+        if ($this->db->query($sql) )
+        {
+            $id = $this->db->last_insert_id(MAIN_DB_PREFIX."socpeople");
     
-    //commenté suite a la nouvell fonction dolibarr_print_phone
-    //$this->phone_pro = ereg_replace(" ","",$this->phone_pro);
-    //$this->phone_perso = ereg_replace(" ","",$this->phone_perso);
-    
-    if (strlen($this->phone_pro) == 0 && $this->socid > 0)
-      {
-	$soc = new Societe($this->db);
-	$soc->fetch($this->socid);
-	$this->phone_pro = $soc->tel;
-      }
+            $ret=$this->update($id, $user);
+            if ($ret < 0)
+            {
+                $this->error=$this->db->error();
+                return -2;
+            }                
+            return $id;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
-    $sql .= "  civilite='$this->civilite_id'";
-    $sql .= ", name='".trim($this->name)."'";
-    $sql .= ", firstname='".trim($this->firstname)."'";
-    $sql .= ", address='$this->address'";
-    $sql .= ", cp='$this->cp'";
-    $sql .= ", ville='$this->ville'";
-    $sql .= ", poste='$this->poste'";
-    $sql .= ", fax='$this->fax'";
-    $sql .= ", email='$this->email'";
-    $sql .= ", note='$this->note'";
-    $sql .= ", phone = '$this->phone_pro'";
-    $sql .= ", phone_perso = '$this->phone_perso'";
-    $sql .= ", phone_mobile = '$this->phone_mobile'";
-    $sql .= ", jabberid = '$this->jabberid'";
+    /*
+     *      \brief      Mise à jour des infos
+     *      \param      id          id du contact à mettre à jour
+     *      \param      user        Utilisateur qui effectue la mise à jour
+     *      \return     int         <0 si erreur, >0 si ok
+     */
+    function update($id, $user=0)
+    {
+        dolibarr_syslog("Contact::Update id=".$id,LOG_DEBUG);
 
-    if ($user)
-      {
-        $sql .= ", fk_user_modif='".$user->id."'";
-      }
-    $sql .= " WHERE idp=$id";
+        $this->id = $id;
     
-    $result = $this->db->query($sql);
+        $this->name=trim($this->name);
+        $this->firstname=trim($this->firstname);
+        $this->email=trim($this->email);
+        $this->phone_pro=trim($this->phone_pro);
     
-    if (!$result)
-      {
-	$this->error='Echec sql='.$sql;
-      }
+        if ($this->phone_pro && $this->socid > 0)
+        {
+            $soc = new Societe($this->db);
+            $soc->fetch($this->socid);
+            $this->phone_pro = $soc->tel;
+        }
     
-    if (defined('MAIN_MODULE_LDAP') && MAIN_MODULE_LDAP)
-      {
-	if (defined('LDAP_CONTACT_ACTIVE')  && LDAP_CONTACT_ACTIVE == 1)
-	  {
-	    $this->update_ldap($user);
-	  }
-	
-      }
-    return $result;
-  }
+        $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
+        $sql .= "  civilite='$this->civilite_id'";
+        $sql .= ", name='$this->name'";
+        $sql .= ", firstname='$this->firstname'";
+        $sql .= ", address='$this->address'";
+        $sql .= ", cp='$this->cp'";
+        $sql .= ", ville='$this->ville'";
+        $sql .= ", fk_pays='$this->fk_pays'";
+        $sql .= ", poste='$this->poste'";
+        $sql .= ", fax='$this->fax'";
+        $sql .= ", email='$this->email'";
+        $sql .= ", note='$this->note'";
+        $sql .= ", phone = '$this->phone_pro'";
+        $sql .= ", phone_perso = '$this->phone_perso'";
+        $sql .= ", phone_mobile = '$this->phone_mobile'";
+        $sql .= ", jabberid = '$this->jabberid'";
+        if ($user) $sql .= ", fk_user_modif='".$user->id."'";
+        $sql .= " WHERE idp=".$id;
+    
+        $result = $this->db->query($sql);
+        if (! $result)
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    
+        if ($conf->ldap->enabled)
+        {
+            if ($conf->global->LDAP_CONTACT_ACTIVE)
+            {
+                $this->update_ldap($user);
+            }
+    
+        }
+        return 1;
+    }
   
   /**
    *    \brief      Mise à jour de l'arbre ldap
@@ -421,13 +434,14 @@ class Contact
    */
   function fetch($id, $user=0)
     {
-        $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname";
-        $sql .= ", c.address, c.cp, c.ville";
-        $sql .= ", c.birthday as birthday, poste";
-        $sql .= ", phone, phone_perso, phone_mobile, fax, c.email, jabberid, c.note";
-        
-        $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-        $sql .= " WHERE c.idp = ". $id;
+        $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname,";
+        $sql.= " c.address, c.cp, c.ville,";
+        $sql.= " c.fk_pays, p.libelle as pays, p.code as pays_code,";
+        $sql.= " c.birthday as birthday, c.poste,";
+        $sql.= " c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.note";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
+        $sql.= " WHERE c.idp = ". $id;
     
         $resql=$this->db->query($sql);
         if ($resql)
@@ -446,6 +460,9 @@ class Contact
                 $this->address        = $obj->address;
                 $this->cp             = $obj->cp;
                 $this->ville          = $obj->ville;
+        	    $this->fk_pays        = $obj->fk_pays;
+        	    $this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
+        	    $this->pays           = $obj->fk_pays?$obj->pays:'';
     
                 $this->societeid      = $obj->fk_soc;
                 $this->socid          = $obj->fk_soc;
@@ -489,7 +506,7 @@ class Contact
             else
             {
                 dolibarr_syslog("Error in Contact::fetch() selectuser sql=$sql");
-           	    $this->error="Error in Contact::fetch() selectuser sql=$sql";
+           	    $this->error="Error in Contact::fetch() selectuser - ".$this->db->error()." - ".$sql;
                 return -1;
             }
     
@@ -514,7 +531,7 @@ class Contact
             else
             {
                 dolibarr_syslog("Error in Contact::fetch() selectcontactfacture sql=$sql");
-           	    $this->error="Error in Contact::fetch() selectcontactfacture sql=$sql";
+           	    $this->error="Error in Contact::fetch() selectcontactfacture - ".$this->db->error()." - ".$sql;
                 return -1;
             }
     
@@ -538,7 +555,7 @@ class Contact
                 else
                 {
                     dolibarr_syslog("Error in Contact::fetch() selectuseralert sql=$sql");
-            	    $this->error="Error in Contact::fetch() selectuseralert sql=$sql";
+            	    $this->error="Error in Contact::fetch() selectuseralert - ".$this->db->error()." - ".$sql;
                     return -1;
                 }
             }
@@ -548,7 +565,7 @@ class Contact
         else
         {
             dolibarr_syslog("Error in Contact::fetch() selectsocpeople sql=$sql");
-       	    $this->error="Error in Contact::fetch() selectsocpeople sql=$sql";
+      	    $this->error="Error in Contact::fetch() selectsocpeople - ".$this->db->error()." - ".$sql;
             return -1;
         }
     }

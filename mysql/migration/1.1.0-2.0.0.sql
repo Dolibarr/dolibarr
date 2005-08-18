@@ -238,6 +238,7 @@ alter table llx_cond_reglement add code varchar(16) after rowid;
  
 alter table llx_socpeople add cp varchar(25) after address;
 alter table llx_socpeople add ville varchar(255) after cp;
+alter table llx_socpeople add fk_pays integer DEFAULT 0 after ville;
 
 alter table llx_paiement add statut smallint DEFAULT 0 NOT NULL ;
 alter table llx_facturedet add fk_export_compta integer DEFAULT 0 NOT NULL ;
