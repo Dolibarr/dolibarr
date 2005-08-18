@@ -719,18 +719,24 @@ class Form
     
         }
     }
-
-
-  /**
-   *    \brief      Retourne le nom traduit ou code+nom d'une devise
-   *    \param      code_iso    Code iso de la devise
-   *    \param      withcode    1=affiche code + nom
-   *    \return     string      Nom traduit de la devise
-   */
-    function currency_name($code_iso,$withcode=0)
+    
+   /**
+    *    \brief      Retourne le nom traduit ou code+nom d'une devise
+    *    \param      code_iso       Code iso de la devise
+    *    \param      withcode       1=affiche code + nom
+    *    \return     string         Nom traduit de la devise
+    */
+   function currency_name($code_iso,$withcode=0)
     {
         global $langs;
 
+        // Si il existe une traduction, on peut renvoyer de suite le libellé
+        if ($langs->trans("Currency".$code_iso)!="Currency".$code_iso)
+        {
+            return $langs->trans("Currency".$code_iso);
+        }
+        
+        // Si pas de traduction, on consulte libellé par défaut en table
         $sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
         $sql.= " WHERE code_iso='$code_iso';";
     
@@ -741,7 +747,7 @@ class Form
             if ($num)
             {
                 $obj = $this->db->fetch_object();
-                $label=$langs->trans("Currency".$code_iso)!="Currency".$code_iso?$langs->trans("Currency".$code_iso):($obj->label!='-'?$obj->label:'');
+                $label=($obj->label!='-'?$obj->label:'');
                 if ($withcode) return $label==$code_iso?"$code_iso":"$code_iso - $label";
                 else return $label;
             }
