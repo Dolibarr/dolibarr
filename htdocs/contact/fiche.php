@@ -413,7 +413,7 @@ else
   print '</td></tr>';
 
   print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="3">';
-  print $langs->trans($yesno[$contact->facturation]);
+  print yn($contact->facturation);
   print '</td></tr>';
 
   print "</table>";

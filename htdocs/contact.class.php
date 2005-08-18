@@ -511,14 +511,15 @@ class Contact
             }
     
     
-            $sql = "SELECT count(*) ";
+            $sql = "SELECT count(*) as nb";
             $sql .= " FROM ".MAIN_DB_PREFIX."contact_facture";
             $sql .= " WHERE fk_contact = ". $id;
     
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                if ($this->db->num_rows($resql))
+                $obj=$this->db->fetch_object($resql);
+                if ($obj->nb)
                 {
                     $this->facturation = 1;
                 }
