@@ -21,6 +21,8 @@
  */
 require("./pre.inc.php");
 
+if (!$user->rights->telephonie->adsl->lire) accessforbidden();
+
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];

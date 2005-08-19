@@ -22,6 +22,8 @@
 
 require("./pre.inc.php");
 
+if (!$user->rights->telephonie->adsl->lire) accessforbidden();
+
 $mesg = '';
 
 llxHeader("","","Historique Liaison ADSL");
