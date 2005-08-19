@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -138,7 +137,7 @@ $head[$h][1] = $langs->trans('Packs');
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
-$head[$h][1] = $langs->trans("Bills");
+$head[$h][1] = $langs->trans("Referers");
 $h++;
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);

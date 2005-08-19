@@ -45,20 +45,20 @@ if ($page == -1) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-
 if ($user->societe_id > 0)
 {
     $action = '';
     $socid = $user->societe_id;
 }
 
-llxHeader();
-
 
 /*
  * Affiche fiche
  *
  */
+
+llxHeader();
+
 
 if ($_GET["id"])
 {
@@ -126,7 +126,7 @@ if ($_GET["id"])
 	    $h++;
 
             $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
-            $head[$h][1] = $langs->trans('Bills');
+            $head[$h][1] = $langs->trans('Referers');
             $hselected=$h;
             $h++;
 
@@ -137,20 +137,95 @@ if ($_GET["id"])
         print '<table class="border" width="100%">';
 
         print '<tr>';
-        print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">'.$product->ref.'</td>';
+        print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">'.$product->ref.'</td>';
         print '</tr>';
-        print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
+        print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
         print '</tr>';
         
         // Prix
-        print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
+        print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">'.price($product->price).'</td></tr>';
         
         // Statut
-        print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+        print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
         if ($product->envente) print $langs->trans("OnSell");
         else print $langs->trans("NotOnSell");
         print '</td></tr>';
 
+        print '<tr><td valign="top" width="25%">'.$langs->trans("Referers").'</td>';
+        print '<td align="right" width="25%">'.$langs->trans("NbOfCustomers").'</td>';
+        print '<td align="right" width="25%">'.$langs->trans("NbOfReferers").'</td>';
+        print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
+        print '</tr>';
+
+        // Propals
+        if ($conf->propal->enabled)
+        {
+            $ret=$product->load_stats_propale($socid);
+            if ($ret < 0) dolibarr_print_error($db);
+            $langs->load("propal");
+            print '<tr><td>';
+            print '<a href="propal.php?id='.$product->id.'">'.$langs->trans("Proposals").'</a>';
+            print '</td><td align="right">';
+            print $product->stats_propale['customers'];
+            print '</td><td align="right">';
+            print $product->stats_propale['nb'];
+            print '</td><td align="right">';
+            print $product->stats_propale['qty'];
+            print '</td>';
+            print '</tr>';
+        }
+        // Commandes
+        if ($conf->commande->enabled)
+        {
+            $ret=$product->load_stats_commande($socid);
+            if ($ret < 0) dolibarr_print_error($db);
+            $langs->load("orders");
+            print '<tr><td>';
+            print '<a href="commande.php?id='.$product->id.'">'.$langs->trans("Orders").'</a>';
+            print '</td><td align="right">';
+            print $product->stats_commande['customers'];
+            print '</td><td align="right">';
+            print $product->stats_commande['nb'];
+            print '</td><td align="right">';
+            print $product->stats_commande['qty'];
+            print '</td>';
+            print '</tr>';
+        }
+        // Contrats
+        if ($conf->contrat->enabled)
+        {
+            $ret=$product->load_stats_contrat($socid);
+            if ($ret < 0) dolibarr_print_error($db);
+            $langs->load("contracts");
+            print '<tr><td>';
+            print '<a href="contrat.php?id='.$product->id.'">'.$langs->trans("Contracts").'</a>';
+            print '</td><td align="right">';
+            print $product->stats_contrat['customers'];
+            print '</td><td align="right">';
+            print $product->stats_contrat['nb'];
+            print '</td><td align="right">';
+            print $product->stats_contrat['qty'];
+            print '</td>';
+            print '</tr>';
+        }
+        // Factures
+        if ($conf->facture->enabled)
+        {
+            $ret=$product->load_stats_facture($socid);
+            if ($ret < 0) dolibarr_print_error($db);
+            $langs->load("bills");
+            print '<tr><td>';
+            print '<a href="facture.php?id='.$product->id.'">'.$langs->trans("Bills").'</a>';
+            print '</td><td align="right">';
+            print $product->stats_facture['customers'];
+            print '</td><td align="right">';
+            print $product->stats_facture['nb'];
+            print '</td><td align="right">';
+            print $product->stats_facture['qty'];
+            print '</td>';
+            print '</tr>';
+        }
+        
         print "</table>";
 
         print '</div>';

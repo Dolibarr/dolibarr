@@ -262,6 +262,10 @@ NoExample=Pas d'exemple
 FindBug=Signaler un bug
 NbOfCustomers=Nombre de clients
 NbOfLines=Nombre de lignes
+NbOfObjects=Nombre d'objets
+NbOfReferers=Nombre de référents
+Referers=Référents
+TotalQuantity=Quantité totale
 # Countries
 CountryFR=France
 CountryBE=Belgique
