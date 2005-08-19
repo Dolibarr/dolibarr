@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -47,6 +46,7 @@ if (! $sortorder) $sortorder="ASC";
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_contract=isset($_GET["search_contract"])?$_GET["search_contract"]:$_POST["search_contract"];
+$search_service=isset($_GET["search_service"])?$_GET["search_service"]:$_POST["search_service"];
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 $socid=$_GET["socid"];
 
@@ -79,6 +79,7 @@ if ($mode == "5") $sql.= " AND cd.statut = 5";
 //if ($mode == "expired") $sql.= " AND cd.statut = 1";
 if ($search_nom)      $sql.= " AND s.nom like '%".$search_nom."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".$search_contract."'";
+if ($search_service)  $sql.= " AND (p.ref like '%".$search_service."%' OR p.label like '%".$search_service."%')";
 if ($socid > 0)       $sql.= " AND s.idp = $socid";
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
@@ -89,14 +90,17 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    print_barre_liste($langs->trans("ListOfServices"), $page, "services.php", "&sref=$sref&snom=$snom&mode=$mode", $sortfield, $sortorder,'',$num);
+    $param='';
+    if ($search_contract) $param.='&amp;search_contract='.urlencode($search_contract);
+    if ($search_nom)      $param.='&amp;search_nom='.urlencode($search_nom);
+    if ($search_service)  $param.='&amp;search_service='.urlencode($search_service);
+    if ($mode)            $param.='&amp;mode='.$mode;
+
+    print_barre_liste($langs->trans("ListOfServices"), $page, "services.php", $param, $sortfield, $sortorder,'',$num);
 
     print '<table class="liste" width="100%">';
 
     print '<tr class="liste_titre">';
-    $param='&amp;search_contract='.$search_contract;
-    $param.='&amp;search_nom='.$search_nom;
-    $param.='&amp;mode='.$mode;
     print_liste_field_titre($langs->trans("Contract"),"services.php", "c.rowid","$param","","",$sortfield);
     print_liste_field_titre($langs->trans("Service"),"services.php", "p.label","$param","","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),"services.php", "s.nom","$param","","",$sortfield);
@@ -114,7 +118,9 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="3" name="search_contract" value="'.stripslashes($search_contract).'">';
     print '</td>';
-    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" size="18" name="search_service" value="'.stripslashes($search_service).'">';
+    print '</td>';
     print '<td class="liste_titre" valign="right">';
     print '<input type="text" class="flat" size="24" name="search_nom" value="'.stripslashes($search_nom).'">';
     print '</td>';
