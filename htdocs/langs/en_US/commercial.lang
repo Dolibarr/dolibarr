@@ -19,6 +19,7 @@ TaskRDV=Rendez-vous
 TaskRDVWith=Rendez-vous with %s
 ShowTask=Show task
 ShowAction=Show action
+ActionsReport=Actions report
 SalesRepresentative=Sales representative
 SalesRepresentatives=Sales representatives
 SalesRepresentativeFollowUp=Sales representative (follow-up)

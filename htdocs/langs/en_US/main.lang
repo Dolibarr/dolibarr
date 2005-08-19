@@ -260,6 +260,8 @@ AmountInCurrency=Amount in %s currency
 Example=Example
 NoExample=No example
 FindBug=Report a bug
+NbOfCustomers=Number of customers
+NbOfLines=Number of lines
 # Countries
 CountryFR=France
 CountryBE=Belgium
