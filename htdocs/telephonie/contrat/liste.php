@@ -66,6 +66,11 @@ $sql .= " WHERE c.fk_client_comm = s.idp";
 $sql .= " AND c.fk_soc = sa.idp";
 $sql .= " AND c.fk_soc_facture = sf.idp";
 
+if ($user->rights->telephonie->ligne->lire_restreint)
+{
+  $sql .= " AND c.fk_commercial_suiv = ".$user->id;
+}
+
 if ($socidp > 0)
 {
   $sql .= " AND s.idp = ".$socidp;

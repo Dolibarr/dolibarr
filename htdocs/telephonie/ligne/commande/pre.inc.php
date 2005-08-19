@@ -44,8 +44,11 @@ function llxHeader($head = "", $title="") {
   $menu->add(DOL_URL_ROOT."/telephonie/contrat/", "Contrats");
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/commande/liste.php", "Lignes");
+  if ($user->rights->telephonie->ligne_commander)
+    {
+      $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
+      $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/commande/liste.php", "Lignes");
+    }
 
   if ($user->rights->telephonie->ligne_commander)
     {
@@ -57,6 +60,7 @@ function llxHeader($head = "", $title="") {
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/commande/retour/", "Retour");
 
+  if ($user->rights->telephonie->stats->lire)
   $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
 
   $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");

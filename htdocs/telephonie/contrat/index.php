@@ -61,6 +61,10 @@ print '<br />';
 
 $sql = "SELECT distinct statut, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as l";
+if ($user->rights->telephonie->ligne->lire_restreint)
+{
+  $sql .= " WHERE l.fk_commercial_suiv = ".$user->id;
+}
 $sql .= " GROUP BY statut";
 
 if ($db->query($sql))
@@ -98,46 +102,7 @@ else
   print $db->error() . ' ' . $sql;
 }
 
-print '<br />';
 
-$sql = "SELECT distinct statut, count(*) as cc";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as l";
-$sql .= " GROUP BY statut";
-
-if ($db->query($sql))
-{
-  $num = $db->num_rows();
-  $i = 0;
-
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Contrats</td><td align="center">Nb</td><td>&nbsp;</td>';
-  print "</tr>\n";
-  $var=True;
-
-  $contrat = new TelephonieContrat($db);
-
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object();	
-
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td>".$contrat->statuts[$obj->statut]."</td>\n";
-      print '<td align="center">'.$obj->cc."</td>\n";
-      print '<td><a href="liste.php?statut='.$obj->statut.'">';
-      print '<img border="0" src="statut'.$obj->statut.'.png"></a></td>';
-      print "</tr>\n";
-
-      $values[$obj->statut] = $obj->cc;
-      $i++;
-    }
-  print "</table>";
-  $db->free();
-}
-else 
-{
-  print $db->error() . ' ' . $sql;
-}
 
 
 print '</td><td valign="top" width="70%">';
@@ -150,6 +115,10 @@ $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
 
 $sql .= " WHERE c.fk_client_comm = s.idp";
 $sql .= " AND c.fk_soc = sf.idp";
+if ($user->rights->telephonie->ligne->lire_restreint)
+{
+  $sql .= " AND c.fk_commercial_suiv = ".$user->id;
+}
 $sql .= " ORDER BY date_creat DESC LIMIT 10;";
 
 $result = $db->query($sql);

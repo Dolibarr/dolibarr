@@ -511,7 +511,7 @@ else
 	    }
 	}
 
-      if ( $result )
+      if ( $result == 1)
 	{ 
 	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	    {
@@ -612,7 +612,7 @@ else
 	      print $client_facture->nom.'</a><br />';
 	      print $client_facture->cp . " " .$client_facture->ville;
 
-	      print '</td><td valign="top" rowspan="9">';
+	      print '</td><td valign="top" rowspan="8">';
 
 	      /* Historique */
 
@@ -620,7 +620,8 @@ else
 	      print '<tr class="liste_titre">';
 	      print '<td>Date</td>';
 	      print '<td>Statut</td>';
-	      print '<td>Fournisseur</td>';
+	      if ($user->rights->telephonie->fournisseur->lire)
+		print '<td>Fournisseur</td>';
 	      print '<td>Rapporteur</td>';
 	      print '</tr>';
 	      $ff = array();     
@@ -668,11 +669,12 @@ else
 			      print '<br />'.$row[5];
 			    }
 
-			  print '</td><td>';
+			  print '</td>';
 
-			  print $ff[$row[6]];
+			  if ($user->rights->telephonie->fournisseur->lire)
+			    print '<td>'.$ff[$row[6]].'</td>';
 
-			  print '</td><td>'. $row[3] . "</td></tr>";
+			  print '<td>'. $row[3] . "</td></tr>";
 			  $i++;
 			}
 		    }
@@ -693,21 +695,30 @@ else
 	      print '</td></tr>';
 
 	      print '<tr><td width="20%">Fournisseur</td><td>';
-
-	      $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur";
-	      $sql .= " WHERE commande_active = 1 AND rowid = ".$ligne->fournisseur_id;
-
-	      if ( $db->query( $sql) )
+	      if ($user->rights->telephonie->fournisseur->lire)
 		{
-		  $num = $db->num_rows();
-		  if ( $num > 0 )
-		    {			  
-		      $row = $db->fetch_row();
-		      print $row[1];
+		  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur";
+		  $sql .= " WHERE commande_active = 1 AND rowid = ".$ligne->fournisseur_id;
+		  
+		  if ( $db->query( $sql) )
+		    {
+		      $num = $db->num_rows();
+		      if ( $num > 0 )
+			{			  
+			  $row = $db->fetch_row();
+			  print $row[1];
+			}
+		      $db->free();	      
 		    }
-		  $db->free();	      
+		}
+	      else
+		{
+		  print '-';
 		}
 	      print '</td></tr>';
+
+
+
 
 	      print '<tr><td>PDF détail</td><td>'.$ligne->pdfdetail.'</td></tr>';
 
@@ -739,10 +750,6 @@ else
 
 	      print '<tr><td width="20%">Concurrent précédent</td>';
 	      print '<td>'.$ligne->print_concurrent_nom().'</td></tr>';
-
-	      print '<tr><td width="20%">Communications</td><td>';
-	      print '<a href="communications.php?ligne='.$ligne->numero.'">liste</a>';	      
-	      print '</td></tr>';
 
 	      print '<tr><td width="20%">Factures</td><td>';	  
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/facture/liste.php?search_ligne='.$ligne->numero.'">liste</a>';

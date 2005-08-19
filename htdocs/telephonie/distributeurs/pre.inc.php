@@ -36,18 +36,7 @@ function llxHeader($head = "", $title="") {
 
   $menu = new Menu();
 
-  if (TELEPHONIE_MODULE_ADSL == 1)
-    $menu->add(DOL_URL_ROOT."/telephonie/adsl/", "ADSL");
-
   $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
-
-  if (TELEPHONIE_MODULE_SIMULATION == 1)
-    {
-      $menu->add(DOL_URL_ROOT."/telephonie/simulation/fiche.php", "Simulation");
-      $menu->add_submenu(DOL_URL_ROOT."/telephonie/simulation/fiche.php?action=create", "Nouvelle");
-    }
-
-
 
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
 
@@ -55,16 +44,20 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
+  if ($user->rights->telephonie->ligne_commander)
+    $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
 
   $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/distributeurs/", "Distributeurs");
+  if ($user->rights->telephonie->stats->lire)
+    {
+      $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
+      $menu->add_submenu(DOL_URL_ROOT."/telephonie/stats/distributeurs/", "Distributeurs");
+    }
+
   $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/distributeurs/", "Distributeurs");
-
 
 
   $sql = "SELECT d.nom, d.rowid";

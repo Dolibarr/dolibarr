@@ -62,6 +62,10 @@ print '<br />';
 
 $sql = "SELECT distinct statut, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+if ($user->rights->telephonie->ligne->lire_restreint)
+{
+  $sql .= " WHERE l.fk_commercial_suiv = ".$user->id;
+}
 $sql .= " GROUP BY statut";
 
 $resql = $db->query($sql);
@@ -98,57 +102,63 @@ else
   print $db->error() . ' ' . $sql;
 }
 
-print '<br />';
-
-/*
- * Fournisseurs
- *
- */
-
-$sql = "SELECT distinct f.nom as fournisseur, f.rowid, count(*) as cc";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= " ,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= " ,".MAIN_DB_PREFIX."telephonie_fournisseur as f";
-$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
-$sql .= " GROUP BY f.nom";
-
-$resql = $db->query($sql);
-
-if ($resql)
+if ($user->rights->telephonie->fournisseur->lire)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
+  print '<br />';
+
+  /*
+   * Fournisseurs
+   *
+   */
   
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Fournisseur</td><td align="center">Nb lignes</td>';
-  print "</tr>\n";
-  $var=True;
-
-  while ($i < min($num,$conf->liste_limit))
+  $sql = "SELECT distinct f.nom as fournisseur, f.rowid, count(*) as cc";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+  $sql .= " ,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+  $sql .= " ,".MAIN_DB_PREFIX."telephonie_fournisseur as f";
+  $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
+  if ($user->rights->telephonie->ligne->lire_restreint)
     {
-      $obj = $db->fetch_object($resql);	
-      $var=!$var;
-
-      print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?fournisseur='.$obj->rowid.'">';
-      print $obj->fournisseur.'</a></td>';
-      print '<td align="center">'.$obj->cc."</td>\n";
-      print "</tr>\n";
-      $i++;
+      $sql .= " AND l.fk_commercial_suiv = ".$user->id;
     }
-  print "</table>";
-  $db->free($resql);
+  $sql .= " GROUP BY f.nom";
+  
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+      print '<tr class="liste_titre"><td>Fournisseur</td><td align="center">Nb lignes</td>';
+      print "</tr>\n";
+      $var=True;
+      
+      while ($i < min($num,$conf->liste_limit))
+	{
+	  $obj = $db->fetch_object($resql);	
+	  $var=!$var;
+	  
+	  print "<tr $bc[$var]>";
+	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?fournisseur='.$obj->rowid.'">';
+	  print $obj->fournisseur.'</a></td>';
+	  print '<td align="center">'.$obj->cc."</td>\n";
+	  print "</tr>\n";
+	  $i++;
+	}
+      print "</table>";
+      $db->free($resql);
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
 }
-else 
-{
-  print $db->error() . ' ' . $sql;
-}
-
 print '</td><td width="70%" valign="top">';
 
 print '</td></tr>';
 print '</table>';
-
+  
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");

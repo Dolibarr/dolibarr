@@ -21,6 +21,8 @@
  */
 require("./pre.inc.php");
 
+if (!$user->rights->telephonie->lire) accessforbidden();
+
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
@@ -68,6 +70,11 @@ $sql .= " ,  ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
 $sql .= " AND l.fk_soc_facture = sf.idp";
+
+if ($user->rights->telephonie->ligne->lire_restreint)
+{
+  $sql .= " AND l.fk_commercial_suiv = ".$user->id;
+}
 
 if ($_GET["search_ligne"])
 {
@@ -147,12 +154,11 @@ if ($result)
   print_liste_field_titre("Ligne","liste.php","l.ligne");
   print_liste_field_titre("Client (Agence/Filiale)","liste.php","s.nom");
 
-  print '<td>Client facturé</td>';
+  //print '<td>Client facturé</td>';
   print '<td align="center">Statut</td>';
 
-  print_liste_field_titre("Remise LMN","liste.php","l.remise","","",' align="center"');
-
-  print '<td>Fournisseur</td>';
+  if ($user->rights->telephonie->fournisseur->lire)
+    print '<td>Fournisseur</td>';
 
   print "</tr>\n";
 
@@ -160,13 +166,13 @@ if ($result)
   print '<form action="liste.php" method="GET">';
   print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
   print '<td><input type="text" name="search_client" value="'. $_GET["search_client"].'" size="10"></td>';
-  print '<td><input type="text" name="search_client_facture" value="'. $_GET["search_client_facture"].'" size="10"></td>';
+  //print '<td><input type="text" name="search_client_facture" value="'. $_GET["search_client_facture"].'" size="10"></td>';
 
   print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 
 
-  print '<td>&nbsp;</td>';
-  print '<td>&nbsp;</td>';
+  if ($user->rights->telephonie->fournisseur->lire)
+    print '<td>&nbsp;</td>';
 
   print '</form>';
   print '</tr>';
@@ -192,12 +198,12 @@ if ($result)
       print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
 
       print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->nom_facture).'</a></td>';
+      //print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->nom_facture).'</a></td>';
 
       print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
 
-      print '<td align="center">'.$obj->remise." %</td>\n";
-      print "<td>".$obj->fournisseur."</td>\n";
+      if ($user->rights->telephonie->fournisseur->lire)
+	print "<td>".$obj->fournisseur."</td>\n";
       print "</tr>\n";
       $i++;
     }

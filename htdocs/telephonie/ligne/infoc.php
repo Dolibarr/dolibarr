@@ -79,7 +79,7 @@ if ($_GET["id"] or $_GET["numero"])
 	}
     }
   
-  if ( $result )
+  if ( $result == 1)
     { 
       if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
@@ -160,70 +160,66 @@ if ($_GET["id"] or $_GET["numero"])
 	  print '<tr><td width="20%">Modèle de facture utilisé</td><td colspan="2">'.$ligne->pdfdetail.'</td></tr>';
 
 	  
-	  
-	  
 	  print "</table>";
 	}
+      
+      
+      if ($_GET["action"] == 'edit' || $action == 're-edit')
+	{
+	  print_fiche_titre('Edition des informations complémentaires de la ligne', $mesg);
+	  
+	  print "<form action=\"infoc.php?id=$ligne->id\" method=\"post\">\n";
+	  print '<input type="hidden" name="action" value="update">';
+	  
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  
+	  print '<tr><td width="20%">Numéro</td><td>'.$ligne->numero.'</td></tr>';
+	  
+	  $client = new Societe($db, $ligne->client_id);
+	  $client->fetch($ligne->client_id);
+	  
+	  print '<tr><td width="20%">Client</td><td colspan="2">'.$client->nom;
+	  print '</td></tr>';
+	  
+	  print '<tr><td width="20%">Remise LMN</td><td>'.$ligne->remise.' %</td></tr>';
+	  
+	  print '<tr><td width="20%">Code Analytique</td><td><input name="code_ana" size="13" maxlength="12" value="'.$ligne->code_analytique.'">&nbsp;</td></tr>';
+	  
+	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Mettre à jour">';
+	  print '<a href="infoc.php?id='.$ligne->id.'">Annuler</a></td></tr>';
+	  print '</table>';
+	  print '</form>';	  
+	}
+      
+      /*
+       *
+       *
+       *
+       */
+      
+      print '</div>';
+      
+      /* ************************************************************************** */
+      /*                                                                            */ 
+      /* Barre d'action                                                             */ 
+      /*                                                                            */ 
+      /* ************************************************************************** */
+      
+      print "<br><div class=\"tabsAction\">\n";
+      
+      if ($_GET["action"] == '')
+	{
+	  print "<a class=\"tabAction\" href=\"infoc.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Edit")."</a>";
+	}
+      
+      print "</div>";
     }
   
-  if ($_GET["action"] == 'edit' || $action == 're-edit')
-    {
-      print_fiche_titre('Edition des informations complémentaires de la ligne', $mesg);
-      
-      print "<form action=\"infoc.php?id=$ligne->id\" method=\"post\">\n";
-      print '<input type="hidden" name="action" value="update">';
-      
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-      
-      print '<tr><td width="20%">Numéro</td><td>'.$ligne->numero.'</td></tr>';
-      
-      $client = new Societe($db, $ligne->client_id);
-      $client->fetch($ligne->client_id);
-      
-      print '<tr><td width="20%">Client</td><td colspan="2">'.$client->nom;
-      print '</td></tr>';
-      
-      print '<tr><td width="20%">Remise LMN</td><td>'.$ligne->remise.' %</td></tr>';
-      
-      print '<tr><td width="20%">Code Analytique</td><td><input name="code_ana" size="13" maxlength="12" value="'.$ligne->code_analytique.'">&nbsp;</td></tr>';
-      
-      print '<tr><td>&nbsp;</td><td><input type="submit" value="Mettre à jour">';
-      print '<a href="infoc.php?id='.$ligne->id.'">Annuler</a></td></tr>';
-      print '</table>';
-      print '</form>';	  
-    }
-  
-  /*
-   *
-   *
-   *
-   */
-
 }
 else
 {
   print "Error";
 }
-
-
-print '</div>';
-
-/* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
-/* ************************************************************************** */
-
-print "<br><div class=\"tabsAction\">\n";
-
-if ($_GET["action"] == '')
-{
-  print "<a class=\"tabAction\" href=\"infoc.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Edit")."</a>";
-}
-
-print "</div>";
-
-
 
 $db->close();
 

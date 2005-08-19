@@ -49,9 +49,12 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/liste.php", "Liste");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/commande/liste.php", "A commander");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/listecommande.php", "En commande");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/communications.php", "Communications");
+  if ($user->rights->telephonie->ligne_commander)    
+    $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/commande/liste.php", "A commander");
+  if ($user->rights->telephonie->ligne_commander)    
+    $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/listecommande.php", "En commande");
+
+  //  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/communications.php", "Communications");
 
   if (TELEPHONIE_MODULE_GROUPES == 1)
     $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/groupe.php", "Groupes");
@@ -59,16 +62,18 @@ function llxHeader($head = "", $title="") {
   if (TELEPHONIE_MODULE_NUMDATA == 1)
     $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/numdata.php", "Numéros data");
 
+  if ($user->rights->telephonie->ligne_commander)    
+    $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
-
-  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
+  if ($user->rights->telephonie->stats->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
 
   $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
 
   $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/", "Fournisseurs");
+  if ($user->rights->telephonie->fournisseur->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/", "Fournisseurs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
 
