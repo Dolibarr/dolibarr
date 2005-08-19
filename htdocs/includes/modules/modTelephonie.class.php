@@ -152,20 +152,57 @@ class modTelephonie extends DolibarrModules
     $this->rights[10][3] = 0;
     $this->rights[10][4] = 'adsl';
     $this->rights[10][5] = 'gerer';
+    $r = 10;
 
-    $this->rights[11][0] = 215;
-    $this->rights[11][1] = 'Définir le mode de réglement';
-    $this->rights[11][2] = 'w';
-    $this->rights[11][3] = 0;
-    $this->rights[11][4] = 'contrat';
-    $this->rights[11][5] = 'paiement';
+    $r++;
 
-    $this->rights[12][0] = 193;
-    $this->rights[12][1] = 'Résilier des lignes';
-    $this->rights[12][2] = 'w';
-    $this->rights[12][3] = 0;
-    $this->rights[12][4] = 'ligne';
-    $this->rights[12][5] = 'resilier';
+    $this->rights[$r][0] = 206;
+    $this->rights[$r][1] = 'Consulter les liaisons';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'adsl';
+    $this->rights[$r][5] = 'lire';
+    $r++;
+
+    $this->rights[$r][0] = 215;
+    $this->rights[$r][1] = 'Définir le mode de réglement';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'contrat';
+    $this->rights[$r][5] = 'paiement';
+    $r++;
+
+    $this->rights[$r][0] = 193;
+    $this->rights[$r][1] = 'Résilier des lignes';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'ligne';
+    $this->rights[$r][5] = 'resilier';
+    $r++;
+
+    $this->rights[$r][0] = 194; // id de la permission
+    $this->rights[$r][1] = 'Consulter ses lignes (lecture restreinte)'; // libelle de la permission
+    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'ligne';
+    $this->rights[$r][5] = 'lire_restreint';
+    $r++;
+
+    $this->rights[$r][0] = 146;
+    $this->rights[$r][1] = 'Consulter les fournisseurs';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'fournisseur';
+    $this->rights[$r][5] = 'lire';
+    $r++;
+
+    $this->rights[$r][0] = 147;
+    $this->rights[$r][1] = 'Consulter les stats';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'stats';
+    $this->rights[$r][5] = 'lire';
+    $r++;
 
     // Dir
     $this->dirs[0] = $conf->telephonie->dir_output;
@@ -177,7 +214,6 @@ class modTelephonie extends DolibarrModules
     $this->dirs[6] = $conf->telephonie->dir_output."/ligne/commande/retour" ;
     
     return $this->_init($sql);
-
   }
 
   /**
