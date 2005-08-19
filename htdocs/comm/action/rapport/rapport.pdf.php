@@ -45,6 +45,7 @@ class CommActionRapport
     function CommActionRapport($db=0, $month, $year)
     {
         global $langs;
+        $langs->load("commercial");
         
         $this->db = $db;
         $this->description = "";

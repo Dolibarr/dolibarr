@@ -36,26 +36,30 @@
 
 class Product
 {
-  var $db ;
+    var $db ;
+    
+    var $id ;
+    var $ref;
+    var $libelle;
+    var $description;
+    var $price;
+    var $tva_tx;
+    var $type;
+    var $seuil_stock_alerte;
+    var $duration_value;
+    var $duration_unit;
 
-  var $id ;
-  var $ref;
-  var $libelle;
-  var $description;
-  var $price;
-  var $tva_tx;
-  var $type;
-  var $seuil_stock_alerte;
-  var $duration_value;
-  var $duration_unit;
+    var $stats_propale=array();
+    var $stats_commande=array();
+    var $stats_contrat=array();
+    var $stats_facture=array();
 
 
   /**
-   *    \brief  Constructeur de la classe
-   *    \param  DB          handler accès base de données
-   *    \param  id          id produit (0 par defaut)
+   *    \brief      Constructeur de la classe
+   *    \param      DB          Handler accès base de données
+   *    \param      id          Id produit (0 par defaut)
    */
-	 
   function Product($DB, $id=0)
     {
       $this->db = $DB;
@@ -66,8 +70,8 @@ class Product
 
 
   /**
-   *    \brief  Vérifie que la référence et libellé du produit est non null
-   *    \return int         1 si ok, 0 sinon
+   *    \brief      Vérifie que la référence et libellé du produit est non null
+   *    \return     int         1 si ok, 0 sinon
    */
 	 
   function check()
@@ -355,209 +359,256 @@ class Product
     }
 
   
-  /**
-   *    \brief  Modifie le prix d'un produit/service
-   *    \param  id          id du produit/service à modifier
-   *    \param  user        utilisateur qui modifie le prix
-   */
-	 
-  function update_price($id, $user)
-  {
-    if (strlen(trim($this->price)) > 0 )
-      {
-	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-	$sql .= " SET price = " . ereg_replace(",",".",$this->price);	  
-	$sql .= " WHERE rowid = " . $id;
-	
-	if ( $this->db->query($sql) )
-	  {
-	    $this->_log_price($user);
-	    return 1;
-	  }
-	else
-	  {
-        dolibarr_print_error($this->db);
-	    return -1;
-	  }
-      }
-    else
-      {
-	$this->error = "Prix saisi invalide.";
-	return -2;
-      }
-  }
-
-
-  /**
-   *    \brief  Charge le produit/service en mémoire
-   *    \param  id          id du produit/service à charger
-   */
-	 
-  function fetch ($id)
-    {    
-      $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente, fk_product_type, duration, seuil_stock_alerte";
-      $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE rowid = $id";
-
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
-	{
-	  $result = $this->db->fetch_array();
-
-	  $this->id                 = $result["rowid"];
-	  $this->ref                = $result["ref"];
-	  $this->libelle            = stripslashes($result["label"]);
-	  $this->description        = stripslashes($result["description"]);
-	  $this->price              = $result["price"];
-	  $this->tva_tx             = $result["tva_tx"];
-	  $this->type               = $result["fk_product_type"];
-	  $this->nbvente            = $result["nbvente"];
-	  $this->envente            = $result["envente"];
-	  $this->duration           = $result["duration"];
-	  $this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
-	  $this->duration_unit      = substr($result["duration"],-1);
-	  $this->seuil_stock_alerte = $result["seuil_stock_alerte"];
-
-	  $this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
-
-	  if ($this->type == 0)
-	    {
-	      $this->isproduct = 1;
-	      $this->isservice = 0;
-	    }
-	  else
-	    {
-	      $this->isproduct = 0;
-	      $this->isservice = 1;
-	    }
-
-	  $this->db->free();
-
-	  $sql = "SELECT reel, fk_entrepot";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = $id";
-	  $result = $this->db->query($sql) ;
-	  if ( $result )
-	    {
-	      $num = $this->db->num_rows();
-	      $i=0;
-	      if ($num > 0)
-		{
-		  while ($i < $num )
-		    {
-		      $row = $this->db->fetch_row($i);
-		      $this->stock_entrepot[$row[1]] = $row[0];
-
-		      $this->stock_reel = $this->stock_reel + $row[0];
-		      $i++;
-		    }
-
-		  $this->no_stock = 0;
-		}
-	      else
-		{
-		  $this->no_stock = 1;
-		}
-	      $this->db->free();
-	    }
-	  return 1;
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	  return -1;
-	}
-  }
-
-
-  /**
-   *    \brief  Renvoie le nombre de propale incluant le produit/service
-   *    \param  socid       id societe
-   *    \return int         nombre d'inclusion
-   */
-	 
-  function count_propale($socid=0)
+    /**
+     *    \brief  Modifie le prix d'un produit/service
+     *    \param  id          id du produit/service à modifier
+     *    \param  user        utilisateur qui modifie le prix
+     */
+    function update_price($id, $user)
     {
-      $sql = "SELECT pd.fk_propal";
-      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."propal as pr";
-      $sql .= " WHERE pr.rowid = pd.fk_propal AND p.rowid = pd.fk_product AND p.rowid = ".$this->id;
-      if ($socid > 0)
-	{
-	  $sql .= " AND pr.fk_soc = $socid";
-	}
-      $sql .= " GROUP BY pd.fk_propal";
-
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
-	{
-	  return $this->db->num_rows();
-	}
-      else
-	{
-	  return 0;
-	}
+        if (strlen(trim($this->price)) > 0 )
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
+            $sql .= " SET price = " . ereg_replace(",",".",$this->price);
+            $sql .= " WHERE rowid = " . $id;
+    
+            if ( $this->db->query($sql) )
+            {
+                $this->_log_price($user);
+                return 1;
+            }
+            else
+            {
+                dolibarr_print_error($this->db);
+                return -1;
+            }
+        }
+        else
+        {
+            $this->error = "Prix saisi invalide.";
+            return -2;
+        }
     }
 
 
-  /**
-   *    \brief  Renvoie le nombre de client avec propale incluant le produit/service
-   *    \param  socid       id societe
-   *    \return int         nombre d'inclusion
-   */
-	 
-  function count_propale_client($socid=0)
+    /**
+     *    \brief  Charge le produit/service en mémoire
+     *    \param  id          id du produit/service à charger
+     */
+    function fetch ($id)
     {
-      $sql = "SELECT pr.fk_soc";
-      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."propal as pr";
-      $sql .= " WHERE p.rowid = pd.fk_product AND pd.fk_propal = pr.rowid AND p.rowid = ".$this->id;
-      if ($socid > 0)
-	{
-	  $sql .= " AND pr.fk_soc = $socid";
-	}
-      $sql .= " GROUP BY pr.fk_soc";
-
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
-	{
-	  return $this->db->num_rows();
-	}
-      else
-	{
-	  return 0;
-	}
+        $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente, fk_product_type, duration, seuil_stock_alerte";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE rowid = $id";
+    
+        $result = $this->db->query($sql) ;
+    
+        if ( $result )
+        {
+            $result = $this->db->fetch_array();
+    
+            $this->id                 = $result["rowid"];
+            $this->ref                = $result["ref"];
+            $this->libelle            = stripslashes($result["label"]);
+            $this->description        = stripslashes($result["description"]);
+            $this->price              = $result["price"];
+            $this->tva_tx             = $result["tva_tx"];
+            $this->type               = $result["fk_product_type"];
+            $this->nbvente            = $result["nbvente"];
+            $this->envente            = $result["envente"];
+            $this->duration           = $result["duration"];
+            $this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
+            $this->duration_unit      = substr($result["duration"],-1);
+            $this->seuil_stock_alerte = $result["seuil_stock_alerte"];
+    
+            $this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
+    
+            if ($this->type == 0)
+            {
+                $this->isproduct = 1;
+                $this->isservice = 0;
+            }
+            else
+            {
+                $this->isproduct = 0;
+                $this->isservice = 1;
+            }
+    
+            $this->db->free();
+    
+            $sql = "SELECT reel, fk_entrepot";
+            $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = $id";
+            $result = $this->db->query($sql) ;
+            if ( $result )
+            {
+                $num = $this->db->num_rows();
+                $i=0;
+                if ($num > 0)
+                {
+                    while ($i < $num )
+                    {
+                        $row = $this->db->fetch_row($i);
+                        $this->stock_entrepot[$row[1]] = $row[0];
+    
+                        $this->stock_reel = $this->stock_reel + $row[0];
+                        $i++;
+                    }
+    
+                    $this->no_stock = 0;
+                }
+                else
+                {
+                    $this->no_stock = 1;
+                }
+                $this->db->free();
+            }
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
     }
 
 
-  /**
-   *    \brief  Renvoie le nombre de facture incluant le produit/service
-   *    \param  socid       id societe
-   *    \return int         nombre d'inclusion
-   */
-	 
-  function count_facture($socid=0)
+    /**
+     *    \brief    Charge tableau des stats propale pour le produit/service
+     *    \param    socid       Id societe
+     *    \return   array       Tableau des stats
+     */
+    function load_stats_propale($socid=0)
     {
-      $sql = "SELECT pd.fk_facture";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as pd, ".MAIN_DB_PREFIX."product as p";
-      $sql .= ", ".MAIN_DB_PREFIX."facture as f";
-      $sql .= " WHERE f.rowid = pd.fk_facture AND p.rowid = pd.fk_product AND p.rowid = ".$this->id;
-      if ($socid > 0)
-	{
-	  $sql .= " AND f.fk_soc = $socid";
-	}
-      $sql .= " GROUP BY pd.fk_facture";
+        $sql = "SELECT COUNT(DISTINCT pr.fk_soc) as nb_customers, COUNT(DISTINCT pr.rowid) as nb,";
+        $sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."propal as pr";
+        $sql.= " WHERE p.rowid = pd.fk_product AND pd.fk_propal = pr.rowid AND p.rowid = ".$this->id;
+        //$sql.= " AND pr.fk_statut != 0";
+        if ($socid > 0)
+        {
+            $sql .= " AND pr.fk_soc = $socid";
+        }
+    
+        $result = $this->db->query($sql) ;
+        if ( $result )
+        {
+            $obj=$this->db->fetch_object($result);
+            $this->stats_propale['customers']=$obj->nb_customers;
+            $this->stats_propale['nb']=$obj->nb;
+            $this->stats_propale['rows']=$obj->nb_rows;
+            $this->stats_propale['qty']=$obj->qty?$obj->qty:0;
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
 
-      $result = $this->db->query($sql) ;
 
-      if ( $result )
-	{
-	  return $this->db->num_rows();
-	}
-      else
-	{
-	  return 0;
-	}
+    /**
+     *    \brief    Charge tableau des stats commande pour le produit/service
+     *    \param    socid       Id societe
+     *    \return   array       Tableau des stats
+     */
+    function load_stats_commande($socid=0)
+    {
+        $sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
+        $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."product as p,";
+        $sql.= " ".MAIN_DB_PREFIX."commande as c";
+        $sql.= " WHERE c.rowid = cd.fk_commande AND p.rowid = cd.fk_product AND p.rowid = ".$this->id;
+        //$sql.= " AND c.fk_statut != 0";
+        if ($socid > 0)
+        {
+            $sql .= " AND c.fk_soc = $socid";
+        }
+    
+        $result = $this->db->query($sql) ;
+        if ( $result )
+        {
+            $obj=$this->db->fetch_object($result);
+            $this->stats_commande['customers']=$obj->nb_customers;
+            $this->stats_commande['nb']=$obj->nb;
+            $this->stats_commande['rows']=$obj->nb_rows;
+            $this->stats_commande['qty']=$obj->qty?$obj->qty:0;
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+    
+    /**
+     *    \brief    Charge tableau des stats contrat pour le produit/service
+     *    \param    socid       Id societe
+     *    \return   array       Tableau des stats
+     */
+    function load_stats_contrat($socid=0)
+    {
+        $sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
+        $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p,";
+        $sql.= " ".MAIN_DB_PREFIX."contrat as c";
+        $sql.= " WHERE c.rowid = cd.fk_contrat AND p.rowid = cd.fk_product AND p.rowid = ".$this->id;
+        //$sql.= " AND c.statut != 0";
+        if ($socid > 0)
+        {
+            $sql .= " AND c.fk_soc = $socid";
+        }
+    
+        $result = $this->db->query($sql) ;
+        if ( $result )
+        {
+            $obj=$this->db->fetch_object($result);
+            $this->stats_contrat['customers']=$obj->nb_customers;
+            $this->stats_contrat['nb']=$obj->nb;
+            $this->stats_contrat['rows']=$obj->nb_rows;
+            $this->stats_contrat['qty']=$obj->qty?$obj->qty:0;
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+    
+    /**
+     *    \brief    Charge tableau des stats facture pour le produit/service
+     *    \param    socid       Id societe
+     *    \return   array       Tableau des stats
+     */
+    function load_stats_facture($socid=0)
+    {
+        $sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
+        $sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as pd, ".MAIN_DB_PREFIX."product as p";
+        $sql.= ", ".MAIN_DB_PREFIX."facture as f";
+        $sql.= " WHERE f.rowid = pd.fk_facture AND p.rowid = pd.fk_product AND p.rowid = ".$this->id;
+        //$sql.= " AND f.fk_statut != 0";
+        if ($socid > 0)
+        {
+            $sql .= " AND f.fk_soc = $socid";
+        }
+    
+        $result = $this->db->query($sql) ;
+        if ( $result )
+        {
+            $obj=$this->db->fetch_object($result);
+            $this->stats_facture['customers']=$obj->nb_customers;
+            $this->stats_facture['nb']=$obj->nb;
+            $this->stats_facture['rows']=$obj->nb_rows;
+            $this->stats_facture['qty']=$obj->qty?$obj->qty:0;
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
     }
 
 
