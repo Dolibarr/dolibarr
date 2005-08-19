@@ -884,40 +884,59 @@ class Form
      */
     function select_tva($name='tauxtva', $defaulttx='', $default=0)
     {
-        global $langs;
-        
-        $file = DOL_DOCUMENT_ROOT . "/conf/tva.local.php";
-        if (is_readable($file))
+        global $langs,$conf;
+
+        if (! $conf->global->MAIN_INFO_SOCIETE_PAYS)
         {
-            include $file;
+            print '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
+        }
+        
+        $sql  = "SELECT t.taux,t.recuperableonly";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_tva AS t";
+        $sql .= " WHERE t.fk_pays = '".$conf->global->MAIN_INFO_SOCIETE_PAYS."'";
+        $sql .= " AND t.active = 1";
+        $sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
+
+        if ($this->db->query($sql))
+        {
+            $num = $this->db->num_rows();
+            for ($i = 0; $i < $num; $i++)
+            {
+                $obj = $this->db->fetch_object();
+                $txtva[ $i ] = $obj->taux;
+                $libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
+            }
         }
         else
         {
             $txtva[0] = '19.6';
+            $libtva[0] = '';
             $txtva[1] = '5.5';
+            $libtva[1] = '';
             $txtva[2] = '0';
+            $libtva[2] = '';
         }
-    
+
         if ($defaulttx == '')
         {
             $defaulttx = $txtva[0];
         }
-    
+
         $taille = sizeof($txtva);
-    
+
         print '<select class="flat" name="'.$name.'">';
         if ($default) print '<option value="0">'.$langs->trans("Default").'</option>';
-        
+
         for ($i = 0 ; $i < $taille ; $i++)
         {
             print '<option value="'.$txtva[$i].'"';
             if ($txtva[$i] == $defaulttx)
             {
-                print ' selected>'.$txtva[$i].'%</option>';
+                print ' selected>'.$libtva[$i].'</option>';
             }
             else
             {
-                print '>'.$txtva[$i].'%</option>';
+                print '>'.$libtva[$i].'</option>';
             }
         }
         print '</select>';

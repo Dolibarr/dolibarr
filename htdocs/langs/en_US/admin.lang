@@ -197,6 +197,8 @@ DictionnaryCurrency=Currencies
 DictionnaryCivility=Civility title
 DictionnaryActions=Actions list
 DictionnarySocialContributions=Social contributions types
+DictionnaryVAT=VAT Rates
+VATReceivedOnly=Special rate not billed
 LabelUsedByDefault=Label used by default if no translation can be found for code
 AlwaysActive=Always active
 UpdateRequired=Your system need to be updated. For this click on <a href="%s">Update now</a>.

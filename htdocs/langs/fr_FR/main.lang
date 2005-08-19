@@ -18,6 +18,7 @@ ErrorFileNotUploaded=Le fichier n'a pas été transféré
 ErrorInternalErrorDetected=Erreur interne détectée
 ErrorNoRequestRan=Aucune requête exécutée
 ErrorWrongHostParameter=Mauvais paramètre Serveur
+ErrorYourCountryIsNotDefined=Votre pays n'est pas défini. Aller dans Configuration-Général-Editer et resoumettez le formulaire.
 HomeArea=Espace accueil
 LastAccess=Dernière connexion
 RequestedUrl=Url sollicitée

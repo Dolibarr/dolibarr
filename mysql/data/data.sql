@@ -686,3 +686,16 @@ insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LT', 'L
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'RU', 'SUR', 1, 'Rouble'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FH', 'HUF', 1, 'Forint hongrois'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LK', 'LKR', 1, 'Roupie sri lanka'); 
+
+--
+-- Taux TVA
+--
+
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1,1,   '0','0','Taux TVA non applicable (France, TOM)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2,1, '5.5','0','Taux à 5.5 (France hors DOMTOM)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (3,1, '8.5','0','Taux à 8.5 (DOM sauf Guyane et Saint-Martin)',0);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (4,1, '8.5','1','Taux à 8.5 (DOM sauf Guyane et Saint-Martin), récupérable uniquement, non facturé',0);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (5,1,'19.6','0','Taux à 19.6 (France hors DOMTOM)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (6,2,   '0','0','Taux TVA non applicable',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (7,2,   '6','0','Taux à 6',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (8,2,  '21','0','Taux à 21',1);

@@ -6,6 +6,29 @@
 -- ;
 
 
+drop table if exists llx_c_tva;
+
+create table llx_c_tva
+(
+  rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  fk_pays           integer NOT NULL,
+  taux              double NOT NULL,
+  recuperableonly   integer DEFAULT 0,
+  note              varchar(128),
+  active            tinyint DEFAULT 1 NOT NULL
+
+)type=innodb;
+
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1,1,   '0','0','Taux TVA non applicable (France, TOM)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2,1, '5.5','0','Taux à 5.5 (France hors DOMTOM)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (3,1, '8.5','0','Taux à 8.5 (DOM sauf Guyane et Saint-Martin)',0);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (4,1, '8.5','1','Taux à 8.5 (DOM sauf Guyane et Saint-Martin), récupérable uniquement, non facturé',0);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (5,1,'19.6','0','Taux à 19.6 (France hors DOMTOM)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (6,2,   '0','0','Taux TVA non applicable',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (7,2,   '6','0','Taux à 6',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (8,2,  '21','0','Taux à 21',1);
+
+
 create table llx_user_clicktodial
 (
   fk_user       integer PRIMARY KEY,

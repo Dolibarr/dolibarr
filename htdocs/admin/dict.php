@@ -50,7 +50,7 @@ $active = 1;
 // Mettre ici tous les caractéristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
-$taborder=array(4,3,2,0,9,0,1,8,0,5,0,6,0,7);
+$taborder=array(4,3,2,0,9,0,1,8,0,5,0,6,0,7,0,10);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -62,6 +62,7 @@ $tabname[6] = MAIN_DB_PREFIX."c_actioncomm";
 $tabname[7] = MAIN_DB_PREFIX."c_chargesociales";
 $tabname[8] = MAIN_DB_PREFIX."c_typent";
 $tabname[9] = MAIN_DB_PREFIX."c_currencies";
+$tabname[10]= MAIN_DB_PREFIX."c_tva";
 
 // Libellé des dictionnaires
 $tablib[1] = $langs->trans("DictionnaryCompanyJuridicalType");
@@ -73,6 +74,7 @@ $tablib[6] = $langs->trans("DictionnaryActions");
 $tablib[7] = $langs->trans("DictionnarySocialContributions");
 $tablib[8] = $langs->trans("DictionnaryCompanyType");
 $tablib[9] = $langs->trans("DictionnaryCurrency");
+$tablib[10]= $langs->trans("DictionnaryVAT");
 
 // Requete pour extraction des données des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM llx_c_forme_juridique as f, llx_c_pays as p WHERE f.fk_pays=p.rowid";
@@ -84,17 +86,19 @@ $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.t
 $tabsql[7] = "SELECT a.id    as rowid, a.id as code, a.libelle AS libelle, a.deductible, a.active FROM llx_c_chargesociales AS a";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM llx_c_typent";
 $tabsql[9] = "SELECT code    as rowid, code, code_iso, label as libelle, active FROM llx_c_currencies";
+$tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, t.recuperableonly, t.note, t.active FROM llx_c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 
 // Tri par defaut
-$tabsqlsort[1]="pays, code ASC";
-$tabsqlsort[2]="pays, code ASC";
-$tabsqlsort[3]="pays, code ASC";
-$tabsqlsort[4]="libelle ASC";
-$tabsqlsort[5]="libelle ASC";
-$tabsqlsort[6]="a.type ASC, a.code ASC";
-$tabsqlsort[7]="a.libelle ASC";
-$tabsqlsort[8]="libelle ASC";
-$tabsqlsort[9]="code ASC";
+$tabsqlsort[1] ="pays, code ASC";
+$tabsqlsort[2] ="pays, code ASC";
+$tabsqlsort[3] ="pays, code ASC";
+$tabsqlsort[4] ="libelle ASC";
+$tabsqlsort[5] ="libelle ASC";
+$tabsqlsort[6] ="a.type ASC, a.code ASC";
+$tabsqlsort[7] ="a.libelle ASC";
+$tabsqlsort[8] ="libelle ASC";
+$tabsqlsort[9] ="code ASC";
+$tabsqlsort[10]="pays ASC, taux ASC, recuperableonly ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -106,6 +110,7 @@ $tabfield[6] = "code,libelle,type";
 $tabfield[7] = "libelle,deductible";
 $tabfield[8] = "code,libelle";
 $tabfield[9] = "code,code_iso,libelle";
+$tabfield[10]= "pays,taux,recuperableonly,note";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -117,6 +122,7 @@ $tabfieldinsert[6] = "code,libelle,type";
 $tabfieldinsert[7] = "libelle,deductible";
 $tabfieldinsert[8] = "code,libelle";
 $tabfieldinsert[9] = "code,code_iso,libelle";
+$tabfieldinsert[10]= "fk_pays,taux,recuperableonly,note";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
 $tabrowid[1] = "";
@@ -128,6 +134,7 @@ $tabrowid[6] = "id";
 $tabrowid[7] = "id";
 $tabrowid[8] = "id";
 $tabrowid[9] = "code";
+$tabrowid[10]= "";
 
 
 $msg='';
@@ -138,8 +145,8 @@ $sortfield=$_GET["sortfield"];
 /*
  * Actions ajout d'une entrée dans un dictionnaire de donnée
  */
-if ($_POST["actionadd"]) {
-    
+if ($_POST["actionadd"])
+{
     $listfield=split(',',$tabfield[$_POST["id"]]);
 
     // Verifie que tous les champs sont renseignés
@@ -205,6 +212,7 @@ if ($_POST["actionadd"]) {
         }
     }
 
+    if ($msg) $msg='<div class="error">'.$msg.'</div>';
     $_GET["id"]=$_POST["id"];       // Force affichage dictionnaire en cours d'edition
 }
 
@@ -297,7 +305,9 @@ if ($_GET["id"])
 
     // Ligne d'ajout
     if ($tabname[$_GET["id"]]) {
+        $alabelisused=0;
         $var=false;
+        
         $fieldlist=split(',',$tabfield[$_GET["id"]]);
         print '<table class="noborder" width="100%">';
 
@@ -310,14 +320,17 @@ if ($_GET["id"])
             // Determine le nom du champ par rapport aux noms possibles
             // dans les dictionnaires de données
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
-            if ($fieldlist[$field]=='lang')    $valuetoshow=$langs->trans("Language");
-            if ($fieldlist[$field]=='type')    $valuetoshow=$langs->trans("Type");
-            if ($fieldlist[$field]=='code')    $valuetoshow=$langs->trans("Code");
-            if ($fieldlist[$field]=='libelle') $valuetoshow=$langs->trans("Label")."*";
-            if ($fieldlist[$field]=='pays')    $valuetoshow=$langs->trans("Country");
+            if ($fieldlist[$field]=='lang')            $valuetoshow=$langs->trans("Language");
+            if ($fieldlist[$field]=='type')            $valuetoshow=$langs->trans("Type");
+            if ($fieldlist[$field]=='code')            $valuetoshow=$langs->trans("Code");
+            if ($fieldlist[$field]=='libelle')         $valuetoshow=$langs->trans("Label")."*"; 
+            if ($fieldlist[$field]=='pays')            $valuetoshow=$langs->trans("Country");
+            if ($fieldlist[$field]=='recuperableonly') $valuetoshow=$langs->trans("VATReceivedOnly");
             print '<td>';
             print $valuetoshow;
             print '</td>';
+
+            if ($fieldlist[$field]=='libelle') $alabelisused=1; 
         }
         print '<td>&nbsp;</td>';
         print '<td>&nbsp;</td>';
@@ -347,6 +360,11 @@ if ($_GET["id"])
                 print 'user<input type="hidden" name="type" value="user">';
                 print '</td>';
             }
+            elseif ($fieldlist[$field] == 'recuperableonly') {
+                print '<td>';
+                $html->selectyesno('recuperableonly','',1);
+                print '</td>';
+            }
             else {
                 print '<td><input type="text" class="flat" value="" name="'.$fieldlist[$field].'"></td>';
             }
@@ -354,7 +372,10 @@ if ($_GET["id"])
         print '<td colspan=3><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
         print "</tr>";
 
-        print '<tr><td colspan="'.(count($fieldlist)+2).'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
+        if ($alabelisused)  // Si un des champs est un libellé
+        {
+            print '<tr><td colspan="'.(count($fieldlist)+2).'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
+        }
         print '<tr><td colspan="'.(count($fieldlist)+2).'">&nbsp;</td></tr>';
 
         print '</form>';
@@ -379,6 +400,7 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='code')    $valuetoshow=$langs->trans("Code");
                 if ($fieldlist[$field]=='libelle') $valuetoshow=$langs->trans("Label")."*";
                 if ($fieldlist[$field]=='pays')    $valuetoshow=$langs->trans("Country");
+                if ($fieldlist[$field]=='recuperableonly') $valuetoshow=$langs->trans("VATReceivedOnly");
                 // Affiche nom du champ
                 print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield);
             }
@@ -398,6 +420,9 @@ if ($_GET["id"])
                     $valuetoshow=$obj->$fieldlist[$field];
                     if ($valuetoshow=='all') {
                         $valuetoshow=$langs->trans('All');
+                    }
+                    if ($fieldlist[$field]=='recuperableonly') {
+                        $valuetoshow=yn($valuetoshow);
                     }
                     print '<td>'.$valuetoshow.'</td>';
 

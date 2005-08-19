@@ -18,6 +18,7 @@ ErrorFileNotUploaded=File was not uploaded
 ErrorInternalErrorDetected=Internal error detected
 ErrorNoRequestRan=No request ran
 ErrorWrongHostParameter=Wrong host parameter
+ErrorYourCountryIsNotDefined=Your country is not defined. Go to Home-Setup-Edit and post again the form.
 HomeArea=Home area
 LastAccess=Last access
 RequestedUrl=Requested Url
