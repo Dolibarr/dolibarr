@@ -72,7 +72,8 @@ if ($_POST["action"] == 'update')
         if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["SIZE_LISTE_LIMIT"]=$_POST["size_liste_limit"];
         else $tabparam["SIZE_LISTE_LIMIT"]='';
     
-        $tabparam["MAIN_THEME"]=$_POST["main_theme"];
+        if ($_POST["check_MAIN_THEME"]=="on") $tabparam["MAIN_THEME"]=$_POST["main_theme"];
+        else $tabparam["MAIN_THEME"]='';
 
         $tabparam["MAIN_SEARCHFORM_CONTACT"]=$_POST["main_searchform_contact"];
         $tabparam["MAIN_SEARCHFORM_SOCIETE"]=$_POST["main_searchform_societe"];
@@ -141,13 +142,13 @@ if ($_GET["action"] == 'edit')
     $var=true;
     
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Langue par defaut
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Language").'</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
     print '<td>'.$conf->global->MAIN_LANG_DEFAULT.'</td>';
-    print '<td align="center"><input name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left"><input name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     $html=new Form($db);
     $html->select_lang($fuser->conf->MAIN_LANG_DEFAULT,'main_lang_default');
@@ -157,7 +158,7 @@ if ($_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="center"><input name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left"><input name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td><input class="flat" name="size_liste_limit" size="4" value="' . $fuser->conf->SIZE_LISTE_LIMIT . '"></td></tr>';
 
     print '</table><br>';
@@ -181,18 +182,18 @@ else
     $var=true;
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Language").'</td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
     print '<td>'.$conf->global->MAIN_LANG_DEFAULT.'</td>';
-    print '<td align="center"><input type="checkbox" disabled '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left"><input type="checkbox" disabled '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>' . $fuser->conf->MAIN_LANG_DEFAULT . '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="center"><input type="checkbox" disabled '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left"><input type="checkbox" disabled '.($fuser->conf->SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>' . $fuser->conf->SIZE_LISTE_LIMIT . '</td></tr>';
 
     print '</table><br>';
@@ -219,20 +220,32 @@ llxFooter('$Date$ - $Revision$');
 
 function show_theme($fuser,$edit=0) 
 {
-    global $langs,$dirtheme,$bc;
+    global $conf,$langs,$dirtheme,$bc;
     
-    $nbofthumbs=5;
+    $thumbsbyrow=6;
+    
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="'.$nbofthumbs.'">'.$langs->trans("Skin").'</td></tr>';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td colspan="2">&nbsp;</td></tr>';
 
-    $handle=opendir($dirtheme);
     $var=false;
+
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultSkin").'</td>';
+    print '<td>'.$conf->global->MAIN_THEME.'</td>';
+    print '<td '.$bc[$var].' align="left"><input name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($fuser->conf->MAIN_THEME?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td '.$bc[$var].'>&nbsp;</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td colspan="4">';
+
+    print '<table class="notopnoleftnoright" width="100%">';
+    $handle=opendir($dirtheme);
     $i=0;
     while (($subdir = readdir($handle))!==false)
     {
         if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.' && substr($subdir, 0, 3) <> 'CVS')
         {
-            if ($i % $nbofthumbs == 0) {
+            if ($i % $thumbsbyrow == 0)
+            {
                 print '<tr '.$bc[$var].'>';
             }
             
@@ -252,17 +265,19 @@ function show_theme($fuser,$edit=0)
 
             $i++;
 
-            if ($i % $nbofthumbs == 0) print '</tr>';
+            if ($i % $thumbsbyrow == 0) print '</tr>';
         }
     }
-    if ($i % $nbofthumbs != 0) {
-        while ($i % $nbofthumbs != 0) {
+    if ($i % $thumbsbyrow != 0) {
+        while ($i % $thumbsbyrow != 0) {
             print '<td>&nbsp;</td>';
             $i++;
         }
         print '</tr>';
     }    
+    print '</table>';
 
+    print '</td></tr>';
     print '</table>';
 }
 
