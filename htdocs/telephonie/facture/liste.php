@@ -71,6 +71,11 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 
 $sql .= " WHERE s.idp = l.fk_soc_facture AND l.rowid = f.fk_ligne";
 
+if ($user->rights->telephonie->ligne->lire_restreint)
+{
+  $sql .= " AND l.fk_commercial_suiv = ".$user->id;
+}
+
 if ($_GET["search_ligne"])
 {
   $sql .= " AND f.ligne LIKE '%".$_GET["search_ligne"]."%'";
