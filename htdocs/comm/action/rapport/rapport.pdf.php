@@ -157,18 +157,18 @@ class CommActionRapport
                 $y = max($y, $pdf->GetY(), $y0, $y1, $y2, $y3) + 1;
 
                 $pdf->SetXY(5, $y);
-                $pdf->MultiCell(20, 4, dolibarr_print_date($obj->da)."\n".dolibarr_print_date($obj->da,"%H:%m:%S"), 0, 'L', 0);
+                $pdf->MultiCell(22, 4, dolibarr_print_date($obj->da)."\n".dolibarr_print_date($obj->da,"%H:%m:%S"), 0, 'L', 0);
                 $y0 = $pdf->GetY();
 
-                $pdf->SetXY(25, $y);
+                $pdf->SetXY(26, $y);
                 $pdf->MultiCell(40, 4, $obj->societe, 0, 'L', 0);
                 $y1 = $pdf->GetY();
 
-                $pdf->SetXY(65,$y);
+                $pdf->SetXY(66,$y);
                 $pdf->MultiCell(40, 4, $obj->libelle, 0, 'L', 0);
                 $y2 = $pdf->GetY();
 
-                $pdf->SetXY(105,$y);
+                $pdf->SetXY(106,$y);
                 $pdf->MultiCell(112, 4, eregi_replace('<br>',"\n",$obj->note), 0, 'L', 0);
                 $y3 = $pdf->GetY();
 

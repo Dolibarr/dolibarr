@@ -22,7 +22,8 @@
  *
  */
 
-/**	    \file       htdocs/comm/action/rapport/index.php
+/**
+	    \file       htdocs/comm/action/rapport/index.php
         \ingroup    commercial
 		\brief      Page accueil des rapports des actions commerciales
 		\version    $Revision$
@@ -32,9 +33,7 @@ require_once("./pre.inc.php");
 require_once("../../../contact.class.php");
 require_once("../../../actioncomm.class.php");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
