@@ -394,6 +394,8 @@ alter table llx_entrepot add fk_pays integer DEFAULT 0;
 alter table llx_product add stock_propale integer default 0;
 alter table llx_product add stock_commande integer default 0;
 alter table llx_product add seuil_stock_alerte integer default 0;
+update llx_product set ref=substr(label,0,15) where ref is null;
+alter table llx_product modify ref varchar(15) UNIQUE NOT NULL;
 
 alter table llx_groupart add description text after groupart ;
 
