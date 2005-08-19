@@ -19,9 +19,7 @@
  *
  * $Id$
  * $Source$
- *
  */
-
 
 /**
 	    \file       htdocs/contact/index.php
@@ -95,181 +93,180 @@ $sql .= "WHERE 1=1 ";
 
 if ($_GET["userid"])    // statut commercial
 {
-  $sql .= " AND p.fk_user=".$_GET["userid"];
+    $sql .= " AND p.fk_user=".$_GET["userid"];
 }
 if ($search_nom)        // filtre sur le nom
 {
-  $sql .= " AND upper(p.name) like '%".$search_nom."%'";
+    $sql .= " AND upper(p.name) like '%".$search_nom."%'";
 }
 if ($search_prenom)     // filtre sur le prenom
 {
-  $sql .= " AND upper(p.firstname) like '%".$search_prenom."%'";
+    $sql .= " AND upper(p.firstname) like '%".$search_prenom."%'";
 }
 if ($search_societe)    // filtre sur la societe
 {
-  $sql .= " AND upper(s.nom) like '%".$search_societe."%'";
+    $sql .= " AND upper(s.nom) like '%".$search_societe."%'";
 }
 if ($search_email)      // filtre sur l'email
 {
-  $sql .= " AND upper(p.email) like '%".$search_email."%'";
+    $sql .= " AND upper(p.email) like '%".$search_email."%'";
 }
 
 if ($type == "f")        // filtre sur type
 {
-  $sql .= " AND fournisseur = 1";
+    $sql .= " AND fournisseur = 1";
 }
 if ($type == "c")        // filtre sur type
 {
-  $sql .= " AND client = 1";
+    $sql .= " AND client = 1";
 }
 
 if ($contactname)
 {
-  $sql .= " AND (p.name like '%".$contactname."%' OR p.firstname like '%".$contactname."%') ";
+    $sql .= " AND (p.name like '%".$contactname."%' OR p.firstname like '%".$contactname."%') ";
 }
 
-if ($socid) 
+if ($socid)
 {
-  $sql .= " AND s.idp = $socid";
+    $sql .= " AND s.idp = $socid";
 }
 
 if($_GET["view"] == "recent")
 {
-  $sql .= " ORDER BY p.datec DESC " . $db->plimit( $limit + 1, $offset);
+    $sql .= " ORDER BY p.datec DESC " . $db->plimit( $limit + 1, $offset);
 }
 else
 {
-  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1, $offset);
+    $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1, $offset);
 }
 
 $result = $db->query($sql);
 
-if ($result) 
+if ($result)
 {
-  $num = $db->num_rows();
-  $i = 0;
+    $num = $db->num_rows();
+    $i = 0;
 
-  print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$_GET["begin"].'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
+    print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$_GET["begin"].'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
 
 
-  print '<table class="liste" width="100%">';
+    print '<table class="liste" width="100%">';
 
-  if ($contactname)
+    if ($contactname)
     {
-      print $langs->trans("Filter")." (".$langs->trans("Lastname")." ".$langs->trans("or")." ".$langs->trans("Firstname")."): $contactname";
+        print $langs->trans("Filter")." (".$langs->trans("Lastname")." ".$langs->trans("or")." ".$langs->trans("Firstname")."): $contactname";
     }
 
-  // Ligne des titres
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
-  print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
-  print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
+    // Ligne des titres
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
+    print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
+    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
+    print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
 
-  if ($_GET["view"] == 'phone')
+    if ($_GET["view"] == 'phone')
     {
-      print '<td class="liste_titre">'.$langs->trans("Mobile").'</td>';
-      print '<td class="liste_titre">'.$langs->trans("Fax").'</td>';
+        print '<td class="liste_titre">'.$langs->trans("Mobile").'</td>';
+        print '<td class="liste_titre">'.$langs->trans("Fax").'</td>';
     }
-  else
+    else
     {
-      print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
+        print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
     }
-  print '<td class="liste_titre">&nbsp;</td>';
-  print "</tr>\n";
+    print '<td class="liste_titre">&nbsp;</td>';
+    print "</tr>\n";
 
-  // Ligne des champs de filtres
-  print '<form method="post" action="index.php">';
-  print '<input type="hidden" name="view" value="'.$view.'">';
-  print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-  print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-  print '<tr class="liste_titre">';
-  print '<td class="liste_titre">';
-  print '<input class="flat" type="text" name="search_nom" size="12" value="'.$search_nom.'">';
-  print '</td>';
-  print '<td class="liste_titre">';
-  print '<input class="flat" type="text" name="search_prenom" size="10" value="'.$search_prenom.'">';
-  print '</td>';
-  print '<td class="liste_titre">';
-  print '<input class="flat" type="text" name="search_societe" size="14" value="'.$search_societe.'">';
-  print '</td>';
-  print '<td class="liste_titre">';
-  print '&nbsp;';
-  print '</td>';
+    // Ligne des champs de filtres
+    print '<form method="post" action="index.php">';
+    print '<input type="hidden" name="view" value="'.$view.'">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre">';
+    print '<input class="flat" type="text" name="search_nom" size="12" value="'.$search_nom.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input class="flat" type="text" name="search_prenom" size="10" value="'.$search_prenom.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input class="flat" type="text" name="search_societe" size="14" value="'.$search_societe.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '&nbsp;';
+    print '</td>';
 
-  if ($_GET["view"] == 'phone')
+    if ($_GET["view"] == 'phone')
     {
-      print '<td class="liste_titre">';
-      print '&nbsp;';
-      print '</td>';
-      print '<td class="liste_titre">';
-      print '&nbsp;';
-      print '</td>';
+        print '<td class="liste_titre">';
+        print '&nbsp;';
+        print '</td>';
+        print '<td class="liste_titre">';
+        print '&nbsp;';
+        print '</td>';
     }
-  else
+    else
     {
-      print '<td class="liste_titre">';
-      print '<input class="flat" type="text" name="search_email" size="12" value="'.$search_email.'">';
-      print '</td>';
+        print '<td class="liste_titre">';
+        print '<input class="flat" type="text" name="search_email" size="12" value="'.$search_email.'">';
+        print '</td>';
     }
 
-  print '<td class="liste_titre" align="right">';
-  print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
-  print '&nbsp; <input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
-  print '</td>';
-  print '</tr>';
-  print '</form>';
+    print '<td class="liste_titre" align="right">';
+    print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
+    print '&nbsp; <input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
+    print '</td>';
+    print '</tr>';
+    print '</form>';
 
-  $var=True;
-  while ($i < min($num,$limit))
+    $var=True;
+    while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object($result);
-    
-      $var=!$var;
+        $obj = $db->fetch_object($result);
 
-      print "<tr $bc[$var]>";
+        $var=!$var;
 
-      print '<td valign="center">';
-      print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">';
-      print img_object($langs->trans("ShowContact"),"contact");
-      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.$obj->name.'</a></td>';
-      print '<td>'.$obj->firstname.'</td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">';
-      print img_object($langs->trans("ShowCompany"),"company");
-      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+        print "<tr $bc[$var]>";
 
-      if ($_GET["view"] == 'phone')
-	{      
-	  print '<td>'.dolibarr_print_phone($obj->phone_mobile).'&nbsp;</td>';
-      
-	  print '<td colspan="2">'.dolibarr_print_phone($obj->fax).'&nbsp;</td>';
-	}
-      else
-	{
-	  print '<td colspan="2">';
-        if (! $obj->email) {
-            print '&nbsp;';
-        }
-        elseif (! ValidEmail($obj->email))
+        print '<td valign="center">';
+        print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">';
+        print img_object($langs->trans("ShowContact"),"contact");
+        print ' '.$obj->name.'</a></td>';
+        print '<td>'.$obj->firstname.'</td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">';
+        print img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+
+        if ($_GET["view"] == 'phone')
         {
-            print "Email Invalide !";
-        }
-        else {
-            print '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>';
-        }
-	  print '</td>';
-	}
+            print '<td>'.dolibarr_print_phone($obj->phone_mobile,$obj->fp_pays).'&nbsp;</td>';
 
-      print "</tr>\n";
-      $i++;
+            print '<td colspan="2">'.dolibarr_print_phone($obj->fax,$obj->fp_pays).'&nbsp;</td>';
+        }
+        else
+        {
+            print '<td colspan="2">';
+            if (! $obj->email) {
+                print '&nbsp;';
+            }
+            elseif (! ValidEmail($obj->email))
+            {
+                print "Email Invalide !";
+            }
+            else {
+                print '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>';
+            }
+            print '</td>';
+        }
+
+        print "</tr>\n";
+        $i++;
     }
-  print "</table>";
-  $db->free();
+    print "</table>";
+    $db->free();
 }
 else
 {
-  dolibarr_print_error($db);
+    dolibarr_print_error($db);
 }
 
 print '<br>';
