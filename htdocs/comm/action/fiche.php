@@ -450,10 +450,9 @@ if ($_GET["id"])
 
     $act = new ActionComm($db);
     $act->fetch($_GET["id"]);
-    
-    $act->societe->fetch($act->societe->id);
-    $act->author->fetch($act->author->id);
-    $act->contact->fetch($act->contact->id);
+    $res=$act->societe->fetch($act->societe->id);
+    $res=$act->author->fetch();     // Le paramètre est le login, hors seul l'id est chargé.
+    $res=$act->contact->fetch($act->contact->id);
 
     /*
      * Affichage onglets
@@ -488,13 +487,14 @@ if ($_GET["id"])
       print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
       print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
       print '<tr><td>'.$langs->trans("Company").'</td>';
-      print '<td><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
+      print '<td><a href="../fiche.php?socid='.$act->societe->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom.'</a></td>';
       
       print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
       $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
       print '</td></tr>';
       print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
-      print '<td>'.$langs->trans("Author").'</td><td>'.$act->author->fullname.'</td></tr>';
+      print '<td>'.$langs->trans("Author").'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
       print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'">%</td></tr>';
       if ($act->objet_url)
 	{
@@ -510,36 +510,37 @@ if ($_GET["id"])
       print '</table></form>';
     }
   else
-    {      
-      // Affichage fiche action en mode visu
-      print '<table class="border" width="100%"';
-      print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-      print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
-      print '<tr><td>'.$langs->trans("Company").'</td>';
-      print '<td>'.$act->societe->nom_url.'</td>';
-      
-      print '<td>'.$langs->trans("Contact").'</td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.$act->contact->fullname.'</a></td></tr>';
-      print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
-      print '<td>'.$langs->trans("Author").'</td><td>'.$act->author->fullname.'</td></tr>';
-      print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3">'.$act->percent.' %</td></tr>';
-      if ($act->objet_url)
-	{
-	  print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-	  print '<td colspan="3">'.$act->objet_url.'</td></tr>';
-	}
-      
-      // Note
-	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-	  print nl2br($act->note).'</td></tr>';
-
-      print '</table>';
+    {
+        // Affichage fiche action en mode visu
+        print '<table class="border" width="100%"';
+        print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Company").'</td>';
+        print '<td>'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom_url.'</td>';
+    
+        print '<td>'.$langs->trans("Contact").'</td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.$act->contact->fullname.'</a></td></tr>';
+        print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
+        print '<td>'.$langs->trans("Author").'</td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
+        print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3">'.$act->percent.' %</td></tr>';
+        if ($act->objet_url)
+        {
+            print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
+            print '<td colspan="3">'.$act->objet_url.'</td></tr>';
+        }
+    
+        // Note
+        print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
+        print nl2br($act->note).'</td></tr>';
+    
+        print '</table>';
     }
     
     print "</div>\n";
 
 
-    /*
+    /**
      * Barre d'actions
      *
      */
