@@ -104,9 +104,13 @@ class Product
     function create($user)
     {
     
-        $this->ref = ereg_replace("'","",stripslashes($this->ref));
-        $this->ref = ereg_replace("\"","",stripslashes($this->ref));
-    
+        $this->ref = ereg_replace("'","",$this->ref);
+        $this->ref = ereg_replace("\"","",$this->ref);
+        if (strlen($this->tva_tx)==0) $this->tva_tx = 0;
+        if (strlen($this->price)==0) $this->price = 0;
+        if (strlen($this->envente)==0) $this->envente = 0;
+        $this->price = ereg_replace(",",".",$this->price);
+
         dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
     
         $this->db->begin();
@@ -120,12 +124,6 @@ class Product
             $row = $this->db->fetch_array($result);
             if ($row[0] == 0)
             {
-                if (strlen($this->tva_tx)==0) $this->tva_tx = 0;
-                if (strlen($this->price)==0) $this->price = 0;
-                if (strlen($this->envente)==0) $this->envente = 0;
-    
-                $this->price = ereg_replace(",",".",$this->price);
-    
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
                 $sql .= " (datec, fk_user_author, fk_product_type, price)";
                 $sql .= " VALUES (now(),".$user->id.",$this->type, '" . $this->price . "')";
@@ -191,12 +189,14 @@ class Product
     $langs->load("products");
     
     if (! $this->libelle) $this->libelle = 'LIBELLE MANQUANT';
-    $this->ref = ereg_replace("\"","",stripslashes($this->ref));
-    $this->ref = ereg_replace("'","",stripslashes($this->ref));
 
     $this->ref = trim($this->ref);
+    $this->ref = ereg_replace("\"","",$this->ref);
+    $this->ref = ereg_replace("'","",$this->ref);
+
     $this->libelle = trim($this->libelle);
     $this->description = trim($this->description);
+    $this->note = trim($this->note);
     
     $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
     $sql .= " SET label = '" . addslashes($this->libelle) ."'";
@@ -205,6 +205,7 @@ class Product
     $sql .= ",envente = " . $this->envente ;
     $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
     $sql .= ",description = '" . addslashes($this->description) ."'";
+    $sql .= ",note = '" . addslashes($this->note) ."'";
     $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
     $sql .= " WHERE rowid = " . $id;
     
@@ -214,11 +215,13 @@ class Product
     }
     else
     {
-        if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+        if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+        {
             $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
             return -1;
         }
-        else {
+        else
+        {
             $this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
     	    return -2;
         }
@@ -397,8 +400,9 @@ class Product
      */
     function fetch ($id)
     {
-        $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente, fk_product_type, duration, seuil_stock_alerte";
-        $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE rowid = $id";
+        $sql = "SELECT rowid, ref, label, description, note, price, tva_tx, envente,";
+        $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product WHERE rowid = $id";
     
         $result = $this->db->query($sql) ;
     
@@ -410,6 +414,7 @@ class Product
             $this->ref                = $result["ref"];
             $this->libelle            = stripslashes($result["label"]);
             $this->description        = stripslashes($result["description"]);
+            $this->note               = stripslashes($result["note"]);
             $this->price              = $result["price"];
             $this->tva_tx             = $result["tva_tx"];
             $this->type               = $result["fk_product_type"];
