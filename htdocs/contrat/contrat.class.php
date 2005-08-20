@@ -76,61 +76,7 @@ class Contrat
         $this->statuts[1]=$langs->trans("Validated");
         $this->statuts[2]=$langs->trans("Closed");
     }
-    
-    
-    /**
-     *    \brief      Modifie date de mise en service d'un contrat
-     *                Si la duree est renseignée, date_start=date_start et date_end=date_start+duree
-     *                sinon date_start=date_start et date_end=date_end
-     */
-/*
-    function mise_en_service($user, $date_start, $duree=0, $date_end)
-    {
-        if ($duree) {
-            // Si duree renseignee
-            $duree_value = substr($duree,0,strlen($duree)-1);
-            $duree_unit = substr($duree,-1);
-    
-            $month = date("m",$date_start);
-            $day = date("d",$date_start);
-            $year = date("Y",$date_start);
-    
-            switch($duree_unit)
-            {
-                case "d":
-                $day = $day + $duree_value;
-                break;
-                case "w":
-                $day = $day + ($duree_value * 7);
-                break;
-                case "m":
-                $month = $month + $duree_value;
-                break;
-                case "y":
-                $year = $year + $duree_value;
-                break;
-            }
-            $date_end = mktime(date("H",$date_start), date("i",$date_start), 0, $month, $day, $year);
-        }
-    
-        $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
-        $sql .= " , mise_en_service = ".$this->db->idate($date_start).", fk_user_mise_en_service = ".$user->id;
-        $sql .= " , fin_validite = ". $this->db->idate($date_end);
-        $sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
-    
-        $result = $this->db->query($sql) ;
-        if ($result)
-        {
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
-    }
-*/    
-    
+
     /**
      *      \brief      Active une ligne detail d'un contrat
      *      \param      user        Objet User qui avtice le contrat
@@ -332,6 +278,26 @@ class Contrat
      */
     function create($user,$lang='',$conf='')
     {
+        global $langs;
+        
+        // Controle validité des paramètres
+        $paramsok=1;
+        if ($this->commercial_signature_id <= 0)
+        {
+            $langs->load("commercial");
+            $this->error.=$langs->trans("ErrorFieldRequired",$langs->trans("SalesRepresentativeSignature"));
+            $paramsok=0;
+        }
+        if ($this->commercial_suivi_id <= 0)
+        {
+            $langs->load("commercial");
+            $this->error.=($this->error?"<br>":'');
+            $this->error.=$langs->trans("ErrorFieldRequired",$langs->trans("SalesRepresentativeFollowUp"));
+            $paramsok=0;
+        }
+        if (! $paramsok) return -1;
+        
+        // Insère contrat
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, fk_commercial_signature, fk_commercial_suivi, date_contrat)";
         $sql.= " VALUES (now(),".$this->soc_id.",".$user->id;
         $sql.= ",".($this->commercial_signature_id>=0?$this->commercial_signature_id:"null");

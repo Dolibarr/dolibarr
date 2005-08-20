@@ -90,8 +90,8 @@ if ($_POST["action"] == 'add')
         $mesg='<div class="error">'.$contrat->error.'</div>';
     }
 
-    $_GET["id"] = $contrat->id;
-
+    $_GET["socid"]=$_POST["soc_id"];
+    $_GET["action"]='create';
     $action = '';
 }
 
@@ -646,6 +646,7 @@ else
                         }
                         if ($contrat->statut == 0  && $user->rights->contrat->creer)
                         {
+                            print '&nbsp;';
                             print '<a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
                             print img_delete();
                             print '</a>';
@@ -717,7 +718,7 @@ else
                         print '<textarea name="eldesc" cols="60" rows="1">'.$objp->description.'</textarea></td>';
                         print '<td align="right"><input size="6" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                         print '<td align="center"><input size="3" type="text" name="elqty" value="'.$objp->qty.'"></td>';
-                        print '<td align="right"><input size="2" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+                        print '<td align="right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
                         print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
                         // Ligne dates prévues
                         print "<tr $bc[$var]>";
@@ -753,7 +754,7 @@ else
                 print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
                 print '<td align="center">'.$langs->trans("Qty").'</td>';
                 print '<td align="right">'.$langs->trans("Discount").'</td>';
-                print '<td>&nbsp;</td><td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
                 print "</tr>\n";
 
@@ -770,7 +771,7 @@ else
                 print '</td>';
 
                 print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
-                print '<td align="right" nowrap><input type="text" class="flat" size="2" name="premise" value="0">%</td>';
+                print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="0">%</td>';
                 print '<td align="center" colspan="3" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 
                 print "<tr $bc[$var]>";
@@ -801,8 +802,8 @@ else
                 print '</td>';
                 print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
                 print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
-                print '<td align="right" nowrap><input type="text" class="flat" size="2" name="premise" value="0">%</td>';
-                print '<td align="center" colspan="3" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+                print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="0">%</td>';
+                print '<td align="center" colspan="2" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 
                 print "</tr>\n";
 
