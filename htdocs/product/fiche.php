@@ -69,6 +69,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
   $product->type           = $_POST["type"];
   $product->envente        = $_POST["statut"];
   $product->description    = $_POST["desc"];
+  $product->note           = $_POST["note"];
   $product->duration_value = $_POST["duration_value"];
   $product->duration_unit  = $_POST["duration_unit"];
   $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
@@ -105,6 +106,7 @@ if ($_POST["action"] == 'update' &&
       $product->price              = $_POST["price"];
       $product->tva_tx             = $_POST["tva_tx"];
       $product->description        = $_POST["desc"];
+      $product->note               = $_POST["note"];
       $product->envente            = $_POST["statut"];
       $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
       $product->duration_value = $_POST["duration_value"];
@@ -196,9 +198,9 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
   Header("Location: fiche.php?id=".$_POST["id"]);
 }
 
-// Le produit n'est pas encore chargé a ce stade
-//llxHeader("","",$langs->trans("CardProduct".$product->type));
-llxHeader("","",$langs->trans("CardProduct0"));
+
+
+llxHeader("","",$langs->trans("CardProductService"));
 
 
 /*
@@ -206,69 +208,77 @@ llxHeader("","",$langs->trans("CardProduct0"));
  */
 if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 {
-  $html = new Form($db);
-  $product = new Product($db);
-  if ($_error == 1)
+    $html = new Form($db);
+    $product = new Product($db);
+    if ($_error == 1)
     {
-      $product = $e_product;
+        $product = $e_product;
     }
 
-  print '<form action="fiche.php" method="post">';
-  print '<input type="hidden" name="action" value="add">';
-  print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
+    print '<form action="fiche.php" method="post">';
+    print '<input type="hidden" name="action" value="add">';
+    print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
 
-  if ($_GET["type"]==0) { $title=$langs->trans("NewProduct"); }
-  if ($_GET["type"]==1) { $title=$langs->trans("NewService"); }
-  print_fiche_titre($title);
-      
-  print '<table class="border" width="100%">';
-  print '<tr>';
-  print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
-  if ($_error == 1)
+    if ($_GET["type"]==0) { $title=$langs->trans("NewProduct"); }
+    if ($_GET["type"]==1) { $title=$langs->trans("NewService"); }
+    print_fiche_titre($title);
+
+    print '<table class="border" width="100%">';
+    print '<tr>';
+    print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
+    if ($_error == 1)
     {
-      print $langs->trans("RefAlreadyExists");
+        print $langs->trans("RefAlreadyExists");
     }
-  print '</td></tr>';
-  print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
-  print '<tr><td>'.$langs->trans("SellingPrice").'</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
- 
-  $langs->load("bills");
-  print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-  print $html->select_tva("tva_tx",$conf->defaulttx);
-  print '</td></tr>';
- 
-  print '<tr><td>'.$langs->trans("Status").'</td><td>';
-  print '<select name="statut">';
-  print '<option value="1">'.$langs->trans("OnSell").'</option>';
-  print '<option value="0" selected>'.$langs->trans("NotOnSell").'</option>';
-  print '</td></tr>';
-  
-  if ($_GET["type"] == 0 && $conf->stick->enabled)
+    print '</td></tr>';
+    print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+    print '<tr><td>'.$langs->trans("SellingPrice").'</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
+
+    $langs->load("bills");
+    print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
+    print $html->select_tva("tva_tx",$conf->defaulttx);
+    print '</td></tr>';
+
+    print '<tr><td>'.$langs->trans("Status").'</td><td>';
+    print '<select name="statut">';
+    print '<option value="1">'.$langs->trans("OnSell").'</option>';
+    print '<option value="0" selected>'.$langs->trans("NotOnSell").'</option>';
+    print '</td></tr>';
+
+    if ($_GET["type"] == 0 && $conf->stick->enabled)
     {
-      print "<tr>".'<td>Seuil stock</td><td colspan="2">';
-      print '<input name="seuil_stock_alerte" size="4" value="0">';
-      print '</td></tr>';
+        print "<tr>".'<td>Seuil stock</td><td colspan="2">';
+        print '<input name="seuil_stock_alerte" size="4" value="0">';
+        print '</td></tr>';
     }
-  else
+    else
     {
-      print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+        print '<input name="seuil_stock_alerte" type="hidden" value="0">';
     }
-  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-  print '<textarea name="desc" rows="8" cols="50">';
-  print "</textarea></td></tr>";
-  if ($_GET["type"] == 1)
+
+    // Description
+    print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+    print '<textarea name="desc" rows="4" cols="50">';
+    print "</textarea></td></tr>";
+
+    if ($_GET["type"] == 1)
     {
-      print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
-      print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
-      print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
-      print '<input name="duration_unit" type="radio" value="m">'.$langs->trans("Month").'&nbsp;';
-      print '<input name="duration_unit" type="radio" value="y">'.$langs->trans("Year").'&nbsp;';
-      print '</td></tr>';
+        print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
+        print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
+        print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
+        print '<input name="duration_unit" type="radio" value="m">'.$langs->trans("Month").'&nbsp;';
+        print '<input name="duration_unit" type="radio" value="y">'.$langs->trans("Year").'&nbsp;';
+        print '</td></tr>';
     }
-  
-  print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-  print '</table>';
-  print '</form>';      
+
+    // Note
+    print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
+    print '<textarea name="note" rows="8" cols="50">';
+    print "</textarea></td></tr>";
+
+    print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
+    print '</table>';
+    print '</form>';
 }
 
 
@@ -436,6 +446,9 @@ if ($_GET["id"])
                 print '</td></tr>';
             }
 
+            // Note
+            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';
+
             print "</table>\n";
 
             print "</div>\n";
@@ -479,7 +492,7 @@ if ($_GET["id"])
             print '<option value="0" selected>'.$langs->trans("NotOnSell").'</option>';
         }
         print '</td></tr>';
-        if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
+        if ($product->type == 0 && $conf->stock->enabled)
         {
             print "<tr>".'<td>Seuil stock</td><td colspan="2">';
             print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
@@ -489,8 +502,10 @@ if ($_GET["id"])
         {
             print '<input name="seuil_stock_alerte" type="hidden" value="0">';
         }
+        
+        // Description
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
-        print '<textarea name="desc" rows="8" cols="50">';
+        print '<textarea name="desc" rows="4" cols="50">';
         print $product->description;
         print "</textarea></td></tr>";
 
@@ -508,6 +523,12 @@ if ($_GET["id"])
 
             print '</td></tr>';
         }
+
+        // Note
+        print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
+        print '<textarea name="note" rows="8" cols="50">';
+        print $product->note;
+        print "</textarea></td></tr>";
 
         print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
         print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
