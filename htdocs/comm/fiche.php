@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -269,7 +268,7 @@ if ($_socid > 0)
     print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$objsoc->effectif.'</td></tr>';
 
     print '<tr><td nowrap>';
-    print '<table width="100%" class="nobordernopadding"><tr><td>';
+    print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
     print $langs->trans("CustomerRelativeDiscount");
     print '<td><td align="right">';
     print '<a href="remise.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
@@ -278,7 +277,7 @@ if ($_socid > 0)
 
     print '<tr><td>';
     
-    print '<table width="100%" class="nobordernopadding"><tr><td>';
+    print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
     print $langs->trans("CustomerAbsoluteDiscount");
     print '<td><td align="right">';
     print '<a href="remx.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';

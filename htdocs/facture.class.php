@@ -248,33 +248,47 @@ class Facture
     {
         $error = 0;
 
+        $this->db->begin();
+        
         if ($this->remise_exceptionnelle[1] > 0)
         {
+            // Calcul valeur de remise a appliquer (remise) et reliquat
             if ($this->remise_exceptionnelle[1] > ($this->total_ht * 0.9))
             {
-
                 $remise = floor($this->total_ht * 0.9);
-
-                $result_insert = $this->addline($this->id,
-                addslashes("Remise exceptionnelle"),
-                (0 - $remise),
-                1,
-                '19.6');
-
                 $reliquat = $this->remise_exceptionnelle[1] - $remise;
+            }
+            else
+            {
+                $remise = $this->remise_exceptionnelle[1];
+                $reliquat=0;
+            }
 
-                $sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
-                $sql .= " SET fk_facture = ".$this->id;
-                $sql .= " ,amount_ht = '".ereg_replace(",",".",$remise)."'";
-                $sql .= " WHERE rowid =".$this->remise_exceptionnelle[0];
-                $sql .= " AND fk_soc =". $this->socidp;
+            $result_insert = $this->addline($this->id,
+            addslashes("Remise exceptionnelle"),
+            (0 - $remise),
+            1,
+            '0');   // Une remise est un négatif sur le TTC, on ne doit pas appliquer de TVA, 
+                    // sinon on impute une TVA négative.
+    
+            if ($result_insert < 0) 
+            {
+                $error++;
+            }
 
-                if (! $this->db->query( $sql))
-                {
-                    $error++;
-                }
+            $sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
+            $sql .= " SET fk_facture = ".$this->id;
+            $sql .= " ,amount_ht = '".ereg_replace(",",".",$remise)."'";
+            $sql .= " WHERE rowid =".$this->remise_exceptionnelle[0];
+            $sql .= " AND fk_soc =". $this->socidp;
 
+            if (! $this->db->query( $sql))
+            {
+                $error++;
+            }
 
+            if ($reliquat > 0)
+            {
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
                 $sql .= " (fk_soc, datec, amount_ht, fk_user) ";
                 $sql .= " VALUES ";
@@ -288,32 +302,20 @@ class Facture
                 {
                     $error++;
                 }
-
             }
-            else
-            {
-                $remise = $this->remise_exceptionnelle[1];
 
-                $result_insert = $this->addline($this->id,
-                addslashes("Remise exceptionnelle"),
-                (0 - $remise),
-                1,
-                '19.6');
+        }
 
-                $sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
-                $sql .= " SET fk_facture = ".$this->id;
-                $sql .= " WHERE rowid =".$this->remise_exceptionnelle[0];
-                $sql .= " AND fk_soc =". $this->socidp;
-
-                if (! $this->db->query( $sql) )
-                {
-                    $error++;
-                }
-            }
+        if (! $error)
+        {
+            $this->db->commit();
+        }
+        else
+        {
+            $this->db->rollback();
         }
 
         return $error;
-
     }
 
     /**
