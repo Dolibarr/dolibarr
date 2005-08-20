@@ -708,7 +708,7 @@ class Form
             if ($num)
             {
                 $obj = $this->db->fetch_object();
-                $label=$obj->libelle;
+                $label=($obj->libelle!='-' ? $obj->libelle : '');
                 return $label;
             }
             else
