@@ -942,11 +942,11 @@ class Form
         else
         {
             $txtva[0] = '19.6';
-            $libtva[0] = '19.6';
+            $libtva[0] = '19.6%';
             $txtva[1] = '5.5';
-            $libtva[1] = '5.5';
+            $libtva[1] = '5.5%';
             $txtva[2] = '0';
-            $libtva[2] = '0';
+            $libtva[2] = '0%';
         }
 
         if ($defaulttx == '')
@@ -966,7 +966,7 @@ class Form
             {
                 print ' selected="true"';
             }
-            print '>'.$libtva[$i].'%</option>';
+            print '>'.$libtva[$i].'</option>';
         }
         print '</select>';
     }
