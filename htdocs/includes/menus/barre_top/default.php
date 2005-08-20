@@ -161,6 +161,26 @@ class MenuTop {
         
         }
         
+        // Entrée projets
+        if ($conf->projet->enabled)
+        {
+	  $langs->load("projects");
+	  
+	  $class="";
+	  
+	  if (ereg("^".DOL_URL_ROOT."\/projet\/",$_SERVER["PHP_SELF"]))
+            {
+	      $class='class="tmenu" id="sel"';
+            }
+	  else
+	    {
+	      $class = 'class="tmenu"';
+            }
+	
+	  $chaine.=$langs->trans("Projects");	  
+	  print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/">'.$chaine.'</a>';	  
+        }
+	
         // Entrée produit/service
         if ($conf->produit->enabled || $conf->service->enabled)
         {
