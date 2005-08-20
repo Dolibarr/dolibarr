@@ -171,7 +171,10 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             print '</div>';
         }
     
-        include("./soc.js.php");
+        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP)
+        {
+            include("./soc.js.php");
+        }
     
         print '<form action="soc.php" method="post" name="formsoc">';
     
@@ -319,6 +322,12 @@ elseif ($_GET["action"] == 'edit')
 
     if ($_GET["socid"])
     {
+
+        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP)
+        {
+            include("./soc.js.php");
+        }
+
         if ($no_reload <> 1)
         {
             $soc = new Societe($db);
@@ -333,7 +342,7 @@ elseif ($_GET["action"] == 'edit')
             print '</div>';
         }
 
-        print '<form action="soc.php?socid='.$soc->id.'" method="post">';
+        print '<form action="soc.php?socid='.$soc->id.'" method="post" name="formsoc">';
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="codeclient_modifiable" value="'.$soc->codeclient_modifiable.'">';
         print '<input type="hidden" name="codefournisseur_modifiable" value="'.$soc->codefournisseur_modifiable.'">';
@@ -383,7 +392,12 @@ elseif ($_GET["action"] == 'edit')
         print $soc->adresse;
         print '</textarea></td></tr>';
 
-        print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"></td>';
+        print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"';
+        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onblur="PopupPostalCode(cp.value,ville)"';
+        print '>';
+        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="PopupPostalCode(cp.value,ville)">';
+        print '</td>';
+
         print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
         print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
