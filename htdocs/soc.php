@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -276,7 +275,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 	$form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
 	print '</td></tr>';
 	
-	print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
+	print '<tr><td nowrap>'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
 	
 	print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
 	print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
@@ -390,7 +389,7 @@ elseif ($_GET["action"] == 'edit')
       print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
       print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td><td colspan="2">&nbsp;</td></tr>';
 
-      print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
+      print '<tr><td nowrap>'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
       print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
       print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
       print '  '.$langs->trans("VATIntraCheckableOnEUSite");
@@ -560,7 +559,7 @@ else
 
     print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td>'.$soc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
 
-    print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
+    print '<tr><td nowrap>'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
     print $soc->tva_intra;
     print '</td></tr>';
 

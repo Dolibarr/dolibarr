@@ -42,6 +42,7 @@ ProfId1PT=NIPC
 ProfId2PT=Social security number
 ProfId3PT=Commercial Record number
 TVAIntra=Numéro de TVA Intracommunautaire
+VATIntraShort=Num TVA Intra-communautaire
 ProspectCustomer=Prospect / Client
 Prospect=Prospect
 CustomerCard=Fiche Client
