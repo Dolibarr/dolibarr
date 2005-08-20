@@ -49,10 +49,11 @@ class pdf_crabe extends ModelePDFFactures
         $this->name = "crabe";
 		$this->description = "Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)";
         $this->format="A4";
+
         $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
         $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
-        $this->option_codeproduitservice = 1;      // Affiche code produit-service FACTURE_CODEPRODUITSERVICE
+        $this->option_codeproduitservice = 1;      // Affiche code produit-service
         $this->option_tvaintra = 1;                // Affiche tva intra MAIN_INFO_TVAINTRA
         $this->option_capital = 1;                 // Affiche capital MAIN_INFO_CAPITAL
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') 
@@ -150,7 +151,6 @@ class pdf_crabe extends ModelePDFFactures
                 $tab_top = 96;
                 $tab_height = 110;
 
-                //$pdf->SetFillColor(220,220,220);
                 $pdf->SetFont('Arial','', 9);
 
                 $iniY = $tab_top + 8;
@@ -208,7 +208,7 @@ class pdf_crabe extends ModelePDFFactures
                         $pdf->MultiCell(14, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
                     }
 
-                    // Total TVA
+                    // Total HT ligne
                     $pdf->SetXY ($this->postotalht, $curY);
                     $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
                     $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
@@ -364,10 +364,10 @@ class pdf_crabe extends ModelePDFFactures
 
 
     /*
-    *   \brief      Affiche tableau des versement
-    *   \param      pdf     objet PDF
-    *   \param      fac     objet facture
-    */
+     *   \brief      Affiche tableau des versement
+     *   \param      pdf     objet PDF
+     *   \param      fac     objet facture
+     */
     function _tableau_versements(&$pdf, $fac, $posy)
     {
         global $langs;
@@ -454,12 +454,12 @@ class pdf_crabe extends ModelePDFFactures
     }
 
     /*
-    *   \brief      Affiche le total à payer
-    *   \param      pdf             Objet PDF
-    *   \param      fac             Objet facture
-    *   \param      deja_regle      Montant deja regle
-    *   \return     y               Position pour suite
-    */
+     *   \brief      Affiche le total à payer
+     *   \param      pdf             Objet PDF
+     *   \param      fac             Objet facture
+     *   \param      deja_regle      Montant deja regle
+     *   \return     y               Position pour suite
+     */
     function _tableau_tot(&$pdf, $fac, $deja_regle)
     {
         global $langs;
@@ -489,7 +489,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetXY ($col2x, $tab2_top + 0);
         $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 1);
 
-        // Remise global
+        // Remise globale
         if ($fac->remise > 0)
         {
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
@@ -538,8 +538,6 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->MultiCell(26, $tab2_hl, price(0), 0, 'R', 1);
         }
 
-//        $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-//        $pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
         $useborder=0;
         
         $index++;
