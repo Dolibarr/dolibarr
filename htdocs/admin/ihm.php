@@ -249,18 +249,23 @@ function show_theme($edit=0)
 {
     global $conf,$langs,$dirtheme,$bc;
     
-    $nbofthumbs=5;
+    $thumbsbyrow=6;
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="'.$nbofthumbs.'">'.$langs->trans("DefaultSkin").'</td></tr>';
+    print '<tr class="liste_titre"><td colspan="'.$thumbsbyrow.'">'.$langs->trans("DefaultSkin").'</td></tr>';
+    $var=true;
 
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td colspan="2">';
+
+    print '<table class="notopnoleftnoright" width="100%">';
     $handle=opendir($dirtheme);
-    $var=false;
     $i=0;
     while (($subdir = readdir($handle))!==false)
     {
         if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.' && substr($subdir, 0, 3) <> 'CVS')
         {
-            if ($i % $nbofthumbs == 0) {
+            if ($i % $thumbsbyrow == 0)
+            {
                 print '<tr '.$bc[$var].'>';
             }
             
@@ -280,17 +285,19 @@ function show_theme($edit=0)
 
             $i++;
 
-            if ($i % $nbofthumbs == 0) print '</tr>';
+            if ($i % $thumbsbyrow == 0) print '</tr>';
         }
     }
-    if ($i % $nbofthumbs != 0) {
-        while ($i % $nbofthumbs != 0) {
+    if ($i % $thumbsbyrow != 0) {
+        while ($i % $thumbsbyrow != 0) {
             print '<td>&nbsp;</td>';
             $i++;
         }
         print '</tr>';
     }    
+    print '</table>';
 
+    print '</td></tr>';
     print '</table>';
 }
 
