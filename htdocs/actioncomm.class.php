@@ -168,7 +168,14 @@ class ActionComm
             $this->fk_facture = $obj->fk_facture;
             if ($this->fk_facture)
             {
-                $this->objet_url = '<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">'.$langs->trans("Bill").'</a>';
+                $this->objet_url = img_object($langs->trans("ShowBill"),'bill').' '.'<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">'.$langs->trans("Bill").'</a>';
+                $this->objet_url_type = 'facture';
+            }
+            $this->fk_propal = $obj->propalrowid;
+            if ($this->fk_propal)
+            {
+                $this->objet_url = img_object($langs->trans("ShowPropal"),'propal').' '.'<a href="'. DOL_URL_ROOT . '/propal/fiche.php?rowid='.$this->fk_facture.'">'.$langs->trans("Propal").'</a>';
+                $this->objet_url_type = 'propal';
             }
     
         }
