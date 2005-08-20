@@ -161,112 +161,123 @@ if (defined("MAIN_NOT_INSTALLED"))
 }
 
 
+
+/**
+ *  \brief      Affiche en-tête html
+ *  \param      head    lignes d'en-tete head
+ *  \param      title   titre page web
+ *  \param      target  target du menu Accueil
+ */
+function top_htmlhead($head, $title="", $target="") 
+{
+    global $user, $conf, $langs, $db;
+
+    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+    print "\n<html>";
+
+    print $langs->lang_header();
+    print $head;
+
+    // Affiche meta
+    print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
+    print '<meta name="author" content="'.$langs->trans("DevelopmentTeam").'">'."\n";
+
+    // Affiche title
+    if (strlen($title) > 0)
+    {
+        print '<title>Dolibarr - '.$title.'</title>';
+    }
+    else
+    {
+        if (defined("MAIN_TITLE"))
+        {
+            print "<title>".MAIN_TITLE."</title>";
+        }
+        else
+        {
+            print '<title>Dolibarr</title>';
+        }
+    }
+    print "\n";
+
+    // Affiche style sheets et link
+    print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+    print '<link rel="stylesheet" type="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
+
+    // Definition en alternate style sheet des feuilles de styles les plus maintenues
+    print '<link rel="alternate stylesheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css">'."\n";
+    print '<link rel="alternate stylesheet" type="text/css" title="Freelug" href="'.DOL_URL_ROOT.'/theme/freelug/freelug.css">'."\n";
+    print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
+
+    print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">'."\n";
+    print '<link rel="help" title="'.$langs->trans("Help").'" href="http://www.dolibarr.com/aide.fr.html">'."\n";
+    print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+    print '<link rel="author" title="'.$langs->trans("DevelopmentTeam").'" href="http://www.dolibarr.com/dev.fr.html">'."\n";
+
+    print "</head>\n";
+}
+  
 /**
  *  \brief      Affiche en-tête html + la barre de menu supérieure
  *  \param      head    lignes d'en-tete head
  *  \param      title   titre page web
  *  \param      target  target du menu Accueil
  */
-
 function top_menu($head, $title="", $target="") 
 {
-  global $user, $conf, $langs, $db;
+    global $user, $conf, $langs, $db;
 
-  print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-  print "\n<html>";
+    top_htmlhead($head, $title, $target);
 
-  print $langs->lang_header();
-  print $head;
+    print '<body>';
+    print '<div class="body">';
 
-  // Affiche meta
-  print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
-  print '<meta name="author" content="'.$langs->trans("DevelopmentTeam").'">'."\n";
-
-  // Affiche title
-  if (strlen($title) > 0)
+    /*
+     * Si la constante MAIN_NEED_UPDATE est définie (par le script de migration sql en général), c'est que
+     * les données ont besoin d'un remaniement. Il faut passer le update.php
+     */
+    if (defined("MAIN_NEED_UPDATE") && MAIN_NEED_UPDATE)
     {
-      print '<title>Dolibarr - '.$title.'</title>';
-    }
-  else
-    {
-      if (defined("MAIN_TITLE"))
-	{
-	  print "<title>".MAIN_TITLE."</title>";
-	}
-      else
-	{
-	  print '<title>Dolibarr</title>';
-	}
-    }
-  print "\n";
-
-  // Affiche style sheets et link
-  print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
-  print '<link rel="stylesheet" type="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
-
-  // Definition en alternate style sheet des feuilles de styles les plus maintenues
-  print '<link rel="alternate stylesheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css">'."\n";
-  print '<link rel="alternate stylesheet" type="text/css" title="Freelug" href="'.DOL_URL_ROOT.'/theme/freelug/freelug.css">'."\n";
-  print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
-
-  print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">'."\n";
-  print '<link rel="help" title="'.$langs->trans("Help").'" href="http://www.dolibarr.com/aide.fr.html">'."\n";
-  print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-  print '<link rel="author" title="'.$langs->trans("DevelopmentTeam").'" href="http://www.dolibarr.com/dev.fr.html">'."\n";
-
-  print "</head>\n";
-  print '<body>';
-  print '<div class="body">';
-
-  
-  /*
-   * Si la constante MAIN_NEED_UPDATE est définie (par le script de migration sql en général), c'est que
-   * les données ont besoin d'un remaniement. Il faut passer le update.php
-   */
-  if (defined("MAIN_NEED_UPDATE") && MAIN_NEED_UPDATE)
-  {
-    $langs->load("admin");
-    print '<div class="fiche">'."\n";
-    print '<table class="noborder" width="100%">';
-    print '<tr><td>';
-    print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/admin/system/update.php');
-    print '</td></tr>';
-    print "</table>";
-    llxFooter();
-    exit;
-  }
-  
-  
-  /*
-   * Barre de menu supérieure
-   *
-   */
-  print '<div class="tmenu">'."\n";
-
-  // Charge le gestionnaire des entrées de menu du haut
-  require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
-  $menutop = new MenuTop($db);
-  $menutop->atarget=$target;
-
-  // Affiche le menu
-  $menutop->showmenu();
-  
-  // Lien sur fiche du login
-  print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
-  print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-  print '>'.$user->login.'</a>';
-
-  // Lien logout
-  if (! isset($_SERVER["REMOTE_USER"]) || ! $_SERVER["REMOTE_USER"])
-    {
-      print '<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-      print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-      print '>';
-      print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" alt="'.$langs->trans("Logout").'" title="'.$langs->trans("Logout").'"></a>';      
+        $langs->load("admin");
+        print '<div class="fiche">'."\n";
+        print '<table class="noborder" width="100%">';
+        print '<tr><td>';
+        print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/admin/system/update.php');
+        print '</td></tr>';
+        print "</table>";
+        llxFooter();
+        exit;
     }
 
-  print "</div><!-- class=tmenu -->\n";
 
+    /*
+     * Barre de menu supérieure
+     */
+    print '<div class="tmenu">'."\n";
+
+    // Charge le gestionnaire des entrées de menu du haut
+    require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
+    $menutop = new MenuTop($db);
+    $menutop->atarget=$target;
+
+    // Affiche le menu
+    $menutop->showmenu();
+
+    // Lien sur fiche du login
+    print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
+    print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+    print '>'.$user->login.'</a>';
+
+    // Lien logout
+    if (! isset($_SERVER["REMOTE_USER"]) || ! $_SERVER["REMOTE_USER"])
+    {
+        print '<a href="'.DOL_URL_ROOT.'/user/logout.php"';
+        print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+        print '>';
+        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" alt="'.$langs->trans("Logout").'" title="'.$langs->trans("Logout").'"></a>';
+    }
+
+    print "</div><!-- class=tmenu -->\n";
 
 }
 
