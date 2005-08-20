@@ -205,7 +205,12 @@ class pdf_crabe extends ModelePDFFactures
                         $pdf->MultiCell(14, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
                     }
 
-                    // Total TTC
+                    // Total TVA
+                    $pdf->SetXY ($postotttc, $curY);
+                    $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
+                    $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+
+                    // Total HT
                     $pdf->SetXY ($postotttc, $curY);
                     $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
                     $pdf->MultiCell(26, 5, $total, 0, 'R', 0);

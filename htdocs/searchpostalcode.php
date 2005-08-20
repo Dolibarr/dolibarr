@@ -35,47 +35,53 @@
  * ************************************************************************* */
 
 /**
-   \file       htdocs/searchpostalcode.php
-   \ingroup    societe
-   \brief      Recherche de la ville correspondant au code postal saisi. 1er tour on cherche dans la table societé, si on a deux clients dans la même ville c'est direct. Si jamais ça ne donne rien alors on lance la recherche dans la table des codes postaux.
-   \version    $Revision$
+        \file       htdocs/searchpostalcode.php
+        \ingroup    societe
+        \brief      Recherche de la ville correspondant au code postal saisi. 1er tour on cherche dans la table societé, si on a deux clients dans la même ville c'est direct. Si jamais ça ne donne rien alors on lance la recherche dans la table des codes postaux.
+        \version    $Revision$
 */
 
 require("pre.inc.php");
+
 $user->getrights('societe');
 $langs->load("companies");
 
-function run_request($table) {
-  global $db;
-  $sql = "SELECT ville,cp from ".MAIN_DB_PREFIX.$table;
-  if(isset($_GET['cp']) && trim($_GET['cp']) != "") {
-    $sql .= " where cp ";
-    if(strstr($_GET['cp'],'%'))
-      $sql .="LIKE";
-    else
-      $sql .="=";
-    $sql .= " '" . $_GET['cp'] . "'";
-  }
-  else {
-    $sql .= " LIMIT 30";
-  }
-  $result=$db->query($sql);
-  if (!$result) {
-    dolibarr_print_error($db);
-  }
-  print $sql;
+
+function run_request($table)
+{
+    global $db;
+    $sql = "SELECT ville,cp from ".MAIN_DB_PREFIX.$table;
+    if(isset($_GET['cp']) && trim($_GET['cp']) != "") {
+        $sql .= " where cp ";
+        if(strstr($_GET['cp'],'%'))
+        $sql .="LIKE";
+        else
+        $sql .="=";
+        $sql .= " '" . $_GET['cp'] . "'";
+    }
+    else {
+        $sql .= " LIMIT 30";
+    }
+    $result=$db->query($sql);
+    if (!$result) {
+        dolibarr_print_error($db);
+    }
+    //  print $sql;
 }
 
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
-  $_GET["action"] = '';
-  $_POST["action"] = '';
-  $_GET["socid"] = $user->societe_id;
+    $_GET["action"] = '';
+    $_POST["action"] = '';
+    $_GET["socid"] = $user->societe_id;
 }
+
+
+
+top_htmlhead($head, $title, $target);
+
 
 print "
 <script language=\"JavaScript\">
@@ -102,13 +108,17 @@ function change_categorie(urlbase,leselect)
 //-->
 </script>\n";
 
-print "<form method=\"post\" action=\"javascript:MAJ(" . $_GET['targetobject'] . ");\" name=\"villes\" enctype=\"application/x-www-form-urlencoded\">
-<table border=\"0\" align=\"center\" width=\"90%\" cellpadding=\"0\" cellspacing=\"0\">
-<tr>
-  <td colspan=\"3\" bgcolor=\"#002266\" align=\"center\">
-    <font color=\"#EEEEFF\" face=\"Arial, Helvetica\" size=\"3\"><b>Recherche code postal: " . $_GET['cp'] . " </b></font>
-  </td>
-</tr>\n";
+print "<body>";
+
+print "<div><div><div><br>";    // Ouvre 3 div a la place de top_menu car le llxFooter en ferme 3
+
+print "<form method=\"post\" action=\"javascript:MAJ(" . $_GET['targetobject'] . ");\" name=\"villes\" enctype=\"application/x-www-form-urlencoded\">";
+print "<table class=\"noborder\" align=\"center\" width=\"90%\">";
+print "<tr class=\"liste_titre\">";
+print "  <td colspan=\"3\" align=\"center\">";
+print "  <b>Recherche code postal: " . $_GET['cp'] . " </b>";
+print "  </td>";
+print "</tr>\n";
 
 run_request("societe");
 
@@ -118,7 +128,7 @@ if($num == 0) {
   $num=$db->num_rows();
 }
 
-//Si on n'a qu'un seul résultat on switche direct et on remplit le formulaire
+// Si on n'a qu'un seul résultat on switche direct et on remplit le formulaire
 if($num <= 1) {
   $obj = $db->fetch_object($result);
   $ville = $obj->ville;
@@ -129,42 +139,43 @@ document.villes.submit();
 </script>\n";
 }
 else {
-  // sinon on affiche la liste des villes dont c'est le code postal ...
-  for($i = 0; $i < $num; $i++){
-   $obj = $db->fetch_object($result);
-   $ville = $obj->ville;
-   $ville_code = urlencode("$ville");
-   if(strstr($_GET['cp'],'%') || trim($_GET['cp'])=="")
-     $cp = "(" . $obj->postalcode . ")";
-   else
-     $cp = "";
+    // Sinon on affiche la liste des villes dont c'est le code postal ...
+    for($i = 0; $i < $num; $i++)
+    {
+        $obj = $db->fetch_object($result);
+        $ville = $obj->ville;
+        $ville_code = urlencode("$ville");
+        if(strstr($_GET['cp'],'%') || trim($_GET['cp'])=="")
+        $cp = "(" . $obj->postalcode . ")";
+        else
+        $cp = "";
 
-   if($bgcolor=="#DDDDFF")
-    $bgcolor="#EEEEFF";
-   else
-    $bgcolor="#DDDDFF";
-  
-   print "<tr>
-  <td bgcolor=\"$bgcolor\" width=\"10%\">
-    <label><input type=\"radio\" name=\"choix\" value=\"$ville\"> $ville $cp</label>
-  </td>
-</tr>
-<tr>\n";
-  }
+        if($bgcolor=="#DDDDFF")
+        $bgcolor="#EEEEFF";
+        else
+        $bgcolor="#DDDDFF";
+
+        $var=!$var;
+        print "<tr ".$bc[$var]."><td width=\"10%\">";
+        print "<label><input type=\"radio\" name=\"choix\" value=\"$ville\"> $ville $cp</label>";
+        print "</td></tr>";
+    }
 }
 
-print "    <input type=\"hidden\" name=\"nb_i\" value=\"$i\">
 
-<tr>
-  <td align=\"center\" colspan=\"3\" bgcolor=\"#DDDDFF\">
-    <input type=\"submit\" name=\"envoyer\" value=\"OK\"> - 
-    <input type=\"button\" value=\"Annuler\" onClick=\"window.close();\">
-  </td>
-</tr>
-</table>
-</form>\n";
+print "    <input type=\"hidden\" name=\"nb_i\" value=\"$i\">";
+
+$var=!$var;
+print "<tr><td align=\"center\" colspan=\"3\">";
+print "<input type=\"submit\" class=\"button\" name=\"envoyer\" value=\"".$langs->trans("Modify")."\">";
+print " &nbsp; ";
+print "<input type=\"button\" class=\"button\" value=\"".$langs->trans("Cancel")."\" onClick=\"window.close();\">";
+print "</td></tr>";
+
+print "</table></form>\n";
+print "<br>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
