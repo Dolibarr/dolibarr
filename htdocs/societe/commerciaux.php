@@ -180,7 +180,7 @@ if($_GET["socid"])
     
     
     print '</table>';
-    print "<br></div>\n";
+    print "</div>\n";
     
     
     

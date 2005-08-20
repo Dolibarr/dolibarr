@@ -282,7 +282,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 	print '  '.$langs->trans("VATIntraCheckableOnEUSite");
 	print '</td></tr>';
 	
-	print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td><select name="client">';
+	print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td><select class="flat" name="client">';
 	print '<option value="2"'.($soc->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
 	print '<option value="1"'.($soc->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
 	print '<option value="0"'.($soc->client==0?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
@@ -337,7 +337,7 @@ elseif ($_GET["action"] == 'edit')
 
       print '<table class="border" width="100%">';
 
-      print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
+      print '<tr><td width="140">'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
 
         print '<td>'.$langs->trans("Prefix").'</td><td colspan="3">';
         print '<input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'">';
@@ -408,7 +408,7 @@ elseif ($_GET["action"] == 'edit')
       $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
       print '</td></tr>';
 
-      print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td><select name="client">';
+      print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td><select class="flat" name="client">';
       print '<option value="2"'.($soc->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
       print '<option value="1"'.($soc->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
       print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
@@ -418,7 +418,7 @@ elseif ($_GET["action"] == 'edit')
       $form->selectyesnonum("fournisseur",$soc->fournisseur);
       print '</td></tr>';
       
-      print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+      print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
       print '</table>';
       print '</form>';

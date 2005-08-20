@@ -149,7 +149,6 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
     print "</td></tr>\n";
 
     print '</table>';
-    print '<br>';
 
     print '</div>';
 

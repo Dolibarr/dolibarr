@@ -175,7 +175,7 @@ if($_GET["socid"])
     print '</td></tr>';
         
     print '</table>';
-    print "<br></div>\n";
+    print "</div>\n";
     
     
     if ($_GET["select"] > 0)
