@@ -210,7 +210,7 @@ function dolibarr_fiche_head($links, $active=0, $title='')
 
 /**
 		\brief      Récupère une constante depuis la base de données.
-		\see        dolibarr_del_const, dolibarr_sel_const
+		\see        dolibarr_del_const, dolibarr_set_const
 		\param	    db          Handler d'accès base
 		\param	    name		Nom de la constante
 		\return     string      Valeur de la constante
@@ -262,17 +262,19 @@ function dolibarr_set_php_lang($code_lang)
 
 /**
 		\brief      Insertion d'une constante dans la base de données.
-		\see        dolibarr_del_const, dolibarr_gel_const
-		\param	    db          handler d'accès base
-		\param	    name		nom de la constante
-		\param	    value		valeur de la constante
-		\param	    type		type de constante (chaine par défaut)
-		\param	    visible	    la constante est elle visible (0 par défaut)
-		\param	    note		explication de la constante
-		\return     int         0 si KO, 1 si OK
+		\see        dolibarr_del_const, dolibarr_get_const
+		\param	    db          Handler d'accès base
+		\param	    name		Nom de la constante
+		\param	    value		Valeur de la constante
+		\param	    type		Type de constante (chaine par défaut)
+		\param	    visible	    La constante est elle visible (0 par défaut)
+		\param	    note		Explication de la constante
+		\return     int         <0 si ko, >0 si ok
 */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {
+        global $conf;
+        
         $db->begin();
         
         $sql = "DELETE FROM llx_const WHERE name = '$name';"; 		
@@ -285,12 +287,13 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
         if ($resql)
         {
             $db->commit();
+            $conf->global->$name=$value;
             return 1;
         }
         else
         {
             $db->rollback();
-            return 0;
+            return -1;
         }
 }
 

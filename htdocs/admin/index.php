@@ -35,108 +35,186 @@ if (!$user->admin)
   accessforbidden();
 
 
-if (isset($_POST["action"]) && $_POST["action"] == 'update')
+if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
+  || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
-  dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
-  dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",$_POST["address"]);
-  dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
-  dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"]);
-  dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",$_POST["address"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"]);
+    dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"]);
+    dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
 
-  dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
-  dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
-  dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
-  dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
+    dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
+    dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
+    dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
+    dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
 
-  Header("Location: index.php");
+    if ($_POST['action'] != 'updateedit')
+    {
+        Header("Location: index.php");
+    }
 }
+
 
 
 llxHeader();
 
 $form = new Form($db);
+$countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
+
 
 print_titre($langs->trans("GlobalSetup"));
 
 
 print "<br>\n";
 
-if (isset($_GET["action"]) && $_GET["action"] == 'edit')
+if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
+ || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
-  /*
-   * Edition des paramètres
-   */
-  print '<form method="post" action="index.php">';
-  print '<input type="hidden" name="action" value="update">';
+    /*
+     * Edition des paramètres
+     */
+    print '
+    <script language="javascript" type="text/javascript">
+    <!--
+    function save_refresh()
+    {
+    	document.form_index.action.value="updateedit";
+    	document.form_index.submit();
+    //	location.href = "index.php?action=updateedit";
+    }
+    -->
+    </script>
+    ';
 
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("CompanyInfo").'</td></tr>';
+    print '<form method="post" action="index.php" name="form_index">';
+    print '<input type="hidden" name="action" value="update">';
+    $var=true;
 
-  print '<tr class="pair"><td>'.$langs->trans("CompanyName").'</td><td>';
-  print '<input name="nom" value="'. MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("CompanyInfo").'</td></tr>';
 
-  print '<tr class="impair"><td>'.$langs->trans("CompanyAddress").'</td><td>';
-  print '<textarea name="address" cols="50" rows="3">'. MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyName").'</td><td>';
+    print '<input name="nom" value="'. $conf->global->MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
 
-  print '<tr class="pair"><td>'.$langs->trans("Country").'</td><td>';
-  $form->select_pays(MAIN_INFO_SOCIETE_PAYS);
-  print '</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyAddress").'</td><td>';
+    print '<textarea name="address" cols="50" rows="2">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
 
-  print '<tr class="impair"><td>'.$langs->trans("CompanyCurrency").'</td><td>';
-  $form->select_currency(MAIN_MONNAIE,"currency");
-  print '</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
+    $form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',' onChange="save_refresh()"');
+    print '</td></tr>';
 
-  print '<tr class="pair"><td width="35%">'.$langs->trans("Capital").'</td><td>';
-  print '<input name="capital" size="20" value="' . MAIN_INFO_CAPITAL . '"></td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCurrency").'</td><td>';
+    $form->select_currency($conf->global->MAIN_MONNAIE,"currency");
+    print '</td></tr>';
 
-  print '</table>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Capital").'</td><td>';
+    print '<input name="capital" size="20" value="' . $conf->global->MAIN_INFO_CAPITAL . '"></td></tr>';
 
-  print '<br>';
-  
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '</table>';
 
-  $langs->load("companies");
+    print '<br>';
 
-  // Recupere code pays
-  $code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
-  $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
-  $sql .= " WHERE rowid = ".MAIN_INFO_SOCIETE_PAYS;
-  $result=$db->query($sql);
-  if ($result) {
-    $obj = $db->fetch_object();
-    if ($obj->code) $code_pays=$obj->code;
-  }
-  else {
-    dolibarr_print_error($db);
-  }
-  
-  if ($langs->transcountry("ProfId1",$code_pays) != '-')
-  {
-      print '<tr class="impair"><td width="35%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
-      print '<input name="siren" size="20" value="' . MAIN_INFO_SIREN . '"></td></tr>';
-  }
-  
-  if ($langs->transcountry("ProfId2",$code_pays) != '-')
-  {
-      print '<tr class="pair"><td width="35%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
-      print '<input name="siret" size="20" value="' . MAIN_INFO_SIRET . '"></td></tr>';
-  }
+    // Identifiants de la société (propre au pays)
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    $var=true;
 
-  if ($langs->transcountry("ProfId3",$code_pays) != '-')
-  {
-      print '<tr class="impair"><td width="35%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
-      print '<input name="ape" size="20" value="' . MAIN_INFO_APE . '"></td></tr>';
-  }
-  
-  print '<tr class="pair"><td width="35%">'.$langs->trans("TVAIntra").'</td><td>';
-  print '<input name="tva" size="20" value="' . MAIN_INFO_TVAINTRA . '"></td></tr>';
+    $langs->load("companies");
 
-  print '</table>';
+    // Recupere code pays
+    $code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
+    if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+    {
+        $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+        $sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
+        $result=$db->query($sql);
+        if ($result) {
+            $obj = $db->fetch_object();
+            if ($obj->code) $code_pays=$obj->code;
+        }
+        else {
+            dolibarr_print_error($db);
+        }
+    }
 
-  print '<br><center><input type="submit" value="'.$langs->trans("Save").'"></center>';
+    // Forme juridique
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("JuridicalStatus").'</td><td>';
+    if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+    {
+        $form->select_forme_juridique($conf->global->MAIN_INFO_FORME_JURIDIQUE,$code_pays);
+    }
+    else
+    {
+        print $countrynotdefined;
+    }
+    print '</td></tr>';
 
-  print '</form>';
+    // ProfID1
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
+    if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+    {
+        if ($langs->transcountry("ProfId1",$code_pays) != '-')
+        {
+            print '<input name="siren" size="20" value="' . $conf->global->MAIN_INFO_SIREN . '">';
+        }
+    }
+    else
+    {
+        print $countrynotdefined;
+    }
+    print '</td></tr>';
+
+    // ProfId2
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
+    if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+    {
+        if ($langs->transcountry("ProfId2",$code_pays) != '-')
+        {
+            print '<input name="siret" size="20" value="' . $conf->global->MAIN_INFO_SIRET . '">';
+        }
+    }
+    else
+    {
+        print $countrynotdefined;
+    }
+    print '</td></tr>';
+
+    // ProfId3
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
+    if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+    {
+        if ($langs->transcountry("ProfId3",$code_pays) != '-')
+        {
+            print '<input name="ape" size="20" value="' . $conf->global->MAIN_INFO_APE . '">';
+        }
+    }
+    else
+    {
+        print $countrynotdefined;
+    }
+    print '</td></tr>';
+
+    // TVA Intra
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("TVAIntra").'</td><td>';
+    print '<input name="tva" size="20" value="' . $conf->global->MAIN_INFO_TVAINTRA . '"></td></tr>';
+
+    print '</table>';
+
+    print '<br><center><input type="submit" value="'.$langs->trans("Save").'"></center>';
+
+    print '</form>';
 }
 else
 {
@@ -144,71 +222,95 @@ else
    * Affichage des paramètres
    */
 
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    $var=true;
 
-  print '<tr class="pair"><td width="35%">'.$langs->trans("CompanyName").'</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyName").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_NOM . '</td></tr>';
 
-  print '<tr class="impair"><td width="35%">'.$langs->trans("CompanyAddress").'</td><td>' . nl2br(MAIN_INFO_SOCIETE_ADRESSE) . '</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyAddress").'</td><td>' . nl2br($conf->global->MAIN_INFO_SOCIETE_ADRESSE) . '</td></tr>';
 
-  print '<tr class="pair"><td>'.$langs->trans("Country").'</td><td>';
-  print $form->pays_name(MAIN_INFO_SOCIETE_PAYS,1);
-  print '</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
+    print $form->pays_name($conf->global->MAIN_INFO_SOCIETE_PAYS,1);
+    print '</td></tr>';
 
-  print '<tr class="impair"><td width="35%">'.$langs->trans("CompanyCurrency").'</td><td>';
-  print $form->currency_name(MAIN_MONNAIE,1);
-  print '</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyCurrency").'</td><td>';
+    print $form->currency_name($conf->global->MAIN_MONNAIE,1);
+    print '</td></tr>';
 
-  print '<tr class="pair"><td width="35%">'.$langs->trans("Capital").'</td><td>';
-  print MAIN_INFO_CAPITAL . '</td></tr>';
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Capital").'</td><td>';
+    print $conf->global->MAIN_INFO_CAPITAL . '</td></tr>';
 
-  print '</table>';
+    print '</table>';
 
-  print '<br>';
-  
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<br>';
 
-  // Recupere code pays
-  $code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
-  $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
-  $sql .= " WHERE rowid = ".MAIN_INFO_SOCIETE_PAYS;
-  $result=$db->query($sql);
-  if ($result) {
-    $obj = $db->fetch_object();
-    if ($obj->code) $code_pays=$obj->code;
-  }
-  else {
-    dolibarr_print_error($db);
-  }
-  
-  if ($langs->transcountry("ProfId1",$code_pays) != '-')
-  {
-    print '<tr class="impair"><td width="35%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
-    print MAIN_INFO_SIREN . '</td></tr>';
-  }
-  
-  if ($langs->transcountry("ProfId2",$code_pays) != '-')
-  {
-    print '<tr class="pair"><td width="35%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
-    print MAIN_INFO_SIRET . '</td></tr>';
-  }
-  
-  if ($langs->transcountry("ProfId3",$code_pays) != '-')
-  {
-    print '<tr class="impair"><td width="35%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
-    print MAIN_INFO_APE . '</td></tr>';
-  }
-  
-  print '<tr class="pair"><td>'.$langs->trans("TVAIntra").'</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
+    // Identifiants de la société (propre au pays)
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    $var=true;
 
-  print '</table><br>';
+    // Recupere code pays
+    $code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
+    if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+    {
+        $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+        $sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
+        $result=$db->query($sql);
+        if ($result)
+        {
+            $obj = $db->fetch_object();
+            if ($obj->code) $code_pays=$obj->code;
+        }
+        else {
+            dolibarr_print_error($db);
+        }
+    }
 
-  // Boutons d'action
-  print '<div class="tabsAction">';
-  print '<a class="tabAction" href="index.php?action=edit">'.$langs->trans("Edit").'</a>';
-  print '</div>';
+    // Forme juridique
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("JuridicalStatus").'</td><td>';
+    print $form->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE,1);
+    print '</td></tr>';
 
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
+    if ($langs->transcountry("ProfId1",$code_pays) != '-')
+    {
+        print $conf->global->MAIN_INFO_SIREN;
+    }
+    print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
+    if ($langs->transcountry("ProfId2",$code_pays) != '-')
+    {
+        print $conf->global->MAIN_INFO_SIRET;
+    }
+    print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
+    if ($langs->transcountry("ProfId3",$code_pays) != '-')
+    {
+        print $conf->global->MAIN_INFO_APE;
+    }
+    print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("TVAIntra").'</td><td>' . $conf->global->MAIN_INFO_TVAINTRA . '</td></tr>';
+
+    print '</table><br>';
+
+    // Boutons d'action
+    print '<div class="tabsAction">';
+    print '<a class="tabAction" href="index.php?action=edit">'.$langs->trans("Edit").'</a>';
+    print '</div>';
 
 }
 

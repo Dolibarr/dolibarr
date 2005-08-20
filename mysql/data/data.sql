@@ -480,7 +480,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'62','Group
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'63','Société coopérative agricole');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'64','Société non commerciale d\'assurances');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'65','Société civile');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'69','Autres personnes de droit privé inscrites au registre du commerce et des sociétés');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'69','Autres personnes de droit privé inscrites au registre du commerce et sociétés');
                                                                      
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'71','Administration de l\'état');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'72','Collectivité territoriale');

@@ -1642,6 +1642,8 @@ class Facture
 
 class FactureLigne
 {
+    var $subprice;  // Prix unitaire HT
+    var $price;     // Prix HT apres remise %
 
     /**
      *      \brief     Constructeur d'objets ligne de facture
@@ -1670,6 +1672,7 @@ class FactureLigne
             $this->desc           = stripslashes($objp->description);
             $this->qty            = $objp->qty;
             $this->price          = $objp->price;
+            $this->price_ttc      = $objp->price_ttc;
             $this->subprice       = $objp->subprice;
             $this->tva_taux       = $objp->tva_taux;
             $this->remise         = $objp->remise;

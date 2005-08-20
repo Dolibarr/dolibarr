@@ -185,10 +185,11 @@ class Form
    *    \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
    *    \param     selected         Code pays pré-sélectionné
    *    \param     htmlname         Nom de la liste deroulante
+   *    \param     htmloption       Options html sur le select
    *    \todo      trier liste sur noms après traduction plutot que avant
    */
 	 
-  function select_pays($selected='',$htmlname='pays_id')
+  function select_pays($selected='',$htmlname='pays_id',$htmloption='')
   {
     global $conf,$langs;
     $langs->load("dict");
@@ -199,7 +200,7 @@ class Form
     
     if ($this->db->query($sql))
       {
-        print '<select class="flat" name="'.$htmlname.'">';
+        print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
         $num = $this->db->num_rows();
         $i = 0;
         if ($num)
@@ -689,6 +690,36 @@ class Form
   
 
   /**
+   *    \brief      Retourne le nom traduit de la forme juridique
+   *    \param      code        Code de la forme juridique
+   *    \return     string      Nom traduit du pays
+   */
+    function forme_juridique_name($code)
+    {
+        global $langs;
+    
+        $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+        $sql.= " WHERE code='$code';";
+    
+        if ($this->db->query($sql))
+        {
+            $num = $this->db->num_rows();
+    
+            if ($num)
+            {
+                $obj = $this->db->fetch_object();
+                $label=$obj->libelle;
+                return $label;
+            }
+            else
+            {
+                return $langs->trans("NotDefined");
+            }
+    
+        }
+    }
+    
+  /**
    *    \brief      Retourne le nom traduit ou code+nom d'un pays
    *    \param      id          id du pays
    *    \param      withcode    1=affiche code + nom
@@ -719,6 +750,7 @@ class Form
     
         }
     }
+    
     
    /**
     *    \brief      Retourne le nom traduit ou code+nom d'une devise

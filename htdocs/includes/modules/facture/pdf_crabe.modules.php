@@ -18,7 +18,6 @@
 *
 * $Id$
 * $Source$
-*
 */
 
 /**
@@ -49,6 +48,7 @@ class pdf_crabe extends ModelePDFFactures
         $this->db = $db;
         $this->name = "crabe";
 		$this->description = "Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)";
+        $this->format="A4";
         $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
         $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
@@ -148,6 +148,13 @@ class pdf_crabe extends ModelePDFFactures
                 $nexY = $pdf->GetY();
                 $nblignes = sizeof($fac->lignes);
 
+                $posxdesc=11;
+                $posxtva=121;
+                $posxup=133;
+                $posxqty=151;
+                $posxdiscount=163;
+                $postotttc=173;
+                
                 // Boucle sur les lignes
                 for ($i = 0 ; $i < $nblignes ; $i++)
                 {
@@ -160,7 +167,7 @@ class pdf_crabe extends ModelePDFFactures
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
                         $libelleproduitservice.=$fac->lignes[$i]->desc;
                     }
-                    $pdf->SetXY (11, $curY );
+                    $pdf->SetXY ($posxdesc, $curY );
                     
                     if ($conf->global->FACTURE_CODEPRODUITSERVICE && $fac->lignes[$i]->produit_id)
                     {
@@ -181,25 +188,25 @@ class pdf_crabe extends ModelePDFFactures
                     $nexY = $pdf->GetY();
 
                     // TVA
-                    $pdf->SetXY (121, $curY);
+                    $pdf->SetXY ($posxtva, $curY);
                     $pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
 
                     // Prix unitaire HT avant remise
-                    $pdf->SetXY (133, $curY);
+                    $pdf->SetXY ($posxup, $curY);
                     $pdf->MultiCell(17, 5, price($fac->lignes[$i]->subprice), 0, 'R', 0);
 
                     // Quantité
-                    $pdf->SetXY (151, $curY);
+                    $pdf->SetXY ($posxqty, $curY);
                     $pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'R');
 
                     // Remise sur ligne
-                    $pdf->SetXY (163, $curY);
+                    $pdf->SetXY ($posxdiscount, $curY);
                     if ($fac->lignes[$i]->remise_percent) {
                         $pdf->MultiCell(14, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
                     }
 
-                    // Total HT
-                    $pdf->SetXY (173, $curY);
+                    // Total TTC
+                    $pdf->SetXY ($postotttc, $curY);
                     $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
                     $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
 
