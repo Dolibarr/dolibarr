@@ -32,6 +32,7 @@
 require("./pre.inc.php");
 
 $langs->load("suppliers");
+$langs->load("products");
 $langs->load("bills");
 $langs->load("orders");
 $langs->load("companies");
