@@ -216,7 +216,7 @@ if ($_GET["action"] == 'create')
       for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
         {
           print '<tr><td>';
-          $html->select_produits("idprod".$id);
+          $html->select_produits('',"idprod".$i);
           print '</td>';
           print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
           print '<td><input type="text" size="3" name="remise'.$i.'" value="'.$soc->remise_client.'"> %</td></tr>';

@@ -314,7 +314,7 @@ if ($_GET["action"] == 'create' && $user->rights->commande->creer)
 	      for ($i = 1 ; $i <= $NBLINES ; $i++)
 		{
 		  print '<tr><td>';
-          print $html->select_produits('','idprod');
+          print $html->select_produits('','idprod'.$i);
 		  print '</td>';
 		  print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
 		  print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="0">%</td></tr>';
