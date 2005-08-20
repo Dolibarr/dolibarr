@@ -138,11 +138,18 @@ class Project {
 	    $this->societe->id = $obj->fk_soc;
 	    
 	    $this->db->free($resql);
+
+	    return 0;
+	  }
+	else
+	  {
+	    return -1;
 	  }
       }
     else
       {
 	print $this->db->error();
+	return -2;
       }
   }
 	
@@ -320,6 +327,111 @@ class Project {
       {
 	return -1;
       }
+  }
+
+  /*
+   *    \brief      Crée une tache dans le projet
+   *    \param      user        Id utilisateur qui crée
+   *    \param     title      titre de la tâche
+   *    \param      parent   tache parente
+   */
+  function CreateTask($user, $title, $parent = 0)
+  {
+    $result = 0;
+    if (trim($title))
+      {
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (fk_projet, title, fk_user_creat) ";
+	$sql .= " VALUES (".$this->id.",'$title', ".$user->id.") ;";
+	
+	if ($this->db->query($sql) )
+	  {
+	    $task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
+	    $result = 0;
+	  }
+	else
+	  {
+	    dolibarr_syslog("Project::CreateTask error -2");
+	    $this->error=$this->db->error();
+	    $result = -2;
+	  }
+
+	if ($result ==0)
+	  {
+
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_actors (fk_projet_task, fk_user) ";
+	    $sql .= " VALUES (".$task_id.",".$user->id.") ;";
+	
+	    if ($this->db->query($sql) )
+	      {
+		$result = 0;
+	      }
+	    else
+	      {
+		dolibarr_syslog("Project::CreateTask error -3");
+		$this->error=$this->db->error();
+		$result = -2;
+	      }
+	  }
+
+
+        }
+    else
+      {
+	dolibarr_syslog("Project::CreateTask error -1 ref null");
+	$result = -1;
+      }
+    
+    return $result;
+  }
+  /*
+   *    \brief      Crée une tache dans le projet
+   *    \param      user        Id utilisateur qui crée
+   *    \param     title      titre de la tâche
+   *    \param      parent   tache parente
+   */
+  function TaskAddTime($user, $task, $time)
+  {
+    $result = 0;
+
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (fk_task, task_date, task_duration, fk_user)";
+	$sql .= " VALUES (".$this->id.",'$title', ".$user->id.") ;";
+
+	if ($this->db->query($sql) )
+	  {
+	    $task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
+	    $result = 0;
+	  }
+	else
+	  {
+	    dolibarr_syslog("Project::CreateTask error -2");
+	    $this->error=$this->db->error();
+	    $result = -2;
+	  }
+
+	if ($result ==0)
+	  {
+
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
+	    $sql .= " SET duration_effective = duration_effective + '".ereg_replace(",",".",$time)."'";
+	    $sql .= " WHERE rowid = '".$task."';";
+	
+	    if ($this->db->query($sql) )
+	      {
+		$result = 0;
+	      }
+	    else
+	      {
+		dolibarr_syslog("Project::CreateTask error -3");
+		$this->error=$this->db->error();
+		$result = -2;
+	      }
+	  }
+	
+
+
+
+    
+    return $result;
   }
 }
 ?>
