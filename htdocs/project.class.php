@@ -340,8 +340,8 @@ class Project {
     $result = 0;
     if (trim($title))
       {
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (fk_projet, title, fk_user_creat) ";
-	$sql .= " VALUES (".$this->id.",'$title', ".$user->id.") ;";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (fk_projet, title, fk_user_creat, fk_task_parent) ";
+	$sql .= " VALUES (".$this->id.",'$title', ".$user->id.",".$parent.") ;";
 	
 	if ($this->db->query($sql) )
 	  {
@@ -350,7 +350,8 @@ class Project {
 	  }
 	else
 	  {
-	    dolibarr_syslog("Project::CreateTask error -2");
+	    dolibarr_syslog("Project::CreateTask error -2",LOG_ERR);
+	    dolibarr_syslog($this->db->error(),LOG_ERR);
 	    $this->error=$this->db->error();
 	    $result = -2;
 	  }
@@ -367,7 +368,7 @@ class Project {
 	      }
 	    else
 	      {
-		dolibarr_syslog("Project::CreateTask error -3");
+		dolibarr_syslog("Project::CreateTask error -3",LOG_ERR);
 		$this->error=$this->db->error();
 		$result = -2;
 	      }
@@ -389,12 +390,12 @@ class Project {
    *    \param     title      titre de la tâche
    *    \param      parent   tache parente
    */
-  function TaskAddTime($user, $task, $time)
+  function TaskAddTime($user, $task, $time, $date)
   {
     $result = 0;
 
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (fk_task, task_date, task_duration, fk_user)";
-	$sql .= " VALUES (".$this->id.",'$title', ".$user->id.") ;";
+	$sql .= " VALUES (".$task.",'".$this->db->idate($date)."',".$time.", ".$user->id.") ;";
 
 	if ($this->db->query($sql) )
 	  {
@@ -403,7 +404,7 @@ class Project {
 	  }
 	else
 	  {
-	    dolibarr_syslog("Project::CreateTask error -2");
+	    dolibarr_syslog("Project::TaskAddTime error -2",LOG_ERR);
 	    $this->error=$this->db->error();
 	    $result = -2;
 	  }
@@ -421,7 +422,7 @@ class Project {
 	      }
 	    else
 	      {
-		dolibarr_syslog("Project::CreateTask error -3");
+		dolibarr_syslog("Project::TaskAddTime error -3",LOG_ERR);
 		$this->error=$this->db->error();
 		$result = -2;
 	      }
