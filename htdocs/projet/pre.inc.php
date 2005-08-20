@@ -51,6 +51,8 @@ function llxHeader($head = "", $title="", $help_url='')
   $menu->add(DOL_URL_ROOT."/projet/", $langs->trans("Projects"));
   $menu->add_submenu(DOL_URL_ROOT."/projet/liste.php", $langs->trans("List"));
 
+  $menu->add(DOL_URL_ROOT."/projet/tasks/", $langs->trans("Tasks"));
+
   left_menu($menu->liste, $help_url);
 }
 
