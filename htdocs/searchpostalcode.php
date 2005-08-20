@@ -80,7 +80,7 @@ if ($user->societe_id > 0)
 
 
 
-top_htmlhead($head, $title, $target);
+top_htmlhead("", $langs->trans("SearchTown"), "");
 
 
 print "

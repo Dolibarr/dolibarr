@@ -173,10 +173,6 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
     
         include("./soc.js.php");
     
-        print '<script language="javascript">'."\n";
-        print $js_OpenPopupWindow;
-        print "\n</script>\n";
-    
         print '<form action="soc.php" method="post" name="formsoc">';
     
         print '<input type="hidden" name="codeclient_modifiable" value="1">';
@@ -260,9 +256,9 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             print '</textarea></td></tr>';
     
             print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"';
-            if ($conf->filltownfromzip) print ' onblur="PopupPostalCode(cp.value,ville)"';
+            if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onblur="PopupPostalCode(cp.value,ville)"';
             print '>';
-            if ($conf->filltownfromzip) print ' <input type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="PopupPostalCode(cp.value,ville)">';
+            if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="PopupPostalCode(cp.value,ville)">';
             print '</td>';
             print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
     

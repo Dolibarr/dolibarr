@@ -172,14 +172,6 @@ require_once(FPDF_PATH . "fpdf.php");
 
 
 /*
- * Active fonction remplissage ville depuis cp
- */
-if (defined('MAIN_AUTO_FILLTOWNFROMZIP') && MAIN_AUTO_FILLTOWNFROMZIP == 1)
-{
-$conf->filltownfromzip=MAIN_AUTO_FILLTOWNFROMZIP;
-}
-
-/*
  * Autres paramètres globaux de configurations
  */
 $conf->users->dir_output=DOL_DATA_ROOT."/users";
