@@ -456,7 +456,7 @@ if ($_GET["id"] > 0)
 	  $resql = $db->query($sql);
 	  if ($resql)
 	    {
-	      $opt = "<option value=\"0\" SELECTED></option>";
+	      $opt = '<option value="0" selected="true"></option>';
 	      if ($resql)
 		{
 		  $num = $db->num_rows($resql);
