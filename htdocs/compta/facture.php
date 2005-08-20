@@ -742,6 +742,10 @@ if ($_GET["action"] == 'create')
                         $i++;
                     }
                 }
+                else
+                {
+                    dolibarr_print_error($db);
+                }
                 // Lignes de propal non produits prédéfinis
                 $sql = "SELECT pt.rowid, pt.description as product, pt.tva_tx, pt.price, pt.qty, pt.remise_percent";
                 $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt ";
@@ -784,7 +788,7 @@ if ($_GET["action"] == 'create')
                 print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
                 print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
 
-                $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.subprice, pt.qty, p.rowid as prodid, pt.remise_percent";
+                $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.subprice, pt.qty, p.rowid as prodid, pt.remise_percent, pt.description";
                 $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as pt, ".MAIN_DB_PREFIX."product as p";
                 $sql .= " WHERE pt.fk_product = p.rowid AND pt.fk_commande = ".$commande->id;
                 $sql .= " ORDER BY pt.rowid ASC";
@@ -799,11 +803,44 @@ if ($_GET["action"] == 'create')
                     {
                         $objp = $db->fetch_object();
                         $var=!$var;
-                        print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
-                        print '<td>'.$objp->product.'</td>';
+                        print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(""),"product")." ".$objp->ref."</a>";
+                        print $objp->product?' - '.$objp->product:'';
+                        print "</td>\n";
+                        print '<td>';
+                        print $objp->description;
+                        print '</td>';
                         print '<td align="right">'.price($objp->subprice).'</td>';
                         print '<td align="center">'.$objp->remise_percent.'%</td>';
                         print '<td align="center">'.$objp->qty.'</td></tr>';
+                        $i++;
+                    }
+                }
+                else
+                {
+                    dolibarr_print_error($db);
+                }
+                // Lignes de commande non produits prédéfinis
+                $sql  = "SELECT pt.rowid, pt.description as product, pt.subprice, pt.qty, pt.remise_percent";
+                $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as pt";
+                $sql .= " WHERE  pt.fk_commande = ".$commande->id;
+                $sql .= " AND pt.fk_product = 0";
+                $sql .= " ORDER BY pt.rowid ASC";
+
+                $result=$db->query($sql);
+                if ($result)
+                {
+                    $num = $db->num_rows($result);
+                    $i = 0;
+                    while ($i < $num)
+                    {
+                        $objp = $db->fetch_object($result);
+                        $var=!$var;
+                        print "<tr $bc[$var]><td>&nbsp;</td>\n";
+                        print '<td>'.$objp->product.'</td>';
+                        print '<td align="right">'.price($objp->subprice).'</td>';
+                        print '<td align="center">'.$objp->remise_percent.'%</td>';
+                        print '<td align="center">'.$objp->qty.'</td>';
+                        print '</tr>';
                         $i++;
                     }
                 }
