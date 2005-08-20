@@ -49,10 +49,12 @@ class pdf_propale_azur extends ModelePDFPropales
         $this->db = $db;
         $this->name = "azur";
         $this->description = "Modèle de propositions commerciales complet (logo...)";
+        $this->format="A4";
+ 
         $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
         $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
-        $this->option_codeproduitservice = 1;      // Affiche code produit-service FACTURE_CODEPRODUITSERVICE
+        $this->option_codeproduitservice = 1;      // Affiche code produit-service
         $this->option_tvaintra = 1;                // Affiche tva intra MAIN_INFO_TVAINTRA
         $this->option_capital = 1;                 // Affiche capital MAIN_INFO_CAPITAL
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') 
@@ -71,8 +73,15 @@ class pdf_propale_azur extends ModelePDFPropales
             dolibarr_print_error($this->db);
         }
         $this->db->free($result);
-    }
 
+        // Defini position des colonnes
+        $this->posxdesc=11;
+        $this->posxtva=121;
+        $this->posxup=133;
+        $this->posxqty=151;
+        $this->posxdiscount=163;
+        $this->postotalht=173;
+	}
 
     /**
     	    \brief      Renvoi dernière erreur
@@ -136,7 +145,7 @@ class pdf_propale_azur extends ModelePDFPropales
                 $pdf->Open();
                 $pdf->AddPage();
 
-                $this->_pagehead($pdf, $prop);
+                $pdf->SetDrawColor(128,128,128);
 
                 $pdf->SetTitle($prop->ref);
                 $pdf->SetSubject($langs->trans("Bill"));
@@ -146,16 +155,16 @@ class pdf_propale_azur extends ModelePDFPropales
                 $pdf->SetMargins(10, 10, 10);
                 $pdf->SetAutoPageBreak(1,0);
 
+                $this->_pagehead($pdf, $prop);
+
                 $tab_top = 96;
                 $tab_height = 110;
 
-                $pdf->SetFillColor(220,220,220);
                 $pdf->SetFont('Arial','', 9);
-                $pdf->SetXY (10, $tab_top + 10 );
-
-                $iniY = $pdf->GetY();
-                $curY = $pdf->GetY();
-                $nexY = $pdf->GetY();
+ 
+                $iniY = $tab_top + 8;
+                $curY = $tab_top + 8;
+                $nexY = $tab_top + 8;
                 $nblignes = sizeof($prop->lignes);
 
                 // Boucle sur les lignes
@@ -170,16 +179,16 @@ class pdf_propale_azur extends ModelePDFPropales
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
                         $libelleproduitservice.=$prop->lignes[$i]->desc;
                     }
-                    $pdf->SetXY (11, $curY );
+                    $pdf->SetXY ($this->posxdesc-1, $curY);
 
-                    if ($conf->global->PROPALE_CODEPRODUITSERVICE && $prop->lignes[$i]->product_id)
+                    if ($prop->lignes[$i]->product_id)
                     {
                         // Affiche code produit si ligne associée à un code produit
                         $prodser = new Product($this->db);
 
                         $prodser->fetch($prop->lignes[$i]->product_id);
                         if ($prodser->ref) {
-                            $libelleproduitservice=$langs->trans("ProductCode")." ".$prodser->ref." - ".$libelleproduitservice;
+                            $libelleproduitservice=$langs->trans("Product")." ".$prodser->ref." - ".$libelleproduitservice;
                         }
                     }
                     if ($prop->lignes[$i]->date_start && $prop->lignes[$i]->date_end) {
@@ -191,28 +200,33 @@ class pdf_propale_azur extends ModelePDFPropales
                     $nexY = $pdf->GetY();
 
                     // TVA
-                    $pdf->SetXY (121, $curY);
+                    $pdf->SetXY ($this->posxtva, $curY);
                     $pdf->MultiCell(10, 5, $prop->lignes[$i]->tva_tx, 0, 'C');
 
                     // Prix unitaire HT avant remise
-                    $pdf->SetXY (133, $curY);
+                    $pdf->SetXY ($this->posxup, $curY);
                     $pdf->MultiCell(16, 5, price($prop->lignes[$i]->subprice), 0, 'R', 0);
 
                     // Quantité
-                    $pdf->SetXY (151, $curY);
+                    $pdf->SetXY ($this->posxqty, $curY);
                     $pdf->MultiCell(10, 5, $prop->lignes[$i]->qty, 0, 'R');
 
                     // Remise sur ligne
-                    $pdf->SetXY (163, $curY);
+                    $pdf->SetXY ($this->posxdiscount, $curY);
                     if ($prop->lignes[$i]->remise_percent) {
                         $pdf->MultiCell(14, 5, $prop->lignes[$i]->remise_percent."%", 0, 'R');
                     }
 
-                    // Total HT
-                    $pdf->SetXY (173, $curY);
+                    // Total HT ligne
+                    $pdf->SetXY ($this->postotalht, $curY);
                     $total = price($prop->lignes[$i]->price * $prop->lignes[$i]->qty);
                     $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
 
+                    // Collecte des totaux par valeur de tva
+                    // dans le tableau tva["taux"]=total_tva
+					$tvaligne=$fac->lignes[$i]->price * $fac->lignes[$i]->qty;
+					if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
+					$this->tva[ (string)$fac->lignes[$i]->tva_taux ] += $tvaligne;
 
                     if ($nexY > 200 && $i < $nblignes - 1)
                     {
@@ -227,7 +241,7 @@ class pdf_propale_azur extends ModelePDFPropales
                 }
                 $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 
-                $this->_tableau_tot($pdf, $prop, "");
+                $posy=$this->_tableau_tot($pdf, $prop, "");
 
                 /*
                 * Mode de règlement
@@ -358,10 +372,11 @@ class pdf_propale_azur extends ModelePDFPropales
     }
 
     /*
-    *   \brief      Affiche le total à payer
-    *   \param      pdf         objet PDF
-    *   \param      fac         objet propale
-    *   \param      deja_regle  montant deja regle
+     *   \brief      Affiche le total à payer
+     *   \param      pdf         	Objet PDF
+     *   \param      fac         	Objet propale
+     *   \param      deja_regle  	Montant deja regle
+     *   \return     y              Position pour suite
     */
     function _tableau_tot(&$pdf, $prop, $deja_regle)
     {
@@ -383,67 +398,100 @@ class pdf_propale_azur extends ModelePDFPropales
 
         // Tableau total
         $col1x=120; $col2x=174;
+
+        // Total HT
+        $pdf->SetFillColor(256,256,256);
         $pdf->SetXY ($col1x, $tab2_top + 0);
-        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalHT"), 0, 'L', 0);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalHT"), 0, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + 0);
-        $pdf->MultiCell(26, $tab2_hl, price($prop->total_ht + $prop->remise), 0, 'R', 0);
+        $pdf->MultiCell(26, $tab2_hl, price($prop->total_ht + $prop->remise), 0, 'R', 1);
 
+        // Remise globale
         if ($prop->remise > 0)
         {
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("GlobalDiscount"), 0, 'L', 0);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("GlobalDiscount"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
-            $pdf->MultiCell(26, $tab2_hl, "-".$prop->remise_percent."%", 0, 'R', 0);
+            $pdf->MultiCell(26, $tab2_hl, "-".$prop->remise_percent."%", 0, 'R', 1);
 
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT après remise", 0, 'L', 0);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT après remise", 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell(26, $tab2_hl, price($prop->total_ht), 0, 'R', 0);
+            $pdf->MultiCell(26, $tab2_hl, price($prop->total_ht), 0, 'R', 1);
 
-            $index = 3;
+            $index = 2;
         }
         else
         {
-            $index = 1;
+            $index = 0;
         }
 
+        // Affichage des totaux de TVA par taux (conformément à réglementation)
+        $atleastoneratenotnull=0;
+        $pdf->SetFillColor(248,248,248);
+        foreach( $this->tva as $tvakey => $tvaval )
+        {
+            if ($tvakey)    // On affiche pas taux 0
+            {
+                $atleastoneratenotnull++;
+                
+                $index++;
+            	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+                $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT").' '.$tvakey.'%', 0, 'L', 1);
+    
+                $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+                $pdf->MultiCell(26, $tab2_hl, price($tvaval * (float)$tvakey / 100 ), 0, 'R', 1);
+            }
+        }
+        if (! $atleastoneratenotnull)
+        {
+            $index++;
         $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT"), 0, 'L', 0);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT"), 0, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-        $pdf->MultiCell(26, $tab2_hl, price($prop->total_tva), 0, 'R', 0);
+        $pdf->MultiCell(26, $tab2_hl, price($prop->total_tva), 0, 'R', 1);
 
-        $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+1));
+        $useborder=0;
+        
+        $index++;
+        $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B', 9);
-        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalTTC"), 0, 'L', 1);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalTTC"), $useborder, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+1));
-        $pdf->MultiCell(26, $tab2_hl, price($prop->total_ttc), 0, 'R', 1);
+        $pdf->MultiCell(26, $tab2_hl, price($prop->total_ttc), $useborder, 'R', 1);
         $pdf->SetFont('Arial','', 9);
         $pdf->SetTextColor(0,0,0);
 
         if ($deja_regle > 0)
         {
-            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+2));
+            $index++;
+            
+            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("AlreadyPayed"), 0, 'L', 0);
 
-            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+2));
+            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
+            $index++;
             $pdf->SetTextColor(0,0,60);
-            $pdf->SetFont('Arial','B', 9);
-            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+3));
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("RemainderToPay"), 0, 'L', 1);
+            //$pdf->SetFont('Arial','B', 9);
+            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("RemainderToPay"), $useborder, 'L', 1);
 
-            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+3));
-            $pdf->MultiCell(26, $tab2_hl, price($prop->total_ttc - $deja_regle), 0, 'R', 1);
+            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+            $pdf->MultiCell(26, $tab2_hl, price($prop->total_ttc - $deja_regle), $useborder, 'R', 1);
             $pdf->SetFont('Arial','', 9);
             $pdf->SetTextColor(0,0,0);
         }
+    
+        $index++;
+        return ($tab2_top + ($tab2_hl * $index));
     }
 
     /*
@@ -457,26 +505,32 @@ class pdf_propale_azur extends ModelePDFPropales
         $langs->load("bills");
         
         $pdf->Rect( 10, $tab_top, 190, $tab_height);
-        $pdf->line( 10, $tab_top+8, 200, $tab_top+8 );
+        $pdf->line( 10, $tab_top+6, 200, $tab_top+6 );
 
         $pdf->SetFont('Arial','',10);
 
-        $pdf->Text(12,$tab_top + 5, $langs->trans("Label"));
+        $pdf->SetXY (10, $tab_top+2);
+        $pdf->MultiCell(40,2, $langs->trans("Designation"),'','L');
 
         $pdf->line(120, $tab_top, 120, $tab_top + $tab_height);
-        $pdf->Text(122, $tab_top + 5, $langs->trans("VAT"));
+        $pdf->SetXY (120, $tab_top+2);
+        $pdf->MultiCell(12,2, $langs->trans("VAT"),'','C');
 
         $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-        $pdf->Text(135, $tab_top + 5,$langs->trans("PriceUHT"));
+        $pdf->SetXY (132, $tab_top+2);
+        $pdf->MultiCell(18,2, $langs->trans("PriceUHT"),'','C');
 
         $pdf->line(150, $tab_top, 150, $tab_top + $tab_height);
-        $pdf->Text(153, $tab_top + 5, $langs->trans("Qty"));
+        $pdf->SetXY (150, $tab_top+2);
+        $pdf->MultiCell(12,2, $langs->trans("Qty"),'','C');
 
         $pdf->line(162, $tab_top, 162, $tab_top + $tab_height);
-        $pdf->Text(163, $tab_top + 5,$langs->trans("Discount"));
+        $pdf->SetXY (162, $tab_top+2);
+        $pdf->MultiCell(15,2, $langs->trans("Discount"),'','C');
 
         $pdf->line(177, $tab_top, 177, $tab_top + $tab_height);
-        $pdf->Text(185, $tab_top + 5, $langs->trans("TotalHT"));
+        $pdf->SetXY (177, $tab_top+2);
+        $pdf->MultiCell(23,2, $langs->trans("TotalHT"),'','C');
 
     }
 
@@ -487,8 +541,8 @@ class pdf_propale_azur extends ModelePDFPropales
     */
     function _pagehead(&$pdf, $prop)
     {
-        global $conf;
-        global $langs;
+        global $langs,$conf;
+
         $langs->load("main");
         $langs->load("bills");
         $langs->load("propal");
@@ -503,7 +557,7 @@ class pdf_propale_azur extends ModelePDFPropales
         if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
         {
             if (file_exists(FAC_PDF_LOGO)) {
-                $pdf->Image(FAC_PDF_LOGO, 10, 5, 0, 24, 'PNG');
+                $pdf->Image(FAC_PDF_LOGO, 10, 5, 0, 24);
             }
             else {
                 $pdf->SetTextColor(200,0,0);
@@ -526,9 +580,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetTextColor(0,0,60);
         $pdf->MultiCell(100, 10, $langs->trans("Date")." : " . dolibarr_print_date($prop->date,"%d %b %Y"), '', 'R');
 
-        /*
-        * Emetteur
-        */
+        // Emetteur
         $posy=42;
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
@@ -589,9 +641,7 @@ class pdf_propale_azur extends ModelePDFPropales
         }
 
 
-        /*
-        * Client
-        */
+        // Client destinataire
         $posy=42;
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
@@ -607,17 +657,14 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetFont('Arial','B',9);
         $pdf->SetXY(102,$posy+12);
         $pdf->MultiCell(86,4, $prop->client->adresse . "\n" . $prop->client->cp . " " . $prop->client->ville);
+        // Cadre client destinataire
         $pdf->rect(100, $posy, 100, 34);
 
-        /*
-        *
-        */
+        // Montants exprimés en
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',10);
-        $titre = $langs->trans("AmountInCurrency")." ".$langs->trans("Currency".$conf->monnaie);
+        $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
         $pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
-        /*
-        */
 
     }
 
@@ -633,24 +680,46 @@ class pdf_propale_azur extends ModelePDFPropales
         $langs->load("bills");
         $langs->load("companies");
         
+        $html=new Form($this->db);
+        
+        $footy=14;
+        $pdf->SetY(-$footy);
+        $pdf->SetDrawColor(224,224,224);
+        $pdf->line(10, 282, 200, 282);
+        
         $footy=13;
         $pdf->SetFont('Arial','',8);
 
-        if (defined(MAIN_INFO_CAPITAL)) {
+        $ligne="";
+        if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
+        {
+            $ligne=($ligne?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
+        }
+        if ($conf->global->MAIN_INFO_CAPITAL)
+        {
+            $ligne=($ligne?" - ":"")."Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
+        }
+        if ($conf->global->MAIN_INFO_SIREN)
+        {
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN;
+            }
+        if ($conf->global->MAIN_INFO_SIRET)
+        {
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIRET;
+            }
+        if ($conf->global->MAIN_INFO_RCS)
+        {
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->code_pays).": ".MAIN_INFO_RCS;
+        }
+        if ($ligne)
+        {
             $pdf->SetY(-$footy);
-            $ligne="SARL au Capital de " . MAIN_INFO_CAPITAL." ".$conf->monnaie;
-            if (defined(MAIN_INFO_SIREN) && MAIN_INFO_SIREN) {
-                $ligne.=" - ".$langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIREN;
-            }
-            if (defined(MAIN_INFO_RCS) && MAIN_INFO_RCS) {
-                $ligne.=" - ".$langs->transcountry("ProfId3",$this->code_pays).": ".MAIN_INFO_RCS;
-            }
             $pdf->MultiCell(190, 3, $ligne, 0, 'C');
-            $footy-=3;
         }
 
         // Affiche le numéro de TVA intracommunautaire
-        if (MAIN_INFO_TVAINTRA == 'MAIN_INFO_TVAINTRA') {
+        if ($conf->global->MAIN_INFO_TVAINTRA == 'MAIN_INFO_TVAINTRA') {
+            $footy-=3;
             $pdf->SetY(-$footy);
             $pdf->SetTextColor(200,0,0);
             $pdf->SetFont('Arial','B',8);
@@ -658,12 +727,13 @@ class pdf_propale_azur extends ModelePDFPropales
             $pdf->MultiCell(190, 3, $langs->trans("ErrorGoToGlobalSetup"),0,'L',0);
             $pdf->SetTextColor(0,0,0);
         }
-        elseif (MAIN_INFO_TVAINTRA != '') {
+        elseif ($conf->global->MAIN_INFO_TVAINTRA != '') {
+            $footy-=3;
             $pdf->SetY(-$footy);
             $pdf->MultiCell(190, 3,  $langs->trans("TVAIntra")." : ".MAIN_INFO_TVAINTRA, 0, 'C');
         }
 
-        $pdf->SetXY(-10,-10);
+        $pdf->SetXY(-20,-$footy);
         $pdf->MultiCell(10, 3, $pdf->PageNo().'/{nb}', 0, 'R');
     }
 
