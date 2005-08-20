@@ -495,7 +495,7 @@ if ($_GET["id"])
       print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
       print '<td>'.$langs->trans("Author").'</td>';
       print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
-      print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'">%</td></tr>';
+      print '<tr><td nowrap>'.$langs->trans("PercentDone").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'" size="4">%</td></tr>';
       if ($act->objet_url)
 	{
 	  print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
