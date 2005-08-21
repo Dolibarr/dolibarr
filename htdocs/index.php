@@ -80,53 +80,11 @@ $userstring=$user->fullname;
 print '<td nowrap>'.$langs->trans("User").'</td><td>'.$userstring.'</td></tr>';
 print '<tr '.$bc[true].'>';
 print '<td nowrap>'.$langs->trans("LastAccess").'</td><td>';
-if ($user->datelastaccess) print dolibarr_print_date($user->datelastaccess,"%d %b %Y %H:%M:%S");
+if ($user->datelastaccess) print dolibarr_print_date($user->datelastaccess,"%d %B %Y %H:%M:%S");
 else print $langs->trans("Unknown");
 print '</td>';
 print '</tr>';
 print '</table>';
-
-/*
- * Bookmark
- */
-/*
-print '<br>';
-
-$sql = "SELECT s.idp, s.nom,b.rowid as bid";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
-$sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
-$sql .= " ORDER BY lower(s.nom) ASC";
-
-$resql = $db->query($sql);
-
-if ( $resql )
-{
-  $num = $db->num_rows($resql);
-  $i = 0;
-  if ($num)
-    {
-      print '<table class="noborder" width="100%">';
-      print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("MyBookmarks")."</td></tr>\n";
-      $var = True;
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object($resql);
-	  $var = !$var;
-	  print "<tr $bc[$var]>";
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-	  print '<td align="right"><a href="index.php?action=del_bookmark&amp;bid='.$obj->bid.'">'.img_delete().'</a></td>';
-	  print '</tr>';
-	  $i++;
-	}
-      print '</table>';
-    }
-  $db->free($resql);
-}
-else
-{
-  dolibarr_print_error($db);
-}
-*/
 
 
 /*
@@ -142,26 +100,26 @@ print '</tr>';
 $var=true;
 
 // Nbre de sociétés clients/prospects
-if ($conf->societe->enabled)
+if ($conf->societe->enabled  && $user->rights->societe->lire )
 {
-    include_once("./client.class.php");
-    $board=new Client($db);
-    $board->load_state_board();
-
-    foreach($board->nb as $key=>$val)
+  include_once("./client.class.php");
+  $board=new Client($db);
+  $board->load_state_board();
+  
+  foreach($board->nb as $key=>$val)
     {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Customers"),"company").'</td>';
-        print '<td>';
-        if ($key == "customers") print $langs->trans("Customers");
-        if ($key == "prospects") print $langs->trans("Prospects");
-        print '</td>';
-        print '<td align="right">';
-        if ($key == "customers") print '<a href="'.DOL_URL_ROOT.'/comm/clients.php">';
-        if ($key == "prospects") print '<a href="'.DOL_URL_ROOT.'/comm/clients.php">';
-        print $val;
-        print '</a></td>';
-        print '</tr>';
+      $var=!$var;
+      print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Customers"),"company").'</td>';
+      print '<td>';
+      if ($key == "customers") print $langs->trans("Customers");
+      if ($key == "prospects") print $langs->trans("Prospects");
+      print '</td>';
+      print '<td align="right">';
+      if ($key == "customers") print '<a href="'.DOL_URL_ROOT.'/comm/clients.php">';
+      if ($key == "prospects") print '<a href="'.DOL_URL_ROOT.'/comm/clients.php">';
+      print $val;
+      print '</a></td>';
+      print '</tr>';
     }
 }
 
