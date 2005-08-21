@@ -74,6 +74,8 @@ class pdf_propale_azur extends ModelePDFPropales
         }
         $this->db->free($result);
 
+        $this->tva=array();
+
         // Defini position des colonnes
         $this->posxdesc=11;
         $this->posxtva=121;
@@ -224,9 +226,9 @@ class pdf_propale_azur extends ModelePDFPropales
 
                     // Collecte des totaux par valeur de tva
                     // dans le tableau tva["taux"]=total_tva
-					$tvaligne=$fac->lignes[$i]->price * $fac->lignes[$i]->qty;
-					if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
-					$this->tva[ (string)$fac->lignes[$i]->tva_taux ] += $tvaligne;
+					$tvaligne=$prop->lignes[$i]->price * $prop->lignes[$i]->qty;
+					if ($prop->remise_percent) $tvaligne-=($tvaligne*$prop->remise_percent)/100;
+					$this->tva[ (string)$prop->lignes[$i]->tva_taux ] += $tvaligne;
 
                     if ($nexY > 200 && $i < $nblignes - 1)
                     {
@@ -449,21 +451,22 @@ class pdf_propale_azur extends ModelePDFPropales
         if (! $atleastoneratenotnull)
         {
             $index++;
-        $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT"), 0, 'L', 1);
-
-        $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-        $pdf->MultiCell(26, $tab2_hl, price($prop->total_tva), 0, 'R', 1);
-
+            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT"), 0, 'L', 1);
+    
+            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+            $pdf->MultiCell(26, $tab2_hl, price($prop->total_tva), 0, 'R', 1);
+        }
+        
         $useborder=0;
         
         $index++;
         $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
         $pdf->SetTextColor(0,0,60);
-        $pdf->SetFont('Arial','B', 9);
+        $pdf->SetFillColor(224,224,224);
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalTTC"), $useborder, 'L', 1);
 
-        $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+1));
+        $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
         $pdf->MultiCell(26, $tab2_hl, price($prop->total_ttc), $useborder, 'R', 1);
         $pdf->SetFont('Arial','', 9);
         $pdf->SetTextColor(0,0,0);
@@ -594,7 +597,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->MultiCell(82, 34, "", 0, 'R', 1);
 
 
-        $pdf->SetXY(10,$posy+4);
+        $pdf->SetXY(10,$posy+3);
 
         // Nom emetteur
         $pdf->SetTextColor(0,0,60);
@@ -614,6 +617,7 @@ class pdf_propale_azur extends ModelePDFPropales
         {
             $pdf->MultiCell(80, 4, FAC_PDF_ADRESSE);
         }
+        $pdf->MultiCell(80, 4, "\n");
         if (defined("FAC_PDF_TEL") && FAC_PDF_TEL)
         {
             $pdf->MultiCell(80, 4, $langs->trans("Phone").": ".FAC_PDF_TEL);
@@ -631,17 +635,6 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->MultiCell(80, 4, $langs->trans("Web").": ".FAC_PDF_WWW);
         }
 
-        $pdf->SetFont('Arial','',7);
-        if (defined("MAIN_INFO_SIREN") && MAIN_INFO_SIREN)
-        {
-            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN);
-        }
-        elseif (defined("MAIN_INFO_SIRET") && MAIN_INFO_SIRET)
-        {
-            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIRET);
-        }
-
-
         // Client destinataire
         $posy=42;
         $pdf->SetTextColor(0,0,0);
@@ -650,14 +643,18 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
 		$prop->fetch_client();
 		// Nom client
-        $pdf->SetXY(102,$posy+4);
+        $pdf->SetXY(102,$posy+3);
         $pdf->SetFont('Arial','B',11);
         $pdf->MultiCell(86,4, $prop->client->nom, 0, 'L');
 
 		// Caractéristiques client
-        $pdf->SetFont('Arial','B',9);
-        $pdf->SetXY(102,$posy+12);
-        $pdf->MultiCell(86,4, $prop->client->adresse . "\n" . $prop->client->cp . " " . $prop->client->ville);
+        $carac_client=$prop->client->adresse;
+        $carac_client.="\n".$prop->client->cp . " " . $prop->client->ville."\n";
+		if ($prop->client->tva_intra) $carac_client.="\n".$langs->trans("VATIntraShort").': '.$prop->client->tva_intra;
+        $pdf->SetFont('Arial','',9);
+        $pdf->SetXY(102,$posy+7);
+        $pdf->MultiCell(86,4, $carac_client);
+
         // Cadre client destinataire
         $pdf->rect(100, $posy, 100, 34);
 
@@ -694,20 +691,20 @@ class pdf_propale_azur extends ModelePDFPropales
         $ligne="";
         if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
         {
-            $ligne=($ligne?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
+            $ligne.=($ligne?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
         }
         if ($conf->global->MAIN_INFO_CAPITAL)
         {
-            $ligne=($ligne?" - ":"")."Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
+            $ligne.=($ligne?" - ":"")."Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
         }
         if ($conf->global->MAIN_INFO_SIREN)
         {
             $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN;
-            }
+        }
         if ($conf->global->MAIN_INFO_SIRET)
         {
             $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIRET;
-            }
+        }
         if ($conf->global->MAIN_INFO_RCS)
         {
             $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->code_pays).": ".MAIN_INFO_RCS;
