@@ -220,7 +220,7 @@ class Form
 		  }
                 // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                 if ($obj->code) { print $obj->code . ' - '; }
-                print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
                 print '</option>';
                 $i++;
 	      }
