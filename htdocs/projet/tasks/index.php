@@ -30,6 +30,8 @@
 
 require("./pre.inc.php");
 
+if (!$user->rights->projet->lire) accessforbidden();
+
 /*
  * Sécurité accés client
  */
