@@ -11,3 +11,7 @@ AllProjects=Tous les projets
 ShowProject=Afficher projet
 SetProject=Définir projet
 NoProject=Aucun projet défini
+NbOpenTasks=Nb Tâche Ouverte
+Tasks=Tâches
+Task=Tâche
+NewTask=Nouvelle tâche
