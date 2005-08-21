@@ -22,10 +22,10 @@
  */
 
 /**
-   \file       htdocs/projet/index.php
-   \ingroup    projet
-   \brief      Page d'accueil du module projet
-   \version    $Revision$
+        \file       htdocs/projet/index.php
+        \ingroup    projet
+        \brief      Page d'accueil du module projet
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -44,10 +44,10 @@ if ($user->societe_id > 0)
 
 llxHeader("",$langs->trans("Projects"),"Projet");
 
-print_titre($langs->trans("ProjectsArea"));
+print_fiche_titre($langs->trans("ProjectsArea"));
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr><td width="30%" valign="top">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
 /*
  *
@@ -98,7 +98,7 @@ else
 }
 print "</table>";
 
-print '</td><td width="70%">';
+print '</td><td width="70%" class="notopnoleft">';
 
 /*
  *
