@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005 Marc Bariley / Ocebo      <marc@ocebo.com>
+ * Copyright (C) 2005      Marc Bariley / Ocebo      <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,15 @@
  */
 
 /** 
-        \file       htdocs/projet/liste.php
-        \ingroup    projet
-        \brief      Page liste des projets
-        \version    $Revision$
+    \file       htdocs/projet/liste.php
+    \ingroup    projet
+    \brief      Page liste des projets
+    \version    $Revision$
 */
 
 require("./pre.inc.php");
+
+if (!$user->rights->projet->lire) accessforbidden();
 
 $socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
 
@@ -40,9 +42,9 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 
 if ($socid > 0)
 {
-	$soc = new Societe($db);
-	$soc->fetch($socid);
-	$title .= ' (<a href="liste.php">'.$soc->nom.'</a>)';
+  $soc = new Societe($db);
+  $soc->fetch($socid);
+  $title .= ' (<a href="liste.php">'.$soc->nom.'</a>)';
 }
 
 
@@ -97,64 +99,64 @@ if ($_GET["search_societe"])
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $var=true;
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows();
-	$i = 0;
-
-	//llxHeader("",$title,"Projet");
-	llxHeader();
-
-	print_barre_liste($langs->trans("Projects"), $page, "liste.php", "", $sortfield, $sortorder, "", $num);
-
-	print '<br>';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),"liste.php","p.ref","","","",$sortfield);
-	print_liste_field_titre($langs->trans("Label"),"liste.php","p.title","","","",$sortfield);
-	print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","","",$sortfield);
-	print '<td>&nbsp;</td>';
-	print "</tr>\n";
-
-	print '<form method="get" action="liste.php">';
-	print '<tr class="liste_titre">';
-	print '<td valign="right">';
-	print '<input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'">';
-	print '</td>';
-	print '<td valign="right">';
-	print '<input type="text" class="flat" name="search_label" value="'.stripslashes($_GET["search_label"]).'">';
-	print '</td>';
-	print '<td valign="right">';
-	print '<input type="text" class="flat" name="search_societe" value="'.$_GET["search_societe"].'">';
-	print '</td>';
-	print '<td align="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Search").'">';
-	print "</td>";
-	print "</tr>\n";
-
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object( $i);    
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->title</a></td>\n";
-		print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->ref</a></td>\n";
-		print '<td>';
-		print img_object($langs->trans("ShowCompanie"),"company");
-
-		print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
-		print '<td>&nbsp;</td>';
-		print "</tr>\n";
-    
-		$i++;
-	}
+  $num = $db->num_rows($resql);
+  $i = 0;
   
-	$db->free();
+  //llxHeader("",$title,"Projet");
+  llxHeader();
+  
+  print_barre_liste($langs->trans("Projects"), $page, "liste.php", "", $sortfield, $sortorder, "", $num);
+  
+  print '<br>';
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre">';
+  print_liste_field_titre($langs->trans("Ref"),"liste.php","p.ref","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Label"),"liste.php","p.title","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","","",$sortfield);
+  print '<td>&nbsp;</td>';
+  print "</tr>\n";
+  
+  print '<form method="get" action="liste.php">';
+  print '<tr class="liste_titre">';
+  print '<td valign="right">';
+  print '<input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'">';
+  print '</td>';
+  print '<td valign="right">';
+  print '<input type="text" class="flat" name="search_label" value="'.stripslashes($_GET["search_label"]).'">';
+  print '</td>';
+  print '<td valign="right">';
+  print '<input type="text" class="flat" name="search_societe" value="'.$_GET["search_societe"].'">';
+  print '</td>';
+  print '<td align="center">';
+  print '<input class="button" type="submit" value="'.$langs->trans("Search").'">';
+  print "</td>";
+  print "</tr>\n";
+  
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object($resql);    
+      $var=!$var;
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->title</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->ref</a></td>\n";
+      print '<td>';
+      print img_object($langs->trans("ShowCompanie"),"company");
+      
+      print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+      print '<td>&nbsp;</td>';
+      print "</tr>\n";
+      
+      $i++;
+    }
+  
+  $db->free($resql);
 }
 else
 {
-	dolibarr_print_error($db);
+  dolibarr_print_error($db);
 }
 
 print "</table>";
