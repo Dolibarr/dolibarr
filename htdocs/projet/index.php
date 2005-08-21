@@ -22,15 +22,16 @@
  */
 
 /**
-        \file       htdocs/projet/index.php
-        \ingroup    projet
-        \brief      Page d'accueil du module projet
-        \version    $Revision$
+   \file       htdocs/projet/index.php
+   \ingroup    projet
+   \brief      Page d'accueil du module projet
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
-
 $langs->load("projects");
+
+if (!$user->rights->projet->lire) accessforbidden();
 
 /*
  * Sécurité accés client
@@ -45,23 +46,65 @@ llxHeader("",$langs->trans("Projects"),"Projet");
 
 print_titre($langs->trans("ProjectsArea"));
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
-
-if ($sortfield == "") $sortfield="p.ref";
-if ($sortorder == "") $sortorder="ASC";
-
-$offset = $limit * $page ;
-
-
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr><td width="30%" valign="top">';
 
 /*
  *
  * Affichage de la liste des projets
  * 
  */
-print '<br>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans("Project"),"index.php","s.nom","","","",$sortfield);
+print '<td align="center">'.$langs->trans("NbOpenTasks").'</td>';
+print "</tr>\n";
+
+$sql = "SELECT p.title, p.rowid, count(t.rowid)";
+$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
+$sql .= " WHERE t.fk_projet = p.rowid";
+
+if ($socidp)
+{ 
+  $sql .= " AND s.idp = $socidp"; 
+}
+$sql .= " GROUP BY p.rowid";
+
+$var=true;
+$resql = $db->query($sql);
+if ( $resql )
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row( $resql);
+      $var=!$var;
+      print "<tr $bc[$var]>";
+      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
+      print '<td align="center">'.$row[2].'</td>';
+      print "</tr>\n";
+    
+      $i++;
+    }
+  
+  $db->free($resql);
+}
+else
+{
+  dolibarr_print_error($db);
+}
+print "</table>";
+
+print '</td><td width="70%">';
+
+/*
+ *
+ * Affichage de la liste des projets
+ * 
+ */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield);
@@ -77,7 +120,7 @@ if ($socidp)
   $sql .= " AND s.idp = $socidp"; 
 }
 $sql .= " GROUP BY s.nom";
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+//$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $var=true;
 $resql = $db->query($sql);
@@ -104,8 +147,9 @@ else
 {
   dolibarr_print_error($db);
 }
-
 print "</table>";
+
+print '</td></tr></table>';
 
 $db->close();
 
