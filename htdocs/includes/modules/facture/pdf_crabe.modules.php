@@ -73,6 +73,8 @@ class pdf_crabe extends ModelePDFFactures
         }
         $this->db->free($result);
         
+        $this->tva=array();
+        
         // Defini position des colonnes
         $this->posxdesc=11;
         $this->posxtva=121;
@@ -543,7 +545,6 @@ class pdf_crabe extends ModelePDFFactures
         $index++;
         $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
         $pdf->SetTextColor(0,0,60);
-//        $pdf->SetFont('Arial','B', 9);
         $pdf->SetFillColor(224,224,224);
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalTTC"), $useborder, 'L', 1);
 
@@ -778,11 +779,11 @@ class pdf_crabe extends ModelePDFFactures
         $ligne="";
         if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
         {
-            $ligne=($ligne?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
+            $ligne=.($ligne?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
         }
         if ($conf->global->MAIN_INFO_CAPITAL)
         {
-            $ligne=($ligne?" - ":"")."Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
+            $ligne=.($ligne?" - ":"")."Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
         }
         if ($conf->global->MAIN_INFO_SIREN)
         {

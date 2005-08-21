@@ -361,7 +361,7 @@ llxHeader();
  * Affichage fiche propal en mode visu
  *
  */
-if ($_GET['propalid'])
+if ($_GET['propalid'] > 0)
 {
   if ($msg) print "$msg<br>";
   $html = new Form($db);
