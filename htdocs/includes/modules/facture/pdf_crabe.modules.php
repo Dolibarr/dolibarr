@@ -98,7 +98,6 @@ class pdf_crabe extends ModelePDFFactures
     		\remarks    MAIN_INFO_CAPITAL
     		\remarks    MAIN_INFO_TVAINTRA
             \remarks    FAC_PDF_LOGO
-    		\remarks    FACTURE_CODEPRODUITSERVICE
     		\remarks    FACTURE_CHQ_NUMBER
     		\remarks    FACTURE_RIB_NUMBER
     		\remarks    FAC_PDF_INTITULE
@@ -677,19 +676,19 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->MultiCell(82, 34, "", 0, 'R', 1);
 
 
-        $pdf->SetXY(10,$posy+4);
+        $pdf->SetXY(10,$posy+3);
 
         // Nom emetteur
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B',11);
         if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM)  // Prioritaire sur MAIN_INFO_SOCIETE_NOM
-          {
-        $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-          }
+        {
+            $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
+        }
         else                                                        // Par defaut
-          {
-        $pdf->MultiCell(80, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
-          }
+        {
+            $pdf->MultiCell(80, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
+        }
 
         // Caractéristiques emetteur
         $pdf->SetFont('Arial','',9);
@@ -697,6 +696,7 @@ class pdf_crabe extends ModelePDFFactures
         {
             $pdf->MultiCell(80, 4, FAC_PDF_ADRESSE);
         }
+        $pdf->MultiCell(80, 4, "\n");
         if (defined("FAC_PDF_TEL") && FAC_PDF_TEL)
         {
             $pdf->MultiCell(80, 4, $langs->trans("Phone").": ".FAC_PDF_TEL);
@@ -714,17 +714,6 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->MultiCell(80, 4, $langs->trans("Web").": ".FAC_PDF_WWW);
 		}
 
-        $pdf->SetFont('Arial','',7);
-        if (defined("MAIN_INFO_SIREN") && MAIN_INFO_SIREN)
-        {
-            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN);
-        }
-        elseif (defined("MAIN_INFO_SIRET") && MAIN_INFO_SIRET)
-        {
-            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIRET);
-        }
-
-
         // Client destinataire
         $posy=42;
         $pdf->SetTextColor(0,0,0);
@@ -734,14 +723,17 @@ class pdf_crabe extends ModelePDFFactures
         $fac->fetch_client();
 
         // Nom client
-        $pdf->SetXY(102,$posy+4);
+        $pdf->SetXY(102,$posy+3);
         $pdf->SetFont('Arial','B',11);
         $pdf->MultiCell(86,4, $fac->client->nom, 0, 'L');
 
         // Caractéristiques client
+        $carac_client=$fac->client->adresse;
+        $carac_client.="\n".$fac->client->cp . " " . $fac->client->ville;
+        if ($fac->client->tva_intra) $carac_client.="\n\n".$langs->trans("VATIntraShort").': '.$fac->client->tva_intra;
         $pdf->SetFont('Arial','B',9);
-        $pdf->SetXY(102,$posy+12);
-        $pdf->MultiCell(86,4, $fac->client->adresse . "\n" . $fac->client->cp . " " . $fac->client->ville);
+        $pdf->SetXY(102,$posy+7);
+        $pdf->MultiCell(86,4, $carac_client);
 
         // Cadre client destinataire
         $pdf->rect(100, $posy, 100, 34);
@@ -779,11 +771,11 @@ class pdf_crabe extends ModelePDFFactures
         $ligne="";
         if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
         {
-            $ligne=($ligne?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
+            $ligne.=($ligne?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
         }
         if ($conf->global->MAIN_INFO_CAPITAL)
         {
-            $ligne=($ligne?" - ":"")."Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
+            $ligne.=($ligne?" - ":"")."Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
         }
         if ($conf->global->MAIN_INFO_SIREN)
         {
