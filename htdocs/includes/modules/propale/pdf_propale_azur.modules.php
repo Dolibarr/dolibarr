@@ -106,7 +106,6 @@ class pdf_propale_azur extends ModelePDFPropales
     		\remarks    MAIN_INFO_CAPITAL
     		\remarks    MAIN_INFO_TVAINTRA
             \remarks    FAC_PDF_LOGO
-    		\remarks    FACTURE_CODEPRODUITSERVICE
     		\remarks    FACTURE_CHQ_NUMBER
     		\remarks    FACTURE_RIB_NUMBER
     		\remarks    FAC_PDF_INTITULE
@@ -205,7 +204,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
                     // TVA
                     $pdf->SetXY ($this->posxtva, $curY);
-                    $pdf->MultiCell(10, 5, $prop->lignes[$i]->tva_tx, 0, 'C');
+                    $pdf->MultiCell(10, 5, ($prop->lignes[$i]->tva_tx < 0 ? '*':'').abs($prop->lignes[$i]->tva_tx), 0, 'C');
 
                     // Prix unitaire HT avant remise
                     $pdf->SetXY ($this->posxup, $curY);
@@ -231,7 +230,7 @@ class pdf_propale_azur extends ModelePDFPropales
                     // dans le tableau tva["taux"]=total_tva
 					$tvaligne=$prop->lignes[$i]->price * $prop->lignes[$i]->qty;
 					if ($prop->remise_percent) $tvaligne-=($tvaligne*$prop->remise_percent)/100;
-					$this->tva[ (string)$prop->lignes[$i]->tva_taux ] += $tvaligne;
+					$this->tva[ (string)$prop->lignes[$i]->tva_tx ] += $tvaligne;
 
                     if ($nexY > 200 && $i < $nblignes - 1)
                     {
@@ -403,7 +402,7 @@ class pdf_propale_azur extends ModelePDFPropales
         }
 
         // Tableau total
-        $col1x=120; $col2x=174;
+        $lltot = 200; $col1x = 120; $col2x = 182; $largcol2 = $lltot - $col2x;
 
         // Total HT
         $pdf->SetFillColor(256,256,256);
@@ -411,7 +410,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalHT"), 0, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + 0);
-        $pdf->MultiCell(26, $tab2_hl, price($prop->total_ht + $prop->remise), 0, 'R', 1);
+        $pdf->MultiCell($largcol2, $tab2_hl, price($prop->total_ht + $prop->remise), 0, 'R', 1);
 
         // Remise globale
         if ($prop->remise > 0)
@@ -420,13 +419,13 @@ class pdf_propale_azur extends ModelePDFPropales
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("GlobalDiscount"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
-            $pdf->MultiCell(26, $tab2_hl, "-".$prop->remise_percent."%", 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, "-".$prop->remise_percent."%", 0, 'R', 1);
 
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT après remise", 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell(26, $tab2_hl, price($prop->total_ht), 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($prop->total_ht), 0, 'R', 0);
 
             $index = 2;
         }
@@ -446,10 +445,11 @@ class pdf_propale_azur extends ModelePDFPropales
                 
                 $index++;
             	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-                $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT").' '.$tvakey.'%', 0, 'L', 1);
+                $tvacompl = ( (float)$tvakey < 0 ) ? " (".$langs->trans("NonPercuRecuperable").")" : '' ; 
+                $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT").' '.abs($tvakey).'%'.$tvacompl, 0, 'L', 1);
     
                 $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-                $pdf->MultiCell(26, $tab2_hl, price($tvaval * (float)$tvakey / 100 ), 0, 'R', 1);
+                $pdf->MultiCell($largcol2, $tab2_hl, price($tvaval * abs((float)$tvakey) / 100 ), 0, 'R', 1);
             }
         }
         if (! $atleastoneratenotnull)
@@ -459,7 +459,7 @@ class pdf_propale_azur extends ModelePDFPropales
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT"), 0, 'L', 1);
     
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell(26, $tab2_hl, price($prop->total_tva), 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($prop->total_tva), 0, 'R', 1);
         }
         
         $useborder=0;
@@ -471,7 +471,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalTTC"), $useborder, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-        $pdf->MultiCell(26, $tab2_hl, price($prop->total_ttc), $useborder, 'R', 1);
+        $pdf->MultiCell($largcol2, $tab2_hl, price($prop->total_ttc), $useborder, 'R', 1);
         $pdf->SetFont('Arial','', 9);
         $pdf->SetTextColor(0,0,0);
 
@@ -483,7 +483,7 @@ class pdf_propale_azur extends ModelePDFPropales
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("AlreadyPayed"), 0, 'L', 0);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
             $index++;
             $pdf->SetTextColor(0,0,60);
@@ -492,7 +492,7 @@ class pdf_propale_azur extends ModelePDFPropales
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("RemainderToPay"), $useborder, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell(26, $tab2_hl, price($prop->total_ttc - $deja_regle), $useborder, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($prop->total_ttc - $deja_regle), $useborder, 'R', 1);
             $pdf->SetFont('Arial','', 9);
             $pdf->SetTextColor(0,0,0);
         }
@@ -591,6 +591,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
         // Emetteur
         $posy=42;
+        $hautcadre=40;
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY(10,$posy-5);
@@ -599,7 +600,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
         $pdf->SetXY(10,$posy);
         $pdf->SetFillColor(230,230,230);
-        $pdf->MultiCell(82, 34, "", 0, 'R', 1);
+        $pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 
 
         $pdf->SetXY(10,$posy+3);
@@ -647,6 +648,10 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetXY(102,$posy-5);
         $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
 		$prop->fetch_client();
+
+        // Cadre client destinataire
+        $pdf->rect(100, $posy, 100, $hautcadre);
+
 		// Nom client
         $pdf->SetXY(102,$posy+3);
         $pdf->SetFont('Arial','B',11);
@@ -659,9 +664,6 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetFont('Arial','',9);
         $pdf->SetXY(102,$posy+7);
         $pdf->MultiCell(86,4, $carac_client);
-
-        // Cadre client destinataire
-        $pdf->rect(100, $posy, 100, 34);
 
         // Montants exprimés en
         $pdf->SetTextColor(0,0,0);
@@ -733,7 +735,7 @@ class pdf_propale_azur extends ModelePDFPropales
         elseif ($conf->global->MAIN_INFO_TVAINTRA != '') {
             $footy-=3;
             $pdf->SetY(-$footy);
-            $pdf->MultiCell(190, 3,  $langs->trans("TVAIntra")." : ".MAIN_INFO_TVAINTRA, 0, 'C');
+            $pdf->MultiCell(190, 3,  $langs->trans("TVAIntra").": ".MAIN_INFO_TVAINTRA, 0, 'C');
         }
 
         $pdf->SetXY(-20,-$footy);
