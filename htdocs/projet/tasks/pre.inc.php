@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +29,7 @@
 
 require ("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/task.class.php");
 
 $langs->load("projects");
 $langs->load("companies");
