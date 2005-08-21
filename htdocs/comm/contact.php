@@ -31,13 +31,9 @@
 
 require("./pre.inc.php");
 
+if (!$user->rights->societe->lire) accessforbidden();
+
 $langs->load("companies");
-
-$user->getrights('propale');
-$user->getrights('fichinter');
-$user->getrights('commande');
-$user->getrights('projet');
-
 
 llxHeader('','Contacts');
 

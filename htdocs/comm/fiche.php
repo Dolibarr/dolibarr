@@ -29,16 +29,17 @@
 */
 
 require_once("./pre.inc.php");
-require_once("../contact.class.php");
-require_once("../actioncomm.class.php");
+
+if (!$user->rights->societe->lire) accessforbidden();
+
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-require_once("../contrat/contrat.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("companies");
 $langs->load("orders");
 $langs->load("contracts");
-
-$user->getrights();
 
 llxHeader('',$langs->trans('CustomerCard'));
 

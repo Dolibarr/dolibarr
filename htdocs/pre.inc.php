@@ -59,7 +59,7 @@ function llxHeader($head = "") {
       $menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
     }
 
-  if ($conf->commercial->enabled ) 
+  if ($conf->commercial->enabled  && $user->rights->societe->lire) 
     {
       $langs->load("commercial");
       $menu->add(DOL_URL_ROOT."/comm/index.php",$langs->trans("Commercial"));
@@ -74,7 +74,7 @@ function llxHeader($head = "") {
 	}
     }
 
-  if ($conf->compta->enabled ) 
+  if ($conf->compta->enabled  && $user->rights->societe->lire) 
     {
       $langs->load("compta");
       $menu->add(DOL_URL_ROOT."/compta/index.php", $langs->trans("Accountancy"));
@@ -85,10 +85,10 @@ function llxHeader($head = "") {
       }
     }
 
-  if ($conf->fichinter->enabled ) 
+  if ($conf->fichinter->enabled  && $user->rights->ficheinter->lire) 
     {
-        $langs->trans("interventions");
-        $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
+      $langs->trans("interventions");
+      $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
     }
 
   if (($conf->produit->enabled || $conf->service->enabled) && $user->rights->produit->lire)
