@@ -729,9 +729,9 @@ class pdf_crabe extends ModelePDFFactures
 
         // Caractéristiques client
         $carac_client=$fac->client->adresse;
-        $carac_client.="\n".$fac->client->cp . " " . $fac->client->ville;
-        if ($fac->client->tva_intra) $carac_client.="\n\n".$langs->trans("VATIntraShort").': '.$fac->client->tva_intra;
-        $pdf->SetFont('Arial','B',9);
+        $carac_client.="\n".$fac->client->cp . " " . $fac->client->ville."\n";
+        if ($fac->client->tva_intra) $carac_client.="\n".$langs->trans("VATIntraShort").': '.$fac->client->tva_intra;
+        $pdf->SetFont('Arial','',9);
         $pdf->SetXY(102,$posy+7);
         $pdf->MultiCell(86,4, $carac_client);
 
