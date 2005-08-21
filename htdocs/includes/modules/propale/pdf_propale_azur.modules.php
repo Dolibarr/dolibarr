@@ -189,11 +189,13 @@ class pdf_propale_azur extends ModelePDFPropales
                         $prodser = new Product($this->db);
 
                         $prodser->fetch($prop->lignes[$i]->product_id);
-                        if ($prodser->ref) {
+                        if ($prodser->ref)
+                        {
                             $libelleproduitservice=$langs->trans("Product")." ".$prodser->ref." - ".$libelleproduitservice;
                         }
                     }
-                    if ($prop->lignes[$i]->date_start && $prop->lignes[$i]->date_end) {
+                    if ($prop->lignes[$i]->date_start && $prop->lignes[$i]->date_end)
+                    {
                         // Affichage durée si il y en a une
                         $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($prop->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($prop->lignes[$i]->date_end).")";
                     }
@@ -215,7 +217,8 @@ class pdf_propale_azur extends ModelePDFPropales
 
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
-                    if ($prop->lignes[$i]->remise_percent) {
+                    if ($prop->lignes[$i]->remise_percent)
+                    {
                         $pdf->MultiCell(14, 5, $prop->lignes[$i]->remise_percent."%", 0, 'R');
                     }
 
@@ -248,7 +251,8 @@ class pdf_propale_azur extends ModelePDFPropales
                 /*
                 * Mode de règlement
                 */
-                if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER)) {
+                if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER))
+                {
                     $pdf->SetXY (10, 228);
                     $pdf->SetTextColor(200,0,0);
                     $pdf->SetFont('Arial','B',8);
@@ -496,7 +500,6 @@ class pdf_propale_azur extends ModelePDFPropales
         $index++;
         return ($tab2_top + ($tab2_hl * $index));
     }
-  }
 
     /*
     *   \brief      Affiche la grille des lignes de propales
@@ -560,10 +563,12 @@ class pdf_propale_azur extends ModelePDFPropales
 		// Logo
         if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
         {
-            if (file_exists(FAC_PDF_LOGO)) {
+            if (file_exists(FAC_PDF_LOGO))
+            {
                 $pdf->Image(FAC_PDF_LOGO, 10, 5, 0, 24);
             }
-            else {
+            else
+            {
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
                 $pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",FAC_PDF_LOGO), 0, 'L');
@@ -604,11 +609,11 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetFont('Arial','B',11);
         if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM)  // Prioritaire sur MAIN_INFO_SOCIETE_NOM
         {
-        $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-          }
+            $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
+        }
         else                                                        // Par defaut
-          {
-        $pdf->MultiCell(80, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
+        {
+            $pdf->MultiCell(80, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
         }
 
         // Caractéristiques emetteur
