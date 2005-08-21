@@ -22,10 +22,10 @@
  */
 
 /**
-        \file       htdocs/commande/liste.php
-        \ingroup    commande
-        \brief      Page liste des commandes
-        \version    $Revision$
+   \file       htdocs/commande/liste.php
+   \ingroup    commande
+   \brief      Page liste des commandes
+   \version    $Revision$
 */
 
 
@@ -33,9 +33,7 @@ require("./pre.inc.php");
 
 $langs->load("orders");
 
-$user->getrights('commande');
-if (!$user->rights->commande->lire)
-  accessforbidden();
+if (!$user->rights->commande->lire) accessforbidden();
 
 /*
  * Sécurité accés client

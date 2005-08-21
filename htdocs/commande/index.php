@@ -30,8 +30,9 @@
 
 require("./pre.inc.php");
 
-$langs->load("orders");
+if (!$user->rights->commande->lire) accessforbidden();
 
+$langs->load("orders");
 
 llxHeader("",$langs->trans("Orders"),"Commande");
 

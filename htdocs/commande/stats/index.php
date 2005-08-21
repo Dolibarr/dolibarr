@@ -29,6 +29,9 @@
 */
 
 require("./pre.inc.php");
+
+if (!$user->rights->commande->lire) accessforbidden();
+
 require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require("./commandestats.class.php");
 
