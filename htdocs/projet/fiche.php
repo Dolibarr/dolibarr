@@ -22,60 +22,62 @@
  */
 
 /**
-        \file       htdocs/projet/fiche.php
-        \ingroup    projet
-        \brief      Fiche projet
-        \version    $Revision$
+   \file       htdocs/projet/fiche.php
+   \ingroup    projet
+   \brief      Fiche projet
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
-require_once("../propal.class.php");
-require_once("../facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
-
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
-    $pro = new Project($db);
-    $pro->socidp = $_GET["socidp"];
-    $pro->ref = $_POST["ref"];
-    $pro->title = $_POST["title"];
-    $result = $pro->create($user);
-    
-    if ($result > 0)
+  $pro = new Project($db);
+  $pro->socidp = $_GET["socidp"];
+  $pro->ref = $_POST["ref"];
+  $pro->title = $_POST["title"];
+  $result = $pro->create($user);
+  
+  if ($result > 0)
     {
-        Header("Location:fiche.php?id=".$pro->id);
-        exit;
+      Header("Location:fiche.php?id=".$pro->id);
+      exit;
     }
-    else
+  else
     {
-        $mesg='<div class="error">'.$pro->error.'</div>';
-        $_GET["action"] = 'create';
+      $mesg='<div class="error">'.$pro->error.'</div>';
+      $_GET["action"] = 'create';
     }
 }
 
 if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 {
-  if (! $_POST["cancel"]) {
-    if (!(empty($_POST["id"]) || empty($_POST["ref"]) || empty($_POST["title"])))
+  if (! $_POST["cancel"])
     {
-      $projet = new Project($db);
-      $projet->id = $_POST["id"];
-      $projet->ref = $_POST["ref"];
-      $projet->title = $_POST["title"];
-      $projet->update();
-    
-      $_GET["id"]=$projet->id;  // On retourne sur la fiche projet
+      if (!(empty($_POST["id"]) || empty($_POST["ref"]) || empty($_POST["title"])))
+	{
+	  $projet = new Project($db);
+	  $projet->id = $_POST["id"];
+	  $projet->ref = $_POST["ref"];
+	  $projet->title = $_POST["title"];
+	  $projet->update();
+	  
+	  $_GET["id"]=$projet->id;  // On retourne sur la fiche projet
+	}
+      else
+	{
+	  $_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+	}
     }
-    else
+  else
     {
       $_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
     }
-  } else {
-      $_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-  }
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->supprimer)
@@ -139,6 +141,10 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   $hselected=$h;
   $h++;
   
+  $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$projet->id;
+  $head[$h][1] = $langs->trans("Tasks");
+  $h++;
+
   if ($conf->propal->enabled)
     {
       $langs->load("propal");
