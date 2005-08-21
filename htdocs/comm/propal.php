@@ -30,15 +30,15 @@
 
 require("./pre.inc.php");
 
-$langs->load('companies');
-$langs->load('propal');
-$langs->load('compta');
-$langs->load('bills');
-
 $user->getrights('propale');
 
 if (!$user->rights->propale->lire)
 	accessforbidden();
+
+$langs->load('companies');
+$langs->load('propal');
+$langs->load('compta');
+$langs->load('bills');
 
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
@@ -50,8 +50,8 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 // Sécurité accés client
 if ($user->societe_id > 0) 
 {
-	$action = '';
-	$socidp = $user->societe_id;
+  $action = '';
+  $socidp = $user->societe_id;
 }
 
 if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
@@ -59,13 +59,10 @@ if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
 $year=isset($_GET["year"])?$_GET["year"]:"";
 $month=isset($_GET["month"])?$_GET["month"]:"";
 
-
 // Nombre de ligne pour choix de produit/service prédéfinis
 $NBLINES=4;
 
 $form=new Form($db);
-
-
 
 /******************************************************************************/
 /*                     Actions                                                */
@@ -1012,7 +1009,6 @@ if ($_GET['propalid'] > 0)
   print '</td></tr></table>';
 
 
-
   /*
    * Action presend
    *
@@ -1023,9 +1019,10 @@ if ($_GET['propalid'] > 0)
       print_titre($langs->trans('SendPropalByMail'));
 
       $liste[0]="&nbsp;";
-      foreach ($societe->contact_email_array() as $key=>$value) {
-	$liste[$key]=$value;
-      }
+      foreach ($societe->contact_email_array() as $key=>$value)
+	{
+	  $liste[$key]=$value;
+	}
 
       // Créé l'objet formulaire mail
       include_once('../html.formmail.class.php');
@@ -1126,6 +1123,7 @@ else
       print "</tr>\n";
       // Lignes des champs de filtre
       print '<form method="get" action="propal.php">';
+
       print '<tr class="liste_titre">';
       print '<td class="liste_titre" valign="right">';
       print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
