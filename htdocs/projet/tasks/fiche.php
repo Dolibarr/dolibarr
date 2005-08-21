@@ -43,7 +43,7 @@ Function PLines(&$inc, $parent, $lines, &$level)
       if ($lines[$i][1] == $parent)
 	{
 	  $var = !$var;
-	  print "<tr $bc[$var]><td>";
+	  print "<tr $bc[$var]>\n<td>";
 
 	  for ($k = 0 ; $k < $level ; $k++)
 	    {
@@ -59,8 +59,8 @@ Function PLines(&$inc, $parent, $lines, &$level)
 	  print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 	  print '<td><input size="4" type="text" class="flat" name="task'.$lines[$i][2].'" value="">';
 	  print '&nbsp;<input type="submit" class="flat" value="'.$langs->trans("Save").'"></td>';
-	  print '<td>';
-	  print $form->select_date();
+	  print "\n<td>";
+	  print $form->select_date('',$lines[$i][2]);
 	  print '</td>';
 	  print "</tr>\n";
 	  $inc++;
@@ -77,7 +77,6 @@ Function PLines(&$inc, $parent, $lines, &$level)
 
 Function PLineSelect(&$inc, $parent, $lines, &$level)
 {
-
   for ($i = 0 ; $i < sizeof($lines) ; $i++)
     {
       if ($parent == 0)
@@ -126,7 +125,6 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
   
   if ($result == 0)
     {
-
       foreach ($_POST as $key => $post)
 	{
 	  //$pro->CreateTask($user, $_POST["task_name"]);
@@ -134,8 +132,10 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 	    {
 	      if ($post > 0)
 		{
-		  $date = mktime(12,12,12,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
-		  $pro->TaskAddTime($user, ereg_replace("task","",$key) , $post, $date);
+		  $id = ereg_replace("task","",$key);
+
+		  $date = mktime(12,12,12,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
+		  $pro->TaskAddTime($user, $id , $post, $date);
 		}
 	    }
 	}
