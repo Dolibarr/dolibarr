@@ -493,6 +493,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $index++;
         return ($tab2_top + ($tab2_hl * $index));
     }
+  }
 
     /*
     *   \brief      Affiche la grille des lignes de propales
