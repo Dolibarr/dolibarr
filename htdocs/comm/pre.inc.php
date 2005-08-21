@@ -30,12 +30,12 @@
 
 require("../main.inc.php");
 
+$user->getrights();
 
 function llxHeader($head = "", $title = "")
 {
   global $user, $conf, $langs;
 
-  $user->getrights();
   $langs->load("companies");
 
   top_menu($head, $title);
@@ -50,20 +50,20 @@ function llxHeader($head = "", $title = "")
     }
   
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
-
-
+  
+  
   // Prospects
   $menu->add(DOL_URL_ROOT."/comm/prospect/index.php", $langs->trans("Prospects"));
   if ($user->rights->societe->creer)
     {
       $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=p", $langs->trans("MenuNewProspect"));
     }
-
+  
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
-
-
+  
+  
   $menu->add(DOL_URL_ROOT."/comm/action/index.php", $langs->trans("Actions"));
-
+  
   // Propal
   if ($conf->propal->enabled && $user->rights->propale->lire)
     {
