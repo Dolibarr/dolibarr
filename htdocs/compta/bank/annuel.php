@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,25 +22,26 @@
  */
 
 /**
-        \file        htdocs/compta/bank/annuel.php
-        \ingroup     banque
-        \brief       Page reporting mensuel Entrées/Sorties d'un compte bancaire
-        \version     $Revision$
+   \file        htdocs/compta/bank/annuel.php
+   \ingroup     banque
+   \brief       Page reporting mensuel Entrées/Sorties d'un compte bancaire
+   \version     $Revision$
 */
 
 require("./pre.inc.php");
 
-if (!$user->admin && !$user->rights->banque->lire)
-  accessforbidden();
+if (!$user->rights->banque->lire) accessforbidden();
 
 $year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
 $year_current = strftime("%Y",time());
-if (! $year_start) {
-    $year_start = $year_current - 2;
-    $year_end = $year_current;
+if (! $year_start)
+{
+  $year_start = $year_current - 2;
+  $year_end = $year_current;
 }
-else {
-    $year_end=$year_start+2;   
+else
+{
+  $year_end=$year_start+2;   
 }
 
 
