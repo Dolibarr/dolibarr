@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,13 +22,15 @@
  */
 
 /**
-	    \file       htdocs/comm/clients.php
-        \ingroup    commercial, societe
-		\brief      Liste des clients
-		\version    $Revision$
+   \file       htdocs/comm/clients.php
+   \ingroup    commercial, societe
+   \brief      Liste des clients
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
+
+if (!$user->rights->societe->lire) accessforbidden();
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
