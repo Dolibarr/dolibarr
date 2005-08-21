@@ -1724,3 +1724,34 @@ create table llx_contrat_service
 
 )type=innodb;
 
+create table llx_projet_task
+(
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
+  fk_projet          integer NOT NULL,
+  fk_task_parent     integer NOT NULL,
+  title              varchar(255),
+  duration_effective real NOT NULL,
+  fk_user_creat      integer,      -- createur
+  statut             enum('open','closed') DEFAULT 'open',
+  note               text,
+
+  key(fk_projet),
+  key(statut),
+  key(fk_user_creat)
+  
+)type=innodb;
+
+create table llx_projet_task_time
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  fk_task          integer  NOT NULL,
+  task_date        date,
+  task_duration    smallint UNSIGNED,
+  fk_user          integer,
+  note             text,
+
+  key(fk_task),
+  key(fk_user)
+
+)type=innodb;
+
