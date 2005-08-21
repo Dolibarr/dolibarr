@@ -41,13 +41,14 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",$_POST["address"]);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"]);
     dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"]);
-    dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
 
+    dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"]);
     dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
     dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
     dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
+    dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"]);
     dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
 
     if ($_POST['action'] != 'updateedit')
@@ -93,7 +94,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=true;
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("CompanyInfo").'</td></tr>';
+    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyName").'</td><td>';
@@ -112,10 +113,6 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCurrency").'</td><td>';
     $form->select_currency($conf->global->MAIN_MONNAIE,"currency");
     print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Capital").'</td><td>';
-    print '<input name="capital" size="20" value="' . $conf->global->MAIN_INFO_CAPITAL . '"></td></tr>';
 
     print '</table>';
 
@@ -143,6 +140,11 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
             dolibarr_print_error($db);
         }
     }
+
+    // Capital
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Capital").'</td><td>';
+    print '<input name="capital" size="20" value="' . $conf->global->MAIN_INFO_CAPITAL . '"></td></tr>';
 
     // Forme juridique
     $var=!$var;
@@ -205,6 +207,22 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     }
     print '</td></tr>';
 
+    // ProfId4
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId4",$code_pays).'</td><td>';
+    if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+    {
+        if ($langs->transcountry("ProfId4",$code_pays) != '-')
+        {
+            print '<input name="rcs" size="20" value="' . $conf->global->MAIN_INFO_RCS . '">';
+        }
+    }
+    else
+    {
+        print $countrynotdefined;
+    }
+    print '</td></tr>';
+
     // TVA Intra
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("TVAIntra").'</td><td>';
@@ -218,9 +236,9 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 }
 else
 {
-  /*
-   * Affichage des paramètres
-   */
+    /*
+     * Affichage des paramètres
+     */
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
@@ -241,10 +259,6 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyCurrency").'</td><td>';
     print $form->currency_name($conf->global->MAIN_MONNAIE,1);
     print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Capital").'</td><td>';
-    print $conf->global->MAIN_INFO_CAPITAL . '</td></tr>';
 
     print '</table>';
 
@@ -272,12 +286,18 @@ else
         }
     }
 
+    // Capital
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Capital").'</td><td>';
+    print $conf->global->MAIN_INFO_CAPITAL . '</td></tr>';
+
     // Forme juridique
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("JuridicalStatus").'</td><td>';
     print $form->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE,1);
     print '</td></tr>';
 
+    // ProfId1
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
     if ($langs->transcountry("ProfId1",$code_pays) != '-')
@@ -286,6 +306,7 @@ else
     }
     print '</td></tr>';
 
+    // ProfId2
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
     if ($langs->transcountry("ProfId2",$code_pays) != '-')
@@ -294,6 +315,7 @@ else
     }
     print '</td></tr>';
 
+    // ProfId3
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
     if ($langs->transcountry("ProfId3",$code_pays) != '-')
@@ -302,6 +324,16 @@ else
     }
     print '</td></tr>';
 
+    // ProfId4
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId4",$code_pays).'</td><td>';
+    if ($langs->transcountry("ProfId4",$code_pays) != '-')
+    {
+        print $conf->global->MAIN_INFO_RCS;
+    }
+    print '</td></tr>';
+
+    // TVA Intracommunautaire
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("TVAIntra").'</td><td>' . $conf->global->MAIN_INFO_TVAINTRA . '</td></tr>';
 
