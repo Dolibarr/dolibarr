@@ -779,11 +779,11 @@ class pdf_crabe extends ModelePDFFactures
         $ligne="";
         if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
         {
-            $ligne=.($ligne?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
+            $ligne=($ligne?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
         }
         if ($conf->global->MAIN_INFO_CAPITAL)
         {
-            $ligne=.($ligne?" - ":"")."Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
+            $ligne=($ligne?" - ":"")."Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
         }
         if ($conf->global->MAIN_INFO_SIREN)
         {
