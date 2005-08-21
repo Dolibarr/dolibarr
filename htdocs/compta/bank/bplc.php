@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,8 +25,7 @@ require("./bank.lib.php");
 
 $user->getrights('compta');
 
-if (!$user->admin && !$user->rights->banque->lire)
-  accessforbidden();
+if (!$user->rights->banque->lire) accessforbidden();
 
 llxHeader();
 
@@ -35,7 +34,6 @@ if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
 
 print_barre_liste("Transactions BPLC", $page, "bplc.php");
 
@@ -59,40 +57,39 @@ $sql = "SELECT ipclient,
 
 $sql .= " FROM ".MAIN_DB_PREFIX."transaction_bplc";
 
-$result = $db->query($sql);
-if ($result) {
+$resql = $db->query($sql);
+if ($resql)
+{
   $var=True;  
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0; $total = 0;
-
+  
   $sep = 0;
 
-  while ($i < $num) {
-    $objp = $db->fetch_object($result);
-
-    print "<tr $bc[1]>";
-
-    $type = substr($objp->ref_commande, strlen($objp->ref_commande) - 2 );
-    $id = substr($objp->ref_commande, 0 , strlen($objp->ref_commande) - 2 );
-
-    if ($type == 10)
-      {
-	print '<td><a href="../dons/fiche.php?rowid='.$id.'&action=edit">'.$objp->ref_commande.'</a></td>';
-      }
-
-    print "<td>$objp->ipclient</td>";
-    print "<td>$objp->num_transaction</td>";
-    print "<td>$objp->date_transaction</td>";
-    print "<td>$objp->heure_transaction</td>";
-    print "<td>$objp->num_autorisation</td>";
-    print "<td>$objp->cle_acceptation</td>";
-    print "<td>$objp->code_retour</td>";
-
-
-
-    $i++;
-  }
-  $db->free();
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object($resql);
+      
+      print "<tr $bc[1]>";
+      
+      $type = substr($objp->ref_commande, strlen($objp->ref_commande) - 2 );
+      $id = substr($objp->ref_commande, 0 , strlen($objp->ref_commande) - 2 );
+      
+      if ($type == 10)
+	{
+	  print '<td><a href="../dons/fiche.php?rowid='.$id.'&action=edit">'.$objp->ref_commande.'</a></td>';
+	}
+      
+      print "<td>$objp->ipclient</td>";
+      print "<td>$objp->num_transaction</td>";
+      print "<td>$objp->date_transaction</td>";
+      print "<td>$objp->heure_transaction</td>";
+      print "<td>$objp->num_autorisation</td>";
+      print "<td>$objp->cle_acceptation</td>";
+      print "<td>$objp->code_retour</td>";                 
+      $i++;
+    }
+  $db->free($resql);
 }
 print "</table>";
 
