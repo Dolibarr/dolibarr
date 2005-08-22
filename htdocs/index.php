@@ -116,7 +116,7 @@ if ($conf->societe->enabled  && $user->rights->societe->lire )
       print '</td>';
       print '<td align="right">';
       if ($key == "customers") print '<a href="'.DOL_URL_ROOT.'/comm/clients.php">';
-      if ($key == "prospects") print '<a href="'.DOL_URL_ROOT.'/comm/clients.php">';
+      if ($key == "prospects") print '<a href="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">';
       print $val;
       print '</a></td>';
       print '</tr>';
