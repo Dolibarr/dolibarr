@@ -201,7 +201,12 @@ class RejetPrelevement
 	$from = $this->user->fullname." <".$this->user->email.">";
 
 	$message = "Bonjour,\n";
-	$message .= "\nLe prélèvement de la facture ".$fac->ref." pour le compte de la société ".$soc->nom." d'un montant de ".price($fac->total_ttc).' '.$langs->trans("Currency".$conf->monnaie)." a été rejeté par la banque.";
+	//$message .= "\nLe prélèvement de la facture ".$fac->ref." pour le compte de la société ".$soc->nom." d'un montant de ".price($fac->total_ttc).' '.$langs->trans("Currency".$conf->monnaie)." a été rejeté par la banque.";
+	// $langs n'est pas accessible ici !!!
+	// Inutile de traduire la monnaie si le reste du message n'est pas traduit
+	// TODO LATER
+
+	$message .= "\nLe prélèvement de la facture ".$fac->ref." pour le compte de la société ".$soc->nom." d'un montant de ".price($fac->total_ttc)." a été rejeté par la banque.";
 
 	$message .= "\n\n--\n".$this->user->fullname;	
 	      
