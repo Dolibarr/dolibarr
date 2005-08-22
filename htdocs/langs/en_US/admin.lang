@@ -7,6 +7,7 @@ DolibarrSetup=Dolibarr setup
 GlobalSetup=Global setup
 GUISetup=GUI setup
 DictionnarySetup=Dictionnary setup
+NextValue=Next value
 ComptaSetup=Accounting module setup
 UserSetup=Users' management setup
 Setup=Setup
