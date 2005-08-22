@@ -46,7 +46,7 @@ ProfId2PT=Social security number
 ProfId3PT=Commercial Record number
 ProfId4PT=Conservatory
 TVAIntra=Numéro de TVA Intracommunautaire
-VATIntraShort=Num TVA Intra-communautaire
+VATIntraShort=N° TVA Intra-communautaire
 ProspectCustomer=Prospect / Client
 Prospect=Prospect
 CustomerCard=Fiche Client
@@ -79,6 +79,7 @@ LastContacts=Derniers contacts
 MyContacts=Mes contacts
 Phones=Téléphones
 Capital=Capital
+CapitalOf=Capital de %s
 EditCompany=Modification société
 ThisUserIsNot=Cet utilisateur n'est ni un prospect, ni un client, ni un fournisseur
 VATIntraCheckableOnEUSite=(Vérifiable sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la Commission Européenne)

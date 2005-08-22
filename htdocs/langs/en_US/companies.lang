@@ -79,6 +79,7 @@ LastContacts=Last contacts
 MyContacts=My contacts
 Phones=Phones
 Capital=Capital
+CapitalOf=Capital of %s
 EditCompany=Edit company
 ThisUserIsNot=This user is not a prospect, customer nor supplier
 VATIntraCheckableOnEUSite=Intracomunnautary VAT can be checked on European commision <a href="http://europa.eu.int/comm/taxation_customs/vies/en/vieshome.htm" target="_blank">site</a>

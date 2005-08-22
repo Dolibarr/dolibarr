@@ -665,6 +665,7 @@ class pdf_crabe extends ModelePDFFactures
 
         // Emetteur
         $posy=42;
+        $hautcadre=40;
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY(10,$posy-5);
@@ -673,7 +674,7 @@ class pdf_crabe extends ModelePDFFactures
 
         $pdf->SetXY(10,$posy);
         $pdf->SetFillColor(230,230,230);
-        $pdf->MultiCell(82, 34, "", 0, 'R', 1);
+        $pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 
 
         $pdf->SetXY(10,$posy+3);
@@ -721,6 +722,8 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetXY(102,$posy-5);
         $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
         $fac->fetch_client();
+        // Cadre client destinataire
+        $pdf->rect(100, $posy, 100, $hautcadre);
 
         // Nom client
         $pdf->SetXY(102,$posy+3);
@@ -734,9 +737,6 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetFont('Arial','',9);
         $pdf->SetXY(102,$posy+7);
         $pdf->MultiCell(86,4, $carac_client);
-
-        // Cadre client destinataire
-        $pdf->rect(100, $posy, 100, 34);
 
         // Montants exprimés en
         $pdf->SetTextColor(0,0,0);
@@ -768,6 +768,7 @@ class pdf_crabe extends ModelePDFFactures
         $footy=13;
         $pdf->SetFont('Arial','',8);
 
+        // Premiere ligne d'info réglementaires
         $ligne="";
         if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
         {
@@ -775,44 +776,38 @@ class pdf_crabe extends ModelePDFFactures
         }
         if ($conf->global->MAIN_INFO_CAPITAL)
         {
-            $ligne.=($ligne?" - ":"")."Capital de " . MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
+            $ligne.=($ligne?" - ":"").$langs->trans("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$langs->trans("Currency".$conf->monnaie);
         }
         if ($conf->global->MAIN_INFO_SIREN)
         {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
         }
         if ($conf->global->MAIN_INFO_SIRET)
         {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIRET;
-        }
-        if ($conf->global->MAIN_INFO_RCS)
-        {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->code_pays).": ".MAIN_INFO_RCS;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
         }
         if ($ligne)
         {
-            $pdf->SetY(-$footy);
-            $pdf->MultiCell(190, 3, $ligne, 0, 'C');
+            $pdf->SetXY(8,-$footy);
+            $pdf->MultiCell(200, 2, $ligne, 0, 'C', 0);
         }
         
-        // Affiche le numéro de TVA intracommunautaire
-        if ($conf->global->MAIN_INFO_TVAINTRA == 'MAIN_INFO_TVAINTRA') {
-            $footy-=3;
-            $pdf->SetY(-$footy);
-            $pdf->SetTextColor(200,0,0);
-            $pdf->SetFont('Arial','B',8);
-            $pdf->MultiCell(190, 3, $langs->trans("ErrorVATIntraNotConfigured"),0,'L',0);
-            $pdf->MultiCell(190, 3, $langs->trans("ErrorGoToGlobalSetup"),0,'L',0);
-            $pdf->SetTextColor(0,0,0);
+        // Deuxieme ligne d'info réglementaires
+        $ligne="";
+        if ($conf->global->MAIN_INFO_RCS)
+        {
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->code_pays).": ".$conf->global->MAIN_INFO_RCS;
         }
-        elseif ($conf->global->MAIN_INFO_TVAINTRA != '') {
-            $footy-=3;
-            $pdf->SetY(-$footy);
-            $pdf->MultiCell(190, 3,  $langs->trans("TVAIntra").": ".MAIN_INFO_TVAINTRA, 0, 'C');
+        if ($conf->global->MAIN_INFO_TVAINTRA != '')
+        {
+            $ligne.=($ligne?" - ":"").$langs->trans("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
         }
+        $footy-=3;
+        $pdf->SetY(-$footy);
+        $pdf->MultiCell(200, 2, $ligne , 0, 'C');
 
         $pdf->SetXY(-20,-$footy);
-        $pdf->MultiCell(10, 3, $pdf->PageNo().'/{nb}', 0, 'R');
+        $pdf->MultiCell(10, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
     }
 
 }
