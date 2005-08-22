@@ -60,7 +60,20 @@ class mod_propale_ivoire extends ModeleNumRefPropales
      */
     function getNextValue()
     {
-        return $this->propale_get_num();
+        global $db;
+    
+        $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal";
+    
+        if ( $db->query($sql) )
+        {
+            $row = $db->fetch_row(0);
+    
+            $num = $row[0];
+        }
+    
+        $y = strftime("%y",time());
+    
+        return  "PR" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
     }
     
     
@@ -70,21 +83,7 @@ class mod_propale_ivoire extends ModeleNumRefPropales
      */
     function propale_get_num($objsoc=0)
     { 
-      global $db;
-      
-      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal";
-      
-      if ( $db->query($sql) ) 
-	{
-	  $row = $db->fetch_row(0);
-	  
-	  $num = $row[0];
-	}
-      
-      $y = strftime("%y",time());
-      
-      return  "PR" . "$y" . substr("000".$num, strlen("000".$num)-4,4);
-
+        return $this->propale_get_num();
     }
 }
 

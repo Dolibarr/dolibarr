@@ -91,6 +91,11 @@ if ($_GET["action"] == 'delete')
   }
 }
 
+
+/*
+ * Affiche page
+ */
+
 $dir = "../includes/modules/facture/";
 
 
@@ -109,9 +114,10 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
+print '<td nowrap>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print "</tr>\n";
+print '<td nowrap>'.$langs->trans("NextValue").'</td>';
+print '</tr>'."\n";
 
 clearstatcache();
 
@@ -120,37 +126,39 @@ $handle=opendir($dir);
 $var=True;
 while (($file = readdir($handle))!==false)
 {
-  if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+    if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
     {
-      $var = !$var;
-      print '<tr '.$bc[$var].'><td width="100">';
-      echo "$file";
-      print "</td><td>\n";
+        $var = !$var;
+        print '<tr '.$bc[$var].'><td width="100">';
+        echo "$file";
+        print "</td><td>\n";
 
-      $filebis = $file."/".$file.".modules.php";
+        $filebis = $file."/".$file.".modules.php";
 
-      // Chargement de la classe de numérotation
-      $classname = "mod_facture_".$file;
-      require_once($dir.$filebis);
+        // Chargement de la classe de numérotation
+        $classname = "mod_facture_".$file;
+        require_once($dir.$filebis);
 
-      $obj = new $classname($db);
-      print $obj->info();
+        $obj = new $classname($db);
+        print $obj->info();
 
-      print '</td>';
+        print '</td>';
 
-      // Affiche example
-      print '<td>'.$obj->getExample().'</td>';
-      
-      print '<td align="center">';
-      if ($facture_addon_var == "$file")
-	{
-	  print img_tick();
-	}
-      else
-	{
-      print '<a href="facture.php?action=set&amp;value='.$file.'">'.$langs->trans("Default").'</a>';
-	}
-	print "</td></tr>\n";
+        // Affiche example
+        print '<td>'.$obj->getExample().'</td>';
+
+        print '<td align="center">';
+        if ($facture_addon_var == "$file")
+        {
+            print img_tick();
+            print "</td><td nowrap>".$obj->getNextValue()."</td>\n";
+        }
+        else
+        {
+            print '<a href="facture.php?action=set&amp;value='.$file.'">'.$langs->trans("Default").'</a>';
+            print "</td><td nowrap>&nbsp;</td>\n";
+        }
+        print "</td></tr>\n";
     }
 }
 closedir($handle);

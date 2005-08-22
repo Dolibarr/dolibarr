@@ -23,7 +23,8 @@
  * $Source$
  */
 
-/**	    \file       htdocs/admin/propale.php
+/**
+	    \file       htdocs/admin/propale.php
 		\ingroup    propale
 		\brief      Page d'administration/configuration du module Propale
 		\version    $Revision$
@@ -40,35 +41,30 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'nbprod')
 {
-  dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$value);
-  Header("Location: propale.php");
+    dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$value);
+    Header("Location: propale.php");
 }
-
-llxHeader();
-
-
 if ($_GET["action"] == 'set')
 {
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$_GET["value"]."')";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$_GET["value"]."')";
 
-  if ($db->query($sql))
+    if ($db->query($sql))
     {
 
     }
 }
 if ($_GET["action"] == 'del')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom='".$_GET["value"]."'";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom='".$_GET["value"]."'";
 
-  if ($db->query($sql))
+    if ($db->query($sql))
     {
 
     }
 }
 
-// positionne la variable pour le test d'affichage de l'icone
 
-$propale_addon_var_pdf = PROPALE_ADDON_PDF;
+$propale_addon_var_pdf = $conf->global->PROPALE_ADDON_PDF;
 
 if ($_GET["action"] == 'setpdf')
 {
@@ -90,10 +86,15 @@ if ($_GET["action"] == 'setpdf')
     }
 }
 
-$propale_addon_var = PROPALE_ADDON;
+$propale_addon_var = $conf->global->PROPALE_ADDON;
 
 if ($_GET["action"] == 'setmod')
 {
+    // \todo Verifier si module numerotation choisi peut etre activé
+    // par appel methode canBeActivated
+
+
+
 	if (dolibarr_set_const($db, "PROPALE_ADDON",$_GET["value"]))
     {
       // la constante qui a été lue en avant du nouveau set
@@ -103,62 +104,72 @@ if ($_GET["action"] == 'setmod')
 }
 
 
-
 /*
  * Affiche page
  */
 
+$dir = "../includes/modules/propale/";
+
+
+llxHeader('',$langs->trans("PropalSetup"));
+
 print_titre($langs->trans("PropalSetup"));
 
-print "<br>";
 
+/*
+ *  Module numérotation
+ */
+print "<br>";
 print_titre($langs->trans("ProposalsNumberingModules"));
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print "  <td>".$langs->trans("Name")."</td>\n";
-print "  <td>".$langs->trans("Description")."</td>\n";
-print "  <td>".$langs->trans("Example")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
-print "</tr>\n";
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name")."</td>\n";
+print '<td>'.$langs->trans("Description")."</td>\n";
+print '<td nowrap>'.$langs->trans("Example")."</td>\n";
+print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
+print '<td nowrap>'.$langs->trans("NextValue")."</td>\n";
+print '</tr>'."\n";
 
 clearstatcache();
 
-$dir = "../includes/modules/propale/";
 $handle = opendir($dir);
 if ($handle)
 {
-  $var=true;
-  while (($file = readdir($handle))!==false)
+    $var=true;
+    while (($file = readdir($handle))!==false)
     {
-      if (substr($file, 0, 12) == 'mod_propale_' && substr($file, strlen($file)-3, 3) == 'php')
-	{
-	  $file = substr($file, 0, strlen($file)-4);
+        if (substr($file, 0, 12) == 'mod_propale_' && substr($file, strlen($file)-3, 3) == 'php')
+        {
+            $file = substr($file, 0, strlen($file)-4);
 
-	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$file.".php");
+            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$file.".php");
 
-	  $modPropale = new $file;
+            $modPropale = new $file;
 
-      $var=!$var;
-	  print "<tr ".$bc[$var].">\n  <td width=\"140\">".$file."</td>";
-	  print "\n  <td>".$modPropale->info()."</td>\n";
-	  print "\n  <td>".$modPropale->getExample()."</td>\n";
-	  
-	  if ($propale_addon_var == "$file")
-	    {
-	      print '<td align="center">';
-    	  print img_tick();
-		  print '</td>';
-	    }
-	  else
-	    {
-		  print "<td align=\"center\"><a href=\"propale.php?action=setmod&amp;value=".$file."\">".$langs->trans("Activate")."</a></td>\n";
-	    }
-	  
-	  print "</tr>\n";
-	}
+            $var=!$var;
+            print "<tr ".$bc[$var].">\n  <td width=\"140\">".$file."</td>";
+            print "\n  <td>".$modPropale->info()."</td>\n";
+            print "\n  <td nowrap>".$modPropale->getExample()."</td>\n";
+
+            if ($propale_addon_var == "$file")
+            {
+                print '<td align="center">';
+                print img_tick();
+                print '</td>';
+                print "\n  <td nowrap>".$modPropale->getNextValue()."</td>\n";
+            }
+            else
+            {
+                print "<td align=\"center\"><a href=\"propale.php?action=setmod&amp;value=".$file."\">".$langs->trans("Activate")."</a></td>\n";
+          	    print "\n  <td nowrap>&nbsp;</td>\n";
+            }
+
+
+            print "</tr>\n";
+        }
     }
-  closedir($handle);
+    closedir($handle);
 }
 print "</table><br>\n";
 

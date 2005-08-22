@@ -86,14 +86,6 @@ class ModeleNumRefFicheinter
         return $langs->trans("NoExample");
     }
 
-   /** 
-        \brief Renvoi le dernier message d'erreur de création de fiche intervention
-    */
-    function numreferror()
-    {
-        return $this->error;
-    }
-
 }
 
 

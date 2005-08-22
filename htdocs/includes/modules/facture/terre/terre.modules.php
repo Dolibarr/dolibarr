@@ -21,38 +21,35 @@
  */
 
 /**
-     	\file       htdocs/includes/modules/propale/mod_propale_marbre.php
-		\ingroup    propale
-		\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Marbre
+        \file       htdocs/includes/modules/facture/terre/terre.modules.php
+		\ingroup    facture
+		\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Terre
 		\version    $Revision$
 */
 
 
-/**	    \class      mod_propale_marbre
-		\brief      Classe du modèle de numérotation de référence de propale Marbre
+/**	    \class      mod_facture_terre
+		\brief      Classe du modèle de numérotation de référence de facture Terre
 */
 
-class mod_propale_marbre extends ModeleNumRefPropales
+class mod_facture_terre extends ModeleNumRefFactures
 {
-    var $error='';
-    
+
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
     function info()
     {
-      return "Renvoie le numéro sous la forme PRyymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0";
+      return "Renvoie le numéro sous la forme FAyymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0";
     }
-
 
     /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Example
      */
     function getExample()
     {
-        return "PR0501-0001";
+        return "FA0501-0001";
     }
-
 
     /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
      *                  de conflits qui empechera cette numérotation de fonctionner.
@@ -60,23 +57,23 @@ class mod_propale_marbre extends ModeleNumRefPropales
      */
     function canBeActivated()
     {
-        $pryymm='';
+        $fayymm='';
         
-        $sql = "SELECT MAX(ref)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        $sql = "SELECT MAX(facnumber)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $pryymm = substr($row[0],0,6);
+            if ($row) $fayymm = substr($row[0],0,6);
         }
-        if (! $pryymm || eregi('PR[0-9][0-9][0-9][0-9]',$pryymm))
+        if (! $fayymm || eregi('FA[0-9][0-9][0-9][0-9]',$fayymm))
         {
             return true;
         }
         else
         {
-            $this->error='Une propal commençant par $pryymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.';
+            $this->error='Une facture commençant par $fayymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.';
             return false;    
         }
     }
@@ -89,24 +86,24 @@ class mod_propale_marbre extends ModeleNumRefPropales
         global $db;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $pryymm='';
-        $sql = "SELECT MAX(ref)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        $fayymm='';
+        $sql = "SELECT MAX(facnumber)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $pryymm = substr($row[0],0,6);
+            if ($row) $fayymm = substr($row[0],0,6);
         }
-    
+
         // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('PR[0-9][0-9][0-9][0-9]',$pryymm))
+        if (eregi('FA[0-9][0-9][0-9][0-9]',$fayymm))
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $posindice=8;
-            $sql = "SELECT MAX(0+SUBSTR(ref,$posindice))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."propal";
-            $sql.= " WHERE ref like '${pryymm}%'";
+            $sql = "SELECT MAX(0+SUBSTR(facnumber,$posindice))";
+            $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+            $sql.= " WHERE facnumber like '${fayymm}%'";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -121,18 +118,18 @@ class mod_propale_marbre extends ModeleNumRefPropales
         $yymm = strftime("%y%m",time());
         $num = sprintf("%04s",$max+1);
         
-        return  "PR$yymm-$num";
+        return  "FA$yymm-$num";
     }
-
-
-    /**     \brief      Renvoie la référence de propale suivante non utilisée
+    
+    /**     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */
-    function propale_get_num($objsoc=0)
-    {
+    function getNumRef($objsoc=0)
+    { 
         return $this->getNextValue();
     }
+    
 }
 
 ?>

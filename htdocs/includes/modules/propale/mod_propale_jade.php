@@ -61,16 +61,6 @@ class mod_propale_jade extends ModeleNumRefPropales
      */
     function getNextValue()
     {
-        return $this->propale_get_num();
-    }
-    
-    
-    /**     \brief      Renvoie la référence de propale suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \return     string      Texte descripif
-     */
-    function propale_get_num($objsoc=0)
-    {
         global $db;
     
         $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal";
@@ -85,6 +75,16 @@ class mod_propale_jade extends ModeleNumRefPropales
         $y = strftime("%y",time());
     
         return  "PROP" . ($num+1);
+    }
+    
+    
+    /**     \brief      Renvoie la référence de propale suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
+    function propale_get_num($objsoc=0)
+    {
+        return $this->propale_get_num();
     }
 }
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -21,10 +21,10 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/**	    \file       htdocs/includes/modules/facture/modules_facture.php
+/**
+	    \file       htdocs/includes/modules/facture/modules_facture.php
 		\ingroup    facture
 		\brief      Fichier contenant la classe mère de generation des factures en PDF
 		            et la classe mère de numérotation des factures
@@ -83,14 +83,23 @@ class ModeleNumRefFactures
         return $langs->trans("NoExample");
     }
 
-   /** 
-        \brief Renvoi le dernier message d'erreur de création de facture
-    */
-    function numreferror()
+    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numérotation de fonctionner.
+     *      \return     boolean     false si conflit, true si ok
+     */
+    function canBeActivated()
     {
-        return $this->error;
+        return true;
     }
 
+    /**     \brief      Renvoi prochaine valeur attribuée
+     *      \return     string      Valeur
+     */
+    function getNextValue()
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
 }
 
 
@@ -235,8 +244,7 @@ function facture_get_num($soc, $prefixe_additionnel='')
 	    }
       else
 	    {
-	       dolibarr_syslog("Erreur dans facture_get_num");
-	       dolibarr_print_error($db,$obj->numreferror());
+	       dolibarr_print_error($db,"modules_facture::facture_get_num ".$obj->error);
 	       return "";
 	    }
     }
