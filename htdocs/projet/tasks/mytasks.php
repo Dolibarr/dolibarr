@@ -81,7 +81,7 @@ llxHeader("",$langs->trans("Mytasks"),"Projet");
  */
 
 $h=0;
-$head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
+$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/mytasks.php';
 $head[$h][1] = $langs->trans("Mytasks");
 $h++;
 
@@ -128,7 +128,6 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("Task").'</td>';
 print '<td align="right">'.$langs->trans("DurationEffective").'</td>';
-print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";      
 $var=true;
 
