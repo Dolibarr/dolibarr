@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -28,6 +27,9 @@
 
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+ 
 
 llxHeader();
 
