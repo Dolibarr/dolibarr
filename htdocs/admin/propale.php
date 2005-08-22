@@ -127,8 +127,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name")."</td>\n";
 print '<td>'.$langs->trans("Description")."</td>\n";
 print '<td nowrap>'.$langs->trans("Example")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
-print '<td nowrap>'.$langs->trans("NextValue")."</td>\n";
+print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
@@ -152,18 +151,21 @@ if ($handle)
             print "\n  <td>".$modPropale->info()."</td>\n";
             print "\n  <td nowrap>".$modPropale->getExample()."</td>\n";
 
+            print '<td align="center">';
             if ($propale_addon_var == "$file")
             {
-                print '<td align="center">';
-                print img_tick();
-                print '</td>';
-                print "\n  <td nowrap>".$modPropale->getNextValue()."</td>\n";
+                $title='';
+                if ($modPropale->getNextValue() != $langs->trans("NotAvailable"))
+                {
+                    $title=$langs->trans("NextValue").': '.$modPropale->getNextValue();
+                }
+                print img_tick($title);
             }
             else
             {
-                print "<td align=\"center\"><a href=\"propale.php?action=setmod&amp;value=".$file."\">".$langs->trans("Activate")."</a></td>\n";
-          	    print "\n  <td nowrap>&nbsp;</td>\n";
+                print "<a href=\"propale.php?action=setmod&amp;value=".$file."\">".$langs->trans("Activate")."</a>";
             }
+            print '</td>';
 
 
             print "</tr>\n";

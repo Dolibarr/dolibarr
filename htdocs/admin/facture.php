@@ -116,7 +116,6 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td nowrap>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td nowrap>'.$langs->trans("NextValue").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
@@ -150,13 +149,16 @@ while (($file = readdir($handle))!==false)
         print '<td align="center">';
         if ($facture_addon_var == "$file")
         {
-            print img_tick();
-            print "</td><td nowrap>".$obj->getNextValue()."</td>\n";
+            $title='';
+            if ($obj->getNextValue() != $langs->trans("NotAvailable"))
+            {
+                    $title=$langs->trans("NextValue").': '.$obj->getNextValue();
+            }
+            print img_tick($title);
         }
         else
         {
             print '<a href="facture.php?action=set&amp;value='.$file.'">'.$langs->trans("Default").'</a>';
-            print "</td><td nowrap>&nbsp;</td>\n";
         }
         print "</td></tr>\n";
     }
