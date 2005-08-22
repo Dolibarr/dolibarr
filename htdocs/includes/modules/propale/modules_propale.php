@@ -22,24 +22,25 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/propale/modules_propale.php
+/**	    
+        \file       htdocs/includes/modules/propale/modules_propale.php
 		\ingroup    propale
 		\brief      Fichier contenant la classe mère de generation des propales en PDF
-	            et la classe mère de numérotation des propales
+	                et la classe mère de numérotation des propales
 		\version    $Revision$
 */
 
 
-
-/*!	\class ModelePDFPropales
-		\brief  Classe mère des modèles de propale
+/**
+    	\class      ModelePDFPropales
+		\brief      Classe mère des modèles de propale
 */
 
 class ModelePDFPropales extends FPDF
 {
   var $error='';
   
-  /*! 
+  /** 
     \brief Renvoi le dernier message d'erreur de création de propale
   */
   function pdferror()
@@ -50,7 +51,7 @@ class ModelePDFPropales extends FPDF
 }
 
 
-/*!\class ModeleNumRefPropales
+/**\class ModeleNumRefPropales
    \brief  Classe mère des modèles de numérotation des références de propales
 */
 
@@ -58,7 +59,7 @@ class ModeleNumRefPropales
 {
     var $error='';
 
-    /*!     \brief      Renvoi la description par defaut du modele de numérotation
+    /**     \brief      Renvoi la description par defaut du modele de numérotation
      *      \return     string      Texte descripif
      */
     function info()
@@ -68,7 +69,7 @@ class ModeleNumRefPropales
         return $langs->trans("NoDescription");
     }
 
-    /*!     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Example
      */
     function getExample()
@@ -78,18 +79,19 @@ class ModeleNumRefPropales
         return $langs->trans("NoExample");
     }
 
-   /*! 
-        \brief Renvoi le dernier message d'erreur de création de propale
-    */
-    function numreferror()
+    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numérotation de fonctionner.
+     *      \return     boolean     false si conflit, true si ok
+     */
+    function canBeActivated()
     {
-        return $this->error;
+        return true;
     }
 
 }
 
 
-/*!
+/**
 		\brief      Crée une propale sur disque en fonction du modèle de PROPALE_ADDON_PDF
 		\param	    db  		objet base de donnée
 		\param	    facid		id de la facture à créer

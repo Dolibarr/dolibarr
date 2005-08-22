@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 
-/** 	\file       htdocs/includes/modules/propale/mod_propale_ivoire.php
+/**
+     	\file       htdocs/includes/modules/propale/mod_propale_ivoire.php
 		\ingroup    propale
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Ivoire
 		\version    $Revision$
@@ -51,10 +51,19 @@ class mod_propale_ivoire extends ModeleNumRefPropales
      */
     function getExample()
     {
-        return "PR040001";
+        return "PR050001";
     }
 
 
+    /**     \brief      Renvoi prochaine valeur attribuée
+     *      \return     string      Valeur
+     */
+    function getNextValue()
+    {
+        return $this->propale_get_num();
+    }
+    
+    
     /**     \brief      Renvoie la référence de propale suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif

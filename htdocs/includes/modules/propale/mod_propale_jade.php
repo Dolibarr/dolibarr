@@ -22,14 +22,16 @@
  *
  */
 
-/**	    \file       htdocs/includes/modules/propale/mod_propale_jade.php
+/**
+	    \file       htdocs/includes/modules/propale/mod_propale_jade.php
 		\ingroup    propale
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Jade
 		\version    $Revision$
 */
 
 
-/** 	\class      mod_propale_jade
+/**
+     	\class      mod_propale_jade
 		\brief      Classe du modèle de numérotation de référence de propale Jade
 */
 
@@ -41,7 +43,7 @@ class mod_propale_jade extends ModeleNumRefPropales
      */
     function info()
     {
-      return "Renvoie le numéro sous la forme PROPn";
+      return "Renvoie le numéro sous la forme PROPn ou n est un compteur continue sans remise à 0";
     }
 
 
@@ -54,26 +56,35 @@ class mod_propale_jade extends ModeleNumRefPropales
     }
 
 
+    /**     \brief      Renvoi prochaine valeur attribuée
+     *      \return     string      Valeur
+     */
+    function getNextValue()
+    {
+        return $this->propale_get_num();
+    }
+    
+    
     /**     \brief      Renvoie la référence de propale suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */
     function propale_get_num($objsoc=0)
-    { 
-      global $db;
-      
-      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal";
-      
-      if ( $db->query($sql) ) 
-	{
-	  $row = $db->fetch_row(0);
-	  
-	  $num = $row[0];
-	}
-      
-      $y = strftime("%y",time());
-      
-      return  "PROP" . $num;      
+    {
+        global $db;
+    
+        $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal";
+    
+        if ( $db->query($sql) )
+        {
+            $row = $db->fetch_row(0);
+    
+            $num = $row[0];
+        }
+    
+        $y = strftime("%y",time());
+    
+        return  "PROP" . ($num+1);
     }
 }
 
