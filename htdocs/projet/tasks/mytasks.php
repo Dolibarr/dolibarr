@@ -31,18 +31,20 @@ require("./pre.inc.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
-Function PLines(&$inc, $parent, $lines, &$level)
+Function PLines(&$inc, $parent, $lines, &$level, &$var)
 {
   $form = new Form($db); // $db est null ici mais inutile pour la fonction select_date()
   global $bc, $langs;
   for ($i = 0 ; $i < sizeof($lines) ; $i++)
     {
       if ($parent == 0)
-	$level = 0;
+	{
+	  $level = 0;
+	  $var = !$var;
+	}
 
       if ($lines[$i][1] == $parent)
 	{
-	  $var = !$var;
 	  print "<tr $bc[$var]>\n<td>";
 	  print $lines[$i][4].'</td><td>';
 
@@ -63,7 +65,7 @@ Function PLines(&$inc, $parent, $lines, &$level)
 	  print "</tr>\n";
 	  $inc++;
 	  $level++;
-	  PLines($inc, $lines[$i][2], $lines, $level);
+	  PLines($inc, $lines[$i][2], $lines, $level, $var);
 	  $level--;
 	}
       else
@@ -91,11 +93,13 @@ dolibarr_fiche_head($head,  $hselected, $langs->trans("Mytasks"));
 
 $sql = "SELECT t.rowid, t.title, t.fk_task_parent, t.duration_effective, p.title as ptitle";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+$sql .= " , ".MAIN_DB_PREFIX."projet_task_actors as a";
 $sql .= " , ".MAIN_DB_PREFIX."projet as p";
 $sql .= " WHERE p.rowid = t.fk_projet";
+$sql .= " AND a.fk_projet_task = t.rowid";
+$sql .= " AND a.fk_user = ".$user->id;
 $sql .= " ORDER BY t.fk_task_parent";
 
-$var=true;
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -128,7 +132,9 @@ print '<td>'.$langs->trans("Task").'</td>';
 print '<td align="right">'.$langs->trans("DurationEffective").'</td>';
 print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";      
-PLines($j, 0, $tasks, $level);
+$var=true;
+
+PLines($j, 0, $tasks, $level, $var);
 print '</form>';
 
 print "</table>";    
