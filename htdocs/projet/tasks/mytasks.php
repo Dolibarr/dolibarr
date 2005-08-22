@@ -97,7 +97,7 @@ $sql .= " , ".MAIN_DB_PREFIX."projet as p";
 $sql .= " WHERE p.rowid = t.fk_projet";
 $sql .= " AND a.fk_projet_task = t.rowid";
 $sql .= " AND a.fk_user = ".$user->id;
-$sql .= " ORDER BY t.fk_task_parent";
+$sql .= " ORDER BY p.rowid, t.fk_task_parent";
 
 $resql = $db->query($sql);
 if ($resql)
