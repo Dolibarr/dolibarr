@@ -151,7 +151,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<tr '.$bc[$var].'><td>'.$langs->trans("JuridicalStatus").'</td><td>';
     if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
     {
-        $form->select_forme_juridique($conf->global->MAIN_INFO_FORME_JURIDIQUE,$code_pays);
+        $form->select_forme_juridique($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE,$code_pays);
     }
     else
     {
