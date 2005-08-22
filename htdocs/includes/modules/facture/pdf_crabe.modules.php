@@ -786,6 +786,13 @@ class pdf_crabe extends ModelePDFFactures
         {
             $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
         }
+
+        if ($conf->global->MAIN_INFO_APE)
+        {
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId3",$this->code_pays).": ".MAIN_INFO_APE;
+        }
+
+
         if ($ligne)
         {
             $pdf->SetXY(8,-$footy);
