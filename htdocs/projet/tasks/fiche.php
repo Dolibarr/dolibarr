@@ -31,10 +31,10 @@ require("./pre.inc.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
-Function PLines(&$inc, $parent, $lines, &$level)
+Function PLines(&$inc, $parent, $lines, &$level, $actors)
 {
   $form = new Form($db); // $db est null ici mais inutile pour la fonction select_date()
-  global $bc, $langs;
+  global $user, $bc, $langs;
   for ($i = 0 ; $i < sizeof($lines) ; $i++)
     {
       if ($parent == 0)
@@ -57,15 +57,25 @@ Function PLines(&$inc, $parent, $lines, &$level)
 	  $minutes = substr("00"."$minutes", -2);
 
 	  print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
-	  print '<td><input size="4" type="text" class="flat" name="task'.$lines[$i][2].'" value="">';
-	  print '&nbsp;<input type="submit" class="flat" value="'.$langs->trans("Save").'"></td>';
-	  print "\n<td>";
-	  print $form->select_date('',$lines[$i][2]);
-	  print '</td>';
+
+	  // TODO améliorer le test
+
+	  if ($actors[$lines[$i][2]] == 'admin')
+	    {
+	      print '<td><input size="4" type="text" class="flat" name="task'.$lines[$i][2].'" value="">';
+	      print '&nbsp;<input type="submit" class="flat" value="'.$langs->trans("Save").'"></td>';
+	      print "\n<td>";
+	      print $form->select_date('',$lines[$i][2]);
+	      print '</td>';
+	    }
+	  else
+	    {
+	      print '<td colspan="2">&nbsp;</td>';
+	    }
 	  print "</tr>\n";
 	  $inc++;
 	  $level++;
-	  PLines($inc, $lines[$i][2], $lines, $level);
+	  PLines($inc, $lines[$i][2], $lines, $level, $actors);
 	  $level--;
 	}
       else
@@ -225,9 +235,34 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
   print '<input type="hidden" name="action" value="createtask">';
   print '<table class="border" width="100%">';
-  print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td>';
+  print '<tr><td>'.$langs->trans("Project").'</td><td>'.$projet->title.'</td>';
   print '<td>'.$langs->trans("Company").'</td><td>'.$projet->societe->nom_url.'</td></tr>';
 
+
+  /* Liste des acteurs */
+  $sql = "SELECT a.fk_projet_task, a.role";
+  $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_actors as a";
+  $sql .= " WHERE a.fk_user = ".$user->id;
+  
+  $resql = $db->query($sql);
+  if ($resql)
+    {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      $actors = array();      
+      while ($i < $num)
+	{
+	  $row = $db->fetch_row($resql);
+	  $actors[$row[0]] = $row[1]; 
+	  $i++;
+	}
+      $db->free();
+    }
+  else
+    {
+      dolibarr_print_error($db);
+    }
+  
   /* Liste des tâches */
 
   $sql = "SELECT t.rowid, t.title, t.fk_task_parent, t.duration_effective";
@@ -280,7 +315,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   print '<td align="right">'.$langs->trans("DurationEffective").'</td>';
   print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
   print "</tr>\n";      
-  PLines($j, 0, $tasks, $level);
+  PLines($j, 0, $tasks, $level, $actors);
   print '</form>';
 
   
