@@ -46,7 +46,7 @@ Function PLines(&$inc, $parent, $lines, &$level, &$var)
       if ($lines[$i][1] == $parent)
 	{
 	  print "<tr $bc[$var]>\n<td>";
-	  print $lines[$i][4].'</td><td>';
+	  print '<a href="fiche.php?id='.$lines[$i][5].'">'.$lines[$i][4]."</a></td><td>\n";
 
 	  for ($k = 0 ; $k < $level ; $k++)
 	    {
@@ -60,8 +60,6 @@ Function PLines(&$inc, $parent, $lines, &$level, &$var)
 	  $minutes = substr("00"."$minutes", -2);
 
 	  print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
-	  print '<td><input size="4" type="text" class="flat" name="task'.$lines[$i][2].'" value="">';
-	  print '&nbsp;<input type="submit" class="flat" value="'.$langs->trans("Save").'"></td>';
 	  print "</tr>\n";
 	  $inc++;
 	  $level++;
@@ -84,14 +82,15 @@ llxHeader("",$langs->trans("Mytasks"),"Projet");
 
 $h=0;
 $head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
-$head[$h][1] = $langs->trans("Myprojects");
+$head[$h][1] = $langs->trans("Mytasks");
 $h++;
 
 dolibarr_fiche_head($head,  $hselected, $langs->trans("Mytasks"));
 
 /* Liste des tâches */
 
-$sql = "SELECT t.rowid, t.title, t.fk_task_parent, t.duration_effective, p.title as ptitle";
+$sql = "SELECT t.rowid, t.title, t.fk_task_parent, t.duration_effective";
+$sql .= " , p.rowid as prowid, p.title as ptitle";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task_actors as a";
 $sql .= " , ".MAIN_DB_PREFIX."projet as p";
@@ -114,6 +113,7 @@ if ($resql)
       $tasks[$i][2] = $obj->rowid;
       $tasks[$i][3] = $obj->duration_effective; 
       $tasks[$i][4] = $obj->ptitle;
+      $tasks[$i][5] = $obj->prowid;
       $i++;
     }
   $db->free();
@@ -123,8 +123,6 @@ else
   dolibarr_print_error($db);
 }
 
-print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
-print '<input type="hidden" name="action" value="addtime">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
@@ -135,7 +133,6 @@ print "</tr>\n";
 $var=true;
 
 PLines($j, 0, $tasks, $level, $var);
-print '</form>';
 
 print "</table>";    
 print '</div>';
