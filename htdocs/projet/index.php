@@ -98,7 +98,7 @@ else
 }
 print "</table>";
 
-print '</td><td width="70%" class="notopnoleft">';
+print '</td><td width="70%" valign="top" class="notopnoleft">';
 
 /*
  *
