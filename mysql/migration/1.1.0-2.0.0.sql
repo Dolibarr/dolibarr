@@ -1755,3 +1755,14 @@ create table llx_projet_task_time
 
 )type=innodb;
 
+create table llx_projet_task_actors
+(
+  fk_projet_task integer NOT NULL,
+  fk_user        integer NOT NULL,
+  role           enum ('admin','read','acto','info') DEFAULT 'admin',
+
+  UNIQUE (fk_projet_task, fk_user),
+  key (role)
+
+)type=innodb;
+
