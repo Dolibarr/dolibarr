@@ -150,7 +150,7 @@ if ($_GET["propalid"] > 0) {
 				// partie Droite
 				print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
 				if ($propal->fin_validite) {
-					print dolibarr_print_date($propal->fin_validite);
+					print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
 				} else {
 					print $langs->trans("Unknown");
 				}
