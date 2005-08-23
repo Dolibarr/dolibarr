@@ -52,7 +52,7 @@ class modUser extends DolibarrModules
 
     $this->family = "base";
     $this->name = "User";
-    $this->description = "Gestion des utilisateurs";
+    $this->description = "Gestion des utilisateurs (requis)";
 
     $this->revision = explode(" ","$Revision$");
     $this->version = $this->revision[1];
@@ -99,14 +99,6 @@ class modUser extends DolibarrModules
     $this->rights[$r][5] = 'lire';
     $r++;
 
-    $this->rights[$r][0] = 252;
-    $this->rights[$r][1] = 'Gérer les utilisateurs';
-    $this->rights[$r][2] = 'w';
-    $this->rights[$r][3] = 0;
-    $this->rights[$r][4] = 'user';
-    $this->rights[$r][5] = 'gerer';
-    $r++;
-   
     return $this->_init($sql);
   }
 
