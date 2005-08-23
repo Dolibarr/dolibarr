@@ -31,9 +31,7 @@
 */
 
 require ("./main.inc.php");
-$user->getrights('societe');
-$user->getrights('propale');
-$user->getrights('facture');
+$user->getrights();
 
 function llxHeader($head = "") {
   global $user, $conf, $langs;
@@ -172,9 +170,12 @@ function llxHeader($head = "") {
     }
 
   $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
-  
-  $langs->load("users");
-  $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
+
+  if ($user->rights->user->user->lire || $user->admin)
+    {
+      $langs->load("users");
+      $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
+    }
   
   if ($user->admin)
     {      
