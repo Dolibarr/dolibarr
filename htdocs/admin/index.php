@@ -34,7 +34,6 @@ $langs->load("companies");
 if (!$user->admin)
   accessforbidden();
 
-
 if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
   || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
@@ -50,6 +49,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
     dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
     dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"]);
     dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
+    dolibarr_set_const($db, "FACTURE_TVAOPTION",$_POST["optiontva"]);
 
     if ($_POST['action'] != 'updateedit')
     {
@@ -230,8 +230,52 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     print '</table>';
 
-    print '<br><center><input type="submit" value="'.$langs->trans("Save").'"></center>';
+    
+    
+    /*
+     *  Options fiscale
+     */
+    print '<br>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
+    print '<td align="right">&nbsp;</td>';
+    print "</tr>\n";
+    $var=true;
+    
+    $var=!$var;
+    print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" value=\"reel\"".($conf->global->FACTURE_TVAOPTION != "franchise"?" checked":"")."> ".$langs->trans("VATIsUsed")."</label></td>";
+    print '<td colspan="2">';
+    print "<table>";
+    print "<tr><td>".$langs->trans("VATIsUsedDesc")."</td></tr>";
+    print "<td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+    print "</table>";
+    print "</td></tr>\n";
+    
+    /* Je désactive cette option "facturation" car ce statut fiscal n'existe pas. Seul le réel et franchise existe.
+    Cette option ne doit donc pas etre en "exclusif" avec l'option fiscale de gestion de tva. Peut etre faut-il
+    une option a part qui n'entre pas en conflit avec les choix "assujéti TVA" ou "non".
+    $var=!$var;
+    print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" value=\"facturation\"".($conf->global->FACTURE_TVAOPTION == "facturation"?" checked":"")."> Option facturation</label></td>";
+    print "<td colspan=\"2\">L'option 'facturation' est utilisée par les entreprises qui payent la TVA à facturation (vente de matériel).</td></tr>\n";
+     */
+    
+    $var=!$var;
+    print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" value=\"franchise\"".($conf->global->FACTURE_TVAOPTION == "franchise"?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
+    print '<td colspan="2">';
+    print "<table>";
+    print "<tr><td>".$langs->trans("VATIsNotUsedDesc")."</td></tr>";
+    print "<td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+    print "</table>";
+    print "</td></tr>\n";
+    
+    print "</table>";
+    
 
+
+    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+    print '<br>';
+    
     print '</form>';
 }
 else
@@ -337,8 +381,49 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("TVAIntra").'</td><td>' . $conf->global->MAIN_INFO_TVAINTRA . '</td></tr>';
 
-    print '</table><br>';
+    print '</table>';
 
+
+    /*
+     *  Options fiscale
+     */
+    print '<br>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
+    print '<td align="right">&nbsp;</td>';
+    print "</tr>\n";
+    $var=true;
+    
+    $var=!$var;
+    print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" disabled value=\"reel\"".($conf->global->FACTURE_TVAOPTION != "franchise"?" checked":"")."> ".$langs->trans("VATIsUsed")."</label></td>";
+    print '<td colspan="2">';
+    print "<table>";
+    print "<tr><td>".$langs->trans("VATIsUsedDesc")."</td></tr>";
+    print "<td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+    print "</table>";
+    print "</td></tr>\n";
+    
+    /* Je désactive cette option "facturation" car ce statut fiscal n'existe pas. Seul le réel et franchise existe.
+    Cette option ne doit donc pas etre en "exclusif" avec l'option fiscale de gestion de tva. Peut etre faut-il
+    une option a part qui n'entre pas en conflit avec les choix "assujéti TVA" ou "non".
+    $var=!$var;
+    print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" value=\"facturation\"".($conf->global->FACTURE_TVAOPTION == "facturation"?" checked":"")."> Option facturation</label></td>";
+    print "<td colspan=\"2\">L'option 'facturation' est utilisée par les entreprises qui payent la TVA à facturation (vente de matériel).</td></tr>\n";
+     */
+    
+    $var=!$var;
+    print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" disabled value=\"franchise\"".($conf->global->FACTURE_TVAOPTION == "franchise"?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
+    print '<td colspan="2">';
+    print "<table>";
+    print "<tr><td>".$langs->trans("VATIsNotUsedDesc")."</td></tr>";
+    print "<td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+    print "</table>";
+    print "</td></tr>\n";
+    
+    print "</table>";
+    
+    
     // Boutons d'action
     print '<div class="tabsAction">';
     print '<a class="tabAction" href="index.php?action=edit">'.$langs->trans("Edit").'</a>';

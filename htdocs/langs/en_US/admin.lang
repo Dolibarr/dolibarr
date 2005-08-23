@@ -202,6 +202,13 @@ DictionnaryActions=Actions list
 DictionnarySocialContributions=Social contributions types
 DictionnaryVAT=VAT Rates
 VATReceivedOnly=Special rate not billed
+VATManagement=VAT Management
+VATIsUsed=VAT is used
+VATIsNotUsed=VAT is not used
+VATIsUsedDesc=Le taux de TVA proposé par défaut lors de la création de propale, facture, commande, etc répond à la règle standard en vigueur pour une société: Si le (pays vendeur = pays client) OU (client n'a pas de numéro TVA Intacommunautaire) alors la TVA par défaut est celle du produit vendu, sinon la TVA proposée par défaut est 0.
+VATIsNotUsedDesc=Le taux de TVA proposé par défaut est 0. C'est le cas d'associations, particuliers ou certaines petites sociétés.
+VATIsUsedExampleFR=En France, il s'agit des sociétés ou organismes ayant choisi un régime fiscale réel (Réel simplifié ou Réel normal), régime dans lequel la TVA est déclarée.
+VATIsNotUsedExampleFR=En France, il s'agit des associations ne déclarant pas de TVA ou sociétés, organismes ou professions libérales ayant choisi le régime fiscal micro entreprise (TVA en franchise) et payant une TVA en franchise sans faire de déclaration de TVA. Ce choix fait apparaitre la mention "TVA non applicable - art-293B du CGI" sur les factures.
 LabelUsedByDefault=Label used by default if no translation can be found for code
 AlwaysActive=Always active
 UpdateRequired=Your system need to be updated. For this click on <a href="%s">Update now</a>.
