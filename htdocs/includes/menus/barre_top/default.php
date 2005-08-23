@@ -209,7 +209,7 @@ class MenuTop {
         }
         
         // Entrée fournisseur
-        if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
+        if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire)
         {
             $langs->load("suppliers");
         
