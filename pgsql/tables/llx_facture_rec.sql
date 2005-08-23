@@ -27,6 +27,7 @@
 
 
 
+
 create table llx_facture_rec
 (
   rowid SERIAL PRIMARY KEY,
@@ -42,7 +43,9 @@ create table llx_facture_rec
   "fk_user_author"     integer,   -- createur
   "fk_projet"          integer,   -- projet auquel est associé la facture
   "fk_cond_reglement"  integer,   -- condition de reglement
-  "note"               text
+  "note"               text,
+  "frequency"          varchar(2) DEFAULT NULL,
+  "last_gen"           varchar(7) DEFAULT NULL
 );
 
 CREATE INDEX idx_facture_rec_fksoc ON llx_facture_rec (fk_soc);

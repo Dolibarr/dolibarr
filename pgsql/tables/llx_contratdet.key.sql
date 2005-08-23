@@ -4,6 +4,7 @@
 
 -- ============================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,11 +24,13 @@
 -- $Source$
 --
 -- ============================================================================
---
---
-ALTER TABLE llx_contratdet ADD INDEX (fk_contrat);
-ALTER TABLE llx_contratdet ADD INDEX (fk_product);
---
---
+
+
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_fk_contrat (fk_contrat);
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_fk_product (fk_product);
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_date_ouverture_prevue (date_ouverture_prevue);
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_date_ouverture (date_ouverture);
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_date_fin_validite (date_fin_validite);
+
 ALTER TABLE llx_contratdet ADD FOREIGN KEY (fk_contrat) REFERENCES llx_contrat (rowid);
 ALTER TABLE llx_contratdet ADD FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);

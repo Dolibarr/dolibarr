@@ -2,9 +2,8 @@
 -- (c) 2004, PostgreSQL Inc.
 -- (c) 2005, Laurent Destailleur.
 
--- ============================================================================
+-- ===========================================================================
 -- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,12 +21,23 @@
 --
 -- $Id$
 -- $Source$
---
--- ============================================================================
+-- 
+-- ===========================================================================
 
 
-ALTER TABLE llx_prelevement_facture ADD INDEX idx_prelevement_facture_fk_prelevement_lignes (fk_prelevement_lignes);
+create table llx_projet_task
+(
+  rowid SERIAL PRIMARY KEY,
+  "fk_projet"          integer NOT NULL,
+  "fk_task_parent"     integer NOT NULL,
+  "title"              varchar(255),
+  "duration_effective" real NOT NULL,
+  "fk_user_creat"      integer,      -- createur
+  "statut" varchar(6) CHECK (statut IN ('open','closed'))  DEFAULT 'open',
+  "note"               text
+  
+);
 
-
-ALTER TABLE llx_prelevement_facture ADD FOREIGN KEY (fk_prelevement_lignes) REFERENCES llx_prelevement_lignes (rowid);
-
+CREATE INDEX idx_llx_projet_task_fk_projet ON llx_projet_task (fk_projet);
+CREATE INDEX idx_llx_projet_task_statut ON llx_projet_task (statut);
+CREATE INDEX idx_llx_projet_task_fk_user_creat ON llx_projet_task (fk_user_creat);

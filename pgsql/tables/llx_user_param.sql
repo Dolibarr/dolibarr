@@ -28,10 +28,10 @@
 
 create table llx_user_param
 (
-  "fk_user"       integer,
-  "page"          varchar(255),
-  "param"         varchar(64),
-  "value"         varchar(255),
+  "fk_user"       integer      NOT NULL,
+  "page"          varchar(255) NOT NULL,
+  "param"         varchar(64)  NOT NULL,
+  "value"         varchar(255) NOT NULL,
   UNIQUE(fk_user,page,param)
 );
 

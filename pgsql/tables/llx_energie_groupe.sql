@@ -3,8 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ===================================================================
--- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,23 +21,15 @@
 --
 -- $Id$
 -- $Source$
+--
 -- ===================================================================
 
-create table llx_facturedet
+
+create table llx_energie_groupe
 (
   rowid SERIAL PRIMARY KEY,
-  "fk_facture"      integer NOT NULL,
-  "fk_product"      integer DEFAULT 0 NOT NULL,
-  "description"     text,
-  "tva_taux"        real DEFAULT 19.6, -- taux tva
-  "qty"             real,              -- quantité
-  "remise_percent"  real DEFAULT 0,    -- pourcentage de remise
-  "remise"          real DEFAULT 0,    -- montant de la remise
-  "subprice"        real,              -- prix avant remise
-  "price"           real,              -- prix final
-  "date_start"      timestamp,          -- date debut si service
-  "date_end"        timestamp,          -- date fin si service
-  "fk_code_ventilation" integer DEFAULT 0 NOT NULL,
-  "fk_export_compta"    integer DEFAULT 0 NOT NULL,
-  "rang"                integer DEFAULT 0
+  "libelle"         varchar(100),
+  "datec"           timestamp,
+  "fk_user_author"  integer NOT NULL,
+  "note"            text
 );

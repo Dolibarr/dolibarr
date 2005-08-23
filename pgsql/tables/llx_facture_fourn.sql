@@ -28,6 +28,8 @@
 
 
 
+
+
 create table llx_facture_fourn
 (
   rowid SERIAL PRIMARY KEY,
@@ -47,6 +49,9 @@ create table llx_facture_fourn
   "fk_statut"  smallint DEFAULT 0 NOT NULL,
   "fk_user_author"  integer,   -- createur de la facture
   "fk_user_valid"   integer,   -- valideur de la facture
+  "fk_projet"           integer,   -- projet auquel est associée la facture
+  "fk_cond_reglement"   integer  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)
+  "date_lim_reglement"  date,      -- date limite de reglement
   "note"       text,
   UNIQUE(facnumber, fk_soc)
 );

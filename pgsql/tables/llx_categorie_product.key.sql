@@ -3,8 +3,9 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2005 Brice Davoleau <e1davole@iu-vannes.fr>
--- Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>		
+-- Copyright (C) 2005 Brice Davoleau       <e1davole@iu-vannes.fr>
+-- Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>		
+-- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,10 +23,9 @@
 --
 -- ============================================================================
 
-ALTER TABLE llx_categorie_product ADD INDEX (fk_categorie);
-ALTER TABLE llx_categorie_product ADD INDEX (fk_product);
 
-ALTER TABLE llx_categorie_product ADD FOREIGN KEY (fk_categorie)
-	REFERENCES llx_categorie (rowid);
-ALTER TABLE llx_categorie_product ADD FOREIGN KEY (fk_product)
-	REFERENCES llx_product (rowid);
+ALTER TABLE llx_categorie_product ADD INDEX idx_categorie_product_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_product ADD INDEX idx_categorie_product_fk_product (fk_product);
+
+ALTER TABLE llx_categorie_product ADD FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_product ADD FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);

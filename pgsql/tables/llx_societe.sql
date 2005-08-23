@@ -24,7 +24,6 @@
 --
 -- ========================================================================
 
-
 create table llx_societe
 (
   idp SERIAL PRIMARY KEY,
@@ -36,7 +35,9 @@ create table llx_societe
   "datea"	             timestamp,                            -- activation date
   "nom"                varchar(60),                         -- company name
   "code_client"        varchar(15),                         -- code client
-  "code_compta"        varchar(15),                         -- code compta
+  "code_fournisseur"   varchar(15),                         -- code founisseur
+  "code_compta"        varchar(15),                         -- code compta client
+  "code_compta_fournisseur"  varchar(15),                         -- code compta founisseur
   "address"            varchar(255),                        -- company adresse
   "cp"                 varchar(10),                         -- zipcode
   "ville"              varchar(50),                         -- town
@@ -64,9 +65,6 @@ create table llx_societe
   "rubrique"           varchar(255),                        -- champ rubrique libre
   "fk_user_creat"      integer,                             -- utilisateur qui a créé l'info
   "fk_user_modif"      integer,                             -- utilisateur qui a modifié l'info
-  "remise_client"      real           DEFAULT 0,            -- remise systématique pour le client
-  UNIQUE(prefix_comm)
+  "remise_client"      real           DEFAULT 0             -- remise systématique pour le client
 );
-
-CREATE INDEX idx_llx_societe_prefix_comm ON llx_societe (prefix_comm);
 

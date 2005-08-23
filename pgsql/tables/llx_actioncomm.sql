@@ -4,6 +4,7 @@
 
 -- ========================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- $Id$
 -- $Source$
@@ -29,12 +30,12 @@
 create table llx_actioncomm
 (
   id SERIAL PRIMARY KEY,
-  "datea"          timestamp,           -- action date
+  "datea"          timestamp,            -- action date
   "fk_action"      integer,
-  "label"          varchar(50),        -- libelle de l'action
+  "label"          varchar(50) NOT NULL, -- libelle de l'action
   "fk_soc"         integer,
   "fk_contact"     integer default 0,
-  "fk_user_action" integer,            -- id de la personne qui doit effectuer l'action
+  "fk_user_action" integer,              -- id de la personne qui doit effectuer l'action
   "fk_user_author" integer,
   "priority"       smallint,
   "percent"        smallint NOT NULL default 0,

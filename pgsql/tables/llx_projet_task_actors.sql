@@ -2,9 +2,8 @@
 -- (c) 2004, PostgreSQL Inc.
 -- (c) 2005, Laurent Destailleur.
 
--- ============================================================================
+-- ===========================================================================
 -- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,12 +21,18 @@
 --
 -- $Id$
 -- $Source$
---
--- ============================================================================
+-- 
+-- ===========================================================================
 
 
-ALTER TABLE llx_prelevement_facture ADD INDEX idx_prelevement_facture_fk_prelevement_lignes (fk_prelevement_lignes);
 
+create table llx_projet_task_actors
+(
+  "fk_projet_task" integer NOT NULL,
+  "fk_user"        integer NOT NULL,
+  "role"           enum ('admin','read','acto','info') DEFAULT 'admin',
+  UNIQUE(fk_projet_task, fk_user)
+);
 
-ALTER TABLE llx_prelevement_facture ADD FOREIGN KEY (fk_prelevement_lignes) REFERENCES llx_prelevement_lignes (rowid);
-
+CREATE INDEX idx_llx_projet_task_actors_fk_projet_task_fk_user ON llx_projet_task_actors (fk_projet_task, fk_user);
+CREATE INDEX idx_llx_projet_task_actors_role ON llx_projet_task_actors (role);

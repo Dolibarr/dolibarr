@@ -24,6 +24,11 @@
 -- ===========================================================================
 
 
+
+
+
+
+
 create table llx_facture
 (
   rowid SERIAL PRIMARY KEY,
@@ -42,7 +47,7 @@ create table llx_facture
   "fk_statut"           smallint DEFAULT 0 NOT NULL,
   "fk_user_author"      integer,   -- createur de la facture
   "fk_user_valid"       integer,   -- valideur de la facture
-  "fk_projet"           integer,   -- projet auquel est associé la facture
+  "fk_projet"           integer,   -- projet auquel est associée la facture
   "fk_cond_reglement"   integer  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)
   "fk_mode_reglement"   integer,   -- mode de reglement (Virement, Prélèvement)
   "date_lim_reglement"  date,      -- date limite de reglement
@@ -51,4 +56,3 @@ create table llx_facture
 );
 
 CREATE INDEX idx_llx_facture_facnumber ON llx_facture (facnumber);
-CREATE INDEX fksoc ON llx_facture (fk_soc);

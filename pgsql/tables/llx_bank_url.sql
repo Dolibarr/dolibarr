@@ -30,5 +30,6 @@ create table llx_bank_url
   "fk_bank"         integer,
   "url_id"          integer,
   "url"             varchar(255),
-  "label"           varchar(255)
+  "label"           varchar(255),
+  "type" varchar(8) CHECK (type IN ('company','payment','member','donation','charge')) 
 );

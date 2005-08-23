@@ -23,15 +23,10 @@
 -- $Id$
 -- $Source$
 --
--- ============================================================================
+-- ===========================================================================
 
 
-ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fournisseur_price_fk_user (fk_user);
-ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fournisseur_price_fk_soc (fk_soc);
-ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fournisseur_price_fk_product (fk_product);
-
-ALTER TABLE llx_product_fournisseur_price ADD FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
-ALTER TABLE llx_product_fournisseur_price ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
-ALTER TABLE llx_product_fournisseur_price ADD FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+ALTER TABLE llx_accountingsystem_det ADD INDEX idx_accountingsystem_det_fk_pcg_version (fk_pcg_version);
 
 
+ALTER TABLE llx_accountingsystem_det ADD FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accountingsystem (pcg_version);

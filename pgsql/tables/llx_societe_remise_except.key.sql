@@ -4,6 +4,7 @@
 
 -- ============================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,10 +29,10 @@
 -- ============================================================================
 
 
+ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_user (fk_user);
+ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_soc (fk_soc);
+ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_facture (fk_facture);
 
-ALTER TABLE llx_societe_remise_except ADD INDEX (fk_user);
-ALTER TABLE llx_societe_remise_except ADD INDEX (fk_soc);
-ALTER TABLE llx_societe_remise_except ADD INDEX (fk_facture);
 
 ALTER TABLE llx_societe_remise_except ADD FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
 ALTER TABLE llx_societe_remise_except ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);

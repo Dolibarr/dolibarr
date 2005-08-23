@@ -26,7 +26,6 @@
 --
 
 
-
 create table llx_mailing_cibles
 (
   rowid SERIAL PRIMARY KEY,
@@ -34,6 +33,8 @@ create table llx_mailing_cibles
   "fk_contact"         integer NOT NULL,
   "nom"                varchar(160),
   "prenom"             varchar(160),
-  "email"              varchar(160) NOT NULL
+  "email"              varchar(160) NOT NULL,
+  "statut"             smallint NOT NULL DEFAULT 0,
+  "date_envoi"         timestamp
 );
 

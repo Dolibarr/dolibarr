@@ -30,7 +30,7 @@ create table llx_entrepot
   rowid SERIAL PRIMARY KEY,
   "datec"           timestamp,
   "tms"             timestamp,
-  "label"           varchar(255) NOT NULL,
+  "label"           varchar(255) UNIQUE NOT NULL,
   "description"     text,
   "lieu"            varchar(64),       -- résumé lieu situation
   "address"         varchar(255),

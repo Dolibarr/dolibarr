@@ -2,9 +2,8 @@
 -- (c) 2004, PostgreSQL Inc.
 -- (c) 2005, Laurent Destailleur.
 
--- ============================================================================
+-- ===========================================================================
 -- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,12 +21,20 @@
 --
 -- $Id$
 -- $Source$
---
--- ============================================================================
+-- 
+-- ===========================================================================
 
 
-ALTER TABLE llx_prelevement_facture ADD INDEX idx_prelevement_facture_fk_prelevement_lignes (fk_prelevement_lignes);
 
+create table llx_projet_task_time
+(
+  rowid SERIAL PRIMARY KEY,
+  "fk_task"          integer  NOT NULL,
+  "task_date"        date,
+  "task_duration"    smallint,
+  "fk_user"          integer,
+  "note"             text
+);
 
-ALTER TABLE llx_prelevement_facture ADD FOREIGN KEY (fk_prelevement_lignes) REFERENCES llx_prelevement_lignes (rowid);
-
+CREATE INDEX idx_llx_projet_task_time_fk_task ON llx_projet_task_time (fk_task);
+CREATE INDEX idx_llx_projet_task_time_fk_user ON llx_projet_task_time (fk_user);

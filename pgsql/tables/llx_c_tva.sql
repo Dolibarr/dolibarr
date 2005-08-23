@@ -2,9 +2,11 @@
 -- (c) 2004, PostgreSQL Inc.
 -- (c) 2005, Laurent Destailleur.
 
--- ============================================================================
--- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- ========================================================================
+-- Copyright (C) 2005           Laurent Destailleur  <eldy@users.sourceforge.net>
+--
+-- $Id$
+-- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,14 +22,16 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
--- $Source$
---
--- ============================================================================
+-- ========================================================================
 
 
-ALTER TABLE llx_prelevement_facture ADD INDEX idx_prelevement_facture_fk_prelevement_lignes (fk_prelevement_lignes);
-
-
-ALTER TABLE llx_prelevement_facture ADD FOREIGN KEY (fk_prelevement_lignes) REFERENCES llx_prelevement_lignes (rowid);
+create table llx_c_tva
+(
+  rowid SERIAL PRIMARY KEY,
+  "fk_pays"           integer NOT NULL,
+  "taux"              real NOT NULL,
+  "recuperableonly"   integer DEFAULT 0,
+  "note"              varchar(128),
+  "active"            smallint DEFAULT 1 NOT NULL
+);
 

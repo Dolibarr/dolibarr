@@ -3,8 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,13 +24,13 @@
 --
 -- ============================================================================
 
-
-ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fournisseur_price_fk_user (fk_user);
-ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fournisseur_price_fk_soc (fk_soc);
-ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fournisseur_price_fk_product (fk_product);
-
-ALTER TABLE llx_product_fournisseur_price ADD FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
-ALTER TABLE llx_product_fournisseur_price ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
-ALTER TABLE llx_product_fournisseur_price ADD FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
-
-
+create table llx_accountingsystem
+(
+  pcg_version       varchar(12)     PRIMARY KEY,
+  "fk_pays"           integer         NOT NULL,
+  "label"             varchar(128)    NOT NULL,
+  "datec"             varchar(12)     NOT NULL,
+  "fk_author"         varchar(20),
+  "tms"               timestamp,
+  "active"            smallint        DEFAULT 0
+);

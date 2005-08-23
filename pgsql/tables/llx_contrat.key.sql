@@ -4,7 +4,7 @@
 
 -- ============================================================================
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,8 +25,10 @@
 --
 -- ============================================================================
 
+
 -- Supprimme orhpelins pour permettre montée de la clé
-DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.idp WHERE llx_societe.idp IS NULL;
+-- V4 DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.idp WHERE llx_societe.idp IS NULL;
+-- V4 DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_user ON llx_contrat.fk_user_author = llx_user.rowid WHERE llx_user.rowid IS NULL;
 
 ALTER TABLE llx_contrat ADD INDEX idx_contrat_fk_soc (fk_soc);
 ALTER TABLE llx_contrat ADD INDEX idx_contrat_fk_user_author (fk_user_author);
