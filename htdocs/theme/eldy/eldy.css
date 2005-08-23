@@ -771,3 +771,22 @@ p#powered-by-dolibarr a {
 	padding-right: 5px;
 	padding-left: 5px;
 }
+
+
+#corpForm fieldset {	/*** Mise en forme des cadres ***/
+	margin: 0;
+	font-style: normal;
+	padding: 0 1em 1em;
+	font-size: 12px;
+}
+
+
+
+#corpForm .focus {	/*** Mise en avant des champs en cours d'utilisation ***/
+	background: beige;
+	color: black;
+}
+#corpForm .normal {	/*** Retour à l'état normal après l'utilisation ***/
+	background: white;
+	color: black;
+}
