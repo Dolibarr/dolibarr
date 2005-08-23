@@ -198,8 +198,8 @@ if ($_GET["action"] == 'create')
   print '<td>';
   include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
   $model=new ModelePDFPropales();
-  $liste=$model->liste_modeles($this->db);
-  $html->select_array("modelpdf",$liste,PROPALE_ADDON_PDF);
+  $liste=$model->liste_modeles($db);
+  $form->select_array("modelpdf",$liste,$conf->global->PROPALE_ADDON_PDF);
   print "</td></tr></table>";
   
   print '<br>';
@@ -216,7 +216,7 @@ if ($_GET["action"] == 'create')
       for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
         {
           print '<tr><td>';
-          $html->select_produits('',"idprod".$i);
+          $form->select_produits('',"idprod".$i);
           print '</td>';
           print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
           print '<td><input type="text" size="3" name="remise'.$i.'" value="'.$soc->remise_client.'"> %</td></tr>';
