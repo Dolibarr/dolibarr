@@ -71,6 +71,7 @@ class ModelePDFPropales extends FPDF
         }
         else
         {
+            $this->error=$db->error();
             return -1;
         }
         return $liste;

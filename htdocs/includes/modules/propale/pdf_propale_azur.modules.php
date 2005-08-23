@@ -705,13 +705,13 @@ class pdf_propale_azur extends ModelePDFPropales
         {
             $ligne.=($ligne?" - ":"").$langs->trans("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$langs->trans("Currency".$conf->monnaie);
         }
-        if ($conf->global->MAIN_INFO_SIREN)
-        {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
-        }
         if ($conf->global->MAIN_INFO_SIRET)
         {
             $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
+        }
+        elseif ($conf->global->MAIN_INFO_SIREN)
+        {
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
         }
         if ($conf->global->MAIN_INFO_APE)
         {
