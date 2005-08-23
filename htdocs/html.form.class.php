@@ -1142,54 +1142,38 @@ class Form
       }
   }
 	
-  /**
-   *    \brief      Affiche liste déroulante
-   *
-   */
-  function select($name, $sql, $id='')
-  {
-
-    $result = $this->db->query($sql);
-    if ($result)
-      {
-
-	print '<select class="flat" name="'.$name.'">';
-
-	$num = $this->db->num_rows();
-	$i = 0;
-	  
-	if (strlen("$id"))
-	  {	    	      
-	    while ($i < $num)
-	      {
-		$row = $this->db->fetch_row($i);
-		print "<option value=\"$row[0]\" ";
-		if ($id == $row[0])
-		  {
-		    print 'selected="true"';
-		  }
-		print ">$row[1]</option>\n";
-		$i++;
-	      }
-	  }
-	else
-	  {
-	    while ($i < $num)
-	      {
-		$row = $this->db->fetch_row($i);
-		print "<option value=\"$row[0]\">$row[1]</option>\n";
-		$i++;
-	      }
-	  }
-
-	print "</select>";
-      }
-    else 
-      {
-	print $this->db->error();
-      }
-
-  }
+    /**
+     *      \brief      Affiche liste déroulante depuis requete SQL
+     *      \param      Nom de la zone select
+     *      \param      Requete sql
+     *      \param      Id présélectionné
+     */
+    function select($name, $sql, $id='')
+    {
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            print '<select class="flat" name="'.$name.'">';
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $row = $this->db->fetch_row($resql);
+                print '<option value="'.$row[0].'"';
+                if ($id != '' && $id == $row[0])
+                {
+                    print ' selected="true"';
+                }
+                print '>'.$row[1].'</option>';
+                $i++;
+            }
+            print "</select>\n";
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
     
   /**
     \brief  Affiche un select à partir d'un tableau
@@ -1367,6 +1351,87 @@ class Form
     print '</div>';
     print "\n<!-- fin cartouche rapport -->\n\n";
   }
+
+    /**
+     *      \brief      Affiche la cartouche de la liste des documents d'une propale, facture...
+     *      \param      modulepart      propal=propal, facture=facture, ...
+     *      \param      filename        Nom fichier
+     *      \param      filedir         Repertoire à scanner
+     *      \param      urlsource       Url page origine
+     *      \param      genallowed      Génération autorisée
+     *      \param      delallowed      Suppression autorisée
+     *      \remarks    Le fichier de facture détaillée est de la forme
+     *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
+     */
+    function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='')
+    {
+        global $langs,$bc;
+        $var=true;
+ 
+        $filename = sanitize_string($filename);
+        $relativepath = "${filename}/${filename}.pdf";
+        $fullpathfile = $filedir . "/" . $filename . ".pdf";
+
+        if ($genallowed)
+        {
+            print '<form action="'.$urlsource.'" method="post">';
+            print '<input type="hidden" name="action" value="setpdfmodel">';
+        }
+        
+        print_titre($langs->trans("Documents"));
+        print '<table class="border" width="100%">';
+
+        if ($genallowed)
+        {
+            $liste=array();
+            if ($modulepart == 'propal')
+            {
+                $liste=$this->select("ee","select nom as id, nom as lib from ".MAIN_DB_PREFIX."propal_model_pdf");
+            }
+            elseif ($modulepart == 'facture')
+            {
+                $liste=$this->select("");
+            }
+            else
+            {
+                dolibarr_print_error($this->db,'Bad value for modulepart');
+            }
+            print '<tr '.$bc[$var].'><td>'.$langs->trans('Model').'</td><td align="center">';
+            $this->select_array('modelpdf',$liste,$modelselected);
+            $texte=$langs->trans('Generate');
+            print '</td><td align="center" colspan="2"><input class="button" type="submit" value="'.$texte.'">';
+            print '</td></tr>';
+        }
+
+        if (is_dir($filedir))
+        {
+            $handle=opendir($filedir);
+            while (($file = readdir($handle))!==false)
+            {
+                if (is_readable($filedir."/".$file) && eregi('\.pdf$',$file))
+                {
+                    print "<tr $bc[$var]>";
+                    if (eregi('\-detail\.pdf',$file)) print '<td nowrap>PDF Détaillé</td>';
+                    else print '<td nowrap>PDF</td>';
+                    
+                    $relativepathdetail = "${filename}/$file";
+    
+                    print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepathdetail).'">'.$file.'</a></td>';
+                    print '<td align="right">'.filesize($filedir."/".$file). ' bytes</td>';
+                    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file)).'</td>';
+                    print '</tr>';
+                }
+            }
+        }
+        
+        print "</table>\n";    
+
+        if ($genallowed)
+        {
+            print '</form>';
+        }
+
+    }
 
 }
 
