@@ -207,6 +207,7 @@ asort($orders);
 $var=True;
 
 $familylib=array(
+'base'=>$langs->trans("ModuleBase"),
 'crm'=>$langs->trans("ModuleFamilyCrm"),
 'products'=>$langs->trans("ModuleFamilyProducts"),
 'hr'=>$langs->trans("ModuleFamilyHr"),
