@@ -49,7 +49,7 @@ function ValidEmail($address)
   if (ereg( ".*<(.+)>", $address, $regs)) {
     $address = $regs[1];
   }
-  if (ereg( "^[^@  ]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2}|net|com|gov|mil|org|edu|int)\$",$address))
+  if (ereg( "^[^@  ]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2}|net|com|gov|mil|org|edu|info|name|int)\$",$address))
     {
       return true;
     }
