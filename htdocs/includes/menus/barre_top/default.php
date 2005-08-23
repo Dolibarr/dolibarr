@@ -182,7 +182,7 @@ class MenuTop {
         }
 	
         // Entrée produit/service
-        if ($conf->produit->enabled || $conf->service->enabled)
+        if (($conf->produit->enabled || $conf->service->enabled)  && $user->rights->produit->lire)
         {
             $langs->load("products");
         
@@ -209,7 +209,7 @@ class MenuTop {
         }
         
         // Entrée fournisseur
-        if ($conf->fournisseur->enabled)
+        if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
         {
             $langs->load("suppliers");
         

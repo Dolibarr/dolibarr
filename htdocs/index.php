@@ -124,7 +124,7 @@ if ($conf->societe->enabled  && $user->rights->societe->lire )
 }
 
 // Nbre de sociétés fournisseurs
-if ($conf->fournisseur->enabled)
+if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 {
     include_once("./fourn/fournisseur.class.php");
     $board=new Fournisseur($db);
@@ -168,7 +168,7 @@ if ($conf->adherent->enabled)
 }
 
 // Nbre de produits
-if ($conf->produit->enabled)
+if ($conf->produit->enabled && $user->rights->produit->lire)
 {
     //include_once("./product.class.php");
     $board=new Product($db);
@@ -190,7 +190,7 @@ if ($conf->produit->enabled)
 }
 
 // Nbre de services
-if ($conf->service->enabled)
+if ($conf->service->enabled && $user->rights->produit->lire)
 {
     include_once("./service.class.php");
     $board=new Service($db);
