@@ -59,7 +59,7 @@ class modUser extends DolibarrModules
 
     $this->const_name = "MAIN_MODULE_USER";
     $this->const_config = MAIN_MODULE_USER;
-    $this->picto='';
+    $this->picto='group';
 
     // Dir
     $this->dirs = array();
