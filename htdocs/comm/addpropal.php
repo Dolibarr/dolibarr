@@ -29,7 +29,6 @@
 */
 
 require("./pre.inc.php");
-require("./propal_model_pdf.class.php");
 
 $langs->load("propal");
 $langs->load("projects");
@@ -197,9 +196,10 @@ if ($_GET["action"] == 'create')
 
   print '<td>Modèle</td>';
   print '<td>';
-  $html = new Form($db);
-  $modelpdf = new Propal_Model_pdf($db);
-  $html->select_array("modelpdf",$modelpdf->liste_array(),PROPALE_ADDON_PDF);
+  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
+  $model=new ModelePDFPropales();
+  $liste=$model->liste_modeles($this->db);
+  $html->select_array("modelpdf",$liste,PROPALE_ADDON_PDF);
   print "</td></tr></table>";
   
   print '<br>';

@@ -1389,48 +1389,19 @@ else
 
             /*
              * Documents générés
-             * Le fichier de facture détaillée est de la forme
-             * REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
              */
-
-            $facref = sanitize_string($fac->ref);
-            $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
-            $relativepath = "${facref}/${facref}.pdf";
-
+            $filename=sanitize_string($fac->ref);
+            $filedir=$conf->facture->dir_output . "/" . sanitize_string($fac->ref);
+            $urlsource=$_SERVER["PHP_SELF"]."?facid=".$fac->id;
+//            $genallowed=($fac->statut == 1 && ($fac->paye == 0 || $user->admin) && $user->rights->facture->creer);
+//            $delallowed=$user->rights->facture->supprimer;
+            $genallowed=0;
+            $delallowed=0;
+            
             $var=true;
 
-            if (file_exists($file))
-            {
-                print "<br>\n";
-                print_titre("Documents");
-                print '<table class="border" width="100%">';
-
-                print "<tr $bc[$var]><td>".$langs->trans("Bill")." PDF</td>";
-
-                print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepath).'">'.$fac->ref.'.pdf</a></td>';
-                print '<td align="right">'.filesize($file). ' bytes</td>';
-                print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-                print '</tr>';
-
-
-                $dir = $conf->facture->dir_output . "/" . $facref . "/";
-                $handle=opendir($dir);
-
-                while (($file = readdir($handle))!==false)
-                {
-                    if (is_readable($dir.$file) && substr($file, -10) == 'detail.pdf')
-                    {
-                        print "<tr $bc[$var]><td>Facture détaillée</td>";
-                        $relativepathdetail = "${facref}/$file";
-
-                        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$file.'</a></td>';
-                        print '<td align="right">'.filesize($dir.$file). ' bytes</td>';
-                        print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($dir.$file)).'</td>';
-                        print '</tr>';
-                    }
-                }
-                print "</table>\n";
-            }
+            print "<br>\n";
+            $html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed);
 
 
             /*

@@ -38,21 +38,49 @@
 
 class ModelePDFPropales extends FPDF
 {
-  var $error='';
-  
-  /** 
-    \brief Renvoi le dernier message d'erreur de création de propale
-  */
-  function pdferror()
+    var $error='';
+    
+    /** 
+     *      \brief      Renvoi le dernier message d'erreur de création de propale
+     */
+    function pdferror()
     {
-      return $this->error;
+        return $this->error;
     }
-
+    
+    /** 
+     *      \brief      Renvoi la liste des modèles actifs
+     */
+    function liste_modeles($db)
+    {
+        $liste=array();
+        $sql ="SELECT nom as id, nom as lib";
+        $sql.=" FROM ".MAIN_DB_PREFIX."propal_model_pdf";
+        
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $row = $db->fetch_row($resql);
+                $liste[$row[0]]=$row[1];
+                $i++;
+            }
+        }
+        else
+        {
+            return -1;
+        }
+        return $liste;
+    }
 }
 
 
-/**\class ModeleNumRefPropales
-   \brief  Classe mère des modèles de numérotation des références de propales
+/**
+        \class      ModeleNumRefPropales
+        \brief      Classe mère des modèles de numérotation des références de propales
 */
 
 class ModeleNumRefPropales

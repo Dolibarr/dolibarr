@@ -40,26 +40,55 @@ class ModelePDFFicheinter extends FPDF
 {
     var $error='';
 
-    /**  \brief      Constructeur
+    /**
+        \brief      Constructeur
      */
     function ModelePDFFicheinter()
     {
     
     }
 
-   /** 
-        \brief Renvoi le dernier message d'erreur de création de fiche intervention
-    */
+    /** 
+        \brief      Renvoi le dernier message d'erreur de création de fiche intervention
+     */
     function pdferror()
     {
         return $this->error;
     }
 
+    /** 
+     *      \brief      Renvoi la liste des modèles actifs
+     */
+    function liste_modeles($db)
+    {
+        $liste=array();
+        $sql ="";
+        
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $row = $db->fetch_row($resql);
+                $liste[$row[0]]=$row[1];
+                $i++;
+            }
+        }
+        else
+        {
+            return -1;
+        }
+        return $liste;
+    }
+
 }
 
 
-/**	\class ModeleNumRefFicheinter
-		\brief  Classe mère des modèles de numérotation des références de fiches d'intervention
+/**
+        \class      ModeleNumRefFicheinter
+		\brief      Classe mère des modèles de numérotation des références de fiches d'intervention
 */
 
 class ModeleNumRefFicheinter

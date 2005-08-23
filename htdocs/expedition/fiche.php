@@ -31,6 +31,7 @@
 
 require("./pre.inc.php");
 
+$langs->load("bills");
 
 if (!$user->rights->expedition->lire)
   accessforbidden();
@@ -444,27 +445,9 @@ else
 	      dolibarr_print_error($db);
 	    }
 	  	  
-	  print "</table><br>\n";
+	  print "</table>\n";
 
 	  print "\n</div>\n";
-
-	  /*
-	   *
-	   */
-	  $file = $expedition->pdf_filename;
-	  if (file_exists($file))
-	    {
-	      print_titre($langs->trans("Documents"));
-	      print '<table class="border" width="50%">';
-	      print "<tr $bc[$var]><td>".$langs->trans("Sending")." PDF</td>";
-
-	      $b = ereg_replace($conf->expedition->dir_output."/","",$file);
-
-	      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=expedition&file='.urlencode($b).'">'.basename($file).'</a></td>';
-	      print '<td align="right">'.filesize($file). ' bytes</td>';
-	      print '<td align="right">'.dolibarr_print_date(filemtime($file),"%d %B %Y %H:%M:%S").'</td></tr>';
-	      print "</table>";
-	    }  
 
 
 	  /*
@@ -489,9 +472,26 @@ else
 	      print '</div>';	      	   
 	    }
 	
+
+        /*
+         * Documents générés
+         */
+        $filename=sanitize_string($expedition->id);
+        $filedir=$conf->expedition->dir_output . "/" .get_exdir($expedition->id);
+        $urlsource=$_SERVER["PHP_SELF"]."?id=".$expedition->id;
+        //$genallowed=$user->rights->expedition->creer;
+        //$delallowed=$user->rights->expedition->supprimer;
+        $genallowed=0;
+        $delallowed=0;
+        
+        $var=true;
+        
+        print "<br>\n";
+        $html->show_documents('expedition',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
+
+
 	  /*
 	   * Déjà livré
-	   *
 	   *
 	   */
 	  $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";

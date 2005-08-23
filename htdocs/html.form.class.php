@@ -1386,11 +1386,15 @@ class Form
             $liste=array();
             if ($modulepart == 'propal')
             {
-                $liste=$this->select("ee","select nom as id, nom as lib from ".MAIN_DB_PREFIX."propal_model_pdf");
+                include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
+                $model=new ModelePDFPropales();
+                $liste=$model->liste_modeles($this->db);
             }
             elseif ($modulepart == 'facture')
             {
-                $liste=$this->select("");
+                include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+                $model=new ModelePDFFactures();
+                $liste=$model->liste_modeles($this->db);
             }
             else
             {

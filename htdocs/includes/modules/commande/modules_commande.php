@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,8 @@
  *
  */
 
-/**	    \file       htdocs/includes/modules/commande/modules_commande.php
+/**
+	    \file       htdocs/includes/modules/commande/modules_commande.php
 		\ingroup    commande
 		\brief      Fichier contenant la classe mère de generation des commandes en PDF
 		            et la classe mère de numérotation des commandes
@@ -32,8 +33,9 @@
 
 
 
-/**	    \class  ModelePDFCommandes
-		\brief  Classe mère des modèles de commandes
+/**
+	    \class      ModelePDFCommandes
+		\brief      Classe mère des modèles de commandes
 */
 
 class ModelePDFCommandes extends FPDF
@@ -48,12 +50,40 @@ class ModelePDFCommandes extends FPDF
         return $this->error;
     }
 
+    /** 
+     *      \brief      Renvoi la liste des modèles actifs
+     */
+    function liste_modeles($db)
+    {
+        $liste=array();
+        $sql ="";
+        
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $row = $db->fetch_row($resql);
+                $liste[$row[0]]=$row[1];
+                $i++;
+            }
+        }
+        else
+        {
+            return -1;
+        }
+        return $liste;
+    }
+
 }
 
 
 
-/**	\class  ModeleNumRefCommandes
-	\brief  Classe mère des modèles de numérotation des références de commandes
+/**
+        \class      ModeleNumRefCommandes
+	    \brief      Classe mère des modèles de numérotation des références de commandes
 */
 
 class ModeleNumRefCommandes

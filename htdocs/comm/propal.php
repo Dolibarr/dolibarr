@@ -42,7 +42,6 @@ $langs->load('bills');
 
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
-require_once('./propal_model_pdf.class.php');
 require_once('../propal.class.php');
 require_once('../actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
@@ -883,51 +882,25 @@ if ($_GET['propalid'] > 0)
     }
     
     print '</div>';
+    
+    
+    
+    print '<table width="100%"><tr><td width="50%" valign="top">';
 
 
-
-  print '<table width="100%"><tr><td width="50%" valign="top">';
-
-  /*
-   * Documents
-   */
-  if ($propal->brouillon == 1)
-    {
-      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-      print '<input type="hidden" name="action" value="setpdfmodel">';
-    }
-  print_titre($langs->trans('Documents'));
-
-  print '<table class="border" width="100%">';
-  $propref = sanitize_string($propal->ref);
-  $file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
-  $relativepath = $propref.'/'.$propref.'.pdf';
-
-  $var=true;
-
-  if (file_exists($file))
-    {
-      print '<tr '.$bc[$var].'><td>'.$langs->trans('Propal').' PDF</td>';
-      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
-      print '<td align="right">'.filesize($file). ' bytes</td>';
-      print '<td align="right">'.strftime('%d %B %Y %H:%M:%S',filemtime($file)).'</td></tr>';
-    }
-
-  if ($propal->brouillon == 1 && $user->rights->propale->creer)
-    {
-      print '<tr '.$bc[$var].'><td>Modèle</td><td align="right">';
-      $html = new Form($db);
-      $modelpdf = new Propal_Model_pdf($db);
-      $html->select_array('modelpdf',$modelpdf->liste_array(),$propal->modelpdf);
-      print '</td><td colspan="2"><input type="submit" value="'.$langs->trans('Save').'">';
-      print '</td></tr>';
-    }
-  print "</table>\n";
-
-  if ($propal->brouillon == 1)
-    {
-      print '</form>';
-    }
+    /*
+     * Documents générés
+     */
+    $filename=sanitize_string($propal->ref);
+    $filedir=$conf->propal->dir_output . "/" . sanitize_string($propal->ref);
+    $urlsource=$_SERVER["PHP_SELF"]."?propalid=".$propal->id;
+    $genallowed=$user->rights->propale->creer;
+    $delallowed=$user->rights->propale->supprimer;
+    
+    $var=true;
+    
+    print "<br>\n";
+    $form->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
 
 
   /*

@@ -453,30 +453,21 @@ if ($_GET["propalid"])
 
   print '<table width="100%"><tr><td width="50%" valign="top">';
 
-  /*
-   * Documents
-   */
+    /*
+     * Documents générés
+     */
+    $filename=sanitize_string($propal->ref);
+    $filedir=$conf->propal->dir_output . "/" . sanitize_string($propal->ref);
+    $urlsource=$_SERVER["PHP_SELF"]."?propalid=".$propal->id;
+    $genallowed=0;
+    $delallowed=0;
+    
+    $var=true;
+    
+    print "<br>\n";
+    $form->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed);
+    
 
-  print_titre($langs->trans('Documents'));
-
-  print '<table class="border" width="100%">';
-  $propref = sanitize_string($propal->ref);
-  $file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
-  $relativepath = $propref.'/'.$propref.'.pdf';
-
-  $var=true;
-
-  if (file_exists($file))
-    {
-      print '<tr '.$bc[$var].'><td>'.$langs->trans('Propal').' PDF</td>';
-      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
-      print '<td align="right">'.filesize($file). ' bytes</td>';
-      print '<td align="right">'.strftime('%d %B %Y %H:%M:%S',filemtime($file)).'</td></tr>';
-    }
-
-  print "</table>\n";
-
-	
   /*
    * Commandes rattachées
    */

@@ -104,11 +104,12 @@ if ($_GET["id"] > 0)
             $h++;
         }
 
-        dolibarr_fiche_head($head, $hselected, $soc->nom." / ".$langs->trans("Order")." : $commande->ref");
+        dolibarr_fiche_head($head, $hselected, $langs->trans("Order").": $commande->ref");
+
         /*
-        * Confirmation de la validation
-        *
-        */
+         * Confirmation de la validation
+         *
+         */
         if ($_GET["action"] == 'cloture')
         {
             $html->form_confirm("commande.php?id=".$_GET["id"],"Clôturer la commande","Etes-vous sûr de vouloir clôturer cette commande ?","confirm_cloture");
@@ -143,13 +144,14 @@ if ($_GET["id"] > 0)
             print '<tr><td colspan="3">'.nl2br($commande->note)."</td></tr>";
         }
 
-        print '</table><br />';
+        print '</table>';
+
 
         /*
-        * Lignes de commandes
-        *
-        */
-        echo '<table class="liste" width="100%">';
+         * Lignes de commandes
+         *
+         */
+        echo '<br><table class="liste" width="100%">';
 
         $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
         $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as l ";
@@ -233,7 +235,6 @@ if ($_GET["id"] > 0)
             if (! $num)
             {
                 print $langs->trans("None").'<br>';
-                print '<br>';
             }
             
         }
@@ -248,7 +249,6 @@ if ($_GET["id"] > 0)
         */
         if ($reste_a_livrer_total > 0 && $commande->brouillon == 0)
         {
-
             print '<form method="post" action="fiche.php">';
             print '<input type="hidden" name="action" value="create">';
             print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
