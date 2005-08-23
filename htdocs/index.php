@@ -211,6 +211,25 @@ if ($conf->service->enabled && $user->rights->produit->lire)
     }
 }
 
+// Nbre de lignes telephoniques suivies
+if ($conf->telephonie->enabled && $user->rights->telephonie->ligne->lire_restreint)
+{
+  include_once(DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
+  $board=new LigneTel($db);
+  $board->load_state_board($user);
+  
+  foreach($board->nb as $key=>$val)
+    {
+      $var=!$var;
+      print '<tr '.$bc[$var].'><td width="16">&nbsp;</td>';
+      print '<td>Lignes téléphoniques suivies</td>';
+      print '<td align="right"><a href="'.DOL_URL_ROOT.'/telephonie/ligne/">';
+      print $val;
+      print '</a></td>';
+      print '</tr>';
+    }
+}
+
 print '</table>';
 
 
