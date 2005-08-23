@@ -104,7 +104,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $posindice=8;
-            $sql = "SELECT MAX(0+SUBSTR(ref,$posindice))";
+            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."propal";
             $sql.= " WHERE ref like '${pryymm}%'";
             $resql=$db->query($sql);

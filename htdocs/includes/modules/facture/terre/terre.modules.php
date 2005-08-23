@@ -101,7 +101,7 @@ class mod_facture_terre extends ModeleNumRefFactures
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $posindice=8;
-            $sql = "SELECT MAX(0+SUBSTR(facnumber,$posindice))";
+            $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE facnumber like '${fayymm}%'";
             $resql=$db->query($sql);
