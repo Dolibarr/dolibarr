@@ -743,7 +743,6 @@ class Facture
                         if ($this->db->num_rows())
                         {
                             $obj = $this->db->fetch_object();
-			    print_r($obj);
                             $cdr_nbjour = $obj->nbjour;
                             $cdr_fdm = $obj->fdm;
                         }
