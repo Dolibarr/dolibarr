@@ -734,10 +734,14 @@ class pdf_propale_azur extends ModelePDFPropales
         {
             $ligne.=($ligne?" - ":"").$langs->trans("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
         }
-        $footy-=3;
-        $pdf->SetY(-$footy);
-        $pdf->MultiCell(200, 2, $ligne , 0, 'C');
 
+        if ($ligne)
+        {
+            $footy-=3;
+            $pdf->SetxY(8,-$footy);
+            $pdf->MultiCell(200, 2, $ligne , 0, 'C');
+        }
+        
         $pdf->SetXY(-20,-$footy);
         $pdf->MultiCell(10, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
     }
