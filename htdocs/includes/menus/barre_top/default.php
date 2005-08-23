@@ -162,7 +162,7 @@ class MenuTop {
         }
         
         // Entrée projets
-        if ($conf->projet->enabled)
+        if ($conf->projet->enabled && $user->rights->projet->lire)
         {
 	  $langs->load("projects");
 	  
