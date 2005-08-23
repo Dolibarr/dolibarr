@@ -41,6 +41,9 @@ function llxHeader($head = "", $title="") {
     $menu->add(DOL_URL_ROOT."/telephonie/simulation/fiche.php", "Simulation");
 
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
+  if ($user->rights->telephonie->ligne->creer)
+    $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/new.php", "Nouveau client");
+
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/my.php", "Mes clients");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/liste.php", "Liste");
 
