@@ -48,6 +48,8 @@ function llxHeader($head = "", $title="") {
 
 
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
+  if ($user->rights->telephonie->ligne->creer)
+    $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/new.php", "Nouveau client");
 
   $menu->add(DOL_URL_ROOT."/telephonie/contrat/", "Contrats");
 
