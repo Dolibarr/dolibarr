@@ -28,6 +28,8 @@
 
 require("../main.inc.php");
 
+$user->getrights('user');
+
 function llxHeader($head = "", $title = "")
 {
   global $user,$langs;
@@ -41,8 +43,11 @@ function llxHeader($head = "", $title = "")
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("Users"));
-  
-  $menu->add_submenu(DOL_URL_ROOT."/user/", $langs->trans("List"));
+
+  if ($user->rights->user->user->lire || $user->admin)
+    {  
+      $menu->add_submenu(DOL_URL_ROOT."/user/", $langs->trans("List"));
+    }
 
   if($user->admin)
     {
@@ -51,7 +56,10 @@ function llxHeader($head = "", $title = "")
 
   $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("Groups"));
 
-  $menu->add_submenu(DOL_URL_ROOT."/user/group/", $langs->trans("List"));
+  if ($user->rights->user->user->lire || $user->admin)
+    {  
+      $menu->add_submenu(DOL_URL_ROOT."/user/group/", $langs->trans("List"));
+    }
 
   if($user->admin)
     {

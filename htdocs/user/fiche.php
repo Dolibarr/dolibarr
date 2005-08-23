@@ -32,6 +32,14 @@
 
 require("./pre.inc.php");
 
+if ($user->id <> $_GET["id"])
+{
+  if (! $user->rights->user->user->lire && !$user->admin)
+    {
+      accessforbidden();
+    }
+}
+
 $langs->load("users");
 $langs->load("companies");
 

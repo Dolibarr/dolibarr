@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,8 @@
 */
 
 require("./pre.inc.php");
+
+if (! $user->rights->user->user->lire && !$user->admin) accessforbidden();
 
 $langs->load("users");
 
