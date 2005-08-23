@@ -826,5 +826,32 @@ class LigneTel {
     return 0;
   }
 
+  /**
+   *      \brief      Charge indicateurs this->nb de tableau de bord
+   *      \return     int         <0 si ko, >0 si ok
+   */
+  function load_state_board($user)
+  {
+    $this->nb=array();
+    
+    $sql = "SELECT count(rowid) as nb";
+    $sql.= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne ";
+    $sql.= " WHERE fk_commercial_sign = ".$user->id;
+    $resql=$this->db->query($sql);
+    if ($resql)
+      {
+	while ($obj=$this->db->fetch_object($resql))
+	  {
+	    $this->nb["sign"] = $obj->nb;
+	  }
+	return 1;
+      }
+    else 
+      {
+	dolibarr_print_error($this->db);
+	$this->error=$this->db->error();
+	return -1;
+      }    
+  }  
 }
 ?>
