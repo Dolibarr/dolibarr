@@ -40,7 +40,6 @@ $langs->load('propal');
 $langs->load("bills");
 
 
-require_once(DOL_DOCUMENT_ROOT.'/comm/propal_model_pdf.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 if ($conf->projet->enabled) {
 	require_once(DOL_DOCUMENT_ROOT."/project.class.php");
