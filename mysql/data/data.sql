@@ -137,6 +137,7 @@ insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON',     
 insert into llx_const (name, value, type, visible) values ('PROPALE_ADDON_PDF',   'azur','chaine',0);
 insert into llx_const (name, value, type, visible) values ('COMMANDE_ADDON',      'mod_commande_ivoire','chaine',0);
 insert into llx_const (name, value, type, visible) values ('EXPEDITION_ADDON_PDF','rouget','chaine',0);
+insert into llx_const (name, value, type, visible) values ('FICHEINTER_ADDON_PDF','soleil','chaine',0);
 insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON',       'terre','chaine',0);
 insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON_PDF',   'crabe','chaine',0);
 
