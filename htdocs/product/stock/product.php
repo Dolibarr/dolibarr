@@ -195,7 +195,7 @@ if ($_GET["id"])
         if ($product->type == 0 && $conf->stock->enabled)
         {
             print '<tr><td><a 
-href=".DOL_URL_ROOT."/product/stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
+href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
             if ($product->no_stock)
             {
                 print "<td>Pas de définition de stock pour ce produit";
