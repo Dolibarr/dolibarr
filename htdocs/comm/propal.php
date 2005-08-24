@@ -46,6 +46,7 @@ require_once('../propal.class.php');
 require_once('../actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 
+$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
 $year=isset($_GET["year"])?$_GET["year"]:"";
 $month=isset($_GET["month"])?$_GET["month"]:"";
@@ -63,6 +64,7 @@ if ($user->societe_id > 0)
 $NBLINES=4;
 
 $form=new Form($db);
+
 
 /******************************************************************************/
 /*                     Actions                                                */
@@ -139,103 +141,103 @@ if ($_POST['action'] == 'setstatut' && $user->rights->propale->cloturer)
  */
 if ($_POST['action'] == 'send')
 {
-  $langs->load('mails');
-  $propal= new Propal($db);
-  if ( $propal->fetch($_POST['propalid']) )
+    $langs->load('mails');
+    $propal= new Propal($db);
+    if ( $propal->fetch($_POST['propalid']) )
     {
-      $propalref = sanitize_string($propal->ref);
-      $file = $conf->propal->dir_output . '/' . $propalref . '/' . $propalref . '.pdf';
-      if (is_readable($file))
-	{
-	  $soc = new Societe($db, $propal->socidp);
-	  if ($_POST['sendto'])
-	    {
-	      // Le destinataire a été fourni via le champ libre
-	      $sendto = $_POST['sendto'];
-	      $sendtoid = 0;
-	    }
-	  elseif ($_POST['receiver'])
-	    {
-	      // Le destinataire a été fourni via la liste déroulante
-	      $sendto = $soc->contact_get_email($_POST['receiver']);
-	      $sendtoid = $_POST['receiver'];
-	    }
+        $propalref = sanitize_string($propal->ref);
+        $file = $conf->propal->dir_output . '/' . $propalref . '/' . $propalref . '.pdf';
+        if (is_readable($file))
+        {
+            $soc = new Societe($db, $propal->socidp);
+            if ($_POST['sendto'])
+            {
+                // Le destinataire a été fourni via le champ libre
+                $sendto = $_POST['sendto'];
+                $sendtoid = 0;
+            }
+            elseif ($_POST['receiver'])
+            {
+                // Le destinataire a été fourni via la liste déroulante
+                $sendto = $soc->contact_get_email($_POST['receiver']);
+                $sendtoid = $_POST['receiver'];
+            }
 
-	  if (strlen($sendto))
-	    {
-	      $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
-	      $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
-	      $message = $_POST['message'];
-	      if ($_POST['action'] == 'send')
-		{
-		  $subject = $langs->trans('Propal').' '.$propal->ref;
-		  $actiontypeid=3;
-		  $actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
-		  if ($message)
-		    {
-		      $actionmsg.='Texte utilisé dans le corps du message:<br>';
-		      $actionmsg.=$message;
-		    }
-		  $actionmsg2='Envoi Propal par mail';
-		}
-
-	      $filepath[0] = $file;
-	      $filename[0] = $propal->ref.'.pdf';
-	      $mimetype[0] = 'application/pdf';
-	      if ($_FILES['addedfile']['tmp_name']) 
-		{
-		  $filepath[1] = $_FILES['addedfile']['tmp_name'];
-		  $filename[1] = $_FILES['addedfile']['name'];
-		  $mimetype[1] = $_FILES['addedfile']['type'];
+            if (strlen($sendto))
+            {
+                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+                $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
+                $message = $_POST['message'];
+                if ($_POST['action'] == 'send')
+                {
+                    $subject = $langs->trans('Propal').' '.$propal->ref;
+                    $actiontypeid=3;
+                    $actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
+                    if ($message)
+                    {
+                        $actionmsg.='Texte utilisé dans le corps du message:<br>';
+                        $actionmsg.=$message;
+                    }
+                    $actionmsg2='Envoi Propal par mail';
                 }
-	      // Envoi de la facture
-	      $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc);
-	      if ($mailfile->sendfile())
-		{
-		  $msg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
-		  // Insertion action
-		  include_once('../contact.class.php');
-		  $actioncomm = new ActionComm($db);
-		  $actioncomm->type_id     = $actiontypeid;
-		  $actioncomm->label       = $actionmsg2;
-		  $actioncomm->note        = $actionmsg;
-		  $actioncomm->date        = time();  // L'action est faite maintenant
-		  $actioncomm->percent     = 100;
-		  $actioncomm->contact     = new Contact($db,$sendtoid);
-		  $actioncomm->societe     = new Societe($db,$propal->socidp);
-		  $actioncomm->user        = $user;   // User qui a fait l'action
-		  $actioncomm->propalrowid = $propal->id;
-		  $ret=$actioncomm->add($user);       // User qui saisi l'action
-		  if ($ret < 0)
-		    {
-		      dolibarr_print_error($db);
-		    }
-		  else
-		    {
-		      // Renvoie sur la fiche
-		      Header('Location: propal.php?propalid='.$propal->id.'&msg='.urlencode($msg));
-		      exit;
-		    }
-		}
-	      else
-		{
-		  $msg='<div class="error">'.$langs->trans('ErrorFailedToSendMail',$from,$sendto).' - '.$actioncomm->error.'</div>';
-		}
-	    }
-	  else
-	    {
-	      $msg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-	      dolibarr_syslog('Le mail du destinataire est vide');
-	    }
-	}
-      else
-	{
-	  dolibarr_syslog('Impossible de lire :'.$file);
-	}
+
+                $filepath[0] = $file;
+                $filename[0] = $propal->ref.'.pdf';
+                $mimetype[0] = 'application/pdf';
+                if ($_FILES['addedfile']['tmp_name'])
+                {
+                    $filepath[1] = $_FILES['addedfile']['tmp_name'];
+                    $filename[1] = $_FILES['addedfile']['name'];
+                    $mimetype[1] = $_FILES['addedfile']['type'];
+                }
+                // Envoi de la facture
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc);
+                if ($mailfile->sendfile())
+                {
+                    $msg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+                    // Insertion action
+                    include_once('../contact.class.php');
+                    $actioncomm = new ActionComm($db);
+                    $actioncomm->type_id     = $actiontypeid;
+                    $actioncomm->label       = $actionmsg2;
+                    $actioncomm->note        = $actionmsg;
+                    $actioncomm->date        = time();  // L'action est faite maintenant
+                    $actioncomm->percent     = 100;
+                    $actioncomm->contact     = new Contact($db,$sendtoid);
+                    $actioncomm->societe     = new Societe($db,$propal->socidp);
+                    $actioncomm->user        = $user;   // User qui a fait l'action
+                    $actioncomm->propalrowid = $propal->id;
+                    $ret=$actioncomm->add($user);       // User qui saisi l'action
+                    if ($ret < 0)
+                    {
+                        dolibarr_print_error($db);
+                    }
+                    else
+                    {
+                        // Renvoie sur la fiche
+                        Header('Location: propal.php?propalid='.$propal->id.'&msg='.urlencode($msg));
+                        exit;
+                    }
+                }
+                else
+                {
+                    $msg='<div class="error">'.$langs->trans('ErrorFailedToSendMail',$from,$sendto).' - '.$actioncomm->error.'</div>';
+                }
+            }
+            else
+            {
+                $msg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
+                dolibarr_syslog('Le mail du destinataire est vide');
+            }
+        }
+        else
+        {
+            dolibarr_syslog('Impossible de lire :'.$file);
+        }
     }
-  else
+    else
     {
-      dolibarr_syslog('Impossible de lire les données de la propale. Le fichier propal n\'a peut-être pas été généré.');
+        dolibarr_syslog('Impossible de lire les données de la propale. Le fichier propal n\'a peut-être pas été généré.');
     }
 }
 
@@ -1044,6 +1046,7 @@ else
 
   $sql = 'SELECT s.nom, s.idp, s.client, p.rowid as propalid, p.price, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
   $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
+  if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
   $sql.= ' WHERE p.fk_soc = s.idp';
 
   if (!empty($_GET['search_ref']))
@@ -1058,6 +1061,7 @@ else
     {
       $sql .= " AND p.price='".$_GET['search_montant_ht']."'";
     }
+  if ($sall) $sql.= " AND (s.nom like '%".$sall."%' OR p.note like '%".$sall."%' OR pd.description like '%".$sall."%')";
   if ($_GET['socidp'])
     { 
       $sql .= ' AND s.idp = '.$_GET['socidp']; 
