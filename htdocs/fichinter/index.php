@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -78,8 +77,8 @@ if ($result)
   print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&amp;socid=$socid",'',$sortfield);
-  print '<td align="center">'.$langs->trans("Description").'</td>';
-  print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","","&amp;socid=$socid",'',$sortfield);
+  print '<td>'.$langs->trans("Description").'</td>';
+  print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","","&amp;socid=$socid",'align="center"',$sortfield);
   print '<td align="right">'.$langs->trans("Duration").'</td>';
   print '<td align="center">'.$langs->trans("Status").'</td>';
   print "</tr>\n";
@@ -94,7 +93,7 @@ if ($result)
 
       print '<td><a href="index.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom."</a></td>\n";
       print '<td>'.nl2br($objp->note).'</td>';
-      print "<td>".dolibarr_print_date($objp->dp)."</td>\n";
+      print '<td align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
       print '<td align="right">'.sprintf("%.1f",$objp->duree).'</td>';
       print '<td align="center">'.$objp->fk_statut.'</td>';
 
