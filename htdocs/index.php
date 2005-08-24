@@ -18,9 +18,7 @@
  *
  * $Id$
  * $Source$
- *
  */
-
 
 /**
         \file       htdocs/index.php
@@ -88,150 +86,102 @@ print '</table>';
 
 
 /*
- * Dolibarr State Board
+ * Tableau de bord d'états Dolibarr (statistiques)
+ * Non affiché pour un utilisateur externe
  */
-print '<br>';
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("DolibarrStateBoard").'</td>';
-print '<td align="right">&nbsp;</td>';
-print '</tr>';
-
-$var=true;
-
-// Nbre de sociétés clients/prospects
-if ($conf->societe->enabled  && $user->rights->societe->lire )
+if ($user->societe_id == 0)
 {
-  include_once("./client.class.php");
-  $board=new Client($db);
-  $board->load_state_board();
-  
-  foreach($board->nb as $key=>$val)
+    print '<br>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="2">'.$langs->trans("DolibarrStateBoard").'</td>';
+    print '<td align="right">&nbsp;</td>';
+    print '</tr>';
+    
+    $var=true;
+    
+    // Condition à vérifier pour affichage de chaque ligne du tableau de bord
+    $conditions=array($conf->societe->enabled && $user->rights->societe->lire,
+                      $conf->societe->enabled && $user->rights->societe->lire,
+                      $conf->fournisseur->enabled && $user->rights->fournisseur->lire,
+                      $conf->adherent->enabled && $user->rights->adherent->lire,
+                      $conf->produit->enabled && $user->rights->produit->lire,
+                      $conf->service->enabled && $user->rights->produit->lire,
+                      $conf->telephonie->enabled && $user->rights->telephonie->ligne->lire_restreint);
+    // Fichiers des classes qui contiennent la methode load_state_board pour chaque ligne
+    $includes=array(DOL_DOCUMENT_ROOT."/client.class.php",
+                    DOL_DOCUMENT_ROOT."/client.class.php",
+                    DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php",
+                    DOL_DOCUMENT_ROOT."/adherents/adherent.class.php",
+                    DOL_DOCUMENT_ROOT."/product.class.php",
+                    DOL_DOCUMENT_ROOT."/service.class.php",
+                    DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
+    // Nom des classes qui contiennent la methode load_state_board pour chaque ligne
+    $classes=array('Client',
+                   'Client',
+                   'Fournisseur',
+                   'Adherent',
+                   'Product',
+                   'Service',
+                   'LigneTel');
+    // Clé du tableau retourné par la methode laod_state_bord pour chaque ligne
+    $keys=array('customers',
+                'prospects',
+                'suppliers',
+                'members',
+                'products',
+                'services',
+                'sign');
+    // Icon des lignes du tableau de bord
+    $icons=array('company',
+                 'company',
+                 'company',
+                 'user',
+                 'product',
+                 'service',
+                 'phone');
+    // Titre des lignes du tableau de bord
+    $titres=array($langs->trans("Customers"),
+                  $langs->trans("Prospects"),
+                  $langs->trans("Suppliers"),
+                  $langs->trans("Members"),
+                  $langs->trans("Products"),
+                  $langs->trans("Services"),
+                  $langs->trans("Lignes de téléphonie suivis"));
+    // Liens des lignes du tableau de bord
+    $links=array(DOL_URL_ROOT.'/comm/clients.php',
+                 DOL_URL_ROOT.'/comm/prospect/prospects.php',
+                 DOL_URL_ROOT.'/fourn/liste.php',
+                 DOL_URL_ROOT.'/adherents/liste.php?statut=1&amp;mainmenu=members',
+                 DOL_URL_ROOT.'/product/liste.php?type=0&amp;mainmenu=products',
+                 DOL_URL_ROOT.'/product/liste.php?type=1&amp;mainmenu=products',
+                 DOL_URL_ROOT.'/telephonie/ligne/index.php');
+   
+    // Boucle et affiche chaque ligne du tableau
+    foreach ($keys as $key=>$val)
     {
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Customers"),"company").'</td>';
-      print '<td>';
-      if ($key == "customers") print $langs->trans("Customers");
-      if ($key == "prospects") print $langs->trans("Prospects");
-      print '</td>';
-      print '<td align="right">';
-      if ($key == "customers") print '<a href="'.DOL_URL_ROOT.'/comm/clients.php">';
-      if ($key == "prospects") print '<a href="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">';
-      print $val;
-      print '</a></td>';
-      print '</tr>';
+        if ($conditions[$key])
+        {
+            $classe=$classes[$key];
+            // Cherche dans cache si le load_state_board deja réalisé
+            if (! is_object($boardloaded[$classe]))
+            {
+                include_once($includes[$key]);
+                $board=new $classe($db);
+                $board->load_state_board($user);
+                $boardloaded[$classe]=$board;
+            }
+            else $board=$boardloaded[$classe];
+            $var=!$var;
+            print '<tr '.$bc[$var].'><td width="16">'.img_object($titres[$key],$icons[$key]).'</td>';
+            print '<td>'.$titres[$key].'</td>';
+            print '<td align="right"><a href="'.$links[$key].'">'.$board->nb[$val].'</a></td>';
+            print '</tr>';
+        }
     }
+
+    print '</table>';
 }
-
-// Nbre de sociétés fournisseurs
-if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
-{
-    include_once("./fourn/fournisseur.class.php");
-    $board=new Fournisseur($db);
-    $board->load_state_board();
-
-    foreach($board->nb as $key=>$val)
-    {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Suppliers"),"company").'</td>';
-        print '<td>';
-        if ($key == "suppliers") print $langs->trans("Suppliers");
-        print '</td>';
-        print '<td align="right">';
-        if ($key == "suppliers") print '<a href="'.DOL_URL_ROOT.'/fourn/liste.php">';
-        print $val;
-        print '</a></td>';
-        print '</tr>';
-    }
-}
-
-// Nbre d'adhérents
-if ($conf->adherent->enabled)
-{
-    include_once("./adherents/adherent.class.php");
-    $board=new Adherent($db);
-    $board->load_state_board();
-
-    foreach($board->nb as $key=>$val)
-    {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Adherent"),"user").'</td>';
-        print '<td>';
-        if ($key == "members") print $langs->trans("Adherents");
-        print '</td>';
-        print '<td align="right">';
-        if ($key == "members") print '<a href="'.DOL_URL_ROOT.'/adherents/liste.php?statut=1&amp;mainmenu=members">';
-        print $val;
-        print '</a></td>';
-        print '</tr>';
-    }
-}
-
-// Nbre de produits
-if ($conf->produit->enabled && $user->rights->produit->lire)
-{
-    //include_once("./product.class.php");
-    $board=new Product($db);
-    $board->load_state_board();
-
-    foreach($board->nb as $key=>$val)
-    {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Products"),"product").'</td>';
-        print '<td>';
-        if ($key == "products") print $langs->trans("Products");
-        print '</td>';
-        print '<td align="right">';
-        if ($key == "products") print '<a href="'.DOL_URL_ROOT.'/product/liste.php?type=0&amp;mainmenu=products">';
-        print $val;
-        print '</a></td>';
-        print '</tr>';
-    }
-}
-
-// Nbre de services
-if ($conf->service->enabled && $user->rights->produit->lire)
-{
-    include_once("./service.class.php");
-    $board=new Service($db);
-    $board->load_state_board();
-
-    foreach($board->nb as $key=>$val)
-    {
-        $var=!$var;
-        print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Services"),"service").'</td>';
-        print '<td>';
-        if ($key == "services") print $langs->trans("Services");
-        print '</td>';
-        print '<td align="right">';
-        if ($key == "services") print '<a href="'.DOL_URL_ROOT.'/product/liste.php?type=1&amp;mainmenu=products">';
-        print $val;
-        print '</a></td>';
-        print '</tr>';
-    }
-}
-
-// Nbre de lignes telephoniques suivies
-if ($conf->telephonie->enabled && $user->rights->telephonie->ligne->lire_restreint)
-{
-  include_once(DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
-  $board=new LigneTel($db);
-  $board->load_state_board($user);
-  
-  foreach($board->nb as $key=>$val)
-    {
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td width="16">&nbsp;</td>';
-      print '<td>Lignes téléphoniques suivies</td>';
-      print '<td align="right"><a href="'.DOL_URL_ROOT.'/telephonie/ligne/">';
-      print $val;
-      print '</a></td>';
-      print '</tr>';
-    }
-}
-
-print '</table>';
-
 
 print '</td><td width="65%" valign="top" class="notopnoleftnoright">';
 
