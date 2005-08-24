@@ -20,54 +20,59 @@
  *
  */
 
-/*!	\file htdocs/boutique/client/client.class.php
-		\brief Classe permettant de gèrer des clients de la boutique online
-		\author	Rodolphe Quiedeville
-		\version $Revision$
+/**
+        \file       htdocs/boutique/client/client.class.php
+		\brief      Classe permettant de gèrer des clients de la boutique online
+		\author	    Rodolphe Quiedeville
+		\version    $Revision$
 */
 
-/*! \class Client
-		\brief Classe permettant de gèrer des clients de la boutique online
+/** 
+        \class      Client
+		\brief      Classe permettant de gèrer des clients de la boutique online
 */
 
-class Client {
-  var $db ;
+class Client
+{
+    var $db ;
 
-  var $id ;
-  var $nom;
+    var $id ;
+    var $nom;
 
-  function Client($DB, $id=0) {
-    $this->db = $DB;
-    $this->id = $id ;
-  }
+    function Client($DB, $id=0)
+    {
+        $this->db = $DB;
+        $this->id = $id ;
+    }
 
-/*!
-		\brief fonction permettant de recupèrer les informations d'un clients de la boutique
-		\param id				id du client
-*/
+    /**
+            \brief  Fonction permettant de recupèrer les informations d'un clients de la boutique
+            \param  Id				id du client
+    */
 
-  function fetch ($id) {
-    
-    $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".OSC_DB_NAME.".customers WHERE customers_id = $id";
+    function fetch ($id)
+    {
 
-    $result = $this->db->query($sql) ;
+        $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".OSC_DB_NAME.".customers WHERE customers_id = $id";
 
-    if ( $result )
-      {
-	$result = $this->db->fetch_array();
+        $result = $this->db->query($sql) ;
 
-	$this->id      = $result["customers_id"];
-	$this->name    = stripslashes($result["customers_firstname"]) . " " . stripslashes($result["customers_lastname"]);
-	
-	$this->db->free();
-      }
-    else
-      {
-	print $this->db->error();
-      }
-    
-    return $result;
-  }
+        if ( $result )
+        {
+            $result = $this->db->fetch_array();
+
+            $this->id      = $result["customers_id"];
+            $this->name    = stripslashes($result["customers_firstname"]) . " " . stripslashes($result["customers_lastname"]);
+
+            $this->db->free();
+        }
+        else
+        {
+            print $this->db->error();
+        }
+
+        return $result;
+    }
 
 }
 ?>

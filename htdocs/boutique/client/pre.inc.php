@@ -19,10 +19,19 @@
  * $Source$
  *
  */
-require("../../main.inc.php");
-require("./client.class.php");
 
-function llxHeader($head = "", $urlp = "") {
+/**
+        \file       htdocs/boutique/client/pre.inc.php
+		\brief      Fichier gestionnaire du menu de gauche de l'espace boutique client
+		\version    $Revision$
+*/
+
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/client.class.php');
+
+
+function llxHeader($head = "", $urlp = "")
+{
   global $user, $conf;
 
   /*

@@ -21,8 +21,14 @@
  *
  */
 
+/**
+        \file       htdocs/dossier/client/fiche.php
+        \brief      Page des dossiers clients
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
-require_once DOL_DOCUMENT_ROOT.'/client.class.php';
+require_once(DOL_DOCUMENT_ROOT.'/client.class.php');
 
 $user->getrights("facture");
 
