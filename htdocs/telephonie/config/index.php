@@ -34,7 +34,7 @@ if (!$user->admin) accessforbidden();
 
 if ($_GET["action"] == "set")
 {
-  for ($i = 1 ; $i < 2 ; $i++)
+  for ($i = 1 ; $i < 3 ; $i++)
     {
       dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"], $type='chaine');
     }
@@ -150,6 +150,27 @@ print TELEPHONIE_GROUPE_COMMERCIAUX_ID.'</td><td>-';
 print '</td><td>TELEPHONIE_GROUPE_COMMERCIAUX_ID</td></tr>';
 
 /* ***************************************** */
+
+$form = new Form($db);
+print '<tr class="pair"><td>Fournisseur par défaut</td><td>';
+$ff = array();
+$sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
+$resql = $db->query($sql);
+if ($resql)
+{
+  while ($row = $db->fetch_row($resql))
+    {
+      $ff[$row[0]] = $row[1];
+    }
+  $db->free($resql);	
+}
+$form->select_array("value2",$ff,TELEPHONIE_FOURNISSEUR_DEFAUT_ID);
+
+print $ff[TELEPHONIE_FOURNISSEUR_DEFAUT_ID].'</td><td>-';
+print '</td><td>TELEPHONIE_FOURNISSEUR_DEFAUT_ID</td></tr>';
+print '<input type="hidden" name="nom2" value="TELEPHONIE_FOURNISSEUR_DEFAUT_ID">';
+
+
 
 print '</table>';
 print '</form>';
