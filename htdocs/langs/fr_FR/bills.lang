@@ -13,6 +13,7 @@ SupplierBills=Factures fournisseurs
 Payment=Paiement
 Payments=Paiements
 ReceivedPayments=Paiements reçus
+PaymentsAlreadyDone=Versements déjà effectués
 PaymentMode=Mode de paiement
 ClassifyPayed=Classer 'Payée'
 ClassifyCanceled=Classer 'Abandonnée'

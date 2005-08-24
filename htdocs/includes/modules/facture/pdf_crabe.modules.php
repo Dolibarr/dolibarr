@@ -382,7 +382,7 @@ class pdf_crabe extends ModelePDFFactures
 
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY ($tab3_posx, $tab3_top - 5);
-        $pdf->MultiCell(60, 5, "Versements déjà effectués", 0, 'L', 0);
+        $pdf->MultiCell(60, 5, $langs->trans("PaymentsAlreadyDone"), 0, 'L', 0);
 
         $pdf->Rect($tab3_posx, $tab3_top-1, $tab3_width, $tab3_height);
 

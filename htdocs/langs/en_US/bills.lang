@@ -13,6 +13,7 @@ SupplierBills=suppliers bills
 Payment=Payment
 Payments=Payments
 ReceivedPayments=Received payments
+PaymentsAlreadyDone=Payments already done
 PaymentMode=Payment mode
 ClassifyPayed=Classify 'Payed'
 ClassifyCanceled=Classify 'Abandonned'
