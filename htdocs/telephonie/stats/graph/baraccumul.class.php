@@ -114,7 +114,6 @@ class GraphBarAccumul extends DolibarrGraph {
 	      {
 		$b1plot = new BarPlot($this->datas[$j][$i]);
 		$b1plot->SetFillColor($this->datas_color[$j][$i]);
-
 		
 		$b1plot->SetLegend($this->legend[$j][$i]);
 		

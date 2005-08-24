@@ -48,105 +48,128 @@ class ProcessGraphLignes
 {
   var $ident;
   
-  function ProcessGraphLignes( $ident , $cpc)
+  function ProcessGraphLignes( $db)
   {
     global $conf;
 
     $this->ident = $ident;
     $this->cpc = $cpc;
-    $this->db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,1);
+
+    $this->db = $db;
+    $this->labels = array();
+    $this->nbminutes = array();
+    $this->nbcomm = array();
+    $this->duree_moyenne = array();
+    $this->vente = array();
+    $this->gain = array();
   }
   
-  function go()
+  function go($ligne)
   {
-    $min = $this->ident * $this->cpc;
-    $max = ($this->ident + 1 ) * $this->cpc;
+    dolibarr_syslog("Deb ligne ".$ligne);
 
-    dolibarr_syslog("Deb ligne ".$this->ident . " ($min - $max)");
+    $this->ligne = $ligne;
+    $this->GetDatas();
+
     $error = 0;
 
-    /*
-     * Lecture des lignes
-     *
-     */
-    $sql = "SELECT l.rowid";
-    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-    $sql .= " WHERE l.rowid >= ".$min;
-    $sql .= " AND l.rowid < ".$max;
-    $sql .= " ORDER BY l.rowid ASC";
+    /* Chiffre d'affaire */
+    
+    $img_root = DOL_DATA_ROOT."/graph/".substr($ligne,-1)."/telephonie/ligne/";
+
+    $file = $img_root . $ligne."/graphca.png";
+
+    $graphx = new GraphBar ($this->db, $file);
+    $graphx->ligne = $ligne;
+    $graphx->width = 360;
+    $graphx->titre = "Chiffre d'affaire (euros HT)";
+    $graphx->barcolor = "blue";
+    $graphx->show_console = 0 ;
+    $graphx->GraphDraw($file, $this->vente, $this->labels);
+
+
+    /* Gain */
+
+    $file = $img_root . $ligne."/graphgain.png";
+    
+    $graphx = new GraphBar ($this->db, $file);
+    $graphx->ligne = $ligne;
+    $graphx->width = 360;
+    $graphx->titre = "Gain (euros HT)";
+    $graphx->barcolor = "green";
+    $graphx->show_console = 0 ;
+    $graphx->GraphDraw($file, $this->gain, $this->labels);
+
+    /* Duree moyenne des appels */
+    
+    $file = $img_root . $ligne."/graphappelsdureemoyenne.png";
+    
+    $graphx = new GraphBar ($this->db, $file);
+    $graphx->ligne = $ligne;
+    $graphx->width = 360;
+    $graphx->titre = "Durée moyenne";
+    $graphx->barcolor = "orange";
+    $graphx->show_console = 0 ;
+    $graphx->GraphDraw($file, $this->duree_moyenne, $this->labels);
+
+    /* Nb de communication */
+    
+    $file = $img_root . $ligne."/nb-comm-mensuel.png";
+
+    $graphx = new GraphBar ($this->db, $file);
+    $graphx->ligne = $ligne;
+    $graphx->width = 360;
+    $graphx->titre = "Nombre de communications";
+    $graphx->show_console = 0 ;
+    $graphx->GraphDraw($file, $this->nbcomm, $this->labels);
+
+    /* Nb de minutes */
+    
+    $file = $img_root . $ligne."/nb-minutes-mensuel.png";
+    
+    $graphx = new GraphBar ($this->db, $file);
+    $graphx->ligne = $ligne;
+    $graphx->width = 360;
+    $graphx->show_console = 0 ;
+    $graphx->titre = "Nombre de minutes";
+    $graphx->barcolor = "bisque2";
+    $graphx->GraphDraw($file, $this->nbminutes, $this->labels);    
+  }
+
+
+  Function GetDatas()
+  {
+    $sql = "SELECT date_format(td.date,'%m'), sum(duree), count(*), sum(cout_vente), sum(fourn_montant)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
+    $sql .= " WHERE td.fk_ligne = ".$this->ligne;
+    $sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
     
     if ($this->db->query($sql))
       {
-	$lignes = array();
-	
 	$num = $this->db->num_rows();
 	$i = 0;
-	
+		
 	while ($i < $num)
 	  {
-	    $obj = $this->db->fetch_object();	
+	    $row = $this->db->fetch_row();	
 	    
-	    $lignes[$i] = $obj->rowid;
+	    $this->labels[$i] = $row[0];
+
+	    $this->nbminutes[$i] = ceil($row[1] / 60);
+	    $this->nbcomm[$i] = $row[2];
+	    $this->duree_moyenne[$i] = ($this->nbminutes[$i] / $this->nbcomm[$i]);
+	    $this->vente[$i] = $row[3];
+	    $this->gain[$i] = ($row[3] - $row[4]);
 	    
 	    $i++;
-	  }
+	  }	
+	$this->db->free();
       }
-
-    if (sizeof($lignes))
+    else 
       {
-	foreach ($lignes as $ligne)
-	  {
-	    /* Chiffre d'affaire */
-	    
-	    $img_root = DOL_DATA_ROOT."/graph/".substr($ligne,-1)."/telephonie/ligne/";
-
-	    $file = $img_root . $ligne."/graphca.png";
-	    $graphca = new GraphCa($this->db, $file);
-	    $graphca->ligne = $ligne;
-	    $graphca->GraphDraw();
-
-	    /* Gain */
-
-	    $file = $img_root . $ligne."/graphgain.png";
-
-	    $graphgain = new GraphGain ($this->db, $file);
-	    $graphgain->ligne = $ligne;
-	    $graphgain->show_console = 0 ;
-	    $graphgain->GraphDraw();
-
-	    /* Duree moyenne des appels */
-
-	    $file = $img_root . $ligne."/graphappelsdureemoyenne.png";
-	    
-	    $graphduree = new GraphAppelsDureeMoyenne ($this->db, $file);
-	    $graphduree->ligne = $ligne;
-	    $graphduree->width = 360;
-	    $graphduree->show_console = 0 ;
-	    $graphduree->Graph();
-	    
-	    /* Nb de communication */
-
-	    $file = $img_root . $ligne."/nb-comm-mensuel.png";
-	    
-	    $graphx = new GraphCommNbMensuel ($this->db, $file);
-	    $graphx->ligne = $ligne;
-	    $graphx->width = 360;
-	    $graphx->show_console = 0 ;
-	    $graphx->Graph();
-
-	    /* Nb de minutes */
-
-	    $file = $img_root . $ligne."/nb-minutes-mensuel.png";
-	    
-	    $graphx = new GraphCommNbMinutes ($this->db, $file);
-	    $graphx->ligne = $ligne;
-	    $graphx->width = 360;
-	    $graphx->show_console = 0 ;
-	    $graphx->Graph();
-	  }       
+	dolibarr_syslog("Error");
       }
-
-    dolibarr_syslog("Fin ligne ".$this->ident);
   }
+
 }
 ?>

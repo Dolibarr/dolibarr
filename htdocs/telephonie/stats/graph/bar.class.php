@@ -71,7 +71,7 @@ class GraphBar extends DolibarrGraph {
     
 	$graph->xaxis->scale->SetGrace(20);
 
-	$LabelAngle = 45;
+	$LabelAngle = 0;
 
 	if ($this->LabelAngle <> $LabelAngle && strlen($this->LabelAngle) > 0)
 	  $LabelAngle = $this->LabelAngle;
@@ -84,7 +84,7 @@ class GraphBar extends DolibarrGraph {
       
 	$graph->title->Set($this->titre);
     
-	$graph->title->SetFont(FF_VERDANA,FS_NORMAL);
+	//$graph->title->SetFont(FF_VERDANA,FS_NORMAL);
 
     
 	$graph->xaxis->SetTickLabels($labels);   

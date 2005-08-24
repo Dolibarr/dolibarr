@@ -21,8 +21,8 @@
  */
 require("./pre.inc.php");
 
-if (!$user->rights->telephonie->lire)
-  accessforbidden();
+if (!$user->rights->telephonie->lire) accessforbidden();
+if (!$user->rights->telephonie->stats->lire) accessforbidden();
 
 llxHeader('','Telephonie - Statistiques - Clients');
 

@@ -25,6 +25,7 @@ $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 
 if (!$user->rights->telephonie->lire) accessforbidden();
+if (!$user->rights->telephonie->stats->lire) accessforbidden();
 
 llxHeader('','Telephonie - Statistiques');
 
