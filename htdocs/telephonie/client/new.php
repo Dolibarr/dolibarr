@@ -56,6 +56,11 @@ if ($_POST["action"] == 'add')
   $verif = "ok";
   $mesg = '';
 
+
+  $contact->name         = $_POST["cnom"];
+  $contact->firstname    = $_POST["cprenom"];
+  $contact->email        = strtolower($_POST["cmail"]);
+
   if (strlen(trim($_POST["nom"])) == 0)
     {
       $mesg = "Nom de société incorrect";
@@ -116,13 +121,20 @@ if ($_POST["action"] == 'add')
 
   if (strlen(trim($_POST["cmail"])) > 0 && $verif == 'ok')
     {
-      if (!ValidEmail(trim($_POST["cmail"]))  && $verif == 'ok')
+
+      if (strlen(trim($_POST["cnom"])) == 0 && $verif == 'ok')
+	{
+	  $mesg = "Nom de contact manquant";
+	  $verif = "nok";
+	}
+
+      if (!ValidEmail(trim($contact->email))  && $verif == 'ok')
 	{
 	  $mesg = "Email invalide";
 	  $verif = "nok";
 	}
 
-      if (!check_mail(trim($_POST["cmail"]))  && $verif == 'ok')
+      if (!check_mail(trim($contact->email))  && $verif == 'ok')
 	{
 	  $mesg = "Email invalide (domaine invalide)";
 	  $verif = "nok";
@@ -158,17 +170,16 @@ if ($_POST["action"] == 'add')
       
       if ($result == 0)
 	{
-	  
+
 	}
       else
 	{
+	  $mesg = nl2br($soc->error);
 	  $error++;
 	}
     }
 
-  $contact->name         = $_POST["cnom"];
-  $contact->firstname    = $_POST["cprenom"];
-  $contact->email        = $_POST["cmail"];
+
   
   if (!$error && $verif == "ok")
     {
@@ -348,8 +359,8 @@ if ($user->rights->telephonie->ligne->creer)
     print "<legend>Contact</legend>\n";
     print '<table class="noborder" width="100%">';
     
-    print '<tr><td width="20%">'.$langs->trans('Name').'</td><td><input type="text" size="30" '.$focus.' name="cnom" value="'.$contact->nom.'"></td></tr>';
-    print '<tr><td width="20%">'.$langs->trans('Firstname').'</td><td><input type="text" size="20" '.$focus.' name="cprenom" value="'.$contact->prenom.'"></td></tr>';
+    print '<tr><td width="20%">'.$langs->trans('Name').'</td><td><input type="text" size="30" '.$focus.' name="cnom" value="'.$contact->name.'"></td></tr>';
+    print '<tr><td width="20%">'.$langs->trans('Firstname').'</td><td><input type="text" size="20" '.$focus.' name="cprenom" value="'.$contact->firstname.'"></td></tr>';
     print '<tr><td>'.$langs->trans('Mail').'</td><td><input type="text" size="40" '.$focus.' name="cmail" value="'.$contact->email.'"></td></tr>';
     
     print "</table>\n";
@@ -410,7 +421,10 @@ if ($user->rights->telephonie->ligne->creer)
 	  }
 	$db->free($resql);	
       }
-    $form->select_array("fournisseur",$ff,$ligne->fournisseur);
+
+    $def =$ligne->fournisseur?$ligne->fournisseur:TELEPHONIE_FOURNISSEUR_DEFAUT_ID;
+
+    $form->select_array("fournisseur",$ff,$def);
     print '</td></tr>';
     
     print '<tr><td width="20%">Fournisseur précédent</td><td colspan="3">';
