@@ -46,6 +46,7 @@ $offset = $limit * $page ;
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_contract=isset($_GET["search_contract"])?$_GET["search_contract"]:$_POST["search_contract"];
+$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 $socid=$_GET["socid"];
 
@@ -72,6 +73,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat
 $sql.= " WHERE c.fk_soc = s.idp ";
 if ($search_nom)      $sql.= " AND s.nom like '%".$search_nom."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".$search_contract."'";
+if ($sall)            $sql.= " AND (s.nom like '%".$sall."%' OR cd.label like '%".$sall."%' OR cd.description like '%".$sall."%')";
 if ($socid > 0)       $sql.= " AND s.idp = $socid";
 $sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.idp";
 $sql.= " ORDER BY $sortfield $sortorder";

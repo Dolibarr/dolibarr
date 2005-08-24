@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -105,14 +104,19 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 /*
  * Recherche Contrat
  */
-if ($conf->contrat->enabled) {
+if ($conf->contrat->enabled)
+{
     $var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
-	print '<tr '.$bc[$var].'><td nowrap>';
-	print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_contract" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "</table></form><br>\n";
+	print '<tr '.$bc[$var].'>';
+	print '<td nowrap>'.$langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_contract" size="18"></td>';
+	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+	print '</tr>';
+	print "</table></form>\n";
+	print "<br>";
 }
 
 /*
