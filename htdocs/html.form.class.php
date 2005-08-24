@@ -1377,7 +1377,6 @@ class Form
             print '<form action="'.$urlsource.'" method="post">';
             print '<input type="hidden" name="action" value="setpdfmodel">';
         }
-        
         print_titre($langs->trans("Documents"));
         print '<table class="border" width="100%">';
 
@@ -1406,30 +1405,32 @@ class Form
             print '</td><td align="center" colspan="2"><input class="button" type="submit" value="'.$texte.'">';
             print '</td></tr>';
         }
-
+                    
+        $i=0;
         if (is_dir($filedir))
         {
             $handle=opendir($filedir);
             while (($file = readdir($handle))!==false)
             {
-                if (is_readable($filedir."/".$file) && eregi('\.pdf$',$file))
-                {
-                    print "<tr $bc[$var]>";
-                    if (eregi('\-detail\.pdf',$file)) print '<td nowrap>PDF Détaillé</td>';
-                    else print '<td nowrap>PDF</td>';
-                    
-                    $relativepathdetail = "${filename}/$file";
-    
-                    print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepathdetail).'">'.$file.'</a></td>';
-                    print '<td align="right">'.filesize($filedir."/".$file). ' bytes</td>';
-                    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file)).'</td>';
-                    print '</tr>';
-                }
+                // Si fichier non lisible ou non .pdf, on passe au suivant
+                if (! is_readable($filedir."/".$file) || ! eregi('\.pdf$',$file)) continue;
+
+                print "<tr $bc[$var]>";
+                if (eregi('\-detail\.pdf',$file)) print '<td nowrap>PDF Détaillé</td>';
+                else print '<td nowrap>PDF</td>';
+                
+                $relativepathdetail = "${filename}/$file";
+
+                print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepathdetail).'">'.$file.'</a></td>';
+                print '<td align="right">'.filesize($filedir."/".$file). ' bytes</td>';
+                print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file)).'</td>';
+                print '</tr>';
+
+                $i++;
             }
         }
         
         print "</table>\n";    
-
         if ($genallowed)
         {
             print '</form>';
