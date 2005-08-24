@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,7 +195,7 @@ if ($_GET["id"])
         if ($product->type == 0 && $conf->stock->enabled)
         {
             print '<tr><td><a 
-href="DOL_URL_ROOT."/product/stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
+href=".DOL_URL_ROOT."/product/stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
             if ($product->no_stock)
             {
                 print "<td>Pas de définition de stock pour ce produit";
