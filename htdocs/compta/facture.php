@@ -38,7 +38,6 @@ accessforbidden();
 
 $langs->load("bills");
 
-
 require_once "../facture.class.php";
 require_once "../paiement.class.php";
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT."/project.class.php");
@@ -48,6 +47,7 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande
 require_once DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php";
 
 
+$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
 
@@ -467,7 +467,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 if ($_GET["action"] == 'pdf')
 {
     // Generation de la facture définie dans /includes/modules/facture/modules_facture.php
-    // Génère également le fichier meta dans le m$eme répertoire (pour faciliter les recherches et indexation)
+    // Génère également le fichier meta dans le meme répertoire (pour faciliter les recherches et indexation)
     facture_pdf_create($db, $_GET["facid"]);
 }
 
@@ -860,15 +860,15 @@ if ($_GET["action"] == 'create')
     }
 }
 else
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode fiche                                                                  */
-/*                                                                             */
-/* *************************************************************************** */
 {
-
     if ($_GET["facid"] > 0)
     {
+        /* *************************************************************************** */
+        /*                                                                             */
+        /* Fiche en mode visu                                                          */
+        /*                                                                             */
+        /* *************************************************************************** */
+
         if ($msg) print "$msg<br>";
 
         $fac = New Facture($db);
@@ -1606,15 +1606,17 @@ else
 
             $sql = "SELECT s.nom,s.idp,f.facnumber,f.increment,f.total,f.total_ttc,";
             $sql.= $db->pdate("f.datef")." as df, ".$db->pdate("f.date_lim_reglement")." as datelimite, ";
-            $sql.= " f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
+            $sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
+            if (! $sall) $sql.= " ,sum(pf.amount) as am";
+
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ",".MAIN_DB_PREFIX."facture as f";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
-            $sql.= " WHERE f.fk_soc = s.idp";
+            if (! $sall) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
+            if ($sall) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as fd ON f.rowid=fd.fk_facture ";
 
+            $sql.= " WHERE f.fk_soc = s.idp";
             if ($socidp) $sql .= " AND s.idp = $socidp";
             if ($month > 0) $sql .= " AND date_format(f.datef, '%m') = $month";
-
             if ($_GET["filtre"])
             {
                 $filtrearr = split(",", $_GET["filtre"]);
@@ -1624,41 +1626,37 @@ else
                     $sql .= " AND " . $filt[0] . " = " . $filt[1];
                 }
             }
-
             if ($_GET["search_ref"])
             {
                 $sql .= " AND f.facnumber like '%".$_GET["search_ref"]."%'";
             }
-
             if ($_GET["search_societe"])
             {
                 $sql .= " AND s.nom like '%".$_GET["search_societe"]."%'";
             }
-
             if ($_GET["search_montant_ht"])
             {
                 $sql .= " AND f.total = '".$_GET["search_montant_ht"]."'";
             }
-
             if ($_GET["search_montant_ttc"])
             {
                 $sql .= " AND f.total_ttc = '".$_GET["search_montant_ttc"]."'";
             }
-
             if ($year > 0) $sql .= " AND date_format(f.datef, '%Y') = $year";
-
-            if (strlen($_POST["sf_ref"]) > 0)
+            if ($_POST["sf_ref"])
             {
                 $sql .= " AND f.facnumber like '%".$_POST["sf_ref"] . "%'";
+            }
+            if ($sall)
+            {
+                $sql .= " AND (f.facnumber like '%".$sall."%' OR f.note like '%".$sall."%' OR fd.description like '%".$sall."%')";
             }
 
             $sql .= " GROUP BY f.facnumber";
 
             $sql .= " ORDER BY ";
             $listfield=split(',',$sortfield);
-            foreach ($listfield as $key => $value) {
-                $sql.="$listfield[$key] $sortorder,";
-            }
+            foreach ($listfield as $key => $value) $sql.="$listfield[$key] $sortorder,";
             $sql .= " f.rowid DESC ";
 
             $sql .= $db->plimit($limit+1,$offset);
@@ -1790,7 +1788,8 @@ else
                         $i++;
                     }
 
-                    if (($offset + $num) <= $limit) {
+                    if (($offset + $num) <= $limit)
+                    {
                         // Print total
                         print '<tr class="liste_total">';
                         print '<td class="liste_total" colspan="3" align="left">'.$langs->trans("Total").'</td>';

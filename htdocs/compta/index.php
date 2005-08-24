@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**   
@@ -91,8 +90,10 @@ if ($conf->facture->enabled) {
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
     print '<td colspan="3">'.$langs->trans("SearchABill").'</td></tr>';
-    print "<tr $bc[0]><td>";
-    print $langs->trans("Ref").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print "<tr $bc[0]><td>".$langs->trans("Ref").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>';
+    print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print "<tr $bc[0]><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+    print '</tr>';
     print "</table></form><br>";
 }
 
