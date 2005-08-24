@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -55,9 +54,12 @@ print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="18" name="sref"></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="18" name="sref"></td>';
+print '<td rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Label").':</td><td><input class="flat" type="text" size="18" name="snom"></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print $langs->trans("Other").':</td><td><input class="flat" type="text" size="18" name="sall"></td>';
+//print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
+print '</tr>';
 print "</table></form><br>";
 
 

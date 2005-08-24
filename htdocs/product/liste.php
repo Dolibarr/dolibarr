@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -40,23 +39,24 @@ if (!$user->rights->produit->lire)
 
 $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
 $snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
+$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
 $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = $_GET["page"];
-
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-  
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
+$page = $_GET["page"];
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
 
-if (isset($_POST["button_removefilter_x"])) {
+if (isset($_POST["button_removefilter_x"]))
+{
     $sref="";
     $snom="";
 }
+
 
 /*
  * Mode Liste
@@ -70,40 +70,35 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 
 if ($_GET["fourn_id"] > 0)
 {
-  $fourn_id = $_GET["fourn_id"];
-  $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
+    $fourn_id = $_GET["fourn_id"];
+    $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
-
-if ($_POST["mode"] == 'search')
+$sql .= " WHERE 1=1";
+if ($sall)
 {
-  $sql .= " WHERE p.ref like '%".$_POST["sall"]."%'";
-  $sql .= " OR p.label like '%".$_POST["sall"]."%'";
+    $sql .= " AND (p.label like '%".$sall."%' OR p.description like '%".$sall."%' OR p.note like '%".$sall."%')";
+}
+if (strlen($_GET["type"]) || strlen($_POST["type"]))
+{
+    $sql .= " AND p.fk_product_type = ".(strlen($_GET["type"])?$_GET["type"]:$_POST["type"]);
+}
+if ($sref)
+{
+    $sql .= " AND p.ref like '%".$sref."%'";
+}
+if ($snom)
+{
+    $sql .= " AND p.label like '%".$snom."%'";
+}
+if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
+{
+    $sql .= " AND p.envente = ".$_GET["envente"];
 }
 else
 {
-  $sql .= " WHERE 1=1";
-  if (strlen($_GET["type"]) || strlen($_POST["type"]))
+    if ($fourn_id == 0)
     {
-      $sql .= " AND p.fk_product_type = ".(strlen($_GET["type"])?$_GET["type"]:$_POST["type"]);
-    }
-  if ($sref)
-    {
-      $sql .= " AND p.ref like '%".$sref."%'";
-    }
-  if ($snom)
-    {
-      $sql .= " AND p.label like '%".$snom."%'";
-    }
-  if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
-    {
-      $sql .= " AND p.envente = ".$_GET["envente"];
-    }
-  else
-    {
-      if ($fourn_id == 0)
-	{
-	  $sql .= " AND p.envente = 1";
-	}
+        $sql .= " AND p.envente = 1";
     }
 }
 
