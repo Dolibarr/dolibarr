@@ -178,14 +178,27 @@ if ($_POST["action"] == 'add')
 	  $error++;
 	}
     }
-
-
   
   if (!$error && $verif == "ok")
     {
       $contact->socid = $soc->id;
       
       if ( $contact->create($user) > 0)
+	{
+	  
+	}
+      else
+	{
+	  $error++;
+	}
+    }
+
+
+  if ((strlen(trim($_POST["rib_banque"])) + strlen(trim($_POST["rib_guichet"])) + strlen(trim($_POST["rib_compte"])) + strlen(trim($_POST["rib_cle"])))<> 0 && $verif == 'ok' && !$error)
+    {
+      $rib->soc_id = $soc->id;
+
+      if ( $rib->update($user) > 0)
 	{
 	  
 	}
