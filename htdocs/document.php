@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005 Simon Tosser  <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,6 +143,17 @@ if ($modulepart)
       //}
       $original_file=$conf->commercial->dir_output.'/'.$original_file;
     }
+    
+  // Wrapping pour les produits et services
+  if ($modulepart == 'produit')
+    {
+      $user->getrights('produit');
+      //if ($user->rights->commercial->lire)      // Ce droit n'existe pas encore
+      //{
+      $accessallowed=1;
+      //}
+      $original_file=$conf->produit->dir_output.'/'.$original_file;
+    }    
   
 }
 
