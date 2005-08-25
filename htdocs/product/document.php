@@ -22,7 +22,6 @@
  * $Id$
  * $Source$
  */
-
 /**
         \file       htdocs/product/document.php
         \ingroup    product
