@@ -206,12 +206,12 @@ if ( $resql )
 {
   while ($row = $db->fetch_row( $resql))
     {
-      $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
       print '<td align="center">'.$row[2].'</td>';
       print "</tr>\n";    
       $total += $row[2];
+      $var=!$var;
     }
   
   $db->free($resql);
@@ -247,20 +247,14 @@ $var=true;
 $resql = $db->query($sql);
 if ( $resql )
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-
-  while ($i < $num)
+  while ($row = $db->fetch_row($resql))
     {
-      $row = $db->fetch_row( $resql);
-      $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
       print '<td align="center">'.$row[2].'</td>';
       print "</tr>\n";    
-      $i++;
-    }
-  
+      $var=!$var;
+    }  
   $db->free($resql);
 }
 else
@@ -290,20 +284,14 @@ $var=true;
 $resql = $db->query($sql);
 if ( $resql )
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-
-  while ($i < $num)
+  while ($row = $db->fetch_row($resql))
     {
-      $row = $db->fetch_row( $resql);
-      $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
       print '<td align="center">'.$row[2].'</td>';
       print "</tr>\n";    
-      $i++;
-    }
-  
+      $var=!$var;
+    }  
   $db->free($resql);
 }
 else
