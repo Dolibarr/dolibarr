@@ -1649,7 +1649,7 @@ else
             }
             if ($sall)
             {
-                $sql .= " AND (f.facnumber like '%".$sall."%' OR f.note like '%".$sall."%' OR fd.description like '%".$sall."%')";
+                $sql .= " AND (s.nom like '%".$sall."%' OR f.facnumber like '%".$sall."%' OR f.note like '%".$sall."%' OR fd.description like '%".$sall."%')";
             }
 
             $sql .= " GROUP BY f.facnumber";
