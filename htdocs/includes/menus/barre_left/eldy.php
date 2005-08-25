@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -458,7 +457,8 @@ class MenuLeft {
             /*
              * Menu FOURNISSEURS
              */
-            if ($mainmenu == 'suppliers') {
+            if ($mainmenu == 'suppliers')
+            {
 
               $langs->load("suppliers");
         
@@ -501,7 +501,8 @@ class MenuLeft {
             /*
              * Menu OUTILS
              */
-            if ($mainmenu == 'tools') {
+            if ($mainmenu == 'tools')
+            {
 
                 if ($conf->mailing->enabled) 
                 {
@@ -510,6 +511,7 @@ class MenuLeft {
 
                   $newmenu->add(DOL_URL_ROOT."/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"), 0, $user->rights->mailing->lire);
                   $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?leftmenu=mailing&action=create", $langs->trans("NewMailing"), 1, $user->rights->mailing->creer);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/liste.php?leftmenu=mailing", $langs->trans("List"), 1, $user->rights->mailing->lire);
                 }
 
                 if ($conf->projet->enabled) 
@@ -517,6 +519,7 @@ class MenuLeft {
                   $langs->load("projects");
                   $newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire);
                   $newmenu->add_submenu(DOL_URL_ROOT."/comm/clients.php?leftmenu=projects", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/projet/liste.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire);
                 }
 
                 $langs->load("other");
@@ -528,7 +531,8 @@ class MenuLeft {
             /*
              * Menu MEMBERS
              */
-            if ($mainmenu == 'members') {
+            if ($mainmenu == 'members')
+            {
 
                 if ($conf->adherent->enabled)
                 {
