@@ -34,8 +34,8 @@ if (!$user->rights->commande->lire)
 accessforbidden();
 
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-require("../propal.class.php");
-require("../product/stock/entrepot.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 // Sécurité accés client
 if ($user->societe_id > 0)

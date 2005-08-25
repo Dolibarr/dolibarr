@@ -29,8 +29,8 @@
 */
 
 require("./pre.inc.php");
-require_once("../propal.class.php");
-require_once("../facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 $langs->load("projects");

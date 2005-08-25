@@ -30,7 +30,7 @@
 */
 
 require('./pre.inc.php');
-require('../../propal.class.php');
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 $langs->load('propal');
 

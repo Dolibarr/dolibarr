@@ -56,7 +56,7 @@ if ($user->societe_id > 0)
 
 if ($_GET["facid"])
 {
-    require_once DOL_DOCUMENT_ROOT.'/facture.class.php';
+    require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
     
     $fac = new Facture($db);
     $fac->fetch($_GET["facid"]);

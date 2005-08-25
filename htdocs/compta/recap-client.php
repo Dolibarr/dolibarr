@@ -29,7 +29,7 @@
 */
 
 require("./pre.inc.php");
-require("../facture.class.php");
+include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");

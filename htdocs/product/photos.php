@@ -30,8 +30,8 @@
 */
 
 require("./pre.inc.php");
-require("../propal.class.php");
-require("../facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $langs->load("products");
 $langs->load("bills");

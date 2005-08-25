@@ -36,9 +36,8 @@ if (!$user->rights->propale->lire)
 
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-require_once("../propal.class.php");
-//require_once("../actioncomm.class.php");
 
 // Sécurité accés client
 if ($user->societe_id > 0)

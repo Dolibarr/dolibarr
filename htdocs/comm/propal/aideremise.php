@@ -21,7 +21,8 @@
  *
  */
 
-/*! \file htdocs/comm/propal/aideremise.php
+/** 
+        \file       htdocs/comm/propal/aideremise.php
         \ingroup    propale
         \brief      Page de simulation des remises
 */
@@ -32,15 +33,15 @@ $user->getrights('propale');
 if (!$user->rights->propale->lire)
   accessforbidden();
 
-require("../../propal.class.php");
-/*
- * Sécurité accés client
- */
+include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
 
 /******************************************************************************/
 /*                     Actions                                                */

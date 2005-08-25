@@ -36,8 +36,8 @@ $langs->load("bills");
 if (!$user->rights->expedition->lire)
   accessforbidden();
 
-require("../propal.class.php");
-require("../product/stock/entrepot.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 // Sécurité accés client
 if ($user->societe_id > 0) 

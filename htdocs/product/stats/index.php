@@ -21,13 +21,15 @@
  *
  */
 
-/*! \file htdocs/product/stats/index.php
+/** 
+        \file       htdocs/product/stats/index.php
         \brief      Page accueil statistiques produits
         \version    $Revision$
 */
 
 require("./pre.inc.php");
-require("../../propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+
 
 llxHeader();
 

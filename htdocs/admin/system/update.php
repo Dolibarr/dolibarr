@@ -34,8 +34,8 @@ if (!$user->admin)
   accessforbidden();
 
 
-require("../../facture.class.php");
-require("../../propal.class.php");
+include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 
 // On appelle pas llxHeader dans le cas de cette page car llxHeader inclus le main.inc.php qui inclut le test

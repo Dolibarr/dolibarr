@@ -31,7 +31,7 @@
 
 require("./pre.inc.php");
 require("../../paiement.class.php");
-require("../../facture.class.php");
+include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $user->getrights('facture');
 

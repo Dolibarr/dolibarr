@@ -530,7 +530,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 	$sql .= " ORDER BY p.rowid DESC";
 	$sql .= $db->plimit($NBMAX, 0);
 	
-	include_once("../propal.class.php");
+    include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 	$propalstatic=new Propal($db);
 	
 	if ( $db->query($sql) )

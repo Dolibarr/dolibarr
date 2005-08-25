@@ -36,7 +36,7 @@ $user->getrights('propale');
 if (!$user->rights->propale->lire)
 	accessforbidden();
 
-require('../../propal.class.php');
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 
 /*

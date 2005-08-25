@@ -25,9 +25,15 @@
  *
  */
 
+/**
+	    \file       htdocs/dev/generate-facture.php
+		\brief      Page de génération de données aléatoires pour les factures
+		\version    $Revision$
+*/
+
 require ("../htdocs/master.inc.php");
-require_once ("../htdocs/facture.class.php");
-require_once ("../htdocs/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
 /*
  * Parametre

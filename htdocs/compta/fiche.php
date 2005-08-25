@@ -31,7 +31,7 @@
 require("./pre.inc.php");
 require("../contact.class.php");
 require("../actioncomm.class.php");
-require("../facture.class.php");
+include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");

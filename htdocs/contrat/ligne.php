@@ -29,8 +29,8 @@
 
 require("./pre.inc.php");
 if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-if ($conf->propal->enabled)  require_once("../propal.class.php");
-if ($conf->contrat->enabled) require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("contracts");
 $langs->load("orders");

@@ -38,13 +38,13 @@ accessforbidden();
 
 $langs->load("bills");
 
-require_once "../facture.class.php";
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once "../paiement.class.php";
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-if ($conf->propal->enabled)   require_once("../propal.class.php");
+if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->contrat->enabled)  require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-require_once DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php";
+require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];

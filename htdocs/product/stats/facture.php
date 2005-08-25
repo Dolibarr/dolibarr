@@ -30,7 +30,7 @@
 
 
 require("./pre.inc.php");
-require_once("../../facture.class.php");
+include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $langs->load("bills");
 

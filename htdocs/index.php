@@ -251,7 +251,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 // Nbre propales ouvertes (expirées)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-    include_once("./propal.class.php");
+    include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
     $board=new Propal($db);
     $board->load_board("opened");
 
@@ -274,7 +274,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 // Nbre propales fermées signées (à facturer)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-    include_once("./propal.class.php");
+    include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
     $board=new Propal($db);
     $board->load_board("signed");
 
@@ -372,7 +372,7 @@ if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->fac
 // Nbre factures clients (à payer)
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
-    include_once("./facture.class.php");
+    include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
     $board=new Facture($db);
     $board->load_board();
 
