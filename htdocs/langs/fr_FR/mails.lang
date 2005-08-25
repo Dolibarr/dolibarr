@@ -15,6 +15,7 @@ MailTopic=Sujet du mail
 MailText=Message
 MailFile=Joindre un fichier
 MailMessage=Message
+ListOfEMailings=Liste des mailings
 NewMailing=Nouveau mailing
 EditMailing=Éditer mailing
 DeleteMailing=Supprimer mailing
