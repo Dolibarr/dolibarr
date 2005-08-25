@@ -299,7 +299,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
     $langs->load("contracts");
     
-    include_once("./contrat/contrat.class.php");
+    include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
     $board=new Contrat($db);
     $board->load_board("inactives");
 
@@ -324,7 +324,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
     $langs->load("contracts");
 
-    include_once("./contrat/contrat.class.php");
+    include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
     $board=new Contrat($db);
     $board->load_board("expired");
 
@@ -422,7 +422,7 @@ if ($conf->adherent->enabled && $user->rights->adherent->lire)
 {
     $langs->load("members");
 
-    include_once("./adherents/adherent.class.php");
+    include_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
     $board=new Adherent($db);
     $board->load_board();
 

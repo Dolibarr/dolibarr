@@ -30,7 +30,7 @@
 
 require("./pre.inc.php");
 
-require("./adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 
 
 llxHeader();
