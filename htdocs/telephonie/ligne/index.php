@@ -44,12 +44,12 @@ if ($user->societe_id > 0)
  *
  *
  */
-
+print '<form method="GET" action="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php">';
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td width="30%" valign="top">';
 
-print '<form method="GET" action="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php">';
+
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Recherche ligne</td>';
 print "</tr>\n";
@@ -149,12 +149,8 @@ if ($user->rights->telephonie->fournisseur->lire)
       print $db->error() . ' ' . $sql;
     }
 }
-/*
- * Concurrents
- *
- */
 
-print '<br />';
+print '</td><td valign="top" width="70%">';
 
 $sql = "SELECT distinct c.nom as concurrent, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_concurrents as c,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
@@ -194,13 +190,8 @@ else
   print $db->error() . ' ' . $sql;
 }
 
-
-print '</td><td valign="top" width="70%" rowspan="3">';
-
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/lignes.actives.png" alt="Lignes Actives" title="Lignes Actives"><br /><br />'."\n";
-print '</td></tr>';
-
-print '</table>';
+print "</td></tr>\n";
+print "</table>\n</form>\n";
 
 $db->close();
 
