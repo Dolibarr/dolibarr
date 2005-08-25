@@ -29,6 +29,9 @@
  
 require("./pre.inc.php");
 
+if (!$user->rights->commercial->main->lire)
+  accessforbidden();
+
 if ($conf->contrat->enabled)
   require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 	  
