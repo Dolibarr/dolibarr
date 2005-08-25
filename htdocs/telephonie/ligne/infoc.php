@@ -127,22 +127,6 @@ if ($_GET["id"] or $_GET["numero"])
 	  $client_facture = new Societe($db);
 	  $client_facture->fetch($ligne->client_facture_id);
 	  
-	  print '<tr><td width="20%">Client Facturé</td><td><a href="'.DOL_URL_ROOT.'/comm/infoc.php?socid=';
-	  print $client->id.'">';
-	  print $client_facture->nom.'</a>';
-	  
-	  print '</td><td>';
-	  
-	  if ($ligne->mode_paiement == 'pre')
-		{
-		  print 'RIB : '.$client_facture->display_rib();
-		}
-	  else
-	    {
-	      print 'Paiement par virement';
-	    }
-	  
-	  print '</td></tr>';
 	  
 	  print '<tr><td width="20%">Remise LMN</td><td colspan="2">'.$ligne->remise.'&nbsp;%</td></tr>';
 
