@@ -152,6 +152,85 @@ if ($user->rights->telephonie->fournisseur->lire)
 
 print '</td><td valign="top" width="70%">';
 
+
+
+$sql = "SELECT s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= " ,  ".MAIN_DB_PREFIX."societe as sf";
+$sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
+$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
+$sql .= " AND l.fk_soc_facture = sf.idp";
+
+if ($user->rights->telephonie->ligne->lire_restreint)
+{
+  $sql .= " AND l.fk_commercial_suiv = ".$user->id;
+}
+
+$sql .= " ORDER BY rowid DESC LIMIT 10";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+
+  print"\n<!-- debut table -->\n";
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre">';
+  print '<td>10 Dernières lignes</td>';
+  print '<td>Client (Agence/Filiale)</td>';
+  print '<td align="center">Statut</td>';
+
+  if ($user->rights->telephonie->fournisseur->lire)
+    print '<td>Fournisseur</td>';
+
+  print "</tr>\n";
+
+  $var=True;
+
+  $ligne = new LigneTel($db);
+
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object();	
+      $var=!$var;
+
+      print "<tr $bc[$var]><td>";
+      print '<img src="./graph'.$obj->statut.'.png">&nbsp;';
+      
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">';
+      print img_file();      
+      print '</a>&nbsp;';
+
+      print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
+
+      $nom = stripslashes($obj->nom);
+      if (strlen(stripslashes($obj->nom)) > 20)
+	{
+	  $nom = substr(stripslashes($obj->nom),0,20)."...";
+	}
+
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.$nom.'</a></td>';
+
+      print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
+
+      if ($user->rights->telephonie->fournisseur->lire)
+	print "<td>".$obj->fournisseur."</td>\n";
+      print "</tr>\n";
+      $i++;
+    }
+  print "</table><br />";
+  $db->free();
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
+
+
+
 $sql = "SELECT distinct c.nom as concurrent, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_concurrents as c,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " WHERE l.fk_concurrent = c.rowid";
