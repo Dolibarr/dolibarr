@@ -17,13 +17,18 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**
+        \file       htdocs/public/adherents/new.php
+        \ingroup    adherent
+        \brief      Page liste des nouveaux adherents
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
-//require($GLOBALS["DOCUMENT_ROOT"]."/cotisation.class.php");
-//require($GLOBALS["DOCUMENT_ROOT"]."/paiement.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 
 $adho = new AdherentOptions($db);

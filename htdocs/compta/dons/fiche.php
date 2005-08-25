@@ -30,7 +30,7 @@
 
 require_once("./pre.inc.php");
 require_once("../../don.class.php");
-require_once("../../paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
 $langs->load("donations");
 $langs->load("bills");

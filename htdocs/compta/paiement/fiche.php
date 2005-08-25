@@ -28,10 +28,9 @@
 		\version    $Revision$
 */
 
-
 require("./pre.inc.php");
-require("../../paiement.class.php");
-include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $user->getrights('facture');
 

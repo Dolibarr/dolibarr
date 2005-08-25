@@ -47,7 +47,7 @@ if ($action == 'update')
 
 	  // test some values
 	  // test si le login existe deja
-	  $sql = "SELECT rowid,login FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login';";
+	  $sql = "SELECT rowid,login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$user->login."';";
 	  $result = $db->query($sql);
 	  if ($result) {
 	    $num = $db->num_rows();
@@ -131,7 +131,8 @@ if ($action == 'update')
 
 llxHeader();
 
-if (isset($user->login)){
+if (isset($user->login))
+{
 
   $adh = new Adherent($db);
   $adh->login = $user->login;
@@ -140,26 +141,12 @@ if (isset($user->login)){
   // fetch optionals attibutes
   $adho->fetch_optionals();
 
-  $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
-  $sql .= " FROM societe as s, ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
-  $sql .= " AND f.rowid = $facid";
-
-  $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-    if ($num) {
-      $obj = $db->fetch_object( 0);
-
-      $total = $obj->total;
-    }
-  }
-
   $adht = new AdherentType($db);
 
   print_titre("Edition de la fiche adhérent de $adh->prenom $adh->nom");
 
   if ($errmsg != ''){
-    print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+    print '<table width="100%">';
     
     print '<th>Erreur dans le formulaire</th>';
     print "<tr><td class=\"delete\"><b>$errmsg</b></td></tr>\n";
@@ -167,7 +154,7 @@ if (isset($user->login)){
     print '</table>';
   }
 
-  print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
+  print '<table class="border" width="100%">';
 
   print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type.'</td>';
   print '<td valign="top" width="50%">'.$langs->trans("Comments").'</td></tr>';
@@ -203,7 +190,7 @@ if (isset($user->login)){
   print "<hr>";
 
   print "<form action=\"priv_edit.php\" method=\"post\">";
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  print '<table class="border" width="100%">';
   
   print "<input type=\"hidden\" name=\"action\" value=\"update\">";
   print "<input type=\"hidden\" name=\"rowid\" value=\"$adh->id\">";
@@ -265,5 +252,5 @@ if (isset($user->login)){
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

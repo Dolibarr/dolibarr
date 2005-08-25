@@ -29,7 +29,7 @@
 */
 
 include_once("./pre.inc.php");
-include_once("../paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 

@@ -29,7 +29,7 @@
 */
 
 require("./pre.inc.php");
-require("../../paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
 $langs->load("bills");
 $langs->load("companies");
