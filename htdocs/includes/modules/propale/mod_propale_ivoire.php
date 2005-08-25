@@ -62,7 +62,7 @@ class mod_propale_ivoire extends ModeleNumRefPropales
     {
         global $db;
     
-        $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal";
+        $sql = "SELECT count(*) FROM  ".MAIN_DB_PREFIX."propal";
     
         if ( $db->query($sql) )
         {
@@ -83,7 +83,8 @@ class mod_propale_ivoire extends ModeleNumRefPropales
      */
     function propale_get_num($objsoc=0)
     { 
-        return $this->propale_get_num();
+//        return $this->propale_get_num();
+	  return $this->getNextValue();
     }
 }
 
