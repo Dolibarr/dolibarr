@@ -41,16 +41,8 @@ $socid=$_GET["socid"];
 /*
  * Creation répertoire si n'existe pas
  */
-if (! is_dir($conf->societe->dir_output)) { mkdir($conf->societe->dir_output); }
 $upload_dir = $conf->societe->dir_output . "/" . $socid ;
-if (! is_dir($upload_dir))
-{
-    umask(0);
-    if (! mkdir($upload_dir, 0755))
-    {
-        print $langs->trans("ErrorCanNotCreateDir",$upload_dir);
-    }
-}
+if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
 
 /*
@@ -150,7 +142,11 @@ if ($socid > 0)
 
         $totalsize=0;
         $filearray=array();
-        $handle=opendir($upload_dir);
+
+        $errorlevel=error_reporting();
+		error_reporting(0);
+		$handle=opendir($upload_dir);
+		error_reporting($errorlevel);
         if ($handle)
         {
             $i=0;
@@ -167,7 +163,7 @@ if ($socid > 0)
         }
         else
         {
-            print $langs->trans("ErrorCanNotReadDir",$upload_dir);
+//            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
         }
         
         print '<table class="border"width="100%">';
