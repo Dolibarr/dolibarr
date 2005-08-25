@@ -160,68 +160,68 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '</td></tr>';
 
     // ProfID1
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
-    if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+    if ($langs->transcountry("ProfId1",$code_pays) != '-')
     {
-        if ($langs->transcountry("ProfId1",$code_pays) != '-')
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
+        if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
         {
             print '<input name="siren" size="20" value="' . $conf->global->MAIN_INFO_SIREN . '">';
         }
+        else
+        {
+            print $countrynotdefined;
+        }
+        print '</td></tr>';
     }
-    else
-    {
-        print $countrynotdefined;
-    }
-    print '</td></tr>';
 
     // ProfId2
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
-    if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+    if ($langs->transcountry("ProfId2",$code_pays) != '-')
     {
-        if ($langs->transcountry("ProfId2",$code_pays) != '-')
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
+        if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
         {
             print '<input name="siret" size="20" value="' . $conf->global->MAIN_INFO_SIRET . '">';
         }
+        else
+        {
+            print $countrynotdefined;
+        }
+        print '</td></tr>';
     }
-    else
-    {
-        print $countrynotdefined;
-    }
-    print '</td></tr>';
 
     // ProfId3
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
-    if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+    if ($langs->transcountry("ProfId3",$code_pays) != '-')
     {
-        if ($langs->transcountry("ProfId3",$code_pays) != '-')
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
+        if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
         {
             print '<input name="ape" size="20" value="' . $conf->global->MAIN_INFO_APE . '">';
         }
+        else
+        {
+            print $countrynotdefined;
+        }
+        print '</td></tr>';
     }
-    else
-    {
-        print $countrynotdefined;
-    }
-    print '</td></tr>';
 
     // ProfId4
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId4",$code_pays).'</td><td>';
-    if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
+    if ($langs->transcountry("ProfId4",$code_pays) != '-')
     {
-        if ($langs->transcountry("ProfId4",$code_pays) != '-')
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId4",$code_pays).'</td><td>';
+        if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
         {
             print '<input name="rcs" size="20" value="' . $conf->global->MAIN_INFO_RCS . '">';
         }
+        else
+        {
+            print $countrynotdefined;
+        }
+        print '</td></tr>';
     }
-    else
-    {
-        print $countrynotdefined;
-    }
-    print '</td></tr>';
 
     // TVA Intra
     $var=!$var;
