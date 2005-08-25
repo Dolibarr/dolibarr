@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,24 +21,19 @@
  */
 
 /**
-	    \file       htdocs/comm/index.php
-        \ingroup    commercial
-		\brief      Page acceuil de la zone commercial
-		\version    $Revision$
+   \file       htdocs/comm/index.php
+   \ingroup    commercial
+   \brief      Page acceuil de la zone commercial
+   \version    $Revision$
 */
  
 require("./pre.inc.php");
-if ($conf->contrat->enabled) {
-	  require_once("../contrat/contrat.class.php");
-}
+
+if ($conf->contrat->enabled)
+  require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 	  
 $langs->load("commercial");
 $langs->load("orders");
-
-$user->getrights('propale');
-$user->getrights('fichinter');
-$user->getrights('commande');
-$user->getrights('projet');
 
 // Securité accès client
 $socidp='';
@@ -50,7 +45,6 @@ if ($user->societe_id > 0)
 $max=5;
 
 llxHeader();
-
 
 /*
  * Actions
@@ -91,18 +85,19 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 /*
  * Recherche Propal
  */
-if ($conf->propal->enabled && $user->rights->propale->lire) {
-    $var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
-	print '<tr '.$bc[$var].'>';
-	print '<td nowrap>'.$langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-	print '</tr>';
-	print "</table></form>\n";
-	print "<br>";
+if ($conf->propal->enabled && $user->rights->propale->lire)
+{
+  $var=false;
+  print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
+  print '<tr '.$bc[$var].'>';
+  print '<td nowrap>'.$langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td>';
+  print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+  print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+  print '</tr>';
+  print "</table></form>\n";
+  print "<br />\n";
 }
 
 /*
@@ -110,17 +105,17 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
  */
 if ($conf->contrat->enabled)
 {
-    $var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
-	print '<tr '.$bc[$var].'>';
-	print '<td nowrap>'.$langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_contract" size="18"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-	print '</tr>';
-	print "</table></form>\n";
-	print "<br>";
+  $var=false;
+  print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
+  print '<tr '.$bc[$var].'>';
+  print '<td nowrap>'.$langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_contract" size="18"></td>';
+  print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+  print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+  print '</tr>';
+  print "</table></form>\n";
+  print "<br>";
 }
 
 /*
@@ -128,39 +123,40 @@ if ($conf->contrat->enabled)
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-    $sql = "SELECT p.rowid, p.ref, p.price, s.idp, s.nom";
-    $sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
-    $sql .= " WHERE p.fk_statut = 0 and p.fk_soc = s.idp";
-
-    $resql=$db->query($sql);
-    if ($resql)
+  $sql = "SELECT p.rowid, p.ref, p.price, s.idp, s.nom";
+  $sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
+  $sql .= " WHERE p.fk_statut = 0 and p.fk_soc = s.idp";
+  
+  $resql=$db->query($sql);
+  if ($resql)
     {
-        $total = 0;
-        $num = $db->num_rows($resql);
-        if ($num > 0)
+      $total = 0;
+      $num = $db->num_rows($resql);
+      if ($num > 0)
         {
-            print '<table class="noborder" width="100%">';
-            print "<tr class=\"liste_titre\">";
-            print "<td colspan=\"3\">".$langs->trans("ProposalsDraft")."</td></tr>";
-
-            $i = 0;
-            $var=true;
-            while ($i < $num)
+	  print '<table class="noborder" width="100%">';
+	  print "<tr class=\"liste_titre\">";
+	  print "<td colspan=\"3\">".$langs->trans("ProposalsDraft")."</td></tr>";
+	  
+	  $i = 0;
+	  $var=true;
+	  while ($i < $num)
             {
-                $obj = $db->fetch_object($resql);
-                $var=!$var;
-                print '<tr '.$bc[$var].'><td nowrap>'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref.'</a></td>';
-                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,18).'</a></td><td align="right">'.price($obj->price).'</td></tr>';
-                $i++;
-                $total += $obj->price;
+	      $obj = $db->fetch_object($resql);
+	      $var=!$var;
+	      print '<tr '.$bc[$var].'><td nowrap>'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref.'</a></td>';
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,18).'</a></td><td align="right">'.price($obj->price).'</td></tr>';
+	      $i++;
+	      $total += $obj->price;
             }
-            if ($total>0) {
-                $var=!$var;
-                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
-            }
-            print "</table><br>";
+	  if ($total>0)
+	    {
+	      $var=!$var;
+	      print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+	    }
+	  print "</table><br>";
         }
-        $db->free($resql);
+      $db->free($resql);
     }
 }
 
@@ -170,41 +166,43 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
  */
 if ($conf->commande->enabled)
 {
-    $langs->load("orders");
-    $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-    $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
-    if ($socidp)
+  $langs->load("orders");
+  $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
+  $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
+  if ($socidp)
     {
-        $sql .= " AND c.fk_soc = $socidp";
+      $sql .= " AND c.fk_soc = $socidp";
     }
-
-    if ( $db->query($sql) )
+  
+  $resql = $db->query($sql);
+  if ($resql)
     {
-        $total = 0;
-        $num = $db->num_rows();
-        if ($num)
+      $total = 0;
+      $num = $db->num_rows($resql);
+      if ($num)
         {
-            print '<table class="noborder" width="100%">';
-            print '<tr class="liste_titre">';
-            print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
-
-            $i = 0;
-            $var = true;
-            while ($i < $num)
+	  print '<table class="noborder" width="100%">';
+	  print '<tr class="liste_titre">';
+	  print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
+	  
+	  $i = 0;
+	  $var = true;
+	  while ($i < $num)
             {
-                $var=!$var;
-                $obj = $db->fetch_object();
-                print "<tr $bc[$var]><td nowrap><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
-                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
-                print '<td align="right">'.price($obj->total_ttc).'</td></tr>';
-                $i++;
-                $total += $obj->total_ttc;
+	      $var=!$var;
+	      $obj = $db->fetch_object($resql);
+	      print "<tr $bc[$var]><td nowrap><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
+	      print '<td align="right">'.price($obj->total_ttc).'</td></tr>';
+	      $i++;
+	      $total += $obj->total_ttc;
             }
-            if ($total>0) {
-                $var=!$var;
-                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
-            }
-            print "</table><br>";
+	  if ($total>0)
+	    {
+	      $var=!$var;
+	      print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+	    }
+	  print "</table><br>";
         }
     }
 }
