@@ -79,6 +79,12 @@ if ($contact->socid > 0)
 
     print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
 }
+else
+{
+    print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+    print $langs->trans("ContactNotLinkedToCompany");
+    print '</td></tr>';
+}
 
 print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
 print $contact->civilite_id;

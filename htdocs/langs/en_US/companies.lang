@@ -111,3 +111,4 @@ NoRIB=No RIB defined
 NoParentCompany=None
 ExportImport=Import-Export
 ExportCardToFormat=Export card to format
+ContactNotLinkedToCompany=Contact not linked to any company

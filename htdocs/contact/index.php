@@ -232,8 +232,17 @@ if ($result)
         print img_object($langs->trans("ShowContact"),"contact");
         print ' '.$obj->name.'</a></td>';
         print '<td>'.$obj->firstname.'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">';
-        print img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+        print '<td>';
+        if ($obj->idp)
+        {
+            print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">';
+            print img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,40).'</a>';
+        }
+        else
+        {   
+            print '&nbsp;';
+        }
+        print '</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
 
         if ($_GET["view"] == 'phone')

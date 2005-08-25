@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin  <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- * 
  */
 
 /**
@@ -86,7 +85,10 @@ class Contact
         }
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user)";
-        $sql.= " VALUES (now(),$this->socid,'$this->name',$user->id)";
+        $sql.= " VALUES (now(),";
+        if ($this->socid > 0) $sql.= " $this->socid,";
+        else $sql.= "null,";
+        $sql.= "'$this->name',$user->id)";
     
         if ($this->db->query($sql) )
         {

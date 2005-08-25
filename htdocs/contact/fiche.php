@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -114,36 +113,36 @@ if ($_POST["action"] == 'confirm_delete' AND $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'update') 
 {
-  $contact = new Contact($db);
-
-  $contact->old_name      = $_POST["old_name"];
-  $contact->old_firstname = $_POST["old_firstname"];
-
-  $contact->socid         = $_POST["socid"];
-  $contact->name          = $_POST["name"];
-  $contact->firstname     = $_POST["firstname"];
-  $contact->civilite_id	  = $_POST["civilite_id"];
-  $contact->poste         = $_POST["poste"];
-
-  $contact->address       = $_POST["address"];
-  $contact->cp            = $_POST["cp"];
-  $contact->ville         = $_POST["ville"];
-  $contact->fk_pays       = $_POST["pays_id"];
-
-  $contact->email         = $_POST["email"];
-  $contact->phone_pro     = $_POST["phone_pro"];
-  $contact->phone_perso   = $_POST["phone_perso"];
-  $contact->phone_mobile  = $_POST["phone_mobile"];
-  $contact->fax           = $_POST["fax"];
-  $contact->jabberid      = $_POST["jabberid"];
-
-  $contact->note          = $_POST["note"];
-
-  $result = $contact->update($_POST["contactid"], $user);
-
-  if ($contact->error) 
+    $contact = new Contact($db);
+    
+    $contact->old_name      = $_POST["old_name"];
+    $contact->old_firstname = $_POST["old_firstname"];
+    
+    $contact->socid         = $_POST["socid"];
+    $contact->name          = $_POST["name"];
+    $contact->firstname     = $_POST["firstname"];
+    $contact->civilite_id	  = $_POST["civilite_id"];
+    $contact->poste         = $_POST["poste"];
+    
+    $contact->address       = $_POST["address"];
+    $contact->cp            = $_POST["cp"];
+    $contact->ville         = $_POST["ville"];
+    $contact->fk_pays       = $_POST["pays_id"];
+    
+    $contact->email         = $_POST["email"];
+    $contact->phone_pro     = $_POST["phone_pro"];
+    $contact->phone_perso   = $_POST["phone_perso"];
+    $contact->phone_mobile  = $_POST["phone_mobile"];
+    $contact->fax           = $_POST["fax"];
+    $contact->jabberid      = $_POST["jabberid"];
+    
+    $contact->note          = $_POST["note"];
+    
+    $result = $contact->update($_POST["contactid"], $user);
+    
+    if ($contact->error) 
     {
-      $error = $contact->error;
+        $error = $contact->error;
     }
 }
 
@@ -244,7 +243,8 @@ if ($_GET["action"] == 'create')
     }
     else {
         print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
-        print $form->select_societes('','socid','');
+        //print $form->select_societes('','socid','');
+        print $langs->trans("ContactNotLinkedToCompany");
         print '</td></tr>';
     }
 
@@ -282,7 +282,7 @@ if ($_GET["action"] == 'create')
     print $form->selectyesno("facturation",$contact->facturation);
     print '</td></tr>';
 
-    print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+    print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
     print "</table><br>";
 
     print "</form>";
@@ -309,7 +309,12 @@ elseif ($_GET["action"] == 'edit')
 
         print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
     }
-
+    else
+    {
+        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+        print $langs->trans("ContactNotLinkedToCompany");
+        print '</td></tr>';
+    }
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
     print $form->select_civilite($contact->civilite_id);
     print '</td></tr>';
@@ -347,151 +352,157 @@ elseif ($_GET["action"] == 'edit')
     print $form->selectyesno("facturation",$contact->facturation);
     print '</td></tr>';
 
-    print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+    print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
     print "</table><br>";
 
     print "</form>";
 }
 else
 {
-  /*
-   * Visualisation de la fiche
-   *
-   */
+    /*
+     * Visualisation de la fiche
+     *
+     */
     
-  print '<table class="border" width="100%">';
-
-  if ($contact->socid > 0)
+    print '<table class="border" width="100%">';
+    
+    if ($contact->socid > 0)
     {
-      $objsoc = new Societe($db);
-      $objsoc->fetch($contact->socid);
-
-      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
+        $objsoc = new Societe($db);
+        $objsoc->fetch($contact->socid);
+    
+        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
     }
-
-  print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-  //TODO Aller chercher le libellé de la civilite a partir de l'id $contact->civilite_id
-  //print '<tr><td valign="top">Titre : '.$contact->civilite."<br>";
-  print $contact->civilite_id;
-  print '</td></tr>';
-
-  print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%">'.$contact->name.'</td>';
-  print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%">'.$contact->firstname.'</td></tr>';
-
-  print '<tr><td>Poste/Fonction</td><td colspan="3">'.$contact->poste.'</td>';
-
-  print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.$contact->address.'</td></tr>';
-
-  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$contact->cp.'&nbsp;';
-  print $contact->ville.'</td></tr>';
-
+    else
+    {
+        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+        print $langs->trans("ContactNotLinkedToCompany");
+        print '</td></tr>';
+    }
+    
+    print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
+    //TODO Aller chercher le libellé de la civilite a partir de l'id $contact->civilite_id
+    //print '<tr><td valign="top">Titre : '.$contact->civilite."<br>";
+    print $contact->civilite_id;
+    print '</td></tr>';
+    
+    print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td width="35%">'.$contact->name.'</td>';
+    print '<td width="15%">'.$langs->trans("Firstname").'</td><td width="35%">'.$contact->firstname.'</td></tr>';
+    
+    print '<tr><td>Poste/Fonction</td><td colspan="3">'.$contact->poste.'</td>';
+    
+    print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.$contact->address.'</td></tr>';
+    
+    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$contact->cp.'&nbsp;';
+    print $contact->ville.'</td></tr>';
+    
     print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
     print $contact->pays;
     print '</td></tr>';
-
-  print '<tr><td>Tel Pro</td><td>'.$contact->phone_pro.'</td>';
-  print '<td>Tel Perso</td><td>'.$contact->phone_perso.'</td></tr>';
-
-  print '<td>Portable</td><td>'.$contact->phone_mobile.'</td>';
-  print '<td>'.$langs->trans("Fax").'</td><td>'.$contact->fax.'</td></tr>';
-
+    
+    print '<tr><td>Tel Pro</td><td>'.$contact->phone_pro.'</td>';
+    print '<td>Tel Perso</td><td>'.$contact->phone_perso.'</td></tr>';
+    
+    print '<td>Portable</td><td>'.$contact->phone_mobile.'</td>';
+    print '<td>'.$langs->trans("Fax").'</td><td>'.$contact->fax.'</td></tr>';
+    
     print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="3">';
-      if ($contact->email && ! ValidEmail($contact->email))
-	{
-	  print '<div class="error">'.$langs->trans("ErrorBadEMail",$contact->email)."</div>";
-	}
+    if ($contact->email && ! ValidEmail($contact->email))
+    {
+        print '<div class="error">'.$langs->trans("ErrorBadEMail",$contact->email)."</div>";
+    }
     else
     {
         print $contact->email;
     }
-  print '</td></tr>';
-
-  print '<tr><td>Jabberid</td><td colspan="3">'.$contact->jabberid.'</td></tr>';
-
-  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">';
-  print nl2br($contact->note);
-  print '</td></tr>';
-
-  print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="3">';
-  print yn($contact->facturation);
-  print '</td></tr>';
-
-  print "</table>";
-  
-  print "</div>";
-
-
-  // Barre d'actions
-  if (! $user->societe_id)
+    print '</td></tr>';
+    
+    print '<tr><td>Jabberid</td><td colspan="3">'.$contact->jabberid.'</td></tr>';
+    
+    print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">';
+    print nl2br($contact->note);
+    print '</td></tr>';
+    
+    print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="3">';
+    print yn($contact->facturation);
+    print '</td></tr>';
+    
+    print "</table>";
+    
+    print "</div>";
+    
+    
+    // Barre d'actions
+    if (! $user->societe_id)
     {
-      print '<div class="tabsAction">';
-      
-      print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';    
-
-      if (! $contact->user_id && $user->admin)
-	{
-	  print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
-	}
-
-      print '<a class="butDelete" href="fiche.php?id='.$contact->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-
-      print "</div><br>";
-    }
-
-
-  // Historique des actions vers ce contact
-  print_titre ($langs->trans("TasksHistoryForThisContact"));
+        print '<div class="tabsAction">';
     
-  print '<table width="100%" class="noborder">';
+        print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
     
-  print "<tr class=\"liste_titre\">";
-  print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("Actions")."</td>";
-  print "<td>".$langs->trans("CreatedBy")."</td></tr>";
-    
-  $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-  $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-  $sql .= " WHERE fk_contact = ".$contact->id;
-  $sql .= " AND u.rowid = a.fk_user_author";
-  $sql .= " AND c.id=a.fk_action ";
-    
-  if ($contactid) 
-    {
-      $sql .= " AND fk_contact = $contactid";
-    }
-  $sql .= " ORDER BY a.datea DESC, a.id DESC";
-    
-  $resql=$db->query($sql);
-  if ($resql) 
-    {
-      $i = 0 ;
-      $num = $db->num_rows($resql);
-      $var=true;
-      while ($i < $num) 
+        if (! $contact->user_id && $user->admin)
         {
-          $obj = $db->fetch_object($resql);
-          $var=!$var;
-          print "<tr $bc[$var]>";
-          
-          print "<td>". strftime("%d %b %Y %H:%M", $obj->da) ."</td>";
-          if ($obj->propalrowid) 
+            print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+        }
+    
+        print '<a class="butDelete" href="fiche.php?id='.$contact->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+    
+        print "</div><br>";
+    }
+    
+    
+    // Historique des actions vers ce contact
+    print_titre ($langs->trans("TasksHistoryForThisContact"));
+    
+    print '<table width="100%" class="noborder">';
+    
+    print "<tr class=\"liste_titre\">";
+    print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("Actions")."</td>";
+    print "<td>".$langs->trans("CreatedBy")."</td></tr>";
+    
+    $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+    $sql .= " WHERE fk_contact = ".$contact->id;
+    $sql .= " AND u.rowid = a.fk_user_author";
+    $sql .= " AND c.id=a.fk_action ";
+    
+    if ($contactid)
+    {
+        $sql .= " AND fk_contact = $contactid";
+    }
+    $sql .= " ORDER BY a.datea DESC, a.id DESC";
+    
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $i = 0 ;
+        $num = $db->num_rows($resql);
+        $var=true;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+            $var=!$var;
+            print "<tr $bc[$var]>";
+    
+            print "<td>". strftime("%d %b %Y %H:%M", $obj->da) ."</td>";
+            if ($obj->propalrowid)
             {
-              print "<td><a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->propalrowid."\">".$obj->libelle."</a></td>"; 
-            } 
-          else 
-            {
-              print "<td>$obj->libelle</td>";
+                print "<td><a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->propalrowid."\">".$obj->libelle."</a></td>";
             }
-          
-          print "<td>$obj->code&nbsp;</td>";
-          print "</tr>\n";
-          $i++;
+            else
+            {
+                print "<td>$obj->libelle</td>";
+            }
+    
+            print "<td>$obj->code&nbsp;</td>";
+            print "</tr>\n";
+            $i++;
         }
     }
-  else 
+    else
     {
-      dolibarr_print_error($db);
+        dolibarr_print_error($db);
     }
-  print "</table>";
+    print "</table>";
   
 }
 
