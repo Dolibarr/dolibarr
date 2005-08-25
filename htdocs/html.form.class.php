@@ -453,7 +453,7 @@ class Form
     $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
     $sql.= " WHERE p.envente = 1";
     if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-    $sql.= " ORDER BY p.ref";
+    $sql.= " ORDER BY p.nbvente DESC";
     if ($limit) $sql.= " LIMIT $limit";
     
     $result=$this->db->query($sql);
