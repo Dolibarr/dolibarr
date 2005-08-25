@@ -94,9 +94,96 @@ else
 }
 print "</table>";
 
+/* Affichage de la liste des projets de la semaine */
+print '<br /><table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="50%">'.$langs->trans('Today').'</td>';
+print '<td width="50%" align="center">Temps</td>';
+print "</tr>\n";
+
+$sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
+$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
+$sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
+$sql .= " WHERE t.fk_projet = p.rowid";
+$sql .= " AND tt.fk_task = t.rowid";
+$sql .= " AND tt.fk_user = ".$user->id;
+$sql .= " AND date_format(task_date,'%d%m%y') = ".strftime("%d%m%y",time());
+$sql .= " GROUP BY p.rowid";
+
+$var=true;
+$total=0;
+$resql = $db->query($sql);
+if ( $resql )
+{
+  while ($row = $db->fetch_row($resql))
+    {
+      print "<tr $bc[$var]>";
+      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
+      print '<td align="center">'.$row[2].'</td>';
+      print "</tr>\n";
+      $total += $row[2];
+      $var=!$var;
+    }
+  
+  $db->free($resql);
+}
+else
+{
+  dolibarr_print_error($db);
+}
+print "<tr $bc[$var]>";
+print '<td>'.$langs->trans('Total').'</td>';
+print '<td align="center">'.$total.'</td>';
+print "</tr>\n";    
+print "</table>";
+
+print '<br /><table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="50%">'.$langs->trans('Yesterday').'</td>';
+print '<td width="50%" align="center">Temps</td>';
+print "</tr>\n";
+
+$sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
+$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
+$sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
+$sql .= " WHERE t.fk_projet = p.rowid";
+$sql .= " AND tt.fk_task = t.rowid";
+$sql .= " AND tt.fk_user = ".$user->id;
+$sql .= " AND date_format(date_add(task_date, INTERVAL 1 DAY),'%d%m%y') = ".strftime("%d%m%y",time());
+$sql .= " GROUP BY p.rowid";
+
+$var=true;
+$total=0;
+$resql = $db->query($sql);
+if ( $resql )
+{
+  while ($row = $db->fetch_row($resql))
+    {
+      print "<tr $bc[$var]>";
+      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
+      print '<td align="center">'.$row[2].'</td>';
+      print "</tr>\n";
+      $total += $row[2];
+      $var=!$var;
+    }
+  
+  $db->free($resql);
+}
+else
+{
+  dolibarr_print_error($db);
+}
+print "<tr $bc[$var]>";
+print '<td>'.$langs->trans('Total').'</td>';
+print '<td align="center">'.$total.'</td>';
+print "</tr>\n";
+print "</table>";
+
 print '</td><td width="70%" valign="top">';
 
-/* Affichage de la liste des projets du mois */
+/* Affichage de la liste des projets de la semaine */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">Activité sur les projets cette semaine</td>';
@@ -112,23 +199,19 @@ $sql .= " AND tt.fk_task = t.rowid";
 $sql .= " AND tt.fk_user = ".$user->id;
 $sql .= " AND week(task_date) = ".strftime("%W",time());
 $sql .= " GROUP BY p.rowid";
-
+$total = 0;
 $var=true;
 $resql = $db->query($sql);
 if ( $resql )
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-
-  while ($i < $num)
+  while ($row = $db->fetch_row( $resql))
     {
-      $row = $db->fetch_row( $resql);
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
       print '<td align="center">'.$row[2].'</td>';
       print "</tr>\n";    
-      $i++;
+      $total += $row[2];
     }
   
   $db->free($resql);
@@ -137,6 +220,10 @@ else
 {
   dolibarr_print_error($db);
 }
+print "<tr $bc[$var]>";
+print '<td>'.$langs->trans('Total').'</td>';
+print '<td align="center">'.$total.'</td>';
+print "</tr>\n";
 print "</table><br />";
 
 /* Affichage de la liste des projets du mois */
