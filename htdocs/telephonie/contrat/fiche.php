@@ -474,7 +474,8 @@ else
 	      $client_facture = new Societe($db);
 	      $client_facture->fetch($contrat->client_facture_id);
 
-	      print '<tr><td width="20%">Client Facturé</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid=';
+	      print '<tr><td width="20%">Client Facturé</td><td>';
+	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id=';
 	      print $client_facture->id.'">';
 	      print $client_facture->nom.'</a><br />';
 	      print $client_facture->cp . " " .$client_facture->ville;
