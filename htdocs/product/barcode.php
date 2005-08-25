@@ -52,63 +52,67 @@ $product = new Product($db);
 $result = $product->fetch($_GET["id"]);
 
 
-    $h=0;
+$h=0;
 
-    $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
-    $head[$h][1] = $langs->trans("Card");
-    $h++;
+$head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+$head[$h][1] = $langs->trans("Card");
+$h++;
 
-    $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-    $head[$h][1] = $langs->trans("Price");
-    $h++;
+$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
+$head[$h][1] = $langs->trans("Price");
+$h++;
 
-            if($product->type == 0)
-            {
-                if ($user->rights->barcode->lire)
-                {
-                    if ($conf->barcode->enabled)
-                    {
-                        $head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
-                        $head[$h][1] = $langs->trans("BarCode");
-                        $hselected=$h;
-                        $h++;
-                    }
-                }
-            }
-
-
-    $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
-    $head[$h][1] = $langs->trans("Photos");
-    $h++;
-
-    if($product->type == 0)
+if($product->type == 0)
+{
+    if ($user->rights->barcode->lire)
     {
-        if ($conf->stock->enabled)
+        if ($conf->barcode->enabled)
         {
-            $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-            $head[$h][1] = $langs->trans("Stock");
+            $head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
+            $head[$h][1] = $langs->trans("BarCode");
+            $hselected=$h;
             $h++;
         }
     }
+}
 
-    if ($conf->fournisseur->enabled) {
-        $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-        $head[$h][1] = $langs->trans("Suppliers");
+
+$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
+$head[$h][1] = $langs->trans("Photos");
+$h++;
+
+if($product->type == 0)
+{
+    if ($conf->stock->enabled)
+    {
+        $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+        $head[$h][1] = $langs->trans("Stock");
         $h++;
     }
+}
 
-        $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-        $head[$h][1] = $langs->trans("Statistics");
-        $h++;
-        
-        //erics: pour créer des produits composés de x 'sous' produits
-	      $head[$h][0] = DOL_URL_ROOT."/product/pack.php?id=".$product->id;
-	      $head[$h][1] = $langs->trans('Packs');
-	      $h++;
+if ($conf->fournisseur->enabled) {
+    $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+    $head[$h][1] = $langs->trans("Suppliers");
+    $h++;
+}
 
-        $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
-        $head[$h][1] = $langs->trans("Bills");
-        $h++;
+$head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+$head[$h][1] = $langs->trans("Statistics");
+$h++;
+
+//erics: pour créer des produits composés de x 'sous' produits
+  $head[$h][0] = DOL_URL_ROOT."/product/pack.php?id=".$product->id;
+  $head[$h][1] = $langs->trans('Packs');
+  $h++;
+
+$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
+$head[$h][1] = $langs->trans("Referers");
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
+$head[$h][1] = $langs->trans('Documents');
+$h++;
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 

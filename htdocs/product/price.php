@@ -93,19 +93,18 @@ $head[$h][1] = $langs->trans("Price");
 $hselected=$h;
 $h++;
 
-            if($product->type == 0)
-            {
-                if ($user->rights->barcode->lire)
-                {
-                    if ($conf->barcode->enabled)
-                    {
-                        $head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
-                        $head[$h][1] = $langs->trans("BarCode");
-                        $h++;
-                    }
-                }
-            }
-
+if($product->type == 0)
+{
+    if ($user->rights->barcode->lire)
+    {
+        if ($conf->barcode->enabled)
+        {
+            $head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
+            $head[$h][1] = $langs->trans("BarCode");
+            $h++;
+        }
+    }
+}
 
 $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
 $head[$h][1] = $langs->trans("Photos");
@@ -138,6 +137,10 @@ $h++;
 
 $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
 $head[$h][1] = $langs->trans("Referers");
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
+$head[$h][1] = $langs->trans('Documents');
 $h++;
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
