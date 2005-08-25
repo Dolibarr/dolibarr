@@ -116,26 +116,26 @@ class MenuTop {
         }
         
         // Entrée commercial
-        if ($conf->commercial->enabled)
+        if ($conf->commercial->enabled && $user->rights->commercial->main->lire)
         {
-            $langs->load("commercial");
-        
-            $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
+	  $langs->load("commercial");
+	  
+	  $class="";
+	  if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
             {
-                $class='class="tmenu" id="sel"';
+	      $class='class="tmenu" id="sel"';
             }
-            elseif (ereg("^".DOL_URL_ROOT."\/(comm|commande|contrat)\/",$_SERVER["PHP_SELF"]))
+	  elseif (ereg("^".DOL_URL_ROOT."\/(comm|commande|contrat)\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenu" id="sel"';
+	      $class='class="tmenu" id="sel"';
             }
-            else
+	  else
             {
-                $class = 'class="tmenu"';
+	      $class = 'class="tmenu"';
             }
-        
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a>';
-        
+	  
+	  print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a>';
+	  
         }
         
         // Entrée compta
