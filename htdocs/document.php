@@ -39,6 +39,9 @@ $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
 $type = urldecode($_GET["type"]);
 
+//Suppression de la chaine de caractère ../ dans $original_file
+$original_file = str_replace("../","/", "$original_file");
+
 $accessallowed=0;
 if ($modulepart)
 {
