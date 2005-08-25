@@ -53,6 +53,11 @@ if ($productid > 0)
  */
 if ( $_POST["sendit"] && $conf->upload)
 {
+    /*
+     * Creation répertoire si n'existe pas
+     */
+    if (! is_dir($upload_dir)) create_exdir($upload_dir);
+
     if (is_dir($upload_dir))
     {
         if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
