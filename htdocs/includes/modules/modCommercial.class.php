@@ -46,78 +46,78 @@ class modCommercial extends DolibarrModules
     *   \brief      Constructeur. Definit les noms, constantes et boites
     *   \param      DB      handler d'accès base
     */
-  function modCommercial($DB)
-  {
-    $this->db = $DB ;
-    $this->numero = 2 ;
+    function modCommercial($DB)
+    {
+        $this->db = $DB ;
+        $this->numero = 2 ;
+        
+        $this->family = "crm";
+        $this->name = "Commercial";
+        $this->description = "Gestion commercial";
+        
+        $this->revision = explode(" ","$Revision$");
+        $this->version = $this->revision[1];
+        
+        $this->const_name = "MAIN_MODULE_COMMERCIAL";
+        $this->const_config = MAIN_MODULE_COMMERCIAL;
+        $this->special = 0;
+        $this->picto='commercial';
+        
+        // Dir
+        $this->dirs = array();
+        
+        // Dépendances
+        $this->depends = array("modSociete");
+        $this->requiredby = array("modPropale","modContrat","modCommande",);
+        
+        // Constantes
+        $this->const = array();
+        
+        // Boxes
+        $this->boxes = array();
+        $this->boxes[0][0] = "Derniers clients";
+        $this->boxes[0][1] = "box_clients.php";
+        $this->boxes[1][0] = "Derniers prospects enregistrés";
+        $this->boxes[1][1] = "box_prospect.php";
+        
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'commercial';
+        $r = 1;
+        
+        // 261 : Permission générale
+        $this->rights[$r][0] = 261;
+        $this->rights[$r][1] = 'Informations commerciales';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 1;
+        $this->rights[$r][4] = 'main';
+        $this->rights[$r][5] = 'lire';
+        $r++;
+    }
 
-    $this->family = "crm";
-    $this->name = "Commercial";
-    $this->description = "Gestion commercial";
+    /**
+     *  \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+     *              Définit également les répertoires de données à créer pour ce module.
+     */
+    function init()
+    {
+        // Permissions
+        $this->remove();
+        
+        $sql = array();
 
-    $this->revision = explode(" ","$Revision$");
-    $this->version = $this->revision[1];
-
-    $this->const_name = "MAIN_MODULE_COMMERCIAL";
-    $this->const_config = MAIN_MODULE_COMMERCIAL;
-    $this->special = 0;
-    $this->picto='commercial';
-
-    // Dir
-    $this->dirs = array();
-
-    // Dépendances
-    $this->depends = array("modSociete");
-    $this->requiredby = array("modPropale","modContrat","modCommande",);
-
-    // Constantes
-    $this->const = array();
-
-    // Boxes
-    $this->boxes = array();
-    $this->boxes[0][0] = "Derniers clients";
-    $this->boxes[0][1] = "box_clients.php";
-    $this->boxes[1][0] = "Derniers prospects enregistrés";
-    $this->boxes[1][1] = "box_prospect.php";
-
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'commercial';
-  }
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    $sql = array();
-
-    // Permissions
-    $this->remove();
-    $r = 1;
-
-    // 261 : Permission générale
-    $this->rights[$r][0] = 261;
-    $this->rights[$r][1] = 'Informations commerciales';
-    $this->rights[$r][2] = 'r';
-    $this->rights[$r][3] = 1;
-    $this->rights[$r][4] = 'main';
-    $this->rights[$r][5] = 'lire';
-    $r++;
-    
-    return $this->_init($sql);
-  }
+        return $this->_init($sql);
+    }
 	
-  /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
-
-    return $this->_remove($sql);
-  }
+    /**
+     *  \brief      Fonction appelée lors de la désactivation d'un module.
+     *              Supprime de la base les constantes, boites et permissions du module.
+     */
+    function remove()
+    {
+        $sql = array();
+        
+        return $this->_remove($sql);
+    }
 }
 ?>
