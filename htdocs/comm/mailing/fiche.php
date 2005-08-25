@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -227,14 +226,10 @@ if ($_GET["action"] == 'create')
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->mailing->email_from.'"></td></tr>';
-
-    print '<tr><td width="20%">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value=""></td></tr>';
-
-    print '<tr><td width="20%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value=""></td></tr>';
-
-    print '<tr><td width="20%" valign="top">'.$langs->trans("MailMessage").'</td><td><textarea cols="70" rows="10" name="body"></textarea></td></tr>';
-
+    print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->mailing->email_from.'"></td></tr>';
+    print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value=""></td></tr>';
+    print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value=""></td></tr>';
+    print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'</td><td><textarea cols="70" rows="10" name="body"></textarea></td></tr>';
     print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("CreateMailing").'"></td></tr>';
     print '</table>';
     print '</form>';
@@ -294,6 +289,7 @@ else
 
             print '<table class="border" width="100%">';
 
+            print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$mil->id.'</td></tr>';
             print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
             print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.htmlentities($mil->email_from).'</td></tr>';
             print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'<font class="error">'.$langs->trans("NoTargetYet").'</font>').'</td></tr>';
@@ -406,10 +402,11 @@ else
             print '<input type="hidden" name="id" value="'.$mil->id.'">';
             print '<table class="border" width="100%">';
 
-            print '<tr><td width="20%">'.$langs->trans("MailTitle").'</td><td colspan="3"><input class="flat" type="text" size=40 name="titre" value="'.htmlentities($mil->titre).'"></td></tr>';
-            print '<tr><td width="20%">'.$langs->trans("MailFrom").'</td><td colspan="3"><input class="flat" type="text" size=40 name="from" value="'.htmlentities($mil->email_from).'"></td></tr>';
-            print '<tr><td width="20%">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.htmlentities($mil->sujet).'"></td></tr>';
-            print '<tr><td width="20%" valign="top">'.$langs->trans("MailMessage").'</td><td colspan="3"><textarea name="body" cols=70 rows=10>';
+            print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$mil->id.'</td></tr>';
+            print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3"><input class="flat" type="text" size=40 name="titre" value="'.htmlentities($mil->titre).'"></td></tr>';
+            print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3"><input class="flat" type="text" size=40 name="from" value="'.htmlentities($mil->email_from).'"></td></tr>';
+            print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.htmlentities($mil->sujet).'"></td></tr>';
+            print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'</td><td colspan="3"><textarea name="body" cols=70 rows=10>';
             print $mil->body.'</textarea></td></tr>';
 
             print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';

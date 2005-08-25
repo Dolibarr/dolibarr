@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -59,7 +58,11 @@ print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/liste.php">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAMailing").'</td></tr>';
 print '<tr '.$bc[$var].'><td nowrap>';
-print $langs->trans("Keyword").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sref" size="18"></td>';
+print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print '<tr '.$bc[$var].'><td nowrap>';
+print $langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+
 print "</table></form><br>\n";
 
 
@@ -151,7 +154,8 @@ $result=$db->query($sql);
 if ($result) 
 {
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("LastMailings",10).'</td>';
+  print '<tr class="liste_titre">';
+  print '<td colspan="2">'.$langs->trans("LastMailings",10).'</td>';
   print '<td align="right">'.$langs->trans("NbOfEMails").'</td>';
   print '<td align="center">'.$langs->trans("Status").'</td></tr>';
 
@@ -167,7 +171,8 @@ if ($result)
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->titre.'</a></td>';
+	  print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
+	  print '<td>'.$obj->titre.'</td>';
 	  print '<td align="right">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
 	  $mail=new Mailing($db);
 	  print '<td align="center">'.$mail->statuts[$obj->statut].'</td>';

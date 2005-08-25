@@ -59,7 +59,7 @@ $sql.= " WHERE 1=1";
 if ($sref) $sql.= " AND m.rowid = '".$sref."'";
 if ($sall) $sql.= " AND (m.titre like '%".$sall."%' OR m.sujet like '%".$sall."%' OR m.body like '%".$sall."%')";
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="m.titre";
+if (! $sortfield) $sortfield="m.rowid";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
 
 $result = $db->query($sql);
