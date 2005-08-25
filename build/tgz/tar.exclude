@@ -1,9 +1,12 @@
 doc/dev/dolibarr-phpdoc
 htdocs/document
+htdocs/documents
 CVS
 *~
+dolibarr-*.tar.gz
 dolibarr-*.tgz
 dolibarr-*.exe
 dolibarr-*.rpm
 dolibarr-*.deb
 dolibarr-*.zip
+cvschangelogbuilder_dolibarr*
