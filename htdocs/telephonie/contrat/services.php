@@ -90,6 +90,14 @@ if ($cancel == $langs->trans("Cancel"))
 	      $hselected = $h;
 	      $h++;
 
+	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/stats.php?id=".$contrat->id;
+	      $head[$h][1] = $langs->trans("Stats");
+	      $h++;
+
+	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/info.php?id=".$contrat->id;
+	      $head[$h][1] = $langs->trans("Infos");
+	      $h++;
+
 	      dolibarr_fiche_head($head, $hselected, 'Contrat : '.$contrat->ref);
 
 	      print_fiche_titre('Fiche Contrat', $mesg);
@@ -107,36 +115,16 @@ if ($cancel == $langs->trans("Cancel"))
 
 	      print $client_comm->nom.'</a></td><td>'.$client_comm->code_client;
 	      print '</td></tr>';
-	      	     
-	      $client = new Societe($db, $contrat->client_id);
-	      $client->fetch($contrat->client_id);
 
-	      print '<tr><td width="20%">Client (Agence/Filiale)</td><td colspan="2">';
-	      print $client->nom.'<br />';
-
-	      print $client->cp . " " .$client->ville;
-	      print '</td></tr>';
-
-	      $client_facture = new Societe($db);
-	      $client_facture->fetch($contrat->client_facture_id);
-
-	      print '<tr><td width="20%">Client Facturé</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid=';
-	      print $client_facture->id.'">';
-	      print $client_facture->nom.'</a><br />';
-	      print $client_facture->cp . " " .$client_facture->ville;
-
-	      print '</td><td>';
-
-	      if ($contrat->mode_paiement == 'pre')
-		{
-		  print 'RIB : '.$client_facture->display_rib();
+	      if ($contrat->client_comm_id <> $contrat->client_id)
+		{	      	     
+		  $client = new Societe($db, $contrat->client_id);
+		  $client->fetch($contrat->client_id);
+		  print '<tr><td width="20%">Client (Agence/Filiale)</td><td colspan="2">';
+		  print $client->nom.'<br />';
+		  print $client->cp . " " .$client->ville;
+		  print '</td></tr>';
 		}
-	      else
-		{
-		  print 'Paiement par virement';
-		}
-
-	      print '</td></tr>';
 
 	      $commercial = new User($db, $contrat->commercial_sign_id);
 	      $commercial->fetch();
