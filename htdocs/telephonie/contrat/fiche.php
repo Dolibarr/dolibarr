@@ -459,17 +459,18 @@ else
 
 	      print $client_comm->nom.'</a></td><td colspan="2">'.$client_comm->code_client;
 	      print '</td></tr>';
-	      	     
-	      $client = new Societe($db, $contrat->client_id);
-	      $client->fetch($contrat->client_id);
 
-	      print '<tr><td width="20%">Client (Agence/Filiale)</td><td>';
-	      print $client->nom.'<br />';
+	      if ($contrat->client_id <> $contrat->client_comm_id)
+		{
+		  $client = new Societe($db, $contrat->client_id);
+		  $client->fetch($contrat->client_id);
 
-	      print $client->cp . " " .$client->ville;
-	      print '</td><td colspan="2" valign="top">'.$client->code_client;
-
-	      print '</td></tr>';
+		  print '<tr><td width="20%">Client (Agence/Filiale)</td><td>';
+		  print $client->nom.'<br />';
+		  print $client->cp . " " .$client->ville;
+		  print '</td><td colspan="2" valign="top">'.$client->code_client;
+		  print '</td></tr>';
+		}
 
 	      $client_facture = new Societe($db);
 	      $client_facture->fetch($contrat->client_facture_id);
