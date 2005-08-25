@@ -85,36 +85,6 @@ if ($_GET["id"])
 	  print $client_comm->nom.'</a></td><td>'.$client_comm->code_client;
 	  print '</td></tr>';
 	  
-	  $client = new Societe($db, $contrat->client_id);
-	  $client->fetch($contrat->client_id);
-	  
-	  print '<tr><td width="20%">Client (Agence/Filiale)</td><td colspan="2">';
-	  print $client->nom.'<br />';
-	  
-	  print $client->cp . " " .$client->ville;
-	  print '</td></tr>';
-	  
-	  $client_facture = new Societe($db);
-	  $client_facture->fetch($contrat->client_facture_id);
-	  
-	  print '<tr><td width="20%">Client Facturé</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid=';
-	  print $client_facture->id.'">';
-	  print $client_facture->nom.'</a><br />';
-	  print $client_facture->cp . " " .$client_facture->ville;
-	  
-	  print '</td><td>';
-	  
-	  if ($contrat->mode_paiement == 'pre')
-	    {
-	      print 'RIB : '.$client_facture->display_rib();
-	    }
-	  else
-	    {
-	      print 'Paiement par virement';
-	    }
-	  
-	  print '</td></tr>';
-	  
 	  $commercial = new User($db, $contrat->commercial_sign_id);
 	  $commercial->fetch();
 	  
@@ -132,7 +102,10 @@ if ($_GET["id"])
 	  
 	  print '<tr><td width="20%">Créé par</td>';
 	  print '<td colspan="2">'.$cuser_suiv->fullname;
-	  print " le : ".strftime("%e %B %Y",$contrat->date_creat);
+	  print '</td></tr>';
+
+	  print '<tr><td width="20%">Créé le</td>';
+	  print '<td colspan="2">'.strftime("%e %B %Y",$contrat->date_creat);
 	  print '</td></tr>';
 
 	  print "</table><br />";
