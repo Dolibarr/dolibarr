@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /** 
@@ -36,6 +35,9 @@ require("./adherent.class.php");
 
 llxHeader();
 
+
+$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
+
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 $page=$_GET["page"];
@@ -50,10 +52,17 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin,";
-$sql .= " d.email, d.fk_adherent_type as type_id, t.libelle as type, d.morphy, d.statut, t.cotisation";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid ";
-if ($_GET["type"]) {
+$sql.= " d.email, d.fk_adherent_type as type_id, t.libelle as type, d.morphy, d.statut, t.cotisation";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
+$sql.= " WHERE d.fk_adherent_type = t.rowid ";
+if ($sall) 
+{
+    $sql.=" AND (d.prenom like '%".$sall."%' OR d.nom like '%".$sall."%' OR d.societe like '%".$sall."%'";
+    $sql.=" OR d.email like '%".$sall."%' OR d.login like '%".$sall."%' OR d.adresse like '%".$sall."%'";
+    $sql.=" OR d.ville like '%".$sall."%' OR d.note like '%".$sall."%')";
+}
+if ($_GET["type"])
+{
     $sql.=" AND t.rowid=".$_GET["type"];
 }
 if (isset($_GET["statut"]))

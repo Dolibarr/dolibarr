@@ -543,7 +543,7 @@ class MenuLeft {
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php",$langs->trans("List"),1,$user->rights->adherent->lire);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1",$langs->trans("MenuMembersToValidate"),1,$user->rights->adherent->lire);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1",$langs->trans("MenuMembersValidated"),1,$user->rights->adherent->lire);
-                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&filter=uptodate",$langs->trans("MenuMembersUpToDate"),1,$user->rights->adherent->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"),1,$user->rights->adherent->lire);
                   $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"),1,$user->rights->adherent->lire);
                 
                   $langs->load("compta");

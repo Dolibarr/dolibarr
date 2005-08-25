@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -150,15 +149,16 @@ print '<form action="liste.php" method="post">';
 print '<input type="hidden" name="action" value="search">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("SearchAMember").'</td>';
+print '<td colspan="3">'.$langs->trans("SearchAMember").'</td>';
 print "</tr>\n";
 $var=false;
 print "<tr $bc[$var]>";
 print '<td>';
-
-print $langs->trans("Name").' <input type="text" name="search" class="flat" size="16">';
-
-print '</td><td><input class="button" type="submit" value="'.$langs->trans("Search").'">';
+print $langs->trans("Name").':</td><td><input type="text" name="search" class="flat" size="16">';
+print '</td><td rowspan="2"><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
+print "<tr $bc[$var]>";
+print '<td>';
+print $langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="16">';
 print '</td></tr>';
 print "</table></form>";
 
