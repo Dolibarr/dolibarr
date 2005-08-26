@@ -259,6 +259,7 @@ CompanyIds=Identifiants réglementaires
 CompanyName=Nom/Enseigne de la société/association
 CompanyAddress=Adresse de la société/association
 CompanyCurrency=Devise de la société/association
+DoNotShow=Ne pas afficher
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Générer mot de passe

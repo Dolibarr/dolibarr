@@ -259,6 +259,7 @@ CompanyIds=Company/foundation identities
 CompanyName=Company/foundation name
 CompanyAddress=Company/foundation address
 CompanyCurrency=Company/foundation currency
+DoNotShow=Do not show
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
 GeneratePassword=Générer mot de passe
