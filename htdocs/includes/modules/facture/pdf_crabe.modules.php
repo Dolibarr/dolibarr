@@ -43,7 +43,7 @@ class pdf_crabe extends ModelePDFFactures
     */
     function pdf_crabe($db)
     {
-        global $langs;
+        global $conf,$langs;
         
         $this->db = $db;
         $this->name = "crabe";
@@ -59,14 +59,14 @@ class pdf_crabe extends ModelePDFFactures
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') 
       		$this->franchise=1;
 
-        // Recupere code pays
-        $this->code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
+        // Recupere code pays de l'emmetteur
+        $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si on trouve pas
         $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
-        $sql .= " WHERE rowid = ".MAIN_INFO_SOCIETE_PAYS;
+        $sql .= " WHERE rowid = '".$conf->global->MAIN_INFO_SOCIETE_PAYS."'";
         $result=$this->db->query($sql);
         if ($result) {
             $obj = $this->db->fetch_object($result);
-            if ($obj->code) $this->code_pays=$obj->code;
+            if ($obj->code) $this->emetteur->code_pays=$obj->code;
         }
         else {
             dolibarr_print_error($this->db);
@@ -645,10 +645,12 @@ class pdf_crabe extends ModelePDFFactures
 		// Logo
         if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
         {
-            if (file_exists(FAC_PDF_LOGO)) {
+            if (file_exists(FAC_PDF_LOGO))
+			{
                 $pdf->Image(FAC_PDF_LOGO, 10, 5, 0, 24);
             }
-            else {
+            else
+			{
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
                 $pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",FAC_PDF_LOGO), 0, 'L');
@@ -786,15 +788,15 @@ class pdf_crabe extends ModelePDFFactures
         }
         if ($conf->global->MAIN_INFO_SIRET)
         {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
         }
-        elseif ($conf->global->MAIN_INFO_SIREN)
+        if ($conf->global->MAIN_INFO_SIREN && (! $conf->global->MAIN_INFO_SIRET || $this->emetteur->code_pays != 'FR'))
         {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
         }
         if ($conf->global->MAIN_INFO_APE)
         {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId3",$this->code_pays).": ".MAIN_INFO_APE;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
         }
 
         if ($ligne)
@@ -807,7 +809,7 @@ class pdf_crabe extends ModelePDFFactures
         $ligne="";
         if ($conf->global->MAIN_INFO_RCS)
         {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->code_pays).": ".$conf->global->MAIN_INFO_RCS;
+            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_RCS;
         }
         if ($conf->global->MAIN_INFO_TVAINTRA != '')
         {
