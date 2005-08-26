@@ -84,7 +84,7 @@ class mod_propale_jade extends ModeleNumRefPropales
      */
     function propale_get_num($objsoc=0)
     {
-        return $this->propale_get_num();
+        return $this->getNextValue();
     }
 }
 
