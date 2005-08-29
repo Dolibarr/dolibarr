@@ -224,9 +224,16 @@ if ($_GET["action"] == 'delete')       // delete
     $sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE $rowidcol='".$_GET["rowid"]."'";
 
     $result = $db->query($sql);
-    if (!$result)
+    if (! $result)
     {
-        dolibarr_print_error($db);
+        if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
+        {
+            $msg='<div class="error">'.$langs->trans("ErrorRecordIsUsedByChild").'</div>';
+        }
+        else 
+        {
+            dolibarr_print_error($db);
+        }
     }
 }
 
