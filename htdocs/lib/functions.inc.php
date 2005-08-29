@@ -115,7 +115,7 @@ function sanitize_string($str)
 */
 function dolibarr_syslog($message, $level=LOG_ERR)
 {
-    global $conf,$user;
+    global $conf,$user,$langs;
     
     if ($conf->syslog->enabled)
     {
@@ -130,6 +130,7 @@ function dolibarr_syslog($message, $level=LOG_ERR)
                 fclose($file);
             }
             else {
+                $langs->load("main");
                 print $langs->trans("ErrorFailedToOpenFile",SYSLOG_FILE);
             }
         }
