@@ -24,8 +24,9 @@ create table llx_societe_perms
 (
   fk_soc    integer,
   fk_user   integer,
-  pread     tinyint unsigned DEFAULT 0,
-  pwrite    tinyint unsigned DEFAULT 0,
+  pread     tinyint unsigned DEFAULT 0, -- permission de lecture
+  pwrite    tinyint unsigned DEFAULT 0, -- permission d'ecriture
+  pperms    tinyint unsigned DEFAULT 0, -- permission sur les permissions
 
   UNIQUE INDEX(fk_soc, fk_user)
 )type=innodb;
