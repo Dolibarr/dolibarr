@@ -38,9 +38,14 @@ if ($cancel == $langs->trans("Cancel"))
 if ($_GET["id"])
 {
   $soc = new Societe($db);
-  $result = $soc->fetch($_GET["id"]);
+  $result = $soc->fetch($_GET["id"], $user);
 
-  if ( $result == 1 )
+  if (!$soc->perm_read)
+    {
+      print "Lecture non authorisée";
+    }
+
+  if ( $result == 1 && $soc->perm_read)
     { 
       if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
