@@ -38,9 +38,14 @@ if ($cancel == $langs->trans("Cancel"))
 if ($_GET["id"])
 {
   $soc = new Societe($db);
-  $result = $soc->fetch($_GET["id"]);
+  $result = $soc->fetch($_GET["id"], $user);
 
-  if ( $result == 1 )
+  if (!$soc->perm_read)
+    {
+      print "Lecture non authorisée";
+    }
+
+  if ( $result == 1 && $soc->perm_read)
     { 
       if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
@@ -65,6 +70,13 @@ if ($_GET["id"])
 	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/tarifs.php?id=".$soc->id;
 	  $head[$h][1] = $langs->trans("Tarifs");
 	  $h++;
+
+	  if ($soc->perm_perms)
+	    {
+	      $head[$h][0] = DOL_URL_ROOT."/telephonie/client/permissions.php?id=".$soc->id;
+	      $head[$h][1] = $langs->trans("Permissions");
+	      $h++;
+	    }
 
 	  dolibarr_fiche_head($head, $hselected, 'Client : '.$soc->nom);
 
