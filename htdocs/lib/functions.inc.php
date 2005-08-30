@@ -792,6 +792,25 @@ function img_tick($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
+/**
+        \brief      Affiche le logo tick si allow
+        \param      allow       Authorise ou non
+        \return     string      Retourne tag img
+*/
+function img_allow($allow)
+{
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Active");
+
+  if ($allow == 1)
+    {
+      return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    }
+  else
+    {
+      return "-";
+    }
+}
 
 /**
 		\brief      Affiche formulaire de login
