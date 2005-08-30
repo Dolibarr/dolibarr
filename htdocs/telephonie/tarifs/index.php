@@ -75,13 +75,18 @@ $sql .= " , t.libelle as tarif, t.rowid as tarif_id";
 $sql .= " , m.temporel, m.fixe";
 $sql .= " , u.code";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
-$sql .= "," . MAIN_DB_PREFIX."telephonie_tarif_montant as m";
-$sql .= "," . MAIN_DB_PREFIX."telephonie_tarif as t";
-$sql .= "," . MAIN_DB_PREFIX."user as u";
+$sql .= ","    . MAIN_DB_PREFIX."telephonie_tarif_grille_rights as r";
+$sql .= ","    . MAIN_DB_PREFIX."telephonie_tarif_montant as m";
+$sql .= ","    . MAIN_DB_PREFIX."telephonie_tarif as t";
+$sql .= ","    . MAIN_DB_PREFIX."user as u";
 
 $sqlc .= " WHERE d.rowid = m.fk_tarif_desc";
 $sqlc .= " AND m.fk_tarif = t.rowid";
 $sqlc .= " AND m.fk_user = u.rowid";
+
+$sqlc .= " AND d.rowid = r.fk_grille";
+$sqlc .= " AND r.fk_user =".$user->id;
+$sqlc .= " AND r.pread = 1";
 
 if ($_GET["search_libelle"])
 {
@@ -98,14 +103,13 @@ if ($_GET["type"])
   $sqlc .= " AND d.type_tarif = '".$_GET["type"]."'";
 }
 
-
 $sql = $sql . $sqlc . " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   
   print_barre_liste("Tarifs", $page, "index.php", "&type=".$_GET["type"], $sortfield, $sortorder, '', $num);
@@ -139,7 +143,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($resql);
       $var=!$var;
 
       print "<tr $bc[$var]>";

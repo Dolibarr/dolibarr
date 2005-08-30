@@ -24,37 +24,6 @@ require("./pre.inc.php");
 llxHeader();
 
 /*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
-
-
-
-/*
- * Recherche
- *
- *
- */
-if ($mode == 'search') {
-  if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
-    $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-  }
-      
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object(0);
-      $socid = $obj->idp;
-    }
-    $db->free();
-  }
-}
-
-/*
  * Mode Liste
  *
  *
@@ -66,6 +35,7 @@ $sql = "SELECT d.libelle as tarif_desc, d.type_tarif, d.rowid";
 $sql .= " , t.libelle as tarif";
 $sql .= " , m.temporel, m.fixe";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
+$sql .= ","    . MAIN_DB_PREFIX."telephonie_tarif_grille_rights as r";
 $sql .= "," . MAIN_DB_PREFIX."telephonie_tarif_montant as m";
 $sql .= "," . MAIN_DB_PREFIX."telephonie_tarif as t";
 
@@ -73,6 +43,10 @@ $sql .= " WHERE d.rowid = m.fk_tarif_desc";
 $sql .= " AND m.fk_tarif = t.rowid";
 $sql .= " AND t.rowid = '".$_GET["id"]."'";
 $sql .= " AND d.type_tarif = 'vente'";
+$sql .= " AND d.rowid = r.fk_grille";
+$sql .= " AND r.fk_user =".$user->id;
+$sql .= " AND r.pread = 1";
+
 $sql .= " ORDER BY t.libelle asc";
 
 $resql = $db->query($sql);
@@ -122,6 +96,7 @@ $sql = "SELECT d.libelle as tarif_desc, d.type_tarif, d.rowid";
 $sql .= " , t.libelle as tarif";
 $sql .= " , m.temporel, m.fixe";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
+$sql .= ","    . MAIN_DB_PREFIX."telephonie_tarif_grille_rights as r";
 $sql .= "," . MAIN_DB_PREFIX."telephonie_tarif_montant as m";
 $sql .= "," . MAIN_DB_PREFIX."telephonie_tarif as t";
 
@@ -129,6 +104,10 @@ $sql .= " WHERE d.rowid = m.fk_tarif_desc";
 $sql .= " AND m.fk_tarif = t.rowid";
 $sql .= " AND t.rowid = '".$_GET["id"]."'";
 $sql .= " AND d.type_tarif = 'achat'";
+
+$sql .= " AND d.rowid = r.fk_grille";
+$sql .= " AND r.fk_user =".$user->id;
+$sql .= " AND r.pread = 1";
 
 $sql .= " ORDER BY t.libelle ASC";
 
