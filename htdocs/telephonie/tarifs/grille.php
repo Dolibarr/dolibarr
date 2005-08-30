@@ -25,7 +25,7 @@ $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 
-$sql = "SELECT pwrite ";
+$sql = "SELECT pwrite, pread ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights ";
 $sql .= " WHERE fk_grille = '".$_GET["id"]."'";
 $sql .= " AND fk_user = ".$user->id;
@@ -42,9 +42,13 @@ if ($resql)
     {
       $row = $db->fetch_row($resql);
       $auth_write = $row[0];
+      $auth_read = $row[1];
     }
   $db->free($resql);
 }
+
+if ($auth_read == 0)
+  accessforbidden();
 
 /*
  *
