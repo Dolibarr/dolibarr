@@ -113,7 +113,7 @@ if ($resql)
 
 print "Grille : ".$grille[0]."<br>";
 
-print '<a href="grille-export.php?id='.$_GET["id"].'">Export tableur</a><br><br>';
+//print '<a href="grille-export.php?id='.$_GET["id"].'">Export tableur</a><br><br>';
 
 if ($auth_write)
 {
