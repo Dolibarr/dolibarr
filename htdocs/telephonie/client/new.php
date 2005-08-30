@@ -96,6 +96,7 @@ if ($_POST["action"] == 'add')
   $rib->number       = $_POST["rib_compte"];
   $rib->cle_rib      = $_POST["rib_cle"];
   $rib->iban_prefix  = $_POST["rib_iban"];
+  $rib->proprio      = $_POST["titulaire"];
 
   
   if ((strlen(trim($_POST["rib_banque"])) + strlen(trim($_POST["rib_guichet"])) + strlen(trim($_POST["rib_compte"])) + strlen(trim($_POST["rib_cle"])))<> 0 && $verif == 'ok')
@@ -109,6 +110,12 @@ if ($_POST["action"] == 'add')
       if (strlen(trim($_POST["rib_guichet"])) <> 5 && $verif == 'ok')
 	{
 	  $mesg = "Rib code agence incomplet";
+	  $verif = "nok";
+	}
+
+      if (strlen(trim($_POST["titulaire"])) == 0 && $verif == 'ok')
+	{
+	  $mesg = "Vous devez indiquer le titulaire du compte";
 	  $verif = "nok";
 	}
 
@@ -352,42 +359,49 @@ if ($user->rights->telephonie->ligne->creer)
 
   print $langs->trans('Town').'&nbsp;<input type="text" '.$focus.' name="ville" value="'.$soc->ville.'"></td></tr>';
   
-    print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" size="11" maxlength="10" '.$focus.' name="tel" value="'.$soc->tel.'"></td>';
-    print '<td>'.$langs->trans('Fax').'</td><td><input type="text" '.$focus.' name="fax" size="11" maxlength="10" value="'.$soc->fax.'"></td></tr>';
-        	         	   
+  print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" size="11" maxlength="10" '.$focus.' name="tel" value="'.$soc->tel.'"></td>';
+  print '<td>'.$langs->trans('Fax').'</td><td><input type="text" '.$focus.' name="fax" size="11" maxlength="10" value="'.$soc->fax.'"></td></tr>';
+  
+  print "</table>\n";
+  print "</fieldset><br />\n";
+  print '<fieldset id="contact">';
+  print "<legend>Coordonnées bancaires</legend>\n";
+  print '<table class="noborder" width="100%">';
 
-    print '<tr><td>RIB</td><td colspan="3">';
-    print '<input type="text" size="6" maxlength="5" '.$focus.' name="rib_banque" value="'.$_POST["rib_banque"].'">';
-    print '<input type="text" size="6" maxlength="5" '.$focus.' name="rib_guichet" value="'.$_POST["rib_guichet"].'">';
-    print '<input type="text" size="12" maxlength="11" '.$focus.' name="rib_compte" value="'.$_POST["rib_compte"].'">';
-    print '<input type="text" size="3" maxlength="2" '.$focus.' name="rib_cle" value="'.$_POST["rib_cle"].'">';
-    print '&nbsp;&nbsp;IBAN&nbsp;&nbsp;';
-    print '<input type="text" size="4" maxlength="4" '.$focus.' name="rib_iban" value="'.$_POST["rib_iban"].'">';
-    print '</td></tr>';
-      
-    print "</table>\n";
-    print "</fieldset><br />\n";
+  print '<tr><td width="20%">Titulaire du compte</td><td><input type="text" size="30" '.$focus.' name="titulaire" value="'.$contact->name.'"></td></tr>';
 
-    print '<fieldset id="contact">';
-    print "<legend>Contact</legend>\n";
-    print '<table class="noborder" width="100%">';
-    
-    print '<tr><td width="20%">'.$langs->trans('Name').'</td><td><input type="text" size="30" '.$focus.' name="cnom" value="'.$contact->name.'"></td></tr>';
-    print '<tr><td width="20%">'.$langs->trans('Firstname').'</td><td><input type="text" size="20" '.$focus.' name="cprenom" value="'.$contact->firstname.'"></td></tr>';
-    print '<tr><td>'.$langs->trans('Mail').'</td><td><input type="text" size="40" '.$focus.' name="cmail" value="'.$contact->email.'"></td></tr>';
-    
-    print "</table>\n";
-    print "</fieldset><br />\n";
-
-    print '<fieldset id="contact">';
-    print "<legend>Commercial</legend>\n";
-    print '<table class="noborder" width="100%">';
-    print '<tr><td width="20%">Commercial Signature</td><td >';
-    $ff = array();
-    $sql = "SELECT u.rowid, u.firstname, u.name";
-    $sql .= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as ug";
-    $sql .= " WHERE u.rowid = ug.fk_user";
-    $sql .= " AND ug.fk_usergroup = '".TELEPHONIE_GROUPE_COMMERCIAUX_ID."'";
+  print '<tr><td width="20%">RIB</td><td colspan="3">';
+  print '<input type="text" size="6" maxlength="5" '.$focus.' name="rib_banque" value="'.$_POST["rib_banque"].'">';
+  print '<input type="text" size="6" maxlength="5" '.$focus.' name="rib_guichet" value="'.$_POST["rib_guichet"].'">';
+  print '<input type="text" size="12" maxlength="11" '.$focus.' name="rib_compte" value="'.$_POST["rib_compte"].'">';
+  print '<input type="text" size="3" maxlength="2" '.$focus.' name="rib_cle" value="'.$_POST["rib_cle"].'">';
+  print '&nbsp;&nbsp;IBAN&nbsp;&nbsp;';
+  print '<input type="text" size="4" maxlength="4" '.$focus.' name="rib_iban" value="'.$_POST["rib_iban"].'">';
+  print '</td></tr>';
+  
+  print "</table>\n";
+  print "</fieldset><br />\n";
+  
+  print '<fieldset id="contact">';
+  print "<legend>Contact</legend>\n";
+  print '<table class="noborder" width="100%">';
+  
+  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td><input type="text" size="30" '.$focus.' name="cnom" value="'.$contact->name.'"></td></tr>';
+  print '<tr><td width="20%">'.$langs->trans('Firstname').'</td><td><input type="text" size="20" '.$focus.' name="cprenom" value="'.$contact->firstname.'"></td></tr>';
+  print '<tr><td>'.$langs->trans('Mail').'</td><td><input type="text" size="40" '.$focus.' name="cmail" value="'.$contact->email.'"></td></tr>';
+  
+  print "</table>\n";
+  print "</fieldset><br />\n";
+  
+  print '<fieldset id="contact">';
+  print "<legend>Commercial</legend>\n";
+  print '<table class="noborder" width="100%">';
+  print '<tr><td width="20%">Commercial Signature</td><td >';
+  $ff = array();
+  $sql = "SELECT u.rowid, u.firstname, u.name";
+  $sql .= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as ug";
+  $sql .= " WHERE u.rowid = ug.fk_user";
+  $sql .= " AND ug.fk_usergroup = '".TELEPHONIE_GROUPE_COMMERCIAUX_ID."'";
     $sql .= " ORDER BY name ";
     if ( $db->query( $sql) )
       {
