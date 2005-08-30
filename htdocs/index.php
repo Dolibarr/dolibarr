@@ -108,7 +108,7 @@ if ($user->societe_id == 0)
                       $conf->produit->enabled && $user->rights->produit->lire,
                       $conf->service->enabled && $user->rights->produit->lire,
                       $conf->telephonie->enabled && $user->rights->telephonie->ligne->lire_restreint);
-    // Fichiers des classes qui contiennent la methode load_state_board pour chaque ligne
+    // Fichier des classes qui contiennent la methode load_state_board pour chaque ligne
     $includes=array(DOL_DOCUMENT_ROOT."/client.class.php",
                     DOL_DOCUMENT_ROOT."/client.class.php",
                     DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php",
@@ -124,7 +124,7 @@ if ($user->societe_id == 0)
                    'Product',
                    'Service',
                    'LigneTel');
-    // Clé du tableau retourné par la methode laod_state_bord pour chaque ligne
+    // Clé de tableau retourné par la methode load_state_bord pour chaque ligne
     $keys=array('customers',
                 'prospects',
                 'suppliers',
@@ -148,7 +148,7 @@ if ($user->societe_id == 0)
                   $langs->trans("Products"),
                   $langs->trans("Services"),
                   $langs->trans("Lignes de téléphonie suivis"));
-    // Liens des lignes du tableau de bord
+    // Lien des lignes du tableau de bord
     $links=array(DOL_URL_ROOT.'/comm/clients.php',
                  DOL_URL_ROOT.'/comm/prospect/prospects.php',
                  DOL_URL_ROOT.'/fourn/liste.php',
@@ -205,7 +205,7 @@ if ($conf->commercial->enabled || $conf->compta->enabled)
 {
     include_once("./actioncomm.class.php");
     $board=new ActionComm($db);
-    $board->load_board();
+    $board->load_board($user);
     $board->warning_delay=$conf->actions->warning_delay/60/60/24;
     $board->label=$langs->trans("ActionsToDo");
 
@@ -230,7 +230,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 {
     include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
     $board=new Commande($db);
-    $board->load_board();
+    $board->load_board($user);
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Orders"),"order").'</td><td>'.$langs->trans("OrdersToProcess").'</td>';
@@ -253,7 +253,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
     include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
     $board=new Propal($db);
-    $board->load_board("opened");
+    $board->load_board($user,"opened");
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Propals"),"propal").'</td><td>'.$langs->trans("PropalsToClose").'</td>';
@@ -276,7 +276,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
     include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
     $board=new Propal($db);
-    $board->load_board("signed");
+    $board->load_board($user,"signed");
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Propals"),"propal").'</td><td>'.$langs->trans("PropalsToBill").'</td>';
@@ -301,7 +301,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
     
     include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
     $board=new Contrat($db);
-    $board->load_board("inactives");
+    $board->load_board($user,"inactives");
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Contract"),"contract").'</td><td>'.$langs->trans("BoardNotActivatedServices").'</td>';
@@ -326,7 +326,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 
     include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
     $board=new Contrat($db);
-    $board->load_board("expired");
+    $board->load_board($user,"expired");
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Contract"),"contract").'</td><td>'.$langs->trans("BoardRunningServices").'</td>';
@@ -351,7 +351,7 @@ if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->fac
     
     include_once("./fourn/fournisseur.facture.class.php");
     $board=new FactureFournisseur($db);
-    $board->load_board();
+    $board->load_board($user);
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Bills"),"bill").'</td><td>'.$langs->trans("SupplierBillsToPay").'</td>';
@@ -374,7 +374,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 {
     include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
     $board=new Facture($db);
-    $board->load_board();
+    $board->load_board($user);
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Bills"),"bill").'</td><td>'.$langs->trans("CustomerBillsUnpayed").'</td>';
@@ -393,13 +393,13 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 }
 
 // Nbre ecritures à rapprocher
-if ($conf->banque->enabled && $user->rights->banque->lire)
+if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
 {
     $langs->load("banks");
 
     include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
     $board=new Account($db);
-    $board->load_board();
+    $board->load_board($user);
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("TransactionsToConciliate"),"payment").'</td><td>'.$langs->trans("TransactionsToConciliate").'</td>';
@@ -418,13 +418,13 @@ if ($conf->banque->enabled && $user->rights->banque->lire)
 }
 
 // Nbre adhérent valides (attente cotisation)
-if ($conf->adherent->enabled && $user->rights->adherent->lire)
+if ($conf->adherent->enabled && $user->rights->adherent->lire && ! $user->societe_id)
 {
     $langs->load("members");
 
     include_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
     $board=new Adherent($db);
-    $board->load_board();
+    $board->load_board($user);
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Members"),"user").'</td><td>'.$langs->trans("Members").'</td>';

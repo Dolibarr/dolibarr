@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -1604,9 +1603,10 @@ class Facture
 
     /**
      *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \param      user        Objet user
      *      \return     int         <0 si ko, >0 si ok
      */
-    function load_board()
+    function load_board($user)
     {
         global $conf;
         
@@ -1614,6 +1614,7 @@ class Facture
         $sql = "SELECT f.rowid,".$this->db->pdate("f.date_lim_reglement")." as datefin";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
         $sql.= " WHERE f.paye=0 AND f.fk_statut = 1";
+        if ($user->societe_id) $sql.=" AND fk_soc = ".$user->societe_id;
         $resql=$this->db->query($sql);
         if ($resql)
         {

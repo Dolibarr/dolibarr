@@ -225,10 +225,11 @@ class ActionComm
     
     
     /**
-     *    \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
-     *    \return     int     <0 si ko, >0 si ok
+     *      \brief        Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \param        user    Objet user
+     *      \return       int     <0 si ko, >0 si ok
      */
-    function load_board()
+    function load_board($user)
     {
         global $conf;
         
@@ -236,6 +237,7 @@ class ActionComm
         $sql = "SELECT a.id,".$this->db->pdate("a.datea")." as da";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " WHERE a.percent < 100";
+        if ($user->societe_id) $sql.=" AND fk_soc = ".$user->societe_id;
         $resql=$this->db->query($sql);
         if ($resql)
         {

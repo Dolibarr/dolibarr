@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -646,10 +645,11 @@ class Contrat
 
     /**
      *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \param      user        Objet user
      *      \param      mode        "inactive" pour services à activer, "expired" pour services expirés
      *      \return     int         <0 si ko, >0 si ok
      */
-    function load_board($mode)
+    function load_board($user,$mode)
     {
         global $conf;
         
@@ -669,6 +669,7 @@ class Contrat
             $sql.= " AND cd.statut = 4";
             $sql.= " AND cd.date_fin_validite < '".$this->db->idate(time())."'";
         }
+        if ($user->societe_id) $sql.=" AND fk_soc = ".$user->societe_id;
         $resql=$this->db->query($sql);
         if ($resql)
         {

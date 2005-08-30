@@ -1084,18 +1084,20 @@ class Propal
 
     /**
      *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
-     *      \param      mode        opened pour propal à fermer, signed pour propale à facturer
+     *      \param      user        Objet user
+     *      \param      mode        "opened" pour propal à fermer, "signed" pour propale à facturer
      *      \return     int         <0 si ko, >0 si ok
      */
-    function load_board($mode)
+    function load_board($user,$mode)
     {
         global $conf;
         
         $this->nbtodo=$this->nbtodolate=0;
-        $sql = "SELECT p.rowid,".$this->db->pdate("p.datec")." as datec,".$this->db->pdate("p.fin_validite")." as datefin";
-        $sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
-        if ($mode == 'opened') $sql.= " WHERE p.fk_statut = 1";
-        if ($mode == 'signed') $sql.= " WHERE p.fk_statut = 2";
+        $sql ="SELECT p.rowid,".$this->db->pdate("p.datec")." as datec,".$this->db->pdate("p.fin_validite")." as datefin";
+        $sql.=" FROM ".MAIN_DB_PREFIX."propal as p";
+        if ($mode == 'opened') $sql.=" WHERE p.fk_statut = 1";
+        if ($mode == 'signed') $sql.=" WHERE p.fk_statut = 2";
+        if ($user->societe_id) $sql.=" AND fk_soc = ".$user->societe_id;
         $resql=$this->db->query($sql);
         if ($resql)
         {

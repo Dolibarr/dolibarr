@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -850,10 +849,11 @@ class Commande
 
     
     /**
-     *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
-     *      \return     int     <0 si ko, >0 si ok
+     *      \brief          Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \param          user    Objet user
+     *      \return         int     <0 si ko, >0 si ok
      */
-    function load_board()
+    function load_board($user)
     {
         global $conf;
         
@@ -861,6 +861,7 @@ class Commande
         $sql = "SELECT c.rowid,".$this->db->pdate("c.date_creation")." as datec";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
         $sql.= " WHERE c.fk_statut BETWEEN 1 AND 2";
+        if ($user->societe_id) $sql.=" AND fk_soc = ".$user->societe_id;
         $resql=$this->db->query($sql);
         if ($resql)
         {

@@ -471,12 +471,15 @@ class Account
 
     /**
      *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \param      user        Objet user
      *      \return     int         <0 si ko, >0 si ok
      */
-    function load_board()
+    function load_board($user)
     {
         global $conf;
         
+        if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+
         $this->nbtodo=$this->nbtodolate=0;
         $sql = "SELECT b.rowid,".$this->db->pdate("b.datev")." as datefin";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
