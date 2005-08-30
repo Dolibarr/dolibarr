@@ -83,12 +83,7 @@ if ($_GET["id"])
 	  
 	  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
 	  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
-	  	  
-	  print '<tr><td><a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit() ."</a>&nbsp;";
-	  print $langs->trans('RIB').'</td><td colspan="3">';
-	  print $soc->display_rib();
-	  print '</td></tr>';
-	  
+	  	  	  
 	  print '</table><br />';
 
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
