@@ -231,7 +231,7 @@ class MenuTop {
         }
 
         // Entrée telephonie
-        if ($conf->telephonie->enabled)
+        if ($conf->telephonie->enabled && $user->rights->telephonie->lire)
         {
 	  $class="";
 	  if (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
