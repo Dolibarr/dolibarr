@@ -417,10 +417,31 @@ class Societe {
    *    \return     int         >0 si ok, <0 si erreur
    */
 	 
-  function fetch($socid)
+  function fetch($socid, $user=0)
   {
     global $langs;
     
+    /* Lecture des permissions */
+    if ($user <> 0)
+      {
+	$sql = "SELECT p.pread, p.pwrite, p.pperms";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe_perms as p";
+	$sql .= " WHERE p.fk_user = '".$user->id."'";
+	$sql .= " AND p.fk_soc = '".$socid."';";
+	
+	$resql=$this->db->query($sql);
+	
+	if ($resql)
+	  {
+	    if ($row = $this->db->fetch_row($resql))
+	      {
+		$this->perm_read  = $row[0];
+		$this->perm_write = $row[1];
+		$this->perm_perms = $row[2];
+	      }
+	  }
+      }
+
     $this->id = $socid;
 
     $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
