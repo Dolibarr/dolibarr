@@ -26,6 +26,8 @@ create table llx_telephonie_tarif_grille_rights (
   fk_grille      integer NOT NULL,
   fk_user        integer NOT NULL,
   pread          smallint DEFAULT 0,
-  pwrite         smallint DEFAULT 0
+  pwrite         smallint DEFAULT 0,
+  fk_user_creat  integer NOT NULL,
 
+  key (fk_user)
 )type=innodb;
