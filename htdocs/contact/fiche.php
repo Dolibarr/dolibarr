@@ -290,9 +290,9 @@ if ($_GET["action"] == 'create')
 elseif ($_GET["action"] == 'edit')
 {
     /*
-    * Fiche en mode edition
-    *
-    */
+     * Fiche en mode edition
+     *
+     */
 
     print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
     print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
@@ -352,15 +352,20 @@ elseif ($_GET["action"] == 'edit')
     print $form->selectyesno("facturation",$contact->facturation);
     print '</td></tr>';
 
+    print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
+    if ($contact->user_id) print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$contact->user_id.'">'.$contact->user_login.'</a>';
+    else print $langs->trans("NoDolibarrAccess");
+    print '</td></tr>';
+    
     print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-    print "</table><br>";
+    print '</table>';
 
     print "</form>";
 }
 else
 {
     /*
-     * Visualisation de la fiche
+     * Fiche en mode visualisation
      *
      */
     
@@ -370,7 +375,7 @@ else
     {
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
-    
+
         print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->nom_url.'</td></tr>';
     }
     else
@@ -399,7 +404,7 @@ else
     print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
     print $contact->pays;
     print '</td></tr>';
-    
+
     print '<tr><td>Tel Pro</td><td>'.$contact->phone_pro.'</td>';
     print '<td>Tel Perso</td><td>'.$contact->phone_perso.'</td></tr>';
     
@@ -425,6 +430,11 @@ else
     
     print '<tr><td>'.$langs->trans("BillingContact").'</td><td colspan="3">';
     print yn($contact->facturation);
+    print '</td></tr>';
+    
+    print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
+    if ($contact->user_id) print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$contact->user_id.'">'.$contact->user_login.'</a>';
+    else print $langs->trans("NoDolibarrAccess");
     print '</td></tr>';
     
     print "</table>";

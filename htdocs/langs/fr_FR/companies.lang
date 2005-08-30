@@ -112,3 +112,5 @@ NoParentCompany=Aucune
 ExportImport=Import-Export
 ExportCardToFormat=Exporter fiche au format
 ContactNotLinkedToCompany=Contact non lié à une société
+DolibarrLogin=Login Dolibarr
+NoDolibarrAccess=Pas d'accès Dolibarr

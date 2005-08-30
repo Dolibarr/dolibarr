@@ -440,9 +440,11 @@ class Contact
         $sql.= " c.address, c.cp, c.ville,";
         $sql.= " c.fk_pays, p.libelle as pays, p.code as pays_code,";
         $sql.= " c.birthday as birthday, c.poste,";
-        $sql.= " c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.note";
+        $sql.= " c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.note,";
+        $sql.= " u.rowid as user_id, u.login as user_login";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.idp = u.fk_socpeople";
         $sql.= " WHERE c.idp = ". $id;
     
         $resql=$this->db->query($sql);
@@ -485,7 +487,9 @@ class Contact
                 $this->birthday       = $obj->birthday;
                 $this->birthday_alert = $obj->birthday_alert;
                 $this->note           = $obj->note;
-    
+
+                $this->user_id        = $obj->user_id;
+                $this->user_login     = $obj->user_login;
             }
             $this->db->free($resql);
     
