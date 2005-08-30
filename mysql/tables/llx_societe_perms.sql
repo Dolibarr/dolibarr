@@ -22,7 +22,6 @@
 
 create table llx_societe_perms
 (
-  rowid     integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc    integer,
   fk_user   integer,
   pread     tinyint unsigned DEFAULT 0,
