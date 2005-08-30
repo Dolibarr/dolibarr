@@ -569,6 +569,7 @@ class Societe {
     else
       {
 	dolibarr_syslog("Erreur Societe::Fetch echec sql=$sql");
+	dolibarr_syslog("Erreur Societe::Fetch ".$this->db->error());
 	$result = -3;
       }
 
