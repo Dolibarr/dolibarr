@@ -44,6 +44,12 @@ print '<tr><td valign="top" width="50%">';
 $sql = "SELECT d.libelle as tarif_desc, d.rowid";
 
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
+$sql .= ","    . MAIN_DB_PREFIX."telephonie_tarif_grille_rights as r";
+$sql .= " WHERE d.rowid = r.fk_grille";
+$sql .= " AND r.fk_user =".$user->id;
+$sql .= " AND r.pread = 1";
+
+
 $sql .= " ORDER BY d.rowid";
 
 $result = $db->query($sql);
@@ -81,7 +87,7 @@ else
 print '</td></tr></table>';
 
 
-print '<br>Tableur des <a href="grille-export-achat.php">tarifs d\'achats comparés</a>';
+//print '<br>Tableur des <a href="grille-export-achat.php">tarifs d\'achats comparés</a>';
 
 $db->close();
 
