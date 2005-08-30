@@ -1393,29 +1393,43 @@ class Societe {
       }
   }
 
-	/**
-	 *    \brief      Indique si la société a des projets
-	 *    \return     bool	   true si la société a des projets, false sinon
-	 */
-	function has_projects()
-	{
-		$sql = 'SELECT COUNT(*) as numproj FROM '.MAIN_DB_PREFIX.'projet WHERE fk_soc = ' . $this->id;
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$nump = $this->db->num_rows($resql);
-			$obj = $this->db->fetch_object();
-			$count = $obj->numproj;
-		}
-		else
-		{
-			$count = 0;
-			print $this->db->error();
-		}
-		$this->db->free($resql);
-		return ($count > 0);
-    }
+  /**
+   *    \brief      Indique si la société a des projets
+   *    \return     bool	   true si la société a des projets, false sinon
+   */
+  function has_projects()
+  {
+    $sql = 'SELECT COUNT(*) as numproj FROM '.MAIN_DB_PREFIX.'projet WHERE fk_soc = ' . $this->id;
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {
+	$nump = $this->db->num_rows($resql);
+	$obj = $this->db->fetch_object();
+	$count = $obj->numproj;
+      }
+    else
+      {
+	$count = 0;
+	print $this->db->error();
+      }
+    $this->db->free($resql);
+    return ($count > 0);
+  }
+  
 
+  function AddPerms($user_id, $read, $write, $perms)
+  {
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perms";
+    $sql .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
+    $sql .= " VALUES (".$this->id.",".$user_id.",".$read.",".$write.",".$perms.");";
+	
+    $resql=$this->db->query($sql);
+	
+    if ($resql)
+      {
+
+      }
+  }
 }
 
 ?>
