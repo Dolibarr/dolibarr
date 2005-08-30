@@ -38,28 +38,27 @@ if ($_POST["action"] == 'perms')
   if ($_POST["perms"] == 1)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights";
-      $sql .= " SET pread= 1, pwrite = 0 WHERE fk_user = '".$_POST["user"]."'";
+      $sql .= " SET pread= 1, pwrite = 0, fk_user_creat ='".$user->id."' WHERE fk_user = '".$_POST["user"]."'";
       $sql .= " AND fk_grille = '".$_POST["grille"]."';";
       if ( $db->query($sql) )
 	{
 	  if ($db->affected_rows($resql) == 0)
 	    {
 	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights";
-	      $sql .= " (pread,pwrite,  fk_user, fk_grille) VALUES ";
-	      $sql .= " (1,0,'".$_POST["user"]."','".$_POST["grille"]."');";
+	      $sql .= " (pread,pwrite,  fk_user, fk_grille, fk_user_creat) VALUES ";
+	      $sql .= " (1,0,'".$_POST["user"]."','".$_POST["grille"]."','".$user->id."');";
 	      if ( $db->query($sql) )
 		{
 
 		}
 	    }
-
 	}
     }
 
   if ($_POST["perms"] == 2)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights";
-      $sql .= " SET pread= 1, pwrite = 1 WHERE fk_user = '".$_POST["user"]."'";
+      $sql .= " SET pread= 1, pwrite = 1, fk_user_creat ='".$user->id."' WHERE fk_user = '".$_POST["user"]."'";
       $sql .= " AND fk_grille = '".$_POST["grille"]."';";
       if ( $db->query($sql) )
 	{
@@ -68,8 +67,8 @@ if ($_POST["action"] == 'perms')
 	    {
 
 	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights";
-	      $sql .= " (pread,pwrite, fk_user, fk_grille) VALUES ";
-	      $sql .= " (1,1,'".$_POST["user"]."','".$_POST["grille"]."');";
+	      $sql .= " (pread,pwrite, fk_user, fk_grille, fk_user_creat) VALUES ";
+	      $sql .= " (1,1,'".$_POST["user"]."','".$_POST["grille"]."','".$user->id."');";
 	      if ( $db->query($sql) )
 		{
 
