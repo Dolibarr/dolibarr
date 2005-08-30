@@ -194,7 +194,7 @@ if ($_GET["search_grille"])
 }
 
 
-$sql = $sql . $sqlc . " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql = $sql . $sqlc . " ORDER BY u.name ASC " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
