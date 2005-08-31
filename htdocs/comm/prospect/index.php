@@ -73,7 +73,9 @@ if ($conf->propal->enabled)
   print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
   print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
   print '<tr '.$bc[$var].'><td>';
-  print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref" size="16"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+  print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+  print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+  print '</tr>';
   print "</form></table><br>\n";
 }
 
