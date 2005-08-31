@@ -346,7 +346,7 @@ if ($socid > 0)
                 $obj = $db->fetch_object();
                 $var = !$var;
                 print "<tr $bc[$var]>";
-                print '<td><a href="../projet/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
+                print '<td><a href="../projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),"project")." ".$obj->title.'</a></td>';
 
                 print "<td align=\"right\">".strftime("%d %b %Y", $obj->do) ."</td></tr>";
                 $i++;
