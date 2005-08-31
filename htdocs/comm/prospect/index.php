@@ -18,13 +18,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
 	    \file       htdocs/comm/prospect/index.php
         \ingroup    commercial
-		\brief      Page acceuil de la zone prospection
+		\brief      Page accueil de la zone prospection
 		\version    $Revision$
 */
 
@@ -239,10 +238,10 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
             {
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
-                print "<tr $bc[$var]><td width=\"20%\"><a href=\"../propal.php?propalid=".$obj->rowid."\">";
+                print "<tr $bc[$var]><td><a href=\"../propal.php?propalid=".$obj->rowid."\">";
                 print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
     
-                print "<td width=\"30%\"><a href=\"fiche.php?id=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
+                print "<td><a href=\"fiche.php?id=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
                 print "<td align=\"right\">";
                 print dolibarr_print_date($obj->dp)."</td>\n";
                 print "<td align=\"right\">".price($obj->price)."</td></tr>\n";

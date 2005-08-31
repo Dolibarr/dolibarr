@@ -18,14 +18,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/commande/liste.php
-   \ingroup    commande
-   \brief      Page liste des commandes
-   \version    $Revision$
+        \file       htdocs/commande/liste.php
+        \ingroup    commande
+        \brief      Page liste des commandes
+        \version    $Revision$
 */
 
 
@@ -35,16 +34,18 @@ $langs->load("orders");
 
 if (!$user->rights->commande->lire) accessforbidden();
 
-/*
- * Sécurité accés client
- */
-$socidp = $_GET["socidp"];
+$sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
+$snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
+$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
+// Sécurité accés client
+$socidp = $_GET["socidp"];
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
 
 llxHeader();
 
@@ -59,13 +60,20 @@ $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
 
 $sql = "SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande, c.fk_statut" ;
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c WHERE c.fk_soc = s.idp";
-
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
+$sql.= " WHERE c.fk_soc = s.idp";
+if ($sref)
+{
+    $sql .= " AND c.ref like '%".$sref."%'";
+}
+if ($sall)
+{
+    $sql .= " AND (c.ref like '%".$sall."%' OR c.note like '%".$sall."%')";
+}
 if ($socidp)
 { 
   $sql .= " AND s.idp = $socidp"; 
 }
-
 if ($_GET["month"] > 0)
 {
   $sql .= " AND date_format(c.date_commande, '%Y-%m') = '$year-$month'";
@@ -78,12 +86,10 @@ if (isset($_GET["status"]))
 {
   $sql .= " AND fk_statut = ".$_GET["status"];
 }
-
 if (isset($_GET["afacturer"]))
 {
   $sql .= " AND c.facture = 0";
 }
-
 if (strlen($_POST["sf_ref"]) > 0)
 {
   $sql .= " AND c.ref like '%".$_POST["sf_ref"] . "%'";

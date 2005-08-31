@@ -21,10 +21,10 @@
  */
 
 /**
-   \file       htdocs/comm/index.php
-   \ingroup    commercial
-   \brief      Page acceuil de la zone commercial
-   \version    $Revision$
+        \file       htdocs/comm/index.php
+        \ingroup    commercial
+        \brief      Page acceuil de la zone commercial
+        \version    $Revision$
 */
  
 require("./pre.inc.php");

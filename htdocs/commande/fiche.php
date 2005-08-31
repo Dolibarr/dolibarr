@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -607,12 +606,12 @@ else
             if ($num)
             {
                 print '<tr class="liste_titre">';
-		  print '<td>'.$langs->trans('Description').'</td>';
-		  print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
-		  print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-		  print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-		  print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
-		  print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
+                print '<td>'.$langs->trans('Description').'</td>';
+                print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+                print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+                print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+                print '<td align="right">'.$langs->trans('Discount').'</td>';
+                print '<td align="right">'.$langs->trans('AmountHT').'</td>';
                 print '<td>&nbsp;</td><td>&nbsp;</td>';
                 print "</tr>\n";
             }
