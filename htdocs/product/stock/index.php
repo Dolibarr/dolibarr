@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -40,25 +39,23 @@ if (!$user->rights->stock->lire)
 
 llxHeader("","",$langs->trans("Stocks"));
 
-print_titre($langs->trans("StocksArea"));
-print '<br>';
+print_fiche_titre($langs->trans("StocksArea"));
 
-
-print '<table class="noborder" width="100%">';
-print '<tr><td valign="top" width="30%">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 
 /*
  * Zone recherche entrepot
  */
-print '<form method="post" action="liste.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/liste.php">';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Ref").' :</td><td><input class="flat" type="text" size="20" name="sf_ref"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="18" name="sf_ref"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print "<tr $bc[0]><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
 print "</table></form><br>";
-
 
 
 
@@ -101,12 +98,12 @@ else
     dolibarr_print_error($db);
 }
 
-print '</td><td valign="top" width="70%">';
+print '</td><td valign="top" width="70%" class="notopnoleft">';
 
 
 print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

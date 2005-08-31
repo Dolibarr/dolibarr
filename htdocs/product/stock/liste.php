@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -37,25 +36,35 @@ $langs->load("stocks");
 if (!$user->rights->stock->lire)
   accessforbidden();
 
+$sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
+$snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
+$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+if (! $sortfield) $sortfield="e.label";
+if (! $sortorder) $sortorder="ASC";
 $page = $_GET["page"];
-$sortfield = $_GET["sortfield"];
-$sortorder = $_GET["sortorder"];
-
 if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
 
-if (! $sortfield) $sortfield="e.label";
-if (! $sortorder) $sortorder="ASC";
-
   
 $sql  = "SELECT e.rowid as ref, e.label, e.statut, e.lieu, e.address, e.cp, e.ville, e.fk_pays";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql .= " WHERE 1=1";
+if ($sref)
+{
+    $sql .= " AND e.ref like '%".$sref."%'";
+}
+if ($sall)
+{
+    $sql .= " AND (e.label like '%".$sall."%' OR e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.ville like '%".$sall."%')";
+}
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
-$result = $db->query($sql) ;
 
+$result = $db->query($sql) ;
 if ($result)
 {
   $num = $db->num_rows($result);
@@ -104,5 +113,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
