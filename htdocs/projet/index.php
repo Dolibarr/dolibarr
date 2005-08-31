@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -33,9 +32,7 @@ $langs->load("projects");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -57,19 +54,19 @@ print '<tr><td width="30%" valign="top" class="notopnoleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Project"),"index.php","s.nom","","","",$sortfield);
-print '<td align="center">'.$langs->trans("NbOpenTasks").'</td>';
+print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, count(t.rowid)";
-$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
-$sql .= " WHERE t.fk_projet = p.rowid";
-
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
+//$sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
+//$sql.= " WHERE t.fk_projet = p.rowid";
 if ($socidp)
 { 
   $sql .= " AND s.idp = $socidp"; 
 }
-$sql .= " GROUP BY p.rowid";
+$sql.= " GROUP BY p.rowid";
 
 $var=true;
 $resql = $db->query($sql);
@@ -83,8 +80,8 @@ if ( $resql )
       $row = $db->fetch_row( $resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="center">'.$row[2].'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$row[1].'">'.img_object($langs->trans("ShowProject"),"project")." ".$row[0].'</a></td>';
+      print '<td align="right">'.$row[2].'</td>';
       print "</tr>\n";
     
       $i++;
@@ -108,13 +105,12 @@ print '</td><td width="70%" valign="top" class="notopnoleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield);
-print '<td>Nb</td>';
+print '<td align="right">'.$langs->trans("Nb").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT s.nom, s.idp, count(p.rowid)";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
 $sql .= " WHERE p.fk_soc = s.idp";
-
 if ($socidp)
 { 
   $sql .= " AND s.idp = $socidp"; 
@@ -134,8 +130,8 @@ if ( $resql )
       $row = $db->fetch_row( $resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td>'.$row[2].'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$row[1].'">'.img_object($langs->trans("ShowCompany"),"company")." ".$row[0].'</a></td>';
+      print '<td align="right">'.$row[2].'</td>';
       print "</tr>\n";
     
       $i++;

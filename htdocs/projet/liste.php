@@ -19,14 +19,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /** 
-    \file       htdocs/projet/liste.php
-    \ingroup    projet
-    \brief      Page liste des projets
-    \version    $Revision$
+        \file       htdocs/projet/liste.php
+        \ingroup    projet
+        \brief      Page liste des projets
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -68,6 +67,8 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
+llxHeader();
+
 /*
  *
  * Affichage de la liste des projets
@@ -77,12 +78,10 @@ $sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." a
 $sql .= " , s.nom, s.idp, s.client";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
 $sql .= " WHERE p.fk_soc = s.idp";
-
 if ($socid)
 { 
   $sql .= " AND s.idp = $socid"; 
 }
-
 if ($_GET["search_ref"])
 {
   $sql .= " AND p.ref LIKE '%".$_GET["search_ref"]."%'";
@@ -95,7 +94,6 @@ if ($_GET["search_societe"])
 {
   $sql .= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";
 }
-
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $var=true;
@@ -105,12 +103,8 @@ if ($resql)
   $num = $db->num_rows($resql);
   $i = 0;
   
-  //llxHeader("",$title,"Projet");
-  llxHeader();
-  
   print_barre_liste($langs->trans("Projects"), $page, "liste.php", "", $sortfield, $sortorder, "", $num);
   
-  print '<br>';
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Ref"),"liste.php","p.ref","","","",$sortfield);
@@ -140,10 +134,10 @@ if ($resql)
       $objp = $db->fetch_object($resql);    
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->title</a></td>\n";
-      print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->ref</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$objp->projectid\">".img_object($langs->trans("ShowProject"),"project")." ".$objp->ref."</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$objp->projectid\">".$objp->title."</a></td>\n";
       print '<td>';
-      print img_object($langs->trans("ShowCompanie"),"company");
+      print img_object($langs->trans("ShowCompany"),"company");
       
       print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
       print '<td>&nbsp;</td>';
@@ -163,5 +157,7 @@ print "</table>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
+
 ?>

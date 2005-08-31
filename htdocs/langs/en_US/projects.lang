@@ -1,6 +1,7 @@
 # Dolibarr language file - en_US - projects
 Project=Project
 Projects=Projects
+Myprojects=My projects
 ProjectsArea=Projects area
 NewProject=New project
 AddProject=Add project
@@ -11,3 +12,10 @@ AllProjects=All projects
 ShowProject=Show project
 SetProject=Set project
 NoProject=No project defined
+NbOpenTasks=Nb of opened tasks
+Mytasks=My tasks
+Tasks=Tasks
+Task=Task
+NewTask=New task
+Activity=Activity
+MyActivity=My activity
