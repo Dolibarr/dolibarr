@@ -18,14 +18,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*!
-  \file       htdocs/fourn/commande/history.php
-  \ingroup    commande
-  \brief      Fiche commande
-  \version    $Revision$
+/**
+        \file       htdocs/fourn/commande/history.php
+        \ingroup    commande
+        \brief      Fiche commande
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -37,9 +36,7 @@ $langs->load("companies");
 $user->getrights('fournisseur');
 
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
-/*
- *
- */	
+
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -81,6 +78,7 @@ if ($_GET["id"] > 0)
       $h++;
 
       dolibarr_fiche_head($head, $a, $soc->nom);	  
+
       
       /*
        *   Commande
@@ -99,7 +97,7 @@ if ($_GET["id"] > 0)
       if ($commande->methode_commande_id > 0) 
 	{	  
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
-	  print '<td colspan="2">'.strftime("%A %e %B %Y",$commande->date_commande)."</td>\n";
+	  print '<td colspan="2">'.dolibarr_print_date($commande->date_commande,"%A %e %B %Y")."</td>\n";
 	  print '<td width="50%">&nbsp;';
 	  print "</td></tr>";
 	}
@@ -108,55 +106,56 @@ if ($_GET["id"] > 0)
 	
       print '<td>&nbsp;</td></tr>';  
       print "</table>\n";
+
 	  
       /*
        * Historique
        *
        */
-      echo '<br><table class="border" width="100%">';	  
+        echo '<br><table class="border" width="100%">';	  
 
-      $sql = "SELECT l.fk_statut, ".$db->pdate("l.datelog") ."as dl, u.firstname, u.name";
-      $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_log as l ";
-      $sql .= " , ".MAIN_DB_PREFIX."user as u ";
-      $sql .= " WHERE l.fk_commande = ".$commande->id." AND u.rowid = l.fk_user";
-      $sql .= " ORDER BY l.rowid DESC";
-	  
-      $resql = $db->query($sql);
+        $sql = "SELECT l.fk_statut, ".$db->pdate("l.datelog") ."as dl, u.firstname, u.name";
+        $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_log as l ";
+        $sql .= " , ".MAIN_DB_PREFIX."user as u ";
+        $sql .= " WHERE l.fk_commande = ".$commande->id." AND u.rowid = l.fk_user";
+        $sql .= " ORDER BY l.rowid DESC";
+        
+        $resql = $db->query($sql);
 
-      if ($resql)
-	{
-	  $num = $db->num_rows($resql);
-	  $i = 0;
-
-	  $var=True;
-	  while ($i < $num)
-	    {
-	      $obj = $db->fetch_object($resql);
-	      print "<tr $bc[$var]>";
-
-	      print '<td width="20%">'.strftime("%a %d %B %Y %H:%M:%S",$obj->dl)."</td>\n";
-
-	      print '<td width="10%"><img src="statut'.$obj->fk_statut.'.png">&nbsp;';
-
-	      print $commande->statuts[$obj->fk_statut]."</td>\n";
-
-	      print '<td width="70%">'.$obj->firstname. " " . $obj->name.'</td>';
-
-	      print "</tr>";
-		  
-
-	      $i++;
-	      $var=!$var;
-	    }	      
-	  $db->free($resql);
-	} 
-      else
-	{
-	  print $db->error();
-	}
-
-      print "</table>";
-      print '<br /></div>';
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            $i = 0;
+        
+            $var=True;
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                print "<tr $bc[$var]>";
+        
+                print '<td width="20%">'.strftime("%a %d %B %Y %H:%M:%S",$obj->dl)."</td>\n";
+        
+                print '<td width="10%"><img src="statut'.$obj->fk_statut.'.png">&nbsp;';
+        
+                print $commande->statuts[$obj->fk_statut]."</td>\n";
+        
+                print '<td width="70%">'.$obj->firstname. " " . $obj->name.'</td>';
+        
+                print "</tr>";
+        
+        
+                $i++;
+                $var=!$var;
+            }
+            $db->free($resql);
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
+        
+        print "</table>";
+        print '</div>';
     }
   else
     {
@@ -167,5 +166,5 @@ if ($_GET["id"] > 0)
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

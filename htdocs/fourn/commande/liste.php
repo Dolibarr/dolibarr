@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /** 
@@ -73,22 +72,22 @@ $sql .= " WHERE cf.fk_soc = s.idp ";
 
 if ($socid)
 {
-  $sql .= " AND s.idp=$socid";
+    $sql .= " AND s.idp=$socid";
 }
 
 if (strlen($_GET["statut"]))
 {
-  $sql .= " AND fk_statut =".$_GET["statut"];
+    $sql .= " AND fk_statut =".$_GET["statut"];
 }
 
 if (strlen($_GET["search_ref"]))
 {
-  $sql .= " AND cf.ref LIKE '%".$_GET["search_ref"]."%'";
+    $sql .= " AND cf.ref LIKE '%".$_GET["search_ref"]."%'";
 }
 
 if (strlen($_GET["search_nom"]))
 {
-  $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
+    $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -96,59 +95,70 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-  
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-  print_barre_liste($title, $page, "liste.php", "", $sortfield, $sortorder, '', $num);
 
-  print '<table class="liste">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref");
-  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom");
-  print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc");
-  print "</tr>\n";
+    print_barre_liste($title, $page, "liste.php", "", $sortfield, $sortorder, '', $num);
 
-  print '<tr class="liste_titre">';
-  print '<form action="liste.php" method="GET">';
-  print '<td><input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
-  print '<td><input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
-  print '<td><input class="button" type="submit" value="'.$langs->trans("Search").'"></td>';
-  print '</form>';
-  print '</tr>';
+    print '<table class="liste">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref");
+    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom");
+    print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","","",'align="center"');
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","","",'align="center"');
+    print "</tr>\n";
 
-  $var=true;
+    print '<tr class="liste_titre">';
+    print '<form action="liste.php" method="GET">';
+    print '<td><input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
+    print '<td><input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+    print '<td colspan="2" class="liste_titre" align="right">';
+    print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+    print '</td>';
+    print '</form>';
+    print '</tr>';
 
-  while ($i < min($num,$conf->liste_limit))
+    $var=true;
+
+    while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($resql);	
-      $var=!$var;
+        $obj = $db->fetch_object($resql);
+        $var=!$var;
 
-      print "<tr $bc[$var]>";
-      print '<td><img src="statut'.$obj->fk_statut.'.png">';
-      print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.$obj->ref.'</a></td>'."\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
-      print $obj->nom.'</a></td>'."\n";
+        print "<tr $bc[$var]>";
 
-      print "<td align=\"right\" width=\"100\">";
-      if ($obj->dc)
-	{
-	  print dolibarr_print_date($obj->dc,"%e %b %Y");
-	}
-      else
-	{
-	  print "-";
-	}
-      print '</td>';
-      print "</tr>\n";
-      $i++;
+        // Ref
+        print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>'."\n";
+
+        // Société
+        print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
+        print $obj->nom.'</a></td>'."\n";
+
+        // Date
+        print "<td align=\"center\" width=\"100\">";
+        if ($obj->dc)
+        {
+            print dolibarr_print_date($obj->dc,"%e %b %Y");
+        }
+        else
+        {
+            print "-";
+        }
+        print '</td>';
+
+        // Statut
+        print '<td align="center"><img src="statut'.$obj->fk_statut.'.png"></td>';
+
+        print "</tr>\n";
+        $i++;
     }
-  print "</table>";
-  $db->free($resql);
+    print "</table>";
+    $db->free($resql);
 }
-else 
+else
 {
-  dolibarr_print_error($db);
+    dolibarr_print_error($db);
 }
 
 $db->close();

@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -133,12 +132,12 @@ if ($_GET["id"] > 0)
       print '<tr><td>'.$langs->trans("AmountHT").'</td>';
       print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td>';
-      print '<td rowspan="3" valign="top">&nbsp;</td></tr>';
+      print '<td valign="top">&nbsp;</td></tr>';
 
       print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
-      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
       print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
-      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td>&nbsp;</td></tr>';
 
 
       if ($user->rights->fournisseur->commande->creer)
@@ -151,7 +150,7 @@ if ($_GET["id"] > 0)
 	  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">'.nl2br($commande->note)."</td></tr>";
 	}
 	  
-      print "</table><br></form>";
+      print "</table></form>";
     }
   else
     {
@@ -163,5 +162,5 @@ if ($_GET["id"] > 0)
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

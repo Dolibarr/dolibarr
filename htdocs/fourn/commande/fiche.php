@@ -19,14 +19,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/fourn/commande/fiche.php
-   \ingroup    commande
-   \brief      Fiche commande
-   \version    $Revision$
+        \file       htdocs/fourn/commande/fiche.php
+        \ingroup    commande
+        \brief      Fiche commande
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -36,14 +35,13 @@ if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
 /*
  *
  */	
@@ -63,10 +61,6 @@ if ($_GET["action"] == 'pdf')
   $commande->generate_pdf();
 }
 
-/*
- *
- */
-
 if ($_POST["action"] == 'setremise' && $user->rights->commande->creer) 
 {
   $commande = new CommandeFournisseur($db);
@@ -74,6 +68,7 @@ if ($_POST["action"] == 'setremise' && $user->rights->commande->creer)
 
   $commande->set_remise($user, $_POST["remise"]);
 } 
+
 /*
  *
  */
@@ -100,7 +95,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->fournisseur->commande->cree
 			       0,
 			       $_POST["remise_percent"]);
     }
-  Header("Location: fiche.php?id=".$_GET["id"]);
+    Header("Location: fiche.php?id=".$_GET["id"]);
 }
 
 if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer) 
@@ -205,6 +200,8 @@ if ($_GET["action"] == 'create')
       Header("Location:fiche.php?id=".$idc);
     }
 }
+
+
 
 llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
@@ -319,7 +316,7 @@ if ($_GET["id"] > 0)
 	  
 	  if ($commande->date_commande)
 	    {
-	      print strftime("%A %d %B %Y",$commande->date_commande)."\n";
+	      print dolibarr_print_date($commande->date_commande,"%A %d %B %Y")."\n";
 	    }
 	  
 	  print '</td><td width="50%" colspan="3">';
@@ -337,16 +334,16 @@ if ($_GET["id"] > 0)
       // Ligne de 3 colonnes
       print '<tr><td>'.$langs->trans("AmountHT").'</td>';
       print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td>';
-      print '<td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
-      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td colspan="3">&nbsp;</td></tr>';
+      print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
+      print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td colspan="3">&nbsp;</td></tr>';
 
       print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td colspan="3">&nbsp;</td></tr>';
 
       if ($commande->note)
 	{
-	  print '<tr><td>Note</td><td colspan="5">'.nl2br($commande->note)."</td></tr>";
+	  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5">'.nl2br($commande->note)."</td></tr>";
 	}
 	  
       print "</table>";
@@ -355,7 +352,7 @@ if ($_GET["id"] > 0)
        * Lignes de commandes
        *
        */
-      echo '<br><table class="noborder" width="100%">';	  
+      print '<br><table class="noborder" width="100%">';	  
 
       $sql = "SELECT l.ref, l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
       $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l ";
@@ -364,7 +361,7 @@ if ($_GET["id"] > 0)
       $resql = $db->query($sql);
       if ($resql)
 	{
-	  $num_lignes = $db->num_rows();
+	  $num_lignes = $db->num_rows($resql);
 	  $i = 0; $total = 0;
 	      
 	  if ($num_lignes)
@@ -382,7 +379,7 @@ if ($_GET["id"] > 0)
 	  $var=True;
 	  while ($i < $num_lignes)
 	    {
-	      $objp = $db->fetch_object();
+	      $objp = $db->fetch_object($resql);
 	      print "<tr $bc[$var]>";
 	      print "<td>".$objp->ref."</td>\n";
 	      if ($objp->fk_product > 0)
@@ -392,10 +389,10 @@ if ($_GET["id"] > 0)
 		}
 	      else
 		{
-		  print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
+		  print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
 		}
-	      print '<td align="center">'.$objp->tva_tx.' %</TD>';
-	      print '<td align="center">'.$objp->qty.'</TD>';
+	      print '<td align="center">'.$objp->tva_tx.'%</td>';
+	      print '<td align="center">'.$objp->qty.'</td>';
 	      if ($objp->remise_percent > 0)
 		{
 		  print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -445,35 +442,35 @@ if ($_GET["id"] > 0)
        * Ajouter une ligne
        *
        */
-      if ($_GET["action"] <> 'valid' && $commande->statut == 0 && $user->rights->fournisseur->commande->creer) 
-	{
-	  $sql = "SELECT p.rowid,p.label,p.ref ";
-	  $sql .=" , (pf.price / pf.quantity) as priceunit";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."product as p ";
-	  $sql .= " , ".MAIN_DB_PREFIX."product_fournisseur_price as pf ";
-	  $sql .= " WHERE p.rowid = pf.fk_product AND pf.fk_soc = ".$commande->fourn_id;
-	  $sql .= " ORDER BY p.ref ";
-	  $resql = $db->query($sql);
-	  if ($resql)
-	    {
-	      $opt = '<option value="0" selected="true"></option>';
-	      if ($resql)
-		{
-		  $num = $db->num_rows($resql);
-		  $i = 0;	
-		  while ($i < $num)
-		    {
-		      $objp = $db->fetch_object($resql);
-		      $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->priceunit</option>\n";
-		      $i++;
-		    }
-		}
-	      $db->free($resql);
-	    }
-	  else
-	    {
-	      print $db->error();
-	    }
+    if ($_GET["action"] <> 'valid' && $commande->statut == 0 && $user->rights->fournisseur->commande->creer)
+    {
+        $sql = "SELECT p.rowid,p.label,p.ref ";
+        $sql .=" , (pf.price / pf.quantity) as priceunit";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product as p ";
+        $sql .= " , ".MAIN_DB_PREFIX."product_fournisseur_price as pf ";
+        $sql .= " WHERE p.rowid = pf.fk_product AND pf.fk_soc = ".$commande->fourn_id;
+        $sql .= " ORDER BY p.ref ";
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $opt = '<option value="0" selected="true"></option>';
+            if ($resql)
+            {
+                $num = $db->num_rows($resql);
+                $i = 0;
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object($resql);
+                    $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->priceunit</option>\n";
+                    $i++;
+                }
+            }
+            $db->free($resql);
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
 
 	  print '<form action="fiche.php?id='.$commande->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="addligne">';
@@ -496,6 +493,7 @@ if ($_GET["id"] > 0)
 
 	  print "</form>";
 	}
+	
       print "</table><br>";
       /*
        * Fin Ajout ligne
@@ -549,38 +547,39 @@ if ($_GET["id"] > 0)
 	    
 	  print "</div>";
 	}
-      print "<p>\n";
 
-      /*
-       * Documents générés
-       *
-       */
-      $file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
-	  $relativepath=$commande->ref . "/" . $commande->ref . ".pdf";
-	  
-	  $var=true;
-	  
-      if (file_exists($file))
-	{
-	  print_titre($langs->trans("Documents"));
-	  print '<table width="100%" class="border">';
-	    
-	  print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
-	  print '<td align="right">'.filesize($file). ' bytes</td>';
-	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-	  print '</tr>';
-	           	
-	  print "</table>\n";
-	  print '</td><td valign="top" width="50%">';
-	}
+        /*
+         * Documents générés
+         *
+         */
+        $file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
+        $relativepath=$commande->ref . "/" . $commande->ref . ".pdf";
+        
+        $var=true;
+        
+        if (file_exists($file))
+        {
+            print_titre($langs->trans("Documents"));
+            print '<table width="100%" class="border">';
+        
+            print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
+            print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
+            print '<td align="right">'.filesize($file). ' bytes</td>';
+            print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+            print '</tr>';
+        
+            print "</table>\n";
+
+            print '</td><td valign="top" width="50%">';
+        }
+        
       /*
        *
        *
        */
       if ($_GET["action"] == 'classer')
 	{	    
-	  print '<p><form method="post" action="fiche.php?id='.$commande->id.'">';
+	  print '<form method="post" action="fiche.php?id='.$commande->id.'">';
 	  print '<input type="hidden" name="action" value="classin">';
 	  print '<table class="border">';
 	  print '<tr><td>Projet</td><td>';
@@ -603,7 +602,7 @@ if ($_GET["id"] > 0)
 	  $form = new Form($db);
 	  
 	  print '<form action="fiche.php?id='.$commande->id.'&amp;action=commande" method="post">';
-	  print '<table class="noborder" cellpadding="4" cellspacing="0">';
+	  print '<table class="noborder">';
 	  print '<tr class="liste_titre"><td colspan="2">Commander</td></tr>';
 	  print '<tr><td>Date commande</td><td>';
 	  print $form->select_date();
@@ -634,7 +633,7 @@ if ($_GET["id"] > 0)
 	  
 	  print '<form action="fiche.php?id='.$commande->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="livraison">';
-	  print '<table class="noborder" cellpadding="4" cellspacing="0">';
+	  print '<table class="noborder">';
 	  print '<tr class="liste_titre"><td colspan="2">Réceptionner</td></tr>';
 	  print '<tr><td>Date de livraison</td><td>';
 	  print $form->select_date();
@@ -664,5 +663,5 @@ if ($_GET["id"] > 0)
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
