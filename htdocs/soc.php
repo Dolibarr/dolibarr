@@ -259,7 +259,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             print '</textarea></td></tr>';
     
             print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"';
-            if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onblur="PopupPostalCode(cp.value,ville)"';
+            if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="PopupPostalCode(cp.value,ville)"';
             print '>';
             if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="PopupPostalCode(cp.value,ville)">';
             print '</td>';
@@ -393,7 +393,7 @@ elseif ($_GET["action"] == 'edit')
         print '</textarea></td></tr>';
 
         print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"';
-        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onblur="PopupPostalCode(cp.value,ville)"';
+        if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="PopupPostalCode(cp.value,ville)"';
         print '>';
         if ($conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="PopupPostalCode(cp.value,ville)">';
         print '</td>';
