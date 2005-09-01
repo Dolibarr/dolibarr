@@ -972,175 +972,183 @@ class Form
     }
 
 
-  /**
-   *    \brief  Affiche zone de selection de date
-   *            Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
-   *            Les champs sont présélectionnées avec:
-   *            - La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
-   *            - La date du jour si set_time vaut ''
-   *            - Aucune date (champs vides) si set_time vaut -1
-   */
-  function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0)
-  {
-    global $langs;
-    
-    if (! $set_time && ! $empty)
-      {
-	$set_time = time();
-      }
-
-    $strmonth[1]  = $langs->trans("January");
-    $strmonth[2]  = $langs->trans("February");
-    $strmonth[3]  = $langs->trans("March");
-    $strmonth[4]  = $langs->trans("April");
-    $strmonth[5]  = $langs->trans("May");
-    $strmonth[6]  = $langs->trans("June");
-    $strmonth[7]  = $langs->trans("July");
-    $strmonth[8]  = $langs->trans("August");
-    $strmonth[9]  = $langs->trans("September");
-    $strmonth[10] = $langs->trans("October");
-    $strmonth[11] = $langs->trans("November");
-    $strmonth[12] = $langs->trans("December");
-    
-    // Analyse de la date de préselection
-    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg)) {
-      // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
-      $syear = $reg[1];
-      $smonth = $reg[2];
-      $sday = $reg[3];
-      $shour = $reg[4];
-      $smin = $reg[5];
-    }
-    else {
-      // Date est un timestamps
-      $syear = date("Y", $set_time);
-      $smonth = date("n", $set_time);
-      $sday = date("d", $set_time);
-      $shour = date("H", $set_time);
-      $smin = date("i", $set_time);
-    }
-    
-    // Jour
-    print '<select class="flat" name="'.$prefix.'day">';    
-
-    if ($empty || $set_time == -1)
-      {
-    	$sday = 0;
-    	$smonth = 0;
-    	$syear = 0;
-    	$shour = 0;
-    	$smin = 0;
-
-    	print '<option value="0" selected="true"></option>';
-      }
-    
-    for ($day = 1 ; $day <= 31; $day++) 
+    /**
+     *    \brief  Affiche zone de selection de date
+     *            Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
+     *            Les champs sont présélectionnées avec:
+     *            - La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
+     *            - La date du jour si set_time vaut ''
+     *            - Aucune date (champs vides) si set_time vaut -1
+     */
+    function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0)
     {
-        if ($day == $sday)
-        {
-            print "<option value=\"$day\" selected=\"true\">$day";
-        }
-        else 
-        {
-            print "<option value=\"$day\">$day";
-        }
-        print "</option>";
-    }
+        global $langs;
     
-    print "</select>";
+        if (! $set_time && $empty == 0)
+        {
+            $set_time = time();
+        }
     
-    print '<select class="flat" name="'.$prefix.'month">';    
-    if ($empty || $set_time == -1)
-      {
-	print '<option value="0" selected="true"></option>';
-      }
-
-    // Mois
-    for ($month = 1 ; $month <= 12 ; $month++)
-    {
-        if ($month == $smonth)
-        {
-            print "<option value=\"$month\" selected=\"true\">" . $strmonth[$month];
-        }
-        else
-        {
-            print "<option value=\"$month\">" . $strmonth[$month];
-        }
-        print "</option>";
-    }
-    print "</select>";
-
-	// Année
-	if ($empty || $set_time == -1)
-      {
-	print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year">';
-      }
-    else
-      {
-	print '<select class="flat" name="'.$prefix.'year">';
-	
-	for ($year = $syear - 3; $year < $syear + 5 ; $year++)
-    {
-        if ($year == $syear)
-        {
-            print "<option value=\"$year\" selected=\"true\">$year";
-        }
-        else
-        {
-            print "<option value=\"$year\">$year";
-        }
-        print "</option>";
-    }
-    print "</select>\n";
-      }
-
-    if ($h)
-      {
-	print '<select class="flat" name="'.$prefix.'hour">';
+        $strmonth[1]  = $langs->trans("January");
+        $strmonth[2]  = $langs->trans("February");
+        $strmonth[3]  = $langs->trans("March");
+        $strmonth[4]  = $langs->trans("April");
+        $strmonth[5]  = $langs->trans("May");
+        $strmonth[6]  = $langs->trans("June");
+        $strmonth[7]  = $langs->trans("July");
+        $strmonth[8]  = $langs->trans("August");
+        $strmonth[9]  = $langs->trans("September");
+        $strmonth[10] = $langs->trans("October");
+        $strmonth[11] = $langs->trans("November");
+        $strmonth[12] = $langs->trans("December");
     
-    for ($hour = 0; $hour < 24 ; $hour++)
-    {
-        if (strlen($hour) < 2)
-        {
-            $hour = "0" . $hour;
+        // Analyse de la date de préselection
+        if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg)) {
+            // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+            $syear = $reg[1];
+            $smonth = $reg[2];
+            $sday = $reg[3];
+            $shour = $reg[4];
+            $smin = $reg[5];
         }
-        if ($hour == $shour)
-        {
-            print "<option value=\"$hour\" selected=\"true\">$hour";
+        elseif ($set_time) {
+            // Date est un timestamps
+            $syear = date("Y", $set_time);
+            $smonth = date("n", $set_time);
+            $sday = date("d", $set_time);
+            $shour = date("H", $set_time);
+            $smin = date("i", $set_time);
         }
-        else
-        {
-            print "<option value=\"$hour\">$hour";
+        else {
+            // Date est vide
+            $syear = '';
+            $smonth = '';
+            $sday = '';
+            $shour = '';
+            $smin = '';
         }
-        print "</option>";
-	  }
-	print "</select>H\n";
-
-	if ($m)
-	  {
-	    print '<select class="flat" name="'.$prefix.'min">';
-	    
-        for ($min = 0; $min < 60 ; $min++)
+    
+        // Jour
+        print '<select class="flat" name="'.$prefix.'day">';
+    
+        if ($empty || $set_time == -1)
         {
-            if (strlen($min) < 2)
+            $sday = 0;
+            $smonth = 0;
+            $syear = 0;
+            $shour = 0;
+            $smin = 0;
+    
+            print '<option value="0" selected="true"></option>';
+        }
+    
+        for ($day = 1 ; $day <= 31; $day++)
+        {
+            if ($day == $sday)
             {
-                $min = "0" . $min;
-            }
-            if ($min == $smin)
-            {
-                print "<option value=\"$min\" selected=\"true\">$min";
+                print "<option value=\"$day\" selected=\"true\">$day";
             }
             else
             {
-                print "<option value=\"$min\">$min";
+                print "<option value=\"$day\">$day";
             }
             print "</option>";
-         }
-         print "</select>M\n";
-	  }
-	
-      }
-  }
+        }
+    
+        print "</select>";
+    
+        print '<select class="flat" name="'.$prefix.'month">';
+        if ($empty || $set_time == -1)
+        {
+            print '<option value="0" selected="true"></option>';
+        }
+    
+        // Mois
+        for ($month = 1 ; $month <= 12 ; $month++)
+        {
+            if ($month == $smonth)
+            {
+                print "<option value=\"$month\" selected=\"true\">" . $strmonth[$month];
+            }
+            else
+            {
+                print "<option value=\"$month\">" . $strmonth[$month];
+            }
+            print "</option>";
+        }
+        print "</select>";
+    
+        // Année
+        if ($empty || $set_time == -1)
+        {
+            print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year">';
+        }
+        else
+        {
+            print '<select class="flat" name="'.$prefix.'year">';
+    
+            for ($year = $syear - 3; $year < $syear + 5 ; $year++)
+            {
+                if ($year == $syear)
+                {
+                    print "<option value=\"$year\" selected=\"true\">$year";
+                }
+                else
+                {
+                    print "<option value=\"$year\">$year";
+                }
+                print "</option>";
+            }
+            print "</select>\n";
+        }
+    
+        if ($h)
+        {
+            print '<select class="flat" name="'.$prefix.'hour">';
+    
+            for ($hour = 0; $hour < 24 ; $hour++)
+            {
+                if (strlen($hour) < 2)
+                {
+                    $hour = "0" . $hour;
+                }
+                if ($hour == $shour)
+                {
+                    print "<option value=\"$hour\" selected=\"true\">$hour";
+                }
+                else
+                {
+                    print "<option value=\"$hour\">$hour";
+                }
+                print "</option>";
+            }
+            print "</select>H\n";
+    
+            if ($m)
+            {
+                print '<select class="flat" name="'.$prefix.'min">';
+    
+                for ($min = 0; $min < 60 ; $min++)
+                {
+                    if (strlen($min) < 2)
+                    {
+                        $min = "0" . $min;
+                    }
+                    if ($min == $smin)
+                    {
+                        print "<option value=\"$min\" selected=\"true\">$min";
+                    }
+                    else
+                    {
+                        print "<option value=\"$min\">$min";
+                    }
+                    print "</option>";
+                }
+                print "</select>M\n";
+            }
+    
+        }
+    }
 	
     /**
      *      \brief      Affiche liste déroulante depuis requete SQL
