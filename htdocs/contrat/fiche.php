@@ -793,9 +793,7 @@ else
                 print '</td>';
                 print '</tr>';
                 
-                print '</tr>';
-                
-                print "</form>";
+                print '</form>';
 
                 $var=!$var;
                 
@@ -815,9 +813,7 @@ else
                 print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="0">%</td>';
                 print '<td align="center" colspan="2" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 
-                print "</tr>\n";
-
-                print '</tr>';
+                print '</tr>'."\n";
 
                 print "<tr $bc[$var]>";
                 print '<td colspan="8">';
@@ -828,7 +824,7 @@ else
                 print '</td>';
                 print '</tr>';
                 
-                print "</form>";
+                print '</form>';
             }
             print "</table>";
             /*
