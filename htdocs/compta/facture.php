@@ -1286,7 +1286,8 @@ else
                 print '<td align="right"><input type="text" name="pu" size="6"></td>';
                 print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
                 print '<td align="right" nowrap><input type="text" name="remise_percent" size="2" value="0">%</td>';
-                print '<td align="center" valign="middle" rowspan="2" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+                print '<td align="center" valign="middle" rowspan="2" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+                print '</tr>';
                 if ($conf->service->enabled)
                 {
                     print '<tr '.$bc[$var].'>';
@@ -1295,8 +1296,8 @@ else
                     print ' au ';
                     print $html->select_date('',"date_end",0,0,1);
                     print '</td>';
+                    print '</tr>';
                 }
-                print '</tr>';
                 print "</form>";
             }
             print "</table>\n";
