@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
  
 /**
@@ -191,60 +190,74 @@ if ($_GET["id"] > 0)
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
       
       print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
-      print $commande->remise_percent.' %</td><td>&nbsp;';
+      print $commande->remise_percent.'%</td><td>&nbsp;';
       print '</td></tr>';
       
       print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
       print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
       print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';      
-      print "</table>\n";
+	  
+	  print '</table><br>';
       
       /*
        * Lignes de commandes
        *
        */
-      echo '<br><table class="noborder" width="100%">';	  
+        $sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
+	  	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid';
+        $sql.= ' FROM '.MAIN_DB_PREFIX."commandedet as l";
+	  	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
+        $sql.= " WHERE l.fk_commande = ".$commande->id;
+        $sql.= " ORDER BY l.rowid";
       
-      $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l WHERE l.fk_commande =".$commande->id." ORDER BY l.rowid";
-      
-      $result = $db->query($sql);
-      if ($result)
+      $resql = $db->query($sql);
+      if ($resql)
 	{
-	  $num = $db->num_rows($result);
+	  $num = $db->num_rows($resql);
 	  $i = 0; $total = 0;
 	  
+	      print '<table class="noborder" width="100%">';
 	  if ($num)
 	    {
 	      print '<tr class="liste_titre">';
-	      print '<td width="54%">'.$langs->trans("Description").'</td>';
-	      print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
-	      print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
-	      print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
-	      print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
-	      print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
+            print '<td>'.$langs->trans('Description').'</td>';
+            print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+            print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+            print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+            print '<td align="right">'.$langs->trans('Discount').'</td>';
+            print '<td align="right">'.$langs->trans('AmountHT').'</td>';
+            print '<td>&nbsp;</td><td>&nbsp;</td>';
 	      print "</tr>\n";
 	    }
 
 	      $var=true;
 	  while ($i < $num)
 	    {
-	      $objp = $db->fetch_object($result);
+	      $objp = $db->fetch_object($resql);
         
 	      $var=!$var;
-	      print "<tr $bc[$var]>";
+	      print '<tr '.$bc[$var].'>';
 	      if ($objp->fk_product > 0)
 		{
-		  print '<td>';
-		  print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.stripslashes(nl2br($objp->description)).'</a></td>';
+                        print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                        if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+                        else print img_object($langs->trans('ShowProduct'),'product');
+                        print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
+                        print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
+                        print '</td>';
 		}
 	      else
 		{
-		  print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
+                        print '<td>'.stripslashes(nl2br($objp->description));
+                        print "</td>\n";
 		}
-	      print '<td align="center">'.$objp->tva_tx.'%</td>';
-	      print '<td align="center">'.$objp->qty.'</td>';
+	      print '<td align="right">'.$objp->tva_tx.'%</td>';
+
+	      print '<td align="right">'.price($objp->subprice)."</td>\n";	      
+
+	      print '<td align="right">'.$objp->qty.'</td>';
+
 	      if ($objp->remise_percent > 0)
 		{
 		  print '<td align="right">'.$objp->remise_percent."%</td>\n";
@@ -253,13 +266,15 @@ if ($_GET["id"] > 0)
 		{
 		  print '<td>&nbsp;</td>';
 		}
-	      print '<td align="right">'.price($objp->subprice)."</td>\n";	      
+
+            print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+
 	      print '<td>&nbsp;</td><td>&nbsp;</td>';
-	      print "</tr>";	      
+	      print '</tr>';	      
 
 	      $i++;
 	    }	      
-	  $db->free($result);
+	  $db->free($resql);
 	} 
       else
 	{

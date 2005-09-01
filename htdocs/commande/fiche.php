@@ -580,10 +580,6 @@ else
 	  print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	  
 	  print '</table><br>';
-	  if ($commande->brouillon == 1 && $user->rights->commande->creer) 
-	    {
-	      print '</form>';
-	    }
 	  
 	  /*
 	   * Lignes de commandes
