@@ -463,7 +463,6 @@ if ($_GET["propalid"])
     
     $var=true;
     
-    print "<br>\n";
     $form->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed);
     
 

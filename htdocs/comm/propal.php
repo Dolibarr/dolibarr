@@ -940,7 +940,6 @@ if ($_GET['propalid'] > 0)
     
     $var=true;
     
-    print "<br>\n";
     $form->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
 
 
