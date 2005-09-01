@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -74,7 +73,7 @@ if ($result)
         $i++;
     }
     print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
-    print "<td align=\"right\"><b>".price($total)."</b></td></tr>";
+    print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>";
     
     print "</table>";
     $db->free($result);
