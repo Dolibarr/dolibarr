@@ -18,7 +18,6 @@
 *
 * $Id$
 * $Source$
-*
 */
 
 /**
@@ -81,8 +80,8 @@ class pdf_propale_azur extends ModelePDFPropales
         $this->posxtva=121;
         $this->posxup=133;
         $this->posxqty=151;
-        $this->posxdiscount=163;
-        $this->postotalht=173;
+        $this->posxdiscount=162;
+        $this->postotalht=177;
 	}
 
     /**
@@ -180,7 +179,6 @@ class pdf_propale_azur extends ModelePDFPropales
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
                         $libelleproduitservice.=$prop->lignes[$i]->desc;
                     }
-                    $pdf->SetXY ($this->posxdesc-1, $curY);
 
                     if ($prop->lignes[$i]->product_id)
                     {
@@ -198,13 +196,15 @@ class pdf_propale_azur extends ModelePDFPropales
                         // Affichage durée si il y en a une
                         $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($prop->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($prop->lignes[$i]->date_end).")";
                     }
-                    $pdf->MultiCell(108, 5, $libelleproduitservice, 0, 'J');
+
+                    $pdf->SetXY ($this->posxdesc-1, $curY);
+                    $pdf->MultiCell(108, 3, $libelleproduitservice, 0, 'J');
 
                     $nexY = $pdf->GetY();
 
                     // TVA
                     $pdf->SetXY ($this->posxtva, $curY);
-                    $pdf->MultiCell(10, 5, ($prop->lignes[$i]->tva_tx < 0 ? '*':'').abs($prop->lignes[$i]->tva_tx), 0, 'C');
+                    $pdf->MultiCell(10, 5, ($prop->lignes[$i]->tva_tx < 0 ? '*':'').abs($prop->lignes[$i]->tva_tx), 0, 'R');
 
                     // Prix unitaire HT avant remise
                     $pdf->SetXY ($this->posxup, $curY);
@@ -224,13 +224,15 @@ class pdf_propale_azur extends ModelePDFPropales
                     // Total HT ligne
                     $pdf->SetXY ($this->postotalht, $curY);
                     $total = price($prop->lignes[$i]->price * $prop->lignes[$i]->qty);
-                    $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+                    $pdf->MultiCell(23, 5, $total, 0, 'R', 0);
 
                     // Collecte des totaux par valeur de tva
                     // dans le tableau tva["taux"]=total_tva
 					$tvaligne=$prop->lignes[$i]->price * $prop->lignes[$i]->qty;
 					if ($prop->remise_percent) $tvaligne-=($tvaligne*$prop->remise_percent)/100;
 					$this->tva[ (string)$prop->lignes[$i]->tva_tx ] += $tvaligne;
+
+                    $nexY+=2;    // Passe espace entre les lignes
 
                     if ($nexY > 200 && $i < $nblignes - 1)
                     {
@@ -516,27 +518,27 @@ class pdf_propale_azur extends ModelePDFPropales
 
         $pdf->SetFont('Arial','',10);
 
-        $pdf->SetXY (10, $tab_top+2);
-        $pdf->MultiCell(40,2, $langs->trans("Designation"),'','L');
+        $pdf->SetXY ($this->posxdesc-1, $tab_top+2);
+        $pdf->MultiCell(108,2, $langs->trans("Designation"),'','L');
 
-        $pdf->line(120, $tab_top, 120, $tab_top + $tab_height);
-        $pdf->SetXY (120, $tab_top+2);
+        $pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
+        $pdf->SetXY ($this->posxtva-1, $tab_top+2);
         $pdf->MultiCell(12,2, $langs->trans("VAT"),'','C');
 
-        $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-        $pdf->SetXY (132, $tab_top+2);
+        $pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
+        $pdf->SetXY ($this->posxup-1, $tab_top+2);
         $pdf->MultiCell(18,2, $langs->trans("PriceUHT"),'','C');
 
-        $pdf->line(150, $tab_top, 150, $tab_top + $tab_height);
-        $pdf->SetXY (150, $tab_top+2);
-        $pdf->MultiCell(12,2, $langs->trans("Qty"),'','C');
+        $pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
+        $pdf->SetXY ($this->posxqty-1, $tab_top+2);
+        $pdf->MultiCell(11,2, $langs->trans("Qty"),'','C');
 
-        $pdf->line(162, $tab_top, 162, $tab_top + $tab_height);
-        $pdf->SetXY (162, $tab_top+2);
-        $pdf->MultiCell(15,2, $langs->trans("Discount"),'','C');
+        $pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
+        $pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
+        $pdf->MultiCell(16,2, $langs->trans("Discount"),'','C');
 
-        $pdf->line(177, $tab_top, 177, $tab_top + $tab_height);
-        $pdf->SetXY (177, $tab_top+2);
+        $pdf->line($this->postotalht-1, $tab_top, $this->postotalht-1, $tab_top + $tab_height);
+        $pdf->SetXY ($this->postotalht-1, $tab_top+2);
         $pdf->MultiCell(23,2, $langs->trans("TotalHT"),'','C');
 
     }
@@ -655,7 +657,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		// Nom client
         $pdf->SetXY(102,$posy+3);
         $pdf->SetFont('Arial','B',11);
-        $pdf->MultiCell(86,4, $prop->client->nom, 0, 'L');
+        $pdf->MultiCell(106,4, $prop->client->nom, 0, 'L');
 
 		// Caractéristiques client
         $carac_client=$prop->client->adresse;

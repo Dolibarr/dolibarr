@@ -80,8 +80,8 @@ class pdf_crabe extends ModelePDFFactures
         $this->posxtva=121;
         $this->posxup=133;
         $this->posxqty=151;
-        $this->posxdiscount=163;
-        $this->postotalht=173;
+        $this->posxdiscount=162;
+        $this->postotalht=177;
        
     }
 
@@ -171,7 +171,6 @@ class pdf_crabe extends ModelePDFFactures
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
                         $libelleproduitservice.=$fac->lignes[$i]->desc;
                     }
-                    $pdf->SetXY ($this->posxdesc-1, $curY);
                     
                     if ($fac->lignes[$i]->produit_id)
                     {
@@ -187,7 +186,9 @@ class pdf_crabe extends ModelePDFFactures
                         // Affichage durée si il y en a une
                         $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
                     }
-                    $pdf->MultiCell(108, 5, $libelleproduitservice, 0, 'J');
+
+                    $pdf->SetXY ($this->posxdesc-1, $curY);
+                    $pdf->MultiCell(108, 3, $libelleproduitservice, 0, 'J');
 
                     $nexY = $pdf->GetY();
 
@@ -205,20 +206,23 @@ class pdf_crabe extends ModelePDFFactures
 
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
-                    if ($fac->lignes[$i]->remise_percent) {
+                    if ($fac->lignes[$i]->remise_percent)
+					{
                         $pdf->MultiCell(14, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
                     }
 
                     // Total HT ligne
                     $pdf->SetXY ($this->postotalht, $curY);
                     $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
-                    $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+                    $pdf->MultiCell(23, 5, $total, 0, 'R', 0);
 
                     // Collecte des totaux par valeur de tva
                     // dans le tableau tva["taux"]=total_tva
 					$tvaligne=$fac->lignes[$i]->price * $fac->lignes[$i]->qty;
 					if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
 					$this->tva[ (string)$fac->lignes[$i]->tva_taux ] += $tvaligne;
+
+                    $nexY+=2;    // Passe espace entre les lignes
 
                     if ($nexY > 200 && $i < $nblignes - 1)
                     {
@@ -599,27 +603,27 @@ class pdf_crabe extends ModelePDFFactures
 
         $pdf->SetFont('Arial','',10);
 
-        $pdf->SetXY (10, $tab_top+2);
-        $pdf->MultiCell(40,2, $langs->trans("Designation"),'','L');
+        $pdf->SetXY ($this->posxdesc-1, $tab_top+2);
+        $pdf->MultiCell(108,2, $langs->trans("Designation"),'','L');
 
-        $pdf->line(120, $tab_top, 120, $tab_top + $tab_height);
-        $pdf->SetXY (120, $tab_top+2);
+        $pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
+        $pdf->SetXY ($this->posxtva-1, $tab_top+2);
         $pdf->MultiCell(12,2, $langs->trans("VAT"),'','C');
 
-        $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-        $pdf->SetXY (132, $tab_top+2);
+        $pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
+        $pdf->SetXY ($this->posxup-1, $tab_top+2);
         $pdf->MultiCell(18,2, $langs->trans("PriceUHT"),'','C');
 
-        $pdf->line(150, $tab_top, 150, $tab_top + $tab_height);
-        $pdf->SetXY (150, $tab_top+2);
-        $pdf->MultiCell(12,2, $langs->trans("Qty"),'','C');
+        $pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
+        $pdf->SetXY ($this->posxqty-1, $tab_top+2);
+        $pdf->MultiCell(11,2, $langs->trans("Qty"),'','C');
 
-        $pdf->line(162, $tab_top, 162, $tab_top + $tab_height);
-        $pdf->SetXY (162, $tab_top+2);
-        $pdf->MultiCell(15,2, $langs->trans("Discount"),'','C');
+        $pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
+        $pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
+        $pdf->MultiCell(16,2, $langs->trans("Discount"),'','C');
 
-        $pdf->line(177, $tab_top, 177, $tab_top + $tab_height);
-        $pdf->SetXY (177, $tab_top+2);
+        $pdf->line($this->postotalht-1, $tab_top, $this->postotalht-1, $tab_top + $tab_height);
+        $pdf->SetXY ($this->postotalht-1, $tab_top+2);
         $pdf->MultiCell(23,2, $langs->trans("TotalHT"),'','C');
 
     }
