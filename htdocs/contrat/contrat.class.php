@@ -435,22 +435,20 @@ class Contrat
      *      \param     remise_percent   Pourcentage de remise de la ligne
      *      \param     datestart        Date de debut prévue
      *      \param     dateend          Date de fin prévue
+     *      \param     tvatx            Taux TVA
      *      \return    int              < 0 si erreur, > 0 si ok
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='')
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='', $tvatx)
     {
-        dolibarr_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $datestart, $dateend");
-    
-        $this->db->begin();
-
-        if (strlen(trim($qty))==0)
-        {
-            $qty=1;
-        }
-        $remise = 0;
+        // Nettoyage parametres
+        $qty=trim($qty);
+        $desc=trim($desc);
+        $desc=trim($desc);
         $price = ereg_replace(",",".",$pu);
+        $tvatx = ereg_replace(",",".",$tvatx);
         $subprice = $price;
-        if (trim(strlen($remise_percent)) > 0)
+        $remise = 0;
+        if (strlen($remise_percent) > 0)
         {
             $remise = round(($pu * $remise_percent / 100), 2);
             $price = $pu - $remise;
@@ -460,12 +458,17 @@ class Contrat
             $remise_percent=0;
         }
 
+        dolibarr_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $datestart, $dateend, $tvatx");
+    
+        $this->db->begin();
+
         $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".addslashes($desc)."'";
-        $sql .= ",price_ht='"    .     ereg_replace(",",".",$price)."'";
+        $sql .= ",price_ht='" .     ereg_replace(",",".",$price)."'";
         $sql .= ",subprice='" .     ereg_replace(",",".",$subprice)."'";
-        $sql .= ",remise='".        ereg_replace(",",".",$remise)."'";
+        $sql .= ",remise='" .       ereg_replace(",",".",$remise)."'";
         $sql .= ",remise_percent='".ereg_replace(",",".",$remise_percent)."'";
         $sql .= ",qty='$qty'";
+        $sql .= ",tva_tx='".        ereg_replace(",",".",$tvatx)."'";
 
         if ($datestart > 0) { $sql.= ",date_ouverture_prevue=".$this->db->idate($datestart); }
         else { $sql.=",date_ouverture_prevue=null"; }

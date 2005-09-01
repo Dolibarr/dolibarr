@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
  
 /**
@@ -42,14 +41,14 @@ $user->getrights('contrat');
 if (! $user->rights->contrat->lire)
 accessforbidden();
 
-$date_start_update=mktime(12, 0 , 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $_POST["date_start_updateyear"]);
-$date_end_update=mktime(12, 0 , 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $_POST["date_end_updateyear"]);
-$date_start=mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
-$date_end=mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
+$startyear=isset($_POST["date_startyear"])&&$_POST["date_startyear"]?$_POST["date_startyear"]:0;
+$endyear=isset($_POST["date_endyear"])&&$_POST["date_endyear"]?$_POST["date_endyear"]:0;
+$date_start_update=mktime(12, 0 , 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $startyear);
+$date_end_update=mktime(12, 0 , 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $startyear);
+$date_start=mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $endyear);
+$date_end=mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $endyear);
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0)
 {
     $action = '';
@@ -104,32 +103,35 @@ if ($_POST["action"] == 'classin')
 
 if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 {
-    $result = 0;
-    $contrat = new Contrat($db);
-    $result=$contrat->fetch($_GET["id"]);
-    if (($_POST["p_idprod"] > 0 && $_POST["mode"]=='predefined') || ($_POST["mode"]=='libre'))
+    if ($_POST["pqty"] && (($_POST["pu"] && $_POST["desc"]) || $_POST["p_idprod"]))
     {
-        //print $_POST["desc"]." - ".$_POST["pu"]." - ".$_POST["pqty"]." - ".$_POST["tva_tx"]." - ".$_POST["p_idprod"]." - ".$_POST["premise"]; exit;
-        $result = $contrat->addline(
-            $_POST["desc"],
-            $_POST["pu"],
-            $_POST["pqty"],
-            $_POST["tva_tx"],
-            $_POST["p_idprod"],
-            $_POST["premise"],
-            $date_start,
-            $date_end
-            );
-    }
-
-    if ($result >= 0)
-    {
-        Header("Location: fiche.php?id=".$contrat->id);
-        exit;
-    }
-    else
-    {
-        $mesg='<div class="error">'.$contrat->error.'</div>';
+        $result = 0;
+        $contrat = new Contrat($db);
+        $result=$contrat->fetch($_GET["id"]);
+        if (($_POST["p_idprod"] > 0 && $_POST["mode"]=='predefined') || ($_POST["mode"]=='libre'))
+        {
+            //print $_POST["desc"]." - ".$_POST["pu"]." - ".$_POST["pqty"]." - ".$_POST["tva_tx"]." - ".$_POST["p_idprod"]." - ".$_POST["premise"]; exit;
+            $result = $contrat->addline(
+                $_POST["desc"],
+                $_POST["pu"],
+                $_POST["pqty"],
+                $_POST["tva_tx"],
+                $_POST["p_idprod"],
+                $_POST["premise"],
+                $date_start,
+                $date_end
+                );
+        }
+    
+        if ($result >= 0)
+        {
+            Header("Location: fiche.php?id=".$contrat->id);
+            exit;
+        }
+        else
+        {
+            $mesg='<div class="error">'.$contrat->error.'</div>';
+        }
     }
 }
 
@@ -144,7 +146,8 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer)
             $_POST["elqty"],
             $_POST["elremise_percent"],
             $date_start_update,
-            $date_end_update
+            $date_end_update,
+            $_POST["eltva_tx"]
         );
         if ($result > 0)
         {
@@ -705,6 +708,8 @@ else
                         print '</td>';
                         print '</tr>';                    
                     }
+
+                    // Ligne en mode update
                     else
                     {
                         print "<form action=\"fiche.php?id=$id\" method=\"post\">";
@@ -712,10 +717,16 @@ else
                         print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
                         // Ligne carac
                         print "<tr $bc[$var]>";
-                        print '<td colspan="2">';
+                        print '<td>';
                         print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-                        print img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a><br>';
+                        if ($objp->label)
+                        {
+                            print img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a><br>';
+                        }
                         print '<textarea name="eldesc" cols="60" rows="1">'.$objp->description.'</textarea></td>';
+                        print '<td align="right">';
+                        print $html->select_tva("eltva_tx",$objp->tva_tx);
+                        print '</td>';
                         print '<td align="right"><input size="6" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                         print '<td align="center"><input size="3" type="text" name="elqty" value="'.$objp->qty.'"></td>';
                         print '<td align="right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
@@ -730,7 +741,6 @@ else
                         print '</td>';
                         print '</tr>';
 
-                        print '</tr>' . "\n";
                         print "</form>\n";
                     }
                     $i++;
