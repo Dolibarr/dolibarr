@@ -959,11 +959,12 @@ class Facture
      *      \param     remise_percent   Pourcentage de remise de la ligne
      *      \param     datestart        Date de debut de validité du service
      *      \param     dateend          Date de fin de validité du service
+     *      \param     tva_tx           Taux TVA
      *      \return    int              < 0 si erreur, > 0 si ok
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='')
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='', $tva_tx='')
     {
-        //dolibarr_syslog("Facture::UpdateLine");
+        dolibarr_syslog("Facture::UpdateLine");
     
         if ($this->brouillon)
         {
@@ -991,6 +992,7 @@ class Facture
             $sql .= ",subprice='" .     ereg_replace(",",".",$subprice)."'";
             $sql .= ",remise='".        ereg_replace(",",".",$remise)."'";
             $sql .= ",remise_percent='".ereg_replace(",",".",$remise_percent)."'";
+            $sql .= ",tva_taux='".      ereg_replace(",",".",$tva_tx)."'";
             $sql .= ",qty='$qty'";
     
             if ($datestart) { $sql.= ",date_start='$datestart'"; }
