@@ -33,6 +33,7 @@ require_once("./pre.inc.php");
 if (!$user->rights->societe->lire) accessforbidden();
 
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
@@ -315,9 +316,11 @@ if ($_socid > 0)
      */
     if ($conf->propal->enabled)
     {
+        $propal_static=new Propal($db);
+
         print '<table class="noborder" width="100%">';
 
-        $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+        $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.fk_statut, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
         $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
         $sql .= " AND s.idp = ".$objsoc->id;
@@ -347,7 +350,7 @@ if ($_socid > 0)
                 }
                 print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dp)."</td>\n";
                 print '<td align="right" width="120">'.price($objp->price).'</td>';
-                print '<td align="center" width="100">'.$objp->statut.'</td></tr>';
+                print '<td align="center" width="100">'.$propal_static->labelstatut_short[$objp->fk_statut].'</td></tr>';
                 $var=!$var;
                 $i++;
             }
