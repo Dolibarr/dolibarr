@@ -41,12 +41,26 @@ $user->getrights('contrat');
 if (! $user->rights->contrat->lire)
 accessforbidden();
 
-$startyear=isset($_POST["date_startyear"])&&$_POST["date_startyear"]?$_POST["date_startyear"]:0;
-$endyear=isset($_POST["date_endyear"])&&$_POST["date_endyear"]?$_POST["date_endyear"]:0;
-$date_start_update=mktime(12, 0 , 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $startyear);
-$date_end_update=mktime(12, 0 , 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $startyear);
-$date_start=mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $endyear);
-$date_end=mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $endyear);
+$date_start='';
+$date_end='';
+$date_start_update='';
+$date_end_update='';
+if ($_POST["date_start_updatemonth"] && $_POST["date_start_updateday"] && $_POST["date_start_updateyear"])
+{
+    $date_start_update=mktime(12, 0 , 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $_POST["date_start_updateyear"]);
+}
+if ($_POST["date_end_updatemonth"] && $_POST["date_end_updateday"] && $_POST["date_end_updateyear"])
+{
+    $date_end_update=mktime(12, 0 , 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $_POST["date_end_updateyear"]);
+}
+if ($_POST["date_startmonth"] && $_POST["date_startday"] && $_POST["date_startyear"])
+{
+    $date_start=mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
+}
+if ($_POST["date_endmonth"] && $_POST["date_endday"] && $_POST["date_endyear"])
+{
+    $date_end=mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
+}
 
 // Sécurité accés client
 if ($user->societe_id > 0)

@@ -375,11 +375,8 @@ class Contrat
         $qty = ereg_replace(",",".",$qty);
         $pu = ereg_replace(",",".",$pu);
         
-        if (strlen(trim($qty))==0)
-        {
-            $qty=1;
-        }
-        
+        dolibarr_syslog("Contrat::AddLine $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart, $dateend");
+
         if ($fk_product > 0)
         {
             $prod = new Product($this->db, $fk_product);
@@ -394,7 +391,7 @@ class Contrat
         $remise = 0;
         $price = ereg_replace(",",".",round($pu, 2));
         $subprice = $price;
-        if (trim(strlen($remise_percent)) > 0)
+        if (strlen($remise_percent) > 0)
         {
             $remise = round(($pu * $remise_percent / 100), 2);
             $price = $pu - $remise;
