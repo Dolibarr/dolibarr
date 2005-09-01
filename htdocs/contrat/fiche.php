@@ -843,7 +843,7 @@ else
 
                 if ($contrat->statut == 0 && $num)
                 {
-                    print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
+                    print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
                 }
 
                 $numclos=$contrat->array_detail(5); // Tableau des lignes au statut clos
