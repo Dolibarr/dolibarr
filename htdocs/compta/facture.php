@@ -284,7 +284,8 @@ if ($_POST["action"] == 'updateligne' && $user->rights->facture->creer && $_POST
         $_POST["qty"],
         $_POST["remise_percent"],
         $datestart,
-        $dateend
+        $dateend,
+        $_POST["tva_tx"]
         );
 
     $_GET["facid"]=$_POST["facid"];   // Pour réaffichage de la fiche en cours d'édition
@@ -1062,7 +1063,8 @@ else
             print '<tr><td height=\"10\">'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
             print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-            print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->getLibStatut()).'</td></tr>';
+            // Statut
+			print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->getLibStatut()).'</td></tr>';
 
             if ($fac->note)
             {
@@ -1112,7 +1114,7 @@ else
                     $objp = $db->fetch_object($resql);
                     $var=!$var;
             
-                    // Update ligne de facture
+                    // Ligne en mode visu
                     if ($_GET["action"] != 'editline' || $_GET["rowid"] != $objp->rowid)
                     {
                         print '<tr '.$bc[$var].'>';
@@ -1122,7 +1124,7 @@ else
                             if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
                             else print img_object($langs->trans('ShowProduct'),'product');
                             print ' '.$objp->ref.'</a>';
-                            print ' - '.nl2br($objp->product);
+                            print ' - '.nl2br(stripslashes($objp->product));
                             if ($objp->date_start && $objp->date_end)
                             {
                                 print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
@@ -1135,7 +1137,7 @@ else
                             {
                                 print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
                             }
-                            print ($objp->description&&$objp->description!=$objp->product)?'<br>'.$objp->description:'';
+                            print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
                             print '</td>';
                         }
                         else
@@ -1189,25 +1191,26 @@ else
                             {
                                 print '<a href="facture.php?facid='.$fac->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
                                 print img_down();
-                                print '</a></td>';
+                                print '</a>';
                             }
+							print '</td>';
                         }
                         else
                         {
                             print '<td colspan="3">&nbsp;</td>';
                         }
-                        print "</tr>";
+                        print '</tr>';
             
                     }
             
-                    // Update ligne de facture
-                    if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
+                    // Ligne en mode update
+                    if ($_GET["action"] == 'editline' && $user->rights->facture->creer && $_GET["rowid"] == $objp->rowid)
                     {
                         print '<form action="facture.php" method="post">';
                         print '<input type="hidden" name="action" value="updateligne">';
                         print '<input type="hidden" name="facid" value="'.$fac->id.'">';
                         print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
-                        print "<tr $bc[$var]>";
+                        print '<tr '.$bc[$var].'>';
                         print '<td>';
                         if ($objp->fk_product > 0)
                         {
@@ -1220,8 +1223,7 @@ else
                         }
                         print '<textarea name="desc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
                         print '<td align="right">';
-                        //print $html->select_tva("tva_tx",$objp->tva_taux);
-                        print $objp->tva_taux."%";    // Taux tva dépend du produit, donc on ne doit pas pouvoir le changer ici
+                        print $html->select_tva("tva_tx",$objp->tva_taux);
                         print '</td>';
                         print '<td align="right"><input size="6" type="text" name="price" value="'.price($objp->subprice).'"></td>';
                         print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
@@ -1316,7 +1318,7 @@ else
                 {
                     if ($user->rights->facture->valider)
                     {
-                        print "  <a class=\"butAction\" href=\"facture.php?facid=".$fac->id."&amp;action=valid\">".$langs->trans("Valid")."</a>\n";
+                        print "  <a class=\"butAction\" href=\"facture.php?facid=".$fac->id."&amp;action=valid\">".$langs->trans("Validate")."</a>\n";
                     }
                 }
                 else
