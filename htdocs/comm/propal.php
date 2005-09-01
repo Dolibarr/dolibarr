@@ -72,16 +72,28 @@ $form=new Form($db);
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 {
-  if ($user->rights->propale->supprimer)
+    if ($user->rights->propale->supprimer)
     {
-      $propal = new Propal($db, 0, $_GET['propalid']);
-      $propal->delete($user);
-      $propalid = 0;
-      $brouillon = 1;
+        $propal = new Propal($db, 0, $_GET['propalid']);
+        $propal->delete($user);
+        $propalid = 0;
+        $brouillon = 1;
     }
-  Header('Location: propal.php');
+    Header('Location: propal.php');
 }
 
+if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
+{
+    if ($user->rights->propale->valider)
+    {
+        $propal = new Propal($db);
+        $propal->fetch($_GET['propalid']);
+        $propal->update_price($_GET['propalid']);
+        propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+        $propal->valid($user);
+    }
+    Header ('Location: propal.php?propalid='.$_GET['propalid']);
+}
 
 if ($_POST['action'] == 'add') 
 {
@@ -289,24 +301,22 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
     propale_pdf_create($db, $_POST['propalid'], $propal->modelpdf);
 }
 
-if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer) 
+if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save")) 
 {
-  /*
-   *  Mise à jour d'une ligne dans la propale
-   */
-
-  $propal = new Propal($db);
-  $propal->fetch($_GET['propalid']);
-  $propal->UpdateLigne($_POST['ligne'], $_POST['subprice'], $_POST['qty'], $_POST['remise']);
-
-  propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
+    /*
+     *  Mise à jour d'une ligne dans la propale
+     */
+    $propal = new Propal($db);
+    $propal->fetch($_GET['propalid']);
+    $propal->UpdateLigne($_POST['ligne'], $_POST['subprice'], $_POST['qty'], $_POST['remise_percent'], $_POST['tva_tx'], $_POST['desc']);
+    propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
 }
 
 if ($_POST['action'] == 'setpdfmodel' && $user->rights->propale->creer) 
 {
-  $propal = new Propal($db, 0, $_GET['propalid']);
-  $propal->set_pdf_model($user, $_POST['modelpdf']);
-  propale_pdf_create($db, $_GET['propalid'], $_POST['modelpdf']);
+    $propal = new Propal($db, 0, $_GET['propalid']);
+    $propal->set_pdf_model($user, $_POST['modelpdf']);
+    propale_pdf_create($db, $_GET['propalid'], $_POST['modelpdf']);
 }
 
 
@@ -319,15 +329,6 @@ if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer)
   $propal->fetch($_GET['propalid']);
   $propal->delete_product($_GET['ligne']);
   propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
-}
-
-if ($_GET['valid'] == 1 && $user->rights->propale->valider)
-{
-  $propal = new Propal($db);
-  $propal->fetch($_GET['propalid']);
-  $propal->update_price($_GET['propalid']);
-  propale_pdf_create($db, $_GET['propalid'], $propal->modelpdf);
-  $propal->valid($user);
 }
 
 if ($_POST['action'] == 'setremise' && $user->rights->propale->creer) 
@@ -401,11 +402,19 @@ if ($_GET['propalid'] > 0)
 
   /*
    * Confirmation de la suppression de la propale
-   *
    */
   if ($_GET['action'] == 'delete')
     {
       $html->form_confirm('propal.php?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
+      print '<br>';
+    }
+
+  /*
+   * Confirmation de la validation de la propale
+   */
+  if ($_GET['action'] == 'validate')
+    {
+      $html->form_confirm('propal.php?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmvalidateProp'), 'confirm_validate');
       print '<br>';
     }
 
@@ -621,7 +630,7 @@ if ($_GET['propalid'] > 0)
                     print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
                     print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
                     print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-                    print '<td>&nbsp;</td><td>&nbsp;</td>';
+                    print '<td width="16">&nbsp;</td><td width="16">&nbsp;</td>';
                     print "</tr>\n";
                 }
                 $var=true;
@@ -630,8 +639,8 @@ if ($_GET['propalid'] > 0)
                     $objp = $db->fetch_object($resql);
                     $var=!$var;
     
-                    // Update ligne de propale
-                    if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
+                    // Ligne en mode visu
+                    if ($_GET['action'] != 'editline' || $_GET['ligne'] != $objp->rowid)
                     {
                         print '<tr '.$bc[$var].'>';
                         if ($objp->fk_product > 0)
@@ -639,7 +648,8 @@ if ($_GET['propalid'] > 0)
                             print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
                             if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
                             else print img_object($langs->trans('ShowProduct'),'product');
-                            print ' '.$objp->ref.'</a> - '.stripslashes(nl2br($objp->product));
+                            print ' '.$objp->ref.'</a>';
+							print ' - '.nl2br(stripslashes($objp->product));
                             if ($objp->date_start && $objp->date_end)
                             {
                                 print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
@@ -652,7 +662,7 @@ if ($_GET['propalid'] > 0)
                             {
                                 print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
                             }
-                            print ($objp->description && $objp->description!=$obj->product)?'<br>'.$objp->description:'';
+                            print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
                             print '</td>';
                         }
                         else
@@ -702,25 +712,53 @@ if ($_GET['propalid'] > 0)
                         print '</tr>';
                     }
     
-                    // Update ligne de propal
-                    if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] == 'editline' && $_GET["ligne"] == $objp->rowid)
+                    // Ligne en mode update
+                    if ($propal->statut == 0 && $_GET["action"] == 'editline' && $user->rights->propale->creer && $_GET["ligne"] == $objp->rowid)
                     {
                         print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
                         print '<input type="hidden" name="action" value="updateligne">';
+                        print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
                         print '<input type="hidden" name="ligne" value="'.$_GET["ligne"].'">';
                         print '<tr '.$bc[$var].'>';
-                        print '<td colspan="2">&nbsp;</td>';
-                        print '<td align="right"><input name="subprice" type="text" size="6" value="'.$objp->subprice.'"></td>';
-                        print '<td align="right"><input name="qty" type="text" size="2" value="'.$objp->qty.'"></td>';
-                        print '<td align="right" nowrap><input name="remise" type="text" size="2" value="'.$objp->remise_percent.'"> %</td>';
-                        print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Save").'"></td>';
-                        print '</tr>';
-                        print '</form>';
+                        print '<td>';
+                        if ($objp->fk_product > 0)
+                        {
+                            print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                            if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+                            else print img_object($langs->trans('ShowProduct'),'product');
+                            print ' '.$objp->ref.'</a>';
+                            print ' - '.stripslashes(nl2br($objp->product));
+                            print '<br>';
+                        }
+                        print '<textarea name="desc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
+                        print '<td align="right">';
+                        print $html->select_tva("tva_tx",$objp->tva_tx);
+                        print '</td>';
+                        print '<td align="right"><input size="6" type="text" name="subprice" value="'.price($objp->subprice).'"></td>';
+                        print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
+                        print '<td align="right" nowrap><input size="2" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
+                        print '<td align="center" colspan="4" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+                        print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
+                        print '</tr>' . "\n";
+                        /*
+						if ($conf->service->enabled)
+                        {
+                            print "<tr $bc[$var]>";
+                            print '<td colspan="5">Si produit de type service à durée limitée: Du ';
+                            print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
+                            print ' au ';
+                            print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
+                            print '</td>';
+                            print '</tr>' . "\n";
+                        }
+						*/
+                        print "</form>\n";
                     }
     
                     $total = $total + ($objp->qty * $objp->price);
                     $i++;
                 }
+            
                 $db->free($resql);
             }
             else
@@ -811,7 +849,7 @@ if ($_GET['propalid'] > 0)
       print '<option value="3">'.$propal->labelstatut[3].'</option>';
       print '</select>';
       print '</td></tr>';
-      print '<tr><td align="center" colspan="2"><input type="submit" value="'.$langs->trans('Valid').'"></td>';
+      print '<tr><td align="center" colspan="2"><input type="submit" value="'.$langs->trans('Validate').'"></td>';
       print '</tr></table></form>';
     }
 
@@ -826,7 +864,7 @@ if ($_GET['propalid'] > 0)
     {
         if ($user->rights->propale->valider)
         {
-            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;valid=1">'.$langs->trans('Valid').'</a>';
+            print '<a class="butAction" href="propal.php?propalid='.$propal->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
         }
     }
     

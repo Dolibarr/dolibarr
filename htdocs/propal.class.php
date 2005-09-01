@@ -221,15 +221,16 @@ class Propal
     
     
   /**
-   * \brief     Mise à jour d'une ligne de produit
-   * \param     id              id de la ligne
-   * \param     subprice        prix unitaire
-   * \param     qty             quantité
-   * \param     remise_percent  remise effectuée sur le produit
-   * \return    int             0 en cas de succès
+   *    \brief      Mise à jour d'une ligne de produit
+   *    \param      id              Id de la ligne
+   *    \param      subprice        Prix unitaire
+   *    \param      qty             Quantité
+   *    \param      remise_percent  Remise effectuée sur le produit
+   *    \param      desc            Description
+   *    \return     int             0 en cas de succès
    */
     	
-    function UpdateLigne($id, $subprice, $qty, $remise_percent=0)
+    function UpdateLigne($id, $subprice, $qty, $remise_percent=0, $tva_tx, $desc='')
     {
         if ($this->statut == 0)
         {
@@ -241,19 +242,22 @@ class Propal
             }
     
             $sql = "UPDATE ".MAIN_DB_PREFIX."propaldet ";
-            $sql .= " SET qty='".$qty."'";
-            $sql .= " , price='". ereg_replace(",",".",$price)."'";
-            $sql .= " , remise_percent='".ereg_replace(",",".",$remise_percent)."'";
-            $sql .= " , subprice='".ereg_replace(",",".",$subprice)."'";
-            $sql .= " WHERE rowid = '".$id."';";
+            $sql.= " SET qty='".$qty."'";
+            $sql.= " , price='". ereg_replace(",",".",$price)."'";
+            $sql.= " , remise_percent='".ereg_replace(",",".",$remise_percent)."'";
+            $sql.= " , subprice='".ereg_replace(",",".",$subprice)."'";
+            $sql.= " , tva_tx='".ereg_replace(",",".",$tva_tx)."'";
+            $sql.= " , description='".addslashes($desc)."'";
+            $sql.= " WHERE rowid = '".$id."';";
     
-            if ($this->db->query($sql) )
+            if ($this->db->query($sql))
             {
                 $this->update_price();
                 return 0;
             }
             else
             {
+                $this->error=$this->db->error();
                 dolibarr_syslog("Propal::UpdateLigne Erreur -1");
                 return -1;
             }
