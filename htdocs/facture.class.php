@@ -962,7 +962,7 @@ class Facture
      *      \param     tva_tx           Taux TVA
      *      \return    int              < 0 si erreur, > 0 si ok
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='', $tva_tx='')
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart, $dateend, $tva_tx)
     {
         dolibarr_syslog("Facture::UpdateLine");
     
