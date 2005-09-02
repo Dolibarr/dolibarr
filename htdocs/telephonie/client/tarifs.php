@@ -168,7 +168,7 @@ if ($cancel == $langs->trans("Cancel"))
 if ($_GET["id"])
 {
   $soc = new Societe($db);
-  $result = $soc->fetch($_GET["id"]);
+  $result = $soc->fetch($_GET["id"], $user);
 
   if (!$soc->perm_read)
     {
