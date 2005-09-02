@@ -572,7 +572,7 @@ class Form
      *    \brief      Retourne la liste des types de paiements possibles
      *    \param      selected        Type de praiement présélectionné
      *    \param      htmlname        Nom de la zone select
-     *    \param      filtertype      Pour filtre
+     *    \param      filtretype      Pour filtre
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1)
     {
@@ -608,7 +608,7 @@ class Form
      *      \brief      Retourne la liste des types de paiements possibles
      *      \param      selected        Type de praiement présélectionné
      *      \param      htmlname        Nom de la zone select
-     *      \param      filtertype      Pour filtre
+     *      \param      filtretype      Pour filtre
      *      \param      format          0=id+libelle, 1=code+code
      */
     function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0)
@@ -1269,9 +1269,9 @@ class Form
 	
     /**
      *      \brief      Affiche liste déroulante depuis requete SQL
-     *      \param      name        Nom de la zone select
-     *      \param      sql         Requete sql
-     *      \param      id          Id présélectionné
+     *      \param      Nom de la zone select
+     *      \param      Requete sql
+     *      \param      Id présélectionné
      */
     function select($name, $sql, $id='')
     {
