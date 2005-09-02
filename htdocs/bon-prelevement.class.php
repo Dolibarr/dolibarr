@@ -17,14 +17,13 @@
  *
  * $Id$
  * $Source$
- * 
  */
 
 /**
-   \file       htdocs/bon-prelevement.class.php
-   \ingroup    prelevement
-   \brief      Fichier de la classe des bons de prélévements
-   \version    $Revision$
+        \file       htdocs/bon-prelevement.class.php
+        \ingroup    prelevement
+        \brief      Fichier de la classe des bons de prélévements
+        \version    $Revision$
 */
 
 
@@ -522,8 +521,6 @@ class BonPrelevement
 
   /**
    *    \brief      Recupére la liste des factures concernées
-   *    \param      rowid       id de la facture a récupérer
-   *    \param      societe_id  id de societe
    */
   function _get_list_factures()
     {

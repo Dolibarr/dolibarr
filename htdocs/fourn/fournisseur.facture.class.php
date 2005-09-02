@@ -22,7 +22,7 @@
  */
 
 /**	
-        \file       htdocs/fournisseur.facture.class.php
+        \file       htdocs/fourn/fournisseur.facture.class.php
         \ingroup    fournisseur
         \brief      Fichier de la classe des factures fournisseurs
         \version    $Revision$

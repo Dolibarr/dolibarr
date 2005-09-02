@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -560,7 +559,7 @@ class DoliDb
     /**
         \brief      Renvoie toutes les données comme un tableau.
         \param      sql         Requete sql
-        \param      data        Tableau de données pour retour
+        \param      datas       Tableau de données pour retour
         \return	    int         >0 si ok, <0 si ko
     */
     function fetch_all_rows($sql, &$datas)
