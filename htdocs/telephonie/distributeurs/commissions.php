@@ -31,6 +31,11 @@ llxHeader('','Telephonie - Statistiques - Distributeur');
  */
 $h = 0;
 
+if ($user->distributeur_id)
+{
+  $_GET["id"] = $user->distributeur_id;
+}
+
 if ($_GET["id"])
 {
   $distri = new DistributeurTelephonie($db);

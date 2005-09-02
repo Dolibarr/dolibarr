@@ -31,6 +31,11 @@ llxHeader('','Telephonie - Statistiques - Distributeur');
  */
 $h = 0;
 
+if ($user->distributeur_id)
+{
+  $_GET["id"] = $user->distributeur_id;
+}
+
 if ($_GET["id"])
 {
   $distri = new DistributeurTelephonie($db);
@@ -59,7 +64,7 @@ if ($_GET["id"])
   print '<tr class="liste_titre">';
   print '<td>Commerciaux</td></tr>';
 
-  $sql = "SELECT u.firstname, u.name";
+  $sql = "SELECT u.rowid, u.firstname, u.name";
   $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
   
@@ -84,7 +89,7 @@ if ($_GET["id"])
 	  
 	  print "<tr $bc[$var]>";
 	  
-	  print '<td>'.$row[0].' '.$row[1].'</td>';
+	  print '<td>'.$row[1].' '.$row[2].'</td>';
 	  
 	  $i++;
 	}
