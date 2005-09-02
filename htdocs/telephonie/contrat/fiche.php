@@ -25,7 +25,7 @@ require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
 
 $mesg = '';
 
-if ($_POST["action"] == 'add')
+if ($_POST["action"] == 'add' && $user->rights->telephonie->ligne->creer)
 {
   $contrat = new TelephonieContrat($db);
 
@@ -46,7 +46,7 @@ if ($_POST["action"] == 'add')
   
 }
 
-if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel") && $user->rights->telephonie->ligne->creer)
 {
   $contrat = new TelephonieContrat($db);
   $contrat->id = $_GET["id"];
@@ -74,7 +74,7 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
     }
 }
 
-if ($_POST["action"] == 'addcontact')
+if ($_POST["action"] == 'addcontact' && $user->rights->telephonie->ligne->creer)
 {
   $contrat = new TelephonieContrat($db);
   $contrat->id = $_GET["id"];
@@ -95,7 +95,7 @@ if ($_POST["action"] == 'addpo' && $user->rights->telephonie->ligne->creer)
 }
 
 
-if ($_GET["action"] == 'delcontact')
+if ($_GET["action"] == 'delcontact' && $user->rights->telephonie->ligne->creer)
 {
   $contrat = new TelephonieContrat($db);
   $contrat->id = $_GET["id"];
@@ -128,7 +128,7 @@ if ($cancel == $langs->trans("Cancel"))
  * Création en 2 étape
  *
  */
-if ($_GET["action"] == 'create')
+if ($_GET["action"] == 'create' && $user->rights->telephonie->ligne->creer)
 {
   $form = new Form($db);
   print_titre("Nouveau contrat");
@@ -174,7 +174,7 @@ if ($_GET["action"] == 'create')
   print '</table>'."\n";
   print '</form>';
 }
-elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0)
+elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->rights->telephonie->ligne->creer)
 {
   $form = new Form($db);
   print_titre("Nouveau contrat");
@@ -190,8 +190,9 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0)
     }
       
   $socc = new Societe($db);
+  $socc->fetch($_GET["client_comm"]);
 
-  if ( $socc->fetch($_GET["client_comm"]) == 1)
+  if ( $socc->id > 0)
     {
 
       if (strlen($socc->code_client) == 0)
@@ -409,7 +410,18 @@ else
 	    }
 	}
 
-      if ( $result )
+      if ($result == 1)
+	{
+	  $client_comm = new Societe($db);
+	  $client_comm->fetch($contrat->client_comm_id, $user);
+	}
+
+      if (!$client_comm->perm_read)
+	{
+	  print "Lecture non authorisée";
+	}
+
+      if ( $result && $client_comm->perm_read)
 	{ 
 	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	    {
@@ -447,7 +459,7 @@ else
       
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-	      $client_comm = new Societe($db, $contrat->client_comm_id);
+	      $client_comm = new Societe($db);
 	      $client_comm->fetch($contrat->client_comm_id);
 
 	      print '<tr><td width="20%">Référence</td><td>'.$contrat->ref.'</td>';
@@ -946,6 +958,44 @@ else
 
 	  print '</div>';
 
+
+	  /* ************************************************************************** */
+	  /*                                                                            */ 
+	  /* Barre d'action                                                             */ 
+	  /*                                                                            */ 
+	  /* ************************************************************************** */
+	  
+	  print "\n<br>\n<div class=\"tabsAction\">\n";
+	  
+	  if ($_GET["action"] == '')
+	    {  
+	      
+	      if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
+		{
+		  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?action=create&amp;contratid='.$contrat->id.'">Nouvelle ligne</a>';
+		}
+	      
+	      if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
+		{
+		  print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$contrat->id\">".$langs->trans("Contact")."</a>";
+		}
+	      
+	      if ($user->rights->telephonie->ligne->creer && $po == 0 && $contrat->statut <> 6)
+		{
+		  print "<a class=\"tabAction\" href=\"fiche.php?action=po&amp;id=$contrat->id\">Ajouter une prise d'ordre</a>";
+		}
+	      if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
+		{
+		  print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$contrat->id\">".$langs->trans("Edit")."</a>";
+		}
+	      
+	      if ($user->rights->telephonie->ligne->creer && $numlignes == 0 && $contrat->statut <> 6)
+		{
+		  print "<a class=\"butDelete\" href=\"fiche.php?action=delete&amp;id=$contrat->id\">".$langs->trans("Delete")."</a>";
+		}      
+	    }
+	  
+	  print "</div>";	  	  	  
 	}
     }
   else
@@ -954,43 +1004,6 @@ else
     }
 }
 
-/* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
-/* ************************************************************************** */
-
-print "\n<br>\n<div class=\"tabsAction\">\n";
-
-if ($_GET["action"] == '')
-{  
-
-  if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
-    {
-      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?action=create&amp;contratid='.$contrat->id.'">Nouvelle ligne</a>';
-    }
-  
-  if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
-    {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$contrat->id\">".$langs->trans("Contact")."</a>";
-    }
-
-  if ($user->rights->telephonie->ligne->creer && $po == 0 && $contrat->statut <> 6)
-    {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=po&amp;id=$contrat->id\">Ajouter une prise d'ordre</a>";
-    }
-  if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
-    {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$contrat->id\">".$langs->trans("Edit")."</a>";
-    }
-
-  if ($user->rights->telephonie->ligne->creer && $numlignes == 0 && $contrat->statut <> 6)
-    {
-  print "<a class=\"butDelete\" href=\"fiche.php?action=delete&amp;id=$contrat->id\">".$langs->trans("Delete")."</a>";
-    }      
-}
-
-print "</div>";
 
 
 

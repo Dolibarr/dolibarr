@@ -32,7 +32,7 @@ $h = strftime("%H",$dt);
 $m = strftime("%M",$dt);
 $s = strftime("%S",$dt);
 
-if ($_POST["action"] == 'add')
+if ($_POST["action"] == 'add' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->contrat         = $_POST["contrat"];
@@ -58,7 +58,7 @@ if ($_POST["action"] == 'add')
     }  
 }
 
-if ($_GET["action"] == 'transfer')
+if ($_GET["action"] == 'transfer' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->fetch_by_id($_GET["id"]);
@@ -69,7 +69,7 @@ if ($_GET["action"] == 'transfer')
     }
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->fetch_by_id($_GET["id"]);
@@ -106,7 +106,7 @@ if ($_POST["action"] == 'changecontrat' && $user->rights->telephonie->ligne->cre
     } 
 }
 
-if ($_POST["action"] == 'addcontact')
+if ($_POST["action"] == 'addcontact' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->id = $_GET["id"];
@@ -119,7 +119,7 @@ if ($_POST["action"] == 'addcontact')
 }
 
 
-if ($_GET["action"] == 'delcontact')
+if ($_GET["action"] == 'delcontact' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->id = $_GET["id"];
@@ -131,7 +131,7 @@ if ($_GET["action"] == 'delcontact')
 
 }
 
-if ($_GET["action"] == 'active')
+if ($_GET["action"] == 'active' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->fetch_by_id($_GET["id"]);
@@ -148,7 +148,7 @@ if ($_GET["action"] == 'active')
 
 }
 
-if ($_GET["action"] == 'refuse')
+if ($_GET["action"] == 'refuse' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->fetch_by_id($_GET["id"]);
@@ -164,7 +164,7 @@ if ($_GET["action"] == 'refuse')
     }
 }
 
-if ($_GET["action"] == 'resilier')
+if ($_GET["action"] == 'resilier' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->fetch_by_id($_GET["id"]);
@@ -175,7 +175,7 @@ if ($_GET["action"] == 'resilier')
     }
 }
 
-if ($_GET["action"] == 'annuleresilier')
+if ($_GET["action"] == 'annuleresilier' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->fetch_by_id($_GET["id"]);
@@ -186,7 +186,7 @@ if ($_GET["action"] == 'annuleresilier')
     }
 }
 
-if ($_GET["action"] == 'confirmresilier')
+if ($_GET["action"] == 'confirmresilier' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->fetch_by_id($_GET["id"]);
@@ -232,7 +232,7 @@ if ($_GET["action"] == 'confirmresilier')
     }
 }
 
-if ($_GET["action"] == 'acommander')
+if ($_GET["action"] == 'acommander' && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->fetch_by_id($_GET["id"]);
@@ -244,7 +244,7 @@ if ($_GET["action"] == 'acommander')
 }
 
 
-if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel") && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->id = $_GET["id"];
@@ -511,7 +511,20 @@ else
 	    }
 	}
 
-      if ( $result == 1)
+      if ($result == 1)
+	{
+	  $client_comm = new Societe($db);
+	  $client_comm->fetch($ligne->client_comm_id, $user);
+	}
+
+      if (!$client_comm->perm_read)
+	{
+	  print decoct($client_comm->id);
+	  print "Lecture non authorisée";
+	}
+
+
+      if ($result == 1 && $client_comm->perm_read)
 	{ 
 	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	    {
@@ -582,9 +595,6 @@ else
 		  print $ligne->statuts[$ligne->statut];
 		  print '</td></tr>';
 		}
-
-	      $client_comm = new Societe($db, $ligne->client_comm_id);
-	      $client_comm->fetch($ligne->client_comm_id);
 
 	      print '<tr><td width="20%">Client</td><td>';
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
@@ -1295,7 +1305,7 @@ if ( $user->rights->telephonie->ligne->creer && $ligne->statut == 6)
 
 print "\n<br>\n<div class=\"tabsAction\">\n";
 
-if ($_GET["action"] == '')
+if ($_GET["action"] == '' && $result == 1 && $client_comm->perm_read)
 {
 
   if ( $user->rights->telephonie->ligne->resilier && $ligne->statut == 3)
