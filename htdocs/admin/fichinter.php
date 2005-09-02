@@ -77,8 +77,9 @@ print "</tr>\n";
 
 clearstatcache();
 
-$handle=opendir($dir);
+$var=true;
 
+$handle=opendir($dir);
 while (($file = readdir($handle))!==false)
 {
   if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
@@ -86,7 +87,9 @@ while (($file = readdir($handle))!==false)
       $name = substr($file, 4, strlen($file) -16);
       $classname = substr($file, 0, strlen($file) -12);
 
-      print '<tr class="pair"><td>';
+      $var=!$var;
+
+      print '<tr '.$bc[$var].'><td>';
       echo "$name";
       print "</td><td>\n";
       require_once($dir.$file);
@@ -117,7 +120,7 @@ closedir($handle);
 print '</table>';
 
 
-
 $db->close();
-llxFooter();
+
+llxFooter('$Date$ - $Revision$');
 ?>
