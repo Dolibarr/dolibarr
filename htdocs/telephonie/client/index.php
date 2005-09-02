@@ -114,7 +114,7 @@ if ($resql)
   $i = 0;
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>'.max(15,$num).' derniers clients</td>';
+  print '<tr class="liste_titre"><td>'.min(15,$num).' derniers clients</td>';
   print '<td width="25%" align="center">Nb Lignes';
   print "</td></tr>\n";
 
