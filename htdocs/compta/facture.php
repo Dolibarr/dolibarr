@@ -240,26 +240,30 @@ if ($_POST["action"] == 'setremise' && $user->rights->facture->creer)
 
 if ($_POST["action"] == 'addligne' && $user->rights->facture->creer)
 {
-    $fac = new Facture($db);
-    $fac->fetch($_POST["facid"]);
-    $datestart='';
-    $dateend='';
-    if ($_POST["date_startyear"] && $_POST["date_startmonth"] && $_POST["date_startday"]) {
-        $datestart=$_POST["date_startyear"].'-'.$_POST["date_startmonth"].'-'.$_POST["date_startday"];
+    if ($_POST["qty"] && (($_POST["pu"] && $_POST["desc"]) || $_POST["idprod"]))
+    {
+        $fac = new Facture($db);
+        $fac->fetch($_POST["facid"]);
+        $datestart='';
+        $dateend='';
+        if ($_POST["date_startyear"] && $_POST["date_startmonth"] && $_POST["date_startday"]) {
+            $datestart=$_POST["date_startyear"].'-'.$_POST["date_startmonth"].'-'.$_POST["date_startday"];
+        }
+        if ($_POST["date_endyear"] && $_POST["date_endmonth"] && $_POST["date_endday"]) {
+            $dateend=$_POST["date_endyear"].'-'.$_POST["date_endmonth"].'-'.$_POST["date_endday"];
+        }
+        $result = $fac->addline($_POST["facid"],
+        $_POST["desc"],
+        $_POST["pu"],
+        $_POST["qty"],
+        $_POST["tva_tx"],
+        0,
+        $_POST["remise_percent"],
+        $datestart,
+        $dateend
+        );
+    
     }
-    if ($_POST["date_endyear"] && $_POST["date_endmonth"] && $_POST["date_endday"]) {
-        $dateend=$_POST["date_endyear"].'-'.$_POST["date_endmonth"].'-'.$_POST["date_endday"];
-    }
-    $result = $fac->addline($_POST["facid"],
-    $_POST["desc"],
-    $_POST["pu"],
-    $_POST["qty"],
-    $_POST["tva_tx"],
-    0,
-    $_POST["remise_percent"],
-    $datestart,
-    $dateend
-    );
 
     $_GET["facid"]=$_POST["facid"];   // Pour réaffichage de la fiche en cours d'édition
 }
@@ -526,12 +530,18 @@ if ($_GET["action"] == 'create')
 
             print '<table class="border" width="100%">';
 
-            print '<tr><td>'.$langs->trans("Company").' :</td><td>'.$soc->nom.'</td>';
-            print '<td class="border">'.$langs->trans("Comments").'</td></tr>';
+            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$soc->nom.'</td>';
+            print '</tr>';
 
-            print '<tr><td>'.$langs->trans("Author").' :</td><td>'.$user->fullname.'</td>';
+            print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td>';
+            print '<td class="border">'.$langs->trans("Comments").'</td>';
+            print '</tr>';
 
-            print '<td rowspan="6" valign="top">';
+            print '<tr><td>'.$langs->trans("Date").'</td><td>';
+            $html->select_date();
+            print '</td>';
+
+            print '<td rowspan="5" valign="top">';
             print '<textarea name="note" wrap="soft" cols="50" rows="5">';
             if (is_object($commande) && !empty($commande->projet_id))
             {
@@ -539,70 +549,31 @@ if ($_GET["action"] == 'create')
             }
             print '</textarea></td></tr>';
 
-            print '<tr><td>'.$langs->trans("Date").' :</td><td>';
-            $html->select_date();
-            print '</td></tr>';
-
-            print '<tr><td>'.$langs->trans("Ref").' :</td><td>Provisoire</td></tr>';
+            print '<tr><td>'.$langs->trans("Ref").'</td><td>Provisoire</td></tr>';
             print '<input name="facnumber" type="hidden" value="provisoire">';
 
-            print "<tr><td nowrap>Conditions de réglement :</td><td>";
-            $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."cond_reglement ORDER BY sortorder";
-            $result = $db->query($sql);
-            $conds=array();
-            if ($result)
-            {
-                $num = $db->num_rows($result);
-                $i = 0;
-                while ($i < $num)
-                {
-                    $objp = $db->fetch_object($result);
-                    $conds[$objp->rowid]=$objp->libelle;
-                    $i++;
-                }
-                $db->free($result);
-            }
-
-            $html->select_array("condid",$conds);
+            // Conditions de réglement
+            $id_condition_paiements_defaut=1;
+            print "<tr><td nowrap>".$langs->trans("PaymentConditions")."</td><td>";
+            $html->select_conditions_paiements($id_condition_paiements_defaut,'condid');
             print "</td></tr>";
 
             // Mode de réglement
-            print "<tr><td>Mode de réglement :</td><td>";
-            $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY libelle";
-            $result = $db->query($sql);
-            $modesregl=array();
-            if ($result)
-            {
-                $num = $db->num_rows();
-                $i = 0;
-                while ($i < $num)
-                {
-                    $objp = $db->fetch_object();
-                    $modesregl[$objp->id]=$objp->libelle;
-                    $i++;
-                }
-                $db->free();
-            }
-
-            $html->select_array("mode_reglement",$modesregl);
+            print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
+            $html->select_types_paiements('','mode_reglement');
             print "</td></tr>";
 
             // Projet
             if ($conf->projet->enabled)
             {
                 $langs->load("projects");
-                print '<tr><td>'.$langs->trans("Project").' :</td><td>';
-                $proj = new Project($db);
-                $html->select_array(
-                "projetid",
-                $proj->liste_array($socidp),
-                (is_object($commande) && !empty($commande->projet_id)) ? $commande->projet_id : ''
-                );
+                print '<tr><td>'.$langs->trans("Project").'</td><td>';
+                $html->select_projects($socidp);
                 print "</td></tr>";
             }
             else
             {
-                print "<tr><td colspan=\"2\">&nbsp;</td></tr>";
+                print '<tr><td colspan="2">&nbsp;</td></tr>';
             }
 
             if ($_GET["propalid"] > 0)
@@ -946,16 +917,18 @@ else
             */
             print '<table class="border" width="100%">';
             print '<tr><td>'.$langs->trans("Company").'</td>';
-            print '<td colspan="3">';
-            print '<b><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
-
-            print "<td>Conditions de réglement</td><td>" . $fac->cond_reglement ."</td></tr>";
+            print '<td colspan="5">';
+            print '<a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
 
             print '<tr><td>'.$langs->trans("Date").'</td>';
-            print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
+            print '<td colspan="3">'.dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
             print '<td>'.$langs->trans("DateClosing").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
             if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans("Late"));
-            print "</td></tr>";
+            print '</td></tr>';
+
+            // Conditions et modes de réglement
+            print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td colspan="3">'. $fac->cond_reglement . '</td>';
+            print '<td width="25%">'.$langs->trans("PaymentMode").'</td><td width="25%">'. $fac->mode_reglement . '</td></tr>';
 
             print '<tr>';
 
@@ -1578,8 +1551,7 @@ else
         }
         else
         {
-            /* Facture non trouvée */
-            print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
+            dolibarr_print_error($db,$fac->error);
         }
     }
     else

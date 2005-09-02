@@ -15,6 +15,7 @@ Payments=Payments
 ReceivedPayments=Received payments
 PaymentsAlreadyDone=Payments already done
 PaymentMode=Payment mode
+PaymentConditions=Payment conditions
 ClassifyPayed=Classify 'Payed'
 ClassifyCanceled=Classify 'Abandonned'
 CreateBill=Create Invoice

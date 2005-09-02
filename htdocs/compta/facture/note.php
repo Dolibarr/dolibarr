@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -105,15 +104,17 @@ if ($_GET["facid"])
       print '<table class="border" width="100%">';
 
       print '<tr><td>'.$langs->trans("Company").'</td>';
-      print '<td>';
-      print '<b><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
-      
-      print "<td>Conditions de réglement</td><td>" . $facture->cond_reglement ."</td></tr>";
+      print '<td colspan="3">';
+      print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
       
       print '<tr><td>'.$langs->trans("Date").'</td>';
       print '<td>'.dolibarr_print_date($facture->date,"%A %d %B %Y")."</td>\n";
       print '<td width="25%">'.$langs->trans("DateClosing").'</td><td width="25%">'.dolibarr_print_date($facture->date_lim_reglement,"%A %d %B %Y") ."</td></tr>";
       
+      // Conditions et modes de réglement
+      print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td>'. $facture->cond_reglement . '</td>';
+      print '<td>'.$langs->trans("PaymentMode").'</td><td>'. $facture->mode_reglement . '</td></tr>';
+
       print '<tr><td valign="top" colspan="4">'.$langs->trans("Note").' :</td></tr>';
 
       print '<tr><td valign="top" colspan="4">'.($facture->note?nl2br($facture->note):"&nbsp;")."</td></tr>";
