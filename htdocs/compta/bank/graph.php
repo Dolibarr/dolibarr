@@ -20,7 +20,7 @@
  *
  */
 
-/**	  \file       htdocs/compta/bank/account.php
+/**	  \file       htdocs/compta/bank/graph.php
 	  \ingroup    banque
 	  \brief      Page de détail des transactions bancaires
 	  \version    $Revision$

@@ -21,8 +21,8 @@
  */
 
 /**   
-        \file   	    htdocs/compta/pre.inc.php
-        \brief  	    Fichier gestionnaire du menu groupe d'utilisateur
+        \file   	htdocs/user/group/pre.inc.php
+        \brief  	Fichier gestionnaire du menu groupe d'utilisateurs
         \version    $Revision$
 */
 

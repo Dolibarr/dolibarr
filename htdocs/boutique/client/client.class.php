@@ -46,8 +46,8 @@ class Client
     }
 
     /**
-            \brief  Fonction permettant de recupèrer les informations d'un clients de la boutique
-            \param  Id				id du client
+            \brief      Fonction permettant de recupèrer les informations d'un clients de la boutique
+            \param      id			Id du client
     */
 
     function fetch ($id)

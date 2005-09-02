@@ -21,7 +21,7 @@
  */
 
 /**
-        \file       htdocs/chargesociales.class.php
+        \file       htdocs/tva.class.php
 		\ingroup    compta
 		\brief      Fichier de la classe de tva
         \remarks    La tva collectée n'est calculée que sur les factures payées.
@@ -29,7 +29,7 @@
 */
 
 
-/**     \class      PaiementCharge
+/**     \class      Tva
 		\brief      Classe permettant la gestion de la tva
 */
  
@@ -40,6 +40,7 @@ class Tva
 
     /*
      *      \brief      Constructeur
+     *      \param      DB      Handler d'accès base
      */
     function Tva($DB)
     {

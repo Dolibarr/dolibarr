@@ -21,9 +21,9 @@
  */
 
 /**
-        \file   	htdocs/fourn/facture/pre.inc.php
+        \file   	htdocs/fourn/paiement/pre.inc.php
         \ingroup    fournisseur,facture
-        \brief  	Fichier gestionnaire du menu factures fournisseurs
+        \brief  	Fichier gestionnaire du menu paiements factures fournisseurs
 */
 
 require("../../main.inc.php");

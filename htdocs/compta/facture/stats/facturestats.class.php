@@ -22,7 +22,7 @@
  */
 
 /**
-        \file       htdocs/facture/stats/facturestats.class.php
+        \file       htdocs/compta/facture/stats/facturestats.class.php
         \ingroup    factures
         \brief      Fichier de la classe de gestion des stats des factures
         \version    $Revision$

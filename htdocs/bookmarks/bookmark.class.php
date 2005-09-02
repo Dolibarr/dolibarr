@@ -92,7 +92,7 @@ class Bookmark
 
     /**
      *      \brief      Insere bookmark en base
-     *      \param      int     <0 si ko, rowid si ok
+     *      \return     int     <0 si ko, rowid du bookmark créé si ok
      */
     function create()
     {

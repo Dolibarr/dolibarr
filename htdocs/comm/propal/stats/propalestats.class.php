@@ -22,7 +22,7 @@
  */
 
 /**
-        \file       htdocs/propal/stats/propalestats.class.php
+        \file       htdocs/comm/propal/stats/propalestats.class.php
         \ingroup    propales
         \brief      Fichier de la classe de gestion des stats des propales
         \version    $Revision$
