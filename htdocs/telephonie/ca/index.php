@@ -24,7 +24,7 @@ require("./pre.inc.php");
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 
-if (!$user->rights->telephonie->lire)
+if (!$user->rights->telephonie->ca->lire)
   accessforbidden();
 
 llxHeader('','Telephonie');
@@ -52,10 +52,10 @@ print '<tr><td width="50%" valign="top">';
 $sql = "SELECT date, sum(cout_vente), sum(gain), count(ligne)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";
 $sql .= " GROUP BY date DESC";
-
-if ($db->query($sql))
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   $ligne = new LigneTel($db);
 
@@ -67,7 +67,7 @@ if ($db->query($sql))
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $row = $db->fetch_row($i);	
+      $row = $db->fetch_row($resql);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -79,7 +79,7 @@ if ($db->query($sql))
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
