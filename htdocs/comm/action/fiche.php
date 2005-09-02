@@ -519,7 +519,10 @@ if ($_GET["id"])
         print '<td>'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom_url.'</td>';
     
         print '<td>'.$langs->trans("Contact").'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.$act->contact->fullname.'</a></td></tr>';
+        print '<td>';
+        if ($act->contact->id) print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.$act->contact->fullname.'</a>';
+        else print $langs->trans("None");
+        print '</td></tr>';
         print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
         print '<td>'.$langs->trans("Author").'</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
