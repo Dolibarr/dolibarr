@@ -159,6 +159,15 @@ class modTelephonie extends DolibarrModules
 
     $r++;
 
+
+    $this->rights[$r][0] = 271;
+    $this->rights[$r][1] = 'Consulter le CA';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'ca';
+    $this->rights[$r][5] = 'lire';
+    $r++;
+
     $this->rights[$r][0] = 206;
     $this->rights[$r][1] = 'Consulter les liaisons';
     $this->rights[$r][2] = 'w';
