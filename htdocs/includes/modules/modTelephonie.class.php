@@ -232,6 +232,14 @@ class modTelephonie extends DolibarrModules
     $this->rights[$r][5] = 'permission';
     $r++;
 
+    $this->rights[$r][0] = 281;
+    $this->rights[$r][1] = 'Consulter les services';
+    $this->rights[$r][2] = 'w';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'service';
+    $this->rights[$r][5] = 'lire';
+    $r++;
+
     // Dir
     $this->dirs[0] = $conf->telephonie->dir_output;
     $this->dirs[1] = $conf->telephonie->dir_output."/ligne";
