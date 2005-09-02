@@ -491,9 +491,6 @@ class Form
 
     /**
      *    \brief      Charge dans cache la liste des conditions de paiements possibles
-     *    \param      selected        Condition de paiement présélectionnée
-     *    \param      htmlname        Nom de la zone select
-     *    \param      filtretype      Pour filtre
      */
     function load_cache_conditions_paiements()
     {
@@ -529,9 +526,6 @@ class Form
 
     /**
      *    \brief      Charge dans cache la liste des types de paiements possibles
-     *    \param      selected        Type de praiement présélectionné
-     *    \param      htmlname        Nom de la zone select
-     *    \param      filtretype      Pour filtre
      */
     function load_cache_types_paiements()
     {
@@ -572,7 +566,7 @@ class Form
      *    \brief      Retourne la liste des types de paiements possibles
      *    \param      selected        Type de praiement présélectionné
      *    \param      htmlname        Nom de la zone select
-     *    \param      filtretype      Pour filtre
+     *    \param      filtertype      Pour filtre
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1)
     {
@@ -608,7 +602,7 @@ class Form
      *      \brief      Retourne la liste des types de paiements possibles
      *      \param      selected        Type de praiement présélectionné
      *      \param      htmlname        Nom de la zone select
-     *      \param      filtretype      Pour filtre
+     *      \param      filtertype      Pour filtre
      *      \param      format          0=id+libelle, 1=code+code
      */
     function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0)
@@ -1269,9 +1263,9 @@ class Form
 	
     /**
      *      \brief      Affiche liste déroulante depuis requete SQL
-     *      \param      Nom de la zone select
-     *      \param      Requete sql
-     *      \param      Id présélectionné
+     *      \param      name        Nom de la zone select
+     *      \param      sql         Requete sql
+     *      \param      id          Id présélectionné
      */
     function select($name, $sql, $id='')
     {

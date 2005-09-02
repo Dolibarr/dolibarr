@@ -175,11 +175,11 @@ class Don
 
     }
 
-  /**
-   *    \brief      Création du don en base
-   *    \param      userid      Objet utilisateur qui crée le don
-   *    \return     int         id don crée si ok, <0 si ko
-   */
+    /**
+     *    \brief      Création du don en base
+     *    \param      user          Objet utilisateur qui crée le don
+     *    \return     int           Id don crée si ok, <0 si ko
+     */
     function create($user)
     {
         $this->date = $this->db->idate($this->date);

@@ -91,6 +91,7 @@ class Account
      *      \param      line_id     Id ecriture bancaire
      *      \param      url_id      Id parametre url
      *      \param      url         Url
+     *      \param      label       Libellé du lien
      *      \param      type        Type de lien (payment, company, member, ...)
      *      \return     int         <0 si ko, id line si ok
      */
