@@ -74,6 +74,7 @@ ListOfContacts=List of contacts
 ListOfCompanies=List of companies
 ShowCompany=Show company
 ShowContact=Show contact
+ContactType=Contact type
 NewContact=New contact
 LastContacts=Last contacts
 MyContacts=My contacts

@@ -17,6 +17,7 @@ ServiceStatusClosed=Closed
 ServicesLegend=Services legend
 Contracts=Contracts
 Contract=Contract
+ContractContacts=Contract contacts
 MenuServices=Services
 MenuInactiveServices=Services not active
 MenuRunningServices=Running services
