@@ -37,17 +37,25 @@ if ($cancel == $langs->trans("Cancel"))
 
 if ($_GET["id"])
 {
-  
-  $ligne = new LigneTel($db);
-  
+  $ligne = new LigneTel($db);  
   $result = $ligne->fetch_by_id($_GET["id"]);  
 }
 
-if ( $result )
+if ($result == 1)
+{
+  $client_comm = new Societe($db);
+  $client_comm->fetch($ligne->client_comm_id, $user);
+}
+
+if (!$client_comm->perm_read)
+{
+  print "Lecture non authorisée";
+}
+
+if ($result == 1 && $client_comm->perm_read)
 { 
   if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
     {
-      
       $h=0;
       $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/fiche.php?id=".$ligne->id;
       $head[$h][1] = $langs->trans("Ligne");
@@ -57,7 +65,6 @@ if ( $result )
       $head[$h][1] = $langs->trans('Discounts');
       $hselected=$h;
       $h++;
-      
       
       dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
       
@@ -69,9 +76,6 @@ if ( $result )
 	      	     
       $client = new Societe($db, $ligne->client_id);
       $client->fetch($ligne->client_id);
-
-      $client_comm = new Societe($db, $ligne->client_comm_id);
-      $client_comm->fetch($ligne->client_comm_id);
 
       print '<tr><td width="20%">Client</td><td colspan="2">';
       print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';

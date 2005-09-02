@@ -519,7 +519,6 @@ else
 
       if (!$client_comm->perm_read)
 	{
-	  print decoct($client_comm->id);
 	  print "Lecture non authorisée";
 	}
 
@@ -537,9 +536,12 @@ else
 	      
 	      if ($ligne->statut == -1)
 		{
-		  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/commande.php?id=".$ligne->id;
-		  $head[$h][1] = $langs->trans('Commande');
-		  $h++;
+		  if ($user->rights->telephonie->ligne->creer)
+		    {
+		      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/commande.php?id=".$ligne->id;
+		      $head[$h][1] = $langs->trans('Commande');
+		      $h++;
+		    }
 		}
 	      else
 		{
