@@ -92,9 +92,11 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/index.php", "Fournisseurs");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/service/", "Services");
+  if ($user->rights->telephonie->service->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/service/", "Services");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
+  if ($user->rights->telephonie->ca->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
 
   left_menu($menu->liste);
 }
