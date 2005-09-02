@@ -21,6 +21,10 @@
  */
 require("./pre.inc.php");
 
+if ($user->distributeur_id)
+{
+  $_GET["id"] = $user->distributeur_id;
+}
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
@@ -83,7 +87,7 @@ if ($_GET["id"])
    *
    */
   
-  $sql = "SELECT s.idp, s.nom, p.fk_contrat, p.montant";
+  $sql = "SELECT s.idp, s.nom, p.fk_contrat, p.montant, p.avance_duree, p.avance_pourcent";
   $sql .= " , ".$db->pdate("p.datepo") . " as datepo";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
@@ -110,13 +114,14 @@ if ($_GET["id"])
       
       print_liste_field_titre("Contrat","po.php","l.ligne");
       print '<td align="center">Date</td><td align="right">Montant</td>';
+      print '<td align="center">Avance Durée</td><td>Avance %</td>';
       print "</tr>\n";
       
       $var=True;
       
       while ($i < min($num,$conf->liste_limit))
 	{
-	  $obj = $db->fetch_object($i);	
+	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
@@ -131,6 +136,8 @@ if ($_GET["id"])
 
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";
 	  
+	  print '<td align="right">'.$obj->avance_duree."</td>\n";
+	  print '<td align="right">'.$obj->avance_pourcent." %</td>\n";
 
 	  print "</tr>\n";
 	  $i++;

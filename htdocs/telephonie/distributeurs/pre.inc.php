@@ -22,8 +22,21 @@
 require("../../main.inc.php");
 
 $user->getrights('telephonie');
+$user->distributeur_id = 0;
 require DOL_DOCUMENT_ROOT.'/telephonie/distributeurtel.class.php';
 require DOL_DOCUMENT_ROOT.'/telephonie/telephonie.commercial.class.php';
+
+$sql = "SELECT fk_distributeur";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux";
+$sql .= " WHERE fk_user=".$user->id;
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $row = $db->fetch_row($resql);
+  $user->distributeur_id = $row[0];
+}
+
 
 function llxHeader($head = "", $title="") {
   global $user, $conf, $db;
@@ -62,6 +75,12 @@ function llxHeader($head = "", $title="") {
 
   $sql = "SELECT d.nom, d.rowid";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
+
+  if ($user->distributeur_id)
+    {
+      $sql .= " WHERE d.rowid = ".$user->distributeur_id;
+    }
+
   $sql .= " ORDER BY d.nom ASC";
   
   $resql = $db->query($sql);
