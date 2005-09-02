@@ -135,7 +135,7 @@ if ($result)
     {
         $objp = $db->fetch_object($result);
         $key=$objp->name;
-        $value=$objp->value;
+        $value=stripslashes($objp->value);
         define ("$key", $value);
         $conf->global->$key=$value;
         $i++;
