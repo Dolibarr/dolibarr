@@ -91,10 +91,10 @@ if ($result)
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$objp->fichid\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
 
-      print '<td><a href="index.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom."</a></td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom."</a></td>\n";
       print '<td>'.nl2br($objp->note).'</td>';
       print '<td align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
-      print '<td align="right">'.sprintf("%.1f",$objp->duree).'</td>';
+      print '<td align="right">'.price($objp->duree).'</td>';
       print '<td align="center">'.$objp->fk_statut.'</td>';
 
       print "</tr>\n";
@@ -102,7 +102,7 @@ if ($result)
       $i++;
     }
   print '<tr class="liste_total"><td colspan="3"></td><td>'.$langs->trans("Total").'</td>';
-  print "<td align=\"right\" nowrap>".($total?sprintf("%.1f",$total):"0")."</td><td></td>";
+  print "<td align=\"right\" nowrap>".price($total)."</td><td></td>";
   print "</tr>";
 
   print "</table>";
