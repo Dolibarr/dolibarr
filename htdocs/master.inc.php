@@ -163,10 +163,22 @@ $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
 
 
 /*
- * Pour utiliser une autre version de fpdf, définir la constante FPDF_PATH
+ * Pour utiliser d'autres versions des librairies externes que les
+ * versions embarquées dans Dolibarr, définir les constantes adequates:
+ * Pour FPDF:           FPDF_PATH
+ * Pour PEAR:           PEAR_PATH
+ * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
+ * Pour PHPlot:         PHPLOT_PATH
+ * Pour MagpieRss:      MAGPIERSS_PATH
  */
-if (! defined('FPDF_PATH')) { define('FPDF_PATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/'); }
+if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/'); }
+if (! defined('PEAR_PATH'))           { define('PEAR_PATH',          DOL_DOCUMENT_ROOT .'/includes/pear/'); }
+if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
+if (! defined('PHPLOT_PATH'))         { define('PHPLOT_PATH',        DOL_DOCUMENT_ROOT .'/includes/phplot/'); }
+if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
 define('FPDF_FONTPATH', FPDF_PATH . 'font/');
+define('MAGPIE_DIR', MAGPIERSS_PATH);
+
 // \todo mettre cet include uniquement sur les éléments qui manipulent du PDF
 require_once(FPDF_PATH . "fpdf.php");
 
