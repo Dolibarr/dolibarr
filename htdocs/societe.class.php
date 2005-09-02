@@ -442,8 +442,6 @@ class Societe {
 	  }
       }
 
-    $this->id = $socid;
-
     $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
     $sql .= ",". $this->db->pdate("s.tms")." as date_update";
     $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
@@ -460,7 +458,7 @@ class Societe {
     $sql .= ", ".MAIN_DB_PREFIX."c_pays as p";
     $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
     $sql .= ", ".MAIN_DB_PREFIX."c_forme_juridique as fj";
-    $sql .= " WHERE s.idp = ".$this->id;
+    $sql .= " WHERE s.idp = ".$socid;
     $sql .= " AND s.fk_stcomm = st.id";
     $sql .= " AND s.fk_effectif = e.id";
     $sql .= " AND s.fk_pays = p.rowid";
@@ -473,6 +471,8 @@ class Societe {
 	if ($this->db->num_rows($resql))
 	  {
 	    $obj = $this->db->fetch_object($resql);
+
+	    $this->id = $obj->idp;
 
 	    $this->date_update = $obj->date_update;
 
