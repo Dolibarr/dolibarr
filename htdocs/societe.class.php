@@ -411,176 +411,175 @@ class Societe {
 
   }
   
-  /**
-   *    \brief      Charge depuis la base l'objet societe
-   *    \param      socid       id de la société à charger en mémoire
-   *    \return     int         >0 si ok, <0 si erreur
-   */
-	 
-  function fetch($socid, $user=0)
-  {
-    global $langs;
+    /**
+     *    \brief      Charge depuis la base l'objet societe
+     *    \param      socid       Id de la société à charger en mémoire
+     *    \param      user        Objet de l'utilisateur
+     *    \return     int         >0 si ok, <0 si erreur
+     */
+    function fetch($socid, $user=0)
+    {
+        global $langs;
     
-    /* Lecture des permissions */
-    if ($user <> 0)
-      {
-	$sql = "SELECT p.pread, p.pwrite, p.pperms";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe_perms as p";
-	$sql .= " WHERE p.fk_user = '".$user->id."'";
-	$sql .= " AND p.fk_soc = '".$socid."';";
-	
-	$resql=$this->db->query($sql);
-	
-	if ($resql)
-	  {
-	    if ($row = $this->db->fetch_row($resql))
-	      {
-		$this->perm_read  = $row[0];
-		$this->perm_write = $row[1];
-		$this->perm_perms = $row[2];
-	      }
-	  }
-      }
-
-    $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
-    $sql .= ",". $this->db->pdate("s.tms")." as date_update";
-    $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
-    $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique";
-    $sql .= ", s.fk_typent as typent_id";
-    $sql .= ", s.fk_effectif as effectif_id, e.libelle as effectif";
-    $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique";
-    $sql .= ", s.code_client, s.code_compta, s.code_fournisseur, s.parent";
-    $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client";
-    $sql .= ", p.code as pays_code, p.libelle as pays";
-    $sql .= ", st.libelle as stcomm";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-    $sql .= ", ".MAIN_DB_PREFIX."c_effectif as e";
-    $sql .= ", ".MAIN_DB_PREFIX."c_pays as p";
-    $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-    $sql .= ", ".MAIN_DB_PREFIX."c_forme_juridique as fj";
-    $sql .= " WHERE s.idp = ".$socid;
-    $sql .= " AND s.fk_stcomm = st.id";
-    $sql .= " AND s.fk_effectif = e.id";
-    $sql .= " AND s.fk_pays = p.rowid";
-    $sql .= " AND s.fk_forme_juridique = fj.code";
-
-    $resql=$this->db->query($sql);
-
-    if ($resql)
-      {
-	if ($this->db->num_rows($resql))
-	  {
-	    $obj = $this->db->fetch_object($resql);
-
-	    $this->id = $obj->idp;
-
-	    $this->date_update = $obj->date_update;
-
-	    $this->nom = stripslashes($obj->nom);
-	    $this->adresse =  stripslashes($obj->address);
-	    $this->cp = $obj->cp;
-	    $this->ville =  stripslashes($obj->ville);
-
-	    $this->adresse_full =  stripslashes($obj->address) . "\n". $obj->cp . " ". stripslashes($obj->ville);
-
-	    $this->departement_id = $obj->fk_departement;
-	    $this->pays_id = $obj->fk_pays;
-	    $this->pays_code = $obj->fk_pays?$obj->pays_code:'';
-	    $this->pays = $obj->fk_pays?$obj->pays:'';
-
-	    $transcode=$langs->trans("StatusProspect".$obj->fk_stcomm);
-	    $libelle=($transcode!="StatusProspect".$obj->fk_stcomm?$transcode:$obj->stcomm);
-	    $this->stcomm_id = $obj->fk_stcomm;     // id statut commercial
-	    $this->statut_commercial = $libelle;    // libelle statut commercial
-
-	    $this->url = $obj->url;
-	    $this->tel = $obj->tel;
-	    $this->fax = $obj->fax;
-	      
-	    $this->parent    = $obj->parent;
-
-	    $this->siren     = $obj->siren;
-	    $this->siret     = $obj->siret;
-	    $this->ape       = $obj->ape;
-	    $this->capital   = $obj->capital;
-
-	    $this->code_client = $obj->code_client;
-	    $this->code_fournisseur = $obj->code_fournisseur;
-
-	    if (! $this->code_client && $this->mod_codeclient->code_modifiable_null == 1)
-	      {
-		$this->codeclient_modifiable = 1;
-	      }
-
-	    if (! $this->code_fournisseur && $this->mod_codefournisseur->code_modifiable_null == 1)
-	      {
-		$this->codefournisseur_modifiable = 1;
-	      }
-
-	    $this->code_compta = $obj->code_compta;
-	    $this->code_compta_fournisseur = $obj->code_compta_fournisseur;
-
-	    $this->tva_intra      = $obj->tva_intra;
-	    $this->tva_intra_code = substr($obj->tva_intra,0,2);
-	    $this->tva_intra_num  = substr($obj->tva_intra,2);
-
-	    $this->typent_id      = $obj->typent_id;
-	    //$this->typent         = $obj->fk_typent?$obj->typeent:'';
-
-	    $this->effectif_id    = $obj->effectif_id;
-	    $this->effectif       = $obj->effectif_id?$obj->effectif:'';
-
-	    $this->forme_juridique_code= $obj->forme_juridique_code;
-	    $this->forme_juridique     = $obj->forme_juridique_code?$obj->forme_juridique:'';
-
-	    $this->prefix_comm = $obj->prefix_comm;
-
-	    $this->remise_client = $obj->remise_client;
-	      
-	    $this->client      = $obj->client;
-	    $this->fournisseur = $obj->fournisseur;
-
-	    if ($this->client == 1)
-	      {
-		$this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">'.$obj->nom.'</a>';
-	      }
-	    elseif($this->client == 2)
-	      {
-		$this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$this->id.'">'.$obj->nom.'</a>';
-	      }
-	    else
-	      {
-		$this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
-	      }
-
-	    $this->rubrique = $obj->rubrique;	      
-	    $this->note = $obj->note;
-
-	    $result = 1;	      
-	  }
-	else
-	  {
-	    dolibarr_syslog("Erreur Societe::Fetch aucune societe avec id=".$this->id);
-	    $result = -2;
-	  }
-
-	$this->db->free($resql);
-      }
-    else
-      {
-	dolibarr_syslog("Erreur Societe::Fetch echec sql=$sql");
-	dolibarr_syslog("Erreur Societe::Fetch ".$this->db->error());
-	$result = -3;
-      }
-
-    return $result;
-  }
+        /* Lecture des permissions */
+        if ($user <> 0)
+        {
+            $sql = "SELECT p.pread, p.pwrite, p.pperms";
+            $sql .= " FROM ".MAIN_DB_PREFIX."societe_perms as p";
+            $sql .= " WHERE p.fk_user = '".$user->id."'";
+            $sql .= " AND p.fk_soc = '".$socid."';";
+    
+            $resql=$this->db->query($sql);
+    
+            if ($resql)
+            {
+                if ($row = $this->db->fetch_row($resql))
+                {
+                    $this->perm_read  = $row[0];
+                    $this->perm_write = $row[1];
+                    $this->perm_perms = $row[2];
+                }
+            }
+        }
+    
+        $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
+        $sql .= ",". $this->db->pdate("s.tms")." as date_update";
+        $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
+        $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique";
+        $sql .= ", s.fk_typent as typent_id";
+        $sql .= ", s.fk_effectif as effectif_id, e.libelle as effectif";
+        $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique";
+        $sql .= ", s.code_client, s.code_compta, s.code_fournisseur, s.parent";
+        $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client";
+        $sql .= ", p.code as pays_code, p.libelle as pays";
+        $sql .= ", st.libelle as stcomm";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql .= ", ".MAIN_DB_PREFIX."c_effectif as e";
+        $sql .= ", ".MAIN_DB_PREFIX."c_pays as p";
+        $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
+        $sql .= ", ".MAIN_DB_PREFIX."c_forme_juridique as fj";
+        $sql .= " WHERE s.idp = ".$socid;
+        $sql .= " AND s.fk_stcomm = st.id";
+        $sql .= " AND s.fk_effectif = e.id";
+        $sql .= " AND s.fk_pays = p.rowid";
+        $sql .= " AND s.fk_forme_juridique = fj.code";
+    
+        $resql=$this->db->query($sql);
+    
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
+    
+                $this->id = $obj->idp;
+    
+                $this->date_update = $obj->date_update;
+    
+                $this->nom = stripslashes($obj->nom);
+                $this->adresse =  stripslashes($obj->address);
+                $this->cp = $obj->cp;
+                $this->ville =  stripslashes($obj->ville);
+    
+                $this->adresse_full =  stripslashes($obj->address) . "\n". $obj->cp . " ". stripslashes($obj->ville);
+    
+                $this->departement_id = $obj->fk_departement;
+                $this->pays_id = $obj->fk_pays;
+                $this->pays_code = $obj->fk_pays?$obj->pays_code:'';
+                $this->pays = $obj->fk_pays?$obj->pays:'';
+    
+                $transcode=$langs->trans("StatusProspect".$obj->fk_stcomm);
+                $libelle=($transcode!="StatusProspect".$obj->fk_stcomm?$transcode:$obj->stcomm);
+                $this->stcomm_id = $obj->fk_stcomm;     // id statut commercial
+                $this->statut_commercial = $libelle;    // libelle statut commercial
+    
+                $this->url = $obj->url;
+                $this->tel = $obj->tel;
+                $this->fax = $obj->fax;
+    
+                $this->parent    = $obj->parent;
+    
+                $this->siren     = $obj->siren;
+                $this->siret     = $obj->siret;
+                $this->ape       = $obj->ape;
+                $this->capital   = $obj->capital;
+    
+                $this->code_client = $obj->code_client;
+                $this->code_fournisseur = $obj->code_fournisseur;
+    
+                if (! $this->code_client && $this->mod_codeclient->code_modifiable_null == 1)
+                {
+                    $this->codeclient_modifiable = 1;
+                }
+    
+                if (! $this->code_fournisseur && $this->mod_codefournisseur->code_modifiable_null == 1)
+                {
+                    $this->codefournisseur_modifiable = 1;
+                }
+    
+                $this->code_compta = $obj->code_compta;
+                $this->code_compta_fournisseur = $obj->code_compta_fournisseur;
+    
+                $this->tva_intra      = $obj->tva_intra;
+                $this->tva_intra_code = substr($obj->tva_intra,0,2);
+                $this->tva_intra_num  = substr($obj->tva_intra,2);
+    
+                $this->typent_id      = $obj->typent_id;
+                //$this->typent         = $obj->fk_typent?$obj->typeent:'';
+    
+                $this->effectif_id    = $obj->effectif_id;
+                $this->effectif       = $obj->effectif_id?$obj->effectif:'';
+    
+                $this->forme_juridique_code= $obj->forme_juridique_code;
+                $this->forme_juridique     = $obj->forme_juridique_code?$obj->forme_juridique:'';
+    
+                $this->prefix_comm = $obj->prefix_comm;
+    
+                $this->remise_client = $obj->remise_client;
+    
+                $this->client      = $obj->client;
+                $this->fournisseur = $obj->fournisseur;
+    
+                if ($this->client == 1)
+                {
+                    $this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">'.$obj->nom.'</a>';
+                }
+                elseif($this->client == 2)
+                {
+                    $this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$this->id.'">'.$obj->nom.'</a>';
+                }
+                else
+                {
+                    $this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
+                }
+    
+                $this->rubrique = $obj->rubrique;
+                $this->note = $obj->note;
+    
+                $result = 1;
+            }
+            else
+            {
+                dolibarr_syslog("Erreur Societe::Fetch aucune societe avec id=".$this->id);
+                $result = -2;
+            }
+    
+            $this->db->free($resql);
+        }
+        else
+        {
+            dolibarr_syslog("Erreur Societe::Fetch echec sql=$sql");
+            dolibarr_syslog("Erreur Societe::Fetch ".$this->db->error());
+            $result = -3;
+        }
+    
+        return $result;
+    }
 
   /**
    *    \brief      Suppression d'une societe de la base avec ses dépendances (contacts, rib...)
    *    \param      id      id de la societe à supprimer
    */
-   
   function delete($id)
   {
     dolibarr_syslog("Societe::Delete");

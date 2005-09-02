@@ -22,7 +22,7 @@
  */
 
 /**
-        \defgroup   bookmark4u      Module Bookmark4u
+        \defgroup   bookmark4u      Module bookmark4u
         \brief      Module pour se synchroniser avec bookmark4u
 */
 

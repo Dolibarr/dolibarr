@@ -22,7 +22,7 @@
  */
 
 /**
-        \defgroup   clicktodial      Module Click to Dial
+        \defgroup   clicktodial      Module click to dial
         \brief      Module pour gérer l'appel automatique
 */
 
