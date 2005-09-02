@@ -25,8 +25,7 @@ require("./pre.inc.php");
  * Sécurité accés client
  */
 
-if (!$user->rights->telephonie->lire) accessforbidden();
-if ($user->societe_id > 0) accessforbidden();
+if (!$user->rights->telephonie->ca->lire) accessforbidden();
 
 llxHeader('','Telephonie - Ratio fournisseur');
 
@@ -66,7 +65,7 @@ if ($resql)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $row = $db->fetch_row($i);	
+      $row = $db->fetch_row($resql);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -78,7 +77,7 @@ if ($resql)
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
