@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -281,6 +280,8 @@ if ($account > 0)
    */
   if ($user->rights->banque->modifier)
     {
+      $html=new Form($db);
+      
       print '<form method="post" action="account.php">';
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="vline" value="' . $vline . '">';
@@ -298,14 +299,9 @@ if ($account > 0)
       print '<td nowrap>';
       print '<input name="dateoy" class="flat" type="text" size="2" value="'.strftime("%Y",time()).'" maxlength="4">';
       print '<input name="dateo" class="flat" type="text" size="2" maxlength="4"></td>';
-      print '<td colspan="2" nowrap><select class="flat" name="operation">';
-      print '<option value="CB">CB';
-      print '<option value="CHQ">CHQ';
-      print '<option value="DEP">DEP';
-      print '<option value="TIP">TIP';
-      print '<option value="PRE">PRE';
-      print '<option value="VIR">VIR';
-      print '</select><input name="num_chq" class="flat" type="text" size="4"></td>';
+      print '<td colspan="2" nowrap>';
+      $html->select_types_paiements('','operation','1,2',1);
+      print '<input name="num_chq" class="flat" type="text" size="4"></td>';
       print '<td>';
       print '<input name="label" class="flat" type="text" size="40"></td>';
 
