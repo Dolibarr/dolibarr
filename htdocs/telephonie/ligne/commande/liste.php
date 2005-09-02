@@ -21,6 +21,8 @@
  */
 require("./pre.inc.php");
 
+if (!$user->rights->telephonie->ligne_commander)
+  accessforbidden();
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];

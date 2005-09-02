@@ -24,7 +24,7 @@ require("./pre.inc.php");
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 
-if (!$user->rights->telephonie->lire)
+if (!$user->rights->telephonie->ligne_commander)
   accessforbidden();
 
 llxHeader('','Telephonie - Ligne - Commande');
