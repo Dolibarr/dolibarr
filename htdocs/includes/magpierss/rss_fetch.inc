@@ -5,7 +5,7 @@
  				to fetching and parsing RSS files, via the
 				function fetch_rss()
  * Author:      Kellan Elliott-McCrea <kellan@protest.net>
- * Version:		0.51
+ *              Modified by Laurent Destailleur <eldy@users.sourceforge.net> for Dolibarr
  * License:		GPL
  *
  * The lastest version of MagpieRSS can be obtained from:
@@ -82,7 +82,7 @@ require_once( MAGPIE_EXTLIB . 'Snoopy.class.inc');
 	version will be return, if it exists (and if MAGPIE_CACHE_FRESH_ONLY is off)
 \*=======================================================================*/
 
-define('MAGPIE_VERSION', '0.51');
+define('MAGPIE_VERSION', '0.7');
 
 $MAGPIE_ERROR = "";
 
@@ -117,10 +117,8 @@ function fetch_rss ($url) {
 		
 		$cache = new RSSCache( MAGPIE_CACHE_DIR, MAGPIE_CACHE_AGE );
 		
-		if ($cache->ERROR) {
-		    // Erreur
-		    print $cache->ERROR;
-		    if (MAGPIE_DEBUG) { debug($cache->ERROR, E_USER_WARNING); }
+        if (MAGPIE_DEBUG and $cache->ERROR) {
+            debug($cache->ERROR, E_USER_WARNING);
 		}
 		
 		
@@ -129,15 +127,20 @@ function fetch_rss ($url) {
 		$rss 			 = 0;		// parsed RSS object
 		$errormsg		 = 0;		// errors, if any
 		
+        // store parsed XML by desired output encoding
+        // as character munging happens at parse time
+        $cache_key       = $url . MAGPIE_OUTPUT_ENCODING;
+        
 		if (!$cache->ERROR) {
 			// return cache HIT, MISS, or STALE
-			$cache_status = $cache->check_cache( $url );
+            $cache_status = $cache->check_cache( $cache_key);
 		}
 		
 		// if object cached, and cache is fresh, return cached obj
 		if ( $cache_status == 'HIT' ) {
-			$rss = $cache->get( $url );
+            $rss = $cache->get( $cache_key );
 			if ( isset($rss) and $rss ) {
+                // should be cache age
 				$rss->from_cache = 1;
 				if ( MAGPIE_DEBUG > 1) {
 				debug("MagpieRSS: Cache HIT", E_USER_NOTICE);
@@ -150,8 +153,8 @@ function fetch_rss ($url) {
 		
 		// setup headers
 		if ( $cache_status == 'STALE' ) {
-			$rss = $cache->get( $url );
-			if ( $rss->etag and $rss->last_modified ) {
+            $rss = $cache->get( $cache_key );
+            if ( $rss and $rss->etag and $rss->last_modified ) {
 				$request_headers['If-None-Match'] = $rss->etag;
 				$request_headers['If-Last-Modified'] = $rss->last_modified;
 			}
@@ -166,7 +169,7 @@ function fetch_rss ($url) {
 					debug("Got 304 for $url");
 				}
 				// reset cache on 304 (at minutillo insistent prodding)
-				$cache->set($url, $rss);
+                $cache->set($cache_key, $rss);
 				return $rss;
 			}
 			elseif ( is_success( $resp->status ) ) {
@@ -176,18 +179,22 @@ function fetch_rss ($url) {
 						debug("Fetch successful");
 					}
 					// add object to cache
-					$cache->set( $url, $rss );
+                    $cache->set( $cache_key, $rss );
 					return $rss;
 				}
 			}
 			else {
-				$errormsg = "Failed to fetch $url. ";
-				if ( $resp->error ) {
+                $errormsg = "Failed to fetch $url ";
+                if ( $resp->status == '-100' ) {
+                    $errormsg .= "(Request timed out after " . MAGPIE_FETCH_TIME_OUT . " seconds)";
+                }
+                elseif ( $resp->error ) {
 					# compensate for Snoopy's annoying habbit to tacking
 					# on '\n'
+                    $http_error = substr($resp->error, 0, -2); 
 					
-					// LDR FIX BUG
-					$http_error = eregi_replace("\n","",$resp->error); 
+					// LDR FIX BUG (plus necessaire car corrigé par ligne du dessus)
+					//$http_error = eregi_replace("\n","",$resp->error); 
 
 					$errormsg .= "(HTTP Error: $http_error)";
 				}
@@ -198,7 +205,7 @@ function fetch_rss ($url) {
 				// LDR FIX BUG Si echec recup http mais cache bien lu, on stock erreur dans object rss
 				if ($rss) {
 				    $rss->ERROR=$errormsg;
-				    if ($cache && $url) $rss->date=filemtime($cache->file_name($url));
+				    if ($cache && $cache_key) $rss->date=filemtime($cache->file_name($url));
 				}
 			}
 		}
@@ -290,7 +297,7 @@ function _fetch_remote_file ($url, $headers = "" ) {
 	Output:		parsed RSS object (see rss_parse)
 \*=======================================================================*/
 function _response_to_rss ($resp) {
-	$rss = new MagpieRSS( $resp->results );
+    $rss = new MagpieRSS( $resp->results, MAGPIE_OUTPUT_ENCODING, MAGPIE_INPUT_ENCODING, MAGPIE_DETECT_ENCODING );
 	
 	// if RSS parsed successfully		
 	if ( $rss and !$rss->ERROR) {
@@ -339,11 +346,11 @@ function init () {
 		return;
 	}
 	else {
-		define('MAGPIE_INITALIZED', 1);
+        define('MAGPIE_INITALIZED', true);
 	}
 	
 	if ( !defined('MAGPIE_CACHE_ON') ) {
-		define('MAGPIE_CACHE_ON', 1);
+        define('MAGPIE_CACHE_ON', true);
 	}
 
 	if ( !defined('MAGPIE_CACHE_DIR') ) {
@@ -372,9 +379,21 @@ function init () {
 	}
 
 	if ( !defined('MAGPIE_CACHE_FRESH_ONLY') ) {
-		define('MAGPIE_CACHE_FRESH_ONLY', 0);
+		define('MAGPIE_CACHE_FRESH_ONLY', false);
 	}
 
+    if ( !defined('MAGPIE_OUTPUT_ENCODING') ) {
+        define('MAGPIE_OUTPUT_ENCODING', 'ISO-8859-1');
+    }
+    
+    if ( !defined('MAGPIE_INPUT_ENCODING') ) {
+        define('MAGPIE_INPUT_ENCODING', null);
+    }
+    
+    if ( !defined('MAGPIE_DETECT_ENCODING') ) {
+        define('MAGPIE_DETECT_ENCODING', true);
+    }
+    
 	if ( !defined('MAGPIE_DEBUG') ) {
 		define('MAGPIE_DEBUG', 0);
 	}

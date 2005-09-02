@@ -198,8 +198,10 @@ class Snoopy
 				return true;					
 				break;
 			case "https":
-				if(!$this->curl_path || (!is_executable($this->curl_path)))
+				if(!$this->curl_path || (!is_executable($this->curl_path))) {
+					$this->error = "Bad curl ($this->curl_path), can't fetch HTTPS \n";
 					return false;
+				}
 				$this->host = $URI_PARTS["host"];
 				if(!empty($URI_PARTS["port"]))
 					$this->port = $URI_PARTS["port"];
@@ -258,325 +260,6 @@ class Snoopy
 		return true;
 	}
 
-/*======================================================================*\
-	Function:	submit
-	Purpose:	submit an http form
-	Input:		$URI	the location to post the data
-				$formvars	the formvars to use.
-					format: $formvars["var"] = "val";
-	Output:		$this->results	the text output from the post
-\*======================================================================*/
-
-	function submit($URI, $formvars="", $formfiles="")
-	{
-		unset($postdata);
-		
-		$postdata = $this->_prepare_post_body($formvars, $formfiles);
-			
-		$URI_PARTS = parse_url($URI);
-		if (!empty($URI_PARTS["user"]))
-			$this->user = $URI_PARTS["user"];
-		if (!empty($URI_PARTS["pass"]))
-			$this->pass = $URI_PARTS["pass"];
-				
-		switch($URI_PARTS["scheme"])
-		{
-			case "http":
-				$this->host = $URI_PARTS["host"];
-				if(!empty($URI_PARTS["port"]))
-					$this->port = $URI_PARTS["port"];
-				if($this->_connect($fp))
-				{
-					if($this->_isproxy)
-					{
-						// using proxy, send entire URI
-						$this->_httprequest($URI,$fp,$URI,$this->_submit_method,$this->_submit_type,$postdata);
-					}
-					else
-					{
-						$path = $URI_PARTS["path"].($URI_PARTS["query"] ? "?".$URI_PARTS["query"] : "");
-						// no proxy, send only the path
-						$this->_httprequest($path, $fp, $URI, $this->_submit_method, $this->_submit_type, $postdata);
-					}
-					
-					$this->_disconnect($fp);
-
-					if($this->_redirectaddr)
-					{
-						/* url was redirected, check if we've hit the max depth */
-						if($this->maxredirs > $this->_redirectdepth)
-						{						
-							if(!preg_match("|^".$URI_PARTS["scheme"]."://|", $this->_redirectaddr))
-								$this->_redirectaddr = $this->_expandlinks($this->_redirectaddr,$URI_PARTS["scheme"]."://".$URI_PARTS["host"]);						
-							
-							// only follow redirect if it's on this site, or offsiteok is true
-							if(preg_match("|^http://".preg_quote($this->host)."|i",$this->_redirectaddr) || $this->offsiteok)
-							{
-								/* follow the redirect */
-								$this->_redirectdepth++;
-								$this->lastredirectaddr=$this->_redirectaddr;
-								$this->submit($this->_redirectaddr,$formvars, $formfiles);
-							}
-						}
-					}
-
-					if($this->_framedepth < $this->maxframes && count($this->_frameurls) > 0)
-					{
-						$frameurls = $this->_frameurls;
-						$this->_frameurls = array();
-						
-						while(list(,$frameurl) = each($frameurls))
-						{														
-							if($this->_framedepth < $this->maxframes)
-							{
-								$this->fetch($frameurl);
-								$this->_framedepth++;
-							}
-							else
-								break;
-						}
-					}					
-					
-				}
-				else
-				{
-					return false;
-				}
-				return true;					
-				break;
-			case "https":
-				if(!$this->curl_path || (!is_executable($this->curl_path)))
-					return false;
-				$this->host = $URI_PARTS["host"];
-				if(!empty($URI_PARTS["port"]))
-					$this->port = $URI_PARTS["port"];
-				if($this->_isproxy)
-				{
-					// using proxy, send entire URI
-					$this->_httpsrequest($URI, $URI, $this->_submit_method, $this->_submit_type, $postdata);
-				}
-				else
-				{
-					$path = $URI_PARTS["path"].($URI_PARTS["query"] ? "?".$URI_PARTS["query"] : "");
-					// no proxy, send only the path
-					$this->_httpsrequest($path, $URI, $this->_submit_method, $this->_submit_type, $postdata);
-				}
-
-				if($this->_redirectaddr)
-				{
-					/* url was redirected, check if we've hit the max depth */
-					if($this->maxredirs > $this->_redirectdepth)
-					{						
-						if(!preg_match("|^".$URI_PARTS["scheme"]."://|", $this->_redirectaddr))
-							$this->_redirectaddr = $this->_expandlinks($this->_redirectaddr,$URI_PARTS["scheme"]."://".$URI_PARTS["host"]);						
-
-						// only follow redirect if it's on this site, or offsiteok is true
-						if(preg_match("|^http://".preg_quote($this->host)."|i",$this->_redirectaddr) || $this->offsiteok)
-						{
-							/* follow the redirect */
-							$this->_redirectdepth++;
-							$this->lastredirectaddr=$this->_redirectaddr;
-							$this->submit($this->_redirectaddr,$formvars, $formfiles);
-						}
-					}
-				}
-
-				if($this->_framedepth < $this->maxframes && count($this->_frameurls) > 0)
-				{
-					$frameurls = $this->_frameurls;
-					$this->_frameurls = array();
-
-					while(list(,$frameurl) = each($frameurls))
-					{														
-						if($this->_framedepth < $this->maxframes)
-						{
-							$this->fetch($frameurl);
-							$this->_framedepth++;
-						}
-						else
-							break;
-					}
-				}					
-				return true;					
-				break;
-				
-			default:
-				// not a valid protocol
-				$this->error	=	'Invalid protocol "'.$URI_PARTS["scheme"].'"\n';
-				return false;
-				break;
-		}		
-		return true;
-	}
-
-/*======================================================================*\
-	Function:	fetchlinks
-	Purpose:	fetch the links from a web page
-	Input:		$URI	where you are fetching from
-	Output:		$this->results	an array of the URLs
-\*======================================================================*/
-
-	function fetchlinks($URI)
-	{
-		if ($this->fetch($URI))
-		{			
-
-			if(is_array($this->results))
-			{
-				for($x=0;$x<count($this->results);$x++)
-					$this->results[$x] = $this->_striplinks($this->results[$x]);
-			}
-			else
-				$this->results = $this->_striplinks($this->results);
-
-			if($this->expandlinks)
-				$this->results = $this->_expandlinks($this->results, $URI);
-			return true;
-		}
-		else
-			return false;
-	}
-
-/*======================================================================*\
-	Function:	fetchform
-	Purpose:	fetch the form elements from a web page
-	Input:		$URI	where you are fetching from
-	Output:		$this->results	the resulting html form
-\*======================================================================*/
-
-	function fetchform($URI)
-	{
-		
-		if ($this->fetch($URI))
-		{			
-
-			if(is_array($this->results))
-			{
-				for($x=0;$x<count($this->results);$x++)
-					$this->results[$x] = $this->_stripform($this->results[$x]);
-			}
-			else
-				$this->results = $this->_stripform($this->results);
-			
-			return true;
-		}
-		else
-			return false;
-	}
-	
-	
-/*======================================================================*\
-	Function:	fetchtext
-	Purpose:	fetch the text from a web page, stripping the links
-	Input:		$URI	where you are fetching from
-	Output:		$this->results	the text from the web page
-\*======================================================================*/
-
-	function fetchtext($URI)
-	{
-		if($this->fetch($URI))
-		{			
-			if(is_array($this->results))
-			{
-				for($x=0;$x<count($this->results);$x++)
-					$this->results[$x] = $this->_striptext($this->results[$x]);
-			}
-			else
-				$this->results = $this->_striptext($this->results);
-			return true;
-		}
-		else
-			return false;
-	}
-
-/*======================================================================*\
-	Function:	submitlinks
-	Purpose:	grab links from a form submission
-	Input:		$URI	where you are submitting from
-	Output:		$this->results	an array of the links from the post
-\*======================================================================*/
-
-	function submitlinks($URI, $formvars="", $formfiles="")
-	{
-		if($this->submit($URI,$formvars, $formfiles))
-		{			
-			if(is_array($this->results))
-			{
-				for($x=0;$x<count($this->results);$x++)
-				{
-					$this->results[$x] = $this->_striplinks($this->results[$x]);
-					if($this->expandlinks)
-						$this->results[$x] = $this->_expandlinks($this->results[$x],$URI);
-				}
-			}
-			else
-			{
-				$this->results = $this->_striplinks($this->results);
-				if($this->expandlinks)
-					$this->results = $this->_expandlinks($this->results,$URI);
-			}
-			return true;
-		}
-		else
-			return false;
-	}
-
-/*======================================================================*\
-	Function:	submittext
-	Purpose:	grab text from a form submission
-	Input:		$URI	where you are submitting from
-	Output:		$this->results	the text from the web page
-\*======================================================================*/
-
-	function submittext($URI, $formvars = "", $formfiles = "")
-	{
-		if($this->submit($URI,$formvars, $formfiles))
-		{			
-			if(is_array($this->results))
-			{
-				for($x=0;$x<count($this->results);$x++)
-				{
-					$this->results[$x] = $this->_striptext($this->results[$x]);
-					if($this->expandlinks)
-						$this->results[$x] = $this->_expandlinks($this->results[$x],$URI);
-				}
-			}
-			else
-			{
-				$this->results = $this->_striptext($this->results);
-				if($this->expandlinks)
-					$this->results = $this->_expandlinks($this->results,$URI);
-			}
-			return true;
-		}
-		else
-			return false;
-	}
-
-	
-
-/*======================================================================*\
-	Function:	set_submit_multipart
-	Purpose:	Set the form submission content type to
-				multipart/form-data
-\*======================================================================*/
-	function set_submit_multipart()
-	{
-		$this->_submit_type = "multipart/form-data";
-	}
-
-	
-/*======================================================================*\
-	Function:	set_submit_normal
-	Purpose:	Set the form submission content type to
-				application/x-www-form-urlencoded
-\*======================================================================*/
-	function set_submit_normal()
-	{
-		$this->_submit_type = "application/x-www-form-urlencoded";
-	}
-
-	
 	
 
 /*======================================================================*\
@@ -812,7 +495,8 @@ class Snoopy
 				return false;
 			}
 				
-			if($currentHeader == "\r\n")
+		//	if($currentHeader == "\r\n")
+			if(preg_match("/^\r?\n$/", $currentHeader) )
 				break;
 						
 			// if a header begins with Location: or URI:, set the redirect
@@ -970,6 +654,8 @@ class Snoopy
 		
 		$headerfile = uniqid(time());
 
+		# accept self-signed certs
+		$cmdline_params .= " -k";
 		exec($this->curl_path." -D \"/tmp/$headerfile\"".$cmdline_params." ".$URI,$results,$return);
 		
 		if($return)
@@ -1010,8 +696,13 @@ class Snoopy
 			}
 		
 			if(preg_match("|^HTTP/|",$result_headers[$currentHeader]))
+			{
 				$this->response_code = $result_headers[$currentHeader];
-
+			    if(preg_match("|^HTTP/[^\s]*\s(.*?)\s|",$this->response_code, $match))
+			    {
+					$this->status= $match[1];
+                }
+			}
 			$this->headers[] = $result_headers[$currentHeader];
 		}
 

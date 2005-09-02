@@ -29,7 +29,7 @@
 		\version    $Revision$
 */
 
-include_once(DOL_DOCUMENT_ROOT."/includes/magpierss/rss_fetch.inc");
+include_once(MAGPIERSS_PATH."rss_fetch.inc");
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 
