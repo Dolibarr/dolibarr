@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,9 @@
  *
  */
 require("./pre.inc.php");
+
+if (!$user->rights->telephonie->service->lire)
+  accessforbidden();
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
