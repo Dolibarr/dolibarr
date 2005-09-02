@@ -572,7 +572,7 @@ class Form
      *    \brief      Retourne la liste des types de paiements possibles
      *    \param      selected        Type de praiement présélectionné
      *    \param      htmlname        Nom de la zone select
-     *    \param      filtretype      Pour filtre
+     *    \param      filtertype      Pour filtre
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1)
     {
@@ -608,7 +608,7 @@ class Form
      *      \brief      Retourne la liste des types de paiements possibles
      *      \param      selected        Type de praiement présélectionné
      *      \param      htmlname        Nom de la zone select
-     *      \param      filtretype      Pour filtre
+     *      \param      filtertype      Pour filtre
      *      \param      format          0=id+libelle, 1=code+code
      */
     function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0)
@@ -1269,9 +1269,9 @@ class Form
 	
     /**
      *      \brief      Affiche liste déroulante depuis requete SQL
-     *      \param      Nom de la zone select
-     *      \param      Requete sql
-     *      \param      Id présélectionné
+     *      \param      name        Nom de la zone select
+     *      \param      sql         Requete sql
+     *      \param      id          Id présélectionné
      */
     function select($name, $sql, $id='')
     {
@@ -1479,12 +1479,13 @@ class Form
 
     /**
      *      \brief      Affiche la cartouche de la liste des documents d'une propale, facture...
-     *      \param      modulepart      propal=propal, facture=facture, ...
-     *      \param      filename        Nom fichier
-     *      \param      filedir         Repertoire à scanner
-     *      \param      urlsource       Url page origine
-     *      \param      genallowed      Génération autorisée
-     *      \param      delallowed      Suppression autorisée
+     *      \param      modulepart          propal=propal, facture=facture, ...
+     *      \param      filename            Nom fichier
+     *      \param      filedir             Repertoire à scanner
+     *      \param      urlsource           Url page origine
+     *      \param      genallowed          Génération autorisée
+     *      \param      delallowed          Suppression autorisée
+     *      \param      modelselected       Modele à présélectionner par défaut
      *      \remarks    Le fichier de facture détaillée est de la forme
      *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
      */

@@ -38,6 +38,13 @@
  */
 
 
+/**
+        \file       scripts/mailing-send.php
+        \ingroup    mailing
+        \brief      Script d'envoi d'un mailing préparé et validé
+*/
+
+
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -45,7 +52,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-if (! $argv[1]) {
+if (! isset($argv[1]) || ! $argv[1]) {
     print "Usage:  mailing-send.php ID_MAILING\n";   
     exit;
 }

@@ -68,7 +68,9 @@ class Propal
 
     /** 
      *		\brief      Constructeur
-     *      \param      DB      Handler d'accès base
+     *      \param      DB          Handler d'accès base
+     *      \param      soc_idp     Id de la société
+     *      \param      propalid    Id de la propal
      */
     function Propal($DB, $soc_idp="", $propalid=0)
     {
@@ -226,6 +228,7 @@ class Propal
    *    \param      subprice        Prix unitaire
    *    \param      qty             Quantité
    *    \param      remise_percent  Remise effectuée sur le produit
+   *    \param      tva_tx          Taux de TVA
    *    \param      desc            Description
    *    \return     int             0 en cas de succès
    */

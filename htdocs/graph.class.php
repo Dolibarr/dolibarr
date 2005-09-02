@@ -45,8 +45,6 @@ class Graph
     /**
      *    \brief      Génère le fichier graphique sur le disque
      *    \param      file    Nom du fichier image
-     *    \param      data    Tableau des données
-     *    \param      title   Titre de l'image
      */
     function draw($file)
     {
@@ -60,8 +58,6 @@ class Graph
     /**
      *    \brief      Prépare l'objet PHPlot
      *    \param      file    Nom du fichier image à générer
-     *    \param      data    Tableau des données
-     *    \param      title   Titre de l'image
      */
     function prepare($file)
     {

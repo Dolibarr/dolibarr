@@ -36,6 +36,12 @@
 
  */
 
+/**
+        \file       scripts/mailing-prepare.php
+        \ingroup    mailing
+        \brief      Script pour préparer les destinataires d'un mailing
+*/
+
 require ("../htdocs/master.inc.php");
 
 $error = 0;

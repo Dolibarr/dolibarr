@@ -41,9 +41,8 @@ class RejetPrelevement
 
   /**
    *    \brief  Constructeur de la classe
-   *    \param  DB          handler accès base de données
-   *    \param  soc_idp     id societe ("" par defaut)
-   *    \param  facid       id facture ("" par defaut)
+   *    \param  DB          Handler accès base de données
+   *    \param  user        Utilisateur
    */
   function RejetPrelevement($DB, $user)
   {
@@ -235,8 +234,6 @@ class RejetPrelevement
 
   /**
    *    \brief      Recupére la liste des factures concernées
-   *    \param      rowid       id de la facture a récupérer
-   *    \param      societe_id  id de societe
    */
   function _get_list_factures()
   {
@@ -286,7 +283,6 @@ class RejetPrelevement
   /**
    *    \brief      Recupére l'objet prelevement
    *    \param      rowid       id de la facture a récupérer
-   *    \param      societe_id  id de societe
    */
   function fetch($rowid)
   {
