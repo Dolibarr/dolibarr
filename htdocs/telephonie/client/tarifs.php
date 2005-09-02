@@ -25,7 +25,7 @@ require("./pre.inc.php");
 $message_erreur = '';
 
 
-if ($_POST["action"] == 'addtarif')
+if ($_POST["action"] == 'addtarif' && $user->rights->telephonie->tarif->client_modifier)
 {
   $error = 0;
   $saisieok = 1;
@@ -134,7 +134,7 @@ if ($_GET["special"] == 'done')
 }
 */
 
-if ($_GET["action"] == 'delete')
+if ($_GET["action"] == 'delete' && $user->rights->telephonie->tarif->client_modifier)
 {
 
   if (strlen(trim($_GET["tid"])) > 0)
@@ -208,16 +208,11 @@ if ($_GET["id"])
 	  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
 	  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
 	  	  
-	  print '<tr><td><a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit() ."</a>&nbsp;";
-	  print $langs->trans('RIB').'</td><td colspan="3">';
-	  print $soc->display_rib();
-	  print '</td></tr>';
+	  print "</table>\n<br />\n";
 
-	  print '</table><br /><table class="border" cellpadding="3" cellspacing="0" width="100%">';
-	  
 	  print '<form action="tarifs.php?id='.$soc->id.'" method="POST">';
 	  print '<input type="hidden" name="action" value="addtarif">';
-
+	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  
 	  print '<tr class="liste_titre"><td width="15%" valign="center">Tarif (coût en euros par minutes)';
@@ -229,37 +224,39 @@ if ($_GET["id"])
 	    {
 	      print '<tr class="liste_titre"><td align="center" bgcolor="red" colspan="5">'.$message_erreur.'</td></tr>';
 	    }
-	  print '<tr><td>';
 
-
-	  print '<select name="tarifid">';
-
-	  $sql = "SELECT t.rowid , t.libelle";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif as t";	  
-	  $sql .= " ORDER BY t.libelle";
-	  
-	  if ( $db->query( $sql) )
+	  if ($user->rights->telephonie->tarif->client_modifier)
 	    {
-	      $num = $db->num_rows();
-	      if ( $num > 0 )
-		{
-		  $i = 0;
+	      print "<tr><td>\n";
+	      print '<select name="tarifid">';
 
-		  while ($i < $num)
+	      $sql = "SELECT t.rowid , t.libelle";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif as t";	  
+	      $sql .= " ORDER BY t.libelle";
+	      $resql = $db->query($sql) ;
+	      if ($resql)
+		{
+		  $num = $db->num_rows($resql);
+		  if ( $num > 0 )
 		    {
-		      $obj = $db->fetch_object($i);	
-		      print '<option value="'.$obj->rowid.'">'.$obj->libelle;
-		      $i++;
+		      $i = 0;
+		      
+		      while ($i < $num)
+			{
+			  $obj = $db->fetch_object($resql);	
+			  print '<option value="'.$obj->rowid.'">'.$obj->libelle;
+			  $i++;
+			}
 		    }
 		}
-	    }
-	  print '</select></td>';
+	      print "</select></td>\n";
+	      
+	      print '<td align="center"><input name="temporel" type="text" value="'.$_POST["temporel"].'" "size="5"></td>';
+	      print '<td align="center"><input name="fixe" value="'.$_POST["fixe"].'" type="text" size="5"></td>';
+	      print '<td align="center"><input type="submit"></td><td>&nbsp;</td>';
+	      print "</tr>\n";
+	    }	  
 
-	  print '<td align="center"><input name="temporel" type="text" value="'.$_POST["temporel"].'" "size="5"></td>';
-	  print '<td align="center"><input name="fixe" value="'.$_POST["fixe"].'" type="text" size="5"></td>';
-	  print '<td align="center"><input type="submit"></td><td>&nbsp;</td>';
-	  print '</tr>';
-	  
 	  /* Tarifs */
 	  
 	  $sql = "SELECT t.rowid , t.libelle, tc.temporel, tc.fixe, u.code, tc.rowid, u.code";
@@ -287,7 +284,7 @@ if ($_GET["id"])
 		      $obj = $db->fetch_object($i);	
 		      $var=!$var;
 
-		      print "<tr $bc[$var]><td>";
+		      print "<tr $bc[$var]><td>\n";
 
 		      print $obj->libelle."</td>\n";
 
@@ -310,7 +307,7 @@ if ($_GET["id"])
 	      print $sql;
 	    }
 	  
-	  print "</table></form>";
+	  print "</table>\n</form>\n";
 	}
     }
 }
