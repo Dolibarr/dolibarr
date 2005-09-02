@@ -25,8 +25,7 @@ require("./pre.inc.php");
  * Sécurité accés client
  */
 
-if (!$user->rights->telephonie->lire) accessforbidden();
-if ($user->societe_id > 0) accessforbidden();
+if (!$user->rights->telephonie->ca->lire) accessforbidden();
 
 llxHeader('','Telephonie - CA par client');
 
@@ -54,10 +53,10 @@ $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_stats";
 $sql .= " , " .MAIN_DB_PREFIX."societe";
 $sql .= " WHERE idp = fk_client_comm";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
-
-if ($db->query($sql))
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
 
   print_barre_liste("CA cumulé par client", $page, "gain.php", $urladd, $sortfield, $sortorder, '', $num);
@@ -72,7 +71,7 @@ if ($db->query($sql))
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $row = $db->fetch_row($i);	
+      $row = $db->fetch_row($resql);	
       $var=!$var;
 
       $marge = $row[4];
@@ -94,7 +93,7 @@ if ($db->query($sql))
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
