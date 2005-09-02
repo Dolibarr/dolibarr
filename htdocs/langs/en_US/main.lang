@@ -181,6 +181,7 @@ RemoveFilter=Remove filter
 ChartGenerated=Chart generated
 ChartNotGenerated=Chart not generated
 GeneratedOn=Build on %s
+Generate=Generate
 Duration=Duration
 Summary=Summary
 MyBookmarks=My bookmarks

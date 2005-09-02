@@ -181,6 +181,7 @@ RemoveFilter=Supprimer filtre
 ChartGenerated=Graphiques générés
 ChartNotGenerated=Graphique non généré
 GeneratedOn=Généré le %s
+Generate=Générer
 Duration=Durée
 Summary=Résumé
 MyBookmarks=Mes marques pages
