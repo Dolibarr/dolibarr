@@ -230,7 +230,7 @@ if ($_socid > 0)
     if ($conf->compta->enabled)
     {
         print '<tr>';
-        print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$societe->code_compta.'</td>';
+        print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$objsoc->code_compta.'</td>';
         print '</tr>';
     }
 
