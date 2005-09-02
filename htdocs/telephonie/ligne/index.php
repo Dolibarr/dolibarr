@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-
 if (!$user->rights->telephonie->lire)
   accessforbidden();
 
-llxHeader('','Telephonie - Ligne');
+$page = $_GET["page"];
+$sortorder = $_GET["sortorder"];
+
+llxHeader('','Telephonie - Lignes');
 
 /*
  * Sécurité accés client
@@ -62,15 +62,15 @@ print '<br />';
 
 $sql = "SELECT distinct statut, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-if ($user->rights->telephonie->ligne->lire_restreint)
-{
-  $sql .= " WHERE l.fk_commercial_suiv = ".$user->id;
-}
+$sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
+$sql .= " WHERE l.fk_client_comm = sp.fk_soc";
+$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 $sql .= " GROUP BY statut";
 
-if ($db->query($sql))
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   $ligne = new LigneTel($db);
 
@@ -81,7 +81,7 @@ if ($db->query($sql))
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($resql);	
       $values[$obj->statut] = $obj->cc;
       $i++;
     }
@@ -152,20 +152,20 @@ if ($user->rights->telephonie->fournisseur->lire)
 
 print '</td><td valign="top" width="70%">';
 
-
-
 $sql = "SELECT s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= " ,  ".MAIN_DB_PREFIX."societe as sf";
+$sql .= " , ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
-$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
-$sql .= " AND l.fk_soc_facture = sf.idp";
 
-if ($user->rights->telephonie->ligne->lire_restreint)
-{
-  $sql .= " AND l.fk_commercial_suiv = ".$user->id;
-}
+$sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
+
+$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
+
+$sql .= " AND s.idp = sp.fk_soc";
+$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
+
+$sql .= " AND l.fk_soc_facture = sf.idp";
 
 $sql .= " ORDER BY rowid DESC LIMIT 10";
 
@@ -179,7 +179,7 @@ if ($resql)
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td>10 Dernières lignes</td>';
+  print '<td>'.min(10,$num).' Dernières lignes</td>';
   print '<td>Client (Agence/Filiale)</td>';
   print '<td align="center">Statut</td>';
 
@@ -233,11 +233,12 @@ else
 
 $sql = "SELECT distinct c.nom as concurrent, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_concurrents as c,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= " WHERE l.fk_concurrent = c.rowid";
-if ($user->rights->telephonie->ligne->lire_restreint)
-{
-  $sql .= " AND l.fk_commercial_suiv = ".$user->id;
-}
+
+$sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
+$sql .= " WHERE l.fk_client_comm = sp.fk_soc";
+$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
+$sql .= " AND l.fk_concurrent = c.rowid";
+
 $sql .= " GROUP BY c.nom";
 
 if ($db->query($sql))

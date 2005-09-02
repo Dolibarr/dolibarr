@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,15 +66,13 @@ $pagenext = $page + 1;
 $sql = "SELECT s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= " ,  ".MAIN_DB_PREFIX."societe as sf";
-$sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
+$sql .= ",".MAIN_DB_PREFIX."societe as sf";
+$sql .= ",".MAIN_DB_PREFIX."telephonie_fournisseur as f";
+$sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
 $sql .= " AND l.fk_soc_facture = sf.idp";
-
-if ($user->rights->telephonie->ligne->lire_restreint)
-{
-  $sql .= " AND l.fk_commercial_suiv = ".$user->id;
-}
+$sql .= " AND l.fk_client_comm = sp.fk_soc";
+$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 
 if ($_GET["search_ligne"])
 {
