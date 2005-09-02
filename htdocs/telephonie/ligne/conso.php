@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,24 +26,32 @@ $mesg = '';
 
 llxHeader("","","Fiche Ligne");
 
-
-
 if ($_GET["id"] or $_GET["numero"])
 {
-  if ($_GET["action"] <> 're-edit')
+
+  $ligne = new LigneTel($db);
+  if ($_GET["id"])
     {
-      $ligne = new LigneTel($db);
-      if ($_GET["id"])
-	{
-	  $result = $ligne->fetch_by_id($_GET["id"]);
-	}
-      if ($_GET["numero"])
-	{
-	  $result = $ligne->fetch($_GET["numero"]);
-	}
+      $result = $ligne->fetch_by_id($_GET["id"]);
+    }
+  if ($_GET["numero"])
+    {
+      $result = $ligne->fetch($_GET["numero"]);
     }
   
-  if ( $result )
+  if ($result == 1)
+    {
+      $client_comm = new Societe($db);
+      $client_comm->fetch($ligne->client_comm_id, $user);
+    }
+  
+  if (!$client_comm->perm_read)
+    {
+      print "Lecture non authorisée";
+    }
+  
+  
+  if ($result == 1 && $client_comm->perm_read)
     { 
       if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
@@ -128,7 +136,7 @@ if ($_GET["id"] or $_GET["numero"])
 	    }
 	  else
 	    {
-	      print $sql;
+	      //print $sql;
 	    }
 	  
 	  print '<tr><td colspan="2" align="center">';

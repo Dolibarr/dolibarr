@@ -26,20 +26,30 @@ llxHeader("","","Fiche Ligne");
 
 if ($_GET["id"] or $_GET["numero"])
 {
-  if ($_GET["action"] <> 're-edit')
+  $ligne = new LigneTel($db);
+  if ($_GET["id"])
     {
-      $ligne = new LigneTel($db);
-      if ($_GET["id"])
-	{
-	  $result = $ligne->fetch_by_id($_GET["id"]);
-	}
-      if ($_GET["numero"])
-	{
-	  $result = $ligne->fetch($_GET["numero"]);
-	}
+      $result = $ligne->fetch_by_id($_GET["id"]);
+    }
+  if ($_GET["numero"])
+    {
+      $result = $ligne->fetch($_GET["numero"]);
     }
   
-  if ( $result )
+  
+  if ($result == 1)
+    {
+      $client_comm = new Societe($db);
+      $client_comm->fetch($ligne->client_comm_id, $user);
+    }
+  
+  if (!$client_comm->perm_read)
+    {
+      print "Lecture non authorisée";
+    }
+  
+  
+  if ($result == 1 && $client_comm->perm_read)
     { 
       if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{

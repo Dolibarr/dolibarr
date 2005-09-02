@@ -26,10 +26,6 @@ $mesg = '';
 
 llxHeader("","","Historique Ligne");
 
-if ($cancel == $langs->trans("Cancel"))
-{
-  $action = '';
-}
 /*
  * Affichage
  *
@@ -50,7 +46,20 @@ if ($cancel == $langs->trans("Cancel"))
 	    }
 	}
 
-      if ( $result )
+
+      if ($result == 1)
+	{
+	  $client_comm = new Societe($db);
+	  $client_comm->fetch($ligne->client_comm_id, $user);
+	}
+
+      if (!$client_comm->perm_read)
+	{
+	  print "Lecture non authorisée";
+	}
+
+
+      if ($result == 1 && $client_comm->perm_read)
 	{ 
 	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	    {
@@ -91,9 +100,6 @@ if ($cancel == $langs->trans("Cancel"))
 	      	     
 	      $client = new Societe($db, $ligne->client_id);
 	      $client->fetch($ligne->client_id);
-
-	      $client_comm = new Societe($db, $ligne->client_comm_id);
-	      $client_comm->fetch($ligne->client_comm_id);
 
 	      print '<tr><td width="20%">Client</td><td colspan="3">';
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
@@ -160,15 +166,16 @@ if ($cancel == $langs->trans("Cancel"))
 	      $sql .= ",".MAIN_DB_PREFIX."user as u";
 	      $sql .= " WHERE u.rowid = l.fk_user AND l.fk_ligne = ".$ligne->id;
 	      $sql .= " ORDER BY l.tms DESC ";
-	      if ( $db->query( $sql) )
+	      $resql =  $db->query($sql);
+	      if ($resql)
 		{
-		  $num = $db->num_rows();
+		  $num = $db->num_rows($resql);
 		  if ( $num > 0 )
 		    {
 		      $i = 0;
 		      while ($i < $num)
 			{
-			  $row = $db->fetch_row($i);
+			  $row = $db->fetch_row($resql);
 
 			  print '<tr><td valign="top" width="20%">'.strftime("%a %d %B %Y %H:%M:%S",$row[0]).'</td>';
 			  print '<td><img src="./graph'.$row[1].'.png">&nbsp;';
@@ -179,14 +186,12 @@ if ($cancel == $langs->trans("Cancel"))
 			    }
 
 			  print '</td><td>';
-
 			  print $ff[$row[6]];
-
 			  print '</td><td>'.$row[4] . " " . $row[3] . "</td></tr>";
 			  $i++;
 			}
 		    }
-		  $db->free();
+		  $db->free($resql);
 		}
 	      else
 		{
@@ -195,64 +200,60 @@ if ($cancel == $langs->trans("Cancel"))
 	  
 	      print "</table>";
 	    }
-	}
-      /*
-       *
-       */
-      print '<br />';
-      print_titre("Retours Fournisseurs");
-      $sql = "SELECT ";
-      $sql .= " cli,mode,situation,date_mise_service,date_resiliation,motif_resiliation,commentaire,fichier, traite ";
-      
-      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande_retour";
-      $sql .= " WHERE cli = ".$ligne->numero;
-      $sql .= " ORDER BY rowid DESC " . $db->plimit($conf->liste_limit+1, $offset);
-      
-      if ($db->query($sql))
-	{
-	  $num = $db->num_rows();
-	  $i = 0;
+
+	  /*
+	   *
+	   */
+	  print '<br />';
+	  print_titre("Retours Fournisseurs");
+	  $sql = "SELECT ";
+	  $sql .= " cli,mode,situation,date_mise_service,date_resiliation,motif_resiliation,commentaire,fichier, traite ";
 	  
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-	  print '<tr class="liste_titre"><td>Mode</td><td>Resultat</td>';
-	  print '<td align="center">Date MeS</td><td>Résil</td></td><td>Commentaire</td><td>Fichier</td>';
-	  print "</tr>\n";
-	  $var=True;
+	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande_retour";
+	  $sql .= " WHERE cli = ".$ligne->numero;
+	  $sql .= " ORDER BY rowid DESC " . $db->plimit($conf->liste_limit+1, $offset);
 	  
-	  while ($i < $num)
+	  $resql = $db->query($sql);
+	  if ($resql)
 	    {
-	      $obj = $db->fetch_object();
-	      $var=!$var;
-	      
-	      print "<tr $bc[$var]>";
-	      print '<td>'.$obj->mode."</td>\n";
-	      print '<td>'.$obj->situation."</td>\n";
-	      print '<td align="center">'.$obj->date_mise_service."</td>\n";
-	      print '<td align="center">'.$obj->date_resiliation."</td>\n";
-	      print '<td>'.$obj->commentaire."</td>\n";
-	      print '<td>'.$obj->fichier."</td>\n";
+	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<tr class="liste_titre"><td>Mode</td><td>Resultat</td>';
+	      print '<td align="center">Date MeS</td><td>Résil</td></td><td>Commentaire</td><td>Fichier</td>';
 	      print "</tr>\n";
-
-	      $i++;
+	      $var=True;
+	      
+	      while ($obj = $db->fetch_object($resql))
+		{
+		  $var=!$var;
+		  
+		  print "<tr $bc[$var]>";
+		  print '<td>'.$obj->mode."</td>\n";
+		  print '<td>'.$obj->situation."</td>\n";
+		  print '<td align="center">'.$obj->date_mise_service."</td>\n";
+		  print '<td align="center">'.$obj->date_resiliation."</td>\n";
+		  print '<td>'.$obj->commentaire."</td>\n";
+		  print '<td>'.$obj->fichier."</td>\n";
+		  print "</tr>\n";
+		}
+	      print "</table>";
+	      $db->free($resql);
 	    }
-	  print "</table>";
-	  $db->free();
+	  else 
+	    {
+	      print $db->error() . ' ' . $sql;
+	    }
+	  
+	  /*
+	   *
+	   *
+	   *
+	   */
 	}
-      else 
-	{
-	  print $db->error() . ' ' . $sql;
-	}
-
-      /*
-       *
-       *
-       *
-       */
     }
-  else
-    {
-      print "Error";
-    }
+else
+{
+  print "Error";
+}
 
 
 $db->close();

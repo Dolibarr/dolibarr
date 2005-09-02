@@ -30,7 +30,7 @@ require("./pre.inc.php");
 
 $mesg = '';
 
-if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel") && $user->rights->telephonie->ligne->creer)
 {
   $ligne = new LigneTel($db);
   $ligne->id = $_GET["id"];
@@ -79,7 +79,19 @@ if ($_GET["id"] or $_GET["numero"])
 	}
     }
   
-  if ( $result == 1)
+  if ($result == 1)
+    {
+      $client_comm = new Societe($db);
+      $client_comm->fetch($ligne->client_comm_id, $user);
+    }
+  
+  if (!$client_comm->perm_read)
+    {
+      print "Lecture non authorisée";
+    }
+  
+  
+  if ($result == 1 && $client_comm->perm_read)
     { 
       if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
