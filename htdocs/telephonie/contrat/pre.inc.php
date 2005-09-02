@@ -66,7 +66,8 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/distributeurs/", "Distributeurs");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
+  if ($user->rights->telephonie->ca->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
 
   left_menu($menu->liste);
 }
