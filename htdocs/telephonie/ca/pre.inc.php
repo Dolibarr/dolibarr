@@ -53,8 +53,7 @@ function llxHeader($head = "", $title="") {
   if ($user->rights->telephonie->ligne_commander)    
     $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commande");
 
-  if ($user->rights->telephonie->stats->lire)
-    $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
+  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
 
   $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
 
