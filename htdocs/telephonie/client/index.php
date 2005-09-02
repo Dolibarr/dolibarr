@@ -21,13 +21,10 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-
 if (!$user->rights->telephonie->lire)
   accessforbidden();
 
-llxHeader('','Telephonie - Ligne');
+llxHeader('','Telephonie - Clients');
 
 /*
  * Sécurité accés client
@@ -64,10 +61,10 @@ $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE s.idp = l.fk_client_comm ";
 $sql .= " AND l.fk_commercial_suiv = ".$user->id;
-
-if ($db->query($sql))
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -75,13 +72,12 @@ if ($db->query($sql))
   print "</tr>\n";
   $var=True;
 
-  $row = $db->fetch_row(0);	
+  $row = $db->fetch_row($resql);
 
   print "<tr $bc[$var]>";
   print '<td><a href="my.php">Mes clients suivis</a></td>';
   print "<td>".$num."</td>\n";
   print "</tr>\n";
-
   print "</table>";
   $db->free();
 }
@@ -91,10 +87,6 @@ else
 }
 
 print '<br />';
-
-print '</td>';
-
-
 
 print '</td><td valign="top" width="70%" rowspan="3">';
 
@@ -122,10 +114,9 @@ if ($resql)
   $i = 0;
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>15 derniers clients</td>';
+  print '<tr class="liste_titre"><td>'.max(15,$num).' derniers clients</td>';
   print '<td width="25%" align="center">Nb Lignes';
-  print '</td>';
-  print "</tr>\n";
+  print "</td></tr>\n";
 
   $var=True;
 
@@ -145,12 +136,11 @@ if ($resql)
       print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
       print '<td align="center">'.$obj->ligne."</td>\n";
 
-
       print "</tr>\n";
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
