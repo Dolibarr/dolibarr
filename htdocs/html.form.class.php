@@ -37,33 +37,38 @@
 
 class Form
 {
-  var $db;
-  var $errorstr;
-  
-  /**
+    var $db;
+    var $errorstr;
+    
+    var $cache_types_paiements_code=array();
+    var $cache_types_paiements_libelle=array();
+    var $cache_conditions_paiements_code=array();
+    var $cache_conditions_paiements_libelle=array();
+
+
+    /**
     	\brief     Constructeur
         \param     DB      handler d'accès base de donnée
-  */
-	
-  function Form($DB)
-  {
-    $this->db = $DB;
+    */
     
-    return 1;
-  }
+    function Form($DB)
+    {
+        $this->db = $DB;
+        
+        return 1;
+    }
   
-  /**
-   *    \brief      Retourne la liste déroulante des départements/province/cantons tout pays confondu ou pour un pays donné.
-   *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
-   *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
-   *                un code donnée mais dans ce cas, le champ pays diffère).
-   *                Ainsi les liens avec les départements se font sur un département indépendemment de nom som.
-   *    \param      selected        code forme juridique a présélectionné
-   *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
-   */
-
-  function select_departement($selected='',$pays_code=0)
-  {
+    /**
+     *    \brief      Retourne la liste déroulante des départements/province/cantons tout pays confondu ou pour un pays donné.
+     *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
+     *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
+     *                un code donnée mais dans ce cas, le champ pays diffère).
+     *                Ainsi les liens avec les départements se font sur un département indépendemment de nom som.
+     *    \param      selected        code forme juridique a présélectionné
+     *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
+     */
+    function select_departement($selected='',$pays_code=0)
+    {
     global $conf,$langs;
     $langs->load("dict");
     
@@ -445,87 +450,199 @@ class Form
    *    \param      filtretype      Pour filtre sur type de produit
    *    \param      limit           Limite sur le nombre de lignes retourné
    */
-  function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20)
-  {
-    global $langs,$conf;
+    function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20)
+    {
+        global $langs,$conf;
     
-    $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration";
-    $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
-    $sql.= " WHERE p.envente = 1";
-    if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-    $sql.= " ORDER BY p.nbvente DESC";
-    if ($limit) $sql.= " LIMIT $limit";
+        $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
+        $sql.= " WHERE p.envente = 1";
+        if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
+        $sql.= " ORDER BY p.nbvente DESC";
+        if ($limit) $sql.= " LIMIT $limit";
     
-    $result=$this->db->query($sql);
-    if ($result)
-    {
-    	print '<select class="flat" name="'.$htmlname.'">';
-        print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
-
-        $num = $this->db->num_rows($result);
-        $i = 0;
-        while ($i < $num)
-        {
-            $objp = $this->db->fetch_object($result);
-            $opt = "<option value=\"$objp->rowid\">[$objp->ref] $objp->label - $objp->price ".$langs->trans("Currency".$conf->monnaie);
-            if ($objp->duration) $opt .= " - ".$objp->duration;
-            $opt .= "</option>\n";
-            print $opt;
-            $i++;
-        }
-        print '</select>';
-        
-        $this->db->free($result);
-    }
-    else
-    {
-        dolibarr_print_error($db);
-    }
-  }
-  
-  
-  /**
-   *    \brief      Retourne la liste des types de paiements possibles
-   *    \param      selected        Type de praiement présélectionné
-   *    \param      htmlname        Nom de la zone select
-   *    \param      filtretype      Pour filtre
-   */
-    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype=-1)
-    {
-        global $langs;
-        
-        $sql = "SELECT id, code, libelle";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
-        $sql.= " WHERE active > 0";
-        if ($filtertype >= 0) $sql.=" AND type = $filtertype";
-        $sql.= " ORDER BY id";
-        $result = $this->db->query($sql);
+        $result=$this->db->query($sql);
         if ($result)
         {
             print '<select class="flat" name="'.$htmlname.'">';
+            print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
+    
             $num = $this->db->num_rows($result);
             $i = 0;
             while ($i < $num)
             {
-                $obj = $this->db->fetch_object($result);
-                if ($selected == $obj->code)
-                {
-                    print '<option value="'.$obj->id.'" selected="true">';
-                }
-                else
-                {
-                    print '<option value="'.$obj->id.'">';
-                }
-                // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                print ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->libelle!='-'?$obj->libelle:''));
-                print '</option>';
+                $objp = $this->db->fetch_object($result);
+                $opt = "<option value=\"$objp->rowid\">[$objp->ref] $objp->label - $objp->price ".$langs->trans("Currency".$conf->monnaie);
+                if ($objp->duration) $opt .= " - ".$objp->duration;
+                $opt .= "</option>\n";
+                print $opt;
                 $i++;
             }
-            print "</select>";
+            print '</select>';
+    
+            $this->db->free($result);
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
+    }
+  
+
+    /**
+     *    \brief      Charge dans cache la liste des conditions de paiements possibles
+     *    \param      selected        Condition de paiement présélectionnée
+     *    \param      htmlname        Nom de la zone select
+     *    \param      filtretype      Pour filtre
+     */
+    function load_cache_conditions_paiements()
+    {
+        global $langs;
+
+        dolibarr_syslog('html.form.class.php::load_cache_conditions_paiements');
+        $sql = "SELECT rowid, libelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
+        $sql.= " WHERE actif=1";
+        $sql.= " ORDER BY sortorder";
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+
+                // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                $libelle=($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                $this->cache_conditions_paiements_code[$obj->rowid]=$obj->code;
+                $this->cache_conditions_paiements_libelle[$obj->rowid]=$libelle;
+                $i++;
+            }
+            return 1;
         }
         else {
             dolibarr_print_error($this->db);
+            return -1;
         }
+    }
+
+    /**
+     *    \brief      Charge dans cache la liste des types de paiements possibles
+     *    \param      selected        Type de praiement présélectionné
+     *    \param      htmlname        Nom de la zone select
+     *    \param      filtretype      Pour filtre
+     */
+    function load_cache_types_paiements()
+    {
+        global $langs;
+
+        dolibarr_syslog('html.form.class.php::load_cache_types_paiements');
+        $sql = "SELECT id, code, libelle, type";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
+        $sql.= " WHERE active > 0";
+        $sql.= " ORDER BY id";
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+
+                // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                $libelle=($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                $this->cache_types_paiements_code[$obj->id]=$obj->code;
+                $this->cache_types_paiements_libelle[$obj->id]=$libelle;
+                $this->cache_types_paiements_type[$obj->id]=$obj->type;
+                $i++;
+            }
+            return 1;
+        }
+        else {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+    }
+
+ 
+ 
+     /**
+     *    \brief      Retourne la liste des types de paiements possibles
+     *    \param      selected        Type de praiement présélectionné
+     *    \param      htmlname        Nom de la zone select
+     *    \param      filtretype      Pour filtre
+     */
+    function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1)
+    {
+        global $langs;
+        
+        // Charge le cache si premier appel
+        if (! sizeof($this->cache_conditions_paiements_code))
+        {
+            $this->load_cache_conditions_paiements();
+        }
+ 
+        print '<select class="flat" name="'.$htmlname.'">';
+        foreach($this->cache_conditions_paiements_code as $id => $code)
+        {
+            if ($selected == $code)
+            {
+                print '<option value="'.$id.'" selected="true">';
+            }
+            else
+            {
+                print '<option value="'.$id.'">';
+            }
+            print $this->cache_conditions_paiements_libelle[$id];
+            print '</option>';
+        }
+        print '</select>';
+    }
+
+
+    
+
+    /**
+     *      \brief      Retourne la liste des types de paiements possibles
+     *      \param      selected        Type de praiement présélectionné
+     *      \param      htmlname        Nom de la zone select
+     *      \param      filtretype      Pour filtre
+     *      \param      format          0=id+libelle, 1=code+code
+     */
+    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0)
+    {
+        global $langs;
+
+        $filterarray=array();
+        if ($filtertype && $filtertype != '-1') $filterarray=split(',',$filtertype);
+        
+        // Charge le cache si premier appel
+        if (! sizeof($this->cache_types_paiements_code))
+        {
+            $this->load_cache_types_paiements();
+        }
+
+        //dolibarr_syslog('html.form.class.php::select_types_paiements use cache');
+        print '<select class="flat" name="'.$htmlname.'">';
+        foreach($this->cache_types_paiements_code as $id => $code)
+        {
+            // On passe si on a demandé de filtrer sur des modes de paiments particulièrs
+            if (sizeof($filterarray) && ! in_array($this->cache_types_paiements_type[$id],$filterarray)) continue;
+
+            if ($format == 0) print '<option value="'.$id.'"';
+            if ($format == 1) print '<option value="'.$code.'"';
+            if ($selected == $code)
+            {
+                print ' selected="true"';
+            }
+            print '>';
+            if ($format == 0) print $this->cache_types_paiements_libelle[$id];
+            if ($format == 1) print $code;
+            print '</option>';
+        }
+        print '</select>';
     }
 
 

@@ -55,6 +55,8 @@ class Facture
     var $propalid;
     var $projetid;
     var $prefixe_facture;
+    var $cond_reglement;
+    var $mode_reglement;
 
     /**
     *    \brief  Constructeur de la classe
@@ -330,10 +332,11 @@ class Facture
         $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent";
         $sql .= ",".$this->db->pdate("f.datef")." as df,f.fk_projet";
         $sql .= ",".$this->db->pdate("f.date_lim_reglement")." as dlr";
-        $sql .= ", c.rowid as cond_regl_id, c.libelle, c.libelle_facture";
         $sql .= ", f.note, f.paye, f.fk_statut, f.fk_user_author";
-        $sql .= ", f.fk_mode_reglement";
+        $sql .= ", f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
+        $sql .= ", f.fk_cond_reglement, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_facture";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."cond_reglement as c";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON f.fk_mode_reglement = p.id";
         $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
         if ($societe_id > 0)
         {
@@ -347,28 +350,30 @@ class Facture
             {
                 $obj = $this->db->fetch_object($result);
 
-                $this->id                 = $rowid;
-                $this->datep              = $obj->dp;
-                $this->date               = $obj->df;
-                $this->ref                = $obj->facnumber;
-                $this->amount             = $obj->amount;
-                $this->remise             = $obj->remise;
-                $this->total_ht           = $obj->total;
-                $this->total_tva          = $obj->tva;
-                $this->total_ttc          = $obj->total_ttc;
-                $this->paye               = $obj->paye;
-                $this->remise_percent     = $obj->remise_percent;
-                $this->socidp             = $obj->fk_soc;
-                $this->statut             = $obj->fk_statut;
-                $this->date_lim_reglement = $obj->dlr;
-                $this->cond_reglement_id  = $obj->cond_regl_id;
-                $this->cond_reglement     = $obj->libelle;
-                $this->cond_reglement_facture = $obj->libelle_facture;
-                $this->projetid           = $obj->fk_projet;
-                $this->note               = stripslashes($obj->note);
-                $this->user_author        = $obj->fk_user_author;
-                $this->lignes             = array();
-                $this->mode_reglement     = $obj->fk_mode_reglement;
+                $this->id                     = $rowid;
+                $this->datep                  = $obj->dp;
+                $this->date                   = $obj->df;
+                $this->ref                    = $obj->facnumber;
+                $this->amount                 = $obj->amount;
+                $this->remise                 = $obj->remise;
+                $this->total_ht               = $obj->total;
+                $this->total_tva              = $obj->tva;
+                $this->total_ttc              = $obj->total_ttc;
+                $this->paye                   = $obj->paye;
+                $this->remise_percent         = $obj->remise_percent;
+                $this->socidp                 = $obj->fk_soc;
+                $this->statut                 = $obj->fk_statut;
+                $this->date_lim_reglement     = $obj->dlr;
+                $this->mode_reglement_id      = $obj->fk_mode_reglement;
+                $this->mode_reglement_code    = $obj->mode_reglement_code;
+                $this->mode_reglement         = $obj->mode_reglement_libelle;
+                $this->cond_reglement_id      = $obj->fk_cond_reglement;
+                $this->cond_reglement         = $obj->cond_reglement_libelle;
+                $this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
+                $this->projetid               = $obj->fk_projet;
+                $this->note                   = stripslashes($obj->note);
+                $this->user_author            = $obj->fk_user_author;
+                $this->lignes                 = array();
 
                 if ($this->statut == 0)
                 {
@@ -437,6 +442,7 @@ class Facture
         else
         {
             dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid Erreur dans fetch de la facture");
+            $this->error=$this->db->error();
             return -1;
         }
     }
