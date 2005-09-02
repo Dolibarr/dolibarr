@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**   
@@ -32,105 +31,108 @@ require("../main.inc.php");
 
 function llxHeader($head = "", $title="", $help_url='')
 {
-  global $user, $conf, $langs;
+    global $user, $conf, $langs;
 
-  $user->getrights('banque');
-  
-  top_menu($head, $title);
+    $user->getrights('banque');
 
-  $menu = new Menu();
+    top_menu($head, $title);
 
-  // Les recettes
+    $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
-
-  if ($conf->propal->enabled) 
+    // Les recettes
+    if ($conf->societe->enabled)
     {
-      $langs->load("propal");
-      $menu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"));
+        $langs->load("companies");
+        $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
     }
 
-  if ($conf->contrat->enabled)
+    if ($conf->propal->enabled)
     {
-      $langs->load("contracts");
-      $menu->add(DOL_URL_ROOT."/contrat/",$langs->trans("Contracts"));
+        $langs->load("propal");
+        $menu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"));
     }
 
-  if ($conf->don->enabled)
+    if ($conf->contrat->enabled)
     {
-      $langs->load("donations");
-      $menu->add(DOL_URL_ROOT."/compta/dons/",$langs->trans("Donations"));
+        $langs->load("contracts");
+        $menu->add(DOL_URL_ROOT."/contrat/",$langs->trans("Contracts"));
     }
 
-  if ($conf->facture->enabled)
+    if ($conf->don->enabled)
     {
-      $langs->load("bills");
-      $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"));
-
-      if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR)
-	{
-	  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
-	}
-      
-      $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"));
+        $langs->load("donations");
+        $menu->add(DOL_URL_ROOT."/compta/dons/",$langs->trans("Donations"));
     }
-  
 
-    if ($conf->commande->enabled && $conf->facture->enabled) 
+    if ($conf->facture->enabled)
     {
-      $langs->load("orders");
-      $menu->add(DOL_URL_ROOT."/compta/commande/liste.php?leftmenu=orders&afacturer=1", $langs->trans("MenuOrdersToBill"));
+        $langs->load("bills");
+        $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
+        $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
+        $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"));
+
+        if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR)
+        {
+            $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
+        }
+
+        $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"));
     }
-    
-  // Les dépenses
-  if ($conf->fournisseur->enabled)
+
+
+    if ($conf->commande->enabled && $conf->facture->enabled)
     {
-      $langs->load("suppliers");
-      $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
+        $langs->load("orders");
+        $menu->add(DOL_URL_ROOT."/compta/commande/liste.php?leftmenu=orders&afacturer=1", $langs->trans("MenuOrdersToBill"));
     }
 
-  if ($conf->deplacement->enabled && $user->societe_id == 0)
+    // Les dépenses
+    if ($conf->fournisseur->enabled)
     {
-      $langs->load("trips");
-      $menu->add(DOL_URL_ROOT."/compta/deplacement/", $langs->trans("Trips"));
+        $langs->load("suppliers");
+        $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
     }
 
-  if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
+    if ($conf->deplacement->enabled && $user->societe_id == 0)
     {
-      $menu->add(DOL_URL_ROOT."/compta/tva/index.php",$langs->trans("VAT"));
+        $langs->load("trips");
+        $menu->add(DOL_URL_ROOT."/compta/deplacement/", $langs->trans("Trips"));
     }
-    
-  if ($conf->compta->enabled)
+
+    if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
     {
-      $menu->add(DOL_URL_ROOT."/compta/charges/index.php",$langs->trans("Charges"));
+        $menu->add(DOL_URL_ROOT."/compta/tva/index.php",$langs->trans("VAT"));
     }
 
-
-  // Vision des recettes-dépenses
-  if ($conf->banque->enabled && $user->rights->banque->lire)
-    { 
-      $langs->load("banks");
-      $menu->add(DOL_URL_ROOT."/compta/bank/",$langs->trans("Bank"));
-    }
-  
-  $menu->add(DOL_URL_ROOT."/compta/stats/",$langs->trans("Reportings"));
-
-  if ($conf->prelevement->enabled)
+    if ($conf->compta->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
+        $menu->add(DOL_URL_ROOT."/compta/charges/index.php",$langs->trans("Charges"));
     }
 
-  $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
 
-  if ($user->rights->compta->ventilation->parametrer)
+    // Vision des recettes-dépenses
+    if ($conf->banque->enabled && $user->rights->banque->lire)
     {
-      $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
+        $langs->load("banks");
+        $menu->add(DOL_URL_ROOT."/compta/bank/",$langs->trans("Bank"));
+    }
+
+    $menu->add(DOL_URL_ROOT."/compta/stats/",$langs->trans("Reportings"));
+
+    if ($conf->prelevement->enabled)
+    {
+        $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
+    }
+
+    $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
+
+    if ($user->rights->compta->ventilation->parametrer)
+    {
+        $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
     }
 
 
-  left_menu($menu->liste, $help_url);
+    left_menu($menu->liste, $help_url);
 }
 
 ?>
