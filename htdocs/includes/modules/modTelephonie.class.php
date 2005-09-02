@@ -245,7 +245,7 @@ class modTelephonie extends DolibarrModules
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'tarif';
-    $this->rights[$r][5] = 'client-modifier';
+    $this->rights[$r][5] = 'client_modifier';
     $r++;
 
 
