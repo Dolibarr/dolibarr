@@ -34,7 +34,7 @@ function llxHeader($head = "", $title="") {
 
   $menu = new Menu();
 
-  if (TELEPHONIE_MODULE_ADSL == 1)
+  if ($user->rights->telephonie->adsl->lire && TELEPHONIE_MODULE_ADSL == 1)
     $menu->add(DOL_URL_ROOT."/telephonie/adsl/", "ADSL");
 
   $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
@@ -70,11 +70,13 @@ function llxHeader($head = "", $title="") {
   if ($user->rights->telephonie->fournisseur->lire)
     $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/index.php", "Fournisseurs");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/service/", "Services");
+  if ($user->rights->telephonie->service->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/service/", "Services");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
+  if ($user->rights->telephonie->ca->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
 
-  if ($user->admin)
+  if ($user->rights->telephonie->configurer)
     $menu->add(DOL_URL_ROOT."/telephonie/config/", "Configuration");
 
   left_menu($menu->liste);

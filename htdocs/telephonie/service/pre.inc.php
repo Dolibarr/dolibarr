@@ -51,12 +51,12 @@ function llxHeader($head = "", $title="") {
   if ($user->rights->telephonie->stats->lire)
     $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/service/", "Services");
-
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/service/liste.php", "Liste");
-
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/service/fiche.php?action=create", "Nouveau service");
-
+  if ($user->rights->telephonie->service->lire)
+    {
+      $menu->add(DOL_URL_ROOT."/telephonie/service/", "Services");      
+      $menu->add_submenu(DOL_URL_ROOT."/telephonie/service/liste.php", "Liste");      
+      $menu->add_submenu(DOL_URL_ROOT."/telephonie/service/fiche.php?action=create", "Nouveau service");
+    }
 
 
   left_menu($menu->liste);

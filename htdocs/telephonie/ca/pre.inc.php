@@ -50,19 +50,25 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commande");
+  if ($user->rights->telephonie->ligne_commander)    
+    $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commande");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
+  if ($user->rights->telephonie->stats->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
 
   $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
 
   $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/fournisseurs.php", "Fournisseurs");
+  if ($user->rights->telephonie->fournisseur->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/fournisseurs.php", "Fournisseurs");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ca/ratiofourn.php", "Ratio fournisseur");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ca/gain.php", "Gain par client");
+  if ($user->rights->telephonie->ca->lire)
+    {
+      $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
+      $menu->add_submenu(DOL_URL_ROOT."/telephonie/ca/ratiofourn.php", "Ratio fournisseur");
+      $menu->add_submenu(DOL_URL_ROOT."/telephonie/ca/gain.php", "Gain par client");
+    }
 
   left_menu($menu->liste);
 }

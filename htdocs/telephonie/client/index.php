@@ -59,11 +59,11 @@ print '</table>';
 
 print '<br />';
 
-
 $sql = "SELECT distinct s.idp ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE s.idp = l.fk_client_comm ";
+$sql .= " AND l.fk_commercial_suiv = ".$user->id;
 
 if ($db->query($sql))
 {
@@ -78,40 +78,7 @@ if ($db->query($sql))
   $row = $db->fetch_row(0);	
 
   print "<tr $bc[$var]>";
-  print "<td>Nombre de clients</td>\n";
-  print "<td>".$num."</td>\n";
-  print "</tr>\n";
-
-  print "</table>";
-  $db->free();
-}
-else 
-{
-  print $db->error() . ' ' . $sql;
-}
-
-print '<br />';
-
-$sql = "SELECT distinct s.idp ";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= " , ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE s.idp = l.fk_client_comm ";
-$sql .= " AND l.fk_commercial_suiv = ".$user->id;
-
-if ($db->query($sql))
-{
-  $num = $db->num_rows();
-  $i = 0;
-
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Mes clients suivis</td><td valign="center">Nb</td>';
-  print "</tr>\n";
-  $var=True;
-
-  $row = $db->fetch_row(0);	
-
-  print "<tr $bc[$var]>";
-  print '<td><a href="my.php">Nombre de clients</a></td>';
+  print '<td><a href="my.php">Mes clients suivis</a></td>';
   print "<td>".$num."</td>\n";
   print "</tr>\n";
 
@@ -139,23 +106,19 @@ print '</td><td valign="top" width="70%" rowspan="3">';
 
 $sql = "SELECT s.idp as socidp, s.nom, count(l.ligne) as ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 
 $sql .= " WHERE l.fk_client_comm = s.idp ";
 
-if ($_GET["search_client"])
-{
-  $sel = urldecode($_GET["search_client"]);
-  $sql .= " AND s.nom LIKE '%".$sel."%'";
-}
-
+$sql .= " AND s.idp = sp.fk_soc";
+$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 $sql .= " GROUP BY s.idp";
-
 $sql .= " ORDER BY s.datec DESC LIMIT 15";
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -170,7 +133,7 @@ if ($result)
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($resql);	
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
