@@ -520,14 +520,14 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'110','GEIE
 --
 
 delete from llx_c_paiement;
-insert into llx_c_paiement (id,code,libelle,type) values (0, '',    '-', 3);
-insert into llx_c_paiement (id,code,libelle,type) values (1, 'TIP', 'TIP', 1);
-insert into llx_c_paiement (id,code,libelle,type) values (2, 'VIR', 'Virement', 2);
-insert into llx_c_paiement (id,code,libelle,type) values (3, 'PRE', 'Prélèvement', 1);
-insert into llx_c_paiement (id,code,libelle,type) values (4, 'LIQ', 'Liquide', 0);
-insert into llx_c_paiement (id,code,libelle,type) values (5, 'VAD', 'Paiement en ligne', 0);
-insert into llx_c_paiement (id,code,libelle,type) values (6, 'CB',  'Carte Bancaire', 1);
-insert into llx_c_paiement (id,code,libelle,type) values (7, 'CHQ', 'Chèque', 2);
+insert into llx_c_paiement (id,code,libelle,type,active) values (0, '',    '-',                 3,1);
+insert into llx_c_paiement (id,code,libelle,type,active) values (1, 'TIP', 'TIP',               2,1);
+insert into llx_c_paiement (id,code,libelle,type,active) values (2, 'VIR', 'Virement',          2,1);
+insert into llx_c_paiement (id,code,libelle,type,active) values (3, 'PRE', 'Prélèvement',       2,1);
+insert into llx_c_paiement (id,code,libelle,type,active) values (4, 'LIQ', 'Liquide',           2,1);
+insert into llx_c_paiement (id,code,libelle,type,active) values (5, 'VAD', 'Paiement en ligne', 2,0);
+insert into llx_c_paiement (id,code,libelle,type,active) values (6, 'CB',  'Carte Bancaire',    2,1);
+insert into llx_c_paiement (id,code,libelle,type,active) values (7, 'CHQ', 'Chèque',            2,1);
 
 --
 -- Pays

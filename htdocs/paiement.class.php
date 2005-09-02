@@ -202,15 +202,15 @@ class Paiement
 
     if ($filtre == 'CRDT')
       {
-	$sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement WHERE type IN (0,2) ORDER BY libelle";
+	$sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement WHERE active=1 AND type IN (0,2) ORDER BY libelle";
       }
     elseif ($filtre == 'DBIT')
       {
-	$sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement WHERE type IN (1,2) ORDER BY libelle";
+	$sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement WHERE active=1 AND type IN (1,2) ORDER BY libelle";
       }
     else
       {
-	$sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY libelle";
+	$sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement WHERE active=1 ORDER BY libelle";
       }
     $form->select($name, $sql, $id);
   }

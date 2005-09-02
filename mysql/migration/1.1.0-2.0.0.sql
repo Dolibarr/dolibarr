@@ -683,6 +683,7 @@ update llx_const set visible='0' where name='MAIN_UPLOAD_DOC';
 update llx_const set visible='0' where name='MAIN_TITLE';
 
 update llx_bank set fk_type = 'VAD' where fk_type = 'WWW';
+update llx_bank set fk_type = 'LIQ' where fk_type = 'DEP';
 
 alter table llx_socpeople change civilite civilite varchar(6);
 
