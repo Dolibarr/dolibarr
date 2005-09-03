@@ -97,3 +97,5 @@ SupplierBillsToPay=Factures fournisseurs à payer
 CustomerBillsUnpayed=Factures clients impayées
 DispenseMontantLettres=Les factures rédigées par procédés mécanographiques sont dispensées de l'arrêté en lettres
 NonPercuRecuperable=non perçu récupérable
+SetConditions=Définir conditions de réglement
+SetMode=Définir mode de réglement

@@ -95,3 +95,5 @@ ClassifyBill=Classify invoice
 NoSupplierBillsUnpayed=No suppliers invoices unpayed
 SupplierBillsToPay=Suppliers invoices to pay
 CustomerBillsUnpayed=Unpayed customers invoices
+SetConditions=Set payment conditions
+SetMode=Set payment mode

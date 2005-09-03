@@ -95,8 +95,8 @@ while ($i < GEN_NUMBER_FACTURE)
   $facture = new Facture($db, $socids[$socid]);
   $facture->number = 'provisoire';
   $facture->date = time();
-  $facture->cond_reglement = 3;
-  $facture->mode_reglement = 3;
+  $facture->cond_reglement_id = 3;
+  $facture->mode_reglement_id = 3;
 
   $nbp = rand(1, 9);
   $xnbp = 0;
