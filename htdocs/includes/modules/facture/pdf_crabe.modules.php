@@ -188,33 +188,33 @@ class pdf_crabe extends ModelePDFFactures
                     }
 
                     $pdf->SetXY ($this->posxdesc-1, $curY);
-                    $pdf->MultiCell(108, 3, $libelleproduitservice, 0, 'J');
+                    $pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
 
                     $nexY = $pdf->GetY();
 
                     // TVA
                     $pdf->SetXY ($this->posxtva, $curY);
-                    $pdf->MultiCell(10, 5, ($fac->lignes[$i]->tva_taux < 0 ? '*':'').abs($fac->lignes[$i]->tva_taux), 0, 'R');
+                    $pdf->MultiCell(10, 4, ($fac->lignes[$i]->tva_taux < 0 ? '*':'').abs($fac->lignes[$i]->tva_taux), 0, 'R');
 
                     // Prix unitaire HT avant remise
                     $pdf->SetXY ($this->posxup, $curY);
-                    $pdf->MultiCell(17, 5, price($fac->lignes[$i]->subprice), 0, 'R', 0);
+                    $pdf->MultiCell(17, 4, price($fac->lignes[$i]->subprice), 0, 'R', 0);
 
                     // Quantité
                     $pdf->SetXY ($this->posxqty, $curY);
-                    $pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'R');
+                    $pdf->MultiCell(10, 4, $fac->lignes[$i]->qty, 0, 'R');
 
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
                     if ($fac->lignes[$i]->remise_percent)
 					{
-                        $pdf->MultiCell(14, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
+                        $pdf->MultiCell(14, 4, $fac->lignes[$i]->remise_percent."%", 0, 'R');
                     }
 
                     // Total HT ligne
                     $pdf->SetXY ($this->postotalht, $curY);
                     $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
-                    $pdf->MultiCell(23, 5, $total, 0, 'R', 0);
+                    $pdf->MultiCell(23, 4, $total, 0, 'R', 0);
 
                     // Collecte des totaux par valeur de tva
                     // dans le tableau tva["taux"]=total_tva

@@ -198,33 +198,33 @@ class pdf_propale_azur extends ModelePDFPropales
                     }
 
                     $pdf->SetXY ($this->posxdesc-1, $curY);
-                    $pdf->MultiCell(108, 3, $libelleproduitservice, 0, 'J');
+                    $pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
 
                     $nexY = $pdf->GetY();
 
                     // TVA
                     $pdf->SetXY ($this->posxtva, $curY);
-                    $pdf->MultiCell(10, 5, ($prop->lignes[$i]->tva_tx < 0 ? '*':'').abs($prop->lignes[$i]->tva_tx), 0, 'R');
+                    $pdf->MultiCell(10, 4, ($prop->lignes[$i]->tva_tx < 0 ? '*':'').abs($prop->lignes[$i]->tva_tx), 0, 'R');
 
                     // Prix unitaire HT avant remise
                     $pdf->SetXY ($this->posxup, $curY);
-                    $pdf->MultiCell(16, 5, price($prop->lignes[$i]->subprice), 0, 'R', 0);
+                    $pdf->MultiCell(16, 4, price($prop->lignes[$i]->subprice), 0, 'R', 0);
 
                     // Quantité
                     $pdf->SetXY ($this->posxqty, $curY);
-                    $pdf->MultiCell(10, 5, $prop->lignes[$i]->qty, 0, 'R');
+                    $pdf->MultiCell(10, 4, $prop->lignes[$i]->qty, 0, 'R');
 
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
                     if ($prop->lignes[$i]->remise_percent)
                     {
-                        $pdf->MultiCell(14, 5, $prop->lignes[$i]->remise_percent."%", 0, 'R');
+                        $pdf->MultiCell(14, 4, $prop->lignes[$i]->remise_percent."%", 0, 'R');
                     }
 
                     // Total HT ligne
                     $pdf->SetXY ($this->postotalht, $curY);
                     $total = price($prop->lignes[$i]->price * $prop->lignes[$i]->qty);
-                    $pdf->MultiCell(23, 5, $total, 0, 'R', 0);
+                    $pdf->MultiCell(23, 4, $total, 0, 'R', 0);
 
                     // Collecte des totaux par valeur de tva
                     // dans le tableau tva["taux"]=total_tva
