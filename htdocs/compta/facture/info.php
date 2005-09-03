@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -40,33 +39,43 @@ llxHeader();
  *
  */
 
-$facture = new Facture($db);
-$facture->fetch($_GET["facid"]);
-$facture->info($_GET["facid"]);
-$soc = new Societe($db, $facture->socidp);
-$soc->fetch($facture->socidp);
+$fac = new Facture($db);
+$fac->fetch($_GET["facid"]);
+$fac->info($_GET["facid"]);
+$soc = new Societe($db, $fac->socidp);
+$soc->fetch($fac->socidp);
 
 $h = 0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$facture->id;
+$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
 $head[$h][1] = $langs->trans("CardBill");
 $h++;
-$head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$facture->id;
+
+$head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
 $head[$h][1] = $langs->trans("Preview");
 $h++;
-$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$facture->id;
+
+if ($fac->mode_reglement_code == 'PRE')
+{
+    $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
+    $head[$h][1] = $langs->trans("StandingOrders");
+    $h++;
+}
+
+$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
 $head[$h][1] = $langs->trans("Note");
 $h++;      
-$head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$facture->id;
+
+$head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$fac->id;
 $head[$h][1] = $langs->trans("Info");
 $hselected = $h;
 $h++;      
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $facture->ref");
+dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
 
 
 print '<table width="100%"><tr><td>';
-dolibarr_print_object_info($facture);
+dolibarr_print_object_info($fac);
 print '</td></tr></table>';
 
 print '</div>';

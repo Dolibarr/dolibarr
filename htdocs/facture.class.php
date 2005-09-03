@@ -55,8 +55,10 @@ class Facture
     var $propalid;
     var $projetid;
     var $prefixe_facture;
-    var $cond_reglement;
-    var $mode_reglement;
+    var $cond_reglement_id;
+    var $cond_reglement_code;
+    var $mode_reglement_id;
+    var $mode_reglement_code;
 
     /**
     *    \brief  Constructeur de la classe
@@ -100,14 +102,19 @@ class Facture
             $_facrec = new FactureRec($this->db, $this->fac_rec);
             $_facrec->fetch($this->fac_rec);
 
-            $this->projetid       = $_facrec->projetid;
-            $this->cond_reglement = $_facrec->cond_reglement_id;
-            $this->amount         = $_facrec->amount;
-            $this->remise         = $_facrec->remise;
-            $this->remise_percent = $_facrec->remise_percent;
+            $this->projetid          = $_facrec->projetid;
+            $this->cond_reglement    = $_facrec->cond_reglement_id;
+            $this->cond_reglement_id = $_facrec->cond_reglement_id;
+            $this->mode_reglement    = $_facrec->mode_reglement_id;
+            $this->mode_reglement_id = $_facrec->mode_reglement_id;
+            $this->amount            = $_facrec->amount;
+            $this->remise            = $_facrec->remise;
+            $this->remise_percent    = $_facrec->remise_percent;
         }
 
-        $sql = "SELECT fdm,nbjour FROM ".MAIN_DB_PREFIX."cond_reglement WHERE rowid = $this->cond_reglement";
+        $sql = "SELECT fdm,nbjour ";
+        $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
+        $sql.= " WHERE rowid = ".$this->cond_reglement;
         if ($this->db->query($sql))
         {
             if ($this->db->num_rows())
@@ -151,7 +158,7 @@ class Facture
         $sql .= " VALUES ('$number','$socid', now(), '$totalht', '$remise'";
         $sql .= ",'$this->remise_percent', ".$this->db->idate($this->date);
         $sql .= ",'".addslashes($this->note)."',$user->id, $this->projetid";
-        $sql .= ",".$this->cond_reglement.",".$this->mode_reglement.",".$this->db->idate($datelim).")";
+        $sql .= ",".$this->cond_reglement_id.",".$this->mode_reglement_id.",".$this->db->idate($datelim).")";
         if ( $this->db->query($sql) )
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture");
@@ -654,7 +661,7 @@ class Facture
     */
     function set_paiement_started($rowid)
     {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut=2 WHERE rowid = $rowid ;";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut=2 WHERE rowid = ".$rowid;
         $return = $this->db->query( $sql);
     }
 
@@ -664,7 +671,7 @@ class Facture
     */
     function set_canceled($rowid)
     {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut=3 WHERE rowid = $rowid ;";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut=3 WHERE rowid = ".$rowid;
         $return = $this->db->query( $sql);
     }
 
@@ -742,7 +749,9 @@ class Facture
                 {
                     $sql .= ", datef=now()";
                     // du coup, il faut aussi recalculer la date limite de règlement
-                    $sqltemp = "SELECT c.fdm,c.nbjour,c.rowid,f.fk_cond_reglement,f.rowid FROM ".MAIN_DB_PREFIX."cond_reglement as c, ".MAIN_DB_PREFIX."facture as f WHERE c.rowid=f.fk_cond_reglement AND f.rowid=$this->id";
+                    $sqltemp = "SELECT c.fdm,c.nbjour,c.rowid,f.fk_cond_reglement,f.rowid";
+                    $sqltemp.= " FROM ".MAIN_DB_PREFIX."cond_reglement as c, ".MAIN_DB_PREFIX."facture as f";
+                    $sqltemp.= " WHERE c.rowid=f.fk_cond_reglement AND f.rowid=".$this->id;
                     if ($this->db->query($sqltemp))
                     {
                         if ($this->db->num_rows())
@@ -1350,38 +1359,76 @@ class Facture
     }
 
     /**
-    * \brief     Change le mode de réglement
-    * \param     mode   nouveau mode
-    */
-    function mode_reglement($mode)
+     *   \brief      Change les conditions de réglement
+     *   \param      cond_reglement_id      Id des nouvelles conditions
+     *   \return     int                    >0 si ok, <0 si ko
+     */
+    function cond_reglement($cond_reglement_id)
     {
-        //dolibarr_syslog("Facture::ModeReglement");
-        if ($this->statut > 0 && $this->paye == 0)
+        dolibarr_syslog("Facture::cond_reglement($cond_reglement_id)");
+        if ($this->statut >= 0 && $this->paye == 0)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."facture";
-            $sql .= " SET fk_mode_reglement = ".$mode;
+            $sql .= " SET fk_cond_reglement = ".$cond_reglement_id;
             $sql .= " WHERE rowid=".$this->id;
 
-            if ( $this->db->query( $sql) )
+            if ( $this->db->query($sql) )
             {
-                $this->mode_reglement = $mode;
-                return 0;
+                $this->cond_reglement_id = $cond_reglement_id;
+                return 1;
             }
             else
             {
-                dolibarr_syslog("Facture::mode_reglement Erreur -2");
-                return -2;
+                dolibarr_syslog("Facture::cond_reglement Erreur $sql - ".$this->db->error());
+                $this->error=$this->db->error();
+                return -1;
             }
         }
         else
         {
-            dolibarr_syslog("Facture::mode_reglement, etat facture incompatible");
-            return -3;
+            dolibarr_syslog("Facture::cond_reglement, etat facture incompatible");
+            $this->error="Etat facture incompatible $this->statut $this->paye";
+            return -2;
         }
     }
 
 
     /**
+     *   \brief      Change le mode de réglement
+     *   \param      mode        Id du nouveau mode
+     *   \return     int         >0 si ok, <0 si ko
+     */
+    function mode_reglement($mode_reglement_id)
+    {
+        dolibarr_syslog("Facture::mode_reglement($mode_reglement_id)");
+        if ($this->statut >= 0 && $this->paye == 0)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+            $sql .= " SET fk_mode_reglement = ".$mode_reglement_id;
+            $sql .= " WHERE rowid=".$this->id;
+
+            if ( $this->db->query($sql) )
+            {
+                $this->mode_reglement_id = $mode_reglement_id;
+                return 1;
+            }
+            else
+            {
+                dolibarr_syslog("Facture::mode_reglement Erreur $sql - ".$this->db->error());
+                $this->error=$this->db->error();
+                return -1;
+            }
+        }
+        else
+        {
+            dolibarr_syslog("Facture::mode_reglement, etat facture incompatible");
+            $this->error="Etat facture incompatible $this->statut $this->paye";
+            return -2;
+        }
+    }
+  
+    
+   /**
     * \brief     Créé une demande de prélèvement
     * \param     user         utilisateur créant la demande
     */

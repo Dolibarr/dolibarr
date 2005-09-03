@@ -490,11 +490,14 @@ class Form
   
 
     /**
-     *    \brief      Charge dans cache la liste des conditions de paiements possibles
+     *      \brief      Charge dans cache la liste des conditions de paiements possibles
+     *      \return     int             Nb lignes chargées, 0 si déjà chargées, <0 si ko
      */
     function load_cache_conditions_paiements()
     {
         global $langs;
+
+        if (sizeof($this->cache_conditions_paiements_code)) return 0;    // Cache déja chargé
 
         dolibarr_syslog('html.form.class.php::load_cache_conditions_paiements');
         $sql = "SELECT rowid, libelle";
@@ -525,11 +528,14 @@ class Form
     }
 
     /**
-     *    \brief      Charge dans cache la liste des types de paiements possibles
+     *      \brief      Charge dans cache la liste des types de paiements possibles
+     *      \return     int             Nb lignes chargées, 0 si déjà chargées, <0 si ko
      */
     function load_cache_types_paiements()
     {
         global $langs;
+
+        if (sizeof($this->cache_types_paiements_code)) return 0;    // Cache déja chargé
 
         dolibarr_syslog('html.form.class.php::load_cache_types_paiements');
         $sql = "SELECT id, code, libelle, type";
@@ -552,7 +558,7 @@ class Form
                 $this->cache_types_paiements_type[$obj->id]=$obj->type;
                 $i++;
             }
-            return 1;
+            return $num;
         }
         else {
             dolibarr_print_error($this->db);
@@ -563,25 +569,21 @@ class Form
  
  
      /**
-     *    \brief      Retourne la liste des types de paiements possibles
-     *    \param      selected        Type de praiement présélectionné
-     *    \param      htmlname        Nom de la zone select
-     *    \param      filtertype      Pour filtre
+     *      \brief      Retourne la liste des types de paiements possibles
+     *      \param      selected        Id du type de paiement présélectionné
+     *      \param      htmlname        Nom de la zone select
+     *      \param      filtertype      Pour filtre
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1)
     {
         global $langs;
         
-        // Charge le cache si premier appel
-        if (! sizeof($this->cache_conditions_paiements_code))
-        {
-            $this->load_cache_conditions_paiements();
-        }
+        $this->load_cache_conditions_paiements();
  
         print '<select class="flat" name="'.$htmlname.'">';
         foreach($this->cache_conditions_paiements_code as $id => $code)
         {
-            if ($selected == $code)
+            if ($selected == $id)
             {
                 print '<option value="'.$id.'" selected="true">';
             }
@@ -599,8 +601,8 @@ class Form
     
 
     /**
-     *      \brief      Retourne la liste des types de paiements possibles
-     *      \param      selected        Type de praiement présélectionné
+     *      \brief      Retourne la liste des modes de paiements possibles
+     *      \param      selected        Id du mode de paiement présélectionné
      *      \param      htmlname        Nom de la zone select
      *      \param      filtertype      Pour filtre
      *      \param      format          0=id+libelle, 1=code+code
@@ -612,13 +614,8 @@ class Form
         $filterarray=array();
         if ($filtertype && $filtertype != '-1') $filterarray=split(',',$filtertype);
         
-        // Charge le cache si premier appel
-        if (! sizeof($this->cache_types_paiements_code))
-        {
-            $this->load_cache_types_paiements();
-        }
+        $this->load_cache_types_paiements();
 
-        //dolibarr_syslog('html.form.class.php::select_types_paiements use cache');
         print '<select class="flat" name="'.$htmlname.'">';
         foreach($this->cache_types_paiements_code as $id => $code)
         {
@@ -627,10 +624,9 @@ class Form
 
             if ($format == 0) print '<option value="'.$id.'"';
             if ($format == 1) print '<option value="'.$code.'"';
-            if ($selected == $code)
-            {
-                print ' selected="true"';
-            }
+            // Si selected est text, on compare avec code, sinon avec id
+            if (eregi('[a-z]', $selected) && $selected == $code) print ' selected="true"';
+            elseif ($selected == $id) print ' selected="true"';
             print '>';
             if ($format == 0) print $this->cache_types_paiements_libelle[$id];
             if ($format == 1) print $code;
@@ -931,13 +927,13 @@ class Form
   }
 
 
-  /**
-   *    \brief      Affiche formulaire de selection de projet
-   *    \param      page        Page
-   *    \param      socid       Id societe
-   *    \param      selected    Id projet présélectionné
-   *    \param      htmlname    Nom du formulaire select
-   */
+    /**
+     *    \brief      Affiche formulaire de selection de projet
+     *    \param      page        Page
+     *    \param      socid       Id societe
+     *    \param      selected    Id projet présélectionné
+     *    \param      htmlname    Nom du formulaire select
+     */
     function form_project($page, $socid, $selected='', $htmlname='projectid')
     {
         global $langs;
@@ -965,12 +961,78 @@ class Form
         }
     }
 
-  /**
-   *    \brief     Retourne la liste des devies, dans la langue de l'utilisateur
-   *    \param     selected    code devise pré-sélectionnée
-   *    \param     htmlname    nom de la liste deroulante
-   *    \todo      trier liste sur noms après traduction plutot que avant
-   */
+    /**
+     *    \brief      Affiche formulaire de selection de conditions de paiement
+     *    \param      page        Page
+     *    \param      selected    Id condition présélectionnée
+     *    \param      htmlname    Nom du formulaire select
+     */
+    function form_conditions_reglement($page, $selected='', $htmlname='cond_reglement_id')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setconditions">';
+            print '<table class="noborder" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_conditions_paiements($selected,$htmlname);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                $this->load_cache_conditions_paiements();
+                print $this->cache_conditions_paiements_libelle[$selected];
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
+
+
+    /**
+     *    \brief      Affiche formulaire de selection des modes de reglement
+     *    \param      page        Page
+     *    \param      selected    Id mode présélectionné
+     *    \param      htmlname    Nom du formulaire select
+     */
+    function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setmode">';
+            print '<table class="noborder" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_types_paiements($selected,$htmlname);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                $this->load_cache_types_paiements();
+                print $this->cache_types_paiements_libelle[$selected];
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
+    
+        
+    /**
+     *    \brief     Retourne la liste des devises, dans la langue de l'utilisateur
+     *    \param     selected    code devise pré-sélectionnée
+     *    \param     htmlname    nom de la liste deroulante
+     *    \todo      trier liste sur noms après traduction plutot que avant
+     */
     function select_currency($selected='',$htmlname='currency_id')
     {
         global $conf,$langs;

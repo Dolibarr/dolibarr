@@ -73,6 +73,29 @@ if ($_POST["action"] == 'classin')
     $facture->classin($_POST["projetid"]);
 }
 
+if ($_POST["action"] == 'setmode')
+{
+    $facture = new Facture($db);
+    $facture->fetch($_GET["facid"]);
+    $result=$facture->mode_reglement($_POST["mode_reglement_id"]);
+    if ($result < 0) dolibarr_print_error($db,$facture->error);
+}
+
+if ($_POST["action"] == 'setconditions')
+{
+    $facture = new Facture($db);
+    $facture->fetch($_GET["facid"]);
+    $result=$facture->cond_reglement($_POST["cond_reglement_id"]);
+    if ($result < 0) dolibarr_print_error($db,$facture->error);
+}
+
+if ($_POST["action"] == 'classin')
+{
+    $facture = new Facture($db);
+    $facture->fetch($_GET["facid"]);
+    $facture->classin($_POST["projetid"]);
+}
+
 /*
  * Insertion facture
  */
@@ -94,12 +117,12 @@ if ($_POST["action"] == 'add')
     }
     else
     {
-        $facture->projetid       = $_POST["projetid"];
-        $facture->cond_reglement = $_POST["condid"];
-        $facture->mode_reglement = $_POST["mode_reglement"];
-        $facture->amount         = $_POST["amount"];
-        $facture->remise         = $_POST["remise"];
-        $facture->remise_percent = $_POST["remise_percent"];
+        $facture->projetid          = $_POST["projetid"];
+        $facture->cond_reglement_id = $_POST["cond_reglement_id"];
+        $facture->mode_reglement_id = $_POST["mode_reglement_id"];
+        $facture->amount            = $_POST["amount"];
+        $facture->remise            = $_POST["remise"];
+        $facture->remise_percent    = $_POST["remise_percent"];
 
         if (!$_POST["propalid"] && !$_POST["commandeid"])
         {
@@ -555,12 +578,12 @@ if ($_GET["action"] == 'create')
             // Conditions de réglement
             $id_condition_paiements_defaut=1;
             print "<tr><td nowrap>".$langs->trans("PaymentConditions")."</td><td>";
-            $html->select_conditions_paiements($id_condition_paiements_defaut,'condid');
+            $html->select_conditions_paiements($id_condition_paiements_defaut,'cond_reglement_id');
             print "</td></tr>";
 
             // Mode de réglement
             print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-            $html->select_types_paiements('','mode_reglement');
+            $html->select_types_paiements('','mode_reglement_id');
             print "</td></tr>";
 
             // Projet
@@ -864,13 +887,13 @@ else
             $head[$h][1] = $langs->trans("Preview");
             $h++;
 
-            if ($fac->mode_reglement == 3)
+            if ($fac->mode_reglement_code == 'PRE')
             {
                 $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
                 $head[$h][1] = $langs->trans("StandingOrders");
                 $h++;
             }
-
+        
             $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
             $head[$h][1] = $langs->trans("Note");
             $h++;
@@ -927,16 +950,45 @@ else
             print '</td></tr>';
 
             // Conditions et modes de réglement
-            print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td colspan="3">'. $fac->cond_reglement . '</td>';
-            print '<td width="25%">'.$langs->trans("PaymentMode").'</td><td width="25%">'. $fac->mode_reglement . '</td></tr>';
-
+            print '<tr><td>';
+            print '<table class="nobordernopadding" width="100%"><tr><td>';
+            print $langs->trans("PaymentConditions");
+            print '</td>';
+            if ($_GET["action"] != "editconditions" && $fac->brouillon) print '<td align="right"><a href="facture.php?action=editconditions&amp;facid='.$fac->id.'">'.img_edit($langs->trans("SetConditions")).'</a></td>';
+            print '</tr></table>';
+            print '</td><td colspan="3">';
+            if ($_GET["action"] == "editconditions")
+            {
+                $html->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->cond_reglement_id,"cond_reglement_id");
+            }
+            else
+            {
+                $html->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->cond_reglement_id,"none");
+            }
+            print '</td>';
+            print '<td width="25%">';
+            print '<table class="nobordernopadding" width="100%"><tr><td>';
+            print $langs->trans("PaymentMode");
+            print '</td>';
+            if ($_GET["action"] != "editmode" && $fac->brouillon) print '<td align="right"><a href="facture.php?action=editmode&amp;facid='.$fac->id.'">'.img_edit($langs->trans("SetMode")).'</a></td>';
+            print '</tr></table>';
+            print '</td><td width="25%">';
+            if ($_GET["action"] == "editmode")
+            {
+                $html->form_modes_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->mode_reglement_id,"mode_reglement_id");
+            }
+            else
+            {
+                $html->form_modes_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->mode_reglement_id,"none");
+            }
+            print '</td></tr>';
             print '<tr>';
 
             // Projet
             if ($conf->projet->enabled)
             {
                 $langs->load("projects");
-                print '<td height="10">';
+                print '<td>';
                 print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans("Project");
                 print '</td>';
@@ -952,8 +1004,10 @@ else
                     $html->form_project($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->fk_soc,$fac->projetid,"none");
                 }
                 print "</td>";
-            } else {
-                print '<td height="10">&nbsp;</td><td colspan="3">&nbsp;</td>';
+            }
+            else
+            {
+                print '<td>&nbsp;</td><td colspan="3">&nbsp;</td>';
             }
 
             print '<td rowspan="8" colspan="2" valign="top">';
@@ -1011,9 +1065,9 @@ else
 
             print "</td></tr>";
 
-            print "<tr><td height=\"10\">".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td></tr>";
+            print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td></tr>";
 
-            print '<tr><td height=\"10\">'.$langs->trans("GlobalDiscount").'</td>';
+            print '<tr><td>'.$langs->trans("GlobalDiscount").'</td>';
             if ($fac->brouillon == 1 && $user->rights->facture->creer)
             {
                 print '<form action="facture.php?facid='.$fac->id.'" method="post">';
@@ -1027,17 +1081,17 @@ else
             }
             print '</tr>';
 
-            print '<tr><td height=\"10\">'.$langs->trans("AmountHT").'</td>';
+            print '<tr><td>'.$langs->trans("AmountHT").'</td>';
             print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
             print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-            print '<tr><td height=\"10\">'.$langs->trans("VAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
+            print '<tr><td>'.$langs->trans("VAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
             print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-            print '<tr><td height=\"10\">'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
+            print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
             print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
             // Statut
-			print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->getLibStatut()).'</td></tr>';
+			print '<tr><td>'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->getLibStatut()).'</td></tr>';
 
             if ($fac->note)
             {
