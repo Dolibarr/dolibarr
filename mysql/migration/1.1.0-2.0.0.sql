@@ -1788,4 +1788,15 @@ ALTER TABLE llx_contrat_contact
 ALTER TABLE llx_contrat_contact 
 	ADD CONSTRAINT idx_contrat_contact_fk_contrat		
 	FOREIGN KEY (fk_contrat)     REFERENCES llx_contrat(rowid);
+	
+create table llx_societe_perms
+(
+  fk_soc    integer,
+  fk_user   integer,
+  pread     tinyint unsigned DEFAULT 0, 
+  pwrite    tinyint unsigned DEFAULT 0,
+  pperms    tinyint unsigned DEFAULT 0, 
+
+  UNIQUE INDEX(fk_soc, fk_user)
+)type=innodb;
 
