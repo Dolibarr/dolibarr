@@ -202,7 +202,7 @@ $db->close();
 
 
 if ($langs->file_exists("html/spam.html",0)) {
-    print "<br><br><br><br>".img_warning().' '.$langs->trans("Note")."<br>";
+    print "<br><br><br><br>".$langs->trans("Note")."<br>";
     print '<div style="padding: 4px; background: #FAFAFA; border: 1px solid #BBBBBB;" >';
     $langs->print_file("html/spam.html",0);
     print '</div>';
