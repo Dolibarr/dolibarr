@@ -42,7 +42,7 @@ function llxHeader($head = "", $title="", $help_url='')
     // Les recettes
     if ($conf->societe->enabled)
     {
-        $langs->load("companies");
+        $langs->load("commercial");
         $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
     }
 
