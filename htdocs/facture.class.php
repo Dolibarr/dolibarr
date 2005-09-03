@@ -334,7 +334,7 @@ class Facture
         $sql .= ",".$this->db->pdate("f.date_lim_reglement")." as dlr";
         $sql .= ", f.note, f.paye, f.fk_statut, f.fk_user_author";
         $sql .= ", f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
-        $sql .= ", f.fk_cond_reglement, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_facture";
+        $sql .= ", f.fk_cond_reglement, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_facture_libelle";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."cond_reglement as c";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON f.fk_mode_reglement = p.id";
         $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
