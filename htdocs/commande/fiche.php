@@ -81,6 +81,10 @@ if ($_POST["action"] == 'add' && $user->rights->commande->creer)
   $commande->add_product($_POST["idprod2"],$_POST["qty2"],$_POST["remise_percent2"]);
   $commande->add_product($_POST["idprod3"],$_POST["qty3"],$_POST["remise_percent3"]);
   $commande->add_product($_POST["idprod4"],$_POST["qty4"],$_POST["remise_percent4"]);
+  $commande->add_product($_POST["idprod5"],$_POST["qty5"],$_POST["remise_percent5"]);
+  $commande->add_product($_POST["idprod6"],$_POST["qty6"],$_POST["remise_percent6"]);
+  $commande->add_product($_POST["idprod7"],$_POST["qty7"],$_POST["remise_percent7"]);
+  $commande->add_product($_POST["idprod8"],$_POST["qty8"],$_POST["remise_percent8"]);
   
   $commande_id = $commande->create($user);
   
@@ -88,10 +92,6 @@ if ($_POST["action"] == 'add' && $user->rights->commande->creer)
 
   $action = '';  
 }
-
-/*
- *
- */
 
 if ($_POST["action"] == 'setremise' && $user->rights->commande->creer) 
 {
@@ -113,47 +113,54 @@ if ($_POST["action"] == 'addligne' && $user->rights->commande->creer)
     /*
      *  Ajout d'une ligne produit dans la commande
      */
-    $commande = new Commande($db);
-    $ret=$commande->fetch($_POST["id"]);
-    
-    if (isset($_POST["p_idprod"]))
+    if ($_POST["qty"] && (($_POST["pu"] && $_POST["desc"]) || $_POST["p_idprod"]))
     {
-        $result = $commande->addline(
-        $_POST["np_desc"],
-        $_POST["pu"],
-        $_POST["pqty"],
-        $_POST["tva_tx"],
-        $_POST["p_idprod"],
-        $_POST["premise"]);
+        $commande = new Commande($db);
+        $ret=$commande->fetch($_POST["id"]);
+        
+        if (isset($_POST["p_idprod"]))
+        {
+            $result = $commande->addline(
+            $_POST["np_desc"],
+            $_POST["pu"],
+            $_POST["qty"],
+            $_POST["tva_tx"],
+            $_POST["p_idprod"],
+            $_POST["remise_percent"]);
+        }
+        else
+        {
+            $result = $commande->addline(
+            $_POST["desc"],
+            $_POST["pu"],
+            $_POST["qty"],
+            $_POST["tva_tx"],
+            0,
+            $_POST["remise_percent"]);
+        }
     }
-    else
-    {
-        $result = $commande->addline(
-        $_POST["desc"],
-        $_POST["pu"],
-        $_POST["qty"],
-        $_POST["tva_tx"],
-        0,
-        $_POST["remise_percent"]);
-    }
-
 }
 
-if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer) 
+if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer && $_POST["save"] == $langs->trans("Save"))
 {
-  $commande = new Commande($db,"",$_GET["id"]);
-  if ($commande->fetch($_GET["id"]) )
-    {
-      $result = $commande->update_line($_POST["elrowid"],
+    $commande = new Commande($db,"",$_POST["id"]);
+    if (! $commande->fetch($_POST["id"]) > 0) dolibarr_print_error($db);
+    
+    $result = $commande->update_line($_POST["elrowid"],
 				       $_POST["eldesc"],
 				       $_POST["elprice"],
 				       $_POST["elqty"],
-				       $_POST["elremise_percent"]);
-    }
-  else
-    {
-      print "Erreur";
-    }
+				       $_POST["elremise_percent"],
+				       $_POST["eltva_tx"]
+				       );
+
+    $_GET["id"]=$_POST["id"];   // Pour réaffichage de la fiche en cours d'édition
+}
+
+if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer && $_POST["cancel"] == $langs->trans("Cancel"))
+{
+    Header("Location: fiche.php?id=".$_POST["id"]);   // Pour réaffichage de la fiche en cours d'édition
+    exit;
 }
 
 if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer) 
@@ -326,7 +333,7 @@ if ($_GET["action"] == 'create' && $user->rights->commande->creer)
 	  /*
 	   *
 	   */	  
-	  print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
+	  print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("CreateDraft").'"></td></tr>';
 	  print "</form>\n";
 	  print "</table>\n";
 
@@ -606,8 +613,8 @@ else
                 print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
                 print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
                 print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-                print '<td align="right">'.$langs->trans('Discount').'</td>';
-                print '<td align="right">'.$langs->trans('AmountHT').'</td>';
+                print '<td align="right" width="50">'.$langs->trans('Discount').'</td>';
+                print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
                 print '<td>&nbsp;</td><td>&nbsp;</td>';
                 print "</tr>\n";
             }
@@ -617,7 +624,7 @@ else
                 $objp = $db->fetch_object($resql);
                 $var=!$var;
                 
-    			// Affiche ligne de commande en mode non edit
+                // Ligne en mode visu
     			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
                 {
                     print '<tr '.$bc[$var].'>';
@@ -636,11 +643,8 @@ else
                         print "</td>\n";
                     }
                     print '<td align="right">'.$objp->tva_tx.'%</td>';
-                
                     print '<td align="right">'.price($objp->subprice)."</td>\n";
-                
                     print '<td align="right">'.$objp->qty.'</td>';
-                
                     if ($objp->remise_percent > 0)
                     {
                         print '<td align="right">'.$objp->remise_percent."%</td>\n";
@@ -668,13 +672,14 @@ else
                     print '</tr>';
                 }
         
-    			// Affiche ligne de commande en mode non edit
-                if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
+                // Ligne en mode update
+                if ($_GET["action"] == 'editline' && $user->rights->commande->creer && $_GET["rowid"] == $objp->rowid)
                 {
-                    print "<form action=\"fiche.php?id=$id\" method=\"post\">";
+                    print '<form action="fiche.php" method="post">';
                     print '<input type="hidden" name="action" value="updateligne">';
+                    print '<input type="hidden" name="id" value="'.$id.'">';
                     print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
-                    print "<tr $bc[$var]>";
+                    print '<tr '.$bc[$var].'>';
                     print '<td>';
                     if ($objp->fk_product > 0)
                     {
@@ -687,13 +692,13 @@ else
                     }
                     print '<textarea name="eldesc" cols="50" rows="1">'.stripslashes($objp->description).'</textarea></td>';
                     print '<td align="right">';
-                    //print $html->select_tva("tva_tx",$objp->tva_taux);
-                    print $objp->tva_tx."%";    // Taux tva dépend du produit, donc on ne doit pas pouvoir le changer ici
+                    print $html->select_tva("eltva_tx",$objp->tva_tx);
                     print '</td>';
                     print '<td align="right"><input size="5" type="text" class="flat" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="right"><input size="2" type="text" class="flat" name="elqty" value="'.$objp->qty.'"></td>';
                     print '<td align="right" nowrap><input size="1" type="text" class="flat" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
-                    print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+                    print '<td align="center" colspan="3"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+                    print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 				    print '</tr>';
 					print '</form>';
                 }
@@ -756,8 +761,8 @@ else
             print '<textarea cols="50" name="np_desc" rows="1"></textarea>';
             print '</td>';
 	   		print '<td>&nbsp;</td>';
-            print '<td align="right"><input type="text" size="2" name="pqty" value="1"></td>';
-            print '<td align="right" nowrap><input type="text" size="2" name="premise" value="0">%</td>';
+            print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
+            print '<td align="right" nowrap><input type="text" size="2" name="remise_percent" value="0">%</td>';
             print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
             print "</tr>\n";
         

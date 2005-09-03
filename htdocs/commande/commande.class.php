@@ -750,41 +750,68 @@ class Commande
 	  return -1;
 	}
     }
-  /**
-   * Mets à jour une ligne de commande
-   *
-   */
-  function update_line($rowid, $desc, $pu, $qty, $remise_percent=0)
-    {
-      if ($this->brouillon)
-	{
-	  if (strlen(trim($qty))==0)
-	    {
-	      $qty=1;
-	    }
-	  $remise = 0;
-	  $price = round(ereg_replace(",",".",$pu), 2);
-	  $subprice = $price;
-	  if (trim(strlen($remise_percent)) > 0)
-	    {
-	      $remise = round(($pu * $remise_percent / 100), 2);
-	      $price = $pu - $remise;
-	    }
-	  else
-	    {
-	      $remise_percent=0;
-	    }
 
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET description='$desc',price=$price,subprice=$subprice,remise=$remise,remise_percent=$remise_percent,qty=$qty WHERE rowid = $rowid ;";
-	  if ( $this->db->query( $sql) )
-	    {
-	      $this->update_price($this->id);
-	    }
-	  else
-	    {
-	      dolibarr_print_error($this->db);
-	    }
-	}
+    /**
+     *      \brief     Mets à jour une ligne de commande
+     *      \param     rowid            Id de la ligne de facture
+     *      \param     desc             Description de la ligne
+     *      \param     pu               Prix unitaire
+     *      \param     qty              Quantité
+     *      \param     remise_percent   Pourcentage de remise de la ligne
+     *      \param     tva_tx           Taux TVA
+     *      \return    int              < 0 si erreur, > 0 si ok
+     */
+    function update_line($rowid, $desc, $pu, $qty, $remise_percent=0, $tva_tx)
+    {
+        dolibarr_syslog("Commande::UpdateLine");
+        
+        if ($this->brouillon)
+        {
+            $this->db->begin();
+
+            if (strlen(trim($qty))==0)
+            {
+                $qty=1;
+            }
+            $remise = 0;
+            $price = ereg_replace(",",".",$pu);
+            $subprice = $price;
+            if (trim(strlen($remise_percent)) > 0)
+            {
+                $remise = round(($pu * $remise_percent / 100), 2);
+                $price = $pu - $remise;
+            }
+            else
+            {
+                $remise_percent=0;
+            }
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commandedet";
+            $sql.= " SET description='".addslashes($desc)."',price=$price,subprice=$subprice,";
+            $sql.= " remise=$remise,remise_percent=$remise_percent,qty=$qty,tva_tx='".$tva_tx."'";
+            $sql.= " WHERE rowid = ".$rowid;
+
+            $result=$this->db->query( $sql);
+            if ( $result )
+            {
+                $this->update_price($this->id);
+ 
+                $this->db->commit();
+                
+                return $result;
+            }
+            else
+            {
+                $this->db->rollback();
+    
+                dolibarr_print_error($this->db);
+                return -1;
+            }
+            
+        }
+        else {
+            return -2;
+        }
     }
 
 
