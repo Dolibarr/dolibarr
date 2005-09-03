@@ -1767,3 +1767,25 @@ create table llx_projet_task_actors
 
 )type=innodb;
 
+
+
+create table llx_contrat_contact
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,  
+  datecreate      datetime, 		
+  statut          smallint DEFAULT 0,
+  nature		  varchar(80),
+
+  fk_contrat	  integer NOT NULL,
+  fk_socpeople    integer NOT NULL
+  
+)type=innodb;
+
+
+ALTER TABLE llx_contrat_contact 
+	ADD INDEX idx_contrat_contact_fk_contrat (fk_contrat);
+	
+ALTER TABLE llx_contrat_contact 
+	ADD CONSTRAINT idx_contrat_contact_fk_contrat		
+	FOREIGN KEY (fk_contrat)     REFERENCES llx_contrat(rowid);
+
