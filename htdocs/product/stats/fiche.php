@@ -291,22 +291,22 @@ if ($_GET["id"])
         print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&file='.urlencode($file).'" alt="Nombre de propales sur les 12 derniers mois">';
         print '</td><td align="center" colspan="2">&nbsp;</td></tr>';
         print '<tr>';
-        if (file_exists($filenbpropal) && filemtime($filenbpropal))
+        if (file_exists($filenbpropal) && filemtime($filenbpropal) && ! $px->isGraphKo())
         {
             print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($filenbpropal),"%d %b %Y %H:%M:%S")).'</td>';
         }
         else
         {
-            print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
+            print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
         }
         print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td>';
-        if (file_exists($filenbpiece) && filemtime($filenbpiece))
+        if (file_exists($filenbpiece) && filemtime($filenbpiece) && ! $px->isGraphKo())
         {
             print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($filenbpiece),"%d %b %Y %H:%M:%S")).'</td>';
         }
         else
         {
-            print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
+            print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
         }
         print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td></tr>';
         
@@ -321,22 +321,22 @@ if ($_GET["id"])
         print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&file='.urlencode($file).'" alt="Nombre de pièces vendues sur les 12 derniers mois">';
         print '</td></tr>';
         print '<tr>';
-        if (file_exists($filenbvente) && filemtime($filenbvente))
+        if (file_exists($filenbvente) && filemtime($filenbvente) && ! $px->isGraphKo())
         {
             print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($filenbvente),"%d %b %Y %H:%M:%S")).'</td>';
         }
         else
         {
-            print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
+            print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
         }
         print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td>';
-        if (file_exists($filenbpiece) && filemtime($filenbpiece))
+        if (file_exists($filenbpiece) && filemtime($filenbpiece) && ! $px->isGraphKo())
         {
             print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($filenbpiece),"%d %b %Y %H:%M:%S")).'</td>';
         }
         else
         {
-            print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
+            print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
         }
         print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td></tr>';
 
