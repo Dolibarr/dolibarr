@@ -462,11 +462,11 @@ else
         {
 
             if ($mesg) print $mesg;
-
+			
             $author = new User($db);
             $author->id = $contrat->user_author_id;
             $author->fetch();
-
+			
             $commercial_signature = new User($db);
             $commercial_signature->id = $contrat->commercial_signature_id;
             $commercial_signature->fetch();
@@ -481,6 +481,10 @@ else
             $hselected = $h;
             $h++;
 
+			$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$contrat->id;
+			$head[$h][1] = $langs->trans("ContractContacts");
+			$h++;
+			
             $head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$contrat->id;
             $head[$h][1] = $langs->trans("Info");
             $h++;      

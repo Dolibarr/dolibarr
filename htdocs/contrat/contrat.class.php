@@ -690,6 +690,193 @@ class Contrat
             return -1;
         }
     }
+
+    /* gestion des contacts d'un contrat */
+
+	/**
+	 * 
+	 *      \brief      Ajoute un contact associé au contrat
+     *      \param      fk_socpeople    Id du contact a ajouter.
+     *      \param      nature          description du contact
+     *      \return     int             <0 si erreur, >0 si ok
+     */
+	 function add_contact($fk_socpeople, $nature)
+	 {
+        
+        if ($fk_socpeople <= 0 
+        	|| $this->societe->contact_get_email($fk_socpeople) == "" )
+        {
+        		// le contact n'existe pas ou est invalide
+        		return -1;
+        }
+        
+        $lNature = addslashes(trim($nature));
+        $datecreate = mktime();
+        
+        // Insertion dans la base
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat_contact";
+        $sql.= " (fk_contrat, fk_socpeople, datecreate, statut, nature) ";
+        $sql.= " VALUES ($this->id, $fk_socpeople , " ;
+		$sql.= $this->db->pdate(time());
+		$sql.= ", 5, '". $lNature . "' ";
+        $sql.= ");";
+        
+        // Retour
+        if ( $this->db->query($sql) )
+        {
+            return 0;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+	 }    
+	 
+	 /**
+	 * 
+	 *      \brief      Misea jour du contact associé au contrat
+     *      \param      rowid    La reference du lien contant contact.
+     * 		\param		statut	Le nouveau statut
+     *      \param      nature          description du contact
+     *      \return     int             <0 si erreur, >0 si ok
+     */
+	 function update_contact($rowid, $statut,  $nature)
+	 {
+           
+        $lNature = addslashes(trim($nature));
+        
+        // Insertion dans la base
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contrat_contact set ";
+        $sql.= " statut = $statut ,";
+        $sql.= " nature = '" . $lNature ."'";
+        $sql.= " where rowid = $rowid ;";
+        // Retour
+        if (  $this->db->query($sql) )
+        {
+            return 0;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+	 }    
+	 
+	/** 
+     *    \brief      Supprime une ligne de contact de contrat
+     *    \param      idligne		La reference du contact
+     *    \return     statur     0 OK, -1 erreur
+     */
+	function delete_contact($idligne)
+	{
+
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat_contact WHERE rowid =".$idligne;
+      
+      if ($this->db->query($sql) ) {
+	
+	  return 0;
+	}
+      else
+	{
+	  return 1;
+	}
+    }
+	 		
+    /** 
+     *    \brief      Récupère les lignes de contact du contrat
+     *    \param      statut      Statut des lignes detail à récupérer
+     *    \return     array       Tableau des rowid des contacts
+     */
+    function liste_contact($statut=-1)
+    {
+        $tab=array();
+     
+        $sql = "SELECT cd.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contrat_contact cd , ".MAIN_DB_PREFIX."socpeople sp";
+        $sql.= " WHERE fk_contrat =".$this->id;
+        $sql.= " and cd.fk_socpeople = sp.idp";
+        if ($statut >= 0) $sql.= " AND statut = '$statut'";
+        $sql.=" order by sp.name asc ;";
+        
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num=$this->db->num_rows($resql);
+            $i=0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+                $tab[$i]=$obj->rowid;
+                $i++;
+            }
+            return $tab;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
+	 /** 
+     *    \brief      Le détail d'un contact
+     *    \param      rowid      L'identifiant du contant de contrat
+     *    \return     object     L'objet de construit par DoliDb.fetch_object
+     */
+ 	function detail_contact($rowid)
+    {
+  
+        $sql = "SELECT datecreate, statut, nature, fk_socpeople";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contrat_contact";
+        $sql.= " WHERE rowid =".$rowid.";";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+             $obj = $this->db->fetch_object($result);
+  
+            return $obj;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return null;
+        }
+    }	
+
+	 /** 
+     *    \brief      La liste des valeurs possibles de nature de contats
+     *    
+     *    \return     array   La liste des natures
+     */
+ 	function liste_nature_contact()
+    {
+  		$tab = array();
+  		
+        $sql = "SELECT distinct nature";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contrat_contact";
+        $sql.= " order by nature;";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num=$this->db->num_rows($result);
+            $i=0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                $tab[$i]=$obj->nature;
+                $i++;
+            }
+            return $tab;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return null;
+        }
+    }		 			
     
 }
 ?>

@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -53,6 +52,10 @@ $head[$h][1] = $langs->trans("ContractCard");
 $hselected = $h;
 $h++;
 
+$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$contrat->id;
+$head[$h][1] = $langs->trans("ContractContacts");
+$h++;
+			
 $head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$contrat->id;
 $head[$h][1] = $langs->trans("Info");
 $hselected = $h;
