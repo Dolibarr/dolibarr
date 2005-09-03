@@ -1,5 +1,5 @@
 <?php
-require('fpdf.php');
+require_once(FPDF_PATH.'fpdf.php');
 
 class PDF_Code39 extends FPDF {
 

@@ -20,6 +20,8 @@
  *
  */
 
+require_once(FPDF_PATH.'fpdf.php');
+
 class DolibarrPdfBarCode extends FPDF {
 
   /* Author Olivier PLATHEY

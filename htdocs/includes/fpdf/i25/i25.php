@@ -1,5 +1,5 @@
 <?php
-require('fpdf.php');
+require_once(FPDF_PATH.'fpdf.php');
 
 // based on the Code 39 script from The-eh
 class PDF_i25 extends FPDF
