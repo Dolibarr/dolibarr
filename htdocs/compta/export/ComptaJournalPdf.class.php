@@ -21,6 +21,9 @@
  *
  */
 
+require_once(FPDF_PATH.'fpdf.php');
+
+
 class ComptaJournalPdf extends FPDF  {
   
   function Footer()

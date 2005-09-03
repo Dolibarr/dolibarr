@@ -28,8 +28,9 @@
 		\version    $Revision$
 */
 
-require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_indexes.php");
-require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_html.php");
+require_once(FPDF_PATH.'fpdf.php');
+require_once(DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_indexes.php");
+require_once(DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_html.php");
 
 
 /**

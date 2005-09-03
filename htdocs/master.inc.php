@@ -179,7 +179,10 @@ if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMEN
 define('FPDF_FONTPATH', FPDF_PATH . 'font/');
 define('MAGPIE_DIR', MAGPIERSS_PATH);
 
-// \todo mettre cet include uniquement sur les éléments qui manipulent du PDF
+// \todo Ajouter la ligne
+// require_once(FPDF_PATH . "fpdf.php");
+// dans le fichier pdfdetail_standard_modeles du module telephonie afin de pouvoir
+// supprimer celle qui suit.
 require_once(FPDF_PATH . "fpdf.php");
 
 

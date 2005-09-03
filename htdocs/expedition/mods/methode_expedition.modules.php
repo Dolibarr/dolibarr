@@ -21,6 +21,8 @@
  *
  */
 
+require_once(FPDF_PATH.'fpdf.php');
+
 Class methode_expedition
 {
 

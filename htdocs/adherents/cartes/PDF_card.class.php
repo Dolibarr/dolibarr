@@ -56,10 +56,8 @@
 //	  + : Added 3mm to the position of labels to avoid errors
 ////////////////////////////////////////////////////
 
-//require_once('fpdf.php');
-
-
-/*!	\file htdocs/adherents/cartes/PDF_card.class.php
+/**	
+        \file       htdocs/adherents/cartes/PDF_card.class.php
         \ingroup    adherent
 		\brief      Fichier de la classe permettant d'éditer au format PDF des étiquettes au format Avery ou personnalisé
 		\author     Steve Dillon
@@ -69,8 +67,12 @@
 		\version    $Revision$
 */
 
-/*! \class PDF_card
-		\brief Classe afin d'éditer au format PDF des étiquettes au format Avery ou personnalisé
+require_once(FPDF_PATH.'fpdf.php');
+
+
+/**
+        \class      PDF_card
+		\brief      Classe afin d'éditer au format PDF des étiquettes au format Avery ou personnalisé
 */
 
 class PDF_card extends FPDF {

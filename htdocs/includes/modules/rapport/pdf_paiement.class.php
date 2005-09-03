@@ -21,20 +21,24 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/rapport/pdf_paiement.class.php
+/**
+        \file       htdocs/includes/modules/rapport/pdf_paiement.class.php
 		\ingroup    banque
 		\brief      Fichier de la classe permettant de générer les rapports de paiement
 		\version    $Revision$
 */
 
+require_once(FPDF_PATH.'fpdf.php');
 
-/*!	\class pdf_paiement
-		\brief  Classe permettant de générer les rapports de paiement
+
+/**	    \class      pdf_paiement
+		\brief      Classe permettant de générer les rapports de paiement
 */
 
-class pdf_paiement {
+class pdf_paiement
+{
 
-    /*!		\brief  Constructeur
+    /**		\brief  Constructeur
     		\param	db		handler accès base de donnée
     */
   function pdf_paiement($db=0)
@@ -163,7 +167,7 @@ class pdf_paiement {
     }
 
 
-    /*!
+    /**
     		\brief  Fonction générant le rapport sur le disque
     		\param	_dir		repertoire
     		\param	month		mois du rapport

@@ -30,6 +30,8 @@
 		\version    $Revision$
 */
 
+require_once(FPDF_PATH.'fpdf.php');
+
 
 /**
     	\class      ModelePDFPropales
