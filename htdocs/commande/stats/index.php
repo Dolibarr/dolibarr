@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -55,11 +54,16 @@ $stats = new CommandeStats($db, $socidp);
 $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);
 
-if (! is_dir($conf->commande->dir_images))
-{ 
-    mkdir($conf->commande->dir_output);
-    mkdir($conf->commande->dir_images);
+// Création répertoire pour images générées
+$dir=$conf->commande->dir_images;
+if (! file_exists($dir))
+{
+    if (create_exdir($dir) < 0)
+    {
+        $mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
+    }
 }
+
 
 $filename = $conf->commande->dir_images."/nbcommande2year-".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$year.'.png';
@@ -81,7 +85,7 @@ $num = sizeof($rows);
 print '<table class="border" width="100%">';
 print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NbOfOrders").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-if ($mesg) { print $mesg; }
+if ($px->isGraphKo()) { print '<font class="error">'.$px->isGraphKo().'</div>'; }
 else { print '<img src="'.$fileurl.'" alt="Nombre de commande par mois">'; }
 print '</td></tr>';
 $i = 0;
@@ -100,5 +104,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
