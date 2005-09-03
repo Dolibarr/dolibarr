@@ -18,13 +18,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-    \file   	htdocs/compta/ventilation/pre.inc.php
-    \ingroup    compta
-    \brief  	Fichier gestionnaire du menu compta
+        \file   	htdocs/compta/ventilation/pre.inc.php
+        \ingroup    compta
+        \brief  	Fichier gestionnaire du menu compta ventilation
 */
 
 require("../../main.inc.php");
@@ -32,22 +31,23 @@ $user->getrights('');
 
 function llxHeader($head = "", $title="", $help_url='')
 {
-  global $user, $conf, $langs;
+    global $user, $conf, $langs;
 
-  top_menu($head, $title);
+    top_menu($head, $title);
 
-  $menu = new Menu();
+    $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
+    $langs->load("commercial");
+    $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
 
-  $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
-  $menu->add_submenu(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("A ventiler"));
-  $menu->add_submenu(DOL_URL_ROOT."/compta/ventilation/lignes.php",$langs->trans("Ventilées"));
+    $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
+    $menu->add_submenu(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("A ventiler"));
+    $menu->add_submenu(DOL_URL_ROOT."/compta/ventilation/lignes.php",$langs->trans("Ventilées"));
 
-  $menu->add(DOL_URL_ROOT."/compta/export/",$langs->trans("Export"));
+    $menu->add(DOL_URL_ROOT."/compta/export/",$langs->trans("Export"));
 
 
-  left_menu($menu->liste, $help_url);
+    left_menu($menu->liste, $help_url);
 }
 
 ?>

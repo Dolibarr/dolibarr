@@ -39,6 +39,7 @@ function llxHeader($head = "", $urlp = "")
     $menu = new Menu();
     
     
+    $langs->load("commercial");
     $menu->add(DOL_URL_ROOT."/comm/action/", $langs->trans("Actions"));
     
     $menu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?time=today", $langs->trans("Today"));

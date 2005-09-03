@@ -18,13 +18,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**   
-      \file   	htdocs/compta/pre.inc.php
-      \ingroup    compta
-      \brief  	Fichier gestionnaire du menu compta
+      \file   	    htdocs/compta/commande/pre.inc.php
+      \ingroup      compta,commande
+      \brief  	    Fichier gestionnaire du menu commande de compta
 */
 
 require("../../main.inc.php");
@@ -37,104 +36,106 @@ $user->getrights('commande');
 
 function llxHeader($head = "", $title="", $help_url='')
 {
-  global $user, $conf, $langs;
+    global $user, $conf, $langs;
 
-  $user->getrights('banque');
-  
-  top_menu($head, $title);
+    $user->getrights('banque');
 
-  $menu = new Menu();
+    top_menu($head, $title);
 
-  // Les recettes
+    $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
+    // Les recettes
 
-  if ($conf->propal->enabled) 
+    $langs->load("commercial");
+    $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
+
+    if ($conf->propal->enabled)
     {
-      $langs->load("propal");
-      $menu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"));
+        $langs->load("propal");
+        $menu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"));
     }
 
-  if ($conf->contrat->enabled)
+    if ($conf->contrat->enabled)
     {
-      $langs->load("contracts");
-      $menu->add(DOL_URL_ROOT."/contrat/",$langs->trans("Contracts"));
+        $langs->load("contracts");
+        $menu->add(DOL_URL_ROOT."/contrat/",$langs->trans("Contracts"));
     }
 
-  if ($conf->don->enabled)
+    if ($conf->don->enabled)
     {
-      $langs->load("donations");
-      $menu->add(DOL_URL_ROOT."/compta/dons/",$langs->trans("Donations"));
+        $langs->load("donations");
+        $menu->add(DOL_URL_ROOT."/compta/dons/",$langs->trans("Donations"));
     }
 
-  if ($conf->facture->enabled)
+    if ($conf->facture->enabled)
     {
-      $langs->load("bills");
-      $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"));
+        $langs->load("bills");
+        $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
+        $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
+        $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"));
 
-      if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR)
-	{
-	  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
-	}
-      
-      $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"));
+        if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR)
+        {
+            $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
+        }
+
+        $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"));
     }
-  
 
-    if ($conf->commande->enabled && $conf->facture->enabled) 
+
+    if ($conf->commande->enabled && $conf->facture->enabled)
     {
-      $langs->load("orders");
-      $menu->add(DOL_URL_ROOT."/compta/commande/liste.php?leftmenu=orders&afacturer=1", $langs->trans("MenuOrdersToBill"));
+        $langs->load("orders");
+        $menu->add(DOL_URL_ROOT."/compta/commande/liste.php?leftmenu=orders&afacturer=1", $langs->trans("MenuOrdersToBill"));
     }
-    
-  // Les dépenses
-  if ($conf->fournisseur->enabled)
+
+
+    // Les dépenses
+    if ($conf->fournisseur->enabled)
     {
-      $langs->load("suppliers");
-      $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
+        $langs->load("suppliers");
+        $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
     }
 
-  if ($conf->deplacement->enabled && $user->societe_id == 0)
+    if ($conf->deplacement->enabled && $user->societe_id == 0)
     {
-      $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
+        $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
     }
 
-  if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
+    if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
     {
-      $menu->add(DOL_URL_ROOT."/compta/tva/index.php",$langs->trans("VAT"));
+        $menu->add(DOL_URL_ROOT."/compta/tva/index.php",$langs->trans("VAT"));
     }
-    
-  if ($conf->compta->enabled)
+
+    if ($conf->compta->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/charges/index.php",$langs->trans("Charges"));
+        $menu->add(DOL_URL_ROOT."/compta/charges/index.php",$langs->trans("Charges"));
     }
 
 
-  // Vision des recettes-dépenses
-  if ($conf->banque->enabled && $user->rights->banque->lire)
-    { 
-      $langs->load("banks");
-      $menu->add(DOL_URL_ROOT."/compta/bank/",$langs->trans("Bank"));
-    }
-  
-  $menu->add(DOL_URL_ROOT."/compta/stats/",$langs->trans("Reportings"));
-
-  if ($conf->prelevement->enabled)
+    // Vision des recettes-dépenses
+    if ($conf->banque->enabled && $user->rights->banque->lire)
     {
-      $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
+        $langs->load("banks");
+        $menu->add(DOL_URL_ROOT."/compta/bank/",$langs->trans("Bank"));
     }
 
-  $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
+    $menu->add(DOL_URL_ROOT."/compta/stats/",$langs->trans("Reportings"));
 
-  if ($user->rights->compta->ventilation->parametrer)
+    if ($conf->prelevement->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
+        $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
+    }
+
+    $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
+
+    if ($user->rights->compta->ventilation->parametrer)
+    {
+        $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
     }
 
 
-  left_menu($menu->liste, $help_url);
+    left_menu($menu->liste, $help_url);
 }
 
 ?>
