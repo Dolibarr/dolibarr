@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -133,9 +132,12 @@ if ($_GET["action"] == 'create')
 	}
       print "</td></tr></table>";
 
+
+    
+      print '<br>';
       print_titre('Services/Produits');
 	  
-      print '<table cellspacing="0" cellpadding="3" border="0" width="100%">';
+      print '<table class="noborder" width="100%">';
       /*
        * Lignes de factures
        *
@@ -151,7 +153,7 @@ if ($_GET["action"] == 'create')
 	  $num = $db->num_rows();
 	  $i = 0; $total = 0;
 	  
-	  echo '<table border="0" width="100%">';
+	  echo '<table class="notopnoleftnoright" width="100%">';
 	  if ($num)
 	    {
 	      print "<tr class=\"liste_titre\">";
@@ -275,7 +277,7 @@ else
 	   *   Facture
 	   */
 	  print '<table class="border" width="100%">';
-	  print "<tr><td>Client</td>";
+	  print '<tr><td>'.$langs->trans("Customer").'</td>';
 	  print "<td colspan=\"3\">";
 	  print '<b><a href="../fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
@@ -304,7 +306,7 @@ else
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	if ($fac->note)
 	  {
-	    print '<tr><td colspan="5">Note : '.nl2br($fac->note)."</td></tr>";
+	    print '<tr><td colspan="5">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";
 	  }
 
 	print "</table><br>";
@@ -328,7 +330,11 @@ else
 	      {
 		$prod = New Product($db);
 		$prod->fetch($fac->lignes[$i]->produit_id);
-		print "<tr $bc[$var]><td>[".$prod->ref.']</td>';
+		print "<tr $bc[$var]><td>";
+		print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$prod->id.'">';
+		print img_object($langs->trans("ShowProduct"),"product").' '.$prod->ref;
+		print '</a>';
+		print '</td>';
 		print '<td>'.$fac->lignes[$i]->desc.'</td>';
 	      }
 	    else
@@ -419,7 +425,7 @@ else
     if ($result)
       {
 	$num = $db->num_rows();
-	print_barre_liste("Factures",$page,"fiche-rec.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("Bills"),$page,"fiche-rec.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
@@ -442,7 +448,7 @@ else
 
 		$class = "normal";
 
-		print '<td><a class="'.$class.'" href="fiche-rec.php?facid='.$objp->facid.'">' . $objp->titre;
+		print '<td><a class="'.$class.'" href="fiche-rec.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
 		print "</a></td>\n";
 		print '<td><a class="'.$class.'" href="../fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		
