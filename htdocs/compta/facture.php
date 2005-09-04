@@ -48,8 +48,8 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande
 
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
-if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
+if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 
 // Sécurité accés client
 if ($user->societe_id > 0)
@@ -512,347 +512,356 @@ $html = new Form($db);
 **********************************************************************/
 if ($_GET["action"] == 'create')
 {
-
     print_titre($langs->trans("NewBill"));
 
     if ($_GET["propalid"])
     {
-        $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-        $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
-        $sql .= " AND p.rowid = ".$_GET["propalid"];
+        $propal = New Propal($db);
+        $propal->fetch($_GET["propalid"]);
+        $societe_id = $propal->soc_id;
     }
-    else
-    {
-        $sql = "SELECT s.nom, s.prefix_comm, s.idp ";
-        $sql .= "FROM ".MAIN_DB_PREFIX."societe as s ";
-        $sql .= "WHERE s.idp = ".$_GET["socidp"];
-    }
-
-    if ($_GET["commandeid"])
+    elseif ($_GET["commandeid"])
     {
         $commande = New Commande($db);
         $commande->fetch($_GET["commandeid"]);
         $societe_id = $commande->soc_id;
     }
-
-    if ( $db->query($sql) )
+    elseif ($_GET["contratid"])
     {
-        $num = $db->num_rows();
-        if ($num)
-        {
-            $obj = $db->fetch_object();
+        $contrat = New Contrat($db);
+        $contrat->fetch($_GET["contratid"]);
+        $societe_id = $contrat->soc_id;
+    }
+    else $societe_id=$socidp;
 
-            $soc = new Societe($db);
-            $soc->fetch($obj->idp);
+    $soc = new Societe($db);
+    $soc->fetch($societe_id);
 
-            print '<form action="facture.php" method="post">';
-            print '<input type="hidden" name="action" value="add">';
-            print '<input type="hidden" name="socid" value="'.$obj->idp.'">' ."\n";
-            print '<input type="hidden" name="remise_percent" value="0">';
+    print '<form action="facture.php" method="post">';
+    print '<input type="hidden" name="action" value="add">';
+    print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
+    print '<input type="hidden" name="remise_percent" value="0">';
 
-            print '<table class="border" width="100%">';
+    print '<table class="border" width="100%">';
 
-            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$soc->nom.'</td>';
-            print '</tr>';
+    print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
+    print '<input name="facnumber" type="hidden" value="provisoire">';
 
-            print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td>';
-            print '<td class="border">'.$langs->trans("Comments").'</td>';
-            print '</tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$soc->nom.'</td>';
+    print '</tr>';
 
-            print '<tr><td>'.$langs->trans("Date").'</td><td>';
-            $html->select_date();
-            print '</td>';
+    print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td>';
+    print '<td class="border">'.$langs->trans("Comments").'</td>';
+    print '</tr>';
 
-            print '<td rowspan="5" valign="top">';
-            print '<textarea name="note" wrap="soft" cols="50" rows="5">';
-            if (is_object($commande) && !empty($commande->projet_id))
-            {
-                print $commande->note;
-            }
-            print '</textarea></td></tr>';
+    print '<tr><td>'.$langs->trans("Date").'</td><td>';
+    $html->select_date();
+    print '</td>';
 
-            print '<tr><td>'.$langs->trans("Ref").'</td><td>Provisoire</td></tr>';
-            print '<input name="facnumber" type="hidden" value="provisoire">';
+    // Notes
+    print '<td rowspan="4" valign="top">';
+    print '<textarea name="note" wrap="soft" cols="50" rows="4">';
+    if (is_object($propal)) 
+    {
+        print $propal->note;
+    }
+    if (is_object($commande))
+    {
+        print $commande->note;
+    }
+    if (is_object($contrat))
+    {
+        print $contrat->note;
+    }
+    print '</textarea></td></tr>';
 
-            // Conditions de réglement
-            $id_condition_paiements_defaut=1;
-            print "<tr><td nowrap>".$langs->trans("PaymentConditions")."</td><td>";
-            $html->select_conditions_paiements($id_condition_paiements_defaut,'cond_reglement_id');
-            print "</td></tr>";
+    // Conditions de réglement
+    $id_condition_paiements_defaut=1;
+    print "<tr><td nowrap>".$langs->trans("PaymentConditions")."</td><td>";
+    $html->select_conditions_paiements($id_condition_paiements_defaut,'cond_reglement_id');
+    print "</td></tr>";
 
-            // Mode de réglement
-            print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-            $html->select_types_paiements('','mode_reglement_id');
-            print "</td></tr>";
+    // Mode de réglement
+    print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
+    $html->select_types_paiements('','mode_reglement_id');
+    print "</td></tr>";
 
-            // Projet
-            if ($conf->projet->enabled)
-            {
-                $langs->load("projects");
-                print '<tr><td>'.$langs->trans("Project").'</td><td>';
-                $html->select_projects($socidp);
-                print "</td></tr>";
-            }
-            else
-            {
-                print '<tr><td colspan="2">&nbsp;</td></tr>';
-            }
-
-            if ($_GET["propalid"] > 0)
-            {
-                $amount = ($obj->price);
-                print '<input type="hidden" name="amount"   value="'.$amount.'">'."\n";
-                print '<input type="hidden" name="total"    value="'.$obj->total.'">'."\n";
-                print '<input type="hidden" name="remise"   value="'.$obj->remise.'">'."\n";
-                print '<input type="hidden" name="remise_percent"   value="'.$obj->remise_percent.'">'."\n";
-                print '<input type="hidden" name="tva"      value="'.$obj->tva.'">'."\n";
-                print '<input type="hidden" name="propalid" value="'.$_GET["propalid"].'">';
-
-                print '<tr><td>'.$langs->trans("Proposal").'</td><td colspan="2">'.$obj->ref.'</td></tr>';
-                print '<tr><td>'.$langs->trans("TotalHT").'</td><td colspan="2">'.price($amount).'</td></tr>';
-                print '<tr><td>'.$langs->trans("VAT").'</td><td colspan="2">'.price($obj->tva)."</td></tr>";
-                print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($obj->total)."</td></tr>";
-            }
-            elseif ($_GET["commandeid"] > 0)
-            {
-                print '<input type="hidden" name="commandeid" value="'.$commande->id.'">';
-                print '<tr><td>'.$langs->trans("Order").'</td><td colspan="2">'.$commande->ref.'</td></tr>';
-                print '<tr><td>'.$langs->trans("TotalHT").'</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
-                print '<tr><td>'.$langs->trans("VAT").'</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
-                print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($commande->total_ttc)."</td></tr>";
-            }
-            else
-            {
-                print '<tr><td colspan="3">&nbsp;</td></tr>';
-                print '<tr><td colspan="3">';
-
-                print '<table class="noborder">';
-                print '<tr><td>Services/Produits prédéfinis</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td><td> &nbsp; &nbsp; </td>';
-                if ($conf->service->enabled)
-                {
-                    print '<td>Si produit de type service à durée limitée</td></tr>';
-                }
-                for ($i = 1 ; $i <= $NBLINES ; $i++)
-                {
-                    print '<tr><td>';
-                    $html->select_produits('',"idprod$i");
-                    print '</td>';
-                    print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
-                    print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0">%</td>';
-                    print '<td>&nbsp;</td>';
-                    // Si le module service est actif, on propose des dates de début et fin à la ligne
-                    if ($conf->service->enabled) {
-                        print '<td>';
-                        print 'Du ';
-                        print $html->select_date('',"date_start$i",0,0,1);
-                        print '<br>au ';
-                        print $html->select_date('',"date_end$i",0,0,1);
-                        print '</td>';
-                    }
-                    print "</tr>\n";
-                }
-
-                print '</table>';
-                print '</td></tr>';
-            }
-
-            /*
-             * Factures récurrentes
-             */
-            if ($_GET["propalid"] == 0 && $_GET["commandeid"] == 0)
-            {
-                $sql = "SELECT r.rowid, r.titre, r.amount FROM ".MAIN_DB_PREFIX."facture_rec as r";
-                $sql .= " WHERE r.fk_soc = ".$soc->id;
-                if ( $db->query($sql) )
-                {
-                    $num = $db->num_rows();
-                    $i = 0;
-
-                    if ($num > 0)
-                    {
-                        print '<tr><td colspan="3">Factures récurrentes : <select class="flat" name="fac_rec">';
-                        print '<option value="0" selected></option>';
-                        while ($i < $num)
-                        {
-                            $objp = $db->fetch_object();
-                            print "<option value=\"$objp->rowid\">$objp->titre : $objp->amount</option>\n";
-                            $i++;
-                        }
-                        print '</select></td></tr>';
-                    }
-                    $db->free();
-                }
-                else
-                {
-                    dolibarr_print_error($db);
-                }
-            }
-
-            /*
-             *
-             */
-            print '<tr><td colspan="3" align="center"><input type="submit" name="bouton" value="'.$langs->trans("CreateDraft").'"></td></tr>';
-            print "</form>\n";
-            print "</table>\n";
-
-            // Si creation depuis un propal
-            if ($_GET["propalid"])
-            {
-                print '<br>';
-                print_titre($langs->trans("ProductsAndServices"));
-
-                print '<table class="noborder" width="100%">';
-                print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Description").'</td>';
-                print '<td align="right">'.$langs->trans("VAT").'</td>';
-                print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
-                print '<td align="right">'.$langs->trans("Qty").'</td>';
-                print '<td align="right">'.$langs->trans("Discount").'</td></tr>';
-
-                // Lignes de propal produits prédéfinis
-                $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.tva_tx, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent, pt.description";
-                $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = ".$_GET["propalid"];
-                $sql .= " ORDER BY pt.rowid ASC";
-                $result = $db->query($sql);
-                if ($result)
-                {
-                    $num = $db->num_rows($result);
-                    $i = 0;
-                    $var=True;
-                    while ($i < $num)
-                    {
-                        $objp = $db->fetch_object($result);
-                        $var=!$var;
-                        print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(""),"product")." ".$objp->ref."</a>";
-                        print $objp->product?' - '.$objp->product:'';
-                        print "</td>\n";
-                        print '<td>';
-                        print $objp->description;
-                        print '</td>';
-                        print '<td align="right">'.$objp->tva_tx.'%</td>';
-                        print '<td align="right">'.price($objp->price).'</td>';
-                        print '<td align="right">'.$objp->qty.'</td>';
-                        print '<td align="right">'.$objp->remise_percent.'%</td>';
-                        print '</tr>';
-                        $i++;
-                    }
-                }
-                else
-                {
-                    dolibarr_print_error($db);
-                }
-                // Lignes de propal non produits prédéfinis
-                $sql = "SELECT pt.rowid, pt.description as product, pt.tva_tx, pt.price, pt.qty, pt.remise_percent";
-                $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt ";
-                $sql .= " WHERE  pt.fk_propal = ".$_GET["propalid"];
-                $sql .= " AND pt.fk_product = 0";
-                $sql .= " ORDER BY pt.rowid ASC";
-                $result=$db->query($sql);
-                if ($result)
-                {
-                    $num = $db->num_rows($result);
-                    $i = 0;
-                    while ($i < $num)
-                    {
-                        $objp = $db->fetch_object($result);
-                        $var=!$var;
-                        print "<tr $bc[$var]><td>&nbsp;</td>\n";
-                        print '<td>'.$objp->product.'</td>';
-                        print '<td align="right">'.$objp->tva_tx.'%</td>';
-                        print '<td align="right">'.price($objp->price).'</td>';
-                        print '<td align="right">'.$objp->qty.'</td>';
-                        print '<td align="right">'.$objp->remise_percent.'%</td>';
-                        print '</tr>';
-                        $i++;
-                    }
-                }
-                else
-                {
-                    dolibarr_print_error($db);
-                }
-
-                print '</table>';
-            }
-
-            // Si creation depuis une commande
-            if ($_GET["commandeid"])
-            {
-                print_titre($langs->trans("Products"));
-
-                print '<table class="noborder" width="100%">';
-                print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
-                print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
-
-                $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.subprice, pt.qty, p.rowid as prodid, pt.remise_percent, pt.description";
-                $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as pt, ".MAIN_DB_PREFIX."product as p";
-                $sql .= " WHERE pt.fk_product = p.rowid AND pt.fk_commande = ".$commande->id;
-                $sql .= " ORDER BY pt.rowid ASC";
-
-                $result = $db->query($sql);
-                if ($result)
-                {
-                    $num = $db->num_rows();
-                    $i = 0;
-                    $var=True;
-                    while ($i < $num)
-                    {
-                        $objp = $db->fetch_object();
-                        $var=!$var;
-                        print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(""),"product")." ".$objp->ref."</a>";
-                        print $objp->product?' - '.$objp->product:'';
-                        print "</td>\n";
-                        print '<td>';
-                        print $objp->description;
-                        print '</td>';
-                        print '<td align="right">'.price($objp->subprice).'</td>';
-                        print '<td align="center">'.$objp->remise_percent.'%</td>';
-                        print '<td align="center">'.$objp->qty.'</td></tr>';
-                        $i++;
-                    }
-                }
-                else
-                {
-                    dolibarr_print_error($db);
-                }
-                // Lignes de commande non produits prédéfinis
-                $sql  = "SELECT pt.rowid, pt.description as product, pt.subprice, pt.qty, pt.remise_percent";
-                $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as pt";
-                $sql .= " WHERE  pt.fk_commande = ".$commande->id;
-                $sql .= " AND pt.fk_product = 0";
-                $sql .= " ORDER BY pt.rowid ASC";
-
-                $result=$db->query($sql);
-                if ($result)
-                {
-                    $num = $db->num_rows($result);
-                    $i = 0;
-                    while ($i < $num)
-                    {
-                        $objp = $db->fetch_object($result);
-                        $var=!$var;
-                        print "<tr $bc[$var]><td>&nbsp;</td>\n";
-                        print '<td>'.$objp->product.'</td>';
-                        print '<td align="right">'.price($objp->subprice).'</td>';
-                        print '<td align="center">'.$objp->remise_percent.'%</td>';
-                        print '<td align="center">'.$objp->qty.'</td>';
-                        print '</tr>';
-                        $i++;
-                    }
-                }
-                else
-                {
-                    dolibarr_print_error($db);
-                }
-
-                print '</table>';
-            }
-
-        }
+    // Projet
+    if ($conf->projet->enabled)
+    {
+        $langs->load("projects");
+        print '<tr><td>'.$langs->trans("Project").'</td><td>';
+        $html->select_projects($socidp);
+        print "</td></tr>";
     }
     else
     {
-        dolibarr_print_error($db);
+        print '<tr><td colspan="2">&nbsp;</td></tr>';
     }
+
+    if ($_GET["propalid"] > 0)
+    {
+        $amount = ($propal->price);
+        print '<input type="hidden" name="amount"   value="'.$amount.'">'."\n";
+        print '<input type="hidden" name="total"    value="'.$propal->total.'">'."\n";
+        print '<input type="hidden" name="remise"   value="'.$propal->remise.'">'."\n";
+        print '<input type="hidden" name="remise_percent"   value="'.$propal->remise_percent.'">'."\n";
+        print '<input type="hidden" name="tva"      value="'.$propal->tva.'">'."\n";
+        print '<input type="hidden" name="propalid" value="'.$_GET["propalid"].'">';
+
+        print '<tr><td>'.$langs->trans("Proposal").'</td><td colspan="2">'.$propal->ref.'</td></tr>';
+        print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td colspan="2">'.$propal->remise_percent.'%</td></tr>';
+        print '<tr><td>'.$langs->trans("TotalHT").'</td><td colspan="2">'.price($amount).'</td></tr>';
+        print '<tr><td>'.$langs->trans("VAT").'</td><td colspan="2">'.price($propal->tva)."</td></tr>";
+        print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($propal->total)."</td></tr>";
+    }
+    elseif ($_GET["commandeid"] > 0)
+    {
+        print '<input type="hidden" name="commandeid" value="'.$commande->id.'">';
+
+        print '<tr><td>'.$langs->trans("Order").'</td><td colspan="2">'.$commande->ref.'</td></tr>';
+        print '<tr><td>'.$langs->trans("TotalHT").'</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
+        print '<tr><td>'.$langs->trans("VAT").'</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
+        print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($commande->total_ttc)."</td></tr>";
+    }
+    elseif ($_GET["contratid"] > 0)
+    {
+        $amount = ($obj->price);
+        print '<input type="hidden" name="amount"    value="'.$amount.'">'."\n";
+        print '<input type="hidden" name="total"     value="'.$obj->total.'">'."\n";
+        print '<input type="hidden" name="remise"    value="'.$obj->remise.'">'."\n";
+        print '<input type="hidden" name="remise_percent"   value="'.$obj->remise_percent.'">'."\n";
+        print '<input type="hidden" name="tva"       value="'.$obj->tva.'">'."\n";
+        print '<input type="hidden" name="contratid" value="'.$_GET["contratid"].'">';
+
+        print '<tr><td>'.$langs->trans("Contract").'</td><td colspan="2">'.$obj->ref.'</td></tr>';
+        print '<tr><td>'.$langs->trans("TotalHT").'</td><td colspan="2">'.price($amount).'</td></tr>';
+        print '<tr><td>'.$langs->trans("VAT").'</td><td colspan="2">'.price($obj->tva)."</td></tr>";
+        print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($obj->total)."</td></tr>";
+    }
+    else
+    {
+        print '<tr><td colspan="3">&nbsp;</td></tr>';
+        print '<tr><td colspan="3">';
+
+        print '<table class="noborder">';
+        print '<tr><td>'.$langs->trans("ProductsAndServices").'</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td><td> &nbsp; &nbsp; </td>';
+        if ($conf->service->enabled)
+        {
+            print '<td>Si produit de type service à durée limitée</td></tr>';
+        }
+        for ($i = 1 ; $i <= $NBLINES ; $i++)
+        {
+            print '<tr><td>';
+            $html->select_produits('',"idprod$i");
+            print '</td>';
+            print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
+            print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0">%</td>';
+            print '<td>&nbsp;</td>';
+            // Si le module service est actif, on propose des dates de début et fin à la ligne
+            if ($conf->service->enabled) {
+                print '<td>';
+                print 'Du ';
+                print $html->select_date('',"date_start$i",0,0,1);
+                print '<br>au ';
+                print $html->select_date('',"date_end$i",0,0,1);
+                print '</td>';
+            }
+            print "</tr>\n";
+        }
+
+        print '</table>';
+        print '</td></tr>';
+    }
+
+    /*
+     * Factures récurrentes
+     */
+    if ($_GET["propalid"] == 0 && $_GET["commandeid"] == 0)
+    {
+        $sql = "SELECT r.rowid, r.titre, r.amount FROM ".MAIN_DB_PREFIX."facture_rec as r";
+        $sql .= " WHERE r.fk_soc = ".$soc->id;
+        if ( $db->query($sql) )
+        {
+            $num = $db->num_rows();
+            $i = 0;
+
+            if ($num > 0)
+            {
+                print '<tr><td colspan="3">Factures récurrentes : <select class="flat" name="fac_rec">';
+                print '<option value="0" selected></option>';
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object();
+                    print "<option value=\"$objp->rowid\">$objp->titre : $objp->amount</option>\n";
+                    $i++;
+                }
+                print '</select></td></tr>';
+            }
+            $db->free();
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
+    }
+
+    // Bouton "Create Draft"
+    print '<tr><td colspan="3" align="center"><input type="submit" name="bouton" value="'.$langs->trans("CreateDraft").'"></td></tr>';
+    print "</form>\n";
+    print "</table>\n";
+
+    // Si creation depuis un propal
+    if ($_GET["propalid"])
+    {
+        print '<br>';
+        print_titre($langs->trans("ProductsAndServices"));
+
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Description").'</td>';
+        print '<td align="right">'.$langs->trans("VAT").'</td>';
+        print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
+        print '<td align="right">'.$langs->trans("Qty").'</td>';
+        print '<td align="right">'.$langs->trans("Discount").'</td></tr>';
+
+        // Lignes de propal produits prédéfinis
+        $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.tva_tx, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent, pt.description";
+        $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = ".$_GET["propalid"];
+        $sql .= " ORDER BY pt.rowid ASC";
+        $result = $db->query($sql);
+        if ($result)
+        {
+            $num = $db->num_rows($result);
+            $i = 0;
+            $var=True;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
+                $var=!$var;
+                print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(""),"product")." ".$objp->ref."</a>";
+                print $objp->product?' - '.$objp->product:'';
+                print "</td>\n";
+                print '<td>';
+                print dolibarr_trunc($objp->description,60);
+                print '</td>';
+                print '<td align="right">'.$objp->tva_tx.'%</td>';
+                print '<td align="right">'.price($objp->price).'</td>';
+                print '<td align="right">'.$objp->qty.'</td>';
+                print '<td align="right">'.$objp->remise_percent.'%</td>';
+                print '</tr>';
+                $i++;
+            }
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
+        // Lignes de propal non produits prédéfinis
+        $sql = "SELECT pt.rowid, pt.description as product, pt.tva_tx, pt.price, pt.qty, pt.remise_percent";
+        $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt ";
+        $sql .= " WHERE  pt.fk_propal = ".$_GET["propalid"];
+        $sql .= " AND pt.fk_product = 0";
+        $sql .= " ORDER BY pt.rowid ASC";
+        $result=$db->query($sql);
+        if ($result)
+        {
+            $num = $db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
+                $var=!$var;
+                print "<tr $bc[$var]><td>&nbsp;</td>\n";
+                print '<td>'.$objp->product.'</td>';
+                print '<td align="right">'.$objp->tva_tx.'%</td>';
+                print '<td align="right">'.price($objp->price).'</td>';
+                print '<td align="right">'.$objp->qty.'</td>';
+                print '<td align="right">'.$objp->remise_percent.'%</td>';
+                print '</tr>';
+                $i++;
+            }
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
+
+        print '</table>';
+    }
+
+    // Si creation depuis une commande
+    if ($_GET["commandeid"])
+    {
+        print_titre($langs->trans("Products"));
+
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
+        print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
+
+        $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.subprice, pt.qty, p.rowid as prodid, pt.remise_percent, pt.description";
+        $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as pt, ".MAIN_DB_PREFIX."product as p";
+        $sql .= " WHERE pt.fk_product = p.rowid AND pt.fk_commande = ".$commande->id;
+        $sql .= " ORDER BY pt.rowid ASC";
+
+        $result = $db->query($sql);
+        if ($result)
+        {
+            $num = $db->num_rows();
+            $i = 0;
+            $var=True;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object();
+                $var=!$var;
+                print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(""),"product")." ".$objp->ref."</a>";
+                print $objp->product?' - '.$objp->product:'';
+                print "</td>\n";
+                print '<td>';
+                print dolibarr_trunc($objp->description,60);
+                print '</td>';
+                print '<td align="right">'.price($objp->subprice).'</td>';
+                print '<td align="center">'.$objp->remise_percent.'%</td>';
+                print '<td align="center">'.$objp->qty.'</td></tr>';
+                $i++;
+            }
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
+        // Lignes de commande non produits prédéfinis
+        $sql  = "SELECT pt.rowid, pt.description as product, pt.subprice, pt.qty, pt.remise_percent";
+        $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as pt";
+        $sql .= " WHERE  pt.fk_commande = ".$commande->id;
+        $sql .= " AND pt.fk_product = 0";
+        $sql .= " ORDER BY pt.rowid ASC";
+
+        $result=$db->query($sql);
+        if ($result)
+        {
+            $num = $db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
+                $var=!$var;
+                print "<tr $bc[$var]><td>&nbsp;</td>\n";
+                print '<td>'.$objp->product.'</td>';
+                print '<td align="right">'.price($objp->subprice).'</td>';
+                print '<td align="center">'.$objp->remise_percent.'%</td>';
+                print '<td align="center">'.$objp->qty.'</td>';
+                print '</tr>';
+                $i++;
+            }
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
+
+        print '</table>';
+    }
+    
 }
 else
 {

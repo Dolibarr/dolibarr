@@ -112,29 +112,8 @@ class Facture
             $this->remise_percent    = $_facrec->remise_percent;
         }
 
-        $sql = "SELECT fdm,nbjour ";
-        $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
-        $sql.= " WHERE rowid = ".$this->cond_reglement;
-        if ($this->db->query($sql))
-        {
-            if ($this->db->num_rows())
-            {
-                $obj = $this->db->fetch_object();
-                $cdr_nbjour = $obj->nbjour;
-                $cdr_fdm = $obj->fdm;
-            }
-            $this->db->free();
-        }
-
         // Definition de la date limite
-        $datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
-        if ($cdr_fdm)
-        {
-            $mois=date('m', $datelim);
-            $annee=date('Y', $datelim);
-            $fins=array(31,28,31,30,31,30,31,31,30,31,30,31);
-            $datelim=mktime(0,0,0,$mois,$fins[$mois-1],$annee);
-        }
+        $datelim=$this->calculate_date_lim_reglement();
 
         /*
          *  Insertion dans la base
@@ -145,7 +124,7 @@ class Facture
         $remise = $this->remise;
 
         if (! $remise) $remise = 0 ;
-        if (strlen($this->mode_reglement)==0) $this->mode_reglement = 0;
+        if (strlen($this->mode_reglement_id)==0) $this->mode_reglement_id = 0;
         if (! $this->projetid) $this->projetid = "NULL";
 
         $totalht = ($amount - $remise);
@@ -337,7 +316,7 @@ class Facture
         //dolibarr_syslog("Facture::Fetch rowid : $rowid, societe_id : $societe_id");
 
         $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent";
-        $sql .= ",".$this->db->pdate("f.datef")." as df,f.fk_projet";
+        $sql .= ",".$this->db->pdate("f.datef")." as df, f.fk_projet";
         $sql .= ",".$this->db->pdate("f.date_lim_reglement")." as dlr";
         $sql .= ", f.note, f.paye, f.fk_statut, f.fk_user_author";
         $sql .= ", f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
@@ -356,6 +335,7 @@ class Facture
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
+                //print strftime("%Y%m%d%H%M%S",$obj->df)." ".$obj->df." ".dolibarr_print_date($obj->df);
 
                 $this->id                     = $rowid;
                 $this->datep                  = $obj->dp;
@@ -637,10 +617,54 @@ class Facture
         }
     }
 
+
     /**
-    *    \brief     Tag la facture comme payée complètement
-    *    \param     rowid       id de la facture à modifier
-    */
+     *      \brief      Renvoi une date limite de reglement de facture en fonction des
+     *                  conditions de reglements de la facture et date de facturation
+     *      \param      cond_reglement_id   Condition de reglement à utiliser, 0=Condition actuelle de la facture
+     *      \return     date                Date limite de réglement si ok, <0 si ko
+     */
+    function calculate_date_lim_reglement($cond_reglement_id=0)
+    {
+        if (! $cond_reglement_id) $cond_reglement_id=$this->cond_reglement_id;
+        
+        $sqltemp = "SELECT c.fdm,c.nbjour";
+        $sqltemp.= " FROM ".MAIN_DB_PREFIX."cond_reglement as c";
+        $sqltemp.= " WHERE c.rowid=".$cond_reglement_id;
+        $resqltemp=$this->db->query($sqltemp);
+        if ($resqltemp)
+        {
+            if ($this->db->num_rows($resqltemp))
+            {
+                $obj = $this->db->fetch_object($resqltemp);
+                $cdr_nbjour = $obj->nbjour;
+                $cdr_fdm = $obj->fdm;
+            }
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+        $this->db->free($resqltemp);
+        // Definition de la date limite
+        $datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
+        if ($cdr_fdm)
+        {
+            $mois=date('m', $datelim);
+            $annee=date('Y', $datelim);
+            $fins=array(31,28,31,30,31,30,31,31,30,31,30,31);
+            $datelim=mktime(12,0,0,$mois,$fins[$mois-1],$annee);
+        }
+
+        return $datelim;
+    }
+
+                    
+    /**
+     *    \brief     Tag la facture comme payée complètement
+     *    \param     rowid       id de la facture à modifier
+     */
     function set_payed($rowid)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture set paye=1 WHERE rowid = ".$rowid ;
@@ -747,38 +771,17 @@ class Facture
                 /* Si l'option est activée on force la date de facture */
                 if (defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION == "1")
                 {
-                    $sql .= ", datef=now()";
-                    // du coup, il faut aussi recalculer la date limite de règlement
-                    $sqltemp = "SELECT c.fdm,c.nbjour,c.rowid,f.fk_cond_reglement,f.rowid";
-                    $sqltemp.= " FROM ".MAIN_DB_PREFIX."cond_reglement as c, ".MAIN_DB_PREFIX."facture as f";
-                    $sqltemp.= " WHERE c.rowid=f.fk_cond_reglement AND f.rowid=".$this->id;
-                    if ($this->db->query($sqltemp))
-                    {
-                        if ($this->db->num_rows())
-                        {
-                            $obj = $this->db->fetch_object();
-                            $cdr_nbjour = $obj->nbjour;
-                            $cdr_fdm = $obj->fdm;
-                        }
-                    }
-                    $this->db->free();
-                    // Definition de la date limite
-                    $datelim = time() + ( $cdr_nbjour * 3600 * 24 );
-                    if ($cdr_fdm)
-                    {
-                        $mois=date('m', $datelim);
-                        $annee=date('Y', $datelim);
-                        $fins=array(31,28,31,30,31,30,31,31,30,31,30,31);
-                        $datelim=mktime(0,0,0,$mois,$fins[$mois-1],$annee);
-                    }
+                    $this->date=time();
+                    $datelim=$this->calculate_date_lim_reglement();
 
+                    $sql .= ", datef=".$this->db->idate($this->date);
                     $sql .= ", date_lim_reglement=".$this->db->idate($datelim);
-
                 }
+
                 $sql .= " WHERE rowid = $rowid ;";
 
-                $result = $this->db->query( $sql);
-                if ($result)
+                $resql = $this->db->query($sql);
+                if ($resql)
                 {
                     // Appel des triggers
                     include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -1359,8 +1362,8 @@ class Facture
     }
 
     /**
-     *   \brief      Change les conditions de réglement
-     *   \param      cond_reglement_id      Id des nouvelles conditions
+     *   \brief      Change les conditions de réglement de la facture
+     *   \param      cond_reglement_id      Id de la nouvelle condition de réglement
      *   \return     int                    >0 si ok, <0 si ko
      */
     function cond_reglement($cond_reglement_id)
@@ -1368,8 +1371,11 @@ class Facture
         dolibarr_syslog("Facture::cond_reglement($cond_reglement_id)");
         if ($this->statut >= 0 && $this->paye == 0)
         {
+            $datelim=$this->calculate_date_lim_reglement($cond_reglement_id);
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."facture";
             $sql .= " SET fk_cond_reglement = ".$cond_reglement_id;
+            $sql .= ", date_lim_reglement=".$this->db->idate($datelim);
             $sql .= " WHERE rowid=".$this->id;
 
             if ( $this->db->query($sql) )
@@ -1719,13 +1725,15 @@ class FactureLigne
      */
     function fetch($rowid, $societe_id=0)
     {
-        $sql = "SELECT fk_product, description, price, qty, rowid, tva_taux, remise, remise_percent, subprice, ".$this->db->pdate("date_start")." as date_start,".$this->db->pdate("date_end")." as date_end";
-        $sql .= " FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$rowid;
+        $sql = "SELECT fk_product, description, price, qty, rowid, tva_taux, remise, remise_percent,";
+        $sql.= " subprice, ".$this->db->pdate("date_start")." as date_start,".$this->db->pdate("date_end")." as date_end";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$rowid;
 
         $result = $this->db->query($sql);
         if ($result)
         {
             $objp = $this->db->fetch_object($result);
+
             $this->desc           = stripslashes($objp->description);
             $this->qty            = $objp->qty;
             $this->price          = $objp->price;
