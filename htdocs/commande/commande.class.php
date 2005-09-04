@@ -906,6 +906,27 @@ class Commande
         }
     }
 
+
+  /**
+   *    \brief      Retourne le libellé du statut de la commande
+   *    \return     string      Libellé
+   */
+    function getLibStatut()
+    {
+		return $this->LibStatut($this->statut);
+    }
+
+  /**
+   *    \brief      Renvoi le libellé d'un statut donné
+   *    \param      statut      id statut
+   *    \return     string      Libellé
+   */
+    function LibStatut($statut)
+    {
+        return $this->status_label_short[$statut];
+    }
+
+
     /**
      *      \brief     Charge les informations d'ordre info dans l'objet commande
      *      \param     id       Id de la commande a charger
