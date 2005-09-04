@@ -458,432 +458,437 @@ else
     if ($id > 0)
     {
         $contrat = New Contrat($db);
-        if ( $contrat->fetch($id) > 0)
+        $result=$contrat->fetch($id);
+        if ($result <= 0)
         {
+            dolibarr_print_error($db);
+            exit;
+        }
+        
+        if ($mesg) print $mesg;
+		
+        $author = new User($db);
+        $author->id = $contrat->user_author_id;
+        $author->fetch();
+		
+        $commercial_signature = new User($db);
+        $commercial_signature->id = $contrat->commercial_signature_id;
+        $commercial_signature->fetch();
 
-            if ($mesg) print $mesg;
-			
-            $author = new User($db);
-            $author->id = $contrat->user_author_id;
-            $author->fetch();
-			
-            $commercial_signature = new User($db);
-            $commercial_signature->id = $contrat->commercial_signature_id;
-            $commercial_signature->fetch();
+        $commercial_suivi = new User($db);
+        $commercial_suivi->id = $contrat->commercial_suivi_id;
+        $commercial_suivi->fetch();
 
-            $commercial_suivi = new User($db);
-            $commercial_suivi->id = $contrat->commercial_suivi_id;
-            $commercial_suivi->fetch();
+        $h = 0;
+        $head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$contrat->id;
+        $head[$h][1] = $langs->trans("ContractCard");
+        $hselected = $h;
+        $h++;
 
-            $h = 0;
-            $head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$contrat->id;
-            $head[$h][1] = $langs->trans("ContractCard");
-            $hselected = $h;
-            $h++;
+		$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$contrat->id;
+		$head[$h][1] = $langs->trans("ContractContacts");
+		$h++;
+		
+        $head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$contrat->id;
+        $head[$h][1] = $langs->trans("Info");
+        $h++;      
 
-			$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$contrat->id;
-			$head[$h][1] = $langs->trans("ContractContacts");
-			$h++;
-			
-            $head[$h][0] = DOL_URL_ROOT.'/contrat/info.php?id='.$contrat->id;
-            $head[$h][1] = $langs->trans("Info");
-            $h++;      
-
-            dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").': '.$contrat->id);
+        dolibarr_fiche_head($head, $hselected, $langs->trans("Contract").': '.$contrat->id);
 
 
-            /*
-             * Confirmation de la suppression du contrat
-             */
-            if ($_GET["action"] == 'delete')
+        /*
+         * Confirmation de la suppression du contrat
+         */
+        if ($_GET["action"] == 'delete')
+        {
+            $html->form_confirm("fiche.php?id=$id",$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete");
+            print '<br>';
+        }
+
+        /*
+         * Confirmation de la validation
+         */
+        if ($_GET["action"] == 'valid')
+        {
+            //$numfa = contrat_get_num($soc);
+            $html->form_confirm("fiche.php?id=$id",$langs->trans("ValidateAContract"),$langs->trans("ConfirmValidateContract"),"confirm_valid");
+            print '<br>';
+        }
+
+        /*
+         * Confirmation de la fermeture
+         */
+        if ($_GET["action"] == 'close')
+        {
+            $html->form_confirm("fiche.php?id=$id",$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close");
+            print '<br>';
+        }
+
+        /*
+         *   Contrat
+         */
+        if ($contrat->brouillon == 1 && $user->rights->contrat->creer)
+        {
+            print '<form action="fiche.php?id='.$id.'" method="post">';
+            print '<input type="hidden" name="action" value="setremise">';
+        }
+
+        print '<table class="border" width="100%">';
+
+        // Reference du contrat
+        print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
+        print $contrat->ref;
+        print "</td></tr>";
+
+        // Customer
+        print "<tr><td>".$langs->trans("Customer")."</td>";
+        print '<td colspan="3">';
+        print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$contrat->societe->id.'">'.$contrat->societe->nom.'</a></b></td></tr>';
+
+        // Statut contrat
+        print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
+        print $contrat->statuts[$contrat->statut];
+        print "</td></tr>";
+
+        // Date
+        print '<tr><td>'.$langs->trans("Date").'</td>';
+        print '<td colspan="3">'.dolibarr_print_date($contrat->date_contrat,"%A %d %B %Y")."</td></tr>\n";
+
+        // Factures associées
+        /*
+        TODO
+        */
+
+        // Projet
+        if ($conf->projet->enabled)
+        {
+            $langs->load("projects");
+            print '<tr><td>';
+            print '<table width="100%" class="nobordernopadding"><tr><td>';
+            print $langs->trans("Project");
+            print '</td>';
+            if ($_GET["action"] != "classer") print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+            print '</tr></table>';
+            print '</td><td colspan="3">';
+            if ($_GET["action"] == "classer")
             {
-                $html->form_confirm("fiche.php?id=$id",$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete");
-                print '<br>';
-            }
-
-            /*
-             * Confirmation de la validation
-             */
-            if ($_GET["action"] == 'valid')
-            {
-                //$numfa = contrat_get_num($soc);
-                $html->form_confirm("fiche.php?id=$id",$langs->trans("ValidateAContract"),$langs->trans("ConfirmValidateContract"),"confirm_valid");
-                print '<br>';
-            }
-
-            /*
-             * Confirmation de la fermeture
-             */
-            if ($_GET["action"] == 'close')
-            {
-                $html->form_confirm("fiche.php?id=$id",$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close");
-                print '<br>';
-            }
-
-            /*
-             *   Contrat
-             */
-            if ($contrat->brouillon == 1 && $user->rights->contrat->creer)
-            {
-                print '<form action="fiche.php?id='.$id.'" method="post">';
-                print '<input type="hidden" name="action" value="setremise">';
-            }
-
-            print '<table class="border" width="100%">';
-
-            // Reference du contrat
-            print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
-            print $contrat->ref;
-            print "</td></tr>";
-
-            // Customer
-            print "<tr><td>".$langs->trans("Customer")."</td>";
-            print '<td colspan="3">';
-            print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$contrat->societe->id.'">'.$contrat->societe->nom.'</a></b></td></tr>';
-
-            // Statut contrat
-            print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
-            print $contrat->statuts[$contrat->statut];
-            print "</td></tr>";
-
-            // Date
-            print '<tr><td>'.$langs->trans("Date").'</td>';
-            print '<td colspan="3">'.dolibarr_print_date($contrat->date_contrat,"%A %d %B %Y")."</td></tr>\n";
-
-            // Factures associées
-            /*
-            TODO
-            */
-
-            // Projet
-            if ($conf->projet->enabled)
-            {
-                $langs->load("projects");
-                print '<tr><td>';
-                print '<table width="100%" class="nobordernopadding"><tr><td>';
-                print $langs->trans("Project");
-                print '</td>';
-                if ($_GET["action"] != "classer") print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
-                print '</tr></table>';
-                print '</td><td colspan="3">';
-                if ($_GET["action"] == "classer")
-                {
-                    $html->form_project("fiche.php?id=$id",$contrat->fk_soc,$contrat->fk_projet,"projetid");
-                }
-                else
-                {
-                    $html->form_project("fiche.php?id=$id",$contrat->fk_soc,$contrat->fk_projet,"none");
-                }
-                print "</td></tr>";
-            }
-
-            print '<tr><td width="25%">'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>'.$commercial_suivi->fullname.'</td>';
-            print '<td width="25%">'.$langs->trans("SalesRepresentativeSignature").'</td><td>'.$commercial_signature->fullname.'</td></tr>';
-            print "</table>";
-
-            if ($contrat->brouillon == 1 && $user->rights->contrat->creer)
-            {
-                print '</form>';
-            }
-
-            /*
-             * Lignes de contrats
-             */
-            echo '<br><table class="noborder" width="100%">';
-
-            $sql = "SELECT cd.statut, cd.label, cd.fk_product, cd.description, cd.price_ht, cd.qty, cd.rowid, cd.tva_tx, cd.remise_percent, cd.subprice,";
-            $sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_debut, ".$db->pdate("cd.date_ouverture")." as date_debut_reelle,";
-            $sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin, ".$db->pdate("cd.date_cloture")." as date_fin_reelle";
-            $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
-            $sql.= " WHERE cd.fk_contrat = ".$id;
-            $sql.= " ORDER BY cd .rowid";
-
-            $result = $db->query($sql);
-            if ($result)
-            {
-                $num = $db->num_rows($result);
-                $i = 0; $total = 0;
-
-                if ($num)
-                {
-                    print '<tr class="liste_titre">';
-                    print '<td>'.$langs->trans("Service").'</td>';
-                    print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
-                    print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
-                    print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
-                    print '<td width="50" align="right">'.$langs->trans("Discount").'</td>';
-                    print '<td width="30">&nbsp;</td>';
-                    print '<td width="30" align="center">'.$langs->trans("Status").'</td>';
-                    print "</tr>\n";
-                }
-                $var=true;
-                while ($i < $num)
-                {
-                    $objp = $db->fetch_object($result);
-
-                    $var=!$var;
-
-                    if ($_GET["action"] != 'editline' || $_GET["rowid"] != $objp->rowid)
-                    {
-
-                        print '<tr '.$bc[$var].' valign="top">';
-                        if ($objp->fk_product > 0)
-                        {
-                            print '<td>';
-                            print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-                            print img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a>';
-                            if ($objp->description) print '<br />'.stripslashes(nl2br($objp->description));
-                            print '</td>';
-                        }
-                        else
-                        {
-                            print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
-                        }
-                        // TVA
-                        print '<td align="center">'.$objp->tva_tx.'%</td>';
-                        // Prix
-                        print '<td align="right">'.price($objp->subprice)."</td>\n";
-                        // Quantité
-                        print '<td align="center">'.$objp->qty.'</td>';
-                        // Remise
-                        if ($objp->remise_percent > 0)
-                        {
-                            print '<td align="right">'.$objp->remise_percent."%</td>\n";
-                        }
-                        else
-                        {
-                            print '<td>&nbsp;</td>';
-                        }
-                        // Icon update et delete (statut contrat 0=brouillon,1=validé,2=fermé)
-                        print '<td align="center" nowrap>';
-                        if ($contrat->statut != 2  && $user->rights->contrat->creer)
-                        {
-                            print '<a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
-                            print img_edit();
-                            print '</a>';
-                        }
-                        else {
-                            print '&nbsp;';
-                        }
-                        if ($contrat->statut == 0  && $user->rights->contrat->creer)
-                        {
-                            print '&nbsp;';
-                            print '<a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
-                            print img_delete();
-                            print '</a>';
-                        }
-                        print '</td>';
-            
-                        // Statut
-                        print '<td align="center">';
-                        if ($contrat->statut > 0) print '<a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id.'&amp;ligne='.$objp->rowid.'">';;
-                        print img_statut($objp->statut);
-                        if ($contrat->statut > 0) print '</a>';
-                        print '</td>';
-
-                        print "</tr>\n";
-    
-                        // Dates mise en service
-                        print '<tr '.$bc[$var].'>';
-                        print '<td colspan="7">';
-                        // Si pas encore activé
-                        if (! $objp->date_debut_reelle) {
-                            print $langs->trans("DateStartPlanned").': ';
-                            if ($objp->date_debut) print dolibarr_print_date($objp->date_debut);
-                            else print $langs->trans("Unknown");
-                        }
-                        // Si activé
-                        if ($objp->date_debut_reelle) {
-                            print $langs->trans("DateStartReal").': ';
-                            if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
-                            else print $langs->trans("ContractStatusNotRunning");
-                        }
-
-                        print ' &nbsp;-&nbsp; ';
-    
-                        // Si pas encore activé
-                        if (! $objp->date_debut_reelle) {
-                            print $langs->trans("DateEndPlanned").': ';
-                            if ($objp->date_fin) {
-                                print dolibarr_print_date($objp->date_fin);
-                            }
-                            else print $langs->trans("Unknown");
-                        }
-                        // Si activé
-                        if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
-                            print $langs->trans("DateEndPlanned").': ';
-                            if ($objp->date_fin) {
-                                print dolibarr_print_date($objp->date_fin);
-                                if ($objp->date_fin < time()) { print " ".img_warning($langs->trans("Late")); }
-                            }
-                            else print $langs->trans("Unknown");
-                        }
-                        // Si désactivé
-                        if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
-                            print $langs->trans("DateEndReal").': ';
-                            print dolibarr_print_date($objp->date_fin_reelle);
-                        }
-                        print '</td>';
-                        print '</tr>';                    
-                    }
-
-                    // Ligne en mode update
-                    else
-                    {
-                        print "<form action=\"fiche.php?id=$id\" method=\"post\">";
-                        print '<input type="hidden" name="action" value="updateligne">';
-                        print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
-                        // Ligne carac
-                        print "<tr $bc[$var]>";
-                        print '<td>';
-                        print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-                        if ($objp->label)
-                        {
-                            print img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a><br>';
-                        }
-                        print '<textarea name="eldesc" cols="60" rows="1">'.$objp->description.'</textarea></td>';
-                        print '<td align="right">';
-                        print $html->select_tva("eltva_tx",$objp->tva_tx);
-                        print '</td>';
-                        print '<td align="right"><input size="6" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
-                        print '<td align="center"><input size="3" type="text" name="elqty" value="'.$objp->qty.'"></td>';
-                        print '<td align="right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
-                        print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
-                        // Ligne dates prévues
-                        print "<tr $bc[$var]>";
-                        print '<td colspan="8">';
-                        print $langs->trans("DateStartPlanned").' ';
-                        $html->select_date($objp->date_debut,"date_start_update",0,0,($objp->date_debut>0?0:1));
-                        print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-                        $html->select_date($objp->date_fin,"date_end_update",0,0,($objp->date_fin>0?0:1));
-                        print '</td>';
-                        print '</tr>';
-
-                        print "</form>\n";
-                    }
-                    $i++;
-                }
-                $db->free($result);
+                $html->form_project("fiche.php?id=$id",$contrat->fk_soc,$contrat->fk_projet,"projetid");
             }
             else
             {
-                dolibarr_print_error($db);
+                $html->form_project("fiche.php?id=$id",$contrat->fk_soc,$contrat->fk_projet,"none");
             }
+            print "</td></tr>";
+        }
 
+        print '<tr><td width="25%">'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>'.$commercial_suivi->fullname.'</td>';
+        print '<td width="25%">'.$langs->trans("SalesRepresentativeSignature").'</td><td>'.$commercial_signature->fullname.'</td></tr>';
+        print "</table>";
 
-            /*
-             * Ajouter une ligne produit/service
-             */
-            if ($user->rights->contrat->creer && $contrat->statut == 0)
+        if ($contrat->brouillon == 1 && $user->rights->contrat->creer)
+        {
+            print '</form>';
+        }
+
+        /*
+         * Lignes de contrats
+         */
+        echo '<br><table class="noborder" width="100%">';
+
+        $sql = "SELECT cd.statut, cd.label, cd.fk_product, cd.description, cd.price_ht, cd.qty, cd.rowid, cd.tva_tx, cd.remise_percent, cd.subprice,";
+        $sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_debut, ".$db->pdate("cd.date_ouverture")." as date_debut_reelle,";
+        $sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin, ".$db->pdate("cd.date_cloture")." as date_fin_reelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+        $sql.= " WHERE cd.fk_contrat = ".$id;
+        $sql.= " ORDER BY cd .rowid";
+
+        $result = $db->query($sql);
+        if ($result)
+        {
+            $num = $db->num_rows($result);
+            $i = 0; $total = 0;
+
+            if ($num)
             {
-                print "<tr class=\"liste_titre\">";
+                print '<tr class="liste_titre">';
                 print '<td>'.$langs->trans("Service").'</td>';
-                print '<td align="center">'.$langs->trans("VAT").'</td>';
-                print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
-                print '<td align="center">'.$langs->trans("Qty").'</td>';
-                print '<td align="right">'.$langs->trans("Discount").'</td>';
-                print '<td>&nbsp;</td>';
-                print '<td>&nbsp;</td>';
+                print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
+                print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
+                print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
+                print '<td width="50" align="right">'.$langs->trans("Discount").'</td>';
+                print '<td width="30">&nbsp;</td>';
+                print '<td width="30" align="center">'.$langs->trans("Status").'</td>';
                 print "</tr>\n";
-
-                $var=false;
-
-                print '<form action="fiche.php?id='.$id.'" method="post">';
-                print '<input type="hidden" name="action" value="addligne">';
-                print '<input type="hidden" name="mode" value="predefined">';
-                print '<input type="hidden" name="id" value="'.$id.'">';
-
-                print "<tr $bc[$var]>";
-                print '<td colspan="3">';
-                $html->select_produits('','p_idprod','',0);
-                print '</td>';
-
-                print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
-                print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="0">%</td>';
-                print '<td align="center" colspan="3" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-
-                print "<tr $bc[$var]>";
-                print '<td colspan="8">';
-                print $langs->trans("DateStartPlanned").' ';
-                $html->select_date('',"date_start",0,0,1);
-                print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-                $html->select_date('',"date_end",0,0,1);
-                print '</td>';
-                print '</tr>';
-                
-                print '</form>';
+            }
+            $var=true;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
 
                 $var=!$var;
-                
-                print '<form action="fiche.php?id='.$id.'" method="post">';
-                print '<input type="hidden" name="action" value="addligne">';
-                print '<input type="hidden" name="mode" value="libre">';
-                print '<input type="hidden" name="id" value="'.$id.'">';
 
-                print "<tr $bc[$var]>";
-                print '<td><textarea name="desc" cols="50" rows="1"></textarea></td>';
+                if ($_GET["action"] != 'editline' || $_GET["rowid"] != $objp->rowid)
+                {
 
-                print '<td>';
-                $html->select_tva("tva_tx",$conf->defaulttx);
-                print '</td>';
-                print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
-                print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
-                print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="0">%</td>';
-                print '<td align="center" colspan="2" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+                    print '<tr '.$bc[$var].' valign="top">';
+                    if ($objp->fk_product > 0)
+                    {
+                        print '<td>';
+                        print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                        print img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a>';
+                        if ($objp->description) print '<br />'.stripslashes(nl2br($objp->description));
+                        print '</td>';
+                    }
+                    else
+                    {
+                        print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
+                    }
+                    // TVA
+                    print '<td align="center">'.$objp->tva_tx.'%</td>';
+                    // Prix
+                    print '<td align="right">'.price($objp->subprice)."</td>\n";
+                    // Quantité
+                    print '<td align="center">'.$objp->qty.'</td>';
+                    // Remise
+                    if ($objp->remise_percent > 0)
+                    {
+                        print '<td align="right">'.$objp->remise_percent."%</td>\n";
+                    }
+                    else
+                    {
+                        print '<td>&nbsp;</td>';
+                    }
+                    // Icon update et delete (statut contrat 0=brouillon,1=validé,2=fermé)
+                    print '<td align="center" nowrap>';
+                    if ($contrat->statut != 2  && $user->rights->contrat->creer)
+                    {
+                        print '<a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+                        print img_edit();
+                        print '</a>';
+                    }
+                    else {
+                        print '&nbsp;';
+                    }
+                    if ($contrat->statut == 0  && $user->rights->contrat->creer)
+                    {
+                        print '&nbsp;';
+                        print '<a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+                        print img_delete();
+                        print '</a>';
+                    }
+                    print '</td>';
+        
+                    // Statut
+                    print '<td align="center">';
+                    if ($contrat->statut > 0) print '<a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id.'&amp;ligne='.$objp->rowid.'">';;
+                    print img_statut($objp->statut);
+                    if ($contrat->statut > 0) print '</a>';
+                    print '</td>';
 
-                print '</tr>'."\n";
+                    print "</tr>\n";
 
-                print "<tr $bc[$var]>";
-                print '<td colspan="8">';
-                print $langs->trans("DateStartPlanned").' ';
-                $html->select_date('',"date_start",0,0,1);
-                print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-                $html->select_date('',"date_end",0,0,1);
-                print '</td>';
-                print '</tr>';
-                
-                print '</form>';
+                    // Dates mise en service
+                    print '<tr '.$bc[$var].'>';
+                    print '<td colspan="7">';
+                    // Si pas encore activé
+                    if (! $objp->date_debut_reelle) {
+                        print $langs->trans("DateStartPlanned").': ';
+                        if ($objp->date_debut) print dolibarr_print_date($objp->date_debut);
+                        else print $langs->trans("Unknown");
+                    }
+                    // Si activé
+                    if ($objp->date_debut_reelle) {
+                        print $langs->trans("DateStartReal").': ';
+                        if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
+                        else print $langs->trans("ContractStatusNotRunning");
+                    }
+
+                    print ' &nbsp;-&nbsp; ';
+
+                    // Si pas encore activé
+                    if (! $objp->date_debut_reelle) {
+                        print $langs->trans("DateEndPlanned").': ';
+                        if ($objp->date_fin) {
+                            print dolibarr_print_date($objp->date_fin);
+                        }
+                        else print $langs->trans("Unknown");
+                    }
+                    // Si activé
+                    if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
+                        print $langs->trans("DateEndPlanned").': ';
+                        if ($objp->date_fin) {
+                            print dolibarr_print_date($objp->date_fin);
+                            if ($objp->date_fin < time()) { print " ".img_warning($langs->trans("Late")); }
+                        }
+                        else print $langs->trans("Unknown");
+                    }
+                    // Si désactivé
+                    if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
+                        print $langs->trans("DateEndReal").': ';
+                        print dolibarr_print_date($objp->date_fin_reelle);
+                    }
+                    print '</td>';
+                    print '</tr>';                    
+                }
+
+                // Ligne en mode update
+                else
+                {
+                    print "<form action=\"fiche.php?id=$id\" method=\"post\">";
+                    print '<input type="hidden" name="action" value="updateligne">';
+                    print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
+                    // Ligne carac
+                    print "<tr $bc[$var]>";
+                    print '<td>';
+                    print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                    if ($objp->label)
+                    {
+                        print img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a><br>';
+                    }
+                    print '<textarea name="eldesc" cols="60" rows="1">'.$objp->description.'</textarea></td>';
+                    print '<td align="right">';
+                    print $html->select_tva("eltva_tx",$objp->tva_tx);
+                    print '</td>';
+                    print '<td align="right"><input size="6" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
+                    print '<td align="center"><input size="3" type="text" name="elqty" value="'.$objp->qty.'"></td>';
+                    print '<td align="right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+                    print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+                    // Ligne dates prévues
+                    print "<tr $bc[$var]>";
+                    print '<td colspan="8">';
+                    print $langs->trans("DateStartPlanned").' ';
+                    $html->select_date($objp->date_debut,"date_start_update",0,0,($objp->date_debut>0?0:1));
+                    print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
+                    $html->select_date($objp->date_fin,"date_end_update",0,0,($objp->date_fin>0?0:1));
+                    print '</td>';
+                    print '</tr>';
+
+                    print "</form>\n";
+                }
+                $i++;
             }
-            print "</table>";
-            /*
-             * Fin Ajout ligne
-             */
-
-            print '</div>';
-
-            /*************************************************************
-             * Boutons Actions
-             *************************************************************/
-
-            if ($user->societe_id == 0)
-            {
-                print '<div class="tabsAction">';
-
-                if ($contrat->statut == 0 && $num)
-                {
-                    print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
-                }
-
-                $numclos=$contrat->array_detail(5); // Tableau des lignes au statut clos
-                if ($contrat->statut == 1 && $num == sizeof($numclos))
-                {
-                    print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=close">'.$langs->trans("Close").'</a>';
-                }
-
-                if ($contrat->statut == 0 && $user->rights->contrat->supprimer)
-                {
-                    print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-                }
-
-                print "</div>";
-            }
-
+            $db->free($result);
         }
         else
         {
-            // Contrat non trouvé
-            print "Contrat inexistant ou accés refusé";
+            dolibarr_print_error($db);
         }
+
+
+        /*
+         * Ajouter une ligne produit/service
+         */
+        if ($user->rights->contrat->creer && $contrat->statut == 0)
+        {
+            print "<tr class=\"liste_titre\">";
+            print '<td>'.$langs->trans("Service").'</td>';
+            print '<td align="center">'.$langs->trans("VAT").'</td>';
+            print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
+            print '<td align="center">'.$langs->trans("Qty").'</td>';
+            print '<td align="right">'.$langs->trans("Discount").'</td>';
+            print '<td>&nbsp;</td>';
+            print '<td>&nbsp;</td>';
+            print "</tr>\n";
+
+            $var=false;
+
+            print '<form action="fiche.php?id='.$id.'" method="post">';
+            print '<input type="hidden" name="action" value="addligne">';
+            print '<input type="hidden" name="mode" value="predefined">';
+            print '<input type="hidden" name="id" value="'.$id.'">';
+
+            print "<tr $bc[$var]>";
+            print '<td colspan="3">';
+            $html->select_produits('','p_idprod','',0);
+            print '</td>';
+
+            print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
+            print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="0">%</td>';
+            print '<td align="center" colspan="3" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+
+            print "<tr $bc[$var]>";
+            print '<td colspan="8">';
+            print $langs->trans("DateStartPlanned").' ';
+            $html->select_date('',"date_start",0,0,1);
+            print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
+            $html->select_date('',"date_end",0,0,1);
+            print '</td>';
+            print '</tr>';
+            
+            print '</form>';
+
+            $var=!$var;
+            
+            print '<form action="fiche.php?id='.$id.'" method="post">';
+            print '<input type="hidden" name="action" value="addligne">';
+            print '<input type="hidden" name="mode" value="libre">';
+            print '<input type="hidden" name="id" value="'.$id.'">';
+
+            print "<tr $bc[$var]>";
+            print '<td><textarea name="desc" cols="50" rows="1"></textarea></td>';
+
+            print '<td>';
+            $html->select_tva("tva_tx",$conf->defaulttx);
+            print '</td>';
+            print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
+            print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
+            print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="0">%</td>';
+            print '<td align="center" colspan="2" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+
+            print '</tr>'."\n";
+
+            print "<tr $bc[$var]>";
+            print '<td colspan="8">';
+            print $langs->trans("DateStartPlanned").' ';
+            $html->select_date('',"date_start",0,0,1);
+            print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
+            $html->select_date('',"date_end",0,0,1);
+            print '</td>';
+            print '</tr>';
+            
+            print '</form>';
+        }
+        print "</table>";
+        /*
+         * Fin Ajout ligne
+         */
+
+        print '</div>';
+
+
+        /*************************************************************
+         * Boutons Actions
+         *************************************************************/
+
+        if ($user->societe_id == 0)
+        {
+            print '<div class="tabsAction">';
+
+            if ($contrat->statut == 0 && $num)
+            {
+                print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+            }
+
+            if ($contrat->statut > 0 && $user->rights->facture->creer)
+            {
+                $langs->load("bills");
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;contratid='.$contrat->id.'&amp;socidp='.$contrat->societe->id.'">'.$langs->trans("CreateBill").'</a>';
+            }
+
+            $numclos=$contrat->array_detail(5); // Tableau des lignes au statut clos
+            if ($contrat->statut == 1 && $num == sizeof($numclos))
+            {
+                print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=close">'.$langs->trans("Close").'</a>';
+            }
+
+            if ($contrat->statut == 0 && $user->rights->contrat->supprimer)
+            {
+                print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+            }
+
+            print "</div>";
+        }
+
     }
 }
 
