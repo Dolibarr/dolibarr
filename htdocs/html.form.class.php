@@ -636,26 +636,32 @@ class Form
     }
 
 
-  /**
-   *    \brief      Retourne la liste des comptes
-   *    \param      selected        Id compte présélectionné
-   *    \param      htmlname        Nom de la zone select
-   *    \param      statut          Statut des comptes recherchés
-   *    \param      filtre          Pour filtre sur la liste
-   */
-    function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='')
+    /**
+     *    \brief      Retourne la liste des comptes
+     *    \param      selected          Id compte présélectionné
+     *    \param      htmlname          Nom de la zone select
+     *    \param      statut            Statut des comptes recherchés
+     *    \param      filtre            Pour filtre sur la liste
+     *    \param      useempty          Affiche valeur vide dans liste
+     */
+    function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0)
     {
         global $langs;
     
         $sql = "SELECT rowid, label, bank";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-        $sql.= " WHERE clos = '".$satut."'";
+        $sql.= " WHERE clos = '".$statut."'";
         if ($filtre) $sql.=" AND ".$filtre;
         $sql.= " ORDER BY rowid";
         $result = $this->db->query($sql);
         if ($result)
         {
             print '<select class="flat" name="'.$htmlname.'">';
+            if ($useempty) 
+            {
+                print '<option value="'.$obj->rowid.'">&nbsp</option>';
+            }
+
             $num = $this->db->num_rows($result);
             $i = 0;
             while ($i < $num)

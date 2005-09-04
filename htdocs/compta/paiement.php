@@ -18,20 +18,22 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/compta/paiement.php
-   \ingroup    compta
-   \brief      Page de création d'un paiement
-   \version    $Revision$
+        \file       htdocs/compta/paiement.php
+        \ingroup    compta
+        \brief      Page de création d'un paiement
+        \version    $Revision$
 */
 
 include_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+
+$langs->load("bills");
+$langs->load("banks");
 
 $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
 $socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
@@ -46,145 +48,152 @@ $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
  */
 if ($_POST["action"] == 'add_paiement')
 {
-  $error = 0;
+    $error = 0;
 
-  if ($_POST["paiementid"] > 0)
+    if ($_POST["paiementid"] > 0)
     {
-      $datepaye = $db->idate(mktime(12, 0 , 0,
-				    $_POST["remonth"],
-				    $_POST["reday"],
-				    $_POST["reyear"]));
-      
-      $paiement_id = 0;
-      $total = 0;
-      $amounts = array();
-      foreach ($_POST as $key => $value)
+        $datepaye = $db->idate(mktime(12, 0 , 0,
+        $_POST["remonth"],
+        $_POST["reday"],
+        $_POST["reyear"]));
+
+        $paiement_id = 0;
+        $total = 0;
+        $amounts = array();
+        foreach ($_POST as $key => $value)
         {
-	  if (substr($key,0,7) == 'amount_')
+            if (substr($key,0,7) == 'amount_')
             {
-	      $other_facid = substr($key,7);
-	      
-	      $amounts[$other_facid] = $_POST[$key];
-	      $total = $total + $amounts[$other_facid];
+                $other_facid = substr($key,7);
+
+                $amounts[$other_facid] = $_POST[$key];
+                $total = $total + $amounts[$other_facid];
             }
         }
-      
-      if ($total > 0)
-	{
 
-	  $db->begin();
-      
-	  // Creation de la ligne paiement
-	  $paiement = new Paiement($db);
-	  $paiement->datepaye     = $datepaye;
-	  $paiement->amounts      = $amounts;   // Tableau de montant
-	  $paiement->paiementid   = $_POST["paiementid"];
-	  $paiement->num_paiement = $_POST["num_paiement"];
-	  $paiement->note         = $_POST["comment"];
-	  
-	  $paiement_id = $paiement->create($user);
+        if ($total > 0)
+        {
 
-	  if ($paiement_id > 0)
-	    {
-	      // On determine le montant total du paiement
-	      $total=0;
-	      foreach ($paiement->amounts as $key => $value)
-		{
-		  $facid = $key;
-		  $value = trim($value);
-		  $amount = round(ereg_replace(",",".",$value), 2);
-		  if (is_numeric($amount))
-		    {
-		      $total += $amount;
-		    }
-		}
-	      
-	      if ($conf->banque->enabled && $_POST["accountid"])
-		{
-		  // Insertion dans llx_bank
-		  $label = "Règlement facture";
-		  $acc = new Account($db, $_POST["accountid"]);
-		  //paiementid contient "CHQ ou VIR par exemple"
-		  $bank_line_id = $acc->addline($paiement->datepaye, 
-						$paiement->paiementid, 
-						$label, 
-						$total, 
-						$paiement->num_paiement, 
-						'', 
-						$user);
-	    
+            $db->begin();
 
-		  // Mise a jour fk_bank dans llx_paiement. 
-		  // On connait ainsi le paiement qui a généré l'écriture bancaire
-		  if ($bank_line_id > 0)
-		    {
-		      $paiement->update_fk_bank($bank_line_id);
-		      
-		      // Mise a jour liens (pour chaque facture concernées par le paiement)
-		      foreach ($paiement->amounts as $key => $value)
-			{
-			  $facid = $key;
-			  $fac = new Facture($db);
-			  $fac->fetch($facid);
-			  $fac->fetch_client();
-			  $acc->add_url_line($bank_line_id, 
-					     $paiement_id, 
-					     DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', 
-					     "(paiement)",
-					     'payment');
-			  $acc->add_url_line($bank_line_id, 
-					     $fac->client->id, 
-					     DOL_URL_ROOT.'/compta/fiche.php?socid=', 
-					     $fac->client->nom,
-					     'company');
-			}
-		      
-		    }
-		  else
-		    {
-		      $error++;
-		    }	      
-		}
-	      
-	    }
-	  else
-	    {
-	      $error++;
-	    }
+            // Creation de la ligne paiement
+            $paiement = new Paiement($db);
+            $paiement->datepaye     = $datepaye;
+            $paiement->amounts      = $amounts;   // Tableau de montant
+            $paiement->paiementid   = $_POST["paiementid"];
+            $paiement->num_paiement = $_POST["num_paiement"];
+            $paiement->note         = $_POST["comment"];
 
-	  
-	  if ($error == 0)
-	    {
-	      $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-	      $db->commit();
-	      Header("Location: $loc");
-	    }
-	  else
-	    {
-	      // Il y a eu erreur
-	      $db->rollback();
-	      $fiche_erreur_message = $langs->trans("ErrorUnknown");
-	    }
-	}
-      else
-	{
-	  $fiche_erreur_message = '<div class="error">Aucun montants indiqués</div>';
-	}
+            $paiement_id = $paiement->create($user);
+
+            if ($paiement_id > 0)
+            {
+                // On determine le montant total du paiement
+                $total=0;
+                foreach ($paiement->amounts as $key => $value)
+                {
+                    $facid = $key;
+                    $value = trim($value);
+                    $amount = round(ereg_replace(",",".",$value), 2);
+                    if (is_numeric($amount))
+                    {
+                        $total += $amount;
+                    }
+                }
+
+                if ($conf->banque->enabled)
+                {
+                    // Si module bank actif, un compte est obligatoire lors de la saisie
+                    // d'un paiement
+                    if (! $_POST["accountid"])
+                    {
+                        $fiche_erreur_message = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("AccountToCredit")).'</div>';
+                        $error++;   
+                    }
+                    else
+                    {
+                        // Insertion dans llx_bank
+                        $label = "Règlement facture";
+                        $acc = new Account($db, $_POST["accountid"]);
+                        //paiementid contient "CHQ ou VIR par exemple"
+                        $bank_line_id = $acc->addline($paiement->datepaye,
+                        $paiement->paiementid,
+                        $label,
+                        $total,
+                        $paiement->num_paiement,
+                        '',
+                        $user);
+    
+    
+                        // Mise a jour fk_bank dans llx_paiement.
+                        // On connait ainsi le paiement qui a généré l'écriture bancaire
+                        if ($bank_line_id > 0)
+                        {
+                            $paiement->update_fk_bank($bank_line_id);
+    
+                            // Mise a jour liens (pour chaque facture concernées par le paiement)
+                            foreach ($paiement->amounts as $key => $value)
+                            {
+                                $facid = $key;
+                                $fac = new Facture($db);
+                                $fac->fetch($facid);
+                                $fac->fetch_client();
+                                $acc->add_url_line($bank_line_id,
+                                $paiement_id,
+                                DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
+                                "(paiement)",
+                                'payment');
+                                $acc->add_url_line($bank_line_id,
+                                $fac->client->id,
+                                DOL_URL_ROOT.'/compta/fiche.php?socid=',
+                                $fac->client->nom,
+                                'company');
+                            }
+    
+                        }
+                        else
+                        {
+                            $error++;
+                        }
+                    }
+                }
+
+            }
+            else
+            {
+                $error++;
+            }
+
+
+            if ($error == 0)
+            {
+                $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+                $db->commit();
+                Header("Location: $loc");
+            }
+            else
+            {
+                $db->rollback();
+            }
+        }
+        else
+        {
+            $fiche_erreur_message = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Amount")).'</div>';
+        }
     }
-  else
+    else
     {
-      $fiche_erreur_message = '<div class="error">Vous devez sélectionner un mode de paiement</div>';
+        $fiche_erreur_message = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("PaymentMode")).'</div>';
     }
 }
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
+
 
 /*
  * Affichage
@@ -196,204 +205,164 @@ $html=new Form($db);
 
 if ($fiche_erreur_message)
 {
-  print '<tr><td colspan="3" align="center">'.$fiche_erreur_message.'</td></tr>';
+    print '<tr><td colspan="3" align="center">'.$fiche_erreur_message.'</td></tr>';
 }
 
-
-if ($_GET["action"] == 'create' || $_POST["action"] == 'add_paiement') 
+if ($_GET["action"] == 'create' || $_POST["action"] == 'add_paiement')
 {
-  $facture = new Facture($db);
-  $facture->fetch($facid);
+    $facture = new Facture($db);
+    $facture->fetch($facid);
 
-  $sql = "SELECT s.nom,s.idp, f.amount, f.total_ttc as total, f.facnumber";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
-  $sql .= " AND f.rowid = $facid";
+    $sql = "SELECT s.nom,s.idp, f.amount, f.total_ttc as total, f.facnumber";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
+    $sql .= " AND f.rowid = $facid";
 
-  $resql = $db->query($sql);
-  if ($resql)
+    $resql = $db->query($sql);
+    if ($resql)
     {
-      $num = $db->num_rows($resql);
-      if ($num)
-	{
-	  $obj = $db->fetch_object($resql);
+        $num = $db->num_rows($resql);
+        if ($num)
+        {
+            $obj = $db->fetch_object($resql);
 
-	  $total = $obj->total;
+            $total = $obj->total;
 
-	  print_titre($langs->trans("DoPayment"));
+            print_titre($langs->trans("DoPayment"));
 
-	  print '<form action="paiement.php" method="post">';
-	  print '<input type="hidden" name="action" value="add_paiement">';
-	  print "<input type=\"hidden\" name=\"facid\" value=\"$facid\">";
-	  print "<input type=\"hidden\" name=\"facnumber\" value=\"$obj->facnumber\">";
-	  print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
-	  print "<input type=\"hidden\" name=\"societe\" value=\"$obj->nom\">";
+            print '<form action="paiement.php" method="post">';
+            print '<input type="hidden" name="action" value="add_paiement">';
+            print "<input type=\"hidden\" name=\"facid\" value=\"$facid\">";
+            print "<input type=\"hidden\" name=\"facnumber\" value=\"$obj->facnumber\">";
+            print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
+            print "<input type=\"hidden\" name=\"societe\" value=\"$obj->nom\">";
 
-	  print '<table class="border" width="100%">';
-	  
-	  print "<tr><td>".$langs->trans("Company")." :</td><td colspan=\"2\">$obj->nom</td></tr>\n";
-	  
-	  print "<tr><td>".$langs->trans("Date")." :</td><td>";
-	  $html->select_date();
-	  print '</td>';
-	  print '<td>'.$langs->trans("Comments").'</td></tr>';
-	  
-	  print '<tr><td>'.$langs->trans("Type").' :</td><td><select name="paiementid">';
-	  
-	  $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY id";
-	  
-	  $resql = $db->query($sql);
-	  if ($resql)
-	    {
-	      $num = $db->num_rows($resql);
-	      $i = 0; 
-	      while ($i < $num)
-		{
-		  $objopt = $db->fetch_object($resql);
-		  print "<option value=\"$objopt->id\">$objopt->libelle</option>\n";
-		  $i++;
-		}
-	    }
-	  print "</select>";
-	  print "</td>\n";
+            print '<table class="border" width="100%">';
 
-	  print '<td rowspan="3" valign="top">';
-	  print '<textarea name="comment" wrap="soft" cols="40" rows="4"></textarea></td></tr>';	  
+            print "<tr><td>".$langs->trans("Company")."</td><td colspan=\"2\">$obj->nom</td></tr>\n";
 
-	  print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Numéro du chèque / virement</em></td></tr>\n";
+            print "<tr><td>".$langs->trans("Date")."</td><td>";
+            $html->select_date();
+            print '</td>';
+            print '<td>'.$langs->trans("Comments").'</td></tr>';
+
+            print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
+            $html->select_types_paiements('','paiementid');
+            print "</td>\n";
+
+            print '<td rowspan="3" valign="top">';
+            print '<textarea name="comment" wrap="soft" cols="40" rows="4"></textarea></td></tr>';
+
+            print "<tr><td>".$langs->trans("Numero")."</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Numéro du chèque / virement</em></td></tr>\n";
 
 
-	  if ($conf->banque->enabled)
-	    {
-	      
-	      print "<tr><td>Compte à créditer :</td><td><select name=\"accountid\">\n";
-	      
-	      $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account ORDER BY rowid";
-	      
-	      $resql = $db->query($sql);
-	      if ($resql)
-		{
-		  $num = $db->num_rows();
-		  $i = 0; 
-		  while ($i < $num)
-		    {
-		      $objopt = $db->fetch_object($resql);
-		      print '<option value="'.$objopt->rowid.'"';
-		      if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
-			{
-			  print ' selected';
-			}
-		      print '>'.$objopt->label.'</option>';
-		      $i++;
-		    }
-		  $db->free($resql);
-		}
-	      print "</select>";
-	      print "</td></tr>\n";
-	      
-	    }
-	  else
-	    {
-	      print '<tr><td colspan="2">&nbsp;</td></tr>';
-	    }
-	  
-	  /*
-	   * Autres factures impayées
-	   */
+            if ($conf->banque->enabled)
+            {
+                print "<tr><td>".$langs->trans("AccountToCredit")."</td><td>";
+                $html->select_comptes('','accountid',0,'',1);
+                print "</td></tr>\n";
+            }
+            else
+            {
+                print '<tr><td colspan="2">&nbsp;</td></tr>';
+            }
 
-	  $sql = "SELECT f.rowid as facid,f.facnumber,f.total_ttc,".$db->pdate("f.datef")." as df";
-	  $sql .= ", sum(pf.amount) as am";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_facture = f.rowid";
-	  $sql .= " WHERE f.fk_soc = ".$facture->socidp;
-	  $sql .= " AND f.paye = 0";
-	  $sql .= " AND f.fk_statut = 1";  // Statut=0 => non validée, Statut=2 => annulée
-	  $sql .= " GROUP BY f.facnumber";  
+            /*
+             * Autres factures impayées
+             */
+            $sql = "SELECT f.rowid as facid,f.facnumber,f.total_ttc,".$db->pdate("f.datef")." as df";
+            $sql .= ", sum(pf.amount) as am";
+            $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_facture = f.rowid";
+            $sql .= " WHERE f.fk_soc = ".$facture->socidp;
+            $sql .= " AND f.paye = 0";
+            $sql .= " AND f.fk_statut = 1";  // Statut=0 => non validée, Statut=2 => annulée
+            $sql .= " GROUP BY f.facnumber";
 
-	  $resql = $db->query($sql);
+            $resql = $db->query($sql);
 
-	  if ($resql)
-	    {
-	      $num = $db->num_rows($resql);
-	      
-	      if ($num > 0)
-		{
-		  $i = 0;
-		  print '<tr><td colspan="3">';
-		  print '<table class="noborder" width="100%">';
-		  print '<tr class="liste_titre">';
-		  print '<td>'.$langs->trans("Bill").'</td><td align="center">'.$langs->trans("Date").'</td>';
-		  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';	      
-		  print '<td align="right">'.$langs->trans("Received").'</td>';
-		  print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
-		  print '<td align="center">'.$langs->trans("Amount").'</td>';
-		  print "</tr>\n";
-	      
-		  $var=True;
-		  $total=0;
-		  $totalrecu=0;
-		  
-		  while ($i < $num)
-		    {
-		      $objp = $db->fetch_object($resql);
-		      $var=!$var;
-		      
-		      print "<tr $bc[$var]>";
-		  
-		      print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber;
-		      print "</a></td>\n";
-		      
-		      if ($objp->df > 0 )
-			{
-			  print "<td align=\"center\">";
-			  print strftime("%d %b %Y",$objp->df)."</td>\n";
-			}
-		      else
-			{
-			  print "<td align=\"center\"><b>!!!</b></td>\n";
-			}
-		      
-		      print '<td align="right">'.price($objp->total_ttc)."</td>";
-		      print '<td align="right">'.price($objp->am)."</td>";
-		      print '<td align="right">'.price($objp->total_ttc - $objp->am)."</td>";
-		      
-		      print '<td align="center">';
+            if ($resql)
+            {
+                $num = $db->num_rows($resql);
 
-		      $namef = "amount_".$objp->facid;
-		      print '<input type="text" size="8" name="'.$namef.'">';
+                if ($num > 0)
+                {
+                    $i = 0;
+                    print '<tr><td colspan="3">';
+                    print '<table class="noborder" width="100%">';
+                    print '<tr class="liste_titre">';
+                    print '<td>'.$langs->trans("Bill").'</td><td align="center">'.$langs->trans("Date").'</td>';
+                    print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+                    print '<td align="right">'.$langs->trans("Received").'</td>';
+                    print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
+                    print '<td align="center">'.$langs->trans("Amount").'</td>';
+                    print "</tr>\n";
 
-		      print "</td></tr>\n";
-		      $total+=$objp->total;
-		      $total_ttc+=$objp->total_ttc;
-		      $totalrecu+=$objp->am;
-		      $i++;
-		    }
-		  if ($i > 1)
-		    {
-		      // Print total
-		      print "<tr ".$bc[!$var].">";
-		      print '<td colspan="2" align="left">'.$langs->trans("TotalTTC").':</td>';
-		      print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
-		      print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
-		      print "<td align=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
-		      print '<td align="center">&nbsp;</td>';
-		      print "</tr>\n";
-		    }
-		  print "</table></td></tr>\n";
-		}
-	      $db->free($resql);	
-	    }
-	  else
-	    {
-	      dolibarr_print_error($db);
-	    }
-	  /*
-	   *
-	   */
+                    $var=True;
+                    $total=0;
+                    $totalrecu=0;
 
-	  print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
-	  print "</table>";
-	  print "</form>\n";	  
-	}
+                    while ($i < $num)
+                    {
+                        $objp = $db->fetch_object($resql);
+                        $var=!$var;
+
+                        print "<tr $bc[$var]>";
+
+                        print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber;
+                        print "</a></td>\n";
+
+                        if ($objp->df > 0 )
+                        {
+                            print "<td align=\"center\">";
+                            print strftime("%d %b %Y",$objp->df)."</td>\n";
+                        }
+                        else
+                        {
+                            print "<td align=\"center\"><b>!!!</b></td>\n";
+                        }
+
+                        print '<td align="right">'.price($objp->total_ttc)."</td>";
+                        print '<td align="right">'.price($objp->am)."</td>";
+                        print '<td align="right">'.price($objp->total_ttc - $objp->am)."</td>";
+
+                        print '<td align="center">';
+
+                        $namef = "amount_".$objp->facid;
+                        print '<input type="text" size="8" name="'.$namef.'">';
+
+                        print "</td></tr>\n";
+                        $total+=$objp->total;
+                        $total_ttc+=$objp->total_ttc;
+                        $totalrecu+=$objp->am;
+                        $i++;
+                    }
+                    if ($i > 1)
+                    {
+                        // Print total
+                        print '<tr class="liste_total">';
+                        print '<td colspan="2" align="left">'.$langs->trans("TotalTTC").':</td>';
+                        print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
+                        print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
+                        print "<td align=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
+                        print '<td align="center">&nbsp;</td>';
+                        print "</tr>\n";
+                    }
+                    print "</table></td></tr>\n";
+                }
+                $db->free($resql);
+            }
+            else
+            {
+                dolibarr_print_error($db);
+            }
+
+            /*
+            *
+            */
+            print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+            print "</table>";
+            print "</form>\n";
+        }
     }
 } 
 
