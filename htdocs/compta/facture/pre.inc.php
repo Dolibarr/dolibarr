@@ -33,29 +33,27 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 
 function llxHeader($head = "", $title="", $help_url='') {
-  global $user, $conf, $langs;
-  $langs->load("companies");
-  $langs->load("bills");
-  $langs->load("banks");
-  $langs->load("propal");
-  
-  /*
-   *
-   *
-   */
-  top_menu($head, $title);
+    global $user, $conf, $langs;
 
-  $menu = new Menu();
-
-  $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
-
-  $langs->load("bills");
-  $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
-  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
-
-  $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
-
-  left_menu($menu->liste, $help_url);
-  
+    $langs->load("companies");
+    $langs->load("commercial");
+    $langs->load("bills");
+    $langs->load("banks");
+    $langs->load("propal");
+    
+    top_menu($head, $title);
+    
+    $menu = new Menu();
+    
+    $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
+    
+    $langs->load("bills");
+    $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
+    $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
+    
+    $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
+    
+    left_menu($menu->liste, $help_url);
 }
+
 ?>

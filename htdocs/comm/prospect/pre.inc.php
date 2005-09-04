@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,45 +21,47 @@
  *
  */
 
-/*!
-  \file       htdocs/comm/prospect/pre.inc.php
-  \ingroup    commercial
-  \brief      Fichier de gestion du menu gauche de l'espace commercial
-  \version    $Revision$
+/**
+        \file       htdocs/comm/prospect/pre.inc.php
+        \ingroup    commercial
+        \brief      Fichier de gestion du menu gauche de l'espace commercial
+        \version    $Revision$
 */
 
 require("../../main.inc.php");
 
-function llxHeader($head = "", $urlp = "") {
-  global $user, $conf, $langs;
-  $user->getrights();
-  $langs->load("companies");
-  
-  top_menu($head);
-
-  $menu = new Menu();
-
-  $menu->add(DOL_URL_ROOT."/comm/prospect/", "Prospection");
-
-  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=p", $langs->trans("MenuNewProspect"));
-
-  $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("List"));
-
-  $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=0", $langs->trans("LastProspect"));
-
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
-
-  $menu->add(DOL_URL_ROOT."/comm/action/index.php", $langs->trans("Actions"));
-
-  if ($conf->propal->enabled && $user->rights->propale->lire)
+function llxHeader($head = "", $urlp = "")
+{
+    global $user, $conf, $langs;
+    
+    $user->getrights();
+    $langs->load("companies");
+    $langs->load("commercial");
+    
+    top_menu($head);
+    
+    $menu = new Menu();
+    
+    $menu->add(DOL_URL_ROOT."/comm/prospect/", $langs->trans("Prospection"));
+    
+    $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=p", $langs->trans("MenuNewProspect"));
+    
+    $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("List"));
+    
+    $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=0", $langs->trans("LastProspect"));
+    
+    $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
+    
+    $menu->add(DOL_URL_ROOT."/comm/action/index.php", $langs->trans("Actions"));
+    
+    if ($conf->propal->enabled && $user->rights->propale->lire)
     {
-      $langs->load("propal");
-      $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
+        $langs->load("propal");
+        $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
     }
-
-
-  $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
-	
-  left_menu($menu->liste);
+    
+    $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
+    
+    left_menu($menu->liste);
 }
 ?>
