@@ -23,7 +23,7 @@
 
 /**
         \file       htdocs/product/stats/facture.php
-        \ingroup    product, service
+        \ingroup    product, service, facture
         \brief      Page des stats des factures pour un produit
         \version    $Revision$
 */
@@ -39,16 +39,22 @@ $mesg = '';
 $page = $_GET["page"];
 $sortfield=$_GET["sortfield"];
 $sortorder=$_GET["sortorder"];
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $_GET["page"] ;
+$pageprev = $_GET["page"] - 1;
+$pagenext = $_GET["page"] + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef";
-if ($page == -1) $page = 0;
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
+
 
 if ($user->societe_id > 0)
 {
     $action = '';
     $socid = $user->societe_id;
+}
+else
+{
+  $socid = 0;
 }
 
 
@@ -233,22 +239,25 @@ if ($_GET["id"])
 
         print '</div>';
         
-        print_barre_liste($langs->trans("Bills"),$page,"facture.php","&amp;id=$product->id",$sortfield,$sortorder);
 
-        $sql = "SELECT s.nom, s.idp, s.code_client, f.facnumber, f.amount,";
-        $sql.= " ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.rowid as facid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as d WHERE f.fk_soc = s.idp";
+        $sql = "SELECT distinct(s.nom), s.idp, s.code_client, f.facnumber, f.amount as amount,";
+        $sql.= " ".$db->pdate("f.datef")." as date, f.paye, f.fk_statut as statut, f.rowid as facid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as d";
+		$sql.= " WHERE f.fk_soc = s.idp";
         $sql.= " AND d.fk_facture = f.rowid AND d.fk_product =".$product->id;
         if ($socid)
         {
             $sql .= " AND f.fk_soc = $socid";
         }
-        $sql .= " ORDER BY $sortfield $sortorder ";
-        $sql .= $db->plimit( $limit ,$offset);
+        $sql.= " ORDER BY $sortfield $sortorder ";
+        $sql.= $db->plimit($conf->liste_limit +1, $offset);
 
         $result = $db->query($sql);
-        if ($result) {
+        if ($result)
+        {
             $num = $db->num_rows($result);
+
+            print_barre_liste($langs->trans("Bills"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num);
 
             $i = 0;
             print "<table class=\"noborder\" width=\"100%\">";
@@ -256,16 +265,16 @@ if ($_GET["id"])
             print '<tr class="liste_titre">';
             print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.idp","","&amp;id=".$_GET["id"],'',$sortfield);
             print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield);
-            print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
-            print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
-            print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"f.amount","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
+            print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield);
+            print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
+            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.amount","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
             print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
             print "</tr>\n";
 
             if ($num > 0)
             {
                 $var=True;
-                while ($i < $num)
+                while ($i < $num && $conf->liste_limit)
                 {
                     $objp = $db->fetch_object($result);
                     $var=!$var;
@@ -276,8 +285,8 @@ if ($_GET["id"])
                     print "</a></td>\n";
                     print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";
-                    print "<td align=\"right\">";
-                    print dolibarr_print_date($objp->df)."</td>";
+                    print "<td align=\"center\">";
+                    print dolibarr_print_date($objp->date)."</td>";
                     print "<td align=\"right\">".price($objp->amount)."</td>\n";
                     $fac=new Facture($db);
                     print '<td align="center">'.$fac->LibStatut($objp->paye,$objp->statut,1).'</td>';
@@ -286,7 +295,8 @@ if ($_GET["id"])
                 }
             }
         }
-        else {
+        else
+        {
             dolibarr_print_error($db);
         }
         print "</table>";
