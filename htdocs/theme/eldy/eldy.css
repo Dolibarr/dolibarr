@@ -528,12 +528,18 @@ margin: 0px 0px;
 }
 
 table.border {
-border-collapse: collapse;
-border: 1px white ridge;
-}
-table.border td {
 border: 1px solid #6C7C8B;
+border-color: #6C7C8B;
+border-width: 1px;
+border-collapse: collapse;
+}
+
+table.border td {
 padding: 1px 2px;
+border: 1px solid #6C7C8B;
+border-color: #6C7C8B;
+border-width: 1px;
+border-collapse: collapse;
 }
 
 table.noborder {
@@ -544,6 +550,7 @@ table.noborder td {
 border: 0px;
 padding: 1px 2px;
 }
+
 
 table.nobordernopadding {
 border-collapse: collapse;
@@ -556,7 +563,7 @@ padding: 0px 0px;
 
 table.liste {
 border-collapse: collapse;
-border: 0px;
+//border: 0px;
 width: 100%;
 }
 
