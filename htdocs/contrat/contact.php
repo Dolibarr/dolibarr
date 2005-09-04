@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -111,7 +110,6 @@ if ($user->societe_id > 0)
 	$action = '';
 	$socidp = $user->societe_id;
 }
-
 
 /*
  * Ajout d'un nouveau contact
@@ -256,6 +254,14 @@ if ($id > 0)
 		 */
 		echo '<br><table class="noborder" width="100%">';
 
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Societe").'</td>';
+		print '<td>'.$langs->trans("Contacts").'</td>';
+		print '<td align="center">'.$langs->trans("ContactType").'</td>';
+		print '<td align="center">'.$langs->trans("Status").'</td>';
+		print '<td colspan="2">&nbsp;</td>';
+		print "</tr>\n";
+
 		$tab = $contrat->liste_contact();
 
 		$num = ($tab == null) ? 0 : count($tab);
@@ -263,15 +269,6 @@ if ($id > 0)
 		{
 			$i = 0;
 			$total = 0;
-
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Societe").'</td>';
-			print '<td>'.$langs->trans("Contacts").'</td>';
-
-			print '<td align="center">'.$langs->trans("ContactType").'</td>';
-			print '<td align="center">'.$langs->trans("Status").'</td>';
-			print '<td colspan="2">&nbsp;</td>';
-			print "</tr>\n";
 
 			$var = true;
 			$person = new Contact($db);
@@ -368,7 +365,7 @@ if ($id > 0)
 
 		/*
 		 * Ajouter une ligne de contact
-		 * uniquement sur les contats en creation.
+		 * uniquement sur les contrats en creation.
 		 * En pas en mode modification de ligne
 		 */
 		if ($_GET["action"] != 'editline' && $user->rights->contrat->creer && $contrat->statut == 0)
@@ -404,10 +401,8 @@ if ($id > 0)
 			print "</form>";
 
 		}
+
 		print "</table>";
-		/*
-		 * Fin Ajout ligne
-		 */
 
 		print '</div>';
 
