@@ -26,6 +26,9 @@
         \version    $Revision$
 */
 
+
+// Code identique a /expedition/fiche.php
+
 require("./pre.inc.php");
 
 $user->getrights('commande');
@@ -62,7 +65,7 @@ if ($_POST["action"] == 'confirm_cloture' && $_POST["confirm"] == 'yes')
 /*                                                                             */
 /* *************************************************************************** */
 
-llxHeader('','Fiche commande','');
+llxHeader('',$langs->trans("OrderCard"));
 
 $html = new Form($db);
 
@@ -104,6 +107,10 @@ if ($_GET["id"] > 0)
             $h++;
         }
 
+        $head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$commande->id;
+        $head[$h][1] = $langs->trans("Info");
+        $h++;
+
         dolibarr_fiche_head($head, $hselected, $langs->trans("Order").": $commande->ref");
 
         /*
@@ -116,6 +123,7 @@ if ($_GET["id"] > 0)
             print "<br />";
         }
 
+        // Onglet expedition
         print '<table class="border" width="100%">';
         print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
         print '<td width="30%">';
@@ -146,9 +154,8 @@ if ($_GET["id"] > 0)
 
         print '</table>';
 
-
-        /*
-         * Lignes de commandes
+        /**
+         *  Lignes de commandes avec quantité livrées et reste à livrer
          *
          */
         echo '<br><table class="liste" width="100%">';
@@ -167,13 +174,13 @@ if ($_GET["id"] > 0)
             $i = 0; $total = 0;
 
             print '<tr class="liste_titre">';
-            print '<td>'.$langs->trans("Products").'</td>';
-            print '<td align="center">Quan. Commandée</td>';
-            print '<td align="center">Quan. livrée</td>';
-            print '<td align="center">Reste à livrer</td>';
+            print '<td>'.$langs->trans("Description").'</td>';
+            print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
+            print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
+            print '<td align="center">'.$langs->trans("KeepToShip").'</td>';
             if ($conf->stock->enabled)
             {
-                print '<td align="center">Stock</td>';
+                print '<td align="center">'.$langs->trans("Stock").'</td>';
             }
             print "</tr>\n";
 
@@ -187,12 +194,13 @@ if ($_GET["id"] > 0)
                 print "<tr $bc[$var]>";
                 if ($objp->fk_product > 0)
                 {
-
                     $product = new Product($db);
                     $product->fetch($objp->fk_product);
-
                     print '<td>';
-                    print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+                    print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                    print img_object($langs->trans("Product"),"product").' '.$product->ref.'</a>';
+                    print $product->libelle?' - '.$product->libelle:'';
+                    print '</td>';
                 }
                 else
                 {
@@ -236,30 +244,50 @@ if ($_GET["id"] > 0)
             {
                 print $langs->trans("None").'<br>';
             }
-            
+
         }
         else
         {
             dolibarr_print_error($db);
         }
 
+        print '</div>';
+        
+        
         /*
-        *
-        *
-        */
-        if ($reste_a_livrer_total > 0 && $commande->brouillon == 0)
+         * Boutons Actions
+         */
+        if ($user->societe_id == 0)
         {
-            print '<form method="post" action="fiche.php">';
+            print '<div class="tabsAction">';
+
+            if (! $conf->stock->enabled && $reste_a_livrer_total > 0 && $commande->brouillon == 0 && $user->rights->expedition->creer)
+            {
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;commande_id='.$_GET["id"].'">'.$langs->trans("NewSending").'</a>';
+            }
+
+            print "</div>";
+
+        }
+
+
+        /**
+         *  Formulaire nouvelle expedition depuis un entrepot
+         */
+        if ($conf->stock->enabled && $reste_a_livrer_total > 0 && $commande->brouillon == 0 && $user->rights->expedition->creer)
+        {
+
+            print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/fiche.php">';
             print '<input type="hidden" name="action" value="create">';
+            print '<input type="hidden" name="id" value="'.$commande->id.'">';
             print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
-            print '<br /><table class="border" width="100%">';
+            print '<table class="border" width="100%">';
 
             $entrepot = new Entrepot($db);
             $langs->load("stocks");
 
-            print '<tr><td colspan="2">'.$langs->trans("NewSending").'</td></tr>';
-
-            print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
+            print '<tr>';
+            print '<td>'.$langs->trans("Warehouse").'</td>';
             print '<td>';
             $html->select_array("entrepot_id",$entrepot->list_array());
             if (sizeof($entrepot->list_array()) <= 0) 
@@ -273,6 +301,10 @@ if ($_GET["id"] > 0)
             $html->select_array("entrepot_id",$entrepot->list_array());
             print '</td></tr>';
             */
+
+            print '<tr><td align="center" colspan="2">';
+            print '<input type="submit" class="button" named="save" value="'.$langs->trans("NewSending").'">';
+            print '</td></tr>';
 
             print "</table><br>";
             print "</form>\n";
@@ -312,37 +344,13 @@ if ($_GET["id"] > 0)
                         $db->free($resql);
                     }
                     else {
-                        dolibarr_print_date($db);
+                        dolibarr_print_error($db);
                     }
 
                 }
             }
             print "</table>";
         }
-
-        print '</div>';
-
-        /*
-         * Boutons Actions
-         */
-        if ($user->societe_id == 0)
-        {
-            print '<div class="tabsAction">';
-
-            if ($user->rights->expedition->creer && $reste_a_livrer_total > 0 && $commande->brouillon == 0)
-            {
-                print '<a class="tabAction" href="fiche.php?action=create&commande_id='.$commande->id.'">'.$langs->trans("CreateSending").'</a>';
-            }
-
-            if ($user->rights->commande->creer && $reste_a_livrer_total == 0 && $commande->statut < 3)
-            {
-                print '<a class="tabAction" href="commande.php?id='.$commande->id.'&amp;action=cloture">'.$langs->trans("Close").'</a>';
-            }
-
-            print "</div>";
-
-        }
-
 
         /*
          * Déjà livr
@@ -371,7 +379,7 @@ if ($_GET["id"] > 0)
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($resql);
-                    print "<TR $bc[$var]>";
+                    print "<tr $bc[$var]>";
                     if ($objp->fk_product > 0)
                     {
                         print '<td>';
@@ -390,7 +398,7 @@ if ($_GET["id"] > 0)
             }
         }
         else {
-            dolibarr_print_date($db);
+            dolibarr_print_error($db);
         }
     }
     else
