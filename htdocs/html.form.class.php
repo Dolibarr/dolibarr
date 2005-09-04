@@ -1553,40 +1553,6 @@ class Form
         $filename = sanitize_string($filename);
         $relativepath = "${filename}/${filename}.pdf";
         $fullpathfile = $filedir . "/" . $filename . ".pdf";
-
-        if ($genallowed)
-        {
-            print '<form action="'.$urlsource.'" method="post">';
-            print '<input type="hidden" name="action" value="setpdfmodel">';
-        }
-        print_titre($langs->trans("Documents"));
-        print '<table class="border" width="100%">';
-
-        if ($genallowed)
-        {
-            $liste=array();
-            if ($modulepart == 'propal')
-            {
-                include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
-                $model=new ModelePDFPropales();
-                $liste=$model->liste_modeles($this->db);
-            }
-            elseif ($modulepart == 'facture')
-            {
-                include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
-                $model=new ModelePDFFactures();
-                $liste=$model->liste_modeles($this->db);
-            }
-            else
-            {
-                dolibarr_print_error($this->db,'Bad value for modulepart');
-            }
-            print '<tr '.$bc[$var].'><td>'.$langs->trans('Model').'</td><td align="center">';
-            $this->select_array('modelpdf',$liste,$modelselected);
-            $texte=$langs->trans('Generate');
-            print '</td><td align="center" colspan="2"><input class="button" type="submit" value="'.$texte.'">';
-            print '</td></tr>';
-        }
                     
         $i=0;
         if (is_dir($filedir))
@@ -1597,6 +1563,46 @@ class Form
                 // Si fichier non lisible ou non .pdf, on passe au suivant
                 if (! is_readable($filedir."/".$file) || ! eregi('\.pdf$',$file)) continue;
 
+                
+                if ($i==0)
+                {
+                    // Affiche en-tete tableau
+                    if ($genallowed)
+                    {
+                        print '<form action="'.$urlsource.'" method="post">';
+                        print '<input type="hidden" name="action" value="setpdfmodel">';
+                    }
+
+                    print_titre($langs->trans("Documents"));
+                    print '<table class="border" width="100%">';
+            
+                    if ($genallowed)
+                    {
+                        $liste=array();
+                        if ($modulepart == 'propal')
+                        {
+                            include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
+                            $model=new ModelePDFPropales();
+                            $liste=$model->liste_modeles($this->db);
+                        }
+                        elseif ($modulepart == 'facture')
+                        {
+                            include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+                            $model=new ModelePDFFactures();
+                            $liste=$model->liste_modeles($this->db);
+                        }
+                        else
+                        {
+                            dolibarr_print_error($this->db,'Bad value for modulepart');
+                        }
+                        print '<tr '.$bc[$var].'><td>'.$langs->trans('Model').'</td><td align="center">';
+                        $this->select_array('modelpdf',$liste,$modelselected);
+                        $texte=$langs->trans('Generate');
+                        print '</td><td align="center" colspan="2"><input class="button" type="submit" value="'.$texte.'">';
+                        print '</td></tr>';
+                    }
+                }
+                
                 print "<tr $bc[$var]>";
                 if (eregi('\-detail\.pdf',$file)) print '<td nowrap>PDF Détaillé</td>';
                 else print '<td nowrap>PDF</td>';
@@ -1612,10 +1618,14 @@ class Form
             }
         }
         
-        print "</table>\n";    
-        if ($genallowed)
+        if ($i > 0)
         {
-            print '</form>';
+            // Affiche pied du tableau
+            print "</table>\n";
+            if ($genallowed)
+            {
+                print '</form>';
+            }
         }
 
     }
