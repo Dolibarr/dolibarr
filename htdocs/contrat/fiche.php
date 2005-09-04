@@ -149,7 +149,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
     }
 }
 
-if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer)
+if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && $_POST["save"])
 {
     $contrat = new Contrat($db,"",$_GET["id"]);
     if ($contrat->fetch($_GET["id"]))
@@ -177,6 +177,11 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer)
     {
         dolibarr_print_error($db);
     }
+}
+
+if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && $_POST["cancel"])
+{
+    Header("Location: fiche.php?id=".$_GET["id"]);
 }
 
 if ($_GET["action"] == 'deleteline' && $user->rights->contrat->creer)
@@ -595,10 +600,12 @@ else
          */
         echo '<br><table class="noborder" width="100%">';
 
-        $sql = "SELECT cd.statut, cd.label, cd.fk_product, cd.description, cd.price_ht, cd.qty, cd.rowid, cd.tva_tx, cd.remise_percent, cd.subprice,";
+        $sql = "SELECT cd.statut, cd.label as label_det, cd.fk_product, cd.description, cd.price_ht, cd.qty, cd.rowid, cd.tva_tx, cd.remise_percent, cd.subprice,";
         $sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_debut, ".$db->pdate("cd.date_ouverture")." as date_debut_reelle,";
-        $sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin, ".$db->pdate("cd.date_cloture")." as date_fin_reelle";
+        $sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin, ".$db->pdate("cd.date_cloture")." as date_fin_reelle,";
+        $sql.= " p.ref, p.label";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
         $sql.= " WHERE cd.fk_contrat = ".$id;
         $sql.= " ORDER BY cd .rowid";
 
@@ -635,7 +642,8 @@ else
                     {
                         print '<td>';
                         print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-                        print img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a>';
+                        print img_object($langs->trans("ShowService"),"service").' '.$objp->ref.'</a>';
+                        print $objp->label?' - '.$objp->label:'';
                         if ($objp->description) print '<br />'.stripslashes(nl2br($objp->description));
                         print '</td>';
                     }
@@ -740,10 +748,16 @@ else
                     // Ligne carac
                     print "<tr $bc[$var]>";
                     print '<td>';
-                    print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-                    if ($objp->label)
+                    if ($objp->fk_product)
                     {
-                        print img_object($langs->trans("ShowService"),"service").' '.$objp->label.'</a><br>';
+                        print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+                        print img_object($langs->trans("ShowService"),"service").' '.$objp->ref.'</a>';
+                        print $objp->label?' - '.$objp->label:'';
+                        print '</br>';
+                    }
+                    else
+                    {
+                        print $objp->label?$objp->label.'<br>':'';
                     }
                     print '<textarea name="eldesc" cols="60" rows="1">'.$objp->description.'</textarea></td>';
                     print '<td align="right">';
@@ -752,10 +766,12 @@ else
                     print '<td align="right"><input size="6" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="center"><input size="3" type="text" name="elqty" value="'.$objp->qty.'"></td>';
                     print '<td align="right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
-                    print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+                    print '<td align="center" colspan="3" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
+                    print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+                    print '</td>';
                     // Ligne dates prévues
                     print "<tr $bc[$var]>";
-                    print '<td colspan="8">';
+                    print '<td colspan="5">';
                     print $langs->trans("DateStartPlanned").' ';
                     $html->select_date($objp->date_debut,"date_start_update",0,0,($objp->date_debut>0?0:1));
                     print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
@@ -792,6 +808,7 @@ else
 
             $var=false;
 
+            // Service sur produit prédéfini
             print '<form action="fiche.php?id='.$id.'" method="post">';
             print '<input type="hidden" name="action" value="addligne">';
             print '<input type="hidden" name="mode" value="predefined">';
@@ -799,7 +816,8 @@ else
 
             print "<tr $bc[$var]>";
             print '<td colspan="3">';
-            $html->select_produits('','p_idprod','',0);
+            $html->select_produits('','p_idprod','',0).'<br>';
+            print '<textarea name="desc" cols="50" rows="1"></textarea>';
             print '</td>';
 
             print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
@@ -819,6 +837,7 @@ else
 
             $var=!$var;
             
+            // Service libre
             print '<form action="fiche.php?id='.$id.'" method="post">';
             print '<input type="hidden" name="action" value="addligne">';
             print '<input type="hidden" name="mode" value="libre">';
