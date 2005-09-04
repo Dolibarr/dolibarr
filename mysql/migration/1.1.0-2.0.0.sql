@@ -421,6 +421,9 @@ update llx_product set ref=substr(label,0,15) where ref is null;
 alter table llx_product modify ref varchar(15) UNIQUE NOT NULL;
 alter table llx_product add note text after description;
 
+alter table llx_product_stock change value reel integer;
+alter table llx_product_stock change fk_stock fk_entrepot integer;
+
 alter table llx_groupart add description text after groupart ;
 
 alter table llx_socpeople add phone_perso varchar(30) after phone ;
