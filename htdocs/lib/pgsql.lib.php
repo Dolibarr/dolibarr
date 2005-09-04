@@ -21,7 +21,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -34,6 +33,7 @@
 		\author     Benoit Mortier
 		\version    $Revision$
 */
+
 
 /**
      	\class      DoliDb
@@ -51,6 +51,7 @@ class DoliDb
     var $database_selected;       // 1 si base sélectionné, 0 sinon
     var $database_name;			  // Nom base sélectionnée
     var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
+    var $lastquery;
     
     var $ok;
     var $error;
@@ -422,24 +423,35 @@ class DoliDb
     
     
     /**
-        \brief      Formatage par la base de données d'un champ de la base au format Timestamp ou Date (YYYY-MM-DD HH:MM:SS)
+        \brief      Formatage (par la base de données) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
                     afin de retourner une donnée toujours au format universel date tms unix.
-        \param	    fname
-        \return	    date
+        \param	    param
+        \return	    date        date au format tms.
     */
-    function pdate($fname)
+    function pdate($param)
     {
-        return "unix_timestamp($fname)";
+        return "unix_timestamp(".$param.")";
+    }
+
+    /**
+        \brief      Formatage (par la base de données) d'un champ de la base au format tms
+                    afin de retourner une donnée au format text YYYYMMDDHHMMSS.
+        \param	    param
+        \return	    string      date au format text YYYYMMDDHHMMSS.
+    */
+    function qdate($param)
+    {
+        return "from_unixtime(".$param.")";
     }
     
     /**
-        \brief      Formatage de la date en fonction des locales.
-        \param		fname
+        \brief      Formatage (par PHP) de la date en texte.
+        \param	    param
         \return		date
     */
-    function idate($fname)
+    function idate($param)
     {
-        return strftime("%Y%m%d%H%M%S",$fname);
+        return strftime("%Y%m%d%H%M%S",$param);
     }
 
 
@@ -543,6 +555,44 @@ class DoliDb
         return  $this->results;
     }
 	
+
+    function setLastQuery($s)
+    {
+        $this->lastquery=$s;
+    }
+
+
+    /**
+        \brief      Renvoie toutes les données comme un tableau.
+        \param      sql         Requete sql
+        \param      datas       Tableau de données pour retour
+        \return	    int         >0 si ok, <0 si ko
+    */
+    function fetch_all_rows($sql, &$datas)
+    {
+        $datas = array();
+    
+        $resql = $this->query($sql);
+        if ($resql)
+        {
+            $i = 0;
+            $num = $this->num_rows($resql);
+    
+            while ($i < $num)
+            {
+                $row = $this->fetch_row($resql);
+                array_push($datas, $row[0]);
+                $i++;
+            }
+        }
+        else
+        {
+            print $this->error();
+            return -1;
+        }
+        return 1;
+    }
+
 }
 
 ?>

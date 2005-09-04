@@ -434,24 +434,35 @@ class DoliDb
 
 
     /**
-        \brief      Formatage par la base de données d'un champ de la base au format Timestamp ou Date (YYYY-MM-DD HH:MM:SS)
+        \brief      Formatage (par la base de données) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
                     afin de retourner une donnée toujours au format universel date tms unix.
-        \param	    fname
-        \return	    date
+        \param	    param
+        \return	    date        date au format tms.
     */
-    function pdate($fname)
+    function pdate($param)
     {
-        return "unix_timestamp($fname)";
+        return "unix_timestamp(".$param.")";
     }
 
     /**
-        \brief      Formatage de la date en fonction des locales.
-        \param	    fname
+        \brief      Formatage (par la base de données) d'un champ de la base au format tms
+                    afin de retourner une donnée au format text YYYYMMDDHHMMSS.
+        \param	    param
+        \return	    string      date au format text YYYYMMDDHHMMSS.
+    */
+    function qdate($param)
+    {
+        return "from_unixtime(".$param.")";
+    }
+
+    /**
+        \brief      Formatage (par PHP) de la date en texte.
+        \param	    param
         \return	    date
     */
-    function idate($fname)
+    function idate($param)
     {
-        return strftime("%Y%m%d%H%M%S",$fname);
+        return strftime("%Y%m%d%H%M%S",$param);
     }
 
 
