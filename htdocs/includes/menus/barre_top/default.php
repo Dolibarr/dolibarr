@@ -164,21 +164,24 @@ class MenuTop {
         // Entrée projets
         if ($conf->projet->enabled && $user->rights->projet->lire)
         {
-	  $langs->load("projects");
-	  
-	  $class="";
-	  
-	  if (ereg("^".DOL_URL_ROOT."\/projet\/",$_SERVER["PHP_SELF"]))
+            $langs->load("projects");
+        
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "product")
             {
-	      $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"';
             }
-	  else
-	    {
-	      $class = 'class="tmenu"';
+            if (ereg("^".DOL_URL_ROOT."\/projet\/[^w]",$_SERVER["PHP_SELF"]))
+            {
+                $class='class="tmenu" id="sel"';
             }
-	
-	  $chaine.=$langs->trans("Projects");	  
-	  print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/">'.$chaine.'</a>';	  
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+        
+            $chaine.=$langs->trans("Projects");
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project">'.$chaine.'</a>';
         }
 	
         // Entrée produit/service
@@ -202,7 +205,7 @@ class MenuTop {
             $chaine="";
             if ($conf->produit->enabled) { $chaine.=$langs->trans("Products"); }
             if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
-	    if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
+	        if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
         
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products"'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a>';
         
@@ -233,36 +236,35 @@ class MenuTop {
         // Entrée telephonie
         if ($conf->telephonie->enabled && $user->rights->telephonie->lire)
         {
-	  $class="";
-	  if (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
+            $class="";
+            if (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
             {
-	      $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"';
             }
-	  else
+            else
             {
-	      $class = 'class="tmenu"';
+                $class = 'class="tmenu"';
             }
-	  
-	  print '<a '.$class.' href="'.DOL_URL_ROOT.'/telephonie/"'.($this->atarget?" target=$this->atarget":"").'>Telephonie</a>';
+        
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/telephonie/"'.($this->atarget?" target=$this->atarget":"").'>Telephonie</a>';
         }
-
+        
         // Entrée energie
         if ($conf->energie->enabled)
         {
-	  $langs->load("energy");
-	  $class="";
-	  if (ereg("^".DOL_URL_ROOT."\/energie\/",$_SERVER["PHP_SELF"]))
+            $langs->load("energy");
+            $class="";
+            if (ereg("^".DOL_URL_ROOT."\/energie\/",$_SERVER["PHP_SELF"]))
             {
-	      $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"';
             }
-	  else
+            else
             {
-	      $class = 'class="tmenu"';
+                $class = 'class="tmenu"';
             }
-	  
-	  print '<a '.$class.' href="'.DOL_URL_ROOT.'/energie/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a>';
+        
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/energie/"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a>';
         }
-
         
         // Entrée webcal
         if ($conf->webcal->enabled)
@@ -274,7 +276,7 @@ class MenuTop {
             {
                 $class='class="tmenu" id="sel"';
             }
-            elseif (ereg("^".DOL_URL_ROOT."\/projet\/",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/webcalendar\/",$_SERVER["PHP_SELF"]))
+            elseif (ereg("^".DOL_URL_ROOT.".*\/webcal",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/webcalendar\/",$_SERVER["PHP_SELF"]))
             {
                 $class='class="tmenu" id="sel"';
             }
