@@ -58,6 +58,10 @@ class Societe {
   var $forme_juridique_code;
   var $forme_juridique;
 
+  var $prefix_comm;
+  
+  var $remise_client;
+  
   var $client;
   var $fournisseur;
 
