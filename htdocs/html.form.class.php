@@ -1212,7 +1212,7 @@ class Form
             $shour = 0;
             $smin = 0;
     
-            print '<option value="0" selected="true"></option>';
+            print '<option value="0" selected="true">&nbsp;</option>';
         }
     
         for ($day = 1 ; $day <= 31; $day++)
@@ -1233,7 +1233,7 @@ class Form
         print '<select class="flat" name="'.$prefix.'month">';
         if ($empty || $set_time == -1)
         {
-            print '<option value="0" selected="true"></option>';
+            print '<option value="0" selected="true">&nbsp;</option>';
         }
     
         // Mois
