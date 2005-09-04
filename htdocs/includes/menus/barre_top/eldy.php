@@ -187,7 +187,24 @@ class MenuTop {
             }
         
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Accountancy")."/".$langs->trans("Treasury").'</a>';
+        }
+
+        // Projets
+        if ($conf->projet->enabled)
+        {
+            $langs->load("projects");
         
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project")
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+        
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Projects").'</a>';
         }
 
         // Tools
@@ -225,7 +242,7 @@ class MenuTop {
             }
         
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/webcal.php?mainmenu=webcal&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a>';
-        };
+        }
        
     }
 

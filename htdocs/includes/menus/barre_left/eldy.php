@@ -95,7 +95,7 @@ class MenuLeft {
         
         
         $newmenu = new Menu();
-        $overwritemenufor=array('home','members','products','suppliers','commercial','accountancy','tools');
+        $overwritemenufor=array('home','members','products','suppliers','commercial','accountancy','project','tools');
         
         /**
          * On definit newmenu en fonction de mainmenu et leftmenu
@@ -504,6 +504,28 @@ class MenuLeft {
         
         
             /*
+             * Menu PROJETS
+             */
+            if ($mainmenu == 'project')
+            {
+                if ($conf->projet->enabled) 
+                {
+                    $langs->load("admin");
+                    $langs->load("projects");
+                    $newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire);
+                    $newmenu->add_submenu(DOL_URL_ROOT."/comm/clients.php?leftmenu=projects", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
+                    $newmenu->add_submenu(DOL_URL_ROOT."/projet/liste.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire);
+                    
+                    $newmenu->add(DOL_URL_ROOT."/projet/tasks/", $langs->trans("Tasks"), 0, $user->rights->projet->lire);
+                    $newmenu->add_submenu(DOL_URL_ROOT."/projet/tasks/mytasks.php", $langs->trans("Mytasks"), 1, $user->rights->projet->lire);
+                    
+                    $newmenu->add(DOL_URL_ROOT."/projet/activity/", $langs->trans("Activity"), 0, $user->rights->projet->lire);
+                    $newmenu->add_submenu(DOL_URL_ROOT."/projet/activity/myactivity.php", $langs->trans("MyActivity"), 1, $user->rights->projet->lire);
+                }
+            }
+            
+            
+            /*
              * Menu OUTILS
              */
             if ($mainmenu == 'tools')
@@ -519,18 +541,12 @@ class MenuLeft {
                   $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/liste.php?leftmenu=mailing", $langs->trans("List"), 1, $user->rights->mailing->lire);
                 }
 
-                if ($conf->projet->enabled) 
-                {
-                  $langs->load("projects");
-                  $newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire);
-                  $newmenu->add_submenu(DOL_URL_ROOT."/comm/clients.php?leftmenu=projects", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
-                  $newmenu->add_submenu(DOL_URL_ROOT."/projet/liste.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire);
-                }
-
                 $langs->load("other");
                 $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php?leftmenu=bookmarks", $langs->trans("Bookmarks"), 0, 1);
                 $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/fiche.php?action=create", $langs->trans("NewBookmark"));
                 $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("List"));
+
+                $newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Exports"),0,1);
             }
         
             /*
@@ -558,10 +574,11 @@ class MenuLeft {
                   $langs->load("banks");
                   $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=accountancy",$langs->trans("Banks"),0,$user->rights->adherent->lire);
                 
-                  $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&mainmenu=members",$langs->trans("Export"),0,$user->rights->adherent->lire);
-                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php?leftmenu=export","Format htpasswd",1,$user->rights->adherent->lire);
-                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export","Cartes d'adhérents",1,$user->rights->adherent->lire);
-                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export","Etiquettes d'adhérents",1,$user->rights->adherent->lire);
+                  $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&mainmenu=members",$langs->trans("Export"),0,$user->rights->adherent->export);
+                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->adherent->export);
+                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php?leftmenu=export",$langs->trans("Filehtpasswd"),1,$user->rights->adherent->export);
+                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export",$langs->trans("MembersCards"),1,$user->rights->adherent->export);
+                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export","Etiquettes d'adhérents",1,$user->rights->adherent->export);
                 
                   $newmenu->add(DOL_URL_ROOT."/public/adherents/index.php","Espace adherents public");
                 
