@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -157,7 +156,7 @@ if ($result)
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">';
       print img_object($langs->trans("ShowProspect"),"company");
-      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">'.$obj->nom.'</a></td>';
+      print ' '.dolibarr_trunc($obj->nom,44).'</a></td>';
       print "<td>".$obj->ville."&nbsp;</td>";
       print "<td align=\"center\">$obj->departement</td>";
       // Date création
