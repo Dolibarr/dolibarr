@@ -13,3 +13,6 @@ SendingCard=Sending Card
 NewSending=New sending
 CreateASending=Create a sending
 CreateSending=Create sending
+QtyOrdered=Qty ordered
+QtyShipped=Qty shipped
+KeepToShip=Keep to ship

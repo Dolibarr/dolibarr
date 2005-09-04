@@ -13,3 +13,6 @@ SendingCard=Fiche Expédition
 NewSending=Nouvelle expédition
 CreateASending=Créer une expedition
 CreateSending=Créer expedition
+QtyOrdered=Qté commandée
+QtyShipped=Qté expédiée
+KeepToShip=Reste à expédier
