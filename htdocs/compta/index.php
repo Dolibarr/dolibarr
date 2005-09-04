@@ -131,7 +131,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
                 print '<tr '.$bc[$var].'><td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
-                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a></td>';
+                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,20).'</a></td>';
                 print '<td align="right">'.price($obj->total_ttc).'</td>';
                 print '</tr>';
                 $tot_ttc+=$obj->total_ttc;
