@@ -238,8 +238,10 @@ if ($_POST["action"] == 'add')
                         $lines = $contrat->fetch_lignes();
                         for ($i = 0 ; $i < sizeof($lines) ; $i++)
                         {
+                            $liblignefac=($contrat->lignes[$i]->desc?$contrat->lignes[$i]->desc:$contrat->lignes[$i]->libelle);
+
                             $result = $facture->addline($facid,
-                            addslashes($lines[$i]->description),
+                            addslashes($liblignefac),
                             $lines[$i]->subprice,
                             $lines[$i]->qty,
                             $lines[$i]->tva_tx,

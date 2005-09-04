@@ -539,8 +539,9 @@ class Contrat
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='', $tvatx)
     {
-        if ($this->statut == 0)
-        {
+// On doit pouvoir modifier datestart et dateend meme si non brouillon
+//        if ($this->statut == 0)
+//        {
             // Nettoyage parametres
             $qty=trim($qty);
             $desc=trim($desc);
@@ -595,12 +596,12 @@ class Contrat
     
                 return -1;
             }
-        }
-        else
-        {
-            dolibarr_syslog("Contrat::UpdateLigne Erreur -2 Contrat en mode incompatible pour cette action");
-            return -2;
-        }
+//        }
+//        else
+//        {
+//            dolibarr_syslog("Contrat::UpdateLigne Erreur -2 Contrat en mode incompatible pour cette action");
+//            return -2;
+//        }
     }
     
     /**
