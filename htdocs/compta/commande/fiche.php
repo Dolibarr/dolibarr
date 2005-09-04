@@ -295,7 +295,7 @@ if ($_GET["id"] > 0)
         
             if ($commande->statut > 0 && $user->rights->facture->creer)
             {
-                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">'.$langs->trans("GenerateBill").'</a>';
+                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">'.$langs->trans("CreateBill").'</a>';
             }
         
             if ($user->rights->commande->creer)
