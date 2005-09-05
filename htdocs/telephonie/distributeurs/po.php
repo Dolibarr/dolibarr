@@ -73,6 +73,10 @@ if ($_GET["id"])
   $hselected = $h;
   $h++;
   
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/stats.php?id='.$distri->id;
+  $head[$h][1] = "Statistiques";
+  $h++;
+
   dolibarr_fiche_head($head, $hselected, "Distributeur");
   
   
