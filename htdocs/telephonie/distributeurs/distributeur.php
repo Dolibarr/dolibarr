@@ -230,7 +230,7 @@ if ($_GET["id"])
   /* ************************************************************************** */
   print "\n<div class=\"tabsAction\">\n";
   
-  if ($_GET["action"] == '')
+  if ($_GET["action"] == '' && $user->admin)
     {
       print "<a class=\"tabAction\" href=\"fiche.php?action=create_commercial&amp;distri=".$distri->id."\">".$langs->trans("Nouveau commercial")."</a>";
     }
