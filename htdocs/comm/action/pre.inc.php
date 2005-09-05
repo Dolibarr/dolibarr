@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -60,7 +59,7 @@ function llxHeader($head = "", $urlp = "")
     
     if ($conf->propal->enabled) {
         $langs->load("propal");
-        $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Propales"));
+        $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
     }
     
     if ($conf->projet->enabled) {
