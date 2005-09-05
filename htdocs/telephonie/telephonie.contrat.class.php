@@ -32,6 +32,7 @@ class TelephonieContrat {
     $this->db = $DB;
     $this->error_message = '';
     $this->statuts[-1] = "En attente";
+    $this->statuts[0] = "En traitement";
     $this->statuts[1] = "A commander";
     $this->statuts[2] = "En commande";
     $this->statuts[3] = "Actif";
