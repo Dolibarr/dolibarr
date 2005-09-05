@@ -169,8 +169,10 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
     }
 
-  if (MAIN_MODULE_BOOKMARK == '1')
-    $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
+  if ($conf->bookmark->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
+    }
 
   if ($user->rights->user->user->lire || $user->admin)
     {

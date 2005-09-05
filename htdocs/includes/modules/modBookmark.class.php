@@ -17,25 +17,24 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \defgroup   bookmark4u  Module Bookmark4u
-   \brief      Module pour gérer l'addon Bookmark4u
+        \defgroup   bookmark    Module Bookmark
+        \brief      Module pour gérer l'addon Bookmark
 */
 
 /**
-        \file       htdocs/includes/modules/modBookmark4u.class.php
-        \ingroup    bookmark4u
-        \brief      Fichier de description et activation du module Bookmark4u
+        \file       htdocs/includes/modules/modBookmark.class.php
+        \ingroup    bookmark
+        \brief      Fichier de description et activation du module Bookmark
 */
 
 include_once "DolibarrModules.class.php";
 
 /** 
-    \class      modBookmark4u
-    \brief      Classe de description et activation du module Bookmark4u
+    \class      modBookmark
+    \brief      Classe de description et activation du module Bookmark
 */
 
 class modBookmark extends DolibarrModules
@@ -52,14 +51,14 @@ class modBookmark extends DolibarrModules
 
     $this->family = "technic";
     $this->name = "Bookmark";
-    $this->description = "Gestion des Bookmark";
+    $this->description = "Gestion des Bookmarks";
     $this->revision = explode(" ","$Revision$");
     $this->version = $this->revision[1]."(DEV)";
 
     $this->const_name = "MAIN_MODULE_BOOKMARK";
     $this->const_config = MAIN_MODULE_BOOKMARK;
     $this->special = 1;
-    //$this->picto='';
+    $this->picto='bookmark';
 
     // Dir
     $this->dirs = array();
@@ -69,7 +68,7 @@ class modBookmark extends DolibarrModules
     $this->requiredby = array();
 
     // Config pages
-    //$this->config_page_url = "clicktodial.php";
+    //$this->config_page_url = "";
 
     // Constantes
     $this->const = array();
