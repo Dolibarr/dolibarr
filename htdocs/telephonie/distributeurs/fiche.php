@@ -44,11 +44,12 @@ if($_POST["action"] == 'add')
     }
 }
 
-if($_POST["action"] == 'add_commercial')
+if($_POST["action"] == 'add_commercial' && $user->admin)
 {
   $commercial->nom = $_POST["nom"];
   $commercial->prenom = $_POST["prenom"];
   $commercial->distri = $_GET["distri"];
+  $commercial->email = $_POST["email"];
   
   if ($commercial->create() <> 0)
     {
@@ -90,12 +91,16 @@ if ($_GET["action"] == 'create_commercial')
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
   print '<tr><td width="20%">Prénom</td>';
-  print '<td><input type="text" size="30" name="prenom" value="'.$commercial->prenom.'"></td>';
+  print '<td><input type="text" size="20" maxlength="20" name="prenom" value="'.$commercial->prenom.'"></td>';
   print '<td>'.$commercial->error_string["prenom"].'</td></tr>';
   print '<tr><td width="20%">Nom</td>';
-  print '<td><input type="text" size="30" name="nom" value="'.$commercial->nom.'"></td>';
+  print '<td><input type="text" size="30" maxlength="30" name="nom" value="'.$commercial->nom.'"></td>';
   print '<td>'.$commercial->error_string["nom"].'</td></tr>';
  
+  print '<tr><td width="20%">Email</td>';
+  print '<td><input type="text" size="50" maxlength="70" name="email" value="'.$commercial->email.'"></td>';
+  print '<td>'.$commercial->error_string["email"].'</td></tr>';
+
   print '<tr><td colspan="2"><input type="submit"></td></tr>';
 
   print '</table><br />';

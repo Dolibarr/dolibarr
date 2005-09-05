@@ -60,10 +60,10 @@ class CommercialTelephonie {
 	{
 
 	  $nuser = new User($this->db);
-	  $nuser->nom = $this->nom;
-	  $nuser->prenom = $this->prenom;
+	  $nuser->nom = trim($this->nom);
+	  $nuser->prenom = trim($this->prenom);
 	  $nuser->admin = 0;
-	  $nuser->email = '';
+	  $nuser->email = trim($this->email);
 	  $nuser->login = substr($this->nom,0,3).substr($this->prenom,0,3);
 
 	  $uid = $nuser->create();
