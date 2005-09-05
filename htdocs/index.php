@@ -139,7 +139,7 @@ if ($user->societe_id == 0)
                  'user',
                  'product',
                  'service',
-                 'phone');
+                 'phoning');
     // Titre des lignes du tableau de bord
     $titres=array($langs->trans("Customers"),
                   $langs->trans("Prospects"),
