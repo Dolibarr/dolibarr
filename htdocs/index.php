@@ -200,8 +200,13 @@ print '</tr>';
 
 $var=true;
 
+
+//
+// Ne pas inclure de sections sans gestion de permissions
+//
+
 // Nbre actions à faire (en retard)
-if ($conf->commercial->enabled || $conf->compta->enabled)
+if (($conf->commercial->enabled || $conf->compta->enabled)  && $user->rights->actions->lire)
 {
     include_once("./actioncomm.class.php");
     $board=new ActionComm($db);
