@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -194,7 +193,7 @@ if (sizeof($amount))
     }
 
     // Total
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$catotal.'</td><td>&nbsp;</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($catotal).'</td><td>&nbsp;</td></tr>';
 
     $db->free($result);
 }
