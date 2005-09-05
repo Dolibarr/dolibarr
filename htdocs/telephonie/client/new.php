@@ -372,7 +372,7 @@ if ($user->rights->telephonie->ligne->creer)
   print "<legend>Coordonnées bancaires</legend>\n";
   print '<table class="noborder" width="100%">';
 
-  print '<tr><td width="20%">Titulaire du compte</td><td><input type="text" size="30" '.$focus.' name="titulaire" value="'.$contact->name.'"></td></tr>';
+  print '<tr><td width="20%">Titulaire du compte</td><td><input type="text" size="30" '.$focus.' name="titulaire" value="'.$_POST["titulaire"].'"></td></tr>';
 
   print '<tr><td width="20%">RIB</td><td colspan="3">';
   print '<input type="text" size="6" maxlength="5" '.$focus.' name="rib_banque" value="'.$_POST["rib_banque"].'">';
