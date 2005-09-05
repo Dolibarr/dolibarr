@@ -28,6 +28,10 @@
 */
  
 require_once("./pre.inc.php");
+
+if (!$user->rights->societe->lire)
+  accessforbidden();
+
 require_once("./contact.class.php");
 //require_once("./cactioncomm.class.php");
 //require_once("./actioncomm.class.php");
