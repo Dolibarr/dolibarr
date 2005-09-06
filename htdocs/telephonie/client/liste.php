@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,11 +65,16 @@ $pagenext = $page + 1;
 
 
 $sql = "SELECT s.idp as socidp, s.nom, count(l.ligne) as ligne, cs.ca";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."telephonie_client_stats as cs ON s.idp=cs.fk_client_comm";
 
 $sql .= " WHERE l.fk_client_comm = s.idp ";
+
+$sql .= " AND s.idp = sp.fk_soc";
+$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 
 if ($_GET["search_client"])
 {
