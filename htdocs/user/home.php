@@ -55,25 +55,27 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
  * Recherche User
  */
 $var=false;
-print '<table class="noborder" width="100%">';
 print '<form method="post" action="'.DOL_URL_ROOT.'/user/index.php">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAUser").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("Ref").'</td><td><input class="flat" type="text" name="search_user" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
-print "</form></table><br>\n";
+print "</table><br>\n";
+print '</form>';
 
 /*
  * Recherche Group
  */
 $var=false;
-print '<table class="noborder" width="100%">';
 print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAGroup").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("Ref").':</td><td><input class="flat" type="text" name="search_group" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
-print "</form></table><br>\n";
+print "</table><br>\n";
+print '</form>';
 
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 

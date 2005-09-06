@@ -133,9 +133,9 @@ print '<td align="right"><b>'.$SommeA.'</b></td>';
 print '<td align="right"><b>'.$SommeB.'</b></td>';
 print '<td align="right"><b>'.$SommeC.'</b></td>';
 print '<td align="right"><b>'.$SommeD.'</b></td>';
-print "<tr>\n";
+print '</tr>';
 
-print "</table>";
+print "</table>\n";
 
 print '<br>';
 
