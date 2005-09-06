@@ -50,7 +50,7 @@ class modBookmark extends DolibarrModules
     $this->numero = 67 ;
 
     $this->family = "technic";
-    $this->name = "Bookmark";
+    $this->name = "Bookmarks";
     $this->description = "Gestion des Bookmarks";
     $this->revision = explode(" ","$Revision$");
     $this->version = $this->revision[1]."(DEV)";
