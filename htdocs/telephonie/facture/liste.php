@@ -63,18 +63,21 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT f.rowid, f.date, f.ligne, f.fourn_montant, f.cout_vente, f.cout_vente_remise, f.gain, f.fk_facture";
+$sql = "SELECT f.rowid, f.date, f.ligne, f.fourn_montant, f.cout_vente, f.gain, f.fk_facture";
 $sql .= " ,s.nom, s.idp";
+$sql .= " , fac.facnumber as ref";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
+$sql .= " , ".MAIN_DB_PREFIX."facture as fac";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 
 $sql .= " WHERE s.idp = l.fk_soc_facture AND l.rowid = f.fk_ligne";
+$sql .= " AND l.fk_soc_facture = s.idp";
+$sql .= " AND l.fk_client_comm = sp.fk_soc";
+$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 
-if ($user->rights->telephonie->ligne->lire_restreint)
-{
-  $sql .= " AND l.fk_commercial_suiv = ".$user->id;
-}
+$sql .= " AND f.fk_facture = fac.rowid";
 
 if ($_GET["search_ligne"])
 {
@@ -84,6 +87,11 @@ if ($_GET["search_ligne"])
 if ($_GET["search_client"])
 {
   $sql .= " AND s.nom LIKE '%".$_GET["search_client"]."%'";
+}
+
+if ($_GET["search_facture"])
+{
+  $sql .= " AND fac.facnumber LIKE '%".$_GET["search_facture"]."%'";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -102,8 +110,12 @@ if ($result)
 
   print_liste_field_titre("Ligne","liste.php","l.ligne");
   print '<td align="center">Date</td><td align="right">Montant HT</td>';
-  print '<td align="right">Coût fournisseur HT</td>';
-  print_liste_field_titre("Gain","liste.php","f.gain",'','','align="right"');
+
+  if ($user->rights->telephonie->ligne->gain)
+    {
+      print '<td align="right">Coût fournisseur HT</td>';
+      print_liste_field_titre("Gain","liste.php","f.gain",'','','align="right"');
+    }
   print '<td align="center">Facture</td>';
   print "</tr>\n";
 
@@ -115,9 +127,15 @@ if ($result)
   print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 
   print '<td>&nbsp;</td>';
-  print '<td>&nbsp;</td>';
-  print '<td>&nbsp;</td>';
-  print '<td>&nbsp;</td>';
+
+  if ($user->rights->telephonie->ligne->gain)
+    {
+      print '<td>&nbsp;</td>';
+      print '<td>&nbsp;</td>';
+    }
+
+
+  print '<td align="center" ><input type="text" name="search_facture" size="8" maxlength="10" value="'.$_GET["search_facture"].'"></td>';
   print '</form>';
   print '</tr>';
 
@@ -140,22 +158,26 @@ if ($result)
       print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?numero='.$obj->ligne.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
       print '<td align="center">'.$obj->date."</td>\n";
-      print '<td align="right">'.sprintf("%01.4f",$obj->cout_vente_remise)."</td>\n";
-      print '<td align="right">'.sprintf("%01.4f",$obj->fourn_montant)."</td>\n";
+      print '<td align="right">'.sprintf("%01.4f",$obj->cout_vente)."</td>\n";
 
-      print '<td align="right">';
-      if ($obj->gain < 0 && $obj->cout_vente_remise)
+      if ($user->rights->telephonie->ligne->gain)
 	{
-	  print '<font color="red"><b>';
-	  print sprintf("%01.4f",$obj->gain);
-	  print "</b></font>";
+	  print '<td align="right">'.sprintf("%01.4f",$obj->fourn_montant)."</td>\n";
+
+	  print '<td align="right">';
+	  if ($obj->gain < 0 && $obj->cout_vente)
+	    {
+	      print '<font color="red"><b>';
+	      print sprintf("%01.4f",$obj->gain);
+	      print "</b></font>";
+	    }
+	  else
+	    {
+	      print sprintf("%01.4f",$obj->gain);
+	    }
+	  print "</td>\n";
 	}
-      else
-	{
-	  print sprintf("%01.4f",$obj->gain);
-	}
-      print "</td>\n";
-      print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.$obj->fk_facture."</a></td>\n";
+      print '<td align="center"><a href="'.DOL_URL_ROOT.'/telephonie/client/facture.php?facid='.$obj->fk_facture.'">'.$obj->ref."</a></td>\n";
       print "</tr>\n";
       $i++;
     }
