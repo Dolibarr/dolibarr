@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -111,12 +110,12 @@ if ($result)
 $var=!$var;
 print "<tr $bc[$var]>";
 print "<td>&nbsp;</td><td><input name=\"label\" type=\"text\" size=45></td>";
-print "<td align=\"center\"><input type=\"submit\" value=\"".$langs->trans("Add")."\"</td></tr>";
+print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 print "</table></form>";
 
 
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

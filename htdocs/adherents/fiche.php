@@ -492,7 +492,7 @@ if ($action == 'create')
     print "</table>\n";
     print '<br>';
     
-    print '<center><input type="submit" value="'.$langs->trans("AddMember").'"></center>';
+    print '<center><input type="submit" class="button" value="'.$langs->trans("AddMember").'"></center>';
 
     print "</form>\n";
 
@@ -822,7 +822,7 @@ if ($rowid)
             print strftime("%Y",($adh->datefin?$adh->datefin:time())).'" ></td></tr>';
         }
 
-        print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"</td></tr>';
+        print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"</td></tr>';
     
         print '</form>';
         print '</table>';

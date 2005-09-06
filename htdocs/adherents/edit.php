@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /** 
@@ -192,8 +191,8 @@ if ($rowid)
     print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
   }
   print '<tr><td colspan="2" align="center">';
-  print '<input type="submit" name="bouton" value="'.$langs->trans("Save").'">&nbsp;';
-  print '<input type="submit" value="'.$langs->trans("Cancel").'">';
+  print '<input type="submit" class="button" name="bouton" value="'.$langs->trans("Save").'">&nbsp;';
+  print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'">';
   print '</td></tr>';
   print '</table>';
   print '</form>';

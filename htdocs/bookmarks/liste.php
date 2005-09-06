@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
  
 /**
@@ -107,7 +106,7 @@ if ($resql)
 
         // Id
         print '<td align="left">';
-        print "<a href=\"fiche.php?id=".$obj->bid."\">".img_picto($langs->trans("ShowBookmark"),"bookmark").' '.$obj->bid."</a>";
+        print "<a href=\"fiche.php?id=".$obj->bid."\">".img_object($langs->trans("ShowBookmark"),"bookmark").' '.$obj->bid."</a>";
         print '</td>';
 
         $lieninterne=0;

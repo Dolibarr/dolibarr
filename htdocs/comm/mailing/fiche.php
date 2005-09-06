@@ -230,7 +230,7 @@ if ($_GET["action"] == 'create')
     print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value=""></td></tr>';
     print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value=""></td></tr>';
     print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'</td><td><textarea cols="70" rows="10" name="body"></textarea></td></tr>';
-    print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("CreateMailing").'"></td></tr>';
+    print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></td></tr>';
     print '</table>';
     print '</form>';
 }
@@ -409,7 +409,7 @@ else
             print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'</td><td colspan="3"><textarea name="body" cols=70 rows=10>';
             print $mil->body.'</textarea></td></tr>';
 
-            print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+            print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
             print '</table>';
             print '</form>';
 

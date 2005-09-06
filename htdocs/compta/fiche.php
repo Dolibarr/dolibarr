@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -401,7 +400,8 @@ if ($socid > 0)
      *
      *
      */
-    if ($action == 'changevalue') {
+    if ($action == 'changevalue')
+    {
 
         print "<hr noshade>";
         print "<form action=\"index.php?socid=$societe->id\" method=\"post\">";
@@ -412,12 +412,12 @@ if ($socid > 0)
         print "<option value=\"t\">Oui";
         print "<option value=\"f\">Non";
         print "</select>";
-        print "<input type=\"submit\" value=\"Mettre &agrave; jour\">";
+        print "<input type=\"submit\" class=\"button\" value=\"".$langs->trans("Update")."\">";
         print "</form>\n";
 
     }
     else
-      {
+    {
         /*
          *
          * Liste des contacts

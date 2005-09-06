@@ -576,7 +576,7 @@ else
                 print '<td>';
                 print $form->select_array("group",$uss);
                 print ' &nbsp; ';
-                print '<input type="submit" class=button value="'.$langs->trans("Add").'">';
+                print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                 print '</td></tr>'."\n";
                 print '</table></form>'."\n";
             }
@@ -702,7 +702,7 @@ else
             print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
             print '<td class="valeur" colspan="2"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
             
-            print '<tr><td align="center" colspan="3"><input value="'.$langs->trans("Save").'" type="submit"></td></tr>';
+            print '<tr><td align="center" colspan="3"><input value="'.$langs->trans("Save").'" class="button" type="submit"></td></tr>';
 
             print '</table><br>';
             print '</form>';

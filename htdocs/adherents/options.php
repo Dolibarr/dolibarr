@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**     \file       htdocs/adherents/options.php
@@ -152,8 +151,8 @@ if ($_GET["action"] == 'create') {
   print '</td></tr>';
   print '<tr><td>Taille</td><td><input type="text" name="size" size="5" value="255"></td></tr>';  
   
-  print '<tr><td colspan="2" align="center"><input type="submit" name="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-  print '<input type="submit" name="button" value="'.$langs->trans("Cancel").'"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" name="button" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+  print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
   print "</form>\n";
   print "</table>\n";
   
@@ -189,8 +188,8 @@ if ($_GET["attrname"] && $_GET["action"] == 'edit')
   print '</td></tr>';
 
   print '<tr><td>'.$langs->trans("Size").'</td><td class="valeur"><input type="text" name="size" size="5" value="'.$size.'"></td></tr>';  
-  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"> &nbsp; ';
-  print '<input type="submit" name="button" value="'.$langs->trans("Cancel").'"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+  print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
   print '</table>';
   print "</form>";
   
@@ -198,5 +197,5 @@ if ($_GET["attrname"] && $_GET["action"] == 'edit')
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

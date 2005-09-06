@@ -200,7 +200,7 @@ if ($_GET["action"] == 'create')
   print "<textarea name=\"adresse_proprio\" rows=\"3\" cols=\"40\">".$_POST["adresse_proprio"];
   print "</textarea></td></tr>";
 
-  print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("CreateAccount").'" type="submit"></td></tr>';
+  print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></td></tr>';
   print '</form>';
   print '</table>';
 }
@@ -369,8 +369,8 @@ else
     	  print "</textarea></td></tr>";
       }
       
-	  print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Modify").'" type="submit">';
-	  print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+	  print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Modify").'" type="submit" class="button">';
+	  print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';
 	  print '</td></tr>';
 	  print '</form>';
 	  print '</table>';

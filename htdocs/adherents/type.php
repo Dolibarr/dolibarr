@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -194,8 +193,8 @@ if ($_GET["action"] == 'create') {
   print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
   print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea></td></tr>";
 
-  print '<tr><td colspan="2" align="center"><input type="submit" name="button" value="'.$langs->trans("Add").'"> &nbsp;';
-  print '<input type="submit" name="button" value="'.$langs->trans("Cancel").'"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp;';
+  print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
 
   print "</form>\n";
   print "</table>\n";
@@ -298,8 +297,8 @@ if ($rowid > 0)
         print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
         print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\">".$adht->mail_valid."</textarea></td></tr>";
         
-        print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"> &nbsp;';
-        print '<input type="submit" name="button" value="'.$langs->trans("Cancel").'"></td></tr>';
+        print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp;';
+        print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
         
         print '</table>';
         print "</form>";

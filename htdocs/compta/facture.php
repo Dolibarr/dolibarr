@@ -795,7 +795,7 @@ if ($_GET["action"] == 'create')
     }
 
     // Bouton "Create Draft"
-    print '<tr><td colspan="3" align="center"><input type="submit" name="bouton" value="'.$langs->trans("CreateDraft").'"></td></tr>';
+    print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans("CreateDraft").'"></td></tr>';
     print "</form>\n";
     print "</table>\n";
 

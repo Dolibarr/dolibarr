@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
  
 /**	 
@@ -113,7 +112,7 @@ if ($_GET["socid"] > 0) {
   print "<textarea name=\"note\" cols=\"48\" rows=\"10\">".$societe->note."</textarea><br>";
   print '</td><td width="50%" valign="top">'.nl2br($societe->note).'</td>';
   print "</td></tr>";
-  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Modify").'"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
   print "</table>";
 
   print '</form>';
@@ -123,5 +122,5 @@ print '</div><br>';
 
 $db->close();
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>
