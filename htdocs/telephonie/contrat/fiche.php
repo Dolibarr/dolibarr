@@ -585,6 +585,7 @@ else
 	      $sql .= " WHERE l.fk_fournisseur = f.rowid";
 	      $sql .= " AND l.fk_soc = ss.idp ";
 	      $sql .= " AND l.fk_contrat = ".$contrat->id;
+	      $sql .= " ORDER BY l.statut ASC";
 	      
 	      if ( $db->query( $sql) )
 		{
