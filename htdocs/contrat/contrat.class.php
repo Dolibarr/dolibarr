@@ -279,8 +279,10 @@ class Contrat
         /*
          * Lignes contrats liées à un produit
          */
-        $sql = "SELECT d.description, p.rowid, p.label, p.description as product_desc, p.ref,";
-        $sql.= " d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice";
+        $sql = "SELECT p.rowid, p.label, p.description as product_desc, p.ref,";
+        $sql.= " d.description, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
+        $sql.= " d.date_ouverture_prevue, d.date_ouverture,";
+        $sql.= " d.date_fin_validite, d.date_cloture";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d, ".MAIN_DB_PREFIX."product as p";
         $sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = p.rowid";
         $sql.= " ORDER by d.rowid ASC";
@@ -296,6 +298,7 @@ class Contrat
                 $objp                  = $this->db->fetch_object($result);
         
                 $ligne                 = new ContratLigne();
+                $ligne->id             = $objp->rowid;
                 $ligne->desc           = stripslashes($objp->description);  // Description ligne
                 $ligne->libelle        = stripslashes($objp->label);        // Label produit
                 $ligne->product_desc   = stripslashes($objp->product_desc); // Description produit
@@ -306,6 +309,11 @@ class Contrat
                 $ligne->remise_percent = $objp->remise_percent;
                 $ligne->price          = $objp->price;
                 $ligne->product_id     = $objp->rowid;
+                    
+                $ligne->date_debut_prevue = $objp->date_ouverture_prevue;
+                $ligne->date_debut_reel   = $objp->date_ouverture;
+                $ligne->date_fin_prevue   = $objp->date_fin_validite;
+                $ligne->date_fin_reel     = $objp->date_cloture;
         
                 $this->lignes[$i]      = $ligne;
                 //dolibarr_syslog("1 ".$ligne->desc);
@@ -323,9 +331,11 @@ class Contrat
         /*
          * Lignes contrat liées à aucun produit
          */
-        $sql = "SELECT d.qty, d.description, d.price_ht, d.subprice, d.tva_tx, d.rowid, d.remise_percent";
-        $sql .= " FROM ".MAIN_DB_PREFIX."contratdet as d";
-        $sql .= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = 0";
+        $sql = "SELECT d.qty, d.description, d.price_ht, d.subprice, d.tva_tx, d.rowid, d.remise_percent,";
+        $sql.= " d.date_ouverture_prevue, d.date_ouverture,";
+        $sql.= " d.date_fin_validite, d.date_cloture";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d";
+        $sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = 0";
         
         $result = $this->db->query($sql);
         if ($result)
@@ -346,6 +356,11 @@ class Contrat
                 $ligne->remise_percent = $objp->remise_percent;
                 $ligne->price          = $objp->price;
                 $ligne->product_id     = 0;
+        
+                $ligne->date_debut_prevue = $objp->date_ouverture_prevue;
+                $ligne->date_debut_reel   = $objp->date_ouverture;
+                $ligne->date_fin_prevue   = $objp->date_fin_validite;
+                $ligne->date_fin_reel     = $objp->date_cloture;
         
                 $this->lignes[$i]      = $ligne;
                 $i++;
@@ -1072,6 +1087,23 @@ class Contrat
 
 class ContratLigne  
 {
+    var $id;
+    var $desc;
+    var $libelle;
+    var $product_desc;
+    var $qty;
+    var $ref;
+    var $tva_tx;
+    var $subprice;
+    var $remise_percent;
+    var $price;
+    var $product_id;
+                  
+    var $date_debut_prevue;
+    var $date_debut_reel;
+    var $date_fin_prevue;
+    var $date_fin_reel;
+
     function ContratLigne()
     {
     }

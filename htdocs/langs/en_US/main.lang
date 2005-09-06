@@ -272,6 +272,9 @@ NbOfObjects=Number of objects
 NbOfReferers=Number of referers
 Referers=Referers
 TotalQuantity=Total quantity
+DateFromTo=From %s to %s
+DateFrom=From %s
+DateUntil=Until %s
 # Countries
 CountryFR=France
 CountryBE=Belgium

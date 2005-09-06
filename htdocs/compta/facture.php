@@ -240,13 +240,21 @@ if ($_POST["action"] == 'add')
                         {
                             $liblignefac=($contrat->lignes[$i]->desc?$contrat->lignes[$i]->desc:$contrat->lignes[$i]->libelle);
 
+                            // Plage de dates
+                            $date_start=$contrat->lignes[$i]->date_debut_prevue;
+                            if ($contrat->lignes[$i]->date_debut_reel) $date_start=$contrat->lignes[$i]->date_debut_reel;
+                            $date_end=$contrat->lignes[$i]->date_fin_prevue;
+                            if ($contrat->lignes[$i]->date_fin_reel) $date_end=$contrat->lignes[$i]->date_fin_reel;
+
                             $result = $facture->addline($facid,
                             addslashes($liblignefac),
                             $lines[$i]->subprice,
                             $lines[$i]->qty,
                             $lines[$i]->tva_tx,
                             $lines[$i]->product_id,
-                            $lines[$i]->remise_percent);
+                            $lines[$i]->remise_percent,
+                            $date_start,
+                            $date_end);
                         }
                     }
                     else
@@ -537,6 +545,33 @@ if ($_GET["action"] == 'pdf')
     // Génère également le fichier meta dans le meme répertoire (pour faciliter les recherches et indexation)
     facture_pdf_create($db, $_GET["facid"]);
 }
+
+
+
+
+/*********************************************************************
+*
+* Fonctions internes
+*
+**********************************************************************/
+function print_date_range($date_start,$date_end)
+{
+    global $langs;
+    
+    if ($date_start && $date_end)
+    {
+        print ' ('.$langs->trans("DateFromTo",dolibarr_print_date($date_start),dolibarr_print_date($date_end)).')';
+    }
+    if ($date_start && ! $date_end)
+    {
+        print ' ('.$langs->trans("DateFrom",dolibarr_print_date($date_start)).')';
+    }
+    if (! $date_start && $date_end)
+    {
+        print ' ('.$langs->trans("DateUntil",dolibarr_print_date($date_end)).')';
+    }
+}
+
 
 
 llxHeader('',$langs->trans("Bill"),'Facture');
@@ -939,7 +974,10 @@ if ($_GET["action"] == 'create')
         print '<td align="right">'.$langs->trans("Qty").'</td>';
         print '<td align="right">'.$langs->trans("Discount").'</td></tr>';
 
+        // Lignes de contrat produits prédéfinis
         $sql = "SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.remise_percent, pt.description,";
+        $sql.= " pt.date_ouverture_prevue as date_debut_prevue, pt.date_ouverture as date_debut_reel,";
+        $sql.= " pt.date_fin_validite as date_fin_prevue, pt.date_cloture as date_fin_reel,";
         $sql.= " p.label as product, p.ref, p.rowid as prodid";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as pt, ".MAIN_DB_PREFIX."product as p";
         $sql.= " WHERE pt.fk_product = p.rowid AND pt.fk_contrat = ".$contrat->id;
@@ -957,6 +995,13 @@ if ($_GET["action"] == 'create')
                 $var=!$var;
                 print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.img_object($langs->trans(""),"service")." ".$objp->ref."</a>";
                 print $objp->product?' - '.$objp->product:'';
+                // Plage de dates
+                $date_start=$objp->date_debut_prevue;
+                if ($objp->date_debut_reel) $date_start=$objp->date_debut_reel;
+                $date_end=$objp->date_fin_prevue;
+                if ($objp->date_fin_reel) $date_end=$objp->date_fin_reel;
+                print_date_range($date_start,$date_end);
+                
                 print "</td>\n";
                 print '<td>';
                 print dolibarr_trunc($objp->description,60);
@@ -974,11 +1019,13 @@ if ($_GET["action"] == 'create')
             dolibarr_print_error($db);
         }
         // Lignes de contrat non produits prédéfinis
-        $sql  = "SELECT pt.rowid, pt.description as product, pt.tva_tx, pt.subprice, pt.qty, pt.remise_percent";
-        $sql .= " FROM ".MAIN_DB_PREFIX."contratdet as pt";
-        $sql .= " WHERE  pt.fk_contrat = ".$contrat->id;
-        $sql .= " AND (pt.fk_product = 0 or pt.fk_product is null)";
-        $sql .= " ORDER BY pt.rowid ASC";
+        $sql  = "SELECT pt.rowid, pt.description as product, pt.tva_tx, pt.subprice, pt.qty, pt.remise_percent,";
+        $sql.= " pt.date_ouverture_prevue as date_debut_prevue, pt.date_ouverture as date_debut_reel,";
+        $sql.= " pt.date_fin_validite as date_fin_prevue, pt.date_cloture as date_fin_reel";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as pt";
+        $sql.= " WHERE  pt.fk_contrat = ".$contrat->id;
+        $sql.= " AND (pt.fk_product = 0 or pt.fk_product is null)";
+        $sql.= " ORDER BY pt.rowid ASC";
 
         $result=$db->query($sql);
         if ($result)
@@ -1306,36 +1353,14 @@ else
                             else print img_object($langs->trans('ShowProduct'),'product');
                             print ' '.$objp->ref.'</a>';
                             print ' - '.nl2br(stripslashes($objp->product));
-                            if ($objp->date_start && $objp->date_end)
-                            {
-                                print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
-                            }
-                            if ($objp->date_start && ! $objp->date_end)
-                            {
-                                print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
-                            }
-                            if (! $objp->date_start && $objp->date_end)
-                            {
-                                print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
-                            }
+                            print_date_range($objp->date_start,$objp->date_end);
                             print ($objp->description && $objp->description!=$objp->product)?'<br>'.$objp->description:'';
                             print '</td>';
                         }
                         else
                         {
                             print '<td>'.stripslashes(nl2br($objp->description));
-                            if ($objp->date_start && $objp->date_end)
-                            {
-                                print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
-                            }
-                            if ($objp->date_start && ! $objp->date_end)
-                            {
-                                print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
-                            }
-                            if (! $objp->date_start && $objp->date_end)
-                            {
-                                print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
-                            }
+                            print_date_range($objp->date_start,$objp->date_end);
                             print "</td>\n";
                         }
                         print '<td align="right">'.$objp->tva_taux.'%</td>';
