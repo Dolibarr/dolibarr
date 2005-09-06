@@ -158,7 +158,7 @@ if ($_GET["id"] or $_GET["numero"])
       $fac = new Facture($db);
       $fac->fetch($facs[$facnum]);
       
-      print '<tr><td>Facture</td><td colspan="3">'.$fac->ref.'</td></tr>';
+      print '<tr><td>Facture</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/telephonie/client/facture.php?facid='.$fac->id.'">'.$fac->ref.'</a></td></tr>';
 
       print "</table>\n";
     }
