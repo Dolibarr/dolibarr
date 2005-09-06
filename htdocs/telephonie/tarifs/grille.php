@@ -59,14 +59,15 @@ if ($_POST["action"] == 'modif' && $auth_write)
   $sortorder = "DESC";
   $sortfield = "m.tms";
 
-  if ($_POST["temporel"] > 0)
+  $temporel = ereg_replace(",",".",$_POST["temporel"]);
+
+  if ($temporel > 0)
     {
       require_once DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.grille.class.php";
 
       $obgrille = new TelephonieTarifGrille($db);
 
-      $obgrille->UpdateTarif($_GET["id"], $_POST["tarif"], $_POST["temporel"], $_POST["fixe"], $user);
-
+      $obgrille->UpdateTarif($_GET["id"], $_POST["tarif"], $temporel, $_POST["fixe"], $user);
 
       Header("Location: grille.php?id=".$_GET["id"]);
     }
