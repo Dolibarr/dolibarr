@@ -81,6 +81,8 @@ Module58Name=ClickToDial
 Module58Desc=Intégration de ClickToDial
 Module59Name=Bookmark4u
 Module59Desc=Ajoute fonction pour générer un compte Bookmark4u depuis un compte Dolibarr
+Module67Name=Bookmarks
+Module67Desc=Gestion des bookmarks
 Module70Name=Interventions
 Module70Desc=Gestion des interventions
 Module75Name=Déplacements
@@ -354,3 +356,4 @@ WithdrawalsSetup=Configuration du module prélèvement
 ##### ExternalRSS #####
 ExternalRSSSetup=Configuration des imports de flux RSS
 NewRSS=Syndication d'un nouveau flux RSS
+
