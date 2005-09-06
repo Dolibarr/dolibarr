@@ -192,12 +192,12 @@ class modTelephonie extends DolibarrModules
     $this->rights[$r][5] = 'resilier';
     $r++;
 
-    $this->rights[$r][0] = 194; // id de la permission
-    $this->rights[$r][1] = 'Consulter ses lignes (lecture restreinte)'; // libelle de la permission
-    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][0] = 194;
+    $this->rights[$r][1] = 'Consulter la marge des lignes';
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'ligne';
-    $this->rights[$r][5] = 'lire_restreint';
+    $this->rights[$r][5] = 'gain';
     $r++;
 
     $this->rights[$r][0] = 146;
