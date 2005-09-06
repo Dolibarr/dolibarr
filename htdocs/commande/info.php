@@ -31,14 +31,15 @@ require("./pre.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 $langs->load("orders");
-
-llxHeader();
+$langs->load("sendings");
 
 
 /*
  * Visualisation de la fiche
  *
  */
+
+llxHeader();
 
 $commande = new Commande($db);
 $commande->fetch($_GET["id"]);
