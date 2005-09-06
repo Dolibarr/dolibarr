@@ -22,6 +22,7 @@
  * $Id$
  * $Source$
  */
+ 
 /**
         \file       htdocs/product/document.php
         \ingroup    product
@@ -251,7 +252,7 @@ if ($productid > 0)
 				}
 				else
 				{
-					echo '<a href="'.DOL_URL_ROOT.'/product/document.php?id='.$product->id.'&action=delete&urlfile='.urlencode($file).'">'.$langs->trans('Delete').'</a>';
+					echo '<a href="'.DOL_URL_ROOT.'/product/document.php?id='.$product->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
 				}
 				print "</td></tr>\n";
 			}

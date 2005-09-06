@@ -22,6 +22,7 @@
  * $Id$
  * $Source$
  */
+ 
 /**
         \file       htdocs/product/document.php
         \ingroup    product
@@ -33,9 +34,7 @@ require_once("./pre.inc.php");
 require_once("../../contact.class.php");
 require_once("../../cactioncomm.class.php");
 require_once("../../actioncomm.class.php");
-if ($conf->webcal->enabled) {
-    require_once("../../lib/webcal.class.php");
-}
+if ($conf->webcal->enabled) require_once("../../lib/webcal.class.php");
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -83,7 +82,7 @@ if ( $_POST["sendit"] && $conf->upload)
 llxHeader();
 
 
-if ($id > 0)
+if ($_GET["id"] > 0)
 {
 	if ( $error_msg )
 	{ 
@@ -116,51 +115,55 @@ if ($id > 0)
 
 	dolibarr_fiche_head($head, $hselected, $langs->trans("Ref")." ".$act->id);
 
-        // Affichage fiche action en mode visu
-        print '<table class="border" width="100%"';
-        print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-        print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
-        print '<tr><td>'.$langs->trans("Company").'</td>';
-        print '<td>'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom_url.'</td>';
-    
-        print '<td>'.$langs->trans("Contact").'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.$act->contact->fullname.'</a></td></tr>';
-        print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
-        print '<td>'.$langs->trans("Author").'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
-        print '</table>';
+    // Affichage fiche action en mode visu
+    print '<table class="border" width="100%"';
+    print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td>';
+    print '<td>'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom_url.'</td>';
+
+    print '<td>'.$langs->trans("Contact").'</td>';
+    print '<td>';
+    if ($act->contact->id) print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.$act->contact->fullname.'</a>';
+    else print $langs->trans("None");
+    print '</td></tr>';
+    print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
+    print '<td>'.$langs->trans("Author").'</td>';
+    print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$act->author->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$act->author->fullname.'</a></td></tr>';
+
     // Construit liste des fichiers
     clearstatcache();
 
     $totalsize=0;
     $filearray=array();
 
-    $errorlevel=error_reporting();
-	error_reporting(0);
-	$handle=opendir($upload_dir);
-	error_reporting($errorlevel);
-    if ($handle)
+    if (is_dir($upload_dir))
     {
-        $i=0;
-        while (($file = readdir($handle))!==false)
+        $errorlevel=error_reporting();
+    	error_reporting(0);
+    	$handle=opendir($upload_dir);
+    	error_reporting($errorlevel);
+        if ($handle)
         {
-            if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+            $i=0;
+            while (($file = readdir($handle))!==false)
             {
-                $filearray[$i]=$file;
-                $totalsize+=filesize($upload_dir."/".$file);
-                $i++;
+                if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+                {
+                    $filearray[$i]=$file;
+                    $totalsize+=filesize($upload_dir."/".$file);
+                    $i++;
+                }
             }
+            closedir($handle);
         }
-        closedir($handle);
-    }
-    else
-    {
-            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
+        else
+        {
+                print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
+        }
     }
     
-    print '<table class="border"width="100%">';
-    //print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$product->ref.'</td></tr>';
-    //print '<tr><td width="30%">'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td></tr>';
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
     print '</table>';
@@ -224,7 +227,7 @@ if ($id > 0)
 				}
 				else
 				{
-					echo '<a href="'.DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id.'&action=delete&urlfile='.urlencode($file).'">'.$langs->trans('Delete').'</a>';
+					echo '<a href="'.DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
 				}
 				print "</td></tr>\n";
 			}

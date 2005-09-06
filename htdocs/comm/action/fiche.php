@@ -490,6 +490,7 @@ if ($_GET["id"])
       print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
 
       print '<table class="border" width="100%">';
+      print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
       print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
       print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
       print '<tr><td>'.$langs->trans("Company").'</td>';
@@ -519,6 +520,7 @@ if ($_GET["id"])
     {
         // Affichage fiche action en mode visu
         print '<table class="border" width="100%"';
+        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
         print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
         print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
         print '<tr><td>'.$langs->trans("Company").'</td>';
