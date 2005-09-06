@@ -136,7 +136,7 @@ if ($_GET["id"] or $_GET["numero"])
 	  print '</td><td width="50%" valign="top" align="center">';
 
 	  $file = $img_root.$ligne->id."/graphgain.png";
-	  if (file_exists($file)) 
+	  if (file_exists($file) && $user->rights->telephonie->ligne->gain)
 	    {
 	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
 	    }
