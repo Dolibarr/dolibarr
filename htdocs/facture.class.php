@@ -896,33 +896,17 @@ class Facture
     */
     function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='', $ventil = 0)
     {
+        dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$datestart,$dateend,$ventil)");
         if ($this->brouillon)
         {
-
-            /* Lecture du rang max de la facture */
-
-            $sql = "SELECT max(rang) FROM ".MAIN_DB_PREFIX."facturedet";
-            $sql .= " WHERE fk_facture =".$facid;
-            $resql = $this->db->query($sql);
-
-            if ($resql)
-            {
-	      $row = $this->db->fetch_row($resql);
-	      $rangmax = $row[0];
-            }
-
-            /* -- */
-
-            if (strlen(trim($qty))==0)
-            {
-	      $qty=1;
-            }
+            // Nettoyage paramètres
+            if (strlen(trim($qty))==0) $qty=1;
             $remise = 0;
             $_price = $pu;
             $subprice = $pu;
-
+    
             $remise_percent = trim($remise_percent);
-
+            
             if ($this->socidp)
             {
                 $soc = new Societe($this->db);
@@ -933,29 +917,39 @@ class Facture
                     $remise_percent = $remise_client ;
                 }
             }
-
+    
             if ($remise_percent > 0)
             {
                 $remise = ($pu * $remise_percent / 100);
                 $_price = ($pu - $remise);
             }
-
-            /* Formatage des prix */
+            
+            // Lecture du rang max de la facture
+            $sql = "SELECT max(rang) FROM ".MAIN_DB_PREFIX."facturedet";
+            $sql .= " WHERE fk_facture =".$facid;
+            $resql = $this->db->query($sql);
+            if ($resql)
+            {
+                $row = $this->db->fetch_row($resql);
+                $rangmax = $row[0];
+            }
+    
+            // Formatage des prix
             $_price    = ereg_replace(",",".",$_price);
             $subprice  = ereg_replace(",",".",$subprice);
-
+    
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet ";
             $sql .= " (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end, fk_code_ventilation, rang)";
             $sql .= " VALUES ($facid, '".addslashes($desc)."','$_price','$qty','$txtva',$fk_product,'$remise_percent','$subprice','$remise', ";
-
+    
             if ($datestart) { $sql.= "'$datestart', "; }
             else { $sql.=" null, "; }
             if ($dateend) { $sql.= "'$dateend' "; }
             else { $sql.=" null "; }
-
-	    $sql .= ",".$ventil;
+    
+            $sql .= ",".$ventil;
             $sql .=",".($rangmax + 1).")";
-
+    
             if ( $this->db->query( $sql) )
             {
                 $this->updateprice($facid);
