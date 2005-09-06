@@ -190,49 +190,55 @@ if ($_GET["facid"] > 0)
   
   $fac = New Facture($db);
   if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
-    {
-      
+    {      
       $soc = new Societe($db, $fac->socidp);
       $soc->fetch($fac->socidp);
+            
+      if (!$soc->perm_read)
+	{
+	  print "Lecture non authorisée";
+	}
       
-      $author = new User($db);
-      $author->id = $fac->user_author;
-      $author->fetch();
-      
-      $h = 0;
-      
-      $head[$h][0] = DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$soc->id;
-      $head[$h][1] = $langs->trans("Fiche client");
-      $h++;
-
-      $head[$h][0] = DOL_URL_ROOT.'/telephonie/client/factures.php?id='.$soc->id;
-      $head[$h][1] = $langs->trans("Factures");
-      $h++;
-
-      $head[$h][0] = DOL_URL_ROOT.'/telephonie/client/facture.php?facid='.$fac->id;
-      $head[$h][1] = $langs->trans("CardBill");
-      $hselected = $h;
-      $h++;
-      
-      dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
-      
-      /*
-       *   Facture
-       */
-      print '<table class="border" width="100%">';
-      print '<tr><td>'.$langs->trans("Company").'</td>';
-      print '<td colspan="3">';
-      print '<b><a href="fiche.php?id='.$soc->id.'">'.$soc->nom.'</a></b></td>';
-      
-      print "<td>Conditions de réglement</td><td>" . $fac->cond_reglement ."</td></tr>";
-      
-      print '<tr><td>'.$langs->trans("Date").'</td>';
-      print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
-      print '<td>'.$langs->trans("DateClosing").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
-      print "</td></tr>";
-      
-      print '<tr>';
-      
+      if ($soc->perm_read)
+	{      
+	  $author = new User($db);
+	  $author->id = $fac->user_author;
+	  $author->fetch();
+	  
+	  $h = 0;
+	  
+	  $head[$h][0] = DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$soc->id;
+	  $head[$h][1] = $langs->trans("Fiche client");
+	  $h++;
+	  
+	  $head[$h][0] = DOL_URL_ROOT.'/telephonie/client/factures.php?id='.$soc->id;
+	  $head[$h][1] = $langs->trans("Factures");
+	  $h++;
+	  
+	  $head[$h][0] = DOL_URL_ROOT.'/telephonie/client/facture.php?facid='.$fac->id;
+	  $head[$h][1] = $langs->trans("CardBill");
+	  $hselected = $h;
+	  $h++;
+	  
+	  dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
+	  
+	  /*
+	   *   Facture
+	   */
+	  print '<table class="border" width="100%">';
+	  print '<tr><td>'.$langs->trans("Company").'</td>';
+	  print '<td colspan="3">';
+	  print '<b><a href="fiche.php?id='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+	  
+	  print "<td>Conditions de réglement</td><td>" . $fac->cond_reglement ."</td></tr>";
+	  
+	  print '<tr><td>'.$langs->trans("Date").'</td>';
+	  print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
+	  print '<td>'.$langs->trans("DateClosing").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
+	  print "</td></tr>";
+	  
+	  print '<tr>';
+	  
       // Projet
       if ($conf->projet->enabled)
 	{
@@ -729,12 +735,16 @@ if ($_GET["facid"] > 0)
 	  print '<br>';
 	}
 
+      }
+
+
     }
   else
     {
       /* Facture non trouvée */
       print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
     }
+
 }
 
 $db->close();
