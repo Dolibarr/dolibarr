@@ -154,7 +154,13 @@ if ($_GET["id"] or $_GET["numero"])
       $client_facture->fetch($ligne->client_facture_id);
 
       print '<td width="25%">Client Facturé</td><td>'.$client_facture->nom.'</td></tr>';
-      print '</table>';
+
+      $fac = new Facture($db);
+      $fac->fetch($facs[$facnum]);
+      
+      print '<tr><td>Facture</td><td colspan="3">'.$fac->ref.'</td></tr>';
+
+      print "</table>\n";
     }
   /*
    *
@@ -162,15 +168,12 @@ if ($_GET["id"] or $_GET["numero"])
    *
    */
 
-  $fac = new Facture($db);
-  $fac->fetch($facs[$facnum]);
-
   $file = DOL_DATA_ROOT."/facture/".$fac->ref."/".$fac->ref.".pdf";
   $file_img = DOL_DATA_ROOT."/facture/".$fac->ref."/".$fac->ref.".pdf.png";
 
   if (file_exists($file_img))
     {
-      print '<br><img src="./image.php?file='.$file_img.'"></img>';
+      print '<br><img src="../showfacture.php?facref='.$fac->ref.'"></img>';
     }
   else
     {
@@ -180,7 +183,7 @@ if ($_GET["id"] or $_GET["numero"])
 	
 	  if (file_exists($file_img))
 	    {
-	      print '<br><img src="./image.php?file='.$file_img.'"></img>';
+	      print '<br><img src="../showfacture.php?facref='.$fac->ref.'"></img>';
 	    }      
 	  else
 	    {
