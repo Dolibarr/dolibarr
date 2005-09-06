@@ -21,15 +21,18 @@
  */
 
 /**   
-        \file       htdocs/compta/index.php
-        \ingroup    compta
-        \brief      Page accueil zone comptabilité
-        \version    $Revision$
+      \file       htdocs/compta/index.php
+      \ingroup    compta
+      \brief      Page accueil zone comptabilité
+      \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 $user->getrights(); // On a besoin des permissions sur plusieurs modules
+
+if (!$user->rights->compta->general->lire)
+  accessforbidden();
 
 $langs->load("compta");
 $langs->load("bills");
@@ -38,8 +41,8 @@ $langs->load("bills");
 $socidp='';
 if ($user->societe_id > 0)
 {
-    $action = '';
-    $socidp = $user->societe_id;
+  $action = '';
+  $socidp = $user->societe_id;
 }
 
 
@@ -52,22 +55,22 @@ llxHeader("",$langs->trans("AccountancyTreasuryArea"));
 
 if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
 {
-$sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
-if (! $db->query($sql) )
-{
-    dolibarr_print_error($db);
-}
-$sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
-if (! $db->query($sql) )
-{
-    dolibarr_print_error($db);
-}
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
+  if (! $db->query($sql) )
+    {
+      dolibarr_print_error($db);
+    }
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
+  if (! $db->query($sql) )
+    {
+      dolibarr_print_error($db);
+    }
 }
 
 if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
-    $result = $db->query($sql);
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
+  $result = $db->query($sql);
 }
 
 
@@ -85,16 +88,17 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 /*
  * Zone recherche facture
  */
-if ($conf->facture->enabled) {
-    print '<form method="post" action="facture.php">';
-    print '<table class="noborder" width="100%">';
-    print "<tr class=\"liste_titre\">";
-    print '<td colspan="3">'.$langs->trans("SearchABill").'</td></tr>';
-    print "<tr $bc[0]><td>".$langs->trans("Ref").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>';
-    print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "<tr $bc[0]><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
-    print '</tr>';
-    print "</table></form><br>";
+if ($conf->facture->enabled)
+{
+  print '<form method="post" action="facture.php">';
+  print '<table class="noborder" width="100%">';
+  print "<tr class=\"liste_titre\">";
+  print '<td colspan="3">'.$langs->trans("SearchABill").'</td></tr>';
+  print "<tr $bc[0]><td>".$langs->trans("Ref").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>';
+  print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+  print "<tr $bc[0]><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+  print '</tr>';
+  print "</table></form><br>";
 }
 
 
@@ -102,53 +106,52 @@ if ($conf->facture->enabled) {
  * Factures brouillons
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
-{
-
-    $sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, s.nom, s.idp";
-    $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
-    $sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
-
-    if ($socidp)
+{  
+  $sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, s.nom, s.idp";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+  $sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
+  
+  if ($socidp)
     {
-        $sql .= " AND f.fk_soc = $socidp";
+      $sql .= " AND f.fk_soc = $socidp";
     }
-
-    $resql = $db->query($sql);
-
-    if ( $resql )
+  
+  $resql = $db->query($sql);
+  
+  if ( $resql )
     {
-        $num = $db->num_rows($resql);
-        if ($num)
+      $num = $db->num_rows($resql);
+      if ($num)
         {
-            print '<table class="noborder" width="100%">';
-            print '<tr class="liste_titre">';
-            print '<td colspan="3">'.$langs->trans("DraftBills").' ('.$num.')</td></tr>';
-            $i = 0;
-            $tot_ttc = 0;
-            $var = True;
-            while ($i < $num && $i < 20)
+	  print '<table class="noborder" width="100%">';
+	  print '<tr class="liste_titre">';
+	  print '<td colspan="3">'.$langs->trans("DraftBills").' ('.$num.')</td></tr>';
+	  $i = 0;
+	  $tot_ttc = 0;
+	  $var = True;
+	  while ($i < $num && $i < 20)
             {
-                $obj = $db->fetch_object($resql);
-                $var=!$var;
-                print '<tr '.$bc[$var].'><td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
-                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,20).'</a></td>';
-                print '<td align="right">'.price($obj->total_ttc).'</td>';
-                print '</tr>';
-                $tot_ttc+=$obj->total_ttc;
-                $i++;
+	      $obj = $db->fetch_object($resql);
+	      $var=!$var;
+	      print '<tr '.$bc[$var].'><td nowrap><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,20).'</a></td>';
+	      print '<td align="right">'.price($obj->total_ttc).'</td>';
+	      print '</tr>';
+	      $tot_ttc+=$obj->total_ttc;
+	      $i++;
             }
-
-            print '<tr class="liste_total"><td colspan="2" align="left">'.$langs->trans("Total").'</td>';
-            print '<td align="right">'.price($tot_ttc).'</td>';
-            print '</tr>';
-
-            print "</table><br>";
+	  
+	  print '<tr class="liste_total"><td colspan="2" align="left">'.$langs->trans("Total").'</td>';
+	  print '<td align="right">'.price($tot_ttc).'</td>';
+	  print '</tr>';
+	  
+	  print "</table><br>";
         }
-        $db->free($resql);
+      $db->free($resql);
     }
-    else
+  else
     {
-        dolibarr_print_error($db);
+      dolibarr_print_error($db);
     }
 }
 
