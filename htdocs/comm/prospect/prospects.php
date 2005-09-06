@@ -137,7 +137,7 @@ if ($result)
   print '<td class="liste_titre" valign="right">';
   print '<input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'">';
   print '</td><td class="liste_titre">';
-  print '<input type="text" class="flat" name="search_ville" value="'.$_GET["search_ville"].'">';
+  print '<input type="text" class="flat" name="search_ville" size="12" value="'.$_GET["search_ville"].'">';
   print '</td>';
   print '<td class="liste_titre" colspan="7" align="right">';
   print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
@@ -169,7 +169,7 @@ if ($result)
       print "</td>";
 
       $sts = array(-1,0,1,2,3);
-      print '<td align="right">';
+      print '<td align="right" nowrap>';
       foreach ($sts as $key => $value)
 	{
 	  if ($value <> $obj->fk_stcomm)

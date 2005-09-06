@@ -233,7 +233,7 @@ if ($_GET["action"] == 'create')
   if ($numdest > 0)
     {
       $langs->load("bills");
-      print '<input type="submit" value="'.$langs->trans("CreateDraft").'">';
+      print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
     }
   print "</form>";
 }

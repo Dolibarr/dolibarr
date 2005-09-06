@@ -307,7 +307,7 @@ if ($_GET["action"] == 'create')
         
       print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
       print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
-      print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';  
+      print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';  
       print '</table>';
     }
 
@@ -368,7 +368,7 @@ if ($_GET["action"] == 'create')
 	{
           $societe = new Societe($db);
           $societe->fetch($_GET["socid"]);
-	  print $societe->nom_url;
+	      print img_object($langs->trans("ShowCompany"),'company').' '.$societe->nom_url;
           print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
 	}
       else 
@@ -432,8 +432,10 @@ if ($_GET["action"] == 'create')
       print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
       print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
 
+      print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"</td></tr>';
+
       print '</table>';  
-      print '<p align="center"><input type="submit" value="'.$langs->trans("Add").'"></p>';
+
 
     }
     print "</form>";
@@ -513,7 +515,7 @@ if ($_GET["id"])
 	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
       print '<textarea cols="60" rows="6" name="note">'.nl2br($act->note).'</textarea></td></tr>';
 
-      print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"</td></tr>';
+      print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Save").'"</td></tr>';
       print '</table></form>';
     }
   else
