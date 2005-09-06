@@ -22,6 +22,9 @@
 
 require("./pre.inc.php");
 
+if (!$user->rights->telephonie->fournisseur->lire)
+  accessforbidden();
+
 $mesg = '';
 
 if ($_POST["action"] == 'add')

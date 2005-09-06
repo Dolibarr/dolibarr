@@ -23,15 +23,13 @@ require("./pre.inc.php");
 
 $user->getrights('telephonie');
 
-
+if (!$user->rights->telephonie->fournisseur->lire)
+  accessforbidden();
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 
 llxHeader();
-
-if (!$user->rights->telephonie->lire)
-  accessforbidden();
 
 /*
  * Sécurité accés client
