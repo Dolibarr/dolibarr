@@ -41,20 +41,21 @@ $langs->load("commercial");
 $langs->load("other");
 $langs->load("bills");
 
+if (isset($_GET["error"])) $error=$_GET["error"];
+$upload_dir = $conf->actionscomm->dir_output.'/'.$_GET['id'];
+
 // Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
-if (isset($_GET["error"])) $error=$_GET["error"];
 
-$upload_dir = $conf->actionscomm->dir_output.'/'.$_GET['id'];
 
 /*
  * Action envoie fichier
  */
-if ( $_POST["sendit"] && $conf->upload)
+if ( $_POST["sendit"] && $conf->upload )
 {
     /*
      * Creation répertoire si n'existe pas
@@ -77,7 +78,19 @@ if ( $_POST["sendit"] && $conf->upload)
     }
 }
 
+/*
+ * Efface fichier
+ */
+if ($_GET["action"] == 'delete')
+{
+	$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
+	dol_delete_file($file);
+}
 
+
+/*
+ * Affiche onglet
+ */
 
 llxHeader();
 
@@ -94,12 +107,6 @@ if ($_GET["id"] > 0)
     $res=$act->societe->fetch($act->societe->id);
     $res=$act->author->fetch();     // Le paramètre est le login, hors seul l'id est chargé.
     $res=$act->contact->fetch($act->contact->id);
-
-	if ($action=='delete')
-	{
-		$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
-		dol_delete_file($file);
-	}
 
 	$h=0;
 
@@ -221,14 +228,7 @@ if ($_GET["id"] > 0)
 				print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
 				print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
 				print '<td align="center">';
-				if ($file == $propref . '.pdf')
-				{
-					echo '-';
-				}
-				else
-				{
-					echo '<a href="'.DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
-				}
+				print '<a href="'.DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
 				print "</td></tr>\n";
 			}
 		}
