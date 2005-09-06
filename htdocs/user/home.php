@@ -52,68 +52,30 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 
 /*
- * Recherche Group
- */
-$var=false;
-print '<table class="noborder" width="100%">';
-print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAGroup").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("Ref").' : <input class="flat" type="text" name="search_group">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</form></table><br>\n";
-
-/*
  * Recherche User
  */
 $var=false;
 print '<table class="noborder" width="100%">';
 print '<form method="post" action="'.DOL_URL_ROOT.'/user/index.php">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAUser").'</td></tr>';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAUser").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("Ref").' : <input class="flat" type="text" name="search_user">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print $langs->trans("Ref").'</td><td><input class="flat" type="text" name="search_user" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
 print "</form></table><br>\n";
 
+/*
+ * Recherche Group
+ */
+$var=false;
+print '<table class="noborder" width="100%">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAGroup").'</td></tr>';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("Ref").':</td><td><input class="flat" type="text" name="search_group" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
+print "</form></table><br>\n";
 
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
-
-
-/*
- * Derniers groupes créés
- */
-$max=5;
-
-$sql = "SELECT g.rowid, g.nom, g.note, ".$db->pdate("g.datec")." as datec";
-$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-$sql .= " ORDER BY g.datec DESC";
-if ($max) $sql .= " LIMIT $max";
-
-if ( $db->query($sql) )
-{
-    $num = $db->num_rows();
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",$max).'</td></tr>';
-    $var = true;
-    $i = 0;
-
-    while ($i < $num && (! $max || $i < $max))
-    {
-        $obj = $db->fetch_object();
-        $var=!$var;
-
-        print "<tr $bc[$var]>";
-        print "<td><a href=\"".DOL_URL_ROOT."/user/group/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowGroup"),"group")." ".$obj->nom."</a></td>";
-        print "<td width=\"80\" align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
-        print '</tr>';
-        $i++;
-    }
-    print "</table><br>";
-
-    $db->free();
-}
-else
-{
-    dolibarr_print_error($db);
-}
 
 
 /*
@@ -167,6 +129,44 @@ else
     dolibarr_print_error($db);
 }
 
+
+/*
+ * Derniers groupes créés
+ */
+$max=5;
+
+$sql = "SELECT g.rowid, g.nom, g.note, ".$db->pdate("g.datec")." as datec";
+$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
+$sql .= " ORDER BY g.datec DESC";
+if ($max) $sql .= " LIMIT $max";
+
+if ( $db->query($sql) )
+{
+    $num = $db->num_rows();
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",$max).'</td></tr>';
+    $var = true;
+    $i = 0;
+
+    while ($i < $num && (! $max || $i < $max))
+    {
+        $obj = $db->fetch_object();
+        $var=!$var;
+
+        print "<tr $bc[$var]>";
+        print "<td><a href=\"".DOL_URL_ROOT."/user/group/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowGroup"),"group")." ".$obj->nom."</a></td>";
+        print "<td width=\"80\" align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
+        print '</tr>';
+        $i++;
+    }
+    print "</table><br>";
+
+    $db->free();
+}
+else
+{
+    dolibarr_print_error($db);
+}
 
 
 print '</td></tr>';

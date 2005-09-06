@@ -18,18 +18,21 @@
  *
  * $Id$
  * $Source$
- *
  */
  
 /**
-        \file       htdocs/user/index.php
-        \brief      Page d'accueil de la gestion des utilisateurs
+        \file       htdocs/user/group/index.php
+        \brief      Page d'accueil de la gestion des groupes
         \version    $Revision$
 */
 
 require("./pre.inc.php");
 
+if (! $user->rights->user->group->lire && !$user->admin) accessforbidden();
+
 $langs->load("users");
+
+$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -50,39 +53,40 @@ print_titre($langs->trans("ListOfGroups"));
 $sql = "SELECT g.rowid, g.nom, ".$db->pdate("g.datec")." as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql .= " WHERE 1=1";
-if ($_POST["search_group"]) {
+if ($_POST["search_group"])
+{
     $sql .= " AND (g.nom like '%".$_POST["search_group"]."%' OR g.note like '%".$_POST["search_group"]."%')";
 }
-if ($sortfield) {
-    $sql .= " ORDER BY ".$sortfield;
-}
-if ($sortorder) {
-    $sql .= " ".$sortorder;
-}
-$result = $db->query($sql);
-if ($result)
+if ($sall) $sql.= " AND (g.nom like '%".$sall."%' OR g.note like '%".$sall."%')";
+if ($sortfield)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  
-  print "<br>";
-  
-  print "<table class=\"noborder\" width=\"100%\">";
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Group"),"index.php","g.nom","","","",$sortfield);
-  print_liste_field_titre($langs->trans("DateCreation"),"index.php","g.datec","","","",$sortfield);
-  print "</tr>\n";
-  $var=True;
-  while ($i < $num)
+    $sql .= " ORDER BY ".$sortfield." ".$sortorder;
+}
+$resql = $db->query($sql);
+if ($resql)
+{
+    $num = $db->num_rows($resql);
+    $i = 0;
+
+    print "<br>";
+
+    $param="search_group=$search_group&amp;sall=$sall";
+    print "<table class=\"noborder\" width=\"100%\">";
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Group"),"index.php","g.nom",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("DateCreation"),"index.php","g.datec",$param,"","",$sortfield);
+    print "</tr>\n";
+    $var=True;
+    while ($i < $num)
     {
-      $obj = $db->fetch_object( $i);
-      $var=!$var;
-      
-      print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a></td>';
-      print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"%d %b %Y").'</td>';
-      print "</tr>\n";
-      $i++;
+        $obj = $db->fetch_object($resql);
+        $var=!$var;
+
+        print "<tr $bc[$var]>";
+        print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a></td>';
+        print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"%d %b %Y").'</td>';
+        print "</tr>\n";
+        $i++;
     }
     print "</table>";
     $db->free();
@@ -94,5 +98,6 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
+
 ?>

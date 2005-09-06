@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
  
 /**
@@ -32,6 +31,8 @@ require("./pre.inc.php");
 if (! $user->rights->user->user->lire && !$user->admin) accessforbidden();
 
 $langs->load("users");
+
+$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -56,6 +57,7 @@ $sql .= " WHERE 1=1";
 if ($_POST["search_user"]) {
     $sql .= " AND (u.name like '%".$_POST["search_user"]."%' OR u.firstname like '%".$_POST["search_user"]."%')";
 }
+if ($sall) $sql.= " AND (u.login like '%".$sall."%' OR u.name like '%".$sall."%' OR u.firstname like '%".$sall."%' OR u.code like '%".$sall."%' OR u.email like '%".$sall."%' OR u.note like '%".$sall."%')";
 if ($sortfield) { $sql.=" ORDER BY $sortfield $sortorder"; }
 
 $result = $db->query($sql);
@@ -66,13 +68,14 @@ if ($result)
 
     print "<br>";
 
+    $param="search_user=$search_user&amp;sall=$sall";
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Login"),"index.php","u.login","","","",$sortfield);
-    print_liste_field_titre($langs->trans("Lastname"),"index.php","u.name","","","",$sortfield);
-    print_liste_field_titre($langs->trans("Firstname"),"index.php","u.firstname","","","",$sortfield);
-    print_liste_field_titre($langs->trans("Code"),"index.php","u.code","","","",$sortfield);
-    print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Login"),"index.php","u.login",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Lastname"),"index.php","u.name",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Firstname"),"index.php","u.firstname",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Code"),"index.php","u.code",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec",$param,"","",$sortfield);
     print "</tr>\n";
     $var=True;
     while ($i < $num)
