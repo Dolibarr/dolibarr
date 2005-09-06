@@ -861,8 +861,15 @@ function loginfunction()
 
 print '
 <table cellpadding="0" cellspacing="0" border="0" align="center" width="350">
-<tr class="vmenu"><td>Dolibarr '.DOL_VERSION.'</td></tr>
-</table>
+<tr class="vmenu"><td>Dolibarr '.DOL_VERSION.'</td></tr>';
+
+if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
+{
+  print '<tr><td colspan="3" style="text-align:center;">';
+  print '<img src="/logo.png"></td></tr>';
+}
+
+print'</table>
 
 <br>
 
@@ -893,13 +900,14 @@ print '
 <tr><td colspan="3" style="text-align:center;"><br>
 <input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />
 </td></tr>
-
+';
+print '
 </table>
 <input type="hidden" name="loginfunction" value="loginfunction" />
-
 ';
 
   print '</form>';
+
 }
 
 

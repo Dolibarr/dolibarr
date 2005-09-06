@@ -71,6 +71,16 @@ print '<tr><td valign="top" class="notopnoleft">';
 /*
  * Informations
  */
+
+if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
+{
+  print '<table class="noborder" width="100%">';
+  print '<tr><td colspan="3" style="text-align:center;">';
+  print '<img src="/logo.png"></td></tr>';
+  print "</table><br />\n";
+}
+
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Informations").'</td></tr>';
 print '<tr '.$bc[false].'>';
@@ -81,8 +91,8 @@ print '<td nowrap>'.$langs->trans("LastAccess").'</td><td>';
 if ($user->datelastaccess) print dolibarr_print_date($user->datelastaccess,"%d %B %Y %H:%M:%S");
 else print $langs->trans("Unknown");
 print '</td>';
-print '</tr>';
-print '</table>';
+print "</tr>\n";
+print "</table>\n";
 
 
 /*
