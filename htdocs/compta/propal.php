@@ -201,7 +201,7 @@ if ($_GET["propalid"])
 		  print '<input type="hidden" name="action" value="set_contact">';
 		  $form->select_contacts($societe->id, $propal->contactid, 'contactidp');
 		  print '</td><td>';
-		  print '<input type="submit" value="'.$langs->trans('Modify').'">';
+		  print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		  print '</form>';
 		  print '</td>';
 		}
@@ -251,7 +251,7 @@ if ($_GET["propalid"])
 		      print '<input type="hidden" name="action" value="set_project">';
 		      $form->select_projects($societe->id, $propal->projetidp, 'projetidp');
 		      print '</td><td>';
-		      print '<input type="submit" value="'.$langs->trans('Modify').'">';
+		      print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		      print '</form>';
 		      print '</td>';
 		    }
@@ -282,7 +282,7 @@ if ($_GET["propalid"])
 	      print '<input type="hidden" name="action" value="setremise">';
 	      print '<td colspan="2"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
 	      print '</td><td>';
-	      print '<input type="submit" value="'.$langs->trans('Modify').'">';
+	      print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 	      print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
 	      print '</td>';
 	      print '</form>';

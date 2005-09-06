@@ -495,7 +495,7 @@ if ($_GET['propalid'] > 0)
                     print '<input type="hidden" name="action" value="set_contact">';
                     $form->select_contacts($societe->id, $propal->contactid, 'contactidp');
                     print '</td><td>';
-                    print '<input type="submit" value="'.$langs->trans('Modify').'">';
+                    print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                     print '</form>';
                     print '</td>';
                 }
@@ -545,7 +545,7 @@ if ($_GET['propalid'] > 0)
                         print '<input type="hidden" name="action" value="set_project">';
                         $form->select_projects($societe->id, $propal->projetidp, 'projetidp');
                         print '</td><td>';
-                        print '<input type="submit" value="'.$langs->trans('Modify').'">';
+                        print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                         print '</form>';
                         print '</td>';
                     }
@@ -576,7 +576,7 @@ if ($_GET['propalid'] > 0)
                 print '<input type="hidden" name="action" value="setremise">';
                 print '<td colspan="2"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
                 print '</td><td>';
-                print '<input type="submit" value="'.$langs->trans('Modify').'">';
+                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                 print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
                 print '</td>';
                 print '</form>';
@@ -795,7 +795,7 @@ if ($_GET['propalid'] > 0)
                 print '  <td align="right"><input type="text" size="5" name="np_price"></td>';
                 print '  <td align="right"><input type="text" size="2" value="1" name="np_qty"></td>';
                 print '  <td align="right" nowrap><input type="text" size="2" value="'.$societe->remise_client.'" name="np_remise">%</td>';
-                print '  <td align="center" colspan="3"><input type="submit" value="'.$langs->trans('Add').'" name="addligne"></td>';
+                print '  <td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
                 print '</tr>';
     
                 print '</form>';
@@ -815,7 +815,7 @@ if ($_GET['propalid'] > 0)
                 print '<td>&nbsp;</td>';
                 print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
                 print '<td align="right" nowrap><input type="text" size="2" name="remise" value="'.$societe->remise_client.'">%</td>';
-                print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'" name="addligne"></td>';
+                print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addligne"></td>';
                 print "</tr>\n";
     
                 print '</form>';
@@ -849,7 +849,7 @@ if ($_GET['propalid'] > 0)
       print '<option value="3">'.$propal->labelstatut[3].'</option>';
       print '</select>';
       print '</td></tr>';
-      print '<tr><td align="center" colspan="2"><input type="submit" value="'.$langs->trans('Validate').'"></td>';
+      print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Validate').'"></td>';
       print '</tr></table></form>';
     }
 
