@@ -99,14 +99,15 @@ if ($_GET["id"])
 	  $pageprev = $page - 1;
 	  $pagenext = $page + 1;
 	  
-	  $sql = "SELECT f.rowid, f.date, f.ligne, f.fourn_montant, f.cout_vente, f.cout_vente_remise, f.gain, f.fk_facture";
+	  $sql = "SELECT f.rowid, f.date, sum(f.cout_vente) as cout_vente, f.fk_facture";
 	  $sql .= " ,s.nom, s.idp";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
 	  $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	  
 	  $sql .= " WHERE s.idp = l.fk_soc_facture AND l.rowid = f.fk_ligne";
-	  $sql .= " AND s.idp = ".$soc->id;	  
+	  $sql .= " AND s.idp = ".$soc->id;
+	  $sql .= " GROUP BY f.fk_facture";
 	  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 	  
 	  $resql = $db->query($sql);
@@ -116,10 +117,9 @@ if ($_GET["id"])
 	      $i = 0;
 	      	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-	      print '<tr class="liste_titre"><td>Ligne</td>';	      
+	      print '<tr class="liste_titre">';	      
 	      print '<td align="center">Date</td><td align="right">Montant HT</td>';
-	      print '<td align="right">Coût fournisseur HT';
-	      print '</td><td align="right">Gain</td><td align="right">Marge</td><td align="center">Facture</td>';
+	      print '<td align="center">Facture</td>';
 	      print "</tr>\n";
 	      	      
 	      $var=True;
@@ -131,32 +131,10 @@ if ($_GET["id"])
 		  
 		  print "<tr $bc[$var]>";
 
-		  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?numero='.$obj->ligne.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
 		  print '<td align="center">'.$obj->date."</td>\n";
-		  print '<td align="right">'.sprintf("%01.4f",$obj->cout_vente_remise)."</td>\n";
-		  print '<td align="right">'.sprintf("%01.4f",$obj->fourn_montant)."</td>\n";
-		  
-		  print '<td align="right">';
-		  if ($obj->gain < 0 && $obj->cout_vente_remise)
-		    {
-		      print '<font color="red"><b>';
-		      print sprintf("%01.2f",$obj->gain);
-		      print "</b></font>";
-		    }
-		  else
-		    {
-		      print sprintf("%01.2f",$obj->gain);
-		    }
-		  print "</td>\n";
+		  print '<td align="right">'.sprintf("%01.4f",$obj->cout_vente)."</td>\n";
 
-		  print '<td align="right">';
-
-		  print sprintf("%01.2f %%",($obj->gain / $obj->cout_vente_remise * 100));
-		      
-		  print "</td>\n";
-
-
-		  print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.$obj->fk_facture."</a></td>\n";
+		  print '<td align="center"><a href="facture.php?facid='.$obj->fk_facture.'">'.$obj->fk_facture."</a></td>\n";
 		  print "</tr>\n";
 		  $i++;
 		}
