@@ -109,8 +109,8 @@ class TelephonieTarifGrille {
     $sql .= "(fk_tarif_desc, fk_user, fk_tarif, temporel,fixe)";
     $sql .= " VALUES (".$grille_id.",".$user->id;
     $sql .= " ,".$tarif_id;
-    $sql .= " ,".$temporel;
-    $sql .= " ,".$fixe.")";
+    $sql .= " ,".ereg_replace(",",".",$temporel);
+    $sql .= " ,".ereg_replace(",",".",$fixe).");";
     
     if ( $this->db->query($sql) )
       {
@@ -126,8 +126,8 @@ class TelephonieTarifGrille {
     
     $sql .= " VALUES (".$grille_id.",".$user->id;
     $sql .= " ,".$tarif_id;
-    $sql .= " ,".$temporel;
-    $sql .= " ,".$fixe.")";
+    $sql .= " ,".ereg_replace(",",".",$temporel);
+    $sql .= " ,".ereg_replace(",",".",$fixe).");";
     
     if ( $this->db->query($sql) )
       {
