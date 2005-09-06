@@ -208,6 +208,7 @@ ResultOk=Success
 ResultKo=Failure
 Reporting=Reporting
 Reportings=Reportings
+Draft=Draft
 Drafts=Drafts
 Validated=Validated
 Opened=Opened
