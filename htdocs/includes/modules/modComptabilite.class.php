@@ -130,6 +130,13 @@ class modComptabilite extends DolibarrModules
     $this->rights[6][4] = 'ventilation';
     $this->rights[6][5] = 'creer';
 
+    $this->rights[7][0] = 98;
+    $this->rights[7][1] = "Accès à l'espace compta/tréso";
+    $this->rights[7][2] = 'r';
+    $this->rights[7][3] = 0;
+    $this->rights[7][4] = 'general';
+    $this->rights[7][5] = 'lire';
+
   }
 
 
