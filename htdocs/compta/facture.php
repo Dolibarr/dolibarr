@@ -310,7 +310,7 @@ if ($_POST["action"] == 'setremise' && $user->rights->facture->creer)
 
 if ($_POST["action"] == 'addligne' && $user->rights->facture->creer)
 {
-    if ($_POST["qty"] && (($_POST["pu"] && $_POST["desc"]) || $_POST["idprod"]))
+    if ($_POST["qty"] && (($_POST["pu"]>=0 && $_POST["desc"]) || $_POST["idprod"]))
     {
         $fac = new Facture($db);
         $fac->fetch($_POST["facid"]);
