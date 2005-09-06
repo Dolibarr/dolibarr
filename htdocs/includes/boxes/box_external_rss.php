@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -85,7 +84,8 @@ class box_external_rss extends ModeleBoxes {
                 $this->info_box_contents[$i][0] = array('align' => 'left',
                 'logo' => $this->boximg,
                 'text' => $title,
-                'url' => $href);
+                'url' => $href,
+                'target' => 'newrss');
             }
 
 

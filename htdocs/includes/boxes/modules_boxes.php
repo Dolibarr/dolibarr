@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -109,7 +108,11 @@ class ModeleBoxes
                         {
                             $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
                             print img_object($langs->trans("Show"),$logo);
-                            print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'">';
+                            print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'"';
+                            print ' title="'.$textewithnotags.'"';
+                            print ' alt="'.$textewithnotags.'"';
+                            print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
+                            print '>';
                         }
                         $maxlength=$this->MAXLENGTHBOX;
                         if (isset($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
