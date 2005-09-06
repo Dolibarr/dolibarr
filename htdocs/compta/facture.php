@@ -595,6 +595,7 @@ if ($_GET["action"] == 'create')
         $propal = New Propal($db);
         $propal->fetch($_GET["propalid"]);
         $societe_id = $propal->soc_id;
+	$projet=$propal->projetidp;
         $soc->fetch($societe_id);
     }
     elseif ($_GET["commandeid"])
@@ -602,6 +603,7 @@ if ($_GET["action"] == 'create')
         $commande = New Commande($db);
         $commande->fetch($_GET["commandeid"]);
         $societe_id = $commande->soc_id;
+	$projet=$commande-> projet_id;
         $soc->fetch($societe_id);
     }
     elseif ($_GET["contratid"])
@@ -609,6 +611,7 @@ if ($_GET["action"] == 'create')
         $contrat = New Contrat($db);
         $contrat->fetch($_GET["contratid"]);
         $societe_id = $contrat->societe->id;
+	$projet=$contrat->fk_projet;
         $soc=$contrat->societe;
     }
     else
@@ -671,7 +674,7 @@ if ($_GET["action"] == 'create')
     {
         $langs->load("projects");
         print '<tr><td>'.$langs->trans("Project").'</td><td>';
-        $html->select_projects($societe_id);
+        $html->select_projects($societe_id, $projet, "projetid");
         print "</td></tr>";
     }
     else
