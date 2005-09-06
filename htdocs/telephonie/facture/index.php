@@ -55,75 +55,21 @@ print '<tr class="liste_titre"><td>Recherche ligne</td>';
 print "</tr>\n";
 print "<tr $bc[1]>";
 print '<td>Numéro <input name="search_ligne" size="12"></td></tr>';
-print '</table>';
+print '</table></form>';
 
+print '<br /><form method="GET" action="'.DOL_URL_ROOT.'/telephonie/facture/liste.php">';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td>Recherche facture</td>';
+print "</tr>\n";
+print "<tr $bc[1]>";
+print '<td>Numéro <input name="search_facture" size="12"></td></tr>';
+print '</table></form>';
 
 print '</td><td valign="top" width="70%" rowspan="3">';
 
-print '<img src="./graphca.php">';
-
-print '</td></tr>';
-
-
-print '<tr><td width="30%" valign="top">';
-/*
- *
- *
- */
-
-$sql = "SELECT date_format(f.datef,'%Y%m'),sum(cout_vente),count(cout_vente)";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
-$sql .= " , ".MAIN_DB_PREFIX."facture as f";
-
-$sql .= " WHERE tf.fk_facture = f.rowid";
-$sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC";
-
-if ($db->query($sql))
-{
-  $num = $db->num_rows();
-  $i = 0;
-  $ligne = new LigneTel($db);
-
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Factures</td><td align="right">Somme</td>';  
-  print '<td align="right">Nb</td>';
-  print "</tr>\n";
-  $var=True;
-
-  while ($i < $num)
-    {
-      $row = $db->fetch_row($i);
-      $var=!$var;
-
-      print "<tr $bc[$var]>";
-      print "<td>".$row[0]."</td>\n";
-      print '<td align="right">'.price($row[1])."</td>\n";
-      print '<td align="right">'.$row[2]."</td>\n";
-      print "</tr>\n";
-      $i++;
-    }
-  print "</table>";
-  $db->free();
-}
-else 
-{
-  print $db->error() . ' ' . $sql;
-}
-
-
-
-
-/*
- *
- *
- */
-
-
 print '</td></tr>';
 
 print '</table>';
-
-
 
 $db->close();
 
