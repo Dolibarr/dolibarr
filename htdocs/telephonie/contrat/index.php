@@ -113,13 +113,15 @@ $sql .= " ,s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
+$sql .= " , ".MAIN_DB_PREFIX."societe_perms as sp";
 
 $sql .= " WHERE c.fk_client_comm = s.idp";
 $sql .= " AND c.fk_soc = sf.idp";
-if ($user->rights->telephonie->ligne->lire_restreint)
-{
-  $sql .= " AND c.fk_commercial_suiv = ".$user->id;
-}
+
+$sql .= " AND c.fk_client_comm = sp.fk_soc";
+$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
+
+
 $sql .= " ORDER BY date_creat DESC LIMIT 10;";
 
 $result = $db->query($sql);
