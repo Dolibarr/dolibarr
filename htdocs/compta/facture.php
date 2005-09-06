@@ -671,7 +671,7 @@ if ($_GET["action"] == 'create')
     {
         $langs->load("projects");
         print '<tr><td>'.$langs->trans("Project").'</td><td>';
-        $html->select_projects($socidp);
+        $html->select_projects($societe_id);
         print "</td></tr>";
     }
     else
