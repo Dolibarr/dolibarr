@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -119,7 +118,8 @@ $sql.= " b.fk_account";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql.= " WHERE d.rowid = c.fk_adherent";
-if(isset($date_select) && $date_select != ''){
+if(isset($date_select) && $date_select != '')
+{
   $sql .= " AND dateadh LIKE '$date_select%'";
 }
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
@@ -127,71 +127,72 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $of
 $result = $db->query($sql);
 if ($result) 
 {
-  $num = $db->num_rows($result);
-  $i = 0;
+    $num = $db->num_rows($result);
+    $i = 0;
 
-  print '<table class="noborder" width="100%">';
+    print '<table class="noborder" width="100%">';
 
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Date"),"cotisations.php","c.dateadh","&page=$page&statut=$statut","","",$sortfield);
-  print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom","&page=$page&statut=$statut","","",$sortfield);
-  print_liste_field_titre($langs->trans("Amount"),"cotisations.php","c.cotisation","&page=$page&statut=$statut","","align=\"right\"",$sortfield);
-  if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0)
-  {
-    print_liste_field_titre($langs->trans("Bank"),"cotisations.php","b.fk_account","&page=$page&statut=$statut","","",$sortfield);
-  }
-  print "</tr>\n";
-    
-  $var=true;
-  $total=0;
-  while ($i < $num)
-  {
-    $objp = $db->fetch_object($result);
-    $total+=price($objp->cotisation);
-    
-    $var=!$var;
-    print "<tr $bc[$var]>";
-    print "<td>".dolibarr_print_date($objp->dateadh)."</td>\n";
-    print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".img_object($langs->trans("ShowMember"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
-    print '<td align="right">'.price($objp->cotisation).'</td>';
+    $param="&page=$page&statut=$statut&amp;date_select=$date_select";
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Date"),"cotisations.php","c.dateadh",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Amount"),"cotisations.php","c.cotisation",$param,"","align=\"right\"",$sortfield);
     if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0)
     {
-        if ($objp->fk_account)
-        {
-            $acc=new Account($db);
-            $acc->fetch($objp->fk_account);
-            print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->fk_account.'">'.$acc->label.'</a></td>';
-        }
-        else
-        {
-            print "<td>";
-            print "<form method=\"post\" action=\"cotisations.php\">";
-            print '<input type="hidden" name="action" value="2bank">';
-            print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
-            $html = new Form($db);
-            $html->select_types_paiements();
-            print '<input name="num_chq" type="text" size="6">&nbsp;-&nbsp;';
-            print "<input name=\"label\" type=\"text\" size=20 value=\"".$langs->trans("Subscriptions").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".strftime("%Y",$objp->dateadh)."\" >\n";
-            //	print "<td><input name=\"debit\" type=\"text\" size=8></td>";
-            //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
-            print '<input type="submit" value="'.$langs->trans("Save").'">';
-            print "</form>\n";
-            print "</td>\n";
-        }
+        print_liste_field_titre($langs->trans("Bank"),"cotisations.php","b.fk_account",$pram,"","",$sortfield);
     }
-    print "</tr>";
-    $i++;
-  }
+    print "</tr>\n";
 
-  $var=!$var;
-  print '<tr class="liste_total">';
-  print "<td>".$langs->trans("Total")."</td>\n";
-  print "<td align=\"right\">&nbsp;</td>\n";
-  print "<td align=\"right\">".price($total)."</td>\n";
-  print '<td>&nbsp;</td>';
-  print "</tr>\n";
-  print "</table>";
-  print "<br>\n";
+    $var=true;
+    $total=0;
+    while ($i < $num)
+    {
+        $objp = $db->fetch_object($result);
+        $total+=price($objp->cotisation);
+
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print "<td>".dolibarr_print_date($objp->dateadh)."</td>\n";
+        print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".img_object($langs->trans("ShowMember"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
+        print '<td align="right">'.price($objp->cotisation).'</td>';
+        if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0)
+        {
+            if ($objp->fk_account)
+            {
+                $acc=new Account($db);
+                $acc->fetch($objp->fk_account);
+                print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->fk_account.'">'.$acc->label.'</a></td>';
+            }
+            else
+            {
+                print "<td>";
+                print "<form method=\"post\" action=\"cotisations.php\">";
+                print '<input type="hidden" name="action" value="2bank">';
+                print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
+                $html = new Form($db);
+                $html->select_types_paiements();
+                print '<input name="num_chq" type="text" size="6">&nbsp;-&nbsp;';
+                print "<input name=\"label\" type=\"text\" size=20 value=\"".$langs->trans("Subscriptions").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".strftime("%Y",$objp->dateadh)."\" >\n";
+                //	print "<td><input name=\"debit\" type=\"text\" size=8></td>";
+                //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
+                print '<input type="submit" value="'.$langs->trans("Save").'">';
+                print "</form>\n";
+                print "</td>\n";
+            }
+        }
+        print "</tr>";
+        $i++;
+    }
+
+    $var=!$var;
+    print '<tr class="liste_total">';
+    print "<td>".$langs->trans("Total")."</td>\n";
+    print "<td align=\"right\">&nbsp;</td>\n";
+    print "<td align=\"right\">".price($total)."</td>\n";
+    print '<td>&nbsp;</td>';
+    print "</tr>\n";
+    print "</table>";
+    print "<br>\n";
 
 
 }
