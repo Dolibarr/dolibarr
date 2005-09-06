@@ -290,7 +290,7 @@ $conf->propal->dir_images=DOL_DATA_ROOT."/propale/images";
 if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
 $conf->domaine->enabled=0;
 $conf->voyage->enabled=0;
-
+$conf->actionscomm->dir_output=DOL_DATA_ROOT."/action";
 
 /*
  * Modification de quelques variable de conf en fonction des Constantes

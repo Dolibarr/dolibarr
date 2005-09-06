@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -464,6 +465,11 @@ if ($_GET["id"])
     $head[$h][1] = $langs->trans("CardAction");
     $hselected=$h;
     $h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
+	$head[$h][1] = $langs->trans('Documents');
+	//$hselected=$h;
+	$h++;
 
     dolibarr_fiche_head($head, $hselected, $langs->trans("Ref")." ".$act->id);
 
