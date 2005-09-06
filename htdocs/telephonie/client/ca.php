@@ -62,8 +62,8 @@ if ($_GET["id"])
 	  $head[$h][1] = $langs->trans("Factures");
 	  $h++;
 
-	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/ca.php?id=".$soc->id;
-	  $head[$h][1] = $langs->trans("CA");
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/client/stats.php?id=".$soc->id;
+	  $head[$h][1] = $langs->trans("Stats");
 	  $hselected = $h;
 	  $h++;
 	  	
