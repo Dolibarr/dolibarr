@@ -33,14 +33,9 @@ require("./pre.inc.php");
 $user->getrights('facture');
 $user->getrights('banque');
 
-if (!$user->rights->facture->lire)
-accessforbidden();
-
 $langs->load("bills");
 
-
 $warning_delay=31*24*60*60; // Delai affichage warning retard (si retard paiement facture > delai)
-
 
 require_once DOL_DOCUMENT_ROOT."/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/paiement.class.php";
@@ -234,7 +229,6 @@ if ($_GET["facid"] > 0)
       print '<tr><td>'.$langs->trans("Date").'</td>';
       print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
       print '<td>'.$langs->trans("DateClosing").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
-      if ($fac->date_lim_reglement < (time() - $warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans("Late"));
       print "</td></tr>";
       
       print '<tr>';
