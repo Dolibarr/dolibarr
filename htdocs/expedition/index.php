@@ -56,7 +56,6 @@ if ($socidp)
 {
     $sql .= " AND c.fk_soc = $socidp";
 }
-
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -108,7 +107,7 @@ if ( $db->query($sql) )
 	  $obj = $db->fetch_object();
 	  print "<tr $bc[$var]><td width=\"33%\">";
 	  print "<a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,20).'</a></td></tr>';
 	  $i++;
 	}
       print "</table><br>";
