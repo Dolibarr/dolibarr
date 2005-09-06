@@ -175,11 +175,11 @@ if ($_GET["id"] > 0)
 	$head[$h][1] = $langs->trans("Fiche");
 	$hselected = $h;
 	$h++;
-	
+	/*	
 	$head[$h][0] = DOL_URL_ROOT."/telephonie/fournisseur/cdr.php?id=".$fourn->id;
 	$head[$h][1] = $langs->trans("CDR");
 	$h++;
-
+	*/
 	dolibarr_fiche_head($head, $hselected, 'Fournisseur : '.$fourn->nom);
 	
 	print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
