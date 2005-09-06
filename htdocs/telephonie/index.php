@@ -114,11 +114,10 @@ if ($user->rights->telephonie->fournisseur->lire)
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
   $sql .= " ,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
   $sql .= " ,".MAIN_DB_PREFIX."telephonie_fournisseur as f";
+  $sql .= " ,".MAIN_DB_PREFIX."societe_perms as sp";
   $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
-  if ($user->rights->telephonie->ligne->lire_restreint)
-    {
-      $sql .= " AND l.fk_commercial_suiv = ".$user->id;
-    }
+  $sql .= " AND l.fk_client_comm = sp.fk_soc";
+  $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
   $sql .= " GROUP BY f.nom";
   
   $resql = $db->query($sql);
