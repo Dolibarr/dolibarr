@@ -548,11 +548,11 @@ else
                 print '</td><td colspan="2">';
                 if ($_GET["action"] == "classer")
                 {
-                    $html->form_project($_SERVER["PHP_SELF"]."?id=$commande->id",$commande->fk_soc,$commande->projetid,"projetid");
+                    $html->form_project($_SERVER["PHP_SELF"]."?id=$commande->id",$commande->soc_id,$commande->projet_id,"projetid");
                 }
                 else
                 {
-                    $html->form_project($_SERVER["PHP_SELF"]."?id=$commande->id",$commande->fk_soc,$commande->projetid,"none");
+                    $html->form_project($_SERVER["PHP_SELF"]."?id=$commande->id",$commande->soc_id,$commande->projet_id,"none");
                 }
                 print "</td>";
             } else {

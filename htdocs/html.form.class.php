@@ -950,7 +950,7 @@ class Form
             print '<input type="hidden" name="action" value="classin">';
             print '<table class="noborder" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_projects($soc_id,$selected,$htmlname);
+            $this->select_projects($socid,$selected,$htmlname);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
