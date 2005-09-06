@@ -141,24 +141,26 @@ class MenuTop {
         // Entrée compta
         if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled)
         {
-            $langs->load("compta");
-        
-            $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "compta")
-            {
-                $class='class="tmenu" id="sel"';
-            }
-            elseif (ereg("^".DOL_URL_ROOT."\/compta\/",$_SERVER["PHP_SELF"]))
-            {
-                $class='class="tmenu" id="sel"';
-            }
-            else
-            {
-                $class = 'class="tmenu"';
-            }
-        
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Accountancy")."/".$langs->trans("Treasury").'</a>';
-        
+	  if ($user->rights->compta->general->lire)
+	    {
+	      $langs->load("compta");
+	      
+	      $class="";
+	      if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "compta")
+		{
+		  $class='class="tmenu" id="sel"';
+		}
+	      elseif (ereg("^".DOL_URL_ROOT."\/compta\/",$_SERVER["PHP_SELF"]))
+		{
+		  $class='class="tmenu" id="sel"';
+		}
+	      else
+		{
+		  $class = 'class="tmenu"';
+		}
+	      
+	      print '<a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Accountancy")."/".$langs->trans("Treasury").'</a>';
+	    }	  
         }
         
         // Entrée projets
