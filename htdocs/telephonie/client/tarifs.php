@@ -220,8 +220,12 @@ if ($_GET["id"])
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  
 	  print '<tr class="liste_titre"><td width="15%" valign="center">Tarif (coût en euros par minutes)';
-	  print '</td><td align="center">Temporel</td><td align="center">Fixe';
-	  print '</td><td>&nbsp;</td><td>&nbsp;</td>';	  
+	  print '</td><td align="center">Temporel</td><td align="center">Fixe</td>';
+	  if ($user->rights->telephonie->tarif->client_modifier)
+	    {
+	      print '<td>&nbsp;</td>';
+	    }
+	  print '<td>&nbsp;</td>';	  
 	  print "</tr>\n";
 
 	  if($message_erreur)
@@ -294,9 +298,12 @@ if ($_GET["id"])
 
 		      print '<td align="center">'.$obj->temporel."</td>\n";
 		      print '<td align="center">'.$obj->fixe."</td>\n";
-		      print '<td align="center"><a href="'.DOL_URL_ROOT.'/telephonie/client/tarifs.php?action=delete&amp;tid='.$obj->rowid.'&amp;id='.$soc->id.'">';
-		      print img_delete()."</a></td>\n";
 
+		      if ($user->rights->telephonie->tarif->client_modifier)
+			{
+			  print '<td align="center"><a href="'.DOL_URL_ROOT.'/telephonie/client/tarifs.php?action=delete&amp;tid='.$obj->rowid.'&amp;id='.$soc->id.'">';
+		      print img_delete()."</a></td>\n";
+			}
 		      print '<td align="center">'.$obj->code."</td>\n";
 		      print '</tr>';
 
