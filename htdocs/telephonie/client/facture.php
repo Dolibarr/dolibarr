@@ -192,7 +192,7 @@ if ($_GET["facid"] > 0)
   if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
     {      
       $soc = new Societe($db, $fac->socidp);
-      $soc->fetch($fac->socidp);
+      $soc->fetch($fac->socidp, $user);
             
       if (!$soc->perm_read)
 	{
