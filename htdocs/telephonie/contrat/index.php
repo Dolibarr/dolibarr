@@ -61,10 +61,11 @@ print '<br />';
 
 $sql = "SELECT distinct statut, count(*) as cc";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as l";
-if ($user->rights->telephonie->ligne->lire_restreint)
-{
-  $sql .= " WHERE l.fk_commercial_suiv = ".$user->id;
-}
+$sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
+$sql .= " WHERE l.fk_client_comm = sp.fk_soc";
+$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
+
+
 $sql .= " GROUP BY statut";
 
 if ($db->query($sql))
