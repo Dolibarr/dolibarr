@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ print '</td><td>';
 
 print '<input type="text" size="40" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
 print '</td><td>';
-print '<input type="submit" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
+print '<input type="submit" value="'.$langs->trans("Modify").'" name="button" class="button"> &nbsp; ';
 print "</td></tr>\n";
 
 print '</form>';
