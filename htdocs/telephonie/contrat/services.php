@@ -24,7 +24,7 @@ require "./pre.inc.php";
 
 $mesg = '';
 
-if ($_POST["action"] == 'addservice')
+if ($_POST["action"] == 'addservice' && $user->rights->telephonie->ligne->creer)
 {
   $contrat = new TelephonieContrat($db);
   $contrat->id= $_GET["id"];
@@ -35,7 +35,7 @@ if ($_POST["action"] == 'addservice')
     }
 }
 
-if ($_GET["action"] == 'rmservice')
+if ($_GET["action"] == 'rmservice' && $user->rights->telephonie->ligne->creer)
 {
   $contrat = new TelephonieContrat($db);
   $contrat->id= $_GET["id"];
@@ -48,93 +48,92 @@ if ($_GET["action"] == 'rmservice')
 
 llxHeader("","","Fiche Contrat - Services");
 
-if ($cancel == $langs->trans("Cancel"))
+
+if ($_GET["id"])
 {
-  $action = '';
-}
-
-
-  if ($_GET["id"])
+  $client_comm = new Societe($db);
+  $contrat = new TelephonieContrat($db);
+  
+  if ($contrat->fetch($_GET["id"]) > 0)
     {
-      if ($_GET["action"] <> 're-edit')
+      $result = 1;
+      $client_comm->fetch($contrat->client_comm_id, $user);
+    }
+  else
+    {
+      print "Erreur";
+    }
+    
+  if (!$client_comm->perm_read)
+    {
+      print "Lecture non authorisée";
+    }
+    
+  if ( $result && $client_comm->perm_read)
+    { 
+      if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
-	  $contrat = new TelephonieContrat($db);
-
-	  if ($contrat->fetch($_GET["id"]) == 0)
+	  
+	  $h=0;
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/fiche.php?id=".$contrat->id;
+	  $head[$h][1] = $langs->trans("Contrat");
+	  $h++;
+	  
+	  $nser = $contrat->count_associated_services();
+	  
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/services.php?id=".$contrat->id;
+	  if ($nser > 0)
 	    {
-	      $result = 1;
+	      $head[$h][1] = $langs->trans("Services")." (".$nser.")";
 	    }
-	}
-
-      if ( $result )
-	{ 
-	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
+	  else
 	    {
-
-	      $h=0;
-	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/fiche.php?id=".$contrat->id;
-	      $head[$h][1] = $langs->trans("Contrat");
-	      $h++;
-
-	      $nser = $contrat->count_associated_services();
-	      
-	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/services.php?id=".$contrat->id;
-	      if ($nser > 0)
-		{
-		  $head[$h][1] = $langs->trans("Services")." (".$nser.")";
-		}
-	      else
-		{
-		  $head[$h][1] = $langs->trans("Services");
-		}
-	      $hselected = $h;
-	      $h++;
-
-	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/stats.php?id=".$contrat->id;
-	      $head[$h][1] = $langs->trans("Stats");
-	      $h++;
-
-	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/info.php?id=".$contrat->id;
-	      $head[$h][1] = $langs->trans("Infos");
-	      $h++;
-
-	      dolibarr_fiche_head($head, $hselected, 'Contrat : '.$contrat->ref);
-
-	      print_fiche_titre('Fiche Contrat', $mesg);
-      
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-
-	      $client_comm = new Societe($db, $contrat->client_comm_id);
-	      $client_comm->fetch($contrat->client_comm_id);
-
-	      print '<tr><td width="20%">Référence</td><td>'.$contrat->ref.'</td>';
-	      print '<td>Facturé : '.$contrat->facturable.'</td></tr>';
-
-	      print '<tr><td width="20%">Client</td><td>';
-	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
-
-	      print $client_comm->nom.'</a></td><td>'.$client_comm->code_client;
+	      $head[$h][1] = $langs->trans("Services");
+	    }
+	  $hselected = $h;
+	  $h++;
+	  
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/stats.php?id=".$contrat->id;
+	  $head[$h][1] = $langs->trans("Stats");
+	  $h++;
+	  
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/info.php?id=".$contrat->id;
+	  $head[$h][1] = $langs->trans("Infos");
+	  $h++;
+	  
+	  dolibarr_fiche_head($head, $hselected, 'Contrat : '.$contrat->ref);
+	  
+	  print_fiche_titre('Fiche Contrat', $mesg);
+	  
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';	  	  
+	  print '<tr><td width="20%">Référence</td><td>'.$contrat->ref.'</td>';
+	  print '<td>Facturé : '.$contrat->facturable.'</td></tr>';
+	  
+	  print '<tr><td width="20%">Client</td><td>';
+	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
+	  
+	  print $client_comm->nom.'</a></td><td>'.$client_comm->code_client;
+	  print '</td></tr>';
+	  
+	  if ($contrat->client_comm_id <> $contrat->client_id)
+	    {	      	     
+	      $client = new Societe($db, $contrat->client_id);
+	      $client->fetch($contrat->client_id);
+	      print '<tr><td width="20%">Client (Agence/Filiale)</td><td colspan="2">';
+	      print $client->nom.'<br />';
+	      print $client->cp . " " .$client->ville;
 	      print '</td></tr>';
-
-	      if ($contrat->client_comm_id <> $contrat->client_id)
-		{	      	     
-		  $client = new Societe($db, $contrat->client_id);
-		  $client->fetch($contrat->client_id);
-		  print '<tr><td width="20%">Client (Agence/Filiale)</td><td colspan="2">';
-		  print $client->nom.'<br />';
-		  print $client->cp . " " .$client->ville;
-		  print '</td></tr>';
-		}
-
-	      $commercial = new User($db, $contrat->commercial_sign_id);
-	      $commercial->fetch();
-
-	      print '<tr><td width="20%">Commercial Signature</td>';
-	      print '<td colspan="2">'.$commercial->fullname.'</td></tr>';
-
-	      $commercial_suiv = new User($db, $contrat->commercial_suiv_id);
-	      $commercial_suiv->fetch();
-
+	    }
+	  
+	  $commercial = new User($db, $contrat->commercial_sign_id);
+	  $commercial->fetch();
+	  
+	  print '<tr><td width="20%">Commercial Signature</td>';
+	  print '<td colspan="2">'.$commercial->fullname.'</td></tr>';
+	  
+	  $commercial_suiv = new User($db, $contrat->commercial_suiv_id);
+	  $commercial_suiv->fetch();
+	  
 	      print '<tr><td width="20%">Commercial Suivi</td>';
 	      print '<td colspan="2">'.$commercial_suiv->fullname.'</td></tr>';
 
@@ -249,6 +248,9 @@ if ($cancel == $langs->trans("Cancel"))
 	   *
 	   */
 
+      if ($user->rights->telephonie->ligne->creer)
+	{
+
 	  print_fiche_titre('Ajouter un service', $mesg);
 	  
 	  print '<form action="services.php?id='.$contrat->id.'" method="post">';
@@ -294,7 +296,7 @@ if ($cancel == $langs->trans("Cancel"))
 	  print '</td></tr>';
 	  print '</table>';
 	  print '</form>';
-	  
+	} 
 	  /*
 	   *
 	   *
