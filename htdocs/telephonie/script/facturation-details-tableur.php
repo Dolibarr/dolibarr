@@ -66,11 +66,11 @@ dolibarr_syslog("Mois $month Année $year");
 if (!$error)
 {
   
-  $sql = "SELECT distinct(ligne) as client";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-  $sql .= " ORDER BY ligne ASC";
+  $sql = "SELECT fk_contrat as contrat";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_service";
+  $sql .= " WHERE fk_service = 3";
   
-  $clients = array();
+  $contrats = array();
   
   if ( $db->query($sql) )
     {
@@ -82,7 +82,7 @@ if (!$error)
 	{
 	  $objp = $db->fetch_object( $i);
 	  
-	  $clients[$i] = $objp->client;
+	  $contrats[$i] = $objp->contrat;
 	  
 	  $i++;
 	}            
@@ -102,17 +102,45 @@ if (!$error)
 
 if (!$error)
 {
-   foreach ($clients as $client)
+  foreach ($contrats as $contrat)
     {
 
-      $facdet = new FactureDetailTableurOne($db);
-      $resg = $facdet->GenerateFile ($client, $year, $month);
+      $sql = "SELECT rowid as ligne";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+      $sql .= " WHERE fk_contrat = ".$contrat;
       
-      if ($resg <> 0)
+      $resql=  $db->query($sql) ;
+
+      if ($resql)
 	{
-	  dolibarr_syslog("ERREUR lors de Génération du détail tableur");
-	  $error = 19;
+	  $num = $db->num_rows($resql);
+	  
+	  $i = 0;
+	  
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object($resql);
+	      
+	      $contrats[$i] = $objp->contrat;
+
+	      $facdet = new FactureDetailTableurOne($db);
+	      $resg = $facdet->GenerateFile ($obj->ligne, $year, $month);
+	      
+	      if ($resg <> 0)
+		{
+		  dolibarr_syslog("ERREUR lors de Génération du détail tableur");
+		  $error = 19;
+		}
+	      
+	      $i++;
+	    }            
+	  $db->free();
 	}
+      else
+	{
+	  $error = 1;
+	  dolibarr_syslog($db->error());
+	}           
     }
 }
 
