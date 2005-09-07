@@ -161,15 +161,15 @@ if ($_socid > 0)
         if ($obj->fk_user == $user->id) $remise_user+=$obj->amount_ht;
     }
 
-    print '<tr><td width="25%">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
+    print '<tr><td width="33%">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
     print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-    print '<tr><td width="25%">'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
+    print '<tr><td width="33%">'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
     print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
     print '<tr><td>'.$langs->trans("NewValue").'</td>';
     print '<td><input type="text" size="5" name="remise" value="'.$remise_user.'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
     
-    print '<tr><td align="center" colspan="2">&nbsp;<input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+    print '<tr><td align="center" colspan="2">&nbsp;<input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
         
     print "</table></form>";
 
@@ -181,7 +181,7 @@ if ($_socid > 0)
     /*
      * Liste
      */
-    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc, u.code";
+    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc, u.code, u.rowid as user_id";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
     $sql .= " , ".MAIN_DB_PREFIX."user as u";
     $sql .= " WHERE rc.fk_soc =". $objsoc->id;
@@ -194,7 +194,7 @@ if ($_socid > 0)
         print_titre($langs->trans("Ristournes restant dues"));
         print '<table width="100%" class="noborder">';
         print '<tr class="liste_titre"><td width="80">'.$langs->trans("Date").'</td>';
-        print '<td>'.$langs->trans("AmountHT").'</td><td width="100">'.$langs->trans("Accordée par").'</td></tr>';
+        print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td><td>&nbsp;</td><td width="100">'.$langs->trans("Accordée par").'</td></tr>';
 
         $var = true;
         $i = 0 ;
@@ -205,8 +205,9 @@ if ($_socid > 0)
             $var = !$var;
             print "<tr $bc[$var]>";
             print '<td>'.dolibarr_print_date($obj->dc).'</td>';
-            print '<td>'.price($obj->amount_ht).'</td>';
-            print '<td>'.$obj->code.'</td></tr>';
+            print '<td align="right">'.price($obj->amount_ht).'</td>';
+            print '<td>&nbsp;</td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</td></tr>';
     
             $i++;
         }
@@ -221,16 +222,17 @@ if ($_socid > 0)
     print '<br />';
 
     /*
-     * Liste Archives
+     * Liste ristournes appliquées
      */
-    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc, u.code, rc.fk_facture, f.facnumber";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-    $sql .= " , ".MAIN_DB_PREFIX."user as u";
-    $sql .= " , ".MAIN_DB_PREFIX."facture as f";
-    $sql .= " WHERE rc.fk_soc =". $objsoc->id;
-    $sql .= " AND fk_facture = f.rowid";
-    $sql .= " AND u.rowid = rc.fk_user AND fk_facture IS NOT NULL";
-    $sql .= " ORDER BY rc.datec DESC";
+    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc, u.code, u.rowid as user_id,";
+    $sql.= " rc.fk_facture, f.facnumber";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+    $sql.= " , ".MAIN_DB_PREFIX."user as u";
+    $sql.= " , ".MAIN_DB_PREFIX."facture as f";
+    $sql.= " WHERE rc.fk_soc =". $objsoc->id;
+    $sql.= " AND fk_facture = f.rowid";
+    $sql.= " AND u.rowid = rc.fk_user AND fk_facture IS NOT NULL";
+    $sql.= " ORDER BY rc.datec DESC";
 
     $resql=$db->query($sql);
     if ($resql)
@@ -238,7 +240,7 @@ if ($_socid > 0)
         print_titre($langs->trans("Ristournes appliquées"));
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre"><td width="80">'.$langs->trans("Date").'</td>';
-        print '<td>'.$langs->trans("AmountHT").'</td><td align="center">'.$langs->trans("Bill").'</td><td width="100">'.$langs->trans("Author").'</td></tr>';
+        print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td><td align="center">'.$langs->trans("Bill").'</td><td width="100">'.$langs->trans("Author").'</td></tr>';
 
         $var = true;
         $i = 0 ;
@@ -249,7 +251,7 @@ if ($_socid > 0)
             $var = !$var;
             print "<tr $bc[$var]>";
             print '<td>'.dolibarr_print_date($obj->dc).'</td>';
-            print '<td>'.price($obj->amount_ht).'</td>';
+            print '<td align="right">'.price($obj->amount_ht).'</td>';
             print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->fk_facture.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
             print '<td>'.$obj->code.'</td></tr>';
     

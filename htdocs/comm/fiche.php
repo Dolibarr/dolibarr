@@ -261,28 +261,28 @@ if ($_socid > 0)
 
     print '<tr><td>'.$langs->transcountry('ProfId3',$objsoc->pays_code).'</td><td>'.$objsoc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
 
-    // Statut juridique
-    print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$objsoc->forme_juridique.'</td></tr>';
-
     // Type + Staff
     $arr = $objsoc->typent_array($objsoc->typent_id);
     $objsoc->typent= $arr[$objsoc->typent_id];
     print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$objsoc->effectif.'</td></tr>';
 
+    // Remise permanente
     print '<tr><td nowrap>';
     print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
     print $langs->trans("CustomerRelativeDiscount");
     print '<td><td align="right">';
-    print '<a href="remise.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
     print '</td></tr></table>';
     print '</td><td colspan="3">'.$objsoc->remise_client."&nbsp;%</td>";
-
-    print '<tr><td>';
+    print '</tr>';
     
-    print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+    // Remise avoirs
+    print '<tr><td nowrap>';
+    print '<table width="100%" class="nobordernopadding">';
+    print '<tr><td nowrap>';
     print $langs->trans("CustomerAbsoluteDiscount");
     print '<td><td align="right">';
-    print '<a href="remx.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
     print '</td></tr></table>';
     print '</td>';
     print '<td colspan="3">';
@@ -299,6 +299,7 @@ if ($_socid > 0)
     }
     print '</td>';
     print '</tr>';
+
 
     print "</table>";
 
@@ -385,7 +386,7 @@ if ($_socid > 0)
             if ($num >0 )
             {
                 print '<tr class="liste_titre">';
-                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td></tr></table></td>';
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->id.'">'.$langs->trans("AllOrders").' ('.$num.')</a></td></tr></table></td>';
                 print '</tr>';
             }
             $i = 0;
@@ -751,7 +752,7 @@ if ($_socid > 0)
                     print '<td>&nbsp;</td>';
                 }
 
-                print '<td><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
+                print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
                 print "</tr>\n";
                 $i++;
             }

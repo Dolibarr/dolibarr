@@ -235,20 +235,49 @@ if ($socid > 0)
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
     // TVA
-    print '<tr><td nowrap>'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
+    print '<tr><td nowrap>'.$langs->trans('VATIntraVeryShort').'</td><td colspan="3">';
     print $societe->tva_intra;
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$societe->capital.' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-
-    // Statut juridique
-    print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>';
 
     // Type + Staff
     $arr = $societe->typent_array($societe->typent_id);
     $societe->typent= $arr[$societe->typent_id];
     print '<tr><td>'.$langs->trans("Type").'</td><td>'.$societe->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$societe->effectif.'</td></tr>';
 
+    // Remise permanente
+    print '<tr><td nowrap>';
+    print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+    print $langs->trans("CustomerRelativeDiscount");
+    print '<td><td align="right">';
+    print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    print '</td></tr></table>';
+    print '</td><td colspan="3">'.$societe->remise_client."&nbsp;%</td>";
+    print '</tr>';
+    
+    // Remise avoirs
+    print '<tr><td nowrap>';
+    print '<table width="100%" class="nobordernopadding">';
+    print '<tr><td nowrap>';
+    print $langs->trans("CustomerAbsoluteDiscount");
+    print '<td><td align="right">';
+    print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    print '</td></tr></table>';
+    print '</td>';
+    print '<td colspan="3">';
+    $sql  = "SELECT rc.amount_ht,".$db->pdate("rc.datec")." as dc";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+    $sql .= " WHERE rc.fk_soc =". $societe->id;
+    $sql .= " AND rc.fk_user = ".$user->id." AND fk_facture IS NULL";
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj = $db->fetch_object($resql);
+        if ($obj->amount_ht) print $obj->amount_ht.'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
+        else print $langs->trans("None");
+    }
+    print '</td>';
     print '</tr>';
 
     print "</table>";
