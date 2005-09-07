@@ -522,10 +522,10 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 	      $error++;
 	    }
 
+	  /* Facture détaillée standard */
 
 	  if (!$error)
 	    {
-
 	      $facok = 0;
 	      
 	      // Différents modèles de factures détaillées
@@ -550,6 +550,34 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
 		  dolibarr_syslog("ERREUR lors de Génération du pdf détaillé");
 		  $error = 19;
 		} 
+	    }
+
+	  /* Factures détaillées autres */
+
+	  if (!$error)
+	    {
+	      // Recherche des factures détaillées
+	      // et copie dans le répertoire de la facture
+	      // ID facture telephonique $factel_id
+	      $fdefacid = substr('0000'.$factel_id, -4);
+	      $fdedir = DOL_DATA_ROOT.'/telephonie/facture/';
+
+	      $fdedir .= substr($fdefacid,0,1)."/";
+	      $fdedir .= substr($fdefacid,1,1)."/";
+	      $fdedir .= substr($fdefacid,2,1)."/";
+	      $fdedir .= substr($fdefacid,3,1)."/";
+	
+	      $fname = $fdedir . $fdefacid . "-detail.xls";
+
+	      if (file_exists($fname))
+		{
+		  $fdefac = new Facture($db,"",$factel->fk_facture);
+		  $fdefac->fetch($factel->fk_facture);  
+
+		  $dest = FAC_OUTPUTDIR ."/".$fdefac->ref."/".$fdefac->ref."-".$fdefacid."-".$ligne->numero."-detail.xls";
+
+		  copy($fname, $dest);
+		}
 	    }
 	}	  	
     }
