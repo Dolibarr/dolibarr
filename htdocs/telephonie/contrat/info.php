@@ -29,17 +29,25 @@ llxHeader("","","Fiche Contrat");
 
 if ($_GET["id"])
 {
-  if ($_GET["action"] <> 're-edit')
-    {
-      $contrat = new TelephonieContrat($db);
+  $client_comm = new Societe($db);
+  $contrat = new TelephonieContrat($db);
       
-      if ($contrat->fetch($_GET["id"]) == 0)
-	{
-	  $result = 1;
-	}
+  if ($contrat->fetch($_GET["id"]) > 0)
+    {
+      $result = 1;
+      $client_comm->fetch($contrat->client_comm_id, $user);
+    }
+  else
+    {
+      print "Erreur";
     }
   
-  if ( $result )
+  if (!$client_comm->perm_read)
+    {
+      print "Lecture non authorisée";
+    }
+  
+  if ( $result && $client_comm->perm_read)
     { 
       if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
