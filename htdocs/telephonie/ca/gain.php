@@ -77,7 +77,7 @@ if ($resql)
       $marge = $row[4];
 
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/ca.php?id='.$row[5].'">'.$row[0]."</a></td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/stats.php?id='.$row[5].'">'.$row[0]."</a></td>\n";
       print '<td align="right">'.price($row[1])." HT</td>\n";
       print '<td align="right">'.price($row[2])." HT</td>\n";
       print '<td align="right">'.number_format(round($marge), 2, '.', ' ')." %</td>\n";
