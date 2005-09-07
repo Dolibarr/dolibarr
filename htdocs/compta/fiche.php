@@ -234,10 +234,12 @@ if ($socid > 0)
     print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel,$societe->pays_code).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax,$societe->pays_code).'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
-    print "<tr><td nowrap>".$langs->transcountry("ProfId1",$societe->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$societe->siren."\">".$societe->siren."</a>&nbsp;</td>";
-    print '<td>'.$langs->transcountry('ProfId2',$societe->pays_code).'</td><td>'.$societe->siret.'</td></tr>';
+    // TVA
+    print '<tr><td nowrap>'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
+    print $societe->tva_intra;
+    print '</td></tr>';
 
-    print '<tr><td>'.$langs->transcountry('ProfId3',$societe->pays_code).'</td><td>'.$societe->ape.'</td><td colspan="2">&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$societe->capital.' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
     // Statut juridique
     print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>';
@@ -558,15 +560,6 @@ if ($socid > 0)
             dolibarr_print_error($db);
         }
         print "</table>";
-
-        // Notes sur la societe
-        /*
-        if ($societe->note) {
-            print '<table class="border" width="100%" bgcolor="#e0e0e0">';
-            print "<tr><td>".nl2br($societe->note)."</td></tr>";
-            print "</table>";
-        }
-        */
 
     }
 
