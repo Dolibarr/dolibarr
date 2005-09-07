@@ -42,8 +42,21 @@ if ($_GET["id"] or $_GET["numero"])
 	  $result = $ligne->fetch($_GET["numero"]);
 	}
     }
+
+
+  if ($result == 1)
+    {
+      $client_comm = new Societe($db);
+      $client_comm->fetch($ligne->client_comm_id, $user);
+    }
   
-  if ( $result )
+  if (!$client_comm->perm_read)
+    {
+      print "Lecture non authorisée";
+    }
+
+  
+  if ($result == 1 && $client_comm->perm_read)  
     { 
 	  
       $h=0;
@@ -56,9 +69,11 @@ if ($_GET["id"] or $_GET["numero"])
       $hselected = $h;
       $h++;
 	  
+      /*
       $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/facturesdet.php?id=".$ligne->id;
       $head[$h][1] = $langs->trans('Factures détaillées');
       $h++;
+      */
 
       $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/infoc.php?id=".$ligne->id;
       $head[$h][1] = $langs->trans('Infos');
@@ -161,33 +176,34 @@ if ($_GET["id"] or $_GET["numero"])
       print '<tr><td>Facture</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/telephonie/client/facture.php?facid='.$fac->id.'">'.$fac->ref.'</a></td></tr>';
 
       print "</table>\n";
-    }
-  /*
-   *
-   *
-   *
-   */
 
-  $file = DOL_DATA_ROOT."/facture/".$fac->ref."/".$fac->ref.".pdf";
-  $file_img = DOL_DATA_ROOT."/facture/".$fac->ref."/".$fac->ref.".pdf.png";
-
-  if (file_exists($file_img))
-    {
-      print '<br><img src="../showfacture.php?facref='.$fac->ref.'"></img>';
-    }
-  else
-    {
-      if (file_exists("/usr/bin/convert"))
+      /*
+       *
+       *
+       *
+       */
+      
+      $file = DOL_DATA_ROOT."/facture/".$fac->ref."/".$fac->ref.".pdf";
+      $file_img = DOL_DATA_ROOT."/facture/".$fac->ref."/".$fac->ref.".pdf.png";
+      
+      if (file_exists($file_img))
 	{
-	  exec("/usr/bin/convert $file $file_img");
-	
-	  if (file_exists($file_img))
+	  print '<br><img src="../showfacture.php?uid='.$user->id.'&amp;facref='.$fac->id.'"></img>';
+	}
+      else
+	{
+	  if (file_exists("/usr/bin/convert"))
 	    {
-	      print '<br><img src="../showfacture.php?facref='.$fac->ref.'"></img>';
-	    }      
-	  else
-	    {
-	      print "Erreur ";
+	      exec("/usr/bin/convert $file $file_img");
+	      
+	      if (file_exists($file_img))
+		{
+		  print '<br><img src="../showfacture.php?uid='.$user->id.'&amp;facref='.$fac->id.'"></img>';
+		}      
+	      else
+		{
+		  print "Erreur ";
+		}
 	    }
 	}
     }

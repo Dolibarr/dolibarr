@@ -199,7 +199,8 @@ if ($_GET["id"])
 		      print '<tr class="liste_titre"><td>Service</td>';
 		      print '<td align="right">Montant Facturé</td>';
 		      print '<td align="right">Montant du service</td>';
-		      print "<td>&nbsp;</td>\n";
+		      if ($user->rights->telephonie->ligne->creer)		
+			print "<td>&nbsp;</td>\n";
 		      print '<td align="center">Ajouté par</td>';
 		      print '<td align="center">Ajouté le</td></tr>';
 		      
@@ -218,9 +219,12 @@ if ($_GET["id"])
 			  print '<td align="right">'.price($obj->montant_fac)." euros HT</td>\n";
 			  print '<td align="right">'.price($obj->montant)." euros HT</td>\n";
 
+      if ($user->rights->telephonie->ligne->creer)
+	{
 			  print '<td align="center"><a href="services.php?id='.$contrat->id.'&amp;action=rmservice&amp;service_id='.$obj->serid.'">';
 			  print img_delete();
 			  print "</a></td>";
+	}
 			  print '<td align="center">'.$obj->firstname.' '.$obj->name.'</td>';
 			  print '<td align="center">'.strftime("%d/%m/%y",$obj->date_creat).'</td>';
 			  print "</tr>\n";
