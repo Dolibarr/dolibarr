@@ -227,7 +227,7 @@ function dolibarr_get_const($db, $name)
         if ($resql)
         {
             $obj=$db->fetch_object($resql);
-            $value=$obj->value;
+            $value=stripslashes($obj->value);
         }
         return $value;
 }
@@ -278,11 +278,12 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
         
         $db->begin();
         
+        //dolibarr_syslog("dolibarr_set_const name=$name, value=$value");
         $sql = "DELETE FROM llx_const WHERE name = '$name';"; 		
         $resql=$db->query($sql);	
         
         $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
-        $sql.= " VALUES ('$name','".addslashes($value)."','$type',$visible,'$note');";
+        $sql.= " VALUES ('$name','".addslashes($value)."','$type',$visible,'".addslashes($note)."');";
         $resql=$db->query($sql);	
 
         if ($resql)

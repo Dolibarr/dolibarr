@@ -37,19 +37,19 @@ if (!$user->admin)
 if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
   || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",$_POST["address"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
-    dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",stripslashes($_POST["nom"]));
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",stripslashes($_POST["address"]));
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",stripslashes($_POST["pays_id"]));
+    dolibarr_set_const($db, "MAIN_MONNAIE",stripslashes($_POST["currency"]));
 
-    dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"]);
-    dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
-    dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
-    dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
-    dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"]);
-    dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
-    dolibarr_set_const($db, "FACTURE_TVAOPTION",$_POST["optiontva"]);
+    dolibarr_set_const($db, "MAIN_INFO_CAPITAL",stripslashes($_POST["capital"]));
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",stripslashes($_POST["forme_juridique_code"]));
+    dolibarr_set_const($db, "MAIN_INFO_SIREN",stripslashes($_POST["siren"]));
+    dolibarr_set_const($db, "MAIN_INFO_SIRET",stripslashes($_POST["siret"]));
+    dolibarr_set_const($db, "MAIN_INFO_APE",stripslashes($_POST["ape"]));
+    dolibarr_set_const($db, "MAIN_INFO_RCS",stripslashes($_POST["rcs"]));
+    dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",stripslashes($_POST["tva"]));
+    dolibarr_set_const($db, "FACTURE_TVAOPTION",stripslashes($_POST["optiontva"]));
 
     if ($_POST['action'] != 'updateedit')
     {
@@ -131,9 +131,9 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     {
         $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
         $sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
-        $result=$db->query($sql);
-        if ($result) {
-            $obj = $db->fetch_object();
+        $resql=$db->query($sql);
+        if ($resql) {
+            $obj = $db->fetch_object($resql);
             if ($obj->code) $code_pays=$obj->code;
         }
         else {
