@@ -28,7 +28,8 @@
 */
 
 require("./pre.inc.php");
-require("../contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 
 $langs->load("interventions");
 
@@ -69,48 +70,49 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
 $result=$db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows($result);
-  print_barre_liste($langs->trans("ListOfInterventions"), $page, "index.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
+    $fichinter_static=new Fichinter($db);
 
-  $i = 0;
-  print '<table class="noborder" width="100%">';
-  print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&amp;socid=$socid",'',$sortfield);
-  print '<td>'.$langs->trans("Description").'</td>';
-  print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","","&amp;socid=$socid",'align="center"',$sortfield);
-  print '<td align="right">'.$langs->trans("Duration").'</td>';
-  print '<td align="center">'.$langs->trans("Status").'</td>';
-  print "</tr>\n";
-  $var=True;
-  $total = 0;
-  while ($i < $num)
+    $num = $db->num_rows($result);
+    print_barre_liste($langs->trans("ListOfInterventions"), $page, "index.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
+
+    $i = 0;
+    print '<table class="noborder" width="100%">';
+    print "<tr class=\"liste_titre\">";
+    print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
+    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&amp;socid=$socid",'',$sortfield);
+    print '<td>'.$langs->trans("Description").'</td>';
+    print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","","&amp;socid=$socid",'align="center"',$sortfield);
+    print '<td align="right">'.$langs->trans("Duration").'</td>';
+    print '<td align="center">'.$langs->trans("Status").'</td>';
+    print "</tr>\n";
+    $var=True;
+    $total = 0;
+    while ($i < $num)
     {
-      $objp = $db->fetch_object($result);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->fichid\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
+        $objp = $db->fetch_object($result);
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print "<td><a href=\"fiche.php?id=$objp->fichid\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
+        print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44)."</a></td>\n";
+        print '<td>'.nl2br($objp->note).'</td>';
+        print '<td align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
+        print '<td align="right">'.price($objp->duree).'</td>';
+        print '<td align="center">'.$fichinter_static->LibStatut($objp->fk_statut).'</td>';
 
-      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom."</a></td>\n";
-      print '<td>'.nl2br($objp->note).'</td>';
-      print '<td align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
-      print '<td align="right">'.price($objp->duree).'</td>';
-      print '<td align="center">'.$objp->fk_statut.'</td>';
-
-      print "</tr>\n";
-      $total += $objp->duree;
-      $i++;
+        print "</tr>\n";
+        $total += $objp->duree;
+        $i++;
     }
-  print '<tr class="liste_total"><td colspan="3"></td><td>'.$langs->trans("Total").'</td>';
-  print "<td align=\"right\" nowrap>".price($total)."</td><td></td>";
-  print "</tr>";
+    print '<tr class="liste_total"><td colspan="3"></td><td>'.$langs->trans("Total").'</td>';
+    print '<td align="right" nowrap>'.price($total).'</td><td></td>';
+    print '</tr>';
 
-  print "</table>";
-  $db->free($result);
+    print '</table>';
+    $db->free($result);
 }
 else
 {
-  dolibarr_print_error($db);
+    dolibarr_print_error($db);
 }
 
 $db->close();

@@ -20,8 +20,9 @@
  * $Source$ 
  *
  */
+
 require("./pre.inc.php");
-require("../contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 if ($user->societe_id > 0)
 {
@@ -29,6 +30,7 @@ if ($user->societe_id > 0)
 }
 
 llxHeader();
+
 /*
  * Liste
  *
