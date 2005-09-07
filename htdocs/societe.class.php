@@ -1356,83 +1356,113 @@ class Societe {
         }
     }
 
-  /**
-   *    \brief  Verifie la validite du siren
-   */
-  function check_siren()
-  {
-    if (strlen($this->siren) == 9)
-      {
-	$sum = 0;
+    /**
+     *      \brief      Verifie la validite d'un identifiant professionnel en
+     *                  fonction du pays de la societe (siren, siret, ...)
+     *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *      \param      soc             Objet societe
+     *      \return     int             <0 si ko, >0 si ok
+     */
+    function id_prof_check($idprof,$soc)
+    {
+        $ok=1;
+        
+        // Verifie SIREN si pays FR
+        if ($idprof == 1 && $soc->pays_code == 'FR')
+        {
+            $chaine=trim($this->siren);
+            $chaine=eregi_replace(' ','',$chaine);
+            
+            if (strlen($chaine) != 9) return -1;
 
-	for ($i = 0 ; $i < 10 ; $i = $i+2)
-	  {
-	    $sum = $sum + substr($this->siren, (8 - $i), 1);
-	  }
+            $sum = 0;
+    
+            for ($i = 0 ; $i < 10 ; $i = $i+2)
+            {
+                $sum = $sum + substr($this->siren, (8 - $i), 1);
+            }
+    
+            for ($i = 1 ; $i < 9 ; $i = $i+2)
+            {
+                $ps = 2 * substr($this->siren, (8 - $i), 1);
+    
+                if ($ps > 9)
+                {
+                    $ps = substr($ps, 0,1) + substr($ps, 1 ,1);
+                }
+                $sum = $sum + $ps;
+            }
+        
+            if (substr($sum, -1) != 0) return -1;
+        }
 
-	for ($i = 1 ; $i < 9 ; $i = $i+2)
-	  {
-	    $ps = 2 * substr($this->siren, (8 - $i), 1);
+        // Verifie SIRET si pays FR
+        if ($idprof == 2 && $soc->pays_code == 'FR')
+        {
+            $chaine=trim($this->siret);
+            $chaine=eregi_replace(' ','',$chaine);
+            
+            if (strlen($chaine) != 14) return -1;
+        }
 
-	    if ($ps > 9)
-	      {
-		$ps = substr($ps, 0,1) + substr($ps, 1 ,1);
-	      }
-	    $sum = $sum + $ps;
-	  }
+        return $ok;
+    }
 
-	if (substr($sum, -1) == 0)
-	  {
-	    return 0;
-	  }
-	else
-	  {
-	    return -1;
-	  }
-      }
-    else
-      {
-	return -2;
-      }
-  }
+    /**
+     *      \brief      Renvoi url de vérification d'un identifiant professionnal
+     *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *      \param      soc             Objet societe
+     *      \return     string          url ou chaine vide si aucune url connue
+     */
+    function id_prof_url($idprof,$soc)
+    {
+        global $langs;
 
-  /**
-   *    \brief      Indique si la société a des projets
-   *    \return     bool	   true si la société a des projets, false sinon
-   */
-  function has_projects()
-  {
-    $sql = 'SELECT COUNT(*) as numproj FROM '.MAIN_DB_PREFIX.'projet WHERE fk_soc = ' . $this->id;
-    $resql = $this->db->query($sql);
-    if ($resql)
-      {
-	$nump = $this->db->num_rows($resql);
-	$obj = $this->db->fetch_object();
-	$count = $obj->numproj;
-      }
-    else
-      {
-	$count = 0;
-	print $this->db->error();
-      }
-    $this->db->free($resql);
-    return ($count > 0);
-  }
+        $url='';        
+        if ($idprof == 1 && $soc->pays_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren;
+        if ($idprof == 1 && $soc->pays_code == 'GB') $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
+            
+        if ($url) return '<a target="_blank" href="'.$url.'">['.$langs->trans("Check").']</a>';
+        return '';
+    }
+
+    /**
+     *      \brief      Indique si la société a des projets
+     *      \return     bool	   true si la société a des projets, false sinon
+     */
+    function has_projects()
+    {
+        $sql = 'SELECT COUNT(*) as numproj FROM '.MAIN_DB_PREFIX.'projet WHERE fk_soc = ' . $this->id;
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $nump = $this->db->num_rows($resql);
+            $obj = $this->db->fetch_object();
+            $count = $obj->numproj;
+        }
+        else
+        {
+            $count = 0;
+            print $this->db->error();
+        }
+        $this->db->free($resql);
+        return ($count > 0);
+    }
   
 
-  function AddPerms($user_id, $read, $write, $perms)
-  {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perms";
-    $sql .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
-    $sql .= " VALUES (".$this->id.",".$user_id.",".$read.",".$write.",".$perms.");";
-	
-    $resql=$this->db->query($sql);
-	
-    if ($resql)
-      {
-
-      }
-  }
+    function AddPerms($user_id, $read, $write, $perms)
+    {
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perms";
+        $sql .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
+        $sql .= " VALUES (".$this->id.",".$user_id.",".$read.",".$write.",".$perms.");";
+    
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+    
+        }
+    }
+    
 }
 
 ?>

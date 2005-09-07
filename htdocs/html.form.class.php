@@ -831,7 +831,26 @@ class Form
     
         }
     }
-    
+
+
+    /**
+     *      \brief      Retourne le formulaire de saisie d'un identifiant professionnel (siren, siret, etc...)
+     *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *      \param      soc             Objet societe
+     *      \param      htmlname        Nom de la zone input
+     */
+    function id_prof($idprof,$soc,$htmlname,$selected='')
+    {
+        global $langs;
+        $formlength=16;
+        if ($idprof==1 && $soc->pays_code == 'FR') $formlength=9;
+        if ($idprof==2 && $soc->pays_code == 'FR') $formlength=14;
+        if ($idprof==3 && $soc->pays_code == 'FR') $formlength=4;
+        if ($idprof==4 && $soc->pays_code == 'FR') $formlength=4;
+        print '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
+    }
+
+
   /**
    *    \brief      Retourne le nom traduit ou code+nom d'un pays
    *    \param      id          id du pays

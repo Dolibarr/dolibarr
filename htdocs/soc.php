@@ -413,9 +413,47 @@ elseif ($_GET["action"] == 'edit')
 
         print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
 
-        print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
-        print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
-        print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td><td colspan="2">&nbsp;</td></tr>';
+        print '<tr>';
+        // IdProf1
+        $idprof=$langs->transcountry('ProfId1',$soc->pays_code);
+        if ($idprof!='-')
+        {
+            print '<td>'.$idprof.'</td><td>';
+            $form->id_prof(1,$soc,'siren',$soc->siren);
+            print '</td>';
+        }
+        else print '<td>&nbsp;</td><td>&nbsp;</td>';
+        // IdProf2
+        $idprof=$langs->transcountry('ProfId2',$soc->pays_code);
+        if ($idprof!='-')
+        {
+            print '<td>'.$idprof.'</td><td>';
+            $form->id_prof(2,$soc,'siret',$soc->siret);
+            print '</td>';
+        }
+        else print '<td>&nbsp;</td><td>&nbsp;</td>';
+        print '</tr>';
+        print '<tr>';
+        // IdProf3
+        $idprof=$langs->transcountry('ProfId3',$soc->pays_code);
+        if ($idprof!='-')
+        {
+            print '<td>'.$idprof.'</td><td>';
+            $form->id_prof(3,$soc,'ape',$soc->ape);
+            print '</td>';
+        }
+        else print '<td>&nbsp;</td><td>&nbsp;</td>';
+        // IdProf4
+        //        $idprof=$langs->transcountry('ProfId4',$soc->pays_code);
+        $idprof='-';    // L'identifiant 4 n'est pas encore géré
+        if ($idprof!='-')
+        {
+            print '<td>'.$idprof.'</td><td>';
+            $form->id_prof(4,$soc,'rcs',$soc->rcs);
+            print '</td>';
+        }
+        else print '<td>&nbsp;</td><td>&nbsp;</td>';
+        print '</tr>';
 
         print '<tr><td nowrap>'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
         print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
@@ -556,28 +594,66 @@ else
     if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
     print '</td></tr>';
 
-    print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td>';
-    // Si société FR et siren fourni, on le vérifie
-    if ($soc->pays_code == "FR" && $soc->siren) {
-        if ($soc->check_siren() == 0)
-        {
-            print '<a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;';
-        }
-        else
-        {
-            print '<a class="error">'.$soc->siren;
-            // Siren invalide
-            print "&nbsp;Code Siren Invalide !</a>";
-        }
-    }
-    else {
+    // ProfId1
+    $profid=$langs->transcountry('ProfId1',$soc->pays_code);
+    if ($profid!='-')
+    {
+        print '<tr><td>'.$profid.'</td><td>';
         print $soc->siren;
+        if ($soc->siren)
+        {
+            if ($soc->id_prof_check(1,$soc) > 0) print ' &nbsp; '.$soc->id_prof_url(1,$soc);
+            else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+        }
+        print '</td>';
     }
-    print '</td>';
-    print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td>'.$soc->siret.'</td></tr>';
+    else print '<tr><td>&nbsp;</td><td>&nbsp;</td>';
+    // ProfId2
+    $profid=$langs->transcountry('ProfId2',$soc->pays_code);
+    if ($profid!='-')
+    {
+        print '<td>'.$profid.'</td><td>';
+        print $soc->siret;
+        if ($soc->siret)
+        {
+            if ($soc->id_prof_check(2,$soc) > 0) print ' &nbsp; '.$soc->id_prof_url(2,$soc);
+            else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+        }
+        print '</td></tr>';
+    }
+    else print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
-    print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td>'.$soc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
+    // ProfId3
+    $profid=$langs->transcountry('ProfId3',$soc->pays_code);
+    if ($profid!='-')
+    {
+        print '<tr><td>'.$profid.'</td><td>';
+        print $soc->ape;
+        if ($soc->ape)
+        {
+            if ($soc->id_prof_check(3,$soc) > 0) print ' &nbsp; '.$soc->id_prof_url(3,$soc);
+            else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+        }
+        print '</td>';
+    }
+    else print '<tr><td>&nbsp;</td><td>&nbsp;</td>';
+    // ProfId4
+    //    $profid=$langs->transcountry('ProfId4',$soc->pays_code);
+    $profid='-';    // L'identifiant 4 n'est pas encore géré
+    if ($profid!='-')
+    {
+        print '<td>'.$profid.'</td><td>';
+        print $soc->rcs;
+        if ($soc->rcs)
+        {
+            if ($soc->id_prof_check(4,$soc) > 0) print ' &nbsp; '.$soc->id_prof_url(4,$soc);
+            else print ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+        }
+        print '</td></tr>';
+    }
+    else print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
+    // TVA
     print '<tr><td nowrap>'.$langs->trans('VATIntraShort').'</td><td colspan="3">';
     print $soc->tva_intra;
     print '</td></tr>';
