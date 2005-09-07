@@ -26,14 +26,6 @@ $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 
 llxHeader('','Telephonie - Contrats - Liste');
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
 
 /*
  *
@@ -60,21 +52,15 @@ $sql .= ", sa.idp as saidp, sa.nom as sanom";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sa";
+$sql .= " , ".MAIN_DB_PREFIX."societe_perms as sp";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 
 $sql .= " WHERE c.fk_client_comm = s.idp";
 $sql .= " AND c.fk_soc = sa.idp";
 $sql .= " AND c.fk_soc_facture = sf.idp";
 
-if ($user->rights->telephonie->ligne->lire_restreint)
-{
-  $sql .= " AND c.fk_commercial_suiv = ".$user->id;
-}
-
-if ($socidp > 0)
-{
-  $sql .= " AND s.idp = ".$socidp;
-}
+$sql .= " AND c.fk_client_comm = sp.fk_soc";
+$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 
 if ($_GET["search_contrat"])
 {
