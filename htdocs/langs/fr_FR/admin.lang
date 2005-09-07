@@ -203,6 +203,7 @@ DictionnaryCivility=Titres de civilité
 DictionnaryActions=Liste des actions
 DictionnarySocialContributions=Types de charges sociales
 DictionnaryVAT=Taux de TVA
+DictionnaryTypeContact=Types de contacts
 VATReceivedOnly=Taux special non facturé
 VATManagement=Gestion TVA
 VATIsUsed=Assujéti à TVA

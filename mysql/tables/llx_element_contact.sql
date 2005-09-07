@@ -18,20 +18,21 @@
 -- $Id$
 -- $Source$
 --
--- Association de personnes/societes avec un contrat.
--- Permet de definir plusieur type d'intervenant sur un contrat.
+-- Association de personnes/societes avec un element de la base (contrat, projet, propal).
+-- Permet de definir plusieur type d'intervenant sur un element.
 -- i.e. commercial, adresse de facturation, prestataire...
 -- ============================================================================
 
-create table llx_contrat_contact
+create table llx_element_contact
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,  
-  datecreate      datetime, 			-- date de creation de l'enregistrement
-  statut          smallint DEFAULT 0,   -- 5 inactif, 4 actif
-  nature		  varchar(80),		    -- nature du contact.
-
-  fk_contrat	  integer NOT NULL,
-  fk_socpeople    integer NOT NULL
+  datecreate      datetime NULL, 			-- date de creation de l'enregistrement
+  statut          smallint DEFAULT 5, 		-- 5 inactif, 4 actif
   
+  fk_c_type_contact	int NOT NULL,	-- nature du contact.
+  element_id		int NOT NULL, 		-- la reference de l'element.
+  -- pour connaitre la table associée a ce contact regarder fk_element_contact->element
+  
+  fk_socpeople     integer NOT NULL
 )type=innodb;
 

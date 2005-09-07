@@ -50,7 +50,7 @@ $active = 1;
 // Mettre ici tous les caractéristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
-$taborder=array(4,3,2,0,9,0,1,8,0,5,0,6,0,7,0,10);
+$taborder=array(4,3,2,0,9,0,1,8,0,5,11, 0,6,0,7,0,10);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -63,6 +63,7 @@ $tabname[7] = MAIN_DB_PREFIX."c_chargesociales";
 $tabname[8] = MAIN_DB_PREFIX."c_typent";
 $tabname[9] = MAIN_DB_PREFIX."c_currencies";
 $tabname[10]= MAIN_DB_PREFIX."c_tva";
+$tabname[11]= MAIN_DB_PREFIX."c_type_contact";
 
 // Libellé des dictionnaires
 $tablib[1] = $langs->trans("DictionnaryCompanyJuridicalType");
@@ -75,18 +76,20 @@ $tablib[7] = $langs->trans("DictionnarySocialContributions");
 $tablib[8] = $langs->trans("DictionnaryCompanyType");
 $tablib[9] = $langs->trans("DictionnaryCurrency");
 $tablib[10]= $langs->trans("DictionnaryVAT");
+$tablib[11]= $langs->trans("DictionnaryTypeContact");
 
 // Requete pour extraction des données des dictionnaires
-$tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM llx_c_forme_juridique as f, llx_c_pays as p WHERE f.fk_pays=p.rowid";
-$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, r.nom as region, p.libelle as pays, d.active FROM llx_c_departements as d, llx_c_regions as r, llx_c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
-$tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.libelle as pays, r.active FROM llx_c_regions as r, llx_c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
-$tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM llx_c_pays";
-$tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.active FROM llx_c_civilite AS c";
-$tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active FROM llx_c_actioncomm AS a";
-$tabsql[7] = "SELECT a.id    as rowid, a.id as code, a.libelle AS libelle, a.deductible, a.active FROM llx_c_chargesociales AS a";
-$tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM llx_c_typent";
-$tabsql[9] = "SELECT code    as rowid, code, code_iso, label as libelle, active FROM llx_c_currencies";
-$tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, t.recuperableonly, t.note, t.active FROM llx_c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
+$tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
+$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, r.nom as region, p.libelle as pays, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
+$tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.libelle as pays, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
+$tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
+$tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.active FROM ".MAIN_DB_PREFIX."c_civilite AS c";
+$tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
+$tabsql[7] = "SELECT a.id    as rowid, a.id as code, a.libelle AS libelle, a.deductible, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a";
+$tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
+$tabsql[9] = "SELECT code    as rowid, code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
+$tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
+$tabsql[11]= "SELECT t.rowid as rowid, code, element, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 
 // Tri par defaut
 $tabsqlsort[1] ="pays, code ASC";
@@ -99,6 +102,7 @@ $tabsqlsort[7] ="a.libelle ASC";
 $tabsqlsort[8] ="libelle ASC";
 $tabsqlsort[9] ="code ASC";
 $tabsqlsort[10]="pays ASC, taux ASC, recuperableonly ASC";
+$tabsqlsort[11]="element ASC, code ASC, libelle ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -111,6 +115,7 @@ $tabfield[7] = "libelle,deductible";
 $tabfield[8] = "code,libelle";
 $tabfield[9] = "code,code_iso,libelle";
 $tabfield[10]= "pays,taux,recuperableonly,note";
+$tabfield[11]= "element,code,libelle";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -123,6 +128,7 @@ $tabfieldinsert[7] = "libelle,deductible";
 $tabfieldinsert[8] = "code,libelle";
 $tabfieldinsert[9] = "code,code_iso,libelle";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,note";
+$tabfieldinsert[11]= "element,code,libelle";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
 $tabrowid[1] = "";
@@ -135,6 +141,7 @@ $tabrowid[7] = "id";
 $tabrowid[8] = "id";
 $tabrowid[9] = "code";
 $tabrowid[10]= "";
+$tabrowid[11]= "rowid";
 
 
 $msg='';
@@ -362,6 +369,19 @@ if ($_GET["id"])
                 $html->select_lang(MAIN_LANG_DEFAULT,'lang');
                 print '</td>';
             }
+            // le type de l'element (pour les type de contact).'
+            elseif ($fieldlist[$field] == 'element') {
+                print '<td>';
+                $elementList = array();
+                // un peu crad mais je n'ai pas de meilleure idee.
+                $elementList["contrat"] = "contrat";
+                $elementList["projet"] = "projet";
+                $elementList["propal"] = "propal";
+                $elementList["facture"] = "facture";
+                
+                $html->select_array('element', $elementList);
+                print '</td>';
+            }
             elseif ($fieldlist[$field] == 'type') {
                 print '<td>';
                 print 'user<input type="hidden" name="type" value="user">';
@@ -422,9 +442,9 @@ if ($_GET["id"])
                 $var=!$var;
 
                 print "<tr $bc[$var] class=\"value\">";
-
                 foreach ($fieldlist as $field => $value) {
                     $valuetoshow=$obj->$fieldlist[$field];
+
                     if ($valuetoshow=='all') {
                         $valuetoshow=$langs->trans('All');
                     }

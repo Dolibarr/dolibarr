@@ -1771,27 +1771,6 @@ create table llx_projet_task_actors
 )type=innodb;
 
 
-
-create table llx_contrat_contact
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,  
-  datecreate      datetime, 		
-  statut          smallint DEFAULT 0,
-  nature		  varchar(80),
-
-  fk_contrat	  integer NOT NULL,
-  fk_socpeople    integer NOT NULL
-  
-)type=innodb;
-
-
-ALTER TABLE llx_contrat_contact 
-	ADD INDEX idx_contrat_contact_fk_contrat (fk_contrat);
-	
-ALTER TABLE llx_contrat_contact 
-	ADD CONSTRAINT idx_contrat_contact_fk_contrat		
-	FOREIGN KEY (fk_contrat)     REFERENCES llx_contrat(rowid);
-	
 create table llx_societe_perms
 (
   fk_soc    integer,
@@ -1803,3 +1782,51 @@ create table llx_societe_perms
   UNIQUE INDEX(fk_soc, fk_user)
 )type=innodb;
 
+
+create table llx_c_type_contact
+(
+  rowid      	integer     PRIMARY KEY,
+  code          varchar(16) NOT NULL,
+  element       varchar(30) NOT NULL,
+  libelle 	    varchar(64)	NOT NULL,
+  active  	    tinyint DEFAULT 1  NOT NULL
+)type=innodb;
+
+
+ALTER TABLE llx_c_type_contact 
+	ADD UNIQUE INDEX idx_c_type_contact_uk (element, code);
+
+
+create table llx_element_contact
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,  
+  datecreate      datetime NULL, 
+  statut          smallint DEFAULT 5,
+  
+  fk_c_type_contact	int NOT NULL,
+  element_id		int NOT NULL,
+  
+  fk_socpeople     integer NOT NULL
+)type=innodb;
+
+
+ALTER TABLE llx_element_contact 
+	ADD INDEX idx_element_contact_idx1 (element_id, fk_socpeople);
+	
+ALTER TABLE llx_element_contact 
+	ADD CONSTRAINT idx_element_contact_fk_c_type_contact		
+	FOREIGN KEY (fk_c_type_contact)     REFERENCES llx_c_type_contact(rowid);
+	
+	
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (10, 'BILLING',       'contrat', 'Contact facturation du contrat', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (11, 'SALESREPSIGN',  'contrat', 'Commercial signataire du contrat', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (12, 'SALESREPFOLL',  'contrat', 'Commercial suivi du contrat', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (13, 'CUSTOMER',      'contrat', 'Contact client pour le contrat', 1);
+
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (20, 'BILLING',       'propale', 'Contact facturation de la propale', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (21, 'SALESREPSIGN',  'propale', 'Commercial signataire de la propale', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (22, 'SALESREPFOLL',  'propale', 'Commercial suivi de la propale', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (23, 'CUSTOMER',      'propale', 'Contact client pour la propale', 1);
+
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (80, 'PROJECTLEADER', 'projet',  'Chef de Projet', 1);
+	

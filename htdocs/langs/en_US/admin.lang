@@ -203,6 +203,7 @@ DictionnaryCivility=Civility title
 DictionnaryActions=Actions list
 DictionnarySocialContributions=Social contributions types
 DictionnaryVAT=VAT Rates
+DictionnaryTypeContact=Contacts types
 VATReceivedOnly=Special rate not billed
 VATManagement=VAT Management
 VATIsUsed=VAT is used

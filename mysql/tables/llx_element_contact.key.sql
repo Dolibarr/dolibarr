@@ -21,12 +21,16 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_contrat_contact 
-	ADD INDEX idx_contrat_contact_fk_contrat (fk_contrat);
+ALTER TABLE llx_element_contact 
+	ADD INDEX idx_element_contact_idx1 (element_id, fk_socpeople);
 	
-ALTER TABLE llx_contrat_contact 
-	ADD CONSTRAINT idx_contrat_contact_fk_contrat		
-	FOREIGN KEY (fk_contrat)     REFERENCES llx_contrat(rowid);
+ALTER TABLE llx_element_contact 
+	ADD CONSTRAINT idx_element_contact_fk_c_type_contact
+	FOREIGN KEY (fk_c_type_contact)     REFERENCES llx_c_type_contact(rowid);
 
-
-
+-- Au cas ou ce serait necessaire.
+-- Abuser des foreign key et parfois plus genant que utile.
+-- ALTER TABLE llx_element_contact 
+-- 	ADD CONSTRAINT idx_element_contact_fk_socpeople		
+-- 	FOREIGN KEY (fk_socpeople)     REFERENCES llx_socpeople(idp);
+	

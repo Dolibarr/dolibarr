@@ -703,3 +703,20 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 7
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 8,2,  '21','0','Taux à 21',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 9,7,   '0','0','VAT Rate 0',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (10,7,'17.5','0','VAT Rate 17.5',1);
+
+
+--
+-- Les types de contact d'un element
+--
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (10, 'BILLING',       'contrat', 'Contact facturation du contrat', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (11, 'SALESREPSIGN',  'contrat', 'Commercial signataire du contrat', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (12, 'SALESREPFOLL',  'contrat', 'Commercial suivi du contrat', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (13, 'CUSTOMER',      'contrat', 'Contact client pour le contrat', 1);
+
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (20, 'BILLING',       'propale', 'Contact facturation de la propale', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (21, 'SALESREPSIGN',  'propale', 'Commercial signataire de la propale', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (22, 'SALESREPFOLL',  'propale', 'Commercial suivi de la propale', 1);
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (23, 'CUSTOMER',      'propale', 'Contact client pour la propale', 1);
+
+insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (80, 'PROJECTLEADER', 'projet',  'Chef de Projet', 1);
+
