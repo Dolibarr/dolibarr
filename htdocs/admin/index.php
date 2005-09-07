@@ -342,41 +342,53 @@ else
     print '</td></tr>';
 
     // ProfId1
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
     if ($langs->transcountry("ProfId1",$code_pays) != '-')
     {
-        print $conf->global->MAIN_INFO_SIREN;
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
+        if ($langs->transcountry("ProfId1",$code_pays) != '-')
+        {
+            print $conf->global->MAIN_INFO_SIREN;
+        }
+        print '</td></tr>';
     }
-    print '</td></tr>';
-
+    
     // ProfId2
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
     if ($langs->transcountry("ProfId2",$code_pays) != '-')
     {
-        print $conf->global->MAIN_INFO_SIRET;
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
+        if ($langs->transcountry("ProfId2",$code_pays) != '-')
+        {
+            print $conf->global->MAIN_INFO_SIRET;
+        }
+        print '</td></tr>';
     }
-    print '</td></tr>';
-
+    
     // ProfId3
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
     if ($langs->transcountry("ProfId3",$code_pays) != '-')
     {
-        print $conf->global->MAIN_INFO_APE;
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
+        if ($langs->transcountry("ProfId3",$code_pays) != '-')
+        {
+            print $conf->global->MAIN_INFO_APE;
+        }
+        print '</td></tr>';
     }
-    print '</td></tr>';
-
+    
     // ProfId4
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId4",$code_pays).'</td><td>';
     if ($langs->transcountry("ProfId4",$code_pays) != '-')
     {
-        print $conf->global->MAIN_INFO_RCS;
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId4",$code_pays).'</td><td>';
+        if ($langs->transcountry("ProfId4",$code_pays) != '-')
+        {
+            print $conf->global->MAIN_INFO_RCS;
+        }
+        print '</td></tr>';
     }
-    print '</td></tr>';
-
+    
     // TVA Intracommunautaire
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("TVAIntra").'</td><td>' . $conf->global->MAIN_INFO_TVAINTRA . '</td></tr>';
