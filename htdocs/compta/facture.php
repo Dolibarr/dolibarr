@@ -487,7 +487,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
                     $msg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$from,$sendto).'.</div>';
 
                     // Insertion action
-                    include_once("../contact.class.php");
+                    require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
                     include_once("../actioncomm.class.php");
                     $actioncomm = new ActionComm($db);
                     $actioncomm->type_id     = $actiontypeid;

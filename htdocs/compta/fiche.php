@@ -28,7 +28,7 @@
 */
 
 require("./pre.inc.php");
-require("../contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require("../actioncomm.class.php");
 include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 

@@ -208,7 +208,7 @@ if ($_POST['action'] == 'send')
                 {
                     $msg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
                     // Insertion action
-                    include_once('../contact.class.php');
+                    include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
                     $actioncomm = new ActionComm($db);
                     $actioncomm->type_id     = $actiontypeid;
                     $actioncomm->label       = $actionmsg2;
@@ -504,7 +504,7 @@ if ($_GET['propalid'] > 0)
                     if (!empty($propal->contactid))
                     {
                         print '<td colspan="3">';
-                        require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
+                        include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
                         $contact=new Contact($db);
                         $contact->fetch($propal->contactid);
                         print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$propal->contactid.'" title="'.$langs->trans('ShowContact').'">';

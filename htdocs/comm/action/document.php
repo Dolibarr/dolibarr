@@ -31,7 +31,7 @@
 */
 
 require_once("./pre.inc.php");
-require_once("../../contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once("../../cactioncomm.class.php");
 require_once("../../actioncomm.class.php");
 if ($conf->webcal->enabled) require_once("../../lib/webcal.class.php");

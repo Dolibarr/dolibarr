@@ -29,8 +29,8 @@
 */
 
 require("./pre.inc.php");
-require_once("../contact.class.php");
-require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
 $langs->load("companies");
 $langs->load("users");
