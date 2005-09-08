@@ -54,7 +54,7 @@ function pHeader($soutitre,$next)
 
     print '<html>';
     print '<head>';
-    print '<meta http-equiv="content-type" content="text/html; charset='.$langs->trans("charset").'"';
+    print '<meta http-equiv="content-type" content="text/html; charset='.$langs->trans("charset").'">';
     print '<link rel="stylesheet" type="text/css" href="./default.css">';
     print '<title>'.$langs->trans("DolibarrSetup").'</title>';
     print '</head>';
