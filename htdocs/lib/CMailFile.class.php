@@ -47,7 +47,8 @@
 class CMailFile
 {
     var $subject;
-    var $addr_from;
+    var $addr_from_email;
+    var $addr_from_name;
     var $addr_to;
     var $addr_cc;
     var $addr_bcc;
@@ -60,8 +61,8 @@ class CMailFile
     /**
             \brief CMailFile
             \param subject              sujet
-            \param to                   email destinataire
-            \param from                 email emetteur
+            \param to                   email destinataire ("Nom <email>" ou "email" ou "<email>")
+            \param from                 email emetteur ("Nom <email>" ou "email" ou "<email>")
             \param msg                  message
             \param filename_list        tableau de fichiers attachés
             \param mimetype_list        tableau des types des fichiers attachés
@@ -76,7 +77,16 @@ class CMailFile
         $this->mime_boundary = md5( uniqid("dolibarr") );
 
         $this->subject = $subject;
-        $this->addr_from = $from;
+        if (eregi('(.*)<(.+)>',$from,$regs))
+        {
+            $this->addr_from_name  = trim($regs[1]);
+            $this->addr_from_email = trim($regs[2]);
+        }
+        else
+        {
+            $this->addr_from_name  = $from;
+            $this->addr_from_email = $from;
+        }
         $this->addr_to = $to;
         $this->addr_cc = $addr_cc;
         $this->addr_bcc = $addr_bcc;
@@ -240,10 +250,10 @@ class CMailFile
         $out = "";
 
         $out .= "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
-        $out .= "X-Sender: <$this->addr_from>\n";
+        $out .= "X-Sender: <$this->addr_from_email>\n";
 
-        $out .= "Return-path: <$this->addr_from>\n";
-        $out .= "From: $this->addr_from <".$this->addr_from.">\n";
+        $out .= "Return-path: <$this->addr_from_email>\n";
+        $out .= "From: $this->addr_from_name <".$this->addr_from_email.">\n";
 
         if ($this->addr_cc)  $out .= "Cc: ".$this->addr_cc."\n";
         if ($this->addr_bcc) $out .= "Bcc: ".$this->addr_bcc."\n";
@@ -251,7 +261,7 @@ class CMailFile
         //    if($this->errors_to != "")
         //$out = $out . "Errors-to: ".$this->errors_to."\n";
 
-        //dolibarr_syslog("CMailFile::write_smtpheaders $out");
+        dolibarr_syslog("CMailFile::write_smtpheaders $out");
         return $out;
     }
 
