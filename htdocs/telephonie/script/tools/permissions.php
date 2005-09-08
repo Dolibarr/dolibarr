@@ -60,6 +60,11 @@ if ( $resql )
       $sqlu .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
       $sqlu .= " VALUES (".$row[0].",18,1,0,0)";
       $resqlu = $db->query($sqlu);
+
+      $sqlu = "REPLACE INTO llx_societe_perms";
+      $sqlu .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
+      $sqlu .= " VALUES (".$row[0].",29,1,0,0)";
+      $resqlu = $db->query($sqlu);
     }
   $db->free($resql);
 }
