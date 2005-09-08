@@ -46,6 +46,10 @@ if ($_GET["id"])
   $hselected = $h;
   $h++;
 
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/contrat.php?id='.$distri->id;
+  $head[$h][1] = "Contrat";
+  $h++;
+
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/commissions.php?id='.$distri->id;
   $head[$h][1] = "Commissions";
   $h++;
@@ -65,37 +69,52 @@ if ($_GET["id"])
   print '<tr><td width="40%" valign="top">';
   
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre">';
-  print '<td>Commerciaux</td></tr>';
+  print '<tr class="liste_titre"><td>Responsables</td></tr>';
 
   $sql = "SELECT u.rowid, u.firstname, u.name";
   $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-  $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
-  
+  $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_responsable as dc";  
   $sql .= " WHERE u.rowid = dc.fk_user ";
-  $sql .= " AND dc.fk_distributeur = ".$_GET["id"];
-
-  $sql .= " ORDER BY u.name ASC";
+  $sql .= " AND dc.fk_distributeur = '".$_GET["id"]."'";
+  $sql .= " ORDER BY u.name ASC;";
     
   $resql = $db->query($sql);
   
   if ($resql)
     {
-      $num = $db->num_rows($resql);
-      $i = 0;
-      $total = 0;
-      
-      while ($i < $num)
+      while ($row = $db->fetch_row($resql))
 	{
-	  $row = $db->fetch_row($resql);
-	  
 	  $var=!$var;
-	  
 	  print "<tr $bc[$var]>";
-	  
 	  print '<td>'.$row[1].' '.$row[2].'</td>';
-	  
-	  $i++;
+	}
+      $db->free($resql);
+    }
+  else 
+    {
+      print $db->error() . ' ' . $sql;
+    }
+  print '</table><br />';
+
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Commerciaux</td></tr>';
+
+  $sql = "SELECT u.rowid, u.firstname, u.name";
+  $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+  $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";  
+  $sql .= " WHERE u.rowid = dc.fk_user ";
+  $sql .= " AND dc.fk_distributeur = '".$_GET["id"]."'";
+  $sql .= " ORDER BY u.name ASC;";
+    
+  $resql = $db->query($sql);
+  
+  if ($resql)
+    {
+      while ($row = $db->fetch_row($resql))
+	{
+	  $var=!$var;
+	  print "<tr $bc[$var]>";
+	  print '<td>'.$row[1].' '.$row[2].'</td>';
 	}
       $db->free($resql);
     }
