@@ -288,89 +288,95 @@ function top_menu($head, $title="", $target="")
  *  \param      help_url        Url pour le lien aide ('' par defaut)
  *  \param      form_search     Formulaire de recherche permanant supplémentaire
  */
- 
-function left_menu($menu_array, $help_url='', $form_search='') 
+function left_menu($menu_array, $help_url='', $form_search='')
 {
-  global $user, $conf, $langs, $db;
+    global $user, $conf, $langs, $db;
 
-  print '<div class="vmenuplusfiche">'."\n";
+    print '<div class="vmenuplusfiche">'."\n";
 
-  // Colonne de gauche
-  print "\n<!-- Debut left vertical menu -->\n";
-  print '<div class="vmenu">'."\n";
+    // Colonne de gauche
+    print "\n<!-- Debut left vertical menu -->\n";
+    print '<div class="vmenu">'."\n";
 
-  
-  // Autres entrées du menu par le gestionnaire
-  require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
-  $menu=new MenuLeft($db,$menu_array);
-  $menu->showmenu();
-  
 
-  // Affichage des zones de recherche permanantes
-  $addzonerecherche=0;
-  if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0) $addzonerecherche=1;
-  if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0) $addzonerecherche=1;
-  if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0) $addzonerecherche=1;
-  
-  if ($addzonerecherche  && ($user->rights->societe->lire || $user->rights->produit->lire))
-    {    
-      print '<div class="blockvmenupair">';
+    // Autres entrées du menu par le gestionnaire
+    require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
+    $menu=new MenuLeft($db,$menu_array);
+    $menu->showmenu();
 
-      if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0 && $user->rights->societe->lire)
-	{
-	  $langs->load("companies");
-	  printSearchForm(DOL_URL_ROOT.'/societe.php',DOL_URL_ROOT.'/societe.php',$langs->trans("Companies"),'soc','socname');
-	}
-      
-      if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0 && $user->rights->societe->lire)
-	{
-	  $langs->load("companies");
-	  printSearchForm(DOL_URL_ROOT.'/contact/index.php',DOL_URL_ROOT.'/contact/index.php',$langs->trans("Contacts"),'contact','contactname');
-	}
-      
-      if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0  && $user->rights->produit->lire)
-	{
-	  $langs->load("products");
-	  printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/',$langs->trans("Products")."/".$langs->trans("Services"),'products','sall');
-	}                  
 
-      /*
-      if ($conf->categorie->enabled)
-	{
-	  $langs->load("categories");
-	  printSearchForm(DOL_URL_ROOT.'/categories/search.php',DOL_URL_ROOT.'/categories/',$langs->trans("Categories"),'categories','catname');
-	}
-      */
+    // Affichage des zones de recherche permanantes
+    $addzonerecherche=0;
+    if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0) $addzonerecherche=1;
+    if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0) $addzonerecherche=1;
+    if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0) $addzonerecherche=1;
 
-      print '</div>';
-    }
-  
-  // Zone de recherche supplémentaire
-  if ($form_search)
+    if ($addzonerecherche  && ($user->rights->societe->lire || $user->rights->produit->lire))
     {
-      print $form_search;
+        print '<div class="blockvmenupair">';
+
+        if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0 && $user->rights->societe->lire)
+        {
+            $langs->load("companies");
+            printSearchForm(DOL_URL_ROOT.'/societe.php',DOL_URL_ROOT.'/societe.php',$langs->trans("Companies"),'soc','socname');
+        }
+
+        if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0 && $user->rights->societe->lire)
+        {
+            $langs->load("companies");
+            printSearchForm(DOL_URL_ROOT.'/contact/index.php',DOL_URL_ROOT.'/contact/index.php',$langs->trans("Contacts"),'contact','contactname');
+        }
+
+        if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0  && $user->rights->produit->lire)
+        {
+            $langs->load("products");
+            printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/',$langs->trans("Products")."/".$langs->trans("Services"),'products','sall');
+        }
+
+        /*
+        if ($conf->categorie->enabled)
+        {
+        $langs->load("categories");
+        printSearchForm(DOL_URL_ROOT.'/categories/search.php',DOL_URL_ROOT.'/categories/',$langs->trans("Categories"),'categories','catname');
+        }
+        */
+
+        print '</div>';
     }
-  
-  // Lien vers l'aide en ligne (uniquement si langue fr_FR)
-  if ($help_url && $langs->defaultlang == "fr_FR")
+
+    // Zone de recherche supplémentaire
+    if ($form_search)
     {
-      define('MAIN_AIDE_URL','http://www.dolibarr.com/wikidev/index.php');
-      print '<div class="help"><a class="help" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">'.$langs->trans("Help").'</a></div>';
+        print $form_search;
     }
 
-  // Lien vers le bugtrack
-  $bugtrack = "https://savannah.nongnu.org/bugs/?group=dolibarr";
-  print '<div class="help"><a class="help" target="_blank" href="'.$bugtrack.'">'.$langs->trans("FindBug").'</a></div>';
+    // Lien vers l'aide en ligne (uniquement si langue fr_FR)
+    if ($help_url)
+    {
+        $helpbaseurl='';
+        if ($langs->defaultlang == "fr_FR") $helpbaseurl='http://www.dolibarr.com/wikidev/index.php/%s';
 
+        if ($helpbaseurl) print '<div class="help"><a class="help" target="_blank" href="'.sprintf($helpbaseurl,$help_url).'">'.$langs->trans("Help").'</a></div>';
+    }
 
-  print "\n";
-  print "</div>\n";
-  print "</div>\n";
-  print "<!-- Fin left vertical menu -->\n";
+    // Lien vers le bugtrack
+    $bugbaseurl='http://savannah.nongnu.org/bugs/?';
+    $bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
+    $bugbaseurl.="&details=";
+    $bugbaseurl.=urlencode("\n\n\n\n\n-------------\n");
+    $bugbaseurl.=urlencode($langs->trans("Version").": ".DOL_VERSION."\n");
+    $bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
+    $bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
+    print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
 
-  print '<div class="vmenuplusfiche">'."\n";
+    print "\n";
+    print "</div>\n";
+    print "</div>\n";
+    print "<!-- Fin left vertical menu -->\n";
 
-  print '<div class="fiche">'."\n";
+    print '<div class="vmenuplusfiche">'."\n";
+
+    print '<div class="fiche">'."\n";
 
 }
 
