@@ -65,7 +65,8 @@ $month_prev = substr("00".$month_prev, -2) ;
 
 if (! $db->begin()) die ;
 
-
+$fp = fopen("/tmp/$month.$year.log","w+");
+fputs($fp,"$month/$year\n");
 /********************************************************
  *
  * Verification des données
@@ -133,6 +134,9 @@ if ( $resql )
       
       $avance = round($avance  * 0.0001, 2);
 
+      fputs($fp, "DIS : ".$obj->fk_distributeur);
+      fputs($fp, " avance : $avance\n");
+
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_avance";
       $sqli .= " (date, fk_distributeur, fk_po,fk_contrat, montant, pourcentage, avance)";
       $sqli .= " VALUES ('".$year.$month."'";
@@ -175,7 +179,6 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_facture as f";
 $sql .= " WHERE p.fk_contrat = c.rowid";
 $sql .= " AND l.fk_contrat = c.rowid";
 $sql .= " AND f.fk_ligne = l.rowid";
-
 $sql .= " AND date_format(f.date, '%Y%m') = '".$year_prev.$month_prev."'";
 $sql .= " AND date_format(p.datepo, '%Y%m') <= '".$year_prev.$month_prev."'";
 $sql .= " AND fk_distributeur > 0";
@@ -194,6 +197,10 @@ if ( $resql )
       $pourcent = $obj->rem_pour_prev;
       
       $comm = round($obj->cout_vente * $pourcent * 0.01, 2) ;
+
+      fputs($fp, "DIS : ".$obj->fk_distributeur);
+      fputs($fp, " CON : ".$obj->fk_contrat);
+      fputs($fp, " conso  : $comm\n");
       
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_conso";
       $sqli .= " (date, fk_distributeur, fk_contrat, fk_ligne, montant, pourcentage)";
@@ -352,6 +359,13 @@ foreach ($distri_av as $distributeur_id)
 		    }
 		  else
 		    {
+		      /*
+		       * Contrats résiliés
+		       *
+		       */
+		      fputs($fp, "DIS : ".$obj->fk_distributeur);
+		      fputs($fp, " CON : ".$row[1] . " ANNULE\n");
+
 		      $sqlc = "UPDATE ".MAIN_DB_PREFIX."telephonie_commission_conso";
 		      $sqlc .= " SET annul = 1";
 		      $sqlc .= " WHERE fk_contrat = ".$row[1];
@@ -510,6 +524,14 @@ foreach ($distributeurs as $distributeur_id)
   $amount = $amount - $avan_regul[$distributeur_id];
   $amount = $amount + $comm_conso[$distributeur_id];
 
+  fputs($fp, "DIS : ".$distributeur_id);
+  fputs($fp, " Comm Regul : ".$comm_regul[$distributeur_id]."\n");
+  fputs($fp, "DIS : ".$distributeur_id);
+  fputs($fp, " Avan Regul : ".$avan_regul[$distributeur_id]."\n");
+  fputs($fp, "DIS : ".$distributeur_id);
+  fputs($fp, " Comm Conso : ".$comm_conso[$distributeur_id]."\n");
+
+
   /********************************************************
    *
    * Somme des commissions
@@ -569,4 +591,5 @@ else
   dolibarr_syslog("Rollback", LOG_ERR);
 }
 dolibarr_syslog("----------------");
+fclose($fp);
 ?>
