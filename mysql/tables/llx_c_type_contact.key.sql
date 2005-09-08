@@ -30,11 +30,6 @@
 -- ========================================================================
 
 
-create table llx_c_type_contact
-(
-  rowid      	integer     PRIMARY KEY,
-  code          varchar(16) NOT NULL,
-  element       varchar(30) NOT NULL,
-  libelle 	    varchar(64)	NOT NULL,
-  active  	    tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+ALTER TABLE llx_c_type_contact 
+	ADD UNIQUE INDEX idx_c_type_contact_uk (element, code);
+
