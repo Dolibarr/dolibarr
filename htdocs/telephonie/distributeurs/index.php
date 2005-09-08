@@ -46,7 +46,7 @@ print '<tr><td width="50%" valign="top">';
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre">';
-print '<td>Distributeur</td><td>Durée avan.</td><td>% Avance</td><td>% Prélèv</td><td>% Autre</td></tr>';
+print '<td>Distributeur</td>';
 
 $sql = "SELECT d.nom, d.rowid, d.avance_pourcent, d.rem_pour_prev, d.rem_pour_autr, d.avance_duree";
 
@@ -74,10 +74,7 @@ if ($resql)
       print "<tr $bc[$var]>";
 
       print '<td><a href="distributeur.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td>'.$row[5].'</td>';
-      print '<td>'.$row[2].'</td>';
-      print '<td>'.$row[3].'</td>';
-      print '<td>'.$row[4].'</td>';
+
       print '</tr>';
       $i++;
     }
@@ -89,14 +86,8 @@ else
 }
 print '</table><br />';
 
-
-
-
-
 print '</td><td width="50%" valign="top">&nbsp;</td></tr>';
 print '</table></div>';
-
-
 
 /* ************************************************************************** */
 /*                                                                            */ 
