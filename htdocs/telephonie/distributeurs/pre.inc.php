@@ -37,6 +37,16 @@ if ($resql)
   $user->distributeur_id = $row[0];
 }
 
+$sql = "SELECT fk_distributeur";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur_responsable";
+$sql .= " WHERE fk_user=".$user->id;
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $row = $db->fetch_row($resql);
+  $user->responsable_distributeur_id = $row[0];
+}
 
 function llxHeader($head = "", $title="") {
   global $user, $conf, $db;
