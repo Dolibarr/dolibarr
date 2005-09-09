@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -30,7 +29,9 @@
  
 require_once("./pre.inc.php");
 
-if (!$user->rights->societe->lire)
+$user->getrights("societe");
+
+if (! $user->rights->societe->lire)
   accessforbidden();
 
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
