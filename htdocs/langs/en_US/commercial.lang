@@ -7,6 +7,7 @@ Customers=Customers
 Prospect=Prospect
 Prospects=Prospects
 DeleteAction=Delete a task
+NewAction=New action
 AddAction=Add action
 AddAnAction=Add an action
 AddActionRendezVous=Add a Rendez-Vous task

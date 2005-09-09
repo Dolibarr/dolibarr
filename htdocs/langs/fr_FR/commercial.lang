@@ -7,6 +7,7 @@ Customers=Clients
 Prospect=Prospect
 Prospects=Prospects
 DeleteAction=Effacer une action
+NewAction=Nouvelle action
 AddAction=Créer action
 AddAnAction=Créer une action
 AddActionRendezVous=Créer un Rendez-Vous

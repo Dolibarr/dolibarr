@@ -32,9 +32,6 @@ require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once("../../cactioncomm.class.php");
 require_once("../../actioncomm.class.php");
-if ($conf->webcal->enabled) {
-    require_once("../../lib/webcal.class.php");
-}
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -96,88 +93,29 @@ if ($_POST["action"] == 'add_action')
             }
         }
         $actioncomm->date = mktime($_POST["heurehour"],
-                                    $_POST["heuremin"],
-                                    0,
-                                    $_POST["acmonth"],
-                                    $_POST["acday"],
-                                    $_POST["acyear"]);
+                                   $_POST["heuremin"],
+                                   0,
+                                   $_POST["acmonth"],
+                                   $_POST["acday"],
+                                   $_POST["acyear"]);
+        $actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
         $actioncomm->percent = isset($_POST["percentage"])?$_POST["percentage"]:0;
         $actioncomm->user = $user;
-        if (isset($_POST["contactid"]))
-        {
-            $actioncomm->contact = $contact;
-        }
-        if (isset($_POST["socid"]))
-        {
-            $actioncomm->societe = $societe;
-        }
         $actioncomm->note = $_POST["note"];
+        if (isset($_POST["contactid"]))    $actioncomm->contact = $contact;
+        if (isset($_POST["socid"]))        $actioncomm->societe = $societe;
+        if ($_POST["todo_webcal"] == 'on') $actioncomm->use_webcal=1;
 
-
-        // On definit la ressource webcal si le module webcal est actif
-        $webcal=0;
-        if ($conf->webcal->enabled && $_POST["todo_webcal"] == 'on')
-        {
-            // Si action complete ou si action de type rendez-vous
-//            if ($actioncomm->percent == 100 || $actioncomm->type_code == 'AC_RDV')
-//            {
-                // Crée objet webcal et connexion avec params $conf->webcal->db->xxx
-                $webcal = new Webcal();
-    
-                if (! $webcal->localdb->ok)
-                {
-                    // Si la creation de l'objet n'as pu se connecter
-                    $error ="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user.").";
-                    $error.=" L'option de mise a jour Webcalendar a été ignorée.";
-                    $webcal->error=$error;
-                }
-                else
-                {
-                    // Initialisation donnees webcal
-                    if ($_POST["actionid"] == 5 && $contact->fullname)
-                    {
-                        $libellecal =$langs->trans("TaskRDVWith",$contact->fullname)."\n";
-                        $libellecal.=$_POST["label"];
-                    }
-                    else
-                    {
-                        $libellecal="";
-                        if ($langs->trans("Action".$actioncomm->type_code) != "Action".$actioncomm->type_code)
-                        {
-                            $libellecal.=$langs->trans("Action".$actioncomm->type_code)."\n";
-                        }
-                        $libellecal.=$_POST["label"];
-                    }
-    
-                    $webcal->date=$actioncomm->date;
-                    $webcal->duree=($_POST["dureehour"] * 60) + $_POST["dureemin"];
-                    $webcal->texte=$societe->nom;
-                    $webcal->desc=$libellecal;
-                }
-//            }
-        }
-
-        // On crée l'action (avec ajout eventuel dans webcal si défini)
-        $idaction=$actioncomm->add($user, ($webcal->localdb->ok?$webcal:0) );
+        // On crée l'action
+        $idaction=$actioncomm->add($user);
 
         if ($idaction > 0)
         {
             if (! $actioncomm->error)
             {
-                // Si pas d'erreur creation action
-                if (! $webcal->error)
-                {
-                    // Pas d'erreur webcal
-                    $db->commit();
-                    Header("Location: ".$_POST["from"]);
-                    return;
-                }
-                else
-                {
-                    // Pas d'erreur action mais erreur webcal
-                    $db->commit();
-                    $_GET["id"]=$idaction;
-                }
+                $db->commit();
+                Header("Location: ".$_POST["from"]);
+                exit;
             }
             else
             {
@@ -195,7 +133,7 @@ if ($_POST["action"] == 'add_action')
     }
     else
     {
-        print "Le type d'action n'a pas été choisi";
+        dolibarr_print_error('',"Le type d'action n'a pas été choisi");
     }
 
 }
@@ -412,14 +350,14 @@ if ($_GET["action"] == 'create')
 	} 
       else if ($_GET["afaire"] == 2) 
 	{
-	  $html->select_date('','ac',1,1);
+	  $html->select_date('','ac');
 	  print '<tr><td>'.$langs->trans("Hour").'</td><td>';
 	  print_heure_select("heure",8,20);
 	  print '</td></tr>';
 	} 
       else 
 	{
-	  $html->select_date('','ac',1,1);
+	  $html->select_date('','ac');
 	  print '<tr><td>'.$langs->trans("Hour").'</td><td>';
 	  print_heure_select("heure",8,20);
 	  print '</td></tr>';
@@ -594,7 +532,7 @@ function add_row_for_webcal_link()
             $langs->load("other");
             if (! $user->webcal_login)
             {
-                print '<tr><td nowrap>'.$langs->trans("AddCalendarEntry").'</td>';
+                print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry").'</td>';
                 print '<td><input type="checkbox" disabled name="todo_webcal">';
                 print ' '.$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
                 print '</td>';
@@ -609,7 +547,7 @@ function add_row_for_webcal_link()
                 }
                 else
                 {
-                    print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
+                    print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry").'</td>';
                     print '<td><input type="checkbox" name="todo_webcal"'.(($conf->webcal->syncro=='always' || $conf->webcal->syncro=='yesbydefault')?' checked':'').'></td>';
                     print '</tr>';
                     $nbtr++;

@@ -22,14 +22,12 @@
 
 /**
         \file       htdocs/lib/webcal.class.php
-        \ingroup    webcal
+        \ingroup    webcalendar
 		\brief      Ensemble des fonctions permettant d'acceder a la database webcalendar.
 		\author     Rodolphe Quiedeville.
 		\author     Laurent Destailleur.
 		\version    $Revision$
 */
-
-require_once (DOL_DOCUMENT_ROOT ."/lib/".$conf->webcal->db->type.".lib.php");
 
 
 /**
@@ -42,9 +40,10 @@ class Webcal {
     var $localdb;
 
     var $date;
-    var $duree = 0;
+    var $duree = 0;     // Secondes
     var $texte;
     var $desc;
+    
     var $error;
 
   
@@ -56,6 +55,7 @@ class Webcal {
         global $conf;
         
         // On initie la connexion à la base Webcalendar
+        require_once (DOL_DOCUMENT_ROOT ."/lib/".$conf->webcal->db->type.".lib.php");
         $this->localdb = new DoliDb(
                     $conf->webcal->db->type,
                     $conf->webcal->db->host,
@@ -66,25 +66,24 @@ class Webcal {
 
 
     /**
-    		\brief      Ajoute une entree dans le calendrier de l'utilisateur
-    		\param[in]  user		le login de l'utilisateur
-    		\param[in]  date		la date et l'heure de l'evenement dans le calendrier
-    		\param[in]  texte		le titre a indiquer dans l'evenement
-    		\param[in]  desc		la description a indiquer dans l'evenement
+    		\brief      Ajoute objet en tant qu'entree dans le calendrier de l'utilisateur
+    		\param[in]  user		Le login de l'utilisateur
             \return     int         1 en cas de succès, -1,-2,-3 en cas d'erreur, -4 si login webcal non défini
     */
-    function add($user, $date, $texte, $desc)
+    function add($user)
 {
         global $langs;
         
-        dolibarr_syslog("Webcal::add user=$user date=$date texte=$texte desc=$desc");
-        
+        dolibarr_syslog("Webcal::add user=$user");
+
         // Test si login webcal défini pour le user
         if (! $user->webcal_login) {
-        $this->error=$langs->trans("ErrorWebcalLoginNotDefined","<a href=\"/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-        return -4; 
+            $this->error=$langs->trans("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+            return -4; 
         }
         
+        $this->localdb->begin();
+
         // Recupère l'id max+1 dans la base webcalendar
         $id = $this->get_next_id();
         
@@ -92,23 +91,20 @@ class Webcal {
         {
             $cal_id = $id;
             $cal_create_by = $user->webcal_login;
-            $cal_date = strftime('%Y%m%d', $date);
-            $cal_time = strftime('%H%M%S', $date);
+            $cal_date = strftime('%Y%m%d', $this->date);
+            $cal_time = strftime('%H%M%S', $this->date);
             $cal_mod_date = strftime('%Y%m%d', time());
             $cal_mod_time = strftime('%H%M%S', time());
-            $cal_duration = $this->duree;
+            $cal_duration = round($this->duree / 60);
             $cal_priority = 2;
             $cal_type = "E";
             $cal_access = "P";
-            $cal_name = $texte;
-            $cal_description = $desc;
-            
-            $sql = "INSERT INTO webcal_entry (cal_id, cal_create_by,cal_date,cal_time,cal_mod_date,
-            	cal_mod_time,cal_duration,cal_priority,cal_type, cal_access, cal_name,cal_description)";
-            
-            $sql .= " VALUES ($cal_id, '$cal_create_by', '$cal_date', '$cal_time', '$cal_mod_date', '$cal_mod_time',
-            	$cal_duration,$cal_priority,'$cal_type', '$cal_access', '$cal_name','$cal_description')";
-            
+            $cal_name = $this->texte;
+            $cal_description = $this->desc;
+
+            $sql = "INSERT INTO webcal_entry (cal_id, cal_create_by,cal_date,cal_time,cal_mod_date, cal_mod_time,cal_duration,cal_priority,cal_type, cal_access, cal_name,cal_description)";
+            $sql.= " VALUES ($cal_id, '$cal_create_by', '$cal_date', '$cal_time', '$cal_mod_date', '$cal_mod_time', $cal_duration, $cal_priority, '$cal_type', '$cal_access', '$cal_name','$cal_description')";
+
             if ($this->localdb->query($sql))
            	{
             	$sql = "INSERT INTO webcal_entry_user (cal_id, cal_login, cal_status)";
@@ -117,22 +113,26 @@ class Webcal {
         		if ( $this->localdb->query($sql) )
         		{
         		    // OK
+                    $this->localdb->commit();
                     return 1;        
         		}
         		else
         		{
+                    $this->localdb->rollback();
         		    $this->error = $this->localdb->error() . '<br>' .$sql;
                     return -1;
         		}
         	}
             else
         	{
+                $this->localdb->rollback();
             	$this->error = $this->localdb->error() . '<br>' .$sql;
                 return -2;
         	}
         }
         else
         {
+            $this->localdb->rollback();
         	$this->error = $this->localdb->error() . '<br>' .$sql;
             return -3;
         }
@@ -141,20 +141,21 @@ class Webcal {
 
     /**
     		\brief      Obtient l'id suivant dans le webcalendar
-    		\return     int     retourne l'id suivant dans le webcalendar ou -1 si erreur
+    		\return     int     Retourne l'id suivant dans webcalendar, <0 si ko
     */
     function get_next_id()
     {
-        $sql = "SELECT max(cal_id) FROM webcal_entry";
+        $sql = "SELECT max(cal_id) as id FROM webcal_entry";
 
-        if ($this->localdb->query($sql))
+        $resql=$this->localdb->query($sql);
+        if ($resql)
         {
-            $id = $this->localdb->result(0, 0) + 1;
-            return $id;
+            $obj=$this->localdb->fetch_object($resql);
+            return ($obj->id + 1);
         }
         else
         {
-            print $this->localdb->error();
+            $this->error=$this->localdb->error();
             return -1;
         }
     }
