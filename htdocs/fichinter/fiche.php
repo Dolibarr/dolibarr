@@ -205,7 +205,7 @@ if ($_GET["action"] == 'create')
   print '</td></tr>';
   
   print '<tr><td colspan="2" align="center">';
-  print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+  print '<input type="submit" class="button" value="'.$langs->trans("CreateDaftIntervention").'">';
   print '</td></tr>';
   print '</table>';
   print '</form>';
@@ -224,50 +224,36 @@ if ($_GET["action"] == 'edit')
     $fichinter = new Fichinter($db);
     $fichinter->fetch($_GET["id"]);
 
+    dolibarr_fiche_head($head, $a, $langs->trans("EditIntervention"));
+
     /*
-    *   Initialisation de la liste des projets
-    */
-    $prj = new Project($db);
-    $listeprj = $prj->liste_array($fichinter->societe_id);
-
-    print_titre($langs->trans("EditIntervention"));
-
+     *   Initialisation de la liste des projets
+     */
     print "<form action=\"fiche.php\" method=\"post\">";
 
     print "<input type=\"hidden\" name=\"action\" value=\"update\">";
     print "<input type=\"hidden\" name=\"id\" value=\"".$_GET["id"]."\">";
 
     print '<table class="border" width="100%">';
+
+    print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$fichinter->ref.'</td></tr>';
+
     print "<tr><td>".$langs->trans("Date")."</td><td>";
     $sel->select_date($fichinter->date);
     print "</td></tr>";
 
-    print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$fichinter->ref.'</td></tr>';
     print '<tr><td>'.$langs->trans("Duration")." (".$langs->trans("days").')</td><td><input name="duree" value="'.$fichinter->duree.'"></td></tr>';
 
     if ($conf->projet->enabled)
       {
-        // Projet associ
+        // Projet associé
         print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-	
-        $sel->select_array("projetidp",$listeprj,$fichinter->projet_id);
-	
-        if (sizeof($listeprj) == 0)
-	  {
-            print 'Cette société n\'a pas de projet.&nbsp;';
-
-	    $user->getrights("projet");
-	    
-	    if ($user->rights->projet->creer)
-	      {
-		print '<a href='.DOL_URL_ROOT.'/comm/projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
-	      }
-	  }
+        $sel->select_project($fichinter->societe_id,$fichinter->projet_id,"projetidp");
         print '</td></tr>';
       }
 
     print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
-    print '<td><textarea name="note" wrap="soft" cols="60" rows="15">';
+    print '<td><textarea name="note" wrap="soft" cols="60" rows="12">';
     print $fichinter->note;
     print '</textarea>';
     print '</td></tr>';
@@ -279,6 +265,7 @@ if ($_GET["action"] == 'edit')
 
     print '</form>';
 
+    print '</div>';
 }
 
 /*
@@ -288,92 +275,97 @@ if ($_GET["action"] == 'edit')
 
 if ($_GET["id"] && $_GET["action"] != 'edit')
 {
-    print_fiche_titre($langs->trans("Intervention"),$mesg);
+    if ($mesg) print $mesg."<br>";
+    
+    dolibarr_fiche_head($head, $a, $langs->trans("InterventionCard"));
 
     $fichinter = new Fichinter($db);
-    if ($fichinter->fetch($_GET["id"]))
+    $result=$fichinter->fetch($_GET["id"]);
+    if (! $result > 0)
     {
-        $fichinter->fetch_client();
-
-        print '<table class="border" width="100%">';
-        print '<tr><td>'.$langs->trans("Company").'</td><td><a href="../comm/fiche.php?socid='.$fichinter->client->id.'">'.$fichinter->client->nom.'</a></td></tr>';
-        print '<tr><td width="20%">Date</td><td>'.strftime("%A %d %B %Y",$fichinter->date).'</td></tr>';
-        print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$fichinter->ref.'</td></tr>';
-        print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$fichinter->duree.'</td></tr>';
-
-        if ($conf->projet->enabled)
-        {
-            $fichinter->fetch_projet();
-            print '<tr><td valign="top">'.$langs->trans("Ref").'</td><td>'.$fichinter->projet.'</td></tr>';
-        }
-        print '<tr><td>'.$langs->trans("Status").'</td><td>'.$fichinter->statut.'</td></tr>';
-        print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
-        print '<td colspan="3">';
-        print nl2br($fichinter->note);
-        print '</td></tr>';
-
-        print '</td></tr>';
-        print "</table>";
-
-
-        /*
-         * Barre d'actions
-         *
-         */
-        print '<br>';
-        print '<div class="tabsAction">';
-
-        if ($user->societe_id == 0)
-        {
-
-            if ($fichinter->statut == 0)
-            {
-                print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=edit">'.$langs->trans("Edit").'</a>';
-            }
-
-            if ($fichinter->statut == 0)
-            {
-                print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=valid">'.$langs->trans("Valid").'</a>';
-            }
-
-            $file = $conf->fichinter->dir_output."/".$fichinter->ref."/".$fichinter->ref.pdf;
-            if ($fichinter->statut == 0 or !file_exists($file))
-            {
-                $langs->load("bills");
-                print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=generate">'.$langs->trans("BuildPDF").'</a>';
-            }
-
-        }
-        print '</div>';
-        print '<br>';
-
-        print '<table width="50%" cellspacing="2"><tr><td width="50%" valign="top">';
-
-
-        /*
-         * Documents générés
-         */
-        $filename=sanitize_string($fichinter->ref);
-        $filedir=$conf->fichinter->dir_output . "/".$fichinter->ref;
-        $urlsource=$_SERVER["PHP_SELF"]."?id=".$fichinter->id;
-        //$genallowed=$user->rights->expedition->creer;
-        //$delallowed=$user->rights->expedition->supprimer;
-        $genallowed=0;
-        $delallowed=0;
-        
-        $var=true;
-        
-        print "<br>\n";
-        $sel->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
-
-      
-        print "</table></td></tr></table>\n";
-      
+        dolibarr_print_error($db);
+        exit;
     }
-  else
+    
+    $fichinter->fetch_client();
+
+    print '<table class="border" width="100%">';
+    print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$fichinter->ref.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td><a href="../comm/fiche.php?socid='.$fichinter->client->id.'">'.$fichinter->client->nom.'</a></td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dolibarr_print_date($fichinter->date,"%A %d %B %Y").'</td></tr>';
+    print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$fichinter->duree.'</td></tr>';
+
+    if ($conf->projet->enabled)
     {
-      print "Fiche inexistante";
+        $fichinter->fetch_projet();
+        print '<tr><td valign="top">'.$langs->trans("Ref").'</td><td>'.$fichinter->projet.'</td></tr>';
     }
+    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$fichinter->getLibStatut().'</td></tr>';
+
+    print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+    print '<td>';
+    print nl2br($fichinter->note);
+    print '</td></tr>';
+
+    print '</td></tr>';
+    print "</table>";
+    print '</div>';
+    
+
+    /**
+     * Barre d'actions
+     *
+     */
+    print '<div class="tabsAction">';
+
+    if ($user->societe_id == 0)
+    {
+
+        if ($fichinter->statut == 0)
+        {
+            print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=edit">'.$langs->trans("Edit").'</a>';
+        }
+
+        if ($fichinter->statut == 0)
+        {
+            print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=valid">'.$langs->trans("Valid").'</a>';
+        }
+
+        $file = $conf->fichinter->dir_output."/".$fichinter->ref."/".$fichinter->ref.pdf;
+        if ($fichinter->statut == 0 or !file_exists($file))
+        {
+            $langs->load("bills");
+            print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=generate">'.$langs->trans("BuildPDF").'</a>';
+        }
+
+    }
+    print '</div>';
+
+    print '<table width="100%"><tr><td width="50%" valign="top">';
+
+    /*
+     * Documents générés
+     */
+    $filename=sanitize_string($fichinter->ref);
+    $filedir=$conf->fichinter->dir_output . "/".$fichinter->ref;
+    $urlsource=$_SERVER["PHP_SELF"]."?id=".$fichinter->id;
+    //$genallowed=$user->rights->fichinter->creer;
+    //$delallowed=$user->rights->fichinter->supprimer;
+    $genallowed=0;
+    $delallowed=0;
+    
+    $var=true;
+    
+    print "<br>\n";
+    $sel->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$ficheinter->modelpdf);
+
+  
+    print "</td><td>";
+    
+    print "&nbsp;";
+    
+    print "</tr></table>\n";
+
 }
 
 $db->close();

@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - interventions
 Intervention=Intervention
 Interventions=Interventions
+InterventionCard=Fiche intervention
 NewIntervention=Nouvelle intervention
 AddIntervention=Créer intervention
 ListOfInterventions=Liste des interventions
@@ -8,3 +9,4 @@ EditIntervention=Editer
 TemplatePDFInterventions=Modèle PDF des fiches d'interventions
 LastInterventions=Les %s dernières interventions
 AllInterventions=Toutes les interventions
+CreateDaftIntervention=Créer brouillon
