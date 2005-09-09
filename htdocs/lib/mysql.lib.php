@@ -507,7 +507,8 @@ class DoliDb
             if (isset($this->errorcode_map[mysql_errno($this->db)])) {
                 return $this->errorcode_map[mysql_errno($this->db)];
             }
-            return 'DB_ERROR_'.mysql_errno($this->db);
+            $errno=mysql_errno($this->db);
+            return ($errno?'DB_ERROR_'.$errno:'0');
         }
     }
 

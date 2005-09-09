@@ -503,7 +503,8 @@ class DoliDb
                 return $code;
             }
         }
-        return 'DB_ERROR';
+        $errno=pg_last_error($this->db);
+        return ($errno?'DB_ERROR':'0');
     }
     
     /**
