@@ -184,9 +184,9 @@ class Facture
             }
             
             /*
-            * Produits de la facture récurrente
-            *
-            */
+             * Produits de la facture récurrente
+             *
+             */
             if ($this->fac_rec > 0)
             {
                 for ($i = 0 ; $i < sizeof($_facrec->lignes) ; $i++)
@@ -205,26 +205,36 @@ class Facture
                     $_facrec->lignes[$i]->produit_id,
                     $_facrec->lignes[$i]->remise_percent);
 
-                    if ( $result_insert < 0)
+                    if ($result_insert < 0)
                     {
                         dolibarr_print_error($this->db);
                     }
                 }
             }
 
-            $this->updateprice($this->id);
-
-            $this->db->commit();
-
-            return $this->id;
+            $result=$this->updateprice($this->id);
+            if ($result)
+            {
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $interface->run_triggers('BILL_CREATE',$this,$user,$lang,$conf);
+                // Fin appel triggers
+    
+                $this->db->commit();
+                return $this->id;
+            }
+            else
+            {
+                $this->db->rollback();
+                return -2;
+            }
         }
         else
         {
             $this->db->rollback();
-
-            dolibarr_print_error($this->db);
+            return -1;
         }
-
     }
 
 
@@ -552,11 +562,13 @@ class Facture
     }
 
     /**
-    * \brief     Supprime la facture
-    * \param     rowid      id de la facture à supprimer
-    */
+     *      \brief     Supprime la facture
+     *      \param     rowid      id de la facture à supprimer
+     */
     function delete($rowid)
     {
+        $this->db->begin();
+        
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_tva_sum WHERE fk_facture = $rowid;";
 
         if ( $this->db->query( $sql) )
@@ -575,8 +587,8 @@ class Facture
                     if ($this->db->query( $sql) )
                     {
                         /*
-                        * On repositionne la remise
-                        */
+                         * On repositionne la remise
+                         */
                         $sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
                         $sql .= " SET fk_facture = NULL WHERE fk_facture = $rowid";
 
@@ -584,36 +596,53 @@ class Facture
                         {
 
                             $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture WHERE rowid = $rowid AND fk_statut = 0;";
+                            $resql=$this->db->query($sql) ;
 
-                            $this->db->query( $sql) ;
-
-
-                            return 1;
+                            if ($resql)
+                            {
+                                // Appel des triggers
+                                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                                $interface=new Interfaces($this->db);
+                                $interface->run_triggers('BILL_DELETE',$this,$user,$lang,$conf);
+                                // Fin appel triggers
+                
+                                $this->db->commit();
+                                return 1;
+                            }
+                            else
+                            {
+                                $this->db->rollback();
+                                return -6;
+                            }
                         }
                         else
                         {
-                            dolibarr_print_error($this->db);
+                            $this->db->rollback();
+                            return -5;
                         }
-
                     }
                     else
                     {
-                        dolibarr_print_error($this->db);
+                        $this->db->rollback();
+                        return -4;
                     }
                 }
                 else
                 {
-                    dolibarr_print_error($this->db);
+                    $this->db->rollback();
+                    return -3;
                 }
             }
             else
             {
-                dolibarr_print_error($this->db);
+                $this->db->rollback();
+                return -2;
             }
         }
         else
         {
-            dolibarr_print_error($this->db);
+            $this->db->rollback();
+            return -1;
         }
     }
 
@@ -724,134 +753,122 @@ class Facture
                 $numfa = facture_get_num($soc, $this->prefixe_facture); // définit dans includes/modules/facture
             }
 
-            if ($this->db->begin())
+            $this->db->begin();
+            
+            /*
+             * Lecture de la remise exceptionnelle
+             */
+            $sql  = "SELECT rowid, rc.amount_ht, fk_soc, fk_user";
+            $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+            $sql .= " WHERE rc.fk_soc =". $this->socidp;
+            $sql .= " AND fk_facture IS NULL";
+
+            $resql = $this->db->query($sql) ;
+            if ($resql)
             {
-                /*
-                * Lecture de la remise exceptionnelle
-                *
-                */
-                $sql  = "SELECT rowid, rc.amount_ht, fk_soc, fk_user";
-                $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-                $sql .= " WHERE rc.fk_soc =". $this->socidp;
-                $sql .= " AND fk_facture IS NULL";
+                $nurmx = $this->db->num_rows($resql);
 
-                $resql = $this->db->query($sql) ;
-
-                if ($resql)
+                if ($nurmx > 0)
                 {
-                    $nurmx = $this->db->num_rows($resql);
-
-                    if ($nurmx > 0)
-                    {
-                        $row = $this->db->fetch_row($resql);
-                        $this->remise_exceptionnelle = $row;
-                    }
-                    $this->db->free($resql);
+                    $row = $this->db->fetch_row($resql);
+                    $this->remise_exceptionnelle = $row;
                 }
-                else
+                $this->db->free($resql);
+            }
+            else
+            {
+                dolibarr_syslog("Facture::Valide Erreur lecture Remise");
+                $error++;
+            }
+
+            /* Affectation de la remise exceptionnelle */
+            if ( $this->_affect_remise_exceptionnelle() <> 0)
+            {
+                $error++;
+            }
+            else
+            {
+                $this->updateprice($this->id);
+            }
+
+            /* Validation de la facture */
+            $sql = "UPDATE ".MAIN_DB_PREFIX."facture ";
+            $sql .= " SET facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id";
+
+            /* Si l'option est activée on force la date de facture */
+            if (defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION == "1")
+            {
+                $this->date=time();
+                $datelim=$this->calculate_date_lim_reglement();
+
+                $sql .= ", datef=".$this->db->idate($this->date);
+                $sql .= ", date_lim_reglement=".$this->db->idate($datelim);
+            }
+
+            $sql .= " WHERE rowid = $rowid ;";
+
+            $resql = $this->db->query($sql);
+            if (! $resql)
+            {
+                dolibarr_syslog("Facture::set_valid() Echec - 10");
+                dolibarr_print_error($this->db);
+                $error++;
+            }
+                
+            /*
+             * Update Stats
+             */
+            $sql = "SELECT fk_product FROM ".MAIN_DB_PREFIX."facturedet WHERE fk_facture = ".$this->id;
+            $sql .= " AND fk_product > 0";
+
+            $resql = $this->db->query($sql);
+            if ($resql)
+            {
+                $num = $this->db->num_rows($resql);
+                $i = 0;
+                while ($i < $num)
                 {
-                    dolibarr_syslog("Facture::Valide Erreur lecture Remise");
-                    $error++;
+                    $obj = $this->db->fetch_object($resql);
+
+                    $sql = "UPDATE ".MAIN_DB_PREFIX."product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
+                    $resql2 = $this->db->query($sql);
+
+                    $i++;
                 }
-
-                /* Affectation de la remise exceptionnelle */
-                if ( $this->_affect_remise_exceptionnelle() <> 0)
-                {
-                    $error++;
-                }
-                else
-                {
-                    $this->updateprice($this->id);
-                }
-
-                /* Validation de la facture */
-                $sql = "UPDATE ".MAIN_DB_PREFIX."facture ";
-                $sql .= " SET facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id";
-
-                /* Si l'option est activée on force la date de facture */
-                if (defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION == "1")
-                {
-                    $this->date=time();
-                    $datelim=$this->calculate_date_lim_reglement();
-
-                    $sql .= ", datef=".$this->db->idate($this->date);
-                    $sql .= ", date_lim_reglement=".$this->db->idate($datelim);
-                }
-
-                $sql .= " WHERE rowid = $rowid ;";
-
-                $resql = $this->db->query($sql);
-                if ($resql)
-                {
-                    // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                    $interface=new Interfaces($this->db);
-                    $ret=$interface->run_triggers('BILL_VALIDATE',$this,$user,$lang,$conf);
-                    // Fin appel triggers
-
-                    if ($ret < 0) $error++;
-                }
-                else
-                {
-                    dolibarr_syslog("Facture::set_valid() Echec - 10");
-                    dolibarr_print_error($this->db);
-                    $error++;
-                }
-
-                /*
-                 * Update Stats
-                 */
-                $sql = "SELECT fk_product FROM ".MAIN_DB_PREFIX."facturedet WHERE fk_facture = ".$this->id;
-                $sql .= " AND fk_product > 0";
-
-                $resql = $this->db->query($sql);
-                if ($resql)
-                {
-                    $num = $this->db->num_rows($resql);
-                    $i = 0;
-                    while ($i < $num)
-                    {
-                        $obj = $this->db->fetch_object($resql);
-
-                        $sql = "UPDATE ".MAIN_DB_PREFIX."product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
-                        $resql2 = $this->db->query($sql);
-
-                        $i++;
-                    }
-                }
-                else
-                {
-                    $error++;
-                }
-
-                if ($error == 0)
-                {
-                    $this->db->commit();
-
-                    /*
-                     * Notify
-                     */
-                    $facref = sanitize_string($this->ref);
-                    $filepdf = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
-    
-                    $mesg = "La facture ".$this->ref." a été validée.\n";
-    
-                    $notify = New Notify($this->db);
-                    $notify->send($action_notify, $this->socidp, $mesg, "facture", $rowid, $filepdf);
-                }
-                else
-                {
-                    $this->db->rollback();
-                }
+            }
+            else
+            {
+                $error++;
             }
 
             if ($error == 0)
             {
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $interface->run_triggers('BILL_VALIDATE',$this,$user,$lang,$conf);
+                // Fin appel triggers
+
+                $this->db->commit();
+
+                /*
+                 * Notify
+                 */
+                $facref = sanitize_string($this->ref);
+                $filepdf = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
+
+                $mesg = "La facture ".$this->ref." a été validée.\n";
+
+                $notify = New Notify($this->db);
+                $notify->send($action_notify, $this->socidp, $mesg, "facture", $rowid, $filepdf);
+
                 return 1;
             }
             else
             {
-                return 0;
+                $this->db->rollback();
+                $this->error=$this->db->error();
+                return -1;
             }
         }
     }
