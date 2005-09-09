@@ -65,19 +65,13 @@ class pdf_soleil extends ModelePDFFicheinter
             $dir = $conf->fichinter->dir_output . "/" . $fichref;
             $file = $dir . "/" . $fichref . ".pdf";
 
-            if (! file_exists($dir))
+            if (! is_dir($dir))
             {
-                umask(0);
-                if (! mkdir($dir, 0755))
-                {
-                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                    return 0;
-                }
+                create_exdir($dir);
             }
 
-            if (file_exists($dir))
+            if (is_dir($dir))
             {
-
                 $pdf=new FPDF('P','mm','A4');
                 $pdf->Open();
                 $pdf->AddPage();
