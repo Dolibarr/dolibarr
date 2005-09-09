@@ -73,7 +73,7 @@ if (! isset($_GET["num"]))
   $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
   $sql .= " WHERE fk_account = ".$_GET["account"];
   $sql .= " ORDER BY numr DESC";
-  $sql .= $db->plimit($limit,$offset);
+//  $sql .= $db->plimit($limit,$offset);   // retrait de la limite tant qu'il n'y a pas de pagination
 
   $result = $db->query($sql);
   if ($result)
@@ -89,6 +89,7 @@ if (! isset($_GET["num"]))
       print "<tr class=\"liste_titre\">";
       print '<td>'.$langs->trans("AccountStatement").'</td></tr>';
 
+      //while ($i < min($numrows,$limit))   // retrait de la limite tant qu'il n'y a pas de pagination
       while ($i < min($numrows,$limit))
 	{
 	  $objp = $db->fetch_object($result);
@@ -189,7 +190,7 @@ else
   $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
   $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
   $sql .= " WHERE num_releve='".$num."'";
-  if (! $num) {
+  if (!isset($num)) {
   	$sql .= " or num_releve is null";
   }
   $sql .= " AND fk_account = ".$acct->id;
