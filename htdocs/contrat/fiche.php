@@ -94,7 +94,7 @@ if ($_POST["action"] == 'add')
     $contrat->add_product($_POST["idprod4"],$_POST["qty4"],$_POST["remise_percent4"]);
     */
     $result = $contrat->create($user,$langs,$conf);
-    if ($result >= 0)
+    if ($result > 0)
     {
         Header("Location: fiche.php?id=".$contrat->id);
         exit;
@@ -378,7 +378,7 @@ if ($_GET["action"] == 'create')
             print '<tr><td>'.$langs->trans("Comment").'</td><td valign="top">';
             print '<textarea name="note" wrap="soft" cols="60" rows="3"></textarea></td></tr>';
 
-            print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
+            print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
             print "</form>\n";
             print "</table>\n";
 
@@ -464,12 +464,12 @@ else
     {
         $contrat = New Contrat($db);
         $result=$contrat->fetch($id);
-        if ($result <= 0)
+        if ($result < 0)
         {
-            dolibarr_print_error($db);
+            dolibarr_print_error($db,$contrat->error);
             exit;
         }
-        
+
         if ($mesg) print $mesg;
 		
         $author = new User($db);

@@ -46,6 +46,7 @@ class Contrat
     var $user_service;
     var $user_cloture;
     var $date_creation;
+    var $date_validation;
     var $date_cloture;
 
     var $commercial_signature_id;
@@ -218,7 +219,7 @@ class Contrat
     /**
      *    \brief      Chargement depuis la base des données du contrat
      *    \param      id      Id du contrat à charger
-     *    \return     int     <0 si KO, >0 si OK
+     *    \return     int     <0 si ko, id du contrat chargé si ok
      */
     function fetch($id)
     {
@@ -230,35 +231,44 @@ class Contrat
         $sql.= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
     
         $resql = $this->db->query($sql) ;
-    
+ 
         if ($resql)
         {
             $result = $this->db->fetch_array($resql);
     
-            $this->id                = $result["rowid"];
-            $this->ref               = $result["rowid"];
-            $this->statut            = $result["statut"];
-            $this->factureid         = $result["fk_facture"];
-            $this->facturedetid      = $result["fk_facturedet"];
-            $this->mise_en_service   = $result["datemise"];
-            $this->date_fin_validite = $result["datefin"];
-            $this->date_contrat      = $result["datecontrat"];
+            if ($result)
+            {
+                $this->id                = $result["rowid"];
+                $this->ref               = $result["rowid"];
+                $this->statut            = $result["statut"];
+                $this->factureid         = $result["fk_facture"];
+                $this->facturedetid      = $result["fk_facturedet"];
+                $this->mise_en_service   = $result["datemise"];
+                $this->date_fin_validite = $result["datefin"];
+                $this->date_contrat      = $result["datecontrat"];
+        
+                $this->user_author_id    = $result["fk_user_author"];
+        
+                $this->commercial_signature_id = $result["fk_commercial_signature"];
+                $this->commercial_suivi_id = $result["fk_commercial_suivi"];
+        
+                $this->user_service->id = $result["fk_user_mise_en_service"];
+                $this->user_cloture->id = $result["fk_user_cloture"];
     
-            $this->user_author_id    = $result["fk_user_author"];
+                $this->fk_projet        = $result["fk_projet"];
+        
+                $this->societe->fetch($result["fk_soc"]);
+        
+                $this->db->free($resql);
     
-            $this->commercial_signature_id = $result["fk_commercial_signature"];
-            $this->commercial_suivi_id = $result["fk_commercial_suivi"];
-    
-            $this->user_service->id = $result["fk_user_mise_en_service"];
-            $this->user_cloture->id = $result["fk_user_cloture"];
-
-            $this->fk_projet        = $result["fk_projet"];
-    
-            $this->societe->fetch($result["fk_soc"]);
-    
-            $this->db->free($resql);
-
-            return 1;
+                return $this->id;
+            }
+            else
+            {
+                dolibarr_syslog("Contrat::Fetch Erreur contrat non trouve");
+                $this->error="Contrat non trouve";
+                return -2;
+            }
         }
         else
         {
@@ -382,14 +392,12 @@ class Contrat
     /**
      *      \brief      Crée un contrat vierge en base
      *      \param      user        Utilisateur qui crée
-     *      \param      lang        Environnement langue de l'utilisateur
+     *      \param      langs       Environnement langue de l'utilisateur
      *      \param      conf        Environnement de configuration lors de l'opération
-     *      \return     int         < 0 si erreur, id contrat créé sinon
+     *      \return     int         <0 si erreur, id contrat créé sinon
      */
-    function create($user,$lang='',$conf='')
+    function create($user,$langs='',$conf='')
     {
-        global $langs;
-        
         // Controle validité des paramètres
         $paramsok=1;
         if ($this->commercial_signature_id <= 0)
@@ -407,6 +415,8 @@ class Contrat
         }
         if (! $paramsok) return -1;
         
+        $this->db->begin();
+
         // Insère contrat
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, fk_commercial_signature, fk_commercial_suivi, date_contrat)";
         $sql.= " VALUES (now(),".$this->soc_id.",".$user->id;
@@ -424,16 +434,18 @@ class Contrat
             $interface->run_triggers('CONTRACT_CREATE',$this,$user,$lang,$conf);
             // Fin appel triggers
     
-            $result = $this->id;
+            $this->db->commit();
+
+            return $this->id;
         }
         else
         {
-            $this->error=$lang->trans("UnknownError: ".$this->db->error()." - sql=".$sql);
+            $this->db->rollback();
+
             dolibarr_syslog("Contrat::create - 10");
-            $result = -1;
+            $this->error=$lang->trans("UnknownError: ".$this->db->error()." - sql=".$sql);
+            return -1;
         }
-    
-        return $result;
     }
     
 
@@ -456,14 +468,12 @@ class Contrat
             $interface->run_triggers('CONTRACT_DELETE',$this,$user,$lang,$conf);
             // Fin appel triggers
     
-            $result = 1;
+            return 1;
         }
         else
         {
-            $result = -1;
+            return -1;
         }
-    
-        return $result;
     }
 
     
