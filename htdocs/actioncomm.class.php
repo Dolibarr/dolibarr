@@ -35,47 +35,46 @@
 
 class ActionComm
 {
-  var $id;
-  var $db;
-
-  var $type_id;
-  var $type_code;
-  var $type;
-  var $label;
-  var $date;
-  var $priority;
-  var $user;
-  var $author;
-  var $societe;
-  var $contact;
-  var $note;
-  var $percent;
-  var $error;
-
-  /**
-   *    \brief      Constructeur
-   *    \param      db      Handler d'accès base de donnée
-   */
-  function ActionComm($db) 
+    var $id;
+    var $db;
+    
+    var $type_id;
+    var $type_code;
+    var $type;
+    var $label;
+    var $date;
+    var $priority;
+    var $user;
+    var $author;
+    var $societe;
+    var $contact;
+    var $note;
+    var $percent;
+    var $error;
+    
+    /**
+     *      \brief      Constructeur
+     *      \param      db      Handler d'accès base de donnée
+     */
+    function ActionComm($db)
     {
-      $this->db = $db;
-      $this->societe = new Societe($db);
-      $this->author = new User($db);
-      if (class_exists("Contact"))
-      {
-	    $this->contact = new Contact($db);
-      }
+        $this->db = $db;
+        $this->societe = new Societe($db);
+        $this->author = new User($db);
+        if (class_exists("Contact"))
+        {
+            $this->contact = new Contact($db);
+        }
     }
 
-  /**
-   *    \brief      Ajout d'une action en base (et eventuellement dans webcalendar)
-   *    \param      author      auteur de la creation de l'action
-   *    \param      webcal      ressource webcalendar: 0=on oublie webcal, 1=on ajoute une entrée générique dans webcal, objet=ajout de l'objet dans webcal
-   *    \return     int         id de l'action créée, < 0 si erreur
-   */
-    function add($author, $webcal=0)
+    /**
+     *    \brief      Ajout d'une action en base
+     *    \param      author      auteur de la creation de l'action
+     *    \return     int         id de l'action créée, < 0 si erreur
+     */
+    function add($author)
     {
-        global $conf;
+        global $langs,$conf;
     
         dolibarr_syslog("ActionComm::add");
 
@@ -98,30 +97,11 @@ class ActionComm
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm");
     
-            if ($conf->webcal->enabled) {
-
-                // Appel a webcal
-                dolibarr_syslog("ActionComm::ajout entree dans webcal");
-
-                // Si webcal demandé et non défini en tant qu'objet, on le construit
-                if (! is_object($webcal) && $webcal == 1)
-                {
-                    $webcal=new ActionComm($this->db);
-                    $webcal->date=$this->date;
-                    $webcal->duree=0;
-                    $webcal->texte=$this->societe;
-                    $webcal->desc="Action ".$this->type_code."\n".$this->note;
-                }
-
-                // Ajoute entrée dans webcal
-                if (is_object($webcal))
-                {
-                    $result=$webcal->add($author,$webcal->date,$webcal->texte,$webcal->desc);
-                    if ($result < 0) {
-                        $this->error="Echec insertion dans webcal: ".$webcal->error;
-                    }
-                }
-            }
+           // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $interface->run_triggers('ACTION_CREATE',$this,$author,$langs,$conf);
+            // Fin appel triggers
     
             return $this->id;
         }

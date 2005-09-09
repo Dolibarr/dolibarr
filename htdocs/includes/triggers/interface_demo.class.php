@@ -32,7 +32,7 @@
 
 
 /**
-        \class      interface_demo
+        \class      InterfaceDemo
         \brief      Classe des fonctions triggers des actions personalisées du workflow
 */
 
@@ -42,7 +42,7 @@ class InterfaceDemo
     
     /**
      *   \brief      Constructeur.
-     *   \param      DB      handler d'accès base
+     *   \param      DB      Handler d'accès base
      */
     function InterfaceDemo($DB)
     {
@@ -88,15 +88,16 @@ class InterfaceDemo
     }
     
     /**
-     *   \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
-     *               D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
-     *   \param      action      Code de l'evenement
-     *   \param      object      Objet concerné
-     *   \param      user        Objet user
-     *   \param      lang        Objet lang
-     *   \param      conf        Objet conf
+     *      \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
+     *                  D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
+     *      \param      action      Code de l'evenement
+     *      \param      object      Objet concerné
+     *      \param      user        Objet user
+     *      \param      lang        Objet lang
+     *      \param      conf        Objet conf
+     *      \return     int         <0 si ko, 0 si aucune action faite, >0 si ok
      */
-    function run_trigger($action,$object,$user,$lang,$conf)
+	function run_trigger($action,$object,$user,$langs,$conf)
     {
         // Mettre ici le code à exécuter en réaction de l'action
         // Les données de l'action sont stockées dans $object
@@ -188,7 +189,9 @@ class InterfaceDemo
         else
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran but no handler found for this action.");
+			return -1;
         }
+		return 0;
     }
 
 }

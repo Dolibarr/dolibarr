@@ -35,7 +35,7 @@ include_once(DOL_DOCUMENT_ROOT.'/lib/webcal.class.php');
 
 /**
         \class      InterfaceWebCal
-        \brief      Classe des fonctions triggers des actions personalisées du workflow
+        \brief      Classe des fonctions triggers des actions webcalendar
 */
 
 class InterfaceWebCal
@@ -46,7 +46,7 @@ class InterfaceWebCal
     
     /**
      *   \brief      Constructeur.
-     *   \param      DB      handler d'accès base
+     *   \param      DB      Handler d'accès base
      */
     function InterfaceWebCal($DB)
     {
@@ -99,7 +99,7 @@ class InterfaceWebCal
      *      \param      user        Objet user
      *      \param      lang        Objet lang
      *      \param      conf        Objet conf
-     *      \return     int         <0 si ko, >0 si ok
+     *      \return     int         <0 si ko, 0 si aucune action faite, >0 si ok
      */
     function run_trigger($action,$object,$user,$langs,$conf)
     {
@@ -160,6 +160,7 @@ class InterfaceWebCal
             }
         }
 
+		return 0;
     }
 
 }
