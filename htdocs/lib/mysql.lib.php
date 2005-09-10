@@ -90,6 +90,16 @@ class DoliDb
         $this->transaction_opened=0;
 
         //print "Name DB: $host,$user,$pass,$name<br>";
+
+        if (! function_exists(mysql_connect))
+        {
+        	$this->connected = 0;
+        	$this->ok = 0;
+            $this->error="Mysql PHP functions are not available in this version of PHP";
+        	dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions are not available in this version of PHP");
+            return $this->ok;
+        }
+
         if (! $host)
         {
         	$this->connected = 0;
@@ -161,7 +171,7 @@ class DoliDb
     */
     function connect($host, $login, $passwd, $name)
     {
-        $this->db  = @mysql_connect($host, $login, $passwd);
+        $this->db  = mysql_connect($host, $login, $passwd);
         //print "Resultat fonction connect: ".$this->db;
         return $this->db;
     }
