@@ -214,7 +214,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
    */
   function _NotifyApprobator($user)
   {
-    require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+    require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
     
     $this->ReadApprobators();
     
@@ -253,10 +253,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 
 	    $sendto = $approb[2];
 
-	    $mailfile = new DolibarrMail($subject,
+	    $mailfile = new CMailFile($subject,
 					 $sendto,
 					 $from,
-					 $message);
+					 $message, array(), array(), array());
 	    if ( $mailfile->sendfile() )
 	      {
 		
@@ -345,7 +345,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
    */
   function _NotifyCreator($user, $subject, $message)
   {
-    require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+    require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
     
     $cc = new user($this->db, $this->user_author_id);
     $cc->fetch();
@@ -353,10 +353,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
     $sendto = $cc->email;
     $from = $user->email;
 
-    $mailfile = new DolibarrMail($subject,
+    $mailfile = new CMailFile($subject,
 				 $sendto,
 				 $from,
-				 $message);
+				 $message, array(), array(), array());
     if ( $mailfile->sendfile() )
       {
 	return 0;

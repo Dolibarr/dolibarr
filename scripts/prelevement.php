@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,6 @@ require_once (DOL_DOCUMENT_ROOT."/bon-prelevement.class.php");
 require_once (DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once (DOL_DOCUMENT_ROOT."/paiement.class.php");
-require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
 
 $error = 0;
 

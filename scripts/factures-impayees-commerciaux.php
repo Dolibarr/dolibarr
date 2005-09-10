@@ -1,5 +1,7 @@
+#!/usr/bin/php
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +19,28 @@
  *
  * $Id$
  * $Source$
- *
- * Envois la liste des factures impayées aux commerciaux
- *
  */
 
-require ("../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+/**
+        \file       scripts/factures-impayees-commerciaux.php
+        \ingroup    facture
+        \brief      Script d'envoi de mails résumé des imapyées par commerciaux
+*/
+
+// Test si mode batch
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
+}
+
+// Recupere root dolibarr
+$path=eregi_replace('factures-impayees-commerciaux.php','',$_SERVER["PHP_SELF"]);
+
+
+require($path."../htdocs/master.inc.php");
+require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+
 
 $error = 0;
 
@@ -38,92 +55,89 @@ $sql .= " AND sc.fk_soc = s.idp";
 $sql .= " AND sc.fk_user = u.rowid";
 $sql .= " ORDER BY u.email ASC, s.idp ASC";
 
-if ( $db->query($sql) ) 
+if ( $db->query($sql) )
 {
-  $num = $db->num_rows();
-  $i = 0;
-  $oldemail = '';
-  $message = '';
-  $total = '';
-  dolibarr_syslog("factures-impayees-commerciaux: ");
-  
-  while ($i < $num)
+    $num = $db->num_rows();
+    $i = 0;
+    $oldemail = '';
+    $message = '';
+    $total = '';
+    dolibarr_syslog("factures-impayees-commerciaux: ");
+
+    if ($num)
     {
-      $obj = $db->fetch_object();
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object();
+    
+            if ($obj->email <> $oldemail)
+            {
+                if (strlen($oldemail))
+                {
+                    envoi_mail($oldemail,$message,$total);    
+                }
+                $oldemail = $obj->email;
+                $message = '';
+                $total = 0;
+            }
+    
+            $message .= "Facture ".$obj->facnumber." : ".price($obj->total_ttc)." : ".$obj->nom."\n";
+            $total += $obj->total_ttc;
+    
+            dolibarr_syslog("factures-impayees-commerciaux: ".$obj->email);
+            $i++;
+        }
 
-      if ($obj->email <> $oldemail)
-	{
-
-	  if (strlen($oldemail))
-	    {
-	      dolibarr_syslog("factures-impayees-commerciaux: send mail to $oldemail");
-	      $subject = "[Dolibarr] Liste des factures impayées";
-	      $sendto = $oldemail;
-	      $from = $oldemail;
-
-	      $allmessage = "Liste des factures impayées à ce jour\n";
-	      $allmessage .= "Cette liste ne comporte que les factures des sociétés dont vous êtes référencés comme commercial.\n";
-	      $allmessage .= "\n";
-	      $allmessage .= $message;
-	      $allmessage .= "\n";
-	      $allmessage .= "Total = ".price($total)."\n";
-
-	      $mail = new DolibarrMail($subject,
-				       $sendto,
-				       $from,
-				       $allmessage);
-	  
-	      $mail->errors_to = $errorsto;                 
-	      
-	      if ( $mail->sendfile() )
-		{
-		  
-		}
-	      
-
-	      
-	    }
-	  $oldemail = $obj->email;
-	  $message = '';
-	  $total = 0;
-	}
-
-
-      $message .= "Facture ".$obj->facnumber." : ".price($obj->total_ttc)." : ".$obj->nom."\n";
-      $total += $obj->total_ttc;
-
-      dolibarr_syslog("factures-impayees-commerciaux: ".$obj->email);
-      $i++;      
+        // Si il reste des envois en buffer
+        if ($total)
+        {
+            envoi_mail($oldemail,$message,$total);    
+        }
     }
-
-  /* On répète le code c'est mal */
-  dolibarr_syslog("factures-impayees-commerciaux: send mail to $oldemail");
-  $subject = "[Dolibarr] Liste des factures impayées";
-  $sendto = $oldemail;
-  $from = $oldemail;
-  
-  $allmessage = "Liste des factures impayées à ce jour\n";
-  $allmessage .= "Cette liste ne comporte que les factures des sociétés dont vous êtes référencés comme commercial.\n";
-  $allmessage .= "\n";
-  $allmessage .= $message;
-  $allmessage .= "\n";
-  $allmessage .= "Total = ".price($total)."\n";
-  
-  $mail = new DolibarrMail($subject,
-			   $sendto,
-			   $from,
-			   $allmessage);
-  
-  $mail->errors_to = $errorsto;                 
-  
-  if ( $mail->sendfile() )
+    else
     {
-      
+        print "Aucune facture impayée avec des commerciaux directement rattachés\n";
     }
 }
 else
 {
-  dolibarr_syslog("factures-impayees-commerciaux: Error");
+    dolibarr_print_error($db);
+    dolibarr_syslog("factures-impayees-commerciaux: Error");
 }
+
+
+function envoi_mail($oldemail,$message,$total)
+{
+    global $conf;
+    
+    $subject = "[Dolibarr] Liste des factures impayées";
+    $sendto = $oldemail;
+    $from = $conf->global->MAIN_EMAIL_FROM;
+
+    print "Envoi mail pour $oldemail, total: $total\n";
+    dolibarr_syslog("factures-impayees-commerciaux: send mail to $oldemail");
+
+    $allmessage = "Liste des factures impayées à ce jour\n";
+    $allmessage .= "Cette liste ne comporte que les factures des sociétés dont vous êtes référencés comme commercial.\n";
+    $allmessage .= "\n";
+    $allmessage .= $message;
+    $allmessage .= "\n";
+    $allmessage .= "Total = ".price($total)."\n";
+
+    $mail = new CMailFile($subject,
+    $sendto,
+    $from,
+    $allmessage,array(),array(),array());
+
+    $mail->errors_to = $errorsto;
+
+    $result=$mail->sendfile();
+    if ($result)
+    {
+
+    }
+
+}    
+    
 
 ?>

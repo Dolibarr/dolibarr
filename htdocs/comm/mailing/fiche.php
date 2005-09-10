@@ -53,46 +53,46 @@ if ($_GET["action"] == 'sendall')
 // Action envoi test mailing
 if ($_POST["action"] == 'send')
 {
-  $mil = new Mailing($db);
+    $mil = new Mailing($db);
 
-  $mil->id           = $_POST["mailid"];
-  $mil->fromname     = $_POST["fromname"];
-  $mil->frommail     = $_POST["frommail"];
-  $mil->sendto       = $_POST["sendto"];
-  $mil->titre        = $_POST["titre"];
-  $mil->sujet        = $_POST["subject"];
-  $mil->body         = $_POST["message"];
+    $mil->id           = $_POST["mailid"];
+    $mil->fromname     = $_POST["fromname"];
+    $mil->frommail     = $_POST["frommail"];
+    $mil->sendto       = $_POST["sendto"];
+    $mil->titre        = $_POST["titre"];
+    $mil->sujet        = $_POST["subject"];
+    $mil->body         = $_POST["message"];
 
-  if ($mil->sendto && $mil->sujet && $mil->body)
+    if ($mil->sendto && $mil->sujet && $mil->body)
     {
-        // \todo    Utiliser la class DolibarrMail ou CMailFile pour envoyer le mail
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/plain; charset=iso-8859-1\n";
-        $headers .= "From: ".$mil->fromname." <".$mil->frommail.">\r\n";
-        $headers .= "Reply-to:".$mil->fromname." <".$mil->frommail.">\r\n";
-        $headers .= "X-Priority: 3\r\n";
-        $headers .= "X-Mailer: Dolibarr ".DOL_VERSION."\r\n";
-        
-        $errorlevel=error_reporting(0);
-        $m=mail($mil->sendto, $mil->sujet, $mil->body, $headers);
-        
-        if($m)
+        require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+
+        $sendto = $mil->sendto;
+        $from = $mil->fromname." <".$mil->frommail.">";
+        $arr_file = array();
+        $arr_mime = array();
+        $arr_name = array();
+
+        $mailfile = new CMailFile($mil->sujet,$sendto,$from,$mil->body,$arr_file,$arr_mime,$arr_name);
+
+        $result=$mailfile->sendfile();
+
+        if($result)
         {
-            $message='<div class="ok">'.$langs->trans("ResultOk").'</div>';
+            $message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$from,$sendto).'</div>';
         }
         else
         {
             $message='<div class="error">'.$langs->trans("ResultKo").'</div>';
-        }					
-        error_reporting($errorlevel);
-        
+        }
+
         $_GET["action"]='';
         $_GET["id"]=$mil->id;
     }
-  else
-   {
-    $message='<div class="error">'.$langs->trans("ErrorUnknown").'</div>';
-   }
+    else
+    {
+        $message='<div class="error">'.$langs->trans("ErrorUnknown").'</div>';
+    }
 
 }
 
