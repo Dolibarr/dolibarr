@@ -32,21 +32,22 @@ require("./pre.inc.php");
 if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
 
-llxHeader('','Lignes de Prélèvements');
-/*
- * Sécurité accés client
- */
+
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socidp = $user->societe_id;
 }
 
+
 /*
  *
  *
  *
  */
+
+llxHeader('','Lignes de Prélèvements');
 
 $page = $_GET["page"];
 $sortorder = (empty($_GET["sortorder"])) ? "DESC" : $_GET["sortorder"];
@@ -112,12 +113,12 @@ if ($result)
 
   print '<form action="liste.php" method="GET">';
   print '<tr class="liste_titre">';
-  print '<td class="liste_titre"><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="6"></td>'; 
-  print '<td class="liste_titre"><input type="text" name="search_bon" value="'. $_GET["search_bon"].'" size="8"></td>'; 
-  print '<td class="liste_titre"><input type="text" name="search_societe" value="'. $_GET["search_societe"].'" size="12"></td>'; 
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $_GET["search_ligne"].'" size="6"></td>'; 
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. $_GET["search_bon"].'" size="8"></td>'; 
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" value="'. $_GET["search_societe"].'" size="12"></td>'; 
   print '<td class="liste_titre">&nbsp;</td>';
   print '<td class="liste_titre">&nbsp;</td>';
-  print '<td class="liste_titre" align="center"><input type="text" name="search_code" value="'. $_GET["search_code"].'" size="8"></td>'; 
+  print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. $_GET["search_code"].'" size="8"></td>'; 
   print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
   print '</tr>';
   print '</form>';

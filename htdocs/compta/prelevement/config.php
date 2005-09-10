@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +171,7 @@ else
 print '</td></tr>';
 
 if ($user->rights->prelevement->bons->configurer)
-  print '<tr><td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+  print '<tr><td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
 print '</table>';
 
@@ -230,7 +231,7 @@ if ($user->rights->prelevement->bons->configurer)
   print '<option value="cr">Crédit du bon</option>'; 
   print '</select></td>';
   
-  print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+  print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 }
 
 
