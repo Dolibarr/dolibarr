@@ -251,6 +251,7 @@ class CMailFile
 
         $out .= "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
         $out .= "X-Sender: <$this->addr_from_email>\n";
+        //$out .= "X-Priority: 3\n";
 
         $out .= "Return-path: <$this->addr_from_email>\n";
         $out .= "From: $this->addr_from_name <".$this->addr_from_email.">\n";
