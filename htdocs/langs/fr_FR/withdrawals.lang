@@ -6,3 +6,6 @@ NewStandingOrder=Nouveau prélèvement
 Withdrawals=Retraits
 Withdrawal=Retrait
 WithdrawalsReceipts=Bons de prélèvements
+WithdrawalReceipt=Bon de prélèvement
+WithdrawalReceiptShort=Bon
+LastWithdrawalReceipts=Les %s derniers bons de traitement

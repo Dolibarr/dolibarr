@@ -5,3 +5,6 @@ StandingOrder=Standing orders
 Withdrawals=Withdrawals
 Withdrawal=Withdrawal
 WithdrawalsReceipts=Withdrawals receipts
+WithdrawalReceipt=Withdrawal receipt
+WithdrawalReceiptShort=Receipt
+LastWithdrawalReceipts=Last %s withdrawal receipts
