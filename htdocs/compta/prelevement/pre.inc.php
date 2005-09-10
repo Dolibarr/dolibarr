@@ -61,7 +61,7 @@ function llxHeader($head = "", $title="", $help_url='')
 	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"));
 	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"));
 	  
-	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Config"));
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Setup"));
 	  
 	  $menu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("Demandes"));
 	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrderToProcess"));

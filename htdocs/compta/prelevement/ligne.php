@@ -17,18 +17,16 @@
  *
  * $Id$
  * $Source$
- *
  */
+ 
 require("./pre.inc.php");
-require_once DOL_DOCUMENT_ROOT."/compta/prelevement/ligne-prelevement.class.php";
-require_once DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php";
-require_once DOL_DOCUMENT_ROOT."/paiement.class.php";
-require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/ligne-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) accessforbidden();
+
 
 if ($_POST["action"] == 'confirm_rejet')
 {
@@ -285,5 +283,5 @@ if ($_GET["id"])
   print "</div>";
 }
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

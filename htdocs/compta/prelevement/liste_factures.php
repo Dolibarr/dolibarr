@@ -28,15 +28,12 @@
 */
 
 require("./pre.inc.php");
-
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) accessforbidden();
+
 
 llxHeader('','Bon de prélèvement');
 
@@ -99,7 +96,7 @@ if ($result)
   print_liste_field_titre($langs->trans("Bill"),"liste_factures.php","f.facnumber",'',$urladd);
   print_liste_field_titre($langs->trans("Company"),"liste_factures.php","s.nom",'',$urladd);
   print_liste_field_titre($langs->trans("Amount"),"liste_factures.php","f.total_ttc","",$urladd,'align="right"');
-  print_liste_field_titre($langs->trans("Receipt"),"liste_factures.php","p.rowid","",$urladd,'align="center"');
+  print_liste_field_titre($langs->trans("WithdrawalReceipt"),"liste_factures.php","p.rowid","",$urladd,'align="center"');
   print '</tr>';
 
   print '<form method="get" action="liste_factures.php">';
@@ -113,7 +110,7 @@ if ($result)
   print "</tr>\n";
   print '</form>';
 
-  $var=True;
+  $var=false;
 
   $total = 0;
 
@@ -127,7 +124,6 @@ if ($result)
 
       print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid_ligne.'">';
       print substr('000000'.$obj->rowid_ligne, -6).'</a></td>';
-
 
       print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
       print img_object($langs->trans("ShowBill"),"bill");

@@ -22,10 +22,10 @@
  */
  
 /**
-   \file       htdocs/compta/prelevement/bon.php
-   \ingroup    prelevement
-   \brief      Fiche aperçu du bon de prelevement
-   \version    $Revision$
+        \file       htdocs/compta/prelevement/bon.php
+        \ingroup    prelevement
+        \brief      Fiche aperçu du bon de prelevement
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -45,13 +45,16 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Card");
 $h++;      
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Bon");
-$hselected = $h;
-$h++;  
+if ($conf->use_preview_tabs)
+{
+    $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
+    $head[$h][1] = $langs->trans("Preview");
+    $hselected = $h;
+    $h++;  
+}
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Lignes");
+$head[$h][1] = $langs->trans("Lines");
 $h++;  
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];

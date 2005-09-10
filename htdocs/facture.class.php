@@ -1446,19 +1446,20 @@ class Facture
   
     
    /**
-    * \brief     Créé une demande de prélèvement
-    * \param     user         utilisateur créant la demande
+    *   \brief      Créé une demande de prélèvement
+    *   \param      user        Utilisateur créant la demande
+    *   \return     int         <0 si ko, >0 si ok 
     */
     function demande_prelevement($user)
     {
-        //dolibarr_syslog("Facture::DemandePrelevement");
+        dolibarr_syslog("Facture::demande_prelevement");
 
         $soc = new Societe($this->db);
         $soc->id = $this->socidp;
         $soc->rib();
 
 
-        if ($this->statut > 0 && $this->paye == 0 &&  $this->mode_reglement == 3)
+        if ($this->statut > 0 && $this->paye == 0 &&  $this->mode_reglement_id == 3)
         {
             $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."prelevement_facture_demande";
             $sql .= " WHERE fk_facture=".$this->id;
@@ -1482,28 +1483,32 @@ class Facture
 
                     if ( $this->db->query( $sql) )
                     {
-                        return 0;
+                        return 1;
                     }
                     else
                     {
+                        $this->error=$this->db->error();
                         dolibarr_syslog("Facture::DemandePrelevement Erreur");
                         return -1;
                     }
                 }
                 else
                 {
+                    $this->error="Une demande existe déjà";
                     dolibarr_syslog("Facture::DemandePrelevement Impossible de créer une demande, demande déja en cours");
                 }
             }
             else
             {
+                $this->error=$this->db->error();
                 dolibarr_syslog("Facture::DemandePrelevement Erreur -2");
                 return -2;
             }
         }
         else
         {
-            dolibarr_syslog("Facture::DemandePrelevement Impossible de créer une demande, etat facture incompatible");
+            $this->error="Etat facture incompatible avec l'action";
+            dolibarr_syslog("Facture::DemandePrelevement Etat facture incompatible $this->statut, $this->paye, $this->mode_reglement_id");
             return -3;
         }
     }

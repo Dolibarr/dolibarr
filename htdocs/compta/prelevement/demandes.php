@@ -69,17 +69,14 @@ $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql .= " WHERE s.idp = f.fk_soc";
 $sql .= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
-
 if (strlen(trim($_GET["search_societe"])))
 {
   $sql .= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";
 }
-
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
 }
-
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 if ( $db->query($sql) )
@@ -92,15 +89,13 @@ if ( $db->query($sql) )
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
   print '<td class="liste_titre">'.$langs->trans("Bill").'</td><td class="liste_titre">'.$langs->trans("Company").'</td>';
-  print '<td class="liste_titre">'.$langs->trans("Date").'</td>';
-  print '<td class="liste_titre">'.$langs->trans("Author").'</td>';
+  print '<td class="liste_titre" align="center">'.$langs->trans("Date").'</td>';
+  print '<td class="liste_titre" align="center">'.$langs->trans("Author").'</td>';
   print '</tr>';
   
   print '<form action="demandes.php" method="GET">';
-  print '<tr class="liste_titre"><td class="liste_titre">-</td>';
-  print '<td class="liste_titre">';
-  print '<input type="text" class="flat" name="search_societe" size="12" value="'.$GET["search_societe"].'">';
-  print '</td>';
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.$GET["search_facture"].'"></td>';
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.$GET["search_societe"].'"></td>';
   print '<td colspan="2" class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
   print '</tr>';
   print '</form>';
@@ -113,17 +108,24 @@ if ( $db->query($sql) )
     {
       $obj = $db->fetch_object();
       $var=!$var;
-      print '<tr '.$bc[$var].'><td>';
-      print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
-      print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-      print '<td>'.$obj->nom.'</td>';
-      print '<td>'.strftime("%d %m %Y", $obj->date_demande).'</td>';
+      print '<tr '.$bc[$var].'>';
+      
+      // Ref facture
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().' '.$obj->facnumber.'</a></td>';
+
+      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom.'</a></td>';
+
+      print '<td align="center">'.dolibarr_print_date($obj->date_demande).'</td>';
+
       if (!array_key_exists($obj->fk_user_demande,$users))
 	{
 	  $users[$obj->fk_user_demande] = new User($db, $obj->fk_user_demande);
 	  $users[$obj->fk_user_demande]->fetch();
 	}
-      print '<td>'.$users[$obj->fk_user_demande]->fullname.'</td>';
+
+      // User
+      print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$users[$obj->fk_user_demande]->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$users[$obj->fk_user_demande]->code.'</a></td>';
+
       print '</tr>';
       $i++;
     }

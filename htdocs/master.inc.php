@@ -295,27 +295,23 @@ $conf->actionscomm->dir_output=DOL_DATA_ROOT."/action";
 /*
  * Modification de quelques variable de conf en fonction des Constantes
  */
+
+// conf->use_preview_tabs
+$conf->use_preview_tabs=1;
+if (isset($conf->global->USE_PREVIEW_TABS)) $conf->use_preview_tabs=$conf->global->USE_PREVIEW_TABS;
+
+// conf->monnaie
 if (! $conf->global->MAIN_MONNAIE) $conf->global->MAIN_MONNAIE='EUR';	
 $conf->monnaie=$conf->global->MAIN_MONNAIE;
 
-/*
- * Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
- */
+// $conf->compta->mode = Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
 $conf->compta->mode = 'RECETTES-DEPENSES';  // Par défaut
 if (defined('COMPTA_MODE') && COMPTA_MODE) {
 	// Peut etre 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
     $conf->compta->mode = COMPTA_MODE;
 }
 
-/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
- * (pour particuliers ou libéraux en franchise)
- * En attendant, valeur forcée à 1
- */
-$conf->compta->tva=1;
-
-/*
- * Option du module Facture
- */
+// $conf->defaulttx
 if (defined('FACTURE_TVAOPTION') && FACTURE_TVAOPTION == 'franchise') {
 	$conf->defaulttx='0';		// Taux par défaut des factures clients
 }
@@ -323,15 +319,11 @@ else {
 	$conf->defaulttx='';		// Pas de taux par défaut des factures clients, le premier sera pris
 }
 
-/*
- * SIZE_LISTE_LIMIT : constante de taille maximale des listes
- */
+// $conf->liste_limit = constante de taille maximale des listes
 if (! $conf->global->SIZE_LISTE_LIMIT) $conf->global->SIZE_LISTE_LIMIT=20;
 $conf->liste_limit=$conf->global->SIZE_LISTE_LIMIT;
 
-/*
- * MAIN_THEME : theme
- */
+// $conf->theme et $conf->css
 if (! $conf->global->MAIN_THEME) $conf->global->MAIN_THEME="eldy";
 $conf->theme=$conf->global->MAIN_THEME;
 $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
@@ -349,6 +341,7 @@ if (defined('MAILING_EMAIL_FROM'))
 }
 else $conf->mailing->email_from=$conf->email_from;
 
+// $conf->adherent->email_resil, ...
 if (defined("MAIN_MAIL_RESIL"))
 {
   $conf->adherent->email_resil=MAIN_MAIL_RESIL;
@@ -381,6 +374,12 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
 {
   $conf->adherent->email_new_subject=MAIN_MAIL_NEW_SUBJECT;
 }
+
+/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
+ * (pour particuliers ou libéraux en franchise)
+ * En attendant, valeur forcée à 1
+ */
+$conf->compta->tva=1;
 
 // Delai de tolerance des alertes
 $conf->actions->warning_delay=7*24*60*60;   // 1 semaine

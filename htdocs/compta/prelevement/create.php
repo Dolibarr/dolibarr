@@ -20,21 +20,26 @@
  */
 
 /**
-   \file       htdocs/compta/prelevement/create.php
-   \brief      Prelevement
-   \version    $Revision$
+        \file       htdocs/compta/prelevement/create.php
+        \brief      Prelevement
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
-require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php");
 
 if (!$user->rights->prelevement->bons->creer)
   accessforbidden();
 
+
+/*
+ * Actions
+ */
+
 if ($_GET["action"] == 'create')
 {
-  $bprev = new BonPrelevement($db);
-  $bprev->create($_GET["banque"],$_GET["guichet"]);
+    $bprev = new BonPrelevement($db);
+    $result=$bprev->create($_GET["banque"],$_GET["guichet"]);
 }
 
 
@@ -49,42 +54,60 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("StandingOrders"));
 
 $bprev = new BonPrelevement($db);
 
-print '<table>';
+$nb=$bprev->NbFactureAPrelever();
+$nb1=$bprev->NbFactureAPrelever(1);
+$nb11=$bprev->NbFactureAPrelever(1,1);
+
+print '<table class="border" width="100%">';
 print '<tr><td>Nb de facture à prélever :</td>';
 print '<td align="right">';
-print $bprev->NbFactureAPrelever();
+print $nb;
 print '</td><td>Notre banque :</td><td align="right">';
-print $bprev->NbFactureAPrelever(1);
+print $nb1;
 print '</td><td>Notre agence :</td><td align="right">';
-print $bprev->NbFactureAPrelever(1,1);
+print $nb11;
 print '</td></tr>';
+
 print '<tr><td>Somme à prélever</td>';
 print '<td align="right">';
 print price($bprev->SommeAPrelever());
-print '</td></tr></table>';
+print '</td>';
+print '<td colspan="4">&nbsp;</td>';
+ 
+print '</tr></table>';
 
 print '</div>';
 
 
-print "<div class=\"tabsAction\">\n";
+if ($nb)
+{
+    print "<div class=\"tabsAction\">\n";
+    
+    if ($nb) print '<a class="tabAction" href="create.php?action=create">'.$langs->trans("Create")."</a>\n";
+    if ($nb1) print '<a class="tabAction" href="create.php?action=create&amp;banque=1&amp;guichet=1">'.$langs->trans("CreateGuichet")."</a>\n";
+    if ($nb11) print '<a class="tabAction" href="create.php?action=create&amp;banque=1">'.$langs->trans("CreateBanque")."</a>\n";
+    
+    print "</div>\n";
+}
+else
+{
+    print "Aucune facture en mode de paiement 'Prélevement' n'a de demande de prélèvements en attente.<br>";
+}
+print '<br>';
 
-
-print '<a class="tabAction" href="create.php?action=create&amp;banque=1&amp;guichet=1">'.$langs->trans("CreateGuichet")."</a>\n";
-print '<a class="tabAction" href="create.php?action=create&amp;banque=1">'.$langs->trans("CreateBanque")."</a>\n";
-print '<a class="tabAction" href="create.php?action=create">'.$langs->trans("Create")."</a>\n";
-
-print "</div><br>\n";
 
 /*
- * Mode Liste
+ * Liste des derniers bons
  *
  */
+$limit=5;
+
 $sql = "SELECT p.rowid, p.ref, p.amount,".$db->pdate("p.datec")." as datec";
-$sql .= ", p.statut";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-
-$sql .= " ORDER BY datec DESC LIMIT 2";
-
+$sql.= ", p.statut";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql.= " ORDER BY datec DESC";
+$sql.=$db->plimit($limit);
+ 
 $result = $db->query($sql);
 if ($result)
 {
@@ -93,13 +116,13 @@ if ($result)
 
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>Derniers Bons</td>';
+  print '<tr class="liste_titre"><td>'.$langs->trans("LastWithdrawalReceipts",$limit).'</td>';
   print '<td><Date</td><td align="right">'.$langs->trans("Amount").'</td>';
   print '</tr>';
 
   $var=True;
 
-  while ($i < min($num,$conf->liste_limit))
+  while ($i < min($num,$limit))
     {
       $obj = $db->fetch_object($result);
       $var=!$var;
@@ -125,7 +148,7 @@ else
 
 
 /*
- * Factures
+ * Factures en attente de prélèvement
  *
  */
 $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
@@ -155,9 +178,9 @@ if ( $db->query($sql) )
 	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  print '<tr '.$bc[$var].'><td>';
-	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
-	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-	  print '<td>'.$obj->nom.'</td></tr>';
+	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().' '.$obj->facnumber.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom.'</a></td>';
+	  print '</tr>';
 	  $i++;
 	}
       
@@ -171,5 +194,5 @@ else
 }  
 
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>

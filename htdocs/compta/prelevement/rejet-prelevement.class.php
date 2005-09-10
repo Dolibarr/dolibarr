@@ -157,79 +157,75 @@ class RejetPrelevement
 
   }
 
-  /**
-   *
-   *
-   *
-   */
-  function _send_email($fac)
-  {
-    $userid = 0;
-
-    $sql = "SELECT fk_user_demande";
-    $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-    $sql .= " WHERE pfd.fk_prelevement_bons = ".$this->bon_id;
-    $sql .= " AND pfd.fk_facture = ".$fac->id;
-
-    $result=$this->db->query($sql);
-    if ($result)
-      {
-	$num = $this->db->num_rows();	
-	if ($num > 0)
-	  {
-	    $row = $this->db->fetch_row();
-	    $userid = $row[0];
-	  }		
-      }
-    else
-      {
-	dolibarr_syslog("RejetPrelevement::_send_email Erreur lecture user");
-      }
-
-    if ($userid > 0)
-      {
-	$emuser = new User($this->db, $userid);
-	$emuser->fetch();
-
-	$subject = "Prélèvement rejeté";
-
-	$soc = new Societe($this->db);
-	$soc->fetch($fac->socidp);
-
-	$sendto = $emuser->fullname." <".$emuser->email.">";
-	$from = $this->user->fullname." <".$this->user->email.">";
-
-	$message = "Bonjour,\n";
-	//$message .= "\nLe prélèvement de la facture ".$fac->ref." pour le compte de la société ".$soc->nom." d'un montant de ".price($fac->total_ttc).' '.$langs->trans("Currency".$conf->monnaie)." a été rejeté par la banque.";
-	// $langs n'est pas accessible ici !!!
-	// Inutile de traduire la monnaie si le reste du message n'est pas traduit
-	// TODO LATER
-
-	$message .= "\nLe prélèvement de la facture ".$fac->ref." pour le compte de la société ".$soc->nom." d'un montant de ".price($fac->total_ttc)." a été rejeté par la banque.";
-
-	$message .= "\n\n--\n".$this->user->fullname;	
-	      
-	$mailfile = new DolibarrMail($subject,
-				     $sendto,
-				     $from,
-				     $message);
-	      
-	$mailfile->errors_to = $this->user->email;
-
-	if ( $mailfile->sendfile() )
-	  {
-	    dolibarr_syslog("RejetPrelevement::_send_email email envoyé");
-	  }
-	else
-	  {
-	    dolibarr_syslog("RejetPrelevement::_send_email Erreur envoi email");
-	  }
-      }
-    else
-      {
-	dolibarr_syslog("RejetPrelevement::_send_email Userid invalide");
-      }
-  }  
+    /**
+     *      \brief      Envoi mail
+     *
+     */
+    function _send_email($fac)
+    {
+        $userid = 0;
+    
+        $sql = "SELECT fk_user_demande";
+        $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+        $sql .= " WHERE pfd.fk_prelevement_bons = ".$this->bon_id;
+        $sql .= " AND pfd.fk_facture = ".$fac->id;
+    
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            if ($num > 0)
+            {
+                $row = $this->db->fetch_row($resql);
+                $userid = $row[0];
+            }
+        }
+        else
+        {
+            dolibarr_syslog("RejetPrelevement::_send_email Erreur lecture user");
+        }
+    
+        if ($userid > 0)
+        {
+            $emuser = new User($this->db, $userid);
+            $emuser->fetch();
+    
+            $soc = new Societe($this->db);
+            $soc->fetch($fac->socidp);
+    
+            require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+    
+            $subject = "Prélèvement rejeté";
+            $sendto = $emuser->fullname." <".$emuser->email.">";
+            $from = $this->user->fullname." <".$this->user->email.">";
+    
+            $arr_file = array();
+            $arr_mime = array();
+            $arr_name = array();
+    
+            $message = "Bonjour,\n";
+            $message .= "\nLe prélèvement de la facture ".$fac->ref." pour le compte de la société ".$soc->nom." d'un montant de ".price($fac->total_ttc)." a été rejeté par la banque.";
+            $message .= "\n\n--\n".$this->user->fullname;
+    
+            $mailfile = new CMailFile($subject,$sendto,$from,$message,
+                                      $arr_file,$arr_mime,$arr_name);
+            $mailfile->errors_to = $this->user->email;
+    
+            $result=$mailfile->sendfile();
+            if ($result)
+            {
+                dolibarr_syslog("RejetPrelevement::_send_email email envoyé");
+            }
+            else
+            {
+                dolibarr_syslog("RejetPrelevement::_send_email Erreur envoi email");
+            }
+        }
+        else
+        {
+            dolibarr_syslog("RejetPrelevement::_send_email Userid invalide");
+        }
+    }
 
 
   /**

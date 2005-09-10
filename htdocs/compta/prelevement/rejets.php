@@ -17,41 +17,37 @@
  *
  * $Id$
  * $Source$
- *
  */
+
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
 if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
 
-require_once DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php";
-require_once DOL_DOCUMENT_ROOT."/paiement.class.php";
-require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
-
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) accessforbidden();
+
 
 llxHeader('','Bon de prélèvement - Rejet');
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Fiche");
+$head[$h][1] = $langs->trans("Card");
 $h++;      
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Factures");
+$head[$h][1] = $langs->trans("Bills");
 $h++;  
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/rejets.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Rejets");
+$head[$h][1] = $langs->trans("Rejects");
 $hselected = $h;
 $h++;  
 
-
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Statistiques");
+$head[$h][1] = $langs->trans("Statistics");
 $h++;  
 
 $prev_id = $_GET["id"];
@@ -71,7 +67,6 @@ $rej = new RejetPrelevement($db, $user);
 
 /*
  * Liste des factures
- *
  *
  */
 $sql = "SELECT pl.rowid, pr.motif, p.ref, pl.statut";
@@ -138,5 +133,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

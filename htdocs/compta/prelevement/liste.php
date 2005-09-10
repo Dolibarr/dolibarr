@@ -103,7 +103,7 @@ if ($result)
 
   print '<tr class="liste_titre">';
   print '<td class="liste_titre">'.$langs->trans("Line").'</td>';
-  print_liste_field_titre($langs->trans("Receipt"),"liste.php","p.ref");
+  print_liste_field_titre($langs->trans("WithdrawalReceipt"),"liste.php","p.ref");
   print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom");
   print_liste_field_titre($langs->trans("Date"),"liste.php","p.datec","","",'align="center"');
   print_liste_field_titre($langs->trans("Amount"),"liste.php","pl.amount");

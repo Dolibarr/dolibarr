@@ -22,10 +22,10 @@
  */
  
 /**
-   \file       htdocs/compta/prelevement/fiche.php
-   \ingroup    prelevement
-   \brief      Fiche prelevement
-   \version    $Revision$
+        \file       htdocs/compta/prelevement/fiche.php
+        \ingroup    prelevement
+        \brief      Fiche prelevement
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -56,7 +56,7 @@ if ($_POST["action"] == 'infotrans')
 
   if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $bon->ref)
     {      
-      $dir = DOL_DATA_ROOT.'/prelevement/bon/';
+      $dir = $conf->prelevement->dir_output.'/bon/';
 
       if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name']))
 	{
@@ -99,12 +99,15 @@ $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;      
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Bon");
-$h++;  
+if ($conf->use_preview_tabs)
+{
+    $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
+    $head[$h][1] = $langs->trans("Preview");
+    $h++;  
+}
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Lignes");
+$head[$h][1] = $langs->trans("Lines");
 $h++;  
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
@@ -112,7 +115,7 @@ $head[$h][1] = $langs->trans("Bills");
 $h++;  
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Rejets");
+$head[$h][1] = $langs->trans("Rejects");
 $h++;  
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];

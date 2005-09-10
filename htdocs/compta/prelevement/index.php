@@ -84,7 +84,7 @@ if ($result)
 
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("Receipt").'</td><td>'.$langs->trans("Date").'</td>';
+  print '<tr class="liste_titre"><td>'.$langs->trans("WithdrawalReceiptShort").'</td><td>'.$langs->trans("Date").'</td>';
   print '<td align="right">'.$langs->trans("Amount").'</td>';
   print '</tr>';
 
@@ -99,9 +99,9 @@ if ($result)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-      print '<td>'.strftime("%d/%m/%Y %H:%M",$obj->datec)."</td>\n";
+      print '<td>'.dolibarr_print_date($obj->datec,"%d/%m/%Y %H:%M")."</td>\n";
 
-      print '<td align="right">'.price($obj->amount)." ".$langs->trans("Currency".$conf->monnaie)."</td>\n";
+      print '<td align="right">'.price($obj->amount)."</td>\n";
 
       print "</tr>\n";
       $i++;
@@ -147,9 +147,9 @@ if ( $db->query($sql) )
 	  $obj = $db->fetch_object();
 	  $var=!$var;
 	  print '<tr '.$bc[$var].'><td>';
-	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
-	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-	  print '<td>'.$obj->nom.'</td></tr>';
+	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().' '.$obj->facnumber.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom.'</a></td>';
+	  print '</tr>';
 	  $i++;
 	}
       

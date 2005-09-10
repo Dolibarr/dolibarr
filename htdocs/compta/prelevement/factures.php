@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -29,38 +28,41 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
-require_once DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php";
-require_once DOL_DOCUMENT_ROOT."/paiement.class.php";
-require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
-
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) accessforbidden();
 
 llxHeader('','Bon de prélèvement');
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Fiche");
+$head[$h][1] = $langs->trans("Card");
 $h++;      
 
+if ($conf->use_preview_tabs)
+{
+    $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
+    $head[$h][1] = $langs->trans("Preview");
+    $h++;  
+}
+
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Lignes");
+$head[$h][1] = $langs->trans("Lines");
 $h++;  
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Factures");
+$head[$h][1] = $langs->trans("Bills");
 $hselected = $h;
 $h++;  
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Rejets");
+$head[$h][1] = $langs->trans("Rejects");
 $h++;  
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("Statistiques");
+$head[$h][1] = $langs->trans("Statistics");
 $h++;  
 
 
@@ -131,9 +133,9 @@ if ($result)
   print"\n<!-- debut table -->\n";
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre("Facture","factures.php","p.ref",'',$urladd,'class="liste_titre"');
-  print_liste_field_titre("Société","factures.php","s.nom",'',$urladd,'class="liste_titre"');
-  print_liste_field_titre("Montant","factures.php","f.total_ttc","",$urladd,'class="liste_titre" align="center"');
+  print_liste_field_titre($langs->trans("Bill"),"factures.php","p.ref",'',$urladd,'class="liste_titre"');
+  print_liste_field_titre($langs->trans("Company"),"factures.php","s.nom",'',$urladd,'class="liste_titre"');
+  print_liste_field_titre($langs->trans("Amount"),"factures.php","f.total_ttc","",$urladd,'class="liste_titre" align="center"');
   print '<td class="liste_titre" colspan="2">&nbsp;</td></tr>';
 
   $var=True;
@@ -202,5 +204,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
