@@ -330,7 +330,7 @@ function left_menu($menu_array, $help_url='', $form_search='')
         if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0  && $user->rights->produit->lire)
         {
             $langs->load("products");
-            printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/',$langs->trans("Products")."/".$langs->trans("Services"),'products','sall');
+            printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/index.php',$langs->trans("Products")."/".$langs->trans("Services"),'products','sall');
         }
 
         /*
