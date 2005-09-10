@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 if ($user->societe_id > 0) accessforbidden();
 
 
-llxHeader('','Bon de prélèvement');
+llxHeader('',$langs->trans("WithdrawedBills"));
 
 $page = $_GET["page"];
 $sortorder = (empty($_GET["sortorder"])) ? "DESC" : $_GET["sortorder"];
@@ -87,7 +87,7 @@ if ($result)
   
   $urladd = "&amp;socid=".$_GET["socid"];
 
-  print_barre_liste("Factures prélevées", $page, "liste_factures.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste($langs->trans("WithdrawedBills"), $page, "liste_factures.php", $urladd, $sortfield, $sortorder, '', $num);
 
   print"\n<!-- debut table -->\n";
   print '<table class="liste" width="100%">';

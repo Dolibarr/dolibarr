@@ -32,6 +32,7 @@ require("./pre.inc.php");
 if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
 
+$langs->load("withdrawals");
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
@@ -47,7 +48,7 @@ if ($user->societe_id > 0)
  *
  */
 
-llxHeader('','Lignes de Prélèvements');
+llxHeader('',$langs->trans("WithdrawalsLines"));
 
 $page = $_GET["page"];
 $sortorder = (empty($_GET["sortorder"])) ? "DESC" : $_GET["sortorder"];
@@ -96,7 +97,7 @@ if ($result)
   $urladd = "&amp;statut=".$_GET["statut"];
   $urladd .= "&amp;search_bon=".$_GET["search_bon"];
 
-  print_barre_liste("Lignes de prélèvements", $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste($langs->trans("WithdrawalsLines"), $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
 
   print"\n<!-- debut table -->\n";
   print '<table class="liste" width="100%">';

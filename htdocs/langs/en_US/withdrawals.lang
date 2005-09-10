@@ -2,9 +2,12 @@
 StandingOrdersArea=Standing orders area
 StandingOrders=Standing orders
 StandingOrder=Standing orders
+NewStandingOrder=New standing order
 Withdrawals=Withdrawals
 Withdrawal=Withdrawal
 WithdrawalsReceipts=Withdrawals receipts
 WithdrawalReceipt=Withdrawal receipt
 WithdrawalReceiptShort=Receipt
 LastWithdrawalReceipts=Last %s withdrawal receipts
+WithdrawedBills=Withdrawed invoices
+WithdrawalsLines=Withdrawals lines
