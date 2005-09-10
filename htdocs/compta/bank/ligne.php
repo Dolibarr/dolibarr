@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
  
 /**
@@ -185,7 +184,7 @@ if ($result)
         print "<tr><td>".$langs->trans("Date")."</td><td colspan=\"3\">";
         $html->select_date($objp->do);
         //print '<input name="date" value="'.strftime("%Y%m%d",$objp->do).'">';
-        print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
+        print '&nbsp; <input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
         print "</tr>";
       }
 
@@ -201,7 +200,7 @@ if ($result)
       // Description
       print "<tr><td>".$langs->trans("Label")."</td><td colspan=\"3\">";
       print '<input name="label" value="'.$objp->label.'" size="50">';
-      print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
+      print '&nbsp; <input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
       print "</tr>";
 
       // Amount
@@ -209,7 +208,7 @@ if ($result)
       {
         print "<tr><td>".$langs->trans("Amount")."</td><td colspan=\"3\">";
         print '<input name="amount" value="'.price($objp->amount).'">';
-        print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
+        print '&nbsp; <input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
         print "</tr>";
       }
 
@@ -220,7 +219,7 @@ if ($result)
       print '<input type="hidden" name="action" value="type">';
       print $html->select_types_paiements($objp->fk_type,"value");
 	  print '<input type="text" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
-      print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\">";
+      print '&nbsp; <input type="submit" class="button" value="'.$langs->trans("Update").'">';
       print "</form>";
       print "</td></tr>";
     
@@ -228,7 +227,7 @@ if ($result)
       print '<input type="hidden" name="action" value="num_releve">';
       print "<tr><td>".$langs->trans("AccountStatement")."</td><td colspan=\"3\">";
       print '<input name="num_rel" value="'.$objp->num_releve.'">';
-      print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
+      print '&nbsp; <input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
       print "</tr>";
       print "</form>";
 
@@ -261,7 +260,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"class\">";
 print "<tr class=\"liste_titre\"><td>".$langs->trans("Categories")."</td><td colspan=\"2\">";
 print "<select class=\"flat\" name=\"cat1\">$options";
 print "</select>&nbsp;";
-print '<input type="submit" value="'.$langs->trans("Add").'"></td>';
+print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 print "</tr>";
 print "</form>";
 
@@ -282,7 +281,7 @@ if ($result)
       print "<tr $bc[$var]>";
       
       print "<td>$objp->label</td>";
-      print "<td align=\"center\"><a href=\"budget.php?bid=$objp->rowid\">voir</a></td>";
+      print "<td align=\"center\"><a href=\"budget.php?bid=$objp->rowid\">".$langs->trans("List")."</a></td>";
       print "<td align=\"center\"><a href=\"ligne.php?action=delete_categ&amp;rowid=$rowid&amp;fk_categ=$objp->rowid\">".img_delete($langs->trans("Remove"))."</a></td>";
       print "</tr>";
 
