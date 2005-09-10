@@ -380,7 +380,7 @@ class MenuLeft {
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=0",$langs->trans("StandingOrderToProcess"),2,$user->rights->prelevement->bons->lire);
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=1",$langs->trans("StandingOrderProcessed"),2,$user->rights->prelevement->bons->lire);
 
-                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Config"),1,$user->rights->prelevement->bons->configurer);
+                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Setup"),1,$user->rights->prelevement->bons->configurer);
                 }
 
                 // Bank-Caisse
