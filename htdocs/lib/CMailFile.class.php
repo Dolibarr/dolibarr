@@ -40,7 +40,7 @@
         \class      CMailFile
         \brief      Classe d'envoi de mails et pièces jointes. Encapsule mail() avec d'éventuel attachements.
         \remarks    Usage:
-        \remarks    $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
+        \remarks    $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc);
         \remarks    $mailfile->sendfile();
 */
 
@@ -70,7 +70,9 @@ class CMailFile
             \param addr_cc              email cc
             \param addr_bcc             email bcc
     */
-    function CMailFile($subject,$to,$from,$msg,$filename_list,$mimetype_list,$mimefilename_list,$addr_cc="",$addr_bcc="")
+    function CMailFile($subject,$to,$from,$msg,
+                       $filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
+                       $addr_cc="",$addr_bcc="")
     {
         dolibarr_syslog("CMailFile::CMailfile: from=$from, filename_list[0]=$filename_list[0], mimetype_list[0]=$mimetype_list[0] mimefilename_list[0]=$mimefilename_list[0]");
 
@@ -125,7 +127,6 @@ class CMailFile
         }
         $out = $out . "--" . $this->mime_boundary . "--" . "\n";
         return $out;
-        // added -- to notify email client attachment is done
     }
 
 
