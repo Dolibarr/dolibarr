@@ -350,7 +350,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
       if ($num)
 	{
 	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsCustomersUnpayed").' ('.$num.')</td>';
+	  print '<tr class="liste_titre"><td colspan="2"><a href="'.DOL_URL_ROOT.'/compta/facture/impayees.php">'.$langs->trans("BillsCustomersUnpayed",min($conf->liste_limit,$num)).' ('.$num.')</a></td>';
 	  print '<td align="right">'.$langs->trans("AmountHT").'</td><td align="right">'.$langs->trans("AmountTTC").'</td><td align="right">'.$langs->trans("Received").'</td></tr>';
 	  $var = True;
 	  $total_ttc = $totalam = $total = 0;

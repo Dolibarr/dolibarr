@@ -359,7 +359,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'add_paiement')
             /*
             *
             */
-            print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+            print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
             print "</table>";
             print "</form>\n";
         }
