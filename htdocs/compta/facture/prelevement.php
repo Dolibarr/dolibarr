@@ -36,6 +36,7 @@ if (!$user->rights->facture->lire)
 
 $langs->load("bills");
 $langs->load("banks");
+$langs->load("withdrawals");
 
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
@@ -53,15 +54,19 @@ if ($user->societe_id > 0)
  
 if ($_GET["action"] == "new")
 {
-  $fact = new Facture($db);
-  if ($fact->fetch($_GET["facid"]))
-  {
-    $result = $fact->demande_prelevement($user);
-    if ($result == 0)
-      {
-	Header("Location: prelevement.php?facid=".$fact->id);
-      }
-  }
+    $fact = new Facture($db);
+    if ($fact->fetch($_GET["facid"]))
+    {
+        $result = $fact->demande_prelevement($user);
+        if ($result > 0)
+        {
+            Header("Location: prelevement.php?facid=".$fact->id);
+        }
+        else
+        {
+            $mesg='<div class="error">'.$fact->error.'</div>';
+        }
+    }
 }
 
 if ($_GET["action"] == "delete")
@@ -94,6 +99,9 @@ if ($_GET["facid"] > 0)
     $fac = New Facture($db);
     if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
     {
+
+        if ($mesg) print $mesg.'<br>';
+
         $soc = new Societe($db, $fac->socidp);
         $soc->fetch($fac->socidp);
         $author = new User($db);
@@ -176,7 +184,7 @@ if ($_GET["facid"] > 0)
         $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
         $sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
         $sql .= " , pfd.amount";
-        $sql .= " , u.name, u.firstname";
+        $sql .= " , u.rowid as user_id, u.name, u.firstname, u.code";
         $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
         $sql .= " , ".MAIN_DB_PREFIX."user as u";
         $sql .= " WHERE fk_facture = ".$fac->id;
@@ -203,16 +211,17 @@ if ($_GET["facid"] > 0)
         }
         print "</div><br/>";
 
+        
         /*
-        * Prélèvement
-        */
+         * Prélèvement
+         */
         print '<table class="noborder" width="100%">';
 
         print '<tr class="liste_titre">';
-        print '<td align="center">Date demande</td>';
-        print '<td align="center">Date traitement</td>';
+        print '<td align="center">'.$langs->trans("DateRequest").'</td>';
+        print '<td align="center">'.$langs->trans("DateProcess").'</td>';
         print '<td align="center">'.$langs->trans("Amount").'</td>';
-        print '<td align="center">Bon prélèvement</td>';
+        print '<td align="center">'.$langs->trans("WithdrawalReceipt").'</td>';
         print '<td align="center">'.$langs->trans("User").'</td><td>&nbsp;</td><td>&nbsp;</td>';
         print '</tr>';
         $var=True;
@@ -227,11 +236,12 @@ if ($_GET["facid"] > 0)
                 $var=!$var;
 
                 print "<tr $bc[$var]>";
-                print '<td align="center">'.strftime("%d/%m/%Y",$obj->date_demande)."</td>\n";
+                print '<td align="center">'.dolibarr_print_date($obj->date_demande)."</td>\n";
                 print '<td align="center">En attente de traitement</td>';
                 print '<td align="center">'.price($obj->amount).'</td>';
                 print '<td align="center">-</td>';
-                print '<td align="center" colspan="2">'.$obj->firstname." ".$obj->name.'</td>';
+                print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
+                print '<td>&nbsp;</td>';
                 print '<td>';
                 print '<a href="prelevement.php?facid='.$fac->id.'&amp;action=delete&amp;did='.$obj->rowid.'">';
                 print img_delete();
@@ -250,7 +260,7 @@ if ($_GET["facid"] > 0)
         $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
         $sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
         $sql .= " , pfd.fk_prelevement_bons, pfd.amount";
-        $sql .= " , u.name, u.firstname";
+        $sql .= " , u.rowid as user_id, u.name, u.firstname, u.code";
         $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
         $sql .= " , ".MAIN_DB_PREFIX."user as u";
         $sql .= " WHERE fk_facture = ".$fac->id;
@@ -271,17 +281,20 @@ if ($_GET["facid"] > 0)
 
                 print "<tr $bc[$var]>";
 
-                print '<td align="center">'.strftime("%d/%m/%Y",$obj->date_demande)."</td>\n";
+                print '<td align="center">'.dolibarr_print_date($obj->date_demande)."</td>\n";
 
-                print '<td align="center">'.strftime("%d/%m/%Y",$obj->date_traite)."</td>\n";
+                print '<td align="center">'.dolibarr_print_date($obj->date_traite)."</td>\n";
+
                 print '<td align="center">'.price($obj->amount).'</td>';
+
                 print '<td align="center">';
                 print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$obj->fk_prelevement_bons;
                 print '">'.$obj->fk_prelevement_bons."</a></td>\n";
 
-                print '<td align="center" colspan="2">'.$obj->firstname." ".$obj->name.'</td>';
+                print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
 
-                print '<td>-</td>';
+                print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
 
                 print "</tr>\n";
                 $i++;
