@@ -171,7 +171,7 @@ class DoliDb
     */
     function connect($host, $login, $passwd, $name)
     {
-        $this->db  = mysql_connect($host, $login, $passwd);
+        $this->db  = @mysql_connect($host, $login, $passwd);
         //print "Resultat fonction connect: ".$this->db;
         return $this->db;
     }
