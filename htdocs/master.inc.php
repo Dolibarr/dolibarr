@@ -298,7 +298,7 @@ $conf->actionscomm->dir_output=DOL_DATA_ROOT."/action";
 
 // conf->use_preview_tabs
 $conf->use_preview_tabs=1;
-if (isset($conf->global->USE_PREVIEW_TABS)) $conf->use_preview_tabs=$conf->global->USE_PREVIEW_TABS;
+if (isset($conf->global->MAIN_USE_PREVIEW_TABS)) $conf->use_preview_tabs=$conf->global->MAIN_USE_PREVIEW_TABS;
 
 // conf->monnaie
 if (! $conf->global->MAIN_MONNAIE) $conf->global->MAIN_MONNAIE='EUR';	

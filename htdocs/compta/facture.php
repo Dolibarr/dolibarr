@@ -1087,10 +1087,14 @@ else
             $head[$h][1] = $langs->trans("CardBill");
             $hselected = $h;
             $h++;
-            $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
-            $head[$h][1] = $langs->trans("Preview");
-            $h++;
 
+            if ($conf->use_preview_tabs)
+            {
+                $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
+                $head[$h][1] = $langs->trans("Preview");
+                $h++;
+            }
+            
             if ($fac->mode_reglement_code == 'PRE')
             {
                 $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
