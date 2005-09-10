@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
  
 /**
@@ -200,7 +199,7 @@ if ($_GET["id"])
 	  print '<input type="file" name="userfile" size="30" maxlength="80"><br />';
 	  print '</td></tr>';
 	  print '<tr><td colspan="2" align="center">';
-	  print '<input type="submit">';
+	  print '<input type="submit" class="button" value="'.$langs->trans("Send").'">';
 	  print '</td></tr>';
 	  print '</table></form>';
 	}
@@ -214,7 +213,7 @@ if ($_GET["id"])
 	  print $html->select_date();
 	  print '</td></tr>';
 	  print '<tr><td colspan="2" align="center">';
-	  print '<input type="submit">';
+	  print '<input type="submit" class="button" value="'.$langs->trans("Send").'">';
 	  print '</td></tr>';
 	  print '</table></form>';
 	}
