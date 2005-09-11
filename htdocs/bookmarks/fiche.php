@@ -18,12 +18,12 @@
  *
  * $Id$
  * $Source$
- *
  */
  
 /**
-        \file       htdocs/comm/bookmark.php
-        \brief      Page affichage des bookmarks
+        \file       htdocs/bookmarks/fiche.php
+        \brief      Page affichage/creation des bookmarks
+        \ingroup    bookmark
         \version    $Revision$
 */
 
@@ -31,13 +31,22 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/bookmarks/bookmark.class.php");
 
+$langs->load("other");
+
+$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$title=isset($_GET["title"])?$_GET["title"]:$_POST["title"];
+$url=isset($_GET["url"])?$_GET["url"]:$_POST["url"];
+$target=isset($_GET["target"])?$_GET["target"]:$_POST["target"];
+
 
 /*
  * Actions
  */
- 
-if ($_GET["action"] == 'add')
+
+if ($action == 'add')
 {
+    $mesg='';
+    
     $bookmark=new Bookmark($db);
     $bookmark->fk_user=$user->id;
     if ($_GET["socid"])    // Lien vers fiche comm société
@@ -47,27 +56,41 @@ if ($_GET["action"] == 'add')
         $societe->fetch($_GET["socid"]);
         $bookmark->fk_soc=$societe->id;
         $bookmark->url=DOL_URL_ROOT.'/comm/fiche.php?socidp='.$societe->id;
-        $bookmark->target='';
+        $bookmark->target='0';
         $bookmark->title=$societe->nom;
     }
     else
     {
-        $bookmark->url=$_GET["url"];
-        $bookmark->target=$_GET["target"];
-        $bookmark->title=$_GET["title"];
+        if (! $title) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("BookmarkTitle"));
+        if (! $url) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink"));
+
+        $bookmark->title=$title;
+        $bookmark->url=$url;
+        $bookmark->target=$target;
     }
-    $bookmark->favicon='xxx';
-    
-    $res=$bookmark->create();
-    if ($res > 0)
+
+    if (! $mesg)
     {
-        $urlsource=isset($_GET["urlsource"])?$_GET["urlsource"]:$_SERVER["PHP_SELF"];
-        header("Location: ".$urlsource);
+        $bookmark->favicon='xxx';
+        
+        $res=$bookmark->create();
+        if ($res > 0)
+        {
+            $urlsource=isset($_GET["urlsource"])?$_GET["urlsource"]:DOL_URL_ROOT.'/bookmarks/liste.php';
+            header("Location: ".$urlsource);
+        }
+        else
+        {
+            $mesg='<div class="error">'.$bookmark->error.'</div>';
+            $action='create';
+        }
     }
     else
     {
-        $mesg='<div class="error">'.$bookmark->error.'</div>';
+        $mesg='<div class="error">'.$mesg.'</div>';
+        $action='create';
     }
+
 }
 
 if ($_GET["action"] == 'delete')
@@ -94,13 +117,76 @@ if ($_GET["action"] == 'delete')
 
 llxHeader();
 
-print_fiche_titre($langs->trans("Bookmarks"));
- 
+$html=new Form($db);
 
-print 'En construction';
 
+if ($action == 'create')
+{
+    /*
+     * Fiche bookmark en mode creation
+     */
+
+    print '<form action="fiche.php" method="post">'."\n";
+    print '<input type="hidden" name="action" value="add">';
+
+    print_fiche_titre($langs->trans("NewBookmark"));
+
+    if ($mesg) print "$mesg<br>";
+
+    print '<table class="border" width="100%">';
+
+    print '<tr><td width="20%">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td>'.$langs->trans("SetHereATitleForLink").'</td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("UrlOrLink").'</td><td><input class="flat" name="url" size="50" value=""></td><td>'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("BehaviourOnClick").'</td><td>';
+    $liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
+    $html->select_array('target',$liste,1);
+    print '</td><td>'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
+    print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'"></td></tr>';
+    print '</table>';
+    
+    print '</form>';
+}
+
+
+if ($_GET["id"] > 0)
+{
+    /*
+     * Fiche bookmark en mode edition
+     */
+    $bookmark=new Bookmark($db);
+    $bookmark->fetch($_GET["id"]);
+    
+
+    dolibarr_fiche_head($head, $hselected, $langs->trans("Bookmark"));
+
+    print '<table class="border" width="100%">';
+
+    print '<tr><td width="20%">'.$langs->trans("BookmarkTitle").'</td><td>'.$bookmark->title.'</td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("UrlOrLink").'</td><td>';
+    print '<a href="'.(eregi('^http',$bookmark->url)?$bookmark->url:DOL_URL_ROOT.$bookmark->url).'" target="'.($bookmark->target?"":"newlink").'">'.$bookmark->url.'</a></td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("BehaviourOnClick").'</td><td>';
+    if ($bookmark->target == 0) print $langs->trans("OpenANewWindow");
+    if ($bookmark->target == 1) print $langs->trans("ReplaceWindow");
+    print '</td></tr>';
+    print '</table>';
+
+    print "</div>\n";
+    
+    print "<div class=\"tabsAction\">\n";
+
+    // Supprimer
+    if ($user->rights->bookmark->supprimer)
+    {
+        print "  <a class=\"butActionDelete\" href=\"liste.php?bid=".$bookmark->id."&amp;action=delete\">".$langs->trans("Delete")."</a>\n";
+    }
+
+    print '</div>';
+
+}
 
 $db->close();
 
+
 llxFooter('$Date$ - $Revision$');
+
 ?>

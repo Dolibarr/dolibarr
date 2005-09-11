@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +40,13 @@ function llxHeader($head = "", $title = "")
     $menu = new Menu();
     
     // Bookmarks
-    $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
-    $menu->add_submenu(DOL_URL_ROOT."/bookmarks/fiche.php?action=create", $langs->trans("NewBookmark"));
-    $menu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("List"));
-    
+    if ($conf->bookmark->enabled) 
+    {
+        if ($user->rights->bookmark->lire) $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
+        if ($user->rights->bookmark->creer) $menu->add_submenu(DOL_URL_ROOT."/bookmarks/fiche.php?action=create", $langs->trans("NewBookmark"));
+        if ($user->rights->bookmark->lire) $menu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("List"));
+    }
+        
     left_menu($menu->liste);
 }
 ?>

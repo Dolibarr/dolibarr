@@ -545,11 +545,14 @@ class MenuLeft {
                   $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/liste.php?leftmenu=mailing", $langs->trans("List"), 1, $user->rights->mailing->lire);
                 }
 
-                $langs->load("other");
-                $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php?leftmenu=bookmarks", $langs->trans("Bookmarks"), 0, 1);
-                $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/fiche.php?action=create", $langs->trans("NewBookmark"));
-                $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("List"));
-
+                if ($conf->bookmark->enabled) 
+                {
+                    $langs->load("other");
+                    $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php?leftmenu=bookmarks", $langs->trans("Bookmarks"), 0, $user->rights->bookmark->lire);
+                    $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/fiche.php?action=create", $langs->trans("NewBookmark"), 1, $user->rights->bookmark->creer);
+                    $newmenu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("List"), 1, $user->rights->bookmark->lire);
+                }
+                
                 $newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Exports"),0,1);
             }
         

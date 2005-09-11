@@ -22,6 +22,7 @@
 /**
         \file       htdocs/bookmarks/liste.php
         \brief      Page affichage des bookmarks
+        \ingroup    bookmark
         \version    $Revision$
 */
  
@@ -75,7 +76,7 @@ $sql = "SELECT b.fk_soc as idp, ".$db->pdate("b.dateb")." as dateb, b.rowid as b
 $sql.= " u.name, u.firstname, u.code";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b, ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE b.fk_user=u.rowid";
-if (! $user->admin) $sql.= " AND b.fk_user = ".$user->id;
+if (! $user->admin) $sql.= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL)";
 $sql.= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
 $resql=$db->query($sql);
@@ -89,8 +90,9 @@ if ($resql)
     print "<tr class=\"liste_titre\">";
     //print "<td>&nbsp;</td>";
     print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"],"bid","","",'align="left"',$sortfield);
-    print "<td>".$langs->trans("Title")."</td>";
-    print "<td>".$langs->trans("Link")."</td>";
+    print '<td>'.$langs->trans("Title")."</td>";
+    print '<td>'.$langs->trans("Link")."</td>";
+    print '<td align="center">'.$langs->trans("Target")."</td>";
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.name","","","",$sortfield);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","","",'align="center"',$sortfield);
     print "<td>&nbsp;</td>";
@@ -137,20 +139,34 @@ if ($resql)
         
         // Url
         print "<td>";
-        if (! $lieninterne) print "<a href=\"".$obj->url."\">";
+        if (! $lieninterne) print '<a href="'.$obj->url.'"'.($obj->target?' target="newlink"':'').'>';
         print $lien;
-        if (! $lieninterne) print "</a>";
+        if (! $lieninterne) print '</a>';
+        print "</td>\n";
+        
+        // Target
+        print '<td align="center">';
+        if ($obj->target == 0) print $langs->trans("BookmarkTargetReplaceWindowShort");
+        if ($obj->target == 1) print $langs->trans("BookmarkTargetNewWindowShort");
         print "</td>\n";
         
         // Auteur
-        print "<td><a href='".DOL_URL_ROOT."/user/fiche.php?id=".$obj->fk_user."'>".img_object($langs->trans("ShowUser"),"user").' '.$obj->code."</a></td>\n";
-        
+        print '<td align="center"><a href="'.DOL_URL_ROOT."/user/fiche.php?id=".$obj->fk_user."'>".img_object($langs->trans("ShowUser"),"user").' '.$obj->code."</a></td>\n";
+
         // Date creation
         print '<td align="center">'.dolibarr_print_date($obj->dateb) ."</td>";
 
         // Actions
-        print "<td><a href=\"".$_SERVER["PHP_SELF"]."?action=delete&bid=$obj->bid\">".img_delete()."</a></td>\n";
-
+        print "<td>";
+        if ($user->rights->bookmark->supprimer)
+        {
+            print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&bid=$obj->bid\">".img_delete()."</a>";
+        }
+        else
+        {
+            print "&nbsp;";
+        }        
+        print "</td>";
         print "</tr>\n";
         $i++;
     }

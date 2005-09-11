@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +22,13 @@
 
 /**
         \defgroup   bookmark    Module Bookmark
-        \brief      Module pour gérer l'addon Bookmark
+        \brief      Module pour gérer les Bookmarks
 */
 
 /**
         \file       htdocs/includes/modules/modBookmark.class.php
         \ingroup    bookmark
-        \brief      Fichier de description et activation du module Bookmark
+        \brief      Fichier de description et activation du module Bookmarks
 */
 
 include_once "DolibarrModules.class.php";
@@ -47,13 +48,13 @@ class modBookmark extends DolibarrModules
   function modBookmark($DB)
   {
     $this->db = $DB ;
-    $this->numero = 67 ;
+    $this->numero = 330;
 
     $this->family = "technic";
     $this->name = "Bookmarks";
     $this->description = "Gestion des Bookmarks";
     $this->revision = explode(" ","$Revision$");
-    $this->version = $this->revision[1]."(DEV)";
+    $this->version = $this->revision[1];
 
     $this->const_name = "MAIN_MODULE_BOOKMARK";
     $this->const_config = MAIN_MODULE_BOOKMARK;
@@ -79,6 +80,29 @@ class modBookmark extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'bookmark';
+    $r=0;
+    
+    $r++;
+    $this->rights[$r][0] = 331; // id de la permission
+    $this->rights[$r][1] = 'Lire les bookmarks'; // libelle de la permission
+    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'lire';
+
+    $r++;
+    $this->rights[$r][0] = 332; // id de la permission
+    $this->rights[$r][1] = 'Creer/modifier les bookmarks'; // libelle de la permission
+    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'creer';
+
+    $r++;
+    $this->rights[$r][0] = 333; // id de la permission
+    $this->rights[$r][1] = 'Supprimer les bookmarks'; // libelle de la permission
+    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][4] = 'supprimer';
+
   }
 
    /**
