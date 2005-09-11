@@ -128,8 +128,12 @@ class Product
             {
                 // Produit non deja existant
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
-                $sql .= " (datec, ref, fk_user_author, fk_product_type, price)";
-                $sql .= " VALUES (now(), '".$this->ref."', ".$user->id.",$this->type, '" . $this->price . "')";
+                $sql.= " (datec, ";
+                if ($this->ref) $sql.= "ref, ";
+                $sql.= "fk_user_author, fk_product_type, price)";
+                $sql.= " VALUES (now(), ";
+                if ($this->ref) $sql.= "'".$this->ref."', ";
+                $sql.= $user->id.", ".$this->type.", '" . $this->price . "')";
                 $result = $this->db->query($sql);
                 if ( $result )
                 {
@@ -195,10 +199,7 @@ class Product
     
     if (! $this->libelle) $this->libelle = 'LIBELLE MANQUANT';
 
-    $this->ref = trim($this->ref);
-    $this->ref = ereg_replace("\"","",$this->ref);
-    $this->ref = ereg_replace("'","",$this->ref);
-
+    $this->ref = trim(sanitize_string($this->ref));
     $this->libelle = trim($this->libelle);
     $this->description = trim($this->description);
     $this->note = trim($this->note);
