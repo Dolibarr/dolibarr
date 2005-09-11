@@ -37,7 +37,7 @@ $user->getrights('propale');
 if (!$user->rights->propale->lire)
 	accessforbidden();
 
-
+$langs->load('compta');
 
 llxHeader();
 
