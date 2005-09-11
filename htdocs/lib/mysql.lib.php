@@ -137,6 +137,7 @@ class DoliDb
             else
             {
                 $this->database_selected = 0;
+                $this->database_name = '';
                 $this->ok = 0;
                 $this->error=$this->error();
                 dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
@@ -153,7 +154,7 @@ class DoliDb
 
     /**
             \brief      Selectionne une database.
-            \param	    database		nom de la database
+            \param	    database		Nom de la database
             \return	    resource
     */
     function select_db($database)
@@ -295,7 +296,9 @@ class DoliDb
     function query($query)
     {
         $query = trim($query);
-        $ret = mysql_query($query, $this->db);
+
+//        $ret = mysql_query($query, $this->db);
+        $ret = mysql_db_query($this->database_name, $query, $this->db);
 
         if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query)) {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset
