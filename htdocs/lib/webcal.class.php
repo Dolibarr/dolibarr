@@ -53,15 +53,19 @@ class Webcal {
     function Webcal()
     {
         global $conf;
-        
+        global $dolibarr_main_db_type,$dolibarr_main_db_host,$dolibarr_main_db_user;
+        global $dolibarr_main_db_pass,$dolibarr_main_db_name;
+
+        // Défini parametres webcal (avec substitution eventuelle)
+        $webcaltype=eregi_replace('__dolibarr_main_db_type__',$dolibarr_main_db_type,$conf->webcal->db->type);
+        $webcalhost=eregi_replace('__dolibarr_main_db_host__',$dolibarr_main_db_host,$conf->webcal->db->host);
+        $webcaluser=eregi_replace('__dolibarr_main_db_user__',$dolibarr_main_db_user,$conf->webcal->db->user);
+        $webcalpass=eregi_replace('__dolibarr_main_db_pass__',$dolibarr_main_db_pass,$conf->webcal->db->pass);
+        $webcalname=eregi_replace('__dolibarr_main_db_name__',$dolibarr_main_db_name,$conf->webcal->db->name);
+
         // On initie la connexion à la base Webcalendar
-        require_once (DOL_DOCUMENT_ROOT ."/lib/".$conf->webcal->db->type.".lib.php");
-        $this->localdb = new DoliDb(
-                    $conf->webcal->db->type,
-                    $conf->webcal->db->host,
-                    $conf->webcal->db->user,
-                    $conf->webcal->db->pass,
-                    $conf->webcal->db->name);
+        require_once (DOL_DOCUMENT_ROOT ."/lib/".$webcaltype.".lib.php");
+        $this->localdb = new DoliDb($webcaltype,$webcalhost,$webcaluser,$webcalpass,$webcalname);
     }
 
 

@@ -177,36 +177,36 @@ function dolibarr_syslog($message, $level=LOG_ERR)
 */
 function dolibarr_fiche_head($links, $active=0, $title='')
 {
-  print "<!-- fiche --><div class=\"tabs\">\n";
+    print "<!-- fiche --><div class=\"tabs\">\n";
 
-  if (strlen($title))
+    if (strlen($title))
     {
         $limittitle=30;
         if (strlen($title) > $limittitle) print '<a class="tabTitle">'.substr($title,0,$limittitle).'...</a>';
         else print '<a class="tabTitle">'.$title.'</a>';
     }
 
-  for ($i = 0 ; $i < sizeof($links) ; $i++)
+    for ($i = 0 ; $i < sizeof($links) ; $i++)
     {
-      if ($links[$i][2] == 'image')
-	{
-	  print '<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
-	}
-      else
-	{
-	  if ($i == $active)
-	    {
-	      print '<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
-	    }
-	  else
-	    {
-	      print '<a class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
-	    }
-	}
+        if ($links[$i][2] == 'image')
+        {
+            print '<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+        }
+        else
+        {
+            if ($i == $active)
+            {
+                print '<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+            }
+            else
+            {
+                print '<a class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+            }
+        }
     }
 
-  print "</div>\n";
-  print "<div class=\"tabBar\">\n<br>\n";
+    print "</div>\n";
+    print "<div class=\"tabBar\">\n<br>\n";
 }
 
 /**
@@ -218,18 +218,18 @@ function dolibarr_fiche_head($links, $active=0, $title='')
 */
 function dolibarr_get_const($db, $name)
 {
-        $value='';
-        
-        $sql ="SELECT value";
-        $sql.=" FROM llx_const";
-        $sql.=" WHERE name = '$name';"; 		
-        $resql=$db->query($sql);	
-        if ($resql)
-        {
-            $obj=$db->fetch_object($resql);
-            $value=stripslashes($obj->value);
-        }
-        return $value;
+    $value='';
+    
+    $sql ="SELECT value";
+    $sql.=" FROM llx_const";
+    $sql.=" WHERE name = '$name';"; 		
+    $resql=$db->query($sql);	
+    if ($resql)
+    {
+        $obj=$db->fetch_object($resql);
+        $value=stripslashes($obj->value);
+    }
+    return $value;
 }
 
 
@@ -274,37 +274,37 @@ function dolibarr_set_php_lang($code_lang)
 */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {
-        global $conf;
-        
-        $db->begin();
-        
-        //dolibarr_syslog("dolibarr_set_const name=$name, value=$value");
-        $sql = "DELETE FROM llx_const WHERE name = '$name';"; 		
-        $resql=$db->query($sql);	
-        
-        $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
-        $sql.= " VALUES ('$name','".addslashes($value)."','$type',$visible,'".addslashes($note)."');";
-        $resql=$db->query($sql);	
+    global $conf;
+    
+    $db->begin();
+    
+    //dolibarr_syslog("dolibarr_set_const name=$name, value=$value");
+    $sql = "DELETE FROM llx_const WHERE name = '$name';"; 		
+    $resql=$db->query($sql);	
+    
+    $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
+    $sql.= " VALUES ('$name','".addslashes($value)."','$type',$visible,'".addslashes($note)."');";
+    $resql=$db->query($sql);	
 
-        if ($resql)
-        {
-            $db->commit();
-            $conf->global->$name=$value;
-            return 1;
-        }
-        else
-        {
-            $db->rollback();
-            return -1;
-        }
+    if ($resql)
+    {
+        $db->commit();
+        $conf->global->$name=$value;
+        return 1;
+    }
+    else
+    {
+        $db->rollback();
+        return -1;
+    }
 }
 
 /**
 		\brief      Effacement d'une constante dans la base de données
 		\see        dolibarr_get_const, dolibarr_sel_const
-		\param	    db          handler d'accès base
-		\param	    name		nom ou rowid de la constante
-		\return     int         0 si KO, 1 si OK
+		\param	    db          Handler d'accès base
+		\param	    name		Nom ou rowid de la constante
+		\return     int         <0 si ko, >0 si ok
 */
 function dolibarr_del_const($db, $name)
 {
@@ -317,7 +317,7 @@ function dolibarr_del_const($db, $name)
     }
     else
     {
-        return 0;
+        return -1;
     }
 }
 

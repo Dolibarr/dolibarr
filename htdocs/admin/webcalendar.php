@@ -25,193 +25,246 @@
 
 /**
 	    \file       htdocs/admin/webcalendar.php
-        \ingroup    webcal
+        \ingroup    webcalendar
         \brief      Page de configuration du module webcalendar
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/webcal.class.php');
+
 
 if (!$user->admin)
     accessforbidden();
 
+
 $langs->load("admin");
 $langs->load("other");
 
-llxHeader();
-
-print_titre($langs->trans("WebCalSetup"));
-print '<br>';
-
 $def = array();
-
-$phpwebcalendar_url=trim($_POST["phpwebcalendar_url"]);
-$phpwebcalendar_host=trim($_POST["phpwebcalendar_host"]);
-$phpwebcalendar_dbname=trim($_POST["phpwebcalendar_dbname"]);
-$phpwebcalendar_user=trim($_POST["phpwebcalendar_user"]);
-$phpwebcalendar_pass=trim($_POST["phpwebcalendar_pass"]);
-$phpwebcalendar_pass2=trim($_POST["phpwebcalendar_pass2"]);
-$phpwebcalendar_syncro=trim($_POST["phpwebcalendar_syncro"]);
 $actiontest=$_POST["test"];
 $actionsave=$_POST["save"];
 
 // Test saisie mot de passe
-if ($phpwebcalendar_pass != $phpwebcalendar_pass2)
+if ($_POST["phpwebcalendar_pass"] != $_POST["phpwebcalendar_pass2"])
 {
-    $ok="<div class=\"error\">".$langs->trans("ErrorPasswordDiffers")."</div>";
+    $mesg="<div class=\"error\">".$langs->trans("ErrorPasswordDiffers")."</div>";
 }
 // Positionne la variable pour le test d'affichage de l'icone
 elseif ($actionsave)
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_URL';";
-	$db->query($sql);
-	
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES	('PHPWEBCALENDAR_URL','".$phpwebcalendar_url."',0);"; 
-	$result=$db->query($sql);
-	
-	$sql1 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_HOST';";
-	$db->query($sql1);
-	
-	$sql1 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_HOST','".$phpwebcalendar_host."',0);"; 
-	$result1=$db->query($sql1);
-							
-	$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_DBNAME';";
-	$db->query($sql2);
-	
-	$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_DBNAME','".$phpwebcalendar_dbname."',0);";
-	$result2=$db->query($sql2);
-	
-	$sql3 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_USER' ;";
-	$db->query($sql3);
-	
-	$sql3 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_USER','".$phpwebcalendar_user."',0);";
-	$result3=$db->query($sql3);
-	
-	$sql4 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_PASS';";
-	$db->query($sql4);
-	
-	$sql4 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_PASS','".$phpwebcalendar_pass."',0);";
-	$result4=$db->query($sql4);
+    $i=0;
 
-	$sql5 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'PHPWEBCALENDAR_SYNCRO';";
-	$db->query($sql5);
-	
-	$sql5 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('PHPWEBCALENDAR_SYNCRO','".$phpwebcalendar_syncro."',0);";
-	$result5=$db->query($sql5);
+    $db->begin();
+    
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_URL',trim($_POST["phpwebcalendar_url"]),'',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_HOST',trim($_POST["phpwebcalendar_host"]),'',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_DBNAME',trim($_POST["phpwebcalendar_dbname"]),'',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_USER',trim($_POST["phpwebcalendar_user"]),'',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PASS',trim($_POST["phpwebcalendar_pass"]),'',0);
 
-    if ($result && $result1 && $result2 && $result3 && $result4 && $result5)
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_SYNCRO',trim($_POST["phpwebcalendar_syncro"]),'',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_COMPANYCREATE',trim($_POST["phpwebcalendar_companycreate"]),'',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_CONTRACTSTATUS',trim($_POST["phpwebcalendar_contractstatus"]),'',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_BILLSTATUS',trim($_POST["phpwebcalendar_billstatus"]),'',0);
+
+    if ($i >= 9)
     {
-        $ok = "<font class=\"ok\">".$langs->trans("WebCalSetupSaved")."</font>";
+        $db->commit();
+        header("Location: webcalendar.php");
+        exit;
+    }
+    else
+    {
+        $db->rollback();
+        $mesg = "<font class=\"ok\">".$langs->trans("WebCalSetupSaved")."</font>";
     }
 }
-
-if (! $actiontest && ! $actionsave) 
+elseif ($actiontest)
 {
-    if (! $phpwebcalendar_url)      { $phpwebcalendar_url=PHPWEBCALENDAR_URL; }
-    if (! $phpwebcalendar_host)     { $phpwebcalendar_host=PHPWEBCALENDAR_HOST; }
-    if (! $phpwebcalendar_dbname)   { $phpwebcalendar_dbname=PHPWEBCALENDAR_DBNAME; }
-    if (! $phpwebcalendar_user)     { $phpwebcalendar_user=PHPWEBCALENDAR_USER; }
-    if (! $phpwebcalendar_pass)     { $phpwebcalendar_pass=PHPWEBCALENDAR_PASS; }
-    if (! $phpwebcalendar_pass2)    { $phpwebcalendar_pass2=PHPWEBCALENDAR_PASS; }
-    if (! $phpwebcalendar_syncro)   { $phpwebcalendar_syncro=PHPWEBCALENDAR_SYNCRO; }
+    //$resql=$db->query("select count(*) from llx_const");
+    //print "< ".$db." - ".$db->db." - ".$resql." - ".$db->error()."><br>\n";
+
+    // Test de la connection a la database webcalendar
+    $conf->webcal->db->type=$dolibarr_main_db_type;
+    $conf->webcal->db->host=$_POST["phpwebcalendar_host"];
+    $conf->webcal->db->user=$_POST["phpwebcalendar_user"];
+    $conf->webcal->db->pass=$_POST["phpwebcalendar_pass"];
+    $conf->webcal->db->name=$_POST["phpwebcalendar_dbname"];
+
+    $webcal=new WebCal();
+
+    //print "D ".$db." - ".$db->db."<br>\n";
+    //print "W ".$webcal->localdb." - ".$webcal->localdb->db."<br>\n";
+    
+    if ($webcal->localdb->connected == 1 && $webcal->localdb->database_selected == 1)
+    {
+        // Vérifie si bonne base
+        $sql="SELECT cal_value FROM webcal_config WHERE cal_setting='application_name'";
+        $resql=$webcal->localdb->query($sql);
+        if ($resql) {
+            $mesg ="<div class=\"ok\">".$langs->trans("WebCalTestOk",$_POST["phpwebcalendar_host"],$_POST["phpwebcalendar_dbname"],$_POST["phpwebcalendar_user"]);
+            $mesg.="</div>";
+        }
+        else {
+            $mesg ="<div class=\"error\">".$langs->trans("ErrorConnectOkButWrongDatabase");
+            $mesg.="</div>";
+        }
+
+        //$webcal->localdb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
+    }
+    elseif ($webcal->connected == 1 && $webcal->database_selected != 1)
+    {
+        $mesg ="<div class=\"error\">".$langs->trans("WebCalTestKo1",$_POST["phpwebcalendar_host"],$_POST["phpwebcalendar_dbname"]);
+        $mesg.="<br>".$webcal->localdb->error();
+        $mesg.="</div>";
+        //$webcal->localdb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
+    }
+    else
+    {
+        $mesg ="<div class=\"error\">".$langs->trans("WebCalTestKo2",$_POST["phpwebcalendar_host"],$_POST["phpwebcalendar_user"]);
+        $mesg.="<br>".$webcal->localdb->error();
+        $mesg.="</div>";
+    }
+
+    //$resql=$db->query("select count(*) from llx_const");
+    //print "< ".$db." - ".$db->db." - ".$resql." - ".$db->error()."><br>\n";
 }
 
 
 /**
  * Affichage du formulaire de saisie
  */
-print '<form name="phpwebcalendarconfig" action="webcalendar.php" method="post">';
-print "<table class=\"noborder\">
-<tr class=\"liste_titre\">
-<td>".$langs->trans("Parameter")."</td>
-<td>".$langs->trans("Value")."</td>
-</tr>
-<tr class=\"impair\">
-<td>".$langs->trans("WebCalURL")."</td>
-<td><input type=\"text\" name=\"phpwebcalendar_url\" value=\"". $phpwebcalendar_url . "\" size=\"45\"></td>
-</tr>
-<tr class=\"pair\">
-<td>".$langs->trans("WebCalServer")."</td>
-<td><input type=\"text\" name=\"phpwebcalendar_host\" value=\"". $phpwebcalendar_host . "\" size=\"45\"></td>
-</tr>
-<tr class=\"impair\">
-<td>".$langs->trans("WebCalDatabaseName")."</td>
-<td><input type=\"text\" name=\"phpwebcalendar_dbname\" value=\"". $phpwebcalendar_dbname . "\" size=\"45\"></td>
-</tr>
-<tr class=\"pair\">
-<td>".$langs->trans("WebCalUser")."</td>
-<td><input type=\"text\" name=\"phpwebcalendar_user\" value=\"". $phpwebcalendar_user . "\" size=\"45\"></td>
-</tr>
-<tr class=\"impair\">
-<td>".$langs->trans("Password")."</td>
-<td><input type=\"password\" name=\"phpwebcalendar_pass\" value=\"" . $phpwebcalendar_pass . "\" size=\"45\"></td>
-</tr>
-<tr class=\"pair\">
-<td>".$langs->trans("PasswordRetype")."</td>
-<td><input type=\"password\" name=\"phpwebcalendar_pass2\" value=\"" . $phpwebcalendar_pass2 ."\" size=\"45\"></td>
-</tr>
-<tr class=\"impair\">
-<td>".$langs->trans("WebCalSyncro")."</td>
-<td>";
-print '<select name="phpwebcalendar_syncro">';
-print '<option value="always"'.($phpwebcalendar_syncro=='always'?' selected':'').'>'.$langs->trans("WebCalAllways").'</option>';
-print '<option value="yesbydefault"'.($phpwebcalendar_syncro=='yesbydefault'?' selected':'').'>'.$langs->trans("WebCalYesByDefault").'</option>';
-print '<option value="nobydefault"'.((! $phpwebcalendar_syncro || $phpwebcalendar_syncro=='nobydefault')?' selected':'').'>'.$langs->trans("WebCalNoByDefault").'</option>';
-print '<option value="never"'.($phpwebcalendar_syncro=='never'?' selected':'').'>'.$langs->trans("WebCalNever").'</option>';
-print '</select>';
-print '</td></tr></table>';
+
+llxHeader();
+
+print_titre($langs->trans("WebCalSetup"));
 print '<br>';
-print "<input type=\"submit\" name=\"test\" value=\"".$langs->trans("TestConnection")."\">";
+
+
+print '<form name="phpwebcalendarconfig" action="webcalendar.php" method="post">';
+print "<table class=\"noborder\" width=\"100%\">";
+print "<tr class=\"liste_titre\">";
+print "<td width=\"30%\">".$langs->trans("Parameter")."</td>";
+print "<td>".$langs->trans("Value")."</td>";
+print "<td>".$langs->trans("Examples")."</td>";
+print "</tr>";
+print "<tr class=\"impair\">";
+print "<td>".$langs->trans("WebCalURL")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"phpwebcalendar_url\" value=\"". ($_POST["phpwebcalendar_url"]?$_POST["phpwebcalendar_url"]:$conf->global->PHPWEBCALENDAR_URL) . "\" size=\"40\"></td>";
+print "<td>http://localhost/webcalendar/";
+print "<br>https://webcalendarserver/";
+print "</td>";
+print "</tr>";
+print "<tr class=\"pair\">";
+print "<td>".$langs->trans("WebCalServer")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"phpwebcalendar_host\" value=\"". ($_POST["phpwebcalendar_host"]?$_POST["phpwebcalendar_host"]:$conf->global->PHPWEBCALENDAR_HOST) . "\" size=\"30\"></td>";
+print "<td>localhost";
+//print "<br>__dolibarr_main_db_host__ <i>(".$dolibarr_main_db_host.")</i>"
+print "</td>";
+print "</tr>";
+print "<tr class=\"impair\">";
+print "<td>".$langs->trans("WebCalDatabaseName")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"phpwebcalendar_dbname\" value=\"". ($_POST["phpwebcalendar_dbname"]?$_POST["phpwebcalendar_dbname"]:$conf->global->PHPWEBCALENDAR_DBNAME) . "\" size=\"30\"></td>";
+print "<td>webcalendar";
+//print "<br>__dolibarr_main_db_name__ <i>(".$dolibarr_main_db_name.")</i>";
+print "</td>";
+print "</tr>";
+print "<tr class=\"pair\">";
+print "<td>".$langs->trans("WebCalUser")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"phpwebcalendar_user\" value=\"". ($_POST["phpwebcalendar_user"]?$_POST["phpwebcalendar_user"]:$conf->global->PHPWEBCALENDAR_USER) . "\" size=\"30\"></td>";
+print "<td>webcaluser";
+//print "<br>__dolibarr_main_db_user__ <i>(".$dolibarr_main_db_user.")</i>";
+print "</td>";
+print "</tr>";
+print "<tr class=\"impair\">";
+print "<td>".$langs->trans("Password")."</td>";
+print "<td><input type=\"password\" class=\"flat\" name=\"phpwebcalendar_pass\" value=\"" . $_POST["phpwebcalendar_pass"] . "\" size=\"30\"></td>";
+print '<td>';
+//if ($dolibarr_main_db_pass) print '__dolibarr_main_db_pass__ <i>('.eregi_replace('.','*',$dolibarr_main_db_pass).')</i>';
+print '&nbsp;</td>';
+print "</tr>";
+print "<tr class=\"pair\">";
+print "<td>".$langs->trans("PasswordRetype")."</td>";
+print "<td><input type=\"password\" class=\"flat\" name=\"phpwebcalendar_pass2\" value=\"" . $_POST["phpwebcalendar_pass2"] ."\" size=\"30\"></td>";
+print '<td>';
+//if ($dolibarr_main_db_pass) print '__dolibarr_main_db_pass__ <i>('.eregi_replace('.','*',$dolibarr_main_db_pass).')</i>';
+print '&nbsp;</td>';
+print "</tr>";
+print "</table>";
+print "<br>";
+
+$var=true;
+print "<table class=\"noborder\" width=\"100%\">";
+print "<tr class=\"liste_titre\">";
+print "<td colspan=\"2\">".$langs->trans("WebCalSyncro")."</td>";
+print "</tr>";
+if ($conf->societe->enabled)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td>'.$langs->trans("WebCalAddEventOnCreateActions").'</td>';
+    print '<td>';
+    print '<select name="phpwebcalendar_syncro" class="flat">';
+    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_SYNCRO=='always'?' selected':'').'>'.$langs->trans("WebCalAllways").'</option>';
+    print '<option value="yesbydefault"'.($conf->global->PHPWEBCALENDAR_SYNCRO=='yesbydefault'?' selected':'').'>'.$langs->trans("WebCalYesByDefault").'</option>';
+    print '<option value="nobydefault"'.((! $conf->global->PHPWEBCALENDAR_SYNCRO || $conf->global->PHPWEBCALENDAR_SYNCRO=='nobydefault')?' selected':'').'>'.$langs->trans("WebCalNoByDefault").'</option>';
+    print '<option value="never"'.($conf->global->PHPWEBCALENDAR_SYNCRO=='never'?' selected':'').'>'.$langs->trans("WebCalNever").'</option>';
+    print '</select>';
+    print '</td></tr>';
+}
+if ($conf->societe->enabled)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td>'.$langs->trans("WebCalAddEventOnCreateCompany").'</td>';
+    print '<td>';
+    print '<select name="phpwebcalendar_companycreate" class="flat">';
+    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_COMPANYCREATE=='always'?' selected':'').'>'.$langs->trans("WebCalAllways").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_COMPANYCREATE || $conf->global->PHPWEBCALENDAR_COMPANYCREATE=='never'?' selected':'').'>'.$langs->trans("WebCalNever").'</option>';
+    print '</select>';
+    print '</td></tr>';
+}
+if ($conf->contrat->enabled)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td>'.$langs->trans("WebCalAddEventOnStatusContract").'</td>';
+    print '<td>';
+    print '<select name="phpwebcalendar_contractstatus" class="flat">';
+    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='always'?' selected':'').'>'.$langs->trans("WebCalAllways").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_CONTRACTSTATUS || $conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='never'?' selected':'').'>'.$langs->trans("WebCalNever").'</option>';
+    print '</select>';
+    print '</td></tr>';
+}
+if ($conf->facture->enabled)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td>'.$langs->trans("WebCalAddEventOnStatusBill").'</td>';
+    print '<td>';
+    print '<select name="phpwebcalendar_billstatus" class="flat">';
+    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?' selected':'').'>'.$langs->trans("WebCalAllways").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_BILLSTATUS || $conf->global->PHPWEBCALENDAR_BILLSTATUS=='never'?' selected':'').'>'.$langs->trans("WebCalNever").'</option>';
+    print '</select>';
+    print '</td></tr>';
+    print '</table>';
+}
+print '<br><center>';
+print "<input type=\"submit\" name=\"test\" class=\"button\" value=\"".$langs->trans("TestConnection")."\">";
 print "&nbsp; &nbsp;";
-print "<input type=\"submit\" name=\"save\" value=\"".$langs->trans("Save")."\">";
+print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
+print "</center>";
+
 print "</form>\n";
 
 
 clearstatcache();
 
-if ($ok) print "<br>$ok<br>";
+if ($mesg) print "<br>$mesg<br>";
 print "<br>";
 
-// Test de la connection a la database webcalendar
-if ($actiontest && ($phpwebcalendar_pass == $phpwebcalendar_pass2))
-{
-    // Test connexion
-    $webcal = new DoliDb('',$phpwebcalendar_host,$phpwebcalendar_user,$phpwebcalendar_pass,$phpwebcalendar_dbname);
-
-    if ($webcal->connected == 1 && $webcal->database_selected == 1)
-    {
-        // Vérifie si bonne base
-        $sql="SELECT cal_value FROM webcal_config WHERE cal_setting='application_name'";
-        $resql=$webcal->query($sql);
-        if ($resql) {
-            $mesg ="<div class=\"ok\">".$langs->trans("WebCalTestOk",$phpwebcalendar_host,$phpwebcalendar_dbname,$phpwebcalendar_user);
-            $mesg.="</div>";
-        }
-        else {
-            $mesg ="<div class=\"error\">".$langs->trans("ErrorConnectOkButWrongDatabase");
-            $mesg.=$webcal->error;
-            $mesg.="</div>";
-        }
-
-        $webcal->close();
-    }
-    elseif ($webcal->connected == 1 && $webcal->database_selected != 1)
-    {
-        $mesg ="<div class=\"error\">".$langs->trans("WebCalTestKo1",$phpwebcalendar_host,$phpwebcalendar_dbname);
-        $mesg.="<br>".$webcal->error;
-        $mesg.="</div>";
-        $webcal->close();
-    }
-    else
-    {
-        $mesg ="<div class=\"error\">".$langs->trans("WebCalTestKo2",$phpwebcalendar_host,$phpwebcalendar_user);
-        $mesg.="<br>".$webcal->error;
-        $mesg.="</div>";
-    }
-
-    print $mesg;
-}
-
+$db->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>
