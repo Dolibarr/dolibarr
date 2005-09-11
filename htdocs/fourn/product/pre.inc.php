@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,97 +18,98 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*!
-  \file       htdocs/product/pre.inc.php
-  \ingroup    product,service
-  \brief      Fichier gestionnaire du menu gauche des produits et services
-  \version    $Revision$
+/**
+        \file       htdocs/fourn/product/pre.inc.php
+        \ingroup    product,service
+        \brief      Fichier gestionnaire du menu gauche des produits et services fournisseurs
+        \version    $Revision$
 */
 
 require("../../main.inc.php");
-require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
-require_once DOL_DOCUMENT_ROOT."/categories/categorie.class.php";
+require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php");
+require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("suppliers");
 $langs->load("products");
 
 $user->getrights("produit");
 
+
 function llxHeader($head = "", $title="", $help_url='',$addons='')
 {
-  global $db, $user, $conf, $langs;
+    global $db, $user, $conf, $langs;
 
-  
-  top_menu($head, $title);
 
-  $menu = new Menu();
+    top_menu($head, $title);
 
-  if (is_array($addons))
+    $menu = new Menu();
+
+    if (is_array($addons))
     {
-      //$menu->add($url, $libelle);
-      $menu->add($addons[0][0], $addons[0][1]);
+        //$menu->add($url, $libelle);
+        $menu->add($addons[0][0], $addons[0][1]);
     }
 
-  if ($conf->produit->enabled)
-  {
-    $menu->add(DOL_URL_ROOT."/fourn/product/", $langs->trans("Products"));
-    $menu->add_submenu(DOL_URL_ROOT."/fourn/product/liste.php?type=0", $langs->trans("List"));
-
-    if ($user->societe_id == 0 && $user->rights->produit->creer)
-      {
-      	if ($conf->categorie->enabled)
-      	{
-      		  $menu->add_submenu(DOL_URL_ROOT."/fourn/product/fiche.php?action=create&amp;type=0&amp;catid=".$_REQUEST['catid'], $langs->trans("NewProduct"));
-      	}
-      	else
-      	{
-      		$menu->add_submenu(DOL_URL_ROOT."/fourn/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
-      	}		
-      }
-  }
-
-  if ($conf->categorie->enabled)
-  {
-    $menu->add(DOL_URL_ROOT."/categories/", $langs->trans("Categories"));
-  }
-
-  $menu->add('liste.php','Top');
-
-  if (isset($_REQUEST['catid']))
+    if ($conf->produit->enabled)
     {
-      $catid = $_REQUEST['catid'];
+        $menu->add(DOL_URL_ROOT."/fourn/product/", $langs->trans("Products"));
+        $menu->add_submenu(DOL_URL_ROOT."/fourn/product/liste.php?type=0", $langs->trans("List"));
 
-      $c = new Categorie ($db, $catid);
-     
-      $menu->add('liste.php?catid='.$c->id, $c->label);
-
-      $cats = $c->get_filles();
-  
-      if (sizeof ($cats) > 0)
-	{
- 	  foreach ($cats as $cat)
-	    {
-	      $menu->add_submenu('liste.php?catid='.$cat->id, $cat->label);
-	    }
-	}
-    }
-  else
-    {
-      $c = new Categorie ($db);
-      $cats = $c->get_main_categories();
-
-      if (sizeof ($cats) > 0)
-	{
- 	  foreach ($cats as $cat)
-	    {
-	      $menu->add_submenu('liste.php?catid='.$cat->id, $cat->label);
-	    }
-	}
+        if ($user->societe_id == 0 && $user->rights->produit->creer)
+        {
+            if ($conf->categorie->enabled)
+            {
+                $menu->add_submenu(DOL_URL_ROOT."/fourn/product/fiche.php?action=create&amp;type=0&amp;catid=".$_REQUEST['catid'], $langs->trans("NewProduct"));
+            }
+            else
+            {
+                $menu->add_submenu(DOL_URL_ROOT."/fourn/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
+            }
+        }
     }
 
-  left_menu($menu->liste, $help_url);
+    if ($conf->categorie->enabled)
+    {
+        $menu->add(DOL_URL_ROOT."/categories/", $langs->trans("Categories"));
+    }
+
+    $menu->add('liste.php','Top');
+
+    if (isset($_REQUEST['catid']) && $_REQUEST['catid'] != '')
+    {
+        $catid = $_REQUEST['catid'];
+
+        $c = new Categorie ($db, $catid);
+
+        $menu->add('liste.php?catid='.$c->id, $c->label);
+
+        $cats = $c->get_filles();
+
+        if (sizeof ($cats) > 0)
+        {
+            foreach ($cats as $cat)
+            {
+                $menu->add_submenu('liste.php?catid='.$cat->id, $cat->label);
+            }
+        }
+    }
+    else
+    {
+        $c = new Categorie ($db);
+        $cats = $c->get_main_categories();
+
+        if (sizeof ($cats) > 0)
+        {
+            foreach ($cats as $cat)
+            {
+                $menu->add_submenu('liste.php?catid='.$cat->id, $cat->label);
+            }
+        }
+    }
+
+    left_menu($menu->liste, $help_url);
 }
+
 ?>

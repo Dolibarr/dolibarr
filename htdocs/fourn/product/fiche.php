@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -60,36 +59,36 @@ if ($_GET["action"] == 'fastappro')
 // Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
-  $product = new Product($db);
+    $product = new Product($db);
 
-  $product->ref            = $_POST["ref"];
-  $product->libelle        = $_POST["libelle"];
-  $product->price          = $_POST["price"];
-  $product->catid          = $_POST["catid"];
-  $product->tva_tx         = $_POST["tva_tx"];
-  $product->type           = $_POST["type"];
-  $product->envente        = $_POST["statut"];
-  $product->description    = $_POST["desc"];
-  $product->duration_value = $_POST["duration_value"];
-  $product->duration_unit  = $_POST["duration_unit"];
-  $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
- 
-  $e_product = $product;
+    $product->ref            = $_POST["ref"];
+    $product->libelle        = $_POST["libelle"];
+    $product->price          = $_POST["price"];
+    $product->catid          = $_POST["catid"];
+    $product->tva_tx         = $_POST["tva_tx"];
+    $product->type           = $_POST["type"];
+    $product->envente        = $_POST["statut"];
+    $product->description    = $_POST["desc"];
+    $product->duration_value = $_POST["duration_value"];
+    $product->duration_unit  = $_POST["duration_unit"];
+    $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
 
-  $id = $product->create($user);
+    $e_product = $product;
 
-  if ($id > 0)
+    $id = $product->create($user);
+    if ($id > 0)
     {
-      Header("Location: fiche.php?id=$id");
+        Header("Location: fiche.php?id=$id");
     }
-  else
+    else
     {
-      if ($id == -3)
-	{
-	  $_error = 1;
-	  $_GET["action"] = "create";
-	  $_GET["type"] = $_POST["type"];
-	}
+        if ($id == -3)
+        {
+            $mesg='<div class="error">'.$product->error.'</div>';
+            $_error = 1;
+            $_GET["action"] = "create";
+            $_GET["type"] = $_POST["type"];
+        }
     }
 }
 
@@ -199,6 +198,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
   Header("Location: fiche.php?id=".$_POST["id"]);
 }
 
+
 // Le produit n'est pas encore chargé a ce stade
 llxHeader("","",$langs->trans("CardProduct0"));
 
@@ -226,6 +226,8 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print_fiche_titre($title);
       
   print '<table class="border" width="100%">';
+
+  if ($mesg) print $mesg;
 
   if ($conf->categorie->enabled)
     {		  
@@ -272,7 +274,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
       print '</td></tr>';
     }
   
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
+  print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
   print '</table>';
   print '</form>';      
 }
@@ -334,8 +336,8 @@ else
 
 	      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
-
-	      print($mesg);
+	      if ($mesg) print($mesg);
+	      
 	      print '<table class="border" width="100%">';
 
 	      if ($conf->categorie->enabled)
