@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005      Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2004           Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005           Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,8 @@ $user->getrights('facture');
 $user->getrights('propale');
 if (!$user->rights->propale->lire)
   accessforbidden();
+
+$langs->load('compta');
 
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
