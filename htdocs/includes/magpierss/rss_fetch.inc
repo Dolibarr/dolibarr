@@ -202,11 +202,17 @@ function fetch_rss ($url) {
 					$errormsg .=  "(HTTP Response: " . $resp->response_code .')';
 				}
 				
-				// LDR FIX BUG Si echec recup http mais cache bien lu, on stock erreur dans object rss
-				if ($rss) {
-				    $rss->ERROR=$errormsg;
-				    if ($cache && $cache_key) $rss->date=filemtime($cache->file_name($url));
+				// LDR FIX BUG Si echec recup http mais cache bien lu,
+				// on stock erreur dans object rss
+				if ($rss)
+				{
+				    if ($cache && $cache_key) $rss->date=filemtime($cache->file_name($cache_key));
 				}
+                else
+                {
+                    $rss=$cache;
+                }
+                $rss->ERROR=$errormsg;
 			}
 		}
 		else {
@@ -246,12 +252,18 @@ function error ($errormsg, $lvl=E_USER_WARNING) {
 		if ( $errormsg ) {
 			$errormsg = "MagpieRSS: $errormsg";
 			$MAGPIE_ERROR = $errormsg;
-			trigger_error( $errormsg, $lvl);				
+            // LDR BUG FIX On affiche erreur que si en mode debug
+            if ( MAGPIE_DEBUG ) {
+    			trigger_error( $errormsg, $lvl);
+    	    }
 		}
 }
 
 function debug ($debugmsg, $lvl=E_USER_NOTICE) {
-	trigger_error("MagpieRSS [debug] $debugmsg", $lvl);
+    // LDR BUG FIX On affiche erreur que si en mode debug
+    if ( MAGPIE_DEBUG ) {
+	    trigger_error("MagpieRSS [debug] $debugmsg", $lvl);
+	}
 }
 			
 /*=======================================================================*\
