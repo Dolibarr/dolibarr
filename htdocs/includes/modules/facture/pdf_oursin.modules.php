@@ -30,12 +30,13 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+
 
 /**
         \class      pdf_oursin
         \brief      Classe permettant de générer les factures au modèle oursin
 */
-
 
 class pdf_oursin extends ModelePDFFactures
 {

@@ -29,7 +29,8 @@
 
 
 require("./pre.inc.php");
-include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $mesg = '';
 

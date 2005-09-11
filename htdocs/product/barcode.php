@@ -30,6 +30,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("products");
 $langs->load("bills");

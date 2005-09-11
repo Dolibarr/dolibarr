@@ -20,16 +20,17 @@
  * $Source$
  */
 
+// Code identique a /expedition/fiche.php
+
 /**
         \file       htdocs/expedition/commande.php
         \ingroup    expedition
         \version    $Revision$
 */
 
-
-// Code identique a /expedition/fiche.php
-
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+
 
 $user->getrights('commande');
 $user->getrights('expedition');

@@ -29,8 +29,7 @@
 */
 
 require("./pre.inc.php");
-;
-
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
 if (!$user->rights->produit->lire) accessforbidden();

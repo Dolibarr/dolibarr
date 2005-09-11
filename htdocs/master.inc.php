@@ -245,7 +245,6 @@ if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $conf->fichinter-
 $conf->adherent->enabled=defined("MAIN_MODULE_ADHERENT")?MAIN_MODULE_ADHERENT:0;
 $conf->adherent->dir_output=DOL_DATA_ROOT."/adherent";
 $conf->produit->enabled=defined("MAIN_MODULE_PRODUIT")?MAIN_MODULE_PRODUIT:0;
-if ($conf->produit->enabled) require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 $conf->produit->dir_output=DOL_DATA_ROOT."/produit";
 $conf->produit->dir_images=DOL_DATA_ROOT."/produit/images";
 $conf->barcode->enabled=defined("MAIN_MODULE_BARCODE")?MAIN_MODULE_BARCODE:0;

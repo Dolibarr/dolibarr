@@ -22,6 +22,8 @@
  *
  */
 
+// Code identique a /expedition/commande.php
+
 /**
         \file       htdocs/expedition/fiche.php
         \ingroup    expedition
@@ -30,14 +32,15 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 $langs->load("bills");
 
 if (!$user->rights->expedition->lire)
   accessforbidden();
 
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 // Sécurité accés client
 if ($user->societe_id > 0) 

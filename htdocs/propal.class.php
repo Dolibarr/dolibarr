@@ -22,7 +22,6 @@
  * $Source$
  */
 
-
 /**
     	\file       htdocs/propal.class.php
 		\brief      Fichier de la classe des propales
@@ -32,6 +31,7 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 
 
 /**

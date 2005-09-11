@@ -30,7 +30,8 @@
 
 
 require("./pre.inc.php");
-include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("orders");
 

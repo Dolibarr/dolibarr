@@ -30,6 +30,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 
 
 /**

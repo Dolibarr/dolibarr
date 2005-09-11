@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
