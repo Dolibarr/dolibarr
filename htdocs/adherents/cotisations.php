@@ -171,11 +171,11 @@ if ($result)
                 print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
                 $html = new Form($db);
                 $html->select_types_paiements();
-                print '<input name="num_chq" type="text" size="6">&nbsp;-&nbsp;';
-                print "<input name=\"label\" type=\"text\" size=20 value=\"".$langs->trans("Subscriptions").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".strftime("%Y",$objp->dateadh)."\" >\n";
+                print '<input name="num_chq" type="text" class="flat" size="6">&nbsp;-&nbsp;';
+                print "<input name=\"label\" type=\"text\" class=\"flat\" size=\"30\" value=\"".$langs->trans("Subscriptions").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".strftime("%Y",$objp->dateadh)."\" >\n";
                 //	print "<td><input name=\"debit\" type=\"text\" size=8></td>";
                 //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
-                print '<input type="submit" value="'.$langs->trans("Save").'">';
+                print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
                 print "</form>\n";
                 print "</td>\n";
             }
