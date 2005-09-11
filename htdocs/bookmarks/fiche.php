@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur       <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ if ($action == 'add')
         $societe=new Societe($db);
         $societe->fetch($_GET["socid"]);
         $bookmark->fk_soc=$societe->id;
-        $bookmark->url=DOL_URL_ROOT.'/comm/fiche.php?socidp='.$societe->id;
+        $bookmark->url=DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
         $bookmark->target='0';
         $bookmark->title=$societe->nom;
     }

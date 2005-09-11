@@ -34,4 +34,6 @@ BoxTitleCurrentAccounts=Les soldes de comptes courants
 BoxTitleSalesTurnover=Le chiffre d'affaire réalisé
 BoxTitleTotalUnpayedCustomerBills=Impayés clients
 BoxTitleTotalUnpayedSuppliersBills=Impayés fournisseurs
+BoxMyLastBookmarks=Mes %s derniers marque-pages
 FailedToRefreshDataInfoNotUpToDate=Echec du rafraichissement du flux RSS. Les informations datent du %s.
+NoRecordedBookmarks=Pas de bookmarks personnels définis. Cliquer <a href="%s">ici</a> pour en ajouter.
