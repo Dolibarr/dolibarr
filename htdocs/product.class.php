@@ -54,7 +54,9 @@ class Product
     var $stats_contrat=array();
     var $stats_facture=array();
 
-
+    var $error;
+    
+    
   /**
    *    \brief      Constructeur de la classe
    *    \param      DB          Handler accès base de données
@@ -104,8 +106,8 @@ class Product
     function create($user)
     {
     
-        $this->ref = ereg_replace("'","",$this->ref);
-        $this->ref = ereg_replace("\"","",$this->ref);
+        $this->ref = trim(sanitize_string($this->ref));
+
         if (strlen($this->tva_tx)==0) $this->tva_tx = 0;
         if (strlen($this->price)==0) $this->price = 0;
         if (strlen($this->envente)==0) $this->envente = 0;
@@ -116,7 +118,7 @@ class Product
         $this->db->begin();
     
         $sql = "SELECT count(*)";
-        $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .trim($this->ref)."'";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
 
         $result = $this->db->query($sql) ;
         if ($result)
@@ -124,9 +126,10 @@ class Product
             $row = $this->db->fetch_array($result);
             if ($row[0] == 0)
             {
+                // Produit non deja existant
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
-                $sql .= " (datec, fk_user_author, fk_product_type, price)";
-                $sql .= " VALUES (now(),".$user->id.",$this->type, '" . $this->price . "')";
+                $sql .= " (datec, ref, fk_user_author, fk_product_type, price)";
+                $sql .= " VALUES (now(), '".$this->ref."', ".$user->id.",$this->type, '" . $this->price . "')";
                 $result = $this->db->query($sql);
                 if ( $result )
                 {
@@ -159,6 +162,7 @@ class Product
                 }
                 else
                 {
+                    $this->error=$this->db->error()." - ".$sql;
                     $this->db->rollback();
                     return -3;
                 }
@@ -170,6 +174,7 @@ class Product
             }
         }
 
+        $this->error=$this->db->error();
         $this->db->rollback();
         return -1;
     }
