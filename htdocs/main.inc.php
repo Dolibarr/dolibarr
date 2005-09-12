@@ -359,16 +359,18 @@ function left_menu($menu_array, $help_url='', $form_search='')
         if ($helpbaseurl) print '<div class="help"><a class="help" target="_blank" href="'.sprintf($helpbaseurl,$help_url).'">'.$langs->trans("Help").'</a></div>';
     }
 
-    // Lien vers le bugtrack
-    $bugbaseurl='http://savannah.nongnu.org/bugs/?';
-    $bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
-    $bugbaseurl.="&details=";
-    $bugbaseurl.=urlencode("\n\n\n\n\n-------------\n");
-    $bugbaseurl.=urlencode($langs->trans("Version").": ".DOL_VERSION."\n");
-    $bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
-    $bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
-    print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
-
+    if (MAIN_SHOW_BUGTRACK_LINK == 1)
+      {
+	// Lien vers le bugtrack
+	$bugbaseurl='http://savannah.nongnu.org/bugs/?';
+	$bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
+	$bugbaseurl.="&details=";
+	$bugbaseurl.=urlencode("\n\n\n\n\n-------------\n");
+	$bugbaseurl.=urlencode($langs->trans("Version").": ".DOL_VERSION."\n");
+	$bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
+	$bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
+	print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
+      }
     print "\n";
     print "</div>\n";
     print "</div>\n";
