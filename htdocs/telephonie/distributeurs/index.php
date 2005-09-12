@@ -97,7 +97,7 @@ print '</table></div>';
 
 print "\n<div class=\"tabsAction\">\n";
 
-if ($_GET["action"] == '')
+if ($_GET["action"] == '' && $user->admin)
 {
   print "<a class=\"tabAction\" href=\"fiche.php?action=create\">".$langs->trans("Nouveau")."</a>";
 }
