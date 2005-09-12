@@ -93,7 +93,7 @@ if ($result)
 
   print_barre_liste($titre, $page, "my.php", $urladd, $sortfield, $sortorder, '', $num);
 
-  print '<a href="myxls.php">Exporter dans un tableur</a>';
+  //print '<a href="myxls.php">Exporter dans un tableur</a>';
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
