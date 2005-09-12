@@ -158,7 +158,11 @@ if ($_GET["id"])
         $h++;
 
         $head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
-        $head[$h][1] = $langs->trans('Bills');
+        $head[$h][1] = $langs->trans('Referers');
+        $h++;
+	  
+        $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;
+        $head[$h][1] = $langs->trans('Documents');
         $h++;
 
         dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
@@ -193,8 +197,7 @@ if ($_GET["id"])
         // Stock
         if ($product->type == 0 && $conf->stock->enabled)
         {
-            print '<tr><td><a 
-href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
+            print '<tr><td><a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
             if ($product->no_stock)
             {
                 print "<td>Pas de définition de stock pour ce produit";
@@ -277,8 +280,8 @@ href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'">'.$langs->
         print '<option value="1">'.$langs->trans("Delete").'</option>';
         print '</select></td>';
         print '<td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
-        print '<tr><td colspan="5" align="center"><input type="submit" value="'.$langs->trans('Save').'">&nbsp;';
-        print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+        print '<tr><td colspan="5" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
         print '</table>';
         print '</form>';
 
@@ -333,8 +336,8 @@ href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'">'.$langs->
         }
         print '</select></td>';
         print '<td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
-        print '<tr><td colspan="6" align="center"><input type="submit" value="'.$langs->trans('Save').'">&nbsp;';
-        print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+        print '<tr><td colspan="6" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
         print '</table>';
         print '</form>';
 
@@ -367,8 +370,8 @@ href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'">'.$langs->
             }
         }
         print '</select></td><td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
-        print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans('Save').'">&nbsp;';
-        print '<input type="submit" name="cancel" value="'.$langs->trans('Cancel').'"></td></tr>';
+        print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td></tr>';
         print '</table>';
         print '</form>';
     }
