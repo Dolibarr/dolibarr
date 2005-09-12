@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -158,7 +157,7 @@ if ($_GET["action"] == 'create')
     print '<option value="0" selected>'.$langs->trans("WarehouseClosed").'</option><option value="1">'.$langs->trans("WarehouseOpened").'</option>';
     print '</td></tr>';
 
-    print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
+    print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
 
     print '</table>';
     print '</form>';
@@ -319,8 +318,8 @@ else
 	  print '</select>';
 	  print '</td></tr>';
 	  
-	  print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-	  print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+	  print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+	  print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	  print '</table>';
 	  print '</form>';
 	  
