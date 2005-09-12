@@ -248,7 +248,7 @@ if ($_GET["action"] == 'edit')
       {
         // Projet associé
         print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-        $sel->select_project($fichinter->societe_id,$fichinter->projet_id,"projetidp");
+        $sel->select_projects($fichinter->societe_id,$fichinter->projet_id,"projetidp");
         print '</td></tr>';
       }
 
