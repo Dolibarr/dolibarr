@@ -56,10 +56,10 @@ function llxHeader($head = "", $title="") {
   if ($user->rights->telephonie->stats->lire)
     $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
+  if ($user->rights->telephonie->facture->lire)    
+    $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
 
-  if ($user->rights->telephonie->facture->lire)
-    $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
+  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/grilles.php", "Grilles");
 
