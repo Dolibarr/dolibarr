@@ -21,6 +21,7 @@
  */
 require("./pre.inc.php");
 
+if (!$user->rights->telephonie->facture->lire) accessforbidden();
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];

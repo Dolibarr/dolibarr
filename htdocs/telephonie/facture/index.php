@@ -21,13 +21,12 @@
  */
 require("./pre.inc.php");
 
+if (!$user->rights->telephonie->facture->lire) accessforbidden();
+
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 
-if (!$user->rights->telephonie->lire)
-  accessforbidden();
-
-llxHeader('','Telephonie');
+llxHeader('','Telephonie - Factures');
 
 /*
  * Sécurité accés client

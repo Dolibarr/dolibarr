@@ -58,7 +58,8 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
+  if ($user->rights->telephonie->facture->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/grilles.php", "Grilles");
 
