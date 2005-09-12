@@ -32,13 +32,10 @@ $langs->load("companies");
 $langs->load("products");
 $langs->load("admin");
 
-
 if (!$user->admin)
-accessforbidden();
-
+  accessforbidden();
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
-
 
 $dirtop = "../includes/menus/barre_top";
 $dirleft = "../includes/menus/barre_left";
@@ -50,143 +47,146 @@ $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAI
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
 
 
-
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
-    dolibarr_set_const($db, "MAIN_LANG_DEFAULT",      $_POST["main_lang_default"]);
-    dolibarr_set_const($db, "MAIN_MENU_BARRETOP",     $_POST["main_menu_barretop"]);
-    dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",    $_POST["main_menu_barreleft"]);
-    dolibarr_set_const($db, "SIZE_LISTE_LIMIT",       $_POST["size_liste_limit"]);
+  dolibarr_set_const($db, "MAIN_LANG_DEFAULT",      $_POST["main_lang_default"]);
+  dolibarr_set_const($db, "MAIN_MENU_BARRETOP",     $_POST["main_menu_barretop"]);
+  dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",    $_POST["main_menu_barreleft"]);
+  dolibarr_set_const($db, "SIZE_LISTE_LIMIT",       $_POST["size_liste_limit"]);
+  
+  dolibarr_set_const($db, "MAIN_THEME",             $_POST["main_theme"]);
+  
+  dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",$_POST["main_searchform_contact"]);
+  dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",$_POST["main_searchform_societe"]);
+  dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["main_searchform_produitservice"]);
+  
+  dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["bugtrack"]);
 
-    dolibarr_set_const($db, "MAIN_THEME",             $_POST["main_theme"]);
-
-    dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",$_POST["main_searchform_contact"]);
-    dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",$_POST["main_searchform_societe"]);
-    dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["main_searchform_produitservice"]);
-
-    dolibarr_set_const($db, "MAIN_MOTD",              trim($_POST["main_motd"]));
-
-    $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
-
-    Header("Location: ihm.php?mainmenu=home&leftmenu=setup");
+  dolibarr_set_const($db, "MAIN_MOTD",              trim($_POST["main_motd"]));
+  
+  $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
+  
+  Header("Location: ihm.php?mainmenu=home&leftmenu=setup");
 }
 
 
 llxHeader();
 
-
 print_titre($langs->trans("GUISetup"));
 
 print "<br>\n";
 
-
-
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
-    print '<form method="post" action="ihm.php">';
-    print '<input type="hidden" name="action" value="update">';
-
-    clearstatcache();
-    $var=true;
+  print '<form method="post" action="ihm.php">';
+  print '<input type="hidden" name="action" value="update">';
+  
+  clearstatcache();
+  $var=true;
     
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-    // Langue par defaut
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
-    $html=new Form($db);
-    $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default');
-    print '</td></tr>';
-
-    // Menu top
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td>';
-    print '<td><select class="flat" name="main_menu_barretop">';
-    $handle=opendir($dirtop);
-    while (($file = readdir($handle))!==false)
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+  
+  // Langue par defaut
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
+  $html=new Form($db);
+  $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default');
+  print '</td></tr>';
+  
+  // Menu top
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td>';
+  print '<td><select class="flat" name="main_menu_barretop">';
+  $handle=opendir($dirtop);
+  while (($file = readdir($handle))!==false)
     {
-        if (is_file($dirtop."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+      if (is_file($dirtop."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
         {
-            $filelib=eregi_replace('\.php$','',$file);
-            if ($file == $conf->global->MAIN_MENU_BARRETOP)
+	  $filelib=eregi_replace('\.php$','',$file);
+	  if ($file == $conf->global->MAIN_MENU_BARRETOP)
             {
-                print '<option value="'.$file.'" selected>'.$filelib.'</option>';
+	      print '<option value="'.$file.'" selected>'.$filelib.'</option>';
             }
-            else
+	  else
             {
-                print '<option value="'.$file.'">'.$filelib.'</option>';
+	      print '<option value="'.$file.'">'.$filelib.'</option>';
+            }
+        }      
+    }
+  print '</select>';
+  print '</td></tr>';
+
+  // Menu left
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
+  print '<td><select class="flat" name="main_menu_barreleft">';
+  $handle=opendir($dirleft);
+  while (($file = readdir($handle))!==false)
+    {
+      if (is_file($dirleft."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+        {
+	  $filelib=eregi_replace('\.php$','',$file);
+	  if ($file == $conf->global->MAIN_MENU_BARRELEFT)
+            {
+	      print '<option value="'.$file.'" selected>'.$filelib.'</option>';
+            }
+	  else
+            {
+	      print '<option value="'.$file.'">'.$filelib.'</option>';
             }
         }
-
+      
     }
-    print '</select>';
-    print '</td></tr>';
-
-    // Menu left
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
-    print '<td><select class="flat" name="main_menu_barreleft">';
-    $handle=opendir($dirleft);
-    while (($file = readdir($handle))!==false)
+  print '</select>';
+  print '</td></tr>';
+  
+  // Taille max des listes
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="size_liste_limit" size="4" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugtrakLink").'</td><td>';
+  $html->selectyesnonum('bugtrack',MAIN_SHOW_BUGTRACK_LINK);
+  print '</td></tr>';
+  
+  print '</table><br>';
+  
+  
+  // Theme
+  show_theme(1);
+  print '<br>';
+  
+  
+  // Liste des zone de recherche permanantes supportées
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td>'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
+  $var=True;
+  foreach ($searchform as $key => $value)
     {
-        if (is_file($dirleft."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-        {
-            $filelib=eregi_replace('\.php$','',$file);
-            if ($file == $conf->global->MAIN_MENU_BARRELEFT)
-            {
-                print '<option value="'.$file.'" selected>'.$filelib.'</option>';
-            }
-            else
-            {
-                print '<option value="'.$file.'">'.$filelib.'</option>';
-            }
-        }
-
+      $var=!$var;
+      print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>';
+      $html->selectyesnonum($searchform[$key],$searchformconst[$key]);
+      print '</td></tr>';
     }
-    print '</select>';
-    print '</td></tr>';
+  print '</table>';
+  print '<br>';
+  
+  
+  // Message of the day
+  $var=true;
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td><textarea cols="60" rows="3" name="main_motd" size="20">' . stripslashes($conf->global->MAIN_MOTD) . '</textarea></td></tr>';
+  print '</table>';
 
-    // Taille max des listes
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="size_liste_limit" size="4" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
-
-    print '</table><br>';
-
-
-    // Theme
-    show_theme(1);
-    print '<br>';
-
-
-    // Liste des zone de recherche permanantes supportées
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
-    $var=True;
-    foreach ($searchform as $key => $value) {
-        $var=!$var;
-        print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>';
-        $html->selectyesnonum($searchform[$key],$searchformconst[$key]);
-        print '</td></tr>';
-    }
-    print '</table>';
-    print '<br>';
-
-
-    // Message of the day
-    $var=true;
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td><textarea cols="60" rows="3" name="main_motd" size="20">' . stripslashes($conf->global->MAIN_MOTD) . '</textarea></td></tr>';
-    print '</table>';
-
-    print '<br><center>';
-    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-    print '</center>';
-
-    print '</form>';
-    print '<br>';
+  print '<br><center>';
+  print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+  print '</center>';
+  
+  print '</form>';
+  print '<br>';
 }
 else
 {
@@ -212,6 +212,10 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->SIZE_LISTE_LIMIT . '</td></tr>';
+
+
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugtrakLink").'</td><td>';   
+    print (MAIN_SHOW_BUGTRACK_LINK?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
 
     print '</table><br>';
 
