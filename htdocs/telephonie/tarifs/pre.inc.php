@@ -62,10 +62,6 @@ function llxHeader($head = "", $title="") {
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/grilles.php", "Grilles");
 
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/index.php?type=vente", "Vente");
-
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/index.php?type=achat", "Achat");
-
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/prefix.php", "Prefix");
 
   if ($user->rights->telephonie->tarif->permission)
