@@ -66,7 +66,7 @@ if ($_GET["id"])
   $head[$h][1] = "Prises d'ordre";
   $h++;
 
-  $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/distributeurs/distributeur.php?id='.$distri->id;
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/stats.php?id='.$distri->id;
   $head[$h][1] = "Statistiques";
   $hselected = $h;
   $h++;

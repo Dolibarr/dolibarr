@@ -60,11 +60,11 @@ if ($_GET["id"])
 
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/remav.php?id='.$distri->id;
   $head[$h][1] = "Rém. avance";
-  $hselected = $h;
   $h++;
 
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/remconso.php?id='.$distri->id;
   $head[$h][1] = "Rém. conso";
+  $hselected = $h;
   $h++;
 
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/po.php?id='.$distri->id;
