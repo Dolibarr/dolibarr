@@ -38,8 +38,6 @@ if ($opt['m'] > 0)
   $datetime = mktime(10,10,10,$opt['m'],10,2005);
 }
 
-
-
 $date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
 
 /*
@@ -108,7 +106,7 @@ else
  *
  *
  *********************************************************/
-
+dolibarr_syslog("Calcul avance");
 $sql = "SELECT rowid, fk_distributeur, fk_contrat, datepo, montant";
 $sql .= " , avance_pourcent, rem_pour_prev";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
@@ -204,7 +202,7 @@ if ( $resql )
       
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commission_conso";
       $sqli .= " (date, fk_distributeur, fk_contrat, fk_ligne, montant, pourcentage)";
-      $sqli .= " VALUES ('".$year_prev.$month_prev."'";
+      $sqli .= " VALUES ('".$year.$month."'";
       $sqli .= ",".$obj->fk_distributeur.",".$obj->fk_contrat.",".$obj->ligne;
       $sqli .= ",".ereg_replace(",",".",$comm);
       $sqli .= ",".ereg_replace(",",".",$pourcent);
@@ -216,7 +214,7 @@ if ( $resql )
 	  dolibarr_syslog("Calcul conso Erreur ".$db->error());
 	}
 
-      dolibarr_syslog("Conso po : ".$obj->rowid . " ".$comm);
+      //dolibarr_syslog("Conso po : ".$obj->rowid . " ".$comm);
               
       $i++;
     }
@@ -566,6 +564,7 @@ foreach ($distributeurs as $distributeur_id)
 	  if (! $db->query($sqli))
 	    {
 	      $error++;
+	      dolibarr_syslog("Erreur insertion Commission finale");
 	    }
 
 	  dolibarr_syslog("Commission finale ".$amount);
@@ -584,6 +583,7 @@ foreach ($distributeurs as $distributeur_id)
 if ($error == 0)
 {
   $db->commit();
+  dolibarr_syslog("Commit");
 }
 else
 {
