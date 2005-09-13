@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005      Lionel COUSTEIX      <etm_ltd@tiscali.co.uk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,7 @@ if ($_POST["action"] == 'confirm_disable' && $_POST["confirm"] == "yes")
         $edituser = new User($db, $_GET["id"]);
         $edituser->fetch($_GET["id"]);
         $edituser->disable();
-        Header("Location: index.php");
+        Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
     }
 }
 
@@ -107,6 +108,9 @@ if ($_POST["action"] == 'add' && $user->admin)
         $edituser->note          = trim($_POST["note"]);
         $edituser->prenom        = trim($_POST["prenom"]);
         $edituser->login         = trim($_POST["login"]);
+ 		$edituser->office_phone  = trim($_POST["office_phone"]);
+ 		$edituser->office_fax    = trim($_POST["office_fax"]);
+ 		$edituser->user_mobile   = trim($_POST["user_mobile"]);
         $edituser->email         = trim($_POST["email"]);
         $edituser->admin         = trim($_POST["admin"]);
         $edituser->webcal_login  = trim($_POST["webcal_login"]);
@@ -173,6 +177,9 @@ if ($_POST["action"] == 'update' && $user->admin)
     $edituser->note          = $_POST["note"];
     $edituser->prenom        = $_POST["prenom"];
     $edituser->login         = $_POST["login"];
+    $edituser->office_phone  = $_POST["office_phone"];
+ 	$edituser->office_fax    = $_POST["office_fax"];
+ 	$edituser->user_mobile   = $_POST["user_mobile"];
     $edituser->email         = $_POST["email"];
     $edituser->admin         = $_POST["admin"];
     $edituser->webcal_login  = $_POST["webcal_login"];
@@ -290,6 +297,15 @@ if ($action == 'create')
 
     print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
     print '<td class="valeur"><input size="30" type="text" name="password" value=""></td></tr>';
+
+    print '<tr><td valign="top">'.$langs->trans("Phone").'</td>';
+    print '<td class="valeur"><input size="20" type="text" name="office_phone" value=""></td></tr>';
+
+    print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
+    print '<td class="valeur"><input size="20" type="text" name="office_fax" value=""></td></tr>';
+
+    print '<tr><td valign="top">'.$langs->trans("Mobile").'</td>';
+    print '<td class="valeur"><input size="20" type="text" name="user_mobile" value=""></td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
     print '<td class="valeur"><input size="40" type="text" name="email" value=""></td></tr>';
@@ -414,7 +430,7 @@ else
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
             print '<td width="50%" class="valeur">'.$fuser->nom.'</td>';
-            print '<td align="center" valign="middle" width="25%" rowspan="8">';
+            print '<td align="center" valign="middle" width="25%" rowspan="11">';
             if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
             {
                 print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
@@ -438,6 +454,14 @@ else
             {
             	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisable").'</td></tr>';
             }
+
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Phone").'</td>';
+ 			print '<td width="50%" class="valeur">'.$fuser->office_phone.'</td>';
+ 			print '<tr><td width="25%" valign="top">'.$langs->trans("Fax").'</td>';
+ 			print '<td width="50%" class="valeur">'.$fuser->office_fax.'</td>';
+ 			print '<tr><td width="25%" valign="top">'.$langs->trans("Mobile").'</td>';
+ 			print '<td width="50%" class="valeur">'.$fuser->user_mobile.'</td>';
+
             print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
             print '<td width="50%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
             print "</tr>\n";
@@ -547,15 +571,15 @@ else
             #      $sql .= " WHERE ug.fk_usergroup IS NULL";
             $sql .= " ORDER BY ug.nom";
 
-            $result = $db->query($sql);
-            if ($result)
+            $resql = $db->query($sql);
+            if ($resql)
             {
-                $num = $db->num_rows();
+                $num = $db->num_rows($resql);
                 $i = 0;
 
                 while ($i < $num)
                 {
-                    $obj = $db->fetch_object();
+                    $obj = $db->fetch_object($resql);
 
                     $uss[$obj->rowid] = $obj->nom;
                     $i++;
@@ -656,8 +680,8 @@ else
             print '<table width="100%" class="border">';
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-            print '<td width="50%" class="valeur"><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td>';
-            print '<td align="center" valign="middle" width="25%" rowspan="6">';
+            print '<td width="50%" class="valeur"><input class="flat" size="30" type="text" name="nom" value="'.$fuser->nom.'"></td>';
+            print '<td align="center" valign="middle" width="25%" rowspan="9">';
             if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
             {
                 print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
@@ -666,17 +690,26 @@ else
             {
                 print '<img src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
             }
-            print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr><tr><td><input type="file" name="photo" class="flat"></td></tr></table>';
+            print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr><tr><td><input type="file" class="flat" name="photo"></td></tr></table>';
             print '</td></tr>';
 
             print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td><input size="30" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
+            print '<td><input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
 
             print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
-            print '<td><input size="12" maxlength="8" type="text" name="login" value="'.$fuser->login.'"></td></tr>';
+            print '<td><input size="12" maxlength="8" type="text" class="flat" name="login" value="'.$fuser->login.'"></td></tr>';
+
+ 			print "<tr>".'<td valign="top">'.$langs->trans("Phone").'</td>';
+			print '<td><input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'"></td></tr>';
+			
+			print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
+ 			print '<td><input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'"></td></tr>';
+			
+			print "<tr>".'<td valign="top">'.$langs->trans("Mobile").'</td>';
+			print '<td><input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'"></td></tr>';
 
             print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
-            print '<td><input size="30" type="text" name="email" value="'.$fuser->email.'"></td></tr>';
+            print '<td><input size="30" type="text" name="email" class="flat" value="'.$fuser->email.'"></td></tr>';
 
             print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
             if ($fuser->societe_id > 0)
@@ -693,14 +726,14 @@ else
             }
 
             print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-            print '<textarea name="note" rows="10" cols="40">';
+            print '<textarea class="flat" name="note" rows="6" cols="40">';
             print $fuser->note;
             print "</textarea></td></tr>";
 
             // Autres caractéristiques issus des autres modules
             $langs->load("other");
             print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-            print '<td class="valeur" colspan="2"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
+            print '<td class="valeur" colspan="2"><input size="30" type="text" class="flat" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
             
             print '<tr><td align="center" colspan="3"><input value="'.$langs->trans("Save").'" class="button" type="submit"></td></tr>';
 

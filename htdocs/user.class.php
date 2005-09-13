@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005      Lionel COUSTEIX      <etm_ltd@tiscali.co.uk>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +55,9 @@ class User
   var $note;
   var $code;
   var $email;
+  var $office_tel;
+  var $office_fax;
+  var $user_mobile;
   var $admin;
   var $login;
   var $pass;
@@ -99,7 +103,7 @@ class User
   function fetch($login='')
     {
         // Recupere utilisateur
-        $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
+        $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
         $sql.= " u.fk_societe, u.fk_socpeople, ";
         $sql.= " ".$this->db->pdate("u.datec")." as datec, ".$this->db->pdate("u.tms")." as datem,";
         $sql.= " ".$this->db->pdate("u.datelastaccess")." as datel";
@@ -127,6 +131,9 @@ class User
                 $this->code = $obj->code;
                 $this->login = $obj->login;
                 $this->pass  = $obj->pass;
+ 				$this->office_phone  = $obj->office_phone;
+ 				$this->office_fax  = $obj->office_fax;
+ 				$this->user_mobile  = $obj->user_mobile;
                 $this->email = $obj->email;
                 $this->admin = $obj->admin;
                 $this->contact_id = $obj->fk_socpeople;
@@ -684,6 +691,9 @@ class User
         $sql .= " name = '$this->nom'";
         $sql .= ", firstname = '$this->prenom'";
         $sql .= ", login = '$this->login'";
+        $sql .= ", office_phone = '$this->office_phone'";
+        $sql .= ", office_fax = '$this->office_fax'";
+        $sql .= ", user_mobile = '$this->user_mobile'";
         $sql .= ", email = '$this->email'";
         $sql .= ", admin = $this->admin";
         $sql .= ", webcal_login = '$this->webcal_login'";
