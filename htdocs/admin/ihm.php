@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
   dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["main_searchform_produitservice"]);
   
   dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["bugtrack"]);
+  dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD", $_POST["workboard"]);
 
   dolibarr_set_const($db, "MAIN_MOTD",              trim($_POST["main_motd"]));
   
@@ -150,6 +151,11 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
   $html->selectyesnonum('bugtrack',MAIN_SHOW_BUGTRACK_LINK);
   print '</td></tr>';
   
+  $var=!$var;
+  print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';
+  $html->selectyesnonum('workboard',MAIN_SHOW_WORKBOARD);
+  print '</td></tr>';
+
   print '</table><br>';
   
   
@@ -213,10 +219,13 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->SIZE_LISTE_LIMIT . '</td></tr>';
 
-
+    $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugtrakLink").'</td><td>';   
     print (MAIN_SHOW_BUGTRACK_LINK?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
 
+    $var=!$var;
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';   
+    print (MAIN_SHOW_WORKBOARD?$langs->trans("yes"):$langs->trans("no"))."</td></tr>";
     print '</table><br>';
 
 
