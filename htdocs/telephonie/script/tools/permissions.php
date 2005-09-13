@@ -68,7 +68,7 @@ if ( $resql )
 
       $sqlu = "REPLACE INTO llx_societe_perms";
       $sqlu .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
-      $sqlu .= " VALUES (".$row[0].",33,1,0,0)";
+      $sqlu .= " VALUES (".$row[0].",32,1,0,0)";
       $resqlu = $db->query($sqlu);
     }
   $db->free($resql);
