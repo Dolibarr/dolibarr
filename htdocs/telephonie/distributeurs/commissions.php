@@ -50,7 +50,7 @@ if ($_GET["id"])
   $h++;
 
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/commissions.php?id='.$distri->id;
-  $head[$h][1] = "Commissions";
+  $head[$h][1] = "Rémunérations";
   $hselected = $h;
   $h++;
 
@@ -113,7 +113,6 @@ if ($_GET["id"])
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";  
   $sql .= " WHERE c.fk_distributeur = ".$_GET["id"];
   $sql .= " ORDER BY c.date DESC";
-
   $resql = $db->query($sql);
   
   if ($resql)
@@ -121,12 +120,10 @@ if ($_GET["id"])
       $num = $db->num_rows($resql);
       $i = 0;
       
-      while ($i < $num)
+      while ($row = $db->fetch_row($resql))
 	{
-	  $row = $db->fetch_row($resql);	
 	  $commissions[$row[0]] = $row[1];	  
 	  $comm_total += $row[1];
-	  $i++;
 	}
       $db->free($resql);
     }
@@ -135,19 +132,16 @@ if ($_GET["id"])
       print $db->error() . ' ' . $sql;
     }
 
-
-
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-
   print '<tr><td width="50%" valign="top">';
-  
-  
+    
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td>Date</td><td align="right">Versé</td><td align="right">Consos</td><td align="right">Solde</td></tr>';
+  print '<td>Date</td><td align="right">Rémunération</td>';
+  print '</tr>';
   $var=1;
   print '<tr class="liste_titre">';
-  print '<td>Total</td><td align="right">'.price($comm_total).' HT</td><td align="right">'.price($conso_total).' HT</td><td align="right">'.price($conso_total - $comm_total).' HT</td></tr>';
+  print '<td>Total</td><td align="right">'.price($comm_total).' HT</td></tr>';
 
   $sql = "SELECT c.date, c.montant";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";
@@ -173,8 +167,10 @@ if ($_GET["id"])
 	  
 	  print '<td>'.substr($row[0], -2).'/'.substr($row[0],0,4).'</td>';
 	  print '<td align="right">'.price($row[1]).' HT</td>';
+	  /*
 	  print '<td align="right">'.price($consos[$row[0]]).' HT</td>';
 	  print '<td align="right">'.price($consos[$row[0]] - $row[1]).' HT</td>';
+	  */
 	  
 	  $i++;
 	}

@@ -55,7 +55,7 @@ if ($_GET["id"])
   $h++;
 
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/commissions.php?id='.$distri->id;
-  $head[$h][1] = "Commissions";
+  $head[$h][1] = "Rémunérations";
   $h++;
 
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/remav.php?id='.$distri->id;
