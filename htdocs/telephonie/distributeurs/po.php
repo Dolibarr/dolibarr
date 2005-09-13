@@ -26,30 +26,16 @@ if ($user->distributeur_id)
   $_GET["id"] = $user->distributeur_id;
 }
 
+llxHeader();
+
+
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
-
-llxHeader();
-
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
-
-if ($sortorder == "") {
-  $sortorder="DESC";
-}
-if ($sortfield == "") {
-  $sortfield="p.datepo";
-}
+if ($sortorder == "") $sortorder="DESC";
+if ($sortfield == "") $sortfield="p.datepo";
 
 /*
- * Recherche
  *
  *
  */
@@ -118,9 +104,8 @@ if ($_GET["id"])
       
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre">';
-      print_liste_field_titre("Client","po.php","s.nom");
-      
-      print_liste_field_titre("Contrat","po.php","l.ligne");
+      print_liste_field_titre("Client","po.php","s.nom","","&amp;id=".$_GET["id"]);
+      print_liste_field_titre("Contrat","po.php","p.fk_contrat","","&amp;id=".$_GET["id"]);
       print '<td align="center">Date</td><td align="right">Montant</td>';
       print '<td align="center">Avance Durée</td><td>Avance %</td>';
       print "</tr>\n";
