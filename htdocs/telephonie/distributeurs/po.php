@@ -106,8 +106,9 @@ if ($_GET["id"])
       print '<tr class="liste_titre">';
       print_liste_field_titre("Client","po.php","s.nom","","&amp;id=".$_GET["id"]);
       print_liste_field_titre("Contrat","po.php","p.fk_contrat","","&amp;id=".$_GET["id"]);
-      print '<td align="center">Date</td><td align="right">Montant</td>';
-      print '<td align="center">Avance Durée</td><td>Avance %</td>';
+      print '<td align="center">Date</td>';
+      print '<td align="right">Montant</td>';
+      print '<td align="center">Avance Durée</td><td align="center">Avance %</td>';
       print "</tr>\n";
       
       $var=True;
@@ -129,8 +130,8 @@ if ($_GET["id"])
 
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";
 	  
-	  print '<td align="right">'.$obj->avance_duree."</td>\n";
-	  print '<td align="right">'.$obj->avance_pourcent." %</td>\n";
+	  print '<td align="center">'.$obj->avance_duree."</td>\n";
+	  print '<td align="center">'.$obj->avance_pourcent." %</td>\n";
 
 	  print "</tr>\n";
 	  $i++;
