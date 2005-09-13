@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -65,7 +64,7 @@ print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="2">'.$langs->trans("SearchABill").'</td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print $langs->trans("Ref").'</td><td><input type="text" class="button" name="sf_ref">&nbsp;<input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form><br>";
 
 
@@ -80,5 +79,5 @@ print '</table>';
 
 $db->close();
  
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
