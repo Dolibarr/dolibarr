@@ -106,7 +106,7 @@ if ($_GET["id"])
 
   $sql = "SELECT s.idp, s.nom, a.fk_contrat, sum(a.montant) as montant";
 
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_avance as a";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso as a";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
   $sql .= " , ".MAIN_DB_PREFIX."societe as s";
   
@@ -114,6 +114,7 @@ if ($_GET["id"])
   $sql .= " AND a.fk_contrat = c.rowid"; 
   $sql .= " AND c.fk_soc = s.idp";
   $sql .= " AND a.date ='".$year.$month."'";
+  $sql .= " AND a.avance = 0";
   $sql .= " GROUP BY s.idp";
   $sql .= " ORDER BY s.nom ASC";
   
@@ -123,7 +124,7 @@ if ($_GET["id"])
       $num = $db->num_rows($resql);
       $i = 0;
       
-      print_barre_liste("Rémunération sur avance pour $mois", $page, "po.php", "", $sortfield, $sortorder, '', $num);
+      print_barre_liste("Rémunération sur consommations pour $mois", $page, "po.php", "", $sortfield, $sortorder, '', $num);
       
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre"><td>Client</td>';
@@ -160,7 +161,8 @@ if ($_GET["id"])
 
   $sql = "SELECT distinct(a.date)";
 
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_avance as a";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso as a";
+  $sql .= " WHERE a.avance = 0";
   $sql .= " ORDER BY a.date DESC";
   
   $resql = $db->query($sql);
@@ -179,7 +181,7 @@ if ($_GET["id"])
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]><td>";
-	  print '<a href="'.DOL_URL_ROOT.'/telephonie/distributeurs/remav.php?id='.$_GET["id"];
+	  print '<a href="'.DOL_URL_ROOT.'/telephonie/distributeurs/remconso.php?id='.$_GET["id"];
 	  print '&amp;month='.$obj->date.'">'.$obj->date."</a></td>\n";
 	  print "</tr>\n";
 	}

@@ -28,7 +28,8 @@ create table llx_telephonie_commission_conso (
   fk_ligne            integer NOT NULL,
   pourcentage         real,
   montant             real,
-  annul               tinyint DEFAULT 0 -- indique si les comm sont annulées
+  annul               tinyint DEFAULT 0, -- indique si les comm sont annulées
+  avance              tinyint DEFAULT 1, -- indique si les comm sont dans la période de l'avance
 
   UNIQUE (date, fk_ligne)
 
