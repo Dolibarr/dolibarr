@@ -713,7 +713,7 @@ else
 	      if ($user->rights->telephonie->fournisseur->lire)
 		{
 		  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur";
-		  $sql .= " WHERE commande_active = 1 AND rowid = ".$ligne->fournisseur_id;
+		  $sql .= " WHERE rowid = ".$ligne->fournisseur_id;
 		  
 		  if ( $db->query( $sql) )
 		    {
