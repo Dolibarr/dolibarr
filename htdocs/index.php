@@ -117,7 +117,7 @@ if ($user->societe_id == 0)
                       $conf->adherent->enabled && $user->rights->adherent->lire,
                       $conf->produit->enabled && $user->rights->produit->lire,
                       $conf->service->enabled && $user->rights->produit->lire,
-                      $conf->telephonie->enabled && $user->rights->telephonie->ligne->lire_restreint);
+                      $conf->telephonie->enabled && $user->rights->telephonie->lire);
     // Fichier des classes qui contiennent la methode load_state_board pour chaque ligne
     $includes=array(DOL_DOCUMENT_ROOT."/client.class.php",
                     DOL_DOCUMENT_ROOT."/client.class.php",
