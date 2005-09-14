@@ -82,7 +82,7 @@ if ($_GET["id"] && $_GET["did"])
 
   $sql = "SELECT ".$db->pdate("p.datepo") . " as datepo, sum(p.montant)";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
-  $sql .= " WHERE p.fk_distributeur =".$distri->id;
+  $sql .= " WHERE p.fk_commercial =".$commercial->id;
   $sql .= " GROUP BY date_format(datepo,'%Y%m') DESC";  
 
   $resql = $db->query($sql);
