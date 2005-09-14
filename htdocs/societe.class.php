@@ -455,16 +455,19 @@ class Societe {
         $sql .= ", s.code_client, s.code_compta, s.code_fournisseur, s.parent";
         $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client";
         $sql .= ", p.code as pays_code, p.libelle as pays";
+        $sql .= ", d.code_departement as departement_code, d.nom as departement";
         $sql .= ", st.libelle as stcomm";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
         $sql .= ", ".MAIN_DB_PREFIX."c_effectif as e";
         $sql .= ", ".MAIN_DB_PREFIX."c_pays as p";
+        $sql .= ", ".MAIN_DB_PREFIX."c_departements as d";
         $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
         $sql .= ", ".MAIN_DB_PREFIX."c_forme_juridique as fj";
         $sql .= " WHERE s.idp = ".$socid;
         $sql .= " AND s.fk_stcomm = st.id";
         $sql .= " AND s.fk_effectif = e.id";
         $sql .= " AND s.fk_pays = p.rowid";
+        $sql .= " AND s.fk_departement = d.rowid";
         $sql .= " AND s.fk_forme_juridique = fj.code";
     
         $resql=$this->db->query($sql);
@@ -486,11 +489,13 @@ class Societe {
     
                 $this->adresse_full =  stripslashes($obj->address) . "\n". $obj->cp . " ". stripslashes($obj->ville);
     
-                $this->departement_id = $obj->fk_departement;
                 $this->pays_id = $obj->fk_pays;
                 $this->pays_code = $obj->fk_pays?$obj->pays_code:'';
                 $this->pays = $obj->fk_pays?($langs->trans("Country".$obj->pays_code)!="Country".$obj->pays_code?$langs->trans("Country".$obj->pays_code):$obj->pays):'';
     
+                $this->departement_id = $obj->fk_departement;
+                $this->departement= $obj->fk_departement?$obj->departement:'';
+
                 $transcode=$langs->trans("StatusProspect".$obj->fk_stcomm);
                 $libelle=($transcode!="StatusProspect".$obj->fk_stcomm?$transcode:$obj->stcomm);
                 $this->stcomm_id = $obj->fk_stcomm;     // id statut commercial
