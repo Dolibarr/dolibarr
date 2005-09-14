@@ -75,27 +75,13 @@ if ($_GET["id"] && $_GET["did"])
 
   print '<tr><td width="50%" valign="top">';
   
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$commercial->id.'/ca.mensuel.png" alt="Nouveaux clients (moy)" title="Nouveaux clients (moy)"><br /><br />'."\n";
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$commercial->id.'/ca.mensuel.png" alt="CA" title="CA"><br /><br />'."\n";
 
   print '</td><td width="50%" valign="top"><br />';
 
   print '</td></tr>';
   print '</table></div>';
 
-  /* ************************************************************************** */
-  /*                                                                            */ 
-  /* Barre d'action                                                             */ 
-  /*                                                                            */ 
-  /* ************************************************************************** */
-  print "\n<div class=\"tabsAction\">\n";
-  
-  if ($_GET["action"] == '' && $user->admin)
-    {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=create_commercial&amp;distri=".$distri->id."\">".$langs->trans("Nouveau commercial")."</a>";
-    }
-  
-  print "</div><br>";
- 
   $db->close();
 }
 
