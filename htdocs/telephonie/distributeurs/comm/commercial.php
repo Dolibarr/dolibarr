@@ -30,6 +30,7 @@ llxHeader('','Telephonie - Statistiques - Distributeur');
  *
  */
 $h = 0;
+$year = strftime("%Y",time());
 
 if ($user->distributeur_id)
 {
@@ -52,7 +53,7 @@ if ($_GET["id"] && $_GET["did"])
   $head[$h][1] = $commercial->prenom ." ". $commercial->nom;
   $hselected = $h;
   $h++;
-
+  /*
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/po.php?id='.$distri->id;
   $head[$h][1] = "Prises d'ordre";
   $h++;
@@ -60,7 +61,7 @@ if ($_GET["id"] && $_GET["did"])
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/stats.php?id='.$distri->id;
   $head[$h][1] = "Statistiques";
   $h++;
-
+  */
   dolibarr_fiche_head($head, $hselected, "Distributeur");
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -107,6 +108,8 @@ if ($_GET["id"] && $_GET["did"])
   print '</table><br />';
 
   print '</td><td width="50%" valign="top">';
+
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$commercial->id.'/po.'.$year.'.mensuel.png" alt="Nouveaux clients (moy)" title="Nouveaux clients (moy)"><br /><br />'."\n";
 
   print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$commercial->id.'/clients.hebdomadaire.png" alt="Nouveaux clients" title="Nouveaux clients"><br /><br />'."\n";
 
