@@ -23,7 +23,7 @@ require("./pre.inc.php");
 
 if (!$user->rights->telephonie->lire) accessforbidden();
 
-if ($user->distributeur_id && $user->responsable_distributeur_id = 0)
+if ($user->distributeur_id && $user->responsable_distributeur_id == 0)
 {
   $_GET["id"] = $user->id;
 }
