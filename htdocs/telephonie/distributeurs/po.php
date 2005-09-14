@@ -21,6 +21,11 @@
  */
 require("./pre.inc.php");
 
+if ($user->distributeur_id && $user->responsable_distributeur_id == 0)
+{
+  accessforbidden();
+}
+
 if ($user->distributeur_id)
 {
   $_GET["id"] = $user->distributeur_id;
