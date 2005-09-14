@@ -104,8 +104,7 @@ if ($_GET["id"])
     }
   print '</table><br />';
 
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Commerciaux</td></tr>';
+
 
   $sql = "SELECT u.rowid, u.firstname, u.name";
   $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -118,12 +117,21 @@ if ($_GET["id"])
   
   if ($resql)
     {
-      while ($row = $db->fetch_row($resql))
+      $num = $db->num_rows($resql);
+
+      if ($num > 0 )
 	{
-	  $var=!$var;
-	  print "<tr $bc[$var]>";
-	  print '<td><a href="./comm/commercial.php?id='.$row[0].'&amp;did='.$_GET["id"].'">';;
-	  print $row[1].' '.$row[2].'</a></td>';
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<tr class="liste_titre"><td>Commerciaux</td></tr>';
+	  while ($row = $db->fetch_row($resql))
+	    {
+	      $var=!$var;
+	      print "<tr $bc[$var]>";
+	      print '<td><a href="./comm/commercial.php?id='.$row[0].'&amp;did='.$_GET["id"].'">';;
+	      print $row[1].' '.$row[2].'</a></td>';
+	    }
+	  
+	  print '</table><br />';
 	}
       $db->free($resql);
     }
@@ -131,7 +139,7 @@ if ($_GET["id"])
     {
       print $db->error() . ' ' . $sql;
     }
-  print '</table><br />';
+
 
 
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
