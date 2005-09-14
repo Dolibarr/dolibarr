@@ -21,6 +21,11 @@
  */
 require("./pre.inc.php");
 
+if ($user->distributeur_id && $user->responsable_distributeur_id == 0)
+{
+  accessforbidden();
+}
+
 if (!$user->rights->telephonie->lire) accessforbidden();
 
 llxHeader('','Telephonie - Statistiques - Distributeur');

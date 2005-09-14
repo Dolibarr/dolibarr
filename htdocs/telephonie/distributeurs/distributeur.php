@@ -46,21 +46,24 @@ if ($_GET["id"])
   $hselected = $h;
   $h++;
 
-  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/contrat.php?id='.$distri->id;
-  $head[$h][1] = "Contrat";
-  $h++;
+  if ($user->distributeur_id == 0 || $user->responsable_distributeur_id > 0)
+    {
+      $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/contrat.php?id='.$distri->id;
+      $head[$h][1] = "Contrat";
+      $h++;
 
-  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/remuneration.php?id='.$distri->id;
-  $head[$h][1] = "Rémunérations";
-  $h++;
+      $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/remuneration.php?id='.$distri->id;
+      $head[$h][1] = "Rémunérations";
+      $h++;
 
-  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/po.php?id='.$distri->id;
-  $head[$h][1] = "Prises d'ordre";
-  $h++;
-
-  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/stats.php?id='.$distri->id;
-  $head[$h][1] = "Statistiques";
-  $h++;
+      $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/po.php?id='.$distri->id;
+      $head[$h][1] = "Prises d'ordre";
+      $h++;
+      
+      $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/stats.php?id='.$distri->id;
+      $head[$h][1] = "Statistiques";
+      $h++;
+    }
 
   dolibarr_fiche_head($head, $hselected, "Distributeur");
 
