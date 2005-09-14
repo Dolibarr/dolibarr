@@ -23,6 +23,8 @@ require("../../../main.inc.php");
 
 $user->getrights('telephonie');
 $user->distributeur_id = 0;
+$user->responsable_distributeur_id = 0;
+$user->responsable_distributeur_commerciaux = array();
 require DOL_DOCUMENT_ROOT.'/telephonie/distributeurtel.class.php';
 require DOL_DOCUMENT_ROOT.'/telephonie/telephonie.commercial.class.php';
 
@@ -46,6 +48,22 @@ if ($resql)
 {
   $row = $db->fetch_row($resql);
   $user->responsable_distributeur_id = $row[0];
+}
+
+if ($user->responsable_distributeur_id > 0)
+{
+  $sql = "SELECT fk_user";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux";
+  $sql .= " WHERE fk_distributeur=".$user->responsable_distributeur_id;
+  
+  $resql = $db->query($sql);
+  if ($resql)
+    {
+      while ($row = $db->fetch_row($resql))
+	{
+	  array_push($user->responsable_distributeur_commerciaux, $row[0]);
+	}
+    }
 }
 
 function llxHeader($head = "", $title="") {
@@ -119,8 +137,8 @@ function llxHeader($head = "", $title="") {
 	}
     }
 
-
-  $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/index.php", "Fournisseurs");
+  if ($user->rights->telephonie->fournisseur->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/index.php", "Fournisseurs");
 
   if ($user->rights->telephonie->service->lire)
     $menu->add(DOL_URL_ROOT."/telephonie/service/", "Services");

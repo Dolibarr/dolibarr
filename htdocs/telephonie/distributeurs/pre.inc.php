@@ -119,8 +119,8 @@ function llxHeader($head = "", $title="") {
 	}
     }
 
-
-  $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/index.php", "Fournisseurs");
+  if ($user->rights->telephonie->fournisseur->lire)
+    $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/index.php", "Fournisseurs");
 
   if ($user->rights->telephonie->service->lire)
     $menu->add(DOL_URL_ROOT."/telephonie/service/", "Services");

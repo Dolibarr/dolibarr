@@ -206,8 +206,8 @@ if ($_GET["id"])
 
 
   $sql = "SELECT distinct(a.date)";
-
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_avance as a";
+  $sql .= " WHERE a.fk_distributeur =".$distri->id;
   $sql .= " ORDER BY a.date DESC";
   
   $resql = $db->query($sql);
