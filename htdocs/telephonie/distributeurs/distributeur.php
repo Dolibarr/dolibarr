@@ -122,7 +122,8 @@ if ($_GET["id"])
 	{
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print '<td>'.$row[1].' '.$row[2].'</td>';
+	  print '<td><a href="./comm/commercial.php?id='.$row[0].'&amp;did='.$_GET["id"].'">';;
+	  print $row[1].' '.$row[2].'</a></td>';
 	}
       $db->free($resql);
     }
