@@ -135,44 +135,51 @@ if ($_GET["id"])
       print $db->error() . ' ' . $sql;
     }
 
-
-
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td colspan="2">Total commission</td></tr>';
-
-  $sql = "SELECT sum(c.montant)";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";  
-  $sql .= " WHERE c.fk_distributeur = ".$_GET["id"];
-    
-  $resql = $db->query($sql);
-  
-  if ($resql)
+  if ($user->distributeur_id == 0 || $user->responsable_distributeur_id > 0)
     {
-      $num = $db->num_rows($resql);
-      $i = 0;
-      $total = 0;
-      $var = 0;
-      while ($i < $num)
+
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+      print '<tr class="liste_titre"><td colspan="2">Total commission</td></tr>';
+      
+      $sql = "SELECT sum(c.montant)";
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";  
+      $sql .= " WHERE c.fk_distributeur = ".$_GET["id"];
+      
+      $resql = $db->query($sql);
+      
+      if ($resql)
 	{
-	  $row = $db->fetch_row($resql);	  
-	  $var=!$var;	  
-	  print "<tr $bc[$var]>";	  
-	  print '<td>Total</td>';
-	  print '<td align="right">'.price($row[0]).' HT</td>';
-	  
-	  $i++;
+	  $num = $db->num_rows($resql);
+	  $i = 0;
+	  $total = 0;
+	  $var = 0;
+	  while ($i < $num)
+	    {
+	      $row = $db->fetch_row($resql);	  
+	      $var=!$var;	  
+	      print "<tr $bc[$var]>";	  
+	      print '<td>Total</td>';
+	      print '<td align="right">'.price($row[0]).' HT</td>';
+	      
+	      $i++;
+	    }
+	  $db->free($resql);
 	}
-      $db->free($resql);
+      else 
+	{
+	  print $db->error() . ' ' . $sql;
+	}
+      print '</table><br />';
     }
-  else 
+
+  if ($user->distributeur_id == 0 || $user->responsable_distributeur_id > 0)
     {
-      print $db->error() . ' ' . $sql;
-    }
-  print '</table><br />';
- 
+
   print '</td><td valign="top" width="30%">';
   
-  /* PO */
+  /* comm */
+
+
 
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
@@ -210,6 +217,7 @@ if ($_GET["id"])
       print $db->error() . ' ' . $sql;
     }
   print '</table><br />';
+    
 
   print '</td><td valign="top" width="30%">';
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -250,7 +258,7 @@ if ($_GET["id"])
       print $db->error() . ' ' . $sql;
     }
   print '</table><br />';
-
+    }
   print '</td></tr>';
   print '</table></div>';
 
