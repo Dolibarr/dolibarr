@@ -108,17 +108,10 @@ class MenuLeft {
              * Menu HOME
              */
             if ($mainmenu == 'home') {
-                $langs->load("users");
-                $newmenu->add(DOL_URL_ROOT."/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"));
-        
                 if($user->admin)
                 {
                   $langs->load("admin");
-                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/index.php", $langs->trans("Users"));
-                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/fiche.php?action=create", $langs->trans("NewUser"),2);
-                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/index.php", $langs->trans("Groups"));
-                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?action=create", $langs->trans("NewGroup"),2);
-                  
+
                   $newmenu->add(DOL_URL_ROOT."/admin/index.php?leftmenu=setup", $langs->trans("Setup"));
                   if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/index.php", $langs->trans("GlobalSetup"));
                   if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
@@ -143,6 +136,13 @@ class MenuLeft {
                   if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/database-tables.php", $langs->trans("Tables"),2);
                   if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/database-tables-contraintes.php", $langs->trans("Constraints"),2);
                 }
+
+                $langs->load("users");
+                $newmenu->add(DOL_URL_ROOT."/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"));
+                if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/index.php", $langs->trans("Users"));
+                if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/fiche.php?action=create", $langs->trans("NewUser"),2);
+                if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/index.php", $langs->trans("Groups"));
+                if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?action=create", $langs->trans("NewGroup"),2);
             }
         
             /*
