@@ -98,17 +98,17 @@ if ($socname)
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
+$sql .= " ORDER BY $sortfield $sortorder, s.nom ASC ";
+$sql .= $db->plimit($conf->liste_limit+1, $offset);
 
-$sql .= " ORDER BY $sortfield $sortorder, s.nom ASC " . $db->plimit($conf->liste_limit, $offset);
-
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows($result);
+  $num = $db->num_rows($resql);
 
   if ($num == 1 && $socname)
     {
-      $obj = $db->fetch_object($result);
+      $obj = $db->fetch_object($resql);
       Header("Location: fiche.php?socid=".$obj->idp);
     }
   else
@@ -149,7 +149,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($result);
+      $obj = $db->fetch_object($resql);
       
       $var=!$var;
 
@@ -185,7 +185,7 @@ if ($result)
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else
 {
