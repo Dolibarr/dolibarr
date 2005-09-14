@@ -40,8 +40,11 @@ if (!$user->rights->produit->lire)
 $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
 $snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
-
 $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
+$sref=trim($sref);
+$snom=trim($snom);
+$sall=trim($sall);
+$type=trim($type);
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -65,7 +68,7 @@ if (isset($_POST["button_removefilter_x"]))
 
 $title=$langs->trans("ProductsAndServices");
 
-$sql = 'SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, '.$db->pdate('p.tms').' as datem';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 
 if ($_GET["fourn_id"] > 0)
@@ -76,7 +79,7 @@ if ($_GET["fourn_id"] > 0)
 $sql .= " WHERE 1=1";
 if ($sall)
 {
-    $sql .= " AND (p.label like '%".$sall."%' OR p.description like '%".$sall."%' OR p.note like '%".$sall."%')";
+    $sql .= " AND (p.ref like '%".$sall."%' OR p.label like '%".$sall."%' OR p.description like '%".$sall."%' OR p.note like '%".$sall."%')";
 }
 if (strlen($_GET["type"]) || strlen($_POST["type"]))
 {
@@ -101,12 +104,10 @@ else
         $sql .= " AND p.envente = 1";
     }
 }
-
 if ($fourn_id > 0)
 {
     $sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = $fourn_id";
 }
-
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
 $resql = $db->query($sql) ;
