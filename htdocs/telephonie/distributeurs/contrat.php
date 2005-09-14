@@ -23,6 +23,11 @@ require("./pre.inc.php");
 
 if (!$user->rights->telephonie->lire) accessforbidden();
 
+if ($user->distributeur_id && $user->responsable_distributeur_id == 0)
+{
+  accessforbidden();
+}
+
 llxHeader('','Telephonie - Statistiques - Distributeurs');
 
 /*
@@ -113,30 +118,8 @@ else
 }
 print '</table><br />';
 
-
-
-
-
 print '</td><td width="50%" valign="top">&nbsp;</td></tr>';
 print '</table></div>';
-
-
-
-/* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
-/* ************************************************************************** */
-
-print "\n<div class=\"tabsAction\">\n";
-
-if ($_GET["action"] == '')
-{
-  print "<a class=\"tabAction\" href=\"fiche.php?action=create\">".$langs->trans("Nouveau")."</a>";
-}
-
-print "</div><br>";
-
 
 $db->close();
 
