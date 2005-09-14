@@ -264,7 +264,7 @@ if ($_socid > 0)
     // Type + Staff
     $arr = $objsoc->typent_array($objsoc->typent_id);
     $objsoc->typent= $arr[$objsoc->typent_id];
-    print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$objsoc->effectif.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Staff").'</td><td nowrap>'.$objsoc->effectif.'</td></tr>';
 
     // Remise permanente
     print '<tr><td nowrap>';
