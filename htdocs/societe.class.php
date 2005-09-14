@@ -236,189 +236,170 @@ class Societe {
     return $result;
   }
 
-  /**
-   *    \brief      Mise a jour des paramètres de la société
-   *    \param      id      id societe
-   *    \param      user    Utilisateur qui demande la mise à jour
-   *    \return     0 si ok, < 0 si erreur
-   */
-	 
-  function update($id, $user='')
-  {
-    global $langs;
+    /**
+     *    \brief      Mise a jour des paramètres de la sociét
+     *    \param      id      id societe
+     *    \param      user    Utilisateur qui demande la mise à jour
+     *    \return     0 si ok, < 0 si erreur
+     */
+    function update($id, $user='')
+    {
+        global $langs;
     
-    dolibarr_syslog("Societe::Update");
-
-    $this->id=$id;
-    $this->capital=trim($this->capital);
-    $this->nom=trim($this->nom);
-    $this->adresse=trim($this->adresse);
-    $this->cp=trim($this->cp);
-    $this->ville=trim($this->ville);
-    $this->departement_id=trim($this->departement_id);
-    $this->pays_id=trim($this->pays_id);
-    $this->tel=trim($this->tel);
-    $this->fax=trim($this->fax);
-    $this->url=trim($this->url);
-    $this->siren=trim($this->siren);
-    $this->siret=trim($this->siret);
-    $this->ape=trim($this->ape);
-    $this->prefix_comm=trim($this->prefix_comm);
-    $this->tva_intra=trim($this->tva_intra);
-    $this->capital=trim($this->capital);
-    $this->effectif_id=trim($this->effectif_id);
-    $this->forme_juridique_code=trim($this->forme_juridique_code);
+        dolibarr_syslog("Societe::Update");
     
-    $result = $this->verify();
-
-    if ($result == 0)
-      {
-	dolibarr_syslog("Societe::Update verify ok");
-
-	if (strlen($this->capital) == 0)
-	  {
-	    $this->capital = 0;
-	  }
-	
-	$this->tel = ereg_replace(" ","",$this->tel);
-	$this->tel = ereg_replace("\.","",$this->tel);
-	$this->fax = ereg_replace(" ","",$this->fax);
-	$this->fax = ereg_replace("\.","",$this->fax);
-	
-	/*
-	 * \todo simpliste pour l'instant mais remplit 95% des cas à améliorer
-	 */
-	if ($this->departement_id == -1 && $this->pays_id == 1)
-	  {
-	    if (strlen($this->cp) == 5)
-	      {
-		$depid = departement_rowid($this->db, substr($this->cp,0,2), $this->pays_id);
-		if ($depid > 0)
-		  {
-		    $this->departement_id = $depid;
-		  }
-	      }
-	  }
-	
-	/*
-	 * Supression des if (trim(valeur)) pour construire la requete
-	 * sinon il est impossible de vider les champs
-	 */
-
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
-	$sql .= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
-	
-	$sql .= ",address = '" . addslashes($this->adresse) ."'";
-	
-	if ($this->cp)
-	  { $sql .= ",cp = '" . $this->cp ."'"; }
-	
-	if ($this->ville)
-	  { $sql .= ",ville = '" . addslashes($this->ville) ."'"; }
-	
-	if ($this->departement_id) 
-	  { $sql .= ",fk_departement = '" . $this->departement_id ."'"; }
-	
-	if ($this->pays_id)
-	  { $sql .= ",fk_pays = '" . $this->pays_id ."'"; }
-	      
-	$sql .= ",tel = ".($this->tel?"'".$this->tel."'":"null"); 	
-	$sql .= ",fax = ".($this->fax?"'".$this->fax."'":"null"); 	
-	$sql .= ",url = ".($this->url?"'".$this->url."'":"null"); 	
-
-	$sql .= ",siren = '". $this->siren ."'";
-	$sql .= ",siret = '". $this->siret ."'";
-	$sql .= ",ape   = '". $this->ape   ."'";
-
-	$sql .= ",tva_intra = '" . $this->tva_intra ."'"; 
-	$sql .= ",capital = '" . $this->capital ."'";
-
-	if ($this->prefix_comm) $sql .= ",prefix_comm = '" . $this->prefix_comm ."'";
-
-	if ($this->effectif_id) $sql .= ",fk_effectif = '" . $this->effectif_id ."'";
-	
-	if ($this->typent_id)   $sql .= ",fk_typent = '" . $this->typent_id ."'";
-
-	if ($this->forme_juridique_code) $sql .= ",fk_forme_juridique = '".$this->forme_juridique_code."'";
-	
-	$sql .= ",client = " . $this->client;
-	$sql .= ",fournisseur = " . $this->fournisseur;
-	
-	if ($this->creation_bit || $this->codeclient_modifiable)
-	  {   
-	    // Attention check_codeclient peut modifier le code 
-	    // suivant le module utilisé
-	    
-	    $this->check_codeclient();
-	    
-	    $sql .= ", code_client = ".($this->code_client?"'".$this->code_client."'":"null");
-	    
-	    // Attention check_codecompta_client peut modifier le code 
-	    // suivant le module utilisé
-	    
-	    $this->check_codecompta_client();
-	    
-	    $sql .= ", code_compta = ".($this->code_compta?"'".$this->code_compta."'":"null");
-	  }
-
-	if ($this->creation_bit || $this->codefournisseur_modifiable)
-	  {   
-	    // Attention check_codefournisseur peut modifier le code 
-	    // suivant le module utilisé
-	    
-	    $this->check_codefournisseur();
-	    
-	    $sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".$this->code_fournisseur."'":"null");
-	    
-	    // Attention check_codecompta_fournisseur peut modifier le code 
-	    // suivant le module utilisé
-	    
-	    $this->check_codecompta_fournisseur();
-	    
-	    $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".$this->code_compta_fournisseur."'":"null");
-	  }
-
-
-	
-	if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
-	
-	$sql .= " WHERE idp = '" . $id ."'";
-	
-	if ($this->db->query($sql)) 
-	  {
-        // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $interface->run_triggers('COMPANY_MODIFY',$this,$user,$lang,$conf);
-        // Fin appel triggers
-
-	    $result = 0;
-	  }
-	else
-	  {
-	    if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
-	      {
-		// Doublon
-		$this->error = $langs->trans("ErrorPrefixAlreadyExists",$this->prefix_comm);
-		$result =  -1;
-	      }
-	    else
-	      {
-		dolibarr_syslog("Societe::Update echec sql=$sql");
-		$result =  -2;
-	      }	    
-	  }
-      }
-
-    return $result;
-
-  }
+        $this->id=$id;
+        $this->capital=trim($this->capital);
+        $this->nom=trim($this->nom);
+        $this->adresse=trim($this->adresse);
+        $this->cp=trim($this->cp);
+        $this->ville=trim($this->ville);
+        $this->departement_id=trim($this->departement_id);
+        $this->pays_id=trim($this->pays_id);
+        $this->tel=trim($this->tel);
+        $this->fax=trim($this->fax);
+        $this->url=trim($this->url);
+        $this->siren=trim($this->siren);
+        $this->siret=trim($this->siret);
+        $this->ape=trim($this->ape);
+        $this->prefix_comm=trim($this->prefix_comm);
+        $this->tva_intra=trim($this->tva_intra);
+        $this->capital=trim($this->capital);
+        $this->effectif_id=trim($this->effectif_id);
+        $this->forme_juridique_code=trim($this->forme_juridique_code);
+    
+        $result = $this->verify();
+    
+        if ($result == 0)
+        {
+            dolibarr_syslog("Societe::Update verify ok");
+    
+            if (strlen($this->capital) == 0)
+            {
+                $this->capital = 0;
+            }
+    
+            $this->tel = ereg_replace(" ","",$this->tel);
+            $this->tel = ereg_replace("\.","",$this->tel);
+            $this->fax = ereg_replace(" ","",$this->fax);
+            $this->fax = ereg_replace("\.","",$this->fax);
+    
+            /*
+             * Supression des if (trim(valeur)) pour construire la requete
+             * sinon il est impossible de vider les champs
+             */
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
+            $sql .= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
+    
+            $sql .= ",address = '" . addslashes($this->adresse) ."'";
+    
+            if ($this->cp)
+            { $sql .= ",cp = '" . $this->cp ."'"; }
+    
+            if ($this->ville)
+            { $sql .= ",ville = '" . addslashes($this->ville) ."'"; }
+    
+            $sql .= ",fk_departement = '" . ($this->departement_id?$this->departement_id:'0') ."'";
+            $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
+    
+            $sql .= ",tel = ".($this->tel?"'".$this->tel."'":"null");
+            $sql .= ",fax = ".($this->fax?"'".$this->fax."'":"null");
+            $sql .= ",url = ".($this->url?"'".$this->url."'":"null");
+    
+            $sql .= ",siren = '". $this->siren ."'";
+            $sql .= ",siret = '". $this->siret ."'";
+            $sql .= ",ape   = '". $this->ape   ."'";
+    
+            $sql .= ",tva_intra = '" . $this->tva_intra ."'";
+            $sql .= ",capital = '" . $this->capital ."'";
+    
+            if ($this->prefix_comm) $sql .= ",prefix_comm = '" . $this->prefix_comm ."'";
+    
+            if ($this->effectif_id) $sql .= ",fk_effectif = '" . $this->effectif_id ."'";
+    
+            if ($this->typent_id)   $sql .= ",fk_typent = '" . $this->typent_id ."'";
+    
+            if ($this->forme_juridique_code) $sql .= ",fk_forme_juridique = '".$this->forme_juridique_code."'";
+    
+            $sql .= ",client = " . $this->client;
+            $sql .= ",fournisseur = " . $this->fournisseur;
+    
+            if ($this->creation_bit || $this->codeclient_modifiable)
+            {
+                // Attention check_codeclient peut modifier le code
+                // suivant le module utilis
+    
+                $this->check_codeclient();
+    
+                $sql .= ", code_client = ".($this->code_client?"'".$this->code_client."'":"null");
+    
+                // Attention check_codecompta_client peut modifier le code
+                // suivant le module utilis
+    
+                $this->check_codecompta_client();
+    
+                $sql .= ", code_compta = ".($this->code_compta?"'".$this->code_compta."'":"null");
+            }
+    
+            if ($this->creation_bit || $this->codefournisseur_modifiable)
+            {
+                // Attention check_codefournisseur peut modifier le code
+                // suivant le module utilis
+    
+                $this->check_codefournisseur();
+    
+                $sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".$this->code_fournisseur."'":"null");
+    
+                // Attention check_codecompta_fournisseur peut modifier le code
+                // suivant le module utilis
+    
+                $this->check_codecompta_fournisseur();
+    
+                $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".$this->code_compta_fournisseur."'":"null");
+            }
+    
+    
+    
+            if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
+    
+            $sql .= " WHERE idp = '" . $id ."'";
+    
+            if ($this->db->query($sql))
+            {
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $interface->run_triggers('COMPANY_MODIFY',$this,$user,$lang,$conf);
+                // Fin appel triggers
+    
+                $result = 0;
+            }
+            else
+            {
+                if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+                {
+                    // Doublon
+                    $this->error = $langs->trans("ErrorPrefixAlreadyExists",$this->prefix_comm);
+                    $result =  -1;
+                }
+                else
+                {
+                    dolibarr_syslog("Societe::Update echec sql=$sql");
+                    $result =  -2;
+                }
+            }
+        }
+    
+        return $result;
+    
+    }
   
     /**
      *    \brief      Charge depuis la base l'objet societe
      *    \param      socid       Id de la société à charger en mémoire
      *    \param      user        Objet de l'utilisateur
-     *    \return     int         >0 si ok, <0 si erreur
+     *    \return     int         >0 si ok, <0 si ko
      */
     function fetch($socid, $user=0)
     {
@@ -460,14 +441,13 @@ class Societe {
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
         $sql .= ", ".MAIN_DB_PREFIX."c_effectif as e";
         $sql .= ", ".MAIN_DB_PREFIX."c_pays as p";
-        $sql .= ", ".MAIN_DB_PREFIX."c_departements as d";
         $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
         $sql .= ", ".MAIN_DB_PREFIX."c_forme_juridique as fj";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON s.fk_departement = d.rowid";
         $sql .= " WHERE s.idp = ".$socid;
         $sql .= " AND s.fk_stcomm = st.id";
         $sql .= " AND s.fk_effectif = e.id";
         $sql .= " AND s.fk_pays = p.rowid";
-        $sql .= " AND s.fk_departement = d.rowid";
         $sql .= " AND s.fk_forme_juridique = fj.code";
     
         $resql=$this->db->query($sql);
@@ -568,7 +548,8 @@ class Societe {
             }
             else
             {
-                dolibarr_syslog("Erreur Societe::Fetch aucune societe avec id=".$this->id);
+                dolibarr_syslog("Erreur Societe::Fetch aucune societe avec id=".$this->id." - ".$sql);
+                $this->error="Erreur Societe::Fetch aucune societe avec id=".$this->id." - ".$sql;
                 $result = -2;
             }
     
@@ -578,6 +559,7 @@ class Societe {
         {
             dolibarr_syslog("Erreur Societe::Fetch echec sql=$sql");
             dolibarr_syslog("Erreur Societe::Fetch ".$this->db->error());
+            $this->error=$this->db->error();
             $result = -3;
         }
     

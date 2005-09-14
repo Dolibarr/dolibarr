@@ -21,6 +21,7 @@ ErrorWrongHostParameter=Mauvais paramètre Serveur
 ErrorYourCountryIsNotDefined=Votre pays n'est pas défini. Aller dans Configuration-Général-Editer et resoumettez le formulaire.
 ErrorRecordIsUsedByChild=Impossible de supprimer cet enregistrement. Ce dernier est utilisé en tant que père par au moins un enregistrement fils.
 ErrorWrongValue=Valeur incorrecte
+SeeAbove=Voir ci-dessus
 HomeArea=Espace accueil
 LastAccess=Dernière connexion
 RequestedUrl=Url sollicitée

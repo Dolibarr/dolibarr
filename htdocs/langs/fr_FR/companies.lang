@@ -2,6 +2,7 @@
 ErrorBadEMail=e-mail %s invalide
 ErrorCompanyNameAlreadyExists=Le nom de société %s existe déjà. Veuillez en choisir un autre.
 ErrorPrefixAlreadyExists=Le préfixe %s existe déjà. Veuillez en choisir un autre.
+ErrorSetACountryFirst=Définissez d'abord le pays
 ConfirmDeleteCompany=Êtes-vous sûr de vouloir supprimer cette société et toutes les informations qui en dépendent ?
 MenuNewCompany=Nouvelle société
 MenuNewCustomer=Nouveau client

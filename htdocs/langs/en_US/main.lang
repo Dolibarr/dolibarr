@@ -21,6 +21,7 @@ ErrorWrongHostParameter=Wrong host parameter
 ErrorYourCountryIsNotDefined=Your country is not defined. Go to Home-Setup-Edit and post again the form.
 ErrorRecordIsUsedByChild=Failed to delete this record. This record is used by at least on child records.
 ErrorWrongValue=Wrong value
+SeeAbove=See above
 HomeArea=Home area
 LastAccess=Last access
 RequestedUrl=Requested Url
