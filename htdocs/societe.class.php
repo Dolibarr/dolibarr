@@ -21,7 +21,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -490,7 +489,7 @@ class Societe {
                 $this->departement_id = $obj->fk_departement;
                 $this->pays_id = $obj->fk_pays;
                 $this->pays_code = $obj->fk_pays?$obj->pays_code:'';
-                $this->pays = $obj->fk_pays?$obj->pays:'';
+                $this->pays = $obj->fk_pays?($langs->trans("Country".$obj->pays_code)!="Country".$obj->pays_code?$langs->trans("Country".$obj->pays_code):$obj->pays):'';
     
                 $transcode=$langs->trans("StatusProspect".$obj->fk_stcomm);
                 $libelle=($transcode!="StatusProspect".$obj->fk_stcomm?$transcode:$obj->stcomm);
