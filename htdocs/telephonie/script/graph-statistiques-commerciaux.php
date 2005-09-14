@@ -38,7 +38,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/commercial.ca.cla
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/commercial.gain.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.gain.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/groupes/groupe.ca.class.php");
-
+$year = strftime("%Y",time());
 $error = 0;
 
 /*
@@ -171,4 +171,42 @@ if ($verbose) print "Graph : Commerciaux contrats $file\n";
 $graph = new GraphCommerciauxContrats($db, $file);
 $graph->GraphMakeGraph("signe");
 
+/*
+ * Prises d'ordres
+ *
+ */
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/commercial.po.class.php");
+
+$sql = "SELECT date_format(datepo,'%Y%m'), sum(montant), fk_commercial, fk_distributeur";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre";
+$sql .= " WHERE year(now()) = year(datepo)";
+$sql .= " GROUP BY date_format(datepo,'%Y%m'), fk_commercial, fk_distributeur";
+$sql .= " ORDER BY date_format(datepo,'%Y%m') ASC";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $datas_comm = array();
+  $labels_comm = array();
+  
+  $datas_dist = array();
+  $labels_dist = array();
+
+  while ( $row = $db->fetch_row($resql) )
+    {
+      $datas_comm[$row[2]][$row[0]] += $row[1];
+      $datas_dist[$row[3]][$row[0]] += $row[1];
+    }
+
+  foreach($datas_comm as $comm => $value)
+    {
+      //print $comm."\n";
+
+      $file = $img_root . "commercials/".$comm."/po.$year.mensuel.png";
+      if ($verbose) print "Graph : Lignes commandes$file\n";
+      $graph = new GraphCommercialPO($db, $file);
+      $graph->width = 400;
+      $graph->GraphMakeGraph($value);
+    }
+}
 ?>
