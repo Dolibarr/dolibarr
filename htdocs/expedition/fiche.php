@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 // Code identique a /expedition/commande.php
@@ -490,7 +489,8 @@ else
         $var=true;
         
         print "<br>\n";
-        $html->show_documents('expedition',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
+
+        $html->show_documents('expedition',$filename,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
 
 
 	  /*

@@ -1572,12 +1572,14 @@ class Form
      */
     function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='')
     {
+        // filedir = conf->...dir_ouput."/".get_exdir(id)
+        
         global $langs,$bc;
         $var=true;
  
         $filename = sanitize_string($filename);
-        $relativepath = "${filename}/${filename}.pdf";
-        $fullpathfile = $filedir . "/" . $filename . ".pdf";
+        if ($modulepart != 'expedition') $relativepath = "${filename}/${filename}.pdf";
+        else $relativepath = get_exdir("${filename}")."${filename}.pdf";
                     
         $i=0;
         if (is_dir($filedir))
@@ -1632,9 +1634,7 @@ class Form
                 if (eregi('\-detail\.pdf',$file)) print '<td nowrap>PDF Détaillé</td>';
                 else print '<td nowrap>PDF</td>';
                 
-                $relativepathdetail = "${filename}/$file";
-
-                print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepathdetail).'">'.$file.'</a></td>';
+                print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file.'</a></td>';
                 print '<td align="right">'.filesize($filedir."/".$file). ' bytes</td>';
                 print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file)).'</td>';
                 print '</tr>';

@@ -183,41 +183,42 @@ class Expedition
    * Lit une commande
    *
    */
-  function fetch ($id)
+    function fetch ($id)
     {
-      $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot";
-      $sql .= ", ".$this->db->pdate("e.date_expedition")." as date_expedition ";
-      $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-      $sql .= " WHERE e.rowid = $id";
-
-      $result = $this->db->query($sql) ;
-
-      if ( $result )
-	{
-	  $obj = $this->db->fetch_object();
-
-	  $this->id              = $obj->rowid;
-	  $this->ref             = $obj->ref;
-	  $this->statut          = $obj->fk_statut;
-	  $this->commande_id     = $obj->fk_commande;
-	  $this->user_author_id  = $obj->fk_user_author;
-	  $this->date            = $obj->date_expedition;
-	  $this->entrepot_id     = $obj->fk_entrepot;
-	  $this->db->free();
-	  
-	  if ($this->statut == 0)
-	    $this->brouillon = 1;
-
-	  $file = $this->_dir() . $this->id.".pdf";
-	  $this->pdf_filename = $file;
-	  
-	  return 1;
-	}
-      else
-	{
-	  print $this->db->error();
-	  return -1;
-	}
+        global $conf;
+    
+        $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot";
+        $sql .= ", ".$this->db->pdate("e.date_expedition")." as date_expedition ";
+        $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
+        $sql .= " WHERE e.rowid = $id";
+    
+        $result = $this->db->query($sql) ;
+    
+        if ( $result )
+        {
+            $obj = $this->db->fetch_object($result);
+    
+            $this->id              = $obj->rowid;
+            $this->ref             = $obj->ref;
+            $this->statut          = $obj->fk_statut;
+            $this->commande_id     = $obj->fk_commande;
+            $this->user_author_id  = $obj->fk_user_author;
+            $this->date            = $obj->date_expedition;
+            $this->entrepot_id     = $obj->fk_entrepot;
+            $this->db->free();
+    
+            if ($this->statut == 0) $this->brouillon = 1;
+    
+            $file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id) . "/" . $this->id.".pdf";
+            $this->pdf_filename = $file;
+    
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
     }
 
   /**
@@ -407,50 +408,42 @@ class Expedition
 	  print $this->db->error() . ' in ' . $sql;
 	}
     }
-  /*
-   * Renvoie le répertoire ou est/sera stocké le document
-   */
-  function _dir()
-  {
-    $dir = DOL_DATA_ROOT . "/expedition/" . get_exdir($this->id) ;
-    return $dir;
-  }
 
-  /**
-   * Genere le pdf
-   *
-   *
-   */
-  function PdfWrite()
+    /**
+     * Genere le pdf
+     */
+    function PdfWrite()
     {
-      //EXPEDITION_ADDON_PDF
-
-      if (defined("EXPEDITION_ADDON_PDF") && strlen(EXPEDITION_ADDON_PDF) > 0)
-	{
-	  $module_file_name = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition_".EXPEDITION_ADDON_PDF.".modules.php";
-            
-	  $mod = "pdf_expedition_".EXPEDITION_ADDON_PDF;
-	  $this->fetch_commande();
-
-	  require_once $module_file_name;
-	  
-	  $pdf = new $mod($this->db);
-	  
-	  $dir = $this->_dir();
-
-	  if (! file_exists($dir))
-	    {
-	      create_exdir($dir);
-	    }
-	  
-	  $file = $dir . $this->id . ".pdf";
-	  
-	  if (file_exists($dir))
-	    {
-	      $pdf->generate($this, $file);
-	    }
-	}
+        global $conf;
+    
+        //EXPEDITION_ADDON_PDF
+        if (defined("EXPEDITION_ADDON_PDF") && strlen(EXPEDITION_ADDON_PDF) > 0)
+        {
+            $module_file_name = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/pdf_expedition_".EXPEDITION_ADDON_PDF.".modules.php";
+    
+            $mod = "pdf_expedition_".EXPEDITION_ADDON_PDF;
+            $this->fetch_commande();
+    
+            require_once($module_file_name);
+    
+            $pdf = new $mod($this->db);
+    
+            $dir = $conf->expedition->dir_output . "/" .get_exdir($this->id);
+    
+            if (! file_exists($dir))
+            {
+                create_exdir($dir);
+            }
+    
+            $file = $dir . $this->id . ".pdf";
+    
+            if (file_exists($dir))
+            {
+                $pdf->generate($this, $file);
+            }
+        }
     }
+
   /*
    * Lit la commande associée
    *
