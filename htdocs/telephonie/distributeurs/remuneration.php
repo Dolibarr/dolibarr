@@ -120,7 +120,7 @@ if ($_GET["id"])
       $num = $db->num_rows($resql);
       $i = 0;
       
-      print_barre_liste("Rémunération sur avance pour $mois", $page, "po.php", "", $sortfield, $sortorder, '', $num);
+      print_barre_liste("Rémunération sur prise d'ordre pour $mois", $page, "po.php", "", $sortfield, $sortorder, '', $num);
       
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre"><td>Client</td>';
@@ -174,7 +174,7 @@ if ($_GET["id"])
       $num = $db->num_rows($resql);
       $i = 0;
       
-      print_barre_liste("Rémunération sur consommations pour $mois", $page, "po.php", "", $sortfield, $sortorder, '', $num);
+      print_barre_liste("Rémunération sur CA pour $mois", $page, "po.php", "", $sortfield, $sortorder, '', $num);
       
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre"><td>Client</td>';
