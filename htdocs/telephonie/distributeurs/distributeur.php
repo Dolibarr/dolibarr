@@ -184,7 +184,7 @@ if ($_GET["id"])
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
   print '<tr class="liste_titre">';
-  print '<td>Date</td><td align="right">Commissions</td></tr>';
+  print '<td>Date</td><td align="right">Rémunérations</td></tr>';
 
   $sql = "SELECT c.date, c.montant";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission as c";  
