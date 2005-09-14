@@ -108,9 +108,9 @@ if ($_GET["id"] && $_GET["did"])
 
   print '</td><td width="50%" valign="top">';
 
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$commercial->id.'/clients.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n";
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$commercial->id.'/clients.hebdomadaire.png" alt="Nouveaux clients" title="Nouveaux clients"><br /><br />'."\n";
 
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$commercial->id.'/clientsmoyenne.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n";
+  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$commercial->id.'/clientsmoyenne.hebdomadaire.png" alt="Nouveaux clients (moy)" title="Nouveaux clients (moy)"><br /><br />'."\n";
 
   print '</td></tr>';
   print '</table></div>';
