@@ -21,21 +21,28 @@
  */
 require("./pre.inc.php");
 
-
 if (!$user->rights->telephonie->lire) accessforbidden();
 
-llxHeader('','Telephonie - Statistiques - Distributeur');
+if ($user->distributeur_id && $user->responsable_distributeur_id = 0)
+{
+  $_GET["id"] = $user->distributeur_id;
+}
+
+if ($user->responsable_distributeur_id > 0)
+{
+  if (!in_array($_GET["id"], $user->responsable_distributeur_commerciaux))
+    {
+      accessforbidden();
+    }
+}
+
+llxHeader('','Telephonie - Distributeur - Commercial');
 
 /*
  *
  */
 $h = 0;
 $year = strftime("%Y",time());
-
-if ($user->distributeur_id)
-{
-  $_GET["id"] = $user->distributeur_id;
-}
 
 if ($_GET["id"] && $_GET["did"])
 {
@@ -53,11 +60,11 @@ if ($_GET["id"] && $_GET["did"])
   $head[$h][1] = $commercial->prenom ." ". $commercial->nom;
   $hselected = $h;
   $h++;
-  /*
-  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/po.php?id='.$distri->id;
-  $head[$h][1] = "Prises d'ordre";
+  
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/comm/ca.php?id='.$commercial->id.'&amp;did='.$_GET["did"];
+  $head[$h][1] = "Chiffre d'affaire";
   $h++;
-
+  /*
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/distributeurs/stats.php?id='.$distri->id;
   $head[$h][1] = "Statistiques";
   $h++;
