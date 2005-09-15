@@ -151,7 +151,7 @@ if ($resql)
         print "</td>\n";
         
         // Auteur
-        print '<td align="center"><a href="'.DOL_URL_ROOT."/user/fiche.php?id=".$obj->fk_user."'>".img_object($langs->trans("ShowUser"),"user").' '.$obj->code."</a></td>\n";
+        print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->code."</a></td>\n";
 
         // Date creation
         print '<td align="center">'.dolibarr_print_date($obj->dateb) ."</td>";
