@@ -118,7 +118,7 @@ while (($file = readdir($handle))!==false)
                       while ($i < $num ) 
                         {
                           $obj = $db->fetch_object($result);
-                          print '<td>'.img_object('',$mailmodule->picto).' '.$obj->label.'</td><td>'.$obj->nb.'<td>';
+                          print '<td>'.img_object('',$mailmodule->picto).' '.$obj->label.'</td><td align="right">'.$obj->nb.'<td>';
                           $i++;
                         }
                     
@@ -156,7 +156,7 @@ if ($result)
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td colspan="2">'.$langs->trans("LastMailings",10).'</td>';
-  print '<td align="right">'.$langs->trans("NbOfEMails").'</td>';
+  print '<td align="center">'.$langs->trans("NbOfEMails").'</td>';
   print '<td align="center">'.$langs->trans("Status").'</td></tr>';
 
   $num = $db->num_rows($result);
@@ -173,7 +173,7 @@ if ($result)
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
 	  print '<td>'.$obj->titre.'</td>';
-	  print '<td align="right">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
+	  print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
 	  $mail=new Mailing($db);
 	  print '<td align="center">'.$mail->statuts[$obj->statut].'</td>';
       print '</tr>';

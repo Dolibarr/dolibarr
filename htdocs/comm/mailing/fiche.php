@@ -99,22 +99,30 @@ if ($_POST["action"] == 'send')
 // Action ajout mailing
 if ($_POST["action"] == 'add')
 {
-  $mil = new Mailing($db);
+    $message='';
+    
+    $mil = new Mailing($db);
 
-  $mil->email_from   = $_POST["from"];
-  $mil->titre        = $_POST["titre"];
-  $mil->sujet        = $_POST["sujet"];
-  $mil->body         = $_POST["body"];
+    $mil->email_from   = trim($_POST["from"]);
+    $mil->titre        = trim($_POST["titre"]);
+    $mil->sujet        = trim($_POST["sujet"]);
+    $mil->body         = trim($_POST["body"]);
 
-  if ($mil->create($user) >= 0)
+    if (! $mil->titre) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTitle"));
+    if (! $mil->sujet) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
+
+    if (! $message)
     {
-      Header("Location: fiche.php?id=".$mil->id);
+        if ($mil->create($user) >= 0)
+        {
+            Header("Location: fiche.php?id=".$mil->id);
+            exit;
+        }
+        $message=$mil->error;
     }
-  else
-   {
-    $message='<div class="error">'.$mil->error.'</div>';
+
+    $message='<div class="error">'.$message.'</div>';
     $_GET["action"]="create";
-   }
 }
 
 // Action mise a jour mailing
@@ -229,7 +237,13 @@ if ($_GET["action"] == 'create')
     print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->mailing->email_from.'"></td></tr>';
     print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value=""></td></tr>';
     print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value=""></td></tr>';
-    print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'</td><td><textarea cols="70" rows="10" name="body"></textarea></td></tr>';
+    print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
+    print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
+    print '__EMAIL__ = '.$langs->trans("EMail").'<br>';
+    print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
+    print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
+    print '</td>';
+    print '<td><textarea cols="70" rows="10" name="body"></textarea></td></tr>';
     print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></td></tr>';
     print '</table>';
     print '</form>';

@@ -53,8 +53,8 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 
 class mailing_poire extends MailingTargets
 {
-    var $name='ContactCustomers';                       // Identifiant du module mailing
-    var $desc='Tous les contacts uniques de toutes les sociétés clientes'; // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $name='ContactCompanies';                       // Identifiant du module mailing
+    var $desc='Contacts des sociétés';                  // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array("commercial");            // Module mailing actif si modules require_module actifs
     var $require_admin=0;                               // Module mailing actif pour user admin ou non
     var $picto='contact';
@@ -71,8 +71,8 @@ class mailing_poire extends MailingTargets
         $this->db=$DB;
 
         // Liste des tableaux des stats espace mailing
-        $this->statssql[0]="SELECT '".$langs->trans("Customers")."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE client = 1";
-        $this->statssql[1]="SELECT '".$langs->trans("NbOfCustomersContacts")."' as label, count(distinct(c.email)) as nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = c.fk_soc AND s.client = 1 AND c.email != ''";
+        //$this->statssql[0]="SELECT '".$langs->trans("Customers")."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE client = 1";
+        $this->statssql[0]="SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label, count(distinct(c.email)) as nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = c.fk_soc AND s.client = 1 AND c.email != ''";
     }
     
     function getNbOfRecipients()
@@ -88,15 +88,58 @@ class mailing_poire extends MailingTargets
         return parent::getNbOfRecipients($sql); 
     }
     
-    function add_to_target($mailing_id)
+    /**
+     *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
+     *                  des destinataires de mailings
+     *      \return     string      Retourne zone select
+     */
+    function formFilter()
     {
-        // La requete doit retourner: email, fk_contact, name, firstname
-        $sql = "SELECT c.email as email, c.idp as fk_contact, c.name as name, c.firstname as firstname";
+        global $langs;
+        $langs->load("commercial");
+        $langs->load("suppliers");
+        
+        $s='';
+        $s.='<select name="filter" class="flat">';
+        $s.='<option value="all">'.$langs->trans("All").'</option>';
+        $s.='<option value="prospects">'.$langs->trans("Prospects").'</option>';
+        $s.='<option value="customers">'.$langs->trans("Customers").'</option>';
+        $s.='<option value="suppliers">'.$langs->trans("Suppliers").'</option>';
+        $s.='</select>';
+        return $s;
+    }
+    
+    
+    /**
+     *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
+     *      \return     string      Url lien
+     */
+    function url($id)
+    {
+        return '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$id.'">'.img_object('',"contact").'</a>';
+    }
+    
+    
+    /**
+     *    \brief      Ajoute destinataires dans table des cibles
+     *    \param      mailing_id    Id du mailing concerné
+     *    \param      filterarray   Requete sql de selection des destinataires
+     *    \return     int           < 0 si erreur, nb ajout si ok
+     */
+    function add_to_target($mailing_id,$filtersarray=array())
+    {
+        // La requete doit retourner: id, email, fk_contact, name, firstname
+        $sql = "SELECT s.idp as id, c.email as email, c.idp as fk_contact, c.name as name, c.firstname as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE s.idp = c.fk_soc";
-        $sql .= " AND s.client = 1";
         $sql .= " AND c.email != ''";
+        foreach($filtersarray as $key)
+        {
+            if ($key == 'prospects') $sql.= " AND s.client=2";
+            if ($key == 'customers') $sql.= " AND s.client=1";
+            if ($key == 'suppliers') $sql.= " AND s.fournisseur=1";
+        }
         $sql .= " ORDER BY c.email";
 
         return parent::add_to_target($mailing_id, $sql);

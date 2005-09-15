@@ -31,6 +31,7 @@ create table llx_mailing_cibles
   prenom             varchar(160),
   email              varchar(160) NOT NULL,
   statut             smallint NOT NULL DEFAULT 0,
+  url                varchar(160),
   date_envoi         datetime
 )type=innodb;
 

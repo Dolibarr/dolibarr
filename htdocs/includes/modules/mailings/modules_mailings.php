@@ -79,11 +79,22 @@ class MailingTargets
             $obj = $this->db->fetch_object($result);
             return $obj->nb;
         }
-        else {
+        else
+        {
             return -1;
         }
     }
 
+    /**
+     *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
+     *                  des destinataires de mailings
+     *      \return     string      Retourne zone select
+     */
+    function formFilter()
+    {
+        return '&nbsp;';
+    }
+    
     /**
      *      \brief      Met a jour nombre de destinataires
      *      \param      mailing_id          Id du mailing concerné
@@ -141,7 +152,7 @@ class MailingTargets
                 $obj = $this->db->fetch_object($result);
                 if ($old <> $obj->email)
                 {
-                    $cibles[$j] = array($obj->email,$obj->fk_contact,$obj->name,$obj->firstname);
+                    $cibles[$j] = array($obj->email,$obj->fk_contact,$obj->name,$obj->firstname,$this->url($obj->id));
                     $old = $obj->email;
                     $j++;
                 }
@@ -156,6 +167,8 @@ class MailingTargets
             return -1;
         }
 
+        $this->db->begin();
+        
         // Insère destinataires de cibles dans table
         $j = 0;
         $num = sizeof($cibles);
@@ -164,12 +177,14 @@ class MailingTargets
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
             $sql .= " (fk_mailing, ";
             if ($cibles[$i][1]) $sql .= "fk_contact, ";
-            $sql .= "nom, prenom, email)";
+            $sql .= "nom, prenom, email, url)";
             $sql .= " VALUES (".$mailing_id.",";
             if ($cibles[$i][1]) $sql .=  $cibles[$i][1] .",";
-            $sql .=  "'".$cibles[$i][2] ."',";
-            $sql .=  "'".$cibles[$i][3] ."',";
-            $sql .=  "'".$cibles[$i][0] ."')";
+            $sql .=  "'".addslashes($cibles[$i][2])."',";
+            $sql .=  "'".addslashes($cibles[$i][3])."',";
+            $sql .=  "'".addslashes($cibles[$i][0])."',";
+            $sql .=  "'".addslashes($cibles[$i][4])."')";
+
             $result=$this->db->query($sql);
             if ($result)
             {
@@ -177,10 +192,12 @@ class MailingTargets
             }
             else
             {
-                if ($this->db->errno() != DB_ERROR_RECORD_ALREADY_EXISTS)
+                if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
                     // Si erreur autre que doublon
                     dolibarr_syslog($this->db->error());
+                    $this->error=$this->db->error();
+                    $this->db->rollback();
                     return -1;
                 }
             }
@@ -190,6 +207,7 @@ class MailingTargets
 
         $this->update_nb($mailing_id);
 
+        $this->db->commit();
         return $j;
     }
 

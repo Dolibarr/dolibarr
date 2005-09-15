@@ -2,6 +2,7 @@
 MemberCard=Fiche adhérent
 Member=Adhérent
 Members=Adhérents
+FundationMembers=Membres de l'association
 Attributs=Attributs
 Person=Personne
 ErrorMemberTypeNotDefined=Le type d'adhérent n'est pas choisi
@@ -61,3 +62,5 @@ ConfirmResiliateMember=Etes-vous sûr de vouloir résilier cet adhérent ?
 DeleteMember=Effacer un membre
 ConfirmDeleteMember=Etes-vous sûr de vouloir effacer ce membre (Effacer un membre efface aussi toutes ses cotisations) ?
 Filehtpasswd=Fichier htpasswd
+ValidateMember=Valider un adhérent
+ConfirmValidateMember=Etes-vous sûr de vouloir valider cet adhérent ?

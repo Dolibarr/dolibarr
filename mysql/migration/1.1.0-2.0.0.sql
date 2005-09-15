@@ -620,6 +620,8 @@ create table llx_mailing_cibles
 
 )type=innodb;
 
+alter table llx_mailing_cibles ADD url varchar(160);
+
 alter table llx_mailing_cibles ADD UNIQUE uk_mailing_cibles (fk_mailing, email);
 
 --

@@ -53,7 +53,7 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 class mailing_pomme extends MailingTargets
 {
     var $name='DolibarrUsers';                      // Identifiant du module mailing
-    var $desc='Tous les utilisateurs avec emails de Dolibarr';  // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $desc='Utilisateurs de Dolibarr avec emails';  // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array();                    // Module mailing actif si modules require_module actifs
     var $require_admin=1;                           // Module mailing actif pour user admin ou non
     var $picto='user';
@@ -85,11 +85,28 @@ class mailing_pomme extends MailingTargets
 
         return parent::getNbOfRecipients($sql); 
     }
+
     
-    function add_to_target($mailing_id)
+    /**
+     *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
+     *      \return     string      Url lien
+     */
+    function url($id)
     {
-        // La requete doit retourner: email, fk_contact, name, firstname
-        $sql = "SELECT u.email as email, null as fk_contact, u.name as name, u.firstname as firstname";
+        return '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$id.'">'.img_object('',"user").'</a>';
+    }
+
+    
+    /**
+     *    \brief      Ajoute destinataires dans table des cibles
+     *    \param      mailing_id    Id du mailing concerné
+     *    \param      filterarray   Requete sql de selection des destinataires
+     *    \return     int           < 0 si erreur, nb ajout si ok
+     */
+    function add_to_target($mailing_id,$filtersarray=array())
+    {
+        // La requete doit retourner: id, email, fk_contact, name, firstname
+        $sql = "SELECT u.rowid as id, u.email as email, null as fk_contact, u.name as name, u.firstname as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
         $sql .= " ORDER BY u.email";

@@ -68,12 +68,16 @@ if ($_GET["action"] == 'add')
     $classname = "mailing_".$modulename;
     require_once($file);
     
+    $filtersarray=array();
+    if (isset($_POST["filter"])) $filtersarray[0]=$_POST["filter"];
+    
     $obj = new $classname($db);
-    $result=$obj->add_to_target($_GET["rowid"]);
-   
+    $result=$obj->add_to_target($_GET["rowid"],$filtersarray);
+
     if ($result > 0)
     {
         Header("Location: cibles.php?id=".$_GET["rowid"]);
+        exit;
     }
     if ($result == 0)
     {
@@ -164,11 +168,13 @@ if ($mil->fetch($_GET["id"]) == 0)
     if ($mesg) print "$mesg<br>\n";
 
     // Affiche les listes de sélection
-    if ($mil->statut == 0) {
+    if ($mil->statut == 0)
+    {
         print '<table class="noborder" width=\"100%\">';
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans("RecipientSelectionModules").'</td>';
         print '<td align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
+        print '<td align="center">'.$langs->trans("Parameters").'</td>';
         print '<td align="center" width="120">';
         if ($mil->statut == 0) {
            print $langs->trans("Actions");
@@ -211,7 +217,9 @@ if ($mil->fetch($_GET["id"]) == 0)
                     {
                         $var = !$var;
                         print '<tr '.$bc[$var].'>';
-            
+                        
+                        if ($mil->statut == 0) print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST">';
+                        
                         print '<td>';
                         print img_object('',$obj->picto).' '.$obj->getDesc();
                         print '</td>';
@@ -221,12 +229,16 @@ if ($mil->fetch($_GET["id"]) == 0)
                         print $modulename;
                         print "</td>";
                         */
-                        print '<td align="center">'.$obj->getNbOfRecipients().'</td>';
+                        print '<td align="center">'.($obj->getNbOfRecipients()).'</td>';
+
+                        print '<td align="center">';
+                        print $obj->formFilter();
+                        print '</td>';
         
                         print '<td align="center">';
                         if ($mil->statut == 0)
                         {
-                            print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST"><input type="submit" class="button" value="'.$langs->trans("Add").'"></form>';
+                            print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                         }
                         else
                         {
@@ -235,6 +247,8 @@ if ($mil->fetch($_GET["id"]) == 0)
                         }
                         print '</td>';
 
+                        if ($mil->statut == 0) print '</form>';
+                        
                         print "</tr>\n";
                     }
                 }
@@ -244,7 +258,7 @@ if ($mil->fetch($_GET["id"]) == 0)
 
         $var=!$var;
         print '<tr '.$bc[$var].'>';
-        print '<td>&nbsp;</td><td>&nbsp;</td><td align="center"><form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST"><input type="submit" class="button" value="'.$langs->trans("TargetsReset").'"></form></td>';
+        print '<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td align="center"><form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST"><input type="submit" class="button" value="'.$langs->trans("TargetsReset").'"></form></td>';
         print '</tr>';
 
         print '</table><br>';
@@ -252,7 +266,7 @@ if ($mil->fetch($_GET["id"]) == 0)
     
 
     // Liste des destinataires sélectionnés
-    $sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.statut, mc.date_envoi";
+    $sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.statut, mc.date_envoi, mc.url";
     $sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
     $sql .= " WHERE mc.fk_mailing=".$mil->id;
     if ($sortfield) { $sql .= " ORDER BY $sortfield $sortorder"; }
@@ -271,6 +285,7 @@ if ($mil->fetch($_GET["id"]) == 0)
         print_liste_field_titre($langs->trans("Lastname"),"cibles.php","mc.nom",$addu,"","",$sortfield);
         print_liste_field_titre($langs->trans("Firstname"),"cibles.php","mc.prenom",$addu,"","",$sortfield);
         print_liste_field_titre($langs->trans("EMail"),"cibles.php","mc.email",$addu,"","",$sortfield);
+        print '<td align="center">&nbsp;</td>';
         print '<td align="center">'.$langs->trans("Status").'</td>';
         if ($mil->statut == 0)
         {
@@ -284,7 +299,7 @@ if ($mil->fetch($_GET["id"]) == 0)
         $var = true;
         $i = 0;
     
-        while ($i < $num )
+        while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
             $var=!$var;
@@ -293,6 +308,7 @@ if ($mil->fetch($_GET["id"]) == 0)
             print '<td>'.stripslashes($obj->nom).'</td>';
             print '<td>'.stripslashes($obj->prenom).'</td>';
             print '<td>'.$obj->email.'</td>';
+            print '<td>'.$obj->url.'</td>';
             if ($mil->statut == 0)
             {
                 print '<td align="center">'.$langs->trans("MailingStatusNotSent").'</td>';

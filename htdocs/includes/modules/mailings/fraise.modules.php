@@ -52,10 +52,10 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 
 class mailing_fraise extends MailingTargets
 {
-    var $name='MembersValidated';                   // Identifiant du module mailing
-    var $desc='Tous les membres à jour';            // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
-    var $require_module=array('adherent');          // Module mailing actif si modules require_module actifs
-    var $require_admin=0;                           // Module mailing actif pour user admin ou non
+    var $name='FundationMembers';                    // Identifiant du module mailing
+    var $desc='Membres de l\'association';           // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $require_module=array('adherent');  // Module mailing actif si modules require_module actifs
+    var $require_admin=0;                   // Module mailing actif pour user admin ou non
     var $picto='user';
     
     var $db;
@@ -70,7 +70,7 @@ class mailing_fraise extends MailingTargets
         $this->db=$DB;
 
         // Liste des tableaux des stats espace mailing
-        $this->statssql[0]="SELECT '".$langs->trans("MembersStatusValidated")."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
+        $this->statssql[0]="SELECT '".$langs->trans("FundationMembers")."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
     }
     
     function getNbOfRecipients()
@@ -83,13 +83,53 @@ class mailing_fraise extends MailingTargets
         return parent::getNbOfRecipients($sql); 
     }
     
-    function add_to_target($mailing_id)
+    /**
+     *      \brief      Affiche formulaire de filtre qui apparait dans page de selection
+     *                  des destinataires de mailings
+     *      \return     string      Retourne zone select
+     */
+    function formFilter()
     {
-        // La requete doit retourner: email, fk_contact, name, firstname
-        $sql = "SELECT a.email as email, null as fk_contact, a.nom as name, a.prenom as firstname";
-        $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        $sql .= " WHERE a.email IS NOT NULL AND a.statut=1";
-        $sql .= " ORDER BY a.email";
+        global $langs;
+        $s='';
+        $s.='<select name="filter" class="flat">';
+        $s.='<option value="-1">'.$langs->trans("ToValidate").'</option>';
+        $s.='<option value="1" selected="true">'.$langs->trans("Validated").'</option>';
+        $s.='<option value="0">'.$langs->trans("Resiliated").'</option>';
+        $s.='</select>';
+        return $s;
+    }
+    
+    
+    /**
+     *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
+     *      \return     string      Url lien
+     */
+    function url($id)
+    {
+        return '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$id.'">'.img_object('',"user").'</a>';
+    }
+    
+    
+    /**
+     *    \brief      Ajoute destinataires dans table des cibles
+     *    \param      mailing_id    Id du mailing concerné
+     *    \param      filterarray   Requete sql de selection des destinataires
+     *    \return     int           < 0 si erreur, nb ajout si ok
+     */
+    function add_to_target($mailing_id,$filtersarray=array())
+    {
+        // La requete doit retourner: id, email, fk_contact, name, firstname
+        $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, a.nom as name, a.prenom as firstname";
+        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
+        $sql.= " WHERE a.email IS NOT NULL";
+        foreach($filtersarray as $key)
+        {
+            if ($key == -1) $sql.= " AND a.statut=-1";
+            if ($key == 0)  $sql.= " AND a.statut=0";
+            if ($key == 1)  $sql.= " AND a.statut=1";
+        }
+        $sql.= " ORDER BY a.email";
 
         return parent::add_to_target($mailing_id, $sql);
     }
