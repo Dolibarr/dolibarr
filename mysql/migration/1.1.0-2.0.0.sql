@@ -1833,3 +1833,5 @@ insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (2
 
 insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (80, 'PROJECTLEADER', 'projet',  'Chef de Projet', 1);
 	
+alter table llx_commande add ref_client varchar(30);
+alter table llx_facture add ref_client varchar(30);

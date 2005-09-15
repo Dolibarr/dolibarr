@@ -19,7 +19,7 @@
  * $Id$
  * $Source$
  */
- 
+
 /**
         \file       htdocs/commande/index.php
         \ingroup    compta
@@ -93,9 +93,9 @@ if ( $db->query($sql) )
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 1";
-$sql .= " ORDER BY c.rowid ASC";
+$sql .= " ORDER BY c.rowid DESC";
 
-if ( $db->query($sql) ) 
+if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   if ($num)
@@ -109,7 +109,7 @@ if ( $db->query($sql) )
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
+	  print "<tr $bc[$var]><td><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
@@ -131,7 +131,7 @@ if ($socidp)
   $sql .= " AND c.fk_soc = $socidp";
 }
 $sql .= " ORDER BY c.rowid DESC";
-if ( $db->query($sql) ) 
+if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   if ($num)
@@ -168,7 +168,7 @@ $sql.= " ORDER BY c.tms DESC";
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
-if ($resql) 
+if ($resql)
 {
   $num = $db->num_rows($resql);
   if ($num)
@@ -182,7 +182,7 @@ if ($resql)
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object($resql);
-	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrders"),"order").' ';
+	  print "<tr $bc[$var]><td><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrders"),"order").' ';
 	  print $obj->ref.'</a></td>';
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
 	  print '<td>'.dolibarr_print_date($obj->datec).'</td>';

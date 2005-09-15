@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,154 +29,168 @@
 */
 
 
-require("./pre.inc.php");
+require('./pre.inc.php');
 
-$langs->load("orders");
+$langs->load('orders');
 
-if (!$user->rights->commande->lire) accessforbidden();
+if (!$user->rights->commande->lire)
+	accessforbidden();
 
-$sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
-$snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
+$sref=isset($_GET['sref'])?$_GET['sref']:$_POST['sref'];
+$sref_client=isset($_GET['sref_client'])?$_GET['sref_client']:(isset($_POST['sref_client'])?$_POST['sref_client']:'');
+$snom=isset($_GET['snom'])?$_GET['snom']:$_POST['snom'];
+$sall=isset($_GET['sall'])?$_GET['sall']:$_POST['sall'];
 
 // Sécurité accés client
-$socidp = $_GET["socidp"];
-if ($user->societe_id > 0) 
+$socidp = $_GET['socidp'];
+if ($user->societe_id > 0)
 {
-  $action = '';
-  $socidp = $user->societe_id;
+	$action = '';
+	$socidp = $user->societe_id;
 }
 
 
 llxHeader();
 
-$begin=$_GET["begin"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
+$begin=$_GET['begin'];
+$sortorder=$_GET['sortorder'];
+$sortfield=$_GET['sortfield'];
 
-if (! $sortfield) $sortfield="c.rowid";
-if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield='c.rowid';
+if (! $sortorder) $sortorder='DESC';
 
 $limit = $conf->liste_limit;
-$offset = $limit * $_GET["page"] ;
+$offset = $limit * $_GET['page'] ;
 
-$sql = "SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande, c.fk_statut" ;
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-$sql.= " WHERE c.fk_soc = s.idp";
+$sql = 'SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,'.$db->pdate('c.date_commande').' as date_commande, c.fk_statut' ;
+$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
+$sql.= ' WHERE c.fk_soc = s.idp';
 if ($sref)
 {
-    $sql .= " AND c.ref like '%".$sref."%'";
+	$sql .= " AND c.ref like '%".$sref."%'";
 }
 if ($sall)
 {
-    $sql .= " AND (c.ref like '%".$sall."%' OR c.note like '%".$sall."%')";
+	$sql .= " AND (c.ref like '%".$sall."%' OR c.note like '%".$sall."%')";
 }
 if ($socidp)
-{ 
-  $sql .= " AND s.idp = $socidp"; 
-}
-if ($_GET["month"] > 0)
 {
-  $sql .= " AND date_format(c.date_commande, '%Y-%m') = '$year-$month'";
+	$sql .= ' AND s.idp = '.$socidp;
 }
-if ($_GET["year"] > 0)
+if ($_GET['month'] > 0)
 {
-  $sql .= " AND date_format(c.date_commande, '%Y') = $year";
+	$sql .= " AND date_format(c.date_commande, '%Y-%m') = '$year-$month'";
 }
-if (isset($_GET["status"]))
+if ($_GET['year'] > 0)
 {
-  $sql .= " AND fk_statut = ".$_GET["status"];
+	$sql .= " AND date_format(c.date_commande, '%Y') = $year";
 }
-if (isset($_GET["afacturer"]))
+if (isset($_GET['status']))
 {
-  $sql .= " AND c.facture = 0";
+	$sql .= " AND fk_statut = ".$_GET['status'];
 }
-if (strlen($_POST["sf_ref"]) > 0)
+if (isset($_GET['afacturer']))
 {
-  $sql .= " AND c.ref like '%".$_POST["sf_ref"] . "%'";
+	$sql .= ' AND c.facture = 0';
+}
+if (strlen($_POST['sf_ref']) > 0)
+{
+	$sql .= " AND c.ref like '%".$_POST['sf_ref'] . "%'";
+}
+if (!empty($snom))
+{
+	$sql .= ' AND s.nom like \'%'.$snom.'%\'';
+}
+if (!empty($sref_client))
+{
+	$sql .= ' AND c.ref_client like \'%'.$sref_client.'%\'';
 }
 
-$sql .= " ORDER BY $sortfield $sortorder";
+$sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
 $sql .= $db->plimit($limit + 1,$offset);
 
 $resql = $db->query($sql);
 
 if ($resql)
 {
-
-  if ($socidp)
-    {
-      $soc = new Societe($db);
-      $soc->fetch($socidp);
-      $title = $langs->trans("ListOfOrders") . " - ".$soc->nom;
-    }
-  else
-    {
-      $title = $langs->trans("ListOfOrders");
-    }
-  if ($_GET["status"] == 3) $title.=" - ".$langs->trans("StatusOrderToBill");
-  
-  $num = $db->num_rows($resql);
-  print_barre_liste($title, $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
-    
-  $i = 0;
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","c.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"liste.php","c.date_commande","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"liste.php","c.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
-  print "</tr>\n";
-  $var=True;
-  
-  $generic_commande = new Commande($db);
-
-  while ($i < min($num,$limit))
-    {
-      $objp = $db->fetch_object($resql);
-      
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objp->ref."</a></td>\n";
-      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a></td>\n";
-      
-      $now = time();
-      $lim = 3600 * 24 * 15 ;
-      
-      if ( ($now - $objp->date_commande) > $lim && $objp->statutid == 1 )
+	if ($socidp)
 	{
-	  print "<td><b> &gt; 15 jours</b></td>";
+		$soc = new Societe($db);
+		$soc->fetch($socidp);
+		$title = $langs->trans('ListOfOrders') . ' - '.$soc->nom;
 	}
-      else
+	else
 	{
-	  print "<td>&nbsp;</td>";
+		$title = $langs->trans('ListOfOrders');
 	}
-      
-      print "<td align=\"right\">";
-      $y = strftime("%Y",$objp->date_commande);
-      $m = strftime("%m",$objp->date_commande);
-      
-      print strftime("%d",$objp->date_commande)."\n";
-      print " <a href=\"liste.php?year=$y&amp;month=$m\">";
-      print strftime("%B",$objp->date_commande)."</a>\n";
-      print " <a href=\"liste.php?year=$y\">";
-      print strftime("%Y",$objp->date_commande)."</a></td>\n";      
-      
-      print '<td align="center">'.$generic_commande->status_label_short[$objp->fk_statut].'</td>';
-      print "</tr>\n";
-      
-      $total = $total + $objp->price;
-      $subtotal = $subtotal + $objp->price;
-      
-      $i++;
-    }
-  
-  print "</table>";
-  $db->free($resql);
+	if ($_GET['status'] == 3)
+		$title.=' - '.$langs->trans('StatusOrderToBill');
+	$num = $db->num_rows($resql);
+	print_barre_liste($title, $_GET['page'], 'liste.php','&amp;socidp='.$socidp,$sortfield,$sortorder,'',$num);
+	$i = 0;
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans('Ref'),'liste.php','c.ref','','&amp;socidp='.$socidp,'width="25%"',$sortfield);
+	print_liste_field_titre($langs->trans('Company'),'liste.php','s.nom','','&amp;socidp='.$socidp,'width="30%"',$sortfield);
+	print_liste_field_titre($langs->trans('RefCdeClient'),'liste.php','c.ref_client','','&amp;socidp='.$socidp,'width="15%"',$sortfield);
+	print_liste_field_titre($langs->trans('Date'),'liste.php','c.date_commande','','&amp;socidp='.$socidp, 'width="20%" align="right" colspan="2"',$sortfield);
+	print_liste_field_titre($langs->trans('Status'),'liste.php','c.fk_statut','','&amp;socidp='.$socidp,'width="10%" align="center"',$sortfield);
+	print '</tr>';
+	// Lignes des champs de filtre
+	print '<form method="get" action="liste.php">';
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre" valign="right">';
+	print '<input class="flat" size="10" type="text" name="sref" value="'.$sref.'">';
+	print '</td><td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
+	print '</td><td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
+	print '</td><td class="liste_titre">&nbsp;';
+	print '</td><td class="liste_titre">&nbsp;';
+	print '</td><td align="right" class="liste_titre">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
+	print '</td></tr>';
+	print '</form>';
+	$var=True;
+	$generic_commande = new Commande($db);
+	while ($i < min($num,$limit))
+	{
+		$objp = $db->fetch_object($resql);
+		$var=!$var;
+		print '<tr '.$bc[$var].'>';
+		print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowOrder'),'order').' '.$objp->ref.'</a></td>';
+		print '<td><a href="../comm/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+		print '<td>'.$objp->ref_client.'</td>';
+		$now = time();
+		$lim = 3600 * 24 * 15 ;
+		if ( ($now - $objp->date_commande) > $lim && $objp->statutid == 1 )
+		{
+			print '<td><b> &gt; 15 jours</b></td>';
+		}
+		else
+		{
+			print '<td>&nbsp;</td>';
+		}
+		print '<td align="right">';
+		$y = strftime('%Y',$objp->date_commande);
+		$m = strftime('%m',$objp->date_commande);
+		print strftime('%d',$objp->date_commande);
+		print ' <a href="liste.php?year='.$y.'&amp;month='.$m.'">';
+		print strftime('%B',$objp->date_commande).'</a>';
+		print ' <a href="liste.php?year='.$y.'">';
+		print strftime('%Y',$objp->date_commande).'</a></td>';
+		print '<td align="center">'.$generic_commande->status_label_short[$objp->fk_statut].'</td>';
+		print '</tr>';
+		$total = $total + $objp->price;
+		$subtotal = $subtotal + $objp->price;
+		$i++;
+	}
+	print '</table>';
+	$db->free($resql);
 }
 else
 {
-  print dolibarr_print_error($db);
+	print dolibarr_print_error($db);
 }
 
 $db->close();
