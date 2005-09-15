@@ -182,7 +182,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         }
 
         // On positionne pays_id, pays_code et libelle du pays choisi
-        $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:(defined(MAIN_INFO_SOCIETE_PAYS)?MAIN_INFO_SOCIETE_PAYS:'');
+        $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
         if ($soc->pays_id)
         {
             $sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$soc->pays_id;
@@ -404,7 +404,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $soc->adresse=$_POST["adresse"];
             $soc->zip=$_POST["zip"];
             $soc->ville=$_POST["ville"];
-            $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:(defined(MAIN_INFO_SOCIETE_PAYS)?MAIN_INFO_SOCIETE_PAYS:'');
+            $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
             $soc->departement_id=$_POST["departement_id"];
             $soc->tel=$_POST["tel"];
             $soc->fax=$_POST["fax"];
