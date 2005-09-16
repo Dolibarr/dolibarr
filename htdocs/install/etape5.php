@@ -115,10 +115,8 @@ if ($_POST["action"] == "set")
         $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
     
         // Si install non Français, on configure pour fonctionner en mode internationnal
-        if ($langs->defaultlang != "fr_FR") {
-
-            $db->query("INSERT INTO llx_const(name,value,type,visible) values ('COMPANY_CREATE_TWO_STEPS','1','yesno',0)");
-
+        if ($langs->defaultlang != "fr_FR")
+        {
             $db->query("UPDATE llx_const set value='eldy.php' WHERE name='MAIN_MENU_BARRETOP';");
             $db->query("UPDATE llx_const set value='eldy.php' WHERE name='MAIN_MENU_BARRELEFT';");
         }

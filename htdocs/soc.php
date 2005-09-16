@@ -150,7 +150,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
     if ($user->rights->societe->creer)
     {
         /*
-         * Fiche societe en mode création (Creation en 1 ou 2 temps selon COMPANY_CREATE_TWO_STEPS)
+         * Fiche societe en mode création
          */
         $soc->fournisseur=0;
         if ($_GET["type"]=='f') { $soc->fournisseur=1; }

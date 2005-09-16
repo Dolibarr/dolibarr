@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -85,11 +84,14 @@ if ($_GET["propalid"] > 0) {
 		$head[$h][1] = $langs->trans('AccountancyCard');
 		$h++;
 
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
-		$head[$h][1] = $langs->trans("Preview");
-		$hselected=$h;
-		$h++;
-
+		if ($conf->use_preview_tabs)
+		{
+    		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
+    		$head[$h][1] = $langs->trans("Preview");
+    		$hselected=$h;
+    		$h++;
+        }
+        
 		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
 		$head[$h][1] = $langs->trans('Note');
 		$h++;

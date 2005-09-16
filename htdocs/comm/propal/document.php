@@ -76,6 +76,7 @@ if ($propalid > 0)
     {
 		$propref = sanitize_string($propal->ref);
 		$upload_dir = $conf->propal->dir_output.'/'.$propref;
+
 		if ( $error_msg )
 		{ 
 			echo '<B>'.$error_msg.'</B><BR><BR>';
@@ -105,10 +106,13 @@ if ($propalid > 0)
     	$head[$h][1] = $langs->trans('AccountancyCard');
     	$h++;
     
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
-		$head[$h][1] = $langs->trans("Preview");
-		$h++;
-
+		if ($conf->use_preview_tabs)
+		{
+    		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?propalid='.$propal->id;
+    		$head[$h][1] = $langs->trans("Preview");
+    		$h++;
+        }
+        
 		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
 		$head[$h][1] = $langs->trans('Note');
 		$h++;
@@ -126,6 +130,8 @@ if ($propalid > 0)
 
 		print_titre($langs->trans('AssociatedDocuments').' '.$propal->ref_url);
 
+		print '<table width="100%" class="noborder">';
+
 		print '<form name="userfile" action="document.php?propalid='.$propal->id.'" enctype="multipart/form-data" method="POST">';
 		print '<input type="hidden" name="max_file_size" value="2000000">';
 		print '<input type="file"   name="userfile" size="40" maxlength="80" class="flat"><br>';
@@ -135,51 +141,50 @@ if ($propalid > 0)
 
 		clearstatcache();
 
-        $errorlevel=error_reporting();
-		error_reporting(0);
-		$handle=opendir($upload_dir);
-		error_reporting($errorlevel);
+        if (is_dir($upload_dir))
+        {
+            
+    		$handle=opendir($upload_dir);
+    		if ($handle)
+    		{
+        		print '<tr class="liste_titre">';
+    			print '<td>'.$langs->trans('Document').'</td>';
+    			print '<td align="right">'.$langs->trans('Size').'</td>';
+    			print '<td align="center">'.$langs->trans('Date').'</td>';
+    			print '<td>&nbsp;</td>';
+    			print '</tr>';
+    			$var=true;
+    			while (($file = readdir($handle))!==false)
+    			{
+    				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+    				{
+    					$var=!$var;
+    					print '<tr '.$bc[$var].'>';
+    					print '<td>';
+    					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=propal&file='.$propref.'/'.urlencode($file).'">'.$file.'</a>';
+    					print "</td>\n";
+    					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
+    					print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
+    					print '<td align="center">';
+    					if ($file == $propref . '.pdf')
+    					{
+    						echo '-';
+    					}
+    					else
+    					{
+    						echo '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
+    					}
+    					print "</td></tr>\n";
+    				}
+    			}
+    			closedir($handle);
+    		}
+    		else
+    		{
+    			print '<div class="error">'.$langs->trans('ErrorCantOpenDir').'<b> '.$upload_dir.'</b></div>';
+    		}
 
-		print '<table width="100%" class="noborder">';
-
-		if ($handle)
-		{
-    		print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans('Document').'</td>';
-			print '<td align="right">'.$langs->trans('Size').'</td>';
-			print '<td align="center">'.$langs->trans('Date').'</td>';
-			print '<td>&nbsp;</td>';
-			print '</tr>';
-			$var=true;
-			while (($file = readdir($handle))!==false)
-			{
-				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-				{
-					$var=!$var;
-					print '<tr '.$bc[$var].'>';
-					print '<td>';
-					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=propal&file='.$propref.'/'.urlencode($file).'">'.$file.'</a>';
-					print "</td>\n";
-					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
-					print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
-					print '<td align="center">';
-					if ($file == $propref . '.pdf')
-					{
-						echo '-';
-					}
-					else
-					{
-						echo '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id.'&action=delete&urlfile='.urlencode($file).'">'.$langs->trans('Delete').'</a>';
-					}
-					print "</td></tr>\n";
-				}
-			}
-			closedir($handle);
-		}
-		else
-		{
-			print '<div class="error">'.$langs->trans('ErrorCantOpenDir').'<b> '.$upload_dir.'</b></div>';
-		}
+        }
 		print '</table>';
 
         print '</div>';
