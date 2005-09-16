@@ -156,8 +156,9 @@ $var=False;
 print '<table class="border" width="100%">';
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro,";
-$sql.= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, fk_account";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=$rowid";
+$sql.= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+$sql.= " WHERE rowid=".$rowid;
 $sql.= " ORDER BY dateo ASC";
 $result = $db->query($sql);
 if ($result)
@@ -214,10 +215,11 @@ if ($result)
 
       print "</form>";
 
+      // Type paiement
       print "<tr><td>".$langs->trans("Type")."</td><td colspan=\"3\">";
       print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
       print '<input type="hidden" name="action" value="type">';
-      print $html->select_types_paiements($objp->fk_type,"value");
+      print $html->select_types_paiements($objp->fk_type,"value",'',2);
 	  print '<input type="text" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
       print '&nbsp; <input type="submit" class="button" value="'.$langs->trans("Update").'">';
       print "</form>";

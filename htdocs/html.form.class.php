@@ -605,7 +605,7 @@ class Form
      *      \param      selected        Id du mode de paiement présélectionné
      *      \param      htmlname        Nom de la zone select
      *      \param      filtertype      Pour filtre
-     *      \param      format          0=id+libelle, 1=code+code
+     *      \param      format          0=id+libelle, 1=code+code, 2=code+libelle
      */
     function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0)
     {
@@ -624,12 +624,14 @@ class Form
 
             if ($format == 0) print '<option value="'.$id.'"';
             if ($format == 1) print '<option value="'.$code.'"';
+            if ($format == 2) print '<option value="'.$code.'"';
             // Si selected est text, on compare avec code, sinon avec id
             if (eregi('[a-z]', $selected) && $selected == $code) print ' selected="true"';
             elseif ($selected == $id) print ' selected="true"';
             print '>';
             if ($format == 0) print $this->cache_types_paiements_libelle[$id];
             if ($format == 1) print $code;
+            if ($format == 2) print $this->cache_types_paiements_libelle[$id];
             print '</option>';
         }
         print '</select>';
