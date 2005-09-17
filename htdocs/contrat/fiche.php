@@ -81,9 +81,10 @@ if ($_POST["action"] == 'add')
 
     $contrat->soc_id         = $_POST["soc_id"];
     $contrat->date_contrat   = $datecontrat;
-// Remplacé par la fonction des contacts non limités d'un contrat
-//    $contrat->commercial_suivi_id      = $_POST["commercial_suivi_id"];
-//    $contrat->commercial_signature_id  = $_POST["commercial_signature_id"];
+
+    $contrat->commercial_suivi_id      = $_POST["commercial_suivi_id"];
+    $contrat->commercial_signature_id  = $_POST["commercial_signature_id"];
+
     $contrat->note           = $_POST["note"];
     $contrat->projetid       = $_POST["projetid"];
     $contrat->remise_percent = $_POST["remise_percent"];
@@ -265,7 +266,6 @@ if ($_GET["action"] == 'create')
             print '<tr><td>'.$langs->trans("Customer").':</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$obj->nom.'</a></td></tr>';
 
             // Commercial suivi
-/* Remplacé par fonction des contacts d'un contrat
             print '<tr><td width="20%" nowrap>'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>';
             print '<select name="commercial_suivi_id">';
             print '<option value="-1">&nbsp;</option>';
@@ -315,7 +315,7 @@ if ($_GET["action"] == 'create')
 
             }
             print '</select></td></tr>';
-*/
+
             print '<tr><td>'.$langs->trans("Date").' :</td><td>';
             $html->select_date();
             print "</td></tr>";
