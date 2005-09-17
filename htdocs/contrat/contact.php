@@ -269,9 +269,9 @@ if ($id > 0)
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
-			print '<td>'.$langs->trans("Societe").'</td>';
+			print '<td>'.$langs->trans("Company").'</td>';
 			print '<td>'.$langs->trans("Contacts").'</td>';
-			print '<td align="center">'.$langs->trans("ContactType").'</td>';
+			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td colspan="2">&nbsp;</td>';
 			print "</tr>\n";
 
@@ -296,7 +296,7 @@ if ($id > 0)
 			print '<td colspan="1">';
 			$html->select_users($user->id,'contactid');
 			print '</td>';
-			print '<td align="center">';
+			print '<td>';
 			select_type_contact($contrat, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
@@ -325,7 +325,7 @@ if ($id > 0)
 			print '<td colspan="1">';
 			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid');
 			print '</td>';
-			print '<td align="center">';
+			print '<td>';
 			select_type_contact($contrat, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
@@ -342,7 +342,7 @@ if ($id > 0)
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("Company").'</td>';
 		print '<td>'.$langs->trans("Contacts").'</td>';
-		print '<td align="center">'.$langs->trans("ContactType").'</td>';
+		print '<td>'.$langs->trans("ContactType").'</td>';
 		print '<td align="center">'.$langs->trans("Status").'</td>';
 		print '<td colspan="2">&nbsp;</td>';
 		print "</tr>\n";
@@ -400,8 +400,8 @@ if ($id > 0)
                 }
 				print '</td>';
 
-				// Description
-				print '<td align="center">'.$tab[$i]['libelle'].'</td>';
+				// Type de contact
+				print '<td>'.$tab[$i]['libelle'].'</td>';
 
 				// Statut
 				print '<td align="center">';

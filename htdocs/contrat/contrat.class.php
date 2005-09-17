@@ -1029,7 +1029,7 @@ class Contrat
         if ($source == 'external') $sql.=" t.fk_soc as socid,";
         if ($source == 'internal') $sql.=" t.name as nom,";
         if ($source == 'external') $sql.=" t.name as nom,";
-        $sql.= "tc.code, tc.source, tc.libelle";
+        $sql.= "tc.source, tc.element, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."element_contact ec,";
         if ($source == 'internal') $sql.=" ".MAIN_DB_PREFIX."user t,";
         if ($source == 'external') $sql.=" ".MAIN_DB_PREFIX."socpeople t,";
@@ -1054,7 +1054,8 @@ class Contrat
             {
                 $obj = $this->db->fetch_object($resql);
                 
-                $libelle_type=($langs->trans("TypeContact".$obj->code)!=$langs->trans("TypeContact".$obj->code) ? $langs->trans("TypeContact".$obj->code) : $obj->libelle);
+                $transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
+                $libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
                 $tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,'nom'=>$obj->nom,
                                'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut);
                 $i++;
@@ -1106,11 +1107,15 @@ class Contrat
      */
  	function liste_type_contact($source)
     {
+        global $langs;
+        
+  		$element='contrat';
+  		
   		$tab = array();
   		
         $sql = "SELECT distinct tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
-        $sql.= " WHERE element='contrat'";
+        $sql.= " WHERE element='".$element."'";
         $sql.= " AND source='".$source."'";
         $sql.= " ORDER by tc.code";
 
@@ -1122,7 +1127,10 @@ class Contrat
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($result);
-                $tab[$obj->rowid]=$obj->libelle;
+
+                $transkey="TypeContact_".$element."_".$source."_".$obj->code;
+                $libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
+                $tab[$obj->rowid]=$libelle_type;
                 $i++;
             }
             return $tab;

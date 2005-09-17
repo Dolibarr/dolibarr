@@ -89,7 +89,7 @@ $tabsql[7] = "SELECT a.id    as rowid, a.id as code, a.libelle AS libelle, a.ded
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
 $tabsql[9] = "SELECT code    as rowid, code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
-$tabsql[11]= "SELECT t.rowid as rowid, code, element, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
+$tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 
 // Tri par defaut
 $tabsqlsort[1] ="pays, code ASC";
@@ -102,7 +102,7 @@ $tabsqlsort[7] ="a.libelle ASC";
 $tabsqlsort[8] ="libelle ASC";
 $tabsqlsort[9] ="code ASC";
 $tabsqlsort[10]="pays ASC, taux ASC, recuperableonly ASC";
-$tabsqlsort[11]="element ASC, code ASC, libelle ASC";
+$tabsqlsort[11]="element ASC, source ASC, code ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -115,7 +115,7 @@ $tabfield[7] = "libelle,deductible";
 $tabfield[8] = "code,libelle";
 $tabfield[9] = "code,code_iso,libelle";
 $tabfield[10]= "pays,taux,recuperableonly,note";
-$tabfield[11]= "element,code,libelle";
+$tabfield[11]= "element,source,code,libelle";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -128,7 +128,7 @@ $tabfieldinsert[7] = "libelle,deductible";
 $tabfieldinsert[8] = "code,libelle";
 $tabfieldinsert[9] = "code,code_iso,libelle";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,note";
-$tabfieldinsert[11]= "element,code,libelle";
+$tabfieldinsert[11]= "element,source,code,libelle";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
 $tabrowid[1] = "";
@@ -210,7 +210,7 @@ if ($_POST["actionadd"])
         $result = $db->query($sql);
         if (!$result)
         {
-            if ($db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS) {
+            if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                 $msg=$langs->trans("ErrorRecordAlreadyExists").'<br>';
             }
             else {
@@ -334,6 +334,7 @@ if ($_GET["id"])
             // Determine le nom du champ par rapport aux noms possibles
             // dans les dictionnaires de données
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
+            if ($fieldlist[$field]=='source')          $valuetoshow=$langs->trans("Contact");
             if ($fieldlist[$field]=='lang')            $valuetoshow=$langs->trans("Language");
             if ($fieldlist[$field]=='type')            $valuetoshow=$langs->trans("Type");
             if ($fieldlist[$field]=='code')            $valuetoshow=$langs->trans("Code");
@@ -369,17 +370,29 @@ if ($_GET["id"])
                 $html->select_lang(MAIN_LANG_DEFAULT,'lang');
                 print '</td>';
             }
-            // le type de l'element (pour les type de contact).'
-            elseif ($fieldlist[$field] == 'element') {
+            // Le type de l'element (pour les type de contact).'
+            elseif ($fieldlist[$field] == 'element')
+            {
+                $langs->load("orders");
+                $langs->load("contracts");
+                $langs->load("project");
+                $langs->load("propal");
+                $langs->load("bills");
                 print '<td>';
-                $elementList = array();
-                // un peu crad mais je n'ai pas de meilleure idee.
-                $elementList["contrat"] = "contrat";
-                $elementList["projet"] = "projet";
-                $elementList["propal"] = "propal";
-                $elementList["facture"] = "facture";
-                
+                $elementList = array("commande"=>$langs->trans("Order"),
+                                     "contrat"=>$langs->trans("Contract"),
+                                     "projet"=>$langs->trans("Project"),
+                                     "propal"=>$langs->trans("Propal"),
+                                     "facture"=>$langs->trans("Bill"));
                 $html->select_array('element', $elementList);
+                print '</td>';
+            }
+            // La source de l'element (pour les type de contact).'
+            elseif ($fieldlist[$field] == 'source') {
+                print '<td>';
+                $elementList = array("internal"=>$langs->trans("Internal"),
+                                     "external"=>$langs->trans("External"));
+                $html->select_array('source', $elementList);
                 print '</td>';
             }
             elseif ($fieldlist[$field] == 'type') {
@@ -422,11 +435,12 @@ if ($_GET["id"])
                 // Determine le nom du champ par rapport aux noms possibles
                 // dans les dictionnaires de données
                 $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
-                if ($fieldlist[$field]=='lang')    $valuetoshow=$langs->trans("Language");
-                if ($fieldlist[$field]=='type')    $valuetoshow=$langs->trans("Type");
-                if ($fieldlist[$field]=='code')    $valuetoshow=$langs->trans("Code");
-                if ($fieldlist[$field]=='libelle') $valuetoshow=$langs->trans("Label")."*";
-                if ($fieldlist[$field]=='pays')    $valuetoshow=$langs->trans("Country");
+                if ($fieldlist[$field]=='source')          $valuetoshow=$langs->trans("Contact");
+                if ($fieldlist[$field]=='lang')            $valuetoshow=$langs->trans("Language");
+                if ($fieldlist[$field]=='type')            $valuetoshow=$langs->trans("Type");
+                if ($fieldlist[$field]=='code')            $valuetoshow=$langs->trans("Code");
+                if ($fieldlist[$field]=='libelle')         $valuetoshow=$langs->trans("Label")."*"; 
+                if ($fieldlist[$field]=='pays')            $valuetoshow=$langs->trans("Country");
                 if ($fieldlist[$field]=='recuperableonly') $valuetoshow=$langs->trans("VATReceivedOnly");
                 // Affiche nom du champ
                 print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield);

@@ -709,15 +709,17 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (10
 --
 -- Les types de contact d'un element
 --
-insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (10, 'BILLING',       'contrat', 'Contact facturation du contrat', 1);
-insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (11, 'SALESREPSIGN',  'contrat', 'Commercial signataire du contrat', 1);
-insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (12, 'SALESREPFOLL',  'contrat', 'Commercial suivi du contrat', 1);
-insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (13, 'CUSTOMER',      'contrat', 'Contact client pour le contrat', 1);
-
-insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (20, 'BILLING',       'propal',  'Contact facturation de la propale', 1);
-insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (21, 'SALESREPSIGN',  'propal',  'Commercial signataire de la propale', 1);
-insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (22, 'SALESREPFOLL',  'propal',  'Commercial suivi de la propale', 1);
-insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (23, 'CUSTOMER',      'propal',  'Contact client pour la propale', 1);
-
-insert into llx_c_type_contact(rowid, code, element, libelle, active ) values (80, 'PROJECTLEADER', 'projet',  'Chef de Projet', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (10, 'contrat', 'internal', 'SALESREPSIGN',  'Commercial signataire du contrat', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (11, 'contrat', 'internal', 'SALESREPFOLL',  'Commercial suivi du contrat', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (20, 'contrat', 'external', 'BILLING',       'Contact client facturation contrat', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (21, 'contrat', 'external', 'CUSTOMER',      'Contact client suivi contrat', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (22, 'contrat', 'external', 'SALESREPSIGN',  'Contact client signataire contrat', 1);
+                                                                                                    
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (30, 'propal',  'internal', 'SALESREPSIGN',  'Commercial signataire de la propale', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (31, 'propal',  'internal', 'SALESREPFOLL',  'Commercial suivi de la propale', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (40, 'propal',  'external', 'BILLING',       'Contact client facturation propale', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (41, 'propal',  'external', 'CUSTOMER',      'Contact client suivi propale', 1);
+                                                                                                    
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (80, 'projet',  'internal', 'PROJECTLEADER', 'Chef de Projet', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (81, 'projet',  'external', 'PROJECTLEADER', 'Chef de Projet', 1);
 

@@ -64,3 +64,9 @@ CloseService=Fermer service
 ServicesNomberShort=%s service(s)
 RunningServices=Services actifs
 BoardRunningServices=Services actifs expirés
+##### Types de contacts #####
+TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
+TypeContact_contrat_internal_SALESREPFOLL=Commercial suivi du contrat
+TypeContact_contrat_external_BILLING=Contact client facturation contrat
+TypeContact_contrat_external_CUSTOMER=Contact client suivi contrat
+TypeContact_contrat_external_SALESREPSIGN=Contact client signataire contrat
