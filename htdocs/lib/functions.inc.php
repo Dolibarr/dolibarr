@@ -206,7 +206,7 @@ function dolibarr_fiche_head($links, $active=0, $title='')
     }
 
     print "</div>\n";
-    print "<div class=\"tabBar\">\n<br>\n";
+    print "<div class=\"tabBar\">\n\n";
 }
 
 /**
