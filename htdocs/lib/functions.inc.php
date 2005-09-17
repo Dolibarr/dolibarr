@@ -1477,18 +1477,18 @@ function print_heure_select($prefix,$begin=1,$end=23) {
 function print_duree_select($prefix)
 {  
   print '<select name="'.$prefix.'hour">';
-  print "<option value=\"0\">0";
-  print "<option value=\"1\" selected>1";
+  print "<option value=\"0\">0</option>";
+  print "<option value=\"1\" selected=\"true\">1</option>";
 
   for ($hour = 2 ; $hour < 13 ; $hour++)
     {
-      print "<option value=\"$hour\">$hour";
+      print "<option value=\"$hour\">$hour</option>";
     }
   print "</select>&nbsp;H&nbsp;";
   print '<select name="'.$prefix.'min">';
   for ($min = 0 ; $min < 55 ; $min=$min+5)
     {
-      print "<option value=\"$min\">$min";
+      print "<option value=\"$min\">$min</option>";
     }
   print "</select>\n";  
 }

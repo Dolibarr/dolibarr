@@ -143,7 +143,7 @@ if ($_GET["id"])
       print '<td colspan="2" class="valid">';
       print '<select name="confirm">';
       print '<option value="yes">oui</option>';
-      print '<option value="no" selected>non</option>';
+      print '<option value="no" selected="true">non</option>';
       print '</select>';
       print '</td></tr>';
 

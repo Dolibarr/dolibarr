@@ -301,11 +301,11 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("DNContactActive").'</td><td><select name="activecontact">';
 if (defined("LDAP_CONTACT_ACTIVE") && LDAP_CONTACT_ACTIVE == 1)
 {
-  print '<option value="1" selected>'.$langs->trans("Yes");
+  print '<option value="1" selected="true">'.$langs->trans("Yes");
 }
 else
 {
-	print '<option value="0" selected>'.$langs->trans("No");
+	print '<option value="0" selected="true">'.$langs->trans("No");
 }
 print '<option value="LDAP_CONTACT_ACTIVE">--------';
 print '<option value="0">'.$langs->trans("No");
@@ -319,17 +319,17 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("Type").'</td><td><select name="type">';
 if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE == activedirectory)
 {
-  print '<option value="activedirectory" selected>Active Directory';
+  print '<option value="activedirectory" selected="true">Active Directory';
 }
 else
 {
   if (defined("LDAP_SERVER_TYPE") && LDAP_SERVER_TYPE == egroupware)
     {
-      print '<option value="egroupware" selected>Egroupware';
+      print '<option value="egroupware" selected="true">Egroupware';
     }
   else
     {
-      print '<option value="openldap" selected>OpenLdap';
+      print '<option value="openldap" selected="true">OpenLdap';
     }
 }
 print '<option value="LDAP_SERVER_TYPE">------------------------';
@@ -343,11 +343,11 @@ print '<tr><td>'.$langs->trans("Version").'</td><td><select name="version">';
 
 if (defined("LDAP_SERVER_PROTOCOLVERSION") && LDAP_SERVER_PROTOCOLVERSION == 3)
 {
-  print '<option value="3" selected>Version 3';
+  print '<option value="3" selected="true">Version 3';
 }
 else
 {
-  print '<option value="2" selected>Version 2';
+  print '<option value="2" selected="true">Version 2';
 }
 print '<option value="LDAP_SERVER_PROTOCOLVERSION">------------------------';
 print '<option value="3">Version 3';

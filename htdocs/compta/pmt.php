@@ -106,7 +106,7 @@ $cmonth = date("n", time());
 print "<select name=\"pmonth\">";    
 for ($month = 1 ; $month <= 12 ; $month++) {
   if ($month == $cmonth) {
-    print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
+    print "<option value=\"$month\" selected=\"true\">" . $strmonth[$month];
   } else {
     print "<option value=\"$month\">" . $strmonth[$month];
   }
@@ -116,7 +116,7 @@ print "</select>";
 print "<select name=\"pyear\">";
 $syear = date("Y", time() ) ;
 print "<option value=\"".($syear-1)."\">".($syear-1);
-print "<option value=\"$syear\" SELECTED>$syear";
+print "<option value=\"$syear\" selected=\"true\">$syear";
 
 for ($year = $syear +1 ; $year < $syear + 5 ; $year++) {
   print "<option value=\"$year\">$year";

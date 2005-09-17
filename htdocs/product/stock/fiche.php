@@ -154,7 +154,7 @@ if ($_GET["action"] == 'create')
 
     print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
     print '<select name="statut">';
-    print '<option value="0" selected>'.$langs->trans("WarehouseClosed").'</option><option value="1">'.$langs->trans("WarehouseOpened").'</option>';
+    print '<option value="0" selected="true">'.$langs->trans("WarehouseClosed").'</option><option value="1">'.$langs->trans("WarehouseOpened").'</option>';
     print '</td></tr>';
 
     print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';

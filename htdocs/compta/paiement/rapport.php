@@ -90,7 +90,7 @@ for ($month = 1 ; $month < 13 ; $month++)
 {
   if ($month == $cmonth)
     {
-      print "<option value=\"$month\" selected>" . $strmonth[$month];
+      print "<option value=\"$month\" selected=\"true\">" . $strmonth[$month];
     }
   else
     {
@@ -105,7 +105,7 @@ for ($formyear = $syear - 2; $formyear < $syear +1 ; $formyear++)
 {
   if ($formyear == $syear)
     {
-      print "<option value=\"$formyear\" selected>$formyear";
+      print "<option value=\"$formyear\" selected=\"true\">$formyear";
     }
   else
     {

@@ -259,7 +259,7 @@ if ($db->query($sql))
 	
 	if ($facture_rib_number_var == $row[0])
 	  {
-	    print '<option value="'.$row[0].'" selected>'.$row[1].'</option>';
+	    print '<option value="'.$row[0].'" selected="true">'.$row[1].'</option>';
 	  }
 	else
 	  {
@@ -297,7 +297,7 @@ if ($db->query($sql))
 	  
 	  if ($facture_chq_number_var == $row[0])
 	    {
-	      print '<option value="'.$row[0].'" selected>'.$row[1].'</option>';
+	      print '<option value="'.$row[0].'" selected="true">'.$row[1].'</option>';
 	    }
 	  else
 	    {

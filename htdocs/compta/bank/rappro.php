@@ -107,7 +107,7 @@ if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
     while ($i < $num) {
-        if ($options == "") { $options = "<option value=\"0\" selected>&nbsp;</option>"; }
+        if ($options == "") { $options = "<option value=\"0\" selected=\"true\">&nbsp;</option>"; }
         $obj = $db->fetch_object($resql);
         $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
     }

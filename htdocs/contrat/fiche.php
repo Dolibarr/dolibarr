@@ -345,7 +345,7 @@ if ($_GET["action"] == 'create')
             $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
             if ( $db->query($sql) )
             {
-            $opt = "<option value=\"0\" selected></option>";
+            $opt = "<option value=\"0\" selected=\"true\"></option>";
             if ($result)
             {
             $num = $db->num_rows();	$i = 0;

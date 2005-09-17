@@ -109,7 +109,7 @@ if ($account > 0)
         $var=True;
         $num = $db->num_rows($result);
         $i = 0;
-        $options = "<option value=\"0\" selected></option>";
+        $options = "<option value=\"0\" selected=\"true\">&nbsp;</option>";
         while ($i < $num)
         {
             $obj = $db->fetch_object($result);

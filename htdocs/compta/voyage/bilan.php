@@ -59,7 +59,7 @@ if ($result) {
   $var=True;  
   $num = $db->num_rows();
   $i = 0;
-  $options = "<option value=\"0\" SELECTED></option>";
+  $options = "<option value=\"0\" selected=\"true\"></option>";
   while ($i < $num) {
     $obj = $db->fetch_object($result);
     $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;

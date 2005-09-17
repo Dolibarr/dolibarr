@@ -63,7 +63,7 @@ while ($i < $num)
   {
     if ($selected == $langs_available[$i])
       {
-	print '<option value="'.$langs_available[$i].'" selected>'.$langs_available[$i].'</option>';
+	print '<option value="'.$langs_available[$i].'" selected="true">'.$langs_available[$i].'</option>';
       }
     else
       {

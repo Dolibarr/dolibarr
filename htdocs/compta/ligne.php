@@ -29,7 +29,7 @@ $sql = "SELECT rowid, number, label FROM ".MAIN_DB_PREFIX."compta_account ORDER 
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
   $i = 0;
-  $options = "<option value=\"0\" SELECTED></option>";
+  $options = "<option value=\"0\" selected=\"true\">&nbsp;</option>";
   while ($i < $num) {
     $obj = $db->fetch_object();
     $options .= "<option value=\"$obj->rowid\">$obj->number</option>\n"; $i++;

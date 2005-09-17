@@ -174,7 +174,7 @@ if ($action == 'create')
   print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value=""></td></tr>';    
 
   print '<tr><td>Frais de port</td><td><select name="fdp">';
-  print '<option value="1" SELECTED>oui</option>';
+  print '<option value="1" selected="true">oui</option>';
   print '<option value="0">non</option></td></tr>';
 
   $htmls = new Form($db);
@@ -261,13 +261,13 @@ else
 	      print '<tr><td>Frais de port</td><td><select name="fdp">';
 	      if ($livre->frais_de_port)
 		{
-		  print '<option value="1" SELECTED>oui</option>';
+		  print '<option value="1" selected="true">oui</option>';
 		  print '<option value="0">non</option>';
 		}
 	      else
 		{
 		  print '<option value="1">oui</option>';
-		  print '<option value="0" SELECTED>non</option>';
+		  print '<option value="0" selected="true">non</option>';
 		}
 	      print '</select></td></tr>';
 

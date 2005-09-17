@@ -792,7 +792,7 @@ if ($_GET['action'] == 'create')
 			if ($num > 0)
 			{
 				print '<tr><td colspan="3">Factures récurrentes : <select class="flat" name="fac_rec">';
-				print '<option value="0" selected></option>';
+				print '<option value="0" selected="true"></option>';
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object();

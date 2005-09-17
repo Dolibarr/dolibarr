@@ -403,6 +403,7 @@ class Form
 	 *      \param      socid       Id société
 	 *      \param      selected    Id projet présélectionné
 	 *      \param      htmlname    Nom de la zone html
+	 *      \return     int         Nbre de projet si ok, <0 si ko
 	 */
 	function select_projects($socid='', $selected='', $htmlname='projectid')
 	{
@@ -436,10 +437,12 @@ class Form
 				}
 			}
 			print '</select>';
+			return $num;
 		}
 		else
 		{
 			dolibarr_print_error($this->db);
+			return -1;
 		}
 	}
 

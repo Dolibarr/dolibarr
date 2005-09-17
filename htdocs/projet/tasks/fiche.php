@@ -299,7 +299,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   print '<tr><td>'.$langs->trans("NewTask").'</td><td colspan="3">';
   print '<input type="text" size="25" name="task_name" class="flat">&nbsp;';
   print '<select class="flat" name="task_parent">';
-  print '<option value="0" SELECTED></option>';
+  print '<option value="0" selected="true">&nbsp;</option>';
   PLineSelect($j, 0, $tasks, $level);  
   print '</select>&nbsp;';
   print '<input type="submit" class="flat">';

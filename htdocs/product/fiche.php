@@ -243,7 +243,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     print '<tr><td>'.$langs->trans("Status").'</td><td>';
     print '<select name="statut">';
     print '<option value="1">'.$langs->trans("OnSell").'</option>';
-    print '<option value="0" selected>'.$langs->trans("NotOnSell").'</option>';
+    print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
     print '</td></tr>';
 
     if ($_GET["type"] == 0 && $conf->stick->enabled)
@@ -487,13 +487,13 @@ if ($_GET["id"])
         print '<select name="statut">';
         if ($product->envente)
         {
-            print '<option value="1" selected>'.$langs->trans("OnSell").'</option>';
+            print '<option value="1" selected="true">'.$langs->trans("OnSell").'</option>';
             print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
         }
         else
         {
             print '<option value="1">'.$langs->trans("OnSell").'</option>';
-            print '<option value="0" selected>'.$langs->trans("NotOnSell").'</option>';
+            print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
         }
         print '</td></tr>';
         if ($product->type == 0 && $conf->stock->enabled)

@@ -107,7 +107,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	  $filelib=eregi_replace('\.php$','',$file);
 	  if ($file == $conf->global->MAIN_MENU_BARRETOP)
             {
-	      print '<option value="'.$file.'" selected>'.$filelib.'</option>';
+	      print '<option value="'.$file.'" selected="true">'.$filelib.'</option>';
             }
 	  else
             {
@@ -130,7 +130,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	  $filelib=eregi_replace('\.php$','',$file);
 	  if ($file == $conf->global->MAIN_MENU_BARRELEFT)
             {
-	      print '<option value="'.$file.'" selected>'.$filelib.'</option>';
+	      print '<option value="'.$file.'" selected="true">'.$filelib.'</option>';
             }
 	  else
             {
