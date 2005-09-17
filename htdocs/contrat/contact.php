@@ -237,7 +237,7 @@ if ($id > 0)
 		print '<table class="border" width="100%">';
 
 		// Reference du contrat
-		print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
+		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $contrat->ref;
 		print "</td></tr>";
 
