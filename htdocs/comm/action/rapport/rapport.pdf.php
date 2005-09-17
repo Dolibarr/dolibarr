@@ -171,7 +171,7 @@ class CommActionRapport
                 $y2 = $pdf->GetY();
 
                 $pdf->SetXY(106,$y);
-                $pdf->MultiCell(112, 4, eregi_replace('<br>',"\n",$obj->note), 0, 'L', 0);
+                $pdf->MultiCell(94, 4, eregi_replace('<br>',"\n",dolibarr_trunc($obj->note,150)), 0, 'L', 0);
                 $y3 = $pdf->GetY();
 
                 $i++;
