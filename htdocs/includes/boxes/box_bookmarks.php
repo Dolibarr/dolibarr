@@ -60,7 +60,7 @@ class box_bookmarks extends ModeleBoxes {
         $langs->load("boxes");
 
         $this->info_box_head = array('text' => $langs->trans("BoxMyLastBookmarks",$max),
-                                     'sublink' => DOL_URL_ROOT.'/bookmarks/fiche.php?action=create',
+                                     'sublink' => DOL_URL_ROOT.'/bookmarks/liste.php',
                                      'subpicto' => 'object_bookmark',
                                      'subtext' => $langs->trans("NewBookmark"));
 

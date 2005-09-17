@@ -179,6 +179,17 @@ else
 }
 
 
+
+print "<div class=\"tabsAction\">\n";
+
+if ($user->rights->bookmark->creer)
+{
+    print '<a class="butAction" href="fiche.php?action=create">'.$langs->trans("NewBookmark").'</a>';
+}
+
+print '</div>';
+
+
 $db->close();
 
 llxFooter('$Date$ - $Revision$');

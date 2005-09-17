@@ -70,7 +70,12 @@ class ModeleBoxes
         // Affiche titre de la boite
         print '<tr class="box_titre"><td';
         if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
-        print '>'.$head['text']."</td></tr>";
+        print '>'.$head['text'];
+        if ($head['sublink'])
+        {
+            print ' <a href="'.$head['sublink'].'">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
+        }
+        print '</td></tr>';
     
         // Affiche chaque ligne de la boite
         for ($i=0, $n=$nblines; $i < $n; $i++)
