@@ -176,6 +176,7 @@ if (! defined('PEAR_PATH'))           { define('PEAR_PATH',          DOL_DOCUMEN
 if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
 if (! defined('PHPLOT_PATH'))         { define('PHPLOT_PATH',        DOL_DOCUMENT_ROOT .'/includes/phplot/'); }
 if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
+if (! defined('JPGRAPH_PATH'))        { define('JPGRAPH_PATH',       DOL_DOCUMENT_ROOT .'/includes/jpgraph/'); }
 define('FPDF_FONTPATH', FPDF_PATH . 'font/');
 define('MAGPIE_DIR', MAGPIERSS_PATH);
 
@@ -233,6 +234,8 @@ $conf->compta->enabled=defined("MAIN_MODULE_COMPTABILITE")?MAIN_MODULE_COMPTABIL
 $conf->compta->dir_output=DOL_DATA_ROOT."/compta";
 $conf->compta->dir_images=DOL_DATA_ROOT."/compta/images";
 $conf->banque->enabled=defined("MAIN_MODULE_BANQUE")?MAIN_MODULE_BANQUE:0;
+$conf->banque->dir_output=DOL_DATA_ROOT."/banque";
+$conf->banque->dir_images=DOL_DATA_ROOT."/banque/images";
 $conf->caisse->enabled=defined("MAIN_MODULE_CAISSE")?MAIN_MODULE_CAISSE:0;
 $conf->don->enabled=defined("MAIN_MODULE_DON")?MAIN_MODULE_DON:0;
 $conf->syslog->enabled=defined("MAIN_MODULE_SYSLOG")?MAIN_MODULE_SYSLOG:0;

@@ -39,12 +39,13 @@ print_titre($langs->trans("AccountSetup"));
 print '<br>';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print "<td>".$langs->trans("Ref")."</td><td>".$langs->trans("Label")."</td><td>".$langs->trans("Type")."</td><td>".$langs->trans("Bank")."</td>";
-print "<td align=\"left\">".$langs->trans("Numero")."</a></td>";
-print "<td align=\"center\">".$langs->trans("Closed")."</a></td>";
+print '<td>'.$langs->trans("Ref")."</td><td>".$langs->trans("Label")."</td><td>".$langs->trans("Type")."</td><td>".$langs->trans("Bank").'</td>';
+print '<td align="left">'.$langs->trans("AccountIdShort").'</a></td>';
+print '<td align="center">'.$langs->trans("Conciliable").'</a></td>';
+print '<td align="center">'.$langs->trans("Status").'</a></td>';
 print "</tr>\n";
 
-$sql = "SELECT rowid, label, number, bank, courant as type, clos";
+$sql = "SELECT rowid, label, number, bank, courant as type, clos, rappro";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 $sql.= " ORDER BY label";
 
@@ -66,7 +67,9 @@ if ($result)
     $var=!$var;
     print "<tr $bc[$var]><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td>";
     print '<td>'.$account->type_lib[$objp->type].'</td>';
-    print "<td>$objp->bank&nbsp;</td><td>$objp->number&nbsp;</td><td align=\"center\">".yn($objp->clos)."</td></tr>";
+    print '<td>'.$objp->bank.'&nbsp;</td><td>'.$objp->number.'&nbsp;</td>';
+    print '<td align="center">'.yn($objp->rappro).'</td>';
+    print '<td align="center">'.$account->status[$objp->clos].'</td></tr>';
 
     $i++;
   }

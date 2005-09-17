@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**	  \file       htdocs/compta/bank/graph.php
@@ -38,29 +37,36 @@ $account = $_GET["id"];
 
 if ($account > 0)
 {
-  $datetime = time();
-  $month = strftime("%m", $datetime);
-  $year = strftime("%Y", $datetime);
-  
-  $acct = new Account($db);
-  $acct->fetch($account);
-
-  print_fiche_titre("Journal de trésorerie du compte : " .$acct->label,$mesg);
-
-  print '<table class="noborder" width="100%">';
-
-  print '<tr><td>';
-
-  $file = "solde.$account.$year.png";
-
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
-
-  print '</td></tr><tr><td>';
-
-  $file = "solde.$account.png";
-
-  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
-
-  print '</td></tr></table>';
+    $datetime = time();
+    $month = strftime("%m", $datetime);
+    $year = strftime("%Y", $datetime);
+    
+    $acct = new Account($db);
+    $acct->fetch($account);
+    
+    print_fiche_titre("Journal de trésorerie du compte : " .$acct->label,$mesg);
+    
+    
+    print '<table class="notopnoleftnoright" width="100%">';
+    
+    print '<tr><td>';
+    
+    $file = "solde.$account.$year.png";
+    if (! file_exists($file))
+    {
+        print "Pour générer ou regénérer les graphiques, lancer le script scripts/banque/graph-solde.php en ligne de commande.<br>";
+        print '<br>';
+    }
+    else
+    {
+        print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+    }
+    print '</td></tr><tr><td>';
+    
+    $file = "solde.$account.png";
+    
+    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
+    
+    print '</td></tr></table>';
 }
 ?>

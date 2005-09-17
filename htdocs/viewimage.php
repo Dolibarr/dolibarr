@@ -153,7 +153,7 @@ if ($modulepart)
         $user->getrights('prelevement');
         if ($user->rights->prelevement->bons->lire) $accessallowed=1;
 
-        $original_file=DOL_DATA_ROOT.'/prelevement/bon/'.$original_file;
+        $original_file=$conf->prelevement->dir_output.'/bon/'.$original_file;
     }
 
     // Wrapping pour les graph telephonie
@@ -178,7 +178,7 @@ if ($modulepart)
     if ($modulepart == 'bank')
     {
       $accessallowed=1;
-      $original_file=DOL_DATA_ROOT.'/graph/banque/'.$original_file;
+      $original_file=$conf->banque->dir_images.'/'.$original_file;
     }
 }
 

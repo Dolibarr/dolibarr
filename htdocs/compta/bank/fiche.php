@@ -49,6 +49,7 @@ if ($_POST["action"] == 'add')
     $account->label         = trim($_POST["label"]);
     $account->courant       = $_POST["type"];
     $account->clos          = $_POST["clos"];
+    $account->rappro        = $_POST["norappro"]?1:0;
     
     $account->bank          = trim($_POST["bank"]);
     $account->code_banque   = $_POST["code_banque"];
@@ -89,6 +90,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->label           = trim($_POST["label"]);
     $account->courant         = $_POST["type"];
     $account->clos            = $_POST["clos"];
+    $account->rappro          = (isset($_POST["norappro"]) && $_POST["norappro"]=='on')?0:1;
 
     $account->bank            = $_POST["bank"];
     $account->code_banque     = $_POST["code_banque"];
@@ -154,7 +156,7 @@ if ($_GET["action"] == 'create')
   print '<table class="border" width="100%">';
 
   print '<tr><td valign="top">'.$langs->trans("LabelBankCashAccount").'</td>';
-  print '<td colspan="3"><input size="30" type="text" name="label" value="'.$_POST["label"].'"></td></tr>';
+  print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.$_POST["label"].'"></td></tr>';
 
   print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
   print '<td colspan="3">';
@@ -163,7 +165,7 @@ if ($_GET["action"] == 'create')
   print '</td></tr>';
 
   print '<tr><td valign="top">'.$langs->trans("InitialBankBalance").'</td>';
-  print '<td colspan="3"><input size="12" type="text" name="solde" value="0.00"></td></tr>';
+  print '<td colspan="3"><input size="12" type="text" class="flat" name="solde" value="0.00"></td></tr>';
 
   print '<tr><td valign="top">'.$langs->trans("Date").'</td>';
   print '<td colspan="3">'; $now=time();
@@ -172,32 +174,35 @@ if ($_GET["action"] == 'create')
   print '<input type="text" size="4" maxlength="4" name="reyear" value="'.strftime("%Y",$now).'">';
   print '</td></tr>';
   
+  print '<tr><td valign="top">&nbsp;</td>';
+  print '<td colspan="3"><input type="checkbox" name="norappro" value="'.$_POST["norappro"].'"> '.$langs->trans("DisableConciliation").'</td></tr>';
+
   print '<tr><td colspan="4"><b>'.$langs->trans("IfBankAccount").'...</b></td></tr>';
 
   print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
-  print '<td colspan="3"><input size="30" type="text" name="bank" value="'.$_POST["bank"].'"></td></tr>';
+  print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$_POST["bank"].'"></td></tr>';
 
   print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
-  print '<tr><td><input size="8" type="text" name="code_banque" value="'.$_POST["code_banque"].'"></td>';
-  print '<td><input size="8" type="text" name="code_guichet" value="'.$_POST["code_guichet"].'"></td>';
-  print '<td><input size="15" type="text" name="number" value="'.$_POST["number"].'"></td>';
-  print '<td><input size="3" type="text" name="cle_rib" value="'.$_POST["cle_rib"].'"></td></tr>';
+  print '<tr><td><input size="8" type="text" class="flat" name="code_banque" value="'.$_POST["code_banque"].'"></td>';
+  print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$_POST["code_guichet"].'"></td>';
+  print '<td><input size="15" type="text" class="flat" name="number" value="'.$_POST["number"].'"></td>';
+  print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$_POST["cle_rib"].'"></td></tr>';
   
   print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-  print '<td colspan="3"><input size="24" type="text" name="iban_prefix" value="'.$_POST["iban_prefix"].'"></td></tr>';
+  print '<td colspan="3"><input size="24" type="text" class="flat" name="iban_prefix" value="'.$_POST["iban_prefix"].'"></td></tr>';
 
   print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-  print '<td colspan="3"><input size="24" type="text" name="bic" value="'.$_POST["bic"].'"></td></tr>';
+  print '<td colspan="3"><input size="24" type="text" class="flat" name="bic" value="'.$_POST["bic"].'"></td></tr>';
 
   print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
-  print "<textarea name=\"domiciliation\" rows=\"3\" cols=\"40\">".$_POST["domiciliation"];
+  print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">".$_POST["domiciliation"];
   print "</textarea></td></tr>";
 
   print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
-  print '<td colspan="3"><input size="12" type="text" name="proprio" value="'.$_POST["proprio"].'"></td></tr>';
+  print '<td colspan="3"><input size="12" type="text" class="flat" name="proprio" value="'.$_POST["proprio"].'"></td></tr>';
 
   print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
-  print "<textarea name=\"adresse_proprio\" rows=\"3\" cols=\"40\">".$_POST["adresse_proprio"];
+  print "<textarea class=\"flat\" name=\"adresse_proprio\" rows=\"2\" cols=\"40\">".$_POST["adresse_proprio"];
   print "</textarea></td></tr>";
 
   print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></td></tr>';
@@ -245,9 +250,16 @@ else
     print '<td colspan="3">'.$account->type_lib[$account->type].'</td></tr>';
     
     print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
-    print '<td colspan="3">'.($account->clos?$langs->trans("Closed"):$langs->trans("Opened")).'</td></tr>';
+    print '<td colspan="3">'.$account->status[$account->clos].'</td></tr>';
 
-    if ($account->type == 0 || $account->type == 1) {
+    print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
+    print '<td colspan="3">';
+    if ($account->type == 0 || $account->type == 1) print ($account->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' ('.$langs->trans("ConciliationDisabled").')'));
+    if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
+    print '</td></tr>';
+
+    if ($account->type == 0 || $account->type == 1)
+    {
         print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
         print '<td colspan="3">'.$account->bank.'</td></tr>';
     
@@ -326,45 +338,51 @@ else
       print '<table class="border" width="100%">';
       
 	  print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
-	  print '<td colspan="3"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
+	  print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.$account->label.'"></td></tr>';
 	  
 	  print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
       print '<td colspan="3">'.$account->type_lib[$account->type].'</td></tr>';
       print '<input type="hidden" name="type" value="'.$account->type.'">';
 
-	  print '<tr><td valign="top">'.$langs->trans("Closed").'</td>';
+	  print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
 	  print '<td colspan="3">';
-	  $form->selectyesnonum("clos",$account->clos);
+	  $form->select_array("clos",array(0=>$account->status[0],1=>$account->status[1]),$account->clos);
 	  print '</td></tr>';
+
+      print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
+      print '<td colspan="3">';
+      if ($account->type == 0 || $account->type == 1) print '<input type="checkbox" class="flat" name="norappro" '.($account->rappro?'':'checked="true"').'"> '.$langs->trans("DisableConciliation");
+      if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
+      print '</td></tr>';
 
       if ($account->type == 0 || $account->type == 1) {
 
           print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
-          print '<td colspan="3"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
+          print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td></tr>';
       
     	  print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
-    	  print '<tr><td><input size="8" type="text" name="code_banque" value="'.$account->code_banque.'"></td>';
-    	  print '<td><input size="8" type="text" name="code_guichet" value="'.$account->code_guichet.'"></td>';
-    	  print '<td><input size="15" type="text" name="number" value="'.$account->number.'"></td>';
-    	  print '<td><input size="3" type="text" name="cle_rib" value="'.$account->cle_rib.'"></td></tr>';
+    	  print '<tr><td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
+    	  print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
+    	  print '<td><input size="15" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
+    	  print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td></tr>';
     	  
     	  print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-    	  print '<td colspan="3"><input size="24" type="text" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
+    	  print '<td colspan="3"><input size="24" type="text" class="flat" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
     	  
     	  print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-    	  print '<td colspan="3"><input size="24" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
+    	  print '<td colspan="3"><input size="24" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
     
     	  print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
-    	  print "<textarea name=\"domiciliation\" rows=\"3\" cols=\"40\">";
+    	  print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
     	  print $account->domiciliation;
     	  print "</textarea></td></tr>";
     
           print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
-    	  print '<td colspan="3"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
+    	  print '<td colspan="3"><input size="30" type="text" class="flat" name="proprio" value="'.$account->proprio.'"></td></tr>';
           print "</td></tr>\n";
     
           print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
-    	  print "<textarea name=\"adresse_proprio\" rows=\"3\" cols=\"40\">";
+    	  print "<textarea class=\"flat\" name=\"adresse_proprio\" rows=\"2\" cols=\"40\">";
     	  print $account->adresse_proprio;
     	  print "</textarea></td></tr>";
       }

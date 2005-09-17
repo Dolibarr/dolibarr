@@ -43,6 +43,8 @@ class Account
     var $type;
     var $bank;
     var $clos;
+    var $rappro;
+    
     var $code_banque;
     var $code_guichet;
     var $number;
@@ -68,6 +70,9 @@ class Account
         $this->type_lib[1]=$langs->trans("BankType1");
         $this->type_lib[2]=$langs->trans("BankType2");
 
+        $this->status[0]=$langs->trans("StatusAccountOpened");
+        $this->status[1]=$langs->trans("StatusAccountClosed");
+
         return 1;
     }
 
@@ -76,6 +81,8 @@ class Account
      */
     function deleteline($rowid)
     {
+        $this->db->begin();
+        
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=$rowid";
         $result = $this->db->query($sql);
 
@@ -84,6 +91,8 @@ class Account
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=$rowid";
         $result = $this->db->query($sql);
+
+        $this->db->commit();
     }
 
     /**
@@ -236,7 +245,7 @@ class Account
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_account");
                 if ( $this->update() )
                 {
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, label, amount, fk_account,datev,dateo,fk_type,rappro) ";
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, label, amount, fk_account, datev, dateo, fk_type, rappro) ";
                     $sql .= " VALUES (now(),'".$langs->trans("Balance")."','" . ereg_replace(',','.',$this->solde) . "','$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
                     $this->db->query($sql);
                 }
@@ -288,6 +297,7 @@ class Account
         $sql .= ",adresse_proprio = '".$this->adresse_proprio."'";
         $sql .= ",courant = ".$this->courant;
         $sql .= ",clos = ".$this->clos;
+        $sql .= ",rappro = ".$this->rappro;
 
         $sql .= " WHERE rowid = ".$this->id;
 
@@ -310,8 +320,9 @@ class Account
     function fetch($id)
     {
         $this->id = $id;
-        $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque, code_guichet, cle_rib, bic, iban_prefix, domiciliation, proprio, adresse_proprio FROM ".MAIN_DB_PREFIX."bank_account";
-        $sql .= " WHERE rowid  = ".$id;
+        $sql = "SELECT rowid, label, bank, number, courant, clos, rappro,";
+        $sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix, domiciliation, proprio, adresse_proprio FROM ".MAIN_DB_PREFIX."bank_account";
+        $sql.= " WHERE rowid  = ".$id;
 
         $result = $this->db->query($sql);
 
@@ -326,6 +337,8 @@ class Account
                 $this->courant       = $obj->courant;
                 $this->bank          = $obj->bank;
                 $this->clos          = $obj->clos;
+                $this->rappro        = $obj->rappro;
+                
                 $this->code_banque   = $obj->code_banque;
                 $this->code_guichet  = $obj->code_guichet;
                 $this->number        = $obj->number;
