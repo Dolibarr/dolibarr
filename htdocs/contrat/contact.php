@@ -95,11 +95,10 @@ function select_societes_for_newconcat($contrat, $selected = '', $htmlname = 'ne
 function select_nature_contact($contrat, $defValue, $htmlname = 'nature')
 {
 	$lesNatures = $contrat->liste_nature_contact();
-	print '<input name="'.$htmlname.'" type="text" size="12" value="'.$defValue.'"> ';
-	print '<select size="0" name="choix" onChange="form.'.$htmlname.'.value=this.value;" >';
-	for ($i = 0; $i < count($lesNatures); $i ++)
+	print '<select size="0" name="nature">';
+	foreach($lesNatures as $key=>$value)
 	{
-		print '<option>'.$lesNatures[$i].'</option>';
+		print '<option value="'.$key.'">'.$value.'</option>';
 	}
 	print "</select>\n";
 }
@@ -122,7 +121,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->contrat->creer)
 	$result = $contrat->fetch($_GET["id"]);
 	if ($_POST["id"] > 0)
 	{
-		$result = $contrat->add_contact($_POST["contactid"], $_POST["newnature"]);
+		$result = $contrat->add_contact($_POST["contactid"], $_POST["nature"]);
 	}
 
 	if ($result >= 0)
@@ -165,10 +164,10 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->contrat->creer)
 	if ($contrat->fetch($_GET["id"]))
 	{
 		$contact = $contrat->detail_contact($_GET["ligne"]);
-		$nature = $contact->nature;
+		$id_type_contact = $contact->fk_c_type_contact;
 		$statut = ($contact->statut == 4) ? 5 : 4;
 
-		$result = $contrat->update_contact($_GET["ligne"], $statut, $nature);
+		$result = $contrat->update_contact($_GET["ligne"], $statut, $id_type_contact);
 		if ($result >= 0)
 		{
 			$db->commit();
@@ -249,11 +248,55 @@ if ($id > 0)
 
 		print "</table>";
 
+
+		print '</div>';
+
+
 		/*
 		 * Lignes de contacts
 		 */
 		echo '<br><table class="noborder" width="100%">';
 
+		/*
+		 * Ajouter une ligne de contact
+		 * Non affiché en mode modification de ligne
+		 */
+		if ($_GET["action"] != 'editline' && $user->rights->contrat->creer)
+		{
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("Societe").'</td>';
+			print '<td>'.$langs->trans("Contacts").'</td>';
+			print '<td align="center">'.$langs->trans("ContactType").'</td>';
+			print '<td colspan="2">&nbsp;</td>';
+			print "</tr>\n";
+
+			$var = false;
+
+			print '<form action="contact.php?id='.$id.'" method="post">';
+			print '<input type="hidden" name="action" value="addcontact">';
+			print '<input type="hidden" name="id" value="'.$id.'">';
+
+			print "<tr $bc[$var]>";
+			print '<td colspan="1">';
+			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$contrat->societe->id;
+			$selectedCompany = select_societes_for_newconcat($contrat, $selectedCompany, $htmlname = 'newcompany');
+			print '</td>';
+
+			print '<td colspan="1">';
+			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid');
+			print '</td>';
+			print '<td align="center">';
+			select_nature_contact($contrat, '', 'nature');
+			print '</td>';
+			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+			print '</tr>';
+
+			print "</form>";
+
+		}
+
+        print '<tr><td colspan="6">&nbsp;</td></tr>';
+        
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Societe").'</td>';
 		print '<td>'.$langs->trans("Contacts").'</td>';
@@ -286,18 +329,30 @@ if ($id > 0)
 				{
 					print '<tr '.$bc[$var].' valign="top">';
 
-					print '<td>';
-					print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$objp->fk_socpeople.'">';
-					print $person->fullname.'</a>';
+					print '<td align="left">';
+					if ($objp->fk_soc)
+					{
+    					print '<a href="'.DOL_URL_ROOT.'/soc.php?idp='.$objp->fk_soc.'">';
+    					print img_object($langs->trans("ShowCompany"),"company").' '.$societe->get_nom($person->socid);
+    					print '</a>';
+                    }
+                    else
+                    {
+                        print '&nbsp;';   
+                    }
 					print '</td>';
 
-					print '<td align="left">'.$societe->get_nom($person->socid).'</td>';
+					print '<td>';
+					print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$objp->fk_socpeople.'">';
+					print img_object($langs->trans("ShowContact"),"contact").' '.$person->fullname.'</a>';
+					print '</td>';
 
 					// Description
-					print '<td align="center">'.$objp->nature.'</td>';
+					print '<td align="center">'.$objp->libelle.'</td>';
+
 					// Statut
 					print '<td align="center">';
-					// Activation descativation du contact
+					// Activation desativation du contact
 					if ($contrat->statut >= 0)
 						print '<a href="'.DOL_URL_ROOT.'/contrat/contact.php?id='.$contrat->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i].'">';
 					print img_statut($objp->statut);
@@ -329,7 +384,7 @@ if ($id > 0)
 
 				}
 				// mode edition de une ligne ligne (editline)
-				// on ne change pas le contact. Seulement la nature
+				// on ne change pas le contact. Seulement le type
 				else
 				{
 
@@ -340,15 +395,28 @@ if ($id > 0)
 					print "<tr $bc[$var]>";
 
 					print '<td>';
-					print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$objp->fk_socpeople.'">';
-					print $person->fullname.'</a>';
+					if ($objp->fk_soc)
+					{
+    					print '<a href="'.DOL_URL_ROOT.'/soc.php?idp='.$objp->fk_soc.'">';
+    					print img_object($langs->trans("ShowCompany"),"company").' '.$societe->get_nom($person->socid);
+    					print '</a>';
+                    }
+                    else
+                    {
+                        print '&nbsp;';   
+                    }
 					print '</td>';
-					print '<td align="left">'.$societe->get_nom($person->socid).'</td>';
+
+					print '<td>';
+					print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$objp->fk_socpeople.'">';
+					print img_object($langs->trans("ShowContact"),"contact").' '.$person->fullname.'</a>';
+					print '</td>';
+
 					// Description
 					print '<td align="center">';
-
 					select_nature_contact($contrat, $objp->nature, 'nature');
 					print "</td>";
+
 					// Statut
 					print '<td align="center">'.img_statut($objp->statut).'</td>';
 
@@ -363,48 +431,8 @@ if ($id > 0)
 			$db->free($result);
 		}
 
-		/*
-		 * Ajouter une ligne de contact
-		 * uniquement sur les contrats en creation.
-		 * En pas en mode modification de ligne
-		 */
-		if ($_GET["action"] != 'editline' && $user->rights->contrat->creer && $contrat->statut == 0)
-		{
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Societe").'</td>';
-			print '<td>'.$langs->trans("Contacts").'</td>';
-			print '<td align="center">'.$langs->trans("ContactType").'</td>';
-			print '<td colspan="2">&nbsp;</td>';
-			print "</tr>\n";
-
-			$var = false;
-
-			print '<form action="contact.php?id='.$id.'" method="post">';
-			print '<input type="hidden" name="action" value="addcontact">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
-
-			print "<tr $bc[$var]>";
-			print '<td colspan="1">';
-			$selectedCompany = $_GET["newcompany"]; // vide pour la premiere recherche
-			$selectedCompany = select_societes_for_newconcat($contrat, $selectedCompany, $htmlname = 'newcompany');
-			print '</td>';
-
-			print '<td colspan="1">';
-			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid');
-			print '</td>';
-			print '<td align="center">';
-			select_nature_contact($contrat, "", 'newnature');
-			print '</td>';
-			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-			print '</tr>';
-
-			print "</form>";
-
-		}
-
 		print "</table>";
 
-		print '</div>';
 
 	} else
 	{

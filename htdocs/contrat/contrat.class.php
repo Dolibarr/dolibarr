@@ -925,21 +925,22 @@ class Contrat
         $datecreate = mktime();
         
         // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat_contact";
-        $sql.= " (fk_contrat, fk_socpeople, datecreate, statut, nature) ";
-        $sql.= " VALUES ($this->id, $fk_socpeople , " ;
-		$sql.= $this->db->pdate(time());
-		$sql.= ", 5, '". $lNature . "' ";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
+        $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
+        $sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
+		$sql.= $this->db->idate(time());
+		$sql.= ", 4, '". $lNature . "' ";
         $sql.= ");";
         
         // Retour
         if ( $this->db->query($sql) )
         {
-            return 0;
+            return 1;
         }
         else
         {
-            dolibarr_print_error($this->db);
+//            dolibarr_print_error($this->db);
+            $this->error=$this->db->error()." - $sql";
             return -1;
         }
 	 }    
@@ -947,20 +948,17 @@ class Contrat
 	 /**
 	 * 
 	 *      \brief      Misea jour du contact associé au contrat
-     *      \param      rowid    La reference du lien contant contact.
-     * 		\param		statut	Le nouveau statut
-     *      \param      nature          description du contact
+     *      \param      rowid           La reference du lien contant contact.
+     * 		\param		statut	        Le nouveau statut
+     *      \param      nature          Description du contact
      *      \return     int             <0 si erreur, >0 si ok
      */
-	 function update_contact($rowid, $statut,  $nature)
+	 function update_contact($rowid, $statut, $type_contact_id)
 	 {
-           
-        $lNature = addslashes(trim($nature));
-        
         // Insertion dans la base
-        $sql = "UPDATE ".MAIN_DB_PREFIX."contrat_contact set ";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set ";
         $sql.= " statut = $statut ,";
-        $sql.= " nature = '" . $lNature ."'";
+        $sql.= " fk_c_type_contact = '".$type_contact_id ."'";
         $sql.= " where rowid = $rowid ;";
         // Retour
         if (  $this->db->query($sql) )
@@ -977,21 +975,20 @@ class Contrat
 	/** 
      *    \brief      Supprime une ligne de contact de contrat
      *    \param      idligne		La reference du contact
-     *    \return     statur     0 OK, -1 erreur
+     *    \return     statur        >0 si ok, <0 si ko
      */
-	function delete_contact($idligne)
-	{
-
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat_contact WHERE rowid =".$idligne;
-      
-      if ($this->db->query($sql) ) {
-	
-	  return 0;
-	}
-      else
-	{
-	  return 1;
-	}
+    function delete_contact($idligne)
+    {
+    
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact WHERE rowid =".$idligne;
+        if ($this->db->query($sql))
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
     }
 	 		
     /** 
@@ -1003,10 +1000,14 @@ class Contrat
     {
         $tab=array();
      
-        $sql = "SELECT cd.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."contrat_contact cd , ".MAIN_DB_PREFIX."socpeople sp";
-        $sql.= " WHERE fk_contrat =".$this->id;
-        $sql.= " and cd.fk_socpeople = sp.idp";
+        $sql = "SELECT ec.rowid, tc.code";
+        $sql.= " FROM ".MAIN_DB_PREFIX."element_contact ec, ".MAIN_DB_PREFIX."socpeople sp,";
+        $sql.= " ".MAIN_DB_PREFIX."c_type_contact tc";
+        $sql.= " WHERE element_id =".$this->id;
+        $sql.= " AND ec.fk_c_type_contact=tc.rowid";
+        $sql.= " AND tc.element='contrat'";
+        $sql.= " AND tc.active=1";
+        $sql.= " AND ec.fk_socpeople = sp.idp";
         if ($statut >= 0) $sql.= " AND statut = '$statut'";
         $sql.=" order by sp.name asc ;";
         
@@ -1026,48 +1027,53 @@ class Contrat
         else
         {
             $this->error=$this->db->error();
+//            dolibarr_print_error($this->db);
             return -1;
         }
     }
 
 	 /** 
      *    \brief      Le détail d'un contact
-     *    \param      rowid      L'identifiant du contant de contrat
-     *    \return     object     L'objet de construit par DoliDb.fetch_object
+     *    \param      rowid      L'identifiant du contact
+     *    \return     object     L'objet construit par DoliDb.fetch_object
      */
  	function detail_contact($rowid)
     {
-  
-        $sql = "SELECT datecreate, statut, nature, fk_socpeople";
-        $sql.= " FROM ".MAIN_DB_PREFIX."contrat_contact";
-        $sql.= " WHERE rowid =".$rowid.";";
+        $sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
+        $sql.= " tc.code, tc.libelle, s.fk_soc";
+        $sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc, ";
+        $sql.= " ".MAIN_DB_PREFIX."socpeople as s";
+        $sql.= " WHERE ec.rowid =".$rowid;
+        $sql.= " AND ec.fk_socpeople=s.idp";
+        $sql.= " AND ec.fk_c_type_contact=tc.rowid";
+        $sql.= " AND tc.element = 'contrat'";
 
         $resql=$this->db->query($sql);
         if ($resql)
         {
-             $obj = $this->db->fetch_object($result);
-  
+            $obj = $this->db->fetch_object($result);
             return $obj;
         }
         else
         {
             $this->error=$this->db->error();
+            dolibarr_print_error($this->db);
             return null;
         }
     }	
 
-	 /** 
-     *    \brief      La liste des valeurs possibles de nature de contats
-     *    
+    /** 
+     *    \brief      La liste des valeurs possibles de type de contats
      *    \return     array   La liste des natures
      */
  	function liste_nature_contact()
     {
   		$tab = array();
   		
-        $sql = "SELECT distinct nature";
-        $sql.= " FROM ".MAIN_DB_PREFIX."contrat_contact";
-        $sql.= " order by nature;";
+        $sql = "SELECT distinct tc.rowid, tc.code, tc.libelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
+        $sql.= " WHERE element='contrat'";
+        $sql.= " ORDER by tc.code";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1077,7 +1083,7 @@ class Contrat
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($result);
-                $tab[$i]=$obj->nature;
+                $tab[$obj->rowid]=$obj->libelle;
                 $i++;
             }
             return $tab;
@@ -1085,6 +1091,7 @@ class Contrat
         else
         {
             $this->error=$this->db->error();
+//            dolibarr_print_error($this->db);
             return null;
         }
     }		 			
