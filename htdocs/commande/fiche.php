@@ -530,7 +530,7 @@ else
 			{
 				print '<form action="fiche.php?id='.$id.'" method="post">';
 				print '<input type="hidden" name="action" value="setnote">';
-				print '<textarea name="note" style="width:95%;height:"80%">'.$commande->note.'</textarea><br>';
+				print '<textarea name="note" style="width:95%;height:80%">'.$commande->note.'</textarea><br>';
 				print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
 				print '</form>';
 			}
@@ -548,7 +548,7 @@ else
             if ($conf->projet->enabled)
             {
                 $langs->load('projects');
-                print '<td height="10">';
+                print '<tr><td height="10">';
                 print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans('Project');
                 print '</td>';
@@ -563,11 +563,11 @@ else
                 {
                     $html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->soc_id, $commande->projet_id, 'none');
                 }
-                print '</td>';
+                print '</td></tr>';
             }
 			else
 			{
-                print '<td height="10">&nbsp;</td><td colspan="2">&nbsp;</td>';
+                print '<tr><td height="10">&nbsp;</td><td colspan="2">&nbsp;</td></tr>';
             }
 
 
