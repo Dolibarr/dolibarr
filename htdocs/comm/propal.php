@@ -97,36 +97,42 @@ if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
 
 if ($_POST['action'] == 'add') 
 {
-  $propal = new Propal($db, $_GET['socidp']);
-  $propal->datep = mktime(12, 1 , 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-  
-  $propal->duree_validite = $_POST['duree_validite'];
-  
-  $propal->contactid = $_POST['contactidp'];
-  $propal->projetidp = $_POST['projetidp'];
-  $propal->modelpdf  = $_POST['modelpdf'];
-  $propal->author    = $user->id;
-  $propal->note      = $_POST['note'];
-  
-  $propal->ref = $_POST['ref'];
-  
-  for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
+    $propal = new Propal($db, $_GET['socidp']);
+    $propal->datep = mktime(12, 1 , 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+
+    $propal->duree_validite = $_POST['duree_validite'];
+
+    $propal->contactid = $_POST['contactidp'];
+    $propal->projetidp = $_POST['projetidp'];
+    $propal->modelpdf  = $_POST['modelpdf'];
+    $propal->author    = $user->id;
+    $propal->note      = $_POST['note'];
+
+    $propal->ref = $_POST['ref'];
+
+    for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
     {
-      $xid = 'idprod'.$i;
-      $xqty = 'qty'.$i;
-      $xremise = 'remise'.$i;
-      $propal->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
+        $xid = 'idprod'.$i;
+        $xqty = 'qty'.$i;
+        $xremise = 'remise'.$i;
+        $propal->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
     }
-  
-  $id = $propal->create();
-  
-  /*
-   *   Generation
-   */
-  if ($id) 
+
+    $id = $propal->create();
+
+    /*
+     *   Generation
+     */
+    if ($id > 0)
     {
-      propale_pdf_create($db, $id, $_POST['modelpdf']);
-      Header ('Location: propal.php?propalid='.$id);
+        propale_pdf_create($db, $id, $_POST['modelpdf']);
+        Header ('Location: propal.php?propalid='.$id);
+        exit;
+    }
+    else
+    {
+        dolibarr_print_error($db,$propal->error);
+        exit;
     }
 }
 
