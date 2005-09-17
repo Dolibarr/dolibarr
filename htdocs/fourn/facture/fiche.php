@@ -19,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -259,7 +258,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
 
             if ($_GET["socid"] == $obj->idp)
             {
-                print '" selected=\"true\">'.$obj->nom.'</option>';
+                print '" selected="true">'.$obj->nom.'</option>';
             }
             else
             {
